@@ -519,7 +519,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jemand hat dich hinzugefügt"
+            "value" : "Jemand hat Sie hinzugefügt"
           }
         },
         "en" : {
@@ -584,14 +584,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Someone added you"
+            "state" : "translated",
+            "value" : "Alguém adicionou você"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Someone added you"
+            "state" : "translated",
+            "value" : "Кто-то добавил вас"
           }
         },
         "sl" : {
@@ -709,14 +709,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Incoming call"
+            "state" : "translated",
+            "value" : "Chamada recebida"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Incoming call"
+            "state" : "translated",
+            "value" : "Входящий вызов"
           }
         },
         "sl" : {
@@ -834,14 +834,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ is calling"
+            "state" : "translated",
+            "value" : "%@ está chamando"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ is calling"
+            "state" : "translated",
+            "value" : "%@ звонит"
           }
         },
         "sl" : {
@@ -959,14 +959,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ new messages"
+            "state" : "translated",
+            "value" : "%@ novas mensagens"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ new messages"
+            "state" : "translated",
+            "value" : "%@ новых сообщений"
           }
         },
         "sl" : {
@@ -2084,14 +2084,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Pinged you"
+            "state" : "translated",
+            "value" : "Chamou sua atenção"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Pinged you"
+            "state" : "translated",
+            "value" : "Отправил(-а) вам пинг"
           }
         },
         "sl" : {
@@ -2144,7 +2144,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jemand hat dich entfernt"
+            "value" : "Jemand hat Sie entfernt"
           }
         },
         "en" : {
@@ -2209,14 +2209,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Someone removed you"
+            "state" : "translated",
+            "value" : "Alguém removeu você"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Someone removed you"
+            "state" : "translated",
+            "value" : "Кто-то удалил вас"
           }
         },
         "sl" : {
@@ -2269,7 +2269,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jemand hat auf Ihre Nachricht geantwortet"
+            "value" : "Jemand hat Ihnen geantwortet"
           }
         },
         "en" : {
@@ -2334,14 +2334,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Someone replied to you"
+            "state" : "translated",
+            "value" : "Alguém respondeu para você"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Someone replied to you"
+            "state" : "translated",
+            "value" : "Вам ответили"
           }
         },
         "sl" : {
@@ -2709,14 +2709,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ created a conversation"
+            "state" : "translated",
+            "value" : "%@ criou uma conversa"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ created a conversation"
+            "state" : "translated",
+            "value" : "%@ создал(-а) беседу"
           }
         },
         "sl" : {
@@ -2834,14 +2834,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ deleted the group"
+            "state" : "translated",
+            "value" : "%@ excluiu o grupo"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ deleted the group"
+            "state" : "translated",
+            "value" : "%@ удалил(-а) группу"
           }
         },
         "sl" : {
@@ -2959,14 +2959,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ pinged you"
+            "state" : "translated",
+            "value" : "%@ chamou sua atenção"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ pinged you"
+            "state" : "translated",
+            "value" : "%@ отправил(-а) вам пинг"
           }
         },
         "sl" : {
@@ -3394,7 +3394,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ hat eine Audio-Nachricht geteilt"
+            "value" : "%@ hat eine Audionachricht geteilt"
           }
         },
         "en" : {
@@ -3459,14 +3459,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ shared an audio message"
+            "state" : "translated",
+            "value" : "%@ compartilhou uma mensagem de áudio"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ shared an audio message"
+            "state" : "translated",
+            "value" : "%@ поделился(-лась) звуковым сообщением"
           }
         },
         "sl" : {
@@ -3584,14 +3584,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ shared a file"
+            "state" : "translated",
+            "value" : "%@ compartilhou um arquivo"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ shared a file"
+            "state" : "translated",
+            "value" : "%@ поделился(-лась) файлом"
           }
         },
         "sl" : {
@@ -3709,14 +3709,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ shared a location"
+            "state" : "translated",
+            "value" : "%@ compartilhou uma localização"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ shared a location"
+            "state" : "translated",
+            "value" : "%@ поделился(-лась) местоположением"
           }
         },
         "sl" : {
@@ -3834,14 +3834,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ shared a picture"
+            "state" : "translated",
+            "value" : "%@ compartilhou uma imagem"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ shared a picture"
+            "state" : "translated",
+            "value" : "%@ поделился(-лась) картинкой"
           }
         },
         "sl" : {
@@ -3959,14 +3959,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ shared a video"
+            "state" : "translated",
+            "value" : "%@ compartilhou um vídeo"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ shared a video"
+            "state" : "translated",
+            "value" : "%@ поделился(-лась) видео"
           }
         },
         "sl" : {
@@ -4144,7 +4144,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jemand hat den Timer ausgeschaltet"
+            "value" : "Jemand hat selbstlöschende Nachrichten ausgeschaltet"
           }
         },
         "en" : {
@@ -4209,14 +4209,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Someone turned off the timer"
+            "state" : "translated",
+            "value" : "Alguém desligou o temporizador"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Someone turned off the timer"
+            "state" : "translated",
+            "value" : "Кто-то отключил таймер"
           }
         },
         "sl" : {
@@ -4269,7 +4269,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jemand hat den Timer auf %@ gesetzt"
+            "value" : "Jemand hat selbstlöschende Nachrichten auf %@ gestellt"
           }
         },
         "en" : {
@@ -4334,14 +4334,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Someone set the timer to %@"
+            "state" : "translated",
+            "value" : "Alguém definiu o temporizador para %@"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Someone set the timer to %@"
+            "state" : "translated",
+            "value" : "Кто-то установил таймер на %@"
           }
         },
         "sl" : {
@@ -5084,14 +5084,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Mention: %@"
+            "state" : "translated",
+            "value" : "Menção: %@"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Mention: %@"
+            "state" : "translated",
+            "value" : "Упоминание: %@"
           }
         },
         "sl" : {
@@ -5209,14 +5209,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Mention from %@: %@"
+            "state" : "translated",
+            "value" : "Menção de %@: %@"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Mention from %@: %@"
+            "state" : "translated",
+            "value" : "Упоминание от %@: %@"
           }
         },
         "sl" : {
@@ -5334,14 +5334,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Reply: %@"
+            "state" : "translated",
+            "value" : "Resposta: %@"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Reply: %@"
+            "state" : "translated",
+            "value" : "Ответ: %@"
           }
         },
         "sl" : {
@@ -5459,14 +5459,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Reply from %@: %@"
+            "state" : "translated",
+            "value" : "Resposta de %@: %@"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Reply from %@: %@"
+            "state" : "translated",
+            "value" : "Ответ от %@:%@"
           }
         },
         "sl" : {
@@ -5584,14 +5584,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Incoming video call"
+            "state" : "translated",
+            "value" : "Chamada de vídeo recebida"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Incoming video call"
+            "state" : "translated",
+            "value" : "Входящий видеозвонок"
           }
         },
         "sl" : {
@@ -5709,14 +5709,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ is calling with video"
+            "state" : "translated",
+            "value" : "%@ está chamando com vídeo"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ is calling with video"
+            "state" : "translated",
+            "value" : "%@ вызывает с видео"
           }
         },
         "sl" : {
@@ -5834,14 +5834,14 @@
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ in %@"
+            "state" : "translated",
+            "value" : "%@ em %@"
           }
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%@ in %@"
+            "state" : "translated",
+            "value" : "%@ в %@"
           }
         },
         "sl" : {
