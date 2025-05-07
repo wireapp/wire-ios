@@ -17,6 +17,7 @@
 //
 
 import WireTestingPackage
+import WireDesign
 import XCTest
 
 @testable import Wire
@@ -74,7 +75,7 @@ final class UserConnectionViewSnapshotTests: XCTestCase {
 
         let connectionView = UserConnectionView(user: mockUser)
         connectionView.layoutForTest()
-
+        connectionView.backgroundColor = SemanticColors.View.backgroundConversationView
         return connectionView
     }
 
