@@ -102,6 +102,12 @@ platform :ios do
         end
     end
 
+    desc "Generate env config for UI Tests"
+    lane :generate_env do
+        sh "ls"
+        sh "cd .. && op inject -i wire-ios/WireUITests/env.xcconfig.tpl -o wire-ios/WireUITests/env.xcconfig"
+    end
+
     desc "Run UITests"
     lane :run_uitests do |options|
         schemes = ["WireUITests"]
