@@ -158,6 +158,7 @@ struct SyncStatus: SyncStatusProtocol {
     func resyncResources() {}
     func forceSlowSync() {}
     func recoverWithQuickSync() async {}
+    var isLive: Bool = false
 }
 
 /// A Wire session to share content from a share extension
@@ -475,7 +476,6 @@ public final class SharingSession {
             conversationEventProcessor: ConversationEventProcessor(context: coreDataStack.syncContext),
             featureRepository: FeatureRepository(context: coreDataStack.syncContext),
             userDefaults: .standard,
-            syncStatus: applicationStatusDirectory.syncStatus,
             userID: coreDataStack.account.userIdentifier
         )
 
