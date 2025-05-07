@@ -28,6 +28,21 @@ public struct QualifiedID: Codable, Equatable, Hashable, CustomDebugStringConver
     public let uuid: UUID
     public let domain: String
 
+    public init?(rawValue: String) {
+        let components = rawValue.split(
+            separator: "@",
+            omittingEmptySubsequences: false
+        ).map(String.init)
+
+        guard components.count == 2,
+              let uuid = UUID(uuidString: components[0])
+        else {
+            return nil
+        }
+
+        self.init(uuid: uuid, domain: components[1])
+    }
+
     public init(uuid: UUID, domain: String) {
         self.uuid = uuid
         self.domain = domain
