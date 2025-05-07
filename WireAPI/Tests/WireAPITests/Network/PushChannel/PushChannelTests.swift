@@ -33,7 +33,11 @@ final class PushChannelTests: XCTestCase {
         request = URLRequest(url: url)
         webSocket = MockWebSocketProtocol()
         webSocket.close_MockMethod = {}
-        sut = PushChannel(webSocket: webSocket)
+        webSocket.sendPing_MockMethod = {}
+        sut = PushChannel(
+            webSocket: webSocket,
+            keepAliveInterval: 0.5
+        )
     }
 
     override func tearDown() async throws {
@@ -129,6 +133,22 @@ final class PushChannelTests: XCTestCase {
 
         // Then the web socket was closed
         XCTAssertEqual(webSocket.close_Invocations.count, 1)
+    }
+
+    func testSendingKeepAlivePings() async throws {
+        // Mock.
+        webSocket.open_MockValue = AsyncThrowingStream { _ in }
+
+        // Given an open push channel.
+        _ = try await sut.open()
+
+        // When we wait for 1 second.
+        try await Task.sleep(for: .seconds(1.5))
+
+        // Then keep alive pings are sent periodically (the timer
+        // is not exact so we will we generous in our assertion of
+        // at least 2 in 1.5 seconds).
+        XCTAssertGreaterThanOrEqual(webSocket.sendPing_Invocations.count, 2)
     }
 
 }
