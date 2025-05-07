@@ -30,6 +30,8 @@ public enum EventConversation {
     static let addOTRAsset = "conversation.otr-asset-add"
 }
 
+struct DummyError: Error {}
+
 class EventDecoderTest: MessagingTestBase {
 
     var sut: EventDecoder!
@@ -521,13 +523,14 @@ extension EventDecoderTest {
             DeveloperFlag.proteusViaCoreCrypto.enable(false, storage: .standard)
         }
         let mockProteusService = MockProteusServiceInterface()
+        let decryptionErrorReason = DummyError()
 
         mockProteusService.decryptDataForSession_MockMethod = { data, _ in
             (didCreateNewSession: false, decryptedData: data)
         }
 
         mockMLSService.decryptMessageForSubconversationType_MockMethod = { _, _, _ in
-            throw MLSDecryptionService.MLSMessageDecryptionError.failedToDecryptMessage
+            throw MLSDecryptionService.MLSMessageDecryptionError.failedToDecryptMessage(reason: decryptionErrorReason)
         }
 
         let mlsEvent: ZMUpdateEvent = await syncMOC.perform { [self] in
@@ -546,7 +549,7 @@ extension EventDecoderTest {
             _ = try await sut.decryptAndStoreEvents([mlsEvent])
         } catch let error as MLSDecryptionService.MLSMessageDecryptionError {
             // Then
-            XCTAssert(error == .failedToDecryptMessage)
+            XCTAssert(error == .failedToDecryptMessage(reason: decryptionErrorReason))
             XCTAssertEqual(lastEventIDRepository.storeLastEventID_Invocations.count, 0)
         }
 
@@ -839,8 +842,9 @@ extension EventDecoderTest {
 
     func test_DecryptMLSMessage_ReturnsNoEvent_WhenmlsServiceThrows() async throws {
         // Given
+        let decryptionErrorReason = DummyError()
         mockMLSService.decryptMessageForSubconversationType_MockMethod = { _, _, _ in
-            throw MLSDecryptionService.MLSMessageDecryptionError.failedToDecryptMessage
+            throw MLSDecryptionService.MLSMessageDecryptionError.failedToDecryptMessage(reason: decryptionErrorReason)
         }
 
         let event = await syncMOC.perform { [self] in
@@ -855,7 +859,7 @@ extension EventDecoderTest {
             _ = try await sut.decryptMlsMessage(from: event, context: syncMOC)
         } catch let error as MLSDecryptionService.MLSMessageDecryptionError {
             // Then
-            XCTAssert(error == .failedToDecryptMessage)
+            XCTAssert(error == .failedToDecryptMessage(reason: decryptionErrorReason))
         }
     }
 

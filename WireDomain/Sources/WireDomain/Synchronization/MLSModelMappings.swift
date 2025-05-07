@@ -1,5 +1,3 @@
-// Generated using Sourcery 2.2.4 — https://github.com/krzysztofzablocki/Sourcery
-// DO NOT EDIT
 //
 // Wire
 // Copyright (C) 2025 Wire Swiss GmbH
@@ -18,38 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// swiftlint:disable superfluous_disable_command
-// swiftlint:disable vertical_whitespace
-// swiftlint:disable line_length
-// swiftlint:disable variable_name
+import WireAPI
+import WireCoreCrypto
 
+extension WireCoreCryptoUniffi.CommitBundle {
 
-import UserNotifications
-
-@testable import WireUtilities
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// swiftlint:enable variable_name
-// swiftlint:enable line_length
-// swiftlint:enable vertical_whitespace
-// swiftlint:enable superfluous_disable_command
+    func toAPIModel() -> WireAPI.CommitBundle {
+        WireAPI.CommitBundle(
+            welcome: welcome,
+            commit: commit,
+            groupInfo: groupInfo.payload
+        )
+    }
+}

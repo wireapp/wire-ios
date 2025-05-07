@@ -27,13 +27,13 @@ final class DeepLinkURLActionProcessorTests: DatabaseTest {
     var presentationDelegate: MockPresentationDelegate!
     var sut: WireSyncEngine.DeepLinkURLActionProcessor!
     var mockTransportSession: MockTransportSession!
-    var mockEventProcessor: MockConversationEventProcessorProtocol!
+    var mockEventProcessor: MockLegacyConversationEventProcessorProtocol!
 
     override func setUp() {
         super.setUp()
 
         mockTransportSession = MockTransportSession(dispatchGroup: dispatchGroup)
-        mockEventProcessor = MockConversationEventProcessorProtocol()
+        mockEventProcessor = MockLegacyConversationEventProcessorProtocol()
         mockEventProcessor.processConversationEvents_MockMethod = { _ in }
         presentationDelegate = MockPresentationDelegate()
 
