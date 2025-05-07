@@ -18,35 +18,30 @@
 
 import Foundation
 
-enum ExternalCommitError: Error, Equatable {
+public struct CommitBundle: Sendable, Equatable {
 
-    case failedToSendCommit(recovery: RecoveryStrategy, cause: SendCommitBundleAction.Failure)
-    case failedToMergePendingGroup
-    case failedToClearPendingGroup
+    public var welcome: Data?
 
-    enum RecoveryStrategy {
+    public var commit: Data
 
-        /// Retry the action from the beginning
-        case retry
+    public var groupInfo: Data
 
-        /// Abort the action and log the error
-        case giveUp
-
+    public init(welcome: Data?, commit: Data, groupInfo: Data) {
+        self.welcome = welcome
+        self.commit = commit
+        self.groupInfo = groupInfo
     }
-}
 
-extension ExternalCommitError.RecoveryStrategy {
+    func transportData() -> Data {
+        var data = Data()
+        data.append(commit)
 
-    /// Whether the pending group should be cleared
-
-    var shouldClearPendingGroup: Bool {
-        switch self {
-        case .retry:
-            false
-
-        case .giveUp:
-            true
+        if let welcome {
+            data.append(welcome)
         }
-    }
 
+        data.append(groupInfo)
+
+        return data
+    }
 }

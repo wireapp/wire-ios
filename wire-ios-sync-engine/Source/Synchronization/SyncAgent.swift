@@ -55,6 +55,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     private let initialSyncProvider: any InitialSyncProvider
     private let incrementalSyncProvider: any IncrementalSyncProvider
     private let legacySyncStatus: any SyncStatusProtocol
+    private let coreCryptoProvider: any CoreCryptoProviderProtocol
 
     private let incrementalSyncTaskManager = NonReentrantTaskManager()
     private var incrementalSyncToken: IncrementalSync.Token?
@@ -76,6 +77,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     init(
         journal: Journal,
         lastUpdateEventIDRepository: any LastEventIDRepositoryInterface,
+        coreCryptoProvider: any CoreCryptoProviderProtocol,
         initialSyncProvider: any InitialSyncProvider,
         incrementalSyncProvider: any IncrementalSyncProvider,
         legacySyncStatus: any SyncStatusProtocol,
@@ -83,6 +85,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     ) {
         self.journal = journal
         self.lastUpdateEventIDRepository = lastUpdateEventIDRepository
+        self.coreCryptoProvider = coreCryptoProvider
         self.initialSyncProvider = initialSyncProvider
         self.incrementalSyncProvider = incrementalSyncProvider
         self.legacySyncStatus = legacySyncStatus
