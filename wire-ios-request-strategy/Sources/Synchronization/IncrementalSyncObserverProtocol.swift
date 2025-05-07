@@ -19,12 +19,17 @@
 import Foundation
 
 // sourcery: AutoMockable
-public protocol SyncStatusProtocol {
+public protocol IncrementalSyncObserverProtocol {
 
-    func performQuickSync() async
-    func resyncResources()
-    func forceSlowSync()
-    func recoverWithQuickSync() async
-    var isLive: Bool { get }
+    func waitUntilCanSendMessage() async
 
+}
+
+public extension Notification.Name {
+
+    /// Published before the first event is decrypted and stored.
+    static let didStartDecryptingEventsNotification = Self("EventProcessorDidStartDecryptingEventsNotification")
+
+    /// Published after the last event has been decrypted and stored.
+    static let didStopDecryptingEventsNotification = Self("EventProcessorDidFinishDecryptingEventsNotification")
 }
