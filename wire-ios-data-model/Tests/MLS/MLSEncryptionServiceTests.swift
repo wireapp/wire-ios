@@ -25,7 +25,7 @@ import XCTest
 final class MLSEncryptionServiceTests: XCTestCase {
 
     var sut: MLSEncryptionService!
-    var mockCoreCrypto: MockCoreCryptoProtocol!
+    var mockCoreCryptoContext: MockCoreCryptoContextProtocol!
     var mockSafeCoreCrypto: MockSafeCoreCrypto!
     var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
 
@@ -33,8 +33,8 @@ final class MLSEncryptionServiceTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        mockCoreCrypto = MockCoreCryptoProtocol()
-        mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
+        mockCoreCryptoContext = MockCoreCryptoContextProtocol()
+        mockSafeCoreCrypto = MockSafeCoreCrypto(coreCryptoContext: mockCoreCryptoContext)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
         sut = MLSEncryptionService(coreCryptoProvider: mockCoreCryptoProvider)
@@ -42,7 +42,7 @@ final class MLSEncryptionServiceTests: XCTestCase {
 
     override func tearDown() {
         sut = nil
-        mockCoreCrypto = nil
+        mockCoreCryptoContext = nil
         mockSafeCoreCrypto = nil
         super.tearDown()
     }
@@ -60,7 +60,7 @@ final class MLSEncryptionServiceTests: XCTestCase {
 
         // Mock
         var mockEncryptMessageCount = 0
-        mockCoreCrypto.encryptMessageConversationIdMessage_MockMethod = {
+        mockCoreCryptoContext.encryptMessageConversationIdMessage_MockMethod = {
             mockEncryptMessageCount += 1
             XCTAssertEqual($0, groupID.data)
             XCTAssertEqual($1, unencryptedMessage)
@@ -84,8 +84,8 @@ final class MLSEncryptionServiceTests: XCTestCase {
         let unencryptedMessage = Data.random()
 
         // Mock
-        mockCoreCrypto.encryptMessageConversationIdMessage_MockMethod = { _, _ in
-            throw CryptoError.InvalidByteArrayError(message: "invalid byte array error")
+        mockCoreCryptoContext.encryptMessageConversationIdMessage_MockMethod = { _, _ in
+            throw CoreCryptoError.Other("invalid byte array error")
         }
 
         // Then

@@ -28,4 +28,6 @@ public protocol WebSocketProtocol: Sendable {
     func write(data: Data) async throws
 
     func write(string: String) async throws
+
+    func sendPing() async throws
 }

@@ -20,7 +20,7 @@ import Foundation
 
 /// An event where the receipt mode of a conversation was updated.
 
-public struct ConversationReceiptModeUpdateEvent: Equatable, Codable, Sendable {
+public struct ConversationReceiptModeUpdateEvent: Equatable, Sendable {
 
     /// The id of the conversation.
 
@@ -36,5 +36,15 @@ public struct ConversationReceiptModeUpdateEvent: Equatable, Codable, Sendable {
     /// and any other value indicates receipts are disabled.
 
     public let newReceiptMode: Int
+
+    public init(
+        conversationID: ConversationID,
+        senderID: UserID,
+        newReceiptMode: Int
+    ) {
+        self.conversationID = conversationID
+        self.senderID = senderID
+        self.newReceiptMode = newReceiptMode
+    }
 
 }

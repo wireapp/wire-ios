@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import Foundation
 import WireAPI
 import WireLogging
@@ -30,6 +31,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
     private let store: any UpdateEventsLocalStoreProtocol
     private let processor: any UpdateEventProcessorProtocol
     private let databaseSaver: any DatabaseSaverProtocol
+    private let syncStateSubject: CurrentValueSubject<SyncState, Never>
     private let logger = WireLogger.sync
 
     public init(
@@ -39,7 +41,8 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         decryptor: any UpdateEventDecryptorProtocol,
         store: any UpdateEventsLocalStoreProtocol,
         processor: any UpdateEventProcessorProtocol,
-        databaseSaver: any DatabaseSaverProtocol
+        databaseSaver: any DatabaseSaverProtocol,
+        syncStateSubject: CurrentValueSubject<SyncState, Never>
     ) {
         self.selfClientID = selfClientID
         self.pushChannelAPI = pushChannelAPI
@@ -48,6 +51,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         self.store = store
         self.processor = processor
         self.databaseSaver = databaseSaver
+        self.syncStateSubject = syncStateSubject
     }
 
     public func perform() async throws -> Token {
@@ -56,19 +60,24 @@ public struct IncrementalSync: IncrementalSyncProtocol {
     
     public func perform(acknowledgeFullSync: Bool) async throws -> Token {
         logger.debug("performing incremental sync")
+        syncStateSubject.send(.incrementalSyncing(.createPushChannel))
         let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID)
 
         logger.debug("opening push channel")
+        syncStateSubject.send(.incrementalSyncing(.openPushChannel))
         let liveEventStream = try await pushChannel.open()
 
         logger.debug("pulling pending update events")
+        syncStateSubject.send(.incrementalSyncing(.pullPendingEvents))
         try await updateEventsSync.pull()
 
         logger.debug("processing stored update events")
+        syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
         let processedEnvelopeIDs = try await processStoredEvents()
 
-        let task: Task<Void, Error> = Task { @Sendable [logger, decryptor, store, processor, databaseSaver] in
+        let task: Task<Void, Error> = Task { @Sendable [logger, decryptor, store, processor, databaseSaver, syncStateSubject] in
             logger.debug("handling live event stream")
+            syncStateSubject.send(.liveSyncing)
 
             do {
                 for try await var envelope in liveEventStream {
@@ -160,6 +169,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
             }
 
             logger.debug("live event stream did finish")
+            syncStateSubject.send(.idle)
         }
 
         return Token(task: task, closePushChannel: {

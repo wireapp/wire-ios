@@ -124,8 +124,7 @@ public final class UserSessionComponent {
     public func clientSessionComponent(
         clientID: String,
         asyncStreamEnabled: Bool,
-        onSelfClientInvalidated: @escaping () async -> Void,
-        onProcessedCallEvent: @escaping (CallEventInfo) -> Void
+        processorHandlers: ClientSessionComponent.ProcessorHandlers
     ) -> ClientSessionComponent {
         ClientSessionComponent(
             selfUserID: selfUserID,
@@ -144,8 +143,7 @@ public final class UserSessionComponent {
             mlsDecryptionService: mlsDecryptionService,
             proteusService: proteusService,
             asyncStreamEnabled: asyncStreamEnabled,
-            onSelfClientInvalidated: onSelfClientInvalidated,
-            onProcessedCallEvent: onProcessedCallEvent
+            processorHandlers: processorHandlers
         )
     }
 

@@ -107,4 +107,16 @@ public actor WebSocket: WebSocketProtocol {
         try await connection.send(.string(string))
     }
 
+    public func sendPing() async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, any Error>) in
+            connection.sendPing { error in
+                if let error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume()
+                }
+            }
+        }
+    }
+
 }

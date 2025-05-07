@@ -22,11 +22,15 @@ import WireDesign
 
 final class ConversationVideoMessageCell: UIView, ConversationMessageCell {
 
-    struct Configuration {
-        let message: ZMConversationMessage
-        var isObfuscated: Bool {
-            message.isObfuscated
+    struct Configuration: Equatable {
+        var message: ZMConversationMessage
+        var isObfuscated: Bool
+
+        static func == (lhs: Configuration, rhs: Configuration) -> Bool {
+            lhs.message == rhs.message &&
+                lhs.isObfuscated == rhs.isObfuscated
         }
+
     }
 
     private var containerView = RoundedView()
@@ -139,12 +143,19 @@ extension ConversationVideoMessageCell: TransferViewDelegate {
 
 final class ConversationVideoMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationVideoMessageCell
-    let configuration: View.Configuration
+    var configuration: View.Configuration
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 
-    weak var message: ZMConversationMessage?
+    weak var message: ZMConversationMessage? {
+        didSet {
+            if let message {
+                configuration.message = message
+            }
+        }
+    }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
@@ -155,7 +166,8 @@ final class ConversationVideoMessageCellDescription: ConversationMessageCellDesc
     let accessibilityLabel: String?
 
     init(message: ZMConversationMessage) {
-        self.configuration = View.Configuration(message: message)
+        self.configuration = View
+            .Configuration(message: message, isObfuscated: message.isObfuscated)
         self.accessibilityLabel = L10n.Accessibility.ConversationSearch.VideoMessage.description
     }
 

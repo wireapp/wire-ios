@@ -20,7 +20,7 @@ import Foundation
 
 /// A container for update events.
 
-public struct UpdateEventEnvelope: Equatable, Codable, Sendable {
+public struct UpdateEventEnvelope: Equatable, Sendable {
 
     /// The id of the event envelope.
 

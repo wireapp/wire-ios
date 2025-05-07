@@ -39,8 +39,7 @@ struct HorizontalMargins {
     }
 
     static func conversationHorizontalMargins(
-        windowWidth: CGFloat? = UIApplication.shared.delegate?.window??.frame
-            .width ?? UIScreen.main.bounds.width
+        windowWidth: CGFloat? = UIApplication.shared.delegate?.window??.frame.width ?? UIScreen.main.bounds.width
     ) -> HorizontalMargins {
         let userInterfaceSizeClass: UIUserInterfaceSizeClass
 

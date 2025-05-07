@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import XCTest
 @testable import WireAPI
 @testable import WireAPISupport
@@ -31,6 +32,7 @@ final class IncrementalSyncTests: XCTestCase {
     var store: MockUpdateEventsLocalStoreProtocol!
     var processor: MockUpdateEventProcessorProtocol!
     var databaseSaver: MockDatabaseSaverProtocol!
+    var syncStateSubject: CurrentValueSubject<SyncState, Never>!
 
     override func setUp() {
         pushChannelAPI = MockPushChannelAPI()
@@ -39,6 +41,7 @@ final class IncrementalSyncTests: XCTestCase {
         store = MockUpdateEventsLocalStoreProtocol()
         processor = MockUpdateEventProcessorProtocol()
         databaseSaver = MockDatabaseSaverProtocol()
+        syncStateSubject = CurrentValueSubject(.idle)
         sut = IncrementalSync(
             selfClientID: Scaffolding.selfClientID,
             pushChannelAPI: pushChannelAPI,
@@ -46,7 +49,8 @@ final class IncrementalSyncTests: XCTestCase {
             decryptor: decryptor,
             store: store,
             processor: processor,
-            databaseSaver: databaseSaver
+            databaseSaver: databaseSaver,
+            syncStateSubject: syncStateSubject
         )
     }
 
@@ -58,6 +62,7 @@ final class IncrementalSyncTests: XCTestCase {
         store = nil
         processor = nil
         databaseSaver = nil
+        syncStateSubject = nil
     }
 
     func test_perform_pendingEventsExist() async throws {

@@ -28,10 +28,17 @@ final class ConversationPingCell: ConversationIconBasedCell<ConversationPingCell
     var isAnimationRunning = false
     var configuration: Configuration?
 
-    struct Configuration {
+    struct Configuration: Equatable {
         let pingColor: UIColor
         let pingText: NSAttributedString
         var message: ZMConversationMessage?
+
+        static func == (lhs: Configuration, rhs: Configuration) -> Bool {
+            lhs.message == rhs.message &&
+                lhs.pingColor == rhs.pingColor &&
+                lhs.pingText == rhs.pingText
+        }
+
     }
 
     func configure(with object: Configuration, animated: Bool) {
@@ -130,9 +137,16 @@ final class ConversationPingCell: ConversationIconBasedCell<ConversationPingCell
 final class ConversationPingCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationPingCell
 
-    let configuration: View.Configuration
+    var configuration: View.Configuration
 
-    weak var message: ZMConversationMessage?
+    weak var message: ZMConversationMessage? {
+        didSet {
+            if let message {
+                configuration.message = message
+            }
+        }
+    }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 

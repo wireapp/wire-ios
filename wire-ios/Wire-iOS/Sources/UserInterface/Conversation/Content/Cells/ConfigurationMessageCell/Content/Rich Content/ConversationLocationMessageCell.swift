@@ -23,12 +23,17 @@ import WireDesign
 
 final class ConversationLocationMessageCell: UIView, ConversationMessageCell, ContextMenuDelegate {
 
-    struct Configuration {
-        let location: LocationMessageData
-        let message: ZMConversationMessage
-        var isObfuscated: Bool {
-            message.isObfuscated
+    struct Configuration: Equatable {
+        var location: LocationMessageData
+        var message: ZMConversationMessage
+        var isObfuscated: Bool
+
+        static func == (lhs: Configuration, rhs: Configuration) -> Bool {
+            lhs.message == rhs.message &&
+                lhs.message == rhs.message &&
+                lhs.isObfuscated == rhs.isObfuscated
         }
+
     }
 
     private var lastConfiguration: Configuration?
@@ -189,9 +194,17 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
 final class ConversationLocationMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationLocationMessageCell
 
-    let configuration: View.Configuration
+    var configuration: View.Configuration
 
-    var message: ZMConversationMessage?
+    var message: ZMConversationMessage? {
+        didSet {
+            if let message, let locationMessageData = message.locationMessageData {
+                configuration.location = locationMessageData
+                configuration.isObfuscated = message.isObfuscated
+            }
+        }
+    }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
@@ -205,6 +218,11 @@ final class ConversationLocationMessageCellDescription: ConversationMessageCellD
     let accessibilityLabel: String? = nil
 
     init(message: ZMConversationMessage, location: LocationMessageData) {
-        self.configuration = View.Configuration(location: location, message: message)
+        self.configuration = View
+            .Configuration(
+                location: location,
+                message: message,
+                isObfuscated: message.isObfuscated
+            )
     }
 }
