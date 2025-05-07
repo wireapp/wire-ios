@@ -261,7 +261,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
     ) {
         // Only show sync error alert for debugging
         guard Bundle.developerModeEnabled else {
-            return
+            return appStateTransitionGroup.leave()
         }
 
         let alert = UIAlertController(
