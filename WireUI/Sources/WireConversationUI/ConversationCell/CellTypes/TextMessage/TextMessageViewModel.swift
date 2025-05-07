@@ -16,18 +16,41 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import Foundation
 
-public extension ConversationCellModel {
+public struct TextMessageViewModel: ConversationCellModelProtocol {
+    
+    typealias ContentView = TextMessageView
 
-    var cellReuseIdentifier: String {
-        switch self {
+    public var id: AnyHashable { self }
 
-        case .timeDivider:
-            "timeDivider"
-        case .text:
-            "text"
-        }
+    var text: String
+    
+    public init(
+        text: String
+    ) {
+        self.text = text
+    }
+
+    init() {
+        self.init(
+            text: ""
+        )
     }
 
 }
+
+extension ConversationCellModel {
+
+//    static func timeDivider(
+//        text: String,
+//        isUnread: Bool
+//    ) -> Self {
+//        let model = TimeDividerModel(
+//            text: text,
+//            isUnreadIndicatorVisible: isUnread
+//        )
+//        return .timeDivider(model)
+//    }
+}
+

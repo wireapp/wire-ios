@@ -16,18 +16,34 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import SwiftUI
+import WireDesign
 
-public extension ConversationCellModel {
+struct TextMessageView: ConversationCellContentViewProtocol {
 
-    var cellReuseIdentifier: String {
-        switch self {
+    private(set) var model: TextMessageViewModel
 
-        case .timeDivider:
-            "timeDivider"
-        case .text:
-            "text"
+    var body: some View {
+        HStack(spacing: 0) {
+            // TODOD
         }
+        .padding(.vertical, 8)
     }
 
+    @ViewBuilder private var text: some View {
+        Text(model.text)
+            .multilineTextAlignment(.center)
+            .font(.footnote)
+            .fontWeight(.semibold)
+            .padding(.horizontal, 12)
+            .layoutPriority(1)
+    }
+
+}
+
+// MARK: - Previews
+
+#Preview("with unread indicator") {
+    let model = TextMessageViewModel()
+    TextMessageView(model: model)
 }

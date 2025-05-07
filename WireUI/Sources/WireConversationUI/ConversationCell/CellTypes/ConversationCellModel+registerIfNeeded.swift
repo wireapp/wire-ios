@@ -28,6 +28,8 @@ public extension ConversationCellModel {
 
         case .timeDivider:
             ConversationCell<TimeDividerModel>.self
+        case .text:
+            ConversationCell<TextMessageViewModel>.self
         }
 
         tableView.register(cellType, forCellReuseIdentifier: cellReuseIdentifier)
