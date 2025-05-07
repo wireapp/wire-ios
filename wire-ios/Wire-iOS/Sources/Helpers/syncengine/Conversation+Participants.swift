@@ -33,7 +33,7 @@ extension ZMConversation {
 
     static let legacyGroupVideoParticipantLimit: Int = 4
 
-    static let maxParticipants: Int = 500
+    static let maxParticipants: Int = 2000
 
     static var maxParticipantsExcludingSelf: Int {
         maxParticipants - 1
