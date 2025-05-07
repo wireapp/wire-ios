@@ -1280,13 +1280,8 @@
 // Open in
 "self.settings.external_apps.header" = "Відкрити за допомогою";
 
-"self.settings.link_options.twitter.title" = "Твіти";
 "self.settings.link_options.maps.title" = "Місця";
 "self.settings.link_options.browser.title" = "Браузер";
-
-"open_link.twitter.option.default" = "Браузер / Твітер";
-"open_link.twitter.option.tweetbot" = "Tweetbot";
-"open_link.twitter.option.twitterrific" = "Twitterrific";
 
 "open_link.maps.option.apple" = "Карти";
 "open_link.maps.option.google" = "Карти Google";
@@ -1308,7 +1303,6 @@
 "self.settings.developer_options.title" = "Налаштування розробника";
 "self.settings.developer_options.loggin.title" = "Налаштування";
 "self.settings.developer_options.database_statistics.title" = "Database Statistics";
-"self.settings.apns_logging.title" = "Ведення журналу APNS";
 
 // Privacy (visibility) options
 "self.settings.options_menu.title" = "Налаштування";
