@@ -20,12 +20,12 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireFoundation
 import WireLogging
 import WireMainNavigationUI
 import WireRequestStrategy
 import WireReusableUIComponents
 import WireSyncEngine
-import WireFoundation
 
 private let zmLog = ZMSLog(tag: "ConversationContentViewController")
 
@@ -71,9 +71,9 @@ final class ConversationContentViewController: UIViewController {
 
         return button
     }()
-    
+
     private let userDefaults: PrivateUserDefaults<ConversationBackgroundKey>
-    
+
     let tableView: UpsideDownTableView = .init(frame: .zero, style: .plain)
     let bottomContainer: UIView = .init(frame: .zero)
     var searchQueries: [String]? {
@@ -255,16 +255,15 @@ final class ConversationContentViewController: UIViewController {
             name: ZMConversation.failedToSendMessageNotificationName,
             object: .none
         )
-        
-        
+
         updateBackgroundColor(color: userSession.selfUser.zmAccentColor)
-        
+
         accentColorChangeHandler = AccentColorChangeHandler
             .addObserver(self, userSession: userSession) { [unowned self] color, _ in
                 updateBackgroundColor(color: color)
             }
     }
-    
+
     private func updateBackgroundColor(color: ZMAccentColor?) {
         func set(color: UIColor) {
             tableView.backgroundColor = color
@@ -727,17 +726,17 @@ extension AccentColor {
     var conversationBackgroundColor: UIColor {
         switch self {
         case .blue:
-            return SemanticColors.View.conversationBackgroundBlue
+            SemanticColors.View.conversationBackgroundBlue
         case .purple:
-            return SemanticColors.View.conversationBackgroundPurple
+            SemanticColors.View.conversationBackgroundPurple
         case .green:
-            return SemanticColors.View.conversationBackgroundGreen
+            SemanticColors.View.conversationBackgroundGreen
         case .amber:
-            return SemanticColors.View.conversationBackgroundAmber
+            SemanticColors.View.conversationBackgroundAmber
         case .red:
-            return SemanticColors.View.conversationBackgroundRed
+            SemanticColors.View.conversationBackgroundRed
         case .turquoise:
-            return SemanticColors.View.conversationBackgroundTurquoise
+            SemanticColors.View.conversationBackgroundTurquoise
         }
     }
 }

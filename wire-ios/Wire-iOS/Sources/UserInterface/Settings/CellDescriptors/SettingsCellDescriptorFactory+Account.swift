@@ -335,7 +335,7 @@ extension SettingsCellDescriptorFactory {
             settingsCoordinator: settingsCoordinator
         )
     }
-    
+
     func conversationBackgroundEnabledElement() -> any SettingsCellDescriptorType {
 
         SettingsPropertyToggleCellDescriptor(
@@ -363,13 +363,13 @@ extension SettingsCellDescriptorFactory {
             assertionFailure("misses prerequisites to present color elements!")
             return UIViewController()
         }
-        
+
         return AccentColorPickerController(
             selfUser: selfUser,
             userSession: userSession
         )
     }
-        
+
     func readReceiptsEnabledElement() -> any SettingsCellDescriptorType {
 
         SettingsPropertyToggleCellDescriptor(

@@ -435,7 +435,7 @@ final class SettingsPropertyFactory {
                     storage.set(enabled.boolValue, forKey: .collapseOwnMessages)
                 }
             )
-            
+
         case .conversationBackground:
             let userId = selfUser!.remoteIdentifier!
             let storage = PrivateUserDefaults<ConversationBackgroundKey>(userID: userId)

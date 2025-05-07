@@ -78,7 +78,7 @@ public enum SettingsPropertyName: String, CustomStringConvertible {
     case readReceiptsEnabled
 
     case encryptMessagesAtRest
-    
+
     case conversationBackground
 
     public var changeNotificationName: String {
