@@ -100,6 +100,9 @@ public class ZMSearchUser: NSObject, UserType {
     public var teamIdentifier: UUID?
     @objc public var user: ZMUser?
     public private(set) var hasDownloadedFullUserProfile: Bool = false
+    public var objectId: Any {
+        user?.objectId ?? remoteIdentifier!
+    }
 
     fileprivate weak var contextProvider: ContextProvider?
     private let searchUsersCache: SearchUsersCache?

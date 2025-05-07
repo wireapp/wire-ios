@@ -48,17 +48,17 @@ public final class MessageSender: MessageSenderInterface {
         sessionEstablisher: SessionEstablisherInterface,
         messageDependencyResolver: MessageDependencyResolverInterface,
         context: NSManagedObjectContext,
-        quickSyncObserver: QuickSyncObserverInterface
+        incrementalSyncObserver: IncrementalSyncObserverProtocol
     ) {
         self.apiProvider = apiProvider
         self.sessionEstablisher = sessionEstablisher
         self.messageDependencyResolver = messageDependencyResolver
         self.context = context
         self.logAttributesBuilder = MessageLogAttributesBuilder(context: context)
-        self.quickSyncObserver = quickSyncObserver
+        self.incrementalSyncObserver = incrementalSyncObserver
     }
 
-    private let quickSyncObserver: QuickSyncObserverInterface
+    private let incrementalSyncObserver: IncrementalSyncObserverProtocol
     private let apiProvider: APIProviderInterface
     private let context: NSManagedObjectContext
     private let sessionEstablisher: SessionEstablisherInterface
@@ -73,7 +73,7 @@ public final class MessageSender: MessageSenderInterface {
         let logAttributes = await logAttributesBuilder.logAttributes(message)
         WireLogger.messaging.debug("broadcast message", attributes: logAttributes)
 
-        await quickSyncObserver.waitUntilCanSendMessage()
+        await incrementalSyncObserver.waitUntilCanSendMessage()
 
         do {
             guard let apiVersion = BackendInfo.apiVersion else { throw MessageSendError.unresolvedApiVersion }
@@ -89,7 +89,7 @@ public final class MessageSender: MessageSenderInterface {
         let logAttributes = await logAttributesBuilder.logAttributes(message)
         WireLogger.messaging.debug("send message - start wait for quick sync to finish", attributes: logAttributes)
 
-        await quickSyncObserver.waitUntilCanSendMessage()
+        await incrementalSyncObserver.waitUntilCanSendMessage()
 
         WireLogger.messaging.debug("send message - sync finished", attributes: logAttributes)
 

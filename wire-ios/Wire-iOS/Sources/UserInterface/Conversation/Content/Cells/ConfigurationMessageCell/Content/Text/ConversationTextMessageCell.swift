@@ -168,7 +168,9 @@ extension ConversationTextMessageCellDescription {
 
     static func cells(
         for message: ZMConversationMessage,
-        searchQueries: [String]
+        searchQueries: [String],
+        selfUser: any UserType,
+        userSession: UserSession
     ) -> [AnyConversationMessageCellDescription] {
         guard let textMessageData = message.textMessageData else {
             preconditionFailure("Invalid text message")
@@ -177,28 +179,40 @@ extension ConversationTextMessageCellDescription {
         return cells(
             textMessageData: textMessageData,
             message: message,
-            searchQueries: searchQueries
+            searchQueries: searchQueries,
+            selfUser: selfUser,
+            userSession: userSession
         )
     }
 
     static func cells(
         textMessageData: TextMessageData,
         message: ZMConversationMessage,
-        searchQueries: [String]
+        searchQueries: [String],
+        selfUser: any UserType,
+        userSession: UserSession
     ) -> [AnyConversationMessageCellDescription] {
 
         var cells: [AnyConversationMessageCellDescription] = []
 
         // Refetch the link attachments if needed
-        if !Settings.disableLinkPreviews {
-            ZMUserSession.shared()?.enqueue {
-                message.refetchLinkAttachmentsIfNeeded()
+        if !Settings.disableLinkPreviews, let id = (message as? ZMMessage)?.objectID {
+            userSession.enqueue {
+                let message = ZMMessage.existingObject(
+                    with: id,
+                    inUserSession: userSession.contextProvider
+                )
+                message?.refetchLinkAttachmentsIfNeeded()
             }
         }
 
         // Text parsing
         let attachments = message.linkAttachments ?? []
-        var messageText = NSAttributedString.format(message: textMessageData, isObfuscated: message.isObfuscated)
+        var messageText = NSAttributedString.format(
+            message: textMessageData,
+            isObfuscated: message.isObfuscated,
+            accentColor: (selfUser.zmAccentColor ?? .default).accentColor
+        )
 
         // Search queries
         if !searchQueries.isEmpty {
@@ -213,7 +227,10 @@ extension ConversationTextMessageCellDescription {
 
         // Quote
         if let quotedMessage = textMessageData.quoteMessage {
-            let quoteCell = ConversationReplyCellDescription(quotedMessage: quotedMessage)
+            let quoteCell = ConversationReplyCellDescription(
+                quotedMessage: quotedMessage,
+                accentColor: (selfUser.zmAccentColor ?? .default).accentColor
+            )
             cells.append(AnyConversationMessageCellDescription(quoteCell))
         }
 

@@ -2317,6 +2317,48 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(mockConversationEventProcessor.processConversationEvents_Invocations, [])
     }
 
+    func test_UpdateKeyMaterial_ContinuesOnFailureForSomeGroups() async throws {
+        // Given
+        let group1 = MLSGroupID.random()
+        let group2 = MLSGroupID.random()
+        let group3 = MLSGroupID.random()
+
+        mockStaleMLSKeyDetector.groupsWithStaleKeyingMaterial = [group1, group2, group3]
+
+        var updatedGroups = [MLSGroupID]()
+        mockMLSActionExecutor.mockUpdateKeyMaterial = { groupID in
+            if groupID == group2 {
+                // Given one of the group fails
+                throw CommitError.failedToSendCommit(recovery: .giveUp, cause: .mlsStaleMessage)
+            } else {
+                updatedGroups.append(groupID)
+                return []
+            }
+        }
+
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
+            [ZMUpdateEvent()]
+        }
+
+        keyMaterialUpdatedExpectation = customExpectation(description: "did update key material")
+
+        // When
+        await sut.updateKeyMaterialForAllStaleGroupsIfNeeded()
+
+        // Then
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 5))
+
+        // Check that group1 and group3 were successfully updated
+        XCTAssertEqual(Set(updatedGroups), Set([group1, group3]))
+
+        // Check that lastKeyMaterialUpdateCheck is updated
+        XCTAssertEqual(
+            sut.lastKeyMaterialUpdateCheck.timeIntervalSinceNow,
+            Date().timeIntervalSinceNow,
+            accuracy: 0.1
+        )
+    }
+
     // MARK: - Subgroups
 
     func test_CreateOrJoinSubgroup_CreateNewGroup() async throws {

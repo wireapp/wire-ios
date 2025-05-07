@@ -354,13 +354,13 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         ]
     }
 
-    func makeRemainingStategies(
+    func makeClientRelatedStategies(
         applicationStatusDirectory: ApplicationStatusDirectory,
         syncContext: NSManagedObjectContext,
         transportSession: TransportSessionType,
         pushMessageHandler: PushMessageHandler,
         flowManager: FlowManagerType,
-        quickSyncObserver: QuickSyncObserverInterface
+        incrementalSyncObserver: IncrementalSyncObserverProtocol
     ) {
         syncContext.performAndWait {
             let httpClient = HttpClientImpl(
@@ -378,7 +378,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 sessionEstablisher: sessionEstablisher,
                 messageDependencyResolver: messageDependencyResolver,
                 context: syncContext,
-                quickSyncObserver: quickSyncObserver
+                incrementalSyncObserver: incrementalSyncObserver
             )
 
             let strategies: [Any] = [

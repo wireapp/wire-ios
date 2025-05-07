@@ -44,7 +44,7 @@ public final class ZMUserSession: NSObject {
 
     private(set) var isNetworkOnline = true
 
-    private(set) var coreDataStack: CoreDataStack!
+    public private(set) var coreDataStack: CoreDataStack!
     private let apiServiceFactory: APIServiceFactory
     public var apiService: APIServiceProtocol? {
         guard let clientId = selfUserClient?.remoteIdentifier else {
@@ -593,17 +593,17 @@ public final class ZMUserSession: NSObject {
         if
             let strategyDirectory = strategyDirectory as? StrategyDirectory,
             let localNotificationDispatcher {
-            let quickSyncObserver = QuickSyncObserver(
+            let incrementalSyncObserver = IncrementalSyncObserver(
                 syncAgent: syncAgent,
                 notificationContext: notificationContext
             )
-            strategyDirectory.makeRemainingStategies(
+            strategyDirectory.makeClientRelatedStategies(
                 applicationStatusDirectory: applicationStatusDirectory,
                 syncContext: syncContext,
                 transportSession: transportSession,
                 pushMessageHandler: localNotificationDispatcher,
                 flowManager: flowManager,
-                quickSyncObserver: quickSyncObserver
+                incrementalSyncObserver: incrementalSyncObserver
             )
         }
 
@@ -1484,6 +1484,10 @@ extension ZMUserSession: ContextProvider {
 
     public var viewContext: NSManagedObjectContext {
         coreDataStack.viewContext
+    }
+
+    public func newBackgroundContext() -> NSManagedObjectContext {
+        coreDataStack.newBackgroundContext()
     }
 
     public var syncContext: NSManagedObjectContext {

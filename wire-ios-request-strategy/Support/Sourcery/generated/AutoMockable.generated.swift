@@ -629,6 +629,30 @@ public class MockEventDecoderProtocol: EventDecoderProtocol {
 
 }
 
+public class MockIncrementalSyncObserverProtocol: IncrementalSyncObserverProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - waitUntilCanSendMessage
+
+    public var waitUntilCanSendMessage_Invocations: [Void] = []
+    public var waitUntilCanSendMessage_MockMethod: (() async -> Void)?
+
+    public func waitUntilCanSendMessage() async {
+        waitUntilCanSendMessage_Invocations.append(())
+
+        guard let mock = waitUntilCanSendMessage_MockMethod else {
+            fatalError("no mock for `waitUntilCanSendMessage`")
+        }
+
+        await mock()
+    }
+
+}
+
 class MockMLSClientIDsProviding: MLSClientIDsProviding {
 
     // MARK: - Life cycle
@@ -1222,30 +1246,6 @@ public class MockProteusMessage: ProteusMessage {
         }
 
         mock(reason)
-    }
-
-}
-
-public class MockQuickSyncObserverInterface: QuickSyncObserverInterface {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - waitUntilCanSendMessage
-
-    public var waitUntilCanSendMessage_Invocations: [Void] = []
-    public var waitUntilCanSendMessage_MockMethod: (() async -> Void)?
-
-    public func waitUntilCanSendMessage() async {
-        waitUntilCanSendMessage_Invocations.append(())
-
-        guard let mock = waitUntilCanSendMessage_MockMethod else {
-            fatalError("no mock for `waitUntilCanSendMessage`")
-        }
-
-        await mock()
     }
 
 }
