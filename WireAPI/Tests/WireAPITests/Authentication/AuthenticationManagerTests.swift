@@ -186,6 +186,7 @@ final class AuthenticationManagerTests: XCTestCase {
     func testRefreshAccessToken_AfterAnError_WeCanStillRefresh() async throws {
         // Mock token refresh error.
         cookieStorage.fetchCookies_MockValue = [try Scaffolding.cookie()]
+        cookieStorage.removeCookies_MockMethod = {}
         URLProtocolMock.mockHandler = {
             try $0.mockErrorResponse(
                 statusCode: .forbidden,
