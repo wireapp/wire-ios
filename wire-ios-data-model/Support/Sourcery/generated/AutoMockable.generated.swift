@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.2.6 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.2.4 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 //
 // Wire
@@ -5627,6 +5627,15 @@ public class MockSyncStatusProtocol: SyncStatusProtocol {
     // MARK: - Life cycle
 
     public init() {}
+
+    // MARK: - isLive
+
+    public var isLive: Bool {
+        get { return underlyingIsLive }
+        set(value) { underlyingIsLive = value }
+    }
+
+    public var underlyingIsLive: Bool!
 
 
     // MARK: - performQuickSync

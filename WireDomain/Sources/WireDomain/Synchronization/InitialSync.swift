@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import Foundation
 import WireLogging
 
@@ -25,6 +26,7 @@ public struct InitialSync: InitialSyncProtocol {
     private let pullResourcesSync: any PullResourcesSyncProtocol
     private let pushSupportedProtocolsUseCase: any PushSupportedProtocolsUseCaseProtocol
     private let oneOnOneResolver: any OneOnOneResolverProtocol
+    private let syncStateSubject: CurrentValueSubject<SyncState, Never>
 
     private let logger = WireLogger(tag: "initial-sync")
 
@@ -32,12 +34,14 @@ public struct InitialSync: InitialSyncProtocol {
         pullLastUpdateEventIDSync: any PullLastUpdateEventIDSyncProtocol,
         pullResourcesSync: any PullResourcesSyncProtocol,
         pushSupportedProtocolsUseCase: any PushSupportedProtocolsUseCaseProtocol,
-        oneOnOneResolver: any OneOnOneResolverProtocol
+        oneOnOneResolver: any OneOnOneResolverProtocol,
+        syncStateSubject: CurrentValueSubject<SyncState, Never>
     ) {
         self.pullLastUpdateEventIDSync = pullLastUpdateEventIDSync
         self.pullResourcesSync = pullResourcesSync
         self.pushSupportedProtocolsUseCase = pushSupportedProtocolsUseCase
         self.oneOnOneResolver = oneOnOneResolver
+        self.syncStateSubject = syncStateSubject
     }
 
     public func perform(skipPullingLastUpdateEventID: Bool) async throws {
@@ -54,6 +58,7 @@ public struct InitialSync: InitialSyncProtocol {
     private func pullLastUpdateEventID() async throws {
         do {
             logger.debug("pulling last update event id")
+            syncStateSubject.send(.initialSyncing(.pullLastEventID))
             try await pullLastUpdateEventIDSync.pull()
         } catch {
             throw Failure(phase: "pull last update event id", reason: error)
@@ -63,6 +68,7 @@ public struct InitialSync: InitialSyncProtocol {
     private func pullResources() async throws {
         do {
             logger.debug("pulling resources")
+            syncStateSubject.send(.initialSyncing(.pullResources))
             try await pullResourcesSync.pull()
         } catch {
             throw Failure(phase: "perform resource sync", reason: error)
@@ -72,6 +78,7 @@ public struct InitialSync: InitialSyncProtocol {
     private func pushSupportedProtocols() async throws {
         do {
             logger.debug("pushing supported protocols")
+            syncStateSubject.send(.initialSyncing(.pushSupportedProtocols))
             try await pushSupportedProtocolsUseCase.invoke()
         } catch {
             throw Failure(phase: "push supported protocols", reason: error)
@@ -80,6 +87,8 @@ public struct InitialSync: InitialSyncProtocol {
 
     private func resolveOneOnOneConversations() async throws {
         do {
+            logger.debug("resolving one on one conversations")
+            syncStateSubject.send(.initialSyncing(.resolveOneOnOneConversations))
             try await oneOnOneResolver.resolveAllOneOnOneConversations()
         } catch {
             throw Failure(phase: "resolve one on one conversations", reason: error)
