@@ -38,7 +38,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     var mockEncryptionService: MockMLSEncryptionServiceInterface!
     var mockDecryptionService: MockMLSDecryptionServiceInterface!
     var mockMLSActionExecutor: MockMLSActionExecutor!
-    var mockSyncStatus: MockSyncStatus!
+    var mockSyncDelegate: MockMLSSyncDelegate!
     var mockActionsProvider: MockMLSActionsProviderProtocol!
     var mockConversationEventProcessor: MockConversationEventProcessorProtocol!
     var mockStaleMLSKeyDetector: MockStaleMLSKeyDetectorProtocol!
@@ -62,7 +62,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockEncryptionService = MockMLSEncryptionServiceInterface()
         mockDecryptionService = MockMLSDecryptionServiceInterface()
         mockMLSActionExecutor = MockMLSActionExecutor()
-        mockSyncStatus = MockSyncStatus()
+        mockSyncDelegate = MockMLSSyncDelegate()
         mockActionsProvider = MockMLSActionsProviderProtocol()
         mockConversationEventProcessor = MockConversationEventProcessorProtocol()
         mockConversationEventProcessor.processConversationEvents_MockMethod = { _ in }
@@ -102,11 +102,11 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             userDefaults: userDefaultsTestSuite,
             actionsProvider: mockActionsProvider,
             delegate: self,
-            syncStatus: mockSyncStatus,
             userID: userIdentifier,
             featureRepository: mockFeatureRepository,
             subconversationGroupIDRepository: mockSubconversationGroupIDRepository
         )
+        sut.setSyncDelegate(mockSyncDelegate)
     }
 
     override func tearDown() {
@@ -117,7 +117,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockEncryptionService = nil
         mockDecryptionService = nil
         mockMLSActionExecutor = nil
-        mockSyncStatus = nil
+        mockSyncDelegate = nil
         mockActionsProvider = nil
         mockStaleMLSKeyDetector = nil
         mockSubconversationGroupIDRepository = nil
@@ -327,7 +327,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let message = "foo"
         let error = MLSDecryptionService.MLSMessageDecryptionError.wrongEpoch
         mockDecryptionService.decryptMessageForSubconversationType_MockError = error
-        mockSyncStatus.mockRecoverWithQuickSync = {}
+        mockSyncDelegate.recoverWithIncrementalSync_MockMethod = {}
 
         let expectation = XCTestExpectation(description: "repaired conversation")
         await uiMOC.perform {
@@ -1593,7 +1593,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             XCTFail("missing groupID")
             return
         }
-        mockSyncStatus.mockRecoverWithQuickSync = {}
+        mockSyncDelegate.recoverWithIncrementalSync_MockMethod = {}
 
         let expectation = XCTestExpectation(description: "rejoined conversation")
 
@@ -1625,7 +1625,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return
         }
 
-        mockSyncStatus.mockRecoverWithQuickSync = {}
+        mockSyncDelegate.recoverWithIncrementalSync_MockMethod = {}
 
         let expectation = XCTestExpectation(description: "didn't rejoin conversation")
         expectation.isInverted = true
@@ -1654,7 +1654,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             XCTFail("missing groupID")
             return
         }
-        mockSyncStatus.mockPerformQuickSync = {}
+        mockSyncDelegate.recoverWithIncrementalSync_MockMethod = {}
         let subgroupID = MLSGroupID.random()
         let qualifiedID = await uiMOC.perform { conversation.qualifiedID }
 
@@ -1695,7 +1695,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             XCTFail("missing groupID")
             return
         }
-        mockSyncStatus.mockPerformQuickSync = {}
+        mockSyncDelegate.recoverWithIncrementalSync_MockMethod = {}
         let subgroupID = MLSGroupID.random()
         let qualifiedID = await uiMOC.perform { conversation.qualifiedID }
 
@@ -2080,12 +2080,8 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             }
         }
 
-        // Mock quick sync.
-        var mockRecoverQuickSyncCount = 0
-
-        mockSyncStatus.mockRecoverWithQuickSync = {
-            mockRecoverQuickSyncCount += 1
-        }
+        // Mock incremental sync.
+        mockSyncDelegate.recoverWithIncrementalSync_MockMethod = {}
 
         // When
         try await sut.updateKeyMaterial(for: groupID)
@@ -2093,8 +2089,8 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Then it attempted to update key material twice.
         XCTAssertEqual(mockUpdateKeyMaterialCount, 2)
 
-        // Then it performed a quick sync once.
-        XCTAssertEqual(mockRecoverQuickSyncCount, 1)
+        // Then it performed an incremental sync once.
+        XCTAssertEqual(mockSyncDelegate.recoverWithIncrementalSync_Invocations.count, 1)
 
         // Then processed the result once.
         XCTAssertEqual(mockConversationEventProcessor.processConversationEvents_Invocations, [[]])
@@ -2121,12 +2117,8 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             }
         }
 
-        // Mock quick sync.
-        var mockRecoverQuickSyncCount = 0
-
-        mockSyncStatus.mockRecoverWithQuickSync = {
-            mockRecoverQuickSyncCount += 1
-        }
+        // Mock incremental sync.
+        mockSyncDelegate.recoverWithIncrementalSync_MockMethod = {}
 
         // When
         try await sut.updateKeyMaterial(for: groupID)
@@ -2134,8 +2126,8 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Then it attempted to update key material 4 times (3 failed, 1 success).
         XCTAssertEqual(mockUpdateKeyMaterialCount, 4)
 
-        // Then it performed a quick sync 3 times (for 3 failures).
-        XCTAssertEqual(mockRecoverQuickSyncCount, 3)
+        // Then it performed an incremental sync 3 times (for 3 failures).
+        XCTAssertEqual(mockSyncDelegate.recoverWithIncrementalSync_Invocations.count, 3)
 
         // Then processed the result once.
         XCTAssertEqual(mockConversationEventProcessor.processConversationEvents_Invocations, [[]])
@@ -2156,8 +2148,8 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             throw CommitError.failedToSendCommit(recovery: .retryAfterQuickSync, cause: .mlsStaleMessage)
         }
 
-        // Mock quick sync.
-        mockSyncStatus.mockRecoverWithQuickSync = {}
+        // Mock incremental sync.
+        mockSyncDelegate.recoverWithIncrementalSync_MockMethod = {}
 
         do {
             // When
@@ -2183,8 +2175,8 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             throw ExternalCommitError.failedToSendCommit(recovery: .retry, cause: .mlsStaleMessage)
         }
 
-        // Mock quick sync.
-        mockSyncStatus.mockRecoverWithQuickSync = {}
+        // Mock incremental sync.
+        mockSyncDelegate.recoverWithIncrementalSync_MockMethod = {}
 
         do {
             // When
@@ -2223,12 +2215,8 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             }
         }
 
-        // Mock quick sync.
-        var mockRecoverQuickSyncCount = 0
-
-        mockSyncStatus.mockRecoverWithQuickSync = {
-            mockRecoverQuickSyncCount += 1
-        }
+        // Mock incremental sync.
+        mockSyncDelegate.recoverWithIncrementalSync_MockMethod = {}
 
         // When
         try await sut.updateKeyMaterial(for: groupID)
@@ -2239,8 +2227,8 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Then it attempted to update key material 4 times (3 failed, 1 success).
         XCTAssertEqual(mockUpdateKeyMaterialCount, 4)
 
-        // Then it performed a quick sync 5 times (for 2 + 3 failures).
-        XCTAssertEqual(mockRecoverQuickSyncCount, 5)
+        // Then it performed an incremental sync 5 times (for 2 + 3 failures).
+        XCTAssertEqual(mockSyncDelegate.recoverWithIncrementalSync_Invocations.count, 5)
 
         // Then processed the results twice (1 for each success).
         XCTAssertEqual(mockConversationEventProcessor.processConversationEvents_Invocations, [[], []])
@@ -2275,12 +2263,8 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             )
         }
 
-        // Mock quick sync.
-        var mockRecoverQuickSyncCount = 0
-
-        mockSyncStatus.mockRecoverWithQuickSync = {
-            mockRecoverQuickSyncCount += 1
-        }
+        // Mock incremental sync.
+        mockSyncDelegate.recoverWithIncrementalSync_MockMethod = {}
 
         // When
         try await sut.updateKeyMaterial(for: groupID)
@@ -2291,8 +2275,8 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Then it attempted to update key material once.
         XCTAssertEqual(mockUpdateKeyMaterialCount, 1)
 
-        // Then it performed a quick sync once.
-        XCTAssertEqual(mockRecoverQuickSyncCount, 1)
+        // Then it performed an incremental sync once.
+        XCTAssertEqual(mockSyncDelegate.recoverWithIncrementalSync_Invocations.count, 1)
 
         // Then processed the result once.
         XCTAssertEqual(mockConversationEventProcessor.processConversationEvents_Invocations, [[]])
@@ -2314,12 +2298,8 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             throw CommitError.failedToSendCommit(recovery: .giveUp, cause: .mlsProtocolError(message: "message"))
         }
 
-        // Mock quick sync.
-        var mockRecoverQuickSyncCount = 0
-
-        mockSyncStatus.mockRecoverWithQuickSync = {
-            mockRecoverQuickSyncCount += 1
-        }
+        // Mock incremental sync.
+        mockSyncDelegate.recoverWithIncrementalSync_MockMethod = {}
 
         // Then
         await assertItThrows(error: SendCommitBundleAction.Failure.mlsProtocolError(message: "message")) {
@@ -2330,11 +2310,53 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Then it attempted to update key material once.
         XCTAssertEqual(mockUpdateKeyMaterialCount, 1)
 
-        // Then it didn't perform a quick sync.
-        XCTAssertEqual(mockRecoverQuickSyncCount, 0)
+        // Then it didn't perform an incremental sync.
+        XCTAssertEqual(mockSyncDelegate.recoverWithIncrementalSync_Invocations.count, 0)
 
         // Then it didn't process any result.
         XCTAssertEqual(mockConversationEventProcessor.processConversationEvents_Invocations, [])
+    }
+
+    func test_UpdateKeyMaterial_ContinuesOnFailureForSomeGroups() async throws {
+        // Given
+        let group1 = MLSGroupID.random()
+        let group2 = MLSGroupID.random()
+        let group3 = MLSGroupID.random()
+
+        mockStaleMLSKeyDetector.groupsWithStaleKeyingMaterial = [group1, group2, group3]
+
+        var updatedGroups = [MLSGroupID]()
+        mockMLSActionExecutor.mockUpdateKeyMaterial = { groupID in
+            if groupID == group2 {
+                // Given one of the group fails
+                throw CommitError.failedToSendCommit(recovery: .giveUp, cause: .mlsStaleMessage)
+            } else {
+                updatedGroups.append(groupID)
+                return []
+            }
+        }
+
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
+            [ZMUpdateEvent()]
+        }
+
+        keyMaterialUpdatedExpectation = customExpectation(description: "did update key material")
+
+        // When
+        await sut.updateKeyMaterialForAllStaleGroupsIfNeeded()
+
+        // Then
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 5))
+
+        // Check that group1 and group3 were successfully updated
+        XCTAssertEqual(Set(updatedGroups), Set([group1, group3]))
+
+        // Check that lastKeyMaterialUpdateCheck is updated
+        XCTAssertEqual(
+            sut.lastKeyMaterialUpdateCheck.timeIntervalSinceNow,
+            Date().timeIntervalSinceNow,
+            accuracy: 0.1
+        )
     }
 
     // MARK: - Subgroups

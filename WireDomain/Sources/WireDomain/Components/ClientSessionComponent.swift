@@ -16,11 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import Foundation
 import WireAPI
 import WireDataModel
 
 public final class ClientSessionComponent {
+
+    public struct ProcessorHandlers {
+        let onProcessedCallEvent: (CallEventInfo) -> Void
+        let onSelfClientInvalidated: () async -> Void
+        let onProcessedTypingUsers: ([ConversationTypingUsersInfo]) -> Void
+
+        public init(
+            onProcessedCallEvent: @escaping (CallEventInfo) -> Void,
+            onSelfClientInvalidated: @escaping () async -> Void,
+            onProcessedTypingUsers: @escaping ([ConversationTypingUsersInfo]) -> Void
+        ) {
+            self.onProcessedCallEvent = onProcessedCallEvent
+            self.onSelfClientInvalidated = onSelfClientInvalidated
+            self.onProcessedTypingUsers = onProcessedTypingUsers
+        }
+    }
 
     private let selfUserID: UUID
     private let selfClientID: String
@@ -42,8 +59,7 @@ public final class ClientSessionComponent {
     private let mlsDecryptionService: any MLSDecryptionServiceInterface
     private let proteusService: any ProteusServiceInterface
 
-    private let onProcessedCallEvent: (CallEventInfo) -> Void
-    private let onSelfClientInvalidated: () async -> Void
+    private let processorHandlers: ProcessorHandlers
 
     public init(
         selfUserID: UUID,
@@ -61,8 +77,7 @@ public final class ClientSessionComponent {
         mlsService: any MLSServiceInterface,
         mlsDecryptionService: any MLSDecryptionServiceInterface,
         proteusService: any ProteusServiceInterface,
-        onSelfClientInvalidated: @escaping () async -> Void,
-        onProcessedCallEvent: @escaping (CallEventInfo) -> Void
+        processorHandlers: ProcessorHandlers
     ) {
         self.selfUserID = selfUserID
         self.selfClientID = selfClientID
@@ -79,8 +94,7 @@ public final class ClientSessionComponent {
         self.localDomain = localDomain
         self.isFederationEnabled = isFederationEnabled
         self.isMLSEnabled = isMLSEnabled
-        self.onProcessedCallEvent = onProcessedCallEvent
-        self.onSelfClientInvalidated = onSelfClientInvalidated
+        self.processorHandlers = processorHandlers
     }
 
     private lazy var authenticationManager = AuthenticationManager(
@@ -296,6 +310,8 @@ public final class ClientSessionComponent {
 
     // MARK: High level syncs
 
+    public lazy var syncStateSubject = CurrentValueSubject<SyncState, Never>(.idle)
+
     public lazy var initialSync = {
         let pullResourcesSync = PullResourcesSync(
             pullSelfUserSync: pullSelfUserSync,
@@ -317,7 +333,8 @@ public final class ClientSessionComponent {
             pullLastUpdateEventIDSync: pullLastUpdateEventIDSync,
             pullResourcesSync: pullResourcesSync,
             pushSupportedProtocolsUseCase: pushSupportedProtocolsUseCase,
-            oneOnOneResolver: oneOnOneResolver
+            oneOnOneResolver: oneOnOneResolver,
+            syncStateSubject: syncStateSubject
         )
     }()
 
@@ -333,7 +350,8 @@ public final class ClientSessionComponent {
         decryptor: updateEventDecryptor,
         store: updateEventsLocalStore,
         processor: updateEventProcessor,
-        databaseSaver: databaseSaver
+        databaseSaver: databaseSaver,
+        syncStateSubject: syncStateSubject
     )
 
     // MARK: - Repositories
@@ -441,7 +459,7 @@ public final class ClientSessionComponent {
         messageLocalStore: messageLocalStore,
         userLocalStore: userLocalStore,
         protobufMessageProcessor: conversationProtobufMessageProcessor,
-        onProcessedCallEvent: onProcessedCallEvent
+        onProcessedCallEvent: processorHandlers.onProcessedCallEvent
     )
 
     private lazy var conversationMLSWelcomeEventProcessor = ConversationMLSWelcomeEventProcessor(
@@ -457,7 +475,7 @@ public final class ClientSessionComponent {
         messageLocalStore: messageLocalStore,
         userLocalStore: userLocalStore,
         protobufMessageProcessor: conversationProtobufMessageProcessor,
-        onProcessedCallEvent: onProcessedCallEvent
+        onProcessedCallEvent: processorHandlers.onProcessedCallEvent
     )
 
     private lazy var conversationProtocolUpdateEventProcessor = ConversationProtocolUpdateEventProcessor(
@@ -478,7 +496,8 @@ public final class ClientSessionComponent {
     private lazy var conversationTypingEventProcessor = ConversationTypingEventProcessor(
         conversationRepository: conversationRepository,
         conversationLocalStore: conversationLocalStore,
-        userRepository: userRepository
+        userRepository: userRepository,
+        onProcessedTypingUsers: processorHandlers.onProcessedTypingUsers
     )
 
     private lazy var featureConfigUpdateEventProcessor = FeatureConfigUpdateEventProcessor(
@@ -503,7 +522,7 @@ public final class ClientSessionComponent {
         pushSupportedProtocolsUseCase: pushSupportedProtocolsUseCase,
         oneOnOneResolver: oneOnOneResolver,
         context: syncContext,
-        onSelfClientInvalidated: onSelfClientInvalidated
+        onSelfClientInvalidated: processorHandlers.onSelfClientInvalidated
     )
 
     private lazy var userConnectionEventProcessor = UserConnectionEventProcessor(

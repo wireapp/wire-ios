@@ -20,6 +20,7 @@ import WireAPI
 import WireDataModel
 import WireFoundation
 import WireLogging
+import WireUpdateEventCoding
 
 final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
 
@@ -39,8 +40,7 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
     private let eventContext: NSManagedObjectContext
     private let syncContext: NSManagedObjectContext
     private let storage: PrivateUserDefaults<Key>
-    private let encoder = JSONEncoder()
-    private let decoder = JSONDecoder()
+    private let updateEventCoder = StorableUpdateEventCoder()
 
     // MARK: - Object lifecycle
 
@@ -83,9 +83,9 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
         _ eventEnvelope: UpdateEventEnvelope,
         index: Int64
     ) async throws {
-        try await eventContext.perform { [eventContext, encoder] in
+        try await eventContext.perform { [eventContext, updateEventCoder] in
             let storedEventEnvelope = StoredUpdateEventEnvelope(context: eventContext)
-            storedEventEnvelope.data = try encoder.encode(eventEnvelope)
+            storedEventEnvelope.data = try updateEventCoder.encode(eventEnvelope)
             storedEventEnvelope.sortIndex = index
             try eventContext.save()
         }
@@ -94,14 +94,14 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
     public func fetchStoredEventEnvelopes(
         limit: UInt
     ) async throws -> [UpdateEventEnvelope] {
-        try await eventContext.perform { [eventContext, decoder] in
+        try await eventContext.perform { [eventContext, updateEventCoder] in
             do {
                 let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
                 request.fetchLimit = Int(limit)
                 request.returnsObjectsAsFaults = false
                 let storedEventEnvelopes = try eventContext.fetch(request)
                 return try storedEventEnvelopes.map {
-                    try decoder.decode(UpdateEventEnvelope.self, from: $0.data)
+                    try updateEventCoder.decode($0.data)
                 }
             } catch {
                 throw Error.failedToFetchStoredEvents(error)

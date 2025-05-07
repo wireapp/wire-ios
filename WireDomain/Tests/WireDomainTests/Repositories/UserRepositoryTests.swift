@@ -506,8 +506,7 @@ final class UserRepositoryTests: XCTestCase {
         static let pushToken = PushToken(
             deviceToken: Data(repeating: 0x41, count: 10),
             appIdentifier: "com.wire",
-            transportType: "APNS_VOIP",
-            tokenType: .voip
+            transportType: "APNS_VOIP"
         )
 
     }

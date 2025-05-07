@@ -26,8 +26,7 @@ class RegisterPushTokenActionHandlerTests: MessagingTestBase {
     let pushToken = PushToken(
         deviceToken: Data("deviceToken".utf8),
         appIdentifier: "appIdentifier",
-        transportType: "APNS",
-        tokenType: .standard
+        transportType: "APNS"
     )
 
     func responseWithStatus(_ status: Int) -> ZMTransportResponse {

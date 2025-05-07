@@ -41,21 +41,15 @@ final class StrategyFactory {
         let apiProvider = APIProvider(httpClient: httpClient)
         let sessionEstablisher = SessionEstablisher(context: syncContext, apiProvider: apiProvider)
         let messageDependencyResolver = MessageDependencyResolver(context: syncContext)
-        let quickSyncObserver = QuickSyncObserver(
-            context: syncContext,
-            applicationStatus: applicationStatus,
-            notificationContext: syncContext.notificationContext
-        )
         self.linkPreviewPreprocessor = linkPreviewPreprocessor
         self.syncContext = syncContext
         self.applicationStatus = applicationStatus
         self.messageSender = MessageSender(
             apiProvider: apiProvider,
-            clientRegistrationDelegate: applicationStatus.clientRegistrationDelegate,
             sessionEstablisher: sessionEstablisher,
             messageDependencyResolver: messageDependencyResolver,
-            quickSyncObserver: quickSyncObserver,
-            context: syncContext
+            context: syncContext,
+            incrementalSyncObserver: NoOpIncrementalSyncObserver()
         )
         self.strategies = createStrategies(linkPreviewPreprocessor: linkPreviewPreprocessor)
     }
@@ -104,7 +98,6 @@ final class StrategyFactory {
         ClientMessageRequestStrategy(
             context: syncContext,
             localNotificationDispatcher: PushMessageHandlerDummy(),
-            applicationStatus: applicationStatus,
             messageSender: messageSender
         )
     }
@@ -160,4 +153,12 @@ final class StrategyFactory {
             messageSender: messageSender
         )
     }
+}
+
+private struct NoOpIncrementalSyncObserver: IncrementalSyncObserverProtocol {
+
+    func waitUntilCanSendMessage() async {
+        // There is no quick sync in the share extension, so no op
+    }
+
 }

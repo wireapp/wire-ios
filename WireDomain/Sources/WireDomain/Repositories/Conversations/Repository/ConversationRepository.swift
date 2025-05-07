@@ -390,17 +390,6 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         await deleteMembership(for: removedUserIDs, time: date)
     }
 
-    public func updateTypingUsers(
-        _ typingUsersInfo: [ConversationTypingUsersInfo]
-    ) async {
-        for typingUserInfo in typingUsersInfo {
-            await conversationsLocalStore.updateTypingUsers(
-                conversationID: typingUserInfo.conversationID,
-                usersID: typingUserInfo.users
-            )
-        }
-    }
-
     // MARK: - Private
 
     private func addSystemMessage(

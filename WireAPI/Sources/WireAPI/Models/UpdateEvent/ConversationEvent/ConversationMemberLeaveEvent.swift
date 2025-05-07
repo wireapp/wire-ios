@@ -20,7 +20,7 @@ import Foundation
 
 /// An event where some participants were removed from a conversation.
 
-public struct ConversationMemberLeaveEvent: Equatable, Codable, Sendable {
+public struct ConversationMemberLeaveEvent: Equatable, Sendable {
 
     /// The id of the conversation.
 
@@ -41,5 +41,19 @@ public struct ConversationMemberLeaveEvent: Equatable, Codable, Sendable {
     /// The reason why the members were removed.
 
     public let reason: ConversationMemberLeaveReason
+
+    public init(
+        conversationID: ConversationID,
+        senderID: UserID,
+        timestamp: Date,
+        removedUserIDs: Set<UserID>,
+        reason: ConversationMemberLeaveReason
+    ) {
+        self.conversationID = conversationID
+        self.senderID = senderID
+        self.timestamp = timestamp
+        self.removedUserIDs = removedUserIDs
+        self.reason = reason
+    }
 
 }
