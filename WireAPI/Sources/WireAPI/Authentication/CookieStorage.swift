@@ -25,7 +25,7 @@ public protocol CookieStorageProtocol: Sendable {
 
     func storeCookies(_ cookies: [HTTPCookie]) async throws
     func fetchCookies() async throws -> [HTTPCookie]
-
+    func removeCookies() async throws
 }
 
 public actor CookieStorage: CookieStorageProtocol {
@@ -105,6 +105,18 @@ public actor CookieStorage: CookieStorageProtocol {
         }
 
         return try HTTPCookieCodec.decodeData(cookieData)
+    }
+
+    /// Remove stored cookies from the keychain.
+    ///
+    /// This will delete any cookie data associated with the current user ID
+    /// from the device keychain. This operation is irreversible and is typically
+    /// used during logout or account removal.
+    ///
+    /// - Throws: An error if the keychain deletion fails.
+
+    public func removeCookies() async throws {
+        try await keychain.deleteItem(query: baseQuery)
     }
 
     // MARK: - Cookie data

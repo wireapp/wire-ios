@@ -18,7 +18,9 @@
 
 import Foundation
 import SwiftUI
+import WireAPI
 import WireDataModel
+import WireFoundation
 import WireLogging
 import WireSyncEngine
 
@@ -78,7 +80,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             .init(title: "Update MLS migration status", action: updateMLSMigrationStatus),
             .init(title: "Delete domains in the database", action: deleteDomains),
             .init(title: "Find Conversation with MLS Group", action: showSearchMLSConversations),
-            .init(title: "Clear access token & cookie (forces logout)", action: clearAccessTokenAndCookie)
+            .init(title: "Force logout", action: forceLogout)
         ]
 
         let toggleItems: [DeveloperDebugActionsDisplayModel.ToggleItem] = [
@@ -102,19 +104,40 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
         onDismiss?()
     }
 
-    // MARK: - Clear access token & cookie
+    // MARK: - Forces logout
 
-    private func clearAccessTokenAndCookie() {
-        let accessTokenHandler = userSession?.transportSession.accessTokenHandler
+    private func forceLogout() {
+        guard let selfUserID = userSession?.managedObjectContext.performAndWait({
+            userSession?.selfUser.remoteIdentifier
+        }) else { return }
 
-        let responseFailure = ZMTransportResponse(
-            payload: nil,
-            httpStatus: 400,
-            transportSessionError: nil,
-            apiVersion: APIVersion.v0.rawValue
+        let cookieStorage = CookieStorage(
+            userID: selfUserID,
+            cookieEncryptionKey: UserDefaults.cookiesKey(),
+            keychain: WireFoundation.Keychain()
         )
 
-        accessTokenHandler?.processAccessTokenResponse(responseFailure)
+        // Forces the access token request to fail
+        let networkService = NetworkService(
+            baseURL: URL(string: "https://wrongurl.com")!,
+            serverTrustValidator: .init(pinnedKeys: [], currentDateProvider: .system)
+        )
+
+        let authenticationManager = AuthenticationManager(
+            clientID: UUID().uuidString,
+            cookieStorage: cookieStorage,
+            networkService: networkService
+        ) { [weak self] in
+            // will log out the user when access token request fails
+            self?.userSession?.onAuthenticationFailure()
+        }
+
+        Task {
+            do {
+                _ = try await authenticationManager.getValidAccessToken()
+            } catch {}
+        }
+
         onDismiss?()
     }
 
@@ -185,7 +208,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
         updateConversationProtocol(to: .mls)
     }
 
-    private func updateConversationProtocol(to messageProtocol: MessageProtocol) {
+    private func updateConversationProtocol(to messageProtocol: WireDataModel.MessageProtocol) {
         guard
             let selfClient,
             let context = selfClient.managedObjectContext,
@@ -216,7 +239,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
     private func qualifiedIDOfFirstGroupConversation(
         of userClient: UserClient,
         in context: NSManagedObjectContext
-    ) async -> QualifiedID? {
+    ) async -> WireDataModel.QualifiedID? {
         await context.perform {
             userClient.user?.conversations
                 .filter { $0.conversationType == .group }

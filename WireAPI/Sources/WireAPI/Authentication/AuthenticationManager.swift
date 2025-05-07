@@ -18,6 +18,7 @@
 
 import Foundation
 import WireFoundation
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol AuthenticationManagerProtocol {
@@ -46,15 +47,18 @@ public actor AuthenticationManager: AuthenticationManagerProtocol {
     private let clientID: String?
     private let cookieStorage: any CookieStorageProtocol
     private let networkService: NetworkService
+    private let onAuthenticationFailure: () -> Void
 
     public init(
         clientID: String?,
         cookieStorage: any CookieStorageProtocol,
-        networkService: NetworkService
+        networkService: NetworkService,
+        onAuthenticationFailure: @escaping () -> Void
     ) {
         self.clientID = clientID
         self.cookieStorage = cookieStorage
         self.networkService = networkService
+        self.onAuthenticationFailure = onAuthenticationFailure
     }
 
     /// Get a valid access token to make authenticated requests.
@@ -108,7 +112,14 @@ public actor AuthenticationManager: AuthenticationManagerProtocol {
             currentToken = .cached(newToken)
             return newToken
         } catch {
+            WireLogger.authentication.error(
+                "Failed to renew access token with error: \(error.localizedDescription)"
+            )
+
+            try await cookieStorage.removeCookies()
             currentToken = nil
+            onAuthenticationFailure()
+
             throw error
         }
     }

@@ -29,6 +29,7 @@ final class AuthenticationManagerTests: XCTestCase {
     var cookieStorage: MockCookieStorageProtocol!
 
     private var mockDateProvider: CurrentDateProvidingMock!
+    private var accessTokenDidFail = false
 
     override func setUpWithError() throws {
         mockDateProvider = CurrentDateProvidingMock()
@@ -47,7 +48,8 @@ final class AuthenticationManagerTests: XCTestCase {
         sut = AuthenticationManager(
             clientID: Scaffolding.clientID,
             cookieStorage: cookieStorage,
-            networkService: networkService
+            networkService: networkService,
+            onAuthenticationFailure: { self.accessTokenDidFail = true }
         )
     }
 
@@ -56,6 +58,7 @@ final class AuthenticationManagerTests: XCTestCase {
         backendURL = nil
         sut = nil
         mockDateProvider = nil
+        accessTokenDidFail = false
     }
 
     // MARK: - Get a valid token
