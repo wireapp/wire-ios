@@ -5919,16 +5919,6 @@ internal enum L10n {
       /// Tap colors to change brush size
       internal static let initialHint = L10n.tr("Localizable", "sketchpad.initial_hint", fallback: "Tap colors to change brush size")
     }
-    internal enum Sync {
-      internal enum Error {
-        /// An error occured while synchronizing your app, please try again
-        internal static let message = L10n.tr("Localizable", "sync.error.message", fallback: "An error occured while synchronizing your app, please try again")
-        /// Retry
-        internal static let retry = L10n.tr("Localizable", "sync.error.retry", fallback: "Retry")
-        /// Synchronization error
-        internal static let title = L10n.tr("Localizable", "sync.error.title", fallback: "Synchronization error")
-      }
-    }
     internal enum SystemStatusBar {
       internal enum NoInternet {
         /// There seems to be a problem with your Internet connection. Please make sure it’s working.
