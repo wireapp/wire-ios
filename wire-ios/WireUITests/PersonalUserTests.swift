@@ -20,7 +20,6 @@ import XCTest
 
 final class PersonalUsersTests: XCTestCase {
     var app: XCUIApplication!
-    var context: [String: Any] = [:]
     let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
 
     override func setUpWithError() throws {
@@ -50,8 +49,6 @@ final class PersonalUsersTests: XCTestCase {
 
         // In UI tests it is usually best to stop immediately when a failure occurs
         continueAfterFailure = false
-
-        context["app"] = app
     }
 
     override func tearDown() async throws {
@@ -68,41 +65,34 @@ final class PersonalUsersTests: XCTestCase {
     @MainActor
     func test_register_asPersonalUser() async throws {
         var loginPage = LoginPage(theApp: app)
-        let time = Int(NSDate().timeIntervalSince1970 * 1000)
-        let username = "smoketester\(time)"
-        let email = "\(username)@wire.engineering"
-        let password = generateRandomPassword()
-        let name = "Smoke Tester"
-        context["username"] = username
-        context["email"] = email
-        context["password"] = password
+        let user = UserGenerator().generateUniqueUserInfo()
 
         let textField = emailTextField()
         XCTAssertTrue(textField.exists)
 
-        loginPage = loginPage.typeEmailOrSSO(email: email)
+        loginPage = loginPage.typeEmailOrSSO(email: user.email)
 
         var registrationPage = loginPage.useCreatePersonalAccountLink()
         registrationPage.confirmCreateAccount()
         registrationPage.acceptButton().tap()
 
-        let verificationCode = try await InbucketClient().getVerificationCode(email: email)
+        let verificationCode = try await InbucketClient().getVerificationCode(email: user.email)
         registrationPage = registrationPage.enterVerificationCode(verificationCode: verificationCode)
 
-        registrationPage = registrationPage.setName(name: name)
-        registrationPage = registrationPage.setPassword(password: password)
+        registrationPage = registrationPage.setName(name: user.name)
+        registrationPage = registrationPage.setPassword(password: user.password)
 
         registrationPage.acceptPopup()
 
-        let conversationsPage = registrationPage.setUsername(username: username)
+        let conversationsPage = registrationPage.setUsername(username: user.username)
 
         XCTAssertTrue(profileButton().exists)
 
         let settingsPage = conversationsPage.openSettings()
         let accountPage = settingsPage.openAccountSettings()
 
-        XCTAssertTrue(accountPage.getAccountName().elementsEqual(name))
-        XCTAssertTrue(accountPage.getUsername().contains(username))
+        XCTAssertTrue(accountPage.getAccountName().elementsEqual(user.name))
+        XCTAssertTrue(accountPage.getUsername().contains(user.username))
 //        TODO: Restore once [WPB-17516] is fixed
 //        XCTAssertTrue(accountPage.getEmail().elementsEqual(email))*/
     }
@@ -127,29 +117,6 @@ final class PersonalUsersTests: XCTestCase {
         expectation(for: exists, evaluatedWith: button, handler: nil)
         waitForExpectations(timeout: 10, handler: nil)
         return button
-    }
-
-    // TODO: Look into maybe using a library for this
-    // TODO: When working on one of the other critical flows, pull this out into a user builder helper of some kind
-    func generateRandomPassword() -> String {
-        let lowercase = "abcdefghijklmnopqrstuvwxyz"
-        let uppercase = lowercase.uppercased()
-        let numbers = "0123456789"
-        let specials = "!@#$%^&*()"
-        var password = ""
-        for _ in 1 ... 5 {
-            password += randomCharacterFrom(array: lowercase)
-        }
-        password += randomCharacterFrom(array: uppercase)
-        password += randomCharacterFrom(array: specials)
-        password += randomCharacterFrom(array: numbers)
-        return password
-    }
-
-    func randomCharacterFrom(array: String) -> String {
-        let randomIndex = Int.random(in: 0 ..< array.count)
-        let character = array[array.index(array.startIndex, offsetBy: randomIndex)]
-        return String(character)
     }
 
 }
