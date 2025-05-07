@@ -19,9 +19,9 @@
 import Foundation
 import WireCellsAPI
 
-package final actor WireCellsCellUploadManagerImpl: WireCellsCellUploadManager {
+package final actor WireCellsNodeUploadManagerImpl: WireCellsNodeUploadManager {
     private let fileManager: FileManager
-    private let repository: any WireCellsCellsRepository
+    private let repository: any WireCellsNodesRepository
 
     private actor Uploads {
         var uploads: [WireCellsNodeID: WireCellsUploadInfo] = [:]
@@ -53,13 +53,13 @@ package final actor WireCellsCellUploadManagerImpl: WireCellsCellUploadManager {
 
     init(
         fileManager: FileManager = .default,
-        repository: any WireCellsCellsRepository
+        repository: any WireCellsNodesRepository
     ) {
         self.fileManager = fileManager
         self.repository = repository
     }
 
-    func upload(assetPath: URL, assetSize: UInt64, destNodePath: String) async throws -> WireCellsCellNode {
+    func upload(assetPath: URL, assetSize: UInt64, destNodePath: String) async throws -> WireCellsNode {
         let result = try await repository.preCheck(nodePath: destNodePath)
 
         let resolvedPath: String = switch result {
@@ -69,7 +69,7 @@ package final actor WireCellsCellUploadManagerImpl: WireCellsCellUploadManager {
             destNodePath
         }
 
-        let node = WireCellsCellNode(
+        let node = WireCellsNode(
             uuid: UUID(),
             versionID: UUID(),
             path: resolvedPath,
@@ -93,8 +93,8 @@ package final actor WireCellsCellUploadManagerImpl: WireCellsCellUploadManager {
         return node
     }
 
-    private func startUpload(assetPath: URL, node: WireCellsCellNode) {
-        let stream = AsyncStream<WireCellsCellUploadEvent> { continuation in
+    private func startUpload(assetPath: URL, node: WireCellsNode) {
+        let stream = AsyncStream<WireCellsNodeUploadEvent> { continuation in
             let task = Task {
                 do {
                     try await repository.uploadFile(
@@ -109,18 +109,18 @@ package final actor WireCellsCellUploadManagerImpl: WireCellsCellUploadManager {
                                 )
                                 continuation
                                     .yield(
-                                        WireCellsCellUploadEvent
+                                        WireCellsNodeUploadEvent
                                             .uploadProgress(Float(uploaded) / Float(node.size ?? 1))
                                     )
                             }
                         }
                     )
                     await uploads.remove(node.id)
-                    continuation.yield(WireCellsCellUploadEvent.uploadCompleted)
+                    continuation.yield(WireCellsNodeUploadEvent.uploadCompleted)
                     continuation.finish()
                 } catch {
                     await uploads.update(node.id) { $0.withUploadFailed() }
-                    continuation.yield(WireCellsCellUploadEvent.uploadError)
+                    continuation.yield(WireCellsNodeUploadEvent.uploadError)
                     continuation.finish()
                 }
             }
@@ -138,7 +138,7 @@ package final actor WireCellsCellUploadManagerImpl: WireCellsCellUploadManager {
         // we need to store the stream reference in UploadInfo above, and provide `observeUpload`
     }
 
-    func observeUpload(nodeID: WireCellsNodeID) async -> AsyncStream<WireCellsCellUploadEvent>? {
+    func observeUpload(nodeID: WireCellsNodeID) async -> AsyncStream<WireCellsNodeUploadEvent>? {
         await uploads.get(nodeID)?.stream
     }
 
@@ -163,7 +163,7 @@ package final actor WireCellsCellUploadManagerImpl: WireCellsCellUploadManager {
         }
     }
 
-    func getUploadInfo(nodeID: WireCellsNodeID) async -> WireCellsCellUploadInfo? {
+    func getUploadInfo(nodeID: WireCellsNodeID) async -> WireCellsNodeUploadInfo? {
         await uploads.get(nodeID)?.toUploadInfo()
     }
 
@@ -178,18 +178,18 @@ package final actor WireCellsCellUploadManagerImpl: WireCellsCellUploadManager {
 }
 
 struct WireCellsUploadInfo {
-    let node: WireCellsCellNode
+    let node: WireCellsNode
     let localPath: URL
     let task: Task<Void, Never>
 
-    var continuation: AsyncStream<WireCellsCellUploadEvent>.Continuation
+    var continuation: AsyncStream<WireCellsNodeUploadEvent>.Continuation
     var progress: Float = 0.0
     var uploadFailed: Bool = false
 
-    var stream: AsyncStream<WireCellsCellUploadEvent>
+    var stream: AsyncStream<WireCellsNodeUploadEvent>
 
-    func toUploadInfo() -> WireCellsCellUploadInfo {
-        WireCellsCellUploadInfo(progress: progress, uploadFailed: uploadFailed)
+    func toUploadInfo() -> WireCellsNodeUploadInfo {
+        WireCellsNodeUploadInfo(progress: progress, uploadFailed: uploadFailed)
     }
 
     func withProgress(_ newProgress: Float) -> WireCellsUploadInfo {

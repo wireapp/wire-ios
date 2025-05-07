@@ -98,7 +98,7 @@ package final class WireCellsAWSClientImplementation: WireCellsAWSClient {
 
     package func upload(
         path: URL,
-        node: WireCellsCellNodeDTO,
+        node: WireCellsNodeDTO,
         onProgressUpdate: @escaping @Sendable (UInt64) -> Void
     ) async throws {
         let fileSize = try FileManager.default.attributesOfItem(atPath: path.path)[.size] as! Int64
@@ -112,7 +112,7 @@ package final class WireCellsAWSClientImplementation: WireCellsAWSClient {
 
     private func uploadRegular(
         path: URL,
-        node: WireCellsCellNodeDTO,
+        node: WireCellsNodeDTO,
         onProgressUpdate: @escaping @Sendable (UInt64) -> Void
     ) async throws {
         let fileHandle = try FileHandle(forReadingFrom: path)
@@ -135,7 +135,7 @@ package final class WireCellsAWSClientImplementation: WireCellsAWSClient {
 
     private func uploadMultipart(
         path: URL,
-        node: WireCellsCellNodeDTO,
+        node: WireCellsNodeDTO,
         onProgressUpdate: @escaping @Sendable (UInt64) -> Void
     ) async throws {
         let fileHandle = try FileHandle(forReadingFrom: path)
@@ -196,7 +196,7 @@ package final class WireCellsAWSClientImplementation: WireCellsAWSClient {
     }
 }
 
-private extension WireCellsCellNodeDTO {
+private extension WireCellsNodeDTO {
     func createDraftNodeMetadata() -> [String: String] {
         [
             "X-Metadata-Draft-Mode": "true",

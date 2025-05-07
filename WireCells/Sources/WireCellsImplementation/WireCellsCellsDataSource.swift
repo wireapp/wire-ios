@@ -19,14 +19,14 @@
 package import Foundation
 package import WireCellsAPI
 
-package final actor WireCellsCellsDataSource: WireCellsCellsRepository {
+package final actor WireCellsNodesDataSource: WireCellsNodesRepository {
     private let awsClient: any WireCellsAWSClient
-    private let cellsAPI: any WireCellsCellsAPI
+    private let cellsAPI: any WireCellsNodesAPI
     private let fileManager: FileManager
 
     package init(
         awsClient: any WireCellsAWSClient,
-        cellsAPI: any WireCellsCellsAPI,
+        cellsAPI: any WireCellsNodesAPI,
         fileManager: FileManager = .default
     ) {
         self.awsClient = awsClient
@@ -43,7 +43,7 @@ package final actor WireCellsCellsDataSource: WireCellsCellsRepository {
 
     package func uploadFile(
         path: URL,
-        node: WireCellsCellNode,
+        node: WireCellsNode,
         onProgressUpdate: @escaping @Sendable (UInt64) -> Void
     ) async throws {
         try await awsClient.upload(path: path, node: node.toDTO(), onProgressUpdate: onProgressUpdate)
@@ -54,7 +54,7 @@ package final actor WireCellsCellsDataSource: WireCellsCellsRepository {
         query: String,
         limit: Int,
         offset: Int
-    ) async throws -> [WireCellsCellNode] {
+    ) async throws -> [WireCellsNode] {
         let response = try await (
             path == nil
                 ? cellsAPI.getFiles(query: query, limit: limit, offset: offset)
@@ -110,7 +110,7 @@ package final actor WireCellsCellsDataSource: WireCellsCellsRepository {
         }
     }
 
-    package func getNode(nodeUUID: UUID) async throws -> WireCellsCellNode {
+    package func getNode(nodeUUID: UUID) async throws -> WireCellsNode {
         let dto = try await cellsAPI.getNode(uuid: nodeUUID)
         return dto.toModel()
     }

@@ -30,7 +30,7 @@ package class MessageAttachmentDraftDataSource: WireCellsMessageAttachmentDraftR
     @discardableResult
     func add(
         conversationID: WireCellsConversationID,
-        node: WireCellsCellNode,
+        node: WireCellsNode,
         mimeType: String,
         dataPath: String,
         metadata: WireCellsAssetMetadata?,

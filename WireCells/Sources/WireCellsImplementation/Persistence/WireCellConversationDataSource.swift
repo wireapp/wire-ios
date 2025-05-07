@@ -19,43 +19,43 @@
 import Foundation
 import WireCellsAPI
 
-final class WireCellConversationDataSource: WireCellsCellConversationRepository {
+final class WireCellConversationDataSource: WireCellsNodeConversationRepository {
     private let conversationDAO: any WireCellsConversationDAO
 
     init(conversationDAO: any WireCellsConversationDAO) {
         self.conversationDAO = conversationDAO
     }
 
-    func getCellName(conversationID: WireCellsConversationID) async throws(WireCellsCellConversationRepositoryError)
+    func getCellName(conversationID: WireCellsConversationID) async throws(WireCellsNodeConversationRepositoryError)
         -> String {
         do {
             return try await conversationDAO.getCellName(conversationID: conversationID)
         } catch WireCellsConversationDAOError.cellNameNotFound {
-            throw WireCellsCellConversationRepositoryError.cellNameNotFound
+            throw WireCellsNodeConversationRepositoryError.cellNameNotFound
         } catch {
-            throw WireCellsCellConversationRepositoryError.genericError(error)
+            throw WireCellsNodeConversationRepositoryError.genericError(error)
         }
     }
 
     func setWireCell(
         conversationID: WireCellsConversationID,
         cellName: String
-    ) async throws(WireCellsCellConversationRepositoryError) {
+    ) async throws(WireCellsNodeConversationRepositoryError) {
         do {
             try await conversationDAO.setWireCell(
                 conversationID: conversationID,
                 cellName: cellName
             )
         } catch {
-            throw WireCellsCellConversationRepositoryError.genericError(error)
+            throw WireCellsNodeConversationRepositoryError.genericError(error)
         }
     }
 
-    func getConversationNames() async throws(WireCellsCellConversationRepositoryError) -> [WireCellsConversation] {
+    func getConversationNames() async throws(WireCellsNodeConversationRepositoryError) -> [WireCellsConversation] {
         do {
             return try await conversationDAO.getAllConversations()
         } catch {
-            throw WireCellsCellConversationRepositoryError.genericError(error)
+            throw WireCellsNodeConversationRepositoryError.genericError(error)
         }
     }
 }

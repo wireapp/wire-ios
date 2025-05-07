@@ -16,20 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum WireCellsCellConversationRepositoryError: Error {
+public enum WireCellsNodeConversationRepositoryError: Error {
     case cellNameNotFound
     case genericError(any Error)
 }
 
 // sourcery: AutoMockable
-public protocol WireCellsCellConversationRepository {
-    func getCellName(conversationID: WireCellsConversationID) async throws(WireCellsCellConversationRepositoryError)
+public protocol WireCellsNodeConversationRepository {
+    func getCellName(conversationID: WireCellsConversationID) async throws(WireCellsNodeConversationRepositoryError)
         -> String
 
     func setWireCell(
         conversationID: WireCellsConversationID,
         cellName: String
-    ) async throws(WireCellsCellConversationRepositoryError)
+    ) async throws(WireCellsNodeConversationRepositoryError)
 
-    func getConversationNames() async throws(WireCellsCellConversationRepositoryError) -> [WireCellsConversation]
+    func getConversationNames() async throws(WireCellsNodeConversationRepositoryError) -> [WireCellsConversation]
 }

@@ -20,9 +20,9 @@ import CellsSDK
 import Foundation
 
 package struct WireCellsGetFilesResponseDTO: Equatable, Hashable, Sendable {
-    package let nodes: [WireCellsCellNodeDTO]
+    package let nodes: [WireCellsNodeDTO]
 
-    package init(nodes: [WireCellsCellNodeDTO]) {
+    package init(nodes: [WireCellsNodeDTO]) {
         self.nodes = nodes
     }
 }

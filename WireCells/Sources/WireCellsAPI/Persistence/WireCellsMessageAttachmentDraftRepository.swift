@@ -30,7 +30,7 @@ public protocol WireCellsMessageAttachmentDraftRepository {
     @discardableResult
     func add(
         conversationID: WireCellsConversationID,
-        node: WireCellsCellNode,
+        node: WireCellsNode,
         mimeType: String,
         dataPath: String,
         metadata: WireCellsAssetMetadata?,

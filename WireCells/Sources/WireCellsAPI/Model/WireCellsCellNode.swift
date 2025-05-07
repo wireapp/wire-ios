@@ -40,7 +40,7 @@ public struct WireCellsPublicLinkID: Codable, Equatable, Hashable, Sendable {
     }
 }
 
-public struct WireCellsCellNode: Equatable, Identifiable, Sendable {
+public struct WireCellsNode: Equatable, Identifiable, Sendable {
     public let id: WireCellsNodeID
 
     public let path: String

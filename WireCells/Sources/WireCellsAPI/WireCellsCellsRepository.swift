@@ -22,7 +22,7 @@ public enum WireCellsRepositoryError: Error {
     case failedToCreateWriteStream
 }
 
-public protocol WireCellsCellsRepository: Actor {
+public protocol WireCellsNodesRepository: Actor {
     func preCheck(nodePath: String) async throws -> WireCellsPreCheckResult
 
     func downloadFile(
@@ -33,7 +33,7 @@ public protocol WireCellsCellsRepository: Actor {
 
     func uploadFile(
         path: URL,
-        node: WireCellsCellNode,
+        node: WireCellsNode,
         onProgressUpdate: @escaping @Sendable (UInt64) -> Void
     ) async throws
 
@@ -42,7 +42,7 @@ public protocol WireCellsCellsRepository: Actor {
         query: String,
         limit: Int,
         offset: Int
-    ) async throws -> [WireCellsCellNode]
+    ) async throws -> [WireCellsNode]
 
     func deleteFile(nodeUUID: UUID) async throws
 
@@ -52,7 +52,7 @@ public protocol WireCellsCellsRepository: Actor {
 
     func getPreviews(nodeUUID: UUID) async throws -> [WireCellsNodePreview]
 
-    func getNode(nodeUUID: UUID) async throws -> WireCellsCellNode
+    func getNode(nodeUUID: UUID) async throws -> WireCellsNode
 
     func deleteFiles(paths: [String]) async throws
 

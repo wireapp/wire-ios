@@ -19,7 +19,7 @@
 import CellsSDK
 package import Foundation
 
-package struct WireCellsCellNodeDTO: Equatable, Hashable, Sendable {
+package struct WireCellsNodeDTO: Equatable, Hashable, Sendable {
     package let uuid: UUID
     package let versionId: UUID
     package let path: String
@@ -74,9 +74,9 @@ package struct WireCellsCellNodeDTO: Equatable, Hashable, Sendable {
     }
 }
 
-package extension WireCellsCellNodeDTO {
-    func toModel() -> WireCellsCellNode {
-        WireCellsCellNode(
+package extension WireCellsNodeDTO {
+    func toModel() -> WireCellsNode {
+        WireCellsNode(
             uuid: uuid,
             versionID: versionId,
             path: path,
@@ -97,9 +97,9 @@ package extension WireCellsCellNodeDTO {
     }
 }
 
-package extension WireCellsCellNode {
-    func toDTO() -> WireCellsCellNodeDTO {
-        WireCellsCellNodeDTO(
+package extension WireCellsNode {
+    func toDTO() -> WireCellsNodeDTO {
+        WireCellsNodeDTO(
             uuid: id.uuid,
             versionId: id.versionID,
             path: path,
@@ -121,12 +121,12 @@ package extension WireCellsCellNode {
 }
 
 package extension RestNode {
-    func toDTO() -> WireCellsCellNodeDTO? {
+    func toDTO() -> WireCellsNodeDTO? {
         guard let uuid = UUID(uuidString: uuid) else { return nil }
         // TODO: [WPB-17473] `versionMeta` is optional in the API response. Clarify whether this can actually be nil and
         // what should we do in that case?
         guard let versionMeta, let versionID = UUID(uuidString: versionMeta.versionId) else { return nil }
-        return WireCellsCellNodeDTO(
+        return WireCellsNodeDTO(
             uuid: uuid,
             versionId: versionID,
             path: path,

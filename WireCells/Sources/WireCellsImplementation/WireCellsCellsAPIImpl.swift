@@ -20,17 +20,17 @@ import CellsSDK
 import Foundation
 import WireCellsAPI
 
-final class WireCellsCellsApiImpl: WireCellsCellsAPI, Sendable {
+final class WireCellsNodesApiImpl: WireCellsNodesAPI, Sendable {
 
     private enum Constants {
         static let sortedBy = "mtime"
 
     }
 
-    func getNode(uuid: UUID) async throws -> WireCellsCellNodeDTO {
+    func getNode(uuid: UUID) async throws -> WireCellsNodeDTO {
         let response = try await NodeServiceAPI.getByUuid(uuid: uuid.uuidString)
         guard let dto = response.toDTO() else {
-            throw WireCellsCellsAPIError.failedToDecodeNode
+            throw WireCellsNodesAPIError.failedToDecodeNode
         }
         return dto
     }
@@ -110,10 +110,10 @@ final class WireCellsCellsApiImpl: WireCellsCellsAPI, Sendable {
         let response = try await NodeServiceAPI.getPublicLink(linkUuid: uuid.uuidString)
 
         guard let urlString = response.linkUrl else {
-            throw WireCellsCellsAPIError.missingData("Link URL not found")
+            throw WireCellsNodesAPIError.missingData("Link URL not found")
         }
         guard let url = URL(string: urlString) else {
-            throw WireCellsCellsAPIError.missingData("Link URL is invalid")
+            throw WireCellsNodesAPIError.missingData("Link URL is invalid")
         }
 
         return url
@@ -130,17 +130,17 @@ final class WireCellsCellsApiImpl: WireCellsCellsAPI, Sendable {
         let response = try await NodeServiceAPI.createPublicLink(uuid: uuid.uuidString, publicLinkRequest: request)
 
         guard let idString = response.uuid else {
-            throw WireCellsCellsAPIError.missingData("UUID is null")
+            throw WireCellsNodesAPIError.missingData("UUID is null")
         }
         guard let id = UUID(uuidString: idString) else {
-            throw WireCellsCellsAPIError.missingData("UUID is invalid")
+            throw WireCellsNodesAPIError.missingData("UUID is invalid")
         }
 
         guard let urlString = response.linkUrl else {
-            throw WireCellsCellsAPIError.missingData("Link URL not found")
+            throw WireCellsNodesAPIError.missingData("Link URL not found")
         }
         guard let url = URL(string: urlString) else {
-            throw WireCellsCellsAPIError.missingData("Link URL is invalid")
+            throw WireCellsNodesAPIError.missingData("Link URL is invalid")
         }
 
         return WireCellsPublicLink(uuid: id, url: url)

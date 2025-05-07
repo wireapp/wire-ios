@@ -18,12 +18,12 @@
 
 public import Foundation
 
-public protocol WireCellsCellUploadManager: Actor {
+public protocol WireCellsNodeUploadManager: Actor {
     /// Starts file upload. Returns the new node after pre-checking.
-    func upload(assetPath: URL, assetSize: UInt64, destNodePath: String) async throws -> WireCellsCellNode
+    func upload(assetPath: URL, assetSize: UInt64, destNodePath: String) async throws -> WireCellsNode
 
     /// Observe upload events for a specific node UUID.
-    func observeUpload(nodeID: WireCellsNodeID) async -> AsyncStream<WireCellsCellUploadEvent>?
+    func observeUpload(nodeID: WireCellsNodeID) async -> AsyncStream<WireCellsNodeUploadEvent>?
 
     /// Retry a failed upload.
     func retryUpload(nodeID: WireCellsNodeID) async
@@ -32,13 +32,13 @@ public protocol WireCellsCellUploadManager: Actor {
     func cancelUpload(nodeID: WireCellsNodeID) async
 
     /// Get current upload info for a node, if any.
-    func getUploadInfo(nodeID: WireCellsNodeID) async -> WireCellsCellUploadInfo?
+    func getUploadInfo(nodeID: WireCellsNodeID) async -> WireCellsNodeUploadInfo?
 
     /// Check if a node is currently uploading.
     func isUploading(nodeID: WireCellsNodeID) async -> Bool
 }
 
-public struct WireCellsCellUploadInfo: Equatable, Hashable, Sendable {
+public struct WireCellsNodeUploadInfo: Equatable, Hashable, Sendable {
     public let progress: Float
     public let uploadFailed: Bool
 
@@ -48,7 +48,7 @@ public struct WireCellsCellUploadInfo: Equatable, Hashable, Sendable {
     }
 }
 
-public enum WireCellsCellUploadEvent: Equatable, Hashable, Sendable {
+public enum WireCellsNodeUploadEvent: Equatable, Hashable, Sendable {
     case uploadProgress(Float)
     case uploadCompleted
     case uploadError

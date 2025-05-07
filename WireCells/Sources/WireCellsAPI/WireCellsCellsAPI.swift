@@ -18,13 +18,13 @@
 
 package import Foundation
 
-package enum WireCellsCellsAPIError: Error {
+package enum WireCellsNodesAPIError: Error {
     case failedToDecodeNode
     case missingData(String)
 }
 
-package protocol WireCellsCellsAPI: Sendable {
-    func getNode(uuid: UUID) async throws -> WireCellsCellNodeDTO
+package protocol WireCellsNodesAPI: Sendable {
+    func getNode(uuid: UUID) async throws -> WireCellsNodeDTO
 
     func preCheck(path: String) async throws -> WireCellsPreCheckResultDTO
 
