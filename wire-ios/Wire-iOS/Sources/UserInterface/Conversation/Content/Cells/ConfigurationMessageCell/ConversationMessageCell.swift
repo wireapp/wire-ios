@@ -227,6 +227,9 @@ extension ConversationMessageCellDescription {
         cell.cellView.delegate = delegate
         cell.cellView.message = message
         cell.cellView.actionController = actionController
+        if let message {
+            actionController?.message = message
+        }
         cell.accessibilityCustomActions = actionController?.makeAccessibilityActions()
         return cell
     }
