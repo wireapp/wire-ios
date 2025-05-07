@@ -588,6 +588,8 @@ public final class ZMUserSession: NSObject {
         self.syncAgent = syncAgent
         syncAgent.delegate = self
 
+        mlsService.setSyncDelegate(syncAgent)
+
         // Finish setting up the final strategies.
         if
             let strategyDirectory = strategyDirectory as? StrategyDirectory,
@@ -1123,8 +1125,11 @@ extension ZMUserSession: SyncAgentDelegate {
         didStartIncrementalSync()
     }
 
-    func syncAgentDidFinishIncrementalSync(_ syncAgent: SyncAgent) {
-        didFinishIncrementalSync(isRecovering: false)
+    func syncAgentDidFinishIncrementalSync(
+        _ syncAgent: SyncAgent,
+        isRecovering: Bool
+    ) {
+        didFinishIncrementalSync(isRecovering: isRecovering)
     }
 
     func syncAgentDidStartLegacyInitialSync(_ syncAgent: SyncAgent) {
@@ -1139,7 +1144,10 @@ extension ZMUserSession: SyncAgentDelegate {
         didStartIncrementalSync()
     }
 
-    func syncAgentDidFinishLegacyIncrementalSync(_ syncAgent: SyncAgent, isRecovering: Bool) {
+    func syncAgentDidFinishLegacyIncrementalSync(
+        _ syncAgent: SyncAgent,
+        isRecovering: Bool
+    ) {
         didFinishIncrementalSync(isRecovering: isRecovering)
     }
 

@@ -492,6 +492,13 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func startProteusToMLSMigration() async throws
 
+    // MARK: - Sync delegate
+
+    /// Set the MLS sync delegate.
+    ///
+    /// - Parameter delegate: The sync delegate to set.
+
+    func setSyncDelegate(_ delegate: any MLSSyncDelegate)
 }
 
 // This is only used in tests, so it should be removed.
@@ -535,8 +542,8 @@ public final class MLSService: MLSServiceInterface {
     private let userDefaults: PrivateUserDefaults<Keys>
     private let logger = WireLogger.mls
     private let groupsBeingRepaired = GroupsBeingRepaired()
-    private let syncStatus: SyncStatusProtocol
     private let featureRepository: FeatureRepositoryInterface
+    private weak var mlsSyncDelegate: (any MLSSyncDelegate)?
 
     private var coreCrypto: SafeCoreCryptoProtocol {
         get async throws {
@@ -575,7 +582,6 @@ public final class MLSService: MLSServiceInterface {
         conversationEventProcessor: ConversationEventProcessorProtocol,
         featureRepository: FeatureRepositoryInterface,
         userDefaults: UserDefaults,
-        syncStatus: SyncStatusProtocol,
         userID: UUID
     ) {
         self.init(
@@ -586,7 +592,6 @@ public final class MLSService: MLSServiceInterface {
             staleKeyMaterialDetector: StaleMLSKeyDetector(context: context),
             userDefaults: userDefaults,
             actionsProvider: MLSActionsProvider(),
-            syncStatus: syncStatus,
             userID: userID,
             featureRepository: featureRepository
         )
@@ -604,7 +609,6 @@ public final class MLSService: MLSServiceInterface {
         userDefaults: UserDefaults,
         actionsProvider: MLSActionsProviderProtocol = MLSActionsProvider(),
         delegate: MLSServiceDelegate? = nil,
-        syncStatus: SyncStatusProtocol,
         userID: UUID,
         featureRepository: FeatureRepositoryInterface,
         subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface = SubconversationGroupIDRepository()
@@ -628,7 +632,6 @@ public final class MLSService: MLSServiceInterface {
         self.actionsProvider = actionsProvider
         self.userDefaults = PrivateUserDefaults(userID: userID, storage: userDefaults)
         self.delegate = delegate
-        self.syncStatus = syncStatus
         self.subconversationGroupIDRepository = subconversationGroupIDRepository
 
         self.encryptionService = encryptionService ?? MLSEncryptionService(
@@ -646,6 +649,12 @@ public final class MLSService: MLSServiceInterface {
 
     deinit {
         keyMaterialUpdateCheckTimer?.invalidate()
+    }
+
+    // MARK: - Sync delegate
+
+    public func setSyncDelegate(_ delegate: any MLSSyncDelegate) {
+        mlsSyncDelegate = delegate
     }
 
     // MARK: - Conference info for subconversations
@@ -1353,7 +1362,7 @@ public final class MLSService: MLSServiceInterface {
 
             // In case of `WrongEpoch` error, local and remote epochs have diverged so we may have missed events.
             // This ensures we're on the latest state.
-            await syncStatus.recoverWithQuickSync()
+            try await mlsSyncDelegate?.recoverWithIncrementalSync()
 
             guard let conversationInfo = fetchConversationInfo(
                 with: groupID,
@@ -1896,13 +1905,15 @@ public final class MLSService: MLSServiceInterface {
 
         } catch CommitError.failedToSendCommit(recovery: .commitPendingProposalsAfterQuickSync, _) {
             logger.warn("failed to send commit, syncing then committing pending proposals...")
-            await syncStatus.recoverWithQuickSync()
+            try await mlsSyncDelegate?.recoverWithIncrementalSync()
+
             logger.info("sync finished, committing pending proposals...")
             try await commitPendingProposals(in: groupID)
 
         } catch CommitError.failedToSendCommit(recovery: .retryAfterQuickSync, cause: let error) {
             logger.warn("failed to send commit, syncing then retrying operation...")
-            await syncStatus.recoverWithQuickSync()
+            try await mlsSyncDelegate?.recoverWithIncrementalSync()
+
             logger.info("sync finished, retying operation...")
 
             guard retryCount <= maxRetryAttempts else {

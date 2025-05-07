@@ -115,11 +115,15 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     /// Suspend any ongoing sync tasks.
 
     func suspend() {
-        WireLogger.sync.debug("suspending sync")
         Task {
-            await incrementalSyncToken?.suspend()
-            incrementalSyncToken = nil
+            await suspend()
         }
+    }
+
+    private func suspend() async {
+        WireLogger.sync.debug("suspending sync")
+        await incrementalSyncToken?.suspend()
+        incrementalSyncToken = nil
     }
 
     /// Performs the appropriate sync depending in the local state.
@@ -194,7 +198,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                     guard let self else { return }
                     delegate?.syncAgentDidStartIncrementalSync(self)
                     incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync().perform()
-                    delegate?.syncAgentDidFinishIncrementalSync(self)
+                    delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: false)
                 }
             } catch {
                 WireLogger.sync.error("failed to perform new incremental sync: \(String(describing: error))")
@@ -202,6 +206,35 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
             }
         } else {
             await legacySyncStatus.performQuickSync()
+        }
+    }
+
+}
+
+// MARK: - MLS sync delegate
+
+extension SyncAgent: MLSSyncDelegate {
+
+    func recoverWithIncrementalSync() async throws {
+        WireLogger.sync.info("performing recovery incremental sync")
+
+        if isSyncV2Enabled {
+            // Recovery means to restart any existing sync.
+            await suspend()
+
+            do {
+                try await incrementalSyncTaskManager.performIfNeeded { [weak self] in
+                    guard let self else { return }
+                    delegate?.syncAgentDidStartIncrementalSync(self)
+                    incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync().perform()
+                    delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: true)
+                }
+            } catch {
+                WireLogger.sync.error("failed to perform recovery incremental sync: \(String(describing: error))")
+                throw error
+            }
+        } else {
+            await legacySyncStatus.recoverWithQuickSync()
         }
     }
 

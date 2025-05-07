@@ -1280,13 +1280,8 @@
 // Open in
 "self.settings.external_apps.header" = "Avaa sovelluksessa";
 
-"self.settings.link_options.twitter.title" = "Tweetit";
 "self.settings.link_options.maps.title" = "Sijainnit";
 "self.settings.link_options.browser.title" = "Selain";
-
-"open_link.twitter.option.default" = "Browser / Twitter";
-"open_link.twitter.option.tweetbot" = "Tweetbot";
-"open_link.twitter.option.twitterrific" = "Twitterrific";
 
 "open_link.maps.option.apple" = "Kartat";
 "open_link.maps.option.google" = "Google Kartat";
@@ -1308,7 +1303,6 @@
 "self.settings.developer_options.title" = "Kehittäjäasetukset";
 "self.settings.developer_options.loggin.title" = "Valinnat";
 "self.settings.developer_options.database_statistics.title" = "Database Statistics";
-"self.settings.apns_logging.title" = "APNS kirjaaminen";
 
 // Privacy (visibility) options
 "self.settings.options_menu.title" = "Valinnat";

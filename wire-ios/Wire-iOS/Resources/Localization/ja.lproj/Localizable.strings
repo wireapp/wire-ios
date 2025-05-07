@@ -1280,13 +1280,8 @@
 // Open in
 "self.settings.external_apps.header" = "リンクを開く";
 
-"self.settings.link_options.twitter.title" = "ツイート";
 "self.settings.link_options.maps.title" = "ロケーション";
 "self.settings.link_options.browser.title" = "ブラウザ";
-
-"open_link.twitter.option.default" = "ブラウザ / Twitter";
-"open_link.twitter.option.tweetbot" = "Tweetbot";
-"open_link.twitter.option.twitterrific" = "Twitterrific";
 
 "open_link.maps.option.apple" = "マップ";
 "open_link.maps.option.google" = "Google マップ";
@@ -1308,7 +1303,6 @@
 "self.settings.developer_options.title" = "開発者向けオプション";
 "self.settings.developer_options.loggin.title" = "オプション";
 "self.settings.developer_options.database_statistics.title" = "Database Statistics";
-"self.settings.apns_logging.title" = "APNS ログ";
 
 // Privacy (visibility) options
 "self.settings.options_menu.title" = "オプション";
