@@ -32,21 +32,22 @@ public final class NewPushChannel: NewPushChannelProtocol {
     private let webSocket: any WebSocketProtocol
     private let decoder = JSONDecoder()
     private let timeout: TimeInterval = 5
+    private var timeoutTimer: Timer?
     
     public init(webSocket: any WebSocketProtocol) {
         self.webSocket = webSocket
     }
-    
+        
     public func open() async throws -> AsyncThrowingStream<Element, any Error> {
         WireLogger.pushChannel.debug("opening new push channel", attributes: .pushChannelV3)
 
-        let mappedSequence = try await webSocket.open().map { [decoder] message in
+        let mapped = try await webSocket.open().map { [decoder] message in
             switch message {
             case let .data(data):
                 WireLogger.pushChannel.debug("received web socket data, decoding..., \(String(data: data, encoding: .utf8))", attributes: .pushChannelV3)
                 let envelope = try decoder.decode(WebSocketNotification.self, from: data)
                 if envelope.type == .event {
-                    return envelope.toAPIModel()
+                    return Element.event(envelope.toAPIModel())
                 } else {
                     throw PushChannelError.missingEvents
                 }
@@ -60,33 +61,43 @@ public final class NewPushChannel: NewPushChannelProtocol {
             }
         }
 
-        // Materialize the mapped sequence into a stream first
-        let baseStream = AsyncThrowingStream<NewPushChannel.Element, any Error> { continuation in
-            Task { [weak self] in
-                do {
-                    for try await element in mappedSequence {
-                        let result = continuation.yield(.event(element))
-                        WireLogger.pushChannel.debug("Yield result: \(result)", attributes: .pushChannelV3)
+        let stream = mapped.toStream()
+        var iterator = stream.makeAsyncIterator()
 
+        return AsyncThrowingStream { continuation in
+            func startTimeoutTimer() {
+                timeoutTimer?.invalidate()
+                timeoutTimer = Timer.scheduledTimer(withTimeInterval: timeout, repeats: false) { _ in
+                    WireLogger.pushChannel.debug("timeout waiting for push event", attributes: .pushChannelV3)
+                    continuation.yield(.upToDate)
+                    Task { await self.close() }
+                }
+                RunLoop.main.add(timeoutTimer!, forMode: .common)
+            }
+
+            startTimeoutTimer()
+
+            Task {
+                do {
+                    while let element = try await iterator.next() {
+                        timeoutTimer?.invalidate()
+                        continuation.yield(element)
+                        startTimeoutTimer()
                     }
-                    WireLogger.pushChannel.debug("finished sequence", attributes: .pushChannelV3)
+                    timeoutTimer?.invalidate()
                     continuation.finish()
-                    
                 } catch {
-                    WireLogger.pushChannel.debug("failed to get next web socket message: \(error)", attributes: .pushChannelV3)
+                    timeoutTimer?.invalidate()
                     continuation.finish(throwing: error)
-                    await self?.close()
                 }
             }
-        }
 
-        return withIdleTimeout(baseStream, timeout: timeout, onTimeout: { continuation in
-            WireLogger.pushChannel.debug("idle timeout occurred, we're up to date", attributes: .pushChannelV3)
-           let result = continuation.yield(.upToDate)
-            WireLogger.pushChannel.debug("Yield result: \(result)", attributes: .pushChannelV3)
-        })
+            continuation.onTermination = { _ in
+                timeoutTimer?.invalidate()
+            }
+        }
     }
-    
+
     public func ackEvent(deliveryTag: UInt64, multiple: Bool = false) async throws {
         WireLogger.pushChannel.debug("ackEvent \(deliveryTag)", attributes: .pushChannelV3)
         let acknowledgement = EventAcknowledgmentNotification(
@@ -114,65 +125,5 @@ public final class NewPushChannel: NewPushChannelProtocol {
     private func write(data: Data) async throws {
         WireLogger.pushChannel.debug("write data to push channel", attributes: .pushChannelV3)
         try await webSocket.write(data: data)
-    }
-}
-
-actor LastMessageTracker {
-    private var timestamp = Date()
-
-    func update() {
-        timestamp = Date()
-    }
-
-    func timeSinceLastMessage() -> TimeInterval {
-        Date().timeIntervalSince(timestamp)
-    }
-}
-
-
-/// Wraps any `AsyncSequence` with idle timeout enforcement.
-private func withIdleTimeout<S: AsyncSequence>(
-    _ sequence: S,
-    timeout: TimeInterval,
-    onTimeout: @escaping (_ continuation: AsyncThrowingStream<S.Element, any Error>.Continuation) -> Void
-) -> AsyncThrowingStream<S.Element, any Error> {
-    AsyncThrowingStream { continuation  in
-        let lastMessageTime = LastMessageTracker()
-
-        // Processing task
-        let processingTask = Task {
-            do {
-                for try await value in sequence {
-                    await lastMessageTime.update()
-                    continuation.yield(value)
-                }
-                continuation.finish()
-            } catch {
-                continuation.finish(throwing: error)
-            }
-        }
-
-        // Watchdog task
-        let watchdogTask = Task {
-            do {
-                while !Task.isCancelled {
-                    try await Task.sleep(nanoseconds: 1_000_000_000)
-
-                    let elapsed = await lastMessageTime.timeSinceLastMessage()
-                    if elapsed > timeout {
-                        processingTask.cancel()
-                        onTimeout(continuation)
-                        break
-                    }
-                }
-            } catch {
-                // Cancelled = normal
-            }
-        }
-
-        continuation.onTermination = { _ in
-            processingTask.cancel()
-            watchdogTask.cancel()
-        }
     }
 }
