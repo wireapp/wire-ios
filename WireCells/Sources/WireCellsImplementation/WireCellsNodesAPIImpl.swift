@@ -20,7 +20,7 @@ import CellsSDK
 import Foundation
 import WireCellsAPI
 
-final class WireCellsNodesApiImpl: WireCellsNodesAPI, Sendable {
+final class WireCellsNodesAPIImpl: WireCellsNodesAPI, Sendable {
 
     private enum Constants {
         static let sortedBy = "mtime"
