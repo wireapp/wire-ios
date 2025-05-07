@@ -476,7 +476,6 @@ public final class SharingSession {
             conversationEventProcessor: ConversationEventProcessor(context: coreDataStack.syncContext),
             featureRepository: FeatureRepository(context: coreDataStack.syncContext),
             userDefaults: .standard,
-            syncStatus: applicationStatusDirectory.syncStatus,
             userID: coreDataStack.account.userIdentifier
         )
 
