@@ -25,6 +25,7 @@ import WireMainNavigationUI
 import WireRequestStrategy
 import WireReusableUIComponents
 import WireSyncEngine
+import WireFoundation
 
 private let zmLog = ZMSLog(tag: "ConversationContentViewController")
 
@@ -70,7 +71,9 @@ final class ConversationContentViewController: UIViewController {
 
         return button
     }()
-
+    
+    private let userDefaults: PrivateUserDefaults<ConversationBackgroundKey>
+    
     let tableView: UpsideDownTableView = .init(frame: .zero, style: .plain)
     let bottomContainer: UIView = .init(frame: .zero)
     var searchQueries: [String]? {
@@ -125,7 +128,8 @@ final class ConversationContentViewController: UIViewController {
         mediaPlaybackManager: MediaPlaybackManager?,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
-        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        userDefaults: UserDefaultsProtocol = UserDefaults.standard
     ) {
         self.messagePresenter = MessagePresenter(mediaPlaybackManager: mediaPlaybackManager)
         self.userSession = userSession
@@ -134,6 +138,10 @@ final class ConversationContentViewController: UIViewController {
         self.conversation = conversation
         self.messageVisibleOnLoad = message ?? conversation.firstUnreadMessage
         self.logger = .conversation
+        self.userDefaults = PrivateUserDefaults<ConversationBackgroundKey>(
+            userID: userSession.selfUser.remoteIdentifier,
+            storage: userDefaults
+        )
 
         super.init(nibName: nil, bundle: nil)
 
@@ -249,7 +257,7 @@ final class ConversationContentViewController: UIViewController {
         )
         
         
-        updateBackgroundColor(color: nil)
+        updateBackgroundColor(color: userSession.selfUser.zmAccentColor)
         
         accentColorChangeHandler = AccentColorChangeHandler
             .addObserver(self, userSession: userSession) { [unowned self] color, _ in
@@ -262,12 +270,11 @@ final class ConversationContentViewController: UIViewController {
             tableView.backgroundColor = color
             view.backgroundColor = color
         }
-        guard let color, true else {
+        guard let color, userDefaults.bool(forKey: .conversationBackground) else {
             set(color: SemanticColors.View.backgroundConversationView)
             return
         }
-        let uiColor = color.accentColor.uiColor
-        set(color: uiColor)
+        set(color: color.accentColor.conversationBackgroundColor)
     }
 
     @objc
@@ -714,4 +721,23 @@ private extension UIAlertController {
         topmostViewController?.present(alertController, animated: true)
     }
 
+}
+
+extension AccentColor {
+    var conversationBackgroundColor: UIColor {
+        switch self {
+        case .blue:
+            return SemanticColors.View.conversationBackgroundBlue
+        case .purple:
+            return SemanticColors.View.conversationBackgroundPurple
+        case .green:
+            return SemanticColors.View.conversationBackgroundGreen
+        case .amber:
+            return SemanticColors.View.conversationBackgroundAmber
+        case .red:
+            return SemanticColors.View.conversationBackgroundRed
+        case .turquoise:
+            return SemanticColors.View.conversationBackgroundTurquoise
+        }
+    }
 }
