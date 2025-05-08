@@ -19,15 +19,53 @@
 import SwiftUI
 import WireDesign
 
+struct SenderMessageView: View {
+
+    private(set) var model: MessageSenderViewModel
+
+    var body: some View {
+        HStack(spacing: 0) {
+            Text(model.author)
+        }
+        .padding(.vertical, 8)
+        .background(.green)
+    }
+}
+
+struct MessageStatusView: View {
+    
+    let model: MessageStatusViewModel
+    
+    var body: some View {
+        HStack {
+            Text(model.timestamp)
+            if model.edited {
+                Text("Edited")
+            }
+            Text(model.deliveryState?.text ?? "-")
+        }
+    }
+}
+
 struct TextMessageView: ConversationCellContentViewProtocol {
 
     private(set) var model: TextMessageViewModel
 
     var body: some View {
-        HStack(spacing: 0) {
-            // TODOD
+        VStack {
+            if let model = model.senderViewModel {
+                SenderMessageView(model: model)
+            }
+            HStack(spacing: 0) {
+                text
+            }
+            .padding(.vertical, 8)
+            .background(.red)
+            
+            if let model = model.statusViewModel {
+                MessageStatusView(model: model)
+            }
         }
-        .padding(.vertical, 8)
     }
 
     @ViewBuilder private var text: some View {
@@ -41,9 +79,32 @@ struct TextMessageView: ConversationCellContentViewProtocol {
 
 }
 
-// MARK: - Previews
+//// MARK: - Previews
+//
+//#Preview("Simple") {
+//    let model = TextMessageViewModel(
+//        text: "Test message",
+//        senderViewModel: nil,
+//        statusViewModel: nil
+//    )
+//    TextMessageView(model: model)
+//}
 
-#Preview("with unread indicator") {
-    let model = TextMessageViewModel()
-    TextMessageView(model: model)
+extension DeliveryState {
+    var text: String {
+        switch self {
+        case .invalid:
+            "Invalid"
+        case .pending:
+            "Pending"
+        case .sent:
+            "Sent"
+        case .delivered:
+            "Delivered"
+        case .read:
+            "Read"
+        case .failedToSend:
+            "Failed"
+        }
+    }
 }

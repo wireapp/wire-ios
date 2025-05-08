@@ -144,7 +144,8 @@ protocol ConversationMessageCellDescription: AnyObject {
     /// A new type of model to replace the cell descriptions eventually.
     /// In order to allow incremental migration to the new approach, the model will be part of the cell description for
     /// now.
-    var conversationCellModel: ConversationCellModel? { get }
+    var conversationCellModel: ConversationCellModel? { get set }
+    func makeConversationCellModel() -> ConversationCellModel
 
     /// The top margin is used to configure the spacing between the current and the previous cell.
     var topMargin: CGFloat { get set }
@@ -191,7 +192,12 @@ protocol ConversationMessageCellDescription: AnyObject {
 extension ConversationMessageCellDescription {
 
     var conversationCellModel: ConversationCellModel? {
-        nil
+        get { fatalError() }
+        set { fatalError() }
+    }
+    
+    func makeConversationCellModel() -> ConversationCellModel {
+        fatalError()
     }
 
     var supportsActions: Bool {
@@ -350,6 +356,10 @@ final class AnyConversationMessageCellDescription: NSObject {
 
     var conversationCellModel: ConversationCellModel? {
         _conversationCellModel()
+    }
+    
+    func makeConversationCellModel() -> ConversationCellModel {
+        instance.makeConversationCellModel()
     }
 
     var delegate: ConversationMessageCellDelegate? {

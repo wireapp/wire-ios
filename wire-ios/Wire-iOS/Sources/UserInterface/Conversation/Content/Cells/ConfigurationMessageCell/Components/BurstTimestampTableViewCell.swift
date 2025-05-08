@@ -24,8 +24,10 @@ import WireSystem
 final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellDescription {
     typealias View = BurstTimestampSenderMessageCell
 
-    @MainActor var conversationCellModel: ConversationCellModel? {
-
+    @MainActor var conversationCellModel: ConversationCellModel?
+    
+    @MainActor
+    func makeConversationCellModel() -> ConversationCellModel {
         let now = currentDateProvider.now
         let calendar = Calendar.current
         lazy var isToday = calendar.isDate(now, equalTo: configuration.date, toGranularity: .day)

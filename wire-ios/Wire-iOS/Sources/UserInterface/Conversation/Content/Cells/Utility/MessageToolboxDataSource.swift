@@ -124,11 +124,7 @@ final class MessageToolboxDataSource {
         }
 
         // Only perform the changes if the content did change.
-        guard previousContent != content else {
-            return false
-        }
-
-        return true
+        return previousContent != content
     }
 
     // MARK: - Details Text

@@ -84,7 +84,9 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         didSet {
             updateDelegates()
             changeObservers.removeAll()
-            startObservingChanges(for: message)
+            if !message.isText {
+                startObservingChanges(for: message)
+            }
         }
     }
 
@@ -383,6 +385,17 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     private func createCellDescriptions(in context: ConversationMessageContext) {
         var cellDescriptions = [AnyConversationMessageCellDescription]()
 
+        if message.isText {
+            self.cellDescriptions = [
+                AnyConversationMessageCellDescription(NewTextCellDescription(
+                    message: message,
+                    context: context,
+                    accentColor: selfUser.accentColor
+                ))
+            ]
+            return
+        }
+        
         let isBurstTimestampVisible = isBurstTimestampVisible(in: context)
         let isSenderVisible = shouldShowSenderDetails(in: context)
 

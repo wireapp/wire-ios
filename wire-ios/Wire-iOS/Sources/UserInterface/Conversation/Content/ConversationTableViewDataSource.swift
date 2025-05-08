@@ -693,8 +693,10 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
         }
 
         let cellDescription = section.elements[indexPath.row]
-        if let model = cellDescription.conversationCellModel {
-
+        if cellDescription.instance is NewCellDescription {
+            let model = cellDescription.makeConversationCellModel()
+            cellDescription.instance.conversationCellModel = model
+            
             model.registerIfNeeded(in: tableView)
             let cell = tableView.dequeueReusableCell(withIdentifier: model.cellReuseIdentifier, for: indexPath)
             model.configureCell(cell)
@@ -715,6 +717,7 @@ extension ConversationTableViewDataSource: ConversationMessageSectionControllerD
         _ controller: ConversationMessageSectionController,
         didRequestRefreshForMessage message: ZMConversationMessage
     ) {
+        guard !message.isText else { return }
         debouncer.call(id: message.nonce!) { [weak self] in
             guard let self else { return }
             reloadSections(newSections: calculateSections(updating: controller))
