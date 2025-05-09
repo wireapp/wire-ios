@@ -65,7 +65,9 @@ final class NewTextCellDescription: ConversationMessageCellDescription {
     typealias View = NewTextCell
 
     @MainActor var conversationCellModel: ConversationCellModel?
-
+    
+    var supportsActions: Bool = true
+    
     private var cancellables: Set<AnyCancellable> = []
 
     func makeConversationCellModel(message: ZMMessage) -> ConversationCellModel {
@@ -88,10 +90,10 @@ final class NewTextCellDescription: ConversationMessageCellDescription {
                 timestamp: message.serverTimestamp?.formattedDate ?? "-"
             )
         )
-        model.significantChangeSubject.sink { [weak self] _ in
-            guard let self else { return }
-            delegate?.conversationMessageDidRequestToUpdate(nonce: self.nonce)
-        }.store(in: &cancellables)
+//        model.significantChangeSubject.sink { [weak self] _ in
+//            guard let self else { return }
+//            delegate?.conversationMessageDidRequestToUpdate(nonce: self.nonce)
+//        }.store(in: &cancellables)
         return ConversationCellModel.text(model)
     }
 
