@@ -65,13 +65,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
     func testThatItReturnsCellsInCorrectOrder_Normal() {
 
         // GIVEN
-        let section = ConversationMessageSectionController(
-            message: MockMessage(),
-            context: context,
-            userSession: userSession,
-            useInvertedIndices: false,
-            contentWidth: 0
-        )
+        let section = makeSUT()
         section.cellDescriptionsForTesting.removeAll()
 
         // WHEN
@@ -88,13 +82,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
 
     func testThatItReturnsCellsInCorrectOrder_UpsideDown() {
         // GIVEN
-        let section = ConversationMessageSectionController(
-            message: MockMessage(),
-            context: context,
-            userSession: userSession,
-            useInvertedIndices: true,
-            contentWidth: 0
-        )
+        let section = makeSUT(useInvertedIndices: true)
         section.cellDescriptionsForTesting.removeAll()
 
         // WHEN
@@ -115,13 +103,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         let context = ConversationMessageContext(isSameSenderAsPrevious: false)
 
         // When
-        let section = ConversationMessageSectionController(
-            message: message,
-            context: context,
-            userSession: userSession,
-            useInvertedIndices: false,
-            contentWidth: 0
-        )
+        let section = makeSUT(message: message, context: context)
 
         // Then
         let cellDescriptions = section.cellDescriptionsForTesting
@@ -143,13 +125,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         )
 
         // WHEN
-        let section = ConversationMessageSectionController(
-            message: message,
-            context: context,
-            userSession: userSession,
-            useInvertedIndices: false,
-            contentWidth: 0
-        )
+        let section = makeSUT(message: message, context: context)
 
         // THEN
         let cellDescriptions = section.cellDescriptionsForTesting
@@ -167,13 +143,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         let context = ConversationMessageContext(previousMessageIsKnock: true)
 
         // When
-        let section = ConversationMessageSectionController(
-            message: message,
-            context: context,
-            userSession: userSession,
-            useInvertedIndices: false,
-            contentWidth: 0
-        )
+        let section = makeSUT(message: message, context: context)
 
         // Then
         let cellDescriptions = section.cellDescriptionsForTesting
@@ -194,13 +164,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             isTimestampInSameMinuteAsPreviousMessage: false
         )
         // WHEN
-        let section = ConversationMessageSectionController(
-            message: message,
-            context: context,
-            userSession: userSession,
-            useInvertedIndices: false,
-            contentWidth: 0
-        )
+        let section = makeSUT(message: message, context: context)
 
         // THEN
         let cellDescriptions = section.cellDescriptionsForTesting
@@ -220,13 +184,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
             isTimestampInSameMinuteAsPreviousMessage: false
         )
         // WHEN
-        let section = ConversationMessageSectionController(
-            message: message,
-            context: context,
-            userSession: userSession,
-            useInvertedIndices: false,
-            contentWidth: 0
-        )
+        let section = makeSUT(message: message, context: context)
 
         let actionController = ConversationMessageActionController(
             responder: nil,
@@ -545,17 +503,18 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         XCTAssertEqual(sut.cellDescriptionsForTesting.count, 3)
     }
 
-    private func makeSUT(message: MockMessage) -> ConversationMessageSectionController {
-        let context = ConversationMessageContext(
-            isSameSenderAsPrevious: true,
-            isTimestampInSameMinuteAsPreviousMessage: false
-        )
-
+    private func makeSUT(
+        message: MockMessage = MockMessage(),
+        context: ConversationMessageContext? = nil,
+        useInvertedIndices: Bool = false
+    ) -> ConversationMessageSectionController {
+        
         let section = ConversationMessageSectionController(
             message: message,
-            context: context,
+            context: context ?? self.context,
+            selfUser: mockSelfUser,
             userSession: userSession,
-            useInvertedIndices: false,
+            useInvertedIndices: useInvertedIndices,
             contentWidth: 0,
             userDefaults: mockUserDefaults
         )

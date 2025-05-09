@@ -376,7 +376,6 @@ extension ZMUserSession: UserSession {
             isFederationUsageAllowed: isFederationUsageAllowed
         )
     }
-
 }
 
 extension UInt64 {

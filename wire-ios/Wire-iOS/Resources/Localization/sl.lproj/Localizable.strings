@@ -1280,13 +1280,8 @@
 // Open in
 "self.settings.external_apps.header" = "Odpri s/z";
 
-"self.settings.link_options.twitter.title" = "Tviti";
 "self.settings.link_options.maps.title" = "Lokacije";
 "self.settings.link_options.browser.title" = "Brskalnik";
-
-"open_link.twitter.option.default" = "Browser / Twitter";
-"open_link.twitter.option.tweetbot" = "Tweetbot";
-"open_link.twitter.option.twitterrific" = "Twitterrific";
 
 "open_link.maps.option.apple" = "Zemljevidi";
 "open_link.maps.option.google" = "Google Maps";
@@ -1308,7 +1303,6 @@
 "self.settings.developer_options.title" = "Možnosti za razvijalce";
 "self.settings.developer_options.loggin.title" = "Možnosti";
 "self.settings.developer_options.database_statistics.title" = "Database Statistics";
-"self.settings.apns_logging.title" = "Beleženje APNS";
 
 // Privacy (visibility) options
 "self.settings.options_menu.title" = "Možnosti";

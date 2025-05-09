@@ -17,36 +17,18 @@
 //
 
 import Foundation
+import WireAPI
 
-enum ExternalCommitError: Error, Equatable {
+struct StorableFederationDeleteEvent: Equatable, Codable, Sendable {
 
-    case failedToSendCommit(recovery: RecoveryStrategy, cause: SendCommitBundleAction.Failure)
-    case failedToMergePendingGroup
-    case failedToClearPendingGroup
+    private let domain: String
 
-    enum RecoveryStrategy {
-
-        /// Retry the action from the beginning
-        case retry
-
-        /// Abort the action and log the error
-        case giveUp
-
+    init(_ value: WireAPI.FederationDeleteEvent) {
+        self.domain = value.domain
     }
-}
 
-extension ExternalCommitError.RecoveryStrategy {
-
-    /// Whether the pending group should be cleared
-
-    var shouldClearPendingGroup: Bool {
-        switch self {
-        case .retry:
-            false
-
-        case .giveUp:
-            true
-        }
+    func toAPIModel() -> WireAPI.FederationDeleteEvent {
+        .init(domain: domain)
     }
 
 }

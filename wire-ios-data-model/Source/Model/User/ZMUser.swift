@@ -312,6 +312,10 @@ public extension ZMUser {
         }
     }
 
+    var objectId: Any {
+        objectID
+    }
+
     /// combination of domain and remoteIdentifier
     @NSManaged private var primaryKey: String
 

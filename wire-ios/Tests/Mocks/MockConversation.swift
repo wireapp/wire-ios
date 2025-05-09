@@ -24,6 +24,8 @@ import WireRequestStrategy
 // TODO: rename to MockConversation after objc MockConversation is retired
 class SwiftMockConversation: NSObject, Conversation {
 
+    var objectId: Any = UUID()
+
     var isMLSConversationDegraded: Bool = false
     var isProteusConversationDegraded: Bool = false
 

@@ -28,7 +28,7 @@ final class ConversationMessageActionController {
         case collection
     }
 
-    let message: ZMConversationMessage
+    var message: ZMConversationMessage
     let context: Context
 
     /// whether message collapsed or normal | expanded

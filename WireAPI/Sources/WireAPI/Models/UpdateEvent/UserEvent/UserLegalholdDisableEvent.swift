@@ -20,7 +20,7 @@ import Foundation
 
 /// An event where legalhold was disabled for a user.
 
-public struct UserLegalholdDisableEvent: Equatable, Codable, Sendable {
+public struct UserLegalholdDisableEvent: Equatable, Sendable {
 
     /// The user id for whom legalhold was disabled.
 

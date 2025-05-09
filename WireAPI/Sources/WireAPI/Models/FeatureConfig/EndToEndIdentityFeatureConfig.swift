@@ -42,4 +42,18 @@ public struct EndToEndIdentityFeatureConfig: Equatable, Codable, Sendable {
 
     public let useProxyOnMobile: Bool
 
+    public init(
+        status: FeatureConfigStatus,
+        acmeDiscoveryURL: String? = nil,
+        verificationExpiration: UInt,
+        crlProxy: String? = nil,
+        useProxyOnMobile: Bool
+    ) {
+        self.status = status
+        self.acmeDiscoveryURL = acmeDiscoveryURL
+        self.verificationExpiration = verificationExpiration
+        self.crlProxy = crlProxy
+        self.useProxyOnMobile = useProxyOnMobile
+    }
+
 }

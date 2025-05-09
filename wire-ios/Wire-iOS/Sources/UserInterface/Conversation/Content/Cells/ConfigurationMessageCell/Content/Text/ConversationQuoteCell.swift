@@ -21,19 +21,26 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireFoundation
 
 final class ConversationReplyContentView: UIView {
     typealias FileSharingRestrictions = L10n.Localizable.FeatureConfig.FileSharingRestrictions
     typealias MessagePreview = L10n.Localizable.Conversation.InputBar.MessagePreview
     let numberOfLinesLimit: Int = 4
 
-    struct Configuration {
+    struct Configuration: Equatable {
         enum Content {
             case text(NSAttributedString)
             case imagePreview(thumbnail: PreviewableImageResource, isVideo: Bool)
         }
 
         var quotedMessage: ZMConversationMessage?
+        let accentColor: AccentColor
+
+        static func == (lhs: Configuration, rhs: Configuration) -> Bool {
+            lhs.accentColor == rhs.accentColor &&
+                lhs.quotedMessage == rhs.quotedMessage
+        }
 
         var showDetails: Bool {
             guard let message = quotedMessage,
@@ -107,7 +114,14 @@ final class ConversationReplyContentView: UIView {
             switch quotedMessage {
             case let message? where message.isText:
                 let data = message.textMessageData!
-                return .text(NSAttributedString.formatForPreview(message: data, inputMode: false))
+                return .text(
+                    NSAttributedString
+                        .formatForPreview(
+                            message: data,
+                            inputMode: false,
+                            accentColor: accentColor
+                        )
+                )
 
             case let message? where message.isLocation:
                 let location = message.locationMessageData!
@@ -326,9 +340,10 @@ final class ConversationReplyCell: UIView, ConversationMessageCell {
 }
 
 final class ConversationReplyCellDescription: ConversationMessageCellDescription {
+
     typealias View = ConversationReplyCell
 
-    let configuration: View.Configuration
+    var configuration: View.Configuration
 
     var topMargin: CGFloat = 8
     var bottomMargin: CGFloat = 0
@@ -336,15 +351,26 @@ final class ConversationReplyCellDescription: ConversationMessageCellDescription
     let supportsActions = false
     let containsHighlightableContent: Bool = true
 
-    weak var message: ZMConversationMessage?
+    weak var message: ZMConversationMessage? {
+        didSet {
+            if let quoteMessage = message?.textMessageData?.quoteMessage {
+                configuration.quotedMessage = quoteMessage
+            }
+        }
+    }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
     let accessibilityLabel: String? = L10n.Localizable.Content.Message.originalLabel
     let accessibilityIdentifier: String? = "ReplyCell"
 
-    init(quotedMessage: ZMConversationMessage?) {
-        self.configuration = View.Configuration(quotedMessage: quotedMessage)
+    init(quotedMessage: ZMConversationMessage?, accentColor: AccentColor) {
+        self.configuration = View
+            .Configuration(
+                quotedMessage: quotedMessage,
+                accentColor: accentColor
+            )
     }
 }
 

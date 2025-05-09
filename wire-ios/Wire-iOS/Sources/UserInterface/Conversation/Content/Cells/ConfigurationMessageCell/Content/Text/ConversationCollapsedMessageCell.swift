@@ -18,14 +18,20 @@
 
 import WireAccountImageUI
 import WireDesign
+import WireFoundation
 import WireSyncEngine
 
 final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
 
-    struct Configuration {
-        let message: ZMConversationMessage
-        let user: UserType?
+    struct Configuration: Equatable {
+        var message: ZMConversationMessage
+        let accentColor: AccentColor
         let collapseExpandAction: () -> Void
+
+        static func == (lhs: Configuration, rhs: Configuration) -> Bool {
+            lhs.message == rhs.message &&
+                lhs.accentColor == rhs.accentColor
+        }
     }
 
     var isSelected: Bool = false
@@ -130,7 +136,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
     }
 
     func configure(with object: Configuration, animated: Bool) {
-        let user = object.user
+        let user = object.message.senderUser
         avatar.user = user
         availabilityIndicatorView.availability = user?.availability.mapToAccountImageAvailability()
 
@@ -149,6 +155,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
                     .format(
                         message: textMessageData,
                         isObfuscated: message.isObfuscated,
+                        accentColor: object.accentColor,
                         shouldRemoveTrailingLink: false
                     )
             }
@@ -254,12 +261,19 @@ final class ConversationCollapsedMessageCellDescription: ConversationMessageCell
 
     typealias View = ConversationCollapsedMessageCell
 
-    let configuration: View.Configuration
+    var configuration: View.Configuration
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = false
 
-    weak var message: ZMConversationMessage?
+    weak var message: ZMConversationMessage? {
+        didSet {
+            if let message {
+                configuration.message = message
+            }
+        }
+    }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
@@ -271,11 +285,12 @@ final class ConversationCollapsedMessageCellDescription: ConversationMessageCell
 
     init(
         message: ConversationMessage,
+        accentColor: AccentColor,
         collapseExpandAction: @escaping () -> Void
     ) {
         self.configuration = View.Configuration(
             message: message,
-            user: message.senderUser,
+            accentColor: accentColor,
             collapseExpandAction: collapseExpandAction
         )
     }

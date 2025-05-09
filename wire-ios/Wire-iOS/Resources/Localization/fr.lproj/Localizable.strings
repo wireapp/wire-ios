@@ -1280,13 +1280,8 @@
 // Open in
 "self.settings.external_apps.header" = "Ouvrir avec";
 
-"self.settings.link_options.twitter.title" = "Tweets";
 "self.settings.link_options.maps.title" = "Positions";
 "self.settings.link_options.browser.title" = "Navigateur";
-
-"open_link.twitter.option.default" = "Navigateur / Twitter";
-"open_link.twitter.option.tweetbot" = "Tweetbot";
-"open_link.twitter.option.twitterrific" = "Twitterrific";
 
 "open_link.maps.option.apple" = "Plans";
 "open_link.maps.option.google" = "Google Maps";
@@ -1308,7 +1303,6 @@
 "self.settings.developer_options.title" = "Options du développeur";
 "self.settings.developer_options.loggin.title" = "Options";
 "self.settings.developer_options.database_statistics.title" = "Statistiques de la base de données";
-"self.settings.apns_logging.title" = "Enregistrement des APNS";
 
 // Privacy (visibility) options
 "self.settings.options_menu.title" = "Options";

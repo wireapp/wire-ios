@@ -168,6 +168,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
         self.launchOptions = launchOptions ?? [:]
 
+        _ = NSAttributedString.paragraphStyle
+
         setupWindowAndRootViewController()
 
         if UIApplication.shared.isProtectedDataAvailable || ZMPersistentCookieStorage

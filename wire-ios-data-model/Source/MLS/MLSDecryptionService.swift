@@ -25,10 +25,6 @@ import WireSystem
 // sourcery: AutoMockable
 public protocol MLSDecryptionServiceInterface {
 
-    /// Publishes an event when the epoch has changed.
-
-    func onEpochChanged() -> AnyPublisher<MLSGroupID, Never>
-
     /// Publishes an event when new CRL distribution points are found.
 
     func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never>
@@ -102,12 +98,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
     private weak var context: NSManagedObjectContext?
     private let subconverationGroupIDRepository: SubconversationGroupIDRepositoryInterface
 
-    private let onEpochChangedSubject = PassthroughSubject<MLSGroupID, Never>()
     private let onNewCRLsDistributionPointsSubject = PassthroughSubject<CRLsDistributionPoints, Never>()
-
-    public func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
-        onEpochChangedSubject.eraseToAnyPublisher()
-    }
 
     public func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never> {
         onNewCRLsDistributionPointsSubject.eraseToAnyPublisher()
@@ -127,13 +118,23 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
     // MARK: - Message decryption
 
-    public enum MLSMessageDecryptionError: Error {
-
+    public enum MLSMessageDecryptionError: Error, Equatable {
         case failedToConvertMessageToBytes
-        case failedToDecryptMessage
+        case failedToDecryptMessage(reason: Error)
         case failedToDecodeSenderClientID
         case wrongEpoch
 
+        public static func == (
+            lhs: MLSDecryptionService.MLSMessageDecryptionError,
+            rhs: MLSDecryptionService.MLSMessageDecryptionError
+        ) -> Bool {
+            switch (lhs, rhs) {
+            case (.failedToConvertMessageToBytes, .failedToConvertMessageToBytes): true
+            case (.failedToDecryptMessage, .failedToDecryptMessage): true
+            case (.failedToDecodeSenderClientID, .failedToDecodeSenderClientID): true
+            default: false
+            }
+        }
     }
 
     public func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID {
@@ -174,10 +175,6 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         do {
             let decryptedMessage = try await mlsActionExecutor.decryptMessage(messageData, in: groupID)
 
-            if decryptedMessage.hasEpochChanged {
-                onEpochChangedSubject.send(groupID)
-            }
-
             if let newDistributionPoints = CRLsDistributionPoints(from: decryptedMessage.crlNewDistributionPoints) {
                 onNewCRLsDistributionPointsSubject.send(newDistributionPoints)
             }
@@ -203,6 +200,9 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
             // Message arrive in future epoch, it has been buffered and will be consumed later.
             case .BufferedFutureMessage: return []
 
+            // Commit arrive in future epoch, it has been buffered and will be consumed later.
+            case .BufferedCommit: return []
+
             // Received already sent or received message, can safely be ignored.
             case .DuplicateMessage: return []
 
@@ -224,8 +224,11 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
             // commit has been buffered, and will be automatically unbuffered when possible.
             case .Other(coreCryptoCommitForMissingProposalError): return []
 
-            case .Other, .ConversationAlreadyExists, .MessageEpochTooOld, .OrphanWelcome:
-                throw MLSMessageDecryptionError.failedToDecryptMessage
+            case .Other, .ConversationAlreadyExists, .MessageEpochTooOld, .OrphanWelcome, .MessageRejected:
+                throw MLSMessageDecryptionError.failedToDecryptMessage(reason: error)
+
+            @unknown default:
+                throw MLSMessageDecryptionError.failedToDecryptMessage(reason: error)
             }
         } catch MLSActionExecutor.Failure.bufferedDecryptedMessage {
             // [WPB-16231] fix CC transaction is not saved
@@ -236,7 +239,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
                     "failed to decrypt message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType))): \(String(describing: error)) | \(debugInfo)"
                 )
 
-            throw MLSMessageDecryptionError.failedToDecryptMessage
+            throw MLSMessageDecryptionError.failedToDecryptMessage(reason: error)
         }
     }
 

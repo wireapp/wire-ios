@@ -20,7 +20,7 @@ import Foundation
 
 /// An event where some metadata changed for a member in a conversation.
 
-public struct ConversationMemberUpdateEvent: Equatable, Codable, Sendable {
+public struct ConversationMemberUpdateEvent: Equatable, Sendable {
 
     /// The id of the conversation.
 
@@ -37,5 +37,17 @@ public struct ConversationMemberUpdateEvent: Equatable, Codable, Sendable {
     /// The changed metadata of the member.
 
     public let memberChange: ConversationMemberChange
+
+    public init(
+        conversationID: ConversationID,
+        senderID: UserID,
+        timestamp: Date,
+        memberChange: ConversationMemberChange
+    ) {
+        self.conversationID = conversationID
+        self.senderID = senderID
+        self.timestamp = timestamp
+        self.memberChange = memberChange
+    }
 
 }

@@ -1280,13 +1280,8 @@
 // Open in
 "self.settings.external_apps.header" = "Birlikte Aç";
 
-"self.settings.link_options.twitter.title" = "Tweetler";
 "self.settings.link_options.maps.title" = "Konumlar";
 "self.settings.link_options.browser.title" = "Tarayıcı";
-
-"open_link.twitter.option.default" = "Web Tarayıcısı / Twitter";
-"open_link.twitter.option.tweetbot" = "Tweetbot";
-"open_link.twitter.option.twitterrific" = "Twitterrific";
 
 "open_link.maps.option.apple" = "Haritalar";
 "open_link.maps.option.google" = "Google Haritalar";
@@ -1308,7 +1303,6 @@
 "self.settings.developer_options.title" = "Geliştiri Seçenekleri";
 "self.settings.developer_options.loggin.title" = "Seçenekler";
 "self.settings.developer_options.database_statistics.title" = "Database Statistics";
-"self.settings.apns_logging.title" = "APNS Günlüğü";
 
 // Privacy (visibility) options
 "self.settings.options_menu.title" = "Seçenekler";
