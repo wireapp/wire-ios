@@ -25,7 +25,7 @@ final class E2EIServiceTests: ZMConversationTestsBase {
 
     var sut: E2EIService!
     var mockE2eIdentity: MockE2EIEnrollment!
-    var mockCoreCrypto: MockCoreCryptoProtocol!
+    var mockCoreCryptoContext: MockCoreCryptoContextProtocol!
     var mockSafeCoreCrypto: MockSafeCoreCrypto!
     var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
 
@@ -33,8 +33,8 @@ final class E2EIServiceTests: ZMConversationTestsBase {
         super.setUp()
 
         mockE2eIdentity = MockE2EIEnrollment()
-        mockCoreCrypto = MockCoreCryptoProtocol()
-        mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
+        mockCoreCryptoContext = MockCoreCryptoContextProtocol()
+        mockSafeCoreCrypto = MockSafeCoreCrypto(coreCryptoContext: mockCoreCryptoContext)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
         sut = E2EIService(
@@ -45,7 +45,7 @@ final class E2EIServiceTests: ZMConversationTestsBase {
     }
 
     override func tearDown() {
-        mockCoreCrypto = nil
+        mockCoreCryptoContext = nil
         mockSafeCoreCrypto = nil
         mockCoreCryptoProvider = nil
         mockE2eIdentity = nil

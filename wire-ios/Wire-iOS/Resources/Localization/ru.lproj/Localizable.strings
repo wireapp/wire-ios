@@ -1280,13 +1280,8 @@
 // Open in
 "self.settings.external_apps.header" = "Открыть с помощью";
 
-"self.settings.link_options.twitter.title" = "Твиты";
 "self.settings.link_options.maps.title" = "Местоположения";
 "self.settings.link_options.browser.title" = "Браузер";
-
-"open_link.twitter.option.default" = "Браузер / Твиттер";
-"open_link.twitter.option.tweetbot" = "Tweetbot";
-"open_link.twitter.option.twitterrific" = "Twitterrific";
 
 "open_link.maps.option.apple" = "Карты";
 "open_link.maps.option.google" = "Google Maps";
@@ -1308,7 +1303,6 @@
 "self.settings.developer_options.title" = "Опции для разработчиков";
 "self.settings.developer_options.loggin.title" = "Настройки";
 "self.settings.developer_options.database_statistics.title" = "Статистика базы данных";
-"self.settings.apns_logging.title" = "APNS журналирование";
 
 // Privacy (visibility) options
 "self.settings.options_menu.title" = "Настройки";

@@ -1280,13 +1280,8 @@
 // Open in
 "self.settings.external_apps.header" = "فتح باستخدام";
 
-"self.settings.link_options.twitter.title" = "غرّد";
 "self.settings.link_options.maps.title" = "مواقع";
 "self.settings.link_options.browser.title" = "المُتصفّح";
-
-"open_link.twitter.option.default" = "Browser / Twitter";
-"open_link.twitter.option.tweetbot" = "Tweetbot";
-"open_link.twitter.option.twitterrific" = "Twitterrific";
 
 "open_link.maps.option.apple" = "خرائط";
 "open_link.maps.option.google" = "خرائط جوجل";
@@ -1308,7 +1303,6 @@
 "self.settings.developer_options.title" = "خيارات مطور البرامج";
 "self.settings.developer_options.loggin.title" = "الخيارات";
 "self.settings.developer_options.database_statistics.title" = "Database Statistics";
-"self.settings.apns_logging.title" = "APNS Logging";
 
 // Privacy (visibility) options
 "self.settings.options_menu.title" = "الخيارات";

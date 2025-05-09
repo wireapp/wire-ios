@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.2.6 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.2.4 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 //
 // Wire
@@ -27,6 +27,7 @@
 import WireAPI
 import WireDataModel
 import WireDomainPackage
+import WireCoreCrypto
 
 @testable import WireDomain
 
@@ -369,6 +370,34 @@ class MockConversationEventNotificationBuilderProtocol: ConversationEventNotific
         } else {
             fatalError("no mock for `buildContentEvent`")
         }
+    }
+
+}
+
+class MockConversationEventProcessorProtocol: ConversationEventProcessorProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - processEvent
+
+    var processEvent_Invocations: [ConversationEvent] = []
+    var processEvent_MockError: Error?
+    var processEvent_MockMethod: ((ConversationEvent) async throws -> Void)?
+
+    func processEvent(_ event: ConversationEvent) async throws {
+        processEvent_Invocations.append(event)
+
+        if let error = processEvent_MockError {
+            throw error
+        }
+
+        guard let mock = processEvent_MockMethod else {
+            fatalError("no mock for `processEvent`")
+        }
+
+        try await mock(event)
     }
 
 }
