@@ -112,7 +112,7 @@ public class TextMessageViewModel: ObservableObject, ConversationCellModelProtoc
         senderViewModel: MessageSenderViewModel?,
         statusViewModel: MessageStatusViewModel?
     ) {
-        self.text = text
+        self.text = text // TODO: format
         self.senderViewModel = senderViewModel
         self.statusViewModel = statusViewModel
 //        startRandomStateTimer()

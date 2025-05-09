@@ -44,14 +44,17 @@ final class SenderObserver: NSObject, ZMMessageObserver, SenderObserverProtocol 
     
     init(
         messageID: NSManagedObjectID,
-        viewContext: NSManagedObjectContext,
-        userSession: ZMUserSession
+        viewContext: NSManagedObjectContext
     ) {
         super.init()
         viewContext.perform {
             let message = try! viewContext.existingObject(with: messageID) as! ZMMessage
             self.author = message.senderName
-            self.observation = MessageChangeInfo.add(observer: self, for: message, userSession: userSession)
+            self.observation = MessageChangeInfo
+                .add(
+                    observer: self,
+                    for: message,
+                    context: viewContext)
         }
     }
     
@@ -70,34 +73,18 @@ final class NewTextCellDescription: ConversationMessageCellDescription {
     
     private var cancellables: Set<AnyCancellable> = []
 
-    func makeConversationCellModel(message: ZMMessage) -> ConversationCellModel {
-        
-        let model = TextMessageViewModel(
-            text: configuration.text,
-            senderViewModel: MessageSenderViewModel(
-                avatar: AvatarViewModel(color: configuration.accentColor.color),
-                author: configuration.author,
-                authorChanged: SenderObserver(
-                    messageID: message.objectID,
-                    viewContext: ZMUserSession
-                        .shared()!.contextProvider.viewContext,
-                    userSession: ZMUserSession.shared()! // TODO: DI
-                )
-            ),
-            statusViewModel: MessageStatusViewModel(
-                deliveryState: message.deliveryState.toUIModel(),
-                edited: message.updatedAt != nil,
-                timestamp: message.serverTimestamp?.formattedDate ?? "-"
-            )
-        )
+//    func makeConversationCellModel(message: ZMMessage) -> ConversationCellModel {
+//        
 //        model.significantChangeSubject.sink { [weak self] _ in
 //            guard let self else { return }
 //            delegate?.conversationMessageDidRequestToUpdate(nonce: self.nonce)
 //        }.store(in: &cancellables)
-        return ConversationCellModel.text(model)
-    }
+//        return ConversationCellModel.text(model)
+//    }
 
-    let configuration: View.Configuration
+    var configuration: View.Configuration {
+        .init(text: "", author: "", accentColor: .red)
+    }
 
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
@@ -110,29 +97,25 @@ final class NewTextCellDescription: ConversationMessageCellDescription {
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String? = nil
-    private let nonce: UUID
     
     init(
-        configuration: View.Configuration,
-        message: ZMMessage
+        conversationCellModel: ConversationCellModel
     ) {
-        self.configuration = configuration
-        self.nonce = message.nonce!
-        self.conversationCellModel = makeConversationCellModel(message: message)
+        self.conversationCellModel = conversationCellModel
     }
 
-    convenience init(
-        message: ZMConversationMessage,
-        context: ConversationMessageContext,
-        accentColor: UIColor
-    ) {
-        let configuration = View.Configuration(
-            text: message.textMessageData?.messageText ?? "",
-            author: message.senderName,
-            accentColor: accentColor
-        )
-        self.init(configuration: configuration, message: message as! ZMMessage)
-    }
+//    convenience init(
+//        message: ZMConversationMessage,
+//        context: ConversationMessageContext,
+//        accentColor: UIColor
+//    ) {
+//        let configuration = View.Configuration(
+//            text: message.textMessageData?.messageText ?? "",
+//            author: message.senderName,
+//            accentColor: accentColor
+//        )
+//        self.init(configuration: configuration, message: message as! ZMMessage)
+//    }
 
 }
 

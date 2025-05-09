@@ -90,7 +90,8 @@ final class ConversationContentViewController: UIViewController {
         actionResponder: self,
         cellDelegate: self,
         userSession: userSession,
-        getUserByIDUseCase: GetUserByIdUseCase()
+        getUserByIDUseCase: GetUserByIdUseCase(),
+        factory: MessageViewModelFactoryImpl(userSession: userSession)
     )
 
     /// Fired regularly in order to always correct time values (like the number of seconds a self-deleting message has

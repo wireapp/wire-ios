@@ -72,6 +72,7 @@ final class ConversationTableViewDataSource: NSObject {
     weak var conversationCellDelegate: ConversationMessageCellDelegate?
     weak var messageActionResponder: MessageActionResponder?
     private let getUserByIDUseCase: GetUserByIDUseCaseProtocol
+    private let factory: MessageViewModelFactory
 
     let debouncer = LeadingTrailingDebouncer<UUID>(cooldownTime: 0.3)
 
@@ -278,7 +279,8 @@ final class ConversationTableViewDataSource: NSObject {
         actionResponder: MessageActionResponder,
         cellDelegate: ConversationMessageCellDelegate,
         userSession: UserSession,
-        getUserByIDUseCase: GetUserByIDUseCaseProtocol
+        getUserByIDUseCase: GetUserByIDUseCaseProtocol,
+        factory: MessageViewModelFactory
     ) {
         self.messageActionResponder = actionResponder
         self.conversationCellDelegate = cellDelegate
@@ -286,6 +288,8 @@ final class ConversationTableViewDataSource: NSObject {
         self.tableView = tableView
         self.userSession = userSession
         self.getUserByIDUseCase = getUserByIDUseCase
+        self.factory = factory
+        
         super.init()
 
         tableView.dataSource = self
@@ -356,7 +360,8 @@ final class ConversationTableViewDataSource: NSObject {
             selected: message.isEqual(selectedMessage),
             userSession: userSession,
             useInvertedIndices: true,
-            contentWidth: contentWidth
+            contentWidth: contentWidth,
+            factory: factory
         )
         sectionController.cellDelegate = conversationCellDelegate
         sectionController.sectionDelegate = self

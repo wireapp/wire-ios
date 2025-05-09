@@ -19,6 +19,14 @@
 import Foundation
 import WireFoundation
 import WireSyncEngine
+import WireConversationUI
+
+protocol MessageViewModelFactory {
+    func makeTextMessageViewModel(
+        message: ZMMessage,
+        accentColor: UIColor
+    ) -> TextMessageViewModel
+}
 
 struct ConversationMessageContext: Equatable {
     var isSameSenderAsPrevious: Bool = false
@@ -114,6 +122,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     private let userSession: UserSession
     private let userDefaults: UserDefaultsProtocol
+    private let factory: MessageViewModelFactory
 
     /// width of a container view to calculate whether message should be collapsed
     var contentWidth: CGFloat
@@ -130,7 +139,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         userSession: UserSession,
         useInvertedIndices: Bool,
         contentWidth: CGFloat,
-        userDefaults: UserDefaultsProtocol = UserDefaults.standard
+        userDefaults: UserDefaultsProtocol = UserDefaults.standard,
+        factory: MessageViewModelFactory
     ) {
         self.message = message
         self.context = context
@@ -140,7 +150,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         self.useInvertedIndices = useInvertedIndices
         self.contentWidth = contentWidth
         self.userDefaults = userDefaults
-
+        self.factory = factory
+        
         super.init()
 
         self.isCollapsed = isCollapsedInitialValue()
@@ -387,11 +398,12 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
         if message.isText {
             self.cellDescriptions = [
-                AnyConversationMessageCellDescription(NewTextCellDescription(
-                    message: message,
-                    context: context,
-                    accentColor: selfUser.accentColor
-                ))
+                NewTextCellDescription(
+                    conversationCellModel:
+                            .text(factory.makeTextMessageViewModel(
+                                message: message as! ZMMessage,
+                                accentColor: selfUser.accentColor))
+                ).eraseToAnyCellDescription()
             ]
             return
         }
@@ -632,4 +644,10 @@ extension ConversationMessageSectionController {
         return boundingBox.height > singleLineHeight
     }
 
+}
+
+extension ConversationMessageCellDescription {
+    func eraseToAnyCellDescription() -> AnyConversationMessageCellDescription {
+        AnyConversationMessageCellDescription(self)
+    }
 }
