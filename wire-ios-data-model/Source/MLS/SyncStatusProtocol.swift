@@ -25,5 +25,6 @@ public protocol SyncStatusProtocol {
     func resyncResources()
     func forceSlowSync()
     func recoverWithQuickSync() async
+    var isLive: Bool { get }
 
 }

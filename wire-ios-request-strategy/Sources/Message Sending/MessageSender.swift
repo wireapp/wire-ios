@@ -45,27 +45,24 @@ public final class MessageSender: MessageSenderInterface {
 
     public init(
         apiProvider: APIProviderInterface,
-        clientRegistrationDelegate: ClientRegistrationDelegate,
         sessionEstablisher: SessionEstablisherInterface,
         messageDependencyResolver: MessageDependencyResolverInterface,
-        quickSyncObserver: QuickSyncObserverInterface,
-        context: NSManagedObjectContext
+        context: NSManagedObjectContext,
+        incrementalSyncObserver: IncrementalSyncObserverProtocol
     ) {
         self.apiProvider = apiProvider
-        self.clientRegistrationDelegate = clientRegistrationDelegate
         self.sessionEstablisher = sessionEstablisher
         self.messageDependencyResolver = messageDependencyResolver
-        self.quickSyncObserver = quickSyncObserver
         self.context = context
         self.logAttributesBuilder = MessageLogAttributesBuilder(context: context)
+        self.incrementalSyncObserver = incrementalSyncObserver
     }
 
+    private let incrementalSyncObserver: IncrementalSyncObserverProtocol
     private let apiProvider: APIProviderInterface
     private let context: NSManagedObjectContext
-    private let clientRegistrationDelegate: ClientRegistrationDelegate
     private let sessionEstablisher: SessionEstablisherInterface
     private let messageDependencyResolver: MessageDependencyResolverInterface
-    private let quickSyncObserver: QuickSyncObserverInterface
     private let proteusPayloadProcessor = MessageSendingStatusPayloadProcessor()
     private let mlsPayloadProcessor = MLSMessageSendingStatusPayloadProcessor()
     private let logAttributesBuilder: MessageLogAttributesBuilder
@@ -76,7 +73,7 @@ public final class MessageSender: MessageSenderInterface {
         let logAttributes = await logAttributesBuilder.logAttributes(message)
         WireLogger.messaging.debug("broadcast message", attributes: logAttributes)
 
-        await quickSyncObserver.waitForDecryptionOfEventsToFinish()
+        await incrementalSyncObserver.waitUntilCanSendMessage()
 
         do {
             guard let apiVersion = BackendInfo.apiVersion else { throw MessageSendError.unresolvedApiVersion }
@@ -92,7 +89,8 @@ public final class MessageSender: MessageSenderInterface {
         let logAttributes = await logAttributesBuilder.logAttributes(message)
         WireLogger.messaging.debug("send message - start wait for quick sync to finish", attributes: logAttributes)
 
-        await quickSyncObserver.waitForDecryptionOfEventsToFinish()
+        await incrementalSyncObserver.waitUntilCanSendMessage()
+
         WireLogger.messaging.debug("send message - sync finished", attributes: logAttributes)
 
         do {

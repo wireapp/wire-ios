@@ -1280,13 +1280,8 @@
 // Open in
 "self.settings.external_apps.header" = "打开";
 
-"self.settings.link_options.twitter.title" = "Tweets";
 "self.settings.link_options.maps.title" = "位置";
 "self.settings.link_options.browser.title" = "浏览器";
-
-"open_link.twitter.option.default" = "浏览器/推特";
-"open_link.twitter.option.tweetbot" = "Tweetbot";
-"open_link.twitter.option.twitterrific" = "Twitterrific";
 
 "open_link.maps.option.apple" = "地图";
 "open_link.maps.option.google" = "Google地图";
@@ -1308,7 +1303,6 @@
 "self.settings.developer_options.title" = "开发人员选项";
 "self.settings.developer_options.loggin.title" = "选项";
 "self.settings.developer_options.database_statistics.title" = "数据库统计信息";
-"self.settings.apns_logging.title" = "APNS记录";
 
 // Privacy (visibility) options
 "self.settings.options_menu.title" = "选项";

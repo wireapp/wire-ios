@@ -133,6 +133,7 @@ struct ZMUserSessionBuilder {
         application: any ZMApplication,
         cryptoboxMigrationManager: any CryptoboxMigrationManagerInterface,
         coreDataStack: CoreDataStack,
+        coreCryptoProvider: CoreCryptoProviderProtocol,
         configuration: ZMUserSession.Configuration,
         contextStorage: any LAContextStorable,
         earService: (any EARServiceInterface)?,
@@ -149,13 +150,6 @@ struct ZMUserSessionBuilder {
     ) {
         // reused dependencies
 
-        let coreCryptoProvider = CoreCryptoProvider(
-            selfUserID: userId,
-            sharedContainerURL: coreDataStack.applicationContainer,
-            accountDirectory: coreDataStack.accountContainer,
-            syncContext: coreDataStack.syncContext,
-            cryptoboxMigrationManager: cryptoboxMigrationManager
-        )
         let lastEventIDRepository = LastEventIDRepository(
             userID: userId,
             sharedUserDefaults: sharedUserDefaults
@@ -203,11 +197,8 @@ struct ZMUserSessionBuilder {
             context: coreDataStack.syncContext,
             notificationContext: coreDataStack.syncContext.notificationContext,
             coreCryptoProvider: coreCryptoProvider,
-            conversationEventProcessor: ConversationEventProcessor(context: coreDataStack.syncContext),
             featureRepository: FeatureRepository(context: coreDataStack.syncContext),
             userDefaults: .standard,
-            // TODO: [WPB-15440] when integrating new quick sync, we'll need to pass the sync agent here.
-            syncStatus: applicationStatusDirectory.syncStatus,
             userID: coreDataStack.account.userIdentifier
         )
         let proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator ?? ProteusToMLSMigrationCoordinator(
