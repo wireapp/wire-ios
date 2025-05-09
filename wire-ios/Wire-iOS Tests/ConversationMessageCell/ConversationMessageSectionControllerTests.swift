@@ -508,7 +508,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         context: ConversationMessageContext? = nil,
         useInvertedIndices: Bool = false
     ) -> ConversationMessageSectionController {
-        
+
         let section = ConversationMessageSectionController(
             message: message,
             context: context ?? self.context,
