@@ -53,6 +53,9 @@ protocol ConversationMessageCellDelegate: AnyObject, MessageActionResponder {
     )
 
     func conversationMessageShouldUpdate()
+    
+    // TODO: Remove
+    func conversationMessageDidRequestToUpdate(nonce: UUID)
 
 }
 
@@ -145,7 +148,7 @@ protocol ConversationMessageCellDescription: AnyObject {
     /// In order to allow incremental migration to the new approach, the model will be part of the cell description for
     /// now.
     var conversationCellModel: ConversationCellModel? { get set }
-    func makeConversationCellModel() -> ConversationCellModel
+//    func makeConversationCellModel() -> ConversationCellModel
 
     /// The top margin is used to configure the spacing between the current and the previous cell.
     var topMargin: CGFloat { get set }
@@ -196,9 +199,9 @@ extension ConversationMessageCellDescription {
         set { fatalError() }
     }
     
-    func makeConversationCellModel() -> ConversationCellModel {
-        fatalError()
-    }
+//    func makeConversationCellModel() -> ConversationCellModel {
+//        fatalError()
+//    }
 
     var supportsActions: Bool {
         false
@@ -358,9 +361,9 @@ final class AnyConversationMessageCellDescription: NSObject {
         _conversationCellModel()
     }
     
-    func makeConversationCellModel() -> ConversationCellModel {
-        instance.makeConversationCellModel()
-    }
+//    func makeConversationCellModel() -> ConversationCellModel {
+//        instance.makeConversationCellModel()
+//    }
 
     var delegate: ConversationMessageCellDelegate? {
         get { _delegate.getter() }

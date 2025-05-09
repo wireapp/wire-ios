@@ -19,7 +19,7 @@
 public struct TimeDividerModel: ConversationCellModelProtocol {
     typealias ContentView = TimeDividerContentView
 
-    public var id: AnyHashable { self }
+//    public var id: AnyHashable { self }
 
     var text: String
     var isUnreadIndicatorVisible: Bool

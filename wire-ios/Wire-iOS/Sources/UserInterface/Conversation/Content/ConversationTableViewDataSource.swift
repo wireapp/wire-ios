@@ -104,6 +104,13 @@ final class ConversationTableViewDataSource: NSObject {
     }
 
     private(set) var currentSections: [Section] = []
+    
+    func updateMessage(nonce: UUID) {
+        guard let sectionController = sectionControllers.get(for: nonce) else {
+            return
+        }
+        reloadSections(newSections: calculateSections(updating: sectionController))
+    }
 
     /// calculate cell sections
     ///
@@ -693,10 +700,11 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
         }
 
         let cellDescription = section.elements[indexPath.row]
-        if cellDescription.instance is NewCellDescription {
-            let model = cellDescription.makeConversationCellModel()
-            cellDescription.instance.conversationCellModel = model
-            
+        if cellDescription.instance is NewCellDescription,
+            let model = cellDescription.conversationCellModel {
+//            let model = cellDescription.makeConversationCellModel()
+//            cellDescription.instance.conversationCellModel = model
+  
             model.registerIfNeeded(in: tableView)
             let cell = tableView.dequeueReusableCell(withIdentifier: model.cellReuseIdentifier, for: indexPath)
             model.configureCell(cell)

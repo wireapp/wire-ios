@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import Combine
 import WireDesign
 
 struct SenderMessageView: View {
@@ -26,6 +27,10 @@ struct SenderMessageView: View {
     var body: some View {
         HStack(spacing: 0) {
             Text(model.author)
+                .padding(12)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .fixedSize(horizontal: false, vertical: true)
+                .animation(.easeInOut, value: model.author)
         }
         .padding(.vertical, 8)
         .background(.green)
@@ -34,7 +39,7 @@ struct SenderMessageView: View {
 
 struct MessageStatusView: View {
     
-    let model: MessageStatusViewModel
+    @StateObject var model: MessageStatusViewModel
     
     var body: some View {
         HStack {
@@ -49,7 +54,7 @@ struct MessageStatusView: View {
 
 struct TextMessageView: ConversationCellContentViewProtocol {
 
-    private(set) var model: TextMessageViewModel
+    @StateObject var model: TextMessageViewModel
 
     var body: some View {
         VStack {
@@ -79,16 +84,24 @@ struct TextMessageView: ConversationCellContentViewProtocol {
 
 }
 
-//// MARK: - Previews
-//
-//#Preview("Simple") {
-//    let model = TextMessageViewModel(
-//        text: "Test message",
-//        senderViewModel: nil,
-//        statusViewModel: nil
-//    )
-//    TextMessageView(model: model)
-//}
+// MARK: - Previews
+
+#Preview("Simple") {
+    let model = TextMessageViewModel(
+        text: "Test message",
+        senderViewModel: MessageSenderViewModel(
+            avatar: AvatarViewModel(color: .red),
+            author: "Author name",
+            authorChanged: MockSenderObserver()
+        ),
+        statusViewModel: MessageStatusViewModel(
+            deliveryState: .pending,
+            edited: true,
+            timestamp: "2 mins ago"
+        )
+    )
+    TextMessageView(model: model)
+}
 
 extension DeliveryState {
     var text: String {
@@ -106,5 +119,11 @@ extension DeliveryState {
         case .failedToSend:
             "Failed"
         }
+    }
+}
+
+struct MockSenderObserver: SenderObserverProtocol {
+    var authorChangedPublisher: AnyPublisher<String, Never> {
+        Empty().eraseToAnyPublisher()
     }
 }

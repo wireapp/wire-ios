@@ -37,13 +37,13 @@ final class ConversationCell<Model: ConversationCellModelProtocol>: UITableViewC
 
 // MARK: - Previews
 
-@available(iOS 17, *)
-#Preview {
-    ConversationCellsPreview(
-        itemIdentifiers: [
-            .timeDivider(text: "Friday", isUnread: false),
-            .timeDivider(text: "Saturday", isUnread: false),
-            .timeDivider(text: "Today", isUnread: true)
-        ]
-    )
-}
+//@available(iOS 17, *)
+//#Preview {
+//    ConversationCellsPreview(
+//        itemIdentifiers: [
+//            .timeDivider(text: "Friday", isUnread: false),
+//            .timeDivider(text: "Saturday", isUnread: false),
+//            .timeDivider(text: "Today", isUnread: true)
+//        ]
+//    )
+//}

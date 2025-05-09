@@ -19,7 +19,7 @@
 import SwiftUI
 
 // the `Hashable` requirement could be loosened if needed (and moved to conforming types where needed)
-protocol ConversationCellModelProtocol: Hashable, Identifiable, Sendable {
+protocol ConversationCellModelProtocol {
     associatedtype ContentView: ConversationCellContentViewProtocol
 
     init()

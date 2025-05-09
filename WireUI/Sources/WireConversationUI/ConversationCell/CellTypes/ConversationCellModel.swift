@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum ConversationCellModel: Hashable, Sendable {
+public enum ConversationCellModel {
 
     /// Used to group messages by time.
     case timeDivider(TimeDividerModel)

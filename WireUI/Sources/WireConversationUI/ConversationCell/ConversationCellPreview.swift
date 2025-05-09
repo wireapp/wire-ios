@@ -18,58 +18,58 @@
 
 import SwiftUI
 
-final class ConversationCellsPreview: UITableViewController {
-
-    enum SectionIdentifier {
-        case single
-    }
-
-    typealias ItemIdentifier = ConversationCellModel
-
-    private let itemIdentifiers: [ItemIdentifier]
-    private var dataSource: UITableViewDiffableDataSource<SectionIdentifier, ItemIdentifier>!
-
-    init(itemIdentifiers: [ItemIdentifier]) {
-        self.itemIdentifiers = itemIdentifiers
-        super.init(style: .plain)
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) is not supported")
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setupTableView()
-        loadItems()
-    }
-
-    private func setupTableView() {
-        registerCellTypes()
-        setupDataSource()
-        tableView.separatorStyle = .none
-    }
-
-    private func registerCellTypes() {
-        for itemIdentifier in itemIdentifiers {
-            itemIdentifier.registerIfNeeded(in: tableView)
-        }
-    }
-
-    private func setupDataSource() {
-        dataSource = UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, itemIdentifier in
-            let cell = tableView.dequeueReusableCell(withIdentifier: itemIdentifier.cellReuseIdentifier, for: indexPath)
-            itemIdentifier.configureCell(cell)
-            return cell
-        }
-    }
-
-    private func loadItems() {
-        var snapshot = dataSource.snapshot()
-        snapshot.appendSections([.single])
-        snapshot.appendItems(itemIdentifiers)
-        dataSource.applySnapshotUsingReloadData(snapshot)
-    }
-
-}
+//final class ConversationCellsPreview: UITableViewController {
+//
+//    enum SectionIdentifier {
+//        case single
+//    }
+//
+//    typealias ItemIdentifier = ConversationCellModel
+//
+//    private let itemIdentifiers: [ItemIdentifier]
+//    private var dataSource: UITableViewDiffableDataSource<SectionIdentifier, ItemIdentifier>!
+//
+//    init(itemIdentifiers: [ItemIdentifier]) {
+//        self.itemIdentifiers = itemIdentifiers
+//        super.init(style: .plain)
+//    }
+//
+//    @available(*, unavailable)
+//    required init?(coder aDecoder: NSCoder) {
+//        fatalError("init(coder:) is not supported")
+//    }
+//
+//    override func viewDidLoad() {
+//        super.viewDidLoad()
+//        setupTableView()
+//        loadItems()
+//    }
+//
+//    private func setupTableView() {
+//        registerCellTypes()
+//        setupDataSource()
+//        tableView.separatorStyle = .none
+//    }
+//
+//    private func registerCellTypes() {
+//        for itemIdentifier in itemIdentifiers {
+//            itemIdentifier.registerIfNeeded(in: tableView)
+//        }
+//    }
+//
+//    private func setupDataSource() {
+//        dataSource = UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, itemIdentifier in
+//            let cell = tableView.dequeueReusableCell(withIdentifier: itemIdentifier.cellReuseIdentifier, for: indexPath)
+//            itemIdentifier.configureCell(cell)
+//            return cell
+//        }
+//    }
+//
+//    private func loadItems() {
+//        var snapshot = dataSource.snapshot()
+//        snapshot.appendSections([.single])
+//        snapshot.appendItems(itemIdentifiers)
+//        dataSource.applySnapshotUsingReloadData(snapshot)
+//    }
+//
+//}

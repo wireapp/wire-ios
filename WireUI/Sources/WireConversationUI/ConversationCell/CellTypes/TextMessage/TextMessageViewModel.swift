@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import Combine
 import SwiftUI
 
 public struct AvatarViewModel: Hashable, Sendable {
@@ -26,19 +27,41 @@ public struct AvatarViewModel: Hashable, Sendable {
     }
 }
 
-public struct MessageSenderViewModel: Hashable, Sendable {
+public protocol SenderObserverProtocol {
+    var authorChangedPublisher: AnyPublisher<String, Never> { get }
+}
+
+public struct MessageSenderViewModel {
     
     let avatar: AvatarViewModel
 
-    let author: AttributedString
+    @State var author: AttributedString
     
-    public init(avatar: AvatarViewModel, author: AttributedString) {
+//    public var significantChangeSubject = PassthroughSubject<Void, Never>()
+    private let authorChanged: any SenderObserverProtocol
+    private var cancellables: Set<AnyCancellable> = []
+
+    public init(
+        avatar: AvatarViewModel,
+        author: String,
+        authorChanged: any SenderObserverProtocol
+    ) {
         self.avatar = avatar
-        self.author = author
+        self.authorChanged = authorChanged
+        self.author = AttributedString(stringLiteral: author)
+        authorChanged.authorChangedPublisher.sink { [self] author in
+            self.author = AttributedString(author)
+            // TODO: check if this significant change or not
+        }.store(in: &cancellables)
+        observeChanges()
+    }
+         
+    private func observeChanges() {
+        
     }
 }
 
-public enum DeliveryState: Int, Sendable {
+public enum DeliveryState: Int, Sendable, Equatable, CaseIterable {
     case invalid
     case pending
     case sent
@@ -47,11 +70,14 @@ public enum DeliveryState: Int, Sendable {
     case failedToSend
 }
 
-public struct MessageStatusViewModel: Hashable, Sendable {
-    let deliveryState: DeliveryState?
-    let edited: Bool
-    let timestamp: String
+public final class MessageStatusViewModel: ObservableObject {
     
+    @Published public var deliveryState: DeliveryState?
+    public let edited: Bool
+    public let timestamp: String
+    
+//    public var significantChangeSubject = PassthroughSubject<Void, Never>()
+
     public init(
         deliveryState: DeliveryState?,
         edited: Bool,
@@ -62,17 +88,24 @@ public struct MessageStatusViewModel: Hashable, Sendable {
         self.timestamp = timestamp
     }
 }
-
-public struct TextMessageViewModel: ConversationCellModelProtocol {
+public class TextMessageViewModel: ObservableObject, ConversationCellModelProtocol {
     
     typealias ContentView = TextMessageView
     
-    let senderViewModel: MessageSenderViewModel?
-    let statusViewModel: MessageStatusViewModel?
+    public var senderViewModel: MessageSenderViewModel?
+    public var statusViewModel: MessageStatusViewModel?
+    
+    func buildView() -> ContentView {
+        ContentView(model: self)
+    }
 
-    public var id: AnyHashable { self }
+//    public var id: AnyHashable { self }
 
-    var text: String
+//    private var timer: AnyCancellable?
+    
+//    public var significantChangeSubject = PassthroughSubject<Void, Never>()
+
+    @Published var text: String
     
     public init(
         text: String,
@@ -82,16 +115,47 @@ public struct TextMessageViewModel: ConversationCellModelProtocol {
         self.text = text
         self.senderViewModel = senderViewModel
         self.statusViewModel = statusViewModel
+//        startRandomStateTimer()
     }
 
-    init() {
+    required convenience init() {
         self.init(
             text: "",
             senderViewModel: nil,
             statusViewModel: nil
         )
     }
-
+    
+//    private func startRandomStateTimer() {
+//        timer = Timer.publish(every: 1.0, on: .main, in: .common)
+//            .autoconnect()
+//            .sink { [weak self] _ in
+//                guard let self else { return }
+//                let (newText, lines) = self.randomMultilineText()
+//                if lines >= 2 {
+//                    self.significantChangeSubject.send(())
+//                } else {
+//                    self.text = newText
+//                }
+//            }
+//    }
+    
+//    func randomMultilineText() -> (String, Int) {
+//        let lines = [
+//            "Hello!",
+//            "This is a second line.",
+//            "Here comes the third one."
+//        ]
+//        
+//        let numberOfLines = Int.random(in: 1...3)
+//        return (lines.prefix(numberOfLines).joined(
+//            separator: "\n"
+//        ), numberOfLines)
+//    }
+//
+//    deinit {
+//        timer?.cancel()
+//    }
 }
 
 extension ConversationCellModel {

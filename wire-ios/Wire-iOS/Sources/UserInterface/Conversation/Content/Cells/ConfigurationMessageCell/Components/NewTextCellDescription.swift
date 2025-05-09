@@ -17,16 +17,48 @@
 //
 
 import Foundation
-
+import Combine
 import UIKit
 import WireConversationUI
 import WireFoundation
 import WireSystem
 import WireDataModel
+import WireSyncEngine
+import WireDesign
 
 protocol NewCellDescription { }
 extension NewTextCellDescription: NewCellDescription { }
 extension BurstTimestampSenderMessageCellDescription: NewCellDescription { }
+
+final class SenderObserver: NSObject, ZMMessageObserver, SenderObserverProtocol {
+    
+    var observation: Any?
+    
+    var author: String?
+    private let authorChangedSubject = PassthroughSubject<String, Never>()
+    var authorChangedPublisher: AnyPublisher<String, Never> {
+        authorChangedSubject
+            .removeDuplicates()
+            .eraseToAnyPublisher()
+    }
+    
+    init(
+        messageID: NSManagedObjectID,
+        viewContext: NSManagedObjectContext,
+        userSession: ZMUserSession
+    ) {
+        super.init()
+        viewContext.perform {
+            let message = try! viewContext.existingObject(with: messageID) as! ZMMessage
+            self.author = message.senderName
+            self.observation = MessageChangeInfo.add(observer: self, for: message, userSession: userSession)
+        }
+    }
+    
+    func messageDidChange(_ changeInfo: WireDataModel.MessageChangeInfo) {
+        authorChangedSubject.send(changeInfo.message.senderName)
+    }
+}
 
 final class NewTextCellDescription: ConversationMessageCellDescription {
     
@@ -34,19 +66,32 @@ final class NewTextCellDescription: ConversationMessageCellDescription {
 
     @MainActor var conversationCellModel: ConversationCellModel?
 
-    func makeConversationCellModel() -> ConversationCellModel {
+    private var cancellables: Set<AnyCancellable> = []
+
+    func makeConversationCellModel(message: ZMMessage) -> ConversationCellModel {
+        
         let model = TextMessageViewModel(
             text: configuration.text,
             senderViewModel: MessageSenderViewModel(
                 avatar: AvatarViewModel(color: configuration.accentColor.color),
-                author: AttributedString(configuration.author)
+                author: configuration.author,
+                authorChanged: SenderObserver(
+                    messageID: message.objectID,
+                    viewContext: ZMUserSession
+                        .shared()!.contextProvider.viewContext,
+                    userSession: ZMUserSession.shared()! // TODO: DI
+                )
             ),
             statusViewModel: MessageStatusViewModel(
-                deliveryState: message?.deliveryState.toUIModel(),
-                edited: message?.updatedAt != nil,
-                timestamp: message?.serverTimestamp?.formattedDate ?? "-"
+                deliveryState: message.deliveryState.toUIModel(),
+                edited: message.updatedAt != nil,
+                timestamp: message.serverTimestamp?.formattedDate ?? "-"
             )
         )
+        model.significantChangeSubject.sink { [weak self] _ in
+            guard let self else { return }
+            delegate?.conversationMessageDidRequestToUpdate(nonce: self.nonce)
+        }.store(in: &cancellables)
         return ConversationCellModel.text(model)
     }
 
@@ -63,13 +108,15 @@ final class NewTextCellDescription: ConversationMessageCellDescription {
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String? = nil
-
+    private let nonce: UUID
     
     init(
-        configuration: View.Configuration
+        configuration: View.Configuration,
+        message: ZMMessage
     ) {
         self.configuration = configuration
-        self.conversationCellModel = makeConversationCellModel()
+        self.nonce = message.nonce!
+        self.conversationCellModel = makeConversationCellModel(message: message)
     }
 
     convenience init(
@@ -82,7 +129,7 @@ final class NewTextCellDescription: ConversationMessageCellDescription {
             author: message.senderName,
             accentColor: accentColor
         )
-        self.init(configuration: configuration)
+        self.init(configuration: configuration, message: message as! ZMMessage)
     }
 
 }
