@@ -103,7 +103,7 @@ platform :ios do
     end
 
     desc "Generate env config for UI Tests"
-    lane :generate_env do
+    def :generate_env do
         sh "cd .. && op inject -i wire-ios/WireUITests/env.xcconfig.tpl -o wire-ios/WireUITests/env.xcconfig"
     end
 
@@ -112,6 +112,7 @@ platform :ios do
         schemes = ["WireUITests"]
         options[:testplan] = "UITests"
         begin
+            generate_env
             run_tests_frameworks(schemes, options)
         rescue => e
             UI.test_failure!("Failing running tests #{e.to_s}")
