@@ -52,4 +52,5 @@ public extension LogAttributes {
     static let newNSE = [LogAttributesKey.nse: "new"]
     static let legacyNSE = [LogAttributesKey.nse: "legacy"]
     static let pushChannelV3 = [LogAttributesKey.pushChannelVersion: "v3"]
+    static let pushChannelV1 = [LogAttributesKey.pushChannelVersion: "v1"]
 }
