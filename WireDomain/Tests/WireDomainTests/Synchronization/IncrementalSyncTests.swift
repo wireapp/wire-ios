@@ -112,6 +112,9 @@ final class IncrementalSyncTests: XCTestCase {
         // Live events are decrypted.
         decryptor.decryptEventsIn_MockMethod = { $0.events }
 
+        // Last event is being updated.
+        store.storeLastEventIDId_MockMethod = { _ in }
+
         // Events are processed.
         processor.processEvent_MockMethod = { _ in }
 
@@ -146,7 +149,6 @@ final class IncrementalSyncTests: XCTestCase {
         // Then live events were stored (duplicates skipped).
         XCTAssertEqual(store.indexOfLastEventEnvelope_Invocations.count, 2)
 
-        // Then live events were stored (duplicates skipped).
         let storeInvocations = store.persistEventEnvelopeIndex_Invocations
         try XCTAssertCount(storeInvocations, count: 2)
         XCTAssertEqual(storeInvocations[0].eventEnvelope, Scaffolding.event4)
@@ -157,7 +159,7 @@ final class IncrementalSyncTests: XCTestCase {
         // Then last event id was updated once (for the non-transient live
         // event)
         try XCTAssertCount(store.storeLastEventIDId_Invocations, count: 1)
-        XCTAssertEqual(store.storeLastEventIDId_Invocations[0], Scaffolding.event5.id)
+        XCTAssertEqual(store.storeLastEventIDId_Invoca
 
         // Then all events were processed once (duplicates skipped).
         XCTAssertEqual(
