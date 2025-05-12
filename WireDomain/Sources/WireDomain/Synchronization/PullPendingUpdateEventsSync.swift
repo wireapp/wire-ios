@@ -42,12 +42,12 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
 
     @discardableResult
     public func pull() async throws -> AsyncStream<[UpdateEvent]> {
-        WireLogger.sync.debug("pulling pending events")
-
         // We want all events since this event.
         guard let lastEventID = store.lastEventID() else {
             throw PullPendingUpdateEventsSyncError.noLastEventID
         }
+
+        WireLogger.sync.debug("pulling pending events since: \(lastEventID)")
 
         // We'll insert new events from this index.
         var currentIndex = try await store.indexOfLastEventEnvelope() + 1
