@@ -74,7 +74,7 @@ public extension UIView {
         heightAnchor.constraint(equalToConstant: value).isActive = true
         return self
     }
-    
+
     @discardableResult
     func minHeightConstraint(_ value: CGFloat) -> Self {
         translatesAutoresizingMaskIntoConstraints = false
@@ -123,7 +123,7 @@ public extension UIView {
 
         return view
     }
-        
+
     /// Returns a container view which is specifically useful not to stretch its content.
     func wrapInViewWithFlexibleTopAndBottom() -> UIView {
         let view = UIView()
@@ -133,7 +133,7 @@ public extension UIView {
 
         let bottomConstraint = view.bottomAnchor.constraint(equalTo: bottomAnchor)
         bottomConstraint.priority = .defaultLow
-        
+
         let topConstraint = view.topAnchor.constraint(equalTo: topAnchor)
         topConstraint.priority = .defaultLow
 
@@ -146,6 +146,5 @@ public extension UIView {
 
         return view
     }
-
 
 }

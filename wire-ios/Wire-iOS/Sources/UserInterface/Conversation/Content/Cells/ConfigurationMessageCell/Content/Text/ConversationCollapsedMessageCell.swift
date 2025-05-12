@@ -145,7 +145,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         }
 
         let message = object.message
-        if message.isText && !message.hasLinks {
+        if message.isText, !message.hasLinks {
             typeIcon.isHidden = true
             if let textMessageData = message.textMessageData {
                 messageTextView.attributedText = NSAttributedString
@@ -210,7 +210,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
 
         let rightStack = [typeIcon, collapseButton.wrapInView(trailingInset: margins.right)]
             .horizontalStack(spacing: 8, alignment: .center)
-        
+
         let stack = UIStackView.horizontal(
             views: [
                 spacingView,
@@ -236,15 +236,14 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
                 constant: -5
             ).isActive = true
 
-        
         let stackWithTopMargin = stack.wrapInView(topInset: 8)
         addSubview(stackWithTopMargin)
-        
+
         stackWithTopMargin
             .pin(to: self)
             .minHeightConstraint(30)
             .setIsUserInteractionEnabled(false)
-        
+
         stack
             .setTranslatesAutoresizingMaskIntoConstraints(false)
             .setIsUserInteractionEnabled(false)
