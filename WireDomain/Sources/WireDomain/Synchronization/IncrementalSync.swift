@@ -118,6 +118,9 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                         continue
                     }
 
+                    // Bump the last event id so we don't refech it.
+                    store.storeLastEventID(id: envelope.id)
+
                     // Process.
                     for event in envelope.events {
                         do {
