@@ -106,6 +106,10 @@ public struct NewIncrementalSync: LiveSyncProtocol {
                             continue
                         }
                         
+                        // Bump the last event id so we don't refetch it.
+                        // there's no events marked as transcient anymore
+                        store.storeLastEventID(id: envelope.id)
+                        
                         // ACK
                         do {
                             if let deliveryTag = envelope.deliveryTag {

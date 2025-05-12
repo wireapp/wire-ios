@@ -90,21 +90,13 @@ public actor PushChannel: PushChannelProtocol {
             do {
                 while true {
                     try await Task.sleep(for: .seconds(keepAliveInterval))
-                    await sendKeepAlivePing()
+                    WireLogger.pushChannel.debug("sending keep alive ping")
+                    await webSocket.sendPing()
                 }
             } catch {
                 WireLogger.pushChannel.warn("keep alive task was cancelled")
                 tearDownKeepAliveTask()
             }
-        }
-    }
-
-    private func sendKeepAlivePing() async {
-        do {
-            WireLogger.pushChannel.debug("sending keep alive ping")
-            try await webSocket.sendPing()
-        } catch {
-            WireLogger.pushChannel.error("failed to send keep alive ping: \(error)")
         }
     }
 

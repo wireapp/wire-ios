@@ -110,7 +110,7 @@ public final class ZMUserSession: NSObject {
     public internal(set) var mlsGroupVerification: (any MLSGroupVerificationProtocol)?
 
     let analyiticsLogger: WireLogger
-    private let journal: Journal
+    let journal: Journal
 
     // MARK: Computed Properties
 
