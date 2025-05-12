@@ -307,7 +307,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         )
 
         // THEN
-        snapshotHelper.verify(matching: sut, record: true)
+        snapshotHelper.verify(matching: sut)
     }
 
 }
