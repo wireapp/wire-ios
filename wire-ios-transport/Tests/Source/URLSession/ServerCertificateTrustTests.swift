@@ -126,9 +126,8 @@ final class BackendTrustProviderTests: XCTestCase {
 
     func testThatItVerifiesWithNoPinnedKeys() {
         // given
-        mockDateProvider.now = Date()
         let trustExpectation = expectation(description: "It should verify server trust")
-        let trustProvider = ServerCertificateTrust(trustData: [], currentDateProvider: mockDateProvider)
+        let trustProvider = ServerCertificateTrust(trustData: [], currentDateProvider: .system)
         let trustVerificator = TestTrustVerificator(trustProvider: trustProvider) { trusted in
             if trusted {
                 trustExpectation.fulfill()
