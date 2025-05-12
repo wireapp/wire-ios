@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import XCTest
 @testable import WireAPI
 @testable import WireAPISupport
@@ -31,6 +32,7 @@ final class IncrementalSyncTests: XCTestCase {
     var store: MockUpdateEventsLocalStoreProtocol!
     var processor: MockUpdateEventProcessorProtocol!
     var databaseSaver: MockDatabaseSaverProtocol!
+    var syncStateSubject: CurrentValueSubject<SyncState, Never>!
 
     override func setUp() {
         pushChannelAPI = MockPushChannelAPI()
@@ -39,6 +41,7 @@ final class IncrementalSyncTests: XCTestCase {
         store = MockUpdateEventsLocalStoreProtocol()
         processor = MockUpdateEventProcessorProtocol()
         databaseSaver = MockDatabaseSaverProtocol()
+        syncStateSubject = CurrentValueSubject(.idle)
         sut = IncrementalSync(
             selfClientID: Scaffolding.selfClientID,
             pushChannelAPI: pushChannelAPI,
@@ -46,7 +49,8 @@ final class IncrementalSyncTests: XCTestCase {
             decryptor: decryptor,
             store: store,
             processor: processor,
-            databaseSaver: databaseSaver
+            databaseSaver: databaseSaver,
+            syncStateSubject: syncStateSubject
         )
     }
 
@@ -58,6 +62,7 @@ final class IncrementalSyncTests: XCTestCase {
         store = nil
         processor = nil
         databaseSaver = nil
+        syncStateSubject = nil
     }
 
     func test_perform_pendingEventsExist() async throws {
@@ -107,6 +112,9 @@ final class IncrementalSyncTests: XCTestCase {
         // Live events are decrypted.
         decryptor.decryptEventsIn_MockMethod = { $0.events }
 
+        // Last event is being updated.
+        store.storeLastEventIDId_MockMethod = { _ in }
+
         // Events are processed.
         processor.processEvent_MockMethod = { _ in }
 
@@ -141,13 +149,17 @@ final class IncrementalSyncTests: XCTestCase {
         // Then live events were stored (duplicates skipped).
         XCTAssertEqual(store.indexOfLastEventEnvelope_Invocations.count, 2)
 
-        // Then live events were stored (duplicates skipped).
         let storeInvocations = store.persistEventEnvelopeIndex_Invocations
         try XCTAssertCount(storeInvocations, count: 2)
         XCTAssertEqual(storeInvocations[0].eventEnvelope, Scaffolding.event4)
         XCTAssertEqual(storeInvocations[0].index, 11)
         XCTAssertEqual(storeInvocations[1].eventEnvelope, Scaffolding.event5)
         XCTAssertEqual(storeInvocations[1].index, 12)
+
+        // Then last event id was updated, onece for each live event.
+        try XCTAssertCount(store.storeLastEventIDId_Invocations, count: 2)
+        XCTAssertEqual(store.storeLastEventIDId_Invocations[0], Scaffolding.event4.id)
+        XCTAssertEqual(store.storeLastEventIDId_Invocations[1], Scaffolding.event5.id)
 
         // Then all events were processed once (duplicates skipped).
         XCTAssertEqual(

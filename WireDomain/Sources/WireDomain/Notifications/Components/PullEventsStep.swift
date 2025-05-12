@@ -145,14 +145,8 @@ extension PullEventsStep {
     }
 
     var mlsMessageDecryptor: any MLSMessageDecryptorProtocol {
-        let commitSender = CommitSender(
-            coreCryptoProvider: coreCryptoProvider,
-            notificationContext: dependency.coreData.syncContext.notificationContext
-        )
-
         let mlsActionExecutor = MLSActionExecutor(
             coreCryptoProvider: coreCryptoProvider,
-            commitSender: commitSender,
             featureRepository: featureRepository
         )
 

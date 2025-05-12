@@ -76,13 +76,14 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         // Given
         let groupID = MLSGroupID.random()
         let message = Data.random().base64EncodedString()
+        let error = CoreCryptoError.Other("conversation not found")
 
         mockMLSActionExecutor.mockDecryptMessage = { _, _ in
-            throw CryptoError.ConversationNotFound(message: "conversation not found")
+            throw error
         }
 
         // Then
-        await assertItThrows(error: DecryptionError.failedToDecryptMessage) {
+        await assertItThrows(error: DecryptionError.failedToDecryptMessage(reason: error)) {
             // When
             try _ = await sut.decrypt(
                 message: message,
@@ -317,51 +318,6 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         // Then
         XCTAssertEqual(mockDecryptMessageCount, 1)
         XCTAssertEqual(results.first, MLSDecryptResult.message(messageData, sender.clientID))
-    }
-
-    func test_Decrypt_PublishesEpochChanges() async throws {
-        // Given
-        let groupID = MLSGroupID.random()
-        let messageData = Data.random()
-        let hasEpochChanged = true
-        let sender = MLSClientID(
-            userID: UUID.create().transportString(),
-            clientID: "client",
-            domain: "example.com"
-        )
-
-        var receivedGroupIDs = [MLSGroupID]()
-        let didReceiveGroupIDs = customExpectation(description: "didReceiveGroupIDs")
-        let cancellable = sut.onEpochChanged().collect(1).sink {
-            receivedGroupIDs = $0
-            didReceiveGroupIDs.fulfill()
-        }
-
-        mockMLSActionExecutor.mockDecryptMessage = { _, _ in
-            DecryptedMessage(
-                message: messageData,
-                proposals: [],
-                isActive: false,
-                commitDelay: nil,
-                senderClientId: sender.rawValue.data(using: .utf8)!,
-                hasEpochChanged: hasEpochChanged,
-                identity: .withBasicCredentials(),
-                bufferedMessages: nil,
-                crlNewDistributionPoints: nil
-            )
-        }
-
-        // When
-        _ = try await sut.decrypt(
-            message: messageData.base64EncodedString(),
-            for: groupID,
-            subconversationType: nil
-        )
-
-        // Then
-        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
-        cancellable.cancel()
-        XCTAssertEqual(receivedGroupIDs, [groupID])
     }
 
     func test_Decrypt_PublishesNewDistributionPoints() async throws {

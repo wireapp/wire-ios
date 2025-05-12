@@ -49,6 +49,9 @@ final class ZMUserSessionTests_AccessToken: ZMUserSessionTestsBase {
         }
         BackendInfo.apiVersion = apiVersion
 
+        mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
+        mockCoreCryptoProvider.registerEpochObserver_MockMethod = { _ in }
+
         // when
         sut.didRegisterSelfUserClient(userClient)
 
