@@ -64,10 +64,18 @@ struct UpdateEventMigrator {
 
             for legacyEvent in legacyEvents {
                 // Map it to the new event model.
-                guard let newUpdateEvent = UpdateEvent(
-                    legacyEvent: legacyEvent,
-                    localDomain: localDomain
-                ) else {
+                let newUpdateEvent: UpdateEvent?
+                do {
+                    newUpdateEvent = try UpdateEvent(
+                        legacyEvent: legacyEvent,
+                        localDomain: localDomain
+                    )
+                } catch {
+                    WireLogger.sync.error("failed to map legacy event, skipping... reason: \(String(describing: error))")
+                    continue
+                }
+
+                guard let newUpdateEvent else {
                     WireLogger.sync.warn("legacy event does not need mapping, skipping...")
                     continue
                 }
@@ -113,76 +121,69 @@ struct UpdateEventMigrator {
 
 private extension UpdateEvent {
 
+    enum Failure: Error {
+
+        case failedToDecodeLegacyEvent(any Error)
+        case missingRequiredField
+
+    }
+
     init?(
         legacyEvent: ZMUpdateEvent,
         localDomain: String
-    ) {
+    ) throws {
         switch legacyEvent.type {
         case .conversationDelete:
-            guard let event = Self.conversationDeleteEvent(
+            let event = try Self.conversationDeleteEvent(
                 from: legacyEvent,
                 localDomain: localDomain
-            ) else {
-                return nil
-            }
+            )
 
             self = .conversation(.delete(event))
 
         case .conversationMemberLeave:
-            guard let event = Self.conversationMemberLeaveEvent(
+            let event = try Self.conversationMemberLeaveEvent(
                 from: legacyEvent,
                 localDomain: localDomain
-            ) else {
-                return nil
-            }
+            )
 
             self = .conversation(.memberLeave(event))
 
         case .conversationMLSMessageAdd:
-            guard let event = Self.conversationMLSMessageAddEvent(
+            let event = try Self.conversationMLSMessageAddEvent(
                 from: legacyEvent,
                 localDomain: localDomain
-            ) else {
-                return nil
-            }
+            )
 
             self = .conversation(.mlsMessageAdd(event))
 
         case .conversationMLSWelcome:
-            guard let event = Self.conversationMLSWelcomeEvent(
+            let event = try Self.conversationMLSWelcomeEvent(
                 from: legacyEvent,
                 localDomain: localDomain
-            ) else {
-                return nil
-            }
+            )
 
             self = .conversation(.mlsWelcome(event))
 
         case .conversationOtrMessageAdd:
-            guard let event = Self.conversationProteusMessageAddEvent(
+            let event = try Self.conversationProteusMessageAddEvent(
                 from: legacyEvent,
                 localDomain: localDomain
-            ) else {
-                return nil
-            }
+            )
 
             self = .conversation(.proteusMessageAdd(event))
 
         case .federationConnectionRemoved:
-            guard let event = Self.federationConnectionRemovedEvent(
+            let event = try Self.federationConnectionRemovedEvent(
                 from: legacyEvent
-            ) else {
-                return nil
-            }
+            )
 
             self = .federation(.connectionRemoved(event))
 
         case .federationDelete:
-            guard let event = Self.federationDeleteEvent(
+            let event = try Self.federationDeleteEvent(
                 from: legacyEvent
-            ) else {
-                return nil
-            }
+            )
 
             self = .federation(.delete(event))
 
@@ -199,18 +200,23 @@ private extension UpdateEvent {
     private static func conversationDeleteEvent(
         from event: ZMUpdateEvent,
         localDomain: String
-    ) -> ConversationDeleteEvent? {
-        let decoder = EventPayloadDecoder()
-        guard
-            let payload = try? decoder.decode(
-                Payload.ConversationEvent<Payload.UpdateConversationDeleted>.self,
+    ) throws -> ConversationDeleteEvent {
+        let payload: Payload.ConversationEvent<Payload.UpdateConversationDeleted>
+        do {
+            payload = try EventPayloadDecoder().decode(
+                type(of: payload),
                 from: event.payload
-            ),
+            )
+        } catch {
+            throw Failure.failedToDecodeLegacyEvent(error)
+        }
+
+        guard
             let conversationID = payload.conversationID(localDomain: localDomain),
             let senderID = payload.senderID(localDomain: localDomain),
             let timestamp = payload.timestamp
         else {
-            return nil
+            throw Failure.missingRequiredField
         }
 
         return ConversationDeleteEvent(
@@ -223,19 +229,24 @@ private extension UpdateEvent {
     private static func conversationMemberLeaveEvent(
         from event: ZMUpdateEvent,
         localDomain: String
-    ) -> ConversationMemberLeaveEvent? {
-        let decoder = EventPayloadDecoder()
-        guard
-            let payload = try? decoder.decode(
-                Payload.ConversationEvent<Payload.UpdateConversationMemberLeave>.self,
+    ) throws -> ConversationMemberLeaveEvent {
+        let payload: Payload.ConversationEvent<Payload.UpdateConversationMemberLeave>
+        do {
+            payload = try EventPayloadDecoder().decode(
+                type(of: payload),
                 from: event.payload
-            ),
+            )
+        } catch {
+            throw Failure.failedToDecodeLegacyEvent(error)
+        }
+
+        guard
             let conversationID = payload.conversationID(localDomain: localDomain),
             let senderID = payload.senderID(localDomain: localDomain),
             let timestamp = payload.timestamp,
             let leaveReason = payload.data.reason
         else {
-            return nil
+            throw Failure.missingRequiredField
         }
 
         var removedUserIDs = Set<UserID>()
@@ -279,18 +290,23 @@ private extension UpdateEvent {
     private static func conversationMLSMessageAddEvent(
         from event: ZMUpdateEvent,
         localDomain: String
-    ) -> ConversationMLSMessageAddEvent? {
-        let decoder = EventPayloadDecoder()
-        guard
-            let payload = try? decoder.decode(
-                Payload.ConversationEvent<DecryptedMLSMessageAddEvent>.self,
+    ) throws -> ConversationMLSMessageAddEvent {
+        let payload: Payload.ConversationEvent<DecryptedMLSMessageAddEvent>
+        do {
+            payload = try EventPayloadDecoder().decode(
+                type(of: payload),
                 from: event.payload
-            ),
+            )
+        } catch {
+            throw Failure.failedToDecodeLegacyEvent(error)
+        }
+
+        guard
             let conversationID = payload.conversationID(localDomain: localDomain),
             let senderID = payload.senderID(localDomain: localDomain),
             let timestamp = payload.timestamp
         else {
-            return nil
+            throw Failure.missingRequiredField
         }
 
         // Each mls message can actually produce multiple messages
@@ -320,17 +336,22 @@ private extension UpdateEvent {
     private static func conversationMLSWelcomeEvent(
         from event: ZMUpdateEvent,
         localDomain: String
-    ) -> ConversationMLSWelcomeEvent? {
-        let decoder = EventPayloadDecoder()
-        guard
-            let payload = try? decoder.decode(
-                Payload.ConversationEvent<MLSWelcomeEvent>.self,
+    ) throws -> ConversationMLSWelcomeEvent {
+        let payload: Payload.ConversationEvent<MLSWelcomeEvent>
+        do {
+            payload = try EventPayloadDecoder().decode(
+                type(of: payload),
                 from: event.payload
-            ),
+            )
+        } catch {
+            throw Failure.failedToDecodeLegacyEvent(error)
+        }
+
+        guard
             let conversationID = payload.conversationID(localDomain: localDomain),
             let senderID = payload.senderID(localDomain: localDomain)
         else {
-            return nil
+            throw Failure.missingRequiredField
         }
 
         return ConversationMLSWelcomeEvent(
@@ -343,18 +364,23 @@ private extension UpdateEvent {
     private static func conversationProteusMessageAddEvent(
         from event: ZMUpdateEvent,
         localDomain: String
-    ) -> ConversationProteusMessageAddEvent? {
-        let decoder = EventPayloadDecoder()
-        guard
-            let payload = try? decoder.decode(
-                Payload.ConversationEvent<DecryptedProteusMessageEvent>.self,
+    ) throws -> ConversationProteusMessageAddEvent {
+        let payload: Payload.ConversationEvent<DecryptedProteusMessageEvent>
+        do {
+            payload = try EventPayloadDecoder().decode(
+                type(of: payload),
                 from: event.payload
-            ),
+            )
+        } catch {
+            throw Failure.failedToDecodeLegacyEvent(error)
+        }
+
+        guard
             let conversationID = payload.conversationID(localDomain: localDomain),
             let senderID = payload.senderID(localDomain: localDomain),
             let timestamp = payload.timestamp
         else {
-            return nil
+            throw Failure.missingRequiredField
         }
 
         // We no longer have the encrypted message, but it
@@ -386,30 +412,33 @@ private extension UpdateEvent {
 
     // MARK: - Federation events
 
-    private static func federationConnectionRemovedEvent(from event: ZMUpdateEvent)
-        -> FederationConnectionRemovedEvent? {
-        let decoder = EventPayloadDecoder()
-        guard
-            let payload = try? decoder.decode(
-                Payload.ConnectionRemoved.self,
+    private static func federationConnectionRemovedEvent(
+        from event: ZMUpdateEvent
+    ) throws -> FederationConnectionRemovedEvent {
+        let payload: Payload.ConnectionRemoved
+        do {
+            payload = try EventPayloadDecoder().decode(
+                type(of: payload),
                 from: event.payload
             )
-        else {
-            return nil
+        } catch {
+            throw Failure.failedToDecodeLegacyEvent(error)
         }
 
         return FederationConnectionRemovedEvent(domains: Set(payload.domains))
     }
 
-    private static func federationDeleteEvent(from event: ZMUpdateEvent) -> FederationDeleteEvent? {
-        let decoder = EventPayloadDecoder()
-        guard
-            let payload = try? decoder.decode(
-                Payload.FederationDelete.self,
+    private static func federationDeleteEvent(
+        from event: ZMUpdateEvent
+    ) throws -> FederationDeleteEvent {
+        let payload: Payload.FederationDelete
+        do {
+            payload = try EventPayloadDecoder().decode(
+                type(of: payload),
                 from: event.payload
             )
-        else {
-            return nil
+        } catch {
+            throw Failure.failedToDecodeLegacyEvent(error)
         }
 
         return FederationDeleteEvent(domain: payload.domain)
