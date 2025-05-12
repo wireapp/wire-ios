@@ -25,6 +25,6 @@ public protocol WebSocketProtocol: Sendable {
 
     func close() async
 
-    func sendPing() async throws
+    func sendPing() async
 
 }
