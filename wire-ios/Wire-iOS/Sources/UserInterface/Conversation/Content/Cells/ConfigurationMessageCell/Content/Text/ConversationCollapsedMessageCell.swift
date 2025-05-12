@@ -145,11 +145,8 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         }
 
         let message = object.message
-        if message.isText {
-            typeIcon.isHidden = !message.hasLinks
-            if message.hasLinks {
-                typeIcon.image = .init(resource: .link)
-            }
+        if message.isText && !message.hasLinks {
+            typeIcon.isHidden = true
             if let textMessageData = message.textMessageData {
                 messageTextView.attributedText = NSAttributedString
                     .format(
@@ -178,6 +175,9 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
             } else if message.isFile {
                 typeIcon.image = .init(resource: .file)
                 messageTextView.text = L10n.Localizable.Content.Collapsed.File.title
+            } else if message.hasLinks {
+                typeIcon.image = .init(resource: .link)
+                messageTextView.text = L10n.Localizable.Content.Collapsed.Link.title
             }
         }
 
