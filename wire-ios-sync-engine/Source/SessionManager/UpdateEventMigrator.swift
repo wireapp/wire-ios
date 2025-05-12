@@ -129,7 +129,7 @@ private extension UpdateEvent {
             self = .conversation(.delete(event))
 
         case .conversationMemberLeave:
-            guard let event = Self.coversationMemberLeaveEvent(
+            guard let event = Self.conversationMemberLeaveEvent(
                 from: legacyEvent,
                 localDomain: localDomain
             ) else {
@@ -220,7 +220,7 @@ private extension UpdateEvent {
         )
     }
 
-    private static func coversationMemberLeaveEvent(
+    private static func conversationMemberLeaveEvent(
         from event: ZMUpdateEvent,
         localDomain: String
     ) -> ConversationMemberLeaveEvent? {
