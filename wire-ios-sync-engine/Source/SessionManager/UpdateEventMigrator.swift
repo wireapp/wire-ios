@@ -71,7 +71,12 @@ struct UpdateEventMigrator {
                         localDomain: localDomain
                     )
                 } catch {
-                    WireLogger.sync.error("failed to map legacy event, skipping... reason: \(String(describing: error))")
+                    WireLogger.sync.error(
+                        """
+                        failed to map legacy event, skipping... \
+                        reason: \(String(describing: error))
+                        """
+                    )
                     continue
                 }
 
