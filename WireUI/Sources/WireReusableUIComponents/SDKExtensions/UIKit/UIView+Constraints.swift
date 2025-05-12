@@ -123,26 +123,29 @@ public extension UIView {
 
         return view
     }
-    
+        
     /// Returns a container view which is specifically useful not to stretch its content.
-    /// or for hide/show animation in a stack view
-    func wrapInViewWithFlexibleBottom() -> UIView {
+    func wrapInViewWithFlexibleTopAndBottom() -> UIView {
         let view = UIView()
-        view.clipsToBounds = true
+        view.clipsToBounds = false
         translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(self)
 
         let bottomConstraint = view.bottomAnchor.constraint(equalTo: bottomAnchor)
         bottomConstraint.priority = .defaultLow
+        
+        let topConstraint = view.topAnchor.constraint(equalTo: topAnchor)
+        topConstraint.priority = .defaultLow
 
         NSLayoutConstraint.activate([
             leadingAnchor.constraint(equalTo: view.leadingAnchor),
             view.trailingAnchor.constraint(equalTo: trailingAnchor),
-            topAnchor.constraint(equalTo: view.topAnchor),
+            topConstraint,
             bottomConstraint
         ])
 
         return view
     }
+
 
 }

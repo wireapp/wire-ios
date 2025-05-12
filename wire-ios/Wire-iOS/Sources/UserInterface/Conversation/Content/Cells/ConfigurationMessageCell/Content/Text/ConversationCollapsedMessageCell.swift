@@ -214,9 +214,9 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         let stack = UIStackView.horizontal(
             views: [
                 spacingView,
-                avatar,
+                avatar.wrapInViewWithFlexibleTopAndBottom(),
                 messageTextView,
-                rightStack.wrapInViewWithFlexibleBottom()
+                rightStack.wrapInViewWithFlexibleTopAndBottom()
             ],
             spacing: 7,
             alignment: .top
@@ -226,8 +226,14 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
 
         rightStack.centerYAnchor
             .constraint(
-                equalTo: avatar.centerYAnchor,
-                constant: -1
+                equalTo: messageTextView.firstBaselineAnchor,
+                constant: -5
+            ).isActive = true
+
+        avatar.centerYAnchor
+            .constraint(
+                equalTo: messageTextView.firstBaselineAnchor,
+                constant: -5
             ).isActive = true
 
         
@@ -236,7 +242,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         
         stackWithTopMargin
             .pin(to: self)
-            .minHeightConstraint(34)
+            .minHeightConstraint(30)
             .setIsUserInteractionEnabled(false)
         
         stack
