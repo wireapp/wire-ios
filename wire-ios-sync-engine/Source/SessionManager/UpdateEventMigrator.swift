@@ -128,6 +128,16 @@ private extension UpdateEvent {
 
             self = .conversation(.delete(event))
 
+        case .conversationMemberLeave:
+            guard let event = Self.coversationMemberLeaveEvent(
+                from: legacyEvent,
+                localDomain: localDomain
+            ) else {
+                return nil
+            }
+
+            self = .conversation(.memberLeave(event))
+
         case .conversationMLSMessageAdd:
             guard let event = Self.conversationMLSMessageAddEvent(
                 from: legacyEvent,
@@ -207,6 +217,62 @@ private extension UpdateEvent {
             conversationID: conversationID,
             senderID: senderID,
             timestamp: timestamp
+        )
+    }
+
+    private static func coversationMemberLeaveEvent(
+        from event: ZMUpdateEvent,
+        localDomain: String
+    ) -> ConversationMemberLeaveEvent? {
+        let decoder = EventPayloadDecoder()
+        guard
+            let payload = try? decoder.decode(
+                Payload.ConversationEvent<Payload.UpdateConversationMemberLeave>.self,
+                from: event.payload
+            ),
+            let conversationID = payload.conversationID(localDomain: localDomain),
+            let senderID = payload.senderID(localDomain: localDomain),
+            let timestamp = payload.timestamp,
+            let leaveReason = payload.data.reason
+        else {
+            return nil
+        }
+
+        var removedUserIDs = Set<UserID>()
+
+        for userID in payload.data.userIDs ?? [] {
+            removedUserIDs.insert(
+                UserID(
+                    uuid: userID,
+                    domain: localDomain
+                )
+            )
+        }
+
+        for qualifiedUserID in payload.data.qualifiedUserIDs ?? [] {
+            removedUserIDs.insert(
+                UserID(
+                    uuid: qualifiedUserID.uuid,
+                    domain: qualifiedUserID.domain
+                )
+            )
+        }
+
+        let reason = switch leaveReason {
+        case .left:
+            ConversationMemberLeaveReason.userLeft
+        case .removed:
+            ConversationMemberLeaveReason.userRemoved
+        case .userDeleted:
+            ConversationMemberLeaveReason.userDeleted
+        }
+
+        return ConversationMemberLeaveEvent(
+            conversationID: conversationID,
+            senderID: senderID,
+            timestamp: timestamp,
+            removedUserIDs: removedUserIDs,
+            reason: reason
         )
     }
 
