@@ -368,7 +368,8 @@ public final class ClientSessionComponent {
         decryptor: updateEventDecryptor,
         store: updateEventsLocalStore,
         processor: updateEventProcessor,
-        databaseSaver: databaseSaver
+        databaseSaver: databaseSaver,
+        syncStateSubject: syncStateSubject
     )
 
     // MARK: - Repositories

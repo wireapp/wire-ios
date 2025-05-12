@@ -225,19 +225,14 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 }
 
 extension SyncAgent: LiveSyncDelegate {
-    func didFinishSync(sync: WireDomain.NewIncrementalSync) {
-        delegate?.syncAgentDidFinishIncrementalSync(self)
-    }
-    
-    func didMissedEvents(sync: WireDomain.NewIncrementalSync) {
-        Task {
-            await incrementalSyncToken?.suspend()
-            incrementalSyncToken = nil
-            WireLogger.sync.debug("slow sync requested by sync v3")
-            try await performInitialSyncV2()
-            WireLogger.sync.debug("slow sync done, restarting live sync")
-            try await performIncrementalSync(shouldAcknowledgeFullSync: true)
-        }
+ 
+    func didMissedEvents(sync: WireDomain.NewIncrementalSync) async throws {
+        await incrementalSyncToken?.suspend()
+        incrementalSyncToken = nil
+        WireLogger.sync.debug("slow sync requested by sync v3")
+        try await performInitialSyncV2()
+        WireLogger.sync.debug("slow sync done, restarting live sync")
+        try await performIncrementalSync(shouldAcknowledgeFullSync: true)
     }
     
     
@@ -258,7 +253,7 @@ extension SyncAgent: MLSSyncDelegate {
                 try await incrementalSyncTaskManager.performIfNeeded { [weak self] in
                     guard let self else { return }
                     delegate?.syncAgentDidStartIncrementalSync(self)
-                    incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync().perform()
+                    incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync().perform(acknowledgeFullSync: false)
                     delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: true)
                 }
             } catch {

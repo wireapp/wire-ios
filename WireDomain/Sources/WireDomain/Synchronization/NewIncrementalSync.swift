@@ -19,10 +19,10 @@
 import Foundation
 import WireAPI
 import WireLogging
+import Combine
 
 public protocol LiveSyncDelegate {
-    func didFinishSync(sync: NewIncrementalSync)
-    func didMissedEvents(sync: NewIncrementalSync)
+    func didMissedEvents(sync: NewIncrementalSync) async throws
 }
 
 /// IncrementalSync using new backend API async stream notifications
@@ -34,6 +34,7 @@ public struct NewIncrementalSync: LiveSyncProtocol {
     private let store: any UpdateEventsLocalStoreProtocol
     private let processor: any UpdateEventProcessorProtocol
     private let databaseSaver: any DatabaseSaverProtocol
+    private let syncStateSubject: CurrentValueSubject<SyncState, Never>
     private let logger = WireLogger.sync
     var delegate: (any LiveSyncDelegate)?
     
@@ -43,7 +44,8 @@ public struct NewIncrementalSync: LiveSyncProtocol {
         decryptor: any UpdateEventDecryptorProtocol,
         store: any UpdateEventsLocalStoreProtocol,
         processor: any UpdateEventProcessorProtocol,
-        databaseSaver: any DatabaseSaverProtocol
+        databaseSaver: any DatabaseSaverProtocol,
+        syncStateSubject: CurrentValueSubject<SyncState, Never>
     ) {
         self.selfClientID = selfClientID
         self.pushChannelAPI = pushChannelAPI
@@ -51,7 +53,7 @@ public struct NewIncrementalSync: LiveSyncProtocol {
         self.store = store
         self.processor = processor
         self.databaseSaver = databaseSaver
-        
+        self.syncStateSubject = syncStateSubject
     }
     
     public func perform(acknowledgeFullSync: Bool) async throws -> IncrementalSync.Token {
@@ -67,7 +69,8 @@ public struct NewIncrementalSync: LiveSyncProtocol {
         
         let task: Task<Void, Error> = Task { @Sendable [logger, decryptor, store, processor, databaseSaver, pushChannel, delegate] in
             logger.debug("handling live event stream v3")
-
+            syncStateSubject.send(.liveSyncing)
+            
             do {
                 for try await var element in liveEventStream {
                     logger.debug("received live event envelope v3")
@@ -168,17 +171,18 @@ public struct NewIncrementalSync: LiveSyncProtocol {
 
                     case .upToDate:
                         logger.debug("upToDate event v3")
-                        delegate?.didFinishSync(sync: self)
+                        
                     }
                   
                 }
             } catch PushChannelError.missingEvents {
-                delegate?.didMissedEvents(sync: self)
+                try await delegate?.didMissedEvents(sync: self)
             } catch {
                 logger.warn("v3 live event stream encountered error: \(String(describing: error))")
             }
 
             logger.debug("live event stream did finish v3")
+            syncStateSubject.send(.idle)
         }
 
         return IncrementalSync.Token(task: task, closePushChannel: {
