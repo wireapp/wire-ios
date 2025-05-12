@@ -159,7 +159,7 @@ final class IncrementalSyncTests: XCTestCase {
         // Then last event id was updated once (for the non-transient live
         // event)
         try XCTAssertCount(store.storeLastEventIDId_Invocations, count: 1)
-        XCTAssertEqual(store.storeLastEventIDId_Invoca
+        XCTAssertEqual(store.storeLastEventIDId_Invocations[0], Scaffolding.event5.id)
 
         // Then all events were processed once (duplicates skipped).
         XCTAssertEqual(
