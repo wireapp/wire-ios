@@ -156,10 +156,10 @@ final class IncrementalSyncTests: XCTestCase {
         XCTAssertEqual(storeInvocations[1].eventEnvelope, Scaffolding.event5)
         XCTAssertEqual(storeInvocations[1].index, 12)
 
-        // Then last event id was updated, onece for each live event.
-        try XCTAssertCount(store.storeLastEventIDId_Invocations, count: 2)
-        XCTAssertEqual(store.storeLastEventIDId_Invocations[0], Scaffolding.event4.id)
-        XCTAssertEqual(store.storeLastEventIDId_Invocations[1], Scaffolding.event5.id)
+        // Then last event id was updated once (for the non-transient live
+        // event)
+        try XCTAssertCount(store.storeLastEventIDId_Invocations, count: 1)
+        XCTAssertEqual(store.storeLastEventIDId_Invocations[0], Scaffolding.event5.id)
 
         // Then all events were processed once (duplicates skipped).
         XCTAssertEqual(
@@ -211,7 +211,8 @@ private enum Scaffolding {
 
     static let event4 = createEvent(
         message: "hallo",
-        timeIntervalSinceNow: -7
+        timeIntervalSinceNow: -7,
+        isTransient: true
     )
 
     static let event5 = createEvent(
@@ -221,7 +222,8 @@ private enum Scaffolding {
 
     static func createEvent(
         message: String,
-        timeIntervalSinceNow: TimeInterval
+        timeIntervalSinceNow: TimeInterval,
+        isTransient: Bool = false
     ) -> UpdateEventEnvelope {
         let event = ConversationProteusMessageAddEvent(
             conversationID: ConversationID(
@@ -244,7 +246,7 @@ private enum Scaffolding {
         return UpdateEventEnvelope(
             id: UUID(),
             events: [.conversation(.proteusMessageAdd(event))],
-            isTransient: false
+            isTransient: isTransient
         )
     }
 
