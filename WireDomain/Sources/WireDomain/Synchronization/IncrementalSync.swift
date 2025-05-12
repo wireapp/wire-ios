@@ -118,8 +118,6 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                         continue
                     }
 
-<<<<<<< HEAD
-=======
                     // Bump the last event id so we don't refech it.
                     if !envelope.isTransient {
                         logger.debug(
@@ -129,7 +127,6 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                         store.storeLastEventID(id: envelope.id)
                     }
 
->>>>>>> 868c63a7e2 (fix: don't update last event id for transient live events - WPB-17602 (#2989))
                     // Process.
                     for event in envelope.events {
                         do {
