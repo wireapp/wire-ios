@@ -25,12 +25,13 @@ public actor WebSocket: WebSocketProtocol {
 
     private let connection: any URLSessionWebSocketTaskProtocol
     private var continuation: Stream.Continuation?
-
+    
     public init(connection: any URLSessionWebSocketTaskProtocol) {
         self.connection = connection
     }
 
     public func open() async throws -> Stream {
+        WireLogger.webSocket.debug("open")
         connection.resume()
 
         if #available(iOS 17, *) {
@@ -43,6 +44,7 @@ public actor WebSocket: WebSocketProtocol {
                     while isAlive, connection.isOpen {
                         do {
                             let message = try await connection.receive()
+                            WireLogger.webSocket.debug("received message")
                             continuation.yield(message)
                         } catch {
                             
@@ -87,6 +89,9 @@ public actor WebSocket: WebSocketProtocol {
     }
 
     public func close() async {
+        WireLogger.webSocket.debug("close")
+        guard connection.isOpen else { return }
+        WireLogger.webSocket.debug("closing")
         connection.cancel(with: .goingAway, reason: nil)
         continuation?.finish()
         continuation = nil

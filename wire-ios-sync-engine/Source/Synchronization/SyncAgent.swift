@@ -226,6 +226,9 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
 extension SyncAgent: LiveSyncDelegate {
  
+    func didFinishSync(sync: NewIncrementalSync) {
+        delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: false)
+    }
     func didMissedEvents(sync: WireDomain.NewIncrementalSync) async throws {
         await incrementalSyncToken?.suspend()
         incrementalSyncToken = nil

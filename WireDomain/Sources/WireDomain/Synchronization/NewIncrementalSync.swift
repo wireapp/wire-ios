@@ -22,6 +22,7 @@ import WireLogging
 import Combine
 
 public protocol LiveSyncDelegate {
+    func didFinishSync(sync: NewIncrementalSync)
     func didMissedEvents(sync: NewIncrementalSync) async throws
 }
 
@@ -65,6 +66,7 @@ public struct NewIncrementalSync: LiveSyncProtocol {
         }
         
         logger.debug("opening new push channel v3")
+        syncStateSubject.send(.incrementalSyncing(.openPushChannel))
         let liveEventStream = try await pushChannel.open()
         
         let task: Task<Void, Error> = Task { @Sendable [logger, decryptor, store, processor, databaseSaver, pushChannel, delegate] in
@@ -171,7 +173,12 @@ public struct NewIncrementalSync: LiveSyncProtocol {
 
                     case .upToDate:
                         logger.debug("upToDate event v3")
-                        
+                        syncStateSubject.send(.idle)
+                        delegate?.didFinishSync(sync: self)
+                    
+                    case .missedEvents:
+                        logger.debug("missedEvents event v3")
+                        try await delegate?.didMissedEvents(sync: self)
                     }
                   
                 }
