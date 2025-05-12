@@ -39,12 +39,12 @@ extension ZMConversation {
     static func maxParticipantsExcludingSelf(isChannel: Bool) -> Int {
         getMaxParticipants(isChannel: isChannel) - 1
     }
-    
+
     static func getMaxParticipants(isChannel: Bool) -> Int {
         if isChannel {
-            return ZMConversation.maxParticipantsForChannels
+            ZMConversation.maxParticipantsForChannels
         } else {
-            return ZMConversation.maxParticipantsForGroups
+            ZMConversation.maxParticipantsForGroups
         }
     }
 

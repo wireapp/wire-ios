@@ -79,7 +79,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
     private func createGroupConversation() {
         mockConversation.sortedOtherParticipants = [otherUser, mockSelfUser]
     }
-    
+
     private func createChannelConversation() {
         mockConversation.sortedOtherParticipants = [otherUser, mockSelfUser]
         mockConversation.isChannel = true
@@ -288,7 +288,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         // THEN
         snapshotHelper.verify(matching: sut.wrapInNavigationController())
     }
-    
+
     func testChannel() {
         // GIVEN & WHEN
         setSelfUserInTeam()
