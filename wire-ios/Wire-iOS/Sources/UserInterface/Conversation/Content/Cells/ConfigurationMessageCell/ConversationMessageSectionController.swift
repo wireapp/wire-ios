@@ -138,7 +138,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         self.useInvertedIndices = useInvertedIndices
         self.contentWidth = contentWidth
         self.privateDefaults = PrivateUserDefaults<CollapseKey>(
-            userID: userSession.selfUser.remoteIdentifier,
+            userID: selfUser.remoteIdentifier,
             storage: userDefaults
         )
 

@@ -92,7 +92,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         view.setContentHuggingPriority(.required, for: .vertical)
         view.setContentCompressionResistancePriority(.required, for: .vertical)
 
-        view.textContainer.maximumNumberOfLines = 1
+        view.textContainer.maximumNumberOfLines = 3
         view.isScrollEnabled = false
         view.textContainer.lineBreakMode = .byTruncatingTail
 
@@ -208,28 +208,40 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         let spacingView = UIView()
         spacingView.widthAnchor.constraint(equalToConstant: 13).isActive = true
 
+        let rightStack = [typeIcon, collapseButton.wrapInView(trailingInset: margins.right)]
+            .horizontalStack(spacing: 8, alignment: .center)
+        
         let stack = UIStackView.horizontal(
             views: [
                 spacingView,
                 avatar,
                 messageTextView,
-                [typeIcon, collapseButton.wrapInView(trailingInset: margins.right)]
-                    .horizontalStack(spacing: 8)
-                    .wrapInView(bottomInset: -1)
+                rightStack.wrapInViewWithFlexibleBottom()
             ],
             spacing: 7,
-            alignment: .center
+            alignment: .top
         )
         stack.setCustomSpacing(12, after: avatar)
         stack.setCustomSpacing(10, after: messageTextView)
 
-        addSubview(stack)
+        rightStack.centerYAnchor
+            .constraint(
+                equalTo: avatar.centerYAnchor,
+                constant: -1
+            ).isActive = true
 
+        
+        let stackWithTopMargin = stack.wrapInView(topInset: 8)
+        addSubview(stackWithTopMargin)
+        
+        stackWithTopMargin
+            .pin(to: self)
+            .minHeightConstraint(34)
+            .setIsUserInteractionEnabled(false)
+        
         stack
             .setTranslatesAutoresizingMaskIntoConstraints(false)
             .setIsUserInteractionEnabled(false)
-            .pin(to: self)
-            .heightConstraint(38)
 
         typeIcon.constraintToSquare(sideLength: 16)
     }

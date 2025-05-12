@@ -74,6 +74,14 @@ public extension UIView {
         heightAnchor.constraint(equalToConstant: value).isActive = true
         return self
     }
+    
+    @discardableResult
+    func minHeightConstraint(_ value: CGFloat) -> Self {
+        translatesAutoresizingMaskIntoConstraints = false
+
+        heightAnchor.constraint(greaterThanOrEqualToConstant: 38).isActive = true
+        return self
+    }
 
     @discardableResult
     func setTranslatesAutoresizingMaskIntoConstraints(_ value: Bool) -> Self {
@@ -115,4 +123,26 @@ public extension UIView {
 
         return view
     }
+    
+    /// Returns a container view which is specifically useful not to stretch its content.
+    /// or for hide/show animation in a stack view
+    func wrapInViewWithFlexibleBottom() -> UIView {
+        let view = UIView()
+        view.clipsToBounds = true
+        translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(self)
+
+        let bottomConstraint = view.bottomAnchor.constraint(equalTo: bottomAnchor)
+        bottomConstraint.priority = .defaultLow
+
+        NSLayoutConstraint.activate([
+            leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            view.trailingAnchor.constraint(equalTo: trailingAnchor),
+            topAnchor.constraint(equalTo: view.topAnchor),
+            bottomConstraint
+        ])
+
+        return view
+    }
+
 }
