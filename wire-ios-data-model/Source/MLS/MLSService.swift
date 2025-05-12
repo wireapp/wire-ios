@@ -1006,8 +1006,22 @@ public final class MLSService: MLSServiceInterface {
 
     public func wipeGroup(_ groupID: MLSGroupID) async throws {
         logger.info("wiping group (\(groupID.safeForLoggingDescription))")
+
         do {
-            try await coreCrypto.perform { try await $0.wipeConversation(conversationId: groupID.data) }
+            try await coreCrypto.perform { [self] in
+                guard try await $0.conversationExists(
+                    conversationId: groupID.data
+                ) else {
+                    return logger.info(
+                        "conversation doesn't exist, nothing to wipe.."
+                    )
+                }
+                try await $0.wipeConversation(
+                    conversationId: groupID.data
+                )
+
+                logger.info("wiped group (\(groupID.safeForLoggingDescription))")
+            }
         } catch {
             logger.warn("failed to wipe group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
             throw error
