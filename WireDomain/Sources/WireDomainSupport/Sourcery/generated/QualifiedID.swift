@@ -16,9 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireDataModel
 
-public enum CreateBackupProgress: Sendable {
-    case progress(Float)
-    case done(URL)
-}
+public typealias QualifiedID = WireDataModel.QualifiedID

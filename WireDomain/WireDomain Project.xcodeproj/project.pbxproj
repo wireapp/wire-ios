@@ -67,6 +67,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Sourcery/generated/AutoMockable.generated.swift,
+				Sourcery/generated/QualifiedID.swift,
 			);
 			target = 017F67812C207A3200B6E02D /* WireDomainSupport */;
 		};
