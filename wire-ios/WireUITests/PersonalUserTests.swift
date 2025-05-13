@@ -25,18 +25,7 @@ final class PersonalUsersTests: XCTestCase {
     override func setUpWithError() throws {
         // Delete app, useful if we aren't resetting simulators between runs (locally writing tests)
         XCUIApplication().terminate()
-//        let icon = springboard.icons["Wire"]
-//        if icon.exists {
-//            icon.press(forDuration: 1.3)
-//
-//            springboard.buttons["com.apple.springboardhome.application-shortcut-item.remove-app"].tap()
-//
-//            // For some reason the following commands were unreliable when called once
-//            springboard.buttons["Delete App"].tap()
-//            springboard.buttons["Delete App"].tap()
-//            springboard.buttons["Delete"].tap()
-//            springboard.buttons["Delete"].tap()
-//        }
+        deleteApp()
 
         app = XCUIApplication()
         app.launchArguments = [
@@ -69,11 +58,12 @@ final class PersonalUsersTests: XCTestCase {
 
         let textField = emailTextField()
         XCTAssertTrue(textField.exists)
-
         loginPage = loginPage.typeEmailOrSSO(email: user.email)
 
         var registrationPage = loginPage.useCreatePersonalAccountLink()
         registrationPage.confirmCreateAccount()
+
+        waitForElement(element: registrationPage.acceptButton())
         registrationPage.acceptButton().tap()
 
         let verificationCode = try await InbucketClient().getVerificationCode(email: user.email)
@@ -94,10 +84,25 @@ final class PersonalUsersTests: XCTestCase {
         XCTAssertTrue(accountPage.getAccountName().elementsEqual(user.name))
         XCTAssertTrue(accountPage.getUsername().contains(user.username))
 //        TODO: Restore once [WPB-17516] is fixed
-//        XCTAssertTrue(accountPage.getEmail().elementsEqual(email))*/
+//        XCTAssertTrue(accountPage.getEmail().elementsEqual(user.email))*/
     }
 
     // MARK: - Helpers
+
+    func deleteApp() {
+        let icon = springboard.icons["Wire"]
+        if icon.exists {
+            icon.press(forDuration: 1.3)
+
+            springboard.buttons["com.apple.springboardhome.application-shortcut-item.remove-app"].tap()
+
+            // For some reason the following commands were unreliable when called once
+            springboard.buttons["Delete App"].tap()
+            springboard.buttons["Delete App"].tap()
+            springboard.buttons["Delete"].tap()
+            springboard.buttons["Delete"].tap()
+        }
+    }
 
     // TODO: Figure out how to move to page object; expectation and waitForExpectation didn't work with simple copy
     func emailTextField() -> XCUIElement {
@@ -119,6 +124,11 @@ final class PersonalUsersTests: XCTestCase {
         return button
     }
 
+    func waitForElement(element:XCUIElement) {
+        let exists = NSPredicate(format: "exists == 1")
+        expectation(for:exists, evaluatedWith: element, handler: nil)
+        waitForExpectations(timeout: 10, handler: nil)
+    }
 }
 
 struct RuntimeError: LocalizedError {

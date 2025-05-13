@@ -24,7 +24,7 @@ class InbucketClient {
         let inbucketUsername = ProcessInfo.processInfo.environment["INBUCKET_USERNAME"]!
         let inbucketPassword = ProcessInfo.processInfo.environment["INBUCKET_PASSWORD"]!
         var verificationCode = ""
-        let url = URL(string: "\(inbucketURL)/api/v1/mailbox/\(email)/latest")
+        let url = URL(string: "\(inbucketURL)api/v1/mailbox/\(email)/latest")
         guard let requestUrl = url else { fatalError() }
         var request = URLRequest(url: requestUrl)
         request.httpMethod = "GET"

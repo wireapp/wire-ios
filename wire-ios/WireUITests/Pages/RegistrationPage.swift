@@ -75,7 +75,7 @@ class RegistrationPage: PageModel {
     func setName(name: String) -> RegistrationPage {
         let nameInput = nameField()
         nameInput.tap()
-        nameInput.typeText("Smoke Tester")
+        nameInput.typeText(name)
         nameNextButton().tap()
         return self
     }
