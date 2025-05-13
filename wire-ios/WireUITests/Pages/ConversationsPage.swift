@@ -19,13 +19,13 @@
 import XCTest
 
 class ConversationsPage: PageModel {
-    func profileImage() -> XCUIElement {
+    func profileButton() -> XCUIElement {
         let elementsQuery = app.buttons.matching(identifier: "account_profile_image_view")
         return elementsQuery.firstMatch
     }
 
     func isPresent() -> Bool {
-        profileImage().exists
+        profileButton().exists
     }
 
     func settingsButton() -> XCUIElement {

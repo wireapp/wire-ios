@@ -56,8 +56,7 @@ final class PersonalUsersTests: XCTestCase {
         var loginPage = LoginPage(theApp: app)
         let user = UserGenerator().generateUniqueUserInfo()
 
-        let textField = emailTextField()
-        XCTAssertTrue(textField.exists)
+        waitForElement(element: loginPage.emailTextField())
         loginPage = loginPage.typeEmailOrSSO(email: user.email)
 
         var registrationPage = loginPage.useCreatePersonalAccountLink()
@@ -76,7 +75,7 @@ final class PersonalUsersTests: XCTestCase {
 
         let conversationsPage = registrationPage.setUsername(username: user.username)
 
-        XCTAssertTrue(profileButton().exists)
+        waitForElement(element: conversationsPage.profileButton())
 
         let settingsPage = conversationsPage.openSettings()
         let accountPage = settingsPage.openAccountSettings()
@@ -102,26 +101,6 @@ final class PersonalUsersTests: XCTestCase {
             springboard.buttons["Delete"].tap()
             springboard.buttons["Delete"].tap()
         }
-    }
-
-    // TODO: Figure out how to move to page object; expectation and waitForExpectation didn't work with simple copy
-    func emailTextField() -> XCUIElement {
-        let elementsQuery = app.scrollViews.otherElements
-        let textField = elementsQuery.textFields["Email or SSO code"]
-        let exists = NSPredicate(format: "exists == 1")
-        expectation(for: exists, evaluatedWith: textField, handler: nil)
-        waitForExpectations(timeout: 5, handler: nil)
-        return textField
-    }
-
-    // TODO: Figure out how to move to page object; expectation and waitForExpectation didn't work with simple copy
-    func profileButton() -> XCUIElement {
-        let elementsQuery = app.buttons.matching(identifier: "account_profile_image_view")
-        let button = elementsQuery.firstMatch
-        let exists = NSPredicate(format: "exists == 1")
-        expectation(for: exists, evaluatedWith: button, handler: nil)
-        waitForExpectations(timeout: 10, handler: nil)
-        return button
     }
 
     func waitForElement(element:XCUIElement) {
