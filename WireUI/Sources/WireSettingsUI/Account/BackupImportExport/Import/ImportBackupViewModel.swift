@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDomainPackage
+import WireFoundation
 import WireLogging
 
 @MainActor

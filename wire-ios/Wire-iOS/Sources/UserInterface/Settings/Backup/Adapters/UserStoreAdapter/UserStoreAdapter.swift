@@ -53,6 +53,26 @@ struct UserStoreAdapter<UserLocalStore>: UserStoreProtocol, @unchecked Sendable
         }
     }
 
+    func addUser(_ user: BackupUserModel) async throws {
+        // TODO: maybe the changes to NewUserInfo can be reverted and the code for event processing used instead
+        let userInfo = NewUserInfo(
+            userID: WireDataModel.QualifiedID(user.qualifiedID),
+            name: user.name,
+            handle: user.handle,
+            teamID: nil,
+            accentID: 0,
+            previewAssetKey: nil,
+            completeAssetKey: nil,
+            isDeleted: false,
+            email: nil,
+            expiresAt: nil,
+            serviceID: nil,
+            serviceProvider: nil,
+            supportedProtocols: nil
+        )
+        await userLocalStore.persistUser(userInfo: userInfo)
+    }
+
 }
 
 extension UserStoreAdapter where UserLocalStore == WireDomain.UserLocalStore {
@@ -75,7 +95,7 @@ extension BackupUserModel {
         guard let qualifiedID = user.qualifiedID else { return nil }
 
         self.init(
-            id: QualifiedID(qualifiedID),
+            qualifiedID: QualifiedID(qualifiedID),
             name: user.name ?? "",
             handle: user.handle ?? ""
         )
