@@ -16,17 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import KaliumBackup
-import WireFoundation
+// sourcery: AutoMockable
+public protocol MessageStoreProtocol: Sendable {
 
-extension BackupUser {
+    /// Returns the number of all stored messages in the local data store, including deleted ones.
+    func totalMessageCount() async throws -> Int
 
-    convenience init(_ user: BackupUserModel) {
-        self.init(
-            id: BackupQualifiedId(user.qualifiedID),
-            name: user.name,
-            handle: user.handle
-        )
-    }
+    /// Returns the IDs of all messages stored in the local database, including deleted ones.
+    func fetchAllMessageIDs() async throws -> [String]
+
+    /// Returns all messages stored in the local database, including deleted ones.
+    func fetchAllMessages() async throws -> [BackupMessageModel]
+
+    /// Adds a message from the backup file to the local data store.
+    func addMessage(_ message: BackupMessageModel) async throws
 
 }
