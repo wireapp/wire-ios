@@ -768,9 +768,9 @@ public final class ZMUserSession: NSObject {
             storeProvider: coreDataStack,
             eventProcessingTracker: eventProcessingTracker,
             earService: earService,
-            eventConsumers: strategyDirectory?.eventConsumers ?? [],
-            eventAsyncConsumers: (strategyDirectory?.eventAsyncConsumers ?? []) + [conversationEventProcessor],
-            lastEventIDRepository: lastEventIDRepository
+            lastEventIDRepository: lastEventIDRepository,
+            strategyDirectory: strategyDirectory!,
+            additionalEventConsumers: [conversationEventProcessor]
         )
     }
 

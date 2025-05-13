@@ -1043,9 +1043,8 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
 
         setupInputBar()
 
-        inputBar.rightAccessoryStackView.addArrangedSubview(sendButton)
-        inputBar.leftAccessoryView.addSubview(markdownButton)
-        inputBar.rightAccessoryStackView.insertArrangedSubview(ephemeralIndicatorButton, at: 0)
+        inputBar.setLeftAccessoryView(markdownButton)
+        inputBar.setRightAccessoryViews([ephemeralIndicatorButton, sendButton])
 
         view.addSubview(securityLevelView)
         view.addSubview(typingIndicatorView)
@@ -1105,8 +1104,6 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
         bottomConstraint.priority = .defaultLow
 
         let securityBannerHeight: CGFloat = securityLevelView.isHidden ? 0 : 24
-        let widthOfSendButton: CGFloat = 42
-        let heightOfSendButton: CGFloat = 32
 
         NSLayoutConstraint.activate(
             securityLevelView.isHidden
@@ -1130,11 +1127,8 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
             ephemeralIndicatorButton.widthAnchor.constraint(equalToConstant: InputBar.rightIconSize),
             ephemeralIndicatorButton.heightAnchor.constraint(equalToConstant: InputBar.rightIconSize),
 
-            markdownButton.centerXAnchor.constraint(equalTo: markdownButton.superview!.centerXAnchor),
-            markdownButton.bottomAnchor.constraint(equalTo: markdownButton.superview!.bottomAnchor, constant: -14),
-
-            markdownButton.widthAnchor.constraint(equalToConstant: widthOfSendButton),
-            markdownButton.heightAnchor.constraint(equalToConstant: heightOfSendButton),
+            markdownButton.widthAnchor.constraint(equalToConstant: 42),
+            markdownButton.heightAnchor.constraint(equalToConstant: 32),
 
             typingIndicatorView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             typingIndicatorView.centerYAnchor.constraint(equalTo: view.topAnchor),

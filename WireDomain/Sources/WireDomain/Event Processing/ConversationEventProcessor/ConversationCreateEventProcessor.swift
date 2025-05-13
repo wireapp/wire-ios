@@ -25,7 +25,6 @@ struct ConversationCreateEventProcessor: ConversationCreateEventProcessorProtoco
     let repository: any ConversationRepositoryProtocol
 
     func processEvent(_ event: ConversationCreateEvent) async {
-        let conversationID = event.conversationID
         let conversation = event.conversation
         let timestamp = event.timestamp
 

@@ -34,7 +34,8 @@ final class RenameGroupSectionController: NSObject, CollectionViewSectionControl
     }
 
     var titleFooter: String {
-        L10n.Localizable.Participants.Section.Name.footer(ZMConversation.maxParticipants)
+        L10n.Localizable.Participants.Section.Name
+            .footer(ZMConversation.getMaxParticipants(isChannel: conversation.isChannel))
     }
 
     init(conversation: GroupDetailsConversationType, userSession: UserSession) {
