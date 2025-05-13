@@ -17,29 +17,25 @@
 //
 
 import SwiftUI
+import UIKit
 import Combine
 import WireDesign
 
 struct SenderMessageView: View {
 
-    private(set) var model: MessageSenderViewModel
+    @ObservedObject var model: MessageSenderViewModel
 
     var body: some View {
-        HStack(spacing: 0) {
-            Text(model.author)
-                .padding(12)
+            Text(model.senderAttributed)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .fixedSize(horizontal: false, vertical: true)
-                .animation(.easeInOut, value: model.author)
-        }
-        .padding(.vertical, 8)
-        .background(.green)
+                .animation(.easeInOut, value: model.senderAttributed)
     }
 }
 
 struct MessageStatusView: View {
     
-    @StateObject var model: MessageStatusViewModel
+    @ObservedObject var model: MessageStatusViewModel
     
     var body: some View {
         HStack {
@@ -52,36 +48,34 @@ struct MessageStatusView: View {
     }
 }
 
-struct TextMessageView: ConversationCellContentViewProtocol {
+public struct TextMessageView: ConversationCellContentViewProtocol {
 
-    @StateObject var model: TextMessageViewModel
+    @ObservedObject var model: TextMessageViewModel
 
-    var body: some View {
+    public init(model: TextMessageViewModel) {
+        self.model = model
+    }
+    
+    public var body: some View {
         VStack {
-            if let model = model.senderViewModel {
-                SenderMessageView(model: model)
-            }
+//            if let model = model.senderViewModel {
+//                SenderMessageView(model: model)
+                SenderMessageView(model: model.senderViewModel)
+//            }
             HStack(spacing: 0) {
-                text
+                Text(model.text)
+                    .multilineTextAlignment(.center)
+                    .font(.footnote)
+                    .fontWeight(.semibold)
+                    .padding(.horizontal, 12)
+                    .layoutPriority(1)
             }
-            .padding(.vertical, 8)
-            .background(.red)
             
             if let model = model.statusViewModel {
                 MessageStatusView(model: model)
             }
         }
     }
-
-    @ViewBuilder private var text: some View {
-        Text(model.text)
-            .multilineTextAlignment(.center)
-            .font(.footnote)
-            .fontWeight(.semibold)
-            .padding(.horizontal, 12)
-            .layoutPriority(1)
-    }
-
 }
 
 // MARK: - Previews
@@ -91,7 +85,13 @@ struct TextMessageView: ConversationCellContentViewProtocol {
         text: "Test message",
         senderViewModel: MessageSenderViewModel(
             avatar: AvatarViewModel(color: .red),
-            author: "Author name",
+            senderModel: UserModel(
+                name: "Test",
+                isServiceUser: false,
+                accentColor: .purple
+            ),
+            isDeleted: false,
+            teamRoleIndicator: nil,
             authorChanged: MockSenderObserver()
         ),
         statusViewModel: MessageStatusViewModel(
@@ -104,7 +104,7 @@ struct TextMessageView: ConversationCellContentViewProtocol {
 }
 
 extension DeliveryState {
-    var text: String {
+    var text: String { // TODO: migrate strings
         switch self {
         case .invalid:
             "Invalid"

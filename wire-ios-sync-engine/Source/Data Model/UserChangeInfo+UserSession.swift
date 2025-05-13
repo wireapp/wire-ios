@@ -29,6 +29,10 @@ public extension UserChangeInfo {
     static func add(observer: UserObserving, for user: UserType, in userSession: ZMUserSession) -> NSObjectProtocol? {
         add(observer: observer, for: user, in: userSession.managedObjectContext)
     }
+    
+    static func add(observer: UserObserving, for user: UserType, context: NSManagedObjectContext) -> NSObjectProtocol? {
+        add(observer: observer, for: user, in: context)
+    }
 
     // MARK: - Registering UserObservers
 

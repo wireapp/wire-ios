@@ -21,6 +21,7 @@ import WireDataModel
 import WireFoundation
 import WireLogging
 import WireSyncEngine
+import WireConversationUI
 
 extension Int: Differentiable {}
 extension String: Differentiable {}
@@ -293,6 +294,8 @@ final class ConversationTableViewDataSource: NSObject {
         super.init()
 
         tableView.dataSource = self
+        
+        tableView.register(ConversationCell.self, forCellReuseIdentifier: "ConversationCell")
     }
 
     func resetSectionControllers() {
@@ -710,11 +713,15 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
 //            let model = cellDescription.makeConversationCellModel()
 //            cellDescription.instance.conversationCellModel = model
   
-            model.registerIfNeeded(in: tableView)
-            let cell = tableView.dequeueReusableCell(withIdentifier: model.cellReuseIdentifier, for: indexPath)
-            model.configureCell(cell)
+//            model.registerIfNeeded(in: tableView)
+            let cell = tableView.dequeueReusableCell(
+                withIdentifier: "ConversationCell",
+                for: indexPath
+            ) as! ConversationCell
+            
+            cell.model = model
+//            model.configureCell(cell)
             return cell
-
         } else {
 
             registerCellIfNeeded(with: cellDescription, in: tableView)

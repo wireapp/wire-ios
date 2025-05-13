@@ -18,16 +18,16 @@
 
 import UIKit
 
-public extension ConversationCellModel {
-
-    var cellReuseIdentifier: String {
-        switch self {
-
-        case .timeDivider:
-            "timeDivider"
-        case .text:
-            "text"
-        }
-    }
-
-}
+//public extension ConversationCellModel {
+//
+//    var cellReuseIdentifier: String {
+//        switch self {
+//
+//        case .timeDivider:
+//            "timeDivider"
+//        case .text:
+//            "text"
+//        }
+//    }
+//
+//}

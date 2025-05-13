@@ -18,33 +18,32 @@
 
 import UIKit
 
-public extension ConversationCellModel {
-
-    @MainActor
-    func registerIfNeeded(in tableView: UITableView) {
-        guard !tableView.registeredIdentifiers.contains(cellReuseIdentifier) else { return }
-
-        let cellType = switch self {
-
-        case .timeDivider:
-            ConversationCell<TimeDividerModel>.self
-        case .text:
-            ConversationCell<TextMessageViewModel>.self
-        }
-
-        tableView.register(cellType, forCellReuseIdentifier: cellReuseIdentifier)
-        tableView.registeredIdentifiers.insert(cellReuseIdentifier)
-    }
-
-}
-
-private extension UITableView {
-
-    var registeredIdentifiers: Set<String> {
-        get { objc_getAssociatedObject(self, &registeredIdentifiersKey) as? Set<String> ?? [] }
-        set { objc_setAssociatedObject(self, &registeredIdentifiersKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
-    }
-
-}
-
-@MainActor private var registeredIdentifiersKey = 0
+//public extension ConversationCellModel {
+//
+//    @MainActor
+//    func registerIfNeeded(in tableView: UITableView) {
+//        guard !tableView.registeredIdentifiers.contains(cellReuseIdentifier) else { return }
+//
+//        let cellType = switch self {
+//
+//        case .timeDivider:
+//            ConversationCell.self // TODO: GENERIC
+//        case .text:
+//            ConversationCell.self
+//        }
+//
+//        tableView.registeredIdentifiers.insert(cellReuseIdentifier)
+//    }
+//
+//}
+//
+//private extension UITableView {
+//
+//    var registeredIdentifiers: Set<String> {
+//        get { objc_getAssociatedObject(self, &registeredIdentifiersKey) as? Set<String> ?? [] }
+//        set { objc_setAssociatedObject(self, &registeredIdentifiersKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+//    }
+//
+//}
+//
+//@MainActor private var registeredIdentifiersKey = 0

@@ -23,17 +23,12 @@ import WireDataModel
 import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
+import WireConversationUI
 
 enum Indicator: Equatable {
     case deleted
 }
 
-enum TeamRoleIndicator {
-    case guest
-    case externalPartner
-    case federated
-    case service
-}
 
 // MARK: - ConversationSenderMessageDetailsCell
 
@@ -354,26 +349,6 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
 
 }
 
-private extension UserType {
-
-    func teamRoleIndicator(selfUser: any UserType) -> TeamRoleIndicator? {
-        if isServiceUser {
-            .service
-
-        } else if isExternalPartner {
-            .externalPartner
-
-        } else if isFederated {
-            .federated
-
-        } else if !isTeamMember, selfUser.isTeamMember {
-            .guest
-        } else {
-            nil
-        }
-    }
-
-}
 
 extension ConversationSenderMessageDetailsCell: UserObserving {
 

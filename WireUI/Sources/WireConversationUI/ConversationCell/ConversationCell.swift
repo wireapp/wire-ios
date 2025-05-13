@@ -18,15 +18,21 @@
 
 import SwiftUI
 
-final class ConversationCell<Model: ConversationCellModelProtocol>: UITableViewCell {
+public final class ConversationCell: UITableViewCell {
 
-    var model = Model() {
+    public var model: ConversationCellModel? {
         didSet { updateConfiguration() }
     }
 
     private func updateConfiguration() {
+        guard let model else { return }
         contentConfiguration = UIHostingConfiguration {
-            model.buildView()
+            switch model {
+            case .timeDivider(let model):
+                TimeDividerContentView(model: model)
+            case .text(let model):
+                TextMessageView(model: model)
+            }
         }
         .margins(.all, 0)
         .minSize(width: 0, height: 0)

@@ -19,13 +19,13 @@
 import SwiftUI
 
 // the `Hashable` requirement could be loosened if needed (and moved to conforming types where needed)
-protocol ConversationCellModelProtocol {
+public protocol ConversationCellModelProtocol {
     associatedtype ContentView: ConversationCellContentViewProtocol
+    
+//    init()
 
-    init()
-
-    @MainActor
-    func buildView() -> ContentView
+//    @MainActor
+//    func buildView() -> ContentView
 
 }
 

@@ -19,13 +19,17 @@
 import SwiftUI
 import WireDesign
 
-struct TimeDividerContentView: ConversationCellContentViewProtocol {
+public struct TimeDividerContentView: ConversationCellContentViewProtocol {
 
     private let dividerColor = ColorTheme.Strokes.outline.color
 
     private(set) var model: TimeDividerModel
+    
+    public init(model: TimeDividerModel) {
+        self.model = model
+    }
 
-    var body: some View {
+    public var body: some View {
         HStack(spacing: 0) {
 
             if model.isUnreadIndicatorVisible {
@@ -103,7 +107,7 @@ struct TimeDividerContentView: ConversationCellContentViewProtocol {
 }
 
 #Preview("no text") {
-    let model = TimeDividerModel()
+    let model = TimeDividerModel(text: "", isUnreadIndicatorVisible: false)
     TimeDividerContentView(model: model)
 }
 

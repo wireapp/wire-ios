@@ -24,6 +24,7 @@ import WireConversationUI
 protocol MessageViewModelFactory {
     func makeTextMessageViewModel(
         message: ZMMessage,
+        selfUser: any UserType,
         accentColor: UIColor
     ) -> TextMessageViewModel
 }
@@ -402,6 +403,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                     conversationCellModel:
                             .text(factory.makeTextMessageViewModel(
                                 message: message as! ZMMessage,
+                                selfUser: selfUser,
                                 accentColor: selfUser.accentColor))
                 ).eraseToAnyCellDescription()
             ]

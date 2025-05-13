@@ -16,10 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import UIKit
 
-@MainActor
-public protocol ConversationCellContentViewProtocol: View {
-    associatedtype Model
-    init(model: Model)
+public struct UserModel {
+    
+    /// The full name
+    var name: String?
+    
+    /// Whether this is a service user (bot)
+    let isServiceUser: Bool
+    
+    let accentColor: UIColor
+    
+    public init(
+        name: String?,
+        isServiceUser: Bool,
+        accentColor: UIColor
+    ) {
+        self.name = name
+        self.isServiceUser = isServiceUser
+        self.accentColor = accentColor
+    }
 }

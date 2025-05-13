@@ -16,10 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
+
 public enum ConversationCellModel {
 
     /// Used to group messages by time.
     case timeDivider(TimeDividerModel)
     case text(TextMessageViewModel)
+    
+//    @MainActor func buildView() -> any View {
+//        
+//    }
 
 }

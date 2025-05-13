@@ -29,19 +29,29 @@ struct MessageViewModelFactoryImpl: MessageViewModelFactory {
         self.userSession = userSession
     }
     
-    func makeTextMessageViewModel(message: ZMMessage, accentColor: UIColor) -> TextMessageViewModel {
-        TextMessageViewModel(
-            text: message.textMessageData?.messageText ?? "",
-            senderViewModel: MessageSenderViewModel(
+    func makeTextMessageViewModel(
+        message: ZMMessage,
+        selfUser: any UserType,
+        accentColor: UIColor
+    ) -> TextMessageViewModel {
+        var senderViewModel: MessageSenderViewModel? = nil
+        if let sender = message.sender {
+            senderViewModel = MessageSenderViewModel(
                 avatar: AvatarViewModel(
                     color: accentColor.color
                 ),
-                author: message.senderName,
+                senderModel: sender.toUIModel(),
+                isDeleted: message.isDeletion,
+                teamRoleIndicator: sender.teamRoleIndicator(selfUser: selfUser),
                 authorChanged: SenderObserver(
                     messageID: message.objectID,
                     viewContext: userSession.contextProvider.viewContext
                 )
-            ),
+            )
+        }
+        return TextMessageViewModel(
+            text: message.textMessageData?.messageText ?? "",
+            senderViewModel: senderViewModel,
             statusViewModel: MessageStatusViewModel(
                 deliveryState: message.deliveryState.toUIModel(),
                 edited: message.updatedAt != nil,
@@ -50,5 +60,33 @@ struct MessageViewModelFactoryImpl: MessageViewModelFactory {
         )
     }
 }
-    
-    
+
+extension UserType {
+    func toUIModel() -> UserModel {
+        UserModel(
+            name: name,
+            isServiceUser: isServiceUser,
+            accentColor: accentColor)
+    }
+}
+
+extension UserType {
+
+    func teamRoleIndicator(selfUser: any UserType) -> TeamRoleIndicator? {
+        if isServiceUser {
+            .service
+
+        } else if isExternalPartner {
+            .externalPartner
+
+        } else if isFederated {
+            .federated
+
+        } else if !isTeamMember, selfUser.isTeamMember {
+            .guest
+        } else {
+            nil
+        }
+    }
+
+}

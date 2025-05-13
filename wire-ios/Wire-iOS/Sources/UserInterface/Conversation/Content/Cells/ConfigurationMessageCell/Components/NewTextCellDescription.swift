@@ -30,7 +30,7 @@ protocol NewCellDescription { }
 extension NewTextCellDescription: NewCellDescription { }
 extension BurstTimestampSenderMessageCellDescription: NewCellDescription { }
 
-final class SenderObserver: NSObject, ZMMessageObserver, SenderObserverProtocol {
+final class SenderObserver: NSObject, UserObserving, SenderObserverProtocol {
     
     var observation: Any?
     
@@ -50,16 +50,18 @@ final class SenderObserver: NSObject, ZMMessageObserver, SenderObserverProtocol 
         viewContext.perform {
             let message = try! viewContext.existingObject(with: messageID) as! ZMMessage
             self.author = message.senderName
-            self.observation = MessageChangeInfo
-                .add(
-                    observer: self,
-                    for: message,
-                    context: viewContext)
+            if let sender = message.senderUser {
+                self.observation = UserChangeInfo.add(observer: self, for: sender, context: viewContext)
+            }
         }
     }
     
-    func messageDidChange(_ changeInfo: WireDataModel.MessageChangeInfo) {
-        authorChangedSubject.send(changeInfo.message.senderName)
+    func userDidChange(_ changeInfo: UserChangeInfo) {
+        authorChangedSubject.send(changeInfo.user.name ?? "")
+    }
+    
+    deinit {
+        print("DS: SenderObserver: deinit")
     }
 }
 
@@ -72,15 +74,6 @@ final class NewTextCellDescription: ConversationMessageCellDescription {
     var supportsActions: Bool = true
     
     private var cancellables: Set<AnyCancellable> = []
-
-//    func makeConversationCellModel(message: ZMMessage) -> ConversationCellModel {
-//        
-//        model.significantChangeSubject.sink { [weak self] _ in
-//            guard let self else { return }
-//            delegate?.conversationMessageDidRequestToUpdate(nonce: self.nonce)
-//        }.store(in: &cancellables)
-//        return ConversationCellModel.text(model)
-//    }
 
     var configuration: View.Configuration {
         .init(text: "", author: "", accentColor: .red)
@@ -103,20 +96,6 @@ final class NewTextCellDescription: ConversationMessageCellDescription {
     ) {
         self.conversationCellModel = conversationCellModel
     }
-
-//    convenience init(
-//        message: ZMConversationMessage,
-//        context: ConversationMessageContext,
-//        accentColor: UIColor
-//    ) {
-//        let configuration = View.Configuration(
-//            text: message.textMessageData?.messageText ?? "",
-//            author: message.senderName,
-//            accentColor: accentColor
-//        )
-//        self.init(configuration: configuration, message: message as! ZMMessage)
-//    }
-
 }
 
 final class NewTextCell: UIView, ConversationMessageCell {

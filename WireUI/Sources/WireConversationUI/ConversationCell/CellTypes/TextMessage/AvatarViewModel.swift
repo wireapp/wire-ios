@@ -15,11 +15,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-
 import SwiftUI
+import Foundation
 
-@MainActor
-public protocol ConversationCellContentViewProtocol: View {
-    associatedtype Model
-    init(model: Model)
+public struct AvatarViewModel: Hashable, Sendable {
+    let color: Color
+    public init(color: Color) {
+        self.color = color
+    }
 }

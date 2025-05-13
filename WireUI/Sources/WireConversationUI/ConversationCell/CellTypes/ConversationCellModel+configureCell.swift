@@ -18,24 +18,24 @@
 
 import UIKit
 
-public extension ConversationCellModel {
-
-    @MainActor
-    func configureCell(_ cell: UITableViewCell) {
-        switch self {
-
-        case let .timeDivider(timeDivider):
-            guard let cell = cell as? ConversationCell<TimeDividerModel> else { break }
-            return cell.model = timeDivider
-            
-        case let .text(viewModel):
-            guard let cell = cell as? ConversationCell<TextMessageViewModel> else {
-                break
-            }
-            return cell.model = viewModel
-        }
-
-        assertionFailure("unexpected cell: \(cell)")
-    }
-
-}
+//public extension ConversationCellModel {
+//
+//    @MainActor
+//    func configureCell(_ cell: UITableViewCell) {
+//        switch self {
+//
+//        case let .timeDivider(timeDivider):
+//            guard let cell = cell as? ConversationCell else { break }
+//            return cell.model = timeDivider
+//            
+//        case let .text(viewModel):
+//            guard let cell = cell as? ConversationCell else {
+//                break
+//            }
+//            return cell.model = viewModel
+//        }
+//
+//        assertionFailure("unexpected cell: \(cell)")
+//    }
+//
+//}

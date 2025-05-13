@@ -19,47 +19,7 @@
 import Foundation
 import Combine
 import SwiftUI
-
-public struct AvatarViewModel: Hashable, Sendable {
-    let color: Color
-    public init(color: Color) {
-        self.color = color
-    }
-}
-
-public protocol SenderObserverProtocol {
-    var authorChangedPublisher: AnyPublisher<String, Never> { get }
-}
-
-public struct MessageSenderViewModel {
-    
-    let avatar: AvatarViewModel
-
-    @State var author: AttributedString
-    
-//    public var significantChangeSubject = PassthroughSubject<Void, Never>()
-    private let authorChanged: any SenderObserverProtocol
-    private var cancellables: Set<AnyCancellable> = []
-
-    public init(
-        avatar: AvatarViewModel,
-        author: String,
-        authorChanged: any SenderObserverProtocol
-    ) {
-        self.avatar = avatar
-        self.authorChanged = authorChanged
-        self.author = AttributedString(stringLiteral: author)
-        authorChanged.authorChangedPublisher.sink { [self] author in
-            self.author = AttributedString(author)
-            // TODO: check if this significant change or not
-        }.store(in: &cancellables)
-        observeChanges()
-    }
-         
-    private func observeChanges() {
-        
-    }
-}
+import WireDesign
 
 public enum DeliveryState: Int, Sendable, Equatable, CaseIterable {
     case invalid
@@ -88,14 +48,17 @@ public final class MessageStatusViewModel: ObservableObject {
         self.timestamp = timestamp
     }
 }
-public class TextMessageViewModel: ObservableObject, ConversationCellModelProtocol {
+
+public class TextMessageViewModel: ObservableObject, Identifiable, ConversationCellModelProtocol {
     
-    typealias ContentView = TextMessageView
+    public let id = UUID()
     
-    public var senderViewModel: MessageSenderViewModel?
+    public typealias ContentView = TextMessageView
+    
+    @ObservedObject var senderViewModel: MessageSenderViewModel
     public var statusViewModel: MessageStatusViewModel?
     
-    func buildView() -> ContentView {
+    public func buildView() -> ContentView {
         ContentView(model: self)
     }
 
@@ -113,15 +76,25 @@ public class TextMessageViewModel: ObservableObject, ConversationCellModelProtoc
         statusViewModel: MessageStatusViewModel?
     ) {
         self.text = text // TODO: format
-        self.senderViewModel = senderViewModel
+        self.senderViewModel = senderViewModel!
         self.statusViewModel = statusViewModel
 //        startRandomStateTimer()
     }
 
-    required convenience init() {
+    public required convenience init() {
         self.init(
             text: "",
-            senderViewModel: nil,
+            senderViewModel: MessageSenderViewModel(
+                avatar: AvatarViewModel(color: .red),
+                senderModel: UserModel(
+                    name: "",
+                    isServiceUser: false,
+                    accentColor: .red
+                ),
+                isDeleted: false,
+                teamRoleIndicator: nil,
+                authorChanged: MockSenderObserver()
+            ),
             statusViewModel: nil
         )
     }

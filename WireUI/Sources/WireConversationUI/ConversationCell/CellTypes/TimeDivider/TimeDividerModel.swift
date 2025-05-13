@@ -17,8 +17,8 @@
 //
 
 public struct TimeDividerModel: ConversationCellModelProtocol {
-    typealias ContentView = TimeDividerContentView
-
+    public typealias ContentView = TimeDividerContentView
+    
 //    public var id: AnyHashable { self }
 
     var text: String
@@ -31,14 +31,6 @@ public struct TimeDividerModel: ConversationCellModelProtocol {
         self.text = text
         self.isUnreadIndicatorVisible = isUnreadIndicatorVisible
     }
-
-    init() {
-        self.init(
-            text: "",
-            isUnreadIndicatorVisible: false
-        )
-    }
-
 }
 
 extension ConversationCellModel {
