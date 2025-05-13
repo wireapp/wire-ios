@@ -240,6 +240,14 @@ final class APIMigrationManagerTests: MessagingTest {
     @MainActor
     private func stubUserSession() -> ZMUserSession {
         let mockStrategyDirectory = MockStrategyDirectory()
+        let mockCoreCrypto = MockCoreCryptoProtocol()
+        let mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
+        let mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
+        mockCoreCrypto.registerEpochObserver_MockMethod = { _ in }
+        mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
+        mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
+        mockCoreCryptoProvider.registerEpochObserver_MockMethod = { _ in }
+
         let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
 
         let cookieStorage = ZMPersistentCookieStorage(
@@ -301,6 +309,7 @@ final class APIMigrationManagerTests: MessagingTest {
             application: application,
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             coreDataStack: createCoreDataStack(),
+            coreCryptoProvider: mockCoreCryptoProvider,
             configuration: configuration,
             contextStorage: mockContextStorable,
             earService: nil,

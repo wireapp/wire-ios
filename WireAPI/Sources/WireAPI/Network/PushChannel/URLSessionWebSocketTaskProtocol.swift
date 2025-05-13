@@ -34,6 +34,9 @@ public protocol URLSessionWebSocketTaskProtocol: Sendable {
 
     func receive() async throws -> URLSessionWebSocketTask.Message
 
+    typealias AnyError = any Error
+    func sendPing(pongReceiveHandler: @escaping @Sendable (AnyError?) -> Void)
+
 }
 
 extension URLSessionWebSocketTask: URLSessionWebSocketTaskProtocol {

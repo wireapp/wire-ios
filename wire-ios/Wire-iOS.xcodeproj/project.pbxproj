@@ -51,6 +51,7 @@
 		061F34192B1E2ED50099CBAB /* AppAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 061F34182B1E2ED50099CBAB /* AppAuth */; };
 		061F341B2B1E2ED50099CBAB /* AppAuthCore in Frameworks */ = {isa = PBXBuildFile; productRef = 061F341A2B1E2ED50099CBAB /* AppAuthCore */; };
 		065A5AE5279B07AC002D4D1E /* Wire Notification Service Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 065A5ADE279B07AC002D4D1E /* Wire Notification Service Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		16EE08AE2D92E861001B372C /* WireCoreCryptoUniffi in Frameworks */ = {isa = PBXBuildFile; productRef = 16EE08AD2D92E861001B372C /* WireCoreCryptoUniffi */; };
 		407831AD2AC4636F005C2978 /* DifferenceKit in Frameworks */ = {isa = PBXBuildFile; productRef = 407831AC2AC4636F005C2978 /* DifferenceKit */; };
 		59076F952C934A9800AE7529 /* WireAccountImageUI in Frameworks */ = {isa = PBXBuildFile; productRef = 59076F942C934A9800AE7529 /* WireAccountImageUI */; };
 		590DCA082C971A56002D0A2C /* WireSidebarUI in Frameworks */ = {isa = PBXBuildFile; productRef = 590DCA072C971A56002D0A2C /* WireSidebarUI */; };
@@ -963,6 +964,7 @@
 				5996E8A62C19D090007A52F0 /* WireSyncEngine.framework in Frameworks */,
 				EEE25B5929719DA80008B894 /* WireImages.framework in Frameworks */,
 				76BFA65F2D89E6D8000F2D0A /* WireConversationsUIBindings in Frameworks */,
+				16EE08AE2D92E861001B372C /* WireCoreCryptoUniffi in Frameworks */,
 				5929CB222CA6C9C800070488 /* WireConversationListUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1358,6 +1360,7 @@
 				01C774262D9EECE100A2FF07 /* WireAVS */,
 				76BFA65C2D89E6B8000F2D0A /* WireConversationsAPI */,
 				76BFA65E2D89E6D8000F2D0A /* WireConversationsUIBindings */,
+				16EE08AD2D92E861001B372C /* WireCoreCryptoUniffi */,
 				CB1428442DCB8A820092E7AE /* WireCellsUI */,
 			);
 			productName = "ZClient iOS";
@@ -2787,6 +2790,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 061F34172B1E2E8F0099CBAB /* XCRemoteSwiftPackageReference "AppAuth-iOS" */;
 			productName = AppAuthCore;
+		};
+		16EE08AD2D92E861001B372C /* WireCoreCryptoUniffi */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireCoreCryptoUniffi;
 		};
 		407831AC2AC4636F005C2978 /* DifferenceKit */ = {
 			isa = XCSwiftPackageProductDependency;

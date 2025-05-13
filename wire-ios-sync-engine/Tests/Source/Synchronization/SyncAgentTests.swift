@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import WireDomain
 import WireDomainSupport
 import XCTest
@@ -31,6 +32,8 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
     var legacySyncStatus: MockSyncStatusProtocol!
     var initialSync: MockInitialSyncProtocol!
     var incrementalSync: MockIncrementalSyncProtocol!
+    var syncStateSubject: CurrentValueSubject<SyncState, Never>!
+    var coreCryptoProvider: MockCoreCryptoProviderProtocol!
 
     override func setUp() {
         journal = Journal(
@@ -41,12 +44,16 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         legacySyncStatus = MockSyncStatusProtocol()
         initialSync = MockInitialSyncProtocol()
         incrementalSync = MockIncrementalSyncProtocol()
+        syncStateSubject = CurrentValueSubject(.idle)
+        coreCryptoProvider = MockCoreCryptoProviderProtocol()
         sut = SyncAgent(
             journal: journal,
             lastUpdateEventIDRepository: lastUpdateEventIDRepository,
+            coreCryptoProvider: coreCryptoProvider,
             initialSyncProvider: self,
             incrementalSyncProvider: self,
-            legacySyncStatus: legacySyncStatus
+            legacySyncStatus: legacySyncStatus,
+            syncStateSubject: syncStateSubject
         )
     }
 
@@ -57,6 +64,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         legacySyncStatus = nil
         initialSync = nil
         incrementalSync = nil
+        syncStateSubject = nil
     }
 
     func provideInitialSync() throws -> any InitialSyncProtocol {
