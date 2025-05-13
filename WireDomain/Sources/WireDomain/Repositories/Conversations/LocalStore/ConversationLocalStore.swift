@@ -1240,23 +1240,32 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
     public func totalConversationCountForBackup() async throws -> Int {
         try await context.perform { [context] in
-            try context.count(for: ZMConversation.fetchRequest())
+            try context.count(for: ZMConversation.fetchRequestForBackup())
         }
     }
 
     public func fetchAllConversationIDsForBackup() async throws -> [QualifiedID] {
-        let fetchRequest = ZMConversation.fetchRequest()
+        let fetchRequest = ZMConversation.fetchRequestForBackup()
         fetchRequest.propertiesToFetch = ["remoteIdentifier_data", "domain"]
         return try await context.perform { [context] in
-            let conversations = try context.fetch(fetchRequest) as! [ZMConversation]
+            let conversations = try context.fetch(fetchRequest)
             return conversations.compactMap(\.qualifiedID)
         }
     }
 
     public func fetchAllConversationsForBackup() async throws -> [ZMConversation] {
         try await context.perform { [context] in
-            try context.fetch(ZMConversation.fetchRequest()) as! [ZMConversation]
+            try context.fetch(ZMConversation.fetchRequestForBackup())
         }
+    }
+
+}
+
+extension ZMConversation {
+
+    fileprivate static func fetchRequestForBackup() -> NSFetchRequest<ZMConversation> {
+        let fetchRequest = ZMConversation.fetchRequest() as! NSFetchRequest<ZMConversation>
+        return fetchRequest
     }
 
 }

@@ -381,7 +381,6 @@ extension SettingsCellDescriptorFactory {
             selfUser.managedObjectContext!.zm_sync!
         }
 
-        let userSession = sessionManager.activeUserSession!
         let importBackupUseCase = sessionManager.importLegacyBackupUseCase!
         let createBackupUseCase: CreateBackupUseCaseProtocol = if DeveloperFlag.createLegacyBackups.isOn {
             CreateLegacyBackupUseCase(sessionManager: sessionManager)
