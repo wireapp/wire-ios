@@ -22,7 +22,7 @@ extension BackupConversation {
 
     convenience init(_ conversation: BackupConversationModel) {
         self.init(
-            id: BackupQualifiedId(conversation.id),
+            id: BackupQualifiedId(conversation.qualifiedID),
             name: conversation.name
         )
     }

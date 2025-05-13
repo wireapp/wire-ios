@@ -97,6 +97,7 @@ public extension MessageContent {
             case image(ImageMetadata)
             case video(VideoMetadata)
             case audio(AudioMetadata)
+            // TODO: [WPB-16658] check if the `.generic` case needs to be used
             case generic(GenericMetadata)
 
         }

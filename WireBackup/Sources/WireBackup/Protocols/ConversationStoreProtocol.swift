@@ -18,17 +18,19 @@
 
 public import WireFoundation
 
-public struct BackupConversationModel {
+// sourcery: AutoMockable
+public protocol ConversationStoreProtocol: Sendable {
 
-    public var qualifiedID: QualifiedID
-    public var name: String
+    /// Returns the number of all stored conversations in the local data store, including deleted ones.
+    func totalConversationCount() async throws -> Int
 
-    public init(
-        qualifiedID: QualifiedID,
-        name: String
-    ) {
-        self.qualifiedID = qualifiedID
-        self.name = name
-    }
+    /// Returns the IDs of all conversations stored in the local database, including deleted ones.
+    func fetchAllConversationIDs() async throws -> Set<QualifiedID>
+
+    /// Returns all conversations stored in the local database, including deleted ones.
+    func fetchAllConversations() async throws -> [BackupConversationModel]
+
+    /// Adds a conversation from the backup file to the local data store.
+    func addConversation(_ conversation: BackupConversationModel) async throws
 
 }
