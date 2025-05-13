@@ -128,15 +128,17 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             headerFields: [:]
         )!
 
-        let jsonData = """
+        let payload = """
          {
             "code": 403,
             "label": "invalid-credentials",
             "message": ""
           }
-        """.data(using: .utf8)!
+        """
 
-        networkService.executeRequest_MockValue = (jsonData, httpURLResponse)
+        let data = Data(payload.utf8)
+
+        networkService.executeRequest_MockValue = (data, httpURLResponse)
 
         let authenticationManager = AuthenticationManager(
             clientID: UUID().uuidString,
@@ -351,7 +353,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
 
 }
 
-/// Debug helper to simulate an access token request failure with invalid credential errors and trigger a logout
+/// Mock network to simulate an access token request failure with invalid credential errors and trigger a logout
 private class MockNetworkService: NetworkServiceProtocol {
     public init() {}
     public var executeRequest_MockValue: (Data, HTTPURLResponse)?
