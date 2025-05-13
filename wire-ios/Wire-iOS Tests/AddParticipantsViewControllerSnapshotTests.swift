@@ -78,6 +78,7 @@ final class AddParticipantsViewControllerSnapshotTests: XCTestCase {
 
     func testForEveryOneIsHere() {
         let newValues = ConversationCreationValues(
+            isChannel: false,
             name: "",
             participants: [],
             allowGuests: true,
