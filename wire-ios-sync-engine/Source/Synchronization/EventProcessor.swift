@@ -32,10 +32,18 @@ actor EventProcessor: UpdateEventProcessor {
     private let eventProcessingTracker: EventProcessingTrackerProtocol
     private let earService: EARServiceInterface
     private var processingTask: Task<Void, Error>?
-    private let eventConsumers: [ZMEventConsumer]
-    private let eventAsyncConsumers: [ZMEventAsyncConsumer]
-
+    private let strategyDirectory: any StrategyDirectoryProtocol
     private let processedEventList = ProcessedEventList()
+
+    private var eventConsumers: [ZMEventConsumer] {
+        strategyDirectory.eventConsumers
+    }
+
+    private var eventAsyncConsumers: [ZMEventAsyncConsumer] {
+        strategyDirectory.eventAsyncConsumers + additionEventConsumers
+    }
+
+    private let additionEventConsumers: [any ZMEventAsyncConsumer]
 
     // MARK: Life Cycle
 
@@ -43,9 +51,9 @@ actor EventProcessor: UpdateEventProcessor {
         storeProvider: CoreDataStack,
         eventProcessingTracker: EventProcessingTrackerProtocol,
         earService: EARServiceInterface,
-        eventConsumers: [ZMEventConsumer],
-        eventAsyncConsumers: [ZMEventAsyncConsumer],
-        lastEventIDRepository: LastEventIDRepositoryInterface
+        lastEventIDRepository: LastEventIDRepositoryInterface,
+        strategyDirectory: any StrategyDirectoryProtocol,
+        additionalEventConsumers: [any ZMEventAsyncConsumer]
     ) {
         let eventDecoder = EventDecoder(
             eventMOC: storeProvider.eventContext,
@@ -58,8 +66,8 @@ actor EventProcessor: UpdateEventProcessor {
             eventDecoder: eventDecoder,
             eventProcessingTracker: eventProcessingTracker,
             earService: earService,
-            eventConsumers: eventConsumers,
-            eventAsyncConsumers: eventAsyncConsumers
+            strategyDirectory: strategyDirectory,
+            additionalEventConsumers: additionalEventConsumers
         )
     }
 
@@ -68,8 +76,8 @@ actor EventProcessor: UpdateEventProcessor {
         eventDecoder: any EventDecoderProtocol,
         eventProcessingTracker: EventProcessingTrackerProtocol,
         earService: EARServiceInterface,
-        eventConsumers: [ZMEventConsumer],
-        eventAsyncConsumers: [ZMEventAsyncConsumer]
+        strategyDirectory: any StrategyDirectoryProtocol,
+        additionalEventConsumers: [any ZMEventAsyncConsumer]
     ) {
         self.syncContext = storeProvider.syncContext
         self.eventContext = storeProvider.eventContext
@@ -77,8 +85,8 @@ actor EventProcessor: UpdateEventProcessor {
         self.eventProcessingTracker = eventProcessingTracker
         self.earService = earService
         self.bufferedEvents = []
-        self.eventConsumers = eventConsumers
-        self.eventAsyncConsumers = eventAsyncConsumers
+        self.strategyDirectory = strategyDirectory
+        self.additionEventConsumers = additionalEventConsumers
     }
 
     // MARK: Methods
@@ -246,8 +254,11 @@ actor EventProcessor: UpdateEventProcessor {
                     continue
                 }
 
+                let eventConsumers = await eventConsumers
+                let eventAsyncConsumers = await eventAsyncConsumers
+
                 await syncContext.perform {
-                    for eventConsumer in self.eventConsumers {
+                    for eventConsumer in eventConsumers {
                         eventConsumer.processEvents([event], liveEvents: true, prefetchResult: prefetchResult)
                     }
                 }
