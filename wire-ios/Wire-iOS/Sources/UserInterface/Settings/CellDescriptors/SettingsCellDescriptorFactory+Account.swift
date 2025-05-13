@@ -17,9 +17,12 @@
 //
 
 import SwiftUI
+import WireAPI
+import WireBackup
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireDomain
 import WireFoundation
 import WireLogging
 import WireSettingsUI
@@ -373,17 +376,37 @@ extension SettingsCellDescriptorFactory {
 
         // force-unwrapping should be fine, since we should have a session manager and an active user session here
         let sessionManager = SessionManager.shared!
-        let importBackupUseCase = sessionManager.importBackupUseCase!
+        let selfUser = ZMUser.selfUser()!
+        let context = selfUser.managedObjectContext!.performAndWait {
+            selfUser.managedObjectContext!.zm_sync!
+        }
+
+        let userSession = sessionManager.activeUserSession!
+        let importBackupUseCase = sessionManager.importLegacyBackupUseCase!
+        let createBackupUseCase: CreateBackupUseCaseProtocol = if DeveloperFlag.createLegacyBackups.isOn {
+            CreateLegacyBackupUseCase(sessionManager: sessionManager)
+        } else {
+            CreateBackupUseCase(
+                selfUserID: .init(selfUser.qualifiedID!),
+                selfUserHandle: selfUser.handle,
+                userStore: UserStoreAdapter(context: context),
+                conversationStore: ConversationStoreAdapter(context: context),
+                messageStore: MessageStoreAdapter(context: context),
+                fileArchiver: ZipArchiveFileArchiver(),
+                currentDateProvider: SystemDateProvider(),
+                logger: WireLogger.backupExport
+            )
+        }
 
         return BackupImportExportBuilder(
             backupPasswordValidator: BackupPasswordValidator(),
-            createBackupUseCase: CreateLegacyBackupUseCase(sessionManager: sessionManager),
+            createBackupUseCase: createBackupUseCase,
             importBackupUseCase: importBackupUseCase,
             cleanUpBackupsUseCase: CleanUpBackupsUseCase(sessionManager: sessionManager),
             exportBackupLogger: WireLogger.backupExport,
             importBackupLogger: WireLogger.backupImport,
             wireAccentColorMapping: WireAccentColorMapping(),
-            wireAccentColor: ZMUser.selfUser()?.accentColor ?? .default
+            wireAccentColor: selfUser.accentColor ?? .default
         )
     }
 

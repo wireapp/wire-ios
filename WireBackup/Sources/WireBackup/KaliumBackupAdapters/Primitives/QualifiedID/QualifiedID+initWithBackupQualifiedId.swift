@@ -17,13 +17,14 @@
 //
 
 import Foundation
+import KaliumBackup
+import WireFoundation
 
-// sourcery: AutoMockable
-protocol ImportBackupFileArchiverProtocol: Sendable {
+extension QualifiedID {
 
-    func unzipFile(
-        at sourceURL: URL,
-        to destinationURL: URL
-    ) throws
+    init?(_ qualifiedID: BackupQualifiedId) {
+        guard let id = UUID(uuidString: qualifiedID.id) else { return nil }
+        self.init(id: id, domain: qualifiedID.domain)
+    }
 
 }

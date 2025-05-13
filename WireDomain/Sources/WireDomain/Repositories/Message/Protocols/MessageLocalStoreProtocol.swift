@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import CoreData
+
 import Foundation
 import WireDataModel
 
@@ -200,5 +202,13 @@ public protocol MessageLocalStoreProtocol {
     func isMessageQuotingSelf(
         quotedMessage: ZMOTRMessage?
     ) async -> Bool
+
+    // MARK: - Backup / Restore
+
+    func totalMessageCountForBackup() async throws -> Int
+
+    func fetchAllMessageIDsForBackup() async throws -> [UUID]
+
+    func fetchAllMessagesForBackup() async throws -> [ZMMessage]
 
 }

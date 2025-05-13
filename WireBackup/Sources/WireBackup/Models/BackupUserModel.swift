@@ -16,18 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum ImportBackupError: Error, Equatable, CaseIterable {
-    case noActiveAccountForImport
-    /// The backup file is encrypted and a password is needed for decryption.
-    case passwordRequired
-    /// E.g. if the file to import was created with a different (incompatible) version of the app.
-    case incompatibleFileFormat // there is no mapping to this error (it's never thrown)
-    case invalidAccountID
-    case compressionError
-    case invalidFileExtension
-    case keyCreationFailed
-    case decryptionError
-    case faildToBackUpUserClient
-    /// Failed to create `InputStream` or `OutputStream` from `URL`.
-    case failedToCreateStreamForDecryption
+public import WireFoundation
+
+public struct BackupUserModel {
+    public typealias ID = QualifiedID
+
+    public var id: ID
+    public var name: String
+    public var handle: String
+
+    public init(
+        id: ID,
+        name: String,
+        handle: String
+    ) {
+        self.id = id
+        self.name = name
+        self.handle = handle
+    }
+
 }
