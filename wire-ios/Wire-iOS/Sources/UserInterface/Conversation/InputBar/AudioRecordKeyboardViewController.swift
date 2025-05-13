@@ -142,7 +142,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         accentColorChangeHandler = AccentColorChangeHandler
             .addObserver(self, userSession: userSession) { [unowned self] color, _ in
                 if let color {
-                    audioPreviewView.color = color
+                    audioPreviewView.color = color.accentColor.uiColor
                 }
             }
 
