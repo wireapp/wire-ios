@@ -23,8 +23,8 @@ extension BackupQualifiedId {
 
     convenience init(_ qualifiedID: QualifiedID) {
         self.init(
-            id: qualifiedID.id.uuidString,
-            domain: qualifiedID.domain
+            id: qualifiedID.id.uuidString.lowercased(),
+            domain: qualifiedID.domain.lowercased()
         )
     }
 
