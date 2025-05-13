@@ -1647,6 +1647,19 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(count, 1)
     }
 
+    func test_WipeGroup_CoreCryptoWipeConversationNotCalledIfConversationDoesNotExist() async throws {
+        let groupID = MLSGroupID.random()
+
+        mockCoreCryptoContext.conversationExistsConversationId_MockValue = false
+
+        // When
+        try await sut.wipeGroup(groupID)
+
+        // Then
+        XCTAssertEqual(mockCoreCryptoContext.wipeConversationConversationId_Invocations.count, 0)
+
+    }
+
     // MARK: - Key Packages
 
     func test_UploadKeyPackages_IsSuccessful() async {
