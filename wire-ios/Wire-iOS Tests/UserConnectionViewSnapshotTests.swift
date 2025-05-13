@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDesign
 import WireTestingPackage
 import XCTest
 
@@ -74,7 +75,7 @@ final class UserConnectionViewSnapshotTests: XCTestCase {
 
         let connectionView = UserConnectionView(user: mockUser)
         connectionView.layoutForTest()
-
+        connectionView.backgroundColor = SemanticColors.View.backgroundConversationView
         return connectionView
     }
 
