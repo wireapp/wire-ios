@@ -32,6 +32,7 @@ final class ConversationCreationValues {
     private var unfilteredParticipants: UserSet
     private let selfUser: UserType
 
+    let isChannel: Bool
     var name: String
     var allowGuests: Bool
     var allowServices: Bool
@@ -70,6 +71,7 @@ final class ConversationCreationValues {
     // MARK: - Life cycle
 
     init(
+        isChannel: Bool,
         name: String = "",
         participants: UserSet = UserSet(),
         allowGuests: Bool = true,
@@ -78,6 +80,7 @@ final class ConversationCreationValues {
         encryptionProtocol: MessageProtocol,
         selfUser: UserType
     ) {
+        self.isChannel = isChannel
         self.name = name
         self.unfilteredParticipants = participants
         self.allowGuests = allowGuests
