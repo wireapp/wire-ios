@@ -16,9 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum CreateLegacyBackupError: Error {
-    case noActiveAccountForExport
-    case compressionError
-    /// Failed to create `InputStream` or `OutputStream` from `URL`.
-    case failedToCreateStreamsForEncryption
+import Foundation
+import KaliumBackup
+
+extension BackupDateTime {
+
+    convenience init(_ date: Date) {
+        let instant = Kotlinx_datetimeInstant
+            .Companion()
+            .fromEpochMilliseconds(epochMilliseconds: Int64(date.timeIntervalSince1970) * 1000)
+        self.init(instant: instant)
+    }
+
 }

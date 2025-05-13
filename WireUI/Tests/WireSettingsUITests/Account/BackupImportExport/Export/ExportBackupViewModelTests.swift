@@ -71,8 +71,8 @@ final class ExportBackupViewModelTests: XCTestCase {
         wait(forConditionToBeTrue: sut.isSetBackupPasswordPresented, timeout: 3)
 
         sut.createBackup(password: "pw")
-        continuation.yield(.progress(0.5))
-        wait(forConditionToBeTrue: sut.backupProgress == .ongoing(0.5), timeout: 3)
+        continuation.yield(.progress(1, 2))
+        wait(forConditionToBeTrue: sut.backupProgress == .ongoing(current: 1, total: 2), timeout: 3)
 
         continuation.yield(.done(url))
         wait(forConditionToBeTrue: sut.backupProgress == .finished(url), timeout: 3)
@@ -93,8 +93,8 @@ final class ExportBackupViewModelTests: XCTestCase {
         // When
         sut.showPasswordDialog()
         sut.createBackup(password: "pw")
-        continuation.yield(.progress(0.5))
-        wait(forConditionToBeTrue: sut.backupProgress == .ongoing(0.5), timeout: 3)
+        continuation.yield(.progress(1, 2))
+        wait(forConditionToBeTrue: sut.backupProgress == .ongoing(current: 1, total: 2), timeout: 3)
         sut.cancel()
 
         // Then
@@ -110,8 +110,8 @@ final class ExportBackupViewModelTests: XCTestCase {
         // When
         sut.showPasswordDialog()
         sut.createBackup(password: "pw")
-        continuation.yield(.progress(0.5))
-        wait(forConditionToBeTrue: sut.backupProgress == .ongoing(0.5), timeout: 3)
+        continuation.yield(.progress(1, 2))
+        wait(forConditionToBeTrue: sut.backupProgress == .ongoing(current: 1, total: 2), timeout: 3)
         continuation.finish(throwing: NSError(domain: "ExportBackupViewModelTests", code: 987))
 
         // Then

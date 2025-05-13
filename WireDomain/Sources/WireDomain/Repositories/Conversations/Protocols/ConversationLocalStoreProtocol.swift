@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import CoreData
+
 import Foundation
 import WireDataModel
 
@@ -451,5 +453,16 @@ public protocol ConversationLocalStoreProtocol {
         permission: WireDomain.Conversation.ChannelPermission,
         conversation: ZMConversation
     ) async
+
+    // MARK: - Backup / Restore
+
+    /// Counts the number of conversations in the local store.
+    /// - returns: The number of conversation entries in the database.
+
+    func totalConversationCountForBackup() async throws -> Int
+
+    func fetchAllConversationIDsForBackup() async throws -> [QualifiedID]
+
+    func fetchAllConversationsForBackup() async throws -> [ZMConversation]
 
 }

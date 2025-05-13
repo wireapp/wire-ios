@@ -1343,6 +1343,75 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         await mock(permission, conversation)
     }
 
+    // MARK: - totalConversationCountForBackup
+
+    public var totalConversationCountForBackup_Invocations: [Void] = []
+    public var totalConversationCountForBackup_MockError: Error?
+    public var totalConversationCountForBackup_MockMethod: (() async throws -> Int)?
+    public var totalConversationCountForBackup_MockValue: Int?
+
+    public func totalConversationCountForBackup() async throws -> Int {
+        totalConversationCountForBackup_Invocations.append(())
+
+        if let error = totalConversationCountForBackup_MockError {
+            throw error
+        }
+
+        if let mock = totalConversationCountForBackup_MockMethod {
+            return try await mock()
+        } else if let mock = totalConversationCountForBackup_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `totalConversationCountForBackup`")
+        }
+    }
+
+    // MARK: - fetchAllConversationIDsForBackup
+
+    public var fetchAllConversationIDsForBackup_Invocations: [Void] = []
+    public var fetchAllConversationIDsForBackup_MockError: Error?
+    public var fetchAllConversationIDsForBackup_MockMethod: (() async throws -> [QualifiedID])?
+    public var fetchAllConversationIDsForBackup_MockValue: [QualifiedID]?
+
+    public func fetchAllConversationIDsForBackup() async throws -> [QualifiedID] {
+        fetchAllConversationIDsForBackup_Invocations.append(())
+
+        if let error = fetchAllConversationIDsForBackup_MockError {
+            throw error
+        }
+
+        if let mock = fetchAllConversationIDsForBackup_MockMethod {
+            return try await mock()
+        } else if let mock = fetchAllConversationIDsForBackup_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchAllConversationIDsForBackup`")
+        }
+    }
+
+    // MARK: - fetchAllConversationsForBackup
+
+    public var fetchAllConversationsForBackup_Invocations: [Void] = []
+    public var fetchAllConversationsForBackup_MockError: Error?
+    public var fetchAllConversationsForBackup_MockMethod: (() async throws -> [ZMConversation])?
+    public var fetchAllConversationsForBackup_MockValue: [ZMConversation]?
+
+    public func fetchAllConversationsForBackup() async throws -> [ZMConversation] {
+        fetchAllConversationsForBackup_Invocations.append(())
+
+        if let error = fetchAllConversationsForBackup_MockError {
+            throw error
+        }
+
+        if let mock = fetchAllConversationsForBackup_MockMethod {
+            return try await mock()
+        } else if let mock = fetchAllConversationsForBackup_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchAllConversationsForBackup`")
+        }
+    }
+
 }
 
 class MockConversationLocationMessageNotificationBuilderProtocol: ConversationLocationMessageNotificationBuilderProtocol {
@@ -2323,6 +2392,75 @@ public class MockMessageLocalStoreProtocol: MessageLocalStoreProtocol {
             return mock
         } else {
             fatalError("no mock for `isMessageQuotingSelfQuotedMessage`")
+        }
+    }
+
+    // MARK: - totalMessageCountForBackup
+
+    public var totalMessageCountForBackup_Invocations: [Void] = []
+    public var totalMessageCountForBackup_MockError: Error?
+    public var totalMessageCountForBackup_MockMethod: (() async throws -> Int)?
+    public var totalMessageCountForBackup_MockValue: Int?
+
+    public func totalMessageCountForBackup() async throws -> Int {
+        totalMessageCountForBackup_Invocations.append(())
+
+        if let error = totalMessageCountForBackup_MockError {
+            throw error
+        }
+
+        if let mock = totalMessageCountForBackup_MockMethod {
+            return try await mock()
+        } else if let mock = totalMessageCountForBackup_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `totalMessageCountForBackup`")
+        }
+    }
+
+    // MARK: - fetchAllMessageIDsForBackup
+
+    public var fetchAllMessageIDsForBackup_Invocations: [Void] = []
+    public var fetchAllMessageIDsForBackup_MockError: Error?
+    public var fetchAllMessageIDsForBackup_MockMethod: (() async throws -> [UUID])?
+    public var fetchAllMessageIDsForBackup_MockValue: [UUID]?
+
+    public func fetchAllMessageIDsForBackup() async throws -> [UUID] {
+        fetchAllMessageIDsForBackup_Invocations.append(())
+
+        if let error = fetchAllMessageIDsForBackup_MockError {
+            throw error
+        }
+
+        if let mock = fetchAllMessageIDsForBackup_MockMethod {
+            return try await mock()
+        } else if let mock = fetchAllMessageIDsForBackup_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchAllMessageIDsForBackup`")
+        }
+    }
+
+    // MARK: - fetchAllMessagesForBackup
+
+    public var fetchAllMessagesForBackup_Invocations: [Void] = []
+    public var fetchAllMessagesForBackup_MockError: Error?
+    public var fetchAllMessagesForBackup_MockMethod: (() async throws -> [ZMMessage])?
+    public var fetchAllMessagesForBackup_MockValue: [ZMMessage]?
+
+    public func fetchAllMessagesForBackup() async throws -> [ZMMessage] {
+        fetchAllMessagesForBackup_Invocations.append(())
+
+        if let error = fetchAllMessagesForBackup_MockError {
+            throw error
+        }
+
+        if let mock = fetchAllMessagesForBackup_MockMethod {
+            return try await mock()
+        } else if let mock = fetchAllMessagesForBackup_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchAllMessagesForBackup`")
         }
     }
 
@@ -4514,6 +4652,75 @@ public class MockUserLocalStoreProtocol: UserLocalStoreProtocol {
             return mock
         } else {
             fatalError("no mock for `fetchSelfUserAvailability`")
+        }
+    }
+
+    // MARK: - totalUserCountForBackup
+
+    public var totalUserCountForBackup_Invocations: [Void] = []
+    public var totalUserCountForBackup_MockError: Error?
+    public var totalUserCountForBackup_MockMethod: (() async throws -> Int)?
+    public var totalUserCountForBackup_MockValue: Int?
+
+    public func totalUserCountForBackup() async throws -> Int {
+        totalUserCountForBackup_Invocations.append(())
+
+        if let error = totalUserCountForBackup_MockError {
+            throw error
+        }
+
+        if let mock = totalUserCountForBackup_MockMethod {
+            return try await mock()
+        } else if let mock = totalUserCountForBackup_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `totalUserCountForBackup`")
+        }
+    }
+
+    // MARK: - fetchAllUserIDsForBackup
+
+    public var fetchAllUserIDsForBackup_Invocations: [Void] = []
+    public var fetchAllUserIDsForBackup_MockError: Error?
+    public var fetchAllUserIDsForBackup_MockMethod: (() async throws -> [QualifiedID])?
+    public var fetchAllUserIDsForBackup_MockValue: [QualifiedID]?
+
+    public func fetchAllUserIDsForBackup() async throws -> [QualifiedID] {
+        fetchAllUserIDsForBackup_Invocations.append(())
+
+        if let error = fetchAllUserIDsForBackup_MockError {
+            throw error
+        }
+
+        if let mock = fetchAllUserIDsForBackup_MockMethod {
+            return try await mock()
+        } else if let mock = fetchAllUserIDsForBackup_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchAllUserIDsForBackup`")
+        }
+    }
+
+    // MARK: - fetchAllUsersForBackup
+
+    public var fetchAllUsersForBackup_Invocations: [Void] = []
+    public var fetchAllUsersForBackup_MockError: Error?
+    public var fetchAllUsersForBackup_MockMethod: (() async throws -> [ZMUser])?
+    public var fetchAllUsersForBackup_MockValue: [ZMUser]?
+
+    public func fetchAllUsersForBackup() async throws -> [ZMUser] {
+        fetchAllUsersForBackup_Invocations.append(())
+
+        if let error = fetchAllUsersForBackup_MockError {
+            throw error
+        }
+
+        if let mock = fetchAllUsersForBackup_MockMethod {
+            return try await mock()
+        } else if let mock = fetchAllUsersForBackup_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchAllUsersForBackup`")
         }
     }
 

@@ -177,4 +177,18 @@ public protocol UserLocalStoreProtocol {
     ) async -> UUID
 
     func fetchSelfUserAvailability() async -> Availability
+
+    // MARK: - Backup / Restore
+
+    /// Counts the number of users in the local store.
+    /// - returns: The number of user entries in the database.
+
+    func totalUserCountForBackup() async throws -> Int
+
+    func fetchAllUserIDsForBackup() async throws -> [QualifiedID]
+
+    /// Fetches all stored users from the local database, including the ones marked as deleted.
+
+    func fetchAllUsersForBackup() async throws -> [ZMUser]
+
 }

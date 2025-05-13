@@ -16,16 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import WireFoundation
 
 // sourcery: AutoMockable
-public protocol ImportBackupStreamDecryptorProtocol: Sendable {
+public protocol UserStoreProtocol: Sendable {
 
-    func decrypt(
-        input: InputStream,
-        output: OutputStream,
-        accountID: UUID,
-        password: String
-    ) throws
+    /// Returns the number of all stored users in the local data store, including deleted ones.
+    func totalUserCount() async throws -> Int
+
+    /// Returns the IDs of all users stored in the local database, including deleted ones.
+    func fetchAllUserIDs() async throws -> Set<QualifiedID>
+
+    /// Returns all users stored in the local database, including deleted ones.
+    func fetchAllUsers() async throws -> [BackupUserModel]
 
 }
