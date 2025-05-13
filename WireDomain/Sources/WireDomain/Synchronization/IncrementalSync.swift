@@ -118,8 +118,14 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                         continue
                     }
 
-                    // Bump the last event id so we don't refech it.
-                    store.storeLastEventID(id: envelope.id)
+                    // Bump the last event id so we don't refetch it.
+                    if !envelope.isTransient {
+                        logger.debug(
+                            "updating last event id",
+                            attributes: [.eventEnvelopeID: envelope.id]
+                        )
+                        store.storeLastEventID(id: envelope.id)
+                    }
 
                     // Process.
                     for event in envelope.events {
