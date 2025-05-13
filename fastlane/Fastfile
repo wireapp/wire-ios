@@ -103,7 +103,7 @@ platform :ios do
     end
 
     desc "Generate env config for UI Tests"
-    lane :generate_env
+    lane :generate_env do
         sh "cd .. && op inject -i wire-ios/WireUITests/env.xcconfig.tpl -o wire-ios/WireUITests/env.xcconfig"
     end
 
