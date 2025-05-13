@@ -19,6 +19,7 @@
 import avs
 import WireCommonComponents
 import WireFoundation
+import WireLogging
 import WireSyncEngine
 import WireUtilities
 
@@ -423,7 +424,10 @@ final class SettingsPropertyFactory {
             )
 
         case .collapseOwnMessages:
-            let userId = selfUser!.remoteIdentifier!
+            guard let userId = selfUser?.remoteIdentifier else {
+                WireLogger.system.error("No self user for settings key \(propertyName)")
+                break
+            }
             let storage = PrivateUserDefaults<CollapseKey>(userID: userId)
             return SettingsBlockProperty(
                 propertyName: propertyName,
@@ -437,7 +441,10 @@ final class SettingsPropertyFactory {
             )
 
         case .conversationBackground:
-            let userId = selfUser!.remoteIdentifier!
+            guard let userId = selfUser?.remoteIdentifier else {
+                WireLogger.system.error("No self user for settings key \(propertyName)")
+                break
+            }
             let storage = PrivateUserDefaults<ConversationBackgroundKey>(userID: userId)
             return SettingsBlockProperty(
                 propertyName: propertyName,
