@@ -16,18 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import WireFoundation
+import WireBackup
+import WireDataModel
+import WireProtos
 
-// sourcery: AutoMockable
-public protocol UserStoreProtocol: Sendable {
+extension GenericMessage {
 
-    /// Returns the number of all stored users in the local data store, including deleted ones.
-    func totalUserCount() async throws -> Int
-
-    /// Returns the IDs of all users stored in the local database, including deleted ones.
-    func fetchAllUserIDs() async throws -> Set<QualifiedID>
-
-    /// Returns all users stored in the local database, including deleted ones.
-    func fetchAllUsers() async throws -> [BackupUserModel]
+    init(
+        nonce: String,
+        messageContent: MessageContent
+    ) {
+        self = GenericMessage.with { genericMessage in
+            genericMessage.messageID = nonce
+            genericMessage.content = .init(messageContent)
+        }
+    }
 
 }

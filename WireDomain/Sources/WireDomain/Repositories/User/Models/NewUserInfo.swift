@@ -19,6 +19,7 @@
 import WireDataModel
 
 public struct NewUserInfo: Equatable, Sendable {
+
     let userID: WireDataModel.QualifiedID
     let name: String
     let handle: String?
@@ -32,4 +33,35 @@ public struct NewUserInfo: Equatable, Sendable {
     let serviceID: UUID?
     let serviceProvider: UUID?
     let supportedProtocols: Set<WireDataModel.MessageProtocol>?
+
+    public init(
+        userID: WireDataModel.QualifiedID,
+        name: String,
+        handle: String?,
+        teamID: UUID?,
+        accentID: Int,
+        previewAssetKey: String?,
+        completeAssetKey: String?,
+        isDeleted: Bool,
+        email: String?,
+        expiresAt: Date?,
+        serviceID: UUID?,
+        serviceProvider: UUID?,
+        supportedProtocols: Set<WireDataModel.MessageProtocol>?
+    ) {
+        self.userID = userID
+        self.name = name
+        self.handle = handle
+        self.teamID = teamID
+        self.accentID = accentID
+        self.previewAssetKey = previewAssetKey
+        self.completeAssetKey = completeAssetKey
+        self.isDeleted = isDeleted
+        self.email = email
+        self.expiresAt = expiresAt
+        self.serviceID = serviceID
+        self.serviceProvider = serviceProvider
+        self.supportedProtocols = supportedProtocols
+    }
+
 }

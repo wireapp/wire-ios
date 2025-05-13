@@ -382,7 +382,23 @@ extension SettingsCellDescriptorFactory {
         }
 
         let userSession = sessionManager.activeUserSession!
-        let importBackupUseCase = sessionManager.importLegacyBackupUseCase!
+        let importBackupUseCase = CompositeImportBackupUseCase(
+            importBackupUseCase: ImportBackupUseCase(
+                selfUserID: .init(selfUser.qualifiedID!),
+                userStore: UserStoreAdapter(context: context),
+                conversationStore: ConversationStoreAdapter(context: context),
+                messageStore: MessageStoreAdapter(context: context),
+                fileUnarchiver: ZipArchiveFileUnarchiver(),
+                syncTrigger: {
+                    context.performGroupedBlock {
+                        context.saveOrRollback()
+                        userSession.triggerInitialSync()
+                    }
+                },
+                logger: WireLogger.backupImport
+            ),
+            legacyImportBackupUseCase: sessionManager.importLegacyBackupUseCase!
+        )
         let createBackupUseCase: CreateBackupUseCaseProtocol = if DeveloperFlag.createLegacyBackups.isOn {
             CreateLegacyBackupUseCase(sessionManager: sessionManager)
         } else {

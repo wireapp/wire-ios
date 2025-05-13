@@ -105,12 +105,12 @@ extension MessageContent {
             name: .none,
             otrKey: imageAsset.otrKey,
             sha256: imageAsset.sha256,
-            assetID: "",
+            assetID: "", // TODO: what value to set? is empty string ok?
             assetToken: .none,
             assetDomain: .none,
             encryption: .none,
             metadata: .image(
-                width: imageAsset.width,
+                width: imageAsset.width, // TODO: use .width or .originalWidth?
                 height: imageAsset.height,
                 tag: imageAsset.hasTag ? imageAsset.tag : ""
             )
