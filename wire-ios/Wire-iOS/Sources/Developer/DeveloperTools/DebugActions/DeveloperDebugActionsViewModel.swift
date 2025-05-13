@@ -80,7 +80,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             .init(title: "Update MLS migration status", action: updateMLSMigrationStatus),
             .init(title: "Delete domains in the database", action: deleteDomains),
             .init(title: "Find Conversation with MLS Group", action: showSearchMLSConversations),
-            .init(title: "Force logout", action: forceLogout)
+            .init(title: "Simulate access token failure", action: simulateAccessTokenFailure)
         ]
 
         let toggleItems: [DeveloperDebugActionsDisplayModel.ToggleItem] = [
@@ -106,7 +106,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
 
     // MARK: - Forces logout
 
-    private func forceLogout() {
+    private func simulateAccessTokenFailure() {
         guard let selfUserID = userSession?.managedObjectContext.performAndWait({
             userSession?.selfUser.remoteIdentifier
         }) else { return }
@@ -117,11 +117,26 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             keychain: WireFoundation.Keychain()
         )
 
-        // Forces the access token request to fail
-        let networkService = NetworkService(
-            baseURL: URL(string: "https://wrongurl.com")!,
-            serverTrustValidator: .init(pinnedKeys: [], currentDateProvider: .system)
-        )
+        // Forces the access token request to fail with 403 (invalid credentials)
+
+        let networkService = MockNetworkService()
+
+        let httpURLResponse = HTTPURLResponse(
+            url: URL(filePath: "https://someurl.com")!,
+            statusCode: 403,
+            httpVersion: nil,
+            headerFields: [:]
+        )!
+
+        let jsonData = """
+         {
+            "code": 403,
+            "label": "invalid-credentials",
+            "message": ""
+          }
+        """.data(using: .utf8)!
+
+        networkService.executeRequest_MockValue = (jsonData, httpURLResponse)
 
         let authenticationManager = AuthenticationManager(
             clientID: UUID().uuidString,
@@ -334,4 +349,20 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
         mlsGroupSearchItem = .result(results, term)
     }
 
+}
+
+/// Debug helper to simulate an access token request failure with invalid credential errors and trigger a logout
+private class MockNetworkService: NetworkServiceProtocol {
+    public init() {}
+    public var executeRequest_MockValue: (Data, HTTPURLResponse)?
+
+    public func executeRequest(
+        _ request: URLRequest
+    ) async throws -> (Data, HTTPURLResponse) {
+        if let mock = executeRequest_MockValue {
+            mock
+        } else {
+            fatalError("no mock for `executeRequest`")
+        }
+    }
 }

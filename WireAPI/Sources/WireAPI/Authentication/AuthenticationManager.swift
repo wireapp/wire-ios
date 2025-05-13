@@ -46,13 +46,13 @@ public actor AuthenticationManager: AuthenticationManagerProtocol {
     private var currentToken: CurrentToken?
     private let clientID: String?
     private let cookieStorage: any CookieStorageProtocol
-    private let networkService: NetworkService
+    private let networkService: any NetworkServiceProtocol
     private let onAuthenticationFailure: () -> Void
 
     public init(
         clientID: String?,
         cookieStorage: any CookieStorageProtocol,
-        networkService: NetworkService,
+        networkService: any NetworkServiceProtocol,
         onAuthenticationFailure: @escaping () -> Void
     ) {
         self.clientID = clientID
@@ -116,9 +116,20 @@ public actor AuthenticationManager: AuthenticationManagerProtocol {
                 "Failed to renew access token with error: \(error.localizedDescription)"
             )
 
-            try await cookieStorage.removeCookies()
             currentToken = nil
-            onAuthenticationFailure()
+
+            switch error {
+            case let authenticationError as AuthenticationManager.Failure:
+                switch authenticationError {
+                case .invalidCredentials:
+                    // can't recover, deleting cookies and logging out
+                    try await cookieStorage.removeCookies()
+                    onAuthenticationFailure()
+                }
+
+            default:
+                break
+            }
 
             throw error
         }
