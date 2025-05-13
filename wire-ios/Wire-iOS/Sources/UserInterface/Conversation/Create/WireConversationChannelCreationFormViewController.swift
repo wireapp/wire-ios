@@ -58,6 +58,7 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
     ) {
         self.userSession = userSession
         self.values = ConversationCreationValues(
+            isChannel: true,
             encryptionProtocol: userSession.defaultProtocol,
             selfUser: userSession.selfUser
         )
