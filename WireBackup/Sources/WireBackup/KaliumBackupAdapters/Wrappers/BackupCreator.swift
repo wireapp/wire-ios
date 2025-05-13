@@ -54,7 +54,7 @@ struct BackupCreator {
 
     func finalize(password: String) async throws -> URL {
 
-        let result = try await mpBackupCreator.finalize(password: password)
+        let result: any BackupExportResult = try await mpBackupCreator.finalize(password: password)
 
         switch result {
         case let success as BackupExportResultSuccess:
@@ -63,8 +63,6 @@ struct BackupCreator {
             throw FinalizeBackupFileError.ioError(ioError.message)
         case let zipError as BackupExportResultFailureZipError:
             throw FinalizeBackupFileError.zipError(zipError.message)
-        case let otherFailure as any BackupExportResultFailure:
-            throw FinalizeBackupFileError.otherFailure(otherFailure.message)
         default:
             throw FinalizeBackupFileError.unexpectedResultType
         }
@@ -78,7 +76,6 @@ struct BackupCreator {
         case success(_ outputFile: String)
         case ioError(_ message: String)
         case zipError(_ message: String)
-        case otherFailure(_ message: String)
         case unexpectedResultType
 
     }
@@ -96,19 +93,16 @@ private final class FileArchiverToFileZipperAdapter<FileArchiver>: FileZipper
         self.fileArchiver = fileArchiver
     }
 
-    func zip(entries: [String]) throws -> String {
+    func zip(entries: [String], outputDirectory: OkioPath) throws -> String {
 
+        let outputDirectory = outputDirectory.segments.reduce(URL(fileURLWithPath: "/")) { url, component in
+            url.appendingPathComponent(component)
+        }
         let targetURLs = entries.map { entry in
             URL(filePath: entry, directoryHint: .notDirectory)
         }
+        let destinationURL = outputDirectory.appendingPathComponent("backup.zip", isDirectory: false)
 
-        // create temporary directory for the destination file
-        let destinationDirectory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
-            .appending(path: UUID().uuidString, directoryHint: .isDirectory)
-        try FileManager.default.createDirectory(at: destinationDirectory, withIntermediateDirectories: true)
-
-        // create zip file
-        let destinationURL = destinationDirectory.appendingPathComponent("backup.zip", isDirectory: false)
         try fileArchiver.zipResources(at: targetURLs, into: destinationURL)
 
         return destinationURL.path()
