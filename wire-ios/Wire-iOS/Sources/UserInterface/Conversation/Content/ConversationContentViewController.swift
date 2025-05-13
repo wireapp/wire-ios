@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireFoundation
 import WireLogging
 import WireMainNavigationUI
 import WireRequestStrategy
@@ -71,6 +72,8 @@ final class ConversationContentViewController: UIViewController {
         return button
     }()
 
+    private let userDefaults: PrivateUserDefaults<ConversationBackgroundKey>
+
     let tableView: UpsideDownTableView = .init(frame: .zero, style: .plain)
     let bottomContainer: UIView = .init(frame: .zero)
     var searchQueries: [String]? {
@@ -117,6 +120,7 @@ final class ConversationContentViewController: UIViewController {
     private(set) lazy var activityIndicator = BlockingActivityIndicator(view: view)
 
     private let logger: WireLogger
+    private var accentColorChangeHandler: AccentColorChangeHandler?
 
     init(
         conversation: ZMConversation,
@@ -124,7 +128,8 @@ final class ConversationContentViewController: UIViewController {
         mediaPlaybackManager: MediaPlaybackManager?,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
-        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        userDefaults: UserDefaultsProtocol = UserDefaults.standard
     ) {
         self.messagePresenter = MessagePresenter(mediaPlaybackManager: mediaPlaybackManager)
         self.userSession = userSession
@@ -133,6 +138,10 @@ final class ConversationContentViewController: UIViewController {
         self.conversation = conversation
         self.messageVisibleOnLoad = message ?? conversation.firstUnreadMessage
         self.logger = .conversation
+        self.userDefaults = PrivateUserDefaults<ConversationBackgroundKey>(
+            userID: userSession.selfUser.remoteIdentifier,
+            storage: userDefaults
+        )
 
         super.init(nibName: nil, bundle: nil)
 
@@ -231,9 +240,6 @@ final class ConversationContentViewController: UIViewController {
         tableView.keyboardDismissMode = AutomationHelper.sharedHelper
             .disableInteractiveKeyboardDismissal ? .none : .interactive
 
-        tableView.backgroundColor = SemanticColors.View.backgroundConversationView
-        view.backgroundColor = SemanticColors.View.backgroundConversationView
-
         setupMentionsResultsView()
 
         NotificationCenter.default.addObserver(
@@ -249,6 +255,25 @@ final class ConversationContentViewController: UIViewController {
             name: ZMConversation.failedToSendMessageNotificationName,
             object: .none
         )
+
+        updateBackgroundColor(color: userSession.selfUser.zmAccentColor)
+
+        accentColorChangeHandler = AccentColorChangeHandler
+            .addObserver(self, userSession: userSession) { [unowned self] color, _ in
+                updateBackgroundColor(color: color)
+            }
+    }
+
+    private func updateBackgroundColor(color: ZMAccentColor?) {
+        func set(color: UIColor) {
+            tableView.backgroundColor = color
+            view.backgroundColor = color
+        }
+        guard let color, userDefaults.bool(forKey: .conversationBackground) else {
+            set(color: SemanticColors.View.backgroundConversationView)
+            return
+        }
+        set(color: color.accentColor.conversationBackgroundColor)
     }
 
     @objc
@@ -712,4 +737,23 @@ private extension UIAlertController {
         topmostViewController?.present(alertController, animated: true)
     }
 
+}
+
+extension AccentColor {
+    var conversationBackgroundColor: UIColor {
+        switch self {
+        case .blue:
+            SemanticColors.View.conversationBackgroundBlue
+        case .purple:
+            SemanticColors.View.conversationBackgroundPurple
+        case .green:
+            SemanticColors.View.conversationBackgroundGreen
+        case .amber:
+            SemanticColors.View.conversationBackgroundAmber
+        case .red:
+            SemanticColors.View.conversationBackgroundRed
+        case .turquoise:
+            SemanticColors.View.conversationBackgroundTurquoise
+        }
+    }
 }

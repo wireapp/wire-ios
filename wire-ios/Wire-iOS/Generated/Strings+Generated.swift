@@ -5265,6 +5265,8 @@ internal enum L10n {
           }
         }
         internal enum AccountAppearanceGroup {
+          /// Your conversations will use a background based on your Profile color, with an accessible shade for light & dark mode.
+          internal static let footer = L10n.tr("Localizable", "self.settings.account_appearance_group.footer", fallback: "Your conversations will use a background based on your Profile color, with an accessible shade for light & dark mode.")
           /// Appearance
           internal static let title = L10n.tr("Localizable", "self.settings.account_appearance_group.title", fallback: "Appearance")
         }
@@ -5356,6 +5358,10 @@ internal enum L10n {
             internal static let takePicture = L10n.tr("Localizable", "self.settings.account_picture_group.alert.take_picture", fallback: "Take Photo")
             /// Change your profile picture
             internal static let title = L10n.tr("Localizable", "self.settings.account_picture_group.alert.title", fallback: "Change your profile picture")
+          }
+          internal enum Background {
+            /// Conversation background color
+            internal static let title = L10n.tr("Localizable", "self.settings.account_picture_group.background.title", fallback: "Conversation background color")
           }
         }
         internal enum AccountSection {
