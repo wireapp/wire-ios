@@ -59,6 +59,7 @@ final class ConversationCreationController: UIViewController {
 
     private lazy var nameSection = ConversationCreateNameSectionController(
         selfUser: userSession.selfUser,
+        isChannel: values.isChannel,
         delegate: self
     )
     private lazy var errorSection = ConversationCreateErrorSectionController()
@@ -162,6 +163,7 @@ final class ConversationCreationController: UIViewController {
         self.preSelectedParticipants = preSelectedParticipants
         self.userSession = userSession
         self.values = ConversationCreationValues(
+            isChannel: false,
             encryptionProtocol: userSession.defaultProtocol,
             selfUser: userSession.selfUser
         )
