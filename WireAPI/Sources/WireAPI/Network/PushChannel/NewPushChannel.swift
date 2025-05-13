@@ -180,9 +180,7 @@ public final class NewPushChannel: NewPushChannelProtocol {
                 while true {
                     try Task.checkCancellation()
                     try await Task.sleep(nanoseconds: 100_000_000)
-                    WireLogger.pushChannel.debug("😅")
                     if await channelState.wait(timeout: timeout) {
-                        WireLogger.pushChannel.debug("timed out!")
                         if await channelState.catchingUp {
                             WireLogger.pushChannel.debug("caught up")
                             await channelState.caughtUp()
@@ -227,6 +225,7 @@ public final class NewPushChannel: NewPushChannelProtocol {
         
         await webSocket.close()
         tearDownTimeoutTask()
+        tearDownKeepAliveTask()
     }
 
     // MARK: - Helpers
