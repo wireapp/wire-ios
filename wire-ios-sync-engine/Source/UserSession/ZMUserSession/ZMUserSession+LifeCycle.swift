@@ -32,6 +32,12 @@ public extension ZMUserSession {
         _ application: ZMApplication,
         performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
     ) {
+        // TODO: [WPB-17583] re-enable background fetch for new sync.
+        guard !journal[.isSyncV2Enabled] else {
+            completionHandler(.noData)
+            return
+        }
+
         BackgroundActivityFactory.shared.resume()
 
         syncManagedObjectContext.performGroupedBlock {

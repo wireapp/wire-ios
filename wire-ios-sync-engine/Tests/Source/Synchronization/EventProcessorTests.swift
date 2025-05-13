@@ -28,6 +28,7 @@ final class EventProcessorTests: MessagingTest {
 
     var sut: EventProcessor!
     var eventProcessingTracker: EventProcessingTracker!
+    var mockStrategyDirectory: MockStrategyDirectory!
     var mockEventsConsumers: [MockEventConsumer]!
     var mockEventAsyncConsumers: [MockEventAsyncConsumer]!
     var earService: MockEARServiceInterface!
@@ -41,6 +42,9 @@ final class EventProcessorTests: MessagingTest {
 
         mockEventsConsumers = [MockEventConsumer(), MockEventConsumer()]
         mockEventAsyncConsumers = [MockEventAsyncConsumer(), MockEventAsyncConsumer()]
+        mockStrategyDirectory = MockStrategyDirectory()
+        mockStrategyDirectory.eventConsumers = mockEventsConsumers
+        mockStrategyDirectory.eventAsyncConsumers = mockEventAsyncConsumers
 
         eventProcessingTracker = EventProcessingTracker()
 
@@ -52,13 +56,14 @@ final class EventProcessorTests: MessagingTest {
             storeProvider: coreDataStack,
             eventProcessingTracker: eventProcessingTracker,
             earService: earService,
-            eventConsumers: mockEventsConsumers,
-            eventAsyncConsumers: mockEventAsyncConsumers,
-            lastEventIDRepository: lastEventIDRepository
+            lastEventIDRepository: lastEventIDRepository,
+            strategyDirectory: mockStrategyDirectory,
+            additionalEventConsumers: []
         )
     }
 
     override func tearDown() {
+        mockStrategyDirectory = nil
         mockEventsConsumers = nil
         mockEventAsyncConsumers = nil
         eventProcessingTracker = nil
@@ -231,8 +236,8 @@ final class EventProcessorTests: MessagingTest {
             eventDecoder: eventDecoder,
             eventProcessingTracker: eventProcessingTracker,
             earService: earService,
-            eventConsumers: mockEventsConsumers,
-            eventAsyncConsumers: mockEventAsyncConsumers
+            strategyDirectory: mockStrategyDirectory,
+            additionalEventConsumers: []
         )
 
         // When
