@@ -591,6 +591,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
                 ))
             }
         mockCoreCryptoContext.wipeConversationConversationId_MockMethod = { _ in }
+        mockCoreCryptoContext.conversationExistsConversationId_MockValue = true
 
         // When
         await assertItThrows(error: MLSService.MLSAddMembersError.failedToClaimKeyPackages(users: usersIncludingSelf)) {
@@ -1637,12 +1638,26 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             count += 1
             XCTAssertEqual(id, groupID.data)
         }
+        mockCoreCryptoContext.conversationExistsConversationId_MockValue = true
 
         // When
         try await sut.wipeGroup(groupID)
 
         // Then
         XCTAssertEqual(count, 1)
+    }
+
+    func test_WipeGroup_CoreCryptoWipeConversationNotCalledIfConversationDoesNotExist() async throws {
+        let groupID = MLSGroupID.random()
+
+        mockCoreCryptoContext.conversationExistsConversationId_MockValue = false
+
+        // When
+        try await sut.wipeGroup(groupID)
+
+        // Then
+        XCTAssertEqual(mockCoreCryptoContext.wipeConversationConversationId_Invocations.count, 0)
+
     }
 
     // MARK: - Key Packages
@@ -3038,6 +3053,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             XCTAssertEqual(conversationID, mlsGroupID.data)
             wipeConversationExpectation.fulfill()
         }
+        mockCoreCryptoContext.conversationExistsConversationId_MockValue = true
 
         // When
         try await sut.startProteusToMLSMigration()
