@@ -226,7 +226,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
     private func qualifiedIDOfFirstGroupConversation(
         of userClient: UserClient,
         in context: NSManagedObjectContext
-    ) async -> QualifiedID? {
+    ) async -> WireDataModel.QualifiedID? {
         await context.perform {
             userClient.user?.conversations
                 .filter { $0.conversationType == .group }
