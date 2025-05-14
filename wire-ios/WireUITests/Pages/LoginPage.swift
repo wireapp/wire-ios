@@ -40,15 +40,15 @@ class LoginPage: PageModel {
         return elementsQuery["Email or SSO code"]
     }
 
-    func typeEmailOrSSO(input: String) -> LoginPage {
+    func tapCreatePersonalAccountLink() -> RegistrationPage {
+        createPersonalAccountLink.tap()
+        return RegistrationPage()
+    }
+
+    func typeEmailOrSSO(_ input: String) -> LoginPage {
         emailTextField.tap()
         emailTextField.typeText(input)
         nextButton.tap()
         return self
-    }
-
-    func useCreatePersonalAccountLink() -> RegistrationPage {
-        createPersonalAccountLink.tap()
-        return RegistrationPage()
     }
 }

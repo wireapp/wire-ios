@@ -36,19 +36,19 @@ final class PersonalUsersTests: WireUITestCase {
         let user = UserGenerator.generateUniqueUserInfo()
 
         let page = LoginPage()
-            .typeEmailOrSSO(email: user.email)
-            .useCreatePersonalAccountLink()
+            .typeEmailOrSSO(user.email)
+            .tapCreatePersonalAccountLink()
             .tapConfirmCreateAccount()
             .tapAcceptButton()
 
         let verificationCode = try await InbucketClient.getVerificationCode(email: user.email)
 
         let finalPage = page
-            .enterVerificationCode(verificationCode: verificationCode)
-            .setName(name: user.name)
-            .setPassword(password: user.password)
+            .enterVerificationCode(verificationCode)
+            .setName(user.name)
+            .setPassword(user.password)
             .acceptPopup()
-            .setUsername(username: user.username)
+            .setUsername(user.username)
             .openSettings()
             .openAccountSettings()
 
