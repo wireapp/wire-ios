@@ -47,8 +47,7 @@ public actor WebSocket: WebSocketProtocol {
                             WireLogger.webSocket.debug("received message")
                             continuation.yield(message)
                         } catch {
-                            
-                            WireLogger.webSocket.error("error throwing \(String(describing: error)) - closeCode: \(connection.closeCode) - closeReason: \(String(describing: connection.closeReason)), debug: \(connection.networkInformation)")
+                            // WireLogger.webSocket.error("error throwing \(String(describing: error)) - closeCode: \(connection.closeCode) - closeReason: \(String(describing: connection.closeReason)), debug: \(connection.networkInformation)")
                             continuation.finish(throwing: error)
                             isAlive = false
                         }

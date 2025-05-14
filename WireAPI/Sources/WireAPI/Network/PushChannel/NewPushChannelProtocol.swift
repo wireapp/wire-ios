@@ -15,21 +15,21 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-
 import Foundation
 
-// sourcery: AutoMockable
-/// Make a direct connection to a server to receive update events.
-public protocol PushChannelProtocol: Sendable {
+public protocol NewPushChannelProtocol: Sendable {
 
     /// Open the push channel and start receiving update events.
     ///
     /// - Returns: An async stream of live update event envelopes.
 
-    func open() async throws -> AsyncThrowingStream<UpdateEventEnvelope, any Error>
+    func open() async throws -> NewPushChannel.Stream
 
     /// Close the push channel and stop receiving update events.
 
     func close() async
 
+    func ackFullSync() async throws
+
+    func ackEvent(deliveryTag: UInt64, multiple: Bool) async throws
 }

@@ -31,19 +31,3 @@ public protocol PushChannelAPI {
 
 // Workaround for automockable compiler error.
 public typealias AnyPushChannel = any PushChannelProtocol
-
-// sourcery: AutoMockable
-/// An API access object for endpoints concerning the push channel.
-public protocol NewPushChannelAPI {
-
-    /// Create a new push channel.
-    ///
-    /// - Parameter clientID: The id of the self client.
-    /// - Returns: A push channel.
-
-    func createPushChannel(clientID: String) async throws -> AnyNewPushChannel
-
-}
-
-// Workaround for automockable compiler error.
-public typealias AnyNewPushChannel = any NewPushChannelProtocol

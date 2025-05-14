@@ -21,29 +21,35 @@ import XCTest
 @testable import WireAPISupport
 @testable import WireDomain
 @testable import WireDomainSupport
+import Combine
 
 final class NewIncrementalSyncTests: XCTestCase {
 
     var sut: NewIncrementalSync!
-    var pushChannelAPI: MockPushChannelAPI!
+    var pushChannelAPI: MockNewPushChannelAPI!
     var decryptor: MockUpdateEventDecryptorProtocol!
     var store: MockUpdateEventsLocalStoreProtocol!
     var processor: MockUpdateEventProcessorProtocol!
     var databaseSaver: MockDatabaseSaverProtocol!
-
+    var syncStateSubject: CurrentValueSubject<SyncState, Never>!
+    
+    
     override func setUp() {
-        pushChannelAPI = MockPushChannelAPI()
+        pushChannelAPI = MockNewPushChannelAPI()
         decryptor = MockUpdateEventDecryptorProtocol()
         store = MockUpdateEventsLocalStoreProtocol()
         processor = MockUpdateEventProcessorProtocol()
         databaseSaver = MockDatabaseSaverProtocol()
+        syncStateSubject = .init(.idle)
+        
         sut = NewIncrementalSync(
             selfClientID: Scaffolding.selfClientID,
             pushChannelAPI: pushChannelAPI,
             decryptor: decryptor,
             store: store,
             processor: processor,
-            databaseSaver: databaseSaver
+            databaseSaver: databaseSaver,
+            syncStateSubject: syncStateSubject
         )
     }
 
@@ -54,6 +60,7 @@ final class NewIncrementalSyncTests: XCTestCase {
         store = nil
         processor = nil
         databaseSaver = nil
+        syncStateSubject = nil
     }
 
     func test_perform_pendingEventsExist() async throws {
@@ -61,7 +68,7 @@ final class NewIncrementalSyncTests: XCTestCase {
         
 
         // Some live events, some of which were already pulled.
-        let pushChannel = MockPushChannelProtocol()
+        let pushChannel = MockNewPushChannelProtocol()
         pushChannel.open_MockValue = AsyncThrowingStream { continuation in
             Task {
                 continuation.yield(Scaffolding.event2)
@@ -69,7 +76,7 @@ final class NewIncrementalSyncTests: XCTestCase {
                 continuation.finish()
             }
         }
-        pushChannel.ackEventDeliveryTagMultiple_MockMethod = { (_, _) in }
+        pushChannel. = { (_, _) in }
         pushChannelAPI.createNewPushChannelClientID_MockMethod = { _ in pushChannel }
 
         // Some indices at which live events will be stored.
@@ -154,7 +161,7 @@ final class NewIncrementalSyncTests: XCTestCase {
         
 
         // Some live events, some of which were already pulled.
-        let pushChannel = MockPushChannelProtocol()
+        let pushChannel = MockNewPushChannelProtocol()
         pushChannel.open_MockValue = AsyncThrowingStream { continuation in
             Task {
                 continuation.yield(Scaffolding.event2)

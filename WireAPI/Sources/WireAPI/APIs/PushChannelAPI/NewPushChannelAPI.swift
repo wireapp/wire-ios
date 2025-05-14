@@ -16,20 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 // sourcery: AutoMockable
-/// Make a direct connection to a server to receive update events.
-public protocol PushChannelProtocol: Sendable {
+/// An API access object for endpoints concerning the push channel.
+public protocol NewPushChannelAPI {
 
-    /// Open the push channel and start receiving update events.
+    /// Create a new push channel.
     ///
-    /// - Returns: An async stream of live update event envelopes.
+    /// - Parameter clientID: The id of the self client.
+    /// - Returns: A push channel.
 
-    func open() async throws -> AsyncThrowingStream<UpdateEventEnvelope, any Error>
-
-    /// Close the push channel and stop receiving update events.
-
-    func close() async
+    func createPushChannel(clientID: String) async throws -> AnyNewPushChannel
 
 }
+
+// Workaround for automockable compiler error.
+public typealias AnyNewPushChannel = any NewPushChannelProtocol
