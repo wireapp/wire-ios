@@ -83,7 +83,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
                 asset: .video(url: videoURL),
                 onConfirm: { [unowned self] _ in
                     dismiss(animated: true)
-                    uploadFile(at: videoURL)
+                    uploadFiles(at: [videoURL])
                 },
                 onCancel: { [unowned self] in
                     dismiss(animated: true) {
@@ -228,7 +228,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
         let filename: String = ((lastPathComponent as NSString).deletingPathExtension as NSString)
             .appendingPathExtension("mp4") ?? "video.mp4"
 
-        let videoURLAsset = AVURLAsset(url: NSURL(fileURLWithPath: inputPath) as URL)
+        let videoURLAsset = AVURLAsset(url: URL(fileURLWithPath: inputPath))
 
         videoURLAsset
             .convert(
@@ -263,7 +263,7 @@ extension ConversationInputBarViewController: UIVideoEditorControllerDelegate {
                 return
             }
 
-            self.uploadFile(at: NSURL(fileURLWithPath: path) as URL)
+            self.uploadFiles(at: [URL(fileURLWithPath: path)])
         }
     }
 

@@ -39,26 +39,35 @@ extension ConversationInputBarViewController {
         return true
     }
 
+    /// Upload files at the given `urls`.
+    ///
+    /// - parameter urls: The URLs of the files to upload.
+    /// - note: If wire cells is enabled, each file will be uploaded separately. If wire cells is disabled and there are
+    /// multiple files, these will be zipped and then uploaded.
+
     func uploadFiles(at urls: [URL]) {
-        guard urls.count > 1 else {
-            if let url = urls.first {
+        switch urls.count {
+        case 0:
+            return
+        case 1:
+            uploadFile(at: urls[0])
+        case 2... where DeveloperFlag.wireCells.isOn:
+            for url in urls {
                 uploadFile(at: url)
             }
-            return
+        default:
+            if let archiveURL = urls.zipFiles() {
+                uploadFile(at: archiveURL)
+            } else {
+                zmLog.error("Cannot archive files at URLs: \(urls.description)")
+            }
         }
-
-        if let archiveURL = urls.zipFiles() {
-            uploadFile(at: archiveURL)
-        } else {
-            zmLog.error("Cannot archive files at URLs: \(urls.description)")
-        }
-
     }
 
-    /// upload a signal file
+    /// upload a single file
     ///
     /// - Parameter url: the URL of the file
-    func uploadFile(at url: URL) {
+    private func uploadFile(at url: URL) {
         guard let conversation = conversation as? ZMConversation else { return }
 
         let completion: Completion = { [weak self] in
