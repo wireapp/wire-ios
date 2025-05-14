@@ -18,20 +18,21 @@
 
 import XCTest
 
-class LoginPage: PageModel {
+class VerificationCodePage: PageModel {
 
     override func hasLoaded() {
-        let expectation = createPersonalAccountLink.waitForExistence(timeout: 10)
-        XCTAssert(expectation, "Login page not loaded - can't find email field")
+        let expectation = verificationCodeInput.waitForExistence(timeout: 10)
+        XCTAssert(expectation, "Verification code page not loaded - can't find verification input")
     }
 
-    var createPersonalAccountLink: XCUIElement {
-        let elementsQuery = app.scrollViews.otherElements
-        return elementsQuery.buttons["Create Personal Account"]
+    var verificationCodeInput: XCUIElement {
+        let elementsQuery = app.textViews.matching(identifier: "VerificationCode")
+        return elementsQuery.firstMatch
     }
 
-    func tapCreatePersonalAccountLink() -> CreateAccountPage {
-        createPersonalAccountLink.tap()
-        return CreateAccountPage()
+    func enterVerificationCode(_ verificationCode: String) -> SetNamePage {
+        verificationCodeInput.tap()
+        verificationCodeInput.typeText(verificationCode)
+        return SetNamePage()
     }
 }

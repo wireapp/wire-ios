@@ -18,20 +18,27 @@
 
 import XCTest
 
-class LoginPage: PageModel {
+class SetNamePage: PageModel {
 
     override func hasLoaded() {
-        let expectation = createPersonalAccountLink.waitForExistence(timeout: 10)
-        XCTAssert(expectation, "Login page not loaded - can't find email field")
+        let expectation = nameField.waitForExistence(timeout: 10)
+        XCTAssert(expectation, "Registration page not loaded - can't find next button")
     }
 
-    var createPersonalAccountLink: XCUIElement {
-        let elementsQuery = app.scrollViews.otherElements
-        return elementsQuery.buttons["Create Personal Account"]
+    var nameNextButton: XCUIElement {
+        let elementsQuery = nameField.buttons.matching(identifier: "ConfirmButton")
+        return elementsQuery.firstMatch
     }
 
-    func tapCreatePersonalAccountLink() -> CreateAccountPage {
-        createPersonalAccountLink.tap()
-        return CreateAccountPage()
+    var nameField: XCUIElement {
+        let elementsQuery = app.otherElements.textFields.matching(identifier: "NameField")
+        return elementsQuery.firstMatch
+    }
+
+    func setName(_ name: String) -> SetPasswordPage {
+        nameField.tap()
+        nameField.typeText(name)
+        nameNextButton.tap()
+        return SetPasswordPage()
     }
 }

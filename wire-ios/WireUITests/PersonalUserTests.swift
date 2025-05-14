@@ -35,7 +35,7 @@ final class PersonalUsersTests: WireUITestCase {
     func test_register_asPersonalUser() async throws {
         let user = UserGenerator.generateUniqueUserInfo()
 
-        let page = LoginPage()
+        let page = WelcomePage()
             .typeEmailOrSSO(user.email)
             .tapCreatePersonalAccountLink()
             .tapConfirmCreateAccount()
