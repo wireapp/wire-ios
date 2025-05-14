@@ -16,15 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import WireCellsAPI
-import WireCellsImplementation
+public import Foundation
 
-public struct WireCellsAssembly {
-
-    public init() {}
-
-    public static func makeUploadFileUseCase() -> any WireCellsUploadFileUseCaseProtocol {
-        WireCellsUploadFileUseCase()
-    }
-
+// sourcery: AutoMockable
+/// Uploads the file at `fileURL` to the cells server.
+public protocol WireCellsUploadFileUseCaseProtocol {
+    func invoke(fileURL: URL) async throws
 }

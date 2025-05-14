@@ -16,15 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import WireCellsAPI
-import WireCellsImplementation
+import WireCellsAPI
+import Foundation
+import WireLogging
 
-public struct WireCellsAssembly {
+package class WireCellsUploadFileUseCase: WireCellsUploadFileUseCaseProtocol {
 
-    public init() {}
+    package init() {}
 
-    public static func makeUploadFileUseCase() -> any WireCellsUploadFileUseCaseProtocol {
-        WireCellsUploadFileUseCase()
+    func invoke(fileURL: URL) async throws {
+        WireLogger.cells.info("Uploading file: \(fileURL)")
     }
 
 }
