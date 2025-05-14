@@ -5269,8 +5269,8 @@ internal enum L10n {
           }
         }
         internal enum AccountAppearanceGroup {
-          /// Your conversations will use a background based on your Profile color, with an accessible shade for light & dark mode.
-          internal static let footer = L10n.tr("Localizable", "self.settings.account_appearance_group.footer", fallback: "Your conversations will use a background based on your Profile color, with an accessible shade for light & dark mode.")
+          /// When this is on, your conversations show a background based on your profile color and light or dark theme.
+          internal static let footer = L10n.tr("Localizable", "self.settings.account_appearance_group.footer", fallback: "When this is on, your conversations show a background based on your profile color and light or dark theme.")
           /// Appearance
           internal static let title = L10n.tr("Localizable", "self.settings.account_appearance_group.title", fallback: "Appearance")
         }
