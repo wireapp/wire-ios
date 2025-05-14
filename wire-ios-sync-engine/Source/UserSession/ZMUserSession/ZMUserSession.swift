@@ -110,7 +110,7 @@ public final class ZMUserSession: NSObject {
     public internal(set) var mlsGroupVerification: (any MLSGroupVerificationProtocol)?
 
     let analyiticsLogger: WireLogger
-    private let journal: Journal
+    let journal: Journal
 
     // MARK: Computed Properties
 
@@ -770,9 +770,9 @@ public final class ZMUserSession: NSObject {
             storeProvider: coreDataStack,
             eventProcessingTracker: eventProcessingTracker,
             earService: earService,
-            eventConsumers: strategyDirectory?.eventConsumers ?? [],
-            eventAsyncConsumers: (strategyDirectory?.eventAsyncConsumers ?? []) + [conversationEventProcessor],
-            lastEventIDRepository: lastEventIDRepository
+            lastEventIDRepository: lastEventIDRepository,
+            strategyDirectory: strategyDirectory!,
+            additionalEventConsumers: [conversationEventProcessor]
         )
     }
 
