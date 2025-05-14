@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireCellsAPI
 import Foundation
+import WireCellsAPI
 import WireLogging
 
 package final class WireCellsUploadFileUseCase: WireCellsUploadFileUseCaseProtocol {
@@ -25,10 +25,12 @@ package final class WireCellsUploadFileUseCase: WireCellsUploadFileUseCaseProtoc
     package init() {}
 
     func invoke(fileURL: URL) async throws {
+        // TODO: [WPB-17619] Implement
         WireLogger.cells.info("Uploading file from URL")
     }
 
     func invoke(imageData: Data) async throws {
+        // TODO: [WPB-17619] Implement
         WireLogger.cells.info("Uploading file from image data")
     }
 

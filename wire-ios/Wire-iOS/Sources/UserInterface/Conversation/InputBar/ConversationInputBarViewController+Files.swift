@@ -17,10 +17,10 @@
 //
 
 import Foundation
-import WireCommonComponents
 import WireCellsBindings
-import WireSyncEngine
+import WireCommonComponents
 import WireLogging
+import WireSyncEngine
 
 extension ConversationInputBarViewController: UINavigationControllerDelegate {}
 
@@ -131,7 +131,10 @@ extension ConversationInputBarViewController {
     }
 
     private func showAlertForFileTooBig() {
-        let maxSizeString = ByteCountFormatter.string(fromByteCount: Int64(userSession.maxUploadFileSize), countStyle: .binary)
+        let maxSizeString = ByteCountFormatter.string(
+            fromByteCount: Int64(userSession.maxUploadFileSize),
+            countStyle: .binary
+        )
         let errorMessage = L10n.Localizable.Content.File.tooBig(maxSizeString)
 
         let alert = UIAlertController(

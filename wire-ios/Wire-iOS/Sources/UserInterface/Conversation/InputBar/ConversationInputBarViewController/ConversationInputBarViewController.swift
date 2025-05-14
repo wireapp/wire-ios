@@ -22,13 +22,13 @@ import MobileCoreServices
 import Photos
 import SwiftUI
 import UIKit
+import WireCellsAPI
+import WireCellsBindings
 import WireCellsUI
 import WireCommonComponents
 import WireDesign
 import WireLogging
 import WireSyncEngine
-import WireCellsAPI
-import WireCellsBindings
 
 enum ConversationInputBarViewControllerMode {
     case textInput
