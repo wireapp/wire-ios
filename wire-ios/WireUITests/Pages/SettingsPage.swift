@@ -19,15 +19,14 @@
 import XCTest
 
 class SettingsPage: PageModel {
-    func accountSettingsMenu() -> XCUIElement {
+    var accountSettingsMenu: XCUIElement {
         let elementsQuery = app.cells
         return elementsQuery["Account"]
     }
 
     func openAccountSettings() -> AccountSettingsPage {
-        let accountSettings = accountSettingsMenu()
-        accountSettings.waitForExistence(timeout: 1)
-        accountSettings.tap()
+        accountSettingsMenu.waitForExistence(timeout: 1)
+        accountSettingsMenu.tap()
         return AccountSettingsPage()
     }
 }

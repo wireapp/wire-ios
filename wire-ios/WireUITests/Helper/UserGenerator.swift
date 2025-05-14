@@ -19,7 +19,7 @@
 import XCTest
 
 class UserGenerator {
-    func generateUniqueUserInfo() -> UserInfo {
+    static func generateUniqueUserInfo() -> UserInfo {
         let password = generateRandomPassword()
         let time = Int(NSDate().timeIntervalSince1970 * 1000)
         let username = "smoketester\(time)"
@@ -28,8 +28,7 @@ class UserGenerator {
         return UserInfo(name, username: username, password: password, domain: domain)
     }
 
-    // TODO: Look into maybe using a library for this and general user info generation
-    func generateRandomPassword() -> String {
+    static func generateRandomPassword() -> String {
         let lowercase = "abcdefghijklmnopqrstuvwxyz"
         let uppercase = lowercase.uppercased()
         let numbers = "0123456789"
@@ -44,7 +43,7 @@ class UserGenerator {
         return password
     }
 
-    func randomCharacterFrom(array: String) -> String {
+    static func randomCharacterFrom(array: String) -> String {
         let randomIndex = Int.random(in: 0 ..< array.count)
         let character = array[array.index(array.startIndex, offsetBy: randomIndex)]
         return String(character)

@@ -33,12 +33,12 @@ final class PersonalUsersTests: WireUITestCase {
 
     @MainActor
     func test_register_asPersonalUser() async throws {
-        let user = UserGenerator().generateUniqueUserInfo()
+        let user = UserGenerator.generateUniqueUserInfo()
 
         let page = LoginPage()
             .typeEmailOrSSO(email: user.email)
             .useCreatePersonalAccountLink()
-            .confirmCreateAccount()
+            .tapConfirmCreateAccount()
             .tapAcceptButton()
 
         let verificationCode = try await InbucketClient.getVerificationCode(email: user.email)

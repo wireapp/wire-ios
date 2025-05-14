@@ -35,13 +35,15 @@ class InbucketClient {
 
         var (inbucketData, response) = try await URLSession.shared.data(for: request)
         var pureResponse = response as! HTTPURLResponse
-        while pureResponse.statusCode != 200 {
+        var timeout = 0
+        while pureResponse.statusCode != 200 && timeout < 100 {
             (inbucketData, response) = try await URLSession.shared.data(for: request)
             pureResponse = response as! HTTPURLResponse
+            timeout+=1
         }
 
         // Convert HTTP Response Data to a simple String
-        let message: InbucketMessage = try! JSONDecoder().decode(InbucketMessage.self, from: inbucketData)
+        let message: InbucketMessage = try JSONDecoder().decode(InbucketMessage.self, from: inbucketData)
         let subject: String = message.subject
         verificationCode = String(subject.prefix(6))
 
@@ -50,6 +52,6 @@ class InbucketClient {
     }
 }
 
-struct InbucketMessage: Decodable {
+private struct InbucketMessage: Decodable {
     let subject: String
 }
