@@ -53,10 +53,12 @@ class WireUITestCase: XCTestCase {
             springboard.buttons["com.apple.springboardhome.application-shortcut-item.remove-app"].tap()
 
             // For some reason the following commands were unreliable when called once
-            springboard.buttons["Delete App"].tap()
-            springboard.buttons["Delete App"].tap()
-            springboard.buttons["Delete"].tap()
-            springboard.buttons["Delete"].tap()
+            let deleteApp = springboard.buttons["Delete App"]
+            deleteApp.waitForExistence(timeout: 1)
+            deleteApp.tap()
+            let delete = springboard.buttons["Delete"]
+            delete.waitForExistence(timeout: 1)
+            delete.tap()
         }
     }
 }
