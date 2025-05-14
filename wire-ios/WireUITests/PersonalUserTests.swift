@@ -43,7 +43,7 @@ final class PersonalUsersTests: WireUITestCase {
 
         let verificationCode = try await InbucketClient.getVerificationCode(email: user.email)
 
-        let finalPage = page
+        let accountPage = page
             .enterVerificationCode(verificationCode)
             .setName(user.name)
             .setPassword(user.password)
@@ -52,9 +52,13 @@ final class PersonalUsersTests: WireUITestCase {
             .openSettings()
             .openAccountSettings()
 
-        XCTAssertTrue(finalPage.getAccountName().elementsEqual(user.name), "Account name didn't match \(user.name)")
-        XCTAssertTrue(finalPage.getUsername().contains(user.username), "Username didn't contain \(user.username)")
+        XCTAssertTrue(accountPage.getAccountName().elementsEqual(user.name), "Account name didn't match \(user.name)")
+        XCTAssertTrue(accountPage.getUsername().contains(user.username), "Username didn't contain \(user.username)")
 //        TODO: Restore once [WPB-17516] is fixed
 //        XCTAssertTrue(accountPage.getEmail().elementsEqual(user.email))*/
+
+        accountPage.logout()
+            // TODO: Restore once [WPB-17516] is fixed
+//            .enterPassword(user.password)
     }
 }

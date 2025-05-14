@@ -48,8 +48,8 @@ class SetPasswordPage: PageModel {
     }
 
     func acceptPopup() -> SetUsernamePage {
-        acceptButton.waitForExistence(timeout: 10)
-        acceptButton.tap()
+        let button = app.otherElements.buttons.firstMatch
+        button.tap()
         return SetUsernamePage()
     }
 }

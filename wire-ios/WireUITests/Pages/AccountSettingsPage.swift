@@ -19,6 +19,7 @@
 import XCTest
 
 class AccountSettingsPage: PageModel {
+
     var nameField: XCUIElement {
         let elementsQuery = app.textFields.matching(identifier: "NameField")
         return elementsQuery.firstMatch
@@ -34,6 +35,11 @@ class AccountSettingsPage: PageModel {
         return elementsQuery.firstMatch
     }
 
+    var logoutButton: XCUIElement {
+        let elementsQuery = app.staticTexts.matching(identifier: "Log OutField")
+        return elementsQuery.firstMatch
+    }
+
     func getAccountName() -> String {
         nameField.value as! String
     }
@@ -44,5 +50,10 @@ class AccountSettingsPage: PageModel {
 
     func getEmail() -> String {
         emailField.label
+    }
+
+    func logout() -> LogOutPage {
+        logoutButton.tap()
+        return LogOutPage()
     }
 }
