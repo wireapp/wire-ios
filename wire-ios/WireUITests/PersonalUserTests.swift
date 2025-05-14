@@ -18,27 +18,7 @@
 
 import XCTest
 
-final class PersonalUsersTests: XCTestCase {
-    var app: XCUIApplication!
-    let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-
-    override func setUpWithError() throws {
-        // Delete app, useful if we aren't resetting simulators between runs (locally writing tests)
-        XCUIApplication().terminate()
-        deleteApp()
-
-        app = XCUIApplication()
-        app.launchArguments = [
-            "-BackendEnvironmentTypeOverrideKey staging",
-            "--preferred-api-version=8"
-        ]
-        app.useWireAuthentication()
-
-        app.launch()
-
-        // In UI tests it is usually best to stop immediately when a failure occurs
-        continueAfterFailure = false
-    }
+final class PersonalUsersTests: WireUITestCase {
 
     override func tearDown() async throws {
 //        TODO: Restore once [WPB-17516] is fixed
@@ -76,22 +56,5 @@ final class PersonalUsersTests: XCTestCase {
         XCTAssertTrue(finalPage.getUsername().contains(user.username), "Username didn't contain \(user.username)")
 //        TODO: Restore once [WPB-17516] is fixed
 //        XCTAssertTrue(accountPage.getEmail().elementsEqual(user.email))*/
-    }
-
-    // MARK: - Helpers
-
-    func deleteApp() {
-        let icon = springboard.icons["Wire"]
-        if icon.exists {
-            icon.press(forDuration: 1.3)
-
-            springboard.buttons["com.apple.springboardhome.application-shortcut-item.remove-app"].tap()
-
-            // For some reason the following commands were unreliable when called once
-            springboard.buttons["Delete App"].tap()
-            springboard.buttons["Delete App"].tap()
-            springboard.buttons["Delete"].tap()
-            springboard.buttons["Delete"].tap()
-        }
     }
 }
