@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import WireBackup
 import WireDataModel
 import WireProtos
@@ -23,12 +24,105 @@ import WireProtos
 extension GenericMessage {
 
     init(
-        nonce: String,
+        nonce: UUID,
         messageContent: MessageContent
     ) {
-        self = GenericMessage.with { genericMessage in
-            genericMessage.messageID = nonce
-            genericMessage.content = .init(messageContent)
+        switch messageContent {
+
+        case let .text(textContent):
+            let textMessage = Text(content: textContent.text)
+            self = GenericMessage(content: textMessage, nonce: nonce)
+
+        case let .location(locationContent):
+            let locationContent = Location.with { location in
+                if let name = locationContent.name {
+                    location.name = name
+                }
+                location.latitude = locationContent.latitude
+                location.longitude = locationContent.longitude
+                location.zoom = locationContent.zoom ?? 0
+            }
+            self = GenericMessage(content: locationContent, nonce: nonce)
+
+            /*
+        case let .asset(assetContent):
+            let (assetClientMessage, isCreated) = try await messageLocalStore.fetchOrCreateAssetClientMessage(
+                id: message.id,
+                conversation: conversation,
+                sender: (id: senderUserID.id, domain: senderUserID.domain, clientID: message.senderClientID),
+                date: message.creationDate
+            )
+            guard isCreated else { return } // don't overwrite existing messages
+
+            let genericMessage: GenericMessage
+            switch assetContent.metadata {
+            case let .image(imageData):
+                let asset = Asset(
+                    imageSize: CGSize(width: Double(imageData.width), height: Double(imageData.height)),
+                    mimeType: assetContent.mimeType,
+                    size: assetContent.size
+                )
+                // TODO: moc.zm_fileAssetCache.storeOriginalImage(data: imageData, for: message) ?
+                // guard !message.isRestricted else {
+                //    throw AppendMessageError.fileSharingIsRestricted
+                // }
+                //
+                genericMessage = GenericMessage(content: asset, nonce: nonce)
+            // try mergeWithExistingData(message: genericMessage) // TODO: ?
+            case let .video(videoData):
+                let asset = Asset.with { asset in
+                    asset.original = Asset.Original.with { original in
+                        original.size = assetContent.size
+                        original.mimeType = assetContent.mimeType
+                        original.name = assetContent.name ?? "video"
+                        original.video = WireProtos.Asset.VideoMetaData.with { video in
+                            video.durationInMillis = videoData.duration.map { $0 / 1000 } ?? 0 // TODO: compare with backup creation
+                            video.width = videoData.width ?? 0
+                            video.height = videoData.height ?? 0
+                        }
+                    }
+                }
+                genericMessage = GenericMessage(content: asset, nonce: nonce)
+            // TODO: contributionType = .videoMessage ?
+            // TODO: moc.zm_fileAssetCache.storeOriginalFile
+            case let .audio(audioData):
+                let asset = Asset.with { asset in
+                    asset.original = Asset.Original.with { original in
+                        original.size = assetContent.size
+                        original.mimeType = assetContent.mimeType
+                        original.name = assetContent.name ?? "audio"
+                        original.audio = Asset.AudioMetaData.with { audio in
+                            let loudnessArray = audioData.normalization?.map { Float($0 / 255) }
+                            audio.durationInMillis = audioData.duration.map { $0 * 1000 } ?? 0
+                            // audio.normalizedLoudness = NSData(bytes: loudnessArray, length: loudnessArray.count) as Data
+                            // TODO: fix
+                        }
+                    }
+                }
+                genericMessage = GenericMessage(content: asset, nonce: nonce)
+            // TODO: see video
+            case let .generic(data):
+                let asset = Asset.with { asset in
+                    asset.original = Asset.Original.with { original in
+                        original.size = assetContent.size
+                        original.mimeType = assetContent.mimeType
+                        original.name = assetContent.name ?? "file"
+                    }
+                }
+                genericMessage = GenericMessage(content: asset, nonce: nonce)
+            case .none:
+                return // TODO: ??
+            }
+            try await context.perform {
+                try assetClientMessage.setUnderlyingMessage(genericMessage)
+                assetClientMessage.sender = sender
+                assetClientMessage.visibleInConversation = conversation
+            }
+             */
+
+        default:
+            fatalError()
+
         }
     }
 
