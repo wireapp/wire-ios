@@ -98,7 +98,8 @@ public struct TextMessageView: ConversationCellContentViewProtocol {
         statusViewModel: MessageStatusViewModel(
             deliveryState: .seen,
             editedString: "Edited: 2 mins ago",
-            timestamp: "2 mins ago"
+            timestamp: "2 mins ago",
+            statusObserver: MockStatusObserver()
         )
     )
     TextMessageView(model: model)
@@ -125,5 +126,11 @@ extension MessageToolboxState {
 struct MockSenderObserver: SenderObserverProtocol {
     var authorChangedPublisher: AnyPublisher<String, Never> {
         Empty().eraseToAnyPublisher()
+    }
+}
+
+struct MockStatusObserver: StatusObserverProtocol {
+    var statusChangedPublisher: AnyPublisher<MessageModel, Never> {
+        Empty<MessageModel, Never>().eraseToAnyPublisher()
     }
 }

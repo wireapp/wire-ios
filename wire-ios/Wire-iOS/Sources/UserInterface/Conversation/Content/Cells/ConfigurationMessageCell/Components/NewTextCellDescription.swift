@@ -30,41 +30,6 @@ protocol NewCellDescription { }
 extension NewTextCellDescription: NewCellDescription { }
 extension BurstTimestampSenderMessageCellDescription: NewCellDescription { }
 
-final class SenderObserver: NSObject, UserObserving, SenderObserverProtocol {
-    
-    var observation: Any?
-    
-    var author: String?
-    private let authorChangedSubject = PassthroughSubject<String, Never>()
-    var authorChangedPublisher: AnyPublisher<String, Never> {
-        authorChangedSubject
-            .removeDuplicates()
-            .eraseToAnyPublisher()
-    }
-    
-    init(
-        messageID: NSManagedObjectID,
-        viewContext: NSManagedObjectContext
-    ) {
-        super.init()
-        viewContext.perform {
-            let message = try! viewContext.existingObject(with: messageID) as! ZMMessage
-            self.author = message.senderName
-            if let sender = message.senderUser {
-                self.observation = UserChangeInfo.add(observer: self, for: sender, context: viewContext)
-            }
-        }
-    }
-    
-    func userDidChange(_ changeInfo: UserChangeInfo) {
-        authorChangedSubject.send(changeInfo.user.name ?? "")
-    }
-    
-    deinit {
-        print("DS: SenderObserver: deinit")
-    }
-}
-
 final class NewTextCellDescription: ConversationMessageCellDescription {
     
     typealias View = NewTextCell

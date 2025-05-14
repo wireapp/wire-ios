@@ -34,6 +34,9 @@ struct MessageViewModelFactoryImpl: MessageViewModelFactory {
         selfUser: any UserType,
         accentColor: UIColor
     ) -> TextMessageViewModel {
+        let context = userSession.contextProvider.viewContext
+        let messagedObjectID = message.objectID
+        
         var senderViewModel: MessageSenderViewModel? = nil
         if let sender = message.sender {
             senderViewModel = MessageSenderViewModel(
@@ -44,8 +47,8 @@ struct MessageViewModelFactoryImpl: MessageViewModelFactory {
                 isDeleted: message.isDeletion,
                 teamRoleIndicator: sender.teamRoleIndicator(selfUser: selfUser),
                 authorChanged: SenderObserver(
-                    messageID: message.objectID,
-                    viewContext: userSession.contextProvider.viewContext
+                    messageID: messagedObjectID,
+                    viewContext: context
                 )
             )
         }
@@ -62,7 +65,11 @@ struct MessageViewModelFactoryImpl: MessageViewModelFactory {
             statusViewModel = MessageStatusViewModel(
                 deliveryState: status,
                 editedString: messageStatusDataSource.editedString,
-                timestamp: timestamp
+                timestamp: timestamp,
+                statusObserver: StatusObserver(
+                    messageID: messagedObjectID,
+                    viewContext: context
+                )
             )
         }
         return TextMessageViewModel(

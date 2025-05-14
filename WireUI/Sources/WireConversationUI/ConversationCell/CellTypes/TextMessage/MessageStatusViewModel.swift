@@ -17,20 +17,48 @@
 //
 
 import Foundation
+import Combine
+
+public protocol StatusObserverProtocol {
+    var statusChangedPublisher: AnyPublisher<MessageModel, Never> { get }
+}
 
 public final class MessageStatusViewModel: ObservableObject {
     
     @Published public var deliveryState: MessageToolboxState?
-    public let editedString: String?
-    public let timestamp: String
+    @Published public var editedString: String?
+    @Published var timestamp: String
     
+    private var statusObserver: any StatusObserverProtocol
+
+    private var cancellables: Set<AnyCancellable> = []
+
     public init(
         deliveryState: MessageToolboxState?,
         editedString: String?,
-        timestamp: String
+        timestamp: String,
+        statusObserver: any StatusObserverProtocol
     ) {
         self.deliveryState = deliveryState
         self.editedString = editedString
         self.timestamp = timestamp
+        self.statusObserver = statusObserver
+        observeChanges()
+    }
+    
+    func observeChanges() {
+        statusObserver.statusChangedPublisher.sink { model in
+            let datasource = MessageToolboxDataSource(message: model)
+            switch datasource.content {
+            case .sendFailure(let string):
+                fatalError()
+            case .callList(let string):
+                fatalError()
+            case .details(let timestamp, let status, let countdown):
+                self.deliveryState = status
+                self.editedString = datasource.editedString
+                self.timestamp = timestamp
+            }
+        }.store(in: &cancellables)
     }
 }
