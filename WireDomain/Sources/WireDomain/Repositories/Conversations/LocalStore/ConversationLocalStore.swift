@@ -1261,11 +1261,10 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
 }
 
-extension ZMConversation {
+private extension ZMConversation {
 
-    fileprivate static func fetchRequestForBackup() -> NSFetchRequest<ZMConversation> {
-        let fetchRequest = ZMConversation.fetchRequest() as! NSFetchRequest<ZMConversation>
-        return fetchRequest
+    static func fetchRequestForBackup() -> NSFetchRequest<ZMConversation> {
+        ZMConversation.fetchRequest() as! NSFetchRequest<ZMConversation>
     }
 
 }
