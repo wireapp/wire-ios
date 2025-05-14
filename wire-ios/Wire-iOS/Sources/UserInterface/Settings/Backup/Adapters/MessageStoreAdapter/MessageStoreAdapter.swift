@@ -54,6 +54,8 @@ struct MessageStoreAdapter<MessageLocalStore>: MessageStoreProtocol, @unchecked 
 
     func addMessage(_ message: BackupMessageModel) async throws {
 
+        todo: convert message to generic message and pass it into ConversationProtobufMessageProcessor
+
         let conversationID = message.conversationID
         let conversation = await context.perform {
             ZMConversation.fetch(with: conversationID.id, domain: conversationID.domain, in: context)
@@ -61,7 +63,6 @@ struct MessageStoreAdapter<MessageLocalStore>: MessageStoreProtocol, @unchecked 
         guard let conversation, let nonce = UUID(transportString: message.id) else { return }
 
         let senderUserID = message.senderUserID
-        let userLocalStore = UserLocalStore(context: context, messageLocalStore: messageLocalStore)
 
         switch message.content {
 

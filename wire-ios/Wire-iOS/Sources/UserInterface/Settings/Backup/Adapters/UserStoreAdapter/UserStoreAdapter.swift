@@ -54,6 +54,9 @@ struct UserStoreAdapter<UserLocalStore>: UserStoreProtocol, @unchecked Sendable
     }
 
     func addUser(_ user: BackupUserModel) async throws {
+
+    todo: check how a client is notified about a new user
+
         // TODO: maybe the changes to NewUserInfo can be reverted and the code for event processing used instead
         let userInfo = NewUserInfo(
             userID: WireDataModel.QualifiedID(user.qualifiedID),
