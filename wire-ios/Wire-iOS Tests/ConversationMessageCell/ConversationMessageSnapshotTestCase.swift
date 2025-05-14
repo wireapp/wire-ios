@@ -53,6 +53,7 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
     override func setUp() {
         super.setUp()
         userSession = UserSessionMock()
+        mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = []
         mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = false
     }
 
