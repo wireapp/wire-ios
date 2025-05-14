@@ -404,10 +404,13 @@ extension SettingsCellDescriptorFactory {
                 messageStore: MessageStoreAdapter(context: context),
                 fileUnarchiver: ZipArchiveFileUnarchiver(),
                 syncTrigger: {
-                    context.performGroupedBlock {
-                        context.saveOrRollback()
-                        userSession.triggerInitialSync()
-                    }
+                    // TODO: what is the correct sync trigger after backup?
+                    // userSession.syncAgent.resume()
+                    userSession.syncStatus.forceSlowSync()
+                    // context.performGroupedBlock {
+                    //     context.saveOrRollback()
+                    //     userSession.triggerInitialSync()
+                    // }
                 },
                 logger: WireLogger.backupImport
             ),

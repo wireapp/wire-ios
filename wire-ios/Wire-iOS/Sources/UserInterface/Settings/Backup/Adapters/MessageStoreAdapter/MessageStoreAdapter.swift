@@ -62,18 +62,10 @@ struct MessageStoreAdapter<MessageLocalStore>: MessageStoreProtocol, @unchecked 
 
         let senderUserID = message.senderUserID
         let userLocalStore = UserLocalStore(context: context, messageLocalStore: messageLocalStore)
-        let sender = await userLocalStore.fetchOrCreateUser(id: senderUserID.id, domain: senderUserID.domain)
 
         switch message.content {
 
         case let .text(textContent):
-//            let (clientMessage, isCreated) = try await messageLocalStore.fetchOrCreateClientMessage(
-//                id: message.id,
-//                conversation: conversation,
-//                sender: (id: senderUserID.id, domain: senderUserID.domain, clientID: message.senderClientID),
-//                date: message.creationDate
-//            )
-//            guard isCreated else { return } // don't overwrite existing messages
 
             let textMessage = Text(content: textContent.text)
             let genericMessage = GenericMessage(content: textMessage, nonce: nonce)
@@ -88,13 +80,6 @@ struct MessageStoreAdapter<MessageLocalStore>: MessageStoreProtocol, @unchecked 
                 date: message.creationDate,
                 eventMessage: "backup.import"
             )
-
-//            try await context.perform {
-//                try clientMessage.setUnderlyingMessage(genericMessage)
-//                clientMessage.sender = sender
-//                clientMessage.visibleInConversation = conversation
-//                clientMessage.markAsSent()
-//            }
 
         default:
             return ()
