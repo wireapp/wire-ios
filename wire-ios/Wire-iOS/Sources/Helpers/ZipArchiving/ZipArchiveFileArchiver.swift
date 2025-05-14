@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import WireFoundation
-import ZipArchive
+import ZIPFoundation
 
 struct ZipArchiveFileArchiver: FileArchiverProtocol {
 
@@ -25,13 +26,38 @@ struct ZipArchiveFileArchiver: FileArchiverProtocol {
         at resourceURLs: [URL],
         into destinationURL: URL
     ) throws {
-        let success = SSZipArchive.createZipFile(
-            atPath: destinationURL.path(),
-            withFilesAtPaths: resourceURLs.map { $0.path() }
-        )
-        guard success else {
-            throw FileArchivingError.unknown
+
+        // We need to pass a directory URL to ZIPFoundation. Therefore we first copy the target files into a separate,
+        // temporary directory representing the future zip content.
+
+        let fileManager = FileManager.default
+        let sourceURL = destinationURL
+            .deletingLastPathComponent()
+            .appending(path: destinationURL.deletingPathExtension().lastPathComponent, directoryHint: .isDirectory)
+        try fileManager.createDirectory(at: sourceURL, withIntermediateDirectories: false)
+        for resourceURL in resourceURLs {
+            try fileManager.copyItem(
+                at: resourceURL,
+                to: sourceURL.appending(path: resourceURL.lastPathComponent, directoryHint: .notDirectory)
+            )
         }
+        defer {
+            try? fileManager.removeItem(at: sourceURL)
+        }
+
+        // TODO: throwing an error here leads to the warning printed:
+        /*
+         Attempt to present <SwiftUI.PlatformAlertController: 0x11202b000> on <Wire.ZClientViewController: 0x11286a600> (from <_TtGC7SwiftUI19UIHostingControllerVS_7AnyView_: 0x111832200>) while a presentation is in progress.
+         */
+
+        try fileManager.zipItem(
+            at: sourceURL,
+            to: destinationURL,
+            shouldKeepParent: false,
+            compressionMethod: .deflate,
+            progress: .none
+        )
+
     }
 
 }
