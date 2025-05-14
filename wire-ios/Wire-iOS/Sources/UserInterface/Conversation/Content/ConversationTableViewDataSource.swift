@@ -122,37 +122,42 @@ final class ConversationTableViewDataSource: NSObject {
         forceRecalculate: Bool = false,
         completion: @escaping ([Section]) -> Void
     ) {
-        print("DS: calculateSections ALL")
+        print("DS: calculateSections ALL called")
         let mainThreadContext = userSession.contextProvider.viewContext
         let messagesOnMainThread = allMessages
         let messageIds = messagesOnMainThread.map(\.objectID)
         let selfUserOnMainThread = userSession.selfUser
         let selfUserObjectID = selfUserOnMainThread.objectId
         let firstUnreadMessageNonce = firstUnreadMessage?.nonce
-
+        print("DS: all messages count: \(messagesOnMainThread.count), currentSections count: \(currentSections.count)")
         // Dispatching to background thread to offload sections calculation
 
         let backgroundContext = userSession.contextProvider.newBackgroundContext()
         backgroundContext.perform { [weak self] in
             guard let self else { return }
-
+            
             var messages: [ZMMessage] = messageIds.compactMap { objectID in
                 try? backgroundContext.existingObject(with: objectID) as? ZMMessage
+            }
+
+            print("DS: background messages count: \(messages.count)")
+
+            guard messages.count == messageIds.count, // TODO: moving
+                  let selfUserOnBackgroundThread = getUserByIDUseCase.getUserByID(
+                    id: selfUserObjectID,
+                    context: backgroundContext
+                  ) else {
+                print("DS: calculateSections: exiting early - count mismatch: \(messages.count):\(messageIds.count)")
+
+                DispatchQueue.main.async {
+                    completion(self.currentSections)
+                }
+                return
             }
 
             // sort if needed
             messages = messages.sorted {
                 ($0.serverTimestamp ?? .distantPast) > ($1.serverTimestamp ?? .distantPast)
-            }
-
-            guard let selfUserOnBackgroundThread = getUserByIDUseCase.getUserByID(
-                id: selfUserObjectID,
-                context: backgroundContext
-            ) else {
-                DispatchQueue.main.async {
-                    completion(self.currentSections)
-                }
-                return
             }
 
             // Go through messages and calculate sections
@@ -187,7 +192,6 @@ final class ConversationTableViewDataSource: NSObject {
             DispatchQueue.main.async {
                 var sections = [Section]()
 
-                let allMessages = messagesOnMainThread
                 for (messageObjectId, sectionController, context) in result {
 
                     // saving calculations result in local cache
@@ -217,7 +221,7 @@ final class ConversationTableViewDataSource: NSObject {
                         elements: sectionController.tableViewCellDescriptions
                     ))
                 }
-
+                print("DS: newSections count: \(sections.count)")
                 completion(
                     self.postProcessedSections(
                         sections,
@@ -592,10 +596,6 @@ final class ConversationTableViewDataSource: NSObject {
 
 extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
 
-    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        // no-op
-    }
-
     func controller(
         _ controller: NSFetchedResultsController<NSFetchRequestResult>,
         didChange anObject: Any,
@@ -603,6 +603,9 @@ extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
         for changeType: NSFetchedResultsChangeType,
         newIndexPath: IndexPath?
     ) {
+        
+        print("DS: controller didChange object \(indexPath), sections count: \(currentSections.count), all Messages count: \(allMessages.count)")
+
         if let message = anObject as? ZMConversationMessage, changeType == .insert {
             /// VoiceOver will output the announcement string from the message
             message.postAnnouncementIfNeeded()
@@ -623,6 +626,19 @@ extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
         
         switch changeType {
         case .insert, .delete, .move:
+//            guard let indexPath else { break }
+//            let sectionController = sectionController(
+//                at: indexPath.section,
+//                selfUser: userSession.selfUser,
+//                messages: allMessages
+//            )
+//            let message = sectionController.message
+//            
+//            debouncer.call(id: message.nonce!) { [weak self] in
+//                guard let self else { return }
+//                reloadSections(newSections: calculateSections(updating: sectionController))
+//            }
+//            break
             debouncer.call(id: nil) { [weak self] in
                 self?.calculateSections { sections in
                     self?.reloadSections(newSections: sections)
@@ -635,17 +651,16 @@ extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
         }
     }
 
-    func controller(
-        _ controller: NSFetchedResultsController<NSFetchRequestResult>,
-        didChange sectionInfo: NSFetchedResultsSectionInfo,
-        atSectionIndex sectionIndex: Int,
-        for changeType: NSFetchedResultsChangeType
-    ) {
-        // no-op
-    }
-
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         // no - op
+        print("DS: controllerDidChangeContent: sections count: \(currentSections.count), all Messages count: \(allMessages.count)")
+        guard currentSections.count != allMessages.count else { return }
+        // TODO: moving (retry message send)
+        debouncer.call(id: nil) { [weak self] in
+            self?.calculateSections { sections in
+                self?.reloadSections(newSections: sections)
+            }
+        }
     }
     
     func reloadSections(newSections: [Section]) {

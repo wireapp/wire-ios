@@ -28,6 +28,7 @@ final class StatusObserver: NSObject, ZMMessageObserver, StatusObserverProtocol 
     var statusChangedPublisher: AnyPublisher<MessageModel, Never> {
         statusChangedSubject
             .removeDuplicates()
+//            .debounce(for: .seconds(1), scheduler: RunLoop.main)
             .eraseToAnyPublisher()
     }
     

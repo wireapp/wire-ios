@@ -60,7 +60,16 @@ struct MessageViewModelFactoryImpl: MessageViewModelFactory {
         case .callList(_):
             fatalError()
         case .sendFailure(_):
-            fatalError()
+            // TODO
+            statusViewModel = MessageStatusViewModel(
+                deliveryState: .delivered,
+                editedString: messageStatusDataSource.editedString,
+                timestamp: "-",
+                statusObserver: StatusObserver(
+                    messageID: messagedObjectID,
+                    viewContext: context
+                )
+            )
         case let .details(timestamp, status, countdown):
             statusViewModel = MessageStatusViewModel(
                 deliveryState: status,
