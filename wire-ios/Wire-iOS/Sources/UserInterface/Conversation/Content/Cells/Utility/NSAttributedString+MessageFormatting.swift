@@ -137,7 +137,11 @@ extension NSAttributedString {
         return markdownText
     }
 
-    static func format(message: TextMessageData, isObfuscated: Bool, accentColor: AccentColor) -> NSAttributedString {
+    static func format(
+        message: TextMessageData,
+        isObfuscated: Bool,
+        accentColor: AccentColor
+    ) -> NSAttributedString {
 
         var plainText = message.messageText ?? ""
 

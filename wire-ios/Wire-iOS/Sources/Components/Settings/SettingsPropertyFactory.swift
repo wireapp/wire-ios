@@ -473,6 +473,7 @@ final class SettingsPropertyFactory {
 
 enum CollapseKey: String, DefaultsKey {
     case collapseOwnMessages
+    case uncollapsedMessages
 }
 
 enum ConversationBackgroundKey: String, DefaultsKey {
