@@ -21,82 +21,78 @@ import XCTest
 class RegistrationPage: PageModel {
 
     override func hasLoaded() {
-        let expectation = newNextButton().waitForExistence(timeout: 10)
+        let expectation = confirmButton.waitForExistence(timeout: 10)
         XCTAssert(expectation, "Registration page not loaded - can't find next button")
     }
 
-    func nameNextButton() -> XCUIElement {
-        let elementsQuery = nameField().buttons.matching(identifier: "ConfirmButton")
+    var nameNextButton: XCUIElement {
+        let elementsQuery = nameField.buttons.matching(identifier: "ConfirmButton")
         return elementsQuery.firstMatch
     }
 
-    func passwordNextButton() -> XCUIElement {
-        let elementsQuery = passwordField().buttons.matching(identifier: "RevealButton")
+    var passwordNextButton: XCUIElement {
+        let elementsQuery = passwordField.buttons.matching(identifier: "RevealButton")
         return elementsQuery.firstMatch
     }
 
-    func nameField() -> XCUIElement {
+    var nameField: XCUIElement {
         let elementsQuery = app.otherElements.textFields.matching(identifier: "NameField")
         return elementsQuery.firstMatch
     }
 
-    func passwordField() -> XCUIElement {
+    var passwordField: XCUIElement {
         let elementsQuery = app.otherElements.secureTextFields.matching(identifier: "PasswordField")
         return elementsQuery.firstMatch
     }
 
-    func usernameField() -> XCUIElement {
+    var usernameField: XCUIElement {
         let elementsQuery = app.textFields.matching(identifier: "UsernameField")
         return elementsQuery.firstMatch
     }
 
-    func usernameConfirmButton() -> XCUIElement {
-        let elementsQuery = usernameField().buttons
+    var usernameConfirmButton: XCUIElement {
+        let elementsQuery = usernameField.buttons
         return elementsQuery.firstMatch
     }
 
-    func newNextButton() -> XCUIElement {
+    var confirmButton: XCUIElement {
         let elementsQuery = app.otherElements
         return elementsQuery.buttons["ConfirmButton"]
     }
 
-    func acceptButton() -> XCUIElement {
+    var acceptButton: XCUIElement {
         let elementsQuery = app.otherElements
         return elementsQuery.buttons["Accept"]
     }
 
-    func verificationCodeInput() -> XCUIElement {
+    var verificationCodeInput: XCUIElement {
         let elementsQuery = app.textViews.matching(identifier: "VerificationCode")
         return elementsQuery.firstMatch
     }
 
     func tapAcceptButton() -> RegistrationPage {
-        let accept = acceptButton()
-        accept.waitForExistence(timeout: 10)
-        accept.tap()
+        acceptButton.waitForExistence(timeout: 10)
+        acceptButton.tap()
         return self
     }
 
     func enterVerificationCode(verificationCode: String) -> RegistrationPage {
-        let input = verificationCodeInput()
-        input.tap()
-        input.typeText(verificationCode)
+        verificationCodeInput.tap()
+        verificationCodeInput.typeText(verificationCode)
         return self
     }
 
     func setName(name: String) -> RegistrationPage {
-        let nameInput = nameField()
-        nameInput.tap()
-        nameInput.typeText(name)
-        nameNextButton().tap()
+        nameField.tap()
+        nameField.typeText(name)
+        nameNextButton.tap()
         return self
     }
 
     func setPassword(password: String) -> RegistrationPage {
-        let passwordInput = passwordField()
-        passwordInput.tap()
-        passwordInput.typeText(password)
-        passwordNextButton().tap()
+        passwordField.tap()
+        passwordField.typeText(password)
+        passwordNextButton.tap()
         return self
     }
 
@@ -107,15 +103,13 @@ class RegistrationPage: PageModel {
     }
 
     func setUsername(username: String) -> ConversationsPage {
-        let usernameInput = usernameField()
-        usernameInput.tap()
-        usernameInput.typeText(username)
-        usernameConfirmButton().tap()
+        usernameField.tap()
+        usernameField.typeText(username)
+        usernameConfirmButton.tap()
         return ConversationsPage()
     }
 
     func tapConfirmCreateAccount() -> RegistrationPage {
-        let confirmButton = newNextButton()
         confirmButton.waitForExistence(timeout: 1)
         confirmButton.tap()
         return self

@@ -19,23 +19,23 @@
 import XCTest
 
 class ConversationsPage: PageModel {
-    func profileButton() -> XCUIElement {
+    var profileButton: XCUIElement {
         let elementsQuery = app.buttons.matching(identifier: "account_profile_image_view")
         return elementsQuery.firstMatch
     }
 
     override func hasLoaded() {
-        let expectation = profileButton().waitForExistence(timeout: 10)
+        let expectation = profileButton.waitForExistence(timeout: 10)
         XCTAssert(expectation, "Conversations page can't be loaded - can't find profile button")
     }
 
-    func settingsButton() -> XCUIElement {
+    var settingsButton: XCUIElement {
         let elementsQuery = app.buttons.matching(identifier: "bottomBarSettingsButton")
         return elementsQuery.firstMatch
     }
 
     func openSettings() -> SettingsPage {
-        settingsButton().tap()
+        settingsButton.tap()
         return SettingsPage()
     }
 }

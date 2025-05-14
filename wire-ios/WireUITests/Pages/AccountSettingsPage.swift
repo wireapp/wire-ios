@@ -19,30 +19,30 @@
 import XCTest
 
 class AccountSettingsPage: PageModel {
-    func nameField() -> XCUIElement {
+    var nameField: XCUIElement {
         let elementsQuery = app.textFields.matching(identifier: "NameField")
         return elementsQuery.firstMatch
     }
 
-    func usernameField() -> XCUIElement {
+    var usernameField: XCUIElement {
         let elementsQuery = app.staticTexts.matching(identifier: "UsernameField")
         return elementsQuery.firstMatch
     }
 
-    func emailField() -> XCUIElement {
+    var emailField: XCUIElement {
         let elementsQuery = app.staticTexts.matching(identifier: "EmailField")
         return elementsQuery.firstMatch
     }
 
     func getAccountName() -> String {
-        nameField().value as! String
+        nameField.value as! String
     }
 
     func getUsername() -> String {
-        usernameField().label
+        usernameField.label
     }
 
     func getEmail() -> String {
-        emailField().label
+        emailField.label
     }
 }

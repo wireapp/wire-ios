@@ -21,35 +21,34 @@ import XCTest
 class LoginPage: PageModel {
 
     override func hasLoaded() {
-        let expectation = emailTextField().waitForExistence(timeout: 10)
+        let expectation = emailTextField.waitForExistence(timeout: 10)
         XCTAssert(expectation, "Login page not loaded - can't find email field")
     }
 
-    func nextButton() -> XCUIElement {
+    var nextButton: XCUIElement {
         let elementsQuery = app.scrollViews.otherElements
         return elementsQuery.buttons["Next"]
     }
 
-    func createPersonalAccountLink() -> XCUIElement {
+    var createPersonalAccountLink: XCUIElement {
         let elementsQuery = app.scrollViews.otherElements
         return elementsQuery.buttons["Create Personal Account"]
     }
 
-    func emailTextField() -> XCUIElement {
+    var emailTextField: XCUIElement {
         let elementsQuery = app.textFields
         return elementsQuery["Email or SSO code"]
     }
 
     func typeEmailOrSSO(email: String) -> LoginPage {
-        let textField = emailTextField()
-        textField.tap()
-        textField.typeText(email)
-        nextButton().tap()
+        emailTextField.tap()
+        emailTextField.typeText(email)
+        nextButton.tap()
         return self
     }
 
     func useCreatePersonalAccountLink() -> RegistrationPage {
-        createPersonalAccountLink().tap()
+        createPersonalAccountLink.tap()
         return RegistrationPage()
     }
 }
