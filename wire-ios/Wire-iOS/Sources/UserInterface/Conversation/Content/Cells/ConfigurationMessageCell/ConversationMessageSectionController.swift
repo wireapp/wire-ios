@@ -614,12 +614,18 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             return // Deletions are handled by the window observer
         }
 
+        if message.isText {
+            return
+        }
         sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: message)
     }
 }
 
 extension ConversationMessageSectionController: UserObserving {
     func userDidChange(_ changeInfo: UserChangeInfo) {
+        if message.isText {
+            return
+        }
         sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: message)
     }
 }

@@ -48,6 +48,7 @@ public final class MessageStatusViewModel: ObservableObject {
     
     func observeChanges() {
         statusObserver.statusChangedPublisher.sink { model in
+            print("DS: status ChangedPublisher: \(model)")
             let datasource = MessageToolboxDataSource(message: model)
             switch datasource.content {
             case .sendFailure(let string):

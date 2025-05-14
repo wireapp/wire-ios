@@ -122,6 +122,7 @@ final class ConversationTableViewDataSource: NSObject {
         forceRecalculate: Bool = false,
         completion: @escaping ([Section]) -> Void
     ) {
+        print("DS: calculateSections ALL")
         let mainThreadContext = userSession.contextProvider.viewContext
         let messagesOnMainThread = allMessages
         let messageIds = messagesOnMainThread.map(\.objectID)
@@ -232,6 +233,7 @@ final class ConversationTableViewDataSource: NSObject {
     func calculateSections(
         updating sectionController: ConversationMessageSectionController
     ) -> [Section] {
+        print("DS: calculateSections: updating sectionController: \(sectionController.message.text ?? "-")")
         let sectionIdentifier = sectionController.message.nonce!
 
         guard let section = currentSections.firstIndex(where: { $0.model == sectionIdentifier })
@@ -605,6 +607,32 @@ extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
             /// VoiceOver will output the announcement string from the message
             message.postAnnouncementIfNeeded()
         }
+        
+        switch changeType {
+        case .insert:
+            print("DS: Inserted at \(newIndexPath!)")
+        case .delete:
+            print("DS: Deleted at \(indexPath!)")
+        case .update:
+            print("DS: Updated at \(indexPath!)")
+        case .move:
+            print("DS: Moved from \(indexPath!) to \(newIndexPath!)")
+        @unknown default:
+            break
+        }
+        
+        switch changeType {
+        case .insert, .delete, .move:
+            debouncer.call(id: nil) { [weak self] in
+                self?.calculateSections { sections in
+                    self?.reloadSections(newSections: sections)
+                }
+            }
+        case .update:
+            break
+        @unknown default:
+            break
+        }
     }
 
     func controller(
@@ -617,13 +645,9 @@ extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
     }
 
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        debouncer.call(id: nil) { [weak self] in
-            self?.calculateSections { sections in
-                self?.reloadSections(newSections: sections)
-            }
-        }
+        // no - op
     }
-
+    
     func reloadSections(newSections: [Section]) {
         let stagedChangeset = StagedChangeset(source: currentSections, target: newSections)
         tableView.reload(using: stagedChangeset, with: .fade) { currentSections = $0 }

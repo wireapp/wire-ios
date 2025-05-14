@@ -69,14 +69,15 @@ public class MessageSenderViewModel: ObservableObject, Identifiable {
         authorChanged.authorChangedPublisher
             .receive(on: RunLoop.main)
             .sink { [weak self] senderString in
-            guard let self else { return }
-            self.senderModel.name = senderString
-            self.senderAttributed = Self.makeSenderAttributed(
-                senderModel: self.senderModel,
-                isDeleted: isDeleted,
-                teamRoleIndicator: teamRoleIndicator
-            )
-        }.store(in: &cancellables)
+                guard let self else { return }
+                print("DS: author ChangedPublisher \(senderString)")
+                self.senderModel.name = senderString
+                self.senderAttributed = Self.makeSenderAttributed(
+                    senderModel: self.senderModel,
+                    isDeleted: isDeleted,
+                    teamRoleIndicator: teamRoleIndicator
+                )
+            }.store(in: &cancellables)
     }
 
     private static func makeSenderAttributed(
