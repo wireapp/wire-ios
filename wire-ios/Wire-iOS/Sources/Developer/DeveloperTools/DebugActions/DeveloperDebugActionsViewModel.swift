@@ -19,6 +19,7 @@
 import Foundation
 import SwiftUI
 import WireDataModel
+import WireFoundation
 import WireLogging
 import WireSyncEngine
 
@@ -78,7 +79,8 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             .init(title: "Update MLS migration status", action: updateMLSMigrationStatus),
             .init(title: "Delete domains in the database", action: deleteDomains),
             .init(title: "Find Conversation with MLS Group", action: showSearchMLSConversations),
-            .init(title: "Clear access token & cookie (forces logout)", action: clearAccessTokenAndCookie)
+            .init(title: "Clear access token & cookie (forces logout)", action: clearAccessTokenAndCookie),
+            .init(title: "Clear collapsed messages cache", action: clearCollapsedMessagesCache)
         ]
 
         let toggleItems: [DeveloperDebugActionsDisplayModel.ToggleItem] = [
@@ -115,6 +117,14 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
         )
 
         accessTokenHandler?.processAccessTokenResponse(responseFailure)
+        onDismiss?()
+    }
+
+    private func clearCollapsedMessagesCache() {
+        let defaults = PrivateUserDefaults<CollapseKey>(
+            userID: selfClient!.user!.remoteIdentifier
+        )
+        defaults.removeObject(forKey: .uncollapsedMessages)
         onDismiss?()
     }
 
@@ -216,7 +226,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
     private func qualifiedIDOfFirstGroupConversation(
         of userClient: UserClient,
         in context: NSManagedObjectContext
-    ) async -> QualifiedID? {
+    ) async -> WireDataModel.QualifiedID? {
         await context.perform {
             userClient.user?.conversations
                 .filter { $0.conversationType == .group }
