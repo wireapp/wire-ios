@@ -23,7 +23,7 @@ import WireProtos
 
 extension GenericMessage {
 
-    init(
+    init?(
         nonce: UUID,
         messageContent: MessageContent
     ) {
@@ -44,21 +44,15 @@ extension GenericMessage {
             }
             self = GenericMessage(content: locationContent, nonce: nonce)
 
-            /*
         case let .asset(assetContent):
-            let (assetClientMessage, isCreated) = try await messageLocalStore.fetchOrCreateAssetClientMessage(
-                id: message.id,
-                conversation: conversation,
-                sender: (id: senderUserID.id, domain: senderUserID.domain, clientID: message.senderClientID),
-                date: message.creationDate
-            )
-            guard isCreated else { return } // don't overwrite existing messages
-
-            let genericMessage: GenericMessage
             switch assetContent.metadata {
+
             case let .image(imageData):
                 let asset = Asset(
-                    imageSize: CGSize(width: Double(imageData.width), height: Double(imageData.height)),
+                    imageSize: CGSize(
+                        width: Double(imageData.width),
+                        height: Double(imageData.height)
+                    ),
                     mimeType: assetContent.mimeType,
                     size: assetContent.size
                 )
@@ -67,8 +61,9 @@ extension GenericMessage {
                 //    throw AppendMessageError.fileSharingIsRestricted
                 // }
                 //
-                genericMessage = GenericMessage(content: asset, nonce: nonce)
+                self = GenericMessage(content: asset, nonce: nonce)
             // try mergeWithExistingData(message: genericMessage) // TODO: ?
+
             case let .video(videoData):
                 let asset = Asset.with { asset in
                     asset.original = Asset.Original.with { original in
@@ -82,9 +77,10 @@ extension GenericMessage {
                         }
                     }
                 }
-                genericMessage = GenericMessage(content: asset, nonce: nonce)
+                self = GenericMessage(content: asset, nonce: nonce)
             // TODO: contributionType = .videoMessage ?
             // TODO: moc.zm_fileAssetCache.storeOriginalFile
+
             case let .audio(audioData):
                 let asset = Asset.with { asset in
                     asset.original = Asset.Original.with { original in
@@ -99,8 +95,9 @@ extension GenericMessage {
                         }
                     }
                 }
-                genericMessage = GenericMessage(content: asset, nonce: nonce)
+                self = GenericMessage(content: asset, nonce: nonce)
             // TODO: see video
+
             case let .generic(data):
                 let asset = Asset.with { asset in
                     asset.original = Asset.Original.with { original in
@@ -109,20 +106,12 @@ extension GenericMessage {
                         original.name = assetContent.name ?? "file"
                     }
                 }
-                genericMessage = GenericMessage(content: asset, nonce: nonce)
+                self = GenericMessage(content: asset, nonce: nonce)
+
             case .none:
-                return // TODO: ??
-            }
-            try await context.perform {
-                try assetClientMessage.setUnderlyingMessage(genericMessage)
-                assetClientMessage.sender = sender
-                assetClientMessage.visibleInConversation = conversation
-            }
-             */
+                return nil
 
-        default:
-            fatalError()
-
+            }
         }
     }
 

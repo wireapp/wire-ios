@@ -53,27 +53,22 @@ struct MessageStoreAdapter<MessageLocalStore>: MessageStoreProtocol, @unchecked 
     }
 
     func addMessage(_ backupMessage: BackupMessageModel) async throws {
-
-       // todo: convert message to generic message and pass it into ConversationProtobufMessageProcessor
-
         let conversationID = backupMessage.conversationID
         let conversation = await context.perform {
             ZMConversation.fetch(with: conversationID.id, domain: conversationID.domain, in: context)
         }
-        guard let conversation, let nonce = UUID(transportString: backupMessage.id) else { return }
+        guard
+            let conversation,
+            let nonce = UUID(transportString: backupMessage.id),
+            let genericMessage = GenericMessage(nonce: nonce, messageContent: backupMessage.content)
+        else { return }
 
-        let senderUserID = backupMessage.senderUserID
-
-        let genericMessage = GenericMessage(
-            nonce: nonce,
-            messageContent: backupMessage.content
-        )
         try await processor.processProtobufMessage(
             genericMessage,
             content: genericMessage.content!,
             conversation: conversation,
             conversationID: WireAPI.QualifiedID(conversationID),
-            senderID: WireAPI.QualifiedID(senderUserID),
+            senderID: WireAPI.QualifiedID(backupMessage.senderUserID),
             senderClientID: backupMessage.senderClientID,
             date: backupMessage.creationDate,
             eventMessage: ""
