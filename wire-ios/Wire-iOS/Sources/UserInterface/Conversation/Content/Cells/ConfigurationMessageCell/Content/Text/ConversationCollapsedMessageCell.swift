@@ -152,8 +152,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
                     .format(
                         message: textMessageData,
                         isObfuscated: message.isObfuscated,
-                        accentColor: object.accentColor,
-                        shouldRemoveTrailingLink: false
+                        accentColor: object.accentColor
                     )
             }
         } else {

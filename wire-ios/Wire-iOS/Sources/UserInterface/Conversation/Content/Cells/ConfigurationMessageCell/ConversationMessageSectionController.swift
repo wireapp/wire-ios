@@ -263,7 +263,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         return [AnyConversationMessageCellDescription(conversationImageMessageCellDescription)]
     }
 
-    func shouldCollapseCell() -> Bool {
+    private func shouldCollapseCell() -> Bool {
         guard !isMessageWithCollapsedByDefault() else {
             return false
         }
