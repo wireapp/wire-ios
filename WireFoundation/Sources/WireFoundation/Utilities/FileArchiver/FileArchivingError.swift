@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// consider removing when removing SSZipArchive
 public enum FileArchivingError: Error {
     case unknown
 }

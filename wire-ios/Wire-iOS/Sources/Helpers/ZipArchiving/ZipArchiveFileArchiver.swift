@@ -20,9 +20,6 @@ import Foundation
 import WireFoundation
 import ZIPFoundation
 
-// TODO: remove
-import ZipArchive
-
 struct ZipArchiveFileArchiver: FileArchiverProtocol {
 
     func zipResources(
@@ -50,23 +47,11 @@ struct ZipArchiveFileArchiver: FileArchiverProtocol {
 
         try fileManager.zipItem(
             at: sourceURL,
-            to: destinationURL.appendingPathExtension("0"),
+            to: destinationURL,
             shouldKeepParent: false,
             compressionMethod: .deflate,
             progress: .none
         )
-        print(destinationURL.path())
-
-
-        let success = SSZipArchive.createZipFile(
-            atPath: destinationURL.path(),
-            withFilesAtPaths: resourceURLs.map { $0.path() }
-        )
-        guard success else {
-            throw FileArchivingError.unknown
-        }
-
-        return ()
 
     }
 
