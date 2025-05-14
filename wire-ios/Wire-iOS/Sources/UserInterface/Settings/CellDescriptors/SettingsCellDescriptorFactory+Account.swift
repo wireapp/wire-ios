@@ -423,7 +423,7 @@ extension SettingsCellDescriptorFactory {
                 userStore: UserStoreAdapter(context: context),
                 conversationStore: ConversationStoreAdapter(context: context),
                 messageStore: MessageStoreAdapter(context: context),
-                fileArchiver: ZipArchiveFileArchiver(),
+                fileArchiver: ZIPFoundationFileArchiver(),
                 currentDateProvider: SystemDateProvider(),
                 logger: WireLogger.backupExport
             )
