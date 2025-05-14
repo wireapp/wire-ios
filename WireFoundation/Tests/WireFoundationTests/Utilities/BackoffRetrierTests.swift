@@ -35,7 +35,7 @@ final class BackoffRetrierTests: XCTestCase {
 
     // TODO: [WPB-17645] Assert sleep durations exponentially increased
     func testBackOffRetrier_It_Eventually_Succeeds() async throws {
-        // When
+        // Given
         var callCount = 0
 
         let policy = BackoffRetryPolicy(

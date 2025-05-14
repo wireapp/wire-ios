@@ -66,7 +66,7 @@ public actor BackoffRetrier {
                     throw Failure.exceededMaxAttempts(latestError: error)
                 }
 
-                // Exponential backoffs
+                // Exponential backoff
                 var delay = policy.baseTime * Double(pow(policy.exponentMultiplier, Double(attempt)))
 
                 if policy.jitter {
