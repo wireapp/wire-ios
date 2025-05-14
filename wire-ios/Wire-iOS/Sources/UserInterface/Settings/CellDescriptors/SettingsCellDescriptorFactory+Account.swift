@@ -131,8 +131,13 @@ extension SettingsCellDescriptorFactory {
 
     private func appearanceSection() -> SettingsSectionDescriptorType {
         SettingsSectionDescriptor(
-            cellDescriptors: [pictureElement(), colorElement()],
-            header: L10n.Localizable.Self.Settings.AccountAppearanceGroup.title
+            cellDescriptors: [
+                pictureElement(),
+                colorElement(),
+                conversationBackgroundEnabledElement()
+            ],
+            header: L10n.Localizable.Self.Settings.AccountAppearanceGroup.title,
+            footer: L10n.Localizable.Self.Settings.AccountAppearanceGroup.footer
         )
     }
 
@@ -328,6 +333,16 @@ extension SettingsCellDescriptorFactory {
             presentationStyle: .navigation,
             presentationAction: colorElementPresentationAction,
             settingsCoordinator: settingsCoordinator
+        )
+    }
+
+    func conversationBackgroundEnabledElement() -> any SettingsCellDescriptorType {
+
+        SettingsPropertyToggleCellDescriptor(
+            settingsProperty:
+            settingsPropertyFactory.property(.conversationBackground),
+            inverse: false,
+            identifier: "ConversationBackgroundSwitch"
         )
     }
 

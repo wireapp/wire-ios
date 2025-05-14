@@ -169,6 +169,14 @@ public enum SemanticColors {
         public static let backgroundAudioViewOverlay = UIColor(light: .gray20, dark: .gray100)
         public static let backgroundAudioViewOverlayActive = UIColor(light: .white, dark: .gray95)
 
+        // Conversation background based on primary color
+
+        public static let conversationBackgroundBlue = UIColor(light: .blue50Light, dark: .blue900Dark)
+        public static let conversationBackgroundGreen = UIColor(light: .green50Light, dark: .green900Dark)
+        public static let conversationBackgroundPurple = UIColor(light: .purple50Light, dark: .purple900Dark)
+        public static let conversationBackgroundAmber = UIColor(light: .amber50Light, dark: .amber900Dark)
+        public static let conversationBackgroundRed = UIColor(light: .red50Light, dark: .red900Dark)
+        public static let conversationBackgroundTurquoise = UIColor(light: .turquoise50Light, dark: .turquoise900Dark)
     }
 
     public enum TabBar {
