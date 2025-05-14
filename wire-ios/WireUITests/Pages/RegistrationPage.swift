@@ -76,42 +76,42 @@ class RegistrationPage: PageModel {
         return self
     }
 
-    func enterVerificationCode(verificationCode: String) -> RegistrationPage {
-        verificationCodeInput.tap()
-        verificationCodeInput.typeText(verificationCode)
-        return self
-    }
-
-    func setName(name: String) -> RegistrationPage {
-        nameField.tap()
-        nameField.typeText(name)
-        nameNextButton.tap()
-        return self
-    }
-
-    func setPassword(password: String) -> RegistrationPage {
-        passwordField.tap()
-        passwordField.typeText(password)
-        passwordNextButton.tap()
-        return self
-    }
-
     func acceptPopup() -> RegistrationPage {
         let button = app.otherElements.buttons.firstMatch
         button.tap()
         return self
     }
 
-    func setUsername(username: String) -> ConversationsPage {
-        usernameField.tap()
-        usernameField.typeText(username)
-        usernameConfirmButton.tap()
-        return ConversationsPage()
-    }
-
     func tapConfirmCreateAccount() -> RegistrationPage {
         confirmButton.waitForExistence(timeout: 1)
         confirmButton.tap()
         return self
+    }
+
+    func enterVerificationCode(_ verificationCode: String) -> RegistrationPage {
+        verificationCodeInput.tap()
+        verificationCodeInput.typeText(verificationCode)
+        return self
+    }
+
+    func setName(_ name: String) -> RegistrationPage {
+        nameField.tap()
+        nameField.typeText(name)
+        nameNextButton.tap()
+        return self
+    }
+
+    func setPassword(_ password: String) -> RegistrationPage {
+        passwordField.tap()
+        passwordField.typeText(password)
+        passwordNextButton.tap()
+        return self
+    }
+
+    func setUsername(_ username: String) -> ConversationsPage {
+        usernameField.tap()
+        usernameField.typeText(username)
+        usernameConfirmButton.tap()
+        return ConversationsPage()
     }
 }
