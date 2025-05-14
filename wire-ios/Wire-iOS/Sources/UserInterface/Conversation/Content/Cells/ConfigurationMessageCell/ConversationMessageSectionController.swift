@@ -264,12 +264,17 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private func shouldCollapseCell() -> Bool {
+        // There are system type of messages are collapsed by default
         guard !isMessageWithCollapsedByDefault() else {
             return false
         }
+        // Collapse if it was set to be collapsed
         if isCollapsed {
             return true
         }
+        // Then there are cases when we receive live update that fits criteria to be collapsed
+        // for example if messages has links previews or attachments
+        // when cell is refreshed, we recalculate
         if collapseOwnMessagesEnabled, message.isSentBySelfUser, message.hasLinks,
            !privateDefaults.wasMessagedUncollapsedBefore(message) {
             return true
