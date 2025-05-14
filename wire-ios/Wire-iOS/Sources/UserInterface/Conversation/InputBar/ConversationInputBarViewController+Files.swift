@@ -18,7 +18,9 @@
 
 import Foundation
 import WireCommonComponents
+import WireCellsBindings
 import WireSyncEngine
+import WireLogging
 
 extension ConversationInputBarViewController: UINavigationControllerDelegate {}
 
@@ -49,7 +51,16 @@ extension ConversationInputBarViewController {
         guard !urls.isEmpty else { return }
 
         if DeveloperFlag.wireCells.isOn {
-            // FIXME: Handle this
+            Task.detached { [wireCellsUploadFileUseCase] in
+                // We don't care about the result of the operation here as we will be observing changes.
+                for url in urls {
+                    do {
+                        try await wireCellsUploadFileUseCase.invoke(fileURL: url)
+                    } catch {
+                        WireLogger.conversation.error("Failed to upload file: \(error)")
+                    }
+                }
+            }
         } else if urls.count == 1 {
             uploadFile(at: urls[0])
         } else if let archiveURL = urls.zipFiles() {

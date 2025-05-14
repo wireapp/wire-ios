@@ -20,6 +20,6 @@ public import Foundation
 
 // sourcery: AutoMockable
 /// Uploads the file at `fileURL` to the cells server.
-public protocol WireCellsUploadFileUseCaseProtocol {
+public protocol WireCellsUploadFileUseCaseProtocol: Sendable {
     func invoke(fileURL: URL) async throws
 }

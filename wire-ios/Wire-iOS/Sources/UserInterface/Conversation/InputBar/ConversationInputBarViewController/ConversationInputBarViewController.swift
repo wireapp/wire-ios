@@ -27,6 +27,8 @@ import WireCommonComponents
 import WireDesign
 import WireLogging
 import WireSyncEngine
+import WireCellsAPI
+import WireCellsBindings
 
 enum ConversationInputBarViewControllerMode {
     case textInput
@@ -223,6 +225,7 @@ final class ConversationInputBarViewController: UIViewController,
     private var typingObserverToken: Any?
     let userSession: UserSession
     let fileMetaDataGenerator: FileMetaDataGeneratorProtocol
+    let wireCellsUploadFileUseCase: WireCellsUploadFileUseCaseProtocol
 
     private var inputBarButtons: [IconButton] {
         var buttonsArray: [IconButton] = []
@@ -347,13 +350,15 @@ final class ConversationInputBarViewController: UIViewController,
         conversation: InputBarConversationType,
         userSession: UserSession,
         classificationProvider: (any SecurityClassificationProviding)?,
-        networkStatusObservable: any NetworkStatusObservable
+        networkStatusObservable: any NetworkStatusObservable,
+        wireCellsAssembly: WireCellsAssembly = WireCellsAssembly()
     ) {
         self.conversation = conversation
         self.userSession = userSession
         self.classificationProvider = classificationProvider
         self.networkStatusObservable = networkStatusObservable
         self.fileMetaDataGenerator = FileMetaDataGenerator.shared
+        self.wireCellsUploadFileUseCase = wireCellsAssembly.makeUploadFileUseCase()
 
         super.init(nibName: nil, bundle: nil)
 

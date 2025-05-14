@@ -23,7 +23,7 @@ public struct WireCellsAssembly {
 
     public init() {}
 
-    public static func makeUploadFileUseCase() -> any WireCellsUploadFileUseCaseProtocol {
+    public func makeUploadFileUseCase() -> any WireCellsUploadFileUseCaseProtocol {
         WireCellsUploadFileUseCase()
     }
 

@@ -20,7 +20,7 @@ import WireCellsAPI
 import Foundation
 import WireLogging
 
-package class WireCellsUploadFileUseCase: WireCellsUploadFileUseCaseProtocol {
+package final class WireCellsUploadFileUseCase: WireCellsUploadFileUseCaseProtocol {
 
     package init() {}
 
