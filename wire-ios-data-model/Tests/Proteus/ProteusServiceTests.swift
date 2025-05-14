@@ -73,7 +73,8 @@ class ProteusServiceTests: XCTestCase {
         // When
         let (didCreateNewSession, decryptedData) = try await sut.decrypt(
             data: encryptedData,
-            forSession: sessionID
+            forSession: sessionID,
+            context: nil
         )
 
         // Then
@@ -101,7 +102,8 @@ class ProteusServiceTests: XCTestCase {
             // When
             _ = try await sut.decrypt(
                 data: encryptedData,
-                forSession: sessionID
+                forSession: sessionID,
+                context: nil
             )
         } errorHandler: { error in
             // Then
@@ -132,7 +134,8 @@ class ProteusServiceTests: XCTestCase {
         // When
         let (didCreateNewSession, decryptedData) = try await sut.decrypt(
             data: encryptedData,
-            forSession: sessionID
+            forSession: sessionID,
+            context: nil
         )
 
         // Then
@@ -159,7 +162,8 @@ class ProteusServiceTests: XCTestCase {
             // When
             _ = try await sut.decrypt(
                 data: encryptedData,
-                forSession: sessionID
+                forSession: sessionID,
+                context: nil
             )
         } errorHandler: { error in
             // Then

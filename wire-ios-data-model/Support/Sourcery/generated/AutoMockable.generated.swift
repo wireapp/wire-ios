@@ -3917,47 +3917,47 @@ public class MockMLSDecryptionServiceInterface: MLSDecryptionServiceInterface {
 
     // MARK: - decrypt
 
-    public var decryptMessageForSubconversationType_Invocations: [(message: String, groupID: MLSGroupID, subconversationType: SubgroupType?)] = []
-    public var decryptMessageForSubconversationType_MockError: Error?
-    public var decryptMessageForSubconversationType_MockMethod: ((String, MLSGroupID, SubgroupType?) async throws -> [MLSDecryptResult])?
-    public var decryptMessageForSubconversationType_MockValue: [MLSDecryptResult]?
+    public var decryptMessageForSubconversationTypeContext_Invocations: [(message: String, groupID: MLSGroupID, subconversationType: SubgroupType?, context: CoreCryptoContextProtocol?)] = []
+    public var decryptMessageForSubconversationTypeContext_MockError: Error?
+    public var decryptMessageForSubconversationTypeContext_MockMethod: ((String, MLSGroupID, SubgroupType?, CoreCryptoContextProtocol?) async throws -> [MLSDecryptResult])?
+    public var decryptMessageForSubconversationTypeContext_MockValue: [MLSDecryptResult]?
 
-    public func decrypt(message: String, for groupID: MLSGroupID, subconversationType: SubgroupType?) async throws -> [MLSDecryptResult] {
-        decryptMessageForSubconversationType_Invocations.append((message: message, groupID: groupID, subconversationType: subconversationType))
+    public func decrypt(message: String, for groupID: MLSGroupID, subconversationType: SubgroupType?, context: CoreCryptoContextProtocol?) async throws -> [MLSDecryptResult] {
+        decryptMessageForSubconversationTypeContext_Invocations.append((message: message, groupID: groupID, subconversationType: subconversationType, context: context))
 
-        if let error = decryptMessageForSubconversationType_MockError {
+        if let error = decryptMessageForSubconversationTypeContext_MockError {
             throw error
         }
 
-        if let mock = decryptMessageForSubconversationType_MockMethod {
-            return try await mock(message, groupID, subconversationType)
-        } else if let mock = decryptMessageForSubconversationType_MockValue {
+        if let mock = decryptMessageForSubconversationTypeContext_MockMethod {
+            return try await mock(message, groupID, subconversationType, context)
+        } else if let mock = decryptMessageForSubconversationTypeContext_MockValue {
             return mock
         } else {
-            fatalError("no mock for `decryptMessageForSubconversationType`")
+            fatalError("no mock for `decryptMessageForSubconversationTypeContext`")
         }
     }
 
     // MARK: - processWelcomeMessage
 
-    public var processWelcomeMessageWelcomeMessage_Invocations: [String] = []
-    public var processWelcomeMessageWelcomeMessage_MockError: Error?
-    public var processWelcomeMessageWelcomeMessage_MockMethod: ((String) async throws -> MLSGroupID)?
-    public var processWelcomeMessageWelcomeMessage_MockValue: MLSGroupID?
+    public var processWelcomeMessageWelcomeMessageContext_Invocations: [(welcomeMessage: String, context: CoreCryptoContextProtocol?)] = []
+    public var processWelcomeMessageWelcomeMessageContext_MockError: Error?
+    public var processWelcomeMessageWelcomeMessageContext_MockMethod: ((String, CoreCryptoContextProtocol?) async throws -> MLSGroupID)?
+    public var processWelcomeMessageWelcomeMessageContext_MockValue: MLSGroupID?
 
-    public func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID {
-        processWelcomeMessageWelcomeMessage_Invocations.append(welcomeMessage)
+    public func processWelcomeMessage(welcomeMessage: String, context: CoreCryptoContextProtocol?) async throws -> MLSGroupID {
+        processWelcomeMessageWelcomeMessageContext_Invocations.append((welcomeMessage: welcomeMessage, context: context))
 
-        if let error = processWelcomeMessageWelcomeMessage_MockError {
+        if let error = processWelcomeMessageWelcomeMessageContext_MockError {
             throw error
         }
 
-        if let mock = processWelcomeMessageWelcomeMessage_MockMethod {
-            return try await mock(welcomeMessage)
-        } else if let mock = processWelcomeMessageWelcomeMessage_MockValue {
+        if let mock = processWelcomeMessageWelcomeMessageContext_MockMethod {
+            return try await mock(welcomeMessage, context)
+        } else if let mock = processWelcomeMessageWelcomeMessageContext_MockValue {
             return mock
         } else {
-            fatalError("no mock for `processWelcomeMessageWelcomeMessage`")
+            fatalError("no mock for `processWelcomeMessageWelcomeMessageContext`")
         }
     }
 
@@ -4646,47 +4646,47 @@ public class MockMLSServiceInterface: MLSServiceInterface {
 
     // MARK: - decrypt
 
-    public var decryptMessageForSubconversationType_Invocations: [(message: String, groupID: MLSGroupID, subconversationType: SubgroupType?)] = []
-    public var decryptMessageForSubconversationType_MockError: Error?
-    public var decryptMessageForSubconversationType_MockMethod: ((String, MLSGroupID, SubgroupType?) async throws -> [MLSDecryptResult])?
-    public var decryptMessageForSubconversationType_MockValue: [MLSDecryptResult]?
+    public var decryptMessageForSubconversationTypeContext_Invocations: [(message: String, groupID: MLSGroupID, subconversationType: SubgroupType?, context: CoreCryptoContextProtocol?)] = []
+    public var decryptMessageForSubconversationTypeContext_MockError: Error?
+    public var decryptMessageForSubconversationTypeContext_MockMethod: ((String, MLSGroupID, SubgroupType?, CoreCryptoContextProtocol?) async throws -> [MLSDecryptResult])?
+    public var decryptMessageForSubconversationTypeContext_MockValue: [MLSDecryptResult]?
 
-    public func decrypt(message: String, for groupID: MLSGroupID, subconversationType: SubgroupType?) async throws -> [MLSDecryptResult] {
-        decryptMessageForSubconversationType_Invocations.append((message: message, groupID: groupID, subconversationType: subconversationType))
+    public func decrypt(message: String, for groupID: MLSGroupID, subconversationType: SubgroupType?, context: CoreCryptoContextProtocol?) async throws -> [MLSDecryptResult] {
+        decryptMessageForSubconversationTypeContext_Invocations.append((message: message, groupID: groupID, subconversationType: subconversationType, context: context))
 
-        if let error = decryptMessageForSubconversationType_MockError {
+        if let error = decryptMessageForSubconversationTypeContext_MockError {
             throw error
         }
 
-        if let mock = decryptMessageForSubconversationType_MockMethod {
-            return try await mock(message, groupID, subconversationType)
-        } else if let mock = decryptMessageForSubconversationType_MockValue {
+        if let mock = decryptMessageForSubconversationTypeContext_MockMethod {
+            return try await mock(message, groupID, subconversationType, context)
+        } else if let mock = decryptMessageForSubconversationTypeContext_MockValue {
             return mock
         } else {
-            fatalError("no mock for `decryptMessageForSubconversationType`")
+            fatalError("no mock for `decryptMessageForSubconversationTypeContext`")
         }
     }
 
     // MARK: - processWelcomeMessage
 
-    public var processWelcomeMessageWelcomeMessage_Invocations: [String] = []
-    public var processWelcomeMessageWelcomeMessage_MockError: Error?
-    public var processWelcomeMessageWelcomeMessage_MockMethod: ((String) async throws -> MLSGroupID)?
-    public var processWelcomeMessageWelcomeMessage_MockValue: MLSGroupID?
+    public var processWelcomeMessageWelcomeMessageContext_Invocations: [(welcomeMessage: String, context: CoreCryptoContextProtocol?)] = []
+    public var processWelcomeMessageWelcomeMessageContext_MockError: Error?
+    public var processWelcomeMessageWelcomeMessageContext_MockMethod: ((String, CoreCryptoContextProtocol?) async throws -> MLSGroupID)?
+    public var processWelcomeMessageWelcomeMessageContext_MockValue: MLSGroupID?
 
-    public func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID {
-        processWelcomeMessageWelcomeMessage_Invocations.append(welcomeMessage)
+    public func processWelcomeMessage(welcomeMessage: String, context: CoreCryptoContextProtocol?) async throws -> MLSGroupID {
+        processWelcomeMessageWelcomeMessageContext_Invocations.append((welcomeMessage: welcomeMessage, context: context))
 
-        if let error = processWelcomeMessageWelcomeMessage_MockError {
+        if let error = processWelcomeMessageWelcomeMessageContext_MockError {
             throw error
         }
 
-        if let mock = processWelcomeMessageWelcomeMessage_MockMethod {
-            return try await mock(welcomeMessage)
-        } else if let mock = processWelcomeMessageWelcomeMessage_MockValue {
+        if let mock = processWelcomeMessageWelcomeMessageContext_MockMethod {
+            return try await mock(welcomeMessage, context)
+        } else if let mock = processWelcomeMessageWelcomeMessageContext_MockValue {
             return mock
         } else {
-            fatalError("no mock for `processWelcomeMessageWelcomeMessage`")
+            fatalError("no mock for `processWelcomeMessageWelcomeMessageContext`")
         }
     }
 
@@ -4995,24 +4995,24 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
 
     // MARK: - decrypt
 
-    public var decryptDataForSession_Invocations: [(data: Data, id: ProteusSessionID)] = []
-    public var decryptDataForSession_MockError: Error?
-    public var decryptDataForSession_MockMethod: ((Data, ProteusSessionID) async throws -> (didCreateNewSession: Bool, decryptedData: Data))?
-    public var decryptDataForSession_MockValue: (didCreateNewSession: Bool, decryptedData: Data)?
+    public var decryptDataForSessionContext_Invocations: [(data: Data, id: ProteusSessionID, context: CoreCryptoContextProtocol?)] = []
+    public var decryptDataForSessionContext_MockError: Error?
+    public var decryptDataForSessionContext_MockMethod: ((Data, ProteusSessionID, CoreCryptoContextProtocol?) async throws -> (didCreateNewSession: Bool, decryptedData: Data))?
+    public var decryptDataForSessionContext_MockValue: (didCreateNewSession: Bool, decryptedData: Data)?
 
-    public func decrypt(data: Data, forSession id: ProteusSessionID) async throws -> (didCreateNewSession: Bool, decryptedData: Data) {
-        decryptDataForSession_Invocations.append((data: data, id: id))
+    public func decrypt(data: Data, forSession id: ProteusSessionID, context: CoreCryptoContextProtocol?) async throws -> (didCreateNewSession: Bool, decryptedData: Data) {
+        decryptDataForSessionContext_Invocations.append((data: data, id: id, context: context))
 
-        if let error = decryptDataForSession_MockError {
+        if let error = decryptDataForSessionContext_MockError {
             throw error
         }
 
-        if let mock = decryptDataForSession_MockMethod {
-            return try await mock(data, id)
-        } else if let mock = decryptDataForSession_MockValue {
+        if let mock = decryptDataForSessionContext_MockMethod {
+            return try await mock(data, id, context)
+        } else if let mock = decryptDataForSessionContext_MockValue {
             return mock
         } else {
-            fatalError("no mock for `decryptDataForSession`")
+            fatalError("no mock for `decryptDataForSessionContext`")
         }
     }
 
