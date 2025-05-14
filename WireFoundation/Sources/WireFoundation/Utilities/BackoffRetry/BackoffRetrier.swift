@@ -48,7 +48,6 @@ public actor BackoffRetrier {
 
     deinit {
         monitor.cancel()
-        NotificationCenter.default.removeObserver(self)
     }
 
     public func retry<T: Sendable>(
