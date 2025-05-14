@@ -46,21 +46,16 @@ extension ConversationInputBarViewController {
     /// multiple files, these will be zipped and then uploaded.
 
     func uploadFiles(at urls: [URL]) {
-        switch urls.count {
-        case 0:
-            return
-        case 1:
+        guard !urls.isEmpty else { return }
+
+        if DeveloperFlag.wireCells.isOn {
+            // FIXME: Handle this
+        } else if urls.count == 1 {
             uploadFile(at: urls[0])
-        case 2... where DeveloperFlag.wireCells.isOn:
-            for url in urls {
-                uploadFile(at: url)
-            }
-        default:
-            if let archiveURL = urls.zipFiles() {
-                uploadFile(at: archiveURL)
-            } else {
-                zmLog.error("Cannot archive files at URLs: \(urls.description)")
-            }
+        } else if let archiveURL = urls.zipFiles() {
+            uploadFile(at: archiveURL)
+        } else {
+            zmLog.error("Cannot archive files at URLs: \(urls.description)")
         }
     }
 
