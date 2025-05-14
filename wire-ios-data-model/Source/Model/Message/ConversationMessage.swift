@@ -21,6 +21,8 @@ import WireLinkPreview
 
 private var zmLog = ZMSLog(tag: "Message")
 
+public typealias ConversationMessage = SwiftConversationMessage & ZMConversationMessage
+
 @objc
 public enum ZMDeliveryState: UInt {
     case invalid = 0

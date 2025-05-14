@@ -40,8 +40,8 @@ struct MessageStatusView: View {
     var body: some View {
         HStack {
             Text(model.timestamp)
-            if model.edited {
-                Text("Edited")
+            if let edited = model.editedString {
+                Text(edited)
             }
             Text(model.deliveryState?.text ?? "-")
         }
@@ -87,6 +87,7 @@ public struct TextMessageView: ConversationCellContentViewProtocol {
             avatar: AvatarViewModel(color: .red),
             senderModel: UserModel(
                 name: "Test",
+                isSelfUser: true,
                 isServiceUser: false,
                 accentColor: .purple
             ),
@@ -95,29 +96,28 @@ public struct TextMessageView: ConversationCellContentViewProtocol {
             authorChanged: MockSenderObserver()
         ),
         statusViewModel: MessageStatusViewModel(
-            deliveryState: .pending,
-            edited: true,
+            deliveryState: .seen,
+            editedString: "Edited: 2 mins ago",
             timestamp: "2 mins ago"
         )
     )
     TextMessageView(model: model)
 }
 
-extension DeliveryState {
+extension MessageToolboxState {
     var text: String { // TODO: migrate strings
+        
         switch self {
-        case .invalid:
-            "Invalid"
-        case .pending:
-            "Pending"
+        case .sending:
+            "Sending"
         case .sent:
             "Sent"
         case .delivered:
             "Delivered"
-        case .read:
-            "Read"
-        case .failedToSend:
-            "Failed"
+        case .seen:
+            "Seen"
+        case .seenByMultiple(let int):
+            "Seen \(int)"
         }
     }
 }

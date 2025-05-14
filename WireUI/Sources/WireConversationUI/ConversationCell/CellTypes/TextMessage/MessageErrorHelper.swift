@@ -19,24 +19,24 @@
 import Foundation
 
 enum MessageErrorHelper {
-    static func errorMessage(_ message: ConversationMessage) -> String? {
+    static func errorMessage(_ message: MessageModel) -> String? {
 
-        let isSentBySelfUser = message.senderUser?.isSelfUser == true
+        let isSentBySelfUser = message.sender?.isSelfUser == true
         let failedToSend = message.deliveryState == .failedToSend && isSentBySelfUser
 
         guard failedToSend, isSentBySelfUser else {
             return nil
         }
 
-        typealias Message = L10n.Localizable.Content.System.FailedtosendMessage
+        typealias Message = L10n.Content.System.FailedtosendMessage
 
         return switch message.expirationReason {
         case .none, .other, .timeout:
             Message.generalReason
         case .federationRemoteError:
             Message.federationRemoteErrorReason(
-                message.conversationLike?.domain ?? "",
-                WireURLs.shared.unreachableBackendInfo.absoluteString
+                "", // TODO: message.conversationLike?.domain ?? "",
+                "http://example.com" // WireURLs.shared.unreachableBackendInfo.absoluteString // TODO: pass url
             )
         case .cancelled:
             Message.userCancelledUploadReason

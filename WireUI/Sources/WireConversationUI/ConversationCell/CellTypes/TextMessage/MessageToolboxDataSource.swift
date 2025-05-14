@@ -17,12 +17,10 @@
 //
 
 import UIKit
-import WireCommonComponents
-import WireDataModel
 import WireDesign
 
 /// The different contents that can be displayed inside the message toolbox.
-enum MessageToolboxContent: Equatable {
+public enum MessageToolboxContent: Equatable {
     /// Display buttons to let the user resend the message.
     case sendFailure(String)
 
@@ -38,7 +36,7 @@ extension MessageToolboxContent: Comparable {
     /// Returns whether one content is located above or below the other.
     /// This is used to determine from which direction to slide, so that we can keep
     /// the animations logical.
-    static func < (lhs: MessageToolboxContent, rhs: MessageToolboxContent) -> Bool {
+    public static func < (lhs: MessageToolboxContent, rhs: MessageToolboxContent) -> Bool {
         switch (lhs, rhs) {
         case (.sendFailure, _):
             true
@@ -51,7 +49,7 @@ extension MessageToolboxContent: Comparable {
 
 }
 
-enum MessageToolboxState: Equatable {
+public enum MessageToolboxState: Equatable {
     case sending
     case sent
     case delivered
@@ -63,34 +61,33 @@ enum MessageToolboxState: Equatable {
 
 /// An object that determines what content to display for the given message.
 
-typealias ConversationMessage = SwiftConversationMessage & ZMConversationMessage
+public final class MessageToolboxDataSource {
 
-final class MessageToolboxDataSource {
-
-    typealias ContentSystem = L10n.Localizable.Content.System
+    typealias ContentSystem = L10n.Content.System
 
     /// The displayed message.
-    let message: ConversationMessage
+    public let message: MessageModel
 
-    var editedString: String? {
+    public var editedString: String? {
         guard message.updatedAt != nil else { return nil }
 
-        return L10n.Localizable.Content.Message.edited
+        return L10n.Content.Message.edited
     }
 
     /// The content to display for the message.
-    private(set) var content: MessageToolboxContent
+    public private(set) var content: MessageToolboxContent
 
     // MARK: - Formatting Properties
 
-    private static let ephemeralTimeFormatter = EphemeralTimeoutFormatter()
+//    private static let ephemeralTimeFormatter = EphemeralTimeoutFormatter()
 
     // MARK: - Initialization
 
     /// Creates a toolbox data source for the given message.
-    init(message: ConversationMessage) {
+    public init(message: MessageModel) {
         self.message = message
         self.content = .details(timestamp: "", status: nil, countdown: "")
+        _ = shouldUpdateContent()
     }
 
     // MARK: - Content
@@ -98,18 +95,18 @@ final class MessageToolboxDataSource {
     /// Updates the contents of the message toolbox.
     /// - parameter widthConstraint: The width available to rend the toolbox contents.
     /// - Returns: A boolean to either update the content of the message toolbox or not
-    func shouldUpdateContent(widthConstraint: CGFloat) -> Bool {
+    public func shouldUpdateContent() -> Bool {
         // Compute the state
         let previousContent = content
 
         // Determine the content by priority
 
         // [WPB-6988] removed performed call
-        if message.systemMessageData?.systemMessageType == .performedCall {
+        if message.systemMessageType == .performedCall {
             return false
         }
         // 1b) Call list for missed calls
-        else if message.systemMessageData?.systemMessageType == .missedCall {
+        else if message.systemMessageType == .missedCall {
             content = .callList(makeCallList())
         }
         // 2) Failed to send
@@ -143,41 +140,42 @@ final class MessageToolboxDataSource {
     }
 
     private func makeEphemeralCountdown() -> String {
-        let showDestructionTimer = message.isEphemeral &&
-            !message.isObfuscated &&
-            message.destructionDate != nil &&
-            message.deliveryState != .pending
-
-        guard let destructionDate = message.destructionDate, showDestructionTimer else { return "" }
-
-        // We need to add one second to start with the correct value
-        let remaining = destructionDate.timeIntervalSinceNow + 1
-
-        if remaining > 0 {
-            if let string = MessageToolboxDataSource.ephemeralTimeFormatter.string(from: remaining) {
-                return string
-            }
-        } else if message.isAudio {
-            // do nothing, audio messages are allowed to extend the timer
-            // past the destruction date.
-        }
-        return ""
+        return "" // TODO:
+//        let showDestructionTimer = message.isEphemeral &&
+//            !message.isObfuscated &&
+//            message.destructionDate != nil &&
+//            message.deliveryState != .pending
+//
+//        guard let destructionDate = message.destructionDate, showDestructionTimer else { return "" }
+//
+//        // We need to add one second to start with the correct value
+//        let remaining = destructionDate.timeIntervalSinceNow + 1
+//
+//        if remaining > 0 {
+//            if let string = MessageToolboxDataSource.ephemeralTimeFormatter.string(from: remaining) {
+//                return string
+//            }
+//        } else if message.isAudio {
+//            // do nothing, audio messages are allowed to extend the timer
+//            // past the destruction date.
+//        }
+//        return ""
     }
 
     // MARK: - message delivery state
 
     /// Returns the status for the sender of the message.
-    private func selfMessageState(for message: ZMConversationMessage) -> MessageToolboxState? {
-        guard let sender = message.senderUser, sender.isSelfUser else {
+    private func selfMessageState(for message: MessageModel) -> MessageToolboxState? {
+        guard let sender = message.sender, sender.isSelfUser else {
             return nil
         }
 
         switch message.deliveryState {
         case .pending:
             return .sending
-        case .read where message.conversationLike?.conversationType == .group:
-            return .seenByMultiple(message.readReceipts.count)
-        case .read where message.conversationLike?.conversationType == .oneOnOne:
+        case .read where message.conversationType == .group:
+            return .seenByMultiple(message.readReceiptsCount)
+        case .read where message.conversationType == .oneOnOne:
             return .seen
         case .delivered:
             return .delivered
@@ -189,12 +187,12 @@ final class MessageToolboxDataSource {
     }
 
     /// Creates the status for the read receipts.
-    private func readDeliveryStateAttributedString(for message: ZMConversationMessage) -> MessageToolboxState? {
-        guard let conversationType = message.conversationLike?.conversationType else { return nil }
+    private func readDeliveryStateAttributedString(for message: MessageModel) -> MessageToolboxState? {
+        guard let conversationType = message.conversationType else { return nil }
 
         switch conversationType {
         case .group:
-            return .seenByMultiple(message.readReceipts.count)
+            return .seenByMultiple(message.readReceiptsCount)
 
         case .oneOnOne:
             return .seen
@@ -208,34 +206,98 @@ final class MessageToolboxDataSource {
 
     /// Create a timestamp list for all calls associated with a call system message
     private func makeCallList() -> String {
-        guard let childMessages = message.systemMessageData?.childMessages, !childMessages.isEmpty,
-              let timestamp = timestampString(message) else {
-            return timestampString(message) ?? "-"
-        }
-
-        let childrenTimestamps = childMessages
-            .compactMap { $0 as? ZMConversationMessage }
-            .sortedAscendingPrependingNil(by: \.serverTimestamp)
-            .compactMap(timestampString)
-
-        return childrenTimestamps.reduce(timestamp) { text, current in
-            "\(text)\n\(current)"
-        }
+        // TODO:
+        return ""
+//        guard let childMessages = message.systemMessageData?.childMessages, !childMessages.isEmpty,
+//              let timestamp = timestampString(message) else {
+//            return timestampString(message) ?? "-"
+//        }
+//
+//        let childrenTimestamps = childMessages
+//            .compactMap { $0 as? ZMConversationMessage }
+//            .sortedAscendingPrependingNil(by: \.serverTimestamp)
+//            .compactMap(timestampString)
+//
+//        return childrenTimestamps.reduce(timestamp) { text, current in
+//            "\(text)\n\(current)"
+//        }
     }
 
     /// Creates the timestamp text.
-    private func timestampString(_ message: ZMConversationMessage) -> String? {
+    private func timestampString(_ message: MessageModel) -> String? {
         var timestampString: String?
 
         if let editedTimeString = message.formattedEditedDate() {
             timestampString = ContentSystem.editedMessagePrefixTimestamp(editedTimeString)
         } else if let dateTimeString = message.formattedReceivedDateTime(),
-                  let systemMessage = message as? ZMSystemMessage,
-                  systemMessage.systemMessageType == .messageDeletedForEveryone {
+                  message.systemMessageType == .messageDeletedForEveryone {
             timestampString = ContentSystem.deletedMessagePrefixTimestamp(dateTimeString)
         }
 
         return timestampString
     }
+
+}
+
+extension MessageModel {
+    func formattedReceivedTime() -> String? {
+        receivedAt.map(MessageModel.shortTimeFormatter.string(from:))
+    }
+
+    func formattedReceivedDateTime() -> String? {
+        receivedAt.map(formattedDate)
+    }
+
+    func formattedEditedDate() -> String? {
+        updatedAt.map(formattedDate)
+    }
+
+    func formattedDate(_ date: Date) -> String {
+        if Calendar.current.isDateInToday(date) {
+            MessageModel.shortTimeFormatter.string(from: date)
+        } else {
+            MessageModel.shortDateTimeFormatter.string(from: date)
+        }
+    }
+}
+
+extension MessageModel {
+    var shouldShowDeliveryState: Bool {
+        systemMessageType != .missedCall
+    }
+}
+
+// TODO: MOVE
+
+extension MessageModel {
+
+    static var shortTimeFormatter: DateFormatter = {
+        var shortTimeFormatter = DateFormatter()
+        shortTimeFormatter.dateStyle = .none
+        shortTimeFormatter.timeStyle = .short
+        return shortTimeFormatter
+    }()
+
+    static let shortDateFormatter: DateFormatter = {
+        var shortDateFormatter = DateFormatter()
+        shortDateFormatter.dateStyle = .short
+        shortDateFormatter.timeStyle = .none
+        return shortDateFormatter
+    }()
+
+    static let spellOutDateTimeFormatter: DateFormatter = {
+        var longDateFormatter = DateFormatter()
+        longDateFormatter.dateStyle = .long
+        longDateFormatter.timeStyle = .short
+        longDateFormatter.doesRelativeDateFormatting = true
+        return longDateFormatter
+    }()
+
+    static let shortDateTimeFormatter: DateFormatter = {
+        var longDateFormatter = DateFormatter()
+        longDateFormatter.dateStyle = .short
+        longDateFormatter.timeStyle = .short
+        return longDateFormatter
+    }()
 
 }

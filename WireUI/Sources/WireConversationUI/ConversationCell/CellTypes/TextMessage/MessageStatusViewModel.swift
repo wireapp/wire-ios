@@ -16,27 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import Foundation
 
-public struct UserModel: Equatable {
+public final class MessageStatusViewModel: ObservableObject {
     
-    /// The full name
-    var name: String?
-    
-    /// Whether this is a service user (bot)
-    let isServiceUser: Bool
-    let isSelfUser: Bool
-    let accentColor: UIColor
+    @Published public var deliveryState: MessageToolboxState?
+    public let editedString: String?
+    public let timestamp: String
     
     public init(
-        name: String?,
-        isSelfUser: Bool,
-        isServiceUser: Bool,
-        accentColor: UIColor
+        deliveryState: MessageToolboxState?,
+        editedString: String?,
+        timestamp: String
     ) {
-        self.name = name
-        self.isServiceUser = isServiceUser
-        self.isSelfUser = isSelfUser
-        self.accentColor = accentColor
+        self.deliveryState = deliveryState
+        self.editedString = editedString
+        self.timestamp = timestamp
     }
 }

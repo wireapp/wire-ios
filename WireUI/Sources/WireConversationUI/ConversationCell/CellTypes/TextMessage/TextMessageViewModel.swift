@@ -21,34 +21,6 @@ import Combine
 import SwiftUI
 import WireDesign
 
-public enum DeliveryState: Int, Sendable, Equatable, CaseIterable {
-    case invalid
-    case pending
-    case sent
-    case delivered
-    case read
-    case failedToSend
-}
-
-public final class MessageStatusViewModel: ObservableObject {
-    
-    @Published public var deliveryState: DeliveryState?
-    public let edited: Bool
-    public let timestamp: String
-    
-//    public var significantChangeSubject = PassthroughSubject<Void, Never>()
-
-    public init(
-        deliveryState: DeliveryState?,
-        edited: Bool,
-        timestamp: String
-    ) {
-        self.deliveryState = deliveryState
-        self.edited = edited
-        self.timestamp = timestamp
-    }
-}
-
 public class TextMessageViewModel: ObservableObject, Identifiable, ConversationCellModelProtocol {
     
     public let id = UUID()
@@ -88,6 +60,7 @@ public class TextMessageViewModel: ObservableObject, Identifiable, ConversationC
                 avatar: AvatarViewModel(color: .red),
                 senderModel: UserModel(
                     name: "",
+                    isSelfUser: true,
                     isServiceUser: false,
                     accentColor: .red
                 ),

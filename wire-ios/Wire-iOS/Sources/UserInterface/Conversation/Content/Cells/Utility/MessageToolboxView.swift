@@ -20,6 +20,7 @@ import UIKit
 import WireDataModel
 import WireDesign
 import WireSyncEngine
+import WireConversationUI
 
 /// Observes events from the message toolbox.
 protocol MessageToolboxViewDelegate: AnyObject {
@@ -284,18 +285,13 @@ final class MessageToolboxView: UIView {
 
     // MARK: - Configuration
 
-    private var contentWidth: CGFloat {
-        bounds.width - conversationHorizontalMargins.left - conversationHorizontalMargins.right
-    }
-
     func configureForMessage(
-        _ message: ZMConversationMessage,
+        _ message: MessageModel,
         animated: Bool = false
     ) {
         noHeightConstraint.isActive = false
 
-        if let message = message as? ConversationMessage,
-           dataSource?.message.nonce != message.nonce {
+        if dataSource?.message.nonce != message.nonce {
             dataSource = MessageToolboxDataSource(message: message)
         }
 
@@ -317,9 +313,7 @@ final class MessageToolboxView: UIView {
         guard let dataSource else { return }
 
         // Do not reload the content if it didn't change.
-        guard dataSource.shouldUpdateContent(
-            widthConstraint: contentWidth
-        ) else {
+        guard dataSource.shouldUpdateContent() else {
             return
         }
 
@@ -356,7 +350,7 @@ final class MessageToolboxView: UIView {
 
             timestampSeparatorContainer.isHidden = timestamp.isEmpty || state == nil
             statusSeparatorContainer.isHidden = (timestamp.isEmpty && state == nil) || countdown.isEmpty
-            countdownView.setProgress(dataSource.message.countdownProgress ?? 0)
+            // countdownView.setProgress(dataSource.message.countdownProgress ?? 0) // TODO:
             countdownContainer.isHidden = countdown.isEmpty
             countdownLabel.text = countdown
             countdownLabel.isHidden = countdown.isEmpty
@@ -401,12 +395,13 @@ final class MessageToolboxView: UIView {
     func startCountdownTimer() {
         stopCountdownTimer()
 
-        guard let message = dataSource?.message else { return }
-        guard message.isEphemeral, !message.hasBeenDeleted, !message.isObfuscated else { return }
-
-        timestampTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
-            self?.reloadContent(animated: false)
-        }
+        // TODO:
+//        guard let message = dataSource?.message else { return }
+//        guard message.isEphemeral, !message.hasBeenDeleted, !message.isObfuscated else { return }
+//
+//        timestampTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
+//            self?.reloadContent(animated: false)
+//        }
     }
 
     /// Stops the countdown timer.
@@ -446,7 +441,8 @@ extension MessageToolboxView: UIGestureRecognizerDelegate {
         switch dataSource.content {
         case .sendFailure:
             break
-        case .details where dataSource.message.areReadReceiptsDetailsAvailable:
+//        case .details where dataSource.message.areReadReceiptsDetailsAvailable: // TODO
+        case .details:
             return .receipts
         default:
             break

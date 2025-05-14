@@ -115,22 +115,3 @@ final class NewTextCell: UIView, ConversationMessageCell {
     func configure(with object: Configuration, animated: Bool) {}
 
 }
-
-extension ZMDeliveryState {
-    func toUIModel() -> DeliveryState {
-        switch self {
-        case .invalid:
-                .invalid
-        case .pending:
-                .pending
-        case .sent:
-                .sent
-        case .delivered:
-                .delivered
-        case .read:
-                .read
-        case .failedToSend:
-                .failedToSend
-        }
-    }
-}

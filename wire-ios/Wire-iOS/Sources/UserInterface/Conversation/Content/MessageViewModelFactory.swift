@@ -49,14 +49,26 @@ struct MessageViewModelFactoryImpl: MessageViewModelFactory {
                 )
             )
         }
+        var statusViewModel: MessageStatusViewModel?
+        let messageStatusDataSource = MessageToolboxDataSource(
+            message: message.toUIModel()
+        )
+        switch messageStatusDataSource.content {
+        case .callList(_):
+            fatalError()
+        case .sendFailure(_):
+            fatalError()
+        case let .details(timestamp, status, countdown):
+            statusViewModel = MessageStatusViewModel(
+                deliveryState: status,
+                editedString: messageStatusDataSource.editedString,
+                timestamp: timestamp
+            )
+        }
         return TextMessageViewModel(
             text: message.textMessageData?.messageText ?? "",
             senderViewModel: senderViewModel,
-            statusViewModel: MessageStatusViewModel(
-                deliveryState: message.deliveryState.toUIModel(),
-                edited: message.updatedAt != nil,
-                timestamp: message.serverTimestamp?.formattedDate ?? "-"
-            )
+            statusViewModel: statusViewModel
         )
     }
 }
@@ -65,6 +77,7 @@ extension UserType {
     func toUIModel() -> UserModel {
         UserModel(
             name: name,
+            isSelfUser: true,
             isServiceUser: isServiceUser,
             accentColor: accentColor)
     }
@@ -89,4 +102,58 @@ extension UserType {
         }
     }
 
+}
+
+extension ZMMessage {
+    func toUIModel() -> MessageModel {
+        .init(
+            nonce: nonce,
+            sender: sender?.toUIModel(),
+            systemMessageType: systemMessageData?.systemMessageType.toUIModel(),
+            updatedAt: updatedAt,
+            receivedAt: serverTimestamp,
+            expirationReason: expirationReason?.toUIModel(),
+            conversationType: conversation?.conversationType.toUIModel(),
+            readReceiptsCount: readReceipts.count,
+            deliveryState: deliveryState.toUIModel(),
+            isSent: isSent
+        )
+    }
+}
+
+extension ZMDeliveryState {
+    func toUIModel() -> DeliveryStateModel {
+        switch self {
+        case .invalid:
+                .invalid
+        case .pending:
+                .pending
+        case .sent:
+                .sent
+        case .delivered:
+                .delivered
+        case .read:
+                .read
+        case .failedToSend:
+                .failedToSend
+        }
+    }
+}
+
+extension ZMSystemMessageType {
+    func toUIModel() -> SystemMessageTypeModel? {
+        .init(rawValue: Int(rawValue))
+    }
+}
+
+extension ExpirationReason {
+    func toUIModel() -> ExpirationReasonModel? {
+        .init(rawValue: Int(rawValue))
+    }
+}
+
+extension ZMConversationType {
+    func toUIModel() -> ConversationTypeModel? {
+        .init(rawValue: Int(rawValue))
+    }
 }

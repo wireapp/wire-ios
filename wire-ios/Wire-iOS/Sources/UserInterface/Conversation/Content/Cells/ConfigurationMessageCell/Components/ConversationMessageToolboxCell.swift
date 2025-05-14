@@ -19,12 +19,13 @@
 import UIKit
 import WireDataModel
 import WireSyncEngine
+import WireConversationUI
 
 final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, MessageToolboxViewDelegate {
 
     struct Configuration: Equatable {
-        var message: ZMConversationMessage
-        var deliveryState: ZMDeliveryState
+        var message: MessageModel
+        var deliveryState: DeliveryStateModel
         /// A message status is considered redundant if it does not provide additional information over a subsequent
         /// message's status. This basically means that only the last of subsequent messages of the same sender within a
         /// short time frame will show the status view, if the delivery state is the same.
@@ -118,10 +119,11 @@ final class ConversationMessageToolboxCellDescription: ConversationMessageCellDe
 
     var message: ZMConversationMessage? {
         didSet {
-            if let message {
+            if let message = message as? ZMMessage {
+                let uiMessage = message.toUIModel()
                 configuration = View.Configuration(
-                    message: message,
-                    deliveryState: message.deliveryState,
+                    message: uiMessage,
+                    deliveryState: uiMessage.deliveryState,
                     isRedundant: configuration.isRedundant
                 )
             }
@@ -138,11 +140,13 @@ final class ConversationMessageToolboxCellDescription: ConversationMessageCellDe
 
     init(message: ZMConversationMessage, isRedundant: Bool) {
         self.message = message
+        let uiMessage = (message as! ZMMessage).toUIModel()
         self.configuration = View.Configuration(
-            message: message,
-            deliveryState: message.deliveryState,
+            message: uiMessage,
+            deliveryState: uiMessage.deliveryState,
             isRedundant: isRedundant
         )
     }
 
 }
+
