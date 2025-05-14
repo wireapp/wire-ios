@@ -92,10 +92,15 @@ public actor BackoffRetrier {
 
         let queue = DispatchQueue(label: "BackoffRetrier")
 
-        monitor.pathUpdateHandler = { [weak self] path in
-            if path.status == .satisfied {
+        monitor.pathUpdateHandler = { [weak self] newPath in
+            guard let self else { return }
+
+            let currentPath = monitor.currentPath
+            let didRetrieveConnection = currentPath.status != .satisfied && newPath.status == .satisfied
+
+            if didRetrieveConnection {
                 Task {
-                    await self?.reset()
+                    await reset()
                 }
             }
         }

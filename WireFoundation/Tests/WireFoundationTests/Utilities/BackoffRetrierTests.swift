@@ -33,10 +33,10 @@ final class BackoffRetrierTests: XCTestCase {
         sut = nil
     }
 
-    // TODO: [WPB-17645] Assert sleep durations exponentially increased
-    func testBackOffRetrier_It_Eventually_Succeeds() async throws {
+    func testBackOffRetrier_It_Eventually_Succeeds_With_Exponential_Sleep_Durations() async throws {
         // Given
         var callCount = 0
+        let recorder = SleepRecorder()
 
         let policy = BackoffRetryPolicy(
             maxRetries: 3,
@@ -46,7 +46,9 @@ final class BackoffRetrierTests: XCTestCase {
             jitter: false // Disable jitter for deterministic testing
         )
 
-        let retrier = BackoffRetrier(policy: policy, sleep: { _ in })
+        let retrier = BackoffRetrier(policy: policy, sleep: { delay in
+            await recorder.record(delay)
+        })
 
         // When, simulating 3 calls, first 2 fail, third succeeds
         let result = try await retrier.retry {
@@ -60,6 +62,13 @@ final class BackoffRetrierTests: XCTestCase {
         // Then
         XCTAssertEqual(result, "Success")
         XCTAssertEqual(callCount, 3)
+
+        let recordedSleeps = await recorder.getAll()
+
+        // Sleep durations values are exponential
+        XCTAssertEqual(recordedSleeps.count, 2)
+        XCTAssertEqual(recordedSleeps[0], 2.0)
+        XCTAssertEqual(recordedSleeps[1], 4.0)
     }
 
     func testBackoffRetrier_It_Fails_After_Max_Retries() async {
@@ -79,5 +88,17 @@ final class BackoffRetrierTests: XCTestCase {
         } catch {
             XCTFail("Unexpected error: \(error)")
         }
+    }
+}
+
+private actor SleepRecorder {
+    private(set) var recordedSleeps: [Double] = []
+
+    func record(_ value: Double) {
+        recordedSleeps.append(value)
+    }
+
+    func getAll() -> [Double] {
+        recordedSleeps
     }
 }
