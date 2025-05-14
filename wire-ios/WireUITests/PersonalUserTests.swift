@@ -41,7 +41,7 @@ final class PersonalUsersTests: WireUITestCase {
             .confirmCreateAccount()
             .tapAcceptButton()
 
-        let verificationCode = try await InbucketClient().getVerificationCode(email: user.email)
+        let verificationCode = try await InbucketClient.getVerificationCode(email: user.email)
 
         let finalPage = page
             .enterVerificationCode(verificationCode: verificationCode)
