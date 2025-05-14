@@ -450,8 +450,6 @@ public protocol ConversationLocalStoreProtocol {
 
     func totalConversationCountForBackup() async throws -> Int
 
-    func fetchAllConversationIDsForBackup() async throws -> [QualifiedID]
-
     func fetchAllConversationsForBackup() async throws -> [ZMConversation]
 
 }

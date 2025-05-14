@@ -401,7 +401,6 @@ extension SettingsCellDescriptorFactory {
             importBackupUseCase: ImportBackupUseCase(
                 selfUserID: .init(selfUser.qualifiedID!),
                 userStore: UserStoreAdapter(context: context),
-                conversationStore: ConversationStoreAdapter(context: context),
                 messageStore: MessageStoreAdapter(context: context),
                 fileUnarchiver: ZipArchiveFileUnarchiver(),
                 syncTrigger: {

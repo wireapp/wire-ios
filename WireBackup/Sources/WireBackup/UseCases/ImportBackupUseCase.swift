@@ -22,14 +22,12 @@ public import WireFoundation
 
 public struct ImportBackupUseCase<
     UserStore: UserStoreProtocol,
-    ConversationStore: ConversationStoreProtocol,
     MessageStore: MessageStoreProtocol,
     FileUnarchiver: FileUnarchiverProtocol
 >: ImportBackupUseCaseProtocol {
 
     let selfUserID: QualifiedID
     let userStore: UserStore
-    let conversationStore: ConversationStore
     let messageStore: MessageStore
     let fileUnarchiver: FileUnarchiver
     let syncTrigger: @Sendable () -> Void
@@ -38,7 +36,6 @@ public struct ImportBackupUseCase<
     public init(
         selfUserID: QualifiedID,
         userStore: UserStore,
-        conversationStore: ConversationStore,
         messageStore: MessageStore,
         fileUnarchiver: FileUnarchiver,
         syncTrigger: @escaping @Sendable () -> Void,
@@ -46,7 +43,6 @@ public struct ImportBackupUseCase<
     ) {
         self.selfUserID = selfUserID
         self.userStore = userStore
-        self.conversationStore = conversationStore
         self.messageStore = messageStore
         self.fileUnarchiver = fileUnarchiver
         self.syncTrigger = syncTrigger
@@ -118,30 +114,9 @@ public struct ImportBackupUseCase<
                         }
                     }
 
-                    let storedConversationIDs = try await conversationStore.fetchAllConversationIDs()
-                    let conversationsPager = pagers.conversationsPager
-                    while conversationsPager.hasMorePages() {
-                        let backupConversations = conversationsPager.nextPage()
-                        for current in 0 ..< backupConversations.size {
-                            guard
-                                let backupConversation = backupConversations.get(index: current),
-                                let conversationID = QualifiedID(backupConversation.id)
-                            else { continue }
-
-                            if !storedConversationIDs.contains(conversationID) {
-                                let conversation = BackupConversationModel(
-                                    qualifiedID: conversationID,
-                                    name: backupConversation.name
-                                )
-                                try await conversationStore.addConversation(conversation)
-                            }
-
-                            if current % 50 == 0 || current == backupConversations.size - 1 {
-                                try Task.checkCancellation()
-                                reportProgress(Int(exactly: current) ?? 0, total)
-                            }
-                        }
-                    }
+                    // Ignoring conversations in the backup file for now.
+                    // Any conversation that has been left or deleted will not be restored from the backup in the first
+                    // version. All other conversations where the self-user is participant will already be available.
 
                     let storedMessageIDs = try await messageStore.fetchAllMessageIDs()
                     let messagesPager = pagers.messagesPager

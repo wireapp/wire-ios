@@ -34,12 +34,6 @@ struct ConversationStoreAdapter<ConversationLocalStore>: ConversationStoreProtoc
         try await conversationLocalStore.totalConversationCountForBackup()
     }
 
-    func fetchAllConversationIDs() async throws -> Set<QualifiedID> {
-        let conversationIDs = try await conversationLocalStore.fetchAllConversationIDsForBackup()
-            .map(WireFoundation.QualifiedID.init)
-        return Set(conversationIDs)
-    }
-
     func fetchAllConversations() async throws -> [BackupConversationModel] {
         let conversations = try await conversationLocalStore.fetchAllConversationsForBackup()
         return await context.perform {
@@ -51,21 +45,6 @@ struct ConversationStoreAdapter<ConversationLocalStore>: ConversationStoreProtoc
                 return conversation
             }
         }
-    }
-
-    func addConversation(_ backupConversation: BackupConversationModel) async throws {
-        let conversation = await conversationLocalStore.fetchOrCreateConversation(
-            id: backupConversation.qualifiedID.id,
-            domain: backupConversation.qualifiedID.domain
-        )
-        await conversation.managedObjectContext?.perform {
-            conversation.userDefinedName = backupConversation.name
-        }
-        await conversationLocalStore.storeConversation(
-            needsBackendUpdate: true,
-            conversationID: backupConversation.qualifiedID.id,
-            conversationDomain: backupConversation.qualifiedID.domain
-        )
     }
 
 }
