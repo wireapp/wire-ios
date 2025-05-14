@@ -39,13 +39,18 @@ final class StatusObserver: NSObject, ZMMessageObserver, StatusObserverProtocol 
         super.init()
         viewContext.perform {
             let message = try! viewContext.existingObject(with: messageID) as! ZMMessage
+            self.send(message)
             self.observation = MessageChangeInfo
                 .add(observer: self, for: message, context: viewContext)
         }
     }
 
     func messageDidChange(_ changeInfo: MessageChangeInfo) {
-        let uiMessage = changeInfo.message.toUIModel()
+        send(changeInfo.message)
+    }
+    
+    private func send(_ message: ZMMessage) {
+        let uiMessage = message.toUIModel()
         statusChangedSubject.send(uiMessage)
     }
 }

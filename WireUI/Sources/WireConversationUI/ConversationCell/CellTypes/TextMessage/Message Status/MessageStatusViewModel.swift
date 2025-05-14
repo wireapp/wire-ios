@@ -58,7 +58,9 @@ public final class MessageStatusViewModel: ObservableObject {
     }
     
     func observeChanges() {
-        statusObserver?.statusChangedPublisher.sink { model in
+        statusObserver?.statusChangedPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { model in
             print("DS: status ChangedPublisher: \(model)")
             self.state = Self.updateState(model: model)
         }.store(in: &cancellables)
