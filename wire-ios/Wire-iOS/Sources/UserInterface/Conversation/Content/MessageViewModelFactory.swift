@@ -32,7 +32,8 @@ struct MessageViewModelFactoryImpl: MessageViewModelFactory {
     func makeTextMessageViewModel(
         message: ZMMessage,
         selfUser: any UserType,
-        accentColor: UIColor
+        accentColor: UIColor,
+        shouldShowStatus: Bool
     ) -> TextMessageViewModel {
         let context = userSession.contextProvider.viewContext
         let messagedObjectID = message.objectID
@@ -52,34 +53,16 @@ struct MessageViewModelFactoryImpl: MessageViewModelFactory {
                 )
             )
         }
-        var statusViewModel: MessageStatusViewModel?
-        let messageStatusDataSource = MessageToolboxDataSource(
-            message: message.toUIModel()
-        )
-        switch messageStatusDataSource.content {
-        case .callList(_):
-            fatalError()
-        case .sendFailure(_):
-            // TODO
-            statusViewModel = MessageStatusViewModel(
-                deliveryState: .delivered,
-                editedString: messageStatusDataSource.editedString,
-                timestamp: "-",
+        let statusViewModel = if shouldShowStatus {
+            MessageStatusViewModel(
+                messageModel: message.toUIModel(),
                 statusObserver: StatusObserver(
                     messageID: messagedObjectID,
                     viewContext: context
                 )
             )
-        case let .details(timestamp, status, countdown):
-            statusViewModel = MessageStatusViewModel(
-                deliveryState: status,
-                editedString: messageStatusDataSource.editedString,
-                timestamp: timestamp,
-                statusObserver: StatusObserver(
-                    messageID: messagedObjectID,
-                    viewContext: context
-                )
-            )
+        } else {
+            MessageStatusViewModel.none()
         }
         return TextMessageViewModel(
             text: message.textMessageData?.messageText ?? "",

@@ -28,7 +28,7 @@ public class TextMessageViewModel: ObservableObject, Identifiable, ConversationC
     public typealias ContentView = TextMessageView
     
     @ObservedObject var senderViewModel: MessageSenderViewModel
-    public var statusViewModel: MessageStatusViewModel?
+    @ObservedObject public var statusViewModel: MessageStatusViewModel
     
     public func buildView() -> ContentView {
         ContentView(model: self)
@@ -45,31 +45,12 @@ public class TextMessageViewModel: ObservableObject, Identifiable, ConversationC
     public init(
         text: String,
         senderViewModel: MessageSenderViewModel?,
-        statusViewModel: MessageStatusViewModel?
+        statusViewModel: MessageStatusViewModel
     ) {
         self.text = text // TODO: format
         self.senderViewModel = senderViewModel!
         self.statusViewModel = statusViewModel
 //        startRandomStateTimer()
-    }
-
-    public required convenience init() {
-        self.init(
-            text: "",
-            senderViewModel: MessageSenderViewModel(
-                avatar: AvatarViewModel(color: .red),
-                senderModel: UserModel(
-                    name: "",
-                    isSelfUser: true,
-                    isServiceUser: false,
-                    accentColor: .red
-                ),
-                isDeleted: false,
-                teamRoleIndicator: nil,
-                authorChanged: MockSenderObserver()
-            ),
-            statusViewModel: nil
-        )
     }
     
 //    private func startRandomStateTimer() {

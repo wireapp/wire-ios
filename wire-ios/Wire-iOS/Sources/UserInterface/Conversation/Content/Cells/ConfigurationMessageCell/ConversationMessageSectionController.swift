@@ -25,7 +25,8 @@ protocol MessageViewModelFactory {
     func makeTextMessageViewModel(
         message: ZMMessage,
         selfUser: any UserType,
-        accentColor: UIColor
+        accentColor: UIColor,
+        shouldShowStatus: Bool
     ) -> TextMessageViewModel
 }
 
@@ -397,6 +398,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     private func createCellDescriptions(in context: ConversationMessageContext) {
         var cellDescriptions = [AnyConversationMessageCellDescription]()
 
+        let isToolboxVisible = isToolboxVisible(in: context)
+        
         if message.isText {
             self.cellDescriptions = [
                 NewTextCellDescription(
@@ -404,7 +407,9 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                             .text(factory.makeTextMessageViewModel(
                                 message: message as! ZMMessage,
                                 selfUser: selfUser,
-                                accentColor: selfUser.accentColor))
+                                accentColor: selfUser.accentColor,
+                                shouldShowStatus: isToolboxVisible
+                            ))
                 ).eraseToAnyCellDescription()
             ]
             return
@@ -438,7 +443,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             to: &cellDescriptions
         )
 
-        if isToolboxVisible(in: context) {
+        if isToolboxVisible {
             let description = ConversationMessageToolboxCellDescription(message: message, isRedundant: false)
             cellDescriptions.append(AnyConversationMessageCellDescription(description))
         }

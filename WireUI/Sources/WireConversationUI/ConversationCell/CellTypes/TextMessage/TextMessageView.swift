@@ -21,32 +21,7 @@ import UIKit
 import Combine
 import WireDesign
 
-struct SenderMessageView: View {
 
-    @ObservedObject var model: MessageSenderViewModel
-
-    var body: some View {
-            Text(model.senderAttributed)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .fixedSize(horizontal: false, vertical: true)
-                .animation(.easeInOut, value: model.senderAttributed)
-    }
-}
-
-struct MessageStatusView: View {
-    
-    @ObservedObject var model: MessageStatusViewModel
-    
-    var body: some View {
-        HStack {
-            Text(model.timestamp)
-            if let edited = model.editedString {
-                Text(edited)
-            }
-            Text(model.deliveryState?.text ?? "-")
-        }
-    }
-}
 
 public struct TextMessageView: ConversationCellContentViewProtocol {
 
@@ -70,10 +45,7 @@ public struct TextMessageView: ConversationCellContentViewProtocol {
                     .padding(.horizontal, 12)
                     .layoutPriority(1)
             }
-            
-            if let model = model.statusViewModel {
-                MessageStatusView(model: model)
-            }
+            MessageStatusView(model: model.statusViewModel)
         }
     }
 }
@@ -96,10 +68,11 @@ public struct TextMessageView: ConversationCellContentViewProtocol {
             authorChanged: MockSenderObserver()
         ),
         statusViewModel: MessageStatusViewModel(
-            deliveryState: .seen,
-            editedString: "Edited: 2 mins ago",
-            timestamp: "2 mins ago",
-            statusObserver: MockStatusObserver()
+            state: .details(StatusDetails(
+                deliveryState: .seen,
+                editedString: "Edited: 2 mins ago",
+                timestamp: "2 mins ago"
+            ))
         )
     )
     TextMessageView(model: model)
