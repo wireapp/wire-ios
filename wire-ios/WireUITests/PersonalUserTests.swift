@@ -24,9 +24,9 @@ final class PersonalUsersTests: WireUITestCase {
 //        TODO: Restore once [WPB-17516] is fixed
 //        let email = context["email"] as! String
 //        let password = context["password"] as! String
-//        let access_token = try? await BackendClient().loginViaAPI(email:email, password:password)
+//        let access_token = try? await BackendClient.loginViaAPI(email:email, password:password)
 //        if(access_token != nil) {
-//            try? await BackendClient().deletePersonalUser(access_token:access_token!, password:password)
+//            try? await BackendClient.deletePersonalUser(access_token:access_token!, password:password)
 //            puts("Cleaned up \(email)")
 //        }
     }

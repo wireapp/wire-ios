@@ -19,7 +19,7 @@
 import Foundation
 
 class BackendClient {
-    func loginViaAPI(email: String, password: String) async throws -> String {
+    static func loginViaAPI(email: String, password: String) async throws -> String {
         let backendURL = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL"]!)"
         let url = URL(string: "\(backendURL)/v8/login")
         guard let requestUrl = url else { fatalError() }
@@ -43,7 +43,7 @@ class BackendClient {
         return message.access_token
     }
 
-    func deletePersonalUser(access_token: String, password: String) async throws {
+    static func deletePersonalUser(access_token: String, password: String) async throws {
         let backendURL = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL"]!)"
         let url = URL(string: "\(backendURL)/self")
         guard let requestUrl = url else { fatalError() }
