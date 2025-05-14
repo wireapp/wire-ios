@@ -229,15 +229,30 @@ extension SyncAgent: LiveSyncDelegate {
     func didFinishSync(sync: NewIncrementalSync) {
         delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: false)
     }
-    func didMissedEvents(sync: WireDomain.NewIncrementalSync) async throws {
-        await incrementalSyncToken?.suspend()
-        incrementalSyncToken = nil
-        WireLogger.sync.debug("slow sync requested by sync v3")
-        try await performInitialSyncV2()
-        WireLogger.sync.debug("slow sync done, restarting live sync")
-        try await performIncrementalSync(shouldAcknowledgeFullSync: true)
+    
+    func didMissedEvents(sync: NewIncrementalSync) {
+        // as this will close this websocket and sync,
+        // we don't want the initialSync to be cancelled too
+        Task.detached { [self] in
+            await incrementalSyncToken?.suspend()
+            incrementalSyncToken = nil
+            WireLogger.sync.debug("slow sync requested by sync v3")
+            do {
+                try await performInitialSyncV2()
+                WireLogger.sync.debug("slow sync done, restarting live sync")
+                try await performIncrementalSync(shouldAcknowledgeFullSync: true)
+            } catch {
+                WireLogger.sync.error("error while requesing slow sync: \(error.localizedDescription)")
+            }
+        }
     }
     
+    func didFail(sync: NewIncrementalSync, error: any Error) {
+        delegate?.syncAgentDidFailSyncing(
+            self,
+            error: error
+        )
+    }
     
 }
 

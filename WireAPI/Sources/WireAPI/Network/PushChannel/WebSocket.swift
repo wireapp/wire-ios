@@ -89,13 +89,9 @@ public actor WebSocket: WebSocketProtocol {
     }
 
     public func close() async {
-        WireLogger.webSocket.debug("close")
-        guard connection.isOpen else { return }
-        WireLogger.webSocket.debug("closing")
         connection.cancel(with: .goingAway, reason: nil)
         continuation?.finish()
         continuation = nil
-
     }
 
     public func sendPing() async {

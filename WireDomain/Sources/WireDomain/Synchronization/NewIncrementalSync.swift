@@ -23,7 +23,8 @@ import Combine
 
 public protocol LiveSyncDelegate {
     func didFinishSync(sync: NewIncrementalSync)
-    func didMissedEvents(sync: NewIncrementalSync) async throws
+    func didMissedEvents(sync: NewIncrementalSync)
+    func didFail(sync: NewIncrementalSync, error: any Error)
 }
 
 /// IncrementalSync using new backend API async stream notifications
@@ -178,14 +179,18 @@ public struct NewIncrementalSync: LiveSyncProtocol {
                     
                     case .missedEvents:
                         logger.debug("missedEvents event v3")
-                        try await delegate?.didMissedEvents(sync: self)
+                        delegate?.didMissedEvents(sync: self)
                     }
                   
                 }
             } catch PushChannelError.missingEvents {
-                try await delegate?.didMissedEvents(sync: self)
+                delegate?.didMissedEvents(sync: self)
             } catch {
+                // if we end up here, the pushChannel is closed
                 logger.warn("v3 live event stream encountered error: \(String(describing: error))")
+                syncStateSubject.send(.idle)
+                delegate?.didFail(sync: self, error: error)
+                return
             }
 
             logger.debug("live event stream did finish v3")
