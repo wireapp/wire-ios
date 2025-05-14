@@ -36,7 +36,6 @@ public struct BackoffRetryPolicy: Sendable {
     /// Whether to introduce randomness into the backoff
     public let jitter: Bool
 
-
     public init(
         maxRetries: Int = 3,
         baseTime: TimeInterval = 1.0,
