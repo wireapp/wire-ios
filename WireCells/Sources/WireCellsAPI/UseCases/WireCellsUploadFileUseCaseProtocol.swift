@@ -22,4 +22,5 @@ public import Foundation
 /// Uploads the file at `fileURL` to the cells server.
 public protocol WireCellsUploadFileUseCaseProtocol: Sendable {
     func invoke(fileURL: URL) async throws
+    func invoke(imageData: Data) async throws
 }

@@ -25,7 +25,11 @@ package final class WireCellsUploadFileUseCase: WireCellsUploadFileUseCaseProtoc
     package init() {}
 
     func invoke(fileURL: URL) async throws {
-        WireLogger.cells.info("Uploading file: \(fileURL)")
+        WireLogger.cells.info("Uploading file from URL")
+    }
+
+    func invoke(imageData: Data) async throws {
+        WireLogger.cells.info("Uploading file from image data")
     }
 
 }
