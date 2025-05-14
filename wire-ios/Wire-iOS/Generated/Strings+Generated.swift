@@ -1703,6 +1703,10 @@ internal enum L10n {
           /// You sent a picture
           internal static let title = L10n.tr("Localizable", "content.collapsed.image.title", fallback: "You sent a picture")
         }
+        internal enum Link {
+          /// You sent a link
+          internal static let title = L10n.tr("Localizable", "content.collapsed.link.title", fallback: "You sent a link")
+        }
         internal enum Location {
           /// You sent your location
           internal static let title = L10n.tr("Localizable", "content.collapsed.location.title", fallback: "You sent your location")
@@ -5696,8 +5700,8 @@ internal enum L10n {
           /// Lock With Passcode
           internal static let lockApp = L10n.tr("Localizable", "self.settings.privacy_security.lock_app", fallback: "Lock With Passcode")
           internal enum CollapseOwnMessages {
-            /// When this is on, all your messages collapse to a single line.
-            internal static let footer = L10n.tr("Localizable", "self.settings.privacy_security.collapse_own_messages.footer", fallback: "When this is on, all your messages collapse to a single line.")
+            /// When this is on, all your messages collapse after three lines.
+            internal static let footer = L10n.tr("Localizable", "self.settings.privacy_security.collapse_own_messages.footer", fallback: "When this is on, all your messages collapse after three lines.")
             /// Collapse my messages
             internal static let title = L10n.tr("Localizable", "self.settings.privacy_security.collapse_own_messages.title", fallback: "Collapse my messages")
           }
