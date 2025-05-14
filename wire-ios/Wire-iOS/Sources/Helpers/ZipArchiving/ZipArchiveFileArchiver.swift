@@ -16,7 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import WireFoundation
+import ZIPFoundation
+
+// TODO: remove
 import ZipArchive
 
 struct ZipArchiveFileArchiver: FileArchiverProtocol {
@@ -25,6 +29,35 @@ struct ZipArchiveFileArchiver: FileArchiverProtocol {
         at resourceURLs: [URL],
         into destinationURL: URL
     ) throws {
+
+        // We need to pass a directory URL to ZIPFoundation. Therefore we first copy the target files into a separate,
+        // temporary directory representing the future zip content.
+
+        let fileManager = FileManager.default
+        let sourceURL = destinationURL
+            .deletingLastPathComponent()
+            .appending(path: destinationURL.deletingPathExtension().lastPathComponent, directoryHint: .isDirectory)
+        try fileManager.createDirectory(at: sourceURL, withIntermediateDirectories: false)
+        for resourceURL in resourceURLs {
+            try fileManager.copyItem(
+                at: resourceURL,
+                to: sourceURL.appending(path: resourceURL.lastPathComponent, directoryHint: .notDirectory)
+            )
+        }
+        defer {
+            try? fileManager.removeItem(at: sourceURL)
+        }
+
+        try fileManager.zipItem(
+            at: sourceURL,
+            to: destinationURL.appendingPathExtension("0"),
+            shouldKeepParent: false,
+            compressionMethod: .deflate,
+            progress: .none
+        )
+        print(destinationURL.path())
+
+
         let success = SSZipArchive.createZipFile(
             atPath: destinationURL.path(),
             withFilesAtPaths: resourceURLs.map { $0.path() }
@@ -32,6 +65,9 @@ struct ZipArchiveFileArchiver: FileArchiverProtocol {
         guard success else {
             throw FileArchivingError.unknown
         }
+
+        return ()
+
     }
 
 }
