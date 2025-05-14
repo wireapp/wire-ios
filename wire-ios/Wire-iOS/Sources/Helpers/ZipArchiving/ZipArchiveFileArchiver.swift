@@ -45,6 +45,11 @@ struct ZipArchiveFileArchiver: FileArchiverProtocol {
             try? fileManager.removeItem(at: sourceURL)
         }
 
+        // TODO: throwing an error here leads to the warning printed:
+        /*
+         Attempt to present <SwiftUI.PlatformAlertController: 0x11202b000> on <Wire.ZClientViewController: 0x11286a600> (from <_TtGC7SwiftUI19UIHostingControllerVS_7AnyView_: 0x111832200>) while a presentation is in progress.
+         */
+
         try fileManager.zipItem(
             at: sourceURL,
             to: destinationURL,
