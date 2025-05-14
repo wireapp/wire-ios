@@ -23,6 +23,7 @@ import WireDataModel
 import WireDomain
 import WireFoundation
 import WireProtos
+import WireAPI
 
 struct MessageStoreAdapter<MessageLocalStore>: MessageStoreProtocol, @unchecked Sendable
     where MessageLocalStore: MessageLocalStoreProtocol {
@@ -31,6 +32,8 @@ struct MessageStoreAdapter<MessageLocalStore>: MessageStoreProtocol, @unchecked 
     /// The context to call `perform(schedule:_:)` on if needed.
     private let context: NSManagedObjectContext
     private let messageLocalStore: MessageLocalStore
+
+    private let processor: any ConversationProtobufMessageProcessorProtocol
 
     func totalMessageCount() async throws -> Int {
         try await messageLocalStore.totalMessageCountForBackup()
@@ -51,8 +54,6 @@ struct MessageStoreAdapter<MessageLocalStore>: MessageStoreProtocol, @unchecked 
 
     func addMessage(_ message: BackupMessageModel) async throws {
 
-        // TODO: try to use code from parsing incoming events
-
         let conversationID = message.conversationID
         let conversation = await context.perform {
             ZMConversation.fetch(with: conversationID.id, domain: conversationID.domain, in: context)
@@ -66,23 +67,39 @@ struct MessageStoreAdapter<MessageLocalStore>: MessageStoreProtocol, @unchecked 
         switch message.content {
 
         case let .text(textContent):
-            let (clientMessage, isCreated) = try await messageLocalStore.fetchOrCreateClientMessage(
-                id: message.id,
-                conversation: conversation,
-                sender: (id: senderUserID.id, domain: senderUserID.domain, clientID: message.senderClientID),
-                date: message.creationDate
-            )
-            guard isCreated else { return } // don't overwrite existing messages
+//            let (clientMessage, isCreated) = try await messageLocalStore.fetchOrCreateClientMessage(
+//                id: message.id,
+//                conversation: conversation,
+//                sender: (id: senderUserID.id, domain: senderUserID.domain, clientID: message.senderClientID),
+//                date: message.creationDate
+//            )
+//            guard isCreated else { return } // don't overwrite existing messages
 
             let textMessage = Text(content: textContent.text)
             let genericMessage = GenericMessage(content: textMessage, nonce: nonce)
-            try await context.perform {
-                try clientMessage.setUnderlyingMessage(genericMessage)
-                clientMessage.sender = sender
-                clientMessage.visibleInConversation = conversation
-                clientMessage.markAsSent()
-            }
 
+            try await processor.processProtobufMessage(
+                genericMessage,
+                content: genericMessage.content!,
+                conversation: conversation,
+                conversationID: WireAPI.QualifiedID(conversationID),
+                senderID: WireAPI.QualifiedID(senderUserID),
+                senderClientID: message.senderClientID,
+                date: message.creationDate,
+                eventMessage: "backup.import"
+            )
+
+//            try await context.perform {
+//                try clientMessage.setUnderlyingMessage(genericMessage)
+//                clientMessage.sender = sender
+//                clientMessage.visibleInConversation = conversation
+//                clientMessage.markAsSent()
+//            }
+
+        default:
+            return ()
+
+            /*
         case let .location(locationContent):
             let (clientMessage, isCreated) = try await messageLocalStore.fetchOrCreateClientMessage(
                 id: message.id,
@@ -179,6 +196,7 @@ struct MessageStoreAdapter<MessageLocalStore>: MessageStoreProtocol, @unchecked 
                 assetClientMessage.sender = sender
                 assetClientMessage.visibleInConversation = conversation
             }
+             */
         }
     }
 
@@ -189,6 +207,12 @@ extension MessageStoreAdapter where MessageLocalStore == WireDomain.MessageLocal
     init(context: NSManagedObjectContext) {
         self.context = context
         self.messageLocalStore = MessageLocalStore(context: context)
+
+        processor = TEMP_ConversationProtobufMessageProcessor(
+            context: context,
+            mlsService: context.performAndWait { context.mlsService },
+            userDefaults: .standard
+        )
     }
 
 }

@@ -16,10 +16,35 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreData
 import WireAPI
 import WireDataModel
 import WireLogging
 import WireProtos
+
+// TODO: delete
+public func TEMP_ConversationProtobufMessageProcessor(
+    context: NSManagedObjectContext,
+    mlsService: (any MLSServiceInterface)?,
+    userDefaults: UserDefaults
+) -> any ConversationProtobufMessageProcessorProtocol {
+    let messageLocalStore = MessageLocalStore(
+        context: context
+    )
+    return ConversationProtobufMessageProcessor(
+        messageLocalStore: messageLocalStore,
+        conversationLocalStore: ConversationLocalStore(
+            context: context,
+            mlsService: mlsService,
+            messageLocalStore: messageLocalStore
+        ),
+        userLocalStore: UserLocalStore(
+            context: context,
+            messageLocalStore: messageLocalStore,
+            userDefaults: userDefaults
+        )
+    )
+}
 
 struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcessorProtocol {
 
