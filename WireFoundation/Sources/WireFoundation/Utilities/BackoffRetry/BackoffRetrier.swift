@@ -18,18 +18,18 @@
 
 
 import Foundation
-import UIKit
 import Network
+import UIKit
 
 public actor BackoffRetrier {
     public typealias SleepFunction = @Sendable (
         _ seconds: Double
     ) async throws -> Void
-    
+
     enum Failure: Error {
         case exceededMaxAttempts(latestError: any Error)
     }
-    
+
     private let policy: BackoffRetryPolicy
     private let monitor = NWPathMonitor()
     private let sleep: SleepFunction
@@ -43,7 +43,7 @@ public actor BackoffRetrier {
     ) {
         self.policy = policy
         self.sleep = sleep
-        
+
         setupObservers()
     }
 
@@ -51,7 +51,7 @@ public actor BackoffRetrier {
         monitor.cancel()
         NotificationCenter.default.removeObserver(self)
     }
-    
+
     public func retry<T: Sendable>(
         _ operation: @escaping () async throws -> T
     ) async throws -> T {
@@ -60,27 +60,27 @@ public actor BackoffRetrier {
             do {
                 return try await operation()
             } catch {
-                
+
                 attempt += 1
-                
+
                 guard attempt < policy.maxRetries else {
                     throw Failure.exceededMaxAttempts(latestError: error)
                 }
-                
+
                 // Exponential backoffs
                 var delay = policy.baseTime * Double(pow(policy.exponentMultiplier, Double(attempt)))
-                
+
                 if policy.jitter {
                     // Adds jitter (randomness)
-                    delay = Double.random(in: 0...min(policy.maxTime, delay))
+                    delay = Double.random(in: 0 ... min(policy.maxTime, delay))
                 }
-                
+
                 try await sleep(delay)
             }
         }
     }
 
-    nonisolated private func setupObservers() {
+    private nonisolated func setupObservers() {
         NotificationCenter.default.addObserver(
             forName: UIApplication.willEnterForegroundNotification,
             object: nil,
@@ -90,9 +90,9 @@ public actor BackoffRetrier {
                 await self?.reset()
             }
         }
-        
+
         let queue = DispatchQueue(label: "BackoffRetrier")
-        
+
         monitor.pathUpdateHandler = { [weak self] path in
             if path.status == .satisfied {
                 Task {
@@ -100,10 +100,10 @@ public actor BackoffRetrier {
                 }
             }
         }
-        
+
         monitor.start(queue: queue)
     }
-    
+
     private func reset() {
         attempt = 0
     }
