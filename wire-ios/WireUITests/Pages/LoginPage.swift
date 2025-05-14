@@ -20,6 +20,11 @@ import XCTest
 
 class LoginPage: PageModel {
 
+    override func hasLoaded() {
+        let expectation = emailTextField().waitForExistence(timeout: 10)
+        XCTAssert(expectation, "Login page not loaded - can't find email field")
+    }
+
     func nextButton() -> XCUIElement {
         let elementsQuery = app.scrollViews.otherElements
         return elementsQuery.buttons["Next"]
@@ -45,6 +50,6 @@ class LoginPage: PageModel {
 
     func useCreatePersonalAccountLink() -> RegistrationPage {
         createPersonalAccountLink().tap()
-        return RegistrationPage(theApp: app)
+        return RegistrationPage()
     }
 }

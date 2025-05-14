@@ -28,6 +28,6 @@ class SettingsPage: PageModel {
         let accountSettings = accountSettingsMenu()
         accountSettings.waitForExistence(timeout: 1)
         accountSettings.tap()
-        return AccountSettingsPage(theApp: app)
+        return AccountSettingsPage()
     }
 }

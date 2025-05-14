@@ -53,35 +53,27 @@ final class PersonalUsersTests: XCTestCase {
 
     @MainActor
     func test_register_asPersonalUser() async throws {
-        var loginPage = LoginPage(theApp: app)
         let user = UserGenerator().generateUniqueUserInfo()
 
-        waitForElement(element: loginPage.emailTextField())
-        loginPage = loginPage.typeEmailOrSSO(email: user.email)
-
-        var registrationPage = loginPage.useCreatePersonalAccountLink()
-        registrationPage.confirmCreateAccount()
-
-        waitForElement(element: registrationPage.acceptButton())
-        registrationPage.acceptButton().tap()
+        let page = LoginPage()
+            .typeEmailOrSSO(email: user.email)
+            .useCreatePersonalAccountLink()
+            .confirmCreateAccount()
+            .tapAcceptButton()
 
         let verificationCode = try await InbucketClient().getVerificationCode(email: user.email)
-        registrationPage = registrationPage.enterVerificationCode(verificationCode: verificationCode)
 
-        registrationPage = registrationPage.setName(name: user.name)
-        registrationPage = registrationPage.setPassword(password: user.password)
+        let finalPage = page
+            .enterVerificationCode(verificationCode: verificationCode)
+            .setName(name: user.name)
+            .setPassword(password: user.password)
+            .acceptPopup()
+            .setUsername(username: user.username)
+            .openSettings()
+            .openAccountSettings()
 
-        registrationPage.acceptPopup()
-
-        let conversationsPage = registrationPage.setUsername(username: user.username)
-
-        waitForElement(element: conversationsPage.profileButton())
-
-        let settingsPage = conversationsPage.openSettings()
-        let accountPage = settingsPage.openAccountSettings()
-
-        XCTAssertTrue(accountPage.getAccountName().elementsEqual(user.name))
-        XCTAssertTrue(accountPage.getUsername().contains(user.username))
+        XCTAssertTrue(finalPage.getAccountName().elementsEqual(user.name), "Account name didn't match \(user.name)")
+        XCTAssertTrue(finalPage.getUsername().contains(user.username), "Username didn't contain \(user.username)")
 //        TODO: Restore once [WPB-17516] is fixed
 //        XCTAssertTrue(accountPage.getEmail().elementsEqual(user.email))*/
     }
@@ -101,23 +93,5 @@ final class PersonalUsersTests: XCTestCase {
             springboard.buttons["Delete"].tap()
             springboard.buttons["Delete"].tap()
         }
-    }
-
-    func waitForElement(element:XCUIElement) {
-        let exists = NSPredicate(format: "exists == 1")
-        expectation(for:exists, evaluatedWith: element, handler: nil)
-        waitForExpectations(timeout: 10, handler: nil)
-    }
-}
-
-struct RuntimeError: LocalizedError {
-    let description: String
-
-    init(_ description: String) {
-        self.description = description
-    }
-
-    var errorDescription: String? {
-        description
     }
 }

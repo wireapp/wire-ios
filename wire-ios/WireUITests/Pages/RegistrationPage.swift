@@ -20,6 +20,11 @@ import XCTest
 
 class RegistrationPage: PageModel {
 
+    override func hasLoaded() {
+        let expectation = newNextButton().waitForExistence(timeout: 10)
+        XCTAssert(expectation, "Registration page not loaded - can't find next button")
+    }
+
     func nameNextButton() -> XCUIElement {
         let elementsQuery = nameField().buttons.matching(identifier: "ConfirmButton")
         return elementsQuery.firstMatch
@@ -65,6 +70,13 @@ class RegistrationPage: PageModel {
         return elementsQuery.firstMatch
     }
 
+    func tapAcceptButton() -> RegistrationPage {
+        let accept = acceptButton()
+        accept.waitForExistence(timeout: 10)
+        accept.tap()
+        return self
+    }
+
     func enterVerificationCode(verificationCode: String) -> RegistrationPage {
         let input = verificationCodeInput()
         input.tap()
@@ -88,12 +100,18 @@ class RegistrationPage: PageModel {
         return self
     }
 
+    func acceptPopup() -> RegistrationPage {
+        let button = app.otherElements.buttons.firstMatch
+        button.tap()
+        return self
+    }
+
     func setUsername(username: String) -> ConversationsPage {
         let usernameInput = usernameField()
         usernameInput.tap()
         usernameInput.typeText(username)
         usernameConfirmButton().tap()
-        return ConversationsPage(theApp: app)
+        return ConversationsPage()
     }
 
     func confirmCreateAccount() -> RegistrationPage {

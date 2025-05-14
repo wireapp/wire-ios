@@ -18,15 +18,14 @@
 
 import XCTest
 
-class PageModel {
-    let app: XCUIApplication
+struct RuntimeError: LocalizedError {
+    let description: String
 
-    init() {
-        app = XCUIApplication()
-        hasLoaded()
+    init(_ description: String) {
+        self.description = description
     }
 
-    func hasLoaded() {
-        print("Warning: hasLoaded should be implemented by inheritor")
+    var errorDescription: String? {
+        description
     }
 }
