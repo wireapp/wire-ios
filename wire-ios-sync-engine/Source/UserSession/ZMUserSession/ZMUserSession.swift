@@ -650,7 +650,7 @@ public final class ZMUserSession: NSObject {
             clientRegistrationStatus.emailCredentials = nil
             clientRegistrationStatus.cookieProvider.deleteKeychainItems()
 
-            let selfUser = ZMUser.selfUser(in: managedObjectContext)
+            let selfUser = ZMUser.selfUser(in: syncContext)
             let clientDeletedRemotelyError = NSError.userSessionError(
                 code: .clientDeletedRemotely,
                 userInfo: selfUser.loginCredentials.dictionaryRepresentation
