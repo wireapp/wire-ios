@@ -20,7 +20,7 @@ import Foundation
 import WireFoundation
 import ZIPFoundation
 
-struct ZipArchiveFileArchiver: FileArchiverProtocol {
+struct ZIPFoundationFileArchiver: FileArchiverProtocol {
 
     func zipResources(
         at resourceURLs: [URL],
