@@ -39,7 +39,7 @@ extension BackupImporter {
         case let error as BackupImportResult.FailureUnzippingError:
             throw OpenBackupError.unzippingFailed(error.message)
         case let success as BackupImportResult.Success:
-            return success.pager
+            return success.pager as! BackupImportPager
         case let error as BackupImportResult.FailureUnknownError:
             throw OpenBackupError.unknown(error.message)
         default:
