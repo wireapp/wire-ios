@@ -23,10 +23,10 @@ extension BackupMessage {
 
     convenience init(_ message: BackupMessageModel) {
         self.init(
-            id: message.id,
+            id: message.id.lowercased(),
             conversationId: BackupQualifiedId(message.conversationID),
             senderUserId: BackupQualifiedId(message.senderUserID),
-            senderClientId: message.senderClientID ?? "",
+            senderClientId: message.senderClientID?.lowercased() ?? "",
             creationDate: BackupDateTime(message.creationDate),
             content: backupMessageContent(message.content),
             webPrimaryKey: nil
