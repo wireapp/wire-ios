@@ -45,6 +45,7 @@ extension GenericMessage {
             self = GenericMessage(content: locationContent, nonce: nonce)
 
         case let .asset(assetContent):
+            var assetContent = assetContent
             switch assetContent.metadata {
 
             case let .image(imageData):
@@ -99,6 +100,12 @@ extension GenericMessage {
             // TODO: see video
 
             case let .generic(data):
+                if assetContent.name == nil, let name = data.name {
+                    assetContent.name = name
+                }
+                fallthrough
+
+            case .none:
                 let asset = Asset.with { asset in
                     asset.original = Asset.Original.with { original in
                         original.size = assetContent.size
@@ -107,9 +114,6 @@ extension GenericMessage {
                     }
                 }
                 self = GenericMessage(content: asset, nonce: nonce)
-
-            case .none:
-                return nil
 
             }
         }
