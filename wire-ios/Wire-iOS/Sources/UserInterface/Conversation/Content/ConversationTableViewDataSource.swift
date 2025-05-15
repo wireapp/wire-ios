@@ -899,17 +899,35 @@ extension ConversationTableViewDataSource {
 
                 // collapse the status view's height
                 let previousMessage = messages[previousSectionIndex]
-                let newCellDescription = ConversationMessageToolboxCellDescription(
-                    message: previousMessage,
-                    isRedundant: true
-                )
-                newCellDescription.topMargin = 0
-                newCellDescription.bottomMargin = 0
 
                 // we notify the table view by creating a new cell description
-                let previousStatus = statusCellDescription(for: previousSectionIndex, in: sections)
-                newCellDescription.delegate = previousStatus?.cellDescription.delegate
-                previousStatus?.replace(newCellDescription, &sections)
+                if let previousStatus = statusCellDescription(for: previousSectionIndex, in: sections) {
+                    let newCellDescription = ConversationMessageToolboxCellDescription(
+                        message: previousMessage,
+                        isRedundant: true
+                    )
+                    newCellDescription.topMargin = 0
+                    newCellDescription.bottomMargin = 0
+
+                    newCellDescription.delegate = previousStatus.cellDescription.delegate
+                    previousStatus.replace(newCellDescription, &sections)
+                }
+                
+                // we notify the table view by creating a new cell description
+//                if let newPreviousStatus = newStatusCellDescription(for: previousSectionIndex, in: sections) {
+//                    let newNewTextDescription = NewTextCellDescription(
+//                        conversationCellModel:
+//                                .text(factory.makeTextMessageViewModel(
+//                                    message: previousMessage,
+//                                    selfUser: selfUser,
+//                                    accentColor: selfUser.accentColor,
+//                                    shouldShowStatus: false
+//                                ))
+//                    )
+//                    newNewTextDescription.message = previousMessage
+//                    newNewTextDescription.delegate = newPreviousStatus.cellDescription.delegate
+//                    newPreviousStatus.replace(newNewTextDescription, &sections)
+//                }
 
                 // for collapsing the space we will refer to the cell description before the previous message's status
                 if let newPreviousSectionLastElement = sections[previousSectionIndex].elements.first?.instance {
@@ -962,6 +980,36 @@ extension ConversationTableViewDataSource {
 
         return nil
     }
+    
+    // TRY MAKE GENERIC
+//    private func newStatusCellDescription(
+//        for sectionIndex: Int,
+//        in sections: [Section]
+//    ) -> (
+//        cellDescription: NewTextCellDescription,
+//        replace: (_ cellDescription: NewTextCellDescription, _ sections: inout [Section]) -> Void
+//    )? {
+//
+//        for elementIndex in sections[sectionIndex].elements.indices {
+//            let cellDescription = sections[sectionIndex].elements[elementIndex].instance
+//
+//            if let cellDescription = cellDescription as? NewTextCellDescription {
+//
+//                func replace(
+//                    by newCellDescription: NewTextCellDescription,
+//                    in sections: inout [Section]
+//                ) {
+//                    sections[sectionIndex]
+//                        .elements[elementIndex] = AnyConversationMessageCellDescription(newCellDescription)
+//                }
+//
+//                return (cellDescription, replace)
+//            }
+//
+//        }
+//
+//        return nil
+//    }
 
     private func isMessageStatus(
         of previousIndex: Int,
