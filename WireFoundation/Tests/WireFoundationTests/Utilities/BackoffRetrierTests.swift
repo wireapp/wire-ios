@@ -39,7 +39,7 @@ final class BackoffRetrierTests: XCTestCase {
         let recorder = SleepRecorder()
 
         let policy = BackoffRetryPolicy(
-            maxRetries: 3,
+            maxRetries: 4,
             baseTime: 1.0,
             maxTime: 100.0,
             exponentMultiplier: 2.0,
@@ -52,8 +52,11 @@ final class BackoffRetrierTests: XCTestCase {
 
         // When, simulating 3 calls, first 2 fail, third succeeds
         let result = try await retrier.retry {
-            callCount += 1
-            if callCount < 3 {
+            defer {
+                callCount += 1
+            }
+
+            if callCount < 4 {
                 throw NSError(domain: "Test", code: -1)
             }
             return "Success"
@@ -61,14 +64,16 @@ final class BackoffRetrierTests: XCTestCase {
 
         // Then
         XCTAssertEqual(result, "Success")
-        XCTAssertEqual(callCount, 3)
+        XCTAssertEqual(callCount, 5) // initial + 4 retries
 
         let recordedSleeps = await recorder.getAll()
 
         // Sleep durations values are exponential
-        XCTAssertEqual(recordedSleeps.count, 2)
-        XCTAssertEqual(recordedSleeps[0], 2.0)
-        XCTAssertEqual(recordedSleeps[1], 4.0)
+        XCTAssertEqual(recordedSleeps.count, 4)
+        XCTAssertEqual(recordedSleeps[0], 1.0)
+        XCTAssertEqual(recordedSleeps[1], 2.0)
+        XCTAssertEqual(recordedSleeps[2], 4.0)
+        XCTAssertEqual(recordedSleeps[3], 8.0)
     }
 
     func testBackoffRetrier_It_Fails_After_Max_Retries() async {

@@ -59,8 +59,6 @@ public actor BackoffRetrier {
                 return try await operation()
             } catch {
 
-                attempt += 1
-
                 guard attempt < policy.maxRetries else {
                     throw Failure.exceededMaxAttempts(latestError: error)
                 }
@@ -74,6 +72,8 @@ public actor BackoffRetrier {
                 }
 
                 try await sleep(delay)
+
+                attempt += 1
             }
         }
     }
