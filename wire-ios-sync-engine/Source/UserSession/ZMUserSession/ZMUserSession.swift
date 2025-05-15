@@ -659,7 +659,7 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-    private func onSelfClientInvalidated() async {
+    func onSelfClientInvalidated() async {
         await syncContext.perform { [self] in
             syncContext.tearDownCryptoStack()
 
