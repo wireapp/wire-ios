@@ -63,7 +63,7 @@ struct ImportLegacyBackupUseCase: ImportBackupUseCaseProtocol {
                     logger.debug("creating backup of user client")
 
                     // backup the self user and the self client
-                    let selfUserQualifiedID: QualifiedID?
+                    let selfUserQualifiedID: WireDataModel.QualifiedID?
                     let selfClientBackup: [String: Any]
                     // we want to avoid keeping a strong reference to the user
                     // session, the managed object context and the user client
