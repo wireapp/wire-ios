@@ -16,15 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
+public enum WireCellsNodeConversationRepositoryError: Error {
+    case cellNameNotFound
+    case genericError(any Error)
+}
 
-public struct WireCellsUploadedFile: Sendable {
-    /// The path of the uploaded file on the server
-    public let path: URL
+// sourcery: AutoMockable
+public protocol WireCellsNodeConversationRepository {
+    func getCellName(conversationID: WireCellsConversationID) async throws(WireCellsNodeConversationRepositoryError)
+        -> String
 
-    ///   - Parameters:
-    ///       - path: The path of the uploaded file on the server
-    public init(path: URL) {
-        self.path = path
-    }
+    func setWireCell(
+        conversationID: WireCellsConversationID,
+        cellName: String
+    ) async throws(WireCellsNodeConversationRepositoryError)
+
+    func getConversationNames() async throws(WireCellsNodeConversationRepositoryError) -> [WireCellsConversation]
 }
