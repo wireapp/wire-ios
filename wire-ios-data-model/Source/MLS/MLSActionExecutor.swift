@@ -342,11 +342,15 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
         let result: DecryptedMessage? = try await performNonReentrant(groupID: groupID) {
             try await coreCrypto.perform {
                 do {
+                    //
                     return try await $0.decryptMessage(conversationId: groupID.data, payload: message)
                 } catch let CoreCryptoError.Mls(error) {
                     switch error {
                     case .BufferedFutureMessage, .BufferedCommit:
                         // ignore error so transaction is saved and message is saved too.
+                        return nil
+                    case .WrongEpoch:
+                        // repair
                         return nil
                     default:
                         throw error

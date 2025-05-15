@@ -46,6 +46,8 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
     func decryptedMessageAddEventData(
         from eventData: ConversationMLSMessageAddEvent
     ) async throws -> ConversationMLSMessageAddEvent {
+        guard !DeveloperFlag.skipMLSMessagesDecryption.isOn else { throw MLSMessageDecryptorError.missingMLSGroupID }
+
         let conversationID = eventData.conversationID
 
         guard let mlsConversation = await conversationLocalStore.fetchConversation(
@@ -66,24 +68,29 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
             throw MLSMessageDecryptorError.mlsConversationNotReady
         }
 
-        let decryptionResults = try await decryptMLSMessage(
-            message: eventData.message,
-            mlsGroupID: mlsGroupID,
-            subconversation: eventData.subconversation
-        )
+        do {
+            let decryptionResults = try await decryptMLSMessage(
+                message: eventData.message,
+                mlsGroupID: mlsGroupID,
+                subconversation: eventData.subconversation
+            )
 
-        let decryptedMessages = await processMLSMessageDecryptionResults(
-            decryptionResults,
-            mlsConversation: mlsConversation,
-            senderID: eventData.senderID.uuid,
-            senderDomain: eventData.senderID.domain,
-            date: eventData.timestamp
-        )
+            let decryptedMessages = await processMLSMessageDecryptionResults(
+                decryptionResults,
+                mlsConversation: mlsConversation,
+                senderID: eventData.senderID.uuid,
+                senderDomain: eventData.senderID.domain,
+                date: eventData.timestamp
+            )
 
-        var decryptedEvent = eventData
-        decryptedEvent.decryptedMessages = decryptedMessages
+            var decryptedEvent = eventData
+            decryptedEvent.decryptedMessages = decryptedMessages
 
-        return decryptedEvent
+            return decryptedEvent
+        } catch {
+            //if mlsWrongEpoch
+            throw MLSMessageDecryptorError.mlsWrongEpoch(mlsGroupID: mlsGroupID)
+        }
     }
 
     private func decryptMLSMessage(

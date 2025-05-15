@@ -173,7 +173,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         }
 
         do {
-            let decryptedMessage = try await mlsActionExecutor.decryptMessage(messageData, in: groupID)
+            let decryptedMessage = try await mlsActionExecutor.decryptMessage(messageData, in: groupID)//
 
             if let newDistributionPoints = CRLsDistributionPoints(from: decryptedMessage.crlNewDistributionPoints) {
                 onNewCRLsDistributionPointsSubject.send(newDistributionPoints)

@@ -67,6 +67,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
     }
 
     func decryptEvents(in eventEnvelope: UpdateEventEnvelope) async throws -> [UpdateEvent] {
+        guard !DeveloperFlag.skipMLSMessagesDecryption.isOn else { return [] }
         let logAttributes: LogAttributes = [
             .eventId: eventEnvelope.id.safeForLoggingDescription,
             .public: true
@@ -116,7 +117,15 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                     let decryptedEventData = try await mlsMessageDecryptor.decryptedMessageAddEventData(from: eventData)
                     decryptedEvents.append(.conversation(.mlsMessageAdd(decryptedEventData)))
 
-                } catch {
+                } catch let error as MLSMessageDecryptorError {
+                    // if Wrong epoch ->
+                    switch error {
+                    case .mlsWrongEpoch(let mlsGroupID):
+                        await mlsService?.fetchAndRepairGroup(with: mlsGroupID)
+                    default:
+                        throw error
+                    }
+
                     WireLogger.updateEvent.error(
                         "failed to decrypt MLS add message event, dropping: \(error.localizedDescription)",
                         attributes: logAttributes
