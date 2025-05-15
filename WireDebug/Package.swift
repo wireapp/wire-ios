@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "WireDebug",
     defaultLocalization: "en",
-    platforms: [.iOS("16.4"), .macOS(.v12)],
+    platforms: [.iOS("16.4"), .macOS(.v13)],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(name: "WireViewsDebugUI", targets: ["WireViewsDebugUI"])

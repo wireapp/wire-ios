@@ -6,7 +6,7 @@ import PackageDescription
 // Temporary local package replacing integration of AVS via Carthage
 let package = Package(
     name: "WireAVS",
-    platforms: [.iOS("16.4"), .macOS(.v12)],
+    platforms: [.iOS("16.4"), .macOS(.v13)],
     products: [
         .library(
             name: "WireAVS",

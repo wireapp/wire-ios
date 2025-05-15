@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "WireFoundation",
-    platforms: [.iOS("16.4"), .macOS(.v12)],
+    platforms: [.iOS("16.4"), .macOS(.v13)],
     products: [
         // TODO: [WPB-7394] `Clibsodium` is no longer needed as a product
         .library(name: "Clibsodium", targets: ["Clibsodium"]),

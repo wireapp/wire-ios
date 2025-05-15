@@ -6,7 +6,7 @@ import PackageDescription
 // Temporary local package replacing integration of CoreCrypto via Carthage
 let package = Package(
     name: "WireCoreCrypto",
-    platforms: [.iOS("16.4"), .macOS(.v12)],
+    platforms: [.iOS("16.4"), .macOS(.v13)],
     products: [
         .library(
             name: "WireCoreCrypto",
