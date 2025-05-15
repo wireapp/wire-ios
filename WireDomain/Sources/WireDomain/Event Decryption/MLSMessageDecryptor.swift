@@ -85,10 +85,10 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
             decryptedEvent.decryptedMessages = decryptedMessages
 
             return decryptedEvent
-        } catch let error as MLSMessageDecryptorError {
+        } catch let error as WireDataModel.MLSDecryptionService.MLSMessageDecryptionError {
             switch error {
-            case .mlsWrongEpoch(let mlsGroupID):
-                throw MLSMessageDecryptorError.mlsWrongEpoch(mlsGroupID: mlsGroupID)
+            case .wrongEpoch:
+                throw MLSMessageDecryptorError.wrongEpoch(mlsGroupID: mlsGroupID)
             default:
                 throw error
             }

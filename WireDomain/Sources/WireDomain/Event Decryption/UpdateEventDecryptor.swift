@@ -99,7 +99,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                     )
                 } catch {
                     WireLogger.updateEvent.error(
-                        "failed to decrypt proteus event, dropping: \(error.localizedDescription)",
+                        "failed to decrypt proteus event, dropping: \(String(describing: error))",
                         attributes: logAttributes
                     )
                 }
@@ -119,17 +119,25 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
 
                 } catch let error as MLSMessageDecryptorError {
                     switch error {
-                    case .mlsWrongEpoch(let mlsGroupID):
+                    case let .wrongEpoch(mlsGroupID):
+                        WireLogger.updateEvent.warn(
+                            "failed to decrypt MLS due to `WrongEpoch` for group \(mlsGroupID)",
+                            attributes: logAttributes
+                        )
                         await mlsService?.fetchAndRepairGroup(with: mlsGroupID)
-                        WireLogger.updateEvent.warn("mls_Wrong_Epoch for group \(mlsGroupID)", attributes: logAttributes)
                     default:
                         WireLogger.updateEvent.error(
-                            "failed to decrypt MLS add message event, dropping: \(error.localizedDescription)",
+                            "failed to decrypt MLS add message event, dropping: \(String(describing: error))",
                             attributes: logAttributes
                         )
 
                         throw error
                     }
+                } catch {
+                    WireLogger.updateEvent.error(
+                        "failed to decrypt MLS add message event, dropping error: \(String(describing: error))",
+                        attributes: logAttributes
+                    )
                 }
 
             case let .conversation(.mlsWelcome(eventData)):

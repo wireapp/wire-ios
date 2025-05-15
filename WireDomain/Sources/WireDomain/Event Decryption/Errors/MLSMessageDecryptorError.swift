@@ -26,6 +26,6 @@ enum MLSMessageDecryptorError: Error {
 
     case mlsConversationNotReady
 
-    case mlsWrongEpoch(mlsGroupID: MLSGroupID)
+    case wrongEpoch(mlsGroupID: MLSGroupID)
 
 }
