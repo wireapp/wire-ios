@@ -16,6 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum WireCellsFileQueryError: Error {
-    case genericError(any Error)
+public struct WireCellsServerConfigDTO {
+    package let links: WireCellsServerLinks
+
+    public init(links: WireCellsServerLinks) {
+        self.links = links
+    }
+}
+
+public struct WireCellsServerLinks {
+    package let api: String
+
+    public init(api: String) {
+        self.api = api
+    }
 }

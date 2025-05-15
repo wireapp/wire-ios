@@ -18,18 +18,19 @@
 
 public import Foundation
 
-public struct WireCellsFileUploadInfo: Identifiable, Sendable {
-    public let data: Data
-    /// Path that the file should be uploaded to
-    public let uploadPath: String
+/// Node preview data.
+/// - Parameters:
+///   - url: URL of the preview.
+///   - dimension: Max preview thumbnail dimension.
+public struct WireCellsNodePreview: Equatable, Hashable, Sendable {
+    public let url: URL
+    public let dimension: Int
 
-    public var id: String { uploadPath }
-
-    ///   - Parameters:
-    ///       - data: The file data
-    ///       - uploadPath: Path that the file should be uploaded to
-    public init(data: Data, uploadPath: String) {
-        self.data = data
-        self.uploadPath = uploadPath
+    package init(
+        url: URL,
+        dimension: Int
+    ) {
+        self.url = url
+        self.dimension = dimension
     }
 }

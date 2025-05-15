@@ -16,6 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import Foundation
 
-final class WireCellsTests: XCTestCase {}
+/// Represents the result of a pre-check operation to determine if a file
+/// with the given path and name already exists on the Cell server.
+public enum WireCellsPreCheckResult: Equatable, Hashable, Sendable {
+    case success
+    case fileExists(nextPath: String)
+}

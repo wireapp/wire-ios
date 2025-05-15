@@ -16,6 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum WireCellsServiceInitError: Error {
-    case failedToInitializeS3Client
+public import Foundation
+
+public struct WireCellsPublicLink: Equatable, Hashable, Sendable {
+    public let uuid: UUID
+    public let url: URL
+
+    package init(uuid: UUID, url: URL) {
+        self.uuid = uuid
+        self.url = url
+    }
 }
