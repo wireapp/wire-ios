@@ -21,7 +21,7 @@ import XCTest
 final class PersonalUsersTests: WireUITestCase {
 
     override func tearDown() async throws {
-//        TODO: Restore once [WPB-17516] is fixed
+//        TODO: [WPB-17516] Restore once fixed
 //        let email = context["email"] as! String
 //        let password = context["password"] as! String
 //        let access_token = try? await BackendClient.loginViaAPI(email:email, password:password)
@@ -54,11 +54,11 @@ final class PersonalUsersTests: WireUITestCase {
 
         XCTAssertTrue(accountPage.getAccountName().elementsEqual(user.name), "Account name didn't match \(user.name)")
         XCTAssertTrue(accountPage.getUsername().contains(user.username), "Username didn't contain \(user.username)")
-//        TODO: Restore once [WPB-17516] is fixed
+//        TODO: [WPB-17516] Restore once fixed
 //        XCTAssertTrue(accountPage.getEmail().elementsEqual(user.email))*/
 
         accountPage.logout()
-        // TODO: Restore once [WPB-17516] is fixed
+//            TODO: [WPB-17516] Restore once fixed
 //            .enterPassword(user.password)
     }
 }
