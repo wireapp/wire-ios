@@ -22,8 +22,29 @@ extension BackupFile {
 
     struct ImportResult: Encodable {
 
-        init(_ importResult: BackupImportResult.Success) {
-            fatalError()
+        let totalPagesCount: Int32?
+        let users: [BackupUser]
+        let conversations: [BackupConversation]
+        let messages: [BackupMessage]
+
+        init(_ importResult: BackupImportResult.Success) throws {
+
+            let pagers = importResult.pager
+            guard let usersPager = pagers.usersPager as? BackupImportDataPager<BackupUser> else {
+                throw InitializationError.some("Unexpected user pager type: \(String(describing: pagers.usersPager))")
+            }
+            guard let conversationsPager = pagers.conversationsPager as? BackupImportDataPager<BackupConversation> else {
+                throw InitializationError.some("Unexpected conversation pager type: \(String(describing: pagers.conversationsPager))")
+            }
+            guard let messagesPager = pagers.messagesPager as? BackupImportDataPager<BackupMessage> else {
+                throw InitializationError.some("Unexpected message pager type: \(String(describing: pagers.messagesPager))")
+            }
+
+            self.totalPagesCount = importResult.pager.totalPagesCount
+            self.users = [BackupUser](usersPager)
+            self.conversations = [BackupConversation](conversationsPager)
+            self.messages = [BackupMessage](messagesPager)
+
         }
 
     }

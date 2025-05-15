@@ -16,10 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+@preconcurrency import KaliumBackup
 
-struct StandardErrorOutputStream: TextOutputStream {
-    func write(_ string: String) {
-        try! FileHandle.standardError.write(contentsOf: Data(string.utf8))
+extension BackupUser: @retroactive Encodable {
+
+    func encode(to encoder: any Encoder) throws {
+        fatalError()
     }
+
 }

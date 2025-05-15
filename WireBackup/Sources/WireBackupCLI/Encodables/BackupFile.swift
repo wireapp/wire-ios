@@ -21,8 +21,8 @@ import Foundation
 
 struct BackupFile: Encodable {
 
-    private let peekResult: PeekResult
-    private let importResult: ImportResult
+    let peekResult: PeekResult
+    let importResult: ImportResult
 
     init(
         path backupFilePath: String,
@@ -36,7 +36,11 @@ struct BackupFile: Encodable {
 
         let peekResult = try await backupImporter.peek(pathToBackupFile: backupFilePath)
         guard let peekResult = peekResult as? BackupPeekResult.Success else {
-            throw InitializationError.some("Peek failed.")
+            throw InitializationError.some("Peek failed: \(peekResult)")
+        }
+
+        guard !peekResult.isEncrypted else {
+            throw InitializationError.some("Encrypted files are not yet supported.")
         }
 
         let importResult = try await backupImporter.importFile(
@@ -44,11 +48,11 @@ struct BackupFile: Encodable {
             passphrase: password.isEmpty ? String?.none : password
         )
         guard let importResult = importResult as? BackupImportResult.Success else {
-            throw InitializationError.some("Import failed.")
+            throw InitializationError.some("Import failed: \(importResult)")
         }
 
         self.peekResult = PeekResult(peekResult)
-        self.importResult = ImportResult(importResult)
+        self.importResult = try ImportResult(importResult)
 
     }
 
@@ -57,49 +61,3 @@ struct BackupFile: Encodable {
     }
 
 }
-
-/*
-
-
-print("version:", peekResult.version, to: &stderr)
-print("isEncrypted:", peekResult.isEncrypted, to: &stderr)
-guard !peekResult.isEncrypted else {
-    print("Encrypted files are not yet supported.", to: &stderr)
-    exit(3)
-}
-
-
-
-let pagers = importResult.pager
-print("totalPagesCount:", pagers.totalPagesCount, to: &stderr)
-
-guard let userPager = pagers.usersPager as? BackupImportDataPager<BackupUser> else {
-    print("Unexpected user pager type:", String(describing: pagers.usersPager), to: &stderr)
-    exit(5)
-}
-guard let conversationsPager = pagers.conversationsPager as? BackupImportDataPager<BackupConversation> else {
-    print("Unexpected conversation pager type:", String(describing: pagers.conversationsPager), to: &stderr)
-    exit(5)
-}
-guard let messagesPager = pagers.messagesPager as? BackupImportDataPager<BackupMessage> else {
-    print("Unexpected message pager type:", String(describing: pagers.messagesPager), to: &stderr)
-    exit(5)
-}
-
-for _ in 0 ..< userPager.totalPages {
-    let users = userPager.nextPage()
-    for u in 0 ..< users.size {
-        let user = users.get(index: u)!
-
-    }
-}
-
-for _ in 0 ..< conversationsPager.totalPages {
-    //
-}
-
-for _ in 0 ..< messagesPager.totalPages {
-    //
-}
-
-*/

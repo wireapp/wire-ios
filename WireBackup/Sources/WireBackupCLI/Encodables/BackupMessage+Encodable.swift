@@ -16,20 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+@preconcurrency import KaliumBackup
 
-guard CommandLine.arguments.count == 2 else {
-    print("Pass a .wbu file as argument.")
-    exit(1)
+extension BackupMessage: @retroactive Encodable {
+
+    func encode(to encoder: any Encoder) throws {
+        fatalError()
+    }
+
 }
-
-let encoder = JSONEncoder()
-encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-
-let backupFile = try await BackupFile(
-    path: CommandLine.arguments[1],
-    password: ""
-)
-let jsonData = try encoder.encode(backupFile)
-let jsonString = String(decoding: jsonData, as: UTF8.self)
-print(jsonString)

@@ -22,8 +22,12 @@ extension BackupFile {
 
     struct PeekResult: Encodable {
 
+        let version: String
+        let isEncrypted: Bool
+
         init(_ peekResult: BackupPeekResult.Success) {
-            fatalError()
+            self.version = peekResult.version
+            self.isEncrypted = peekResult.isEncrypted
         }
 
     }

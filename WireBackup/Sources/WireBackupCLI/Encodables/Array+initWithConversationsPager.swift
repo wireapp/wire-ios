@@ -16,20 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+@preconcurrency import KaliumBackup
 
-guard CommandLine.arguments.count == 2 else {
-    print("Pass a .wbu file as argument.")
-    exit(1)
+extension Array where Element == BackupConversation {
+
+    init(_ conversationsPager: BackupImportDataPager<BackupConversation>) {
+        // fatalError()
+        self = []
+    }
+
 }
-
-let encoder = JSONEncoder()
-encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-
-let backupFile = try await BackupFile(
-    path: CommandLine.arguments[1],
-    password: ""
-)
-let jsonData = try encoder.encode(backupFile)
-let jsonString = String(decoding: jsonData, as: UTF8.self)
-print(jsonString)
