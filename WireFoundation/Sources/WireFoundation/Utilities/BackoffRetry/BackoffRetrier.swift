@@ -56,7 +56,12 @@ public actor BackoffRetrier {
 
         while true {
             do {
-                return try await operation()
+                // Temporary code to test retry mechanism, to be removed after playtest
+                if attempt < policy.maxRetries {
+                    throw NSError(domain: "wire.com", code: 400)
+                } else {
+                    return try await operation()
+                }
             } catch {
 
                 guard attempt < policy.maxRetries else {
