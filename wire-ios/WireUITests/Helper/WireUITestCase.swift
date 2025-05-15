@@ -31,19 +31,30 @@ class WireUITestCase: XCTestCase {
         deleteApp()
 
         app = XCUIApplication()
-        app.launchArguments = [
+        let launchArguments = [
             "-BackendEnvironmentTypeOverrideKey staging",
             "--preferred-api-version=8"
         ]
-        app.useWireAuthentication()
 
-        app.launch()
+        tryLaunch(launchArguments)
 
         // In UI tests it is usually best to stop immediately when a failure occurs
         continueAfterFailure = false
     }
 
     // MARK: - Helpers
+
+    // Sometimes the app fails to launch, especially in the pipeline
+    func tryLaunch(_ launchArguments:Array<String>, counter:Int = 10) {
+        if !app.exists && counter > 0 {
+            XCUIApplication().terminate()
+            app = XCUIApplication()
+            app.launchArguments = launchArguments
+            app.useWireAuthentication()
+            app.launch()
+            tryLaunch(launchArguments, counter:counter-1)
+        }
+    }
 
     func deleteApp() {
         let icon = springboard.icons["Wire"]

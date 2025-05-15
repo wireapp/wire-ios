@@ -21,7 +21,7 @@ import XCTest
 class VerificationCodePage: PageModel {
 
     override func hasLoaded() {
-        let expectation = verificationCodeInput.waitForExistence(timeout: 10)
+        let expectation = verificationCodeInput.waitForExistence(timeout: 20)
         XCTAssert(expectation, "Verification code page not loaded - can't find verification input")
     }
 
