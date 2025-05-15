@@ -38,11 +38,10 @@ let package = Package(
                 .product(name: "WireFoundationSupport", package: "WireFoundation")
             ]
         ),
-
         .binaryTarget(
             name: "KaliumBackup",
-            url: "https://media.githubusercontent.com/media/wireapp/wire-ios/60fa91813b0b36bde4769b63982c2f5511c15a94/WireBackup/Frameworks/KaliumBackup.xcframework.zip?download=true",
-            checksum: "2ea1f7516165a0928809ea2d80f94de2949eb686c0ca3ddccf1908a01d63573b"
+            url: "https://github.com/wireapp/kalium/releases/download/backup%2F0.0.1/KaliumBackup.xcframework.zip",
+            checksum: "03e6e6398f65e0366a772b0b3ec710bd74d9e0482739781f649bcbd89be482ac"
         )
     ],
     swiftLanguageModes: [.v6]
