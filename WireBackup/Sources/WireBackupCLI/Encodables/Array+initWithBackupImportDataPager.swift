@@ -18,30 +18,30 @@
 
 @preconcurrency import KaliumBackup
 
-extension Array where Element == BackupUser {
+extension Array where Element: AnyObject {
 
-    init(_ usersPager: BackupImportDataPager<BackupUser>) {
+    init(_ pager: BackupImportDataPager<Element>) {
 
-        var users = [BackupUser]()
-        while usersPager.hasMorePages() {
-            let usersPage = usersPager.nextPage()
-            users += [BackupUser](usersPage)
+        var elements = [Element]()
+        while pager.hasMorePages() {
+            let page = pager.nextPage()
+            elements += [Element](page)
         }
-        self = users
+        self = elements
 
     }
 
-    private init(_ page: KotlinArray<BackupUser>) {
+    private init(_ page: KotlinArray<Element>) {
 
-        var users = [BackupUser]()
+        var elements = [Element]()
         if let capacity = Int(exactly: page.size) {
-            users.reserveCapacity(capacity)
+            elements.reserveCapacity(capacity)
         }
         for index in 0 ..< page.size {
-            guard let user = page.get(index: index) else { continue }
-            users += [user]
+            guard let element = page.get(index: index) else { continue }
+            elements += [element]
         }
-        self = users
+        self = elements
 
     }
 
