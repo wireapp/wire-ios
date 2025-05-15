@@ -18,7 +18,7 @@
 
 public struct TimeDividerModel: ConversationCellModelProtocol {
     public typealias ContentView = TimeDividerContentView
-    
+
 //    public var id: AnyHashable { self }
 
     var text: String

@@ -16,28 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import Combine
+import Foundation
 import UIKit
 import WireConversationUI
-import WireFoundation
-import WireSystem
 import WireDataModel
-import WireSyncEngine
 import WireDesign
+import WireFoundation
+import WireSyncEngine
+import WireSystem
 
-protocol NewCellDescription { }
-extension NewTextCellDescription: NewCellDescription { }
-extension BurstTimestampSenderMessageCellDescription: NewCellDescription { }
+protocol NewCellDescription {}
+extension NewTextCellDescription: NewCellDescription {}
+extension BurstTimestampSenderMessageCellDescription: NewCellDescription {}
 
 final class NewTextCellDescription: ConversationMessageCellDescription {
-    
+
     typealias View = NewTextCell
 
     @MainActor var conversationCellModel: ConversationCellModel?
-    
+
     var supportsActions: Bool = true
-    
+
     private var cancellables: Set<AnyCancellable> = []
 
     var configuration: View.Configuration {
@@ -55,7 +55,7 @@ final class NewTextCellDescription: ConversationMessageCellDescription {
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String? = nil
-    
+
     init(
         conversationCellModel: ConversationCellModel
     ) {

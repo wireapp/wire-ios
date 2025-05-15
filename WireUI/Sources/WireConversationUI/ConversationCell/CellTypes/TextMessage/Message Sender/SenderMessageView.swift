@@ -23,9 +23,9 @@ struct SenderMessageView: View {
     @ObservedObject var model: MessageSenderViewModel
 
     var body: some View {
-            Text(model.senderAttributed)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .fixedSize(horizontal: false, vertical: true)
-                .animation(.easeInOut, value: model.senderAttributed)
+        Text(model.senderAttributed)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .fixedSize(horizontal: false, vertical: true)
+            .animation(.easeInOut, value: model.senderAttributed)
     }
 }

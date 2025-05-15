@@ -19,15 +19,15 @@
 import UIKit
 
 public struct UserModel: Equatable {
-    
+
     /// The full name
     var name: String?
-    
+
     /// Whether this is a service user (bot)
     let isServiceUser: Bool
     let isSelfUser: Bool
     let accentColor: UIColor
-    
+
     public init(
         name: String?,
         isSelfUser: Bool,

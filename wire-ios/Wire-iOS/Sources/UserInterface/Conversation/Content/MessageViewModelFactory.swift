@@ -22,13 +22,13 @@ import WireDataModel
 import WireSyncEngine
 
 struct MessageViewModelFactoryImpl: MessageViewModelFactory {
-    
+
     private let userSession: UserSession
-    
+
     init(userSession: UserSession) {
         self.userSession = userSession
     }
-    
+
     func makeTextMessageViewModel(
         message: ZMMessage,
         selfUser: any UserType,
@@ -37,8 +37,8 @@ struct MessageViewModelFactoryImpl: MessageViewModelFactory {
     ) -> TextMessageViewModel {
         let context = userSession.contextProvider.viewContext
         let messagedObjectID = message.objectID
-        
-        var senderViewModel: MessageSenderViewModel? = nil
+
+        var senderViewModel: MessageSenderViewModel?
         if let sender = message.sender {
             senderViewModel = MessageSenderViewModel(
                 avatar: AvatarViewModel(
@@ -78,7 +78,8 @@ extension UserType {
             name: name,
             isSelfUser: true,
             isServiceUser: isServiceUser,
-            accentColor: accentColor)
+            accentColor: accentColor
+        )
     }
 }
 
@@ -124,17 +125,17 @@ extension ZMDeliveryState {
     func toUIModel() -> DeliveryStateModel {
         switch self {
         case .invalid:
-                .invalid
+            .invalid
         case .pending:
-                .pending
+            .pending
         case .sent:
-                .sent
+            .sent
         case .delivered:
-                .delivered
+            .delivered
         case .read:
-                .read
+            .read
         case .failedToSend:
-                .failedToSend
+            .failedToSend
         }
     }
 }

@@ -25,7 +25,7 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
     typealias View = BurstTimestampSenderMessageCell
 
     @MainActor var conversationCellModel: ConversationCellModel?
-    
+
     @MainActor
     func makeConversationCellModel() -> ConversationCellModel {
         let now = currentDateProvider.now

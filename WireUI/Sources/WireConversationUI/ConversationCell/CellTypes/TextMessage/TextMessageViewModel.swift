@@ -16,20 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import Combine
+import Foundation
 import SwiftUI
 import WireDesign
 
 public class TextMessageViewModel: ObservableObject, Identifiable, ConversationCellModelProtocol {
-    
+
     public let id = UUID()
-    
+
     public typealias ContentView = TextMessageView
-    
+
     @ObservedObject var senderViewModel: MessageSenderViewModel
     @ObservedObject public var statusViewModel: MessageStatusViewModel
-    
+
     public func buildView() -> ContentView {
         ContentView(model: self)
     }
@@ -37,11 +37,11 @@ public class TextMessageViewModel: ObservableObject, Identifiable, ConversationC
 //    public var id: AnyHashable { self }
 
 //    private var timer: AnyCancellable?
-    
+
 //    public var significantChangeSubject = PassthroughSubject<Void, Never>()
 
     @Published var text: String
-    
+
     public init(
         text: String,
         senderViewModel: MessageSenderViewModel?,
@@ -52,7 +52,7 @@ public class TextMessageViewModel: ObservableObject, Identifiable, ConversationC
         self.statusViewModel = statusViewModel
 //        startRandomStateTimer()
     }
-    
+
 //    private func startRandomStateTimer() {
 //        timer = Timer.publish(every: 1.0, on: .main, in: .common)
 //            .autoconnect()
@@ -66,14 +66,14 @@ public class TextMessageViewModel: ObservableObject, Identifiable, ConversationC
 //                }
 //            }
 //    }
-    
+
 //    func randomMultilineText() -> (String, Int) {
 //        let lines = [
 //            "Hello!",
 //            "This is a second line.",
 //            "Here comes the third one."
 //        ]
-//        
+//
 //        let numberOfLines = Int.random(in: 1...3)
 //        return (lines.prefix(numberOfLines).joined(
 //            separator: "\n"
@@ -98,4 +98,3 @@ extension ConversationCellModel {
 //        return .timeDivider(model)
 //    }
 }
-

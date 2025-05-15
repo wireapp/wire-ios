@@ -17,9 +17,11 @@
 //
 
 import Foundation
+import WireConversationUI
 import WireFoundation
 import WireSyncEngine
-import WireConversationUI
+import WireDataModel
+import WireDataModel
 
 protocol MessageViewModelFactory {
     func makeTextMessageViewModel(
@@ -153,7 +155,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         self.contentWidth = contentWidth
         self.userDefaults = userDefaults
         self.factory = factory
-        
+
         super.init()
 
         self.isCollapsed = isCollapsedInitialValue()
@@ -399,22 +401,22 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         var cellDescriptions = [AnyConversationMessageCellDescription]()
 
         let isToolboxVisible = isToolboxVisible(in: context)
-        
+
         if message.isText {
             self.cellDescriptions = [
                 NewTextCellDescription(
                     conversationCellModel:
-                            .text(factory.makeTextMessageViewModel(
-                                message: message as! ZMMessage,
-                                selfUser: selfUser,
-                                accentColor: selfUser.accentColor,
-                                shouldShowStatus: isToolboxVisible
-                            ))
+                    .text(factory.makeTextMessageViewModel(
+                        message: message as! ZMMessage,
+                        selfUser: selfUser,
+                        accentColor: selfUser.accentColor,
+                        shouldShowStatus: isToolboxVisible
+                    ))
                 ).eraseToAnyCellDescription()
             ]
             return
         }
-        
+
         let isBurstTimestampVisible = isBurstTimestampVisible(in: context)
         let isSenderVisible = shouldShowSenderDetails(in: context)
 

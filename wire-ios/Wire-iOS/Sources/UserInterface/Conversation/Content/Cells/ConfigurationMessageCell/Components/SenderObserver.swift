@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
 import Combine
 import WireConversationUI
+import WireDataModel
 
 final class SenderObserver: NSObject, UserObserving, SenderObserverProtocol {
-    
+
     var observation: Any?
-    
+
     var author: String?
     private let authorChangedSubject = PassthroughSubject<String, Never>()
     var authorChangedPublisher: AnyPublisher<String, Never> {
@@ -31,7 +31,7 @@ final class SenderObserver: NSObject, UserObserving, SenderObserverProtocol {
             .removeDuplicates()
             .eraseToAnyPublisher()
     }
-    
+
     init(
         messageID: NSManagedObjectID,
         viewContext: NSManagedObjectContext
@@ -45,7 +45,7 @@ final class SenderObserver: NSObject, UserObserving, SenderObserverProtocol {
             }
         }
     }
-    
+
     func userDidChange(_ changeInfo: UserChangeInfo) {
         authorChangedSubject.send(changeInfo.user.name ?? "")
     }

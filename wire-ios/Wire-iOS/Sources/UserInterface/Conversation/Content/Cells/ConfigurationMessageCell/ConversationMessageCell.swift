@@ -53,7 +53,7 @@ protocol ConversationMessageCellDelegate: AnyObject, MessageActionResponder {
     )
 
     func conversationMessageShouldUpdate()
-    
+
     // TODO: Remove
     func conversationMessageDidRequestToUpdate(nonce: UUID)
 
@@ -198,7 +198,7 @@ extension ConversationMessageCellDescription {
         get { fatalError() }
         set { fatalError() }
     }
-    
+
 //    func makeConversationCellModel() -> ConversationCellModel {
 //        fatalError()
 //    }
@@ -360,7 +360,7 @@ final class AnyConversationMessageCellDescription: NSObject {
     var conversationCellModel: ConversationCellModel? {
         _conversationCellModel()
     }
-    
+
 //    func makeConversationCellModel() -> ConversationCellModel {
 //        instance.makeConversationCellModel()
 //    }

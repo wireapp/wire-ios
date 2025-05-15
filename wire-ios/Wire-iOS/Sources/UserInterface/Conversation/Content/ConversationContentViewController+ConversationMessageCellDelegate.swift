@@ -127,7 +127,7 @@ extension ConversationContentViewController: ConversationMessageCellDelegate {
     func conversationMessageShouldUpdate() {
         dataSource.loadMessages(forceRecalculate: true)
     }
-    
+
     func conversationMessageDidRequestToUpdate(nonce: UUID) {
         dataSource.updateMessage(nonce: nonce)
     }

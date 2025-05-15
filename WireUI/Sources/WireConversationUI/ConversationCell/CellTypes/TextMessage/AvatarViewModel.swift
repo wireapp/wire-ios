@@ -1,4 +1,6 @@
 //
+import Foundation
+
 // Wire
 // Copyright (C) 2025 Wire Swiss GmbH
 //
@@ -16,7 +18,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 import SwiftUI
-import Foundation
 
 public struct AvatarViewModel: Hashable, Sendable {
     let color: Color

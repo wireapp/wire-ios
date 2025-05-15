@@ -140,7 +140,7 @@ public final class MessageToolboxDataSource {
     }
 
     private func makeEphemeralCountdown() -> String {
-        return "" // TODO:
+        "" // TODO:
 //        let showDestructionTimer = message.isEphemeral &&
 //            !message.isObfuscated &&
 //            message.destructionDate != nil &&
@@ -207,7 +207,7 @@ public final class MessageToolboxDataSource {
     /// Create a timestamp list for all calls associated with a call system message
     private func makeCallList() -> String {
         // TODO:
-        return ""
+        ""
 //        guard let childMessages = message.systemMessageData?.childMessages, !childMessages.isEmpty,
 //              let timestamp = timestampString(message) else {
 //            return timestampString(message) ?? "-"

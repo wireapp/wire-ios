@@ -68,10 +68,8 @@ final class MockConversationMessageCellDelegate: ConversationMessageCellDelegate
     func conversationMessageShouldUpdate() {
         // no-op
     }
-    
-    func conversationMessageDidRequestToUpdate(nonce: UUID) {
-    
-    }
+
+    func conversationMessageDidRequestToUpdate(nonce: UUID) {}
 
     func perform(
         action: MessageAction,

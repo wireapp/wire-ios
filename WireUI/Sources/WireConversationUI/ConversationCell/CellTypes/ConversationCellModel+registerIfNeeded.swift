@@ -18,7 +18,7 @@
 
 import UIKit
 
-//public extension ConversationCellModel {
+// public extension ConversationCellModel {
 //
 //    @MainActor
 //    func registerIfNeeded(in tableView: UITableView) {
@@ -35,15 +35,16 @@ import UIKit
 //        tableView.registeredIdentifiers.insert(cellReuseIdentifier)
 //    }
 //
-//}
+// }
 //
-//private extension UITableView {
+// private extension UITableView {
 //
 //    var registeredIdentifiers: Set<String> {
 //        get { objc_getAssociatedObject(self, &registeredIdentifiersKey) as? Set<String> ?? [] }
-//        set { objc_setAssociatedObject(self, &registeredIdentifiersKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+//        set { objc_setAssociatedObject(self, &registeredIdentifiersKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+//        }
 //    }
 //
-//}
+// }
 //
-//@MainActor private var registeredIdentifiersKey = 0
+// @MainActor private var registeredIdentifiersKey = 0

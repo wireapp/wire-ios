@@ -17,11 +17,11 @@
 //
 
 import DifferenceKit
+import WireConversationUI
 import WireDataModel
 import WireFoundation
 import WireLogging
 import WireSyncEngine
-import WireConversationUI
 
 extension Int: Differentiable {}
 extension String: Differentiable {}
@@ -106,7 +106,7 @@ final class ConversationTableViewDataSource: NSObject {
     }
 
     private(set) var currentSections: [Section] = []
-    
+
     func updateMessage(nonce: UUID) {
         guard let sectionController = sectionControllers.get(for: nonce) else {
             return
@@ -135,7 +135,7 @@ final class ConversationTableViewDataSource: NSObject {
         let backgroundContext = userSession.contextProvider.newBackgroundContext()
         backgroundContext.perform { [weak self] in
             guard let self else { return }
-            
+
             var messages: [ZMMessage] = messageIds.compactMap { objectID in
                 try? backgroundContext.existingObject(with: objectID) as? ZMMessage
             }
@@ -144,8 +144,8 @@ final class ConversationTableViewDataSource: NSObject {
 
             guard messages.count == messageIds.count, // TODO: moving
                   let selfUserOnBackgroundThread = getUserByIDUseCase.getUserByID(
-                    id: selfUserObjectID,
-                    context: backgroundContext
+                      id: selfUserObjectID,
+                      context: backgroundContext
                   ) else {
                 print("DS: calculateSections: exiting early - count mismatch: \(messages.count):\(messageIds.count)")
 
@@ -296,11 +296,11 @@ final class ConversationTableViewDataSource: NSObject {
         self.userSession = userSession
         self.getUserByIDUseCase = getUserByIDUseCase
         self.factory = factory
-        
+
         super.init()
 
         tableView.dataSource = self
-        
+
         tableView.register(ConversationCell.self, forCellReuseIdentifier: "ConversationCell")
     }
 
@@ -603,14 +603,16 @@ extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
         for changeType: NSFetchedResultsChangeType,
         newIndexPath: IndexPath?
     ) {
-        
-        print("DS: controller didChange object \(indexPath), sections count: \(currentSections.count), all Messages count: \(allMessages.count)")
+
+        print(
+            "DS: controller didChange object \(indexPath), sections count: \(currentSections.count), all Messages count: \(allMessages.count)"
+        )
 
         if let message = anObject as? ZMConversationMessage, changeType == .insert {
             /// VoiceOver will output the announcement string from the message
             message.postAnnouncementIfNeeded()
         }
-        
+
         switch changeType {
         case .insert:
             print("DS: Inserted at \(newIndexPath!)")
@@ -623,7 +625,7 @@ extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
         @unknown default:
             break
         }
-        
+
         switch changeType {
         case .insert, .delete, .move:
 //            guard let indexPath else { break }
@@ -633,7 +635,7 @@ extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
 //                messages: allMessages
 //            )
 //            let message = sectionController.message
-//            
+//
 //            debouncer.call(id: message.nonce!) { [weak self] in
 //                guard let self else { return }
 //                reloadSections(newSections: calculateSections(updating: sectionController))
@@ -653,7 +655,9 @@ extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
 
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         // no - op
-        print("DS: controllerDidChangeContent: sections count: \(currentSections.count), all Messages count: \(allMessages.count)")
+        print(
+            "DS: controllerDidChangeContent: sections count: \(currentSections.count), all Messages count: \(allMessages.count)"
+        )
         guard currentSections.count != allMessages.count else { return }
         // TODO: moving (retry message send)
         debouncer.call(id: nil) { [weak self] in
@@ -662,7 +666,7 @@ extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
             }
         }
     }
-    
+
     func reloadSections(newSections: [Section]) {
         let stagedChangeset = StagedChangeset(source: currentSections, target: newSections)
         tableView.reload(using: stagedChangeset, with: .fade) { currentSections = $0 }
@@ -748,16 +752,16 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
 
         let cellDescription = section.elements[indexPath.row]
         if cellDescription.instance is NewCellDescription,
-            let model = cellDescription.conversationCellModel {
+           let model = cellDescription.conversationCellModel {
 //            let model = cellDescription.makeConversationCellModel()
 //            cellDescription.instance.conversationCellModel = model
-  
+
 //            model.registerIfNeeded(in: tableView)
             let cell = tableView.dequeueReusableCell(
                 withIdentifier: "ConversationCell",
                 for: indexPath
             ) as! ConversationCell
-            
+
             cell.model = model
 //            model.configureCell(cell)
             return cell
@@ -912,7 +916,7 @@ extension ConversationTableViewDataSource {
                     newCellDescription.delegate = previousStatus.cellDescription.delegate
                     previousStatus.replace(newCellDescription, &sections)
                 }
-                
+
                 // we notify the table view by creating a new cell description
 //                if let newPreviousStatus = newStatusCellDescription(for: previousSectionIndex, in: sections) {
 //                    let newNewTextDescription = NewTextCellDescription(
@@ -980,7 +984,7 @@ extension ConversationTableViewDataSource {
 
         return nil
     }
-    
+
     // TRY MAKE GENERIC
 //    private func newStatusCellDescription(
 //        for sectionIndex: Int,

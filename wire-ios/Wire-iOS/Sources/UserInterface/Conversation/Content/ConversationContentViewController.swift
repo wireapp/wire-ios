@@ -498,7 +498,7 @@ final class ConversationContentViewController: UIViewController {
             let section = dataSource.currentSections[indexPath.section]
             for cellDescription in section.elements {
                 if cellDescription is NewCellDescription,
-                    let refreshInterval = cellDescription.conversationCellModel?.refreshInterval, refreshInterval > 0 {
+                   let refreshInterval = cellDescription.conversationCellModel?.refreshInterval, refreshInterval > 0 {
                     timeInterval = timeInterval == .zero
                         ? refreshInterval
                         : min(timeInterval, refreshInterval)
@@ -532,7 +532,7 @@ final class ConversationContentViewController: UIViewController {
             let section = dataSource.currentSections[indexPath.section]
             let cellDescription = section.elements[indexPath.row]
             if cellDescription is NewCellDescription,
-                let refreshInterval = cellDescription.conversationCellModel?.refreshInterval, refreshInterval > 0 {
+               let refreshInterval = cellDescription.conversationCellModel?.refreshInterval, refreshInterval > 0 {
                 indexPathsToReload += [indexPath]
                 continue
             }

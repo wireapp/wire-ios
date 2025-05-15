@@ -17,10 +17,10 @@
 //
 
 import UIKit
+import WireConversationUI
 import WireDataModel
 import WireDesign
 import WireSyncEngine
-import WireConversationUI
 
 /// Observes events from the message toolbox.
 protocol MessageToolboxViewDelegate: AnyObject {

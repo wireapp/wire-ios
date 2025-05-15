@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import Combine
+import Foundation
 
 public protocol StatusObserverProtocol {
     var statusChangedPublisher: AnyPublisher<MessageModel, Never> { get }
@@ -30,20 +30,20 @@ public struct StatusDetails {
 }
 
 public final class MessageStatusViewModel: ObservableObject {
-    
+
     public enum State {
         case none
         case sendFailure(String)
         case callList(String)
         case details(StatusDetails)
     }
-    
+
     @Published var state: State
-    
+
     private var statusObserver: (any StatusObserverProtocol)?
 
     private var cancellables: Set<AnyCancellable> = []
-    
+
     public init(state: State) {
         self.state = state
     }
@@ -56,35 +56,35 @@ public final class MessageStatusViewModel: ObservableObject {
         self.state = Self.updateState(model: messageModel)
         observeChanges()
     }
-    
+
     func observeChanges() {
         statusObserver?.statusChangedPublisher
             .receive(on: DispatchQueue.main)
             .sink { model in
-            print("DS: status ChangedPublisher: \(model)")
-            self.state = Self.updateState(model: model)
-        }.store(in: &cancellables)
+                print("DS: status ChangedPublisher: \(model)")
+                self.state = Self.updateState(model: model)
+            }.store(in: &cancellables)
     }
-    
+
     private static func updateState(model: MessageModel) -> State {
         let datasource = MessageToolboxDataSource(message: model)
         switch datasource.content {
-        case .sendFailure(let string):
+        case let .sendFailure(string):
             return .sendFailure(string)
-        case .callList(let string):
+        case let .callList(string):
             return .callList(string)
-        case .details(let timestamp, let status, let countdown):
+        case let .details(timestamp, status, countdown):
             return .details(StatusDetails(
                 deliveryState: status,
                 editedString: datasource.editedString,
-                timestamp: timestamp))
+                timestamp: timestamp
+            ))
         }
     }
 }
 
-extension MessageStatusViewModel {
-    public static func none() -> MessageStatusViewModel {
+public extension MessageStatusViewModel {
+    static func none() -> MessageStatusViewModel {
         .init(state: .none)
     }
 }
-

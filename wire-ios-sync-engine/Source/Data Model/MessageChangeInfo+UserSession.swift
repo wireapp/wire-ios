@@ -31,7 +31,7 @@ public extension MessageChangeInfo {
     ) -> NSObjectProtocol {
         add(observer: observer, for: message, managedObjectContext: userSession.managedObjectContext)
     }
-    
+
     static func add(
         observer: ZMMessageObserver,
         for message: ZMConversationMessage,

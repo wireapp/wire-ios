@@ -16,12 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import SwiftUI
 import UIKit
-import Combine
 import WireDesign
-
-
 
 public struct TextMessageView: ConversationCellContentViewProtocol {
 
@@ -30,12 +28,12 @@ public struct TextMessageView: ConversationCellContentViewProtocol {
     public init(model: TextMessageViewModel) {
         self.model = model
     }
-    
+
     public var body: some View {
         VStack {
 //            if let model = model.senderViewModel {
 //                SenderMessageView(model: model)
-                SenderMessageView(model: model.senderViewModel)
+            SenderMessageView(model: model.senderViewModel)
 //            }
             HStack(spacing: 0) {
                 Text(model.text)
@@ -80,7 +78,7 @@ public struct TextMessageView: ConversationCellContentViewProtocol {
 
 extension MessageToolboxState {
     var text: String { // TODO: migrate strings
-        
+
         switch self {
         case .sending:
             "Sending"
@@ -90,7 +88,7 @@ extension MessageToolboxState {
             "Delivered"
         case .seen:
             "Seen"
-        case .seenByMultiple(let int):
+        case let .seenByMultiple(int):
             "Seen \(int)"
         }
     }

@@ -17,9 +17,9 @@
 //
 
 import UIKit
+import WireConversationUI
 import WireDataModel
 import WireSyncEngine
-import WireConversationUI
 
 final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, MessageToolboxViewDelegate {
 
@@ -149,4 +149,3 @@ final class ConversationMessageToolboxCellDescription: ConversationMessageCellDe
     }
 
 }
-

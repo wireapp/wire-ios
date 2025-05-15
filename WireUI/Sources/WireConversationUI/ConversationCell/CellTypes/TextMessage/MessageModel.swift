@@ -29,7 +29,7 @@ public struct MessageModel: Equatable {
     public let readReceiptsCount: Int
     public let deliveryState: DeliveryStateModel
     public let isSent: Bool
-    
+
     public init(
         nonce: UUID?,
         sender: UserModel?,
@@ -77,7 +77,6 @@ public enum ExpirationReasonModel: Int {
     case cancelled
     case timeout
 }
-
 
 public enum ConversationTypeModel: Int, Codable, Sendable {
 

@@ -28,9 +28,9 @@ public final class ConversationCell: UITableViewCell {
         guard let model else { return }
         contentConfiguration = UIHostingConfiguration {
             switch model {
-            case .timeDivider(let model):
+            case let .timeDivider(model):
                 TimeDividerContentView(model: model)
-            case .text(let model):
+            case let .text(model):
                 TextMessageView(model: model)
             }
         }
@@ -43,8 +43,8 @@ public final class ConversationCell: UITableViewCell {
 
 // MARK: - Previews
 
-//@available(iOS 17, *)
-//#Preview {
+// @available(iOS 17, *)
+// #Preview {
 //    ConversationCellsPreview(
 //        itemIdentifiers: [
 //            .timeDivider(text: "Friday", isUnread: false),
@@ -52,4 +52,4 @@ public final class ConversationCell: UITableViewCell {
 //            .timeDivider(text: "Today", isUnread: true)
 //        ]
 //    )
-//}
+// }

@@ -18,7 +18,7 @@
 
 import UIKit
 
-//public extension ConversationCellModel {
+// public extension ConversationCellModel {
 //
 //    var cellReuseIdentifier: String {
 //        switch self {
@@ -30,4 +30,4 @@ import UIKit
 //        }
 //    }
 //
-//}
+// }

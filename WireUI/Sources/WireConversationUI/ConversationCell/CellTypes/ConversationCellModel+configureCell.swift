@@ -18,7 +18,7 @@
 
 import UIKit
 
-//public extension ConversationCellModel {
+// public extension ConversationCellModel {
 //
 //    @MainActor
 //    func configureCell(_ cell: UITableViewCell) {
@@ -27,7 +27,7 @@ import UIKit
 //        case let .timeDivider(timeDivider):
 //            guard let cell = cell as? ConversationCell else { break }
 //            return cell.model = timeDivider
-//            
+//
 //        case let .text(viewModel):
 //            guard let cell = cell as? ConversationCell else {
 //                break
@@ -38,4 +38,4 @@ import UIKit
 //        assertionFailure("unexpected cell: \(cell)")
 //    }
 //
-//}
+// }

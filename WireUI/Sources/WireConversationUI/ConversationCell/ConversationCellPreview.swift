@@ -18,7 +18,7 @@
 
 import SwiftUI
 
-//final class ConversationCellsPreview: UITableViewController {
+// final class ConversationCellsPreview: UITableViewController {
 //
 //    enum SectionIdentifier {
 //        case single
@@ -59,7 +59,8 @@ import SwiftUI
 //
 //    private func setupDataSource() {
 //        dataSource = UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, itemIdentifier in
-//            let cell = tableView.dequeueReusableCell(withIdentifier: itemIdentifier.cellReuseIdentifier, for: indexPath)
+//            let cell = tableView.dequeueReusableCell(withIdentifier: itemIdentifier.cellReuseIdentifier, for:
+//            indexPath)
 //            itemIdentifier.configureCell(cell)
 //            return cell
 //        }
@@ -72,4 +73,4 @@ import SwiftUI
 //        dataSource.applySnapshotUsingReloadData(snapshot)
 //    }
 //
-//}
+// }

@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
 import Combine
 import WireConversationUI
+import WireDataModel
 
 final class StatusObserver: NSObject, ZMMessageObserver, StatusObserverProtocol {
-    
+
     var observation: Any?
-    
+
     private let statusChangedSubject = PassthroughSubject<MessageModel, Never>()
     var statusChangedPublisher: AnyPublisher<MessageModel, Never> {
         statusChangedSubject
@@ -31,7 +31,7 @@ final class StatusObserver: NSObject, ZMMessageObserver, StatusObserverProtocol 
 //            .debounce(for: .seconds(1), scheduler: RunLoop.main)
             .eraseToAnyPublisher()
     }
-    
+
     init(
         messageID: NSManagedObjectID,
         viewContext: NSManagedObjectContext
@@ -48,7 +48,7 @@ final class StatusObserver: NSObject, ZMMessageObserver, StatusObserverProtocol 
     func messageDidChange(_ changeInfo: MessageChangeInfo) {
         send(changeInfo.message)
     }
-    
+
     private func send(_ message: ZMMessage) {
         let uiMessage = message.toUIModel()
         statusChangedSubject.send(uiMessage)

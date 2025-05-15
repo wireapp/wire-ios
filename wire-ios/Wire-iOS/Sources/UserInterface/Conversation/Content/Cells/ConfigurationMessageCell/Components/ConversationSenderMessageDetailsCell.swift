@@ -19,16 +19,15 @@
 import UIKit
 import WireAccountImageUI
 import WireCommonComponents
+import WireConversationUI
 import WireDataModel
 import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
-import WireConversationUI
 
 enum Indicator: Equatable {
     case deleted
 }
-
 
 // MARK: - ConversationSenderMessageDetailsCell
 
@@ -348,7 +347,6 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
     }
 
 }
-
 
 extension ConversationSenderMessageDetailsCell: UserObserving {
 

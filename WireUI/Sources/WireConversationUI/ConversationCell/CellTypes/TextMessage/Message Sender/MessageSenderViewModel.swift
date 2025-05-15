@@ -32,15 +32,15 @@ public enum TeamRoleIndicator {
 }
 
 public class MessageSenderViewModel: ObservableObject, Identifiable {
-    
+
     public let id = UUID()
-    
+
     let avatar: AvatarViewModel
     private var senderModel: UserModel
     let isDeleted: Bool
     let teamRoleIndicator: TeamRoleIndicator?
     @Published var senderAttributed: AttributedString
-    
+
     private let authorChanged: any SenderObserverProtocol
     private var cancellables: Set<AnyCancellable> = []
 
@@ -61,19 +61,19 @@ public class MessageSenderViewModel: ObservableObject, Identifiable {
             isDeleted: isDeleted,
             teamRoleIndicator: teamRoleIndicator
         )
-        
+
         observeChanges()
     }
-        
+
     private func observeChanges() {
         authorChanged.authorChangedPublisher
             .receive(on: RunLoop.main)
             .sink { [weak self] senderString in
                 guard let self else { return }
                 print("DS: author ChangedPublisher \(senderString)")
-                self.senderModel.name = senderString
-                self.senderAttributed = Self.makeSenderAttributed(
-                    senderModel: self.senderModel,
+                senderModel.name = senderString
+                senderAttributed = Self.makeSenderAttributed(
+                    senderModel: senderModel,
                     isDeleted: isDeleted,
                     teamRoleIndicator: teamRoleIndicator
                 )
@@ -85,7 +85,7 @@ public class MessageSenderViewModel: ObservableObject, Identifiable {
         isDeleted: Bool,
         teamRoleIndicator: TeamRoleIndicator?
     ) -> AttributedString {
-        
+
         let textColor: UIColor = senderModel.isServiceUser ? SemanticColors.Label.textDefault : senderModel.accentColor
 
         var result = AttributedString(senderModel.name ?? L10n.Name.unavailable)
@@ -103,7 +103,12 @@ public class MessageSenderViewModel: ObservableObject, Identifiable {
             guard let image = UIImage(named: name) else { return nil }
             let attachment = NSTextAttachment()
             attachment.image = image
-            attachment.bounds = CGRect(x: 0, y: (UIFont.mediumSemiboldFont.capHeight - size).rounded() / 2, width: size, height: size)
+            attachment.bounds = CGRect(
+                x: 0,
+                y: (UIFont.mediumSemiboldFont.capHeight - size).rounded() / 2,
+                width: size,
+                height: size
+            )
             return AttributedString(NSAttributedString(attachment: attachment))
         }
 
@@ -139,5 +144,5 @@ public class MessageSenderViewModel: ObservableObject, Identifiable {
         return result
 
     }
-         
+
 }

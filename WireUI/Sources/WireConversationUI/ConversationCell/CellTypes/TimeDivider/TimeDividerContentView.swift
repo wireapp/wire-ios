@@ -24,7 +24,7 @@ public struct TimeDividerContentView: ConversationCellContentViewProtocol {
     private let dividerColor = ColorTheme.Strokes.outline.color
 
     private(set) var model: TimeDividerModel
-    
+
     public init(model: TimeDividerModel) {
         self.model = model
     }
