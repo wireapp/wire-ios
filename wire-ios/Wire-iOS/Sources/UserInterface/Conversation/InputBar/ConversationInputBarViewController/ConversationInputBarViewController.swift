@@ -20,9 +20,12 @@ import AVFoundation
 import avs
 import MobileCoreServices
 import Photos
+import SwiftUI
 import UIKit
+import WireCellsUI
 import WireCommonComponents
 import WireDesign
+import WireLogging
 import WireSyncEngine
 
 enum ConversationInputBarViewControllerMode {
@@ -1045,12 +1048,57 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
 
         inputBar.setLeftAccessoryView(markdownButton)
         inputBar.setRightAccessoryViews([ephemeralIndicatorButton, sendButton])
+        addAttachmentsCarousel()
 
         view.addSubview(securityLevelView)
         view.addSubview(typingIndicatorView)
         view.backgroundColor = SemanticColors.View.backgroundConversationView
 
         createConstraints()
+    }
+
+    private func addAttachmentsCarousel() {
+        guard useWireCells() else { return }
+
+        let carouselViewController = UIHostingController(
+            rootView: AttachmentsCarousel( // FIXME: [WPB-17612] Use real data
+                items: [
+                    AttachmentsCarouselItem(
+                        id: UUID(),
+                        state: .uploading(progress: 0.5),
+                        kind: .audio(samples: [0.1, 0.2, 0.3]),
+                        name: "Image",
+                        size: "1.2 MB"
+                    ),
+                    AttachmentsCarouselItem(
+                        id: UUID(),
+                        state: .failed,
+                        kind: .image(thumbnail: UIImage()),
+                        name: "Image",
+                        size: "1.2 MB"
+                    )
+                ],
+                onTap: { WireLogger.conversation.debug("Did tap draft attachment: \($0)") },
+                onRemove: { WireLogger.conversation.debug("Did tap remove draft attachment: \($0)") },
+                onOptions: { WireLogger.conversation.debug("Did tap options on draft attachment: \($0)") }
+            )
+        )
+        addChild(carouselViewController)
+        carouselViewController.view.translatesAutoresizingMaskIntoConstraints = false
+        carouselViewController.view.clipsToBounds = true
+        carouselViewController.sizingOptions = .preferredContentSize
+        carouselViewController.safeAreaRegions = SafeAreaRegions()
+        inputBar.attachmentsContainer.addSubview(carouselViewController.view)
+        inputBar.attachmentsContainer.clipsToBounds = true
+        NSLayoutConstraint.activate([
+            carouselViewController.view.topAnchor.constraint(equalTo: inputBar.attachmentsContainer.topAnchor),
+            carouselViewController.view.leadingAnchor.constraint(equalTo: inputBar.attachmentsContainer.leadingAnchor),
+            carouselViewController.view.trailingAnchor
+                .constraint(equalTo: inputBar.attachmentsContainer.trailingAnchor),
+            carouselViewController.view.bottomAnchor.constraint(equalTo: inputBar.attachmentsContainer.bottomAnchor)
+        ])
+
+        carouselViewController.didMove(toParent: self)
     }
 
     private func setupInputBar() {
@@ -1135,5 +1183,9 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
             typingIndicatorView.leftAnchor.constraint(greaterThanOrEqualTo: view.leftAnchor, constant: 48),
             typingIndicatorView.rightAnchor.constraint(lessThanOrEqualTo: view.rightAnchor, constant: 48)
         ])
+    }
+
+    private func useWireCells() -> Bool {
+        DeveloperFlag.wireCells.isOn
     }
 }
