@@ -10,6 +10,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
+        .package(url: "https://github.com/weichsel/ZIPFoundation.git", from: "0.9.19"),
         .package(path: "../WireFoundation"),
         .package(path: "../WireLogging"),
         .package(path: "../WirePlugins")
@@ -37,6 +38,10 @@ let package = Package(
                 "WireBackupSupport",
                 .product(name: "WireFoundationSupport", package: "WireFoundation")
             ]
+        ),
+        .executableTarget(
+            name: "WireBackupCLI",
+            dependencies: ["KaliumBackup", "ZIPFoundation"]
         ),
 
         .binaryTarget(
