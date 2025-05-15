@@ -20,11 +20,16 @@ import CellsSDK
 import Foundation
 import WireCellsAPI
 
-final class WireCellsNodesAPIImpl: WireCellsNodesAPI, Sendable {
+final class WireCellsNodesAPI: WireCellsNodesAPIProtocol, Sendable {
 
     private enum Constants {
         static let sortedBy = "mtime"
 
+    }
+
+    static func configure(credentials: WireCellsCredentials) {
+        CellsSDKAPIConfiguration.shared.basePath = credentials.serverURL.absoluteString
+        CellsSDKAPIConfiguration.shared.customHeaders = ["Authorization": "Bearer \(credentials.accessToken)"]
     }
 
     func getNode(uuid: UUID) async throws -> WireCellsNodeDTO {
