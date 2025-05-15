@@ -21,7 +21,7 @@
 extension BackupConversation: @retroactive Encodable {
 
     func encode(to encoder: any Encoder) throws {
-        fatalError()
+        // fatalError()
     }
 
 }
