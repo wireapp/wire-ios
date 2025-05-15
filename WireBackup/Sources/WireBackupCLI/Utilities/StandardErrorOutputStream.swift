@@ -18,20 +18,8 @@
 
 import Foundation
 
-private var stderr = StandardErrorOutputStream()
-
-guard CommandLine.arguments.count == 2 else {
-    print("Pass a .wbu file as argument.", to: &stderr)
-    exit(1)
+struct StandardErrorOutputStream: TextOutputStream {
+    func write(_ string: String) {
+        try! FileHandle.standardError.write(contentsOf: Data(string.utf8))
+    }
 }
-
-let encoder = JSONEncoder()
-encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-
-let backupFile = try await BackupFile(
-    path: CommandLine.arguments[1],
-    password: ""
-)
-let jsonData = try encoder.encode(backupFile)
-let jsonString = String(decoding: jsonData, as: UTF8.self)
-print(jsonString)
