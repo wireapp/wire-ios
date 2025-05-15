@@ -28,10 +28,7 @@ class LogOutPage: PageModel {
         return app.buttons["OK"]
     }
 
-    func enterPassword(_ password:String) -> WelcomePage {
-        print("------ elements ---------")
-        print(app.otherElements.allElementsBoundByAccessibilityElement)
-        print("------ end elements ---------")
+    func enterPassword(_ password: String) -> WelcomePage {
         passwordField.tap()
         passwordField.typeText(password)
         okButton.tap()

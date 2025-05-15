@@ -45,14 +45,14 @@ class WireUITestCase: XCTestCase {
     // MARK: - Helpers
 
     // Sometimes the app fails to launch, especially in the pipeline
-    func tryLaunch(_ launchArguments:Array<String>, counter:Int = 10) {
+    func tryLaunch(_ launchArguments: [String], counter: Int = 10) {
         if !app.exists && counter > 0 {
             XCUIApplication().terminate()
             app = XCUIApplication()
             app.launchArguments = launchArguments
             app.useWireAuthentication()
             app.launch()
-            tryLaunch(launchArguments, counter:counter-1)
+            tryLaunch(launchArguments, counter: counter-1)
         }
     }
 

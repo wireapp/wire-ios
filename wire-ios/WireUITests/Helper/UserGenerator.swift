@@ -64,6 +64,6 @@ struct UserInfo {
     }
 
     var email: String {
-        username+"@"+domain
+        username + "@" + domain
     }
 }

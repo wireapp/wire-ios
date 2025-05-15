@@ -39,7 +39,7 @@ class BackendClient {
             throw (RuntimeError("Error \(pureResponse.description)"))
         }
 
-        let message: LoginMessage = try! JSONDecoder().decode(LoginMessage.self, from: responseData)
+        let message: LoginMessage = try JSONDecoder().decode(LoginMessage.self, from: responseData)
         return message.access_token
     }
 
