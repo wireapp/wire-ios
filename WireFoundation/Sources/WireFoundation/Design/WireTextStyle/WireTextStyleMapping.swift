@@ -19,24 +19,37 @@
 public import SwiftUI
 
 public final class WireTextStyleMapping: ObservableObject, Sendable {
-
-    public typealias UIFontMapping = @Sendable (WireTextStyle) -> UIFont
+    #if canImport(UIKit)
+        public typealias UIFontMapping = @Sendable (WireTextStyle) -> UIFont
+    #endif
     public typealias FontMapping = @Sendable (WireTextStyle) -> Font
 
-    let uiFontMapping: UIFontMapping
+    #if canImport(UIKit)
+        let uiFontMapping: UIFontMapping
+    #endif
     let fontMapping: FontMapping
 
-    public init(
-        uiFontMapping: @escaping UIFontMapping,
-        fontMapping: @escaping FontMapping
-    ) {
-        self.uiFontMapping = uiFontMapping
-        self.fontMapping = fontMapping
-    }
+    #if canImport(UIKit)
+        public init(
+            uiFontMapping: @escaping UIFontMapping,
+            fontMapping: @escaping FontMapping
+        ) {
+            self.uiFontMapping = uiFontMapping
+            self.fontMapping = fontMapping
+        }
+    #else
+        public init(
+            fontMapping: @escaping FontMapping
+        ) {
+            self.fontMapping = fontMapping
+        }
+    #endif
 
-    public func uiFont(for textStyle: WireTextStyle) -> UIFont {
-        uiFontMapping(textStyle)
-    }
+    #if canImport(UIKit)
+        public func uiFont(for textStyle: WireTextStyle) -> UIFont {
+            uiFontMapping(textStyle)
+        }
+    #endif
 
     public func font(for textStyle: WireTextStyle) -> Font {
         fontMapping(textStyle)

@@ -16,14 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import UIKit
+#if canImport(UIKit)
+    public import UIKit
 
-public extension UIImage {
+    public extension UIImage {
 
-    static func from(solidColor color: UIColor) -> UIImage {
-        UIGraphicsImageRenderer(size: .init(width: 1, height: 1)).image { rendererContext in
-            color.setFill()
-            rendererContext.fill(CGRect(x: 0, y: 0, width: 1, height: 1))
+        static func from(solidColor color: UIColor) -> UIImage {
+            UIGraphicsImageRenderer(size: .init(width: 1, height: 1)).image { rendererContext in
+                color.setFill()
+                rendererContext.fill(CGRect(x: 0, y: 0, width: 1, height: 1))
+            }
         }
     }
-}
+#endif

@@ -20,29 +20,43 @@ public import SwiftUI
 
 public final class WireAccentColorMapping: ObservableObject, Sendable {
 
-    public typealias UIColorMapping = @Sendable (WireAccentColor) -> UIColor
+    #if canImport(UIKit)
+        public typealias UIColorMapping = @Sendable (WireAccentColor) -> UIColor
+    #endif
     public typealias ColorMapping = @Sendable (WireAccentColor) -> Color
 
-    let uiColorMapping: UIColorMapping
+    #if canImport(UIKit)
+        let uiColorMapping: UIColorMapping
+    #endif
     let colorMapping: ColorMapping
 
-    public convenience init(uiColorMapping: @escaping UIColorMapping) {
-        self.init(uiColorMapping: uiColorMapping) { uiColor in
-            Color(uiColor: uiColorMapping(uiColor))
+    #if canImport(UIKit)
+        public convenience init(uiColorMapping: @escaping UIColorMapping) {
+            self.init(uiColorMapping: uiColorMapping) { uiColor in
+                Color(uiColor: uiColorMapping(uiColor))
+            }
         }
-    }
 
-    public init(
-        uiColorMapping: @escaping UIColorMapping,
-        colorMapping: @escaping ColorMapping
-    ) {
-        self.uiColorMapping = uiColorMapping
-        self.colorMapping = colorMapping
-    }
+        public init(
+            uiColorMapping: @escaping UIColorMapping,
+            colorMapping: @escaping ColorMapping
+        ) {
+            self.uiColorMapping = uiColorMapping
+            self.colorMapping = colorMapping
+        }
+    #else
+        public init(
+            colorMapping: @escaping ColorMapping
+        ) {
+            self.colorMapping = colorMapping
+        }
+    #endif
 
-    public func uiColor(for accentColor: WireAccentColor) -> UIColor {
-        uiColorMapping(accentColor)
-    }
+    #if canImport(UIKit)
+        public func uiColor(for accentColor: WireAccentColor) -> UIColor {
+            uiColorMapping(accentColor)
+        }
+    #endif
 
     public func color(for accentColor: WireAccentColor) -> Color {
         colorMapping(accentColor)

@@ -16,36 +16,38 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import UIKit
+#if canImport(UIKit)
+    public import UIKit
 
-/// Wraps an instance of `UIDevice` and conforms to `DeviceAbstraction`.
-public struct DeviceWrapper {
+    /// Wraps an instance of `UIDevice` and conforms to `DeviceAbstraction`.
+    public struct DeviceWrapper {
 
-    var device: UIDevice
+        var device: UIDevice
 
-    public init(device: UIDevice) {
-        self.device = device
-    }
-}
-
-extension DeviceWrapper: DeviceAbstraction {
-
-    public var userInterfaceIdiom: UIUserInterfaceIdiom {
-        device.userInterfaceIdiom
+        public init(device: UIDevice) {
+            self.device = device
+        }
     }
 
-    public var orientation: UIDeviceOrientation {
-        device.orientation
+    extension DeviceWrapper: DeviceAbstraction {
+
+        public var userInterfaceIdiom: UIUserInterfaceIdiom {
+            device.userInterfaceIdiom
+        }
+
+        public var orientation: UIDeviceOrientation {
+            device.orientation
+        }
+
+        public var model: String {
+            device.model
+        }
     }
 
-    public var model: String {
-        device.model
-    }
-}
+    public extension DeviceAbstraction where Self == DeviceWrapper {
 
-public extension DeviceAbstraction where Self == DeviceWrapper {
-
-    static var current: Self {
-        .init(device: .current)
+        static var current: Self {
+            .init(device: .current)
+        }
     }
-}
+#endif

@@ -18,12 +18,12 @@
 
 import CoreData
 import Foundation
+import WireAPI
 import WireBackup
 import WireDataModel
 import WireDomain
 import WireFoundation
 import WireProtos
-import WireAPI
 
 struct MessageStoreAdapter<MessageLocalStore>: MessageStoreProtocol, @unchecked Sendable
     where MessageLocalStore: MessageLocalStoreProtocol {
@@ -83,7 +83,7 @@ extension MessageStoreAdapter where MessageLocalStore == WireDomain.MessageLocal
         self.context = context
         self.messageLocalStore = MessageLocalStore(context: context)
 
-        processor = TEMP_ConversationProtobufMessageProcessor(
+        self.processor = TEMP_ConversationProtobufMessageProcessor(
             context: context,
             mlsService: context.performAndWait { context.mlsService },
             userDefaults: .standard

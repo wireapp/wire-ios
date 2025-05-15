@@ -16,13 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import UIKit
+#if canImport(UIKit)
+    public import UIKit
 
-// sourcery: AutoMockable
-/// A protocol which allows for abstracting `UIDevice`.
-@MainActor
-public protocol DeviceAbstraction {
-    var userInterfaceIdiom: UIUserInterfaceIdiom { get }
-    var orientation: UIDeviceOrientation { get }
-    var model: String { get }
-}
+    // sourcery: AutoMockable
+    /// A protocol which allows for abstracting `UIDevice`.
+    @MainActor
+    public protocol DeviceAbstraction {
+        var userInterfaceIdiom: UIUserInterfaceIdiom { get }
+        var orientation: UIDeviceOrientation { get }
+        var model: String { get }
+    }
+#endif

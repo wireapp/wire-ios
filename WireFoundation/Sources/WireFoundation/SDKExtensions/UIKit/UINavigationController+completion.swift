@@ -16,66 +16,68 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import UIKit
+#if canImport(UIKit)
+    public import UIKit
 
-public extension UINavigationController {
+    public extension UINavigationController {
 
-    // MARK: - setViewControllers
+        // MARK: - setViewControllers
 
-    func setViewControllers(
-        _ viewControllers: [UIViewController],
-        animated: Bool,
-        completion: @escaping () -> Void
-    ) {
-        setViewControllers(viewControllers, animated: animated)
+        func setViewControllers(
+            _ viewControllers: [UIViewController],
+            animated: Bool,
+            completion: @escaping () -> Void
+        ) {
+            setViewControllers(viewControllers, animated: animated)
 
-        guard animated, let coordinator = transitionCoordinator else {
-            return DispatchQueue.main.async { completion() }
+            guard animated, let coordinator = transitionCoordinator else {
+                return DispatchQueue.main.async { completion() }
+            }
+
+            coordinator.animate(alongsideTransition: nil) { _ in completion() }
         }
 
-        coordinator.animate(alongsideTransition: nil) { _ in completion() }
-    }
+        // MARK: - pushViewController
 
-    // MARK: - pushViewController
+        func pushViewController(
+            _ viewController: UIViewController,
+            animated: Bool,
+            completion: @escaping () -> Void
+        ) {
+            pushViewController(viewController, animated: animated)
 
-    func pushViewController(
-        _ viewController: UIViewController,
-        animated: Bool,
-        completion: @escaping () -> Void
-    ) {
-        pushViewController(viewController, animated: animated)
+            guard animated, let coordinator = transitionCoordinator else {
+                return DispatchQueue.main.async { completion() }
+            }
 
-        guard animated, let coordinator = transitionCoordinator else {
-            return DispatchQueue.main.async { completion() }
+            coordinator.animate(alongsideTransition: nil) { _ in completion() }
         }
 
-        coordinator.animate(alongsideTransition: nil) { _ in completion() }
-    }
+        // MARK: - popViewController
 
-    // MARK: - popViewController
+        func popViewController(
+            animated: Bool,
+            completion: @escaping () -> Void
+        ) {
+            popViewController(animated: animated)
 
-    func popViewController(
-        animated: Bool,
-        completion: @escaping () -> Void
-    ) {
-        popViewController(animated: animated)
+            guard animated, let coordinator = transitionCoordinator else {
+                return DispatchQueue.main.async { completion() }
+            }
 
-        guard animated, let coordinator = transitionCoordinator else {
-            return DispatchQueue.main.async { completion() }
+            coordinator.animate(alongsideTransition: nil) { _ in completion() }
         }
 
-        coordinator.animate(alongsideTransition: nil) { _ in completion() }
-    }
+        // MARK: - popToRootViewController
 
-    // MARK: - popToRootViewController
+        func popToRootViewController(animated: Bool, completion: @escaping () -> Void) {
+            popToRootViewController(animated: animated)
 
-    func popToRootViewController(animated: Bool, completion: @escaping () -> Void) {
-        popToRootViewController(animated: animated)
+            guard animated, let coordinator = transitionCoordinator else {
+                return DispatchQueue.main.async { completion() }
+            }
 
-        guard animated, let coordinator = transitionCoordinator else {
-            return DispatchQueue.main.async { completion() }
+            coordinator.animate(alongsideTransition: nil) { _ in completion() }
         }
-
-        coordinator.animate(alongsideTransition: nil) { _ in completion() }
     }
-}
+#endif
