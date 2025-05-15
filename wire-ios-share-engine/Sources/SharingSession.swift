@@ -554,7 +554,8 @@ public final class SharingSession {
 
         let clientUserSessionComponent = userSessionComponent.clientSessionComponent(
             clientID: selfClientID,
-            processorHandlers: processHandlers
+            processorHandlers: processHandlers,
+            onAuthenticationFailure: {}
         )
 
         coreCryptoProvider.registerMlsTransport(clientUserSessionComponent.mlsTransport)
