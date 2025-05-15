@@ -92,7 +92,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         view.setContentHuggingPriority(.required, for: .vertical)
         view.setContentCompressionResistancePriority(.required, for: .vertical)
 
-        view.textContainer.maximumNumberOfLines = 1
+        view.textContainer.maximumNumberOfLines = 3
         view.isScrollEnabled = false
         view.textContainer.lineBreakMode = .byTruncatingTail
 
@@ -145,7 +145,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         }
 
         let message = object.message
-        if message.isText {
+        if message.isText, !message.hasLinks {
             typeIcon.isHidden = true
             if let textMessageData = message.textMessageData {
                 messageTextView.attributedText = NSAttributedString
@@ -174,6 +174,9 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
             } else if message.isFile {
                 typeIcon.image = .init(resource: .file)
                 messageTextView.text = L10n.Localizable.Content.Collapsed.File.title
+            } else if message.hasLinks {
+                typeIcon.image = .init(resource: .link)
+                messageTextView.text = L10n.Localizable.Content.Collapsed.Link.title
             }
         }
 
@@ -204,28 +207,45 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         let spacingView = UIView()
         spacingView.widthAnchor.constraint(equalToConstant: 13).isActive = true
 
+        let rightStack = [typeIcon, collapseButton.wrapInView(trailingInset: margins.right)]
+            .horizontalStack(spacing: 8, alignment: .center)
+
         let stack = UIStackView.horizontal(
             views: [
                 spacingView,
-                avatar,
+                avatar.wrapInViewWithFlexibleTopAndBottom(),
                 messageTextView,
-                [typeIcon, collapseButton.wrapInView(trailingInset: margins.right)]
-                    .horizontalStack(spacing: 8)
-                    .wrapInView(bottomInset: -1)
+                rightStack.wrapInViewWithFlexibleTopAndBottom()
             ],
             spacing: 7,
-            alignment: .center
+            alignment: .top
         )
         stack.setCustomSpacing(12, after: avatar)
         stack.setCustomSpacing(10, after: messageTextView)
 
-        addSubview(stack)
+        rightStack.centerYAnchor
+            .constraint(
+                equalTo: messageTextView.firstBaselineAnchor,
+                constant: -5
+            ).isActive = true
+
+        avatar.centerYAnchor
+            .constraint(
+                equalTo: messageTextView.firstBaselineAnchor,
+                constant: -5
+            ).isActive = true
+
+        let stackWithTopMargin = stack.wrapInView(topInset: 8)
+        addSubview(stackWithTopMargin)
+
+        stackWithTopMargin
+            .pin(to: self)
+            .minHeightConstraint(30)
+            .setIsUserInteractionEnabled(false)
 
         stack
             .setTranslatesAutoresizingMaskIntoConstraints(false)
             .setIsUserInteractionEnabled(false)
-            .pin(to: self)
-            .heightConstraint(38)
 
         typeIcon.constraintToSquare(sideLength: 16)
     }

@@ -289,6 +289,8 @@ extension SettingsPropertyName {
             return SoundMenu.Ping.title
         case .accentColor:
             return Settings.AccountPictureGroup.color
+        case .conversationBackground:
+            return Settings.AccountPictureGroup.Background.title
         case .disableSendButton:
             return Settings.PopularDemand.SendButton.title
         case .disableCallKit:
