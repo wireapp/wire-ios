@@ -19,25 +19,23 @@
 import SwiftUI
 
 struct MessageStatusView: View {
-    
+
     @ObservedObject var model: MessageStatusViewModel
-    
+
     var body: some View {
         switch model.state {
         case .none:
             EmptyView()
-        case .sendFailure(let string):
+        case let .sendFailure(string):
             EmptyView()
-        case .callList(let string):
+        case let .callList(string):
             EmptyView()
-        case .details(let statusDetails):
-            HStack {
-                Text(statusDetails.timestamp)
-                if let edited = statusDetails.editedString {
-                    Text(edited)
-                }
-                Text(statusDetails.deliveryState?.text ?? "-")
-            }
+        case let .details(statusDetails):
+            MessageToolboxView(
+                detailsText: statusDetails.timestamp,
+                editedString: statusDetails.editedString,
+                deliveryStatus: statusDetails.deliveryState
+            )
         }
     }
 }

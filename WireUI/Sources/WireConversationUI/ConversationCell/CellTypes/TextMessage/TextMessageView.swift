@@ -30,7 +30,7 @@ public struct TextMessageView: ConversationCellContentViewProtocol {
     }
 
     public var body: some View {
-        VStack {
+        VStack(alignment: .leading) {
 //            if let model = model.senderViewModel {
 //                SenderMessageView(model: model)
             SenderMessageView(model: model.senderViewModel)
@@ -40,7 +40,6 @@ public struct TextMessageView: ConversationCellContentViewProtocol {
                     .multilineTextAlignment(.center)
                     .font(.footnote)
                     .fontWeight(.semibold)
-                    .padding(.horizontal, 12)
                     .layoutPriority(1)
             }
             MessageStatusView(model: model.statusViewModel)
