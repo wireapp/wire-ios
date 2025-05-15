@@ -80,12 +80,8 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             .init(title: "Update MLS migration status", action: updateMLSMigrationStatus),
             .init(title: "Delete domains in the database", action: deleteDomains),
             .init(title: "Find Conversation with MLS Group", action: showSearchMLSConversations),
-<<<<<<< HEAD
-            .init(title: "Clear access token & cookie (forces logout)", action: clearAccessTokenAndCookie),
-            .init(title: "Clear collapsed messages cache", action: clearCollapsedMessagesCache)
-=======
+            .init(title: "Clear collapsed messages cache", action: clearCollapsedMessagesCache),
             .init(title: "Simulate access token failure", action: simulateAccessTokenFailure)
->>>>>>> 80aaf67c74 (fix: logout when access token request fails - WPB-12035 (#2977))
         ]
 
         let toggleItems: [DeveloperDebugActionsDisplayModel.ToggleItem] = [
