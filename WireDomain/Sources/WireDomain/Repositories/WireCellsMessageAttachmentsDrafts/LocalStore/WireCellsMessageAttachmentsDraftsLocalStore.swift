@@ -16,6 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+@preconcurrency import CoreData
+import WireCellsAPI
+import WireDataModel
+import WireLogging
 
-final class WireCellsTests: XCTestCase {}
+public final class WireCellsMessageAttachmentsDraftsLocalStore: WireCellsMessageAttachmentsDraftsLocalStoreProtocol {
+
+    // MARK: - Properties
+
+    let context: NSManagedObjectContext
+    let conversationStore: ConversationLocalStoreProtocol
+
+    public init(
+        context: NSManagedObjectContext,
+        conversationStore: ConversationLocalStoreProtocol
+    ) {
+        self.context = context
+        self.conversationStore = conversationStore
+    }
+}
