@@ -565,7 +565,8 @@ public final class ZMUserSession: NSObject {
                 onProcessedCallEvent: onProcessedCallEvent(callEventInfo:),
                 onSelfClientInvalidated: onSelfClientInvalidated,
                 onProcessedTypingUsers: onProcessedTypingUsers(typingUsersInfo:)
-            )
+            ),
+            onAuthenticationFailure: onAuthenticationFailure
         )
 
         coreCryptoProvider.registerMlsTransport(clientSessionComponent.mlsTransport)
@@ -614,7 +615,25 @@ public final class ZMUserSession: NSObject {
         syncAgent.resume()
     }
 
-    func onProcessedTypingUsers(
+    // MARK: - Callbacks from WireDomain
+
+    @Sendable
+    public func onAuthenticationFailure() {
+        managedObjectContext.performGroupedBlock { [weak self] in
+            guard let self else { return }
+
+            let selfUser = ZMUser.selfUser(in: managedObjectContext)
+
+            notifyAuthenticationInvalidated(
+                NSError.userSessionError(
+                    code: .accessTokenExpired,
+                    userInfo: selfUser.loginCredentials.dictionaryRepresentation
+                )
+            )
+        }
+    }
+
+    private func onProcessedTypingUsers(
         typingUsersInfo: [ConversationTypingUsersInfo]
     ) {
 
@@ -662,7 +681,7 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-    func onProcessedCallEvent(callEventInfo: CallEventInfo) {
+    private func onProcessedCallEvent(callEventInfo: CallEventInfo) {
         let serverTimeDelta = syncContext.performAndWait {
             syncContext.serverTimeDelta // serverTimeDelta can only be accessed on the sync context
         }
