@@ -43,7 +43,7 @@ package final class WireCellsAWSClientImplementation: WireCellsAWSClient {
                 )
             ),
             region: Constants.region,
-            endpoint: credentials.serverUrl.absoluteString
+            endpoint: credentials.serverURL.absoluteString
         )
         self.s3 = S3Client(config: config)
     }
