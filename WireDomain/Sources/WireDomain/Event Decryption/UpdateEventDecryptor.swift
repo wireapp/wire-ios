@@ -118,18 +118,18 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                     decryptedEvents.append(.conversation(.mlsMessageAdd(decryptedEventData)))
 
                 } catch let error as MLSMessageDecryptorError {
-                    // if Wrong epoch ->
                     switch error {
                     case .mlsWrongEpoch(let mlsGroupID):
                         await mlsService?.fetchAndRepairGroup(with: mlsGroupID)
+                        WireLogger.updateEvent.warn("mls_Wrong_Epoch for group \(mlsGroupID)", attributes: logAttributes)
                     default:
+                        WireLogger.updateEvent.error(
+                            "failed to decrypt MLS add message event, dropping: \(error.localizedDescription)",
+                            attributes: logAttributes
+                        )
+
                         throw error
                     }
-
-                    WireLogger.updateEvent.error(
-                        "failed to decrypt MLS add message event, dropping: \(error.localizedDescription)",
-                        attributes: logAttributes
-                    )
                 }
 
             case let .conversation(.mlsWelcome(eventData)):

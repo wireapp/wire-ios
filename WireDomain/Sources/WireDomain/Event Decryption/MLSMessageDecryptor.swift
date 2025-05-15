@@ -46,8 +46,6 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
     func decryptedMessageAddEventData(
         from eventData: ConversationMLSMessageAddEvent
     ) async throws -> ConversationMLSMessageAddEvent {
-        guard !DeveloperFlag.skipMLSMessagesDecryption.isOn else { throw MLSMessageDecryptorError.missingMLSGroupID }
-
         let conversationID = eventData.conversationID
 
         guard let mlsConversation = await conversationLocalStore.fetchConversation(
@@ -87,9 +85,14 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
             decryptedEvent.decryptedMessages = decryptedMessages
 
             return decryptedEvent
-        } catch {
-            //if mlsWrongEpoch
-            throw MLSMessageDecryptorError.mlsWrongEpoch(mlsGroupID: mlsGroupID)
+        } catch let error as MLSMessageDecryptorError {
+            switch error {
+            case .mlsWrongEpoch(let mlsGroupID):
+                throw MLSMessageDecryptorError.mlsWrongEpoch(mlsGroupID: mlsGroupID)
+            default:
+                throw error
+            }
+
         }
     }
 

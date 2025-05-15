@@ -128,13 +128,7 @@ public final class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
         clientIDs: [Data]
     ) async throws -> [WireIdentity] {
         try await coreCrypto.perform {
-            do {
-                let aaa = try await $0.conversationExists(conversationId: conversationId)
-                print(aaa)
-            } catch {
-                print(error)
-            }
-            return try await $0.getDeviceIdentities(
+            try await $0.getDeviceIdentities(
                 conversationId: conversationId,
                 deviceIds: clientIDs
             )

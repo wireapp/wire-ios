@@ -173,7 +173,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         }
 
         do {
-            let decryptedMessage = try await mlsActionExecutor.decryptMessage(messageData, in: groupID)//
+            let decryptedMessage = try await mlsActionExecutor.decryptMessage(messageData, in: groupID)
 
             if let newDistributionPoints = CRLsDistributionPoints(from: decryptedMessage.crlNewDistributionPoints) {
                 onNewCRLsDistributionPointsSubject.send(newDistributionPoints)
@@ -189,7 +189,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         } catch let CoreCryptoError.Mls(error) {
             WireLogger.mls
                 .error(
-                    "failed to decrypt message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType))): \(String(describing: error)) | \(debugInfo)"
+                    "failed to decrypt message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType))), CoreCryptoError: \(String(describing: error)) | \(debugInfo)"
                 )
 
             switch error {
