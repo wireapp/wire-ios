@@ -21,11 +21,11 @@ import XCTest
 class LogOutPage: PageModel {
 
     var passwordField: XCUIElement {
-        return app.secureTextFields.firstMatch
+        app.secureTextFields.firstMatch
     }
 
     var okButton: XCUIElement {
-        return app.buttons["OK"]
+        app.buttons["OK"]
     }
 
     func enterPassword(_ password: String) -> WelcomePage {

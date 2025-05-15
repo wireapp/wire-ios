@@ -58,7 +58,7 @@ final class PersonalUsersTests: WireUITestCase {
 //        XCTAssertTrue(accountPage.getEmail().elementsEqual(user.email))*/
 
         accountPage.logout()
-            // TODO: Restore once [WPB-17516] is fixed
+        // TODO: Restore once [WPB-17516] is fixed
 //            .enterPassword(user.password)
     }
 }

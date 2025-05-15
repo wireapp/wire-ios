@@ -36,10 +36,10 @@ class InbucketClient {
         var (inbucketData, response) = try await URLSession.shared.data(for: request)
         var pureResponse = response as! HTTPURLResponse
         var timeout = 0
-        while pureResponse.statusCode != 200 && timeout < 100 {
+        while pureResponse.statusCode != 200, timeout < 100 {
             (inbucketData, response) = try await URLSession.shared.data(for: request)
             pureResponse = response as! HTTPURLResponse
-            timeout+=1
+            timeout += 1
         }
 
         // Convert HTTP Response Data to a simple String

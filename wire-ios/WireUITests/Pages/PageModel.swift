@@ -22,7 +22,7 @@ class PageModel {
     let app: XCUIApplication
 
     init() {
-        app = XCUIApplication()
+        self.app = XCUIApplication()
         hasLoaded()
     }
 
