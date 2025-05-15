@@ -30,7 +30,6 @@ class WireUITestCase: XCTestCase {
         XCUIApplication().terminate()
         deleteApp()
 
-        app = XCUIApplication()
         let launchArguments = [
             "-BackendEnvironmentTypeOverrideKey staging",
             "--preferred-api-version=8"
@@ -46,8 +45,8 @@ class WireUITestCase: XCTestCase {
 
     // Sometimes the app fails to launch, especially in the pipeline
     func tryLaunch(_ launchArguments: [String], counter: Int = 10) {
+        app = XCUIApplication()
         if !app.exists, counter > 0 {
-            XCUIApplication().terminate()
             app = XCUIApplication()
             app.launchArguments = launchArguments
             app.useWireAuthentication()
