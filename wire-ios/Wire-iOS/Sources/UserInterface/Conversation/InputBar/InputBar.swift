@@ -129,7 +129,7 @@ final class InputBar: UIView {
         return stackView
     }()
 
-    /// Container for the `upperContainer` & `attachmentsView` when visible.
+    /// Container for the `upperContainer` & `attachmentsContainer` when visible.
     private let inputContainer: UIStackView = {
         let stackView = UIStackView()
         stackView.spacing = 0
@@ -139,12 +139,8 @@ final class InputBar: UIView {
         return stackView
     }()
 
-    // TODO: [WPB-15842] For now this is just a placeholder but will become a collection view displaying attachments.
-    private let attachmentsView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .red
-        return view
-    }()
+    /// Container for the attachments carousel when visible.
+    let attachmentsContainer = UIView()
 
     // Contains and clips the buttonInnerContainer
     let buttonContainer = UIView()
@@ -249,7 +245,7 @@ final class InputBar: UIView {
         [leftAccessoryView, textView, rightAccessoryStackView].forEach { upperContainer.addSubview($0) }
 
         if DeveloperFlag.wireCells.isOn {
-            inputContainer.addArrangedSubview(attachmentsView)
+            inputContainer.addArrangedSubview(attachmentsContainer)
         }
 
         [buttonContainer, buttonRowSeparator].forEach(addSubview)
@@ -353,7 +349,7 @@ final class InputBar: UIView {
         [
             inputContainer,
             upperContainer,
-            attachmentsView,
+            attachmentsContainer,
             buttonContainer,
             textView,
             buttonRowSeparator,
@@ -366,8 +362,8 @@ final class InputBar: UIView {
 
         if DeveloperFlag.wireCells.isOn {
             NSLayoutConstraint.activate([
-                attachmentsView.widthAnchor.constraint(equalTo: inputContainer.widthAnchor),
-                attachmentsView.heightAnchor.constraint(equalToConstant: 100)
+                attachmentsContainer.widthAnchor.constraint(equalTo: inputContainer.widthAnchor),
+                attachmentsContainer.heightAnchor.constraint(equalToConstant: 74)
             ])
         }
 
