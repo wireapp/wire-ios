@@ -16,6 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import CellsSDK
+import Foundation
 
-final class WireCellsTests: XCTestCase {}
+package struct WireCellsGetFilesResponseDTO: Equatable, Hashable, Sendable {
+    package let nodes: [WireCellsNodeDTO]
+
+    package init(nodes: [WireCellsNodeDTO]) {
+        self.nodes = nodes
+    }
+}
+
+package extension RestNodeCollection {
+    func toDTO() -> WireCellsGetFilesResponseDTO {
+        WireCellsGetFilesResponseDTO(
+            // /!\ Will silently filter out nil values that could not be mapped to DTOs
+            nodes: nodes?.compactMap { $0.toDTO() } ?? []
+        )
+    }
+}
