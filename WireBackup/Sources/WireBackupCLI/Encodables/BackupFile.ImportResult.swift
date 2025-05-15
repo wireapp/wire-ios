@@ -17,15 +17,16 @@
 //
 
 @preconcurrency import KaliumBackup
+import WireBackup
 
 extension BackupFile {
 
     struct ImportResult: Encodable {
 
         let totalPagesCount: Int32?
-        let users: [BackupUser]
-        let conversations: [BackupConversation]
-        let messages: [BackupMessage]
+        let users: [BackupUserModel]
+        let conversations: [BackupConversationModel]
+        let messages: [BackupMessageModel]
 
         init(_ importResult: BackupImportResult.Success) throws {
 
@@ -41,9 +42,9 @@ extension BackupFile {
             }
 
             self.totalPagesCount = importResult.pager.totalPagesCount
-            self.users = [BackupUser](usersPager)
-            self.conversations = [BackupConversation](conversationsPager)
-            self.messages = [BackupMessage](messagesPager)
+            self.users = [BackupUser](usersPager).compactMap(BackupUserModel.init)
+            self.conversations = [BackupConversation](conversationsPager).compactMap(BackupConversationModel.init)
+            self.messages = [BackupMessage](messagesPager).compactMap(BackupMessageModel.init)
 
         }
 

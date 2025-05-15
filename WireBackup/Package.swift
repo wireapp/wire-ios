@@ -41,7 +41,7 @@ let package = Package(
         ),
         .executableTarget(
             name: "WireBackupCLI",
-            dependencies: ["KaliumBackup", "ZIPFoundation"]
+            dependencies: ["KaliumBackup", "WireBackup", "ZIPFoundation"]
         ),
 
         .binaryTarget(

@@ -16,12 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@preconcurrency import KaliumBackup
+package import KaliumBackup
 
-extension BackupConversation: @retroactive Encodable {
+import WireFoundation
 
-    func encode(to encoder: any Encoder) throws {
-        // fatalError()
+extension BackupConversationModel {
+
+    package init?(_ backupConversation: BackupConversation) {
+        guard let qualifiedID = QualifiedID(backupConversation.id) else { return nil }
+        self.init(
+            qualifiedID: qualifiedID,
+            name: backupConversation.name
+        )
     }
 
 }
+

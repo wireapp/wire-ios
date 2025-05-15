@@ -19,7 +19,7 @@
 public import Foundation
 public import WireFoundation
 
-public struct BackupMessageModel {
+public struct BackupMessageModel: Codable, Hashable, Sendable {
     public typealias ID = String
 
     public var id: ID
@@ -52,7 +52,7 @@ public struct BackupMessageModel {
 // The following types replicate the API of the multi-platform backup library in a Swift friendlier way.
 // (e.g. enums instead of class hierarchy)
 
-public enum MessageContent {
+public enum MessageContent: Codable, Hashable, Sendable {
 
     case text(TextContent)
     case location(LocationContent)
@@ -64,18 +64,18 @@ public enum MessageContent {
 
 public extension MessageContent {
 
-    struct TextContent {
+    struct TextContent: Codable, Hashable, Sendable {
         public var text: String
     }
 
-    struct LocationContent {
+    struct LocationContent: Codable, Hashable, Sendable {
         public var longitude: Float
         public var latitude: Float
         public var name: String?
         public var zoom: Int32?
     }
 
-    struct AssetContent {
+    struct AssetContent: Codable, Hashable, Sendable {
         public var mimeType: String
         public var size: UInt64
         public var name: String?
@@ -87,12 +87,12 @@ public extension MessageContent {
         public var encryption: EncryptionAlgorithm?
         public var metadata: Metadata?
 
-        public enum EncryptionAlgorithm {
+        public enum EncryptionAlgorithm: Codable, Hashable, Sendable {
             case aesCBC
             case aesGCM
         }
 
-        public enum Metadata {
+        public enum Metadata: Codable, Hashable, Sendable {
 
             case image(ImageMetadata)
             case video(VideoMetadata)
@@ -107,24 +107,24 @@ public extension MessageContent {
 
 public extension MessageContent.AssetContent.Metadata {
 
-    struct ImageMetadata {
+    struct ImageMetadata: Codable, Hashable, Sendable {
         public var width: Int32
         public var height: Int32
         public var tag: String?
     }
 
-    struct VideoMetadata {
+    struct VideoMetadata: Codable, Hashable, Sendable {
         public var width: Int32?
         public var height: Int32?
         public var duration: UInt64?
     }
 
-    struct AudioMetadata {
+    struct AudioMetadata: Codable, Hashable, Sendable {
         public var normalization: Data?
         public var duration: UInt64?
     }
 
-    struct GenericMetadata {
+    struct GenericMetadata: Codable, Hashable, Sendable {
         public var name: String?
     }
 
