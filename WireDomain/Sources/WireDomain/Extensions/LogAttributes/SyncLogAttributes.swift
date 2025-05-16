@@ -93,29 +93,29 @@ public extension LogAttributes {
 
     // MARK: - New sync (V2, V3)
 
-    static func newSyncAttributes(
+    static func syncAttributes(
         initialSync: Bool
     ) -> Self {
         [
             .syncType: initialSync ? Constants.initial : Constants.incremental,
-            .syncVersion: newSyncVersion,
+            .syncVersion: syncVersion,
             .public: true
         ]
     }
 
-    static func newSyncPhaseAttributes(
+    static func syncPhaseAttributes(
         _ phase: String,
         initialSync: Bool
     ) -> Self {
         [
             .syncType: initialSync ? Constants.initial : Constants.incremental,
-            .syncVersion: newSyncVersion,
+            .syncVersion: syncVersion,
             .syncPhase: phase,
             .public: true
         ]
     }
 
-    private static var newSyncVersion: String {
+    private static var syncVersion: String {
         DeveloperFlag.asyncStreamNotifications.isOn ? Constants.v3 : Constants.v2
     }
 }

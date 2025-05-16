@@ -96,7 +96,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
 
         return try await logger.measureTime(
             label: "new sync phase: \(phase)",
-            attributes: .newSyncPhaseAttributes(phase, initialSync: true)
+            attributes: .syncPhaseAttributes(phase, initialSync: true)
         ) {
             do {
                 return try await pullSelfUserSync.pull().teamID
@@ -111,7 +111,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
 
         try await logger.measureTime(
             label: "new sync phase: \(phase)",
-            attributes: .newSyncPhaseAttributes(phase, initialSync: true)
+            attributes: .syncPhaseAttributes(phase, initialSync: true)
         ) {
             do {
                 try await pullSelfUserClientsSync.pull()
@@ -126,7 +126,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
 
         try await logger.measureTime(
             label: "new sync phase: \(phase)",
-            attributes: .newSyncPhaseAttributes(phase, initialSync: true)
+            attributes: .syncPhaseAttributes(phase, initialSync: true)
         ) {
             do {
                 try await pullSelfUserSettingsSync.pull()
@@ -141,7 +141,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
 
         try await logger.measureTime(
             label: "new sync phase: \(phase)",
-            attributes: .newSyncPhaseAttributes(phase, initialSync: true)
+            attributes: .syncPhaseAttributes(phase, initialSync: true)
         ) {
             do {
                 try await pullSelfTeamSync.pull(selfTeamID: teamID)
@@ -156,7 +156,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
 
         try await logger.measureTime(
             label: "new sync phase: \(phase)",
-            attributes: .newSyncPhaseAttributes(phase, initialSync: true)
+            attributes: .syncPhaseAttributes(phase, initialSync: true)
         ) {
             do {
                 try await pullSelfTeamRolesSync.pull(selfTeamID: teamID)
@@ -171,7 +171,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
 
         try await logger.measureTime(
             label: "new sync phase: \(phase)",
-            attributes: .newSyncPhaseAttributes(phase, initialSync: true)
+            attributes: .syncPhaseAttributes(phase, initialSync: true)
         ) {
             do {
                 try await pullSelfTeamMembersSync.pull(selfTeamID: teamID)
@@ -186,7 +186,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
 
         try await logger.measureTime(
             label: "new sync phase: \(phase)",
-            attributes: .newSyncPhaseAttributes(phase, initialSync: true)
+            attributes: .syncPhaseAttributes(phase, initialSync: true)
         ) {
             do {
                 try await pullSelfLegalholdInfoSync.pull(selfTeamID: teamID)
@@ -201,7 +201,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
 
         try await logger.measureTime(
             label: "new sync phase: \(phase)",
-            attributes: .newSyncPhaseAttributes(phase, initialSync: true)
+            attributes: .syncPhaseAttributes(phase, initialSync: true)
         ) {
             do {
                 try await pullUserConnectionsSync.pull()
@@ -216,7 +216,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
 
         try await logger.measureTime(
             label: "new sync phase: \(phase)",
-            attributes: .newSyncPhaseAttributes(phase, initialSync: true)
+            attributes: .syncPhaseAttributes(phase, initialSync: true)
         ) {
             do {
                 try await pullAllConversationsSync.pull()
@@ -231,7 +231,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
 
         try await logger.measureTime(
             label: "new sync phase: \(phase)",
-            attributes: .newSyncPhaseAttributes(phase, initialSync: true)
+            attributes: .syncPhaseAttributes(phase, initialSync: true)
         ) {
             do {
                 try await pullKnownUsersSync.pull()
@@ -246,7 +246,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
 
         try await logger.measureTime(
             label: "new sync phase: \(phase)",
-            attributes: .newSyncPhaseAttributes(phase, initialSync: true)
+            attributes: .syncPhaseAttributes(phase, initialSync: true)
         ) {
             do {
                 try await pullConversationLabelsSync.pull()
@@ -261,7 +261,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
 
         try await logger.measureTime(
             label: "new sync phase: \(phase)",
-            attributes: .newSyncPhaseAttributes(phase, initialSync: true)
+            attributes: .syncPhaseAttributes(phase, initialSync: true)
         ) {
             do {
                 try await pullAllFeatureConfigsSync.pull()
@@ -276,7 +276,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
 
         try await logger.measureTime(
             label: "new sync phase: \(phase)",
-            attributes: .newSyncPhaseAttributes(phase, initialSync: true)
+            attributes: .syncPhaseAttributes(phase, initialSync: true)
         ) {
             do {
                 try await pullMLSStatusSync.pull()

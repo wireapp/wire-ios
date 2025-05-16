@@ -25,7 +25,7 @@ public extension WireLogger {
         attributes: LogAttributes = [:],
         block: () async throws -> T
     ) async throws -> T {
-        let startMessage = "did start \(label)"
+        let startMessage = "starting \(label)"
         info(startMessage, attributes: attributes)
         let start = Date.now
         let result = try await block()
@@ -33,7 +33,7 @@ public extension WireLogger {
         var updatedAttributes = attributes
         let formattedDuration = String(format: "%.2f", durationInSeconds)
         updatedAttributes[.duration] = formattedDuration
-        let completedMessage = "did complete \(label) in \(formattedDuration) seconds"
+        let completedMessage = "completed \(label) in \(formattedDuration) seconds"
         info(completedMessage, attributes: updatedAttributes)
         return result
     }

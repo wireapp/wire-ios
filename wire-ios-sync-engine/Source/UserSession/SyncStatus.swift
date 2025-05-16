@@ -378,7 +378,7 @@ extension SyncStatus {
 
     /// Logs the initial / incremental sync start
     private func logSyncStarted() {
-        let message = "did start \(isSlowSyncing ? "legacy initial sync" : "did start legacy incremental sync")"
+        let message = "starting \(isSlowSyncing ? "legacy initial sync" : "legacy incremental sync")"
 
         WireLogger.sync.info(
             message,
@@ -394,7 +394,7 @@ extension SyncStatus {
         let formattedDuration = String(format: "%.2f", syncTotalDuration)
 
         let message =
-            "did complete \(isSlowSyncing ? "legacy initial sync" : "legacy incremental sync") in \(formattedDuration)"
+            "completed \(isSlowSyncing ? "legacy initial sync" : "legacy incremental sync") in \(formattedDuration)"
 
         WireLogger.sync.info(
             message,
@@ -410,7 +410,7 @@ extension SyncStatus {
         phase: SyncPhase
     ) {
         WireLogger.sync.info(
-            "did start legacy sync phase: \(phase.description)",
+            "starting legacy sync phase: \(phase.description)",
             attributes: .legacySyncPhaseDidStartAttributes(
                 phase.description,
                 initialSync: isSlowSyncing
@@ -424,7 +424,7 @@ extension SyncStatus {
         duration: Double
     ) {
         let formattedDuration = String(format: "%.2f", duration)
-        let message = "did complete legacy sync phase: \(phase.description) in \(formattedDuration)"
+        let message = "completed legacy sync phase: \(phase.description) in \(formattedDuration)"
 
         WireLogger.sync.info(
             message,
