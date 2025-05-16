@@ -28,6 +28,7 @@ protocol MessageViewModelFactory {
         message: ZMMessage,
         selfUser: any UserType,
         accentColor: UIColor,
+        shouldShowSender: Bool,
         shouldShowStatus: Bool
     ) -> TextMessageViewModel
 }
@@ -401,6 +402,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         var cellDescriptions = [AnyConversationMessageCellDescription]()
 
         let isToolboxVisible = isToolboxVisible(in: context)
+        let isSenderVisible = shouldShowSenderDetails(in: context)
 
         if message.isText {
             self.cellDescriptions = [
@@ -410,6 +412,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                         message: message as! ZMMessage,
                         selfUser: selfUser,
                         accentColor: selfUser.accentColor,
+                        shouldShowSender: isSenderVisible,
                         shouldShowStatus: isToolboxVisible
                     ))
                 ).eraseToAnyCellDescription()
@@ -418,7 +421,6 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         }
 
         let isBurstTimestampVisible = isBurstTimestampVisible(in: context)
-        let isSenderVisible = shouldShowSenderDetails(in: context)
 
         if isBurstTimestampVisible {
             let description = BurstTimestampSenderMessageCellDescription(

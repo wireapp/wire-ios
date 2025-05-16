@@ -761,8 +761,11 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
                 withIdentifier: "ConversationCell",
                 for: indexPath
             ) as! ConversationCell
-
-            cell.model = model
+            let margins = cell.conversationHorizontalMargins
+            cell.updateConfiguration(model: model, horizontalMargins: .init(
+                left: margins.left,
+                right: margins.right
+            ))
 //            model.configureCell(cell)
             return cell
         } else {

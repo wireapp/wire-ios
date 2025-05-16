@@ -18,13 +18,25 @@
 
 import SwiftUI
 
-public final class ConversationCell: UITableViewCell {
-
-    public var model: ConversationCellModel? {
-        didSet { updateConfiguration() }
+public struct HorizontalMargins {
+    var left: CGFloat
+    var right: CGFloat
+    
+    public init(left: CGFloat, right: CGFloat) {
+        self.left = left
+        self.right = right
     }
+    
+    static var `default`: HorizontalMargins {
+        .init(left: 56, right: 16)
+    }
+}
 
-    private func updateConfiguration() {
+public final class ConversationCell: UITableViewCell {
+    
+    public var model: ConversationCellModel?
+
+    public func updateConfiguration(model: ConversationCellModel?, horizontalMargins: HorizontalMargins) {
         guard let model else { return }
         contentConfiguration = UIHostingConfiguration {
             switch model {
@@ -34,7 +46,9 @@ public final class ConversationCell: UITableViewCell {
                 TextMessageView(model: model)
             }
         }
-        .margins(.all, 0)
+        .margins(.vertical, 0)
+        .margins(.leading, horizontalMargins.left)
+        .margins(.trailing, horizontalMargins.right)
         .minSize(width: 0, height: 0)
         .background(.clear)
     }

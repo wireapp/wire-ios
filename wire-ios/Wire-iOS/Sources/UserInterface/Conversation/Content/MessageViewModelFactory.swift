@@ -33,26 +33,30 @@ struct MessageViewModelFactoryImpl: MessageViewModelFactory {
         message: ZMMessage,
         selfUser: any UserType,
         accentColor: UIColor,
+        shouldShowSender: Bool,
         shouldShowStatus: Bool
     ) -> TextMessageViewModel {
         let context = userSession.contextProvider.viewContext
         let messagedObjectID = message.objectID
 
-        var senderViewModel: MessageSenderViewModel?
-        if let sender = message.sender {
-            senderViewModel = MessageSenderViewModel(
-                avatar: AvatarViewModel(
-                    color: accentColor.color
-                ),
-                senderModel: sender.toUIModel(),
-                isDeleted: message.isDeletion,
-                teamRoleIndicator: sender.teamRoleIndicator(selfUser: selfUser),
-                authorChanged: SenderObserver(
-                    messageID: messagedObjectID,
-                    viewContext: context
+        var senderViewModelWrapper: MessageSenderViewModelWrapper? = .init(state: .none)
+        if shouldShowSender, let sender = message.sender {
+            senderViewModelWrapper = MessageSenderViewModelWrapper.init(state: .some(
+                MessageSenderViewModel(
+                    avatar: AvatarViewModel(
+                        color: accentColor.color
+                    ),
+                    senderModel: sender.toUIModel(),
+                    isDeleted: message.isDeletion,
+                    teamRoleIndicator: sender.teamRoleIndicator(selfUser: selfUser),
+                    authorChanged: SenderObserver(
+                        messageID: messagedObjectID,
+                        viewContext: context
+                    )
                 )
-            )
+            ))
         }
+        
         let statusViewModel = if shouldShowStatus {
             MessageStatusViewModel(
                 messageModel: message.toUIModel(),
@@ -64,9 +68,10 @@ struct MessageViewModelFactoryImpl: MessageViewModelFactory {
         } else {
             MessageStatusViewModel.none()
         }
+        
         return TextMessageViewModel(
             text: message.textMessageData?.messageText ?? "",
-            senderViewModel: senderViewModel,
+            senderViewModelWrapper: senderViewModelWrapper,
             statusViewModel: statusViewModel
         )
     }

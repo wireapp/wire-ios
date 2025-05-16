@@ -31,6 +31,20 @@ public enum TeamRoleIndicator {
     case service
 }
 
+public class MessageSenderViewModelWrapper: ObservableObject {
+    
+    public enum State {
+        case none
+        case some(MessageSenderViewModel)
+    }
+    
+    @Published var state: State
+    
+    public init(state: State) {
+        self.state = state
+    }
+}
+
 public class MessageSenderViewModel: ObservableObject, Identifiable {
 
     public let id = UUID()

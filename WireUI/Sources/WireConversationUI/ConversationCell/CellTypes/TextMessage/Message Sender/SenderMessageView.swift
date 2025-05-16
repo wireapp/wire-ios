@@ -20,12 +20,17 @@ import SwiftUI
 
 struct SenderMessageView: View {
 
-    @ObservedObject var model: MessageSenderViewModel
+    @ObservedObject var model: MessageSenderViewModelWrapper
 
     var body: some View {
-        Text(model.senderAttributed)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .fixedSize(horizontal: false, vertical: true)
-            .animation(.easeInOut, value: model.senderAttributed)
+        switch model.state {
+        case .none:
+            EmptyView()
+        case .some(let model):
+            Text(model.senderAttributed)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .fixedSize(horizontal: false, vertical: true)
+                .animation(.easeInOut, value: model.senderAttributed)
+        }
     }
 }

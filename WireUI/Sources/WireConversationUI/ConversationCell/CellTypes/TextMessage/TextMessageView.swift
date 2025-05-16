@@ -30,11 +30,8 @@ public struct TextMessageView: ConversationCellContentViewProtocol {
     }
 
     public var body: some View {
-        VStack(alignment: .leading) {
-//            if let model = model.senderViewModel {
-//                SenderMessageView(model: model)
-            SenderMessageView(model: model.senderViewModel)
-//            }
+        VStack(alignment: .leading, spacing: 2) {
+            SenderMessageView(model: model.senderViewModelWrapper)
             HStack(spacing: 0) {
                 Text(model.text)
                     .multilineTextAlignment(.center)
@@ -44,6 +41,7 @@ public struct TextMessageView: ConversationCellContentViewProtocol {
             }
             MessageStatusView(model: model.statusViewModel)
         }
+        .padding(.vertical, 4)
     }
 }
 
@@ -52,7 +50,7 @@ public struct TextMessageView: ConversationCellContentViewProtocol {
 #Preview("Simple") {
     let model = TextMessageViewModel(
         text: "Test message",
-        senderViewModel: MessageSenderViewModel(
+        senderViewModelWrapper: .init(state: .some(MessageSenderViewModel(
             avatar: AvatarViewModel(color: .red),
             senderModel: UserModel(
                 name: "Test",
@@ -63,7 +61,7 @@ public struct TextMessageView: ConversationCellContentViewProtocol {
             isDeleted: false,
             teamRoleIndicator: nil,
             authorChanged: MockSenderObserver()
-        ),
+        ))),
         statusViewModel: MessageStatusViewModel(
             state: .details(StatusDetails(
                 deliveryState: .seen,
