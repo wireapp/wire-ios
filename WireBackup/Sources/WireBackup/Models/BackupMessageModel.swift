@@ -140,7 +140,7 @@ public extension BackupMessageModel.Content {
             self.metadata = metadata
         }
 
-        public enum EncryptionAlgorithm: Encodable, Hashable, Sendable {
+        public enum EncryptionAlgorithm: String, Encodable, Hashable, Sendable {
             case aesCBC
             case aesGCM
         }
@@ -162,24 +162,65 @@ public extension BackupMessageModel.Content {
 public extension BackupMessageModel.Content.AssetContent.Metadata {
 
     struct ImageMetadata: Encodable, Hashable, Sendable {
+
         public var width: Int32
         public var height: Int32
         public var tag: String?
+
+        // This property is used by the Codable implementation and is not to be used otherwise.
+        private var type = "image"
+
+        public init(width: Int32, height: Int32, tag: String?) {
+            self.width = width
+            self.height = height
+            self.tag = tag
+        }
+
     }
 
     struct VideoMetadata: Encodable, Hashable, Sendable {
+
         public var width: Int32?
         public var height: Int32?
         public var duration: UInt64?
+
+        // This property is used by the Codable implementation and is not to be used otherwise.
+        private var type = "video"
+
+        public init(width: Int32?, height: Int32?, duration: UInt64?) {
+            self.width = width
+            self.height = height
+            self.duration = duration
+        }
+
     }
 
     struct AudioMetadata: Encodable, Hashable, Sendable {
+
         public var normalization: Data?
         public var duration: UInt64?
+
+        // This property is used by the Codable implementation and is not to be used otherwise.
+        private var type = "audio"
+
+        public init(normalization: Data?, duration: UInt64?) {
+            self.normalization = normalization
+            self.duration = duration
+        }
+
     }
 
     struct GenericMetadata: Encodable, Hashable, Sendable {
+
         public var name: String?
+
+        // This property is used by the Codable implementation and is not to be used otherwise.
+        private var type = "generic"
+
+        public init(name: String?) {
+            self.name = name
+        }
+
     }
 
 }

@@ -51,3 +51,21 @@ extension BackupMessageModel.Content {
     }
 
 }
+
+extension BackupMessageModel.Content.AssetContent.Metadata {
+
+    public func encode(to encoder: any Encoder) throws {
+        var container = encoder.singleValueContainer()
+        switch self {
+        case .image(let imageMetadata):
+            try container.encode(imageMetadata)
+        case .video(let videoMetadata):
+            try container.encode(videoMetadata)
+        case .audio(let audioMetadata):
+            try container.encode(audioMetadata)
+        case .generic(let genericMetadata):
+            try container.encode(genericMetadata)
+        }
+    }
+
+}
