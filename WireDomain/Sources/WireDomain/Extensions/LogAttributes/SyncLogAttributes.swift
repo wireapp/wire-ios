@@ -30,13 +30,13 @@ public extension LogAttributes {
         static let v2 = "v2"
         static let v3 = "v3"
     }
-    
+
     // MARK: Notification Service Extension
-    
+
     static let newNSE = [
         LogAttributesKey.nse: "new"
     ]
-    
+
     static let legacyNSE = [
         LogAttributesKey.nse: "legacy"
     ]
@@ -47,7 +47,7 @@ public extension LogAttributes {
         initialSync: Bool
     ) -> Self {
         [
-            .syncType: initialSync ? Constants.initial: Constants.incremental,
+            .syncType: initialSync ? Constants.initial : Constants.incremental,
             .syncVersion: Constants.v1,
             .public: true
         ]
@@ -58,7 +58,7 @@ public extension LogAttributes {
         initialSync: Bool
     ) -> Self {
         [
-            .syncType: initialSync ? Constants.initial: Constants.incremental,
+            .syncType: initialSync ? Constants.initial : Constants.incremental,
             .syncVersion: Constants.v1,
             .duration: duration,
             .public: true
@@ -70,7 +70,7 @@ public extension LogAttributes {
         initialSync: Bool
     ) -> Self {
         [
-            .syncType: initialSync ? Constants.initial: Constants.incremental,
+            .syncType: initialSync ? Constants.initial : Constants.incremental,
             .syncVersion: Constants.v1,
             .syncPhase: phase,
             .public: true
@@ -83,7 +83,7 @@ public extension LogAttributes {
         initialSync: Bool
     ) -> Self {
         [
-            .syncType: initialSync ? Constants.initial: Constants.incremental,
+            .syncType: initialSync ? Constants.initial : Constants.incremental,
             .syncVersion: Constants.v1,
             .syncPhase: phase,
             .duration: duration,
@@ -97,7 +97,7 @@ public extension LogAttributes {
         initialSync: Bool
     ) -> Self {
         [
-            .syncType: initialSync ? Constants.initial: Constants.incremental,
+            .syncType: initialSync ? Constants.initial : Constants.incremental,
             .syncVersion: newSyncVersion,
             .public: true
         ]
@@ -108,13 +108,13 @@ public extension LogAttributes {
         initialSync: Bool
     ) -> Self {
         [
-            .syncType: initialSync ? Constants.initial: Constants.incremental,
+            .syncType: initialSync ? Constants.initial : Constants.incremental,
             .syncVersion: newSyncVersion,
             .syncPhase: phase,
             .public: true
         ]
     }
-    
+
     private static var newSyncVersion: String {
         DeveloperFlag.asyncStreamNotifications.isOn ? Constants.v3 : Constants.v2
     }
