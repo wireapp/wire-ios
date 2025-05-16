@@ -214,7 +214,8 @@ final class UpdateEventDecryptorTests: XCTestCase {
 
         // Mock
         mlsService.fetchAndRepairGroupWith_MockMethod = { _ in }
-        mlsMessageDecryptor.decryptedMessageAddEventDataFrom_MockError = MLSMessageDecryptorError.wrongEpoch(mlsGroupID: MLSGroupID(Data()))
+        mlsMessageDecryptor.decryptedMessageAddEventDataFrom_MockError = MLSMessageDecryptorError
+            .wrongEpoch(mlsGroupID: MLSGroupID(Data()))
 
         // When
         let events = try await sut.decryptEvents(in: envelope)
