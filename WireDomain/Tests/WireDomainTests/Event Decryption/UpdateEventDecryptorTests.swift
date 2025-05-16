@@ -201,6 +201,28 @@ final class UpdateEventDecryptorTests: XCTestCase {
         XCTAssertEqual(mlsService.commitPendingProposalsIfNeeded_Invocations.count, 1)
     }
 
+    func testWhenDecryptionOfMLSMessagesThrowsWrongEpochErrorAndTriggersFetchAndRepairGroup() async throws {
+        // Given some events.
+        let envelope = UpdateEventEnvelope(
+            id: UUID(),
+            events: [
+                .conversation(.mlsMessageAdd(Scaffolding.mlsMessage)),
+                .user(.pushRemove)
+            ],
+            isTransient: false
+        )
+
+        // Mock
+        mlsService.fetchAndRepairGroupWith_MockMethod = { _ in }
+        mlsMessageDecryptor.decryptedMessageAddEventDataFrom_MockError = MLSMessageDecryptorError.wrongEpoch(mlsGroupID: MLSGroupID(Data()))
+
+        // When
+        let events = try await sut.decryptEvents(in: envelope)
+
+        // Then
+        XCTAssertEqual(mlsService.fetchAndRepairGroupWith_Invocations.count, 1)
+    }
+
 }
 
 private enum Scaffolding {
