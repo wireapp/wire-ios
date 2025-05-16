@@ -41,12 +41,29 @@ class WireUITestCase: XCTestCase {
         continueAfterFailure = false
     }
 
+    override func tearDownWithError() throws {
+        deleteApp()
+    }
+
+    override func tearDown() async throws {
+//        TODO: [WPB-17516] Restore once fixed
+//        let email = context["email"] as! String
+//        let password = context["password"] as! String
+//        let access_token = try? await BackendClient.loginViaAPI(email:email, password:password)
+//        if(access_token != nil) {
+//            try? await BackendClient.deletePersonalUser(access_token:access_token!, password:password)
+//            puts("Cleaned up \(email)")
+//        }
+    }
+
+
     // MARK: - Helpers
 
     // Sometimes the app fails to launch, especially in the pipeline
     func tryLaunch(_ launchArguments: [String], counter: Int = 10) {
         app = XCUIApplication()
         if !app.exists, counter > 0 {
+            print("Countdown \(counter) attempting to launch app")
             app = XCUIApplication()
             app.launchArguments = launchArguments
             app.useWireAuthentication()

@@ -20,17 +20,6 @@ import XCTest
 
 final class PersonalUsersTests: WireUITestCase {
 
-    override func tearDown() async throws {
-//        TODO: [WPB-17516] Restore once fixed
-//        let email = context["email"] as! String
-//        let password = context["password"] as! String
-//        let access_token = try? await BackendClient.loginViaAPI(email:email, password:password)
-//        if(access_token != nil) {
-//            try? await BackendClient.deletePersonalUser(access_token:access_token!, password:password)
-//            puts("Cleaned up \(email)")
-//        }
-    }
-
     @MainActor
     func test_register_asPersonalUser() async throws {
         let user = UserGenerator.generateUniqueUserInfo()
