@@ -45,6 +45,7 @@ public protocol ContextProvider {
     var account: Account { get }
 
     var viewContext: NSManagedObjectContext { get }
+    func newBackgroundContext() -> NSManagedObjectContext
     var syncContext: NSManagedObjectContext { get }
     var searchContext: NSManagedObjectContext { get }
     var eventContext: NSManagedObjectContext { get }
@@ -120,6 +121,14 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
         messagesContainer.viewContext
     }
 
+    public func newBackgroundContext() -> NSManagedObjectContext {
+        #if DEBUG
+            return newBackgroundContextProvider?() ?? messagesContainer.newBackgroundContext()
+        #else
+            return messagesContainer.newBackgroundContext()
+        #endif
+    }
+
     public lazy var syncContext: NSManagedObjectContext = messagesContainer.newBackgroundContext()
 
     public lazy var searchContext: NSManagedObjectContext = messagesContainer.newBackgroundContext()
@@ -129,10 +138,13 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
     public let accountContainer: URL
     public let applicationContainer: URL
 
-    let messagesContainer: PersistentContainer
+    public let messagesContainer: PersistentContainer
     let eventsContainer: PersistentContainer
     let dispatchGroup: ZMSDispatchGroup?
 
+    #if DEBUG
+        public var newBackgroundContextProvider: (() -> NSManagedObjectContext)?
+    #endif
     private let messagesMigrator: CoreDataMigrator<CoreDataMessagingMigrationVersion>
     private let eventsMigrator: CoreDataMigrator<CoreDataEventsMigrationVersion>
     private var hasBeenClosed = false
@@ -570,7 +582,7 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
 
 // MARK: -
 
-class PersistentContainer: NSPersistentContainer {
+public class PersistentContainer: NSPersistentContainer {
 
     var storeURL: URL? {
         persistentStoreDescriptions.first?.url

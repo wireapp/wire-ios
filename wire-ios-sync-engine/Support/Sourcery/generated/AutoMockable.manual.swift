@@ -1295,5 +1295,4 @@ public class MockUserSession: UserSession {
             fatalError("no mock for `e2eIdentityUpdateCertificateUpdateStatus`")
         }
     }
-
 }

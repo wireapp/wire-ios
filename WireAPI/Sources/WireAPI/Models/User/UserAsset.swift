@@ -55,4 +55,14 @@ public struct UserAsset: Codable, Equatable, Sendable {
     /// Asset type
 
     public let type: UserAssetType
+
+    public init(
+        key: String,
+        size: UserAssetSize,
+        type: UserAssetType
+    ) {
+        self.key = key
+        self.size = size
+        self.type = type
+    }
 }

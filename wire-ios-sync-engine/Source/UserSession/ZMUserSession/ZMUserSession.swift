@@ -20,6 +20,7 @@ import Combine
 import Foundation
 import WireAnalytics
 import WireAPI
+import WireCoreCrypto
 import WireDataModel
 import WireDomain
 import WireLogging
@@ -44,7 +45,7 @@ public final class ZMUserSession: NSObject {
 
     private(set) var isNetworkOnline = true
 
-    private(set) var coreDataStack: CoreDataStack!
+    public private(set) var coreDataStack: CoreDataStack!
     private let apiServiceFactory: APIServiceFactory
     public var apiService: APIServiceProtocol? {
         guard let clientId = selfUserClient?.remoteIdentifier else {
@@ -109,7 +110,7 @@ public final class ZMUserSession: NSObject {
     public internal(set) var mlsGroupVerification: (any MLSGroupVerificationProtocol)?
 
     let analyiticsLogger: WireLogger
-    private let journal: Journal
+    let journal: Journal
 
     // MARK: Computed Properties
 
@@ -287,7 +288,6 @@ public final class ZMUserSession: NSObject {
 
         let keyRotator = E2EIKeyPackageRotator(
             coreCryptoProvider: coreCryptoProvider,
-            conversationEventProcessor: conversationEventProcessor,
             context: syncContext,
             onNewCRLsDistributionPointsSubject: onNewCRLsDistributionPointsSubject,
             featureRepository: featureRepository
@@ -559,33 +559,17 @@ public final class ZMUserSession: NSObject {
     }
 
     private func setUpSyncAgent(clientID: String, asyncStreamEnabled: Bool) {
-        let onSelfClientInvalidated: () async -> Void = { [self] in
-            await syncContext.perform { [self] in
-                syncContext.tearDownCryptoStack()
-
-                let clientRegistrationStatus = applicationStatusDirectory.clientRegistrationStatus
-                let clientUpdateStatus = applicationStatusDirectory.clientUpdateStatus
-
-                clientRegistrationStatus.emailCredentials = nil
-                clientRegistrationStatus.cookieProvider.deleteKeychainItems()
-
-                let selfUser = ZMUser.selfUser(in: managedObjectContext)
-                let clientDeletedRemotelyError = NSError.userSessionError(
-                    code: .clientDeletedRemotely,
-                    userInfo: selfUser.loginCredentials.dictionaryRepresentation
-                )
-
-                didDeleteSelfUserClient(error: clientDeletedRemotelyError)
-
-                clientUpdateStatus.needsToVerifySelfClient = false
-            }
-        }
-
         let clientSessionComponent = userSessionComponent.clientSessionComponent(
             clientID: clientID,
-            onSelfClientInvalidated: onSelfClientInvalidated,
-            onProcessedCallEvent: onProcessedCallEvent(callEventInfo:)
+            processorHandlers: .init(
+                onProcessedCallEvent: onProcessedCallEvent(callEventInfo:),
+                onSelfClientInvalidated: onSelfClientInvalidated,
+                onProcessedTypingUsers: onProcessedTypingUsers(typingUsersInfo:)
+            ),
+            onAuthenticationFailure: onAuthenticationFailure
         )
+
+        coreCryptoProvider.registerMlsTransport(clientSessionComponent.mlsTransport)
 
         let incrementalSyncProvider: IncrementalSyncProvider = if !asyncStreamEnabled {
             clientSessionComponent
@@ -597,19 +581,107 @@ public final class ZMUserSession: NSObject {
         let syncAgent = SyncAgent(
             journal: journal,
             lastUpdateEventIDRepository: lastEventIDRepository,
+            coreCryptoProvider: coreCryptoProvider,
             initialSyncProvider: clientSessionComponent,
             incrementalSyncProvider: incrementalSyncProvider,
-            legacySyncStatus: applicationStatusDirectory.syncStatus
+            legacySyncStatus: applicationStatusDirectory.syncStatus,
+            syncStateSubject: clientSessionComponent.syncStateSubject
         )
         applicationStatusDirectory.syncStatus.syncStateDelegate = syncAgent
         self.syncAgent = syncAgent
         syncAgent.delegate = self
 
+        mlsService.setSyncDelegate(syncAgent)
+
+        // Finish setting up the final strategies.
+        if
+            let strategyDirectory = strategyDirectory as? StrategyDirectory,
+            let localNotificationDispatcher {
+            let incrementalSyncObserver = IncrementalSyncObserver(
+                syncAgent: syncAgent,
+                notificationContext: notificationContext
+            )
+            strategyDirectory.makeClientRelatedStategies(
+                applicationStatusDirectory: applicationStatusDirectory,
+                syncContext: syncContext,
+                transportSession: transportSession,
+                pushMessageHandler: localNotificationDispatcher,
+                flowManager: flowManager,
+                incrementalSyncObserver: incrementalSyncObserver
+            )
+        }
+
         // TODO: [WPB-17223] remove `resume` call from here
         syncAgent.resume()
     }
 
-    func onProcessedCallEvent(callEventInfo: CallEventInfo) {
+    // MARK: - Callbacks from WireDomain
+
+    @Sendable
+    public func onAuthenticationFailure() {
+        managedObjectContext.performGroupedBlock { [weak self] in
+            guard let self else { return }
+
+            let selfUser = ZMUser.selfUser(in: managedObjectContext)
+
+            notifyAuthenticationInvalidated(
+                NSError.userSessionError(
+                    code: .accessTokenExpired,
+                    userInfo: selfUser.loginCredentials.dictionaryRepresentation
+                )
+            )
+        }
+    }
+
+    private func onProcessedTypingUsers(
+        typingUsersInfo: [ConversationTypingUsersInfo]
+    ) {
+
+        viewContext.performGroupedBlock { [viewContext] in
+            for typingUserInfo in typingUsersInfo {
+                let conversationID = typingUserInfo.conversationID
+                let usersID = typingUserInfo.users
+
+                if let conversation = viewContext.object(with: conversationID) as? ZMConversation {
+
+                    let users = usersID.compactMap {
+                        viewContext.object(with: $0) as? ZMUser
+                    }
+
+                    viewContext.typingUsers?.update(
+                        typingUsers: Set(users),
+                        in: conversation
+                    )
+
+                    conversation.notifyTyping(typingUsers: Set(users))
+                }
+            }
+        }
+    }
+
+    func onSelfClientInvalidated() async {
+        await syncContext.perform { [self] in
+            syncContext.tearDownCryptoStack()
+
+            let clientRegistrationStatus = applicationStatusDirectory.clientRegistrationStatus
+            let clientUpdateStatus = applicationStatusDirectory.clientUpdateStatus
+
+            clientRegistrationStatus.emailCredentials = nil
+            clientRegistrationStatus.cookieProvider.deleteKeychainItems()
+
+            let selfUser = ZMUser.selfUser(in: syncContext)
+            let clientDeletedRemotelyError = NSError.userSessionError(
+                code: .clientDeletedRemotely,
+                userInfo: selfUser.loginCredentials.dictionaryRepresentation
+            )
+
+            didDeleteSelfUserClient(error: clientDeletedRemotelyError)
+
+            clientUpdateStatus.needsToVerifySelfClient = false
+        }
+    }
+
+    private func onProcessedCallEvent(callEventInfo: CallEventInfo) {
         let serverTimeDelta = syncContext.performAndWait {
             syncContext.serverTimeDelta // serverTimeDelta can only be accessed on the sync context
         }
@@ -717,9 +789,9 @@ public final class ZMUserSession: NSObject {
             storeProvider: coreDataStack,
             eventProcessingTracker: eventProcessingTracker,
             earService: earService,
-            eventConsumers: strategyDirectory?.eventConsumers ?? [],
-            eventAsyncConsumers: (strategyDirectory?.eventAsyncConsumers ?? []) + [conversationEventProcessor],
-            lastEventIDRepository: lastEventIDRepository
+            lastEventIDRepository: lastEventIDRepository,
+            strategyDirectory: strategyDirectory!,
+            additionalEventConsumers: [conversationEventProcessor]
         )
     }
 
@@ -1056,8 +1128,11 @@ extension ZMUserSession: SyncAgentDelegate {
         didStartIncrementalSync()
     }
 
-    func syncAgentDidFinishIncrementalSync(_ syncAgent: SyncAgent) {
-        didFinishIncrementalSync(isRecovering: false)
+    func syncAgentDidFinishIncrementalSync(
+        _ syncAgent: SyncAgent,
+        isRecovering: Bool
+    ) {
+        didFinishIncrementalSync(isRecovering: isRecovering)
     }
 
     func syncAgentDidStartLegacyInitialSync(_ syncAgent: SyncAgent) {
@@ -1072,7 +1147,10 @@ extension ZMUserSession: SyncAgentDelegate {
         didStartIncrementalSync()
     }
 
-    func syncAgentDidFinishLegacyIncrementalSync(_ syncAgent: SyncAgent, isRecovering: Bool) {
+    func syncAgentDidFinishLegacyIncrementalSync(
+        _ syncAgent: SyncAgent,
+        isRecovering: Bool
+    ) {
         didFinishIncrementalSync(isRecovering: isRecovering)
     }
 
@@ -1428,6 +1506,10 @@ extension ZMUserSession: ContextProvider {
 
     public var viewContext: NSManagedObjectContext {
         coreDataStack.viewContext
+    }
+
+    public func newBackgroundContext() -> NSManagedObjectContext {
+        coreDataStack.newBackgroundContext()
     }
 
     public var syncContext: NSManagedObjectContext {

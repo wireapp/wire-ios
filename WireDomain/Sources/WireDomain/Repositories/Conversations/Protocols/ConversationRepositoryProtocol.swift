@@ -188,14 +188,6 @@ public protocol ConversationRepositoryProtocol {
         date: Date
     ) async
 
-    /// Updates the typing users for a given conversation.
-    /// - Parameters:
-    ///     - typingUsersInfo: A list of typing users for a given conversation.
-
-    func updateTypingUsers(
-        _ typingUsersInfo: [ConversationTypingUsersInfo]
-    ) async
-
     /// Fetches the guest link for a given conversation.
     /// - parameter conversationID: The conversation id.
     /// - returns: The guest link.

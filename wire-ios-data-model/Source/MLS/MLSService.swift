@@ -18,6 +18,7 @@
 
 import Combine
 import Foundation
+import WireAPI
 import WireCoreCrypto
 import WireFoundation
 import WireLogging
@@ -116,9 +117,6 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// If the group is joined successfully, the conversation's ``ZMConversation/mlsStatus``
     /// will be set to ``MLSGroupStatus/ready``
     ///
-    /// Finally, it will call ``ConversationEventProcessorProtocol/processConversationEvents(_:)``
-    /// to process the events returned by the backend.
-    ///
     /// The operation is covered by a retry mechanism that will perform a recovery strategy based on errors thrown
     /// while sending commits. See `MLSService/retryOnCommitFailure(for:operation:)`
     ///
@@ -187,9 +185,6 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// If there are no key packages, it will call ``MLSActionExecutor/updateKeyMaterial(for:)`` to send a commit
     /// to the backend to inform we are in the group.
     ///
-    /// Finally, it will call ``ConversationEventProcessorProtocol/processConversationEvents(_:)``
-    /// to process the events returned by the backend.
-    ///
     /// The operation is covered by a retry mechanism that will perform a recovery strategy based on errors thrown
     /// while sending commits. See `MLSService/retryOnCommitFailure(for:operation:)`
     ///
@@ -211,9 +206,6 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     ///
     /// Then calls ``MLSActionExecutor/removeClients(_:from:)`` to send a commit bundle to the backend
     /// to remove the clients from the group.
-    ///
-    /// Finally, it will call ``ConversationEventProcessorProtocol/processConversationEvents(_:)``
-    /// to process the events returned by the backend.
     ///
     /// The operation is covered by a retry mechanism that will perform a recovery strategy based on errors thrown
     /// while sending commits. See `MLSService/retryOnCommitFailure(for:operation:)`
@@ -339,8 +331,6 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     ///
     /// Commiting proposals entails sending a commit to the backend
     /// with ``MLSActionExecutor/commitPendingProposals(in:)``
-    /// and processing the events that are returned
-    /// with ``ConversationEventProcessorProtocol/processConversationEvents(_:)``.
     ///
     /// If the commit is successful, or if there are no proposals to commit,
     /// we clear the ``ZMConversation/commitPendingProposalDate``
@@ -361,9 +351,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// by calling ``MLSActionExecutor/updateKeyMaterial(for:)``
     ///
     /// If successful it notifies that the key material has been updated
-    /// via ``StaleMLSKeyDetector/keyingMaterialUpdated(for:)``,
-    /// then it processes the conversation events returned by the backend
-    /// with ``ConversationEventProcessorProtocol/processConversationEvents(_:)``
+    /// via ``StaleMLSKeyDetector/keyingMaterialUpdated(for:)``
     ///
     /// Updating the key material is covered by a retry mechanism that will perform a recovery strategy
     /// based on errors thrown while sending commits.
@@ -432,9 +420,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// which sends a commit to the backend.
     ///
     /// Then the ``StaleMLSKeyDetector/keyingMaterialUpdated(for:)``
-    /// method is called to note when the key material was updated for the group,
-    /// and any events returned by the backend are processed
-    /// with ``ConversationEventProcessorProtocol/processConversationEvents(_:)``.
+    /// method is called to note when the key material was updated for the group
     ///
     /// The operation is covered by a retry mechanism that will perform a recovery strategy based on errors thrown
     /// while sending commits. See `MLSService/retryOnCommitFailure(for:operation:)`
@@ -492,6 +478,13 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func startProteusToMLSMigration() async throws
 
+    // MARK: - Sync delegate
+
+    /// Set the MLS sync delegate.
+    ///
+    /// - Parameter delegate: The sync delegate to set.
+
+    func setSyncDelegate(_ delegate: any MLSSyncDelegate)
 }
 
 // This is only used in tests, so it should be removed.
@@ -530,13 +523,13 @@ public final class MLSService: MLSServiceInterface {
     private let decryptionService: MLSDecryptionServiceInterface
 
     private let mlsActionExecutor: MLSActionExecutorProtocol
-    private let conversationEventProcessor: ConversationEventProcessorProtocol
     private let staleKeyMaterialDetector: StaleMLSKeyDetectorProtocol
     private let userDefaults: PrivateUserDefaults<Keys>
     private let logger = WireLogger.mls
     private let groupsBeingRepaired = GroupsBeingRepaired()
-    private let syncStatus: SyncStatusProtocol
     private let featureRepository: FeatureRepositoryInterface
+    private weak var mlsSyncDelegate: (any MLSSyncDelegate)?
+    private let onEpochChangedSubject = PassthroughSubject<MLSGroupID, Never>()
 
     private var coreCrypto: SafeCoreCryptoProtocol {
         get async throws {
@@ -572,21 +565,17 @@ public final class MLSService: MLSServiceInterface {
         context: NSManagedObjectContext,
         notificationContext: any NotificationContext,
         coreCryptoProvider: CoreCryptoProviderProtocol,
-        conversationEventProcessor: ConversationEventProcessorProtocol,
         featureRepository: FeatureRepositoryInterface,
         userDefaults: UserDefaults,
-        syncStatus: SyncStatusProtocol,
         userID: UUID
     ) {
         self.init(
             context: context,
             notificationContext: notificationContext,
             coreCryptoProvider: coreCryptoProvider,
-            conversationEventProcessor: conversationEventProcessor,
             staleKeyMaterialDetector: StaleMLSKeyDetector(context: context),
             userDefaults: userDefaults,
             actionsProvider: MLSActionsProvider(),
-            syncStatus: syncStatus,
             userID: userID,
             featureRepository: featureRepository
         )
@@ -599,36 +588,26 @@ public final class MLSService: MLSServiceInterface {
         encryptionService: MLSEncryptionServiceInterface? = nil,
         decryptionService: MLSDecryptionServiceInterface? = nil,
         mlsActionExecutor: MLSActionExecutorProtocol? = nil,
-        conversationEventProcessor: ConversationEventProcessorProtocol,
         staleKeyMaterialDetector: StaleMLSKeyDetectorProtocol,
         userDefaults: UserDefaults,
         actionsProvider: MLSActionsProviderProtocol = MLSActionsProvider(),
         delegate: MLSServiceDelegate? = nil,
-        syncStatus: SyncStatusProtocol,
         userID: UUID,
         featureRepository: FeatureRepositoryInterface,
         subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface = SubconversationGroupIDRepository()
     ) {
-        let commitSender = CommitSender(
-            coreCryptoProvider: coreCryptoProvider,
-            notificationContext: context.notificationContext
-        )
-
         self.context = context
         self.notificationContext = notificationContext
         self.coreCryptoProvider = coreCryptoProvider
         self.featureRepository = featureRepository
         self.mlsActionExecutor = mlsActionExecutor ?? MLSActionExecutor(
             coreCryptoProvider: coreCryptoProvider,
-            commitSender: commitSender,
             featureRepository: featureRepository
         )
-        self.conversationEventProcessor = conversationEventProcessor
         self.staleKeyMaterialDetector = staleKeyMaterialDetector
         self.actionsProvider = actionsProvider
         self.userDefaults = PrivateUserDefaults(userID: userID, storage: userDefaults)
         self.delegate = delegate
-        self.syncStatus = syncStatus
         self.subconversationGroupIDRepository = subconversationGroupIDRepository
 
         self.encryptionService = encryptionService ?? MLSEncryptionService(
@@ -642,10 +621,17 @@ public final class MLSService: MLSServiceInterface {
         )
 
         schedulePeriodicKeyMaterialUpdateCheck()
+        startObservingEpochs()
     }
 
     deinit {
         keyMaterialUpdateCheckTimer?.invalidate()
+    }
+
+    // MARK: - Sync delegate
+
+    public func setSyncDelegate(_ delegate: any MLSSyncDelegate) {
+        mlsSyncDelegate = delegate
     }
 
     // MARK: - Conference info for subconversations
@@ -802,9 +788,8 @@ public final class MLSService: MLSServiceInterface {
     private func internalUpdateKeyMaterial(for groupID: MLSGroupID) async throws {
         do {
             WireLogger.mls.info("updating key material for group (\(groupID.safeForLoggingDescription))")
-            let events = try await mlsActionExecutor.updateKeyMaterial(for: groupID)
+            try await mlsActionExecutor.updateKeyMaterial(for: groupID)
             staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
-            await conversationEventProcessor.processConversationEvents(events)
         } catch {
             WireLogger.mls
                 .warn(
@@ -930,7 +915,7 @@ public final class MLSService: MLSServiceInterface {
             }
             let keyPackages = try await claimKeyPackages(for: users, ciphersuite: ciphersuite)
 
-            let events = if keyPackages.isEmpty {
+            if keyPackages.isEmpty {
                 // CC does not accept empty keypackages in addMembers, but
                 // when creating a group we still need to send a commit to backend
                 // to inform we are in the group
@@ -938,8 +923,6 @@ public final class MLSService: MLSServiceInterface {
             } else {
                 try await mlsActionExecutor.addMembers(keyPackages, to: groupID)
             }
-            await conversationEventProcessor.processConversationEvents(events)
-
         } catch {
             logger
                 .warn(
@@ -1009,8 +992,7 @@ public final class MLSService: MLSServiceInterface {
             logger.info("removing members from group (\(groupID.safeForLoggingDescription)), members: \(clientIds)")
             guard !clientIds.isEmpty else { throw MLSRemoveParticipantsError.noClientsToRemove }
             let clientIds = clientIds.compactMap(\.rawValue.utf8Data)
-            let events = try await mlsActionExecutor.removeClients(clientIds, from: groupID)
-            await conversationEventProcessor.processConversationEvents(events)
+            try await mlsActionExecutor.removeClients(clientIds, from: groupID)
         } catch {
             logger
                 .warn(
@@ -1023,11 +1005,35 @@ public final class MLSService: MLSServiceInterface {
     // MARK: - Remove group
 
     public func wipeGroup(_ groupID: MLSGroupID) async throws {
-        logger.info("wiping group (\(groupID.safeForLoggingDescription))")
+        logger.info(
+            "wiping group",
+            attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+        )
+
         do {
-            try await coreCrypto.perform { try await $0.wipeConversation(conversationId: groupID.data) }
+            try await coreCrypto.perform { [self] in
+                guard try await $0.conversationExists(
+                    conversationId: groupID.data
+                ) else {
+                    return logger.info(
+                        "conversation doesn't exist, nothing to wipe..",
+                        attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                    )
+                }
+                try await $0.wipeConversation(
+                    conversationId: groupID.data
+                )
+
+                logger.info(
+                    "wiped group",
+                    attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                )
+            }
         } catch {
-            logger.warn("failed to wipe group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
+            logger.warn(
+                "failed to wipe group \(String(describing: error))",
+                attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+            )
             throw error
         }
     }
@@ -1353,7 +1359,7 @@ public final class MLSService: MLSServiceInterface {
 
             // In case of `WrongEpoch` error, local and remote epochs have diverged so we may have missed events.
             // This ensures we're on the latest state.
-            await syncStatus.recoverWithQuickSync()
+            try await mlsSyncDelegate?.recoverWithIncrementalSync()
 
             guard let conversationInfo = fetchConversationInfo(
                 with: groupID,
@@ -1491,7 +1497,7 @@ public final class MLSService: MLSServiceInterface {
 
             var outOfSyncConversations = [ZMConversation]()
             for conversation in allMLSConversations {
-                guard await isConversationOutOfSync(conversation, coreCrypto: coreCrypto, context: context)
+                guard await self.isConversationOutOfSync(conversation, coreCrypto: coreCrypto, context: context)
                 else { continue }
                 outOfSyncConversations.append(conversation)
             }
@@ -1511,7 +1517,7 @@ public final class MLSService: MLSServiceInterface {
     private func isConversationOutOfSync(
         _ conversation: ZMConversation,
         subgroup: MLSSubgroup? = nil,
-        coreCrypto: CoreCryptoProtocol,
+        coreCrypto: CoreCryptoContextProtocol,
         context: NSManagedObjectContext
     ) async -> Bool {
         var groupID: MLSGroupID?
@@ -1548,7 +1554,7 @@ public final class MLSService: MLSServiceInterface {
         context: NSManagedObjectContext
     ) async throws -> Bool {
         try await coreCrypto.perform {
-            await isConversationOutOfSync(
+            await self.isConversationOutOfSync(
                 conversation,
                 subgroup: subgroup,
                 coreCrypto: $0,
@@ -1619,15 +1625,13 @@ public final class MLSService: MLSServiceInterface {
                 context: context.notificationContext
             )
 
-            let updateEvents: [ZMUpdateEvent]
-
             if let subgroupID {
-                updateEvents = try await mlsActionExecutor.joinGroup(
+                try await mlsActionExecutor.joinGroup(
                     subgroupID,
                     groupInfo: groupInfo
                 )
             } else {
-                updateEvents = try await mlsActionExecutor.joinGroup(
+                try await mlsActionExecutor.joinGroup(
                     parentID,
                     groupInfo: groupInfo
                 )
@@ -1637,7 +1641,6 @@ public final class MLSService: MLSServiceInterface {
                 }
             }
 
-            await conversationEventProcessor.processConversationEvents(updateEvents)
             logger.info("success: joined group with external commit (\(logInfo))")
 
         } catch {
@@ -1856,13 +1859,9 @@ public final class MLSService: MLSServiceInterface {
     private func internalCommitPendingProposals(in groupID: MLSGroupID) async throws {
         do {
             logger.info("committing pending proposals in: \(groupID.safeForLoggingDescription)")
-            let events = try await mlsActionExecutor.commitPendingProposals(in: groupID)
-            await conversationEventProcessor.processConversationEvents(events)
+            try await mlsActionExecutor.commitPendingProposals(in: groupID)
             clearPendingProposalCommitDate(for: groupID)
             delegate?.mlsServiceDidCommitPendingProposal(for: groupID)
-        } catch CommitError.noPendingProposals {
-            logger.info("no proposals to commit in group (\(groupID.safeForLoggingDescription))...")
-            clearPendingProposalCommitDate(for: groupID)
         } catch {
             logger
                 .info(
@@ -1885,6 +1884,50 @@ public final class MLSService: MLSServiceInterface {
 
     // MARK: - Error recovery
 
+    enum MLSRetryError: Error, Equatable {
+        case retryLimitReached
+        case nonRecoverableError(_ reason: String)
+    }
+
+    enum RecoveryStrategy: Equatable {
+
+        /// Perform a quick sync, then retry the action in its entirety.
+        ///
+        /// Core Crypto can not automatically recover by itself. It needs
+        /// to process incoming handshake messages then generate a new commit.
+
+        case retryAfterQuickSync
+
+        /// Repair (re-join) the group and retry the action
+        ///
+        /// We may have missed a few commits so we will rejoin the group
+        /// and try again.
+
+        case retryAfterRepairingGroup
+
+        /// Abort the action and inform the user.
+        ///
+        /// There is no way to automatically recover from the error.
+
+        case giveUp
+
+        init(from reason: String) {
+            if let error = try? MLSAPIError(from: reason) {
+                switch error {
+                case .mlsClientMismatch, .mlsCommitMissingReferences:
+                    self = .retryAfterQuickSync
+                case .mlsStaleMessage:
+                    self = .retryAfterRepairingGroup
+                default:
+                    self = .giveUp
+                }
+            } else {
+                self = .giveUp
+            }
+        }
+
+    }
+
     private func retryOnCommitFailure(
         for groupID: MLSGroupID,
         operation: @escaping () async throws -> Void,
@@ -1893,53 +1936,47 @@ public final class MLSService: MLSServiceInterface {
 
         do {
             try await operation()
+        } catch let CoreCryptoError.Mls(.MessageRejected(reason: reason)) {
+            switch RecoveryStrategy(from: reason) {
+            case .retryAfterQuickSync:
+                logger.warn(
+                    "failed to send commit, syncing then retrying operation...",
+                    attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                )
+                try await mlsSyncDelegate?.recoverWithIncrementalSync()
+                logger.info(
+                    "sync finished, retrying operation...",
+                    attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                )
 
-        } catch CommitError.failedToSendCommit(recovery: .commitPendingProposalsAfterQuickSync, _) {
-            logger.warn("failed to send commit, syncing then committing pending proposals...")
-            await syncStatus.recoverWithQuickSync()
-            logger.info("sync finished, committing pending proposals...")
-            try await commitPendingProposals(in: groupID)
+                guard retryCount <= maxRetryAttempts else {
+                    throw MLSRetryError.retryLimitReached
+                }
 
-        } catch CommitError.failedToSendCommit(recovery: .retryAfterQuickSync, cause: let error) {
-            logger.warn("failed to send commit, syncing then retrying operation...")
-            await syncStatus.recoverWithQuickSync()
-            logger.info("sync finished, retying operation...")
+                var currentRetryCount = retryCount
+                currentRetryCount += 1
 
-            guard retryCount <= maxRetryAttempts else {
-                throw error
+                try await retryOnCommitFailure(for: groupID, operation: operation, retryCount: currentRetryCount)
+
+            case .retryAfterRepairingGroup:
+                logger.warn(
+                    "failed to send commit, repairing group then retrying operation...",
+                    attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                )
+                await fetchAndRepairGroup(with: groupID)
+                logger.info(
+                    "repair finished, retrying operation...",
+                    attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                )
+                try await operation()
+
+            case .giveUp:
+                logger.warn(
+                    "failed to send commit, giving up...",
+                    attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                )
+                throw MLSRetryError.nonRecoverableError(reason)
             }
-
-            var currentRetryCount = retryCount
-            currentRetryCount += 1
-
-            try await retryOnCommitFailure(for: groupID, operation: operation, retryCount: currentRetryCount)
-
-        } catch CommitError.failedToSendCommit(recovery: .retryAfterRepairingGroup, _) {
-            logger.warn("failed to send commit, repairing group then retrying operation...")
-            await fetchAndRepairGroup(with: groupID)
-            logger.info("repair finished, retrying operation...")
-            try await operation()
-
-        } catch CommitError.failedToSendCommit(recovery: .giveUp, cause: let error) {
-            logger.warn("failed to send commit, giving up...")
-            throw error
-
-        } catch ExternalCommitError.failedToSendCommit(recovery: .retry, cause: let error) {
-            logger.warn("failed to send external commit, retrying operation...")
-
-            guard retryCount <= maxRetryAttempts else {
-                throw error
-            }
-
-            var currentRetryCount = retryCount
-            currentRetryCount += 1
-
-            try await retryOnCommitFailure(for: groupID, operation: operation, retryCount: currentRetryCount)
-
-        } catch ExternalCommitError.failedToSendCommit(recovery: .giveUp, cause: let error) {
-            logger.warn("failed to send external commit, giving up...")
-            throw error
-
         }
     }
 
@@ -2201,10 +2238,18 @@ public final class MLSService: MLSServiceInterface {
 
     // MARK: - Epoch
 
+    public func startObservingEpochs() {
+        Task {
+            await coreCryptoProvider.registerEpochObserver(self)
+        }
+    }
+
     public func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
-        decryptionService.onEpochChanged()
-            .merge(with: mlsActionExecutor.onEpochChanged())
-            .eraseToAnyPublisher()
+        onEpochChangedSubject.eraseToAnyPublisher()
+    }
+
+    public func epochChanged(conversationId: Data, epoch: UInt64) async throws {
+        onEpochChangedSubject.send(MLSGroupID(conversationId))
     }
 
     // MARK: - Generate new epoch
@@ -2293,6 +2338,8 @@ public final class MLSService: MLSServiceInterface {
     }
 }
 
+extension MLSService: EpochObserver {}
+
 // MARK: - Helper types
 
 public struct MLSUser: Equatable {
@@ -2352,7 +2399,7 @@ private extension TimeInterval {
 }
 
 // sourcery: AutoMockable
-public protocol ConversationEventProcessorProtocol {
+public protocol LegacyConversationEventProcessorProtocol {
 
     /// Decodes event's payload and transform it to local model
     func processConversationEvents(_ events: [ZMUpdateEvent]) async

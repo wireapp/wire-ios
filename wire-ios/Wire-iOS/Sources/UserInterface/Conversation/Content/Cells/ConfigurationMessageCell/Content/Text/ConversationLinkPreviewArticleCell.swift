@@ -21,13 +21,19 @@ import WireDataModel
 
 final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell, ContextMenuDelegate {
 
-    struct Configuration {
-        let textMessageData: TextMessageData
+    struct Configuration: Equatable {
+        var textMessageData: TextMessageData
         let showImage: Bool
-        let message: ZMConversationMessage
-        var isObfuscated: Bool {
-            message.isObfuscated
+        var message: ZMConversationMessage
+        var isObfuscated: Bool
+
+        static func == (lhs: Configuration, rhs: Configuration) -> Bool {
+            lhs.message == rhs.message &&
+                lhs.showImage == rhs.showImage &&
+                lhs.isObfuscated == rhs.isObfuscated &&
+                lhs.textMessageData.messageText == rhs.textMessageData.messageText
         }
+
     }
 
     private let articleView = ArticleView(withImagePlaceholder: true)
@@ -101,9 +107,17 @@ extension ConversationLinkPreviewArticleCell: LinkViewDelegate {
 final class ConversationLinkPreviewArticleCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationLinkPreviewArticleCell
 
-    let configuration: View.Configuration
+    var configuration: View.Configuration
 
-    weak var message: ZMConversationMessage?
+    weak var message: ZMConversationMessage? {
+        didSet {
+            if let message {
+                configuration.message = message
+                configuration.textMessageData = message.textMessageData!
+            }
+        }
+    }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
@@ -121,7 +135,13 @@ final class ConversationLinkPreviewArticleCellDescription: ConversationMessageCe
 
     init(message: ZMConversationMessage, data: TextMessageData) {
         let showImage = data.linkPreviewHasImage
-        self.configuration = View.Configuration(textMessageData: data, showImage: showImage, message: message)
+        self.configuration = View
+            .Configuration(
+                textMessageData: data,
+                showImage: showImage,
+                message: message,
+                isObfuscated: message.isObfuscated
+            )
         self.accessibilityLabel = L10n.Accessibility.ConversationSearch.LinkMessage.description
     }
 }

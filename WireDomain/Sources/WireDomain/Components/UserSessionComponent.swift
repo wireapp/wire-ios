@@ -123,8 +123,8 @@ public final class UserSessionComponent {
 
     public func clientSessionComponent(
         clientID: String,
-        onSelfClientInvalidated: @escaping () async -> Void,
-        onProcessedCallEvent: @escaping (CallEventInfo) -> Void
+        processorHandlers: ClientSessionComponent.ProcessorHandlers,
+        onAuthenticationFailure: @escaping @Sendable () -> Void
     ) -> ClientSessionComponent {
         ClientSessionComponent(
             selfUserID: selfUserID,
@@ -142,8 +142,8 @@ public final class UserSessionComponent {
             mlsService: mlsService,
             mlsDecryptionService: mlsDecryptionService,
             proteusService: proteusService,
-            onSelfClientInvalidated: onSelfClientInvalidated,
-            onProcessedCallEvent: onProcessedCallEvent
+            processorHandlers: processorHandlers,
+            onAuthenticationFailure: onAuthenticationFailure
         )
     }
 

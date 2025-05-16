@@ -88,7 +88,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                     decryptedEvents.append(.conversation(.proteusMessageAdd(decryptedEventData)))
                 } catch let error as ProteusService.DecryptionError {
                     WireLogger.updateEvent.error(
-                        "failed to decrypt proteus event payload, dropping: \(error.localizedDescription)",
+                        "failed to decrypt proteus event payload, dropping: \(String(describing: error))",
                         attributes: logAttributes
                     )
 

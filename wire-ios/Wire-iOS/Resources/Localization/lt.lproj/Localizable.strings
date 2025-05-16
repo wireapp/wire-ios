@@ -1280,13 +1280,8 @@
 // Open in
 "self.settings.external_apps.header" = "Atverti naudojant";
 
-"self.settings.link_options.twitter.title" = "„Tweets“";
 "self.settings.link_options.maps.title" = "Vieta";
 "self.settings.link_options.browser.title" = "Naršyklė";
-
-"open_link.twitter.option.default" = "Naršyklė / „Twitter“";
-"open_link.twitter.option.tweetbot" = "„Tweetbot“";
-"open_link.twitter.option.twitterrific" = "„Twitterrific“";
 
 "open_link.maps.option.apple" = "Žemėlapiai";
 "open_link.maps.option.google" = "„Google Maps“";
@@ -1308,7 +1303,6 @@
 "self.settings.developer_options.title" = "Kūrėjo nustatymai";
 "self.settings.developer_options.loggin.title" = "Parinktys";
 "self.settings.developer_options.database_statistics.title" = "Database Statistics";
-"self.settings.apns_logging.title" = "„APNS“ registravimas";
 
 // Privacy (visibility) options
 "self.settings.options_menu.title" = "Parinktys";

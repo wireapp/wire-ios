@@ -15,18 +15,39 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+
+import Combine
 import Foundation
 import WireDataModel
 import WireDomain
+import WireFoundation
 import WireLogging
 import WireUtilities
+
+// sourcery: AutoMockable
+protocol SyncAgentProtocol {
+
+    var isSyncV2Enabled: Bool { get }
+    var isLive: Bool { get }
+    var syncStatePublisher: AnyPublisher<SyncState, Never> { get }
+
+}
 
 // TODO: [WPB-15440] remove objc interoperability.
 // To temporarily bridge this to legacy code, this inherits from NSObject
 // and exposes a method to objc. Once we integrate the new incremental
 // sync, we won't need to bridge to legacy code and remove the inheritance.
 
-final class SyncAgent: NSObject {
+final class SyncAgent: NSObject, SyncAgentProtocol {
+
+    var isSyncV2Enabled: Bool {
+        journal[.isSyncV2Enabled]
+    }
+
+    private let syncStateSubject: CurrentValueSubject<SyncState, Never>
+    var syncStatePublisher: AnyPublisher<SyncState, Never> {
+        syncStateSubject.eraseToAnyPublisher()
+    }
 
     weak var delegate: SyncAgentDelegate?
 
@@ -35,6 +56,7 @@ final class SyncAgent: NSObject {
     private let initialSyncProvider: any InitialSyncProvider
     private let incrementalSyncProvider: any IncrementalSyncProvider
     private let legacySyncStatus: any SyncStatusProtocol
+    private let coreCryptoProvider: any CoreCryptoProviderProtocol
 
     private let incrementalSyncTaskManager = NonReentrantTaskManager()
     private var incrementalSyncToken: IncrementalSync.Token?
@@ -43,20 +65,32 @@ final class SyncAgent: NSObject {
         lastUpdateEventIDRepository.fetchLastEventID() != nil
     }
 
+    var isLive: Bool {
+        if isSyncV2Enabled {
+            syncStateSubject.value == .liveSyncing
+        } else {
+            legacySyncStatus.isLive
+        }
+    }
+
     // MARK: - Life cycle
 
     init(
         journal: Journal,
         lastUpdateEventIDRepository: any LastEventIDRepositoryInterface,
+        coreCryptoProvider: any CoreCryptoProviderProtocol,
         initialSyncProvider: any InitialSyncProvider,
         incrementalSyncProvider: any IncrementalSyncProvider,
-        legacySyncStatus: any SyncStatusProtocol
+        legacySyncStatus: any SyncStatusProtocol,
+        syncStateSubject: CurrentValueSubject<SyncState, Never>
     ) {
         self.journal = journal
         self.lastUpdateEventIDRepository = lastUpdateEventIDRepository
+        self.coreCryptoProvider = coreCryptoProvider
         self.initialSyncProvider = initialSyncProvider
         self.incrementalSyncProvider = incrementalSyncProvider
         self.legacySyncStatus = legacySyncStatus
+        self.syncStateSubject = syncStateSubject
         super.init()
     }
 
@@ -71,8 +105,12 @@ final class SyncAgent: NSObject {
 
     func resume() {
         Task {
+            let retrier = BackoffRetrier()
+
             do {
-                try await performSync()
+                try await retrier.retry { [self] in
+                    try await performSync()
+                }
             } catch {
                 delegate?.syncAgentDidFailSyncing(
                     self,
@@ -85,11 +123,15 @@ final class SyncAgent: NSObject {
     /// Suspend any ongoing sync tasks.
 
     func suspend() {
-        WireLogger.sync.debug("suspending sync")
         Task {
-            await incrementalSyncToken?.suspend()
-            incrementalSyncToken = nil
+            await suspend()
         }
+    }
+
+    private func suspend() async {
+        WireLogger.sync.debug("suspending sync")
+        await incrementalSyncToken?.suspend()
+        incrementalSyncToken = nil
     }
 
     /// Performs the appropriate sync depending in the local state.
@@ -108,7 +150,7 @@ final class SyncAgent: NSObject {
     /// Perform an initial sync.
 
     func performInitialSync() async throws {
-        if journal[.isSyncV2Enabled] {
+        if isSyncV2Enabled {
             do {
                 delegate?.syncAgentDidStartInitialSync(self)
                 try await initialSyncProvider.provideInitialSync().perform(skipPullingLastUpdateEventID: false)
@@ -129,7 +171,7 @@ final class SyncAgent: NSObject {
     /// Perform a resource sync.
 
     func performResourceSync() async throws {
-        if journal[.isSyncV2Enabled] {
+        if isSyncV2Enabled {
             do {
                 delegate?.syncAgentDidStartInitialSync(self)
                 WireLogger.sync.debug("did start new resource sync")
@@ -151,7 +193,7 @@ final class SyncAgent: NSObject {
     /// Perform an incremental sync.
 
     func performIncrementalSync() async throws {
-        if journal[.isSyncV2Enabled] {
+        if isSyncV2Enabled {
             guard incrementalSyncToken == nil else {
                 WireLogger.sync.info("incremental sync already running...")
                 return
@@ -162,7 +204,7 @@ final class SyncAgent: NSObject {
                     guard let self else { return }
                     delegate?.syncAgentDidStartIncrementalSync(self)
                     incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync().perform()
-                    delegate?.syncAgentDidFinishIncrementalSync(self)
+                    delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: false)
                 }
             } catch {
                 WireLogger.sync.error("failed to perform new incremental sync: \(String(describing: error))")
@@ -170,6 +212,35 @@ final class SyncAgent: NSObject {
             }
         } else {
             await legacySyncStatus.performQuickSync()
+        }
+    }
+
+}
+
+// MARK: - MLS sync delegate
+
+extension SyncAgent: MLSSyncDelegate {
+
+    func recoverWithIncrementalSync() async throws {
+        WireLogger.sync.info("performing recovery incremental sync")
+
+        if isSyncV2Enabled {
+            // Recovery means to restart any existing sync.
+            await suspend()
+
+            do {
+                try await incrementalSyncTaskManager.performIfNeeded { [weak self] in
+                    guard let self else { return }
+                    delegate?.syncAgentDidStartIncrementalSync(self)
+                    incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync().perform()
+                    delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: true)
+                }
+            } catch {
+                WireLogger.sync.error("failed to perform recovery incremental sync: \(String(describing: error))")
+                throw error
+            }
+        } else {
+            await legacySyncStatus.recoverWithQuickSync()
         }
     }
 

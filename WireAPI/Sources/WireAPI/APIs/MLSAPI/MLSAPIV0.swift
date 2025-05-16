@@ -38,4 +38,8 @@ class MLSAPIV0: MLSAPI, VersionedAPI {
         throw MLSAPIError.unsupportedEndpointForAPIVersion
     }
 
+    func postCommitBundle(_ bundle: CommitBundle) async throws -> [UpdateEvent] {
+        throw MLSAPIError.unsupportedEndpointForAPIVersion
+    }
+
 }

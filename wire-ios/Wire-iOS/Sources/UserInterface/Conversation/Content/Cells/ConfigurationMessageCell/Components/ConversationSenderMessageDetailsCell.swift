@@ -40,7 +40,7 @@ enum TeamRoleIndicator {
 final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
 
     struct Configuration {
-        let user: UserType
+        var sender: UserType
         let indicator: Indicator?
         let teamRoleIndicator: TeamRoleIndicator?
     }
@@ -116,7 +116,7 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
     // MARK: - configure
 
     func configure(with object: Configuration, animated: Bool) {
-        let user = object.user
+        let user = object.sender
         avatar.user = user
         availabilityIndicatorView.availability = user.availability.mapToAccountImageAvailability()
 
@@ -177,9 +177,10 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
     }
 
     private func configureAuthorLabel(object: Configuration) {
-        let textColor: UIColor = object.user.isServiceUser ? SemanticColors.Label.textDefault : object.user.accentColor
+        let sender = object.sender
+        let textColor: UIColor = sender.isServiceUser ? SemanticColors.Label.textDefault : sender.accentColor
         let attributedString = NSMutableAttributedString(
-            string: object.user.name ?? L10n.Localizable.Profile.Details.Title.unavailable,
+            string: sender.name ?? L10n.Localizable.Profile.Details.Title.unavailable,
             attributes: [
                 .foregroundColor: textColor,
                 .font: UIFont.mediumSemiboldFont
@@ -278,9 +279,16 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
 
     typealias View = ConversationSenderMessageDetailsCell
     typealias ConversationAnnouncement = L10n.Accessibility.ConversationAnnouncement
-    let configuration: View.Configuration
+    var configuration: View.Configuration
 
-    var message: ZMConversationMessage?
+    var message: ZMConversationMessage? {
+        didSet {
+            if let sender = message?.senderUser {
+                configuration.sender = sender
+            }
+        }
+    }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
@@ -296,29 +304,32 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
     ///   - timestamp: The given timestamp of the message
     init(
         sender: UserType,
+        selfUser: any UserType,
         message: ZMConversationMessage
     ) {
         self.message = message
-
-        let teamRoleIndicator = sender.teamRoleIndicator()
+        let teamRoleIndicator = sender.teamRoleIndicator(selfUser: selfUser)
         let indicator: Indicator? = if message.isDeletion {
             .deleted
         } else {
             .none
         }
         self.configuration = View.Configuration(
-            user: sender,
+            sender: sender,
             indicator: indicator,
             teamRoleIndicator: teamRoleIndicator
         )
 
-        setupAccessibility(sender)
+        setupAccessibility(sender, selfUser: selfUser)
         self.actionController = nil
     }
 
     // MARK: - Accessibility
 
-    private func setupAccessibility(_ sender: UserType) {
+    private func setupAccessibility(
+        _ sender: UserType,
+        selfUser: (any UserType)?
+    ) {
         guard let message, let senderName = sender.name else {
             accessibilityLabel = nil
             return
@@ -329,7 +340,8 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
             if message.isText, let textMessageData = message.textMessageData {
                 let messageText = NSAttributedString.format(
                     message: textMessageData,
-                    isObfuscated: message.isObfuscated
+                    isObfuscated: message.isObfuscated,
+                    accentColor: (selfUser?.zmAccentColor ?? .default).accentColor
                 )
                 accessibilityLabel = ConversationAnnouncement.EditedMessage.description(senderName) + messageText.string
             } else {
@@ -343,7 +355,8 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
 }
 
 private extension UserType {
-    func teamRoleIndicator(with provider: SelfUserProvider? = SelfUser.provider) -> TeamRoleIndicator? {
+
+    func teamRoleIndicator(selfUser: any UserType) -> TeamRoleIndicator? {
         if isServiceUser {
             .service
 
@@ -353,9 +366,7 @@ private extension UserType {
         } else if isFederated {
             .federated
 
-        } else if !isTeamMember,
-                  let selfUser = provider?.providedSelfUser,
-                  selfUser.isTeamMember {
+        } else if !isTeamMember, selfUser.isTeamMember {
             .guest
         } else {
             nil
