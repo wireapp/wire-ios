@@ -236,6 +236,11 @@ extension ConversationMessageCellDescription {
         cell.cellView.delegate = delegate
         cell.cellView.message = message
         cell.cellView.actionController = actionController
+        if let message {
+            // sometimes action controller still has background context message
+            // so re-set message from main context to avoid crash
+            actionController?.message = message
+        }
         cell.accessibilityCustomActions = actionController?.makeAccessibilityActions()
         return cell
     }

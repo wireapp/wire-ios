@@ -16,7 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum WireCellsFileUploadError: Error {
-    case fileTooLarge(fileSize: Int, maxSize: Int)
-    case genericError(any Error)
+package struct WireCellsPreCheckResultDTO: Equatable, Hashable, Sendable {
+    package let fileExists: Bool
+    package let nextPath: String?
+
+    package init(fileExists: Bool = false, nextPath: String? = nil) {
+        self.fileExists = fileExists
+        self.nextPath = nextPath
+    }
 }
