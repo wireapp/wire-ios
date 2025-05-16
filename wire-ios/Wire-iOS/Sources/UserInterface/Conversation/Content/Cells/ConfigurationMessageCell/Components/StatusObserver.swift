@@ -33,10 +33,13 @@ final class StatusObserver: NSObject, ZMMessageObserver, StatusObserverProtocol 
     }
 
     init(
-        messageID: NSManagedObjectID,
+        messageID: Any,
         viewContext: NSManagedObjectContext
     ) {
         super.init()
+        guard let messageID = messageID as? NSManagedObjectID else {
+            return
+        }
         viewContext.perform {
             let message = try! viewContext.existingObject(with: messageID) as! ZMMessage
             self.send(message)

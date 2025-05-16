@@ -33,10 +33,13 @@ final class SenderObserver: NSObject, UserObserving, SenderObserverProtocol {
     }
 
     init(
-        messageID: NSManagedObjectID,
+        messageID: Any,
         viewContext: NSManagedObjectContext
     ) {
         super.init()
+        guard let messageID = messageID as? NSManagedObjectID else {
+            return
+        }
         viewContext.perform {
             let message = try! viewContext.existingObject(with: messageID) as! ZMMessage
             self.author = message.senderName

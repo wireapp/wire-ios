@@ -30,17 +30,17 @@ struct MessageViewModelFactoryImpl: MessageViewModelFactory {
     }
 
     func makeTextMessageViewModel(
-        message: ZMMessage,
+        message: ConversationMessage,
         selfUser: any UserType,
         accentColor: UIColor,
         shouldShowSender: Bool,
         shouldShowStatus: Bool
     ) -> TextMessageViewModel {
         let context = userSession.contextProvider.viewContext
-        let messagedObjectID = message.objectID
+        let messagedObjectID = message.objectId
 
         var senderViewModelWrapper: MessageSenderViewModelWrapper? = .init(state: .none)
-        if shouldShowSender, let sender = message.sender {
+        if shouldShowSender, let sender = message.senderUser {
             senderViewModelWrapper = MessageSenderViewModelWrapper.init(state: .some(
                 MessageSenderViewModel(
                     avatarViewModel: AvatarViewModel(
@@ -109,6 +109,23 @@ extension UserType {
 
 }
 
+extension ZMConversationMessage {
+    func toUIModel() -> MessageModel {
+        .init(
+            nonce: nonce,
+            sender: senderUser?.toUIModel(),
+            systemMessageType: systemMessageData?.systemMessageType.toUIModel(),
+            updatedAt: updatedAt,
+            receivedAt: serverTimestamp,
+            expirationReason: (self as? SwiftConversationMessage)?.expirationReason?.toUIModel(),
+            conversationType: conversationLike?.conversationType.toUIModel(),
+            readReceiptsCount: readReceipts.count,
+            deliveryState: deliveryState.toUIModel(),
+            isSent: isSent
+        )
+    }
+}
+
 extension ZMMessage {
     func toUIModel() -> MessageModel {
         .init(
@@ -159,6 +176,17 @@ extension ExpirationReason {
 
 extension ZMConversationType {
     func toUIModel() -> ConversationTypeModel? {
-        .init(rawValue: Int(rawValue))
+        switch self {
+        case .invalid:
+            return nil
+        case .`self`:
+            return .`self`
+        case .group:
+            return .group
+        case .oneOnOne:
+            return .oneOnOne
+        case .connection:
+            return .connection
+        }
     }
 }

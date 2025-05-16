@@ -332,6 +332,7 @@ class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage
 
     // MARK: - ZMConversationMessage
 
+    var objectId: Any { nonce ?? UUID() }
     var nonce: UUID? = UUID()
     var isEncrypted: Bool = false
     var isPlainText: Bool = true

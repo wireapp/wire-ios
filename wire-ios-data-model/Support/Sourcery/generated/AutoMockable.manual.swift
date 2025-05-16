@@ -37,6 +37,11 @@ import WireCoreCrypto
 // It's because of this error that we need to create this mock manually:
 // Cannot declare conformance to 'NSObjectProtocol' in Swift; 'MockZMConversationMessage' should inherit 'NSObject' instead
 public class MockZMConversationMessage: NSObject, ZMConversationMessage {
+    
+    // to satisfy abstraction
+    public var objectId: Any {
+        nonce ?? UUID()
+    }
 
     // MARK: - nonce
 

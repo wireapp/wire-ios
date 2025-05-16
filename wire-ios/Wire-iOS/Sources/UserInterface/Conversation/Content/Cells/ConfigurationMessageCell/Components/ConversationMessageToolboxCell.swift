@@ -140,7 +140,7 @@ final class ConversationMessageToolboxCellDescription: ConversationMessageCellDe
 
     init(message: ZMConversationMessage, isRedundant: Bool) {
         self.message = message
-        let uiMessage = (message as! ZMMessage).toUIModel()
+        let uiMessage = message.toUIModel()
         self.configuration = View.Configuration(
             message: uiMessage,
             deliveryState: uiMessage.deliveryState,

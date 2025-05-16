@@ -24,9 +24,8 @@ import WireSystem
 final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellDescription {
     typealias View = BurstTimestampSenderMessageCell
 
-    @MainActor var conversationCellModel: ConversationCellModel?
-
-    @MainActor
+    var conversationCellModel: ConversationCellModel?
+    
     func makeConversationCellModel() -> ConversationCellModel {
         let now = currentDateProvider.now
         let calendar = Calendar.current
@@ -121,6 +120,7 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
     ) {
         self.configuration = configuration
         self.currentDateProvider = currentDateProvider
+        conversationCellModel = makeConversationCellModel()
     }
 
     convenience init(
@@ -158,7 +158,7 @@ final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
 
 }
 
-@MainActor private let todayDateFormatter = {
+private let todayDateFormatter = {
     let sameDayDateFormatter = DateFormatter()
     sameDayDateFormatter.timeStyle = .none
     sameDayDateFormatter.dateStyle = .medium
@@ -166,7 +166,7 @@ final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
     return sameDayDateFormatter
 }()
 
-@MainActor private let monthAndDayDateFormatter = {
+private let monthAndDayDateFormatter = {
     let dateFormatter = DateFormatter()
     dateFormatter.dateFormat = DateFormatter.dateFormat(
         fromTemplate: "MMM d",
@@ -176,7 +176,7 @@ final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
     return dateFormatter
 }()
 
-@MainActor private let monthDayAndYearDateFormatter = {
+private let monthDayAndYearDateFormatter = {
     let dateFormatter = DateFormatter()
     dateFormatter.dateFormat = DateFormatter.dateFormat(
         fromTemplate: "MMM d, yyyy",
@@ -186,7 +186,7 @@ final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
     return dateFormatter
 }()
 
-@MainActor private let weekdayAndDateDateFormatter = {
+private let weekdayAndDateDateFormatter = {
     let dateFormatter = DateFormatter()
     dateFormatter.dateFormat = DateFormatter.dateFormat(
         fromTemplate: "EEEEdMMM",
@@ -196,7 +196,7 @@ final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
     return dateFormatter
 }()
 
-@MainActor private let weekdayDateAndYearDateFormatter = {
+private let weekdayDateAndYearDateFormatter = {
     let dateFormatter = DateFormatter()
     dateFormatter.dateFormat = DateFormatter.dateFormat(
         fromTemplate: "EEEEdMMMYYYY",

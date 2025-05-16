@@ -148,7 +148,6 @@ protocol ConversationMessageCellDescription: AnyObject {
     /// In order to allow incremental migration to the new approach, the model will be part of the cell description for
     /// now.
     var conversationCellModel: ConversationCellModel? { get set }
-//    func makeConversationCellModel() -> ConversationCellModel
 
     /// The top margin is used to configure the spacing between the current and the previous cell.
     var topMargin: CGFloat { get set }

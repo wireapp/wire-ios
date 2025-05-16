@@ -69,6 +69,7 @@ public final class MessageStatusViewModel: ObservableObject {
     private static func updateState(model: MessageModel) -> State {
         let datasource = MessageToolboxDataSource(message: model)
         switch datasource.content {
+        case .none: return .none
         case let .sendFailure(string):
             return .sendFailure(string)
         case let .callList(string):

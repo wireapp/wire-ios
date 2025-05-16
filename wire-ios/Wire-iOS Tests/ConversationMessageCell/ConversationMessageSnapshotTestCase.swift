@@ -185,7 +185,8 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
             userSession: userSession,
             useInvertedIndices: false,
             contentWidth: width,
-            userDefaults: mockUserDefaults
+            userDefaults: mockUserDefaults,
+            factory: MessageViewModelFactoryImpl(userSession: userSession)
         )
         let views = section.cellDescriptionsForTesting.map { $0.instance.makeView() }
         let stackView = UIStackView(arrangedSubviews: views)

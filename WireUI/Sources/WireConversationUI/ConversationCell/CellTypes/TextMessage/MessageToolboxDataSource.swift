@@ -76,7 +76,7 @@ public final class MessageToolboxDataSource {
     }
 
     /// The content to display for the message.
-    public private(set) var content: MessageToolboxContent
+    public private(set) var content: MessageToolboxContent?
 
     // MARK: - Formatting Properties
 
@@ -87,8 +87,7 @@ public final class MessageToolboxDataSource {
     /// Creates a toolbox data source for the given message.
     public init(message: MessageModel) {
         self.message = message
-        self.content = .details(timestamp: "", status: nil, countdown: "")
-        _ = shouldUpdateContent()
+        self.content = updateContent()
     }
 
     // MARK: - Content
@@ -96,33 +95,26 @@ public final class MessageToolboxDataSource {
     /// Updates the contents of the message toolbox.
     /// - parameter widthConstraint: The width available to rend the toolbox contents.
     /// - Returns: A boolean to either update the content of the message toolbox or not
-    public func shouldUpdateContent() -> Bool {
-        // Compute the state
-        let previousContent = content
-
-        // Determine the content by priority
-
+    public func updateContent() -> MessageToolboxContent? {
+        
         // [WPB-6988] removed performed call
         if message.systemMessageType == .performedCall {
-            return false
+            return nil
         }
         // 1b) Call list for missed calls
         else if message.systemMessageType == .missedCall {
-            content = .callList(makeCallList())
+            return .callList(makeCallList())
         }
         // 2) Failed to send
         else if let errorMessage = MessageErrorHelper.errorMessage(message) {
-            content = .sendFailure(errorMessage)
+            return .sendFailure(errorMessage)
         }
 
         // 3) Timestamp
         else {
             let (timestamp, status, countdown) = makeDetailsString()
-            content = .details(timestamp: timestamp, status: status, countdown: countdown)
+            return .details(timestamp: timestamp, status: status, countdown: countdown)
         }
-
-        // Only perform the changes if the content did change.
-        return previousContent != content
     }
 
     // MARK: - Details Text

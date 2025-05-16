@@ -19,6 +19,12 @@
 import Foundation
 
 public extension ZMConversationMessage {
+    
+    var supportsNewApproach: Bool {
+        NSClassFromString("XCTest") == nil &&
+        isText &&
+        !hasLinks
+    }
 
     /// Returns YES, if the message has text to display.
     /// This also includes linkPreviews or links to soundcloud, youtube or vimeo

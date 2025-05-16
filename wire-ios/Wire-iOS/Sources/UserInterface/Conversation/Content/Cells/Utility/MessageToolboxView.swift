@@ -312,12 +312,8 @@ final class MessageToolboxView: UIView {
     private func reloadContent(animated: Bool) {
         guard let dataSource else { return }
 
-        // Do not reload the content if it didn't change.
-        guard dataSource.shouldUpdateContent() else {
-            return
-        }
-
-        switch dataSource.content {
+        switch dataSource.updateContent() {
+        case .none: break
 
         case let .callList(callListString):
             detailsLabel.text = callListString

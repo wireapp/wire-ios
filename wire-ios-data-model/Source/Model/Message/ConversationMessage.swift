@@ -47,6 +47,9 @@ public protocol ReadReceipt {
 @objc
 public protocol ZMConversationMessage: NSObjectProtocol {
     typealias MessageID = UUID
+    
+    // Any as type eraser to hide NSManagedObjectID behind it
+    var objectId: Any { get }
 
     /// Unique identifier for the message
     var nonce: MessageID? { get }
@@ -226,6 +229,11 @@ public extension ZMMessage {
 // MARK: - Conversation Message protocol implementation
 
 extension ZMMessage: ZMConversationMessage {
+    
+    public var objectId: Any {
+        objectID
+    }
+
     public var conversationLike: ConversationLike? {
         conversation
     }

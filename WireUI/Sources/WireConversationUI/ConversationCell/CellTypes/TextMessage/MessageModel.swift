@@ -56,9 +56,45 @@ public struct MessageModel: Equatable {
 }
 
 public enum SystemMessageTypeModel: Int, Equatable {
-    case performedCall
+    case invalid = 0
+    case participantsAdded
+    case failedToAddParticipants
+    case participantsRemoved
+    case conversationNameChanged
+    case connectionRequest // deprecated
+    case connectionUpdate  // deprecated
     case missedCall
+    case newClient
+    case ignoredClient
+    case conversationIsSecure
+    case potentialGap
+    case decryptionFailed
+    case decryptionFailedRemoteIdentityChanged
+    case newConversation
+    case reactivatedDevice // deprecated: Devices can't be reactivated any longer
+    case usingNewDevice    // deprecated: We don't need inform users about new devices any longer
     case messageDeletedForEveryone
+    case performedCall     // deprecated: [WPB-6988] we don't show end call messages any longer.
+    case teamMemberLeave
+    case messageTimerUpdate
+    case readReceiptsEnabled
+    case readReceiptsDisabled
+    case readReceiptsOn
+    case legalHoldEnabled
+    case legalHoldDisabled
+    case sessionReset
+    case decryptionFailedResolved
+    case domainsStoppedFederating
+    case conversationIsVerified
+    case conversationIsDegraded
+    case mlsMigrationFinalized
+    case mlsMigrationJoinAfterwards
+    case mlsMigrationOngoingCall
+    case mlsMigrationStarted
+    case mlsMigrationUpdateVersion
+    case mlsMigrationPotentialGap
+    case mlsNotSupportedSelfUser
+    case mlsNotSupportedOtherUser
 }
 
 public enum DeliveryStateModel: Int, Sendable, Equatable, CaseIterable {

@@ -26,9 +26,9 @@ struct MessageStatusView: View {
         switch model.state {
         case .none:
             EmptyView() // when no need to show status view
-        case let .sendFailure(_):
+        case .sendFailure(_):
             EmptyView() // will be implemented later
-        case let .callList(_):
+        case .callList(_):
             EmptyView() // will be implemented later
         case let .details(statusDetails):
             MessageToolboxView(

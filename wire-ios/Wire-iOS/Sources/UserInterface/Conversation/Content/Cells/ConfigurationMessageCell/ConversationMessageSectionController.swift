@@ -25,7 +25,7 @@ import WireDataModel
 
 protocol MessageViewModelFactory {
     func makeTextMessageViewModel(
-        message: ZMMessage,
+        message: ConversationMessage,
         selfUser: any UserType,
         accentColor: UIColor,
         shouldShowSender: Bool,
@@ -97,7 +97,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         didSet {
             updateDelegates()
             changeObservers.removeAll()
-            if !message.isText {
+            if !message.supportsNewApproach {
                 startObservingChanges(for: message)
             }
         }
@@ -434,13 +434,12 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
         let isToolboxVisible = isToolboxVisible(in: context)
         let isSenderVisible = shouldShowSenderDetails(in: context)
-
-        if message.isText {
+        if message.supportsNewApproach {
             self.cellDescriptions = [
                 NewTextCellDescription(
                     conversationCellModel:
                     .text(factory.makeTextMessageViewModel(
-                        message: message as! ZMMessage,
+                        message: message,
                         selfUser: selfUser,
                         accentColor: selfUser.accentColor,
                         shouldShowSender: isSenderVisible,
@@ -654,7 +653,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             return // Deletions are handled by the window observer
         }
 
-        if message.isText {
+        if message.supportsNewApproach {
             return
         }
         sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: message)
@@ -663,7 +662,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
 extension ConversationMessageSectionController: UserObserving {
     func userDidChange(_ changeInfo: UserChangeInfo) {
-        if message.isText {
+        if message.supportsNewApproach {
             return
         }
         sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: message)
