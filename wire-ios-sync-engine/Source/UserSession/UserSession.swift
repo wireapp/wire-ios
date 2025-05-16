@@ -20,6 +20,7 @@ import Foundation
 import LocalAuthentication
 import WireAnalytics
 import WireDataModel
+import WireFoundation
 
 /// An abstraction of the user session for use in the presentation
 /// layer.
@@ -85,7 +86,7 @@ public protocol UserSession: AnyObject {
 
     /// This property will be set or cleared depending on the user giving or removing consent for analytics tracking.
 
-    var analyticsEventTracker: AnalyticsEventTracker? { get }
+    var analyticsEventTracker: AnalyticsEventTrackerProtocol? { get }
 
     /// Unlocks the database.
 
