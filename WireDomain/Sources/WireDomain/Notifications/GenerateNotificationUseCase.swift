@@ -31,17 +31,40 @@ protocol GenerateNotificationUseCaseProtocol {
 
 struct GenerateNotificationUseCase: GenerateNotificationUseCaseProtocol {
 
-    let conversationEventBuilder: any ConversationEventNotificationBuilderProtocol
-    let userEventBuilder: any UserEventNotificationBuilderProtocol
-    let eventID: UUID
+    private let conversationEventBuilder: any ConversationEventNotificationBuilderProtocol
+    private let userEventBuilder: any UserEventNotificationBuilderProtocol
+    private let eventID: UUID
+    private let logger = WireLogger.notifications
+
+    init(
+        conversationEventBuilder: any ConversationEventNotificationBuilderProtocol,
+        userEventBuilder: any UserEventNotificationBuilderProtocol,
+        eventID: UUID
+    ) {
+        self.conversationEventBuilder = conversationEventBuilder
+        self.userEventBuilder = userEventBuilder
+        self.eventID = eventID
+    }
 
     /// Processes the events stream.
-    func invoke(updateEvents: AsyncStream<[UpdateEvent]>) async throws -> [UserNotification] {
+    func invoke(
+        updateEvents: AsyncStream<[UpdateEvent]>
+    ) async throws -> [UserNotification] {
+
         var notifications = [UserNotification]()
 
         for await events in updateEvents {
+            logger.info(
+                "Processing \(events.count) pending events...",
+                attributes: .newNSE
+            )
+
             for event in events {
                 if let notification = await generateNotification(for: event) {
+                    logger.info(
+                        "Generated a notification from an event",
+                        attributes: .newNSE
+                    )
                     notifications.append(notification)
                 }
             }
@@ -63,8 +86,8 @@ struct GenerateNotificationUseCase: GenerateNotificationUseCaseProtocol {
                 var attributes = LogAttributes.newNSE
                 attributes[.eventId] = eventID.safeForLoggingDescription
 
-                WireLogger.notifications.error(
-                    "An error occured when building the conversation notification content \(error)",
+                logger.error(
+                    "Failed generating notification: \(String(describing: error))",
                     attributes: attributes
                 )
 
@@ -77,6 +100,14 @@ struct GenerateNotificationUseCase: GenerateNotificationUseCaseProtocol {
             )
 
         default:
+            var attributes = LogAttributes.newNSE
+            attributes[.eventId] = eventID.safeForLoggingDescription
+
+            logger.info(
+                "Ignoring event",
+                attributes: attributes
+            )
+
             return nil
         }
     }
