@@ -26,7 +26,7 @@ public enum WireAnalytics {
     private static let isSetUpLock = NSLock()
     private static var isSetUp = false
 
-    public static func setup() {
+    public static func setup(for target: Target) {
         // Adding a lock here since some app extension might execute this setup in the same process as the main app.
         // https://stackoverflow.com/a/62674277
         isSetUpLock.lock()
@@ -42,7 +42,7 @@ public enum WireAnalytics {
         WireLogger.initialize(
             loggers: [
                 SystemLogger(),
-                CocoaLumberjackLogger(),
+                CocoaLumberjackLogger(logsDirectory: target.logsDirectory),
                 WireAnalytics.Datadog.shared
             ]
         )
@@ -51,4 +51,29 @@ public enum WireAnalytics {
         WireLogger.system.addTag(.processId, value: "\(ProcessInfo.processInfo.processIdentifier)")
         WireLogger.system.addTag(.processName, value: ProcessInfo.processInfo.processName)
     }
+
+    public enum Target {
+        case app // TODO: we actually want one log bucket per account
+        case nse(
+            appGroupIdentifier: String,
+            accountIdentifier: UUID
+        )
+    }
+
+}
+
+extension WireAnalytics.Target {
+
+    fileprivate var logsDirectory: URL? {
+        switch self {
+        case .app:
+            nil // use the default
+        case let .nse(appGroupIdentifier, accountIdentifier):
+            FileManager.default.cachesURLForAccount(
+                with: accountIdentifier,
+                in: FileManager.sharedContainerDirectory(for: appGroupIdentifier)
+            )
+        }
+    }
+
 }

@@ -116,7 +116,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         ZMSLog.switchCurrentLogToPrevious()
 
         // Set up Datadog and other loggers
-        WireAnalytics.setup()
+        WireAnalytics.setup(for: .app)
 
         WireLogger.appDelegate.info(
             "application:willFinishLaunchingWithOptions \(String(describing: launchOptions)) (applicationState = \(application.applicationState))"
