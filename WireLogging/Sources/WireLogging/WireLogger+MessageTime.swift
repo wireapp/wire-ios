@@ -33,7 +33,7 @@ public extension WireLogger {
         var updatedAttributes = attributes
         let formattedDuration = String(format: "%.2f", durationInSeconds)
         updatedAttributes[.duration] = formattedDuration
-        let completedMessage = "completed \(label) in \(formattedDuration) seconds"
+        let completedMessage = "completed \(label)"
         info(completedMessage, attributes: updatedAttributes)
         return result
     }

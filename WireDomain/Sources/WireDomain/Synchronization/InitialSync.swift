@@ -62,7 +62,7 @@ public struct InitialSync: InitialSyncProtocol {
         let phase = "pulling last update event id"
 
         try await logger.measureTime(
-            label: "new sync phase: \(phase)",
+            label: "sync phase",
             attributes: .syncPhaseAttributes(phase, initialSync: true)
         ) {
             do {
@@ -89,7 +89,7 @@ public struct InitialSync: InitialSyncProtocol {
         let phase = "push supported protocols"
 
         try await logger.measureTime(
-            label: "new sync phase: \(phase)",
+            label: "sync phase",
             attributes: .syncPhaseAttributes(phase, initialSync: true)
         ) {
             do {
@@ -105,7 +105,7 @@ public struct InitialSync: InitialSyncProtocol {
         let phase = "resolve one on one conversations"
 
         try await logger.measureTime(
-            label: "new sync phase: \(phase)",
+            label: "sync phase",
             attributes: .syncPhaseAttributes(phase, initialSync: true)
         ) {
             do {
