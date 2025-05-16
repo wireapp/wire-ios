@@ -20,44 +20,9 @@ import Foundation
 import WireFoundation
 import WireLogging
 
-
-actor ChannelState {
-    private var lastMessageUpdate = Date()
-    var isProcessing = false
-    var catchingUp = false
-
-    func receivedMessage() {
-        lastMessageUpdate = Date()
-    }
-    
-    func websocketOpened() {
-        catchingUp = true
-    }
-
-    func startProcessing() {
-        isProcessing = true
-    }
-
-    func stopProcessing() {
-        isProcessing = false
-    }
-    
-    func timeSinceLastMessage() -> TimeInterval {
-        Date().timeIntervalSince(lastMessageUpdate)
-    }
-    
-    func caughtUp() {
-        catchingUp = false
-    }
-
-    func wait(timeout: TimeInterval) -> Bool {
-        return timeSinceLastMessage() > timeout && !isProcessing
-    }
-}
-
 public final class NewPushChannel: NewPushChannelProtocol {
 
-    public enum Element {
+    public enum Element: Equatable {
         case upToDate
         case event(UpdateEventEnvelope)
         case missedEvents
@@ -247,3 +212,36 @@ public final class NewPushChannel: NewPushChannelProtocol {
     }
 }
 
+private actor ChannelState {
+    private var lastMessageUpdate = Date()
+    var isProcessing = false
+    var catchingUp = false
+
+    func receivedMessage() {
+        lastMessageUpdate = Date()
+    }
+    
+    func websocketOpened() {
+        catchingUp = true
+    }
+
+    func startProcessing() {
+        isProcessing = true
+    }
+
+    func stopProcessing() {
+        isProcessing = false
+    }
+    
+    func timeSinceLastMessage() -> TimeInterval {
+        Date().timeIntervalSince(lastMessageUpdate)
+    }
+    
+    func caughtUp() {
+        catchingUp = false
+    }
+
+    func wait(timeout: TimeInterval) -> Bool {
+        return timeSinceLastMessage() > timeout && !isProcessing
+    }
+}

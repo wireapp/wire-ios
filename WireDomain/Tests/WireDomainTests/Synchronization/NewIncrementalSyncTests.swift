@@ -71,13 +71,13 @@ final class NewIncrementalSyncTests: XCTestCase {
         let pushChannel = MockNewPushChannelProtocol()
         pushChannel.open_MockValue = AsyncThrowingStream { continuation in
             Task {
-                continuation.yield(Scaffolding.event2)
+                continuation.yield(.event(Scaffolding.event2))
                 continuation.finish(throwing: PushChannelError.missingEvents)
                 continuation.finish()
             }
         }
-        pushChannel. = { (_, _) in }
-        pushChannelAPI.createNewPushChannelClientID_MockMethod = { _ in pushChannel }
+        pushChannel.ackEventDeliveryTagMultiple_MockMethod = { (_, _) in }
+        pushChannelAPI.createPushChannelClientID_MockMethod = { _ in pushChannel }
 
         // Some indices at which live events will be stored.
         var indices = [Int64(10)]
@@ -90,6 +90,9 @@ final class NewIncrementalSyncTests: XCTestCase {
         // Live events are decrypted.
         decryptor.decryptEventsIn_MockMethod = { $0.events }
 
+        // Last event is being updated.
+        store.storeLastEventIDId_MockMethod = { _ in }
+        
         // Events are processed.
         processor.processEvent_MockMethod = { _ in }
 
@@ -124,12 +127,12 @@ final class NewIncrementalSyncTests: XCTestCase {
 
         // Then live events were stored.
         let storeInvocations = store.persistEventEnvelopeIndex_Invocations
-        try XCTAssertCount(storeInvocations, count: 4)
+        try XCTAssertCount(storeInvocations, count: 1)
         XCTAssertEqual(storeInvocations[0].eventEnvelope, Scaffolding.event2)
-        XCTAssertEqual(storeInvocations[0].index, 10)
+        XCTAssertEqual(storeInvocations[0].index, 11)
         
         // Then ack of events done adter storing
-        XCTAssertEqual(pushChannel.ackDeliveryTagMultiple_Invocations.count, 4)
+        XCTAssertEqual(pushChannel.ackEventDeliveryTagMultiple_Invocations.count, 1)
         
         
         // Then all events were processed once.
@@ -137,22 +140,19 @@ final class NewIncrementalSyncTests: XCTestCase {
             processor.processEvent_Invocations,
             [
                 Scaffolding.event2,
-                Scaffolding.event3,
-                Scaffolding.event4,
-                Scaffolding.event5
             ].flatMap(\.events)
         )
 
         // Then live events were deleted.
-        XCTAssertEqual(store.deleteEventEnvelopeAtIndex_Invocations, [11, 12, 13, 14])
+        XCTAssertEqual(store.deleteEventEnvelopeAtIndex_Invocations, [11])
 
         // Then unread messages are calculated once after processing pending events
         // and once after processing each live event.
-        XCTAssertEqual(store.calculateLastUnreadMessages_Invocations.count, 4)
+        XCTAssertEqual(store.calculateLastUnreadMessages_Invocations.count, 1)
 
         // Then the database was saved once after processing pending events
         // and once after processing each live event.
-        XCTAssertEqual(databaseSaver.save_Invocations.count, 4)
+        XCTAssertEqual(databaseSaver.save_Invocations.count, 1)
     }
 
     
@@ -164,14 +164,13 @@ final class NewIncrementalSyncTests: XCTestCase {
         let pushChannel = MockNewPushChannelProtocol()
         pushChannel.open_MockValue = AsyncThrowingStream { continuation in
             Task {
-                continuation.yield(Scaffolding.event2)
-                continuation.yield(Scaffolding.event3)
-                continuation.yield(Scaffolding.event4)
-                continuation.yield(Scaffolding.event5)
+                continuation.yield(.event(Scaffolding.event2))
+                continuation.yield(.event(Scaffolding.event3))
+                continuation.yield(.missedEvents)
                 continuation.finish()
             }
         }
-        pushChannel.ackDeliveryTagMultiple_MockMethod = { (_, _) in }
+        pushChannel.ackEventDeliveryTagMultiple_MockMethod = { (_, _) in }
         pushChannelAPI.createPushChannelClientID_MockMethod = { _ in pushChannel }
 
         // Some indices at which live events will be stored.
@@ -185,6 +184,9 @@ final class NewIncrementalSyncTests: XCTestCase {
         // Live events are decrypted.
         decryptor.decryptEventsIn_MockMethod = { $0.events }
 
+        // Last event is being updated.
+        store.storeLastEventIDId_MockMethod = { _ in }
+        
         // Events are processed.
         processor.processEvent_MockMethod = { _ in }
 
@@ -226,7 +228,7 @@ final class NewIncrementalSyncTests: XCTestCase {
         XCTAssertEqual(storeInvocations[3].index, 14)
 
         // Then ack of events done adter storing
-        XCTAssertEqual(pushChannel.ackDeliveryTagMultiple_Invocations.count, 4)
+        XCTAssertEqual(pushChannel.ackEventDeliveryTagMultiple_Invocations.count, 4)
         
         
         // Then all events were processed once.

@@ -17,6 +17,8 @@
 //
 import Foundation
 
+// sourcery: AutoMockable
+/// Make a direct connection to a server to receive update events and acknowledge them.
 public protocol NewPushChannelProtocol: Sendable {
 
     /// Open the push channel and start receiving update events.

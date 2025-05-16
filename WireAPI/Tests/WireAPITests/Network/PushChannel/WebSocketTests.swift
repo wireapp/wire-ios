@@ -205,5 +205,46 @@ final class WebSocketTests: XCTestCase {
         // Then all messages were received in order
         XCTAssertEqual(receivedMessages, messages)
     }
+    
+    func testWebSocketSendsDataSuccessfully()async throws {
+        // GIVEN
+        connection.send_MockMethod = { _ in }
+        
+        let sut = WebSocket(connection: connection)
+        let testData = try XCTUnwrap("test".data(using: .utf8))
+
+        // WHEN
+        try await sut.write(data: testData)
+        
+        // THEN
+        try XCTAssertCount(connection.send_Invocations, count: 1)
+        let result = try XCTUnwrap(connection.send_Invocations.first)
+        if case URLSessionWebSocketTask.Message.data(testData) = result  {
+            // successful
+        } else {
+            XCTFail("unexpected message written: \(result)")
+        }
+    }
+
+    
+    func testWebSocketSendsStringSuccessfully()async throws {
+        // GIVEN
+        connection.send_MockMethod = { _ in }
+        
+        let sut = WebSocket(connection: connection)
+        let testString = "test"
+
+        // WHEN
+        try await sut.write(string: testString)
+        
+        // THEN
+        try XCTAssertCount(connection.send_Invocations, count: 1)
+        let result = try XCTUnwrap(connection.send_Invocations.first)
+        if case URLSessionWebSocketTask.Message.string(testString) = result  {
+            // successful
+        } else {
+            XCTFail("unexpected message written: \(result)")
+        }
+    }
 
 }
