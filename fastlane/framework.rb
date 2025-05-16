@@ -110,6 +110,7 @@ class Framework
         frameworks["WireAuthentication"].add_dependency(frameworks["WireUI"])
 
         frameworks["WireBackup"].add_dependency(frameworks["WireFoundation"])
+        frameworks["WireBackup"].add_dependency(frameworks["WireLogging"])
 
         frameworks["WireCells"].add_dependency(frameworks["WireFoundation"])
         frameworks["WireCells"].add_dependency(frameworks["WireUI"])
