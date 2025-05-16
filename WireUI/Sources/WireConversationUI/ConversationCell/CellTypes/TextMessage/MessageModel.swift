@@ -81,20 +81,15 @@ public enum ExpirationReasonModel: Int {
 public enum ConversationTypeModel: Int, Codable, Sendable {
 
     /// A conversation with many participants.
-
     case group = 0
 
     /// A conversation with only the self user.
-
     case `self` = 1
 
     /// A conversation between the two users.
-
     case oneOnOne = 2
 
     /// A placeholder conversation for a pending connection
     /// to another user.
-
     case connection = 3
-
 }

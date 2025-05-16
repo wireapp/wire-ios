@@ -22,10 +22,7 @@ public enum ConversationCellModel {
 
     /// Used to group messages by time.
     case timeDivider(TimeDividerModel)
+    /// Text Message
     case text(TextMessageViewModel)
-
-//    @MainActor func buildView() -> any View {
-//
-//    }
 
 }

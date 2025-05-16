@@ -60,37 +60,30 @@ struct MessageToolboxView: View {
         }
     }
     
-    @ViewBuilder private func editedLabel(_ text: String) -> some View {
+    @ViewBuilder private func label(
+        _ text: String,
+        accessibilityIdentifier: String
+    ) -> some View {
         Text(text)
             .lineLimit(1)
             .truncationMode(.middle)
             .font(font)
             .foregroundColor(textColor)
-            .accessibilityIdentifier("Edited")
+            .accessibilityIdentifier(accessibilityIdentifier)
             .accessibilityElement()
             .layoutPriority(1)
     }
     
+    @ViewBuilder private func editedLabel(_ text: String) -> some View {
+        label(text, accessibilityIdentifier: "Edited")
+    }
+    
     @ViewBuilder private func statusLabel(_ text: String) -> some View {
-        Text(text)
-            .lineLimit(1)
-            .truncationMode(.middle)
-            .font(font)
-            .foregroundColor(textColor)
-            .accessibilityIdentifier("DeliveryStatus")
-            .accessibilityElement()
-            .layoutPriority(1)
+        label(text, accessibilityIdentifier: "DeliveryStatus")
     }
 
     @ViewBuilder private func detailsLabel(_ text: String) -> some View {
-        Text(text)
-            .lineLimit(1)
-            .truncationMode(.middle)
-            .font(font)
-            .foregroundColor(textColor)
-            .accessibilityIdentifier("Details")
-            .accessibilityElement()
-            .layoutPriority(1) // equivalent to high hugging and compression
+        label(text, accessibilityIdentifier: "Details")
     }
 
     @ViewBuilder private var separator: some View {
@@ -105,14 +98,7 @@ struct MessageToolboxView: View {
     
     @ViewBuilder
     private func countDownLabel(_ text: String) ->  some View {
-        Text(text)
-            .lineLimit(1)
-            .truncationMode(.middle)
-            .font(font)
-            .foregroundColor(textColor)
-            .accessibilityIdentifier("EphemeralCountdown")
-            .accessibilityElement()
-            .layoutPriority(1)
+        label(text, accessibilityIdentifier: "EphemeralCountdown")
     }
     
     @ViewBuilder

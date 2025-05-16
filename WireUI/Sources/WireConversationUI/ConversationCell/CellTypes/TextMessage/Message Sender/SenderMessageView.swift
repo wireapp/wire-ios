@@ -25,7 +25,7 @@ struct SenderMessageView: View {
     var body: some View {
         switch model.state {
         case .none:
-            EmptyView()
+            EmptyView() // nothing when don't need to show sender
         case .some(let model):
             Text(model.senderAttributed)
                 .frame(maxWidth: .infinity, alignment: .leading)

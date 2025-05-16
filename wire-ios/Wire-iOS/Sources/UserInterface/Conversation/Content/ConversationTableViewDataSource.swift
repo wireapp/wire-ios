@@ -753,20 +753,17 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
         let cellDescription = section.elements[indexPath.row]
         if cellDescription.instance is NewCellDescription,
            let model = cellDescription.conversationCellModel {
-//            let model = cellDescription.makeConversationCellModel()
-//            cellDescription.instance.conversationCellModel = model
-
-//            model.registerIfNeeded(in: tableView)
-            let cell = tableView.dequeueReusableCell(
+            guard let cell = tableView.dequeueReusableCell(
                 withIdentifier: "ConversationCell",
                 for: indexPath
-            ) as! ConversationCell
+            ) as? ConversationCell else {
+                return UITableViewCell()
+            }
             let margins = cell.conversationHorizontalMargins
-            cell.updateConfiguration(model: model, horizontalMargins: .init(
+            cell.configure(model: model, horizontalMargins: .init(
                 left: margins.left,
                 right: margins.right
             ))
-//            model.configureCell(cell)
             return cell
         } else {
 

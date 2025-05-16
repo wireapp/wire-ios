@@ -33,6 +33,9 @@ public enum TeamRoleIndicator {
 
 public class MessageSenderViewModelWrapper: ObservableObject {
     
+    /// State needed here to be able to update view
+    /// because it's not possible to have optional 'MessageSenderViewModel?'
+    /// and @Published together
     public enum State {
         case none
         case some(MessageSenderViewModel)
@@ -49,7 +52,7 @@ public class MessageSenderViewModel: ObservableObject, Identifiable {
 
     public let id = UUID()
 
-    let avatar: AvatarViewModel
+    let avatarViewModel: AvatarViewModel
     private var senderModel: UserModel
     let isDeleted: Bool
     let teamRoleIndicator: TeamRoleIndicator?
@@ -59,13 +62,13 @@ public class MessageSenderViewModel: ObservableObject, Identifiable {
     private var cancellables: Set<AnyCancellable> = []
 
     public init(
-        avatar: AvatarViewModel,
+        avatarViewModel: AvatarViewModel,
         senderModel: UserModel,
         isDeleted: Bool,
         teamRoleIndicator: TeamRoleIndicator?,
         authorChanged: any SenderObserverProtocol
     ) {
-        self.avatar = avatar
+        self.avatarViewModel = avatarViewModel
         self.authorChanged = authorChanged
         self.senderModel = senderModel
         self.isDeleted = isDeleted

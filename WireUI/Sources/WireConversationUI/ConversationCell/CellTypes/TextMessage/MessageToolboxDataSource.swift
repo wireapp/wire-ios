@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDesign
+import WireReusableUIComponents
 
 /// The different contents that can be displayed inside the message toolbox.
 public enum MessageToolboxContent: Equatable {
@@ -135,7 +136,7 @@ public final class MessageToolboxDataSource {
         let countdownStatus = makeEphemeralCountdown()
         let deliveryState = message.shouldShowDeliveryState ? selfMessageState(for: message) : nil
         let isTimestampVisible = message.isSent && message.deliveryState != .failedToSend
-        let timestampString = isTimestampVisible ? message.formattedReceivedTime() ?? "" : ""
+        let timestampString = isTimestampVisible ? MessageFormatter.formattedReceivedTime(message.receivedAt) ?? "" : ""
         return (timestampString, deliveryState, countdownStatus)
     }
 
@@ -227,9 +228,9 @@ public final class MessageToolboxDataSource {
     private func timestampString(_ message: MessageModel) -> String? {
         var timestampString: String?
 
-        if let editedTimeString = message.formattedEditedDate() {
+        if let editedTimeString = MessageFormatter.formattedEditedDate(message.updatedAt) {
             timestampString = ContentSystem.editedMessagePrefixTimestamp(editedTimeString)
-        } else if let dateTimeString = message.formattedReceivedDateTime(),
+        } else if let dateTimeString = MessageFormatter.formattedReceivedDateTime(message.receivedAt),
                   message.systemMessageType == .messageDeletedForEveryone {
             timestampString = ContentSystem.deletedMessagePrefixTimestamp(dateTimeString)
         }
@@ -240,64 +241,7 @@ public final class MessageToolboxDataSource {
 }
 
 extension MessageModel {
-    func formattedReceivedTime() -> String? {
-        receivedAt.map(MessageModel.shortTimeFormatter.string(from:))
-    }
-
-    func formattedReceivedDateTime() -> String? {
-        receivedAt.map(formattedDate)
-    }
-
-    func formattedEditedDate() -> String? {
-        updatedAt.map(formattedDate)
-    }
-
-    func formattedDate(_ date: Date) -> String {
-        if Calendar.current.isDateInToday(date) {
-            MessageModel.shortTimeFormatter.string(from: date)
-        } else {
-            MessageModel.shortDateTimeFormatter.string(from: date)
-        }
-    }
-}
-
-extension MessageModel {
     var shouldShowDeliveryState: Bool {
         systemMessageType != .missedCall
     }
-}
-
-// TODO: MOVE
-
-extension MessageModel {
-
-    static var shortTimeFormatter: DateFormatter = {
-        var shortTimeFormatter = DateFormatter()
-        shortTimeFormatter.dateStyle = .none
-        shortTimeFormatter.timeStyle = .short
-        return shortTimeFormatter
-    }()
-
-    static let shortDateFormatter: DateFormatter = {
-        var shortDateFormatter = DateFormatter()
-        shortDateFormatter.dateStyle = .short
-        shortDateFormatter.timeStyle = .none
-        return shortDateFormatter
-    }()
-
-    static let spellOutDateTimeFormatter: DateFormatter = {
-        var longDateFormatter = DateFormatter()
-        longDateFormatter.dateStyle = .long
-        longDateFormatter.timeStyle = .short
-        longDateFormatter.doesRelativeDateFormatting = true
-        return longDateFormatter
-    }()
-
-    static let shortDateTimeFormatter: DateFormatter = {
-        var longDateFormatter = DateFormatter()
-        longDateFormatter.dateStyle = .short
-        longDateFormatter.timeStyle = .short
-        return longDateFormatter
-    }()
-
 }

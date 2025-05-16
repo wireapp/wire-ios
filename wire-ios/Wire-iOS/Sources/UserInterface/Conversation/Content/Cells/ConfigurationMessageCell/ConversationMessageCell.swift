@@ -199,10 +199,6 @@ extension ConversationMessageCellDescription {
         set { fatalError() }
     }
 
-//    func makeConversationCellModel() -> ConversationCellModel {
-//        fatalError()
-//    }
-
     var supportsActions: Bool {
         false
     }
@@ -365,10 +361,6 @@ final class AnyConversationMessageCellDescription: NSObject {
     var conversationCellModel: ConversationCellModel? {
         _conversationCellModel()
     }
-
-//    func makeConversationCellModel() -> ConversationCellModel {
-//        instance.makeConversationCellModel()
-//    }
 
     var delegate: ConversationMessageCellDelegate? {
         get { _delegate.getter() }

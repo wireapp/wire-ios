@@ -1813,16 +1813,6 @@ internal enum L10n {
           internal static let brokenMessage = L10n.tr("Localizable", "content.message.reply.broken_message", fallback: "You cannot see this message.")
           /// Edited
           internal static let editedMessage = L10n.tr("Localizable", "content.message.reply.edited_message", fallback: "Edited")
-          internal enum OriginalTimestamp {
-            /// Original message from %@
-            internal static func date(_ p1: Any) -> String {
-              return L10n.tr("Localizable", "content.message.reply.original_timestamp.date", String(describing: p1), fallback: "Original message from %@")
-            }
-            /// Original message from %@
-            internal static func time(_ p1: Any) -> String {
-              return L10n.tr("Localizable", "content.message.reply.original_timestamp.time", String(describing: p1), fallback: "Original message from %@")
-            }
-          }
         }
       }
       internal enum Ping {

@@ -72,8 +72,10 @@ extension MessageDetailsCellDescription {
 
     static func makeReceiptCell(_ receipts: [ReadReceipt]) -> [MessageDetailsCellDescription] {
         receipts.map {
-            let formattedDate = $0.serverTimestamp.map(Message.shortDateTimeFormatter.string)
-            let formattedAccessibleDate = $0.serverTimestamp.map(Message.spellOutDateTimeFormatter.string)
+            let formattedDate = $0.serverTimestamp.map(
+                DateFormatter.shortDateTimeFormatter.string
+            )
+            let formattedAccessibleDate = $0.serverTimestamp.map(DateFormatter.spellOutDateTimeFormatter.string)
 
             return MessageDetailsCellDescription(
                 user: $0.userType,

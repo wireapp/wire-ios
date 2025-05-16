@@ -51,7 +51,7 @@ public struct TextMessageView: ConversationCellContentViewProtocol {
     let model = TextMessageViewModel(
         text: "Test message",
         senderViewModelWrapper: .init(state: .some(MessageSenderViewModel(
-            avatar: AvatarViewModel(color: .red),
+            avatarViewModel: AvatarViewModel(color: .red),
             senderModel: UserModel(
                 name: "Test",
                 isSelfUser: true,

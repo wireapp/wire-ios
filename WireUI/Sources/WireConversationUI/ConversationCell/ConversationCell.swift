@@ -36,7 +36,7 @@ public final class ConversationCell: UITableViewCell {
     
     public var model: ConversationCellModel?
 
-    public func updateConfiguration(model: ConversationCellModel?, horizontalMargins: HorizontalMargins) {
+    public func configure(model: ConversationCellModel?, horizontalMargins: HorizontalMargins) {
         guard let model else { return }
         contentConfiguration = UIHostingConfiguration {
             switch model {

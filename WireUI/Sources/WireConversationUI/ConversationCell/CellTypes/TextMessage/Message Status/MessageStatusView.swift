@@ -25,11 +25,11 @@ struct MessageStatusView: View {
     var body: some View {
         switch model.state {
         case .none:
-            EmptyView()
-        case let .sendFailure(string):
-            EmptyView()
-        case let .callList(string):
-            EmptyView()
+            EmptyView() // when no need to show status view
+        case let .sendFailure(_):
+            EmptyView() // will be implemented later
+        case let .callList(_):
+            EmptyView() // will be implemented later
         case let .details(statusDetails):
             MessageToolboxView(
                 detailsText: statusDetails.timestamp,

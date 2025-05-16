@@ -43,7 +43,7 @@ struct MessageViewModelFactoryImpl: MessageViewModelFactory {
         if shouldShowSender, let sender = message.sender {
             senderViewModelWrapper = MessageSenderViewModelWrapper.init(state: .some(
                 MessageSenderViewModel(
-                    avatar: AvatarViewModel(
+                    avatarViewModel: AvatarViewModel(
                         color: accentColor.color
                     ),
                     senderModel: sender.toUIModel(),

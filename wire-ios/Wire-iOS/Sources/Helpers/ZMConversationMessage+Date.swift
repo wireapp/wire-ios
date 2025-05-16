@@ -18,63 +18,31 @@
 
 import Foundation
 import WireDataModel
+import WireReusableUIComponents
 
 extension ZMConversationMessage {
 
     func formattedOriginalReceivedDate() -> String? {
-        guard let timestamp = serverTimestamp else {
-            return nil
-        }
-
-        let formattedDate: String
-
-        if Calendar.current.isDateInToday(timestamp) {
-            formattedDate = Message.shortTimeFormatter.string(from: timestamp)
-            return L10n.Localizable.Content.Message.Reply.OriginalTimestamp.time(formattedDate)
-
-        } else {
-            formattedDate = Message.shortDateFormatter.string(from: timestamp)
-            return L10n.Localizable.Content.Message.Reply.OriginalTimestamp.date(formattedDate)
-        }
+        MessageFormatter.formattedOriginalReceivedDate(serverTimestamp)
     }
 
     func formattedReceivedTime() -> String? {
-        serverTimestamp.map(Message.shortTimeFormatter.string(from:))
+        MessageFormatter.formattedReceivedTime(serverTimestamp)
     }
 
     func formattedReceivedDateTime() -> String? {
-        serverTimestamp.map(formattedDate)
+        MessageFormatter.formattedReceivedDateTime(serverTimestamp)
     }
 
     func formattedEditedDate() -> String? {
-        updatedAt.map(formattedDate)
-    }
-
-    func formattedDate(_ date: Date) -> String {
-        if Calendar.current.isDateInToday(date) {
-            Message.shortTimeFormatter.string(from: date)
-        } else {
-            Message.shortDateTimeFormatter.string(from: date)
-        }
+        MessageFormatter.formattedEditedDate(updatedAt)
     }
 
     func formattedAccessibleMessageDetails() -> String? {
-        guard let serverTimestamp else {
-            return nil
-        }
-        let formattedTimestamp = Message.spellOutDateTimeFormatter.string(from: serverTimestamp)
-        let sendDate = L10n.Localizable.MessageDetails.subtitleSendDate(formattedTimestamp)
-
-        var accessibleMessageDetails = sendDate
-
-        if let editTimestamp = updatedAt {
-            let formattedEditTimestamp = Message.spellOutDateTimeFormatter.string(from: editTimestamp)
-            let editDate = L10n.Localizable.MessageDetails.subtitleEditDate(formattedEditTimestamp)
-
-            accessibleMessageDetails += ("\n" + editDate)
-        }
-
-        return accessibleMessageDetails
+        MessageFormatter
+            .formattedAccessibleMessageDetails(
+                receivedAt: serverTimestamp,
+                updatedAt: updatedAt
+            )
     }
-
 }
