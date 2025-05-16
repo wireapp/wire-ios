@@ -4807,6 +4807,15 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
 
 }
 
+public class MockWireCellsMessageAttachmentsDraftsLocalStoreProtocol: WireCellsMessageAttachmentsDraftsLocalStoreProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+}
+
 // swiftlint:enable variable_name
 // swiftlint:enable line_length
 // swiftlint:enable vertical_whitespace
