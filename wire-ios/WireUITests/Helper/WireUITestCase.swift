@@ -35,14 +35,14 @@ class WireUITestCase: XCTestCase {
             "--preferred-api-version=8"
         ]
 
-        tryLaunch(launchArguments)
+        app = XCUIApplication()
+        app.launchArguments = launchArguments
+        app.useWireAuthentication()
+        app.launch()
 
         // In UI tests it is usually best to stop immediately when a failure occurs
+        // although this does not appear to work
         continueAfterFailure = false
-    }
-
-    override func tearDownWithError() throws {
-        deleteApp()
     }
 
     override func tearDown() async throws {
@@ -58,19 +58,6 @@ class WireUITestCase: XCTestCase {
 
     // MARK: - Helpers
 
-    // Sometimes the app fails to launch, especially in the pipeline
-    func tryLaunch(_ launchArguments: [String], counter: Int = 10) {
-        app = XCUIApplication()
-        if !app.exists, counter > 0 {
-            print("Countdown \(counter) attempting to launch app")
-            app = XCUIApplication()
-            app.launchArguments = launchArguments
-            app.useWireAuthentication()
-            app.launch()
-            tryLaunch(launchArguments, counter: counter - 1)
-        }
-    }
-
     func deleteApp() {
         let icon = springboard.icons["Wire"]
         if icon.exists {
@@ -80,11 +67,13 @@ class WireUITestCase: XCTestCase {
 
             // For some reason the following commands were unreliable when called once
             let deleteApp = springboard.buttons["Delete App"]
-            deleteApp.waitForExistence(timeout: 1)
-            deleteApp.tap()
+            if deleteApp.waitForExistence(timeout: 1) {
+                deleteApp.tap()
+            }
             let delete = springboard.buttons["Delete"]
-            delete.waitForExistence(timeout: 1)
-            delete.tap()
+            if delete.waitForExistence(timeout: 1) {
+                delete.tap()
+            }
         }
     }
 }
