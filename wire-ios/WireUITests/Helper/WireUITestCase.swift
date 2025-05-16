@@ -56,7 +56,6 @@ class WireUITestCase: XCTestCase {
 //        }
     }
 
-
     // MARK: - Helpers
 
     // Sometimes the app fails to launch, especially in the pipeline
