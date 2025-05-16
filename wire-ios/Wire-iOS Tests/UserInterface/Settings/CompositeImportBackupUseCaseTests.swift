@@ -50,10 +50,10 @@ final class CompositeImportBackupUseCaseTests: XCTestCase {
         let fileExtension = "wbu"
         let expectation = XCTestExpectation()
         useCaseMock.invokeUrlURLPasswordStringAsyncThrowingStreamImportBackupProgressAnyErrorReturnValue =
-        AsyncThrowingStream { continuation in
-            expectation.fulfill()
-            continuation.finish()
-        }
+            AsyncThrowingStream { continuation in
+                expectation.fulfill()
+                continuation.finish()
+            }
 
         // When
         let filePath = "/path/to/file.\(fileExtension)"
@@ -70,10 +70,10 @@ final class CompositeImportBackupUseCaseTests: XCTestCase {
         for fileExtension in fileExtensions {
             let expectation = XCTestExpectation()
             useCaseMock.invokeUrlURLPasswordStringAsyncThrowingStreamImportBackupProgressAnyErrorReturnValue =
-            AsyncThrowingStream { continuation in
-                expectation.fulfill()
-                continuation.finish()
-            }
+                AsyncThrowingStream { continuation in
+                    expectation.fulfill()
+                    continuation.finish()
+                }
 
             // When
             let filePath = "/path/to/file.\(fileExtension)"

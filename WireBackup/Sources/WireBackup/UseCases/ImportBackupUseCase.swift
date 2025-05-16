@@ -98,12 +98,7 @@ public struct ImportBackupUseCase<
                                 let userID = QualifiedID(backupUser.id)
                             else { continue }
 
-                            if !storedUserIDs.contains(userID) {
-                                let user = BackupUserModel(
-                                    qualifiedID: userID,
-                                    name: backupUser.name,
-                                    handle: backupUser.handle
-                                )
+                            if !storedUserIDs.contains(userID), let user = BackupUserModel(backupUser) {
                                 try await userStore.addUser(user)
                             }
 
@@ -123,22 +118,10 @@ public struct ImportBackupUseCase<
                     while messagesPager.hasMorePages() {
                         let backupMessages = messagesPager.nextPage()
                         for current in 0 ..< backupMessages.size {
-                            guard
-                                let backupMessage = backupMessages.get(index: current),
-                                let conversationID = QualifiedID(backupMessage.conversationId),
-                                let senderUserID = QualifiedID(backupMessage.senderUserId),
-                                let content = WireBackup.MessageContent(backupMessage.content)
-                            else { continue }
+                            guard let backupMessage = backupMessages.get(index: current) else { continue }
 
-                            if !storedMessageIDs.contains(backupMessage.id) {
-                                let message = BackupMessageModel(
-                                    id: backupMessage.id,
-                                    conversationID: conversationID,
-                                    senderUserID: senderUserID,
-                                    senderClientID: backupMessage.senderClientId,
-                                    creationDate: Date(backupMessage.creationDate),
-                                    content: content
-                                )
+                            if !storedMessageIDs.contains(backupMessage.id),
+                               let message = BackupMessageModel(backupMessage) {
                                 try await messageStore.addMessage(message)
                             }
 

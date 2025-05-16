@@ -114,7 +114,6 @@ extension GenericMessage {
                     }
                 }
                 self = GenericMessage(content: asset, nonce: nonce)
-
             }
         }
     }
