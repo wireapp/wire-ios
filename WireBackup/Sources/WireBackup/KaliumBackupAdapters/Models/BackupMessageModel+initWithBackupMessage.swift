@@ -27,7 +27,7 @@ extension BackupMessageModel {
         guard
             let conversationID = QualifiedID(backupMessage.conversationId),
             let senderUserID = QualifiedID(backupMessage.senderUserId),
-            let content = WireBackup.MessageContent(backupMessage.content)
+            let content = WireBackup.BackupMessageModel.Content(backupMessage.content)
         else { return nil }
 
         self.init(
@@ -41,4 +41,3 @@ extension BackupMessageModel {
     }
 
 }
-

@@ -19,7 +19,7 @@
 import Foundation
 import KaliumBackup
 
-extension WireBackup.MessageContent {
+extension WireBackup.BackupMessageModel.Content {
 
     init?(_ backupMessageContent: BackupMessageContent) {
         switch backupMessageContent {
@@ -40,7 +40,7 @@ extension WireBackup.MessageContent {
 
 }
 
-private extension WireBackup.MessageContent.TextContent {
+private extension WireBackup.BackupMessageModel.Content.TextContent {
 
     init(_ textContent: BackupMessageContent.Text) {
         self.init(
@@ -50,7 +50,7 @@ private extension WireBackup.MessageContent.TextContent {
 
 }
 
-extension WireBackup.MessageContent.LocationContent {
+extension WireBackup.BackupMessageModel.Content.LocationContent {
 
     init(_ locationContent: BackupMessageContent.Location) {
         self.init(
@@ -63,7 +63,7 @@ extension WireBackup.MessageContent.LocationContent {
 
 }
 
-extension WireBackup.MessageContent.AssetContent {
+extension WireBackup.BackupMessageModel.Content.AssetContent {
 
     init(_ assetContent: BackupMessageContent.Asset) {
         self.init(
@@ -82,7 +82,7 @@ extension WireBackup.MessageContent.AssetContent {
 
 }
 
-extension MessageContent.AssetContent.EncryptionAlgorithm {
+extension BackupMessageModel.Content.AssetContent.EncryptionAlgorithm {
 
     init(_ encryptionAlgorithm: BackupMessageContent.AssetEncryptionAlgorithm) {
         switch encryptionAlgorithm {
@@ -95,7 +95,7 @@ extension MessageContent.AssetContent.EncryptionAlgorithm {
 
 }
 
-extension MessageContent.AssetContent.Metadata {
+extension BackupMessageModel.Content.AssetContent.Metadata {
 
     init?(_ metadata: BackupMessageContent.AssetAssetMetadata) {
         switch metadata {
@@ -119,7 +119,7 @@ extension MessageContent.AssetContent.Metadata {
 
 }
 
-extension MessageContent.AssetContent.Metadata.ImageMetadata {
+extension BackupMessageModel.Content.AssetContent.Metadata.ImageMetadata {
 
     init(_ imageMetadata: BackupMessageContent.AssetAssetMetadataImage) {
         self.init(
@@ -131,7 +131,7 @@ extension MessageContent.AssetContent.Metadata.ImageMetadata {
 
 }
 
-extension MessageContent.AssetContent.Metadata.VideoMetadata {
+extension BackupMessageModel.Content.AssetContent.Metadata.VideoMetadata {
 
     init(_ videoMetadata: BackupMessageContent.AssetAssetMetadataVideo) {
         self.init(
@@ -143,7 +143,7 @@ extension MessageContent.AssetContent.Metadata.VideoMetadata {
 
 }
 
-extension MessageContent.AssetContent.Metadata.AudioMetadata {
+extension BackupMessageModel.Content.AssetContent.Metadata.AudioMetadata {
 
     init(_ audioMetadata: BackupMessageContent.AssetAssetMetadataAudio) {
         self.init(
@@ -154,7 +154,7 @@ extension MessageContent.AssetContent.Metadata.AudioMetadata {
 
 }
 
-extension MessageContent.AssetContent.Metadata.GenericMetadata {
+extension BackupMessageModel.Content.AssetContent.Metadata.GenericMetadata {
 
     init(_ genericMetadata: BackupMessageContent.AssetAssetMetadataGeneric) {
         self.init(
