@@ -42,9 +42,15 @@ extension BackupFile {
             }
 
             self.totalPagesCount = importResult.pager.totalPagesCount
-            self.users = [BackupUser](usersPager).compactMap(BackupUserModel.init)
-            self.conversations = [BackupConversation](conversationsPager).compactMap(BackupConversationModel.init)
-            self.messages = [BackupMessage](messagesPager).compactMap(BackupMessageModel.init)
+            self.users = [BackupUser](usersPager)
+                .compactMap(BackupUserModel.init)
+                .sorted { $0.name < $1.name }
+            self.conversations = [BackupConversation](conversationsPager)
+                .compactMap(BackupConversationModel.init)
+                .sorted { $0.name < $1.name }
+            self.messages = [BackupMessage](messagesPager)
+                .compactMap(BackupMessageModel.init)
+                .sorted { $0.creationDate < $1.creationDate }
 
         }
 

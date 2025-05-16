@@ -40,7 +40,7 @@ public struct BackupMessageModel: Encodable, Hashable, Sendable {
         self.id = id
         self.conversationID = conversationID
         self.senderUserID = senderUserID
-        self.senderClientID = senderClientID
+        self.senderClientID = senderClientID?.isEmpty == true ? nil : senderClientID
         self.creationDate = creationDate
         self.content = content
     }
@@ -94,7 +94,7 @@ public extension BackupMessageModel.Content {
         public init(longitude: Float, latitude: Float, name: String?, zoom: Int32?) {
             self.longitude = longitude
             self.latitude = latitude
-            self.name = name
+            self.name = name?.isEmpty == true ? nil : name
             self.zoom = zoom
         }
 
@@ -130,7 +130,7 @@ public extension BackupMessageModel.Content {
         ) {
             self.mimeType = mimeType
             self.size = size
-            self.name = name
+            self.name = name?.isEmpty == true ? nil : name
             self.otrKey = otrKey
             self.sha256 = sha256
             self.assetID = assetID
@@ -173,7 +173,7 @@ public extension BackupMessageModel.Content.AssetContent.Metadata {
         public init(width: Int32, height: Int32, tag: String?) {
             self.width = width
             self.height = height
-            self.tag = tag
+            self.tag = tag?.isEmpty == true ? nil : tag
         }
 
     }
@@ -218,7 +218,7 @@ public extension BackupMessageModel.Content.AssetContent.Metadata {
         private var type = "generic"
 
         public init(name: String?) {
-            self.name = name
+            self.name = name?.isEmpty == true ? nil : name
         }
 
     }
