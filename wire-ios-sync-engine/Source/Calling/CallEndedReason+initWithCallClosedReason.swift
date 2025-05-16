@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import WireFoundation
+
 import WireAnalytics
 
 public extension AnalyticsEvent.Calling.CallEndedReason {
@@ -23,4 +25,5 @@ public extension AnalyticsEvent.Calling.CallEndedReason {
     init(_ reason: CallClosedReason) {
         self.init(value: Int(reason.wcall_reason))
     }
+
 }

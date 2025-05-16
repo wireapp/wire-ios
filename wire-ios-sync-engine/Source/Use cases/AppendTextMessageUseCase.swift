@@ -18,6 +18,7 @@
 
 import WireAnalytics
 import WireDataModel
+import WireFoundation
 
 public protocol AppendTextMessageUseCaseProtocol {
 
@@ -32,9 +33,9 @@ public protocol AppendTextMessageUseCaseProtocol {
 
 public struct AppendTextMessageUseCase: AppendTextMessageUseCaseProtocol {
 
-    weak var analyticsEventTracker: (any AnalyticsEventTracker)?
+    weak var analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?
 
-    public init(analyticsEventTracker: (any AnalyticsEventTracker)?) {
+    public init(analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?) {
         self.analyticsEventTracker = analyticsEventTracker
     }
 
