@@ -119,3 +119,12 @@ public extension LogAttributes {
         DeveloperFlag.asyncStreamNotifications.isOn ? Constants.v3 : Constants.v2
     }
 }
+
+extension LogAttributes {
+    static func + (lhs: LogAttributes, rhs: LogAttributes) -> LogAttributes {
+        [lhs, rhs].reduce(into: [:]) { result, dict in
+            result.merge(dict) { _, new in new }
+        }
+    }
+}
+
