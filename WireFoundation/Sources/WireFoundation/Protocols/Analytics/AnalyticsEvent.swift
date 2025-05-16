@@ -22,11 +22,11 @@ public struct AnalyticsEvent: Equatable, Sendable {
 
     /// A unique name.
 
-    let name: String
+    public let name: String
 
     /// Additional metadata.
 
-    let segmentation: Set<Segmentation>
+    public let segmentation: Set<Segmentation>
 
     /// Create a new `AnalyticsEvent`.
     ///
@@ -34,13 +34,14 @@ public struct AnalyticsEvent: Equatable, Sendable {
     ///   - name: A unique name.
     ///   - segmentation: Additional metadata.
 
-    init<Collection>(
+    public init<Collection>(
         name: String,
         segmentation: Collection = []
     ) where Collection: Swift.Collection, Collection.Element == Segmentation {
         self.name = name
         self.segmentation = Set(segmentation)
     }
+
 }
 
 extension AnalyticsEvent: CustomDebugStringConvertible {

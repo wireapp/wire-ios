@@ -17,6 +17,7 @@
 //
 
 import struct Foundation.TimeInterval
+import WireFoundation
 
 // The segmentation entries in this file are not to be used anymore.
 // As soon as we get the confirmation that these are not used anymore, we should delete this file.

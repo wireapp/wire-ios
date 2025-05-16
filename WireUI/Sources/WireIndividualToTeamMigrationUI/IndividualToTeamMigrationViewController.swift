@@ -113,7 +113,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
     let useCase: any IndividualToTeamMigrationUseCaseProtocol
     let userProfileName: String
     private var analyticsFlowCompletionAction: AnalyticsEvent.User.IndividualToTeamMigration.CompletedAction?
-    private let analyticsEventTracker: (any AnalyticsEventTracker)?
+    private let analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?
 
     public init(
         features: [TeamPlanFeature],
@@ -121,7 +121,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
         termsOfUseURL: String,
         useCase: any IndividualToTeamMigrationUseCaseProtocol,
         userProfileName: String,
-        analyticsEventTracker: (any AnalyticsEventTracker)?,
+        analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?,
         actionCallback: @escaping @Sendable (Action) -> Void
     ) {
         self.analyticsEventTracker = analyticsEventTracker
@@ -141,7 +141,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
         termsOfUseURL: String,
         useCase: any IndividualToTeamMigrationUseCaseProtocol,
         userProfileName: String,
-        analyticsEventTracker: (any AnalyticsEventTracker)?,
+        analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?,
         actionCallback: @escaping @Sendable (Action) -> Void
     ) {
         self.init(

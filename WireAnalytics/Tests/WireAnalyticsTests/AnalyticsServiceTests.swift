@@ -16,12 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundation
 import XCTest
 
 @testable import WireAnalytics
 @testable import WireAnalyticsSupport
 
-class AnalyticsServiceTests: XCTestCase {
+final class AnalyticsServiceTests: XCTestCase {
 
     private var sut: AnalyticsService!
     private var countlyMock: MockCountlyProtocol!

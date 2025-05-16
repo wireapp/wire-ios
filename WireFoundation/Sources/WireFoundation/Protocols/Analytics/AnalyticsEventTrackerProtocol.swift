@@ -18,8 +18,7 @@
 
 // sourcery: AutoMockable
 /// An object that tracks analytic events.
-public protocol AnalyticsEventTrackerProtocol: AnyObject {
-    associatedtype AnalyticsEvent
+public protocol AnalyticsEventTrackerProtocol {
 
     /// Track an event.
     ///

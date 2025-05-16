@@ -26,27 +26,13 @@ public extension AnalyticsEvent {
 
     struct Segmentation: Hashable, Sendable {
 
-        let key: String
-        let value: String
+        public let key: String
+        public let value: String
 
-        init(key: String, value: String) {
+        public init(key: String, value: String) {
             self.key = key
             self.value = value
         }
 
-        init(key: String, value: Int) {
-            self.key = key
-            self.value = "\(value)"
-        }
-
-        init(key: String, value: Int32) {
-            self.key = key
-            self.value = "\(value)"
-        }
-
-        init(key: String, value: Bool) {
-            self.key = key
-            self.value = value ? "True" : "False"
-        }
     }
 }

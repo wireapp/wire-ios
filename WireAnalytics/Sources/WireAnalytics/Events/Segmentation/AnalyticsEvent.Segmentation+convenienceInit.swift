@@ -18,13 +18,27 @@
 
 public import WireFoundation
 
-public extension AnalyticsEvent {
+extension AnalyticsEvent.Segmentation {
 
-    enum App {
-
-        /// An event tracking when the user opens the app.
-
-        public static let open = AnalyticsEvent(name: "app.open")
-
+    public init(key: String, value: Int) {
+        self.init(
+            key: key,
+            value: "\(value)"
+        )
     }
+
+    public init(key: String, value: Int32) {
+        self.init(
+            key: key,
+            value: "\(value)"
+        )
+    }
+
+    public init(key: String, value: Bool) {
+        self.init(
+            key: key,
+            value: value ? "True" : "False"
+        )
+    }
+
 }

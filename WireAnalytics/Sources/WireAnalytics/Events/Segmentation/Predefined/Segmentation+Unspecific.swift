@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireFoundation
 
 // MARK: - Predefined entries
 
