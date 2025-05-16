@@ -45,7 +45,7 @@ extension BackupMessageModel {
             let senderUserID = message.senderUser?.qualifiedID,
             let creationDate = message.serverTimestamp,
             let conversationID = message.conversation?.qualifiedID,
-            let content = genericMessage.content.flatMap(MessageContent.init)
+            let content = genericMessage.content.flatMap(BackupMessageModel.Content.init)
         else { return nil }
 
         self.init(

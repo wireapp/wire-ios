@@ -19,7 +19,7 @@
 import WireBackup
 import WireProtos
 
-extension MessageContent {
+extension BackupMessageModel.Content {
 
     init?(_ content: GenericMessage.OneOf_Content) {
         switch content {
@@ -94,7 +94,7 @@ extension MessageContent {
             assetToken: uploaded.hasAssetToken ? uploaded.assetToken : nil,
             assetDomain: uploaded.hasAssetDomain ? uploaded.assetDomain : nil,
             encryption: uploaded.hasEncryption ? .init(uploaded.encryption) : nil,
-            metadata: original.metaData.flatMap(MessageContent.AssetContent.Metadata.init)
+            metadata: original.metaData.flatMap(BackupMessageModel.Content.AssetContent.Metadata.init)
         )
     }
 
