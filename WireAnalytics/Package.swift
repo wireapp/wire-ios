@@ -3,9 +3,8 @@
 import Foundation
 import PackageDescription
 
-// You can enable/disable Datadog for debugging by overriding the boolean.
-let isDatadogEnabled = hasEnvironmentVariable("ENABLE_DATADOG", "true")
-let isCountlyEnabled = hasEnvironmentVariable("ENABLE_COUNTLY", "true")
+let isDatadogEnabled = ProcessInfo.processInfo.environment["ENABLE_DATADOG"] == "true"
+let isCountlyEnabled = ProcessInfo.processInfo.environment["ENABLE_COUNTLY"] == "true"
 
 let package = Package(
     name: "WireAnalytics",
@@ -103,14 +102,6 @@ func datadogFiles() -> [String] {
 }
 
 // MARK: -
-
-func hasEnvironmentVariable(_ name: String, _ value: String? = nil) -> Bool {
-    if let value {
-        ProcessInfo.processInfo.environment[name] == value
-    } else {
-        ProcessInfo.processInfo.environment[name] != nil
-    }
-}
 
 for target in package.targets {
     target.swiftSettings = (target.swiftSettings ?? []) + [
