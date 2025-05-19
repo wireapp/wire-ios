@@ -17,22 +17,54 @@
 //
 
 import Foundation
+import Collections
 import WireCellsAPI
 @preconcurrency import Combine
 
-struct Draft {
-    let uuid: UUID
+struct Draft: Hashable, Sendable {
+    let id: WireCellsNodeID
+    let assetURL: URL
+    var status: WireCellsUploadStatus
 }
 
 actor DraftsRepository {
 
     typealias CellName = String
 
-    private var drafts: CurrentValueSubject<[CellName: [Draft]], Never> = .init([:])
+    private var drafts: CurrentValueSubject<[CellName: OrderedDictionary<WireCellsNodeID,Draft>], Never> = .init([:])
     private var continuations: [UUID: AsyncStream<[Draft]>.Continuation] = [:]
+    private var uploadManager: any WireCellsNodeUploadManagerProtocol
+
+    init(uploadManager: any WireCellsNodeUploadManagerProtocol) {
+        self.uploadManager = uploadManager
+    }
 
     deinit {
         continuations.values.forEach { $0.finish() }
+    }
+
+    func add(assetURL: URL, assetSize: UInt64, cellName: String, fileName: String) async throws {
+        let draft = Draft(
+            id: .new(),
+            assetURL: assetURL,
+            status: .uploading(progress: 0)
+        )
+        drafts.value[cellName, default: [:]][draft.id] = draft
+
+        do {
+            let (_, stream) = try await uploadManager.upload(
+                id: draft.id,
+                assetPath: assetURL,
+                assetSize: assetSize,
+                destNodePath: "\(cellName)/\(fileName)"
+            )
+            for await status in stream {
+                setStatus(status, cellName: cellName, id: draft.id)
+            }
+
+        } catch {
+            setStatus(.failed, cellName: cellName, id: draft.id)
+        }
     }
 
     func drafts(for cellName: CellName) -> AsyncStream<[Draft]> {
@@ -40,8 +72,8 @@ actor DraftsRepository {
         let (stream, continuation) = AsyncStream.makeStream(of: [Draft].self, bufferingPolicy: .bufferingOldest(0))
 
         let cancellable = drafts.sink { drafts in
-            let result = drafts[cellName] ?? []
-            continuation.yield(result)
+            let result = drafts[cellName] ?? [:]
+            continuation.yield(Array(result.values))
         }
         continuation.onTermination = { continuation in
             cancellable.cancel()
@@ -60,4 +92,14 @@ actor DraftsRepository {
         continuations[uuid] = nil
     }
 
+    private func setStatus(_ status: WireCellsUploadStatus, cellName: CellName, id: WireCellsNodeID) {
+        drafts.value[cellName]?[id]?.status = status
+    }
+
+}
+
+private extension WireCellsNodeID {
+    static func new() -> WireCellsNodeID {
+        WireCellsNodeID(uuid: UUID(), versionID: UUID())
+    }
 }
