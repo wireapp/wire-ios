@@ -21,15 +21,19 @@
 public import WireFoundation
 
 // sourcery: AutoMockable
+@available(*, deprecated, message: "Use BackupLocalStoreProtocol")
 public protocol ConversationStoreProtocol: Sendable {
 
     /// Returns the number of all stored conversations in the local data store, including deleted ones.
+    @available(*, deprecated, message: "Use BackupLocalStoreProtocol")
     func totalConversationCount() async throws -> Int
 
     /// Returns the IDs of all conversations stored in the local database, including deleted ones.
+    @available(*, deprecated, message: "Use BackupLocalStoreProtocol")
     func fetchAllConversationIDs() async throws -> Set<QualifiedID>
 
     /// Returns all conversations stored in the local database, including deleted ones.
+    @available(*, deprecated, message: "Use BackupLocalStoreProtocol")
     func fetchAllConversations() async throws -> [BackupConversationModel]
 
 }

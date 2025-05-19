@@ -21,15 +21,19 @@
 public import WireFoundation
 
 // sourcery: AutoMockable
+@available(*, deprecated, message: "Use BackupLocalStoreProtocol")
 public protocol UserStoreProtocol: Sendable {
 
     /// Returns the number of all stored users in the local data store, including deleted ones.
+    @available(*, deprecated, message: "Use BackupLocalStoreProtocol")
     func totalUserCount() async throws -> Int
 
     /// Returns the IDs of all users stored in the local database, including deleted ones.
+    @available(*, deprecated, message: "Use BackupLocalStoreProtocol")
     func fetchAllUserIDs() async throws -> Set<QualifiedID>
 
     /// Returns all users stored in the local database, including deleted ones.
+    @available(*, deprecated, message: "Use BackupLocalStoreProtocol")
     func fetchAllUsers() async throws -> [BackupUserModel]
 
 }

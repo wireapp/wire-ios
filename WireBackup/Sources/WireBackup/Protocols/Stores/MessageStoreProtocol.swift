@@ -19,15 +19,19 @@
 // TODO: delete
 
 // sourcery: AutoMockable
+@available(*, deprecated, message: "Use BackupLocalStoreProtocol")
 public protocol MessageStoreProtocol: Sendable {
 
     /// Returns the number of all stored messages in the local data store, including deleted ones.
+    @available(*, deprecated, message: "Use BackupLocalStoreProtocol")
     func totalMessageCount() async throws -> Int
 
     /// Returns the IDs of all messages stored in the local database, including deleted ones.
+    @available(*, deprecated, message: "Use BackupLocalStoreProtocol")
     func fetchAllMessageIDs() async throws -> [BackupMessageModel.ID]
 
     /// Returns all messages stored in the local database, including deleted ones.
+    @available(*, deprecated, message: "Use BackupLocalStoreProtocol")
     func fetchAllMessages() async throws -> [BackupMessageModel]
 
 }
