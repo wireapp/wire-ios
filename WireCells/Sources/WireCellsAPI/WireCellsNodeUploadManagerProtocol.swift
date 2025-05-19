@@ -18,7 +18,7 @@
 
 public import Foundation
 
-public protocol WireCellsNodeUploadManager: Actor {
+public protocol WireCellsNodeUploadManagerProtocol: Actor {
     /// Starts file upload. Returns the new node after pre-checking.
     func upload(assetPath: URL, assetSize: UInt64, destNodePath: String) async throws -> WireCellsNode
 

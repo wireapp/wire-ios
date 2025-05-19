@@ -19,7 +19,7 @@
 import Foundation
 import WireCellsAPI
 
-package final actor WireCellsNodeUploadManagerImpl: WireCellsNodeUploadManager {
+package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtocol {
     private let fileManager: FileManager
     private let repository: any WireCellsNodesRepository
 
