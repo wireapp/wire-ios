@@ -21,29 +21,25 @@ public import WireLogging
 public import WireFoundation
 
 public struct ImportBackupUseCase<
-    UserStore: UserStoreProtocol,
-    MessageStore: MessageStoreProtocol,
+    BackupLocalStore: BackupLocalStoreProtocol,
     FileUnarchiver: FileUnarchiverProtocol
 >: ImportBackupUseCaseProtocol {
 
     let selfUserID: QualifiedID
-    let userStore: UserStore
-    let messageStore: MessageStore
+    let backupLocalStore: BackupLocalStore
     let fileUnarchiver: FileUnarchiver
     let syncTrigger: @Sendable () -> Void
     let logger: @Sendable () -> any LoggerProtocol
 
     public init(
         selfUserID: QualifiedID,
-        userStore: UserStore,
-        messageStore: MessageStore,
+        backupLocalStore: BackupLocalStore,
         fileUnarchiver: FileUnarchiver,
         syncTrigger: @escaping @Sendable () -> Void,
         logger: @escaping @autoclosure @Sendable () -> any LoggerProtocol
     ) {
         self.selfUserID = selfUserID
-        self.userStore = userStore
-        self.messageStore = messageStore
+        self.backupLocalStore = backupLocalStore
         self.fileUnarchiver = fileUnarchiver
         self.syncTrigger = syncTrigger
         self.logger = logger
@@ -88,7 +84,7 @@ public struct ImportBackupUseCase<
                     let pagers = try await importer.importBackup(from: url, using: password)
                     let total = Int(exactly: pagers.totalPagesCount) ?? 0
 
-                    let storedUserIDs = try await userStore.fetchAllUserIDs()
+                    let storedUserIDs = try await backupLocalStore.fetchAllUserIDs()
                     let usersPager = pagers.usersPager
                     while usersPager.hasMorePages() {
                         let backupUsers = usersPager.nextPage()
@@ -99,7 +95,7 @@ public struct ImportBackupUseCase<
                             else { continue }
 
                             if !storedUserIDs.contains(userID), let user = BackupUserModel(backupUser) {
-                                try await userStore.addUser(user)
+                                try await backupLocalStore.addUser(user)
                             }
 
                             if current % 50 == 0 || current == backupUsers.size - 1 {
@@ -113,7 +109,7 @@ public struct ImportBackupUseCase<
                     // Any conversation that has been left or deleted will not be restored from the backup in the first
                     // version. All other conversations where the self-user is participant will already be available.
 
-                    let storedMessageIDs = try await messageStore.fetchAllMessageIDs()
+                    let storedMessageIDs = try await backupLocalStore.fetchAllMessageIDs()
                     let messagesPager = pagers.messagesPager
                     while messagesPager.hasMorePages() {
                         let backupMessages = messagesPager.nextPage()
@@ -122,7 +118,7 @@ public struct ImportBackupUseCase<
 
                             if !storedMessageIDs.contains(backupMessage.id),
                                let message = BackupMessageModel(backupMessage) {
-                                try await messageStore.addMessage(message)
+                                try await backupLocalStore.addMessage(message)
                             }
 
                             if current % 50 == 0 || current == backupMessages.size - 1 {

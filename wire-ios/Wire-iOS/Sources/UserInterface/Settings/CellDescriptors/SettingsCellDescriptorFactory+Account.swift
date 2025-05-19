@@ -400,8 +400,7 @@ extension SettingsCellDescriptorFactory {
         let importBackupUseCase = CompositeImportBackupUseCase(
             importBackupUseCase: ImportBackupUseCase(
                 selfUserID: .init(selfUser.qualifiedID!),
-                userStore: UserStoreAdapter(context: context),
-                messageStore: MessageStoreAdapter(context: context),
+                backupLocalStore: BackupLocalStore(context: context),
                 fileUnarchiver: ZipArchiveFileUnarchiver(),
                 syncTrigger: {
                     // TODO: what is the correct sync trigger after backup?
@@ -422,9 +421,7 @@ extension SettingsCellDescriptorFactory {
             CreateBackupUseCase(
                 selfUserID: .init(selfUser.qualifiedID!),
                 selfUserHandle: selfUser.handle,
-                userStore: UserStoreAdapter(context: context),
-                conversationStore: ConversationStoreAdapter(context: context),
-                messageStore: MessageStoreAdapter(context: context),
+                backupLocalStore: BackupLocalStore(context: context),
                 fileArchiver: ZIPFoundationFileArchiver(),
                 currentDateProvider: SystemDateProvider(),
                 logger: WireLogger.backupExport

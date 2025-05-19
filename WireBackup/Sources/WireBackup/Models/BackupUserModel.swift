@@ -18,7 +18,9 @@
 
 public import WireFoundation
 
-public struct BackupUserModel: Codable, Hashable, Sendable {
+public typealias BackupUserModel = UserBackupModel
+
+public struct UserBackupModel: Codable, Hashable, Sendable {
 
     public var qualifiedID: QualifiedID
     public var name: String

@@ -19,7 +19,9 @@
 public import Foundation
 public import WireFoundation
 
-public struct BackupMessageModel: Codable, Hashable, Sendable {
+public typealias BackupMessageModel = MessageBackupModel
+
+public struct MessageBackupModel: Codable, Hashable, Sendable {
     public typealias ID = String
 
     public var id: ID

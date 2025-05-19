@@ -1244,6 +1244,15 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
+    public func fetchAllConversationIDsForBackup() async throws -> [QualifiedID] {
+        let fetchRequest = ZMConversation.fetchRequestForBackup()
+        fetchRequest.propertiesToFetch = ["remoteIdentifier_data", "domain"]
+        return try await context.perform { [context] in
+            let conversations = try context.fetch(fetchRequest)
+            return conversations.compactMap(\.qualifiedID)
+        }
+    }
+
     public func fetchAllConversationsForBackup() async throws -> [ZMConversation] {
         try await context.perform { [context] in
             try context.fetch(ZMConversation.fetchRequestForBackup())
