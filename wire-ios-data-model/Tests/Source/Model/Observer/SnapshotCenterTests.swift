@@ -78,7 +78,8 @@ class SnapshotCenterTests: BaseZMMessageTests {
             "lastReadServerTimeStamp": nil,
             "normalizedUserDefinedName": nil,
             "remoteIdentifier": nil,
-            "mutedStatus": 0 as NSObject?
+            "mutedStatus": 0 as NSObject?,
+            "cellName": nil
         ]
         let expectedToManyRelationships = [
             "hiddenMessages": 0,
@@ -86,7 +87,8 @@ class SnapshotCenterTests: BaseZMMessageTests {
             "allMessages": 0,
             "labels": 0,
             "nonTeamRoles": 0,
-            "lastServerSyncedActiveParticipants": 0
+            "lastServerSyncedActiveParticipants": 0,
+            "wireCellsMessageAttachmentDrafts": 0
         ]
 
         expectedAttributes.forEach {
@@ -147,7 +149,8 @@ class SnapshotCenterTests: BaseZMMessageTests {
                 .normalizedUserDefinedName as NSObject?,
             "remoteIdentifier": nil,
             "mutedStatus": (MutedMessageOptionValue.all
-                .rawValue) as NSObject?
+                .rawValue) as NSObject?,
+            "cellName": nil
         ]
         let expectedToManyRelationships = [
             "hiddenMessages": 0,
@@ -155,7 +158,8 @@ class SnapshotCenterTests: BaseZMMessageTests {
             "allMessages": 1,
             "labels": 0,
             "nonTeamRoles": 0,
-            "lastServerSyncedActiveParticipants": 0
+            "lastServerSyncedActiveParticipants": 0,
+            "wireCellsMessageAttachmentDrafts": 0
         ]
 
         let expectedToOneRelationships: [String: NSManagedObjectID] =
@@ -212,7 +216,8 @@ class SnapshotCenterTests: BaseZMMessageTests {
             "allMessages",
             "labels",
             "nonTeamRoles",
-            "lastServerSyncedActiveParticipants"
+            "lastServerSyncedActiveParticipants",
+            "wireCellsMessageAttachmentDrafts"
         ]))
     }
 

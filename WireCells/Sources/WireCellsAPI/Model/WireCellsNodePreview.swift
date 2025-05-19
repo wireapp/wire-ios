@@ -16,7 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum WireCellsFileUploadError: Error {
-    case fileTooLarge(fileSize: Int, maxSize: Int)
-    case genericError(any Error)
+public import Foundation
+
+/// Node preview data.
+/// - Parameters:
+///   - url: URL of the preview.
+///   - dimension: Max preview thumbnail dimension.
+public struct WireCellsNodePreview: Equatable, Hashable, Sendable {
+    public let url: URL
+    public let dimension: Int
+
+    package init(
+        url: URL,
+        dimension: Int
+    ) {
+        self.url = url
+        self.dimension = dimension
+    }
 }

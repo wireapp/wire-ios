@@ -101,5 +101,5 @@ jobs:
     with:
       folders: ${{ join(fromJson(needs.detect-changes.outputs.folders), ',') }}
       notify_secret: WIRE_IOS_CI_WEBHOOK
-      test_dependencies: ${{ github.event_name != 'pull_request' }}
+      test_dependencies: ${{ github.event_name != 'pull_request' || startsWith(github.base_ref, 'release/cycle') }}
     secrets: inherit

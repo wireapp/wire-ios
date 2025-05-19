@@ -16,18 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireDataModel
 
-public enum WireCellsFileUploadProgress: Sendable {
-    case started(file: WireCellsFileUploadInfo)
-    case uploading(file: WireCellsFileUploadInfo, progress: Double)
-    case success(file: WireCellsFileUploadInfo, uploadedFile: WireCellsUploadedFile)
-    case failure(file: WireCellsFileUploadInfo, error: WireCellsFileUploadError)
-
-    public var filePath: String {
-        switch self {
-        case let .started(file), let .uploading(file, _), let .success(file, _), let .failure(file, _):
-            file.uploadPath
-        }
-    }
-}
+public typealias QualifiedID = WireDataModel.QualifiedID

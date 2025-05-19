@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.2.4 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.2.6 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 //
 // Wire
@@ -4804,6 +4804,15 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
             fatalError("no mock for `fetchAllUserIDsWithOneOnOneConversation`")
         }
     }
+
+}
+
+public class MockWireCellsMessageAttachmentsDraftsLocalStoreProtocol: WireCellsMessageAttachmentsDraftsLocalStoreProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
 
 }
 

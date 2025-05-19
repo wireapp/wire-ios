@@ -20,6 +20,7 @@ import Combine
 import Foundation
 import WireDataModel
 import WireDomain
+import WireFoundation
 import WireLogging
 import WireUtilities
 
@@ -104,8 +105,12 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
     func resume() {
         Task {
+            let retrier = BackoffRetrier()
+
             do {
-                try await performSync()
+                try await retrier.retry { [self] in
+                    try await performSync()
+                }
             } catch {
                 delegate?.syncAgentDidFailSyncing(
                     self,

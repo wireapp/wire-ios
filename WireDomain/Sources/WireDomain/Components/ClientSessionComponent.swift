@@ -61,6 +61,7 @@ public final class ClientSessionComponent {
     private let proteusService: any ProteusServiceInterface
 
     private let processorHandlers: ProcessorHandlers
+    private let onAuthenticationFailure: @Sendable () -> Void
 
     public init(
         selfUserID: UUID,
@@ -78,7 +79,8 @@ public final class ClientSessionComponent {
         mlsService: any MLSServiceInterface,
         mlsDecryptionService: any MLSDecryptionServiceInterface,
         proteusService: any ProteusServiceInterface,
-        processorHandlers: ProcessorHandlers
+        processorHandlers: ProcessorHandlers,
+        onAuthenticationFailure: @escaping @Sendable () -> Void
     ) {
         self.selfUserID = selfUserID
         self.selfClientID = selfClientID
@@ -96,12 +98,14 @@ public final class ClientSessionComponent {
         self.isFederationEnabled = isFederationEnabled
         self.isMLSEnabled = isMLSEnabled
         self.processorHandlers = processorHandlers
+        self.onAuthenticationFailure = onAuthenticationFailure
     }
 
     private lazy var authenticationManager = AuthenticationManager(
         clientID: selfClientID,
         cookieStorage: cookieStorage,
-        networkService: networkService
+        networkService: networkService,
+        onAuthenticationFailure: onAuthenticationFailure
     )
 
     // MARK: - Network API clients
