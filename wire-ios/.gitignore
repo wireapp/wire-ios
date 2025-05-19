@@ -24,3 +24,4 @@ Scripts/**/.build
 /fastlane/report.xml
 /test
 /fastlane/README.md
+/WireUITests/env.xcconfig
