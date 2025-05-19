@@ -83,7 +83,7 @@ public class CoreCryptoConfigProvider {
         let coreCryptoDirectory = accountDirectory.appendingPathComponent("corecrypto")
 
         do {
-            let key = try coreCryptoKeyProvider.coreCryptoKey(createIfNeeded: createKeyIfNeeded)
+            let key = try coreCryptoKeyProvider.coreCryptoKey(createIfNeeded: createKeyIfNeeded)//
             return (
                 path: coreCryptoDirectory.path,
                 key: key.base64EncodedString()

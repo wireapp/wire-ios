@@ -100,7 +100,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     public func initialiseMLSWithBasicCredentials(mlsClientID: MLSClientID) async throws {
         WireLogger.mls.info("Initialising MLS client with basic credentials")
         let defaultCiphersuite = await featureRespository.fetchMLS().config.defaultCipherSuite
-        let coreCrypto = try await coreCrypto()
+        let coreCrypto = try await coreCrypto()//
         _ = try await coreCrypto.perform { context in
             try await context.mlsInit(
                 clientId: Data(mlsClientID.rawValue.utf8),
@@ -117,7 +117,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         certificateChain: String
     ) async throws -> CRLsDistributionPoints? {
         WireLogger.mls.info("Initialising MLS client from end-to-end identity enrollment")
-        let coreCrypto = try await coreCrypto()
+        let coreCrypto = try await coreCrypto()//
         let crls = try await coreCrypto.perform { context in
             let crlsDistributionPoints = try await context.e2eiMlsInitOnly(
                 enrollment: enrollment,
@@ -214,7 +214,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             createKeyIfNeeded: allowCreation
         )
 
-        let coreCrypto = try await SafeCoreCrypto(
+        let coreCrypto = try await SafeCoreCrypto(//
             path: configuration.path,
             key: configuration.key
         )
