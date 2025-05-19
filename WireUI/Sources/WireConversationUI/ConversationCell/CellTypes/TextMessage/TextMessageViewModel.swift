@@ -50,51 +50,6 @@ public class TextMessageViewModel: ObservableObject, Identifiable, ConversationC
         self.text = text // TODO: format
         self.senderViewModelWrapper = senderViewModelWrapper!
         self.statusViewModel = statusViewModel
-//        startRandomStateTimer()
     }
 
-//    private func startRandomStateTimer() {
-//        timer = Timer.publish(every: 1.0, on: .main, in: .common)
-//            .autoconnect()
-//            .sink { [weak self] _ in
-//                guard let self else { return }
-//                let (newText, lines) = self.randomMultilineText()
-//                if lines >= 2 {
-//                    self.significantChangeSubject.send(())
-//                } else {
-//                    self.text = newText
-//                }
-//            }
-//    }
-
-//    func randomMultilineText() -> (String, Int) {
-//        let lines = [
-//            "Hello!",
-//            "This is a second line.",
-//            "Here comes the third one."
-//        ]
-//
-//        let numberOfLines = Int.random(in: 1...3)
-//        return (lines.prefix(numberOfLines).joined(
-//            separator: "\n"
-//        ), numberOfLines)
-//    }
-//
-//    deinit {
-//        timer?.cancel()
-//    }
-}
-
-extension ConversationCellModel {
-
-//    static func timeDivider(
-//        text: String,
-//        isUnread: Bool
-//    ) -> Self {
-//        let model = TimeDividerModel(
-//            text: text,
-//            isUnreadIndicatorVisible: isUnread
-//        )
-//        return .timeDivider(model)
-//    }
 }
