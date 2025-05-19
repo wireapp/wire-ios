@@ -23,9 +23,10 @@ import WireFoundation
 package extension BackupConversationModel {
 
     package init?(_ backupConversation: BackupConversation) {
-        guard let id = QualifiedID(backupConversation.id) else { return nil }
+        guard let qualifiedID = QualifiedID(backupConversation.id) else { return nil }
+
         self.init(
-            id: id,
+            qualifiedID: qualifiedID,
             name: backupConversation.name
         )
     }

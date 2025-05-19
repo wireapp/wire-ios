@@ -102,7 +102,7 @@ struct BackupLocalStore<
 
     // MARK: -
 
-    func fetchAllMessageIDs() async throws -> Set<WireBackup.BackupMessageModel.ID> {
+    func fetchAllMessageIDs() async throws -> Set<String> {
         let messageIDs = try await messageLocalStore.fetchAllMessageIDsForBackup().map(\.uuidString)
         return Set(messageIDs)
     }
@@ -192,7 +192,7 @@ private extension BackupConversationModel {
         guard let qualifiedID = conversation.qualifiedID else { return nil }
 
         self.init(
-            id: QualifiedID(qualifiedID),
+            qualifiedID: QualifiedID(qualifiedID),
             name: conversation.name ?? ""
         )
     }

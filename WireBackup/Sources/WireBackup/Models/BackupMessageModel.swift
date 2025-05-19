@@ -22,9 +22,8 @@ public import WireFoundation
 public typealias BackupMessageModel = MessageBackupModel
 
 public struct MessageBackupModel: Codable, Hashable, Sendable {
-    public typealias ID = String
 
-    public var id: ID
+    public var id: String
     public var conversationID: QualifiedID
     public var senderUserID: QualifiedID
     public var senderClientID: String?
@@ -32,7 +31,7 @@ public struct MessageBackupModel: Codable, Hashable, Sendable {
     public var content: MessageContent
 
     public init(
-        id: ID,
+        id: String,
         conversationID: QualifiedID,
         senderUserID: QualifiedID,
         senderClientID: String? = nil,
