@@ -27,24 +27,15 @@ public protocol BackupLocalStoreProtocol: Sendable {
 
     // MARK: -
 
-    /// Returns the IDs of all users stored in the local database, including deleted ones.
-    func fetchAllUserIDs() async throws -> Set<QualifiedID>
-
     /// Returns all users stored in the local database, including deleted ones.
     func fetchAllUsers() async throws -> Set<UserBackupModel>
 
     // MARK: -
 
-    /// Returns the IDs of all conversations stored in the local database, including deleted ones.
-    func fetchAllConversationIDs() async throws -> Set<QualifiedID>
-
     /// Returns all conversations stored in the local database, including deleted ones.
     func fetchAllConversations() async throws -> Set<ConversationBackupModel>
 
     // MARK: -
-
-    /// Returns the IDs of all messages stored in the local database, including deleted ones.
-    func fetchAllMessageIDs() async throws -> Set<QualifiedID>
 
     /// Returns all messages stored in the local database, including deleted ones.
     func fetchAllMessages() async throws -> Set<MessageBackupModel>

@@ -45,12 +45,6 @@ struct BackupLocalStore<
 
     // MARK: -
 
-    func fetchAllUserIDs() async throws -> Set<WireFoundation.QualifiedID> {
-        let userIDs = try await userLocalStore.fetchAllUserIDsForBackup()
-            .map(WireFoundation.QualifiedID.init)
-        return Set(userIDs)
-    }
-
     func fetchAllUsers() async throws -> Set<WireBackup.UserBackupModel> {
         let users = try await userLocalStore.fetchAllUsersForBackup()
         return await context.perform {
@@ -66,12 +60,6 @@ struct BackupLocalStore<
 
     // MARK: -
 
-    func fetchAllConversationIDs() async throws -> Set<WireFoundation.QualifiedID> {
-        let conversationIDs = try await conversationLocalStore.fetchAllConversationIDsForBackup()
-            .map(WireFoundation.QualifiedID.init)
-        return Set(conversationIDs)
-    }
-
     func fetchAllConversations() async throws -> Set<WireBackup.ConversationBackupModel> {
         let conversations = try await conversationLocalStore.fetchAllConversationsForBackup()
         return await context.perform {
@@ -86,11 +74,6 @@ struct BackupLocalStore<
     }
 
     // MARK: -
-
-    func fetchAllMessageIDs() async throws -> Set<WireBackup.BackupMessageModel.ID> {
-        let messageIDs = try await messageLocalStore.fetchAllMessageIDsForBackup().map(\.uuidString)
-        return Set(messageIDs)
-    }
 
     func fetchAllMessages() async throws -> Set<WireBackup.MessageBackupModel> {
         let messages = try await messageLocalStore.fetchAllMessagesForBackup()
@@ -134,7 +117,7 @@ private extension BackupUserModel {
         guard let qualifiedID = user.qualifiedID else { return nil }
 
         self.init(
-            id: QualifiedID(qualifiedID),
+            qualifiedID: QualifiedID(qualifiedID),
             name: user.name ?? "",
             handle: user.handle ?? ""
         )
@@ -148,7 +131,7 @@ private extension BackupConversationModel {
         guard let qualifiedID = conversation.qualifiedID else { return nil }
 
         self.init(
-            id: QualifiedID(qualifiedID),
+            qualifiedID: QualifiedID(qualifiedID),
             name: conversation.name ?? ""
         )
     }
