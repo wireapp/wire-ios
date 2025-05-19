@@ -64,7 +64,8 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
                     } catch {
                         /// skip conversation migration for this user
                         WireLogger.conversation.error(
-                            "resolve 1-1 conversation with userID \(userID) failed!"
+                            "resolve 1-1 conversation with userID \(userID) failed: \(error)",
+                            attributes: [.senderUserId: userID.safeForLoggingDescription]
                         )
                     }
                 }
@@ -305,7 +306,10 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
         for user: ZMUser
     ) async {
         await context.perform {
-            WireLogger.conversation.debug("Should resolve to Proteus 1-1 conversation")
+            WireLogger.conversation.debug(
+                "Should resolve to Proteus 1-1 conversation",
+                attributes: [.senderUserId: user.remoteIdentifier.safeForLoggingDescription]
+            )
 
             guard let conversation = user.oneOnOneConversation else {
                 return WireLogger.conversation.warn(
