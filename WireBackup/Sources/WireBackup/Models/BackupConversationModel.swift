@@ -21,16 +21,15 @@ public import WireFoundation
 public typealias BackupConversationModel = ConversationBackupModel
 
 public struct ConversationBackupModel: Codable, Hashable, Sendable {
-    public typealias ID = QualifiedID
 
-    public var id: ID
+    public var qualifiedID: QualifiedID
     public var name: String
 
     public init(
-        id: ID,
+        qualifiedID: QualifiedID,
         name: String
     ) {
-        self.id = id
+        self.qualifiedID = qualifiedID
         self.name = name
     }
 
