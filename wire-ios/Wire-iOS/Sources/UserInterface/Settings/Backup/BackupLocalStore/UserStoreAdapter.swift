@@ -22,46 +22,45 @@ import WireDataModel
 import WireDomain
 import WireFoundation
 
-struct ConversationStoreAdapter<ConversationLocalStore>: ConversationStoreProtocol, @unchecked Sendable
-    where ConversationLocalStore: ConversationLocalStoreProtocol {
+struct UserStoreAdapter<UserLocalStore>: /*UserStoreProtocol,*/ @unchecked Sendable
+    where UserLocalStore: UserLocalStoreProtocol {
     typealias QualifiedID = WireFoundation.QualifiedID
 
     /// The context to call `perform(schedule:_:)` on if needed.
     let context: NSManagedObjectContext
-    let conversationLocalStore: ConversationLocalStore
+    let userLocalStore: UserLocalStore
 
-    func totalConversationCount() async throws -> Int {
-        try await conversationLocalStore.totalConversationCountForBackup()
+    func totalUserCount() async throws -> Int {
+        try await userLocalStore.totalUserCountForBackup()
     }
 
-    func fetchAllConversationIDs() async throws -> Set<QualifiedID> {
-        let conversationIDs = try await conversationLocalStore.fetchAllConversationIDsForBackup()
+    func fetchAllUserIDs() async throws -> Set<QualifiedID> {
+        let userIDs = try await userLocalStore.fetchAllUserIDsForBackup()
             .map(WireFoundation.QualifiedID.init)
-        return Set(conversationIDs)
+        return Set(userIDs)
     }
 
-    func fetchAllConversations() async throws -> [BackupConversationModel] {
-        let conversations = try await conversationLocalStore.fetchAllConversationsForBackup()
+    func fetchAllUsers() async throws -> [BackupUserModel] {
+        let users = try await userLocalStore.fetchAllUsersForBackup()
         return await context.perform {
-            conversations.compactMap { conversation in
-                guard let conversation = BackupConversationModel(conversation) else {
+            users.compactMap { user in
+                guard let user = BackupUserModel(user) else {
                     assertionFailure()
                     return nil
                 }
-                return conversation
+                return user
             }
         }
     }
 
 }
 
-extension ConversationStoreAdapter where ConversationLocalStore == WireDomain.ConversationLocalStore {
+extension UserStoreAdapter where UserLocalStore == WireDomain.UserLocalStore {
 
     init(context: NSManagedObjectContext) {
         self.context = context
-        self.conversationLocalStore = ConversationLocalStore(
+        self.userLocalStore = UserLocalStore(
             context: context,
-            mlsService: context.performAndWait { context.mlsService },
             messageLocalStore: MessageLocalStore(context: context)
         )
     }
@@ -70,14 +69,15 @@ extension ConversationStoreAdapter where ConversationLocalStore == WireDomain.Co
 
 // MARK: -
 
-extension BackupConversationModel {
+extension BackupUserModel {
 
-    init?(_ conversation: ZMConversation) {
-        guard let qualifiedID = conversation.qualifiedID else { return nil }
+    init?(_ user: ZMUser) {
+        guard let qualifiedID = user.qualifiedID else { return nil }
 
         self.init(
             id: QualifiedID(qualifiedID),
-            name: conversation.name ?? ""
+            name: user.name ?? "",
+            handle: user.handle ?? ""
         )
     }
 

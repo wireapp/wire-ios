@@ -24,7 +24,7 @@ import WireDomain
 import WireFoundation
 import WireProtos
 
-struct MessageStoreAdapter<MessageLocalStore>: MessageStoreProtocol, @unchecked Sendable
+struct MessageStoreAdapter<MessageLocalStore>: /*MessageStoreProtocol,*/ @unchecked Sendable
     where MessageLocalStore: MessageLocalStoreProtocol {
     typealias QualifiedID = WireFoundation.QualifiedID
 

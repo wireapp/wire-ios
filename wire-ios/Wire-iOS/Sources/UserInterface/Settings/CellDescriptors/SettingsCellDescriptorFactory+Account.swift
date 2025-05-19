@@ -403,9 +403,10 @@ extension SettingsCellDescriptorFactory {
             CreateBackupUseCase(
                 selfUserID: .init(selfUser.qualifiedID!),
                 selfUserHandle: selfUser.handle,
-                userStore: UserStoreAdapter(context: context),
-                conversationStore: ConversationStoreAdapter(context: context),
-                messageStore: MessageStoreAdapter(context: context),
+                backupLocalStore: BackupLocalStore(),
+//                userStore: UserStoreAdapter(context: context),
+//                conversationStore: ConversationStoreAdapter(context: context),
+//                messageStore: MessageStoreAdapter(context: context),
                 fileArchiver: ZIPFoundationFileArchiver(),
                 currentDateProvider: SystemDateProvider(),
                 logger: WireLogger.backupExport
