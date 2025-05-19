@@ -23,6 +23,7 @@ import Foundation
 @preconcurrency import KaliumBackup
 
 public struct CreateBackupUseCase<
+    BackupLocalStore: BackupLocalStoreProtocol,
     UserStore: UserStoreProtocol,
     ConversationStore: ConversationStoreProtocol,
     MessageStore: MessageStoreProtocol,

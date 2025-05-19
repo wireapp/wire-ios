@@ -26,6 +26,7 @@ import XCTest
 
 final class CreateBackupUseCaseTests: XCTestCase {
 
+    private typealias BackupLocalStoreMock = BackupLocalStoreProtocolMock
     private typealias UserStoreMock = UserStoreProtocolMock
     private typealias ConversationStoreMock = ConversationStoreProtocolMock
     private typealias MessageStoreMock = MessageStoreProtocolMock
@@ -37,6 +38,7 @@ final class CreateBackupUseCaseTests: XCTestCase {
     private var fileArchiverMock: FileArchiverMock!
     private var dateProviderMock: CurrentDateProvidingMock!
     private var sut: CreateBackupUseCase<
+        BackupLocalStoreMock,
         UserStoreMock,
         ConversationStoreMock,
         MessageStoreMock,
