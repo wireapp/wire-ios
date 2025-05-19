@@ -654,6 +654,7 @@
 "content.collapsed.video.title" = "You sent a video";
 "content.collapsed.audio.title" = "You sent an audio message";
 "content.collapsed.location.title" = "You sent your location";
+"content.collapsed.link.title" = "You sent a link";
 
 "content.message.like" = "Meeldib";
 "content.message.unlike" = "Ei meeldi";
@@ -1158,6 +1159,7 @@
 "self.settings.account_details.remove_device.password.error" = "Vale parool";
 
 "self.settings.account_appearance_group.title" = "Välimus";
+"self.settings.account_appearance_group.footer" = "When this is on, your conversations show a background based on your profile color and light or dark theme.";
 
 "self.settings.privacy_section_group.title" = "Privaatsus";
 "self.settings.enable_read_receipts.title" = "Saada lugemiskinnitusi";
@@ -1176,6 +1178,7 @@
 "self.settings.account_picture_group.accent_color.amber" = "Amber";
 "self.settings.account_picture_group.accent_color.turquoise" = "Turquoise";
 "self.settings.account_picture_group.accent_color.purple" = "Purple";
+"self.settings.account_picture_group.background.title" = "Conversation background color";
 
 "self.settings.account_personal_information_group.title" = "Isikuandmed";
 
@@ -1327,7 +1330,7 @@
 "self.settings.privacy_security.disable_link_previews.footer" = "Eelvaateid võidakse siiski näidata teiste saadetud linkide puhul.";
 
 "self.settings.privacy_security.collapse_own_messages.title" = "Collapse my messages";
-"self.settings.privacy_security.collapse_own_messages.footer" = "When this is on, all your messages collapse to a single line.";
+"self.settings.privacy_security.collapse_own_messages.footer" = "When this is on, all your messages collapse after three lines.";
 
 "self.settings.privacy_analytics_menu.devices.title" = "Seadmed";
 
