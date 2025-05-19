@@ -94,48 +94,45 @@ package final actor WireCellsNodeUploadManagerImpl: WireCellsNodeUploadManager {
     }
 
     private func startUpload(assetPath: URL, node: WireCellsNode) {
-        let stream = AsyncStream<WireCellsNodeUploadEvent> { continuation in
-            let task = Task {
-                do {
-                    try await repository.uploadFile(
-                        path: assetPath,
-                        node: node,
-                        onProgressUpdate: { [weak self] uploaded in
-                            Task { [weak self] in
-                                await self?.updateUploadProgress(
-                                    nodeID: node.id,
-                                    uploaded: uploaded,
-                                    total: node.size ?? 1
+        let (stream, continuation) = AsyncStream.makeStream(of: WireCellsNodeUploadEvent.self)
+        let task = Task {
+            do {
+                try await repository.uploadFile(
+                    path: assetPath,
+                    node: node,
+                    onProgressUpdate: { [weak self] uploaded in
+                        Task { [weak self] in
+                            await self?.updateUploadProgress(
+                                nodeID: node.id,
+                                uploaded: uploaded,
+                                total: node.size ?? 1
+                            )
+                            continuation
+                                .yield(
+                                    WireCellsNodeUploadEvent
+                                        .uploadProgress(Float(uploaded) / Float(node.size ?? 1))
                                 )
-                                continuation
-                                    .yield(
-                                        WireCellsNodeUploadEvent
-                                            .uploadProgress(Float(uploaded) / Float(node.size ?? 1))
-                                    )
-                            }
                         }
-                    )
-                    await uploads.remove(node.id)
-                    continuation.yield(WireCellsNodeUploadEvent.uploadCompleted)
-                    continuation.finish()
-                } catch {
-                    await uploads.update(node.id) { $0.withUploadFailed() }
-                    continuation.yield(WireCellsNodeUploadEvent.uploadError)
-                    continuation.finish()
-                }
+                    }
+                )
+                await uploads.remove(node.id)
+                continuation.yield(WireCellsNodeUploadEvent.uploadCompleted)
+                continuation.finish()
+            } catch {
+                await uploads.update(node.id) { $0.withUploadFailed() }
+                continuation.yield(WireCellsNodeUploadEvent.uploadError)
+                continuation.finish()
             }
-
-            let info = WireCellsUploadInfo(
-                node: node,
-                localPath: assetPath,
-                task: task,
-                continuation: continuation,
-                stream: stream
-            )
-            Task { await uploads.set(node.id, info: info) }
         }
 
-        // we need to store the stream reference in UploadInfo above, and provide `observeUpload`
+        let info = WireCellsUploadInfo(
+            node: node,
+            localPath: assetPath,
+            task: task,
+            continuation: continuation,
+            stream: stream
+        )
+        Task { await uploads.set(node.id, info: info) }
     }
 
     func observeUpload(nodeID: WireCellsNodeID) async -> AsyncStream<WireCellsNodeUploadEvent>? {
