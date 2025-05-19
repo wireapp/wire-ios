@@ -4,11 +4,36 @@
       "id" : "8151CB8E-0EC8-4C9B-A840-DC65D0D48A83",
       "name" : "Configuration 1",
       "options" : {
-
+        "environmentVariableEntries" : [
+          {
+            "key" : "INBUCKET_USERNAME",
+            "value" : "$(INBUCKET_USERNAME)"
+          },
+          {
+            "key" : "BACKEND_URL",
+            "value" : "$(BACKEND_URL)"
+          },
+          {
+            "key" : "INBUCKET_URL",
+            "value" : "$(INBUCKET_URL)"
+          },
+          {
+            "key" : "INBUCKET_PASSWORD",
+            "value" : "$(INBUCKET_PASSWORD)"
+          }
+        ],
+        "targetForVariableExpansion" : {
+          "containerPath" : "container:Wire-iOS.xcodeproj",
+          "identifier" : "01DFC4302D7B4C6F00D1962A",
+          "name" : "WireUITests"
+        }
       }
     }
   ],
   "defaultOptions" : {
+    "environmentVariableEntries" : [
+
+    ],
     "language" : "en",
     "region" : "US",
     "testTimeoutsEnabled" : true
