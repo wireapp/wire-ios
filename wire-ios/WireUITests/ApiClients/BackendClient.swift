@@ -19,9 +19,10 @@
 import Foundation
 
 enum BackendClient {
-
+    
+    static let backendURL = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL"]!)"
+    
     static func loginViaAPI(email: String, password: String) async throws -> String {
-        let backendURL = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL"]!)"
         let url = URL(string: "\(backendURL)/v8/login")
         guard let requestUrl = url else { fatalError() }
         var request = URLRequest(url: requestUrl)
@@ -45,7 +46,6 @@ enum BackendClient {
     }
 
     static func deletePersonalUser(access_token: String, password: String) async throws {
-        let backendURL = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL"]!)"
         let url = URL(string: "\(backendURL)/self")
         guard let requestUrl = url else { fatalError() }
         var request = URLRequest(url: requestUrl)
@@ -61,7 +61,36 @@ enum BackendClient {
             throw (RuntimeError("Error \(pureResponse.description)"))
         }
     }
-
+    
+    static func registerPersonalUser(_ user: UserInfo) async throws -> UserInfo {
+        var body: [String: Any] = [
+            "email": user.email,
+            "password": user.password,
+            "name": user.name
+        ]
+        let response = try await httpPostRequest(url: "\(backendURL)/register", body: body)
+        var updatedUser = UserInfo()
+        updatedUser.name = response.value(forKey: "name") as! String
+        updatedUser.email = response.value(forKey: "email") as! String
+        updatedUser.id = response.value(forKey: "id") as! String
+        updatedUser.backend_domain = response.value(forKeyPath: "qualified_id.domain") as! String
+        return user
+    }
+    
+    private static func httpPostRequest(url: String, body: [String: Any]) async throws -> HTTPURLResponse {
+        guard let requestUrl = URL(string: url) else { fatalError() }
+        var request = URLRequest(url: requestUrl)
+        request.httpMethod = "DELETE"
+        request.httpBody = try? JSONSerialization.data(withJSONObject: body, options: .prettyPrinted)
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        let (responseData, response) = try await URLSession.shared.data(for: request)
+        let pureResponse = response as! HTTPURLResponse
+        if pureResponse.statusCode != 200 {
+            throw (RuntimeError("Error \(pureResponse.description)"))
+        }
+        return pureResponse
+    }
 }
 
 private struct LoginMessage: Decodable {

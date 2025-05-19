@@ -27,41 +27,18 @@ final class WireAuthenticationTests: WireUITestCase {
     @MainActor
     func test_Login_withWrongEmail_NextIsDisabled() throws {
 
-        let textField = emailTextField()
-        textField.tap()
-        textField.typeText("notAnEmail.com")
+        let welcomePage = WelcomePage()
+            .typeEmailOrSSO("notAnEmail.com")
 
-        let nextButton = nextButton()
-        XCTAssertFalse(nextButton.isEnabled, "nextButton should be disabled if no email")
+        XCTAssertFalse(welcomePage.nextButton.isEnabled, "nextButton should be disabled if no email")
     }
 
     @MainActor // note: comment @MainActor to use recorder
-    func test_Login_withEmail() throws {
+    func test_Login_withoutPassword_NextIsDisabled() throws {
 
-        let textField = emailTextField()
-        textField.tap()
-        textField.typeText(LoginCredentials.email)
+        let loginPage = WelcomePage()
+            .enterEmailOrSSO(LoginCredentials.email)
 
-        let nextButton = nextButton()
-        nextButton.tap()
-
-        let errorAlert = app.alerts["Error"]
-        XCTAssertFalse(errorAlert.exists)
-    }
-
-    // MARK: - Helpers
-
-    private func nextButton() -> XCUIElement {
-        let elementsQuery = app.scrollViews.otherElements
-        return elementsQuery.buttons["Next"]
-    }
-
-    private func emailTextField() -> XCUIElement {
-        let elementsQuery = app.scrollViews.otherElements
-        let textField = elementsQuery.textFields["Email or SSO code"]
-        let exists = NSPredicate(format: "exists == 1")
-        expectation(for: exists, evaluatedWith: textField, handler: nil)
-        waitForExpectations(timeout: 5, handler: nil)
-        return textField
+        XCTAssertFalse(loginPage.nextButton.isEnabled, "nextButton should be disabled if no password")
     }
 }

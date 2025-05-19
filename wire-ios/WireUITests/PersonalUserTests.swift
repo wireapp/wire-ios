@@ -25,7 +25,7 @@ final class PersonalUsersTests: WireUITestCase {
         let user = UserGenerator.generateUniqueUserInfo()
 
         let page = WelcomePage()
-            .typeEmailOrSSO(user.email)
+            .enterEmailOrSSO(user.email)
             .tapCreatePersonalAccountLink()
             .tapConfirmCreateAccount()
             .tapAcceptButton()
@@ -49,5 +49,14 @@ final class PersonalUsersTests: WireUITestCase {
         accountPage.logout()
 //            TODO: [WPB-17516] Restore once fixed
 //            .enterPassword(user.password)
+    }
+    
+    
+    @MainActor
+    func test_Login_asExistingPersonalUser() async throws {
+        let user = try await userManager.createPersonalUser()
+        
+        let page = WelcomePage()
+            .enterEmailOrSSO(user.email)
     }
 }

@@ -25,6 +25,7 @@ class WireUITestCase: XCTestCase {
 
     var app: XCUIApplication!
     let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+    let userManager = UserManager()
 
     override func setUpWithError() throws {
         // Delete app, useful if we aren't resetting simulators between runs (locally writing tests)
@@ -47,14 +48,8 @@ class WireUITestCase: XCTestCase {
     }
 
     override func tearDown() async throws {
-//        TODO: [WPB-17516] Restore once fixed
-//        let email = context["email"] as! String
-//        let password = context["password"] as! String
-//        let access_token = try? await BackendClient.loginViaAPI(email:email, password:password)
-//        if(access_token != nil) {
-//            try? await BackendClient.deletePersonalUser(access_token:access_token!, password:password)
-//            puts("Cleaned up \(email)")
-//        }
+//        TODO: [WPB-17516] Make sure the personal user created via registration flow also gets cleaned up
+        try await userManager.deleteCreatedUsers()
     }
 
     // MARK: - Helpers

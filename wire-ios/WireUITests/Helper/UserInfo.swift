@@ -16,15 +16,54 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-struct UserInfo {
+class UserInfo {
+    
+    var name: String
+    var username: String
+    var email: String
+    var domain: String
+    var password: String
+    var id: String
+    var backend_domain: String
 
-    let name: String
-    let username: String
-    let domain: String
-    let password: String
-
-    var email: String {
-        username + "@" + domain
+    init(name: String, username: String, password: String, domain: String) {
+        self.name = name
+        self.username = username
+        self.password = password
+        self.domain = domain
+        self.email = username + "@" + domain
+        self.id = ""
+        self.backend_domain = ""
     }
-
+    
+    init() {
+        self.name = ""
+        self.username = ""
+        self.password = ""
+        self.domain = ""
+        self.email = ""
+        self.id = ""
+        self.backend_domain = ""
+    }
+    
+    func updateUserInfo(newInfo: UserInfo) {
+        if(newInfo.name != "") {
+            self.name = newInfo.name
+        }
+        if(newInfo.username != "") {
+            self.username = newInfo.username
+        }
+        if(newInfo.password != "") {
+            self.password = newInfo.password
+        }
+        if(newInfo.domain != "") {
+            self.domain = newInfo.domain
+        }
+        if(newInfo.id != "") {
+            self.id = newInfo.id
+        }
+        if(newInfo.backend_domain != "") {
+            self.backend_domain = newInfo.backend_domain
+        }
+    }
 }
