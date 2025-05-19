@@ -59,7 +59,12 @@ package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtoc
         self.repository = repository
     }
 
-    func upload(assetPath: URL, assetSize: UInt64, destNodePath: String) async throws -> WireCellsNode {
+    func upload(
+        id: WireCellsNodeID,
+        assetPath: URL,
+        assetSize: UInt64,
+        destNodePath: String
+    ) async throws -> (node: WireCellsNode, stream: AsyncStream<WireCellsUploadStatus>) {
         let result = try await repository.preCheck(nodePath: destNodePath)
 
         let resolvedPath: String = switch result {
@@ -70,8 +75,8 @@ package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtoc
         }
 
         let node = WireCellsNode(
-            uuid: UUID(),
-            versionID: UUID(),
+            uuid: id.uuid,
+            versionID: id.versionID,
             path: resolvedPath,
             modified: nil,
             size: assetSize,
@@ -88,12 +93,12 @@ package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtoc
             publicLinkID: nil
         )
 
-        await startUpload(assetPath: assetPath, node: node)
+        let stream = await startUpload(assetPath: assetPath, node: node)
 
-        return node
+        return (node, stream)
     }
 
-    private func startUpload(assetPath: URL, node: WireCellsNode) async {
+    private func startUpload(assetPath: URL, node: WireCellsNode) async -> AsyncStream<WireCellsUploadStatus> {
         let (stream, continuation) = AsyncStream.makeStream(of: WireCellsUploadStatus.self)
         let task = Task {
             do {
@@ -134,6 +139,8 @@ package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtoc
         )
 
         await uploads.set(node.id, info: info)
+
+        return stream
     }
 
     func observeUpload(nodeID: WireCellsNodeID) async -> AsyncStream<WireCellsUploadStatus>? {
@@ -143,7 +150,7 @@ package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtoc
     func retryUpload(nodeID: WireCellsNodeID) async {
         if let info = await uploads.get(nodeID) {
             if fileManager.fileExists(atPath: info.localPath.path) == true {
-                await startUpload(assetPath: info.localPath, node: info.node)
+                _ = await startUpload(assetPath: info.localPath, node: info.node)
             } else {
                 await uploads.update(nodeID) { $0.withUploadFailed() }
                 info.continuation.yield(.failed)

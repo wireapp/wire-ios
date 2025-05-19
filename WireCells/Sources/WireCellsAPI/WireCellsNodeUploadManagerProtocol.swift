@@ -20,7 +20,12 @@ public import Foundation
 
 public protocol WireCellsNodeUploadManagerProtocol: Actor {
     /// Starts file upload. Returns the new node after pre-checking.
-    func upload(assetPath: URL, assetSize: UInt64, destNodePath: String) async throws -> WireCellsNode
+    func upload(
+        id: WireCellsNodeID,
+        assetPath: URL,
+        assetSize: UInt64,
+        destNodePath: String
+    ) async throws -> (node: WireCellsNode, stream: AsyncStream<WireCellsUploadStatus>)
 
     /// Observe upload events for a specific node UUID.
     func observeUpload(nodeID: WireCellsNodeID) async -> AsyncStream<WireCellsUploadStatus>?
