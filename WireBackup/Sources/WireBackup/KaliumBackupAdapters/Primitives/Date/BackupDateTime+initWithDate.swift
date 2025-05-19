@@ -16,15 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
+import Foundation
+import KaliumBackup
 
-public struct WireCellsUploadedFile: Sendable {
-    /// The path of the uploaded file on the server
-    public let path: URL
+extension BackupDateTime {
 
-    ///   - Parameters:
-    ///       - path: The path of the uploaded file on the server
-    public init(path: URL) {
-        self.path = path
+    convenience init(_ date: Date) {
+        let instant = Kotlinx_datetimeInstant
+            .Companion()
+            .fromEpochMilliseconds(epochMilliseconds: Int64(date.timeIntervalSince1970) * 1000)
+        self.init(instant: instant)
     }
+
 }

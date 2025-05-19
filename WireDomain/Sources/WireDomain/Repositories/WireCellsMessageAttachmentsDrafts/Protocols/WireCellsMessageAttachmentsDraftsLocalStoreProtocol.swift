@@ -16,6 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum WireCellsServiceInitError: Error {
-    case failedToInitializeS3Client
-}
+import Foundation
+import WireCellsAPI
+import WireDataModel
+
+// sourcery: AutoMockable
+public protocol WireCellsMessageAttachmentsDraftsLocalStoreProtocol {}

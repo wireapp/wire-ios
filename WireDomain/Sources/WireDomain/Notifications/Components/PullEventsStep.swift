@@ -211,7 +211,8 @@ extension PullEventsStep {
             await AuthenticationManager(
                 clientID: selfClientID,
                 cookieStorage: dependency.cookieStorage,
-                networkService: try networkService
+                networkService: try networkService,
+                onAuthenticationFailure: {}
             )
         }
     }

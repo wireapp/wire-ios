@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/awslabs/aws-crt-swift",
         "state": {
           "branch": null,
-          "revision": "5a65eb60edbd080a8a79af813a5bb6e5ff387550",
-          "version": "0.43.0"
+          "revision": "74d970dde8a0d6b2fe1d8374767ca9793088ce2c",
+          "version": "0.48.0"
         }
       },
       {
@@ -24,8 +24,8 @@
         "repositoryURL": "https://github.com/awslabs/aws-sdk-swift.git",
         "state": {
           "branch": null,
-          "revision": "13fd05c74d7d1c421707ef5b738a5b18d5fa347a",
-          "version": "1.2.17"
+          "revision": "104958a898543582bb01102616bf5d61ed237352",
+          "version": "1.2.59"
         }
       },
       {
@@ -33,8 +33,8 @@
         "repositoryURL": "https://github.com/pydio/cells-sdk-swift.git",
         "state": {
           "branch": null,
-          "revision": "4741bcb266e9a805a403c758e56f2a3cad7f66a3",
-          "version": "0.1.1-alpha09"
+          "revision": "4b7577af50585420dc8280b38296e84daf2a6696",
+          "version": "0.1.1-alpha10"
         }
       },
       {
@@ -60,8 +60,8 @@
         "repositoryURL": "https://github.com/DataDog/dd-sdk-ios.git",
         "state": {
           "branch": null,
-          "revision": "e67af5e59678668acbe73e7d0e1c657b6cfeac6f",
-          "version": "2.18.0"
+          "revision": "27ad5b051697a773f135ed1e4b0fed3a45a0e655",
+          "version": "2.27.0"
         }
       },
       {
@@ -114,8 +114,8 @@
         "repositoryURL": "https://github.com/DataDog/opentelemetry-swift-packages.git",
         "state": {
           "branch": null,
-          "revision": "adcfc3d7fc6ad411bb576cfa4512c2d3f8b2dbc7",
-          "version": "1.6.0"
+          "revision": "4a7295600d4ebb9525a23c11586c5fdb74ae8b7e",
+          "version": "1.13.1"
         }
       },
       {
@@ -141,8 +141,8 @@
         "repositoryURL": "https://github.com/microsoft/plcrashreporter.git",
         "state": {
           "branch": null,
-          "revision": "fec2ff791b27fd9b9ceab9072025dea56409cca1",
-          "version": "1.11.3"
+          "revision": "8c61e5e38e9f737dd68512ed1ea5ab081244ad65",
+          "version": "1.12.0"
         }
       },
       {
@@ -150,8 +150,8 @@
         "repositoryURL": "https://github.com/smithy-lang/smithy-swift",
         "state": {
           "branch": null,
-          "revision": "edfc55c48a3d8c17720780872d94c17449241d88",
-          "version": "0.115.0"
+          "revision": "755367ae4e10004f8b5a94fbfdf3f638a1f225bc",
+          "version": "0.125.0"
         }
       },
       {
@@ -242,6 +242,15 @@
           "branch": null,
           "revision": "39de59b2d47f7ef3ca88a039dff3084688fe27f4",
           "version": "1.5.2"
+        }
+      },
+      {
+        "package": "ZIPFoundation",
+        "repositoryURL": "https://github.com/weichsel/ZIPFoundation.git",
+        "state": {
+          "branch": null,
+          "revision": "02b6abe5f6eef7e3cbd5f247c5cc24e246efcfe0",
+          "version": "0.9.19"
         }
       }
     ]
