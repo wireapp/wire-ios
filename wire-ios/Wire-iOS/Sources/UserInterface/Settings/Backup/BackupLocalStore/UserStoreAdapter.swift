@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// TODO: delete
+
 import CoreData
 import WireBackup
 import WireDataModel
@@ -71,7 +73,7 @@ extension UserStoreAdapter where UserLocalStore == WireDomain.UserLocalStore {
 
 extension BackupUserModel {
 
-    init?(_ user: ZMUser) {
+    fileprivate init?(_ user: ZMUser) {
         guard let qualifiedID = user.qualifiedID else { return nil }
 
         self.init(
