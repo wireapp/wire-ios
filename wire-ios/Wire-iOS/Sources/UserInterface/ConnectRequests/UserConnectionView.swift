@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 import WireSyncEngine
+import WireReusableUIComponents
 
 final class UserConnectionView: UIView, Copyable {
 

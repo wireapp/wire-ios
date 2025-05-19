@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireReusableUIComponents
 
 enum PasscodeError: CaseIterable {
     case tooShort

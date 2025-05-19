@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDesign
+import WireReusableUIComponents
 
 protocol ParticipantDeviceHeaderViewDelegate: AnyObject {
     func participantsDeviceHeaderViewDidTapLearnMore(_ headerView: ParticipantDeviceHeaderView)

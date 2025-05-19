@@ -1,0 +1,108 @@
+//
+// Wire
+// Copyright (C) 2025 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import UIKit
+
+public enum Constants {
+    public static var teamAccountViewImageInsets = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
+}
+
+public extension StyleKitIcon.Size {
+    enum CreatePasscode {
+        public static let iconSize: StyleKitIcon.Size = .custom(11)
+        public static let errorIconSize: StyleKitIcon.Size = .custom(13)
+    }
+}
+
+public extension CGFloat {
+    enum iPhone4Inch {
+        public static let width: CGFloat = 320
+        public static let height: CGFloat = 568
+    }
+
+    enum iPhone4_7Inch {
+        public static let width: CGFloat = 375
+        public static let height: CGFloat = 667
+    }
+
+    enum WipeCompletion {
+        public static let buttonHeight: CGFloat = 48
+    }
+
+    enum PasscodeUnlock {
+        public static let textFieldHeight: CGFloat = 40
+        public static let buttonHeight: CGFloat = 40
+        public static let buttonPadding: CGFloat = 24
+    }
+
+    enum AccessoryTextField {
+        public static let horizonalInset: CGFloat = 16
+    }
+
+    enum SpinnerButton {
+        public static let contentInset: CGFloat = 16
+        public static let iconSize: CGFloat = StyleKitIcon.Size.tiny.rawValue
+        public static let spinnerBackgroundAlpha: CGFloat = 0.93
+    }
+
+    enum MessageCell {
+        public static var paragraphSpacing: CGFloat = 8
+    }
+
+    enum IconCell {
+        public static let IconWidth: CGFloat = 64
+        public static let IconSpacing: CGFloat = 16
+    }
+
+    enum StartUI {
+        public static let CellHeight: CGFloat = 56
+    }
+
+    enum SplitView {
+        public static let LeftViewWidth: CGFloat = 336
+
+        /// on iPad 9.7 inch 2/3 mode, right view's width is  396pt, use the compact mode's narrower margin
+        /// when the window is small then or equal to (396 + LeftViewWidth = 732), use compact mode margin
+        public static let IPadMarginLimit: CGFloat = 732
+    }
+
+    enum ConversationList {
+        public static let horizontalMargin: CGFloat = 16
+    }
+
+    enum ConversationListHeader {
+        public static let iconWidth: CGFloat = 32
+        /// 75% of ConversationAvatarView.iconWidth + TeamAccountView.imageInset * 2 = 24 + 2 * 2
+        public static let avatarSize: CGFloat = 24 + Constants.teamAccountViewImageInsets.left + Constants
+            .teamAccountViewImageInsets.right
+
+        public static let barHeight: CGFloat = 44
+    }
+
+    enum ConversationListSectionHeader {
+        public static let height: CGFloat = 51
+    }
+
+    enum ConversationAvatarView {
+        public static let iconSize: CGFloat = 32
+    }
+
+    enum AccountView {
+        public static let iconWidth: CGFloat = 32
+    }
+}

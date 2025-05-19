@@ -20,6 +20,7 @@ import Foundation
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireReusableUIComponents
 
 protocol UserCellSubtitleProtocol: AnyObject {
     func subtitle(forRegularUser user: UserType?) -> NSAttributedString?

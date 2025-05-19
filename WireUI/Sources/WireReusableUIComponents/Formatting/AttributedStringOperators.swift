@@ -17,21 +17,21 @@
 //
 
 import Foundation
-import WireDataModel
+import UIKit
 
 // MARK: - Operators
 
 // Concats the lhs and rhs and returns a NSAttributedString
 infix operator +: AdditionPrecedence
 
-func + (left: NSAttributedString, right: NSAttributedString) -> NSAttributedString {
+public func + (left: NSAttributedString, right: NSAttributedString) -> NSAttributedString {
     let result = NSMutableAttributedString()
     result.append(left)
     result.append(right)
     return NSAttributedString(attributedString: result)
 }
 
-func + (left: String, right: NSAttributedString) -> NSAttributedString {
+public func + (left: String, right: NSAttributedString) -> NSAttributedString {
     var range = NSRange(location: 0, length: 0)
     let attributes = right.length > 0 ? right.attributes(at: 0, effectiveRange: &range) : [:]
 
@@ -42,7 +42,7 @@ func + (left: String, right: NSAttributedString) -> NSAttributedString {
     return NSAttributedString(attributedString: result)
 }
 
-func + (left: NSAttributedString, right: String) -> NSAttributedString {
+public func + (left: NSAttributedString, right: String) -> NSAttributedString {
     var range: NSRange? = NSRange(location: 0, length: 0)
     let attributes = left.length > 0 ? left.attributes(at: left.length - 1, effectiveRange: &range!) : [:]
 
@@ -56,25 +56,25 @@ func + (left: NSAttributedString, right: String) -> NSAttributedString {
 infix operator +=: AssignmentPrecedence
 
 @discardableResult
-func += (left: inout NSMutableAttributedString, right: String) -> NSMutableAttributedString {
+public func += (left: inout NSMutableAttributedString, right: String) -> NSMutableAttributedString {
     left.append(right.attributedString)
     return left
 }
 
 @discardableResult
-func += (left: inout NSAttributedString, right: String) -> NSAttributedString {
+public func += (left: inout NSAttributedString, right: String) -> NSAttributedString {
     left = left + right
     return left
 }
 
 @discardableResult
-func += (left: inout NSAttributedString, right: NSAttributedString) -> NSAttributedString {
+public func += (left: inout NSAttributedString, right: NSAttributedString) -> NSAttributedString {
     left = left + right
     return left
 }
 
 @discardableResult
-func += (left: inout NSAttributedString, right: NSAttributedString?) -> NSAttributedString {
+public func += (left: inout NSAttributedString, right: NSAttributedString?) -> NSAttributedString {
     guard let rhs = right else { return left }
     return left += rhs
 }
@@ -82,32 +82,32 @@ func += (left: inout NSAttributedString, right: NSAttributedString?) -> NSAttrib
 // Applies the attributes on the rhs to the string on the lhs
 infix operator &&: LogicalConjunctionPrecedence
 
-func && (left: String, right: [NSAttributedString.Key: Any]) -> NSAttributedString {
+public func && (left: String, right: [NSAttributedString.Key: Any]) -> NSAttributedString {
     NSAttributedString(string: left, attributes: right)
 }
 
-func && (left: String, right: UIFont) -> NSAttributedString {
+public func && (left: String, right: UIFont) -> NSAttributedString {
     NSAttributedString(string: left, attributes: [.font: right])
 }
 
-func && (left: NSAttributedString, right: UIFont?) -> NSAttributedString {
+public func && (left: NSAttributedString, right: UIFont?) -> NSAttributedString {
     guard let font = right else { return left }
     let result = NSMutableAttributedString(attributedString: left)
     result.addAttributes([.font: font], range: NSRange(location: 0, length: result.length))
     return NSAttributedString(attributedString: result)
 }
 
-func && (left: String, right: UIColor) -> NSAttributedString {
+public func && (left: String, right: UIColor) -> NSAttributedString {
     NSAttributedString(string: left, attributes: [.foregroundColor: right])
 }
 
-func && (left: NSAttributedString, right: UIColor) -> NSAttributedString {
+public func && (left: NSAttributedString, right: UIColor) -> NSAttributedString {
     let result = NSMutableAttributedString(attributedString: left)
     result.addAttributes([.foregroundColor: right], range: NSRange(location: 0, length: result.length))
     return NSAttributedString(attributedString: result)
 }
 
-func && (left: NSAttributedString, right: [NSAttributedString.Key: Any]) -> NSAttributedString {
+public func && (left: NSAttributedString, right: [NSAttributedString.Key: Any]) -> NSAttributedString {
     let result = NSMutableAttributedString(attributedString: left)
     result.addAttributes(right, range: NSRange(location: 0, length: result.length))
     return NSAttributedString(attributedString: result)
@@ -115,7 +115,7 @@ func && (left: NSAttributedString, right: [NSAttributedString.Key: Any]) -> NSAt
 
 // MARK: - Helper Functions
 
-extension String {
+public extension String {
 
     var attributedString: NSAttributedString {
         .init(string: self)
@@ -124,11 +124,11 @@ extension String {
 
 // MARK: - Line Height
 
-enum ParagraphStyleDescriptor {
+public enum ParagraphStyleDescriptor {
     case lineSpacing(CGFloat)
     case paragraphSpacing(CGFloat)
 
-    var style: NSParagraphStyle {
+    public var style: NSParagraphStyle {
         let style = NSMutableParagraphStyle()
         switch self {
         case let .lineSpacing(height): style.lineSpacing = height
@@ -138,13 +138,13 @@ enum ParagraphStyleDescriptor {
     }
 }
 
-func && (left: NSAttributedString, right: ParagraphStyleDescriptor) -> NSAttributedString {
+public func && (left: NSAttributedString, right: ParagraphStyleDescriptor) -> NSAttributedString {
     let result = NSMutableAttributedString(attributedString: left)
     result.addAttributes([.paragraphStyle: right.style], range: NSRange(location: 0, length: result.length))
     return NSAttributedString(attributedString: result)
 }
 
-func && (left: String, right: ParagraphStyleDescriptor) -> NSAttributedString {
+public func && (left: String, right: ParagraphStyleDescriptor) -> NSAttributedString {
     left.attributedString && right
 }
 
@@ -155,7 +155,7 @@ func && (left: String, right: ParagraphStyleDescriptor) -> NSAttributedString {
 // --- In localized .strings file:
 // "some.string" = "%@ hat etwas gemacht"; // basic version
 // "some.string-you" = "%@ hast etwas gemacht"; // second person version
-enum PointOfView: UInt {
+public enum PointOfView: UInt {
     // The localized string does not adjust.
     case none
     // First person: I/We case
@@ -180,12 +180,12 @@ enum PointOfView: UInt {
 }
 
 extension PointOfView: CustomStringConvertible {
-    var description: String {
+    public var description: String {
         "POV: \(suffix)"
     }
 }
 
-extension String {
+public extension String {
     /// Retuns the NSLocalizedString version of self from the InfoPlist table
     var infoPlistLocalized: String {
         localized(table: "InfoPlist")
@@ -197,7 +197,7 @@ extension String {
     }
 
     /// Used to generate localized strings with plural rules from the stringdict
-    func localized(uppercased: Bool = false, pov pointOfView: PointOfView = .none, args: CVarArg...) -> String {
+    func localized(uppercased: Bool = false, pov pointOfView: PointOfView = .none, args: any CVarArg...) -> String {
         withVaList(args) {
             let text = NSString(format: self.localized(pov: pointOfView), arguments: $0) as String
             return uppercased ? text.localizedUppercase : text
@@ -216,7 +216,7 @@ extension String {
     }
 }
 
-extension NSAttributedString {
+public extension NSAttributedString {
 
     // Adds the attribtues to the given substring in self and returns the resulting String
     func addAttributes(
@@ -249,7 +249,7 @@ extension NSAttributedString {
     }
 }
 
-extension NSMutableAttributedString {
+public extension NSMutableAttributedString {
 
     func addAttributes(_ attributes: [NSAttributedString.Key: AnyObject], to substring: String) {
         let substringRange = (string as NSString).range(of: substring)
@@ -259,4 +259,12 @@ extension NSMutableAttributedString {
         addAttributes(attributes, range: substringRange)
     }
 
+}
+
+private extension String {
+    /// Returns the NSLocalizedString version of self
+    @available(*, deprecated, message: "Use NSLocalizedString(_:comment:) directly instead")
+    var localized: String {
+        NSLocalizedString(self, comment: "")
+    }
 }

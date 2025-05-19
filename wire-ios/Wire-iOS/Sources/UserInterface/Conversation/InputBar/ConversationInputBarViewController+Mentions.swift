@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireReusableUIComponents
 
 extension ConversationInputBarViewController {
     var isInMentionsFlow: Bool {

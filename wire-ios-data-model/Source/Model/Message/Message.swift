@@ -23,7 +23,11 @@ public extension ZMConversationMessage {
     var supportsNewApproach: Bool {
         NSClassFromString("XCTest") == nil &&
         isText &&
-        !hasLinks
+        !hasLinks &&
+        textMessageData?.quoteMessage == nil
+        // TODO
+        // no search querie
+        // tags
     }
 
     /// Returns YES, if the message has text to display.

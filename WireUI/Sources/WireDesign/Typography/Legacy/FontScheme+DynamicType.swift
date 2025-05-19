@@ -19,7 +19,7 @@
 import UIKit
 
 extension UIFont {
-    static func wr_preferredContentSizeMultiplier(for contentSizeCategory: UIContentSizeCategory) -> CGFloat {
+    public static func wr_preferredContentSizeMultiplier(for contentSizeCategory: UIContentSizeCategory) -> CGFloat {
         switch contentSizeCategory {
         case UIContentSizeCategory.accessibilityExtraExtraExtraLarge: 26.0 / 16.0
         case UIContentSizeCategory.accessibilityExtraExtraLarge: 25.0 / 16.0

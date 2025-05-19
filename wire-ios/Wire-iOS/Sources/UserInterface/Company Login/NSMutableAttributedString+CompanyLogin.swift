@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireReusableUIComponents
 
 extension NSAttributedString {
     static func companyLoginString(withMessage message: String, error: String) -> NSAttributedString {

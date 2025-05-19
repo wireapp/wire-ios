@@ -19,7 +19,7 @@
 import Down
 import Foundation
 
-extension NSAttributedString {
+public extension NSAttributedString {
 
     @objc
     static func markdown(from text: String, style: DownStyle) -> NSMutableAttributedString {
@@ -39,24 +39,5 @@ extension NSAttributedString {
         }
 
         return result
-    }
-}
-
-extension NSAttributedString {
-
-    /// Trim the NSAttributedString to given number of line limit and add an ellipsis at the end if necessary
-    ///
-    /// - Parameter numberOfLinesLimit: number of line reserved
-    /// - Returns: the trimmed NSAttributedString. If not excess limit, return the original NSAttributedString
-    func trimmedToNumberOfLines(numberOfLinesLimit: Int) -> NSAttributedString {
-        // Trim the string to first four lines to prevent last line narrower spacing issue
-        let lines = string.components(separatedBy: ["\n"])
-        if lines.count > numberOfLinesLimit {
-            let headLines = lines.prefix(numberOfLinesLimit).joined(separator: "\n")
-
-            return attributedSubstring(from: NSRange(location: 0, length: headLines.count)) + String.ellipsis
-        } else {
-            return self
-        }
     }
 }

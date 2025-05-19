@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireReusableUIComponents
 
 private let smallLightFont = FontSpec(.small, .light)
 private let smallBoldFont = FontSpec(.small, .medium)

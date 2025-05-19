@@ -18,7 +18,7 @@
 
 import Down
 import XCTest
-@testable import Wire
+@testable import WireReusableUIComponents
 
 final class LinkInteractionTextViewTests: XCTestCase {
 

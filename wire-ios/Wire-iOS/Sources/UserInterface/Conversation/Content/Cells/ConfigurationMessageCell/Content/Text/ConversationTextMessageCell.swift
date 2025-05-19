@@ -18,6 +18,7 @@
 
 import UIKit
 import WireSyncEngine
+import WireReusableUIComponents
 
 final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextViewInteractionDelegate {
 

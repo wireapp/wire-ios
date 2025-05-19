@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireReusableUIComponents
 
 final class ConversationMessageFailedRecipientsCellDescription: ConversationMessageCellDescription {
 

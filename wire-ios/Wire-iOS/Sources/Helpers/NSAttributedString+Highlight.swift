@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireReusableUIComponents
 
 extension String {
     func nsRange(from range: Range<String.Index>) -> NSRange {

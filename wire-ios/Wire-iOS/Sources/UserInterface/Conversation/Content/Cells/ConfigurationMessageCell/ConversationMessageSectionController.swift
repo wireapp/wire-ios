@@ -27,7 +27,7 @@ protocol MessageViewModelFactory {
     func makeTextMessageViewModel(
         message: ConversationMessage,
         selfUser: any UserType,
-        accentColor: UIColor,
+        accentColor: AccentColor,
         shouldShowSender: Bool,
         shouldShowStatus: Bool
     ) -> TextMessageViewModel
@@ -441,7 +441,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                     .text(factory.makeTextMessageViewModel(
                         message: message,
                         selfUser: selfUser,
-                        accentColor: selfUser.accentColor,
+                        accentColor: selfUser.wireAccentColor,
                         shouldShowSender: isSenderVisible,
                         shouldShowStatus: isToolboxVisible
                     ))

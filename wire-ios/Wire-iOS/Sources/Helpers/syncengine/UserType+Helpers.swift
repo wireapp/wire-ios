@@ -18,6 +18,7 @@
 
 import WireCommonComponents
 import WireSyncEngine
+import WireReusableUIComponents
 
 typealias ConversationCreatedBlock = (Result<ZMConversation, Error>) -> Void
 

@@ -23,6 +23,7 @@ import UniformTypeIdentifiers
 import WireCommonComponents
 import WireDesign
 import WireSyncEngine
+import WireReusableUIComponents
 
 extension Notification.Name {
     static let MarkdownTextViewDidChangeActiveMarkdown = Notification.Name("MarkdownTextViewDidChangeActiveMarkdown")
@@ -623,88 +624,6 @@ extension MarkdownTextView: MarkdownBarViewDelegate {
 
         activeMarkdown.subtract(markdown)
     }
-}
-
-// MARK: - DownStyle Presets
-
-extension DownStyle {
-    /// The style used within the conversation system message cells.
-    static var systemMessage: DownStyle = {
-        let style = DownStyle()
-        if let fontFromFontSpec = FontSpec(.medium, .none).font {
-            style.baseFont = fontFromFontSpec
-        }
-        style.baseFontColor = SemanticColors.Label.textDefault
-        style.codeFont = UIFont(name: "Menlo", size: style.baseFont.pointSize) ?? style.baseFont
-        style.codeColor = SemanticColors.Label.textDefault
-        style.baseParagraphStyle = ParagraphStyleDescriptor.paragraphSpacing(CGFloat.MessageCell.paragraphSpacing).style
-        style.listItemPrefixSpacing = 8
-        style.renderOnlyValidLinks = false
-        return style
-    }()
-
-    /// The style used within the conversation message cells.
-    static var normal: DownStyle = {
-        let style = DownStyle()
-        style.baseFont = FontSpec.normalLightFont.font!
-        style.baseFontColor = SemanticColors.Label.textDefault
-        style.codeFont = UIFont(name: "Menlo", size: style.baseFont.pointSize) ?? style.baseFont
-        style.codeColor = SemanticColors.Label.textDefault
-        style.baseParagraphStyle = NSParagraphStyle.default
-        style.listItemPrefixSpacing = 8
-        return style
-    }()
-
-    /// The style used within the input bar.
-    static var compact: DownStyle = {
-        let style = DownStyle()
-        style.baseFont = FontSpec.normalLightFont.font!
-        style.baseFontColor = SemanticColors.Label.textDefault
-        style.codeFont = UIFont(name: "Menlo", size: style.baseFont.pointSize) ?? style.baseFont
-        style.codeColor = SemanticColors.Label.textDefault
-        style.baseParagraphStyle = NSParagraphStyle.default
-        style.listItemPrefixSpacing = 8
-
-        // headers all same size
-        style.h1Size = style.baseFont.pointSize
-        style.h2Size = style.h1Size
-        style.h3Size = style.h1Size
-        return style
-    }()
-
-    /// The style used for the reply compose preview.
-    static var preview: DownStyle = {
-        let style = DownStyle()
-        style.baseFont = UIFont.systemFont(ofSize: 14, contentSizeCategory: .medium, weight: .light)
-        style.baseFontColor = SemanticColors.Label.textDefault
-        style.codeFont = UIFont(name: "Menlo", size: style.baseFont.pointSize) ?? style.baseFont
-        style.codeColor = SemanticColors.Label.textDefault
-        style.baseParagraphStyle = NSParagraphStyle.default
-        style.listItemPrefixSpacing = 8
-
-        // headers all same size
-        style.h1Size = style.baseFont.pointSize
-        style.h2Size = style.h1Size
-        style.h3Size = style.h1Size
-        return style
-    }()
-
-    /// The style used during the login flow
-    static var login: DownStyle = {
-        let paragraphStyle = NSParagraphStyle.default.mutableCopy() as! NSMutableParagraphStyle
-        paragraphStyle.alignment = .center
-        paragraphStyle.paragraphSpacing = 8
-        paragraphStyle.paragraphSpacingBefore = 8
-
-        let style = DownStyle()
-        style.baseFont = FontSpec.normalLightFont.font!
-        style.baseFontColor = SemanticColors.Label.textDefault
-        style.codeFont = UIFont(name: "Menlo", size: style.baseFont.pointSize) ?? style.baseFont
-        style.codeColor = SemanticColors.Label.textDefault
-        style.baseParagraphStyle = paragraphStyle
-        style.listItemPrefixSpacing = 8
-        return style
-    }()
 }
 
 // MARK: - Helper Extensions

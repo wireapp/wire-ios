@@ -21,6 +21,7 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 import WireSyncEngine
+import WireReusableUIComponents
 
 protocol UnlockViewControllerDelegate: AnyObject {
 

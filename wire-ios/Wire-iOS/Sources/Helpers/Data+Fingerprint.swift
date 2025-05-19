@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireReusableUIComponents
 
 extension Data {
     /// return a lower case and space between every byte string of the given data

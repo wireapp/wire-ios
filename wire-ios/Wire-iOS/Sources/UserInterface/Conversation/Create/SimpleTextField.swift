@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireReusableUIComponents
 
 protocol SimpleTextFieldDelegate: AnyObject {
     func textField(_ textField: SimpleTextField, valueChanged value: SimpleTextField.Value)

@@ -22,6 +22,7 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 import WireFoundation
+import WireReusableUIComponents
 
 final class ConversationReplyContentView: UIView {
     typealias FileSharingRestrictions = L10n.Localizable.FeatureConfig.FileSharingRestrictions
@@ -390,6 +391,25 @@ private extension ZMConversationMessage {
             "file"
         } else {
             "unavailable"
+        }
+    }
+}
+
+extension NSAttributedString {
+
+    /// Trim the NSAttributedString to given number of line limit and add an ellipsis at the end if necessary
+    ///
+    /// - Parameter numberOfLinesLimit: number of line reserved
+    /// - Returns: the trimmed NSAttributedString. If not excess limit, return the original NSAttributedString
+    public func trimmedToNumberOfLines(numberOfLinesLimit: Int) -> NSAttributedString {
+        // Trim the string to first four lines to prevent last line narrower spacing issue
+        let lines = string.components(separatedBy: ["\n"])
+        if lines.count > numberOfLinesLimit {
+            let headLines = lines.prefix(numberOfLinesLimit).joined(separator: "\n")
+
+            return attributedSubstring(from: NSRange(location: 0, length: headLines.count)) + String.ellipsis
+        } else {
+            return self
         }
     }
 }

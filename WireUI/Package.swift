@@ -26,6 +26,7 @@ let package = Package(
         .library(name: "WireSidebarUI", targets: ["WireSidebarUI"]),
     ],
     dependencies: [
+        .package(url: "https://github.com/wireapp/Down", exact: "2.3.5"),
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
         .package(path: "../WireAnalytics"),
         .package(name: "WireDomainPackage", path: "../WireDomain"),
@@ -81,7 +82,11 @@ let package = Package(
 
         .target(
             name: "WireReusableUIComponents",
-            dependencies: ["WireDesign", "WireFoundation"],
+            dependencies: [
+                "WireDesign",
+                "WireFoundation",
+                .product(name: "Down", package: "Down")
+            ],
             plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
         ),
         .target(

@@ -447,7 +447,6 @@
 				Helpers/SessionFileRestrictionsProtocol.swift,
 				"Helpers/String+URL.swift",
 				"Helpers/UIImage+ImageUtilities.swift",
-				UserInterface/Components/Constants.swift,
 				"UserInterface/Components/NSTextAttachment+Icon.swift",
 				"UserInterface/Components/StyleKitIcon+Const.swift",
 				"UserInterface/Components/UIImage+DownSize.swift",
@@ -455,13 +454,6 @@
 				"UserInterface/Helpers/UIStackView+Helper.swift",
 			);
 			target = 168A16A81D9597C2005CFA6C /* Wire Share Extension */;
-		};
-		015DB0222D68DAB1004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Helpers/AttributedStringOperators.swift,
-			);
-			target = F1FEA14921DCEB1700790A54 /* WireCommonComponents */;
 		};
 		015DB0F92D68DB05004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
@@ -873,7 +865,7 @@
 		015B25B72D68EAD000959185 /* Wire-iOS Share Extension */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (015B25D32D68EAD000959185 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "Wire-iOS Share Extension"; sourceTree = "<group>"; };
 		015D91E72D68D481004EE8C9 /* Scripts */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Scripts; sourceTree = "<group>"; };
 		015DA6092D68DA96004EE8C9 /* Generated */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); name = Generated; path = "Wire-iOS/Generated"; sourceTree = "<group>"; };
-		015DAB7D2D68DAB0004EE8C9 /* Sources */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (015DB0212D68DAB1004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 015DB0222D68DAB1004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); name = Sources; path = "Wire-iOS/Sources"; sourceTree = "<group>"; };
+		015DAB7D2D68DAB0004EE8C9 /* Sources */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (015DB0212D68DAB1004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); name = Sources; path = "Wire-iOS/Sources"; sourceTree = "<group>"; };
 		015DB07A2D68DB05004EE8C9 /* Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (015DB0F92D68DB05004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 015DB0FA2D68DB05004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Tests; sourceTree = "<group>"; };
 		015DB12B2D68DB7B004EE8C9 /* WireCommonComponents */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = WireCommonComponents; sourceTree = "<group>"; };
 		015DB15C2D68DB7F004EE8C9 /* Wire Notification Service Extension */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (015DB1642D68DB7F004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 015DB1652D68DB7F004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "Wire Notification Service Extension"; sourceTree = "<group>"; };

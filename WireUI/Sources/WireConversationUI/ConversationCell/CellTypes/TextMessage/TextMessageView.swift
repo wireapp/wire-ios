@@ -20,6 +20,7 @@ import Combine
 import SwiftUI
 import UIKit
 import WireDesign
+import WireReusableUIComponents
 
 public struct TextMessageView: ConversationCellContentViewProtocol {
 
@@ -33,11 +34,11 @@ public struct TextMessageView: ConversationCellContentViewProtocol {
         VStack(alignment: .leading, spacing: 2) {
             SenderMessageView(model: model.senderViewModelWrapper)
             HStack(spacing: 0) {
-                Text(model.text)
-                    .multilineTextAlignment(.center)
-                    .font(.footnote)
-                    .fontWeight(.semibold)
-                    .layoutPriority(1)
+                LinkInteractionTextViewWrapper(
+                    text: model.text,
+                    accentColor: model.accentColor,
+                    shouldDetectTypes: true
+                )
             }
             MessageStatusView(model: model.statusViewModel)
         }
@@ -50,6 +51,8 @@ public struct TextMessageView: ConversationCellContentViewProtocol {
 #Preview("Simple") {
     let model = TextMessageViewModel(
         text: "Test message",
+        accentColor: .red,
+        isObfuscated: false,
         senderViewModelWrapper: .init(state: .some(MessageSenderViewModel(
             avatarViewModel: AvatarViewModel(color: .red),
             senderModel: UserModel(

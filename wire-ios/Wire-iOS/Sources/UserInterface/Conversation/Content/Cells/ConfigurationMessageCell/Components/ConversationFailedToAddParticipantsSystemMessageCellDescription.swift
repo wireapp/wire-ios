@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireReusableUIComponents
 
 final class ConversationFailedToAddParticipantsSystemMessageCellDescription: ConversationMessageCellDescription {
 

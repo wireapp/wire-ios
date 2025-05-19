@@ -24,6 +24,8 @@ import WireFoundation
 import WireLinkPreview
 import WireUtilities
 
+// TODO: move out to shared place
+
 extension NSAttributedString {
 
     static var paragraphStyle: NSParagraphStyle = defaultParagraphStyle()

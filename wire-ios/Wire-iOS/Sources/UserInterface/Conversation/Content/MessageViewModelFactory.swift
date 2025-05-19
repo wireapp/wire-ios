@@ -20,6 +20,8 @@ import Foundation
 import WireConversationUI
 import WireDataModel
 import WireSyncEngine
+import WireReusableUIComponents
+import WireFoundation
 
 struct MessageViewModelFactoryImpl: MessageViewModelFactory {
 
@@ -32,7 +34,7 @@ struct MessageViewModelFactoryImpl: MessageViewModelFactory {
     func makeTextMessageViewModel(
         message: ConversationMessage,
         selfUser: any UserType,
-        accentColor: UIColor,
+        accentColor: AccentColor,
         shouldShowSender: Bool,
         shouldShowStatus: Bool
     ) -> TextMessageViewModel {
@@ -71,6 +73,8 @@ struct MessageViewModelFactoryImpl: MessageViewModelFactory {
         
         return TextMessageViewModel(
             text: message.textMessageData?.messageText ?? "",
+            accentColor: accentColor,
+            isObfuscated: message.isObfuscated,
             senderViewModelWrapper: senderViewModelWrapper,
             statusViewModel: statusViewModel
         )

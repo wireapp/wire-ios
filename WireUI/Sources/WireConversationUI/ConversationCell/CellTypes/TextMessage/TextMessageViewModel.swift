@@ -20,13 +20,14 @@ import Combine
 import Foundation
 import SwiftUI
 import WireDesign
+import WireFoundation
 
 public class TextMessageViewModel: ObservableObject, Identifiable, ConversationCellModelProtocol {
 
     public let id = UUID()
 
     public typealias ContentView = TextMessageView
-
+    
     @ObservedObject var senderViewModelWrapper: MessageSenderViewModelWrapper
     @ObservedObject var statusViewModel: MessageStatusViewModel
 
@@ -40,16 +41,29 @@ public class TextMessageViewModel: ObservableObject, Identifiable, ConversationC
 
 //    public var significantChangeSubject = PassthroughSubject<Void, Never>()
 
-    @Published var text: String
+    @Published var text: NSAttributedString
+    let accentColor: AccentColor
 
     public init(
         text: String,
+        accentColor: AccentColor,
+        isObfuscated: Bool,
         senderViewModelWrapper: MessageSenderViewModelWrapper?,
         statusViewModel: MessageStatusViewModel
     ) {
-        self.text = text // TODO: format
+        self.text = Self.format(text, isObfuscated: isObfuscated, accentColor: accentColor)
+        self.accentColor = accentColor
         self.senderViewModelWrapper = senderViewModelWrapper!
         self.statusViewModel = statusViewModel
+    }
+    
+    static func format(_ text: String, isObfuscated: Bool, accentColor: AccentColor) -> NSAttributedString {
+        NSAttributedString.format(
+            text: text,
+            isObfuscated: isObfuscated,
+            accentColor: accentColor
+        )
+
     }
 
 }
