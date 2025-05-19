@@ -18,7 +18,8 @@
 
 import Foundation
 
-class BackendClient {
+final class BackendClient {
+
     static func loginViaAPI(email: String, password: String) async throws -> String {
         let backendURL = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL"]!)"
         let url = URL(string: "\(backendURL)/v8/login")
@@ -30,7 +31,7 @@ class BackendClient {
         request.httpBody = try? JSONSerialization.data(withJSONObject: body, options: .prettyPrinted)
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue("application/json", forHTTPHeaderField: "Accept")
-        let (responseData, response) = try await URLSession.shared.data(for: request)
+        let (_, response) = try await URLSession.shared.data(for: request)
 
         let pureResponse = response as! HTTPURLResponse
         if pureResponse.statusCode != 200 {
@@ -60,8 +61,9 @@ class BackendClient {
             throw (RuntimeError("Error \(pureResponse.description)"))
         }
     }
+
 }
 
-struct LoginMessage: Decodable {
+private struct LoginMessage: Decodable {
     let access_token: String
 }
