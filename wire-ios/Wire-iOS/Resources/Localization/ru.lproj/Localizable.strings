@@ -654,6 +654,7 @@
 "content.collapsed.video.title" = "Вы отправили видео";
 "content.collapsed.audio.title" = "Вы отправили аудиосообщение";
 "content.collapsed.location.title" = "Вы отправили свое местоположение";
+"content.collapsed.link.title" = "Вы отправили ссылку";
 
 "content.message.like" = "Нравится";
 "content.message.unlike" = "Не нравится";
@@ -1158,6 +1159,7 @@
 "self.settings.account_details.remove_device.password.error" = "Неверный пароль";
 
 "self.settings.account_appearance_group.title" = "Внешний вид";
+"self.settings.account_appearance_group.footer" = "Когда эта функция включена, фон ваших бесед будет соответствовать цвету вашего профиля, а также светлой или темной теме.";
 
 "self.settings.privacy_section_group.title" = "Конфиденциальность";
 "self.settings.enable_read_receipts.title" = "Отправлять отчеты о прочтении";
@@ -1176,6 +1178,7 @@
 "self.settings.account_picture_group.accent_color.amber" = "Янтарный";
 "self.settings.account_picture_group.accent_color.turquoise" = "Бирюзовый";
 "self.settings.account_picture_group.accent_color.purple" = "Фиолетовый";
+"self.settings.account_picture_group.background.title" = "Цвет фона беседы";
 
 "self.settings.account_personal_information_group.title" = "Личные данные";
 
@@ -1327,7 +1330,7 @@
 "self.settings.privacy_security.disable_link_previews.footer" = "Эта опция не влияет на предварительный просмотр ссылок от других пользователей.";
 
 "self.settings.privacy_security.collapse_own_messages.title" = "Свернуть мои сообщения";
-"self.settings.privacy_security.collapse_own_messages.footer" = "Когда эта функция включена, все ваши сообщения сворачиваются в одну строку.";
+"self.settings.privacy_security.collapse_own_messages.footer" = "Когда эта функция включена, все ваши сообщения сворачиваются после трех строк.";
 
 "self.settings.privacy_analytics_menu.devices.title" = "Устройства";
 
