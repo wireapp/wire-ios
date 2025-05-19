@@ -52,6 +52,7 @@ class AccountSettingsPage: PageModel {
         emailField.label
     }
 
+    @discardableResult
     func logout() -> LogOutPage {
         logoutButton.tap()
         return LogOutPage()

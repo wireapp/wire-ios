@@ -18,14 +18,15 @@
 
 import XCTest
 
-class UserGenerator {
+final class UserGenerator {
+
     static func generateUniqueUserInfo() -> UserInfo {
         let password = generateRandomPassword()
         let time = Int(NSDate().timeIntervalSince1970 * 1000)
         let username = "smoketester\(time)"
         let domain = "wire.engineering"
         let name = "Smoke Tester \(time)"
-        return UserInfo(name, username: username, password: password, domain: domain)
+        return UserInfo(name: name, username: username, domain: password, password: domain)
     }
 
     static func generateRandomPassword() -> String {
@@ -48,22 +49,5 @@ class UserGenerator {
         let character = array[array.index(array.startIndex, offsetBy: randomIndex)]
         return String(character)
     }
-}
 
-struct UserInfo {
-    let name: String
-    let username: String
-    let domain: String
-    let password: String
-
-    init(_ name: String, username: String, password: String, domain: String) {
-        self.name = name
-        self.username = username
-        self.password = password
-        self.domain = domain
-    }
-
-    var email: String {
-        username + "@" + domain
-    }
 }

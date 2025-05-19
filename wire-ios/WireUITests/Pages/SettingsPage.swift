@@ -25,7 +25,7 @@ class SettingsPage: PageModel {
     }
 
     func openAccountSettings() -> AccountSettingsPage {
-        accountSettingsMenu.waitForExistence(timeout: 1)
+        _ = accountSettingsMenu.waitForExistence(timeout: 1)
         accountSettingsMenu.tap()
         return AccountSettingsPage()
     }

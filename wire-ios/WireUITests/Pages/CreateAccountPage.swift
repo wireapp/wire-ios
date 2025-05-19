@@ -36,13 +36,13 @@ class CreateAccountPage: PageModel {
     }
 
     func tapConfirmCreateAccount() -> CreateAccountPage {
-        confirmButton.waitForExistence(timeout: 1)
+        _ = confirmButton.waitForExistence(timeout: 1)
         confirmButton.tap()
         return self
     }
 
     func tapAcceptButton() -> VerificationCodePage {
-        acceptButton.waitForExistence(timeout: 10)
+        _ = acceptButton.waitForExistence(timeout: 10)
         acceptButton.tap()
         return VerificationCodePage()
     }

@@ -18,7 +18,8 @@
 
 import Foundation
 
-class InbucketClient {
+final class InbucketClient {
+
     static func getVerificationCode(email: String) async throws -> String {
         let inbucketURL = "https://\(ProcessInfo.processInfo.environment["INBUCKET_URL"]!)"
         let inbucketUsername = ProcessInfo.processInfo.environment["INBUCKET_USERNAME"]!
@@ -50,6 +51,7 @@ class InbucketClient {
         print("Verification Code Found: \(verificationCode) for \(email)")
         return verificationCode
     }
+
 }
 
 private struct InbucketMessage: Decodable {

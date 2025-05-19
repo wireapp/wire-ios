@@ -22,6 +22,7 @@
 import XCTest
 
 class WireUITestCase: XCTestCase {
+
     var app: XCUIApplication!
     let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
 

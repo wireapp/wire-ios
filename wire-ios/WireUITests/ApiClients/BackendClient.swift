@@ -31,7 +31,7 @@ final class BackendClient {
         request.httpBody = try? JSONSerialization.data(withJSONObject: body, options: .prettyPrinted)
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue("application/json", forHTTPHeaderField: "Accept")
-        let (_, response) = try await URLSession.shared.data(for: request)
+        let (responseData, response) = try await URLSession.shared.data(for: request)
 
         let pureResponse = response as! HTTPURLResponse
         if pureResponse.statusCode != 200 {
@@ -55,7 +55,7 @@ final class BackendClient {
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue("application/json", forHTTPHeaderField: "Accept")
         request.addValue("Bearer \(access_token)", forHTTPHeaderField: "Authorization")
-        let (responseData, response) = try await URLSession.shared.data(for: request)
+        let (_, response) = try await URLSession.shared.data(for: request)
         let pureResponse = response as! HTTPURLResponse
         if pureResponse.statusCode != 200 {
             throw (RuntimeError("Error \(pureResponse.description)"))

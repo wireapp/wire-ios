@@ -16,16 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+struct UserInfo {
 
-struct RuntimeError: LocalizedError {
-    let description: String
+    let name: String
+    let username: String
+    let domain: String
+    let password: String
 
-    init(_ description: String) {
-        self.description = description
+    var email: String {
+        username + "@" + domain
     }
 
-    var errorDescription: String? {
-        description
-    }
 }
