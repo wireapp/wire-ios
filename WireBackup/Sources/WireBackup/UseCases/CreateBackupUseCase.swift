@@ -91,15 +91,8 @@ public struct CreateBackupUseCase<
                     try Task.checkCancellation()
 
                     // get the counts of users, messages and conversations in order to report progress accurately
-                    logger.debug("calculating entity counts") // TODO: move into BackupLocalStore implementation
                     let (userCount, conversationCount, messageCount) = try await backupLocalStore.countModels()
                     let total = userCount + conversationCount + messageCount
-                    logger.debug([ // TODO: move into BackupLocalStore implementation
-                        "userCount: \(userCount)",
-                        "conversationCount: \(conversationCount)",
-                        "messageCount: \(messageCount)",
-                        "total: \(total)"
-                    ].joined(separator: ", "))
 
                     // fetch the data and pass it into the backup exporter
                     let allUsers = try await backupLocalStore.fetchAllUsers()

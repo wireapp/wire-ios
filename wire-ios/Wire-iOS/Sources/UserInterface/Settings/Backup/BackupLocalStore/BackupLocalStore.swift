@@ -25,9 +25,9 @@ import WireFoundation
 struct BackupLocalStore<
     UserLocalStore, ConversationLocalStore, MessageLocalStore
 >: BackupLocalStoreProtocol, @unchecked Sendable where
-UserLocalStore: UserLocalStoreProtocol,
-MessageLocalStore: MessageLocalStoreProtocol,
-ConversationLocalStore: ConversationLocalStoreProtocol {
+    UserLocalStore: UserLocalStoreProtocol,
+    MessageLocalStore: MessageLocalStoreProtocol,
+    ConversationLocalStore: ConversationLocalStoreProtocol {
 
     /// The context to call `perform(schedule:_:)` on if needed.
     private let context: NSManagedObjectContext
@@ -106,9 +106,9 @@ ConversationLocalStore: ConversationLocalStoreProtocol {
 // MARK: -
 
 extension BackupLocalStore where
-UserLocalStore == WireDomain.UserLocalStore,
-ConversationLocalStore == WireDomain.ConversationLocalStore,
-MessageLocalStore == WireDomain.MessageLocalStore {
+    UserLocalStore == WireDomain.UserLocalStore,
+    ConversationLocalStore == WireDomain.ConversationLocalStore,
+    MessageLocalStore == WireDomain.MessageLocalStore {
 
     init(context: NSManagedObjectContext) {
         self.context = context
@@ -128,9 +128,9 @@ MessageLocalStore == WireDomain.MessageLocalStore {
 
 // MARK: -
 
-extension BackupUserModel {
+private extension BackupUserModel {
 
-    fileprivate init?(_ user: ZMUser) {
+    init?(_ user: ZMUser) {
         guard let qualifiedID = user.qualifiedID else { return nil }
 
         self.init(
@@ -142,9 +142,9 @@ extension BackupUserModel {
 
 }
 
-extension BackupConversationModel {
+private extension BackupConversationModel {
 
-    fileprivate init?(_ conversation: ZMConversation) {
+    init?(_ conversation: ZMConversation) {
         guard let qualifiedID = conversation.qualifiedID else { return nil }
 
         self.init(

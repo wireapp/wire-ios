@@ -21,7 +21,8 @@ public import WireFoundation
 // sourcery: AutoMockable
 public protocol BackupLocalStoreProtocol: Sendable {
 
-    /// Returns the number of all stored users, conversations and messages in the local data store, including deleted ones.
+    /// Returns the number of all stored users, conversations and messages in the local data store, including deleted
+    /// ones.
     func countModels() async throws -> (userCount: Int, conversationCount: Int, messageCount: Int)
 
     // MARK: -
