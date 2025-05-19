@@ -199,9 +199,9 @@ package final class WireCellsAWSClientImplementation: WireCellsAWSClient {
 private extension WireCellsNodeDTO {
     func createDraftNodeMetadata() -> [String: String] {
         [
-            "X-Metadata-Draft-Mode": "true",
-            "X-Metadata-Create-Resource-UUID": uuid.uuidString,
-            "X-Metadata-Create-Version-ID": versionId.uuidString
+            "Draft-Mode": "true",
+            "Create-Resource-UUID": uuid.uuidString,
+            "Create-Version-ID": versionId.uuidString
         ]
     }
 }
