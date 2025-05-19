@@ -38,8 +38,8 @@ ConversationLocalStore: ConversationLocalStoreProtocol {
 
     func countModels() async throws -> (userCount: Int, conversationCount: Int, messageCount: Int) {
         let userCount = try await userLocalStore.totalUserCountForBackup()
-        let conversationCount = 0
-        let messageCount = 0
+        let conversationCount = try await conversationLocalStore.totalConversationCountForBackup()
+        let messageCount = try await messageLocalStore.totalMessageCountForBackup()
         return (userCount, conversationCount, messageCount)
     }
 
@@ -67,25 +67,38 @@ ConversationLocalStore: ConversationLocalStoreProtocol {
     // MARK: -
 
     func fetchAllConversationIDs() async throws -> Set<WireFoundation.QualifiedID> {
-//        <#code#>
-        fatalError()
+        let conversationIDs = try await conversationLocalStore.fetchAllConversationIDsForBackup()
+            .map(WireFoundation.QualifiedID.init)
+        return Set(conversationIDs)
     }
 
     func fetchAllConversations() async throws -> Set<WireBackup.ConversationBackupModel> {
-//        <#code#>
-        fatalError()
+        let conversations = try await conversationLocalStore.fetchAllConversationsForBackup()
+        return await context.perform {
+            Set(conversations.compactMap { conversation in
+                guard let conversation = BackupConversationModel(conversation) else {
+                    assertionFailure()
+                    return nil
+                }
+                return conversation
+            })
+        }
     }
 
     // MARK: -
 
     func fetchAllMessageIDs() async throws -> Set<WireBackup.BackupMessageModel.ID> {
-//        <#code#>
-        fatalError()
+        let messageIDs = try await messageLocalStore.fetchAllMessageIDsForBackup().map(\.uuidString)
+        return Set(messageIDs)
     }
 
     func fetchAllMessages() async throws -> Set<WireBackup.MessageBackupModel> {
-//        <#code#>
-        fatalError()
+        let messages = try await messageLocalStore.fetchAllMessagesForBackup()
+        return await context.perform {
+            Set(messages.compactMap { message in
+                if let message = BackupMessageModel(message) { message } else { nil }
+            })
+        }
     }
 
 }
@@ -124,6 +137,19 @@ extension BackupUserModel {
             id: QualifiedID(qualifiedID),
             name: user.name ?? "",
             handle: user.handle ?? ""
+        )
+    }
+
+}
+
+extension BackupConversationModel {
+
+    fileprivate init?(_ conversation: ZMConversation) {
+        guard let qualifiedID = conversation.qualifiedID else { return nil }
+
+        self.init(
+            id: QualifiedID(qualifiedID),
+            name: conversation.name ?? ""
         )
     }
 
