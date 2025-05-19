@@ -121,7 +121,7 @@ actor EventProcessor: UpdateEventProcessor {
 
             guard !DeveloperFlag.ignoreIncomingEvents.isOn else { return }
 
-            let publicKeys = try? await self.earService.fetchPublicKeys()
+            let publicKeys = try? self.earService.fetchPublicKeys()
 
             if duringQuickSync {
                 NotificationCenter.default.post(
