@@ -18,7 +18,7 @@
 
 import XCTest
 
-final class UserGenerator {
+enum UserGenerator {
 
     static func generateUniqueUserInfo() -> UserInfo {
         let password = generateRandomPassword()

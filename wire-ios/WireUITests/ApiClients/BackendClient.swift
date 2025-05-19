@@ -18,7 +18,7 @@
 
 import Foundation
 
-final class BackendClient {
+enum BackendClient {
 
     static func loginViaAPI(email: String, password: String) async throws -> String {
         let backendURL = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL"]!)"

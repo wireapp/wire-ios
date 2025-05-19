@@ -18,7 +18,7 @@
 
 import Foundation
 
-final class InbucketClient {
+enum InbucketClient {
 
     static func getVerificationCode(email: String) async throws -> String {
         let inbucketURL = "https://\(ProcessInfo.processInfo.environment["INBUCKET_URL"]!)"
