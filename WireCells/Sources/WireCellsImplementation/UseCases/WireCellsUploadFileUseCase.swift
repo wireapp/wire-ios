@@ -45,7 +45,7 @@ package final class WireCellsUploadFileUseCase: WireCellsUploadFileUseCaseProtoc
 
     func invoke(imageData: Data) async throws {
         // TODO: [WPB-17767] Implement
-        WireLogger.cells.info("Uploading file from image data")
+        WireLogger.wireCells.info("Uploading file from image data")
     }
 
 }
