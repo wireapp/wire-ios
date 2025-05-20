@@ -91,6 +91,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         view.textContainerInset = UIEdgeInsets.zero
         view.textContainer.lineFragmentPadding = 0
         view.isUserInteractionEnabled = false
+        view.dataDetectorTypes = []
         view.accessibilityIdentifier = "Message"
         view.accessibilityElementsHidden = false
         view.setContentHuggingPriority(.required, for: .vertical)
@@ -138,8 +139,13 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     func configure(with object: Configuration, animated: Bool) {
+        
+        messageTextView.text = nil
+        messageTextView.attributedText = nil
+        messageTextView.textColor = SemanticColors.Label.textDefault
+    
         let user = object.message.senderUser
         avatar.user = user
         availabilityIndicatorView.availability = user?.availability.mapToAccountImageAvailability()
@@ -149,7 +155,6 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         }
 
         let message = object.message
-        messageTextView.textColor = SemanticColors.Label.textDefault
         if message.isText, !message.hasLinks {
             typeIcon.isHidden = true
             if let textMessageData = message.textMessageData {
