@@ -25,17 +25,7 @@ struct BackupLocalStore: BackupLocalStoreProtocol, @unchecked Sendable {
 
     /// The context to call `perform(schedule:_:)` on if needed.
     let context: NSManagedObjectContext
-
     let processor: any ConversationProtobufMessageProcessorProtocol
-
-    init(context: NSManagedObjectContext) {
-        self.context = context
-        self.processor = TEMP_ConversationProtobufMessageProcessor(
-            context: context,
-            mlsService: context.performAndWait { context.mlsService },
-            userDefaults: .standard
-        )
-    }
 
     func countModels() async throws -> (userCount: Int, conversationCount: Int, messageCount: Int) {
         try await context.perform { [context] in

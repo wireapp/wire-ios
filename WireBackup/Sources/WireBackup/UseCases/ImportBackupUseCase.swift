@@ -96,9 +96,7 @@ public struct ImportBackupUseCase<
                                 try await backupLocalStore.addUser(user)
                             }
 
-                            if current % 50 == 0 || current == backupUsers.size - 1 {
-                                try checkCancellationAndReportProgress(Int(exactly: current) ?? 0, total)
-                            }
+                            try checkCancellationAndReportProgress(Int(exactly: current) ?? 0, total)
                         }
                     }
 
@@ -118,9 +116,7 @@ public struct ImportBackupUseCase<
                                 try await backupLocalStore.addMessage(message)
                             }
 
-                            if current % 50 == 0 || current == backupMessages.size - 1 {
-                                try checkCancellationAndReportProgress(Int(exactly: current) ?? 0, total)
-                            }
+                            try checkCancellationAndReportProgress(Int(exactly: current) ?? 0, total)
                         }
                     }
 
@@ -141,7 +137,6 @@ public struct ImportBackupUseCase<
             continuation.onTermination = { _ in
                 task.cancel()
             }
-
         }
     }
 
