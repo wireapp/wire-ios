@@ -290,7 +290,7 @@ public extension String {
 
 }
 
-private extension IndexSet {
+public extension IndexSet {
 
     init(integersIn range: Range<IndexSet.Element>, excluding: [Range<IndexSet.Element>]) {
 

@@ -24,6 +24,7 @@ import WireDesign
 import WireDomain
 import WireLogging
 import WireSyncEngine
+import WireReusableUIComponents
 
 protocol ConversationCreationControllerDelegate: AnyObject {
 

@@ -245,6 +245,7 @@ extension NSMutableAttributedString {
 
 }
 
+
 public extension Mention {
     func toUIModel() -> MentionModel {
         .init(range: range, isSelfUser: user.isSelfUser, object: self)

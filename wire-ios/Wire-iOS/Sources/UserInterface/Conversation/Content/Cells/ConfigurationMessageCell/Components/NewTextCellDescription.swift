@@ -25,6 +25,7 @@ import WireDesign
 import WireFoundation
 import WireSyncEngine
 import WireSystem
+import WireReusableUIComponents
 
 protocol NewCellDescription {}
 extension NewTextCellDescription: NewCellDescription {}
@@ -34,7 +35,9 @@ final class NewTextCellDescription: ConversationMessageCellDescription {
 
     typealias View = NewTextCell
 
-    @MainActor var conversationCellModel: ConversationCellModel?
+    @MainActor lazy var conversationCellModel: ConversationCellModel? = .text(textMessageViewModel)
+    
+    @MainActor var textMessageViewModel: TextMessageViewModel
 
     var supportsActions: Bool = true
 
@@ -56,10 +59,51 @@ final class NewTextCellDescription: ConversationMessageCellDescription {
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String? = nil
 
-    init(
-        conversationCellModel: ConversationCellModel
-    ) {
-        self.conversationCellModel = conversationCellModel
+    init(textMessageViewModel: TextMessageViewModel) {
+        self.textMessageViewModel = textMessageViewModel
+        textMessageViewModel.onLinkTapped = { [weak self] url in
+            if url.isMention {
+                if let message = self?.message,
+                   let mention = message.textMessageData?.mentions
+                    .toUIModels().first(where: { $0.location == url.mentionLocation }) {
+                    return self?.openMention(mention) ?? false
+                } else {
+                    return false
+                }
+            }
+
+            // Open the URL
+            return url.open()
+        }
+    }
+
+    func openMention(_ mention: MentionModel) -> Bool {
+        guard let mention = mention.object as? Mention else { return true }
+        delegate?.conversationMessageWantsToOpenUserDetails(
+            UIView(), //TODO: self,
+            user: mention.user,
+            sourceView: UIView(), // TODO: messageTextView,
+            frame: .zero // TODO: selectionRect
+        )
+        return true
+    }
+
+    func textViewDidLongPress(_ textView: LinkInteractionTextView) {
+        if !UIMenuController.shared.isMenuVisible {
+            if !Settings.isClipboardEnabled {
+                menuPresenter?.showSecuredMenu()
+            } else {
+                menuPresenter?.showMenu()
+            }
+        }
+    }
+    
+    var menuPresenter: ConversationMessageCellMenuPresenter? {
+        ConversationMessageCellMenuPresenter(
+            contentView: NewTextCell(), // TODO: self,
+            actionController: actionController,
+            conversationMessageCellDelegate: delegate
+        )
     }
 }
 

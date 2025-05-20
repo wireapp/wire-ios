@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireReusableUIComponents
 
 final class RecentlyUsedEmojiSection: EmojiDataSource.Section {
 

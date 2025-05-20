@@ -32,15 +32,7 @@ public class TextMessageViewModel: ObservableObject, Identifiable, ConversationC
     @ObservedObject var senderViewModelWrapper: MessageSenderViewModelWrapper
     @ObservedObject var statusViewModel: MessageStatusViewModel
 
-    public func buildView() -> ContentView {
-        ContentView(model: self)
-    }
-
-//    public var id: AnyHashable { self }
-
-//    private var timer: AnyCancellable?
-
-//    public var significantChangeSubject = PassthroughSubject<Void, Never>()
+    public var onLinkTapped: ((URL) -> Bool)?
 
     @Published var text: NSAttributedString
     let accentColor: AccentColor

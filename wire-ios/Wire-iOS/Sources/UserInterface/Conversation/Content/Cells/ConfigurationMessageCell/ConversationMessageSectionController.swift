@@ -437,14 +437,13 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         if message.supportsNewApproach {
             self.cellDescriptions = [
                 NewTextCellDescription(
-                    conversationCellModel:
-                    .text(factory.makeTextMessageViewModel(
+                    textMessageViewModel: factory.makeTextMessageViewModel(
                         message: message,
                         selfUser: selfUser,
                         accentColor: selfUser.wireAccentColor,
                         shouldShowSender: isSenderVisible,
                         shouldShowStatus: isToolboxVisible
-                    ))
+                    )
                 ).eraseToAnyCellDescription()
             ]
             return
