@@ -1254,8 +1254,12 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     public func fetchAllConversationsForBackup() async throws -> [ZMConversation] {
-        try await context.perform { [context] in
-            try context.fetch(ZMConversation.fetchRequestForBackup())
+        let fetchRequest = ZMConversation.fetchRequestForBackup()
+        fetchRequest.fetchBatchSize = 50
+        fetchRequest.returnsObjectsAsFaults = true
+        fetchRequest.includesPropertyValues = false
+        return try await context.perform { [context] in
+            try context.fetch(fetchRequest)
         }
     }
 

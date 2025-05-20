@@ -33,11 +33,11 @@ public protocol BackupLocalStoreProtocol: Sendable {
     // MARK: -
 
     /// Returns all conversations stored in the local database, including deleted ones.
-    func fetchAllConversations() async throws -> Set<ConversationBackupModel>
+    func fetchAllConversations() -> AsyncThrowingStream<ConversationBackupModel, any Error>
 
     // MARK: -
 
     /// Returns all messages stored in the local database, including deleted ones.
-    func fetchAllMessages() async throws -> Set<MessageBackupModel>
+    func fetchAllMessages() -> AsyncThrowingStream<MessageBackupModel, any Error>
 
 }

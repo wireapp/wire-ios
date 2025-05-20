@@ -94,27 +94,27 @@ public struct CreateBackupUseCase<
                     let total = userCount + conversationCount + messageCount
 
                     // fetch the data and pass it into the backup exporter
-                    var processedUsers = 0
+                    var processedItems = 0
                     for try await user in backupLocalStore.fetchAllUsers() {
                         backupCreator.addUser(user)
-                        processedUsers += 1
-                        try checkCancellationAndReportProgress(processedUsers, total)
+                        processedItems += 1
+                        try checkCancellationAndReportProgress(processedItems, total)
                     }
 
                     let conversationProgressOffset = userCount
-                    let allConversations = try await backupLocalStore.fetchAllConversations()
-                    for (conversationIndex, conversation) in allConversations.enumerated() {
+                    processedItems = 0
+                    for try await conversation in backupLocalStore.fetchAllConversations() {
                         backupCreator.addConversation(conversation)
-                        if conversationIndex % 50 == 0 { try Task.checkCancellation() }
-                        try checkCancellationAndReportProgress(conversationProgressOffset + conversationIndex + 1, total)
+                        processedItems += 1
+                        try checkCancellationAndReportProgress(conversationProgressOffset + processedItems, total)
                     }
 
                     let messageProgressOffset = userCount + conversationCount
-                    let allMessages = try await backupLocalStore.fetchAllMessages()
-                    for (messageIndex, message) in allMessages.enumerated() {
+                    processedItems = 0
+                    for try await message in backupLocalStore.fetchAllMessages() {
                         backupCreator.addMessage(message)
-                        if messageIndex % 50 == 0 { try Task.checkCancellation() }
-                        try checkCancellationAndReportProgress(messageProgressOffset + messageIndex + 1, total)
+                        processedItems += 1
+                        try checkCancellationAndReportProgress(messageProgressOffset + processedItems, total)
                     }
 
                     // create the file

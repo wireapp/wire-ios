@@ -1037,8 +1037,12 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
     }
 
     public func fetchAllMessagesForBackup() async throws -> [ZMMessage] {
-        try await context.perform { [context] in
-            try context.fetch(ZMMessage.fetchRequest()) as! [ZMMessage]
+        let fetchRequest = ZMMessage.fetchRequest()
+        fetchRequest.fetchBatchSize = 50
+        fetchRequest.returnsObjectsAsFaults = true
+        fetchRequest.includesPropertyValues = false
+        return try await context.perform { [context] in
+            try context.fetch(fetchRequest) as! [ZMMessage]
         }
     }
 
