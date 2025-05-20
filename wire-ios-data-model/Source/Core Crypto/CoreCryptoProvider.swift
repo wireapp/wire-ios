@@ -179,12 +179,14 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         }
 
         if let coreCrypto {
+            try await migrateDatabaseKeyIfNeeded()
             return coreCrypto
         } else {
             loadingCoreCrypto = true
             let cc: SafeCoreCrypto
             do {
                 cc = try await createCoreCrypto()
+
             } catch {
                 resumeCoreCryptoContinuations(with: .failure(error))
                 loadingCoreCrypto = false
@@ -205,6 +207,13 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         coreCryptoContinuations = []
     }
 
+    func migrateDatabaseKeyIfNeeded() async throws {
+        let provider = CoreCryptoConfigProvider()
+        try await provider.migrateDatabaseKeyIfNeeded(
+            sharedContainerURL: sharedContainerURL,
+            userID: selfUserID)
+    }
+
     func createCoreCrypto() async throws -> SafeCoreCrypto {
         let provider = CoreCryptoConfigProvider()
 
@@ -214,11 +223,11 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             createKeyIfNeeded: allowCreation
         )
 
-        let coreCrypto = try await SafeCoreCrypto(//
+        let coreCrypto = try await SafeCoreCrypto(
             path: configuration.path,
             key: configuration.key
         )
-
+        
         updateKeychainItemAccess()
         await migrateCryptoboxSessionsIfNeeded(with: coreCrypto)
 
@@ -314,7 +323,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
 
     private func generateClientPublicKeys(
         with coreCrypto: CoreCryptoContextProtocol,
-        credentialType: MlsCredentialType
+        credentialType: CredentialType
     ) async throws {
         WireLogger.mls.info("generating public key")
         let ciphersuite = await featureRespository.fetchMLS().config.defaultCipherSuite

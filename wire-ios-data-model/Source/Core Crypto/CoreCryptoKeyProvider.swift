@@ -24,7 +24,7 @@ public class CoreCryptoKeyProvider {
 
     public init() {}
 
-    public func coreCryptoKey(createIfNeeded: Bool) throws -> Data {
+    public func coreCryptoKey(createIfNeeded: Bool) throws -> Data { //?
         removeLegacyKeyIfNeeded()
 
         do {
@@ -36,6 +36,23 @@ public class CoreCryptoKeyProvider {
                 throw error
             }
         }
+    }
+
+    public func fetchCoreCryptoKeyV2() throws -> Data {
+        let item = CoreCryptoKeychainItemV2()
+        let key: Data = try KeychainManager.fetchItem(item)
+        WireLogger.coreCrypto.info("Core crypto key_v2 exists: \(key.base64String()). Returning...")
+        return key
+    }
+
+    public func createCoreCryptoKeyV2() throws -> Data {
+        let item = CoreCryptoKeychainItemV2()
+        WireLogger.coreCrypto.info("Core crypto key_v2 doesn't exist. Creating...")
+        let key = try KeychainManager.generateKey(numberOfBytes: 32)
+        WireLogger.coreCrypto.info("Created core crypto key_v2: \(key.base64String()). Storing...")
+        try KeychainManager.storeItem(item, value: key)
+        WireLogger.coreCrypto.info("Stored core crypto key_v2. Returning...")
+        return key
     }
 
     private func fetchCoreCryptoKey() throws -> Data {
@@ -128,4 +145,34 @@ struct LegacyCoreCryptoKeychainItem: KeychainItemProtocol {
             kSecAttrAccessible: kSecAttrAccessibleWhenUnlocked
         ]
     }
+}
+
+struct CoreCryptoKeychainItemV2: KeychainItemProtocol {
+
+    var id: String {
+        "com.wire.mls.key.v2"
+    }
+
+    var tag: Data {
+        id.data(using: .utf8)!
+    }
+
+    var getQuery: [CFString: Any] {
+        [
+            kSecClass: kSecClassKey,
+            kSecAttrApplicationTag: tag,
+            kSecReturnData: true,
+            kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock
+        ]
+    }
+
+    func setQuery(value: some Any) -> [CFString: Any] {
+        [
+            kSecClass: kSecClassKey,
+            kSecAttrApplicationTag: tag,
+            kSecValueData: value,
+            kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock
+        ]
+    }
+
 }

@@ -41,9 +41,9 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
 
     public convenience init(path: String, key: String) async throws {
 
-        let coreCrypto = try await CoreCrypto(//
+        let coreCrypto = try await CoreCrypto(
             keystorePath: path,
-            keystoreSecret: Data(key.utf8)
+            key: Data(key.utf8)
         )
 
         setLogger(logger: CoreCryptoLoggerProxy(), level: .info)

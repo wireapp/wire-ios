@@ -105,6 +105,30 @@ public class CoreCryptoConfigProvider {
         return clientID
     }
 
+    public func migrateDatabaseKeyIfNeeded(
+        sharedContainerURL: URL,
+        userID: UUID
+    ) async throws {
+        let coreCryptoKeyV2 = try? coreCryptoKeyProvider.fetchCoreCryptoKeyV2()
+        if coreCryptoKeyV2 == nil {
+            let accountDirectory = CoreDataStack.accountDataFolder(
+                accountIdentifier: userID,
+                applicationContainer: sharedContainerURL
+            )
+
+            try FileManager.default.createAndProtectDirectory(at: accountDirectory)
+            let coreCryptoDirectory = accountDirectory.appendingPathComponent("corecrypto")
+            let oldKey = try coreCryptoKeyProvider.coreCryptoKey(createIfNeeded: false)
+            let newKey = try coreCryptoKeyProvider.createCoreCryptoKeyV2()
+
+            try await migrateDatabaseKeyTypeToBytes(
+                path: coreCryptoDirectory.path,
+                oldKey: oldKey.base64EncodedString(),
+                newKey: newKey
+            )
+        }
+    }
+
     public enum ConfigurationSetupFailure: Error, Equatable {
         case failedToGetClientId
         case failedToGetCoreCryptoKey
