@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireFoundation
+public import WireFoundation
 
 // sourcery: AutoMockable
 public protocol BackupLocalStoreProtocol: Sendable {

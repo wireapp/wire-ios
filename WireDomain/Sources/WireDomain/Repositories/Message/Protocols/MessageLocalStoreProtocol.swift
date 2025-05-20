@@ -203,12 +203,4 @@ public protocol MessageLocalStoreProtocol {
         quotedMessage: ZMOTRMessage?
     ) async -> Bool
 
-    // MARK: - Backup / Restore
-
-    func totalMessageCountForBackup() async throws -> Int
-
-    func fetchAllMessageIDsForBackup() async throws -> [UUID]
-
-    func fetchAllMessagesForBackup() async throws -> [ZMMessage]
-
 }

@@ -1236,41 +1236,6 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
-    // MARK: - Backup / Restore
-
-    public func totalConversationCountForBackup() async throws -> Int {
-        try await context.perform { [context] in
-            try context.count(for: ZMConversation.fetchRequestForBackup())
-        }
-    }
-
-    public func fetchAllConversationIDsForBackup() async throws -> [QualifiedID] {
-        let fetchRequest = ZMConversation.fetchRequestForBackup()
-        fetchRequest.propertiesToFetch = ["remoteIdentifier_data", "domain"]
-        return try await context.perform { [context] in
-            let conversations = try context.fetch(fetchRequest)
-            return conversations.compactMap(\.qualifiedID)
-        }
-    }
-
-    public func fetchAllConversationsForBackup() async throws -> [ZMConversation] {
-        let fetchRequest = ZMConversation.fetchRequestForBackup()
-        fetchRequest.fetchBatchSize = 50
-        fetchRequest.returnsObjectsAsFaults = true
-        fetchRequest.includesPropertyValues = false
-        return try await context.perform { [context] in
-            try context.fetch(fetchRequest)
-        }
-    }
-
-}
-
-private extension ZMConversation {
-
-    static func fetchRequestForBackup() -> NSFetchRequest<ZMConversation> {
-        ZMConversation.fetchRequest() as! NSFetchRequest<ZMConversation>
-    }
-
 }
 
 // MARK: - Private helpers
