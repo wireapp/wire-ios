@@ -208,7 +208,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     func createCoreCrypto() async throws -> SafeCoreCrypto {
         let provider = CoreCryptoConfigProvider()
 
-        let configuration = try provider.createInitialConfiguration(
+        let configuration = try await provider.createInitialConfiguration(
             sharedContainerURL: sharedContainerURL,
             userID: selfUserID,
             createKeyIfNeeded: allowCreation
@@ -314,7 +314,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
 
     private func generateClientPublicKeys(
         with coreCrypto: CoreCryptoContextProtocol,
-        credentialType: MlsCredentialType
+        credentialType: CredentialType
     ) async throws {
         WireLogger.mls.info("generating public key")
         let ciphersuite = await featureRespository.fetchMLS().config.defaultCipherSuite

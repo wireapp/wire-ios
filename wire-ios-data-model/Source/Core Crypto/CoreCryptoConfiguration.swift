@@ -24,7 +24,7 @@ import WireSystem
 public struct CoreCryptoConfiguration {
 
     public let path: String
-    public let key: String
+    public let key: Data
     public let clientID: String
 
     public var clientIDBytes: ClientId? {
@@ -47,32 +47,32 @@ public class CoreCryptoConfigProvider {
 
     // MARK: - Configuration
 
-    public func createFullConfiguration(
-        sharedContainerURL: URL,
-        selfUser: ZMUser,
-        createKeyIfNeeded: Bool
-    ) throws -> CoreCryptoConfiguration {
-
-        let qualifiedClientID = try clientID(of: selfUser)
-
-        let initialConfig = try createInitialConfiguration(
-            sharedContainerURL: sharedContainerURL,
-            userID: selfUser.remoteIdentifier,
-            createKeyIfNeeded: createKeyIfNeeded
-        )
-
-        return CoreCryptoConfiguration(
-            path: initialConfig.path,
-            key: initialConfig.key,
-            clientID: qualifiedClientID
-        )
-    }
+//    public func createFullConfiguration(
+//        sharedContainerURL: URL,
+//        selfUser: ZMUser,
+//        createKeyIfNeeded: Bool
+//    ) async throws -> CoreCryptoConfiguration {
+//
+//        let qualifiedClientID = try clientID(of: selfUser)
+//
+//        let initialConfig = try await createInitialConfiguration(
+//            sharedContainerURL: sharedContainerURL,
+//            userID: selfUser.remoteIdentifier,
+//            createKeyIfNeeded: createKeyIfNeeded
+//        )
+//
+//        return CoreCryptoConfiguration(
+//            path: initialConfig.path,
+//            key: initialConfig.key,
+//            clientID: qualifiedClientID
+//        )
+//    }
 
     public func createInitialConfiguration(
         sharedContainerURL: URL,
         userID: UUID,
         createKeyIfNeeded: Bool
-    ) throws -> (path: String, key: String) {
+    ) async throws -> (path: String, key: Data) {
 
         let accountDirectory = CoreDataStack.accountDataFolder(
             accountIdentifier: userID,
@@ -83,10 +83,13 @@ public class CoreCryptoConfigProvider {
         let coreCryptoDirectory = accountDirectory.appendingPathComponent("corecrypto")
 
         do {
-            let key = try coreCryptoKeyProvider.coreCryptoKey(createIfNeeded: createKeyIfNeeded)
+            let key = try await coreCryptoKeyProvider.coreCryptoKey(
+                createIfNeeded: createKeyIfNeeded,
+                path: coreCryptoDirectory.path
+            )
             return (
                 path: coreCryptoDirectory.path,
-                key: key.base64EncodedString()
+                key: key
             )
         } catch {
             WireLogger.coreCrypto.error("Failed to get core crypto key \(String(describing: error))")
@@ -94,16 +97,16 @@ public class CoreCryptoConfigProvider {
         }
     }
 
-    public func clientID(of selfUser: ZMUser) throws -> String {
-        guard
-            let selfClient = selfUser.selfClient(),
-            let clientID = MLSClientID(userClient: selfClient)?.rawValue
-        else {
-            throw ConfigurationSetupFailure.failedToGetClientId
-        }
-
-        return clientID
-    }
+//    public func clientID(of selfUser: ZMUser) throws -> String {
+//        guard
+//            let selfClient = selfUser.selfClient(),
+//            let clientID = MLSClientID(userClient: selfClient)?.rawValue
+//        else {
+//            throw ConfigurationSetupFailure.failedToGetClientId
+//        }
+//
+//        return clientID
+//    }
 
     public enum ConfigurationSetupFailure: Error, Equatable {
         case failedToGetClientId

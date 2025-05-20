@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireCoreCrypto
 import WireLogging
 import WireSystem
 
@@ -24,18 +25,54 @@ public class CoreCryptoKeyProvider {
 
     public init() {}
 
-    public func coreCryptoKey(createIfNeeded: Bool) throws -> Data {
+    public func coreCryptoKey(
+        createIfNeeded: Bool,
+        path: String
+    ) async throws -> Data {
         removeLegacyKeyIfNeeded()
 
         do {
-            return try fetchCoreCryptoKey()
+            return try fetchCoreCryptoKeyV2()
         } catch {
             if createIfNeeded {
-                return try createCoreCryptoKey()
+                guard let oldKey = try? fetchCoreCryptoKey() else {
+                    return try createCoreCryptoKeyV2()
+                }
+                return try await migrateDatabaseKey(path: path, oldKey: oldKey)
             } else {
                 throw error
             }
         }
+    }
+
+    private func fetchCoreCryptoKeyV2() throws -> Data {
+        let item = CoreCryptoKeychainItemV2()
+        let key: Data = try KeychainManager.fetchItem(item)
+        WireLogger.coreCrypto.info("Core crypto key_v2 exists: \(key.base64String()). Returning...")
+        return key
+    }
+
+    private func createCoreCryptoKeyV2() throws -> Data {
+        let item = CoreCryptoKeychainItemV2()
+        WireLogger.coreCrypto.info("Core crypto key_v2 doesn't exist. Creating...")
+        let key = try KeychainManager.generateKey(numberOfBytes: 32)
+        WireLogger.coreCrypto.info("Created core crypto key_v2: \(key.base64String()). Storing...")
+        try KeychainManager.storeItem(item, value: key)
+        WireLogger.coreCrypto.info("Stored core crypto key_v2. Returning...")
+        return key
+    }
+
+    private func migrateDatabaseKey(path: String, oldKey: Data) async throws -> Data {
+        WireLogger.coreCrypto.info("Migrating CoreCrypto key from v1 to v2")
+        let newKey = try createCoreCryptoKeyV2()
+
+        try await migrateDatabaseKeyTypeToBytes(
+            path: path,
+            oldKey: oldKey.base64EncodedString(),
+            newKey: newKey
+        )
+
+        return newKey
     }
 
     private func fetchCoreCryptoKey() throws -> Data {
@@ -128,4 +165,36 @@ struct LegacyCoreCryptoKeychainItem: KeychainItemProtocol {
             kSecAttrAccessible: kSecAttrAccessibleWhenUnlocked
         ]
     }
+}
+
+struct CoreCryptoKeychainItemV2: KeychainItemProtocol {
+
+    var id: String {
+        "com.wire.mls.key"
+    }
+
+    var keychainServiceName: String {
+        "wire.com"
+    }
+
+    var getQuery: [CFString: Any] {
+        [
+            kSecClass: kSecClassGenericPassword,
+            kSecAttrService: keychainServiceName,
+            kSecAttrAccount: id,
+            kSecReturnData: true
+        ]
+    }
+
+    func setQuery(value: some Any) -> [CFString: Any] {
+        [
+            kSecClass: kSecClassGenericPassword,
+            kSecAttrService: keychainServiceName,
+            kSecAttrAccount: id,
+            kSecAttrComment: "6.0.1",
+            kSecValueData: value,
+            kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock
+        ]
+    }
+
 }
