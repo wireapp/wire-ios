@@ -433,8 +433,12 @@ public final class UserLocalStore: UserLocalStoreProtocol {
     }
 
     public func fetchAllUsersForBackup() async throws -> [ZMUser] {
-        try await context.perform { [context] in
-            try context.fetch(ZMUser.fetchRequest()) as! [ZMUser]
+        let fetchRequest = ZMUser.fetchRequest()
+        fetchRequest.fetchBatchSize = 50
+        fetchRequest.returnsObjectsAsFaults = true
+        fetchRequest.includesPropertyValues = false
+        return try await context.perform { [context] in
+            try context.fetch(fetchRequest) as! [ZMUser]
         }
     }
 

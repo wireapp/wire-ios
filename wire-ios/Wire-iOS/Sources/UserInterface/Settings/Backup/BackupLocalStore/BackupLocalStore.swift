@@ -48,6 +48,73 @@ struct BackupLocalStore<
 
     // MARK: -
 
+    func fetchAllUsers() -> AsyncThrowingStream<UserBackupModel, any Error> {
+        AsyncThrowingStream { continuation in
+            Task<Void, Never> {
+                do {
+                    let users = try await userLocalStore.fetchAllUsersForBackup()
+                    await context.perform {
+                        for user in users {
+                            autoreleasepool {
+                                if let backupUser = UserBackupModel(user) {
+                                    continuation.yield(backupUser)
+                                }
+                            }
+                        }
+                    }
+                    continuation.finish()
+                } catch {
+                    continuation.finish(throwing: error)
+                }
+            }
+        }
+    }
+
+    // MARK: -
+
+    func fetchAllConversations() -> AsyncThrowingStream<ConversationBackupModel, any Error> {
+        AsyncThrowingStream { continuation in
+            Task<Void, Never> {
+                do {
+                    let conversations = try await conversationLocalStore.fetchAllConversationsForBackup()
+                    await context.perform {
+                        for conversation in conversations {
+                            autoreleasepool {
+                                if let backupConversation = ConversationBackupModel(conversation) {
+                                    continuation.yield(backupConversation)
+                                }
+                            }
+                        }
+                    }
+                    continuation.finish()
+                } catch {
+                    continuation.finish(throwing: error)
+                }
+            }
+        }
+    }
+
+    // MARK: -
+
+    func fetchAllMessages() -> AsyncThrowingStream<MessageBackupModel, any Error> {
+        AsyncThrowingStream { continuation in
+            Task<Void, Never> {
+                do {
+                    let messages = try await messageLocalStore.fetchAllMessagesForBackup()
+                    await context.perform {
+                        for message in messages {
+                            autoreleasepool {
+                                if let backupMessage = MessageBackupModel(message) {
+                                    continuation.yield(backupMessage)
+                                }
+                            }
+                        }
+                    }
+                    continuation.finish()
+                } catch {
+                    continuation.finish(throwing: error)
+                }
+            }
     func fetchAllUserIDs() async throws -> Set<WireFoundation.QualifiedID> {
         let userIDs = try await userLocalStore.fetchAllUserIDsForBackup()
             .map(WireFoundation.QualifiedID.init)

@@ -74,13 +74,14 @@ public struct CreateBackupUseCase<
 
                 do {
                     let logger = logger()
-                    let reportProgress: (Int, Int) -> Void = { current, total in
+                    let checkCancellationAndReportProgress: (Int, Int) throws -> Void = { current, total in
                         guard current % 50 == 0 || current == total else { return }
+                        try Task.checkCancellation()
                         logger.debug("reporting overall process: \(current)/\(total)")
                         continuation.yield(.progress(current, total))
                     }
 
-                    reportProgress(0, 0)
+                    try checkCancellationAndReportProgress(0, 0)
 
                     logger.debug("initializing backup creator")
                     let backupCreator = BackupCreator(
@@ -90,41 +91,33 @@ public struct CreateBackupUseCase<
                         fileArchiver: fileArchiver
                     )
 
-                    try Task.checkCancellation()
-
                     // get the counts of users, messages and conversations in order to report progress accurately
                     let (userCount, conversationCount, messageCount) = try await backupLocalStore.countModels()
                     let total = userCount + conversationCount + messageCount
 
                     // fetch the data and pass it into the backup exporter
-                    let allUsers = try await backupLocalStore.fetchAllUsers()
-                    for (userIndex, user) in allUsers.enumerated() {
+                    var processedItems = 0
+                    for try await user in backupLocalStore.fetchAllUsers() {
                         backupCreator.addUser(user)
-                        if userIndex % 50 == 0 { try Task.checkCancellation() }
-                        reportProgress(userIndex + 1, total)
+                        processedItems += 1
+                        try checkCancellationAndReportProgress(processedItems, total)
                     }
-
-                    try Task.checkCancellation()
 
                     let conversationProgressOffset = userCount
-                    let allConversations = try await backupLocalStore.fetchAllConversations()
-                    for (conversationIndex, conversation) in allConversations.enumerated() {
+                    processedItems = 0
+                    for try await conversation in backupLocalStore.fetchAllConversations() {
                         backupCreator.addConversation(conversation)
-                        if conversationIndex % 50 == 0 { try Task.checkCancellation() }
-                        reportProgress(conversationProgressOffset + conversationIndex + 1, total)
+                        processedItems += 1
+                        try checkCancellationAndReportProgress(conversationProgressOffset + processedItems, total)
                     }
-
-                    try Task.checkCancellation()
 
                     let messageProgressOffset = userCount + conversationCount
-                    let allMessages = try await backupLocalStore.fetchAllMessages()
-                    for (messageIndex, message) in allMessages.enumerated() {
+                    processedItems = 0
+                    for try await message in backupLocalStore.fetchAllMessages() {
                         backupCreator.addMessage(message)
-                        if messageIndex % 50 == 0 { try Task.checkCancellation() }
-                        reportProgress(messageProgressOffset + messageIndex + 1, total)
+                        processedItems += 1
+                        try checkCancellationAndReportProgress(messageProgressOffset + processedItems, total)
                     }
-
-                    try Task.checkCancellation()
 
                     // create the file
                     let outputFileURL = try await backupCreator.finalize(password: password)
