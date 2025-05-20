@@ -43,7 +43,7 @@ actor DraftsRepository {
         continuations.values.forEach { $0.finish() }
     }
 
-    func add(assetURL: URL, assetSize: UInt64, cellName: String, fileName: String) async throws {
+    func add(assetURL: URL, assetSize: UInt64, cellName: String, fileName: String) async {
         let draft = Draft(
             id: .new(),
             assetURL: assetURL,
