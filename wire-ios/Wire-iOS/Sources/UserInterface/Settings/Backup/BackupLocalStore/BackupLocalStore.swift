@@ -50,10 +50,12 @@ struct BackupLocalStore<
             Task<Void, Never> {
                 do {
                     let users = try await userLocalStore.fetchAllUsersForBackup()
-                    for user in users {
-                        autoreleasepool {
-                            if let user = UserBackupModel(user) {
-                                continuation.yield(user)
+                    await context.perform {
+                        for user in users {
+                            autoreleasepool {
+                                if let user = UserBackupModel(user) {
+                                    continuation.yield(user)
+                                }
                             }
                         }
                     }
