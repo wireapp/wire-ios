@@ -25,7 +25,7 @@ extension GenericMessage {
 
     init?(
         nonce: UUID,
-        messageContent: BackupMessageModel.Content
+        messageContent: MessageBackupModel.Content
     ) {
         switch messageContent {
 

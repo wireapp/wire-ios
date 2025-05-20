@@ -19,7 +19,7 @@
 import WireBackup
 import WireProtos
 
-extension BackupMessageModel.Content.AssetContent.EncryptionAlgorithm {
+extension MessageBackupModel.Content.AssetContent.EncryptionAlgorithm {
 
     init(_ encryptionAlgorithm: WireProtos.EncryptionAlgorithm) {
         switch encryptionAlgorithm {

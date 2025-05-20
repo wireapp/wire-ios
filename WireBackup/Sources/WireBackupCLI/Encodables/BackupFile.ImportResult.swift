@@ -24,9 +24,9 @@ extension BackupFile {
     struct ImportResult: Encodable {
 
         let totalPagesCount: Int32?
-        let users: [BackupUserModel]
-        let conversations: [BackupConversationModel]
-        let messages: [BackupMessageModel]
+        let users: [UserBackupModel]
+        let conversations: [ConversationBackupModel]
+        let messages: [MessageBackupModel]
 
         init(_ importResult: BackupImportResult.Success) throws {
 
@@ -43,13 +43,13 @@ extension BackupFile {
 
             self.totalPagesCount = importResult.pager.totalPagesCount
             self.users = [BackupUser](usersPager)
-                .compactMap(BackupUserModel.init)
+                .compactMap(UserBackupModel.init)
                 .sorted { $0.name < $1.name }
             self.conversations = [BackupConversation](conversationsPager)
-                .compactMap(BackupConversationModel.init)
+                .compactMap(ConversationBackupModel.init)
                 .sorted { $0.name < $1.name }
             self.messages = [BackupMessage](messagesPager)
-                .compactMap(BackupMessageModel.init)
+                .compactMap(MessageBackupModel.init)
                 .sorted { $0.creationDate < $1.creationDate }
 
         }

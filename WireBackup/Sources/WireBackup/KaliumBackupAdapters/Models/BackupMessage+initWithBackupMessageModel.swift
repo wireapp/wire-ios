@@ -35,7 +35,7 @@ extension BackupMessage {
 
 }
 
-private func backupMessageContent(_ content: BackupMessageModel.Content) -> BackupMessageContent {
+private func backupMessageContent(_ content: MessageBackupModel.Content) -> BackupMessageContent {
     switch content {
 
     case let .text(content):
@@ -68,7 +68,7 @@ private func backupMessageContent(_ content: BackupMessageModel.Content) -> Back
 }
 
 private func assetEncryptionAlgorithm(
-    _ encryption: BackupMessageModel.Content.AssetContent.EncryptionAlgorithm
+    _ encryption: MessageBackupModel.Content.AssetContent.EncryptionAlgorithm
 ) -> BackupMessageContent.AssetEncryptionAlgorithm {
     switch encryption {
     case .aesCBC:
@@ -79,7 +79,7 @@ private func assetEncryptionAlgorithm(
 }
 
 private func assetAssetMetadata(
-    _ metadata: BackupMessageModel.Content.AssetContent.Metadata
+    _ metadata: MessageBackupModel.Content.AssetContent.Metadata
 ) -> BackupMessageContent.AssetAssetMetadata {
     switch metadata {
 

@@ -19,7 +19,7 @@
 public import Foundation
 public import WireFoundation
 
-public struct MessageBackupModel: Codable, Hashable, Sendable {
+public struct MessageBackupModel: Encodable, Hashable, Sendable {
 
     public var id: String
     public var conversationID: QualifiedID
@@ -51,7 +51,7 @@ public struct MessageBackupModel: Codable, Hashable, Sendable {
 // The following types replicate the API of the multi-platform backup library in a Swift friendlier way.
 // (e.g. enums instead of class hierarchy)
 
-extension BackupMessageModel {
+extension MessageBackupModel {
 
     public enum Content: Encodable, Hashable, Sendable {
 
@@ -65,7 +65,7 @@ extension BackupMessageModel {
 
 // MARK: - Nested Types
 
-public extension BackupMessageModel.Content {
+public extension MessageBackupModel.Content {
 
     struct TextContent: Encodable, Hashable, Sendable {
 
@@ -158,7 +158,7 @@ public extension BackupMessageModel.Content {
 
 }
 
-public extension BackupMessageModel.Content.AssetContent.Metadata {
+public extension MessageBackupModel.Content.AssetContent.Metadata {
 
     struct ImageMetadata: Encodable, Hashable, Sendable {
 
@@ -226,7 +226,7 @@ public extension BackupMessageModel.Content.AssetContent.Metadata {
 
 // MARK: - Convenience
 
-public extension BackupMessageModel.Content {
+public extension MessageBackupModel.Content {
 
     static func text(
         _ text: String
@@ -284,7 +284,7 @@ public extension BackupMessageModel.Content {
 
 }
 
-public extension BackupMessageModel.Content.AssetContent.Metadata {
+public extension MessageBackupModel.Content.AssetContent.Metadata {
 
     static func image(
         width: Int32,

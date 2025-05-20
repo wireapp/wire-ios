@@ -36,7 +36,7 @@ This implementation will put the properties of the specific content under "conte
 
  */
 
-extension BackupMessageModel.Content {
+extension MessageBackupModel.Content {
 
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
@@ -52,7 +52,7 @@ extension BackupMessageModel.Content {
 
 }
 
-extension BackupMessageModel.Content.AssetContent.Metadata {
+extension MessageBackupModel.Content.AssetContent.Metadata {
 
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
