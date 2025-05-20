@@ -18,16 +18,16 @@
 
 import Foundation
 import Collections
-import WireCellsAPI
+package import WireCellsAPI
 @preconcurrency import Combine
 
-struct Draft: Hashable, Sendable {
+package struct Draft: Hashable, Sendable {
     let id: WireCellsNodeID
     let assetURL: URL
     var status: WireCellsUploadStatus
 }
 
-actor DraftsRepository {
+package actor DraftsRepository {
 
     typealias CellName = String
 
@@ -35,7 +35,7 @@ actor DraftsRepository {
     private var continuations: [UUID: AsyncStream<[Draft]>.Continuation] = [:]
     private var uploadManager: any WireCellsNodeUploadManagerProtocol
 
-    init(uploadManager: any WireCellsNodeUploadManagerProtocol) {
+    package init(uploadManager: any WireCellsNodeUploadManagerProtocol) {
         self.uploadManager = uploadManager
     }
 
