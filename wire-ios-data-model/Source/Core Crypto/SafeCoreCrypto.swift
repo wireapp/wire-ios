@@ -39,11 +39,11 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
     private let safeContext: SafeFileContext
     private let databasePath: String
 
-    public convenience init(path: String, key: String) async throws {
+    public convenience init(path: String, key: Data) async throws {
 
         let coreCrypto = try await CoreCrypto(
             keystorePath: path,
-            key: Data(key.utf8)
+            key: key
         )
 
         setLogger(logger: CoreCryptoLoggerProxy(), level: .info)

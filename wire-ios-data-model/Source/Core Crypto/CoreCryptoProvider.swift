@@ -186,7 +186,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             let cc: SafeCoreCrypto
             do {
                 cc = try await createCoreCrypto()
-                try await migrateDatabaseKeyIfNeeded()
+                //try await migrateDatabaseKeyIfNeeded()
             } catch {
                 resumeCoreCryptoContinuations(with: .failure(error))
                 loadingCoreCrypto = false

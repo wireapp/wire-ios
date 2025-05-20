@@ -24,7 +24,7 @@ import WireSystem
 public struct CoreCryptoConfiguration {
 
     public let path: String
-    public let key: String
+    public let key: Data
     public let clientID: String
 
     public var clientIDBytes: ClientId? {
@@ -72,7 +72,7 @@ public class CoreCryptoConfigProvider {
         sharedContainerURL: URL,
         userID: UUID,
         createKeyIfNeeded: Bool
-    ) throws -> (path: String, key: String) {
+    ) throws -> (path: String, key: Data) {
 
         let accountDirectory = CoreDataStack.accountDataFolder(
             accountIdentifier: userID,
@@ -83,10 +83,10 @@ public class CoreCryptoConfigProvider {
         let coreCryptoDirectory = accountDirectory.appendingPathComponent("corecrypto")
 
         do {
-            let key = try coreCryptoKeyProvider.coreCryptoKey(createIfNeeded: createKeyIfNeeded)//
+            let key = try coreCryptoKeyProvider.coreCryptoKey(createIfNeeded: createKeyIfNeeded)
             return (
                 path: coreCryptoDirectory.path,
-                key: key.base64EncodedString()
+                key: key
             )
         } catch {
             WireLogger.coreCrypto.error("Failed to get core crypto key \(String(describing: error))")
