@@ -19,7 +19,7 @@ let package = Package(
         .target(
             name: "WireLoggingSupport",
             dependencies: ["WireLogging"],
-            plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
+            // plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
         ),
         .testTarget(
             name: "WireLoggingTests",

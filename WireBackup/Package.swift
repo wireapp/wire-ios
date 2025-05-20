@@ -29,7 +29,7 @@ let package = Package(
             dependencies: [
                 "WireBackup"
             ],
-            plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
+            // plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
         ),
         .testTarget(
             name: "WireBackupTests",

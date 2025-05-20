@@ -43,7 +43,7 @@ let package = Package(
         .target(
             name: "WireFoundationSupport",
             dependencies: ["WireFoundation"],
-            plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
+            // plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
         ),
 
         .target(
