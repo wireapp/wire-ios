@@ -45,11 +45,26 @@ struct BackupLocalStore<
 
     // MARK: -
 
-    func fetchAllUsers() async throws -> Set<WireBackup.UserBackupModel> {
+    func fetchAllUsers() -> AsyncThrowingStream<UserBackupModel, any Error> {
+        fatalError()
+//        AsyncThrowingStream { continuation in
+//            Task<Void, Never> {
+//                do {
+//                    let users = try await userLocalStore.fetchAllUsersForBackup()
+//                    continuation.yield(.done(url))
+//                    continuation.finish()
+//                } catch {
+//                    continuation.finish(throwing: error)
+//                }
+//            }
+//        }
+    }
+
+    func fetchAllUsers_() async throws -> Set<WireBackup.UserBackupModel> {
         let users = try await userLocalStore.fetchAllUsersForBackup()
         return await context.perform {
             Set(users.compactMap { user in
-                guard let user = BackupUserModel(user) else {
+                guard let user = UserBackupModel(user) else {
                     assertionFailure()
                     return nil
                 }
@@ -111,7 +126,7 @@ extension BackupLocalStore where
 
 // MARK: -
 
-private extension BackupUserModel {
+private extension UserBackupModel {
 
     init?(_ user: ZMUser) {
         guard let qualifiedID = user.qualifiedID else { return nil }
