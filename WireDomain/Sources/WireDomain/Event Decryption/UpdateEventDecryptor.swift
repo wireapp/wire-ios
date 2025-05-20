@@ -120,7 +120,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                 } catch let error as MLSMessageDecryptorError {
                     switch error {
                     case let .wrongEpoch(mlsGroupID):
-                        WireLogger.updateEvent.warn(
+                        WireLogger.updateEvent.error(
                             "failed to decrypt MLS due to `WrongEpoch` for group \(mlsGroupID)",
                             attributes: logAttributes
                         )
@@ -130,7 +130,6 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                             attributes: logAttributes
                         )
                     }
-                    throw error
                 } catch {
                     WireLogger.updateEvent.error(
                         "failed to decrypt MLS add message event, dropping: \(String(describing: error))",
