@@ -21,7 +21,7 @@ import WireFoundation
 
 extension BackupUser {
 
-    convenience init(_ user: BackupUserModel) {
+    convenience init(_ user: UserBackupModel) {
         self.init(
             id: BackupQualifiedId(user.qualifiedID),
             name: user.name,

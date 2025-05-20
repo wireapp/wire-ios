@@ -40,15 +40,15 @@ struct BackupCreator {
         )
     }
 
-    func addUser(_ user: BackupUserModel) {
+    func addUser(_ user: UserBackupModel) {
         mpBackupCreator.add(user: BackupUser(user))
     }
 
-    func addConversation(_ conversation: BackupConversationModel) {
+    func addConversation(_ conversation: ConversationBackupModel) {
         mpBackupCreator.add(conversation: BackupConversation(conversation))
     }
 
-    func addMessage(_ message: BackupMessageModel) {
+    func addMessage(_ message: MessageBackupModel) {
         mpBackupCreator.add(message: BackupMessage(message))
     }
 
