@@ -121,6 +121,7 @@ public class CoreCryptoConfigProvider {
             let oldKey = try coreCryptoKeyProvider.coreCryptoKey(createIfNeeded: false)
             let newKey = try coreCryptoKeyProvider.createCoreCryptoKeyV2()
 
+            print("Kate333 migrateDatabaseKeyTypeToBytes")
             try await migrateDatabaseKeyTypeToBytes(
                 path: coreCryptoDirectory.path,
                 oldKey: oldKey.base64EncodedString(),

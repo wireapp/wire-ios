@@ -179,14 +179,14 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         }
 
         if let coreCrypto {
-            try await migrateDatabaseKeyIfNeeded()
+            //try await migrateDatabaseKeyIfNeeded()
             return coreCrypto
         } else {
             loadingCoreCrypto = true
             let cc: SafeCoreCrypto
             do {
                 cc = try await createCoreCrypto()
-
+                try await migrateDatabaseKeyIfNeeded()
             } catch {
                 resumeCoreCryptoContinuations(with: .failure(error))
                 loadingCoreCrypto = false
