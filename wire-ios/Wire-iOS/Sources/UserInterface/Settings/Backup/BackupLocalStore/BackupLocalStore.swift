@@ -91,7 +91,7 @@ struct BackupLocalStore<
         let conversations = try await conversationLocalStore.fetchAllConversationsForBackup()
         return await context.perform {
             Set(conversations.compactMap { conversation in
-                guard let conversation = BackupConversationModel(conversation) else {
+                guard let conversation = ConversationBackupModel(conversation) else {
                     assertionFailure()
                     return nil
                 }
@@ -111,7 +111,7 @@ struct BackupLocalStore<
         let messages = try await messageLocalStore.fetchAllMessagesForBackup()
         return await context.perform {
             Set(messages.compactMap { message in
-                if let message = BackupMessageModel(message) { message } else { nil }
+                if let message = MessageBackupModel(message) { message } else { nil }
             })
         }
     }
@@ -186,7 +186,7 @@ private extension BackupUserModel {
 
 }
 
-private extension BackupConversationModel {
+private extension ConversationBackupModel {
 
     init?(_ conversation: ZMConversation) {
         guard let qualifiedID = conversation.qualifiedID else { return nil }

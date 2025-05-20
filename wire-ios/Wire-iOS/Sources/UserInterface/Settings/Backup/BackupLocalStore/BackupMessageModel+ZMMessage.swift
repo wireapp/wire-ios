@@ -20,7 +20,7 @@ import WireBackup
 import WireDataModel
 import WireFoundation
 
-extension BackupMessageModel {
+extension MessageBackupModel {
 
     init?(_ message: ZMMessage) {
         switch message {

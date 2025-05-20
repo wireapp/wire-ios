@@ -20,7 +20,7 @@ import KaliumBackup
 
 extension BackupConversation {
 
-    convenience init(_ conversation: BackupConversationModel) {
+    convenience init(_ conversation: ConversationBackupModel) {
         self.init(
             id: BackupQualifiedId(conversation.qualifiedID),
             name: conversation.name

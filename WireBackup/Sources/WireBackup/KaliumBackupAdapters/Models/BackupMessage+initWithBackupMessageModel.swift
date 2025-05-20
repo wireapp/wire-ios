@@ -21,7 +21,7 @@ import KaliumBackup
 
 extension BackupMessage {
 
-    convenience init(_ message: BackupMessageModel) {
+    convenience init(_ message: MessageBackupModel) {
         self.init(
             id: message.id.lowercased(),
             conversationId: BackupQualifiedId(message.conversationID),
