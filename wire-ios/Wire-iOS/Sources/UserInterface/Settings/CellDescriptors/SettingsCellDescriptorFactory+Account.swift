@@ -397,7 +397,8 @@ extension SettingsCellDescriptorFactory {
         }
 
         let importBackupUseCase = sessionManager.importLegacyBackupUseCase!
-        let createBackupUseCase: CreateBackupUseCaseProtocol = if DeveloperFlag.createLegacyBackups.isOn {
+        // TODO: [WPB-16658] enable new backup when restore is ready
+        let createBackupUseCase: CreateBackupUseCaseProtocol = if true || DeveloperFlag.createLegacyBackups.isOn {
             CreateLegacyBackupUseCase(sessionManager: sessionManager)
         } else {
             CreateBackupUseCase(
