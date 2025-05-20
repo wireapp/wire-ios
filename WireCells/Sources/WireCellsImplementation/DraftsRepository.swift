@@ -21,18 +21,12 @@ import Collections
 package import WireCellsAPI
 @preconcurrency import Combine
 
-package struct Draft: Hashable, Sendable {
-    let id: WireCellsNodeID
-    let assetURL: URL
-    var status: WireCellsUploadStatus
-}
-
 package actor DraftsRepository {
 
     typealias CellName = String
 
-    private var drafts: CurrentValueSubject<[CellName: OrderedDictionary<WireCellsNodeID,Draft>], Never> = .init([:])
-    private var continuations: [UUID: AsyncStream<[Draft]>.Continuation] = [:]
+    private var drafts: CurrentValueSubject<[CellName: OrderedDictionary<WireCellsNodeID, WireCellsDraft>], Never> = .init([:])
+    private var continuations: [UUID: AsyncStream<[WireCellsDraft]>.Continuation] = [:]
     private var uploadManager: any WireCellsNodeUploadManagerProtocol
 
     package init(uploadManager: any WireCellsNodeUploadManagerProtocol) {
@@ -44,7 +38,7 @@ package actor DraftsRepository {
     }
 
     func add(assetURL: URL, assetSize: UInt64, cellName: String, fileName: String) async {
-        let draft = Draft(
+        let draft = WireCellsDraft(
             id: .new(),
             assetURL: assetURL,
             status: .uploading(progress: 0)
@@ -67,9 +61,12 @@ package actor DraftsRepository {
         }
     }
 
-    func drafts(for cellName: CellName) -> AsyncStream<[Draft]> {
+    func drafts(for cellName: CellName) -> AsyncStream<[WireCellsDraft]> {
         let continuationID = UUID()
-        let (stream, continuation) = AsyncStream.makeStream(of: [Draft].self, bufferingPolicy: .bufferingOldest(0))
+        let (stream, continuation) = AsyncStream.makeStream(
+            of: [WireCellsDraft].self,
+            bufferingPolicy: .bufferingOldest(0)
+        )
 
         let cancellable = drafts.sink { drafts in
             let result = drafts[cellName] ?? [:]
