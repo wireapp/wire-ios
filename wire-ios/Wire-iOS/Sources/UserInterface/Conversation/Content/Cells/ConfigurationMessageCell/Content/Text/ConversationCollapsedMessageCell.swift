@@ -166,28 +166,28 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
                     )
             }
         } else {
-            messageTextView.font = UIFont.normalLightFont.italic
-            messageTextView.textColor = SemanticColors.Label.textDefault
+            var text: String = ""
             typeIcon.isHidden = false
             if message.isImage {
                 typeIcon.image = .init(resource: .image)
-                messageTextView.attributedText = L10n.Localizable.Content.Collapsed.Image.title.attributedString
+                text = L10n.Localizable.Content.Collapsed.Image.title
             } else if message.isVideo {
                 typeIcon.image = .init(resource: .play)
-                messageTextView.attributedText = L10n.Localizable.Content.Collapsed.Video.title.attributedString
+                text = L10n.Localizable.Content.Collapsed.Video.title
             } else if message.isAudio {
                 typeIcon.image = .init(resource: .micOn)
-                messageTextView.attributedText = L10n.Localizable.Content.Collapsed.Audio.title.attributedString
+                text = L10n.Localizable.Content.Collapsed.Audio.title
             } else if message.isLocation {
                 typeIcon.image = .init(resource: .location)
-                messageTextView.attributedText = L10n.Localizable.Content.Collapsed.Location.title.attributedString
+                text = L10n.Localizable.Content.Collapsed.Location.title
             } else if message.isFile {
                 typeIcon.image = .init(resource: .file)
-                messageTextView.attributedText = L10n.Localizable.Content.Collapsed.File.title.attributedString
+                text = L10n.Localizable.Content.Collapsed.File.title
             } else if message.hasLinks {
                 typeIcon.image = .init(resource: .link)
-                messageTextView.attributedText = L10n.Localizable.Content.Collapsed.Link.title.attributedString
+                text = L10n.Localizable.Content.Collapsed.Link.title
             }
+            messageTextView.attributedText = text.attributedString && UIFont.normalLightFont.italic && SemanticColors.Label.textDefault
         }
 
         wholeViewTapButton.removeTarget(nil, action: nil, for: .allEvents)
