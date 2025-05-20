@@ -39,7 +39,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
-    
+
     enum Constants {
         static let avatarSize: CGFloat = 24.0
         static let spacingBetweenAvatarAndText: CGFloat = 12
@@ -218,7 +218,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
 
         let rightStack = [typeIcon, collapseButton.wrapInView(trailingInset: margins.right)]
             .horizontalStack(spacing: 8, alignment: .center)
-        
+
         let avatarContainer = avatar.wrapInViewWithFlexibleTopAndBottom()
 
         let stack = UIStackView.horizontal(
