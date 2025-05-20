@@ -47,27 +47,6 @@ public class CoreCryptoConfigProvider {
 
     // MARK: - Configuration
 
-//    public func createFullConfiguration(
-//        sharedContainerURL: URL,
-//        selfUser: ZMUser,
-//        createKeyIfNeeded: Bool
-//    ) async throws -> CoreCryptoConfiguration {
-//
-//        let qualifiedClientID = try clientID(of: selfUser)
-//
-//        let initialConfig = try await createInitialConfiguration(
-//            sharedContainerURL: sharedContainerURL,
-//            userID: selfUser.remoteIdentifier,
-//            createKeyIfNeeded: createKeyIfNeeded
-//        )
-//
-//        return CoreCryptoConfiguration(
-//            path: initialConfig.path,
-//            key: initialConfig.key,
-//            clientID: qualifiedClientID
-//        )
-//    }
-
     public func createInitialConfiguration(
         sharedContainerURL: URL,
         userID: UUID,
@@ -96,17 +75,6 @@ public class CoreCryptoConfigProvider {
             throw ConfigurationSetupFailure.failedToGetCoreCryptoKey
         }
     }
-
-//    public func clientID(of selfUser: ZMUser) throws -> String {
-//        guard
-//            let selfClient = selfUser.selfClient(),
-//            let clientID = MLSClientID(userClient: selfClient)?.rawValue
-//        else {
-//            throw ConfigurationSetupFailure.failedToGetClientId
-//        }
-//
-//        return clientID
-//    }
 
     public enum ConfigurationSetupFailure: Error, Equatable {
         case failedToGetClientId

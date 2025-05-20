@@ -25,15 +25,16 @@ class CoreCryptoKeyProviderTests: XCTestCase {
     override func tearDown() {
         super.tearDown()
         try? KeychainManager.deleteItem(CoreCryptoKeychainItem())
+        try? KeychainManager.deleteItem(CoreCryptoKeychainItemV2())
     }
 
     // MARK: Fetching & creating key
 
-    func test_itFetchesCoreCryptoKey() async throws {
+    func test_itFetchesCoreCryptoKeyV2() async throws {
         // GIVEN
         let sut = CoreCryptoKeyProvider()
 
-        let item = CoreCryptoKeychainItem()
+        let item = CoreCryptoKeychainItemV2()
         let expectedKey = try KeychainManager.generateKey(numberOfBytes: 32)
         try KeychainManager.storeItem(item, value: expectedKey)
 
@@ -44,25 +45,21 @@ class CoreCryptoKeyProviderTests: XCTestCase {
         XCTAssertEqual(key, expectedKey)
     }
 
-//    func test_itDoesntCreateCoreCryptoKey_WhenNotNeeded() async {
-//        // GIVEN
-//        let sut = CoreCryptoKeyProvider()
-//
-//        // WHEN
-//        //XCTAssertThrowsError(try await sut.coreCryptoKey(createIfNeeded: false, path: ""))
-//        do {
-//            _ = try await sut.coreCryptoKey(createIfNeeded: false, path: "")
-//        } catch let error as CoreCryptoKeyProvider.Error {
-//            XCTAssertEqual(error, .failedToFetchItemFromKeychain(errSecItemNotFound))
-//        } catch {
-//            XCTFail("Unexpected error type: \(error)")
-//        }
-//
-//        // THEN
-//        XCTAssertNil(try? KeychainManager.fetchItem(CoreCryptoKeychainItem()))
-//    }
+    func test_itDoesntCreateCoreCryptoKey_WhenNotNeeded() async {
+        // GIVEN
+        let sut = CoreCryptoKeyProvider()
 
-    func test_itCreatesCoreCryptoKey_WhenNeeded() async throws {
+        // WHEN
+        await XCTAssertThrowsErrorAsync {
+            _ = try await sut.coreCryptoKey(createIfNeeded: false, path: "")
+        }
+
+        // THEN
+        XCTAssertNil(try? KeychainManager.fetchItem(CoreCryptoKeychainItem()))
+        XCTAssertNil(try? KeychainManager.fetchItem(CoreCryptoKeychainItemV2()))
+    }
+
+    func test_itCreatesCoreCryptoKeyV2_WhenNeeded() async throws {
         // GIVEN
         let sut = CoreCryptoKeyProvider()
 
@@ -72,9 +69,32 @@ class CoreCryptoKeyProviderTests: XCTestCase {
         // THEN
         XCTAssertNotNil(key)
 
-        let storedKey: Data? = try? KeychainManager.fetchItem(CoreCryptoKeychainItem())
+        let storedKey: Data? = try? KeychainManager.fetchItem(CoreCryptoKeychainItemV2())
         XCTAssertNotNil(storedKey)
         XCTAssertEqual(key, storedKey)
+    }
+
+    func test_itCreatesCryptoKeyV2_ifKeyV1Exists() async throws {
+        // GIVEN
+        let sut = CoreCryptoKeyProvider()
+
+        let item = CoreCryptoKeychainItem()
+        let expectedKey = try KeychainManager.generateKey(numberOfBytes: 32)
+        try KeychainManager.storeItem(item, value: expectedKey)
+
+        // WHEN
+        let oldStoredKey: Data? = try? KeychainManager.fetchItem(CoreCryptoKeychainItem())
+        XCTAssertNotNil(oldStoredKey)
+
+        let newdKey: Data? = try? KeychainManager.fetchItem(CoreCryptoKeychainItemV2())
+        XCTAssertNil(newdKey)
+
+        let key = try await sut.coreCryptoKey(createIfNeeded: true, path: "")
+
+        // THEN
+        let newStoredKey: Data? = try? KeychainManager.fetchItem(CoreCryptoKeychainItemV2())
+        XCTAssertNotNil(newStoredKey)
+        XCTAssertEqual(key, newStoredKey)
     }
 
 }
