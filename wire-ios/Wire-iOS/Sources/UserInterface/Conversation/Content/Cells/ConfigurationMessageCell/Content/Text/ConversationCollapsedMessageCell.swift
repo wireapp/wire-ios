@@ -40,6 +40,11 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
+    enum Constants {
+        static let avatarSize: CGFloat = 24.0
+        static let spacingBetweenAvatarAndText: CGFloat = 12
+    }
+
     private lazy var avatar: UserImageView = {
         let view = UserImageView()
         view.userSession = ZMUserSession.shared()
@@ -55,8 +60,9 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         view.isUserInteractionEnabled = true
         view.setContentHuggingPriority(.required, for: .horizontal)
         view.setContentCompressionResistancePriority(.required, for: .horizontal)
-        view.heightAnchor.constraint(equalToConstant: 24).isActive = true
-        view.widthAnchor.constraint(equalToConstant: 24).isActive = true
+        view.heightAnchor
+            .constraint(equalToConstant: Constants.avatarSize).isActive = true
+        view.widthAnchor.constraint(equalToConstant: Constants.avatarSize).isActive = true
         return view
     }()
 
@@ -204,22 +210,28 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         ).isActive = true
 
         let spacingView = UIView()
-        spacingView.widthAnchor.constraint(equalToConstant: 13).isActive = true
+        spacingView.widthAnchor
+            .constraint(
+                equalToConstant: margins.left - Constants.avatarSize - Constants.spacingBetweenAvatarAndText
+            ).isActive = true
 
         let rightStack = [typeIcon, collapseButton.wrapInView(trailingInset: margins.right)]
             .horizontalStack(spacing: 8, alignment: .center)
 
+        let avatarContainer = avatar.wrapInViewWithFlexibleTopAndBottom()
+
         let stack = UIStackView.horizontal(
             views: [
                 spacingView,
-                avatar.wrapInViewWithFlexibleTopAndBottom(),
+                avatarContainer,
                 messageTextView,
                 rightStack.wrapInViewWithFlexibleTopAndBottom()
             ],
             spacing: 7,
             alignment: .top
         )
-        stack.setCustomSpacing(12, after: avatar)
+        stack.setCustomSpacing(0, after: spacingView)
+        stack.setCustomSpacing(Constants.spacingBetweenAvatarAndText, after: avatarContainer)
         stack.setCustomSpacing(10, after: messageTextView)
 
         rightStack.centerYAnchor
