@@ -17,8 +17,10 @@
 //
 
 import Foundation
+import WireReusableUIComponents
 
 public struct MessageModel: Equatable {
+    
     public let nonce: UUID?
     public let sender: UserModel?
     public let systemMessageType: SystemMessageTypeModel?
@@ -29,6 +31,7 @@ public struct MessageModel: Equatable {
     public let readReceiptsCount: Int
     public let deliveryState: DeliveryStateModel
     public let isSent: Bool
+    public let mentions: [MentionModel]
 
     public init(
         nonce: UUID?,
@@ -40,7 +43,8 @@ public struct MessageModel: Equatable {
         conversationType: ConversationTypeModel?,
         readReceiptsCount: Int,
         deliveryState: DeliveryStateModel,
-        isSent: Bool
+        isSent: Bool,
+        mentions: [MentionModel]
     ) {
         self.nonce = nonce
         self.sender = sender
@@ -52,6 +56,7 @@ public struct MessageModel: Equatable {
         self.readReceiptsCount = readReceiptsCount
         self.deliveryState = deliveryState
         self.isSent = isSent
+        self.mentions = mentions
     }
 }
 

@@ -88,23 +88,6 @@ extension UIColor {
         }
     }
 
-    class func lowAccentColorForUsernameMention(accentColor: AccentColor) -> UIColor {
-        switch accentColor {
-        case .blue:
-            SemanticColors.View.backgroundBlueUsernameMention
-        case .red:
-            SemanticColors.View.backgroundRedUsernameMention
-        case .green:
-            SemanticColors.View.backgroundGreenUsernameMention
-        case .amber:
-            SemanticColors.View.backgroundAmberUsernameMention
-        case .turquoise:
-            SemanticColors.View.backgroundTurqoiseUsernameMention
-        case .purple:
-            SemanticColors.View.backgroundPurpleUsernameMention
-        }
-    }
-
     static func buttonEmptyText(variant: ColorSchemeVariant) -> UIColor {
         switch variant {
         case .dark:

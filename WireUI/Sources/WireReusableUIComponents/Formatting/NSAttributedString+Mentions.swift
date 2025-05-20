@@ -17,49 +17,45 @@
 //
 
 import Foundation
-import WireDataModel
+import UIKit
 import WireFoundation
-import WireReusableUIComponents
+import WireDesign
 
-private let log = ZMSLog(tag: "Mentions")
+//private let log = ZMSLog(tag: "Mentions")
 
-struct TextMarker<A> {
-
-    let replacementText: String
-    let token: String
-    let value: A
-
-    init(_ value: A, replacementText: String) {
-        self.value = value
-        self.replacementText = replacementText
-        self.token = UUID().transportString()
-    }
-}
-
-extension TextMarker {
-
-    func range(in string: String) -> Range<Int>? {
-        Range((string as NSString).range(of: token))
+public struct MentionModel: Equatable {
+    public static func == (lhs: MentionModel, rhs: MentionModel) -> Bool {
+        lhs.range == rhs.range &&
+        lhs.isSelfUser == rhs.isSelfUser &&
+        lhs.object === rhs.object
     }
 
-}
 
-extension Mention {
-    static let mentionScheme = "wire-mention"
-
-    var link: URL {
-        URL(string: "\(Mention.mentionScheme)://location/\(range.location)")!
+    public let range: NSRange
+    public let isSelfUser: Bool
+    public let object: AnyObject
+    
+    public init(range: NSRange, isSelfUser: Bool, object: AnyObject) {
+        self.range = range
+        self.isSelfUser = isSelfUser
+        self.object = object
     }
 
-    var location: Int {
+    public static let mentionScheme = "wire-mention"
+
+    public var link: URL {
+        URL(string: "\(MentionModel.mentionScheme)://location/\(range.location)")!
+    }
+
+    public var location: Int {
         range.location
     }
 }
 
-extension URL {
+public extension URL {
 
     var isMention: Bool {
-        scheme == Mention.mentionScheme
+        scheme == MentionModel.mentionScheme
     }
 
     var mentionLocation: Int {
@@ -75,14 +71,14 @@ extension URL {
 extension NSMutableAttributedString {
 
     private static func mention(
-        for user: UserType,
+        isSelfUser: Bool,
         name: String,
         link: URL,
         accentColor: AccentColor,
         suggestedAttributes: [NSAttributedString.Key: Any] = [:]
     ) -> NSAttributedString {
         let color: UIColor = accentColor.uiColor
-        let backgroundColor: UIColor = if user.isSelfUser {
+        let backgroundColor: UIColor = if isSelfUser {
             .lowAccentColorForUsernameMention(accentColor: accentColor)
         } else {
             .clear
@@ -100,7 +96,7 @@ extension NSMutableAttributedString {
             .paragraphStyle: paragraphStyle
         ]
 
-        if !user.isSelfUser {
+        if !isSelfUser {
             atAttributes[NSAttributedString.Key.link] = link as NSObject
         }
 
@@ -113,7 +109,7 @@ extension NSMutableAttributedString {
             .paragraphStyle: paragraphStyle
         ]
 
-        if !user.isSelfUser {
+        if !isSelfUser {
             mentionAttributes[NSAttributedString.Key.link] = link as NSObject
         }
 
@@ -122,8 +118,8 @@ extension NSMutableAttributedString {
         return atString + mentionText
     }
 
-    func highlight(
-        mentions: [TextMarker<Mention>],
+    public func highlight(
+        mentions: [TextMarker<MentionModel>],
         paragraphStyle: NSParagraphStyle? = NSAttributedString.paragraphStyle,
         accentColor: AccentColor
     ) {
@@ -132,14 +128,15 @@ extension NSMutableAttributedString {
             let mentionRange = mutableString.range(of: textObject.token)
 
             guard mentionRange.location != NSNotFound else {
-                log.error("Cannot process mention: \(textObject)")
+                // TODO: add log
+//                log.error("Cannot process mention: \(textObject)")
                 return
             }
 
             var attributes = self.attributes(at: mentionRange.location, effectiveRange: nil)
             attributes[.paragraphStyle] = paragraphStyle
             let replacementString = NSMutableAttributedString.mention(
-                for: textObject.value.user,
+                isSelfUser: textObject.value.isSelfUser,
                 name: textObject.replacementText,
                 link: textObject.value.link,
                 accentColor: accentColor,
@@ -147,6 +144,25 @@ extension NSMutableAttributedString {
             )
 
             self.replaceCharacters(in: mentionRange, with: replacementString)
+        }
+    }
+}
+
+extension UIColor {
+    class func lowAccentColorForUsernameMention(accentColor: AccentColor) -> UIColor {
+        switch accentColor {
+        case .blue:
+            SemanticColors.View.backgroundBlueUsernameMention
+        case .red:
+            SemanticColors.View.backgroundRedUsernameMention
+        case .green:
+            SemanticColors.View.backgroundGreenUsernameMention
+        case .amber:
+            SemanticColors.View.backgroundAmberUsernameMention
+        case .turquoise:
+            SemanticColors.View.backgroundTurqoiseUsernameMention
+        case .purple:
+            SemanticColors.View.backgroundPurpleUsernameMention
         }
     }
 }

@@ -75,6 +75,7 @@ struct MessageViewModelFactoryImpl: MessageViewModelFactory {
             text: message.textMessageData?.messageText ?? "",
             accentColor: accentColor,
             isObfuscated: message.isObfuscated,
+            mentions: message.textMessageData?.mentions.toUIModels() ?? [],
             senderViewModelWrapper: senderViewModelWrapper,
             statusViewModel: statusViewModel
         )
@@ -125,7 +126,8 @@ extension ZMConversationMessage {
             conversationType: conversationLike?.conversationType.toUIModel(),
             readReceiptsCount: readReceipts.count,
             deliveryState: deliveryState.toUIModel(),
-            isSent: isSent
+            isSent: isSent,
+            mentions: textMessageData?.mentions.toUIModels() ?? []
         )
     }
 }
@@ -142,7 +144,8 @@ extension ZMMessage {
             conversationType: conversation?.conversationType.toUIModel(),
             readReceiptsCount: readReceipts.count,
             deliveryState: deliveryState.toUIModel(),
-            isSent: isSent
+            isSent: isSent,
+            mentions: textMessageData?.mentions.toUIModels() ?? []
         )
     }
 }

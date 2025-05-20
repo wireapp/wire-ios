@@ -102,7 +102,8 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         // Open mention link
         if url.isMention {
             if let message,
-               let mention = message.textMessageData?.mentions.first(where: { $0.location == url.mentionLocation }) {
+               let mention = message.textMessageData?.mentions
+                .toUIModels().first(where: { $0.location == url.mentionLocation }) {
                 return openMention(mention)
             } else {
                 return false
@@ -113,7 +114,8 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         return url.open()
     }
 
-    func openMention(_ mention: Mention) -> Bool {
+    func openMention(_ mention: MentionModel) -> Bool {
+        guard let mention = mention.object as? Mention else { return true }
         delegate?.conversationMessageWantsToOpenUserDetails(
             self,
             user: mention.user,

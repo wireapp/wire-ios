@@ -25,7 +25,7 @@ import WireLinkPreview
 
 extension NSAttributedString {
 
-    static var paragraphStyle: NSParagraphStyle = defaultParagraphStyle()
+    public static var paragraphStyle: NSParagraphStyle = defaultParagraphStyle()
 //
 //    static var previewParagraphStyle: NSParagraphStyle {
 //        defaultPreviewParagraphStyle()
@@ -139,7 +139,8 @@ extension NSAttributedString {
     public static func format(
         text: String?,
         isObfuscated: Bool,
-        accentColor: AccentColor
+        accentColor: AccentColor,
+        mentions: [MentionModel]
     ) -> NSAttributedString {
 
         var plainText = text ?? ""
@@ -156,14 +157,13 @@ extension NSAttributedString {
 
         // Substitute mentions with text markers
         // TODO
-//        let mentionTextObjects = plainText.replaceMentionsWithTextMarkers(mentions: message.mentions)
+        let mentionTextObjects = plainText.replaceMentionsWithTextMarkers(mentions: mentions)
 
         // Perform markdown parsing
         let markdownText = NSMutableAttributedString.markdown(from: plainText, style: style)
 
         // Highlight mentions using previously inserted text markers
-        // TODO
-//        markdownText.highlight(mentions: mentionTextObjects, accentColor: accentColor)
+        markdownText.highlight(mentions: mentionTextObjects, accentColor: accentColor)
 
 //        // Remove trailing link if we show a link preview
 //        if let linkPreview = message.linkPreview {
@@ -243,23 +243,50 @@ extension NSMutableAttributedString {
 
 }
 
-private extension String {
+public struct TextMarker<A> {
 
-    // TODO:
-//    mutating func replaceMentionsWithTextMarkers(mentions: [Mention]) -> [TextMarker<Mention>] {
-//        mentions.sorted(by: {
-//            $0.range.location > $1.range.location
-//        }).compactMap { mention in
-//            guard let range = Range(mention.range, in: self) else { return nil }
-//
-//            let name = String(self[range].dropFirst()) // drop @
-//            let textObject = TextMarker<Mention>(mention, replacementText: name)
-//
-//            replaceSubrange(range, with: textObject.token)
-//
-//            return textObject
-//        }
-//    }
+    public let replacementText: String
+    public let token: String // TODO: transportString
+    public let value: A
+
+    public init(_ value: A, replacementText: String) {
+        self.value = value
+        self.replacementText = replacementText
+        self.token = UUID().transportString()
+    }
+}
+
+extension UUID {
+    
+    public func transportString() -> String {
+        uuidString.lowercased()
+    }
+}
+
+public extension TextMarker {
+
+    func range(in string: String) -> Range<Int>? {
+        Range((string as NSString).range(of: token))
+    }
+
+}
+
+public extension String {
+
+    mutating func replaceMentionsWithTextMarkers(mentions: [MentionModel]) -> [TextMarker<MentionModel>] {
+        mentions.sorted(by: {
+            $0.range.location > $1.range.location
+        }).compactMap { mention in
+            guard let range = Range(mention.range, in: self) else { return nil }
+
+            let name = String(self[range].dropFirst()) // drop @
+            let textObject = TextMarker<MentionModel>(mention, replacementText: name)
+
+            replaceSubrange(range, with: textObject.token)
+
+            return textObject
+        }
+    }
 
 }
 

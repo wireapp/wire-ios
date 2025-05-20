@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import WireDataModel
+import WireReusableUIComponents
 
 protocol TextViewInteractionDelegate: AnyObject {
     func textView(_ textView: LinkInteractionTextView, open url: URL) -> Bool
@@ -166,8 +166,7 @@ extension LinkInteractionTextView: UITextDragDelegate {
     ) -> [UIDragItem] {
 
         func isMentionLink(_ attributeTuple: (NSAttributedString.Key, Any)) -> Bool {
-            attributeTuple.0 == NSAttributedString.Key.link && (attributeTuple.1 as? NSURL)?.scheme == Mention
-                .mentionScheme
+            attributeTuple.0 == NSAttributedString.Key.link && (attributeTuple.1 as? NSURL)?.scheme == MentionModel.mentionScheme
         }
 
         if let attributes = textStyling(at: dragRequest.dragRange.start, in: .forward) {

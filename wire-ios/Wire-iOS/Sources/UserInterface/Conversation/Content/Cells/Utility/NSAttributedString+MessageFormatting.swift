@@ -23,6 +23,7 @@ import WireDesign
 import WireFoundation
 import WireLinkPreview
 import WireUtilities
+import WireReusableUIComponents
 
 // TODO: move out to shared place
 
@@ -104,7 +105,8 @@ extension NSAttributedString {
         var plainText = message.messageText ?? ""
 
         // Substitute mentions with text markers
-        let mentionTextObjects = plainText.replaceMentionsWithTextMarkers(mentions: message.mentions)
+        let mentionTextObjects = plainText.replaceMentionsWithTextMarkers(
+            mentions: message.mentions.toUIModels())
 
         // Perform markdown parsing
         let markdownText = NSMutableAttributedString.markdown(from: plainText, style: previewStyle)
@@ -158,7 +160,8 @@ extension NSAttributedString {
         }
 
         // Substitute mentions with text markers
-        let mentionTextObjects = plainText.replaceMentionsWithTextMarkers(mentions: message.mentions)
+        let mentionTextObjects = plainText.replaceMentionsWithTextMarkers(
+            mentions: message.mentions.toUIModels())
 
         // Perform markdown parsing
         let markdownText = NSMutableAttributedString.markdown(from: plainText, style: style)
@@ -242,36 +245,14 @@ extension NSMutableAttributedString {
 
 }
 
-private extension String {
-
-    mutating func replaceMentionsWithTextMarkers(mentions: [Mention]) -> [TextMarker<Mention>] {
-        mentions.sorted(by: {
-            $0.range.location > $1.range.location
-        }).compactMap { mention in
-            guard let range = Range(mention.range, in: self) else { return nil }
-
-            let name = String(self[range].dropFirst()) // drop @
-            let textObject = TextMarker<Mention>(mention, replacementText: name)
-
-            replaceSubrange(range, with: textObject.token)
-
-            return textObject
-        }
+public extension Mention {
+    func toUIModel() -> MentionModel {
+        .init(range: range, isSelfUser: user.isSelfUser, object: self)
     }
-
 }
 
-private extension IndexSet {
-
-    init(integersIn range: Range<IndexSet.Element>, excluding: [Range<IndexSet.Element>]) {
-
-        var excludedIndexSet = IndexSet()
-        var includedIndexSet = IndexSet()
-
-        excluding.forEach { excludedIndexSet.insert(integersIn: $0) }
-        includedIndexSet.insert(integersIn: range)
-
-        self = includedIndexSet.subtracting(excludedIndexSet)
+public extension Array where Element == Mention {
+    func toUIModels() -> [MentionModel] {
+        map { $0.toUIModel() }
     }
-
 }

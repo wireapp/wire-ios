@@ -53,6 +53,7 @@ public struct TextMessageView: ConversationCellContentViewProtocol {
         text: "Test message",
         accentColor: .red,
         isObfuscated: false,
+        mentions: [],
         senderViewModelWrapper: .init(state: .some(MessageSenderViewModel(
             avatarViewModel: AvatarViewModel(color: .red),
             senderModel: UserModel(

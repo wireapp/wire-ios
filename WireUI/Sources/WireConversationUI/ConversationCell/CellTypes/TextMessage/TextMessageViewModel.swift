@@ -21,6 +21,7 @@ import Foundation
 import SwiftUI
 import WireDesign
 import WireFoundation
+import WireReusableUIComponents
 
 public class TextMessageViewModel: ObservableObject, Identifiable, ConversationCellModelProtocol {
 
@@ -48,20 +49,33 @@ public class TextMessageViewModel: ObservableObject, Identifiable, ConversationC
         text: String,
         accentColor: AccentColor,
         isObfuscated: Bool,
+        mentions: [MentionModel],
         senderViewModelWrapper: MessageSenderViewModelWrapper?,
         statusViewModel: MessageStatusViewModel
     ) {
-        self.text = Self.format(text, isObfuscated: isObfuscated, accentColor: accentColor)
+        self.text = Self
+            .format(
+                text,
+                isObfuscated: isObfuscated,
+                accentColor: accentColor,
+                mentions: mentions
+            )
         self.accentColor = accentColor
         self.senderViewModelWrapper = senderViewModelWrapper!
         self.statusViewModel = statusViewModel
     }
     
-    static func format(_ text: String, isObfuscated: Bool, accentColor: AccentColor) -> NSAttributedString {
+    static func format(
+        _ text: String,
+        isObfuscated: Bool,
+        accentColor: AccentColor,
+        mentions: [MentionModel]
+    ) -> NSAttributedString {
         NSAttributedString.format(
             text: text,
             isObfuscated: isObfuscated,
-            accentColor: accentColor
+            accentColor: accentColor,
+            mentions: mentions
         )
 
     }
