@@ -40,8 +40,8 @@ let package = Package(
         ),
         .binaryTarget(
             name: "KaliumBackup",
-            url: "https://github.com/wireapp/kalium/releases/download/backup%2F0.0.2/KaliumBackup.xcframework.zip",
-            checksum: "1bfe39d56c89414d5c9c330ef2a250a2a2e837106e06bad2f89f4a38f927ea43"
+            url: "https://github.com/wireapp/kalium/releases/download/backup%2F0.0.3/KaliumBackup.xcframework.zip",
+            checksum: "2f78301880c372b058479bf432b751f5cee82a362e73da4737436be292bdb0ff"
         )
     ],
     swiftLanguageModes: [.v6]
