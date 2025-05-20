@@ -20,7 +20,7 @@ import Foundation
 
 /// Represents the identifer for an MLS group.
 
-public struct MLSGroupID: Equatable, Hashable {
+public struct MLSGroupID: Equatable, Hashable, Sendable {
 
     // MARK: - Properties
 
