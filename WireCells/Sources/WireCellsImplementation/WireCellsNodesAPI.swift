@@ -101,10 +101,10 @@ final class WireCellsNodesAPI: WireCellsNodesAPIProtocol, Sendable {
 
     func cancelDraft(uuid: UUID, versionID: UUID) async throws {
         _ = try await NodeServiceAPI.deleteVersion(
-                uuid: uuid.uuidString,
-                versionId: versionID.uuidString,
-                apiConfiguration: configuration
-            )
+            uuid: uuid.uuidString,
+            versionId: versionID.uuidString,
+            apiConfiguration: configuration
+        )
     }
 
     func preCheck(path: String) async throws -> WireCellsPreCheckResultDTO {

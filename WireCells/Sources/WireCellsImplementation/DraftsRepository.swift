@@ -16,16 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import Collections
-package import WireCellsAPI
 @preconcurrency import Combine
+import Foundation
+package import WireCellsAPI
 
 package actor DraftsRepository {
 
     typealias CellName = String
 
-    private var drafts: CurrentValueSubject<[CellName: OrderedDictionary<WireCellsNodeID, WireCellsDraft>], Never> = .init([:])
+    private var drafts: CurrentValueSubject<[CellName: OrderedDictionary<WireCellsNodeID, WireCellsDraft>], Never> =
+        .init([:])
     private var continuations: [UUID: AsyncStream<[WireCellsDraft]>.Continuation] = [:]
     private var uploadManager: any WireCellsNodeUploadManagerProtocol
 
@@ -72,7 +73,7 @@ package actor DraftsRepository {
             let result = drafts[cellName] ?? [:]
             continuation.yield(Array(result.values))
         }
-        continuation.onTermination = { continuation in
+        continuation.onTermination = { _ in
             cancellable.cancel()
 
             Task { [weak self] in
@@ -85,7 +86,7 @@ package actor DraftsRepository {
         return stream
     }
 
-    private func removeContinuation(for uuid: UUID) async{
+    private func removeContinuation(for uuid: UUID) async {
         continuations[uuid] = nil
     }
 

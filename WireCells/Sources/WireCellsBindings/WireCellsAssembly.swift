@@ -17,8 +17,8 @@
 //
 
 public import WireCellsAPI
-import WireCellsImplementation
 import Foundation
+import WireCellsImplementation
 
 public struct WireCellsAssembly {
 
