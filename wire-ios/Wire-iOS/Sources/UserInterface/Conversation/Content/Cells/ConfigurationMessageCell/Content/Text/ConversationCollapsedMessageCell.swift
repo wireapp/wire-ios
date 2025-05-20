@@ -87,8 +87,6 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         view.isUserInteractionEnabled = false
         view.accessibilityIdentifier = "Message"
         view.accessibilityElementsHidden = false
-        view.dataDetectorTypes = [.link, .address, .phoneNumber, .flightNumber, .calendarEvent, .shipmentTrackingNumber]
-        view.linkTextAttributes = [.foregroundColor: UIColor.accent()]
         view.setContentHuggingPriority(.required, for: .vertical)
         view.setContentCompressionResistancePriority(.required, for: .vertical)
 
@@ -145,6 +143,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         }
 
         let message = object.message
+        messageTextView.textColor = SemanticColors.Label.textDefault
         if message.isText, !message.hasLinks {
             typeIcon.isHidden = true
             if let textMessageData = message.textMessageData {
