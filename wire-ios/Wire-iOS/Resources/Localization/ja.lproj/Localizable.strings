@@ -654,6 +654,7 @@
 "content.collapsed.video.title" = "You sent a video";
 "content.collapsed.audio.title" = "You sent an audio message";
 "content.collapsed.location.title" = "You sent your location";
+"content.collapsed.link.title" = "You sent a link";
 
 "content.message.like" = "いいね！";
 "content.message.unlike" = "いいね！を取消す";
@@ -1158,6 +1159,7 @@
 "self.settings.account_details.remove_device.password.error" = "パスワードが間違っています";
 
 "self.settings.account_appearance_group.title" = "外観";
+"self.settings.account_appearance_group.footer" = "When this is on, your conversations show a background based on your profile color and light or dark theme.";
 
 "self.settings.privacy_section_group.title" = "プライバシー";
 "self.settings.enable_read_receipts.title" = "開封通知を送信";
@@ -1176,6 +1178,7 @@
 "self.settings.account_picture_group.accent_color.amber" = "黄";
 "self.settings.account_picture_group.accent_color.turquoise" = "青緑";
 "self.settings.account_picture_group.accent_color.purple" = "紫";
+"self.settings.account_picture_group.background.title" = "Conversation background color";
 
 "self.settings.account_personal_information_group.title" = "個人情報";
 
@@ -1327,7 +1330,7 @@
 "self.settings.privacy_security.disable_link_previews.footer" = "他ユーザーからのリンクがプレビュー表示されれます";
 
 "self.settings.privacy_security.collapse_own_messages.title" = "Collapse my messages";
-"self.settings.privacy_security.collapse_own_messages.footer" = "When this is on, all your messages collapse to a single line.";
+"self.settings.privacy_security.collapse_own_messages.footer" = "When this is on, all your messages collapse after three lines.";
 
 "self.settings.privacy_analytics_menu.devices.title" = "デバイス";
 

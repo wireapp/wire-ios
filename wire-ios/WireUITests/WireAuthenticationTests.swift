@@ -18,23 +18,7 @@
 
 import XCTest
 
-final class WireAuthenticationTests: XCTestCase {
-
-    var app: XCUIApplication!
-
-    override func setUpWithError() throws {
-        app = XCUIApplication()
-        app.launchArguments = [
-            "-BackendEnvironmentTypeOverrideKey staging",
-            "--preferred-api-version=8"
-        ]
-        app.useWireAuthentication()
-
-        app.launch()
-
-        // In UI tests it is usually best to stop immediately when a failure occurs.
-        continueAfterFailure = false
-    }
+final class WireAuthenticationTests: WireUITestCase {
 
     override func tearDownWithError() throws {
         app = nil
@@ -53,7 +37,6 @@ final class WireAuthenticationTests: XCTestCase {
 
     @MainActor // note: comment @MainActor to use recorder
     func test_Login_withEmail() throws {
-        throw XCTSkip("This should be fixed once SSO is merged")
 
         let textField = emailTextField()
         textField.tap()
