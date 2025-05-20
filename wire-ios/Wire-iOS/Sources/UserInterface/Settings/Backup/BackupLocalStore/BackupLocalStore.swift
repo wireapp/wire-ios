@@ -20,7 +20,6 @@ import CoreData
 import WireBackup
 import WireDataModel
 import WireDomain
-import WireFoundation
 
 struct BackupLocalStore: BackupLocalStoreProtocol, @unchecked Sendable {
 
