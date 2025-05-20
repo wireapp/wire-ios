@@ -18,8 +18,6 @@
 
 public import WireFoundation
 
-public typealias BackupConversationModel = ConversationBackupModel
-
 public struct ConversationBackupModel: Codable, Hashable, Sendable {
 
     public var qualifiedID: QualifiedID
