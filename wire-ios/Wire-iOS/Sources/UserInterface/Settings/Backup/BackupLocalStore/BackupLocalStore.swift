@@ -22,149 +22,18 @@ import WireDataModel
 import WireDomain
 import WireFoundation
 
-struct BackupLocalStore<
-    UserLocalStore, ConversationLocalStore, MessageLocalStore
->: BackupLocalStoreProtocol, @unchecked Sendable where
-    UserLocalStore: UserLocalStoreProtocol,
-    MessageLocalStore: MessageLocalStoreProtocol,
-    ConversationLocalStore: ConversationLocalStoreProtocol {
+struct BackupLocalStore: BackupLocalStoreProtocol, @unchecked Sendable {
 
     /// The context to call `perform(schedule:_:)` on if needed.
-    private let context: NSManagedObjectContext
-
-    private let userLocalStore: UserLocalStore
-    private let conversationLocalStore: ConversationLocalStore
-    private let messageLocalStore: MessageLocalStore
+    let context: NSManagedObjectContext
 
     func countModels() async throws -> (userCount: Int, conversationCount: Int, messageCount: Int) {
-        let userCount = try await userLocalStore.totalUserCountForBackup()
-        let conversationCount = try await conversationLocalStore.totalConversationCountForBackup()
-        let messageCount = try await messageLocalStore.totalMessageCountForBackup()
-        return (userCount, conversationCount, messageCount)
-    }
-
-    // MARK: -
-
-    func fetchAllUsers() -> AsyncThrowingStream<UserBackupModel, any Error> {
-        AsyncThrowingStream { continuation in
-            Task<Void, Never> {
-                do {
-                    let users = try await userLocalStore.fetchAllUsersForBackup()
-                    await context.perform {
-                        for user in users {
-                            autoreleasepool {
-                                if let backupUser = UserBackupModel(user) {
-                                    continuation.yield(backupUser)
-                                }
-                            }
-                        }
-                    }
-                    continuation.finish()
-                } catch {
-                    continuation.finish(throwing: error)
-                }
-            }
+        try await context.perform { [context] in
+            let userCount = try context.count(for: ZMUser.fetchRequest())
+            let conversationCount = try context.count(for: ZMConversation.fetchRequest())
+            let messageCount = try context.count(for: ZMMessage.fetchRequest())
+            return (userCount, conversationCount, messageCount)
         }
-    }
-
-    // MARK: -
-
-    func fetchAllConversations() -> AsyncThrowingStream<ConversationBackupModel, any Error> {
-        AsyncThrowingStream { continuation in
-            Task<Void, Never> {
-                do {
-                    let conversations = try await conversationLocalStore.fetchAllConversationsForBackup()
-                    await context.perform {
-                        for conversation in conversations {
-                            autoreleasepool {
-                                if let backupConversation = ConversationBackupModel(conversation) {
-                                    continuation.yield(backupConversation)
-                                }
-                            }
-                        }
-                    }
-                    continuation.finish()
-                } catch {
-                    continuation.finish(throwing: error)
-                }
-            }
-        }
-    }
-
-    // MARK: -
-
-    func fetchAllMessages() -> AsyncThrowingStream<MessageBackupModel, any Error> {
-        AsyncThrowingStream { continuation in
-            Task<Void, Never> {
-                do {
-                    let messages = try await messageLocalStore.fetchAllMessagesForBackup()
-                    await context.perform {
-                        for message in messages {
-                            autoreleasepool {
-                                if let backupMessage = MessageBackupModel(message) {
-                                    continuation.yield(backupMessage)
-                                }
-                            }
-                        }
-                    }
-                    continuation.finish()
-                } catch {
-                    continuation.finish(throwing: error)
-                }
-            }
-        }
-    }
-
-}
-
-// MARK: -
-
-extension BackupLocalStore where
-    UserLocalStore == WireDomain.UserLocalStore,
-    ConversationLocalStore == WireDomain.ConversationLocalStore,
-    MessageLocalStore == WireDomain.MessageLocalStore {
-
-    init(context: NSManagedObjectContext) {
-        self.context = context
-        self.messageLocalStore = MessageLocalStore(context: context)
-        self.userLocalStore = UserLocalStore(
-            context: context,
-            messageLocalStore: messageLocalStore
-        )
-        self.conversationLocalStore = ConversationLocalStore(
-            context: context,
-            mlsService: context.performAndWait { context.mlsService },
-            messageLocalStore: messageLocalStore
-        )
-    }
-
-}
-
-// MARK: -
-
-private extension UserBackupModel {
-
-    init?(_ user: ZMUser) {
-        guard let qualifiedID = user.qualifiedID else { return nil }
-
-        self.init(
-            qualifiedID: QualifiedID(qualifiedID),
-            name: user.name ?? "",
-            handle: user.handle ?? ""
-        )
-    }
-
-}
-
-private extension ConversationBackupModel {
-
-    init?(_ conversation: ZMConversation) {
-        guard let qualifiedID = conversation.qualifiedID else { return nil }
-
-        self.init(
-            qualifiedID: QualifiedID(qualifiedID),
-            name: conversation.name ?? ""
-        )
     }
 
 }

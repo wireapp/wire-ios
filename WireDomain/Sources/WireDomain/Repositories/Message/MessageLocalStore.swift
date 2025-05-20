@@ -1021,29 +1021,4 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         }
     }
 
-    // MARK: - Backup / Restore
-
-    public func totalMessageCountForBackup() async throws -> Int {
-        try await context.perform { [context] in
-            try context.count(for: ZMMessage.fetchRequest())
-        }
-    }
-
-    public func fetchAllMessageIDsForBackup() async throws -> [UUID] {
-        try await context.perform { [context] in
-            let messages = try context.fetch(ZMMessage.fetchRequest()) as! [ZMMessage]
-            return messages.compactMap(\.nonce)
-        }
-    }
-
-    public func fetchAllMessagesForBackup() async throws -> [ZMMessage] {
-        let fetchRequest = ZMMessage.fetchRequest()
-        fetchRequest.fetchBatchSize = 50
-        fetchRequest.returnsObjectsAsFaults = true
-        fetchRequest.includesPropertyValues = false
-        return try await context.perform { [context] in
-            try context.fetch(fetchRequest) as! [ZMMessage]
-        }
-    }
-
 }

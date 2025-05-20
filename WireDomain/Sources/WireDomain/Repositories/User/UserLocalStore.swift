@@ -414,32 +414,4 @@ public final class UserLocalStore: UserLocalStoreProtocol {
         }
     }
 
-    // MARK: - Backup / Restore
-
-    public func totalUserCountForBackup() async throws -> Int {
-        try await context.perform { [context] in
-            let fetchRequest = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
-            return try context.count(for: fetchRequest)
-        }
-    }
-
-    public func fetchAllUserIDsForBackup() async throws -> [QualifiedID] {
-        let fetchRequest = ZMUser.fetchRequest()
-        fetchRequest.propertiesToFetch = ["remoteIdentifier_data", "domain"]
-        return try await context.perform { [context] in
-            let users = try context.fetch(fetchRequest) as! [ZMUser]
-            return users.compactMap(\.qualifiedID)
-        }
-    }
-
-    public func fetchAllUsersForBackup() async throws -> [ZMUser] {
-        let fetchRequest = ZMUser.fetchRequest()
-        fetchRequest.fetchBatchSize = 50
-        fetchRequest.returnsObjectsAsFaults = true
-        fetchRequest.includesPropertyValues = false
-        return try await context.perform { [context] in
-            try context.fetch(fetchRequest) as! [ZMUser]
-        }
-    }
-
 }
