@@ -51,11 +51,11 @@ public class CoreCryptoConfigProvider {
         sharedContainerURL: URL,
         selfUser: ZMUser,
         createKeyIfNeeded: Bool
-    ) throws -> CoreCryptoConfiguration {
+    ) async throws -> CoreCryptoConfiguration {
 
         let qualifiedClientID = try clientID(of: selfUser)
 
-        let initialConfig = try createInitialConfiguration(
+        let initialConfig = try await createInitialConfiguration(
             sharedContainerURL: sharedContainerURL,
             userID: selfUser.remoteIdentifier,
             createKeyIfNeeded: createKeyIfNeeded
@@ -72,7 +72,7 @@ public class CoreCryptoConfigProvider {
         sharedContainerURL: URL,
         userID: UUID,
         createKeyIfNeeded: Bool
-    ) throws -> (path: String, key: Data) {
+    ) async throws -> (path: String, key: Data) {
 
         let accountDirectory = CoreDataStack.accountDataFolder(
             accountIdentifier: userID,
@@ -83,7 +83,7 @@ public class CoreCryptoConfigProvider {
         let coreCryptoDirectory = accountDirectory.appendingPathComponent("corecrypto")
 
         do {
-            let key = try coreCryptoKeyProvider.coreCryptoKey(createIfNeeded: createKeyIfNeeded)
+            let key = try await coreCryptoKeyProvider.coreCryptoKey(createIfNeeded: createKeyIfNeeded, path: coreCryptoDirectory.path)
             return (
                 path: coreCryptoDirectory.path,
                 key: key
@@ -105,30 +105,30 @@ public class CoreCryptoConfigProvider {
         return clientID
     }
 
-    public func migrateDatabaseKeyIfNeeded(
-        sharedContainerURL: URL,
-        userID: UUID
-    ) async throws {
-        let coreCryptoKeyV2 = try? coreCryptoKeyProvider.fetchCoreCryptoKeyV2()
-        if coreCryptoKeyV2 == nil {
-            let accountDirectory = CoreDataStack.accountDataFolder(
-                accountIdentifier: userID,
-                applicationContainer: sharedContainerURL
-            )
-
-            try FileManager.default.createAndProtectDirectory(at: accountDirectory)
-            let coreCryptoDirectory = accountDirectory.appendingPathComponent("corecrypto")
-            let oldKey = try coreCryptoKeyProvider.coreCryptoKey(createIfNeeded: false)
-            let newKey = try coreCryptoKeyProvider.createCoreCryptoKeyV2()
-
-            print("Kate333 migrateDatabaseKeyTypeToBytes")
-            try await migrateDatabaseKeyTypeToBytes(
-                path: coreCryptoDirectory.path,
-                oldKey: oldKey.base64EncodedString(),
-                newKey: newKey
-            )
-        }
-    }
+//    public func migrateDatabaseKeyIfNeeded(
+//        sharedContainerURL: URL,
+//        userID: UUID
+//    ) async throws {
+//        let coreCryptoKeyV2 = try? coreCryptoKeyProvider.fetchCoreCryptoKeyV2()
+//        if coreCryptoKeyV2 == nil {
+//            let accountDirectory = CoreDataStack.accountDataFolder(
+//                accountIdentifier: userID,
+//                applicationContainer: sharedContainerURL
+//            )
+//
+//            try FileManager.default.createAndProtectDirectory(at: accountDirectory)
+//            let coreCryptoDirectory = accountDirectory.appendingPathComponent("corecrypto")
+//            let oldKey = try coreCryptoKeyProvider.coreCryptoKey(createIfNeeded: false, path: coreCryptoDirectory.path)
+//            let newKey = try coreCryptoKeyProvider.createCoreCryptoKeyV2()
+//
+//            print("Kate333 migrateDatabaseKeyTypeToBytes")
+//            try await migrateDatabaseKeyTypeToBytes(
+//                path: coreCryptoDirectory.path,
+//                oldKey: oldKey.base64EncodedString(),
+//                newKey: newKey
+//            )
+//        }
+//    }
 
     public enum ConfigurationSetupFailure: Error, Equatable {
         case failedToGetClientId

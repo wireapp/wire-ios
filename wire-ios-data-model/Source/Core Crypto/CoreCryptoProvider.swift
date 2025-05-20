@@ -91,6 +91,10 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         self.featureRespository = FeatureRepository(context: syncContext)
     }
 
+    deinit {
+        print("deinit333 \(coreCrypto)")
+    }
+
     public func coreCrypto() async throws -> SafeCoreCryptoProtocol {
         let coreCrypto = try await getCoreCrypto()
         try await registerMlsTransportIfNecessary(coreCrypto: coreCrypto)
@@ -100,7 +104,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     public func initialiseMLSWithBasicCredentials(mlsClientID: MLSClientID) async throws {
         WireLogger.mls.info("Initialising MLS client with basic credentials")
         let defaultCiphersuite = await featureRespository.fetchMLS().config.defaultCipherSuite
-        let coreCrypto = try await coreCrypto()//
+        let coreCrypto = try await coreCrypto()
         _ = try await coreCrypto.perform { context in
             try await context.mlsInit(
                 clientId: Data(mlsClientID.rawValue.utf8),
@@ -179,14 +183,12 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         }
 
         if let coreCrypto {
-            //try await migrateDatabaseKeyIfNeeded()
             return coreCrypto
         } else {
             loadingCoreCrypto = true
             let cc: SafeCoreCrypto
             do {
                 cc = try await createCoreCrypto()
-                //try await migrateDatabaseKeyIfNeeded()
             } catch {
                 resumeCoreCryptoContinuations(with: .failure(error))
                 loadingCoreCrypto = false
@@ -207,17 +209,17 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         coreCryptoContinuations = []
     }
 
-    func migrateDatabaseKeyIfNeeded() async throws {
-        let provider = CoreCryptoConfigProvider()
-        try await provider.migrateDatabaseKeyIfNeeded(
-            sharedContainerURL: sharedContainerURL,
-            userID: selfUserID)
-    }
+//    func migrateDatabaseKeyIfNeeded() async throws {
+//        let provider = CoreCryptoConfigProvider()
+//        try await provider.migrateDatabaseKeyIfNeeded(
+//            sharedContainerURL: sharedContainerURL,
+//            userID: selfUserID)
+//    }
 
     func createCoreCrypto() async throws -> SafeCoreCrypto {
         let provider = CoreCryptoConfigProvider()
 
-        let configuration = try provider.createInitialConfiguration(
+        let configuration = try await provider.createInitialConfiguration(
             sharedContainerURL: sharedContainerURL,
             userID: selfUserID,
             createKeyIfNeeded: allowCreation
