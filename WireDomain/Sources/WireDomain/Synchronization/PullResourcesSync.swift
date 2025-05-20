@@ -69,6 +69,13 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
 
     func pull() async throws {
         try await logger.measureTime(label: "pull resources") {
+            try await pullUserConnections()
+            try await pullAllConversations()
+
+            // Pulling known users must happen after we've discovered
+            // user ids from user connections and conversations.
+            try await pullKnownUsers()
+
             let teamID = try await pullSelfUser()
             try await pullSelfUserClients()
             try await pullSelfUserSettings()
@@ -79,13 +86,6 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
                 try await pullSelfTeamMembers(teamID: teamID)
                 try await pullSelfLegalholdInfo(teamID: teamID)
             }
-
-            try await pullUserConnections()
-            try await pullAllConversations()
-
-            // Pulling known users must happen after we've discovered
-            // user ids from user connections and conversations.
-            try await pullKnownUsers()
 
             try await pullConversationLabels()
             try await pullFeatureConfigs()
