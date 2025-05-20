@@ -16,21 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import WireFoundation
+import Foundation
 
-// sourcery: AutoMockable
-public protocol UserStoreProtocol: Sendable {
+struct RuntimeError: LocalizedError {
+    let description: String
 
-    /// Returns the number of all stored users in the local data store, including deleted ones.
-    func totalUserCount() async throws -> Int
+    init(_ description: String) {
+        self.description = description
+    }
 
-    /// Returns the IDs of all users stored in the local database, including deleted ones.
-    func fetchAllUserIDs() async throws -> Set<QualifiedID>
-
-    /// Returns all users stored in the local database, including deleted ones.
-    func fetchAllUsers() async throws -> [BackupUserModel]
-
-    /// Adds a user from the backup file to the local data store.
-    func addUser(_ user: BackupUserModel) async throws
-
+    var errorDescription: String? {
+        description
+    }
 }

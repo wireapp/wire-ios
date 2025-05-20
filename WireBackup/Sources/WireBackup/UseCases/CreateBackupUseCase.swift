@@ -23,17 +23,13 @@ import Foundation
 @preconcurrency import KaliumBackup
 
 public struct CreateBackupUseCase<
-    UserStore: UserStoreProtocol,
-    ConversationStore: ConversationStoreProtocol,
-    MessageStore: MessageStoreProtocol,
+    BackupLocalStore: BackupLocalStoreProtocol,
     FileArchiver: FileArchiverProtocol
 >: CreateBackupUseCaseProtocol {
 
     private let selfUserID: QualifiedID
     private let selfUserHandle: String?
-    private let userStore: UserStore
-    private let conversationStore: ConversationStore
-    private let messageStore: MessageStore
+    private let backupLocalStore: BackupLocalStore
     private let fileArchiver: FileArchiver
     private let currentDateProvider: any CurrentDateProviding
     // TODO: [WPB-14297] Try making LoggerProtocol `Sendable` (implementations might be @unchecked Sendable) and
@@ -43,16 +39,12 @@ public struct CreateBackupUseCase<
     public init(
         selfUserID: QualifiedID,
         selfUserHandle: String?,
-        userStore: UserStore,
-        conversationStore: ConversationStore,
-        messageStore: MessageStore,
+        backupLocalStore: BackupLocalStore,
         fileArchiver: FileArchiver,
         currentDateProvider: any CurrentDateProviding,
         logger: @escaping @autoclosure @Sendable () -> any LoggerProtocol
     ) {
-        self.userStore = userStore
-        self.conversationStore = conversationStore
-        self.messageStore = messageStore
+        self.backupLocalStore = backupLocalStore
         self.fileArchiver = fileArchiver
         self.currentDateProvider = currentDateProvider
         self.selfUserID = selfUserID
@@ -64,9 +56,6 @@ public struct CreateBackupUseCase<
         AsyncThrowingStream { continuation in
             let task = Task<Void, Never> { [
                 // swiftlint:disable closure_parameter_position
-                userStore,
-                conversationStore,
-                messageStore,
                 currentDateProvider,
                 fileArchiver,
                 logger,
@@ -104,22 +93,13 @@ public struct CreateBackupUseCase<
                     try Task.checkCancellation()
 
                     // get the counts of users, messages and conversations in order to report progress accurately
-                    logger.debug("calculating entity counts")
-                    let userCount = try await userStore.totalUserCount()
-                    let conversationCount = try await conversationStore.totalConversationCount()
-                    let messageCount = try await messageStore.totalMessageCount()
+                    let (userCount, conversationCount, messageCount) = try await backupLocalStore.countModels()
                     let total = userCount + conversationCount + messageCount
-                    logger.debug([
-                        "userCount: \(userCount)",
-                        "conversationCount: \(conversationCount)",
-                        "messageCount: \(messageCount)",
-                        "total: \(total)"
-                    ].joined(separator: ", "))
 
                     // fetch the data and pass it into the backup exporter
-                    let allUsers = try await userStore.fetchAllUsers()
-                    for userIndex in 0 ..< allUsers.count {
-                        backupCreator.addUser(allUsers[userIndex])
+                    let allUsers = try await backupLocalStore.fetchAllUsers()
+                    for (userIndex, user) in allUsers.enumerated() {
+                        backupCreator.addUser(user)
                         if userIndex % 50 == 0 { try Task.checkCancellation() }
                         reportProgress(userIndex + 1, total)
                     }
@@ -127,9 +107,9 @@ public struct CreateBackupUseCase<
                     try Task.checkCancellation()
 
                     let conversationProgressOffset = userCount
-                    let allConversations = try await conversationStore.fetchAllConversations()
-                    for conversationIndex in 0 ..< allConversations.count {
-                        backupCreator.addConversation(allConversations[conversationIndex])
+                    let allConversations = try await backupLocalStore.fetchAllConversations()
+                    for (conversationIndex, conversation) in allConversations.enumerated() {
+                        backupCreator.addConversation(conversation)
                         if conversationIndex % 50 == 0 { try Task.checkCancellation() }
                         reportProgress(conversationProgressOffset + conversationIndex + 1, total)
                     }
@@ -137,9 +117,9 @@ public struct CreateBackupUseCase<
                     try Task.checkCancellation()
 
                     let messageProgressOffset = userCount + conversationCount
-                    let allMessages = try await messageStore.fetchAllMessages()
-                    for messageIndex in 0 ..< allMessages.count {
-                        backupCreator.addMessage(allMessages[messageIndex])
+                    let allMessages = try await backupLocalStore.fetchAllMessages()
+                    for (messageIndex, message) in allMessages.enumerated() {
+                        backupCreator.addMessage(message)
                         if messageIndex % 50 == 0 { try Task.checkCancellation() }
                         reportProgress(messageProgressOffset + messageIndex + 1, total)
                     }

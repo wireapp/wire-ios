@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreData
 import Foundation
 import WireCellsAPI
 import WireDataModel
@@ -30,15 +31,14 @@ public final actor WireCellsMessageAttachmentDraftsObserverImplementation: NSObj
     init(
         fetchedResultsController: NSFetchedResultsController<WireCellsMessageAttachmentDraftEntity>,
         initialValues: [WireCellsAPI.WireCellsMessageAttachmentDraft]
-    ) async throws {
-
+    ) {
         self.fetchedResultsController = fetchedResultsController
         self.currentValues = initialValues
         super.init()
 
         fetchedResultsController.delegate = self
 
-        send(newValues: initialValues)
+        Task { await send(newValues: initialValues) }
     }
 
     public nonisolated func controllerDidChangeContent(

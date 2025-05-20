@@ -20,10 +20,11 @@ package import KaliumBackup
 
 import WireFoundation
 
-extension BackupUserModel {
+package extension BackupUserModel {
 
     package init?(_ backupUser: BackupUser) {
         guard let qualifiedID = QualifiedID(backupUser.id) else { return nil }
+
         self.init(
             qualifiedID: qualifiedID,
             name: backupUser.name,
@@ -32,4 +33,3 @@ extension BackupUserModel {
     }
 
 }
-

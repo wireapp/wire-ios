@@ -21,7 +21,7 @@ package import KaliumBackup
 import Foundation
 import WireFoundation
 
-extension BackupMessageModel {
+package extension BackupMessageModel {
 
     package init?(_ backupMessage: BackupMessage) {
         guard
@@ -31,13 +31,13 @@ extension BackupMessageModel {
         else { return nil }
 
         self.init(
-             id: backupMessage.id,
-             conversationID: conversationID,
-             senderUserID: senderUserID,
-             senderClientID: backupMessage.senderClientId,
-             creationDate: Date(backupMessage.creationDate),
-             content: content
-         )
+            id: backupMessage.id,
+            conversationID: conversationID,
+            senderUserID: senderUserID,
+            senderClientID: backupMessage.senderClientId,
+            creationDate: Date(backupMessage.creationDate),
+            content: content
+        )
     }
 
 }

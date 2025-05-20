@@ -16,13 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-public protocol ConversationStoreProtocol: Sendable {
-
-    /// Returns the number of all stored conversations in the local data store, including deleted ones.
-    func totalConversationCount() async throws -> Int
-
-    /// Returns all conversations stored in the local database, including deleted ones.
-    func fetchAllConversations() async throws -> [BackupConversationModel]
-
-}
+INBUCKET_USERNAME=op://Test Automation/BackendConnection staging/inbucketUsername
+INBUCKET_PASSWORD=op://Test Automation/BackendConnection staging/inbucketPassword
+INBUCKET_URL=op://Test Automation/BackendConnection staging/trimmedInbucketUrl
+BACKEND_URL=op://Test Automation/BackendConnection staging/trimmedBackendURL

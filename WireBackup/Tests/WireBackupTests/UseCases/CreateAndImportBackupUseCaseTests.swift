@@ -26,37 +26,27 @@ import XCTest
 
 final class CreateAndImportBackupUseCaseTests: XCTestCase {
 
-    private typealias UserStoreMock = UserStoreProtocolMock
-    private typealias ConversationStoreMock = ConversationStoreProtocolMock
-    private typealias MessageStoreMock = MessageStoreProtocolMock
+    private typealias BackupLocalStoreMock = BackupLocalStoreProtocolMock
     private typealias FileArchiverMock = FileArchiverProtocolMock
 
-    private var userStoreMock: UserStoreMock!
-    private var conversationStoreMock: ConversationStoreMock!
-    private var messageStoreMock: MessageStoreMock!
+    private var backupLocalStoreMock: BackupLocalStoreMock!
     private var fileArchiverMock: FileArchiverMock!
     private var dateProviderMock: CurrentDateProvidingMock!
     private var sut: CreateBackupUseCase<
-        UserStoreMock,
-        ConversationStoreMock,
-        MessageStoreMock,
+        BackupLocalStoreMock,
         FileArchiverMock
     >!
 
     override func setUpWithError() throws {
 
-        userStoreMock = .init()
-        conversationStoreMock = .init()
-        messageStoreMock = .init()
+        backupLocalStoreMock = .init()
         fileArchiverMock = .init()
         dateProviderMock = .init()
 
         sut = CreateBackupUseCase(
             selfUserID: QualifiedID(id: UUID(), domain: ""),
             selfUserHandle: "handle",
-            userStore: userStoreMock,
-            conversationStore: conversationStoreMock,
-            messageStore: messageStoreMock,
+            backupLocalStore: backupLocalStoreMock,
             fileArchiver: fileArchiverMock,
             currentDateProvider: dateProviderMock,
             logger: WireLogger(tag: "???")
@@ -67,9 +57,7 @@ final class CreateAndImportBackupUseCaseTests: XCTestCase {
         sut = nil
         dateProviderMock = nil
         fileArchiverMock = nil
-        messageStoreMock = nil
-        conversationStoreMock = nil
-        userStoreMock = nil
+        backupLocalStoreMock = nil
     }
 
     func testHappyPath() throws {
