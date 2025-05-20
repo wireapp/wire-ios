@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import WireFoundation
+import WireFoundation
 
 // sourcery: AutoMockable
 public protocol BackupLocalStoreProtocol: Sendable {
@@ -28,7 +28,8 @@ public protocol BackupLocalStoreProtocol: Sendable {
     // MARK: -
 
     /// Returns all users stored in the local database, including deleted ones.
-    func fetchAllUsers() async throws -> Set<UserBackupModel>
+    func fetchAllUsers() -> AsyncThrowingStream<UserBackupModel, any Error>
+    // func fetchAllUsers_() async throws -> Set<UserBackupModel> // TODO: delete line
 
     // MARK: -
 
