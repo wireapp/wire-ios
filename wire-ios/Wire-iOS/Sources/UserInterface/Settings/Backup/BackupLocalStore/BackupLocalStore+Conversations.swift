@@ -30,6 +30,15 @@ extension BackupLocalStore {
         return fetchRequest
     }
 
+    func fetchAllConversationIDs() async throws -> Set<WireFoundation.QualifiedID> {
+        let fetchRequest = ZMConversation.fetchRequest()
+        fetchRequest.propertiesToFetch = ["remoteIdentifier_data", "domain"]
+        return try await context.perform { [context] in
+            let conversations = try context.fetch(fetchRequest) as! [ZMConversation]
+            return Set(conversations.compactMap(\.qualifiedID).map(WireFoundation.QualifiedID.init))
+        }
+    }
+
     func fetchAllConversations() -> AsyncThrowingStream<ConversationBackupModel, any Error> {
         AsyncThrowingStream { continuation in
             Task<Void, Never> {

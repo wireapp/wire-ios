@@ -17,11 +17,9 @@
 //
 
 import CoreData
-import WireAPI
 import WireBackup
 import WireDataModel
 import WireDomain
-import WireFoundation
 
 struct BackupLocalStore: BackupLocalStoreProtocol, @unchecked Sendable {
 
@@ -30,24 +28,6 @@ struct BackupLocalStore: BackupLocalStoreProtocol, @unchecked Sendable {
 
     let processor: any ConversationProtobufMessageProcessorProtocol
 
-    func countModels() async throws -> (userCount: Int, conversationCount: Int, messageCount: Int) {
-        try await context.perform { [context] in
-            let userCount = try context.count(for: ZMUser.fetchRequest())
-            let conversationCount = try context.count(for: ZMConversation.fetchRequest())
-            let messageCount = try context.count(for: ZMMessage.fetchRequest())
-            return (userCount, conversationCount, messageCount)
-        }
-    }
-
-}
-
-// MARK: -
-
-extension BackupLocalStore where
-    UserLocalStore == WireDomain.UserLocalStore,
-    ConversationLocalStore == WireDomain.ConversationLocalStore,
-    MessageLocalStore == WireDomain.MessageLocalStore {
-
     init(context: NSManagedObjectContext) {
         self.context = context
         self.processor = TEMP_ConversationProtobufMessageProcessor(
@@ -55,6 +35,15 @@ extension BackupLocalStore where
             mlsService: context.performAndWait { context.mlsService },
             userDefaults: .standard
         )
+    }
+
+    func countModels() async throws -> (userCount: Int, conversationCount: Int, messageCount: Int) {
+        try await context.perform { [context] in
+            let userCount = try context.count(for: ZMUser.fetchRequest())
+            let conversationCount = try context.count(for: ZMConversation.fetchRequest())
+            let messageCount = try context.count(for: ZMMessage.fetchRequest())
+            return (userCount, conversationCount, messageCount)
+        }
     }
 
 }

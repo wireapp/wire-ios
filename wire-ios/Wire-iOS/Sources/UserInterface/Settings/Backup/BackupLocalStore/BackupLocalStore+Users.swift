@@ -30,6 +30,15 @@ extension BackupLocalStore {
         return fetchRequest
     }
 
+    func fetchAllUserIDs() async throws -> Set<WireFoundation.QualifiedID> {
+        let fetchRequest = ZMUser.fetchRequest()
+        fetchRequest.propertiesToFetch = ["remoteIdentifier_data", "domain"]
+        return try await context.perform { [context] in
+            let users = try context.fetch(fetchRequest) as! [ZMUser]
+            return Set(users.compactMap(\.qualifiedID).map(WireFoundation.QualifiedID.init))
+        }
+    }
+
     func fetchAllUsers() -> AsyncThrowingStream<UserBackupModel, any Error> {
         AsyncThrowingStream { continuation in
             Task<Void, Never> {
@@ -53,11 +62,12 @@ extension BackupLocalStore {
     }
 
     func addUser(_ backupUser: UserBackupModel) async throws {
-        let user = await userLocalStore.fetchOrCreateUser(
-            id: backupUser.qualifiedID.id,
-            domain: backupUser.qualifiedID.domain
-        )
-        await user.managedObjectContext?.perform {
+        await context.perform { [context] in
+            let user = ZMUser.fetchOrCreate(
+                with: backupUser.qualifiedID.id,
+                domain: backupUser.qualifiedID.domain,
+                in: context
+            )
             if user.handle?.isEmpty != false {
                 user.handle = backupUser.handle
             }

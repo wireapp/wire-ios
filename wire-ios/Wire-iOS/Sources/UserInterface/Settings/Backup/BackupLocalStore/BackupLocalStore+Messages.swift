@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireAPI
 import WireBackup
 import WireDataModel
 import WireFoundation
@@ -28,6 +29,15 @@ extension BackupLocalStore {
         fetchRequest.returnsObjectsAsFaults = true
         fetchRequest.includesPropertyValues = false
         return fetchRequest
+    }
+
+    func fetchAllMessageIDs() async throws -> Set<String> {
+        let fetchRequest = ZMMessage.fetchRequest()
+        fetchRequest.propertiesToFetch = ["nonce_data"]
+        return try await context.perform { [context] in
+            let messages = try context.fetch(fetchRequest) as! [ZMMessage]
+            return Set(messages.compactMap(\.nonce).map(\.uuidString))
+        }
     }
 
     func fetchAllMessages() -> AsyncThrowingStream<MessageBackupModel, any Error> {
