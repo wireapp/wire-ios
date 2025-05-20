@@ -84,8 +84,8 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
     private lazy var messageTextView: LinkInteractionTextView = {
         let view = LinkInteractionTextView()
 
-        view.isEditable = false
-        view.isSelectable = false
+        view.isEditable = true
+        view.isSelectable = true
         view.backgroundColor = .clear
         view.isScrollEnabled = false
         view.textContainerInset = UIEdgeInsets.zero
