@@ -29,7 +29,6 @@ public protocol BackupLocalStoreProtocol: Sendable {
 
     /// Returns all users stored in the local database, including deleted ones.
     func fetchAllUsers() -> AsyncThrowingStream<UserBackupModel, any Error>
-    // func fetchAllUsers_() async throws -> Set<UserBackupModel> // TODO: delete line
 
     // MARK: -
 

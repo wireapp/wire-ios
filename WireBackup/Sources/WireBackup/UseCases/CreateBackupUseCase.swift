@@ -100,13 +100,6 @@ public struct CreateBackupUseCase<
                         processedUsers += 1
                         try checkCancellationAndReportProgress(processedUsers, total)
                     }
-                    // TODO: clean up
-//                    let allUsers = try await backupLocalStore.fetchAllUsers_()
-//                    for (userIndex, user) in allUsers.enumerated() {
-//                        backupCreator.addUser(user)
-//                        if userIndex % 50 == 0 { try Task.checkCancellation() }
-//                        try checkCancellationAndReportProgress(userIndex + 1, total)
-//                    }
 
                     let conversationProgressOffset = userCount
                     let allConversations = try await backupLocalStore.fetchAllConversations()

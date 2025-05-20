@@ -432,50 +432,13 @@ public final class UserLocalStore: UserLocalStoreProtocol {
         }
     }
 
-    // TODO: add unit test
-    public func fetchAllUsersForBackup_() -> AsyncThrowingStream<[ZMUser], any Error> {
-        let batchCount = 50
-        let context = context
-        return AsyncThrowingStream { [context] continuation in
-            Task<Void, Never> { [context] in
-                do {
-                    let fetchRequest = ZMUser.fetchRequest()
-                    fetchRequest.fetchBatchSize = batchCount
-                    let users = try await context.perform { [context] in
-                        try context.fetch(fetchRequest) as! [ZMUser]
-                    }
-                    let chunks = stride(from: 0, to: users.count, by: batchCount).map { offset in
-                        let end = min(offset + batchCount, users.count)
-                        continuation.yield(Array(users[offset ..< end]))
-                    }
-                    continuation.finish()
-                } catch {
-                    continuation.finish(throwing: error)
-                }
-            }
-        }
-    }
-
-    /*
-    let request: NSFetchRequest<YourEntity> = YourEntity.fetchRequest()
-    request.fetchBatchSize = 20                // only fault in 20 objects at a time
-    request.includesPropertyValues = false     // don’t pre‐populate any values
-    request.returnsObjectsAsFaults = true      // make sure each object starts as a fault
-
-    let results = try context.fetch(request)
-
-    for object in results {
-        // at this point `object` is just a fault;
-        // Core Data will fire only the properties you touch
-        // into memory, and keep only a small working set.
-        let name = object.name                 // fault fires here
-        // … work with `object`
-    }
-    */
-
     public func fetchAllUsersForBackup() async throws -> [ZMUser] {
-        try await context.perform { [context] in
-            try context.fetch(ZMUser.fetchRequest()) as! [ZMUser]
+        let fetchRequest = ZMUser.fetchRequest()
+        fetchRequest.fetchBatchSize = 50
+        fetchRequest.returnsObjectsAsFaults = true
+        fetchRequest.includesPropertyValues = false
+        return try await context.perform { [context] in
+            try context.fetch(fetchRequest) as! [ZMUser]
         }
     }
 

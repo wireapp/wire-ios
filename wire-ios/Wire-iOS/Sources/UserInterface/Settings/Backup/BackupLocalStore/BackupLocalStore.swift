@@ -46,30 +46,22 @@ struct BackupLocalStore<
     // MARK: -
 
     func fetchAllUsers() -> AsyncThrowingStream<UserBackupModel, any Error> {
-        fatalError()
-//        AsyncThrowingStream { continuation in
-//            Task<Void, Never> {
-//                do {
-//                    let users = try await userLocalStore.fetchAllUsersForBackup()
-//                    continuation.yield(.done(url))
-//                    continuation.finish()
-//                } catch {
-//                    continuation.finish(throwing: error)
-//                }
-//            }
-//        }
-    }
-
-    func fetchAllUsers_() async throws -> Set<WireBackup.UserBackupModel> {
-        let users = try await userLocalStore.fetchAllUsersForBackup()
-        return await context.perform {
-            Set(users.compactMap { user in
-                guard let user = UserBackupModel(user) else {
-                    assertionFailure()
-                    return nil
+        AsyncThrowingStream { continuation in
+            Task<Void, Never> {
+                do {
+                    let users = try await userLocalStore.fetchAllUsersForBackup()
+                    for user in users {
+                        autoreleasepool {
+                            if let user = UserBackupModel(user) {
+                                continuation.yield(user)
+                            }
+                        }
+                    }
+                    continuation.finish()
+                } catch {
+                    continuation.finish(throwing: error)
                 }
-                return user
-            })
+            }
         }
     }
 
