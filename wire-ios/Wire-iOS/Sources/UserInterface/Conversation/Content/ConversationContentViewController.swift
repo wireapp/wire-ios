@@ -323,7 +323,7 @@ final class ConversationContentViewController: UIViewController {
         messagePresenter.modalTargetController = parent
 
         updateHeaderHeight()
-
+        updateBackgroundColor(color: userSession.selfUser.zmAccentColor)
         setNeedsStatusBarAppearanceUpdate()
     }
 
