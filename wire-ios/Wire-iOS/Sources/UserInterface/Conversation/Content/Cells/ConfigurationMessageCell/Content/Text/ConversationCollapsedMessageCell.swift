@@ -84,8 +84,8 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
     private lazy var messageTextView: LinkInteractionTextView = {
         let view = LinkInteractionTextView()
 
-        view.isEditable = true
-        view.isSelectable = true
+        view.isEditable = false
+        view.isSelectable = false
         view.backgroundColor = .clear
         view.isScrollEnabled = false
         view.textContainerInset = UIEdgeInsets.zero
@@ -186,8 +186,8 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
                 typeIcon.image = .init(resource: .link)
                 text = L10n.Localizable.Content.Collapsed.Link.title
             }
-            messageTextView.attributedText = text.attributedString && UIFont.normalLightFont.italic && SemanticColors
-                .Label.textDefault
+            messageTextView.attributedText = text.attributedString &&
+                UIFont.normalLightFont.italic && SemanticColors.Label.textDefault
         }
 
         wholeViewTapButton.removeTarget(nil, action: nil, for: .allEvents)
