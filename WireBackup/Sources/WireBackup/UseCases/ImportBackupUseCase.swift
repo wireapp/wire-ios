@@ -58,13 +58,15 @@ public struct ImportBackupUseCase<
 
                 do {
                     let logger = logger()
-                    let reportProgress: (Int, Int) -> Void = { current, total in
+                    let checkCancellationAndReportProgress: (Int, Int) throws -> Void = { current, total in
                         guard current % 50 == 0 || current == total else { return }
+                        try Task.checkCancellation()
                         logger.debug("reporting overall process: \(current)/\(total)")
                         continuation.yield(.progress(current, total))
                     }
 
-                    reportProgress(0, 0)
+                    try checkCancellationAndReportProgress(0, 0)
+
                     logger.debug("initializing MPBackupImporter")
                     let importer = BackupImporter(
                         selfUserID: selfUserID,
@@ -72,14 +74,10 @@ public struct ImportBackupUseCase<
                         fileUnarchiver: fileUnarchiver
                     )
 
-                    try Task.checkCancellation()
-
                     let peekResult = try await importer.peek(into: url)
                     if password.isEmpty, peekResult.isEncrypted {
                         throw ImportBackupError.passwordRequired
                     }
-
-                    try Task.checkCancellation()
 
                     let pagers = try await importer.importBackup(from: url, using: password)
                     let total = Int(exactly: pagers.totalPagesCount) ?? 0
@@ -99,8 +97,7 @@ public struct ImportBackupUseCase<
                             }
 
                             if current % 50 == 0 || current == backupUsers.size - 1 {
-                                try Task.checkCancellation()
-                                reportProgress(Int(exactly: current) ?? 0, total)
+                                try checkCancellationAndReportProgress(Int(exactly: current) ?? 0, total)
                             }
                         }
                     }
@@ -122,8 +119,7 @@ public struct ImportBackupUseCase<
                             }
 
                             if current % 50 == 0 || current == backupMessages.size - 1 {
-                                try Task.checkCancellation()
-                                reportProgress(Int(exactly: current) ?? 0, total)
+                                try checkCancellationAndReportProgress(Int(exactly: current) ?? 0, total)
                             }
                         }
                     }

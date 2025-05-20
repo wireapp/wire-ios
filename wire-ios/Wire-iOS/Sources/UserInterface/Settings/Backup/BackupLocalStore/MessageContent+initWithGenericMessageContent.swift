@@ -94,7 +94,8 @@ extension MessageBackupModel.Content {
             assetToken: uploaded.hasAssetToken ? uploaded.assetToken : nil,
             assetDomain: uploaded.hasAssetDomain ? uploaded.assetDomain : nil,
             encryption: uploaded.hasEncryption ? .init(uploaded.encryption) : nil,
-            metadata: original.metaData.flatMap(MessageBackupModel.Content.AssetContent.Metadata.init)
+            metadata: original.metaData.flatMap(MessageBackupModel.Content.AssetContent.Metadata.init) ??
+                .generic(name: original.hasName ? original.name : nil)
         )
     }
 
