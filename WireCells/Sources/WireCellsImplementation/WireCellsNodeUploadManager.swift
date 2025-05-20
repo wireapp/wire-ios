@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireCellsAPI
+package import Foundation
+package import WireCellsAPI
 
 package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtocol {
     private let fileManager: FileManager
@@ -51,7 +51,7 @@ package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtoc
 
     private let uploads = Uploads()
 
-    init(
+    package init(
         fileManager: FileManager = .default,
         repository: any WireCellsNodesRepository
     ) {
@@ -59,7 +59,7 @@ package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtoc
         self.repository = repository
     }
 
-    func upload(
+    package func upload(
         id: WireCellsNodeID,
         assetPath: URL,
         assetSize: UInt64,
@@ -143,11 +143,11 @@ package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtoc
         return stream
     }
 
-    func observeUpload(nodeID: WireCellsNodeID) async -> AsyncStream<WireCellsUploadStatus>? {
+    package func observeUpload(nodeID: WireCellsNodeID) async -> AsyncStream<WireCellsUploadStatus>? {
         await uploads.get(nodeID)?.stream
     }
 
-    func retryUpload(nodeID: WireCellsNodeID) async {
+    package func retryUpload(nodeID: WireCellsNodeID) async {
         if let info = await uploads.get(nodeID) {
             if fileManager.fileExists(atPath: info.localPath.path) == true {
                 _ = await startUpload(assetPath: info.localPath, node: info.node)
@@ -159,7 +159,7 @@ package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtoc
         }
     }
 
-    func cancelUpload(nodeID: WireCellsNodeID) async {
+    package func cancelUpload(nodeID: WireCellsNodeID) async {
         if let info = await uploads.get(nodeID) {
             info.continuation.yield(.cancelled)
             info.continuation.finish()
@@ -168,11 +168,11 @@ package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtoc
         }
     }
 
-    func getUploadInfo(nodeID: WireCellsNodeID) async -> WireCellsNodeUploadInfo? {
+    package func getUploadInfo(nodeID: WireCellsNodeID) async -> WireCellsNodeUploadInfo? {
         await uploads.get(nodeID)?.toUploadInfo()
     }
 
-    func isUploading(nodeID: WireCellsNodeID) async -> Bool {
+    package func isUploading(nodeID: WireCellsNodeID) async -> Bool {
         await uploads.get(nodeID) != nil
     }
 
