@@ -16,10 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import CoreData
-
-import Foundation
-import WireDataModel
+public import Foundation
+public import WireDataModel
 
 // sourcery: AutoMockable
 /// Facilitate access to message related domain objects.
