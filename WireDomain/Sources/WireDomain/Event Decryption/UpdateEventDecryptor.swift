@@ -124,15 +124,13 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                             "failed to decrypt MLS due to `WrongEpoch` for group \(mlsGroupID)",
                             attributes: logAttributes
                         )
-                        await mlsService?.fetchAndRepairGroup(with: mlsGroupID)
                     default:
                         WireLogger.updateEvent.error(
                             "failed to decrypt MLS add message event, dropping: \(String(describing: error))",
                             attributes: logAttributes
                         )
-
-                        throw error
                     }
+                    throw error
                 } catch {
                     WireLogger.updateEvent.error(
                         "failed to decrypt MLS add message event, dropping: \(String(describing: error))",
