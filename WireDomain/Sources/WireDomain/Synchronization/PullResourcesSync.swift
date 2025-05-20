@@ -76,6 +76,8 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
             // user ids from user connections and conversations.
             try await pullKnownUsers()
 
+            // Pulling self user must happen after we've pulled known users
+            // otherwise some self user values might be overwritten with nil values.
             let teamID = try await pullSelfUser()
             try await pullSelfUserClients()
             try await pullSelfUserSettings()
