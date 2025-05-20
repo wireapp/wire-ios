@@ -58,7 +58,7 @@ struct BackupLocalStore<
         let users = try await userLocalStore.fetchAllUsersForBackup()
         return await context.perform {
             Set(users.compactMap { user in
-                guard let user = BackupUserModel(user) else {
+                guard let user = UserBackupModel(user) else {
                     assertionFailure()
                     return nil
                 }
@@ -67,7 +67,7 @@ struct BackupLocalStore<
         }
     }
 
-    func addUser(_ backupUser: BackupUserModel) async throws {
+    func addUser(_ backupUser: UserBackupModel) async throws {
         let user = await userLocalStore.fetchOrCreateUser(
             id: backupUser.qualifiedID.id,
             domain: backupUser.qualifiedID.domain
@@ -116,7 +116,7 @@ struct BackupLocalStore<
         }
     }
 
-    func addMessage(_ backupMessage: BackupMessageModel) async throws {
+    func addMessage(_ backupMessage: MessageBackupModel) async throws {
         let conversationID = backupMessage.conversationID
         let conversation = await context.perform {
             ZMConversation.fetch(with: conversationID.id, domain: conversationID.domain, in: context)
@@ -172,7 +172,7 @@ extension BackupLocalStore where
 
 // MARK: -
 
-private extension BackupUserModel {
+private extension UserBackupModel {
 
     init?(_ user: ZMUser) {
         guard let qualifiedID = user.qualifiedID else { return nil }

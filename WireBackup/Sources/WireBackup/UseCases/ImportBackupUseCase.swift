@@ -94,7 +94,7 @@ public struct ImportBackupUseCase<
                                 let userID = QualifiedID(backupUser.id)
                             else { continue }
 
-                            if !storedUserIDs.contains(userID), let user = BackupUserModel(backupUser) {
+                            if !storedUserIDs.contains(userID), let user = UserBackupModel(backupUser) {
                                 try await backupLocalStore.addUser(user)
                             }
 
@@ -117,7 +117,7 @@ public struct ImportBackupUseCase<
                             guard let backupMessage = backupMessages.get(index: current) else { continue }
 
                             if !storedMessageIDs.contains(backupMessage.id),
-                               let message = BackupMessageModel(backupMessage) {
+                               let message = MessageBackupModel(backupMessage) {
                                 try await backupLocalStore.addMessage(message)
                             }
 
