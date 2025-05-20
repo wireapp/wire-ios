@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+#if canImport(UIKit)
 import Network
 import UIKit
 
@@ -111,3 +111,4 @@ public actor BackoffRetrier {
         attempt = 0
     }
 }
+#endif
