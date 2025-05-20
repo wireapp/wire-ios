@@ -171,22 +171,22 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
             typeIcon.isHidden = false
             if message.isImage {
                 typeIcon.image = .init(resource: .image)
-                messageTextView.text = L10n.Localizable.Content.Collapsed.Image.title
+                messageTextView.attributedText = L10n.Localizable.Content.Collapsed.Image.title.attributedString
             } else if message.isVideo {
                 typeIcon.image = .init(resource: .play)
-                messageTextView.text = L10n.Localizable.Content.Collapsed.Video.title
+                messageTextView.attributedText = L10n.Localizable.Content.Collapsed.Video.title.attributedString
             } else if message.isAudio {
                 typeIcon.image = .init(resource: .micOn)
-                messageTextView.text = L10n.Localizable.Content.Collapsed.Audio.title
+                messageTextView.attributedText = L10n.Localizable.Content.Collapsed.Audio.title.attributedString
             } else if message.isLocation {
                 typeIcon.image = .init(resource: .location)
-                messageTextView.text = L10n.Localizable.Content.Collapsed.Location.title
+                messageTextView.attributedText = L10n.Localizable.Content.Collapsed.Location.title.attributedString
             } else if message.isFile {
                 typeIcon.image = .init(resource: .file)
-                messageTextView.text = L10n.Localizable.Content.Collapsed.File.title
+                messageTextView.attributedText = L10n.Localizable.Content.Collapsed.File.title.attributedString
             } else if message.hasLinks {
                 typeIcon.image = .init(resource: .link)
-                messageTextView.text = L10n.Localizable.Content.Collapsed.Link.title
+                messageTextView.attributedText = L10n.Localizable.Content.Collapsed.Link.title.attributedString
             }
         }
 
