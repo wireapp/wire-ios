@@ -115,16 +115,16 @@ package final class WireCellsAWSClientImplementation: WireCellsAWSClient {
         node: WireCellsNodeDTO,
         onProgressUpdate: @escaping @Sendable (UInt64) -> Void
     ) async throws {
-        let fileHandle = try FileHandle(forReadingFrom: path)
-        defer { try? fileHandle.close() }
-
+        // FIXME: [WPB-17765] Use a FileHandle (`FileHandle(forReadingFrom: path)`) instead of Data
+        let data = try Data(contentsOf: path)
         let fileSize = try FileManager.default.attributesOfItem(atPath: path.path)[.size] as! Int64
 
         let metadata = node.createDraftNodeMetadata()
 
         let input = PutObjectInput(
-            body: .from(fileHandle: fileHandle),
+            body: .data(data),
             bucket: Constants.bucket,
+            contentLength: Int(fileSize),
             key: node.path,
             metadata: metadata
         )
