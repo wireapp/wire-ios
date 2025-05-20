@@ -139,13 +139,12 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     func configure(with object: Configuration, animated: Bool) {
-        
         messageTextView.text = nil
         messageTextView.attributedText = nil
         messageTextView.textColor = SemanticColors.Label.textDefault
-    
+
         let user = object.message.senderUser
         avatar.user = user
         availabilityIndicatorView.availability = user?.availability.mapToAccountImageAvailability()
@@ -166,7 +165,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
                     )
             }
         } else {
-            var text: String = ""
+            var text = ""
             typeIcon.isHidden = false
             if message.isImage {
                 typeIcon.image = .init(resource: .image)
@@ -187,7 +186,8 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
                 typeIcon.image = .init(resource: .link)
                 text = L10n.Localizable.Content.Collapsed.Link.title
             }
-            messageTextView.attributedText = text.attributedString && UIFont.normalLightFont.italic && SemanticColors.Label.textDefault
+            messageTextView.attributedText = text.attributedString && UIFont.normalLightFont.italic && SemanticColors
+                .Label.textDefault
         }
 
         wholeViewTapButton.removeTarget(nil, action: nil, for: .allEvents)
