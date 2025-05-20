@@ -20,7 +20,7 @@ package import KaliumBackup
 
 import WireFoundation
 
-package extension BackupConversationModel {
+package extension ConversationBackupModel {
 
     package init?(_ backupConversation: BackupConversation) {
         guard let qualifiedID = QualifiedID(backupConversation.id) else { return nil }

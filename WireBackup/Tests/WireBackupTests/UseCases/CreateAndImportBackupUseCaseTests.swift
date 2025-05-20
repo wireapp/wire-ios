@@ -63,7 +63,7 @@ final class CreateAndImportBackupUseCaseTests: XCTestCase {
     func testHappyPath() throws {
         // TODO: [WPB-16658] create mock models, run create and then import & compare
 
-        // let user = BackupUserModel(...)
+        // let user = UserBackupModel(...)
         // let conversations = ...
         throw XCTSkip("not yet implemented")
     }

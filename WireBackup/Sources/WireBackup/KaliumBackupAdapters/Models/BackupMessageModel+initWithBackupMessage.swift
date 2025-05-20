@@ -21,7 +21,7 @@ package import KaliumBackup
 import Foundation
 import WireFoundation
 
-package extension BackupMessageModel {
+package extension MessageBackupModel {
 
     package init?(_ backupMessage: BackupMessage) {
         guard
