@@ -129,6 +129,8 @@ public struct ImportBackupUseCase<
                     continuation.yield(.done)
                     continuation.finish()
 
+                } catch BackupImporter.OpenBackupError.incorrectPassword {
+                    continuation.finish(throwing: ImportBackupError.incorrectPassword)
                 } catch BackupImporter.OpenBackupError.parsingFailed {
                     continuation.finish(throwing: ImportBackupError.incompatibleFileFormat)
                 } catch {

@@ -139,6 +139,10 @@ final class ImportBackupViewModel: ObservableObject {
                 logger.debug("password is required to open backup file")
                 state = .requestingPassword(url: url, isPasswordIncorrect: false)
                 return // don't clean up temporary file
+            } catch ImportLegacyBackupError.passwordRequired, ImportBackupError.incorrectPassword {
+                logger.debug("provided password is incorrect")
+                state = .requestingPassword(url: url, isPasswordIncorrect: false)
+                return // don't clean up temporary file
             } catch ImportLegacyBackupError.decryptionError {
                 logger.warn("failed to decrypt backup file, presenting the password input again")
                 state = .requestingPassword(url: url, isPasswordIncorrect: true)
