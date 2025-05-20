@@ -17,7 +17,9 @@
 //
 
 import Foundation
+import WireCellsBindings
 import WireCommonComponents
+import WireLogging
 import WireSyncEngine
 
 extension ConversationInputBarViewController: UINavigationControllerDelegate {}
@@ -39,29 +41,40 @@ extension ConversationInputBarViewController {
         return true
     }
 
-    func uploadFiles(at urls: [URL]) {
-        guard urls.count > 1 else {
-            if let url = urls.first {
-                uploadFile(at: url)
-            }
-            return
-        }
+    /// Upload files at the given `urls`.
+    ///
+    /// - parameter urls: The URLs of the files to upload.
+    /// - note: If wire cells is enabled, each file will be uploaded separately. If wire cells is disabled and there are
+    /// multiple files, these will be zipped and then uploaded.
 
-        if let archiveURL = urls.zipFiles() {
+    func uploadFiles(at urls: [URL]) {
+        guard !urls.isEmpty else { return }
+
+        if DeveloperFlag.wireCells.isOn {
+            Task.detached { [wireCellsUploadFileUseCase] in
+                // We don't care about the result of the operation here as we will be observing changes.
+                for url in urls {
+                    do {
+                        try await wireCellsUploadFileUseCase.invoke(fileURL: url)
+                    } catch {
+                        WireLogger.conversation.error("Failed to upload file: \(error)")
+                    }
+                }
+            }
+        } else if urls.count == 1 {
+            uploadFile(at: urls[0])
+        } else if let archiveURL = urls.zipFiles() {
             uploadFile(at: archiveURL)
         } else {
             zmLog.error("Cannot archive files at URLs: \(urls.description)")
         }
-
     }
 
-    /// upload a signal file
+    /// upload a single file
     ///
     /// - Parameter url: the URL of the file
-    func uploadFile(at url: URL) {
+    private func uploadFile(at url: URL) {
         guard let conversation = conversation as? ZMConversation else { return }
-
-        guard let maxUploadFileSize = ZMUserSession.shared()?.maxUploadFileSize else { return }
 
         let completion: Completion = { [weak self] in
             self?.removeItem(atPath: url.path)
@@ -73,7 +86,7 @@ extension ConversationInputBarViewController {
             return completion()
         }
 
-        guard fileSize <= maxUploadFileSize else {
+        guard fileSize <= userSession.maxUploadFileSize else {
             // file exceeds maximum allowed upload size
             parent?.dismiss(animated: false)
             showAlertForFileTooBig()
@@ -118,9 +131,10 @@ extension ConversationInputBarViewController {
     }
 
     private func showAlertForFileTooBig() {
-        guard let maxUploadFileSize = ZMUserSession.shared()?.maxUploadFileSize else { return }
-
-        let maxSizeString = ByteCountFormatter.string(fromByteCount: Int64(maxUploadFileSize), countStyle: .binary)
+        let maxSizeString = ByteCountFormatter.string(
+            fromByteCount: Int64(userSession.maxUploadFileSize),
+            countStyle: .binary
+        )
         let errorMessage = L10n.Localizable.Content.File.tooBig(maxSizeString)
 
         let alert = UIAlertController(
