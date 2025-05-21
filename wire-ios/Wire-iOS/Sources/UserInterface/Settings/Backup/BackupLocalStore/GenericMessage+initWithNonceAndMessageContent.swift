@@ -117,11 +117,11 @@ extension EncryptionAlgorithm {
 
 extension Asset.Original.OneOf_MetaData {
 
-    fileprivate init(_ metadata: MessageBackupModel.Content.AssetContent.Metadata) {
+    fileprivate init?(_ metadata: MessageBackupModel.Content.AssetContent.Metadata) {
         switch metadata {
 
         case let .image(imageMetadata):
-            self = .image(Asset.ImageMetaData.with { image in
+            self = .image(.with { image in
                 image.width = imageMetadata.width
                 image.height = imageMetadata.height
                 if let tag = imageMetadata.tag, !tag.isEmpty {
@@ -130,70 +130,35 @@ extension Asset.Original.OneOf_MetaData {
             })
 
         case let .video(videoMetadata):
-            fatalError()
+            self = .video(.with { video in
+                if let width = videoMetadata.width {
+                    video.width = width
+                }
+                if let height = videoMetadata.height {
+                    video.height = height
+                }
+                if let duration = videoMetadata.duration {
+                    video.durationInMillis = duration
+                }
+            })
 
         case let .audio(audioMetadata):
-            fatalError()
+            self = .audio(.with { audio in
+                if let normalization = audioMetadata.normalization {
+                    audio.normalizedLoudness = normalization
+                }
+                if let duration = audioMetadata.duration {
+                    audio.durationInMillis = duration
+                }
+            })
 
         case let .generic(genericMetadata):
-            fatalError()
+            return nil
 
         }
     }
 
 }
-
-/*
-
-        switch assetContent.metadata {
-
-        case let .video(videoData):
-            asset = Asset.with { asset in
-                asset.original = Asset.Original.with { original in
-                    original.size = assetContent.size
-                    original.mimeType = assetContent.mimeType
-                    original.name = assetContent.name ?? "video"
-                    original.video = WireProtos.Asset.VideoMetaData.with { video in
-                        video.durationInMillis = videoData.duration.map { $0 / 1000 } ?? 0 // TODO: compare with backup creation
-                        video.width = videoData.width ?? 0
-                        video.height = videoData.height ?? 0
-                    }
-                }
-            }
-
-        case let .audio(audioData):
-            asset = Asset.with { asset in
-                asset.original = Asset.Original.with { original in
-                    original.size = assetContent.size
-                    original.mimeType = assetContent.mimeType
-                    original.name = assetContent.name ?? "audio"
-                    original.audio = Asset.AudioMetaData.with { audio in
-                        let loudnessArray = audioData.normalization?.map { Float($0 / 255) }
-                        audio.durationInMillis = audioData.duration.map { $0 * 1000 } ?? 0
-                        // audio.normalizedLoudness = NSData(bytes: loudnessArray, length: loudnessArray.count) as Data
-                        // TODO: fix
-                    }
-                }
-            }
-
-        case let .generic(data):
-            // TODO: asset =
-            var assetContent = assetContent
-            if assetContent.name == nil, let name = data.name {
-                assetContent.name = name
-            }
-            fallthrough
-
-        case .none:
-            asset = Asset.with { asset in
-                asset.original = Asset.Original.with { original in
-                    original.size = assetContent.size
-                    original.mimeType = assetContent.mimeType
-                    original.name = assetContent.name ?? "file"
-                }
-            }
-        }
-*/
 
 private func fallbackName(for metadata: MessageBackupModel.Content.AssetContent.Metadata) -> String? {
     switch metadata {
