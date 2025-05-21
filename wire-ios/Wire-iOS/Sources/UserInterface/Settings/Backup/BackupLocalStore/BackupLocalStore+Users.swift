@@ -71,6 +71,8 @@ extension BackupLocalStore {
             if user.handle?.isEmpty != false {
                 user.handle = backupUser.handle
             }
+            user.isPendingMetadataRefresh = true
+            user.needsToBeUpdatedFromBackend = true
         }
     }
 

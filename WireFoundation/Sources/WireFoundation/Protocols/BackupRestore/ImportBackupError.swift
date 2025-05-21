@@ -21,4 +21,5 @@ public enum ImportBackupError: Error {
     case incompatibleFileFormat
     /// The backup file is encrypted and a password is needed for decryption.
     case passwordRequired
+    case incorrectPassword
 }

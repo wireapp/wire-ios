@@ -395,12 +395,28 @@ extension SettingsCellDescriptorFactory {
         let context = selfUser.managedObjectContext!.performAndWait {
             selfUser.managedObjectContext!.zm_sync!
         }
+        let messageLocalStore = MessageLocalStore(context: context)
+        let backupLocalStore = BackupLocalStore(
+            context: context,
+            processor: ConversationProtobufMessageProcessor(
+                messageLocalStore: messageLocalStore,
+                conversationLocalStore: ConversationLocalStore(
+                    context: context,
+                    mlsService: context.performAndWait { context.mlsService },
+                    messageLocalStore: messageLocalStore
+                ),
+                userLocalStore: UserLocalStore(
+                    context: context,
+                    messageLocalStore: messageLocalStore
+                )
+            )
+        )
 
         let userSession = sessionManager.activeUserSession!
         let importBackupUseCase = CompositeImportBackupUseCase(
             importBackupUseCase: ImportBackupUseCase(
                 selfUserID: .init(selfUser.qualifiedID!),
-                backupLocalStore: BackupLocalStore(context: context),
+                backupLocalStore: backupLocalStore,
                 fileUnarchiver: ZipArchiveFileUnarchiver(),
                 syncTrigger: {
                     // TODO: what is the correct sync trigger after backup?
@@ -421,7 +437,7 @@ extension SettingsCellDescriptorFactory {
             CreateBackupUseCase(
                 selfUserID: .init(selfUser.qualifiedID!),
                 selfUserHandle: selfUser.handle,
-                backupLocalStore: BackupLocalStore(context: context),
+                backupLocalStore: backupLocalStore,
                 fileArchiver: ZIPFoundationFileArchiver(),
                 currentDateProvider: SystemDateProvider(),
                 logger: WireLogger.backupExport

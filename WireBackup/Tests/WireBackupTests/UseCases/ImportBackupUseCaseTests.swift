@@ -17,41 +17,27 @@
 //
 
 import Foundation
+import Testing
+import WireFoundation
 
-/// Represents the identifer for an MLS group.
+@testable import WireBackup
 
-public struct MLSGroupID: Equatable, Hashable, Sendable {
+struct ImportBackupUseCaseTests {
 
-    // MARK: - Properties
+    @Test(arguments: ["android", "web"])
+    func testImportingBackupFilesFromOtherPlatforms(resource: String) async throws {
 
-    public let data: Data
+        let workDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
+        defer { try? FileManager.default.removeItem(at: workDirectoryURL) }
 
-    // MARK: - Life cycle
+        let fileURL = Bundle.module.url(forResource: resource, withExtension: "wbu")
+        let importer = BackupImporter(
+            selfUserID: QualifiedID(id: UUID(), domain: "wire.com"),
+            workDirectoryURL: workDirectoryURL,
+            fileUnarchiver: ZIPFoundationFileUnarchiver()
+        )
 
-    public init?(base64Encoded string: String) {
-        guard !string.isEmpty, let data = Data(base64Encoded: string) else { return nil }
-        self.init(data)
+        fatalError("TODO")
     }
 
-    public init(_ data: Data) {
-        self.data = data
-    }
-}
-
-// MARK: -
-
-extension MLSGroupID: CustomStringConvertible {
-
-    public var description: String {
-        data.base64EncodedString()
-    }
-}
-
-// MARK: -
-
-extension MLSGroupID: SafeForLoggingStringConvertible {
-
-    public var safeForLoggingDescription: String {
-        description.redactedAndTruncated()
-    }
 }

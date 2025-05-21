@@ -17,41 +17,13 @@
 //
 
 import Foundation
+import WireFoundation
+import ZIPFoundation
 
-/// Represents the identifer for an MLS group.
+struct ZIPFoundationFileUnarchiver: FileUnarchiverProtocol {
 
-public struct MLSGroupID: Equatable, Hashable, Sendable {
-
-    // MARK: - Properties
-
-    public let data: Data
-
-    // MARK: - Life cycle
-
-    public init?(base64Encoded string: String) {
-        guard !string.isEmpty, let data = Data(base64Encoded: string) else { return nil }
-        self.init(data)
+    func unzipFile(at sourceURL: URL, to destinationURL: URL) throws {
+        try FileManager.default.unzipItem(at: sourceURL, to: destinationURL)
     }
 
-    public init(_ data: Data) {
-        self.data = data
-    }
-}
-
-// MARK: -
-
-extension MLSGroupID: CustomStringConvertible {
-
-    public var description: String {
-        data.base64EncodedString()
-    }
-}
-
-// MARK: -
-
-extension MLSGroupID: SafeForLoggingStringConvertible {
-
-    public var safeForLoggingDescription: String {
-        description.redactedAndTruncated()
-    }
 }
