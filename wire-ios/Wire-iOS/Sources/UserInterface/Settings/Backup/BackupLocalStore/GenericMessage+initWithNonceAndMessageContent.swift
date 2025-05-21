@@ -88,35 +88,64 @@ extension Asset {
             if let assetDomain = assetContent.assetDomain, !assetDomain.isEmpty {
                 asset.uploaded.assetDomain = assetDomain
             }
+            if let encryption = assetContent.encryption {
+                asset.uploaded.encryption = EncryptionAlgorithm(encryption)
+            }
+            if let metadata = assetContent.metadata {
+                asset.original.metaData = Asset.Original.OneOf_MetaData(metadata)
+                if !asset.original.hasName, let name = fallbackName(for: metadata) {
+                    asset.original.name = name
+                }
+            }
+        }
+    }
 
-        todo: encrypteon, metadata
+}
 
-//            self = .asset(
+extension EncryptionAlgorithm {
 
-//                encryption: uploaded.hasEncryption ? .init(uploaded.encryption) : nil,
-//                metadata: original.metaData.flatMap(MessageBackupModel.Content.AssetContent.Metadata.init) ??
-//                    .generic(name: original.hasName ? original.name : nil)
-//            )
+    fileprivate init(_ encryption: MessageBackupModel.Content.AssetContent.EncryptionAlgorithm) {
+        switch encryption {
+        case .aesCBC:
+            self = .aesCbc
+        case .aesGCM:
+            self = .aesGcm
+        }
+    }
+
+}
+
+extension Asset.Original.OneOf_MetaData {
+
+    fileprivate init(_ metadata: MessageBackupModel.Content.AssetContent.Metadata) {
+        switch metadata {
+
+        case let .image(imageMetadata):
+            self = .image(Asset.ImageMetaData.with { image in
+                image.width = imageMetadata.width
+                image.height = imageMetadata.height
+                if let tag = imageMetadata.tag, !tag.isEmpty {
+                    image.tag = tag
+                }
+            })
+
+        case let .video(videoMetadata):
+            fatalError()
+
+        case let .audio(audioMetadata):
+            fatalError()
+
+        case let .generic(genericMetadata):
+            fatalError()
 
         }
+    }
 
+}
 
 /*
 
-        let asset: Asset
         switch assetContent.metadata {
-
-        case let .image(imageData):
-            asset = Asset.with { asset in
-                asset.original = Asset.Original.with { original in
-                    original.size = assetContent.size
-                    original.mimeType = assetContent.mimeType
-                    original.image = Asset.ImageMetaData.with {
-                        $0.width = imageData.width
-                        $0.height = imageData.height
-                    }
-                }
-            }
 
         case let .video(videoData):
             asset = Asset.with { asset in
@@ -166,6 +195,24 @@ extension Asset {
         }
 */
 
-    }
+private func fallbackName(for metadata: MessageBackupModel.Content.AssetContent.Metadata) -> String? {
+    switch metadata {
 
+    case .image:
+        "image"
+
+    case .video:
+        "video"
+
+    case .audio:
+        "audio"
+
+    case .generic(let genericMetadata):
+        if let name = genericMetadata.name, !name.isEmpty {
+            name
+        } else {
+            "file"
+        }
+
+    }
 }
