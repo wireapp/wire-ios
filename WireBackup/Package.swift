@@ -40,8 +40,10 @@ let package = Package(
                 "ZIPFoundation"
             ],
             resources: [
-                .copy("Resources/android.wbu"),
-                .copy("Resources/web.wbu")
+                .copy("Resources/android-encrypted.wbu"),
+                .copy("Resources/android-unencrypted.wbu"),
+                .copy("Resources/web-encrypted.wbu"),
+                .copy("Resources/web-unencrypted.wbu")
             ]
         ),
         .binaryTarget(

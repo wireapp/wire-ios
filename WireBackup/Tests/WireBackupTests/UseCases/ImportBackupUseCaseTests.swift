@@ -24,20 +24,26 @@ import WireFoundation
 
 struct ImportBackupUseCaseTests {
 
-    @Test(arguments: ["android", "web"])
-    func testImportingBackupFilesFromOtherPlatforms(resource: String) async throws {
+    private let password = "Cp2mXgrj.3-qX92p3BRG"
+
+    @Test(arguments: ["android-encrypted", "web-encrypted", "android-unencrypted", "web-unencrypted"])
+    func testPeekingIntoBackupFilesFromOtherPlatforms(resource: String) async throws {
 
         let workDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
         defer { try? FileManager.default.removeItem(at: workDirectoryURL) }
 
-        let fileURL = Bundle.module.url(forResource: resource, withExtension: "wbu")
         let importer = BackupImporter(
             selfUserID: QualifiedID(id: UUID(), domain: "wire.com"),
             workDirectoryURL: workDirectoryURL,
             fileUnarchiver: ZIPFoundationFileUnarchiver()
         )
 
-        fatalError("TODO")
+        let backupURL = try #require(Bundle.module.url(forResource: resource, withExtension: "wbu"))
+
+        let result = try await importer.peek(into: backupURL)
+        #expect(result.isEncrypted == resource.hasSuffix("-encrypted"))
+        #expect(result.version == "todo")
+
     }
 
 }
