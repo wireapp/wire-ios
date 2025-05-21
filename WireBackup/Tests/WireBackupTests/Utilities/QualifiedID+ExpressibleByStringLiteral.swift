@@ -17,27 +17,16 @@
 //
 
 import Foundation
-import Testing
 import WireFoundation
 
-@testable import WireBackup
+extension QualifiedID: @retroactive ExpressibleByStringLiteral {
 
-struct ImportBackupUseCaseTests {
-
-    @Test(arguments: ["android", "web"])
-    func testImportingBackupFilesFromOtherPlatforms(resource: String) async throws {
-
-        let workDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
-        defer { try? FileManager.default.removeItem(at: workDirectoryURL) }
-
-        let fileURL = Bundle.module.url(forResource: resource, withExtension: "wbu")
-        let importer = BackupImporter(
-            selfUserID: QualifiedID(id: UUID(), domain: "wire.com"),
-            workDirectoryURL: workDirectoryURL,
-            fileUnarchiver: ZIPFoundationFileUnarchiver()
+    init(stringLiteral value: String) {
+        let components = value.components(separatedBy: "@")
+        self.init(
+            id: UUID(uuidString: String(components.first!))!,
+            domain: String(components.last!)
         )
-
-        fatalError("TODO")
     }
 
 }

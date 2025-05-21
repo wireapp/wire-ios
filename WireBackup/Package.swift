@@ -34,14 +34,19 @@ let package = Package(
         .testTarget(
             name: "WireBackupTests",
             dependencies: [
+                "KaliumBackup",
                 "WireBackup",
                 "WireBackupSupport",
                 .product(name: "WireFoundationSupport", package: "WireFoundation"),
                 "ZIPFoundation"
             ],
             resources: [
-                .copy("Resources/android.wbu"),
-                .copy("Resources/web.wbu")
+                .copy("Resources/android-encrypted.wbu"),
+                .copy("Resources/android-unencrypted.wbu"),
+                .copy("Resources/ios-encrypted.wbu"),
+                .copy("Resources/ios-unencrypted.wbu"),
+                .copy("Resources/web-encrypted.wbu"),
+                .copy("Resources/web-unencrypted.wbu")
             ]
         ),
         .executableTarget(
