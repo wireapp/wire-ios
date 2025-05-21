@@ -33,7 +33,10 @@ struct ImportBackupUseCaseTests {
         defer { try? FileManager.default.removeItem(at: workDirectoryURL) }
 
         let importer = BackupImporter(
-            selfUserID: QualifiedID(id: UUID(), domain: "wire.com"),
+            selfUserID: QualifiedID(
+                id: UUID(uuidString: "cfc7f55a-2ccf-4557-b212-32b2c89bf1a2")!,
+                domain: "staging.zinfra.io"
+            ),
             workDirectoryURL: workDirectoryURL,
             fileUnarchiver: ZIPFoundationFileUnarchiver()
         )
@@ -42,7 +45,7 @@ struct ImportBackupUseCaseTests {
 
         let result = try await importer.peek(into: backupURL)
         #expect(result.isEncrypted == resource.hasSuffix("-encrypted"))
-        #expect(result.version == "todo")
+        #expect(result.version == "4")
 
     }
 
