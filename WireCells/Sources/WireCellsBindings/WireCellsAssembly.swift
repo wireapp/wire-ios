@@ -25,8 +25,8 @@ public struct WireCellsAssembly {
     // TODO: [WPB-17769] Somehow inject secrets without storing them in the code base
     private static let credentials = WireCellsCredentials(
         serverURL: URL(string: "https://service.zeta.pydiocells.com")!,
-        accessToken: "",
-        gatewaySecret: ""
+        accessToken: "some-access-token",
+        gatewaySecret: "some-gateway-secret"
     )
 
     private static let nodesRepository = WireCellsNodesDataSource(credentials: credentials)
