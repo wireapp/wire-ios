@@ -35,8 +35,10 @@ public class CoreCryptoKeyProvider {
             return try fetchCoreCryptoKeyV2()
         } catch {
             if createIfNeeded {
-                let newKey = try createCoreCryptoKeyV2()
+                let newKey = try generateCoreCryptoKeyV2()
+
                 guard let oldKey = try? fetchCoreCryptoKey() else {
+                    try storeCoreCryptoKeyV2(newKey)
                     return newKey
                 }
                 return try await migrateDatabaseKey(path: path, oldKey: oldKey, newKey: newKey)
@@ -53,14 +55,15 @@ public class CoreCryptoKeyProvider {
         return key
     }
 
-    private func createCoreCryptoKeyV2() throws -> Data {
+    private func generateCoreCryptoKeyV2() throws -> Data {
+        WireLogger.coreCrypto.info("Generating core crypto key_v2...")
+        return try KeychainManager.generateKey(numberOfBytes: 32)
+    }
+
+    private func storeCoreCryptoKeyV2(_ key: Data) throws {
         let item = CoreCryptoKeychainItemV2()
-        WireLogger.coreCrypto.info("Core crypto key_v2 doesn't exist. Creating...")
-        let key = try KeychainManager.generateKey(numberOfBytes: 32)
-        WireLogger.coreCrypto.info("Created core crypto key_v2: \(key.base64String()). Storing...")
         try KeychainManager.storeItem(item, value: key)
-        WireLogger.coreCrypto.info("Stored core crypto key_v2. Returning...")
-        return key
+        WireLogger.coreCrypto.info("Stored core crypto key_v2: \(key.base64String())")
     }
 
     private func migrateDatabaseKey(path: String, oldKey: Data, newKey: Data) async throws -> Data {
@@ -72,6 +75,7 @@ public class CoreCryptoKeyProvider {
             newKey: newKey
         )
 
+        try storeCoreCryptoKeyV2(newKey)
         removeKeyV1IfNeeded()
         return newKey
     }
