@@ -53,22 +53,36 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         self.syncStateSubject = syncStateSubject
     }
 
-    public func perform() async throws -> Token {
+    public func perform() async throws {
+        // Parent task was cancelled, immediately abort incremental sync operations.
+        try Task.checkCancellation()
+        
         logger.debug("performing incremental sync")
         syncStateSubject.send(.incrementalSyncing(.createPushChannel))
         let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID)
 
         logger.debug("opening push channel")
         syncStateSubject.send(.incrementalSyncing(.openPushChannel))
+
+        let processedEnvelopeIDs: Set<UUID>
+        do {
+            logger.debug("pulling pending update events")
+            syncStateSubject.send(.incrementalSyncing(.pullPendingEvents))
+            try await updateEventsSync.pull()
+
+            logger.debug("processing stored update events")
+            syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
+            processedEnvelopeIDs = try await processStoredEvents()
+        } catch {
+            logger.debug("incremental sync interrupted, tearing down...")
+            await pushChannel.close()
+            throw error
+        }
+        
+        // Processing stored events can take some time to complete so we ensure parent task has not been cancelled in the meantime to avoid creating the push channel.
+        try Task.checkCancellation()
+        
         let liveEventStream = try await pushChannel.open()
-
-        logger.debug("pulling pending update events")
-        syncStateSubject.send(.incrementalSyncing(.pullPendingEvents))
-        try await updateEventsSync.pull()
-
-        logger.debug("processing stored update events")
-        syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
-        let processedEnvelopeIDs = try await processStoredEvents()
 
         let task = Task { @Sendable [logger, decryptor, store, processor, databaseSaver, syncStateSubject] in
             logger.debug("handling live event stream")
@@ -76,6 +90,15 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 
             do {
                 for try await var envelope in liveEventStream {
+                    
+                    // If the parent task has been cancelled and push channel is already opened, we close it and abort processing live events.
+                    do {
+                        try Task.checkCancellation()
+                    } catch {
+                        logger.debug("incremental sync interrupted, tearing down...")
+                        await pushChannel.close()
+                    }
+                    
                     logger.debug("received live event envelope")
 
                     if processedEnvelopeIDs.contains(envelope.id) {
@@ -175,10 +198,6 @@ public struct IncrementalSync: IncrementalSyncProtocol {
             logger.debug("live event stream did finish")
             syncStateSubject.send(.idle)
         }
-
-        return Token(task: task, closePushChannel: {
-            await pushChannel.close()
-        })
     }
 
     private func processStoredEvents() async throws -> Set<UUID> {
@@ -238,6 +257,10 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 
         let task: Task<Void, Never>
         let closePushChannel: () async -> Void
+
+        public var isCancelled: Bool {
+            task.isCancelled
+        }
 
         public init(
             task: Task<Void, Never>,

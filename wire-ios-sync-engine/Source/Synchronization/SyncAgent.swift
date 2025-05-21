@@ -59,7 +59,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     private let coreCryptoProvider: any CoreCryptoProviderProtocol
 
     private let incrementalSyncTaskManager = NonReentrantTaskManager()
-    private var incrementalSyncToken: IncrementalSync.Token?
+    private var ongoingSyncTask: Task<Void, Error>?
 
     private var hasCompletedInitialSync: Bool {
         lastUpdateEventIDRepository.fetchLastEventID() != nil
@@ -104,9 +104,9 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     /// This method logs any errors and does not wait for the sync to finish.
 
     func resume() {
-        Task {
+        ongoingSyncTask = Task {
             let retrier = BackoffRetrier()
-
+            
             do {
                 try await retrier.retry { [self] in
                     try await performSync()
@@ -129,9 +129,17 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     }
 
     private func suspend() async {
-        WireLogger.sync.debug("suspending sync")
-        await incrementalSyncToken?.suspend()
-        incrementalSyncToken = nil
+        WireLogger.sync.debug(
+            "suspending sync"
+        )
+        
+        // When cancelling the ongoing sync task, cancellation will be propagated to child tasks ensuring that we:
+        // 1. Immediately abort incremental sync operations
+        // 2. Don't open the push channel
+        // 3. Close the push channel if it was already opened
+
+        ongoingSyncTask?.cancel()
+        ongoingSyncTask = nil
     }
 
     /// Performs the appropriate sync depending in the local state.
@@ -196,16 +204,11 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
     func performIncrementalSync() async throws {
         if isSyncV2Enabled {
-            guard incrementalSyncToken == nil else {
-                WireLogger.sync.info("incremental sync already running...")
-                return
-            }
-
             do {
                 try await incrementalSyncTaskManager.performIfNeeded { [weak self] in
                     guard let self else { return }
                     delegate?.syncAgentDidStartIncrementalSync(self)
-                    incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync().perform()
+                    try await incrementalSyncProvider.provideIncrementalSync().perform()
                     delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: false)
                 }
             } catch {
@@ -234,7 +237,7 @@ extension SyncAgent: MLSSyncDelegate {
                 try await incrementalSyncTaskManager.performIfNeeded { [weak self] in
                     guard let self else { return }
                     delegate?.syncAgentDidStartIncrementalSync(self)
-                    incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync().perform()
+                    try await incrementalSyncProvider.provideIncrementalSync().perform()
                     delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: true)
                 }
             } catch {
