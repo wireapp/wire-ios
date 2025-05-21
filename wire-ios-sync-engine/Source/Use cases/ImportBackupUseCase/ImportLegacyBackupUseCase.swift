@@ -24,12 +24,15 @@ import WireFoundation
 import WireLogging
 import WireSystem
 
-struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
+struct ImportLegacyBackupUseCase: ImportBackupUseCaseProtocol {
+
+    // using WireFoundation.QualifiedID leads to linking errors
+    private typealias QualifiedID = WireDataModel.QualifiedID
 
     let userSession: @Sendable () -> UserSession?
     let dispatchGroup: ZMSDispatchGroup
-    let streamDecryptor: ImportBackupStreamDecryptorProtocol
-    let fileArchiver: ImportBackupFileArchiverProtocol
+    let streamDecryptor: ImportLegacyBackupStreamDecryptorProtocol
+    let fileUnarchiver: FileUnarchiverProtocol
     let entityStorage: ImportBackupEntityStorageProtocol
     let appStateUpdater: ImportBackupAppStateUpdaterProtocol
 
@@ -37,34 +40,17 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
     let logger: WireLogger
 
     func invoke(url: URL, password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error> {
-
-        switch BackupFileExtensions(rawValue: url.pathExtension.lowercased()) {
-
-        case .fileExtensionWithUnderscore, .fileExtensionWithHyphen:
-            importIOSBackup(url, password)
-
-        case nil:
-            AsyncThrowingStream { continuation in
-                continuation.finish(throwing: ImportBackupError.invalidFileExtension)
-            }
-        }
-    }
-
-    private func importIOSBackup(
-        _ url: URL,
-        _ password: String
-    ) -> AsyncThrowingStream<ImportBackupProgress, any Error> {
         AsyncThrowingStream { continuation in
             let task = Task<Void, Never> { @MainActor in
                 do {
 
                     // to start with we need an active user session, later the session will be torn down
                     guard let account = userSession()?.contextProvider.account else {
-                        throw ImportBackupError.noActiveAccountForImport
+                        throw ImportLegacyBackupError.noActiveAccountForImport
                     }
 
                     // before we start the first operation let the user know, the progress has started
-                    continuation.yield(.progress(0.25))
+                    continuation.yield(.progress(current: 1, total: 4))
 
                     let unzippedURL = try decryptAndUnzipBackup(
                         url: url,
@@ -72,7 +58,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                         accountID: account.userIdentifier
                     )
 
-                    continuation.yield(.progress(0.5))
+                    continuation.yield(.progress(current: 2, total: 4))
 
                     logger.debug("creating backup of user client")
 
@@ -87,7 +73,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                         selfUserQualifiedID = qualifiedID
                         selfClientBackup = backup
                     } else {
-                        throw ImportBackupError.faildToBackUpUserClient
+                        throw ImportLegacyBackupError.failedToBackUpUserClient
                     }
 
                     logger.debug("reporting migration required")
@@ -163,7 +149,7 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
         guard
             let inputStream = InputStream(url: url),
             let outputStream = OutputStream(url: decryptedURL, append: false)
-        else { throw ImportBackupError.failedToCreateStreamForDecryption }
+        else { throw ImportLegacyBackupError.failedToCreateStreamForDecryption }
 
         do {
             try streamDecryptor.decrypt(
@@ -173,10 +159,10 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
                 password: password
             )
         } catch WireCrypto.ChaCha20Poly1305.StreamEncryption.EncryptionError.mismatchingUUID {
-            throw ImportBackupError.invalidAccountID
+            throw ImportLegacyBackupError.invalidAccountID
         }
 
-        try fileArchiver.unzipFile(at: decryptedURL, to: unzippedURL)
+        try fileUnarchiver.unzipFile(at: decryptedURL, to: unzippedURL)
         return unzippedURL
     }
 
@@ -190,15 +176,6 @@ struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
         return entityStorage.importsDirectory.appendingPathComponent(filename)
     }
 
-}
-
-// MARK: -
-
-/// There are some external apps that users can use to transfer backup files, which can modify their attachments and
-/// change the underscore with a dash. For this reason, we accept 2 types of file extensions to restore conversations.
-private enum BackupFileExtensions: String, CaseIterable {
-    case fileExtensionWithUnderscore = "ios_wbu"
-    case fileExtensionWithHyphen = "ios-wbu"
 }
 
 // MARK: -
