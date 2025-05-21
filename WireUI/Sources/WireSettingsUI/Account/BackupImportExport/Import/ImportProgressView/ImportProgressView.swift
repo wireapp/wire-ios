@@ -21,7 +21,7 @@ import WireDesign
 
 struct ImportProgressView: View {
 
-    var progressValue = Float()
+    var progressValues = (current: 0, total: 0)
     var cancelAction: () -> Void
 
     private typealias Strings = L10n.Localizable.ImportBackup
@@ -46,6 +46,12 @@ struct ImportProgressView: View {
     }
 
     @ViewBuilder private var progressView: some View {
+        let progressValue = if progressValues.current == 0 || progressValues.total == 0 {
+            Float()
+        } else {
+            Float(progressValues.current) / Float(progressValues.total)
+        }
+
         VStack {
             Spacer()
             HStack {
@@ -55,7 +61,7 @@ struct ImportProgressView: View {
             .padding(.bottom)
             HStack {
                 Spacer()
-                Text("\(Int(progressValue * 100))%")
+                Text(progressValue.formatted(.percent))
                     .font(.caption2)
                 Spacer()
             }
