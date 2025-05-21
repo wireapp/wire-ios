@@ -82,6 +82,7 @@ public struct ImportBackupUseCase<
                     let pagers = try await importer.importBackup(from: url, using: password)
                     let total = Int(exactly: pagers.totalPagesCount) ?? 0
 
+                    // users
                     let storedUserIDs = try await backupLocalStore.fetchAllUserIDs()
                     let usersPager = pagers.usersPager
                     while usersPager.hasMorePages() {
@@ -100,10 +101,12 @@ public struct ImportBackupUseCase<
                         }
                     }
 
+                    // conversations
                     // Ignoring conversations in the backup file for now.
                     // Any conversation that has been left or deleted will not be restored from the backup in the first
                     // version. All other conversations where the self-user is participant will already be available.
 
+                    // messages
                     let storedMessageIDs = try await backupLocalStore.fetchAllMessageIDs()
                     let messagesPager = pagers.messagesPager
                     while messagesPager.hasMorePages() {
