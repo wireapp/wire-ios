@@ -83,7 +83,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
                 asset: .video(url: videoURL),
                 onConfirm: { [unowned self] _ in
                     dismiss(animated: true)
-                    uploadFile(at: videoURL)
+                    uploadFiles(at: [videoURL])
                 },
                 onCancel: { [unowned self] in
                     dismiss(animated: true) {
@@ -164,17 +164,29 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
 
         let context = ConfirmAssetViewController.Context(
             asset: .image(mediaAsset: mediaAsset),
-            onConfirm: { [weak self] (editedImage: UIImage?) in
+            onConfirm: { [weak self, wireCellsUploadFileUseCase] (editedImage: UIImage?) in
                 guard let self else { return }
                 dismiss(animated: true) {
                     self.writeToSavedPhotoAlbumIfNecessary(
                         imageData: imageData,
                         isFromCamera: isFromCamera
                     )
-                    self.sendController.sendMessage(
-                        withImageData: editedImage?.pngData() ?? imageData,
-                        userSession: self.userSession
-                    )
+                    let dataToSend = editedImage?.pngData() ?? imageData
+                    if DeveloperFlag.wireCells.isOn {
+                        Task.detached {
+                            // We don't care about the result of the operation here as we will be observing changes.
+                            do {
+                                try await wireCellsUploadFileUseCase.invoke(imageData: dataToSend)
+                            } catch {
+                                WireLogger.conversation.error("Failed to upload file: \(error)")
+                            }
+                        }
+                    } else {
+                        self.sendController.sendMessage(
+                            withImageData: dataToSend,
+                            userSession: self.userSession
+                        )
+                    }
                 }
             },
             onCancel: { [weak self] in
@@ -228,7 +240,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
         let filename: String = ((lastPathComponent as NSString).deletingPathExtension as NSString)
             .appendingPathExtension("mp4") ?? "video.mp4"
 
-        let videoURLAsset = AVURLAsset(url: NSURL(fileURLWithPath: inputPath) as URL)
+        let videoURLAsset = AVURLAsset(url: URL(fileURLWithPath: inputPath))
 
         videoURLAsset
             .convert(
@@ -263,7 +275,7 @@ extension ConversationInputBarViewController: UIVideoEditorControllerDelegate {
                 return
             }
 
-            self.uploadFile(at: NSURL(fileURLWithPath: path) as URL)
+            self.uploadFiles(at: [URL(fileURLWithPath: path)])
         }
     }
 
