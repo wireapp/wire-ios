@@ -38,7 +38,7 @@ final class ImportProgressViewSnapshotTests: XCTestCase {
 
     func testColorSchemeVariants() async throws {
         let screenBounds = UIScreen.main.bounds
-        let sut = ImportProgressView(progressValue: 0.25) {}
+        let sut = ImportProgressView(progressValues: (current: 1, total: 4)) {}
             .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
@@ -48,7 +48,7 @@ final class ImportProgressViewSnapshotTests: XCTestCase {
 
     func testDynamicTypeVariants() {
         let screenBounds = UIScreen.main.bounds
-        let sut = ImportProgressView(progressValue: 0.25) {}
+        let sut = ImportProgressView(progressValues: (current: 1, total: 4)) {}
             .frame(width: screenBounds.width, height: screenBounds.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {

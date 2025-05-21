@@ -22,7 +22,7 @@ import SwiftUI
 func ImportProgressPreview() -> some View {
     Color(uiColor: .systemBackground)
         .sheet(isPresented: .constant(true)) {
-            ImportProgressView(progressValue: 0.25) {}
+            ImportProgressView(progressValues: (1, 4)) {}
                 .interactiveDismissDisabled()
                 .presentationDetents([.medium])
         }
