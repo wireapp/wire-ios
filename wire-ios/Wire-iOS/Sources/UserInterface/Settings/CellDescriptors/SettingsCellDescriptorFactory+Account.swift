@@ -418,15 +418,7 @@ extension SettingsCellDescriptorFactory {
                 selfUserID: .init(selfUser.qualifiedID!),
                 backupLocalStore: backupLocalStore,
                 fileUnarchiver: ZipArchiveFileUnarchiver(),
-                syncTrigger: {
-                    // TODO: what is the correct sync trigger after backup?
-                    // userSession.syncAgent.resume()
-                    userSession.syncStatus.forceSlowSync()
-                    // context.performGroupedBlock {
-                    //     context.saveOrRollback()
-                    //     userSession.triggerInitialSync()
-                    // }
-                },
+                syncTrigger: { userSession.triggerResourcesSync() },
                 logger: WireLogger.backupImport
             ),
             legacyImportBackupUseCase: sessionManager.importLegacyBackupUseCase!
