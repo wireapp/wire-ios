@@ -19,6 +19,7 @@
 import Foundation
 import WireAPI
 import WireLogging
+import WireDataModel
 
 public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
 
@@ -53,6 +54,7 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
         var currentIndex = try await store.indexOfLastEventEnvelope() + 1
 
         var events: [UpdateEvent] = []
+        var brokenMLSGroupIDs = Set<MLSGroupID>()
 
         // Events are fetched in batches.
         for try await envelopes in api.getUpdateEvents(
