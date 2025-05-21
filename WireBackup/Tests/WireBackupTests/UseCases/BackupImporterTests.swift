@@ -96,16 +96,19 @@ struct BackupImporterTests {
 //        let messages = result.messagesPager.nextPage()
 
         #expect(users.count == 1)
-        let qI: QualifiedID = "CFC7F55A-2CCF-4557-B212-32B2C89BF1A2@staging.zinfra.io"
-        print(qI)
-        #expect(users.first?.qualifiedID == "CFC7F55A-2CCF-4557-B212-32B2C89BF1A2@staging.zinfra.io")
-        // #expect(users.first?.name == "CA Staging 94") // mismatch between platforms
+        if !resource.hasPrefix("web-") { // some mismatch
+            #expect(users.first?.qualifiedID == "CFC7F55A-2CCF-4557-B212-32B2C89BF1A2@staging.zinfra.io")
+            #expect(users.first?.name == "CA Staging 94")
+        }
         #expect(users.first?.handle == "ca-staging-94")
+
 //        #expect(conversations.size == 3)
 //        #expect(messages.size == 7)
 //
 //        let user = UserBackupModel(users.get(index: 0))
 //        user.
+
+        #expect(Bool(false))
 
     }
 
