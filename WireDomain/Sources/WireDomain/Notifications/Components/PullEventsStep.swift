@@ -93,12 +93,24 @@ extension PullEventsStep {
         )
     }
 
+    private var sharedUserDefaults: UserDefaults {
+        UserDefaults(suiteName: dependency.applicationIdentifier)!
+    }
+
+    private var journal: Journal {
+        Journal(
+            userID: selfUserID,
+            storage: sharedUserDefaults
+        )
+    }
+
     var updateEventDecryptor: any UpdateEventDecryptorProtocol {
         UpdateEventDecryptor(
             proteusMessageDecryptor: proteusMessageDecryptor,
             mlsMessageDecryptor: mlsMessageDecryptor,
             mlsService: nil,
-            messageLocalStore: dependency.messageLocalStore
+            messageLocalStore: dependency.messageLocalStore,
+            journal: journal
         )
     }
 

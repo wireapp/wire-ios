@@ -64,7 +64,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 
         logger.debug("pulling pending update events")
         syncStateSubject.send(.incrementalSyncing(.pullPendingEvents))
-        try await updateEventsSync.pull() // Step 1
+        try await updateEventsSync.pull()
 
         logger.debug("processing stored update events")
         syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
@@ -93,6 +93,8 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                             attributes: [.eventEnvelopeID: envelope.id]
                         )
                         envelope.events = try await decryptor.decryptEvents(in: envelope)
+                        // throw
+                        // last event ID
                     } catch {
                         logger.error(
                             "failed to decrypt live event envelope: \(String(describing: error))",

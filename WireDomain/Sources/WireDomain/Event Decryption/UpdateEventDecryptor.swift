@@ -38,7 +38,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         messageLocalStore: any MessageLocalStoreProtocol,
         userLocalStore: any UserLocalStoreProtocol,
         conversationLocalStore: any ConversationLocalStoreProtocol,
-        journal: JournalProtocol
+        journal: Journal
     ) {
         self.proteusMessageDecryptor = ProteusMessageDecryptor(
             proteusService: proteusService,
@@ -63,7 +63,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         mlsMessageDecryptor: any MLSMessageDecryptorProtocol,
         mlsService: (any MLSServiceInterface)?,
         messageLocalStore: any MessageLocalStoreProtocol,
-        journal: JournalProtocol
+        journal: Journal
     ) {
         self.proteusMessageDecryptor = proteusMessageDecryptor
         self.mlsMessageDecryptor = mlsMessageDecryptor
@@ -80,7 +80,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         ]
 
         var decryptedEvents = [UpdateEvent]()
-        var brokenMLSGroupIDs = Set<MLSGroupID>()
+        var brokenMLSGroupIDs = Set<String>()
         var shouldCommitPendingProposals = false
 
         for event in eventEnvelope.events {
@@ -131,7 +131,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                             "failed to decrypt MLS due to `WrongEpoch` for group \(mlsGroupID)",
                             attributes: logAttributes
                         )
-                        brokenMLSGroupIDs.insert(mlsGroupID)
+                        brokenMLSGroupIDs.insert(mlsGroupID.description)
                     default:
                         WireLogger.updateEvent.error(
                             "failed to decrypt MLS add message event, dropping: \(String(describing: error))",

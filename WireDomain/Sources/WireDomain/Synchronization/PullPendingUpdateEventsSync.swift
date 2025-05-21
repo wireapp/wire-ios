@@ -54,7 +54,7 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
         var currentIndex = try await store.indexOfLastEventEnvelope() + 1
 
         var events: [UpdateEvent] = []
-        var brokenMLSGroupIDs = Set<MLSGroupID>()
+       // var brokenMLSGroupIDs = Set<String>()
 
         // Events are fetched in batches.
         for try await envelopes in api.getUpdateEvents(

@@ -413,6 +413,14 @@ public final class ClientSessionComponent {
         userLocalStore: userLocalStore
     )
 
+    private var journal: Journal {
+        Journal(
+            userID: selfUserID,
+            storage: sharedUserDefaults
+        )
+    }
+
+
     // MARK: - Update events
 
     private lazy var updateEventDecryptor = UpdateEventDecryptor(
@@ -422,7 +430,8 @@ public final class ClientSessionComponent {
         userClientsLocalStore: userClientsLocalStore,
         messageLocalStore: messageLocalStore,
         userLocalStore: userLocalStore,
-        conversationLocalStore: conversationLocalStore
+        conversationLocalStore: conversationLocalStore,
+        journal: journal
     )
 
     private lazy var conversationAccessUpdateEventProcessor = ConversationAccessUpdateEventProcessor(

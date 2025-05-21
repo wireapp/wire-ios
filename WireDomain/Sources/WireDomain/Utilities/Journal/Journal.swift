@@ -66,18 +66,18 @@ public class Journal: JournalProtocol {
 
     /// Get or set a list of string values.
 
-    subscript(_ key: JournalKey<Set<String>>) -> Set<String> {
-            get {
-                if let array = storage.object(forKey: rawKey(for: key)) as? [String] {
-                    return Set(array)
-                } else {
-                    return key.defaultValue
-                }
-            }
-            set {
-                storage.set(Array(newValue), forKey: rawKey(for: key))
+    public subscript(_ key: JournalKey<Set<String>>) -> Set<String> {
+        get {
+            if let array = storage.object(forKey: rawKey(for: key)) as? [String] {
+                return Set(array)
+            } else {
+                return key.defaultValue
             }
         }
+        set {
+            storage.set(Array(newValue), forKey: rawKey(for: key))
+        }
+    }
 
     /// Delete all values in the journal.
 
@@ -98,7 +98,7 @@ public class Journal: JournalProtocol {
     ///   - value: The string to remove.
     ///   - key: The journal key associated with the Set<String>.
 
-    func removeValue(_ value: String, for key: JournalKey<Set<String>>) {
+    public func removeValue(_ value: String, for key: JournalKey<Set<String>>) {
         var currentSet = self[key]
         currentSet.remove(value)
         self[key] = currentSet
@@ -110,7 +110,7 @@ public class Journal: JournalProtocol {
     ///   - value: The string to insert.
     ///   - key: The journal key associated with the Set<String>.
 
-    func addValue(_ value: String, for key: JournalKey<Set<String>>) {
+    public func addValue(_ value: String, for key: JournalKey<Set<String>>) {
         var currentSet = self[key]
         currentSet.insert(value)
         self[key] = currentSet

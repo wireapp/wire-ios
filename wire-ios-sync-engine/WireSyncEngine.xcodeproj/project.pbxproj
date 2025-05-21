@@ -18,6 +18,8 @@
 		0601900B2678750D0043F8F8 /* DeepLinkURLActionProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161ACB3E23F6E4C200ABFF33 /* DeepLinkURLActionProcessorTests.swift */; };
 		060C06682B7619E300B484C6 /* SelfClientCertificateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 060C06672B7619E300B484C6 /* SelfClientCertificateProvider.swift */; };
 		061F791C2B767B3D00E8827B /* SelfClientCertificateProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 061F791A2B767AE100E8827B /* SelfClientCertificateProviderTests.swift */; };
+		061FBE9C2DDE1D8A00751943 /* MLSGroupRepairObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 061FBE9B2DDE1D8A00751943 /* MLSGroupRepairObserver.swift */; };
+		061FBE9E2DDE1E1A00751943 /* RepairAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 061FBE9D2DDE1E1A00751943 /* RepairAgent.swift */; };
 		06239126274DB73A0065A72D /* StartLoginURLActionProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06239125274DB73A0065A72D /* StartLoginURLActionProcessor.swift */; };
 		063AF985264B2DF800DCBCED /* CallClosedReason.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0625690E264AE6560041C17B /* CallClosedReason.swift */; };
 		0640C26D26EA0B5C0057AF80 /* NSManagedObjectContext+Packaging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0640C26C26EA0B5C0057AF80 /* NSManagedObjectContext+Packaging.swift */; };
@@ -604,6 +606,8 @@
 		01D33D8029B8ED97009E94F3 /* SyncStatusLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncStatusLog.swift; sourceTree = "<group>"; };
 		060C06672B7619E300B484C6 /* SelfClientCertificateProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfClientCertificateProvider.swift; sourceTree = "<group>"; };
 		061F791A2B767AE100E8827B /* SelfClientCertificateProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfClientCertificateProviderTests.swift; sourceTree = "<group>"; };
+		061FBE9B2DDE1D8A00751943 /* MLSGroupRepairObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSGroupRepairObserver.swift; sourceTree = "<group>"; };
+		061FBE9D2DDE1E1A00751943 /* RepairAgent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepairAgent.swift; sourceTree = "<group>"; };
 		06239125274DB73A0065A72D /* StartLoginURLActionProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartLoginURLActionProcessor.swift; sourceTree = "<group>"; };
 		0625690E264AE6560041C17B /* CallClosedReason.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CallClosedReason.swift; sourceTree = "<group>"; };
 		063AFA3E264B30C400DCBCED /* BuildType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuildType.swift; sourceTree = "<group>"; };
@@ -2107,6 +2111,7 @@
 			isa = PBXGroup;
 			children = (
 				EE5437CC2D55F90900CA96BA /* SyncAgent.swift */,
+				061FBE9D2DDE1E1A00751943 /* RepairAgent.swift */,
 				EE5437CD2D55F90900CA96BA /* SyncAgentDelegate.swift */,
 				59E6A9122B4EE58600DBCC6B /* RecurringActionService */,
 				54F8D6D619AB525400146664 /* Transcoders */,
@@ -2138,6 +2143,7 @@
 				5EDF03EB2245563C00C04007 /* LinkPreviewAssetUploadRequestStrategy+Helper.swift */,
 				06DE14CE24B85BD0006CB6B3 /* ZMClientRegistrationStatusDelegate.h */,
 				3416A3172DC0D53600827BCB /* IncrementalSyncObserver.swift */,
+				061FBE9B2DDE1D8A00751943 /* MLSGroupRepairObserver.swift */,
 			);
 			path = Synchronization;
 			sourceTree = "<group>";
@@ -3005,6 +3011,7 @@
 				16ED865D23E30F7E00CB1766 /* ZMUserSesson+Proxy.swift in Sources */,
 				A938BDC823A7964200D4C208 /* ConversationRoleDownstreamRequestStrategy.swift in Sources */,
 				EE88B0512BF62B3F0013F0BD /* SupportedProtocolsService.swift in Sources */,
+				061FBE9C2DDE1D8A00751943 /* MLSGroupRepairObserver.swift in Sources */,
 				F19E55A622B3AAA8005C792D /* PKPushCredentials+SafeLogging.swift in Sources */,
 				59E6A9162B4EE5D500DBCC6B /* RecurringActionServiceInterface.swift in Sources */,
 				09C77C531BA6C77000E2163F /* UserClientRequestStrategy.swift in Sources */,
@@ -3160,6 +3167,7 @@
 				8754B84A1F73C25400EC02AD /* ConversationListChangeInfo+UserSession.swift in Sources */,
 				8737D554209217BD00E5A4AF /* URLActions.swift in Sources */,
 				E662328F2BF4BDB0002B680A /* ZMUserSession+CertificateRevocationLists.swift in Sources */,
+				061FBE9E2DDE1E1A00751943 /* RepairAgent.swift in Sources */,
 				547E5B581DDB4B800038D936 /* UserProfileUpdateStatus.swift in Sources */,
 				EEEA75FC1F8A6142006D1070 /* ZMLocalNotification+Calling.swift in Sources */,
 				EE2DE5EC29263C5100F42F4C /* Logger.swift in Sources */,
