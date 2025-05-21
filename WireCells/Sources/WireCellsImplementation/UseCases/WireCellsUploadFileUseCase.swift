@@ -17,41 +17,21 @@
 //
 
 import Foundation
+import WireCellsAPI
+import WireLogging
 
-/// Represents the identifer for an MLS group.
+package final class WireCellsUploadFileUseCase: WireCellsUploadFileUseCaseProtocol {
 
-public struct MLSGroupID: Equatable, Hashable, Sendable {
+    package init() {}
 
-    // MARK: - Properties
-
-    public let data: Data
-
-    // MARK: - Life cycle
-
-    public init?(base64Encoded string: String) {
-        guard !string.isEmpty, let data = Data(base64Encoded: string) else { return nil }
-        self.init(data)
+    func invoke(fileURL: URL) async throws {
+        // TODO: [WPB-17619] Implement
+        WireLogger.wireCells.info("Uploading file from URL")
     }
 
-    public init(_ data: Data) {
-        self.data = data
+    func invoke(imageData: Data) async throws {
+        // TODO: [WPB-17619] Implement
+        WireLogger.wireCells.info("Uploading file from image data")
     }
-}
 
-// MARK: -
-
-extension MLSGroupID: CustomStringConvertible {
-
-    public var description: String {
-        data.base64EncodedString()
-    }
-}
-
-// MARK: -
-
-extension MLSGroupID: SafeForLoggingStringConvertible {
-
-    public var safeForLoggingDescription: String {
-        description.redactedAndTruncated()
-    }
 }

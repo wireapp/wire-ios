@@ -63,4 +63,5 @@ public extension WireLogger {
     static let analytics = WireLogger(tag: "analytics")
     static let supportedProtocols = WireLogger(tag: "supported-protocols")
     static let search = WireLogger(tag: "search")
+    static let wireCells = WireLogger(tag: "wire-cells")
 }
