@@ -35,10 +35,11 @@ public class CoreCryptoKeyProvider {
             return try fetchCoreCryptoKeyV2()
         } catch {
             if createIfNeeded {
+                let newKey = try createCoreCryptoKeyV2()
                 guard let oldKey = try? fetchCoreCryptoKey() else {
-                    return try createCoreCryptoKeyV2()
+                    return newKey
                 }
-                return try await migrateDatabaseKey(path: path, oldKey: oldKey)
+                return try await migrateDatabaseKey(path: path, oldKey: oldKey, newKey: newKey)
             } else {
                 throw error
             }
