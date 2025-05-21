@@ -697,3 +697,16 @@ extension ConversationMessageCellDescription {
         AnyConversationMessageCellDescription(self)
     }
 }
+
+extension ZMConversationMessage {
+    var supportsNewApproach: Bool {
+        NSClassFromString("XCTest") == nil &&
+        isText &&
+        !hasLinks &&
+        textMessageData?.quoteMessage == nil &&
+        !hasReactions() &&
+        textMessageData?.mentions.isEmpty ?? true
+        // TODO
+        // no search querie
+    }
+}
