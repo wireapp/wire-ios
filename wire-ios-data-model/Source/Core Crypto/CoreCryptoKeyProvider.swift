@@ -63,9 +63,8 @@ public class CoreCryptoKeyProvider {
         return key
     }
 
-    private func migrateDatabaseKey(path: String, oldKey: Data) async throws -> Data {
+    private func migrateDatabaseKey(path: String, oldKey: Data, newKey: Data) async throws -> Data {
         WireLogger.coreCrypto.info("Migrating CoreCrypto key from v1 to v2")
-        let newKey = try createCoreCryptoKeyV2()
 
         try await migrateDatabaseKeyTypeToBytes(
             path: path,
@@ -73,6 +72,7 @@ public class CoreCryptoKeyProvider {
             newKey: newKey
         )
 
+        removeKeyV1IfNeeded()
         return newKey
     }
 
@@ -107,6 +107,22 @@ public class CoreCryptoKeyProvider {
             // key was not found. no action needed
         }
     }
+
+    private func removeKeyV1IfNeeded() {
+        let item = CoreCryptoKeychainItem()
+
+        do {
+            _ = try KeychainManager.fetchItem(item) as Data
+            WireLogger.coreCrypto.info("Found core crypto key_v1. Deleting...")
+            try KeychainManager.deleteItem(item)
+            WireLogger.coreCrypto.info("Deleted legacy core crypto key")
+        } catch let KeychainManager.Error.failedToDeleteItemFromKeychain(error) {
+            WireLogger.coreCrypto.error("Failed to delete core crypto key_v1: \(String(describing: error))")
+        } catch {
+            // key was not found. no action needed
+        }
+    }
+
 }
 
 struct CoreCryptoKeychainItem: KeychainItemProtocol {
