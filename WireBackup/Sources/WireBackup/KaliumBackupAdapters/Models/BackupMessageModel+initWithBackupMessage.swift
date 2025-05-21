@@ -27,7 +27,7 @@ package extension MessageBackupModel {
         guard
             let conversationID = QualifiedID(backupMessage.conversationId),
             let senderUserID = QualifiedID(backupMessage.senderUserId),
-            let content = WireBackup.MessageContent(backupMessage.content)
+            let content = WireBackup.MessageBackupModel.Content(backupMessage.content)
         else { return nil }
 
         self.init(
