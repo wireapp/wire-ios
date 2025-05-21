@@ -51,10 +51,10 @@ struct CreatingBackupProgressView: View {
 
         switch progress {
 
-        case let .ongoing(progress):
+        case let .ongoing(current, total):
             BackupProgressViewControllerRepresentable(
                 progressDescription: .init(localized: "exportBackup.creatingBackup.saving", bundle: .module),
-                progressValue: progress,
+                progressValues: (current, total),
                 backupURL: nil,
                 completedAction: completedAction
             )
@@ -62,7 +62,7 @@ struct CreatingBackupProgressView: View {
         case let .finished(url):
             BackupProgressViewControllerRepresentable(
                 progressDescription: .init(localized: "exportBackup.creatingBackup.success", bundle: .module),
-                progressValue: 1,
+                progressValues: (1, 1),
                 backupURL: url,
                 completedAction: completedAction
             )
@@ -72,7 +72,7 @@ struct CreatingBackupProgressView: View {
 }
 
 #Preview("in progress") {
-    CreatingBackupProgressPreview(.ongoing(0.25))
+    CreatingBackupProgressPreview(.ongoing(current: 1, total: 4))
         .tint(Color.purple)
 }
 
