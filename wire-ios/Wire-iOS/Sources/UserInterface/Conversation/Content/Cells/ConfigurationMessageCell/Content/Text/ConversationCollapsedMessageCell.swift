@@ -91,6 +91,7 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         view.textContainerInset = UIEdgeInsets.zero
         view.textContainer.lineFragmentPadding = 0
         view.isUserInteractionEnabled = false
+        view.dataDetectorTypes = []
         view.accessibilityIdentifier = "Message"
         view.accessibilityElementsHidden = false
         view.setContentHuggingPriority(.required, for: .vertical)
@@ -140,6 +141,10 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
     }
 
     func configure(with object: Configuration, animated: Bool) {
+        messageTextView.text = nil
+        messageTextView.attributedText = nil
+        messageTextView.textColor = SemanticColors.Label.textDefault
+
         let user = object.message.senderUser
         avatar.user = user
         availabilityIndicatorView.availability = user?.availability.mapToAccountImageAvailability()
@@ -149,7 +154,6 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         }
 
         let message = object.message
-        messageTextView.textColor = SemanticColors.Label.textDefault
         if message.isText, !message.hasLinks {
             typeIcon.isHidden = true
             if let textMessageData = message.textMessageData {
@@ -161,28 +165,29 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
                     )
             }
         } else {
-            messageTextView.font = UIFont.normalLightFont.italic
-            messageTextView.textColor = SemanticColors.Label.textDefault
+            var text = ""
             typeIcon.isHidden = false
             if message.isImage {
                 typeIcon.image = .init(resource: .image)
-                messageTextView.text = L10n.Localizable.Content.Collapsed.Image.title
+                text = L10n.Localizable.Content.Collapsed.Image.title
             } else if message.isVideo {
                 typeIcon.image = .init(resource: .play)
-                messageTextView.text = L10n.Localizable.Content.Collapsed.Video.title
+                text = L10n.Localizable.Content.Collapsed.Video.title
             } else if message.isAudio {
                 typeIcon.image = .init(resource: .micOn)
-                messageTextView.text = L10n.Localizable.Content.Collapsed.Audio.title
+                text = L10n.Localizable.Content.Collapsed.Audio.title
             } else if message.isLocation {
                 typeIcon.image = .init(resource: .location)
-                messageTextView.text = L10n.Localizable.Content.Collapsed.Location.title
+                text = L10n.Localizable.Content.Collapsed.Location.title
             } else if message.isFile {
                 typeIcon.image = .init(resource: .file)
-                messageTextView.text = L10n.Localizable.Content.Collapsed.File.title
+                text = L10n.Localizable.Content.Collapsed.File.title
             } else if message.hasLinks {
                 typeIcon.image = .init(resource: .link)
-                messageTextView.text = L10n.Localizable.Content.Collapsed.Link.title
+                text = L10n.Localizable.Content.Collapsed.Link.title
             }
+            messageTextView.attributedText = text.attributedString &&
+                UIFont.normalLightFont.italic && SemanticColors.Label.textDefault
         }
 
         wholeViewTapButton.removeTarget(nil, action: nil, for: .allEvents)
