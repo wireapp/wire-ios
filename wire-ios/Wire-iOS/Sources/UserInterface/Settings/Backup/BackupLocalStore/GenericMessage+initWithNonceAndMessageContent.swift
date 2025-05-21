@@ -30,92 +30,142 @@ extension GenericMessage {
         switch messageContent {
 
         case let .text(textContent):
-            let textMessage = Text(content: textContent.text)
-            self = GenericMessage(content: textMessage, nonce: nonce)
+            self = GenericMessage(content: Text(textContent), nonce: nonce)
 
         case let .location(locationContent):
-            let locationContent = Location.with { location in
-                if let name = locationContent.name {
-                    location.name = name
-                }
-                location.latitude = locationContent.latitude
-                location.longitude = locationContent.longitude
-                location.zoom = locationContent.zoom ?? 0
-            }
-            self = GenericMessage(content: locationContent, nonce: nonce)
+            self = GenericMessage(content: Location(locationContent), nonce: nonce)
 
         case let .asset(assetContent):
+            self = GenericMessage(content: Asset(assetContent), nonce: nonce)
+
+        }
+    }
+
+}
+
+// MARK: -
+
+extension Text {
+
+    fileprivate init(_ textContent: MessageBackupModel.Content.TextContent) {
+        self.init(content: textContent.text)
+    }
+
+}
+
+extension Location {
+
+    fileprivate init(_ locationContent: MessageBackupModel.Content.LocationContent) {
+        self = .with { location in
+            if let name = locationContent.name {
+                location.name = name
+            }
+            location.latitude = locationContent.latitude
+            location.longitude = locationContent.longitude
+            location.zoom = locationContent.zoom ?? 0
+        }
+    }
+
+}
+
+extension Asset {
+
+    fileprivate init(_ assetContent: MessageBackupModel.Content.AssetContent) {
+        self = .with { asset in
+            asset.original.mimeType = assetContent.mimeType
+            asset.original.size = assetContent.size
+            if let name = assetContent.name, !name.isEmpty {
+                asset.original.name = name
+            }
+            asset.uploaded = Asset.RemoteData(
+                otrKey: assetContent.otrKey,
+                sha256: assetContent.sha256
+            )
+            asset.uploaded.assetID = assetContent.assetID
+            if let assetToken = assetContent.assetToken, !assetToken.isEmpty {
+                asset.uploaded.assetToken = assetToken
+            }
+            if let assetDomain = assetContent.assetDomain, !assetDomain.isEmpty {
+                asset.uploaded.assetDomain = assetDomain
+            }
+
+        todo: encrypteon, metadata
+
+//            self = .asset(
+
+//                encryption: uploaded.hasEncryption ? .init(uploaded.encryption) : nil,
+//                metadata: original.metaData.flatMap(MessageBackupModel.Content.AssetContent.Metadata.init) ??
+//                    .generic(name: original.hasName ? original.name : nil)
+//            )
+
+        }
+
+
+/*
+
+        let asset: Asset
+        switch assetContent.metadata {
+
+        case let .image(imageData):
+            asset = Asset.with { asset in
+                asset.original = Asset.Original.with { original in
+                    original.size = assetContent.size
+                    original.mimeType = assetContent.mimeType
+                    original.image = Asset.ImageMetaData.with {
+                        $0.width = imageData.width
+                        $0.height = imageData.height
+                    }
+                }
+            }
+
+        case let .video(videoData):
+            asset = Asset.with { asset in
+                asset.original = Asset.Original.with { original in
+                    original.size = assetContent.size
+                    original.mimeType = assetContent.mimeType
+                    original.name = assetContent.name ?? "video"
+                    original.video = WireProtos.Asset.VideoMetaData.with { video in
+                        video.durationInMillis = videoData.duration.map { $0 / 1000 } ?? 0 // TODO: compare with backup creation
+                        video.width = videoData.width ?? 0
+                        video.height = videoData.height ?? 0
+                    }
+                }
+            }
+
+        case let .audio(audioData):
+            asset = Asset.with { asset in
+                asset.original = Asset.Original.with { original in
+                    original.size = assetContent.size
+                    original.mimeType = assetContent.mimeType
+                    original.name = assetContent.name ?? "audio"
+                    original.audio = Asset.AudioMetaData.with { audio in
+                        let loudnessArray = audioData.normalization?.map { Float($0 / 255) }
+                        audio.durationInMillis = audioData.duration.map { $0 * 1000 } ?? 0
+                        // audio.normalizedLoudness = NSData(bytes: loudnessArray, length: loudnessArray.count) as Data
+                        // TODO: fix
+                    }
+                }
+            }
+
+        case let .generic(data):
+            // TODO: asset =
             var assetContent = assetContent
-            switch assetContent.metadata {
+            if assetContent.name == nil, let name = data.name {
+                assetContent.name = name
+            }
+            fallthrough
 
-            case let .image(imageData):
-                let asset = Asset(
-                    imageSize: CGSize(
-                        width: Double(imageData.width),
-                        height: Double(imageData.height)
-                    ),
-                    mimeType: assetContent.mimeType,
-                    size: assetContent.size
-                )
-                // TODO: moc.zm_fileAssetCache.storeOriginalImage(data: imageData, for: message) ?
-                // guard !message.isRestricted else {
-                //    throw AppendMessageError.fileSharingIsRestricted
-                // }
-                //
-                self = GenericMessage(content: asset, nonce: nonce)
-            // try mergeWithExistingData(message: genericMessage) // TODO: ?
-
-            case let .video(videoData):
-                let asset = Asset.with { asset in
-                    asset.original = Asset.Original.with { original in
-                        original.size = assetContent.size
-                        original.mimeType = assetContent.mimeType
-                        original.name = assetContent.name ?? "video"
-                        original.video = WireProtos.Asset.VideoMetaData.with { video in
-                            video.durationInMillis = videoData.duration.map { $0 / 1000 } ?? 0 // TODO: compare with backup creation
-                            video.width = videoData.width ?? 0
-                            video.height = videoData.height ?? 0
-                        }
-                    }
+        case .none:
+            asset = Asset.with { asset in
+                asset.original = Asset.Original.with { original in
+                    original.size = assetContent.size
+                    original.mimeType = assetContent.mimeType
+                    original.name = assetContent.name ?? "file"
                 }
-                self = GenericMessage(content: asset, nonce: nonce)
-            // TODO: contributionType = .videoMessage ?
-            // TODO: moc.zm_fileAssetCache.storeOriginalFile
-
-            case let .audio(audioData):
-                let asset = Asset.with { asset in
-                    asset.original = Asset.Original.with { original in
-                        original.size = assetContent.size
-                        original.mimeType = assetContent.mimeType
-                        original.name = assetContent.name ?? "audio"
-                        original.audio = Asset.AudioMetaData.with { audio in
-                            let loudnessArray = audioData.normalization?.map { Float($0 / 255) }
-                            audio.durationInMillis = audioData.duration.map { $0 * 1000 } ?? 0
-                            // audio.normalizedLoudness = NSData(bytes: loudnessArray, length: loudnessArray.count) as Data
-                            // TODO: fix
-                        }
-                    }
-                }
-                self = GenericMessage(content: asset, nonce: nonce)
-            // TODO: see video
-
-            case let .generic(data):
-                if assetContent.name == nil, let name = data.name {
-                    assetContent.name = name
-                }
-                fallthrough
-
-            case .none:
-                let asset = Asset.with { asset in
-                    asset.original = Asset.Original.with { original in
-                        original.size = assetContent.size
-                        original.mimeType = assetContent.mimeType
-                        original.name = assetContent.name ?? "file"
-                    }
-                }
-                self = GenericMessage(content: asset, nonce: nonce)
             }
         }
+*/
+
     }
 
 }

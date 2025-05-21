@@ -99,7 +99,7 @@ extension MessageBackupModel.Content {
         )
     }
 
-    private init?(_ imageAsset: ImageAsset) {
+    private init?(_ imageAsset: ImageAsset) { // TODO: delete
         self = .asset(
             mimeType: imageAsset.hasMimeType ? imageAsset.mimeType : "application/octet-stream",
             size: UInt64(imageAsset.size),

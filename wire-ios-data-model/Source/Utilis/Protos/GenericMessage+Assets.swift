@@ -85,7 +85,7 @@ public extension WireProtos.Asset {
 
     init(withUploadedOTRKey otrKey: Data, sha256: Data) {
         self = WireProtos.Asset.with {
-            $0.uploaded = WireProtos.Asset.RemoteData(withOTRKey: otrKey, sha256: sha256)
+            $0.uploaded = WireProtos.Asset.RemoteData(otrKey: otrKey, sha256: sha256)
         }
     }
 
@@ -196,7 +196,7 @@ public extension WireProtos.Asset.ImageMetaData {
 
 public extension WireProtos.Asset.RemoteData {
     init(
-        withOTRKey otrKey: Data,
+        otrKey: Data,
         sha256: Data,
         assetId: String? = nil,
         assetToken: String? = nil,
@@ -233,7 +233,7 @@ extension GenericMessage {
     mutating func updateAssetPreview(withUploadedOTRKey otrKey: Data, sha256: Data) {
         guard var preview = assetData?.preview else { return }
 
-        preview.remote = WireProtos.Asset.RemoteData(withOTRKey: otrKey, sha256: sha256)
+        preview.remote = WireProtos.Asset.RemoteData(otrKey: otrKey, sha256: sha256)
         let asset = WireProtos.Asset(original: nil, preview: preview)
 
         update(asset: asset)
