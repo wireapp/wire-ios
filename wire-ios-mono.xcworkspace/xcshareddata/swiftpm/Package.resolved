@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/awslabs/aws-crt-swift",
         "state": {
           "branch": null,
-          "revision": "74d970dde8a0d6b2fe1d8374767ca9793088ce2c",
-          "version": "0.48.0"
+          "revision": "5be6550f81c760cceb0a43c30d4149ac55c5640c",
+          "version": "0.52.1"
         }
       },
       {
@@ -24,8 +24,8 @@
         "repositoryURL": "https://github.com/awslabs/aws-sdk-swift.git",
         "state": {
           "branch": null,
-          "revision": "104958a898543582bb01102616bf5d61ed237352",
-          "version": "1.2.59"
+          "revision": "49090d3a9e308df5643891cbc68fcbeb6170a4d4",
+          "version": "1.3.18"
         }
       },
       {
@@ -150,8 +150,8 @@
         "repositoryURL": "https://github.com/smithy-lang/smithy-swift",
         "state": {
           "branch": null,
-          "revision": "755367ae4e10004f8b5a94fbfdf3f638a1f225bc",
-          "version": "0.125.0"
+          "revision": "aa4cb4585232b52f116286e432dca055df698863",
+          "version": "0.131.0"
         }
       },
       {
@@ -161,6 +161,15 @@
           "branch": null,
           "revision": "bf73a16e7409a83c38872726e45e4f432512315e",
           "version": "4.0.8"
+        }
+      },
+      {
+        "package": "swift-argument-parser",
+        "repositoryURL": "https://github.com/apple/swift-argument-parser.git",
+        "state": {
+          "branch": null,
+          "revision": "41982a3656a71c768319979febd796c6fd111d5c",
+          "version": "1.5.0"
         }
       },
       {
@@ -204,8 +213,8 @@
         "repositoryURL": "https://github.com/apple/swift-log",
         "state": {
           "branch": null,
-          "revision": "96a2f8a0fa41e9e09af4585e2724c4e825410b91",
-          "version": "1.6.2"
+          "revision": "3d8596ed08bd13520157f0355e35caed215ffbfa",
+          "version": "1.6.3"
         }
       },
       {
@@ -231,8 +240,8 @@
         "repositoryURL": "https://github.com/swiftlang/swift-syntax",
         "state": {
           "branch": null,
-          "revision": "0687f71944021d616d34d922343dcef086855920",
-          "version": "600.0.1"
+          "revision": "f99ae8aa18f0cf0d53481901f88a0991dc3bd4a2",
+          "version": "601.0.1"
         }
       },
       {

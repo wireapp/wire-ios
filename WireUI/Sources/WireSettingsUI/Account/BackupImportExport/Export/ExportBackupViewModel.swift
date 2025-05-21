@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireFoundation
 import WireLogging
 
 @MainActor
@@ -34,7 +35,7 @@ final class ExportBackupViewModel: ObservableObject {
     @Published var isSetBackupPasswordPresented = false
     @Published var isErrorAlertPresented = false
 
-    @Published private(set) var backupProgress: CreatingBackupProgressModel = .ongoing(0)
+    @Published private(set) var backupProgress: CreatingBackupProgressModel = .ongoing(current: 0, total: 0)
     @Published private(set) var backupURL: URL?
 
     private var backupTask: Task<Void, Never>?
@@ -68,11 +69,11 @@ final class ExportBackupViewModel: ObservableObject {
         backupTask?.cancel()
         backupTask = Task {
             do {
-                state = .creatingBackup(progress: 0)
+                state = .creatingBackup(current: 0, total: 0)
                 for try await update in createBackupUseCase.invoke(password: password) {
                     switch update {
-                    case let .progress(fraction):
-                        state = .creatingBackup(progress: fraction)
+                    case let .progress(current, total):
+                        state = .creatingBackup(current: current, total: total)
                     case let .done(url):
                         state = .backupReady(url: url)
                     }
@@ -105,12 +106,12 @@ final class ExportBackupViewModel: ObservableObject {
     private func updatePublishedProperties() {
 
         backupProgress = switch state {
-        case let .creatingBackup(progress):
-            .ongoing(progress)
+        case let .creatingBackup(current, total):
+            .ongoing(current: current, total: total)
         case let .backupReady(url):
             .finished(url)
         default:
-            .ongoing(0)
+            .ongoing(current: 0, total: 0)
         }
 
         // outer sheet
