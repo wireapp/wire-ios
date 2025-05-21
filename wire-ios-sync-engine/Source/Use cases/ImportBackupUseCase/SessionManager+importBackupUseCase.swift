@@ -20,16 +20,16 @@ import WireDomainPackage
 
 public extension SessionManager {
 
-    var importBackupUseCase: ImportBackupUseCaseProtocol? {
+    var importLegacyBackupUseCase: ImportBackupUseCaseProtocol? {
 
         // return `nil` immediately if there is no active user session
         activeUserSession.map { _ in
 
-            ImportBackupUseCase(
+            ImportLegacyBackupUseCase(
                 userSession: { [weak self] in self?.activeUserSession },
                 dispatchGroup: dispatchGroup,
-                streamDecryptor: ImportBackupStreamDecryptor(),
-                fileArchiver: ImportBackupFileArchiver(),
+                streamDecryptor: ImportLegacyBackupStreamDecryptor(),
+                fileUnarchiver: ImportBackupFileArchiver(),
                 entityStorage: ImportBackupEntityStorage(),
                 appStateUpdater: ImportBackupAppStateUpdater(sessionManager: self),
                 sharedContainerURL: sharedContainerURL,

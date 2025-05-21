@@ -413,4 +413,5 @@ public final class UserLocalStore: UserLocalStoreProtocol {
             ZMUser.selfUser(in: context).supportedProtocols
         }
     }
+
 }
