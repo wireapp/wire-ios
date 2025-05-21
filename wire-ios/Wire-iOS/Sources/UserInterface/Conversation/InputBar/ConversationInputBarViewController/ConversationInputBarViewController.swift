@@ -226,6 +226,8 @@ final class ConversationInputBarViewController: UIViewController,
     let userSession: UserSession
     let fileMetaDataGenerator: FileMetaDataGeneratorProtocol
     let wireCellsUploadFileUseCase: WireCellsUploadFileUseCaseProtocol
+    private let wireCellsObserveDraftsUseCase: WireCellsObserveDraftsUseCaseProtocol
+    private let attachmentsCarouselViewModel = AttachmentsCarouselViewModel(items: [])
 
     private var inputBarButtons: [IconButton] {
         var buttonsArray: [IconButton] = []
@@ -361,6 +363,9 @@ final class ConversationInputBarViewController: UIViewController,
         self.wireCellsUploadFileUseCase = wireCellsAssembly.makeUploadFileUseCase(
             cellName: "" // Pass in correct cell name.
         )
+        self.wireCellsObserveDraftsUseCase = wireCellsAssembly.makeObserveDraftsUseCase(
+            cellName: "" // Pass in correct cell name.
+        )
 
         super.init(nibName: nil, bundle: nil)
 
@@ -373,6 +378,7 @@ final class ConversationInputBarViewController: UIViewController,
         setupNotificationCenter()
         setupInputLanguageObserver()
         setupViews()
+        observeDraftAttachments()
     }
 
     @available(*, unavailable)
@@ -1068,23 +1074,8 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
         guard useWireCells() else { return }
 
         let carouselViewController = UIHostingController(
-            rootView: AttachmentsCarousel( // FIXME: [WPB-17612] Use real data
-                items: [
-                    AttachmentsCarouselItem(
-                        id: UUID(),
-                        state: .uploading(progress: 0.5),
-                        kind: .audio(samples: [0.1, 0.2, 0.3]),
-                        name: "Image",
-                        size: "1.2 MB"
-                    ),
-                    AttachmentsCarouselItem(
-                        id: UUID(),
-                        state: .failed,
-                        kind: .image(thumbnail: UIImage()),
-                        name: "Image",
-                        size: "1.2 MB"
-                    )
-                ],
+            rootView: AttachmentsCarousel(
+                viewModel: attachmentsCarouselViewModel,
                 onTap: { WireLogger.conversation.debug("Did tap draft attachment: \($0)") },
                 onRemove: { WireLogger.conversation.debug("Did tap remove draft attachment: \($0)") },
                 onOptions: { WireLogger.conversation.debug("Did tap options on draft attachment: \($0)") }
@@ -1106,6 +1097,7 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
         ])
 
         carouselViewController.didMove(toParent: self)
+        syncCarouselVisible(drafts: [])
     }
 
     private func setupInputBar() {
@@ -1195,4 +1187,21 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
     private func useWireCells() -> Bool {
         DeveloperFlag.wireCells.isOn
     }
+
+    private func observeDraftAttachments() {
+        guard useWireCells() else { return }
+
+        Task.detached { [weak self, wireCellsObserveDraftsUseCase, attachmentsCarouselViewModel] in
+            let observed = await wireCellsObserveDraftsUseCase.invoke()
+            for await drafts in observed {
+                await attachmentsCarouselViewModel.update(with: drafts)
+                await self?.syncCarouselVisible(drafts: drafts)
+            }
+        }
+    }
+
+    private func syncCarouselVisible(drafts: [WireCellsDraft]) {
+        inputBar.attachmentsContainer.isHidden = drafts.filter { $0.status != .cancelled }.isEmpty
+    }
+
 }

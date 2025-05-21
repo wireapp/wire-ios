@@ -20,9 +20,9 @@ package import Foundation
 
 public struct WireCellsDraft: Hashable, Sendable {
 
-    package let id: WireCellsNodeID
+    public let id: WireCellsNodeID
     package let assetURL: URL
-    package var status: WireCellsUploadStatus
+    public var status: WireCellsUploadStatus
 
     package init(
         id: WireCellsNodeID,
