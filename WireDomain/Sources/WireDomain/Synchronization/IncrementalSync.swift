@@ -64,7 +64,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 
         logger.debug("pulling pending update events")
         syncStateSubject.send(.incrementalSyncing(.pullPendingEvents))
-        try await updateEventsSync.pull()
+        try await updateEventsSync.pull() // Step 1
 
         logger.debug("processing stored update events")
         syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
@@ -99,6 +99,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                             attributes: [.eventEnvelopeID: envelope.id]
                         )
                         continue
+                        // Step 2
                     }
 
                     let index: Int64

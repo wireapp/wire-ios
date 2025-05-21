@@ -64,6 +64,21 @@ public class Journal: JournalProtocol {
         }
     }
 
+    /// Get or set a list of string values.
+
+    subscript(_ key: JournalKey<Set<String>>) -> Set<String> {
+            get {
+                if let array = storage.object(forKey: rawKey(for: key)) as? [String] {
+                    return Set(array)
+                } else {
+                    return key.defaultValue
+                }
+            }
+            set {
+                storage.set(Array(newValue), forKey: rawKey(for: key))
+            }
+        }
+
     /// Delete all values in the journal.
 
     public func erase() {
@@ -75,6 +90,30 @@ public class Journal: JournalProtocol {
     func rawKey(for key: JournalKey<some Any>) -> String {
         // Prefix to avoid possible namespace conflicts.
         "\(namespace).\(key.name)"
+    }
+
+    /// Remove a single value from a Set<String> .
+    ///
+    /// - Parameters:
+    ///   - value: The string to remove.
+    ///   - key: The journal key associated with the Set<String>.
+
+    func removeValue(_ value: String, for key: JournalKey<Set<String>>) {
+        var currentSet = self[key]
+        currentSet.remove(value)
+        self[key] = currentSet
+    }
+
+    /// Adds a single value to a Set<String>.
+    ///
+    /// - Parameters:
+    ///   - value: The string to insert.
+    ///   - key: The journal key associated with the Set<String>.
+
+    func addValue(_ value: String, for key: JournalKey<Set<String>>) {
+        var currentSet = self[key]
+        currentSet.insert(value)
+        self[key] = currentSet
     }
 
 }
