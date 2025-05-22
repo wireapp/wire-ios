@@ -81,14 +81,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 throw error
             }
 
-            let liveEventTask = Task { @Sendable [
-                logger,
-                decryptor,
-                store,
-                processor,
-                databaseSaver,
-                syncStateSubject
-            ] in
+            let liveEventTask = Task { @Sendable [self] in
                 logger.debug("handling live event stream")
                 syncStateSubject.send(.liveSyncing)
 
