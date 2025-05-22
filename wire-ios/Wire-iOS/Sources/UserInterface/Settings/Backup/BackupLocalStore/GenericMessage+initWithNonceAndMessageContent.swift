@@ -151,7 +151,7 @@ private extension Asset.Original.OneOf_MetaData {
                 }
             })
 
-        case let .generic(genericMetadata):
+        case let .generic:
             return nil
         }
     }
