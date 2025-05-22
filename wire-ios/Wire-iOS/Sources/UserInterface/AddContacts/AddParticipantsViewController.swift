@@ -77,10 +77,12 @@ extension AddParticipantsViewController.Context {
         case let .add(conversation):
             let freeSpace = conversation.freeParticipantSlots
             let max = ZMConversation.getMaxParticipants(isChannel: conversation.isChannel)
-            message = AddParticipantsAlert.Message.existingConversation(max, freeSpace)
+            message = AddParticipantsAlert.Message
+                .existingConversation(max.participantsFormatted,
+                                      freeSpace.participantsFormatted)
         case let .create(context):
             message = AddParticipantsAlert.Message
-                .newConversation(ZMConversation.getMaxParticipants(isChannel: context.isChannel))
+                .newConversation(ZMConversation.getMaxParticipants(isChannel: context.isChannel).participantsFormatted)
         }
 
         let controller = UIAlertController(
@@ -578,6 +580,20 @@ extension AddParticipantsViewController: EmptySearchResultsViewDelegate {
             URL.manageTeam(source: .onboarding).openInApp(above: self)
         case .openSearchSupportPage:
             WireURLs.shared.searchSupport.open()
+        }
+    }
+}
+
+extension Int {
+    var participantsFormatted: String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.locale = Locale.current
+
+        if let formatted = formatter.string(from: NSNumber(value: self)) {
+            return formatted
+        } else {
+            return String(intValue: self) ?? String(format: "%1$d", self)
         }
     }
 }

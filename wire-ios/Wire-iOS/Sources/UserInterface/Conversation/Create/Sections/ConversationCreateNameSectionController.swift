@@ -38,7 +38,7 @@ final class ConversationCreateNameSectionController: NSObject, CollectionViewSec
     private let isChannel: Bool
 
     private lazy var footerText: String = L10n.Localizable.Participants.Section.Name
-        .footer(ZMConversation.getMaxParticipants(isChannel: isChannel))
+        .footer(ZMConversation.getMaxParticipants(isChannel: isChannel).participantsFormatted)
 
     init(
         selfUser: UserType,
