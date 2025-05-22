@@ -35,6 +35,11 @@ public struct HorizontalMargins {
 public final class ConversationCell: UITableViewCell {
     
     public var model: ConversationCellModel?
+    
+    public override func prepareForReuse() {
+        super.prepareForReuse()
+        contentView.transform = .identity
+    }
 
     public func configure(model: ConversationCellModel?, horizontalMargins: HorizontalMargins) {
         guard let model else { return }

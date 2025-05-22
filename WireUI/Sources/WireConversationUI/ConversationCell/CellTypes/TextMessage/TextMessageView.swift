@@ -32,16 +32,16 @@ public struct TextMessageView: ConversationCellContentViewProtocol {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 2) {
-            SenderMessageView(model: model.senderViewModelWrapper)
-            HStack(spacing: 0) {
-                LinkInteractionTextViewWrapper(
-                    text: model.text,
-                    accentColor: model.accentColor,
-                    shouldDetectTypes: true
-                )
             if case .some(let senderModel) = model.senderViewModelWrapper.state {
                 SenderMessageView(model: senderModel)
             }
+            LinkInteractionTextViewWrapper(
+                text: model.text,
+                accentColor: model.accentColor,
+                shouldDetectTypes: true,
+                width: 330
+            )
+            .frame(maxWidth: .infinity, alignment: .leading)
             MessageStatusView(model: model.statusViewModel)
         }
         .padding(.vertical, 4)
@@ -52,7 +52,7 @@ public struct TextMessageView: ConversationCellContentViewProtocol {
 
 #Preview("Simple") {
     let model = TextMessageViewModel(
-        text: "Test message",
+        text: "Test message ajfhhkjsdf dsfjk hadsjkfh adskjlhf adjskhf jkasdhfjkl asdhajj dsfsd fsda fasdfasdf",
         accentColor: .red,
         isObfuscated: false,
         mentions: [],

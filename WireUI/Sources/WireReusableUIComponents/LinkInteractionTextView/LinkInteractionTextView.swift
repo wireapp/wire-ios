@@ -57,6 +57,23 @@ public final class LinkInteractionTextView: UITextView {
         self.isClipboardEnabled = isClipboardEnabled
         super.init(frame: .zero, textContainer: nil)
     }
+    
+    
+    public func setFixedWidth(_ width: CGFloat) {
+        textContainer.size = CGSize(width: width, height: .greatestFiniteMagnitude)
+        textContainer.widthTracksTextView = false
+    }
+    
+    public override var intrinsicContentSize: CGSize {
+        let fittingSize = CGSize(width: textContainer.size.width, height: .greatestFiniteMagnitude)
+        let size = sizeThatFits(fittingSize)
+        return CGSize(width: fittingSize.width, height: size.height)
+    }
+
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+        invalidateIntrinsicContentSize()
+    }
 
     public override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
         let isInside = super.point(inside: point, with: event)

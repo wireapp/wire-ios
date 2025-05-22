@@ -753,12 +753,17 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
         let cellDescription = section.elements[indexPath.row]
         if cellDescription.instance is NewCellDescription,
            let model = cellDescription.conversationCellModel {
-            guard let cell = tableView.dequeueReusableCell(
-                withIdentifier: "ConversationCell",
-                for: indexPath
-            ) as? ConversationCell else {
-                return UITableViewCell()
-            }
+//            guard let cell = tableView.dequeueReusableCell(
+//                withIdentifier: "ConversationCell",
+//                for: indexPath
+//            ) as? ConversationCell else {
+//                return UITableViewCell()
+//            }
+            // TODO: fix issues with inverted table view and bring back reuse
+            // now sender is not properly updated
+            let cell = ConversationCell(frame: .zero)
+//            cell.contentView.transform = CGAffineTransform(scaleX: 1, y: -1)
+            cell.transform = CGAffineTransform(scaleX: 1, y: -1)
             let margins = cell.conversationHorizontalMargins
             cell.configure(model: model, horizontalMargins: .init(
                 left: margins.left,
@@ -766,10 +771,8 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
             ))
             return cell
         } else {
-
             registerCellIfNeeded(with: cellDescription, in: tableView)
             return cellDescription.makeCell(for: tableView, at: indexPath)
-
         }
     }
 }

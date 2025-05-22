@@ -25,11 +25,18 @@ public struct LinkInteractionTextViewWrapper: UIViewRepresentable {
     let text: NSAttributedString
     let accentColor: AccentColor
     let shouldDetectTypes: Bool
+    let width: CGFloat
     
-    public init(text: NSAttributedString, accentColor: AccentColor, shouldDetectTypes: Bool) {
+    public init(
+        text: NSAttributedString,
+        accentColor: AccentColor,
+        shouldDetectTypes: Bool,
+        width: CGFloat
+    ) {
         self.text = text
         self.accentColor = accentColor
         self.shouldDetectTypes = shouldDetectTypes
+        self.width = width
     }
     
     public func makeUIView(context: Context) -> LinkInteractionTextView {
@@ -38,28 +45,30 @@ public struct LinkInteractionTextViewWrapper: UIViewRepresentable {
         view.isSelectable = false
         view.backgroundColor = .clear
         view.isScrollEnabled = false
-        view.textContainerInset = UIEdgeInsets.zero
+        view.textContainerInset = .zero
         view.textContainer.lineFragmentPadding = 0
+        view.textContainer.maximumNumberOfLines = 0
+        view.textContainer.lineBreakMode = .byWordWrapping
         view.isUserInteractionEnabled = false
         view.accessibilityIdentifier = "Message"
         view.accessibilityElementsHidden = false
+
         if shouldDetectTypes {
             view.dataDetectorTypes = [.link, .address, .phoneNumber, .flightNumber, .calendarEvent, .shipmentTrackingNumber]
             view.linkTextAttributes = [.foregroundColor: accentColor.uiColor]
         }
-        view.setContentHuggingPriority(.required, for: .vertical)
-        view.setContentCompressionResistancePriority(.required, for: .vertical)
-        
-        view.textContainer.maximumNumberOfLines = 3
-        view.isScrollEnabled = false
-        view.textContainer.lineBreakMode = .byTruncatingTail
+
         return view
     }
     
     public func updateUIView(_ uiView: LinkInteractionTextView, context: Context) {
-        if uiView.attributedText != text {
+        uiView.setFixedWidth(width)
+
+        if uiView.attributedText?.string != text.string {
             uiView.attributedText = text
         }
+        
+        uiView.layoutIfNeeded()
     }
     
     public func makeCoordinator() -> Coordinator {
