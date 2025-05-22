@@ -57,7 +57,7 @@ final class SwitchBackendViewModel: ObservableObject {
 
     init() {
         var items = [
-            Item(title: "Production", value: .production),
+            Item(title: "Default", value: .default),
             Item(title: "Staging", value: .staging),
             Item(title: "Anta", value: .anta),
             Item(title: "Bella", value: .bella),
