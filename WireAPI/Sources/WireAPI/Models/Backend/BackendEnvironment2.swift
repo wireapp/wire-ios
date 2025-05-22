@@ -18,7 +18,7 @@
 
 import Foundation
 
-// TODO: rename to BackendEnvironment
+// TODO: [WPB-12140] rename to BackendEnvironment
 
 /// A collection of data for connecting to a given backend environment
 /// (e.g. Production, Staging, etc).
