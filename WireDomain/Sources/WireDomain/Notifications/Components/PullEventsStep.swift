@@ -62,6 +62,7 @@ final class PullEventsStep: Component<PullEventsDependency>, PullEventsStepProto
             selfClientID: selfClientID,
             api: try updateEventsAPI,
             store: updateEventsLocalStore,
+            journal: journal,
             decryptor: updateEventDecryptor
         )
 

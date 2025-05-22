@@ -44,6 +44,8 @@ final class RepairAgent: RepairAgentProtocol {
     }
 
     private let journal: Journal
+    private let decryptionQueue = DispatchQueue(label: "decryptionQueue")
+    private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Life cycle
 
@@ -53,6 +55,28 @@ final class RepairAgent: RepairAgentProtocol {
     ) {
         self.journal = journal
         self.syncStateSubject = syncStateSubject
+        setupObservation()
+    }
+
+    private func setupObservation() {
+        if isSyncV2Enabled {
+            syncStatePublisher
+                .receive(on: decryptionQueue)
+                .sink { [weak self] state in
+                    guard case .liveSyncing = state else { return }
+                    self?.repairConversations()
+                    //self?.handleLiveSyncing()
+                }
+                .store(in: &cancellables)
+        } else {
+            print("is not sync 2")
+            // TODO: for legacy sync
+        }
+    }
+
+    private func repairConversations() {
+        print("repairConversations")
+
     }
 
 }

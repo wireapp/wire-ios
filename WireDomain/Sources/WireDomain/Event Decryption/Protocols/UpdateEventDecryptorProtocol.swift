@@ -27,6 +27,13 @@ public protocol UpdateEventDecryptorProtocol {
     /// - Parameter eventEnvelope: An event envelope that contains events received from the server.
     /// - Returns: A list of decrypted update events.
 
-    func decryptEvents(in eventEnvelope: UpdateEventEnvelope) async throws -> [UpdateEvent]
+    func decryptEvents(in eventEnvelope: UpdateEventEnvelope) async throws -> EventDecryptorResult
+
+}
+
+public struct EventDecryptorResult {
+
+    let events: [UpdateEvent]
+    let brokenMLSGroupIDs: [String]
 
 }

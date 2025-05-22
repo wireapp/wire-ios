@@ -258,10 +258,18 @@ public final class ClientSessionComponent {
         store: backendConfigLocalStore
     )
 
+    private var journal: Journal {
+        Journal(
+            userID: selfUserID,
+            storage: sharedUserDefaults
+        )
+    }
+
     private lazy var pullPendingUpdateEventsSync = PullPendingUpdateEventsSync(
         selfClientID: selfClientID,
         api: updateEventsAPI,
         store: updateEventsLocalStore,
+        journal: journal,
         decryptor: updateEventDecryptor
     )
 
@@ -413,12 +421,12 @@ public final class ClientSessionComponent {
         userLocalStore: userLocalStore
     )
 
-    private var journal: Journal {
-        Journal(
-            userID: selfUserID,
-            storage: sharedUserDefaults
-        )
-    }
+//    private var journal: Journal {
+//        Journal(
+//            userID: selfUserID,
+//            storage: sharedUserDefaults
+//        )
+//    }
 
 
     // MARK: - Update events
@@ -430,8 +438,7 @@ public final class ClientSessionComponent {
         userClientsLocalStore: userClientsLocalStore,
         messageLocalStore: messageLocalStore,
         userLocalStore: userLocalStore,
-        conversationLocalStore: conversationLocalStore,
-        journal: journal
+        conversationLocalStore: conversationLocalStore
     )
 
     private lazy var conversationAccessUpdateEventProcessor = ConversationAccessUpdateEventProcessor(

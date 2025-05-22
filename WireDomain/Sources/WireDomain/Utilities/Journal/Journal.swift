@@ -116,4 +116,15 @@ public class Journal: JournalProtocol {
         self[key] = currentSet
     }
 
+    /// Adds multiple values to a Set<String>.
+    ///
+    /// - Parameters:
+    ///   - values: A set of strings to insert.
+    ///   - key: The journal key associated with the Set<String>.
+    public func addValue(_ values: Set<String>, for key: JournalKey<Set<String>>) {
+        var currentSet = self[key]
+        currentSet.formUnion(values)
+        self[key] = currentSet
+    }
+
 }

@@ -28,7 +28,6 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
     private let mlsMessageDecryptor: any MLSMessageDecryptorProtocol
     private let messageLocalStore: any MessageLocalStoreProtocol
     private let mlsService: (any MLSServiceInterface)? // optional because only necessary for live events
-    private let journal: Journal
 
     init(
         proteusService: any ProteusServiceInterface,
@@ -37,8 +36,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         userClientsLocalStore: any UserClientsLocalStoreProtocol,
         messageLocalStore: any MessageLocalStoreProtocol,
         userLocalStore: any UserLocalStoreProtocol,
-        conversationLocalStore: any ConversationLocalStoreProtocol,
-        journal: Journal
+        conversationLocalStore: any ConversationLocalStoreProtocol
     ) {
         self.proteusMessageDecryptor = ProteusMessageDecryptor(
             proteusService: proteusService,
@@ -54,8 +52,6 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         self.mlsService = mlsService
 
         self.messageLocalStore = messageLocalStore
-
-        self.journal = journal
     }
 
     init(
@@ -69,18 +65,19 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         self.mlsMessageDecryptor = mlsMessageDecryptor
         self.messageLocalStore = messageLocalStore
         self.mlsService = mlsService
-        self.journal = journal
     }
 
-    func decryptEvents(in eventEnvelope: UpdateEventEnvelope) async throws -> [UpdateEvent] {
-        guard !DeveloperFlag.skipMLSMessagesDecryption.isOn else { return [] }
+    func decryptEvents(in eventEnvelope: UpdateEventEnvelope) async throws -> EventDecryptorResult {
+        guard !DeveloperFlag.skipMLSMessagesDecryption.isOn else {
+            return EventDecryptorResult(events: [], brokenMLSGroupIDs: [])
+        }
         let logAttributes: LogAttributes = [
             .eventId: eventEnvelope.id.safeForLoggingDescription,
             .public: true
         ]
 
         var decryptedEvents = [UpdateEvent]()
-        var brokenMLSGroupIDs = Set<String>()
+        var brokenMLSGroupIDs = [String]()
         var shouldCommitPendingProposals = false
 
         for event in eventEnvelope.events {
@@ -117,7 +114,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                     "decrypting MLS add message event...",
                     attributes: logAttributes
                 )
-                brokenMLSGroupIDs.insert("AAEAAGWE4vNlaUGzpxLgWY9P4k8Ad2lyZS5jb20=")
+                brokenMLSGroupIDs.append("AAEAAGWE4vNlaUGzpxLgWY9P4k8Ad2lyZS5jb20=")
                 shouldCommitPendingProposals = true
 
                 do {
@@ -131,7 +128,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                             "failed to decrypt MLS due to `WrongEpoch` for group \(mlsGroupID)",
                             attributes: logAttributes
                         )
-                        brokenMLSGroupIDs.insert(mlsGroupID.description)
+                        brokenMLSGroupIDs.append(mlsGroupID.description)
                     default:
                         WireLogger.updateEvent.error(
                             "failed to decrypt MLS add message event, dropping: \(String(describing: error))",
@@ -172,8 +169,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
             }
         }
 
-        journal[.brokenMLSGroupIDs] = brokenMLSGroupIDs
-        return decryptedEvents
+        return EventDecryptorResult(events: decryptedEvents, brokenMLSGroupIDs: brokenMLSGroupIDs)
     }
 
     private func commitPendingProposalsIfNeeded() async {

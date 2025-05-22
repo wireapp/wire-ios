@@ -26,6 +26,7 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
     private let selfClientID: String
     private let api: any UpdateEventsAPI
     private let store: any UpdateEventsLocalStoreProtocol
+    private let journal: Journal
     private let decryptor: any UpdateEventDecryptorProtocol
     private let jsonEncoder = JSONEncoder()
 
@@ -33,11 +34,13 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
         selfClientID: String,
         api: any UpdateEventsAPI,
         store: any UpdateEventsLocalStoreProtocol,
+        journal: Journal,
         decryptor: any UpdateEventDecryptorProtocol
     ) {
         self.selfClientID = selfClientID
         self.api = api
         self.store = store
+        self.journal = journal
         self.decryptor = decryptor
     }
 
@@ -54,7 +57,7 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
         var currentIndex = try await store.indexOfLastEventEnvelope() + 1
 
         var events: [UpdateEvent] = []
-       // var brokenMLSGroupIDs = Set<String>()
+        var brokenMLSGroupIDs = Set<String>()
 
         // Events are fetched in batches.
         for try await envelopes in api.getUpdateEvents(
@@ -85,8 +88,11 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
 
                 log("decrypting...", envelopeID: envelope.id)
                 var decryptedEnvelope = envelope
-                let decryptedEvents = try await decryptor.decryptEvents(in: envelope)
+                let decryptionEventsResult = try await decryptor.decryptEvents(in: envelope)
+                let decryptedEvents = decryptionEventsResult.events
                 decryptedEnvelope.events = decryptedEvents
+
+                brokenMLSGroupIDs.formUnion(decryptionEventsResult.brokenMLSGroupIDs)
 
                 log("storing...", envelopeID: envelope.id)
                 try await store.persistEventEnvelope(
@@ -107,6 +113,8 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
                 }
             }
         }
+
+        journal.addValue(brokenMLSGroupIDs, for: .brokenMLSGroupIDs)
 
         return AsyncStream {
             $0.yield(events)
