@@ -75,7 +75,7 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
                 message: eventData.message,
                 mlsGroupID: mlsGroupID,
                 subconversation: eventData.subconversation,
-            	context: context
+                context: context
             )
 
             let decryptedMessages = await processMLSMessageDecryptionResults(
