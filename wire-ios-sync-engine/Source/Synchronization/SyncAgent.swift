@@ -59,6 +59,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     private let coreCryptoProvider: any CoreCryptoProviderProtocol
 
     private let incrementalSyncTaskManager = NonReentrantTaskManager()
+    private var incrementalSyncToken: IncrementalSync.Token?
     private var ongoingSyncTask: Task<Void, Error>?
 
     private var hasCompletedInitialSync: Bool {
@@ -105,6 +106,10 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
     func resume() {
         ongoingSyncTask = Task {
+            WireLogger.sync.debug(
+                "resuming sync"
+            )
+            
             let retrier = BackoffRetrier()
             
             do {
@@ -129,17 +134,24 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     }
 
     private func suspend() async {
-        WireLogger.sync.debug(
-            "suspending sync"
-        )
+        if incrementalSyncToken == nil {
+            // It's possible we try to close the push channel before it was even created which means that it could be created while in the foreground.
+            // As a consequence, we need to check for any cancellation occuring within the `IncrementalSync` object to make sure the push channel is properly closed.
+            WireLogger.sync.debug(
+                "incremental sync token null.. nothing to suspend at this point"
+            )
+        } else {
+            WireLogger.sync.debug(
+                "suspending sync"
+            )
+            
+            // Close the push channel
+            await incrementalSyncToken?.suspend()
+            incrementalSyncToken = nil
+        }
         
-        // When cancelling the ongoing sync task, cancellation will be propagated to child tasks ensuring that we:
-        // 1. Immediately abort incremental sync operations
-        // 2. Don't open the push channel
-        // 3. Close the push channel if it was already opened
-
+        // Cancel the ongoing sync task
         ongoingSyncTask?.cancel()
-        ongoingSyncTask = nil
     }
 
     /// Performs the appropriate sync depending in the local state.
@@ -204,11 +216,12 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
     func performIncrementalSync() async throws {
         if isSyncV2Enabled {
+
             do {
                 try await incrementalSyncTaskManager.performIfNeeded { [weak self] in
                     guard let self else { return }
                     delegate?.syncAgentDidStartIncrementalSync(self)
-                    try await incrementalSyncProvider.provideIncrementalSync().perform()
+                    incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync().perform()
                     delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: false)
                 }
             } catch {
@@ -237,7 +250,7 @@ extension SyncAgent: MLSSyncDelegate {
                 try await incrementalSyncTaskManager.performIfNeeded { [weak self] in
                     guard let self else { return }
                     delegate?.syncAgentDidStartIncrementalSync(self)
-                    try await incrementalSyncProvider.provideIncrementalSync().perform()
+                    incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync().perform()
                     delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: true)
                 }
             } catch {

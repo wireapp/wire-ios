@@ -24,7 +24,9 @@ import Foundation
 public protocol IncrementalSyncProtocol {
 
     /// Perform the incremental sync.
-    
-    func perform() async throws
+    ///
+    /// - Returns: A token to retain to keep the push channel open.
+
+    func perform() async throws -> IncrementalSync.Token
 
 }
