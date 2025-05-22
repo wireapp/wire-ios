@@ -592,10 +592,6 @@ extension Int {
         formatter.numberStyle = .decimal
         formatter.locale = Locale.current
 
-        if let formatted = formatter.string(from: NSNumber(value: self)) {
-            return formatted
-        } else {
-            return String(intValue: self) ?? String(format: "%1$d", self)
-        }
+        return formatter.string(from: NSNumber(value: self)) ?? String(self)
     }
 }
