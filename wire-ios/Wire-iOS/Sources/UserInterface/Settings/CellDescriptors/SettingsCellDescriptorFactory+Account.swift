@@ -521,9 +521,9 @@ extension SettingsCellDescriptorFactory {
 
 // MARK: -
 
-extension ConversationProtobufMessageProcessor {
+private extension ConversationProtobufMessageProcessor {
 
-    fileprivate init(context: NSManagedObjectContext) {
+    init(context: NSManagedObjectContext) {
         let messageLocalStore = MessageLocalStore(context: context)
         self.init(
             messageLocalStore: messageLocalStore,
