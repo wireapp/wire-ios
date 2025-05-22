@@ -80,7 +80,7 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
             }
 
             // We'll insert new events from this index.
-            var currentIndex = try await store.indexOfLastEventEnvelope() + 1
+            let currentIndex = try await store.indexOfLastEventEnvelope() + 1
 
             // We are decrypting the batch within one core crypto transaction
             try await coreCryptoProvider.coreCrypto().perform { context in
