@@ -25,9 +25,12 @@ import WireReusableUIComponents
 public struct TextMessageView: ConversationCellContentViewProtocol {
 
     @ObservedObject var model: TextMessageViewModel
+    @State private var internalWidth: CGFloat
 
-    public init(model: TextMessageViewModel) {
+    public init(model: TextMessageViewModel, contentWidth: CGFloat) {
         self.model = model
+        _internalWidth = State(initialValue: contentWidth)
+
     }
 
     public var body: some View {
@@ -35,16 +38,33 @@ public struct TextMessageView: ConversationCellContentViewProtocol {
             if case .some(let senderModel) = model.senderViewModelWrapper.state {
                 SenderMessageView(model: senderModel)
             }
-            LinkInteractionTextViewWrapper(
-                text: model.text,
-                accentColor: model.accentColor,
-                shouldDetectTypes: true,
-                width: 330
-            )
-            .frame(maxWidth: .infinity, alignment: .leading)
+            VStack {
+                LinkInteractionTextViewWrapper(
+                    text: model.text,
+                    accentColor: model.accentColor,
+                    shouldDetectTypes: true,
+                    width: internalWidth
+                )
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+
+//            .onChange(of: newWidth.rounded(.toNearestOrAwayFromZero))
+
             MessageStatusView(model: model.statusViewModel)
         }
         .padding(.vertical, 4)
+        .background(
+            GeometryReader { proxy in
+                Color.clear
+                    .onAppear {
+                        // Update only if changed significantly
+                        let measuredWidth = proxy.size.width
+                        if abs(measuredWidth - internalWidth) > 1 {
+                            internalWidth = measuredWidth
+                        }
+                    }
+            }
+        )
     }
 }
 
@@ -76,7 +96,7 @@ public struct TextMessageView: ConversationCellContentViewProtocol {
             ))
         )
     )
-    TextMessageView(model: model)
+    TextMessageView(model: model, contentWidth: 330)
 }
 
 extension MessageToolboxState {

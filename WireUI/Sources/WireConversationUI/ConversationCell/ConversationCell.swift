@@ -43,12 +43,13 @@ public final class ConversationCell: UITableViewCell {
 
     public func configure(model: ConversationCellModel?, horizontalMargins: HorizontalMargins) {
         guard let model else { return }
+        let contentWidth = bounds.width - horizontalMargins.left - horizontalMargins.right
         contentConfiguration = UIHostingConfiguration {
             switch model {
             case let .timeDivider(model):
                 TimeDividerContentView(model: model)
             case let .text(model):
-                TextMessageView(model: model)
+                TextMessageView(model: model, contentWidth: contentWidth)
             }
         }
         .margins(.vertical, 0)

@@ -29,11 +29,11 @@ public protocol ConversationCellModelProtocol {
 
 }
 
-extension ConversationCellModelProtocol where Self == ContentView.Model {
-
-    @MainActor
-    func buildView() -> ContentView {
-        ContentView(model: self)
-    }
-
-}
+//extension ConversationCellModelProtocol where Self == ContentView.Model {
+//
+//    @MainActor
+//    func buildView() -> ContentView {
+//        ContentView(model: self)
+//    }
+//
+//}
