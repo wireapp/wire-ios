@@ -99,7 +99,7 @@ final class UpsideDownTableView: UITableView {
 
     override func dequeueReusableCell(withIdentifier identifier: String) -> UITableViewCell? {
         let cell = super.dequeueReusableCell(withIdentifier: identifier)
-        cell?.transform = CGAffineTransform(scaleX: 1, y: -1)
+        cell?.contentView.transform = CGAffineTransform(scaleX: 1, y: -1)
         return cell
     }
 
@@ -118,7 +118,7 @@ final class UpsideDownTableView: UITableView {
     override func dequeueReusableCell(withIdentifier identifier: String, for indexPath: IndexPath) -> UITableViewCell {
         let cell = super.dequeueReusableCell(withIdentifier: identifier, for: indexPath)
 
-        cell.transform = CGAffineTransform(scaleX: 1, y: -1)
+        cell.contentView.transform = CGAffineTransform(scaleX: 1, y: -1)
 
         return cell
     }
