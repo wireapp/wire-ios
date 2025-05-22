@@ -187,7 +187,7 @@ final class IncrementalSyncTests: XCTestCase {
         // and once after processing each live event.
         XCTAssertEqual(databaseSaver.save_Invocations.count, 3)
     }
-    
+
     func test_perform_Cancelled_Push_Channel_Closed() async throws {
         // Mock
         // Pending events are pulled.
@@ -246,12 +246,12 @@ final class IncrementalSyncTests: XCTestCase {
         // Database is saved.
         databaseSaver.save_MockMethod = {}
         pushChannel.close_MockMethod = {}
-        
+
         // When
         let task = Task {
             try await sut.perform()
         }
-        
+
         // Then
         do {
             _ = try await task.value

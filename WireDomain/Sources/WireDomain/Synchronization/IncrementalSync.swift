@@ -55,7 +55,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 
     public func perform() async throws -> Token {
         var wasCanceled = false
-        
+
         return try await withTaskCancellationHandler {
             logger.debug("performing incremental sync")
             syncStateSubject.send(.incrementalSyncing(.createPushChannel))
@@ -63,7 +63,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 
             logger.debug("opening push channel")
             syncStateSubject.send(.incrementalSyncing(.openPushChannel))
-            
+
             let liveEventStream = try await pushChannel.open()
 
             let processedEnvelopeIDs: Set<UUID>
@@ -81,10 +81,17 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 throw error
             }
 
-            let liveEventTask = Task { @Sendable [logger, decryptor, store, processor, databaseSaver, syncStateSubject] in
+            let liveEventTask = Task { @Sendable [
+                logger,
+                decryptor,
+                store,
+                processor,
+                databaseSaver,
+                syncStateSubject
+            ] in
                 logger.debug("handling live event stream")
                 syncStateSubject.send(.liveSyncing)
-                
+
                 await processLiveEvents(
                     liveEventStream: liveEventStream,
                     processedEnvelopeIDs: processedEnvelopeIDs
@@ -93,8 +100,9 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 logger.debug("live event stream did finish")
                 syncStateSubject.send(.idle)
             }
-            
-            // If the parent task is cancelled at any point and we didn't already handle it using a `try Task.checkCancellation()`, we ensure to
+
+            // If the parent task is cancelled at any point and we didn't already handle it using a `try
+            // Task.checkCancellation()`, we ensure to
             // cancel the live event task, close the push channel and throw a CancellationError.
             if wasCanceled {
                 logger.debug("incremental sync interrupted, tearing down...")
@@ -102,17 +110,18 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 await pushChannel.close()
                 throw CancellationError()
             }
-            
+
             return Token(task: liveEventTask, closePushChannel: {
                 await pushChannel.close()
             })
-            
+
         } onCancel: {
-            // this cancellation handler is always and immediately invoked when the parent task (see `SyncAgent`) is canceled.
+            // this cancellation handler is always and immediately invoked when the parent task (see `SyncAgent`) is
+            // canceled.
             wasCanceled = true
         }
     }
-    
+
     private func processLiveEvents(
         liveEventStream: AsyncThrowingStream<UpdateEventEnvelope, any Error>,
         processedEnvelopeIDs: Set<UUID>

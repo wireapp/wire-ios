@@ -109,9 +109,9 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
             WireLogger.sync.debug(
                 "resuming sync"
             )
-            
+
             let retrier = BackoffRetrier()
-            
+
             do {
                 try await retrier.retry { [self] in
                     try await performSync()
@@ -135,8 +135,10 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
     private func suspend() async {
         if incrementalSyncToken == nil {
-            // It's possible we try to close the push channel before it was even created which means that it could be created while in the foreground.
-            // As a consequence, we need to check for any cancellation occuring within the `IncrementalSync` object to make sure the push channel is properly closed.
+            // It's possible we try to close the push channel before it was even created which means that it could be
+            // created while in the foreground.
+            // As a consequence, we need to check for any cancellation occuring within the `IncrementalSync` object to
+            // make sure the push channel is properly closed.
             WireLogger.sync.debug(
                 "incremental sync token null.. nothing to suspend at this point"
             )
@@ -144,12 +146,12 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
             WireLogger.sync.debug(
                 "suspending sync"
             )
-            
+
             // Close the push channel
             await incrementalSyncToken?.suspend()
             incrementalSyncToken = nil
         }
-        
+
         // Cancel the ongoing sync task
         ongoingSyncTask?.cancel()
     }
