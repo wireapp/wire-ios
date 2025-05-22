@@ -172,11 +172,10 @@ extension NSAttributedString {
 
         // Do emoji substition (but not inside link or mentions)
         let links = markdownText.links()
-        let linkAttachmentRanges = links.compactMap { Range<Int>($0.range) }
+//        let linkAttachmentRanges = links.compactMap { Range<Int>($0.range) }
         // TODO:
-//        let mentionRanges = mentionTextObjects.compactMap { $0.range(in: markdownText.string as String) }
-        let mentionRanges: [Range<Int>] = []
-        let codeBlockRanges = markdownText.ranges(of: .code).compactMap { Range<Int>($0) }
+        let mentionRanges = mentionTextObjects.compactMap { $0.range(in: markdownText.string as String) }
+//        let codeBlockRanges = markdownText.ranges(of: .code).compactMap { Range<Int>($0) }
 //        markdownText.replaceEmoticons(excluding: linkAttachmentRanges + mentionRanges + codeBlockRanges)
 
         markdownText.removeTrailingWhitespace()
