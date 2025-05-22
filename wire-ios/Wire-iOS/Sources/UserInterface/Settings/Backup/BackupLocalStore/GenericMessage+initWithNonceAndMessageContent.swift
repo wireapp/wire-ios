@@ -37,7 +37,6 @@ extension GenericMessage {
 
         case let .asset(assetContent):
             self = GenericMessage(content: Asset(assetContent), nonce: nonce)
-
         }
     }
 
@@ -45,17 +44,17 @@ extension GenericMessage {
 
 // MARK: -
 
-extension Text {
+private extension Text {
 
-    fileprivate init(_ textContent: MessageBackupModel.Content.TextContent) {
+    init(_ textContent: MessageBackupModel.Content.TextContent) {
         self.init(content: textContent.text)
     }
 
 }
 
-extension Location {
+private extension Location {
 
-    fileprivate init(_ locationContent: MessageBackupModel.Content.LocationContent) {
+    init(_ locationContent: MessageBackupModel.Content.LocationContent) {
         self = .with { location in
             if let name = locationContent.name {
                 location.name = name
@@ -68,9 +67,9 @@ extension Location {
 
 }
 
-extension Asset {
+private extension Asset {
 
-    fileprivate init(_ assetContent: MessageBackupModel.Content.AssetContent) {
+    init(_ assetContent: MessageBackupModel.Content.AssetContent) {
         self = .with { asset in
             asset.original.mimeType = assetContent.mimeType
             asset.original.size = assetContent.size
@@ -102,9 +101,9 @@ extension Asset {
 
 }
 
-extension EncryptionAlgorithm {
+private extension EncryptionAlgorithm {
 
-    fileprivate init(_ encryption: MessageBackupModel.Content.AssetContent.EncryptionAlgorithm) {
+    init(_ encryption: MessageBackupModel.Content.AssetContent.EncryptionAlgorithm) {
         switch encryption {
         case .aesCBC:
             self = .aesCbc
@@ -115,9 +114,9 @@ extension EncryptionAlgorithm {
 
 }
 
-extension Asset.Original.OneOf_MetaData {
+private extension Asset.Original.OneOf_MetaData {
 
-    fileprivate init?(_ metadata: MessageBackupModel.Content.AssetContent.Metadata) {
+    init?(_ metadata: MessageBackupModel.Content.AssetContent.Metadata) {
         switch metadata {
 
         case let .image(imageMetadata):
@@ -154,7 +153,6 @@ extension Asset.Original.OneOf_MetaData {
 
         case let .generic(genericMetadata):
             return nil
-
         }
     }
 
@@ -172,12 +170,11 @@ private func fallbackName(for metadata: MessageBackupModel.Content.AssetContent.
     case .audio:
         "audio"
 
-    case .generic(let genericMetadata):
+    case let .generic(genericMetadata):
         if let name = genericMetadata.name, !name.isEmpty {
             name
         } else {
             "file"
         }
-
     }
 }

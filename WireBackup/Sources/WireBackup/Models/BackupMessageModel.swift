@@ -51,9 +51,9 @@ public struct MessageBackupModel: Hashable, Sendable {
 // The following types replicate the API of the multi-platform backup library in a Swift friendlier way.
 // (e.g. enums instead of class hierarchy)
 
-extension MessageBackupModel {
+public extension MessageBackupModel {
 
-    public enum Content: Hashable, Sendable {
+    enum Content: Hashable, Sendable {
 
         case text(TextContent)
         case location(LocationContent)
