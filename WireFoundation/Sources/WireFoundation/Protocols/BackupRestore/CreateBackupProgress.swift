@@ -16,14 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
-// sourcery: AutoMockable
-protocol ImportBackupFileArchiverProtocol: Sendable {
+public enum CreateBackupProgress: Sendable {
 
-    func unzipFile(
-        at sourceURL: URL,
-        to destinationURL: URL
-    ) throws
+    case progress(current: Int, total: Int)
+    case done(url: URL)
+
+}
+
+public extension CreateBackupProgress {
+
+    static func progress(_ current: Int, _ total: Int) -> Self {
+        .progress(current: current, total: total)
+    }
+
+    static func done(_ url: URL) -> Self {
+        .done(url: url)
+    }
 
 }

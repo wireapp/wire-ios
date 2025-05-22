@@ -17,8 +17,21 @@
 //
 
 import Foundation
+import WireCellsAPI
+import WireLogging
 
-public enum CreateBackupProgress: Sendable {
-    case progress(Float)
-    case done(URL)
+package final class WireCellsUploadFileUseCase: WireCellsUploadFileUseCaseProtocol {
+
+    package init() {}
+
+    func invoke(fileURL: URL) async throws {
+        // TODO: [WPB-17619] Implement
+        WireLogger.wireCells.info("Uploading file from URL")
+    }
+
+    func invoke(imageData: Data) async throws {
+        // TODO: [WPB-17619] Implement
+        WireLogger.wireCells.info("Uploading file from image data")
+    }
+
 }

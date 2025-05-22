@@ -66,24 +66,34 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
             throw MLSMessageDecryptorError.mlsConversationNotReady
         }
 
-        let decryptionResults = try await decryptMLSMessage(
-            message: eventData.message,
-            mlsGroupID: mlsGroupID,
-            subconversation: eventData.subconversation
-        )
+        do {
+            let decryptionResults = try await decryptMLSMessage(
+                message: eventData.message,
+                mlsGroupID: mlsGroupID,
+                subconversation: eventData.subconversation
+            )
 
-        let decryptedMessages = await processMLSMessageDecryptionResults(
-            decryptionResults,
-            mlsConversation: mlsConversation,
-            senderID: eventData.senderID.uuid,
-            senderDomain: eventData.senderID.domain,
-            date: eventData.timestamp
-        )
+            let decryptedMessages = await processMLSMessageDecryptionResults(
+                decryptionResults,
+                mlsConversation: mlsConversation,
+                senderID: eventData.senderID.uuid,
+                senderDomain: eventData.senderID.domain,
+                date: eventData.timestamp
+            )
 
-        var decryptedEvent = eventData
-        decryptedEvent.decryptedMessages = decryptedMessages
+            var decryptedEvent = eventData
+            decryptedEvent.decryptedMessages = decryptedMessages
 
-        return decryptedEvent
+            return decryptedEvent
+        } catch let error as WireDataModel.MLSDecryptionService.MLSMessageDecryptionError {
+            switch error {
+            case .wrongEpoch:
+                throw MLSMessageDecryptorError.wrongEpoch(mlsGroupID: mlsGroupID)
+            default:
+                throw error
+            }
+
+        }
     }
 
     private func decryptMLSMessage(
