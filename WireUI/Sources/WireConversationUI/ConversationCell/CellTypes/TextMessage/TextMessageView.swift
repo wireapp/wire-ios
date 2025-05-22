@@ -39,6 +39,8 @@ public struct TextMessageView: ConversationCellContentViewProtocol {
                     accentColor: model.accentColor,
                     shouldDetectTypes: true
                 )
+            if case .some(let senderModel) = model.senderViewModelWrapper.state {
+                SenderMessageView(model: senderModel)
             }
             MessageStatusView(model: model.statusViewModel)
         }
