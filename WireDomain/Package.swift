@@ -26,9 +26,6 @@ let package = Package(
                 "WireAPI",
                 "WireLogging",
                 "WireFoundation"
-            ],
-            swiftSettings: [
-                .define("EXCLUDE_X86_64")
             ]
         ),
         .target(
