@@ -78,8 +78,10 @@ extension AddParticipantsViewController.Context {
             let freeSpace = conversation.freeParticipantSlots
             let max = ZMConversation.getMaxParticipants(isChannel: conversation.isChannel)
             message = AddParticipantsAlert.Message
-                .existingConversation(max.participantsFormatted,
-                                      freeSpace.participantsFormatted)
+                .existingConversation(
+                    max.participantsFormatted,
+                    freeSpace.participantsFormatted
+                )
         case let .create(context):
             message = AddParticipantsAlert.Message
                 .newConversation(ZMConversation.getMaxParticipants(isChannel: context.isChannel).participantsFormatted)
