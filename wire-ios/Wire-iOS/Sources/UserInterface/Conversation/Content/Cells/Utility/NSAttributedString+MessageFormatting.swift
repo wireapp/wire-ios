@@ -29,8 +29,6 @@ import WireReusableUIComponents
 
 extension NSAttributedString {
 
-    static var paragraphStyle: NSParagraphStyle = defaultParagraphStyle()
-
     static var previewParagraphStyle: NSParagraphStyle {
         defaultPreviewParagraphStyle()
     }
@@ -39,27 +37,11 @@ extension NSAttributedString {
 
     static var previewStyle: DownStyle = previewMarkdownStyle()
 
-    /// This method needs to be called as soon as the preferredContentSizeCategory is changed
-    @objc
-    static func invalidateParagraphStyle() {
-        paragraphStyle = defaultParagraphStyle()
-    }
-
     /// This method needs to be called as soon as the text color configuration is changed.
     @objc
     static func invalidateMarkdownStyle() {
         style = defaultMarkdownStyle()
         previewStyle = previewMarkdownStyle()
-    }
-
-    fileprivate static func defaultParagraphStyle() -> NSParagraphStyle {
-        let paragraphStyle = NSMutableParagraphStyle()
-
-        paragraphStyle.minimumLineHeight = 22 * UIFont
-            .wr_preferredContentSizeMultiplier(for: UIApplication.shared.preferredContentSizeCategory)
-        paragraphStyle.paragraphSpacing = CGFloat.MessageCell.paragraphSpacing
-
-        return paragraphStyle
     }
 
     fileprivate static func defaultPreviewParagraphStyle() -> NSParagraphStyle {

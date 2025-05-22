@@ -35,12 +35,12 @@ extension NSAttributedString {
 //
 //    static var previewStyle: DownStyle = previewMarkdownStyle()
 //
-//   /// This method needs to be called as soon as the preferredContentSizeCategory is changed
-//    @objc
-//    static func invalidateParagraphStyle() {
-//        paragraphStyle = defaultParagraphStyle()
-//    }
-//
+   /// This method needs to be called as soon as the preferredContentSizeCategory is changed
+    @objc
+    public static func invalidateParagraphStyle() {
+        paragraphStyle = defaultParagraphStyle()
+    }
+
 //    /// This method needs to be called as soon as the text color configuration is changed.
 //    @objc
 //    static func invalidateMarkdownStyle() {
@@ -48,7 +48,7 @@ extension NSAttributedString {
 //        previewStyle = previewMarkdownStyle()
 //    }
 //
-    fileprivate static func defaultParagraphStyle() -> NSParagraphStyle {
+    public static func defaultParagraphStyle() -> NSParagraphStyle {
         let paragraphStyle = NSMutableParagraphStyle()
 
         paragraphStyle.minimumLineHeight = 22 * UIFont
