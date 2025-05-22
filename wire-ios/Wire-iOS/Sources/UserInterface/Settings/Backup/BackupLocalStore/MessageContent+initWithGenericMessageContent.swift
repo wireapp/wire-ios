@@ -25,8 +25,6 @@ extension MessageBackupModel.Content {
         switch content {
         case let .text(text):
             self.init(text)
-        case let .image(imageAsset):
-            self.init(imageAsset)
         case let .asset(asset):
             self.init(asset)
         case let .location(location):
@@ -36,9 +34,8 @@ extension MessageBackupModel.Content {
         case let .ephemeral(ephemeral):
             self.init(ephemeral)
         case .knock, .lastRead, .cleared, .external, .clientAction, .calling, .hidden, .deleted, .confirmation,
-             .reaction, .availability, .composite, .buttonAction, .buttonActionConfirmation, .dataTransfer,
-             .inCallEmoji,
-             .inCallHandRaise:
+             .reaction, .availability, .composite, .buttonAction, .buttonActionConfirmation, .dataTransfer, .image,
+             .inCallEmoji, .inCallHandRaise:
             return nil
         }
     }
@@ -47,11 +44,9 @@ extension MessageBackupModel.Content {
         switch ephemeral.content {
         case let .text(text):
             self.init(text)
-        case let .image(imageAsset):
-            self.init(imageAsset)
         case let .location(location):
             self.init(location)
-        case .knock, .asset, .none:
+        case .knock, .asset, .image, .none:
             return nil
         }
     }
@@ -96,25 +91,6 @@ extension MessageBackupModel.Content {
             encryption: uploaded.hasEncryption ? .init(uploaded.encryption) : nil,
             metadata: original.metaData.flatMap(MessageBackupModel.Content.AssetContent.Metadata.init) ??
                 .generic(name: original.hasName ? original.name : nil)
-        )
-    }
-
-    private init?(_ imageAsset: ImageAsset) { // TODO: delete
-        self = .asset(
-            mimeType: imageAsset.hasMimeType ? imageAsset.mimeType : "application/octet-stream",
-            size: UInt64(imageAsset.size),
-            name: .none,
-            otrKey: imageAsset.otrKey,
-            sha256: imageAsset.sha256,
-            assetID: "", // TODO: what value to set? is empty string ok?
-            assetToken: .none,
-            assetDomain: .none,
-            encryption: .none,
-            metadata: .image(
-                width: imageAsset.width, // TODO: use .width or .originalWidth?
-                height: imageAsset.height,
-                tag: imageAsset.hasTag ? imageAsset.tag : ""
-            )
         )
     }
 
