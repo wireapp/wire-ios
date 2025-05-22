@@ -16,16 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
 // sourcery: AutoMockable
-public protocol ImportBackupStreamDecryptorProtocol: Sendable {
+public protocol FileArchiverProtocol: Sendable {
 
-    func decrypt(
-        input: InputStream,
-        output: OutputStream,
-        accountID: UUID,
-        password: String
+    /// Creates a zip file at `destinationURL` from the file or directory at `sourceURL`.
+    func zipResources(
+        at resourceURLs: [URL],
+        into destinationURL: URL
     ) throws
 
 }

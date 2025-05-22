@@ -16,9 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum CreateLegacyBackupError: Error {
-    case noActiveAccountForExport
-    case compressionError
-    /// Failed to create `InputStream` or `OutputStream` from `URL`.
-    case failedToCreateStreamsForEncryption
+public import Foundation
+
+public enum CreateBackupProgress: Sendable {
+
+    case progress(current: Int, total: Int)
+    case done(url: URL)
+
+}
+
+public extension CreateBackupProgress {
+
+    static func progress(_ current: Int, _ total: Int) -> Self {
+        .progress(current: current, total: total)
+    }
+
+    static func done(_ url: URL) -> Self {
+        .done(url: url)
+    }
+
 }

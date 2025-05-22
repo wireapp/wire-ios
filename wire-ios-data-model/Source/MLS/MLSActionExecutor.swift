@@ -382,7 +382,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
                 // ignore error so transaction is saved and message is saved too.
                 return nil
             default:
-                throw error
+                throw CoreCryptoError.Mls(error)
             }
         } catch {
             throw error

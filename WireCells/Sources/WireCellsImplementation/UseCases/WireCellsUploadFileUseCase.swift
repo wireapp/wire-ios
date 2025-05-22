@@ -17,13 +17,21 @@
 //
 
 import Foundation
+import WireCellsAPI
+import WireLogging
 
-// sourcery: AutoMockable
-protocol ImportBackupFileArchiverProtocol: Sendable {
+package final class WireCellsUploadFileUseCase: WireCellsUploadFileUseCaseProtocol {
 
-    func unzipFile(
-        at sourceURL: URL,
-        to destinationURL: URL
-    ) throws
+    package init() {}
+
+    func invoke(fileURL: URL) async throws {
+        // TODO: [WPB-17619] Implement
+        WireLogger.wireCells.info("Uploading file from URL")
+    }
+
+    func invoke(imageData: Data) async throws {
+        // TODO: [WPB-17619] Implement
+        WireLogger.wireCells.info("Uploading file from image data")
+    }
 
 }

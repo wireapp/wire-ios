@@ -18,7 +18,14 @@
 
 import Foundation
 
-public enum CreateBackupProgress: Sendable {
-    case progress(Float)
-    case done(URL)
+struct RuntimeError: LocalizedError {
+    let description: String
+
+    init(_ description: String) {
+        self.description = description
+    }
+
+    var errorDescription: String? {
+        description
+    }
 }

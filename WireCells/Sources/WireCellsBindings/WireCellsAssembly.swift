@@ -16,8 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public class WireCellsAssembly {
-    public init() {
-        print("Init")
+public import WireCellsAPI
+import WireCellsImplementation
+
+public struct WireCellsAssembly {
+
+    public init() {}
+
+    public func makeUploadFileUseCase() -> any WireCellsUploadFileUseCaseProtocol {
+        WireCellsUploadFileUseCase()
     }
+
 }
