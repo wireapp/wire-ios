@@ -18,8 +18,16 @@
 
 /*package*/ public import Foundation
 
-/*package*/ public extension Bundle {
-    static var resources: Bundle {
+/*package*/ extension Bundle {
+
+    static var module: Bundle {
+        Bundle(for: Dummy.self)
+    }
+
+    public static var wireConversationsResources: Bundle {
         .module
     }
+
 }
+
+private final class Dummy {}
