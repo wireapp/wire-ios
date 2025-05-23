@@ -1877,6 +1877,21 @@ public class MockCoreCryptoKeyMigrationManagerProtocol: CoreCryptoKeyMigrationMa
         try await mock(path, oldKey, newKey)
     }
 
+    // MARK: - markMigrationAsSkipped
+
+    public var markMigrationAsSkipped_Invocations: [Void] = []
+    public var markMigrationAsSkipped_MockMethod: (() -> Void)?
+
+    public func markMigrationAsSkipped() {
+        markMigrationAsSkipped_Invocations.append(())
+
+        guard let mock = markMigrationAsSkipped_MockMethod else {
+            fatalError("no mock for `markMigrationAsSkipped`")
+        }
+
+        mock()
+    }
+
 }
 
 public class MockCoreCryptoProviderProtocol: CoreCryptoProviderProtocol {

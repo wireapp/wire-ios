@@ -19,6 +19,7 @@
 import Foundation
 import XCTest
 @testable import WireDataModel
+@testable import WireDataModelSupport
 
 class MockCoreCryptoKeyProvider: CoreCryptoKeyProvider {
 
@@ -37,20 +38,11 @@ class MockCoreCryptoKeyProvider: CoreCryptoKeyProvider {
     }
 }
 
-class MockCoreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol {
-    var isMigrationNeeded: Bool {
-        true
-    }
-
-    func performMigrationIfNeeded(path: String, oldKey: String, newKey: Data) async throws {}
-
-}
-
 class CoreCryptoConfigProviderTests: ZMConversationTestsBase {
 
     private var mockCoreCryptoKeyProvider: MockCoreCryptoKeyProvider!
     private var sut: CoreCryptoConfigProvider!
-    private var mockCoreCryptoKeyMigrationManager = MockCoreCryptoKeyMigrationManager()
+    private var mockCoreCryptoKeyMigrationManager = MockCoreCryptoKeyMigrationManagerProtocol()
 
     override func setUp() {
         super.setUp()

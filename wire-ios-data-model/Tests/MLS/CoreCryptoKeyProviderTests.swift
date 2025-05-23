@@ -19,6 +19,7 @@
 import Foundation
 import XCTest
 @testable import WireDataModel
+@testable import WireDataModelSupport
 
 class CoreCryptoKeyProviderTests: XCTestCase {
 
@@ -31,8 +32,9 @@ class CoreCryptoKeyProviderTests: XCTestCase {
 
     func test_itFetchesCoreCryptoKey() async throws {
         // GIVEN
-        let mockCoreCryptoKeyMigrationManager = MockCoreCryptoKeyMigrationManager()
+        let mockCoreCryptoKeyMigrationManager = MockCoreCryptoKeyMigrationManagerProtocol()
         let sut = CoreCryptoKeyProvider(coreCryptoKeyMigrationManager: mockCoreCryptoKeyMigrationManager)
+        mockCoreCryptoKeyMigrationManager.performMigrationIfNeededPathOldKeyNewKey_MockMethod = { _, _, _ in }
 
         let item = CoreCryptoKeychainItem()
         let expectedKey = try KeychainManager.generateKey(numberOfBytes: 32)
@@ -47,8 +49,10 @@ class CoreCryptoKeyProviderTests: XCTestCase {
 
     func test_itDoesntCreateCoreCryptoKey_WhenNotNeeded() async {
         // GIVEN
-        let mockCoreCryptoKeyMigrationManager = MockCoreCryptoKeyMigrationManager()
+        let mockCoreCryptoKeyMigrationManager = MockCoreCryptoKeyMigrationManagerProtocol()
         let sut = CoreCryptoKeyProvider(coreCryptoKeyMigrationManager: mockCoreCryptoKeyMigrationManager)
+        mockCoreCryptoKeyMigrationManager.performMigrationIfNeededPathOldKeyNewKey_MockMethod = { _, _, _ in }
+        mockCoreCryptoKeyMigrationManager.markMigrationAsSkipped_MockMethod = {}
 
         // WHEN
         await XCTAssertThrowsErrorAsync {
@@ -61,8 +65,10 @@ class CoreCryptoKeyProviderTests: XCTestCase {
 
     func test_itCreatesCoreCryptoKey_WhenNeeded() async throws {
         // GIVEN
-        let mockCoreCryptoKeyMigrationManager = MockCoreCryptoKeyMigrationManager()
+        let mockCoreCryptoKeyMigrationManager = MockCoreCryptoKeyMigrationManagerProtocol()
         let sut = CoreCryptoKeyProvider(coreCryptoKeyMigrationManager: mockCoreCryptoKeyMigrationManager)
+        mockCoreCryptoKeyMigrationManager.performMigrationIfNeededPathOldKeyNewKey_MockMethod = { _, _, _ in }
+        mockCoreCryptoKeyMigrationManager.markMigrationAsSkipped_MockMethod = {}
 
         // WHEN
         let key = try await sut.coreCryptoKey(createIfNeeded: true, path: "")
@@ -73,6 +79,41 @@ class CoreCryptoKeyProviderTests: XCTestCase {
         let storedKey: Data? = try? KeychainManager.fetchItem(CoreCryptoKeychainItem())
         XCTAssertNotNil(storedKey)
         XCTAssertEqual(key, storedKey)
+    }
+
+    // MARK: Migrating key
+
+    func test_itSkipsKeyMigration() async throws {
+        // GIVEN
+        let mockCoreCryptoKeyMigrationManager = MockCoreCryptoKeyMigrationManagerProtocol()
+        let sut = CoreCryptoKeyProvider(coreCryptoKeyMigrationManager: mockCoreCryptoKeyMigrationManager)
+        mockCoreCryptoKeyMigrationManager.markMigrationAsSkipped_MockMethod = {}
+
+        // WHEN
+        await XCTAssertThrowsErrorAsync {
+            _ = try await sut.coreCryptoKey(createIfNeeded: false, path: "")
+        }
+
+        // THEN
+        XCTAssertEqual(mockCoreCryptoKeyMigrationManager.markMigrationAsSkipped_Invocations.count, 1)
+    }
+
+    func test_itPerformsKeyMigration() async throws {
+        // GIVEN
+        let mockCoreCryptoKeyMigrationManager = MockCoreCryptoKeyMigrationManagerProtocol()
+        let sut = CoreCryptoKeyProvider(coreCryptoKeyMigrationManager: mockCoreCryptoKeyMigrationManager)
+        mockCoreCryptoKeyMigrationManager.performMigrationIfNeededPathOldKeyNewKey_MockMethod = { _, _, _ in }
+
+        let item = CoreCryptoKeychainItem()
+        let expectedKey = try KeychainManager.generateKey(numberOfBytes: 32)
+        try KeychainManager.storeItem(item, value: expectedKey)
+
+        // WHEN
+        _ = try? await sut.coreCryptoKey(createIfNeeded: false, path: "")
+
+        // THEN
+
+        XCTAssertEqual(mockCoreCryptoKeyMigrationManager.performMigrationIfNeededPathOldKeyNewKey_Invocations.count, 1)
     }
 
 }
