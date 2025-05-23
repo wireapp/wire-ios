@@ -55,7 +55,7 @@ final class IncrementalSyncObserver: IncrementalSyncObserverProtocol {
                 .receive(on: decryptionQueue)
                 .sink { [weak self] syncState in
                     switch syncState {
-                    case .incrementalSyncing(.pullPendingEvents(let state)):
+                    case let .incrementalSyncing(.pullPendingEvents(state)):
                         switch state {
                         case .inProgress:
                             self?.decryptionState = .inProgress
