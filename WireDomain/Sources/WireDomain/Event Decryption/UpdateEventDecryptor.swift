@@ -58,8 +58,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         proteusMessageDecryptor: any ProteusMessageDecryptorProtocol,
         mlsMessageDecryptor: any MLSMessageDecryptorProtocol,
         mlsService: (any MLSServiceInterface)?,
-        messageLocalStore: any MessageLocalStoreProtocol,
-        journal: Journal
+        messageLocalStore: any MessageLocalStoreProtocol
     ) {
         self.proteusMessageDecryptor = proteusMessageDecryptor
         self.mlsMessageDecryptor = mlsMessageDecryptor

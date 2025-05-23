@@ -59,8 +59,6 @@ final class IncrementalSyncObserver: IncrementalSyncObserverProtocol {
                         self?.decryptionState = .inProgress
                     case .incrementalSyncing(.processPendingEvents), .liveSyncing:
                         self?.decryptionState = .done
-                    case .liveSyncing:
-                        print("something")
                     default:
                         self?.decryptionState = .notStarted
                     }

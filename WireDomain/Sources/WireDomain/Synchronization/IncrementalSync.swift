@@ -100,7 +100,6 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                             attributes: [.eventEnvelopeID: envelope.id]
                         )
                         continue
-                        // Step 2
                     }
 
                     let index: Int64

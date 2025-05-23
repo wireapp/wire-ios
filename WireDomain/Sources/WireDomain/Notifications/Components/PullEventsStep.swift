@@ -110,8 +110,7 @@ extension PullEventsStep {
             proteusMessageDecryptor: proteusMessageDecryptor,
             mlsMessageDecryptor: mlsMessageDecryptor,
             mlsService: nil,
-            messageLocalStore: dependency.messageLocalStore,
-            journal: journal
+            messageLocalStore: dependency.messageLocalStore
         )
     }
 
