@@ -266,6 +266,7 @@
 		59DA5E202DA7ED95007C3629 /* WireDomainSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59DA5E1F2DA7ED95007C3629 /* WireDomainSupport.framework */; };
 		59E6A9142B4EE5CF00DBCC6B /* RecurringAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E6A9132B4EE5CF00DBCC6B /* RecurringAction.swift */; };
 		59E6A9162B4EE5D500DBCC6B /* RecurringActionServiceInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E6A9152B4EE5D500DBCC6B /* RecurringActionServiceInterface.swift */; };
+		59FC8CEA2DE0A42000565449 /* WirePackages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59FC8CE92DE0A42000565449 /* WirePackages.framework */; };
 		59FFADA02C8229BB000C8085 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB79AC7B2C6DFAA2003CF5F4 /* WireTransportSupport.framework */; };
 		5E0EB1F421008C1900B5DC2B /* CompanyLoginRequester.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EB1F321008C1900B5DC2B /* CompanyLoginRequester.swift */; };
 		5E0EB1F72100A14A00B5DC2B /* CompanyLoginRequesterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EB1F52100A13200B5DC2B /* CompanyLoginRequesterTests.swift */; };
@@ -856,6 +857,7 @@
 		59DA5E1F2DA7ED95007C3629 /* WireDomainSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDomainSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59E6A9132B4EE5CF00DBCC6B /* RecurringAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecurringAction.swift; sourceTree = "<group>"; };
 		59E6A9152B4EE5D500DBCC6B /* RecurringActionServiceInterface.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecurringActionServiceInterface.swift; sourceTree = "<group>"; };
+		59FC8CE92DE0A42000565449 /* WirePackages.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WirePackages.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E0EB1F321008C1900B5DC2B /* CompanyLoginRequester.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyLoginRequester.swift; sourceTree = "<group>"; };
 		5E0EB1F52100A13200B5DC2B /* CompanyLoginRequesterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyLoginRequesterTests.swift; sourceTree = "<group>"; };
 		5E0EB1F82100A46F00B5DC2B /* MockCompanyLoginRequesterDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCompanyLoginRequesterDelegate.swift; sourceTree = "<group>"; };
@@ -1284,6 +1286,7 @@
 				591B6E132C8B092B009F8A7B /* WireDataModelSupport.framework in Frameworks */,
 				54F4DC5A1A4438B300FDB6EA /* WireSyncEngine.framework in Frameworks */,
 				59919E092DACFEED00EF63C7 /* WireFoundationSupport in Frameworks */,
+				59FC8CEA2DE0A42000565449 /* WirePackages.framework in Frameworks */,
 				EE4E6A262B714490007C476D /* WireRequestStrategySupport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1629,6 +1632,7 @@
 		540029B61918CA8500578793 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				59FC8CE92DE0A42000565449 /* WirePackages.framework */,
 				59DA5E1F2DA7ED95007C3629 /* WireDomainSupport.framework */,
 				59D1C30F2B1DEE6E0016F6B2 /* WireDataModelSupport.framework */,
 				015519452C20D20800037358 /* WireDomain.framework */,

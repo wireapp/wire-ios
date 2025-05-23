@@ -328,6 +328,7 @@
 		59F4B6F22B87563E00AC84B1 /* IsUserE2EICertifiedUseCaseProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4B6F12B87563E00AC84B1 /* IsUserE2EICertifiedUseCaseProtocol.swift */; };
 		59F4B6F42B87566700AC84B1 /* IsUserE2EICertifiedUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4B6F32B87566700AC84B1 /* IsUserE2EICertifiedUseCase.swift */; };
 		59F4B6F62B87638200AC84B1 /* IsUserE2EICertifiedUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4B6F52B87638200AC84B1 /* IsUserE2EICertifiedUseCaseTests.swift */; };
+		59FC8CE62DE0A41200565449 /* WirePackages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59FC8CE52DE0A41200565449 /* WirePackages.framework */; };
 		59FFAD9D2C822977000C8085 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59FFAD9C2C822977000C8085 /* WireTesting.framework */; };
 		5E0FB215205176B400FD9867 /* Set+ServiceUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0FB214205176B400FD9867 /* Set+ServiceUser.swift */; };
 		5E39FC67225F22BE00C682B8 /* ZMConversation+ExternalParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E39FC66225F22BE00C682B8 /* ZMConversation+ExternalParticipant.swift */; };
@@ -1239,6 +1240,7 @@
 		59F4B6F12B87563E00AC84B1 /* IsUserE2EICertifiedUseCaseProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IsUserE2EICertifiedUseCaseProtocol.swift; sourceTree = "<group>"; };
 		59F4B6F32B87566700AC84B1 /* IsUserE2EICertifiedUseCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IsUserE2EICertifiedUseCase.swift; sourceTree = "<group>"; };
 		59F4B6F52B87638200AC84B1 /* IsUserE2EICertifiedUseCaseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IsUserE2EICertifiedUseCaseTests.swift; sourceTree = "<group>"; };
+		59FC8CE52DE0A41200565449 /* WirePackages.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WirePackages.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59FFAD9C2C822977000C8085 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E0FB214205176B400FD9867 /* Set+ServiceUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Set+ServiceUser.swift"; sourceTree = "<group>"; };
 		5E39FC66225F22BE00C682B8 /* ZMConversation+ExternalParticipant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversation+ExternalParticipant.swift"; sourceTree = "<group>"; };
@@ -1909,6 +1911,7 @@
 				1657FA9A2D9C2EB800A7B337 /* WireCoreCryptoUniffi in Frameworks */,
 				591B6E4C2C8B09C6009F8A7B /* CoreData.framework in Frameworks */,
 				76E000BC2DAFED3A00853C45 /* WireCellsAPI in Frameworks */,
+				59FC8CE62DE0A41200565449 /* WirePackages.framework in Frameworks */,
 				EE8DA96D2954A03800F58B79 /* WireLinkPreview.framework in Frameworks */,
 				E6707E902BBD683F00469D57 /* PINCache in Frameworks */,
 				EE8DA9632954A02400F58B79 /* WireProtos.framework in Frameworks */,
@@ -3588,6 +3591,7 @@
 		F9C9A6701CAD779E0039E10C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				59FC8CE52DE0A41200565449 /* WirePackages.framework */,
 				F9C9A66E1CAD77930039E10C /* CoreData.framework */,
 				EE8DA9662954A02B00F58B79 /* WireCryptobox.framework */,
 				EE8DA96F2954A03E00F58B79 /* WireImages.framework */,
