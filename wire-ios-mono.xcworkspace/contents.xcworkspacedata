@@ -222,7 +222,7 @@
       location = "group:WireCells">
    </FileRef>
    <FileRef
-      location = "group:WireConversations">
+      location = "group:WireConversations/WireConversations.xcodeproj">
    </FileRef>
    <FileRef
       location = "container:WireDebug">
