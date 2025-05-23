@@ -75,68 +75,122 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		59AD461A2DE0774C006AFC8C /* Exceptions for "WireConversationsImplementationSupport" folder in "WireConversationsImplementationSupport" target */ = {
+		59AD69252DE08E34006AFC8C /* Exceptions for "Sources" folder in "WireConversationsAPI" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Sourcery/AutoMockable.stencil,
-				Sourcery/sourcery.yml,
+				WireConversationsAPI/ChannelAccessModel.swift,
+				WireConversationsAPI/ConversationIDToPaletteMapper.swift,
+				WireConversationsAPI/WireConversationChannelAccess.swift,
+				WireConversationsAPI/WireConversationChannelCreationSettings.swift,
+				WireConversationsAPI/WireConversationChannelHistorySetting.swift,
+				WireConversationsAPI/WireMultiParticipantConversationType.swift,
+			);
+			target = 59AD20BA2DE072CA006AFC8C /* WireConversationsAPI */;
+		};
+		59AD69262DE08E34006AFC8C /* Exceptions for "Sources" folder in "WireConversationsBindings" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				WireConversationsBindings/WireConversationsAssembly.swift,
+			);
+			target = 59AD20C62DE072E0006AFC8C /* WireConversationsBindings */;
+		};
+		59AD69272DE08E34006AFC8C /* Exceptions for "Sources" folder in "WireConversationsImplementation" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				WireConversationsImplementation/ChannelAccessLevel/ChannelAccessUseCase.swift,
+				WireConversationsImplementation/ConversationIDToChannelIconMapper.swift,
+				WireConversationsImplementation/ConversationIDToGroupIconMapper.swift,
+				WireConversationsImplementation/stringHashCode.swift,
+			);
+			target = 59AD20D22DE072F3006AFC8C /* WireConversationsImplementation */;
+		};
+		59AD69282DE08E34006AFC8C /* Exceptions for "Sources" folder in "WireConversationsImplementationSupport" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				WireConversationsImplementationSupport/Sourcery/AutoMockable.manual.swift,
+				WireConversationsImplementationSupport/Sourcery/generated/AutoMockable.generated.swift,
+				WireConversationsImplementationSupport/WireConversationsImplementationSupport.swift,
 			);
 			target = 59AD20DE2DE072FF006AFC8C /* WireConversationsImplementationSupport */;
+		};
+		59AD69292DE08E34006AFC8C /* Exceptions for "Sources" folder in "WireConversationsResources" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"WireConversationsResources/Bundle+module+wireConversationsResources.swift",
+				WireConversationsResources/Media.xcassets,
+				WireConversationsResources/WireConversationChannelIcon.swift,
+				WireConversationsResources/WireConversationGroupIcon.swift,
+			);
+			target = 59AD20EA2DE07310006AFC8C /* WireConversationsResources */;
+		};
+		59AD692A2DE08E34006AFC8C /* Exceptions for "Sources" folder in "WireConversationsUIBindings" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				WireConversationsUIBindings/ChannelViewFactory.swift,
+				WireConversationsUIBindings/WireConversationChannelIconFactory.swift,
+				WireConversationsUIBindings/WireConversationGroupIconFactory.swift,
+				WireConversationsUIBindings/WireConversationTypePickerFactory.swift,
+			);
+			target = 59AD21022DE0732A006AFC8C /* WireConversationsUIBindings */;
+		};
+		59AD692B2DE08E34006AFC8C /* Exceptions for "Sources" folder in "WireConversationsUI" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"/Localized: WireConversationsUI/Resources/Localization/Accessibility.strings",
+				"/Localized: WireConversationsUI/Resources/Localization/Localizable.strings",
+				WireConversationsUI/.swiftgen.yml,
+				WireConversationsUI/ChannelAccess/ChannelAccessHostingController.swift,
+				WireConversationsUI/ChannelAccess/ChannelAccessView.swift,
+				WireConversationsUI/ChannelAccess/ChannelAccessViewModel.swift,
+				"WireConversationsUI/Generated/Strings+Generated.swift",
+				WireConversationsUI/WireConversationChannelCreationForm/WireConversationChannelCreationFormView.swift,
+				WireConversationsUI/WireConversationChannelCreationForm/WireConversationChannelCreationFormViewModel.swift,
+				WireConversationsUI/WireConversationChannelIcon.swift,
+				WireConversationsUI/WireConversationChannelIconUIKit.swift,
+				WireConversationsUI/WireConversationGroupIcon.swift,
+				WireConversationsUI/WireConversationTypePicker.swift,
+			);
+			target = 59AD210E2DE0733F006AFC8C /* WireConversationsUI */;
+		};
+		59AD69BF2DE08E64006AFC8C /* Exceptions for "Tests" folder in "WireConversationsUITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				TestPlans/AllTests.xctestplan,
+				WireConversationsTests/WireConversationChannelCreationFormViewModel/WireConversationChannelCreationFormViewModelTests.swift,
+			);
+			target = 59AD21162DE0733F006AFC8C /* WireConversationsUITests */;
+		};
+		59AD69C02DE08E64006AFC8C /* Exceptions for "Tests" folder in "WireConversationsTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				WireConversationsTests/WireConversationChannelCreationFormViewModel/WireConversationChannelCreationFormViewModelTests.swift,
+			);
+			target = 59AD21272DE07375006AFC8C /* WireConversationsTests */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		59AD20BC2DE072CA006AFC8C /* WireConversationsAPI */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = WireConversationsAPI;
-			sourceTree = "<group>";
-		};
-		59AD20C82DE072E0006AFC8C /* WireConversationsBindings */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = WireConversationsBindings;
-			sourceTree = "<group>";
-		};
-		59AD20D42DE072F3006AFC8C /* WireConversationsImplementation */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = WireConversationsImplementation;
-			sourceTree = "<group>";
-		};
-		59AD20E02DE072FF006AFC8C /* WireConversationsImplementationSupport */ = {
+		59AD69012DE08E33006AFC8C /* Sources */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				59AD461A2DE0774C006AFC8C /* Exceptions for "WireConversationsImplementationSupport" folder in "WireConversationsImplementationSupport" target */,
+				59AD69252DE08E34006AFC8C /* Exceptions for "Sources" folder in "WireConversationsAPI" target */,
+				59AD69262DE08E34006AFC8C /* Exceptions for "Sources" folder in "WireConversationsBindings" target */,
+				59AD69272DE08E34006AFC8C /* Exceptions for "Sources" folder in "WireConversationsImplementation" target */,
+				59AD69282DE08E34006AFC8C /* Exceptions for "Sources" folder in "WireConversationsImplementationSupport" target */,
+				59AD69292DE08E34006AFC8C /* Exceptions for "Sources" folder in "WireConversationsResources" target */,
+				59AD692A2DE08E34006AFC8C /* Exceptions for "Sources" folder in "WireConversationsUIBindings" target */,
+				59AD692B2DE08E34006AFC8C /* Exceptions for "Sources" folder in "WireConversationsUI" target */,
 			);
-			path = WireConversationsImplementationSupport;
+			path = Sources;
 			sourceTree = "<group>";
 		};
-		59AD20EC2DE07310006AFC8C /* WireConversationsResources */ = {
+		59AD697E2DE08E64006AFC8C /* Tests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = WireConversationsResources;
-			sourceTree = "<group>";
-		};
-		59AD20F82DE07321006AFC8C /* WireConversationsUI */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = WireConversationsUI;
-			sourceTree = "<group>";
-		};
-		59AD21042DE0732A006AFC8C /* WireConversationsUIBindings */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = WireConversationsUIBindings;
-			sourceTree = "<group>";
-		};
-		59AD21102DE0733F006AFC8C /* WireConversationsUI */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = WireConversationsUI;
-			sourceTree = "<group>";
-		};
-		59AD211B2DE0733F006AFC8C /* WireConversationsUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = WireConversationsUITests;
-			sourceTree = "<group>";
-		};
-		59AD21292DE07375006AFC8C /* WireConversationsTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = WireConversationsTests;
+			exceptions = (
+				59AD69BF2DE08E64006AFC8C /* Exceptions for "Tests" folder in "WireConversationsUITests" target */,
+				59AD69C02DE08E64006AFC8C /* Exceptions for "Tests" folder in "WireConversationsTests" target */,
+			);
+			path = Tests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -219,8 +273,8 @@
 		59AD20992DE0722A006AFC8C = {
 			isa = PBXGroup;
 			children = (
-				59AD20B52DE0724B006AFC8C /* Sources */,
-				59AD21322DE07384006AFC8C /* Tests */,
+				59AD69012DE08E33006AFC8C /* Sources */,
+				59AD697E2DE08E64006AFC8C /* Tests */,
 				59AD46052DE07537006AFC8C /* Frameworks */,
 				59AD20A42DE0722A006AFC8C /* Products */,
 			);
@@ -240,30 +294,6 @@
 				59AD21282DE07375006AFC8C /* WireConversationsTests.xctest */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		59AD20B52DE0724B006AFC8C /* Sources */ = {
-			isa = PBXGroup;
-			children = (
-				59AD20BC2DE072CA006AFC8C /* WireConversationsAPI */,
-				59AD20C82DE072E0006AFC8C /* WireConversationsBindings */,
-				59AD20D42DE072F3006AFC8C /* WireConversationsImplementation */,
-				59AD20E02DE072FF006AFC8C /* WireConversationsImplementationSupport */,
-				59AD20EC2DE07310006AFC8C /* WireConversationsResources */,
-				59AD20F82DE07321006AFC8C /* WireConversationsUI */,
-				59AD21042DE0732A006AFC8C /* WireConversationsUIBindings */,
-				59AD21102DE0733F006AFC8C /* WireConversationsUI */,
-			);
-			path = Sources;
-			sourceTree = "<group>";
-		};
-		59AD21322DE07384006AFC8C /* Tests */ = {
-			isa = PBXGroup;
-			children = (
-				59AD211B2DE0733F006AFC8C /* WireConversationsUITests */,
-				59AD21292DE07375006AFC8C /* WireConversationsTests */,
-			);
-			path = Tests;
 			sourceTree = "<group>";
 		};
 		59AD46052DE07537006AFC8C /* Frameworks */ = {
@@ -341,9 +371,6 @@
 			);
 			dependencies = (
 			);
-			fileSystemSynchronizedGroups = (
-				59AD20BC2DE072CA006AFC8C /* WireConversationsAPI */,
-			);
 			name = WireConversationsAPI;
 			packageProductDependencies = (
 			);
@@ -363,9 +390,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				59AD20C82DE072E0006AFC8C /* WireConversationsBindings */,
 			);
 			name = WireConversationsBindings;
 			packageProductDependencies = (
@@ -388,9 +412,6 @@
 			dependencies = (
 				59AD46092DE07537006AFC8C /* PBXTargetDependency */,
 				59AD460E2DE0755A006AFC8C /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				59AD20D42DE072F3006AFC8C /* WireConversationsImplementation */,
 			);
 			name = WireConversationsImplementation;
 			packageProductDependencies = (
@@ -415,9 +436,6 @@
 				59AD46132DE076B7006AFC8C /* PBXTargetDependency */,
 				59AD46172DE076B7006AFC8C /* PBXTargetDependency */,
 			);
-			fileSystemSynchronizedGroups = (
-				59AD20E02DE072FF006AFC8C /* WireConversationsImplementationSupport */,
-			);
 			name = WireConversationsImplementationSupport;
 			packageProductDependencies = (
 			);
@@ -437,9 +455,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				59AD20EC2DE07310006AFC8C /* WireConversationsResources */,
 			);
 			name = WireConversationsResources;
 			packageProductDependencies = (
@@ -461,9 +476,6 @@
 			);
 			dependencies = (
 			);
-			fileSystemSynchronizedGroups = (
-				59AD21042DE0732A006AFC8C /* WireConversationsUIBindings */,
-			);
 			name = WireConversationsUIBindings;
 			packageProductDependencies = (
 			);
@@ -484,10 +496,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				59AD20F82DE07321006AFC8C /* WireConversationsUI */,
-				59AD21102DE0733F006AFC8C /* WireConversationsUI */,
 			);
 			name = WireConversationsUI;
 			packageProductDependencies = (
@@ -512,7 +520,7 @@
 				59AD211A2DE0733F006AFC8C /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				59AD211B2DE0733F006AFC8C /* WireConversationsUITests */,
+				59AD697E2DE08E64006AFC8C /* Tests */,
 			);
 			name = WireConversationsUITests;
 			packageProductDependencies = (
@@ -533,9 +541,6 @@
 			);
 			dependencies = (
 				59AD212E2DE07375006AFC8C /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				59AD21292DE07375006AFC8C /* WireConversationsTests */,
 			);
 			name = WireConversationsTests;
 			packageProductDependencies = (
