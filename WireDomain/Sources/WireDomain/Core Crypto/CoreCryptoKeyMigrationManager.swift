@@ -24,7 +24,7 @@ public class CoreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtoco
 
     private let journal: Journal
 
-    init(journal: Journal) {
+    public init(journal: Journal) {
         self.journal = journal
     }
 

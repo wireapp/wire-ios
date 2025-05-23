@@ -498,6 +498,7 @@ public final class SharingSession {
             accountDirectory: coreDataStack.accountContainer,
             syncContext: coreDataStack.syncContext,
             cryptoboxMigrationManager: cryptoboxMigrationManager,
+            coreCryptoKeyMigrationManager: nil,
             allowCreation: false
         )
         let featureRepository = FeatureRepository(context: coreDataStack.syncContext)
