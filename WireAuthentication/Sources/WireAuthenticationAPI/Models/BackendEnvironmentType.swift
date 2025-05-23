@@ -20,10 +20,8 @@ import Foundation
 
 public enum BackendEnvironmentType: Sendable, Equatable, Hashable {
 
-    case production
+    case `default`
     case staging
-    case qaDemo
-    case qaDemo2
     case anta
     case bella
     case chala
