@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		59AD21182DE0733F006AFC8C /* WireConversationsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59AD210F2DE0733F006AFC8C /* WireConversationsUI.framework */; };
 		59AD212C2DE07375006AFC8C /* WireConversationsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59AD210F2DE0733F006AFC8C /* WireConversationsUI.framework */; };
+		59AD46062DE07537006AFC8C /* WireConversationsAPI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59AD20BB2DE072CA006AFC8C /* WireConversationsAPI.framework */; };
+		59AD460B2DE0755A006AFC8C /* WireConversationsResources.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59AD20EB2DE07310006AFC8C /* WireConversationsResources.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -25,6 +27,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = 59AD210E2DE0733F006AFC8C;
 			remoteInfo = WireConversationsUI;
+		};
+		59AD46082DE07537006AFC8C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 59AD209A2DE0722A006AFC8C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 59AD20BA2DE072CA006AFC8C;
+			remoteInfo = WireConversationsAPI;
+		};
+		59AD460D2DE0755A006AFC8C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 59AD209A2DE0722A006AFC8C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 59AD20EA2DE07310006AFC8C;
+			remoteInfo = WireConversationsResources;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -112,6 +128,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59AD460B2DE0755A006AFC8C /* WireConversationsResources.framework in Frameworks */,
+				59AD46062DE07537006AFC8C /* WireConversationsAPI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -167,6 +185,7 @@
 			children = (
 				59AD20B52DE0724B006AFC8C /* Sources */,
 				59AD21322DE07384006AFC8C /* Tests */,
+				59AD46052DE07537006AFC8C /* Frameworks */,
 				59AD20A42DE0722A006AFC8C /* Products */,
 			);
 			sourceTree = "<group>";
@@ -209,6 +228,13 @@
 				59AD21292DE07375006AFC8C /* WireConversationsTests */,
 			);
 			path = Tests;
+			sourceTree = "<group>";
+		};
+		59AD46052DE07537006AFC8C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -324,6 +350,8 @@
 			buildRules = (
 			);
 			dependencies = (
+				59AD46092DE07537006AFC8C /* PBXTargetDependency */,
+				59AD460E2DE0755A006AFC8C /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				59AD20D42DE072F3006AFC8C /* WireConversationsImplementation */,
@@ -701,6 +729,16 @@
 			target = 59AD210E2DE0733F006AFC8C /* WireConversationsUI */;
 			targetProxy = 59AD212D2DE07375006AFC8C /* PBXContainerItemProxy */;
 		};
+		59AD46092DE07537006AFC8C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 59AD20BA2DE072CA006AFC8C /* WireConversationsAPI */;
+			targetProxy = 59AD46082DE07537006AFC8C /* PBXContainerItemProxy */;
+		};
+		59AD460E2DE0755A006AFC8C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 59AD20EA2DE07310006AFC8C /* WireConversationsResources */;
+			targetProxy = 59AD460D2DE0755A006AFC8C /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
@@ -757,7 +795,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -765,6 +803,9 @@
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
+				SWIFT_UPCOMING_FEATURE_INTERNAL_IMPORTS_BY_DEFAULT = YES;
+				SWIFT_VERSION = 6.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -817,12 +858,15 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
+				SWIFT_UPCOMING_FEATURE_INTERNAL_IMPORTS_BY_DEFAULT = YES;
+				SWIFT_VERSION = 6.0;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";

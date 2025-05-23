@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireConversationsAPI
+public import WireConversationsAPI
 /*package*/ public import WireConversationsResources
 
 /*package*/ public final class ConversationIDToGroupIconMapper: ConversationIDToPaletteMapper {
