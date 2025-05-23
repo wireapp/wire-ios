@@ -17,7 +17,7 @@
 //
 
 import Combine
-package import SwiftUI
+/*package*/ public import SwiftUI
 import UIKit
 import WireConversationsAPI
 import WireConversationsImplementation
@@ -25,7 +25,7 @@ import WireConversationsImplementationSupport
 import WireDesign
 import WireReusableUIComponents
 
-package  final class ChannelAccessHostingController: UIHostingController<ChannelAccessView> {
+/*package*/ public  final class ChannelAccessHostingController: UIHostingController<ChannelAccessView> {
 
     private let viewModel: ChannelAccessViewModel
 
@@ -33,7 +33,7 @@ package  final class ChannelAccessHostingController: UIHostingController<Channel
 
     private var cancellables = Set<AnyCancellable>()
 
-    package init(viewModel: ChannelAccessViewModel) {
+    /*package*/ public init(viewModel: ChannelAccessViewModel) {
         self.viewModel = viewModel
         super.init(rootView: ChannelAccessView(viewModel: viewModel))
     }

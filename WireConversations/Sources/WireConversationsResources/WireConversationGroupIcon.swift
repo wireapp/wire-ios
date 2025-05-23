@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import SwiftUI
+/*package*/ public import SwiftUI
 
-package enum WireConversationGroupIconAsset {
+/*package*/ public enum WireConversationGroupIconAsset {
     case _1
     case _2
     case _3
@@ -35,7 +35,7 @@ package enum WireConversationGroupIconAsset {
     case _14
     case _15
 
-    package var index: UInt {
+    /*package*/ public var index: UInt {
         switch self {
         case ._1: 1
         case ._2: 2
@@ -55,7 +55,7 @@ package enum WireConversationGroupIconAsset {
         }
     }
 
-    package static var all: [WireConversationGroupIconAsset] {
+    /*package*/ public static var all: [WireConversationGroupIconAsset] {
         [
             ._1,
             ._2,
@@ -75,15 +75,15 @@ package enum WireConversationGroupIconAsset {
         ]
     }
 
-    package var imageName: String {
+    /*package*/ public var imageName: String {
         "group-icon-\(index)"
     }
 
-    package var image: Image {
+    /*package*/ public var image: Image {
         Image(imageName, bundle: .module)
     }
 
-    package var uiKitImage: UIImage {
+    /*package*/ public var uiKitImage: UIImage {
         UIImage(resource: .init(name: imageName, bundle: .module))
     }
 }

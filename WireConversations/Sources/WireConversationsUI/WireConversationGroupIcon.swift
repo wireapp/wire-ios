@@ -16,17 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import SwiftUI
-package import WireConversationsResources
+/*package*/ public import SwiftUI
+/*package*/ public import WireConversationsResources
 
-package struct WireConversationGroupIcon: View {
+/*package*/ public struct WireConversationGroupIcon: View {
     let groupIcon: WireConversationGroupIconAsset
 
-    package init(asset: WireConversationGroupIconAsset) {
+    /*package*/ public init(asset: WireConversationGroupIconAsset) {
         self.groupIcon = asset
     }
 
-    package var body: some View {
+    /*package*/ public var body: some View {
         groupIcon.image
             .resizable()
             .aspectRatio(contentMode: .fit)

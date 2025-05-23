@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
+/*package*/ public import Foundation
 
-package extension Bundle {
+/*package*/ public extension Bundle {
     static var resources: Bundle {
         .module
     }

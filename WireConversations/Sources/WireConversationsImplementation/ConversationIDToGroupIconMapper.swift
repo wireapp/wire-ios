@@ -17,15 +17,15 @@
 //
 
 import WireConversationsAPI
-package import WireConversationsResources
+/*package*/ public import WireConversationsResources
 
-package final class ConversationIDToGroupIconMapper: ConversationIDToPaletteMapper {
+/*package*/ public final class ConversationIDToGroupIconMapper: ConversationIDToPaletteMapper {
 
     let palette: [WireConversationGroupIconAsset] = WireConversationGroupIconAsset.all
 
-    package init() {}
+    /*package*/ public init() {}
 
-    package func palette(for conversationID: String) -> WireConversationGroupIconAsset {
+    /*package*/ public func palette(for conversationID: String) -> WireConversationGroupIconAsset {
         // make sure id is lowercased
         let id = conversationID.lowercased()
         // Calculate the combined hash
