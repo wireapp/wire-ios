@@ -41,15 +41,6 @@ public extension WireAccentColorMapping {
     }
 }
 
-private extension UIColor {
-
-    convenience init(light: ColorResource, dark: ColorResource) {
-        self.init { traits in
-            .init(resource: traits.userInterfaceStyle == .dark ? dark : light)
-        }
-    }
-}
-
 // MARK: - Previews
 
 #Preview {
