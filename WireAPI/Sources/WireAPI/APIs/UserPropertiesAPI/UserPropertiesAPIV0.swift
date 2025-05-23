@@ -84,20 +84,32 @@ class UserPropertiesAPIV0: UserPropertiesAPI, VersionedAPI {
 
         switch key {
         case .wireReceiptMode:
-            return try parseResponse(
-                (response.statusCode, data),
-                forPayloadType: ReceiptModeResponseV0.self
-            )
+            do {
+                return try parseResponse(
+                    (response.statusCode, data),
+                    forPayloadType: ReceiptModeResponseV0.self
+                )
+            } catch UserPropertiesAPIError.propertyNotFound {
+                return .areReadReceiptsEnabled(false)
+            }
         case .wireTypingIndicatorMode:
-            return try parseResponse(
-                (response.statusCode, data),
-                forPayloadType: TypeIndicatorModeResponseV0.self
-            )
+            do {
+                return try parseResponse(
+                    (response.statusCode, data),
+                    forPayloadType: TypeIndicatorModeResponseV0.self
+                )
+            } catch UserPropertiesAPIError.propertyNotFound {
+                return .areTypingIndicatorsEnabled(false)
+            }
         case .labels:
-            return try parseResponse(
-                (response.statusCode, data),
-                forPayloadType: LabelsResponseV0.self
-            )
+            do {
+                return try parseResponse(
+                    (response.statusCode, data),
+                    forPayloadType: LabelsResponseV0.self
+                )
+            } catch UserPropertiesAPIError.propertyNotFound {
+                return .conversationLabels([])
+            }
         }
     }
 

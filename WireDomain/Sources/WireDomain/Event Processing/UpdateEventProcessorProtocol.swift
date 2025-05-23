@@ -20,7 +20,7 @@ import WireAPI
 
 // sourcery: AutoMockable
 /// Process update events.
-protocol UpdateEventProcessorProtocol {
+public protocol UpdateEventProcessorProtocol {
 
     /// Process an update event.
     ///

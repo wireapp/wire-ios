@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "WireFoundation",
-    platforms: [.iOS(.v16), .macOS(.v12)],
+    platforms: [.iOS("16.4"), .macOS(.v12)],
     products: [
         // TODO: [WPB-7394] `Clibsodium` is no longer needed as a product
         .library(name: "Clibsodium", targets: ["Clibsodium"]),
@@ -16,7 +16,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
-        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.17.4"),
+        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", exact: "1.18.3"),
         .package(path: "../WirePlugins")
     ],
     targets: [
@@ -60,7 +60,6 @@ let package = Package(
 for target in package.targets where target.name != "Clibsodium" {
     target.swiftSettings = (target.swiftSettings ?? []) + [
         .enableUpcomingFeature("InternalImportsByDefault"),
-        .enableUpcomingFeature("FullTypedThrows"),
         .enableUpcomingFeature("ExistentialAny")
     ]
 }

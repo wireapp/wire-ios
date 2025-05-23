@@ -29,7 +29,8 @@ final class UpdateEventDecryptorTests: XCTestCase {
     var sut: UpdateEventDecryptor!
     var proteusMessageDecryptor: MockProteusMessageDecryptorProtocol!
     var mlsMessageDecryptor: MockMLSMessageDecryptorProtocol!
-    var messageRepository: MockMessageRepositoryProtocol!
+    var messageLocalStore: MockMessageLocalStoreProtocol!
+    var mlsService: MockMLSServiceInterface!
 
     var stack: CoreDataStack!
     let coreDataStackHelper = CoreDataStackHelper()
@@ -45,22 +46,26 @@ final class UpdateEventDecryptorTests: XCTestCase {
         try await insertScaffoldingData()
         proteusMessageDecryptor = MockProteusMessageDecryptorProtocol()
         mlsMessageDecryptor = MockMLSMessageDecryptorProtocol()
-        messageRepository = MockMessageRepositoryProtocol()
+        messageLocalStore = MockMessageLocalStoreProtocol()
+        mlsService = MockMLSServiceInterface()
 
         sut = UpdateEventDecryptor(
             proteusMessageDecryptor: proteusMessageDecryptor,
             mlsMessageDecryptor: mlsMessageDecryptor,
-            messageRepository: messageRepository
+            mlsService: mlsService,
+            messageLocalStore: messageLocalStore
         )
+        mlsService.commitPendingProposalsIfNeeded_MockMethod = {}
     }
 
     override func tearDown() async throws {
         stack = nil
         proteusMessageDecryptor = nil
         mlsMessageDecryptor = nil
-        messageRepository = nil
+        messageLocalStore = nil
         modelHelper = nil
         sut = nil
+        mlsService = nil
         try coreDataStackHelper.cleanupDirectory()
     }
 
@@ -165,6 +170,37 @@ final class UpdateEventDecryptorTests: XCTestCase {
         }
     }
 
+    func testWhenDecryptionOfMLSMessagesIsSuccessfulThenEventsAreReturned() async throws {
+        // Given some events.
+        let envelope = UpdateEventEnvelope(
+            id: UUID(),
+            events: [
+                .conversation(.mlsMessageAdd(Scaffolding.mlsMessage)),
+                .user(.pushRemove)
+            ],
+            isTransient: false
+        )
+
+        // Mock
+        mlsMessageDecryptor.decryptedMessageAddEventDataFrom_MockMethod = { $0 }
+
+        // When
+        let events = try await sut.decryptEvents(in: envelope)
+
+        // Then the "decrypted" (the mock just passes them right back) are returned.
+        XCTAssertEqual(
+            events,
+            [
+                .conversation(.mlsMessageAdd(Scaffolding.mlsMessage)),
+                .user(.pushRemove)
+            ]
+        )
+
+        await Task.yield()
+
+        XCTAssertEqual(mlsService.commitPendingProposalsIfNeeded_Invocations.count, 1)
+    }
+
 }
 
 private enum Scaffolding {
@@ -191,4 +227,17 @@ private enum Scaffolding {
         messageRecipientClientID: selfClientID
     )
 
+    static let mlsMessage = ConversationMLSMessageAddEvent(
+        conversationID: conversationID,
+        senderID: aliceID,
+        subconversation: "",
+        message: .init(messageContent),
+        timestamp: .now,
+        decryptedMessages: [.init(
+            message: Scaffolding.base64EncodedString,
+            senderClientID: UUID.mockID1.uuidString
+        )]
+    )
+
+    static let base64EncodedString = "CiQ5ZTU2NTQwOS0xODZiLTRlN2YtYTE4NC05NzE4MGE0MDAwMDQSDAoKRXZlcnl0aGluZw=="
 }

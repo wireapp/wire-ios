@@ -40,6 +40,7 @@ public enum SettingsPropertyName: String, CustomStringConvertible {
     case disableSendButton = "DisableSendButton"
 
     case disableLinkPreviews = "DisableLinkPreviews"
+    case collapseOwnMessages = "CollapseOwnMessages"
 
     // Profile
     case profileName = "ProfileName"
@@ -60,18 +61,16 @@ public enum SettingsPropertyName: String, CustomStringConvertible {
     case pingSoundName = "PingSoundName"
 
     // Open In
-    case tweetOpeningOption = "TweetOpeningOption"
     case mapsOpeningOption = "MapsOpeningOption"
     case browserOpeningOption = "BrowserOpeningOption"
 
-    // Persoanl Information
+    // Personal Information
     // Analytics
     case disableAnalyticsSharing = "DisableAnalyticsSharing"
 
     // Debug
     case disableCallKit = "DisableCallKit"
     case muteIncomingCallsWhileInACall = "MuteIncomingCallsWhileInACall"
-    case callingProtocolStrategy = "CallingProtcolStrategy"
     case enableBatchCollections = "EnableBatchCollections"
 
     case lockApp
@@ -79,6 +78,8 @@ public enum SettingsPropertyName: String, CustomStringConvertible {
     case readReceiptsEnabled
 
     case encryptMessagesAtRest
+
+    case conversationBackground
 
     public var changeNotificationName: String {
         description + "ChangeNotification"

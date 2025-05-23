@@ -37,7 +37,7 @@ public final class PushChannelService: PushChannelServiceProtocol {
     private let networkService: NetworkService
     private let authenticationManager: any AuthenticationManagerProtocol
 
-    init(
+    public init(
         networkService: NetworkService,
         authenticationManager: any AuthenticationManagerProtocol
     ) {
@@ -50,7 +50,10 @@ public final class PushChannelService: PushChannelServiceProtocol {
         let accessToken = try await authenticationManager.getValidAccessToken()
         request.setAccessToken(accessToken)
         let webSocket = try networkService.executeWebSocketRequest(request)
-        return PushChannel(webSocket: webSocket)
+        return PushChannel(
+            webSocket: webSocket,
+            keepAliveInterval: 30
+        )
     }
 
 }

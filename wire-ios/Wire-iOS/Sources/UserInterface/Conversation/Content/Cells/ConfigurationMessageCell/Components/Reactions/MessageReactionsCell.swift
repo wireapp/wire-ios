@@ -43,11 +43,12 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
     var message: ZMConversationMessage?
 
     weak var delegate: ConversationMessageCellDelegate?
+    weak var actionController: ConversationMessageActionController?
 
     private let reactionsView = GridLayoutView()
 
     private lazy var insets = UIEdgeInsets(
-        top: 8,
+        top: 2,
         left: conversationHorizontalMargins.left,
         bottom: 0,
         right: conversationHorizontalMargins.right

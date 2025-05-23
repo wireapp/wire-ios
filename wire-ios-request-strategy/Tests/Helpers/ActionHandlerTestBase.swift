@@ -43,21 +43,23 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
         expectedPayload: Payload?,
         expectedMethod: ZMTransportRequestMethod,
         expectedAcceptType: ZMTransportAccept? = nil,
-        apiVersion: APIVersion = .v1
+        apiVersion: APIVersion = .v1,
+        file: StaticString = #filePath,
+        line: UInt = #line
     ) throws -> ZMTransportRequest {
         // When
-        let request = try XCTUnwrap(handler.request(for: action, apiVersion: apiVersion))
+        let request = try XCTUnwrap(handler.request(for: action, apiVersion: apiVersion), file: file, line: line)
 
         // Then
-        XCTAssertEqual(request.path, expectedPath)
-        XCTAssertEqual(request.method, expectedMethod)
+        XCTAssertEqual(request.path, expectedPath, file: file, line: line)
+        XCTAssertEqual(request.method, expectedMethod, file: file, line: line)
 
         if let expectedPayload {
-            XCTAssertEqual(request.payload as? Payload, expectedPayload)
+            XCTAssertEqual(request.payload as? Payload, expectedPayload, file: file, line: line)
         }
 
         if let expectedAcceptType {
-            XCTAssertEqual(request.acceptedResponseMediaTypes, expectedAcceptType)
+            XCTAssertEqual(request.acceptedResponseMediaTypes, expectedAcceptType, file: file, line: line)
         }
 
         return request
@@ -154,7 +156,9 @@ extension ActionHandlerTestBase {
         expectedPath: String,
         expectedMethod: ZMTransportRequestMethod,
         expectedAcceptType: ZMTransportAccept? = nil,
-        apiVersion: APIVersion = .v1
+        apiVersion: APIVersion = .v1,
+        file: StaticString = #filePath,
+        line: UInt = #line
     ) throws -> ZMTransportRequest {
         try test_itGeneratesARequest(
             for: action,
@@ -162,7 +166,9 @@ extension ActionHandlerTestBase {
             expectedPayload: DefaultEquatable?.none,
             expectedMethod: expectedMethod,
             expectedAcceptType: expectedAcceptType,
-            apiVersion: apiVersion
+            apiVersion: apiVersion,
+            file: file,
+            line: line
         )
     }
 

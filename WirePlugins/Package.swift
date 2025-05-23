@@ -12,14 +12,18 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "sourcery",
-            url: "https://github.com/krzysztofzablocki/Sourcery/releases/download/2.2.4/sourcery-2.2.4.artifactbundle.zip",
-            checksum: "79282fd22949653dcaf0ab6a215d33a913ce09840f577c5959b7e94292b12bd4"
+            url: "https://github.com/krzysztofzablocki/Sourcery/releases/download/2.2.6/sourcery-2.2.6.artifactbundle.zip",
+            checksum: "00ddb01d968cf5a1b9971a997f362553b2cf57ccdd437e7ecde9c7891ee9e4c1"
         ),
+
         .plugin(
             name: "SourceryPlugin",
             capability: .buildTool(),
             dependencies: ["sourcery"],
-            exclude: ["./Stencils/AutoMockable.stencil"]
+            exclude: [
+                "./Stencils/AutoMockable.stencil",
+                "./Stencils/LegacyAutoMockable.stencil"
+            ]
         ),
 
         .plugin(

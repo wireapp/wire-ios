@@ -28,7 +28,7 @@ final class CompanyLoginURLActionProcessorTests: ZMTBaseTest, UnauthenticatedSes
 
     override func setUp() {
         super.setUp()
-
+        DeveloperFlag.useWireAuthentication.enable(false, storage: .temporary())
         delegate = MockAuthenticationStatusDelegate()
         let userInfoParser = MockUserInfoParser()
         let groupQueue = DispatchGroupQueue(queue: .main)
@@ -52,7 +52,7 @@ final class CompanyLoginURLActionProcessorTests: ZMTBaseTest, UnauthenticatedSes
         // given
         let accountId = UUID()
         let cookieData = Data("cookie".utf8)
-        let userInfo = UserInfo(identifier: accountId, cookieData: cookieData)
+        let userInfo = UserInfo(identifier: accountId, cookieData: cookieData, cookies: [])
         let action: URLAction = .companyLoginSuccess(userInfo: userInfo)
 
         // when

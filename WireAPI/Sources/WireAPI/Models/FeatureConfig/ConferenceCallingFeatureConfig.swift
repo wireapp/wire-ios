@@ -30,4 +30,12 @@ public struct ConferenceCallingFeatureConfig: Codable, Equatable, Sendable {
 
     public let useSFTForOneToOneCalls: Bool
 
+    public init(
+        status: FeatureConfigStatus,
+        useSFTForOneToOneCalls: Bool
+    ) {
+        self.status = status
+        self.useSFTForOneToOneCalls = useSFTForOneToOneCalls
+    }
+
 }

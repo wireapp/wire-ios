@@ -17,158 +17,194 @@
 //
 
 import SwiftUI
+import WireAuthenticationAPI
 import WireDesign
 import WireReusableUIComponents
 
-package protocol DetermineAuthMethodBuilder {
+package protocol DetermineAuthMethodFactory {
 
-    @MainActor var determineAuthMethodView: DetermineAuthMethodView { get }
+    @MainActor var viewModel: DetermineAuthMethodViewModel { get }
 
+    @MainActor
+    func loginViaEmailFactory(
+        email: String?,
+        canCreateAccount: Bool,
+        didDetectDomainConflict: Bool,
+        backendInfo: BackendInfo
+    ) -> any LoginViaEmailFactory
+
+    @MainActor
+    func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory
 }
 
 package struct DetermineAuthMethodView: View {
 
     @StateObject var viewModel: DetermineAuthMethodViewModel
 
-    let builder: any LoginViaEmailBuilder
-
-    package init(
-        viewModel: DetermineAuthMethodViewModel,
-        builder: any LoginViaEmailBuilder
-    ) {
-        self._viewModel = StateObject(wrappedValue: viewModel)
-        self.builder = builder
+    package init(factory: @autoclosure @escaping () -> any DetermineAuthMethodFactory) {
+        self._viewModel = StateObject(wrappedValue: factory().viewModel)
     }
 
     package var body: some View {
         ScrollView {
             VStack(alignment: .center, spacing: 16) {
-                HStack {
-                    Spacer()
-                        .frame(maxWidth: .infinity)
-                    Logo()
-                        .foregroundColor(ColorTheme.Backgrounds.onBackground.color)
-                        .frame(width: 164, height: 95)
-                    Spacer()
-                        .frame(maxWidth: .infinity)
-                }
-
-                Text(L10n.Authentication.Identity.Input.body)
-                    .multilineTextAlignment(.leading)
-                    .wireTextStyle(.body1)
-                    .lineLimit(nil)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.trailing)
-
-                VStack(alignment: .leading, spacing: 8) {
-                    LabeledTextField(
-                        isMandatory: false,
-                        placeholder: L10n.Authentication.Identity.Input.Field.placeholder,
-                        title: L10n.Authentication.Identity.Input.Field.title,
-                        string: $viewModel.emailOrSSOCode
-                    )
-                    .lineLimit(nil)
-                    .fixedSize(horizontal: false, vertical: true)
-                }
-
-                Button(action: {
-                    Task {
-                        await viewModel.submitEmailOrSSOCode()
-                    }
-                }, label: {
-                    HStack {
-                        if viewModel.isLoading {
-                            ProgressView()
-                        }
-
-                        Text(L10n.Authentication.Identity.Input.submit)
-                            .lineLimit(nil)
-                    }
-                })
-                .wireButtonStyle(.primary)
-                .disabled(viewModel.isNextButtonEnabled || viewModel.isLoading)
-            }.padding()
+                header
+                message
+                inputField
+                submitButton
+            }
+            .padding()
+            .setPreferredSize(navigationBarHidden: !viewModel.existsAnotherAccount)
         }
-        .alert(item: $viewModel.alert) { alert in
-            Alert(
-                title: titleForAlert(alert),
-                message: messageForAlert(alert),
-                dismissButton: .default(
-                    Text(L10n.Authentication.Error.confirm),
-                    action: { viewModel.didDismissAlert(alert: alert) }
-                )
-            )
-        }
-        .navigationDestination(for: Destination.self) {
-            switch $0 {
-            case let .login(email):
-                builder.loginViaEmailView(email: email, canCreateAccount: false)
-            case .loginOrRegister:
-                Color.red
+        .toolbar {
+            if viewModel.existsAnotherAccount {
+                ToolbarItem(placement: .topBarTrailing) {
+                    dismissButton
+                }
             }
         }
-        .presentationDetents([.medium, .large])
+        .alert(
+            item: $viewModel.alert,
+            title: { Text($0.title) },
+            message: { Text($0.message) },
+            actions: { _ in
+                Button(L10n.Authentication.Error.confirm, action: viewModel.onAlertDismiss)
+            }
+        )
+        .navigationDestination(for: DetermineAuthMethodDestination.self) {
+            destinationView(for: $0)
+        }
+        .fullScreenCover(item: $viewModel.modalDestination) {
+            sheetView(for: $0)
+                .presentationBackground(Color.black.opacity(0.7))
+        }
         .interactiveDismissDisabled()
+        .background(ColorTheme.Backgrounds.surface.color)
         .presentationDragIndicator(.hidden)
     }
 
-    enum Destination: Hashable {
+    // MARK: - Views
 
-        case login(email: String)
-        case loginOrRegister(email: String)
+    @ViewBuilder private var header: some View {
+        HStack {
+            Spacer()
+                .frame(maxWidth: .infinity)
+            if viewModel.isOnPremiseBackend {
+                OnPremHeaderView(backendConfig: viewModel.backendInfo.backendConfig)
+                    .foregroundColor(ColorTheme.Backgrounds.onBackground.color)
+                    .frame(width: 164, height: 95)
+            } else {
+                Logo()
+                    .foregroundColor(ColorTheme.Backgrounds.onBackground.color)
+                    .frame(width: 164, height: 95)
+            }
 
-    }
-
-    // MARK: - Private helpers
-
-    private func titleForAlert(_ alert: DetermineAuthMethodViewModel.Alert) -> Text {
-        switch alert {
-        case .noInternet:
-            Text(L10n.Authentication.Error.Title.noInternet)
-        case .invalidResponse:
-            Text(L10n.Authentication.Error.Title.general)
-        case .unknownError:
-            Text(L10n.Authentication.Error.Title.general)
-        case .onPremLoginNotPossible:
-            Text(L10n.Authentication.Error.Title.onPremNotPossible)
+            Spacer()
+                .frame(maxWidth: .infinity)
         }
     }
 
-    private func messageForAlert(_ alert: DetermineAuthMethodViewModel.Alert) -> Text {
-        switch alert {
-        case .noInternet:
-            Text(L10n.Authentication.Error.Message.noInternet)
-        case .invalidResponse:
-            Text(L10n.Authentication.Error.Message.general)
-        case .unknownError:
-            Text(L10n.Authentication.Error.Message.general)
-        case .onPremLoginNotPossible:
-            Text(L10n.Authentication.Error.Message.emailIsAlreadyRegistered)
-        }
+    @ViewBuilder private var message: some View {
+        Text(L10n.Authentication.Identity.Input.body)
+            .multilineTextAlignment(.leading)
+            .wireTextStyle(.body1)
+            .lineLimit(nil)
+            .fixedSize(horizontal: false, vertical: true)
+            .padding(.trailing)
     }
 
-}
-
-@MainActor
-package func makeDetermineAuthMethodViewPreview(
-    emailOrSSOCode: String = "",
-    isLoading: Bool = false,
-    alert: DetermineAuthMethodViewModel.Alert? = nil
-) -> some View {
-    MockDependencies().makeDetermineAuthMethodView(
-        emailOrSSOCode: emailOrSSOCode,
-        isLoading: isLoading,
-        alert: alert
-    )
-}
-
-#Preview {
-    BackgroundView()
-        .sheet(isPresented: .constant(true)) {
-            makeDetermineAuthMethodViewPreview(
-                emailOrSSOCode: "user@wire.com",
-                isLoading: false,
-                alert: .unknownError
+    private var inputField: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            LabeledTextField(
+                isMandatory: false,
+                placeholder: L10n.Authentication.Identity.Input.Field.placeholder,
+                title: L10n.Authentication.Identity.Input.Field.title,
+                string: $viewModel.emailOrSSOCode
             )
+            .autocapitalization(.none)
+            .autocorrectionDisabled()
+            .textContentType(.username)
+            .keyboardType(.emailAddress)
+            .lineLimit(nil)
+            .fixedSize(horizontal: false, vertical: true)
         }
+    }
+
+    @ViewBuilder private var submitButton: some View {
+        Button(action: {
+            Task {
+                await viewModel.submitEmailOrSSOCode()
+            }
+        }, label: {
+            HStack {
+                if viewModel.isLoading {
+                    ProgressView()
+                }
+
+                Text(L10n.Authentication.Identity.Input.submit)
+                    .lineLimit(nil)
+            }
+        })
+        .wireButtonStyle(.primary)
+        .disabled(viewModel.isNextButtonEnabled || viewModel.isLoading)
+    }
+
+    @ViewBuilder private var dismissButton: some View {
+        Button {
+            viewModel.exitFlow()
+        } label: {
+            Image(systemName: "xmark")
+        }
+    }
+
+    // MARK: - Destinations
+
+    @ViewBuilder
+    private func destinationView(for destination: DetermineAuthMethodDestination) -> some View {
+        switch destination {
+        case let .login(
+            email,
+            didDetectDomainConflict,
+            backendInfo
+        ):
+            LoginViaEmailView(factory: viewModel.factory.loginViaEmailFactory(
+                email: email,
+                canCreateAccount: false,
+                didDetectDomainConflict: didDetectDomainConflict,
+                backendInfo: backendInfo
+            ))
+        case let .loginOrRegister(
+            email,
+            didDetectDomainConflict,
+            backendInfo
+        ):
+            LoginViaEmailView(factory: viewModel.factory.loginViaEmailFactory(
+                email: email,
+                canCreateAccount: true,
+                didDetectDomainConflict: didDetectDomainConflict,
+                backendInfo: backendInfo
+            ))
+        case let .noHistory(authenticationResult):
+            NoHistoryView(factory: viewModel.factory.noHistoryFactory(authenticationResult: authenticationResult))
+        }
+    }
+
+    @ViewBuilder
+    private func sheetView(for sheet: DetermineAuthMethodSheet) -> some View {
+        switch sheet {
+        case let .switchBackendConfirmation(
+            email,
+            backendInfo
+        ):
+            SwitchBackendConfirmation(backendConfig: backendInfo.backendConfig) { didConfirm in
+                guard didConfirm else { return }
+                Task {
+                    await viewModel.switchBackend(
+                        email: email,
+                        backendInfo: backendInfo
+                    )
+                }
+            }
+        }
+    }
 }

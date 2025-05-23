@@ -32,6 +32,12 @@ public extension ZMUserSession {
         _ application: ZMApplication,
         performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
     ) {
+        // TODO: [WPB-17583] re-enable background fetch for new sync.
+        guard !journal[.isSyncV2Enabled] else {
+            completionHandler(.noData)
+            return
+        }
+
         BackgroundActivityFactory.shared.resume()
 
         syncManagedObjectContext.performGroupedBlock {
@@ -50,6 +56,7 @@ public extension ZMUserSession {
 
     @objc
     func applicationDidEnterBackground(_ note: Notification?) {
+        syncAgent?.suspend()
         stopEphemeralTimers()
         lockDatabase()
         recalculateUnreadMessages()
@@ -63,7 +70,7 @@ public extension ZMUserSession {
 
     @objc
     func applicationWillEnterForeground(_ note: Notification?) {
-
+        syncAgent?.resume()
         mergeChangesFromStoredSaveNotificationsIfNeeded()
         startEphemeralTimers()
         deleteOldEphemeralMessages()
@@ -72,7 +79,7 @@ public extension ZMUserSession {
 
     internal func processPendingEvents() {
         syncContext.performGroupedBlock {
-            self.processEvents()
+            self.processLegacyEvents()
         }
     }
 

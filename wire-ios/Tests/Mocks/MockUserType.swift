@@ -50,6 +50,9 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
 
     var teamIdentifier: UUID?
     var remoteIdentifier: UUID?
+    var objectId: Any {
+        remoteIdentifier ?? UUID()
+    }
 
     var canLeaveConversation = false
     var canCreateConversation = true
@@ -63,7 +66,8 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
     var canModifyReadReceiptSettingsInConversation = false
     var canModifyEphemeralSettingsInConversation = false
     var canModifyNotificationSettingsInConversation = false
-    var canModifyAccessControlSettings = false
+    var canModifyGuestsAccessControlSettings = false
+    var canModifyChannelAccessLevelSettings = false
     var isGroupAdminInConversation = false
     var isGuestInConversation = false
     var isPendingMetadataRefresh = false
@@ -256,8 +260,12 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
         canModifyNotificationSettingsInConversation
     }
 
-    func canModifyAccessControlSettings(in conversation: ConversationLike) -> Bool {
-        canModifyAccessControlSettings
+    func canModifyGuestsAccessControlSettings(in conversation: ConversationLike) -> Bool {
+        canModifyGuestsAccessControlSettings
+    }
+
+    func canModifyChannelAccessLevelSettings(in conversation: ConversationLike) -> Bool {
+        canModifyChannelAccessLevelSettings
     }
 
     func isGroupAdmin(in conversation: ConversationLike) -> Bool {

@@ -17,21 +17,19 @@
 //
 
 import Foundation
+import WireAuthenticationAPI
 
 final class WireAuthenticationModuleCompletionHandler: AuthenticationEventHandler {
-
-    typealias Context = Any
 
     var statusProvider: AuthenticationStatusProvider?
 
     func handleEvent(
         currentStep: AuthenticationFlowStep,
-        context: Context
+        context: AuthenticationResult
     ) -> [AuthenticationCoordinatorAction]? {
         switch currentStep {
         case .wireAuthenticationModule:
-            // TODO: [WPB-16044] Return the appropriate step action here.
-            return nil
+            return [.showLoadingView, .configureNotifications, .completeWireAuthenticationLogin(context)]
 
         default:
             assertionFailure("Got auth flow success but on wrong step: \(currentStep)")

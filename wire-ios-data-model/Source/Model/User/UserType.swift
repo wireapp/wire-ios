@@ -24,6 +24,9 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     /// The identifier which uniquely idenitifies the user in its domain
     var remoteIdentifier: UUID! { get }
 
+    /// Any as type eraser to hide NSManagedObjectID behind it
+    var objectId: Any { get }
+
     /// The domain which the user originates from
     var domain: String? { get }
 
@@ -210,8 +213,12 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     func canModifyNotificationSettings(in conversation: ConversationLike) -> Bool
 
     /// Whether the user can toggle the access level setting in the conversation.
-    @objc(canModifyAccessControlSettingsInConversation:)
-    func canModifyAccessControlSettings(in conversation: ConversationLike) -> Bool
+    @objc(canModifyGuestsAccessControlSettingsInConversation:)
+    func canModifyGuestsAccessControlSettings(in conversation: ConversationLike) -> Bool
+
+    /// Whether the user can toggle the channel's access level setting in the conversation.
+    @objc(canModifyChannelAccessLevelSettingsInConversation:)
+    func canModifyChannelAccessLevelSettings(in conversation: ConversationLike) -> Bool
 
     /// Whether the user can update the title of the conversation.
     @objc(canModifyTitleInConversation:)

@@ -834,7 +834,7 @@ public final class FileAssetCache: NSObject {
         }
 
         let key = [messageId, senderId, conversationId, identifier, encrypted ? "encrypted" : nil]
-            .compactMap { $0 }
+            .compactMap(\.self)
             .joined(separator: "_")
 
         return key.data(using: .utf8)?

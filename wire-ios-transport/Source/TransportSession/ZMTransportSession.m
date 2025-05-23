@@ -82,6 +82,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 @property (nonatomic) ZMAtomicInteger *numberOfRequestsInProgress;
 
 @property (nonatomic) NSString *minTLSVersion;
+@property (nonatomic) NSString *selfClientID;
 
 @end
 
@@ -100,6 +101,8 @@ static NSInteger const DefaultMaximumRequests = 6;
           applicationGroupIdentifier:nil
                   applicationVersion:@"1.0"
                        minTLSVersion:nil
+                        selfClientID:nil
+                     isSyncV2Enabled:false
     ];
 }
 
@@ -112,6 +115,8 @@ static NSInteger const DefaultMaximumRequests = 6;
          applicationGroupIdentifier:(NSString *)applicationGroupIdentifier
                  applicationVersion:(NSString *)appliationVersion
                       minTLSVersion:(NSString * _Nullable)minTLSVersion
+                       selfClientID:(nullable NSString *)selfClientID
+                    isSyncV2Enabled:(bool)isSyncV2Enabled
 {
     NSString *userAgent = [ZMUserAgent userAgentWithAppVersion:appliationVersion];
     NSUUID *userIdentifier = cookieStorage.userIdentifier;
@@ -170,7 +175,9 @@ static NSInteger const DefaultMaximumRequests = 6;
                                 cookieStorage:cookieStorage
                            initialAccessToken:initialAccessToken
                                     userAgent:userAgent
-                                minTLSVersion:minTLSVersion];
+                                minTLSVersion:minTLSVersion
+                                 selfClientID:selfClientID
+                              isSyncV2Enabled:isSyncV2Enabled];
 }
 
 - (instancetype)initWithURLSessionsDirectory:(id<URLSessionsDirectory, TearDownCapable>)directory
@@ -186,6 +193,8 @@ static NSInteger const DefaultMaximumRequests = 6;
                           initialAccessToken:(ZMAccessToken *)initialAccessToken
                                    userAgent:(NSString *)userAgent
                                minTLSVersion:(NSString * _Nullable)minTLSVersion
+                                selfClientID:(nullable NSString *)selfClientID
+                             isSyncV2Enabled:(bool)isSyncV2Enabled
 {
     self = [super init];
     if (self) {
@@ -193,6 +202,7 @@ static NSInteger const DefaultMaximumRequests = 6;
         self.baseURL = environment.backendURL;
         self.websocketURL = environment.backendWSURL;
         self.numberOfRequestsInProgress = [[ZMAtomicInteger alloc] initWithInteger:0];
+        self.selfClientID = selfClientID;
         
         self.workQueue = queue;
         _workGroup = group;
@@ -222,7 +232,8 @@ static NSInteger const DefaultMaximumRequests = 6;
                                                                   proxyUsername:proxyUsername
                                                                   proxyPassword:proxyPassword
                                                                   minTLSVersion:minTLSVersion
-                                                                          queue:queue];
+                                                                          queue:queue
+                                                                      isEnabled:!isSyncV2Enabled];
 
         self.firstRequestFired = NO;
         self.accessTokenHandler = [[ZMAccessTokenHandler alloc] initWithBaseURL:self.baseURL
@@ -612,7 +623,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 
 - (void)sendAccessTokenRequest;
 {
-    [self.accessTokenHandler sendAccessTokenRequestWithURLSession:self.sessionsDirectory.foregroundSession];
+    [self.accessTokenHandler sendAccessTokenRequestWithURLSession:self.sessionsDirectory.foregroundSession clientID:_selfClientID];
 }
 
 - (BOOL)accessTokenIsAboutToExpire {

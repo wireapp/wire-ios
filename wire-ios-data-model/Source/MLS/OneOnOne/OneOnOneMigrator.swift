@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol OneOnOneMigratorInterface {
@@ -152,19 +153,32 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
                 throw MigrateMLSOneOnOneConversationError.failedToActivateConversation
             }
 
+            guard !(mlsConversation.migratedToMLS && otherUser.oneOnOneConversation == mlsConversation) else {
+                throw MigrateMLSOneOnOneConversationError.alreadyMigrated
+            }
+
+            WireLogger.conversation
+                .info(
+                    "Migrating messages and link the MLS conversation if needed. Conversation is migrated to MLS: \(mlsConversation.migratedToMLS), is oneOnOneConversation MLS: \(otherUser.oneOnOneConversation == mlsConversation)"
+                )
             // Note on proteus, it's possible to have duplicate 1-1 conversations, so we need to fetch all relevant
             // 1-1 conversations here.
             let source = OneOnOneSource(context: context)
-            let proteusConversations = try source.fetchOneOnOnes(
-                user: otherUser,
-                types: [.fake, .proteus, .proteusPending]
-            )
+            var proteusConversations: [ZMConversation] = []
+            // NOTE: querying for all types at once triggers a table scan which is very expensive
+            for type in [OneOnOneType.fake, OneOnOneType.proteus, OneOnOneType.proteusPending] {
+                let conversations = try source.fetchOneOnOnes(
+                    user: otherUser,
+                    types: [type]
+                )
+                proteusConversations.append(contentsOf: conversations)
+            }
 
             // Move local messages from all proteus conversations
             for proteusConversation in proteusConversations {
                 // Since ZMMessages only have a single conversation connected,
                 // forming this union also removes the relationship to the proteus conversation.
-                mlsConversation.mutableMessages.union(proteusConversation.allMessages)
+                mlsConversation.migrateMessages(from: proteusConversation)
             }
 
             if !proteusConversations.isEmpty {
@@ -177,6 +191,8 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
             }
             // switch active conversation
             otherUser.oneOnOneConversation = mlsConversation
+
+            mlsConversation.migratedToMLS = true
         }
     }
 

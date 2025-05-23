@@ -32,38 +32,33 @@ public struct LoginViaEmailUseCase: LoginViaEmailUseCaseProtocol {
         email: String,
         password: String,
         verificationCode: String?
-    ) async throws(LoginViaEmailUseCaseFailure) -> ([HTTPCookie], AccessToken) {
+    ) async throws -> ([HTTPCookie], WireAuthenticationAPI.AccessToken) {
         do {
-            return try await authenticationAPI.login(
+            let (cookies, token) = try await authenticationAPI.login(
                 email: email,
                 password: password,
                 verificationCode: verificationCode,
                 label: nil
             )
-        } catch let error as AuthenticationAPIError {
-            switch error {
-            case .twoFactorAuthenticationRequired:
-                throw .twoFactorAuthenticationRequired
-            case .twoFactorAuthenticationFailed:
-                throw .twoFactorAuthenticationFailed
-            case .accountPendingActivation:
-                throw .accountPendingActivation
-            case .accountSuspended:
-                throw .accountSuspended
-            case .invalidCredentials:
-                throw .invalidCredentials
-            default:
-                throw .other
-            }
-        } catch let error as URLError {
-            switch error.code {
-            case .notConnectedToInternet, .networkConnectionLost:
-                throw .noInternet
-            default:
-                throw .other
-            }
-        } catch {
-            throw .other
+            return (
+                cookies,
+                AccessToken(
+                    userID: token.userID,
+                    token: token.token,
+                    type: token.type,
+                    expirationDate: token.expirationDate
+                )
+            )
+        } catch AuthenticationAPIError.twoFactorAuthenticationRequired {
+            throw LoginViaEmailUseCaseFailure.twoFactorAuthenticationRequired
+        } catch AuthenticationAPIError.twoFactorAuthenticationFailed {
+            throw LoginViaEmailUseCaseFailure.twoFactorAuthenticationFailed
+        } catch AuthenticationAPIError.accountPendingActivation {
+            throw LoginViaEmailUseCaseFailure.accountPendingActivation
+        } catch AuthenticationAPIError.accountSuspended {
+            throw LoginViaEmailUseCaseFailure.accountSuspended
+        } catch AuthenticationAPIError.invalidCredentials {
+            throw LoginViaEmailUseCaseFailure.invalidCredentials
         }
     }
 

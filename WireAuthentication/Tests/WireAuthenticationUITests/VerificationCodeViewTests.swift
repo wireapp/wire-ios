@@ -22,9 +22,10 @@ import XCTest
 
 @testable import WireAuthenticationUI
 
-class VerificationCodeViewTests: XCTestCase {
+final class VerificationCodeViewTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
+    let testContainerSize = CGSize(width: 390, height: 400)
 
     override func setUp() {
         snapshotHelper = .init()
@@ -37,10 +38,8 @@ class VerificationCodeViewTests: XCTestCase {
 
     @MainActor
     func testColorSchemeVariantsEmptyState() {
-        let screenBounds = UIScreen.main.bounds
-
         let view = VerificationCodeView_Previews(code: ["", "", "", "", "", ""])
-            .frame(width: screenBounds.width, height: screenBounds.height)
+            .frame(width: testContainerSize.width, height: testContainerSize.height)
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -52,10 +51,8 @@ class VerificationCodeViewTests: XCTestCase {
 
     @MainActor
     func testDynamicTypeVariantsEmptyState() {
-        let screenBounds = UIScreen.main.bounds
-
         let view = VerificationCodeView_Previews(code: ["", "", "", "", "", ""])
-            .frame(width: screenBounds.width, height: screenBounds.height)
+            .frame(width: testContainerSize.width, height: testContainerSize.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
             snapshotHelper

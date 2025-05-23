@@ -28,6 +28,7 @@ final class MockCell: UIView, ConversationMessageCell {
 
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
+    weak var actionController: ConversationMessageActionController?
 
     var isConfigured: Bool = false
     var isSelected: Bool = false
@@ -42,9 +43,6 @@ final class MockCellDescription<T>: ConversationMessageCellDescription {
     typealias View = MockCell
     let configuration: View.Configuration
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 0
-    var isFullWidth: Bool = false
     var supportsActions: Bool = true
     var containsHighlightableContent: Bool = true
 

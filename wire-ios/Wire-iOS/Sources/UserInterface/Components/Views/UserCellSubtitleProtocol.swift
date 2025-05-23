@@ -54,7 +54,7 @@ extension UserCellSubtitleProtocol where Self: UIView {
             components.append(formatter.correlationText(for: user, addressBookName: addressBookName))
         }
 
-        return components.compactMap { $0 }
+        return components.compactMap(\.self)
             .joined(separator: " " + String.MessageToolbox.middleDot + " " && UserCell.lightFont.font!)
     }
 

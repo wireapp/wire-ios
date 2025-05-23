@@ -28,6 +28,21 @@ public struct QualifiedID: Codable, Equatable, Hashable, CustomDebugStringConver
     public let uuid: UUID
     public let domain: String
 
+    public init?(rawValue: String) {
+        let components = rawValue.split(
+            separator: "@",
+            omittingEmptySubsequences: false
+        ).map(String.init)
+
+        guard components.count == 2,
+              let uuid = UUID(uuidString: components[0])
+        else {
+            return nil
+        }
+
+        self.init(uuid: uuid, domain: components[1])
+    }
+
     public init(uuid: UUID, domain: String) {
         self.uuid = uuid
         self.domain = domain
@@ -43,6 +58,10 @@ extension QualifiedID: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {
         "\(uuid.safeForLoggingDescription) - \(domain.redactedAndTruncated(maxVisibleCharacters: 4, length: 7))"
     }
+}
+
+public protocol HasQualifiedID {
+    var qualifiedID: WireDataModel.QualifiedID? { get }
 }
 
 public extension ZMUser {
@@ -61,9 +80,9 @@ public extension ZMUser {
 
 }
 
-public extension ZMConversation {
+extension ZMConversation: HasQualifiedID {
 
-    var qualifiedID: QualifiedID? {
+    public var qualifiedID: QualifiedID? {
         guard
             let uuid = remoteIdentifier,
             let domain = domain ?? BackendInfo.domain

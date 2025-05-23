@@ -1,0 +1,102 @@
+//
+// Wire
+// Copyright (C) 2025 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+"authentication.identity.input.body" = "Просто введите свой адрес электронной почты, чтобы начать!";
+"authentication.identity.input.field.placeholder" = "Email или код SSO";
+"authentication.identity.input.field.title" = "Email или код SSO";
+"authentication.identity.input.submit" = "Вперед";
+
+"cloud_user_login.title" = "Введите пароль для входа";
+"cloud_user_login.input_email.title" = "Email";
+"cloud_user_login.input_email.placeholder" = "Введите email";
+"cloud_user_login.input_password.title" = "Пароль";
+"cloud_user_login.input_password.placeholder" = "Введите пароль";
+"cloud_user_login.submit" = "Вперед";
+"cloud_user_login.forgot_password" = "Забыли пароль?";
+"create_personal_account.title" = "У вас нет аккаунта Wire?";
+"create_personal_account.button" = "Создать личный аккаунт";
+
+"on_prem_user_login.title" = "Приветствуем вас в Wire Enterprise для %@!";
+"on_prem_user_login.message" = "Введите пароль для входа";
+"on_prem_user_login.alert.title" = "Внутренний бэкэнд";
+"on_prem_user_login.alert.message.backend-name" = "Название бэкэнда";
+"on_prem_user_login.alert.message.backend-url" = "URL бэкэнда:";
+"on_prem_user_login.alert.button" = "OK";
+
+"proxy_credentials.title" = "Учетные данные прокси";
+"proxy_credentials.message" = "Этот бэкэнд настроен на использование следующего прокси: %@.";
+"proxy_credentials.input_email.title" = "Email или имя пользователя прокси";
+"proxy_credentials.input_password.title" = "Пароль";
+"proxy_credentials.input_password.placeholder" = "Введите пароль";
+
+"switch_backend_confirmation.title" = "Перенаправить на локальный бэкэнд?";
+"switch_backend_confirmation.message" = "При продолжении вы будете перенаправлены на следующий локальный бэкэнд для авторизации:";
+"switch_backend_confirmation.backend_name" = "Название бэкэнда";
+"switch_backend_confirmation.backend_url" = "URL бэкэнда:";
+"switch_backend_confirmation.backend_wsurl" = "URL веб-сокета внутреннего сервера:";
+"switch_backend_confirmation.blacklist_url" = "URL черного списка:";
+"switch_backend_confirmation.teams_url" = "URL команды:";
+"switch_backend_confirmation.accounts_url" = "URL аккаунта:";
+"switch_backend_confirmation.website_url" = "URL веб-сайта:";
+"switch_backend_confirmation.countly_url" = "Countly URL:";
+"switch_backend_confirmation.proceed" = "Продолжить";
+"switch_backend_confirmation.cancel" = "Отмена";
+"switch_backend_confirmation.show_details" = "Подробнее";
+"switch_backend.error.title.logged_in" = "Невозможно переключить серверы";
+"switch_backend.error.message.logged_in" = "Вы уже авторизованы. Чтобы переключиться на этот сервер, выйдите из всех учетных записей и повторите попытку.";
+
+"verification_code.title" = "Вам письмо";
+"verification_code.message" = "Введите код подтверждения, который мы отправили на %@.";
+"verification_code.confirm" = "Подтвердить";
+"verification_code.resend_code" = "Отправить код еще раз";
+
+"authentication.no_history.title" = "Вы впервые используете Wire на этом устройстве.";
+"authentication.no_history.message" = "История бесед не отображается в целях обеспечения конфиденциальности.";
+"authentication.no_history.confirm" = "OK";
+
+"authentication.error.title.no_internet" = "Отсутствует подключение к интернету";
+"authentication.error.title.general" = "Что-то пошло не так";
+"authentication.error.title.sso_login_failed" = "Ошибка SSO-авторизации";
+"authentication.error.title.invalid_credentials" = "Неверная информация";
+"authentication.error.title.invalid_invalid_2FA_code" = "Неверный код подтверждения";
+"authentication.error.title.account_pending_activation" = "Ожидание активации";
+"authentication.error.title.account_suspended" = "Неавторизован";
+"authentication.error.title.incorrect_sso_code" = "Неверный код SSO";
+
+"authentication.error.message.no_internet" = "Похоже, возникла проблема с вашей сетью. Пожалуйста, попробуйте позже.";
+"authentication.error.message.general" = "Повторите попытку позже.";
+"authentication.error.message.sso_login_failed" = "Для получения более подробной информации обратитесь к администратору вашей команды.";
+"authentication.error.message.invalid_credentials" = "Эти учетные данные неверны.  Проверьте их и повторите попытку.";
+"authentication.error.message.invalid_invalid_2FA_code" = "Пожалуйста, введите действительный верификационный код.";
+"authentication.error.message.account_pending_activation" = "Сначала примите приглашение в свою команду и выполните шаги по созданию аккаунта.";
+"authentication.error.message.account_suspended" = "Эта учетная запись больше не авторизована для входа.";
+"authentication.error.message.incorrect_sso_code" = "Проверьте код доступа SSO вашей компании и повторите попытку.";
+
+"authentication.error.confirm" = "OK";
+
+"authentication.error.title.email_already_in_use" = "Email, заявленный в локальном бэкенде";
+"authentication.error.message.email_already_in_use" = "Домен этого email принадлежит локальному бэкенду. Пожалуйста, измените свой email в настройках аккаунта или удалите аккаунт. Если вы являетесь частью команды, обратитесь к администратору команды.";
+"authentication.error.how_to_change_email" = "Как изменить адрес email";
+"authentication.error.how_to_delete_account" = "Как удалить личный аккаунт";
+
+"obsolete_client.alert.title" = "Необходимо обновление";
+"obsolete_client.alert.message" = "Вы упускаете новые возможности.\nПолучите последнюю версию Wire в App Store.";
+"obsolete_client.alert.ok_button" = "Перейти в App Store";
+
+"obsolete_backend.alert.title" = "Версия сервера не поддерживается";
+"obsolete_backend.alert.message" = "Версия сервера не поддерживается этим приложением.  Пожалуйста, обратитесь к системному администратору.";

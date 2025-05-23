@@ -30,6 +30,8 @@ protocol ZMSyncStateDelegate: AnyObject {
     func didStartQuickSync()
 
     /// The session did finish the quick sync
-    func didFinishQuickSync()
+    /// - Parameter isRecovering: Set to true when trying to recover after failing some MLS operations (see
+    /// `MLSService`)
+    func didFinishQuickSync(isRecovering: Bool)
 
 }

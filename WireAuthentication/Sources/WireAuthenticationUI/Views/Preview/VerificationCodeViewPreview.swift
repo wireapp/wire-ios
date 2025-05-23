@@ -20,19 +20,21 @@ import SwiftUI
 
 public struct VerificationCodeView_Previews: View {
 
+    var email: String = ""
+    var password: String = ""
     var code: [String]
 
-    public init(code: [String]) {
+    public init(code: [String], email: String = "", password: String = "") {
         self.code = code
     }
 
     public var body: some View {
-        VerificationCodeView(
-            initialCode: code,
-            receiver: "name.name@mail.com",
-            onConfirm: { _ in },
-            onResend: {}
-        )
+        NavigationStack {
+            VerificationCodeView(factory: FakeVerificationCodeFactory(
+                email: "name.name@mail.com",
+                password: "password"
+            ))
+        }
     }
 
 }

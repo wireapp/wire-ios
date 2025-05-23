@@ -18,7 +18,7 @@
 
 import WireAPI
 
-struct ConversationEventProcessor {
+struct ConversationEventProcessor: ConversationEventProcessorProtocol {
 
     let accessUpdateEventProcessor: any ConversationAccessUpdateEventProcessorProtocol
     let createEventProcessor: any ConversationCreateEventProcessorProtocol
@@ -34,6 +34,7 @@ struct ConversationEventProcessor {
     let receiptModeUpdateEventProcessor: any ConversationReceiptModeUpdateEventProcessorProtocol
     let renameEventProcessor: any ConversationRenameEventProcessorProtocol
     let typingEventProcessor: any ConversationTypingEventProcessorProtocol
+    let addPermissionEventProcessor: any ConversationAddPermissionEventProcessorProtocol
 
     func processEvent(_ event: ConversationEvent) async throws {
         switch event {
@@ -83,6 +84,9 @@ struct ConversationEventProcessor {
 
         case let .typing(event):
             await typingEventProcessor.processEvent(event)
+
+        case let .permissionUpdate(event):
+            await addPermissionEventProcessor.processEvent(event)
         }
     }
 

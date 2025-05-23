@@ -21,19 +21,26 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireFoundation
 
 final class ConversationReplyContentView: UIView {
     typealias FileSharingRestrictions = L10n.Localizable.FeatureConfig.FileSharingRestrictions
     typealias MessagePreview = L10n.Localizable.Conversation.InputBar.MessagePreview
     let numberOfLinesLimit: Int = 4
 
-    struct Configuration {
+    struct Configuration: Equatable {
         enum Content {
             case text(NSAttributedString)
             case imagePreview(thumbnail: PreviewableImageResource, isVideo: Bool)
         }
 
         var quotedMessage: ZMConversationMessage?
+        let accentColor: AccentColor
+
+        static func == (lhs: Configuration, rhs: Configuration) -> Bool {
+            lhs.accentColor == rhs.accentColor &&
+                lhs.quotedMessage == rhs.quotedMessage
+        }
 
         var showDetails: Bool {
             guard let message = quotedMessage,
@@ -107,7 +114,14 @@ final class ConversationReplyContentView: UIView {
             switch quotedMessage {
             case let message? where message.isText:
                 let data = message.textMessageData!
-                return .text(NSAttributedString.formatForPreview(message: data, inputMode: false))
+                return .text(
+                    NSAttributedString
+                        .formatForPreview(
+                            message: data,
+                            inputMode: false,
+                            accentColor: accentColor
+                        )
+                )
 
             case let message? where message.isLocation:
                 let location = message.locationMessageData!
@@ -277,7 +291,9 @@ final class ConversationReplyContentView: UIView {
 }
 
 final class ConversationReplyCell: UIView, ConversationMessageCell {
+
     typealias Configuration = ConversationReplyContentView.Configuration
+
     var isSelected: Bool = false
 
     let contentView: ConversationReplyContentView
@@ -285,6 +301,7 @@ final class ConversationReplyCell: UIView, ConversationMessageCell {
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
+    weak var actionController: ConversationMessageActionController?
 
     override init(frame: CGRect) {
         self.contentView = ConversationReplyContentView()
@@ -301,12 +318,14 @@ final class ConversationReplyCell: UIView, ConversationMessageCell {
 
     private func configureSubviews() {
         container.addTarget(self, action: #selector(onTap), for: .touchUpInside)
+        container.translatesAutoresizingMaskIntoConstraints = false
         addSubview(container)
     }
 
     private func configureConstraints() {
-        container.translatesAutoresizingMaskIntoConstraints = false
-        container.fitIn(view: self)
+        let margins = conversationHorizontalMargins
+        let insets = UIEdgeInsets(top: 0, left: margins.left, bottom: 0, right: margins.right)
+        container.fitIn(view: self, insets: insets)
     }
 
     func configure(with object: Configuration, animated: Bool) {
@@ -321,24 +340,37 @@ final class ConversationReplyCell: UIView, ConversationMessageCell {
 }
 
 final class ConversationReplyCellDescription: ConversationMessageCellDescription {
-    typealias View = ConversationReplyCell
-    let configuration: View.Configuration
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 8
-    let isFullWidth = false
+    typealias View = ConversationReplyCell
+
+    var configuration: View.Configuration
+
+    var topMargin: CGFloat = 8
+    var bottomMargin: CGFloat = 0
+
     let supportsActions = false
     let containsHighlightableContent: Bool = true
 
-    weak var message: ZMConversationMessage?
+    weak var message: ZMConversationMessage? {
+        didSet {
+            if let quoteMessage = message?.textMessageData?.quoteMessage {
+                configuration.quotedMessage = quoteMessage
+            }
+        }
+    }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
     let accessibilityLabel: String? = L10n.Localizable.Content.Message.originalLabel
     let accessibilityIdentifier: String? = "ReplyCell"
 
-    init(quotedMessage: ZMConversationMessage?) {
-        self.configuration = View.Configuration(quotedMessage: quotedMessage)
+    init(quotedMessage: ZMConversationMessage?, accentColor: AccentColor) {
+        self.configuration = View
+            .Configuration(
+                quotedMessage: quotedMessage,
+                accentColor: accentColor
+            )
     }
 }
 

@@ -18,6 +18,7 @@
 
 import WireLinkPreview
 import XCTest
+
 @testable import Wire
 
 final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
@@ -500,7 +501,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
     // MARK: - Helpers
 
     private func makeCell(for message: ZMConversationMessage?) -> ConversationReplyCell {
-        let cellDescription = ConversationReplyCellDescription(quotedMessage: message)
+        let cellDescription = ConversationReplyCellDescription(quotedMessage: message, accentColor: .red)
         let cell = ConversationReplyCell()
         cell.configure(with: cellDescription.configuration, animated: false)
         XCTAssertTrue(waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))

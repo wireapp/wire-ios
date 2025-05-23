@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 public enum ReadReceiptModeError: Error {
     case invalidOperation
@@ -49,9 +50,20 @@ public extension ZMConversation {
         guard let conversationId = remoteIdentifier?.transportString()
         else { return completion(.failure(ReadReceiptModeError.noConversation)) }
 
+        let path: String
+        if apiVersion >= .v8 {
+            if domain == nil {
+                WireLogger.conversation.warn("ZMConversation.setEnableReadReceipts: conversation.domain == nil")
+            }
+            let domain = domain ?? BackendInfo.domain ?? "None"
+            path = "/conversations/\(domain)/\(conversationId)/receipt-mode"
+        } else {
+            path = "/conversations/\(conversationId)/receipt-mode"
+        }
+
         let payload = ["receipt_mode": enabled ? 1 : 0] as ZMTransportData
         let request = ZMTransportRequest(
-            path: "/conversations/\(conversationId)/receipt-mode",
+            path: path,
             method: .put,
             payload: payload,
             apiVersion: apiVersion.rawValue

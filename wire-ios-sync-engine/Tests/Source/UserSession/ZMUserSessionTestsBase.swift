@@ -17,7 +17,9 @@
 //
 
 import Combine
+import WireAPI
 import WireDataModelSupport
+import WireDomain
 import WireRequestStrategySupport
 import WireTransportSupport
 @testable import WireSyncEngine
@@ -30,6 +32,8 @@ class ZMUserSessionTestsBase: MessagingTest {
     var mockPushChannel: MockPushChannel!
     var mockEARService: MockEARServiceInterface!
     var mockMLSService: MockMLSServiceInterface!
+    var backendEnvironment: WireTransport.BackendEnvironment!
+    var wireAPIBackendEnvironment: WireAPI.BackendEnvironment!
     var transportSession: RecordingMockTransportSession!
     var cookieStorage: ZMPersistentCookieStorage!
     var validCookie: Data!
@@ -41,6 +45,7 @@ class ZMUserSessionTestsBase: MessagingTest {
     var mockGetFeatureConfigsActionHandler: MockActionHandler<GetFeatureConfigsAction>!
     var mockFetchBackendMLSPublicKeysActionHandler: MockActionHandler<FetchBackendMLSPublicKeysAction>!
     var mockRecurringActionService: MockRecurringActionServiceInterface!
+    var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
 
     var sut: ZMUserSession!
 
@@ -58,6 +63,31 @@ class ZMUserSessionTestsBase: MessagingTest {
 
         dataChangeNotificationsCount = 0
         baseURL = URL(string: "http://bar.example.com")
+
+        backendEnvironment = WireTransport.BackendEnvironment(
+            title: "Mock backend environment",
+            trustData: [],
+            environmentType: .production,
+            endpoints: BackendEndpoints(
+                backendURL: baseURL,
+                backendWSURL: baseURL,
+                blackListURL: baseURL,
+                teamsURL: baseURL,
+                accountsURL: baseURL,
+                websiteURL: baseURL,
+                countlyURL: nil
+            ),
+            proxySettings: nil,
+            certificateTrust: ServerCertificateTrust(trustData: [], currentDateProvider: .system)
+        )
+
+        wireAPIBackendEnvironment = WireAPI.BackendEnvironment(
+            url: backendEnvironment.backendURL,
+            webSocketURL: backendEnvironment.backendWSURL,
+            pinnedKeys: [],
+            proxySettings: nil
+        )
+
         cookieStorage = ZMPersistentCookieStorage(
             forServerName: "usersessiontest.example.com",
             userIdentifier: .create(),
@@ -80,6 +110,7 @@ class ZMUserSessionTestsBase: MessagingTest {
             continuation.yield(MLSGroupID.random())
             continuation.finish()
         }
+        mockMLSService.setSyncDelegate_MockMethod = { _ in }
 
         mockRecurringActionService = MockRecurringActionServiceInterface()
         mockRecurringActionService.registerAction_MockMethod = { _ in }
@@ -98,6 +129,8 @@ class ZMUserSessionTestsBase: MessagingTest {
 
         WireCallCenterV3Factory.wireCallCenterClass = WireCallCenterV3.self
 
+        backendEnvironment = nil
+        wireAPIBackendEnvironment = nil
         baseURL = nil
         cookieStorage = nil
         validCookie = nil
@@ -113,6 +146,7 @@ class ZMUserSessionTestsBase: MessagingTest {
         self.sut = nil
         mockGetFeatureConfigsActionHandler = nil
         mockFetchBackendMLSPublicKeysActionHandler = nil
+        mockCoreCryptoProvider = nil
         sut?.tearDown()
 
         super.tearDown()
@@ -123,6 +157,12 @@ class ZMUserSessionTestsBase: MessagingTest {
     }
 
     func createSut(earService: EARServiceInterface) -> ZMUserSession {
+        let mockCoreCrypto = MockCoreCryptoProtocol()
+        mockCoreCrypto.registerEpochObserver_MockMethod = { _ in }
+        let mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
+        mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
+        mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
+
         let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
         mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
 
@@ -131,13 +171,21 @@ class ZMUserSessionTestsBase: MessagingTest {
 
         let configuration = ZMUserSession.Configuration()
 
+        let journal = Journal(
+            userID: coreDataStack.account.userIdentifier,
+            storage: UserDefaults.temporary()
+        )
+
         var builder = ZMUserSessionBuilder()
         builder.withAllDependencies(
             apiServiceFactory: { _, _ in MockAPIService() },
+            backendEnvironment: backendEnvironment,
+            wireAPIBackendEnvironment: wireAPIBackendEnvironment,
             appVersion: "00000",
             application: application,
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             coreDataStack: coreDataStack,
+            coreCryptoProvider: mockCoreCryptoProvider,
             configuration: configuration,
             contextStorage: mockContextStorable,
             earService: earService,
@@ -148,7 +196,9 @@ class ZMUserSessionTestsBase: MessagingTest {
             recurringActionService: mockRecurringActionService,
             sharedUserDefaults: sharedUserDefaults,
             transportSession: transportSession,
-            userId: coreDataStack.account.userIdentifier
+            userId: coreDataStack.account.userIdentifier,
+            minTLSVersion: nil,
+            journal: journal
         )
 
         let userSession = builder.build()

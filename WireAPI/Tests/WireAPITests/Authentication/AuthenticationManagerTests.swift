@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundationSupport
 import XCTest
 
 @testable import WireAPI
@@ -27,19 +28,28 @@ final class AuthenticationManagerTests: XCTestCase {
     var backendURL: URL!
     var cookieStorage: MockCookieStorageProtocol!
 
+    private var mockDateProvider: CurrentDateProvidingMock!
+    private var accessTokenDidFail = false
+
     override func setUpWithError() throws {
+        mockDateProvider = CurrentDateProvidingMock()
+        mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-04-09T12:34:56Z")
         cookieStorage = MockCookieStorageProtocol()
         backendURL = try XCTUnwrap(URL(string: "https://www.example.com"))
         let networkService = NetworkService(
             baseURL: backendURL,
-            serverTrustValidator: ServerTrustValidator(pinnedKeys: [])
+            serverTrustValidator: ServerTrustValidator(
+                pinnedKeys: [],
+                currentDateProvider: mockDateProvider
+            )
         )
         networkService.configure(with: .mockURLSession())
 
         sut = AuthenticationManager(
             clientID: Scaffolding.clientID,
             cookieStorage: cookieStorage,
-            networkService: networkService
+            networkService: networkService,
+            onAuthenticationFailure: { self.accessTokenDidFail = true }
         )
     }
 
@@ -47,6 +57,8 @@ final class AuthenticationManagerTests: XCTestCase {
         cookieStorage = nil
         backendURL = nil
         sut = nil
+        mockDateProvider = nil
+        accessTokenDidFail = false
     }
 
     // MARK: - Get a valid token
@@ -174,6 +186,7 @@ final class AuthenticationManagerTests: XCTestCase {
     func testRefreshAccessToken_AfterAnError_WeCanStillRefresh() async throws {
         // Mock token refresh error.
         cookieStorage.fetchCookies_MockValue = [try Scaffolding.cookie()]
+        cookieStorage.removeCookies_MockMethod = {}
         URLProtocolMock.mockHandler = {
             try $0.mockErrorResponse(
                 statusCode: .forbidden,

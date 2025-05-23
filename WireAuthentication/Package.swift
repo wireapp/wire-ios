@@ -8,7 +8,7 @@ let WireTestingPackage = Target.Dependency.product(name: "WireTestingPackage", p
 let package = Package(
     name: "WireAuthentication",
     defaultLocalization: "en",
-    platforms: [.iOS(.v16), .macOS(.v12)],
+    platforms: [.iOS("16.4"), .macOS(.v12)],
     products: [
         .library(name: "WireAuthentication", targets: ["WireAuthentication"]),
         .library(name: "WireAuthenticationAPI", targets: ["WireAuthenticationAPI"]),
@@ -18,9 +18,11 @@ let package = Package(
     dependencies: [
         .package(name: "WireAPI", path: "../WireAPI"),
         .package(name: "WireFoundation", path: "../WireFoundation"),
+        .package(path: "../WireLogging"),
         .package(name: "WireUI", path: "../WireUI"),
         .package(path: "../WirePlugins"),
         .package(url: "https://github.com/uber/needle.git", .upToNextMinor(from: "0.25.1")),
+        .package(url: "https://github.com/siteline/swiftui-introspect", from: "1.0.0")
     ],
     targets: [
         .target(
@@ -40,6 +42,13 @@ let package = Package(
         .target(
             name: "WireAuthenticationAPI"
         ),
+        .target(
+            name: "WireAuthenticationAPISupport",
+            dependencies: ["WireAuthenticationAPI"],
+            plugins: [
+                .plugin(name: "SourceryPlugin", package: "WirePlugins")
+            ]
+        ),
 
         .target(
             name: "WireAuthenticationLogic",
@@ -49,6 +58,7 @@ let package = Package(
             name: "WireAuthenticationLogicTests",
             dependencies: [
                 "WireAuthenticationLogic",
+                "WireAuthenticationAPISupport",
                 .product(name: "WireAPISupport", package: "WireAPI"),
             ]
         ),
@@ -60,12 +70,18 @@ let package = Package(
                 .product(name: "WireDesign", package: "WireUI"),
                 "WireFoundation",
                 .product(name: "WireReusableUIComponents", package: "WireUI"),
+                "WireLogging",
+                .product(name: "SwiftUIIntrospect", package: "swiftui-introspect")
             ],
             plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
         ),
         .testTarget(
             name: "WireAuthenticationUITests",
-            dependencies: ["WireAuthenticationUI"]
+            dependencies: [
+                "WireAuthenticationUI",
+                "WireAuthenticationAPISupport",
+                .product(name: "WireReusableUIComponentsSupport", package: "WireUI"),
+            ]
         )
     ]
 )

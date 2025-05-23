@@ -19,31 +19,64 @@
 import SwiftUI
 import WireAuthenticationAPI
 
+package protocol RootFactory {
+
+    @MainActor var viewModel: RootViewModel { get }
+
+    @MainActor
+    func determineAuthMethodFactory(backendInfo: BackendInfo) -> any DetermineAuthMethodFactory
+}
+
 package struct RootView: View {
 
-    @StateObject var viewModel: RootViewModel
+    @StateObject private var viewModel: RootViewModel
 
-    let builder: any DetermineAuthMethodBuilder
+    private let cornerRadius: CGFloat = 10
 
     package init(
-        viewModel: RootViewModel,
-        builder: any DetermineAuthMethodBuilder
+        factory: @autoclosure @escaping () -> any RootFactory
     ) {
-        self._viewModel = StateObject(wrappedValue: viewModel)
-        self.builder = builder
+        self._viewModel = StateObject(wrappedValue: factory().viewModel)
     }
 
     package var body: some View {
         BackgroundView()
-            .sheet(isPresented: .constant(true)) {
-                NavigationStack(path: $viewModel.path) {
-                    builder.determineAuthMethodView
-                }
+            .universalSheet(item: $viewModel.modalDestination) { item in
+                sheetContent(for: item)
             }
     }
 
-}
+    @ViewBuilder
+    private func sheetContent(for sheet: RootViewSheet) -> some View {
+        switch sheet {
+        case let .authFlow(backendInfo):
+            NavigationStack(path: $viewModel.path) {
+                DetermineAuthMethodView(
+                    factory: viewModel.factory.determineAuthMethodFactory(
+                        backendInfo: backendInfo
+                    )
+                )
+            }
+            // We must provide an explicit id so it knows to create a new
+            // view when the backend info changes.
+            .id(backendInfo)
+            .sheetCornerRadius(cornerRadius, inNavigationStack: true)
+            // The alert should be shown on the navigation stack, otherwise
+            // it will dismiss the sheet.
+            .alert(
+                item: $viewModel.alert,
+                title: { Text($0.title) },
+                message: { Text($0.message) },
+                actions: { alert in
+                    switch alert {
+                    case .obsoleteClient:
+                        Button(L10n.ObsoleteClient.Alert.okButton, action: viewModel.goToAppStore)
+                    default:
+                        Button(L10n.Authentication.Error.confirm, action: {})
+                    }
+                }
+            )
+        }
+    }
 
-#Preview {
-    MockDependencies().rootView
 }

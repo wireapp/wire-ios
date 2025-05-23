@@ -18,47 +18,93 @@
 
 import Foundation
 import WireFoundation
+import WireLogging
 
-final class PushChannel: PushChannelProtocol {
+public actor PushChannel: PushChannelProtocol {
 
-    typealias Stream = AsyncThrowingStream<UpdateEventEnvelope, any Error>
+    public typealias Stream = AsyncThrowingStream<UpdateEventEnvelope, any Error>
+
+    // MARK: - Properties
 
     private let webSocket: any WebSocketProtocol
     private let decoder = JSONDecoder()
 
-    init(webSocket: any WebSocketProtocol) {
+    private var keepAliveTask: Task<Void, any Error>?
+    private let keepAliveInterval: TimeInterval
+
+    // MARK: - Init
+
+    public init(
+        webSocket: any WebSocketProtocol,
+        keepAliveInterval: TimeInterval
+    ) {
         self.webSocket = webSocket
+        self.keepAliveInterval = keepAliveInterval
     }
 
-    func open() throws -> Stream {
-        print("opening new push channel")
-        return try webSocket.open().map { [weak self, decoder] message in
+    // MARK: - Public
+
+    public func open() async throws -> Stream {
+        WireLogger.pushChannel.debug("opening new push channel")
+        let stream = try await webSocket.open().map { [weak self, decoder] message in
             do {
                 switch message {
                 case let .data(data):
-                    print("received web socket data, decoding...")
+                    WireLogger.pushChannel.debug("received web socket data, decoding...")
                     let envelope = try decoder.decode(UpdateEventEnvelopeV0.self, from: data)
                     return envelope.toAPIModel()
 
                 case .string:
-                    print("received web socket string, ignoring...")
+                    WireLogger.pushChannel.debug("received web socket string, ignoring...")
                     throw PushChannelError.receivedInvalidMessage
 
                 @unknown default:
-                    print("received web socket message, ignoring...")
+                    WireLogger.pushChannel.debug("received unknown web socket message, ignoring...")
                     throw PushChannelError.receivedInvalidMessage
                 }
             } catch {
-                print("failed to get next web socket message: \(error)")
-                self?.close()
+                WireLogger.pushChannel.debug("failed to get next web socket message: \(error)")
+                await self?.close()
                 throw error
             }
         }.toStream()
+
+        // The server will drop the connection (possibly silently)
+        // if the client doesn’t send a ping message every so often.
+        setUpKeepAliveTask()
+
+        return stream
     }
 
-    func close() {
-        print("closing push channel")
-        webSocket.close()
+    public func close() async {
+        WireLogger.pushChannel.debug("closing push channel")
+        await webSocket.close()
+        tearDownKeepAliveTask()
+    }
+
+    // MARK: - Keep alive
+
+    private func setUpKeepAliveTask() {
+        tearDownKeepAliveTask()
+        keepAliveTask = Task { [keepAliveInterval] in
+            do {
+                while true {
+                    try await Task.sleep(for: .seconds(keepAliveInterval))
+                    WireLogger.pushChannel.debug("sending keep alive ping")
+                    await webSocket.sendPing()
+                }
+            } catch {
+                WireLogger.pushChannel.warn("keep alive task was cancelled")
+                tearDownKeepAliveTask()
+            }
+        }
+    }
+
+    private func tearDownKeepAliveTask() {
+        guard let keepAliveTask else { return }
+        WireLogger.pushChannel.debug("tearing down keep alive task")
+        keepAliveTask.cancel()
+        self.keepAliveTask = nil
     }
 
 }

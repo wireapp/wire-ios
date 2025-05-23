@@ -61,10 +61,9 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: XCTestCase {
         // GIVEN
         mockUser.teamRole = .partner
         let configuration = ConversationSenderMessageDetailsCell.Configuration(
-            user: mockUser,
+            sender: mockUser,
             indicator: .none,
-            teamRoleIndicator: .externalPartner,
-            timestamp: "1/1/70, 1:00 AM"
+            teamRoleIndicator: .externalPartner
         )
 
         // WHEN
@@ -78,10 +77,9 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: XCTestCase {
         // GIVEN
         mockUser.isFederated = true
         let configuration = ConversationSenderMessageDetailsCell.Configuration(
-            user: mockUser,
+            sender: mockUser,
             indicator: .none,
-            teamRoleIndicator: .federated,
-            timestamp: "1/1/70, 1:00 AM"
+            teamRoleIndicator: .federated
         )
 
         // WHEN
@@ -95,10 +93,9 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: XCTestCase {
         // GIVEN
         mockUser.isGuestInConversation = true
         let configuration = ConversationSenderMessageDetailsCell.Configuration(
-            user: mockUser,
+            sender: mockUser,
             indicator: .none,
-            teamRoleIndicator: .guest,
-            timestamp: "1/1/70, 1:00 AM"
+            teamRoleIndicator: .guest
         )
 
         // WHEN
@@ -112,10 +109,9 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: XCTestCase {
         // GIVEN
         mockUser.mockedIsServiceUser = true
         let configuration = ConversationSenderMessageDetailsCell.Configuration(
-            user: mockUser,
+            sender: mockUser,
             indicator: .none,
-            teamRoleIndicator: .service,
-            timestamp: "1/1/70, 1:00 AM"
+            teamRoleIndicator: .service
         )
 
         // WHEN
@@ -129,10 +125,9 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: XCTestCase {
         // GIVEN
         mockUser.teamRole = .member
         let configuration = ConversationSenderMessageDetailsCell.Configuration(
-            user: mockUser,
+            sender: mockUser,
             indicator: .none,
-            teamRoleIndicator: .none,
-            timestamp: "1/1/70, 1:00 AM"
+            teamRoleIndicator: .none
         )
 
         // WHEN
@@ -145,47 +140,9 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: XCTestCase {
     func test_MessageHasBeenDeleted() {
         mockUser.teamRole = .member
         let configuration = ConversationSenderMessageDetailsCell.Configuration(
-            user: mockUser,
+            sender: mockUser,
             indicator: .deleted,
-            teamRoleIndicator: .none,
-            timestamp: "1/1/70, 1:00 AM"
-        )
-
-        // WHEN
-        sut.configure(with: configuration, animated: false)
-
-        // THEN
-        snapshotHelper.verify(matching: sut)
-    }
-
-    func test_MessageHasBeenEdited() {
-        mockUser.teamRole = .member
-        let configuration = ConversationSenderMessageDetailsCell.Configuration(
-            user: mockUser,
-            indicator: .edited,
-            teamRoleIndicator: .none,
-            timestamp: "1/1/70, 1:00 AM"
-        )
-
-        // WHEN
-        sut.configure(with: configuration, animated: false)
-
-        // THEN
-        snapshotHelper.verify(matching: sut)
-    }
-
-    func test_SenderIsGuestWithALongName_AndMessageHasBeenEdited() {
-        // GIVEN
-        mockUser = MockUserType.createUser(
-            name: "Bruno with a really really really really really really really really really really long name",
-            inTeam: teamID
-        )
-        mockUser.isGuestInConversation = true
-        let configuration = ConversationSenderMessageDetailsCell.Configuration(
-            user: mockUser,
-            indicator: .edited,
-            teamRoleIndicator: .guest,
-            timestamp: "1/1/70, 1:00 AM"
+            teamRoleIndicator: .none
         )
 
         // WHEN
@@ -203,10 +160,9 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: XCTestCase {
         )
         mockUser.isGuestInConversation = true
         let configuration = ConversationSenderMessageDetailsCell.Configuration(
-            user: mockUser,
+            sender: mockUser,
             indicator: .deleted,
-            teamRoleIndicator: .guest,
-            timestamp: "1/1/70, 1:00 AM"
+            teamRoleIndicator: .guest
         )
 
         // WHEN
@@ -221,10 +177,9 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: XCTestCase {
         mockUser.name = nil
         mockUser.teamRole = .member
         let configuration = ConversationSenderMessageDetailsCell.Configuration(
-            user: mockUser,
+            sender: mockUser,
             indicator: .none,
-            teamRoleIndicator: .none,
-            timestamp: "1/1/70, 1:00 AM"
+            teamRoleIndicator: .none
         )
 
         // WHEN

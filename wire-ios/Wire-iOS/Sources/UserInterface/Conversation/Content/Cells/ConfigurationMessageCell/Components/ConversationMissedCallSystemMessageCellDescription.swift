@@ -22,7 +22,7 @@ import WireDesign
 
 final class ConversationMissedCallSystemMessageCellDescription: ConversationMessageCellDescription {
 
-    typealias View = ConversationSystemMessageCell
+    typealias View = ConversationSystemMessageCell<ConversationMissedCallSystemMessageCellDescription>
     typealias IconColors = SemanticColors.Icon
     typealias LabelColors = SemanticColors.Label
 
@@ -32,11 +32,6 @@ final class ConversationMissedCallSystemMessageCellDescription: ConversationMess
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 0
-
-    let isFullWidth: Bool = true
-    let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = nil

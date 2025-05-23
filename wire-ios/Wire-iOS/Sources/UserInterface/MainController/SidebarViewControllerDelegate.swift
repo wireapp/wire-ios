@@ -94,6 +94,8 @@ final class SidebarViewControllerDelegate: WireSidebarUI.SidebarViewControllerDe
                 await mainCoordinator.showConversationList(conversationFilter: .favorites)
             case .groups:
                 await mainCoordinator.showConversationList(conversationFilter: .groups)
+            case .channels:
+                await mainCoordinator.showConversationList(conversationFilter: .channels)
             case .oneOnOne:
                 await mainCoordinator.showConversationList(conversationFilter: .oneOnOne)
             case .folders:
@@ -103,14 +105,6 @@ final class SidebarViewControllerDelegate: WireSidebarUI.SidebarViewControllerDe
             case .settings:
                 await mainCoordinator.showSettings()
             }
-        }
-    }
-
-    public func sidebarViewControllerDidSelectConnect(_ viewController: SidebarViewController) {
-        Task {
-            let connectUI = UINavigationController(rootViewController: connectUIBuilder.build())
-            connectUI.modalPresentationStyle = .formSheet
-            await mainCoordinator.presentViewController(connectUI)
         }
     }
 

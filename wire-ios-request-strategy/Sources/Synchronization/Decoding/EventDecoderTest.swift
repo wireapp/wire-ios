@@ -30,6 +30,8 @@ public enum EventConversation {
     static let addOTRAsset = "conversation.otr-asset-add"
 }
 
+struct DummyError: Error {}
+
 class EventDecoderTest: MessagingTestBase {
 
     var sut: EventDecoder!
@@ -51,9 +53,13 @@ class EventDecoderTest: MessagingTestBase {
             selfConversation.remoteIdentifier = self.accountIdentifier
             selfConversation.conversationType = .self
         }
+        disableZMLogError(true)
+
     }
 
     override func tearDown() {
+        // log ZMUpdateEvents will produce errors (SafeTypes)
+        disableZMLogError(false)
         EventDecoder.testingBatchSize = nil
         sut = nil
         super.tearDown()
@@ -475,7 +481,7 @@ extension EventDecoderTest {
         proteusViaCoreCrypto.isOn = false
     }
 
-    func test_ProteusEventDecryptionDoesNotStoreLastEventIdIfFails() async throws {
+    func test_ProteusEventDecryptionDoesStoreLastEventIdIfFails() async throws {
         DeveloperFlag.proteusViaCoreCrypto.enable(true, storage: .temporary())
         defer {
             DeveloperFlag.proteusViaCoreCrypto.enable(false, storage: .standard)
@@ -506,7 +512,7 @@ extension EventDecoderTest {
 
         // Then
         XCTAssertEqual(mockProteusService.decryptDataForSession_Invocations.count, 1)
-        XCTAssertEqual(lastEventIDRepository.storeLastEventID_Invocations.count, 0)
+        XCTAssertEqual(lastEventIDRepository.storeLastEventID_Invocations.count, 1)
     }
 
     func test_MLSEventDecryptionDoesNotStoreLastEventIdIfFails() async throws {
@@ -517,13 +523,14 @@ extension EventDecoderTest {
             DeveloperFlag.proteusViaCoreCrypto.enable(false, storage: .standard)
         }
         let mockProteusService = MockProteusServiceInterface()
+        let decryptionErrorReason = DummyError()
 
         mockProteusService.decryptDataForSession_MockMethod = { data, _ in
             (didCreateNewSession: false, decryptedData: data)
         }
 
         mockMLSService.decryptMessageForSubconversationType_MockMethod = { _, _, _ in
-            throw MLSDecryptionService.MLSMessageDecryptionError.failedToDecryptMessage
+            throw MLSDecryptionService.MLSMessageDecryptionError.failedToDecryptMessage(reason: decryptionErrorReason)
         }
 
         let mlsEvent: ZMUpdateEvent = await syncMOC.perform { [self] in
@@ -542,7 +549,7 @@ extension EventDecoderTest {
             _ = try await sut.decryptAndStoreEvents([mlsEvent])
         } catch let error as MLSDecryptionService.MLSMessageDecryptionError {
             // Then
-            XCTAssert(error == .failedToDecryptMessage)
+            XCTAssert(error == .failedToDecryptMessage(reason: decryptionErrorReason))
             XCTAssertEqual(lastEventIDRepository.storeLastEventID_Invocations.count, 0)
         }
 
@@ -835,8 +842,9 @@ extension EventDecoderTest {
 
     func test_DecryptMLSMessage_ReturnsNoEvent_WhenmlsServiceThrows() async throws {
         // Given
+        let decryptionErrorReason = DummyError()
         mockMLSService.decryptMessageForSubconversationType_MockMethod = { _, _, _ in
-            throw MLSDecryptionService.MLSMessageDecryptionError.failedToDecryptMessage
+            throw MLSDecryptionService.MLSMessageDecryptionError.failedToDecryptMessage(reason: decryptionErrorReason)
         }
 
         let event = await syncMOC.perform { [self] in
@@ -851,7 +859,7 @@ extension EventDecoderTest {
             _ = try await sut.decryptMlsMessage(from: event, context: syncMOC)
         } catch let error as MLSDecryptionService.MLSMessageDecryptionError {
             // Then
-            XCTAssert(error == .failedToDecryptMessage)
+            XCTAssert(error == .failedToDecryptMessage(reason: decryptionErrorReason))
         }
     }
 
@@ -972,7 +980,8 @@ extension EventDecoderTest {
                 _ = StoredUpdateEvent.encryptAndCreate(
                     event,
                     context: self.eventMOC,
-                    index: Int64(startIndex) + Int64(index)
+                    index: Int64(startIndex) + Int64(index),
+                    isCallEvent: event.isCallEvent
                 )
             }
 

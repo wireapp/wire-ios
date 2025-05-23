@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDomain
 import WireLogging
 
 private let zmLog = ZMSLog(tag: "SyncStatus")
@@ -46,6 +47,8 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
 
     weak var syncStateDelegate: ZMSyncStateDelegate?
 
+    private let isSyncV2Enabled: Bool
+
     private let lastEventIDRepository: LastEventIDRepositoryInterface
     fileprivate var lastUpdateEventID: UUID?
     fileprivate unowned var managedObjectContext: NSManagedObjectContext
@@ -58,30 +61,44 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
 
     var quickSyncContinuation: CheckedContinuation<Void, Never>?
 
+    public var isLive: Bool {
+        guard !isSyncV2Enabled else { return false }
+        return managedObjectContext.performAndWait {
+            currentSyncPhase == .done && isPushChannelOpen
+        }
+    }
+
     public var isSlowSyncing: Bool {
-        !currentSyncPhase.isOne(of: [.fetchingMissedEvents, .done])
+        guard !isSyncV2Enabled else { return false }
+        return !currentSyncPhase.isOne(of: [.fetchingMissedEvents, .done])
     }
 
     private var isForceQuickSync = false
+    private var isRecovering = false
 
     public var isSyncing: Bool {
-        currentSyncPhase.isSyncing || !isPushChannelOpen
+        guard !isSyncV2Enabled else { return false }
+        return currentSyncPhase.isSyncing || !isPushChannelOpen
     }
 
     public var isSyncingInBackground: Bool {
-        currentSyncPhase.isSyncing
+        guard !isSyncV2Enabled else { return false }
+        return currentSyncPhase.isSyncing
     }
 
     public var isPushChannelOpen: Bool {
-        pushChannelEstablishedDate != nil
+        guard !isSyncV2Enabled else { return false }
+        return pushChannelEstablishedDate != nil
     }
 
     public init(
         managedObjectContext: NSManagedObjectContext,
-        lastEventIDRepository: LastEventIDRepositoryInterface
+        lastEventIDRepository: LastEventIDRepositoryInterface,
+        isSyncV2Enabled: Bool
     ) {
         self.managedObjectContext = managedObjectContext
         self.lastEventIDRepository = lastEventIDRepository
+        self.isSyncV2Enabled = isSyncV2Enabled
 
         super.init()
 
@@ -118,26 +135,41 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
     }
 
     public func forceSlowSync() {
-        // Refetch user settings.
-        ZMUser.selfUser(in: managedObjectContext).needsPropertiesUpdate = true
-        // Reset the status.
-        currentSyncPhase = SyncPhase.fetchingLastUpdateEventID
-        RequestAvailableNotification.notifyNewRequestsAvailable(nil)
-        log("slow sync")
-        syncStateDelegate?.didStartSlowSync()
+        managedObjectContext.performAndWait { [weak self] in
+            guard let self else { return }
+            // Refetch user settings.
+            ZMUser.selfUser(in: managedObjectContext).needsPropertiesUpdate = true
+            // Reset the status.
+            currentSyncPhase = SyncPhase.fetchingLastUpdateEventID
+            RequestAvailableNotification.notifyNewRequestsAvailable(nil)
+            log("slow sync")
+            syncStateDelegate?.didStartSlowSync()
+        }
     }
 
     /// Sync the resources: Teams, Users, Conversations...
     public func resyncResources() {
-        // Refetch user settings.
-        ZMUser.selfUser(in: managedObjectContext).needsPropertiesUpdate = true
-        // If we don't have a last event id, we need to get that first, otherwise the quick sync will fetch all events
-        // in the notification queue.
-        currentSyncPhase = hasPersistedLastEventID ? SyncPhase.fetchingLastUpdateEventID
-            .nextPhase : .fetchingLastUpdateEventID
-        RequestAvailableNotification.notifyNewRequestsAvailable(nil)
-        log("resyncResources")
-        syncStateDelegate?.didStartSlowSync()
+        managedObjectContext.performAndWait { [weak self] in
+            guard let self else { return }
+            // Refetch user settings.
+            ZMUser.selfUser(in: managedObjectContext).needsPropertiesUpdate = true
+            // If we don't have a last event id, we need to get that first, otherwise the quick sync will fetch all
+            // events
+            // in the notification queue.
+            currentSyncPhase = hasPersistedLastEventID ? SyncPhase.fetchingLastUpdateEventID
+                .nextPhase : .fetchingLastUpdateEventID
+            RequestAvailableNotification.notifyNewRequestsAvailable(nil)
+            log("resyncResources")
+            syncStateDelegate?.didStartSlowSync()
+        }
+    }
+
+    public func recoverWithQuickSync() async {
+        isRecovering = true
+        defer {
+            self.isRecovering = false
+        }
+        await performQuickSync()
     }
 
     public func performQuickSync() async {
@@ -155,7 +187,7 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
     }
 
     func notifyQuickSyncDidFinish() {
-        syncStateDelegate?.didFinishQuickSync()
+        syncStateDelegate?.didFinishQuickSync(isRecovering: isRecovering)
         quickSyncContinuation?.resume()
         quickSyncContinuation = nil
     }

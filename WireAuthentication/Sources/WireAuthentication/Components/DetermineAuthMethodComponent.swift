@@ -20,59 +20,138 @@ import NeedleFoundation
 import SwiftUI
 import WireAPI
 import WireAuthenticationAPI
+import WireLogging
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
 
 protocol DetermineAuthMethodComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
-    var defaultBackendEnvironment: BackendEnvironment { get }
-    var defaultAPIVersion: APIVersion { get }
+    @MainActor var bridge: WireAuthenticationBridge { get }
+    var preferredAPIVersion: APIVersion? { get }
     var minTLSVersion: TLSVersion { get }
+    var ssoCallbackURLScheme: String { get }
+    var existsAnotherAccount: Bool { get }
 
 }
 
-class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDependency>, DetermineAuthMethodBuilder {
+class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDependency> {
 
-    private var validateEmailOrSSOCode: ValidateEmailOrSSOCodeUseCase {
-        ValidateEmailOrSSOCodeUseCase()
-    }
+    public let networkStack: NetworkStack
 
-    private var determineAuthMethodUseCase: some DetermineAuthMethodUseCaseProtocol {
-        DetermineAuthMethodUseCase(
-            validateEmailOrSSOCode: validateEmailOrSSOCode,
-            authenticationAPI: authenticationAPI
-        )
-    }
-
-    @MainActor private var viewModel: DetermineAuthMethodViewModel {
-        DetermineAuthMethodViewModel(
-            router: dependency.router,
-            validateEmailOrSSOCode: validateEmailOrSSOCode,
-            determineAuthMethod: determineAuthMethodUseCase
-        )
-    }
-
-    @MainActor var determineAuthMethodView: DetermineAuthMethodView {
-        DetermineAuthMethodView(
-            viewModel: viewModel,
-            builder: loginViaEmailComponent
-        )
-    }
-
-    public var authenticationAPI: AuthenticationAPI {
-        AuthenticationAPIBuilder(
-            networkService: NetworkService.make(
-                backendEnvironment: dependency.defaultBackendEnvironment,
-                minTLSVersion: dependency.minTLSVersion
-            )
-        ).makeAPI(for: dependency.defaultAPIVersion)
+    init(
+        parent: any Scope,
+        networkStack: NetworkStack
+    ) {
+        self.networkStack = networkStack
+        super.init(parent: parent)
     }
 
     // MARK: - Children
 
-    var loginViaEmailComponent: LoginViaEmailComponent {
-        LoginViaEmailComponent(parent: self)
+    func loginViaEmailComponent(
+        email: String?,
+        canCreateAccount: Bool,
+        didDetectDomainConflict: Bool,
+        backendInfo: BackendInfo
+    ) -> LoginViaEmailComponent {
+        let networkStack = NetworkStack(
+            backendInfo: backendInfo,
+            minTLSVersion: dependency.minTLSVersion,
+            preferredAPIVersion: dependency.preferredAPIVersion
+        )
+        return LoginViaEmailComponent(
+            parent: self,
+            email: email,
+            canCreateAccount: canCreateAccount,
+            didDetectDomainConflict: didDetectDomainConflict,
+            networkStack: networkStack
+        )
+    }
+
+    func noHistoryComponent(authenticationResult: AuthenticationResult) -> NoHistoryComponent {
+        NoHistoryComponent(
+            parent: self,
+            authenticationResult: authenticationResult,
+            didDetectDomainConflict: false
+        )
+    }
+
+}
+
+extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
+
+    // MARK: Factory
+
+    @MainActor var viewModel: DetermineAuthMethodViewModel {
+        DetermineAuthMethodViewModel(
+            factory: self,
+            router: dependency.router,
+            bridge: dependency.bridge,
+            backendInfo: networkStack.backendInfo,
+            existsAnotherAccount: dependency.existsAnotherAccount
+        )
+    }
+
+    func loginViaEmailFactory(
+        email: String?,
+        canCreateAccount: Bool,
+        didDetectDomainConflict: Bool,
+        backendInfo: BackendInfo
+    ) -> any WireAuthenticationUI.LoginViaEmailFactory {
+        loginViaEmailComponent(
+            email: email,
+            canCreateAccount: canCreateAccount,
+            didDetectDomainConflict: didDetectDomainConflict,
+            backendInfo: backendInfo
+        )
+    }
+
+    func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory {
+        noHistoryComponent(authenticationResult: authenticationResult)
+    }
+
+    // MARK: Use cases
+
+    func validateEmailOrSSOCodeUseCase() -> any ValidateEmailOrSSOCodeUseCaseProtocol {
+        ValidateEmailOrSSOCodeUseCase()
+    }
+
+    func determineAuthMethodUseCase() async throws -> any DetermineAuthMethodUseCaseProtocol {
+        let authenticationAPI = try await networkStack.makeAuthenticationAPI()
+        return DetermineAuthMethodUseCase(
+            validateEmailOrSSOCode: validateEmailOrSSOCodeUseCase(),
+            authenticationAPI: authenticationAPI,
+            urlSession: URLSession.shared
+        )
+    }
+
+    func fetchBackendConfigUseCase() -> any FetchBackendConfigUseCaseProtocol {
+        FetchBackendConfigUseCase()
+    }
+
+    @MainActor
+    func loginViaSSOUseCase(backendInfo: BackendInfo?) async throws -> any LoginViaSSOUseCaseProtocol {
+        let networkStack: NetworkStack = if let backendInfo {
+            NetworkStack(
+                backendInfo: backendInfo,
+                minTLSVersion: dependency.minTLSVersion,
+                preferredAPIVersion: dependency.preferredAPIVersion
+            )
+        } else {
+            self.networkStack
+        }
+
+        let authenticationAPI = try await networkStack.makeAuthenticationAPI()
+
+        return LoginViaSSOUseCase(
+            authenticationAPI: authenticationAPI,
+            baseURL: networkStack.backendInfo.backendConfig.endpoints.backendURL,
+            ssoCallbackURLScheme: dependency.ssoCallbackURLScheme,
+            verificationTokenGenerator: SSOLoginVerificationTokenGenerator(),
+            webAuthenticator: WebAuthenticator(ssoCallbackURLScheme: dependency.ssoCallbackURLScheme),
+            createAuthResultUseCase: CreateAuthenticationResultUseCase(networkStack: networkStack)
+        )
     }
 
 }

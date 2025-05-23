@@ -312,6 +312,10 @@ public extension ZMUser {
         }
     }
 
+    var objectId: Any {
+        objectID
+    }
+
     /// combination of domain and remoteIdentifier
     @NSManaged private var primaryKey: String
 
@@ -524,7 +528,7 @@ extension ZMUser: UserConnections {
 
         let mlsService = syncContext.performAndWait { syncContext.mlsService }
         let migrator = mlsService.map(OneOnOneMigrator.init(mlsService:))
-        let resolver = OneOnOneResolver(migrator: migrator, isMLSEnabled: isMLSEnabled())
+        let resolver = LegacyOneOnOneResolver(migrator: migrator, isMLSEnabled: isMLSEnabled())
 
         accept(
             oneOnOneResolver: resolver,

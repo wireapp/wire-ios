@@ -33,12 +33,11 @@ public protocol StrategyDirectoryProtocol {
 @objcMembers
 public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
 
-    let strategies: [Any]
-
-    public let requestStrategies: [RequestStrategy]
-    public let eventConsumers: [ZMEventConsumer]
-    public let eventAsyncConsumers: [ZMEventAsyncConsumer]
-    public let contextChangeTrackers: [ZMContextChangeTracker]
+    public private(set) var strategies: [Any]
+    public private(set) var requestStrategies: [RequestStrategy]
+    public private(set) var eventConsumers: [ZMEventConsumer]
+    public private(set) var eventAsyncConsumers: [ZMEventAsyncConsumer]
+    public private(set) var contextChangeTrackers: [ZMContextChangeTracker]
 
     init(
         contextProvider: ContextProvider,
@@ -48,7 +47,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         flowManager: FlowManagerType,
         updateEventProcessor: UpdateEventProcessor,
         localNotificationDispatcher: LocalNotificationDispatcher,
-        useLegacyPushNotifications: Bool,
         lastEventIDRepository: LastEventIDRepositoryInterface,
         transportSession: TransportSessionType,
         proteusProvider: ProteusProviding,
@@ -57,7 +55,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         pullSelfUserClientsFactory: @escaping PullSelfUserClientsFactory,
         searchUsersCache: SearchUsersCache?
     ) {
-
         self.strategies = Self.buildStrategies(
             contextProvider: contextProvider,
             applicationStatusDirectory: applicationStatusDirectory,
@@ -66,7 +63,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             flowManager: flowManager,
             updateEventProcessor: updateEventProcessor,
             localNotificationDispatcher: localNotificationDispatcher,
-            useLegacyPushNotifications: useLegacyPushNotifications,
             lastEventIDRepository: lastEventIDRepository,
             transportSession: transportSession,
             proteusProvider: proteusProvider,
@@ -106,7 +102,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         flowManager: FlowManagerType,
         updateEventProcessor: UpdateEventProcessor,
         localNotificationDispatcher: LocalNotificationDispatcher,
-        useLegacyPushNotifications: Bool,
         lastEventIDRepository: LastEventIDRepositoryInterface,
         transportSession: TransportSessionType,
         proteusProvider: ProteusProviding,
@@ -117,31 +112,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
     ) -> [Any] {
         let syncMOC = contextProvider.syncContext
 
-        let httpClient = HttpClientImpl(
-            transportSession: transportSession,
-            queue: syncMOC
-        )
-        let apiProvider = APIProvider(httpClient: httpClient)
-        let sessionEstablisher = SessionEstablisher(
-            context: syncMOC,
-            apiProvider: apiProvider
-        )
-        let messageDependencyResolver = MessageDependencyResolver(context: syncMOC)
-        let quickSyncObserver = QuickSyncObserver(
-            context: syncMOC,
-            applicationStatus: applicationStatusDirectory,
-            notificationContext: syncMOC.notificationContext
-        )
-        let messageSender = MessageSender(
-            apiProvider: apiProvider,
-            clientRegistrationDelegate: applicationStatusDirectory.clientRegistrationStatus,
-            sessionEstablisher: sessionEstablisher,
-            messageDependencyResolver: messageDependencyResolver,
-            quickSyncObserver: quickSyncObserver,
-            context: syncMOC
-        )
         let mlsFeature = FeatureRepository(context: syncMOC).fetchMLS()
-        let oneOnOneResolver = OneOnOneResolver(
+        let oneOnOneResolver = LegacyOneOnOneResolver(
             migrator: OneOnOneMigrator(mlsService: mlsService),
             isMLSEnabled: mlsFeature.isEnabled
         )
@@ -151,7 +123,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         )
 
         return [
-
             UserClientRequestStrategy(
                 clientRegistrationStatus: applicationStatusDirectory.clientRegistrationStatus,
                 clientUpdateStatus: applicationStatusDirectory.clientUpdateStatus,
@@ -165,7 +136,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 pushNotificationStatus: applicationStatusDirectory.pushNotificationStatus,
                 syncStatus: applicationStatusDirectory.syncStatus,
                 operationStatus: applicationStatusDirectory.operationStatus,
-                useLegacyPushNotifications: useLegacyPushNotifications,
                 lastEventIDRepository: lastEventIDRepository
             ),
             FetchingClientRequestStrategy(
@@ -198,27 +168,9 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory
             ),
-            AssetClientMessageRequestStrategy(
-                managedObjectContext: syncMOC,
-                messageSender: messageSender
-            ),
             AssetV3PreviewDownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory
-            ),
-            ClientMessageRequestStrategy(
-                context: syncMOC,
-                localNotificationDispatcher: pushMessageHandler,
-                applicationStatus: applicationStatusDirectory,
-                messageSender: messageSender
-            ),
-            DeliveryReceiptRequestStrategy(
-                managedObjectContext: syncMOC,
-                messageSender: messageSender
-            ),
-            AvailabilityRequestStrategy(
-                context: syncMOC,
-                messageSender: messageSender
             ),
             UserPropertyRequestStrategy(
                 withManagedObjectContext: syncMOC,
@@ -238,10 +190,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             LinkPreviewAssetDownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory
-            ),
-            LinkPreviewUpdateRequestStrategy(
-                managedObjectContext: syncMOC,
-                messageSender: messageSender
             ),
             ImageV2DownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
@@ -294,13 +242,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             SelfUserRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory
-            ),
-            CallingRequestStrategy(
-                managedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory,
-                clientRegistrationDelegate: applicationStatusDirectory.clientRegistrationStatus,
-                flowManager: flowManager,
-                messageSender: messageSender
             ),
             LegalHoldRequestStrategy(
                 withManagedObjectContext: syncMOC,
@@ -389,10 +330,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                     pullSelfUserClientsFactory: pullSelfUserClientsFactory
                 )
             ),
-            ResetSessionRequestStrategy(
-                managedObjectContext: syncMOC,
-                messageSender: messageSender
-            ),
             UserImageAssetUpdateStrategy(
                 managedObjectContext: syncMOC,
                 applicationStatusDirectory: applicationStatusDirectory,
@@ -415,6 +352,84 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 syncProgress: applicationStatusDirectory.syncStatus
             )
         ]
+    }
+
+    func makeClientRelatedStategies(
+        applicationStatusDirectory: ApplicationStatusDirectory,
+        syncContext: NSManagedObjectContext,
+        transportSession: TransportSessionType,
+        pushMessageHandler: PushMessageHandler,
+        flowManager: FlowManagerType,
+        incrementalSyncObserver: IncrementalSyncObserverProtocol
+    ) {
+        syncContext.performAndWait {
+            let httpClient = HttpClientImpl(
+                transportSession: transportSession,
+                queue: syncContext
+            )
+            let apiProvider = APIProvider(httpClient: httpClient)
+            let messageDependencyResolver = MessageDependencyResolver(context: syncContext)
+            let sessionEstablisher = SessionEstablisher(
+                context: syncContext,
+                apiProvider: apiProvider
+            )
+            let messageSender = MessageSender(
+                apiProvider: apiProvider,
+                sessionEstablisher: sessionEstablisher,
+                messageDependencyResolver: messageDependencyResolver,
+                context: syncContext,
+                incrementalSyncObserver: incrementalSyncObserver
+            )
+
+            let strategies: [Any] = [
+                AssetClientMessageRequestStrategy(
+                    managedObjectContext: syncContext,
+                    messageSender: messageSender
+                ),
+                ClientMessageRequestStrategy(
+                    context: syncContext,
+                    localNotificationDispatcher: pushMessageHandler,
+                    messageSender: messageSender
+                ),
+                DeliveryReceiptRequestStrategy(
+                    managedObjectContext: syncContext,
+                    messageSender: messageSender
+                ),
+                AvailabilityRequestStrategy(
+                    context: syncContext,
+                    messageSender: messageSender
+                ),
+                LinkPreviewUpdateRequestStrategy(
+                    managedObjectContext: syncContext,
+                    messageSender: messageSender
+                ),
+                CallingRequestStrategy(
+                    managedObjectContext: syncContext,
+                    applicationStatus: applicationStatusDirectory,
+                    flowManager: flowManager,
+                    messageSender: messageSender
+                ),
+                ResetSessionRequestStrategy(
+                    managedObjectContext: syncContext,
+                    messageSender: messageSender
+                )
+            ]
+
+            self.strategies.append(contentsOf: strategies)
+            self.requestStrategies.append(contentsOf: strategies.compactMap { $0 as? RequestStrategy })
+            self.eventConsumers.append(contentsOf: strategies.compactMap { $0 as? ZMEventConsumer })
+            self.eventAsyncConsumers.append(contentsOf: strategies.compactMap { $0 as? ZMEventAsyncConsumer })
+            self.contextChangeTrackers
+                .append(contentsOf: strategies.flatMap { (object: Any) -> [ZMContextChangeTracker] in
+                    if let source = object as? ZMContextChangeTrackerSource {
+                        return source.contextChangeTrackers
+                    } else if let tracker = object as? ZMContextChangeTracker {
+                        return [tracker]
+                    } else {
+                        return []
+                    }
+                })
+        }
     }
 
     // MARK: Use Cases

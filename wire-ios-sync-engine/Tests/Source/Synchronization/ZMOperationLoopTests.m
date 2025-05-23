@@ -42,7 +42,7 @@
     self.mockRequestCancellation = [[MockRequestCancellation alloc] init];
 
     self.operationStatus = [[OperationStatus alloc] init];
-    self.syncStatus = [[SyncStatus alloc] initWithManagedObjectContext:self.syncMOC lastEventIDRepository:self.lastEventIDRepository];
+    self.syncStatus = [[SyncStatus alloc] initWithManagedObjectContext:self.syncMOC lastEventIDRepository:self.lastEventIDRepository isSyncV2Enabled:NO];
     self.pushNotificationStatus = [[PushNotificationStatus alloc] initWithManagedObjectContext:self.syncMOC lastEventIDRepository:self.lastEventIDRepository];
     self.sut = [[ZMOperationLoop alloc] initWithTransportSession:self.mockTransportSesssion
                                                  requestStrategy:self.mockRequestStrategy
@@ -52,7 +52,8 @@
                                           pushNotificationStatus:self.pushNotificationStatus
                                                            uiMOC:self.uiMOC
                                                          syncMOC:self.syncMOC
-                                          isDeveloperModeEnabled:NO];
+                                          isDeveloperModeEnabled:NO
+                                                 isSyncV2Enabled:NO];
     self.pushChannelObserverToken = [NotificationInContext addObserverWithNotificationCenter:[NSNotificationCenter defaultCenter]
                                                                                         name:ZMOperationLoop.pushChannelStateChangeNotificationName
                                                                                      context:self.uiMOC.notificationContext
@@ -116,7 +117,8 @@
                                                      pushNotificationStatus:self.pushNotificationStatus
                                                                       uiMOC:self.uiMOC
                                                                     syncMOC:self.syncMOC
-                                                     isDeveloperModeEnabled:NO];
+                                                     isDeveloperModeEnabled:NO
+                                                            isSyncV2Enabled:NO];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
@@ -305,7 +307,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
 
     // then
-    XCTAssertEqualObjects(self.mockUpdateEventProcessor.processedEvents, expectedEvents);
+    XCTAssertEqualObjects(self.mockUpdateEventProcessor.processedLivedEvents, expectedEvents);
 }
 
 - (void)testThatProcessSyncDataIsNotForwardedToAllSyncObjectsIfItIsNotAnArray

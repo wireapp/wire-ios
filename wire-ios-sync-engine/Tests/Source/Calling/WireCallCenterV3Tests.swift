@@ -963,9 +963,6 @@ final class WireCallCenterV3Tests: MessagingTest {
     }
 
     func testThatItAnswersACall_conference_mls() throws {
-        // TODO: [WPB-7346]: enable this (flaky) test again
-        throw XCTSkip()
-
         // given
         sut.handleIncomingCall(
             conversationId: groupConversationID,
@@ -983,10 +980,15 @@ final class WireCallCenterV3Tests: MessagingTest {
             expectedCallerID: otherUserID,
             expectedConversationID: groupConversationID
         ) {
-            // when
             _ = try sut.answerCall(conversation: groupConversation, video: false)
 
-            // then
+            XCTAssertNil(mockAVSWrapper.answerCallArguments)
+
+            XCTAssert(
+                waitForCustomExpectations(withTimeout: 0.5)
+            )
+
+            // then, once subgroup has been joined, avs answer call should be triggered
             XCTAssertEqual(mockAVSWrapper.answerCallArguments?.callType, AVSCallType.normal)
         }
     }
@@ -1071,18 +1073,20 @@ final class WireCallCenterV3Tests: MessagingTest {
     }
 
     func testThatItStartsACall_conference_mls() throws {
-        // TODO: [WPB-7346]: enable this (flaky) test again
-        throw XCTSkip()
-
         try assertMLSConference(
             expectedCallState: .outgoing(isVideo: false, degraded: false),
             expectedCallerID: selfUserID,
             expectedConversationID: groupConversationID
         ) {
-            // when
             try sut.startCall(in: groupConversation, isVideo: false)
 
-            // then
+            XCTAssertNil(mockAVSWrapper.startCallArguments)
+
+            XCTAssert(
+                waitForCustomExpectations(withTimeout: 0.5)
+            )
+
+            // then, once subgroup has been joined avs start call should be triggered
             XCTAssertEqual(mockAVSWrapper.startCallArguments?.conversationType, AVSConversationType.mlsConference)
             XCTAssertEqual(mockAVSWrapper.startCallArguments?.callType, AVSCallType.normal)
         }
@@ -1153,9 +1157,11 @@ final class WireCallCenterV3Tests: MessagingTest {
         }
 
         // So we can inform of new conference infos
+        let listentingOnConferenceInfoChange = expectation(description: "listenting to onConferenceInfoChange")
         let conferenceInfoChangeSubject = PassthroughSubject<MLSConferenceInfo, Never>()
         mlsService.onConferenceInfoChangeParentGroupIDSubConversationGroupID_MockMethod = { _, _ in
             var iterator = conferenceInfoChangeSubject.values.makeAsyncIterator()
+            listentingOnConferenceInfoChange.fulfill()
             return AsyncThrowingStream {
                 await iterator.next()
             }
@@ -1170,18 +1176,7 @@ final class WireCallCenterV3Tests: MessagingTest {
             try block()
         }
 
-        XCTAssert(
-            waitForCustomExpectations(withTimeout: 0.5),
-            "[6] waitForCustomExpectations failed",
-            file: file,
-            line: line
-        )
-        XCTAssert(
-            waitForAllGroupsToBeEmpty(withTimeout: 0.5),
-            "[7] waitForAllGroupsToBeEmpty failed",
-            file: file,
-            line: line
-        )
+        wait(for: [listentingOnConferenceInfoChange])
 
         let didSetConferenceInfo2 = customExpectation(description: "didSetConferenceInfo2")
         mockAVSWrapper.mockSetMLSConferenceInfo = {

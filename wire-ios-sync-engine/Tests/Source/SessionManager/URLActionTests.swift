@@ -96,7 +96,35 @@ class URLActionTests: ZMTBaseTest {
         let action = try URLAction(url: url)
 
         // then
-        XCTAssertEqual(action, URLAction.openUserProfile(id: uuid))
+        XCTAssertEqual(action, URLAction.openUserProfile(id: uuid, domain: nil))
+    }
+
+    func testThatItParsesOpenUserProfileLinkWithDomain() throws {
+        // given
+        let uuidString = "fc43d637-6cc2-4d03-9185-2563c73d6ef2"
+        let domain = "wire.com"
+        let url = URL(string: "wire://user/\(domain)/\(uuidString)")!
+        let uuid = UUID(uuidString: uuidString)!
+
+        // when
+        let action = try URLAction(url: url)
+
+        // then
+        XCTAssertEqual(action, URLAction.openUserProfile(id: uuid, domain: domain))
+    }
+
+    func testThatItParsesOpenUserProfileLinkWithDomainAndLegacyFormat() throws {
+        // given
+        let domain = "wire.com"
+        let uuidString = "fc43d637-6cc2-4d03-9185-2563c73d6ef2"
+        let url = URL(string: "wire://user/\(uuidString)@\(domain)")!
+        let uuid = UUID(uuidString: uuidString)!
+
+        // when
+        let action = try URLAction(url: url)
+
+        // then
+        XCTAssertEqual(action, URLAction.openUserProfile(id: uuid, domain: domain))
     }
 
     func testThatItParsesImportEventsLink() throws {

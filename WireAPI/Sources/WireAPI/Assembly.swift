@@ -79,7 +79,8 @@ public final class Assembly {
     public lazy var authenticationManager: some AuthenticationManagerProtocol = AuthenticationManager(
         clientID: clientID,
         cookieStorage: cookieStorage,
-        networkService: apiNetworkService
+        networkService: apiNetworkService,
+        onAuthenticationFailure: {}
     )
 
     private lazy var cookieStorage: some CookieStorageProtocol = CookieStorage(
@@ -88,6 +89,9 @@ public final class Assembly {
         keychain: keychain
     )
 
-    private lazy var serverTrustValidator = ServerTrustValidator(pinnedKeys: backendEnvironment.pinnedKeys)
+    private lazy var serverTrustValidator = ServerTrustValidator(
+        pinnedKeys: backendEnvironment.pinnedKeys,
+        currentDateProvider: .system
+    )
 
 }

@@ -40,6 +40,18 @@ extension NSTextAttachment {
             icon.makeImage(size: iconSize, color: color)
         }
 
+        return makeAttachment(
+            image: image,
+            iconSize: iconSize,
+            verticalCorrection: verticalCorrection
+        )
+    }
+
+    private static func makeAttachment(
+        image: UIImage,
+        iconSize: StyleKitIcon.Size,
+        verticalCorrection: CGFloat
+    ) -> NSTextAttachment {
         let attachment = NSTextAttachment()
         attachment.image = image
         let ratio = image.size.width / image.size.height
@@ -51,4 +63,5 @@ extension NSTextAttachment {
         )
         return attachment
     }
+
 }

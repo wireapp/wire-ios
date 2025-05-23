@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireDomainPkg
+import WireDomainPackage
 
 public final class MockImportBackupUseCaseProtocol: ImportBackupUseCaseProtocol {
 

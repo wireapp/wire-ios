@@ -20,22 +20,27 @@ import UIKit
 import WireDataModel
 import WireDesign
 
-final class ConversationAudioMessageCell: RoundedView, ConversationMessageCell {
+final class ConversationAudioMessageCell: UIView, ConversationMessageCell {
 
-    struct Configuration {
-        let message: ZMConversationMessage
-        var isObfuscated: Bool {
-            message.isObfuscated
+    struct Configuration: Equatable {
+        var message: ZMConversationMessage
+        var isObfuscated: Bool
+
+        static func == (lhs: Configuration, rhs: Configuration) -> Bool {
+            lhs.message == rhs.message &&
+                lhs.isObfuscated == rhs.isObfuscated
         }
+
     }
 
-    private var containerView = UIView()
+    private var containerView = RoundedView()
     private let transferView = AudioMessageView()
     private let obfuscationView = ObfuscationView(icon: .microphone)
     private let restrictionView = AudioMessageRestrictionView()
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
+    weak var actionController: ConversationMessageActionController?
 
     var isSelected: Bool = false
 
@@ -51,27 +56,28 @@ final class ConversationAudioMessageCell: RoundedView, ConversationMessageCell {
     }
 
     private func configureSubview() {
-        shape = .rounded(radius: 12)
-        backgroundColor = SemanticColors.View.backgroundCollectionCell
+        containerView.shape = .rounded(radius: 12)
+        containerView.backgroundColor = SemanticColors.View.backgroundCollectionCell
         containerView.layer.cornerRadius = 12
         containerView.layer.borderWidth = 1
         containerView.layer.borderColor = SemanticColors.View.borderCollectionCell.cgColor
-        clipsToBounds = true
+        containerView.clipsToBounds = true
         setup(transferView)
 
+        containerView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(containerView)
     }
 
     private func configureConstraints() {
-        containerView.translatesAutoresizingMaskIntoConstraints = false
+        let margins = conversationHorizontalMargins
 
         NSLayoutConstraint.activate([
             heightAnchor.constraint(equalToConstant: 56),
             // containerView
-            containerView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
             containerView.topAnchor.constraint(equalTo: topAnchor),
-            containerView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            containerView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: margins.right),
+            bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
         ])
     }
 
@@ -121,16 +127,20 @@ extension ConversationAudioMessageCell: TransferViewDelegate {
 
 final class ConversationAudioMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationAudioMessageCell
-    let configuration: View.Configuration
 
-    var topMargin: Float = 8
-    var showEphemeralTimer: Bool = false
+    var configuration: View.Configuration
 
-    let isFullWidth: Bool = false
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 
-    weak var message: ZMConversationMessage?
+    weak var message: ZMConversationMessage? {
+        didSet {
+            if let message {
+                configuration.message = message
+            }
+        }
+    }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
@@ -141,7 +151,8 @@ final class ConversationAudioMessageCellDescription: ConversationMessageCellDesc
     let accessibilityLabel: String?
 
     init(message: ZMConversationMessage) {
-        self.configuration = View.Configuration(message: message)
+        self.configuration = View
+            .Configuration(message: message, isObfuscated: message.isObfuscated)
         self.accessibilityLabel = L10n.Accessibility.ConversationSearch.AudioMessage.description
     }
 

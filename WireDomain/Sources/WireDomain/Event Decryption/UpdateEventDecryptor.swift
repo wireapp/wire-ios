@@ -26,14 +26,15 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
 
     private let proteusMessageDecryptor: any ProteusMessageDecryptorProtocol
     private let mlsMessageDecryptor: any MLSMessageDecryptorProtocol
-    private let messageRepository: any MessageRepositoryProtocol
+    private let messageLocalStore: any MessageLocalStoreProtocol
+    private let mlsService: (any MLSServiceInterface)? // optional because only necessary for live events
 
     init(
         proteusService: any ProteusServiceInterface,
-        mlsService: any MLSServiceInterface,
+        mlsService: (any MLSServiceInterface)?,
         mlsDecryptionService: any MLSDecryptionServiceInterface,
         userClientsLocalStore: any UserClientsLocalStoreProtocol,
-        messageRepository: any MessageRepositoryProtocol,
+        messageLocalStore: any MessageLocalStoreProtocol,
         userLocalStore: any UserLocalStoreProtocol,
         conversationLocalStore: any ConversationLocalStoreProtocol
     ) {
@@ -45,30 +46,35 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
 
         self.mlsMessageDecryptor = MLSMessageDecryptor(
             mlsDecryptionService: mlsDecryptionService,
-            mlsService: mlsService,
             conversationLocalStore: conversationLocalStore
         )
 
-        self.messageRepository = messageRepository
+        self.mlsService = mlsService
+
+        self.messageLocalStore = messageLocalStore
     }
 
     init(
         proteusMessageDecryptor: any ProteusMessageDecryptorProtocol,
         mlsMessageDecryptor: any MLSMessageDecryptorProtocol,
-        messageRepository: any MessageRepositoryProtocol
+        mlsService: (any MLSServiceInterface)?,
+        messageLocalStore: any MessageLocalStoreProtocol
     ) {
         self.proteusMessageDecryptor = proteusMessageDecryptor
         self.mlsMessageDecryptor = mlsMessageDecryptor
-        self.messageRepository = messageRepository
+        self.messageLocalStore = messageLocalStore
+        self.mlsService = mlsService
     }
 
     func decryptEvents(in eventEnvelope: UpdateEventEnvelope) async throws -> [UpdateEvent] {
+        guard !DeveloperFlag.skipMLSMessagesDecryption.isOn else { return [] }
         let logAttributes: LogAttributes = [
             .eventId: eventEnvelope.id.safeForLoggingDescription,
             .public: true
         ]
 
         var decryptedEvents = [UpdateEvent]()
+        var shouldCommitPendingProposals = false
 
         for event in eventEnvelope.events {
             switch event {
@@ -83,7 +89,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                     decryptedEvents.append(.conversation(.proteusMessageAdd(decryptedEventData)))
                 } catch let error as ProteusService.DecryptionError {
                     WireLogger.updateEvent.error(
-                        "failed to decrypt proteus event payload, dropping: \(error.localizedDescription)",
+                        "failed to decrypt proteus event payload, dropping: \(String(describing: error))",
                         attributes: logAttributes
                     )
 
@@ -93,7 +99,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                     )
                 } catch {
                     WireLogger.updateEvent.error(
-                        "failed to decrypt proteus event, dropping: \(error.localizedDescription)",
+                        "failed to decrypt proteus event, dropping: \(String(describing: error))",
                         attributes: logAttributes
                     )
                 }
@@ -101,17 +107,45 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
             case let .conversation(.mlsMessageAdd(eventData)):
 
                 WireLogger.updateEvent.info(
-                    "decrypting MLS event...",
+                    "decrypting MLS add message event...",
                     attributes: logAttributes
                 )
 
+                shouldCommitPendingProposals = true
+
                 do {
-                    let decryptedEventData = try await mlsMessageDecryptor.decryptedEventData(from: eventData)
+                    let decryptedEventData = try await mlsMessageDecryptor.decryptedMessageAddEventData(from: eventData)
                     decryptedEvents.append(.conversation(.mlsMessageAdd(decryptedEventData)))
 
+                } catch let error as MLSMessageDecryptorError {
+                    switch error {
+                    case let .wrongEpoch(mlsGroupID):
+                        WireLogger.updateEvent.error(
+                            "failed to decrypt MLS due to `WrongEpoch` for group \(mlsGroupID)",
+                            attributes: logAttributes
+                        )
+                    default:
+                        WireLogger.updateEvent.error(
+                            "failed to decrypt MLS add message event, dropping: \(String(describing: error))",
+                            attributes: logAttributes
+                        )
+                    }
                 } catch {
                     WireLogger.updateEvent.error(
-                        "failed to decrypt MLS event, dropping: \(error.localizedDescription)",
+                        "failed to decrypt MLS add message event, dropping: \(String(describing: error))",
+                        attributes: logAttributes
+                    )
+                }
+
+            case let .conversation(.mlsWelcome(eventData)):
+
+                do {
+                    try await mlsMessageDecryptor.decryptedWelcomeMessageEventData(
+                        from: eventData
+                    )
+                } catch {
+                    WireLogger.updateEvent.error(
+                        "failed to decrypt MLS welcome message event, dropping: \(error.localizedDescription)",
                         attributes: logAttributes
                     )
                 }
@@ -122,7 +156,21 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
             }
         }
 
+        if shouldCommitPendingProposals {
+            Task.detached {
+                // we don't need to wait for this, as it can take a while to finish
+                // it should not block decryption
+                await commitPendingProposalsIfNeeded()
+            }
+        }
+
         return decryptedEvents
+    }
+
+    private func commitPendingProposalsIfNeeded() async {
+        // MLSService will be nil when called from push notification service.
+        // As we don't need to commit pending proposals in that case.
+        await mlsService?.commitPendingProposalsIfNeeded()
     }
 
     private func appendFailedToDecryptProteusMessage(
@@ -141,7 +189,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
             date: eventData.timestamp
         )
 
-        await messageRepository.addSystemMessage(
+        await messageLocalStore.addSystemMessage(
             messageType: systemMessageType,
             conversationID: eventData.conversationID.uuid,
             conversationDomain: eventData.conversationID.domain

@@ -17,12 +17,25 @@
 //
 
 import SwiftUI
+import WireAuthenticationAPI
 
-struct NoHistoryView: View {
+package protocol NoHistoryFactory {
 
-    @ObservedObject var viewModel: NoHistoryViewModel
+    @MainActor var viewModel: NoHistoryViewModel { get }
 
-    var body: some View {
+}
+
+package struct NoHistoryView: View {
+
+    @StateObject private var viewModel: NoHistoryViewModel
+
+    package init(
+        factory: @autoclosure @escaping () -> NoHistoryFactory
+    ) {
+        self._viewModel = StateObject(wrappedValue: factory().viewModel)
+    }
+
+    package var body: some View {
         VStack(spacing: 20) {
             Text(L10n.Authentication.NoHistory.title)
                 .multilineTextAlignment(.center)
@@ -34,25 +47,70 @@ struct NoHistoryView: View {
                 .wireTextStyle(.body1)
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
-            Button(L10n.Authentication.NoHistory.confirm, action: viewModel.confirm)
-                .wireButtonStyle(.primary)
-                .bold()
+
+            Button {
+                viewModel.confirm()
+            } label: {
+                HStack {
+                    if viewModel.isLoading {
+                        ProgressView()
+                    }
+
+                    Text(L10n.Authentication.NoHistory.confirm)
+                        .lineLimit(nil)
+                }
+            }
+            .wireButtonStyle(.primary)
+            .bold()
+            .disabled(viewModel.isLoading)
+
+        }
+        .alert(
+            item: $viewModel.alert,
+            title: titleForAlert,
+            message: messageForAlert,
+            actions: { _ in
+                Button(L10n.Authentication.Error.howToChangeEmail, action: {
+                    viewModel.howToChangeEmail()
+                })
+                Button(L10n.Authentication.Error.howToDeleteAccount, action: {
+                    viewModel.howToDeleteAccount()
+                })
+                Button(L10n.Authentication.Error.confirm, action: {
+                    viewModel.confirmAlert()
+                })
+            }
+        )
+        .onAppear {
+            viewModel.onAppear()
+        }
+        .padding(.vertical, 32)
+        .onReceive(
+            NotificationCenter.default.publisher(
+                for: UIApplication.willEnterForegroundNotification
+            )
+        ) { _ in
+            viewModel.onAppear()
         }
         .padding()
-        .presentationDetents([.medium])
+        .setPreferredSize()
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
+        .navigationBarBackButtonHidden()
     }
 
-}
-
-#Preview {
-    NoHistoryView(viewModel: NoHistoryViewModel())
-}
-
-#Preview("With background") {
-    BackgroundView()
-        .sheet(isPresented: .constant(true)) {
-            NoHistoryView(viewModel: NoHistoryViewModel())
+    private func titleForAlert(_ alert: NoHistoryViewModel.Alert) -> Text {
+        switch alert {
+        case .cloudAccountAlreadyRegistered:
+            Text(L10n.Authentication.Error.Title.emailAlreadyInUse)
         }
+    }
+
+    private func messageForAlert(_ alert: NoHistoryViewModel.Alert) -> Text {
+        switch alert {
+        case .cloudAccountAlreadyRegistered:
+            Text(L10n.Authentication.Error.Message.emailAlreadyInUse)
+        }
+    }
+
 }

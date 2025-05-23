@@ -49,6 +49,7 @@ struct NewCocoaLumberjackLogger: WireLoggingProvider {
 final class CocoaLumberjackLogger: LoggerProtocol, @unchecked Sendable {
 
     private let fileLogger: DDFileLogger = .init() // File Logger
+    private var tags = [LogAttributesKey: String]()
 
     init() {
         fileLogger.rollingFrequency = 60 * 60 * 24 // 24 hours
@@ -118,6 +119,11 @@ final class CocoaLumberjackLogger: LoggerProtocol, @unchecked Sendable {
         var entry =
             "[\(formattedLevel(level))] \(message.logDescription)\(attributesDescription(from: mergedAttributes))"
 
+        if !tags.isEmpty {
+            let extraInfo = tags.map { key, value in "[\(key.rawValue):\(value)]" }.joined()
+            entry += extraInfo
+        }
+
         if let tag = mergedAttributes[.tag] as? String {
             entry = "[\(tag)] - \(entry)"
         }
@@ -127,7 +133,11 @@ final class CocoaLumberjackLogger: LoggerProtocol, @unchecked Sendable {
     }
 
     func addTag(_ key: LogAttributesKey, value: String?) {
-        // do nothing
+        if let value {
+            tags[key] = value
+        } else {
+            tags.removeValue(forKey: key)
+        }
     }
 
     private func formattedLevel(_ level: DDLogLevel) -> String {

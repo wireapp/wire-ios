@@ -42,7 +42,6 @@ public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSourc
     public init(
         context: NSManagedObjectContext,
         localNotificationDispatcher: PushMessageHandler,
-        applicationStatus: ApplicationStatus,
         messageSender: MessageSenderInterface
     ) {
         self.insertedObjectSync = InsertedObjectSync(
@@ -91,6 +90,26 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
     typealias Object = ZMClientMessage
 
     func insert(object: ZMClientMessage, completion: @escaping () -> Void) {
+        // Temp fix for avoiding to send a large amount of last read
+        // messages, see: [WPB-17439]
+        if
+            let conversation = object.conversation,
+            conversation.isSelfConversation,
+            conversation.messageProtocol == .mls {
+            completion()
+            return
+        }
+
+        let hasRegisteredMLSClient = context.performAndWait {
+            let selfClient = ZMUser.selfUser(in: context).selfClient()
+            return selfClient?.hasRegisteredMLSClient ?? false
+        }
+
+        if !hasRegisteredMLSClient, object.conversation?.messageProtocol == .mls {
+            completion()
+            return
+        }
+
         let logAttributesBuilder = MessageLogAttributesBuilder(context: context)
         let logAttributes = logAttributesBuilder.syncLogAttributes(object)
         WireLogger.messaging.debug("inserting message", attributes: logAttributes)

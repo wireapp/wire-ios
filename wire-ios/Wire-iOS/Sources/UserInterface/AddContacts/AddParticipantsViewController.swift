@@ -64,21 +64,27 @@ extension AddParticipantsViewController.Context {
         switch self {
         case let .add(conversation):
             conversation.freeParticipantSlots
-        case .create:
-            ZMConversation.maxParticipantsExcludingSelf
+        case let .create(context):
+            ZMConversation
+                .maxParticipantsExcludingSelf(isChannel: context.isChannel)
         }
     }
 
     var alertForSelectionOverflow: UIAlertController {
         typealias AddParticipantsAlert = L10n.Localizable.AddParticipants.Alert
-        let max = ZMConversation.maxParticipants
         let message: String
         switch self {
         case let .add(conversation):
             let freeSpace = conversation.freeParticipantSlots
-            message = AddParticipantsAlert.Message.existingConversation(max, freeSpace)
-        case .create:
-            message = AddParticipantsAlert.Message.newConversation(max)
+            let max = ZMConversation.getMaxParticipants(isChannel: conversation.isChannel)
+            message = AddParticipantsAlert.Message
+                .existingConversation(
+                    max.formatted(.number),
+                    freeSpace.formatted(.number)
+                )
+        case let .create(context):
+            message = AddParticipantsAlert.Message
+                .newConversation(ZMConversation.getMaxParticipants(isChannel: context.isChannel).formatted(.number))
         }
 
         let controller = UIAlertController(
@@ -359,6 +365,7 @@ final class AddParticipantsViewController: UIViewController {
         // Update view model after selection changed
         if case let .create(values) = viewModel.context {
             let updated = ConversationCreationValues(
+                isChannel: values.isChannel,
                 name: values.name,
                 participants: userSelection.users,
                 allowGuests: true,

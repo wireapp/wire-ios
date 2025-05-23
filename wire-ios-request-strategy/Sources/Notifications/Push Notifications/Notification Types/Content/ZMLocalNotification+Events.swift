@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireLogging
 
 public extension ZMLocalNotification {
 
@@ -193,6 +194,9 @@ private class ConversationCreateEventNotificationBuilder: EventNotificationBuild
     }
 
     override func shouldCreateNotification() -> Bool {
+        // if there is a sender, make sure it's not the selfUser (no notification for self)
+        if let sender, sender.isSelfUser { return false }
+
         if conversation == nil {
             // WPB-8946: fixes bug: notifications shown even though availability is busy or away
             let availability = moc.performAndWait { ZMUser.selfUser(in: moc).availability }
@@ -326,22 +330,24 @@ private class NewMessageNotificationBuilder: EventNotificationBuilder {
     }
 
     override func shouldCreateNotification() -> Bool {
+        let selfUser = ZMUser.selfUser(in: moc)
+        guard selfUser.remoteIdentifier != event.senderUUID else {
+            // message comes from selfUser, discard
+            return false
+        }
+
         if let conversation,
            let senderUUID = event.senderUUID,
            conversation.isMessageSilenced(message, senderID: senderUUID) {
-            Logging.push
-                .safePublic(
-                    "Not creating local notification for message with nonce = \(event.messageNonce) because conversation is silenced"
+            WireLogger.push
+                .info(
+                    "Not creating local notification for message with nonce = \(event.messageNonce?.safeForLoggingDescription) because conversation is silenced"
                 )
             return false
         } else if conversation == nil {
             // WPB-8946: fixes bug: notifications shown even though availability is busy or away
             let availability = moc.performAndWait { ZMUser.selfUser(in: moc).availability }
             return [.none, .available].contains(availability)
-        }
-
-        if ZMUser.selfUser(in: moc).remoteIdentifier == event.senderUUID {
-            return false
         }
 
         if let timeStamp = event.timestamp,

@@ -17,7 +17,10 @@
 //
 
 import Foundation
+import SwiftUI
+import WireAPI
 import WireDataModel
+import WireFoundation
 import WireLogging
 import WireSyncEngine
 
@@ -44,35 +47,124 @@ enum MLSGroupSearchItem: Identifiable {
 
 final class DeveloperDebugActionsViewModel: ObservableObject {
 
-    @Published var buttons: [DeveloperDebugActionsDisplayModel.ButtonItem] = []
+    @Published var debugItems: [DeveloperDebugActionsDisplayModel.DebugItem] = []
     @Published var mlsGroupSearchItem: MLSGroupSearchItem?
 
     private var userSession: ZMUserSession? { ZMUserSession.shared() }
 
     private let selfClient: UserClient?
+    private let onDismiss: (() -> Void)?
 
     private let logger = WireLogger(tag: "developer")
 
     // MARK: - Initialize
 
-    init(selfClient: UserClient?) {
+    init(
+        selfClient: UserClient?,
+        onDismiss: (() -> Void)? = nil
+    ) {
         self.selfClient = selfClient
+        self.onDismiss = onDismiss
 
         setupButtons()
     }
 
     private func setupButtons() {
-        buttons = [
+        let buttonItems: [DeveloperDebugActionsDisplayModel.ButtonItem] = [
             .init(title: "Send debug logs", action: sendDebugLogs),
-            .init(title: "Perform quick sync", action: performQuickSync),
-            .init(title: "Resync resources", action: resyncResources),
-            .init(title: "Break next quick sync", action: breakNextQuickSync),
+            .init(title: "Trigger incremental sync", action: triggerIncrementalSync),
+            .init(title: "Trigger resources sync", action: triggerResourcesSync),
+            .init(title: "Break next incremental sync", action: breakNextIncrementalSync),
             .init(title: "Update Conversation to mixed protocol", action: updateConversationProtocolToMixed),
             .init(title: "Update Conversation to MLS protocol", action: updateConversationProtocolToMLS),
             .init(title: "Update MLS migration status", action: updateMLSMigrationStatus),
             .init(title: "Delete domains in the database", action: deleteDomains),
-            .init(title: "Find Conversation with MLS Group", action: showSearchMLSConversations)
+            .init(title: "Find Conversation with MLS Group", action: showSearchMLSConversations),
+            .init(title: "Clear collapsed messages cache", action: clearCollapsedMessagesCache),
+            .init(title: "Simulate access token failure", action: simulateAccessTokenFailure)
         ]
+
+        let toggleItems: [DeveloperDebugActionsDisplayModel.ToggleItem] = [
+            .init(title: "Use CallKit", isOn: Binding(
+                get: { self.isCallKitEnabled() },
+                set: { self.enableCallKit($0) }
+            ), enabled: !UIDevice.isSimulator)
+        ]
+
+        debugItems = buttonItems.map { .button($0) } + toggleItems.map { .toggle($0) }
+    }
+
+    // MARK: - CallKit
+
+    private func isCallKitEnabled() -> Bool {
+        SessionManager.shared?.callNotificationStyle == .callKit
+    }
+
+    private func enableCallKit(_ enabled: Bool) {
+        SessionManager.shared?.callNotificationStyle = enabled ? .callKit : .pushNotifications
+        onDismiss?()
+    }
+
+    // MARK: - Forces logout
+
+    private func simulateAccessTokenFailure() {
+        guard let selfUserID = userSession?.managedObjectContext.performAndWait({
+            userSession?.selfUser.remoteIdentifier
+        }) else { return }
+
+        let cookieStorage = CookieStorage(
+            userID: selfUserID,
+            cookieEncryptionKey: UserDefaults.cookiesKey(),
+            keychain: WireFoundation.Keychain()
+        )
+
+        // Forces the access token request to fail with 403 (invalid credentials)
+
+        let networkService = MockNetworkService()
+
+        let httpURLResponse = HTTPURLResponse(
+            url: URL(filePath: "https://someurl.com")!,
+            statusCode: 403,
+            httpVersion: nil,
+            headerFields: [:]
+        )!
+
+        let payload = """
+         {
+            "code": 403,
+            "label": "invalid-credentials",
+            "message": ""
+          }
+        """
+
+        let data = Data(payload.utf8)
+
+        networkService.executeRequest_MockValue = (data, httpURLResponse)
+
+        let authenticationManager = AuthenticationManager(
+            clientID: UUID().uuidString,
+            cookieStorage: cookieStorage,
+            networkService: networkService
+        ) { [weak self] in
+            // will log out the user when access token request fails
+            self?.userSession?.onAuthenticationFailure()
+        }
+
+        Task {
+            do {
+                _ = try await authenticationManager.getValidAccessToken()
+            } catch {}
+        }
+
+        onDismiss?()
+    }
+
+    private func clearCollapsedMessagesCache() {
+        let defaults = PrivateUserDefaults<CollapseKey>(
+            userID: selfClient!.user!.remoteIdentifier
+        )
+        defaults.removeObject(forKey: .uncollapsedMessages)
+        onDismiss?()
     }
 
     // MARK: Send Logs
@@ -104,22 +196,18 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
 
     // MARK: Quick Sync
 
-    private func breakNextQuickSync() {
+    private func breakNextIncrementalSync() {
         userSession?.setBogusLastEventID()
     }
 
-    private func performQuickSync() {
-        guard let userSession else { return }
-
-        Task {
-            await userSession.syncStatus.performQuickSync()
-        }
+    private func triggerIncrementalSync() {
+        userSession?.triggerIncrementalSync()
     }
 
     // MARK: Resync resources
 
-    private func resyncResources() {
-        DebugActions.triggerResyncResources()
+    private func triggerResourcesSync() {
+        userSession?.triggerResourcesSync()
     }
 
     // MARK: Proteus to MLS migration
@@ -146,7 +234,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
         updateConversationProtocol(to: .mls)
     }
 
-    private func updateConversationProtocol(to messageProtocol: MessageProtocol) {
+    private func updateConversationProtocol(to messageProtocol: WireDataModel.MessageProtocol) {
         guard
             let selfClient,
             let context = selfClient.managedObjectContext,
@@ -177,7 +265,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
     private func qualifiedIDOfFirstGroupConversation(
         of userClient: UserClient,
         in context: NSManagedObjectContext
-    ) async -> QualifiedID? {
+    ) async -> WireDataModel.QualifiedID? {
         await context.perform {
             userClient.user?.conversations
                 .filter { $0.conversationType == .group }
@@ -272,4 +360,20 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
         mlsGroupSearchItem = .result(results, term)
     }
 
+}
+
+/// Mock network to simulate an access token request failure with invalid credential errors and trigger a logout
+private class MockNetworkService: NetworkServiceProtocol {
+    public init() {}
+    public var executeRequest_MockValue: (Data, HTTPURLResponse)?
+
+    public func executeRequest(
+        _ request: URLRequest
+    ) async throws -> (Data, HTTPURLResponse) {
+        if let mock = executeRequest_MockValue {
+            mock
+        } else {
+            fatalError("no mock for `executeRequest`")
+        }
+    }
 }

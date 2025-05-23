@@ -24,10 +24,26 @@ import WireLogging
 struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
 
     let mlsDecryptionService: any MLSDecryptionServiceInterface
-    let mlsService: any MLSServiceInterface
     let conversationLocalStore: any ConversationLocalStoreProtocol
 
-    func decryptedEventData(
+    func decryptedWelcomeMessageEventData(
+        from eventData: ConversationMLSWelcomeEvent
+    ) async throws {
+        let welcomeMessage = eventData.welcomeMessage
+        let conversationID = eventData.conversationID
+
+        let groupID = try await mlsDecryptionService.processWelcomeMessage(
+            welcomeMessage: welcomeMessage
+        )
+
+        await conversationLocalStore.createMLSConversation(
+            conversationID: conversationID.uuid,
+            conversationDomain: conversationID.domain,
+            mlsGroupID: groupID
+        )
+    }
+
+    func decryptedMessageAddEventData(
         from eventData: ConversationMLSMessageAddEvent
     ) async throws -> ConversationMLSMessageAddEvent {
         let conversationID = eventData.conversationID
@@ -50,24 +66,34 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
             throw MLSMessageDecryptorError.mlsConversationNotReady
         }
 
-        let decryptionResults = try await decryptMLSMessage(
-            message: eventData.message,
-            mlsGroupID: mlsGroupID,
-            subconversation: eventData.subconversation
-        )
+        do {
+            let decryptionResults = try await decryptMLSMessage(
+                message: eventData.message,
+                mlsGroupID: mlsGroupID,
+                subconversation: eventData.subconversation
+            )
 
-        let decryptedMessages = await processMLSMessageDecryptionResults(
-            decryptionResults,
-            mlsConversation: mlsConversation,
-            senderID: eventData.senderID.uuid,
-            senderDomain: eventData.senderID.domain,
-            date: eventData.timestamp
-        )
+            let decryptedMessages = await processMLSMessageDecryptionResults(
+                decryptionResults,
+                mlsConversation: mlsConversation,
+                senderID: eventData.senderID.uuid,
+                senderDomain: eventData.senderID.domain,
+                date: eventData.timestamp
+            )
 
-        var decryptedEvent = eventData
-        decryptedEvent.decryptedMessages = decryptedMessages
+            var decryptedEvent = eventData
+            decryptedEvent.decryptedMessages = decryptedMessages
 
-        return decryptedEvent
+            return decryptedEvent
+        } catch let error as WireDataModel.MLSDecryptionService.MLSMessageDecryptionError {
+            switch error {
+            case .wrongEpoch:
+                throw MLSMessageDecryptorError.wrongEpoch(mlsGroupID: mlsGroupID)
+            default:
+                throw error
+            }
+
+        }
     }
 
     private func decryptMLSMessage(
@@ -115,9 +141,9 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
                 )
 
             case let .proposal(commitDelay):
-                await conversationLocalStore.commitPendingProposals(
-                    conversation: mlsConversation,
+                await conversationLocalStore.updateCommitPendingProposal(
                     date: date ?? .now,
+                    for: mlsConversation,
                     commitDelay: commitDelay
                 )
             }

@@ -26,12 +26,10 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
 
     private var mockMainCoordinator: AnyMainCoordinator!
     private var sut: ConversationViewController!
-    private var mockConversation: ZMConversation!
     private var serviceUser: ZMUser!
     private var userSession: UserSessionMock!
     var coreDataFixture: CoreDataFixture!
     var snapshotHelper: SnapshotHelper!
-    private var imageTransformerMock: MockImageTransformer!
 
     override func setupCoreDataStack() {
         coreDataFixture = CoreDataFixture()
@@ -47,39 +45,9 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
 
     override func setUp() {
         super.setUp()
+
         snapshotHelper = SnapshotHelper()
-        imageTransformerMock = .init()
-        mockConversation = createTeamGroupConversation()
-        userSession = UserSessionMock(mockUser: .createSelfUser(name: "Bob"))
-        userSession.coreDataStack = coreDataStack
-        userSession.mockConversationList = ConversationList(
-            allConversations: [mockConversation!],
-            filteringPredicate: NSPredicate(value: true),
-            managedObjectContext: uiMOC,
-            description: "all conversations"
-        )
-
         serviceUser = coreDataFixture.createServiceUser()
-
-        let mockAccount = Account(userName: "mock user", userIdentifier: UUID())
-
-        let zClientViewController = ZClientViewController(
-            account: mockAccount,
-            selfProfileViewsMonitor: SelfProfileViewsMonitorImplementation(),
-            userSession: userSession,
-            trackingManager: nil
-        )
-
-        sut = ConversationViewController(
-            conversation: mockConversation,
-            visibleMessage: nil,
-            userSession: userSession,
-            mainCoordinator: mockMainCoordinator,
-            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
-            mediaPlaybackManager: .init(name: nil, userSession: userSession),
-            classificationProvider: nil,
-            networkStatusObservable: MockNetworkStatusObservable()
-        )
     }
 
     override func tearDown() {
@@ -87,13 +55,16 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
         sut = nil
         serviceUser = nil
         coreDataFixture = nil
-        imageTransformerMock = nil
-        mockMainCoordinator = nil
 
         super.tearDown()
     }
 
     func testForInitState() {
+        // given
+        let mockConversation = createTeamGroupConversation()
+        createSut(conversation: mockConversation)
+
+        // then
         snapshotHelper.verify(matching: sut)
     }
 }
@@ -104,6 +75,8 @@ extension ConversationViewControllerSnapshotTests {
 
     func testThatTheSearchButtonIsDisabledIfMessagesAreEncryptedInTheDataBase() {
         // given
+        let mockConversation = createTeamGroupConversation()
+        createSut(conversation: mockConversation)
 
         // when
         userSession.encryptMessagesAtRest = true
@@ -114,6 +87,8 @@ extension ConversationViewControllerSnapshotTests {
 
     func testThatTheSearchButtonIsEnabledIfMessagesAreNotEncryptedInTheDataBase() {
         // given
+        let mockConversation = createTeamGroupConversation()
+        createSut(conversation: mockConversation)
 
         // when
         userSession.encryptMessagesAtRest = false
@@ -121,6 +96,34 @@ extension ConversationViewControllerSnapshotTests {
         // then
         XCTAssertTrue(sut.shouldShowCollectionsButton)
     }
+
+    func testThatTheSearchButtonIsDisabled_IfConversationIsPendingConnection() {
+        // given
+        let mockConversation = createOneOnOneConversation(.pending)
+        createSut(conversation: mockConversation)
+
+        // then
+        XCTAssertFalse(sut.shouldShowCollectionsButton)
+    }
+
+    func testThatTheSearchButtonIsDisabled_IfConversationIsSentConnection() {
+        // given
+        let mockConversation = createOneOnOneConversation(.sent)
+        createSut(conversation: mockConversation)
+
+        // then
+        XCTAssertFalse(sut.shouldShowCollectionsButton)
+    }
+
+    func testThatTheSearchButtonIsEnabled_IfConversationIsOneOnOne() {
+        // given
+        let mockConversation = createOneOnOneConversation(.accepted)
+        createSut(conversation: mockConversation)
+
+        // then
+        XCTAssertTrue(sut.shouldShowCollectionsButton)
+    }
+
 }
 
 // MARK: - Guests bar controller
@@ -129,12 +132,14 @@ extension ConversationViewControllerSnapshotTests {
 
     func testThatGuestsBarControllerIsVisibleIfExternalsArePresent() {
         // given
+        let mockConversation = createTeamGroupConversation()
         mockConversation.teamRemoteIdentifier = team?.remoteIdentifier
         let teamMember = Member.insertNewObject(in: uiMOC)
         teamMember.user = otherUser
         teamMember.team = team
         otherUser.membership?.setTeamRole(.partner)
         UIColor.setAccentOverride(.green)
+        createSut(conversation: mockConversation)
 
         // when
         sut.updateGuestsBarVisibility()
@@ -145,10 +150,12 @@ extension ConversationViewControllerSnapshotTests {
 
     func testThatGuestsBarControllerIsVisibleIfServicesArePresent() {
         // given
+        let mockConversation = createTeamGroupConversation()
         mockConversation.teamRemoteIdentifier = team?.remoteIdentifier
         mockConversation.addParticipantAndUpdateConversationState(user: serviceUser)
 
         UIColor.setAccentOverride(.green)
+        createSut(conversation: mockConversation)
 
         // when
         sut.updateGuestsBarVisibility()
@@ -159,6 +166,7 @@ extension ConversationViewControllerSnapshotTests {
 
     func testThatGuestsBarControllerIsVisibleIfExternalsAndServicesArePresent() {
         // given
+        let mockConversation = createTeamGroupConversation()
         let teamMember = Member.insertNewObject(in: uiMOC)
         teamMember.user = otherUser
         teamMember.team = team
@@ -168,12 +176,61 @@ extension ConversationViewControllerSnapshotTests {
         mockConversation.addParticipantAndUpdateConversationState(user: serviceUser)
 
         UIColor.setAccentOverride(.green)
+        createSut(conversation: mockConversation)
 
         // when
         sut.updateGuestsBarVisibility()
 
         // then
         snapshotHelper.verify(matching: sut)
+    }
+
+    // MARK: - Helper Method
+
+    private func createSut(conversation: ZMConversation) {
+        userSession = UserSessionMock(mockUser: .createSelfUser(name: "Bob"))
+        userSession.coreDataStack = coreDataStack
+        userSession.mockConversationList = ConversationList(
+            allConversations: [conversation],
+            filteringPredicate: NSPredicate(value: true),
+            managedObjectContext: uiMOC,
+            description: "all conversations"
+        )
+        userSession.coreDataStack?.newBackgroundContextProvider = { [uiMOC] in
+            uiMOC!
+        }
+
+        sut = ConversationViewController(
+            conversation: conversation,
+            visibleMessage: nil,
+            userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
+            selfProfileUIBuilder: MockSelfProfileViewControllerBuilderProtocol(),
+            mediaPlaybackManager: .init(name: nil, userSession: userSession),
+            classificationProvider: nil,
+            networkStatusObservable: MockNetworkStatusObservable(),
+            getParticipantImageSourceUseCase: MockGetParticipantImageSourceUseCaseProtocol()
+        )
+    }
+
+    private func createOneOnOneConversation(_ connectionStatus: ZMConnectionStatus) -> ZMConversation {
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        let otherUser = ZMUser.insertNewObject(in: uiMOC)
+        otherUser.remoteIdentifier = UUID()
+        otherUser.name = "Bruno"
+
+        let mockConversation = ZMConversation.insertNewObject(in: uiMOC)
+        mockConversation.messageProtocol = .proteus
+        mockConversation.addParticipantAndUpdateConversationState(user: selfUser)
+        mockConversation.conversationType = .oneOnOne
+        mockConversation.remoteIdentifier = UUID.create()
+        mockConversation.oneOnOneUser = otherUser
+
+        let connection = ZMConnection.insertNewObject(in: uiMOC)
+        connection.to = otherUser
+        connection.status = connectionStatus
+
+        return mockConversation
     }
 
 }

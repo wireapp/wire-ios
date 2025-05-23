@@ -83,7 +83,7 @@ final class AuthenticationAPITests: XCTestCase {
             _ = try await sut.login(
                 email: "email@example.com",
                 password: "123456",
-                verificationCode: nil,
+                verificationCode: "193756",
                 label: nil
             )
         }
@@ -169,6 +169,21 @@ final class AuthenticationAPITests: XCTestCase {
         }
     }
 
+    func testGetDomainRegistration_Response_Handling_V8_Service_Unavailable() async throws {
+        // Given
+        let networkService = MockNetworkServiceProtocol.withResponses([
+            (.serviceUnavailable, "GetDomainRegistrationErrorResponse_ServiceUnavailableV8")
+        ])
+
+        let sut = AuthenticationAPIV8(networkService: networkService)
+
+        // Then
+        await XCTAssertThrowsErrorAsync(AuthenticationAPIError.serviceUnavailable) {
+            // When
+            try await sut.getDomainRegistration(forEmail: "email@example.com")
+        }
+    }
+
     func testGetOnPremConfigURL_Response_Handling_Success() async throws {
         // Given
         let networkService = MockNetworkServiceProtocol.withResponses([
@@ -236,9 +251,10 @@ final class AuthenticationAPITests: XCTestCase {
 
     func testLoginViaEmail_Response_Handling_Custom_Backend_Not_Found() async throws {
         // Given
-        let networkService = MockNetworkServiceProtocol.withResponses([
-            (.notFound, "LoginViaEmailErrorResponse_CodeAuthenticationRequired_V0")
-        ])
+        let networkService = MockNetworkServiceProtocol.withError(
+            statusCode: .forbidden,
+            label: "code-authentication-required"
+        )
 
         let sut = AuthenticationAPIV8(networkService: networkService)
 
@@ -284,9 +300,7 @@ final class AuthenticationAPITests: XCTestCase {
 
     func testUpgradeToTeam_Response_Handling_V8_BadRequest() async throws {
         // Given
-        let networkService = MockNetworkServiceProtocol.withResponses([
-            (.notFound, "RequestVerificationCodeResponse_BadRequest")
-        ])
+        let networkService = MockNetworkServiceProtocol.withError(statusCode: .badRequest, label: "bad-request")
 
         let sut = AuthenticationAPIV8(networkService: networkService)
 

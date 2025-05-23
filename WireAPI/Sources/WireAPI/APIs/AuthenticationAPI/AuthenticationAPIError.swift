@@ -42,13 +42,15 @@ public enum AuthenticationAPIError: Error {
 
     case invalidCredentials
 
+    case serviceUnavailable
+
     /// Thrown by `requestVerificationCode(for:)`.
 
     case invalidEmail
 
 }
 
-extension AuthenticationAPIError {
+public extension AuthenticationAPIError {
 
     enum SSOLoginError: Equatable, Error {
 

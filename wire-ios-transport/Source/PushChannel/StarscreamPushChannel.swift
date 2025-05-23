@@ -31,6 +31,7 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
     var consumerQueue: GroupQueue?
     var pingTimer: ZMTimer?
     private let minTLSVersion: TLSVersion
+    private let isEnabled: Bool
 
     var clientID: String? {
         didSet {
@@ -56,7 +57,8 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
     }
 
     var canOpenConnection: Bool {
-        keepOpen && websocketURL != nil && consumer != nil
+        guard isEnabled else { return false }
+        return keepOpen && websocketURL != nil && consumer != nil
     }
 
     var websocketURL: URL? {
@@ -76,7 +78,8 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
         proxyUsername: String?,
         proxyPassword: String?,
         minTLSVersion: String?,
-        queue: OperationQueue
+        queue: OperationQueue,
+        isEnabled: Bool
     ) {
         self.environment = environment
         self.scheduler = scheduler
@@ -84,12 +87,13 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
         self.proxyPassword = proxyPassword
         self.workQueue = queue
         self.minTLSVersion = TLSVersion.minVersionFrom(minTLSVersion)
+        self.isEnabled = isEnabled
     }
 
     func reachabilityDidChange(_ reachability: ReachabilityProvider) {
         WireLogger.backend
             .debug(
-                "reachability did change. May be reachable: \(reachability.mayBeReachable), is mobile connection: \(reachability.isMobileConnection)"
+                "reachability did change. May be reachable: \(reachability.mayBeReachable)"
             )
 
         let didGoOnline = reachability.mayBeReachable && !reachability.oldMayBeReachable

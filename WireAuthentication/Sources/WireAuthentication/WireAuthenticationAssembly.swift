@@ -25,6 +25,15 @@ import WireReusableUIComponents
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
 
+public typealias WireAuthenticationBridge = WireAuthenticationAPI.WireAuthenticationBridge
+public typealias WireAuthenticationBackendEnvironment = WireAuthenticationAPI.WireAuthenticationBackendEnvironment
+public typealias BackendEnvironmentType = WireAuthenticationAPI.BackendEnvironmentType
+public typealias BackendConfig = WireAuthenticationAPI.BackendConfig
+public typealias Endpoints = WireAuthenticationAPI.Endpoints
+public typealias ProxySettings = WireAuthenticationAPI.UnresolvedProxySettings
+public typealias TrustData = WireAuthenticationAPI.TrustData
+public typealias BackendMetadata = WireAuthenticationAPI.BackendMetadata
+
 public struct WireAuthenticationAssembly {
 
     public init() {
@@ -33,23 +42,35 @@ public struct WireAuthenticationAssembly {
 
     @MainActor
     public func assemble(
-        defaultBackendEnvironment: BackendEnvironment,
+        environmentType: BackendEnvironmentType,
+        backendConfig: BackendConfig,
         minTLSVersion: TLSVersion,
-        defaultAPIVersion: APIVersion,
+        preferredAPIVersion: APIVersion?,
         accountsURL: URL,
+        howToChangeEmailURL: URL,
+        howToDeleteAccountURL: URL,
         passwordValidator: any PasswordValidator,
-        onFlowCompletion: @escaping () -> Void
-    ) -> some View {
-        let bridge = WireAuthenticationBridge(onFlowCompletion: onFlowCompletion)
-        let rootComponent = RootComponent(
-            bridge: bridge,
-            defaultBackendEnvironment: defaultBackendEnvironment,
-            defaultAPIVersion: defaultAPIVersion,
-            minTLSVersion: minTLSVersion,
-            accountsURL: accountsURL, // this is temp
-            passwordValidator: passwordValidator
+        ssoCallbackURLScheme: String,
+        appStoreURL: URL,
+        existsAnotherAccount: Bool
+    ) -> (view: some View, bridge: WireAuthenticationBridge) {
+        let backendInfo = BackendInfo(
+            environmentType: environmentType,
+            backendConfig: backendConfig
         )
-        return rootComponent.rootView
+        let rootComponent = RootComponent(
+            backendInfo: backendInfo,
+            preferredAPIVersion: preferredAPIVersion,
+            minTLSVersion: minTLSVersion,
+            howToChangeEmailURL: howToChangeEmailURL,
+            howToDeleteAccountURL: howToDeleteAccountURL,
+            passwordValidator: passwordValidator,
+            ssoCallbackURLScheme: ssoCallbackURLScheme,
+            appStoreURL: appStoreURL,
+            existsAnotherAccount: existsAnotherAccount
+        )
+
+        return (view: RootView(factory: rootComponent), bridge: rootComponent.bridge)
     }
 
 }

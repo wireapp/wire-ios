@@ -75,6 +75,12 @@ public protocol ConversationLocalStoreProtocol {
         conversationDomain: String
     ) async
 
+    func createMLSConversation(
+        conversationID: UUID,
+        conversationDomain: String?,
+        mlsGroupID: MLSGroupID
+    ) async
+
     /// Fetches a MLS conversation locally.
     ///
     /// - parameters:
@@ -284,13 +290,13 @@ public protocol ConversationLocalStoreProtocol {
     ) async -> (mlsGroupID: MLSGroupID, isMLSReady: Bool)?
 
     /// Commits pending proposals for a given conversation.
-    /// - Parameter conversation: The conversation to update the `date` flag for.
     /// - Parameter date: The date to update.
+    /// - Parameter conversation: The conversation to update the `date` flag for.
     /// - Parameter commitDelay: The commit delay.
 
-    func commitPendingProposals(
-        conversation: ZMConversation,
+    func updateCommitPendingProposal(
         date: Date,
+        for conversation: ZMConversation,
         commitDelay: UInt64
     ) async
 
@@ -327,17 +333,6 @@ public protocol ConversationLocalStoreProtocol {
     func updateClearedMessageTimestamp(
         _ clearedMessage: Cleared,
         in conversation: ZMConversation
-    ) async
-
-    /// Sends a notification using the main context informing typing users
-    /// have been updated for a given conversation.
-    /// - Parameters:
-    ///     - conversationID: The conversation managed object ID.
-    ///     - usersID: The updated typing users managed object IDs.
-
-    func updateTypingUsers(
-        conversationID: NSManagedObjectID,
-        usersID: Set<NSManagedObjectID>
     ) async
 
     /// Obtain permanent stored object IDs.
@@ -394,5 +389,56 @@ public protocol ConversationLocalStoreProtocol {
     func fetchOtherUserIDInOneOnOneConversation(
         conversation: ZMConversation
     ) async -> WireDataModel.QualifiedID?
+
+    func name(
+        for conversation: ZMConversation
+    ) async -> String?
+
+    func shouldHideNotification() async -> Bool
+
+    func isMessageSilenced(
+        _ message: GenericMessage,
+        senderID: UUID?,
+        conversation: ZMConversation
+    ) async -> Bool
+
+    func conversationMutedMessageTypesIncludingAvailability(
+        _ conversation: ZMConversation
+    ) async -> MutedMessageTypes
+
+    func lastReadServerTimestamp(
+        _ conversation: ZMConversation
+    ) async -> Date?
+
+    func conversationNeedsBackendUpdate(
+        _ conversation: ZMConversation
+    ) async -> Bool
+
+    func increaseUnreadCount(
+        for conversation: ZMConversation
+    ) async
+
+    func decreaseUnreadCount(
+        for conversation: ZMConversation
+    ) async
+
+    func increaseUnreadSelfMentionCount(
+        for conversation: ZMConversation
+    ) async
+
+    func increaseUnreadSelfReplyCount(
+        for conversation: ZMConversation
+    ) async
+
+    func unreadConversationCount() async -> UInt
+
+    /// Stores the private conversation (aka channel) permission locally.
+    /// - Parameters
+    ///     - permission: The new permission value (`admins` or `everyone`)
+
+    func storeConversation(
+        permission: WireDomain.Conversation.ChannelPermission,
+        conversation: ZMConversation
+    ) async
 
 }

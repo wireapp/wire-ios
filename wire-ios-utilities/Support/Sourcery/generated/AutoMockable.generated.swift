@@ -1,6 +1,5 @@
-// Generated using Sourcery 2.2.4 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.2.6 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
-
 //
 // Wire
 // Copyright (C) 2025 Wire Swiss GmbH
@@ -28,6 +27,7 @@
 import UserNotifications
 
 @testable import WireUtilities
+
 
 
 

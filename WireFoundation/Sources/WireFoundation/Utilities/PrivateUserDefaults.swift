@@ -23,13 +23,13 @@ public final class PrivateUserDefaults<Key: DefaultsKey> {
     // MARK: - Properties
 
     let userID: UUID
-    let storage: UserDefaults
+    let storage: any UserDefaultsProtocol
 
     // MARK: - Life cycle
 
     public init(
         userID: UUID,
-        storage: UserDefaults = .standard
+        storage: any UserDefaultsProtocol = UserDefaults.standard
     ) {
         self.userID = userID
         self.storage = storage
@@ -93,6 +93,9 @@ public extension PrivateUserDefaults {
         storage.removeObject(forKey: scopeKey(key))
     }
 
+    func stringArray(forKey key: Key) -> [String]? {
+        storage.stringArray(forKey: scopeKey(key))
+    }
 }
 
 public protocol DefaultsKey {
@@ -113,10 +116,34 @@ public extension PrivateUserDefaults where Key == Never {
 
     static func removeAll(forUserID userID: UUID, in storage: UserDefaults) {
         let prefix = scopePrefix(userID: userID)
-        let skopedKeys = storage.dictionaryRepresentation().keys.filter { $0.hasPrefix(prefix) }
-        for key in skopedKeys {
+        let scopedKeys = storage.dictionaryRepresentation().keys.filter { $0.hasPrefix(prefix) }
+        for key in scopedKeys {
             storage.removeObject(forKey: key)
         }
     }
 
 }
+
+// sourcery: AutoMockable
+public protocol UserDefaultsProtocol {
+    func set(_ value: Any?, forKey defaultName: String)
+    func object(forKey defaultName: String) -> Any?
+    func integer(forKey defaultName: String) -> Int
+    func string(forKey defaultName: String) -> String?
+    func bool(forKey defaultName: String) -> Bool
+
+    func removeObject(forKey defaultName: String)
+    func dictionaryRepresentation() -> [String: Any]
+
+    func stringArray(forKey defaultName: String) -> [String]?
+}
+
+public extension UserDefaultsProtocol {
+
+    func keys() -> [String] {
+        Array(dictionaryRepresentation().keys)
+    }
+
+}
+
+extension UserDefaults: UserDefaultsProtocol {}

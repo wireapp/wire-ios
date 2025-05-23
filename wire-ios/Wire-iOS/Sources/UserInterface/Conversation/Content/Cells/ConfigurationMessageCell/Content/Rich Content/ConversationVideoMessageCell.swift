@@ -20,22 +20,27 @@ import UIKit
 import WireDataModel
 import WireDesign
 
-final class ConversationVideoMessageCell: RoundedView, ConversationMessageCell {
+final class ConversationVideoMessageCell: UIView, ConversationMessageCell {
 
-    struct Configuration {
-        let message: ZMConversationMessage
-        var isObfuscated: Bool {
-            message.isObfuscated
+    struct Configuration: Equatable {
+        var message: ZMConversationMessage
+        var isObfuscated: Bool
+
+        static func == (lhs: Configuration, rhs: Configuration) -> Bool {
+            lhs.message == rhs.message &&
+                lhs.isObfuscated == rhs.isObfuscated
         }
+
     }
 
-    private var containerView = UIView()
+    private var containerView = RoundedView()
     private let transferView = VideoMessageView(frame: .zero)
     private let obfuscationView = ObfuscationView(icon: .videoMessage)
     private let restrictionView = VideoMessageRestrictionView()
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
+    weak var actionController: ConversationMessageActionController?
 
     var isSelected: Bool = false
 
@@ -51,28 +56,29 @@ final class ConversationVideoMessageCell: RoundedView, ConversationMessageCell {
     }
 
     private func configureSubview() {
-        shape = .rounded(radius: 12)
-        backgroundColor = SemanticColors.View.backgroundCollectionCell
+        containerView.shape = .rounded(radius: 12)
+        containerView.backgroundColor = SemanticColors.View.backgroundCollectionCell
         containerView.layer.cornerRadius = 12
         containerView.layer.borderWidth = 1
         containerView.layer.borderColor = SemanticColors.View.borderCollectionCell.cgColor
-        clipsToBounds = true
+        containerView.clipsToBounds = true
 
         transferView.delegate = self
         setup(transferView)
 
+        containerView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(containerView)
     }
 
     private func configureConstraints() {
-        containerView.translatesAutoresizingMaskIntoConstraints = false
+        let margins = conversationHorizontalMargins
 
         NSLayoutConstraint.activate([
             // containerView
-            containerView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left),
             containerView.topAnchor.constraint(equalTo: topAnchor),
-            containerView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            containerView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: margins.right),
+            bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
         ])
     }
 
@@ -137,16 +143,19 @@ extension ConversationVideoMessageCell: TransferViewDelegate {
 
 final class ConversationVideoMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationVideoMessageCell
-    let configuration: View.Configuration
+    var configuration: View.Configuration
 
-    var topMargin: Float = 8
-    var showEphemeralTimer: Bool = false
-
-    let isFullWidth: Bool = false
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 
-    weak var message: ZMConversationMessage?
+    weak var message: ZMConversationMessage? {
+        didSet {
+            if let message {
+                configuration.message = message
+            }
+        }
+    }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
@@ -157,7 +166,8 @@ final class ConversationVideoMessageCellDescription: ConversationMessageCellDesc
     let accessibilityLabel: String?
 
     init(message: ZMConversationMessage) {
-        self.configuration = View.Configuration(message: message)
+        self.configuration = View
+            .Configuration(message: message, isObfuscated: message.isObfuscated)
         self.accessibilityLabel = L10n.Accessibility.ConversationSearch.VideoMessage.description
     }
 

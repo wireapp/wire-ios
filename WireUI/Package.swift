@@ -8,10 +8,11 @@ let WireTestingPackage = Target.Dependency.product(name: "WireTestingPackage", p
 let package = Package(
     name: "WireUI",
     defaultLocalization: "en",
-    platforms: [.iOS(.v16), .macOS(.v12)],
+    platforms: [.iOS("16.4"), .macOS(.v12)],
     products: [
         .library(name: "WireAccountImageUI", targets: ["WireAccountImageUI"]),
         .library(name: "WireConversationListUI", targets: ["WireConversationListUI"]),
+        .library(name: "WireConversationUI", targets: ["WireConversationUI"]),
         .library(name: "WireDesign", targets: ["WireDesign"]),
         .library(name: "WireFolderPickerUI", targets: ["WireFolderPickerUI"]),
         .library(name: "WireIndividualToTeamMigrationUI", targets: ["WireIndividualToTeamMigrationUI"]),
@@ -19,6 +20,7 @@ let package = Package(
         .library(name: "WireMoveToFolderUI", targets: ["WireMoveToFolderUI"]),
         .library(name: "WireMoveToFolderUISupport", targets: ["WireMoveToFolderUISupport"]),
         .library(name: "WireReusableUIComponents", targets: ["WireReusableUIComponents"]),
+        .library(name: "WireReusableUIComponentsSupport", targets: ["WireReusableUIComponentsSupport"]),
         .library(name: "WireSettingsUI", targets: ["WireSettingsUI"]),
         .library(name: "WireSettingsUISupport", targets: ["WireSettingsUISupport"]),
         .library(name: "WireSidebarUI", targets: ["WireSidebarUI"]),
@@ -34,15 +36,18 @@ let package = Package(
     targets: [
         .target(
             name: "WireAccountImageUI",
-            dependencies: [
-                "WireDesign",
-                "WireFoundation"
-            ]
+            dependencies: ["WireDesign", "WireFoundation"]
         ),
         .testTarget(name: "WireAccountImageUITests", dependencies: ["WireAccountImageUI", "WireFoundation"]),
 
         .target(name: "WireConversationListUI"),
-        .testTarget(name: "WireConversationListUITests", dependencies: ["WireConversationListUI", "WireSettingsUI"]),
+        .testTarget(name: "WireConversationListUITests", dependencies: ["WireConversationListUI"]),
+
+        .target(
+            name: "WireConversationUI",
+            dependencies: ["WireAccountImageUI", "WireDesign", "WireFoundation", "WireReusableUIComponents"]
+        ),
+        .testTarget(name: "WireConversationUITests", dependencies: ["WireConversationUI"]),
 
         .target(name: "WireDesign", dependencies: ["WireFoundation"]),
         .testTarget(name: "WireDesignTests", dependencies: ["WireDesign"]),
@@ -78,6 +83,13 @@ let package = Package(
             dependencies: ["WireDesign", "WireFoundation"],
             plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
         ),
+        .target(
+            name: "WireReusableUIComponentsSupport",
+            dependencies: ["WireReusableUIComponents"],
+            plugins: [
+                .plugin(name: "SourceryPlugin", package: "WirePlugins")
+            ]
+        ),
         .testTarget(name: "WireReusableUIComponentsTests", dependencies: ["WireReusableUIComponents"]),
 
         .target(
@@ -98,7 +110,11 @@ let package = Package(
                 .plugin(name: "SourceryPlugin", package: "WirePlugins")
             ]
         ),
-        .testTarget(name: "WireSettingsUITests", dependencies: ["WireSettingsUI", "WireSettingsUISupport"]),
+        .testTarget(name: "WireSettingsUITests", dependencies: [
+            .product(name: "WireFoundationSupport", package: "WireFoundation"),
+            "WireSettingsUI",
+            "WireSettingsUISupport"
+        ]),
 
         .target(
             name: "WireSidebarUI",

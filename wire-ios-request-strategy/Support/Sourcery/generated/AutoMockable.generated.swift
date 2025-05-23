@@ -1,6 +1,5 @@
-// Generated using Sourcery 2.2.4 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.2.6 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
-
 //
 // Wire
 // Copyright (C) 2025 Wire Swiss GmbH
@@ -29,6 +28,7 @@ import WireCoreCrypto
 import Combine
 
 @testable import WireRequestStrategy
+
 
 
 
@@ -625,6 +625,30 @@ public class MockEventDecoderProtocol: EventDecoderProtocol {
         }
 
         await mock(privateKeys, callEventsOnly, block)
+    }
+
+}
+
+public class MockIncrementalSyncObserverProtocol: IncrementalSyncObserverProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - waitUntilCanSendMessage
+
+    public var waitUntilCanSendMessage_Invocations: [Void] = []
+    public var waitUntilCanSendMessage_MockMethod: (() async -> Void)?
+
+    public func waitUntilCanSendMessage() async {
+        waitUntilCanSendMessage_Invocations.append(())
+
+        guard let mock = waitUntilCanSendMessage_MockMethod else {
+            fatalError("no mock for `waitUntilCanSendMessage`")
+        }
+
+        await mock()
     }
 
 }
@@ -1226,30 +1250,6 @@ public class MockProteusMessage: ProteusMessage {
 
 }
 
-public class MockQuickSyncObserverInterface: QuickSyncObserverInterface {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - waitForQuickSyncToFinish
-
-    public var waitForQuickSyncToFinish_Invocations: [Void] = []
-    public var waitForQuickSyncToFinish_MockMethod: (() async -> Void)?
-
-    public func waitForQuickSyncToFinish() async {
-        waitForQuickSyncToFinish_Invocations.append(())
-
-        guard let mock = waitForQuickSyncToFinish_MockMethod else {
-            fatalError("no mock for `waitForQuickSyncToFinish`")
-        }
-
-        await mock()
-    }
-
-}
-
 public class MockSessionEstablisherInterface: SessionEstablisherInterface {
 
     // MARK: - Life cycle
@@ -1336,11 +1336,11 @@ public class MockUserClientAPI: UserClientAPI {
 
     // MARK: - deleteUserClient
 
-    public var deleteUserClientClientIdPassword_Invocations: [(clientId: String, password: String)] = []
+    public var deleteUserClientClientIdPassword_Invocations: [(clientId: String, password: String?)] = []
     public var deleteUserClientClientIdPassword_MockError: Error?
-    public var deleteUserClientClientIdPassword_MockMethod: ((String, String) async throws -> Void)?
+    public var deleteUserClientClientIdPassword_MockMethod: ((String, String?) async throws -> Void)?
 
-    public func deleteUserClient(clientId: String, password: String) async throws {
+    public func deleteUserClient(clientId: String, password: String?) async throws {
         deleteUserClientClientIdPassword_Invocations.append((clientId: clientId, password: password))
 
         if let error = deleteUserClientClientIdPassword_MockError {

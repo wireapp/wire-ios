@@ -4,6 +4,25 @@ As it is hard to spot changes from version to version of database models (.xcdat
 
 ## zmessaging
 
+### 2.126.0
+
+* added `WireCellsMessageAttachmentDraft` entity
+* added `wireCellsMessageAttachmentDrafts` attribute to Conversation entity
+* added `cellName` attribute to Conversation entity
+
+### 2.125.0
+
+* added `asyncStreamCapable` attribute on the UserClient entity
+
+### 2.124.0
+
+* added `migratedToMLS` attribute on the Conversation entity
+
+### 2.123.0
+
+* added `groupType` attribute on the Conversation entity
+* added `privateChannelPermission` attribute on the Conversation entity
+
 ### 2.122.0
 
 * Remove `ToDeleted` entity from 2.120.0
@@ -14,6 +33,8 @@ As it is hard to spot changes from version to version of database models (.xcdat
 Removed `pushToken` attribute from `UserClient`.
 
 ### 2.120.0
+
+* Added `ToDeleted` entity
 
 PostAction to fix issue with federation migration. It triggers a resyncResources to make sure users and conversations get the domain.
 

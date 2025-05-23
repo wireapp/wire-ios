@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireDataModel
+public import Foundation
+public import WireDataModel
 
 // sourcery: AutoMockable
 /// Facilitate access to message related domain objects.
@@ -186,5 +186,19 @@ public protocol MessageLocalStoreProtocol {
         genericMessage: GenericMessage,
         date: Date
     ) async
+
+    func fetchMessage(
+        id: UUID?,
+        conversationID: UUID,
+        conversationDomain: String?
+    ) async -> ZMOTRMessage?
+
+    func isMessageMentioningSelf(
+        text: Text
+    ) async -> Bool
+
+    func isMessageQuotingSelf(
+        quotedMessage: ZMOTRMessage?
+    ) async -> Bool
 
 }

@@ -24,9 +24,10 @@ public protocol FileLoggerDestination {
     var log: URL? { get }
 }
 
-public struct SystemLogger: LoggerProtocol {
+public class SystemLogger: LoggerProtocol {
 
     let persistQueue = DispatchQueue(label: "persistQueue")
+    private var tags = [LogAttributesKey: String]()
 
     public var logFiles: [URL] {
         []
@@ -59,7 +60,11 @@ public struct SystemLogger: LoggerProtocol {
     }
 
     public func addTag(_ key: LogAttributesKey, value: String?) {
-        // do nothing, as it's only available on datadog
+        if let value {
+            tags[key] = value
+        } else {
+            tags.removeValue(forKey: key)
+        }
     }
 
     private func log(_ message: any LogConvertible, attributes: [LogAttributes], osLogType: OSLogType) {
@@ -73,12 +78,17 @@ public struct SystemLogger: LoggerProtocol {
             logger = OSLog(subsystem: Bundle.main.bundleIdentifier ?? "main", category: tag)
         }
 
-        let message = "\(message.logDescription)\(attributesDescription(from: mergedAttributes))"
+        var finalMessage = "\(message.logDescription)\(attributesDescription(from: mergedAttributes))"
+
+        if !tags.isEmpty {
+            let extraInfo = tags.map { key, value in "[\(key.rawValue):\(value)]" }.joined()
+            finalMessage += extraInfo
+        }
 
         if mergedAttributes[.public] as? Bool == true {
-            os_log(osLogType, log: logger, "%{public}@", message)
+            os_log(osLogType, log: logger, "%{public}@", finalMessage)
         } else {
-            os_log(osLogType, log: logger, "\(message)")
+            os_log(osLogType, log: logger, "\(finalMessage)")
         }
     }
 }

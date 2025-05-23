@@ -71,6 +71,16 @@ extension AssetClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
     typealias Object = ZMAssetClientMessage
 
     func insert(object: ZMAssetClientMessage, completion: @escaping () -> Void) {
+        let hasRegisteredMLSClient = managedObjectContext.performAndWait {
+            let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
+            return selfClient?.hasRegisteredMLSClient ?? false
+        }
+
+        if !hasRegisteredMLSClient, object.conversation?.messageProtocol == .mls {
+            completion()
+            return
+        }
+
         let logAttributesBuilder = MessageLogAttributesBuilder(context: managedObjectContext)
         let logAttributes = logAttributesBuilder.syncLogAttributes(object)
         WireLogger.messaging.debug("inserting message", attributes: logAttributes)

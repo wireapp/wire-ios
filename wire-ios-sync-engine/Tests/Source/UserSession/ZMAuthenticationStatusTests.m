@@ -221,7 +221,7 @@
     NSString *email = @"gfdgfgdfg@fds.sgf";
     NSString *password = @"#$4tewt343$";
     
-    UserInfo *info = [[UserInfo alloc] initWithIdentifier:NSUUID.createUUID cookieData:NSData.data];
+    UserInfo *info = [[UserInfo alloc] initWithIdentifier:NSUUID.createUUID cookieData:NSData.data  cookies:@[]];
     self.userInfoParser.existingAccounts = [self.userInfoParser.existingAccounts arrayByAddingObject:info];
 
     // when

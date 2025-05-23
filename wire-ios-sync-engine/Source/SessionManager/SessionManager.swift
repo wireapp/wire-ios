@@ -23,6 +23,7 @@ import PushKit
 import UserNotifications
 import WireAnalytics
 import WireDataModel
+import WireDomain
 import WireFoundation
 import WireLogging
 import WireRequestStrategy
@@ -68,6 +69,10 @@ public protocol SessionManagerDelegate: AnyObject, SessionActivationObserver {
     func sessionManagerDidPerformAPIMigrations(activeSession: UserSession?)
     func sessionManagerAsksToRetryStart()
     func sessionManagerDidCompleteInitialSync(for activeSession: UserSession?)
+    func sessionManagerDidFailSyncing(
+        error: any Error,
+        retryHandler: @escaping () -> Void
+    )
 
     var isInAuthenticatedAppState: Bool { get }
     var isInUnathenticatedAppState: Bool { get }
@@ -268,7 +273,6 @@ public final class SessionManager: NSObject, SessionManagerType {
     var deleteAccountToken: Any?
     var callCenterObserverToken: Any?
     var blacklistVerificator: ZMBlacklistVerificator?
-    var pushRegistry: PushRegistry
     let configuration: SessionManagerConfiguration
     var pendingURLAction: URLAction?
     let apiMigrationManager: APIMigrationManager
@@ -326,8 +330,6 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private(set) var isUnauthenticatedTransportSessionReady: Bool
 
-    public var requiredPushTokenType: PushToken.TokenType
-
     let isDeveloperModeEnabled: Bool
 
     let pushTokenService: PushTokenServiceInterface
@@ -357,7 +359,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         environment: BackendEnvironment,
         configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
         detector: JailbreakDetectorProtocol = JailbreakDetector(),
-        requiredPushTokenType: PushToken.TokenType,
         pushTokenService: PushTokenServiceInterface = PushTokenService(),
         callKitManager: CallKitManagerInterface,
         isDeveloperModeEnabled: Bool = false,
@@ -407,12 +408,10 @@ public final class SessionManager: NSObject, SessionManagerType {
             reachability: reachability,
             delegate: delegate,
             application: application,
-            pushRegistry: PKPushRegistry(queue: nil),
             dispatchGroup: dispatchGroup,
             environment: environment,
             configuration: configuration,
             detector: detector,
-            requiredPushTokenType: requiredPushTokenType,
             pushTokenService: pushTokenService,
             callKitManager: callKitManager,
             isDeveloperModeEnabled: isDeveloperModeEnabled,
@@ -471,12 +470,10 @@ public final class SessionManager: NSObject, SessionManagerType {
         reachability: ReachabilityWrapper,
         delegate: SessionManagerDelegate?,
         application: ZMApplication,
-        pushRegistry: PushRegistry,
         dispatchGroup: ZMSDispatchGroup,
         environment: BackendEnvironment,
         configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
         detector: JailbreakDetectorProtocol = JailbreakDetector(),
-        requiredPushTokenType: PushToken.TokenType,
         pushTokenService: PushTokenServiceInterface = PushTokenService(),
         callKitManager: CallKitManagerInterface,
         isDeveloperModeEnabled: Bool = false,
@@ -496,7 +493,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         self.dispatchGroup = dispatchGroup
         self.configuration = configuration.copy() as! SessionManagerConfiguration
         self.jailbreakDetector = detector
-        self.requiredPushTokenType = requiredPushTokenType
         self.pushTokenService = pushTokenService
         self.callKitManager = callKitManager
         self.proxyCredentials = proxyCredentials
@@ -531,7 +527,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         self.authenticatedSessionFactory = authenticatedSessionFactory
         self.unauthenticatedSessionFactory = unauthenticatedSessionFactory
         self.reachability = reachability
-        self.pushRegistry = pushRegistry
         self.maxNumberAccounts = maxNumberAccounts
         self.isDeveloperModeEnabled = isDeveloperModeEnabled
         self.apiMigrationManager = APIMigrationManager(
@@ -889,17 +884,15 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         requireInternal(activeUserSession.userId == account.userIdentifier, "User session and account are different")
 
-        delegate?.sessionManagerWillLogout(error: error, userSessionCanBeTornDown: { [dispatchGroup] in
-            dispatchGroup.enter()
-
+        delegate?.sessionManagerWillLogout(error: error) { [weak self] in
             activeUserSession.close(deleteCookie: deleteCookie) {
                 if deleteAccount {
-                    self.deleteAccountData(for: account)
+                    self?.deleteAccountData(for: account)
                 }
-                dispatchGroup.leave()
             }
-            self.activeUserSession = nil
-        })
+
+            self?.activeUserSession = nil
+        }
     }
 
     /// Loads a session for a given account
@@ -1004,6 +997,29 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
+    @MainActor
+    func withSession(
+        for account: Account,
+        notifyAboutMigration: Bool = false
+    ) async -> ZMUserSession? {
+
+        WireLogger.sessionManager.debug("Request to load session for \(account)")
+        if let session = backgroundUserSessions[account.userIdentifier] {
+            WireLogger.sessionManager.debug("Session for \(account) is already loaded")
+            return session
+        } else {
+            return await withCheckedContinuation { continuation in
+                self.setupUserSession(account: account) { userSession in
+                    if let userSession {
+                        continuation.resume(returning: userSession)
+                    } else {
+                        continuation.resume(returning: nil)
+                    }
+                }
+            }
+        }
+    }
+
     public func retryStart() {
         delegate?.sessionManagerAsksToRetryStart()
     }
@@ -1046,36 +1062,107 @@ public final class SessionManager: NSObject, SessionManagerType {
             onStartMigration: { [weak self] in
                 self?.delegate?.sessionManagerWillMigrateAccount(userSessionCanBeTornDown: {})
 
-            }, onFailure: { [weak self] error in
+            },
+            onFailure: { [weak self] error in
                 self?.delegate?.sessionManagerDidFailToLoadDatabase(error: error)
                 onCompletion(nil)
 
-            }, onCompletion: { [weak self] coreDataStack in
+            },
+            onCompletion: { [weak self] coreDataStack in
                 guard let self else {
                     assertionFailure("expected 'self' to continue!")
                     return
                 }
 
-                let userSession = startBackgroundSession(
-                    for: account,
-                    with: coreDataStack
+                let journal = Journal(
+                    userID: account.userIdentifier,
+                    storage: sharedUserDefaults
                 )
 
-                triggerMigrationsNeedsActionsIfNeeded(with: userSession)
+                Task {
+                    if self.shouldEnableSyncV2(journal: journal) {
+                        await self.enableSyncV2(
+                            journal: journal,
+                            coreDataStack: coreDataStack
+                        )
+                    }
 
-                onCompletion(userSession)
+                    await MainActor.run {
+                        let userSession = self.startBackgroundSession(
+                            for: account,
+                            with: coreDataStack,
+                            journal: journal
+                        )
+
+                        self.triggerMigrationsNeedsActionsIfNeeded(
+                            journal: journal,
+                            userSession: userSession
+                        )
+
+                        onCompletion(userSession)
+                    }
+                }
             }
         )
     }
 
+    private func shouldEnableSyncV2(journal: Journal) -> Bool {
+        guard let apiVersion = BackendInfo.apiVersion else {
+            fatalError("api version unknown")
+        }
+
+        let isAvailble = apiVersion >= .v8
+        let isAlreadyEnabled = journal[.isSyncV2Enabled]
+        return isAvailble && !isAlreadyEnabled
+    }
+
+    private func enableSyncV2(
+        journal: Journal,
+        coreDataStack: CoreDataStack
+    ) async {
+        guard let localDomain = BackendInfo.domain else {
+            fatalError("local domain unknown")
+        }
+
+        let dao: UpdateEventMigratorDAOProtocol = if #available(iOS 17, *) {
+            ActorBasedUpdateEventMigratorDAO(context: coreDataStack.eventContext)
+        } else {
+            UpdateEventMigratorDAO(context: coreDataStack.eventContext)
+        }
+
+        let migrator = UpdateEventMigrator(
+            dao: dao,
+            localDomain: localDomain
+        )
+
+        do {
+            if try await migrator.isMigrationNeeded() {
+                try await migrator.migrateLegacyUpdateEvents()
+                // Since we only migrate some events, we require an
+                // initial sync to ensure we didn't miss updates.
+                journal[.isInitialSyncRequired] = true
+            } else {
+                WireLogger.sync.debug("no migration needed")
+            }
+
+            journal[.isSyncV2Enabled] = true
+
+        } catch {
+            WireLogger.sync.critical("failed to migrate update events: \(error)")
+        }
+    }
+
     /// Executes post migration slow sync or sync resources
-    private func triggerMigrationsNeedsActionsIfNeeded(with userSession: ZMUserSession) {
+    private func triggerMigrationsNeedsActionsIfNeeded(
+        journal: Journal,
+        userSession: ZMUserSession
+    ) {
         let context = userSession.syncContext
         context.perform {
-            if context.readMigrationNeedsSlowSyncFlag() {
-                userSession.syncStatus.forceSlowSync()
+            if context.readMigrationNeedsSlowSyncFlag() || journal[.isInitialSyncRequired] {
+                userSession.triggerInitialSync()
             } else if context.readMigrationNeedsSyncResourcesFlag() {
-                userSession.syncStatus.resyncResources()
+                userSession.triggerResourcesSync()
             }
         }
     }
@@ -1107,6 +1194,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         // Clear tmp directory when the user logout from the session.
         deleteTemporaryData()
 
+        Journal(userID: account.userIdentifier, storage: sharedUserDefaults).erase()
         PrivateUserDefaults.removeAll(forUserID: account.userIdentifier, in: sharedUserDefaults)
         PrivateUserDefaults.removeAll(forUserID: account.userIdentifier, in: .standard)
 
@@ -1211,11 +1299,11 @@ public final class SessionManager: NSObject, SessionManagerType {
     // Creates the user session for @c account given, calls @c completion when done.
     private func startBackgroundSession(
         for account: Account,
-        with coreDataStack: CoreDataStack
+        with coreDataStack: CoreDataStack,
+        journal: Journal
     ) -> ZMUserSession {
         let sessionConfig = ZMUserSession.Configuration(
-            appLockConfig: configuration.legacyAppLockConfig,
-            useLegacyPushNotifications: shouldProcessLegacyPushes
+            appLockConfig: configuration.legacyAppLockConfig
         )
 
         guard let newSession = authenticatedSessionFactory.session(
@@ -1223,7 +1311,8 @@ public final class SessionManager: NSObject, SessionManagerType {
             coreDataStack: coreDataStack,
             configuration: sessionConfig,
             sharedUserDefaults: sharedUserDefaults,
-            isDeveloperModeEnabled: isDeveloperModeEnabled
+            isDeveloperModeEnabled: isDeveloperModeEnabled,
+            journal: journal
         ) else {
             preconditionFailure("Unable to create session for \(account)")
         }
@@ -1645,8 +1734,8 @@ extension SessionManager: ZMConversationListObserver {
             account?.unreadConversationCount = unreadCount
             let totalUnreadCount = self.accountManager.totalUnreadCount
             self.application.applicationIconBadgeNumber = totalUnreadCount
-            Logging.push
-                .safePublic("Updated badge count to \(SanitizedString(stringLiteral: String(totalUnreadCount)))")
+            WireLogger.notifications
+                .debug("Updated badge count to \(SanitizedString(stringLiteral: String(totalUnreadCount)))")
         }
     }
 }

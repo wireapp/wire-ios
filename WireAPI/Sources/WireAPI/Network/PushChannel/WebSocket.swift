@@ -17,23 +17,20 @@
 //
 
 import Foundation
+import WireLogging
 
-final class WebSocket: WebSocketProtocol {
+public actor WebSocket: WebSocketProtocol {
 
-    typealias Stream = AsyncThrowingStream<URLSessionWebSocketTask.Message, any Error>
+    public typealias Stream = AsyncThrowingStream<URLSessionWebSocketTask.Message, any Error>
 
     private let connection: any URLSessionWebSocketTaskProtocol
     private var continuation: Stream.Continuation?
 
-    init(connection: any URLSessionWebSocketTaskProtocol) {
+    public init(connection: any URLSessionWebSocketTaskProtocol) {
         self.connection = connection
     }
 
-    deinit {
-        close()
-    }
-
-    func open() throws -> Stream {
+    public func open() async throws -> Stream {
         connection.resume()
 
         if #available(iOS 17, *) {
@@ -62,6 +59,7 @@ final class WebSocket: WebSocketProtocol {
             return Stream { continuation in
                 self.continuation = continuation
 
+                @Sendable
                 func yieldNextMessage() {
                     guard connection.isOpen else {
                         continuation.finish()
@@ -85,9 +83,19 @@ final class WebSocket: WebSocketProtocol {
         }
     }
 
-    func close() {
+    public func close() async {
         connection.cancel(with: .goingAway, reason: nil)
         continuation?.finish()
+        continuation = nil
+
+    }
+
+    public func sendPing() async {
+        connection.sendPing { error in
+            if let error {
+                WireLogger.pushChannel.warn("failed to send keep alive ping: \(error)")
+            }
+        }
     }
 
 }

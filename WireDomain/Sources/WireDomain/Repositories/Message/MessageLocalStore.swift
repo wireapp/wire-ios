@@ -24,7 +24,9 @@ import WireLogging
 public final class MessageLocalStore: MessageLocalStoreProtocol {
 
     enum Failure: Error {
-        case failedToAddConversation
+
+        case invalidInsertion(reason: String)
+
     }
 
     /// When receiving a MLS/Proteus add message event, we treat them either as an `asset` client message or a `default`
@@ -37,34 +39,78 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
     // MARK: - Properties
 
     let context: NSManagedObjectContext
-    let userLocalStore: any UserLocalStoreProtocol
 
     // MARK: - Object lifecycle
 
     public init(
-        context: NSManagedObjectContext,
-        userLocalStore: any UserLocalStoreProtocol
+        context: NSManagedObjectContext
     ) {
         self.context = context
-        self.userLocalStore = userLocalStore
     }
 
     // MARK: - Public
+
+    public func fetchMessage(
+        id: UUID?,
+        conversationID: UUID,
+        conversationDomain: String?
+    ) async -> ZMOTRMessage? {
+
+        let conversation = await context.perform { [context] in
+            ZMConversation.fetch(
+                with: conversationID,
+                domain: conversationDomain,
+                in: context
+            )
+        }
+
+        guard let conversation else { return nil }
+
+        return await context.perform { [context] in
+            ZMOTRMessage.fetch(
+                withNonce: id,
+                for: conversation,
+                in: context
+            )
+        }
+
+    }
+
+    public func isMessageMentioningSelf(
+        text: Text
+    ) async -> Bool {
+        let selfUser = await context.perform { [context] in
+            ZMUser.selfUser(in: context)
+        }
+
+        return await context.perform {
+            text.mentions.any { $0.userID.uppercased() == selfUser.remoteIdentifier.uuidString }
+        }
+    }
+
+    public func isMessageQuotingSelf(
+        quotedMessage: ZMOTRMessage?
+    ) async -> Bool {
+        await context.perform {
+            quotedMessage?.sender?.isSelfUser ?? false
+        }
+    }
 
     public func addSystemMessage(
         messageType: SystemMessageType,
         conversationID: UUID,
         conversationDomain: String?
     ) async {
-        guard let conversation = (await context.perform { [context] in
+
+        let conversation = await context.perform { [context] in
             ZMConversation.fetch(
                 with: conversationID,
                 domain: conversationDomain,
                 in: context
             )
-        }) else {
-            return
         }
+
+        guard let conversation else { return }
 
         let systemMessages = await createSystemMessages(
             from: messageType,
@@ -81,7 +127,9 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         conversation: ZMConversation,
         senderID: UUID
     ) async -> Bool {
-        let selfUser = await userLocalStore.fetchSelfUser()
+        let selfUser = await context.perform { [context] in
+            ZMUser.selfUser(in: context)
+        }
 
         return await context.perform {
             let isSelf = conversation.isSelfConversation && senderID != selfUser.remoteIdentifier
@@ -317,11 +365,17 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         date: Date
     ) async throws -> (ZMOTRMessage, isNew: Bool) {
         try await context.perform { [self] in
-            guard let clearedTime = conversation.clearedTimeStamp,
-                  clearedTime.compare(date) != .orderedAscending,
-                  conversation.conversationType != .self,
-                  let nonce = UUID(uuidString: id) else {
-                throw Failure.failedToAddConversation
+
+            if let clearedTime = conversation.clearedTimeStamp, clearedTime.compare(date) != .orderedAscending {
+                throw Failure.invalidInsertion(reason: "message is older than cleared time")
+            }
+
+            guard conversation.conversationType != .`self` else {
+                throw Failure.invalidInsertion(reason: "message cannot be sent to self")
+            }
+
+            guard let nonce = UUID(uuidString: id) else {
+                throw Failure.invalidInsertion(reason: "invalid nonce")
             }
 
             let clientMessage = messageType == .asset ?
@@ -469,7 +523,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
             return [systemMessage]
 
-        case let .participantsAdded(participants, sender, date):
+        case let .participantsAdded(participants, sender, _):
             guard let sender = await fetchUser(
                 id: sender.id,
                 domain: sender.domain
@@ -477,14 +531,20 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                 return []
             }
 
-            let newUsers = await userLocalStore.fetchOrCreateUsers(
-                userIDs: participants
-            )
+            let newUsers = await context.perform { [context] in
+                participants.map {
+                    ZMUser.fetchOrCreate(
+                        with: $0.id,
+                        domain: $0.domain,
+                        in: context
+                    )
+                }
+            }
 
             let systemMessage = await createSystemMessage(
                 messageType: .participantsAdded,
                 sender: sender,
-                users: newUsers
+                users: Set(newUsers)
             )
 
             return [systemMessage]
@@ -713,10 +773,13 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             return [systemMessage]
 
         case let .sessionReset(sender, senderClientID, date):
-            let sender = await userLocalStore.fetchOrCreateUser(
-                id: sender.id,
-                domain: sender.domain
-            )
+            let sender = await context.perform { [context] in
+                ZMUser.fetchOrCreate(
+                    with: sender.id,
+                    domain: sender.domain,
+                    in: context
+                )
+            }
 
             let client = await context.perform {
                 UserClient.fetchUserClient(
@@ -860,14 +923,19 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         id: UUID,
         domain: String?
     ) async -> ZMUser? {
-        try? await userLocalStore.fetchUser(
-            id: id,
-            domain: domain
-        )
+        await context.perform { [context] in
+            ZMUser.fetch(
+                with: id,
+                domain: domain,
+                in: context
+            )
+        }
     }
 
     private func fetchSelfUser() async -> ZMUser {
-        await userLocalStore.fetchSelfUser()
+        await context.perform { [context] in
+            ZMUser.selfUser(in: context)
+        }
     }
 
     private func editMessage(

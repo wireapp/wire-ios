@@ -18,6 +18,7 @@
 
 import Foundation
 import UserNotifications
+import WireDomain
 import WireLogging
 import WireRequestStrategy
 import WireTransport
@@ -52,20 +53,18 @@ struct PushTokenMetadata {
     ///
     /// @sa https://github.com/zinfra/backend-wiki/wiki/Native-Push-Notifications
 
-    var tokenType: PushToken.TokenType
-
     var transportType: String {
-        isSandbox ? (tokenType.transportType + "_SANDBOX") : tokenType.transportType
+        isSandbox ? "APNS_SANDBOX" : "APNS"
     }
 
-    static func current(for tokenType: PushToken.TokenType) -> PushTokenMetadata {
+    static func current() -> PushTokenMetadata {
         let appId = Bundle.main.bundleIdentifier ?? ""
         let buildType = BuildType(bundleID: appId)
 
         let isSandbox = ZMMobileProvisionParser().apsEnvironment == .sandbox
         let appIdentifier = buildType.certificateName
 
-        return PushTokenMetadata(isSandbox: isSandbox, appIdentifier: appIdentifier, tokenType: tokenType)
+        return PushTokenMetadata(isSandbox: isSandbox, appIdentifier: appIdentifier)
     }
 }
 
@@ -121,7 +120,7 @@ extension ZMUserSession: UNUserNotificationCenterDelegate {
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions)
             -> Void
     ) {
-        Logging.push.safePublic("Notification center wants to present in-app notification: \(notification)")
+        WireLogger.notifications.info("Notification center wants to present in-app notification: \(notification)")
         let categoryIdentifier = notification.request.content.categoryIdentifier
 
         handleInAppNotification(
@@ -137,7 +136,7 @@ extension ZMUserSession: UNUserNotificationCenterDelegate {
         didReceive response: UNNotificationResponse,
         withCompletionHandler completionHandler: @escaping () -> Void
     ) {
-        Logging.push.safePublic("Did receive notification response: \(response)")
+        WireLogger.notifications.info("Did receive notification response: \(response)")
         let userText = (response as? UNTextInputNotificationResponse)?.userText
         let note = response.notification
 
@@ -184,11 +183,12 @@ extension ZMUserSession: UNUserNotificationCenterDelegate {
         WireLogger.notifications.info("handling notification response with action id (\(actionIdentifier))")
 
         switch actionIdentifier {
-        case CallNotificationAction.ignore.rawValue:
+        case CallNotificationAction.ignore.rawValue, NotificationActionIdentifier.ignoreCallIdentifier:
             ignoreCall(with: userInfo, completionHandler: completionHandler)
         case CallNotificationAction.accept.rawValue:
             acceptCall(with: userInfo, completionHandler: completionHandler)
-        case ConversationNotificationAction.mute.rawValue:
+        case ConversationNotificationAction.mute.rawValue,
+             NotificationActionIdentifier.muteConversationIdentifier:
             muteConversation(with: userInfo, completionHandler: completionHandler)
         case ConversationNotificationAction.like.rawValue:
             likeMessage(with: userInfo, completionHandler: completionHandler)
@@ -196,12 +196,17 @@ extension ZMUserSession: UNUserNotificationCenterDelegate {
             if let textInput = userText {
                 reply(with: userInfo, message: textInput, completionHandler: completionHandler)
             }
-        case ConversationNotificationAction.connect.rawValue:
+        case ConversationNotificationAction.connect.rawValue,
+             NotificationActionIdentifier.acceptConnectionRequestIdentifier:
             acceptConnectionRequest(with: userInfo, completionHandler: completionHandler)
+        // TODO: [WPB-17220] new NSE - callback action is currently broken - disabling this action for now
+//        case NotificationActionIdentifier.callbackIdentifier:
+//            callback(with: userInfo, completionHandler: completionHandler)
         default:
             showContent(for: userInfo)
             completionHandler()
         }
+
     }
 
 }
@@ -213,21 +218,16 @@ extension UNNotificationContent {
 }
 
 public extension PushToken {
-    init(deviceToken: Data, pushTokenType: TokenType) {
-        let metadata = PushTokenMetadata.current(for: pushTokenType)
+    init(deviceToken: Data) {
+        let metadata = PushTokenMetadata.current()
         self.init(
             deviceToken: deviceToken,
             appIdentifier: metadata.appIdentifier,
-            transportType: metadata.transportType,
-            tokenType: pushTokenType
+            transportType: metadata.transportType
         )
     }
 
-    static func createVOIPToken(from deviceToken: Data) -> PushToken {
-        PushToken(deviceToken: deviceToken, pushTokenType: .voip)
-    }
-
     static func createAPNSToken(from deviceToken: Data) -> PushToken {
-        PushToken(deviceToken: deviceToken, pushTokenType: .standard)
+        PushToken(deviceToken: deviceToken)
     }
 }

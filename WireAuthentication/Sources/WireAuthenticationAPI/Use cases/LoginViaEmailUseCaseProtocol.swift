@@ -18,15 +18,14 @@
 
 import Foundation
 
-public protocol LoginViaEmailUseCaseProtocol {
-
-    associatedtype AccessToken
+// sourcery: AutoMockable
+public protocol LoginViaEmailUseCaseProtocol: Sendable {
 
     func invoke(
         email: String,
         password: String,
         verificationCode: String?
-    ) async throws(LoginViaEmailUseCaseFailure) -> ([HTTPCookie], AccessToken)
+    ) async throws -> ([HTTPCookie], AccessToken)
 
 }
 
@@ -37,7 +36,11 @@ public enum LoginViaEmailUseCaseFailure: Error, Equatable {
     case twoFactorAuthenticationFailed
     case accountPendingActivation
     case accountSuspended
-    case noInternet
-    case other
+
+}
+
+public protocol LoginViaEmailUseCaseFactory {
+
+    func loginViaEmailUseCase() async throws -> any LoginViaEmailUseCaseProtocol
 
 }

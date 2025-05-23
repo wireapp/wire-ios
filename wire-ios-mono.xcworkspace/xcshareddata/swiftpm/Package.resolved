@@ -15,26 +15,26 @@
         "repositoryURL": "https://github.com/awslabs/aws-crt-swift",
         "state": {
           "branch": null,
-          "revision": "5a65eb60edbd080a8a79af813a5bb6e5ff387550",
-          "version": "0.43.0"
+          "revision": "5be6550f81c760cceb0a43c30d4149ac55c5640c",
+          "version": "0.52.1"
         }
       },
       {
         "package": "aws-sdk-swift",
-        "repositoryURL": "https://github.com/awslabs/aws-sdk-swift",
+        "repositoryURL": "https://github.com/awslabs/aws-sdk-swift.git",
         "state": {
           "branch": null,
-          "revision": "e587d4f4dd0290f188023a393f3a78f4d9522be2",
-          "version": "1.2.5"
+          "revision": "49090d3a9e308df5643891cbc68fcbeb6170a4d4",
+          "version": "1.3.18"
         }
       },
       {
         "package": "CellsSDK",
         "repositoryURL": "https://github.com/pydio/cells-sdk-swift.git",
         "state": {
-          "branch": "v5-dev",
-          "revision": "04297886acc07d15862f6b94e61e4318dc25f3b7",
-          "version": null
+          "branch": null,
+          "revision": "4b7577af50585420dc8280b38296e84daf2a6696",
+          "version": "0.1.1-alpha10"
         }
       },
       {
@@ -60,8 +60,8 @@
         "repositoryURL": "https://github.com/DataDog/dd-sdk-ios.git",
         "state": {
           "branch": null,
-          "revision": "e67af5e59678668acbe73e7d0e1c657b6cfeac6f",
-          "version": "2.18.0"
+          "revision": "27ad5b051697a773f135ed1e4b0fed3a45a0e655",
+          "version": "2.27.0"
         }
       },
       {
@@ -114,8 +114,8 @@
         "repositoryURL": "https://github.com/DataDog/opentelemetry-swift-packages.git",
         "state": {
           "branch": null,
-          "revision": "adcfc3d7fc6ad411bb576cfa4512c2d3f8b2dbc7",
-          "version": "1.6.0"
+          "revision": "4a7295600d4ebb9525a23c11586c5fdb74ae8b7e",
+          "version": "1.13.1"
         }
       },
       {
@@ -141,8 +141,8 @@
         "repositoryURL": "https://github.com/microsoft/plcrashreporter.git",
         "state": {
           "branch": null,
-          "revision": "fec2ff791b27fd9b9ceab9072025dea56409cca1",
-          "version": "1.11.3"
+          "revision": "8c61e5e38e9f737dd68512ed1ea5ab081244ad65",
+          "version": "1.12.0"
         }
       },
       {
@@ -150,8 +150,8 @@
         "repositoryURL": "https://github.com/smithy-lang/smithy-swift",
         "state": {
           "branch": null,
-          "revision": "0eda9f03e78dac2fbe516e09ca0ae96d72879c56",
-          "version": "0.111.0"
+          "revision": "aa4cb4585232b52f116286e432dca055df698863",
+          "version": "0.131.0"
         }
       },
       {
@@ -161,6 +161,24 @@
           "branch": null,
           "revision": "bf73a16e7409a83c38872726e45e4f432512315e",
           "version": "4.0.8"
+        }
+      },
+      {
+        "package": "swift-argument-parser",
+        "repositoryURL": "https://github.com/apple/swift-argument-parser.git",
+        "state": {
+          "branch": null,
+          "revision": "41982a3656a71c768319979febd796c6fd111d5c",
+          "version": "1.5.0"
+        }
+      },
+      {
+        "package": "swift-custom-dump",
+        "repositoryURL": "https://github.com/pointfreeco/swift-custom-dump",
+        "state": {
+          "branch": null,
+          "revision": "82645ec760917961cfa08c9c0c7104a57a0fa4b1",
+          "version": "1.3.3"
         }
       },
       {
@@ -186,8 +204,8 @@
         "repositoryURL": "https://github.com/apple/swift-log",
         "state": {
           "branch": null,
-          "revision": "96a2f8a0fa41e9e09af4585e2724c4e825410b91",
-          "version": "1.6.2"
+          "revision": "3d8596ed08bd13520157f0355e35caed215ffbfa",
+          "version": "1.6.3"
         }
       },
       {
@@ -204,8 +222,8 @@
         "repositoryURL": "https://github.com/pointfreeco/swift-snapshot-testing",
         "state": {
           "branch": null,
-          "revision": "6d932a79e7173b275b96c600c86c603cf84f153c",
-          "version": "1.17.4"
+          "revision": "1be8144023c367c5de701a6313ed29a3a10bf59b",
+          "version": "1.18.3"
         }
       },
       {
@@ -213,8 +231,35 @@
         "repositoryURL": "https://github.com/swiftlang/swift-syntax",
         "state": {
           "branch": null,
-          "revision": "0687f71944021d616d34d922343dcef086855920",
-          "version": "600.0.1"
+          "revision": "f99ae8aa18f0cf0d53481901f88a0991dc3bd4a2",
+          "version": "601.0.1"
+        }
+      },
+      {
+        "package": "swiftui-introspect",
+        "repositoryURL": "https://github.com/siteline/swiftui-introspect",
+        "state": {
+          "branch": null,
+          "revision": "807f73ce09a9b9723f12385e592b4e0aaebd3336",
+          "version": "1.3.0"
+        }
+      },
+      {
+        "package": "xctest-dynamic-overlay",
+        "repositoryURL": "https://github.com/pointfreeco/xctest-dynamic-overlay",
+        "state": {
+          "branch": null,
+          "revision": "39de59b2d47f7ef3ca88a039dff3084688fe27f4",
+          "version": "1.5.2"
+        }
+      },
+      {
+        "package": "ZIPFoundation",
+        "repositoryURL": "https://github.com/weichsel/ZIPFoundation.git",
+        "state": {
+          "branch": null,
+          "revision": "02b6abe5f6eef7e3cbd5f247c5cc24e246efcfe0",
+          "version": "0.9.19"
         }
       }
     ]

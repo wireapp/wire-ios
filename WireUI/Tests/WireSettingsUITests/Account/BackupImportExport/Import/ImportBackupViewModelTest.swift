@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDomainPkg
+import WireDomainPackage
 import WireLogging
 import WireTestingPackage
 import XCTest
@@ -107,18 +107,18 @@ final class ImportBackupViewModelTest: XCTestCase {
         sut.pickedBackupFile(result: .success(temporaryFile))
         wait(forConditionToBeTrue: sut.isImportConfirmationPresented, timeout: 3)
         sut.confirmOverwrite()
-        wait(forConditionToBeTrue: sut.importProgress == 0, timeout: 3)
-        continuation.finish(throwing: ImportBackupError.decryptionError)
+        wait(forConditionToBeTrue: sut.importProgress == (0, 0), timeout: 3)
+        continuation.finish(throwing: ImportBackupError.passwordRequired)
         wait(forConditionToBeTrue: sut.isEnterBackupPasswordPresented, timeout: 3)
         mockImportBackupUseCase.invokeUrlPassword_MockValue = .init { continuation = $0 }
         sut.enterPassword("pw")
 
         // Then
-        wait(forConditionToBeTrue: sut.importProgress == 0, timeout: 3)
-        continuation.yield(.progress(0.25))
-        wait(forConditionToBeTrue: sut.importProgress == 0.25, timeout: 3)
+        wait(forConditionToBeTrue: sut.importProgress == (0, 0), timeout: 3)
+        continuation.yield(.progress(1, 4))
+        wait(forConditionToBeTrue: sut.importProgress == (1, 4), timeout: 3)
         continuation.yield(.done)
-        wait(forConditionToBeTrue: sut.importProgress == 1, timeout: 3)
+        wait(forConditionToBeTrue: sut.importProgress == (1, 1), timeout: 3)
         wait(forConditionToBeTrue: sut.isAlertPresented, timeout: 3)
     }
 

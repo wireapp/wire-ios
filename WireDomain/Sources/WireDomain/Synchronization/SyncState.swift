@@ -16,22 +16,42 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+/// Describes the current syncing state of the app.
 
-/// Describes the apps synchronization state.
+public enum SyncState: Equatable {
 
-enum SyncState {
+    /// The app is not syncing.
 
-    /// The app is fetching and processing all pending events.
+    case idle
 
-    case quickSync(Task<Void, Error>)
+    /// Initial sync is ongoing.
 
-    /// The app is processing live events via the push channel.
+    case initialSyncing(InitialSyncState)
 
-    case live(Task<Void, Error>)
+    /// Incremental sync is ongoing.
 
-    /// The app is neither receiving nor processing any events.
+    case incrementalSyncing(IncrementalSyncState)
 
-    case suspended
+    /// App is up to date and processing live events.
+
+    case liveSyncing
+
+    public enum InitialSyncState: Equatable {
+
+        case pullLastEventID
+        case pullResources
+        case pushSupportedProtocols
+        case resolveOneOnOneConversations
+
+    }
+
+    public enum IncrementalSyncState: Equatable {
+
+        case createPushChannel
+        case openPushChannel
+        case pullPendingEvents
+        case processPendingEvents
+
+    }
 
 }

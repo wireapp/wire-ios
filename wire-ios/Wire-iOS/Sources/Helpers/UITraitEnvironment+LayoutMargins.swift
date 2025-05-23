@@ -37,16 +37,9 @@ struct HorizontalMargins {
             self.right = 16
         }
     }
-}
 
-extension UITraitEnvironment {
-    var conversationHorizontalMargins: HorizontalMargins {
-        conversationHorizontalMargins()
-    }
-
-    func conversationHorizontalMargins(
-        windowWidth: CGFloat? = UIApplication.shared.delegate?.window??.frame
-            .width ?? UIScreen.main.bounds.width
+    static func conversationHorizontalMargins(
+        windowWidth: CGFloat? = UIApplication.shared.delegate?.window??.frame.width ?? UIScreen.main.bounds.width
     ) -> HorizontalMargins {
         let userInterfaceSizeClass: UIUserInterfaceSizeClass
 
@@ -58,6 +51,13 @@ extension UITraitEnvironment {
         }
 
         return HorizontalMargins(userInterfaceSizeClass: userInterfaceSizeClass)
+    }
+
+}
+
+extension UITraitEnvironment {
+    var conversationHorizontalMargins: HorizontalMargins {
+        HorizontalMargins.conversationHorizontalMargins()
     }
 
     var directionAwareConversationLayoutMargins: HorizontalMargins {

@@ -19,9 +19,7 @@
 import UIKit
 import WireSyncEngine
 
-final class ConversationTextMessageCell: UIView,
-    ConversationMessageCell,
-    TextViewInteractionDelegate {
+final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextViewInteractionDelegate {
 
     struct Configuration: Equatable {
         let attributedText: NSAttributedString
@@ -51,19 +49,11 @@ final class ConversationTextMessageCell: UIView,
         return view
     }()
 
-    var isSelected: Bool = false
+    var isSelected = false
 
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
-    weak var menuPresenter: ConversationMessageCellMenuPresenter?
-
-    var ephemeralTimerTopInset: CGFloat {
-        guard let font = messageTextView.font else {
-            return 0
-        }
-
-        return font.lineHeight / 2
-    }
+    weak var actionController: ConversationMessageActionController?
 
     var selectionView: UIView? {
         messageTextView
@@ -85,13 +75,15 @@ final class ConversationTextMessageCell: UIView,
     }
 
     private func setup() {
+        messageTextView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(messageTextView)
         configureConstraints()
     }
 
     private func configureConstraints() {
-        messageTextView.translatesAutoresizingMaskIntoConstraints = false
-        messageTextView.fitIn(view: self)
+        let margins = conversationHorizontalMargins
+        let insets = UIEdgeInsets(top: 0, left: margins.left, bottom: 0, right: margins.right)
+        messageTextView.fitIn(view: self, insets: insets)
     }
 
     func configure(with object: Configuration, animated: Bool) {
@@ -152,16 +144,13 @@ final class ConversationTextMessageCell: UIView,
 
 final class ConversationTextMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationTextMessageCell
+
     let configuration: View.Configuration
 
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 8
-
-    let isFullWidth: Bool = false
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 
@@ -171,15 +160,6 @@ final class ConversationTextMessageCellDescription: ConversationMessageCellDescr
     init(attributedString: NSAttributedString, isObfuscated: Bool) {
         self.configuration = View.Configuration(attributedText: attributedString, isObfuscated: isObfuscated)
     }
-
-    func makeCell(for tableView: UITableView, at indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueConversationCell(with: self, for: indexPath)
-        cell.accessibilityCustomActions = actionController?.makeAccessibilityActions()
-        cell.cellView.delegate = delegate
-        cell.cellView.message = message
-        cell.cellView.menuPresenter = cell
-        return cell
-    }
 }
 
 // MARK: - Factory
@@ -188,33 +168,51 @@ extension ConversationTextMessageCellDescription {
 
     static func cells(
         for message: ZMConversationMessage,
-        searchQueries: [String]
+        searchQueries: [String],
+        selfUser: any UserType,
+        userSession: UserSession
     ) -> [AnyConversationMessageCellDescription] {
         guard let textMessageData = message.textMessageData else {
             preconditionFailure("Invalid text message")
         }
 
-        return cells(textMessageData: textMessageData, message: message, searchQueries: searchQueries)
+        return cells(
+            textMessageData: textMessageData,
+            message: message,
+            searchQueries: searchQueries,
+            selfUser: selfUser,
+            userSession: userSession
+        )
     }
 
     static func cells(
         textMessageData: TextMessageData,
         message: ZMConversationMessage,
-        searchQueries: [String]
+        searchQueries: [String],
+        selfUser: any UserType,
+        userSession: UserSession
     ) -> [AnyConversationMessageCellDescription] {
 
         var cells: [AnyConversationMessageCellDescription] = []
 
         // Refetch the link attachments if needed
-        if !Settings.disableLinkPreviews {
-            ZMUserSession.shared()?.enqueue {
-                message.refetchLinkAttachmentsIfNeeded()
+        if !Settings.disableLinkPreviews, let id = (message as? ZMMessage)?.objectID {
+            userSession.enqueue {
+                let message = ZMMessage.existingObject(
+                    with: id,
+                    inUserSession: userSession.contextProvider
+                )
+                message?.refetchLinkAttachmentsIfNeeded()
             }
         }
 
         // Text parsing
         let attachments = message.linkAttachments ?? []
-        var messageText = NSAttributedString.format(message: textMessageData, isObfuscated: message.isObfuscated)
+        var messageText = NSAttributedString.format(
+            message: textMessageData,
+            isObfuscated: message.isObfuscated,
+            accentColor: (selfUser.zmAccentColor ?? .default).accentColor
+        )
 
         // Search queries
         if !searchQueries.isEmpty {
@@ -229,7 +227,10 @@ extension ConversationTextMessageCellDescription {
 
         // Quote
         if let quotedMessage = textMessageData.quoteMessage {
-            let quoteCell = ConversationReplyCellDescription(quotedMessage: quotedMessage)
+            let quoteCell = ConversationReplyCellDescription(
+                quotedMessage: quotedMessage,
+                accentColor: (selfUser.zmAccentColor ?? .default).accentColor
+            )
             cells.append(AnyConversationMessageCellDescription(quoteCell))
         }
 
@@ -242,9 +243,7 @@ extension ConversationTextMessageCellDescription {
             cells.append(AnyConversationMessageCellDescription(textCell))
         }
 
-        guard !message.isObfuscated else {
-            return cells
-        }
+        guard !message.isObfuscated else { return cells }
 
         // Links
         if let attachment = attachments.first {

@@ -32,10 +32,18 @@ actor EventProcessor: UpdateEventProcessor {
     private let eventProcessingTracker: EventProcessingTrackerProtocol
     private let earService: EARServiceInterface
     private var processingTask: Task<Void, Error>?
-    private let eventConsumers: [ZMEventConsumer]
-    private let eventAsyncConsumers: [ZMEventAsyncConsumer]
-
+    private let strategyDirectory: any StrategyDirectoryProtocol
     private let processedEventList = ProcessedEventList()
+
+    private var eventConsumers: [ZMEventConsumer] {
+        strategyDirectory.eventConsumers
+    }
+
+    private var eventAsyncConsumers: [ZMEventAsyncConsumer] {
+        strategyDirectory.eventAsyncConsumers + additionEventConsumers
+    }
+
+    private let additionEventConsumers: [any ZMEventAsyncConsumer]
 
     // MARK: Life Cycle
 
@@ -43,9 +51,9 @@ actor EventProcessor: UpdateEventProcessor {
         storeProvider: CoreDataStack,
         eventProcessingTracker: EventProcessingTrackerProtocol,
         earService: EARServiceInterface,
-        eventConsumers: [ZMEventConsumer],
-        eventAsyncConsumers: [ZMEventAsyncConsumer],
-        lastEventIDRepository: LastEventIDRepositoryInterface
+        lastEventIDRepository: LastEventIDRepositoryInterface,
+        strategyDirectory: any StrategyDirectoryProtocol,
+        additionalEventConsumers: [any ZMEventAsyncConsumer]
     ) {
         let eventDecoder = EventDecoder(
             eventMOC: storeProvider.eventContext,
@@ -58,8 +66,8 @@ actor EventProcessor: UpdateEventProcessor {
             eventDecoder: eventDecoder,
             eventProcessingTracker: eventProcessingTracker,
             earService: earService,
-            eventConsumers: eventConsumers,
-            eventAsyncConsumers: eventAsyncConsumers
+            strategyDirectory: strategyDirectory,
+            additionalEventConsumers: additionalEventConsumers
         )
     }
 
@@ -68,8 +76,8 @@ actor EventProcessor: UpdateEventProcessor {
         eventDecoder: any EventDecoderProtocol,
         eventProcessingTracker: EventProcessingTrackerProtocol,
         earService: EARServiceInterface,
-        eventConsumers: [ZMEventConsumer],
-        eventAsyncConsumers: [ZMEventAsyncConsumer]
+        strategyDirectory: any StrategyDirectoryProtocol,
+        additionalEventConsumers: [any ZMEventAsyncConsumer]
     ) {
         self.syncContext = storeProvider.syncContext
         self.eventContext = storeProvider.eventContext
@@ -77,8 +85,8 @@ actor EventProcessor: UpdateEventProcessor {
         self.eventProcessingTracker = eventProcessingTracker
         self.earService = earService
         self.bufferedEvents = []
-        self.eventConsumers = eventConsumers
-        self.eventAsyncConsumers = eventAsyncConsumers
+        self.strategyDirectory = strategyDirectory
+        self.additionEventConsumers = additionalEventConsumers
     }
 
     // MARK: Methods
@@ -91,14 +99,50 @@ actor EventProcessor: UpdateEventProcessor {
         bufferedEvents.append(contentsOf: events)
     }
 
+    /// Decrypt Store and Process events from webSocket
+    func processLiveEvents(_ events: [ZMUpdateEvent]) async throws {
+        try await processEvents(events, duringQuickSync: false)
+    }
+
+    /// Decrypt Store and Process events during quickSync
     func processEvents(_ events: [ZMUpdateEvent]) async throws {
+        try await processEvents(events, duringQuickSync: true)
+    }
+
+    private func processEvents(_ events: [ZMUpdateEvent], duringQuickSync: Bool) async throws {
+        events.forEach {
+            WireLogger.updateEvent.debug(
+                "processEvents event",
+                attributes: $0.logAttributes(source: duringQuickSync ? .pushChannel : .notificationsStream)
+            )
+        }
         try await enqueueTask {
             NotificationCenter.default.post(name: .eventProcessorDidStartProcessingEventsNotification, object: self)
 
             guard !DeveloperFlag.ignoreIncomingEvents.isOn else { return }
 
             let publicKeys = try? self.earService.fetchPublicKeys()
+
+            if duringQuickSync {
+                NotificationCenter.default.post(
+                    name: .didStartDecryptingEventsNotification,
+                    object: self.syncContext.notificationContext
+                )
+            }
+            events.forEach {
+                WireLogger.updateEvent.debug(
+                    "before decryptAndStoreEvents",
+                    attributes: $0.logAttributes(source: duringQuickSync ? .pushChannel : .notificationsStream)
+                )
+            }
             let decryptedEvents = try await self.eventDecoder.decryptAndStoreEvents(events, publicKeys: publicKeys)
+            if duringQuickSync {
+                NotificationCenter.default.post(
+                    name: .didStopDecryptingEventsNotification,
+                    object: self.syncContext.notificationContext
+                )
+            }
+
             await self.processBackgroundEvents(decryptedEvents)
 
             let isLocked = await self.syncContext.perform { self.syncContext.isLocked }
@@ -117,7 +161,6 @@ actor EventProcessor: UpdateEventProcessor {
     }
 
     private func enqueueTask(_ block: @escaping @Sendable () async throws -> Void) async throws {
-        defer { processingTask = nil }
 
         processingTask = Task { [processingTask] in
             _ = try await processingTask?.value
@@ -178,7 +221,7 @@ actor EventProcessor: UpdateEventProcessor {
                 attributes: .safePublic
             )
 
-            guard let self else { return }
+            guard let self, !decryptedUpdateEvents.isEmpty else { return }
 
             let date = Date()
             let fetchRequest = await prefetchRequest(updateEvents: decryptedUpdateEvents)
@@ -211,8 +254,11 @@ actor EventProcessor: UpdateEventProcessor {
                     continue
                 }
 
+                let eventConsumers = await eventConsumers
+                let eventAsyncConsumers = await eventAsyncConsumers
+
                 await syncContext.perform {
-                    for eventConsumer in self.eventConsumers {
+                    for eventConsumer in eventConsumers {
                         eventConsumer.processEvents([event], liveEvents: true, prefetchResult: prefetchResult)
                     }
                 }

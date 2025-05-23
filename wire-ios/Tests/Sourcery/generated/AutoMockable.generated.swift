@@ -1,6 +1,5 @@
-// Generated using Sourcery 2.2.4 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.2.6 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
-
 //
 // Wire
 // Copyright (C) 2025 Wire Swiss GmbH
@@ -28,9 +27,11 @@
 import CoreLocation
 import WireDataModel
 import WireSyncEngine
+import WireAccountImageUI
 
 @testable import Wire
 @testable import WireCommonComponents
+
 
 
 
@@ -740,6 +741,58 @@ public class MockFileMetaDataGeneratorProtocol: FileMetaDataGeneratorProtocol {
             return mock
         } else {
             fatalError("no mock for `metadataForFileAt`")
+        }
+    }
+
+}
+
+class MockGetParticipantImageSourceRepositoryProtocol: GetParticipantImageSourceRepositoryProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - invoke
+
+    var invokeUser_Invocations: [UserType] = []
+    var invokeUser_MockMethod: ((UserType) async -> UIImage?)?
+    var invokeUser_MockValue: UIImage??
+
+    func invoke(user: UserType) async -> UIImage? {
+        invokeUser_Invocations.append(user)
+
+        if let mock = invokeUser_MockMethod {
+            return await mock(user)
+        } else if let mock = invokeUser_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invokeUser`")
+        }
+    }
+
+}
+
+class MockGetParticipantImageSourceUseCaseProtocol: GetParticipantImageSourceUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - invoke
+
+    var invokeUser_Invocations: [UserType] = []
+    var invokeUser_MockMethod: ((UserType) async -> WireAccountImageUI.AccountImageSource?)?
+    var invokeUser_MockValue: WireAccountImageUI.AccountImageSource??
+
+    func invoke(user: UserType) async -> WireAccountImageUI.AccountImageSource? {
+        invokeUser_Invocations.append(user)
+
+        if let mock = invokeUser_MockMethod {
+            return await mock(user)
+        } else if let mock = invokeUser_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invokeUser`")
         }
     }
 

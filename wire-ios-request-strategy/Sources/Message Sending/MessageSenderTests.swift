@@ -46,7 +46,7 @@ final class MessageSenderTests: MessagingTestBase {
         )
 
         let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
-            .withQuickSyncObserverCompleting()
+            .withIncrementalSyncObserverCompleting()
             .withMessageDependencyResolverReturning(result: .failure(.securityLevelDegraded))
             .arrange()
 
@@ -66,7 +66,7 @@ final class MessageSenderTests: MessagingTestBase {
         )
 
         let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
-            .withQuickSyncObserverCompleting()
+            .withIncrementalSyncObserverCompleting()
             .withMessageDependencyResolverReturning(result: .success(()))
             .withApiVersionResolving(to: nil)
             .arrange()
@@ -78,7 +78,7 @@ final class MessageSenderTests: MessagingTestBase {
         XCTAssertEqual(1, arrangement.messageDependencyResolver.waitForDependenciesToResolveFor_Invocations.count)
     }
 
-    func testThatBeforeSendingMessage_thenWaitForQuickSyncToFinish() async throws {
+    func testThatBeforeSendingMessage_thenWaitForDecryptionOfEventsToFinish() async throws {
         // given
         let message = GenericMessageEntity(
             message: GenericMessage(content: Text(content: "Hello World")),
@@ -88,7 +88,7 @@ final class MessageSenderTests: MessagingTestBase {
         )
 
         let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
-            .withQuickSyncObserverCompleting()
+            .withIncrementalSyncObserverCompleting()
             .withMessageDependencyResolverReturning(result: .success(()))
             .withApiVersionResolving(to: nil)
             .arrange()
@@ -97,7 +97,7 @@ final class MessageSenderTests: MessagingTestBase {
         try? await messageSender.sendMessage(message: message)
 
         // then
-        XCTAssertEqual(1, arrangement.quickSyncObserver.waitForQuickSyncToFinish_Invocations.count)
+        XCTAssertEqual(1, arrangement.incrementalSyncObserver.waitUntilCanSendMessage_Invocations.count)
     }
 
     func testThatWhenApiVersionIsNotResolved_thenFailWithUnresolvedApiVersion() async throws {
@@ -110,7 +110,7 @@ final class MessageSenderTests: MessagingTestBase {
         )
 
         let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
-            .withQuickSyncObserverCompleting()
+            .withIncrementalSyncObserverCompleting()
             .withMessageDependencyResolverReturning(result: .success(()))
             .withApiVersionResolving(to: nil)
             .arrange()
@@ -140,7 +140,7 @@ final class MessageSenderTests: MessagingTestBase {
 
         let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
             .withProteusConfigured()
-            .withQuickSyncObserverCompleting()
+            .withIncrementalSyncObserverCompleting()
             .withApiVersionResolving(to: .v0)
             .withBroadcastProteusMessage(returning: .success((messageSendingStatus, response)))
             .arrange()
@@ -158,7 +158,7 @@ final class MessageSenderTests: MessagingTestBase {
 
         let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
             .withProteusConfigured()
-            .withQuickSyncObserverCompleting()
+            .withIncrementalSyncObserverCompleting()
             .withApiVersionResolving(to: .v0)
             .withBroadcastProteusMessageFailing(
                 with: NetworkError.missingClients(
@@ -186,7 +186,7 @@ final class MessageSenderTests: MessagingTestBase {
 
         let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
             .withProteusConfigured()
-            .withQuickSyncObserverCompleting()
+            .withIncrementalSyncObserverCompleting()
             .withApiVersionResolving(to: .v0)
             .withBroadcastProteusMessageFailing(with: NetworkError.errorDecodingResponse(response))
             .withEstablishSessions(returning: .success(()))
@@ -222,7 +222,7 @@ final class MessageSenderTests: MessagingTestBase {
 
         let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
             .withProteusConfigured()
-            .withQuickSyncObserverCompleting()
+            .withIncrementalSyncObserverCompleting()
             .withMessageDependencyResolverReturning(result: .success(()))
             .withApiVersionResolving(to: .v0)
             .withSendProteusMessage(returning: .success((messageSendingStatus, response)))
@@ -246,7 +246,7 @@ final class MessageSenderTests: MessagingTestBase {
 
         let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
             .withProteusConfigured()
-            .withQuickSyncObserverCompleting()
+            .withIncrementalSyncObserverCompleting()
             .withMessageDependencyResolverReturning(result: .success(()))
             .withApiVersionResolving(to: .v0)
             .withSendProteusMessageFailing(
@@ -280,7 +280,7 @@ final class MessageSenderTests: MessagingTestBase {
 
         let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
             .withProteusConfigured()
-            .withQuickSyncObserverCompleting()
+            .withIncrementalSyncObserverCompleting()
             .withMessageDependencyResolverReturning(result: .success(()))
             .withApiVersionResolving(to: .v0)
             .withSendProteusMessageFailing(with: NetworkError.errorDecodingResponse(response))
@@ -310,7 +310,7 @@ final class MessageSenderTests: MessagingTestBase {
 
         let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
             .withProteusConfigured()
-            .withQuickSyncObserverCompleting()
+            .withIncrementalSyncObserverCompleting()
             .withMessageDependencyResolverReturning(result: .success(()))
             .withApiVersionResolving(to: .v0)
             // simulates a potential infinite loop when sending proteus message keeps failing
@@ -337,7 +337,7 @@ final class MessageSenderTests: MessagingTestBase {
 
         let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
             .withProteusConfigured()
-            .withQuickSyncObserverCompleting()
+            .withIncrementalSyncObserverCompleting()
             .withMessageDependencyResolverReturning(result: .success(()))
             .withApiVersionResolving(to: .v0)
             // simulates a potential infinite loop when sending proteus message keeps failing
@@ -364,7 +364,7 @@ final class MessageSenderTests: MessagingTestBase {
 
         let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
             .withProteusConfigured()
-            .withQuickSyncObserverCompleting()
+            .withIncrementalSyncObserverCompleting()
             .withMessageDependencyResolverReturning(result: .success(()))
             .withApiVersionResolving(to: .v0)
             .withSendProteusMessageFailing(with: networkError)
@@ -400,7 +400,7 @@ final class MessageSenderTests: MessagingTestBase {
 
         let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
             .withProteusConfigured()
-            .withQuickSyncObserverCompleting()
+            .withIncrementalSyncObserverCompleting()
             .withProteusConfigured()
             .withMessageDependencyResolverReturning(result: .success(()))
             .withApiVersionResolving(to: .v0)
@@ -440,7 +440,7 @@ final class MessageSenderTests: MessagingTestBase {
 
         let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
             .withProteusConfigured()
-            .withQuickSyncObserverCompleting()
+            .withIncrementalSyncObserverCompleting()
             .withMessageDependencyResolverReturning(result: .success(()))
             .withApiVersionResolving(to: .v0)
             .withSendProteusMessageFailing(with: networkError)
@@ -478,7 +478,7 @@ final class MessageSenderTests: MessagingTestBase {
         )
 
         let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
-            .withQuickSyncObserverCompleting()
+            .withIncrementalSyncObserverCompleting()
             .withMessageDependencyResolverReturning(result: .success(()))
             .withApiVersionResolving(to: .v5)
             .withMLServiceConfigured()
@@ -516,7 +516,7 @@ final class MessageSenderTests: MessagingTestBase {
         )
 
         let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
-            .withQuickSyncObserverCompleting()
+            .withIncrementalSyncObserverCompleting()
             .withMessageDependencyResolverReturning(result: .success(()))
             .withApiVersionResolving(to: .v5)
             .withMLServiceConfigured()
@@ -550,7 +550,40 @@ final class MessageSenderTests: MessagingTestBase {
         )
 
         let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
-            .withQuickSyncObserverCompleting()
+            .withIncrementalSyncObserverCompleting()
+            .withMessageDependencyResolverReturning(result: .success(()))
+            .withApiVersionResolving(to: .v5)
+            .withMLServiceConfigured()
+            .withSendMlsMessage(returning: .failure(networkError))
+            .arrange()
+        arrangement.mlsService.commitPendingProposalsIn_MockMethod = { _ in }
+        arrangement.mlsService.encryptMessageFor_MockMethod = { message, _ in
+            message + [000]
+        }
+
+        // then
+        await assertItThrows(error: networkError) {
+            try await messageSender.sendMessage(message: message)
+        }
+    }
+
+    func testThatWhenSendingMlsMessageFailsWithMLSError_thenThrowError() async throws {
+        // given
+        await syncMOC.performGrouped {
+            self.groupConversation.mlsGroupID = Arrangement.Scaffolding.groupID
+            self.groupConversation.messageProtocol = .mls
+        }
+        let response = ZMTransportResponse(payload: nil, httpStatus: 403, transportSessionError: nil, apiVersion: 0)
+        let networkError = SendMLSMessageFailure.mlsMissingSenderClient(message: "test")
+        let message = GenericMessageEntity(
+            message: GenericMessage(content: Text(content: "Hello World")),
+            context: syncMOC,
+            conversation: groupConversation,
+            completionHandler: nil
+        )
+
+        let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
+            .withIncrementalSyncObserverCompleting()
             .withMessageDependencyResolverReturning(result: .success(()))
             .withApiVersionResolving(to: .v5)
             .withMLServiceConfigured()
@@ -581,7 +614,7 @@ final class MessageSenderTests: MessagingTestBase {
         )
 
         let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
-            .withQuickSyncObserverCompleting()
+            .withIncrementalSyncObserverCompleting()
             .withMessageDependencyResolverReturning(result: .success(()))
             .withApiVersionResolving(to: .v5)
             .arrange()
@@ -605,7 +638,7 @@ final class MessageSenderTests: MessagingTestBase {
         )
 
         let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
-            .withQuickSyncObserverCompleting()
+            .withIncrementalSyncObserverCompleting()
             .withMessageDependencyResolverReturning(result: .success(()))
             .withApiVersionResolving(to: .v5)
             .withMLServiceConfigured()
@@ -672,10 +705,9 @@ final class MessageSenderTests: MessagingTestBase {
         let apiProvider = MockAPIProviderInterface()
         let messageApi = MockMessageAPI()
         let processor = MockPrekeyPayloadProcessorInterface()
-        let clientRegistrationDelegate = MockClientRegistrationStatus()
         let sessionEstablisher = MockSessionEstablisherInterface()
         let messageDependencyResolver = MockMessageDependencyResolverInterface()
-        let quickSyncObserver = MockQuickSyncObserverInterface()
+        let incrementalSyncObserver = MockIncrementalSyncObserverProtocol()
         let mlsService = MockMLSServiceInterface()
         let proteusService = MockProteusServiceInterface()
         let coreDataStack: CoreDataStack
@@ -691,8 +723,8 @@ final class MessageSenderTests: MessagingTestBase {
             return self
         }
 
-        func withQuickSyncObserverCompleting() -> Arrangement {
-            quickSyncObserver.waitForQuickSyncToFinish_MockMethod = {}
+        func withIncrementalSyncObserverCompleting() -> Arrangement {
+            incrementalSyncObserver.waitUntilCanSendMessage_MockMethod = {}
             return self
         }
 
@@ -764,7 +796,7 @@ final class MessageSenderTests: MessagingTestBase {
 
         func withBroadcastProteusMessage(returning result: Result<
             (Payload.MessageSendingStatus, ZMTransportResponse),
-            NetworkError
+            Error
         >) -> Arrangement {
 
             switch result {
@@ -778,7 +810,7 @@ final class MessageSenderTests: MessagingTestBase {
 
         func withSendProteusMessage(returning result: Result<
             (Payload.MessageSendingStatus, ZMTransportResponse),
-            NetworkError
+            Error
         >) -> Arrangement {
 
             switch result {
@@ -791,8 +823,7 @@ final class MessageSenderTests: MessagingTestBase {
         }
 
         func withSendMlsMessage(returning result: Result<
-            (Payload.MLSMessageSendingStatus, ZMTransportResponse),
-            NetworkError
+            (Payload.MLSMessageSendingStatus, ZMTransportResponse), Error
         >) -> Arrangement {
 
             switch result {
@@ -809,11 +840,10 @@ final class MessageSenderTests: MessagingTestBase {
                 self,
                 MessageSender(
                     apiProvider: apiProvider,
-                    clientRegistrationDelegate: clientRegistrationDelegate,
                     sessionEstablisher: sessionEstablisher,
                     messageDependencyResolver: messageDependencyResolver,
-                    quickSyncObserver: quickSyncObserver,
-                    context: coreDataStack.syncContext
+                    context: coreDataStack.syncContext,
+                    incrementalSyncObserver: incrementalSyncObserver
                 )
             )
         }

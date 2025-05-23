@@ -19,12 +19,14 @@
 import UIKit
 import WireDataModel
 
-final class ConversationStartedSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
+final class ConversationStartedSystemMessageCell<
+    CellDescription: ConversationMessageCellDescription
+>: ConversationIconBasedCell<CellDescription>, ConversationMessageCell {
 
     struct Configuration {
         let title: NSAttributedString?
         let message: NSAttributedString
-        let selectedUsers: [UserType]
+        var selectedUsers: [UserType]
         let icon: UIImage?
     }
 
@@ -54,11 +56,7 @@ final class ConversationStartedSystemMessageCell: ConversationIconBasedCell, Con
         accessibilityLabel = object.title?.string
     }
 
-}
-
-// MARK: - UITextViewDelegate
-
-extension ConversationStartedSystemMessageCell {
+    // MARK: - UITextViewDelegate
 
     override func textView(
         _ textView: UITextView,

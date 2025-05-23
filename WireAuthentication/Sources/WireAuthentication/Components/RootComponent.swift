@@ -22,51 +22,93 @@ import WireAPI
 import WireReusableUIComponents
 internal import WireAuthenticationUI
 import WireAuthenticationAPI
+internal import WireAuthenticationLogic
 
 class RootComponent: BootstrapComponent {
 
-    public let bridge: WireAuthenticationBridge
-    public let defaultBackendEnvironment: BackendEnvironment
-    public let defaultAPIVersion: APIVersion
+    public let backendInfo: BackendInfo
+    public let preferredAPIVersion: APIVersion?
+    public let productionVersions: Set<APIVersion>
     public let minTLSVersion: TLSVersion
-    public let accountsURL: URL
+    public let howToChangeEmailURL: URL
+    public let howToDeleteAccountURL: URL
     public let passwordValidator: any PasswordValidator
+    public let ssoCallbackURLScheme: String
+    public let appStoreURL: URL
+    public let existsAnotherAccount: Bool
 
-    init(
-        bridge: WireAuthenticationBridge,
-        defaultBackendEnvironment: BackendEnvironment,
-        defaultAPIVersion: APIVersion,
-        minTLSVersion: TLSVersion,
-        accountsURL: URL,
-        passwordValidator: any PasswordValidator
-    ) {
-        self.bridge = bridge
-        self.defaultBackendEnvironment = defaultBackendEnvironment
-        self.defaultAPIVersion = defaultAPIVersion
-        self.minTLSVersion = minTLSVersion
-        self.accountsURL = accountsURL
-        self.passwordValidator = passwordValidator
+    @MainActor public var bridge: WireAuthenticationBridge {
+        shared {
+            WireAuthenticationBridge()
+        }
     }
 
     @MainActor public var router: any Router {
-        rootViewModel
+        viewModel
     }
 
-    @MainActor private var rootViewModel: RootViewModel {
-        shared { RootViewModel() }
-    }
-
-    @MainActor var rootView: some View {
-        RootView(
-            viewModel: rootViewModel,
-            builder: determineAuthMethodComponent
-        )
+    init(
+        backendInfo: BackendInfo,
+        preferredAPIVersion: APIVersion?,
+        minTLSVersion: TLSVersion,
+        howToChangeEmailURL: URL,
+        howToDeleteAccountURL: URL,
+        passwordValidator: any PasswordValidator,
+        ssoCallbackURLScheme: String,
+        appStoreURL: URL,
+        existsAnotherAccount: Bool
+    ) {
+        self.backendInfo = backendInfo
+        self.preferredAPIVersion = preferredAPIVersion
+        self.productionVersions = APIVersion.productionVersions
+        self.minTLSVersion = minTLSVersion
+        self.howToChangeEmailURL = howToChangeEmailURL
+        self.howToDeleteAccountURL = howToDeleteAccountURL
+        self.passwordValidator = passwordValidator
+        self.ssoCallbackURLScheme = ssoCallbackURLScheme
+        self.appStoreURL = appStoreURL
+        self.existsAnotherAccount = existsAnotherAccount
     }
 
     // MARK: - Children
 
-    var determineAuthMethodComponent: DetermineAuthMethodComponent {
-        DetermineAuthMethodComponent(parent: self)
+    func determineAuthMethodComponent(backendInfo: BackendInfo) -> DetermineAuthMethodComponent {
+        let networkStack = NetworkStack(
+            backendInfo: backendInfo,
+            minTLSVersion: minTLSVersion,
+            preferredAPIVersion: preferredAPIVersion
+        )
+
+        return DetermineAuthMethodComponent(
+            parent: self,
+            networkStack: networkStack
+        )
+    }
+
+}
+
+extension RootComponent: RootViewModel.Factory {
+
+    // MARK: - Factory
+
+    @MainActor var viewModel: RootViewModel {
+        shared {
+            RootViewModel(
+                factory: self,
+                bridge: bridge,
+                backendInfo: backendInfo
+            )
+        }
+    }
+
+    func determineAuthMethodFactory(backendInfo: BackendInfo) -> any DetermineAuthMethodFactory {
+        determineAuthMethodComponent(backendInfo: backendInfo)
+    }
+
+    // MARK: - Use cases
+
+    func openAppStoreUseCase() -> any OpenAppStoreUseCaseProtocol {
+        OpenAppStoreUseCase(url: appStoreURL)
     }
 
 }

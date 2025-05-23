@@ -19,6 +19,7 @@
 import WireDataModel
 import WireDataModelSupport
 import WireTestingPackage
+import WireUpdateEventCoding
 import XCTest
 @testable import WireAPI
 @testable import WireDomain
@@ -30,25 +31,33 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
     private var mockUserDefaults: UserDefaults!
     private var stack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
+    private var modelHelper: ModelHelper!
 
-    private var context: NSManagedObjectContext {
+    private var eventContext: NSManagedObjectContext {
         stack.eventContext
     }
 
+    private var syncContext: NSManagedObjectContext {
+        stack.syncContext
+    }
+
     override func setUp() async throws {
+        modelHelper = ModelHelper()
         coreDataStackHelper = CoreDataStackHelper()
         stack = try await coreDataStackHelper.createStack()
         mockUserDefaults = UserDefaults(
             suiteName: Scaffolding.defaultsTestSuiteName
         )
         sut = UpdateEventsLocalStore(
-            context: context,
+            eventContext: eventContext,
+            syncContext: syncContext,
             userID: Scaffolding.selfUserID.uuid,
             sharedUserDefaults: mockUserDefaults
         )
     }
 
     override func tearDown() async throws {
+        modelHelper = nil
         coreDataStackHelper = CoreDataStackHelper()
         stack = nil
         sut = nil
@@ -62,23 +71,20 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
     // MARK: - Tests
 
     func testPersistEventEnvelope_It_Stores_Envelope_Locally() async throws {
-        // Given
-
-        let envelopeData = try JSONEncoder().encode(Scaffolding.envelope1)
-
         // When
 
         try await sut.persistEventEnvelope(
-            envelopeData,
+            Scaffolding.envelope1,
             index: 1
         )
 
         // Then
 
-        try await context.perform { [context] in
+        try await eventContext.perform { [eventContext] in
             let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
-            let storedEventEnvelope = try XCTUnwrap(context.fetch(request).first)
-            let decodedEnvelope = try JSONDecoder().decode(UpdateEventEnvelope.self, from: storedEventEnvelope.data)
+            let storedEventEnvelope = try XCTUnwrap(eventContext.fetch(request).first)
+            let coder = StorableUpdateEventCoder()
+            let decodedEnvelope = try coder.decode(storedEventEnvelope.data)
 
             XCTAssertEqual(decodedEnvelope.id, Scaffolding.envelope1.id)
             XCTAssertEqual(decodedEnvelope.events, Scaffolding.envelope1.events)
@@ -90,7 +96,7 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
 
         // When
 
-        let fetchedEnvelopes = try await sut.fetchStoredEventEnvelopePayloads(limit: 3)
+        let fetchedEnvelopes = try await sut.fetchStoredEventEnvelopes(limit: 3)
 
         // Then it returns no envelopes.
 
@@ -105,11 +111,11 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
 
         // When
 
-        let fetchedEnvelopes = try await sut.fetchStoredEventEnvelopePayloads(limit: 3)
+        let fetchedEnvelopes = try await sut.fetchStoredEventEnvelopes(limit: 3)
 
         // Then it returns the one and only envelope.
-
-        let fetchedEnvelope1 = try JSONDecoder().decode(UpdateEventEnvelope.self, from: fetchedEnvelopes[0])
+        try XCTAssertCount(fetchedEnvelopes, count: 1)
+        let fetchedEnvelope1 = fetchedEnvelopes[0]
 
         XCTAssertEqual(fetchedEnvelope1, Scaffolding.envelope3)
     }
@@ -127,26 +133,17 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
 
         // When
 
-        let fetchedEnvelopes = try await sut.fetchStoredEventEnvelopePayloads(limit: 3)
+        let fetchedEnvelopes = try await sut.fetchStoredEventEnvelopes(limit: 3)
 
         // Then the first 3 envelopes were returned.
+        try XCTAssertCount(fetchedEnvelopes, count: 3)
 
-        guard fetchedEnvelopes.count == 3 else {
-            XCTFail("expected 3 envelopes, got \(fetchedEnvelopes.count)")
-            return
-        }
-
-        let fetchedEnvelope1 = try JSONDecoder().decode(UpdateEventEnvelope.self, from: fetchedEnvelopes[0])
-        let fetchedEnvelope2 = try JSONDecoder().decode(UpdateEventEnvelope.self, from: fetchedEnvelopes[1])
-        let fetchedEnvelope3 = try JSONDecoder().decode(UpdateEventEnvelope.self, from: fetchedEnvelopes[2])
-
-        XCTAssertEqual(fetchedEnvelope1, Scaffolding.envelope3)
-        XCTAssertEqual(fetchedEnvelope2, Scaffolding.envelope4)
-        XCTAssertEqual(fetchedEnvelope3, Scaffolding.envelope1)
+        XCTAssertEqual(fetchedEnvelopes[0], Scaffolding.envelope3)
+        XCTAssertEqual(fetchedEnvelopes[1], Scaffolding.envelope4)
+        XCTAssertEqual(fetchedEnvelopes[2], Scaffolding.envelope1)
     }
 
-    func testDeleteNextPendingEvents_It_Deletes_All_Stored_Envelopes_If_Limit_Exceeds_Total_Number_Of_Envelopes(
-    ) async throws {
+    func testDeleteNextPendingEvents_It_Deletes_All_Stored_Envelopes_If_Limit_Exceeds_Total() async throws {
         // Given there are stored envelopes.
 
         try await insertStoredEventEnvelopes([
@@ -161,9 +158,9 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
 
         // Then all stored events were deleted.
 
-        try await context.perform { [context] in
+        try await eventContext.perform { [eventContext] in
             let request = StoredUpdateEventEnvelope.fetchRequest()
-            let result = try context.fetch(request)
+            let result = try eventContext.fetch(request)
             XCTAssertTrue(result.isEmpty)
         }
     }
@@ -183,18 +180,40 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
 
         // Then the first 2 envelopes were deleted.
 
-        try await context.perform { [context] in
+        try await eventContext.perform { [eventContext] in
             let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
-            let result = try context.fetch(request)
+            let result = try eventContext.fetch(request)
 
             XCTAssertEqual(result.count, 1)
 
             let envelope = try XCTUnwrap(result.first)
             XCTAssertEqual(envelope.sortIndex, 2)
 
-            let decoder = JSONDecoder()
-            let decodedEnvelope = try decoder.decode(UpdateEventEnvelope.self, from: envelope.data)
+            let coder = StorableUpdateEventCoder()
+            let decodedEnvelope = try coder.decode(envelope.data)
             XCTAssertEqual(decodedEnvelope, Scaffolding.envelope3)
+        }
+    }
+
+    func testDeleteEventEnvelope_It_Deletes_The_Stored_Envelope() async throws {
+        // Given there are stored envelopes.
+        try await insertStoredEventEnvelopes([
+            Scaffolding.envelope1,
+            Scaffolding.envelope2,
+            Scaffolding.envelope3
+        ])
+
+        // When it deletes the first one
+        try await sut.deleteEventEnvelope(atIndex: 0)
+
+        // Then the first envelope (index 0) was deleted and indices 1 and 2 remain.
+        try await eventContext.perform { [eventContext] in
+            let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
+            let result = try eventContext.fetch(request)
+            XCTAssertEqual(result.count, 2)
+
+            let indicesOfStoredEnvelopes = result.map(\.sortIndex)
+            XCTAssertEqual(indicesOfStoredEnvelopes, [1, 2])
         }
     }
 
@@ -213,17 +232,43 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
         XCTAssertEqual(UUID(uuidString: lastEventId), id)
     }
 
+    func testCalculateLastUnreadMessages_It_Disables_Flag_After_Calculation() async throws {
+        // Given
+
+        let conversation = try await syncContext.perform { [self] in
+            let conversation = modelHelper.createGroupConversation(in: syncContext)
+            try modelHelper.addTextMessages(
+                to: conversation,
+                sender: nil,
+                count: 1,
+                in: syncContext
+            )
+            conversation.needsToCalculateUnreadMessages = true
+
+            return conversation
+        }
+
+        // When
+
+        await sut.calculateLastUnreadMessages()
+
+        // Then
+        await syncContext.perform {
+            XCTAssertEqual(conversation.needsToCalculateUnreadMessages, false)
+        }
+    }
+
     private func insertStoredEventEnvelopes(_ envelopes: [UpdateEventEnvelope]) async throws {
-        try await context.perform { [context] in
-            let encoder = JSONEncoder()
+        try await eventContext.perform { [eventContext] in
+            let coder = StorableUpdateEventCoder()
 
             for (index, envelope) in envelopes.enumerated() {
-                let storedEventEnvelope = StoredUpdateEventEnvelope(context: context)
-                storedEventEnvelope.data = try encoder.encode(envelope)
+                let storedEventEnvelope = StoredUpdateEventEnvelope(context: eventContext)
+                storedEventEnvelope.data = try coder.encode(envelope)
                 storedEventEnvelope.sortIndex = Int64(index)
             }
 
-            try context.save()
+            try eventContext.save()
         }
     }
 

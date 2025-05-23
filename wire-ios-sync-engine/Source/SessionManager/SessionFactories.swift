@@ -19,6 +19,7 @@
 import avs
 import WireAPI
 import WireDataModel
+import WireDomain
 
 open class AuthenticatedSessionFactory {
 
@@ -59,31 +60,33 @@ open class AuthenticatedSessionFactory {
         coreDataStack: CoreDataStack,
         configuration: ZMUserSession.Configuration,
         sharedUserDefaults: UserDefaults,
-        isDeveloperModeEnabled: Bool
+        isDeveloperModeEnabled: Bool,
+        journal: Journal
     ) -> ZMUserSession? {
+        let wireAPIBackendEnvironment = BackendEnvironment(
+            url: environment.backendURL,
+            webSocketURL: environment.backendWSURL,
+            pinnedKeys: environment.trustData.map { trustData in
+                PinnedKey(
+                    key: trustData.certificateKey,
+                    hosts: trustData.hosts.map { host in
+                        switch host.rule {
+                        case .equals:
+                            .equals(host.value)
+                        case .endsWith:
+                            .endsWith(host.value)
+                        }
+                    }
+                )
+            },
+            proxySettings: proxySettings
+        )
 
-        let apiServiceFactory: APIServiceFactory = { [weak self, environment, minTLSVersion] clientID, userID in
+        let apiServiceFactory: APIServiceFactory = { [wireAPIBackendEnvironment, minTLSVersion] clientID, userID in
             let wireAssembly = WireAPI.Assembly(
                 userID: userID,
                 clientID: clientID,
-                backendEnvironment: BackendEnvironment(
-                    url: environment.backendURL,
-                    webSocketURL: environment.backendWSURL,
-                    pinnedKeys: environment.trustData.map { trustData in
-                        PinnedKey(
-                            key: trustData.certificateKey,
-                            hosts: trustData.hosts.map { host in
-                                switch host.rule {
-                                case .equals:
-                                    .equals(host.value)
-                                case .endsWith:
-                                    .endsWith(host.value)
-                                }
-                            }
-                        )
-                    },
-                    proxySettings: self?.proxySettings
-                ),
+                backendEnvironment: wireAPIBackendEnvironment,
                 minTLSVersion: WireAPI.TLSVersion.minVersionFrom(minTLSVersion),
                 cookieEncryptionKey: UserDefaults.cookiesKey()
             )
@@ -96,6 +99,11 @@ open class AuthenticatedSessionFactory {
                 authenticationManager: authenticationManager
             )
         }
+
+        let selfClientID = coreDataStack.syncContext.performAndWait {
+            ZMUser.selfUser(in: coreDataStack.syncContext).selfClient()?.remoteIdentifier
+        }
+
         let transportSession = ZMTransportSession(
             environment: environment,
             proxyUsername: proxyUsername,
@@ -105,16 +113,31 @@ open class AuthenticatedSessionFactory {
             initialAccessToken: nil,
             applicationGroupIdentifier: nil,
             applicationVersion: appVersion,
-            minTLSVersion: minTLSVersion
+            minTLSVersion: minTLSVersion,
+            selfClientID: selfClientID,
+            isSyncV2Enabled: journal[.isSyncV2Enabled]
+        )
+
+        let cryptoboxMigrationManager = CryptoboxMigrationManager()
+
+        let coreCryptoProvider = CoreCryptoProvider(
+            selfUserID: account.userIdentifier,
+            sharedContainerURL: coreDataStack.applicationContainer,
+            accountDirectory: coreDataStack.accountContainer,
+            syncContext: coreDataStack.syncContext,
+            cryptoboxMigrationManager: cryptoboxMigrationManager
         )
 
         var userSessionBuilder = ZMUserSessionBuilder()
         userSessionBuilder.withAllDependencies(
             apiServiceFactory: apiServiceFactory,
+            backendEnvironment: environment,
+            wireAPIBackendEnvironment: wireAPIBackendEnvironment,
             appVersion: appVersion,
             application: application,
             cryptoboxMigrationManager: CryptoboxMigrationManager(),
             coreDataStack: coreDataStack,
+            coreCryptoProvider: coreCryptoProvider,
             configuration: configuration,
             contextStorage: LAContextStorage(),
             earService: nil,
@@ -125,7 +148,9 @@ open class AuthenticatedSessionFactory {
             recurringActionService: nil,
             sharedUserDefaults: sharedUserDefaults,
             transportSession: transportSession,
-            userId: account.userIdentifier
+            userId: account.userIdentifier,
+            minTLSVersion: minTLSVersion,
+            journal: journal
         )
 
         let userSession = userSessionBuilder.build()
@@ -152,7 +177,7 @@ open class AuthenticatedSessionFactory {
     private(set) var proxyUsername: String?
     private(set) var proxyPassword: String?
 
-    private var proxySettings: ProxySettings? {
+    private var proxySettings: WireAPI.ProxySettings? {
         guard let proxy = environment.proxy else { return nil }
 
         if proxy.needsAuthentication {

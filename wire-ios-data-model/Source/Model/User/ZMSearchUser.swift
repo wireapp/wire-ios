@@ -100,6 +100,9 @@ public class ZMSearchUser: NSObject, UserType {
     public var teamIdentifier: UUID?
     @objc public var user: ZMUser?
     public private(set) var hasDownloadedFullUserProfile: Bool = false
+    public var objectId: Any {
+        user?.objectId ?? remoteIdentifier!
+    }
 
     fileprivate weak var contextProvider: ContextProvider?
     private let searchUsersCache: SearchUsersCache?
@@ -388,8 +391,12 @@ public class ZMSearchUser: NSObject, UserType {
         user?.canModifyNotificationSettings(in: conversation) == true
     }
 
-    public func canModifyAccessControlSettings(in conversation: ConversationLike) -> Bool {
-        user?.canModifyAccessControlSettings(in: conversation) == true
+    public func canModifyGuestsAccessControlSettings(in conversation: ConversationLike) -> Bool {
+        user?.canModifyGuestsAccessControlSettings(in: conversation) == true
+    }
+
+    public func canModifyChannelAccessLevelSettings(in conversation: ConversationLike) -> Bool {
+        user?.canModifyChannelAccessLevelSettings(in: conversation) == true
     }
 
     public func canLeave(_ conversation: ZMConversation) -> Bool {

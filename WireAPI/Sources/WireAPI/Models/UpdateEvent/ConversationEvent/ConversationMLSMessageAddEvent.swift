@@ -20,9 +20,9 @@ import Foundation
 
 /// An event where an mls message was received in a conversation.
 
-public struct ConversationMLSMessageAddEvent: Equatable, Codable, Sendable {
+public struct ConversationMLSMessageAddEvent: Equatable, Sendable {
 
-    public struct DecryptedMessage: Equatable, Codable, Sendable {
+    public struct DecryptedMessage: Equatable, Sendable {
 
         public let message: String
 
@@ -65,5 +65,21 @@ public struct ConversationMLSMessageAddEvent: Equatable, Codable, Sendable {
     /// along with the related sender client ID for each message.
 
     public var decryptedMessages: [DecryptedMessage] = []
+
+    public init(
+        conversationID: ConversationID,
+        senderID: UserID,
+        subconversation: String?,
+        message: String,
+        timestamp: Date?,
+        decryptedMessages: [DecryptedMessage]
+    ) {
+        self.conversationID = conversationID
+        self.senderID = senderID
+        self.subconversation = subconversation
+        self.message = message
+        self.timestamp = timestamp
+        self.decryptedMessages = decryptedMessages
+    }
 
 }

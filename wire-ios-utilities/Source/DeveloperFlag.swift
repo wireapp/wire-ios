@@ -22,18 +22,25 @@ public enum DeveloperFlag: String, CaseIterable {
 
     public static var storage = UserDefaults.standard
 
+    case createLegacyBackups
     case showCreateMLSGroupToggle
     case proteusViaCoreCrypto
     case forceDatabaseLoadingFailure
     case ignoreIncomingEvents
+    case skipMLSMessagesDecryption
     case debugDuplicateObjects
     case decryptAndStoreEventsSleep
     case forceCRLExpiryAfterOneMinute
-    case newInitialSync
     case useWireAuthentication
+    case wireCells
+    case asyncStreamNotifications
+    case multibackend
 
     public var description: String {
         switch self {
+        case .createLegacyBackups:
+            "Don't use the cross-platform library when creating backups."
+
         case .showCreateMLSGroupToggle:
             "Turn on to show the MLS toggle when creating a new group."
 
@@ -46,6 +53,9 @@ public enum DeveloperFlag: String, CaseIterable {
         case .ignoreIncomingEvents:
             "Turn on to ignore incoming update events"
 
+        case .skipMLSMessagesDecryption:
+            "Turn on to skip MLS message decryption"
+
         case .debugDuplicateObjects:
             "Turn on to have actions to insert duplicate users, conversations, teams"
 
@@ -55,11 +65,17 @@ public enum DeveloperFlag: String, CaseIterable {
         case .forceCRLExpiryAfterOneMinute:
             "Turn on to force CRLs to expire after 1 minute"
 
-        case .newInitialSync:
-            "Use the new and improved 'Initial Sync™' (formerly slow sync)"
-
         case .useWireAuthentication:
             "Use the new WireAuthentication feature module"
+
+        case .wireCells:
+            "Use the wire cells feature"
+
+        case .asyncStreamNotifications:
+            "Turn on to enable new sync with consumable notifications"
+
+        case .multibackend:
+            "Turn on to be able to log in with accounts from multiple backends"
         }
     }
 
@@ -86,14 +102,18 @@ public enum DeveloperFlag: String, CaseIterable {
         }
     }
 
-    var bundleKey: String? {
+    private var bundleKey: String? {
         switch self {
+        case .createLegacyBackups:
+            "CreateLegacyBackupsEnabled"
         case .proteusViaCoreCrypto:
             "ProteusByCoreCryptoEnabled"
         case .forceDatabaseLoadingFailure:
             "ForceDatabaseLoadingFailure"
         case .ignoreIncomingEvents:
             "IgnoreIncomingEventsEnabled"
+        case .useWireAuthentication:
+            "WireAuthenticationEnabled"
         default:
             nil
         }

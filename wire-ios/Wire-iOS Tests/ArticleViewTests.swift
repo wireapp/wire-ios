@@ -19,16 +19,19 @@
 import WireDataModel
 import WireLinkPreview
 import XCTest
+
 @testable import Wire
 
 // MARK: - MockConversationMessageCellDelegate
 
 final class MockConversationMessageCellDelegate: ConversationMessageCellDelegate {
 
-    func conversationMessageWantsToShowActionsController(
-        _ cell: UIView,
-        actionsController: Wire.MessageActionsViewController
-    ) {}
+    func conversationMessageCell(
+        _ contentView: any ConversationMessageCell,
+        present viewController: UIViewController
+    ) {
+        // no-op
+    }
 
     func conversationMessageWantsToOpenUserDetails(
         _ cell: UIView,
@@ -327,14 +330,14 @@ final class ArticleViewTests: XCTestCase {
     ) {
 
         verifyInAllPhoneWidths(
-            createSut: {
+            createSut: { _ in
                 self.sut = ArticleView(withImagePlaceholder: true)
                 self.sut.translatesAutoresizingMaskIntoConstraints = false
                 self.sut.configure(withTextMessageData: self.articleWithPicture(imageNamed: named), obfuscated: false)
                 XCTAssert(self.waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
 
                 return self.sut
-            } as () -> UIView,
+            } as (CGFloat) -> UIView,
             file: file,
             testName: testName,
             line: line

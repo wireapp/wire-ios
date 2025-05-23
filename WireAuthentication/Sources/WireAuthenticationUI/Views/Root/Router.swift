@@ -19,12 +19,28 @@
 import Combine
 import Foundation
 import SwiftUI
+import WireLogging
 
 @MainActor
-public protocol Router {
+package protocol Router {
 
     func popToRoot()
 
     func navigate<Destination: Hashable>(to destination: Destination)
+
+    func presentSheet(_ modalDestination: RootViewSheet)
+
+    func dismissSheet()
+
+    func presentAlert(_ alert: Alert)
+
+}
+
+package extension Router {
+
+    func presentAlert(for error: any Error) {
+        WireLogger.authentication.error("router received unhandled error: \(String(describing: error))")
+        presentAlert(.general(for: error))
+    }
 
 }

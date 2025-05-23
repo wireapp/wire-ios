@@ -205,9 +205,18 @@ extension URLActionRouter: PresentationDelegate {
                 decisionHandler: decisionHandler
             )
         case let .accessBackend(url):
-            // Switching backend is handled below, so pass false here.
-            decisionHandler(false)
-            switchBackend(configURL: url)
+            if let error = sessionManager?.canSwitchBackend() {
+                let localizedError = mapToLocalizedError(error)
+                presentLocalizedErrorAlert(localizedError)
+            }
+
+            if DeveloperFlag.useWireAuthentication.isOn {
+                decisionHandler(SecurityFlags.customBackend.isEnabled)
+            } else {
+                // Switching backend is handled below, so pass false here.
+                decisionHandler(false)
+                switchBackend(configURL: url)
+            }
         default:
             decisionHandler(true)
         }
@@ -230,8 +239,8 @@ extension URLActionRouter: PresentationDelegate {
         }
     }
 
-    func showConnectionRequest(userId: UUID) {
-        navigate(to: .connectionRequest(userId))
+    func showConnectionRequest(qualifiedID: QualifiedID) {
+        navigate(to: .connectionRequest(qualifiedID))
     }
 
     func showUserProfile(user: UserType) {

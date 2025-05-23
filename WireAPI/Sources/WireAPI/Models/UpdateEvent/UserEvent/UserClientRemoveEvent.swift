@@ -20,10 +20,16 @@ import Foundation
 
 /// An event where an existing self user client was removed.
 
-public struct UserClientRemoveEvent: Equatable, Codable, Sendable {
+public struct UserClientRemoveEvent: Equatable, Sendable {
 
     /// The id of the removed client.
 
     public let clientID: SelfUserClient.ID
+
+    public init(
+        clientID: SelfUserClient.ID
+    ) {
+        self.clientID = clientID
+    }
 
 }

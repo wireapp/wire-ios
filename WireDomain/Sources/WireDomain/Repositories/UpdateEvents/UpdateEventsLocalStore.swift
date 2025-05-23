@@ -16,9 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireAPI
 import WireDataModel
 import WireFoundation
 import WireLogging
+import WireUpdateEventCoding
 
 final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
 
@@ -35,17 +37,21 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
 
     // MARK: - Properties
 
-    private let context: NSManagedObjectContext
+    private let eventContext: NSManagedObjectContext
+    private let syncContext: NSManagedObjectContext
     private let storage: PrivateUserDefaults<Key>
+    private let updateEventCoder = StorableUpdateEventCoder()
 
     // MARK: - Object lifecycle
 
     init(
-        context: NSManagedObjectContext,
+        eventContext: NSManagedObjectContext,
+        syncContext: NSManagedObjectContext,
         userID: UUID,
         sharedUserDefaults: UserDefaults
     ) {
-        self.context = context
+        self.eventContext = eventContext
+        self.syncContext = syncContext
         self.storage = PrivateUserDefaults(
             userID: userID,
             storage: sharedUserDefaults
@@ -65,36 +71,38 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
     }
 
     public func indexOfLastEventEnvelope() async throws -> Int64 {
-        try await context.perform { [context] in
+        try await eventContext.perform { [eventContext] in
             let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: false)
             request.fetchBatchSize = 1
-            let lastEnvelope = try context.fetch(request).first
+            let lastEnvelope = try eventContext.fetch(request).first
             return lastEnvelope?.sortIndex ?? 0
         }
     }
 
     public func persistEventEnvelope(
-        _ data: Data,
+        _ eventEnvelope: UpdateEventEnvelope,
         index: Int64
     ) async throws {
-        try await context.perform { [context] in
-            let storedEventEnvelope = StoredUpdateEventEnvelope(context: context)
-            storedEventEnvelope.data = data
+        try await eventContext.perform { [eventContext, updateEventCoder] in
+            let storedEventEnvelope = StoredUpdateEventEnvelope(context: eventContext)
+            storedEventEnvelope.data = try updateEventCoder.encode(eventEnvelope)
             storedEventEnvelope.sortIndex = index
-            try context.save()
+            try eventContext.save()
         }
     }
 
-    public func fetchStoredEventEnvelopePayloads(
+    public func fetchStoredEventEnvelopes(
         limit: UInt
-    ) async throws -> [Data] {
-        try await context.perform { [context] in
+    ) async throws -> [UpdateEventEnvelope] {
+        try await eventContext.perform { [eventContext, updateEventCoder] in
             do {
                 let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
                 request.fetchLimit = Int(limit)
                 request.returnsObjectsAsFaults = false
-                let storedEventEnvelopes = try context.fetch(request)
-                return storedEventEnvelopes.map(\.data)
+                let storedEventEnvelopes = try eventContext.fetch(request)
+                return try storedEventEnvelopes.map {
+                    try updateEventCoder.decode($0.data)
+                }
             } catch {
                 throw Error.failedToFetchStoredEvents(error)
             }
@@ -104,17 +112,35 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
     public func deleteNextPendingEvents(
         limit: UInt
     ) async throws {
-        try await context.perform { [context] in
+        try await eventContext.perform { [eventContext] in
             do {
                 let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
                 request.fetchLimit = Int(limit)
-                let storedEventEnvelopes = try context.fetch(request)
+                let storedEventEnvelopes = try eventContext.fetch(request)
                 WireLogger.sync.debug("deleting \(storedEventEnvelopes.count) stored envelopes")
-                storedEventEnvelopes.forEach(context.delete)
-                try context.save()
+                storedEventEnvelopes.forEach(eventContext.delete)
+                try eventContext.save()
             } catch {
                 throw Error.failedToDeleteStoredEvents(error)
             }
+        }
+    }
+
+    public func deleteEventEnvelope(
+        atIndex index: Int64
+    ) async throws {
+        try await eventContext.perform { [eventContext] in
+            let request = StoredUpdateEventEnvelope.fetchRequest(sortIndex: index)
+            guard let envelope = try eventContext.fetch(request).first else { return }
+            WireLogger.sync.debug("deleting stored envelope at index \(index)")
+            eventContext.delete(envelope)
+            try eventContext.save()
+        }
+    }
+
+    func calculateLastUnreadMessages() async {
+        await syncContext.perform { [syncContext] in
+            ZMConversation.calculateLastUnreadMessages(in: syncContext)
         }
     }
 

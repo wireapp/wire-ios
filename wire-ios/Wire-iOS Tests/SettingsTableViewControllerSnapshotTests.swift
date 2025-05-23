@@ -95,7 +95,8 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         let group = settingsCellDescriptorFactory.settingsGroup(
             isPublicDomain: true,
             userSession: userSession,
-            useTypeIntrinsicSizeTableView: true
+            useTypeIntrinsicSizeTableView: true,
+            mainCoordinator: MockMainCoordinator()
         )
         try verify(group: group)
     }
@@ -166,7 +167,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
 
         snapshotHelper.verify(
             matching: sut,
-            size: CGSize(width: CGSize.iPhoneSize.iPhone4_7.width, height: sut.tableView.contentSize.height)
+            size: CGSize(width: CGSize.iPhoneSize.iPhone4_7.width, height: 1400)
         )
     }
 
@@ -233,7 +234,10 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
     // MARK: - advanced
 
     func testForAdvancedGroup() throws {
-        let group = settingsCellDescriptorFactory.advancedGroup(userSession: userSession)
+        let group = settingsCellDescriptorFactory.advancedGroup(
+            userSession: userSession,
+            mainCoordinator: MockMainCoordinator()
+        )
         try verify(group: group)
     }
 

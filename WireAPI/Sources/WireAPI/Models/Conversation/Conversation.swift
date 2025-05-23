@@ -96,6 +96,10 @@ public struct Conversation: Equatable, Codable, Sendable {
 
     public var lastEventTime: Date?
 
+    public var groupType: ConversationGroupType?
+
+    public var addPermission: ChannelPermission?
+
     enum CodingKeys: String, CodingKey {
 
         case id
@@ -117,7 +121,55 @@ public struct Conversation: Equatable, Codable, Sendable {
         case legacyAccessRole = "access_role"
         case lastEvent = "last_event"
         case lastEventTime = "last_event_time"
+        case groupType = "group_conv_type"
+        case addPermission = "add_permission"
 
+    }
+
+    public init(
+        id: UUID? = nil,
+        qualifiedID: ConversationID? = nil,
+        teamID: UUID? = nil,
+        type: ConversationType? = nil,
+        messageProtocol: ConversationMessageProtocol? = nil,
+        mlsGroupID: String? = nil,
+        cipherSuite: MLSCipherSuite? = nil,
+        epoch: UInt? = nil,
+        epochTimestamp: Date? = nil,
+        creator: UUID? = nil,
+        members: Conversation.Members? = nil,
+        name: String? = nil,
+        messageTimer: TimeInterval? = nil,
+        readReceiptMode: Int? = nil,
+        access: Set<ConversationAccessMode>? = nil,
+        accessRoles: Set<ConversationAccessRole>? = nil,
+        legacyAccessRole: ConversationAccessRoleLegacy? = nil,
+        lastEvent: String? = nil,
+        lastEventTime: Date? = nil,
+        groupType: ConversationGroupType? = nil,
+        addPermission: ChannelPermission? = nil
+    ) {
+        self.id = id
+        self.qualifiedID = qualifiedID
+        self.teamID = teamID
+        self.type = type
+        self.messageProtocol = messageProtocol
+        self.mlsGroupID = mlsGroupID
+        self.cipherSuite = cipherSuite
+        self.epoch = epoch
+        self.epochTimestamp = epochTimestamp
+        self.creator = creator
+        self.members = members
+        self.name = name
+        self.messageTimer = messageTimer
+        self.readReceiptMode = readReceiptMode
+        self.access = access
+        self.accessRoles = accessRoles
+        self.legacyAccessRole = legacyAccessRole
+        self.lastEvent = lastEvent
+        self.lastEventTime = lastEventTime
+        self.groupType = groupType
+        self.addPermission = addPermission
     }
 
 }

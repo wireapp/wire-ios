@@ -4,14 +4,14 @@ import PackageDescription
 
 let package = Package(
     name: "WireAPI",
-    platforms: [.iOS(.v16), .macOS(.v12)],
+    platforms: [.iOS("16.4"), .macOS(.v12)],
     products: [
         .library(name: "WireAPI", targets: ["WireAPI"]),
         .library(name: "WireAPISupport", targets: ["WireAPISupport"])
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
-        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.17.4"),
+        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", exact: "1.18.3"),
         .package(path: "../WirePlugins"),
         .package(path: "../WireLogging"),
         .package(name: "WireFoundation", path: "../WireFoundation")
@@ -44,9 +44,10 @@ let package = Package(
             resources: [
                 .process("APIs/AuthenticationAPI/Resources"),
                 .process("APIs/AccountsAPI/Resources"),
-                .process("APIs/BackendInfoAPI/Resources"),
+                .process("APIs/BackendMetadataAPI/Resources"),
                 .process("APIs/ConnectionsAPI/Resources"),
                 .process("APIs/ConversationsAPI/Resources"),
+                .process("APIs/MLSAPI/Resources"),
                 .process("APIs/TeamsAPI/Resources"),
                 .process("APIs/UpdateEventsAPI/Resources"),
                 .process("APIs/UsersAPI/Resources"),

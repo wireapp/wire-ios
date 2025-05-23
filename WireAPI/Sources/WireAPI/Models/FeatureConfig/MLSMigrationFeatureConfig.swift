@@ -34,4 +34,14 @@ public struct MLSMigrationFeatureConfig: Equatable, Codable, Sendable {
 
     public let finaliseRegardlessAfter: Date?
 
+    public init(
+        status: FeatureConfigStatus,
+        startTime: Date? = nil,
+        finaliseRegardlessAfter: Date? = nil
+    ) {
+        self.status = status
+        self.startTime = startTime
+        self.finaliseRegardlessAfter = finaliseRegardlessAfter
+    }
+
 }

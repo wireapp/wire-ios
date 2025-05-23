@@ -22,16 +22,11 @@ import WireDesign
 
 final class ConversationDomainsStoppedFederatingSystemMessageCellDescription: ConversationMessageCellDescription {
 
-    typealias View = ConversationSystemMessageCell
+    typealias View = ConversationSystemMessageCell<ConversationDomainsStoppedFederatingSystemMessageCellDescription>
     typealias System = L10n.Localizable.Content.System
 
     let configuration: View.Configuration
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 0
-
-    let isFullWidth: Bool = true
-    let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = nil

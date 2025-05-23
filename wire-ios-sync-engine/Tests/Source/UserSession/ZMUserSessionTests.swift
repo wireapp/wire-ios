@@ -18,10 +18,10 @@
 
 import Foundation
 import WireDataModelSupport
-import WireSyncEngine
 import WireTesting
 import WireTestingPackage
 
+@testable import WireSyncEngine
 @testable import WireSyncEngineSupport
 
 final class ZMUserSessionTests: ZMUserSessionTestsBase {
@@ -109,6 +109,9 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
             self.createSelfClient()
         }
 
+        mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
+        mockCoreCryptoProvider.registerEpochObserver_MockMethod = { _ in }
+
         // WHEN
         syncMOC.performGroupedBlock { [self] in
             sut.didRegisterSelfUserClient(userClient)
@@ -122,13 +125,11 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         }
     }
 
-    func testItSlowSyncsAfterRegisteringMLSClient() async throws {
+    // TODO: [WPB-16224] Re-enable
+    func testItSlowSyncsAfterRegisteringClient() async throws {
         // GIVEN
         let userClient = await syncMOC.perform {
-            let userClient = self.createSelfClient()
-            userClient.mlsPublicKeys = .init(ed25519: "ed25519")
-            userClient.needsToUploadMLSPublicKeys = false
-            return userClient
+            self.createSelfClient()
         }
 
         // WHEN
@@ -311,7 +312,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         )
 
         syncMOC.performAndWait {
-            sut.didFinishQuickSync()
+            sut.didFinishIncrementalSync(isRecovering: false)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 1))
 
@@ -323,7 +324,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
     func testThatWeSetUserSessionToSynchronizingWhenSyncIsStarted() {
         // WHEN
         syncMOC.performAndWait {
-            sut.didStartQuickSync()
+            sut.didStartIncrementalSync()
         }
 
         // THEN
@@ -383,8 +384,13 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
 
     func testThatItDoesNotNotifiesObserversWhenTheNetworkStatusWasAlreadyOnline() {
         // GIVEN
+        // Update the network state to online
+        sut.isPerformingSync = false
+        sut.updateNetworkState()
+
         let stateRecorder = NetworkStateRecorder()
         stateRecorder.observe(in: sut.managedObjectContext.notificationContext)
+        XCTAssertEqual(stateRecorder.stateChanges.count, 0)
 
         // WHEN
         sut.didReceiveData()
@@ -487,7 +493,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
             syncMOC.saveOrRollback()
 
             // WHEN
-            sut.didFinishQuickSync()
+            sut.didFinishIncrementalSync(isRecovering: false)
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -517,6 +523,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         mockMLSService.commitPendingProposalsIfNeeded_MockMethod = {}
         mockMLSService.uploadKeyPackagesIfNeeded_MockMethod = {}
         mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod = {}
+        mockCoreCryptoProvider.initialiseMLSWithBasicCredentialsMlsClientID_MockMethod = { _ in }
 
         syncMOC.performAndWait {
             XCTAssertTrue(selfUserClient.mlsPublicKeys.isEmpty)
@@ -535,15 +542,14 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
             let mls = Feature.MLS(status: .enabled, config: .init())
             self.sut.featureRepository.storeMLS(mls)
 
-            sut.didFinishQuickSync()
+            sut.didFinishIncrementalSync(isRecovering: false)
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         syncMOC.performAndWait {
-            XCTAssertFalse(selfUserClient.mlsPublicKeys.isEmpty)
-
+            XCTAssertEqual(mockCoreCryptoProvider.initialiseMLSWithBasicCredentialsMlsClientID_Invocations.count, 1)
             XCTAssertTrue(BackendInfo.isMLSEnabled)
             XCTAssertTrue(sut.featureRepository.fetchMLS().isEnabled)
         }
@@ -555,7 +561,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
             ZMUser.selfUser(in: self.syncMOC).supportedProtocols = .init()
 
             // WHEN
-            sut.didFinishQuickSync()
+            sut.didFinishIncrementalSync(isRecovering: false)
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -564,5 +570,26 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         let supportedProtocols = syncMOC.performAndWait { ZMUser.selfUser(in: self.syncMOC).supportedProtocols }
 
         XCTAssertTrue(supportedProtocols.contains(.proteus))
+    }
+
+    func test_OnSelfClientInvalidated() async throws {
+        // GIVEN
+        let applicationStatusDirectory = sut.applicationStatusDirectory
+        let clientRegistrationStatus = applicationStatusDirectory.clientRegistrationStatus
+        let clientUpdateStatus = applicationStatusDirectory.clientUpdateStatus
+        clientRegistrationStatus.emailCredentials = .credentials(
+            email: "test@wire.com",
+            password: "7@9xIZ"
+        )
+
+        clientUpdateStatus.needsToVerifySelfClient = true
+
+        // WHEN
+        await sut.onSelfClientInvalidated()
+
+        // THEN
+        XCTAssertEqual(clientRegistrationStatus.emailCredentials, nil)
+        XCTAssertEqual(clientRegistrationStatus.cookieProvider.isAuthenticated, false)
+        XCTAssertEqual(clientUpdateStatus.needsToVerifySelfClient, false)
     }
 }

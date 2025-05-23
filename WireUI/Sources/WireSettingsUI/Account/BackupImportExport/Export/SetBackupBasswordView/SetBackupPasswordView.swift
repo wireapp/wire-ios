@@ -24,6 +24,8 @@ struct SetBackupPasswordView: View {
 
     @StateObject var viewModel: SetBackupPasswordViewModel
 
+    var focusPasswordFieldOnAppear = true
+
     @Environment(\.wireAccentColor) private var wireAccentColor
     @Environment(\.wireAccentColorMapping) private var wireAccentColorMapping
 
@@ -50,12 +52,8 @@ struct SetBackupPasswordView: View {
     @ViewBuilder private var setBackupPasswordView: some View {
         VStack {
 
-            if #available(iOS 16.4, *) {
-                ScrollView(content: scrollViewContent)
-                    .scrollBounceBehavior(.basedOnSize)
-            } else {
-                ScrollView(content: scrollViewContent)
-            }
+            ScrollView(content: scrollViewContent)
+                .scrollBounceBehavior(.basedOnSize)
 
             Spacer()
 
@@ -98,7 +96,7 @@ struct SetBackupPasswordView: View {
             password: $viewModel.password,
             placeholder: Strings.ExportBackup.SetBackupPassword.placeholder,
             placeholderColor: passwordFieldPlaceholderColor,
-            focusOnAppear: true
+            focusOnAppear: focusPasswordFieldOnAppear
         )
         .tint(passwordFieldBorderColor)
     }

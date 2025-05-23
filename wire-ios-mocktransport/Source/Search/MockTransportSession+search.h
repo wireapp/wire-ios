@@ -22,7 +22,5 @@
 @interface MockTransportSession (Search)
 
 - (ZMTransportResponse *)processSearchRequest:(ZMTransportRequest *)request;
-- (ZMTransportResponse *)processOnboardingRequest:(ZMTransportRequest *)request
-
 
 @end

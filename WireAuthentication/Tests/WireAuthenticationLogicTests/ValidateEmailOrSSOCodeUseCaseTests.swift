@@ -33,7 +33,6 @@ final class ValidateEmailOrSSOCodeUseCaseTests: XCTestCase {
         sut = nil
     }
 
-    @MainActor
     func testInvoke_withValidEmail() throws {
         // given, when
         let result = try sut.invoke(input: "foo@example.com")
@@ -42,7 +41,14 @@ final class ValidateEmailOrSSOCodeUseCaseTests: XCTestCase {
         XCTAssertEqual(result, .email(email: "foo@example.com", domain: "example.com"))
     }
 
-    @MainActor
+    func testInvoke_withValidEmail_containingWhitespace() throws {
+        // given, when
+        let result = try sut.invoke(input: " foo@example.com\n\r")
+
+        // then
+        XCTAssertEqual(result, .email(email: "foo@example.com", domain: "example.com"))
+    }
+
     func testInvoke_withValidSSOCode() throws {
         // given, when
         let result = try sut.invoke(input: "wire-648e79cb-88b9-42a8-8ea7-dd93e97f4da1")
@@ -51,7 +57,14 @@ final class ValidateEmailOrSSOCodeUseCaseTests: XCTestCase {
         XCTAssertEqual(result, .ssoCode(UUID(uuidString: "648e79cb-88b9-42a8-8ea7-dd93e97f4da1")!))
     }
 
-    @MainActor
+    func testInvoke_withValidSSOCode_containingWhitespace() throws {
+        // given, when
+        let result = try sut.invoke(input: "\nwire-648e79cb-88b9-42a8-8ea7-dd93e97f4da1\t")
+
+        // then
+        XCTAssertEqual(result, .ssoCode(UUID(uuidString: "648e79cb-88b9-42a8-8ea7-dd93e97f4da1")!))
+    }
+
     func testInvoke_withInvalidInput() {
         // given, when, then
         XCTAssertThrowsError(try sut.invoke(input: "invalid-input")) { error in

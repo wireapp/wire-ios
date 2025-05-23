@@ -21,6 +21,7 @@ import WireAPI
 import WireAuthentication
 import WireCommonComponents
 import WireDataModel
+import WireSyncEngine
 
 /// A type of view controller that can be managed by an authentication coordinator.
 
@@ -75,34 +76,28 @@ final class AuthenticationInterfaceBuilder {
         switch step {
         case .wireAuthenticationModule:
             let assembly = WireAuthenticationAssembly()
-            let rootView = assembly.assemble(
-                defaultBackendEnvironment: BackendEnvironment(
-                    url: environment.backendURL,
-                    webSocketURL: environment.backendWSURL,
-                    pinnedKeys: environment.trustData.map { trustData in
-                        PinnedKey(
-                            key: trustData.certificateKey,
-                            hosts: trustData.hosts.map { host in
-                                switch host.rule {
-                                case .equals:
-                                    .equals(host.value)
-                                case .endsWith:
-                                    .endsWith(host.value)
-                                }
-                            }
-                        )
-                    },
-                    proxySettings: nil
-                ),
-                minTLSVersion: TLSVersion.minVersionFrom(SecurityFlags.minTLSVersion.stringValue),
-                defaultAPIVersion: .v8,
-                accountsURL: environment.accountsURL,
-                passwordValidator: AuthenticationPasswordValidator()
-            ) {
-                authenticationCoordinator?.eventResponderChain.handleEvent(ofType: .wireAuthenticationModuleComplete)
+            let numberOfAccounts = SessionManager.shared?.accountManager.accounts.count ?? 0
+            let preferredAPIVersion = BackendInfo.preferredAPIVersion.flatMap {
+                WireAPI.APIVersion(rawValue: UInt($0.rawValue))
             }
-
-            return AuthenticationHostingController(rootView: rootView)
+            let (rootView, bridge) = assembly.assemble(
+                environmentType: BackendEnvironmentType(environment.environmentType.value),
+                backendConfig: BackendConfig(environment),
+                minTLSVersion: TLSVersion.minVersionFrom(SecurityFlags.minTLSVersion.stringValue),
+                preferredAPIVersion: Bundle.developerModeEnabled ? preferredAPIVersion : nil,
+                accountsURL: environment.accountsURL,
+                howToChangeEmailURL: WireURLs.shared.howToChangeEmail,
+                howToDeleteAccountURL: WireURLs.shared.howToDeleteAccount,
+                passwordValidator: AuthenticationPasswordValidator(),
+                ssoCallbackURLScheme: Bundle.ssoURLScheme ?? "wire-sso",
+                appStoreURL: WireURLs.shared.appOnItunes,
+                existsAnotherAccount: numberOfAccounts > 0
+            )
+            return AuthenticationHostingController(
+                rootView: rootView,
+                bridge: bridge,
+                authenticationCoordinator: authenticationCoordinator
+            )
 
         case .landingScreen:
             let landingViewController = LandingViewController(backendEnvironmentProvider: backendEnvironmentProvider)
@@ -138,8 +133,16 @@ final class AuthenticationInterfaceBuilder {
         case let .provideCredentials(prefill):
             return makeCredentialsViewController(for: .login(prefill))
 
-        case .createCredentials:
-            return makeCredentialsViewController(for: .registration)
+        case let .createCredentials(user):
+            let prefilledCredentials = AuthenticationPrefilledCredentials(
+                credentials: LoginCredentials(
+                    emailAddress: user.unverifiedEmail,
+                    hasPassword: false,
+                    usesCompanyLogin: false
+                ),
+                isExpired: false
+            )
+            return makeCredentialsViewController(for: .registration(prefilledCredentials))
 
         case .clientManagement:
             let manageClientsInvitation = ClientUnregisterInvitationStepDescription()

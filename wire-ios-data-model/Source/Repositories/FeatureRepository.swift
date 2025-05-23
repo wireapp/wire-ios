@@ -43,7 +43,8 @@ public protocol FeatureRepositoryInterface {
     func storeE2EI(_ e2ei: Feature.E2EI)
     func fetchMLSMigration() -> Feature.MLSMigration
     func storeMLSMigration(_ mlsMigration: Feature.MLSMigration)
-
+    func fetchChannels() -> Feature.Channels
+    func storeChannels(_ channels: Feature.Channels)
 }
 
 /// This class facilitates storage and retrieval of feature configs to and from
@@ -425,6 +426,40 @@ public class FeatureRepository: FeatureRepositoryInterface {
         }
     }
 
+    // MARK: - Channels
+
+    public func fetchChannels() -> Feature.Channels {
+        guard
+            let feature = Feature.fetch(name: .channels, context: context),
+            let featureConfig = feature.config
+        else {
+            return .init()
+        }
+
+        var config = Feature.Channels.Config()
+
+        do {
+            config = try decoder.decode(Feature.Channels.Config.self, from: featureConfig)
+        } catch {
+            logger.error("failed to decode Feature.Channels.Config: \(error)")
+        }
+
+        return .init(status: feature.status, config: config)
+    }
+
+    public func storeChannels(_ channels: Feature.Channels) {
+        do {
+            let config = try encoder.encode(channels.config)
+
+            Feature.updateOrCreate(havingName: .channels, in: context) {
+                $0.status = channels.status
+                $0.config = config
+            }
+        } catch {
+            logger.error("failed to encode Feature.Channels.Config: \(error)")
+        }
+    }
+
     // MARK: - Methods
 
     func createDefaultConfigsIfNeeded() {
@@ -459,6 +494,9 @@ public class FeatureRepository: FeatureRepositoryInterface {
 
             case .mlsMigration:
                 storeMLSMigration(.init())
+
+            case .channels:
+                storeChannels(.init())
             }
         }
     }

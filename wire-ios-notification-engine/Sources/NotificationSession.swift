@@ -168,6 +168,10 @@ public final class NotificationSession {
 
         let credentials = environment.proxy.flatMap { ProxyCredentials.retrieve(for: $0) }
 
+        let selfClientID = coreDataStack.syncContext.performAndWait {
+            ZMUser.selfUser(in: coreDataStack.syncContext).selfClient()?.remoteIdentifier
+        }
+
         let transportSession = ZMTransportSession(
             environment: environment,
             proxyUsername: credentials?.username,
@@ -177,7 +181,11 @@ public final class NotificationSession {
             initialAccessToken: nil,
             applicationGroupIdentifier: applicationGroupIdentifier,
             applicationVersion: "1.0.0",
-            minTLSVersion: minTLSVersion
+            minTLSVersion: minTLSVersion,
+            selfClientID: selfClientID,
+            // This flag only concerns the push channel which isn't relevant
+            // in the notification session.
+            isSyncV2Enabled: false
         )
 
         try self.init(
@@ -238,14 +246,9 @@ public final class NotificationSession {
             cryptoboxMigrationManager: cryptoboxMigrationManager,
             allowCreation: false
         )
-        let commitSender = CommitSender(
-            coreCryptoProvider: coreCryptoProvider,
-            notificationContext: coreDataStack.syncContext.notificationContext
-        )
         let featureRepository = FeatureRepository(context: coreDataStack.syncContext)
         let mlsActionExecutor = MLSActionExecutor(
             coreCryptoProvider: coreCryptoProvider,
-            commitSender: commitSender,
             featureRepository: featureRepository
         )
 
@@ -339,16 +342,21 @@ public final class NotificationSession {
     // MARK: - Methods
 
     public func processPushNotification(with payload: [AnyHashable: Any]) {
-        WireLogger.notifications.info("processing notification with payload: \(payload)")
+        WireLogger.notifications.info("processing notification with payload: \(payload)", attributes: .legacyNSE)
 
         coreDataStack.syncContext.performGroupedBlock {
             if self.applicationStatusDirectory.authenticationStatus.state == .unauthenticated {
-                WireLogger.notifications.error("Not displaying notification because app is not authenticated")
+                WireLogger.notifications.error(
+                    "Not displaying notification because app is not authenticated",
+                    attributes: .legacyNSE
+                )
                 self.delegate?.notificationSessionDidFailWithError(error: .accountNotAuthenticated)
                 return
             }
 
             let selfClient = ZMUser(context: self.coreDataStack.syncContext).selfClient()
+            if let clientID = selfClient?.safeRemoteIdentifier.safeForLoggingDescription {
+                WireLogger.authentication.setClientID(clientID)
             if let clientId = selfClient?.safeRemoteIdentifier.safeForLoggingDescription {
                 WireLogger.authentication.addTag(.selfClientId, value: clientId) // TODO: does it at the tag to the logger 
             }
@@ -363,7 +371,7 @@ public final class NotificationSession {
             return
         }
 
-        WireLogger.notifications.info("attempting to fetch events")
+        WireLogger.notifications.info("attempting to fetch events", attributes: .legacyNSE)
         applicationStatusDirectory.pushNotificationStatus.fetch(eventId: nonce) { result in
             switch result {
             case .success:
@@ -416,7 +424,7 @@ extension NotificationSession: PushNotificationStrategyDelegate {
     }
 
     private func processDecodedEvents(_ events: [ZMUpdateEvent]) {
-        WireLogger.notifications.info("processing \(events.count) decoded events...")
+        WireLogger.notifications.info("processing \(events.count) decoded events...", attributes: .legacyNSE)
 
         // Dictionary to filter notifications fetched in same batch with same messageOnce
         // i.e: textMessage and linkPreview
@@ -424,14 +432,18 @@ extension NotificationSession: PushNotificationStrategyDelegate {
 
         for event in events {
             if let callEventPayload = callEventPayloadForCallKit(from: event) {
-                WireLogger.calling.info("detected a call event", attributes: event.logAttributes)
+                WireLogger.calling.info("detected a call event", attributes: event.logAttributes, .legacyNSE)
                 // Only store the last call event.
                 callEvent = callEventPayload
             } else if let notification = notification(from: event, in: context) {
-                WireLogger.notifications.info("generated a notification from an event", attributes: event.logAttributes)
+                WireLogger.notifications.info(
+                    "generated a notification from an event",
+                    attributes: event.logAttributes,
+                    .legacyNSE
+                )
                 tempNotifications[notification.contentHashValue] = notification
             } else {
-                WireLogger.notifications.info("ignoring event", attributes: event.logAttributes)
+                WireLogger.notifications.info("ignoring event", attributes: event.logAttributes, .legacyNSE)
             }
         }
 
@@ -446,7 +458,10 @@ extension NotificationSession: PushNotificationStrategyDelegate {
         }
 
         guard let callerID = event.senderUUID else {
-            WireLogger.calling.error("should not handle call event: senderUUID missing from event")
+            WireLogger.calling.error(
+                "should not handle call event: senderUUID missing from event",
+                attributes: .legacyNSE
+            )
             return nil
         }
 
@@ -455,12 +470,15 @@ extension NotificationSession: PushNotificationStrategyDelegate {
             domain: event.senderDomain,
             in: context
         ) else {
-            WireLogger.calling.warn("should not handle call event: caller not in db")
+            WireLogger.calling.warn("should not handle call event: caller not in db", attributes: .legacyNSE)
             return nil
         }
 
         guard let conversationID = event.conversationUUID else {
-            WireLogger.calling.error("should not handle call event: conversationUUID missing from event")
+            WireLogger.calling.error(
+                "should not handle call event: conversationUUID missing from event",
+                attributes: .legacyNSE
+            )
             return nil
         }
 
@@ -469,37 +487,43 @@ extension NotificationSession: PushNotificationStrategyDelegate {
             domain: event.conversationDomain,
             in: context
         ) else {
-            WireLogger.calling.warn("should not handle call event: conversation not in db")
+            WireLogger.calling.warn("should not handle call event: conversation not in db", attributes: .legacyNSE)
             return nil
         }
 
         guard !conversation.needsToBeUpdatedFromBackend else {
-            WireLogger.calling.warn("should not handle call event: conversation not synced")
+            WireLogger.calling.warn("should not handle call event: conversation not synced", attributes: .legacyNSE)
             return nil
         }
 
         if conversation.mutedMessageTypesIncludingAvailability != .none {
-            WireLogger.calling.info("should not handle call event: conversation is muted or user is not available")
+            WireLogger.calling.info(
+                "should not handle call event: conversation is muted or user is not available",
+                attributes: .legacyNSE
+            )
             return nil
         }
 
         if conversation.isForcedReadOnly {
-            WireLogger.calling.info("should not handle call event: conversation is forced readonly")
+            WireLogger.calling.info(
+                "should not handle call event: conversation is forced readonly",
+                attributes: .legacyNSE
+            )
             return nil
         }
 
         guard VoIPPushHelper.isAVSReady else {
-            WireLogger.calling.warn("should not handle call event: AVS is not ready")
+            WireLogger.calling.warn("should not handle call event: AVS is not ready", attributes: .legacyNSE)
             return nil
         }
 
         guard VoIPPushHelper.isCallKitAvailable else {
-            WireLogger.calling.info("should not handle call event: CallKit is not available")
+            WireLogger.calling.info("should not handle call event: CallKit is not available", attributes: .legacyNSE)
             return nil
         }
 
         guard VoIPPushHelper.isUserSessionLoaded(accountID: accountIdentifier) else {
-            WireLogger.calling.warn("should not handle call event: user session is not loaded")
+            WireLogger.calling.warn("should not handle call event: user session is not loaded", attributes: .legacyNSE)
             return nil
         }
 
@@ -513,12 +537,12 @@ extension NotificationSession: PushNotificationStrategyDelegate {
            callerID.identifier == selfUser.remoteIdentifier,
            callerID.domain == selfUser.domain,
            callContent.isIncomingCall || callContent.isEndCall {
-            WireLogger.calling.info("should not handle call event: self call")
+            WireLogger.calling.info("should not handle call event: self call", attributes: .legacyNSE)
             return nil
         }
 
         if callContent.initiatesRinging, !wasCallHandleReported {
-            WireLogger.calling.info("should initiate ringing")
+            WireLogger.calling.info("should initiate ringing", attributes: .legacyNSE)
             return CallEventPayload(
                 accountID: accountIdentifier.uuidString,
                 conversationID: conversationID.uuidString,
@@ -527,7 +551,7 @@ extension NotificationSession: PushNotificationStrategyDelegate {
                 hasVideo: callContent.isVideo
             )
         } else if callContent.terminatesRinging, wasCallHandleReported {
-            WireLogger.calling.info("should terminate ringing")
+            WireLogger.calling.info("should terminate ringing", attributes: .legacyNSE)
             return CallEventPayload(
                 accountID: accountIdentifier.uuidString,
                 conversationID: conversationID.uuidString,
@@ -536,13 +560,13 @@ extension NotificationSession: PushNotificationStrategyDelegate {
                 hasVideo: callContent.isVideo
             )
         } else {
-            WireLogger.calling.info("should not handle call event: nothing to report")
+            WireLogger.calling.info("should not handle call event: nothing to report", attributes: .legacyNSE)
             return nil
         }
     }
 
     func pushNotificationStrategyDidFinishFetchingEvents(_ strategy: PushNotificationStrategy) {
-        WireLogger.notifications.info("did finish processing events")
+        WireLogger.notifications.info("did finish processing events", attributes: .legacyNSE)
         processCallEvent()
         processLocalNotifications()
     }
@@ -562,7 +586,7 @@ extension NotificationSession: PushNotificationStrategyDelegate {
         let notification: ZMLocalNotification?
 
         if localNotifications.count > 1 {
-            WireLogger.notifications.info("bundling \(localNotifications.count) notifications")
+            WireLogger.notifications.info("bundling \(localNotifications.count) notifications", attributes: .legacyNSE)
             notification = ZMLocalNotification.bundledMessages(count: localNotifications.count, in: context)
         } else {
             notification = localNotifications.first
@@ -585,7 +609,8 @@ extension NotificationSession {
         guard let conversationID = event.conversationUUID else {
             WireLogger.notifications.warn(
                 "failed to generate notification from event: missing conversation id",
-                attributes: event.logAttributes
+                attributes: event.logAttributes,
+                .legacyNSE
             )
             return nil
         }

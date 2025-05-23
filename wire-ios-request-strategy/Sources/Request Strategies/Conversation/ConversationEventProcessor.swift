@@ -20,7 +20,7 @@ import Foundation
 import WireDataModel
 import WireLogging
 
-public class ConversationEventProcessor: NSObject, ConversationEventProcessorProtocol, ZMEventAsyncConsumer {
+public class ConversationEventProcessor: NSObject, LegacyConversationEventProcessorProtocol, ZMEventAsyncConsumer {
 
     // MARK: - Properties
 
@@ -138,9 +138,22 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
         case .conversationProtocolUpdate:
             await processConversationProtocolChange(event)
 
+        case .conversationAddPermissionUpdate:
+
+            await processConversationAddPermissionUpdate(event: event)
+
         default:
             break
         }
+    }
+
+    private func processConversationAddPermissionUpdate(event: ZMUpdateEvent) async {
+        guard let payload = try? eventPayloadDecoder.decode(
+            Payload.ConversationEvent<Payload.UpdateConversationPermission>.self,
+            from: event.payload
+        ) else { return }
+
+        await processor.processPayload(payload, in: context)
     }
 
     private func processConversationCreate(_ event: ZMUpdateEvent) async {
@@ -163,7 +176,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
 
     private func processConversationMemberLeave(_ event: ZMUpdateEvent) async {
         guard let payload = try? eventPayloadDecoder.decode(
-            Payload.ConversationEvent<Payload.UpdateConverationMemberLeave>.self,
+            Payload.ConversationEvent<Payload.UpdateConversationMemberLeave>.self,
             from: event.payload
         ) else { return }
 
@@ -172,7 +185,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
 
     private func processConversationMemberJoin(_ event: ZMUpdateEvent) async {
         guard let payload = try? eventPayloadDecoder.decode(
-            Payload.ConversationEvent<Payload.UpdateConverationMemberJoin>.self,
+            Payload.ConversationEvent<Payload.UpdateConversationMemberJoin>.self,
             from: event.payload
         ) else { return }
 
@@ -307,7 +320,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
 
     // MARK: - Member Join
 
-    typealias MemberJoinPayload = Payload.ConversationEvent<Payload.UpdateConverationMemberJoin>
+    typealias MemberJoinPayload = Payload.ConversationEvent<Payload.UpdateConversationMemberJoin>
 
     func fetchOrCreateConversation(
         id: UUID?,

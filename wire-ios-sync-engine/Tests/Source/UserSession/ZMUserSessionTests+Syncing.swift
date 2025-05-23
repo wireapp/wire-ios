@@ -51,26 +51,22 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
     func startQuickSync() {
         sut.applicationStatusDirectory.syncStatus.currentSyncPhase = .done
         sut.applicationStatusDirectory.syncStatus.pushChannelDidOpen()
+        sut.didStartIncrementalSync()
     }
 
     func finishQuickSync() {
         syncMOC.performAndWait {
             sut.applicationStatusDirectory.syncStatus.finishCurrentSyncPhase(phase: .fetchingMissedEvents)
         }
+        sut.didFinishIncrementalSync(isRecovering: false)
     }
 
     func startSlowSync() {
-        syncMOC.performAndWait {
-            sut.applicationStatusDirectory.syncStatus.forceSlowSync()
-        }
+        sut.didStartInitialSync()
     }
 
     func finishSlowSync() {
-        syncMOC.performAndWait {
-            sut.applicationStatusDirectory.syncStatus.currentSyncPhase = .lastSlowSyncPhase
-            sut.applicationStatusDirectory.syncStatus.finishCurrentSyncPhase(phase: .lastSlowSyncPhase)
-
-        }
+        sut.didFinishInitialSync()
     }
 
     // MARK: Slow Sync
@@ -189,7 +185,7 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
         XCTAssertTrue(sut.isPerformingSync)
 
         // when
-        sut.processEvents()
+        sut.processLegacyEvents()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -206,7 +202,7 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
         networkStateRecorder.observe(in: sut.managedObjectContext.notificationContext)
 
         // when
-        sut.processEvents()
+        sut.processLegacyEvents()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then

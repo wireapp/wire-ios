@@ -506,4 +506,44 @@ extension ConversationTests {
             XCTAssertEqual(previusMessagesCount, conversation.allMessages.count)
         }
     }
+
+    // MARK: Test isChannel
+
+    func testIsChannel_whenConversationTypeNotGroup() throws {
+        // given a conversation which is not a group conversation and any group conversation type
+        let conversation = insertMockGroupConversation(userDefinedName: "ABC")
+        conversation.conversationType = .oneOnOne
+
+        let testCases: [ConversationGroupType] = [.none, .group, .channel]
+        for testCase in testCases {
+            conversation.groupType = testCase
+            try uiMOC.save()
+
+            // when
+            let isChannel = conversation.isChannel
+
+            // then it always returns false
+            XCTAssertFalse(isChannel)
+        }
+    }
+
+    func testIsChannel_whenConversationTypeIsGroup() throws {
+        // given a conversation which is not a group conversation and any group conversation type
+        let conversation = insertMockGroupConversation(userDefinedName: "ABC")
+        conversation.conversationType = .group
+
+        let testCases: [(groupType: ConversationGroupType, expected: Bool)] = [
+            (.none, false),
+            (.group, false),
+            (.channel, true)
+        ]
+        for testCase in testCases {
+            conversation.groupType = testCase.groupType
+            try uiMOC.save()
+
+            // when, then
+            XCTAssertEqual(conversation.isChannel, testCase.expected)
+        }
+    }
+
 }

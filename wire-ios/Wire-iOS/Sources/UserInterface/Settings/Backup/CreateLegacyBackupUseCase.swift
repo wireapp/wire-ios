@@ -17,9 +17,12 @@
 //
 
 import Foundation
-import WireDomainPkg
+import WireDomainPackage
+import WireFoundation
 import WireSettingsUI
 import WireSyncEngine
+
+// TODO: [WPB-14592] clean up everything around the legacy backup creation
 
 /// Use case for creating a backup file which can only used by iOS apps.
 struct CreateLegacyBackupUseCase: CreateBackupUseCaseProtocol {
@@ -37,7 +40,7 @@ struct CreateLegacyBackupUseCase: CreateBackupUseCaseProtocol {
 
                     let sessionManager = sessionManager()
 
-                    continuation.yield(.progress(0.5))
+                    continuation.yield(.progress(current: 1, total: 2))
 
                     let url = try await withCheckedThrowingContinuation { continuation in
                         sessionManager.backupActiveAccount(password: password) { result in

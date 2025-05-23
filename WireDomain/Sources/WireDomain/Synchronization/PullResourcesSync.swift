@@ -22,6 +22,7 @@ import WireLogging
 struct PullResourcesSync: PullResourcesSyncProtocol {
 
     private let pullSelfUserSync: any PullSelfUserSyncProtocol
+    private let pullSelfUserClientsSync: any PullSelfUserClientsSyncProtocol
     private let pullSelfUserSettingsSync: any PullSelfUserSettingsSyncProtocol
     private let pullSelfTeamSync: any PullSelfTeamSyncProtocol
     private let pullSelfTeamRolesSync: any PullSelfTeamRolesSyncProtocol
@@ -32,11 +33,13 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
     private let pullKnownUsersSync: any PullKnownUsersSyncProtocol
     private let pullConversationLabelsSync: any PullConversationLabelsSyncProtocol
     private let pullAllFeatureConfigsSync: any PullAllFeatureConfigsSyncProtocol
+    private let pullMLSStatusSync: any PullMLSStatusSyncProtocol
 
     private let logger = WireLogger(tag: "pull-resources")
 
     init(
         pullSelfUserSync: any PullSelfUserSyncProtocol,
+        pullSelfUserClientsSync: any PullSelfUserClientsSyncProtocol,
         pullSelfUserSettingsSync: any PullSelfUserSettingsSyncProtocol,
         pullSelfTeamSync: any PullSelfTeamSyncProtocol,
         pullSelfTeamRolesSync: any PullSelfTeamRolesSyncProtocol,
@@ -46,9 +49,11 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
         pullAllConversationsSync: any PullAllConversationsSyncProtocol,
         pullKnownUsersSync: any PullKnownUsersSyncProtocol,
         pullConversationLabelsSync: any PullConversationLabelsSyncProtocol,
-        pullAllFeatureConfigsSync: any PullAllFeatureConfigsSyncProtocol
+        pullAllFeatureConfigsSync: any PullAllFeatureConfigsSyncProtocol,
+        pullMLSStatusSync: any PullMLSStatusSyncProtocol
     ) {
         self.pullSelfUserSync = pullSelfUserSync
+        self.pullSelfUserClientsSync = pullSelfUserClientsSync
         self.pullSelfUserSettingsSync = pullSelfUserSettingsSync
         self.pullSelfTeamSync = pullSelfTeamSync
         self.pullSelfTeamRolesSync = pullSelfTeamRolesSync
@@ -59,11 +64,22 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
         self.pullKnownUsersSync = pullKnownUsersSync
         self.pullConversationLabelsSync = pullConversationLabelsSync
         self.pullAllFeatureConfigsSync = pullAllFeatureConfigsSync
+        self.pullMLSStatusSync = pullMLSStatusSync
     }
 
     func pull() async throws {
         try await logger.measureTime(label: "pull resources") {
+            try await pullUserConnections()
+            try await pullAllConversations()
+
+            // Pulling known users must happen after we've discovered
+            // user ids from user connections and conversations.
+            try await pullKnownUsers()
+
+            // Pulling self user must happen after we've pulled known users
+            // otherwise some self user values might be overwritten with nil values.
             let teamID = try await pullSelfUser()
+            try await pullSelfUserClients()
             try await pullSelfUserSettings()
 
             if let teamID {
@@ -73,15 +89,9 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
                 try await pullSelfLegalholdInfo(teamID: teamID)
             }
 
-            try await pullUserConnections()
-            try await pullAllConversations()
-
-            // Pulling known users must happen after we've discovered
-            // user ids from user connections and conversations.
-            try await pullKnownUsers()
-
             try await pullConversationLabels()
             try await pullFeatureConfigs()
+            try await pullMLSStatus()
         }
     }
 
@@ -91,6 +101,15 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
             return try await pullSelfUserSync.pull().teamID
         } catch {
             throw Failure(resourceName: "pull self user", reason: error)
+        }
+    }
+
+    private func pullSelfUserClients() async throws {
+        do {
+            logger.debug("pulling self user clients")
+            return try await pullSelfUserClientsSync.pull()
+        } catch {
+            throw Failure(resourceName: "pull self user clients", reason: error)
         }
     }
 
@@ -181,6 +200,15 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
             try await pullAllFeatureConfigsSync.pull()
         } catch {
             throw Failure(resourceName: "pull feature configs", reason: error)
+        }
+    }
+
+    private func pullMLSStatus() async throws {
+        do {
+            logger.debug("pulling MLS status")
+            try await pullMLSStatusSync.pull()
+        } catch {
+            throw Failure(resourceName: "pull MLS status", reason: error)
         }
     }
 

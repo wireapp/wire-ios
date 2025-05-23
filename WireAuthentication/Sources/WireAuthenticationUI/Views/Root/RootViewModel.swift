@@ -22,18 +22,77 @@ import SwiftUI
 import WireAuthenticationAPI
 
 @MainActor
-public final class RootViewModel: ObservableObject, Router {
+package final class RootViewModel: ObservableObject, Router {
+
+    package typealias Factory =
+        OpenAppStoreUseCaseFactory &
+        RootFactory
+
+    // MARK: - View state
 
     @Published var path = NavigationPath()
+    @Published var modalDestination: RootViewSheet?
+    @Published var alert: Alert?
 
-    public init() {}
+    // MARK: - Dependencies
 
-    public func popToRoot() {
+    package let factory: any Factory
+    private var cancellable: AnyCancellable?
+    private var lastModalDestination: RootViewSheet?
+
+    // MARK: - Life cycle
+
+    package init(
+        factory: any Factory,
+        bridge: WireAuthenticationBridge,
+        backendInfo: BackendInfo
+    ) {
+        self.factory = factory
+        self.modalDestination = .authFlow(backendInfo: backendInfo)
+        self.cancellable = bridge.inboundEvents.sink { [weak self] event in
+            switch event {
+            case .didRewindToThisView:
+                self?.restoreSheet()
+            default:
+                break
+            }
+        }
+    }
+
+    // MARK: - Actions
+
+    package func popToRoot() {
         path.removeLast(path.count)
     }
 
-    public func navigate(to destination: some Hashable) {
+    package func navigate(to destination: some Hashable) {
         path.append(destination)
+    }
+
+    package func presentSheet(_ modalDestination: RootViewSheet) {
+        self.modalDestination = modalDestination
+    }
+
+    public func presentAlert(_ alert: Alert) {
+        self.alert = alert
+    }
+
+    public func dismissSheet() {
+        lastModalDestination = modalDestination
+        modalDestination = nil
+    }
+
+    func goToAppStore() {
+        factory.openAppStoreUseCase().invoke()
+    }
+
+    // MARK: - Private
+
+    private func restoreSheet() {
+        if let lastModalDestination, modalDestination == nil {
+            modalDestination = lastModalDestination
+            self.lastModalDestination = nil
+        }
     }
 
 }

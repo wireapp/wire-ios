@@ -23,6 +23,7 @@ struct EnterPasswordView: View {
 
     @Binding var password: String
     @Binding var passwordIsWrong: Bool
+    var focusPasswordFieldOnAppear = true
 
     let continueAction: (_ password: String) -> Void
     let cancelAction: () -> Void
@@ -52,12 +53,8 @@ struct EnterPasswordView: View {
     @ViewBuilder private var enterPasswordView: some View {
         VStack {
 
-            if #available(iOS 16.4, *) {
-                ScrollView(content: scrollViewContent)
-                    .scrollBounceBehavior(.basedOnSize)
-            } else {
-                ScrollView(content: scrollViewContent)
-            }
+            ScrollView(content: scrollViewContent)
+                .scrollBounceBehavior(.basedOnSize)
 
             Spacer()
 
@@ -89,7 +86,7 @@ struct EnterPasswordView: View {
                 password: $password,
                 placeholder: Strings.EnterPassword.TextField.placeholder,
                 placeholderColor: passwordFieldPlaceholderColor,
-                focusOnAppear: true
+                focusOnAppear: focusPasswordFieldOnAppear
             )
             .tint(passwordFieldBorderColor)
             .padding(.bottom, 8)

@@ -17,13 +17,15 @@
 //
 
 import UIKit
+import WireDataModel
+import WireFoundation
 import WireLogging
 import WireSyncEngine
 
 enum NavigationDestination {
     case conversation(ZMConversation, ZMConversationMessage?)
     case userProfile(UserType)
-    case connectionRequest(UUID)
+    case connectionRequest(WireDataModel.QualifiedID)
     case conversationList
 }
 
@@ -90,7 +92,7 @@ final class AuthenticatedRouter {
             notificationCenter: notificationCenter,
             analyticsEventTracker: { [weak userSession] in userSession?.analyticsEventTracker },
             logger: WireLogger.analytics,
-            currentDateProvider: SystemDateProvider()
+            currentDateProvider: .system
         )
 
         self.featureChangeObserverToken = notificationCenter.addObserver(
@@ -170,8 +172,8 @@ extension AuthenticatedRouter: AuthenticatedRouterProtocol {
         switch destination {
         case let .conversation(converation, message):
             _zClientViewController?.showConversation(converation, at: message)
-        case let .connectionRequest(userId):
-            _zClientViewController?.showConnectionRequest(userId: userId)
+        case let .connectionRequest(qualifiedID):
+            _zClientViewController?.showConnectionRequest(qualifiedID: qualifiedID)
         case .conversationList:
             _zClientViewController?.showConversationList()
         case let .userProfile(user):

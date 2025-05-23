@@ -64,7 +64,8 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
                     } catch {
                         /// skip conversation migration for this user
                         WireLogger.conversation.error(
-                            "resolve 1-1 conversation with userID \(userID) failed!"
+                            "resolve 1-1 conversation with userID \(userID) failed: \(error)",
+                            attributes: [.senderUserId: userID.safeForLoggingDescription]
                         )
                     }
                 }
@@ -227,6 +228,9 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
         userID: WireDataModel.QualifiedID
     ) async {
         await context.perform {
+            guard !(mlsConversation.migratedToMLS && user.oneOnOneConversation == mlsConversation) else {
+                return
+            }
 
             // Note on proteus, it's possible to have 2 duplicate 1-1 conversations, so we need to fetch both
             // conversations here.
@@ -245,7 +249,7 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
             for proteusConversation in allProteusConversations {
                 // Since ZMMessages only have a single conversation connected,
                 // forming this union also removes the relationship to the proteus conversation.
-                mlsConversation.mutableMessages.union(proteusConversation.allMessages)
+                mlsConversation.migrateMessages(from: proteusConversation)
             }
 
             if !allProteusConversations.isEmpty {
@@ -260,6 +264,7 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
 
             /// Switch active conversation
             user.oneOnOneConversation = mlsConversation
+            mlsConversation.migratedToMLS = true
         }
     }
 
@@ -301,7 +306,10 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
         for user: ZMUser
     ) async {
         await context.perform {
-            WireLogger.conversation.debug("Should resolve to Proteus 1-1 conversation")
+            WireLogger.conversation.debug(
+                "Should resolve to Proteus 1-1 conversation",
+                attributes: [.senderUserId: user.remoteIdentifier.safeForLoggingDescription]
+            )
 
             guard let conversation = user.oneOnOneConversation else {
                 return WireLogger.conversation.warn(
@@ -351,8 +359,8 @@ public struct OneOnOneResolver: OneOnOneResolverProtocol {
     ) async -> ConversationMessageProtocol? {
         await context.perform {
             let selfUserProtocols = selfUser.supportedProtocols
-            let otherUserProtocols = otherUser.supportedProtocols.isEmpty ? [.proteus] : otherUser
-                .supportedProtocols /// default to Proteus if empty.
+            let otherUserProtocols = otherUser.supportedProtocols.isEmpty ?
+                [.proteus] : otherUser.supportedProtocols /// default to Proteus if empty.
 
             let commonProtocols = selfUserProtocols.intersection(otherUserProtocols)
 

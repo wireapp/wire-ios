@@ -175,10 +175,34 @@ final class DeveloperToolsViewModel: ObservableObject {
                     .text(TextItem(
                         title: "MLS public key",
                         value: selfClient?.mlsPublicKeys.allKeys.first?.uppercased() ?? "None"
+                    )),
+                    .text(TextItem(title: "1-1 MLS Conversations", value: oneOnOneMLSConversationsCount())),
+                    .text(TextItem(
+                        title: "Async Stream Enabled",
+                        value: selfClient?.asyncStreamCapable == true ? "Yes" : "No"
                     ))
                 ]
             ))
         }
+    }
+
+    private func oneOnOneMLSConversationsCount() -> String {
+        guard let context = ZMUserSession.shared()?.managedObjectContext else {
+            return "-"
+        }
+        let allOneOnOneRequest = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
+        allOneOnOneRequest.predicate = NSPredicate(format: "%K != nil", #keyPath(ZMUser.oneOnOneConversation))
+        let allOneOnOneCount = context.countOrAssert(request: allOneOnOneRequest)
+
+        let mlsOneOnOneRequest = ZMConversation.fetchRequest()
+        mlsOneOnOneRequest.predicate = NSPredicate(
+            format: "%K = YES && %K != nil",
+            #keyPath(ZMConversation.migratedToMLS),
+            #keyPath(ZMConversation.oneOnOneUser)
+        )
+        let mlsOneOnOneCount = context.countOrAssert(request: mlsOneOnOneRequest)
+
+        return "\(mlsOneOnOneCount)/\(allOneOnOneCount)"
     }
 
     private func setupPushToken() {
@@ -186,7 +210,6 @@ final class DeveloperToolsViewModel: ObservableObject {
             sections.append(Section(
                 header: "Push token",
                 items: [
-                    .text(TextItem(title: "Token type", value: String(describing: pushToken.tokenType))),
                     .text(TextItem(title: "Token data", value: pushToken.deviceTokenString)),
                     .button(ButtonItem(title: "Check registered tokens", action: { [weak self] in
                         self?.checkRegisteredTokens()
@@ -237,7 +260,8 @@ final class DeveloperToolsViewModel: ObservableObject {
                 .destination(DestinationItem(title: "Debug actions", makeView: { [weak self] in
                     AnyView(DeveloperDebugActionsView(viewModel: DeveloperDebugActionsViewModel(
                         selfClient: self?
-                            .selfClient
+                            .selfClient,
+                        onDismiss: { self?.onDismiss {} }
                     )))
                 })),
                 .destination(DestinationItem(title: "Configure feature flags", makeView: {
@@ -432,26 +456,12 @@ final class DeveloperToolsViewModel: ObservableObject {
 
 }
 
-extension PushToken.TokenType: CustomStringConvertible {
-
-    public var description: String {
-        switch self {
-        case .standard:
-            "Standard"
-
-        case .voip:
-            "VoIP"
-        }
-    }
-
-}
-
 extension PushToken: CustomDebugStringConvertible {
 
     public var debugDescription: String {
         """
         token: \(deviceTokenString),
-        type: \(tokenType),
+        type: standard,
         transport: \(transportType)
         app: \(appIdentifier)
         """

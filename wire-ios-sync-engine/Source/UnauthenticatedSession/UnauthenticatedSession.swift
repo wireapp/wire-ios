@@ -107,6 +107,16 @@ public class UnauthenticatedSession: NSObject {
             authenticationStatus.notifyAuthenticationDidFail(error)
         }
     }
+
+    public func appendURLActionProcessors(
+        handleBackendSwitch: @escaping (URL) -> Void
+    ) {
+        urlActionProcessors.append(
+            AuthenticationModuleURLActionProcessor(
+                handleBackendSwitch: handleBackendSwitch
+            )
+        )
+    }
 }
 
 extension UnauthenticatedSession: UnauthenticatedSessionStatusDelegate {

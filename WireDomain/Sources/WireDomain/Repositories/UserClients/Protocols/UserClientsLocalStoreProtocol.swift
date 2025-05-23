@@ -46,6 +46,10 @@ public protocol UserClientsLocalStoreProtocol {
         id: String
     ) async
 
+    /// Invalides the self client locally
+
+    func invalidateSelfClient() async
+
     /// Updates the user client informations locally.
     ///
     /// - parameters:
@@ -119,4 +123,6 @@ public protocol UserClientsLocalStoreProtocol {
         forUser user: ZMUser,
         createIfNeeded: Bool
     ) async -> WireDataModel.UserClient?
+
+    func fetchSelfClientID() async -> UUID
 }

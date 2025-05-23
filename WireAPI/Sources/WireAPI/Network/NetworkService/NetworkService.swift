@@ -111,8 +111,10 @@ extension NetworkService: URLSessionWebSocketDelegate {
         didCloseWith closeCode: URLSessionWebSocketTask.CloseCode,
         reason: Data?
     ) {
-        webSocketsByTask[webSocketTask]?.close()
-        webSocketsByTask[webSocketTask] = nil
+        Task {
+            await webSocketsByTask[webSocketTask]?.close()
+            webSocketsByTask[webSocketTask] = nil
+        }
     }
 
 }

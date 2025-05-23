@@ -20,16 +20,19 @@ import UIKit
 import WireDataModel
 import WireDesign
 
-final class ConversationImageMessageCell: UIView,
-    ConversationMessageCell,
-    ContextMenuDelegate {
+final class ConversationImageMessageCell: UIView, ConversationMessageCell, ContextMenuDelegate {
 
-    struct Configuration {
-        let image: ZMImageMessageData
-        let message: ZMConversationMessage
-        var isObfuscated: Bool {
-            message.isObfuscated
+    struct Configuration: Equatable {
+        var image: ZMImageMessageData
+        var message: ZMConversationMessage
+        var isObfuscated: Bool
+
+        static func == (lhs: Configuration, rhs: Configuration) -> Bool {
+            lhs.message == rhs.message &&
+                lhs.image.imageDataIdentifier == rhs.image.imageDataIdentifier &&
+                lhs.isObfuscated == rhs.isObfuscated
         }
+
     }
 
     private var containerView = UIView()
@@ -51,6 +54,7 @@ final class ConversationImageMessageCell: UIView,
 
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
+    weak var actionController: ConversationMessageActionController?
 
     var isSelected: Bool = false
 
@@ -70,24 +74,26 @@ final class ConversationImageMessageCell: UIView,
     }
 
     private func configureView() {
-        containerView.translatesAutoresizingMaskIntoConstraints = false
-
         containerView.layer.cornerRadius = 12
         containerView.layer.borderWidth = 1
         containerView.layer.masksToBounds = true
         containerView.backgroundColor = SemanticColors.View.backgroundCollectionCell
         containerView.layer.borderColor = SemanticColors.View.backgroundSeparatorCell.cgColor
 
+        containerView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(containerView)
     }
 
     private func createConstraints() {
-        containerView.translatesAutoresizingMaskIntoConstraints = false
+        let margins = conversationHorizontalMargins
 
-        let leading = containerView.leadingAnchor.constraint(equalTo: leadingAnchor)
-        let trailing = containerView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor)
+        let leading = containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: margins.left)
         let top = containerView.topAnchor.constraint(equalTo: topAnchor)
-        let bottom = containerView.bottomAnchor.constraint(equalTo: bottomAnchor)
+        let trailing = containerView.trailingAnchor.constraint(
+            lessThanOrEqualTo: trailingAnchor,
+            constant: -margins.right
+        )
+        let bottom = bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
 
         widthConstraint = containerView.widthAnchor.constraint(equalToConstant: 0)
         heightConstraint = containerView.heightAnchor.constraint(equalToConstant: 0)
@@ -168,16 +174,20 @@ final class ConversationImageMessageCell: UIView,
 final class ConversationImageMessageCellDescription: ConversationMessageCellDescription {
 
     typealias View = ConversationImageMessageCell
-    let configuration: View.Configuration
+    var configuration: View.Configuration
 
-    var message: ZMConversationMessage?
+    var message: ZMConversationMessage? {
+        didSet {
+            if let message {
+                configuration.message = message
+                configuration.image = message.imageMessageData!
+            }
+        }
+    }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 8
-
-    let isFullWidth: Bool = false
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 
@@ -185,11 +195,17 @@ final class ConversationImageMessageCellDescription: ConversationMessageCellDesc
         configuration.isObfuscated ? "ObfuscatedImageCell" : "ImageCell"
     }
 
+    let isAccessibilityElement = true
     let accessibilityLabel: String?
 
     init(message: ZMConversationMessage, image: ZMImageMessageData) {
         self.message = message
-        self.configuration = View.Configuration(image: image, message: message)
+        self.configuration = View
+            .Configuration(
+                image: image,
+                message: message,
+                isObfuscated: message.isObfuscated
+            )
         self.accessibilityLabel = L10n.Accessibility.ConversationSearch.ImageMessage.description
     }
 

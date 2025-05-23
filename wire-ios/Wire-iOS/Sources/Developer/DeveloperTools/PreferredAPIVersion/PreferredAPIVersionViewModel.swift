@@ -72,10 +72,10 @@ final class PreferredAPIVersionViewModel: ObservableObject {
     init() {
         self.sections = [
             Section(header: "", items: [Item(title: "No preference", value: .noPreference)]),
-            Section(header: "Production versions", items: APIVersion.productionVersions.map {
+            Section(header: "Production versions", items: APIVersion.productionVersions.sorted().map {
                 Item(title: String($0.rawValue), value: Value(apiVersion: $0))
             }),
-            Section(header: "Development versions", items: APIVersion.developmentVersions.map {
+            Section(header: "Development versions", items: APIVersion.developmentVersions.sorted().map {
                 Item(title: String($0.rawValue), value: Value(apiVersion: $0))
             })
         ]

@@ -78,18 +78,14 @@ struct ReadReceiptViewModel {
 }
 
 final class ConversationReadReceiptSettingChangedCellDescription: ConversationMessageCellDescription {
-    typealias View = ConversationSystemMessageCell
+    typealias View = ConversationSystemMessageCell<ConversationReadReceiptSettingChangedCellDescription>
+
     let configuration: View.Configuration
 
     var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
-    var topMargin: Float = 0
-
-    let isFullWidth: Bool = true
-    let supportsActions: Bool = false
     let containsHighlightableContent: Bool = false
 
     let accessibilityIdentifier: String? = nil

@@ -101,3 +101,24 @@ public struct WireLogger: LoggerProtocol, Sendable {
         provider?.logFiles ?? []
     }
 }
+
+// MARK: - Helpers
+
+public extension WireLogger {
+    func setClientID(_ clientID: String) {
+        addTag(.selfClientId, value: clientID)
+    }
+
+    func clearClientID() {
+        addTag(.selfClientId, value: nil)
+    }
+
+    func setActiveAccount(accoundID: String) {
+        addTag(.accountID, value: accoundID)
+    }
+
+    func clearActiveAccount() {
+        addTag(.accountID, value: nil)
+    }
+
+}

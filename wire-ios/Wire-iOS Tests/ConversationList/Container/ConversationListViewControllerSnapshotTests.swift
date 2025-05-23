@@ -40,6 +40,12 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
     private var windowScene: UIWindowScene! { UIApplication.shared.connectedScenes.first as? UIWindowScene }
     private var searchBar: UISearchBar! { sut.navigationItem.searchController?.searchBar }
 
+    private let iOSTeamID = UUID(uuidString: "E621E1F8-C36C-495A-93FC-0C247A3E6E50")!
+    private let webTeamID = UUID(uuidString: "E621E1F8-C36C-495A-93FC-0C247A3E6E51")!
+    private let qaTeamID = UUID(uuidString: "E621E1F8-C36C-495A-93FC-0C247A3E6E52")!
+    private let designTeamID = UUID(uuidString: "E621E1F8-C36C-495A-93FC-0C247A3E6E53")!
+    private let bugsAndQuestionsTeamID = UUID(uuidString: "E621E1F8-C36C-495A-93FC-0C247A3E6E54")!
+
     @MainActor
     override func setUp() async throws {
 
@@ -136,11 +142,11 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
     func testForShowingConversationsWithoutAnyFilterApplied() {
         // GIVEN
         let conversationData = [
-            (name: "iOS Team", isFavorite: false),
-            (name: "Web Team", isFavorite: false),
-            (name: "QA Team", isFavorite: false),
-            (name: "Design Team", isFavorite: false),
-            (name: "iOS Bugs & Questions", isFavorite: false)
+            (name: "iOS Team", iOSTeamID, isFavorite: false),
+            (name: "Web Team", webTeamID, isFavorite: false),
+            (name: "QA Team", qaTeamID, isFavorite: false),
+            (name: "Design Team", designTeamID, isFavorite: false),
+            (name: "iOS Bugs & Questions", bugsAndQuestionsTeamID, isFavorite: false)
         ]
 
         let conversations = createConversations(conversationsData: conversationData)
@@ -158,8 +164,8 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
     func testForShowingConversationsFilteredByGroups() {
         // GIVEN
         let conversationData = [
-            (name: "iOS Team", isFavorite: false),
-            (name: "Web Team", isFavorite: false)
+            (name: "iOS Team", iOSTeamID, isFavorite: false),
+            (name: "Web Team", webTeamID, isFavorite: false)
         ]
         let conversations = createConversations(conversationsData: conversationData)
         userSession.mockConversationDirectory.mockGroupConversations = conversations
@@ -189,8 +195,8 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
     func testForShowingConversationsFilteredByFavourites() {
         // GIVEN
         let conversationData = [
-            (name: "iOS Team", isFavorite: false),
-            (name: "Web Team", isFavorite: true)
+            (name: "iOS Team", iOSTeamID, isFavorite: false),
+            (name: "Web Team", webTeamID, isFavorite: true)
         ]
         let conversations = createConversations(conversationsData: conversationData)
         userSession.mockConversationDirectory.mockFavoritesConversations = conversations.filter(\.isFavorite)
@@ -287,15 +293,17 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Helper Methods
 
-    private func createConversations(conversationsData: [(name: String, isFavorite: Bool)]) -> [ZMConversation] {
+    private func createConversations(conversationsData: [(name: String, id: UUID, isFavorite: Bool)])
+        -> [ZMConversation] {
         var conversations: [ZMConversation] = []
 
-        for (name, isFavorite) in conversationsData {
+        for (name, id, isFavorite) in conversationsData {
             let conversation = modelHelper.createGroupConversation(
                 in: coreDataFixture.coreDataStack.viewContext
             )
 
             conversation.userDefinedName = name
+            conversation.remoteIdentifier = id
             conversation.isFavorite = isFavorite
             conversations.append(conversation)
         }

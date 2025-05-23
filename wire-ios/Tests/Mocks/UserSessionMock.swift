@@ -369,6 +369,8 @@ final class UserSessionMock: UserSession {
 
     var e2eiFeature: Feature.E2EI = .init(status: .enabled)
 
+    var channelsFeature: Feature.Channels = .init(status: .disabled)
+
     var mlsFeature: Feature.MLS = .init(
         status: .enabled,
         config: .init(defaultCipherSuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519)
@@ -416,7 +418,6 @@ final class UserSessionMock: UserSession {
     var contextProvider: any ContextProvider {
         coreDataStack ?? MockContextProvider()
     }
-
 }
 
 // MARK: - UserSessionMock + ContextProvider
@@ -425,6 +426,10 @@ extension UserSessionMock: ContextProvider {
 
     var account: Account { contextProvider.account }
     var viewContext: NSManagedObjectContext { contextProvider.viewContext }
+    func newBackgroundContext() -> NSManagedObjectContext {
+        contextProvider.newBackgroundContext()
+    }
+
     var syncContext: NSManagedObjectContext { contextProvider.syncContext }
     var searchContext: NSManagedObjectContext { contextProvider.searchContext }
     var eventContext: NSManagedObjectContext { contextProvider.eventContext }

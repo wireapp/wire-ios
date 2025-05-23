@@ -6,13 +6,14 @@ import PackageDescription
 let package = Package(
     name: "WireDebug",
     defaultLocalization: "en",
-    platforms: [.iOS(.v16), .macOS(.v12)],
+    platforms: [.iOS("16.4"), .macOS(.v12)],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(name: "WireViewsDebugUI", targets: ["WireViewsDebugUI"])
     ],
     dependencies: [
         .package(name: "WireAuthentication", path: "../WireAuthentication"),
+        .package(name: "WireCells", path: "../WireCells"),
         .package(name: "WireDomainPackage", path: "../WireDomain"),
         .package(name: "WireFoundation", path: "../WireFoundation"),
         .package(path: "../WireUI")
@@ -24,6 +25,7 @@ let package = Package(
             name: "WireViewsDebugUI",
             dependencies: [
                 .product(name: "WireAuthenticationUI", package: "WireAuthentication"),
+                .product(name: "WireCellsUI", package: "WireCells"),
                 .product(name: "WireDomainPackage", package: "WireDomainPackage"),
                 "WireFoundation",
                 .product(name: "WireReusableUIComponents", package: "WireUI")
@@ -31,3 +33,10 @@ let package = Package(
         )
     ]
 )
+
+for target in package.targets {
+    target.swiftSettings = (target.swiftSettings ?? []) + [
+        .enableUpcomingFeature("InternalImportsByDefault"),
+        .enableUpcomingFeature("ExistentialAny")
+    ]
+}
