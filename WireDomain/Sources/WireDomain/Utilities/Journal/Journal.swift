@@ -69,9 +69,9 @@ public class Journal: JournalProtocol {
     public subscript(_ key: JournalKey<Set<String>>) -> Set<String> {
         get {
             if let array = storage.object(forKey: rawKey(for: key)) as? [String] {
-                return Set(array)
+                Set(array)
             } else {
-                return key.defaultValue
+                key.defaultValue
             }
         }
         set {
