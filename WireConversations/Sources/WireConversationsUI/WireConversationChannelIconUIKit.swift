@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/*package*/ public import UIKit
-/*package*/ public import WireConversationsResources
+package import UIKit
+package import WireConversationsResources
 
-/*package*/ public class WireConversationChannelIconUIKit: UIView {
+package class WireConversationChannelIconUIKit: UIView {
     private enum Constants {
         static let padlockSize: CGFloat = 14
         static let padlockOverhang: CGFloat = 4
@@ -28,7 +28,7 @@
     private let iconView: UIImageView
     private let padlockView: UIImageView?
 
-    /*package*/ public init(asset: WireConversationChannelIconAsset, isPrivateChannel: Bool) {
+    package init(asset: WireConversationChannelIconAsset, isPrivateChannel: Bool) {
         self.iconView = UIImageView(image: asset.uiKitImage)
         self.padlockView = isPrivateChannel ? Self.makePadlockView() : nil
 
@@ -43,7 +43,7 @@
         fatalError("init(coder:) has not been implemented")
     }
 
-    /*package*/ public override func layoutSubviews() {
+    package override func layoutSubviews() {
         super.layoutSubviews()
 
         iconView.frame = bounds

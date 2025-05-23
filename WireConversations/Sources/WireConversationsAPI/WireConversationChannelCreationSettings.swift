@@ -25,7 +25,7 @@ public struct WireConversationChannelCreationSettings: Equatable, Hashable {
     public let guestsAllowed: Bool
     public let readReceiptsEnabled: Bool
 
-    /*package*/ public init(
+    package init(
         channelName: String,
         channelAccess: WireConversationChannelAccess,
         servicesAllowed: Bool,

@@ -16,13 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/*package*/ public import SwiftUI
-/*package*/ public import WireConversationsAPI
+package import SwiftUI
+package import WireConversationsAPI
 import WireConversationsResources
 import WireDesign
 import WireFoundation
 
-/*package*/ public struct WireConversationTypePicker: View {
+package struct WireConversationTypePicker: View {
     private enum Constants {
         static let verticalSpacing: CGFloat = 12
         static let maxIconWidth: CGFloat = 27
@@ -47,7 +47,7 @@ import WireFoundation
     private let displayedItems: [DisplayedItem]
     private let onConversationTypeSelected: @Sendable (WireMultiParticipantConversationType) -> Void
 
-    /*package*/ public init(
+    package init(
         availableConversationTypes: Set<WireMultiParticipantConversationType>,
         onConversationTypeSelected: @escaping @Sendable (WireMultiParticipantConversationType) -> Void
     ) {
@@ -63,7 +63,7 @@ import WireFoundation
         self.onConversationTypeSelected = onConversationTypeSelected
     }
 
-    /*package*/ public var body: some View {
+    package var body: some View {
         VStack(spacing: 0) {
             ForEach(displayedItems, id: \.hashValue) { conversationType in
                 view(for: conversationType)

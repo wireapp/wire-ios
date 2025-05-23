@@ -16,17 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/*package*/ public import SwiftUI
+package import SwiftUI
 import WireConversationsAPI
 import WireConversationsImplementation
 import WireConversationsImplementationSupport
 import WireDesign
 
-/*package*/ public struct ChannelAccessView: View {
+package struct ChannelAccessView: View {
 
     @ObservedObject var viewModel: ChannelAccessViewModel
 
-    /*package*/ public init(viewModel: ChannelAccessViewModel) {
+    package init(viewModel: ChannelAccessViewModel) {
         self.viewModel = viewModel
     }
 

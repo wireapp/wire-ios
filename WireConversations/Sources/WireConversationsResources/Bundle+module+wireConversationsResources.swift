@@ -16,15 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/*package*/ public import Foundation
+package import Foundation
 
-/*package*/ extension Bundle {
+extension Bundle {
 
     static var module: Bundle {
         Bundle(for: Dummy.self)
     }
 
-    public static var wireConversationsResources: Bundle {
+    package static var wireConversationsResources: Bundle {
         .module
     }
 
