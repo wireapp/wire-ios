@@ -22,10 +22,10 @@ import WireSystem
 
 public class CoreCryptoKeyProvider {
 
-    private let coreCryptoKeyMigrator: CoreCryptoKeyMigrationManagerProtocol?
+    private let coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol?
 
-    public init(coreCryptoKeyMigrator: CoreCryptoKeyMigrationManagerProtocol?) {
-        self.coreCryptoKeyMigrator = coreCryptoKeyMigrator
+    public init(coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol?) {
+        self.coreCryptoKeyMigrationManager = coreCryptoKeyMigrationManager
     }
 
     public func coreCryptoKey(
@@ -50,7 +50,7 @@ public class CoreCryptoKeyProvider {
         WireLogger.coreCrypto.info("Migrating core crypto key...")
 
         if let oldKey = try? fetchCoreCryptoKey() {
-            try await coreCryptoKeyMigrator?.performMigrationIfNeeded(
+            try await coreCryptoKeyMigrationManager?.performMigrationIfNeeded(
                 path: path,
                 oldKey: oldKey.base64EncodedString(),
                 newKey: oldKey
@@ -89,7 +89,6 @@ public class CoreCryptoKeyProvider {
             // key was not found. no action needed
         }
     }
-
 }
 
 struct CoreCryptoKeychainItem: KeychainItemProtocol {

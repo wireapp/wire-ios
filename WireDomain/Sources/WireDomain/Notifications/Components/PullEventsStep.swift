@@ -18,7 +18,6 @@
 
 import NeedleFoundation
 import WireAPI
-import WireCoreCrypto
 import WireDataModel
 import WireFoundation
 

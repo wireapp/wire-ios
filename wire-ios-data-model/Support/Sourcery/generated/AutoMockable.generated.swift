@@ -1841,6 +1841,44 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
 
 }
 
+public class MockCoreCryptoKeyMigrationManagerProtocol: CoreCryptoKeyMigrationManagerProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - isMigrationNeeded
+
+    public var isMigrationNeeded: Bool {
+        get { return underlyingIsMigrationNeeded }
+        set(value) { underlyingIsMigrationNeeded = value }
+    }
+
+    public var underlyingIsMigrationNeeded: Bool!
+
+
+    // MARK: - performMigrationIfNeeded
+
+    public var performMigrationIfNeededPathOldKeyNewKey_Invocations: [(path: String, oldKey: String, newKey: Data)] = []
+    public var performMigrationIfNeededPathOldKeyNewKey_MockError: Error?
+    public var performMigrationIfNeededPathOldKeyNewKey_MockMethod: ((String, String, Data) async throws -> Void)?
+
+    public func performMigrationIfNeeded(path: String, oldKey: String, newKey: Data) async throws {
+        performMigrationIfNeededPathOldKeyNewKey_Invocations.append((path: path, oldKey: oldKey, newKey: newKey))
+
+        if let error = performMigrationIfNeededPathOldKeyNewKey_MockError {
+            throw error
+        }
+
+        guard let mock = performMigrationIfNeededPathOldKeyNewKey_MockMethod else {
+            fatalError("no mock for `performMigrationIfNeededPathOldKeyNewKey`")
+        }
+
+        try await mock(path, oldKey, newKey)
+    }
+
+}
+
 public class MockCoreCryptoProviderProtocol: CoreCryptoProviderProtocol {
 
     // MARK: - Life cycle
