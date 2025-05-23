@@ -244,6 +244,7 @@ public final class NotificationSession {
             accountDirectory: coreDataStack.accountContainer,
             syncContext: coreDataStack.syncContext,
             cryptoboxMigrationManager: cryptoboxMigrationManager,
+            coreCryptoKeyMigrator: nil,
             allowCreation: false
         )
         let featureRepository = FeatureRepository(context: coreDataStack.syncContext)

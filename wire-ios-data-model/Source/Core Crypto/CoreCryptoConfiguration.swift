@@ -41,7 +41,7 @@ public class CoreCryptoConfigProvider {
 
     // MARK: - Life cycle
 
-    public init(coreCryptoKeyProvider: CoreCryptoKeyProvider = .init()) {
+    public init(coreCryptoKeyProvider: CoreCryptoKeyProvider) {
         self.coreCryptoKeyProvider = coreCryptoKeyProvider
     }
 

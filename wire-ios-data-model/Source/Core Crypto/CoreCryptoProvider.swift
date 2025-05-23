@@ -61,6 +61,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     private let sharedContainerURL: URL
     private let accountDirectory: URL
     private let cryptoboxMigrationManager: CryptoboxMigrationManagerInterface
+    private var coreCryptoKeyMigrator: CoreCryptoKeyMigrationManagerProtocol?
     private let featureRespository: FeatureRepositoryInterface
     private let syncContext: NSManagedObjectContext
     private let allowCreation: Bool
@@ -80,6 +81,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         accountDirectory: URL,
         syncContext: NSManagedObjectContext,
         cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
+        coreCryptoKeyMigrator: CoreCryptoKeyMigrationManagerProtocol?,
         allowCreation: Bool = true
     ) {
         self.selfUserID = selfUserID
@@ -88,6 +90,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         self.syncContext = syncContext
         self.allowCreation = allowCreation
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
+        self.coreCryptoKeyMigrator = coreCryptoKeyMigrator
         self.featureRespository = FeatureRepository(context: syncContext)
     }
 
@@ -206,7 +209,8 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     }
 
     func createCoreCrypto() async throws -> SafeCoreCrypto {
-        let provider = CoreCryptoConfigProvider()
+        let coreCryptoKeyProvider = CoreCryptoKeyProvider(coreCryptoKeyMigrator: coreCryptoKeyMigrator)
+        let provider = CoreCryptoConfigProvider(coreCryptoKeyProvider: coreCryptoKeyProvider)
 
         let configuration = try await provider.createInitialConfiguration(
             sharedContainerURL: sharedContainerURL,
@@ -365,6 +369,10 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         }
 
         WireLogger.proteus.info("cryptobox migration success")
+    }
+
+    private func migrateCoreCryptoKeyIfNeeded(path: String, oldKey: String, newKey: Data) async throws  {
+        try await coreCryptoKeyMigrator?.performMigrationIfNeeded(path: path, oldKey: oldKey, newKey: newKey)
     }
 
 }

@@ -18,6 +18,7 @@
 
 import NeedleFoundation
 import WireAPI
+import WireCoreCrypto
 import WireDataModel
 import WireFoundation
 
@@ -102,6 +103,17 @@ extension PullEventsStep {
         )
     }
 
+    private var sharedUserDefaults: UserDefaults {
+        UserDefaults(suiteName: dependency.applicationIdentifier)!
+    }
+
+    private var journal: Journal {
+        Journal(
+            userID: selfUserID,
+            storage: sharedUserDefaults
+        )
+    }
+
     var coreCryptoProvider: any CoreCryptoProviderProtocol {
         CoreCryptoProvider(
             selfUserID: selfUserID,
@@ -109,6 +121,7 @@ extension PullEventsStep {
             accountDirectory: accountContainer,
             syncContext: dependency.coreData.syncContext,
             cryptoboxMigrationManager: CryptoboxMigrationManager(),
+            coreCryptoKeyMigrator: CoreCryptoKeyMigrationManager(journal: journal),
             allowCreation: false
         )
     }
