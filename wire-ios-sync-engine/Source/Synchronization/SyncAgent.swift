@@ -132,6 +132,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         WireLogger.sync.debug("suspending sync")
         await incrementalSyncToken?.suspend()
         incrementalSyncToken = nil
+        syncStateSubject.send(.suspended)
     }
 
     /// Performs the appropriate sync depending in the local state.
