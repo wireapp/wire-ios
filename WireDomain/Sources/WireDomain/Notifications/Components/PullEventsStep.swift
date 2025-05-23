@@ -120,7 +120,7 @@ extension PullEventsStep {
             accountDirectory: accountContainer,
             syncContext: dependency.coreData.syncContext,
             cryptoboxMigrationManager: CryptoboxMigrationManager(),
-            coreCryptoKeyMigrator: CoreCryptoKeyMigrationManager(journal: journal),
+            coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager(journal: journal),
             allowCreation: false
         )
     }
