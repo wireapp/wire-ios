@@ -20,7 +20,6 @@ import SwiftUI
 import WireTestingPackage
 import XCTest
 
-import WireConversationsUIBindings
 
 class WireConversationGroupIconTests: XCTestCase {
 

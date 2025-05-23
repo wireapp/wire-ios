@@ -21,7 +21,6 @@ import SwiftUI
 import UIKit
 import WireAccountImageUI
 import WireCommonComponents
-import WireConversationsUIBindings
 import WireDesign
 import WireFoundation
 import WireLogging

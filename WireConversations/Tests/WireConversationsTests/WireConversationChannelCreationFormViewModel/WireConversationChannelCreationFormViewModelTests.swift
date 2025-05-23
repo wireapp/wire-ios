@@ -122,4 +122,8 @@ final class WireConversationChannelCreationFormViewModelTests: XCTestCase {
         // Then
         XCTAssertEqual(sut.channelName, .success(expectedValue))
     }
+
+    func failing() {
+        XCTFail()
+    }
 }

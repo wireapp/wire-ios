@@ -67,4 +67,8 @@ class WireConversationChannelCreationFormTests: XCTestCase {
                 )
         }
     }
+
+    func failing() {
+        XCTFail()
+    }
 }

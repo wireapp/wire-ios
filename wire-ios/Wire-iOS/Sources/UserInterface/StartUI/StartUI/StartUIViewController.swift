@@ -20,7 +20,6 @@ import SwiftUI
 import UIKit
 import WireCommonComponents
 import WireConversationsAPI
-import WireConversationsUIBindings
 import WireDesign
 import WireMainNavigationUI
 import WireReusableUIComponents

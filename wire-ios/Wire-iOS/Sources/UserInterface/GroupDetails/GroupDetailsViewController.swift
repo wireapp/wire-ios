@@ -19,7 +19,6 @@
 import SwiftUI
 import UIKit
 import WireConversationsAPI
-import WireConversationsUIBindings
 import WireDesign
 import WireLogging
 import WireMainNavigationUI
