@@ -71,8 +71,6 @@ final class MLSGroupRepairAgent: MLSGroupRepairAgentProtocol {
                 }
                 .store(in: &cancellables)
         } else {
-            print("is not sync 2")
-            // TODO: for legacy sync
         }
     }
 
