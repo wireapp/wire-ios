@@ -194,7 +194,7 @@ class SignatureRequestStrategyTests: MessagingTest {
             imageMetaData: imageMetaData
         )
         let remoteData = WireProtos.Asset.RemoteData(
-            otrKey: Data(),
+            withOTRKey: Data(),
             sha256: Data(),
             assetId: "id",
             assetToken: "token"
