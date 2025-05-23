@@ -65,4 +65,15 @@ public protocol AuthenticationAPI: Sendable {
 
     func requestVerificationCode(for email: String) async throws
 
+    /// Request to start the registration process for provided user details
+    ///
+    /// - Returns: The user details.
+    ///
+    func testRegisterPersonalAccount(name: String, email: String, password: String) async throws -> [HTTPCookie]
+    
+    /// Activate user
+    ///
+    /// - Returns: The user details.
+    ///
+    func testActivateUser(email: String, key: String, code: String) async throws
 }

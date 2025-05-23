@@ -17,32 +17,99 @@
 //
 
 import Foundation
+import WireAPI
 
 class UserManager {
     var createdUsers: [UserInfo]
+    var networkStack: NetworkStack
+    var apiService: APIService
+    
+    let authenticationAPI: AuthenticationAPI
+    let selfUserAPI: SelfUserAPI
+    let authenticationManager: AuthenticationManager
+    
+    private let cookieStorage: any CookieStorageProtocol
     
     init() {
         createdUsers = []
+        networkStack = NetworkStack(backendEnvironment: .staging, minTLSVersion: .v1_2, cookieEncryptionKey: Data())
+        cookieStorage = MockCookieStorage()
+        authenticationManager = AuthenticationManager(
+            clientID: "selfClientID",
+            cookieStorage: cookieStorage,
+            networkService: networkStack.apiNetworkService,
+            onAuthenticationFailure: { @Sendable () in return}
+        )
+        apiService = APIService(networkService: networkStack.apiNetworkService, authenticationManager: authenticationManager)
+        authenticationAPI = AuthenticationAPIBuilder(networkService: networkStack.apiNetworkService).makeAPI(for: .v8)
+        selfUserAPI = SelfUserAPIBuilder(apiService: apiService).makeAPI(for: .v8)
     }
     
     func createPersonalUser() async throws -> UserInfo {
-        var user = UserGenerator.generateUniqueUserInfo()
-        let newUser = try await BackendClient.registerPersonalUser(user)
-        createdUsers.append(newUser)
-        return newUser
+        let user = UserGenerator.generateUniqueUserInfo()
+        print(" User looks like: ")
+        print(user.email)
+        print(user.password)
+        
+        // Start registration
+        let cookies = try await authenticationAPI.testRegisterPersonalAccount(name: user.name, email: user.email, password: user.password)
+        try await cookieStorage.storeCookies(cookies)
+        
+        // Get activation code
+//        let activationCode = try await authenticationAPI.getVerificationCode(for: user.email)
+        let (activationCode, activationKey) = try await BackendClient.getActivationCode(email: user.email)
+        
+        // Activate user
+        try await authenticationAPI.testActivateUser(email: user.email, key: activationKey, code: activationCode)
+        
+        createdUsers.append(user)
+        return user
+    }
+    
+    func addUser(_ user: UserInfo) {
+        createdUsers.append(user)
+    }
+    
+    func addUser(email: String, password: String) {
+        createdUsers.append(UserInfo(email: email, password: password))
     }
     
     func deleteUser(_ user: UserInfo) async throws {
-        let access_token = try? await BackendClient.loginViaAPI(email: user.email, password: user.password)
-        if(access_token != nil) {
-            try? await BackendClient.deletePersonalUser(access_token:access_token!, password: user.password)
-            puts("Cleaned up \(user.email)")
-        }
+        try await selfUserAPI.testDeleteSelf(password: user.password)
     }
     
     func deleteCreatedUsers() async throws {
         for user in createdUsers {
+            print("Deleting \(user.email)")
             try await deleteUser(user)
         }
+    }
+}
+
+private extension BackendEnvironment {
+    static let backendURL = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL"]!)"
+    static let staging = BackendEnvironment(url: URL(string: backendURL)!, webSocketURL: URL(string: backendURL)!, pinnedKeys: [], proxySettings: nil)
+}
+
+final class MockCookieStorage: CookieStorageProtocol {
+    var cookies: [HTTPCookie]
+    
+    init() {
+        cookies = []
+    }
+    
+    func storeCookies(_ cookies: [HTTPCookie]) async throws {
+        print("Storing \(cookies)")
+        self.cookies = cookies
+    }
+    
+    func fetchCookies() async throws -> [HTTPCookie] {
+        print("Giving \(cookies)")
+        return cookies
+    }
+    
+    func removeCookies() async throws {
+        print("Clearing cookies")
+        cookies = []
     }
 }

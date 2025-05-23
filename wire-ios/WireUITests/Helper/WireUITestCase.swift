@@ -30,7 +30,7 @@ class WireUITestCase: XCTestCase {
     override func setUpWithError() throws {
         // Delete app, useful if we aren't resetting simulators between runs (locally writing tests)
         XCUIApplication().terminate()
-        deleteApp()
+//        deleteApp()
 
         let launchArguments = [
             "-BackendEnvironmentTypeOverrideKey staging",
@@ -49,7 +49,7 @@ class WireUITestCase: XCTestCase {
 
     override func tearDown() async throws {
 //        TODO: [WPB-17516] Make sure the personal user created via registration flow also gets cleaned up
-        try await userManager.deleteCreatedUsers()
+//        try await userManager.deleteCreatedUsers()
     }
 
     // MARK: - Helpers
@@ -73,3 +73,4 @@ class WireUITestCase: XCTestCase {
         }
     }
 }
+

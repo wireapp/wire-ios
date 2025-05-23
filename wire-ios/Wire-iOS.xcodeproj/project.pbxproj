@@ -109,6 +109,8 @@
 		CB43D9BD2CDBBBB900BF5AEB /* WireFolderPickerUI in Frameworks */ = {isa = PBXBuildFile; productRef = CB43D9BC2CDBBBB900BF5AEB /* WireFolderPickerUI */; };
 		CB4870F22C7F4FE5001E9151 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB4870F12C7F4FE5001E9151 /* WireTransportSupport.framework */; };
 		CB4E15122C81CC81005DDEC8 /* Down in Frameworks */ = {isa = PBXBuildFile; productRef = CB4E15112C81CC81005DDEC8 /* Down */; };
+		D0E258132DDC860100959FB9 /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = D0E258122DDC860100959FB9 /* WireAPI */; };
+		D0E258152DDC864100959FB9 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = D0E258142DDC864100959FB9 /* WireFoundation */; };
 		E40050762D71A80100B7962B /* WireConversationUI in Frameworks */ = {isa = PBXBuildFile; productRef = E40050752D71A80100B7962B /* WireConversationUI */; };
 		E6C25FC52AFFAAC300406A1C /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E6C25FC42AFFAAC300406A1C /* WireTesting.framework */; };
 		E9816C902CC9244700D77F22 /* WireSyncEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9816C8F2CC9244700D77F22 /* WireSyncEngine.framework */; };
@@ -890,6 +892,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D0E258152DDC864100959FB9 /* WireFoundation in Frameworks */,
+				D0E258132DDC860100959FB9 /* WireAPI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1254,6 +1258,8 @@
 			);
 			name = WireUITests;
 			packageProductDependencies = (
+				D0E258122DDC860100959FB9 /* WireAPI */,
+				D0E258142DDC864100959FB9 /* WireFoundation */,
 			);
 			productName = WireUITests;
 			productReference = 01DFC4312D7B4C6F00D1962A /* WireUITests.xctest */;
@@ -2962,6 +2968,14 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CB4E15102C81CC81005DDEC8 /* XCRemoteSwiftPackageReference "Down" */;
 			productName = Down;
+		};
+		D0E258122DDC860100959FB9 /* WireAPI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireAPI;
+		};
+		D0E258142DDC864100959FB9 /* WireFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireFoundation;
 		};
 		E40050752D71A80100B7962B /* WireConversationUI */ = {
 			isa = XCSwiftPackageProductDependency;

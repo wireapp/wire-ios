@@ -36,6 +36,16 @@ class UserInfo {
         self.backend_domain = ""
     }
     
+    init(email: String, password: String) {
+        self.name = ""
+        self.username = ""
+        self.password = password
+        self.domain = ""
+        self.email = email
+        self.id = ""
+        self.backend_domain = ""
+    }
+    
     init() {
         self.name = ""
         self.username = ""

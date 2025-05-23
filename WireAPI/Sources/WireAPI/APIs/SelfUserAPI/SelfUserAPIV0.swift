@@ -52,6 +52,27 @@ class SelfUserAPIV0: SelfUserAPI, VersionedAPI {
     func pushSupportedProtocols(_: Set<MessageProtocol>) async throws {
         throw SelfUserAPIError.unsupportedEndpointForAPIVersion
     }
+    
+    func testDeleteSelf(password: String) async throws {
+//        let body = try JSONEncoder.defaultEncoder.encode(
+//            DeleteSelfRequestBodyV0(password: password)
+//        )
+        
+        let body = Data()
+
+        let request = try URLRequestBuilder(path: resourcePath)
+            .withMethod(.delete)
+//            .withBody(body, contentType: .json)
+            .build()
+
+        print("before request")
+        let (data, response) = try await apiService.executeRequest(request, requiringAccessToken: true)
+        print(response.statusCode)
+        print(response.description)
+        return try ResponseParser()
+            .success(code: .ok)
+            .parse(code: response.statusCode, data: data)
+    }
 }
 
 struct SelfUserV0: Decodable, ToAPIModelConvertible {
@@ -139,4 +160,8 @@ struct SSOIDV0: Decodable, ToAPIModelConvertible {
             tenant: tenant
         )
     }
+}
+
+private struct DeleteSelfRequestBodyV0: Encodable {
+    var password: String
 }
