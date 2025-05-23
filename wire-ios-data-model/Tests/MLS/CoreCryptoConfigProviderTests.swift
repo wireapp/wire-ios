@@ -42,8 +42,7 @@ class MockCoreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol {
         true
     }
 
-    func performMigrationIfNeeded(path: String, oldKey: String, newKey: Data) async throws {
-    }
+    func performMigrationIfNeeded(path: String, oldKey: String, newKey: Data) async throws {}
 
 }
 
@@ -55,7 +54,8 @@ class CoreCryptoConfigProviderTests: ZMConversationTestsBase {
 
     override func setUp() {
         super.setUp()
-        mockCoreCryptoKeyProvider = MockCoreCryptoKeyProvider(coreCryptoKeyMigrationManager: mockCoreCryptoKeyMigrationManager)
+        mockCoreCryptoKeyProvider =
+            MockCoreCryptoKeyProvider(coreCryptoKeyMigrationManager: mockCoreCryptoKeyMigrationManager)
         sut = CoreCryptoConfigProvider(coreCryptoKeyProvider: mockCoreCryptoKeyProvider)
     }
 
