@@ -14,20 +14,6 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireDesign"
-               BuildableName = "WireDesign"
-               BlueprintName = "WireDesign"
-               ReferencedContainer = "container:../WireUI">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
                BlueprintIdentifier = "8F42C537199244A700288E4D"
                BuildableName = "Wire.app"
                BlueprintName = "Wire-iOS"
