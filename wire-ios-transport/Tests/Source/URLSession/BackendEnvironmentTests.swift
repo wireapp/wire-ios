@@ -46,7 +46,7 @@ class BackendEnvironmentTests: XCTestCase {
         self.backendBundle = backendBundle
         defaultsProd = UserDefaults(suiteName: name)
         defaultsCustom = UserDefaults(suiteName: "custom")
-        EnvironmentType.production.save(in: defaultsProd)
+        EnvironmentType.default.save(in: defaultsProd)
         EnvironmentType.custom(url: URL(string: "https://custom.backend.com")!).save(in: defaultsCustom)
 
         continueAfterFailure = true
