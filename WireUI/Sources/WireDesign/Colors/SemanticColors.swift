@@ -287,7 +287,23 @@ private extension UIColor {
 
     convenience init(light: ColorResource, dark: ColorResource) {
         self.init { traits in
-            .init(resource: traits.userInterfaceStyle == .dark ? dark : light)
+            UIColor(resource: traits.userInterfaceStyle == .dark ? dark : light)
         }
     }
+    convenience init(light: UIColor, dark: ColorResource) {
+        self.init { traits in
+            traits.userInterfaceStyle == .dark ? UIColor(resource: dark) : light
+        }
+    }
+    convenience init(light: ColorResource, dark: UIColor) {
+        self.init { traits in
+            traits.userInterfaceStyle == .dark ? dark : UIColor(resource: light)
+        }
+    }
+    convenience init(light: UIColor, dark: UIColor) {
+        self.init { traits in
+            traits.userInterfaceStyle == .dark ? dark : light
+        }
+    }
+
 }
