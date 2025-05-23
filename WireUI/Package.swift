@@ -15,7 +15,7 @@ let package = Package(
         .library(name: "WireConversationUI", targets: ["WireConversationUI"]),
         .library(name: "WireDesign", targets: ["WireDesign"]),
         .library(name: "WireFolderPickerUI", targets: ["WireFolderPickerUI"]),
-        .library(name: "WireIndividualToTeamMigrationUI", targets: ["WireIndividualToTeamMigrationUI"]),
+        .library(name: "WireIndividualToTeamMigrationUI", type: .dynamic, targets: ["WireIndividualToTeamMigrationUI"]),
         .library(name: "WireMainNavigationUI", targets: ["WireMainNavigationUI"]),
         .library(name: "WireMoveToFolderUI", targets: ["WireMoveToFolderUI"]),
         .library(name: "WireMoveToFolderUISupport", targets: ["WireMoveToFolderUISupport"]),
@@ -57,7 +57,7 @@ let package = Package(
         .target(
             name: "WireIndividualToTeamMigrationUI",
             dependencies: [
-                "WireAnalytics",
+                .product(name: "WireAnalyticsDynamic", package: "WireAnalytics"),
                 .product(name: "WireDomainPackage", package: "WireDomainPackage"),
                 "WireFoundation",
                 "WireReusableUIComponents"

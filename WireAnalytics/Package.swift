@@ -11,7 +11,7 @@ let package = Package(
     name: "WireAnalytics",
     platforms: [.iOS("16.4"), .macOS(.v12)],
     products: [
-        .library(name: "WireAnalytics", targets: ["WireAnalytics"]),
+        .library(name: "WireAnalyticsDynamic", type: .dynamic, targets: ["WireAnalytics"]),
         .library(name: "WireAnalyticsSupport", targets: ["WireAnalyticsSupport"]),
         .library(name: "WireCountly", targets: ["WireCountly"]),
         .library(name: "WireDatadog", targets: ["WireDatadog"])
