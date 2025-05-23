@@ -130,7 +130,7 @@ import WireFoundation
     }
 
     func iconView(for imageName: String) -> some View {
-        Image(imageName, bundle: .resources)
+        Image(imageName, bundle: .wireConversationsResources)
             .renderingMode(.template)
             .aspectRatio(contentMode: .fit)
             .foregroundStyle(ColorTheme.Base.primary.color)
@@ -138,7 +138,7 @@ import WireFoundation
     }
 
     func chevronView() -> some View {
-        Image("wire_conversations_chevron_right", bundle: .resources)
+        Image("wire_conversations_chevron_right", bundle: .wireConversationsResources)
             .renderingMode(.template)
             .foregroundStyle(ColorTheme.Base.secondaryText.color)
     }

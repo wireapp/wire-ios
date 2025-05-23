@@ -132,7 +132,7 @@ import WireDesign
         let accentColor: Color
 
         var body: some View {
-            Image("Check", bundle: .resources)
+            Image("Check", bundle: .wireConversationsResources)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 18, height: 22)

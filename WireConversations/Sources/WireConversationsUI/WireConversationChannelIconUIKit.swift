@@ -58,7 +58,7 @@
     // MARK: - Private
 
     private static func makePadlockView() -> UIImageView {
-        UIImageView(image: UIImage(named: "lock", in: .resources, with: nil))
+        UIImageView(image: UIImage(named: "lock", in: .wireConversationsResources, with: nil))
     }
 
 }
