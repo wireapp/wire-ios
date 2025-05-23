@@ -97,8 +97,11 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                         )
                         let decryptionEventsResult = try await decryptor.decryptEvents(in: envelope)
                         envelope.events = decryptionEventsResult.events
+
                         let brokenMLSGroupIDs = decryptionEventsResult.brokenMLSGroupIDs
-                        journal.addValue(Set(brokenMLSGroupIDs), for: .brokenMLSGroupIDs)
+                        if !brokenMLSGroupIDs.isEmpty {
+                            journal.addValue(Set(brokenMLSGroupIDs), for: .brokenMLSGroupIDs)
+                        }
                     } catch {
                         logger.error(
                             "failed to decrypt live event envelope: \(String(describing: error))",
