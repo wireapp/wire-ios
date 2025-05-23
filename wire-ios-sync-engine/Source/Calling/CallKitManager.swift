@@ -409,7 +409,7 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
 
         // Don't use the async version, it's broken
         // It doesn't get executed when waking up the app from the background and ends up crashing
-        // See latest comments https://developer.apple.com/documentation/callkit/sending_end-to-end_encrypted_voip_calls
+        // See latest comments https://stackoverflow.com/questions/56788314/ios-13-killing-app-because-it-never-posted-an-incoming-call-to-the-system-after
         provider.reportNewIncomingCall(
             with: call.id,
             update: update
