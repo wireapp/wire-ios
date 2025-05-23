@@ -86,19 +86,19 @@ final class CompositeImportBackupUseCaseTests: XCTestCase {
 
     func testUnknownFileExtensionsThrow() async throws {
         #if true // TODO: [WPB-17397] re-enable after fixing duplicate symbols
-        throw XCTSkip("disabled because catch is not entered")
+            throw XCTSkip("disabled because catch is not entered")
         #else
-        // Given
-        let fileExtension = "zip"
+            // Given
+            let fileExtension = "zip"
 
-        do {
-            // When
-            let filePath = "/path/to/file.\(fileExtension)"
-            for try await _ in sut.invoke(url: URL(fileURLWithPath: filePath), password: "") {}
-            XCTFail("Unexpected success")
-        } catch ImportBackupError.invalidFileExtension {
-            // Then
-        }
+            do {
+                // When
+                let filePath = "/path/to/file.\(fileExtension)"
+                for try await _ in sut.invoke(url: URL(fileURLWithPath: filePath), password: "") {}
+                XCTFail("Unexpected success")
+            } catch ImportBackupError.invalidFileExtension {
+                // Then
+            }
         #endif
     }
 
