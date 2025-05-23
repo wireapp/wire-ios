@@ -76,12 +76,3 @@ public extension Color {
         )
     )
 }
-
-private extension UIColor {
-
-    convenience init(light: ColorResource, dark: ColorResource) {
-        self.init { traits in
-            .init(resource: traits.userInterfaceStyle == .dark ? dark : light)
-        }
-    }
-}
