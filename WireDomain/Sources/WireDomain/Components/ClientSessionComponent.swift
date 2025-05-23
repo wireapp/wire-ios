@@ -364,7 +364,8 @@ public final class ClientSessionComponent {
         store: updateEventsLocalStore,
         processor: updateEventProcessor,
         databaseSaver: databaseSaver,
-        syncStateSubject: syncStateSubject
+        syncStateSubject: syncStateSubject,
+        journal: journal
     )
 
     // MARK: - Repositories

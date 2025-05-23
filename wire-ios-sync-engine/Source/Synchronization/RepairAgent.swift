@@ -25,14 +25,14 @@ import WireLogging
 import WireUtilities
 
 // sourcery: AutoMockable
-protocol RepairAgentProtocol {
+protocol MLSGroupRepairAgentProtocol {
 
     var isSyncV2Enabled: Bool { get }
     var syncStatePublisher: AnyPublisher<SyncState, Never> { get }
 
 }
 
-final class RepairAgent: RepairAgentProtocol {
+final class MLSGroupRepairAgent: MLSGroupRepairAgentProtocol {
 
     var isSyncV2Enabled: Bool {
         journal[.isSyncV2Enabled]
@@ -44,6 +44,7 @@ final class RepairAgent: RepairAgentProtocol {
     }
 
     private let journal: Journal
+    private let mlsService: MLSServiceInterface
     private let decryptionQueue = DispatchQueue(label: "decryptionQueue")
     private var cancellables = Set<AnyCancellable>()
 
@@ -51,9 +52,11 @@ final class RepairAgent: RepairAgentProtocol {
 
     init(
         journal: Journal,
+        mlsService: MLSServiceInterface,
         syncStateSubject: CurrentValueSubject<SyncState, Never>
     ) {
         self.journal = journal
+        self.mlsService = mlsService
         self.syncStateSubject = syncStateSubject
         setupObservation()
     }
@@ -65,7 +68,6 @@ final class RepairAgent: RepairAgentProtocol {
                 .sink { [weak self] state in
                     guard case .liveSyncing = state else { return }
                     self?.repairConversations()
-                    //self?.handleLiveSyncing()
                 }
                 .store(in: &cancellables)
         } else {
@@ -75,8 +77,29 @@ final class RepairAgent: RepairAgentProtocol {
     }
 
     private func repairConversations() {
-        print("repairConversations")
+        let brokenGroupIDs = journal[.brokenMLSGroupIDs]
+        guard !brokenGroupIDs.isEmpty else {
+            WireLogger.sync.debug("No broken MLS groups to repair")
+            return
+        }
 
+        WireLogger.sync.debug("Repairing \(brokenGroupIDs.count) MLS groups")
+
+        brokenGroupIDs
+            .compactMap { groupID -> (String, MLSGroupID)? in
+                guard let mlsGroupID = MLSGroupID(base64Encoded: groupID) else {
+                    WireLogger.sync.warn("Invalid convert string to MLS group ID: \(groupID)")
+                    return nil
+                }
+                return (groupID, mlsGroupID)
+            }
+            .forEach { groupID, mlsGroupID in
+                Task {
+                    await mlsService.fetchAndRepairGroup(with: mlsGroupID)
+                    journal.removeValue(groupID, for: .brokenMLSGroupIDs)
+                    WireLogger.sync.debug("Successfully repaired group: \(groupID)")
+                }
+            }
     }
 
 }
