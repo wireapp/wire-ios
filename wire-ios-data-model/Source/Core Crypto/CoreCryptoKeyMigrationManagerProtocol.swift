@@ -23,4 +23,6 @@ public protocol CoreCryptoKeyMigrationManagerProtocol {
 
     func performMigrationIfNeeded(path: String, oldKey: String, newKey: Data) async throws
 
+    func markMigrationAsSkipped()
+
 }

@@ -55,6 +55,8 @@ public class CoreCryptoKeyProvider {
                 oldKey: oldKey.base64EncodedString(),
                 newKey: oldKey
             )
+        } else {
+            coreCryptoKeyMigrationManager?.markMigrationAsSkipped()
         }
     }
 

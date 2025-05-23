@@ -43,4 +43,10 @@ public class CoreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtoco
         }
     }
 
+    public func markMigrationAsSkipped() {
+        WireLogger.coreCrypto.info("Skip core crypto key migration")
+
+        journal[.isCoreCryptoKeyMigrationRequired] = false
+    }
+
 }
