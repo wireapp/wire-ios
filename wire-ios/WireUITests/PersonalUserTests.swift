@@ -60,7 +60,8 @@ final class PersonalUsersTests: WireUITestCase {
         deleteApp()
 
         let launchArguments = [
-            "-BackendEnvironmentTypeOverrideKey staging",
+            "--BackendEnvironmentTypeOverrideKey=staging",
+            "--persist-backend-type",
             "--preferred-api-version=8"
         ]
 
