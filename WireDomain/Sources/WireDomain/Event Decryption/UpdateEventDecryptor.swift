@@ -113,7 +113,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                     "decrypting MLS add message event...",
                     attributes: logAttributes
                 )
-                brokenMLSGroupIDs.append("AAEAAGWE4vNlaUGzpxLgWY9P4k8Ad2lyZS5jb20=")
+                //brokenMLSGroupIDs.append("AAEAAGWE4vNlaUGzpxLgWY9P4k8Ad2lyZS5jb20=")
                 shouldCommitPendingProposals = true
 
                 do {

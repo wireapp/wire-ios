@@ -70,7 +70,6 @@ final class MLSGroupRepairAgent: MLSGroupRepairAgentProtocol {
                     self?.repairConversations()
                 }
                 .store(in: &cancellables)
-        } else {
         }
     }
 

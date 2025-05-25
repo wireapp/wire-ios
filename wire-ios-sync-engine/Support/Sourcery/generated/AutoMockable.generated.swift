@@ -547,6 +547,32 @@ public class MockIsE2EICertificateEnrollmentRequiredProtocol: IsE2EICertificateE
 
 }
 
+class MockMLSGroupRepairAgentProtocol: MLSGroupRepairAgentProtocol {
+
+    // MARK: - Life cycle
+
+
+    // MARK: - isSyncV2Enabled
+
+    var isSyncV2Enabled: Bool {
+        get { return underlyingIsSyncV2Enabled }
+        set(value) { underlyingIsSyncV2Enabled = value }
+    }
+
+    var underlyingIsSyncV2Enabled: Bool!
+
+    // MARK: - syncStatePublisher
+
+    var syncStatePublisher: AnyPublisher<SyncState, Never> {
+        get { return underlyingSyncStatePublisher }
+        set(value) { underlyingSyncStatePublisher = value }
+    }
+
+    var underlyingSyncStatePublisher: AnyPublisher<SyncState, Never>!
+
+
+}
+
 public class MockPasteboard: Pasteboard {
 
     // MARK: - Life cycle

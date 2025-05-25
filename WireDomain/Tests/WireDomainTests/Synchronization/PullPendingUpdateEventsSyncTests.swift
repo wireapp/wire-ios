@@ -22,14 +22,19 @@ import XCTest
 @testable import WireDomain
 @testable import WireDomainSupport
 
-final class PullPendingUpdateEventsSyncTests: XCTestCase {
+final class PullPendingUpdateEventsSyncTests: XCTestCase { // maybe here
 
     private var sut: PullPendingUpdateEventsSync!
+    private var journal: Journal!
     private var api: MockUpdateEventsAPI!
     private var store: MockUpdateEventsLocalStoreProtocol!
     private var decryptor: MockUpdateEventDecryptorProtocol!
 
     override func setUp() async throws {
+        journal = Journal(
+            userID: UUID(),
+            storage: UserDefaults.temporary()
+        )
         api = MockUpdateEventsAPI()
         store = MockUpdateEventsLocalStoreProtocol()
         decryptor = MockUpdateEventDecryptorProtocol()
@@ -37,6 +42,7 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
             selfClientID: Scaffolding.selfClientID,
             api: api,
             store: store,
+            journal: journal,
             decryptor: decryptor
         )
     }
@@ -45,6 +51,7 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
         api = nil
         store = nil
         decryptor = nil
+        journal = nil
         sut = nil
     }
 
@@ -67,7 +74,7 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
         }
 
         decryptor.decryptEventsIn_MockMethod = {
-            $0.events
+            EventDecryptorResult(events: $0.events, brokenMLSGroupIDs: [Scaffolding.mlsGroupID])
         }
 
         store.persistEventEnvelopeIndex_MockMethod = { _, _ in }
@@ -104,6 +111,7 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
         XCTAssertEqual(storeLastEventIDInvocations[0], Scaffolding.envelope1.id)
         XCTAssertEqual(storeLastEventIDInvocations[1], Scaffolding.envelope3.id)
         XCTAssertEqual(storeLastEventIDInvocations[2], Scaffolding.envelope4.id)
+        XCTAssertEqual(journal[.brokenMLSGroupIDs].first, Scaffolding.mlsGroupID)
     }
 
 }
@@ -114,6 +122,7 @@ private enum Scaffolding {
     static let selfUserID = UserID(uuid: UUID(), domain: localDomain)
     static let selfClientID = "abcd1234"
     static let conversationID = ConversationID(uuid: UUID(), domain: localDomain)
+    static let mlsGroupID = "ASDF"
 
     static let otherDomain = "other.com"
     static let aliceID = UserID(uuid: .mockID3, domain: otherDomain)
