@@ -31,15 +31,17 @@ package final class WireCellsUploadFileUseCase: WireCellsUploadFileUseCaseProtoc
     }
 
     func invoke(fileURL: URL) async throws {
-        guard let fileSize = try fileURL.resourceValues(forKeys: Set([.fileSizeKey])).fileSize else {
+        let resourceValues = try fileURL.resourceValues(forKeys: [.fileSizeKey, .contentTypeKey])
+        guard let fileSize = resourceValues.fileSize else {
             throw WireCellsUploadFileUseCaseError.missingFileSize
         }
 
         await draftRepository.add(
             assetURL: fileURL,
-            assetSize: UInt64(fileSize),
+            assetSize: fileSize,
             cellName: cellName,
-            fileName: fileURL.lastPathComponent
+            fileName: fileURL.lastPathComponent,
+            fileType: resourceValues.contentType
         )
     }
 

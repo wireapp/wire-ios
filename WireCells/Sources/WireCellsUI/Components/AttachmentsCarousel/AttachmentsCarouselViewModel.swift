@@ -19,6 +19,7 @@
 import Foundation
 import UIKit
 public import WireCellsAPI
+import UniformTypeIdentifiers
 
 @MainActor
 public final class AttachmentsCarouselViewModel: ObservableObject {
@@ -53,10 +54,32 @@ private extension AttachmentsCarouselItem {
         self.init(
             id: draft.id.uuid,
             state: state,
-            kind: .image(thumbnail: UIImage()), // FIXME:
-            name: "something", // FIXME:
-            size: "something" // FIXME:
+            kind: AttachmentsCarouselItem.Kind(draft.fileType),
+            name: draft.name,
+            size: draft.bytes.formatted(.byteCount(style: .memory))
         )
+    }
+
+}
+
+private extension AttachmentsCarouselItem.Kind {
+
+    init(_ value: UTType?) {
+        guard let value else {
+            self = .document(type: nil)
+            return
+        }
+
+        // FIXME: [WPB-17604] Set preview data i.e. thumbnail or audio samples
+        if value.conforms(to: .image) {
+            self = .image(thumbnail: UIImage())
+        } else if value.conforms(to: .audiovisualContent) {
+            self = .video(thumbnail: UIImage())
+        } else if value.conforms(to: .audio) {
+            self = .audio(samples: [])
+        } else {
+            self = .document(type: value)
+        }
     }
 
 }

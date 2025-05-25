@@ -19,6 +19,7 @@
 import Collections
 @preconcurrency import Combine
 import Foundation
+import UniformTypeIdentifiers
 package import WireCellsAPI
 
 package actor DraftsRepository {
@@ -38,21 +39,30 @@ package actor DraftsRepository {
         continuations.values.forEach { $0.finish() }
     }
 
-    func add(assetURL: URL, assetSize: UInt64, cellName: String, fileName: String) async {
+    func add(assetURL: URL, assetSize: Int, cellName: String, fileName: String, fileType: UTType?) async {
         let draft = WireCellsDraft(
             id: .new(),
             assetURL: assetURL,
-            status: .uploading(progress: 0)
+            fileType: fileType,
+            status: .uploading(progress: 0),
+            name: fileName,
+            bytes: assetSize
         )
         drafts.value[cellName, default: [:]][draft.id] = draft
 
         do {
-            let (_, stream) = try await uploadManager.upload(
+            let (node, stream) = try await uploadManager.upload(
                 id: draft.id,
                 assetPath: assetURL,
-                assetSize: assetSize,
+                assetSize: UInt64(assetSize),
                 destNodePath: "\(cellName)/\(fileName)"
             )
+
+            // Update draft name if changed
+            if let updatedName = URL(string: node.path)?.lastPathComponent, updatedName != draft.name {
+                drafts.value[cellName]?[draft.id]?.name = updatedName
+            }
+
             for await status in stream {
                 setStatus(status, cellName: cellName, id: draft.id)
             }

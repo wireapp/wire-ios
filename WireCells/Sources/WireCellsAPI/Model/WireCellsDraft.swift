@@ -17,20 +17,30 @@
 //
 
 package import Foundation
+package import UniformTypeIdentifiers
 
 public struct WireCellsDraft: Hashable, Sendable {
 
     public let id: WireCellsNodeID
     package let assetURL: URL
+    package let fileType: UTType?
     public var status: WireCellsUploadStatus
+    package var name: String
+    package let bytes: Int
 
     package init(
         id: WireCellsNodeID,
         assetURL: URL,
-        status: WireCellsUploadStatus
+        fileType: UTType?,
+        status: WireCellsUploadStatus,
+        name: String,
+        bytes: Int
     ) {
         self.id = id
         self.assetURL = assetURL
+        self.fileType = fileType
         self.status = status
+        self.name = name
+        self.bytes = bytes
     }
 }
