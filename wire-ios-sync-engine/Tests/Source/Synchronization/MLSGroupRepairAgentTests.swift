@@ -19,8 +19,8 @@
 import Combine
 import Testing
 import WireDomain
-@testable import WireSyncEngine
 @testable import WireDataModelSupport
+@testable import WireSyncEngine
 
 class MLSGroupRepairAgentTests: XCTestCase {
 
@@ -40,7 +40,8 @@ class MLSGroupRepairAgentTests: XCTestCase {
         sut = MLSGroupRepairAgent(
             journal: journal,
             mlsService: mockMLSService,
-            syncStateSubject: syncStateSubject)
+            syncStateSubject: syncStateSubject
+        )
     }
 
     override func tearDown() {
@@ -57,7 +58,7 @@ class MLSGroupRepairAgentTests: XCTestCase {
 
         journal[.brokenMLSGroupIDs] = [validGroupID]
 
-        mockMLSService.fetchAndRepairGroupWith_MockMethod = { group in
+        mockMLSService.fetchAndRepairGroupWith_MockMethod = { _ in
             expectation.fulfill()
         }
 
