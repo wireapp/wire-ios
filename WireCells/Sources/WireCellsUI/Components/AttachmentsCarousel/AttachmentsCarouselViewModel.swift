@@ -24,7 +24,7 @@ import UniformTypeIdentifiers
 @MainActor
 public final class AttachmentsCarouselViewModel: ObservableObject {
 
-    @Published private(set)var items: [AttachmentsCarouselItem]
+    @Published private(set) var items: [AttachmentsCarouselItem]
 
     public init(items: [AttachmentsCarouselItem]) {
         self.items = items
