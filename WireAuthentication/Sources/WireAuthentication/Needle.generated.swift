@@ -127,6 +127,9 @@ private class LoginViaEmailComponentDependency6f812ea9ca4f0322dd27Provider: Logi
     var minTLSVersion: TLSVersion {
         return rootComponent.minTLSVersion
     }
+    var useLegacyRegistrationFlow: Bool {
+        return rootComponent.useLegacyRegistrationFlow
+    }
     private let rootComponent: RootComponent
     init(rootComponent: RootComponent) {
         self.rootComponent = rootComponent
