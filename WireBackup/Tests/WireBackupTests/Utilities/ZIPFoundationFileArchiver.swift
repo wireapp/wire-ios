@@ -32,7 +32,11 @@ struct ZIPFoundationFileArchiver: FileArchiverProtocol {
                 to: destinationURL.appending(path: resourceURL.lastPathComponent, directoryHint: .notDirectory)
             )
         }
-        try fileManager.zipItem(at: destinationURL, to: destinationURL.appendingPathExtension("tmp"))
+        try fileManager.zipItem(
+            at: destinationURL,
+            to: destinationURL.appendingPathExtension("tmp"),
+            shouldKeepParent: false
+        )
         try fileManager.removeItem(at: destinationURL)
         try fileManager.moveItem(at: destinationURL.appendingPathExtension("tmp"), to: destinationURL)
     }

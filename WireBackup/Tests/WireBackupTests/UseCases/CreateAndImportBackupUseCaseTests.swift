@@ -79,15 +79,16 @@ final class CreateAndImportBackupUseCaseTests: XCTestCase {
         // create
 
         let user = exampleUser
-        let message = exampleMessage
+        let conversation = exampleConversation
+        let message = exampleMessage(of: user, in: conversation)
 
         backupLocalStoreMock.countModels_UserCountIntConversationCountIntMessageCountIntReturnValue = (1, 1, 1)
         backupLocalStoreMock.fetchAllUsersAsyncThrowingStreamUserBackupModelAnyErrorReturnValue =
-            .makeStream(of: [exampleUser])
+            .makeStream(of: [user])
         backupLocalStoreMock.fetchAllConversationsAsyncThrowingStreamConversationBackupModelAnyErrorReturnValue =
-            .makeStream(of: [exampleConversation])
+            .makeStream(of: [conversation])
         backupLocalStoreMock.fetchAllMessagesAsyncThrowingStreamMessageBackupModelAnyErrorReturnValue =
-            .makeStream(of: [exampleMessage])
+            .makeStream(of: [message])
 
         let password = UUID().uuidString
         let createEvents = try await createBackupUseCase.invoke(password: password)
@@ -124,13 +125,13 @@ final class CreateAndImportBackupUseCaseTests: XCTestCase {
         )
     }
 
-    private var exampleMessage: MessageBackupModel {
+    private func exampleMessage(of user: UserBackupModel, in conversation: ConversationBackupModel) -> MessageBackupModel {
         MessageBackupModel(
-            id: UUID().uuidString,
-            conversationID: exampleConversation.qualifiedID,
-            senderUserID: exampleUser.qualifiedID,
+            id: UUID().uuidString.lowercased(),
+            conversationID: conversation.qualifiedID,
+            senderUserID: user.qualifiedID,
             senderClientID: .none,
-            creationDate: .now,
+            creationDate: try! Date.ISO8601FormatStyle().parse("2025-05-26T11:50:17+02:00"),
             content: .text("some message")
         )
     }
