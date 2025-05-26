@@ -18,12 +18,17 @@
 
 public import Foundation
 
-public protocol WireCellsNodeUploadManager: Actor {
+public protocol WireCellsNodeUploadManagerProtocol: Actor {
     /// Starts file upload. Returns the new node after pre-checking.
-    func upload(assetPath: URL, assetSize: UInt64, destNodePath: String) async throws -> WireCellsNode
+    func upload(
+        id: WireCellsNodeID,
+        assetPath: URL,
+        assetSize: UInt64,
+        destNodePath: String
+    ) async throws -> (node: WireCellsNode, stream: AsyncStream<WireCellsUploadStatus>)
 
     /// Observe upload events for a specific node UUID.
-    func observeUpload(nodeID: WireCellsNodeID) async -> AsyncStream<WireCellsNodeUploadEvent>?
+    func observeUpload(nodeID: WireCellsNodeID) async -> AsyncStream<WireCellsUploadStatus>?
 
     /// Retry a failed upload.
     func retryUpload(nodeID: WireCellsNodeID) async
@@ -46,11 +51,4 @@ public struct WireCellsNodeUploadInfo: Equatable, Hashable, Sendable {
         self.progress = progress
         self.uploadFailed = uploadFailed
     }
-}
-
-public enum WireCellsNodeUploadEvent: Equatable, Hashable, Sendable {
-    case uploadProgress(Float)
-    case uploadCompleted
-    case uploadError
-    case uploadCancelled
 }
