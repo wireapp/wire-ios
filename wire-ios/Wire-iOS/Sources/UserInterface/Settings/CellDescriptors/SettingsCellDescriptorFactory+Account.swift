@@ -395,38 +395,17 @@ extension SettingsCellDescriptorFactory {
         let context = selfUser.managedObjectContext!.performAndWait {
             selfUser.managedObjectContext!.zm_sync!
         }
-        let messageLocalStore = MessageLocalStore(context: context)
         let backupLocalStore = BackupLocalStore(
             context: context,
-            processor: ConversationProtobufMessageProcessor(
-                messageLocalStore: messageLocalStore,
-                conversationLocalStore: ConversationLocalStore(
-                    context: context,
-                    mlsService: context.performAndWait { context.mlsService },
-                    messageLocalStore: messageLocalStore
-                ),
-                userLocalStore: UserLocalStore(
-                    context: context,
-                    messageLocalStore: messageLocalStore
-                )
-            )
+            processor: ConversationProtobufMessageProcessor(context: context)
         )
-
         let userSession = sessionManager.activeUserSession!
         let importBackupUseCase = CompositeImportBackupUseCase(
             importBackupUseCase: ImportBackupUseCase(
                 selfUserID: .init(selfUser.qualifiedID!),
                 backupLocalStore: backupLocalStore,
                 fileUnarchiver: ZipArchiveFileUnarchiver(),
-                syncTrigger: {
-                    // TODO: what is the correct sync trigger after backup?
-                    // userSession.syncAgent.resume()
-                    userSession.syncStatus.forceSlowSync()
-                    // context.performGroupedBlock {
-                    //     context.saveOrRollback()
-                    //     userSession.triggerInitialSync()
-                    // }
-                },
+                syncTrigger: { userSession.triggerResourcesSync() },
                 logger: WireLogger.backupImport
             ),
             legacyImportBackupUseCase: sessionManager.importLegacyBackupUseCase!
@@ -536,6 +515,28 @@ extension SettingsCellDescriptorFactory {
 
     func signOutElement() -> any SettingsCellDescriptorType {
         SettingsSignOutCellDescriptor()
+    }
+
+}
+
+// MARK: -
+
+private extension ConversationProtobufMessageProcessor {
+
+    init(context: NSManagedObjectContext) {
+        let messageLocalStore = MessageLocalStore(context: context)
+        self.init(
+            messageLocalStore: messageLocalStore,
+            conversationLocalStore: ConversationLocalStore(
+                context: context,
+                mlsService: context.performAndWait { context.mlsService },
+                messageLocalStore: messageLocalStore
+            ),
+            userLocalStore: UserLocalStore(
+                context: context,
+                messageLocalStore: messageLocalStore
+            )
+        )
     }
 
 }

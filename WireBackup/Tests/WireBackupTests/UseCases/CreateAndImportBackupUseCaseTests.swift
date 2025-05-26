@@ -27,49 +27,126 @@ import XCTest
 final class CreateAndImportBackupUseCaseTests: XCTestCase {
 
     private typealias BackupLocalStoreMock = BackupLocalStoreProtocolMock
-    private typealias FileArchiverMock = FileArchiverProtocolMock
 
     private var backupLocalStoreMock: BackupLocalStoreMock!
-    private var fileArchiverMock: FileArchiverMock!
-    private var dateProviderMock: CurrentDateProvidingMock!
-    private var sut: CreateBackupUseCase<
+    private var fileArchiver: ZIPFoundationFileArchiver!
+    private var fileUnarchiver: ZIPFoundationFileUnarchiver!
+    private var createBackupUseCase: CreateBackupUseCase<
         BackupLocalStoreMock,
-        FileArchiverMock
+        ZIPFoundationFileArchiver
     >!
+    private var importBackupUseCase: ImportBackupUseCase<
+        BackupLocalStoreMock,
+        ZIPFoundationFileUnarchiver
+    >!
+    private var syncTriggerExpectation: XCTestExpectation!
 
     override func setUpWithError() throws {
 
         backupLocalStoreMock = .init()
-        fileArchiverMock = .init()
-        dateProviderMock = .init()
+        fileArchiver = .init()
+        fileUnarchiver = .init()
 
-        sut = CreateBackupUseCase(
-            selfUserID: QualifiedID(id: UUID(), domain: ""),
-            selfUserHandle: "handle",
+        let selfUserID = QualifiedID(id: UUID(), domain: "wire.com")
+        createBackupUseCase = CreateBackupUseCase(
+            selfUserID: selfUserID,
             backupLocalStore: backupLocalStoreMock,
-            fileArchiver: fileArchiverMock,
-            currentDateProvider: dateProviderMock,
+            fileArchiver: fileArchiver,
+            logger: WireLogger(tag: "???")
+        )
+
+        let syncTriggerExpectation = XCTestExpectation()
+        self.syncTriggerExpectation = syncTriggerExpectation
+        importBackupUseCase = ImportBackupUseCase(
+            selfUserID: selfUserID,
+            backupLocalStore: backupLocalStoreMock,
+            fileUnarchiver: fileUnarchiver,
+            syncTrigger: { syncTriggerExpectation.fulfill() },
             logger: WireLogger(tag: "???")
         )
     }
 
     override func tearDownWithError() throws {
-        sut = nil
-        dateProviderMock = nil
-        fileArchiverMock = nil
+        importBackupUseCase = nil
+        createBackupUseCase = nil
+        fileArchiver = nil
+        fileUnarchiver = nil
         backupLocalStoreMock = nil
     }
 
-    func testHappyPath() throws {
-        // TODO: [WPB-16658] create mock models, run create and then import & compare
+    func testCreateAndImport() async throws {
 
-        // let user = UserBackupModel(...)
-        // let conversations = ...
-        throw XCTSkip("not yet implemented")
+        // create
+
+        let user = exampleUser
+        let message = exampleMessage
+
+        backupLocalStoreMock.countModels_UserCountIntConversationCountIntMessageCountIntReturnValue = (1, 1, 1)
+        backupLocalStoreMock.fetchAllUsersAsyncThrowingStreamUserBackupModelAnyErrorReturnValue =
+            .makeStream(of: [exampleUser])
+        backupLocalStoreMock.fetchAllConversationsAsyncThrowingStreamConversationBackupModelAnyErrorReturnValue =
+            .makeStream(of: [exampleConversation])
+        backupLocalStoreMock.fetchAllMessagesAsyncThrowingStreamMessageBackupModelAnyErrorReturnValue =
+            .makeStream(of: [exampleMessage])
+
+        let password = UUID().uuidString
+        let createEvents = try await createBackupUseCase.invoke(password: password)
+            .reduce(into: [CreateBackupProgress]()) { $0 += [$1] }
+        guard case .done(let backupURL) = createEvents.last else { return XCTFail("backup url missing") }
+
+        // import
+
+        backupLocalStoreMock.fetchAllUserIDsSetQualifiedIDReturnValue = []
+        backupLocalStoreMock.fetchAllMessageIDsSetStringReturnValue = []
+
+        let importEvents = try await importBackupUseCase.invoke(url: backupURL, password: password)
+            .reduce(into: [ImportBackupProgress]()) { $0 += [$1] }
+        await fulfillment(of: [syncTriggerExpectation], timeout: 1)
+
+        XCTAssertEqual(importEvents.last, .done)
+        XCTAssertEqual(backupLocalStoreMock.addUserUserUserBackupModelVoidReceivedInvocations, [user])
+        XCTAssertEqual(backupLocalStoreMock.addMessageMessageMessageBackupModelVoidReceivedInvocations, [message])
+
     }
 
-    // TODO: [WPB-16658] maybe importing a backup file from another platform could be tested
+    private var exampleUser: UserBackupModel {
+        UserBackupModel(
+            qualifiedID: QualifiedID(id: UUID(), domain: "wire.com"),
+            name: "Somebody",
+            handle: "sb"
+        )
+    }
 
-    // TODO: [WPB-16658] edge cases?
+    private var exampleConversation: ConversationBackupModel {
+        ConversationBackupModel(
+            qualifiedID: QualifiedID(id: UUID(), domain: "wire.com"),
+            name: "some conversation"
+        )
+    }
 
+    private var exampleMessage: MessageBackupModel {
+        MessageBackupModel(
+            id: UUID().uuidString,
+            conversationID: exampleConversation.qualifiedID,
+            senderUserID: exampleUser.qualifiedID,
+            senderClientID: .none,
+            creationDate: .now,
+            content: .text("some message")
+        )
+    }
+
+}
+
+// MARK: -
+
+private extension AsyncThrowingStream where Element: Sendable, Failure == (any Error) {
+
+    static func makeStream(of elements: [Element]) -> Self {
+        let (stream, continuation) = AsyncThrowingStream.makeStream(of: Element.self, bufferingPolicy: .unbounded)
+        for element in elements {
+            continuation.yield(element)
+        }
+        continuation.finish()
+        return stream
+    }
 }
