@@ -93,7 +93,7 @@ final class CreateAndImportBackupUseCaseTests: XCTestCase {
         let password = UUID().uuidString
         let createEvents = try await createBackupUseCase.invoke(password: password)
             .reduce(into: [CreateBackupProgress]()) { $0 += [$1] }
-        guard case .done(let backupURL) = createEvents.last else { return XCTFail("backup url missing") }
+        guard case let .done(backupURL) = createEvents.last else { return XCTFail("backup url missing") }
 
         // import
 
@@ -125,7 +125,10 @@ final class CreateAndImportBackupUseCaseTests: XCTestCase {
         )
     }
 
-    private func exampleMessage(of user: UserBackupModel, in conversation: ConversationBackupModel) -> MessageBackupModel {
+    private func exampleMessage(
+        of user: UserBackupModel,
+        in conversation: ConversationBackupModel
+    ) -> MessageBackupModel {
         MessageBackupModel(
             id: UUID().uuidString.lowercased(),
             conversationID: conversation.qualifiedID,
