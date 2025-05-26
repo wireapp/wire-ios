@@ -92,36 +92,24 @@ public class Journal: JournalProtocol {
         "\(namespace).\(key.name)"
     }
 
-    /// Remove a single value from a Set<String> .
-    ///
-    /// - Parameters:
-    ///   - value: The string to remove.
-    ///   - key: The journal key associated with the Set<String>.
+}
 
-    public func removeValue(_ value: String, for key: JournalKey<Set<String>>) {
+
+public extension Journal {
+
+    func removeValue(_ value: String, for key: JournalKey<Set<String>>) {
         var currentSet = self[key]
         currentSet.remove(value)
         self[key] = currentSet
     }
 
-    /// Adds a single value to a Set<String>.
-    ///
-    /// - Parameters:
-    ///   - value: The string to insert.
-    ///   - key: The journal key associated with the Set<String>.
-
-    public func addValue(_ value: String, for key: JournalKey<Set<String>>) {
+    func addValue(_ value: String, for key: JournalKey<Set<String>>) {
         var currentSet = self[key]
         currentSet.insert(value)
         self[key] = currentSet
     }
 
-    /// Adds multiple values to a Set<String>.
-    ///
-    /// - Parameters:
-    ///   - values: A set of strings to insert.
-    ///   - key: The journal key associated with the Set<String>.
-    public func addValue(_ values: Set<String>, for key: JournalKey<Set<String>>) {
+    func addValues(_ values: Set<String>, for key: JournalKey<Set<String>>) {
         var currentSet = self[key]
         currentSet.formUnion(values)
         self[key] = currentSet

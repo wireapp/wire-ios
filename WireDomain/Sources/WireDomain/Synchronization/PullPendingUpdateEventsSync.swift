@@ -113,7 +113,7 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
             }
         }
 
-        journal.addValue(brokenMLSGroupIDs, for: .brokenMLSGroupIDs)
+        journal.addValues(brokenMLSGroupIDs, for: .brokenMLSGroupIDs)
 
         return AsyncStream {
             $0.yield(events)

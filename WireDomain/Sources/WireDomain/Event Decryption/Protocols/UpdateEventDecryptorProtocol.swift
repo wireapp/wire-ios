@@ -34,6 +34,6 @@ public protocol UpdateEventDecryptorProtocol {
 public struct EventDecryptorResult {
 
     let events: [UpdateEvent]
-    let brokenMLSGroupIDs: [String]
+    let brokenMLSGroupIDs: Set<String>
 
 }

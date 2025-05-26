@@ -76,7 +76,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         ]
 
         var decryptedEvents = [UpdateEvent]()
-        var brokenMLSGroupIDs = [String]()
+        var brokenMLSGroupIDs = Set<String>()
         var shouldCommitPendingProposals = false
 
         for event in eventEnvelope.events {
@@ -113,7 +113,6 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                     "decrypting MLS add message event...",
                     attributes: logAttributes
                 )
-                // brokenMLSGroupIDs.append("AAEAAGWE4vNlaUGzpxLgWY9P4k8Ad2lyZS5jb20=")
                 shouldCommitPendingProposals = true
 
                 do {
@@ -127,7 +126,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                             "failed to decrypt MLS due to `WrongEpoch` for group \(mlsGroupID)",
                             attributes: logAttributes
                         )
-                        brokenMLSGroupIDs.append(mlsGroupID.description)
+                        brokenMLSGroupIDs.insert(mlsGroupID.description)
                     default:
                         WireLogger.updateEvent.error(
                             "failed to decrypt MLS add message event, dropping: \(String(describing: error))",

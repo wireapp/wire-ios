@@ -22,7 +22,7 @@ import XCTest
 @testable import WireDomain
 @testable import WireDomainSupport
 
-final class PullPendingUpdateEventsSyncTests: XCTestCase { // maybe here
+final class PullPendingUpdateEventsSyncTests: XCTestCase {
 
     private var sut: PullPendingUpdateEventsSync!
     private var journal: Journal!

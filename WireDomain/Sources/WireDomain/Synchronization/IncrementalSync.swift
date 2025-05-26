@@ -100,7 +100,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 
                         let brokenMLSGroupIDs = decryptionEventsResult.brokenMLSGroupIDs
                         if !brokenMLSGroupIDs.isEmpty {
-                            journal.addValue(Set(brokenMLSGroupIDs), for: .brokenMLSGroupIDs)
+                            journal.addValues(Set(brokenMLSGroupIDs), for: .brokenMLSGroupIDs)
                         }
                     } catch {
                         logger.error(
