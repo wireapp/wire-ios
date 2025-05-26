@@ -28,12 +28,13 @@ class WireUITestCase: XCTestCase {
     let userManager = UserManager()
 
     override func setUpWithError() throws {
-        // Delete app, useful if we aren't resetting simulators between runs (locally writing tests)
+        // Delete app, useful since resetting sim between runs made it unstable
         XCUIApplication().terminate()
-//        deleteApp()
+        deleteApp()
 
         let launchArguments = [
-            "-BackendEnvironmentTypeOverrideKey staging",
+            "--BackendEnvironmentTypeOverrideKey=staging",
+            "--persist-backend-type",
             "--preferred-api-version=8"
         ]
 

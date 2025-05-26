@@ -54,32 +54,18 @@ final class PersonalUsersTests: WireUITestCase {
     
     @MainActor
     func test_Login_asExistingPersonalUser() async throws {
+        // TODO: Get userManager to also set the user's username
         let user = try await userManager.createPersonalUser()
-        
-        XCUIApplication().terminate()
-        deleteApp()
-
-        let launchArguments = [
-            "--BackendEnvironmentTypeOverrideKey=staging",
-            "--persist-backend-type",
-            "--preferred-api-version=8"
-        ]
-
-        app = XCUIApplication()
-        app.launchArguments = launchArguments
-        app.useWireAuthentication()
-        app.launch()
-
-        // In UI tests it is usually best to stop immediately when a failure occurs
-        // although this does not appear to work
-        continueAfterFailure = false
         
         let page = WelcomePage()
             .enterEmailOrSSO(user.email)
             .enterPassword(user.password)
-//        
-//        print("--- elements -----")
-//        print(page.app.otherElements.allElementsBoundByAccessibilityElement)
-//        print("--- end elements -----")
+            .acceptFirstTimeAlert()
+            .acceptPopup()
+            .setUsername(user.username)
+            .openSettings()
+            .openAccountSettings()
+            .logout()
+            .enterPassword(user.password)
     }
 }

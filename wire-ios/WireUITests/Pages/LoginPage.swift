@@ -44,10 +44,10 @@ class LoginPage: PageModel {
         return CreateAccountPage()
     }
     
-    func enterPassword(_ password: String) -> LoginPage {
+    func enterPassword(_ password: String) -> FirstTimePage {
         passwordField.tap()
         passwordField.typeText(password)
         nextButton.tap()
-        return self
+        return FirstTimePage()
     }
 }
