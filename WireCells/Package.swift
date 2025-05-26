@@ -70,9 +70,8 @@ let package = Package(
             plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
         ),
         .testTarget(
-            name: "WireCellsTests",
+            name: "WireCellsImplementationTests",
             dependencies: [
-                "WireCellsAPI",
                 "WireCellsImplementation"
             ]
         ),
