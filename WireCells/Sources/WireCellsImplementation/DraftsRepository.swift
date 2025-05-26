@@ -68,7 +68,7 @@ package actor DraftsRepository {
             }
 
         } catch {
-            setStatus(.failed, cellName: cellName, id: draft.id)
+            setStatus(.failed(error: WireCellsUploadError(error)), cellName: cellName, id: draft.id)
         }
     }
 
