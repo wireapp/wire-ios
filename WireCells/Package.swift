@@ -72,7 +72,8 @@ let package = Package(
         .testTarget(
             name: "WireCellsImplementationTests",
             dependencies: [
-                "WireCellsImplementation"
+                "WireCellsImplementation",
+                "WireCellsImplementationSupport"
             ]
         ),
         .testTarget(
@@ -80,6 +81,11 @@ let package = Package(
             dependencies: [
                 "WireCellsUI"
             ]
+        ),
+        .target(
+            name: "WireCellsImplementationSupport",
+            dependencies: ["WireCellsImplementation"],
+            plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
         ),
     ]
 )

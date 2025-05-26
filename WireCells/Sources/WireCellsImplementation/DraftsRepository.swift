@@ -19,10 +19,17 @@
 import Collections
 @preconcurrency import Combine
 import Foundation
-import UniformTypeIdentifiers
+package import UniformTypeIdentifiers
 package import WireCellsAPI
 
-package actor DraftsRepository {
+package protocol DraftsRepositoryProtocol: Actor {
+
+    func add(assetURL: URL, assetSize: Int, cellName: String, fileName: String, fileType: UTType?) async
+    func drafts(for cellName: String) -> AsyncStream<[WireCellsDraft]>
+
+}
+
+package actor DraftsRepository: DraftsRepositoryProtocol {
 
     typealias CellName = String
 
@@ -39,7 +46,7 @@ package actor DraftsRepository {
         continuations.values.forEach { $0.finish() }
     }
 
-    func add(assetURL: URL, assetSize: Int, cellName: String, fileName: String, fileType: UTType?) async {
+    package func add(assetURL: URL, assetSize: Int, cellName: String, fileName: String, fileType: UTType?) async {
         let draft = WireCellsDraft(
             id: .new(),
             assetURL: assetURL,
@@ -72,7 +79,7 @@ package actor DraftsRepository {
         }
     }
 
-    func drafts(for cellName: CellName) -> AsyncStream<[WireCellsDraft]> {
+    package func drafts(for cellName: String) -> AsyncStream<[WireCellsDraft]> {
         let continuationID = UUID()
         let (stream, continuation) = AsyncStream.makeStream(
             of: [WireCellsDraft].self,
