@@ -208,4 +208,76 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         XCTAssertEqual(incrementalSync.perform_Invocations.count, 1)
     }
 
+    func testPerformIncrementalSync_Sync_State_Update_To_Suspended_When_Throwing_Error() async throws {
+        // Given
+        journal[.isSyncV2Enabled] = true
+        let expectation = XCTestExpectation()
+
+        enum Failure: Error {
+            case failed
+        }
+
+        // Mock
+        incrementalSync.perform_MockMethod = {
+            throw Failure.failed
+        }
+
+        var cancellable: AnyCancellable?
+
+        cancellable = syncStateSubject
+            .dropFirst()
+            .sink { state in
+                switch state {
+                case .suspended:
+                    // Then
+                    expectation.fulfill()
+                default:
+                    XCTFail("Sync should be suspended when an error is thrown")
+                }
+            }
+
+
+        do {
+            // When
+            try await sut.performIncrementalSync()
+        } catch {}
+
+        await fulfillment(of: [expectation])
+    }
+
+    func testPerformIncrementalSync_Sync_State_Update_To_Suspended() async throws {
+        // Given
+        journal[.isSyncV2Enabled] = true
+        let expectation = XCTestExpectation()
+
+        enum Failure: Error {
+            case failed
+        }
+
+        // Mock
+        incrementalSync.perform_MockMethod = {
+            throw Failure.failed
+        }
+
+        var cancellable: AnyCancellable?
+
+        cancellable = syncStateSubject
+            .dropFirst()
+            .sink { state in
+                switch state {
+                case .suspended:
+                    // Then
+                    expectation.fulfill()
+                default:
+                    XCTFail("Sync should be suspended")
+                }
+            }
+
+
+        // When
+        sut.suspend()
+
+        await fulfillment(of: [expectation])
+    }
+
 }
