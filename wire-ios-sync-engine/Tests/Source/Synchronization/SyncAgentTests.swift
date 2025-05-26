@@ -236,7 +236,6 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
                 }
             }
 
-
         do {
             // When
             try await sut.performIncrementalSync()
@@ -272,7 +271,6 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
                     XCTFail("Sync should be suspended")
                 }
             }
-
 
         // When
         sut.suspend()
