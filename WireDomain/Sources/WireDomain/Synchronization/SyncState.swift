@@ -36,6 +36,10 @@ public enum SyncState: Equatable {
 
     case liveSyncing
 
+    /// Sync was suspended
+
+    case suspended
+
     public enum InitialSyncState: Equatable {
 
         case pullLastEventID
