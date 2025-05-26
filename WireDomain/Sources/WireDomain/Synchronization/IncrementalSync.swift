@@ -63,14 +63,8 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         let liveEventStream = try await pushChannel.open()
 
         logger.debug("pulling pending update events")
-        syncStateSubject.send(.incrementalSyncing(.pullPendingEvents(.inProgress)))
-        do {
-            try await updateEventsSync.pull()
-        } catch {
-            logger.debug("pulling pending update events interrupted \(String(describing: error))")
-            syncStateSubject.send(.incrementalSyncing(.pullPendingEvents(.interrupted)))
-            throw error
-        }
+        syncStateSubject.send(.incrementalSyncing(.pullPendingEvents))
+        try await updateEventsSync.pull()
 
         logger.debug("processing stored update events")
         syncStateSubject.send(.incrementalSyncing(.processPendingEvents))

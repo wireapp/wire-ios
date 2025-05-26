@@ -53,13 +53,8 @@ public enum SyncState: Equatable {
 
         case createPushChannel
         case openPushChannel
-        case pullPendingEvents(PullPendingEventsState)
+        case pullPendingEvents
         case processPendingEvents
-
-        public enum PullPendingEventsState {
-            case inProgress
-            case interrupted
-        }
 
     }
 

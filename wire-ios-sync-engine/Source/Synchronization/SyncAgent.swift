@@ -211,6 +211,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                 }
             } catch {
                 WireLogger.sync.error("failed to perform new incremental sync: \(String(describing: error))")
+                syncStateSubject.send(.suspended)
                 throw error
             }
         } else {
