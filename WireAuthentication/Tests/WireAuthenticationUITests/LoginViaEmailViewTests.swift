@@ -44,7 +44,7 @@ final class LoginViaEmailViewTests: XCTestCase {
         let view = LoginViaEmailView(factory: FakeLoginViaEmailFactory(
             email: "foo@bar.com",
             backendInfo: BackendInfo(
-                environmentType: .production,
+                environmentType: .default,
                 backendConfig: MockDependencies()._backendConfig
             ),
             canCreateAccount: true,
@@ -68,7 +68,7 @@ final class LoginViaEmailViewTests: XCTestCase {
         let view = LoginViaEmailView(factory: FakeLoginViaEmailFactory(
             email: "foo@bar.com",
             backendInfo: BackendInfo(
-                environmentType: .production,
+                environmentType: .default,
                 backendConfig: MockDependencies()._backendConfig
             ),
             canCreateAccount: true,
@@ -156,7 +156,7 @@ final class LoginViaEmailViewTests: XCTestCase {
         let view = LoginViaEmailView(factory: FakeLoginViaEmailFactory(
             email: "foo@bar.com",
             backendInfo: BackendInfo(
-                environmentType: .production,
+                environmentType: .default,
                 backendConfig: backendConfig
             ),
             canCreateAccount: false,
@@ -194,7 +194,7 @@ final class LoginViaEmailViewTests: XCTestCase {
         let view = LoginViaEmailView(factory: FakeLoginViaEmailFactory(
             email: "foo@bar.com",
             backendInfo: BackendInfo(
-                environmentType: .production,
+                environmentType: .default,
                 backendConfig: backendConfig
             ),
             canCreateAccount: false,

@@ -16,18 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
-public enum BackendEnvironmentType: Sendable, Equatable, Hashable {
-
-    case `default`
-    case staging
-    case anta
-    case bella
-    case chala
-    case diya
-    case elna
-    case foma
-    case custom(url: URL)
-
+public enum WireCellsUploadStatus: Equatable, Hashable, Sendable {
+    case uploading(progress: Float)
+    case uploaded
+    case failed
+    case cancelled
 }
