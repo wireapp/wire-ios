@@ -18,12 +18,12 @@
 
 import WireCellsAPI
 
-package final class WireCellsObserveDraftsUseCase: WireCellsObserveDraftsUseCaseProtocol {
+package final class ObserveDraftsUseCase: WireCellsObserveDraftsUseCaseProtocol {
 
     private let cellName: String
-    private let draftRepository: DraftsRepository
+    private let draftRepository: any DraftsRepositoryProtocol
 
-    package init(cellName: String, draftRepository: DraftsRepository) {
+    package init(cellName: String, draftRepository: any DraftsRepositoryProtocol) {
         self.cellName = cellName
         self.draftRepository = draftRepository
     }

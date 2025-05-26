@@ -42,7 +42,7 @@ public struct WireCellsAssembly {
     }
 
     public func makeObserveDraftsUseCase(cellName: String) -> any WireCellsObserveDraftsUseCaseProtocol {
-        WireCellsObserveDraftsUseCase(cellName: cellName, draftRepository: Self.draftsRepository)
+        ObserveDraftsUseCase(cellName: cellName, draftRepository: Self.draftsRepository)
     }
 
 }
