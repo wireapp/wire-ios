@@ -121,7 +121,7 @@ actor EventProcessor: UpdateEventProcessor {
 
             guard !DeveloperFlag.ignoreIncomingEvents.isOn else { return }
 
-            let publicKeys = try? await self.earService.fetchPublicKeys()
+            let publicKeys = try? self.earService.fetchPublicKeys()
 
             if duringQuickSync {
                 NotificationCenter.default.post(
@@ -161,7 +161,6 @@ actor EventProcessor: UpdateEventProcessor {
     }
 
     private func enqueueTask(_ block: @escaping @Sendable () async throws -> Void) async throws {
-        defer { processingTask = nil }
 
         processingTask = Task { [processingTask] in
             _ = try await processingTask?.value

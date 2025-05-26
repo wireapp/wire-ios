@@ -18,19 +18,18 @@
 
 public import WireFoundation
 
-public struct BackupUserModel {
-    public typealias ID = QualifiedID
+public struct UserBackupModel: Codable, Hashable, Sendable {
 
-    public var id: ID
+    public var qualifiedID: QualifiedID
     public var name: String
     public var handle: String
 
     public init(
-        id: ID,
+        qualifiedID: QualifiedID,
         name: String,
         handle: String
     ) {
-        self.id = id
+        self.qualifiedID = qualifiedID
         self.name = name
         self.handle = handle
     }

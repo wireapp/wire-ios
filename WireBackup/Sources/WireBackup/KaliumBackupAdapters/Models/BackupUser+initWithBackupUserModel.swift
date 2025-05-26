@@ -17,12 +17,13 @@
 //
 
 import KaliumBackup
+import WireFoundation
 
 extension BackupUser {
 
-    convenience init(_ user: BackupUserModel) {
+    convenience init(_ user: UserBackupModel) {
         self.init(
-            id: BackupQualifiedId(user.id),
+            id: BackupQualifiedId(user.qualifiedID),
             name: user.name,
             handle: user.handle
         )

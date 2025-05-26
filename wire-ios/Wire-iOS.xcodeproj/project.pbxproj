@@ -111,6 +111,8 @@
 		CB4E15122C81CC81005DDEC8 /* Down in Frameworks */ = {isa = PBXBuildFile; productRef = CB4E15112C81CC81005DDEC8 /* Down */; };
 		D0E258132DDC860100959FB9 /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = D0E258122DDC860100959FB9 /* WireAPI */; };
 		D0E258152DDC864100959FB9 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = D0E258142DDC864100959FB9 /* WireFoundation */; };
+		CB71EE212DDF5A1000E7A3AF /* WireCellsAPI in Frameworks */ = {isa = PBXBuildFile; productRef = CB71EE202DDF5A1000E7A3AF /* WireCellsAPI */; };
+		CBDDB1832DD4BCA700A0A1F3 /* WireCellsBindings in Frameworks */ = {isa = PBXBuildFile; productRef = CBDDB1822DD4BCA700A0A1F3 /* WireCellsBindings */; };
 		E40050762D71A80100B7962B /* WireConversationUI in Frameworks */ = {isa = PBXBuildFile; productRef = E40050752D71A80100B7962B /* WireConversationUI */; };
 		E6C25FC52AFFAAC300406A1C /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E6C25FC42AFFAAC300406A1C /* WireTesting.framework */; };
 		E9816C902CC9244700D77F22 /* WireSyncEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9816C8F2CC9244700D77F22 /* WireSyncEngine.framework */; };
@@ -923,6 +925,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CB71EE212DDF5A1000E7A3AF /* WireCellsAPI in Frameworks */,
 				0619A95C2D3FE78700876BDE /* WireAuthenticationUI in Frameworks */,
 				EEE25B4129719C750008B894 /* WireRequestStrategy.framework in Frameworks */,
 				EE543B4A2D564AC000CA96BA /* WireAuthentication in Frameworks */,
@@ -943,6 +946,7 @@
 				CB4E15122C81CC81005DDEC8 /* Down in Frameworks */,
 				EEE25B3829719C170008B894 /* WireDataModel.framework in Frameworks */,
 				59D038272C85D31E009FE583 /* WireMainNavigationUI in Frameworks */,
+				CBDDB1832DD4BCA700A0A1F3 /* WireCellsBindings in Frameworks */,
 				767F41E82D7F95C100E4E090 /* WireConversationsUIBindings in Frameworks */,
 				CB1428452DCB8A820092E7AE /* WireCellsUI in Frameworks */,
 				EE33C48D296485FA00C058D1 /* WireShareEngine.framework in Frameworks */,
@@ -1374,6 +1378,8 @@
 				16EE08AD2D92E861001B372C /* WireCoreCryptoUniffi */,
 				CB1428442DCB8A820092E7AE /* WireCellsUI */,
 				59703B272DD4A42000B45773 /* ZIPFoundation */,
+				CBDDB1822DD4BCA700A0A1F3 /* WireCellsBindings */,
+				CB71EE202DDF5A1000E7A3AF /* WireCellsAPI */,
 			);
 			productName = "ZClient iOS";
 			productReference = 8F42C538199244A700288E4D /* Wire.app */;
@@ -2976,6 +2982,14 @@
 		D0E258142DDC864100959FB9 /* WireFoundation */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireFoundation;
+    };
+		CB71EE202DDF5A1000E7A3AF /* WireCellsAPI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireCellsAPI;
+		};
+		CBDDB1822DD4BCA700A0A1F3 /* WireCellsBindings */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireCellsBindings;
 		};
 		E40050752D71A80100B7962B /* WireConversationUI */ = {
 			isa = XCSwiftPackageProductDependency;

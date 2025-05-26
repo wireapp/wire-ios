@@ -16,9 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum CreateLegacyBackupError: Error {
-    case noActiveAccountForExport
-    case compressionError
-    /// Failed to create `InputStream` or `OutputStream` from `URL`.
-    case failedToCreateStreamsForEncryption
+public import Foundation
+
+// sourcery: AutoMockable
+public protocol FileArchiverProtocol: Sendable {
+
+    /// Creates a zip file at `destinationURL` from the file or directory at `sourceURL`.
+    func zipResources(
+        at resourceURLs: [URL],
+        into destinationURL: URL
+    ) throws
+
 }

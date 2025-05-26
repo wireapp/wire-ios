@@ -177,4 +177,5 @@ public protocol UserLocalStoreProtocol {
     ) async -> UUID
 
     func fetchSelfUserAvailability() async -> Availability
+
 }

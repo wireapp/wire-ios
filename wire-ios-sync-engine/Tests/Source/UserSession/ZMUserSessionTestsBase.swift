@@ -67,7 +67,7 @@ class ZMUserSessionTestsBase: MessagingTest {
         backendEnvironment = WireTransport.BackendEnvironment(
             title: "Mock backend environment",
             trustData: [],
-            environmentType: .production,
+            environmentType: .default,
             endpoints: BackendEndpoints(
                 backendURL: baseURL,
                 backendWSURL: baseURL,
