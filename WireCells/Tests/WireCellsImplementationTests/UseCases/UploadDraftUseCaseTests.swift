@@ -21,8 +21,8 @@ import Testing
 import UniformTypeIdentifiers
 import WireCellsAPI
 
-@testable import WireCellsImplementationSupport
 @testable import WireCellsImplementation
+@testable import WireCellsImplementationSupport
 
 class UploadDraftUseCaseTests {
 
@@ -34,7 +34,8 @@ class UploadDraftUseCaseTests {
         try? FileManager.default.removeItem(at: fileURL)
     }
 
-    @Test func invokeWithMissingFileURL() async {
+    @Test
+    func invokeWithMissingFileURL() async {
         // Given
         let url = URL.temporaryDirectory.appendingPathComponent("some-missing-file.txt")
 
@@ -45,7 +46,8 @@ class UploadDraftUseCaseTests {
         }
     }
 
-    @Test func invokeWithWithFileURL() async throws {
+    @Test
+    func invokeWithWithFileURL() async throws {
         // Given
         let fileContent = "This is a test file content."
         let data = Data(fileContent.utf8)

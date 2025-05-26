@@ -20,12 +20,13 @@ import Foundation
 import Testing
 import WireCellsAPI
 
-@testable import WireCellsImplementationSupport
 @testable import WireCellsImplementation
+@testable import WireCellsImplementationSupport
 
 struct ObserveDraftsUseCaseTests {
 
-    @Test func invoke() async throws {
+    @Test
+    func invoke() async throws {
         // Given
         let draftsRepository = DraftsRepositoryProtocolMock()
         let sut = ObserveDraftsUseCase(cellName: "cell-name", draftRepository: draftsRepository)

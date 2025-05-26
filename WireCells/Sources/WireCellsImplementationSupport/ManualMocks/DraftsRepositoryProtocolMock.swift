@@ -23,7 +23,7 @@ import WireCellsImplementation
 
 package actor DraftsRepositoryProtocolMock: DraftsRepositoryProtocol {
 
-    //MARK: - add
+    // MARK: - add
 
     package var addAssetURLURLAssetSizeIntCellNameStringFileNameStringFileTypeUTTypeVoidReceivedArguments:
         (assetURL: URL, assetSize: Int, cellName: String, fileName: String, fileType: UTType?)?
@@ -33,9 +33,9 @@ package actor DraftsRepositoryProtocolMock: DraftsRepositoryProtocol {
             (assetURL, assetSize, cellName, fileName, fileType)
     }
 
-    //MARK: - drafts
+    // MARK: - drafts
 
-    private(set) var draftsForCellNameStringAsyncStreamWireCellsDraftReceivedCellName: (String)?
+    private(set) var draftsForCellNameStringAsyncStreamWireCellsDraftReceivedCellName: String?
     package var draftsForCellNameStringAsyncStreamWireCellsDraftReturnValue: AsyncStream<[WireCellsDraft]>!
 
     package func drafts(for cellName: String) -> AsyncStream<[WireCellsDraft]> {
