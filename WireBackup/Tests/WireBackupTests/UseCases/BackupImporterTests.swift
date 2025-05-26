@@ -157,33 +157,51 @@ struct BackupImporterTests {
             return messageModel.id == "61bc2d96-fb9c-49da-be1a-2e1f1a82f319" &&
             messageModel.conversationID == "7E4143D8-C126-488B-B9DB-A0B419B767E9@staging.zinfra.io" &&
             messageModel.senderUserID == "CFC7F55A-2CCF-4557-B212-32B2C89BF1A2@staging.zinfra.io" &&
-            messageModel.creationDate == expectedCreationDate // &&
-//            messageModel.content == .text(.init(text: "Simple text message"))
+            messageModel.creationDate == expectedCreationDate &&
+            messageModel.content.assetContent?.mimeType == "image/jpeg" &&
+            messageModel.content.assetContent?.size != nil &&
+            messageModel.content.assetContent.map { $0.size >= 179 } == true &&
+            messageModel.content.assetContent?.name == "canary Small as file.jpeg" &&
+            messageModel.content.assetContent?.otrKey.isEmpty == false &&
+            messageModel.content.assetContent?.sha256.isEmpty == false &&
+            messageModel.content.assetContent?.assetID == "3-5-188eb05a-f398-467a-8799-074b45a10672" &&
+            messageModel.content.assetContent?.assetDomain == "staging.zinfra.io"
         }))
         #expect(messages.contains(where: { messageModel in
             let expectedCreationDate = try! Date.ISO8601FormatStyle().parse("2025-05-16T07:33:22+0000")
             return messageModel.id == "23d0ebe1-13f2-44e1-a699-1f511764243f" &&
             messageModel.conversationID == "7E4143D8-C126-488B-B9DB-A0B419B767E9@staging.zinfra.io" &&
             messageModel.senderUserID == "CFC7F55A-2CCF-4557-B212-32B2C89BF1A2@staging.zinfra.io" &&
-            messageModel.creationDate == expectedCreationDate //&&
-//            messageModel.content == .text(.init(text: "Simple text message"))
+            messageModel.creationDate == expectedCreationDate &&
+            messageModel.content.assetContent?.mimeType == "audio/mp4" &&
+            messageModel.content.assetContent?.size != nil &&
+            messageModel.content.assetContent.map { $0.size >= 180 } == true &&
+            messageModel.content.assetContent?.otrKey.isEmpty == false &&
+            messageModel.content.assetContent?.sha256.isEmpty == false &&
+            messageModel.content.assetContent?.assetID == "3-2-da7f6a06-6544-4881-bfb7-837ec81b2ff4" &&
+            messageModel.content.assetContent?.assetToken == "a87ztkPJdNC2-hDyH-I4IQ==" &&
+            messageModel.content.assetContent?.assetDomain == "staging.zinfra.io" &&
+            messageModel.content.assetContent?.encryption == .aesCBC &&
+            messageModel.content.assetContent?.metadata?.audioMetadata?.normalization?.isEmpty != false &&
+            messageModel.content.assetContent?.metadata?.audioMetadata?.duration == 6561
         }))
         #expect(messages.contains(where: { messageModel in
             let expectedCreationDate = try! Date.ISO8601FormatStyle().parse("2025-05-16T07:33:39+0000")
             return messageModel.id == "455a8a6c-acbb-4cbe-ae48-04b9a7643f91" &&
             messageModel.conversationID == "7E4143D8-C126-488B-B9DB-A0B419B767E9@staging.zinfra.io" &&
             messageModel.senderUserID == "CFC7F55A-2CCF-4557-B212-32B2C89BF1A2@staging.zinfra.io" &&
-            messageModel.creationDate == expectedCreationDate //&&
-//            messageModel.content == .text(.init(text: "Simple text message"))
+            messageModel.creationDate == expectedCreationDate &&
+            messageModel.content.assetContent?.mimeType == "video/mp4" &&
+            messageModel.content.assetContent?.size != nil &&
+            messageModel.content.assetContent?.name == "video_attachment.mp4" &&
+            messageModel.content.assetContent.map { $0.size >= 180 } == true &&
+            messageModel.content.assetContent?.otrKey.isEmpty == false &&
+            messageModel.content.assetContent?.sha256.isEmpty == false &&
+            messageModel.content.assetContent?.assetID == "3-2-393a8608-1f64-4907-87b0-92409cb75999" &&
+            messageModel.content.assetContent?.assetToken == "gwyOSFD8twOWoCkZXzIo6Q==" &&
+            messageModel.content.assetContent?.assetDomain == "staging.zinfra.io" &&
+            messageModel.content.assetContent?.encryption == .aesCBC
         }))
-
-        /*
- 1 : .asset(.AssetContent(mimeType: "image/jpeg", size: 201, name: Optional("canary Small as file.jpeg"), otrKey: 32 bytes, sha256: 32 bytes, assetID: "3-5-188eb05a-f398-467a-8799-074b45a10672", assetToken: nil, assetDomain: Optional("staging.zinfra.io"), encryption: nil, metadata: Optional(.AssetContent.Metadata.generic(.AssetContent.Metadata.GenericMetadata(name: Optional("canary Small as file.jpeg")))))))
-
- 2 : .asset(.AssetContent(mimeType: "audio/mp4", size: 215, name: Optional("wire-audio-2025-05-16-09-33-11.mp4"), otrKey: 32 bytes, sha256: 32 bytes, assetID: "3-2-da7f6a06-6544-4881-bfb7-837ec81b2ff4", assetToken: Optional("a87ztkPJdNC2-hDyH-I4IQ=="), assetDomain: Optional("staging.zinfra.io"), encryption: Optional(.AssetContent.EncryptionAlgorithm.aesCBC), metadata: Optional(.AssetContent.Metadata.audio(.AssetContent.Metadata.AudioMetadata(normalization: Optional(0 bytes), duration: Optional(6561)))))))
-
- 3 : .asset(.AssetContent(mimeType: "video/mp4", size: 218, name: Optional("video_attachment.mp4"), otrKey: 32 bytes, sha256: 32 bytes, assetID: "3-2-393a8608-1f64-4907-87b0-92409cb75999", assetToken: Optional("gwyOSFD8twOWoCkZXzIo6Q=="), assetDomain: Optional("staging.zinfra.io"), encryption: Optional(.AssetContent.EncryptionAlgorithm.aesCBC), metadata: Optional(.AssetContent.Metadata.generic(.AssetContent.Metadata.GenericMetadata(name: Optional("video_attachment.mp4")))))))
-*/
     }
 
 }
@@ -197,5 +215,14 @@ private extension MessageBackupModel.Content {
 private extension MessageBackupModel.Content.AssetContent.Metadata {
     var imageMetadata: ImageMetadata? {
         if case .image(let imageMetadata) = self { imageMetadata } else { nil }
+    }
+    var audioMetadata: AudioMetadata? {
+        if case .audio(let audioMetadata) = self { audioMetadata } else { nil }
+    }
+    var videoMetadata: VideoMetadata? {
+        if case .video(let videoMetadata) = self { videoMetadata } else { nil }
+    }
+    var genericMetadata: GenericMetadata? {
+        if case .generic(let genericMetadata) = self { genericMetadata } else { nil }
     }
 }
