@@ -72,13 +72,6 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
             // If we need to abort, do it before processing the next page.
             try Task.checkCancellation()
 
-            func log(_ message: String, envelopeID: UUID?) {
-                WireLogger.sync.debug(
-                    "event \(count) of \(batchCount): \(message)",
-                    attributes: [.eventEnvelopeID: envelopeID]
-                )
-            }
-
             // We'll insert new events from this index.
             let currentIndex = try await store.indexOfLastEventEnvelope() + 1
 
@@ -91,7 +84,11 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
                 for envelope in envelopes {
                     count += 1
 
-                    log("decrypting...", envelopeID: envelope.id)
+                    WireLogger.sync.debug(
+                        "event \(count) of \(batchCount): decrypting...",
+                        attributes: [.eventEnvelopeID: envelope.id]
+                    )
+
                     var decryptedEnvelope = envelope
                     let decryptedEvents = try await decryptor.decryptEvents(in: envelope, context: context)
                     decryptedEnvelope.events = decryptedEvents
@@ -104,9 +101,7 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
                     }
                 }
 
-                for envelope in decryptedEnvelopes {
-                    log("storing...", envelopeID: envelope.id)
-                }
+                WireLogger.sync.debug("persisting \(decryptedEnvelopes.count) decrypted event(s)")
 
                 try await store.persistEventEnvelopes(
                     decryptedEnvelopes,
@@ -117,7 +112,7 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
                     // We keep track of the last event id so next time we fetch
                     // only new events. We don't track tranisent events because
                     // these events aren't stored in the backend.
-                    log("storing last event id...", envelopeID: lastEnvelopeID)
+                    WireLogger.sync.debug("storing last event id", attributes: [.eventEnvelopeID: lastEnvelopeID])
                     store.storeLastEventID(id: lastEnvelopeID)
                 }
             }
