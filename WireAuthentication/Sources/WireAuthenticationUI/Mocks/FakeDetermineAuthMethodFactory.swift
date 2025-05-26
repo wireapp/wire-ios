@@ -46,7 +46,6 @@ struct FakeDetermineAuthMethodFactory: DetermineAuthMethodFactory,
     func loginViaEmailFactory(
         email: String?,
         canCreateAccount: Bool,
-        useLegacyRegistrationFlow: Bool,
         didDetectDomainConflict: Bool,
         backendInfo: WireAuthenticationAPI.BackendInfo
     ) -> any LoginViaEmailFactory {

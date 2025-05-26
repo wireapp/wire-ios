@@ -25,13 +25,11 @@ package enum DetermineAuthMethodDestination: Hashable {
         email: String?,
         didDetectDomainConflict: Bool,
         backendInfo: BackendInfo
-        //useLegacyRegistrationFlow: Bool
     )
     case loginOrRegister(
         email: String,
         didDetectDomainConflict: Bool,
         backendInfo: BackendInfo
-//        useLegacyRegistrationFlow: Bool
     )
     case noHistory(AuthenticationResult)
 }

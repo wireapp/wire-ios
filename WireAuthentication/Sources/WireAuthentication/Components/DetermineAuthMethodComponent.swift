@@ -52,7 +52,6 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
     func loginViaEmailComponent(
         email: String?,
         canCreateAccount: Bool,
-        useLegacyRegistrationFlow: Bool,
         didDetectDomainConflict: Bool,
         backendInfo: BackendInfo
     ) -> LoginViaEmailComponent {
@@ -65,7 +64,6 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
             parent: self,
             email: email,
             canCreateAccount: canCreateAccount,
-            useLegacyRegistrationFlow: useLegacyRegistrationFlow,
             didDetectDomainConflict: didDetectDomainConflict,
             networkStack: networkStack
         )
@@ -98,14 +96,12 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
     func loginViaEmailFactory(
         email: String?,
         canCreateAccount: Bool,
-        useLegacyRegistrationFlow: Bool,
         didDetectDomainConflict: Bool,
         backendInfo: BackendInfo
     ) -> any WireAuthenticationUI.LoginViaEmailFactory {
         loginViaEmailComponent(
             email: email,
             canCreateAccount: canCreateAccount,
-            useLegacyRegistrationFlow: useLegacyRegistrationFlow,
             didDetectDomainConflict: didDetectDomainConflict,
             backendInfo: backendInfo
         )
