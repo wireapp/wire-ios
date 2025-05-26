@@ -28,7 +28,6 @@ import WireUtilities
 protocol MLSGroupRepairAgentProtocol {
 
     var isSyncV2Enabled: Bool { get }
-    var syncStatePublisher: AnyPublisher<SyncState, Never> { get }
 
 }
 
@@ -39,7 +38,7 @@ final class MLSGroupRepairAgent: MLSGroupRepairAgentProtocol {
     }
 
     private let syncStateSubject: CurrentValueSubject<SyncState, Never>
-    var syncStatePublisher: AnyPublisher<SyncState, Never> {
+    private var syncStatePublisher: AnyPublisher<SyncState, Never> {
         syncStateSubject.eraseToAnyPublisher()
     }
 
@@ -82,21 +81,21 @@ final class MLSGroupRepairAgent: MLSGroupRepairAgentProtocol {
 
         WireLogger.sync.debug("Repairing \(brokenGroupIDs.count) MLS groups")
 
-        brokenGroupIDs
-            .compactMap { groupID -> (String, MLSGroupID)? in
-                guard let mlsGroupID = MLSGroupID(base64Encoded: groupID) else {
-                    WireLogger.sync.warn("Invalid convert string to MLS group ID: \(groupID)")
-                    return nil
-                }
-                return (groupID, mlsGroupID)
+        let mlsGroups: [(String, MLSGroupID)] = brokenGroupIDs.compactMap { groupIDString in
+            guard let mlsGroupID = MLSGroupID(base64Encoded: groupIDString) else {
+                WireLogger.sync.warn("Invalid MLS group ID: \(groupIDString)")
+                return nil
             }
-            .forEach { groupID, mlsGroupID in
-                Task {
-                    await mlsService.fetchAndRepairGroup(with: mlsGroupID)
-                    journal.removeValue(groupID, for: .brokenMLSGroupIDs)
-                    WireLogger.sync.debug("Successfully repaired group: \(groupID)")
-                }
+            return (groupIDString, mlsGroupID)
+        }
+
+        Task {
+            for (groupID, mlsGroupID) in mlsGroups {
+                await mlsService.fetchAndRepairGroup(with: mlsGroupID)
+                journal.removeValue(groupID, for: .brokenMLSGroupIDs)
+                WireLogger.sync.debug("Successfully repaired group: \(groupID)")
             }
+        }
     }
 
 }

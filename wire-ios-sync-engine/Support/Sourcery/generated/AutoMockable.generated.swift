@@ -561,15 +561,6 @@ class MockMLSGroupRepairAgentProtocol: MLSGroupRepairAgentProtocol {
 
     var underlyingIsSyncV2Enabled: Bool!
 
-    // MARK: - syncStatePublisher
-
-    var syncStatePublisher: AnyPublisher<SyncState, Never> {
-        get { return underlyingSyncStatePublisher }
-        set(value) { underlyingSyncStatePublisher = value }
-    }
-
-    var underlyingSyncStatePublisher: AnyPublisher<SyncState, Never>!
-
 
 }
 

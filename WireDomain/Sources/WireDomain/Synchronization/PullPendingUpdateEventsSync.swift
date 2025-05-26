@@ -56,7 +56,6 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
         var currentIndex = try await store.indexOfLastEventEnvelope() + 1
 
         var events: [UpdateEvent] = []
-        var brokenMLSGroupIDs = Set<String>()
 
         // Events are fetched in batches.
         for try await envelopes in api.getUpdateEvents(
@@ -91,8 +90,6 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
                 let decryptedEvents = decryptionEventsResult.events
                 decryptedEnvelope.events = decryptedEvents
 
-                brokenMLSGroupIDs.formUnion(decryptionEventsResult.brokenMLSGroupIDs)
-
                 log("storing...", envelopeID: envelope.id)
                 try await store.persistEventEnvelope(
                     decryptedEnvelope,
@@ -110,10 +107,11 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
                     log("storing last event id...", envelopeID: envelope.id)
                     store.storeLastEventID(id: envelope.id)
                 }
+
+                journal.addValues(decryptionEventsResult.brokenMLSGroupIDs, for: .brokenMLSGroupIDs)
             }
         }
 
-        journal.addValues(brokenMLSGroupIDs, for: .brokenMLSGroupIDs)
 
         return AsyncStream {
             $0.yield(events)
