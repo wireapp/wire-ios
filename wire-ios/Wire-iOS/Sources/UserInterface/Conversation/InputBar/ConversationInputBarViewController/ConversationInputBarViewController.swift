@@ -225,7 +225,7 @@ final class ConversationInputBarViewController: UIViewController,
     private var typingObserverToken: Any?
     let userSession: UserSession
     let fileMetaDataGenerator: FileMetaDataGeneratorProtocol
-    let wireCellsUploadFileUseCase: WireCellsUploadFileUseCaseProtocol
+    let wireCellsUploadDraftUseCase: WireCellsUploadDraftUseCaseProtocol
     private let wireCellsObserveDraftsUseCase: WireCellsObserveDraftsUseCaseProtocol
     private let attachmentsCarouselViewModel = AttachmentsCarouselViewModel(items: [])
 
@@ -360,7 +360,7 @@ final class ConversationInputBarViewController: UIViewController,
         self.classificationProvider = classificationProvider
         self.networkStatusObservable = networkStatusObservable
         self.fileMetaDataGenerator = FileMetaDataGenerator.shared
-        self.wireCellsUploadFileUseCase = wireCellsAssembly.makeUploadFileUseCase(
+        self.wireCellsUploadDraftUseCase = wireCellsAssembly.makeUploadDraftUseCase(
             cellName: "" // Pass in correct cell name.
         )
         self.wireCellsObserveDraftsUseCase = wireCellsAssembly.makeObserveDraftsUseCase(
