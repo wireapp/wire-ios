@@ -58,14 +58,12 @@ public struct ImportBackupUseCase<
 
                 do {
                     let logger = logger()
-                    let checkCancellationAndReportProgress: (Int, Int) throws -> Void = { current, total in
-                        guard current % 50 == 0 || current == total else { return }
-                        try Task.checkCancellation()
+                    let reportProgress: (Int, Int) -> Void = { current, total in
                         logger.debug("reporting overall process: \(current)/\(total)")
                         continuation.yield(.progress(current, total))
                     }
 
-                    try checkCancellationAndReportProgress(0, 0)
+                    reportProgress(0, 0)
 
                     logger.debug("initializing MPBackupImporter")
                     let importer = BackupImporter(
@@ -80,11 +78,13 @@ public struct ImportBackupUseCase<
                     }
 
                     let pagers = try await importer.importBackup(from: url, using: password)
-                    let total = Int(exactly: pagers.totalPagesCount) ?? 0
+                    let usersPager = pagers.usersPager
+                    let messagesPager = pagers.messagesPager
+                    var current = 0
+                    let total = usersPager.totalPages + messagesPager.totalPages
 
                     // users
                     let storedUserIDs = try await backupLocalStore.fetchAllUserIDs()
-                    let usersPager = pagers.usersPager
                     while usersPager.hasMorePages() {
                         let backupUsers = usersPager.nextPage()
                         for current in 0 ..< backupUsers.size {
@@ -96,9 +96,10 @@ public struct ImportBackupUseCase<
                             if !storedUserIDs.contains(userID), let user = UserBackupModel(backupUser) {
                                 try await backupLocalStore.addUser(user)
                             }
-
-                            try checkCancellationAndReportProgress(Int(exactly: current) ?? 0, total)
                         }
+                        try Task.checkCancellation()
+                        current += 1
+                        reportProgress(current, Int(exactly: total) ?? 1)
                     }
 
                     // conversations
@@ -108,7 +109,6 @@ public struct ImportBackupUseCase<
 
                     // messages
                     let storedMessageIDs = try await backupLocalStore.fetchAllMessageIDs()
-                    let messagesPager = pagers.messagesPager
                     while messagesPager.hasMorePages() {
                         let backupMessages = messagesPager.nextPage()
                         for current in 0 ..< backupMessages.size {
@@ -118,12 +118,15 @@ public struct ImportBackupUseCase<
                                let message = MessageBackupModel(backupMessage) {
                                 try await backupLocalStore.addMessage(message)
                             }
-
-                            try checkCancellationAndReportProgress(Int(exactly: current) ?? 0, total)
                         }
+                        try Task.checkCancellation()
+                        current += 1
+                        reportProgress(current, Int(exactly: total) ?? 1)
                     }
 
-                    syncTrigger()
+                    if total > 0 {
+                        syncTrigger()
+                    }
 
                     continuation.yield(.done)
                     continuation.finish()

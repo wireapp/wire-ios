@@ -27,45 +27,40 @@ import XCTest
 final class CreateAndImportBackupUseCaseTests: XCTestCase {
 
     private typealias BackupLocalStoreMock = BackupLocalStoreProtocolMock
-    private typealias FileArchiverMock = FileArchiverProtocolMock
-    private typealias FileUnarchiverMock = FileUnarchiverProtocolMock
 
     private var backupLocalStoreMock: BackupLocalStoreMock!
-    private var fileArchiverMock: FileArchiverMock!
-    private var fileUnarchiverMock: FileUnarchiverMock!
-    private var dateProviderMock: CurrentDateProvidingMock!
+    private var fileArchiver: ZIPFoundationFileArchiver!
+    private var fileUnarchiver: ZIPFoundationFileUnarchiver!
     private var createBackupUseCase: CreateBackupUseCase<
         BackupLocalStoreMock,
-        FileArchiverMock
+        ZIPFoundationFileArchiver
     >!
     private var importBackupUseCase: ImportBackupUseCase<
         BackupLocalStoreMock,
-        FileUnarchiverMock
+        ZIPFoundationFileUnarchiver
     >!
     private var syncTriggerExpectation: XCTestExpectation!
 
     override func setUpWithError() throws {
 
         backupLocalStoreMock = .init()
-        fileArchiverMock = .init()
-        fileUnarchiverMock = .init()
-        dateProviderMock = .init()
+        fileArchiver = .init()
+        fileUnarchiver = .init()
 
         let selfUserID = QualifiedID(id: UUID(), domain: "wire.com")
         createBackupUseCase = CreateBackupUseCase(
             selfUserID: selfUserID,
-            selfUserHandle: "handle",
             backupLocalStore: backupLocalStoreMock,
-            fileArchiver: fileArchiverMock,
-            currentDateProvider: dateProviderMock,
+            fileArchiver: fileArchiver,
             logger: WireLogger(tag: "???")
         )
+
         let syncTriggerExpectation = XCTestExpectation()
         self.syncTriggerExpectation = syncTriggerExpectation
         importBackupUseCase = ImportBackupUseCase(
             selfUserID: selfUserID,
             backupLocalStore: backupLocalStoreMock,
-            fileUnarchiver: fileUnarchiverMock,
+            fileUnarchiver: fileUnarchiver,
             syncTrigger: { syncTriggerExpectation.fulfill() },
             logger: WireLogger(tag: "???")
         )
@@ -74,45 +69,84 @@ final class CreateAndImportBackupUseCaseTests: XCTestCase {
     override func tearDownWithError() throws {
         importBackupUseCase = nil
         createBackupUseCase = nil
-        dateProviderMock = nil
-        fileArchiverMock = nil
+        fileArchiver = nil
+        fileUnarchiver = nil
         backupLocalStoreMock = nil
     }
 
     func testCreateAndImport() async throws {
 
-        let user = UserBackupModel(
+        // create
+
+        let user = exampleUser
+        let message = exampleMessage
+
+        backupLocalStoreMock.countModels_UserCountIntConversationCountIntMessageCountIntReturnValue = (1, 1, 1)
+        backupLocalStoreMock.fetchAllUsersAsyncThrowingStreamUserBackupModelAnyErrorReturnValue =
+            .makeStream(of: [exampleUser])
+        backupLocalStoreMock.fetchAllConversationsAsyncThrowingStreamConversationBackupModelAnyErrorReturnValue =
+            .makeStream(of: [exampleConversation])
+        backupLocalStoreMock.fetchAllMessagesAsyncThrowingStreamMessageBackupModelAnyErrorReturnValue =
+            .makeStream(of: [exampleMessage])
+
+        let password = UUID().uuidString
+        let createEvents = try await createBackupUseCase.invoke(password: password)
+            .reduce(into: [CreateBackupProgress]()) { $0 += [$1] }
+        guard case .done(let backupURL) = createEvents.last else { return XCTFail("backup url missing") }
+
+        // import
+
+        backupLocalStoreMock.fetchAllUserIDsSetQualifiedIDReturnValue = []
+        backupLocalStoreMock.fetchAllMessageIDsSetStringReturnValue = []
+
+        let importEvents = try await importBackupUseCase.invoke(url: backupURL, password: password)
+            .reduce(into: [ImportBackupProgress]()) { $0 += [$1] }
+        await fulfillment(of: [syncTriggerExpectation], timeout: 1)
+
+        XCTAssertEqual(importEvents.last, .done)
+        XCTAssertEqual(backupLocalStoreMock.addUserUserUserBackupModelVoidReceivedInvocations, [user])
+        XCTAssertEqual(backupLocalStoreMock.addMessageMessageMessageBackupModelVoidReceivedInvocations, [message])
+
+    }
+
+    private var exampleUser: UserBackupModel {
+        UserBackupModel(
             qualifiedID: QualifiedID(id: UUID(), domain: "wire.com"),
             name: "Somebody",
             handle: "sb"
         )
-        let conversation = ConversationBackupModel(
+    }
+
+    private var exampleConversation: ConversationBackupModel {
+        ConversationBackupModel(
             qualifiedID: QualifiedID(id: UUID(), domain: "wire.com"),
             name: "some conversation"
         )
-        let message = MessageBackupModel(
+    }
+
+    private var exampleMessage: MessageBackupModel {
+        MessageBackupModel(
             id: UUID().uuidString,
-            conversationID: conversation.qualifiedID,
-            senderUserID: user.qualifiedID,
+            conversationID: exampleConversation.qualifiedID,
+            senderUserID: exampleUser.qualifiedID,
             senderClientID: .none,
             creationDate: .now,
             content: .text("some message")
         )
-        let password = UUID().uuidString
-
-        backupLocalStoreMock.countModels_UserCountIntConversationCountIntMessageCountIntReturnValue = (1, 1, 1)
-        let (userStream, userContinuation) = AsyncThrowingStream.makeStream(
-            of: UserBackupModel.self,
-            bufferingPolicy: .unbounded
-        )
-        backupLocalStoreMock.fetchAllUsersAsyncThrowingStreamUserBackupModelAnyErrorReturnValue = userStream
-        userContinuation.yield(user)
-        userContinuation.finish()
-
-        let events = try await createBackupUseCase.invoke(password: password)
-            .reduce(into: [CreateBackupProgress]()) { $0 += [$1] }
-        XCTAssertEqual(events, [])
-
     }
 
+}
+
+// MARK: -
+
+private extension AsyncThrowingStream where Element: Sendable, Failure == (any Error) {
+
+    static func makeStream(of elements: [Element]) -> Self {
+        let (stream, continuation) = AsyncThrowingStream.makeStream(of: Element.self, bufferingPolicy: .unbounded)
+        for element in elements {
+            continuation.yield(element)
+        }
+        continuation.finish()
+        return stream
+    }
 }
