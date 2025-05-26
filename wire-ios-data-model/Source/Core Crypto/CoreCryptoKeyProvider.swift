@@ -50,12 +50,16 @@ public class CoreCryptoKeyProvider {
         WireLogger.coreCrypto.info("Migrating core crypto key...")
 
         if let oldKey = try? fetchCoreCryptoKey() {
+            // Since version 6.x, CC has changed the key format and clients need to migrate the key.
+            // We can reuse the same key, but the "new key" must be 'Data'.
             try await coreCryptoKeyMigrationManager?.performMigrationIfNeeded(
                 path: path,
                 oldKey: oldKey.base64EncodedString(),
                 newKey: oldKey
             )
         } else {
+            // If there is no key,
+            // then this is a fresh install and we do not need to perform migration.
             coreCryptoKeyMigrationManager?.markMigrationAsSkipped()
         }
     }
