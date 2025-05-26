@@ -825,7 +825,7 @@ public extension LinkPreview {
     }
 
     mutating func update(withOtrKey otrKey: Data, sha256: Data, original: WireProtos.Asset.Original?) {
-        image.uploaded = WireProtos.Asset.RemoteData(otrKey: otrKey, sha256: sha256)
+        image.uploaded = WireProtos.Asset.RemoteData(withOTRKey: otrKey, sha256: sha256)
         if let original {
             image.original = original
         }

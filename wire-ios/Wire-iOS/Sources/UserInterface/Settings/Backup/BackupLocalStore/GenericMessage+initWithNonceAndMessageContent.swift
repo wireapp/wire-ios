@@ -77,7 +77,7 @@ private extension Asset {
                 asset.original.name = name
             }
             asset.uploaded = Asset.RemoteData(
-                otrKey: assetContent.otrKey,
+                withOTRKey: assetContent.otrKey,
                 sha256: assetContent.sha256
             )
             asset.uploaded.assetID = assetContent.assetID
