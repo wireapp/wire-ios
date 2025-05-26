@@ -223,6 +223,8 @@ final class ProfileViewController: UIViewController {
         viewControllers.append(profileDetailsViewController)
 
         if viewModel.hasUserClientListTab {
+            print(viewModel.conversation)
+            print(viewModel.conversation?.mlsGroupID)
             let userClientListViewController = OtherUserClientsListViewController(
                 user: viewModel.user,
                 userSession: viewModel.userSession,
