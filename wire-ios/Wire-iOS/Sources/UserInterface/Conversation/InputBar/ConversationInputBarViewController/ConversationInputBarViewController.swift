@@ -358,7 +358,9 @@ final class ConversationInputBarViewController: UIViewController,
         self.classificationProvider = classificationProvider
         self.networkStatusObservable = networkStatusObservable
         self.fileMetaDataGenerator = FileMetaDataGenerator.shared
-        self.wireCellsUploadFileUseCase = wireCellsAssembly.makeUploadFileUseCase()
+        self.wireCellsUploadFileUseCase = wireCellsAssembly.makeUploadFileUseCase(
+            cellName: "" // Pass in correct cell name.
+        )
 
         super.init(nibName: nil, bundle: nil)
 

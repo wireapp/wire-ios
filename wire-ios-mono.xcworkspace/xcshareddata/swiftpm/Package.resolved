@@ -173,6 +173,15 @@
         }
       },
       {
+        "package": "swift-collections",
+        "repositoryURL": "https://github.com/apple/swift-collections.git",
+        "state": {
+          "branch": null,
+          "revision": "671108c96644956dddcd89dd59c203dcdb36cec7",
+          "version": "1.1.4"
+        }
+      },
+      {
         "package": "swift-custom-dump",
         "repositoryURL": "https://github.com/pointfreeco/swift-custom-dump",
         "state": {

@@ -16,16 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
+package import Foundation
 
-public struct WireCellsCredentials: Equatable, Hashable, Sendable {
-    public let serverURL: URL
-    public let accessToken: String
-    public let gatewaySecret: String
+public struct WireCellsDraft: Hashable, Sendable {
 
-    package init(serverURL: URL, accessToken: String, gatewaySecret: String) {
-        self.serverURL = serverURL
-        self.accessToken = accessToken
-        self.gatewaySecret = gatewaySecret
+    package let id: WireCellsNodeID
+    package let assetURL: URL
+    package var status: WireCellsUploadStatus
+
+    package init(
+        id: WireCellsNodeID,
+        assetURL: URL,
+        status: WireCellsUploadStatus
+    ) {
+        self.id = id
+        self.assetURL = assetURL
+        self.status = status
     }
 }
