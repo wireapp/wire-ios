@@ -58,8 +58,8 @@ final class IncrementalSyncObserver: IncrementalSyncObserverProtocol {
                     case .incrementalSyncing(.pullPendingEvents):
                         self?.decryptionState = .inProgress
                     case .incrementalSyncing(.processPendingEvents),
-                            .suspended,
-                            .liveSyncing:
+                         .suspended,
+                         .liveSyncing:
                         self?.decryptionState = .done
                     default:
                         self?.decryptionState = .notStarted
