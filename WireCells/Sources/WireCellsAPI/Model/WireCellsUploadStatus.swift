@@ -16,16 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
-
-public struct WireCellsCredentials: Equatable, Hashable, Sendable {
-    public let serverURL: URL
-    public let accessToken: String
-    public let gatewaySecret: String
-
-    package init(serverURL: URL, accessToken: String, gatewaySecret: String) {
-        self.serverURL = serverURL
-        self.accessToken = accessToken
-        self.gatewaySecret = gatewaySecret
-    }
+public enum WireCellsUploadStatus: Equatable, Hashable, Sendable {
+    case uploading(progress: Float)
+    case uploaded
+    case failed
+    case cancelled
 }

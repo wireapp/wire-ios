@@ -22,15 +22,29 @@ import WireLogging
 
 package final class WireCellsUploadFileUseCase: WireCellsUploadFileUseCaseProtocol {
 
-    package init() {}
+    private let cellName: String
+    private let draftRepository: DraftsRepository
+
+    package init(cellName: String, draftRepository: DraftsRepository) {
+        self.cellName = cellName
+        self.draftRepository = draftRepository
+    }
 
     func invoke(fileURL: URL) async throws {
-        // TODO: [WPB-17619] Implement
-        WireLogger.wireCells.info("Uploading file from URL")
+        guard let fileSize = try fileURL.resourceValues(forKeys: Set([.fileSizeKey])).fileSize else {
+            throw WireCellsUploadFileUseCaseError.missingFileSize
+        }
+
+        await draftRepository.add(
+            assetURL: fileURL,
+            assetSize: UInt64(fileSize),
+            cellName: cellName,
+            fileName: fileURL.lastPathComponent
+        )
     }
 
     func invoke(imageData: Data) async throws {
-        // TODO: [WPB-17619] Implement
+        // TODO: [WPB-17767] Implement
         WireLogger.wireCells.info("Uploading file from image data")
     }
 
