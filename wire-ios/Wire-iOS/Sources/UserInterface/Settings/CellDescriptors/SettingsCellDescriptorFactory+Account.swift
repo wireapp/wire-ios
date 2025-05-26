@@ -415,10 +415,8 @@ extension SettingsCellDescriptorFactory {
         } else {
             CreateBackupUseCase(
                 selfUserID: .init(selfUser.qualifiedID!),
-                selfUserHandle: selfUser.handle,
                 backupLocalStore: backupLocalStore,
                 fileArchiver: ZIPFoundationFileArchiver(),
-                currentDateProvider: SystemDateProvider(),
                 logger: WireLogger.backupExport
             )
         }
