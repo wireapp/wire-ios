@@ -307,9 +307,7 @@ final class ClientListViewController: UIViewController,
     func finishedFetching(_ userClients: [UserClient]) {
         Task {
             await updateCertificates(for: userClients)
-            //await MainActor.run {
             await dismissLoadingView()
-            //}
         }
     }
 
