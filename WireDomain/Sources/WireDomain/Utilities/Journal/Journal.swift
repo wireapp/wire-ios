@@ -94,7 +94,6 @@ public class Journal: JournalProtocol {
 
 }
 
-
 public extension Journal {
 
     func removeValue(_ value: String, for key: JournalKey<Set<String>>) {

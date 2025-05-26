@@ -112,7 +112,6 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
             }
         }
 
-
         return AsyncStream {
             $0.yield(events)
             $0.finish()
