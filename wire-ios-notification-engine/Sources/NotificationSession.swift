@@ -239,7 +239,7 @@ public final class NotificationSession {
         )
 
         let cryptoboxMigrationManager = CryptoboxMigrationManager()
-        let journal: Journal = Journal(
+        let journal = Journal(
             userID: accountIdentifier,
             storage: sharedUserDefaults
         )
