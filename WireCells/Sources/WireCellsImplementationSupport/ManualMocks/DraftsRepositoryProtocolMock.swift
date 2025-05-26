@@ -25,8 +25,12 @@ package actor DraftsRepositoryProtocolMock: DraftsRepositoryProtocol {
 
     //MARK: - add
 
+    package var addAssetURLURLAssetSizeIntCellNameStringFileNameStringFileTypeUTTypeVoidReceivedArguments:
+        (assetURL: URL, assetSize: Int, cellName: String, fileName: String, fileType: UTType?)?
+
     package func add(assetURL: URL, assetSize: Int, cellName: String, fileName: String, fileType: UTType?) async {
-        fatalError("Implement")
+        addAssetURLURLAssetSizeIntCellNameStringFileNameStringFileTypeUTTypeVoidReceivedArguments =
+            (assetURL, assetSize, cellName, fileName, fileType)
     }
 
     //MARK: - drafts

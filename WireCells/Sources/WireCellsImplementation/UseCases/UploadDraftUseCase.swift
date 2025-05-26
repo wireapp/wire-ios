@@ -23,9 +23,9 @@ import WireLogging
 package final class UploadDraftUseCase: WireCellsUploadDraftUseCaseProtocol {
 
     private let cellName: String
-    private let draftRepository: DraftsRepository
+    private let draftRepository: any DraftsRepositoryProtocol
 
-    package init(cellName: String, draftRepository: DraftsRepository) {
+    package init(cellName: String, draftRepository: any DraftsRepositoryProtocol) {
         self.cellName = cellName
         self.draftRepository = draftRepository
     }
