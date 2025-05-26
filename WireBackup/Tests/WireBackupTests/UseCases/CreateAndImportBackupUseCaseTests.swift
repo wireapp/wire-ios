@@ -28,50 +28,91 @@ final class CreateAndImportBackupUseCaseTests: XCTestCase {
 
     private typealias BackupLocalStoreMock = BackupLocalStoreProtocolMock
     private typealias FileArchiverMock = FileArchiverProtocolMock
+    private typealias FileUnarchiverMock = FileUnarchiverProtocolMock
 
     private var backupLocalStoreMock: BackupLocalStoreMock!
     private var fileArchiverMock: FileArchiverMock!
+    private var fileUnarchiverMock: FileUnarchiverMock!
     private var dateProviderMock: CurrentDateProvidingMock!
-    private var sut: CreateBackupUseCase<
+    private var createBackupUseCase: CreateBackupUseCase<
         BackupLocalStoreMock,
         FileArchiverMock
     >!
+    private var importBackupUseCase: ImportBackupUseCase<
+        BackupLocalStoreMock,
+        FileUnarchiverMock
+    >!
+    private var syncTriggerExpectation: XCTestExpectation!
 
     override func setUpWithError() throws {
 
         backupLocalStoreMock = .init()
         fileArchiverMock = .init()
+        fileUnarchiverMock = .init()
         dateProviderMock = .init()
 
-        sut = CreateBackupUseCase(
-            selfUserID: QualifiedID(id: UUID(), domain: ""),
+        let selfUserID = QualifiedID(id: UUID(), domain: "wire.com")
+        createBackupUseCase = CreateBackupUseCase(
+            selfUserID: selfUserID,
             selfUserHandle: "handle",
             backupLocalStore: backupLocalStoreMock,
             fileArchiver: fileArchiverMock,
             currentDateProvider: dateProviderMock,
             logger: WireLogger(tag: "???")
         )
+        let syncTriggerExpectation = XCTestExpectation()
+        self.syncTriggerExpectation = syncTriggerExpectation
+        importBackupUseCase = ImportBackupUseCase(
+            selfUserID: selfUserID,
+            backupLocalStore: backupLocalStoreMock,
+            fileUnarchiver: fileUnarchiverMock,
+            syncTrigger: { syncTriggerExpectation.fulfill() },
+            logger: WireLogger(tag: "???")
+        )
     }
 
     override func tearDownWithError() throws {
-        sut = nil
+        importBackupUseCase = nil
+        createBackupUseCase = nil
         dateProviderMock = nil
         fileArchiverMock = nil
         backupLocalStoreMock = nil
     }
 
-    // TODO: [WPB-16658] add tests
+    func testCreateAndImport() async throws {
 
-    func testHappyPath() throws {
-        // TODO: [WPB-16658] create mock models, run create and then import & compare
+        let user = UserBackupModel(
+            qualifiedID: QualifiedID(id: UUID(), domain: "wire.com"),
+            name: "Somebody",
+            handle: "sb"
+        )
+        let conversation = ConversationBackupModel(
+            qualifiedID: QualifiedID(id: UUID(), domain: "wire.com"),
+            name: "some conversation"
+        )
+        let message = MessageBackupModel(
+            id: UUID().uuidString,
+            conversationID: conversation.qualifiedID,
+            senderUserID: user.qualifiedID,
+            senderClientID: .none,
+            creationDate: .now,
+            content: .text("some message")
+        )
+        let password = UUID().uuidString
 
-        // let user = UserBackupModel(...)
-        // let conversations = ...
-        throw XCTSkip("not yet implemented")
+        backupLocalStoreMock.countModels_UserCountIntConversationCountIntMessageCountIntReturnValue = (1, 1, 1)
+        let (userStream, userContinuation) = AsyncThrowingStream.makeStream(
+            of: UserBackupModel.self,
+            bufferingPolicy: .unbounded
+        )
+        backupLocalStoreMock.fetchAllUsersAsyncThrowingStreamUserBackupModelAnyErrorReturnValue = userStream
+        userContinuation.yield(user)
+        userContinuation.finish()
+
+        let events = try await createBackupUseCase.invoke(password: password)
+            .reduce(into: [CreateBackupProgress]()) { $0 += [$1] }
+        XCTAssertEqual(events, [])
+
     }
-
-    // TODO: [WPB-16658] maybe importing a backup file from another platform could be tested
-
-    // TODO: [WPB-16658] edge cases?
 
 }

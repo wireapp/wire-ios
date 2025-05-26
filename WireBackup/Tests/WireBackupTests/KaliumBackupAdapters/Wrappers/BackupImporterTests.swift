@@ -57,8 +57,6 @@ struct BackupImporterTests {
 
     }
 
-    // TODO: [WPB-16658] add more tests
-
     @Test(arguments: [
         "android-encrypted",
         "android-unencrypted",
