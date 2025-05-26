@@ -29,6 +29,7 @@ package protocol DetermineAuthMethodFactory {
     func loginViaEmailFactory(
         email: String?,
         canCreateAccount: Bool,
+        useLegacyRegistrationFlow: Bool,
         didDetectDomainConflict: Bool,
         backendInfo: BackendInfo
     ) -> any LoginViaEmailFactory
@@ -166,10 +167,12 @@ package struct DetermineAuthMethodView: View {
             email,
             didDetectDomainConflict,
             backendInfo
+//            useLegacyRegistrationFlow
         ):
             LoginViaEmailView(factory: viewModel.factory.loginViaEmailFactory(
                 email: email,
                 canCreateAccount: false,
+                useLegacyRegistrationFlow: useLegacyRegistrationFlow,
                 didDetectDomainConflict: didDetectDomainConflict,
                 backendInfo: backendInfo
             ))
@@ -177,10 +180,12 @@ package struct DetermineAuthMethodView: View {
             email,
             didDetectDomainConflict,
             backendInfo
+//            useLegacyRegistrationFlow
         ):
             LoginViaEmailView(factory: viewModel.factory.loginViaEmailFactory(
                 email: email,
                 canCreateAccount: true,
+                useLegacyRegistrationFlow: useLegacyRegistrationFlow,
                 didDetectDomainConflict: didDetectDomainConflict,
                 backendInfo: backendInfo
             ))

@@ -119,7 +119,8 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                     to: DetermineAuthMethodDestination.login(
                         email: nil,
                         didDetectDomainConflict: false,
-                        backendInfo: backendInfo
+                        backendInfo: backendInfo,
+                        useLegacyRegistrationFlow: <#T##Bool#>
                     )
                 )
 

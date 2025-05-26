@@ -34,10 +34,11 @@ protocol LoginViaEmailComponentDependency: Dependency {
 
 }
 
-class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
+final class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
 
     public let email: String?
     private let canCreateAccount: Bool
+    private let useLegacyRegistrationFlow: Bool
     public let didDetectDomainConflict: Bool
     public let networkStack: NetworkStack
 
@@ -45,11 +46,13 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
         parent: any Scope,
         email: String?,
         canCreateAccount: Bool,
+        useLegacyRegistrationFlow: Bool,
         didDetectDomainConflict: Bool,
         networkStack: NetworkStack
     ) {
         self.email = email
         self.canCreateAccount = canCreateAccount
+        self.useLegacyRegistrationFlow = useLegacyRegistrationFlow
         self.didDetectDomainConflict = didDetectDomainConflict
         self.networkStack = networkStack
         super.init(parent: parent)
@@ -94,28 +97,26 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
             backendInfo: networkStack.backendInfo,
             canCreateAccount: canCreateAccount,
             didDetectDomainConflict: didDetectDomainConflict,
-            onCreateAccount: { [dependency, networkStack, email] in
+            onCreateAccount: { [dependency, networkStack, email, useLegacyRegistrationFlow] in
                 guard let dependency else { return }
-                Task.detached {
+                Task<Void, Never> { @MainActor in
                     do {
                         let backendEnvironment = try await networkStack.makeBackendEnvironment()
-                        await MainActor.run {
-                            dependency.router.dismissSheet()
+                        dependency.router.dismissSheet()
+                        if useLegacyRegistrationFlow {
                             dependency.bridge.sendOutboundEvent(
                                 .accountRegistrationRequested(
                                     email: email,
                                     backendEnvironment
                                 )
                             )
+                        } else {
+                            fatalError("TODO")
                         }
                     } catch {
-                        await MainActor.run {
-                            dependency.router.presentAlert(for: error)
-                        }
+                        dependency.router.presentAlert(for: error)
                     }
-
                 }
-
             }
         )
     }
