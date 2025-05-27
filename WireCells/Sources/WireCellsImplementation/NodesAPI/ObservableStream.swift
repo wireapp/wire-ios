@@ -29,8 +29,11 @@ final class ObservableStream: Smithy.Stream, Sendable {
 
     let readProgress: AsyncStream<Int>
 
-    init(_ wrapped: any Smithy.Stream) {
-        let (progress, continuation) = AsyncStream.makeStream(of: Int.self, bufferingPolicy: .bufferingOldest(0))
+    init(
+        _ wrapped: any Smithy.Stream,
+        bufferingPolicy: AsyncStream<Int>.Continuation.BufferingPolicy = .bufferingNewest(1)
+    ) {
+        let (progress, continuation) = AsyncStream.makeStream(of: Int.self, bufferingPolicy: bufferingPolicy)
         self.wrapped = wrapped
         self.readProgress = progress
         self.readContinuation = continuation
