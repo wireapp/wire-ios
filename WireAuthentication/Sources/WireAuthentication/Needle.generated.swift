@@ -1,6 +1,5 @@
 
 
-import Foundation
 import NeedleFoundation
 import SwiftUI
 import WireAPI
@@ -173,6 +172,7 @@ extension RootComponent: NeedleFoundation.Registration {
         localTable["ssoCallbackURLScheme-String"] = { [unowned self] in self.ssoCallbackURLScheme as Any }
         localTable["appStoreURL-URL"] = { [unowned self] in self.appStoreURL as Any }
         localTable["existsAnotherAccount-Bool"] = { [unowned self] in self.existsAnotherAccount as Any }
+        localTable["useLegacyRegistrationFlow-Bool"] = { [unowned self] in self.useLegacyRegistrationFlow as Any }
         localTable["bridge-WireAuthenticationBridge"] = { [unowned self] in self.bridge as Any }
         localTable["router-any Router"] = { [unowned self] in self.router as Any }
     }
@@ -191,6 +191,7 @@ extension LoginViaEmailComponent: NeedleFoundation.Registration {
         keyPathToName[\LoginViaEmailComponentDependency.preferredAPIVersion] = "preferredAPIVersion-APIVersion?"
         keyPathToName[\LoginViaEmailComponentDependency.backendInfo] = "backendInfo-BackendInfo"
         keyPathToName[\LoginViaEmailComponentDependency.minTLSVersion] = "minTLSVersion-TLSVersion"
+        keyPathToName[\LoginViaEmailComponentDependency.useLegacyRegistrationFlow] = "useLegacyRegistrationFlow-Bool"
         localTable["email-String?"] = { [unowned self] in self.email as Any }
         localTable["didDetectDomainConflict-Bool"] = { [unowned self] in self.didDetectDomainConflict as Any }
         localTable["networkStack-NetworkStack"] = { [unowned self] in self.networkStack as Any }
