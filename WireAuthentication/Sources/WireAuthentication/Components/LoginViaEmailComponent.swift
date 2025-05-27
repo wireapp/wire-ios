@@ -95,27 +95,23 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
             backendInfo: networkStack.backendInfo,
             canCreateAccount: canCreateAccount,
             didDetectDomainConflict: didDetectDomainConflict,
-            onCreateAccount: { [dependency, networkStack, email] in
+            onCreateAccount: dependency.useLegacyRegistrationFlow ? { [dependency, networkStack, email] in
                 guard let dependency else { return }
                 Task<Void, Never> { @MainActor in
                     do {
                         let backendEnvironment = try await networkStack.makeBackendEnvironment()
                         dependency.router.dismissSheet()
-                        if dependency.useLegacyRegistrationFlow {
-                            dependency.bridge.sendOutboundEvent(
-                                .accountRegistrationRequested(
-                                    email: email,
-                                    backendEnvironment
-                                )
+                        dependency.bridge.sendOutboundEvent(
+                            .accountRegistrationRequested(
+                                email: email,
+                                backendEnvironment
                             )
-                        } else {
-                            fatalError("TODO")
-                        }
+                        )
                     } catch {
                         dependency.router.presentAlert(for: error)
                     }
                 }
-            }
+            } : nil
         )
     }
 

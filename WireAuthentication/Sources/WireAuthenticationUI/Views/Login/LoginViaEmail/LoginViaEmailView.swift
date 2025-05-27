@@ -87,6 +87,9 @@ package struct LoginViaEmailView: View {
                 Button(L10n.Authentication.Error.confirm, action: {})
             }
         )
+        .sheet(isPresented: $viewModel.isCreateAccountPresented) {
+            AccountTypeSelectorView()
+        }
         .navigationDestination(for: LoginViaEmailDestination.self) { destination in
             destinationView(destination)
         }
