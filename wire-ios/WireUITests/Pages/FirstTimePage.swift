@@ -33,9 +33,9 @@ class FirstTimePage: PageModel {
         return self
     }
     
-    func acceptPopup() -> SetUsernamePage {
+    func acceptPopup() -> ConversationsPage {
         let button = app.otherElements.buttons.firstMatch
         button.tap()
-        return SetUsernamePage()
+        return ConversationsPage()
     }
 }

@@ -52,20 +52,33 @@ class SelfUserAPIV0: SelfUserAPI, VersionedAPI {
     func pushSupportedProtocols(_: Set<MessageProtocol>) async throws {
         throw SelfUserAPIError.unsupportedEndpointForAPIVersion
     }
-    
+
     func testDeleteSelf(password: String) async throws {
-//        let body = try JSONEncoder.defaultEncoder.encode(
-//            DeleteSelfRequestBodyV0(password: password)
-//        )
-        
-        let body = Data()
+        let body = try JSONEncoder.defaultEncoder.encode(
+            DeleteSelfRequestBodyV0(password: password)
+        )
 
         let request = try URLRequestBuilder(path: resourcePath)
             .withMethod(.delete)
-//            .withBody(body, contentType: .json)
+            .withBody(body, contentType: .json)
             .build()
 
-        print("before request")
+        let (data, response) = try await apiService.executeRequest(request, requiringAccessToken: true)
+        return try ResponseParser()
+            .success(code: .ok)
+            .parse(code: response.statusCode, data: data)
+    }
+
+    func testUpdateHandle(handle: String) async throws {
+        let body = try JSONEncoder.defaultEncoder.encode(
+            UpdateHandleRequestBodyV0(handle: handle)
+        )
+
+        let request = try URLRequestBuilder(path: "\(resourcePath)/handle")
+            .withMethod(.put)
+            .withBody(body, contentType: .json)
+            .build()
+
         let (data, response) = try await apiService.executeRequest(request, requiringAccessToken: true)
         print(response.statusCode)
         print(response.description)
@@ -164,4 +177,8 @@ struct SSOIDV0: Decodable, ToAPIModelConvertible {
 
 private struct DeleteSelfRequestBodyV0: Encodable {
     var password: String
+}
+
+private struct UpdateHandleRequestBodyV0: Encodable {
+    var handle: String
 }

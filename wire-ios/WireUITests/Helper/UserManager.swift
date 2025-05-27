@@ -47,21 +47,20 @@ class UserManager {
     
     func createPersonalUser() async throws -> UserInfo {
         let user = UserGenerator.generateUniqueUserInfo()
-        print(" User looks like: ")
-        print(user.email)
-        print(user.password)
-        
+
         // Start registration
         let cookies = try await authenticationAPI.testRegisterPersonalAccount(name: user.name, email: user.email, password: user.password)
         try await cookieStorage.storeCookies(cookies)
-        
+
         // Get activation code
-//        let activationCode = try await authenticationAPI.getVerificationCode(for: user.email)
         let (activationCode, activationKey) = try await BackendClient.getActivationCode(email: user.email)
-        
+
         // Activate user
         try await authenticationAPI.testActivateUser(email: user.email, key: activationKey, code: activationCode)
-        
+
+        // Set username
+        try await selfUserAPI.testUpdateHandle(handle: user.username)
+
         createdUsers.append(user)
         return user
     }

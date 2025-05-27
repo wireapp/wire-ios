@@ -62,7 +62,6 @@ final class PersonalUsersTests: WireUITestCase {
             .enterPassword(user.password)
             .acceptFirstTimeAlert()
             .acceptPopup()
-            .setUsername(user.username)
             .openSettings()
             .openAccountSettings()
             .logout()
