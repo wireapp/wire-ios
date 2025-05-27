@@ -47,6 +47,16 @@ public protocol UpdateEventsLocalStoreProtocol {
         index: Int64
     ) async throws
 
+    /// Persists an event envelopes locally.
+    /// - Parameters:
+    ///     - eventEnvelopes: The event envelopes to persist.
+    ///     - index: The event envelope start index.
+
+    func persistEventEnvelopes(
+        _ eventEnvelopes: [UpdateEventEnvelope],
+        index: Int64
+    ) async throws
+
     /// Fetches stored event envelopes.
     /// - parameter limit: A fetch limit.
     /// - returns: A list of event envelopes.
