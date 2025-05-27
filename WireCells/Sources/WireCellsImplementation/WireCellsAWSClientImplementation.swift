@@ -20,6 +20,7 @@ import AWSClientRuntime
 @preconcurrency import AWSS3
 package import Foundation
 import SmithyIdentity
+import SmithyStreams
 package import WireCellsAPI
 
 package final class WireCellsAWSClientImplementation: WireCellsAWSClient {
@@ -115,22 +116,24 @@ package final class WireCellsAWSClientImplementation: WireCellsAWSClient {
         node: WireCellsNodeDTO,
         onProgressUpdate: @escaping @Sendable (UInt64) -> Void
     ) async throws {
-        // FIXME: [WPB-17765] Use a FileHandle (`FileHandle(forReadingFrom: path)`) instead of Data
-        let data = try Data(contentsOf: path)
-        let fileSize = try FileManager.default.attributesOfItem(atPath: path.path)[.size] as! Int64
+        let fileStream = FileStream(fileHandle: try FileHandle(forReadingFrom: path))
+        let stream = ObservableStream(fileStream)
 
-        let metadata = node.createDraftNodeMetadata()
+        let progressTask = Task {
+            for await progress in stream.readProgress {
+                onProgressUpdate(UInt64(progress))
+            }
+        }
+        defer { progressTask.cancel() }
 
         let input = PutObjectInput(
-            body: .data(data),
+            body: .stream(stream),
             bucket: Constants.bucket,
-            contentLength: Int(fileSize),
             key: node.path,
-            metadata: metadata
+            metadata: node.createDraftNodeMetadata()
         )
 
         _ = try await s3.putObject(input: input)
-        onProgressUpdate(UInt64(fileSize))
     }
 
     private func uploadMultipart(
