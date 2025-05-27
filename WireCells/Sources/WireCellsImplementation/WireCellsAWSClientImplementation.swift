@@ -97,7 +97,22 @@ package final class WireCellsAWSClientImplementation: WireCellsAWSClient {
         }
     }
 
-    package func upload(
+    package func upload(path: URL, node: WireCellsNodeDTO) async -> AsyncThrowingStream<Int, any Error> {
+        AsyncThrowingStream { continuation in
+            Task {
+                do {
+                    try await self.upload(path: path, node: node) { progress in
+                        continuation.yield(Int(progress))
+                    }
+                    continuation.finish()
+                } catch {
+                    continuation.finish(throwing: error)
+                }
+            }
+        }
+    }
+
+    private func upload(
         path: URL,
         node: WireCellsNodeDTO,
         onProgressUpdate: @escaping @Sendable (UInt64) -> Void

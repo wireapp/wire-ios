@@ -39,9 +39,8 @@ package protocol WireCellsAWSClient: Sendable {
     /// Uploads a file at a local path to S3, using metadata from the CellNode.
     func upload(
         path: URL,
-        node: WireCellsNodeDTO,
-        onProgressUpdate: @escaping @Sendable (UInt64) -> Void
-    ) async throws
+        node: WireCellsNodeDTO
+    ) async -> AsyncThrowingStream<Int, any Error>
 
     /// Returns a pre-signed URL for the given S3 object key.
     func getPreSignedUrl(objectKey: String) async throws -> String

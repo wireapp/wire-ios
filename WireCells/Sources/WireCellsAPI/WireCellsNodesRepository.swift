@@ -31,11 +31,7 @@ public protocol WireCellsNodesRepository: Actor {
         onProgressUpdate: @escaping @Sendable (UInt64) -> Void
     ) async throws
 
-    func uploadFile(
-        path: URL,
-        node: WireCellsNode,
-        onProgressUpdate: @escaping @Sendable (UInt64) -> Void
-    ) async throws
+    func uploadFile(path: URL, node: WireCellsNode) async -> AsyncThrowingStream<Int, any Error>
 
     func getFiles(
         path: String?,

@@ -18,6 +18,7 @@
 
 package import Foundation
 package import WireCellsAPI
+import WireLogging
 
 package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtocol {
     private let fileManager: FileManager
@@ -100,30 +101,24 @@ package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtoc
 
     private func startUpload(assetPath: URL, node: WireCellsNode) async -> AsyncStream<WireCellsUploadStatus> {
         let (stream, continuation) = AsyncStream.makeStream(of: WireCellsUploadStatus.self)
-        let task = Task {
+        let task = Task { [repository] in
+            let upload = await repository.uploadFile(path: assetPath, node: node)
+
             do {
-                try await repository.uploadFile(
-                    path: assetPath,
-                    node: node,
-                    onProgressUpdate: { [weak self] uploaded in
-                        Task { [weak self] in
-                            await self?.updateUploadProgress(
-                                nodeID: node.id,
-                                uploaded: uploaded,
-                                total: node.size ?? 1
-                            )
-                            continuation
-                                .yield(
-                                    WireCellsUploadStatus
-                                        .uploading(progress: Float(uploaded) / Float(node.size ?? 1))
-                                )
-                        }
-                    }
-                )
+                for try await progress in upload {
+                    await self.updateUploadProgress(
+                        nodeID: node.id,
+                        uploaded: UInt64(progress),
+                        total: node.size ?? 1
+                    )
+                    continuation.yield(.uploading(progress: Float(progress) / Float(node.size ?? 1)))
+                }
                 await uploads.remove(node.id)
                 continuation.yield(WireCellsUploadStatus.uploaded)
                 continuation.finish()
             } catch {
+                WireLogger.wireCells.info("Failed to upload file: \(error)")
+
                 await uploads.update(node.id) { $0.withUploadFailed() }
                 continuation.yield(WireCellsUploadStatus.failed(error: WireCellsUploadError(error)))
                 continuation.finish()

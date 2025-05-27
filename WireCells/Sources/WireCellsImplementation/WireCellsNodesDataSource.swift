@@ -51,12 +51,8 @@ package final actor WireCellsNodesDataSource: WireCellsNodesRepository {
             : .success
     }
 
-    package func uploadFile(
-        path: URL,
-        node: WireCellsNode,
-        onProgressUpdate: @escaping @Sendable (UInt64) -> Void
-    ) async throws {
-        try await awsClient.upload(path: path, node: node.toDTO(), onProgressUpdate: onProgressUpdate)
+    package func uploadFile(path: URL, node: WireCellsNode) async -> AsyncThrowingStream<Int, any Error> {
+        await awsClient.upload(path: path, node: node.toDTO())
     }
 
     package func getFiles(
