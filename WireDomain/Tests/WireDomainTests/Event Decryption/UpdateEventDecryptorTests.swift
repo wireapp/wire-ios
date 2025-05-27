@@ -119,10 +119,13 @@ final class UpdateEventDecryptorTests: XCTestCase {
         )
 
         // Mock
-        proteusMessageDecryptor.decryptedEventDataFrom_MockMethod = { $0 }
+
+        proteusMessageDecryptor.decryptedEventDataFromContext_MockMethod = { envelope, _ in
+            envelope
+        }
 
         // When
-        let events = try await sut.decryptEvents(in: envelope)
+        let events = try await sut.decryptEvents(in: envelope, context: nil)
 
         // Then the "decrypted" (the mock just passes them right back) are returned.
         XCTAssertEqual(
@@ -146,12 +149,12 @@ final class UpdateEventDecryptorTests: XCTestCase {
         )
 
         // Mock
-        proteusMessageDecryptor.decryptedEventDataFrom_MockMethod = { _ in
+        proteusMessageDecryptor.decryptedEventDataFromContext_MockMethod = { _, _ in
             throw ProteusService.DecryptionError.failedToDecryptData(.DuplicateMessage)
         }
 
         // When
-        let events = try await sut.decryptEvents(in: envelope)
+        let events = try await sut.decryptEvents(in: envelope, context: nil)
 
         // Then we skipped over the proteus message.
         XCTAssertEqual(events, [.user(.pushRemove)])
@@ -182,10 +185,12 @@ final class UpdateEventDecryptorTests: XCTestCase {
         )
 
         // Mock
-        mlsMessageDecryptor.decryptedMessageAddEventDataFrom_MockMethod = { $0 }
+        mlsMessageDecryptor.decryptedMessageAddEventDataFromContext_MockMethod = { envelope, _ in
+            envelope
+        }
 
         // When
-        let events = try await sut.decryptEvents(in: envelope)
+        let events = try await sut.decryptEvents(in: envelope, context: nil)
 
         // Then the "decrypted" (the mock just passes them right back) are returned.
         XCTAssertEqual(
