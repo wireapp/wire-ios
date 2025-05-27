@@ -60,7 +60,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
     private let incrementalSyncTaskManager = NonReentrantTaskManager()
     private var incrementalSyncToken: IncrementalSync.Token?
-    private var ongoingSyncTask: Task<Void, Error>?
+    private var ongoingSyncTask: Task<Void, Never>?
 
     private var hasCompletedInitialSync: Bool {
         lastUpdateEventIDRepository.fetchLastEventID() != nil
