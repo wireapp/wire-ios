@@ -52,10 +52,17 @@ struct UserConnectionEventNotificationBuilder {
         let connectionStatus = isPendingConnection ? ConnectionStatus.pending : .accepted
         let selfUser = await context.getSelfUser()
         let selfUserID = await context.selfUserID(selfUser: selfUser)
+        let senderName: String? = if let senderID = connection.senderID {
+            await context.senderName(
+                sender: context.getSender(senderID: senderID)
+            )
+        } else {
+            nil
+        }
 
         return buildConnectionRequestNotification(
             connectionStatus: connectionStatus,
-            username: event.userName,
+            username: senderName ?? event.userName,
             selfUserID: selfUserID,
             senderID: connection.senderID,
             conversationID: qualifiedID
@@ -159,11 +166,11 @@ extension UserConnectionEventNotificationBuilder {
         }
 
         func getSender(
-            senderID: UserID
+            senderID: UUID
         ) async -> ZMUser {
             await userLocalStore.fetchOrCreateUser(
-                id: senderID.uuid,
-                domain: senderID.domain
+                id: senderID,
+                domain: nil
             )
         }
 

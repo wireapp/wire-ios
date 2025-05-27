@@ -66,6 +66,14 @@ final class UserConnectionEventNotificationBuilderTests: XCTestCase {
             modelHelper.createSelfUser(in: context)
         }
 
+        userLocalStore.fetchOrCreateUserIdDomain_MockValue = await context.perform { [self] in
+            modelHelper.createUser(in: context)
+        }
+
+        userLocalStore.nameFor_MockValue = await context.perform {
+            Scaffolding.username
+        }
+
         userLocalStore.idFor_MockValue = .mockID1
 
         for connectionEvent in connectionEvents {
