@@ -28,8 +28,8 @@
 "cloud_user_login.input_password.placeholder" = "Enter password";
 "cloud_user_login.submit" = "Next";
 "cloud_user_login.forgot_password" = "Forgot password?";
-"create_personal_account.title" = "Don’t have a Wire account?";
-"create_personal_account.button" = "Create Personal Account";
+"create_account_or_team.title" = "Don’t have a Wire account?";
+"create_account_or_team.button" = "Create account or team";
 
 "on_prem_user_login.title" = "Welcome to Wire Enterprise for %@!";
 "on_prem_user_login.message" = "Enter your password to log in";
