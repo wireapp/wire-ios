@@ -556,7 +556,7 @@ public final class SharingSession {
         let clientUserSessionComponent = userSessionComponent.clientSessionComponent(
             clientID: selfClientID,
             asyncStreamEnabled: selfClient?.asyncStreamCapable == true,
-            processorHandlers: processHandlers
+            processorHandlers: processHandlers,
             onAuthenticationFailure: {}
         )
 

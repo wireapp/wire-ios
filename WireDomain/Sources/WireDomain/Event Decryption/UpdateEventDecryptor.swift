@@ -68,7 +68,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
 
     func decryptEvents(in eventEnvelope: UpdateEventEnvelope) async throws -> [UpdateEvent] {
         guard !DeveloperFlag.skipMLSMessagesDecryption.isOn else { return [] }
-        let logAttributes: LogAttributes = [
+        var logAttributes: LogAttributes = [
             .eventId: eventEnvelope.id.safeForLoggingDescription,
             .public: true
         ]

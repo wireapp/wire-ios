@@ -10,7 +10,7 @@ let package = Package(
     defaultLocalization: "en",
     platforms: [.iOS("16.4"), .macOS(.v12)],
     products: [
-        .library(name: "WireAccountImageUI", type: .dynamic, targets: ["WireAccountImageUI"]),
+        .library(name: "WireAccountImageUI", targets: ["WireAccountImageUI"]),
         .library(name: "WireConversationListUI", targets: ["WireConversationListUI"]),
         .library(name: "WireConversationUI", targets: ["WireConversationUI"]),
         .library(name: "WireDesign", targets: ["WireDesign"]),
