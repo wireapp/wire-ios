@@ -63,7 +63,8 @@ public final class Assembly {
     public lazy var authenticationManager: some AuthenticationManagerProtocol = AuthenticationManager(
         clientID: clientID,
         cookieStorage: cookieStorage,
-        networkService: apiNetworkService
+        networkService: apiNetworkService,
+        onAuthenticationFailure: {}
     )
 
     private lazy var cookieStorage: some CookieStorageProtocol = CookieStorage(

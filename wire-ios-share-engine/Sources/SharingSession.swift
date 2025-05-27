@@ -557,6 +557,7 @@ public final class SharingSession {
             clientID: selfClientID,
             asyncStreamEnabled: selfClient?.asyncStreamCapable == true,
             processorHandlers: processHandlers
+            onAuthenticationFailure: {}
         )
 
         coreCryptoProvider.registerMlsTransport(clientUserSessionComponent.mlsTransport)

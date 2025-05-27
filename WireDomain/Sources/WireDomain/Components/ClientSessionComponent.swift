@@ -62,6 +62,7 @@ public final class ClientSessionComponent {
 
     public let asyncStreamEnabled: Bool
     private let processorHandlers: ProcessorHandlers
+    private let onAuthenticationFailure: @Sendable () -> Void
 
     public init(
         selfUserID: UUID,
@@ -80,7 +81,8 @@ public final class ClientSessionComponent {
         mlsDecryptionService: any MLSDecryptionServiceInterface,
         proteusService: any ProteusServiceInterface,
         asyncStreamEnabled: Bool,
-        processorHandlers: ProcessorHandlers
+        processorHandlers: ProcessorHandlers,
+        onAuthenticationFailure: @escaping @Sendable () -> Void
     ) {
         self.selfUserID = selfUserID
         self.selfClientID = selfClientID
@@ -99,12 +101,14 @@ public final class ClientSessionComponent {
         self.isMLSEnabled = isMLSEnabled
         self.asyncStreamEnabled = asyncStreamEnabled
         self.processorHandlers = processorHandlers
+        self.onAuthenticationFailure = onAuthenticationFailure
     }
 
     private lazy var authenticationManager = AuthenticationManager(
         clientID: selfClientID,
         cookieStorage: cookieStorage,
-        networkService: networkService
+        networkService: networkService,
+        onAuthenticationFailure: onAuthenticationFailure
     )
 
     // MARK: - Network API clients

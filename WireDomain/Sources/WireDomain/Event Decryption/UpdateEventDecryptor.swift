@@ -67,7 +67,8 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
     }
 
     func decryptEvents(in eventEnvelope: UpdateEventEnvelope) async throws -> [UpdateEvent] {
-        var logAttributes: LogAttributes = [
+        guard !DeveloperFlag.skipMLSMessagesDecryption.isOn else { return [] }
+        let logAttributes: LogAttributes = [
             .eventId: eventEnvelope.id.safeForLoggingDescription,
             .public: true
         ]
@@ -99,7 +100,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                     )
                 } catch {
                     WireLogger.updateEvent.error(
-                        "failed to decrypt proteus event, dropping: \(error.localizedDescription)",
+                        "failed to decrypt proteus event, dropping: \(String(describing: error))",
                         attributes: logAttributes
                     )
                 }
@@ -117,9 +118,22 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                     let decryptedEventData = try await mlsMessageDecryptor.decryptedMessageAddEventData(from: eventData)
                     decryptedEvents.append(.conversation(.mlsMessageAdd(decryptedEventData)))
 
+                } catch let error as MLSMessageDecryptorError {
+                    switch error {
+                    case let .wrongEpoch(mlsGroupID):
+                        WireLogger.updateEvent.error(
+                            "failed to decrypt MLS due to `WrongEpoch` for group \(mlsGroupID)",
+                            attributes: logAttributes
+                        )
+                    default:
+                        WireLogger.updateEvent.error(
+                            "failed to decrypt MLS add message event, dropping: \(String(describing: error))",
+                            attributes: logAttributes
+                        )
+                    }
                 } catch {
                     WireLogger.updateEvent.error(
-                        "failed to decrypt MLS add message event, dropping: \(error.localizedDescription)",
+                        "failed to decrypt MLS add message event, dropping: \(String(describing: error))",
                         attributes: logAttributes
                     )
                 }

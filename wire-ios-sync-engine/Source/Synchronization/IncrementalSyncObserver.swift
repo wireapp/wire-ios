@@ -108,6 +108,7 @@ final class IncrementalSyncObserver: IncrementalSyncObserverProtocol {
                 cancellable = $decryptionState.sink { newDecryptionState in
                     if newDecryptionState == .done {
                         continuation.resume()
+                        cancellable?.cancel()
                     }
                 }
             }
