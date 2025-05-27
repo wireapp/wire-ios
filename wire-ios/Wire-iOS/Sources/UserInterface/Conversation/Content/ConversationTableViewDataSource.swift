@@ -177,7 +177,6 @@ final class ConversationTableViewDataSource: NSObject {
             DispatchQueue.main.async {
                 var sections = [Section]()
 
-                let allMessages = messagesOnMainThread
                 for (messageObjectId, sectionController, context) in result {
 
                     // saving calculations result in local cache
@@ -285,11 +284,13 @@ final class ConversationTableViewDataSource: NSObject {
     }
 
     func resetSectionControllers() {
-        sectionControllers.reset()
-        calculateSections { [weak self] sections in
-            guard let self else { return }
-            currentSections = sections
-            tableView.reloadData()
+        debouncer.call(id: nil) { [weak self] in
+            self?.sectionControllers.reset()
+            self?.calculateSections { [weak self] sections in
+                guard let self else { return }
+                currentSections = sections
+                tableView.reloadData()
+            }
         }
     }
 
@@ -464,10 +465,12 @@ final class ConversationTableViewDataSource: NSObject {
         hasNewerMessagesToLoad = offset > 0
         firstUnreadMessage = conversation.firstUnreadMessage
 
-        calculateSections(forceRecalculate: forceRecalculate) { [weak self] sections in
-            self?.currentSections = sections
-            self?.tableView.reloadData()
-            completion?()
+        debouncer.call(id: nil) { [weak self] in
+            self?.calculateSections(forceRecalculate: forceRecalculate) { [weak self] sections in
+                self?.currentSections = sections
+                self?.tableView.reloadData()
+                completion?()
+            }
         }
     }
 

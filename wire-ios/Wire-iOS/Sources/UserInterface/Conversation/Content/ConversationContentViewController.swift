@@ -570,9 +570,12 @@ extension ConversationContentViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
         willSelectRow(at: indexPath, tableView: tableView)
     }
-    
-    private func actionControllerToSwipe(indexPath: IndexPath, isLeading: Bool) -> ConversationMessageActionController? {
-        
+
+    private func actionControllerToSwipe(
+        indexPath: IndexPath,
+        isLeading: Bool
+    ) -> ConversationMessageActionController? {
+
         let section = dataSource.currentSections[ifExists: indexPath.section]?.elements[ifExists: indexPath.row]
         let actionController = section?.actionController
         let cellDescription = section?.instance
@@ -584,13 +587,14 @@ extension ConversationContentViewController: UITableViewDelegate {
         if let nonce = cellDescription?.message?.nonce {
             backupActionController = dataSource.sectionControllers.get(for: nonce)?.actionController
         }
-        
-        if (cellDescription?.supportsActions ?? false),
+
+        if cellDescription?.supportsActions ?? false,
            let actionController = actionController ?? backupActionController,
-           isLeading ? actionController.message.canAddReaction : actionController.canPerformAction(action: .react("❤️")) {
+           isLeading ? actionController.message.canAddReaction : actionController
+           .canPerformAction(action: .react("❤️")) {
             return actionController
         }
-        
+
         return nil
     }
 
