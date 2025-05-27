@@ -90,6 +90,11 @@ package struct LoginViaEmailView: View {
         .navigationDestination(for: LoginViaEmailDestination.self) { destination in
             destinationView(destination)
         }
+        .sheet(isPresented: $viewModel.isCreateTeamAccountPresented) {
+            if let url = viewModel.teamAccountCreationLink {
+                SFSafariView(url: url)
+            }
+        }
         .presentationDetents(viewModel.areProxyCredentialsRequired ? [.large] : [.medium, .large])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)

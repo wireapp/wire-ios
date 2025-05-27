@@ -42,6 +42,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
     @Published private(set) var isLoading = false
     @Published var alert: Alert?
+    @Published var isCreateTeamAccountPresented = false
 
     let backendInfo: BackendInfo
     let isEmailPrefilled: Bool
@@ -68,6 +69,20 @@ package final class LoginViaEmailViewModel: ObservableObject {
             areAccountCredentialsValid && areProxyCredentialsValid
         } else {
             areAccountCredentialsValid
+        }
+    }
+
+    var teamAccountCreationLink: URL? {
+        let baseURL = backendInfo.backendConfig.endpoints.teamsURL
+        if var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false) {
+            components.queryItems = (components.queryItems ?? []) + [
+                URLQueryItem(name: "origin", value: "ios")
+            ]
+
+            return components.url
+        } else {
+            // can't generate url
+            return nil
         }
     }
 
@@ -163,9 +178,10 @@ package final class LoginViaEmailViewModel: ObservableObject {
     }
 
     func recoverPassword() {
-        UIApplication.shared.open(
-            backendInfo.backendConfig.endpoints.accountsURL.appendingPathComponent("forgot")
-        )
+        isCreateTeamAccountPresented = true
+//        UIApplication.shared.open(
+//            backendInfo.backendConfig.endpoints.accountsURL.appendingPathComponent("forgot")
+//        )
     }
 
     func createAccount() {
