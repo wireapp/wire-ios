@@ -57,18 +57,18 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         logger.debug("performing incremental sync")
         syncStateSubject.send(.incrementalSyncing(.createPushChannel))
         let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID)
-        
+
         logger.debug("opening push channel")
         syncStateSubject.send(.incrementalSyncing(.openPushChannel))
-        
+
         let liveEventStream = try await pushChannel.open()
-        
+
         let processedEnvelopeIDs: Set<UUID>
         do {
             logger.debug("pulling pending update events")
             syncStateSubject.send(.incrementalSyncing(.pullPendingEvents))
             try await updateEventsSync.pull()
-            
+
             logger.debug("processing stored update events")
             syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
             processedEnvelopeIDs = try await processStoredEvents()
@@ -77,20 +77,20 @@ public struct IncrementalSync: IncrementalSyncProtocol {
             await pushChannel.close()
             throw error
         }
-        
+
         let liveEventTask = Task { @Sendable [self] in
             logger.debug("handling live event stream")
             syncStateSubject.send(.liveSyncing)
-            
+
             await processLiveEvents(
                 liveEventStream: liveEventStream,
                 processedEnvelopeIDs: processedEnvelopeIDs
             )
-            
+
             logger.debug("live event stream did finish")
             syncStateSubject.send(.idle)
         }
-        
+
         return Token(task: liveEventTask, closePushChannel: {
             await pushChannel.close()
         })
