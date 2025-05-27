@@ -177,7 +177,7 @@ package struct LoginViaEmailView: View {
 
     @ViewBuilder private var createAccount: some View {
         VStack(spacing: 4) {
-            Text(L10n.CreatePersonalAccount.title)
+            Text(L10n.CreateAccountOrTeam.title)
                 .multilineTextAlignment(.center)
                 .wireTextStyle(.body1)
                 .lineLimit(nil)
@@ -186,7 +186,7 @@ package struct LoginViaEmailView: View {
             Button(action: {
                 viewModel.createAccount()
             }, label: {
-                Text(L10n.CreatePersonalAccount.button)
+                Text(L10n.CreateAccountOrTeam.button)
                     .multilineTextAlignment(.center)
                     .lineLimit(nil)
                     .minimumScaleFactor(0.5)
