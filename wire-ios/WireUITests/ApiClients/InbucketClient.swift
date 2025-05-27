@@ -21,15 +21,14 @@ import Foundation
 enum InbucketClient {
 
     static func getVerificationCode(email: String) async throws -> String {
-        let inbucketURL = "https://\(ProcessInfo.processInfo.environment["INBUCKET_URL"]!)"
-        let inbucketUsername = ProcessInfo.processInfo.environment["INBUCKET_USERNAME"]!
-        let inbucketPassword = ProcessInfo.processInfo.environment["INBUCKET_PASSWORD"]!
+        let envVariables = try EnvironmentVariables()
+
         var verificationCode = ""
-        let url = URL(string: "\(inbucketURL)api/v1/mailbox/\(email)/latest")
-        guard let requestUrl = url else { fatalError() }
+        let requestUrl = envVariables.inbucketURL.appending(path: "api/v1/mailbox/\(email)/latest")
+
         var request = URLRequest(url: requestUrl)
         request.httpMethod = "GET"
-        let loginString = String(format: "%@:%@", inbucketUsername, inbucketPassword)
+        let loginString = String(format: "%@:%@", envVariables.inbucketUsername, envVariables.inbucketPassword)
         let loginData = loginString.data(using: String.Encoding.utf8)!
         let base64LoginString = loginData.base64EncodedString()
         request.setValue("Basic \(base64LoginString)", forHTTPHeaderField: "Authorization")

@@ -23,8 +23,9 @@ enum BackendClient {
     static let backendURL = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL"]!)"
     
     static func loginViaAPI(email: String, password: String) async throws -> String {
-        let url = URL(string: "\(backendURL)/v8/login")
-        guard let requestUrl = url else { fatalError() }
+        let envVariables = try EnvironmentVariables()
+        let requestUrl = envVariables.backendURL.appending(path: "v8/login")
+
         var request = URLRequest(url: requestUrl)
         request.httpMethod = "POST"
         let body: [String: Any] = ["email": "\(email)", "password": "\(password)"]
@@ -45,8 +46,9 @@ enum BackendClient {
     }
 
     static func deletePersonalUser(access_token: String, password: String) async throws {
-        let url = URL(string: "\(backendURL)/self")
-        guard let requestUrl = url else { fatalError() }
+        let envVariables = try EnvironmentVariables()
+        let requestUrl = envVariables.backendURL.appending(path: "self")
+
         var request = URLRequest(url: requestUrl)
         request.httpMethod = "DELETE"
         let body: [String: Any] = ["password": "\(password)"]

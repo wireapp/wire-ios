@@ -16,18 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireAPI
+package import Foundation
 
-// sourcery: AutoMockable
-/// A sync to pull pending update events from the remote, decrypts,
-/// and stores them locally.
-public protocol PullPendingUpdateEventsSyncProtocol {
+public struct WireCellsDraft: Hashable, Sendable {
 
-    /// Pull pending update events from the remote, decrypt (if needed),
-    /// and store them locally.
+    package let id: WireCellsNodeID
+    package let assetURL: URL
+    package var status: WireCellsUploadStatus
 
-    @discardableResult
-    func pull() async throws -> AsyncStream<[UpdateEvent]>
-
+    package init(
+        id: WireCellsNodeID,
+        assetURL: URL,
+        status: WireCellsUploadStatus
+    ) {
+        self.id = id
+        self.assetURL = assetURL
+        self.status = status
+    }
 }

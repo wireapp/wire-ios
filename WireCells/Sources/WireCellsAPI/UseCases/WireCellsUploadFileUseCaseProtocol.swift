@@ -31,3 +31,11 @@ public protocol WireCellsUploadFileUseCaseProtocol: Sendable {
 
     func invoke(imageData: Data) async throws
 }
+
+public enum WireCellsUploadFileUseCaseError: Error, Sendable {
+
+    /// The file size of the requested file cannot be determined.
+
+    case missingFileSize
+
+}

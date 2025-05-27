@@ -20,15 +20,24 @@ import CellsSDK
 import Foundation
 import WireCellsAPI
 
-final class WireCellsNodesAPIImpl: WireCellsNodesAPI, Sendable {
+final class WireCellsNodesAPI: WireCellsNodesAPIProtocol, Sendable {
 
     private enum Constants {
         static let sortedBy = "mtime"
 
     }
 
+    private let configuration: CellsSDKAPIConfiguration
+
+    init(serverURL: URL, accessToken: String) {
+        let config = CellsSDKAPIConfiguration()
+        config.basePath = serverURL.absoluteString
+        config.customHeaders = ["Authorization": "Bearer \(accessToken)"]
+        self.configuration = config
+    }
+
     func getNode(uuid: UUID) async throws -> WireCellsNodeDTO {
-        let response = try await NodeServiceAPI.getByUuid(uuid: uuid.uuidString)
+        let response = try await NodeServiceAPI.getByUuid(uuid: uuid.uuidString, apiConfiguration: configuration)
         guard let dto = response.toDTO() else {
             throw WireCellsNodesAPIError.failedToDecodeNode
         }
@@ -44,7 +53,7 @@ final class WireCellsNodesAPIImpl: WireCellsNodesAPI, Sendable {
             sortField: Constants.sortedBy
         )
 
-        return try await NodeServiceAPI.lookup(body: request).toDTO()
+        return try await NodeServiceAPI.lookup(body: request, apiConfiguration: configuration).toDTO()
     }
 
     func getFilesForPath(path: String, limit: Int, offset: Int) async throws -> WireCellsGetFilesResponseDTO {
@@ -58,18 +67,26 @@ final class WireCellsNodesAPIImpl: WireCellsNodesAPI, Sendable {
             sortField: Constants.sortedBy
         )
 
-        return try await NodeServiceAPI.lookup(body: request).toDTO()
+        return try await NodeServiceAPI.lookup(body: request, apiConfiguration: configuration).toDTO()
     }
 
     func delete(uuid: UUID) async throws {
         let parameters = RestActionParameters(nodes: [RestNodeLocator(uuid: uuid.uuidString)])
-        _ = try await NodeServiceAPI.performAction(name: .delete, parameters: parameters)
+        _ = try await NodeServiceAPI.performAction(
+            name: .delete,
+            parameters: parameters,
+            apiConfiguration: configuration
+        )
     }
 
     func delete(paths: [String]) async throws {
         let nodes = paths.map { RestNodeLocator(path: $0) }
         let parameters = RestActionParameters(nodes: nodes)
-        _ = try await NodeServiceAPI.performAction(name: .delete, parameters: parameters)
+        _ = try await NodeServiceAPI.performAction(
+            name: .delete,
+            parameters: parameters,
+            apiConfiguration: configuration
+        )
     }
 
     func publishDraft(uuid: UUID, versionID: UUID) async throws {
@@ -77,12 +94,17 @@ final class WireCellsNodesAPIImpl: WireCellsNodesAPI, Sendable {
         _ = try await NodeServiceAPI.promoteVersion(
             uuid: uuid.uuidString,
             versionId: versionID.uuidString,
-            parameters: parameters
+            parameters: parameters,
+            apiConfiguration: configuration
         )
     }
 
     func cancelDraft(uuid: UUID, versionID: UUID) async throws {
-        _ = try await NodeServiceAPI.deleteVersion(uuid: uuid.uuidString, versionId: versionID.uuidString)
+        _ = try await NodeServiceAPI.deleteVersion(
+            uuid: uuid.uuidString,
+            versionId: versionID.uuidString,
+            apiConfiguration: configuration
+        )
     }
 
     func preCheck(path: String) async throws -> WireCellsPreCheckResultDTO {
@@ -94,7 +116,7 @@ final class WireCellsNodesAPIImpl: WireCellsNodesAPI, Sendable {
             )]
         )
 
-        let response = try await NodeServiceAPI.createCheck(body: request)
+        let response = try await NodeServiceAPI.createCheck(body: request, apiConfiguration: configuration)
 
         if let result = response.results?.first {
             return WireCellsPreCheckResultDTO(
@@ -107,7 +129,10 @@ final class WireCellsNodesAPIImpl: WireCellsNodesAPI, Sendable {
     }
 
     func getPublicLink(uuid: UUID) async throws -> URL {
-        let response = try await NodeServiceAPI.getPublicLink(linkUuid: uuid.uuidString)
+        let response = try await NodeServiceAPI.getPublicLink(
+            linkUuid: uuid.uuidString,
+            apiConfiguration: configuration
+        )
 
         guard let urlString = response.linkUrl else {
             throw WireCellsNodesAPIError.missingData("Link URL not found")
@@ -127,7 +152,11 @@ final class WireCellsNodesAPIImpl: WireCellsNodesAPI, Sendable {
             )
         )
 
-        let response = try await NodeServiceAPI.createPublicLink(uuid: uuid.uuidString, publicLinkRequest: request)
+        let response = try await NodeServiceAPI.createPublicLink(
+            uuid: uuid.uuidString,
+            publicLinkRequest: request,
+            apiConfiguration: configuration
+        )
 
         guard let idString = response.uuid else {
             throw WireCellsNodesAPIError.missingData("UUID is null")
@@ -147,6 +176,6 @@ final class WireCellsNodesAPIImpl: WireCellsNodesAPI, Sendable {
     }
 
     func deletePublicLink(uuid: UUID) async throws {
-        _ = try await NodeServiceAPI.deletePublicLink(linkUuid: uuid.uuidString)
+        _ = try await NodeServiceAPI.deletePublicLink(linkUuid: uuid.uuidString, apiConfiguration: configuration)
     }
 }
