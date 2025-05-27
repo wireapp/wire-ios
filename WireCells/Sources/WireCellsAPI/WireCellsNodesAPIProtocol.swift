@@ -23,7 +23,7 @@ package enum WireCellsNodesAPIError: Error {
     case missingData(String)
 }
 
-package protocol WireCellsNodesAPI: Sendable {
+package protocol WireCellsNodesAPIProtocol: Sendable {
     func getNode(uuid: UUID) async throws -> WireCellsNodeDTO
 
     func preCheck(path: String) async throws -> WireCellsPreCheckResultDTO
