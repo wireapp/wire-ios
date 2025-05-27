@@ -17,21 +17,17 @@
 //
 
 import SwiftUI
+import WireDesign
 
-struct AccountTypeSelectorView: View {
+struct SheetCloseButton: View {
 
-    @Environment(\.dismiss) private var dismiss
+    var action: () -> Void
 
     var body: some View {
-        NavigationStack {
-            Text(verbatim: "The new UI will presented here.")
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        SheetCloseButton {
-                            dismiss()
-                        }
-                    }
-                }
+        Button(action: action) {
+            Image(systemName: "xmark.circle.fill")
+                .symbolRenderingMode(.hierarchical)
+                .foregroundStyle(ColorTheme.Base.secondaryText.color)
         }
     }
 
@@ -40,6 +36,13 @@ struct AccountTypeSelectorView: View {
 #Preview {
     Spacer()
         .sheet(isPresented: .constant(true)) {
-            AccountTypeSelectorView()
+            NavigationStack {
+                Spacer()
+                    .toolbar {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            SheetCloseButton {}
+                        }
+                    }
+            }
         }
 }
