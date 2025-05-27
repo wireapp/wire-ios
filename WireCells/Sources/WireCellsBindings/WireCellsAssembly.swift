@@ -16,8 +16,29 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public class WireCellsAssembly {
-    public init() {
-        print("Init")
+public import WireCellsAPI
+import Foundation
+import WireCellsImplementation
+
+public struct WireCellsAssembly {
+
+    // TODO: [WPB-17769] Somehow inject secrets without storing them in the code base
+    private static let credentials = WireCellsCredentials(
+        serverURL: URL(string: "https://service.zeta.pydiocells.com")!,
+        accessToken: "some-access-token",
+        gatewaySecret: "some-gateway-secret"
+    )
+
+    private static let nodesRepository = WireCellsNodesDataSource(credentials: credentials)
+
+    private static let draftsRepository = DraftsRepository(
+        uploadManager: WireCellsNodeUploadManager(repository: nodesRepository)
+    )
+
+    public init() {}
+
+    public func makeUploadFileUseCase(cellName: String) -> any WireCellsUploadFileUseCaseProtocol {
+        WireCellsUploadFileUseCase(cellName: cellName, draftRepository: Self.draftsRepository)
     }
+
 }

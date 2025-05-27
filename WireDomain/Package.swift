@@ -17,7 +17,7 @@ let package = Package(
         .package(path: "../WireAPI"),
         .package(path: "../WireFoundation"),
         .package(path: "../WireLogging"),
-        .package(path: "../WirePlugins"),
+        .package(path: "../WirePlugins")
     ],
     targets: [
         .target(
@@ -25,7 +25,7 @@ let package = Package(
             dependencies: [
                 "WireAPI",
                 "WireLogging",
-                .product(name: "WireFoundation", package: "WireFoundation")
+                "WireFoundation"
             ]
         ),
         .target(
@@ -48,7 +48,7 @@ let package = Package(
     ]
 )
 
-for target in package.targets where target.type != .binary {
+for target in package.targets {
     target.swiftSettings = [
         .enableUpcomingFeature("InternalImportsByDefault"),
         .enableUpcomingFeature("ExistentialAny")

@@ -571,4 +571,25 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
 
         XCTAssertTrue(supportedProtocols.contains(.proteus))
     }
+
+    func test_OnSelfClientInvalidated() async throws {
+        // GIVEN
+        let applicationStatusDirectory = sut.applicationStatusDirectory
+        let clientRegistrationStatus = applicationStatusDirectory.clientRegistrationStatus
+        let clientUpdateStatus = applicationStatusDirectory.clientUpdateStatus
+        clientRegistrationStatus.emailCredentials = .credentials(
+            email: "test@wire.com",
+            password: "7@9xIZ"
+        )
+
+        clientUpdateStatus.needsToVerifySelfClient = true
+
+        // WHEN
+        await sut.onSelfClientInvalidated()
+
+        // THEN
+        XCTAssertEqual(clientRegistrationStatus.emailCredentials, nil)
+        XCTAssertEqual(clientRegistrationStatus.cookieProvider.isAuthenticated, false)
+        XCTAssertEqual(clientUpdateStatus.needsToVerifySelfClient, false)
+    }
 }

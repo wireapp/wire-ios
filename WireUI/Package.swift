@@ -110,7 +110,11 @@ let package = Package(
                 .plugin(name: "SourceryPlugin", package: "WirePlugins")
             ]
         ),
-        .testTarget(name: "WireSettingsUITests", dependencies: ["WireSettingsUI", "WireSettingsUISupport"]),
+        .testTarget(name: "WireSettingsUITests", dependencies: [
+            .product(name: "WireFoundationSupport", package: "WireFoundation"),
+            "WireSettingsUI",
+            "WireSettingsUISupport"
+        ]),
 
         .target(
             name: "WireSidebarUI",
