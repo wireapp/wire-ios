@@ -23,7 +23,7 @@ import Combine
 
 public protocol LiveSyncDelegate {
     func didFinishSync(sync: NewIncrementalSync)
-    func didMissedEvents(sync: NewIncrementalSync)
+    func didMissedEvents(sync: NewIncrementalSync) async
     func didFail(sync: NewIncrementalSync, error: any Error)
 }
 
@@ -70,7 +70,7 @@ public struct NewIncrementalSync: LiveSyncProtocol {
         syncStateSubject.send(.incrementalSyncing(.openPushChannel))
         let liveEventStream = try await pushChannel.open()
         
-        let task: Task<Void, Error> = Task { @Sendable [logger, decryptor, store, processor, databaseSaver, pushChannel, delegate] in
+        let task: Task<Void, Error> = Task { @Sendable [logger, decryptor, store, processor, databaseSaver, pushChannel, delegate, syncStateSubject] in
             logger.debug("handling live event stream v3")
             syncStateSubject.send(.liveSyncing)
             
@@ -179,12 +179,13 @@ public struct NewIncrementalSync: LiveSyncProtocol {
                     
                     case .missedEvents:
                         logger.debug("missedEvents event v3")
-                        delegate?.didMissedEvents(sync: self)
+                        await delegate?.didMissedEvents(sync: self)
+                        // TODO: [WPB-17609] insert potential gap message here with messageLocalStore
+                        try await pushChannel.ackFullSync()
                     }
                   
                 }
-            } catch PushChannelError.missingEvents {
-                delegate?.didMissedEvents(sync: self)
+                
             } catch {
                 // if we end up here, the pushChannel is closed
                 logger.warn("v3 live event stream encountered error: \(String(describing: error))")

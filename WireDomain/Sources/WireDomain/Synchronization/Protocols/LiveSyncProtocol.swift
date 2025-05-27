@@ -16,12 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Errors originating from `PushChannel`.
 
-public enum PushChannelError: Error {
 
-    /// An unexpected message was received.
-
-    case receivedInvalidMessage
-
+public protocol LiveSyncProtocol {
+    
+    func perform(acknowledgeFullSync: Bool) async throws -> IncrementalSync.Token
 }

@@ -30,8 +30,3 @@ public protocol IncrementalSyncProtocol {
     func perform(acknowledgeFullSync: Bool) async throws -> IncrementalSync.Token
 
 }
-
-public protocol LiveSyncProtocol {
-    
-    func perform(acknowledgeFullSync: Bool) async throws -> IncrementalSync.Token
-}
