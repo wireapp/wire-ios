@@ -16,18 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+package import Foundation
 
-public enum BackendEnvironmentType: Sendable, Equatable, Hashable {
+public struct WireCellsDraft: Hashable, Sendable {
 
-    case `default`
-    case staging
-    case anta
-    case bella
-    case chala
-    case diya
-    case elna
-    case foma
-    case custom(url: URL)
+    package let id: WireCellsNodeID
+    package let assetURL: URL
+    package var status: WireCellsUploadStatus
 
+    package init(
+        id: WireCellsNodeID,
+        assetURL: URL,
+        status: WireCellsUploadStatus
+    ) {
+        self.id = id
+        self.assetURL = assetURL
+        self.status = status
+    }
 }
