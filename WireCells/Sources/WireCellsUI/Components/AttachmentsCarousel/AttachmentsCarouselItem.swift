@@ -17,6 +17,7 @@
 //
 
 public import UIKit
+public import UniformTypeIdentifiers
 
 public struct AttachmentsCarouselItem: Identifiable {
 
@@ -30,7 +31,7 @@ public struct AttachmentsCarouselItem: Identifiable {
         case image(thumbnail: UIImage)
         case video(thumbnail: UIImage)
         case audio(samples: [Double])
-        case document(mimeType: String)
+        case document(type: UTType?)
     }
 
     public let id: UUID
