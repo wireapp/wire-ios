@@ -16,3 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
+
+extension AccountTypeSelectorView { // TODO: delete
+
+    struct OptionView: View {
+
+        var body: some View {
+            Text(verbatim: "abcd")
+        }
+
+    }
+
+}

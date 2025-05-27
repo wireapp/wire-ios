@@ -42,7 +42,16 @@ struct AccountTypeSelectorView: View {
 
     @ViewBuilder
     private var scrollViewContent: some View {
-        Text(verbatim: "The new UI will presented here.")
+        VStack {
+            Text(L10n.AccountTypeSelector.title)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(
+              RoundedRectangle(cornerRadius: 30, style: .continuous)
+                .fill(Color.blue)
+            )
+//            .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
+            .padding()
     }
 
 }
