@@ -16,36 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireCellsAPI
-import WireLogging
 
-package final class WireCellsUploadFileUseCase: WireCellsUploadFileUseCaseProtocol {
+package final class ObserveDraftsUseCase: WireCellsObserveDraftsUseCaseProtocol {
 
     private let cellName: String
-    private let draftRepository: DraftsRepository
+    private let draftRepository: any DraftsRepositoryProtocol
 
-    package init(cellName: String, draftRepository: DraftsRepository) {
+    package init(cellName: String, draftRepository: any DraftsRepositoryProtocol) {
         self.cellName = cellName
         self.draftRepository = draftRepository
     }
 
-    func invoke(fileURL: URL) async throws {
-        guard let fileSize = try fileURL.resourceValues(forKeys: Set([.fileSizeKey])).fileSize else {
-            throw WireCellsUploadFileUseCaseError.missingFileSize
-        }
-
-        await draftRepository.add(
-            assetURL: fileURL,
-            assetSize: UInt64(fileSize),
-            cellName: cellName,
-            fileName: fileURL.lastPathComponent
-        )
-    }
-
-    func invoke(imageData: Data) async throws {
-        // TODO: [WPB-17767] Implement
-        WireLogger.wireCells.info("Uploading file from image data")
+    func invoke() async -> AsyncStream<[WireCellsDraft]> {
+        await draftRepository.drafts(for: cellName)
     }
 
 }

@@ -125,7 +125,7 @@ package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtoc
                 continuation.finish()
             } catch {
                 await uploads.update(node.id) { $0.withUploadFailed() }
-                continuation.yield(WireCellsUploadStatus.failed)
+                continuation.yield(WireCellsUploadStatus.failed(error: WireCellsUploadError(error)))
                 continuation.finish()
             }
         }
@@ -153,7 +153,7 @@ package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtoc
                 _ = await startUpload(assetPath: info.localPath, node: info.node)
             } else {
                 await uploads.update(nodeID) { $0.withUploadFailed() }
-                info.continuation.yield(.failed)
+                info.continuation.yield(.failed(error: .fileNotFound))
                 info.continuation.finish()
             }
         }

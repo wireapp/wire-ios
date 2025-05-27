@@ -37,8 +37,12 @@ public struct WireCellsAssembly {
 
     public init() {}
 
-    public func makeUploadFileUseCase(cellName: String) -> any WireCellsUploadFileUseCaseProtocol {
-        WireCellsUploadFileUseCase(cellName: cellName, draftRepository: Self.draftsRepository)
+    public func makeUploadDraftUseCase(cellName: String) -> any WireCellsUploadDraftUseCaseProtocol {
+        UploadDraftUseCase(cellName: cellName, draftRepository: Self.draftsRepository)
+    }
+
+    public func makeObserveDraftsUseCase(cellName: String) -> any WireCellsObserveDraftsUseCaseProtocol {
+        ObserveDraftsUseCase(cellName: cellName, draftRepository: Self.draftsRepository)
     }
 
 }
