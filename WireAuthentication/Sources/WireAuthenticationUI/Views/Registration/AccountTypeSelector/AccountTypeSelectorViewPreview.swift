@@ -16,18 +16,3 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
-
-struct AccountTypeSelectorView: View {
-
-    var body: some View {
-        Text(verbatim: "The new UI will presented here.")
-    }
-}
-
-#Preview {
-    EmptyView()
-        .sheet(isPresented: .constant(true)) {
-            AccountTypeSelectorView()
-        }
-}
