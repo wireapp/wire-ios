@@ -31,6 +31,8 @@
 "create_account_or_team.title" = "Don’t have a Wire account?";
 "create_account_or_team.button" = "Create account or team";
 
+"account_type_selector.title" = "How will you use Wire?";
+
 "on_prem_user_login.title" = "Welcome to Wire Enterprise for %@!";
 "on_prem_user_login.message" = "Enter your password to log in";
 "on_prem_user_login.alert.title" = "On-premises Backend";

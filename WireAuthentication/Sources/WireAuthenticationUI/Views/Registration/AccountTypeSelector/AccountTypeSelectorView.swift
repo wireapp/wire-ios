@@ -24,15 +24,25 @@ struct AccountTypeSelectorView: View {
 
     var body: some View {
         NavigationStack {
-            Text(verbatim: "The new UI will presented here.")
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        SheetCloseButton {
-                            dismiss()
-                        }
+            ScrollView {
+                scrollViewContent
+            }
+            .scrollBounceBehavior(.basedOnSize)
+            .navigationTitle(L10n.AccountTypeSelector.title)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    SheetCloseButton {
+                        dismiss()
                     }
                 }
+            }
         }
+    }
+
+    @ViewBuilder
+    private var scrollViewContent: some View {
+        Text(verbatim: "The new UI will presented here.")
     }
 
 }
