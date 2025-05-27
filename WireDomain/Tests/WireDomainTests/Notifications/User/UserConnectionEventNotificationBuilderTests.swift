@@ -58,7 +58,12 @@ final class UserConnectionEventNotificationBuilderTests: XCTestCase {
 
     func testGenerateUserConnectionNotifications() async {
         // Given
-        let connectionEvents = [Scaffolding.userPendingConnectionEvent, Scaffolding.userAcceptedConnectionEvent]
+        let connectionEvents = [
+            Scaffolding.userPendingConnectionEvent,
+            Scaffolding.userAcceptedConnectionEvent,
+            Scaffolding.userPendingConnectionEventNoUsername,
+            Scaffolding.userAcceptedConnectionEventNoUsername
+        ]
 
         // Mock
 
@@ -71,7 +76,7 @@ final class UserConnectionEventNotificationBuilderTests: XCTestCase {
         }
 
         userLocalStore.nameFor_MockValue = await context.perform {
-            Scaffolding.username
+            .some(nil)
         }
 
         userLocalStore.idFor_MockValue = .mockID1
@@ -99,14 +104,24 @@ final class UserConnectionEventNotificationBuilderTests: XCTestCase {
             switch connectionEvent.connection.status {
 
             case .pending:
-                XCTAssertEqual(notificationContent.body, "\(Scaffolding.username) wants to connect")
+                if let userName = connectionEvent.userName {
+                    XCTAssertEqual(notificationContent.body, "\(Scaffolding.username) wants to connect")
+                } else {
+                    XCTAssertEqual(notificationContent.body, "Someone wants to connect")
+                }
+
                 XCTAssertEqual(
                     notificationContent.categoryIdentifier,
                     NotificationCategory.incomingConnectionRequest.rawValue
                 )
 
             case .accepted:
-                XCTAssertEqual(notificationContent.body, "You and \(Scaffolding.username) are now connected")
+                if let userName = connectionEvent.userName {
+                    XCTAssertEqual(notificationContent.body, "You and \(Scaffolding.username) are now connected")
+                } else {
+                    XCTAssertEqual(notificationContent.body, "You have a new connection")
+                }
+
                 XCTAssertEqual(notificationContent.categoryIdentifier, NotificationCategory.nonActionable.rawValue)
 
             default:
@@ -121,8 +136,19 @@ final class UserConnectionEventNotificationBuilderTests: XCTestCase {
             userName: Scaffolding.username,
             connection: pendingConnection
         )
+
+        static let userPendingConnectionEventNoUsername = UserConnectionEvent(
+            userName: nil,
+            connection: pendingConnection
+        )
+
         static let userAcceptedConnectionEvent = UserConnectionEvent(
             userName: Scaffolding.username,
+            connection: acceptedConnection
+        )
+
+        static let userAcceptedConnectionEventNoUsername = UserConnectionEvent(
+            userName: nil,
             connection: acceptedConnection
         )
 

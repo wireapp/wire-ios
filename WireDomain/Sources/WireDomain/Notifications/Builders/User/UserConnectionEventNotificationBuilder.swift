@@ -52,9 +52,20 @@ struct UserConnectionEventNotificationBuilder {
         let connectionStatus = isPendingConnection ? ConnectionStatus.pending : .accepted
         let selfUser = await context.getSelfUser()
         let selfUserID = await context.selfUserID(selfUser: selfUser)
+        // The receiver is the user we are connecting with
         let username: String? = if let receiverQualifiedID = connection.receiverQualifiedID {
             await context.username(
-                for: context.getUser(userID: receiverQualifiedID)
+                for: context.getUser(
+                    id: receiverQualifiedID.uuid,
+                    domain: receiverQualifiedID.domain
+                )
+            )
+        } else if let receiverID = connection.receiverID {
+            await context.username(
+                for: context.getUser(
+                    id: receiverID,
+                    domain: nil
+                )
             )
         } else {
             nil
@@ -81,17 +92,31 @@ struct UserConnectionEventNotificationBuilder {
     ) -> UserNotification {
         let content = UNMutableNotificationContent()
 
-        let localizableKey: String.LocalizationValue = switch connectionStatus {
+        let body = switch connectionStatus {
         case .pending:
-            "push.notification.body.connectionPending"
+            if let username {
+                String.formated(
+                    key: "push.notification.body.connectionPending",
+                    bundle: .module, username
+                )
+            } else {
+                String.formated(
+                    key: "push.notification.body.connectionPending.noUsername",
+                    bundle: .module
+                )
+            }
         case .accepted:
-            "push.notification.body.connectionAccepted"
-        }
-
-        let body = if let username {
-            String.formated(key: localizableKey, bundle: .module, username)
-        } else {
-            String.localized(key: localizableKey, bundle: .module)
+            if let username {
+                String.formated(
+                    key: "push.notification.body.connectionAccepted",
+                    bundle: .module, username
+                )
+            } else {
+                String.formated(
+                    key: "push.notification.body.connectionAccepted.noUsername",
+                    bundle: .module
+                )
+            }
         }
 
         content.body = body
@@ -166,11 +191,12 @@ extension UserConnectionEventNotificationBuilder {
         }
 
         func getUser(
-            userID: UserID
+            id: UUID,
+            domain: String?
         ) async -> ZMUser {
             await userLocalStore.fetchOrCreateUser(
-                id: userID.uuid,
-                domain: userID.domain
+                id: id,
+                domain: domain
             )
         }
 
