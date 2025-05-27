@@ -2847,6 +2847,7 @@ public class MockPullPendingUpdateEventsSyncProtocol: PullPendingUpdateEventsSyn
     public var pull_MockMethod: (() async throws -> AsyncStream<[UpdateEvent]>)?
     public var pull_MockValue: AsyncStream<[UpdateEvent]>?
 
+    @discardableResult
     public func pull() async throws -> AsyncStream<[UpdateEvent]> {
         pull_Invocations.append(())
 
