@@ -43,15 +43,36 @@ struct AccountTypeSelectorView: View {
     @ViewBuilder
     private var scrollViewContent: some View {
         VStack {
-            Text(L10n.AccountTypeSelector.title)
+            teamAccountView
+            personalAccountView
         }
+    }
+
+    @ViewBuilder
+    private var teamAccountView: some View {
+        let background = RoundedRectangle(cornerRadius: 24, style: .circular)
+            .stroke(.tint)
+        VStack(spacing: 24) {
+            VStack(spacing: 8) {
+                Text(L10n.AccountTypeSelector.OptionTeam.title)
+                    .font(.callout.bold())
+                Text(L10n.AccountTypeSelector.OptionTeam.subtitle)
+            }
+            VStack {
+                Divider()
+                Text(verbatim: "abcd")
+                Divider()
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 24)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(
-              RoundedRectangle(cornerRadius: 30, style: .continuous)
-                .fill(Color.blue)
-            )
-//            .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
-            .padding()
+        .background(background)
+        .padding()
+    }
+
+    @ViewBuilder
+    private var personalAccountView: some View {
     }
 
 }
