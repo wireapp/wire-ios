@@ -91,7 +91,8 @@ final class AuthenticationInterfaceBuilder {
                 passwordValidator: AuthenticationPasswordValidator(),
                 ssoCallbackURLScheme: Bundle.ssoURLScheme ?? "wire-sso",
                 appStoreURL: WireURLs.shared.appOnItunes,
-                existsAnotherAccount: numberOfAccounts > 0
+                existsAnotherAccount: numberOfAccounts > 0,
+                useLegacyRegistrationFlow: !DeveloperFlag.newRegistration.isOn
             )
             return AuthenticationHostingController(
                 rootView: rootView,

@@ -16,22 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import SwiftUI
 
-class LoginPage: PageModel {
+struct AccountTypeSelectorView: View {
 
-    override func hasLoaded() {
-        let expectation = createPersonalAccountLink.waitForExistence(timeout: 10)
-        XCTAssert(expectation, "Login page not loaded - can't find email field")
-    }
-
-    var createPersonalAccountLink: XCUIElement {
-        let elementsQuery = app.scrollViews.otherElements
-        return elementsQuery.buttons["Create account or team"]
-    }
-
-    func tapCreatePersonalAccountLink() -> CreateAccountPage {
-        createPersonalAccountLink.tap()
-        return CreateAccountPage()
+    var body: some View {
+        Text(verbatim: "The new UI will presented here.")
     }
 }
