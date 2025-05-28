@@ -16,22 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
 import SafariServices
+import SwiftUI
 
 struct SFSafariView: UIViewControllerRepresentable {
 
     let url: URL
 
     func makeUIViewController(context: UIViewControllerRepresentableContext<Self>) -> SFSafariViewController {
-        return SFSafariViewController(url: url)
+        SFSafariViewController(url: url)
     }
 
-    func updateUIViewController(_ uiViewController: SFSafariViewController, context: UIViewControllerRepresentableContext<SFSafariView>) {
-    }
+    func updateUIViewController(
+        _ uiViewController: SFSafariViewController,
+        context: UIViewControllerRepresentableContext<SFSafariView>
+    ) {}
 }
 
-//var teamAccountCreationLink: URL? {
+// var teamAccountCreationLink: URL? {
 //        let baseURL = backendInfo.backendConfig.endpoints.teamsURL
 //        if var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false) {
 //            components.queryItems = (components.queryItems ?? []) + [
@@ -45,4 +47,4 @@ struct SFSafariView: UIViewControllerRepresentable {
 //        }
 //    }
 //
-//@Published var isCreateTeamAccountPresented = false
+// @Published var isCreateTeamAccountPresented = false
