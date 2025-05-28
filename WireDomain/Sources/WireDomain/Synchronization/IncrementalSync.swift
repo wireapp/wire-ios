@@ -92,9 +92,23 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 throw apiError
             }
         } catch {
-            logger.debug("incremental sync interrupted, tearing down...")
-            await pushChannel.close()
-            throw error
+            switch error {
+            case let apiError as UpdateEventsAPIError:
+                switch apiError {
+                case .notFound, .invalidParameters:
+                    // nullifying the last event ID since we missed events and we want to
+                    // reset with a full sync (initial + incremental)
+                    updateEventsStore.resetLastEventID()
+                    try await messageStore.addPotentialGapSystemMessage()
+                    throw Failure.missedEvents
+                default:
+                    throw error
+                }
+            default:
+                logger.debug("incremental sync interrupted, tearing down...")
+                await pushChannel.close()
+                throw error
+            }
         }
 
         let liveEventTask = Task { @Sendable [self] in

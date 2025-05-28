@@ -3558,10 +3558,10 @@ public class MockUpdateEventsLocalStoreProtocol: UpdateEventsLocalStoreProtocol 
 
     // MARK: - storeLastEventID
 
-    public var storeLastEventIDId_Invocations: [UUID] = []
-    public var storeLastEventIDId_MockMethod: ((UUID) -> Void)?
+    public var storeLastEventIDId_Invocations: [UUID?] = []
+    public var storeLastEventIDId_MockMethod: ((UUID?) -> Void)?
 
-    public func storeLastEventID(id: UUID) {
+    public func storeLastEventID(id: UUID?) {
         storeLastEventIDId_Invocations.append(id)
 
         guard let mock = storeLastEventIDId_MockMethod else {

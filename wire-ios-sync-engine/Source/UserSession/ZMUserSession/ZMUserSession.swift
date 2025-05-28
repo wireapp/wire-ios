@@ -1544,6 +1544,6 @@ extension ZMUserSession {
     }
     
     func onMissedEvents() {
-        triggerInitialSync()
+        syncAgent?.resume()
     }
 }

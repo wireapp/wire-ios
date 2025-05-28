@@ -280,6 +280,26 @@ final class IncrementalSyncTests: XCTestCase {
         }
     }
 
+//    func test_perform_Missed_Events() async throws {
+//        // Mock
+//        let pushChannel = MockPushChannelProtocol()
+//        pushChannel.open_MockValue = AsyncThrowingStream { _ in [] }
+//        pushChannel.close_MockMethod = {}
+//        pushChannelAPI.createPushChannelClientID_MockMethod = { _ in pushChannel }
+//        updateEventsSync.pull_MockError = UpdateEventsAPIError.notFound
+//        messageStore.addPotentialGapSystemMessage_MockMethod = {}
+//        updateEventsStore.storeLastEventIDId_MockMethod = { _ in }
+//
+//        await XCTAssertThrowsErrorAsync(UpdateEventsAPIError.notFound) {
+//            // When
+//            try await self.sut.perform()
+//        }
+//
+//        // Then
+//        XCTAssertEqual(didCallMissedEventsCallback, true)
+//        XCTAssertEqual(messageStore.addPotentialGapSystemMessage_Invocations.count, 1)
+//        XCTAssertEqual(updateEventsStore.storeLastEventIDId_Invocations.count, 1)
+//    }
 }
 
 private enum Scaffolding {
