@@ -16,19 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import WireFoundation
+package import KaliumBackup
 
-public struct ConversationBackupModel: Hashable, Sendable {
+import WireFoundation
 
-    public var qualifiedID: QualifiedID
-    public var name: String
+package extension ConversationBackupModel {
 
-    public init(
-        qualifiedID: QualifiedID,
-        name: String
-    ) {
-        self.qualifiedID = qualifiedID
-        self.name = name
+    package init?(_ backupConversation: BackupConversation) {
+        guard let qualifiedID = QualifiedID(backupConversation.id) else { return nil }
+
+        self.init(
+            qualifiedID: qualifiedID,
+            name: backupConversation.name
+        )
     }
 
 }

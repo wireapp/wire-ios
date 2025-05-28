@@ -16,9 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum ImportBackupError: Error {
-    case invalidFileExtension
-    case incompatibleFileFormat
-    /// The backup file is encrypted and a password is needed for decryption.
-    case passwordRequired
+import Foundation
+import WireFoundation
+
+extension QualifiedID: @retroactive ExpressibleByStringLiteral {
+
+    init(stringLiteral value: String) {
+        let components = value.components(separatedBy: "@")
+        self.init(
+            id: UUID(uuidString: String(components.first!))!,
+            domain: String(components.last!)
+        )
+    }
+
 }

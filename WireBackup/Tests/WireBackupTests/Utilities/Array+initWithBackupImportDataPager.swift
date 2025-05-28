@@ -16,19 +16,33 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import WireFoundation
+@preconcurrency import KaliumBackup
 
-public struct ConversationBackupModel: Hashable, Sendable {
+extension Array where Element: AnyObject {
 
-    public var qualifiedID: QualifiedID
-    public var name: String
+    init(_ pager: BackupImportDataPager<Element>) {
 
-    public init(
-        qualifiedID: QualifiedID,
-        name: String
-    ) {
-        self.qualifiedID = qualifiedID
-        self.name = name
+        var elements = [Element]()
+        while pager.hasMorePages() {
+            let page = pager.nextPage()
+            elements += [Element](page)
+        }
+        self = elements
+
+    }
+
+    private init(_ page: KotlinArray<Element>) {
+
+        var elements = [Element]()
+        if let capacity = Int(exactly: page.size) {
+            elements.reserveCapacity(capacity)
+        }
+        for index in 0 ..< page.size {
+            guard let element = page.get(index: index) else { continue }
+            elements += [element]
+        }
+        self = elements
+
     }
 
 }
