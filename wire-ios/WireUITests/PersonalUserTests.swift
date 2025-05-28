@@ -21,7 +21,7 @@ import XCTest
 final class PersonalUsersTests: WireUITestCase {
 
     @MainActor
-    func test_register_asPersonalUser() async throws {
+    func test_Register_asPersonalUser() async throws {
         let user = UserGenerator.generateUniqueUserInfo()
 
         let page = WelcomePage()
@@ -43,11 +43,9 @@ final class PersonalUsersTests: WireUITestCase {
 
         XCTAssertTrue(accountPage.getAccountName().elementsEqual(user.name), "Account name didn't match \(user.name)")
         XCTAssertTrue(accountPage.getUsername().contains(user.username), "Username didn't contain \(user.username)")
-//        TODO: [WPB-17516] Restore once fixed
-//        XCTAssertTrue(accountPage.getEmail().elementsEqual(user.email))*/
+        XCTAssertTrue(accountPage.getEmail().elementsEqual(user.email))
 
         accountPage.logout()
-//            TODO: [WPB-17516] Restore once fixed
-//            .enterPassword(user.password)
+            .enterPassword(user.password)
     }
 }

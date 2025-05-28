@@ -16,17 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
+// sourcery: AutoMockable
+public protocol CoreCryptoKeyMigrationManagerProtocol {
 
-public enum WireCellsUploadStatus: Equatable, Hashable, Sendable {
-    case uploading(progress: Float)
-    case uploaded
-    case failed(error: WireCellsUploadError)
-    case cancelled
-}
+    var isMigrationNeeded: Bool { get }
 
-public enum WireCellsUploadError: Error, Equatable, Hashable, Sendable {
-    case fileNotFound
-    case urlError(error: URLError)
-    case other(message: String)
+    func performMigrationIfNeeded(path: String, oldKey: String, newKey: Data) async throws
+
+    func markMigrationAsSkipped()
+
 }
