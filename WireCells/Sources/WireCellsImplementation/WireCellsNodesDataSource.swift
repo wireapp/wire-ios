@@ -19,6 +19,47 @@
 package import Foundation
 package import WireCellsAPI
 
+public enum WireCellsRepositoryError: Error {
+    case failedToCreateWriteStream
+}
+
+package protocol WireCellsNodesRepository: Actor {
+    func preCheck(nodePath: String) async throws -> WireCellsPreCheckResult
+
+    func downloadFile(
+        out: URL,
+        cellPath: String,
+        onProgressUpdate: @escaping @Sendable (UInt64) -> Void
+    ) async throws
+
+    func uploadFile(path: URL, node: WireCellsNode) async -> AsyncThrowingStream<Int, any Error>
+
+    func getFiles(
+        path: String?,
+        query: String,
+        limit: Int,
+        offset: Int
+    ) async throws -> [WireCellsNode]
+
+    func deleteFile(nodeUUID: UUID) async throws
+
+    func cancelDraft(nodeID: WireCellsNodeID) async throws
+
+    func publishDrafts(nodes: [WireCellsNodeID]) async throws
+
+    func getPreviews(nodeUUID: UUID) async throws -> [WireCellsNodePreview]
+
+    func getNode(nodeUUID: UUID) async throws -> WireCellsNode
+
+    func deleteFiles(paths: [String]) async throws
+
+    func createPublicLink(nodeUUID: UUID, fileName: String) async throws -> WireCellsPublicLink
+
+    func getPublicLink(linkUUID: UUID) async throws -> URL
+
+    func deletePublicLink(linkUUID: UUID) async throws
+}
+
 package final actor WireCellsNodesDataSource: WireCellsNodesRepository {
     private let awsClient: AWSClient
     private let restAPI: RestAPI
