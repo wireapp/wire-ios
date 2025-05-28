@@ -22,7 +22,7 @@ import WireDesign
 
 public struct SwitchBackendConfirmation: View {
 
-    private typealias Strings = L10n.SwitchBackendConfirmation
+    private typealias Strings = L10n.Localizable.SwitchBackendConfirmation
 
     private struct Item {
 

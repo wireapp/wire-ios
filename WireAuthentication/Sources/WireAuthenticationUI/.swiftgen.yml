@@ -7,6 +7,7 @@ output_dir: ${GENERATED}/
 
 strings:
   inputs:
+    - Resources/Localization/en.lproj/Accessibility.strings
     - Resources/Localization/en.lproj/Localizable.strings
   filter:
   outputs:
