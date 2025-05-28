@@ -60,7 +60,7 @@ public final class PushChannelService: PushChannelServiceProtocol {
             keepAliveInterval: 30
         )
     }
-    
+
     public func createNewPushChannel(_ request: URLRequest) async throws -> any NewPushChannelProtocol {
         var request = request
         let accessToken = try await authenticationManager.getValidAccessToken()

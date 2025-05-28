@@ -112,7 +112,10 @@ extension NetworkService: URLSessionWebSocketDelegate {
         didCloseWith closeCode: URLSessionWebSocketTask.CloseCode,
         reason: Data?
     ) {
-        WireLogger.network.debug("web socket task did close. Close code: \(closeCode), Reason: \(String(data: reason ?? Data(), encoding: .utf8) ?? "No reason")")
+        WireLogger.network
+            .debug(
+                "web socket task did close. Close code: \(closeCode), Reason: \(String(data: reason ?? Data(), encoding: .utf8) ?? "No reason")"
+            )
         Task {
             await webSocketsByTask[webSocketTask]?.close()
             webSocketsByTask[webSocketTask] = nil

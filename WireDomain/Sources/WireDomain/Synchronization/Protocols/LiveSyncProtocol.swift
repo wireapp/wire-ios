@@ -16,9 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
-
 public protocol LiveSyncProtocol {
-    
+
     func perform(acknowledgeFullSync: Bool) async throws -> IncrementalSync.Token
 }

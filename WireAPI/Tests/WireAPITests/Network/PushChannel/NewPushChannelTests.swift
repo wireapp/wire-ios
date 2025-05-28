@@ -97,7 +97,6 @@ final class NewPushChannelTests: XCTestCase {
         XCTAssertEqual(receivedEnvelopes[0], .missedEvents)
     }
 
-    
     func testClose_CloseWebSocket() async throws {
         // Given an open push channel
         webSocket.open_MockValue = AsyncThrowingStream { _ in }
@@ -190,7 +189,6 @@ final class NewPushChannelTests: XCTestCase {
         // When we wait for 1 second.
         try await Task.sleep(for: .seconds(1.5))
 
-        
         // Then keep alive pings are sent periodically (the timer
         // is not exact so we will we generous in our assertion of
         // at least 2 in 1.5 seconds).
@@ -198,7 +196,7 @@ final class NewPushChannelTests: XCTestCase {
         try XCTAssertCount(receivedEnvelopes, count: 1)
         XCTAssertEqual(receivedEnvelopes[0], .upToDate)
     }
-        
+
     func testOpen_TimeoutTriggerIfNoEvents() async throws {
         // Mock.
         webSocket.open_MockValue = AsyncThrowingStream { _ in }

@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import Foundation
 import WireAPI
 import WireLogging
-import Combine
 
 public protocol LiveSyncDelegate {
     func didFinishSync(sync: NewIncrementalSync)
@@ -29,7 +29,7 @@ public protocol LiveSyncDelegate {
 
 /// IncrementalSync using new backend API async stream notifications
 public struct NewIncrementalSync: LiveSyncProtocol {
-    
+
     private let selfClientID: String
     private let pushChannelAPI: any NewPushChannelAPI
     private let decryptor: any UpdateEventDecryptorProtocol
@@ -39,7 +39,7 @@ public struct NewIncrementalSync: LiveSyncProtocol {
     private let syncStateSubject: CurrentValueSubject<SyncState, Never>
     private let logger = WireLogger.sync
     var delegate: (any LiveSyncDelegate)?
-    
+
     public init(
         selfClientID: String,
         pushChannelAPI: any NewPushChannelAPI,
@@ -57,7 +57,7 @@ public struct NewIncrementalSync: LiveSyncProtocol {
         self.databaseSaver = databaseSaver
         self.syncStateSubject = syncStateSubject
     }
-    
+
     public func perform(acknowledgeFullSync: Bool) async throws -> IncrementalSync.Token {
         logger.debug("performing live sync v3")
         let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID)
@@ -65,15 +65,24 @@ public struct NewIncrementalSync: LiveSyncProtocol {
         if acknowledgeFullSync {
             try await pushChannel.ackFullSync()
         }
-        
+
         logger.debug("opening new push channel v3")
         syncStateSubject.send(.incrementalSyncing(.openPushChannel))
         let liveEventStream = try await pushChannel.open()
-        
-        let task: Task<Void, Error> = Task { @Sendable [logger, decryptor, store, processor, databaseSaver, pushChannel, delegate, syncStateSubject] in
+
+        let task: Task<Void, Error> = Task { @Sendable [
+            logger,
+            decryptor,
+            store,
+            processor,
+            databaseSaver,
+            pushChannel,
+            delegate,
+            syncStateSubject
+        ] in
             logger.debug("handling live event stream v3")
             syncStateSubject.send(.liveSyncing)
-            
+
             do {
                 for try await var element in liveEventStream {
                     logger.debug("received live event envelope v3")
@@ -111,11 +120,11 @@ public struct NewIncrementalSync: LiveSyncProtocol {
                             )
                             continue
                         }
-                        
+
                         // Bump the last event id so we don't refetch it.
                         // there's no events marked as transcient anymore
                         store.storeLastEventID(id: envelope.id)
-                        
+
                         // ACK
                         do {
                             if let deliveryTag = envelope.deliveryTag {
@@ -132,7 +141,7 @@ public struct NewIncrementalSync: LiveSyncProtocol {
                             )
 
                         }
-                        
+
                         // Process.
                         for event in envelope.events {
                             do {
@@ -176,16 +185,16 @@ public struct NewIncrementalSync: LiveSyncProtocol {
                         logger.debug("upToDate event v3")
                         syncStateSubject.send(.idle)
                         delegate?.didFinishSync(sync: self)
-                    
+
                     case .missedEvents:
                         logger.debug("missedEvents event v3")
                         await delegate?.didMissedEvents(sync: self)
                         // TODO: [WPB-17609] insert potential gap message here with messageLocalStore
                         try await pushChannel.ackFullSync()
                     }
-                  
+
                 }
-                
+
             } catch {
                 // if we end up here, the pushChannel is closed
                 logger.warn("v3 live event stream encountered error: \(String(describing: error))")

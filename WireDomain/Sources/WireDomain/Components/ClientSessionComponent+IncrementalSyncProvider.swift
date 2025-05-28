@@ -23,7 +23,7 @@ extension ClientSessionComponent: IncrementalSyncProvider {
     public func provideIncrementalSync() throws -> any IncrementalSyncProtocol {
         incrementalSync
     }
-    
+
     public func provideLiveSync(delegate: any LiveSyncDelegate) throws -> any LiveSyncProtocol {
         newIncrementalSync.delegate = delegate
         return newIncrementalSync

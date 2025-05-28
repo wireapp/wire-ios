@@ -36,7 +36,7 @@ struct WebSocketNotification: Decodable {
 
     var type: NotificationType
     var data: NotificationData?
-    
+
     init(type: NotificationType, data: NotificationData? = nil) {
         self.type = type
         self.data = data
@@ -44,7 +44,7 @@ struct WebSocketNotification: Decodable {
 }
 
 extension WebSocketNotification: ToAPIModelConvertible {
-    
+
     func toAPIModel() -> UpdateEventEnvelope {
         guard let event = data?.event  else {
             assertionFailure("don't call toAPIModel() when type is `notificationsMissed`")
@@ -66,7 +66,7 @@ extension WebSocketNotification: ToAPIModelConvertible {
 // MARK: - For Testing
 
 extension WebSocketNotification {
-    
+
     public static var notificationMissed: WebSocketNotification {
         WebSocketNotification(type: .notificationsMissed)
     }

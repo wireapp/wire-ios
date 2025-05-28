@@ -22,7 +22,6 @@ import WireAPI
 import WireLogging
 
 public struct IncrementalSync: IncrementalSyncProtocol {
-    
 
     private let selfClientID: String
     private let pushChannelAPI: any PushChannelAPI
@@ -57,7 +56,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
     public func perform() async throws -> Token {
         try await perform(acknowledgeFullSync: false)
     }
-    
+
     public func perform(acknowledgeFullSync: Bool) async throws -> Token {
         logger.debug("performing incremental sync")
         syncStateSubject.send(.incrementalSyncing(.createPushChannel))
@@ -75,7 +74,14 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
         let processedEnvelopeIDs = try await processStoredEvents()
 
-        let task: Task<Void, Error> = Task { @Sendable [logger, decryptor, store, processor, databaseSaver, syncStateSubject] in
+        let task: Task<Void, Error> = Task { @Sendable [
+            logger,
+            decryptor,
+            store,
+            processor,
+            databaseSaver,
+            syncStateSubject
+        ] in
             logger.debug("handling live event stream")
             syncStateSubject.send(.liveSyncing)
 

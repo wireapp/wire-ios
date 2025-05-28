@@ -151,7 +151,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
     func performInitialSync() async throws {
         if isSyncV2Enabled {
-   
+
             try await performInitialSyncV2()
             try await performIncrementalSync()
         } else {
@@ -159,7 +159,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
             legacySyncStatus.forceSlowSync()
         }
     }
-    
+
     /// Perform a resource sync.
 
     func performResourceSync() async throws {
@@ -186,7 +186,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
     func performIncrementalSync(shouldAcknowledgeFullSync: Bool = false) async throws {
         let liveSync = journal[.skipPullingLastNotificationID]
-        
+
         if isSyncV2Enabled {
             guard incrementalSyncToken == nil else {
                 WireLogger.sync.info("incremental sync already running...")
@@ -197,11 +197,13 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                 try await incrementalSyncTaskManager.performIfNeeded { [weak self] in
                     guard let self else { return }
                     delegate?.syncAgentDidStartIncrementalSync(self)
-                    
+
                     if liveSync {
-                        incrementalSyncToken = try await incrementalSyncProvider.provideLiveSync(delegate: self).perform(acknowledgeFullSync: shouldAcknowledgeFullSync)
+                        incrementalSyncToken = try await incrementalSyncProvider.provideLiveSync(delegate: self)
+                            .perform(acknowledgeFullSync: shouldAcknowledgeFullSync)
                     } else {
-                        incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync().perform(acknowledgeFullSync: shouldAcknowledgeFullSync)
+                        incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync()
+                            .perform(acknowledgeFullSync: shouldAcknowledgeFullSync)
                         delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: false)
                     }
                 }
@@ -213,12 +215,13 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
             await legacySyncStatus.performQuickSync()
         }
     }
-    
+
     private func performInitialSyncV2() async throws {
         do {
             delegate?.syncAgentDidStartInitialSync(self)
             WireLogger.sync.debug("did start new initial sync")
-            try await initialSyncProvider.provideInitialSync().perform(skipPullingLastUpdateEventID: journal[.skipPullingLastNotificationID])
+            try await initialSyncProvider.provideInitialSync()
+                .perform(skipPullingLastUpdateEventID: journal[.skipPullingLastNotificationID])
             WireLogger.sync.debug("did finish new initial sync")
             journal[.isInitialSyncRequired] = false
             delegate?.syncAgentDidFinishInitialSync(self)
@@ -230,11 +233,11 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 }
 
 extension SyncAgent: LiveSyncDelegate {
- 
+
     func didFinishSync(sync: NewIncrementalSync) {
         delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: false)
     }
-    
+
     func didMissedEvents(sync: NewIncrementalSync) async {
         WireLogger.sync.debug("slow sync requested by sync v3")
         do {
@@ -244,14 +247,14 @@ extension SyncAgent: LiveSyncDelegate {
             WireLogger.sync.error("error while requesing slow sync: \(error.localizedDescription)")
         }
     }
-    
+
     func didFail(sync: NewIncrementalSync, error: any Error) {
         delegate?.syncAgentDidFailSyncing(
             self,
             error: error
         )
     }
-    
+
 }
 
 // MARK: - MLS sync delegate
@@ -269,7 +272,8 @@ extension SyncAgent: MLSSyncDelegate {
                 try await incrementalSyncTaskManager.performIfNeeded { [weak self] in
                     guard let self else { return }
                     delegate?.syncAgentDidStartIncrementalSync(self)
-                    incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync().perform(acknowledgeFullSync: false)
+                    incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync()
+                        .perform(acknowledgeFullSync: false)
                     delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: true)
                 }
             } catch {

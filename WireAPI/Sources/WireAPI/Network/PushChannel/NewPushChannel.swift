@@ -27,30 +27,32 @@ public final class NewPushChannel: NewPushChannelProtocol {
         case event(UpdateEventEnvelope)
         case missedEvents
     }
-    
+
     public typealias Stream = AsyncThrowingStream<Element, any Error>
-    
+
     private let webSocket: any WebSocketProtocol
     private let decoder = JSONDecoder()
-    
+
     private let timeout: TimeInterval
     private var timeoutTask: Task<Void, any Error>?
-    
+
     private let channelState = ChannelState()
 
     private var keepAliveTask: Task<Void, any Error>?
     private let keepAliveInterval: TimeInterval
-    
+
     private var (stream, continuation) = AsyncThrowingStream<Element, any Error>.makeStream()
-    
+
     /// Initial PushChannel with Async Stream capabitilites
     /// - Parameters:
     ///   - webSocket: webSocket to use
     ///   - keepAliveInterval: interval for sending ping and keep webSocket open
     ///   - timeout: interval after we consider we're up to date with events
-    public init(webSocket: any WebSocketProtocol,
-                keepAliveInterval: TimeInterval = 5,
-                timeout: TimeInterval = 1) {
+    public init(
+        webSocket: any WebSocketProtocol,
+        keepAliveInterval: TimeInterval = 5,
+        timeout: TimeInterval = 1
+    ) {
         self.webSocket = webSocket
         self.keepAliveInterval = keepAliveInterval
         self.timeout = timeout
@@ -59,22 +61,22 @@ public final class NewPushChannel: NewPushChannelProtocol {
     deinit {
         timeoutTask?.cancel()
     }
-    
+
     public func open() async throws -> AsyncThrowingStream<Element, any Error> {
         WireLogger.pushChannel.debug("opening new push channel", attributes: .pushChannelV3)
-        
+
         let sourceStream = try await webSocket.open()
         await channelState.websocketOpened()
         setupTimeoutTask()
-        
+
         Task { [weak self] in
             guard let self else { return }
             do {
                 for try await message in sourceStream {
-                    
+
                     let result = try await receiveMessage(message)
                     continuation.yield(result)
-                    
+
                     await channelState.stopProcessing()
                     setupTimeoutTask()
                 }
@@ -86,48 +88,51 @@ public final class NewPushChannel: NewPushChannelProtocol {
             }
             continuation.finish()
         }
-        
+
         // The server will drop the connection (possibly silently)
         // if the client doesn’t send a ping message every so often.
         setUpKeepAliveTask()
-        
+
         return stream
     }
-    
+
     public func close() async {
         WireLogger.pushChannel.debug("closing push channel", attributes: .pushChannelV3)
-        
+
         await webSocket.close()
         tearDownTimeoutTask()
         tearDownKeepAliveTask()
     }
-    
+
     func receiveMessage(_ message: URLSessionWebSocketTask.Message) async throws -> Element {
         timeoutTask?.cancel()
         await channelState.receivedMessage()
         await channelState.startProcessing()
-        
+
         switch message {
         case let .data(data):
-            WireLogger.pushChannel.debug("received web socket data, decoding..., \(String(data: data, encoding: .utf8))", attributes: .pushChannelV3)
+            WireLogger.pushChannel.debug(
+                "received web socket data, decoding..., \(String(data: data, encoding: .utf8))",
+                attributes: .pushChannelV3
+            )
             let envelope = try decoder.decode(WebSocketNotification.self, from: data)
             if envelope.type == .event {
                 return Element.event(envelope.toAPIModel())
             } else {
                 return Element.missedEvents
             }
+
         case .string:
             WireLogger.pushChannel.debug("received web socket string, ignoring...", attributes: .pushChannelV3)
             throw PushChannelError.receivedInvalidMessage
-            
+
         @unknown default:
             WireLogger.pushChannel.debug("received web socket message, ignoring...", attributes: .pushChannelV3)
             throw PushChannelError.receivedInvalidMessage
         }
 
-
     }
-    
+
     // MARK: - Keep alive
 
     private func setUpKeepAliveTask() {
@@ -186,7 +191,7 @@ public final class NewPushChannel: NewPushChannelProtocol {
     }
 
     // MARK: - Acknowledgement
-    
+
     public func ackEvent(deliveryTag: UInt64, multiple: Bool = false) async throws {
         WireLogger.pushChannel.debug("ackEvent \(deliveryTag)", attributes: .pushChannelV3)
         let acknowledgement = EventAcknowledgmentNotification(
@@ -196,16 +201,16 @@ public final class NewPushChannel: NewPushChannelProtocol {
         let data = try JSONEncoder().encode(acknowledgement)
         try await write(data: data)
     }
-    
+
     public func ackFullSync() async throws {
         WireLogger.pushChannel.debug("ackFullSync", attributes: .pushChannelV3)
         let acknowledgement = FullSyncAcknowledgmentNotification()
         let data = try JSONEncoder().encode(acknowledgement)
         try await write(data: data)
     }
-    
+
     // MARK: - Helpers
-    
+
     private func write(data: Data) async throws {
         WireLogger.pushChannel.debug("write data to push channel", attributes: .pushChannelV3)
         try await webSocket.write(data: data)
@@ -220,7 +225,7 @@ private actor ChannelState {
     func receivedMessage() {
         lastMessageUpdate = Date()
     }
-    
+
     func websocketOpened() {
         catchingUp = true
     }
@@ -232,16 +237,16 @@ private actor ChannelState {
     func stopProcessing() {
         isProcessing = false
     }
-    
+
     func timeSinceLastMessage() -> TimeInterval {
         Date().timeIntervalSince(lastMessageUpdate)
     }
-    
+
     func caughtUp() {
         catchingUp = false
     }
 
     func wait(timeout: TimeInterval) -> Bool {
-        return timeSinceLastMessage() > timeout && !isProcessing
+        timeSinceLastMessage() > timeout && !isProcessing
     }
 }

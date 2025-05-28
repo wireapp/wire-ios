@@ -25,7 +25,7 @@ public actor WebSocket: WebSocketProtocol {
 
     private let connection: any URLSessionWebSocketTaskProtocol
     private var continuation: Stream.Continuation?
-    
+
     public init(connection: any URLSessionWebSocketTaskProtocol) {
         self.connection = connection
     }
@@ -47,7 +47,9 @@ public actor WebSocket: WebSocketProtocol {
                             WireLogger.webSocket.debug("received message")
                             continuation.yield(message)
                         } catch {
-                            // WireLogger.webSocket.error("error throwing \(String(describing: error)) - closeCode: \(connection.closeCode) - closeReason: \(String(describing: connection.closeReason)), debug: \(connection.networkInformation)")
+                            // WireLogger.webSocket.error("error throwing \(String(describing: error)) - closeCode:
+                            // \(connection.closeCode) - closeReason: \(String(describing: connection.closeReason)),
+                            // debug: \(connection.networkInformation)")
                             continuation.finish(throwing: error)
                             isAlive = false
                         }
@@ -104,7 +106,7 @@ public actor WebSocket: WebSocketProtocol {
     public func write(data: Data) async throws {
         WireLogger.webSocket.debug("write data")
 //        if !connection.isOpen {
-            connection.resume()
+        connection.resume()
 //        }
         try await connection.send(.data(data))
         WireLogger.webSocket.debug("wrote data")
@@ -112,7 +114,7 @@ public actor WebSocket: WebSocketProtocol {
 
     public func write(string: String) async throws {
 //        if !connection.isOpen {
-            connection.resume()
+        connection.resume()
 //        }
         try await connection.send(.string(string))
     }

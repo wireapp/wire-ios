@@ -168,7 +168,7 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
 
         let attributes: LogAttributes = [
             .selfClientId: clientID?.redactedAndTruncated(maxVisibleCharacters: 3, length: 8)
-            
+
         ].merging(.pushChannelV1, uniquingKeysWith: { _, new in new })
         WireLogger.pushChannel.info(
             "Connecting websocket with URL: \(websocketURL.endpointRemoteLogDescription)",
@@ -190,7 +190,10 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
 
     private func scheduleOpenInternal() {
         guard canOpenConnection else {
-            WireLogger.pushChannel.debug("Conditions for scheduling opening not fulfilled, waiting...", attributes: .pushChannelV1)
+            WireLogger.pushChannel.debug(
+                "Conditions for scheduling opening not fulfilled, waiting...",
+                attributes: .pushChannelV1
+            )
             return
         }
         WireLogger.pushChannel.debug("Schedule opening..", attributes: .pushChannelV1)
