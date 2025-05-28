@@ -119,10 +119,8 @@ final class ClientListViewController: UIViewController,
             self.userObserverToken = UserChangeInfo.add(observer: self, for: user, in: session)
         }
 
-        if clientsList == nil {
-            if clients.isEmpty {
-                activityIndicator.start()
-            }
+        if clients.isEmpty {
+            activityIndicator.start()
             userSession?.fetchAllClients()
         }
     }
@@ -167,14 +165,19 @@ final class ClientListViewController: UIViewController,
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        dismissLoadingView()
 
         // Prevent more then one removalObserver in self and SettingsClientViewController
         removalObserver = nil
     }
 
-    private func dismissLoadingView() {
-        activityIndicator.stop()
+    private func dismissLoadingView() async {
+        let minimumDelay: TimeInterval = 0.2
+        let nanoseconds = UInt64(minimumDelay * 1_000_000_000)
+
+        try? await Task.sleep(nanoseconds: nanoseconds)
+        await MainActor.run {
+            activityIndicator.stop()
+        }
     }
 
     func openDetailsOfClient(_ client: UserClient) {
@@ -304,14 +307,14 @@ final class ClientListViewController: UIViewController,
     func finishedFetching(_ userClients: [UserClient]) {
         Task {
             await updateCertificates(for: userClients)
-            await MainActor.run {
-                dismissLoadingView()
-            }
+            await dismissLoadingView()
         }
     }
 
     func failedToFetchClients(_ error: Error) {
-        dismissLoadingView()
+        Task {
+            await dismissLoadingView()
+        }
 
         zmLog.error("Clients request failed: \(error.localizedDescription)")
 
@@ -513,10 +516,12 @@ final class ClientListViewController: UIViewController,
 
     @MainActor
     private func updateCertificates(for userClients: [UserClient]) async {
+        activityIndicator.start()
         guard
             let userSession,
             let selfMlsGroupID = await userSession.fetchSelfConversationMLSGroupID()
         else {
+            activityIndicator.stop()
             return
         }
 
@@ -547,10 +552,10 @@ final class ClientListViewController: UIViewController,
                     client.mlsThumbPrint = e2eiCertificate.mlsThumbprint
                 }
             }
-
         } catch {
             WireLogger.e2ei.error(String(reflecting: error))
         }
+        await dismissLoadingView()
     }
 
     private func updateAllClients(completed: (() -> Void)? = nil) {
