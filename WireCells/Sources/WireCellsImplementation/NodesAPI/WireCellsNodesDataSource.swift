@@ -23,7 +23,7 @@ public enum WireCellsRepositoryError: Error {
     case failedToCreateWriteStream
 }
 
-package protocol WireCellsNodesRepository: Actor {
+package protocol NodesAPIProtocol: Actor {
     func preCheck(nodePath: String) async throws -> WireCellsPreCheckResult
 
     func downloadFile(
@@ -60,7 +60,7 @@ package protocol WireCellsNodesRepository: Actor {
     func deletePublicLink(linkUUID: UUID) async throws
 }
 
-package final actor WireCellsNodesDataSource: WireCellsNodesRepository {
+package final actor WireCellsNodesDataSource: NodesAPIProtocol {
     private let awsClient: AWSClient
     private let restAPI: RestAPI
     private let fileManager: FileManager

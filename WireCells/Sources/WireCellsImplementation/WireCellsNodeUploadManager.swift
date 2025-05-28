@@ -22,7 +22,7 @@ import WireLogging
 
 package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtocol {
     private let fileManager: FileManager
-    private let repository: any WireCellsNodesRepository
+    private let nodesAPI: any NodesAPIProtocol
 
     private actor Uploads {
         var uploads: [WireCellsNodeID: WireCellsUploadInfo] = [:]
@@ -54,10 +54,10 @@ package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtoc
 
     package init(
         fileManager: FileManager = .default,
-        repository: any WireCellsNodesRepository
+        nodesAPI: any NodesAPIProtocol
     ) {
         self.fileManager = fileManager
-        self.repository = repository
+        self.nodesAPI = nodesAPI
     }
 
     package func upload(
@@ -66,7 +66,7 @@ package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtoc
         assetSize: UInt64,
         destNodePath: String
     ) async throws -> (node: WireCellsNode, stream: AsyncStream<WireCellsUploadStatus>) {
-        let result = try await repository.preCheck(nodePath: destNodePath)
+        let result = try await nodesAPI.preCheck(nodePath: destNodePath)
 
         let resolvedPath: String = switch result {
         case let .fileExists(nextPath):
@@ -101,8 +101,8 @@ package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtoc
 
     private func startUpload(assetPath: URL, node: WireCellsNode) async -> AsyncStream<WireCellsUploadStatus> {
         let (stream, continuation) = AsyncStream.makeStream(of: WireCellsUploadStatus.self)
-        let task = Task { [repository] in
-            let upload = await repository.uploadFile(path: assetPath, node: node)
+        let task = Task { [nodesAPI] in
+            let upload = await nodesAPI.uploadFile(path: assetPath, node: node)
 
             do {
                 for try await progress in upload {
