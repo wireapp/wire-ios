@@ -122,7 +122,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             to: conversation
         )
     }
-    
+
     public func addPotentialGapSystemMessage() async throws {
         try await context.perform { [context] in
             guard let conversations = try context.fetch(ZMConversation.sortedFetchRequest()) as? [ZMConversation] else {
@@ -131,7 +131,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             for conversation in conversations {
                 let offset = 0.1
                 let timestamp = conversation.lastModifiedDate?.addingTimeInterval(offset) ?? Date()
-                
+
                 conversation.appendNewPotentialGapSystemMessage(
                     users: conversation.localParticipants,
                     timestamp: timestamp

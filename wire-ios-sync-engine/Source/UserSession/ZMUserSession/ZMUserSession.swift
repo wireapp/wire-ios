@@ -1533,7 +1533,7 @@ extension ZMUserSession {
         }
 
     }
-    
+
     func onMissedEvents() {
         triggerInitialSync()
     }
