@@ -89,8 +89,11 @@ struct AccountTypeSelectionView: View {
     }
 
     @ViewBuilder private var teamAccountButton: some View {
-        Button(Strings.OptionTeam.button) {
+        Button {
             print("[WPB-17525]") // TODO: [WPB-17525] implement flow
+        } label: {
+            Text(Strings.OptionTeam.button)
+                .lineLimit(nil)
         }
         .wireButtonStyle(.primary)
         .bold()
@@ -133,8 +136,11 @@ struct AccountTypeSelectionView: View {
     }
 
     @ViewBuilder private var personalAccountButton: some View {
-        Button(Strings.OptionPersonal.button) {
+        Button {
             print("[WPB-17453]") // TODO: [WPB-17453] implement flow
+        } label: {
+            Text(Strings.OptionPersonal.button)
+                .lineLimit(nil)
         }
         .wireButtonStyle(.secondary)
         .bold()
