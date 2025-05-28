@@ -86,6 +86,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
             case let apiError as UpdateEventsAPIError:
                 switch apiError {
                 case .notFound, .invalidParameters:
+                    logger.debug("too many missed events.. recovering")
                     // nullifying the last event ID since we missed events and we want to
                     // reset with a full sync (initial + incremental)
                     updateEventsStore.storeLastEventID(id: nil)
