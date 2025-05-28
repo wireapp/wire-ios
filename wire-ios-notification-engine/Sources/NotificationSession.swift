@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDomain
 import WireLogging
 import WireRequestStrategy
 
@@ -238,12 +239,17 @@ public final class NotificationSession {
         )
 
         let cryptoboxMigrationManager = CryptoboxMigrationManager()
+        let journal = Journal(
+            userID: accountIdentifier,
+            storage: sharedUserDefaults
+        )
         let coreCryptoProvider = CoreCryptoProvider(
             selfUserID: accountIdentifier,
             sharedContainerURL: coreDataStack.applicationContainer,
             accountDirectory: coreDataStack.accountContainer,
             syncContext: coreDataStack.syncContext,
             cryptoboxMigrationManager: cryptoboxMigrationManager,
+            coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager(journal: journal),
             allowCreation: false
         )
         let featureRepository = FeatureRepository(context: coreDataStack.syncContext)

@@ -119,13 +119,15 @@ open class AuthenticatedSessionFactory {
         )
 
         let cryptoboxMigrationManager = CryptoboxMigrationManager()
+        let coreCryptoKeyMigrationManager = CoreCryptoKeyMigrationManager(journal: journal)
 
         let coreCryptoProvider = CoreCryptoProvider(
             selfUserID: account.userIdentifier,
             sharedContainerURL: coreDataStack.applicationContainer,
             accountDirectory: coreDataStack.accountContainer,
             syncContext: coreDataStack.syncContext,
-            cryptoboxMigrationManager: cryptoboxMigrationManager
+            cryptoboxMigrationManager: cryptoboxMigrationManager,
+            coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager
         )
 
         var userSessionBuilder = ZMUserSessionBuilder()

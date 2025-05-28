@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		06DE04672DE5233100D79D99 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 06DE04662DE5233100D79D99 /* WireFoundation */; };
 		1606AD122DC5136000C95115 /* WireDomain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1606AD112DC5136000C95115 /* WireDomain.framework */; };
 		1606AD162DC5136F00C95115 /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 1606AD152DC5136F00C95115 /* WireAPI */; };
 		165C55F62551AF1300731CA9 /* SharingSession+EncryptionAtRest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165C55F52551AF1300731CA9 /* SharingSession+EncryptionAtRest.swift */; };
@@ -117,6 +118,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1606AD162DC5136F00C95115 /* WireAPI in Frameworks */,
+				06DE04672DE5233100D79D99 /* WireFoundation in Frameworks */,
 				1606AD122DC5136000C95115 /* WireDomain.framework in Frameworks */,
 				591B6E322C8B098C009F8A7B /* WireRequestStrategy.framework in Frameworks */,
 				59537D8B2CFF9F8F00920B59 /* WireLogging in Frameworks */,
@@ -602,6 +604,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		06DE04662DE5233100D79D99 /* WireFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireFoundation;
+		};
 		1606AD152DC5136F00C95115 /* WireAPI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireAPI;
