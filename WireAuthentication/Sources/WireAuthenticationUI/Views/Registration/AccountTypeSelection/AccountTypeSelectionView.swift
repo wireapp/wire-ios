@@ -45,8 +45,7 @@ struct AccountTypeSelectionView: View {
         }
     }
 
-    @ViewBuilder
-    private var scrollViewContent: some View {
+    @ViewBuilder private var scrollViewContent: some View {
         VStack(spacing: 24) {
             teamAccountView
             personalAccountView
@@ -55,8 +54,7 @@ struct AccountTypeSelectionView: View {
 
     // MARK: -
 
-    @ViewBuilder
-    private var teamAccountView: some View {
+    @ViewBuilder private var teamAccountView: some View {
         let background = RoundedRectangle(cornerRadius: 24, style: .circular)
             .stroke(ColorTheme.Base.primary.color)
         VStack(spacing: 24) {
@@ -72,16 +70,14 @@ struct AccountTypeSelectionView: View {
         .padding(.top, 16)
     }
 
-    @ViewBuilder
-    private var teamAccountTitles: some View {
+    @ViewBuilder private var teamAccountTitles: some View {
         TitlesView(
             title: Strings.OptionTeam.title,
             subtitle: Strings.OptionTeam.subtitle
         )
     }
 
-    @ViewBuilder
-    private var teamAccountFeatures: some View {
+    @ViewBuilder private var teamAccountFeatures: some View {
         VStack(spacing: 12) {
             Divider()
             FeatureView(Strings.OptionTeam.feature0)
@@ -92,8 +88,7 @@ struct AccountTypeSelectionView: View {
         .padding(.horizontal, 16)
     }
 
-    @ViewBuilder
-    private var teamAccountButton: some View {
+    @ViewBuilder private var teamAccountButton: some View {
         Button(Strings.OptionTeam.button) {
             print("[WPB-17525]") // TODO: [WPB-17525] implement flow
         }
@@ -103,8 +98,7 @@ struct AccountTypeSelectionView: View {
 
     // MARK: -
 
-    @ViewBuilder
-    private var personalAccountView: some View {
+    @ViewBuilder private var personalAccountView: some View {
         let background = RoundedRectangle(cornerRadius: 24, style: .circular)
             .stroke(ColorTheme.Strokes.outline.color)
         VStack(spacing: 24) {
@@ -120,16 +114,14 @@ struct AccountTypeSelectionView: View {
         .padding(.bottom, 16)
     }
 
-    @ViewBuilder
-    private var personalAccountTitles: some View {
+    @ViewBuilder private var personalAccountTitles: some View {
         TitlesView(
             title: Strings.OptionPersonal.title,
             subtitle: Strings.OptionPersonal.subtitle
         )
     }
 
-    @ViewBuilder
-    private var personalAccountFeatures: some View {
+    @ViewBuilder private var personalAccountFeatures: some View {
         VStack(spacing: 12) {
             Divider()
             FeatureView(Strings.OptionPersonal.feature0)
@@ -140,8 +132,7 @@ struct AccountTypeSelectionView: View {
         .padding(.horizontal, 16)
     }
 
-    @ViewBuilder
-    private var personalAccountButton: some View {
+    @ViewBuilder private var personalAccountButton: some View {
         Button(Strings.OptionPersonal.button) {
             print("[WPB-17453]") // TODO: [WPB-17453] implement flow
         }
