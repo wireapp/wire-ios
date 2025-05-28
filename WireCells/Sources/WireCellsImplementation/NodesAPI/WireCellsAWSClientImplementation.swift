@@ -18,10 +18,10 @@
 
 import AWSClientRuntime
 import AWSS3
-package import Foundation
+import Foundation
 import SmithyIdentity
 import SmithyStreams
-package import WireCellsAPI
+import WireCellsAPI
 
 package enum WireCellsAWSClientError: Error {
     case downloadError
@@ -33,7 +33,7 @@ package enum WireCellsAWSClientError: Error {
     case writeError
 }
 
-package final class WireCellsAWSClientImplementation: Sendable {
+final class WireCellsAWSClientImplementation: Sendable {
     private enum Constants {
         static let bucket = "io"
         static let multipartChunkSize = 10 * 1024 * 1024
@@ -46,7 +46,7 @@ package final class WireCellsAWSClientImplementation: Sendable {
     private let s3: any S3ClientProtocol
     private let makeStream: @Sendable (FileStream) -> ObservableStream
 
-    package convenience init(credentials: WireCellsCredentials) {
+    convenience init(credentials: WireCellsCredentials) {
         let config = try! S3Client.S3ClientConfiguration(
             awsCredentialIdentityResolver: StaticAWSCredentialIdentityResolver(
                 .init(
@@ -68,7 +68,7 @@ package final class WireCellsAWSClientImplementation: Sendable {
         self.makeStream = makeStream
     }
 
-    package func download(
+    func download(
         objectKey: String,
         to fileHandle: FileHandle,
         onProgressUpdate: @escaping (UInt64) -> Void
@@ -116,7 +116,7 @@ package final class WireCellsAWSClientImplementation: Sendable {
         }
     }
 
-    package func upload(path: URL, node: WireCellsNodeDTO) async -> AsyncThrowingStream<Int, any Error> {
+    func upload(path: URL, node: WireCellsNodeDTO) async -> AsyncThrowingStream<Int, any Error> {
         AsyncThrowingStream { continuation in
             Task {
                 do {
@@ -225,7 +225,7 @@ package final class WireCellsAWSClientImplementation: Sendable {
         )
     }
 
-    package func getPreSignedUrl(objectKey: String) async throws -> String {
+    func getPreSignedUrl(objectKey: String) async throws -> String {
         let expiration = TimeInterval(Constants.preSignedUrlExpiryInHours * 60 * 60)
         let input = GetObjectInput(bucket: Constants.bucket, key: objectKey)
         let signed = try await s3.presignedURLForGetObject(input: input, expiration: expiration)
