@@ -257,10 +257,6 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         let task: Task<Void, Never>
         let closePushChannel: () async -> Void
 
-        public var isCancelled: Bool {
-            task.isCancelled
-        }
-
         public init(
             task: Task<Void, Never>,
             closePushChannel: @escaping () async -> Void
