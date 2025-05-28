@@ -60,7 +60,7 @@ package protocol NodesAPIProtocol: Actor {
     func deletePublicLink(linkUUID: UUID) async throws
 }
 
-package final actor WireCellsNodesDataSource: NodesAPIProtocol {
+package final actor NodesAPI: NodesAPIProtocol {
     private let awsClient: AWSClient
     private let restAPI: RestAPI
     private let fileManager: FileManager

@@ -31,7 +31,7 @@ final class WireCellsNodesDataSourceTests {
     private let smallFileURL = URL.temporaryDirectory.appendingPathComponent(UUID().uuidString)
     private let smallFileHandle: FileHandle
     private let s3: S3ClientProtocolMock
-    private let sut: WireCellsNodesDataSource
+    private let sut: NodesAPI
 
     init() throws {
         let smallFile = Data(repeating: 0, count: 100)
@@ -40,7 +40,7 @@ final class WireCellsNodesDataSourceTests {
         self.s3 = S3ClientProtocolMock()
 
         self.smallFileHandle = try FileHandle(forReadingFrom: smallFileURL)
-        self.sut = WireCellsNodesDataSource(
+        self.sut = NodesAPI(
             awsClient: AWSClient(
                 s3: s3,
                 makeStream: { ObservableStream($0, bufferingPolicy: .unbounded) }
