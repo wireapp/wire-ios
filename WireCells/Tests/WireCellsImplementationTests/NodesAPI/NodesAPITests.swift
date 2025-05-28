@@ -26,7 +26,7 @@ import WireCellsAPI
 @testable import WireCellsImplementation
 @testable import WireCellsImplementationSupport
 
-final class WireCellsNodesDataSourceTests {
+final class NodesAPITests {
 
     private let smallFileURL = URL.temporaryDirectory.appendingPathComponent(UUID().uuidString)
     private let smallFileHandle: FileHandle
