@@ -102,7 +102,7 @@
 "peoplepicker.federation.domain_unvailable" = "Федеративный домен в настоящее время недоступен. [Подробнее](%@)";
 
 "add_participants.alert.title" = "Беседа переполнена";
-"add_participants.alert.message.new_conversation" = "К беседе могут присоединиться до %d человек.";
+"add_participants.alert.message.new_conversation" = "К беседе могут присоединиться до %@ человек.";
 "add_participants.alert.message.existing_conversation" = "К беседе может присоединиться до %1$d человек. На текущий момент в комнате есть места еще для %2$d.";
 
 // Channel Creation UI - Navigation
@@ -860,7 +860,7 @@
 "participants.section.services" = "Сервисы (%d)";
 "participants.section.settings" = "Настройки";
 "participants.footer.add_title" = "Добавить участников";
-"participants.section.name.footer" = "К беседе могут присоединиться до %1$d участников.";
+"participants.section.name.footer" = "К беседе могут присоединиться до %@ участников.";
 "participants.section.admins.footer" = "Здесь нет администраторов.";
 "participants.section.members.footer" = "Здесь нет участников.";
 
