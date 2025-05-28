@@ -45,7 +45,7 @@ final class WireCellsNodesDataSourceTests {
                 s3: s3,
                 makeStream: { ObservableStream($0, bufferingPolicy: .unbounded) }
             ),
-            cellsAPI: WireCellsNodesAPI(
+            restAPI: RestAPI(
                 serverURL: URL(string: "example.com")!,
                 accessToken: "exampleAccessToken"
             ),

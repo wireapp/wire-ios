@@ -25,7 +25,7 @@ enum WireCellsNodesAPIError: Error {
     case missingData(String)
 }
 
-final class WireCellsNodesAPI: Sendable {
+final class RestAPI: Sendable {
 
     private enum Constants {
         static let sortedBy = "mtime"
