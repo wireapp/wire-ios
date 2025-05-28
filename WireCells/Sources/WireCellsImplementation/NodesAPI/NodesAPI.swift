@@ -19,7 +19,7 @@
 package import Foundation
 package import WireCellsAPI
 
-public enum WireCellsRepositoryError: Error {
+package enum NodesAPIError: Error {
     case failedToCreateWriteStream
 }
 
@@ -141,7 +141,7 @@ package final actor NodesAPI: NodesAPIProtocol {
         onProgressUpdate: @escaping @Sendable (UInt64) -> Void
     ) async throws {
         guard let stream = OutputStream(url: out, append: true) else {
-            throw WireCellsRepositoryError.failedToCreateWriteStream
+            throw NodesAPIError.failedToCreateWriteStream
         }
         // Create an empty file at the destination URL
         fileManager.createFile(atPath: out.path, contents: nil, attributes: nil)
