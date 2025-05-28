@@ -64,16 +64,7 @@ public struct NewIncrementalSync: LiveSyncProtocol {
         syncStateSubject.send(.incrementalSyncing(.openPushChannel))
         let liveEventStream = try await pushChannel.open()
 
-        let task = Task { @Sendable [
-            logger,
-            decryptor,
-            store,
-            processor,
-            databaseSaver,
-            pushChannel,
-            delegate,
-            syncStateSubject
-        ] in
+        let task = Task { @Sendable [logger, decryptor, store, processor, databaseSaver, syncStateSubject, pushChannel, delegate] in
             logger.debug("handling live event stream v3")
             syncStateSubject.send(.liveSyncing)
 

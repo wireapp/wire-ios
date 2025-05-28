@@ -74,14 +74,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
         let processedEnvelopeIDs = try await processStoredEvents()
 
-        let task: Task<Void, Never> = Task { @Sendable [
-            logger,
-            decryptor,
-            store,
-            processor,
-            databaseSaver,
-            syncStateSubject
-        ] in
+        let task = Task { @Sendable [logger, decryptor, store, processor, databaseSaver, syncStateSubject] in
             logger.debug("handling live event stream")
             syncStateSubject.send(.liveSyncing)
 
