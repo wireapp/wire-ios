@@ -30,7 +30,7 @@ public protocol UpdateEventsLocalStoreProtocol {
     /// Stores last event ID.
     /// - parameter id: The last event ID to store.
 
-    func storeLastEventID(id: UUID)
+    func storeLastEventID(id: UUID?)
 
     /// Retrieves the index of the last event envelope.
     /// - returns: The last index event envelope.

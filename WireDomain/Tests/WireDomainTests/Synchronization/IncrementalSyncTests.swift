@@ -275,6 +275,7 @@ final class IncrementalSyncTests: XCTestCase {
         pushChannelAPI.createPushChannelClientID_MockMethod = { _ in pushChannel }
         updateEventsSync.pull_MockError = UpdateEventsAPIError.notFound
         messageStore.addPotentialGapSystemMessage_MockMethod = {}
+        updateEventsStore.storeLastEventIDId_MockMethod = { _ in }
 
         await XCTAssertThrowsErrorAsync(UpdateEventsAPIError.notFound) {
             // When
@@ -284,6 +285,7 @@ final class IncrementalSyncTests: XCTestCase {
         // Then
         XCTAssertEqual(didCallMissedEventsCallback, true)
         XCTAssertEqual(messageStore.addPotentialGapSystemMessage_Invocations.count, 1)
+        XCTAssertEqual(updateEventsStore.storeLastEventIDId_Invocations.count, 1)
     }
 
 }
