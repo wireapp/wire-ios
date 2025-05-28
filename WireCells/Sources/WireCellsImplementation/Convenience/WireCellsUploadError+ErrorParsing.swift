@@ -16,17 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
+import Foundation
+import WireCellsAPI
 
-public enum WireCellsUploadStatus: Equatable, Hashable, Sendable {
-    case uploading(progress: Float)
-    case uploaded
-    case failed(error: WireCellsUploadError)
-    case cancelled
-}
+extension WireCellsUploadError {
 
-public enum WireCellsUploadError: Error, Equatable, Hashable, Sendable {
-    case fileNotFound
-    case urlError(error: URLError)
-    case other(message: String)
+    init(_ error: any Error) {
+        if let error = error as? URLError {
+            self = .urlError(error: error)
+        } else {
+            self = .other(message: error.localizedDescription)
+        }
+    }
+
 }

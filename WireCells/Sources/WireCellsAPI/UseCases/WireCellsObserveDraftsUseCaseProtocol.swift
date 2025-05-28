@@ -16,17 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
+import Foundation
 
-public enum WireCellsUploadStatus: Equatable, Hashable, Sendable {
-    case uploading(progress: Float)
-    case uploaded
-    case failed(error: WireCellsUploadError)
-    case cancelled
-}
+// sourcery: AutoMockable
+/// Observes changes to all current drafts attachments for a given conversation.
 
-public enum WireCellsUploadError: Error, Equatable, Hashable, Sendable {
-    case fileNotFound
-    case urlError(error: URLError)
-    case other(message: String)
+public protocol WireCellsObserveDraftsUseCaseProtocol: Sendable {
+
+    /// Returns a stream of drafts for a given conversation.
+
+    func invoke() async -> AsyncStream<[WireCellsDraft]>
+
 }
