@@ -61,6 +61,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     private let sharedContainerURL: URL
     private let accountDirectory: URL
     private let cryptoboxMigrationManager: CryptoboxMigrationManagerInterface
+    private var coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol?
     private let featureRespository: FeatureRepositoryInterface
     private let syncContext: NSManagedObjectContext
     private let allowCreation: Bool
@@ -80,6 +81,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         accountDirectory: URL,
         syncContext: NSManagedObjectContext,
         cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
+        coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol?,
         allowCreation: Bool = true
     ) {
         self.selfUserID = selfUserID
@@ -88,6 +90,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         self.syncContext = syncContext
         self.allowCreation = allowCreation
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
+        self.coreCryptoKeyMigrationManager = coreCryptoKeyMigrationManager
         self.featureRespository = FeatureRepository(context: syncContext)
     }
 
@@ -206,9 +209,10 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     }
 
     func createCoreCrypto() async throws -> SafeCoreCrypto {
-        let provider = CoreCryptoConfigProvider()
+        let coreCryptoKeyProvider = CoreCryptoKeyProvider(coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager)
+        let provider = CoreCryptoConfigProvider(coreCryptoKeyProvider: coreCryptoKeyProvider)
 
-        let configuration = try provider.createInitialConfiguration(
+        let configuration = try await provider.createInitialConfiguration(
             sharedContainerURL: sharedContainerURL,
             userID: selfUserID,
             createKeyIfNeeded: allowCreation
@@ -314,7 +318,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
 
     private func generateClientPublicKeys(
         with coreCrypto: CoreCryptoContextProtocol,
-        credentialType: MlsCredentialType
+        credentialType: CredentialType
     ) async throws {
         WireLogger.mls.info("generating public key")
         let ciphersuite = await featureRespository.fetchMLS().config.defaultCipherSuite

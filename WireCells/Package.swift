@@ -62,6 +62,7 @@ let package = Package(
         .target(
             name: "WireCellsUI",
             dependencies: [
+                "WireCellsAPI",
                 "WireFoundation",
                 .product(name: "WireDesign", package: "WireUI"),
                 .product(name: "WireReusableUIComponents", package: "WireUI")
@@ -69,10 +70,10 @@ let package = Package(
             plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
         ),
         .testTarget(
-            name: "WireCellsTests",
+            name: "WireCellsImplementationTests",
             dependencies: [
-                "WireCellsAPI",
-                "WireCellsImplementation"
+                "WireCellsImplementation",
+                "WireCellsImplementationSupport"
             ]
         ),
         .testTarget(
@@ -80,6 +81,11 @@ let package = Package(
             dependencies: [
                 "WireCellsUI"
             ]
+        ),
+        .target(
+            name: "WireCellsImplementationSupport",
+            dependencies: ["WireCellsImplementation"],
+            plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
         ),
     ]
 )
