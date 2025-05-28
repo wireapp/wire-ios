@@ -105,6 +105,8 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     /// This method logs any errors and does not wait for the sync to finish.
 
     func resume() {
+        syncStateSubject.send(.idle)
+        
         ongoingSyncTask = Task {
             WireLogger.sync.debug(
                 "resuming sync"
