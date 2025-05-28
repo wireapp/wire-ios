@@ -33,8 +33,29 @@
     {
       "target" : {
         "containerPath" : "container:WireUI",
-        "identifier" : "WireConversationUITests",
-        "name" : "WireConversationUITests"
+        "identifier" : "WireIndividualToTeamMigrationUITests",
+        "name" : "WireIndividualToTeamMigrationUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireUI",
+        "identifier" : "WireReusableUIComponentsTests",
+        "name" : "WireReusableUIComponentsTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/WireUI",
+        "identifier" : "WireMultiBackendUITests",
+        "name" : "WireMultiBackendUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireUI",
+        "identifier" : "WireDesignTests",
+        "name" : "WireDesignTests"
       }
     },
     {
@@ -42,13 +63,6 @@
         "containerPath" : "container:WireUI",
         "identifier" : "WireConversationListUITests",
         "name" : "WireConversationListUITests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:WireUI",
-        "identifier" : "WireMoveToFolderUITests",
-        "name" : "WireMoveToFolderUITests"
       }
     },
     {
@@ -61,22 +75,8 @@
     {
       "target" : {
         "containerPath" : "container:WireUI",
-        "identifier" : "WireSidebarUITests",
-        "name" : "WireSidebarUITests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:WireUI",
-        "identifier" : "WireIndividualToTeamMigrationUITests",
-        "name" : "WireIndividualToTeamMigrationUITests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:WireUI",
-        "identifier" : "WireAccountImageUITests",
-        "name" : "WireAccountImageUITests"
+        "identifier" : "WireMoveToFolderUITests",
+        "name" : "WireMoveToFolderUITests"
       }
     },
     {
@@ -89,20 +89,6 @@
     {
       "target" : {
         "containerPath" : "container:WireUI",
-        "identifier" : "WireMainNavigationUITests",
-        "name" : "WireMainNavigationUITests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:WireUI",
-        "identifier" : "WireReusableUIComponentsTests",
-        "name" : "WireReusableUIComponentsTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:WireUI",
         "identifier" : "WireSettingsUITests",
         "name" : "WireSettingsUITests"
       }
@@ -110,8 +96,29 @@
     {
       "target" : {
         "containerPath" : "container:WireUI",
-        "identifier" : "WireDesignTests",
-        "name" : "WireDesignTests"
+        "identifier" : "WireAccountImageUITests",
+        "name" : "WireAccountImageUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireUI",
+        "identifier" : "WireSidebarUITests",
+        "name" : "WireSidebarUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireUI",
+        "identifier" : "WireMainNavigationUITests",
+        "name" : "WireMainNavigationUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:WireUI",
+        "identifier" : "WireConversationUITests",
+        "name" : "WireConversationUITests"
       }
     }
   ],
