@@ -24,19 +24,26 @@ import WireDataModel
 
 public final class ClientSessionComponent {
 
-    public struct ProcessorHandlers {
+    /// Provides callbacks for other modules.
+    public struct CompletionHandlers {
         let onProcessedCallEvent: (CallEventInfo) -> Void
         let onSelfClientInvalidated: () async -> Void
         let onProcessedTypingUsers: ([ConversationTypingUsersInfo]) -> Void
+        let onAuthenticationFailure: @Sendable () -> Void
+        let onMissedEvents: () -> Void
 
         public init(
             onProcessedCallEvent: @escaping (CallEventInfo) -> Void,
             onSelfClientInvalidated: @escaping () async -> Void,
-            onProcessedTypingUsers: @escaping ([ConversationTypingUsersInfo]) -> Void
+            onAuthenticationFailure: @escaping @Sendable () -> Void,
+            onProcessedTypingUsers: @escaping ([ConversationTypingUsersInfo]) -> Void,
+            onMissedEvents: @escaping () -> Void
         ) {
             self.onProcessedCallEvent = onProcessedCallEvent
             self.onSelfClientInvalidated = onSelfClientInvalidated
             self.onProcessedTypingUsers = onProcessedTypingUsers
+            self.onAuthenticationFailure = onAuthenticationFailure
+            self.onMissedEvents = onMissedEvents
         }
     }
 
@@ -61,8 +68,7 @@ public final class ClientSessionComponent {
     private let proteusService: any ProteusServiceInterface
     private let coreCryptoProvider: any CoreCryptoProviderProtocol
 
-    private let processorHandlers: ProcessorHandlers
-    private let onAuthenticationFailure: @Sendable () -> Void
+    private let completionHandlers: CompletionHandlers
 
     public init(
         selfUserID: UUID,
@@ -80,9 +86,8 @@ public final class ClientSessionComponent {
         mlsService: any MLSServiceInterface,
         mlsDecryptionService: any MLSDecryptionServiceInterface,
         proteusService: any ProteusServiceInterface,
-        processorHandlers: ProcessorHandlers,
         coreCryptoProvider: any CoreCryptoProviderProtocol,
-        onAuthenticationFailure: @escaping @Sendable () -> Void
+        completionHandlers: CompletionHandlers
     ) {
         self.selfUserID = selfUserID
         self.selfClientID = selfClientID
@@ -99,16 +104,15 @@ public final class ClientSessionComponent {
         self.localDomain = localDomain
         self.isFederationEnabled = isFederationEnabled
         self.isMLSEnabled = isMLSEnabled
-        self.processorHandlers = processorHandlers
         self.coreCryptoProvider = coreCryptoProvider
-        self.onAuthenticationFailure = onAuthenticationFailure
+        self.completionHandlers = completionHandlers
     }
 
     private lazy var authenticationManager = AuthenticationManager(
         clientID: selfClientID,
         cookieStorage: cookieStorage,
         networkService: networkService,
-        onAuthenticationFailure: onAuthenticationFailure
+        onAuthenticationFailure: completionHandlers.onAuthenticationFailure
     )
 
     // MARK: - Network API clients
@@ -477,7 +481,7 @@ public final class ClientSessionComponent {
         messageLocalStore: messageLocalStore,
         userLocalStore: userLocalStore,
         protobufMessageProcessor: conversationProtobufMessageProcessor,
-        onProcessedCallEvent: processorHandlers.onProcessedCallEvent
+        onProcessedCallEvent: completionHandlers.onProcessedCallEvent
     )
 
     private lazy var conversationMLSWelcomeEventProcessor = ConversationMLSWelcomeEventProcessor(
@@ -493,7 +497,7 @@ public final class ClientSessionComponent {
         messageLocalStore: messageLocalStore,
         userLocalStore: userLocalStore,
         protobufMessageProcessor: conversationProtobufMessageProcessor,
-        onProcessedCallEvent: processorHandlers.onProcessedCallEvent
+        onProcessedCallEvent: completionHandlers.onProcessedCallEvent
     )
 
     private lazy var conversationProtocolUpdateEventProcessor = ConversationProtocolUpdateEventProcessor(
@@ -515,7 +519,7 @@ public final class ClientSessionComponent {
         conversationRepository: conversationRepository,
         conversationLocalStore: conversationLocalStore,
         userRepository: userRepository,
-        onProcessedTypingUsers: processorHandlers.onProcessedTypingUsers
+        onProcessedTypingUsers: completionHandlers.onProcessedTypingUsers
     )
 
     private lazy var featureConfigUpdateEventProcessor = FeatureConfigUpdateEventProcessor(
@@ -540,7 +544,7 @@ public final class ClientSessionComponent {
         pushSupportedProtocolsUseCase: pushSupportedProtocolsUseCase,
         oneOnOneResolver: oneOnOneResolver,
         context: syncContext,
-        onSelfClientInvalidated: processorHandlers.onSelfClientInvalidated
+        onSelfClientInvalidated: completionHandlers.onSelfClientInvalidated
     )
 
     private lazy var userConnectionEventProcessor = UserConnectionEventProcessor(
