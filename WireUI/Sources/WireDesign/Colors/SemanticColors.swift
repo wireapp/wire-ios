@@ -282,12 +282,3 @@ public enum SemanticColors {
         public static let purple = UIColor(light: .purple500Light, dark: .purple500Dark)
     }
 }
-
-private extension UIColor {
-
-    convenience init(light: ColorResource, dark: ColorResource) {
-        self.init { traits in
-            .init(resource: traits.userInterfaceStyle == .dark ? dark : light)
-        }
-    }
-}

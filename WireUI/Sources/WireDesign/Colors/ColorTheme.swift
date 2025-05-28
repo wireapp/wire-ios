@@ -22,7 +22,7 @@ import UIKit
 // The structure of this type corresponds to the Wire design system.
 
 public enum ColorTheme {
-    case base(Base)
+
     public enum Base {
 
         public static let primary = UIColor(light: .blue500Light, dark: .blue500Dark)
@@ -167,15 +167,6 @@ public enum ColorTheme {
 
     public enum NotificationBadge {
         public static let fill = ColorTheme.Base.error
-    }
-}
-
-private extension UIColor {
-
-    convenience init(light: ColorResource, dark: ColorResource) {
-        self.init { traits in
-            .init(resource: traits.userInterfaceStyle == .dark ? dark : light)
-        }
     }
 }
 
