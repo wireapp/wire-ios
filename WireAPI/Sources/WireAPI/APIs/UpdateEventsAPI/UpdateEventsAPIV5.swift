@@ -19,6 +19,8 @@
 import Foundation
 
 class UpdateEventsAPIV5: UpdateEventsAPIV4 {
+    
+    var called = 0
 
     override var apiVersion: APIVersion {
         .v5
@@ -62,8 +64,9 @@ class UpdateEventsAPIV5: UpdateEventsAPIV4 {
         sinceEventID: UUID
     ) -> PayloadPager<UpdateEventEnvelope> {
         let resourcePath = "\(pathPrefix)\(basePath)"
+        called += 1
 
-        return PayloadPager(start: sinceEventID.transportString()) { nextSince in
+        return PayloadPager(start: sinceEventID.transportString()) { [self] nextSince in
             var requestBuilder = try URLRequestBuilder(path: resourcePath)
                 .withMethod(.get)
                 .withQueryItem(name: "since", value: nextSince)
@@ -82,6 +85,11 @@ class UpdateEventsAPIV5: UpdateEventsAPIV4 {
                 request,
                 requiringAccessToken: true
             )
+            
+            if called == 4 {
+                throw UpdateEventsAPIError.notFound
+            }
+            
             // Change: 400 error removed.
             return try ResponseParser()
                 .success(code: .ok, type: UpdateEventListResponseV0.self)

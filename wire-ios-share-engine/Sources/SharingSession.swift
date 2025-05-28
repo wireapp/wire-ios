@@ -546,16 +546,17 @@ public final class SharingSession {
             proteusService: proteusService
         )
 
-        let processHandlers = ClientSessionComponent.ProcessorHandlers(
+        let completionHandlers = ClientSessionComponent.CompletionHandlers(
             onProcessedCallEvent: { _ in },
             onSelfClientInvalidated: {},
-            onProcessedTypingUsers: { _ in }
+            onAuthenticationFailure: {},
+            onProcessedTypingUsers: { _ in },
+            onMissedEvents: {}
         )
 
         let clientUserSessionComponent = userSessionComponent.clientSessionComponent(
             clientID: selfClientID,
-            processorHandlers: processHandlers,
-            onAuthenticationFailure: {}
+            completionHandlers: completionHandlers
         )
 
         coreCryptoProvider.registerMlsTransport(clientUserSessionComponent.mlsTransport)
