@@ -54,7 +54,7 @@ struct AccountTypeSelectorView: View {
     @ViewBuilder
     private var teamAccountView: some View {
         let background = RoundedRectangle(cornerRadius: 24, style: .circular)
-            .stroke(.tint)
+            .stroke(ColorTheme.Base.primary.color)
         VStack(spacing: 24) {
             teamAccountTitles
             teamAccountFeatures
@@ -73,7 +73,7 @@ struct AccountTypeSelectorView: View {
         VStack(spacing: 8) {
             Text(L10n.AccountTypeSelector.OptionTeam.title)
                 .font(.callout.bold())
-                .foregroundStyle(.tint)
+                .foregroundStyle(ColorTheme.Base.primary.color)
             Text(L10n.AccountTypeSelector.OptionTeam.subtitle)
         }
     }
@@ -134,7 +134,7 @@ struct AccountTypeSelectorView: View {
         VStack(spacing: 8) {
             Text(L10n.AccountTypeSelector.OptionPersonal.title)
                 .font(.callout.bold())
-                .foregroundStyle(.tint)
+                .foregroundStyle(ColorTheme.Base.primary.color)
             Text(L10n.AccountTypeSelector.OptionPersonal.subtitle)
         }
     }
