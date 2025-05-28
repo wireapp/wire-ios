@@ -188,6 +188,79 @@ final class IncrementalSyncTests: XCTestCase {
         XCTAssertEqual(databaseSaver.save_Invocations.count, 3)
     }
 
+    func test_perform_Cancelled_Push_Channel_Closed() async throws {
+        // Mock
+        // Pending events are pulled.
+        updateEventsSync.pull_MockMethod = { AsyncStream { [] } }
+
+        // Some pending events.
+        var storedEnvelopes = [
+            Scaffolding.event1,
+            Scaffolding.event2,
+            Scaffolding.event3
+        ]
+
+        // Pendeng events are stored in batches.
+        store.fetchStoredEventEnvelopesLimit_MockMethod = { _ in
+            let envelopes = storedEnvelopes
+            storedEnvelopes = []
+            return envelopes
+        }
+
+        // Pending events are deleted in batches.
+        store.deleteNextPendingEventsLimit_MockMethod = { _ in }
+
+        // Some live events, some of which were already pulled.
+        let pushChannel = MockPushChannelProtocol()
+        let liveEventsStream = AsyncThrowingStream { continuation in
+            Task {
+                continuation.yield(Scaffolding.event2)
+                continuation.yield(Scaffolding.event3)
+                continuation.yield(Scaffolding.event4)
+                continuation.yield(Scaffolding.event5)
+                continuation.finish()
+            }
+        }
+        pushChannel.open_MockValue = liveEventsStream
+        pushChannelAPI.createPushChannelClientID_MockMethod = { _ in pushChannel }
+        // Some indices at which live events will be stored.
+        var indices = [Int64(10), 11, 12, 13, 14, 15]
+        store.indexOfLastEventEnvelope_MockMethod = { indices.remove(at: 0) }
+
+        // Live envelopes are peristed and deleted one by one.
+        store.persistEventEnvelopeIndex_MockMethod = { _, _ async throws in }
+        store.deleteEventEnvelopeAtIndex_MockMethod = { _ in }
+
+        // Live events are decrypted.
+        decryptor.decryptEventsIn_MockMethod = { $0.events }
+
+        // Last event is being updated.
+        store.storeLastEventIDId_MockMethod = { _ in }
+
+        // Events are processed.
+        processor.processEvent_MockMethod = { _ in }
+
+        // Unread messages are set
+        store.calculateLastUnreadMessages_MockMethod = {}
+
+        // Database is saved.
+        databaseSaver.save_MockMethod = {}
+        pushChannel.close_MockMethod = {}
+
+        // When
+        let task = Task {
+            try await sut.perform()
+        }
+
+        // Then
+        do {
+            _ = try await task.value
+        } catch {
+            XCTAssertEqual(pushChannel.close_Invocations.count, 1)
+            XCTAssertTrue(error is CancellationError)
+        }
+    }
+
 }
 
 private enum Scaffolding {

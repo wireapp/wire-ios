@@ -571,19 +571,41 @@ extension ConversationContentViewController: UITableViewDelegate {
         willSelectRow(at: indexPath, tableView: tableView)
     }
 
+    private func actionControllerToSwipe(
+        indexPath: IndexPath,
+        isLeading: Bool
+    ) -> ConversationMessageActionController? {
+
+        let section = dataSource.currentSections[ifExists: indexPath.section]?.elements[ifExists: indexPath.row]
+        let actionController = section?.actionController
+        let cellDescription = section?.instance
+        // There were a bug with no able to swipe https://wearezeta.atlassian.net/browse/WPB-17839
+        // Happened because action controller of a section controller was nil and
+        // different to actionControllers[<message.nonce>], so it was out of sync
+        // it was fixed but for extra safety backup action controller if not found
+        var backupActionController: ConversationMessageActionController?
+        if let nonce = cellDescription?.message?.nonce {
+            backupActionController = dataSource.sectionControllers.get(for: nonce)?.actionController
+        }
+
+        if cellDescription?.supportsActions ?? false,
+           let actionController = actionController ?? backupActionController,
+           isLeading ? actionController.message.canAddReaction : actionController
+           .canPerformAction(action: .react("❤️")) {
+            return actionController
+        }
+
+        return nil
+    }
+
     func tableView(
         _ tableView: UITableView,
         leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath
     ) -> UISwipeActionsConfiguration? {
 
-        let sections = dataSource.currentSections
-        guard
-            sections.indices.contains(indexPath.section),
-            sections[indexPath.section].elements.indices.contains(indexPath.row),
-            sections[indexPath.section].elements[indexPath.row].instance.supportsActions,
-            let actionController = sections[indexPath.section].elements[indexPath.row].actionController,
-            actionController.message.canAddReaction
-        else { return nil }
+        guard let actionController = actionControllerToSwipe(indexPath: indexPath, isLeading: true) else {
+            return nil
+        }
 
         // setting an empty title string since it would be displayed upside down
         // TODO: [WPB-16341] set "Reply" as text for accessibility reasons
@@ -608,14 +630,9 @@ extension ConversationContentViewController: UITableViewDelegate {
         trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
     ) -> UISwipeActionsConfiguration? {
 
-        let sections = dataSource.currentSections
-        guard
-            sections.indices.contains(indexPath.section),
-            sections[indexPath.section].elements.indices.contains(indexPath.row),
-            sections[indexPath.section].elements[indexPath.row].instance.supportsActions,
-            let actionController = sections[indexPath.section].elements[indexPath.row].actionController,
-            actionController.canPerformAction(action: .react("❤️"))
-        else { return nil }
+        guard let actionController = actionControllerToSwipe(indexPath: indexPath, isLeading: true) else {
+            return nil
+        }
 
         // since the table view is flipped vertically we also render the image flipped
         // TODO: [WPB-16341] use the real image, remove the upsideDownImage
