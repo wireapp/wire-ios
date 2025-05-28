@@ -33,6 +33,8 @@ package struct RootView: View {
 
     private let cornerRadius: CGFloat = 10
 
+    private typealias Strings = L10n.Localizable
+
     package init(
         factory: @autoclosure @escaping () -> any RootFactory
     ) {
@@ -70,9 +72,9 @@ package struct RootView: View {
                 actions: { alert in
                     switch alert {
                     case .obsoleteClient:
-                        Button(L10n.ObsoleteClient.Alert.okButton, action: viewModel.goToAppStore)
+                        Button(Strings.ObsoleteClient.Alert.okButton, action: viewModel.goToAppStore)
                     default:
-                        Button(L10n.Authentication.Error.confirm, action: {})
+                        Button(Strings.Authentication.Error.confirm, action: {})
                     }
                 }
             )

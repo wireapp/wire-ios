@@ -41,6 +41,8 @@ package struct LoginViaEmailView: View {
 
     @StateObject private var viewModel: LoginViaEmailViewModel
 
+    private typealias Strings = L10n.Localizable
+
     package init(
         factory: @autoclosure @escaping () -> any LoginViaEmailFactory
     ) {
@@ -72,7 +74,7 @@ package struct LoginViaEmailView: View {
                     }
                 }
             }
-            .navigationTitle(L10n.CloudUserLogin.title)
+            .navigationTitle(Strings.CloudUserLogin.title)
             .navigationBarTitleDisplayMode(.inline)
             .padding(32)
             .setPreferredSize(navigationBarHidden: false)
@@ -84,7 +86,7 @@ package struct LoginViaEmailView: View {
             title: { Text($0.title) },
             message: { Text($0.message) },
             actions: { _ in
-                Button(L10n.Authentication.Error.confirm, action: {})
+                Button(Strings.Authentication.Error.confirm, action: {})
             }
         )
         .navigationDestination(for: LoginViaEmailDestination.self) { destination in
@@ -125,8 +127,8 @@ package struct LoginViaEmailView: View {
 
     @ViewBuilder private var emailField: some View {
         LabeledTextField(
-            placeholder: L10n.CloudUserLogin.InputEmail.placeholder,
-            title: L10n.CloudUserLogin.InputEmail.title,
+            placeholder: Strings.CloudUserLogin.InputEmail.placeholder,
+            title: Strings.CloudUserLogin.InputEmail.title,
             string: $viewModel.email
         )
         .autocapitalization(.none)
@@ -139,8 +141,8 @@ package struct LoginViaEmailView: View {
     @ViewBuilder private var passwordField: some View {
         PasswordField(
             password: $viewModel.password,
-            placeholder: L10n.CloudUserLogin.InputPassword.placeholder,
-            title: L10n.CloudUserLogin.InputPassword.title,
+            placeholder: Strings.CloudUserLogin.InputPassword.placeholder,
+            title: Strings.CloudUserLogin.InputPassword.title,
             passwordRules: "",
             isValidPassword: viewModel.isPasswordValid
         )
@@ -152,7 +154,7 @@ package struct LoginViaEmailView: View {
                 await viewModel.submitCredentials()
             }
         }, label: {
-            Text(L10n.CloudUserLogin.submit)
+            Text(Strings.CloudUserLogin.submit)
                 .lineLimit(nil)
         })
         .wireButtonStyle(.primary)
@@ -164,7 +166,7 @@ package struct LoginViaEmailView: View {
         Button(action: {
             viewModel.recoverPassword()
         }, label: {
-            Text(L10n.CloudUserLogin.forgotPassword)
+            Text(Strings.CloudUserLogin.forgotPassword)
                 .multilineTextAlignment(.center)
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
@@ -174,7 +176,7 @@ package struct LoginViaEmailView: View {
 
     @ViewBuilder private var createAccount: some View {
         VStack(spacing: 4) {
-            Text(L10n.CreatePersonalAccount.title)
+            Text(Strings.CreatePersonalAccount.title)
                 .multilineTextAlignment(.center)
                 .wireTextStyle(.body1)
                 .lineLimit(nil)
@@ -183,7 +185,7 @@ package struct LoginViaEmailView: View {
             Button(action: {
                 viewModel.createAccount()
             }, label: {
-                Text(L10n.CreatePersonalAccount.button)
+                Text(Strings.CreatePersonalAccount.button)
                     .multilineTextAlignment(.center)
                     .lineLimit(nil)
                     .minimumScaleFactor(0.5)
@@ -210,13 +212,13 @@ package struct LoginViaEmailView: View {
     @ViewBuilder private var proxyCredentials: some View {
         Spacer()
         VStack(spacing: 14) {
-            Text(L10n.ProxyCredentials.title)
+            Text(Strings.ProxyCredentials.title)
                 .multilineTextAlignment(.center)
                 .font(.textStyle(.h2))
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
 
-            Text(L10n.ProxyCredentials.message(viewModel.proxyServer))
+            Text(Strings.ProxyCredentials.message(viewModel.proxyServer))
                 .multilineTextAlignment(.center)
                 .wireTextStyle(.body1)
                 .lineLimit(nil)
@@ -224,7 +226,7 @@ package struct LoginViaEmailView: View {
 
             LabeledTextField(
                 placeholder: "jane@example.com",
-                title: L10n.ProxyCredentials.InputEmail.title,
+                title: Strings.ProxyCredentials.InputEmail.title,
                 string: $viewModel.proxyUsername
             )
             .autocapitalization(.none)
@@ -234,8 +236,8 @@ package struct LoginViaEmailView: View {
 
             PasswordField(
                 password: $viewModel.proxyPassword,
-                placeholder: L10n.CloudUserLogin.InputPassword.placeholder,
-                title: L10n.CloudUserLogin.InputPassword.title,
+                placeholder: Strings.CloudUserLogin.InputPassword.placeholder,
+                title: Strings.CloudUserLogin.InputPassword.title,
                 passwordRules: "",
                 isValidPassword: viewModel.isPasswordValid
             )
