@@ -16,19 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import WireFoundation
-
-public struct ConversationBackupModel: Hashable, Sendable {
-
-    public var qualifiedID: QualifiedID
-    public var name: String
-
-    public init(
-        qualifiedID: QualifiedID,
-        name: String
-    ) {
-        self.qualifiedID = qualifiedID
-        self.name = name
-    }
-
+public enum ImportBackupError: Error {
+    case invalidFileExtension
+    case incompatibleFileFormat
+    /// The backup file is encrypted and a password is needed for decryption.
+    case passwordRequired
+    case incorrectPassword
 }

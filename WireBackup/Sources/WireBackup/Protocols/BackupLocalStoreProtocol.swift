@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireFoundation
+public import WireFoundation
 
 // sourcery: AutoMockable
 public protocol BackupLocalStoreProtocol: Sendable {
@@ -27,17 +27,32 @@ public protocol BackupLocalStoreProtocol: Sendable {
 
     // MARK: -
 
+    /// Returns the IDs of all users stored in the local database, including deleted ones.
+    func fetchAllUserIDs() async throws -> Set<QualifiedID>
+
     /// Returns all users stored in the local database, including deleted ones.
     func fetchAllUsers() -> AsyncThrowingStream<UserBackupModel, any Error>
 
+    /// Adds a user from the backup file to the local data store.
+    func addUser(_ user: UserBackupModel) async throws
+
     // MARK: -
+
+    /// Returns the IDs of all conversations stored in the local database, including deleted ones.
+    func fetchAllConversationIDs() async throws -> Set<QualifiedID>
 
     /// Returns all conversations stored in the local database, including deleted ones.
     func fetchAllConversations() -> AsyncThrowingStream<ConversationBackupModel, any Error>
 
     // MARK: -
 
+    /// Returns the IDs of all messages stored in the local database, including deleted ones.
+    func fetchAllMessageIDs() async throws -> Set<String>
+
     /// Returns all messages stored in the local database, including deleted ones.
     func fetchAllMessages() -> AsyncThrowingStream<MessageBackupModel, any Error>
+
+    /// Adds a message from the backup file to the local data store.
+    func addMessage(_ message: MessageBackupModel) async throws
 
 }

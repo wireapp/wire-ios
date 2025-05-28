@@ -16,19 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import WireFoundation
+import Foundation
+import WireFoundation
+import ZIPFoundation
 
-public struct ConversationBackupModel: Hashable, Sendable {
+struct ZIPFoundationFileUnarchiver: FileUnarchiverProtocol {
 
-    public var qualifiedID: QualifiedID
-    public var name: String
-
-    public init(
-        qualifiedID: QualifiedID,
-        name: String
-    ) {
-        self.qualifiedID = qualifiedID
-        self.name = name
+    func unzipFile(at sourceURL: URL, to destinationURL: URL) throws {
+        try FileManager.default.unzipItem(at: sourceURL, to: destinationURL)
     }
 
 }
