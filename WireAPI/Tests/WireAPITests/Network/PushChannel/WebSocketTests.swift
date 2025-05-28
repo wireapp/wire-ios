@@ -211,7 +211,7 @@ final class WebSocketTests: XCTestCase {
         connection.send_MockMethod = { _ in }
 
         let sut = WebSocket(connection: connection)
-        let testData = try XCTUnwrap("test".data(using: .utf8))
+        let testData = Data("test".utf8)
 
         // WHEN
         try await sut.write(data: testData)

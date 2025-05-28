@@ -68,7 +68,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 
         logger.debug("pulling pending update events")
         syncStateSubject.send(.incrementalSyncing(.pullPendingEvents))
-        try await updateEventsSync.pull()
+        _ = try await updateEventsSync.pull()
 
         logger.debug("processing stored update events")
         syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
