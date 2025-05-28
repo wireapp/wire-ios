@@ -88,7 +88,6 @@ public struct IncrementalSync: IncrementalSyncProtocol {
             )
 
             logger.debug("live event stream did finish")
-            syncStateSubject.send(.idle)
         }
 
         return Token(task: liveEventTask, closePushChannel: {
