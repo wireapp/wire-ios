@@ -20,7 +20,7 @@ package import Foundation
 package import WireCellsAPI
 
 package final actor WireCellsNodesDataSource: WireCellsNodesRepository {
-    private let awsClient: any WireCellsAWSClient
+    private let awsClient: WireCellsAWSClientImplementation
     private let restAPI: RestAPI
     private let fileManager: FileManager
 
@@ -35,7 +35,7 @@ package final actor WireCellsNodesDataSource: WireCellsNodesRepository {
     }
 
     init(
-        awsClient: any WireCellsAWSClient,
+        awsClient: WireCellsAWSClientImplementation,
         restAPI: RestAPI,
         fileManager: FileManager = .default
     ) {

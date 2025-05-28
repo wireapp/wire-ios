@@ -23,7 +23,17 @@ import SmithyIdentity
 import SmithyStreams
 package import WireCellsAPI
 
-package final class WireCellsAWSClientImplementation: WireCellsAWSClient {
+package enum WireCellsAWSClientError: Error {
+    case downloadError
+    case downloadErrorNoData
+    case downloadErrorUnknownObject
+    case missingUploadID
+    case noContent
+    case uploadError
+    case writeError
+}
+
+package final class WireCellsAWSClientImplementation: Sendable {
     private enum Constants {
         static let bucket = "io"
         static let multipartChunkSize = 10 * 1024 * 1024
