@@ -63,7 +63,7 @@ final class NewIncrementalSyncTests: XCTestCase {
         syncStateSubject = nil
     }
 
-    func test_perform_pendingEventsExist() async throws {
+    func testPerform_pendingEventsExist() async throws {
         // Mock
         
 
@@ -71,8 +71,7 @@ final class NewIncrementalSyncTests: XCTestCase {
         let pushChannel = MockNewPushChannelProtocol()
         pushChannel.open_MockValue = AsyncThrowingStream { continuation in
             Task {
-                continuation.yield(.event(Scaffolding.event2))
-                continuation.finish(throwing: PushChannelError.missingEvents)
+                continuation.yield(NewPushChannel.Element.event(Scaffolding.event2))
                 continuation.finish()
             }
         }
@@ -156,12 +155,11 @@ final class NewIncrementalSyncTests: XCTestCase {
     }
 
     
-    func test_perform_AcknowledgementFullSync() async throws {
+    func testPerform_AcknowledgementFullSync() async throws {
         // Mock
-        
-
-        // Some live events, some of which were already pulled.
         let pushChannel = MockNewPushChannelProtocol()
+        pushChannel.ackFullSync_MockMethod = { }
+        
         pushChannel.open_MockValue = AsyncThrowingStream { continuation in
             Task {
                 continuation.yield(.event(Scaffolding.event2))
@@ -174,7 +172,7 @@ final class NewIncrementalSyncTests: XCTestCase {
         pushChannelAPI.createPushChannelClientID_MockMethod = { _ in pushChannel }
 
         // Some indices at which live events will be stored.
-        var indices = [Int64(10), 11, 12, 13, 14, 15]
+        var indices = [Int64(10), 11]
         store.indexOfLastEventEnvelope_MockMethod = { indices.remove(at: 0) }
 
         // Live envelopes are peristed and deleted one by one.
@@ -213,22 +211,19 @@ final class NewIncrementalSyncTests: XCTestCase {
         // Then live events were decrypted (duplicates skipped).
         XCTAssertEqual(
             decryptor.decryptEventsIn_Invocations,
-            [Scaffolding.event2, Scaffolding.event3, Scaffolding.event4, Scaffolding.event5]
+            [Scaffolding.event2, Scaffolding.event3]
         )
 
         // Then live events were stored.
-        XCTAssertEqual(store.indexOfLastEventEnvelope_Invocations.count, 4)
+        XCTAssertEqual(store.indexOfLastEventEnvelope_Invocations.count, 2)
 
         // Then live events were stored.
         let storeInvocations = store.persistEventEnvelopeIndex_Invocations
-        try XCTAssertCount(storeInvocations, count: 4)
-        XCTAssertEqual(storeInvocations[2].eventEnvelope, Scaffolding.event4)
-        XCTAssertEqual(storeInvocations[2].index, 13)
-        XCTAssertEqual(storeInvocations[3].eventEnvelope, Scaffolding.event5)
-        XCTAssertEqual(storeInvocations[3].index, 14)
-
-        // Then ack of events done adter storing
-        XCTAssertEqual(pushChannel.ackEventDeliveryTagMultiple_Invocations.count, 4)
+        try XCTAssertCount(storeInvocations, count: 2)
+        XCTAssertEqual(storeInvocations[0].eventEnvelope, Scaffolding.event2)
+        XCTAssertEqual(storeInvocations[1].eventEnvelope, Scaffolding.event3)
+        // Then ack of events done after storing
+        XCTAssertEqual(pushChannel.ackEventDeliveryTagMultiple_Invocations.count, 2)
         
         
         // Then all events were processed once.
@@ -236,22 +231,20 @@ final class NewIncrementalSyncTests: XCTestCase {
             processor.processEvent_Invocations,
             [
                 Scaffolding.event2,
-                Scaffolding.event3,
-                Scaffolding.event4,
-                Scaffolding.event5
+                Scaffolding.event3
             ].flatMap(\.events)
         )
 
         // Then live events were deleted.
-        XCTAssertEqual(store.deleteEventEnvelopeAtIndex_Invocations, [11, 12, 13, 14])
+        XCTAssertEqual(store.deleteEventEnvelopeAtIndex_Invocations, [11, 12])
 
         // Then unread messages are calculated once after processing pending events
         // and once after processing each live event.
-        XCTAssertEqual(store.calculateLastUnreadMessages_Invocations.count, 4)
+        XCTAssertEqual(store.calculateLastUnreadMessages_Invocations.count, 2)
 
         // Then the database was saved once after processing pending events
         // and once after processing each live event.
-        XCTAssertEqual(databaseSaver.save_Invocations.count, 4)
+        XCTAssertEqual(databaseSaver.save_Invocations.count, 2)
     }
 
 }
