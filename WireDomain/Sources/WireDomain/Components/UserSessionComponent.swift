@@ -40,7 +40,6 @@ public final class UserSessionComponent {
     private let mlsService: any MLSServiceInterface
     private let mlsDecryptionService: any MLSDecryptionServiceInterface
     private let proteusService: any ProteusServiceInterface
-    private let coreCryptoProvider: any CoreCryptoProviderProtocol
 
     public init(
         selfUserID: UUID,
@@ -55,8 +54,7 @@ public final class UserSessionComponent {
         eventContext: NSManagedObjectContext,
         mlsService: any MLSServiceInterface,
         mlsDecryptionService: any MLSDecryptionServiceInterface,
-        proteusService: any ProteusServiceInterface,
-        coreCryptoProvider: any CoreCryptoProviderProtocol
+        proteusService: any ProteusServiceInterface
     ) {
         self.selfUserID = selfUserID
         self.backendEnvironment = backendEnvironment
@@ -71,7 +69,6 @@ public final class UserSessionComponent {
         self.mlsService = mlsService
         self.mlsDecryptionService = mlsDecryptionService
         self.proteusService = proteusService
-        self.coreCryptoProvider = coreCryptoProvider
     }
 
     private lazy var keychain: some KeychainProtocol = WireFoundation.Keychain()
@@ -146,7 +143,6 @@ public final class UserSessionComponent {
             mlsDecryptionService: mlsDecryptionService,
             proteusService: proteusService,
             processorHandlers: processorHandlers,
-            coreCryptoProvider: coreCryptoProvider,
             onAuthenticationFailure: onAuthenticationFailure
         )
     }

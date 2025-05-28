@@ -38,7 +38,7 @@ extension EventDecoder {
 
         do {
             let payload = try decoder.decode(Payload.UpdateConversationMLSWelcome.self, from: updateEvent.payload)
-            let groupID = try await decryptionService.processWelcomeMessage(welcomeMessage: payload.data, context: nil)
+            let groupID = try await decryptionService.processWelcomeMessage(welcomeMessage: payload.data)
             await context.perform {
                 let conversation = ZMConversation.fetchOrCreate(
                     with: payload.id,
@@ -110,8 +110,7 @@ extension EventDecoder {
         let results = try await decryptionService.decrypt(
             message: payload.data,
             for: groupID,
-            subconversationType: payload.subconversationType,
-            context: nil
+            subconversationType: payload.subconversationType
         )
 
         if results.isEmpty {

@@ -17,7 +17,6 @@
 //
 
 import WireAPI
-import WireCoreCrypto
 
 // sourcery: AutoMockable
 /// Decrypt the E2EE content within update events.
@@ -28,7 +27,6 @@ public protocol UpdateEventDecryptorProtocol {
     /// - Parameter eventEnvelope: An event envelope that contains events received from the server.
     /// - Returns: A list of decrypted update events.
 
-    func decryptEvents(in eventEnvelope: UpdateEventEnvelope, context: CoreCryptoContextProtocol?) async throws
-        -> [UpdateEvent]
+    func decryptEvents(in eventEnvelope: UpdateEventEnvelope) async throws -> [UpdateEvent]
 
 }

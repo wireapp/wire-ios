@@ -18,7 +18,6 @@
 
 import Foundation
 import WireAPI
-import WireCoreCrypto
 import WireDataModel
 
 struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
@@ -47,25 +46,23 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
     }
 
     func decryptedEventData(
-        from eventData: ConversationProteusMessageAddEvent,
-        context: CoreCryptoContextProtocol?
+        from eventData: ConversationProteusMessageAddEvent
     ) async throws -> ConversationProteusMessageAddEvent {
         // Only decrypt ciphertext, return plaintext unchanged.
 
         let ciphertext = eventData.message.encryptedMessage
         let ciphertextData = try validateCiphertext(ciphertext)
-        let eventContext = try await extractContext(from: eventData)
+        let context = try await extractContext(from: eventData)
 
         let (didCreateSession, plaintextData) = try await proteusService.decrypt(
             data: ciphertextData,
-            forSession: eventContext.proteusSessionID,
-            context: context
+            forSession: context.proteusSessionID
         )
 
         if didCreateSession {
             await userClientsLocalStore.clientSessionCreated(
-                selfClient: eventContext.selfClient,
-                newClient: eventContext.senderClient
+                selfClient: context.selfClient,
+                newClient: context.senderClient
             )
         }
 

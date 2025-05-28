@@ -92,7 +92,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                             "decrypting live event envelope",
                             attributes: [.eventEnvelopeID: envelope.id]
                         )
-                        envelope.events = try await decryptor.decryptEvents(in: envelope, context: nil)
+                        envelope.events = try await decryptor.decryptEvents(in: envelope)
                     } catch {
                         logger.error(
                             "failed to decrypt live event envelope: \(String(describing: error))",

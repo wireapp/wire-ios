@@ -234,7 +234,7 @@ extension MessagingTestBase {
                 event,
                 in: self.syncMOC
             ) { sessionID, encryptedData in
-                let result = try await proteusService.decrypt(data: encryptedData, forSession: sessionID, context: nil)
+                let result = try await proteusService.decrypt(data: encryptedData, forSession: sessionID)
                 return (didCreateNewSession: result.didCreateNewSession, decryptedData: result.decryptedData)
             }
         }, withKeyStore: { keyStore in

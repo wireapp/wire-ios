@@ -110,7 +110,7 @@ final class IncrementalSyncTests: XCTestCase {
         store.deleteEventEnvelopeAtIndex_MockMethod = { _ in }
 
         // Live events are decrypted.
-        decryptor.decryptEventsInContext_MockMethod = { envelope, _ in  envelope.events }
+        decryptor.decryptEventsIn_MockMethod = { $0.events }
 
         // Last event is being updated.
         store.storeLastEventIDId_MockMethod = { _ in }
@@ -142,7 +142,7 @@ final class IncrementalSyncTests: XCTestCase {
 
         // Then live events were decrypted (duplicates skipped).
         XCTAssertEqual(
-            decryptor.decryptEventsInContext_Invocations.map(\.eventEnvelope),
+            decryptor.decryptEventsIn_Invocations,
             [Scaffolding.event4, Scaffolding.event5]
         )
 

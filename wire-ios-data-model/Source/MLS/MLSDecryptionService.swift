@@ -48,8 +48,7 @@ public protocol MLSDecryptionServiceInterface {
     func decrypt(
         message: String,
         for groupID: MLSGroupID,
-        subconversationType: SubgroupType?,
-        context: CoreCryptoContextProtocol?
+        subconversationType: SubgroupType?
     ) async throws -> [MLSDecryptResult]
 
     /// Processes a welcome message.
@@ -60,8 +59,7 @@ public protocol MLSDecryptionServiceInterface {
     /// See ``MLSActionExecutor/processWelcomeMessage(_:)`` for implementation details
 
     func processWelcomeMessage(
-        welcomeMessage: String,
-        context: CoreCryptoContextProtocol?
+        welcomeMessage: String
     ) async throws -> MLSGroupID
 
 }
@@ -139,24 +137,20 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         }
     }
 
-    public func processWelcomeMessage(
-        welcomeMessage: String,
-        context: CoreCryptoContextProtocol?
-    ) async throws -> MLSGroupID {
+    public func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID {
         WireLogger.mls.info("processing welcome message")
 
         guard let messageData = welcomeMessage.base64DecodedData else {
             throw MLSMessageDecryptionError.failedToConvertMessageToBytes
         }
 
-        return try await mlsActionExecutor.processWelcomeMessage(messageData, context: context)
+        return try await mlsActionExecutor.processWelcomeMessage(messageData)
     }
 
     public func decrypt(
         message: String,
         for groupID: MLSGroupID,
-        subconversationType: SubgroupType?,
-        context: CoreCryptoContextProtocol?
+        subconversationType: SubgroupType?
     ) async throws -> [MLSDecryptResult] {
         WireLogger.mls
             .debug(
@@ -179,22 +173,16 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         }
 
         do {
-            let decryptedMessage = try await mlsActionExecutor.decryptMessage(
-                messageData,
-                in: groupID,
-                context: context
-            )
+            let decryptedMessage = try await mlsActionExecutor.decryptMessage(messageData, in: groupID)
 
-            if let newDistributionPoints = CRLsDistributionPoints(from: decryptedMessage?.crlNewDistributionPoints) {
+            if let newDistributionPoints = CRLsDistributionPoints(from: decryptedMessage.crlNewDistributionPoints) {
                 onNewCRLsDistributionPointsSubject.send(newDistributionPoints)
             }
 
-            var results = try decryptedMessage?.bufferedMessages?.compactMap { try decryptResult(from: $0) } ?? []
+            var results = try decryptedMessage.bufferedMessages?.compactMap { try decryptResult(from: $0) } ?? []
 
-            if let decryptedMessage {
-                if let result = try decryptResult(from: decryptedMessage) {
-                    results.append(result)
-                }
+            if let result = try decryptResult(from: decryptedMessage) {
+                results.append(result)
             }
 
             return results

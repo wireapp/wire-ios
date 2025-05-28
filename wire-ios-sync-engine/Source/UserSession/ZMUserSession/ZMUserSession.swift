@@ -457,8 +457,7 @@ public final class ZMUserSession: NSObject {
             eventContext: coreDataStack.eventContext,
             mlsService: mlsService,
             mlsDecryptionService: mlsService,
-            proteusService: proteusService,
-            coreCryptoProvider: coreCryptoProvider
+            proteusService: proteusService
         )
         self.journal = journal
         super.init()

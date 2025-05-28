@@ -17,7 +17,6 @@
 //
 
 import WireAPI
-import WireCoreCrypto
 
 // sourcery: AutoMockable
 /// Decrypt proteus messages.
@@ -25,14 +24,11 @@ protocol ProteusMessageDecryptorProtocol {
 
     /// Decrypt a proteus message.
     ///
-    /// - Parameters:
-    ///     - eventData: A payload containing the encrypted message.
-    ///     - context: if provided, decryption will happen within the existing transaction
+    /// - Parameter eventData: A payload containing the encrypted message.
     /// - Returns: The payload containing the decrypted message.
 
     func decryptedEventData(
-        from eventData: ConversationProteusMessageAddEvent,
-        context: CoreCryptoContextProtocol?
+        from eventData: ConversationProteusMessageAddEvent
     ) async throws -> ConversationProteusMessageAddEvent
 
 }

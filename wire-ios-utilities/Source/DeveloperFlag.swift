@@ -35,6 +35,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case wireCells
     case asyncStreamNotifications
     case multibackend
+    case newRegistration
 
     public var description: String {
         switch self {
@@ -76,6 +77,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .multibackend:
             "Turn on to be able to log in with accounts from multiple backends"
+
+        case .newRegistration:
+            "Turn on to use the new registration flow"
         }
     }
 

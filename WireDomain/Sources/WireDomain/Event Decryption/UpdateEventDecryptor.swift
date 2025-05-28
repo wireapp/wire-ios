@@ -66,10 +66,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         self.mlsService = mlsService
     }
 
-    func decryptEvents(
-        in eventEnvelope: UpdateEventEnvelope,
-        context: CoreCryptoContextProtocol?
-    ) async throws -> [UpdateEvent] {
+    func decryptEvents(in eventEnvelope: UpdateEventEnvelope) async throws -> [UpdateEvent] {
         guard !DeveloperFlag.skipMLSMessagesDecryption.isOn else { return [] }
         let logAttributes: LogAttributes = [
             .eventId: eventEnvelope.id.safeForLoggingDescription,
@@ -88,10 +85,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                 )
 
                 do {
-                    let decryptedEventData = try await proteusMessageDecryptor.decryptedEventData(
-                        from: eventData,
-                        context: context
-                    )
+                    let decryptedEventData = try await proteusMessageDecryptor.decryptedEventData(from: eventData)
                     decryptedEvents.append(.conversation(.proteusMessageAdd(decryptedEventData)))
                 } catch let error as ProteusService.DecryptionError {
                     WireLogger.updateEvent.error(
@@ -120,10 +114,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                 shouldCommitPendingProposals = true
 
                 do {
-                    let decryptedEventData = try await mlsMessageDecryptor.decryptedMessageAddEventData(
-                        from: eventData,
-                        context: context
-                    )
+                    let decryptedEventData = try await mlsMessageDecryptor.decryptedMessageAddEventData(from: eventData)
                     decryptedEvents.append(.conversation(.mlsMessageAdd(decryptedEventData)))
 
                 } catch let error as MLSMessageDecryptorError {
@@ -150,8 +141,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
 
                 do {
                     try await mlsMessageDecryptor.decryptedWelcomeMessageEventData(
-                        from: eventData,
-                        context: context
+                        from: eventData
                     )
                 } catch {
                     WireLogger.updateEvent.error(
