@@ -21,7 +21,7 @@ package import WireCellsAPI
 
 package final actor WireCellsNodesDataSource: WireCellsNodesRepository {
     private let awsClient: any WireCellsAWSClient
-    private let cellsAPI: any WireCellsNodesAPIProtocol
+    private let cellsAPI: WireCellsNodesAPI
     private let fileManager: FileManager
 
     package init(credentials: WireCellsCredentials) {
@@ -34,9 +34,9 @@ package final actor WireCellsNodesDataSource: WireCellsNodesRepository {
         )
     }
 
-    package init(
+    init(
         awsClient: any WireCellsAWSClient,
-        cellsAPI: any WireCellsNodesAPIProtocol,
+        cellsAPI: WireCellsNodesAPI,
         fileManager: FileManager = .default
     ) {
         self.awsClient = awsClient
