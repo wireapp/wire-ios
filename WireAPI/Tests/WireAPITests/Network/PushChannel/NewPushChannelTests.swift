@@ -48,11 +48,11 @@ final class NewPushChannelTests: XCTestCase {
         try await super.tearDown()
     }
 
-    func testOpenPushChannel() async throws {
+    func testOpen_DecodeEventSuccessfully() async throws {
         // Given some envelopes that will be delivered through the push channel
-        let mockEnvelope1 = try MockJSONPayloadResource(name: "LiveUpdateEventEnvelope1")
-        let mockEnvelope2 = try MockJSONPayloadResource(name: "LiveUpdateEventEnvelope2")
-        let mockEnvelope3 = try MockJSONPayloadResource(name: "LiveUpdateEventEnvelope3")
+        let mockEnvelope1 = try MockJSONPayloadResource(name: "AsyncLiveUpdateEventEnvelope1")
+        let mockEnvelope2 = try MockJSONPayloadResource(name: "AsyncLiveUpdateEventEnvelope2")
+        let mockEnvelope3 = try MockJSONPayloadResource(name: "AsyncLiveUpdateEventEnvelope3")
 
         webSocket.open_MockValue = AsyncThrowingStream { continuation in
             continuation.yield(.data(mockEnvelope1.jsonData))
@@ -76,7 +76,29 @@ final class NewPushChannelTests: XCTestCase {
         XCTAssertEqual(receivedEnvelopes[2], .event(Scaffolding.envelope3))
     }
 
-    func testClosingPushChannel() async throws {
+    func testOpen_MissedNotificationsEvent() async throws {
+        let mockEnvelopeMissedNotifications = try MockJSONPayloadResource(name: "AsyncLiveUpdateEventEnvelope4")
+
+        webSocket.open_MockValue = AsyncThrowingStream { continuation in
+            continuation.yield(.data(mockEnvelopeMissedNotifications.jsonData))
+            continuation.finish()
+        }
+
+        // When the push channel is open and the stream is iterated
+        let liveEventEnvelopes = try await sut.open()
+
+        var receivedEnvelopes = [NewPushChannel.Element]()
+        for try await envelope in liveEventEnvelopes {
+            receivedEnvelopes.append(envelope)
+        }
+
+        // Then envelopes are received
+        try XCTAssertCount(receivedEnvelopes, count: 1)
+        XCTAssertEqual(receivedEnvelopes[0], .missedEvents)
+    }
+
+    
+    func testClose_CloseWebSocket() async throws {
         // Given an open push channel
         webSocket.open_MockValue = AsyncThrowingStream { _ in }
         _ = try await sut.open()
@@ -88,7 +110,7 @@ final class NewPushChannelTests: XCTestCase {
         XCTAssertEqual(webSocket.close_Invocations.count, 1)
     }
 
-    func testFailureToDecodeClosesPushChannel() async throws {
+    func testOpen_FailureToDecodeClosesPushChannel() async throws {
         // Given an open push channel that is being iterated
         webSocket.open_MockValue = AsyncThrowingStream { continuation in
             // Send some invalid data
@@ -112,7 +134,7 @@ final class NewPushChannelTests: XCTestCase {
         XCTAssertEqual(webSocket.close_Invocations.count, 1)
     }
 
-    func testReceivingUnknownMessageClosesPushChannel() async throws {
+    func testOpen_ReceivingUnknownMessageClosesPushChannel() async throws {
         // Given an open push channel that is being iterated
         webSocket.open_MockValue = AsyncThrowingStream { continuation in
             // Send some invalid data.
@@ -136,7 +158,7 @@ final class NewPushChannelTests: XCTestCase {
         XCTAssertEqual(webSocket.close_Invocations.count, 1)
     }
 
-    func testSendingKeepAlivePings() async throws {
+    func testOpen_SendsKeepAlivePings() async throws {
         // Mock.
         webSocket.open_MockValue = AsyncThrowingStream { _ in }
 
@@ -152,7 +174,32 @@ final class NewPushChannelTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(webSocket.sendPing_Invocations.count, 2)
     }
 
-    func testTimeoutTriggerIfNoEvents() async throws {
+    func testOpen_ReceiveUpToDateAfterTimeout() async throws {
+        // Mock.
+        webSocket.open_MockValue = AsyncThrowingStream { _ in }
+
+        // Given an open push channel.
+        let liveEventEnvelopes = try await sut.open()
+
+        var receivedEnvelopes = [NewPushChannel.Element]()
+        Task.detached {
+            for try await envelope in liveEventEnvelopes {
+                receivedEnvelopes.append(envelope)
+            }
+        }
+        // When we wait for 1 second.
+        try await Task.sleep(for: .seconds(1.5))
+
+        
+        // Then keep alive pings are sent periodically (the timer
+        // is not exact so we will we generous in our assertion of
+        // at least 2 in 1.5 seconds).
+        XCTAssertGreaterThanOrEqual(webSocket.sendPing_Invocations.count, 2)
+        try XCTAssertCount(receivedEnvelopes, count: 1)
+        XCTAssertEqual(receivedEnvelopes[0], .upToDate)
+    }
+        
+    func testOpen_TimeoutTriggerIfNoEvents() async throws {
         // Mock.
         webSocket.open_MockValue = AsyncThrowingStream { _ in }
 
@@ -177,7 +224,8 @@ private enum Scaffolding {
             .conversation(.proteusMessageAdd(proteusMessageAddEvent)),
             .conversation(.protocolUpdate(protocolUpdateEvent))
         ],
-        isTransient: false
+        isTransient: false,
+        deliveryTag: 1
     )
 
     static let envelope2 = UpdateEventEnvelope(
@@ -186,7 +234,8 @@ private enum Scaffolding {
             .conversation(.receiptModeUpdate(receiptModeUpdateEvent)),
             .conversation(.rename(renameEvent))
         ],
-        isTransient: false
+        isTransient: false,
+        deliveryTag: 2
     )
 
     static let envelope3 = UpdateEventEnvelope(
@@ -195,7 +244,8 @@ private enum Scaffolding {
             .conversation(.typing(typingEvent)),
             .conversation(.delete(deleteEvent))
         ],
-        isTransient: false
+        isTransient: false,
+        deliveryTag: 3
     )
 
     static func fractionalDate(from string: String) -> Date {

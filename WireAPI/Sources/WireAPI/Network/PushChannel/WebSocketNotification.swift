@@ -36,6 +36,11 @@ struct WebSocketNotification: Decodable {
 
     var type: NotificationType
     var data: NotificationData?
+    
+    init(type: NotificationType, data: NotificationData? = nil) {
+        self.type = type
+        self.data = data
+    }
 }
 
 extension WebSocketNotification: ToAPIModelConvertible {
@@ -55,5 +60,19 @@ extension WebSocketNotification: ToAPIModelConvertible {
             isTransient: false,
             deliveryTag: data?.deliveryTag
         )
+    }
+}
+
+// MARK: - For Testing
+
+extension WebSocketNotification {
+    
+    public static var notificationMissed: WebSocketNotification {
+        WebSocketNotification(type: .notificationsMissed)
+    }
+
+    public init(event: UpdateEventEnvelopeV8, deliveryTag: UInt64) {
+        self.type = .event
+        self.data = .init(deliveryTag: deliveryTag, event: event)
     }
 }
