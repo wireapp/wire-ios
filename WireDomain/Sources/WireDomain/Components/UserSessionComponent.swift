@@ -143,7 +143,7 @@ public final class UserSessionComponent {
             mlsService: mlsService,
             mlsDecryptionService: mlsDecryptionService,
             proteusService: proteusService,
-            asyncStreamEnabled: asyncStreamEnabled,
+            asyncStreamEnabled: asyncStreamEnabled, // TODO: [WPB-17223] check if still needed
             processorHandlers: processorHandlers,
             onAuthenticationFailure: onAuthenticationFailure
         )

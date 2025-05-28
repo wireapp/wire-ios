@@ -20,6 +20,7 @@ import Foundation
 import WireFoundation
 import WireLogging
 
+/// PushChannel using new async stream
 public final class NewPushChannel: NewPushChannelProtocol {
 
     public enum Element: Equatable {

@@ -31,7 +31,14 @@ public protocol NewPushChannelProtocol: Sendable {
 
     func close() async
 
+    /// Acknowledge a initial sync has been performed
+
     func ackFullSync() async throws
+
+    /// Acknowledge an event has been received
+    /// - Parameters:
+    ///   - deliveryTag: the associated deliveryTag of the (last) event
+    ///   - multiple: true if all previous events should be acknowledge, false for individual one
 
     func ackEvent(deliveryTag: UInt64, multiple: Bool) async throws
 }

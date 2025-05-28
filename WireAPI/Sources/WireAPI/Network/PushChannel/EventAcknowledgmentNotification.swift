@@ -17,6 +17,7 @@
 //
 import Foundation
 
+/// Payload sent via NewPushChannel for acknowledgment of event in async stream
 struct EventAcknowledgmentNotification: Encodable {
 
     struct AcknowledgmentData: Encodable {

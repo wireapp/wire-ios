@@ -15,9 +15,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-import Foundation
 
-/// Payload of acknowledgment of initial sync for async stream
-struct FullSyncAcknowledgmentNotification: Encodable {
-    let type: AcknowledgmentType = .fullSync
+/// Delegate steps of LiveSync
+public protocol LiveSyncDelegate {
+    func didFinishSync(sync: NewIncrementalSync)
+    func didMissedEvents(sync: NewIncrementalSync) async
+    func didFail(sync: NewIncrementalSync, error: any Error)
 }

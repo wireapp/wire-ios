@@ -74,7 +74,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
         let processedEnvelopeIDs = try await processStoredEvents()
 
-        let task: Task<Void, Error> = Task { @Sendable [
+        let task: Task<Void, Never> = Task { @Sendable [
             logger,
             decryptor,
             store,
@@ -247,11 +247,11 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 
     public struct Token {
 
-        let task: Task<Void, Error>
+        let task: Task<Void, Never>
         let closePushChannel: () async -> Void
 
         public init(
-            task: Task<Void, Error>,
+            task: Task<Void, Never>,
             closePushChannel: @escaping () async -> Void
         ) {
             self.task = task

@@ -21,12 +21,6 @@ import Foundation
 import WireAPI
 import WireLogging
 
-public protocol LiveSyncDelegate {
-    func didFinishSync(sync: NewIncrementalSync)
-    func didMissedEvents(sync: NewIncrementalSync) async
-    func didFail(sync: NewIncrementalSync, error: any Error)
-}
-
 /// IncrementalSync using new backend API async stream notifications
 public struct NewIncrementalSync: LiveSyncProtocol {
 
@@ -70,7 +64,7 @@ public struct NewIncrementalSync: LiveSyncProtocol {
         syncStateSubject.send(.incrementalSyncing(.openPushChannel))
         let liveEventStream = try await pushChannel.open()
 
-        let task: Task<Void, Error> = Task { @Sendable [
+        let task = Task { @Sendable [
             logger,
             decryptor,
             store,
@@ -87,6 +81,17 @@ public struct NewIncrementalSync: LiveSyncProtocol {
                 for try await var element in liveEventStream {
                     logger.debug("received live event envelope v3")
                     switch element {
+                    case .upToDate:
+                        logger.debug("upToDate event v3")
+                        syncStateSubject.send(.idle)
+                        delegate?.didFinishSync(sync: self)
+
+                    case .missedEvents:
+                        logger.debug("missedEvents event v3")
+                        await delegate?.didMissedEvents(sync: self)
+                        // TODO: [WPB-17609] insert potential gap message here with messageLocalStore
+                        try await pushChannel.ackFullSync()
+
                     case let .event(enveloppe):
                         var envelope = enveloppe
                         do {
@@ -180,17 +185,6 @@ public struct NewIncrementalSync: LiveSyncProtocol {
                         } catch {
                             logger.error("failed to save database v3: \(String(describing: error))")
                         }
-
-                    case .upToDate:
-                        logger.debug("upToDate event v3")
-                        syncStateSubject.send(.idle)
-                        delegate?.didFinishSync(sync: self)
-
-                    case .missedEvents:
-                        logger.debug("missedEvents event v3")
-                        await delegate?.didMissedEvents(sync: self)
-                        // TODO: [WPB-17609] insert potential gap message here with messageLocalStore
-                        try await pushChannel.ackFullSync()
                     }
 
                 }

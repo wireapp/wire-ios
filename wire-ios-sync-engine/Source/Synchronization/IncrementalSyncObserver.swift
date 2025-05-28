@@ -56,13 +56,10 @@ final class IncrementalSyncObserver: IncrementalSyncObserverProtocol {
                 .sink { [weak self] syncState in
                     switch syncState {
                     case .incrementalSyncing(.pullPendingEvents):
-                        WireLogger.sync.debug("syncObserver: inProgress")
                         self?.decryptionState = .inProgress
                     case .incrementalSyncing(.processPendingEvents), .liveSyncing:
-                        WireLogger.sync.debug("syncObserver: done")
                         self?.decryptionState = .done
                     default:
-                        WireLogger.sync.debug("syncObserver: notStarted")
                         self?.decryptionState = .notStarted
                     }
                 }

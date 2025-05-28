@@ -22,11 +22,8 @@ import Foundation
 public protocol URLSessionWebSocketTaskProtocol: Sendable {
 
     var isOpen: Bool { get }
+
     var networkInformation: String { get }
-
-    var closeCode: URLSessionWebSocketTask.CloseCode { get }
-
-    var closeReason: Data? { get }
 
     func resume()
 

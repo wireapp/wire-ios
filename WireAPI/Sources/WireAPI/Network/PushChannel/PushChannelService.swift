@@ -21,14 +21,14 @@ import Foundation
 /// A service for creating push channel connections to a specific backend.
 public protocol PushChannelServiceProtocol {
 
-    /// Create a new push channel (v1).
+    /// Create a new push channel (v1). Legacy
     ///
     /// - Parameter request: A request for a web socket connection.
     /// - Returns: A push channel.
 
     func createPushChannel(_ request: URLRequest) async throws -> any PushChannelProtocol
 
-    /// Create a new push channel (v2).
+    /// Create a new push channel (v2). Async notifications
     ///
     /// - Parameter request: A request for a web socket connection.
     /// - Returns: A push channel.

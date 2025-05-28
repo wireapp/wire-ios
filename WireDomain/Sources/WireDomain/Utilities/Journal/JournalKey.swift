@@ -53,6 +53,8 @@ public extension JournalKey where Value == Bool {
         defaultValue: false
     )
 
+    /// Whether client should skip calling /notifications/last
+
     static let skipPullingLastNotificationID = Self(
         "skipPullingLastNotificationID",
         defaultValue: false
