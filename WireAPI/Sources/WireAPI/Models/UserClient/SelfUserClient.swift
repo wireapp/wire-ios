@@ -32,7 +32,7 @@ public struct SelfUserClient: Equatable, Identifiable, Codable, Sendable {
 
     /// The date when the client was activated.
 
-    public let activationDate: Date
+    public let activationDate: Date?
 
     /// A label describing the client.
 
@@ -79,7 +79,7 @@ public struct SelfUserClient: Equatable, Identifiable, Codable, Sendable {
     public init(
         id: String,
         type: UserClientType,
-        activationDate: Date,
+        activationDate: Date?,
         label: String? = nil,
         model: String? = nil,
         deviceClass: DeviceClass? = nil,
