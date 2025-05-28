@@ -33,6 +33,8 @@ extension MessageBackupModel.Content {
             self.init(messageEdit)
         case let .ephemeral(ephemeral):
             self.init(ephemeral)
+        case let .multipart(multipart):
+            self.init(multipart)
         case .knock, .lastRead, .cleared, .external, .clientAction, .calling, .hidden, .deleted, .confirmation,
              .reaction, .availability, .composite, .buttonAction, .buttonActionConfirmation, .dataTransfer, .image,
              .inCallEmoji, .inCallHandRaise:
@@ -94,4 +96,8 @@ extension MessageBackupModel.Content {
         )
     }
 
+    private init?(_ multipart: Multipart) {
+        // TODO: [WPB-17971] Support multipart messages in backup
+        return nil
+    }
 }

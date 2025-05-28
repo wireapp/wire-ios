@@ -135,6 +135,9 @@ extension GenericMessage.OneOf_Content: SafeForLoggingStringConvertible {
         case .asset:
             "asset"
 
+        case .multipart:
+            "multipart"
+
         case .hidden:
             "hidden"
 
