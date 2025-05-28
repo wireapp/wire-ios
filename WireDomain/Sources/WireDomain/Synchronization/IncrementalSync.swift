@@ -74,14 +74,14 @@ public struct IncrementalSync: IncrementalSyncProtocol {
             logger.debug("pulling pending update events")
             syncStateSubject.send(.incrementalSyncing(.pullPendingEvents))
             try await updateEventsSync.pull()
-            
+
             logger.debug("processing stored update events")
             syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
             processedEnvelopeIDs = try await processStoredEvents()
         } catch {
             logger.debug("incremental sync interrupted, tearing down...")
             await pushChannel.close()
-            
+
             switch error {
             case let apiError as UpdateEventsAPIError:
                 switch apiError {
@@ -96,7 +96,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 throw error
             }
         }
-        
+
         let liveEventTask = Task { @Sendable [self] in
             logger.debug("handling live event stream")
             syncStateSubject.send(.liveSyncing)
@@ -153,8 +153,8 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                         "storing live event envelope",
                         attributes: [.eventEnvelopeID: envelope.id]
                     )
-                    index = try await store.indexOfLastEventEnvelope() + 1
-                    try await store.persistEventEnvelope(envelope, index: index)
+                    index = try await updateEventsStore.indexOfLastEventEnvelope() + 1
+                    try await updateEventsStore.persistEventEnvelope(envelope, index: index)
                 } catch {
                     logger.error(
                         "failed to store live event envelope: \(String(describing: error))",
@@ -169,7 +169,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                         "updating last event id",
                         attributes: [.eventEnvelopeID: envelope.id]
                     )
-                    store.storeLastEventID(id: envelope.id)
+                    updateEventsStore.storeLastEventID(id: envelope.id)
                 }
 
                 // Process.
@@ -194,7 +194,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                         "deleting live event envelope",
                         attributes: [.eventEnvelopeID: envelope.id]
                     )
-                    try await store.deleteEventEnvelope(atIndex: index)
+                    try await updateEventsStore.deleteEventEnvelope(atIndex: index)
                 } catch {
                     logger.error(
                         "failed to delete live event envelope: \(String(describing: error))",
@@ -202,7 +202,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                     )
                 }
 
-                await store.calculateLastUnreadMessages()
+                await updateEventsStore.calculateLastUnreadMessages()
 
                 do {
                     // Save.
