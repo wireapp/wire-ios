@@ -60,6 +60,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
     private let incrementalSyncTaskManager = NonReentrantTaskManager()
     private var incrementalSyncToken: IncrementalSync.Token?
+    private var ongoingSyncTask: Task<Void, Never>?
 
     private var hasCompletedInitialSync: Bool {
         lastUpdateEventIDRepository.fetchLastEventID() != nil
@@ -104,7 +105,11 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     /// This method logs any errors and does not wait for the sync to finish.
 
     func resume() {
-        Task {
+        ongoingSyncTask = Task {
+            WireLogger.sync.debug(
+                "resuming sync"
+            )
+
             let retrier = BackoffRetrier()
 
             do {
@@ -130,6 +135,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
     private func suspend() async {
         WireLogger.sync.debug("suspending sync")
+        ongoingSyncTask?.cancel()
         await incrementalSyncToken?.suspend()
         incrementalSyncToken = nil
         syncStateSubject.send(.suspended)
@@ -197,10 +203,6 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
     func performIncrementalSync() async throws {
         if isSyncV2Enabled {
-            guard incrementalSyncToken == nil else {
-                WireLogger.sync.info("incremental sync already running...")
-                return
-            }
 
             do {
                 try await incrementalSyncTaskManager.performIfNeeded { [weak self] in
