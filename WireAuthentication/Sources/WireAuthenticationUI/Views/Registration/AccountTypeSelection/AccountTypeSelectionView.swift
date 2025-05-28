@@ -23,19 +23,23 @@ struct AccountTypeSelectionView: View {
 
     @Environment(\.dismiss) private var dismiss
 
+    private typealias Strings = L10n.Localizable.AccountTypeSelector
+    private typealias Labels = L10n.Accessibility.AccountTypeSelector
+
     var body: some View {
         NavigationStack {
             ScrollView {
                 scrollViewContent
             }
             .scrollBounceBehavior(.basedOnSize)
-            .navigationTitle(L10n.AccountTypeSelector.title)
+            .navigationTitle(Strings.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     SheetCloseButton {
                         dismiss()
                     }
+                    .accessibilityLabel(Labels.Close.label)
                 }
             }
         }
@@ -70,21 +74,19 @@ struct AccountTypeSelectionView: View {
 
     @ViewBuilder
     private var teamAccountTitles: some View {
-        VStack(spacing: 8) {
-            Text(L10n.AccountTypeSelector.OptionTeam.title)
-                .font(.callout.bold())
-                .foregroundStyle(ColorTheme.Base.primary.color)
-            Text(L10n.AccountTypeSelector.OptionTeam.subtitle)
-        }
+        TitlesView(
+            title: Strings.OptionTeam.title,
+            subtitle: Strings.OptionTeam.subtitle
+        )
     }
 
     @ViewBuilder
     private var teamAccountFeatures: some View {
         VStack(spacing: 12) {
             Divider()
-            FeatureView(L10n.AccountTypeSelector.OptionTeam.feature0)
+            FeatureView(Strings.OptionTeam.feature0)
             Divider()
-            FeatureView(L10n.AccountTypeSelector.OptionTeam.feature1)
+            FeatureView(Strings.OptionTeam.feature1)
             Divider()
         }
         .padding(.horizontal, 16)
@@ -92,7 +94,7 @@ struct AccountTypeSelectionView: View {
 
     @ViewBuilder
     private var teamAccountButton: some View {
-        Button(L10n.AccountTypeSelector.OptionTeam.button) {
+        Button(Strings.OptionTeam.button) {
             print("[WPB-17525]") // TODO: [WPB-17525] implement flow
         }
         .wireButtonStyle(.primary)
@@ -120,21 +122,19 @@ struct AccountTypeSelectionView: View {
 
     @ViewBuilder
     private var personalAccountTitles: some View {
-        VStack(spacing: 8) {
-            Text(L10n.AccountTypeSelector.OptionPersonal.title)
-                .font(.callout.bold())
-                .foregroundStyle(ColorTheme.Base.primary.color)
-            Text(L10n.AccountTypeSelector.OptionPersonal.subtitle)
-        }
+        TitlesView(
+            title: Strings.OptionPersonal.title,
+            subtitle: Strings.OptionPersonal.subtitle
+        )
     }
 
     @ViewBuilder
     private var personalAccountFeatures: some View {
         VStack(spacing: 12) {
             Divider()
-            FeatureView(L10n.AccountTypeSelector.OptionPersonal.feature0)
+            FeatureView(Strings.OptionPersonal.feature0)
             Divider()
-            FeatureView(L10n.AccountTypeSelector.OptionPersonal.feature1)
+            FeatureView(Strings.OptionPersonal.feature1)
             Divider()
         }
         .padding(.horizontal, 16)
@@ -142,35 +142,52 @@ struct AccountTypeSelectionView: View {
 
     @ViewBuilder
     private var personalAccountButton: some View {
-        Button(L10n.AccountTypeSelector.OptionPersonal.button) {
+        Button(Strings.OptionPersonal.button) {
             print("[WPB-17453]") // TODO: [WPB-17453] implement flow
         }
         .wireButtonStyle(.secondary)
         .bold()
     }
 
-    // MARK: -
+}
 
-    private struct FeatureView: View {
+// MARK: -
 
-        var content: String
+private struct TitlesView: View {
 
-        init(_ content: String) {
-            self.content = content
+    var title: String
+    var subtitle: String
+
+    var body: some View {
+        VStack(spacing: 8) {
+            Text(title)
+                .font(.callout.bold())
+                .foregroundStyle(ColorTheme.Base.primary.color)
+            Text(subtitle)
         }
+    }
 
-        var body: some View {
-            HStack(alignment: .firstTextBaseline, spacing: 8) {
-                ZStack {
-                    Text(verbatim: "o") // used to vertically align the image for large font sizes
-                        .hidden()
-                        .accessibilityHidden(true)
-                    Image(.circleCheck)
-                        .foregroundStyle(ColorTheme.Base.positive.color)
-                }
-                Text(content)
-                Spacer()
+}
+
+private struct FeatureView: View {
+
+    var content: String
+
+    init(_ content: String) {
+        self.content = content
+    }
+
+    var body: some View {
+        HStack(alignment: .firstTextBaseline, spacing: 8) {
+            ZStack {
+                Text(verbatim: "o") // used to vertically align the image for large font sizes
+                    .hidden()
+                    .accessibilityHidden(true)
+                Image(.circleCheck)
+                    .foregroundStyle(ColorTheme.Base.positive.color)
             }
+            Text(content)
+            Spacer()
         }
     }
 
