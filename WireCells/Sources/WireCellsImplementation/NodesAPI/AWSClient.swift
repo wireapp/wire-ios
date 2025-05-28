@@ -33,7 +33,7 @@ package enum WireCellsAWSClientError: Error {
     case writeError
 }
 
-final class WireCellsAWSClientImplementation: Sendable {
+final class AWSClient: Sendable {
     private enum Constants {
         static let bucket = "io"
         static let multipartChunkSize = 10 * 1024 * 1024

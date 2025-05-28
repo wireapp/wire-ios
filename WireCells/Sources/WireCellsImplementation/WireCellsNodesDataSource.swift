@@ -20,13 +20,13 @@ package import Foundation
 package import WireCellsAPI
 
 package final actor WireCellsNodesDataSource: WireCellsNodesRepository {
-    private let awsClient: WireCellsAWSClientImplementation
+    private let awsClient: AWSClient
     private let restAPI: RestAPI
     private let fileManager: FileManager
 
     package init(credentials: WireCellsCredentials) {
         self.init(
-            awsClient: WireCellsAWSClientImplementation(credentials: credentials),
+            awsClient: AWSClient(credentials: credentials),
             restAPI: RestAPI(
                 serverURL: credentials.serverURL.appendingPathComponent("/v2"),
                 accessToken: credentials.accessToken
@@ -35,7 +35,7 @@ package final actor WireCellsNodesDataSource: WireCellsNodesRepository {
     }
 
     init(
-        awsClient: WireCellsAWSClientImplementation,
+        awsClient: AWSClient,
         restAPI: RestAPI,
         fileManager: FileManager = .default
     ) {

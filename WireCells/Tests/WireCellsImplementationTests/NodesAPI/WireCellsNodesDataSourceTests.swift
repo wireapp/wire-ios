@@ -41,7 +41,7 @@ final class WireCellsNodesDataSourceTests {
 
         self.smallFileHandle = try FileHandle(forReadingFrom: smallFileURL)
         self.sut = WireCellsNodesDataSource(
-            awsClient: WireCellsAWSClientImplementation(
+            awsClient: AWSClient(
                 s3: s3,
                 makeStream: { ObservableStream($0, bufferingPolicy: .unbounded) }
             ),
