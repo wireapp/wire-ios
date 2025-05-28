@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Smithy
 import Foundation
+import Smithy
 
 /// Wraps a `Smithy.Stream` allowing its progress to be observed. This is a workaround to enable reading upload progress
 /// using the AWS SDK.
@@ -62,19 +62,19 @@ final class ObservableStream: Smithy.Stream, Sendable {
         readContinuation.yield(position)
         return result
     }
-    
+
     func readAsync(upToCount count: Int) async throws -> Data? {
         let result = try await wrapped.readAsync(upToCount: count)
         readContinuation.yield(position)
         return result
     }
-    
+
     func readToEnd() throws -> Data? {
         let result = try wrapped.readToEnd()
         readContinuation.yield(position)
         return result
     }
-    
+
     func readToEndAsync() async throws -> Data? {
         let result = try await wrapped.readToEndAsync()
         readContinuation.yield(position)
@@ -86,11 +86,11 @@ final class ObservableStream: Smithy.Stream, Sendable {
     func write(contentsOf data: Data) throws {
         try wrapped.write(contentsOf: data)
     }
-    
+
     func close() {
         wrapped.close()
     }
-    
+
     func closeWithError(_ error: any Error) {
         wrapped.closeWithError(error)
     }

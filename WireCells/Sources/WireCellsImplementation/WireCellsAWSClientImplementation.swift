@@ -17,7 +17,7 @@
 //
 
 import AWSClientRuntime
-@preconcurrency import AWSS3
+import AWSS3
 package import Foundation
 import SmithyIdentity
 import SmithyStreams
@@ -33,9 +33,10 @@ package final class WireCellsAWSClientImplementation: WireCellsAWSClient {
         static let region = "us-east-1"
     }
 
-    private let s3: S3Client
+    private let s3: any S3ClientProtocol
+    private let makeStream: @Sendable (FileStream) -> ObservableStream
 
-    package init(credentials: WireCellsCredentials) {
+    package convenience init(credentials: WireCellsCredentials) {
         let config = try! S3Client.S3ClientConfiguration(
             awsCredentialIdentityResolver: StaticAWSCredentialIdentityResolver(
                 .init(
@@ -46,7 +47,15 @@ package final class WireCellsAWSClientImplementation: WireCellsAWSClient {
             region: Constants.region,
             endpoint: credentials.serverURL.absoluteString
         )
-        self.s3 = S3Client(config: config)
+        self.init(s3: S3Client(config: config))
+    }
+
+    init(
+        s3: any S3ClientProtocol,
+        makeStream: @Sendable @escaping (FileStream) -> ObservableStream = { ObservableStream($0) }
+    ) {
+        self.s3 = s3
+        self.makeStream = makeStream
     }
 
     package func download(
@@ -132,7 +141,7 @@ package final class WireCellsAWSClientImplementation: WireCellsAWSClient {
         onProgressUpdate: @escaping @Sendable (UInt64) -> Void
     ) async throws {
         let fileStream = FileStream(fileHandle: try FileHandle(forReadingFrom: path))
-        let stream = ObservableStream(fileStream)
+        let stream = makeStream(fileStream)
 
         let progressTask = Task {
             for await progress in stream.readProgress {

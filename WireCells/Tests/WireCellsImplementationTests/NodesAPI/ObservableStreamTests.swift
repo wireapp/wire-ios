@@ -16,20 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Testing
 import Foundation
 import SmithyStreams
+import Testing
 
 @testable import WireCellsImplementation
 
 final class ObservableStreamTests {
 
-    private let fileURL = URL.temporaryDirectory.appendingPathComponent("\(UUID().uuidString).txt")
+    private let fileURL = URL.temporaryDirectory.appendingPathComponent(UUID().uuidString)
     private let fileHandle: FileHandle
     private let sut: ObservableStream
 
-    init() throws{
-        let data = "12345".data(using: .utf8)!
+    init() throws {
+        let data = Data(repeating: 0, count: 5)
         try data.write(to: fileURL)
 
         self.fileHandle = try FileHandle(forReadingFrom: fileURL)
@@ -40,7 +40,8 @@ final class ObservableStreamTests {
         try? FileManager.default.removeItem(at: fileURL)
     }
 
-    @Test func readUpToCount() async throws {
+    @Test
+    func readUpToCount() async throws {
         // Given
         let progressesTask = Task { [sut] in
             var progresses: [Int] = []
@@ -59,7 +60,8 @@ final class ObservableStreamTests {
         #expect(await progressesTask.value == [2, 4, 5])
     }
 
-    @Test func readAsyncUpToCount() async throws {
+    @Test
+    func readAsyncUpToCount() async throws {
         // Given
         let progressesTask = Task { [sut] in
             var progresses: [Int] = []
@@ -78,7 +80,8 @@ final class ObservableStreamTests {
         #expect(await progressesTask.value == [2, 4, 5])
     }
 
-    @Test func readToEnd() async throws {
+    @Test
+    func readToEnd() async throws {
         // Given
         let progressesTask = Task { [sut] in
             var progresses: [Int] = []
@@ -96,7 +99,8 @@ final class ObservableStreamTests {
         #expect(await progressesTask.value == [2, 5])
     }
 
-    @Test func readToEndAsync() async throws {
+    @Test
+    func readToEndAsync() async throws {
         // Given
         let progressesTask = Task { [sut] in
             var progresses: [Int] = []
