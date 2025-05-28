@@ -88,7 +88,7 @@ package struct LoginViaEmailView: View {
             }
         )
         .sheet(isPresented: $viewModel.isCreateAccountPresented) {
-            AccountTypeSelectorView()
+            AccountTypeSelectionView()
         }
         .navigationDestination(for: LoginViaEmailDestination.self) { destination in
             destinationView(destination)

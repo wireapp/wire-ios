@@ -19,7 +19,7 @@
 import SwiftUI
 import WireDesign
 
-struct AccountTypeSelectorView: View {
+struct AccountTypeSelectionView: View {
 
     @Environment(\.dismiss) private var dismiss
 
@@ -65,7 +65,7 @@ struct AccountTypeSelectorView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(background)
         .padding(.horizontal, 24)
-        .padding(.vertical, 16)
+        .padding(.top, 16)
     }
 
     @ViewBuilder
@@ -82,29 +82,18 @@ struct AccountTypeSelectorView: View {
     private var teamAccountFeatures: some View {
         VStack(spacing: 12) {
             Divider()
-            teamAccountFeature(L10n.AccountTypeSelector.OptionTeam.feature0)
+            FeatureView(L10n.AccountTypeSelector.OptionTeam.feature0)
             Divider()
-            teamAccountFeature(L10n.AccountTypeSelector.OptionTeam.feature1)
+            FeatureView(L10n.AccountTypeSelector.OptionTeam.feature1)
             Divider()
         }
         .padding(.horizontal, 16)
     }
 
     @ViewBuilder
-    private func teamAccountFeature(_ content: String) -> some View {
-        HStack(alignment: .top, spacing: 8) {
-            Image(.circleCheck)
-                .foregroundStyle(ColorTheme.Base.positive.color)
-                .padding(.vertical, 4)
-            Text(content)
-            Spacer()
-        }
-    }
-
-    @ViewBuilder
     private var teamAccountButton: some View {
         Button(L10n.AccountTypeSelector.OptionTeam.button) {
-            print("[WPB-17453]") // TODO: [WPB-17453] implement flow
+            print("[WPB-17525]") // TODO: [WPB-17525] implement flow
         }
         .wireButtonStyle(.primary)
         .bold()
@@ -126,7 +115,7 @@ struct AccountTypeSelectorView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(background)
         .padding(.horizontal, 24)
-        .padding(.vertical, 16)
+        .padding(.bottom, 16)
     }
 
     @ViewBuilder
@@ -143,23 +132,12 @@ struct AccountTypeSelectorView: View {
     private var personalAccountFeatures: some View {
         VStack(spacing: 12) {
             Divider()
-            personalAccountFeature(L10n.AccountTypeSelector.OptionPersonal.feature0)
+            FeatureView(L10n.AccountTypeSelector.OptionPersonal.feature0)
             Divider()
-            personalAccountFeature(L10n.AccountTypeSelector.OptionPersonal.feature1)
+            FeatureView(L10n.AccountTypeSelector.OptionPersonal.feature1)
             Divider()
         }
         .padding(.horizontal, 16)
-    }
-
-    @ViewBuilder
-    private func personalAccountFeature(_ content: String) -> some View {
-        HStack(alignment: .top, spacing: 8) {
-            Image(.circleCheck)
-                .foregroundStyle(ColorTheme.Base.positive.color)
-                .padding(.vertical, 4)
-            Text(content)
-            Spacer()
-        }
     }
 
     @ViewBuilder
@@ -171,11 +149,38 @@ struct AccountTypeSelectorView: View {
         .bold()
     }
 
+    // MARK: -
+
+    private struct FeatureView: View {
+
+        var content: String
+
+        init(_ content: String) {
+            self.content = content
+        }
+
+        var body: some View {
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                ZStack {
+                    Text(verbatim: "o") // used to vertically align the image for large font sizes
+                        .hidden()
+                        .accessibilityHidden(true)
+                    Image(.circleCheck)
+                        .foregroundStyle(ColorTheme.Base.positive.color)
+                }
+                Text(content)
+                Spacer()
+            }
+        }
+    }
+
 }
+
+// MARK: -
 
 #Preview {
     Spacer()
         .sheet(isPresented: .constant(true)) {
-            AccountTypeSelectorView()
+            AccountTypeSelectionView()
         }
 }
