@@ -22,6 +22,7 @@ import WireDesign
 struct AccountTypeSelectionView: View {
 
     @Environment(\.dismiss) private var dismiss
+    @State private var showSafari = false
 
     private typealias Strings = L10n.Localizable.AccountTypeSelector
     private typealias Labels = L10n.Accessibility.AccountTypeSelector
@@ -30,6 +31,10 @@ struct AccountTypeSelectionView: View {
         NavigationStack {
             ScrollView {
                 scrollViewContent
+            }
+            .sheet(isPresented: $showSafari) {
+                SFSafariView(url: URL(string: "https://www.apple.com")!)
+                    .ignoresSafeArea()
             }
             .scrollBounceBehavior(.basedOnSize)
             .navigationTitle(Strings.title)
@@ -90,6 +95,7 @@ struct AccountTypeSelectionView: View {
 
     @ViewBuilder private var teamAccountButton: some View {
         Button(Strings.OptionTeam.button) {
+            showSafari = true
             print("[WPB-17525]") // TODO: [WPB-17525] implement flow
         }
         .wireButtonStyle(.primary)
