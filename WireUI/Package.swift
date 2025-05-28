@@ -55,7 +55,7 @@ let package = Package(
 
         .target(name: "WireFolderPickerUI", dependencies: ["WireReusableUIComponents"]),
 
-        .target(name: "WireMultiBackendUI", dependencies: ["WireDesign"]),
+        .target(name: "WireMultiBackendUI", dependencies: ["WireDesign", "WireAccountImageUI"]),
 
         .testTarget(name: "WireMultiBackendUITests", dependencies: ["WireMultiBackendUI"]),
 

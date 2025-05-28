@@ -43,43 +43,18 @@ struct AccountSwitcherView: View {
     AccountSwitcherView(
         accounts: [
             AccountUIModel(
+                avatarSource: .image(.strokedCheckmark),
                 name: "Kim Dawson",
                 handle: "@username",
                 teamName: nil,
-                backendName: nil,
-                imageName: nil
+                backendName: nil
             ),
             AccountUIModel(
+                avatarSource: .text("DS"),
                 name: "Deniz Agha",
                 handle: "@username",
                 teamName: "team name",
-                backendName: "backend name",
-                imageName: nil
-            ),
-        ],
-        options: [
-            Option(icon: .plus, text: "Add account or team", actionImage: nil),
-            Option(icon: .manage, text: "Manage Team & Billing", actionImage: .manage)
-        ]
-    )
-}
-
-#Preview {
-    AccountSwitcherView(
-        accounts: [
-            AccountUIModel(
-                name: "Kim Dawson",
-                handle: "@username",
-                teamName: nil,
-                backendName: nil,
-                imageName: nil
-            ),
-            AccountUIModel(
-                name: "Deniz Agha",
-                handle: "@username",
-                teamName: "team name",
-                backendName: "backend name",
-                imageName: nil
+                backendName: "backend name"
             ),
         ],
         options: [

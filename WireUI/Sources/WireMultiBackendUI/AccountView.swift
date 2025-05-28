@@ -18,15 +18,15 @@
 
 import SwiftUI
 import WireDesign
+import WireAccountImageUI
 
 struct AccountUIModel: Identifiable {
     let id = UUID()
-
+    let avatarSource: AccountImageSource
     let name: String
     let handle: String
     let teamName: String?
     let backendName: String?
-    let imageName: String? // name of asset in Assets.xcassets
 }
 
 struct AccountView: View {
@@ -34,12 +34,13 @@ struct AccountView: View {
     let account: AccountUIModel
     
     var body: some View {
-        HStack {
-            Image(account.imageName ?? "")
-                .resizable()
-                .scaledToFill()
-                .frame(width: 40, height: 40)
-                .clipShape(Circle())
+        HStack(spacing: 22) {
+            
+            AccountImageViewRepresentable(
+                source: account.avatarSource,
+                availability: nil,
+                showNotificationsBadge: false
+            ).frame(width: 28, height: 28)
             
             VStack(alignment: .leading, spacing: 2) {
                 
@@ -77,13 +78,25 @@ struct DotSeparatedTextView: View {
 }
 
 #Preview {
-    AccountView(
-        account: AccountUIModel(
-            name: "Deniz Agha",
-            handle: "@username",
-            teamName: "team name",
-            backendName: "backend name",
-            imageName: nil
+    List {
+        AccountView(
+            account: AccountUIModel(
+                avatarSource: .image(.close),
+                name: "Deniz Agha",
+                handle: "@username",
+                teamName: "team name",
+                backendName: "backend name"
+            )
         )
-    )
+        AccountView(
+            account: AccountUIModel(
+                avatarSource: .text("DS"),
+                name: "Deniz Agha",
+                handle: "@username",
+                teamName: "team name",
+                backendName: "backend name long long long long long "
+            )
+        )
+
+    }
 }

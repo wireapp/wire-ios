@@ -42,21 +42,21 @@ struct OptionView: View {
     let option: Option
     
     var body: some View {
-        HStack {
-            Label {
-                Text(option.text)
-                    .font(FontSpec.bodyTwoSemibold.swiftUIFont)
-                    .foregroundStyle(Color(SemanticColors.Label.textDefault))
+        HStack(spacing: 19) {
+            HStack() {
+                image(option.icon)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 16, height: 16)
+                Spacer()
+            }.frame(width: 28, height: 28)
+                .padding(.leading, 3)
+            
+            Text(option.text)
+                .font(FontSpec.bodyTwoSemibold.swiftUIFont)
+                .foregroundStyle(Color(SemanticColors.Label.textDefault))
 
-            } icon: {
-                switch option.icon {
-                case .plus:
-                    Image(.plus)
-                case .manage:
-                    Image(.manageTeam)
-                }
-            }
-
+            
             Spacer()
             switch option.actionImage {
             case .manage:
@@ -70,8 +70,21 @@ struct OptionView: View {
             // Handle external link
         }
     }
+    
+    func image(_ icon: Option.Icon) -> Image {
+        switch option.icon {
+        case .plus:
+            Image(.plus)
+        case .manage:
+            Image(.manageTeam)
+        }
+    }
+    
+    
 }
 
 #Preview {
-    OptionView(option: Option(icon: .manage, text: "Manage Team & Billing", actionImage: .manage))
+    List {
+        OptionView(option: Option(icon: .manage, text: "Manage Team & Billing", actionImage: .manage))
+    }
 }
