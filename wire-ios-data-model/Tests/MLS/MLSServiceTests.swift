@@ -269,19 +269,18 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let subconversationType = SubgroupType.conference
         let mockResult = MLSDecryptResult.message(.random(), .randomAlphanumerical(length: 3))
 
-        mockDecryptionService.decryptMessageForSubconversationTypeContext_MockValue = [mockResult]
+        mockDecryptionService.decryptMessageForSubconversationType_MockValue = [mockResult]
 
         // When
         let results = try await sut.decrypt(
             message: message,
             for: groupID,
-            subconversationType: subconversationType,
-            context: nil
+            subconversationType: subconversationType
         )
 
         // Then
-        XCTAssertEqual(mockDecryptionService.decryptMessageForSubconversationTypeContext_Invocations.count, 1)
-        let invocation = mockDecryptionService.decryptMessageForSubconversationTypeContext_Invocations.first
+        XCTAssertEqual(mockDecryptionService.decryptMessageForSubconversationType_Invocations.count, 1)
+        let invocation = mockDecryptionService.decryptMessageForSubconversationType_Invocations.first
         XCTAssertEqual(invocation?.message, message)
         XCTAssertEqual(invocation?.groupID, groupID)
         XCTAssertEqual(invocation?.subconversationType, subconversationType)
@@ -297,19 +296,18 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let subconversationType = SubgroupType.conference
 
         let mockResult = MLSDecryptResult.message(.random(), .randomAlphanumerical(length: 3))
-        mockDecryptionService.decryptMessageForSubconversationTypeContext_MockValue = [mockResult]
+        mockDecryptionService.decryptMessageForSubconversationType_MockValue = [mockResult]
 
         // When
         let results = try await sut.decrypt(
             message: message,
             for: groupID,
-            subconversationType: subconversationType,
-            context: nil
+            subconversationType: subconversationType
         )
 
         // Then
-        XCTAssertEqual(mockDecryptionService.decryptMessageForSubconversationTypeContext_Invocations.count, 1)
-        let invocation = mockDecryptionService.decryptMessageForSubconversationTypeContext_Invocations.first
+        XCTAssertEqual(mockDecryptionService.decryptMessageForSubconversationType_Invocations.count, 1)
+        let invocation = mockDecryptionService.decryptMessageForSubconversationType_Invocations.first
         XCTAssertEqual(invocation?.message, message)
         XCTAssertEqual(invocation?.groupID, groupID)
         XCTAssertEqual(invocation?.subconversationType, subconversationType)
@@ -325,7 +323,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
         let message = "foo"
         let error = MLSDecryptionService.MLSMessageDecryptionError.wrongEpoch
-        mockDecryptionService.decryptMessageForSubconversationTypeContext_MockError = error
+        mockDecryptionService.decryptMessageForSubconversationType_MockError = error
         mockSyncDelegate.recoverWithIncrementalSync_MockMethod = {}
 
         let expectation = XCTestExpectation(description: "repaired conversation")
@@ -344,8 +342,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         _ = try? await sut.decrypt(
             message: message,
             for: groupID,
-            subconversationType: nil,
-            context: nil
+            subconversationType: nil
         )
 
         // Then

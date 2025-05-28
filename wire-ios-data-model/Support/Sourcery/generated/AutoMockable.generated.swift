@@ -426,12 +426,12 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
 
     // MARK: - clientKeypackages
 
-    public var clientKeypackagesCiphersuiteCredentialTypeAmountRequested_Invocations: [(ciphersuite: WireCoreCryptoUniffi.Ciphersuite, credentialType: WireCoreCryptoUniffi.MlsCredentialType, amountRequested: UInt32)] = []
+    public var clientKeypackagesCiphersuiteCredentialTypeAmountRequested_Invocations: [(ciphersuite: WireCoreCryptoUniffi.Ciphersuite, credentialType: WireCoreCryptoUniffi.CredentialType, amountRequested: UInt32)] = []
     public var clientKeypackagesCiphersuiteCredentialTypeAmountRequested_MockError: Error?
-    public var clientKeypackagesCiphersuiteCredentialTypeAmountRequested_MockMethod: ((WireCoreCryptoUniffi.Ciphersuite, WireCoreCryptoUniffi.MlsCredentialType, UInt32) async throws -> [Data])?
+    public var clientKeypackagesCiphersuiteCredentialTypeAmountRequested_MockMethod: ((WireCoreCryptoUniffi.Ciphersuite, WireCoreCryptoUniffi.CredentialType, UInt32) async throws -> [Data])?
     public var clientKeypackagesCiphersuiteCredentialTypeAmountRequested_MockValue: [Data]?
 
-    public func clientKeypackages(ciphersuite: WireCoreCryptoUniffi.Ciphersuite, credentialType: WireCoreCryptoUniffi.MlsCredentialType, amountRequested: UInt32) async throws -> [Data] {
+    public func clientKeypackages(ciphersuite: WireCoreCryptoUniffi.Ciphersuite, credentialType: WireCoreCryptoUniffi.CredentialType, amountRequested: UInt32) async throws -> [Data] {
         clientKeypackagesCiphersuiteCredentialTypeAmountRequested_Invocations.append((ciphersuite: ciphersuite, credentialType: credentialType, amountRequested: amountRequested))
 
         if let error = clientKeypackagesCiphersuiteCredentialTypeAmountRequested_MockError {
@@ -449,12 +449,12 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
 
     // MARK: - clientPublicKey
 
-    public var clientPublicKeyCiphersuiteCredentialType_Invocations: [(ciphersuite: WireCoreCryptoUniffi.Ciphersuite, credentialType: WireCoreCryptoUniffi.MlsCredentialType)] = []
+    public var clientPublicKeyCiphersuiteCredentialType_Invocations: [(ciphersuite: WireCoreCryptoUniffi.Ciphersuite, credentialType: WireCoreCryptoUniffi.CredentialType)] = []
     public var clientPublicKeyCiphersuiteCredentialType_MockError: Error?
-    public var clientPublicKeyCiphersuiteCredentialType_MockMethod: ((WireCoreCryptoUniffi.Ciphersuite, WireCoreCryptoUniffi.MlsCredentialType) async throws -> Data)?
+    public var clientPublicKeyCiphersuiteCredentialType_MockMethod: ((WireCoreCryptoUniffi.Ciphersuite, WireCoreCryptoUniffi.CredentialType) async throws -> Data)?
     public var clientPublicKeyCiphersuiteCredentialType_MockValue: Data?
 
-    public func clientPublicKey(ciphersuite: WireCoreCryptoUniffi.Ciphersuite, credentialType: WireCoreCryptoUniffi.MlsCredentialType) async throws -> Data {
+    public func clientPublicKey(ciphersuite: WireCoreCryptoUniffi.Ciphersuite, credentialType: WireCoreCryptoUniffi.CredentialType) async throws -> Data {
         clientPublicKeyCiphersuiteCredentialType_Invocations.append((ciphersuite: ciphersuite, credentialType: credentialType))
 
         if let error = clientPublicKeyCiphersuiteCredentialType_MockError {
@@ -472,12 +472,12 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
 
     // MARK: - clientValidKeypackagesCount
 
-    public var clientValidKeypackagesCountCiphersuiteCredentialType_Invocations: [(ciphersuite: WireCoreCryptoUniffi.Ciphersuite, credentialType: WireCoreCryptoUniffi.MlsCredentialType)] = []
+    public var clientValidKeypackagesCountCiphersuiteCredentialType_Invocations: [(ciphersuite: WireCoreCryptoUniffi.Ciphersuite, credentialType: WireCoreCryptoUniffi.CredentialType)] = []
     public var clientValidKeypackagesCountCiphersuiteCredentialType_MockError: Error?
-    public var clientValidKeypackagesCountCiphersuiteCredentialType_MockMethod: ((WireCoreCryptoUniffi.Ciphersuite, WireCoreCryptoUniffi.MlsCredentialType) async throws -> UInt64)?
+    public var clientValidKeypackagesCountCiphersuiteCredentialType_MockMethod: ((WireCoreCryptoUniffi.Ciphersuite, WireCoreCryptoUniffi.CredentialType) async throws -> UInt64)?
     public var clientValidKeypackagesCountCiphersuiteCredentialType_MockValue: UInt64?
 
-    public func clientValidKeypackagesCount(ciphersuite: WireCoreCryptoUniffi.Ciphersuite, credentialType: WireCoreCryptoUniffi.MlsCredentialType) async throws -> UInt64 {
+    public func clientValidKeypackagesCount(ciphersuite: WireCoreCryptoUniffi.Ciphersuite, credentialType: WireCoreCryptoUniffi.CredentialType) async throws -> UInt64 {
         clientValidKeypackagesCountCiphersuiteCredentialType_Invocations.append((ciphersuite: ciphersuite, credentialType: credentialType))
 
         if let error = clientValidKeypackagesCountCiphersuiteCredentialType_MockError {
@@ -584,11 +584,11 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
 
     // MARK: - createConversation
 
-    public var createConversationConversationIdCreatorCredentialTypeConfig_Invocations: [(conversationId: Data, creatorCredentialType: WireCoreCryptoUniffi.MlsCredentialType, config: WireCoreCryptoUniffi.ConversationConfiguration)] = []
+    public var createConversationConversationIdCreatorCredentialTypeConfig_Invocations: [(conversationId: Data, creatorCredentialType: WireCoreCryptoUniffi.CredentialType, config: WireCoreCryptoUniffi.ConversationConfiguration)] = []
     public var createConversationConversationIdCreatorCredentialTypeConfig_MockError: Error?
-    public var createConversationConversationIdCreatorCredentialTypeConfig_MockMethod: ((Data, WireCoreCryptoUniffi.MlsCredentialType, WireCoreCryptoUniffi.ConversationConfiguration) async throws -> Void)?
+    public var createConversationConversationIdCreatorCredentialTypeConfig_MockMethod: ((Data, WireCoreCryptoUniffi.CredentialType, WireCoreCryptoUniffi.ConversationConfiguration) async throws -> Void)?
 
-    public func createConversation(conversationId: Data, creatorCredentialType: WireCoreCryptoUniffi.MlsCredentialType, config: WireCoreCryptoUniffi.ConversationConfiguration) async throws {
+    public func createConversation(conversationId: Data, creatorCredentialType: WireCoreCryptoUniffi.CredentialType, config: WireCoreCryptoUniffi.ConversationConfiguration) async throws {
         createConversationConversationIdCreatorCredentialTypeConfig_Invocations.append((conversationId: conversationId, creatorCredentialType: creatorCredentialType, config: config))
 
         if let error = createConversationConversationIdCreatorCredentialTypeConfig_MockError {
@@ -1052,12 +1052,12 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
 
     // MARK: - getCredentialInUse
 
-    public var getCredentialInUseGroupInfoCredentialType_Invocations: [(groupInfo: Data, credentialType: WireCoreCryptoUniffi.MlsCredentialType)] = []
+    public var getCredentialInUseGroupInfoCredentialType_Invocations: [(groupInfo: Data, credentialType: WireCoreCryptoUniffi.CredentialType)] = []
     public var getCredentialInUseGroupInfoCredentialType_MockError: Error?
-    public var getCredentialInUseGroupInfoCredentialType_MockMethod: ((Data, WireCoreCryptoUniffi.MlsCredentialType) async throws -> WireCoreCryptoUniffi.E2eiConversationState)?
+    public var getCredentialInUseGroupInfoCredentialType_MockMethod: ((Data, WireCoreCryptoUniffi.CredentialType) async throws -> WireCoreCryptoUniffi.E2eiConversationState)?
     public var getCredentialInUseGroupInfoCredentialType_MockValue: WireCoreCryptoUniffi.E2eiConversationState?
 
-    public func getCredentialInUse(groupInfo: Data, credentialType: WireCoreCryptoUniffi.MlsCredentialType) async throws -> WireCoreCryptoUniffi.E2eiConversationState {
+    public func getCredentialInUse(groupInfo: Data, credentialType: WireCoreCryptoUniffi.CredentialType) async throws -> WireCoreCryptoUniffi.E2eiConversationState {
         getCredentialInUseGroupInfoCredentialType_Invocations.append((groupInfo: groupInfo, credentialType: credentialType))
 
         if let error = getCredentialInUseGroupInfoCredentialType_MockError {
@@ -1167,12 +1167,12 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
 
     // MARK: - joinByExternalCommit
 
-    public var joinByExternalCommitGroupInfoCustomConfigurationCredentialType_Invocations: [(groupInfo: Data, customConfiguration: WireCoreCryptoUniffi.CustomConfiguration, credentialType: WireCoreCryptoUniffi.MlsCredentialType)] = []
+    public var joinByExternalCommitGroupInfoCustomConfigurationCredentialType_Invocations: [(groupInfo: Data, customConfiguration: WireCoreCryptoUniffi.CustomConfiguration, credentialType: WireCoreCryptoUniffi.CredentialType)] = []
     public var joinByExternalCommitGroupInfoCustomConfigurationCredentialType_MockError: Error?
-    public var joinByExternalCommitGroupInfoCustomConfigurationCredentialType_MockMethod: ((Data, WireCoreCryptoUniffi.CustomConfiguration, WireCoreCryptoUniffi.MlsCredentialType) async throws -> WireCoreCryptoUniffi.WelcomeBundle)?
+    public var joinByExternalCommitGroupInfoCustomConfigurationCredentialType_MockMethod: ((Data, WireCoreCryptoUniffi.CustomConfiguration, WireCoreCryptoUniffi.CredentialType) async throws -> WireCoreCryptoUniffi.WelcomeBundle)?
     public var joinByExternalCommitGroupInfoCustomConfigurationCredentialType_MockValue: WireCoreCryptoUniffi.WelcomeBundle?
 
-    public func joinByExternalCommit(groupInfo: Data, customConfiguration: WireCoreCryptoUniffi.CustomConfiguration, credentialType: WireCoreCryptoUniffi.MlsCredentialType) async throws -> WireCoreCryptoUniffi.WelcomeBundle {
+    public func joinByExternalCommit(groupInfo: Data, customConfiguration: WireCoreCryptoUniffi.CustomConfiguration, credentialType: WireCoreCryptoUniffi.CredentialType) async throws -> WireCoreCryptoUniffi.WelcomeBundle {
         joinByExternalCommitGroupInfoCustomConfigurationCredentialType_Invocations.append((groupInfo: groupInfo, customConfiguration: customConfiguration, credentialType: credentialType))
 
         if let error = joinByExternalCommitGroupInfoCustomConfigurationCredentialType_MockError {
@@ -1713,6 +1713,29 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
         try await mock(sessionId)
     }
 
+    // MARK: - randomBytes
+
+    public var randomBytesLen_Invocations: [UInt32] = []
+    public var randomBytesLen_MockError: Error?
+    public var randomBytesLen_MockMethod: ((UInt32) async throws -> Data)?
+    public var randomBytesLen_MockValue: Data?
+
+    public func randomBytes(len: UInt32) async throws -> Data {
+        randomBytesLen_Invocations.append(len)
+
+        if let error = randomBytesLen_MockError {
+            throw error
+        }
+
+        if let mock = randomBytesLen_MockMethod {
+            return try await mock(len)
+        } else if let mock = randomBytesLen_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `randomBytesLen`")
+        }
+    }
+
     // MARK: - removeClientsFromConversation
 
     public var removeClientsFromConversationConversationIdClients_Invocations: [(conversationId: Data, clients: [WireCoreCryptoUniffi.ClientId])] = []
@@ -1814,6 +1837,59 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol {
         }
 
         try await mock(conversationId)
+    }
+
+}
+
+public class MockCoreCryptoKeyMigrationManagerProtocol: CoreCryptoKeyMigrationManagerProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - isMigrationNeeded
+
+    public var isMigrationNeeded: Bool {
+        get { return underlyingIsMigrationNeeded }
+        set(value) { underlyingIsMigrationNeeded = value }
+    }
+
+    public var underlyingIsMigrationNeeded: Bool!
+
+
+    // MARK: - performMigrationIfNeeded
+
+    public var performMigrationIfNeededPathOldKeyNewKey_Invocations: [(path: String, oldKey: String, newKey: Data)] = []
+    public var performMigrationIfNeededPathOldKeyNewKey_MockError: Error?
+    public var performMigrationIfNeededPathOldKeyNewKey_MockMethod: ((String, String, Data) async throws -> Void)?
+
+    public func performMigrationIfNeeded(path: String, oldKey: String, newKey: Data) async throws {
+        performMigrationIfNeededPathOldKeyNewKey_Invocations.append((path: path, oldKey: oldKey, newKey: newKey))
+
+        if let error = performMigrationIfNeededPathOldKeyNewKey_MockError {
+            throw error
+        }
+
+        guard let mock = performMigrationIfNeededPathOldKeyNewKey_MockMethod else {
+            fatalError("no mock for `performMigrationIfNeededPathOldKeyNewKey`")
+        }
+
+        try await mock(path, oldKey, newKey)
+    }
+
+    // MARK: - markMigrationAsSkipped
+
+    public var markMigrationAsSkipped_Invocations: [Void] = []
+    public var markMigrationAsSkipped_MockMethod: (() -> Void)?
+
+    public func markMigrationAsSkipped() {
+        markMigrationAsSkipped_Invocations.append(())
+
+        guard let mock = markMigrationAsSkipped_MockMethod else {
+            fatalError("no mock for `markMigrationAsSkipped`")
+        }
+
+        mock()
     }
 
 }
@@ -3917,47 +3993,47 @@ public class MockMLSDecryptionServiceInterface: MLSDecryptionServiceInterface {
 
     // MARK: - decrypt
 
-    public var decryptMessageForSubconversationTypeContext_Invocations: [(message: String, groupID: MLSGroupID, subconversationType: SubgroupType?, context: CoreCryptoContextProtocol?)] = []
-    public var decryptMessageForSubconversationTypeContext_MockError: Error?
-    public var decryptMessageForSubconversationTypeContext_MockMethod: ((String, MLSGroupID, SubgroupType?, CoreCryptoContextProtocol?) async throws -> [MLSDecryptResult])?
-    public var decryptMessageForSubconversationTypeContext_MockValue: [MLSDecryptResult]?
+    public var decryptMessageForSubconversationType_Invocations: [(message: String, groupID: MLSGroupID, subconversationType: SubgroupType?)] = []
+    public var decryptMessageForSubconversationType_MockError: Error?
+    public var decryptMessageForSubconversationType_MockMethod: ((String, MLSGroupID, SubgroupType?) async throws -> [MLSDecryptResult])?
+    public var decryptMessageForSubconversationType_MockValue: [MLSDecryptResult]?
 
-    public func decrypt(message: String, for groupID: MLSGroupID, subconversationType: SubgroupType?, context: CoreCryptoContextProtocol?) async throws -> [MLSDecryptResult] {
-        decryptMessageForSubconversationTypeContext_Invocations.append((message: message, groupID: groupID, subconversationType: subconversationType, context: context))
+    public func decrypt(message: String, for groupID: MLSGroupID, subconversationType: SubgroupType?) async throws -> [MLSDecryptResult] {
+        decryptMessageForSubconversationType_Invocations.append((message: message, groupID: groupID, subconversationType: subconversationType))
 
-        if let error = decryptMessageForSubconversationTypeContext_MockError {
+        if let error = decryptMessageForSubconversationType_MockError {
             throw error
         }
 
-        if let mock = decryptMessageForSubconversationTypeContext_MockMethod {
-            return try await mock(message, groupID, subconversationType, context)
-        } else if let mock = decryptMessageForSubconversationTypeContext_MockValue {
+        if let mock = decryptMessageForSubconversationType_MockMethod {
+            return try await mock(message, groupID, subconversationType)
+        } else if let mock = decryptMessageForSubconversationType_MockValue {
             return mock
         } else {
-            fatalError("no mock for `decryptMessageForSubconversationTypeContext`")
+            fatalError("no mock for `decryptMessageForSubconversationType`")
         }
     }
 
     // MARK: - processWelcomeMessage
 
-    public var processWelcomeMessageWelcomeMessageContext_Invocations: [(welcomeMessage: String, context: CoreCryptoContextProtocol?)] = []
-    public var processWelcomeMessageWelcomeMessageContext_MockError: Error?
-    public var processWelcomeMessageWelcomeMessageContext_MockMethod: ((String, CoreCryptoContextProtocol?) async throws -> MLSGroupID)?
-    public var processWelcomeMessageWelcomeMessageContext_MockValue: MLSGroupID?
+    public var processWelcomeMessageWelcomeMessage_Invocations: [String] = []
+    public var processWelcomeMessageWelcomeMessage_MockError: Error?
+    public var processWelcomeMessageWelcomeMessage_MockMethod: ((String) async throws -> MLSGroupID)?
+    public var processWelcomeMessageWelcomeMessage_MockValue: MLSGroupID?
 
-    public func processWelcomeMessage(welcomeMessage: String, context: CoreCryptoContextProtocol?) async throws -> MLSGroupID {
-        processWelcomeMessageWelcomeMessageContext_Invocations.append((welcomeMessage: welcomeMessage, context: context))
+    public func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID {
+        processWelcomeMessageWelcomeMessage_Invocations.append(welcomeMessage)
 
-        if let error = processWelcomeMessageWelcomeMessageContext_MockError {
+        if let error = processWelcomeMessageWelcomeMessage_MockError {
             throw error
         }
 
-        if let mock = processWelcomeMessageWelcomeMessageContext_MockMethod {
-            return try await mock(welcomeMessage, context)
-        } else if let mock = processWelcomeMessageWelcomeMessageContext_MockValue {
+        if let mock = processWelcomeMessageWelcomeMessage_MockMethod {
+            return try await mock(welcomeMessage)
+        } else if let mock = processWelcomeMessageWelcomeMessage_MockValue {
             return mock
         } else {
-            fatalError("no mock for `processWelcomeMessageWelcomeMessageContext`")
+            fatalError("no mock for `processWelcomeMessageWelcomeMessage`")
         }
     }
 
@@ -4646,47 +4722,47 @@ public class MockMLSServiceInterface: MLSServiceInterface {
 
     // MARK: - decrypt
 
-    public var decryptMessageForSubconversationTypeContext_Invocations: [(message: String, groupID: MLSGroupID, subconversationType: SubgroupType?, context: CoreCryptoContextProtocol?)] = []
-    public var decryptMessageForSubconversationTypeContext_MockError: Error?
-    public var decryptMessageForSubconversationTypeContext_MockMethod: ((String, MLSGroupID, SubgroupType?, CoreCryptoContextProtocol?) async throws -> [MLSDecryptResult])?
-    public var decryptMessageForSubconversationTypeContext_MockValue: [MLSDecryptResult]?
+    public var decryptMessageForSubconversationType_Invocations: [(message: String, groupID: MLSGroupID, subconversationType: SubgroupType?)] = []
+    public var decryptMessageForSubconversationType_MockError: Error?
+    public var decryptMessageForSubconversationType_MockMethod: ((String, MLSGroupID, SubgroupType?) async throws -> [MLSDecryptResult])?
+    public var decryptMessageForSubconversationType_MockValue: [MLSDecryptResult]?
 
-    public func decrypt(message: String, for groupID: MLSGroupID, subconversationType: SubgroupType?, context: CoreCryptoContextProtocol?) async throws -> [MLSDecryptResult] {
-        decryptMessageForSubconversationTypeContext_Invocations.append((message: message, groupID: groupID, subconversationType: subconversationType, context: context))
+    public func decrypt(message: String, for groupID: MLSGroupID, subconversationType: SubgroupType?) async throws -> [MLSDecryptResult] {
+        decryptMessageForSubconversationType_Invocations.append((message: message, groupID: groupID, subconversationType: subconversationType))
 
-        if let error = decryptMessageForSubconversationTypeContext_MockError {
+        if let error = decryptMessageForSubconversationType_MockError {
             throw error
         }
 
-        if let mock = decryptMessageForSubconversationTypeContext_MockMethod {
-            return try await mock(message, groupID, subconversationType, context)
-        } else if let mock = decryptMessageForSubconversationTypeContext_MockValue {
+        if let mock = decryptMessageForSubconversationType_MockMethod {
+            return try await mock(message, groupID, subconversationType)
+        } else if let mock = decryptMessageForSubconversationType_MockValue {
             return mock
         } else {
-            fatalError("no mock for `decryptMessageForSubconversationTypeContext`")
+            fatalError("no mock for `decryptMessageForSubconversationType`")
         }
     }
 
     // MARK: - processWelcomeMessage
 
-    public var processWelcomeMessageWelcomeMessageContext_Invocations: [(welcomeMessage: String, context: CoreCryptoContextProtocol?)] = []
-    public var processWelcomeMessageWelcomeMessageContext_MockError: Error?
-    public var processWelcomeMessageWelcomeMessageContext_MockMethod: ((String, CoreCryptoContextProtocol?) async throws -> MLSGroupID)?
-    public var processWelcomeMessageWelcomeMessageContext_MockValue: MLSGroupID?
+    public var processWelcomeMessageWelcomeMessage_Invocations: [String] = []
+    public var processWelcomeMessageWelcomeMessage_MockError: Error?
+    public var processWelcomeMessageWelcomeMessage_MockMethod: ((String) async throws -> MLSGroupID)?
+    public var processWelcomeMessageWelcomeMessage_MockValue: MLSGroupID?
 
-    public func processWelcomeMessage(welcomeMessage: String, context: CoreCryptoContextProtocol?) async throws -> MLSGroupID {
-        processWelcomeMessageWelcomeMessageContext_Invocations.append((welcomeMessage: welcomeMessage, context: context))
+    public func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID {
+        processWelcomeMessageWelcomeMessage_Invocations.append(welcomeMessage)
 
-        if let error = processWelcomeMessageWelcomeMessageContext_MockError {
+        if let error = processWelcomeMessageWelcomeMessage_MockError {
             throw error
         }
 
-        if let mock = processWelcomeMessageWelcomeMessageContext_MockMethod {
-            return try await mock(welcomeMessage, context)
-        } else if let mock = processWelcomeMessageWelcomeMessageContext_MockValue {
+        if let mock = processWelcomeMessageWelcomeMessage_MockMethod {
+            return try await mock(welcomeMessage)
+        } else if let mock = processWelcomeMessageWelcomeMessage_MockValue {
             return mock
         } else {
-            fatalError("no mock for `processWelcomeMessageWelcomeMessageContext`")
+            fatalError("no mock for `processWelcomeMessageWelcomeMessage`")
         }
     }
 
@@ -4995,24 +5071,24 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
 
     // MARK: - decrypt
 
-    public var decryptDataForSessionContext_Invocations: [(data: Data, id: ProteusSessionID, context: CoreCryptoContextProtocol?)] = []
-    public var decryptDataForSessionContext_MockError: Error?
-    public var decryptDataForSessionContext_MockMethod: ((Data, ProteusSessionID, CoreCryptoContextProtocol?) async throws -> (didCreateNewSession: Bool, decryptedData: Data))?
-    public var decryptDataForSessionContext_MockValue: (didCreateNewSession: Bool, decryptedData: Data)?
+    public var decryptDataForSession_Invocations: [(data: Data, id: ProteusSessionID)] = []
+    public var decryptDataForSession_MockError: Error?
+    public var decryptDataForSession_MockMethod: ((Data, ProteusSessionID) async throws -> (didCreateNewSession: Bool, decryptedData: Data))?
+    public var decryptDataForSession_MockValue: (didCreateNewSession: Bool, decryptedData: Data)?
 
-    public func decrypt(data: Data, forSession id: ProteusSessionID, context: CoreCryptoContextProtocol?) async throws -> (didCreateNewSession: Bool, decryptedData: Data) {
-        decryptDataForSessionContext_Invocations.append((data: data, id: id, context: context))
+    public func decrypt(data: Data, forSession id: ProteusSessionID) async throws -> (didCreateNewSession: Bool, decryptedData: Data) {
+        decryptDataForSession_Invocations.append((data: data, id: id))
 
-        if let error = decryptDataForSessionContext_MockError {
+        if let error = decryptDataForSession_MockError {
             throw error
         }
 
-        if let mock = decryptDataForSessionContext_MockMethod {
-            return try await mock(data, id, context)
-        } else if let mock = decryptDataForSessionContext_MockValue {
+        if let mock = decryptDataForSession_MockMethod {
+            return try await mock(data, id)
+        } else if let mock = decryptDataForSession_MockValue {
             return mock
         } else {
-            fatalError("no mock for `decryptDataForSessionContext`")
+            fatalError("no mock for `decryptDataForSession`")
         }
     }
 

@@ -19,7 +19,6 @@
 import WireAPISupport
 import XCTest
 @testable import WireAPI
-@testable import WireDataModelSupport
 @testable import WireDomain
 @testable import WireDomainSupport
 
@@ -29,23 +28,16 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
     private var api: MockUpdateEventsAPI!
     private var store: MockUpdateEventsLocalStoreProtocol!
     private var decryptor: MockUpdateEventDecryptorProtocol!
-    private var coreCrypto: MockSafeCoreCrypto!
-    private var coreCryptoProvider: MockCoreCryptoProviderProtocol!
 
     override func setUp() async throws {
         api = MockUpdateEventsAPI()
         store = MockUpdateEventsLocalStoreProtocol()
         decryptor = MockUpdateEventDecryptorProtocol()
-        coreCrypto = MockSafeCoreCrypto()
-        coreCryptoProvider = MockCoreCryptoProviderProtocol()
-        coreCryptoProvider.coreCrypto_MockValue = coreCrypto
-
         sut = PullPendingUpdateEventsSync(
             selfClientID: Scaffolding.selfClientID,
             api: api,
             store: store,
-            decryptor: decryptor,
-            coreCryptoProvider: coreCryptoProvider
+            decryptor: decryptor
         )
     }
 
@@ -74,11 +66,11 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
             }
         }
 
-        decryptor.decryptEventsInContext_MockMethod = { envelope, _ in
-            envelope.events
+        decryptor.decryptEventsIn_MockMethod = {
+            $0.events
         }
 
-        store.persistEventEnvelopesIndex_MockMethod = { _, _ in }
+        store.persistEventEnvelopeIndex_MockMethod = { _, _ in }
         store.storeLastEventIDId_MockMethod = { _ in }
 
         // When
@@ -91,24 +83,27 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
         XCTAssertEqual(apiInvocations[0].sinceEventID, Scaffolding.lastEventID)
 
         // Then the events were decrypted, one call per envelope.
-        let decryptorInvocations = decryptor.decryptEventsInContext_Invocations
+        let decryptorInvocations = decryptor.decryptEventsIn_Invocations
         try XCTAssertCount(decryptorInvocations, count: 4)
-        XCTAssertEqual(decryptorInvocations[0].eventEnvelope.id, Scaffolding.envelope1.id)
-        XCTAssertEqual(decryptorInvocations[1].eventEnvelope.id, Scaffolding.envelope2.id)
-        XCTAssertEqual(decryptorInvocations[2].eventEnvelope.id, Scaffolding.envelope3.id)
-        XCTAssertEqual(decryptorInvocations[3].eventEnvelope.id, Scaffolding.envelope4.id)
+        XCTAssertEqual(decryptorInvocations[0].id, Scaffolding.envelope1.id)
+        XCTAssertEqual(decryptorInvocations[1].id, Scaffolding.envelope2.id)
+        XCTAssertEqual(decryptorInvocations[2].id, Scaffolding.envelope3.id)
+        XCTAssertEqual(decryptorInvocations[3].id, Scaffolding.envelope4.id)
 
         // Then the events were stored at correct indices.
-        let persistInvocactions = store.persistEventEnvelopesIndex_Invocations
-        try XCTAssertCount(persistInvocactions, count: 2)
+        let persistInvocactions = store.persistEventEnvelopeIndex_Invocations
+        try XCTAssertCount(persistInvocactions, count: 4)
         XCTAssertEqual(persistInvocactions[0].index, Scaffolding.indexOfLastEventEnvelope + 1)
-        XCTAssertEqual(persistInvocactions[1].index, Scaffolding.indexOfLastEventEnvelope + 1)
+        XCTAssertEqual(persistInvocactions[1].index, Scaffolding.indexOfLastEventEnvelope + 2)
+        XCTAssertEqual(persistInvocactions[2].index, Scaffolding.indexOfLastEventEnvelope + 3)
+        XCTAssertEqual(persistInvocactions[3].index, Scaffolding.indexOfLastEventEnvelope + 4)
 
         // Then the last event id was updated for all envelopes that aren't transient (envelope 2)
         let storeLastEventIDInvocations = store.storeLastEventIDId_Invocations
-        try XCTAssertCount(storeLastEventIDInvocations, count: 2)
+        try XCTAssertCount(storeLastEventIDInvocations, count: 3)
         XCTAssertEqual(storeLastEventIDInvocations[0], Scaffolding.envelope1.id)
-        XCTAssertEqual(storeLastEventIDInvocations[1], Scaffolding.envelope4.id)
+        XCTAssertEqual(storeLastEventIDInvocations[1], Scaffolding.envelope3.id)
+        XCTAssertEqual(storeLastEventIDInvocations[2], Scaffolding.envelope4.id)
     }
 
 }

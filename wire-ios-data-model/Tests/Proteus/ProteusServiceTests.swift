@@ -73,14 +73,12 @@ class ProteusServiceTests: XCTestCase {
         // When
         let (didCreateNewSession, decryptedData) = try await sut.decrypt(
             data: encryptedData,
-            forSession: sessionID,
-            context: nil
+            forSession: sessionID
         )
 
         // Then
         XCTAssertFalse(didCreateNewSession)
         XCTAssertEqual(decryptedData, Data([0, 1, 2, 3, 4, 5]))
-        XCTAssertEqual(mockSafeCoreCrypto.performAsyncCount, 1)
     }
 
     func test_DecryptDataForSession_SessionExists_Failure() async throws {
@@ -103,8 +101,7 @@ class ProteusServiceTests: XCTestCase {
             // When
             _ = try await sut.decrypt(
                 data: encryptedData,
-                forSession: sessionID,
-                context: nil
+                forSession: sessionID
             )
         } errorHandler: { error in
             // Then
@@ -135,8 +132,7 @@ class ProteusServiceTests: XCTestCase {
         // When
         let (didCreateNewSession, decryptedData) = try await sut.decrypt(
             data: encryptedData,
-            forSession: sessionID,
-            context: nil
+            forSession: sessionID
         )
 
         // Then
@@ -163,8 +159,7 @@ class ProteusServiceTests: XCTestCase {
             // When
             _ = try await sut.decrypt(
                 data: encryptedData,
-                forSession: sessionID,
-                context: nil
+                forSession: sessionID
             )
         } errorHandler: { error in
             // Then
@@ -174,36 +169,6 @@ class ProteusServiceTests: XCTestCase {
                 return
             }
         }
-    }
-
-    func test_DecryptDataForSession_TransactionIsNotCreatedWhenProvided() async throws {
-        // Given
-        let sessionID = ProteusSessionID.random()
-        let encryptedData = Data.secureRandomData(length: 8)
-
-        // Mock
-        mockCoreCryptoContext.proteusSessionExistsSessionId_MockMethod = { id in
-            XCTAssertEqual(id, sessionID.rawValue)
-            return true
-        }
-
-        mockCoreCryptoContext.proteusDecryptSessionIdCiphertext_MockMethod = { id, ciphertext in
-            XCTAssertEqual(id, sessionID.rawValue)
-            XCTAssertEqual(ciphertext, encryptedData)
-            return Data([0, 1, 2, 3, 4, 5])
-        }
-
-        // When
-        let (didCreateNewSession, decryptedData) = try await sut.decrypt(
-            data: encryptedData,
-            forSession: sessionID,
-            context: mockCoreCryptoContext
-        )
-
-        // Then
-        XCTAssertFalse(didCreateNewSession)
-        XCTAssertEqual(decryptedData, Data([0, 1, 2, 3, 4, 5]))
-        XCTAssertEqual(mockSafeCoreCrypto.performAsyncCount, 0)
     }
 
     // MARK: - Encrypting messages

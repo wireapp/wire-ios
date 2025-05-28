@@ -91,22 +91,6 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
         }
     }
 
-    public func persistEventEnvelopes(
-        _ eventEnvelopes: [UpdateEventEnvelope],
-        index: Int64
-    ) async throws {
-        try await eventContext.perform { [eventContext, updateEventCoder] in
-            var currentIndex = index
-            for eventEnvelope in eventEnvelopes {
-                let storedEventEnvelope = StoredUpdateEventEnvelope(context: eventContext)
-                storedEventEnvelope.data = try updateEventCoder.encode(eventEnvelope)
-                storedEventEnvelope.sortIndex = currentIndex
-                currentIndex += 1
-            }
-            try eventContext.save()
-        }
-    }
-
     public func fetchStoredEventEnvelopes(
         limit: UInt
     ) async throws -> [UpdateEventEnvelope] {

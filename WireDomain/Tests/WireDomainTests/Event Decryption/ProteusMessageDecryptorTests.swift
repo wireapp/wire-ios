@@ -130,7 +130,7 @@ final class ProteusMessageDecryptorTests: XCTestCase {
 
         // When
         do {
-            _ = try await sut.decryptedEventData(from: invalidEvent, context: nil)
+            _ = try await sut.decryptedEventData(from: invalidEvent)
             XCTFail("expected an error but none was thrown")
             return
         } catch ProteusMessageDecryptorError.senderFailedToEncrypt {
@@ -147,7 +147,7 @@ final class ProteusMessageDecryptorTests: XCTestCase {
 
         // When
         do {
-            _ = try await sut.decryptedEventData(from: invalidEvent, context: nil)
+            _ = try await sut.decryptedEventData(from: invalidEvent)
             XCTFail("expected an error but none was thrown")
             return
         } catch ProteusMessageDecryptorError.invalidCiphertext {
@@ -195,12 +195,12 @@ final class ProteusMessageDecryptorTests: XCTestCase {
         let decryptedMessageData = try XCTUnwrap(decryptedMessage.base64DecodedData)
 
         // Mock decryption
-        proteusService.decryptDataForSessionContext_MockMethod = { _, _, _ in
+        proteusService.decryptDataForSession_MockMethod = { _, _ in
             (didCreateNewSession: true, decryptedData: decryptedMessageData)
         }
 
         // When
-        let decryptedEvent = try await sut.decryptedEventData(from: encryptedEvent, context: nil)
+        let decryptedEvent = try await sut.decryptedEventData(from: encryptedEvent)
 
         // Then the event was decrypted
         XCTAssertEqual(
@@ -211,7 +211,7 @@ final class ProteusMessageDecryptorTests: XCTestCase {
             ))
         )
 
-        let decryptInvocations = proteusService.decryptDataForSessionContext_Invocations
+        let decryptInvocations = proteusService.decryptDataForSession_Invocations
         XCTAssertEqual(decryptInvocations.count, 1)
         XCTAssertEqual(decryptInvocations.first?.data, encryptedMessageData)
         XCTAssertEqual(decryptInvocations.first?.id, Scaffolding.proteusSessionID)

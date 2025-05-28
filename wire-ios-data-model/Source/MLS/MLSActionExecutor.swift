@@ -25,15 +25,13 @@ public protocol MLSActionExecutorProtocol {
 
     /// Processes a welcome message.
     ///
-    /// - Parameters:
-    ///     - message: The welcome message to process.
-    ///     - context: if provided, processing will happen within the existing transaction
+    /// - Parameter message: The welcome message to process.
     /// - Returns: The group ID of the group the welcome message was for.
     ///
     /// If any new CRL distribution points are found, they will be published.
     /// They can be observed with ``MLSActionExecutor/onNewCRLsDistributionPoints()``
 
-    func processWelcomeMessage(_ message: Data, context: CoreCryptoContextProtocol?) async throws -> MLSGroupID
+    func processWelcomeMessage(_ message: Data) async throws -> MLSGroupID
 
     /// Creates and sends a commit bundle to add the invitees to a group.
     ///
@@ -97,14 +95,12 @@ public protocol MLSActionExecutorProtocol {
     /// - Parameters:
     ///   - message: The message to decrypt.
     ///   - groupID: The group ID of the group this message was for.
-    ///   - context: if provided, decryption will happen within the existing transaction
     /// - Returns: The decrypted message.
 
     func decryptMessage(
         _ message: Data,
-        in groupID: MLSGroupID,
-        context: CoreCryptoContextProtocol?
-    ) async throws -> DecryptedMessage?
+        in groupID: MLSGroupID
+    ) async throws -> DecryptedMessage
 
     /// Returns a publisher that emits the new CRL distribution points when they are found
 
@@ -207,24 +203,13 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Actions
 
-    public func processWelcomeMessage(_ message: Data, context: CoreCryptoContextProtocol?) async throws -> MLSGroupID {
-        if let context {
-            try await processWelcomeMessageInternal(message, context: context)
-        } else {
-            try await coreCrypto.perform { context in
-                try await self.processWelcomeMessageInternal(message, context: context)
-            }
+    public func processWelcomeMessage(_ message: Data) async throws -> MLSGroupID {
+        let welcomeBundle = try await coreCrypto.perform { coreCrypto in
+            try await coreCrypto.processWelcomeMessage(
+                welcomeMessage: message,
+                customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil)
+            )
         }
-    }
-
-    private func processWelcomeMessageInternal(
-        _ message: Data,
-        context: CoreCryptoContextProtocol
-    ) async throws -> MLSGroupID {
-        let welcomeBundle = try await context.processWelcomeMessage(
-            welcomeMessage: message,
-            customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil)
-        )
 
         if let newDistributionPoints = CRLsDistributionPoints(
             from: welcomeBundle.crlNewDistributionPoints
@@ -353,39 +338,29 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Decryption
 
-    public func decryptMessage(
-        _ message: Data,
-        in groupID: MLSGroupID,
-        context: CoreCryptoContextProtocol?
-    ) async throws -> DecryptedMessage? {
-        if let context {
-            try await decryptMessageInternal(message, in: groupID, context: context)
-        } else {
-            try await performNonReentrant(groupID: groupID) {
-                try await coreCrypto.perform {
-                    try await self.decryptMessageInternal(message, in: groupID, context: $0)
+    public func decryptMessage(_ message: Data, in groupID: MLSGroupID) async throws -> DecryptedMessage {
+        let result: DecryptedMessage? = try await performNonReentrant(groupID: groupID) {
+            try await coreCrypto.perform {
+                do {
+                    return try await $0.decryptMessage(conversationId: groupID.data, payload: message)
+                } catch let CoreCryptoError.Mls(error) {
+                    switch error {
+                    case .BufferedFutureMessage, .BufferedCommit:
+                        // ignore error so transaction is saved and message is saved too.
+                        return nil
+                    default:
+                        throw CoreCryptoError.Mls(error)
+                    }
+                } catch {
+                    throw error
                 }
             }
         }
-    }
 
-    private func decryptMessageInternal(
-        _ message: Data,
-        in groupID: MLSGroupID,
-        context: CoreCryptoContextProtocol
-    ) async throws -> DecryptedMessage? {
-        do {
-            return try await context.decryptMessage(conversationId: groupID.data, payload: message)
-        } catch let CoreCryptoError.Mls(error) {
-            switch error {
-            case .BufferedFutureMessage, .BufferedCommit:
-                // ignore error so transaction is saved and message is saved too.
-                return nil
-            default:
-                throw CoreCryptoError.Mls(error)
-            }
-        } catch {
-            throw error
+        if let result {
+            return result
+        } else {
+            throw Failure.bufferedDecryptedMessage
         }
     }
 

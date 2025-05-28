@@ -60,7 +60,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
     }
 
     var isOnPremiseBackend: Bool {
-        backendInfo.environmentType != .production
+        backendInfo.environmentType != .default
     }
 
     var canSubmitCredentials: Bool {

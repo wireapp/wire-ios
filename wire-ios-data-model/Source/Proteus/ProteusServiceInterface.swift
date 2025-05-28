@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireCoreCrypto
 
 // swiftlint:disable orphaned_doc_comment
 
@@ -41,15 +40,13 @@ public protocol ProteusServiceInterface {
     /// - Parameters:
     ///   - data: The encrypted message.
     ///   - id: The id of the session associated with the message.
-    ///   - context: if provided, decryption will happen within the existing transaction
     ///
     /// - Throws: `ProteusService.DecryptionError`
     /// - Returns: The decrypted data and indicates whether a new session was established.
 
     func decrypt(
         data: Data,
-        forSession id: ProteusSessionID,
-        context: CoreCryptoContextProtocol?
+        forSession id: ProteusSessionID
     ) async throws -> (didCreateNewSession: Bool, decryptedData: Data)
 
     func generatePrekey(id: UInt16) async throws -> String

@@ -38,5 +38,5 @@ public final class MockEnvironment: NSObject, BackendEnvironmentProvider {
         port: 8080,
         needsAuthentication: true
     )
-    public var environmentType: EnvironmentTypeProvider = .init(environmentType: .production)
+    public var environmentType: EnvironmentTypeProvider = .init(environmentType: .default)
 }

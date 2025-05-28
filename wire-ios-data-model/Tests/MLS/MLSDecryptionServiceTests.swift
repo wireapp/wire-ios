@@ -67,8 +67,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
             try _ = await sut.decrypt(
                 message: invalidBase64String,
                 for: groupID,
-                subconversationType: nil,
-                context: nil
+                subconversationType: nil
             )
         }
     }
@@ -89,8 +88,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
             try _ = await sut.decrypt(
                 message: message,
                 for: groupID,
-                subconversationType: nil,
-                context: nil
+                subconversationType: nil
             )
         }
     }
@@ -114,8 +112,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         let results = try await sut.decrypt(
             message: message,
             for: groupID,
-            subconversationType: nil,
-            context: nil
+            subconversationType: nil
         )
 
         // Then
@@ -145,8 +142,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         let results = try await sut.decrypt(
             message: messageBytes.data.base64EncodedString(),
             for: groupID,
-            subconversationType: nil,
-            context: nil
+            subconversationType: nil
         )
 
         // Then
@@ -187,8 +183,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         let results = try await sut.decrypt(
             message: messageData.base64EncodedString(),
             for: groupID,
-            subconversationType: nil,
-            context: nil
+            subconversationType: nil
         )
 
         // Then
@@ -230,8 +225,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         let results = try await sut.decrypt(
             message: messageData.base64EncodedString(),
             for: parentGroupID,
-            subconversationType: .conference,
-            context: nil
+            subconversationType: .conference
         )
 
         // Then
@@ -262,8 +256,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         let results = try await sut.decrypt(
             message: messageData.base64EncodedString(),
             for: parentGroupID,
-            subconversationType: .conference,
-            context: nil
+            subconversationType: .conference
         )
 
         // Then
@@ -319,8 +312,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         let results = try await sut.decrypt(
             message: messageData.base64EncodedString(),
             for: groupID,
-            subconversationType: nil,
-            context: nil
+            subconversationType: nil
         )
 
         // Then
@@ -365,8 +357,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         _ = try await sut.decrypt(
             message: messageData.base64EncodedString(),
             for: .random(),
-            subconversationType: nil,
-            context: nil
+            subconversationType: nil
         )
 
         // Then

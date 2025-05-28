@@ -132,7 +132,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         Task {
             do {
                 beforeDecryptMessageExpectation.fulfill()
-                try await _ = sut.decryptMessage(Data.random(byteCount: 1), in: groupID, context: nil)
+                try await _ = sut.decryptMessage(Data.random(byteCount: 1), in: groupID)
                 afterDecryptMessageExpectation.fulfill()
             } catch {
                 XCTFail(String(reflecting: error))
@@ -199,7 +199,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         Task {
             do {
-                try await _ = sut.decryptMessage(Data.random(byteCount: 1), in: groupID2, context: nil)
+                try await _ = sut.decryptMessage(Data.random(byteCount: 1), in: groupID2)
             } catch {
                 XCTFail(String(reflecting: error))
             }
@@ -226,7 +226,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         }
 
         // When
-        let result = try await sut.processWelcomeMessage(message, context: nil)
+        let result = try await sut.processWelcomeMessage(message)
 
         // Then
         XCTAssertEqual(groupID, result)
@@ -234,7 +234,6 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
             mockCoreCryptoContext.processWelcomeMessageWelcomeMessageCustomConfiguration_Invocations.count,
             1
         )
-        XCTAssertEqual(mockSafeCoreCrypto.performAsyncCount, 1)
     }
 
     func test_processWelcomeMessage_PublishesNewDistributionPoints() async throws {
@@ -257,33 +256,10 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         }
 
         // When
-        _ = try await sut.processWelcomeMessage(message, context: nil)
+        _ = try await sut.processWelcomeMessage(message)
 
         // Then
         await fulfillment(of: [expectation], timeout: 1)
-    }
-
-    func test_processWelcomeMessage_transcationIsNotCreatedWhenProvided() async throws {
-        // Given
-        let groupID = MLSGroupID.random()
-        let message = Data.random()
-        let welcomeBundle = WelcomeBundle(id: groupID.data, crlNewDistributionPoints: nil)
-
-        // Mock
-        mockCoreCryptoContext.processWelcomeMessageWelcomeMessageCustomConfiguration_MockMethod = { _, _ in
-            welcomeBundle
-        }
-
-        // When
-        let result = try await sut.processWelcomeMessage(message, context: mockCoreCryptoContext)
-
-        // Then
-        XCTAssertEqual(groupID, result)
-        XCTAssertEqual(
-            mockCoreCryptoContext.processWelcomeMessageWelcomeMessageCustomConfiguration_Invocations.count,
-            1
-        )
-        XCTAssertEqual(mockSafeCoreCrypto.performAsyncCount, 0)
     }
 
     // MARK: - Add members
@@ -493,18 +469,18 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
     // MARK: - Decrypt Message
 
     func test_decryptMessage_throwsBufferedDecryptedMessage_withCC_BufferedFutureMessageError() async throws {
-        try await internalTest_decryptMessage_swallowsError(
+        try await internalTest_decryptMessage_throwsError(
             CoreCryptoError.Mls(.BufferedFutureMessage)
         )
     }
 
     func test_decryptMessage_throwsBufferedDecryptedMessage_withBufferedCommit() async throws {
-        try await internalTest_decryptMessage_swallowsError(
+        try await internalTest_decryptMessage_throwsError(
             CoreCryptoError.Mls(.BufferedCommit)
         )
     }
 
-    func internalTest_decryptMessage_swallowsError(_ error: Error) async throws {
+    func internalTest_decryptMessage_throwsError(_ error: Error) async throws {
 
         // Given
         let groupID = MLSGroupID.random()
@@ -513,11 +489,12 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         mockCoreCryptoContext.decryptMessageConversationIdPayload_MockError = error
 
         // When
-        let result = try await sut.decryptMessage(encryptedMessage, in: groupID, context: nil)
+        await assertItThrows(error: MLSActionExecutor.Failure.bufferedDecryptedMessage) {
+            _ = try await sut.decryptMessage(encryptedMessage, in: groupID)
+        }
 
         // Then
         XCTAssertEqual(mockCoreCryptoContext.decryptMessageConversationIdPayload_Invocations.count, 1)
-        XCTAssertNil(result)
     }
 
     func test_decryptMessage_successfully() async throws {
@@ -540,38 +517,10 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         mockCoreCryptoContext.decryptMessageConversationIdPayload_MockValue = decryptedMessage
 
         // When
-        let result = try await sut.decryptMessage(encryptedMessage, in: groupID, context: nil)
+        let result = try await sut.decryptMessage(encryptedMessage, in: groupID)
 
         // Then
         XCTAssertEqual(result, decryptedMessage)
         XCTAssertEqual(mockCoreCryptoContext.decryptMessageConversationIdPayload_Invocations.count, 1)
-        XCTAssertEqual(mockSafeCoreCrypto.performAsyncCount, 1)
-    }
-
-    func test_decryptMessage_transcationIsNotCreatedWhenProvided() async throws {
-        // Given
-        let groupID = MLSGroupID.random()
-        let encryptedMessage = Data.random(byteCount: 1)
-        let decryptedMessage = DecryptedMessage(
-            message: nil,
-            proposals: [],
-            isActive: false,
-            commitDelay: 0,
-            senderClientId: nil,
-            hasEpochChanged: false,
-            identity: .withBasicCredentials(),
-            bufferedMessages: nil,
-            crlNewDistributionPoints: nil
-        )
-
-        mockCoreCryptoContext.decryptMessageConversationIdPayload_MockValue = decryptedMessage
-
-        // When
-        let result = try await sut.decryptMessage(encryptedMessage, in: groupID, context: mockCoreCryptoContext)
-
-        // Then
-        XCTAssertEqual(result, decryptedMessage)
-        XCTAssertEqual(mockCoreCryptoContext.decryptMessageConversationIdPayload_Invocations.count, 1)
-        XCTAssertEqual(mockSafeCoreCrypto.performAsyncCount, 0)
     }
 }

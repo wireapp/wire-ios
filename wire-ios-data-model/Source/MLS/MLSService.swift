@@ -1213,14 +1213,8 @@ public final class MLSService: MLSServiceInterface {
         return result
     }
 
-    public func processWelcomeMessage(
-        welcomeMessage: String,
-        context: CoreCryptoContextProtocol?
-    ) async throws -> MLSGroupID {
-        try await decryptionService.processWelcomeMessage(
-            welcomeMessage: welcomeMessage,
-            context: context
-        )
+    public func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID {
+        try await decryptionService.processWelcomeMessage(welcomeMessage: welcomeMessage)
     }
 
     // MARK: - Joining conversations
@@ -1695,8 +1689,7 @@ public final class MLSService: MLSServiceInterface {
     public func decrypt(
         message: String,
         for groupID: MLSGroupID,
-        subconversationType: SubgroupType?,
-        context: CoreCryptoContextProtocol?
+        subconversationType: SubgroupType?
     ) async throws -> [MLSDecryptResult] {
         typealias DecryptionError = MLSDecryptionService.MLSMessageDecryptionError
 
@@ -1704,8 +1697,7 @@ public final class MLSService: MLSServiceInterface {
             return try await decryptionService.decrypt(
                 message: message,
                 for: groupID,
-                subconversationType: subconversationType,
-                context: context
+                subconversationType: subconversationType
             )
         } catch DecryptionError.wrongEpoch {
             Task.detached { [self] in

@@ -88,41 +88,37 @@ final class MLSMessageDecryptorTests: XCTestCase {
 
         conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
         conversationLocalStore.mlsConversationInfoConversation_MockValue = (try XCTUnwrap(Scaffolding.mlsGroupID), true)
-        mlsDecryptionService.decryptMessageForSubconversationTypeContext_MockValue = [mockDecryptionResult]
+        mlsDecryptionService.decryptMessageForSubconversationType_MockValue = [mockDecryptionResult]
 
         // When
 
         let event = try await sut
-            .decryptedMessageAddEventData(
-                from: Scaffolding.makeAddMessageEvent(content: encryptedMessage),
-                context: nil
-            )
+            .decryptedMessageAddEventData(from: Scaffolding.makeAddMessageEvent(content: encryptedMessage))
 
         // Then
 
         XCTAssertEqual(conversationLocalStore.fetchConversationIdDomain_Invocations.count, 1)
         XCTAssertEqual(conversationLocalStore.mlsConversationInfoConversation_Invocations.count, 1)
-        XCTAssertEqual(mlsDecryptionService.decryptMessageForSubconversationTypeContext_Invocations.count, 1)
+        XCTAssertEqual(mlsDecryptionService.decryptMessageForSubconversationType_Invocations.count, 1)
         XCTAssertEqual(event.decryptedMessages.first?.message, decryptedMessage)
     }
 
     func testDecryptedEventData_It_Decrypts_A_Welcome_Message_Event_And_Invokes_Repo_Methods() async throws {
         // Mock
 
-        mlsDecryptionService.processWelcomeMessageWelcomeMessageContext_MockValue = Scaffolding.mlsGroupID
+        mlsDecryptionService.processWelcomeMessageWelcomeMessage_MockValue = Scaffolding.mlsGroupID
         conversationLocalStore
             .createMLSConversationConversationIDConversationDomainMlsGroupID_MockMethod = { _, _, _ in }
 
         // When
 
         try await sut.decryptedWelcomeMessageEventData(
-            from: Scaffolding.makeWelcomeEvent(),
-            context: nil
+            from: Scaffolding.makeWelcomeEvent()
         )
 
         // Then
 
-        XCTAssertEqual(mlsDecryptionService.processWelcomeMessageWelcomeMessageContext_Invocations.count, 1)
+        XCTAssertEqual(mlsDecryptionService.processWelcomeMessageWelcomeMessage_Invocations.count, 1)
         XCTAssertEqual(
             conversationLocalStore.createMLSConversationConversationIDConversationDomainMlsGroupID_Invocations.count,
             1
