@@ -19,9 +19,17 @@
 import Collections
 @preconcurrency import Combine
 import Foundation
+package import UniformTypeIdentifiers
 package import WireCellsAPI
 
-package actor DraftsRepository {
+package protocol DraftsRepositoryProtocol: Actor {
+
+    func add(assetURL: URL, assetSize: Int, cellName: String, fileName: String, fileType: UTType?) async
+    func drafts(for cellName: String) -> AsyncStream<[WireCellsDraft]>
+
+}
+
+package actor DraftsRepository: DraftsRepositoryProtocol {
 
     typealias CellName = String
 
@@ -38,31 +46,40 @@ package actor DraftsRepository {
         continuations.values.forEach { $0.finish() }
     }
 
-    func add(assetURL: URL, assetSize: UInt64, cellName: String, fileName: String) async {
+    package func add(assetURL: URL, assetSize: Int, cellName: String, fileName: String, fileType: UTType?) async {
         let draft = WireCellsDraft(
             id: .new(),
             assetURL: assetURL,
-            status: .uploading(progress: 0)
+            fileType: fileType,
+            status: .uploading(progress: 0),
+            name: fileName,
+            bytes: assetSize
         )
         drafts.value[cellName, default: [:]][draft.id] = draft
 
         do {
-            let (_, stream) = try await uploadManager.upload(
+            let (node, stream) = try await uploadManager.upload(
                 id: draft.id,
                 assetPath: assetURL,
-                assetSize: assetSize,
+                assetSize: UInt64(assetSize),
                 destNodePath: "\(cellName)/\(fileName)"
             )
+
+            // Update draft name if changed
+            if let updatedName = URL(string: node.path)?.lastPathComponent, updatedName != draft.name {
+                drafts.value[cellName]?[draft.id]?.name = updatedName
+            }
+
             for await status in stream {
                 setStatus(status, cellName: cellName, id: draft.id)
             }
 
         } catch {
-            setStatus(.failed, cellName: cellName, id: draft.id)
+            setStatus(.failed(error: WireCellsUploadError(error)), cellName: cellName, id: draft.id)
         }
     }
 
-    func drafts(for cellName: CellName) -> AsyncStream<[WireCellsDraft]> {
+    package func drafts(for cellName: String) -> AsyncStream<[WireCellsDraft]> {
         let continuationID = UUID()
         let (stream, continuation) = AsyncStream.makeStream(
             of: [WireCellsDraft].self,

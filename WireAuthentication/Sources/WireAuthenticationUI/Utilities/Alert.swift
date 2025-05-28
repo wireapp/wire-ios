@@ -34,8 +34,8 @@ package struct Alert: Hashable, Identifiable, Sendable {
 
 extension Alert {
 
-    private typealias Title = L10n.Authentication.Error.Title
-    private typealias Message = L10n.Authentication.Error.Message
+    private typealias Title = L10n.Localizable.Authentication.Error.Title
+    private typealias Message = L10n.Localizable.Authentication.Error.Message
 
     static let noInternet = Alert(
         title: Title.noInternet,
@@ -68,18 +68,18 @@ extension Alert {
     )
 
     static let obsoleteClient = Alert(
-        title: L10n.ObsoleteClient.Alert.title,
-        message: L10n.ObsoleteClient.Alert.message
+        title: L10n.Localizable.ObsoleteClient.Alert.title,
+        message: L10n.Localizable.ObsoleteClient.Alert.message
     )
 
     static let obsoleteBackend = Alert(
-        title: L10n.ObsoleteBackend.Alert.title,
-        message: L10n.ObsoleteBackend.Alert.message
+        title: L10n.Localizable.ObsoleteBackend.Alert.title,
+        message: L10n.Localizable.ObsoleteBackend.Alert.message
     )
 
     static let switchBackendFailed = Alert(
-        title: L10n.SwitchBackend.Error.Title.loggedIn,
-        message: L10n.SwitchBackend.Error.Message.loggedIn
+        title: L10n.Localizable.SwitchBackend.Error.Title.loggedIn,
+        message: L10n.Localizable.SwitchBackend.Error.Message.loggedIn
     )
 
     static let unknownError = Alert(

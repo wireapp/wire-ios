@@ -28,6 +28,7 @@ class LogOutPage: PageModel {
         app.buttons["OK"]
     }
 
+    @discardableResult
     func enterPassword(_ password: String) -> WelcomePage {
         passwordField.tap()
         passwordField.typeText(password)
