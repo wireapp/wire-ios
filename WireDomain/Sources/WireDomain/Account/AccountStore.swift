@@ -68,11 +68,17 @@ struct AccountStore {
         Account.load(from: url(for: id))
     }
 
-    /// Stores an `Account` in the account store.
-    /// - parameter account: The account which should be saved (or updated).
-    /// - returns: Whether or not the operation was successful.
+    // MARK: - Store
+
+    /// Store an `Account`.
+    ///
+    /// If the account already exists, it will be overwritten.
+    ///
+    /// - parameter account: The account to store.
+    /// - returns: Whether the operation was successful.
+
     @discardableResult
-    func add(_ account: Account) -> Bool {
+    func storeAccount(_ account: Account) -> Bool {
         do {
             try account.write(to: url(for: account))
             return true

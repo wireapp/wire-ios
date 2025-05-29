@@ -72,7 +72,7 @@ public final class AccountManager: NSObject {
     /// Adds an account to the manager and persists it.
     /// - parameter account: The account to add.
     public func addOrUpdate(_ account: Account) {
-        store.add(account)
+        store.storeAccount(account)
         updateAccounts()
     }
 
