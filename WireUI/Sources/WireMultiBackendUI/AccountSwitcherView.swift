@@ -38,7 +38,6 @@ public struct AccountSwitcherView: View {
                     .padding(.bottom, 10.5)
                 if index < accounts.count - 1 || !options.isEmpty {
                     divider()
-                        .padding(.leading, 64)
                 }
             }
 
@@ -50,7 +49,6 @@ public struct AccountSwitcherView: View {
 
                 if index < options.count - 1 {
                     divider()
-                        .padding(.leading, 64)
                 }
             }
         }
@@ -62,6 +60,7 @@ public struct AccountSwitcherView: View {
         Divider()
             .frame(height: 1)
             .background(Color(ColorTheme.Strokes.outline))
+            .padding(.leading, 64)
     }
 }
 
