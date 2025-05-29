@@ -21,13 +21,27 @@ import WireAccountImageUI
 import WireDesign
 import WireReusableUIComponents
 
-struct AccountUIModel: Identifiable {
-    let id = UUID()
+public struct AccountUIModel: Identifiable {
+    public let id = UUID()
     let avatarSource: AccountImageSource
     let name: String
     let handle: String
     let teamName: String?
     let backendName: String?
+    
+    public init(
+        avatarSource: AccountImageSource,
+        name: String,
+        handle: String,
+        teamName: String?,
+        backendName: String?
+    ) {
+        self.avatarSource = avatarSource
+        self.name = name
+        self.handle = handle
+        self.teamName = teamName
+        self.backendName = backendName
+    }
 }
 
 struct AccountView: View {

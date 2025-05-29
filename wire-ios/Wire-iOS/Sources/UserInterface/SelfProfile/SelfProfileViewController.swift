@@ -25,8 +25,10 @@ import WireDomainPackage
 import WireIndividualToTeamMigrationUI
 import WireMainNavigationUI
 import WireReusableUIComponents
+import WireMultiBackendUI
 import WireSettingsUI
 import WireSyncEngine
+import WireUtilities
 
 /// The first page of the user settings.
 final class SelfProfileViewController: UIViewController {
@@ -36,7 +38,9 @@ final class SelfProfileViewController: UIViewController {
 
     // MARK: - Views
 
-    private let settingsController: SettingsTableViewController
+    private let bottomController: UIViewController
+    private var settingsController: SettingsTableViewController?
+    private var appSwitcherController: AccountSwitcherHostingController?
     private weak var accountSelectorView: AccountSelectorView?
     private let profileLayoutGuide = UILayoutGuide()
     private var profileLayoutGuideViewTopConstraint = NSLayoutConstraint()
@@ -69,25 +73,36 @@ final class SelfProfileViewController: UIViewController {
         self.accountSelector = accountSelector
         self.mainCoordinator = mainCoordinator
         self.analyticsEventTracker = analyticsEventTracker
-
+        
         // Create the settings hierarchy
         let settingsPropertyFactory = SettingsPropertyFactory(
             userSession: userSession,
             selfUser: selfUser,
             trackingManager: nil
         )
-
+        
         let settingsCoordinator = SettingsCoordinator(mainCoordinator: mainCoordinator)
         let settingsCellDescriptorFactory = SettingsCellDescriptorFactory(
             settingsPropertyFactory: settingsPropertyFactory,
             userRightInterfaceType: userRightInterfaceType,
             settingsCoordinator: AnySettingsCoordinator(settingsCoordinator: settingsCoordinator)
         )
-
+        
         let rootGroup = settingsCellDescriptorFactory.rootGroup(userSession: userSession)
-
-        self.settingsController = rootGroup.generateViewController()! as! SettingsTableViewController
-
+        if DeveloperFlag.multibackend.isOn {
+            let appSwitcherController = AccountSwitcherHostingController(
+                accounts: [],
+                options: [.addAccountOption, .manageTeamOption]
+            )
+            appSwitcherController.sizingOptions = .intrinsicContentSize
+            self.bottomController = appSwitcherController
+            self.appSwitcherController = appSwitcherController
+        } else {
+            let settingsController = rootGroup.generateViewController()! as! SettingsTableViewController
+            self.bottomController = settingsController
+            self.settingsController = settingsController
+        }
+        
         var options: ProfileHeaderViewController.Options
         options = selfUser.isTeamMember ? [.allowEditingAvailability] : [.hideAvailability]
         if userRightInterfaceType.selfUserIsPermitted(to: .editProfilePicture) {
@@ -142,11 +157,11 @@ final class SelfProfileViewController: UIViewController {
         view.addSubview(profileHeaderViewController.view)
         profileHeaderViewController.didMove(toParent: self)
 
-        addChild(settingsController)
-        view.addSubview(settingsController.view)
-        settingsController.didMove(toParent: self)
+        addChild(bottomController)
+        view.addSubview(bottomController.view)
+        bottomController.didMove(toParent: self)
 
-        settingsController.tableView.isScrollEnabled = false
+        settingsController?.tableView.isScrollEnabled = false
 
         if let teamMigrationBanner {
             addChild(teamMigrationBanner)
@@ -192,7 +207,7 @@ final class SelfProfileViewController: UIViewController {
 
     private func createConstraints() {
         profileHeaderViewController.view.translatesAutoresizingMaskIntoConstraints = false
-        settingsController.view.translatesAutoresizingMaskIntoConstraints = false
+        bottomController.view.translatesAutoresizingMaskIntoConstraints = false
 
         profileLayoutGuideViewTopConstraint = profileLayoutGuide.topAnchor
             .constraint(equalTo: view.safeAreaLayoutGuide.topAnchor)
@@ -216,10 +231,12 @@ final class SelfProfileViewController: UIViewController {
             profileLayoutGuideViewTopConstraint.isActive = true
         }
 
+        
         NSLayoutConstraint.activate([
 
             // profileLayoutGuide
-            profileLayoutGuide.bottomAnchor.constraint(equalTo: settingsController.view.topAnchor),
+            profileLayoutGuide.bottomAnchor
+                .constraint(equalTo: bottomController.view.topAnchor),
 
             // profileView
             profileHeaderViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -230,9 +247,9 @@ final class SelfProfileViewController: UIViewController {
             profileHeaderViewController.view.centerYAnchor.constraint(equalTo: profileLayoutGuide.centerYAnchor),
 
             // settingsControllerView
-            settingsController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            settingsController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            settingsController.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            bottomController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            bottomController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            bottomController.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
 

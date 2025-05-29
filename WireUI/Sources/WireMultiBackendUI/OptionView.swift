@@ -19,16 +19,16 @@
 import SwiftUI
 import WireDesign
 
-struct Option: Identifiable {
+public  struct Option: Identifiable {
 
-    let id = UUID()
+    public let id = UUID()
 
-    enum Icon {
+    public enum Icon {
         case plus
         case manage
     }
 
-    enum ActionImage {
+    public enum ActionImage {
         case manage
     }
 
@@ -36,17 +36,23 @@ struct Option: Identifiable {
     let text: String
     let actionImage: ActionImage?
 
-    static let manageTeamOption = Option(
+    public static let manageTeamOption = Option(
         icon: .manage,
         text: L10n.ManageTeam.title,
         actionImage: .manage
     )
 
-    static let addAccountOption = Option(
+    public static let addAccountOption = Option(
         icon: .plus,
         text: L10n.AddAccount.title,
         actionImage: nil
     )
+    
+    public init(icon: Icon, text: String, actionImage: ActionImage?) {
+        self.icon = icon
+        self.text = text
+        self.actionImage = actionImage
+    }
 }
 
 struct OptionView: View {
