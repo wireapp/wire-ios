@@ -19,7 +19,6 @@
 import Foundation
 import WireDataModel
 import WireLogging
-import WireTransport
 
 public let AccountManagerDidUpdateAccountsNotificationName = Notification
     .Name("AccountManagerDidUpdateAccountsNotification")
