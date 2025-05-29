@@ -101,25 +101,6 @@ public final class Account: NSObject, Codable {
 
 }
 
-// MARK: - Serialization Helper
-
-public extension Account {
-
-    func write(to url: URL) throws {
-        let encoder = JSONEncoder()
-        let data = try encoder.encode(self)
-        try data.write(to: url, options: [.atomic])
-    }
-
-    static func load(from url: URL) -> Account? {
-        let data = try? Data(contentsOf: url)
-        let decoder = JSONDecoder()
-
-        return data.flatMap { try? decoder.decode(Account.self, from: $0) }
-    }
-
-}
-
 // MARK: - SafeForLoggingStringConvertible
 
 extension Account: SafeForLoggingStringConvertible {

@@ -39,6 +39,9 @@ struct AccountStore {
     private static let directoryName = "Accounts"
     private let fileManager = FileManager.default
 
+    private let encoder = JSONEncoder()
+    private let decoder = JSONDecoder()
+
     /// Creates a new `AccountStore`.
     ///
     /// `Account` objects will be stored in a subdirectory of the passed in url.
@@ -65,7 +68,19 @@ struct AccountStore {
     /// - returns: The `Account` if it exists.
 
     func fetchAccount(with id: UUID) -> Account? {
-        Account.load(from: url(for: id))
+        let url = url(for: id)
+
+        guard
+            let data = try? Data(contentsOf: url),
+            let storedAccount = try? decoder.decode(
+                StoredAccount.self,
+                from: data
+            )
+        else {
+            return nil
+        }
+
+        return Account(storedAccount)
     }
 
     // MARK: - Store
@@ -80,7 +95,10 @@ struct AccountStore {
     @discardableResult
     func storeAccount(_ account: Account) -> Bool {
         do {
-            try account.write(to: url(for: account.userIdentifier))
+            let storedAccount = StoredAccount(account)
+            let url = url(for: account.userIdentifier)
+            let data = try encoder.encode(storedAccount)
+            try data.write(to: url, options: .atomic)
             return true
         } catch {
             let accountDescription = account.safeForLoggingDescription
@@ -144,12 +162,55 @@ struct AccountStore {
     private func url(for id: UUID) -> URL {
         directory.appendingPathComponent(id.uuidString)
     }
+
 }
 
 private extension Error {
 
     var safeForLoggingDescription: String {
         (self as NSError).safeForLoggingDescription
+    }
+
+}
+
+private extension AccountStore {
+
+    struct StoredAccount: Codable {
+
+        var identifier: UUID
+        var name: String
+        var image: Data?
+        var team: String?
+        var teamImage: Data?
+        var loginCredentials: LoginCredentials?
+        var unreadConversationCount: Int
+
+        init(_ account: Account) {
+            identifier = account.userIdentifier
+            name = account.userName
+            image = account.imageData
+            team = account.teamName
+            teamImage = account.teamImageData
+            loginCredentials = account.loginCredentials
+            unreadConversationCount = account.unreadConversationCount
+        }
+
+    }
+
+}
+
+private extension Account {
+
+    convenience init(_ storedAccount: AccountStore.StoredAccount) {
+        self.init(
+            userName: storedAccount.name,
+            userIdentifier: storedAccount.identifier,
+            teamName: storedAccount.team,
+            imageData: storedAccount.image,
+            teamImageData: storedAccount.teamImage,
+            unreadConversationCount: storedAccount.unreadConversationCount,
+            loginCredentials: storedAccount.loginCredentials
+        )
     }
 
 }
