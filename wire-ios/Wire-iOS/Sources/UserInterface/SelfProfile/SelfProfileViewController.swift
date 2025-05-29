@@ -29,6 +29,7 @@ import WireMultiBackendUI
 import WireSettingsUI
 import WireSyncEngine
 import WireUtilities
+import WireAccountImageUI
 
 /// The first page of the user settings.
 final class SelfProfileViewController: UIViewController {
@@ -40,7 +41,7 @@ final class SelfProfileViewController: UIViewController {
 
     private var bottomController: UIViewController!
     private var settingsController: SettingsTableViewController?
-    private var appSwitcherController: AccountSwitcherHostingController?
+    private var accountSwitcherViewController: AccountSwitcherHostingController?
     private weak var accountSelectorView: AccountSelectorView?
     private let profileLayoutGuide = UILayoutGuide()
     private var profileLayoutGuideViewTopConstraint = NSLayoutConstraint()
@@ -126,29 +127,65 @@ final class SelfProfileViewController: UIViewController {
         }
         
         if DeveloperFlag.multibackend.isOn {
-            var options = [Option.addAccountOption(action: {
-                settingsCellDescriptorFactory
-                    .addAccountOrTeamCell().select(.none, sender: UIView())
-            })]
-            if userSession.selfUser.canManageTeam == true {
-                options.append(Option.manageTeamOption(action: { [weak self] in
-                    let controllerToShow = BrowserViewController(url: URL.manageTeam(source: .settings))
-                    controllerToShow.modalPresentationCapturesStatusBarAppearance = true
-                    self?.present(controllerToShow, animated: true, completion: .none)
-                }))
-            }
-            let appSwitcherController = AccountSwitcherHostingController(
-                accounts: [],
-                options: options
+            let accountSwitcherViewController = makeAccountSwitcherViewController(
+                settingsCellDescriptorFactory: settingsCellDescriptorFactory
             )
-            appSwitcherController.sizingOptions = .intrinsicContentSize
-            self.bottomController = appSwitcherController
-            self.appSwitcherController = appSwitcherController
+            self.bottomController = accountSwitcherViewController
+            self.accountSwitcherViewController = accountSwitcherViewController
         } else {
             let settingsController = rootGroup.generateViewController()! as! SettingsTableViewController
             self.bottomController = settingsController
             self.settingsController = settingsController
         }
+    }
+    
+    private func makeAccountSwitcherViewController(settingsCellDescriptorFactory: SettingsCellDescriptorFactory) -> AccountSwitcherHostingController {
+        var options = [Option.addAccountOption(action: {
+            settingsCellDescriptorFactory
+                .addAccountOrTeamCell().select(.none, sender: UIView())
+        })]
+        if userSession.selfUser.canManageTeam == true {
+            options.append(Option.manageTeamOption(action: { [weak self] in
+                let controllerToShow = BrowserViewController(url: URL.manageTeam(source: .settings))
+                controllerToShow.modalPresentationCapturesStatusBarAppearance = true
+                self?.present(controllerToShow, animated: true, completion: .none)
+            }))
+        }
+        
+        let accountManager = SessionManager.shared?.accountManager
+        let accounts = (accountManager?.accounts ?? [])
+            .filter {
+                !$0.isEqual(accountManager?.selectedAccount)
+            }
+            .map { domainAccount in
+                let avatarSource: WireAccountImageUI.AccountImageSource
+                if let imageData = domainAccount.imageData,
+                   let avatarImage = UIImage(data: imageData) {
+                    avatarSource = .image(avatarImage)
+                } else {
+                    let personName = PersonName.person(
+                        withName: domainAccount.userName,
+                        schemeTagger: nil
+                    )
+                    avatarSource = .text(personName.initials)
+                }
+                // TODO: track updates in user avatar and name
+                let uiAccount = AccountUIModel(
+                    avatarSource: avatarSource,
+                    name: domainAccount.userName,
+                    handle: "@handle",
+                    teamName: domainAccount.teamName,
+                    backendName: "Back END INFO"
+                )
+                return uiAccount
+            }
+        
+        let appSwitcherController = AccountSwitcherHostingController(
+            accounts: accounts,
+            options: options
+        )
+        appSwitcherController.sizingOptions = .intrinsicContentSize
+        return appSwitcherController
     }
 
     @available(*, unavailable)
@@ -206,6 +243,9 @@ final class SelfProfileViewController: UIViewController {
     }
 
     private func configureAccountTitle() {
+        guard !DeveloperFlag.multibackend.isOn else {
+            return
+        }
         if let accounts = SessionManager.shared?.accountManager.accounts, accounts.count > 1 {
             let accountSelectorView = AccountSelectorView()
             accountSelectorView.delegate = self
