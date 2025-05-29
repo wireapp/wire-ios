@@ -29,7 +29,7 @@ struct AccountSwitcherView: View {
             ForEach(accounts) { account in
                 AccountView(account: account)
             }
-            
+
             ForEach(options) { option in
                 OptionView(option: option)
                     .frame(height: 37)
@@ -62,7 +62,7 @@ struct AccountSwitcherView: View {
                 handle: "@username",
                 teamName: "team name",
                 backendName: "backend name long long long long"
-            ),
+            )
 
         ],
         options: [

@@ -17,8 +17,8 @@
 //
 
 import SwiftUI
-import WireDesign
 import WireAccountImageUI
+import WireDesign
 import WireReusableUIComponents
 
 struct AccountUIModel: Identifiable {
@@ -31,39 +31,39 @@ struct AccountUIModel: Identifiable {
 }
 
 struct AccountView: View {
-    
+
     let account: AccountUIModel
-    
+
     var body: some View {
-        HStack() {
+        HStack {
             HStack(spacing: 22) {
-                
+
                 AccountImageViewRepresentable(
                     source: account.avatarSource,
                     availability: nil,
                     showNotificationsBadge: false
                 ).frame(width: 28, height: 28)
-                
+
                 VStack(alignment: .leading, spacing: 2) {
-                    
+
                     Text(account.name)
                         .font(FontSpec.bodyTwoSemibold.swiftUIFont)
                         .foregroundStyle(Color(SemanticColors.Label.textDefault))
-                    
+
                     DotSeparatedTextView(
                         items: [
                             account.handle,
                             account.teamName,
                             account.backendName
-                        ].compactMap { $0 }
+                        ].compactMap(\.self)
                     )
-                    
+
                 }
                 .padding(.vertical, 4)
             }
-            
+
             Spacer()
-            
+
             Image("ChevronRight", bundle: Bundle.wireReusableUIComponentsBundle)
                 .resizable()
                 .scaledToFill()
@@ -73,7 +73,7 @@ struct AccountView: View {
 }
 
 struct DotSeparatedTextView: View {
-    
+
     let items: [String]
 
     var body: some View {
