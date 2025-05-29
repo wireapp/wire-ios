@@ -1472,7 +1472,13 @@ public final class SessionManager: NSObject, SessionManagerType {
 extension SessionManager {
     func updateCurrentAccount(in managedObjectContext: NSManagedObjectContext) {
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
-        if let account = accountManager.account(with: selfUser.remoteIdentifier) {
+
+        // Nothing to update if the user hasn't been registerd yet.
+        guard let id = selfUser.remoteIdentifier else {
+            return
+        }
+
+        if let account = accountManager.account(with: id) {
             if let name = selfUser.team?.name {
                 account.teamName = name
             }
