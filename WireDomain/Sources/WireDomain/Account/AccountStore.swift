@@ -32,11 +32,12 @@ private let log = WireLogger(tag: "Accounts")
 ///         - 47B3C313-E3FA-4DE4-8DBE-5BBDB6A0A14B
 ///         - 0F5771BB-2103-4E45-9ED2-E7E6B9D46C0F
 /// ```
-public final class AccountStore: NSObject {
 
+struct AccountStore {
+
+    private let directory: URL
     private static let directoryName = "Accounts"
     private let fileManager = FileManager.default
-    private let directory: URL // The url to the directory in which accounts are stored in
 
     /// Creates a new `AccountStore`.
     /// `Account` objects will be stored in a subdirectory of the passed in url.
