@@ -1219,13 +1219,6 @@ public final class SessionManager: NSObject, SessionManagerType {
             for: ConversationList.pendingConnectionConversations(inUserSession: session)!,
             userSession: session
         )
-        let unreadCountObserver = NotificationInContext.addObserver(
-            name: .AccountUnreadCountDidChangeNotification,
-            context: account
-        ) { [weak self] note in
-            guard let account = note.context as? Account else { return }
-            self?.accountManager.addOrUpdate(account)
-        }
 
         let databaseEncryptionObserverToken = session.registerDatabaseLockedHandler { [weak self] _ in
             guard session == self?.activeUserSession else { return }
@@ -1237,7 +1230,6 @@ public final class SessionManager: NSObject, SessionManagerType {
             selfObserver!,
             conversationListObserver,
             connectionRequestObserver,
-            unreadCountObserver,
             databaseEncryptionObserverToken
         ]
     }
@@ -1709,6 +1701,7 @@ extension SessionManager: ZMConversationListObserver {
         }
 
         account.unreadConversationCount = Int(ZMConversation.unreadConversationCount(in: session.managedObjectContext))
+        accountManager.addOrUpdate(account)
     }
 
     fileprivate func updateAllUnreadCounts() {
@@ -1719,8 +1712,11 @@ extension SessionManager: ZMConversationListObserver {
 
     public func updateAppIconBadge(accountID: UUID, unreadCount: Int) {
         DispatchQueue.main.async {
-            let account = self.accountManager.account(with: accountID)
-            account?.unreadConversationCount = unreadCount
+            if let account = self.accountManager.account(with: accountID) {
+                account.unreadConversationCount = unreadCount
+                self.accountManager.addOrUpdate(account)
+            }
+
             let totalUnreadCount = self.accountManager.totalUnreadCount
             self.application.applicationIconBadgeNumber = totalUnreadCount
             WireLogger.notifications
