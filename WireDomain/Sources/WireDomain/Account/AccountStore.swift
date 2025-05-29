@@ -90,11 +90,15 @@ struct AccountStore {
         }
     }
 
-    /// Deletes an `Account` from the account store.
+    // MARK: - Delete
+
+    /// Delete an `Account`.
+    ///
     /// - parameter account: The account which should be deleted.
     /// - returns: `false` if the account cannot be found or cannot be deleted otherwise `true`.
+
     @discardableResult
-    func remove(_ account: Account) -> Bool {
+    func deleteAccount(_ account: Account) -> Bool {
         do {
             try fileManager.removeItem(at: url(for: account))
             return true
@@ -106,9 +110,12 @@ struct AccountStore {
         }
     }
 
-    /// Deletes the persistence layer of an `AccountStore` from the file system.
+    /// Delete the persistence layer of an `AccountStore` from the file system.
+    ///
     /// Mostly useful for cleaning up after tests or for complete account resets.
+    ///
     /// - parameter root: The root url of the store that should be deleted.
+
     @discardableResult
     static func delete(at root: URL) -> Bool {
         do {

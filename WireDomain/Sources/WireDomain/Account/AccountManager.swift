@@ -86,7 +86,7 @@ public final class AccountManager: NSObject {
     /// Removes an account from the manager and the persistence layer.
     /// - parameter account: The account to remove.
     public func remove(_ account: Account) {
-        store.remove(account)
+        store.deleteAccount(account)
         if selectedAccount == account {
             defaults?.selectedAccountIdentifier = nil
             WireLogger.system.clearActiveAccount()
