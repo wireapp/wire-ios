@@ -93,8 +93,8 @@ public struct AccountSwitcherView: View {
 
         ],
         options: [
-            .addAccountOption,
-            .manageTeamOption
-        ]
+            .addAccountOption(action: { }),
+            .manageTeamOption(action: { })
+         ]
     )
 }

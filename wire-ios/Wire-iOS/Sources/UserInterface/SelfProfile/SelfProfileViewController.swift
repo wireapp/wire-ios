@@ -38,7 +38,7 @@ final class SelfProfileViewController: UIViewController {
 
     // MARK: - Views
 
-    private let bottomController: UIViewController
+    private var bottomController: UIViewController!
     private var settingsController: SettingsTableViewController?
     private var appSwitcherController: AccountSwitcherHostingController?
     private weak var accountSelectorView: AccountSelectorView?
@@ -89,19 +89,6 @@ final class SelfProfileViewController: UIViewController {
         )
         
         let rootGroup = settingsCellDescriptorFactory.rootGroup(userSession: userSession)
-        if DeveloperFlag.multibackend.isOn {
-            let appSwitcherController = AccountSwitcherHostingController(
-                accounts: [],
-                options: [.addAccountOption, .manageTeamOption]
-            )
-            appSwitcherController.sizingOptions = .intrinsicContentSize
-            self.bottomController = appSwitcherController
-            self.appSwitcherController = appSwitcherController
-        } else {
-            let settingsController = rootGroup.generateViewController()! as! SettingsTableViewController
-            self.bottomController = settingsController
-            self.settingsController = settingsController
-        }
         
         var options: ProfileHeaderViewController.Options
         options = selfUser.isTeamMember ? [.allowEditingAvailability] : [.hideAvailability]
@@ -136,6 +123,31 @@ final class SelfProfileViewController: UIViewController {
                     self?.onTeamCreationBannerInteraction(action, apiVersion: apiVersion)
                 }
             )
+        }
+        
+        if DeveloperFlag.multibackend.isOn {
+            var options = [Option.addAccountOption(action: {
+                settingsCellDescriptorFactory
+                    .addAccountOrTeamCell().select(.none, sender: UIView())
+            })]
+            if userSession.selfUser.canManageTeam == true {
+                options.append(Option.manageTeamOption(action: { [weak self] in
+                    let controllerToShow = BrowserViewController(url: URL.manageTeam(source: .settings))
+                    controllerToShow.modalPresentationCapturesStatusBarAppearance = true
+                    self?.present(controllerToShow, animated: true, completion: .none)
+                }))
+            }
+            let appSwitcherController = AccountSwitcherHostingController(
+                accounts: [],
+                options: options
+            )
+            appSwitcherController.sizingOptions = .intrinsicContentSize
+            self.bottomController = appSwitcherController
+            self.appSwitcherController = appSwitcherController
+        } else {
+            let settingsController = rootGroup.generateViewController()! as! SettingsTableViewController
+            self.bottomController = settingsController
+            self.settingsController = settingsController
         }
     }
 

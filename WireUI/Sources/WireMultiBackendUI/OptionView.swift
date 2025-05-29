@@ -35,23 +35,36 @@ public  struct Option: Identifiable {
     let icon: Icon
     let text: String
     let actionImage: ActionImage?
+    let action: () -> Void
 
-    public static let manageTeamOption = Option(
-        icon: .manage,
-        text: L10n.ManageTeam.title,
-        actionImage: .manage
-    )
+    public static func manageTeamOption(action: @escaping () -> Void) -> Option {
+        Option(
+            icon: .manage,
+            text: L10n.ManageTeam.title,
+            actionImage: .manage,
+            action: action
+        )
+    }
 
-    public static let addAccountOption = Option(
-        icon: .plus,
-        text: L10n.AddAccount.title,
-        actionImage: nil
-    )
-    
-    public init(icon: Icon, text: String, actionImage: ActionImage?) {
+    public static func addAccountOption(action: @escaping () -> Void) -> Option {
+        Option(
+            icon: .plus,
+            text: L10n.AddAccount.title,
+            actionImage: nil,
+            action: action
+        )
+    }
+        
+    public init(
+        icon: Icon,
+        text: String,
+        actionImage: ActionImage?,
+        action: @escaping () -> Void
+    ) {
         self.icon = icon
         self.text = text
         self.actionImage = actionImage
+        self.action = action
     }
 }
 
@@ -84,7 +97,7 @@ struct OptionView: View {
         }
         .contentShape(Rectangle())
         .onTapGesture {
-            // Handle external link
+            option.action()
         }
     }
 
@@ -101,7 +114,7 @@ struct OptionView: View {
 
 #Preview {
     List {
-        OptionView(option: .manageTeamOption)
-        OptionView(option: .addAccountOption)
+        OptionView(option: .manageTeamOption(action: { }))
+        OptionView(option: .addAccountOption(action: { }))
     }
 }
