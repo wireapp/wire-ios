@@ -56,6 +56,14 @@ struct AccountSwitcherView: View {
                 teamName: "team name",
                 backendName: "backend name"
             ),
+            AccountUIModel(
+                avatarSource: .text("SD"),
+                name: "Willy Wonka",
+                handle: "@username",
+                teamName: "team name",
+                backendName: "backend name long long long long"
+            ),
+
         ],
         options: [
             .addAccountOption,
