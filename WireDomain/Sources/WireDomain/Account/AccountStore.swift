@@ -56,7 +56,7 @@ struct AccountStore {
     /// - returns: All accounts stored in this `AccountStore`.
 
     func fetchAllAccounts() -> Set<Account> {
-        Set<Account>(loadURLs().compactMap(Account.load))
+        Set(listAccountIDs().compactMap(fetchAccount))
     }
 
     /// Fetch a single account.
@@ -129,15 +129,14 @@ struct AccountStore {
 
     // MARK: - Private Helper
 
-    /// Loads the urls to all stored accounts.
-    /// - returns: The urls to all accounts stored in this `AccountStore`.
-    private func loadURLs() -> Set<URL> {
+    private func listAccountIDs() -> Set<UUID> {
         do {
             let uuidName: (String) -> Bool = { UUID(uuidString: $0) != nil }
             let paths = try fileManager.contentsOfDirectory(atPath: directory.path)
-            return Set<URL>(paths.filter(uuidName).map(directory.appendingPathComponent))
+            let ids = paths.compactMap(UUID.init(uuidString:))
+            return Set(ids)
         } catch {
-            log.error("Unable to load accounts, error: \(error.safeForLoggingDescription)")
+            log.error("failed to list account ids, error: \(error.safeForLoggingDescription)")
             return []
         }
     }
