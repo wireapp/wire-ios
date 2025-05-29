@@ -506,7 +506,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
 
         self.sharedContainerURL = sharedContainerURL
-        self.accountManager = AccountManager(sharedDirectory: sharedContainerURL)
+        self.accountManager = try! AccountManager(sharedDirectory: sharedContainerURL)
 
         WireLogger.sessionManager.debug("Starting the session manager:")
 

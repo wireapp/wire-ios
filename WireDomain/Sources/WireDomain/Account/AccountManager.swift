@@ -82,8 +82,8 @@ public final class AccountManager: NSObject {
     ///
     /// - parameter sharedDirectory: The directory of the shared container.
 
-    public init(sharedDirectory: URL) {
-        self.store = try! AccountStore(root: sharedDirectory)
+    public init(sharedDirectory: URL) throws {
+        self.store = try AccountStore(root: sharedDirectory)
         super.init()
         refreshCache()
     }

@@ -425,7 +425,7 @@ extension AccountManager {
     static var sharedAccountManager: AccountManager? {
         guard let applicationGroupIdentifier = Bundle.main.applicationGroupIdentifier else { return nil }
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
-        return AccountManager(sharedDirectory: sharedContainerURL)
+        return try? AccountManager(sharedDirectory: sharedContainerURL)
     }
 
     static var fileSizeLimitInBytes: UInt64 {
