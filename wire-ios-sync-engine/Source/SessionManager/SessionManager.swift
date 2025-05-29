@@ -510,7 +510,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         WireLogger.sessionManager.debug("Starting the session manager:")
 
-        if !accountManager.accounts.isEmpty {
+        if accountManager.hasAccounts {
             WireLogger.sessionManager.debug("Known accounts:")
             accountManager.accounts.forEach { account in
                 WireLogger.sessionManager
@@ -782,8 +782,9 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     fileprivate func deleteAllAccounts(reason: ZMAccountDeletedReason) {
-        let inactiveAccounts = accountManager.accounts.filter { $0 != accountManager.selectedAccount }
-        inactiveAccounts.forEach { delete(account: $0, reason: reason) }
+        accountManager.inactiveAccounts.forEach {
+            delete(account: $0, reason: reason)
+        }
 
         if let activeAccount = accountManager.selectedAccount {
             delete(account: activeAccount, reason: reason)
@@ -792,7 +793,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     func delete(account: Account, reason: ZMAccountDeletedReason) {
         WireLogger.sessionManager.debug("Deleting account \(account.userIdentifier)...")
-        if let secondAccount = accountManager.accounts.first(where: { $0.userIdentifier != account.userIdentifier }) {
+        if let secondAccount = accountManager.inactiveAccounts.first {
             // Deleted an account but we can switch to another account
             select(secondAccount, tearDownCompletion: { [weak self] in
                 self?.tearDownSessionAndDelete(account: account)
@@ -1491,7 +1492,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 extension SessionManager {
     func updateCurrentAccount(in managedObjectContext: NSManagedObjectContext) {
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
-        if let account = accountManager.accounts.first(where: { $0.userIdentifier == selfUser.remoteIdentifier }) {
+        if let account = accountManager.account(with: selfUser.remoteIdentifier) {
             if let name = selfUser.team?.name {
                 account.teamName = name
             }
@@ -1575,14 +1576,14 @@ extension SessionManager: UnauthenticatedSessionDelegate {
     public func sessionIsAllowedToCreateNewAccount(
         _ session: UnauthenticatedSession
     ) -> Bool {
-        accountManager.accounts.count < maxNumberAccounts
+        accountManager.numberOfAccounts < maxNumberAccounts
     }
 
     public func session(
         session: UnauthenticatedSession,
         isExistingAccount account: Account
     ) -> Bool {
-        accountManager.accounts.contains(account)
+        accountManager.account(with: account.userIdentifier) != nil
     }
 
     public func session(
@@ -1603,7 +1604,7 @@ extension SessionManager: UnauthenticatedSessionDelegate {
         session: UnauthenticatedSession,
         createdAccount account: Account
     ) {
-        let numberOfExistingAccounts = accountManager.accounts.count
+        let numberOfExistingAccounts = accountManager.numberOfAccounts
         let createdAccountIsKnown = accountManager.account(with: account.userIdentifier) != nil
 
         guard

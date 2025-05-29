@@ -218,7 +218,7 @@ extension ConversationListViewController.ViewModel {
             // Therefore only update the account if the accountManager's accounts still contains the instance we have.
             if let self,
                let accountManager = notification.object as? AccountManager,
-               accountManager.accounts.contains(account),
+               accountManager.account(with: account.userIdentifier) != nil,
                accountManager.selectedAccount == account,
                !account.userName.isEmpty {
                 updateAccountImage()

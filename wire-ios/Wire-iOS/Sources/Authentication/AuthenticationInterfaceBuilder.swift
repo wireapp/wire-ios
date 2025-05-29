@@ -76,7 +76,7 @@ final class AuthenticationInterfaceBuilder {
         switch step {
         case .wireAuthenticationModule:
             let assembly = WireAuthenticationAssembly()
-            let numberOfAccounts = SessionManager.shared?.accountManager.accounts.count ?? 0
+            let numberOfAccounts = SessionManager.shared?.accountManager.numberOfAccounts ?? 0
             let preferredAPIVersion = BackendInfo.preferredAPIVersion.flatMap {
                 WireAPI.APIVersion(rawValue: UInt($0.rawValue))
             }

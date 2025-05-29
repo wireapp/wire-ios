@@ -35,135 +35,201 @@ private extension UserDefaults {
     }
 }
 
-/// Class used to safely access and change stored accounts and the current selected account.
+/// Manages the known and selected accounts.
+
 public final class AccountManager: NSObject {
 
-    private let defaults = UserDefaults.shared()
-    public private(set) var accounts = [Account]()
-    public private(set) var selectedAccount: Account? { // The currently selected account or `nil` in case there is none
-        didSet {
-            if let selectedAccount {
-                WireLogger.system.setActiveAccount(accoundID: selectedAccount.userIdentifier.safeForLoggingDescription)
-            }
+    // MARK: - Properties
+
+    /// The currently selected account.
+
+    public var selectedAccount: Account? {
+        guard let id = defaults.selectedAccountIdentifier else { return nil }
+        return cache[id]
+    }
+
+    /// All known accounts.
+
+    public var accounts: Set<Account> {
+        Set(cache.values)
+    }
+
+    /// All accounts excluding the selected account.
+
+    public var inactiveAccounts: Set<Account> {
+        if let selectedAccount {
+            accounts.subtracting([selectedAccount])
+        } else {
+            accounts
         }
     }
 
-    private var store: AccountStore
+    /// The sum of unread conversations in all accounts.
 
-    /// Returns the sum of unread conversations in all accounts.
     public var totalUnreadCount: Int {
-        accounts.reduce(0) { $0 + $1.unreadConversationCount }
+        cache.values.reduce(0) {
+            $0 + $1.unreadConversationCount
+        }
     }
 
-    /// Creates a new `AccountManager`.
+    /// The number of known accounts.
+
+    public var numberOfAccounts: Int {
+        cache.count
+    }
+
+    /// Whether there are any known accounts.
+
+    public var hasAccounts: Bool {
+        !cache.isEmpty
+    }
+
+    private var cache = [UUID: Account]()
+    private var store: AccountStore
+    private let defaults = UserDefaults.shared()!
+
+    // MARK: - Init
+
+    /// Create a new `AccountManager`.
+    ///
     /// - parameter sharedDirectory: The directory of the shared container.
+
     public init(sharedDirectory: URL) {
         self.store = try! AccountStore(root: sharedDirectory)
         super.init()
-        updateAccounts()
+        refreshCache()
     }
 
-    /// Deletes all content stored by an `AccountManager` on disk at the given URL, including the selected account.
-    public static func delete(at root: URL) {
-        AccountStore.delete(at: root)
-        UserDefaults.shared().selectedAccountIdentifier = nil
-    }
+    // MARK: - Add / update
 
-    /// Adds an account to the manager and persists it.
+    /// Add an account to the manager and persists it.
+    ///
     /// - parameter account: The account to add.
+
     public func addOrUpdate(_ account: Account) {
         store.storeAccount(account)
-        updateAccounts()
+        refreshCache()
     }
 
-    /// Adds an account to the mananger and immediately and selects it.
+    /// Add an account to the mananger and immediately and selects it.
+    ///
     /// - parameter account: The account to add and select.
+
     public func addAndSelect(_ account: Account) {
         addOrUpdate(account)
         select(account)
     }
 
-    /// Removes an account from the manager and the persistence layer.
+    /// Select a new account.
+    ///
+    /// - parameter account: The account to select.
+
+    public func select(_ account: Account) {
+        let id = account.userIdentifier
+
+        precondition(
+            cache[id] != nil,
+            "Selecting an account without first adding it is not allowed"
+        )
+
+        guard id != defaults.selectedAccountIdentifier else {
+            return
+        }
+
+        defaults.selectedAccountIdentifier = id
+        refreshCache()
+
+        WireLogger.system.setActiveAccount(
+            accoundID: id.safeForLoggingDescription
+        )
+    }
+
+    // MARK: - Remove
+
+    /// Remove an account from the manager and the persistence layer.
+    ///
     /// - parameter account: The account to remove.
+
     public func remove(_ account: Account) {
         store.deleteAccount(account)
         if selectedAccount == account {
-            defaults?.selectedAccountIdentifier = nil
+            defaults.selectedAccountIdentifier = nil
             WireLogger.system.clearActiveAccount()
         }
-        updateAccounts()
+        refreshCache()
     }
 
-    /// Selects a new account.
-    /// - parameter account: The account to select.
-    public func select(_ account: Account) {
-        precondition(accounts.contains(account), "Selecting an account without first adding it is not allowed")
-        guard account != selectedAccount else { return }
-        defaults?.selectedAccountIdentifier = account.userIdentifier
-        updateAccounts()
+    /// Delete all content stored by an `AccountManager` on disk at the
+    /// given URL, including the selected account.
+
+    public static func delete(at root: URL) {
+        AccountStore.delete(at: root)
+        UserDefaults.shared().selectedAccountIdentifier = nil
+    }
+
+    // MARK: - Retrieve
+
+    /// Fetch an account.
+    ///
+    /// - Parameter id: The user id of the account to fetch.
+    /// - Returns: The account, if it exists.
+
+    public func account(with id: UUID) -> Account? {
+        cache[id]
+    }
+
+    /// Loads and sorts the stored accounts.
+    ///
+    /// - returns: An Array consisting of the sorted accounts. Accounts without team will
+    /// be first, sorted by their user name. Accounts with team will be last,
+    /// sorted by their team name.
+
+    public func sortedAccounts() -> [Account] {
+        cache.values.sorted { lhs, rhs in
+            switch (lhs.teamName, rhs.teamName) {
+            case (.some, .none):
+                return false
+            case (.none, .some):
+                return true
+            case let (.some(leftName), .some(rightName)):
+                guard leftName != rightName else { fallthrough }
+                return leftName < rightName
+            default:
+                return lhs.userName < rhs.userName
+            }
+        }
     }
 
     // MARK: - Private Helper
 
-    /// Updates the local accounts array and the selected account.
-    /// This method should be called each time accounts are added or
-    /// removed, or when the selectedAccountIdentifier has been changed.
-    private func updateAccounts() {
+    private func refreshCache() {
+        let accounts = store.fetchAllAccounts()
 
-        // since some objects (eg. AccountView) observe changes in the account, we must
-        // make sure their object addresses are maintained after updating, i.e if
-        // exisiting objects need to be updated from the account store, we just update
-        // their properties and not replace the whole object.
-        //
-        var updatedAccounts = [Account]()
-
-        for account in computeSortedAccounts() {
-            if let existingAccount = self.account(with: account.userIdentifier) {
+        // Add or update values in cache.
+        for account in accounts {
+            // TODO: fix this
+            // Since some objects (eg. AccountView) observe changes in the account, we must
+            // make sure their object addresses are maintained after updating, i.e if
+            // exisiting objects need to be updated from the account store, we just update
+            // their properties and not replace the whole object.
+            if let existingAccount = cache[account.userIdentifier] {
                 existingAccount.updateWith(account)
-                updatedAccounts.append(existingAccount)
+                cache[account.userIdentifier] = existingAccount
             } else {
-                updatedAccounts.append(account)
+                cache[account.userIdentifier] = account
             }
         }
 
-        accounts = updatedAccounts
-
-        let computedAccount = computeSelectedAccount()
-        if let account = computedAccount, let exisitingAccount = self.account(with: account.userIdentifier) {
-            exisitingAccount.updateWith(account)
-            selectedAccount = exisitingAccount
-        } else {
-            selectedAccount = computedAccount
+        // Remove deleted accounts.
+        for key in Set(cache.keys).subtracting(accounts.map(\.userIdentifier)) {
+            cache[key] = nil
         }
 
-        NotificationCenter.default.post(name: AccountManagerDidUpdateAccountsNotificationName, object: self)
-    }
-
-    public func account(with id: UUID) -> Account? {
-        accounts.first(where: { $0.userIdentifier == id })
-    }
-
-    /// Loads and computes the locally selected account if any
-    /// - returns: The currently selected account or `nil` if there is none.
-    private func computeSelectedAccount() -> Account? {
-        defaults?.selectedAccountIdentifier.flatMap(store.fetchAccount)
-    }
-
-    /// Loads and sorts the stored accounts.
-    /// - returns: An Array consisting of the sorted accounts. Accounts without team will
-    /// be first, sorted by their user name. Accounts with team will be last,
-    /// sorted by their team name.
-    private func computeSortedAccounts() -> [Account] {
-        store.fetchAllAccounts().sorted { lhs, rhs in
-            switch (lhs.teamName, rhs.teamName) {
-            case (.some, .none): return false
-            case (.none, .some): return true
-            case let (.some(leftName), .some(rightName)):
-                guard leftName != rightName else { fallthrough }
-                return leftName < rightName
-            default: return lhs.userName < rhs.userName
-            }
-        }
+        // TODO: get rid of this.
+        NotificationCenter.default.post(
+            name: AccountManagerDidUpdateAccountsNotificationName,
+            object: self
+        )
     }
 
 }

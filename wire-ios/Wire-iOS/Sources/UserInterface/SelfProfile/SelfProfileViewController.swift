@@ -179,7 +179,7 @@ final class SelfProfileViewController: UIViewController {
     }
 
     private func configureAccountTitle() {
-        if let accounts = SessionManager.shared?.accountManager.accounts, accounts.count > 1 {
+        if let accounts = SessionManager.shared?.accountManager.sortedAccounts(), accounts.count > 1 {
             let accountSelectorView = AccountSelectorView()
             accountSelectorView.delegate = self
             accountSelectorView.accounts = accounts
