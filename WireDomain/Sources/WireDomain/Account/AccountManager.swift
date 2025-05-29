@@ -58,7 +58,7 @@ public final class AccountManager: NSObject {
     /// Creates a new `AccountManager`.
     /// - parameter sharedDirectory: The directory of the shared container.
     public init(sharedDirectory: URL) {
-        self.store = AccountStore(root: sharedDirectory)
+        self.store = try! AccountStore(root: sharedDirectory)
         super.init()
         updateAccounts()
     }

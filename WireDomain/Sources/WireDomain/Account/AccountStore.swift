@@ -40,12 +40,13 @@ struct AccountStore {
     private let fileManager = FileManager.default
 
     /// Creates a new `AccountStore`.
+    ///
     /// `Account` objects will be stored in a subdirectory of the passed in url.
     /// - parameter root: The root url in which the storage will use to store its data
-    public required init(root: URL) {
+
+    init(root: URL) throws {
         self.directory = root.appendingPathComponent(AccountStore.directoryName)
-        super.init()
-        try! fileManager.createAndProtectDirectory(at: directory)
+        try fileManager.createAndProtectDirectory(at: directory)
     }
 
     // MARK: - Storing and Retrieving
