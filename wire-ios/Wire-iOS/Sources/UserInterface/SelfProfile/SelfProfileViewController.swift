@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireAccountImageUI
 import WireAnalytics
 import WireAPI
 import WireCommonComponents
@@ -24,12 +25,11 @@ import WireDesign
 import WireDomainPackage
 import WireIndividualToTeamMigrationUI
 import WireMainNavigationUI
-import WireReusableUIComponents
 import WireMultiBackendUI
+import WireReusableUIComponents
 import WireSettingsUI
 import WireSyncEngine
 import WireUtilities
-import WireAccountImageUI
 
 /// The first page of the user settings.
 final class SelfProfileViewController: UIViewController {
@@ -74,23 +74,23 @@ final class SelfProfileViewController: UIViewController {
         self.accountSelector = accountSelector
         self.mainCoordinator = mainCoordinator
         self.analyticsEventTracker = analyticsEventTracker
-        
+
         // Create the settings hierarchy
         let settingsPropertyFactory = SettingsPropertyFactory(
             userSession: userSession,
             selfUser: selfUser,
             trackingManager: nil
         )
-        
+
         let settingsCoordinator = SettingsCoordinator(mainCoordinator: mainCoordinator)
         let settingsCellDescriptorFactory = SettingsCellDescriptorFactory(
             settingsPropertyFactory: settingsPropertyFactory,
             userRightInterfaceType: userRightInterfaceType,
             settingsCoordinator: AnySettingsCoordinator(settingsCoordinator: settingsCoordinator)
         )
-        
+
         let rootGroup = settingsCellDescriptorFactory.rootGroup(userSession: userSession)
-        
+
         var options: ProfileHeaderViewController.Options
         options = selfUser.isTeamMember ? [.allowEditingAvailability] : [.hideAvailability]
         if userRightInterfaceType.selfUserIsPermitted(to: .editProfilePicture) {
@@ -125,7 +125,7 @@ final class SelfProfileViewController: UIViewController {
                 }
             )
         }
-        
+
         if DeveloperFlag.multibackend.isOn {
             let accountSwitcherViewController = makeAccountSwitcherViewController(
                 settingsCellDescriptorFactory: settingsCellDescriptorFactory
@@ -138,8 +138,9 @@ final class SelfProfileViewController: UIViewController {
             self.settingsController = settingsController
         }
     }
-    
-    private func makeAccountSwitcherViewController(settingsCellDescriptorFactory: SettingsCellDescriptorFactory) -> AccountSwitcherHostingController {
+
+    private func makeAccountSwitcherViewController(settingsCellDescriptorFactory: SettingsCellDescriptorFactory)
+        -> AccountSwitcherHostingController {
         var options = [Option.addAccountOption(action: {
             settingsCellDescriptorFactory
                 .addAccountOrTeamCell().select(.none, sender: UIView())
@@ -151,7 +152,7 @@ final class SelfProfileViewController: UIViewController {
                 self?.present(controllerToShow, animated: true, completion: .none)
             }))
         }
-        
+
         let accountManager = SessionManager.shared?.accountManager
         let accounts = (accountManager?.accounts ?? [])
             .filter {
@@ -169,8 +170,8 @@ final class SelfProfileViewController: UIViewController {
                     )
                     avatarSource = .text(personName.initials)
                 }
-                // TODO: track updates in user avatar and name
-                let uiAccount = AccountUIModel(
+                // track updates in user avatar and name?
+                return AccountUIModel(
                     avatarSource: avatarSource,
                     name: domainAccount.userName,
                     handle: "@handle", // TODO:
@@ -180,9 +181,8 @@ final class SelfProfileViewController: UIViewController {
                         self?.handleAccountSelected(domainAccount)
                     }
                 )
-                return uiAccount
             }
-        
+
         let appSwitcherController = AccountSwitcherHostingController(
             accounts: accounts,
             options: options
@@ -286,7 +286,6 @@ final class SelfProfileViewController: UIViewController {
             profileLayoutGuideViewTopConstraint.isActive = true
         }
 
-        
         NSLayoutConstraint.activate([
 
             // profileLayoutGuide
@@ -440,7 +439,7 @@ extension SelfProfileViewController: UIAdaptivePresentationControllerDelegate {
 // MARK: - AccountSelectorViewDelegate
 
 extension SelfProfileViewController: AccountSelectorViewDelegate {
-    
+
     private func handleAccountSelected(_ account: Account) {
         guard SessionManager.shared?.accountManager.selectedAccount != account else { return }
 

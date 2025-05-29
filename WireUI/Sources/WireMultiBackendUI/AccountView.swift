@@ -29,7 +29,7 @@ public struct AccountUIModel: Identifiable {
     let teamName: String?
     let backendName: String?
     let action: () -> Void
-    
+
     public init(
         avatarSource: AccountImageSource,
         name: String,
@@ -117,7 +117,7 @@ struct DotSeparatedTextView: View {
                 handle: "@username",
                 teamName: "team name",
                 backendName: "backend ",
-                action: { }
+                action: {}
             )
         )
         AccountView(
@@ -127,7 +127,7 @@ struct DotSeparatedTextView: View {
                 handle: "@username",
                 teamName: "team name",
                 backendName: "backend name long long long long long ",
-                action: { }
+                action: {}
             )
         )
 

@@ -54,7 +54,7 @@ public  struct Option: Identifiable {
             action: action
         )
     }
-        
+
     public init(
         icon: Icon,
         text: String,
@@ -114,7 +114,7 @@ struct OptionView: View {
 
 #Preview {
     List {
-        OptionView(option: .manageTeamOption(action: { }))
-        OptionView(option: .addAccountOption(action: { }))
+        OptionView(option: .manageTeamOption(action: {}))
+        OptionView(option: .addAccountOption(action: {}))
     }
 }

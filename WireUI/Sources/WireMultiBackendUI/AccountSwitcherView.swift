@@ -23,7 +23,7 @@ public struct AccountSwitcherView: View {
 
     let accounts: [AccountUIModel]
     let options: [Option]
-    
+
     public init(accounts: [AccountUIModel], options: [Option]) {
         self.accounts = accounts
         self.options = options
@@ -41,7 +41,7 @@ public struct AccountSwitcherView: View {
                         .padding(.leading, 64)
                 }
             }
-            
+
             ForEach(options.indices, id: \.self) { index in
                 OptionView(option: options[index])
                     .padding(.horizontal, 16)
@@ -56,7 +56,7 @@ public struct AccountSwitcherView: View {
         }
         .background(Color(uiColor: ColorTheme.Backgrounds.surface))
     }
-    
+
     @ViewBuilder
     func divider() -> some View {
         Divider()
@@ -64,7 +64,6 @@ public struct AccountSwitcherView: View {
             .background(Color(ColorTheme.Strokes.outline))
     }
 }
-
 
 #Preview {
     AccountSwitcherView(
@@ -75,7 +74,7 @@ public struct AccountSwitcherView: View {
                 handle: "@username",
                 teamName: nil,
                 backendName: nil,
-                action: { }
+                action: {}
             ),
             AccountUIModel(
                 avatarSource: .text("DS"),
@@ -83,7 +82,7 @@ public struct AccountSwitcherView: View {
                 handle: "@username",
                 teamName: "team name",
                 backendName: "backend name",
-                action: { }
+                action: {}
             ),
             AccountUIModel(
                 avatarSource: .text("SD"),
@@ -91,13 +90,13 @@ public struct AccountSwitcherView: View {
                 handle: "@username",
                 teamName: "team name",
                 backendName: "backend name long long long long",
-                action: { }
+                action: {}
             )
 
         ],
         options: [
-            .addAccountOption(action: { }),
-            .manageTeamOption(action: { })
-         ]
+            .addAccountOption(action: {}),
+            .manageTeamOption(action: {})
+        ]
     )
 }
