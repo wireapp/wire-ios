@@ -21,6 +21,7 @@ import UserNotifications
 import WireAccountImageUI
 import WireCommonComponents
 import WireDataModel
+import WireDomain
 import WireFoundation
 import WireLogging
 import WireMainNavigationUI

@@ -495,8 +495,6 @@
 		BF46662A1DCB71B0007463FF /* V3Asset.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4666291DCB71B0007463FF /* V3Asset.swift */; };
 		BF491CCF1F02A6CF0055EE44 /* Member+Patches.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF491CCE1F02A6CF0055EE44 /* Member+Patches.swift */; };
 		BF491CE41F063EDB0055EE44 /* Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF491CE31F063EDB0055EE44 /* Account.swift */; };
-		BF491CE61F063EE50055EE44 /* AccountStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF491CE51F063EE50055EE44 /* AccountStore.swift */; };
-		BF491CE81F063EEB0055EE44 /* AccountManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF491CE71F063EEB0055EE44 /* AccountManager.swift */; };
 		BF491CEA1F063F440055EE44 /* AccountTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF491CDA1F0525DC0055EE44 /* AccountTests.swift */; };
 		BF491CEB1F063F480055EE44 /* AccountManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF491CDC1F0525E50055EE44 /* AccountManagerTests.swift */; };
 		BF491CEC1F063F4B0055EE44 /* AccountStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF491CDF1F0529D80055EE44 /* AccountStoreTests.swift */; };
@@ -1411,8 +1409,6 @@
 		BF491CDC1F0525E50055EE44 /* AccountManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountManagerTests.swift; sourceTree = "<group>"; };
 		BF491CDF1F0529D80055EE44 /* AccountStoreTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountStoreTests.swift; sourceTree = "<group>"; };
 		BF491CE31F063EDB0055EE44 /* Account.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Account.swift; sourceTree = "<group>"; };
-		BF491CE51F063EE50055EE44 /* AccountStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountStore.swift; sourceTree = "<group>"; };
-		BF491CE71F063EEB0055EE44 /* AccountManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountManager.swift; sourceTree = "<group>"; };
 		BF5DF5CC20F4EB3E002BCB67 /* ZMSystemMessage+NewConversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMSystemMessage+NewConversation.swift"; sourceTree = "<group>"; };
 		BF6EA4D11E2512E800B7BD4B /* ZMConversation+DisplayName.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMConversation+DisplayName.swift"; sourceTree = "<group>"; };
 		BF735CFB1E7050D0003BC61F /* ZMConversationMissedCallSystemMessageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMConversationMissedCallSystemMessageTests.swift; sourceTree = "<group>"; };
@@ -2204,8 +2200,6 @@
 				BF491CE31F063EDB0055EE44 /* Account.swift */,
 				EE5F54CB259B22C400F11F3C /* Account+Keychain.swift */,
 				161E05692667C4D000DADC3D /* AccountDeletedObserver.swift */,
-				BF491CE71F063EEB0055EE44 /* AccountManager.swift */,
-				BF491CE51F063EE50055EE44 /* AccountStore.swift */,
 				5E67168D2174B9AF00522E61 /* LoginCredentials.swift */,
 				BF8361D91F0A3C41009AE5AC /* NSSecureCoding+Swift.swift */,
 			);
@@ -4300,7 +4294,6 @@
 				F110503D2220439900F3EB62 /* ZMUser+RichProfile.swift in Sources */,
 				F9A706571CAEE01D00C2F5FE /* NSNotification+ManagedObjectContextSave.m in Sources */,
 				E9DCCC1B2BCFB15B00AB01DE /* SetAllowGuestsAndServicesAction.swift in Sources */,
-				BF491CE61F063EE50055EE44 /* AccountStore.swift in Sources */,
 				E6E5043C2BC542C5004948E7 /* EARService.swift in Sources */,
 				16BA4305233CDEA30018E883 /* ZMConversation+Labels.swift in Sources */,
 				5451DE371F604CD500C82E75 /* ZMMoveIndex.swift in Sources */,
@@ -4384,7 +4377,6 @@
 				5980C7012BE4E17100278363 /* E2EINotifications.swift in Sources */,
 				F9A706811CAEE01D00C2F5FE /* ZMMessage.m in Sources */,
 				76E000BA2DAFED1B00853C45 /* WireCellsMessageAttachmentDraftEntity.swift in Sources */,
-				639971B02B27346B009DD5CF /* CommitError.swift in Sources */,
 				631A0578240420380062B387 /* UserClient+SafeLogging.swift in Sources */,
 				165DC52121491D8700090B7B /* ZMClientMessage+TextMessageData.swift in Sources */,
 				EEE95CD52A432FA100E136CB /* LeaveSubconversationAction.swift in Sources */,
@@ -4542,7 +4534,6 @@
 				BF10B58B1E6432ED00E7036E /* Message.swift in Sources */,
 				59F4B6F22B87563E00AC84B1 /* IsUserE2EICertifiedUseCaseProtocol.swift in Sources */,
 				E6E504342BC542C5004948E7 /* BaseEARKeyDescription.swift in Sources */,
-				BF491CE81F063EEB0055EE44 /* AccountManager.swift in Sources */,
 				060C06612B73D9D400B484C6 /* E2EIActivationRepository.swift in Sources */,
 				63B1335429A503D100009D84 /* ProteusServiceInterface.swift in Sources */,
 				16D95A421FCEF87B00C96069 /* ZMUser+Availability.swift in Sources */,

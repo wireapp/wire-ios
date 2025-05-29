@@ -103,7 +103,7 @@ public final class Account: NSObject, Codable {
 
 // MARK: - Serialization Helper
 
-extension Account {
+public extension Account {
 
     func write(to url: URL) throws {
         let encoder = JSONEncoder()

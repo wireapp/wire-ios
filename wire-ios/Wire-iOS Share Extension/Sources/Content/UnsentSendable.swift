@@ -22,6 +22,7 @@ import MobileCoreServices
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDomain
 import WireShareEngine
 
 /// Error that can happen during the preparation or sending operation
