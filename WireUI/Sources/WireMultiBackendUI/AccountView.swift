@@ -28,19 +28,22 @@ public struct AccountUIModel: Identifiable {
     let handle: String
     let teamName: String?
     let backendName: String?
+    let action: () -> Void
     
     public init(
         avatarSource: AccountImageSource,
         name: String,
         handle: String,
         teamName: String?,
-        backendName: String?
+        backendName: String?,
+        action: @escaping () -> Void
     ) {
         self.avatarSource = avatarSource
         self.name = name
         self.handle = handle
         self.teamName = teamName
         self.backendName = backendName
+        self.action = action
     }
 }
 
@@ -83,6 +86,10 @@ struct AccountView: View {
                 .scaledToFill()
                 .frame(width: 16, height: 16)
         }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            account.action()
+        }
     }
 }
 
@@ -109,7 +116,8 @@ struct DotSeparatedTextView: View {
                 name: "Deniz Agha",
                 handle: "@username",
                 teamName: "team name",
-                backendName: "backend "
+                backendName: "backend ",
+                action: { }
             )
         )
         AccountView(
@@ -118,7 +126,8 @@ struct DotSeparatedTextView: View {
                 name: "Deniz Agha",
                 handle: "@username",
                 teamName: "team name",
-                backendName: "backend name long long long long long "
+                backendName: "backend name long long long long long ",
+                action: { }
             )
         )
 

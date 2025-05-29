@@ -74,21 +74,24 @@ public struct AccountSwitcherView: View {
                 name: "Kim Dawson",
                 handle: "@username",
                 teamName: nil,
-                backendName: nil
+                backendName: nil,
+                action: { }
             ),
             AccountUIModel(
                 avatarSource: .text("DS"),
                 name: "Deniz Agha",
                 handle: "@username",
                 teamName: "team name",
-                backendName: "backend name"
+                backendName: "backend name",
+                action: { }
             ),
             AccountUIModel(
                 avatarSource: .text("SD"),
                 name: "Willy Wonka",
                 handle: "@username",
                 teamName: "team name",
-                backendName: "backend name long long long long"
+                backendName: "backend name long long long long",
+                action: { }
             )
 
         ],

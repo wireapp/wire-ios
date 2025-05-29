@@ -173,9 +173,12 @@ final class SelfProfileViewController: UIViewController {
                 let uiAccount = AccountUIModel(
                     avatarSource: avatarSource,
                     name: domainAccount.userName,
-                    handle: "@handle",
+                    handle: "@handle", // TODO:
                     teamName: domainAccount.teamName,
-                    backendName: "Back END INFO"
+                    backendName: "Back END INFO", // TODO:
+                    action: { [weak self] in
+                        self?.handleAccountSelected(domainAccount)
+                    }
                 )
                 return uiAccount
             }
@@ -437,8 +440,8 @@ extension SelfProfileViewController: UIAdaptivePresentationControllerDelegate {
 // MARK: - AccountSelectorViewDelegate
 
 extension SelfProfileViewController: AccountSelectorViewDelegate {
-
-    func accountSelectorView(_ view: AccountSelectorView, didSelect account: Account) {
+    
+    private func handleAccountSelected(_ account: Account) {
         guard SessionManager.shared?.accountManager.selectedAccount != account else { return }
 
         sendDismissAnalyticsEventIfNeeded()
@@ -448,6 +451,10 @@ extension SelfProfileViewController: AccountSelectorViewDelegate {
             }
             self.accountSelector?.switchTo(account: account)
         }
+    }
+
+    func accountSelectorView(_ view: AccountSelectorView, didSelect account: Account) {
+        handleAccountSelected(account)
     }
 }
 
