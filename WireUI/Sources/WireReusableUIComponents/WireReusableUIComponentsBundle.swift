@@ -18,6 +18,6 @@
 
 import Foundation
 
-extension Bundle {
-    public static let wireReusableUIComponentsBundle = Bundle.module
+public extension Bundle {
+    static let wireReusableUIComponentsBundle = Bundle.module
 }

@@ -20,40 +20,42 @@ import SwiftUI
 import WireDesign
 
 struct Option: Identifiable {
-    
+
     let id = UUID()
 
     enum Icon {
         case plus
         case manage
     }
-    
+
     enum ActionImage {
         case manage
     }
-    
+
     let icon: Icon
     let text: String
     let actionImage: ActionImage?
-    
+
     static let manageTeamOption = Option(
         icon: .manage,
         text: L10n.ManageTeam.title,
-        actionImage: .manage)
-    
+        actionImage: .manage
+    )
+
     static let addAccountOption = Option(
         icon: .plus,
         text: L10n.AddAccount.title,
-        actionImage: nil)
+        actionImage: nil
+    )
 }
 
 struct OptionView: View {
-    
+
     let option: Option
-    
+
     var body: some View {
         HStack(spacing: 19) {
-            HStack() {
+            HStack {
                 image(option.icon)
                     .resizable()
                     .scaledToFill()
@@ -61,12 +63,11 @@ struct OptionView: View {
                 Spacer()
             }.frame(width: 28, height: 28)
                 .padding(.leading, 3)
-            
+
             Text(option.text)
                 .font(FontSpec.bodyTwoSemibold.swiftUIFont)
                 .foregroundStyle(Color(SemanticColors.Label.textDefault))
 
-            
             Spacer()
             switch option.actionImage {
             case .manage:
@@ -80,7 +81,7 @@ struct OptionView: View {
             // Handle external link
         }
     }
-    
+
     func image(_ icon: Option.Icon) -> Image {
         switch option.icon {
         case .plus:
@@ -89,8 +90,7 @@ struct OptionView: View {
             Image(.manageTeam)
         }
     }
-    
-    
+
 }
 
 #Preview {
