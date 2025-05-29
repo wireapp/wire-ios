@@ -670,18 +670,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         delete(account: account)
     }
 
-    /// Creates an account with the given identifier and migrates its cookie storage.
-    private func migrateAccount(with identifier: UUID) -> Account {
-        let account = Account(userName: "", userIdentifier: identifier)
-        accountManager.addAndSelect(account)
-        let migrator = ZMPersistentCookieStorageMigrator(
-            userIdentifier: identifier,
-            serverName: authenticatedSessionFactory.environment.backendURL.host!
-        )
-        _ = migrator.createStoreMigratingLegacyStoreIfNeeded()
-        return account
-    }
-
     private func selectInitialAccount(
         _ account: Account,
         launchOptions: LaunchOptions
