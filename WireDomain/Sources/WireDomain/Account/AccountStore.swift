@@ -80,7 +80,7 @@ struct AccountStore {
     @discardableResult
     func storeAccount(_ account: Account) -> Bool {
         do {
-            try account.write(to: url(for: account))
+            try account.write(to: url(for: account.userIdentifier))
             return true
         } catch {
             let accountDescription = account.safeForLoggingDescription
@@ -100,7 +100,7 @@ struct AccountStore {
     @discardableResult
     func deleteAccount(_ account: Account) -> Bool {
         do {
-            try fileManager.removeItem(at: url(for: account))
+            try fileManager.removeItem(at: url(for: account.userIdentifier))
             return true
         } catch {
             let accountDescription = account.safeForLoggingDescription
@@ -141,18 +141,8 @@ struct AccountStore {
         }
     }
 
-    /// Create a local url for an `Account` inside this `AccountStore`.
-    /// - parameter account: The account for which the url should be generated.
-    /// - returns: The `URL` for the given account.
-    private func url(for account: Account) -> URL {
-        url(for: account.userIdentifier)
-    }
-
-    /// Create a local url for an `Account` with the given `UUID` inside this `AccountStore`.
-    /// - parameter uuid: The uuid of the user for which the url should be generated.
-    /// - returns: The `URL` for the given uuid.
-    private func url(for uuid: UUID) -> URL {
-        directory.appendingPathComponent(uuid.uuidString)
+    private func url(for id: UUID) -> URL {
+        directory.appendingPathComponent(id.uuidString)
     }
 }
 
