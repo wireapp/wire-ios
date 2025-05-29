@@ -149,7 +149,6 @@ struct AccountStore {
 
     private func listAccountIDs() -> Set<UUID> {
         do {
-            let uuidName: (String) -> Bool = { UUID(uuidString: $0) != nil }
             let paths = try fileManager.contentsOfDirectory(atPath: directory.path)
             let ids = paths.compactMap(UUID.init(uuidString:))
             return Set(ids)
