@@ -35,6 +35,16 @@ struct Option: Identifiable {
     let icon: Icon
     let text: String
     let actionImage: ActionImage?
+    
+    static let manageTeamOption = Option(
+        icon: .manage,
+        text: L10n.ManageTeam.title,
+        actionImage: .manage)
+    
+    static let addAccountOption = Option(
+        icon: .plus,
+        text: L10n.AddAccount.title,
+        actionImage: nil)
 }
 
 struct OptionView: View {
@@ -85,6 +95,7 @@ struct OptionView: View {
 
 #Preview {
     List {
-        OptionView(option: Option(icon: .manage, text: "Manage Team & Billing", actionImage: .manage))
+        OptionView(option: .manageTeamOption)
+        OptionView(option: .addAccountOption)
     }
 }

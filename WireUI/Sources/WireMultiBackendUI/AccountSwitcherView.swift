@@ -58,8 +58,8 @@ struct AccountSwitcherView: View {
             ),
         ],
         options: [
-            Option(icon: .plus, text: "Add account or team", actionImage: nil),
-            Option(icon: .manage, text: "Manage Team & Billing", actionImage: .manage)
+            .addAccountOption,
+            .manageTeamOption
         ]
     )
 }

@@ -19,6 +19,7 @@
 import SwiftUI
 import WireDesign
 import WireAccountImageUI
+import WireReusableUIComponents
 
 struct AccountUIModel: Identifiable {
     let id = UUID()
@@ -34,30 +35,39 @@ struct AccountView: View {
     let account: AccountUIModel
     
     var body: some View {
-        HStack(spacing: 22) {
-            
-            AccountImageViewRepresentable(
-                source: account.avatarSource,
-                availability: nil,
-                showNotificationsBadge: false
-            ).frame(width: 28, height: 28)
-            
-            VStack(alignment: .leading, spacing: 2) {
+        HStack() {
+            HStack(spacing: 22) {
                 
-                Text(account.name)
-                    .font(FontSpec.bodyTwoSemibold.swiftUIFont)
-                    .foregroundStyle(Color(SemanticColors.Label.textDefault))
+                AccountImageViewRepresentable(
+                    source: account.avatarSource,
+                    availability: nil,
+                    showNotificationsBadge: false
+                ).frame(width: 28, height: 28)
                 
-                DotSeparatedTextView(
-                    items: [
-                        account.handle,
-                        account.teamName,
-                        account.backendName
-                    ].compactMap { $0 }
-                )
-                
+                VStack(alignment: .leading, spacing: 2) {
+                    
+                    Text(account.name)
+                        .font(FontSpec.bodyTwoSemibold.swiftUIFont)
+                        .foregroundStyle(Color(SemanticColors.Label.textDefault))
+                    
+                    DotSeparatedTextView(
+                        items: [
+                            account.handle,
+                            account.teamName,
+                            account.backendName
+                        ].compactMap { $0 }
+                    )
+                    
+                }
+                .padding(.vertical, 4)
             }
-            .padding(.vertical, 4)
+            
+            Spacer()
+            
+            Image("ChevronRight", bundle: Bundle.wireReusableUIComponentsBundle)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 16, height: 16)
         }
     }
 }
@@ -85,7 +95,7 @@ struct DotSeparatedTextView: View {
                 name: "Deniz Agha",
                 handle: "@username",
                 teamName: "team name",
-                backendName: "backend name"
+                backendName: "backend "
             )
         )
         AccountView(
