@@ -49,19 +49,23 @@ struct AccountStore {
         try fileManager.createAndProtectDirectory(at: directory)
     }
 
-    // MARK: - Storing and Retrieving
+    // MARK: - Fetch
 
-    /// Loads all stored accounts.
+    /// Fetch all stored accounts.
+    ///
     /// - returns: All accounts stored in this `AccountStore`.
-    func load() -> Set<Account> {
+
+    func fetchAllAccounts() -> Set<Account> {
         Set<Account>(loadURLs().compactMap(Account.load))
     }
 
-    /// Tries to load a stored account with the given `UUID`.
-    /// - parameter uuid: The `UUID` of the user the account belongs to.
-    /// - returns: The `Account` stored for the passed in `UUID`, or `nil` otherwise.
-    func load(_ uuid: UUID) -> Account? {
-        Account.load(from: url(for: uuid))
+    /// Fetch a single account.
+    ///
+    /// - parameter id: The `UUID` of the user the account belongs to.
+    /// - returns: The `Account` if it exists.
+
+    func fetchAccount(with id: UUID) -> Account? {
+        Account.load(from: url(for: id))
     }
 
     /// Stores an `Account` in the account store.

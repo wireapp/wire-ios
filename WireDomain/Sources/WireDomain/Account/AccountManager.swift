@@ -146,7 +146,7 @@ public final class AccountManager: NSObject {
     /// Loads and computes the locally selected account if any
     /// - returns: The currently selected account or `nil` if there is none.
     private func computeSelectedAccount() -> Account? {
-        defaults?.selectedAccountIdentifier.flatMap(store.load)
+        defaults?.selectedAccountIdentifier.flatMap(store.fetchAccount)
     }
 
     /// Loads and sorts the stored accounts.
@@ -154,7 +154,7 @@ public final class AccountManager: NSObject {
     /// be first, sorted by their user name. Accounts with team will be last,
     /// sorted by their team name.
     private func computeSortedAccounts() -> [Account] {
-        store.load().sorted { lhs, rhs in
+        store.fetchAllAccounts().sorted { lhs, rhs in
             switch (lhs.teamName, rhs.teamName) {
             case (.some, .none): return false
             case (.none, .some): return true
