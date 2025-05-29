@@ -24,17 +24,6 @@ import WireTransport
 public let AccountManagerDidUpdateAccountsNotificationName = Notification
     .Name("AccountManagerDidUpdateAccountsNotification")
 
-private extension UserDefaults {
-
-    private var selectedAccountKey: String { "AccountManagerSelectedAccountKey" }
-
-    /// The identifier of the currently selected `Account` or `nil` if there is none.
-    var selectedAccountIdentifier: UUID? {
-        get { string(forKey: selectedAccountKey).flatMap(UUID.init(transportString:)) }
-        set { set(newValue?.uuidString, forKey: selectedAccountKey) }
-    }
-}
-
 /// Manages the known and selected accounts.
 
 public final class AccountManager: NSObject {
@@ -230,6 +219,23 @@ public final class AccountManager: NSObject {
             name: AccountManagerDidUpdateAccountsNotificationName,
             object: self
         )
+    }
+
+}
+
+private extension UserDefaults {
+
+    private static let key = "AccountManagerSelectedAccountKey"
+
+    /// The id of the currently selected `Account`.
+
+    var selectedAccountIdentifier: UUID? {
+        get {
+            string(forKey: Self.key).flatMap(UUID.init(transportString:))
+        }
+        set {
+            set(newValue?.uuidString, forKey: Self.key)
+        }
     }
 
 }
