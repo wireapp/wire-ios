@@ -21,8 +21,6 @@ import WireDesign
 
 public  struct Option: Identifiable {
 
-    let id = UUID()
-
     public let id = UUID()
 
     public enum Icon {
