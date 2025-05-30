@@ -31,7 +31,7 @@ package final class AccountTypeSelectionViewModel: ObservableObject {
         }
 
         let appendedPath = components.path.appending("/register/email")
-            components.path = appendedPath
+        components.path = appendedPath
 
         components.queryItems = (components.queryItems ?? []) + [
             URLQueryItem(name: "origin", value: "ios")
