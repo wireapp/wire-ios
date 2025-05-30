@@ -16,9 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum ImportBackupError: Error {
-    case invalidFileExtension
-    case incompatibleFileFormat
-    /// The backup file is encrypted and a password is needed for decryption.
-    case passwordRequired
+import XCTest
+@testable import WireMultiBackendUI
+
+// placeholder for now
+final class WireMultiBackendUITests: XCTestCase {
+
+    func testExample() {}
 }

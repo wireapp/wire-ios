@@ -190,13 +190,8 @@ private struct FeatureView: View {
 
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: 8) {
-            ZStack {
-                Text(verbatim: "o") // used to vertically align the image for large font sizes
-                    .hidden()
-                    .accessibilityHidden(true)
-                Image(.circleCheck)
-                    .foregroundStyle(ColorTheme.Base.positive.color)
-            }
+            Image(systemName: "checkmark.circle.fill")
+                .foregroundStyle(ColorTheme.Base.positive.color)
             Text(content)
             Spacer()
         }

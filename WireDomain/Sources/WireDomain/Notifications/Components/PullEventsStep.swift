@@ -62,7 +62,8 @@ final class PullEventsStep: Component<PullEventsDependency>, PullEventsStepProto
             selfClientID: selfClientID,
             api: try updateEventsAPI,
             store: updateEventsLocalStore,
-            decryptor: updateEventDecryptor
+            decryptor: updateEventDecryptor,
+            coreCryptoProvider: coreCryptoProvider
         )
 
         let pullEventsUseCase = PullEventsUseCase(
