@@ -31,14 +31,8 @@ final class CreateAndImportBackupUseCaseTests: XCTestCase {
     private var backupLocalStoreMock: BackupLocalStoreMock!
     private var fileArchiver: ZIPFoundationFileArchiver!
     private var fileUnarchiver: ZIPFoundationFileUnarchiver!
-    private var createBackupUseCase: CreateBackupUseCase<
-        BackupLocalStoreMock,
-        ZIPFoundationFileArchiver
-    >!
-    private var importBackupUseCase: ImportBackupUseCase<
-        BackupLocalStoreMock,
-        ZIPFoundationFileUnarchiver
-    >!
+    private var createBackupUseCase: CreateBackupUseCase!
+    private var importBackupUseCase: ImportBackupUseCase!
     private var syncTriggerExpectation: XCTestExpectation!
 
     override func setUpWithError() throws {

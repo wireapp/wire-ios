@@ -41,12 +41,11 @@ struct BackupImporter {
 
 // MARK: -
 
-private final class FileUnarchiverToBackupFileUnzipper<FileUnarchiver>: BackupFileUnzipper
-    where FileUnarchiver: FileUnarchiverProtocol {
+private final class FileUnarchiverToBackupFileUnzipper: BackupFileUnzipper {
 
-    let fileUnarchiver: FileUnarchiver
+    let fileUnarchiver: any FileUnarchiverProtocol
 
-    init(fileUnarchiver: FileUnarchiver) {
+    init(fileUnarchiver: any FileUnarchiverProtocol) {
         self.fileUnarchiver = fileUnarchiver
     }
 

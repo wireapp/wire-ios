@@ -20,21 +20,18 @@ public import Foundation
 public import WireLogging
 public import WireFoundation
 
-public struct ImportBackupUseCase<
-    BackupLocalStore: BackupLocalStoreProtocol,
-    FileUnarchiver: FileUnarchiverProtocol
->: ImportBackupUseCaseProtocol {
+public struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
     let selfUserID: QualifiedID
-    let backupLocalStore: BackupLocalStore
-    let fileUnarchiver: FileUnarchiver
+    let backupLocalStore: any BackupLocalStoreProtocol
+    let fileUnarchiver: any FileUnarchiverProtocol
     let syncTrigger: @Sendable () -> Void
     let logger: @Sendable () -> any LoggerProtocol
 
     public init(
         selfUserID: QualifiedID,
-        backupLocalStore: BackupLocalStore,
-        fileUnarchiver: FileUnarchiver,
+        backupLocalStore: any BackupLocalStoreProtocol,
+        fileUnarchiver: any FileUnarchiverProtocol,
         syncTrigger: @escaping @Sendable () -> Void,
         logger: @escaping @autoclosure @Sendable () -> any LoggerProtocol
     ) {
