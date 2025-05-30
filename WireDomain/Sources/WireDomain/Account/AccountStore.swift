@@ -172,35 +172,47 @@ private extension Error {
 
 }
 
-private extension AccountStore {
+private struct StoredAccount: Codable {
 
-    struct StoredAccount: Codable {
+    var identifier: UUID
+    var name: String
+    var image: Data?
+    var team: String?
+    var teamImage: Data?
+    var loginCredentials: StoredLoginCredentials?
+    var unreadConversationCount: Int
 
-        var identifier: UUID
-        var name: String
-        var image: Data?
-        var team: String?
-        var teamImage: Data?
-        var loginCredentials: LoginCredentials?
-        var unreadConversationCount: Int
-
-        init(_ account: Account) {
-            identifier = account.userIdentifier
-            name = account.userName
-            image = account.imageData
-            team = account.teamName
-            teamImage = account.teamImageData
-            loginCredentials = account.loginCredentials
-            unreadConversationCount = account.unreadConversationCount
+    init(_ account: Account) {
+        identifier = account.userIdentifier
+        name = account.userName
+        image = account.imageData
+        team = account.teamName
+        teamImage = account.teamImageData
+        loginCredentials = account.loginCredentials.map {
+            StoredLoginCredentials($0)
         }
+        unreadConversationCount = account.unreadConversationCount
+    }
 
+}
+
+private struct StoredLoginCredentials: Codable {
+
+    var emailAddress: String?
+    var hasPassword: Bool
+    var usesCompanyLogin: Bool
+
+    init(_ loginCredentials: LoginCredentials) {
+        emailAddress = loginCredentials.emailAddress
+        hasPassword = loginCredentials.hasPassword
+        usesCompanyLogin = loginCredentials.usesCompanyLogin
     }
 
 }
 
 private extension Account {
 
-    convenience init(_ storedAccount: AccountStore.StoredAccount) {
+    init(_ storedAccount: StoredAccount) {
         self.init(
             userName: storedAccount.name,
             userIdentifier: storedAccount.identifier,
@@ -208,7 +220,21 @@ private extension Account {
             imageData: storedAccount.image,
             teamImageData: storedAccount.teamImage,
             unreadConversationCount: storedAccount.unreadConversationCount,
-            loginCredentials: storedAccount.loginCredentials
+            loginCredentials: storedAccount.loginCredentials.map {
+                LoginCredentials($0)
+            }
+        )
+    }
+
+}
+
+private extension LoginCredentials {
+
+    convenience init(_ loginCredentials: StoredLoginCredentials) {
+        self.init(
+            emailAddress: loginCredentials.emailAddress,
+            hasPassword: loginCredentials.hasPassword,
+            usesCompanyLogin: loginCredentials.usesCompanyLogin
         )
     }
 
