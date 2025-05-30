@@ -457,7 +457,8 @@ public final class ZMUserSession: NSObject {
             eventContext: coreDataStack.eventContext,
             mlsService: mlsService,
             mlsDecryptionService: mlsService,
-            proteusService: proteusService
+            proteusService: proteusService,
+            coreCryptoProvider: coreCryptoProvider
         )
         self.journal = journal
         super.init()
@@ -934,6 +935,7 @@ public final class ZMUserSession: NSObject {
     public func triggerInitialSync() {
         Task {
             do {
+                syncAgent?.suspend()
                 try await syncAgent?.performInitialSync()
             } catch {
                 WireLogger.sync.error("failed to perform initial sync: \(String(describing: error))")
@@ -944,6 +946,7 @@ public final class ZMUserSession: NSObject {
     public func triggerResourcesSync() {
         Task {
             do {
+                syncAgent?.suspend()
                 try await syncAgent?.performResourceSync()
             } catch {
                 WireLogger.sync.error("failed to perform resource sync: \(String(describing: error))")
