@@ -78,8 +78,14 @@ final class FolderPickerViewModelTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(mockUpdateFolderUseCase.invokeConversationIDUUIDFolderIDUUIDVoidReceivedInvocations.count, 1)
-        XCTAssertEqual(mockUpdateFolderUseCase.invokeConversationIDUUIDFolderIDUUIDVoidReceivedInvocations.first?.conversationID, conversation.identifier)
-        XCTAssertEqual(mockUpdateFolderUseCase.invokeConversationIDUUIDFolderIDUUIDVoidReceivedInvocations.first?.folderID, folder.identifier)
+        XCTAssertEqual(
+            mockUpdateFolderUseCase.invokeConversationIDUUIDFolderIDUUIDVoidReceivedInvocations.first?.conversationID,
+            conversation.identifier
+        )
+        XCTAssertEqual(
+            mockUpdateFolderUseCase.invokeConversationIDUUIDFolderIDUUIDVoidReceivedInvocations.first?.folderID,
+            folder.identifier
+        )
     }
 
     @MainActor
