@@ -595,7 +595,7 @@ public final class ZMUserSession: NSObject {
         mlsGroupRepairAgent = MLSGroupRepairAgent(
             journal: journal,
             mlsService: mlsService,
-            syncStateSubject: clientSessionComponent.syncStateSubject
+            syncStatePublisher: clientSessionComponent.syncStateSubject.eraseToAnyPublisher()
         )
 
         // Finish setting up the final strategies.

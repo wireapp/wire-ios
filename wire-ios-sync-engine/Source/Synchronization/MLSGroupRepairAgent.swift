@@ -37,10 +37,7 @@ final class MLSGroupRepairAgent: MLSGroupRepairAgentProtocol {
         journal[.isSyncV2Enabled]
     }
 
-    private let syncStateSubject: CurrentValueSubject<SyncState, Never>
-    private var syncStatePublisher: AnyPublisher<SyncState, Never> {
-        syncStateSubject.eraseToAnyPublisher()
-    }
+    private let syncStatePublisher: AnyPublisher<SyncState, Never>
 
     private let journal: Journal
     private let mlsService: MLSServiceInterface
@@ -52,11 +49,11 @@ final class MLSGroupRepairAgent: MLSGroupRepairAgentProtocol {
     init(
         journal: Journal,
         mlsService: MLSServiceInterface,
-        syncStateSubject: CurrentValueSubject<SyncState, Never>
+        syncStatePublisher: AnyPublisher<SyncState, Never>
     ) {
         self.journal = journal
         self.mlsService = mlsService
-        self.syncStateSubject = syncStateSubject
+        self.syncStatePublisher = syncStatePublisher
         setupObservation()
     }
 

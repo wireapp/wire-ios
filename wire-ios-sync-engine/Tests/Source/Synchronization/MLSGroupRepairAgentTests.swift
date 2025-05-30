@@ -40,7 +40,7 @@ class MLSGroupRepairAgentTests: XCTestCase {
         sut = MLSGroupRepairAgent(
             journal: journal,
             mlsService: mockMLSService,
-            syncStateSubject: syncStateSubject
+            syncStatePublisher: syncStateSubject.eraseToAnyPublisher()
         )
     }
 
