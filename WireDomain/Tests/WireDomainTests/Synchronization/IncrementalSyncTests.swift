@@ -117,10 +117,13 @@ final class IncrementalSyncTests: XCTestCase {
         store.deleteEventEnvelopeAtIndex_MockMethod = { _ in }
 
         // Live events are decrypted.
-        decryptor.decryptEventsIn_MockMethod = { EventDecryptorResult(
-            events: $0.events,
-            brokenMLSGroupIDs: [Scaffolding.mlsGroupID]
-        ) }
+//        decryptor.decryptEventsIn_MockMethod = { EventDecryptorResult(
+//            events: $0.events,
+//            brokenMLSGroupIDs: [Scaffolding.mlsGroupID]
+//        ) }
+        decryptor.decryptEventsInContext_MockMethod = { envelope, _ in
+            EventDecryptorResult(events: envelope.events, brokenMLSGroupIDs: [Scaffolding.mlsGroupID])
+        }
 
         // Last event is being updated.
         store.storeLastEventIDId_MockMethod = { _ in }
@@ -152,7 +155,7 @@ final class IncrementalSyncTests: XCTestCase {
 
         // Then live events were decrypted (duplicates skipped).
         XCTAssertEqual(
-            decryptor.decryptEventsIn_Invocations,
+            decryptor.decryptEventsInContext_Invocations.map(\.eventEnvelope),
             [Scaffolding.event4, Scaffolding.event5]
         )
 

@@ -36,6 +36,7 @@ class RootComponent: BootstrapComponent {
     public let ssoCallbackURLScheme: String
     public let appStoreURL: URL
     public let existsAnotherAccount: Bool
+    public let useLegacyRegistrationFlow: Bool
 
     @MainActor public var bridge: WireAuthenticationBridge {
         shared {
@@ -56,7 +57,8 @@ class RootComponent: BootstrapComponent {
         passwordValidator: any PasswordValidator,
         ssoCallbackURLScheme: String,
         appStoreURL: URL,
-        existsAnotherAccount: Bool
+        existsAnotherAccount: Bool,
+        useLegacyRegistrationFlow: Bool
     ) {
         self.backendInfo = backendInfo
         self.preferredAPIVersion = preferredAPIVersion
@@ -68,6 +70,7 @@ class RootComponent: BootstrapComponent {
         self.ssoCallbackURLScheme = ssoCallbackURLScheme
         self.appStoreURL = appStoreURL
         self.existsAnotherAccount = existsAnotherAccount
+        self.useLegacyRegistrationFlow = useLegacyRegistrationFlow
     }
 
     // MARK: - Children

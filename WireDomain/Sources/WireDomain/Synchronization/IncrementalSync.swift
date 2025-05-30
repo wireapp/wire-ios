@@ -95,7 +95,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                             "decrypting live event envelope",
                             attributes: [.eventEnvelopeID: envelope.id]
                         )
-                        let decryptionEventsResult = try await decryptor.decryptEvents(in: envelope)
+                        let decryptionEventsResult = try await decryptor.decryptEvents(in: envelope, context: nil)
                         envelope.events = decryptionEventsResult.events
 
                         let brokenMLSGroupIDs = decryptionEventsResult.brokenMLSGroupIDs
