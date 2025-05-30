@@ -93,7 +93,7 @@ struct AccountView: View {
     }
 }
 
-struct DotSeparatedTextView: View {
+private struct DotSeparatedTextView: View {
 
     let items: [String]
 
