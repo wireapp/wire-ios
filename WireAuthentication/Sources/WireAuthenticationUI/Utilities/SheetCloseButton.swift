@@ -16,22 +16,33 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import SwiftUI
+import WireDesign
 
-class LoginPage: PageModel {
+struct SheetCloseButton: View {
 
-    override func hasLoaded() {
-        let expectation = createPersonalAccountLink.waitForExistence(timeout: 10)
-        XCTAssert(expectation, "Login page not loaded - can't find email field")
+    var action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: "xmark.circle.fill")
+                .symbolRenderingMode(.hierarchical)
+                .foregroundStyle(ColorTheme.Base.secondaryText.color)
+        }
     }
 
-    var createPersonalAccountLink: XCUIElement {
-        let elementsQuery = app.scrollViews.otherElements
-        return elementsQuery.buttons["Create account or team"]
-    }
+}
 
-    func tapCreatePersonalAccountLink() -> CreateAccountPage {
-        createPersonalAccountLink.tap()
-        return CreateAccountPage()
-    }
+#Preview {
+    Spacer()
+        .sheet(isPresented: .constant(true)) {
+            NavigationStack {
+                Spacer()
+                    .toolbar {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            SheetCloseButton {}
+                        }
+                    }
+            }
+        }
 }
