@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import Combine
 import WireAuthenticationAPI
 import WireDesign
 import WireReusableUIComponents
@@ -179,6 +180,8 @@ package struct DetermineAuthMethodView: View {
                             action: { }
                         )
                     ],
+                    accountsPublisher: Empty<[AccountUIModel], Never>()
+                        .eraseToAnyPublisher(),
                     router: viewModel.router
                 )
             )

@@ -17,20 +17,27 @@
 //
 
 import SwiftUI
+import Combine
 import WireMultiBackendUI
 
 @MainActor
 class AccountSwitcherModalViewModel: ObservableObject {
     
     @Published var accounts: [AccountUIModel]
+    
     private let router: any Router
+    private var cancellables = Set<AnyCancellable>()
                 
     init(
         accounts: [AccountUIModel],
+        accountsPublisher: AnyPublisher<[AccountUIModel], Never>,
         router: any Router
     ) {
         self.accounts = accounts
         self.router = router
+        accountsPublisher.sink { [weak self] accounts in
+            self?.accounts = accounts
+        }.store(in: &cancellables)
     }
     
     func onCloseButtonTapped() {
