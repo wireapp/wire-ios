@@ -1357,75 +1357,6 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         await mock(permission, conversation)
     }
 
-    // MARK: - totalConversationCountForBackup
-
-    public var totalConversationCountForBackup_Invocations: [Void] = []
-    public var totalConversationCountForBackup_MockError: Error?
-    public var totalConversationCountForBackup_MockMethod: (() async throws -> Int)?
-    public var totalConversationCountForBackup_MockValue: Int?
-
-    public func totalConversationCountForBackup() async throws -> Int {
-        totalConversationCountForBackup_Invocations.append(())
-
-        if let error = totalConversationCountForBackup_MockError {
-            throw error
-        }
-
-        if let mock = totalConversationCountForBackup_MockMethod {
-            return try await mock()
-        } else if let mock = totalConversationCountForBackup_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `totalConversationCountForBackup`")
-        }
-    }
-
-    // MARK: - fetchAllConversationIDsForBackup
-
-    public var fetchAllConversationIDsForBackup_Invocations: [Void] = []
-    public var fetchAllConversationIDsForBackup_MockError: Error?
-    public var fetchAllConversationIDsForBackup_MockMethod: (() async throws -> [QualifiedID])?
-    public var fetchAllConversationIDsForBackup_MockValue: [QualifiedID]?
-
-    public func fetchAllConversationIDsForBackup() async throws -> [QualifiedID] {
-        fetchAllConversationIDsForBackup_Invocations.append(())
-
-        if let error = fetchAllConversationIDsForBackup_MockError {
-            throw error
-        }
-
-        if let mock = fetchAllConversationIDsForBackup_MockMethod {
-            return try await mock()
-        } else if let mock = fetchAllConversationIDsForBackup_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchAllConversationIDsForBackup`")
-        }
-    }
-
-    // MARK: - fetchAllConversationsForBackup
-
-    public var fetchAllConversationsForBackup_Invocations: [Void] = []
-    public var fetchAllConversationsForBackup_MockError: Error?
-    public var fetchAllConversationsForBackup_MockMethod: (() async throws -> [ZMConversation])?
-    public var fetchAllConversationsForBackup_MockValue: [ZMConversation]?
-
-    public func fetchAllConversationsForBackup() async throws -> [ZMConversation] {
-        fetchAllConversationsForBackup_Invocations.append(())
-
-        if let error = fetchAllConversationsForBackup_MockError {
-            throw error
-        }
-
-        if let mock = fetchAllConversationsForBackup_MockMethod {
-            return try await mock()
-        } else if let mock = fetchAllConversationsForBackup_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchAllConversationsForBackup`")
-        }
-    }
-
 }
 
 class MockConversationLocationMessageNotificationBuilderProtocol: ConversationLocationMessageNotificationBuilderProtocol {
@@ -2106,45 +2037,45 @@ class MockMLSMessageDecryptorProtocol: MLSMessageDecryptorProtocol {
 
     // MARK: - decryptedMessageAddEventData
 
-    var decryptedMessageAddEventDataFrom_Invocations: [ConversationMLSMessageAddEvent] = []
-    var decryptedMessageAddEventDataFrom_MockError: Error?
-    var decryptedMessageAddEventDataFrom_MockMethod: ((ConversationMLSMessageAddEvent) async throws -> ConversationMLSMessageAddEvent)?
-    var decryptedMessageAddEventDataFrom_MockValue: ConversationMLSMessageAddEvent?
+    var decryptedMessageAddEventDataFromContext_Invocations: [(eventData: ConversationMLSMessageAddEvent, context: CoreCryptoContextProtocol?)] = []
+    var decryptedMessageAddEventDataFromContext_MockError: Error?
+    var decryptedMessageAddEventDataFromContext_MockMethod: ((ConversationMLSMessageAddEvent, CoreCryptoContextProtocol?) async throws -> ConversationMLSMessageAddEvent)?
+    var decryptedMessageAddEventDataFromContext_MockValue: ConversationMLSMessageAddEvent?
 
-    func decryptedMessageAddEventData(from eventData: ConversationMLSMessageAddEvent) async throws -> ConversationMLSMessageAddEvent {
-        decryptedMessageAddEventDataFrom_Invocations.append(eventData)
+    func decryptedMessageAddEventData(from eventData: ConversationMLSMessageAddEvent, context: CoreCryptoContextProtocol?) async throws -> ConversationMLSMessageAddEvent {
+        decryptedMessageAddEventDataFromContext_Invocations.append((eventData: eventData, context: context))
 
-        if let error = decryptedMessageAddEventDataFrom_MockError {
+        if let error = decryptedMessageAddEventDataFromContext_MockError {
             throw error
         }
 
-        if let mock = decryptedMessageAddEventDataFrom_MockMethod {
-            return try await mock(eventData)
-        } else if let mock = decryptedMessageAddEventDataFrom_MockValue {
+        if let mock = decryptedMessageAddEventDataFromContext_MockMethod {
+            return try await mock(eventData, context)
+        } else if let mock = decryptedMessageAddEventDataFromContext_MockValue {
             return mock
         } else {
-            fatalError("no mock for `decryptedMessageAddEventDataFrom`")
+            fatalError("no mock for `decryptedMessageAddEventDataFromContext`")
         }
     }
 
     // MARK: - decryptedWelcomeMessageEventData
 
-    var decryptedWelcomeMessageEventDataFrom_Invocations: [ConversationMLSWelcomeEvent] = []
-    var decryptedWelcomeMessageEventDataFrom_MockError: Error?
-    var decryptedWelcomeMessageEventDataFrom_MockMethod: ((ConversationMLSWelcomeEvent) async throws -> Void)?
+    var decryptedWelcomeMessageEventDataFromContext_Invocations: [(eventData: ConversationMLSWelcomeEvent, context: CoreCryptoContextProtocol?)] = []
+    var decryptedWelcomeMessageEventDataFromContext_MockError: Error?
+    var decryptedWelcomeMessageEventDataFromContext_MockMethod: ((ConversationMLSWelcomeEvent, CoreCryptoContextProtocol?) async throws -> Void)?
 
-    func decryptedWelcomeMessageEventData(from eventData: ConversationMLSWelcomeEvent) async throws {
-        decryptedWelcomeMessageEventDataFrom_Invocations.append(eventData)
+    func decryptedWelcomeMessageEventData(from eventData: ConversationMLSWelcomeEvent, context: CoreCryptoContextProtocol?) async throws {
+        decryptedWelcomeMessageEventDataFromContext_Invocations.append((eventData: eventData, context: context))
 
-        if let error = decryptedWelcomeMessageEventDataFrom_MockError {
+        if let error = decryptedWelcomeMessageEventDataFromContext_MockError {
             throw error
         }
 
-        guard let mock = decryptedWelcomeMessageEventDataFrom_MockMethod else {
-            fatalError("no mock for `decryptedWelcomeMessageEventDataFrom`")
+        guard let mock = decryptedWelcomeMessageEventDataFromContext_MockMethod else {
+            fatalError("no mock for `decryptedWelcomeMessageEventDataFromContext`")
         }
 
-        try await mock(eventData)
+        try await mock(eventData, context)
     }
 
 }
@@ -2394,75 +2325,6 @@ public class MockMessageLocalStoreProtocol: MessageLocalStoreProtocol {
         }
     }
 
-    // MARK: - totalMessageCountForBackup
-
-    public var totalMessageCountForBackup_Invocations: [Void] = []
-    public var totalMessageCountForBackup_MockError: Error?
-    public var totalMessageCountForBackup_MockMethod: (() async throws -> Int)?
-    public var totalMessageCountForBackup_MockValue: Int?
-
-    public func totalMessageCountForBackup() async throws -> Int {
-        totalMessageCountForBackup_Invocations.append(())
-
-        if let error = totalMessageCountForBackup_MockError {
-            throw error
-        }
-
-        if let mock = totalMessageCountForBackup_MockMethod {
-            return try await mock()
-        } else if let mock = totalMessageCountForBackup_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `totalMessageCountForBackup`")
-        }
-    }
-
-    // MARK: - fetchAllMessageIDsForBackup
-
-    public var fetchAllMessageIDsForBackup_Invocations: [Void] = []
-    public var fetchAllMessageIDsForBackup_MockError: Error?
-    public var fetchAllMessageIDsForBackup_MockMethod: (() async throws -> [UUID])?
-    public var fetchAllMessageIDsForBackup_MockValue: [UUID]?
-
-    public func fetchAllMessageIDsForBackup() async throws -> [UUID] {
-        fetchAllMessageIDsForBackup_Invocations.append(())
-
-        if let error = fetchAllMessageIDsForBackup_MockError {
-            throw error
-        }
-
-        if let mock = fetchAllMessageIDsForBackup_MockMethod {
-            return try await mock()
-        } else if let mock = fetchAllMessageIDsForBackup_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchAllMessageIDsForBackup`")
-        }
-    }
-
-    // MARK: - fetchAllMessagesForBackup
-
-    public var fetchAllMessagesForBackup_Invocations: [Void] = []
-    public var fetchAllMessagesForBackup_MockError: Error?
-    public var fetchAllMessagesForBackup_MockMethod: (() async throws -> [ZMMessage])?
-    public var fetchAllMessagesForBackup_MockValue: [ZMMessage]?
-
-    public func fetchAllMessagesForBackup() async throws -> [ZMMessage] {
-        fetchAllMessagesForBackup_Invocations.append(())
-
-        if let error = fetchAllMessagesForBackup_MockError {
-            throw error
-        }
-
-        if let mock = fetchAllMessagesForBackup_MockMethod {
-            return try await mock()
-        } else if let mock = fetchAllMessagesForBackup_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchAllMessagesForBackup`")
-        }
-    }
-
 }
 
 public class MockMessageRepositoryProtocol: MessageRepositoryProtocol {
@@ -2577,24 +2439,24 @@ class MockProteusMessageDecryptorProtocol: ProteusMessageDecryptorProtocol {
 
     // MARK: - decryptedEventData
 
-    var decryptedEventDataFrom_Invocations: [ConversationProteusMessageAddEvent] = []
-    var decryptedEventDataFrom_MockError: Error?
-    var decryptedEventDataFrom_MockMethod: ((ConversationProteusMessageAddEvent) async throws -> ConversationProteusMessageAddEvent)?
-    var decryptedEventDataFrom_MockValue: ConversationProteusMessageAddEvent?
+    var decryptedEventDataFromContext_Invocations: [(eventData: ConversationProteusMessageAddEvent, context: CoreCryptoContextProtocol?)] = []
+    var decryptedEventDataFromContext_MockError: Error?
+    var decryptedEventDataFromContext_MockMethod: ((ConversationProteusMessageAddEvent, CoreCryptoContextProtocol?) async throws -> ConversationProteusMessageAddEvent)?
+    var decryptedEventDataFromContext_MockValue: ConversationProteusMessageAddEvent?
 
-    func decryptedEventData(from eventData: ConversationProteusMessageAddEvent) async throws -> ConversationProteusMessageAddEvent {
-        decryptedEventDataFrom_Invocations.append(eventData)
+    func decryptedEventData(from eventData: ConversationProteusMessageAddEvent, context: CoreCryptoContextProtocol?) async throws -> ConversationProteusMessageAddEvent {
+        decryptedEventDataFromContext_Invocations.append((eventData: eventData, context: context))
 
-        if let error = decryptedEventDataFrom_MockError {
+        if let error = decryptedEventDataFromContext_MockError {
             throw error
         }
 
-        if let mock = decryptedEventDataFrom_MockMethod {
-            return try await mock(eventData)
-        } else if let mock = decryptedEventDataFrom_MockValue {
+        if let mock = decryptedEventDataFromContext_MockMethod {
+            return try await mock(eventData, context)
+        } else if let mock = decryptedEventDataFromContext_MockValue {
             return mock
         } else {
-            fatalError("no mock for `decryptedEventDataFrom`")
+            fatalError("no mock for `decryptedEventDataFromContext`")
         }
     }
 
@@ -3602,24 +3464,24 @@ public class MockUpdateEventDecryptorProtocol: UpdateEventDecryptorProtocol {
 
     // MARK: - decryptEvents
 
-    public var decryptEventsIn_Invocations: [UpdateEventEnvelope] = []
-    public var decryptEventsIn_MockError: Error?
-    public var decryptEventsIn_MockMethod: ((UpdateEventEnvelope) async throws -> [UpdateEvent])?
-    public var decryptEventsIn_MockValue: [UpdateEvent]?
+    public var decryptEventsInContext_Invocations: [(eventEnvelope: UpdateEventEnvelope, context: CoreCryptoContextProtocol?)] = []
+    public var decryptEventsInContext_MockError: Error?
+    public var decryptEventsInContext_MockMethod: ((UpdateEventEnvelope, CoreCryptoContextProtocol?) async throws -> [UpdateEvent])?
+    public var decryptEventsInContext_MockValue: [UpdateEvent]?
 
-    public func decryptEvents(in eventEnvelope: UpdateEventEnvelope) async throws -> [UpdateEvent] {
-        decryptEventsIn_Invocations.append(eventEnvelope)
+    public func decryptEvents(in eventEnvelope: UpdateEventEnvelope, context: CoreCryptoContextProtocol?) async throws -> [UpdateEvent] {
+        decryptEventsInContext_Invocations.append((eventEnvelope: eventEnvelope, context: context))
 
-        if let error = decryptEventsIn_MockError {
+        if let error = decryptEventsInContext_MockError {
             throw error
         }
 
-        if let mock = decryptEventsIn_MockMethod {
-            return try await mock(eventEnvelope)
-        } else if let mock = decryptEventsIn_MockValue {
+        if let mock = decryptEventsInContext_MockMethod {
+            return try await mock(eventEnvelope, context)
+        } else if let mock = decryptEventsInContext_MockValue {
             return mock
         } else {
-            fatalError("no mock for `decryptEventsIn`")
+            fatalError("no mock for `decryptEventsInContext`")
         }
     }
 
@@ -3735,6 +3597,26 @@ public class MockUpdateEventsLocalStoreProtocol: UpdateEventsLocalStoreProtocol 
         }
 
         try await mock(eventEnvelope, index)
+    }
+
+    // MARK: - persistEventEnvelopes
+
+    public var persistEventEnvelopesIndex_Invocations: [(eventEnvelopes: [UpdateEventEnvelope], index: Int64)] = []
+    public var persistEventEnvelopesIndex_MockError: Error?
+    public var persistEventEnvelopesIndex_MockMethod: (([UpdateEventEnvelope], Int64) async throws -> Void)?
+
+    public func persistEventEnvelopes(_ eventEnvelopes: [UpdateEventEnvelope], index: Int64) async throws {
+        persistEventEnvelopesIndex_Invocations.append((eventEnvelopes: eventEnvelopes, index: index))
+
+        if let error = persistEventEnvelopesIndex_MockError {
+            throw error
+        }
+
+        guard let mock = persistEventEnvelopesIndex_MockMethod else {
+            fatalError("no mock for `persistEventEnvelopesIndex`")
+        }
+
+        try await mock(eventEnvelopes, index)
     }
 
     // MARK: - fetchStoredEventEnvelopes
@@ -4652,75 +4534,6 @@ public class MockUserLocalStoreProtocol: UserLocalStoreProtocol {
             return mock
         } else {
             fatalError("no mock for `fetchSelfUserAvailability`")
-        }
-    }
-
-    // MARK: - totalUserCountForBackup
-
-    public var totalUserCountForBackup_Invocations: [Void] = []
-    public var totalUserCountForBackup_MockError: Error?
-    public var totalUserCountForBackup_MockMethod: (() async throws -> Int)?
-    public var totalUserCountForBackup_MockValue: Int?
-
-    public func totalUserCountForBackup() async throws -> Int {
-        totalUserCountForBackup_Invocations.append(())
-
-        if let error = totalUserCountForBackup_MockError {
-            throw error
-        }
-
-        if let mock = totalUserCountForBackup_MockMethod {
-            return try await mock()
-        } else if let mock = totalUserCountForBackup_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `totalUserCountForBackup`")
-        }
-    }
-
-    // MARK: - fetchAllUserIDsForBackup
-
-    public var fetchAllUserIDsForBackup_Invocations: [Void] = []
-    public var fetchAllUserIDsForBackup_MockError: Error?
-    public var fetchAllUserIDsForBackup_MockMethod: (() async throws -> [QualifiedID])?
-    public var fetchAllUserIDsForBackup_MockValue: [QualifiedID]?
-
-    public func fetchAllUserIDsForBackup() async throws -> [QualifiedID] {
-        fetchAllUserIDsForBackup_Invocations.append(())
-
-        if let error = fetchAllUserIDsForBackup_MockError {
-            throw error
-        }
-
-        if let mock = fetchAllUserIDsForBackup_MockMethod {
-            return try await mock()
-        } else if let mock = fetchAllUserIDsForBackup_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchAllUserIDsForBackup`")
-        }
-    }
-
-    // MARK: - fetchAllUsersForBackup
-
-    public var fetchAllUsersForBackup_Invocations: [Void] = []
-    public var fetchAllUsersForBackup_MockError: Error?
-    public var fetchAllUsersForBackup_MockMethod: (() async throws -> [ZMUser])?
-    public var fetchAllUsersForBackup_MockValue: [ZMUser]?
-
-    public func fetchAllUsersForBackup() async throws -> [ZMUser] {
-        fetchAllUsersForBackup_Invocations.append(())
-
-        if let error = fetchAllUsersForBackup_MockError {
-            throw error
-        }
-
-        if let mock = fetchAllUsersForBackup_MockMethod {
-            return try await mock()
-        } else if let mock = fetchAllUsersForBackup_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchAllUsersForBackup`")
         }
     }
 

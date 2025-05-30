@@ -207,39 +207,54 @@ public final class ProteusService: ProteusServiceInterface {
 
     public func decrypt(
         data: Data,
-        forSession id: ProteusSessionID
+        forSession id: ProteusSessionID,
+        context: CoreCryptoContextProtocol?
+    ) async throws -> (didCreateNewSession: Bool, decryptedData: Data) {
+        if let context {
+            try await decryptInternal(data: data, forSession: id, context: context)
+        } else {
+            try await coreCrypto.perform { context in
+                try await self.decryptInternal(data: data, forSession: id, context: context)
+            }
+        }
+    }
+
+    private func decryptInternal(
+        data: Data,
+        forSession id: ProteusSessionID,
+        context: CoreCryptoContextProtocol
     ) async throws -> (didCreateNewSession: Bool, decryptedData: Data) {
         logger.info("decrypting data")
 
-        if await sessionExists(id: id) {
+        if try await context.proteusSessionExists(sessionId: id.rawValue) {
             logger.info("session exists, decrypting...")
 
-            let decryptedData: Data = try await coreCrypto.perform {
+            let decryptedData: Data = try await {
                 do {
-                    return try await $0.proteusDecrypt(
+                    return try await context.proteusDecrypt(
                         sessionId: id.rawValue,
                         ciphertext: data
                     )
                 } catch let CoreCryptoError.Proteus(error) {
                     throw DecryptionError.failedToDecryptData(error)
                 }
-            }
+            }()
 
             return (didCreateNewSession: false, decryptedData: decryptedData)
 
         } else {
             logger.info("session doesn't exist, creating one then decrypting message...")
 
-            let decryptedData: Data = try await coreCrypto.perform {
+            let decryptedData: Data = try await {
                 do {
-                    return try await $0.proteusSessionFromMessage(
+                    return try await context.proteusSessionFromMessage(
                         sessionId: id.rawValue,
                         envelope: data
                     )
                 } catch let CoreCryptoError.Proteus(error) {
                     throw DecryptionError.failedToEstablishSessionFromMessage(error)
                 }
-            }
+            }()
 
             return (didCreateNewSession: true, decryptedData: decryptedData)
         }
