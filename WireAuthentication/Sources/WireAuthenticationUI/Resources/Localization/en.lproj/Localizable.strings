@@ -100,3 +100,6 @@
 
 "obsolete_backend.alert.title" = "Server version not supported";
 "obsolete_backend.alert.message" = "The server version is not supported by this app. Please contact your system administrator.";
+
+"switching_accounts.title" = "Switch account";
+"switching_accounts.subtitle" = "Select another account on this device:";

@@ -64,6 +64,10 @@ package final class RootViewModel: ObservableObject, Router {
     package func popToRoot() {
         path.removeLast(path.count)
     }
+    
+    package func pop() {
+        path.removeLast()
+    }
 
     package func navigate(to destination: some Hashable) {
         path.append(destination)

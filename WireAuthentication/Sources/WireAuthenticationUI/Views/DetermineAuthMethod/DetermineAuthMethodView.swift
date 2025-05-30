@@ -20,6 +20,7 @@ import SwiftUI
 import WireAuthenticationAPI
 import WireDesign
 import WireReusableUIComponents
+import WireMultiBackendUI
 
 package protocol DetermineAuthMethodFactory {
 
@@ -164,6 +165,23 @@ package struct DetermineAuthMethodView: View {
     @ViewBuilder
     private func destinationView(for destination: DetermineAuthMethodDestination) -> some View {
         switch destination {
+            // dev only
+        case .switchAccounts:
+            AccountSwitcherModalView(
+                viewModel: AccountSwitcherModalViewModel(
+                    accounts: [
+                        AccountUIModel(
+                            avatarSource: .text("FF"),
+                            name: "Name",
+                            handle: "@handle",
+                            teamName: "Team",
+                            backendName: "Backedn",
+                            action: { }
+                        )
+                    ],
+                    router: viewModel.router
+                )
+            )
         case let .login(
             email,
             didDetectDomainConflict,

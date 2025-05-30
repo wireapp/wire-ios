@@ -16,23 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireAuthenticationAPI
+import SwiftUI
+import WireMultiBackendUI
 
-package enum DetermineAuthMethodDestination: Hashable {
-
-    // for dev purposes only, until whole integration is done
-    case switchAccounts
+@MainActor
+class AccountSwitcherModalViewModel: ObservableObject {
     
-    case login(
-        email: String?,
-        didDetectDomainConflict: Bool,
-        backendInfo: BackendInfo
-    )
-    case loginOrRegister(
-        email: String,
-        didDetectDomainConflict: Bool,
-        backendInfo: BackendInfo
-    )
-    case noHistory(AuthenticationResult)
+    @Published var accounts: [AccountUIModel]
+    private let router: any Router
+                
+    init(
+        accounts: [AccountUIModel],
+        router: any Router
+    ) {
+        self.accounts = accounts
+        self.router = router
+    }
+    
+    func onCloseButtonTapped() {
+        router.pop()
+    }
 }

@@ -22,7 +22,13 @@ import UIKit
 public class AccountSwitcherHostingController: UIHostingController<AccountSwitcherView> {
 
     public init(accounts: [AccountUIModel], options: [Option]) {
-        super.init(rootView: AccountSwitcherView(accounts: accounts, options: options))
+        super.init(
+            rootView: AccountSwitcherView(
+                accounts: accounts,
+                options: options,
+                showLastSeparator: false
+            )
+        )
         view.backgroundColor = .clear
     }
 

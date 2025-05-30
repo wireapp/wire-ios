@@ -66,11 +66,12 @@ let package = Package(
         .target(
             name: "WireAuthenticationUI",
             dependencies: [
+                "WireLogging",
+                "WireFoundation",
                 "WireAuthenticationAPI",
                 .product(name: "WireDesign", package: "WireUI"),
-                "WireFoundation",
+                .product(name: "WireMultiBackendUI", package: "WireUI"),
                 .product(name: "WireReusableUIComponents", package: "WireUI"),
-                "WireLogging",
                 .product(name: "SwiftUIIntrospect", package: "swiftui-introspect")
             ],
             plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
