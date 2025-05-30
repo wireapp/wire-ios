@@ -20,10 +20,11 @@ import Foundation
 import WireAPI
 import WireAPISupport
 import WireReusableUIComponents
+import WireAuthentication
 
 struct Configuration {
 
-    let defaultBackendEnvironment: BackendEnvironment
+    let defaultBackendEnvironment: BackendEnvironmentType
     let minTLSVersion: TLSVersion
     let defaultAPIVersion: APIVersion
     let accountsURL: URL

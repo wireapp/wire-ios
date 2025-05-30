@@ -27,19 +27,33 @@ struct ContentView: View {
     let configuration: Configuration
 
     var body: some View {
-        WireAuthenticationAssembly().assemble(
-            defaultBackendEnvironment: configuration.defaultBackendEnvironment,
-            minTLSVersion: configuration.minTLSVersion,
-            preferredAPIVersion: .v8,
-            accountsURL: configuration.accountsURL,
-            howToChangeEmailURL: URL(string: "www.example.com")!,
-            howToDeleteAccountURL: URL(string: "www.example.com")!,
-            passwordValidator: configuration.passwordValidator,
-            ssoCallbackURLScheme: "some scheme",
-            userDefaults: .standard,
-            onFlowCompletion: { _ in },
-            onRegisterAccount: {}
-        ).view
+        WireAuthenticationAssembly()
+            .assemble(
+                environmentType: configuration.defaultBackendEnvironment,
+                backendConfig: BackendConfig(
+                    title: "Mock backend",
+                    endpoints: Endpoints(
+                        backendURL: URL(string: "https://prod-nginz-https.wire.com")!,
+                        backendWSURL: URL(string: "https://prod-nginz-ssl.wire.com")!,
+                        blackListURL: URL(string: "https://clientblacklist.wire.com/prod")!,
+                        teamsURL: URL(string: "https://teams.wire.com")!,
+                        accountsURL: URL(string: "https://account.wire.com")!,
+                        websiteURL: URL(string: "https://wire.com")!,
+                        countlyURL: URL(string: "https://countly.wire.com")!
+                    ),
+                    proxySettings: nil,
+                    pinnedKeys: nil
+                ),
+                minTLSVersion: configuration.minTLSVersion,
+                preferredAPIVersion: .v8,
+                accountsURL: configuration.accountsURL,
+                howToChangeEmailURL: URL(string: "www.example.com")!,
+                howToDeleteAccountURL: URL(string: "www.example.com")!,
+                passwordValidator: configuration.passwordValidator,
+                ssoCallbackURLScheme: "some scheme",
+                appStoreURL: URL(string: "www.example.com")!,
+                existsAnotherAccount: true
+            ).view
     }
 
 }
