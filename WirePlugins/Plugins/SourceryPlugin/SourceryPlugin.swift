@@ -55,8 +55,8 @@ extension SourceryPlugin: BuildToolPlugin {
             target.directoryURL,
             target.directoryURL.appending(path: "Sourcery", directoryHint: .isDirectory)
         ]
-            .map { (url: URL) in url.appending(path: Constant.configFileName, directoryHint: .notDirectory) }
-            .filter { url in FileManager.default.fileExists(atPath: url.path()) }
+        .map { (url: URL) in url.appending(path: Constant.configFileName, directoryHint: .notDirectory) }
+        .filter { url in FileManager.default.fileExists(atPath: url.path()) }
         .first
 
         guard let configURL else {
