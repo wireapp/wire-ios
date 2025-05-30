@@ -19,7 +19,7 @@
 import SafariServices
 import SwiftUI
 
-struct SFSafariView: UIViewControllerRepresentable {
+struct SafariBrowserView: UIViewControllerRepresentable {
 
     let url: URL
 
@@ -29,22 +29,6 @@ struct SFSafariView: UIViewControllerRepresentable {
 
     func updateUIViewController(
         _ uiViewController: SFSafariViewController,
-        context: UIViewControllerRepresentableContext<SFSafariView>
+        context: UIViewControllerRepresentableContext<SafariBrowserView>
     ) {}
 }
-
-// var teamAccountCreationLink: URL? {
-//        let baseURL = backendInfo.backendConfig.endpoints.teamsURL
-//        if var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false) {
-//            components.queryItems = (components.queryItems ?? []) + [
-//                URLQueryItem(name: "origin", value: "ios")
-//            ]
-//
-//            return components.url
-//        } else {
-//            // can't generate url
-//            return nil
-//        }
-//    }
-//
-// @Published var isCreateTeamAccountPresented = false

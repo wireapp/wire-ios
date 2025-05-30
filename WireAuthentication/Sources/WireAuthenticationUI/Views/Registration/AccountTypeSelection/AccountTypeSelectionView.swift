@@ -41,7 +41,7 @@ struct AccountTypeSelectionView: View {
                 presentationMode.wrappedValue.dismiss()
             }, content: {
                 if let teamAccountCreationLink = viewModel.teamAccountCreationLink {
-                    SFSafariView(url: teamAccountCreationLink)
+                    SafariBrowserView(url: teamAccountCreationLink)
                         .ignoresSafeArea()
                 }
             })

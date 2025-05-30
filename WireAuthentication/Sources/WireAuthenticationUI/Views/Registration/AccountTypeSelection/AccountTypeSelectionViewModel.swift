@@ -24,10 +24,15 @@ package final class AccountTypeSelectionViewModel: ObservableObject {
     @Published var isCreateTeamAccountPresented = false
 
     private let teamsURL: URL
+
     var teamAccountCreationLink: URL? {
         guard var components = URLComponents(url: teamsURL, resolvingAgainstBaseURL: false) else {
             return nil
         }
+
+        let appendedPath = components.path.appending("/register/email")
+            components.path = appendedPath
+
         components.queryItems = (components.queryItems ?? []) + [
             URLQueryItem(name: "origin", value: "ios")
         ]
