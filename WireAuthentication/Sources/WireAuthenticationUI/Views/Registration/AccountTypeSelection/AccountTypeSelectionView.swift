@@ -127,8 +127,6 @@ struct AccountTypeSelectionView: View {
     @ViewBuilder private var personalAccountFeatures: some View {
         VStack(spacing: 12) {
             Divider()
-            BulletTextView(text: "This is a sample text with a custom bullet image.", bulletImage: Image(systemName: "circle.fill"))
-            Divider()
             FeatureView(Strings.OptionPersonal.feature0)
             Divider()
             FeatureView(Strings.OptionPersonal.feature1)
@@ -178,28 +176,8 @@ private struct FeatureView: View {
 
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: 8) {
-
             Image(systemName: "checkmark.circle.fill")
-
-//            Image(.circleCheck)
-//                .resizable()
-//                .aspectRatio(contentMode: .fit)
-//                .foregroundStyle(ColorTheme.Base.positive.color)
-//                .frame(height: UIFont.preferredFont(forTextStyle: .body).pointSize)
-//                .alignmentGuide(.firstTextBaseline) { d in d[VerticalAlignment.center] + 5.5 }
-//                .background(Color.red)
-
-            ZStack {
-                Text(verbatim: "o") // used to vertically align the image for large font sizes
-                    .hidden()
-                    .accessibilityHidden(true)
-                Image(.circleCheck)
-                    .resizable()
-                    .background(Color.red)
-                    .aspectRatio(contentMode: .fit)
-                    .foregroundStyle(ColorTheme.Base.positive.color)
-                    .layoutPriority(-1)
-            }
+                .foregroundStyle(ColorTheme.Base.positive.color)
             Text(content)
             Spacer()
         }
@@ -213,43 +191,5 @@ private struct FeatureView: View {
     Spacer()
         .sheet(isPresented: .constant(true)) {
             AccountTypeSelectionView()
-//                .dynamicTypeSize(.accessibility5)
         }
-}
-
-
-
-struct BulletTextView: View {
-    let text: String
-    let bulletImage: Image
-
-    var body: some View {
-        HStack(alignment: .firstTextBaseline, spacing: 8) {
-            bulletImage
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(height: UIFont.preferredFont(forTextStyle: .body).pointSize * 0.8)
-                .alignmentGuide(.firstTextBaseline) { d in d[VerticalAlignment.center] }
-
-            Text(text)
-                .font(.body) // or use `.font(.body).dynamicTypeSize(...)` if needed
-                .fixedSize(horizontal: false, vertical: true)
-        }
-    }
-}
-
-struct ContentView: View {
-    var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            BulletTextView(text: "This is a sample text with a custom bullet image.", bulletImage: Image(systemName: "circle.fill"))
-
-            BulletTextView(text: "Another bullet point with a longer text that wraps to the next line and remains aligned.", bulletImage: Image(systemName: "star.fill"))
-        }
-        .padding()
-    }
-}
-
-#Preview {
-    ContentView()
-        .dynamicTypeSize(.accessibility4)
 }
