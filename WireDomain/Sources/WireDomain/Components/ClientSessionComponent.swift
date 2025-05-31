@@ -59,6 +59,7 @@ public final class ClientSessionComponent {
     private let mlsService: any MLSServiceInterface
     private let mlsDecryptionService: any MLSDecryptionServiceInterface
     private let proteusService: any ProteusServiceInterface
+    private let coreCryptoProvider: any CoreCryptoProviderProtocol
 
     public let asyncStreamEnabled: Bool
     private let processorHandlers: ProcessorHandlers
@@ -82,6 +83,7 @@ public final class ClientSessionComponent {
         proteusService: any ProteusServiceInterface,
         asyncStreamEnabled: Bool,
         processorHandlers: ProcessorHandlers,
+        coreCryptoProvider: any CoreCryptoProviderProtocol,
         onAuthenticationFailure: @escaping @Sendable () -> Void
     ) {
         self.selfUserID = selfUserID
@@ -101,6 +103,7 @@ public final class ClientSessionComponent {
         self.isMLSEnabled = isMLSEnabled
         self.asyncStreamEnabled = asyncStreamEnabled
         self.processorHandlers = processorHandlers
+        self.coreCryptoProvider = coreCryptoProvider
         self.onAuthenticationFailure = onAuthenticationFailure
     }
 
@@ -269,7 +272,8 @@ public final class ClientSessionComponent {
         selfClientID: selfClientID,
         api: updateEventsAPI,
         store: updateEventsLocalStore,
-        decryptor: updateEventDecryptor
+        decryptor: updateEventDecryptor,
+        coreCryptoProvider: coreCryptoProvider
     )
 
     private lazy var pullSelfLegalholdInfoSync = PullSelfLegalholdInfoSync(

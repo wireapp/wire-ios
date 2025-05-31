@@ -257,7 +257,8 @@ extension EventDecoder {
             let proteusEvent = await decryptProteusEventAndAddClient(event, in: syncMOC) { sessionID, encryptedData in
                 try await proteusService.decrypt(
                     data: encryptedData,
-                    forSession: sessionID
+                    forSession: sessionID,
+                    context: nil
                 )
             }
             return proteusEvent.map { [$0] } ?? []

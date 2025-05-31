@@ -548,7 +548,8 @@ public final class SharingSession {
             eventContext: coreDataStack.eventContext,
             mlsService: mlsService,
             mlsDecryptionService: mlsService,
-            proteusService: proteusService
+            proteusService: proteusService,
+            coreCryptoProvider: coreCryptoProvider
         )
 
         let processHandlers = ClientSessionComponent.ProcessorHandlers(
