@@ -41,6 +41,7 @@ extension MessageBackupModel {
     init?(_ message: ZMMessage, genericMessage: GenericMessage) {
 
         guard
+            !message.isEphemeral,
             let id = message.nonce,
             let senderUserID = message.senderUser?.qualifiedID,
             let creationDate = message.serverTimestamp,
