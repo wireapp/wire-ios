@@ -29,6 +29,13 @@ public protocol UpdateEventDecryptorProtocol {
     /// - Returns: A list of decrypted update events.
 
     func decryptEvents(in eventEnvelope: UpdateEventEnvelope, context: CoreCryptoContextProtocol?) async throws
-        -> [UpdateEvent]
+        -> EventDecryptorResult
+
+}
+
+public struct EventDecryptorResult {
+
+    let events: [UpdateEvent]
+    let brokenMLSGroupIDs: Set<String>
 
 }
