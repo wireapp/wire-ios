@@ -60,40 +60,43 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         ) {
             syncStateSubject.send(.incrementalSyncing(.createPushChannel))
             let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID)
-            
+
             logger.debug("opening push channel", attributes: .syncAttributes(initialSync: false))
             syncStateSubject.send(.incrementalSyncing(.openPushChannel))
-            
+
             let liveEventStream = try await pushChannel.open()
-            
+
             let processedEnvelopeIDs: Set<UUID>
             do {
                 logger.debug("pulling pending update events", attributes: .syncAttributes(initialSync: false))
                 syncStateSubject.send(.incrementalSyncing(.pullPendingEvents))
                 try await updateEventsSync.pull()
-                
+
                 logger.debug("processing stored update events", attributes: .syncAttributes(initialSync: false))
                 syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
                 processedEnvelopeIDs = try await processStoredEvents()
             } catch {
-                logger.debug("incremental sync interrupted, tearing down...", attributes: .syncAttributes(initialSync: false))
+                logger.debug(
+                    "incremental sync interrupted, tearing down...",
+                    attributes: .syncAttributes(initialSync: false)
+                )
                 await pushChannel.close()
                 throw error
             }
-            
+
             let liveEventTask = Task { @Sendable [self] in
                 logger.debug("handling live event stream", attributes: .syncAttributes(initialSync: false))
                 syncStateSubject.send(.liveSyncing(.ongoing))
-                
+
                 await processLiveEvents(
                     liveEventStream: liveEventStream,
                     processedEnvelopeIDs: processedEnvelopeIDs
                 )
-                
+
                 logger.debug("live event stream did finish", attributes: .syncAttributes(initialSync: false))
                 syncStateSubject.send(.liveSyncing(.finished))
             }
-            
+
             return Token(task: liveEventTask, closePushChannel: {
                 await pushChannel.close()
             })
