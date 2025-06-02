@@ -21,16 +21,29 @@ import WireDesign
 
 struct AccountTypeSelectionView: View {
 
+    @StateObject private var viewModel: AccountTypeSelectionViewModel
     @Environment(\.dismiss) private var dismiss
 
     private typealias Strings = L10n.Localizable.AccountTypeSelector
     private typealias Labels = L10n.Accessibility.AccountTypeSelector
+
+    package init(viewModel: AccountTypeSelectionViewModel) {
+        self._viewModel = StateObject(wrappedValue: viewModel)
+    }
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 scrollViewContent
             }
+            .sheet(isPresented: $viewModel.isCreateTeamAccountPresented, onDismiss: {
+                dismiss()
+            }, content: {
+                if let teamAccountCreationLink = viewModel.teamAccountCreationLink {
+                    SafariBrowserView(url: teamAccountCreationLink)
+                        .ignoresSafeArea()
+                }
+            })
             .scrollBounceBehavior(.basedOnSize)
             .navigationTitle(Strings.title)
             .navigationBarTitleDisplayMode(.inline)
@@ -90,7 +103,7 @@ struct AccountTypeSelectionView: View {
 
     @ViewBuilder private var teamAccountButton: some View {
         Button {
-            print("[WPB-17525]") // TODO: [WPB-17525] implement flow
+            viewModel.isCreateTeamAccountPresented = true
         } label: {
             Text(Strings.OptionTeam.button)
                 .lineLimit(nil)
@@ -190,6 +203,7 @@ private struct FeatureView: View {
 #Preview {
     Spacer()
         .sheet(isPresented: .constant(true)) {
-            AccountTypeSelectionView()
+            let viewModel = AccountTypeSelectionViewModel(teamsURL: URL(string: "https://www.wire.com")!)
+            AccountTypeSelectionView(viewModel: viewModel)
         }
 }

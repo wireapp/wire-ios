@@ -39,7 +39,8 @@ final class AccountTypeSelectionViewTests: XCTestCase {
     func testColorSchemeVariantsEmptyState() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = AccountTypeSelectionView()
+        let viewModel = AccountTypeSelectionViewModel(teamsURL: URL(string: "https://www.apple.com")!)
+        let view = AccountTypeSelectionView(viewModel: viewModel)
             .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
@@ -54,7 +55,8 @@ final class AccountTypeSelectionViewTests: XCTestCase {
     func testDynamicTypeVariantsEmptyState() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = AccountTypeSelectionView()
+        let viewModel = AccountTypeSelectionViewModel(teamsURL: URL(string: "https://www.apple.com")!)
+        let view = AccountTypeSelectionView(viewModel: viewModel)
             .frame(width: screenBounds.width, height: screenBounds.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
