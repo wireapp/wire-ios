@@ -26,6 +26,7 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
     private let selfClientID: String
     private let api: any UpdateEventsAPI
     private let store: any UpdateEventsLocalStoreProtocol
+    private let journal: Journal
     private let decryptor: any UpdateEventDecryptorProtocol
     private let coreCryptoProvider: any CoreCryptoProviderProtocol
     private let jsonEncoder = JSONEncoder()
@@ -34,12 +35,14 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
         selfClientID: String,
         api: any UpdateEventsAPI,
         store: any UpdateEventsLocalStoreProtocol,
+        journal: Journal,
         decryptor: any UpdateEventDecryptorProtocol,
         coreCryptoProvider: any CoreCryptoProviderProtocol
     ) {
         self.selfClientID = selfClientID
         self.api = api
         self.store = store
+        self.journal = journal
         self.decryptor = decryptor
         self.coreCryptoProvider = coreCryptoProvider
     }
@@ -90,11 +93,13 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
                     )
 
                     var decryptedEnvelope = envelope
-                    let decryptedEvents = try await decryptor.decryptEvents(in: envelope, context: context)
+                    let decryptionEventsResult = try await decryptor.decryptEvents(in: envelope, context: context)
+                    let decryptedEvents = decryptionEventsResult.events
                     decryptedEnvelope.events = decryptedEvents
 
                     events.append(contentsOf: decryptedEvents)
                     decryptedEnvelopes.append(decryptedEnvelope)
+                    journal.addValues(decryptionEventsResult.brokenMLSGroupIDs, for: .brokenMLSGroupIDs)
 
                     if !envelope.isTransient {
                         lastEnvelopeID = envelope.id
@@ -115,6 +120,7 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
                     WireLogger.sync.debug("storing last event id", attributes: [.eventEnvelopeID: lastEnvelopeID])
                     store.storeLastEventID(id: lastEnvelopeID)
                 }
+
             }
         }
 

@@ -32,7 +32,7 @@ package final class UploadDraftUseCase: WireCellsUploadDraftUseCaseProtocol {
 
     func invoke(fileURL: URL) async throws {
         let resourceValues = try fileURL.resourceValues(forKeys: [.fileSizeKey, .contentTypeKey])
-        guard let fileSize = resourceValues.fileSize else {
+        guard let fileSize = resourceValues.fileSize, fileSize > 0 else {
             throw WireCellsUploadDraftUseCaseError.missingFileSize
         }
 
