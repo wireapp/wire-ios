@@ -24,7 +24,7 @@ import Smithy
 
 final class ObservableStream: Smithy.Stream, Sendable {
 
-    private let wrapped: any Smithy.Stream
+    private let wrappedStream: any Smithy.Stream
     private let readContinuation: AsyncStream<Int>.Continuation
 
     let readProgress: AsyncStream<Int>
@@ -34,7 +34,7 @@ final class ObservableStream: Smithy.Stream, Sendable {
         bufferingPolicy: AsyncStream<Int>.Continuation.BufferingPolicy = .bufferingNewest(1)
     ) {
         let (progress, continuation) = AsyncStream.makeStream(of: Int.self, bufferingPolicy: bufferingPolicy)
-        self.wrapped = wrapped
+        self.wrappedStream = wrapped
         self.readProgress = progress
         self.readContinuation = continuation
     }
@@ -42,41 +42,41 @@ final class ObservableStream: Smithy.Stream, Sendable {
     // MARK: - ReadableStream
 
     var position: Data.Index {
-        wrapped.position
+        wrappedStream.position
     }
 
     var length: Int? {
-        wrapped.length
+        wrappedStream.length
     }
 
     var isEmpty: Bool {
-        wrapped.isEmpty
+        wrappedStream.isEmpty
     }
 
     var isSeekable: Bool {
-        wrapped.isSeekable
+        wrappedStream.isSeekable
     }
 
     func read(upToCount count: Int) throws -> Data? {
-        let result = try wrapped.read(upToCount: count)
+        let result = try wrappedStream.read(upToCount: count)
         readContinuation.yield(position)
         return result
     }
 
     func readAsync(upToCount count: Int) async throws -> Data? {
-        let result = try await wrapped.readAsync(upToCount: count)
+        let result = try await wrappedStream.readAsync(upToCount: count)
         readContinuation.yield(position)
         return result
     }
 
     func readToEnd() throws -> Data? {
-        let result = try wrapped.readToEnd()
+        let result = try wrappedStream.readToEnd()
         readContinuation.yield(position)
         return result
     }
 
     func readToEndAsync() async throws -> Data? {
-        let result = try await wrapped.readToEndAsync()
+        let result = try await wrappedStream.readToEndAsync()
         readContinuation.yield(position)
         return result
     }
@@ -84,14 +84,14 @@ final class ObservableStream: Smithy.Stream, Sendable {
     // MARK: - WriteableStream
 
     func write(contentsOf data: Data) throws {
-        try wrapped.write(contentsOf: data)
+        try wrappedStream.write(contentsOf: data)
     }
 
     func close() {
-        wrapped.close()
+        wrappedStream.close()
     }
 
     func closeWithError(_ error: any Error) {
-        wrapped.closeWithError(error)
+        wrappedStream.closeWithError(error)
     }
 }
