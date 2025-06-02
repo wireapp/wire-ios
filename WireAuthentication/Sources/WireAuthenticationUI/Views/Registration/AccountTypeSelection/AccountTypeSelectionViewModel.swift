@@ -26,7 +26,7 @@ package final class AccountTypeSelectionViewModel: ObservableObject {
 
     private let teamsURL: URL
 
-    var teamAccountCreationLink: URL? {
+    lazy var teamAccountCreationLink: URL? = {
         guard var components = URLComponents(url: teamsURL, resolvingAgainstBaseURL: false) else {
             WireLogger.authentication
                 .warn("Unable to generate team account creation link. Invalid teamsURL: \(teamsURL.absoluteString)")
@@ -41,7 +41,7 @@ package final class AccountTypeSelectionViewModel: ObservableObject {
         ]
 
         return components.url
-    }
+    }()
 
     package init(teamsURL: URL) {
         self.teamsURL = teamsURL
