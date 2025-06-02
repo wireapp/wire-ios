@@ -94,7 +94,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         self.legacySyncStatus = legacySyncStatus
         self.syncStateSubject = syncStateSubject
         super.init()
-        
+
         setupBindings()
     }
 
@@ -109,7 +109,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
     func resume() {
         syncStateSubject.send(.idle)
-        
+
         ongoingSyncTask = Task {
             WireLogger.sync.debug(
                 "resuming sync"
@@ -225,14 +225,14 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
             await legacySyncStatus.performQuickSync()
         }
     }
-    
+
     private func setupBindings() {
         subscription = syncStateSubject
             .receive(on: DispatchQueue.main)
             .filter {
                 let liveSyncTerminated = $0 == .liveSyncing(.terminated)
                 let isAppInForeground = UIApplication.shared.applicationState != .background
-                
+
                 return liveSyncTerminated && isAppInForeground
             }
             .sink { [weak self] _ in

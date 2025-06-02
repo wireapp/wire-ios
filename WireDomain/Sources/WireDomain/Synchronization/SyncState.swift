@@ -57,7 +57,7 @@ public enum SyncState: Equatable {
         case processPendingEvents
 
     }
-    
+
     public enum LiveSyncState: Equatable {
         case ongoing
         case terminated
