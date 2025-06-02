@@ -60,6 +60,8 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
     private let incrementalSyncTaskManager = NonReentrantTaskManager()
     private var incrementalSyncToken: IncrementalSync.Token?
+    private var ongoingSyncTask: Task<Void, Never>?
+    private var subscription: AnyCancellable?
 
     private var hasCompletedInitialSync: Bool {
         lastUpdateEventIDRepository.fetchLastEventID() != nil
@@ -67,7 +69,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
     var isLive: Bool {
         if isSyncV2Enabled {
-            syncStateSubject.value == .liveSyncing
+            syncStateSubject.value == .liveSyncing(.ongoing)
         } else {
             legacySyncStatus.isLive
         }
@@ -92,6 +94,8 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         self.legacySyncStatus = legacySyncStatus
         self.syncStateSubject = syncStateSubject
         super.init()
+
+        setupBindings()
     }
 
     // MARK: - API
@@ -104,7 +108,13 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     /// This method logs any errors and does not wait for the sync to finish.
 
     func resume() {
-        Task {
+        syncStateSubject.send(.idle)
+
+        ongoingSyncTask = Task {
+            WireLogger.sync.debug(
+                "resuming sync"
+            )
+
             let retrier = BackoffRetrier()
 
             do {
@@ -130,8 +140,10 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
     private func suspend() async {
         WireLogger.sync.debug("suspending sync")
+        ongoingSyncTask?.cancel()
         await incrementalSyncToken?.suspend()
         incrementalSyncToken = nil
+        syncStateSubject.send(.suspended)
     }
 
     /// Performs the appropriate sync depending in the local state.
@@ -194,10 +206,6 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
     func performIncrementalSync() async throws {
         if isSyncV2Enabled {
-            guard incrementalSyncToken == nil else {
-                WireLogger.sync.info("incremental sync already running...")
-                return
-            }
 
             do {
                 try await incrementalSyncTaskManager.performIfNeeded { [weak self] in
@@ -208,11 +216,28 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                 }
             } catch {
                 WireLogger.sync.error("failed to perform new incremental sync: \(String(describing: error))")
+                syncStateSubject.send(.suspended)
                 throw error
             }
         } else {
             await legacySyncStatus.performQuickSync()
         }
+    }
+
+    private func setupBindings() {
+        subscription = syncStateSubject
+            .receive(on: DispatchQueue.main)
+            .filter {
+                let liveSyncTerminated = $0 == .liveSyncing(.finished)
+                let isAppInForeground = UIApplication.shared.applicationState != .background
+
+                return liveSyncTerminated && isAppInForeground
+            }
+            .sink { [weak self] _ in
+                // if live sync terminated and we're in foreground
+                // app will try to recover by performing an incremental sync again
+                self?.resume()
+            }
     }
 
 }

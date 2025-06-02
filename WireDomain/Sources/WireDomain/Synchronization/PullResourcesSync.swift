@@ -68,6 +68,15 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
     }
 
     func pull() async throws {
+        try await pullUserConnections()
+        try await pullAllConversations()
+
+        // Pulling known users must happen after we've discovered
+        // user ids from user connections and conversations.
+        try await pullKnownUsers()
+
+        // Pulling self user must happen after we've pulled known users
+        // otherwise some self user values might be overwritten with nil values.
         let teamID = try await pullSelfUser()
         try await pullSelfUserClients()
         try await pullSelfUserSettings()
@@ -78,13 +87,6 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
             try await pullSelfTeamMembers(teamID: teamID)
             try await pullSelfLegalholdInfo(teamID: teamID)
         }
-
-        try await pullUserConnections()
-        try await pullAllConversations()
-
-        // Pulling known users must happen after we've discovered
-        // user ids from user connections and conversations.
-        try await pullKnownUsers()
 
         try await pullConversationLabels()
         try await pullFeatureConfigs()
