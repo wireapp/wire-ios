@@ -21,13 +21,23 @@ import WireDataModel
 import WireLogging
 import WireProtos
 
-struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcessorProtocol {
+public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcessorProtocol {
 
     let messageLocalStore: any MessageLocalStoreProtocol
     let conversationLocalStore: any ConversationLocalStoreProtocol
     let userLocalStore: any UserLocalStoreProtocol
 
-    func processProtobufMessage(
+    public init(
+        messageLocalStore: any MessageLocalStoreProtocol,
+        conversationLocalStore: any ConversationLocalStoreProtocol,
+        userLocalStore: any UserLocalStoreProtocol
+    ) {
+        self.messageLocalStore = messageLocalStore
+        self.conversationLocalStore = conversationLocalStore
+        self.userLocalStore = userLocalStore
+    }
+
+    public func processProtobufMessage(
         _ message: GenericMessage,
         content: GenericMessage.OneOf_Content,
         conversation: ZMConversation,

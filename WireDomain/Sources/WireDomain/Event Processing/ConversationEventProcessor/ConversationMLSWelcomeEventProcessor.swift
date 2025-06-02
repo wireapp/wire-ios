@@ -40,7 +40,8 @@ struct ConversationMLSWelcomeEventProcessor: ConversationMLSWelcomeEventProcesso
 
         // Decrypts the welcome message which returns the group ID of the conversation we were added to.
         let groupID = try await mlsDecryptionService.processWelcomeMessage(
-            welcomeMessage: welcomeMessage
+            welcomeMessage: welcomeMessage,
+            context: nil
         )
 
         var conversation = await conversationRepository.fetchConversation(

@@ -16,11 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import Foundation
+import WireFoundation
+import ZIPFoundation
 
-@testable import WireLogging
+struct ZIPFoundationFileUnarchiver: FileUnarchiverProtocol {
 
-final class PlaceholderTests: XCTestCase {
+    func unzipFile(at sourceURL: URL, to destinationURL: URL) throws {
+        try FileManager.default.unzipItem(at: sourceURL, to: destinationURL)
+    }
 
-    func testNothing() {}
 }
