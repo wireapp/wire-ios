@@ -3466,10 +3466,10 @@ public class MockUpdateEventDecryptorProtocol: UpdateEventDecryptorProtocol {
 
     public var decryptEventsInContext_Invocations: [(eventEnvelope: UpdateEventEnvelope, context: CoreCryptoContextProtocol?)] = []
     public var decryptEventsInContext_MockError: Error?
-    public var decryptEventsInContext_MockMethod: ((UpdateEventEnvelope, CoreCryptoContextProtocol?) async throws -> [UpdateEvent])?
-    public var decryptEventsInContext_MockValue: [UpdateEvent]?
+    public var decryptEventsInContext_MockMethod: ((UpdateEventEnvelope, CoreCryptoContextProtocol?) async throws -> EventDecryptorResult)?
+    public var decryptEventsInContext_MockValue: EventDecryptorResult?
 
-    public func decryptEvents(in eventEnvelope: UpdateEventEnvelope, context: CoreCryptoContextProtocol?) async throws -> [UpdateEvent] {
+    public func decryptEvents(in eventEnvelope: UpdateEventEnvelope, context: CoreCryptoContextProtocol?) async throws -> EventDecryptorResult {
         decryptEventsInContext_Invocations.append((eventEnvelope: eventEnvelope, context: context))
 
         if let error = decryptEventsInContext_MockError {

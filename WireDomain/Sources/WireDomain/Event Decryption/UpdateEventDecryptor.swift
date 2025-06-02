@@ -69,14 +69,17 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
     func decryptEvents(
         in eventEnvelope: UpdateEventEnvelope,
         context: CoreCryptoContextProtocol?
-    ) async throws -> [UpdateEvent] {
-        guard !DeveloperFlag.skipMLSMessagesDecryption.isOn else { return [] }
+    ) async throws -> EventDecryptorResult {
+        guard !DeveloperFlag.skipMLSMessagesDecryption.isOn else {
+            return EventDecryptorResult(events: [], brokenMLSGroupIDs: [])
+        }
         let logAttributes: LogAttributes = [
             .eventId: eventEnvelope.id.safeForLoggingDescription,
             .public: true
         ]
 
         var decryptedEvents = [UpdateEvent]()
+        var brokenMLSGroupIDs = Set<String>()
         var shouldCommitPendingProposals = false
 
         for event in eventEnvelope.events {
@@ -116,7 +119,6 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                     "decrypting MLS add message event...",
                     attributes: logAttributes
                 )
-
                 shouldCommitPendingProposals = true
 
                 do {
@@ -133,6 +135,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                             "failed to decrypt MLS due to `WrongEpoch` for group \(mlsGroupID)",
                             attributes: logAttributes
                         )
+                        brokenMLSGroupIDs.insert(mlsGroupID.description)
                     default:
                         WireLogger.updateEvent.error(
                             "failed to decrypt MLS add message event, dropping: \(String(describing: error))",
@@ -174,7 +177,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
             }
         }
 
-        return decryptedEvents
+        return EventDecryptorResult(events: decryptedEvents, brokenMLSGroupIDs: brokenMLSGroupIDs)
     }
 
     private func commitPendingProposalsIfNeeded() async {

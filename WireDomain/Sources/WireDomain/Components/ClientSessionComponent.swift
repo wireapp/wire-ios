@@ -261,10 +261,18 @@ public final class ClientSessionComponent {
         store: backendConfigLocalStore
     )
 
+    private var journal: Journal {
+        Journal(
+            userID: selfUserID,
+            storage: sharedUserDefaults
+        )
+    }
+
     private lazy var pullPendingUpdateEventsSync = PullPendingUpdateEventsSync(
         selfClientID: selfClientID,
         api: updateEventsAPI,
         store: updateEventsLocalStore,
+        journal: journal,
         decryptor: updateEventDecryptor,
         coreCryptoProvider: coreCryptoProvider
     )
@@ -360,7 +368,8 @@ public final class ClientSessionComponent {
         store: updateEventsLocalStore,
         processor: updateEventProcessor,
         databaseSaver: databaseSaver,
-        syncStateSubject: syncStateSubject
+        syncStateSubject: syncStateSubject,
+        journal: journal
     )
 
     // MARK: - Repositories
