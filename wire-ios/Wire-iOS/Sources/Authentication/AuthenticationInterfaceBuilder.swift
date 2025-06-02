@@ -22,6 +22,8 @@ import WireAuthentication
 import WireCommonComponents
 import WireDataModel
 import WireSyncEngine
+import WireFoundation
+import Combine
 
 /// A type of view controller that can be managed by an authentication coordinator.
 
@@ -43,6 +45,8 @@ final class AuthenticationInterfaceBuilder {
     private var environment: WireTransport.BackendEnvironment {
         BackendEnvironment.shared
     }
+    
+    private var accountSelector: AccountSelector?
 
     // MARK: - Initialization
 
@@ -51,10 +55,12 @@ final class AuthenticationInterfaceBuilder {
 
     init(
         featureProvider: AuthenticationFeatureProvider,
+        accountSelector: AccountSelector?,
         backendEnvironmentProvider: @escaping () -> BackendEnvironmentProvider = { BackendEnvironment.shared }
     ) {
         self.featureProvider = featureProvider
         self.backendEnvironmentProvider = backendEnvironmentProvider
+        self.accountSelector = accountSelector
     }
 
     // MARK: - Interface Building
@@ -77,6 +83,15 @@ final class AuthenticationInterfaceBuilder {
         case .wireAuthenticationModule:
             let assembly = WireAuthenticationAssembly()
             let numberOfAccounts = SessionManager.shared?.accountManager.accounts.count ?? 0
+            let accounts = (SessionManager.shared?.accountManager.accounts ?? [])
+                .filter {
+                    !$0.isEqual(SessionManager.shared?.accountManager.selectedAccount)
+                }
+                .map { account in
+                    account.toUIModel { [weak self] in
+                        self?.accountSelector?.switchTo(account: account)
+                    }
+            }
             let preferredAPIVersion = BackendInfo.preferredAPIVersion.flatMap {
                 WireAPI.APIVersion(rawValue: UInt($0.rawValue))
             }
@@ -91,7 +106,8 @@ final class AuthenticationInterfaceBuilder {
                 passwordValidator: AuthenticationPasswordValidator(),
                 ssoCallbackURLScheme: Bundle.ssoURLScheme ?? "wire-sso",
                 appStoreURL: WireURLs.shared.appOnItunes,
-                existsAnotherAccount: numberOfAccounts > 0
+                existsAnotherAccount: numberOfAccounts > 0,
+                accountsPublisher: ReadOnlyCurrentValueSubject(subject: CurrentValueSubject(accounts))
             )
             return AuthenticationHostingController(
                 rootView: rootView,

@@ -17,10 +17,13 @@
 //
 
 import SwiftUI
+import Combine
+import WireFoundation
 import WireAPI
 import WireAuthentication
 import WireAuthenticationUI
 import WireReusableUIComponents
+import WireMultiBackendUI
 
 struct ContentView: View {
 
@@ -52,7 +55,29 @@ struct ContentView: View {
                 passwordValidator: configuration.passwordValidator,
                 ssoCallbackURLScheme: "some scheme",
                 appStoreURL: URL(string: "www.example.com")!,
-                existsAnotherAccount: true
+                existsAnotherAccount: true,
+                accountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>(
+                    subject: CurrentValueSubject<[AccountUIModel], Never>(
+                        [
+                            AccountUIModel(
+                                avatarSource: .text("FF"),
+                                name: "Name",
+                                handle: "@handle",
+                                teamName: "Team",
+                                backendName: "Backedn",
+                                action: { }
+                            ),
+                            AccountUIModel(
+                                avatarSource: .text("DS"),
+                                name: "Name 2",
+                                handle: "@handle 2",
+                                teamName: "Team two",
+                                backendName: "Backend two",
+                                action: { }
+                            )
+                        ]
+                    )
+                )
             ).view
     }
 

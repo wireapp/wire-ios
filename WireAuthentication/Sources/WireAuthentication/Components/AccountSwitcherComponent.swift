@@ -21,17 +21,16 @@ import Combine
 import NeedleFoundation
 internal import WireAuthenticationUI
 import WireMultiBackendUI
+import WireFoundation
 
 protocol AccountSwitcherComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
-    var accountsPublisher: AnyPublisher<[AccountUIModel], Never> { get }
+    var accountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]> { get }
 
 }
 
-class AccountSwitcherComponent: Component<AccountSwitcherComponentDependency> {
-
-}
+class AccountSwitcherComponent: Component<AccountSwitcherComponentDependency> { }
 
 extension AccountSwitcherComponent: AccountSwitcherFactory {
 
@@ -39,16 +38,6 @@ extension AccountSwitcherComponent: AccountSwitcherFactory {
 
     @MainActor var viewModel: AccountSwitcherModalViewModel {
         AccountSwitcherModalViewModel(
-            accounts: [
-                AccountUIModel(
-                    avatarSource: .text("FF"),
-                    name: "Name",
-                    handle: "@handle",
-                    teamName: "Team",
-                    backendName: "Backedn",
-                    action: { }
-                )
-            ],
             accountsPublisher: dependency.accountsPublisher,
             router: dependency.router
         )

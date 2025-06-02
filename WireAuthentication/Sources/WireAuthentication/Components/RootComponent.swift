@@ -25,6 +25,7 @@ internal import WireAuthenticationUI
 import WireAuthenticationAPI
 import WireMultiBackendUI
 internal import WireAuthenticationLogic
+import WireFoundation
 
 class RootComponent: BootstrapComponent {
 
@@ -38,7 +39,7 @@ class RootComponent: BootstrapComponent {
     public let ssoCallbackURLScheme: String
     public let appStoreURL: URL
     public let existsAnotherAccount: Bool
-    public var accountsPublisher: AnyPublisher<[AccountUIModel], Never>
+    public var accountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>
 
     @MainActor public var bridge: WireAuthenticationBridge {
         shared {
@@ -59,7 +60,8 @@ class RootComponent: BootstrapComponent {
         passwordValidator: any PasswordValidator,
         ssoCallbackURLScheme: String,
         appStoreURL: URL,
-        existsAnotherAccount: Bool
+        existsAnotherAccount: Bool,
+        accountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>
     ) {
         self.backendInfo = backendInfo
         self.preferredAPIVersion = preferredAPIVersion
@@ -71,7 +73,7 @@ class RootComponent: BootstrapComponent {
         self.ssoCallbackURLScheme = ssoCallbackURLScheme
         self.appStoreURL = appStoreURL
         self.existsAnotherAccount = existsAnotherAccount
-        self.accountsPublisher = Just([]).eraseToAnyPublisher()
+        self.accountsPublisher = accountsPublisher
     }
 
     // MARK: - Children

@@ -19,9 +19,12 @@
 import Foundation
 import NeedleFoundation
 import SwiftUI
+import Combine
 import WireAPI
 import WireAuthenticationAPI
 import WireReusableUIComponents
+import WireFoundation
+import WireMultiBackendUI
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
 
@@ -52,7 +55,8 @@ public struct WireAuthenticationAssembly {
         passwordValidator: any PasswordValidator,
         ssoCallbackURLScheme: String,
         appStoreURL: URL,
-        existsAnotherAccount: Bool
+        existsAnotherAccount: Bool,
+        accountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
         let backendInfo = BackendInfo(
             environmentType: environmentType,
@@ -67,7 +71,8 @@ public struct WireAuthenticationAssembly {
             passwordValidator: passwordValidator,
             ssoCallbackURLScheme: ssoCallbackURLScheme,
             appStoreURL: appStoreURL,
-            existsAnotherAccount: existsAnotherAccount
+            existsAnotherAccount: existsAnotherAccount,
+            accountsPublisher: accountsPublisher
         )
 
         return (view: RootView(factory: rootComponent), bridge: rootComponent.bridge)

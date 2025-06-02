@@ -16,31 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
-import Combine
-import WireMultiBackendUI
-import WireFoundation
+public import Combine
 
-@MainActor
-package class AccountSwitcherModalViewModel: ObservableObject {
+public final class ReadOnlyCurrentValueSubject<Output> {
     
-    @Published var accounts: [AccountUIModel]
-    
-    private let router: any Router
-    private var cancellables = Set<AnyCancellable>()
-    
-    package init(
-        accountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>,
-        router: any Router
-    ) {
-        self.accounts = accountsPublisher.value
-        self.router = router
-        accountsPublisher.publisher.sink { [weak self] accounts in
-            self?.accounts = accounts
-        }.store(in: &cancellables)
+    private let subject: CurrentValueSubject<Output, Never>
+
+    public init(subject: CurrentValueSubject<Output, Never>) {
+        self.subject = subject
     }
-    
-    func onCloseButtonTapped() {
-        router.pop()
+
+    /// Current value
+    public var value: Output {
+        subject.value
+    }
+
+    /// Read-only publisher
+    public var publisher: AnyPublisher<Output, Never> {
+        subject.eraseToAnyPublisher()
     }
 }

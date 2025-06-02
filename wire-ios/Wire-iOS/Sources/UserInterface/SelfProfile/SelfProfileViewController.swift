@@ -158,29 +158,10 @@ final class SelfProfileViewController: UIViewController {
             .filter {
                 !$0.isEqual(accountManager?.selectedAccount)
             }
-            .map { domainAccount in
-                let avatarSource: WireAccountImageUI.AccountImageSource
-                if let imageData = domainAccount.imageData,
-                   let avatarImage = UIImage(data: imageData) {
-                    avatarSource = .image(avatarImage)
-                } else {
-                    let personName = PersonName.person(
-                        withName: domainAccount.userName,
-                        schemeTagger: nil
-                    )
-                    avatarSource = .text(personName.initials)
-                }
-                // track updates in user avatar and name?
-                return AccountUIModel(
-                    avatarSource: avatarSource,
-                    name: domainAccount.userName,
-                    handle: "@handle", // TODO:
-                    teamName: domainAccount.teamName,
-                    backendName: "Back END INFO", // TODO:
-                    action: { [weak self] in
-                        self?.handleAccountSelected(domainAccount)
-                    }
-                )
+            .map { account in
+                account.toUIModel(action: { [weak self] in
+                    self?.handleAccountSelected(account)
+                })
             }
 
         let appSwitcherController = AccountSwitcherHostingController(
@@ -462,4 +443,30 @@ extension SelfProfileViewController: AccountSelectorViewDelegate {
 public extension Notification.Name {
     // Used to notify the app that the user has viewed their own profile
     static let userDidViewSelfProfile = Notification.Name("userDidViewSelfProfile")
+}
+
+extension Account {
+    func toUIModel(action: @escaping () -> Void) -> AccountUIModel {
+        let avatarSource: WireAccountImageUI.AccountImageSource
+        if let imageData = imageData,
+           let avatarImage = UIImage(data: imageData) {
+            avatarSource = .image(avatarImage)
+        } else {
+            let personName = PersonName.person(
+                withName: userName,
+                schemeTagger: nil
+            )
+            avatarSource = .text(personName.initials)
+        }
+        // track updates in user avatar and name?
+        return AccountUIModel(
+            avatarSource: avatarSource,
+            name: userName,
+            handle: "@handle", // TODO:
+            teamName: teamName,
+            backendName: "Back END INFO", // TODO:
+            action: action
+        )
+
+    }
 }
