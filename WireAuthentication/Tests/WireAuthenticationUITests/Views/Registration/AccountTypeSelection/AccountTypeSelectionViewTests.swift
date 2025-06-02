@@ -39,7 +39,11 @@ final class AccountTypeSelectionViewTests: XCTestCase {
     func testColorSchemeVariantsEmptyState() {
         let screenBounds = UIScreen.main.bounds
 
-        let viewModel = AccountTypeSelectionViewModel(teamsURL: URL(string: "https://www.apple.com")!)
+        let viewModel = AccountTypeSelectionViewModel(
+            email: "",
+            privacyPolicyURL: URL(string: "https://www.wire.com")!,
+            teamsURL: URL(string: "https://www.apple.com")!
+        )
         let view = AccountTypeSelectionView(viewModel: viewModel)
             .frame(width: screenBounds.width, height: screenBounds.height)
 
@@ -55,7 +59,11 @@ final class AccountTypeSelectionViewTests: XCTestCase {
     func testDynamicTypeVariantsEmptyState() {
         let screenBounds = UIScreen.main.bounds
 
-        let viewModel = AccountTypeSelectionViewModel(teamsURL: URL(string: "https://www.apple.com")!)
+        let viewModel = AccountTypeSelectionViewModel(
+            email: "",
+            privacyPolicyURL: URL(string: "https://www.wire.com")!,
+            teamsURL: URL(string: "https://www.apple.com")!
+        )
         let view = AccountTypeSelectionView(viewModel: viewModel)
             .frame(width: screenBounds.width, height: screenBounds.height)
 

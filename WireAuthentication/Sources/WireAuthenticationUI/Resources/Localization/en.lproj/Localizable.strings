@@ -112,3 +112,10 @@
 
 "obsolete_backend.alert.title" = "Server version not supported";
 "obsolete_backend.alert.message" = "The server version is not supported by this app. Please contact your system administrator.";
+
+// Registration
+
+"create_personal_account.title" = "Create personal account";
+"create_personal_account.continue" = "Continue";
+"create_personal_account.share_data_usage" = "I agree to share anonymous usage data. Find all details in our [Privacy Policy](%@)";
+"create_personal_account.create_team" = "Looking for team collaboration?\nCreate a team";

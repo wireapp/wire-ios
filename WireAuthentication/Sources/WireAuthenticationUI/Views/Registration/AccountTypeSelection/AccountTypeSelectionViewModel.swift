@@ -22,8 +22,10 @@ import WireLogging
 @MainActor
 package final class AccountTypeSelectionViewModel: ObservableObject {
 
-    @Published var isCreateTeamAccountPresented = false
+    @Published var modalDestination: AccountTypeSelectionSheet?
 
+    let email: String
+    let privacyPolicyURL: URL
     private let teamsURL: URL
 
     lazy var teamAccountCreationLink: URL? = {
@@ -43,8 +45,39 @@ package final class AccountTypeSelectionViewModel: ObservableObject {
         return components.url
     }()
 
-    package init(teamsURL: URL) {
+    package init(
+        email: String,
+        privacyPolicyURL: URL,
+        teamsURL: URL
+    ) {
+        self.email = email
+        self.privacyPolicyURL = privacyPolicyURL
         self.teamsURL = teamsURL
     }
+
+    func presentTeamAccountFlow() {
+        if let url = teamAccountCreationLink {
+            modalDestination = .team(url: url)
+        }
+    }
+
+    func presentPersonalAccountFlow() {
+        modalDestination = .personal(email: email)
+    }
+
+}
+
+// TODO: move to another file
+package enum AccountTypeSelectionSheet: Identifiable, Hashable {
+
+    package var id: Self { self }
+
+    /// Represents the flow to create a team account.
+    /// - Parameter url: The URL to the web page where the team account is created.
+    case team(url: URL)
+
+    /// Represents the flow to create a personal account.
+    /// - Parameter email: The email address for the new personal account.
+    case personal(email: String)
 
 }

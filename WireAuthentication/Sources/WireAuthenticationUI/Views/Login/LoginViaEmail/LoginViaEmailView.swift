@@ -90,7 +90,11 @@ package struct LoginViaEmailView: View {
             }
         )
         .sheet(isPresented: $viewModel.isCreateAccountPresented) {
+            // TODO: fix
             AccountTypeSelectionView(viewModel: AccountTypeSelectionViewModel(
+                email: "",
+                privacyPolicyURL: viewModel.backendInfo
+                    .backendConfig.endpoints.teamsURL,
                 teamsURL: viewModel.backendInfo
                     .backendConfig.endpoints.teamsURL
             ))

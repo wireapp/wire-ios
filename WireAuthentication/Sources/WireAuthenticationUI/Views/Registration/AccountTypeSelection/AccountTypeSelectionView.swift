@@ -36,14 +36,21 @@ struct AccountTypeSelectionView: View {
             ScrollView {
                 scrollViewContent
             }
-            .sheet(isPresented: $viewModel.isCreateTeamAccountPresented, onDismiss: {
+
+            .sheet(item: $viewModel.modalDestination, onDismiss: {
                 dismiss()
-            }, content: {
-                if let teamAccountCreationLink = viewModel.teamAccountCreationLink {
-                    SafariBrowserView(url: teamAccountCreationLink)
-                        .ignoresSafeArea()
-                }
+            }, content: { item in
+                sheetView(for: item)
+                    .presentationBackground(Color.black.opacity(0.7))
             })
+//            .sheet(isPresented: $viewModel.isCreateTeamAccountPresented, onDismiss: {
+//                dismiss()
+//            }, content: {
+//                if let teamAccountCreationLink = viewModel.teamAccountCreationLink {
+//                    SafariBrowserView(url: teamAccountCreationLink)
+//                        .ignoresSafeArea()
+//                }
+//            })
             .scrollBounceBehavior(.basedOnSize)
             .navigationTitle(Strings.title)
             .navigationBarTitleDisplayMode(.inline)
@@ -103,7 +110,7 @@ struct AccountTypeSelectionView: View {
 
     @ViewBuilder private var teamAccountButton: some View {
         Button {
-            viewModel.isCreateTeamAccountPresented = true
+            viewModel.presentTeamAccountFlow()
         } label: {
             Text(Strings.OptionTeam.button)
                 .lineLimit(nil)
@@ -150,13 +157,34 @@ struct AccountTypeSelectionView: View {
 
     @ViewBuilder private var personalAccountButton: some View {
         Button {
-            print("[WPB-17453]") // TODO: [WPB-17453] implement flow
+//            let viewModel = CreatePersonalAccountViewModel(
+//                email: viewModel.email,
+//                privacyPolicyURL: viewModel.privacyPolicyURL,
+//                teamAccountCreationLink: viewModel.teamAccountCreationLink
+//            )
+//            CreatePersonalAccountView(viewModel: viewModel)
+            viewModel.presentPersonalAccountFlow()
         } label: {
             Text(Strings.OptionPersonal.button)
                 .lineLimit(nil)
         }
         .wireButtonStyle(.secondary)
         .bold()
+    }
+
+    @ViewBuilder
+    private func sheetView(for sheet: AccountTypeSelectionSheet) -> some View {
+        switch sheet {
+        case let .team(teamAccountCreationURL):
+            SafariBrowserView(url: teamAccountCreationURL).ignoresSafeArea()
+        case let .personal(email):
+            let viewModel = CreatePersonalAccountViewModel(
+                email: email,
+                privacyPolicyURL: viewModel.privacyPolicyURL,
+                teamAccountCreationLink: viewModel.teamAccountCreationLink
+            )
+            CreatePersonalAccountView(viewModel: viewModel)
+        }
     }
 
 }
@@ -203,7 +231,11 @@ private struct FeatureView: View {
 #Preview {
     Spacer()
         .sheet(isPresented: .constant(true)) {
-            let viewModel = AccountTypeSelectionViewModel(teamsURL: URL(string: "https://www.wire.com")!)
+            let viewModel = AccountTypeSelectionViewModel(
+                email: "email@wire.com",
+                privacyPolicyURL: URL(string: "https://www.wire.com")!,
+                teamsURL: URL(string: "https://www.wire.com")!
+            )
             AccountTypeSelectionView(viewModel: viewModel)
         }
 }
