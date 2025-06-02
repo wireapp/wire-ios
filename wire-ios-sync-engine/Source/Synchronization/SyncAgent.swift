@@ -230,7 +230,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         subscription = syncStateSubject
             .receive(on: DispatchQueue.main)
             .filter {
-                let liveSyncTerminated = $0 == .liveSyncing(.terminated)
+                let liveSyncTerminated = $0 == .liveSyncing(.finished)
                 let isAppInForeground = UIApplication.shared.applicationState != .background
 
                 return liveSyncTerminated && isAppInForeground

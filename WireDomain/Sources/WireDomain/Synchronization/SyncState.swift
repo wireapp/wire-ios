@@ -60,7 +60,7 @@ public enum SyncState: Equatable {
 
     public enum LiveSyncState: Equatable {
         case ongoing
-        case terminated
+        case finished
     }
 
 }
