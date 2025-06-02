@@ -41,6 +41,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
     @Published var proxyPassword: String = ""
 
     @Published private(set) var isLoading = false
+    @Published var isCreateAccountPresented = false
     @Published var alert: Alert?
 
     let backendInfo: BackendInfo
@@ -75,7 +76,9 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
     package let factory: any Factory
     private let router: any Router
-    private let onCreateAccount: () -> Void
+    /// This property is used for presenting the legacy registration flow.
+    /// If `nil` the new registration flow is presented.
+    private let onCreateAccount: (() -> Void)?
     private let didDetectDomainConflict: Bool
 
     // MARK: - Life cycle
@@ -87,7 +90,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
         backendInfo: BackendInfo,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
-        onCreateAccount: @escaping () -> Void
+        onCreateAccount: (() -> Void)?
     ) {
         self.factory = factory
         self.router = router
@@ -169,7 +172,13 @@ package final class LoginViaEmailViewModel: ObservableObject {
     }
 
     func createAccount() {
-        onCreateAccount()
+        // legacy flow
+        if let onCreateAccount {
+            return onCreateAccount()
+        }
+
+        // new flow
+        isCreateAccountPresented = true
     }
 
     // MARK: - Private

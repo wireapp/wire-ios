@@ -395,18 +395,28 @@ extension SettingsCellDescriptorFactory {
         let context = selfUser.managedObjectContext!.performAndWait {
             selfUser.managedObjectContext!.zm_sync!
         }
-
-        let importBackupUseCase = sessionManager.importLegacyBackupUseCase!
-        // TODO: [WPB-16658] enable new backup when restore is ready
-        let createBackupUseCase: CreateBackupUseCaseProtocol = if true || DeveloperFlag.createLegacyBackups.isOn {
+        let backupLocalStore = BackupLocalStore(
+            context: context,
+            processor: ConversationProtobufMessageProcessor(context: context)
+        )
+        let userSession = sessionManager.activeUserSession!
+        let importBackupUseCase = CompositeImportBackupUseCase(
+            importBackupUseCase: ImportBackupUseCase(
+                selfUserID: .init(selfUser.qualifiedID!),
+                backupLocalStore: backupLocalStore,
+                fileUnarchiver: ZipArchiveFileUnarchiver(),
+                syncTrigger: { userSession.triggerResourcesSync() },
+                logger: WireLogger.backupImport
+            ),
+            legacyImportBackupUseCase: sessionManager.importLegacyBackupUseCase!
+        )
+        let createBackupUseCase: CreateBackupUseCaseProtocol = if DeveloperFlag.createLegacyBackups.isOn {
             CreateLegacyBackupUseCase(sessionManager: sessionManager)
         } else {
             CreateBackupUseCase(
                 selfUserID: .init(selfUser.qualifiedID!),
-                selfUserHandle: selfUser.handle,
-                backupLocalStore: BackupLocalStore(context: context),
+                backupLocalStore: backupLocalStore,
                 fileArchiver: ZIPFoundationFileArchiver(),
-                currentDateProvider: SystemDateProvider(),
                 logger: WireLogger.backupExport
             )
         }
@@ -503,6 +513,28 @@ extension SettingsCellDescriptorFactory {
 
     func signOutElement() -> any SettingsCellDescriptorType {
         SettingsSignOutCellDescriptor()
+    }
+
+}
+
+// MARK: -
+
+private extension ConversationProtobufMessageProcessor {
+
+    init(context: NSManagedObjectContext) {
+        let messageLocalStore = MessageLocalStore(context: context)
+        self.init(
+            messageLocalStore: messageLocalStore,
+            conversationLocalStore: ConversationLocalStore(
+                context: context,
+                mlsService: context.performAndWait { context.mlsService },
+                messageLocalStore: messageLocalStore
+            ),
+            userLocalStore: UserLocalStore(
+                context: context,
+                messageLocalStore: messageLocalStore
+            )
+        )
     }
 
 }
