@@ -23,7 +23,6 @@ struct AccountTypeSelectionView: View {
 
     @StateObject private var viewModel: AccountTypeSelectionViewModel
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.presentationMode) private var presentationMode
 
     private typealias Strings = L10n.Localizable.AccountTypeSelector
     private typealias Labels = L10n.Accessibility.AccountTypeSelector
@@ -38,7 +37,7 @@ struct AccountTypeSelectionView: View {
                 scrollViewContent
             }
             .sheet(isPresented: $viewModel.isCreateTeamAccountPresented, onDismiss: {
-                presentationMode.wrappedValue.dismiss()
+                dismiss()
             }, content: {
                 if let teamAccountCreationLink = viewModel.teamAccountCreationLink {
                     SafariBrowserView(url: teamAccountCreationLink)
