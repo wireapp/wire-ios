@@ -34,7 +34,7 @@ public enum SyncState: Equatable {
 
     /// App is up to date and processing live events.
 
-    case liveSyncing
+    case liveSyncing(LiveSyncState)
 
     /// Sync was suspended
 
@@ -56,6 +56,11 @@ public enum SyncState: Equatable {
         case pullPendingEvents
         case processPendingEvents
 
+    }
+    
+    public enum LiveSyncState: Equatable {
+        case ongoing
+        case terminated
     }
 
 }
