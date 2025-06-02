@@ -60,6 +60,11 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
     private let incrementalSyncTaskManager = NonReentrantTaskManager()
     private var incrementalSyncToken: IncrementalSync.Token?
+<<<<<<< HEAD
+=======
+    private var ongoingSyncTask: Task<Void, Never>?
+    private var subscription: AnyCancellable?
+>>>>>>> e27bb3c2af (fix: message sending stuck - WPB-17866 (#3100))
 
     private var hasCompletedInitialSync: Bool {
         lastUpdateEventIDRepository.fetchLastEventID() != nil
@@ -67,7 +72,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
     var isLive: Bool {
         if isSyncV2Enabled {
-            syncStateSubject.value == .liveSyncing
+            syncStateSubject.value == .liveSyncing(.ongoing)
         } else {
             legacySyncStatus.isLive
         }
@@ -92,6 +97,8 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         self.legacySyncStatus = legacySyncStatus
         self.syncStateSubject = syncStateSubject
         super.init()
+
+        setupBindings()
     }
 
     // MARK: - API
@@ -104,7 +111,17 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     /// This method logs any errors and does not wait for the sync to finish.
 
     func resume() {
+<<<<<<< HEAD
         Task {
+=======
+        syncStateSubject.send(.idle)
+
+        ongoingSyncTask = Task {
+            WireLogger.sync.debug(
+                "resuming sync"
+            )
+
+>>>>>>> e27bb3c2af (fix: message sending stuck - WPB-17866 (#3100))
             let retrier = BackoffRetrier()
 
             do {
@@ -217,6 +234,22 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         } else {
             await legacySyncStatus.performQuickSync()
         }
+    }
+
+    private func setupBindings() {
+        subscription = syncStateSubject
+            .receive(on: DispatchQueue.main)
+            .filter {
+                let liveSyncTerminated = $0 == .liveSyncing(.finished)
+                let isAppInForeground = UIApplication.shared.applicationState != .background
+
+                return liveSyncTerminated && isAppInForeground
+            }
+            .sink { [weak self] _ in
+                // if live sync terminated and we're in foreground
+                // app will try to recover by performing an incremental sync again
+                self?.resume()
+            }
     }
 
 }
