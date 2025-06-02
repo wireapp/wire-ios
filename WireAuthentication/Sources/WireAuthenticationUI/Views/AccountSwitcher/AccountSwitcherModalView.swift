@@ -21,9 +21,18 @@ import WireMultiBackendUI
 import WireDesign
 import WireFoundation
 
+
+package protocol AccountSwitcherFactory {
+    @MainActor var viewModel: AccountSwitcherModalViewModel { get }
+}
+
 struct AccountSwitcherModalView: View {
     
     @ObservedObject var viewModel: AccountSwitcherModalViewModel
+    
+    init(_ factory: AccountSwitcherFactory) {
+        self._viewModel = ObservedObject(initialValue: factory.viewModel)
+    }
     
     var body: some View {
         VStack {

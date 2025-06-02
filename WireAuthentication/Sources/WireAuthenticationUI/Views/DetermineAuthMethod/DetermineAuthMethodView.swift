@@ -21,7 +21,6 @@ import Combine
 import WireAuthenticationAPI
 import WireDesign
 import WireReusableUIComponents
-import WireMultiBackendUI
 
 package protocol DetermineAuthMethodFactory {
 
@@ -37,6 +36,8 @@ package protocol DetermineAuthMethodFactory {
 
     @MainActor
     func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory
+    @MainActor
+    func accountsSwitcherFactory() -> any AccountSwitcherFactory
 }
 
 package struct DetermineAuthMethodView: View {
@@ -166,25 +167,6 @@ package struct DetermineAuthMethodView: View {
     @ViewBuilder
     private func destinationView(for destination: DetermineAuthMethodDestination) -> some View {
         switch destination {
-            // dev only
-        case .switchAccounts:
-            AccountSwitcherModalView(
-                viewModel: AccountSwitcherModalViewModel(
-                    accounts: [
-                        AccountUIModel(
-                            avatarSource: .text("FF"),
-                            name: "Name",
-                            handle: "@handle",
-                            teamName: "Team",
-                            backendName: "Backedn",
-                            action: { }
-                        )
-                    ],
-                    accountsPublisher: Empty<[AccountUIModel], Never>()
-                        .eraseToAnyPublisher(),
-                    router: viewModel.router
-                )
-            )
         case let .login(
             email,
             didDetectDomainConflict,
@@ -209,6 +191,9 @@ package struct DetermineAuthMethodView: View {
             ))
         case let .noHistory(authenticationResult):
             NoHistoryView(factory: viewModel.factory.noHistoryFactory(authenticationResult: authenticationResult))
+            
+        case .switchAccounts:
+            AccountSwitcherModalView(viewModel.factory.accountsSwitcherFactory())
         }
     }
 

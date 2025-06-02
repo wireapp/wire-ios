@@ -76,7 +76,10 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
             didDetectDomainConflict: false
         )
     }
-
+    
+    func accountSwitcherComponent() -> AccountSwitcherComponent {
+        AccountSwitcherComponent(parent: self)
+    }
 }
 
 extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
@@ -110,7 +113,11 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
     func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory {
         noHistoryComponent(authenticationResult: authenticationResult)
     }
-
+    
+    func accountsSwitcherFactory() -> any AccountSwitcherFactory {
+        accountSwitcherComponent()
+    }
+    
     // MARK: Use cases
 
     func validateEmailOrSSOCodeUseCase() -> any ValidateEmailOrSSOCodeUseCaseProtocol {

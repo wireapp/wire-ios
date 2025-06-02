@@ -18,10 +18,12 @@
 
 import NeedleFoundation
 import SwiftUI
+import Combine
 import WireAPI
 import WireReusableUIComponents
 internal import WireAuthenticationUI
 import WireAuthenticationAPI
+import WireMultiBackendUI
 internal import WireAuthenticationLogic
 
 class RootComponent: BootstrapComponent {
@@ -36,6 +38,7 @@ class RootComponent: BootstrapComponent {
     public let ssoCallbackURLScheme: String
     public let appStoreURL: URL
     public let existsAnotherAccount: Bool
+    public var accountsPublisher: AnyPublisher<[AccountUIModel], Never>
 
     @MainActor public var bridge: WireAuthenticationBridge {
         shared {
@@ -68,6 +71,7 @@ class RootComponent: BootstrapComponent {
         self.ssoCallbackURLScheme = ssoCallbackURLScheme
         self.appStoreURL = appStoreURL
         self.existsAnotherAccount = existsAnotherAccount
+        self.accountsPublisher = Just([]).eraseToAnyPublisher()
     }
 
     // MARK: - Children

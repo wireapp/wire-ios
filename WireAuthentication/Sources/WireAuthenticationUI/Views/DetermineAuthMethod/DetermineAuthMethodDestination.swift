@@ -21,7 +21,6 @@ import WireAuthenticationAPI
 
 package enum DetermineAuthMethodDestination: Hashable {
 
-    // for dev purposes only, until whole integration is done
     case switchAccounts
     
     case login(

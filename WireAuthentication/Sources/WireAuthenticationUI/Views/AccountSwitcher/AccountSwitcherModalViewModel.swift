@@ -21,14 +21,14 @@ import Combine
 import WireMultiBackendUI
 
 @MainActor
-class AccountSwitcherModalViewModel: ObservableObject {
+package class AccountSwitcherModalViewModel: ObservableObject {
     
     @Published var accounts: [AccountUIModel]
     
     private let router: any Router
     private var cancellables = Set<AnyCancellable>()
-                
-    init(
+    
+    package init(
         accounts: [AccountUIModel],
         accountsPublisher: AnyPublisher<[AccountUIModel], Never>,
         router: any Router

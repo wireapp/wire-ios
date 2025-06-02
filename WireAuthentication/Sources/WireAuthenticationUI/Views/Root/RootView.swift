@@ -67,12 +67,20 @@ package struct RootView: View {
             // it will dismiss the sheet.
             .alert(
                 item: $viewModel.alert,
-                title: { Text($0.title) },
+                title: { Text($0.title)
+ },
                 message: { Text($0.message) },
                 actions: { alert in
                     switch alert {
                     case .obsoleteClient:
-                        Button(Strings.ObsoleteClient.Alert.okButton, action: viewModel.goToAppStore)
+                        Button(
+                            Strings.ObsoleteClient.Alert.okButton,
+                            action: viewModel.goToAppStore
+                        )
+                        Button(
+                            Strings.ObsoleteClient.Alert.switchAccounts,
+                            action: viewModel.switchAccounts // TODO: support from Determ auth view as well
+                        )
                     default:
                         Button(Strings.Authentication.Error.confirm, action: {})
                     }

@@ -1,11 +1,13 @@
 
 
+import Combine
 import Foundation
 import NeedleFoundation
 import SwiftUI
 import WireAPI
 import WireAuthenticationAPI
 import WireLogging
+import WireMultiBackendUI
 import WireReusableUIComponents
 internal import WireAuthenticationLogic
 internal import WireAuthenticationUI
@@ -83,6 +85,22 @@ private class DetermineAuthMethodComponentDependency527e70b5dbcfcb8f2023Provider
 /// ^->RootComponent->DetermineAuthMethodComponent
 private func factoryd47fa74281e135cd9f10b3a8f24c1d289f2c0f2e(_ component: NeedleFoundation.Scope) -> AnyObject {
     return DetermineAuthMethodComponentDependency527e70b5dbcfcb8f2023Provider(rootComponent: parent1(component) as! RootComponent)
+}
+private class AccountSwitcherComponentDependency2c290bb2ecf7122b5593Provider: AccountSwitcherComponentDependency {
+    var router: any Router {
+        return rootComponent.router
+    }
+    var accountsPublisher: AnyPublisher<[AccountUIModel], Never> {
+        return rootComponent.accountsPublisher
+    }
+    private let rootComponent: RootComponent
+    init(rootComponent: RootComponent) {
+        self.rootComponent = rootComponent
+    }
+}
+/// ^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->AccountSwitcherComponent
+private func factory6c41b5e4dea4b3f5015242f5655bf2362a8495f6(_ component: NeedleFoundation.Scope) -> AnyObject {
+    return AccountSwitcherComponentDependency2c290bb2ecf7122b5593Provider(rootComponent: parent3(component) as! RootComponent)
 }
 private class NoHistoryComponentDependencya1005f718577ea03ea08Provider: NoHistoryComponentDependency {
     var howToChangeEmailURL: URL {
@@ -170,8 +188,15 @@ extension RootComponent: NeedleFoundation.Registration {
         localTable["ssoCallbackURLScheme-String"] = { [unowned self] in self.ssoCallbackURLScheme as Any }
         localTable["appStoreURL-URL"] = { [unowned self] in self.appStoreURL as Any }
         localTable["existsAnotherAccount-Bool"] = { [unowned self] in self.existsAnotherAccount as Any }
+        localTable["accountsPublisher-AnyPublisher<[AccountUIModel], Never>"] = { [unowned self] in self.accountsPublisher as Any }
         localTable["bridge-WireAuthenticationBridge"] = { [unowned self] in self.bridge as Any }
         localTable["router-any Router"] = { [unowned self] in self.router as Any }
+    }
+}
+extension AccountSwitcherComponent: NeedleFoundation.Registration {
+    public func registerItems() {
+        keyPathToName[\AccountSwitcherComponentDependency.router] = "router-any Router"
+        keyPathToName[\AccountSwitcherComponentDependency.accountsPublisher] = "accountsPublisher-AnyPublisher<[AccountUIModel], Never>"
     }
 }
 extension NoHistoryComponent: NeedleFoundation.Registration {
@@ -212,6 +237,7 @@ private func registerProviderFactory(_ componentPath: String, _ factory: @escapi
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->VerificationCodeComponent", factoryd3638676a47fce1fe62317031e1ba787d83cb463)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent", factoryd47fa74281e135cd9f10b3a8f24c1d289f2c0f2e)
     registerProviderFactory("^->RootComponent", factoryEmptyDependencyProvider)
+    registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->AccountSwitcherComponent", factory6c41b5e4dea4b3f5015242f5655bf2362a8495f6)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->VerificationCodeComponent->NoHistoryComponent", factory5f94de319ad3e04a942321a9c45ed079aafca21f)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->NoHistoryComponent", factory5f94de319ad3e04a9423a9403e3301bb54f80df0)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->NoHistoryComponent", factory5f94de319ad3e04a942342f5655bf2362a8495f6)

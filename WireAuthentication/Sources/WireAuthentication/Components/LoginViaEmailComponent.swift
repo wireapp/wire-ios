@@ -79,6 +79,10 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
             didDetectDomainConflict: didDetectDomainConflict
         )
     }
+    
+    func accountSwitcherComponent() -> AccountSwitcherComponent {
+        AccountSwitcherComponent(parent: self)
+    }
 
 }
 
@@ -138,6 +142,10 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
         noHistoryComponent(
             authenticationResult: authenticationResult
         )
+    }
+    
+    func accountsSwitcherFactory() -> any AccountSwitcherFactory {
+        accountSwitcherComponent()
     }
 
     // MARK: - Use cases

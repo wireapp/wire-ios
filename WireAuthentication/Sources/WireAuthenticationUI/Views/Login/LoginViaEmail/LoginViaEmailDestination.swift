@@ -30,4 +30,5 @@ enum LoginViaEmailDestination: Hashable {
         authenticationResult: AuthenticationResult
     )
 
+    case switchAccounts
 }

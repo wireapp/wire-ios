@@ -36,6 +36,10 @@ struct FakeLoginViaEmailFactory: LoginViaEmailFactory, CreateAuthenticationResul
     func noHistoryFactory(authenticationResult: WireAuthenticationAPI.AuthenticationResult) -> any NoHistoryFactory {
         fatalError()
     }
+    
+    func accountsSwitcherFactory() -> any AccountSwitcherFactory {
+        fatalError()
+    }
 
     var email: String?
     var backendInfo: BackendInfo

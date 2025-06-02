@@ -89,6 +89,10 @@ package final class RootViewModel: ObservableObject, Router {
     func goToAppStore() {
         factory.openAppStoreUseCase().invoke()
     }
+    
+    func switchAccounts() {
+        navigate(to: LoginViaEmailDestination.switchAccounts)
+    }
 
     // MARK: - Private
 
