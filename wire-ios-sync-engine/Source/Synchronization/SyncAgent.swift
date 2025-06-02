@@ -60,11 +60,8 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
     private let incrementalSyncTaskManager = NonReentrantTaskManager()
     private var incrementalSyncToken: IncrementalSync.Token?
-<<<<<<< HEAD
-=======
     private var ongoingSyncTask: Task<Void, Never>?
     private var subscription: AnyCancellable?
->>>>>>> e27bb3c2af (fix: message sending stuck - WPB-17866 (#3100))
 
     private var hasCompletedInitialSync: Bool {
         lastUpdateEventIDRepository.fetchLastEventID() != nil
@@ -111,9 +108,6 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     /// This method logs any errors and does not wait for the sync to finish.
 
     func resume() {
-<<<<<<< HEAD
-        Task {
-=======
         syncStateSubject.send(.idle)
 
         ongoingSyncTask = Task {
@@ -121,7 +115,6 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                 "resuming sync"
             )
 
->>>>>>> e27bb3c2af (fix: message sending stuck - WPB-17866 (#3100))
             let retrier = BackoffRetrier()
 
             do {
