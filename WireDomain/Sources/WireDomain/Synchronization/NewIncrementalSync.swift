@@ -144,7 +144,8 @@ public struct NewIncrementalSync: LiveSyncProtocol {
                 "decrypting live event envelope  v3",
                 attributes: [.eventEnvelopeID: envelope.id]
             )
-            return try await decryptor.decryptEvents(in: envelope)
+            // TODO: [WPB-17703] add batch decryption
+            return try await decryptor.decryptEvents(in: envelope, context: nil)
         } catch {
             logger.error(
                 "failed to decrypt live event envelope  v3: \(String(describing: error))",
