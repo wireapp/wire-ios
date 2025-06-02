@@ -56,10 +56,6 @@ struct FakeDetermineAuthMethodFactory: DetermineAuthMethodFactory,
         fatalError()
     }
     
-    func accountsSwitcherFactory() -> any AccountSwitcherFactory {
-        fatalError()
-    }
-
     // MARK: - UseCases
 
     func determineAuthMethodUseCase() async throws -> any WireAuthenticationAPI.DetermineAuthMethodUseCaseProtocol {

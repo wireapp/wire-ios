@@ -34,9 +34,6 @@ package protocol LoginViaEmailFactory {
 
     @MainActor
     func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory
-    
-    @MainActor
-    func accountsSwitcherFactory() -> any AccountSwitcherFactory
 }
 
 package struct LoginViaEmailView: View {
@@ -120,8 +117,6 @@ package struct LoginViaEmailView: View {
                     authenticationResult: authenticationResult
                 )
             )
-        case .switchAccounts:
-            AccountSwitcherModalView(viewModel.factory.accountsSwitcherFactory())
         }
     }
 

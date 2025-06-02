@@ -21,8 +21,6 @@ import WireAuthenticationAPI
 
 package enum DetermineAuthMethodDestination: Hashable {
 
-    case switchAccounts
-    
     case login(
         email: String?,
         didDetectDomainConflict: Bool,

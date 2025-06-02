@@ -37,10 +37,6 @@ struct FakeLoginViaEmailFactory: LoginViaEmailFactory, CreateAuthenticationResul
         fatalError()
     }
     
-    func accountsSwitcherFactory() -> any AccountSwitcherFactory {
-        fatalError()
-    }
-
     var email: String?
     var backendInfo: BackendInfo
     var canCreateAccount: Bool

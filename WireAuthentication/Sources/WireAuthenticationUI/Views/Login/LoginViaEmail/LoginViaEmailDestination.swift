@@ -29,6 +29,4 @@ enum LoginViaEmailDestination: Hashable {
     case noHistory(
         authenticationResult: AuthenticationResult
     )
-
-    case switchAccounts
 }

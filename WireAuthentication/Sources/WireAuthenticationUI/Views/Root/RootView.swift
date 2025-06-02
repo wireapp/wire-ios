@@ -25,6 +25,13 @@ package protocol RootFactory {
 
     @MainActor
     func determineAuthMethodFactory(backendInfo: BackendInfo) -> any DetermineAuthMethodFactory
+    
+    @MainActor
+    func accountsSwitcherFactory() -> any AccountSwitcherFactory
+}
+
+enum RootDestination: Hashable {
+    case switchAccounts
 }
 
 package struct RootView: View {
@@ -58,6 +65,12 @@ package struct RootView: View {
                         backendInfo: backendInfo
                     )
                 )
+                .navigationDestination(for: RootDestination.self) { destination in
+                    switch destination {
+                    case .switchAccounts:
+                        AccountSwitcherModalView(viewModel.factory.accountsSwitcherFactory())
+                    }
+                }
             }
             // We must provide an explicit id so it knows to create a new
             // view when the backend info changes.
@@ -67,8 +80,7 @@ package struct RootView: View {
             // it will dismiss the sheet.
             .alert(
                 item: $viewModel.alert,
-                title: { Text($0.title)
- },
+                title: { Text($0.title) },
                 message: { Text($0.message) },
                 actions: { alert in
                     switch alert {

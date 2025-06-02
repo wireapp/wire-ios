@@ -91,7 +91,7 @@ package final class RootViewModel: ObservableObject, Router {
     }
     
     func switchAccounts() {
-        navigate(to: LoginViaEmailDestination.switchAccounts)
+        navigate(to: RootDestination.switchAccounts)
     }
 
     // MARK: - Private

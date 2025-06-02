@@ -79,11 +79,6 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
             didDetectDomainConflict: didDetectDomainConflict
         )
     }
-    
-    func accountSwitcherComponent() -> AccountSwitcherComponent {
-        AccountSwitcherComponent(parent: self)
-    }
-
 }
 
 extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
@@ -144,10 +139,6 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
         )
     }
     
-    func accountsSwitcherFactory() -> any AccountSwitcherFactory {
-        accountSwitcherComponent()
-    }
-
     // MARK: - Use cases
 
     func submitProxyCredentialsUseCase() -> any SubmitProxyCredentialsUseCaseProtocol {

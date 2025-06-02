@@ -86,7 +86,7 @@ private class DetermineAuthMethodComponentDependency527e70b5dbcfcb8f2023Provider
 private func factoryd47fa74281e135cd9f10b3a8f24c1d289f2c0f2e(_ component: NeedleFoundation.Scope) -> AnyObject {
     return DetermineAuthMethodComponentDependency527e70b5dbcfcb8f2023Provider(rootComponent: parent1(component) as! RootComponent)
 }
-private class AccountSwitcherComponentDependency2c290bb2ecf7122b5593Provider: AccountSwitcherComponentDependency {
+private class AccountSwitcherComponentDependency65306f6262d465ec7963Provider: AccountSwitcherComponentDependency {
     var router: any Router {
         return rootComponent.router
     }
@@ -98,9 +98,9 @@ private class AccountSwitcherComponentDependency2c290bb2ecf7122b5593Provider: Ac
         self.rootComponent = rootComponent
     }
 }
-/// ^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->AccountSwitcherComponent
-private func factory6c41b5e4dea4b3f5015242f5655bf2362a8495f6(_ component: NeedleFoundation.Scope) -> AnyObject {
-    return AccountSwitcherComponentDependency2c290bb2ecf7122b5593Provider(rootComponent: parent3(component) as! RootComponent)
+/// ^->RootComponent->AccountSwitcherComponent
+private func factory74ea254f881cfa30d8aeb3a8f24c1d289f2c0f2e(_ component: NeedleFoundation.Scope) -> AnyObject {
+    return AccountSwitcherComponentDependency65306f6262d465ec7963Provider(rootComponent: parent1(component) as! RootComponent)
 }
 private class NoHistoryComponentDependencya1005f718577ea03ea08Provider: NoHistoryComponentDependency {
     var howToChangeEmailURL: URL {
@@ -237,7 +237,7 @@ private func registerProviderFactory(_ componentPath: String, _ factory: @escapi
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->VerificationCodeComponent", factoryd3638676a47fce1fe62317031e1ba787d83cb463)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent", factoryd47fa74281e135cd9f10b3a8f24c1d289f2c0f2e)
     registerProviderFactory("^->RootComponent", factoryEmptyDependencyProvider)
-    registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->AccountSwitcherComponent", factory6c41b5e4dea4b3f5015242f5655bf2362a8495f6)
+    registerProviderFactory("^->RootComponent->AccountSwitcherComponent", factory74ea254f881cfa30d8aeb3a8f24c1d289f2c0f2e)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->VerificationCodeComponent->NoHistoryComponent", factory5f94de319ad3e04a942321a9c45ed079aafca21f)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->NoHistoryComponent", factory5f94de319ad3e04a9423a9403e3301bb54f80df0)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->NoHistoryComponent", factory5f94de319ad3e04a942342f5655bf2362a8495f6)

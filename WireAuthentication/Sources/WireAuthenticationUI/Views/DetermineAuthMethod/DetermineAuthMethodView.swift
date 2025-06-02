@@ -36,8 +36,6 @@ package protocol DetermineAuthMethodFactory {
 
     @MainActor
     func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory
-    @MainActor
-    func accountsSwitcherFactory() -> any AccountSwitcherFactory
 }
 
 package struct DetermineAuthMethodView: View {
@@ -191,9 +189,6 @@ package struct DetermineAuthMethodView: View {
             ))
         case let .noHistory(authenticationResult):
             NoHistoryView(factory: viewModel.factory.noHistoryFactory(authenticationResult: authenticationResult))
-            
-        case .switchAccounts:
-            AccountSwitcherModalView(viewModel.factory.accountsSwitcherFactory())
         }
     }
 
