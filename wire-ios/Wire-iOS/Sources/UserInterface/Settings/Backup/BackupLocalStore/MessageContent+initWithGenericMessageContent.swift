@@ -98,6 +98,6 @@ extension MessageBackupModel.Content {
 
     private init?(_ multipart: Multipart) {
         // TODO: [WPB-17971] Support multipart messages in backup
-        return nil
+        nil
     }
 }
