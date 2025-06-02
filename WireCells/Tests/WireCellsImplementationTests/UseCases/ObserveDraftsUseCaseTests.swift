@@ -62,7 +62,7 @@ private extension WireCellsDraft {
             id: WireCellsNodeID(uuid: UUID(), versionID: UUID()),
             assetURL: URL(string: "https://example.com")!,
             fileType: nil,
-            status: .uploaded,
+            status: .uploaded(isDraft: true),
             name: "Draft",
             bytes: 1024
         )
