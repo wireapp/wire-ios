@@ -204,7 +204,7 @@ private struct FeatureView: View {
 #Preview {
     Spacer()
         .sheet(isPresented: .constant(true)) {
-            let viewModel = AccountTypeSelectionViewModel(teamsURL: URL(string: "https://www.apple.com")!)
+            let viewModel = AccountTypeSelectionViewModel(teamsURL: URL(string: "https://www.wire.com")!)
             AccountTypeSelectionView(viewModel: viewModel)
         }
 }
