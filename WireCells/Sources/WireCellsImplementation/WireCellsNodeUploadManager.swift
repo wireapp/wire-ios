@@ -18,10 +18,11 @@
 
 package import Foundation
 package import WireCellsAPI
+import WireLogging
 
 package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtocol {
     private let fileManager: FileManager
-    private let repository: any WireCellsNodesRepository
+    private let nodesAPI: any NodesAPIProtocol
 
     private actor Uploads {
         var uploads: [WireCellsNodeID: WireCellsUploadInfo] = [:]
@@ -53,10 +54,10 @@ package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtoc
 
     package init(
         fileManager: FileManager = .default,
-        repository: any WireCellsNodesRepository
+        nodesAPI: any NodesAPIProtocol
     ) {
         self.fileManager = fileManager
-        self.repository = repository
+        self.nodesAPI = nodesAPI
     }
 
     package func upload(
@@ -65,7 +66,7 @@ package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtoc
         assetSize: UInt64,
         destNodePath: String
     ) async throws -> (node: WireCellsNode, stream: AsyncStream<WireCellsUploadStatus>) {
-        let result = try await repository.preCheck(nodePath: destNodePath)
+        let result = try await nodesAPI.preCheck(nodePath: destNodePath)
 
         let resolvedPath: String = switch result {
         case let .fileExists(nextPath):
@@ -93,37 +94,35 @@ package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtoc
             publicLinkID: nil
         )
 
-        let stream = await startUpload(assetPath: assetPath, node: node)
+        let stream = await startUpload(assetPath: assetPath, assetSize: assetSize, node: node)
 
         return (node, stream)
     }
 
-    private func startUpload(assetPath: URL, node: WireCellsNode) async -> AsyncStream<WireCellsUploadStatus> {
+    private func startUpload(
+        assetPath: URL,
+        assetSize: UInt64,
+        node: WireCellsNode
+    ) async -> AsyncStream<WireCellsUploadStatus> {
         let (stream, continuation) = AsyncStream.makeStream(of: WireCellsUploadStatus.self)
-        let task = Task {
+        let task = Task { [nodesAPI] in
+            let upload = await nodesAPI.uploadFile(path: assetPath, node: node)
+
             do {
-                try await repository.uploadFile(
-                    path: assetPath,
-                    node: node,
-                    onProgressUpdate: { [weak self] uploaded in
-                        Task { [weak self] in
-                            await self?.updateUploadProgress(
-                                nodeID: node.id,
-                                uploaded: uploaded,
-                                total: node.size ?? 1
-                            )
-                            continuation
-                                .yield(
-                                    WireCellsUploadStatus
-                                        .uploading(progress: Float(uploaded) / Float(node.size ?? 1))
-                                )
-                        }
-                    }
-                )
+                for try await progress in upload {
+                    await self.updateUploadProgress(
+                        nodeID: node.id,
+                        uploaded: UInt64(progress),
+                        total: assetSize
+                    )
+                    continuation.yield(.uploading(progress: Float(progress) / Float(assetSize)))
+                }
                 await uploads.remove(node.id)
                 continuation.yield(WireCellsUploadStatus.uploaded)
                 continuation.finish()
             } catch {
+                WireLogger.wireCells.info("Failed to upload file: \(error)")
+
                 await uploads.update(node.id) { $0.withUploadFailed() }
                 continuation.yield(WireCellsUploadStatus.failed(error: WireCellsUploadError(error)))
                 continuation.finish()
@@ -149,8 +148,8 @@ package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtoc
 
     package func retryUpload(nodeID: WireCellsNodeID) async {
         if let info = await uploads.get(nodeID) {
-            if fileManager.fileExists(atPath: info.localPath.path) == true {
-                _ = await startUpload(assetPath: info.localPath, node: info.node)
+            if fileManager.fileExists(atPath: info.localPath.path) == true, let assetSize = info.node.size {
+                _ = await startUpload(assetPath: info.localPath, assetSize: assetSize, node: info.node)
             } else {
                 await uploads.update(nodeID) { $0.withUploadFailed() }
                 info.continuation.yield(.failed(error: .fileNotFound))
