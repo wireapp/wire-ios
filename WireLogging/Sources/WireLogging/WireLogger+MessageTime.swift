@@ -20,12 +20,22 @@ import Foundation
 
 public extension WireLogger {
 
-    func measureTime(label: String, block: () async throws -> Void) async throws {
-        debug("starting \(label)")
+    func measureTime<T>(
+        label: String,
+        attributes: LogAttributes = [:],
+        block: () async throws -> T
+    ) async throws -> T {
+        let startMessage = "starting \(label)"
+        info(startMessage, attributes: attributes)
         let start = Date.now
-        try await block()
+        let result = try await block()
         let durationInSeconds = start.timeIntervalSinceNow.magnitude
-        debug("completed \(label) in \(String(format: "%.2f", durationInSeconds)) seconds")
+        var updatedAttributes = attributes
+        let formattedDuration = String(format: "%.2f", durationInSeconds)
+        updatedAttributes[.duration] = formattedDuration
+        let completedMessage = "completed \(label)"
+        info(completedMessage, attributes: updatedAttributes)
+        return result
     }
 
 }
