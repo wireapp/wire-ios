@@ -21,16 +21,16 @@ import WireDesign
 
 public struct AccountSwitcherView: View {
 
-    let accounts: [AccountUIModel]
+    let otherAccounts: [AccountUIModel]
     let options: [Option]
     let showLastSeparator: Bool
 
     public init(
-        accounts: [AccountUIModel],
+        otherAccounts: [AccountUIModel],
         options: [Option],
         showLastSeparator: Bool
     ) {
-        self.accounts = accounts
+        self.otherAccounts = otherAccounts
         self.options = options
         self.showLastSeparator = showLastSeparator
     }
@@ -38,16 +38,16 @@ public struct AccountSwitcherView: View {
     public var body: some View {
         VStack(spacing: 0) {
 
-            let totalCount = accounts.count + options.count
+            let totalCount = otherAccounts.count + options.count
 
             ForEach(0 ..< totalCount, id: \.self) { index in
-                if index < accounts.count {
-                    AccountView(account: accounts[index])
+                if index < otherAccounts.count {
+                    AccountView(account: otherAccounts[index])
                         .padding(.horizontal, 16)
                         .padding(.top, 8.5)
                         .padding(.bottom, 10.5)
                 } else {
-                    OptionView(option: options[index - accounts.count])
+                    OptionView(option: options[index - otherAccounts.count])
                         .padding(.horizontal, 16)
                         .padding(.top, 16.5)
                         .padding(.bottom, 18.5)
@@ -73,7 +73,7 @@ public struct AccountSwitcherView: View {
 
 #Preview {
     AccountSwitcherView(
-        accounts: [
+        otherAccounts: [
             AccountUIModel(
                 avatarSource: .image(.strokedCheckmark),
                 name: "Kim Dawson",

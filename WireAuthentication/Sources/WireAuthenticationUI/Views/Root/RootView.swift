@@ -91,7 +91,7 @@ package struct RootView: View {
                         )
                         Button(
                             Strings.ObsoleteClient.Alert.switchAccounts,
-                            action: viewModel.switchAccounts // TODO: support from Determ auth view as well
+                            action: viewModel.switchAccounts
                         )
                     default:
                         Button(Strings.Authentication.Error.confirm, action: {})

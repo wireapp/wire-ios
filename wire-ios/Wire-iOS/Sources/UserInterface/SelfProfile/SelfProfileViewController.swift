@@ -154,7 +154,7 @@ final class SelfProfileViewController: UIViewController {
         }
 
         let accountManager = SessionManager.shared?.accountManager
-        let accounts = (accountManager?.accounts ?? [])
+        let otherAccounts = (accountManager?.accounts ?? [])
             .filter {
                 !$0.isEqual(accountManager?.selectedAccount)
             }
@@ -165,7 +165,7 @@ final class SelfProfileViewController: UIViewController {
             }
 
         let appSwitcherController = AccountSwitcherHostingController(
-            accounts: accounts,
+            otherAccounts: otherAccounts,
             options: options
         )
         appSwitcherController.sizingOptions = .intrinsicContentSize

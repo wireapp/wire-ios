@@ -45,7 +45,7 @@ struct AccountSwitcherModalView: View {
                     .font(.textStyle(.body1))
 
                 AccountSwitcherView(
-                    accounts: viewModel.accounts,
+                    otherAccounts: viewModel.otherAccounts,
                     options: [],
                     showLastSeparator: true
                 )
