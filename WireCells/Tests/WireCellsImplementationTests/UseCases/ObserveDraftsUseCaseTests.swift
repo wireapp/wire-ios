@@ -55,16 +55,3 @@ struct ObserveDraftsUseCaseTests {
     }
 
 }
-
-private extension WireCellsDraft {
-    static func make() -> WireCellsDraft {
-        WireCellsDraft(
-            id: WireCellsNodeID(uuid: UUID(), versionID: UUID()),
-            assetURL: URL(string: "https://example.com")!,
-            fileType: nil,
-            status: .uploaded(isDraft: true),
-            name: "Draft",
-            bytes: 1024
-        )
-    }
-}

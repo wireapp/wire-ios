@@ -23,7 +23,8 @@ package enum NodesAPIError: Error {
     case failedToCreateWriteStream
 }
 
-package protocol NodesAPIProtocol: Actor {
+// sourcery: AutoMockable
+package protocol NodesAPIProtocol: Sendable {
     func preCheck(nodePath: String) async throws -> WireCellsPreCheckResult
 
     func downloadFile(

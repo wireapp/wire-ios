@@ -42,15 +42,23 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
 
     typealias CellName = String
 
-    private var drafts: CurrentValueSubject<[CellName: OrderedDictionary<WireCellsNodeID, WireCellsDraft>], Never> =
-        .init([:])
+    private var drafts: CurrentValueSubject<[CellName: OrderedDictionary<WireCellsNodeID, WireCellsDraft>], Never>
     private var continuations: [UUID: AsyncStream<[WireCellsDraft]>.Continuation] = [:]
     private let uploadManager: any WireCellsNodeUploadManagerProtocol
     private let nodesAPI: any NodesAPIProtocol
 
     package init(uploadManager: any WireCellsNodeUploadManagerProtocol, nodesAPI: any NodesAPIProtocol) {
+        self.init(uploadManager: uploadManager, nodesAPI: nodesAPI, drafts: [:])
+    }
+
+    init(
+        uploadManager: any WireCellsNodeUploadManagerProtocol,
+        nodesAPI: any NodesAPIProtocol,
+        drafts: [CellName: OrderedDictionary<WireCellsNodeID, WireCellsDraft>]
+    ) {
         self.uploadManager = uploadManager
         self.nodesAPI = nodesAPI
+        self.drafts = CurrentValueSubject(drafts)
     }
 
     deinit {
