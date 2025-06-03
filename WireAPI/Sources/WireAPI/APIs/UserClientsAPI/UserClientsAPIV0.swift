@@ -69,6 +69,29 @@ class UserClientsAPIV0: UserClientsAPI, VersionedAPI {
             .success(code: .ok, type: OtherUserClientsV0.self)
             .parse(code: response.statusCode, data: data)
     }
+    
+    func updateClient(id: UserClientID, payload: UpdateClientPayload) async throws {
+        let body = try JSONEncoder.defaultEncoder.encode(payload)
+
+        let path = "/clients/\(id)"
+        
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.put)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            .success(code: .ok)
+            .failure(code: .badRequest, error: UserClientsAPIError.invalidBody)
+            .failure(code: .badRequest, label: "bad-request", error: UserClientsAPIError.malformedPrekeysUploaded)
+            .failure(code: .notFound, error: UserClientsAPIError.clientNotFound)
+            .parse(code: response.statusCode, data: data)
+    }
 }
 
 struct ListUserClientV0: Decodable, ToAPIModelConvertible {

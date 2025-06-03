@@ -16,6 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+
+public typealias UserClientID = String
+
 // sourcery: AutoMockable
 /// An API access object for endpoints concerning user clients.
 public protocol UserClientsAPI {
@@ -31,4 +34,11 @@ public protocol UserClientsAPI {
     /// - returns: A list of clients for a given user ID on a given domain.
 
     func getClients(for userIDs: Set<UserID>) async throws -> [OtherUserClients]
+    
+    /// Update client with id
+    /// - Parameters:
+    ///   - id: id of User client
+    ///   - payload: payload containing properties to update
+
+    func updateClient(id: UserClientID, payload: UpdateClientPayload) async throws
 }

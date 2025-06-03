@@ -1,0 +1,62 @@
+//
+// Wire
+// Copyright (C) 2025 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+/// Payload to update a UserClient
+public struct UpdateClientPayload: Equatable, Encodable, Sendable {
+
+    /// The capabilities of the client.
+
+    public let capabilities: [UserClientCapability]?
+
+    /// A label describing the client.
+
+    public let label: String?
+
+    /// The last resort Prekey
+    
+    public let lastKey: Prekey?
+
+    /// The mls public keys for the client.
+
+    public let mlsPublicKeys: MLSPublicKeys?
+
+    /// New prekeys for other clients to establish OTR sessions.
+    
+    public let preKeys: [Prekey]?
+
+    enum CodingKeys: String, CodingKey {
+        case label
+        case lastKey = "last_key"
+        case preKeys = "prekeys"
+        case mlsPublicKeys = "mls_public_keys"
+        case capabilities
+
+    }
+
+    public init(capabilities: [UserClientCapability]? = nil,
+                label: String? = nil,
+                lastKey: Prekey? = nil,
+                mlsPublicKeys: MLSPublicKeys? = nil,
+                preKeys: [Prekey]? = nil) {
+        self.capabilities = capabilities
+        self.label = label
+        self.lastKey = lastKey
+        self.mlsPublicKeys = mlsPublicKeys
+        self.preKeys = preKeys
+    }
+}
