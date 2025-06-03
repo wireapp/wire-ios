@@ -191,7 +191,7 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
                 )
             }
 
-        case .text, .knock, .location, .composite, .buttonAction:
+        case .text, .knock, .location, .composite, .buttonAction, .multipart:
 
             try await processMessageContent(
                 message: message,
