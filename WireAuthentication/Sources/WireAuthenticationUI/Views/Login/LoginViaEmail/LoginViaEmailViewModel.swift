@@ -26,9 +26,7 @@ import WireReusableUIComponents
 package final class LoginViaEmailViewModel: ObservableObject {
 
     typealias Factory =
-        AccountTypeSelectionFactory &
         CreateAuthenticationResultUseCaseFactory &
-        LoginViaEmailFactory &
         LoginViaEmailUseCaseFactory &
         SubmitProxyCredentialsUseCaseFactory &
         ValidateEmailUseCaseFactory

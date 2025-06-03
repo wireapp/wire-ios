@@ -67,6 +67,10 @@ struct FakeLoginViaEmailFactory: LoginViaEmailFactory, CreateAuthenticationResul
         try await mockDependencies.loginViaEmailUseCase()
     }
 
+    func personalAccountCreationFactory(todo: String) -> any PersonalAccountCreationFactory {
+        fatalError()
+    }
+
     @MainActor
     func submitProxyCredentialsUseCase() -> any WireAuthenticationAPI.SubmitProxyCredentialsUseCaseProtocol {
         mockDependencies.submitProxyCredentialsUseCase()
