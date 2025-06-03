@@ -248,7 +248,10 @@ final class IncrementalSyncTests: XCTestCase {
         store.deleteEventEnvelopeAtIndex_MockMethod = { _ in }
 
         // Live events are decrypted.
-        decryptor.decryptEventsIn_MockMethod = { $0.events }
+        decryptor.decryptEventsInContext_MockMethod = { envelope, _ async throws in .init(
+            events: envelope.events,
+            brokenMLSGroupIDs: []
+        ) }
 
         // Last event is being updated.
         store.storeLastEventIDId_MockMethod = { _ in }
