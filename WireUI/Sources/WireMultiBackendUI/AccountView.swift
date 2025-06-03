@@ -38,7 +38,8 @@ struct AccountView: View {
                 VStack(alignment: .leading, spacing: 2) {
 
                     Text(account.name)
-                        .font(FontSpec.bodyTwoSemibold.swiftUIFont)
+                        .font(Font.textStyle(.body2))
+                        .bold()
                         .foregroundStyle(Color(SemanticColors.Label.textDefault))
 
                     DotSeparatedTextView(
