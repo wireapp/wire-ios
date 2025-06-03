@@ -38,6 +38,13 @@ public struct JournalKey<Value>: Sendable where Value: Sendable {
 
 public extension JournalKey where Value == Bool {
 
+    /// Whether new sync mechanism (async stream) is used.
+
+    static let isSyncV3Enabled = Self(
+        "isSyncV3Enabled",
+        defaultValue: false
+    )
+    
     /// Whether new sync mechanism (initial sync, incremental
     /// sync, live sync) is used.
 
