@@ -458,15 +458,13 @@ extension Account {
             )
             avatarSource = .text(personName.initials)
         }
-        // track updates in user avatar and name?
         return AccountUIModel(
             avatarSource: avatarSource,
             name: userName,
-            handle: "@handle", // TODO:
+            handle: "@handle", // TODO: when data will be ready https://wearezeta.atlassian.net/browse/WPB-18008
             teamName: teamName,
-            backendName: "Back END INFO", // TODO:
+            backendName: "Back END INFO", // TODO: https://wearezeta.atlassian.net/browse/WPB-18008
             action: action
         )
-
     }
 }

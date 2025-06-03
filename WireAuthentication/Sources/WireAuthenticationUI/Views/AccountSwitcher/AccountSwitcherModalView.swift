@@ -38,6 +38,7 @@ struct AccountSwitcherModalView: View {
             VStack(alignment: .center, spacing: 16) {
                 Text(L10n.Localizable.SwitchingAccounts.title)
                     .font(.textStyle(.h3))
+                    .bold()
                     .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
                 Text(L10n.Localizable.SwitchingAccounts.subtitle)

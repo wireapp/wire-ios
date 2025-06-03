@@ -89,6 +89,8 @@ package struct RootView: View {
                             Strings.ObsoleteClient.Alert.okButton,
                             action: viewModel.goToAppStore
                         )
+                        // for dev purposes only
+                        // will be added in tickets to implement real alerts
                         Button(
                             Strings.ObsoleteClient.Alert.switchAccounts,
                             action: viewModel.switchAccounts

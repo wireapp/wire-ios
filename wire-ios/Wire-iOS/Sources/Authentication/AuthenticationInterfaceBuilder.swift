@@ -83,7 +83,7 @@ final class AuthenticationInterfaceBuilder {
         case .wireAuthenticationModule:
             let assembly = WireAuthenticationAssembly()
             let numberOfAccounts = SessionManager.shared?.accountManager.accounts.count ?? 0
-            let accounts = (SessionManager.shared?.accountManager.accounts ?? [])
+            let otherAccounts = (SessionManager.shared?.accountManager.accounts ?? [])
                 .filter {
                     !$0.isEqual(SessionManager.shared?.accountManager.selectedAccount)
                 }
@@ -107,7 +107,7 @@ final class AuthenticationInterfaceBuilder {
                 ssoCallbackURLScheme: Bundle.ssoURLScheme ?? "wire-sso",
                 appStoreURL: WireURLs.shared.appOnItunes,
                 existsAnotherAccount: numberOfAccounts > 0,
-                otherAccountsPublisher: ReadOnlyCurrentValueSubject(subject: CurrentValueSubject(accounts)),
+                otherAccountsPublisher: ReadOnlyCurrentValueSubject(subject: CurrentValueSubject(otherAccounts)),
                 useLegacyRegistrationFlow: !DeveloperFlag.newRegistration.isOn
             )
             return AuthenticationHostingController(
