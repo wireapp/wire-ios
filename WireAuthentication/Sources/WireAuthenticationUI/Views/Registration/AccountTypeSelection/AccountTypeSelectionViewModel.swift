@@ -20,7 +20,7 @@ import Foundation
 import WireLogging
 
 @MainActor
-final class AccountTypeSelectionViewModel: ObservableObject {
+package final class AccountTypeSelectionViewModel: ObservableObject {
 
     @Published var isCreateTeamAccountPresented = false
 

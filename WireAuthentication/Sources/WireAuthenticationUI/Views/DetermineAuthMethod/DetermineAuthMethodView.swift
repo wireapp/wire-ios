@@ -37,13 +37,13 @@ package protocol DetermineAuthMethodFactory {
     func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory
 }
 
-struct DetermineAuthMethodView: View {
+package struct DetermineAuthMethodView: View {
 
     @StateObject var viewModel: DetermineAuthMethodViewModel
 
     private typealias Strings = L10n.Localizable.Authentication
 
-    init(factory: @autoclosure @escaping () -> any DetermineAuthMethodFactory) {
+    package init(factory: @autoclosure @escaping () -> any DetermineAuthMethodFactory) {
         self._viewModel = StateObject(wrappedValue: factory().viewModel)
     }
 

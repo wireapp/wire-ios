@@ -25,8 +25,9 @@ import WireReusableUIComponents
 @MainActor
 package final class LoginViaEmailViewModel: ObservableObject {
 
-    typealias Factory =
+    package typealias Factory =
         CreateAuthenticationResultUseCaseFactory &
+        LoginViaEmailFactory &
         LoginViaEmailUseCaseFactory &
         SubmitProxyCredentialsUseCaseFactory &
         ValidateEmailUseCaseFactory
@@ -73,7 +74,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
     // MARK: - Dependencies
 
-    let factory: any Factory
+    package let factory: any Factory
     private let router: any Router
     /// This property is used for presenting the legacy registration flow.
     /// If `nil` the new registration flow is presented.
@@ -82,7 +83,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
     // MARK: - Life cycle
 
-    init(
+    package init(
         factory: any Factory,
         router: any Router,
         email: String?,

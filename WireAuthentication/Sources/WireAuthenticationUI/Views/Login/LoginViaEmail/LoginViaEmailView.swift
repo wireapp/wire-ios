@@ -35,11 +35,6 @@ package protocol LoginViaEmailFactory {
     @MainActor
     func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory
 
-    @MainActor
-    func personalAccountCreationFactory(
-        todo: String
-    ) -> any PersonalAccountCreationFactory
-
 }
 
 package struct LoginViaEmailView: View {
@@ -95,12 +90,10 @@ package struct LoginViaEmailView: View {
             }
         )
         .sheet(isPresented: $viewModel.isCreateAccountPresented) {
-            Rectangle()
-            // viewModel.factory
-//            AccountTypeSelectionView(viewModel: AccountTypeSelectionViewModel(
-//                teamsURL: viewModel.backendInfo.backendConfig.endpoints.teamsURL,
-//                analyticsTracker: <#T##any AccountRegistrationAnalyticsTrackerProtocol#>
-//            ))
+            AccountTypeSelectionView(viewModel: AccountTypeSelectionViewModel(
+                teamsURL: viewModel.backendInfo
+                    .backendConfig.endpoints.teamsURL
+            ))
         }
         .navigationDestination(for: LoginViaEmailDestination.self) { destination in
             destinationView(destination)

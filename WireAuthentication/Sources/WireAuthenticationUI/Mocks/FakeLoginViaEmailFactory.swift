@@ -20,7 +20,8 @@ import Foundation
 import WireAuthenticationAPI
 import WireReusableUIComponents
 
-struct FakeLoginViaEmailFactory: LoginViaEmailFactory, CreateAuthenticationResultUseCaseFactory, LoginViaEmailUseCaseFactory, SubmitProxyCredentialsUseCaseFactory, ValidateEmailUseCaseFactory {
+struct FakeLoginViaEmailFactory: LoginViaEmailFactory, CreateAuthenticationResultUseCaseFactory,
+    LoginViaEmailUseCaseFactory, SubmitProxyCredentialsUseCaseFactory, ValidateEmailUseCaseFactory {
 
     var mockDependencies = MockDependencies()
 
@@ -53,10 +54,6 @@ struct FakeLoginViaEmailFactory: LoginViaEmailFactory, CreateAuthenticationResul
         )
     }
 
-    func personalAccountCreationFactory(todo: String) {
-        fatalError()
-    }
-
     @MainActor
     func createAuthenticationResultUseCase() -> any WireAuthenticationAPI
         .CreateAuthenticationResultUseCaseProtocol {
@@ -65,10 +62,6 @@ struct FakeLoginViaEmailFactory: LoginViaEmailFactory, CreateAuthenticationResul
 
     func loginViaEmailUseCase() async throws -> any WireAuthenticationAPI.LoginViaEmailUseCaseProtocol {
         try await mockDependencies.loginViaEmailUseCase()
-    }
-
-    func personalAccountCreationFactory(todo: String) -> any PersonalAccountCreationFactory {
-        fatalError()
     }
 
     @MainActor
