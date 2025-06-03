@@ -36,11 +36,11 @@ public extension Bundle {
     @objc var appGroupIdentifier: String? {
         bundleIdentifier.map { "group." + $0 }
     }
-    
+
     static var developerModeEnabled: Bool {
         Bundle.appMainBundle.infoForKey("EnableDeveloperMenu") == "1"
     }
-    
+
     private static var appMainBundle: Bundle {
         let mainBundle: Bundle
         let runningInExtension = Bundle.main.bundlePath.hasSuffix(".appex")
