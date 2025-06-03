@@ -16,26 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
-import WireDataModel
+import SafariServices
+import SwiftUI
 
-public struct UserClientInfo: Sendable {
+struct SafariBrowserView: UIViewControllerRepresentable {
 
-    let id: String
-    let label: String?
-    let type: WireDataModel.DeviceType
-    let activationDate: Date?
-    let model: String?
-    let deviceClass: WireDataModel.DeviceClass?
-    let lastActiveDate: Date?
-    let mlsPublicKeys: UserClientInfo.MLSPublicKeys?
-    let capabilities: [UserClientCapability]
+    let url: URL
 
-    struct MLSPublicKeys {
-        let ed25519: String?
-        let ed448: String?
-        let p256: String?
-        let p384: String?
-        let p512: String?
+    func makeUIViewController(context: UIViewControllerRepresentableContext<Self>) -> SFSafariViewController {
+        SFSafariViewController(url: url)
     }
+
+    func updateUIViewController(
+        _ uiViewController: SFSafariViewController,
+        context: UIViewControllerRepresentableContext<SafariBrowserView>
+    ) {}
 }

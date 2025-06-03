@@ -23,7 +23,7 @@ import WireFoundation
 
 package extension MessageBackupModel {
 
-    package init?(_ backupMessage: BackupMessage) {
+    init?(_ backupMessage: BackupMessage) {
         guard
             let conversationID = QualifiedID(backupMessage.conversationId),
             let senderUserID = QualifiedID(backupMessage.senderUserId),

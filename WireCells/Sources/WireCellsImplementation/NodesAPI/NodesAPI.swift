@@ -19,44 +19,81 @@
 package import Foundation
 package import WireCellsAPI
 
-package final actor WireCellsNodesDataSource: WireCellsNodesRepository {
-    private let awsClient: any WireCellsAWSClient
-    private let cellsAPI: any WireCellsNodesAPIProtocol
+package enum NodesAPIError: Error {
+    case failedToCreateWriteStream
+}
+
+package protocol NodesAPIProtocol: Actor {
+    func preCheck(nodePath: String) async throws -> WireCellsPreCheckResult
+
+    func downloadFile(
+        out: URL,
+        cellPath: String,
+        onProgressUpdate: @escaping @Sendable (UInt64) -> Void
+    ) async throws
+
+    func uploadFile(path: URL, node: WireCellsNode) async -> AsyncThrowingStream<Int, any Error>
+
+    func getFiles(
+        path: String?,
+        query: String,
+        limit: Int,
+        offset: Int
+    ) async throws -> [WireCellsNode]
+
+    func deleteFile(nodeUUID: UUID) async throws
+
+    func cancelDraft(nodeID: WireCellsNodeID) async throws
+
+    func publishDrafts(nodes: [WireCellsNodeID]) async throws
+
+    func getPreviews(nodeUUID: UUID) async throws -> [WireCellsNodePreview]
+
+    func getNode(nodeUUID: UUID) async throws -> WireCellsNode
+
+    func deleteFiles(paths: [String]) async throws
+
+    func createPublicLink(nodeUUID: UUID, fileName: String) async throws -> WireCellsPublicLink
+
+    func getPublicLink(linkUUID: UUID) async throws -> URL
+
+    func deletePublicLink(linkUUID: UUID) async throws
+}
+
+package final actor NodesAPI: NodesAPIProtocol {
+    private let awsClient: AWSClient
+    private let restAPI: RestAPI
     private let fileManager: FileManager
 
     package init(credentials: WireCellsCredentials) {
         self.init(
-            awsClient: WireCellsAWSClientImplementation(credentials: credentials),
-            cellsAPI: WireCellsNodesAPI(
+            awsClient: AWSClient(credentials: credentials),
+            restAPI: RestAPI(
                 serverURL: credentials.serverURL.appendingPathComponent("/v2"),
                 accessToken: credentials.accessToken
             )
         )
     }
 
-    package init(
-        awsClient: any WireCellsAWSClient,
-        cellsAPI: any WireCellsNodesAPIProtocol,
+    init(
+        awsClient: AWSClient,
+        restAPI: RestAPI,
         fileManager: FileManager = .default
     ) {
         self.awsClient = awsClient
-        self.cellsAPI = cellsAPI
+        self.restAPI = restAPI
         self.fileManager = fileManager
     }
 
     package func preCheck(nodePath: String) async throws -> WireCellsPreCheckResult {
-        let result = try await cellsAPI.preCheck(path: nodePath)
+        let result = try await restAPI.preCheck(path: nodePath)
         return result.fileExists
             ? .fileExists(nextPath: result.nextPath ?? nodePath)
             : .success
     }
 
-    package func uploadFile(
-        path: URL,
-        node: WireCellsNode,
-        onProgressUpdate: @escaping @Sendable (UInt64) -> Void
-    ) async throws {
-        try await awsClient.upload(path: path, node: node.toDTO(), onProgressUpdate: onProgressUpdate)
+    package func uploadFile(path: URL, node: WireCellsNode) async -> AsyncThrowingStream<Int, any Error> {
+        await awsClient.upload(path: path, node: node.toDTO())
     }
 
     package func getFiles(
@@ -67,18 +104,18 @@ package final actor WireCellsNodesDataSource: WireCellsNodesRepository {
     ) async throws -> [WireCellsNode] {
         let response = try await (
             path == nil
-                ? cellsAPI.getFiles(query: query, limit: limit, offset: offset)
-                : cellsAPI.getFilesForPath(path: path!, limit: limit, offset: offset)
+                ? restAPI.getFiles(query: query, limit: limit, offset: offset)
+                : restAPI.getFilesForPath(path: path!, limit: limit, offset: offset)
         )
         return response.nodes.map { $0.toModel() }
     }
 
     package func deleteFile(nodeUUID: UUID) async throws {
-        try await cellsAPI.delete(uuid: nodeUUID)
+        try await restAPI.delete(uuid: nodeUUID)
     }
 
     package func deleteFiles(paths: [String]) async throws {
-        try await cellsAPI.delete(paths: paths)
+        try await restAPI.delete(paths: paths)
     }
 
     package func publishDrafts(nodes: [WireCellsNodeID]) async throws {
@@ -87,7 +124,7 @@ package final actor WireCellsNodesDataSource: WireCellsNodesRepository {
             for node in nodes {
                 group.addTask { [weak self] in
                     guard let self else { return }
-                    try await cellsAPI.publishDraft(uuid: node.uuid, versionID: node.versionID)
+                    try await restAPI.publishDraft(uuid: node.uuid, versionID: node.versionID)
                 }
             }
             try await group.waitForAll()
@@ -95,7 +132,7 @@ package final actor WireCellsNodesDataSource: WireCellsNodesRepository {
     }
 
     package func cancelDraft(nodeID: WireCellsNodeID) async throws {
-        try await cellsAPI.cancelDraft(uuid: nodeID.uuid, versionID: nodeID.versionID)
+        try await restAPI.cancelDraft(uuid: nodeID.uuid, versionID: nodeID.versionID)
     }
 
     package func downloadFile(
@@ -104,7 +141,7 @@ package final actor WireCellsNodesDataSource: WireCellsNodesRepository {
         onProgressUpdate: @escaping @Sendable (UInt64) -> Void
     ) async throws {
         guard let stream = OutputStream(url: out, append: true) else {
-            throw WireCellsRepositoryError.failedToCreateWriteStream
+            throw NodesAPIError.failedToCreateWriteStream
         }
         // Create an empty file at the destination URL
         fileManager.createFile(atPath: out.path, contents: nil, attributes: nil)
@@ -114,26 +151,26 @@ package final actor WireCellsNodesDataSource: WireCellsNodesRepository {
     }
 
     package func getPreviews(nodeUUID: UUID) async throws -> [WireCellsNodePreview] {
-        let dto = try await cellsAPI.getNode(uuid: nodeUUID)
+        let dto = try await restAPI.getNode(uuid: nodeUUID)
         return dto.previews.map {
             WireCellsNodePreview(url: $0.url, dimension: $0.dimension ?? 0)
         }
     }
 
     package func getNode(nodeUUID: UUID) async throws -> WireCellsNode {
-        let dto = try await cellsAPI.getNode(uuid: nodeUUID)
+        let dto = try await restAPI.getNode(uuid: nodeUUID)
         return dto.toModel()
     }
 
     package func createPublicLink(nodeUUID: UUID, fileName: String) async throws -> WireCellsPublicLink {
-        try await cellsAPI.createPublicLink(uuid: nodeUUID, fileName: fileName)
+        try await restAPI.createPublicLink(uuid: nodeUUID, fileName: fileName)
     }
 
     package func getPublicLink(linkUUID: UUID) async throws -> URL {
-        try await cellsAPI.getPublicLink(uuid: linkUUID)
+        try await restAPI.getPublicLink(uuid: linkUUID)
     }
 
     package func deletePublicLink(linkUUID: UUID) async throws {
-        try await cellsAPI.deletePublicLink(uuid: linkUUID)
+        try await restAPI.deletePublicLink(uuid: linkUUID)
     }
 }

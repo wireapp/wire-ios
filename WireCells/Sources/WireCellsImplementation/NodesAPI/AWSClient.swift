@@ -17,12 +17,23 @@
 //
 
 import AWSClientRuntime
-@preconcurrency import AWSS3
-package import Foundation
+import AWSS3
+import Foundation
 import SmithyIdentity
-package import WireCellsAPI
+import SmithyStreams
+import WireCellsAPI
 
-package final class WireCellsAWSClientImplementation: WireCellsAWSClient {
+package enum WireCellsAWSClientError: Error {
+    case downloadError
+    case downloadErrorNoData
+    case downloadErrorUnknownObject
+    case missingUploadID
+    case noContent
+    case uploadError
+    case writeError
+}
+
+final class AWSClient: Sendable {
     private enum Constants {
         static let bucket = "io"
         static let multipartChunkSize = 10 * 1024 * 1024
@@ -32,9 +43,10 @@ package final class WireCellsAWSClientImplementation: WireCellsAWSClient {
         static let region = "us-east-1"
     }
 
-    private let s3: S3Client
+    private let s3: any S3ClientProtocol
+    private let makeStream: @Sendable (FileStream) -> ObservableStream
 
-    package init(credentials: WireCellsCredentials) {
+    convenience init(credentials: WireCellsCredentials) {
         let config = try! S3Client.S3ClientConfiguration(
             awsCredentialIdentityResolver: StaticAWSCredentialIdentityResolver(
                 .init(
@@ -45,10 +57,18 @@ package final class WireCellsAWSClientImplementation: WireCellsAWSClient {
             region: Constants.region,
             endpoint: credentials.serverURL.absoluteString
         )
-        self.s3 = S3Client(config: config)
+        self.init(s3: S3Client(config: config))
     }
 
-    package func download(
+    init(
+        s3: any S3ClientProtocol,
+        makeStream: @Sendable @escaping (FileStream) -> ObservableStream = { ObservableStream($0) }
+    ) {
+        self.s3 = s3
+        self.makeStream = makeStream
+    }
+
+    func download(
         objectKey: String,
         to fileHandle: FileHandle,
         onProgressUpdate: @escaping (UInt64) -> Void
@@ -96,7 +116,22 @@ package final class WireCellsAWSClientImplementation: WireCellsAWSClient {
         }
     }
 
-    package func upload(
+    func upload(path: URL, node: WireCellsNodeDTO) async -> AsyncThrowingStream<Int, any Error> {
+        AsyncThrowingStream { continuation in
+            Task {
+                do {
+                    try await self.upload(path: path, node: node) { progress in
+                        continuation.yield(Int(progress))
+                    }
+                    continuation.finish()
+                } catch {
+                    continuation.finish(throwing: error)
+                }
+            }
+        }
+    }
+
+    private func upload(
         path: URL,
         node: WireCellsNodeDTO,
         onProgressUpdate: @escaping @Sendable (UInt64) -> Void
@@ -115,22 +150,24 @@ package final class WireCellsAWSClientImplementation: WireCellsAWSClient {
         node: WireCellsNodeDTO,
         onProgressUpdate: @escaping @Sendable (UInt64) -> Void
     ) async throws {
-        // FIXME: [WPB-17765] Use a FileHandle (`FileHandle(forReadingFrom: path)`) instead of Data
-        let data = try Data(contentsOf: path)
-        let fileSize = try FileManager.default.attributesOfItem(atPath: path.path)[.size] as! Int64
+        let fileStream = FileStream(fileHandle: try FileHandle(forReadingFrom: path))
+        let stream = makeStream(fileStream)
 
-        let metadata = node.createDraftNodeMetadata()
+        let progressTask = Task {
+            for await progress in stream.readProgress {
+                onProgressUpdate(UInt64(progress))
+            }
+        }
+        defer { progressTask.cancel() }
 
         let input = PutObjectInput(
-            body: .data(data),
+            body: .stream(stream),
             bucket: Constants.bucket,
-            contentLength: Int(fileSize),
             key: node.path,
-            metadata: metadata
+            metadata: node.createDraftNodeMetadata()
         )
 
         _ = try await s3.putObject(input: input)
-        onProgressUpdate(UInt64(fileSize))
     }
 
     private func uploadMultipart(
@@ -188,7 +225,7 @@ package final class WireCellsAWSClientImplementation: WireCellsAWSClient {
         )
     }
 
-    package func getPreSignedUrl(objectKey: String) async throws -> String {
+    func getPreSignedUrl(objectKey: String) async throws -> String {
         let expiration = TimeInterval(Constants.preSignedUrlExpiryInHours * 60 * 60)
         let input = GetObjectInput(bucket: Constants.bucket, key: objectKey)
         let signed = try await s3.presignedURLForGetObject(input: input, expiration: expiration)

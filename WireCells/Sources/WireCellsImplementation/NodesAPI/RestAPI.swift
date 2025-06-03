@@ -20,7 +20,12 @@ import CellsSDK
 import Foundation
 import WireCellsAPI
 
-final class WireCellsNodesAPI: WireCellsNodesAPIProtocol, Sendable {
+enum WireCellsNodesAPIError: Error {
+    case failedToDecodeNode
+    case missingData(String)
+}
+
+final class RestAPI: Sendable {
 
     private enum Constants {
         static let sortedBy = "mtime"
