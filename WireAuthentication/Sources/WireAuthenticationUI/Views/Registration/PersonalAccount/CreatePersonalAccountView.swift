@@ -79,10 +79,9 @@ struct CreatePersonalAccountView: View {
             title: Strings.InputName.title,
             string: $viewModel.name
         )
-        .autocapitalization(.none)
+        .autocapitalization(.words)
         .autocorrectionDisabled()
-        .textContentType(.username)
-        .keyboardType(.emailAddress)
+        .textContentType(.name)
     }
 
     @ViewBuilder private var emailField: some View {

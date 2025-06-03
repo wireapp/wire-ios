@@ -17,6 +17,8 @@
 //
 
 import SwiftUI
+import WireAuthenticationAPI
+import WireAuthenticationLogic
 
 @MainActor
 package final class CreatePersonalAccountViewModel: ObservableObject {
@@ -26,30 +28,59 @@ package final class CreatePersonalAccountViewModel: ObservableObject {
     @Published var name: String = ""
     @Published var email: String
     @Published var password: String = ""
+    @Published var confirmedPassword: String = ""
 
     let privacyPolicyURL: URL
     // TODO: should it be optional?
     let teamAccountCreationLink: URL?
-
-    var canSubmitCredentials: Bool {
-        // TODO: implement
-        true
-    }
+    let validateEmailUseCase: any ValidateEmailUseCaseProtocol 
 
     init(
         email: String,
         privacyPolicyURL: URL,
-        teamAccountCreationLink: URL?
+        teamAccountCreationLink: URL?,
+        validateEmailUseCase: any ValidateEmailUseCaseProtocol =  ValidateEmailUseCase()
     ) {
         self.email = email
         self.privacyPolicyURL = privacyPolicyURL
         self.teamAccountCreationLink = teamAccountCreationLink
+        self.validateEmailUseCase = validateEmailUseCase
     }
 
-    func submitCredentials() async {}
+    // MARK: - Validations
 
     func isPasswordValid(_ password: String) -> Bool {
+        // TODO:
         return true
+    }
+
+    var isEmailValid: Bool {
+        validateEmailUseCase.invoke(email: email) == .isValid
+    }
+
+    var isNameValid: Bool {
+        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.count > 2 && trimmed.count < 64
+    }
+
+    var isPasswordValid: Bool {
+        // TODO:
+        return true
+    }
+
+    var isPasswordMatchConfirmedPassword: Bool {
+        password == confirmedPassword
+    }
+
+    var canSubmitCredentials: Bool {
+        isNameValid && isEmailValid && isPasswordValid && isPasswordMatchConfirmedPassword
+    }
+
+    func submitCredentials() async {
+        guard canSubmitCredentials else {
+            return
+        }
+        // TODO: send to the next screen
     }
 
 }
