@@ -43,7 +43,8 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
                 backendEnvironmentProvider.proxy = proxy
                 backendEnvironmentProvider.environmentType = EnvironmentTypeProvider(environmentType: .staging)
                 return backendEnvironmentProvider
-            })
+            }
+        )
     }
 
     override func tearDown() {
