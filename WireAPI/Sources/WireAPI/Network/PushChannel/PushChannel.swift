@@ -45,6 +45,10 @@ public actor PushChannel: PushChannelProtocol {
     // MARK: - Public
 
     public func open() async throws -> Stream {
+        // We don't want to proceed if not necessary (in case we've
+        // gone to the background)
+        try Task.checkCancellation()
+
         WireLogger.pushChannel.debug("opening new push channel")
         let stream = try await webSocket.open().map { [weak self, decoder] message in
             do {
