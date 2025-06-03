@@ -20,7 +20,7 @@ import Foundation
 import WireCellsAPI
 
 extension WireCellsNodeID {
-    static func make() -> WireCellsNodeID {
+    static func fixture() -> WireCellsNodeID {
         WireCellsNodeID(uuid: UUID(), versionID: UUID())
     }
 }

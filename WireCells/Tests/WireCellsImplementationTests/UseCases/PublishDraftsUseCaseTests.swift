@@ -32,16 +32,16 @@ final class PublishDraftsUseCaseTests {
         nodesAPI: nodesAPI,
         drafts: [
             "cell-1": [
-                WireCellsNodeID.make(): WireCellsDraft.make(status: .cancelled),
-                WireCellsNodeID.make(): WireCellsDraft.make(status: .uploaded(isDraft: true))
+                WireCellsNodeID.fixture(): WireCellsDraft.fixture(status: .cancelled),
+                WireCellsNodeID.fixture(): WireCellsDraft.fixture(status: .uploaded(isDraft: true))
             ],
             "cell-2": [
-                WireCellsNodeID.make(): WireCellsDraft.make(status: .failed(error: .fileNotFound)),
-                WireCellsNodeID.make(): WireCellsDraft.make(status: .uploaded(isDraft: true))
+                WireCellsNodeID.fixture(): WireCellsDraft.fixture(status: .failed(error: .fileNotFound)),
+                WireCellsNodeID.fixture(): WireCellsDraft.fixture(status: .uploaded(isDraft: true))
             ],
             "cell-3": [
-                WireCellsNodeID.make(): WireCellsDraft.make(status: .uploading(progress: 0.5)),
-                WireCellsNodeID.make(): WireCellsDraft.make(status: .uploaded(isDraft: true))
+                WireCellsNodeID.fixture(): WireCellsDraft.fixture(status: .uploading(progress: 0.5)),
+                WireCellsNodeID.fixture(): WireCellsDraft.fixture(status: .uploaded(isDraft: true))
             ]
         ]
     )

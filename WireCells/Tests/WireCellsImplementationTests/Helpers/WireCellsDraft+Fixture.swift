@@ -20,9 +20,9 @@ import WireCellsAPI
 import Foundation
 
 extension WireCellsDraft {
-    static func make(status: WireCellsUploadStatus = .uploaded(isDraft: true)) -> WireCellsDraft {
+    static func fixture(status: WireCellsUploadStatus = .uploaded(isDraft: true)) -> WireCellsDraft {
         WireCellsDraft(
-            id: .make(),
+            id: .fixture(),
             assetURL: URL(string: "https://example.com")!,
             fileType: nil,
             status: status,

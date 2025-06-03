@@ -36,9 +36,9 @@ struct ObserveDraftsUseCaseTests {
         // When
         let output = await sut.invoke()
 
-        let a = WireCellsDraft.make()
-        let b = WireCellsDraft.make()
-        let c = WireCellsDraft.make()
+        let a = WireCellsDraft.fixture()
+        let b = WireCellsDraft.fixture()
+        let c = WireCellsDraft.fixture()
 
         continuation.yield([a, b])
         continuation.yield([b, c])
