@@ -40,7 +40,7 @@ public  struct Option: Identifiable {
     public static func manageTeamOption(action: @escaping () -> Void) -> Option {
         Option(
             icon: .manage,
-            text: L10n.ManageTeam.title,
+            text: L10n.Localizable.ManageTeam.title,
             actionImage: .manage,
             action: action
         )
@@ -49,7 +49,7 @@ public  struct Option: Identifiable {
     public static func addAccountOption(action: @escaping () -> Void) -> Option {
         Option(
             icon: .plus,
-            text: L10n.AddAccount.title,
+            text: L10n.Localizable.AddAccount.title,
             actionImage: nil,
             action: action
         )

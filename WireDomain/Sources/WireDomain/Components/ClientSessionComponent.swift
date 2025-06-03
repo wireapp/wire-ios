@@ -59,6 +59,7 @@ public final class ClientSessionComponent {
     private let mlsService: any MLSServiceInterface
     private let mlsDecryptionService: any MLSDecryptionServiceInterface
     private let proteusService: any ProteusServiceInterface
+    private let coreCryptoProvider: any CoreCryptoProviderProtocol
 
     private let processorHandlers: ProcessorHandlers
     private let onAuthenticationFailure: @Sendable () -> Void
@@ -80,6 +81,7 @@ public final class ClientSessionComponent {
         mlsDecryptionService: any MLSDecryptionServiceInterface,
         proteusService: any ProteusServiceInterface,
         processorHandlers: ProcessorHandlers,
+        coreCryptoProvider: any CoreCryptoProviderProtocol,
         onAuthenticationFailure: @escaping @Sendable () -> Void
     ) {
         self.selfUserID = selfUserID
@@ -98,6 +100,7 @@ public final class ClientSessionComponent {
         self.isFederationEnabled = isFederationEnabled
         self.isMLSEnabled = isMLSEnabled
         self.processorHandlers = processorHandlers
+        self.coreCryptoProvider = coreCryptoProvider
         self.onAuthenticationFailure = onAuthenticationFailure
     }
 
@@ -258,11 +261,20 @@ public final class ClientSessionComponent {
         store: backendConfigLocalStore
     )
 
+    private var journal: Journal {
+        Journal(
+            userID: selfUserID,
+            storage: sharedUserDefaults
+        )
+    }
+
     private lazy var pullPendingUpdateEventsSync = PullPendingUpdateEventsSync(
         selfClientID: selfClientID,
         api: updateEventsAPI,
         store: updateEventsLocalStore,
-        decryptor: updateEventDecryptor
+        journal: journal,
+        decryptor: updateEventDecryptor,
+        coreCryptoProvider: coreCryptoProvider
     )
 
     private lazy var pullSelfLegalholdInfoSync = PullSelfLegalholdInfoSync(
@@ -356,7 +368,8 @@ public final class ClientSessionComponent {
         store: updateEventsLocalStore,
         processor: updateEventProcessor,
         databaseSaver: databaseSaver,
-        syncStateSubject: syncStateSubject
+        syncStateSubject: syncStateSubject,
+        journal: journal
     )
 
     // MARK: - Repositories

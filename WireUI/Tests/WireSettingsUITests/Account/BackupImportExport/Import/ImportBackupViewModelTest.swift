@@ -17,6 +17,7 @@
 //
 
 import WireDomainPackage
+import WireFoundation
 import WireLogging
 import WireTestingPackage
 import XCTest

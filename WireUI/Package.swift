@@ -25,7 +25,7 @@ let package = Package(
         .library(name: "WireSettingsUISupport", targets: ["WireSettingsUISupport"]),
         .library(name: "WireSidebarUI", targets: ["WireSidebarUI"]),
         .library(name: "WireMultiBackendUI", targets: ["WireMultiBackendUI"]),
-        .library(name: "WireMultiBackendUISupport", targets: ["WireMultiBackendUISupport"]),
+        .library(name: "WireMultiBackendUISupport", targets: ["WireMultiBackendUISupport"])
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),

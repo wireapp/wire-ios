@@ -88,6 +88,12 @@ package struct LoginViaEmailView: View {
                 Button(Strings.Authentication.Error.confirm, action: {})
             }
         )
+        .sheet(isPresented: $viewModel.isCreateAccountPresented) {
+            AccountTypeSelectionView(viewModel: AccountTypeSelectionViewModel(
+                teamsURL: viewModel.backendInfo
+                    .backendConfig.endpoints.teamsURL
+            ))
+        }
         .navigationDestination(for: LoginViaEmailDestination.self) { destination in
             destinationView(destination)
         }
@@ -175,7 +181,7 @@ package struct LoginViaEmailView: View {
 
     @ViewBuilder private var createAccount: some View {
         VStack(spacing: 4) {
-            Text(Strings.CreatePersonalAccount.title)
+            Text(Strings.CreateAccountOrTeam.title)
                 .multilineTextAlignment(.center)
                 .wireTextStyle(.body1)
                 .lineLimit(nil)
@@ -184,7 +190,7 @@ package struct LoginViaEmailView: View {
             Button(action: {
                 viewModel.createAccount()
             }, label: {
-                Text(Strings.CreatePersonalAccount.button)
+                Text(Strings.CreateAccountOrTeam.button)
                     .multilineTextAlignment(.center)
                     .lineLimit(nil)
                     .minimumScaleFactor(0.5)

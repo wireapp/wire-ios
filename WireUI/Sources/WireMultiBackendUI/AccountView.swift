@@ -21,7 +21,6 @@ import WireAccountImageUI
 import WireDesign
 import WireReusableUIComponents
 
-
 struct AccountView: View {
 
     let account: AccountUIModel

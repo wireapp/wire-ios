@@ -63,9 +63,6 @@ jobs:
               - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireConversationsAll.xcscheme'
             WireDomain:
               - 'WireDomain/**'
-            WireLogging:
-              - 'WireLogging/**'
-              - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireLoggingAll.xcscheme'
             wire-ios-data-model:
               - 'wire-ios-data-model/**'
             wire-ios-transport:
