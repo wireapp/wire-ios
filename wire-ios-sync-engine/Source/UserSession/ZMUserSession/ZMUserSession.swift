@@ -570,7 +570,8 @@ public final class ZMUserSession: NSObject {
         )
 
         if asyncStreamEnabled {
-            journal[.skipPullingLastNotificationID] = true
+            // TODO: [WPB-17223] move this just after the migration is done
+            journal[.isSyncV3Enabled] = true
         }
 
         coreCryptoProvider.registerMlsTransport(clientSessionComponent.mlsTransport)

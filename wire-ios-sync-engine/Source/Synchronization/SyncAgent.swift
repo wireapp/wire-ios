@@ -186,7 +186,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     /// Perform an incremental sync.
 
     func performIncrementalSync(shouldAcknowledgeFullSync: Bool = false) async throws {
-        let liveSync = journal[.skipPullingLastNotificationID]
+        let liveSync = journal[.isSyncV3Enabled]
 
         if isSyncV2Enabled {
             guard incrementalSyncToken == nil else {
@@ -223,7 +223,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
             delegate?.syncAgentDidStartInitialSync(self)
             WireLogger.sync.debug("did start new initial sync")
             try await initialSyncProvider.provideInitialSync()
-                .perform(skipPullingLastUpdateEventID: journal[.skipPullingLastNotificationID])
+                .perform(skipPullingLastUpdateEventID: skipPullingLastNotificationID)
             WireLogger.sync.debug("did finish new initial sync")
             journal[.isInitialSyncRequired] = false
             delegate?.syncAgentDidFinishInitialSync(self)
@@ -231,6 +231,10 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
             WireLogger.sync.error("failed to perform new initial sync: \(String(describing: error))")
             throw error
         }
+    }
+
+    private var skipPullingLastNotificationID: Bool {
+        journal[.isSyncV3Enabled]
     }
 }
 

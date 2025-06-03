@@ -44,7 +44,7 @@ public extension JournalKey where Value == Bool {
         "isSyncV3Enabled",
         defaultValue: false
     )
-    
+
     /// Whether new sync mechanism (initial sync, incremental
     /// sync, live sync) is used.
 
@@ -57,13 +57,6 @@ public extension JournalKey where Value == Bool {
 
     static let isInitialSyncRequired = Self(
         "isInitialSyncRequired",
-        defaultValue: false
-    )
-
-    /// Whether client should skip calling /notifications/last
-
-    static let skipPullingLastNotificationID = Self(
-        "skipPullingLastNotificationID",
         defaultValue: false
     )
 
