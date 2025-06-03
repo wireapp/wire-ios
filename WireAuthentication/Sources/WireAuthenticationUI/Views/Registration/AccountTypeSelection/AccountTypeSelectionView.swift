@@ -18,7 +18,6 @@
 
 import SwiftUI
 import WireDesign
-import WireAuthenticationAPI
 
 struct AccountTypeSelectionView: View {
 
@@ -206,30 +205,6 @@ private struct FeatureView: View {
 #Preview {
     Spacer()
         .sheet(isPresented: .constant(true)) {
-            AccountTypeSelectionView(factory: Factory())
+            AccountTypeSelectionView(factory: FakeAccountTypeSelectionFactory())
         }
-}
-
-private struct Factory: AccountTypeSelectionFactory {
-
-    var viewModel: AccountTypeSelectionViewModel {
-        AccountTypeSelectionViewModel(
-            teamsURL: URL(string: "https://www.wire.com")!,
-            analyticsTracker: T()
-        )
-    }
-
-    func personalAccountCreationFactory(todo: String) {
-        fatalError("not needed")
-    }
-}
-
-// TODO: delete
-private struct T: AccountRegistrationAnalyticsTrackerProtocol {
-    func trackPersonalAccountCreationStart(multiplePasswordAttemptsNeeded: Bool) { fatalError() }
-    func trackPersonalAccountCreationReachedTermsOfUseConfirmation() { fatalError() }
-    func trackPersonalAccountCreationReachedVerificationCode() { fatalError() }
-    func trackPersonalAccountCreationFailedCodeVerification() { fatalError() }
-    func trackPersonalAccountCreationReachedUsernameForm() { fatalError() }
-    func trackPersonalAccountCreationCompletion() { fatalError() }
 }
