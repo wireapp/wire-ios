@@ -16,18 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+protocol AccountTypeSelectionFactory {
 
-// sourcery: AutoMockable
-public protocol SubmitProxyCredentialsUseCaseProtocol: Sendable {
-
-    func invoke(proxyCredentials: ProxyCredentials) throws
-
-}
-
-public protocol SubmitProxyCredentialsUseCaseFactory {
+    @MainActor var viewModel: AccountTypeSelectionViewModel { get }
 
     @MainActor
-    func submitProxyCredentialsUseCase() -> any SubmitProxyCredentialsUseCaseProtocol
+    func personalAccountCreationFactory(
+        todo: String
+    ) -> Void
 
 }

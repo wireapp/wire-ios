@@ -20,8 +20,7 @@ import Foundation
 import WireAuthenticationAPI
 import WireReusableUIComponents
 
-struct FakeLoginViaEmailFactory: LoginViaEmailFactory, CreateAuthenticationResultUseCaseFactory,
-    LoginViaEmailUseCaseFactory, SubmitProxyCredentialsUseCaseFactory, ValidateEmailUseCaseFactory {
+struct FakeLoginViaEmailFactory: LoginViaEmailFactory, CreateAuthenticationResultUseCaseFactory, LoginViaEmailUseCaseFactory, SubmitProxyCredentialsUseCaseFactory, ValidateEmailUseCaseFactory {
 
     var mockDependencies = MockDependencies()
 
@@ -52,6 +51,10 @@ struct FakeLoginViaEmailFactory: LoginViaEmailFactory, CreateAuthenticationResul
             didDetectDomainConflict: didDetectDomainConflict,
             onCreateAccount: {}
         )
+    }
+
+    func personalAccountCreationFactory(todo: String) {
+        fatalError()
     }
 
     @MainActor

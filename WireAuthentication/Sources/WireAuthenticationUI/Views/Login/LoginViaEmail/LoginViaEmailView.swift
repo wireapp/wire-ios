@@ -90,10 +90,11 @@ package struct LoginViaEmailView: View {
             }
         )
         .sheet(isPresented: $viewModel.isCreateAccountPresented) {
-            AccountTypeSelectionView(viewModel: AccountTypeSelectionViewModel(
-                teamsURL: viewModel.backendInfo
-                    .backendConfig.endpoints.teamsURL
-            ))
+            Rectangle()
+//            AccountTypeSelectionView(viewModel: AccountTypeSelectionViewModel(
+//                teamsURL: viewModel.backendInfo.backendConfig.endpoints.teamsURL,
+//                analyticsTracker: <#T##any AccountRegistrationAnalyticsTrackerProtocol#>
+//            ))
         }
         .navigationDestination(for: LoginViaEmailDestination.self) { destination in
             destinationView(destination)
