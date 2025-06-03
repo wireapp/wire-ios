@@ -18,6 +18,30 @@
 
 public protocol AccountMigrationAnalyticsTrackerProtocol {
 
+    /// Invoked when the user reaches the disclaimer UI.
+
+    func trackMigrationReachedDisclaimerStep()
+
+    /// Invoked when the user reaches the team name selection UI.
+
+    func trackMigrationReachedTeamNameStep()
+
+    /// Invoked when the user reaches the confirmation UI.
+
+    func trackMigrationReachedConfirmationStep()
+
+    /// Invoked when the user cancels on the disclaimer UI.
+
+    func trackMigrationDroppedAtDisclaimerStep()
+
+    /// Invoked when the user cancels on the team name selection UI.
+
+    func trackMigrationDroppedAtTeamNameStep()
+
+    /// Invoked when the user cancels on the confirmation UI.
+
+    func trackMigrationDroppedAtConfirmationStep()
+
     /// Invoked when the user attempts to cancel the account migration.
     /// - Parameter choice: Specifies if the user confirmed the cancellation or reconsidered.
 

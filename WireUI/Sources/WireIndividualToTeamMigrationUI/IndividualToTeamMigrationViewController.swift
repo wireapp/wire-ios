@@ -199,7 +199,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
             childController.pushViewController(vc, animated: false) { [analyticsEventTracker] in
-                analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowStarted(at: .disclaimer))
+                analyticsEventTracker?.trackMigrationReachedDisclaimerStep()
             }
             isModalInPresentation = true
         case .toLearnMoreAboutPlans:
@@ -214,7 +214,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
             childController.pushViewController(vc, animated: true) { [analyticsEventTracker] in
-                analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowStarted(at: .teamName))
+                analyticsEventTracker?.trackMigrationReachedTeamNameStep()
             }
             isModalInPresentation = true
         case let .toConfirmation(teamName):
@@ -231,7 +231,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
                 onTransition: { @MainActor [weak self] in self?.transition(to: $0) }
             )
             childController.pushViewController(vc, animated: true) { [analyticsEventTracker] in
-                analyticsEventTracker?.trackEvent(.User.personalTeamCreationFlowStarted(at: .confirmation))
+                analyticsEventTracker?.trackMigrationReachedConfirmationStep()
             }
             isModalInPresentation = true
         case let .toTeamCreation(teamName: teamName):
@@ -255,7 +255,7 @@ public class IndividualToTeamMigrationViewController: UIViewController {
             analyticsFlowCompletionAction = nil
             actionCallback(.completionDismiss)
         case .toConversations:
-            analyticsFlowCompletionAction = .backToWire
+            analyticsFlowCompletionAction = .returnToApp
             actionCallback(.completionGoToConversations)
         case .toTeamManagement:
             analyticsFlowCompletionAction = .openTeamManagement
@@ -311,11 +311,11 @@ extension IndividualToTeamMigrationViewController: UIAdaptivePresentationControl
 
         switch currentStep {
         case .teamPlanSelection:
-            analyticsEventTracker?.trackEvent(.User.personalToTeamMigrationFlowStopped(at: .disclaimer))
+            analyticsEventTracker?.trackMigrationDroppedAtDisclaimerStep()
         case .teamName:
-            analyticsEventTracker?.trackEvent(.User.personalToTeamMigrationFlowStopped(at: .teamName))
+            analyticsEventTracker?.trackMigrationDroppedAtTeamNameStep()
         case .confirmation:
-            analyticsEventTracker?.trackEvent(.User.personalToTeamMigrationFlowStopped(at: .confirmation))
+            analyticsEventTracker?.trackMigrationDroppedAtConfirmationStep()
         case .completion:
             // the flow-completed event will handle this case
             break
