@@ -117,24 +117,16 @@ final class PublishDraftsUseCaseTests {
     func invoke_whenNewDraftAddedConcurrently() async throws {
         // Given
         let sut = PublishDraftsUseCase(cellName: "cell-4", draftRepository: draftsRepository)
-        nodesAPI.publishDraftNodeIDWireCellsNodeIDVoidClosure = { _ in
-            try await Task.sleep(nanoseconds: 2_000_000_000)
+        nodesAPI.publishDraftNodeIDWireCellsNodeIDVoidClosure = { [draftsRepository] _ in
+            // Add a new draft while invoke is running
+            var drafts = await draftsRepository.getDraftsForTesting
+            drafts["cell-4"]?[.fixture()] = WireCellsDraft.fixture(status: .uploading(progress: 0.5))
+            await draftsRepository.setDraftsForTesting(drafts)
         }
-
 
         // When, Then
-        let task = Task.detached {
-            try await sut.invoke()
-        }
-
-        try await Task.sleep(nanoseconds: 1_000_000_000)
-        var drafts = await draftsRepository.getDraftsForTesting
-        drafts["cell-4"]?[.fixture()] = WireCellsDraft.fixture(status: .uploading(progress: 0.5))
-        await draftsRepository.setDraftsForTesting(drafts)
-
-
         await #expect(throws: DraftsRepositoryError.notAllFilesArePublished) {
-            try await task.value
+            try await sut.invoke()
         }
     }
 }
