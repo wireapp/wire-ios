@@ -32,6 +32,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
     private let databaseSaver: any DatabaseSaverProtocol
     private let syncStateSubject: CurrentValueSubject<SyncState, Never>
     private let logger = WireLogger.sync
+    private let journal: Journal
 
     public init(
         selfClientID: String,
@@ -41,7 +42,8 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         store: any UpdateEventsLocalStoreProtocol,
         processor: any UpdateEventProcessorProtocol,
         databaseSaver: any DatabaseSaverProtocol,
-        syncStateSubject: CurrentValueSubject<SyncState, Never>
+        syncStateSubject: CurrentValueSubject<SyncState, Never>,
+        journal: Journal
     ) {
         self.selfClientID = selfClientID
         self.pushChannelAPI = pushChannelAPI
@@ -51,6 +53,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         self.processor = processor
         self.databaseSaver = databaseSaver
         self.syncStateSubject = syncStateSubject
+        self.journal = journal
     }
 
     public func perform() async throws -> Token {
@@ -90,7 +93,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
             logger.debug("live event stream did finish")
             syncStateSubject.send(.idle)
         }
-
+      
         return Token(task: liveEventTask, closePushChannel: {
             await pushChannel.close()
         })
@@ -114,11 +117,20 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 
                 do {
                     // Decrypt.
-                    logger.debug(
-                        "decrypting live event envelope",
-                        attributes: [.eventEnvelopeID: envelope.id]
-                    )
-                    envelope.events = try await decryptor.decryptEvents(in: envelope)
+                  logger.debug(
+                      "decrypting live event envelope",
+                      attributes: [.eventEnvelopeID: envelope.id]
+                  )
+                  
+                  let decryptionEventsResult = try await decryptor.decryptEvents(in: envelope, context: nil)
+                    
+                  envelope.events = try await decryptor.decryptEvents(in: envelope)
+                  
+                  let brokenMLSGroupIDs = decryptionEventsResult.brokenMLSGroupIDs
+                  if !brokenMLSGroupIDs.isEmpty {
+                      journal.addValues(Set(brokenMLSGroupIDs), for: .brokenMLSGroupIDs)
+                  }
+                  
                 } catch {
                     logger.error(
                         "failed to decrypt live event envelope: \(String(describing: error))",
