@@ -39,6 +39,7 @@ public protocol PushChannelServiceProtocol {
 
 public final class PushChannelService: PushChannelServiceProtocol {
 
+    private let keepAliveInterval: TimeInterval = 30
     private let networkService: NetworkService
     private let authenticationManager: any AuthenticationManagerProtocol
 
@@ -57,7 +58,7 @@ public final class PushChannelService: PushChannelServiceProtocol {
         let webSocket = try networkService.executeWebSocketRequest(request)
         return PushChannel(
             webSocket: webSocket,
-            keepAliveInterval: 30
+            keepAliveInterval: keepAliveInterval
         )
     }
 
@@ -67,6 +68,10 @@ public final class PushChannelService: PushChannelServiceProtocol {
         request.setAccessToken(accessToken)
         let webSocket = try networkService.executeWebSocketRequest(request)
 
-        return NewPushChannel(webSocket: webSocket)
+        return NewPushChannel(
+            webSocket: webSocket,
+            keepAliveInterval: keepAliveInterval,
+            upToDateThreshold: 1
+        )
     }
 }

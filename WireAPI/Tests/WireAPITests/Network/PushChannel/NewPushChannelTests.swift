@@ -37,7 +37,7 @@ final class NewPushChannelTests: XCTestCase {
         sut = NewPushChannel(
             webSocket: webSocket,
             keepAliveInterval: 0.5,
-            timeout: 0.1
+            upToDateThreshold: 0.1
         )
     }
 

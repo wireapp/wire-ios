@@ -17,7 +17,23 @@
 //
 import Foundation
 
-/// Payload of acknowledgment of initial sync for async stream
-struct FullSyncAcknowledgmentNotification: Encodable {
-    let type: AcknowledgmentType = .fullSync
+/// Payload sent via NewPushChannel for acknowledgment of event in async stream
+struct EventAcknowledgment: Encodable {
+
+    struct AcknowledgmentData: Encodable {
+        enum CodingKeys: String, CodingKey {
+            case deliveryTag = "delivery_tag"
+            case multiple
+        }
+
+        var deliveryTag: UInt64
+        var multiple: Bool
+    }
+
+    let type: AcknowledgmentType = .ack
+    var data: AcknowledgmentData
+
+    init(deliveryTag: UInt64, multiple: Bool) {
+        self.data = .init(deliveryTag: deliveryTag, multiple: multiple)
+    }
 }

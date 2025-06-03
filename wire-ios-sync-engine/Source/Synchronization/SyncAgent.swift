@@ -204,7 +204,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                             .perform(acknowledgeFullSync: shouldAcknowledgeFullSync)
                     } else {
                         incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync()
-                            .perform(acknowledgeFullSync: shouldAcknowledgeFullSync)
+                            .perform()
                         delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: false)
                     }
                 }
@@ -275,7 +275,7 @@ extension SyncAgent: MLSSyncDelegate {
                     guard let self else { return }
                     delegate?.syncAgentDidStartIncrementalSync(self)
                     incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync()
-                        .perform(acknowledgeFullSync: false)
+                        .perform()
                     delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: true)
                 }
             } catch {

@@ -37,6 +37,8 @@ public struct UpdateEventEnvelope: Equatable, Sendable {
 
     public let isTransient: Bool
 
+    /// The deliveryTag is used to acknowledge receiving the event to the backend.
+
     public let deliveryTag: UInt64?
 
     /// Create a new `UpdateEventEnvelope`.

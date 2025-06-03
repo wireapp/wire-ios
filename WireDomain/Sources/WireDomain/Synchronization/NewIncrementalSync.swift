@@ -57,7 +57,7 @@ public struct NewIncrementalSync: LiveSyncProtocol {
         let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID)
 
         if acknowledgeFullSync {
-            try await pushChannel.ackFullSync()
+            try await pushChannel.acknowledgeFullSync()
         }
 
         logger.debug("opening new push channel v3")
@@ -93,7 +93,7 @@ public struct NewIncrementalSync: LiveSyncProtocol {
                     logger.debug("missedEvents event v3")
                     await delegate?.didMissedEvents(sync: self)
                     // TODO: [WPB-17609] insert potential gap message here with messageLocalStore
-                    try await pushChannel.ackFullSync()
+                    try await pushChannel.acknowledgeFullSync()
 
                 case let .event(envelope):
                     do {
@@ -186,7 +186,7 @@ public struct NewIncrementalSync: LiveSyncProtocol {
                     "ack event envelope v3",
                     attributes: [.eventEnvelopeID: envelope.id]
                 )
-                try await pushChannel.ackEvent(deliveryTag: deliveryTag, multiple: false)
+                try await pushChannel.acknowledgeEvent(deliveryTag: deliveryTag, multiple: false)
             }
         } catch {
             logger.error(

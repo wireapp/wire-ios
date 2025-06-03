@@ -19,11 +19,6 @@
 import Foundation
 
 struct UpdateEventEnvelopeV8: Decodable {
-    enum CodingKeys: String, CodingKey {
-        case id
-        case payload
-    }
-
     let id: UUID
     let payload: [UpdateEventDecodingProxy]
 }

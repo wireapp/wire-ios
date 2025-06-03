@@ -73,7 +73,7 @@ final class NewIncrementalSyncTests: XCTestCase {
                 continuation.finish()
             }
         }
-        pushChannel.ackEventDeliveryTagMultiple_MockMethod = { _, _ in }
+        pushChannel.acknowledgeEventDeliveryTagMultiple_MockMethod = { _, _ in }
         pushChannelAPI.createPushChannelClientID_MockMethod = { _ in pushChannel }
 
         // Some indices at which live events will be stored.
@@ -85,7 +85,7 @@ final class NewIncrementalSyncTests: XCTestCase {
         store.deleteEventEnvelopeAtIndex_MockMethod = { _ in }
 
         // Live events are decrypted.
-        decryptor.decryptEventsIn_MockMethod = { $0.events }
+        decryptor.decryptEventsInContext_MockMethod = { envelope, _ in  envelope.events }
 
         // Last event is being updated.
         store.storeLastEventIDId_MockMethod = { _ in }
@@ -114,7 +114,7 @@ final class NewIncrementalSyncTests: XCTestCase {
 
         // Then live events were decrypted (duplicates skipped).
         XCTAssertEqual(
-            decryptor.decryptEventsIn_Invocations,
+            decryptor.decryptEventsInContext_Invocations.map(\.eventEnvelope),
             [Scaffolding.event2]
         )
 
@@ -128,7 +128,7 @@ final class NewIncrementalSyncTests: XCTestCase {
         XCTAssertEqual(storeInvocations[0].index, 11)
 
         // Then ack of events done adter storing
-        XCTAssertEqual(pushChannel.ackEventDeliveryTagMultiple_Invocations.count, 1)
+        XCTAssertEqual(pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations.count, 1)
 
         // Then all events were processed once.
         XCTAssertEqual(
@@ -153,7 +153,7 @@ final class NewIncrementalSyncTests: XCTestCase {
     func testPerform_AcknowledgementFullSync() async throws {
         // Mock
         let pushChannel = MockNewPushChannelProtocol()
-        pushChannel.ackFullSync_MockMethod = {}
+        pushChannel.acknowledgeFullSync_MockMethod = {}
 
         pushChannel.open_MockValue = AsyncThrowingStream { continuation in
             Task {
@@ -163,7 +163,7 @@ final class NewIncrementalSyncTests: XCTestCase {
                 continuation.finish()
             }
         }
-        pushChannel.ackEventDeliveryTagMultiple_MockMethod = { _, _ in }
+        pushChannel.acknowledgeEventDeliveryTagMultiple_MockMethod = { _, _ in }
         pushChannelAPI.createPushChannelClientID_MockMethod = { _ in pushChannel }
 
         // Some indices at which live events will be stored.
@@ -175,7 +175,7 @@ final class NewIncrementalSyncTests: XCTestCase {
         store.deleteEventEnvelopeAtIndex_MockMethod = { _ in }
 
         // Live events are decrypted.
-        decryptor.decryptEventsIn_MockMethod = { $0.events }
+        decryptor.decryptEventsInContext_MockMethod = { envelope, _ in  envelope.events }
 
         // Last event is being updated.
         store.storeLastEventIDId_MockMethod = { _ in }
@@ -204,7 +204,7 @@ final class NewIncrementalSyncTests: XCTestCase {
 
         // Then live events were decrypted (duplicates skipped).
         XCTAssertEqual(
-            decryptor.decryptEventsIn_Invocations,
+            decryptor.decryptEventsInContext_Invocations.map(\.eventEnvelope),
             [Scaffolding.event2, Scaffolding.event3]
         )
 
@@ -217,7 +217,7 @@ final class NewIncrementalSyncTests: XCTestCase {
         XCTAssertEqual(storeInvocations[0].eventEnvelope, Scaffolding.event2)
         XCTAssertEqual(storeInvocations[1].eventEnvelope, Scaffolding.event3)
         // Then ack of events done after storing
-        XCTAssertEqual(pushChannel.ackEventDeliveryTagMultiple_Invocations.count, 2)
+        XCTAssertEqual(pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations.count, 2)
 
         // Then all events were processed once.
         XCTAssertEqual(
