@@ -38,13 +38,13 @@ struct Option: Identifiable {
 
     static let manageTeamOption = Option(
         icon: .manage,
-        text: L10n.ManageTeam.title,
+        text: L10n.Localizable.ManageTeam.title,
         actionImage: .manage
     )
 
     static let addAccountOption = Option(
         icon: .plus,
-        text: L10n.AddAccount.title,
+        text: L10n.Localizable.AddAccount.title,
         actionImage: nil
     )
 }
