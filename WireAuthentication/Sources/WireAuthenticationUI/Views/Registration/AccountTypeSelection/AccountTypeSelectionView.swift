@@ -41,16 +41,7 @@ struct AccountTypeSelectionView: View {
                 dismiss()
             }, content: { item in
                 sheetView(for: item)
-                    .presentationBackground(Color.black.opacity(0.7))
             })
-//            .sheet(isPresented: $viewModel.isCreateTeamAccountPresented, onDismiss: {
-//                dismiss()
-//            }, content: {
-//                if let teamAccountCreationLink = viewModel.teamAccountCreationLink {
-//                    SafariBrowserView(url: teamAccountCreationLink)
-//                        .ignoresSafeArea()
-//                }
-//            })
             .scrollBounceBehavior(.basedOnSize)
             .navigationTitle(Strings.title)
             .navigationBarTitleDisplayMode(.inline)
@@ -157,12 +148,6 @@ struct AccountTypeSelectionView: View {
 
     @ViewBuilder private var personalAccountButton: some View {
         Button {
-//            let viewModel = CreatePersonalAccountViewModel(
-//                email: viewModel.email,
-//                privacyPolicyURL: viewModel.privacyPolicyURL,
-//                teamAccountCreationLink: viewModel.teamAccountCreationLink
-//            )
-//            CreatePersonalAccountView(viewModel: viewModel)
             viewModel.presentPersonalAccountFlow()
         } label: {
             Text(Strings.OptionPersonal.button)

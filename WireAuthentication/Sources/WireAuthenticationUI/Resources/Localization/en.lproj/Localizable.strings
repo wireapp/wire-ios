@@ -118,4 +118,12 @@
 "create_personal_account.title" = "Create personal account";
 "create_personal_account.continue" = "Continue";
 "create_personal_account.share_data_usage" = "I agree to share anonymous usage data. Find all details in our [Privacy Policy](%@)";
-"create_personal_account.create_team" = "Looking for team collaboration?\nCreate a team";
+"create_personal_account.looking_for_collaboration" = "Looking for team collaboration?";
+"create_personal_account.create_team" = "Create a team";
+"create_personal_account.input_name.title" = "Name";
+"create_personal_account.input_name.placeholder" = "Enter your name";
+"create_personal_account.input_email.title" = "Email";
+"create_personal_account.input_email.placeholder" = "Enter your email";
+"create_personal_account.input_password.title" = "Password";
+"create_personal_account.input_password.placeholder" = "Enter a password";
+"create_personal_account.input_confirm_password.placeholder" = "Confirm password";

@@ -22,9 +22,11 @@ import SwiftUI
 package final class CreatePersonalAccountViewModel: ObservableObject {
 
     @Published var isCreateTeamAccountPresented = false
-    @State var enableAnalyticsSharing: Bool = false
+    @Published var dataUsageAgreementAccepted: Bool = false
+    @Published var name: String = ""
+    @Published var email: String
+    @Published var password: String = ""
 
-    let email: String
     let privacyPolicyURL: URL
     // TODO: should it be optional?
     let teamAccountCreationLink: URL?
@@ -45,5 +47,9 @@ package final class CreatePersonalAccountViewModel: ObservableObject {
     }
 
     func submitCredentials() async {}
+
+    func isPasswordValid(_ password: String) -> Bool {
+        return true
+    }
 
 }

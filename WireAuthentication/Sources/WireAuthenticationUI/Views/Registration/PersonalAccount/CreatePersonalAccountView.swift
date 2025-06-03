@@ -61,15 +61,69 @@ struct CreatePersonalAccountView: View {
 
     @ViewBuilder private var scrollViewContent: some View {
         VStack(spacing: 24) {
+            nameField
+            emailField
+            passwordField
+            confirmPasswordField
             dataUsageAgreementView
             continueButton
             teamAccountCreationView
         }
+        .padding(.horizontal, 24)
+        .padding(.top, 32)
     }
+
+    @ViewBuilder private var nameField: some View {
+        LabeledTextField(
+            placeholder: Strings.InputName.placeholder,
+            title: Strings.InputName.title,
+            string: $viewModel.name
+        )
+        .autocapitalization(.none)
+        .autocorrectionDisabled()
+        .textContentType(.username)
+        .keyboardType(.emailAddress)
+    }
+
+    @ViewBuilder private var emailField: some View {
+        LabeledTextField(
+            placeholder: Strings.InputEmail.placeholder,
+            title: Strings.InputEmail.title,
+            string: $viewModel.email
+        )
+        .autocapitalization(.none)
+        .autocorrectionDisabled()
+        .textContentType(.username)
+        .keyboardType(.emailAddress)
+    }
+
+    @ViewBuilder private var passwordField: some View {
+        PasswordField(
+            password: $viewModel.password,
+            placeholder: Strings.InputPassword.placeholder,
+            title: Strings.InputPassword.title,
+            passwordRules: "",
+            isValidPassword: viewModel.isPasswordValid
+        )
+    }
+
+    @ViewBuilder private var confirmPasswordField: some View {
+        PasswordField(
+            password: $viewModel.password,
+            placeholder: Strings.InputConfirmPassword.placeholder,
+            title: Strings.InputPassword.title,
+            passwordRules: "",
+            isValidPassword: viewModel.isPasswordValid
+        )
+    }
+
 
     @ViewBuilder private var dataUsageAgreementView: some View {
         Checkbox(
-            isChecked: $viewModel.enableAnalyticsSharing,
+            isChecked: Binding(
+                get: { viewModel.dataUsageAgreementAccepted },
+                set: { viewModel.dataUsageAgreementAccepted = $0 }
+            ),
             title: .formattedMarkdown(
                 key: "create_personal_account.share_data_usage",
                 bundle: .module,
@@ -92,7 +146,24 @@ struct CreatePersonalAccountView: View {
         .disabled(!viewModel.canSubmitCredentials)
     }
 
-    @ViewBuilder private var teamAccountCreationView: some View {}
+    @ViewBuilder private var teamAccountCreationView: some View {
+        VStack(spacing: 0) {
+            Text(Strings.lookingForCollaboration)
+                .multilineTextAlignment(.center)
+            Button(
+                action: {
+                    viewModel.isCreateTeamAccountPresented = true
+                },
+                label: {
+                    Text(Strings.createTeam)
+                        .lineLimit(nil)
+                }
+            )
+            .wireButtonStyle(.link)
+        }
+        .frame(maxWidth: .infinity)
+        .padding()
+    }
 
 }
 

@@ -40,6 +40,7 @@ package protocol LoginViaEmailFactory {
 package struct LoginViaEmailView: View {
 
     @StateObject private var viewModel: LoginViaEmailViewModel
+    @Environment(\.dismiss) private var dismiss
 
     private typealias Strings = L10n.Localizable
 
@@ -90,9 +91,9 @@ package struct LoginViaEmailView: View {
             }
         )
         .sheet(isPresented: $viewModel.isCreateAccountPresented) {
-            // TODO: fix
+            // TODO: fix parameters
             AccountTypeSelectionView(viewModel: AccountTypeSelectionViewModel(
-                email: "",
+                email: viewModel.email,
                 privacyPolicyURL: viewModel.backendInfo
                     .backendConfig.endpoints.teamsURL,
                 teamsURL: viewModel.backendInfo
