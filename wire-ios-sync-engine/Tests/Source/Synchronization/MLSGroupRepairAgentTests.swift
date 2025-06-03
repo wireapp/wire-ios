@@ -63,7 +63,7 @@ class MLSGroupRepairAgentTests: XCTestCase {
         }
 
         // When
-        syncStateSubject.send(.liveSyncing)
+        syncStateSubject.send(.liveSyncing(.ongoing))
 
         // Then
         await fulfillment(of: [expectation], timeout: 1.0)
@@ -75,7 +75,7 @@ class MLSGroupRepairAgentTests: XCTestCase {
         mockMLSService.fetchAndRepairGroupWith_MockMethod = { _ in }
 
         // When
-        syncStateSubject.send(.liveSyncing)
+        syncStateSubject.send(.liveSyncing(.ongoing))
 
         // Then
         XCTAssertTrue(mockMLSService.fetchAndRepairGroupWith_Invocations.isEmpty)
