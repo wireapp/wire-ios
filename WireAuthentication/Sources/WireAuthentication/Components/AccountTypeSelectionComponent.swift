@@ -23,6 +23,7 @@ import WireAuthenticationAPI
 
 protocol AccountTypeSelectionComponentDependency: Dependency {
 
+    var accountRegistrationAnalyticsTracker: AccountRegistrationAnalyticsTrackerProtocol { get }
 //    var howToChangeEmailURL: URL { get }
 //    var howToDeleteAccountURL: URL { get }
 //    @MainActor var bridge: WireAuthenticationBridge { get }
@@ -54,19 +55,10 @@ extension AccountTypeSelectionComponent: AccountTypeSelectionFactory {
 
 
         let todo = URL(string: "https://wire.com")!
-        // TODO: delete
-        struct T: AccountRegistrationAnalyticsTrackerProtocol {
-            func trackPersonalAccountCreationStart(multiplePasswordAttemptsNeeded: Bool) { fatalError() }
-            func trackPersonalAccountCreationReachedTermsOfUseConfirmation() { fatalError() }
-            func trackPersonalAccountCreationReachedVerificationCode() { fatalError() }
-            func trackPersonalAccountCreationFailedCodeVerification() { fatalError() }
-            func trackPersonalAccountCreationReachedUsernameForm() { fatalError() }
-            func trackPersonalAccountCreationCompletion() { fatalError() }
-        }
 
         return AccountTypeSelectionViewModel(
             teamsURL: todo,
-            analyticsTracker: T()
+            analyticsTracker: dependency.accountRegistrationAnalyticsTracker
 //            didDetectDomainConflict: didDetectDomainConflict,
 //            howToChangeEmailURL: dependency.howToChangeEmailURL,
 //            howToDeleteAccountURL: dependency.howToDeleteAccountURL,

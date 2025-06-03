@@ -36,15 +36,17 @@ private func parent4(_ component: NeedleFoundation.Scope) -> NeedleFoundation.Sc
 #if !NEEDLE_DYNAMIC
 
 private class AccountTypeSelectionComponentDependency1ba0ac471f874e74bbfbProvider: AccountTypeSelectionComponentDependency {
-
-
-    init() {
-
+    var accountRegistrationAnalyticsTracker: AccountRegistrationAnalyticsTrackerProtocol {
+        return rootComponent.accountRegistrationAnalyticsTracker
+    }
+    private let rootComponent: RootComponent
+    init(rootComponent: RootComponent) {
+        self.rootComponent = rootComponent
     }
 }
 /// ^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->AccountTypeSelectionComponent
-private func factorybf833f2180a29f63b7cbe3b0c44298fc1c149afb(_ component: NeedleFoundation.Scope) -> AnyObject {
-    return AccountTypeSelectionComponentDependency1ba0ac471f874e74bbfbProvider()
+private func factorybf833f2180a29f63b7cb42f5655bf2362a8495f6(_ component: NeedleFoundation.Scope) -> AnyObject {
+    return AccountTypeSelectionComponentDependency1ba0ac471f874e74bbfbProvider(rootComponent: parent3(component) as! RootComponent)
 }
 private class VerificationCodeComponentDependency48f3b80358781bc7c928Provider: VerificationCodeComponentDependency {
     var router: any Router {
@@ -154,7 +156,7 @@ private func factory9bda312c16141c932061a9403e3301bb54f80df0(_ component: Needle
 #else
 extension AccountTypeSelectionComponent: NeedleFoundation.Registration {
     public func registerItems() {
-
+        keyPathToName[\AccountTypeSelectionComponentDependency.accountRegistrationAnalyticsTracker] = "accountRegistrationAnalyticsTracker-AccountRegistrationAnalyticsTrackerProtocol"
     }
 }
 extension VerificationCodeComponent: NeedleFoundation.Registration {
@@ -190,6 +192,7 @@ extension RootComponent: NeedleFoundation.Registration {
         localTable["appStoreURL-URL"] = { [unowned self] in self.appStoreURL as Any }
         localTable["existsAnotherAccount-Bool"] = { [unowned self] in self.existsAnotherAccount as Any }
         localTable["useLegacyRegistrationFlow-Bool"] = { [unowned self] in self.useLegacyRegistrationFlow as Any }
+        localTable["accountRegistrationAnalyticsTracker-AccountRegistrationAnalyticsTrackerProtocol"] = { [unowned self] in self.accountRegistrationAnalyticsTracker as Any }
         localTable["bridge-WireAuthenticationBridge"] = { [unowned self] in self.bridge as Any }
         localTable["router-any Router"] = { [unowned self] in self.router as Any }
     }
@@ -230,7 +233,7 @@ private func registerProviderFactory(_ componentPath: String, _ factory: @escapi
 #if !NEEDLE_DYNAMIC
 
 @inline(never) private func register1() {
-    registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->AccountTypeSelectionComponent", factorybf833f2180a29f63b7cbe3b0c44298fc1c149afb)
+    registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->AccountTypeSelectionComponent", factorybf833f2180a29f63b7cb42f5655bf2362a8495f6)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->VerificationCodeComponent", factoryd3638676a47fce1fe62317031e1ba787d83cb463)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent", factoryd47fa74281e135cd9f10b3a8f24c1d289f2c0f2e)
     registerProviderFactory("^->RootComponent", factoryEmptyDependencyProvider)
