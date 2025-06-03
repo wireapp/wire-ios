@@ -26,6 +26,23 @@
 // For information on using the generated types, please see the documentation:
 //   https://github.com/apple/swift-protobuf/
 
+//
+// Wire
+// Copyright (C) 2021 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+
 import Foundation
 import SwiftProtobuf
 
@@ -39,60 +56,24 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
   typealias Version = _2
 }
 
-public enum Mls_GroupInfoType: SwiftProtobuf.Enum, Swift.CaseIterable {
-  public typealias RawValue = Int
-  case publicGroupState // = 1
-  case groupInfo // = 2
-  case groupInfoJwe // = 3
+public enum Mls_GroupInfoType: Int, SwiftProtobuf.Enum, Swift.CaseIterable {
+  case publicGroupState = 1
+  case groupInfo = 2
+  case groupInfoJwe = 3
 
   public init() {
     self = .publicGroupState
   }
 
-  public init?(rawValue: Int) {
-    switch rawValue {
-    case 1: self = .publicGroupState
-    case 2: self = .groupInfo
-    case 3: self = .groupInfoJwe
-    default: return nil
-    }
-  }
-
-  public var rawValue: Int {
-    switch self {
-    case .publicGroupState: return 1
-    case .groupInfo: return 2
-    case .groupInfoJwe: return 3
-    }
-  }
-
 }
 
-public enum Mls_RatchetTreeType: SwiftProtobuf.Enum, Swift.CaseIterable {
-  public typealias RawValue = Int
-  case full // = 1
-  case delta // = 2
-  case reference // = 3
+public enum Mls_RatchetTreeType: Int, SwiftProtobuf.Enum, Swift.CaseIterable {
+  case full = 1
+  case delta = 2
+  case reference = 3
 
   public init() {
     self = .full
-  }
-
-  public init?(rawValue: Int) {
-    switch rawValue {
-    case 1: self = .full
-    case 2: self = .delta
-    case 3: self = .reference
-    default: return nil
-    }
-  }
-
-  public var rawValue: Int {
-    switch self {
-    case .full: return 1
-    case .delta: return 2
-    case .reference: return 3
-    }
   }
 
 }
