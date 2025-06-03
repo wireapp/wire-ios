@@ -109,7 +109,7 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
     func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory {
         noHistoryComponent(authenticationResult: authenticationResult)
     }
-    
+
     // MARK: Use cases
 
     func validateEmailOrSSOCodeUseCase() -> any ValidateEmailOrSSOCodeUseCaseProtocol {

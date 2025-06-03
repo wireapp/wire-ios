@@ -25,7 +25,7 @@ package protocol RootFactory {
 
     @MainActor
     func determineAuthMethodFactory(backendInfo: BackendInfo) -> any DetermineAuthMethodFactory
-    
+
     @MainActor
     func accountsSwitcherFactory() -> any AccountSwitcherFactory
 }

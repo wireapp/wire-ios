@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import NeedleFoundation
 import SwiftUI
-import Combine
 import WireAPI
 import WireReusableUIComponents
 internal import WireAuthenticationUI
@@ -113,11 +113,11 @@ extension RootComponent: RootViewModel.Factory {
     func determineAuthMethodFactory(backendInfo: BackendInfo) -> any DetermineAuthMethodFactory {
         determineAuthMethodComponent(backendInfo: backendInfo)
     }
-    
+
     func accountsSwitcherFactory() -> any AccountSwitcherFactory {
         accountSwitcherComponent()
     }
-    
+
     func accountSwitcherComponent() -> AccountSwitcherComponent {
         AccountSwitcherComponent(parent: self)
     }

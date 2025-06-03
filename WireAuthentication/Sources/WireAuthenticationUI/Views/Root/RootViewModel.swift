@@ -64,7 +64,7 @@ package final class RootViewModel: ObservableObject, Router {
     package func popToRoot() {
         path.removeLast(path.count)
     }
-    
+
     package func pop() {
         path.removeLast()
     }
@@ -89,7 +89,7 @@ package final class RootViewModel: ObservableObject, Router {
     func goToAppStore() {
         factory.openAppStoreUseCase().invoke()
     }
-    
+
     func switchAccounts() {
         navigate(to: RootDestination.switchAccounts)
     }

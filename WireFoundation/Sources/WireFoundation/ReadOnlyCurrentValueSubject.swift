@@ -19,7 +19,7 @@
 public import Combine
 
 public final class ReadOnlyCurrentValueSubject<Output> {
-    
+
     private let subject: CurrentValueSubject<Output, Never>
 
     public init(subject: CurrentValueSubject<Output, Never>) {

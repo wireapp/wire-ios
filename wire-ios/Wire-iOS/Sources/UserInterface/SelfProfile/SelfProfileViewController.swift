@@ -448,7 +448,7 @@ public extension Notification.Name {
 extension Account {
     func toUIModel(action: @escaping () -> Void) -> AccountUIModel {
         let avatarSource: WireAccountImageUI.AccountImageSource
-        if let imageData = imageData,
+        if let imageData,
            let avatarImage = UIImage(data: imageData) {
             avatarSource = .image(avatarImage)
         } else {

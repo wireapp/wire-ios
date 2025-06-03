@@ -17,34 +17,33 @@
 //
 
 import SwiftUI
-import WireMultiBackendUI
 import WireDesign
 import WireFoundation
-
+import WireMultiBackendUI
 
 package protocol AccountSwitcherFactory {
     @MainActor var viewModel: AccountSwitcherModalViewModel { get }
 }
 
 struct AccountSwitcherModalView: View {
-    
+
     @ObservedObject var viewModel: AccountSwitcherModalViewModel
-    
+
     init(_ factory: AccountSwitcherFactory) {
         self._viewModel = ObservedObject(initialValue: factory.viewModel)
     }
-    
+
     var body: some View {
         VStack {
             VStack(alignment: .center, spacing: 16) {
                 Text(L10n.Localizable.SwitchingAccounts.title)
                     .font(.textStyle(.h3))
                     .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-                
+
                 Text(L10n.Localizable.SwitchingAccounts.subtitle)
                     .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
                     .font(.textStyle(.body1))
-                
+
                 AccountSwitcherView(
                     accounts: viewModel.accounts,
                     options: [],
@@ -64,7 +63,7 @@ struct AccountSwitcherModalView: View {
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
     }
-    
+
     @ViewBuilder private var closeButton: some View {
         Button {
             viewModel.onCloseButtonTapped()

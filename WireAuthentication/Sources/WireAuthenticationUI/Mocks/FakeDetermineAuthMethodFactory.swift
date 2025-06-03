@@ -55,7 +55,7 @@ struct FakeDetermineAuthMethodFactory: DetermineAuthMethodFactory,
     func noHistoryFactory(authenticationResult: WireAuthenticationAPI.AuthenticationResult) -> any NoHistoryFactory {
         fatalError()
     }
-    
+
     // MARK: - UseCases
 
     func determineAuthMethodUseCase() async throws -> any WireAuthenticationAPI.DetermineAuthMethodUseCaseProtocol {

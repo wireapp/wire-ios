@@ -16,15 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import Foundation
 import NeedleFoundation
 import SwiftUI
-import Combine
 import WireAPI
 import WireAuthenticationAPI
-import WireReusableUIComponents
 import WireFoundation
 import WireMultiBackendUI
+import WireReusableUIComponents
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
 

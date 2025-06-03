@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import Combine
+import Foundation
 import NeedleFoundation
 internal import WireAuthenticationUI
-import WireMultiBackendUI
 import WireFoundation
+import WireMultiBackendUI
 
 protocol AccountSwitcherComponentDependency: Dependency {
 
@@ -30,7 +30,7 @@ protocol AccountSwitcherComponentDependency: Dependency {
 
 }
 
-class AccountSwitcherComponent: Component<AccountSwitcherComponentDependency> { }
+class AccountSwitcherComponent: Component<AccountSwitcherComponentDependency> {}
 
 extension AccountSwitcherComponent: AccountSwitcherFactory {
 

@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
 import Combine
-import WireFoundation
+import SwiftUI
 import WireAPI
 import WireAuthentication
 import WireAuthenticationUI
-import WireReusableUIComponents
+import WireFoundation
 import WireMultiBackendUI
+import WireReusableUIComponents
 
 struct ContentView: View {
 
@@ -65,7 +65,7 @@ struct ContentView: View {
                                 handle: "@handle",
                                 teamName: "Team",
                                 backendName: "Backedn",
-                                action: { }
+                                action: {}
                             ),
                             AccountUIModel(
                                 avatarSource: .text("DS"),
@@ -73,7 +73,7 @@ struct ContentView: View {
                                 handle: "@handle 2",
                                 teamName: "Team two",
                                 backendName: "Backend two",
-                                action: { }
+                                action: {}
                             )
                         ]
                     )

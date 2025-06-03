@@ -133,7 +133,7 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
             authenticationResult: authenticationResult
         )
     }
-    
+
     // MARK: - Use cases
 
     func submitProxyCredentialsUseCase() -> any SubmitProxyCredentialsUseCaseProtocol {

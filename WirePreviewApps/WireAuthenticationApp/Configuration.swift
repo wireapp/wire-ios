@@ -19,8 +19,8 @@
 import Foundation
 import WireAPI
 import WireAPISupport
-import WireReusableUIComponents
 import WireAuthentication
+import WireReusableUIComponents
 
 struct Configuration {
 

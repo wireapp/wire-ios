@@ -20,9 +20,9 @@ import Foundation
 import WireAccountImageUI
 
 public struct AccountUIModel: Identifiable {
-    
+
     public let id = UUID()
-    
+
     let avatarSource: AccountImageSource
     let name: String
     let handle: String

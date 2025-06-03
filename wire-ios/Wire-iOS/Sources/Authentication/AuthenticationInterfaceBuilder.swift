@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import UIKit
 import WireAPI
 import WireAuthentication
 import WireCommonComponents
 import WireDataModel
-import WireSyncEngine
 import WireFoundation
-import Combine
+import WireSyncEngine
 
 /// A type of view controller that can be managed by an authentication coordinator.
 
@@ -45,7 +45,7 @@ final class AuthenticationInterfaceBuilder {
     private var environment: WireTransport.BackendEnvironment {
         BackendEnvironment.shared
     }
-    
+
     private var accountSelector: AccountSelector?
 
     // MARK: - Initialization
@@ -91,7 +91,7 @@ final class AuthenticationInterfaceBuilder {
                     account.toUIModel { [weak self] in
                         self?.accountSelector?.switchTo(account: account)
                     }
-            }
+                }
             let preferredAPIVersion = BackendInfo.preferredAPIVersion.flatMap {
                 WireAPI.APIVersion(rawValue: UInt($0.rawValue))
             }

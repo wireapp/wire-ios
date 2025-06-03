@@ -37,10 +37,10 @@ public struct AccountSwitcherView: View {
 
     public var body: some View {
         VStack(spacing: 0) {
-            
+
             let totalCount = accounts.count + options.count
 
-            ForEach(0..<totalCount, id: \.self) { index in
+            ForEach(0 ..< totalCount, id: \.self) { index in
                 if index < accounts.count {
                     AccountView(account: accounts[index])
                         .padding(.horizontal, 16)
@@ -52,7 +52,7 @@ public struct AccountSwitcherView: View {
                         .padding(.top, 16.5)
                         .padding(.bottom, 18.5)
                 }
-                
+
                 let isLastItem = index == totalCount - 1
                 if showLastSeparator || !isLastItem {
                     divider()
