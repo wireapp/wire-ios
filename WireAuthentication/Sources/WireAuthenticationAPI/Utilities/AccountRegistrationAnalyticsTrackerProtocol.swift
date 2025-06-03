@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// sourcery: AutoMockable
 public protocol AccountRegistrationAnalyticsTrackerProtocol {
 
     /// Invoked when the user submits the personal account creation form.

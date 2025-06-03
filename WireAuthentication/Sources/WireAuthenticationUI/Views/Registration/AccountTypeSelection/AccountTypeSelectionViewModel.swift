@@ -18,6 +18,7 @@
 
 import Foundation
 import WireLogging
+import WireAuthenticationAPI
 
 @MainActor
 package final class AccountTypeSelectionViewModel: ObservableObject {

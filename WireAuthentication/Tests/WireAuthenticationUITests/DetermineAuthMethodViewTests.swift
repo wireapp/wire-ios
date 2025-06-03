@@ -93,8 +93,4 @@ final class DetermineAuthMethodViewTests: XCTestCase {
     }
 }
 
-extension View {
-    func inNavigationStack() -> some View {
-        NavigationStack(root: { self })
-    }
-}
+

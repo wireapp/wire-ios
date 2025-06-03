@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireDesign
+import WireAuthenticationAPI
 
 struct AccountTypeSelectionView: View {
 
@@ -27,8 +28,10 @@ struct AccountTypeSelectionView: View {
     private typealias Strings = L10n.Localizable.AccountTypeSelector
     private typealias Labels = L10n.Accessibility.AccountTypeSelector
 
-    package init(viewModel: AccountTypeSelectionViewModel) {
-        self._viewModel = StateObject(wrappedValue: viewModel)
+    package init(
+        factory: @autoclosure @escaping () -> AccountTypeSelectionFactory
+    ) {
+        self._viewModel = StateObject(wrappedValue: factory().viewModel)
     }
 
     var body: some View {
@@ -203,7 +206,30 @@ private struct FeatureView: View {
 #Preview {
     Spacer()
         .sheet(isPresented: .constant(true)) {
-            let viewModel = AccountTypeSelectionViewModel(teamsURL: URL(string: "https://www.wire.com")!)
-            AccountTypeSelectionView(viewModel: viewModel)
+            AccountTypeSelectionView(factory: Factory())
         }
+}
+
+private struct Factory: AccountTypeSelectionFactory {
+
+    var viewModel: AccountTypeSelectionViewModel {
+        AccountTypeSelectionViewModel(
+            teamsURL: URL(string: "https://www.wire.com")!,
+            analyticsTracker: T()
+        )
+    }
+
+    func personalAccountCreationFactory(todo: String) {
+        fatalError("not needed")
+    }
+}
+
+// TODO: delete
+private struct T: AccountRegistrationAnalyticsTrackerProtocol {
+    func trackPersonalAccountCreationStart(multiplePasswordAttemptsNeeded: Bool) { fatalError() }
+    func trackPersonalAccountCreationReachedTermsOfUseConfirmation() { fatalError() }
+    func trackPersonalAccountCreationReachedVerificationCode() { fatalError() }
+    func trackPersonalAccountCreationFailedCodeVerification() { fatalError() }
+    func trackPersonalAccountCreationReachedUsernameForm() { fatalError() }
+    func trackPersonalAccountCreationCompletion() { fatalError() }
 }

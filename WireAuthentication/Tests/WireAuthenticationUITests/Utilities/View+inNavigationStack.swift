@@ -16,13 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package protocol AccountTypeSelectionFactory {
+import SwiftUI
 
-    @MainActor var viewModel: AccountTypeSelectionViewModel { get }
+extension View {
 
-    @MainActor
-    func personalAccountCreationFactory(
-        todo: String
-    ) -> Void
+    @available(*, deprecated, message: "use NavigationStack directly")
+    func inNavigationStack() -> some View { // TODO: delete
+        NavigationStack(root: { self })
+    }
 
 }

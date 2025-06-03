@@ -16,13 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package protocol AccountTypeSelectionFactory {
+struct FakeAccountTypeSelectionFactory: AccountTypeSelectionFactory {
 
-    @MainActor var viewModel: AccountTypeSelectionViewModel { get }
+    var viewModel: AccountTypeSelectionViewModel {
+        fatalError()
+    }
 
-    @MainActor
-    func personalAccountCreationFactory(
-        todo: String
-    ) -> Void
+    func personalAccountCreationFactory(todo: String) {
+        fatalError()
+    }
 
 }

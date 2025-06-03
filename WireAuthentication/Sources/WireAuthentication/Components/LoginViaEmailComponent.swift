@@ -135,6 +135,10 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
         )
     }
 
+    func accountTypeSelectionFactory() -> any AccountTypeSelectionFactory {
+        fatalError("TODO")
+    }
+
     // MARK: - Use cases
 
     func submitProxyCredentialsUseCase() -> any SubmitProxyCredentialsUseCaseProtocol {
