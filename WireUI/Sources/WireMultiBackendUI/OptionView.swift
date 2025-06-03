@@ -19,34 +19,53 @@
 import SwiftUI
 import WireDesign
 
-struct Option: Identifiable {
+public  struct Option: Identifiable {
 
-    let id = UUID()
+    public let id = UUID()
 
-    enum Icon {
+    public enum Icon {
         case plus
         case manage
     }
 
-    enum ActionImage {
+    public enum ActionImage {
         case manage
     }
 
     let icon: Icon
     let text: String
     let actionImage: ActionImage?
+    let action: () -> Void
 
-    static let manageTeamOption = Option(
-        icon: .manage,
-        text: L10n.Localizable.ManageTeam.title,
-        actionImage: .manage
-    )
+    public static func manageTeamOption(action: @escaping () -> Void) -> Option {
+        Option(
+            icon: .manage,
+            text: L10n.Localizable.ManageTeam.title,
+            actionImage: .manage,
+            action: action
+        )
+    }
 
-    static let addAccountOption = Option(
-        icon: .plus,
-        text: L10n.Localizable.AddAccount.title,
-        actionImage: nil
-    )
+    public static func addAccountOption(action: @escaping () -> Void) -> Option {
+        Option(
+            icon: .plus,
+            text: L10n.Localizable.AddAccount.title,
+            actionImage: nil,
+            action: action
+        )
+    }
+
+    public init(
+        icon: Icon,
+        text: String,
+        actionImage: ActionImage?,
+        action: @escaping () -> Void
+    ) {
+        self.icon = icon
+        self.text = text
+        self.actionImage = actionImage
+        self.action = action
+    }
 }
 
 struct OptionView: View {
@@ -78,7 +97,7 @@ struct OptionView: View {
         }
         .contentShape(Rectangle())
         .onTapGesture {
-            // Handle external link
+            option.action()
         }
     }
 
@@ -95,7 +114,7 @@ struct OptionView: View {
 
 #Preview {
     List {
-        OptionView(option: .manageTeamOption)
-        OptionView(option: .addAccountOption)
+        OptionView(option: .manageTeamOption(action: {}))
+        OptionView(option: .addAccountOption(action: {}))
     }
 }
