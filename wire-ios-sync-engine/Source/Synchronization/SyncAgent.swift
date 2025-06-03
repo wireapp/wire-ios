@@ -140,6 +140,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
     private func suspend() async {
         WireLogger.sync.debug("suspending sync")
+        ongoingSyncTask?.cancel()
         await incrementalSyncToken?.suspend()
         incrementalSyncToken = nil
         syncStateSubject.send(.suspended)
@@ -207,10 +208,6 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
     func performIncrementalSync() async throws {
         if isSyncV2Enabled {
-            guard incrementalSyncToken == nil else {
-                WireLogger.sync.info("incremental sync already running...")
-                return
-            }
 
             do {
                 try await incrementalSyncTaskManager.performIfNeeded { [weak self] in
