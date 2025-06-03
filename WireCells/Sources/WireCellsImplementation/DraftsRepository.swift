@@ -27,6 +27,7 @@ package protocol DraftsRepositoryProtocol: Actor {
 
     func add(assetURL: URL, assetSize: Int, cellName: String, fileName: String, fileType: UTType?) async
     func drafts(for cellName: String) -> AsyncStream<[WireCellsDraft]>
+    func publishAll(for cellName: String) async throws
 
 }
 
