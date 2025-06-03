@@ -1162,19 +1162,21 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     func syncAgentDidFailSyncing(_ syncAgent: SyncAgent, error: any Error) {
-        let onRetry: () -> Void = { [weak self] in
-            self?.managedObjectContext.performGroupedBlock {
-                self?.isPerformingSync = true
-                self?.updateNetworkState()
+        if Bundle.developerModeEnabled { // Only show sync error alert for debugging
+            let onRetry: () -> Void = { [weak self] in
+                self?.managedObjectContext.performGroupedBlock {
+                    self?.isPerformingSync = true
+                    self?.updateNetworkState()
+                }
+
+                syncAgent.resume()
             }
 
-            syncAgent.resume()
+            delegate?.clientDidFailSyncing(
+                error: error,
+                retryHandler: onRetry
+            )
         }
-
-        delegate?.clientDidFailSyncing(
-            error: error,
-            retryHandler: onRetry
-        )
 
         WireLogger.sync.error("failed to perform sync: \(String(describing: error))")
 
