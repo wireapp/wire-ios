@@ -184,13 +184,13 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
     }
 
     #if DEBUG
-    var getDraftsForTesting: [CellName: OrderedDictionary<WireCellsNodeID, WireCellsDraft>] {
-        drafts.value
-    }
+        var getDraftsForTesting: [CellName: OrderedDictionary<WireCellsNodeID, WireCellsDraft>] {
+            drafts.value
+        }
 
-    func setDraftsForTesting(_ drafts: [CellName: OrderedDictionary<WireCellsNodeID, WireCellsDraft>]) {
-        self.drafts.value = drafts
-    }
+        func setDraftsForTesting(_ drafts: [CellName: OrderedDictionary<WireCellsNodeID, WireCellsDraft>]) {
+            self.drafts.value = drafts
+        }
     #endif
 
 }
@@ -206,9 +206,9 @@ private extension OrderedDictionary<WireCellsNodeID, WireCellsDraft> {
         allSatisfy {
             switch $0.value.status {
             case .uploaded:
-                return true
+                true
             case .uploading, .failed, .cancelled:
-                return false
+                false
             }
         }
     }
