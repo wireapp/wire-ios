@@ -85,7 +85,7 @@ final class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> 
         todo: Void
     ) -> AccountTypeSelectionComponent {
         AccountTypeSelectionComponent(
-            todo: todo
+            parent: self
         )
     }
 

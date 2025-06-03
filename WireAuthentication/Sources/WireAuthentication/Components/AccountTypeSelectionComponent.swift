@@ -18,6 +18,8 @@
 
 import Foundation
 import NeedleFoundation
+internal import WireAuthenticationUI
+import WireAuthenticationAPI
 
 protocol AccountTypeSelectionComponentDependency: Dependency {
 
@@ -49,7 +51,22 @@ extension AccountTypeSelectionComponent: AccountTypeSelectionFactory {
     // MARK: - Factory
 
     @MainActor var viewModel: AccountTypeSelectionViewModel {
-        AccountTypeSelectionViewModel(
+
+
+        let todo = URL(string: "https://wire.com")!
+        // TODO: delete
+        struct T: AccountRegistrationAnalyticsTrackerProtocol {
+            func trackPersonalAccountCreationStart(multiplePasswordAttemptsNeeded: Bool) { fatalError() }
+            func trackPersonalAccountCreationReachedTermsOfUseConfirmation() { fatalError() }
+            func trackPersonalAccountCreationReachedVerificationCode() { fatalError() }
+            func trackPersonalAccountCreationFailedCodeVerification() { fatalError() }
+            func trackPersonalAccountCreationReachedUsernameForm() { fatalError() }
+            func trackPersonalAccountCreationCompletion() { fatalError() }
+        }
+
+        return AccountTypeSelectionViewModel(
+            teamsURL: todo,
+            analyticsTracker: T()
 //            didDetectDomainConflict: didDetectDomainConflict,
 //            howToChangeEmailURL: dependency.howToChangeEmailURL,
 //            howToDeleteAccountURL: dependency.howToDeleteAccountURL,
@@ -57,6 +74,10 @@ extension AccountTypeSelectionComponent: AccountTypeSelectionFactory {
 //                dependency?.bridge.sendOutboundEvent(.userAuthenticated(authenticationResult))
 //            }
         )
+    }
+
+    func personalAccountCreationFactory(todo: String) {
+        fatalError("TODO")
     }
 
 }

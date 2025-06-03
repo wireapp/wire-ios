@@ -46,7 +46,7 @@ package final class AccountTypeSelectionViewModel: ObservableObject {
         return components.url
     }()
 
-    init(
+    package init(
         teamsURL: URL,
         analyticsTracker: any AccountRegistrationAnalyticsTrackerProtocol
     ) {
