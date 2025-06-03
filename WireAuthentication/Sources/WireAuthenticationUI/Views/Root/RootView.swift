@@ -89,12 +89,13 @@ package struct RootView: View {
                             Strings.ObsoleteClient.Alert.okButton,
                             action: viewModel.goToAppStore
                         )
-                        // for dev purposes only
-                        // will be added in tickets to implement real alerts
-                        Button(
-                            Strings.ObsoleteClient.Alert.switchAccounts,
-                            action: viewModel.switchAccounts
-                        )
+                    // for dev purposes only
+                    // will be added in tickets to implement real alerts
+                    // TODO: [WPB-17804] https://wearezeta.atlassian.net/browse/WPB-17804
+//                        Button(
+//                            Strings.ObsoleteClient.Alert.switchAccounts,
+//                            action: viewModel.switchAccounts
+//                        )
                     default:
                         Button(Strings.Authentication.Error.confirm, action: {})
                     }
