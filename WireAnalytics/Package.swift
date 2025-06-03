@@ -11,10 +11,10 @@ let package = Package(
     name: "WireAnalytics",
     platforms: [.iOS("16.4"), .macOS(.v12)],
     products: [
-        .library(name: "WireAnalytics", type: .dynamic, targets: ["WireAnalytics"]),
-        .library(name: "WireAnalyticsSupport", type: .dynamic, targets: ["WireAnalyticsSupport"]),
-        .library(name: "WireCountly", type: .dynamic, targets: ["WireCountly"]),
-        .library(name: "WireDatadog", type: .dynamic, targets: ["WireDatadog"])
+        .library(name: "WireAnalytics", targets: ["WireAnalytics"]),
+        .library(name: "WireAnalyticsSupport", targets: ["WireAnalyticsSupport"]),
+        .library(name: "WireCountly", targets: ["WireCountly"]),
+        .library(name: "WireDatadog", targets: ["WireDatadog"])
     ],
     dependencies: [
         .package(url: "https://github.com/Countly/countly-sdk-ios.git", exact: "24.4.2"),
