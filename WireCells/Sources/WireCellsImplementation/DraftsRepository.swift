@@ -31,7 +31,7 @@ package protocol DraftsRepositoryProtocol: Actor {
 
 }
 
-enum DraftsRepositoryError: Error {
+enum DraftsRepositoryError: Error, Equatable {
 
     case notAllFilesAreUploaded
     case notAllFilesArePublished
@@ -42,7 +42,7 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
 
     typealias CellName = String
 
-    private var drafts: CurrentValueSubject<[CellName: OrderedDictionary<WireCellsNodeID, WireCellsDraft>], Never>
+    private let drafts: CurrentValueSubject<[CellName: OrderedDictionary<WireCellsNodeID, WireCellsDraft>], Never>
     private var continuations: [UUID: AsyncStream<[WireCellsDraft]>.Continuation] = [:]
     private let uploadManager: any WireCellsNodeUploadManagerProtocol
     private let nodesAPI: any NodesAPIProtocol
@@ -157,7 +157,7 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
         }
 
         let publishedIDs = results.compactMap { try? $0.get() }
-        for id in publishedIDs where getStatus(cellName: cellName, id: id) == .uploaded(isDraft: true) {
+        for id in publishedIDs {
             setStatus(.uploaded(isDraft: false), cellName: cellName, id: id)
         }
 
@@ -182,6 +182,16 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
     private func setStatus(_ status: WireCellsUploadStatus, cellName: CellName, id: WireCellsNodeID) {
         drafts.value[cellName]?[id]?.status = status
     }
+
+    #if DEBUG
+    var getDraftsForTesting: [CellName: OrderedDictionary<WireCellsNodeID, WireCellsDraft>] {
+        drafts.value
+    }
+
+    func setDraftsForTesting(_ drafts: [CellName: OrderedDictionary<WireCellsNodeID, WireCellsDraft>]) {
+        self.drafts.value = drafts
+    }
+    #endif
 
 }
 

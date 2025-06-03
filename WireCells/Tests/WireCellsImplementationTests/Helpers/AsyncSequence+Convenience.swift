@@ -16,21 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireCellsAPI
-import Foundation
-
-extension WireCellsDraft {
-    static func fixture(
-        id: WireCellsNodeID = .fixture(),
-        status: WireCellsUploadStatus = .uploaded(isDraft: true)
-    ) -> WireCellsDraft {
-        WireCellsDraft(
-            id: id,
-            assetURL: URL(string: "https://example.com")!,
-            fileType: nil,
-            status: status,
-            name: "Draft",
-            bytes: 1024
-        )
+extension AsyncSequence {
+    func collect() async throws -> [Element] {
+        try await reduce(into: [Element]()) { $0.append($1) }
     }
 }

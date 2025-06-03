@@ -42,13 +42,18 @@ final class PublishDraftsUseCaseTests {
             "cell-3": [
                 WireCellsNodeID.fixture(): WireCellsDraft.fixture(status: .uploading(progress: 0.5)),
                 WireCellsNodeID.fixture(): WireCellsDraft.fixture(status: .uploaded(isDraft: true))
-            ]
+            ],
+            "cell-4": [
+                WireCellsNodeID.fixture(): WireCellsDraft.fixture(status: .uploaded(isDraft: false)),
+                WireCellsNodeID.fixture(): WireCellsDraft.fixture(status: .uploaded(isDraft: true))
+            ],
+            "cell-5": [:] // Empty cell
         ]
     )
     private lazy var sut = PublishDraftsUseCase(cellName: "cell-name", draftRepository: draftsRepository)
 
     @Test(arguments: ["cell-1", "cell-2", "cell-3"])
-    func invoke_whenNotAllFilesUploaded(cellName: String) async throws {
+    func invoke_whenNotAllFilesUploaded(cellName: String) async {
         // Given
         let sut = PublishDraftsUseCase(cellName: cellName, draftRepository: draftsRepository)
 
@@ -58,4 +63,78 @@ final class PublishDraftsUseCaseTests {
         }
     }
 
+    @Test
+    func invoke_whenNoFilesInCell() async {
+        // Given
+        let sut = PublishDraftsUseCase(cellName: "cell-5", draftRepository: draftsRepository)
+
+        // When, Then
+        await #expect(throws: Never.self) {
+            try await sut.invoke()
+        }
+    }
+
+    @Test
+    func invoke_whenNonExistentCell() async throws {
+        // Given
+        let sut = PublishDraftsUseCase(cellName: "non-existent-cell", draftRepository: draftsRepository)
+
+        // When, Then
+        await #expect(throws: Never.self) {
+            try await sut.invoke()
+        }
+    }
+
+    @Test
+    func invoke_whenPublishingFails() async {
+        // Given
+        let sut = PublishDraftsUseCase(cellName: "cell-4", draftRepository: draftsRepository)
+        nodesAPI.publishDraftNodeIDWireCellsNodeIDVoidThrowableError = URLError(.notConnectedToInternet)
+
+        // When, Then
+        await #expect(throws: DraftsRepositoryError.notAllFilesArePublished) {
+            try await sut.invoke()
+        }
+    }
+
+    @Test
+    func invoke_whenPublishingSucceeds() async throws {
+        // Given
+        let sut = PublishDraftsUseCase(cellName: "cell-4", draftRepository: draftsRepository)
+        nodesAPI.publishDraftNodeIDWireCellsNodeIDVoidClosure = { _ in }
+
+        // When
+        try await sut.invoke()
+
+        // Then
+        let drafts = try await #require(draftsRepository.getDraftsForTesting["cell-4"]).values
+        #expect(drafts.count == 2)
+        #expect(drafts.allSatisfy { $0.status == .uploaded(isDraft: false) })
+        #expect(nodesAPI.publishDraftNodeIDWireCellsNodeIDVoidCallsCount == 1)
+    }
+
+    @Test
+    func invoke_whenNewDraftAddedConcurrently() async throws {
+        // Given
+        let sut = PublishDraftsUseCase(cellName: "cell-4", draftRepository: draftsRepository)
+        nodesAPI.publishDraftNodeIDWireCellsNodeIDVoidClosure = { _ in
+            try await Task.sleep(nanoseconds: 2_000_000_000)
+        }
+
+
+        // When, Then
+        let task = Task.detached {
+            try await sut.invoke()
+        }
+
+        try await Task.sleep(nanoseconds: 1_000_000_000)
+        var drafts = await draftsRepository.getDraftsForTesting
+        drafts["cell-4"]?[.fixture()] = WireCellsDraft.fixture(status: .uploading(progress: 0.5))
+        await draftsRepository.setDraftsForTesting(drafts)
+
+
+        await #expect(throws: DraftsRepositoryError.notAllFilesArePublished) {
+            try await task.value
+        }
+    }
 }
