@@ -80,6 +80,12 @@ extension WireProtos.Asset: EphemeralMessageCapable {
 
 // MARK: - MessageCapable
 
+extension Multipart: MessageCapable {
+    public func setContent(on message: inout GenericMessage) {
+        message.multipart = self
+    }
+}
+
 extension ImageAsset: MessageCapable {
     public func setContent(on message: inout GenericMessage) {
         message.image = self
