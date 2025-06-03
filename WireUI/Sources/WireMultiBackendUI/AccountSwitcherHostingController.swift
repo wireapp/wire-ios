@@ -16,5 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-"manageTeam.title" = "Manage Team & Billing";
-"addAccount.title" = "Add account or team";
+import SwiftUI
+import UIKit
+
+public class AccountSwitcherHostingController: UIHostingController<AccountSwitcherView> {
+
+    public init(accounts: [AccountUIModel], options: [Option]) {
+        super.init(rootView: AccountSwitcherView(accounts: accounts, options: options))
+        view.backgroundColor = .clear
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
