@@ -73,32 +73,3 @@ struct AccountSwitcherModalView: View {
         }
     }
 }
-
-//#Preview {
-//    NavigationStack {
-//        AccountSwitcherModalView(
-//            viewModel: AccountSwitcherModalViewModel(
-//                accounts: [
-//                    AccountUIModel(
-//                        avatarSource: .text("DS"),
-//                        name: "Name",
-//                        handle: "@handle",
-//                        teamName: nil,
-//                        backendName: "Staging",
-//                        action: { }
-//                    ),
-//                    AccountUIModel(
-//                        avatarSource: .text("SD"),
-//                        name: "Name 2",
-//                        handle: "@handle",
-//                        teamName: "SUper team",
-//                        backendName: "Cloud",
-//                        action: { }
-//                    )
-//                ],
-//                router: MockRouter()
-//            )
-//        )
-//    }
-//    .environment(\.wireTextStyleMapping, WireTextStyleMapping())
-//}

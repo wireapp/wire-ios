@@ -107,7 +107,7 @@ final class AuthenticationInterfaceBuilder {
                 ssoCallbackURLScheme: Bundle.ssoURLScheme ?? "wire-sso",
                 appStoreURL: WireURLs.shared.appOnItunes,
                 existsAnotherAccount: numberOfAccounts > 0,
-                accountsPublisher: ReadOnlyCurrentValueSubject(subject: CurrentValueSubject(accounts)),
+                otherAccountsPublisher: ReadOnlyCurrentValueSubject(subject: CurrentValueSubject(accounts)),
                 useLegacyRegistrationFlow: !DeveloperFlag.newRegistration.isOn
             )
             return AuthenticationHostingController(

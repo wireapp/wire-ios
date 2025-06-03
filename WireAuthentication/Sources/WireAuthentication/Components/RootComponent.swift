@@ -39,7 +39,7 @@ class RootComponent: BootstrapComponent {
     public let ssoCallbackURLScheme: String
     public let appStoreURL: URL
     public let existsAnotherAccount: Bool
-    public var accountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>
+    public var otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>
     public let useLegacyRegistrationFlow: Bool
 
     @MainActor public var bridge: WireAuthenticationBridge {
@@ -62,7 +62,7 @@ class RootComponent: BootstrapComponent {
         ssoCallbackURLScheme: String,
         appStoreURL: URL,
         existsAnotherAccount: Bool,
-        accountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>,
+        otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>,
         useLegacyRegistrationFlow: Bool
     ) {
         self.backendInfo = backendInfo
@@ -75,7 +75,7 @@ class RootComponent: BootstrapComponent {
         self.ssoCallbackURLScheme = ssoCallbackURLScheme
         self.appStoreURL = appStoreURL
         self.existsAnotherAccount = existsAnotherAccount
-        self.accountsPublisher = accountsPublisher
+        self.otherAccountsPublisher = otherAccountsPublisher
         self.useLegacyRegistrationFlow = useLegacyRegistrationFlow
     }
 

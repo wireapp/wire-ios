@@ -56,7 +56,7 @@ public struct WireAuthenticationAssembly {
         ssoCallbackURLScheme: String,
         appStoreURL: URL,
         existsAnotherAccount: Bool,
-        accountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>,
+        otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>,
         useLegacyRegistrationFlow: Bool
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
         let backendInfo = BackendInfo(
@@ -73,7 +73,7 @@ public struct WireAuthenticationAssembly {
             ssoCallbackURLScheme: ssoCallbackURLScheme,
             appStoreURL: appStoreURL,
             existsAnotherAccount: existsAnotherAccount,
-            accountsPublisher: accountsPublisher,
+            otherAccountsPublisher: otherAccountsPublisher,
             useLegacyRegistrationFlow: useLegacyRegistrationFlow
         )
 

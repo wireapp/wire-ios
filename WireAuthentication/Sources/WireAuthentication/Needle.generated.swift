@@ -91,8 +91,8 @@ private class AccountSwitcherComponentDependency65306f6262d465ec7963Provider: Ac
     var router: any Router {
         return rootComponent.router
     }
-    var accountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]> {
-        return rootComponent.accountsPublisher
+    var otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]> {
+        return rootComponent.otherAccountsPublisher
     }
     private let rootComponent: RootComponent
     init(rootComponent: RootComponent) {
@@ -192,7 +192,7 @@ extension RootComponent: NeedleFoundation.Registration {
         localTable["ssoCallbackURLScheme-String"] = { [unowned self] in self.ssoCallbackURLScheme as Any }
         localTable["appStoreURL-URL"] = { [unowned self] in self.appStoreURL as Any }
         localTable["existsAnotherAccount-Bool"] = { [unowned self] in self.existsAnotherAccount as Any }
-        localTable["accountsPublisher-ReadOnlyCurrentValueSubject<[AccountUIModel]>"] = { [unowned self] in self.accountsPublisher as Any }
+        localTable["otherAccountsPublisher-ReadOnlyCurrentValueSubject<[AccountUIModel]>"] = { [unowned self] in self.otherAccountsPublisher as Any }
         localTable["useLegacyRegistrationFlow-Bool"] = { [unowned self] in self.useLegacyRegistrationFlow as Any }
         localTable["bridge-WireAuthenticationBridge"] = { [unowned self] in self.bridge as Any }
         localTable["router-any Router"] = { [unowned self] in self.router as Any }
@@ -201,7 +201,7 @@ extension RootComponent: NeedleFoundation.Registration {
 extension AccountSwitcherComponent: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\AccountSwitcherComponentDependency.router] = "router-any Router"
-        keyPathToName[\AccountSwitcherComponentDependency.accountsPublisher] = "accountsPublisher-ReadOnlyCurrentValueSubject<[AccountUIModel]>"
+        keyPathToName[\AccountSwitcherComponentDependency.otherAccountsPublisher] = "otherAccountsPublisher-ReadOnlyCurrentValueSubject<[AccountUIModel]>"
     }
 }
 extension NoHistoryComponent: NeedleFoundation.Registration {

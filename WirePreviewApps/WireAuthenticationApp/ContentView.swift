@@ -56,7 +56,7 @@ struct ContentView: View {
                 ssoCallbackURLScheme: "some scheme",
                 appStoreURL: URL(string: "www.example.com")!,
                 existsAnotherAccount: true,
-                accountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>(
+                otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>(
                     subject: CurrentValueSubject<[AccountUIModel], Never>(
                         [
                             AccountUIModel(

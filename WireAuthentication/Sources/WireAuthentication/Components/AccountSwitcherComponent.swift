@@ -26,7 +26,7 @@ import WireFoundation
 protocol AccountSwitcherComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
-    var accountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]> { get }
+    var otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]> { get }
 
 }
 
@@ -38,7 +38,7 @@ extension AccountSwitcherComponent: AccountSwitcherFactory {
 
     @MainActor var viewModel: AccountSwitcherModalViewModel {
         AccountSwitcherModalViewModel(
-            accountsPublisher: dependency.accountsPublisher,
+            otherAccountsPublisher: dependency.otherAccountsPublisher,
             router: dependency.router
         )
     }
