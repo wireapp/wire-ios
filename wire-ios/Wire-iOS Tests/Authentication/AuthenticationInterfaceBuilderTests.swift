@@ -34,13 +34,16 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
         accentColor = .blue
 
         featureProvider = MockAuthenticationFeatureProvider()
-        builder = AuthenticationInterfaceBuilder(featureProvider: featureProvider, backendEnvironmentProvider: {
-            let backendEnvironmentProvider = MockEnvironment()
-            let proxy: FakeProxySettings? = nil
-            backendEnvironmentProvider.proxy = proxy
-            backendEnvironmentProvider.environmentType = EnvironmentTypeProvider(environmentType: .staging)
-            return backendEnvironmentProvider
-        })
+        builder = AuthenticationInterfaceBuilder(
+            featureProvider: featureProvider,
+            accountSelector: MockAccountSelector(),
+            backendEnvironmentProvider: {
+                let backendEnvironmentProvider = MockEnvironment()
+                let proxy: FakeProxySettings? = nil
+                backendEnvironmentProvider.proxy = proxy
+                backendEnvironmentProvider.environmentType = EnvironmentTypeProvider(environmentType: .staging)
+                return backendEnvironmentProvider
+            })
     }
 
     override func tearDown() {
@@ -109,6 +112,7 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
         backendEnvironmentProvider.backendURL = URL(string: "https://api.example.org")!
         builder = AuthenticationInterfaceBuilder(
             featureProvider: featureProvider,
+            accountSelector: MockAccountSelector(),
             backendEnvironmentProvider: { backendEnvironmentProvider }
         )
         runSnapshotTest(
@@ -127,6 +131,7 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
         backendEnvironmentProvider.backendURL = URL(string: "https://api.example.org")!
         builder = AuthenticationInterfaceBuilder(
             featureProvider: featureProvider,
+            accountSelector: MockAccountSelector(),
             backendEnvironmentProvider: { backendEnvironmentProvider }
         )
         runSnapshotTest(for: .provideCredentials(nil))
@@ -147,6 +152,7 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
 
         builder = AuthenticationInterfaceBuilder(
             featureProvider: featureProvider,
+            accountSelector: MockAccountSelector(),
             backendEnvironmentProvider: { backendEnvironmentProvider }
         )
         runSnapshotTest(for: .provideCredentials(nil))
