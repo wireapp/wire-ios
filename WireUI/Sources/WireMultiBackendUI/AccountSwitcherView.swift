@@ -43,14 +43,10 @@ public struct AccountSwitcherView: View {
             ForEach(0 ..< totalCount, id: \.self) { index in
                 if index < otherAccounts.count {
                     AccountView(account: otherAccounts[index])
-                        .padding(.horizontal, 16)
-                        .padding(.top, 8.5)
-                        .padding(.bottom, 10.5)
+                        .padding(EdgeInsets(top: 8.5, leading: 16, bottom: 10.5, trailing: 20))
                 } else {
                     OptionView(option: options[index - otherAccounts.count])
-                        .padding(.horizontal, 16)
-                        .padding(.top, 16.5)
-                        .padding(.bottom, 18.5)
+                        .padding(EdgeInsets(top: 16.5, leading: 16, bottom: 18.5, trailing: 20))
                 }
 
                 let isLastItem = index == totalCount - 1
