@@ -19,23 +19,48 @@
 import SwiftUI
 import WireDesign
 
-struct AccountSwitcherView: View {
+public struct AccountSwitcherView: View {
 
     let accounts: [AccountUIModel]
     let options: [Option]
 
-    var body: some View {
-        List {
-            ForEach(accounts) { account in
-                AccountView(account: account)
+    public init(accounts: [AccountUIModel], options: [Option]) {
+        self.accounts = accounts
+        self.options = options
+    }
+
+    public var body: some View {
+        VStack(spacing: 0) {
+            ForEach(accounts.indices, id: \.self) { index in
+                AccountView(account: accounts[index])
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8.5)
+                    .padding(.bottom, 10.5)
+                if index < accounts.count - 1 || !options.isEmpty {
+                    divider()
+                }
             }
 
-            ForEach(options) { option in
-                OptionView(option: option)
-                    .frame(height: 37)
+            ForEach(options.indices, id: \.self) { index in
+                OptionView(option: options[index])
+                    .padding(.horizontal, 16)
+                    .padding(.top, 16.5)
+                    .padding(.bottom, 18.5)
+
+                if index < options.count - 1 {
+                    divider()
+                }
             }
         }
-        .background(Color(uiColor: SemanticColors.View.backgroundDefault))
+        .background(Color(uiColor: ColorTheme.Backgrounds.surface))
+    }
+
+    @ViewBuilder
+    func divider() -> some View {
+        Divider()
+            .frame(height: 1)
+            .background(Color(ColorTheme.Strokes.outline))
+            .padding(.leading, 64)
     }
 }
 
@@ -47,27 +72,30 @@ struct AccountSwitcherView: View {
                 name: "Kim Dawson",
                 handle: "@username",
                 teamName: nil,
-                backendName: nil
+                backendName: nil,
+                action: {}
             ),
             AccountUIModel(
                 avatarSource: .text("DS"),
                 name: "Deniz Agha",
                 handle: "@username",
                 teamName: "team name",
-                backendName: "backend name"
+                backendName: "backend name",
+                action: {}
             ),
             AccountUIModel(
                 avatarSource: .text("SD"),
                 name: "Willy Wonka",
                 handle: "@username",
                 teamName: "team name",
-                backendName: "backend name long long long long"
+                backendName: "backend name long long long long",
+                action: {}
             )
 
         ],
         options: [
-            .addAccountOption,
-            .manageTeamOption
+            .addAccountOption(action: {}),
+            .manageTeamOption(action: {})
         ]
     )
 }
