@@ -81,6 +81,14 @@ final class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> 
         )
     }
 
+    func accountTypeSelectionComponent(
+        todo: Void
+    ) -> AccountTypeSelectionComponent {
+        AccountTypeSelectionComponent(
+            todo: todo
+        )
+    }
+
 }
 
 extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
@@ -136,7 +144,9 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
     }
 
     func accountTypeSelectionFactory() -> any AccountTypeSelectionFactory {
-        fatalError("TODO")
+        accountTypeSelectionComponent(
+            todo: ()
+        )
     }
 
     // MARK: - Use cases
