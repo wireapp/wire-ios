@@ -267,7 +267,7 @@ final class SelfProfileViewController: UIViewController {
         analyticsEventTracker?.trackEvent(.UI.personalToTeamMigrationCTA)
 
         let viewController = IndividualToTeamMigrationViewController(
-            privacyPolicyURL: WireURLs.shared.privacyPolicy.absoluteString, //
+            privacyPolicyURL: WireURLs.shared.privacyPolicy.absoluteString,
             termsOfUseURL: WireURLs.shared.legal.absoluteString,
             useCase: useCase,
             userProfileName: userName,
