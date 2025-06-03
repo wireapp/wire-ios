@@ -36,7 +36,6 @@ struct AccountTypeSelectionView: View {
             ScrollView {
                 scrollViewContent
             }
-
             .sheet(item: $viewModel.modalDestination, onDismiss: {
                 dismiss()
             }, content: { item in
