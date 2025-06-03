@@ -73,7 +73,7 @@ class UserClientsAPIV0: UserClientsAPI, VersionedAPI {
     func updateClient(id: UserClientID, payload: UpdateClientPayload) async throws {
         let body = try JSONEncoder.defaultEncoder.encode(payload)
 
-        let path = "/clients/\(id)"
+        let path = "\(pathPrefix)/clients/\(id)"
         
         let request = try URLRequestBuilder(path: path)
             .withMethod(.put)
