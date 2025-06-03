@@ -16,5 +16,4 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-"manageTeam.title" = "Manage Team & Billing";
-"addAccount.title" = "Add account or team";
+import Foundation
