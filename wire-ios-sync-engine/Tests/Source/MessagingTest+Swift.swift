@@ -97,10 +97,11 @@ public extension MessagingTest {
     
     func createSelfClient(capabilities: [UserClientCapability] = []) -> UserClient {
         let selfClient = self.setupSelfClient(inMoc: self.syncMOC)
+        let time = Date().transportString()
         var payload: [String : AnyObject] = [
             "id": selfClient.remoteIdentifier as AnyObject,
             "type": "permanent" as AnyObject,
-            "time": Date().transportString as AnyObject
+            "time": time as AnyObject
         ]
         
         if capabilities.isEmpty == false {
