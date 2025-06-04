@@ -24,6 +24,7 @@ class WebViewUserAgent: NSObject, OIDExternalUserAgent, WebAuthViewControllerDel
 
     private let targetViewController: UIViewController
     private var session: OIDExternalUserAgentSession?
+    private var webAuthViewController: WebAuthViewController?
 
     init(targetViewController: UIViewController) {
         self.targetViewController = targetViewController
@@ -35,6 +36,7 @@ class WebViewUserAgent: NSObject, OIDExternalUserAgent, WebAuthViewControllerDel
     ) -> Bool {
         let url = request.externalUserAgentRequestURL().absoluteURL
         let webAuthViewController = WebAuthViewController(url: url)
+        self.webAuthViewController = webAuthViewController
         webAuthViewController.delegate = self
         targetViewController.present(webAuthViewController, animated: true)
         self.session = session
@@ -42,17 +44,23 @@ class WebViewUserAgent: NSObject, OIDExternalUserAgent, WebAuthViewControllerDel
     }
 
     func dismiss(animated: Bool) async {
-        await targetViewController
-            .presentedViewController?
-            .dismiss(animated: animated)
+        await targetViewController.presentedViewController?.dismiss(animated: animated)
+        destroyWebAuthViewController()
     }
 
     func webAuthViewDidReceiveCallback(url: URL) {
         session?.resumeExternalUserAgentFlow(with: url)
+        destroyWebAuthViewController()
     }
 
     func webAuthViewDidCancel() {
         session?.cancel()
+        destroyWebAuthViewController()
+    }
+
+    private func destroyWebAuthViewController() {
+        webAuthViewController?.wipeDataStore()
+        webAuthViewController = nil
     }
 
 }

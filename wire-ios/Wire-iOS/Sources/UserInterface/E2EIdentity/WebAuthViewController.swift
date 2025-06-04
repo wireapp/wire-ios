@@ -37,6 +37,7 @@ class WebAuthViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
 
     private lazy var webView: WKWebView = {
         let webConfiguration = WKWebViewConfiguration()
+
         // Don't cache anything (cookies, data, etc).
         webConfiguration.websiteDataStore = .nonPersistent()
 
@@ -201,6 +202,15 @@ class WebAuthViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
         // Show the user the entire URL for them to verify.
         let viewController = WebAuthURLViewController(url: url)
         present(viewController, animated: true)
+    }
+
+    func wipeDataStore() {
+        // Even though it's non persistent, clear it just to be safe.
+        let types = WKWebsiteDataStore.allWebsiteDataTypes()
+        webView.configuration.websiteDataStore.removeData(
+            ofTypes: types,
+            modifiedSince: Date.distantPast
+        ) {}
     }
 
 }
