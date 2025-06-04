@@ -40,8 +40,8 @@ class RootComponent: BootstrapComponent {
     public let appStoreURL: URL
     public let existsAnotherAccount: Bool
     public let otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>
-    public let isLoggedInProvider: () -> Bool
-    public let multibackendEnabledProvider: () -> Bool
+    public let isLoggedIn: Bool
+    public let multibackendEnabled: Bool
     public let useLegacyRegistrationFlow: Bool
 
     @MainActor public var bridge: WireAuthenticationBridge {
@@ -65,9 +65,9 @@ class RootComponent: BootstrapComponent {
         appStoreURL: URL,
         existsAnotherAccount: Bool,
         otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>,
-        isLoggedInProvider: @escaping () -> Bool,
+        isLoggedIn: Bool,
         useLegacyRegistrationFlow: Bool,
-        multibackendEnabledProvider: @escaping () -> Bool
+        multibackendEnabled: Bool
     ) {
         self.backendInfo = backendInfo
         self.preferredAPIVersion = preferredAPIVersion
@@ -80,9 +80,9 @@ class RootComponent: BootstrapComponent {
         self.appStoreURL = appStoreURL
         self.existsAnotherAccount = existsAnotherAccount
         self.otherAccountsPublisher = otherAccountsPublisher
-        self.isLoggedInProvider = isLoggedInProvider
+        self.isLoggedIn = isLoggedIn
         self.useLegacyRegistrationFlow = useLegacyRegistrationFlow
-        self.multibackendEnabledProvider = multibackendEnabledProvider
+        self.multibackendEnabled = multibackendEnabled
     }
 
     // MARK: - Children
@@ -112,9 +112,9 @@ extension RootComponent: RootViewModel.Factory {
                 factory: self,
                 bridge: bridge,
                 backendInfo: backendInfo,
-                multibackendEnabled: multibackendEnabledProvider(),
+                multibackendEnabled: multibackendEnabled,
                 hasOtherAccounts: !otherAccountsPublisher.value.isEmpty,
-                isLoggedIn: isLoggedInProvider()
+                isLoggedIn: isLoggedIn
             )
         }
     }
