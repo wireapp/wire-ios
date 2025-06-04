@@ -1110,10 +1110,14 @@ public final class SessionManager: NSObject, SessionManagerType {
         guard let apiVersion = BackendInfo.apiVersion else {
             fatalError("api version unknown")
         }
+        guard isDeveloperModeEnabled else {
+            // [WPB-18030] disabled new sync for Cloud build 3.124
+            return false
+        }
 
-        let isAvailble = apiVersion >= .v8
+        let isAvailable = apiVersion >= .v8
         let isAlreadyEnabled = journal[.isSyncV2Enabled]
-        return isAvailble && !isAlreadyEnabled
+        return isAvailable && !isAlreadyEnabled
     }
 
     private func enableSyncV2(
