@@ -16,18 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import SwiftUI
 
-// sourcery: AutoMockable
-public protocol SubmitProxyCredentialsUseCaseProtocol: Sendable {
+extension View {
 
-    func invoke(proxyCredentials: ProxyCredentials) throws
-
-}
-
-public protocol SubmitProxyCredentialsUseCaseFactory {
-
-    @MainActor
-    func submitProxyCredentialsUseCase() -> any SubmitProxyCredentialsUseCaseProtocol
+    @available(*, deprecated, message: "use NavigationStack directly")
+    func inNavigationStack() -> some View {
+        NavigationStack(root: { self })
+    }
 
 }
