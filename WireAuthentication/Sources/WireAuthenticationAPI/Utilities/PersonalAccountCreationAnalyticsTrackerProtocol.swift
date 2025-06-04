@@ -19,6 +19,14 @@
 // sourcery: AutoMockable
 public protocol PersonalAccountCreationAnalyticsTrackerProtocol {
 
+    /// Start analytics after the user agreed.
+
+    func setUp()
+
+    /// Stop analytics when the account creation flow is left.
+
+    func tearDown()
+
     /// Invoked when the user submits the personal account creation form.
     /// - Parameter multiplePasswordAttemptsNeeded: `true` if it took the user more than one try to enter a valid password.
 

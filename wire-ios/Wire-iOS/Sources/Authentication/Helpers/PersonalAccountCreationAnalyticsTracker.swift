@@ -21,10 +21,16 @@ import WireAuthenticationAPI
 
 struct PersonalAccountCreationAnalyticsTracker: PersonalAccountCreationAnalyticsTrackerProtocol {
 
-    let analyticsTracker: any AnalyticsEventTracker
+    private var analyticsTracker: (any AnalyticsEventTracker)!
 
-    init() {
-        fatalError()
+    init() {}
+
+    func setUp() {
+        fatalError("WPB-17530")
+    }
+
+    func tearDown() {
+        fatalError("WPB-17530")
     }
 
     func trackPersonalAccountCreationStart(multiplePasswordAttemptsNeeded multipleAttempts: Bool) {
