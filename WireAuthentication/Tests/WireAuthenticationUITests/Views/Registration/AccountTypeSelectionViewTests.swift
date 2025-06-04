@@ -25,7 +25,7 @@ import WireAuthenticationAPISupport
 
 final class AccountTypeSelectionViewTests: XCTestCase {
 
-    private var analyticsTrackerMock: MockAccountRegistrationAnalyticsTrackerProtocol!
+    private var analyticsTrackerMock: MockPersonalAccountCreationAnalyticsTrackerProtocol!
     private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
@@ -47,7 +47,7 @@ final class AccountTypeSelectionViewTests: XCTestCase {
             teamsURL: URL(string: "https://www.apple.com")!,
             analyticsTracker: analyticsTrackerMock
         )
-        let view = AccountTypeSelectionView(factory: FakeAccountTypeSelectionFactory())
+        let view = AccountTypeSelectionView(/*factory: FakeAccountTypeSelectionFactory()*/) // TODO: fix
             .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
@@ -66,7 +66,7 @@ final class AccountTypeSelectionViewTests: XCTestCase {
             teamsURL: URL(string: "https://www.apple.com")!,
             analyticsTracker: analyticsTrackerMock
         )
-        let view = AccountTypeSelectionView(factory: FakeAccountTypeSelectionFactory())
+        let view = AccountTypeSelectionView(/*factory: FakeAccountTypeSelectionFactory()*/) // TODO: fix
             .frame(width: screenBounds.width, height: screenBounds.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {

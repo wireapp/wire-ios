@@ -81,10 +81,10 @@ final class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> 
         )
     }
 
-    func accountTypeSelectionComponent(
+    func personalAccountCreationComponent(
         todo: Void
-    ) -> AccountTypeSelectionComponent {
-        AccountTypeSelectionComponent(
+    ) -> PersonalAccountCreationComponent {
+        PersonalAccountCreationComponent(
             parent: self
         )
     }
@@ -143,8 +143,8 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
         )
     }
 
-    func accountTypeSelectionFactory() -> any AccountTypeSelectionFactory {
-        accountTypeSelectionComponent(
+    func personalAccountCreationFactory() -> any PersonalAccountCreationFactory {
+        personalAccountCreationComponent(
             todo: ()
         )
     }

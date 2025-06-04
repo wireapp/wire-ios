@@ -16,14 +16,4 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-struct FakeAccountTypeSelectionFactory: AccountTypeSelectionFactory {
-
-    var viewModel: AccountTypeSelectionViewModel {
-        fatalError()
-    }
-
-    func personalAccountCreationFactory(todo: String) {
-        fatalError()
-    }
-
-}
+package final class PersonalAccountCreationViewModel {}

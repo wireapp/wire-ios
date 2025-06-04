@@ -54,7 +54,7 @@ public struct WireAuthenticationAssembly {
         appStoreURL: URL,
         existsAnotherAccount: Bool,
         useLegacyRegistrationFlow: Bool,
-        accountRegistrationAnalyticsTracker: any AccountRegistrationAnalyticsTrackerProtocol
+        personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
         let backendInfo = BackendInfo(
             environmentType: environmentType,
@@ -71,7 +71,7 @@ public struct WireAuthenticationAssembly {
             appStoreURL: appStoreURL,
             existsAnotherAccount: existsAnotherAccount,
             useLegacyRegistrationFlow: useLegacyRegistrationFlow,
-            accountRegistrationAnalyticsTracker: accountRegistrationAnalyticsTracker
+            personalAccountCreationAnalyticsTracker: personalAccountCreationAnalyticsTracker
         )
 
         return (view: RootView(factory: rootComponent), bridge: rootComponent.bridge)

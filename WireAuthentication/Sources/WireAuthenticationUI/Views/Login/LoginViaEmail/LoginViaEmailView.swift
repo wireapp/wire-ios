@@ -36,7 +36,7 @@ package protocol LoginViaEmailFactory {
     func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory
 
     @MainActor
-    func accountTypeSelectionFactory() -> any AccountTypeSelectionFactory
+    func personalAccountCreationFactory() -> any PersonalAccountCreationFactory
 
 }
 
@@ -93,7 +93,8 @@ package struct LoginViaEmailView: View {
             }
         )
         .sheet(isPresented: $viewModel.isCreateAccountPresented) {
-            AccountTypeSelectionView(factory: viewModel.factory.accountTypeSelectionFactory())
+            //AccountTypeSelectionView(factory: viewModel.factory.accountTypeSelectionFactory()) TODO: fix
+            Text(verbatim: "todo: show AccountTypeSelectionView")
         }
         .navigationDestination(for: LoginViaEmailDestination.self) { destination in
             destinationView(destination)

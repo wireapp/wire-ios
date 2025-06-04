@@ -46,7 +46,9 @@ extension PersonalAccountCreationComponent: PersonalAccountCreationFactory {
 
 
         let todo = URL(string: "https://wire.com")!
+        fatalError("TODO")
 
+        /*
         return AccountTypeSelectionViewModel(
             teamsURL: todo,
             analyticsTracker: dependency.accountRegistrationAnalyticsTracker
@@ -57,6 +59,7 @@ extension PersonalAccountCreationComponent: PersonalAccountCreationFactory {
 //                dependency?.bridge.sendOutboundEvent(.userAuthenticated(authenticationResult))
 //            }
         )
+         */
     }
 
 }

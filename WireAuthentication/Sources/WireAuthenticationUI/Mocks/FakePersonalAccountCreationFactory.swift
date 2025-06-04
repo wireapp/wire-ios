@@ -16,11 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import NeedleFoundation
-import WireAuthenticationAPI
+struct FakePersonalAccountCreationFactory: PersonalAccountCreationFactory {
 
-protocol PersonalAccountCreationComponentDependency: Dependency {
-
-    var personalAccountCreationAnalyticsTracker: PersonalAccountCreationAnalyticsTrackerProtocol { get }
+    var viewModel: PersonalAccountCreationViewModel {
+        fatalError()
+    }
 
 }

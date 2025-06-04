@@ -37,7 +37,7 @@ class RootComponent: BootstrapComponent {
     public let appStoreURL: URL
     public let existsAnotherAccount: Bool
     public let useLegacyRegistrationFlow: Bool
-    public let accountRegistrationAnalyticsTracker: AccountRegistrationAnalyticsTrackerProtocol
+    public let personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
 
     @MainActor public var bridge: WireAuthenticationBridge {
         shared {
@@ -60,7 +60,7 @@ class RootComponent: BootstrapComponent {
         appStoreURL: URL,
         existsAnotherAccount: Bool,
         useLegacyRegistrationFlow: Bool,
-        accountRegistrationAnalyticsTracker: AccountRegistrationAnalyticsTrackerProtocol
+        personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
     ) {
         self.backendInfo = backendInfo
         self.preferredAPIVersion = preferredAPIVersion
@@ -73,7 +73,7 @@ class RootComponent: BootstrapComponent {
         self.appStoreURL = appStoreURL
         self.existsAnotherAccount = existsAnotherAccount
         self.useLegacyRegistrationFlow = useLegacyRegistrationFlow
-        self.accountRegistrationAnalyticsTracker = accountRegistrationAnalyticsTracker
+        self.personalAccountCreationAnalyticsTracker = personalAccountCreationAnalyticsTracker
     }
 
     // MARK: - Children

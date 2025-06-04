@@ -28,9 +28,10 @@ struct AccountTypeSelectionView: View {
     private typealias Labels = L10n.Accessibility.AccountTypeSelector
 
     package init(
-        factory: @autoclosure @escaping () -> AccountTypeSelectionFactory
+        // factory: @autoclosure @escaping () -> AccountTypeSelectionFactory
     ) {
-        self._viewModel = StateObject(wrappedValue: factory().viewModel)
+        fatalError("TODO")
+        // self._viewModel = StateObject(wrappedValue: factory().viewModel)
     }
 
     var body: some View {
@@ -205,6 +206,6 @@ private struct FeatureView: View {
 #Preview {
     Spacer()
         .sheet(isPresented: .constant(true)) {
-            AccountTypeSelectionView(factory: FakeAccountTypeSelectionFactory())
+            AccountTypeSelectionView(/*factory: FakeAccountTypeSelectionFactory()*/) // TODO: fix
         }
 }

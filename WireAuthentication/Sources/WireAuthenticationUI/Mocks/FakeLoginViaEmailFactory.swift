@@ -37,7 +37,7 @@ struct FakeLoginViaEmailFactory: LoginViaEmailFactory, CreateAuthenticationResul
         fatalError()
     }
 
-    func accountTypeSelectionFactory() -> any AccountTypeSelectionFactory {
+    func personalAccountCreationFactory() -> any PersonalAccountCreationFactory {
         fatalError()
     }
 

@@ -25,7 +25,7 @@ package final class AccountTypeSelectionViewModel: ObservableObject {
 
     @Published var isCreateTeamAccountPresented = false
 
-    private let analyticsTracker: any AccountRegistrationAnalyticsTrackerProtocol
+    private let analyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
 
     private let teamsURL: URL
 
@@ -48,7 +48,7 @@ package final class AccountTypeSelectionViewModel: ObservableObject {
 
     package init(
         teamsURL: URL,
-        analyticsTracker: any AccountRegistrationAnalyticsTrackerProtocol
+        analyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
     ) {
         self.teamsURL = teamsURL
         self.analyticsTracker = analyticsTracker
