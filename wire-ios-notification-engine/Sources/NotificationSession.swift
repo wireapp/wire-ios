@@ -679,3 +679,13 @@ public struct CallEventPayload {
     }
 
 }
+
+extension LogAttributes {
+    static let newNSE = [
+        LogAttributesKey.nse: "new"
+    ]
+
+    static let legacyNSE = [
+        LogAttributesKey.nse: "legacy"
+    ]
+}
