@@ -27,8 +27,10 @@ struct FakeRootFactory: RootFactory, OpenAppStoreUseCaseFactory {
         RootViewModel(
             factory: self,
             bridge: WireAuthenticationBridge(),
-            backendInfo: mockDependencies.backendInfo
-
+            backendInfo: mockDependencies.backendInfo,
+            multibackendEnabled: false,
+            hasOtherAccounts: true,
+            isLoggedIn: false
         )
     }
 

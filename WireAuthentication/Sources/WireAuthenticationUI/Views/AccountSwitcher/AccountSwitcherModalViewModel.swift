@@ -35,7 +35,7 @@ package class AccountSwitcherModalViewModel: ObservableObject {
     ) {
         self.otherAccounts = otherAccountsPublisher.value
         self.router = router
-        otherAccountsPublisher.publisher.sink { [weak self] accounts in
+        otherAccountsPublisher.sink { [weak self] accounts in
             self?.otherAccounts = accounts
         }.store(in: &cancellables)
     }

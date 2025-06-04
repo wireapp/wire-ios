@@ -20,7 +20,10 @@ public import Combine
 
 /// Helper subject to be able to pass object from which you can get current value and publisher
 /// but not able to send values as to regular subject (safety)
-public final class ReadOnlyCurrentValueSubject<Output> {
+public final class ReadOnlyCurrentValueSubject<Output>: Publisher {
+    
+    
+    public typealias Failure = Never
 
     private let subject: CurrentValueSubject<Output, Never>
 
@@ -36,5 +39,9 @@ public final class ReadOnlyCurrentValueSubject<Output> {
     /// Read-only publisher
     public var publisher: AnyPublisher<Output, Never> {
         subject.eraseToAnyPublisher()
+    }
+    
+    public func receive<S>(subscriber: S) where S : Subscriber, Never == S.Failure, Output == S.Input {
+        subject.receive(subscriber: subscriber)
     }
 }

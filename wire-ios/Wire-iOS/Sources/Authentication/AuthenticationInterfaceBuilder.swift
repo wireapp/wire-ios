@@ -84,7 +84,7 @@ final class AuthenticationInterfaceBuilder {
             let assembly = WireAuthenticationAssembly()
             let numberOfAccounts = SessionManager.shared?.accountManager.accounts.count ?? 0
             let otherAccounts = (SessionManager.shared?.accountManager.accounts ?? [])
-                .filter {
+                .filter { // TODO: maybe not needed
                     !$0.isEqual(SessionManager.shared?.accountManager.selectedAccount)
                 }
                 .map { account in
@@ -108,7 +108,9 @@ final class AuthenticationInterfaceBuilder {
                 appStoreURL: WireURLs.shared.appOnItunes,
                 existsAnotherAccount: numberOfAccounts > 0,
                 otherAccountsPublisher: ReadOnlyCurrentValueSubject(subject: CurrentValueSubject(otherAccounts)),
-                useLegacyRegistrationFlow: !DeveloperFlag.newRegistration.isOn
+                isLoggedInProvider: { SessionManager.shared?.accountManager.selectedAccount != nil },
+                useLegacyRegistrationFlow: !DeveloperFlag.newRegistration.isOn,
+                multibackendEnabledProvider: { DeveloperFlag.newRegistration.isOn }
             )
             return AuthenticationHostingController(
                 rootView: rootView,

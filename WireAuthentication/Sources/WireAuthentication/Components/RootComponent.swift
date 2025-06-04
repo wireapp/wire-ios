@@ -39,7 +39,9 @@ class RootComponent: BootstrapComponent {
     public let ssoCallbackURLScheme: String
     public let appStoreURL: URL
     public let existsAnotherAccount: Bool
-    public var otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>
+    public let otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>
+    public let isLoggedInProvider: () -> Bool
+    public let multibackendEnabledProvider: () -> Bool
     public let useLegacyRegistrationFlow: Bool
 
     @MainActor public var bridge: WireAuthenticationBridge {
@@ -63,7 +65,9 @@ class RootComponent: BootstrapComponent {
         appStoreURL: URL,
         existsAnotherAccount: Bool,
         otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>,
-        useLegacyRegistrationFlow: Bool
+        isLoggedInProvider: @escaping () -> Bool,
+        useLegacyRegistrationFlow: Bool,
+        multibackendEnabledProvider: @escaping () -> Bool
     ) {
         self.backendInfo = backendInfo
         self.preferredAPIVersion = preferredAPIVersion
@@ -76,7 +80,9 @@ class RootComponent: BootstrapComponent {
         self.appStoreURL = appStoreURL
         self.existsAnotherAccount = existsAnotherAccount
         self.otherAccountsPublisher = otherAccountsPublisher
+        self.isLoggedInProvider = isLoggedInProvider
         self.useLegacyRegistrationFlow = useLegacyRegistrationFlow
+        self.multibackendEnabledProvider = multibackendEnabledProvider
     }
 
     // MARK: - Children
@@ -105,7 +111,10 @@ extension RootComponent: RootViewModel.Factory {
             RootViewModel(
                 factory: self,
                 bridge: bridge,
-                backendInfo: backendInfo
+                backendInfo: backendInfo,
+                multibackendEnabled: multibackendEnabledProvider(),
+                hasOtherAccounts: !otherAccountsPublisher.value.isEmpty,
+                isLoggedIn: isLoggedInProvider()
             )
         }
     }

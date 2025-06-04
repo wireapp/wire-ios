@@ -33,7 +33,12 @@ package final class RootViewModel: ObservableObject, Router {
     @Published var path = NavigationPath()
     @Published var modalDestination: RootViewSheet?
     @Published var alert: Alert?
-
+    
+    let multibackendEnabled: Bool
+    
+    let shouldShowSwitchAccountsAlertButton: Bool
+    var shouldShowLogOutAlertButton: Bool
+    
     // MARK: - Dependencies
 
     package let factory: any Factory
@@ -45,10 +50,17 @@ package final class RootViewModel: ObservableObject, Router {
     package init(
         factory: any Factory,
         bridge: WireAuthenticationBridge,
-        backendInfo: BackendInfo
+        backendInfo: BackendInfo,
+        multibackendEnabled: Bool,
+        hasOtherAccounts: Bool,
+        isLoggedIn: Bool
     ) {
         self.factory = factory
         self.modalDestination = .authFlow(backendInfo: backendInfo)
+        self.multibackendEnabled = multibackendEnabled
+        self.shouldShowSwitchAccountsAlertButton = multibackendEnabled && hasOtherAccounts
+        self.shouldShowLogOutAlertButton = multibackendEnabled && isLoggedIn
+        
         self.cancellable = bridge.inboundEvents.sink { [weak self] event in
             switch event {
             case .didRewindToThisView:
@@ -92,6 +104,10 @@ package final class RootViewModel: ObservableObject, Router {
 
     func switchAccounts() {
         navigate(to: RootDestination.switchAccounts)
+    }
+    
+    func logout() {
+        // TODO: -
     }
 
     // MARK: - Private

@@ -86,16 +86,28 @@ package struct RootView: View {
                     switch alert {
                     case .obsoleteClient:
                         Button(
-                            Strings.ObsoleteClient.Alert.okButton,
+                            viewModel.multibackendEnabled ?  Strings.Obsolete.Alert.updateButton : Strings.ObsoleteClient.Alert.okButton,
                             action: viewModel.goToAppStore
                         )
-                    // for dev purposes only
-                    // will be added in tickets to implement real alerts
-                    // TODO: [WPB-17804] https://wearezeta.atlassian.net/browse/WPB-17804
-//                        Button(
-//                            Strings.ObsoleteClient.Alert.switchAccounts,
-//                            action: viewModel.switchAccounts
-//                        )
+                        if viewModel.shouldShowSwitchAccountsAlertButton {
+                            Button(
+                                Strings.Obsolete.Alert.switchAccounts,
+                                action: viewModel.switchAccounts
+                            )
+                        }
+                        if viewModel.multibackendEnabled {
+                            if viewModel.shouldShowLogOutAlertButton {
+                                Button(
+                                    Strings.Obsolete.Alert.logout,
+                                    action: viewModel.logout
+                                )
+                            } else {
+                                Button(
+                                    Strings.Obsolete.Alert.cancel,
+                                    action: viewModel.dismissSheet
+                                )
+                            }
+                        }
                     default:
                         Button(Strings.Authentication.Error.confirm, action: {})
                     }
