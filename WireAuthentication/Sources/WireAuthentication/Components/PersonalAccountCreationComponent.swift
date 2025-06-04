@@ -16,18 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import NeedleFoundation
+internal import WireAuthenticationUI
 
-// sourcery: AutoMockable
-public protocol SubmitProxyCredentialsUseCaseProtocol: Sendable {
+final class PersonalAccountCreationComponent: Component<PersonalAccountCreationComponentDependency> {}
 
-    func invoke(proxyCredentials: ProxyCredentials) throws
+extension PersonalAccountCreationComponent: PersonalAccountCreationFactory {
 
-}
+    // MARK: - Factory
 
-public protocol SubmitProxyCredentialsUseCaseFactory {
-
-    @MainActor
-    func submitProxyCredentialsUseCase() -> any SubmitProxyCredentialsUseCaseProtocol
+    @MainActor var viewModel: PersonalAccountCreationViewModel {
+        PersonalAccountCreationViewModel()
+    }
 
 }

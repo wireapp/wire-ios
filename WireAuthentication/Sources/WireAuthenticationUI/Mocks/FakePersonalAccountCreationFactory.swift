@@ -16,18 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+struct FakePersonalAccountCreationFactory: PersonalAccountCreationFactory {
 
-// sourcery: AutoMockable
-public protocol SubmitProxyCredentialsUseCaseProtocol: Sendable {
-
-    func invoke(proxyCredentials: ProxyCredentials) throws
-
-}
-
-public protocol SubmitProxyCredentialsUseCaseFactory {
-
-    @MainActor
-    func submitProxyCredentialsUseCase() -> any SubmitProxyCredentialsUseCaseProtocol
+    var viewModel: PersonalAccountCreationViewModel {
+        fatalError("WPB-17530")
+    }
 
 }
