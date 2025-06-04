@@ -46,7 +46,7 @@ class WebAuthViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
         webConfiguration.mediaTypesRequiringUserActionForPlayback = .all
 
         let preferences = WKPreferences()
-        preferences.isTextInteractionEnabled = false
+        preferences.isTextInteractionEnabled = true
         preferences.javaScriptCanOpenWindowsAutomatically = false
         webConfiguration.preferences = preferences
 
@@ -68,6 +68,7 @@ class WebAuthViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
 
         webView = WKWebView(frame: .zero, configuration: webConfiguration)
         webView.customUserAgent = customUserAgent
+        webView.tintColor = .systemBlue
         webView.isInspectable = false
         webView.allowsLinkPreview = false
         webView.uiDelegate = self
