@@ -126,10 +126,6 @@ extension RootComponent: RootViewModel.Factory {
     }
 
     func accountsSwitcherFactory() -> any AccountSwitcherFactory {
-        accountSwitcherComponent()
-    }
-
-    func accountSwitcherComponent() -> AccountSwitcherComponent {
         AccountSwitcherComponent(parent: self)
     }
 
