@@ -48,6 +48,8 @@ extension PersonalAccountCreationComponent: PersonalAccountCreationFactory {
         let todo = URL(string: "https://wire.com")!
         fatalError("TODO")
 
+        return PersonalAccountCreationViewModel()
+
         /*
         return AccountTypeSelectionViewModel(
             teamsURL: todo,

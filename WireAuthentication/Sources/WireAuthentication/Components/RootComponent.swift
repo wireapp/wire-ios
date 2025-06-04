@@ -24,7 +24,7 @@ internal import WireAuthenticationUI
 import WireAuthenticationAPI
 internal import WireAuthenticationLogic
 
-class RootComponent: BootstrapComponent {
+final class RootComponent: BootstrapComponent {
 
     public let backendInfo: BackendInfo
     public let preferredAPIVersion: APIVersion?

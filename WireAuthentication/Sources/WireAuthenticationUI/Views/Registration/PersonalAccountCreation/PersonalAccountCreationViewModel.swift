@@ -16,4 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package final class PersonalAccountCreationViewModel {}
+package final class PersonalAccountCreationViewModel {
+
+    package init() {}
+
+}

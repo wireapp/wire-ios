@@ -32,6 +32,7 @@ protocol LoginViaEmailComponentDependency: Dependency {
     var backendInfo: BackendInfo { get }
     var minTLSVersion: TLSVersion { get }
     var useLegacyRegistrationFlow: Bool { get }
+    var personalAccountCreationAnalyticsTracker: PersonalAccountCreationAnalyticsTrackerProtocol { get }
 
 }
 
