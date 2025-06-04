@@ -25,6 +25,7 @@ let package = Package(
         .library(name: "WireSettingsUISupport", targets: ["WireSettingsUISupport"]),
         .library(name: "WireSidebarUI", targets: ["WireSidebarUI"]),
         .library(name: "WireMultiBackendUI", targets: ["WireMultiBackendUI"]),
+        .library(name: "WireMultiBackendUISupport", targets: ["WireMultiBackendUISupport"])
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
@@ -55,8 +56,18 @@ let package = Package(
 
         .target(name: "WireFolderPickerUI", dependencies: ["WireReusableUIComponents"]),
 
-        .target(name: "WireMultiBackendUI", dependencies: []),
-
+        .target(
+            name: "WireMultiBackendUI",
+            dependencies: ["WireDesign", "WireAccountImageUI", "WireReusableUIComponents"],
+            plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
+        ),
+        .target(
+            name: "WireMultiBackendUISupport",
+            dependencies: ["WireMultiBackendUI"],
+            plugins: [
+                .plugin(name: "SourceryPlugin", package: "WirePlugins")
+            ]
+        ),
         .testTarget(name: "WireMultiBackendUITests", dependencies: ["WireMultiBackendUI"]),
 
         .target(

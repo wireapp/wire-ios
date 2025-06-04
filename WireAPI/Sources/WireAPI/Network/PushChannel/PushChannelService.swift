@@ -49,6 +49,11 @@ public final class PushChannelService: PushChannelServiceProtocol {
         var request = request
         let accessToken = try await authenticationManager.getValidAccessToken()
         request.setAccessToken(accessToken)
+
+        // We don't want to proceed if not necessary (in case we've
+        // gone to the background)
+        try Task.checkCancellation()
+
         let webSocket = try networkService.executeWebSocketRequest(request)
         return PushChannel(
             webSocket: webSocket,
