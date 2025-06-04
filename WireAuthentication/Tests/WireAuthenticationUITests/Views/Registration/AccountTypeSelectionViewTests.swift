@@ -19,35 +19,28 @@
 import SwiftUI
 import WireTestingPackage
 import XCTest
-import WireAuthenticationAPISupport
 
 @testable import WireAuthenticationUI
 
 final class AccountTypeSelectionViewTests: XCTestCase {
 
-    private var analyticsTrackerMock: MockPersonalAccountCreationAnalyticsTrackerProtocol!
     private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
-        analyticsTrackerMock = .init()
         snapshotHelper = .init()
             .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
     }
 
     override func tearDown() {
         snapshotHelper = nil
-        analyticsTrackerMock = nil
     }
 
     @MainActor
     func testColorSchemeVariantsEmptyState() {
         let screenBounds = UIScreen.main.bounds
 
-        let viewModel = AccountTypeSelectionViewModel(
-            teamsURL: URL(string: "https://www.apple.com")!,
-            analyticsTracker: analyticsTrackerMock
-        )
-        let view = AccountTypeSelectionView(/*factory: FakeAccountTypeSelectionFactory()*/) // TODO: fix
+        let viewModel = AccountTypeSelectionViewModel(teamsURL: URL(string: "https://www.apple.com")!)
+        let view = AccountTypeSelectionView(viewModel: viewModel)
             .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
@@ -62,11 +55,8 @@ final class AccountTypeSelectionViewTests: XCTestCase {
     func testDynamicTypeVariantsEmptyState() {
         let screenBounds = UIScreen.main.bounds
 
-        let viewModel = AccountTypeSelectionViewModel(
-            teamsURL: URL(string: "https://www.apple.com")!,
-            analyticsTracker: analyticsTrackerMock
-        )
-        let view = AccountTypeSelectionView(/*factory: FakeAccountTypeSelectionFactory()*/) // TODO: fix
+        let viewModel = AccountTypeSelectionViewModel(teamsURL: URL(string: "https://www.apple.com")!)
+        let view = AccountTypeSelectionView(viewModel: viewModel)
             .frame(width: screenBounds.width, height: screenBounds.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
