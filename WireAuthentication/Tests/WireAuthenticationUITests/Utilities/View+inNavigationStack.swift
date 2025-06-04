@@ -21,7 +21,7 @@ import SwiftUI
 extension View {
 
     @available(*, deprecated, message: "use NavigationStack directly")
-    func inNavigationStack() -> some View { // TODO: delete
+    func inNavigationStack() -> some View {
         NavigationStack(root: { self })
     }
 

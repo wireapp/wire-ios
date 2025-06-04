@@ -19,7 +19,7 @@
 struct FakePersonalAccountCreationFactory: PersonalAccountCreationFactory {
 
     var viewModel: PersonalAccountCreationViewModel {
-        fatalError()
+        fatalError("WPB-17530")
     }
 
 }

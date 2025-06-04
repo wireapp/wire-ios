@@ -16,10 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import NeedleFoundation
 internal import WireAuthenticationUI
-import WireAuthenticationAPI
 
 final class PersonalAccountCreationComponent: Component<PersonalAccountCreationComponentDependency> {}
 
@@ -28,25 +26,7 @@ extension PersonalAccountCreationComponent: PersonalAccountCreationFactory {
     // MARK: - Factory
 
     @MainActor var viewModel: PersonalAccountCreationViewModel {
-
-
-        let todo = URL(string: "https://wire.com")!
-        fatalError("TODO")
-
-        return PersonalAccountCreationViewModel()
-
-        /*
-        return AccountTypeSelectionViewModel(
-            teamsURL: todo,
-            analyticsTracker: dependency.accountRegistrationAnalyticsTracker
-//            didDetectDomainConflict: didDetectDomainConflict,
-//            howToChangeEmailURL: dependency.howToChangeEmailURL,
-//            howToDeleteAccountURL: dependency.howToDeleteAccountURL,
-//            onFlowCompletion: { [dependency, authenticationResult] in
-//                dependency?.bridge.sendOutboundEvent(.userAuthenticated(authenticationResult))
-//            }
-        )
-         */
+        PersonalAccountCreationViewModel()
     }
 
 }
