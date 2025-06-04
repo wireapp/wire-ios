@@ -27,11 +27,8 @@ struct AccountTypeSelectionView: View {
     private typealias Strings = L10n.Localizable.AccountTypeSelector
     private typealias Labels = L10n.Accessibility.AccountTypeSelector
 
-    package init(
-        // factory: @autoclosure @escaping () -> AccountTypeSelectionFactory
-    ) {
-        fatalError("TODO")
-        // self._viewModel = StateObject(wrappedValue: factory().viewModel)
+    package init(viewModel: AccountTypeSelectionViewModel) {
+        self._viewModel = StateObject(wrappedValue: viewModel)
     }
 
     var body: some View {
@@ -206,6 +203,7 @@ private struct FeatureView: View {
 #Preview {
     Spacer()
         .sheet(isPresented: .constant(true)) {
-            AccountTypeSelectionView(/*factory: FakeAccountTypeSelectionFactory()*/) // TODO: fix
+            let viewModel = AccountTypeSelectionViewModel(teamsURL: URL(string: "https://www.wire.com")!)
+            AccountTypeSelectionView(viewModel: viewModel)
         }
 }

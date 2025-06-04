@@ -18,14 +18,11 @@
 
 import Foundation
 import WireLogging
-import WireAuthenticationAPI
 
 @MainActor
 package final class AccountTypeSelectionViewModel: ObservableObject {
 
     @Published var isCreateTeamAccountPresented = false
-
-    private let analyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
 
     private let teamsURL: URL
 
@@ -46,12 +43,8 @@ package final class AccountTypeSelectionViewModel: ObservableObject {
         return components.url
     }()
 
-    package init(
-        teamsURL: URL,
-        analyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
-    ) {
+    package init(teamsURL: URL) {
         self.teamsURL = teamsURL
-        self.analyticsTracker = analyticsTracker
     }
 
 }

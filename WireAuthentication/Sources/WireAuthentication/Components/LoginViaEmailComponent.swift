@@ -142,9 +142,7 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
     }
 
     func personalAccountCreationFactory() -> any PersonalAccountCreationFactory {
-        personalAccountCreationComponent(
-            todo: ()
-        )
+        personalAccountCreationComponent()
     }
 
     // MARK: - Use cases

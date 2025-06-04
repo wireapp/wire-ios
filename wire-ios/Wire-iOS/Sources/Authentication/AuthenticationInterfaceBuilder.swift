@@ -92,7 +92,8 @@ final class AuthenticationInterfaceBuilder {
                 ssoCallbackURLScheme: Bundle.ssoURLScheme ?? "wire-sso",
                 appStoreURL: WireURLs.shared.appOnItunes,
                 existsAnotherAccount: numberOfAccounts > 0,
-                useLegacyRegistrationFlow: !DeveloperFlag.newRegistration.isOn
+                useLegacyRegistrationFlow: !DeveloperFlag.newRegistration.isOn,
+                personalAccountCreationAnalyticsTracker: PersonalAccountCreationAnalyticsTracker()
             )
             return AuthenticationHostingController(
                 rootView: rootView,

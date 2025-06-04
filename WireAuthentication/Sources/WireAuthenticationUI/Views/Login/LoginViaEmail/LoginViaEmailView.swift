@@ -93,8 +93,10 @@ package struct LoginViaEmailView: View {
             }
         )
         .sheet(isPresented: $viewModel.isCreateAccountPresented) {
-            //AccountTypeSelectionView(factory: viewModel.factory.accountTypeSelectionFactory()) TODO: fix
-            Text(verbatim: "todo: show AccountTypeSelectionView")
+            AccountTypeSelectionView(viewModel: AccountTypeSelectionViewModel(
+                teamsURL: viewModel.backendInfo
+                    .backendConfig.endpoints.teamsURL
+            ))
         }
         .navigationDestination(for: LoginViaEmailDestination.self) { destination in
             destinationView(destination)
