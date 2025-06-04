@@ -83,7 +83,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 
         let liveEventTask = Task { @Sendable [self] in
             logger.debug("handling live event stream")
-            syncStateSubject.send(.liveSyncing)
+            syncStateSubject.send(.liveSyncing(.ongoing))
 
             await processLiveEvents(
                 liveEventStream: liveEventStream,
@@ -91,7 +91,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
             )
 
             logger.debug("live event stream did finish")
-            syncStateSubject.send(.idle)
+            syncStateSubject.send(.liveSyncing(.finished))
         }
 
         return Token(task: liveEventTask, closePushChannel: {
