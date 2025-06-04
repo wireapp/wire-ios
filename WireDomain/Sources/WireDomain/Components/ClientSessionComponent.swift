@@ -61,7 +61,6 @@ public final class ClientSessionComponent {
     private let proteusService: any ProteusServiceInterface
     private let coreCryptoProvider: any CoreCryptoProviderProtocol
 
-    public let asyncStreamEnabled: Bool
     private let processorHandlers: ProcessorHandlers
     private let onAuthenticationFailure: @Sendable () -> Void
 
@@ -81,7 +80,6 @@ public final class ClientSessionComponent {
         mlsService: any MLSServiceInterface,
         mlsDecryptionService: any MLSDecryptionServiceInterface,
         proteusService: any ProteusServiceInterface,
-        asyncStreamEnabled: Bool,
         processorHandlers: ProcessorHandlers,
         coreCryptoProvider: any CoreCryptoProviderProtocol,
         onAuthenticationFailure: @escaping @Sendable () -> Void
@@ -101,7 +99,6 @@ public final class ClientSessionComponent {
         self.localDomain = localDomain
         self.isFederationEnabled = isFederationEnabled
         self.isMLSEnabled = isMLSEnabled
-        self.asyncStreamEnabled = asyncStreamEnabled
         self.processorHandlers = processorHandlers
         self.coreCryptoProvider = coreCryptoProvider
         self.onAuthenticationFailure = onAuthenticationFailure
@@ -389,6 +386,16 @@ public final class ClientSessionComponent {
         syncStateSubject: syncStateSubject,
         journal: journal
     )
+    
+    public func asyncStreamMigrator() -> AsyncStreamMigrator {
+        AsyncStreamMigrator(sync: pullPendingUpdateEventsSync,
+                            api: userClientsAPI,
+                            apiVersion: apiVersion,
+                            userClientsLocalStore: userClientsLocalStore,
+                            journal: Journal(userID: selfUserID,
+                                             storage: sharedUserDefaults)
+        )
+    }
 
     // MARK: - Repositories
 

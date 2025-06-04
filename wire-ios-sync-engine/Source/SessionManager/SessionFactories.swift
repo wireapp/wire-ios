@@ -100,9 +100,7 @@ open class AuthenticatedSessionFactory {
             )
         }
 
-        let selfClientID = coreDataStack.syncContext.performAndWait {
-            ZMUser.selfUser(in: coreDataStack.syncContext).selfClient()?.remoteIdentifier
-        }
+        let selfClientID = ZMUser.selfUser(in: coreDataStack.viewContext).selfClient()?.remoteIdentifier
 
         let transportSession = ZMTransportSession(
             environment: environment,

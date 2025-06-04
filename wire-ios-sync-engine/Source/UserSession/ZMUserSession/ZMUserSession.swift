@@ -104,6 +104,8 @@ public final class ZMUserSession: NSObject {
     let conversationEventProcessor: ConversationEventProcessor
 
     var syncAgent: SyncAgent?
+    private(set) var clientSessionComponent: ClientSessionComponent?
+    
     public var hasCompletedInitialSync: Bool = false
 
     public var topConversationsDirectory: TopConversationsDirectory
@@ -553,15 +555,14 @@ public final class ZMUserSession: NSObject {
 
             // Create and perform sync if there is a self client.
             if let selfClientID = selfUserClient.remoteIdentifier {
-                setUpSyncAgent(clientID: selfClientID, asyncStreamEnabled: selfUserClient.asyncStreamCapable)
+                setUpSyncAgent(clientID: selfClientID)
             }
         }
     }
 
-    private func setUpSyncAgent(clientID: String, asyncStreamEnabled: Bool) {
+    private func setUpSyncAgent(clientID: String) {
         let clientSessionComponent = userSessionComponent.clientSessionComponent(
             clientID: clientID,
-            asyncStreamEnabled: asyncStreamEnabled,
             processorHandlers: .init(
                 onProcessedCallEvent: onProcessedCallEvent(callEventInfo:),
                 onSelfClientInvalidated: onSelfClientInvalidated,
@@ -569,12 +570,8 @@ public final class ZMUserSession: NSObject {
             ),
             onAuthenticationFailure: onAuthenticationFailure
         )
-
-        if asyncStreamEnabled {
-            // TODO: [WPB-17223] move this just after the migration is done
-            journal[.isSyncV3Enabled] = true
-        }
-
+        self.clientSessionComponent = clientSessionComponent
+        
         coreCryptoProvider.registerMlsTransport(clientSessionComponent.mlsTransport)
 
         let syncAgent = SyncAgent(
@@ -614,11 +611,26 @@ public final class ZMUserSession: NSObject {
                 incrementalSyncObserver: incrementalSyncObserver
             )
         }
-
-        // TODO: [WPB-17223] remove `resume` call from here
-        syncAgent.resume()
     }
 
+    public func migrateToAsyncStreamIfNeeded() async {
+        guard !journal[.isSyncV3Enabled] else { return }
+        guard let migrator = self.clientSessionComponent?.asyncStreamMigrator() else {
+            return
+        }
+        do {
+           try await migrator.migrateToAsyncStream()
+        } catch {
+            WireLogger.session.error("Failed to migrate to async stream: \(String(describing: error))")
+        }
+    }
+    
+    public func triggerSync() {
+        syncAgent?.resume()
+    }
+    
+    
+    
     // MARK: - Callbacks from WireDomain
 
     @Sendable
@@ -1480,7 +1492,9 @@ extension ZMUserSession: ZMClientRegistrationStatusDelegate {
         // The client was just registered and still needs to perform the
         // initial sync.
         if let selfClientID = userClient.remoteIdentifier {
-            setUpSyncAgent(clientID: selfClientID, asyncStreamEnabled: userClient.asyncStreamCapable)
+            setUpSyncAgent(clientID: selfClientID)
+            // no migration needed from last system as it's new client
+            triggerSync()
         }
     }
 

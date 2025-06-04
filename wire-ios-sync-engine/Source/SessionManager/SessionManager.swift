@@ -1087,13 +1087,16 @@ public final class SessionManager: NSObject, SessionManagerType {
                         )
                     }
 
-                    await self.executeAsyncStreamMigrationIfNeeded(coreDataStack: coreDataStack, journal: journal)
+                    let userSession = await self.startBackgroundSession(
+                        for: account,
+                        with: coreDataStack,
+                        journal: journal
+                    )
+
+                    await userSession.migrateToAsyncStreamIfNeeded()
+                    
                     await MainActor.run {
-                        let userSession = self.startBackgroundSession(
-                            for: account,
-                            with: coreDataStack,
-                            journal: journal
-                        )
+                        userSession.triggerSync()
 
                         self.triggerMigrationsNeedsActionsIfNeeded(
                             journal: journal,
@@ -1105,27 +1108,6 @@ public final class SessionManager: NSObject, SessionManagerType {
                 }
             }
         )
-    }
-    
-    private func executeAsyncStreamMigrationIfNeeded(coreDataStack: CoreDataStack, journal: Journal) async {
-        
-        guard let apiVersion = BackendInfo.apiVersion else {
-            fatalError("api version unknown")
-        }
-        async let asyncStreamEnabled = await coreDataStack.syncContext.perform {
-                let client = ZMUser.selfUser(in: coreDataStack.syncContext).selfClient()
-                return client?.asyncStreamCapable == true
-            }
-        }
-        let isAvailable = apiVersion >= .v8
-        let isAlreadyEnabled = journal[.isSyncV3Enabled]
-
-        guard !isAlreadyEnabled && isAvailable && !asyncStreamEnabled else {
-            return
-        }
-        
-        
-        
     }
 
     private func shouldEnableSyncV2(journal: Journal) -> Bool {
@@ -1323,6 +1305,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     // Creates the user session for @c account given, calls @c completion when done.
+    @MainActor
     private func startBackgroundSession(
         for account: Account,
         with coreDataStack: CoreDataStack,

@@ -125,4 +125,8 @@ public protocol UserClientsLocalStoreProtocol {
     ) async -> WireDataModel.UserClient?
 
     func fetchSelfClientID() async -> UUID
+    
+    /// Checks if self client has consumable notifications capability
+    /// - Returns: True if capability is there, false otherwise
+    func isClientAsyncStreamCapable() async -> Bool
 }
