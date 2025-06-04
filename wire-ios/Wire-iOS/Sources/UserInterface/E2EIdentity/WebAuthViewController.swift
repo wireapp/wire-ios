@@ -97,7 +97,12 @@ class WebAuthViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
         urlLabel.text = url.absoluteString
         urlLabel.lineBreakMode = .byTruncatingTail
         urlLabel.isUserInteractionEnabled = true
-        urlLabel.showsExpansionTextWhenTruncated = true
+        urlLabel.isAccessibilityElement = true
+        urlLabel.accessibilityTraits = .link
+        // TODO: localize
+        urlLabel.accessibilityLabel = "IDP URL"
+        urlLabel.accessibilityHint = "Tap to view full URL"
+
         urlLabel.addGestureRecognizer(
             UITapGestureRecognizer(
                 target: self,
