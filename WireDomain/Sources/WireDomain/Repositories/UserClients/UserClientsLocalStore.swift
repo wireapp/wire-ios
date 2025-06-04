@@ -40,10 +40,10 @@ public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
         }
     }
     
-    public func fetchSelfClientID() async -> UUID {
+    public func fetchSelfClientID() async -> String? {
         await context.perform { [context] in
             let selfUser = ZMUser.selfUser(in: context)
-            return selfUser.remoteIdentifier
+            return selfUser.selfClient()?.remoteIdentifier
         }
     }
     

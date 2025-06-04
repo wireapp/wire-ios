@@ -71,11 +71,13 @@ public final class AsyncStreamMigrator: AsyncStreamMigratorProtocol {
     }
     
     private func registerAsyncStreamCapability() async throws {
-        let id = await userClientsLocalStore.fetchSelfClientID()
+        guard let id = await userClientsLocalStore.fetchSelfClientID() else {
+            throw Failure.missingClientID
+        }
         
         WireLogger.sync.debug("registering client with async stream capabilities")
         let payload: UpdateClientPayload = .init(
-            capabilities: [.consumableNotifications])
-        try await api.updateClient(id: id.uuidString, payload: payload)
+            capabilities: [.legalholdConsent, .consumableNotifications])
+        try await api.updateClient(id: id, payload: payload)
     }
 }
