@@ -57,9 +57,9 @@ public struct WireAuthenticationAssembly {
         appStoreURL: URL,
         existsAnotherAccount: Bool, // get rid of it
         otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>,
-        isLoggedIn: Bool,
+        isLoggedInProvider: @escaping () -> Bool,
         useLegacyRegistrationFlow: Bool,
-        multibackendEnabled: Bool
+        multibackendEnabledProvider: @escaping () -> Bool
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
         let backendInfo = BackendInfo(
             environmentType: environmentType,
@@ -76,9 +76,9 @@ public struct WireAuthenticationAssembly {
             appStoreURL: appStoreURL,
             existsAnotherAccount: existsAnotherAccount,
             otherAccountsPublisher: otherAccountsPublisher,
-            isLoggedIn: isLoggedIn,
+            isLoggedInProvider: isLoggedInProvider,
             useLegacyRegistrationFlow: useLegacyRegistrationFlow,
-            multibackendEnabled: multibackendEnabled
+            multibackendEnabledProvider: multibackendEnabledProvider
         )
 
         return (view: RootView(factory: rootComponent), bridge: rootComponent.bridge)

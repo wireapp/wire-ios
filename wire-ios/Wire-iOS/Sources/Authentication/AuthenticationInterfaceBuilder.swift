@@ -108,9 +108,9 @@ final class AuthenticationInterfaceBuilder {
                 appStoreURL: WireURLs.shared.appOnItunes,
                 existsAnotherAccount: numberOfAccounts > 0,
                 otherAccountsPublisher: ReadOnlyCurrentValueSubject(subject: CurrentValueSubject(otherAccounts)),
-                isLoggedIn: SessionManager.shared?.accountManager.selectedAccount != nil,
+                isLoggedInProvider: { SessionManager.shared?.accountManager.selectedAccount != nil },
                 useLegacyRegistrationFlow: !DeveloperFlag.newRegistration.isOn,
-                multibackendEnabled: DeveloperFlag.multibackend.isOn
+                multibackendEnabledProvider: { DeveloperFlag.newRegistration.isOn }
             )
             return AuthenticationHostingController(
                 rootView: rootView,

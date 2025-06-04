@@ -78,9 +78,9 @@ struct ContentView: View {
                         ]
                     )
                 ),
-                isLoggedIn: true ,
+                isLoggedInProvider: { true },
                 useLegacyRegistrationFlow: false,
-                multibackendEnabled: true
+                multibackendEnabledProvider: { true }
             ).view
     }
 
