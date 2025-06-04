@@ -35,9 +35,15 @@ package final class RootViewModel: ObservableObject, Router {
     @Published var alert: Alert?
     
     let multibackendEnabled: Bool
+    let isLoggedInProvider: () -> Bool
+    let hasOtherAccountsProvider: () -> Bool
     
-    let shouldShowSwitchAccountsAlertButton: Bool
-    var shouldShowLogOutAlertButton: Bool
+    var shouldShowSwitchAccountsAlertButton: Bool {
+        multibackendEnabled && hasOtherAccountsProvider()
+    }
+    var shouldShowLogOutAlertButton: Bool {
+        multibackendEnabled && isLoggedInProvider()
+    }
     
     // MARK: - Dependencies
 
@@ -52,14 +58,14 @@ package final class RootViewModel: ObservableObject, Router {
         bridge: WireAuthenticationBridge,
         backendInfo: BackendInfo,
         multibackendEnabled: Bool,
-        hasOtherAccounts: Bool,
-        isLoggedIn: Bool
+        hasOtherAccountsProvider: @escaping () -> Bool,
+        isLoggedInProvider: @escaping () -> Bool
     ) {
         self.factory = factory
         self.modalDestination = .authFlow(backendInfo: backendInfo)
         self.multibackendEnabled = multibackendEnabled
-        self.shouldShowSwitchAccountsAlertButton = multibackendEnabled && hasOtherAccounts
-        self.shouldShowLogOutAlertButton = multibackendEnabled && isLoggedIn
+        self.isLoggedInProvider = isLoggedInProvider
+        self.hasOtherAccountsProvider = hasOtherAccountsProvider
         
         self.cancellable = bridge.inboundEvents.sink { [weak self] event in
             switch event {

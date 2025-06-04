@@ -113,8 +113,10 @@ extension RootComponent: RootViewModel.Factory {
                 bridge: bridge,
                 backendInfo: backendInfo,
                 multibackendEnabled: multibackendEnabledProvider(),
-                hasOtherAccounts: !otherAccountsPublisher.value.isEmpty,
-                isLoggedIn: isLoggedInProvider()
+                hasOtherAccountsProvider: { [otherAccountsPublisher] in
+                    !otherAccountsPublisher.value.isEmpty
+                }, 
+                isLoggedInProvider: isLoggedInProvider
             )
         }
     }
