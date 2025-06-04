@@ -233,6 +233,8 @@ private final class WebAuthURLViewController: UIViewController {
 
         let textView = UITextView()
         textView.text = url.absoluteString
+        textView.isEditable = false
+        textView.isSelectable = false
         textView.font = .preferredFont(forTextStyle: .body)
         textView.contentInset = UIEdgeInsets(
             top: 20,
