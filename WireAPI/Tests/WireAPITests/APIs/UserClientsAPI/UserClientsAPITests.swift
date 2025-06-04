@@ -46,15 +46,21 @@ final class UserClientsAPITests: XCTestCase {
             _ = try await sut.getSelfClients()
         }
     }
-    
+
     func testUpdateClient() async throws {
-        
+
         try await apiSnapshotHelper.verifyRequest(for: APIVersion.allCasesUpTo(.v8)) { sut in
-            _ = try await sut.updateClient(id: "000600d0-000b-9c1a-000d-a4130002c221", payload: .init(capabilities: [.legalholdConsent]))
+            _ = try await sut.updateClient(
+                id: "000600d0-000b-9c1a-000d-a4130002c221",
+                payload: .init(capabilities: [.legalholdConsent])
+            )
         }
-        
+
         try await apiSnapshotHelper.verifyRequest(for: APIVersion.v8.andNextVersions) { sut in
-            _ = try await sut.updateClient(id: "000600d0-000b-9c1a-000d-a4130002c221", payload: .init(capabilities: [.legalholdConsent, .consumableNotifications]))
+            _ = try await sut.updateClient(
+                id: "000600d0-000b-9c1a-000d-a4130002c221",
+                payload: .init(capabilities: [.legalholdConsent, .consumableNotifications])
+            )
         }
     }
 

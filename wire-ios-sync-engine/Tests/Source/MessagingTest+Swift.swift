@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireTransport
 import WireAPI
+import WireTransport
 @testable import WireSyncEngine
 
 public extension MessagingTest {
@@ -94,21 +94,21 @@ public extension MessagingTest {
         var proteusViaCoreCrypto = DeveloperFlag.proteusViaCoreCrypto
         proteusViaCoreCrypto.isOn = false
     }
-    
+
     func createSelfClient(capabilities: [UserClientCapability] = []) -> UserClient {
-        let selfClient = self.setupSelfClient(inMoc: self.syncMOC)
+        let selfClient = setupSelfClient(inMoc: syncMOC)
         let time = Date().transportString()
-        var payload: [String : AnyObject] = [
+        var payload: [String: AnyObject] = [
             "id": selfClient.remoteIdentifier as AnyObject,
             "type": "permanent" as AnyObject,
             "time": time as AnyObject
         ]
-        
+
         if capabilities.isEmpty == false {
-            payload["capabilities"] = capabilities.map { $0.rawValue } as AnyObject
+            payload["capabilities"] = capabilities.map(\.rawValue) as AnyObject
         }
-        _ = UserClient.createOrUpdateSelfUserClient(payload, context: self.syncMOC)
-        self.syncMOC.saveOrRollback()
+        _ = UserClient.createOrUpdateSelfUserClient(payload, context: syncMOC)
+        syncMOC.saveOrRollback()
         return selfClient
     }
 

@@ -23,7 +23,6 @@ protocol AsyncStreamMigratorProtocol {
     func migrateToAsyncStream() async throws
 }
 
-
 public final class AsyncStreamMigrator: AsyncStreamMigratorProtocol {
     let sync: PullPendingUpdateEventsSync
     let apiVersion: WireAPI.APIVersion
@@ -31,32 +30,33 @@ public final class AsyncStreamMigrator: AsyncStreamMigratorProtocol {
     var journal: JournalProtocol
     let api: UserClientsAPI
 
-    init(sync: PullPendingUpdateEventsSync,
-         api: UserClientsAPI,
-         apiVersion: WireAPI.APIVersion,
-         userClientsLocalStore: UserClientsLocalStore,
-         journal: JournalProtocol) {
+    init(
+        sync: PullPendingUpdateEventsSync,
+        api: UserClientsAPI,
+        apiVersion: WireAPI.APIVersion,
+        userClientsLocalStore: UserClientsLocalStore,
+        journal: JournalProtocol
+    ) {
         self.sync = sync
         self.apiVersion = apiVersion
         self.userClientsLocalStore = userClientsLocalStore
         self.journal = journal
         self.api = api
     }
-    
-    enum Failure: Error
-    {
+
+    enum Failure: Error {
         case apiVersionTooLow
         case missingClient
         case missingClientID
     }
-    
+
     public func migrateToAsyncStream() async throws {
-        
+
         // 1) register asyncStream capabilities
         guard apiVersion >= .v8 else {
             throw Failure.apiVersionTooLow
         }
-        
+
         if await !userClientsLocalStore.isClientAsyncStreamCapable() {
             try await registerAsyncStreamCapability()
         }
@@ -69,15 +69,16 @@ public final class AsyncStreamMigrator: AsyncStreamMigratorProtocol {
         WireLogger.sync.debug("ready for sync v3")
         journal[.isSyncV3Enabled] = true
     }
-    
+
     private func registerAsyncStreamCapability() async throws {
         guard let id = await userClientsLocalStore.fetchSelfClientID() else {
             throw Failure.missingClientID
         }
-        
+
         WireLogger.sync.debug("registering client with async stream capabilities")
         let payload: UpdateClientPayload = .init(
-            capabilities: [.legalholdConsent, .consumableNotifications])
+            capabilities: [.legalholdConsent, .consumableNotifications]
+        )
         try await api.updateClient(id: id, payload: payload)
     }
 }

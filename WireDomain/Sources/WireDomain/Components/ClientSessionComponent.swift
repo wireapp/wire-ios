@@ -386,14 +386,17 @@ public final class ClientSessionComponent {
         syncStateSubject: syncStateSubject,
         journal: journal
     )
-    
+
     public func asyncStreamMigrator() -> AsyncStreamMigrator {
-        AsyncStreamMigrator(sync: pullPendingUpdateEventsSync,
-                            api: userClientsAPI,
-                            apiVersion: apiVersion,
-                            userClientsLocalStore: userClientsLocalStore,
-                            journal: Journal(userID: selfUserID,
-                                             storage: sharedUserDefaults)
+        AsyncStreamMigrator(
+            sync: pullPendingUpdateEventsSync,
+            api: userClientsAPI,
+            apiVersion: apiVersion,
+            userClientsLocalStore: userClientsLocalStore,
+            journal: Journal(
+                userID: selfUserID,
+                storage: sharedUserDefaults
+            )
         )
     }
 

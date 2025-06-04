@@ -105,7 +105,7 @@ public final class ZMUserSession: NSObject {
 
     var syncAgent: SyncAgent?
     private(set) var clientSessionComponent: ClientSessionComponent?
-    
+
     public var hasCompletedInitialSync: Bool = false
 
     public var topConversationsDirectory: TopConversationsDirectory
@@ -571,7 +571,7 @@ public final class ZMUserSession: NSObject {
             onAuthenticationFailure: onAuthenticationFailure
         )
         self.clientSessionComponent = clientSessionComponent
-        
+
         coreCryptoProvider.registerMlsTransport(clientSessionComponent.mlsTransport)
 
         let syncAgent = SyncAgent(
@@ -615,23 +615,21 @@ public final class ZMUserSession: NSObject {
 
     public func migrateToAsyncStreamIfNeeded() async {
         guard !journal[.isSyncV3Enabled] else { return }
-        guard let migrator = self.clientSessionComponent?.asyncStreamMigrator() else {
+        guard let migrator = clientSessionComponent?.asyncStreamMigrator() else {
             WireLogger.sync.warn("No async stream migrator available")
             return
         }
         do {
-           try await migrator.migrateToAsyncStream()
+            try await migrator.migrateToAsyncStream()
         } catch {
             WireLogger.session.error("Failed to migrate to async stream: \(String(describing: error))")
         }
     }
-    
+
     public func triggerSync() {
         syncAgent?.resume()
     }
-    
-    
-    
+
     // MARK: - Callbacks from WireDomain
 
     @Sendable

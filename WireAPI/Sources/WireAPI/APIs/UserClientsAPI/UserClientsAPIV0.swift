@@ -69,12 +69,12 @@ class UserClientsAPIV0: UserClientsAPI, VersionedAPI {
             .success(code: .ok, type: OtherUserClientsV0.self)
             .parse(code: response.statusCode, data: data)
     }
-    
+
     func updateClient(id: UserClientID, payload: UpdateClientPayload) async throws {
         let body = try JSONEncoder.defaultEncoder.encode(payload)
 
         let path = "\(pathPrefix)/clients/\(id)"
-        
+
         let request = try URLRequestBuilder(path: path)
             .withMethod(.put)
             .withBody(body, contentType: .json)

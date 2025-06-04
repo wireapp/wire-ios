@@ -144,7 +144,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
 
         XCTAssertTrue(syncStatus.isSlowSyncing)
     }
-    
+
     func test_didRegisterSelfUserClient_withAsyncStreamCapabableEnablesSyncV3() async throws {
         // GIVEN
         mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
@@ -161,7 +161,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         // THEN
         XCTAssertTrue(sut.journal[.isSyncV3Enabled])
     }
-    
+
     func testThatPerformChangesAreDoneSynchronouslyOnTheMainQueue() {
         // GIVEN
         var executed = false

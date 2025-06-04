@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 /// Errors originating from `ConnectionsAPI`.
 
 public enum UserClientsAPIError: Error {
@@ -24,13 +23,13 @@ public enum UserClientsAPIError: Error {
     /// Invalid body
 
     case invalidBody
-    
+
     /// Malformed prekeys uploaded
-    
+
     case malformedPrekeysUploaded
-    
+
     /// client not found
-    
+
     case clientNotFound // v3 removed
 
 }

@@ -28,7 +28,7 @@ public struct UpdateClientPayload: Equatable, Encodable, Sendable {
     public let label: String?
 
     /// The last resort Prekey
-    
+
     public let lastKey: Prekey?
 
     /// The mls public keys for the client.
@@ -36,7 +36,7 @@ public struct UpdateClientPayload: Equatable, Encodable, Sendable {
     public let mlsPublicKeys: MLSPublicKeys?
 
     /// New prekeys for other clients to establish OTR sessions.
-    
+
     public let preKeys: [Prekey]?
 
     enum CodingKeys: String, CodingKey {
@@ -48,11 +48,13 @@ public struct UpdateClientPayload: Equatable, Encodable, Sendable {
 
     }
 
-    public init(capabilities: [UserClientCapability]? = nil,
-                label: String? = nil,
-                lastKey: Prekey? = nil,
-                mlsPublicKeys: MLSPublicKeys? = nil,
-                preKeys: [Prekey]? = nil) {
+    public init(
+        capabilities: [UserClientCapability]? = nil,
+        label: String? = nil,
+        lastKey: Prekey? = nil,
+        mlsPublicKeys: MLSPublicKeys? = nil,
+        preKeys: [Prekey]? = nil
+    ) {
         self.capabilities = capabilities
         self.label = label
         self.lastKey = lastKey

@@ -1094,7 +1094,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                     )
 
                     await userSession.migrateToAsyncStreamIfNeeded()
-                    
+
                     await MainActor.run {
                         userSession.triggerSync()
 
