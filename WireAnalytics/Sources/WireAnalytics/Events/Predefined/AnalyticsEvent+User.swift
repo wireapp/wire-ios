@@ -39,7 +39,7 @@ public extension AnalyticsEvent {
                 case leave
             }
 
-            /// The actions a user can choose on the final confirmation scren.
+            /// The actions a user can choose on the final confirmation screen.
 
             public enum CompletedAction {
                 case backToWire
