@@ -16,11 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+/// The choice the user makes when the confirmation for cancelling the account migration is presented.
 
-struct SyncStatusLog: Codable {
-    var phase: String
-    var isSyncing: Bool
-    var pushChannelEstablishedDate: String?
-    var message: String?
+public enum CancelAccountMigrationChoice {
+    case confirm
+    case backOut
 }
