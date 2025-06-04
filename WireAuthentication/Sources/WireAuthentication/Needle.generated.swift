@@ -186,6 +186,7 @@ extension RootComponent: NeedleFoundation.Registration {
         localTable["minTLSVersion-TLSVersion"] = { [unowned self] in self.minTLSVersion as Any }
         localTable["howToChangeEmailURL-URL"] = { [unowned self] in self.howToChangeEmailURL as Any }
         localTable["howToDeleteAccountURL-URL"] = { [unowned self] in self.howToDeleteAccountURL as Any }
+        localTable["privacyPolicyURL-URL"] = { [unowned self] in self.privacyPolicyURL as Any }
         localTable["passwordValidator-any PasswordValidator"] = { [unowned self] in self.passwordValidator as Any }
         localTable["ssoCallbackURLScheme-String"] = { [unowned self] in self.ssoCallbackURLScheme as Any }
         localTable["appStoreURL-URL"] = { [unowned self] in self.appStoreURL as Any }

@@ -16,30 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import NeedleFoundation
-internal import WireAuthenticationUI
+import Foundation
 
-final class PersonalAccountCreationComponent: Component<PersonalAccountCreationComponentDependency> {
+package enum LoginViaEmailSheet: Identifiable, Hashable, Sendable {
 
-    private let email: String
+    package var id: Self { self }
 
+    /// Represents the account type selection screen.
+    case accountTypeSelection
 
-    init(
-        parent: any Scope,
-        email: String
-    ) {
-        self.email = email
-        super.init(parent: parent)
-    }
-
-}
-
-extension PersonalAccountCreationComponent: PersonalAccountCreationFactory {
-
-    // MARK: - Factory
-
-    @MainActor var viewModel: PersonalAccountCreationViewModel {
-        PersonalAccountCreationViewModel()
-    }
+    /// Represents the flow to create a team account.
+    case teamAccountCreation
 
 }

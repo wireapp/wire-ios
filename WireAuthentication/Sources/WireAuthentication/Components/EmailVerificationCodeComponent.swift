@@ -1,0 +1,91 @@
+//
+// Wire
+// Copyright (C) 2025 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import NeedleFoundation
+import SwiftUI
+import WireAPI
+import WireAuthenticationAPI
+internal import WireAuthenticationUI
+internal import WireAuthenticationLogic
+import WireReusableUIComponents
+
+protocol EmailVerificationCodeComponentDependency: Dependency {
+
+    @MainActor var router: any Router { get }
+    var networkStack: NetworkStack { get }
+
+}
+
+class EmailVerificationCodeComponent: Component<EmailVerificationCodeComponentDependency> {
+
+    private let email: String
+    private let password: String
+
+    init(
+        parent: any Scope,
+        email: String,
+        password: String
+    ) {
+        self.email = email
+        self.password = password
+        super.init(parent: parent)
+    }
+
+    // MARK: - Children
+
+}
+
+//extension EmailVerificationCodeComponent: VerificationCodeViewModel.Factory {
+//
+//    // MARK: - Factory
+//
+//    @MainActor var viewModel: VerificationCodeViewModel {
+//        VerificationCodeViewModel(
+//            factory: self,
+//            email: email,
+//            password: password,
+//            proxyCredentials: proxyCredentials,
+//            router: dependency.router
+//        )
+//    }
+//
+//    func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory {
+//        noHistoryComponent(authenticationResult: authenticationResult)
+//    }
+//
+//    // MARK: - Use cases
+//
+//    func submitProxyCredentialsUseCase() -> any SubmitProxyCredentialsUseCaseProtocol {
+//        SubmitProxyCredentialsUseCase(networkStack: dependency.networkStack)
+//    }
+//
+//    func loginViaEmailUseCase() async throws -> any LoginViaEmailUseCaseProtocol {
+//        let authenticationAPI = try await dependency.networkStack.makeAuthenticationAPI()
+//        return LoginViaEmailUseCase(authenticationAPI: authenticationAPI)
+//    }
+//
+//    func requestLoginVerificationCodeUseCase() async throws -> any RequestLoginVerificationCodeUseCaseProtocol {
+//        let authenticationAPI = try await dependency.networkStack.makeAuthenticationAPI()
+//        return RequestLoginVerificationCodeUseCase(authenticationAPI: authenticationAPI)
+//    }
+//
+//    func createAuthenticationResultUseCase() -> any CreateAuthenticationResultUseCaseProtocol {
+//        CreateAuthenticationResultUseCase(networkStack: dependency.networkStack)
+//    }
+//
+//}

@@ -268,12 +268,3 @@ package final class LoginViaEmailViewModel: ObservableObject {
     }
 
 }
-
-package enum LoginViaEmailSheet: Identifiable, Hashable, Sendable {
-
-    package var id: Self { self }
-
-    case accountTypeSelection
-    case teamAccountCreation
-
-}

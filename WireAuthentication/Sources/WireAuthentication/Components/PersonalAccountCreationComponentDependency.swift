@@ -18,9 +18,13 @@
 
 import NeedleFoundation
 import WireAuthenticationAPI
+internal import WireAuthenticationUI
+internal import WireAuthenticationLogic
 
 protocol PersonalAccountCreationComponentDependency: Dependency {
 
+//    @MainActor var router: any Router { get }
+//    var networkStack: NetworkStack { get }
     var personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol { get }
 
 }
