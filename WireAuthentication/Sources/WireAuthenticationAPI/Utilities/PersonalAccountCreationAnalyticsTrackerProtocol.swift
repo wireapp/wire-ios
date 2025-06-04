@@ -28,7 +28,8 @@ public protocol PersonalAccountCreationAnalyticsTrackerProtocol {
     func tearDown()
 
     /// Invoked when the user submits the personal account creation form.
-    /// - Parameter multiplePasswordAttemptsNeeded: `true` if it took the user more than one try to enter a valid password.
+    /// - Parameter multiplePasswordAttemptsNeeded: `true` if it took the user more than one try to enter a valid
+    /// password.
 
     func trackPersonalAccountCreationStart(multiplePasswordAttemptsNeeded: Bool)
 
