@@ -32,7 +32,6 @@ protocol DetermineAuthMethodComponentDependency: Dependency {
     var minTLSVersion: TLSVersion { get }
     var ssoCallbackURLScheme: String { get }
     var existsAnotherAccount: Bool { get }
-    var personalAccountCreationAnalyticsTracker: PersonalAccountCreationAnalyticsTrackerProtocol { get }
 
 }
 

@@ -32,7 +32,6 @@ protocol LoginViaEmailComponentDependency: Dependency {
     var backendInfo: BackendInfo { get }
     var minTLSVersion: TLSVersion { get }
     var useLegacyRegistrationFlow: Bool { get }
-    var personalAccountCreationAnalyticsTracker: PersonalAccountCreationAnalyticsTrackerProtocol { get }
 
 }
 
@@ -82,9 +81,7 @@ final class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> 
         )
     }
 
-    func personalAccountCreationComponent(
-        todo: Void
-    ) -> PersonalAccountCreationComponent {
+    func personalAccountCreationComponent() -> PersonalAccountCreationComponent {
         PersonalAccountCreationComponent(
             parent: self
         )

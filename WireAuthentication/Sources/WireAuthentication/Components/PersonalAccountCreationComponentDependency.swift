@@ -21,6 +21,6 @@ import WireAuthenticationAPI
 
 protocol PersonalAccountCreationComponentDependency: Dependency {
 
-    var personalAccountCreationAnalyticsTracker: PersonalAccountCreationAnalyticsTrackerProtocol { get }
+    var personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol { get }
 
 }

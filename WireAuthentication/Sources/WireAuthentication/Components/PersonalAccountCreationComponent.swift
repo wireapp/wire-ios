@@ -21,22 +21,7 @@ import NeedleFoundation
 internal import WireAuthenticationUI
 import WireAuthenticationAPI
 
-final class PersonalAccountCreationComponent: Component<PersonalAccountCreationComponentDependency> {
-
-//    private let authenticationResult: AuthenticationResult
-//    private let didDetectDomainConflict: Bool
-
-    override init(
-        parent: any Scope,
-//        authenticationResult: AuthenticationResult,
-//        didDetectDomainConflict: Bool
-    ) {
-//        self.authenticationResult = authenticationResult
-//        self.didDetectDomainConflict = didDetectDomainConflict
-        super.init(parent: parent)
-    }
-
-}
+final class PersonalAccountCreationComponent: Component<PersonalAccountCreationComponentDependency> {}
 
 extension PersonalAccountCreationComponent: PersonalAccountCreationFactory {
 

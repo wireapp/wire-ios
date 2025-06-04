@@ -84,6 +84,19 @@ private class DetermineAuthMethodComponentDependency527e70b5dbcfcb8f2023Provider
 private func factoryd47fa74281e135cd9f10b3a8f24c1d289f2c0f2e(_ component: NeedleFoundation.Scope) -> AnyObject {
     return DetermineAuthMethodComponentDependency527e70b5dbcfcb8f2023Provider(rootComponent: parent1(component) as! RootComponent)
 }
+private class PersonalAccountCreationComponentDependency9e5e5a00f5c85fcf54b5Provider: PersonalAccountCreationComponentDependency {
+    var personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol {
+        return rootComponent.personalAccountCreationAnalyticsTracker
+    }
+    private let rootComponent: RootComponent
+    init(rootComponent: RootComponent) {
+        self.rootComponent = rootComponent
+    }
+}
+/// ^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->PersonalAccountCreationComponent
+private func factory98c59649331d50383edd42f5655bf2362a8495f6(_ component: NeedleFoundation.Scope) -> AnyObject {
+    return PersonalAccountCreationComponentDependency9e5e5a00f5c85fcf54b5Provider(rootComponent: parent3(component) as! RootComponent)
+}
 private class NoHistoryComponentDependencya1005f718577ea03ea08Provider: NoHistoryComponentDependency {
     var howToChangeEmailURL: URL {
         return rootComponent.howToChangeEmailURL
@@ -160,6 +173,11 @@ extension DetermineAuthMethodComponent: NeedleFoundation.Registration {
         localTable["networkStack-NetworkStack"] = { [unowned self] in self.networkStack as Any }
     }
 }
+extension PersonalAccountCreationComponent: NeedleFoundation.Registration {
+    public func registerItems() {
+        keyPathToName[\PersonalAccountCreationComponentDependency.personalAccountCreationAnalyticsTracker] = "personalAccountCreationAnalyticsTracker-any PersonalAccountCreationAnalyticsTrackerProtocol"
+    }
+}
 extension RootComponent: NeedleFoundation.Registration {
     public func registerItems() {
 
@@ -174,7 +192,7 @@ extension RootComponent: NeedleFoundation.Registration {
         localTable["appStoreURL-URL"] = { [unowned self] in self.appStoreURL as Any }
         localTable["existsAnotherAccount-Bool"] = { [unowned self] in self.existsAnotherAccount as Any }
         localTable["useLegacyRegistrationFlow-Bool"] = { [unowned self] in self.useLegacyRegistrationFlow as Any }
-        localTable["accountRegistrationAnalyticsTracker-AccountRegistrationAnalyticsTrackerProtocol"] = { [unowned self] in self.accountRegistrationAnalyticsTracker as Any }
+        localTable["personalAccountCreationAnalyticsTracker-any PersonalAccountCreationAnalyticsTrackerProtocol"] = { [unowned self] in self.personalAccountCreationAnalyticsTracker as Any }
         localTable["bridge-WireAuthenticationBridge"] = { [unowned self] in self.bridge as Any }
         localTable["router-any Router"] = { [unowned self] in self.router as Any }
     }
@@ -217,6 +235,7 @@ private func registerProviderFactory(_ componentPath: String, _ factory: @escapi
 @inline(never) private func register1() {
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->VerificationCodeComponent", factoryd3638676a47fce1fe62317031e1ba787d83cb463)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent", factoryd47fa74281e135cd9f10b3a8f24c1d289f2c0f2e)
+    registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->PersonalAccountCreationComponent", factory98c59649331d50383edd42f5655bf2362a8495f6)
     registerProviderFactory("^->RootComponent", factoryEmptyDependencyProvider)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->VerificationCodeComponent->NoHistoryComponent", factory5f94de319ad3e04a942321a9c45ed079aafca21f)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->NoHistoryComponent", factory5f94de319ad3e04a9423a9403e3301bb54f80df0)
