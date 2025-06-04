@@ -1494,7 +1494,7 @@ extension ZMUserSession: ZMClientRegistrationStatusDelegate {
         // initial sync.
         if let selfClientID = userClient.remoteIdentifier {
             setUpSyncAgent(clientID: selfClientID)
-            // no migration needed from last system as it's new client
+            // no migration needed from last sync system as it's a new client
             if userClient.asyncStreamCapable {
                 // activate new sync v3
                 journal[.isSyncV3Enabled] = true
