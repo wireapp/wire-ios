@@ -148,7 +148,7 @@ final class AuthenticationEventResponderChain {
         registerHandler(RegistrationActivationErrorHandler(), to: &registrationErrorHandlers)
         registerHandler(RegistrationFinalErrorHandler(), to: &registrationErrorHandlers)
 
-        // registrationSuccessHandlers
+        // registrationSuccessHandlers //
         registerHandler(RegistrationActivationCodeSentEventHandler(), to: &registrationSuccessHandlers)
         registerHandler(RegistrationCredentialsVerifiedEventHandler(), to: &registrationSuccessHandlers)
         registerHandler(RegistrationIncrementalUserDataChangeHandler(), to: &registrationSuccessHandlers)
