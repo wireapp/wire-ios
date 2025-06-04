@@ -402,12 +402,12 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         reason: ConversationMemberLeaveReason
     ) async {
         let systemMessageType: SystemMessageType = switch reason {
-        case .userDeleted, .userLeft:
+        case .userDeleted:
             .teamMemberRemoved(
                 member: (senderID, senderDomain),
                 date: date
             )
-        case .userRemoved:
+        case .userRemoved, .userLeft:
             .participantsRemoved(
                 participants: removedUsers.map { ($0.uuid, $0.domain) },
                 sender: (senderID, senderDomain),
