@@ -23,7 +23,6 @@ final class PersonalAccountCreationComponent: Component<PersonalAccountCreationC
 
     private let email: String
 
-
     init(
         parent: any Scope,
         email: String

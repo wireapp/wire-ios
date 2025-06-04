@@ -1,5 +1,6 @@
 
 
+import Foundation
 import NeedleFoundation
 import SwiftUI
 import WireAPI
@@ -84,17 +85,31 @@ private func factoryd47fa74281e135cd9f10b3a8f24c1d289f2c0f2e(_ component: Needle
     return DetermineAuthMethodComponentDependency527e70b5dbcfcb8f2023Provider(rootComponent: parent1(component) as! RootComponent)
 }
 private class PersonalAccountCreationComponentDependency9e5e5a00f5c85fcf54b5Provider: PersonalAccountCreationComponentDependency {
+    var router: any Router {
+        return rootComponent.router
+    }
+    var networkStack: NetworkStack {
+        return loginViaEmailComponent.networkStack
+    }
+    var passwordValidator: any PasswordValidator {
+        return rootComponent.passwordValidator
+    }
+    var privacyPolicyURL: URL {
+        return rootComponent.privacyPolicyURL
+    }
     var personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol {
         return rootComponent.personalAccountCreationAnalyticsTracker
     }
+    private let loginViaEmailComponent: LoginViaEmailComponent
     private let rootComponent: RootComponent
-    init(rootComponent: RootComponent) {
+    init(loginViaEmailComponent: LoginViaEmailComponent, rootComponent: RootComponent) {
+        self.loginViaEmailComponent = loginViaEmailComponent
         self.rootComponent = rootComponent
     }
 }
 /// ^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->PersonalAccountCreationComponent
-private func factory98c59649331d50383edd42f5655bf2362a8495f6(_ component: NeedleFoundation.Scope) -> AnyObject {
-    return PersonalAccountCreationComponentDependency9e5e5a00f5c85fcf54b5Provider(rootComponent: parent3(component) as! RootComponent)
+private func factory98c59649331d50383edd17031e1ba787d83cb463(_ component: NeedleFoundation.Scope) -> AnyObject {
+    return PersonalAccountCreationComponentDependency9e5e5a00f5c85fcf54b5Provider(loginViaEmailComponent: parent1(component) as! LoginViaEmailComponent, rootComponent: parent3(component) as! RootComponent)
 }
 private class NoHistoryComponentDependencya1005f718577ea03ea08Provider: NoHistoryComponentDependency {
     var howToChangeEmailURL: URL {
@@ -174,6 +189,10 @@ extension DetermineAuthMethodComponent: NeedleFoundation.Registration {
 }
 extension PersonalAccountCreationComponent: NeedleFoundation.Registration {
     public func registerItems() {
+        keyPathToName[\PersonalAccountCreationComponentDependency.router] = "router-any Router"
+        keyPathToName[\PersonalAccountCreationComponentDependency.networkStack] = "networkStack-NetworkStack"
+        keyPathToName[\PersonalAccountCreationComponentDependency.passwordValidator] = "passwordValidator-any PasswordValidator"
+        keyPathToName[\PersonalAccountCreationComponentDependency.privacyPolicyURL] = "privacyPolicyURL-URL"
         keyPathToName[\PersonalAccountCreationComponentDependency.personalAccountCreationAnalyticsTracker] = "personalAccountCreationAnalyticsTracker-any PersonalAccountCreationAnalyticsTrackerProtocol"
     }
 }
@@ -235,7 +254,7 @@ private func registerProviderFactory(_ componentPath: String, _ factory: @escapi
 @inline(never) private func register1() {
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->VerificationCodeComponent", factoryd3638676a47fce1fe62317031e1ba787d83cb463)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent", factoryd47fa74281e135cd9f10b3a8f24c1d289f2c0f2e)
-    registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->PersonalAccountCreationComponent", factory98c59649331d50383edd42f5655bf2362a8495f6)
+    registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->PersonalAccountCreationComponent", factory98c59649331d50383edd17031e1ba787d83cb463)
     registerProviderFactory("^->RootComponent", factoryEmptyDependencyProvider)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->VerificationCodeComponent->NoHistoryComponent", factory5f94de319ad3e04a942321a9c45ed079aafca21f)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->NoHistoryComponent", factory5f94de319ad3e04a9423a9403e3301bb54f80df0)
