@@ -4,6 +4,7 @@
       "id" : "8151CB8E-0EC8-4C9B-A840-DC65D0D48A83",
       "name" : "Configuration 1",
       "options" : {
+        "defaultTestExecutionTimeAllowance" : 160,
         "environmentVariableEntries" : [
           {
             "key" : "INBUCKET_USERNAME",
