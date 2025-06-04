@@ -32,6 +32,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
     var legacySyncStatus: MockSyncStatusProtocol!
     var initialSync: MockInitialSyncProtocol!
     var incrementalSync: MockIncrementalSyncProtocol!
+    var liveSync: MockLiveSyncProtocol!
     var syncStateSubject: CurrentValueSubject<SyncState, Never>!
     var coreCryptoProvider: MockCoreCryptoProviderProtocol!
 
@@ -44,6 +45,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         legacySyncStatus = MockSyncStatusProtocol()
         initialSync = MockInitialSyncProtocol()
         incrementalSync = MockIncrementalSyncProtocol()
+        liveSync = MockLiveSyncProtocol()
         syncStateSubject = CurrentValueSubject(.idle)
         coreCryptoProvider = MockCoreCryptoProviderProtocol()
         sut = SyncAgent(
@@ -64,6 +66,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         legacySyncStatus = nil
         initialSync = nil
         incrementalSync = nil
+        liveSync = nil
         syncStateSubject = nil
     }
 
@@ -278,4 +281,27 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         await fulfillment(of: [expectation])
     }
 
+    func provideLiveSync(delegate: any WireDomain.LiveSyncDelegate) throws -> any WireDomain.LiveSyncProtocol {
+
+        MockLiveSyncProtocol()
+    }
+
+    func testPerformIncrementalSync_V3() async throws {
+        // Given
+        journal[.isSyncV3Enabled] = true
+
+        // Mock
+        liveSync.performAcknowledgeFullSync_MockMethod = { _ in
+            IncrementalSync.Token(
+                task: Task {},
+                closePushChannel: {}
+            )
+        }
+
+        // When
+        try await sut.performIncrementalSync()
+
+        // Then
+        XCTAssertEqual(liveSync.performAcknowledgeFullSync_Invocations.count, 1)
+    }
 }
