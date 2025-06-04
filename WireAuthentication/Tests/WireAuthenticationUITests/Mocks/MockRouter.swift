@@ -26,6 +26,8 @@ final class MockRouter: Router {
     public var dismissSheet_InvocationCount = 0
 
     func popToRoot() {}
+    
+    func pop() { }
 
     func navigate(to destination: some Hashable) {
         navigate_Invocations.append(destination)
