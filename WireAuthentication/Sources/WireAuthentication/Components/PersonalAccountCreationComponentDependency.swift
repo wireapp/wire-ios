@@ -16,13 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package protocol AccountTypeSelectionFactory {
+import NeedleFoundation
 
-    @MainActor var viewModel: AccountTypeSelectionViewModel { get }
+protocol PersonalAccountCreationComponentDependency: Dependency {
 
-    @MainActor
-    func personalAccountCreationFactory(
-        todo: String
-    ) -> Void
+    var personalAccountCreationAnalyticsTracker: PersonalAccountCreationAnalyticsTrackerProtocol { get }
 
 }

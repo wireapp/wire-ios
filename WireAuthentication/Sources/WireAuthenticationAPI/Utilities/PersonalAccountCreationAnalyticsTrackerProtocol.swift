@@ -17,7 +17,7 @@
 //
 
 // sourcery: AutoMockable
-public protocol AccountRegistrationAnalyticsTrackerProtocol {
+public protocol PersonalAccountCreationAnalyticsTrackerProtocol {
 
     /// Invoked when the user submits the personal account creation form.
     /// - Parameter multiplePasswordAttemptsNeeded: `true` if it took the user more than one try to enter a valid password.

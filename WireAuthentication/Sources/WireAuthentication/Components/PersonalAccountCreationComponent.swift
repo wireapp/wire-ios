@@ -21,16 +21,7 @@ import NeedleFoundation
 internal import WireAuthenticationUI
 import WireAuthenticationAPI
 
-protocol AccountTypeSelectionComponentDependency: Dependency {
-
-    var accountRegistrationAnalyticsTracker: AccountRegistrationAnalyticsTrackerProtocol { get }
-//    var howToChangeEmailURL: URL { get }
-//    var howToDeleteAccountURL: URL { get }
-//    @MainActor var bridge: WireAuthenticationBridge { get }
-
-}
-
-final class AccountTypeSelectionComponent: Component<AccountTypeSelectionComponentDependency> {
+final class PersonalAccountCreationComponent: Component<PersonalAccountCreationComponentDependency> {
 
 //    private let authenticationResult: AuthenticationResult
 //    private let didDetectDomainConflict: Bool
@@ -47,11 +38,11 @@ final class AccountTypeSelectionComponent: Component<AccountTypeSelectionCompone
 
 }
 
-extension AccountTypeSelectionComponent: AccountTypeSelectionFactory {
+extension PersonalAccountCreationComponent: PersonalAccountCreationFactory {
 
     // MARK: - Factory
 
-    @MainActor var viewModel: AccountTypeSelectionViewModel {
+    @MainActor var viewModel: PersonalAccountCreationViewModel {
 
 
         let todo = URL(string: "https://wire.com")!
@@ -66,10 +57,6 @@ extension AccountTypeSelectionComponent: AccountTypeSelectionFactory {
 //                dependency?.bridge.sendOutboundEvent(.userAuthenticated(authenticationResult))
 //            }
         )
-    }
-
-    func personalAccountCreationFactory(todo: String) {
-        fatalError("TODO")
     }
 
 }
