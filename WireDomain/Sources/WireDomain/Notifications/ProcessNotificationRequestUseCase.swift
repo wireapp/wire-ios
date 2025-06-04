@@ -17,6 +17,7 @@
 //
 
 import UserNotifications
+import WireLogging
 
 // sourcery: AutoMockable
 protocol ProcessNotificationUseCaseProtocol {
@@ -26,11 +27,18 @@ protocol ProcessNotificationUseCaseProtocol {
 }
 
 struct ProcessNotificationRequestUseCase: ProcessNotificationUseCaseProtocol {
+    private let logger = WireLogger.notifications
 
     func invoke(
         request: UNNotificationRequest
     ) async throws -> NotificationPayload {
         let userInfo = request.content.userInfo
+
+        logger.info(
+            "Processing notification with payload: \(userInfo)",
+            attributes: .newNSE
+        )
+
         let data = try JSONSerialization.data(
             withJSONObject: userInfo
         )

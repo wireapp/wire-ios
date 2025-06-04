@@ -58,6 +58,12 @@ struct ShowNotificationUseCase: ShowNotificationUseCaseProtocol {
                 notifications.append(notificationContent)
             case let .callKit(callKitContent):
                 do {
+
+                    WireLogger.calling.info(
+                        "Detected a call event",
+                        attributes: .newNSE
+                    )
+
                     try await CXProvider.reportNewIncomingVoIPPushPayload(callKitContent)
                 } catch {
                     WireLogger.calling.error(
@@ -92,7 +98,7 @@ struct ShowNotificationUseCase: ShowNotificationUseCaseProtocol {
         notification.badge = await getNotificationBadge()
 
         WireLogger.notifications.info(
-            "Displaying push notification",
+            "Showing notification to the user",
             attributes: .newNSE
         )
 
