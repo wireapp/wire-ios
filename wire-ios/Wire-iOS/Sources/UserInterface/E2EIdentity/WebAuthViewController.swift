@@ -19,6 +19,7 @@
 import Foundation
 import UIKit
 import WebKit
+import WireCommonComponents
 
 protocol WebAuthViewControllerDelegate: AnyObject {
 
@@ -58,7 +59,14 @@ class WebAuthViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
         userContentController.removeAllUserScripts()
         webConfiguration.userContentController = userContentController
 
+        let customUserAgent = if let appVersion = Bundle.main.shortVersionString {
+            "Wire E2EI \(appVersion)"
+        } else {
+            "Wire E2EI"
+        }
+
         webView = WKWebView(frame: .zero, configuration: webConfiguration)
+        webView.customUserAgent = customUserAgent
         webView.isInspectable = false
         webView.allowsLinkPreview = false
         webView.uiDelegate = self
