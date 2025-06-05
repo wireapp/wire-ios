@@ -18,7 +18,7 @@
 
 // sourcery: AutoMockable
 /// An object that tracks analytic events.
-public protocol AnalyticsEventTracker: AnyObject {
+public protocol AnalyticsEventTrackerProtocol: AnyObject {
 
     /// Track an event.
     ///
@@ -27,3 +27,6 @@ public protocol AnalyticsEventTracker: AnyObject {
     func trackEvent(_ event: AnalyticsEvent)
 
 }
+
+@available(*, deprecated, renamed: "AnalyticsEventTrackerProtocol")
+public typealias AnalyticsEventTracker = AnalyticsEventTrackerProtocol

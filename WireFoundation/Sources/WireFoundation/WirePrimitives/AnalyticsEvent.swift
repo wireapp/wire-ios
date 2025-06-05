@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// An event that can be tracked.
-
 public struct AnalyticsEvent: Equatable, Sendable {
 
     /// A unique name.
@@ -34,14 +32,56 @@ public struct AnalyticsEvent: Equatable, Sendable {
     ///   - name: A unique name.
     ///   - segmentation: Additional metadata.
 
-    init<Collection>(
+    public init(
         name: String,
-        segmentation: Collection = []
-    ) where Collection: Swift.Collection, Collection.Element == Segmentation {
+        segmentation: some Collection<Segmentation> = []
+    ) {
         self.name = name
         self.segmentation = Set(segmentation)
     }
+
 }
+
+// MARK: -
+
+public extension AnalyticsEvent {
+
+    /// Represents a key-value pair for analytics event segmentation.
+    ///
+    /// This struct is used to provide additional, structured information about an analytics event.
+    /// Each ``Segmentation`` consists of a key (identifying the type of information) and a value
+    /// (the actual data point).
+
+    struct Segmentation: Hashable, Sendable {
+
+        let key: String
+        let value: String
+
+        init(key: String, value: String) {
+            self.key = key
+            self.value = value
+        }
+
+        init(key: String, value: Int) {
+            self.key = key
+            self.value = "\(value)"
+        }
+
+        init(key: String, value: Int32) {
+            self.key = key
+            self.value = "\(value)"
+        }
+
+        init(key: String, value: Bool) {
+            self.key = key
+            self.value = value ? "True" : "False"
+        }
+
+    }
+
+}
+
+// MARK: -
 
 extension AnalyticsEvent: CustomDebugStringConvertible {
 

@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import WireFoundation
+
 import struct Foundation.TimeInterval
 
 // The segmentation entries in this file are not to be used anymore.
