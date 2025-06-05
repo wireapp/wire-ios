@@ -20,7 +20,7 @@ import Foundation
 
 /// Errors to throw from test code.
 
-struct TestError: Error {
+struct TestError: Error, Equatable {
 
     let message: String
 

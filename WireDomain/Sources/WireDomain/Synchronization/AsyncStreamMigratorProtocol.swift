@@ -24,24 +24,24 @@ protocol AsyncStreamMigratorProtocol {
 }
 
 public final class AsyncStreamMigrator: AsyncStreamMigratorProtocol {
-    let sync: PullPendingUpdateEventsSync
+    let sync: PullPendingUpdateEventsSyncProtocol
     let apiVersion: WireAPI.APIVersion
-    let userClientsLocalStore: UserClientsLocalStore
+    let userClientsLocalStore: UserClientsLocalStoreProtocol
+    let userClientsAPI: UserClientsAPI
     var journal: JournalProtocol
-    let api: UserClientsAPI
 
     init(
-        sync: PullPendingUpdateEventsSync,
-        api: UserClientsAPI,
+        sync: PullPendingUpdateEventsSyncProtocol,
+        userClientsAPI: UserClientsAPI,
+        userClientsLocalStore: UserClientsLocalStoreProtocol,
         apiVersion: WireAPI.APIVersion,
-        userClientsLocalStore: UserClientsLocalStore,
         journal: JournalProtocol
     ) {
         self.sync = sync
         self.apiVersion = apiVersion
         self.userClientsLocalStore = userClientsLocalStore
         self.journal = journal
-        self.api = api
+        self.userClientsAPI = userClientsAPI
     }
 
     enum Failure: Error {
@@ -51,7 +51,6 @@ public final class AsyncStreamMigrator: AsyncStreamMigratorProtocol {
     }
 
     public func migrateToAsyncStream() async throws {
-
         // 1) register asyncStream capabilities
         guard apiVersion >= .v8 else {
             throw Failure.apiVersionTooLow
@@ -79,6 +78,6 @@ public final class AsyncStreamMigrator: AsyncStreamMigratorProtocol {
         let payload: UpdateClientPayload = .init(
             capabilities: [.legalholdConsent, .consumableNotifications]
         )
-        try await api.updateClient(id: id, payload: payload)
+        try await userClientsAPI.updateClient(id: id, payload: payload)
     }
 }
