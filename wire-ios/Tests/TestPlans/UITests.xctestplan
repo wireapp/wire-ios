@@ -23,6 +23,7 @@
             "value" : "$(INBUCKET_PASSWORD)"
           }
         ],
+        "maximumTestRepetitions" : 3,
         "repeatInNewRunnerProcess" : true,
         "targetForVariableExpansion" : {
           "containerPath" : "container:Wire-iOS.xcodeproj",
