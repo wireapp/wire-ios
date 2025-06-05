@@ -20,7 +20,8 @@
 public struct UpdateClientPayload: Equatable, Encodable, Sendable {
 
     /// The capabilities of the client.
-
+    /// - Note: capabilities cannot be removed once added to a client,
+    ///  so once 1 capability added it must always be present
     public let capabilities: [UserClientCapability]?
 
     /// A label describing the client.
