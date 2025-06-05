@@ -68,13 +68,13 @@ final class NotificationService: UNNotificationServiceExtension {
             WireLogger.notifications.warn("no resolved api version, not loading service")
             return nil
         }
-        
+
         /// With v8, the new extension is available, but not necessarily
         /// turned on yet. Regardless, we will use it and later check
         /// if the new sync is enabled.
         ///
         /// WPB-18030 disable new sync for prod for now
-        if apiVersion >= .v8 && Bundle.developerModeEnabled {
+        if apiVersion >= .v8, Bundle.developerModeEnabled {
             WireLogger.notifications.warn("loading new notification service")
             return NotificationServiceExtension()
         } else {
