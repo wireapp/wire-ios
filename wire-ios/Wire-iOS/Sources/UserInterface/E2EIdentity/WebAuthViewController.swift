@@ -30,7 +30,7 @@ protocol WebAuthViewControllerDelegate: AnyObject {
 
 }
 
-class WebAuthViewController: UIViewController, WKUIDelegate, WKNavigationDelegate {
+final class WebAuthViewController: UIViewController, WKUIDelegate, WKNavigationDelegate {
 
     let url: URL
     weak var delegate: WebAuthViewControllerDelegate?
