@@ -117,10 +117,6 @@ final class IncrementalSyncTests: XCTestCase {
         store.deleteEventEnvelopeAtIndex_MockMethod = { _ in }
 
         // Live events are decrypted.
-//        decryptor.decryptEventsIn_MockMethod = { EventDecryptorResult(
-//            events: $0.events,
-//            brokenMLSGroupIDs: [Scaffolding.mlsGroupID]
-//        ) }
         decryptor.decryptEventsInContext_MockMethod = { envelope, _ in
             EventDecryptorResult(events: envelope.events, brokenMLSGroupIDs: [Scaffolding.mlsGroupID])
         }
@@ -139,7 +135,7 @@ final class IncrementalSyncTests: XCTestCase {
 
         // When
         let token = try await sut.perform()
-        try await token.task.value
+        await token.task.value
 
         // Then push channel was created.
         XCTAssertEqual(

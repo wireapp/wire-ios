@@ -32,6 +32,7 @@ public struct NewIncrementalSync: LiveSyncProtocol {
     private let databaseSaver: any DatabaseSaverProtocol
     private let syncStateSubject: CurrentValueSubject<SyncState, Never>
     private let logger = WireLogger.sync
+    private let journal: Journal
     weak var delegate: (any LiveSyncDelegate)?
 
     public init(
@@ -41,7 +42,8 @@ public struct NewIncrementalSync: LiveSyncProtocol {
         store: any UpdateEventsLocalStoreProtocol,
         processor: any UpdateEventProcessorProtocol,
         databaseSaver: any DatabaseSaverProtocol,
-        syncStateSubject: CurrentValueSubject<SyncState, Never>
+        syncStateSubject: CurrentValueSubject<SyncState, Never>,
+        journal: Journal
     ) {
         self.selfClientID = selfClientID
         self.pushChannelAPI = pushChannelAPI
@@ -78,7 +80,7 @@ public struct NewIncrementalSync: LiveSyncProtocol {
         pushChannel: NewPushChannelProtocol
     ) async {
         logger.debug("handling live event stream v3")
-        syncStateSubject.send(.liveSyncing)
+        syncStateSubject.send(.liveSyncing(.ongoing))
 
         do {
             for try await element in liveEventStream {
@@ -130,7 +132,7 @@ public struct NewIncrementalSync: LiveSyncProtocol {
         }
 
         logger.debug("live event stream did finish v3")
-        syncStateSubject.send(.idle)
+        syncStateSubject.send(.liveSyncing(.finished))
     }
 
     // MARK: - Event Steps
@@ -143,7 +145,13 @@ public struct NewIncrementalSync: LiveSyncProtocol {
                 attributes: [.eventEnvelopeID: envelope.id]
             )
             // TODO: [WPB-17703] add batch decryption
-            return try await decryptor.decryptEvents(in: envelope, context: nil)
+            let decryptionEventsResult = try await decryptor.decryptEvents(in: envelope, context: nil)
+
+            let brokenMLSGroupIDs = decryptionEventsResult.brokenMLSGroupIDs
+            if !brokenMLSGroupIDs.isEmpty {
+                journal.addValues(Set(brokenMLSGroupIDs), for: .brokenMLSGroupIDs)
+            }
+            return decryptionEventsResult.events
         } catch {
             logger.error(
                 "failed to decrypt live event envelope  v3: \(String(describing: error))",
