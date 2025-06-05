@@ -35,6 +35,9 @@ package protocol LoginViaEmailFactory {
     @MainActor
     func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory
 
+    @MainActor
+    func personalAccountCreationFactory() -> any PersonalAccountCreationFactory
+
 }
 
 package struct LoginViaEmailView: View {

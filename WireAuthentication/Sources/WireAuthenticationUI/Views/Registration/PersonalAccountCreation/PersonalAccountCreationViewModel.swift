@@ -16,18 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+package final class PersonalAccountCreationViewModel {
 
-// sourcery: AutoMockable
-public protocol SubmitProxyCredentialsUseCaseProtocol: Sendable {
-
-    func invoke(proxyCredentials: ProxyCredentials) throws
-
-}
-
-public protocol SubmitProxyCredentialsUseCaseFactory {
-
-    @MainActor
-    func submitProxyCredentialsUseCase() -> any SubmitProxyCredentialsUseCaseProtocol
+    package init() {}
 
 }

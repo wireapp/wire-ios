@@ -32,6 +32,7 @@ public protocol CreateAuthenticationResultUseCaseProtocol: Sendable {
 
 public protocol CreateAuthenticationResultUseCaseFactory {
 
+    @MainActor
     func createAuthenticationResultUseCase() -> any CreateAuthenticationResultUseCaseProtocol
 
 }

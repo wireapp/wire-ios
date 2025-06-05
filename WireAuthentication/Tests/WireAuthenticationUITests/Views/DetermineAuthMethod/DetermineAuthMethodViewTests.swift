@@ -92,9 +92,3 @@ final class DetermineAuthMethodViewTests: XCTestCase {
         snapshotHelper.verify(matching: view)
     }
 }
-
-extension View {
-    func inNavigationStack() -> some View {
-        NavigationStack(root: { self })
-    }
-}
