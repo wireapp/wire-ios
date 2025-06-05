@@ -17,8 +17,8 @@
 //
 
 import WireAnalytics
-import WireFoundation
 import WireAnalyticsSupport
+import WireFoundation
 import XCTest
 
 @testable import WireSyncEngine

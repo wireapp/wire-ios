@@ -19,9 +19,9 @@
 import WireAnalytics
 import WireDataModel
 import WireDataModelSupport
-import WireSyncEngineSupport
 import WireFoundation
 import WireFoundationSupport
+import WireSyncEngineSupport
 import XCTest
 
 @testable import WireSyncEngine

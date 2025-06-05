@@ -76,7 +76,8 @@ final class WebSocketTests: XCTestCase {
         await fulfillment(of: [didFinishIterating], timeout: 1)
 
         // Then the connection was cancelled
-        let invocations = connection.cancelWithCloseCodeURLSessionWebSocketTaskCloseCodeReasonDataVoidReceivedInvocations
+        let invocations = connection
+            .cancelWithCloseCodeURLSessionWebSocketTaskCloseCodeReasonDataVoidReceivedInvocations
         try XCTAssertCount(invocations, count: 1)
         XCTAssertEqual(invocations[0].closeCode, .goingAway)
         XCTAssertNil(invocations[0].reason)

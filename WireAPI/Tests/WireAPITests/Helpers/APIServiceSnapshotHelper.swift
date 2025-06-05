@@ -131,9 +131,10 @@ struct APIServiceSnapshotHelper<API> {
 
         try? await block(sut)
 
-        let receivedRequests = apiService.executeRequestRequestURLRequestRequiringAccessTokenBool_DataHTTPURLResponseReceivedInvocations.map(
-            \.request
-        )
+        let receivedRequests = apiService
+            .executeRequestRequestURLRequestRequiringAccessTokenBool_DataHTTPURLResponseReceivedInvocations.map(
+                \.request
+            )
 
         guard !receivedRequests.isEmpty else {
             XCTFail("no requests to snapshot", file: file, line: line)

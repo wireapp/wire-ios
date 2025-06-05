@@ -130,7 +130,8 @@ class ConnectionsAPITests: XCTestCase {
         }
 
         // THEN
-        let invokedRequestCount = apiService.executeRequestRequestURLRequestRequiringAccessTokenBool_DataHTTPURLResponseCallsCount
+        let invokedRequestCount = apiService
+            .executeRequestRequestURLRequestRequiringAccessTokenBool_DataHTTPURLResponseCallsCount
         XCTAssertEqual(invokedRequestCount, 3)
     }
 }

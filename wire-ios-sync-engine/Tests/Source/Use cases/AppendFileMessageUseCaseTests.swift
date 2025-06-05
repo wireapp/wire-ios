@@ -17,10 +17,10 @@
 //
 
 import WireAnalytics
-import WireFoundation
-import WireFoundationSupport
 import WireDataModel
 import WireDataModelSupport
+import WireFoundation
+import WireFoundationSupport
 import WireSyncEngineSupport
 import XCTest
 

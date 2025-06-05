@@ -53,12 +53,14 @@ final class PushChannelTests: XCTestCase {
         let mockEnvelope2 = try MockJSONPayloadResource(name: "LiveUpdateEventEnvelope2")
         let mockEnvelope3 = try MockJSONPayloadResource(name: "LiveUpdateEventEnvelope3")
 
-        webSocket.openAsyncThrowingStreamURLSessionWebSocketTaskMessageAnyErrorReturnValue = AsyncThrowingStream { continuation in
-            continuation.yield(.data(mockEnvelope1.jsonData))
-            continuation.yield(.data(mockEnvelope2.jsonData))
-            continuation.yield(.data(mockEnvelope3.jsonData))
-            continuation.finish()
-        }
+        webSocket
+            .openAsyncThrowingStreamURLSessionWebSocketTaskMessageAnyErrorReturnValue =
+            AsyncThrowingStream { continuation in
+                continuation.yield(.data(mockEnvelope1.jsonData))
+                continuation.yield(.data(mockEnvelope2.jsonData))
+                continuation.yield(.data(mockEnvelope3.jsonData))
+                continuation.finish()
+            }
 
         // When the push channel is open and the stream is iterated
         let liveEventEnvelopes = try await sut.open()
@@ -91,11 +93,13 @@ final class PushChannelTests: XCTestCase {
 
     func testFailureToDecodeClosesPushChannel() async throws {
         // Given an open push channel that is being iterated
-        webSocket.openAsyncThrowingStreamURLSessionWebSocketTaskMessageAnyErrorReturnValue = AsyncThrowingStream { continuation in
-            // Send some invalid data
-            continuation.yield(.data(Data()))
-            // Don't call finish, so the stream stays open.
-        }
+        webSocket
+            .openAsyncThrowingStreamURLSessionWebSocketTaskMessageAnyErrorReturnValue =
+            AsyncThrowingStream { continuation in
+                // Send some invalid data
+                continuation.yield(.data(Data()))
+                // Don't call finish, so the stream stays open.
+            }
 
         let liveEventEnvelopes = try await sut.open()
 
@@ -115,11 +119,13 @@ final class PushChannelTests: XCTestCase {
 
     func testReceivingUnknownMessageClosesPushChannel() async throws {
         // Given an open push channel that is being iterated
-        webSocket.openAsyncThrowingStreamURLSessionWebSocketTaskMessageAnyErrorReturnValue = AsyncThrowingStream { continuation in
-            // Send some invalid data.
-            continuation.yield(.string("some string"))
-            // Don't call finish, so the stream stays open.
-        }
+        webSocket
+            .openAsyncThrowingStreamURLSessionWebSocketTaskMessageAnyErrorReturnValue =
+            AsyncThrowingStream { continuation in
+                // Send some invalid data.
+                continuation.yield(.string("some string"))
+                // Don't call finish, so the stream stays open.
+            }
 
         let liveEventEnvelopes = try await sut.open()
 
