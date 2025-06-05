@@ -17,9 +17,11 @@
 //
 
 import Foundation
+import SwiftUI
 import UIKit
 import WebKit
 import WireCommonComponents
+import WireDesign
 
 protocol WebAuthViewControllerDelegate: AnyObject {
 
@@ -33,7 +35,7 @@ class WebAuthViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
     let url: URL
     weak var delegate: WebAuthViewControllerDelegate?
 
-    private let urlLabel = UILabel()
+    private var urlLabel: URLLabel!
 
     private lazy var webView: WKWebView = {
         let webConfiguration = WKWebViewConfiguration()
@@ -94,14 +96,11 @@ class WebAuthViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
         // Prevent auto dismissal.
         isModalInPresentation = true
 
-        urlLabel.text = url.absoluteString
-        urlLabel.lineBreakMode = .byTruncatingTail
+        urlLabel = URLLabel(url: url)
         urlLabel.isUserInteractionEnabled = true
         urlLabel.isAccessibilityElement = true
-        urlLabel.accessibilityTraits = .link
-        // TODO: localize
-        urlLabel.accessibilityLabel = "IDP URL"
-        urlLabel.accessibilityHint = "Tap to view full URL"
+        urlLabel.accessibilityLabel = L10n.Accessibility.WebAuth.UrlLabel.accessiblityLabel
+        urlLabel.accessibilityHint = L10n.Accessibility.WebAuth.UrlLabel.hint
 
         urlLabel.addGestureRecognizer(
             UITapGestureRecognizer(
@@ -186,7 +185,7 @@ class WebAuthViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
         didFinish navigation: WKNavigation!
     ) {
         if let currentURL = webView.url {
-            urlLabel.text = currentURL.absoluteString
+            urlLabel.url = currentURL
         }
     }
 
@@ -207,7 +206,8 @@ class WebAuthViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
     @objc
     private func urlLabelTapped() {
         // Show the user the entire URL for them to verify.
-        let viewController = WebAuthURLViewController(url: url)
+        let view = WebAuthURLView(url: url.absoluteString)
+        let viewController = UIHostingController(rootView: view)
         present(viewController, animated: true)
     }
 
@@ -222,43 +222,78 @@ class WebAuthViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
 
 }
 
-private final class WebAuthURLViewController: UIViewController {
+// VoiceOver reads UILabel text content then the accessibility label
+// you set. If the content is a long URL then the it's not a very
+// good experience. This view wraps the label so if you set an
+// accessibility label then VoiceOver will only read that label.
 
-    let url: URL
+private final class URLLabel: UIView {
+
+    var url: URL {
+        didSet {
+            label.text = url.absoluteString
+        }
+    }
+
+    private let label: UILabel
 
     init(url: URL) {
         self.url = url
-        super.init(nibName: nil, bundle: nil)
+        label = UILabel()
+        super.init(frame: .zero)
+        label.text = url.absoluteString
+        label.lineBreakMode = .byTruncatingTail
+        label.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(label)
+        NSLayoutConstraint.activate([
+            label.leadingAnchor.constraint(equalTo: leadingAnchor),
+            label.topAnchor.constraint(equalTo: topAnchor),
+            label.trailingAnchor.constraint(equalTo: trailingAnchor),
+            label.bottomAnchor.constraint(equalTo: bottomAnchor)
+        ])
     }
 
-    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
+}
 
-        let textView = UITextView()
-        textView.text = url.absoluteString
-        textView.isEditable = false
-        textView.isSelectable = false
-        textView.font = .preferredFont(forTextStyle: .body)
-        textView.contentInset = UIEdgeInsets(
-            top: 20,
-            left: 20,
-            bottom: 20,
-            right: 20
-        )
+// To show the complete URL.
 
-        textView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(textView)
-        NSLayoutConstraint.activate([
-            textView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            textView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            textView.topAnchor.constraint(equalTo: view.topAnchor),
-            textView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
+private struct WebAuthURLView: View {
+
+    let url: String
+
+    @Environment(\.dismiss)
+    var dismiss
+
+    var body: some View {
+        VStack(spacing: 40) {
+            HStack {
+                Spacer()
+                Text(L10n.Localizable.EnrollE2eiCertificate.idpUrlTitle)
+                    .font(.body)
+                    .bold()
+
+                Spacer()
+                Button(role: .cancel) {
+                    dismiss()
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .symbolRenderingMode(.hierarchical)
+                        .resizable()
+                        .frame(width: 30, height: 30)
+                        .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                }
+            }
+
+            ScrollView {
+                Text(url)
+                    .font(.body)
+            }
+        }
+        .padding()
     }
 
 }

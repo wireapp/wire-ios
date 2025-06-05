@@ -321,3 +321,8 @@
 "searchGifs.norResultsLabel.description" = "No Gifs found";
 "searchGifs.gifItem.accessibilityHint" = "Tap to select this GIF";
 "searchGifs.gifItems_loaded.announcement" = "Loaded %@ new GIFs";
+
+// MARK: - E2EI
+
+"webAuth.urlLabel.accessiblityLabel" = "Identity Provider URL";
+"webAuth.urlLabel.hint" = "Tap to view this URL";

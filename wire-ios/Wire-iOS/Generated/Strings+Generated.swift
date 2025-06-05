@@ -1081,6 +1081,14 @@ internal enum L10n {
         internal static let description = L10n.tr("Accessibility", "tabBar.phone.description", fallback: "Log in via phone number")
       }
     }
+    internal enum WebAuth {
+      internal enum UrlLabel {
+        /// Identity Provider URL
+        internal static let accessiblityLabel = L10n.tr("Accessibility", "webAuth.urlLabel.accessiblityLabel", fallback: "Identity Provider URL")
+        /// Tap to view this URL
+        internal static let hint = L10n.tr("Accessibility", "webAuth.urlLabel.hint", fallback: "Tap to view this URL")
+      }
+    }
   }
   internal enum InfoPlist {
     /// Allow Wire to access your camera so you can place video calls and send photos.
@@ -3171,6 +3179,8 @@ internal enum L10n {
     internal enum EnrollE2eiCertificate {
       /// Certificate Details
       internal static let certificateDetailsButton = L10n.tr("Localizable", "enroll_e2ei_certificate.certificate_details_button", fallback: "Certificate Details")
+      /// Identity Provider URL
+      internal static let idpUrlTitle = L10n.tr("Localizable", "enroll_e2ei_certificate.idp_url_title", fallback: "Identity Provider URL")
       /// OK
       internal static let okButton = L10n.tr("Localizable", "enroll_e2ei_certificate.ok_button", fallback: "OK")
       /// The certificate is active and your device is verified.
