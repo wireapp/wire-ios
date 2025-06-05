@@ -20,11 +20,11 @@ public struct AnalyticsEvent: Equatable, Sendable {
 
     /// A unique name.
 
-    let name: String
+    public let name: String
 
     /// Additional metadata.
 
-    let segmentation: Set<Segmentation>
+    public let segmentation: Set<Segmentation>
 
     /// Create a new `AnalyticsEvent`.
     ///
@@ -44,7 +44,7 @@ public struct AnalyticsEvent: Equatable, Sendable {
 
 // MARK: -
 
-public extension AnalyticsEvent {
+extension AnalyticsEvent {
 
     /// Represents a key-value pair for analytics event segmentation.
     ///
@@ -52,27 +52,27 @@ public extension AnalyticsEvent {
     /// Each ``Segmentation`` consists of a key (identifying the type of information) and a value
     /// (the actual data point).
 
-    struct Segmentation: Hashable, Sendable {
+    public struct Segmentation: Hashable, Sendable {
 
-        let key: String
-        let value: String
+        public let key: String
+        public let value: String
 
-        init(key: String, value: String) {
+        public init(key: String, value: String) {
             self.key = key
             self.value = value
         }
 
-        init(key: String, value: Int) {
+        public init(key: String, value: Int) {
             self.key = key
             self.value = "\(value)"
         }
 
-        init(key: String, value: Int32) {
+        public init(key: String, value: Int32) {
             self.key = key
             self.value = "\(value)"
         }
 
-        init(key: String, value: Bool) {
+        public init(key: String, value: Bool) {
             self.key = key
             self.value = value ? "True" : "False"
         }
