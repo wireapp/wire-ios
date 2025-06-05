@@ -102,10 +102,7 @@ public struct NewIncrementalSync: LiveSyncProtocol {
 
                         let index = try await storeEnvelope(envelope)
 
-                        // Bump the last event id so we don't refetch it.
-                        // there's no events marked as transient anymore
                         // TODO: [WPB-17947] handle duplicate events, reacknowledge and move on
-                        store.storeLastEventID(id: envelope.id)
 
                         await acknowledgeEnvelope(envelope, through: pushChannel)
 
