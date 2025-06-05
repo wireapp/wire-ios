@@ -125,7 +125,7 @@ final class UpdateEventDecryptorTests: XCTestCase {
         }
 
         // When
-        let events = try await sut.decryptEvents(in: envelope, context: nil)
+        let events = try await sut.decryptEvents(in: envelope, context: nil).events
 
         // Then the "decrypted" (the mock just passes them right back) are returned.
         XCTAssertEqual(
@@ -154,7 +154,7 @@ final class UpdateEventDecryptorTests: XCTestCase {
         }
 
         // When
-        let events = try await sut.decryptEvents(in: envelope, context: nil)
+        let events = try await sut.decryptEvents(in: envelope, context: nil).events
 
         // Then we skipped over the proteus message.
         XCTAssertEqual(events, [.user(.pushRemove)])
@@ -190,7 +190,7 @@ final class UpdateEventDecryptorTests: XCTestCase {
         }
 
         // When
-        let events = try await sut.decryptEvents(in: envelope, context: nil)
+        let events = try await sut.decryptEvents(in: envelope, context: nil).events
 
         // Then the "decrypted" (the mock just passes them right back) are returned.
         XCTAssertEqual(
@@ -206,6 +206,30 @@ final class UpdateEventDecryptorTests: XCTestCase {
         XCTAssertEqual(mlsService.commitPendingProposalsIfNeeded_Invocations.count, 1)
     }
 
+    func testWhenWrongEpochErrorIsThrown() async throws {
+        // Given some events.
+        let envelope = UpdateEventEnvelope(
+            id: UUID(),
+            events: [
+                .conversation(.mlsMessageAdd(Scaffolding.mlsMessage)),
+                .user(.pushRemove)
+            ],
+            isTransient: false
+        )
+
+        // Mock
+        mlsMessageDecryptor.decryptedMessageAddEventDataFromContext_MockMethod = { _, _ in
+            throw MLSMessageDecryptorError.wrongEpoch(mlsGroupID: Scaffolding.mlsGroupID)
+        }
+
+        // When
+        let decryptEvents = try await sut.decryptEvents(in: envelope, context: nil)
+
+        // Then we skipped over the mls message.
+        XCTAssertEqual(decryptEvents.events, [.user(.pushRemove)])
+        XCTAssertEqual(decryptEvents.brokenMLSGroupIDs.first, Scaffolding.mlsGroupID.description)
+    }
+
 }
 
 private enum Scaffolding {
@@ -219,6 +243,7 @@ private enum Scaffolding {
     static let aliceClientID = "efgh5678"
 
     static let conversationID = ConversationID(uuid: UUID(), domain: localDomain)
+    static let mlsGroupID = MLSGroupID.random()
     static let messageContent = "foo"
     static let timestamp = Date()
 

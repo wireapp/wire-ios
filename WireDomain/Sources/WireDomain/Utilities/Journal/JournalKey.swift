@@ -68,3 +68,14 @@ public extension JournalKey where Value == Bool {
     )
 
 }
+
+public extension JournalKey where Value == Set<String> {
+
+    /// The set of MLS group IDs to be repaired.
+
+    static let brokenMLSGroupIDs = Self(
+        "brokenMLSGroupIDs",
+        defaultValue: []
+    )
+
+}

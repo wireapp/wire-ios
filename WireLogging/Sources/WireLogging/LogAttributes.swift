@@ -41,6 +41,9 @@ public enum LogAttributesKey: String, Comparable, Sendable {
     case accountID = "account_id"
     case mlsGroupID = "mls_group_id"
     case pushChannelVersion = "push_channel"
+    case duration
+    case syncType = "sync_type"
+    case syncVersion = "sync_version"
 
     public static func < (lhs: LogAttributesKey, rhs: LogAttributesKey) -> Bool {
         lhs.rawValue < rhs.rawValue

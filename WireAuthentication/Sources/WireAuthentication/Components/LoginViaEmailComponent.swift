@@ -81,6 +81,12 @@ final class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> 
         )
     }
 
+    func personalAccountCreationComponent() -> PersonalAccountCreationComponent {
+        PersonalAccountCreationComponent(
+            parent: self
+        )
+    }
+
 }
 
 extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
@@ -133,6 +139,10 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
         noHistoryComponent(
             authenticationResult: authenticationResult
         )
+    }
+
+    func personalAccountCreationFactory() -> any PersonalAccountCreationFactory {
+        personalAccountCreationComponent()
     }
 
     // MARK: - Use cases

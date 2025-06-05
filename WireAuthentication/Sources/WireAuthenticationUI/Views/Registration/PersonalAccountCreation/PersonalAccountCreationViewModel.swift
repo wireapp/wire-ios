@@ -16,11 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+package final class PersonalAccountCreationViewModel {
 
-struct SyncStatusLog: Codable {
-    var phase: String
-    var isSyncing: Bool
-    var pushChannelEstablishedDate: String?
-    var message: String?
+    package init() {}
+
 }

@@ -30,6 +30,11 @@ public actor WebSocket: WebSocketProtocol {
         self.connection = connection
     }
 
+    deinit {
+        connection.cancel(with: .goingAway, reason: nil)
+        continuation?.finish()
+    }
+
     public func open() async throws -> Stream {
         WireLogger.webSocket.debug("open")
         connection.resume()
