@@ -16,12 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+<<<<<<< HEAD
 import WireAnalytics
+=======
+import WireFoundation
+>>>>>>> 0aa4d34b8d (fix: duplicate WireAnalytics symbols - WPB-17530 (#3140))
 import WireIndividualToTeamMigrationUI
 
 struct AccountMigrationAnalyticsTracker: AccountMigrationAnalyticsTrackerProtocol {
 
+<<<<<<< HEAD
     let analyticsEventTracker: any AnalyticsEventTracker
+=======
+    let analyticsEventTracker: any AnalyticsEventTrackerProtocol
+>>>>>>> 0aa4d34b8d (fix: duplicate WireAnalytics symbols - WPB-17530 (#3140))
 
     func trackMigrationReachedDisclaimerStep() {
         analyticsEventTracker.trackEvent(.User.personalTeamCreationFlowStarted(at: .disclaimer))

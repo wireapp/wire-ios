@@ -14,13 +14,14 @@ let package = Package(
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", exact: "1.18.3"),
         .package(path: "../WirePlugins"),
         .package(path: "../WireLogging"),
-        .package(name: "WireFoundation", path: "../WireFoundation")
+        .package(path: "../WireFoundation")
     ],
     targets: [
         .target(
             name: "WireAPI",
             dependencies: [
-                "WireFoundation", "WireLogging",
+                "WireFoundation",
+                "WireLogging",
                 .product(name: "WireCrypto", package: "WireFoundation")
             ]
         ),
