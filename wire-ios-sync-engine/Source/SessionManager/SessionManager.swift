@@ -1087,6 +1087,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                         )
                     }
 
+                    await self.executeAsyncStreamMigrationIfNeeded(coreDataStack: coreDataStack, journal: journal)
                     await MainActor.run {
                         let userSession = self.startBackgroundSession(
                             for: account,
@@ -1104,6 +1105,27 @@ public final class SessionManager: NSObject, SessionManagerType {
                 }
             }
         )
+    }
+    
+    private func executeAsyncStreamMigrationIfNeeded(coreDataStack: CoreDataStack, journal: Journal) async {
+        
+        guard let apiVersion = BackendInfo.apiVersion else {
+            fatalError("api version unknown")
+        }
+        async let asyncStreamEnabled = await coreDataStack.syncContext.perform {
+                let client = ZMUser.selfUser(in: coreDataStack.syncContext).selfClient()
+                return client?.asyncStreamCapable == true
+            }
+        }
+        let isAvailable = apiVersion >= .v8
+        let isAlreadyEnabled = journal[.isSyncV3Enabled]
+
+        guard !isAlreadyEnabled && isAvailable && !asyncStreamEnabled else {
+            return
+        }
+        
+        
+        
     }
 
     private func shouldEnableSyncV2(journal: Journal) -> Bool {
