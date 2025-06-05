@@ -79,9 +79,7 @@ final class PushChannelTests: XCTestCase {
 
     func testClosingPushChannel() async throws {
         // Given an open push channel
-        webSocket.openAsyncThrowingStreamURLSessionWebSocketTaskMessageAnyErrorReturnValue = AsyncThrowingStream {
-            _ in
-        }
+        webSocket.openAsyncThrowingStreamURLSessionWebSocketTaskMessageAnyErrorReturnValue = .init { _ in }
         _ = try await sut.open()
 
         // When the push channel is closed
@@ -145,9 +143,7 @@ final class PushChannelTests: XCTestCase {
 
     func testSendingKeepAlivePings() async throws {
         // Mock.
-        webSocket.openAsyncThrowingStreamURLSessionWebSocketTaskMessageAnyErrorReturnValue = AsyncThrowingStream {
-            _ in
-        }
+        webSocket.openAsyncThrowingStreamURLSessionWebSocketTaskMessageAnyErrorReturnValue = .init { _ in }
 
         // Given an open push channel.
         _ = try await sut.open()
