@@ -28,5 +28,5 @@ public protocol AnalyticsEventTrackerProtocol: AnyObject {
 
 }
 
-@available(*, deprecated, renamed: "AnalyticsEventTrackerProtocol")
-public typealias AnalyticsEventTracker = AnalyticsEventTrackerProtocol
+// @available(*, deprecated, renamed: "AnalyticsEventTrackerProtocol")
+public typealias AnalyticsEventTracker = AnalyticsEventTrackerProtocol // TODO: delete

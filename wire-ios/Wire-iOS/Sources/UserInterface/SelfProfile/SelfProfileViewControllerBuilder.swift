@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireAnalytics
 import WireCommonComponents
+import WireFoundation
 import WireMainNavigationUI
 import WireSyncEngine
 

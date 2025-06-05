@@ -18,11 +18,11 @@
 
 import SwiftUI
 import WireAccountImageUI
-import WireAnalytics
 import WireAPI
 import WireCommonComponents
 import WireDesign
 import WireDomainPackage
+import WireFoundation
 import WireIndividualToTeamMigrationUI
 import WireMainNavigationUI
 import WireMultiBackendUI

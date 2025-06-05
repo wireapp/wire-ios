@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import WireAnalytics
+import WireFoundation
 import WireMainNavigationUI
 import WireSidebarUI
 
