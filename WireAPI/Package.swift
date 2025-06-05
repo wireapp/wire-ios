@@ -1,4 +1,4 @@
-// swift-tools-version: 5.10
+// swift-tools-version: 6.0
 
 import PackageDescription
 
@@ -14,13 +14,14 @@ let package = Package(
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", exact: "1.18.3"),
         .package(path: "../WirePlugins"),
         .package(path: "../WireLogging"),
-        .package(name: "WireFoundation", path: "../WireFoundation")
+        .package(path: "../WireFoundation")
     ],
     targets: [
         .target(
             name: "WireAPI",
             dependencies: [
-                "WireFoundation", "WireLogging",
+                "WireFoundation",
+                "WireLogging",
                 .product(name: "WireCrypto", package: "WireFoundation")
             ]
         ),
@@ -65,12 +66,8 @@ let package = Package(
 )
 
 for target in package.targets {
-    // remove this once we updated the Sourcery stencil to support existential any
-    guard target.name != "WireAPISupport" else { continue }
-
-    target.swiftSettings = [
-        .enableUpcomingFeature("ExistentialAny"),
-        .enableUpcomingFeature("GlobalConcurrency"),
-        .enableExperimentalFeature("StrictConcurrency")
+    target.swiftSettings = (target.swiftSettings ?? []) + [
+        .enableUpcomingFeature("InternalImportsByDefault"),
+        .enableUpcomingFeature("ExistentialAny")
     ]
 }
