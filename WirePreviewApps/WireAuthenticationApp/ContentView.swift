@@ -55,8 +55,7 @@ struct ContentView: View {
                 passwordValidator: configuration.passwordValidator,
                 ssoCallbackURLScheme: "some scheme",
                 appStoreURL: URL(string: "www.example.com")!,
-                existsAnotherAccount: true,
-                otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>(
+                accountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>(
                     subject: CurrentValueSubject<[AccountUIModel], Never>(
                         [
                             AccountUIModel(

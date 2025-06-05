@@ -26,7 +26,7 @@ import WireMultiBackendUI
 protocol AccountSwitcherComponentDependency: Dependency {
 
     @MainActor var router: any Router { get }
-    var otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]> { get }
+    var accountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]> { get }
 
 }
 
@@ -38,7 +38,7 @@ extension AccountSwitcherComponent: AccountSwitcherFactory {
 
     @MainActor var viewModel: AccountSwitcherModalViewModel {
         AccountSwitcherModalViewModel(
-            otherAccountsPublisher: dependency.otherAccountsPublisher,
+            accountsPublisher: dependency.accountsPublisher,
             router: dependency.router
         )
     }

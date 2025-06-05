@@ -55,8 +55,7 @@ public struct WireAuthenticationAssembly {
         passwordValidator: any PasswordValidator,
         ssoCallbackURLScheme: String,
         appStoreURL: URL,
-        existsAnotherAccount: Bool, // get rid of it
-        otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>,
+        accountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>,
         isLoggedInProvider: @escaping () -> Bool,
         useLegacyRegistrationFlow: Bool,
         multibackendEnabled: Bool
@@ -74,8 +73,7 @@ public struct WireAuthenticationAssembly {
             passwordValidator: passwordValidator,
             ssoCallbackURLScheme: ssoCallbackURLScheme,
             appStoreURL: appStoreURL,
-            existsAnotherAccount: existsAnotherAccount,
-            otherAccountsPublisher: otherAccountsPublisher,
+            accountsPublisher: accountsPublisher,
             isLoggedInProvider: isLoggedInProvider,
             useLegacyRegistrationFlow: useLegacyRegistrationFlow,
             multibackendEnabled: multibackendEnabled

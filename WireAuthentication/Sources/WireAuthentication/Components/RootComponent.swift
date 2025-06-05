@@ -38,8 +38,7 @@ class RootComponent: BootstrapComponent {
     public let passwordValidator: any PasswordValidator
     public let ssoCallbackURLScheme: String
     public let appStoreURL: URL
-    public let existsAnotherAccount: Bool
-    public let otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>
+    public let accountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>
     public let isLoggedInProvider: () -> Bool
     public let multibackendEnabled: Bool
     public let useLegacyRegistrationFlow: Bool
@@ -63,8 +62,7 @@ class RootComponent: BootstrapComponent {
         passwordValidator: any PasswordValidator,
         ssoCallbackURLScheme: String,
         appStoreURL: URL,
-        existsAnotherAccount: Bool,
-        otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>,
+        accountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>,
         isLoggedInProvider: @escaping () -> Bool,
         useLegacyRegistrationFlow: Bool,
         multibackendEnabled: Bool
@@ -78,8 +76,7 @@ class RootComponent: BootstrapComponent {
         self.passwordValidator = passwordValidator
         self.ssoCallbackURLScheme = ssoCallbackURLScheme
         self.appStoreURL = appStoreURL
-        self.existsAnotherAccount = existsAnotherAccount
-        self.otherAccountsPublisher = otherAccountsPublisher
+        self.accountsPublisher = accountsPublisher
         self.isLoggedInProvider = isLoggedInProvider
         self.useLegacyRegistrationFlow = useLegacyRegistrationFlow
         self.multibackendEnabled = multibackendEnabled
@@ -96,7 +93,8 @@ class RootComponent: BootstrapComponent {
 
         return DetermineAuthMethodComponent(
             parent: self,
-            networkStack: networkStack
+            networkStack: networkStack,
+            existsAnotherAccount: !accountsPublisher.value.isEmpty
         )
     }
 
@@ -113,8 +111,8 @@ extension RootComponent: RootViewModel.Factory {
                 bridge: bridge,
                 backendInfo: backendInfo,
                 multibackendEnabled: multibackendEnabled,
-                hasOtherAccountsProvider: { [otherAccountsPublisher] in
-                    !otherAccountsPublisher.value.isEmpty
+                hasOtherAccountsProvider: { [accountsPublisher] in
+                    !accountsPublisher.value.isEmpty
                 }, 
                 isLoggedInProvider: isLoggedInProvider
             )

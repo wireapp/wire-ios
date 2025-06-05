@@ -24,19 +24,19 @@ import WireMultiBackendUI
 @MainActor
 package class AccountSwitcherModalViewModel: ObservableObject {
 
-    @Published var otherAccounts: [AccountUIModel]
+    @Published var accounts: [AccountUIModel]
 
     private let router: any Router
     private var cancellables = Set<AnyCancellable>()
 
     package init(
-        otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>,
+        accountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>,
         router: any Router
     ) {
-        self.otherAccounts = otherAccountsPublisher.value
+        self.accounts = accountsPublisher.value
         self.router = router
-        otherAccountsPublisher.sink { [weak self] accounts in
-            self?.otherAccounts = accounts
+        accountsPublisher.sink { [weak self] accounts in
+            self?.accounts = accounts
         }.store(in: &cancellables)
     }
 
