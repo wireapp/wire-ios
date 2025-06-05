@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import WireFoundation
+
 public extension AnalyticsEvent {
 
     enum User {
@@ -37,7 +39,7 @@ public extension AnalyticsEvent {
                 case leave
             }
 
-            /// The actions a user can choose on the final confirmation scren.
+            /// The actions a user can choose on the final confirmation screen.
 
             public enum CompletedAction {
                 case backToWire

@@ -16,18 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAnalytics
+// sourcery: AutoMockable
+/// An object that tracks analytic events.
+public protocol AnalyticsEventTrackerProtocol: AnyObject {
 
-public extension AnalyticsEvent.Segmentation.Conversation.ConversationType {
+    /// Track an event.
+    ///
+    /// - Parameter event: The event to track.
 
-    init?(_ conversationType: ZMConversationType) {
-        switch conversationType {
-        case .oneOnOne:
-            self = .oneOnOne
-        case .group:
-            self = .group
-        case .invalid, .self, .connection:
-            return nil
-        }
-    }
+    func trackEvent(_ event: AnalyticsEvent)
+
 }
