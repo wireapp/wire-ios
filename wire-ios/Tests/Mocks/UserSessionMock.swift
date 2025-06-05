@@ -21,6 +21,7 @@ import LocalAuthentication
 import WireAnalytics
 import WireDataModel
 import WireDataModelSupport
+import WireFoundation
 import WireRequestStrategySupport
 import WireSyncEngine
 import WireSyncEngineSupport

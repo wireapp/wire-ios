@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAnalyticsSupport
 import WireDataModelSupport
+import WireFoundation
 import WireFoundationSupport
 import WireLogging
 import XCTest
