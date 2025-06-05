@@ -104,7 +104,7 @@ package struct RootView: View {
                             } else {
                                 Button(
                                     Strings.Obsolete.Alert.cancel,
-                                    action: viewModel.dismissSheet
+                                    action: viewModel.dismissAlert
                                 )
                             }
                         }

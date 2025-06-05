@@ -98,6 +98,10 @@ package final class RootViewModel: ObservableObject, Router {
     public func presentAlert(_ alert: Alert) {
         self.alert = alert
     }
+    
+    public func dismissAlert() {
+        self.alert = nil
+    }
 
     public func dismissSheet() {
         lastModalDestination = modalDestination

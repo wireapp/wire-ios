@@ -110,7 +110,7 @@ final class AuthenticationInterfaceBuilder {
                 otherAccountsPublisher: ReadOnlyCurrentValueSubject(subject: CurrentValueSubject(otherAccounts)),
                 isLoggedInProvider: { SessionManager.shared?.accountManager.selectedAccount != nil },
                 useLegacyRegistrationFlow: !DeveloperFlag.newRegistration.isOn,
-                multibackendEnabledProvider: { DeveloperFlag.newRegistration.isOn }
+                multibackendEnabled: DeveloperFlag.multibackend.isOn
             )
             return AuthenticationHostingController(
                 rootView: rootView,

@@ -41,7 +41,7 @@ class RootComponent: BootstrapComponent {
     public let existsAnotherAccount: Bool
     public let otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>
     public let isLoggedInProvider: () -> Bool
-    public let multibackendEnabledProvider: () -> Bool
+    public let multibackendEnabled: Bool
     public let useLegacyRegistrationFlow: Bool
 
     @MainActor public var bridge: WireAuthenticationBridge {
@@ -67,7 +67,7 @@ class RootComponent: BootstrapComponent {
         otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>,
         isLoggedInProvider: @escaping () -> Bool,
         useLegacyRegistrationFlow: Bool,
-        multibackendEnabledProvider: @escaping () -> Bool
+        multibackendEnabled: Bool
     ) {
         self.backendInfo = backendInfo
         self.preferredAPIVersion = preferredAPIVersion
@@ -82,7 +82,7 @@ class RootComponent: BootstrapComponent {
         self.otherAccountsPublisher = otherAccountsPublisher
         self.isLoggedInProvider = isLoggedInProvider
         self.useLegacyRegistrationFlow = useLegacyRegistrationFlow
-        self.multibackendEnabledProvider = multibackendEnabledProvider
+        self.multibackendEnabled = multibackendEnabled
     }
 
     // MARK: - Children
@@ -112,7 +112,7 @@ extension RootComponent: RootViewModel.Factory {
                 factory: self,
                 bridge: bridge,
                 backendInfo: backendInfo,
-                multibackendEnabled: multibackendEnabledProvider(),
+                multibackendEnabled: multibackendEnabled,
                 hasOtherAccountsProvider: { [otherAccountsPublisher] in
                     !otherAccountsPublisher.value.isEmpty
                 }, 

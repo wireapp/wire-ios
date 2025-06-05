@@ -80,7 +80,7 @@ struct ContentView: View {
                 ),
                 isLoggedInProvider: { true },
                 useLegacyRegistrationFlow: false,
-                multibackendEnabledProvider: { true }
+                multibackendEnabled: true
             ).view
     }
 

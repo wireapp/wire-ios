@@ -59,7 +59,7 @@ public struct WireAuthenticationAssembly {
         otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>,
         isLoggedInProvider: @escaping () -> Bool,
         useLegacyRegistrationFlow: Bool,
-        multibackendEnabledProvider: @escaping () -> Bool
+        multibackendEnabled: Bool
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
         let backendInfo = BackendInfo(
             environmentType: environmentType,
@@ -78,7 +78,7 @@ public struct WireAuthenticationAssembly {
             otherAccountsPublisher: otherAccountsPublisher,
             isLoggedInProvider: isLoggedInProvider,
             useLegacyRegistrationFlow: useLegacyRegistrationFlow,
-            multibackendEnabledProvider: multibackendEnabledProvider
+            multibackendEnabled: multibackendEnabled
         )
 
         return (view: RootView(factory: rootComponent), bridge: rootComponent.bridge)
