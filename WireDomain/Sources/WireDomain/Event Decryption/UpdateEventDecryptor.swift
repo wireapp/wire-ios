@@ -73,7 +73,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         guard !DeveloperFlag.skipMLSMessagesDecryption.isOn else {
             return EventDecryptorResult(events: [], brokenMLSGroupIDs: [])
         }
-        let logAttributes: LogAttributes = [
+        var logAttributes: LogAttributes = [
             .eventId: eventEnvelope.id.safeForLoggingDescription,
             .public: true
         ]

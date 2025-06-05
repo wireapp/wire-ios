@@ -52,6 +52,7 @@ public struct NewIncrementalSync: LiveSyncProtocol {
         self.processor = processor
         self.databaseSaver = databaseSaver
         self.syncStateSubject = syncStateSubject
+        self.journal = journal
     }
 
     public func perform(acknowledgeFullSync: Bool) async throws -> IncrementalSync.Token {

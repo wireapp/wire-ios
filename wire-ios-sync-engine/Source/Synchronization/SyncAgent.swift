@@ -281,6 +281,7 @@ extension SyncAgent: LiveSyncDelegate {
             self,
             error: error
         )
+    }
 }
 
 // MARK: - MLS sync delegate
