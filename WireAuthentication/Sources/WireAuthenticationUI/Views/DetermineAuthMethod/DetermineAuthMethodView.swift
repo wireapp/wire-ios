@@ -83,6 +83,9 @@ package struct DetermineAuthMethodView: View {
         .interactiveDismissDisabled()
         .background(ColorTheme.Backgrounds.surface.color)
         .presentationDragIndicator(.hidden)
+        .onAppear { // TODO: revert temporary change
+            viewModel.emailOrSSOCode = "somebody@example.org"
+        }
     }
 
     // MARK: - Views
