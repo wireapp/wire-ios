@@ -19,6 +19,7 @@
 import Foundation
 
 class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
+
     let networkService: any NetworkServiceProtocol
 
     init(networkService: any NetworkServiceProtocol) {
@@ -189,6 +190,117 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
             .failure(code: .badRequest, label: "bad-request", error: AuthenticationAPIError.invalidEmail)
             .parse(code: response.statusCode, data: data)
     }
+
+    func requestEmailVerificationCode(for email: String) async throws {
+        let path = "\(pathPrefix)/activate/send"
+
+        let body = try JSONEncoder.defaultEncoder.encode(
+            RequestEmailVerificationCodeBodyV0(
+                email: email,
+                locale: Locale.formattedLocaleIdentifier
+            )
+        )
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.post)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await networkService.executeRequest(request)
+        return try ResponseParser()
+            .success(code: .ok)
+            .failure(
+                code: .badRequest,
+                label: "invalid-email",
+                error: AuthenticationAPIError.RegistrationError.invalidEmail
+            )
+            .failure(
+                code: .forbidden,
+                label: "blacklisted-email",
+                error: AuthenticationAPIError.RegistrationError.blacklistedEmail
+            )
+            .failure(
+                code: .conflict,
+                label: "key-exists",
+                error: AuthenticationAPIError.RegistrationError.keyExists
+            )
+            .failure(
+                code: .domainBlocked,
+                label: "domain-blocked-for-registration",
+                error: AuthenticationAPIError.RegistrationError.domainBlocked
+            )
+            .parse(code: response.statusCode, data: data)
+    }
+
+    func registerAccount(
+        email: String,
+        emailCode: String,
+        name: String,
+        password: String
+    ) async throws {
+        let path = "\(pathPrefix)/register"
+
+        let body = try JSONEncoder.defaultEncoder.encode(
+            RegisterAccountBodyV0(
+                email: email,
+                emailCode: emailCode,
+                name: name,
+                password: password,
+                locale: Locale.formattedLocaleIdentifier
+            )
+        )
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.post)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await networkService.executeRequest(request)
+        return try ResponseParser()
+            .success(code: .ok)
+            .failure(
+                code: .badRequest,
+                label: "invalid-email",
+                error: AuthenticationAPIError.RegistrationError.invalidEmail
+            )
+            .failure(
+                code: .badRequest,
+                label: "invalid-invitation-code",
+                error: AuthenticationAPIError.RegistrationError.invalidInvitationCode
+            )
+            .failure(
+                code: .forbidden,
+                label: "unauthorized",
+                error: AuthenticationAPIError.RegistrationError.unauthorized
+            )
+            .failure(
+                code: .forbidden,
+                label: "missing-identity",
+                error: AuthenticationAPIError.RegistrationError.missingIdentity
+            )
+            .failure(
+                code: .forbidden,
+                label: "blacklisted-email",
+                error: AuthenticationAPIError.RegistrationError.blacklistedEmail
+            )
+            .failure(
+                code: .forbidden,
+                label: "too-many-team-members",
+                error: AuthenticationAPIError.RegistrationError.tooManyTeamMembers
+            )
+            .failure(
+                code: .forbidden,
+                label: "user-creation-restricted",
+                error: AuthenticationAPIError.RegistrationError.userCreationRestricted
+            )
+            .failure(
+                code: .notFound,
+                label: "invalid-code",
+                error: AuthenticationAPIError.RegistrationError.invalidCode
+            )
+            .failure(code: .conflict, label: "key-exists", error: AuthenticationAPIError.RegistrationError.keyExists)
+            .parse(code: response.statusCode, data: data)
+    }
 }
 
 // MARK: Encodables
@@ -196,4 +308,17 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
 private struct RequestVerificationCodeRequestBodyV0: Encodable {
     var action: String
     var email: String
+}
+
+private struct RequestEmailVerificationCodeBodyV0: Encodable {
+    var email: String
+    var locale: String
+}
+
+private struct RegisterAccountBodyV0: Encodable {
+    var email: String
+    var emailCode: String
+    var name: String
+    var password: String
+    var locale: String
 }
