@@ -24,7 +24,7 @@ internal import WireAuthenticationUI
 import WireAuthenticationAPI
 internal import WireAuthenticationLogic
 
-class RootComponent: BootstrapComponent {
+final class RootComponent: BootstrapComponent {
 
     public let backendInfo: BackendInfo
     public let preferredAPIVersion: APIVersion?
@@ -37,6 +37,7 @@ class RootComponent: BootstrapComponent {
     public let appStoreURL: URL
     public let existsAnotherAccount: Bool
     public let useLegacyRegistrationFlow: Bool
+    public let personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
 
     @MainActor public var bridge: WireAuthenticationBridge {
         shared {
@@ -58,7 +59,8 @@ class RootComponent: BootstrapComponent {
         ssoCallbackURLScheme: String,
         appStoreURL: URL,
         existsAnotherAccount: Bool,
-        useLegacyRegistrationFlow: Bool
+        useLegacyRegistrationFlow: Bool,
+        personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
     ) {
         self.backendInfo = backendInfo
         self.preferredAPIVersion = preferredAPIVersion
@@ -71,6 +73,7 @@ class RootComponent: BootstrapComponent {
         self.appStoreURL = appStoreURL
         self.existsAnotherAccount = existsAnotherAccount
         self.useLegacyRegistrationFlow = useLegacyRegistrationFlow
+        self.personalAccountCreationAnalyticsTracker = personalAccountCreationAnalyticsTracker
     }
 
     // MARK: - Children

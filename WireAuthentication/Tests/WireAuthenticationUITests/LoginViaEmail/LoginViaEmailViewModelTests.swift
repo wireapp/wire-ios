@@ -27,7 +27,7 @@ import XCTest
 
 @testable import WireAuthenticationUI
 
-class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Factory {
+final class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Factory {
 
     private var router: MockRouter!
     private var sut: LoginViaEmailViewModel!
@@ -92,20 +92,24 @@ class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Factory {
         mockValidateEmailUseCase
     }
 
-    var viewModel: WireAuthenticationUI.LoginViaEmailViewModel {
+    var viewModel: LoginViaEmailViewModel {
         fatalError("not needed here")
     }
 
     func verificationCodeFactory(
         email: String,
         password: String,
-        proxyCredentials: WireAuthenticationAPI.ProxyCredentials?
-    ) -> any WireAuthenticationUI.VerificationCodeFactory {
+        proxyCredentials: ProxyCredentials?
+    ) -> any VerificationCodeFactory {
         fatalError("not needed here")
     }
 
-    func noHistoryFactory(authenticationResult: WireAuthenticationAPI.AuthenticationResult) -> any WireAuthenticationUI
+    func noHistoryFactory(authenticationResult: AuthenticationResult) -> any WireAuthenticationUI
         .NoHistoryFactory {
+        fatalError("not needed here")
+    }
+
+    func personalAccountCreationFactory() -> any PersonalAccountCreationFactory {
         fatalError("not needed here")
     }
 

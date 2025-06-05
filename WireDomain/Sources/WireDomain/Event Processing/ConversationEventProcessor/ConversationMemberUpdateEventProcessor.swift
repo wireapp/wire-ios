@@ -26,9 +26,9 @@ struct ConversationMemberUpdateEventProcessor: ConversationMemberUpdateEventProc
     let localStore: any ConversationLocalStoreProtocol
 
     func processEvent(_ event: ConversationMemberUpdateEvent) async throws {
-        let senderID = event.senderID
         let conversationID = event.conversationID
         let memberChange = event.memberChange
+        let memberChangeID = memberChange.id
         let muteStatus = memberChange.newMuteStatus
         let muteStatusDate = memberChange.muteStatusReferenceDate
         let archivedStatus = memberChange.newArchivedStatus
@@ -40,8 +40,8 @@ struct ConversationMemberUpdateEventProcessor: ConversationMemberUpdateEventProc
         )
 
         let isSelfUser = try await userRepository.isSelfUser(
-            id: senderID.uuid,
-            domain: senderID.domain
+            id: memberChangeID.uuid,
+            domain: memberChangeID.domain
         )
 
         if isSelfUser {
@@ -57,8 +57,8 @@ struct ConversationMemberUpdateEventProcessor: ConversationMemberUpdateEventProc
         }
 
         await conversationRepository.addOrUpdateParticipant(
-            participantID: senderID.uuid,
-            participantDomain: senderID.domain,
+            participantID: memberChangeID.uuid,
+            participantDomain: memberChangeID.domain,
             participantRole: role,
             conversationID: conversationID.uuid,
             conversationDomain: conversationID.domain
