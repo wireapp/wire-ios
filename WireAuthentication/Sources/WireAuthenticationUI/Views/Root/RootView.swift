@@ -85,34 +85,70 @@ package struct RootView: View {
                 actions: { alert in
                     switch alert {
                     case .obsoleteClient:
-                        Button(
-                            viewModel.multibackendEnabled ?  Strings.Obsolete.Alert.updateButton : Strings.ObsoleteClient.Alert.okButton,
-                            action: viewModel.goToAppStore
-                        )
-                        if viewModel.shouldShowSwitchAccountsAlertButton {
-                            Button(
-                                Strings.Obsolete.Alert.switchAccounts,
-                                action: viewModel.switchAccounts
-                            )
-                        }
-                        if viewModel.multibackendEnabled {
-                            if viewModel.shouldShowLogOutAlertButton {
-                                Button(
-                                    Strings.Obsolete.Alert.logout,
-                                    action: viewModel.logout
-                                )
-                            } else {
-                                Button(
-                                    Strings.Obsolete.Alert.cancel,
-                                    action: viewModel.dismissAlert
-                                )
-                            }
-                        }
+                        obsoleteClientAlertActions()
+                    case .obsoleteBackend where viewModel.multibackendEnabled:
+                        obsoleteBackendAlertActions()
                     default:
-                        Button(Strings.Authentication.Error.confirm, action: {})
+                        Button(Strings.Authentication.Error.confirm, action: {} )
                     }
                 }
             )
+        }
+    }
+    
+    @ViewBuilder
+    fileprivate func logoutAlertButtonIfNeeded() -> some View {
+        if viewModel.shouldShowLogOutAlertButton {
+            Button(
+                Strings.Obsolete.Alert.logout,
+                action: viewModel.logout
+            )
+        }
+    }
+    
+    @ViewBuilder
+    fileprivate func switchAccountsAlertButtonIfNeeded() -> some View {
+        if viewModel.shouldShowSwitchAccountsAlertButton {
+            Button(
+                Strings.Obsolete.Alert.switchAccounts,
+                action: viewModel.switchAccounts
+            )
+        }
+    }
+    
+    @ViewBuilder
+    private func obsoleteBackendAlertActions() -> some View {
+        if viewModel.shouldShowLogOutAlertButton {
+            switchAccountsAlertButtonIfNeeded()
+            logoutAlertButtonIfNeeded()
+        } else {
+            Button(
+                Strings.Obsolete.Alert.ok,
+                action: viewModel.dismissAlert
+            )
+            switchAccountsAlertButtonIfNeeded()
+        }
+    }
+    
+    @ViewBuilder
+    private func obsoleteClientAlertActions() -> some View {
+        Button(
+            viewModel.multibackendEnabled ? Strings.Obsolete.Alert.updateButton : Strings.ObsoleteClient.Alert.okButton,
+            action: viewModel.goToAppStore
+        )
+        switchAccountsAlertButtonIfNeeded()
+        if viewModel.multibackendEnabled {
+            if viewModel.shouldShowLogOutAlertButton {
+                Button(
+                    Strings.Obsolete.Alert.logout,
+                    action: viewModel.logout
+                )
+            } else {
+                Button(
+                    Strings.Obsolete.Alert.cancel,
+                    action: viewModel.dismissAlert
+                )
+            }
         }
     }
 
