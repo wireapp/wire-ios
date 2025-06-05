@@ -53,7 +53,8 @@ public struct WireAuthenticationAssembly {
         ssoCallbackURLScheme: String,
         appStoreURL: URL,
         existsAnotherAccount: Bool,
-        useLegacyRegistrationFlow: Bool
+        useLegacyRegistrationFlow: Bool,
+        personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
         let backendInfo = BackendInfo(
             environmentType: environmentType,
@@ -69,7 +70,8 @@ public struct WireAuthenticationAssembly {
             ssoCallbackURLScheme: ssoCallbackURLScheme,
             appStoreURL: appStoreURL,
             existsAnotherAccount: existsAnotherAccount,
-            useLegacyRegistrationFlow: useLegacyRegistrationFlow
+            useLegacyRegistrationFlow: useLegacyRegistrationFlow,
+            personalAccountCreationAnalyticsTracker: personalAccountCreationAnalyticsTracker
         )
 
         return (view: RootView(factory: rootComponent), bridge: rootComponent.bridge)

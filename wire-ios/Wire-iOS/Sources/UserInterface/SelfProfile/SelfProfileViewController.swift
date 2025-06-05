@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireAccountImageUI
 import WireAnalytics
 import WireAPI
 import WireCommonComponents
@@ -24,9 +25,11 @@ import WireDesign
 import WireDomainPackage
 import WireIndividualToTeamMigrationUI
 import WireMainNavigationUI
+import WireMultiBackendUI
 import WireReusableUIComponents
 import WireSettingsUI
 import WireSyncEngine
+import WireUtilities
 
 /// The first page of the user settings.
 final class SelfProfileViewController: UIViewController {
@@ -36,7 +39,9 @@ final class SelfProfileViewController: UIViewController {
 
     // MARK: - Views
 
-    private let settingsController: SettingsTableViewController
+    private var bottomController: UIViewController!
+    private var settingsController: SettingsTableViewController?
+    private var accountSwitcherViewController: AccountSwitcherHostingController?
     private weak var accountSelectorView: AccountSelectorView?
     private let profileLayoutGuide = UILayoutGuide()
     private var profileLayoutGuideViewTopConstraint = NSLayoutConstraint()
@@ -86,8 +91,6 @@ final class SelfProfileViewController: UIViewController {
 
         let rootGroup = settingsCellDescriptorFactory.rootGroup(userSession: userSession)
 
-        self.settingsController = rootGroup.generateViewController()! as! SettingsTableViewController
-
         var options: ProfileHeaderViewController.Options
         options = selfUser.isTeamMember ? [.allowEditingAvailability] : [.hideAvailability]
         if userRightInterfaceType.selfUserIsPermitted(to: .editProfilePicture) {
@@ -122,6 +125,70 @@ final class SelfProfileViewController: UIViewController {
                 }
             )
         }
+
+        if DeveloperFlag.multibackend.isOn {
+            let accountSwitcherViewController = makeAccountSwitcherViewController(
+                settingsCellDescriptorFactory: settingsCellDescriptorFactory
+            )
+            self.bottomController = accountSwitcherViewController
+            self.accountSwitcherViewController = accountSwitcherViewController
+        } else {
+            let settingsController = rootGroup.generateViewController()! as! SettingsTableViewController
+            self.bottomController = settingsController
+            self.settingsController = settingsController
+        }
+    }
+
+    private func makeAccountSwitcherViewController(settingsCellDescriptorFactory: SettingsCellDescriptorFactory)
+        -> AccountSwitcherHostingController {
+        var options = [Option.addAccountOption(action: {
+            settingsCellDescriptorFactory
+                .addAccountOrTeamCell().select(.none, sender: UIView())
+        })]
+        if userSession.selfUser.canManageTeam == true {
+            options.append(Option.manageTeamOption(action: { [weak self] in
+                let controllerToShow = BrowserViewController(url: URL.manageTeam(source: .settings))
+                controllerToShow.modalPresentationCapturesStatusBarAppearance = true
+                self?.present(controllerToShow, animated: true, completion: .none)
+            }))
+        }
+
+        let accountManager = SessionManager.shared?.accountManager
+        let accounts = (accountManager?.accounts ?? [])
+            .filter {
+                !$0.isEqual(accountManager?.selectedAccount)
+            }
+            .map { domainAccount in
+                let avatarSource: WireAccountImageUI.AccountImageSource
+                if let imageData = domainAccount.imageData,
+                   let avatarImage = UIImage(data: imageData) {
+                    avatarSource = .image(avatarImage)
+                } else {
+                    let personName = PersonName.person(
+                        withName: domainAccount.userName,
+                        schemeTagger: nil
+                    )
+                    avatarSource = .text(personName.initials)
+                }
+                // track updates in user avatar and name?
+                return AccountUIModel(
+                    avatarSource: avatarSource,
+                    name: domainAccount.userName,
+                    handle: "@handle", // TODO:
+                    teamName: domainAccount.teamName,
+                    backendName: "Back END INFO", // TODO:
+                    action: { [weak self] in
+                        self?.handleAccountSelected(domainAccount)
+                    }
+                )
+            }
+
+        let appSwitcherController = AccountSwitcherHostingController(
+            accounts: accounts,
+            options: options
+        )
+        appSwitcherController.sizingOptions = .intrinsicContentSize
+        return appSwitcherController
     }
 
     @available(*, unavailable)
@@ -142,11 +209,11 @@ final class SelfProfileViewController: UIViewController {
         view.addSubview(profileHeaderViewController.view)
         profileHeaderViewController.didMove(toParent: self)
 
-        addChild(settingsController)
-        view.addSubview(settingsController.view)
-        settingsController.didMove(toParent: self)
+        addChild(bottomController)
+        view.addSubview(bottomController.view)
+        bottomController.didMove(toParent: self)
 
-        settingsController.tableView.isScrollEnabled = false
+        settingsController?.tableView.isScrollEnabled = false
 
         if let teamMigrationBanner {
             addChild(teamMigrationBanner)
@@ -179,6 +246,9 @@ final class SelfProfileViewController: UIViewController {
     }
 
     private func configureAccountTitle() {
+        guard !DeveloperFlag.multibackend.isOn else {
+            return
+        }
         if let accounts = SessionManager.shared?.accountManager.accounts, accounts.count > 1 {
             let accountSelectorView = AccountSelectorView()
             accountSelectorView.delegate = self
@@ -192,7 +262,7 @@ final class SelfProfileViewController: UIViewController {
 
     private func createConstraints() {
         profileHeaderViewController.view.translatesAutoresizingMaskIntoConstraints = false
-        settingsController.view.translatesAutoresizingMaskIntoConstraints = false
+        bottomController.view.translatesAutoresizingMaskIntoConstraints = false
 
         profileLayoutGuideViewTopConstraint = profileLayoutGuide.topAnchor
             .constraint(equalTo: view.safeAreaLayoutGuide.topAnchor)
@@ -219,7 +289,8 @@ final class SelfProfileViewController: UIViewController {
         NSLayoutConstraint.activate([
 
             // profileLayoutGuide
-            profileLayoutGuide.bottomAnchor.constraint(equalTo: settingsController.view.topAnchor),
+            profileLayoutGuide.bottomAnchor
+                .constraint(equalTo: bottomController.view.topAnchor),
 
             // profileView
             profileHeaderViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -230,9 +301,9 @@ final class SelfProfileViewController: UIViewController {
             profileHeaderViewController.view.centerYAnchor.constraint(equalTo: profileLayoutGuide.centerYAnchor),
 
             // settingsControllerView
-            settingsController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            settingsController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            settingsController.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            bottomController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            bottomController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            bottomController.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
 
@@ -265,6 +336,10 @@ final class SelfProfileViewController: UIViewController {
     private func userDidTapCreateTeam(useCase: any IndividualToTeamMigrationUseCaseProtocol, userName: String) {
 
         analyticsEventTracker?.trackEvent(.UI.personalToTeamMigrationCTA)
+
+        let analyticsEventTracker = analyticsEventTracker.map {
+            AccountMigrationAnalyticsTracker(analyticsEventTracker: $0)
+        }
 
         let viewController = IndividualToTeamMigrationViewController(
             privacyPolicyURL: WireURLs.shared.privacyPolicy.absoluteString,
@@ -369,7 +444,7 @@ extension SelfProfileViewController: UIAdaptivePresentationControllerDelegate {
 
 extension SelfProfileViewController: AccountSelectorViewDelegate {
 
-    func accountSelectorView(_ view: AccountSelectorView, didSelect account: Account) {
+    private func handleAccountSelected(_ account: Account) {
         guard SessionManager.shared?.accountManager.selectedAccount != account else { return }
 
         sendDismissAnalyticsEventIfNeeded()
@@ -379,6 +454,10 @@ extension SelfProfileViewController: AccountSelectorViewDelegate {
             }
             self.accountSelector?.switchTo(account: account)
         }
+    }
+
+    func accountSelectorView(_ view: AccountSelectorView, didSelect account: Account) {
+        handleAccountSelected(account)
     }
 }
 

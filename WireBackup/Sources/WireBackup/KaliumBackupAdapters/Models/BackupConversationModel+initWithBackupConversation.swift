@@ -22,7 +22,7 @@ import WireFoundation
 
 package extension ConversationBackupModel {
 
-    package init?(_ backupConversation: BackupConversation) {
+    init?(_ backupConversation: BackupConversation) {
         guard let qualifiedID = QualifiedID(backupConversation.id) else { return nil }
 
         self.init(

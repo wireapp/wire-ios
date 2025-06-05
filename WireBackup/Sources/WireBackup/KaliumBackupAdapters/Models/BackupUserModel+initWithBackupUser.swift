@@ -22,7 +22,7 @@ import WireFoundation
 
 package extension UserBackupModel {
 
-    package init?(_ backupUser: BackupUser) {
+    init?(_ backupUser: BackupUser) {
         guard let qualifiedID = QualifiedID(backupUser.id) else { return nil }
 
         self.init(
