@@ -25,12 +25,12 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
 
     private let contextProvider: ContextProvider
     private let notificationCenter: NotificationCenter
-    private let analyticsEventTracker: () -> (any AnalyticsEventTracker)?
+    private let analyticsEventTracker: () -> (any AnalyticsEventTrackerProtocol)?
 
     private var eventInfos = [UUID: EventInfo]()
     private var callStateObservationToken: AnyObject?
     private var toggleVideoObservationToken: AnyObject?
-    private var callParticipantObsererToken: AnyObject?
+    private var callParticipantObserverToken: AnyObject?
 
     private let logger: LoggerProtocol
     private let currentDateProvider: CurrentDateProviding
@@ -38,7 +38,7 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
     init(
         contextProvider: ContextProvider,
         notificationCenter: NotificationCenter,
-        analyticsEventTracker: @escaping () -> (any AnalyticsEventTracker)?,
+        analyticsEventTracker: @escaping () -> (any AnalyticsEventTrackerProtocol)?,
         logger: LoggerProtocol,
         currentDateProvider: CurrentDateProviding
     ) {
@@ -111,7 +111,7 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
 
         eventInfos[conversation.remoteIdentifier]?.callStart = currentDateProvider.now
 
-        callParticipantObsererToken = CallCenter.addCallParticipantObserver(
+        callParticipantObserverToken = CallCenter.addCallParticipantObserver(
             observer: self,
             for: conversation,
             contextProvider: contextProvider
@@ -140,7 +140,7 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
             return
         }
 
-        callParticipantObsererToken = nil
+        callParticipantObserverToken = nil
 
         guard
             let eventInfo = eventInfos[conversation.remoteIdentifier],
