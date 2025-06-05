@@ -43,7 +43,7 @@ final class AccountsAPITests: XCTestCase {
 
     func testUpgradeToTeam_V0_To_V6() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol()
+        let apiService = APIServiceProtocolMock()
         let builder = AccountsAPIBuilder(apiService: apiService)
 
         for apiVersion in [APIVersion.v0, .v1, .v2, .v3, .v4, .v5, .v6] {
@@ -71,7 +71,7 @@ final class AccountsAPITests: XCTestCase {
 
     func testUpgradeToTeam_Response_Handling_V7_Success() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
+        let apiService = APIServiceProtocolMock.withResponses([
             (.ok, "UpgradeToTeamSuccessResponse")
         ])
 
@@ -86,7 +86,7 @@ final class AccountsAPITests: XCTestCase {
 
     func testUpgradeToTeam_Response_Handling_V7_User_Already_In_A_Team() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
+        let apiService = APIServiceProtocolMock.withResponses([
             (.forbidden, "UpgradeToTeamErrorResponse_UserAlreadyInATeam")
         ])
 
@@ -101,7 +101,7 @@ final class AccountsAPITests: XCTestCase {
 
     func testUpgradeToTeam_Response_Handling_V7_User_Not_Found() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
+        let apiService = APIServiceProtocolMock.withResponses([
             (.notFound, "UpgradeToTeamErrorResponse_UserNotFound")
         ])
 

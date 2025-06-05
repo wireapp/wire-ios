@@ -28,13 +28,13 @@ struct RequestLoginVerificationCodeUseCaseTests {
     @Test("UseCase passes the argument to the API")
     func passEmailArgumentToAPI() async throws {
         // Given
-        let mockAuthenticationAPI = MockAuthenticationAPI()
+        let mockAuthenticationAPI = AuthenticationAPIMock()
         let sut = RequestLoginVerificationCodeUseCase(authenticationAPI: mockAuthenticationAPI)
 
         try await confirmation { confirmation in
 
             // Then
-            mockAuthenticationAPI.requestVerificationCodeFor_MockMethod = { email in
+            mockAuthenticationAPI.requestVerificationCodeForEmailStringVoidClosure = { email in
                 #expect(email == "email value")
                 confirmation()
             }
@@ -47,8 +47,9 @@ struct RequestLoginVerificationCodeUseCaseTests {
     @Test("UseCase maps invalid email error")
     func mapInvalidEmailError() async throws {
         // Given
-        let mockAuthenticationAPI = MockAuthenticationAPI()
-        mockAuthenticationAPI.requestVerificationCodeFor_MockError = AuthenticationAPIError.invalidEmail
+        let mockAuthenticationAPI = AuthenticationAPIMock()
+        mockAuthenticationAPI.requestVerificationCodeForEmailStringVoidThrowableError = AuthenticationAPIError
+            .invalidEmail
         let sut = RequestLoginVerificationCodeUseCase(authenticationAPI: mockAuthenticationAPI)
 
         do {
@@ -72,8 +73,8 @@ struct RequestLoginVerificationCodeUseCaseTests {
     @Test("UseCase forwards any other error")
     func mapUnexpectedError() async throws {
         // Given
-        let mockAuthenticationAPI = MockAuthenticationAPI()
-        mockAuthenticationAPI.requestVerificationCodeFor_MockError = SomeError.some
+        let mockAuthenticationAPI = AuthenticationAPIMock()
+        mockAuthenticationAPI.requestVerificationCodeForEmailStringVoidThrowableError = SomeError.some
         let sut = RequestLoginVerificationCodeUseCase(authenticationAPI: mockAuthenticationAPI)
 
         do {
