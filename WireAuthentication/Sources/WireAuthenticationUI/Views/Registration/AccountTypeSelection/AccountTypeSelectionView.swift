@@ -36,6 +36,7 @@ struct AccountTypeSelectionView: View {
         self.onTeamAccountCreation = onTeamAccountCreation
         self.onPersonalAccountCreation = onPersonalAccountCreation
     }
+
     var body: some View {
         NavigationStack {
             ScrollView {

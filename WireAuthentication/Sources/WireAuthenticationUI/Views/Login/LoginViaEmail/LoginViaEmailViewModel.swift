@@ -203,9 +203,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
         modalDestination = .teamAccountCreation
     }
 
-    func handleoOnPersonalAccountCreation() {
-
-    }
+    func handleoOnPersonalAccountCreation() {}
 
     // MARK: - Private
 

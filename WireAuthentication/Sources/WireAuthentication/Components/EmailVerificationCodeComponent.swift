@@ -50,7 +50,7 @@ class EmailVerificationCodeComponent: Component<EmailVerificationCodeComponentDe
 
 }
 
-//extension EmailVerificationCodeComponent: VerificationCodeViewModel.Factory {
+// extension EmailVerificationCodeComponent: VerificationCodeViewModel.Factory {
 //
 //    // MARK: - Factory
 //
@@ -88,4 +88,4 @@ class EmailVerificationCodeComponent: Component<EmailVerificationCodeComponentDe
 //        CreateAuthenticationResultUseCase(networkStack: dependency.networkStack)
 //    }
 //
-//}
+// }

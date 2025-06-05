@@ -261,7 +261,8 @@ package struct LoginViaEmailView: View {
         case .accountTypeSelection:
             AccountTypeSelectionView(
                 onTeamAccountCreation: viewModel.handleOnTeamAccountCreation,
-                onPersonalAccountCreation: viewModel.handleoOnPersonalAccountCreation)
+                onPersonalAccountCreation: viewModel.handleoOnPersonalAccountCreation
+            )
         }
     }
 

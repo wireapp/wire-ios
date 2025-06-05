@@ -152,7 +152,7 @@ extension UnauthenticatedSession: UserInfoParser {
         return delegate.session(session: self, isExistingAccount: account)
     }
 
-    public func upgradeToAuthenticatedSession(with userInfo: UserInfo) {//
+    public func upgradeToAuthenticatedSession(with userInfo: UserInfo) { //
         let account = Account(userName: "", userIdentifier: userInfo.identifier)
         let cookieStorage = transportSession.environment.cookieStorage(for: account)
         cookieStorage.authenticationCookieData = userInfo.cookieData
