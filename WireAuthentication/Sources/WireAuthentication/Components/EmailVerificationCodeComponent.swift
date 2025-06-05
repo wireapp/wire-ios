@@ -46,6 +46,4 @@ class EmailVerificationCodeComponent: Component<EmailVerificationCodeComponentDe
         super.init(parent: parent)
     }
 
-    // MARK: - Children
-
 }
