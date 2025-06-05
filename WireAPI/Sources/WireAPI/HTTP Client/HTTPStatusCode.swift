@@ -58,6 +58,10 @@ enum HTTPStatusCode: Int {
 
     case conflict = 409
 
+    /// domain blocked - 451
+
+    case domainBlocked = 451
+
     // MARK: Server Errors - 5xx
 
     /// service unavailable - 503

@@ -17,18 +17,16 @@
 //
 
 import Foundation
-import NeedleFoundation
-import WireAuthenticationAPI
-internal import WireAuthenticationUI
-internal import WireAuthenticationLogic
-import WireReusableUIComponents
 
-protocol PersonalAccountCreationComponentDependency: Dependency {
+extension Locale {
 
-    @MainActor var router: any Router { get }
-    var networkStack: NetworkStack { get }
-    var passwordValidator: any PasswordValidator { get }
-    var privacyPolicyURL: URL { get }
-    var personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol { get }
+    static var formattedLocaleIdentifier: String {
+        let language = getFirstSupportedLanguage()
+        return language.replacingOccurrences(of: "_", with: "-")
+    }
+
+    private static func getFirstSupportedLanguage() -> String {
+        Locale.preferredLanguages.first ?? "en-US"
+    }
 
 }

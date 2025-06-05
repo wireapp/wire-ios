@@ -21,14 +21,20 @@ import WireDesign
 
 struct AccountTypeSelectionView: View {
 
-    @StateObject private var viewModel: AccountTypeSelectionViewModel
     @Environment(\.dismiss) private var dismiss
+
+    private let onTeamAccountCreation: () -> Void
+    private let onPersonalAccountCreation: () -> Void
 
     private typealias Strings = L10n.Localizable.AccountTypeSelector
     private typealias Labels = L10n.Accessibility.AccountTypeSelector
 
-    package init(viewModel: AccountTypeSelectionViewModel) {
-        self._viewModel = StateObject(wrappedValue: viewModel)
+    init(
+        onTeamAccountCreation: @escaping () -> Void,
+        onPersonalAccountCreation: @escaping () -> Void
+    ) {
+        self.onTeamAccountCreation = onTeamAccountCreation
+        self.onPersonalAccountCreation = onPersonalAccountCreation
     }
 
     var body: some View {
@@ -36,11 +42,6 @@ struct AccountTypeSelectionView: View {
             ScrollView {
                 scrollViewContent
             }
-            .sheet(item: $viewModel.modalDestination, onDismiss: {
-                dismiss()
-            }, content: { item in
-                sheetView(for: item)
-            })
             .scrollBounceBehavior(.basedOnSize)
             .navigationTitle(Strings.title)
             .navigationBarTitleDisplayMode(.inline)
@@ -100,7 +101,8 @@ struct AccountTypeSelectionView: View {
 
     @ViewBuilder private var teamAccountButton: some View {
         Button {
-            viewModel.presentTeamAccountFlow()
+            dismiss()
+            onTeamAccountCreation()
         } label: {
             Text(Strings.OptionTeam.button)
                 .lineLimit(nil)
@@ -147,7 +149,8 @@ struct AccountTypeSelectionView: View {
 
     @ViewBuilder private var personalAccountButton: some View {
         Button {
-            viewModel.presentPersonalAccountFlow()
+            dismiss()
+            onPersonalAccountCreation()
         } label: {
             Text(Strings.OptionPersonal.button)
                 .lineLimit(nil)
@@ -156,20 +159,20 @@ struct AccountTypeSelectionView: View {
         .bold()
     }
 
-    @ViewBuilder
-    private func sheetView(for sheet: AccountTypeSelectionSheet) -> some View {
-        switch sheet {
-        case let .team(teamAccountCreationURL):
-            SafariBrowserView(url: teamAccountCreationURL).ignoresSafeArea()
-        case let .personal(email):
-            let viewModel = CreatePersonalAccountViewModel(
-                email: email,
-                privacyPolicyURL: viewModel.privacyPolicyURL,
-                teamAccountCreationLink: viewModel.teamAccountCreationLink
-            )
-            CreatePersonalAccountView(viewModel: viewModel)
-        }
-    }
+//    @ViewBuilder
+//    private func sheetView(for sheet: AccountTypeSelectionSheet) -> some View {
+//        switch sheet {
+//        case let .team(teamAccountCreationURL):
+//            SafariBrowserView(url: teamAccountCreationURL).ignoresSafeArea()
+//        case let .personal(email):
+//            let viewModel = CreatePersonalAccountViewModel(
+//                email: email,
+//                privacyPolicyURL: viewModel.privacyPolicyURL,
+//                teamAccountCreationLink: viewModel.teamAccountCreationLink
+//            )
+//            CreatePersonalAccountView(viewModel: viewModel)
+//        }
+//    }
 
 }
 
@@ -215,11 +218,6 @@ private struct FeatureView: View {
 #Preview {
     Spacer()
         .sheet(isPresented: .constant(true)) {
-            let viewModel = AccountTypeSelectionViewModel(
-                email: "email@wire.com",
-                privacyPolicyURL: URL(string: "https://www.wire.com")!,
-                teamsURL: URL(string: "https://www.wire.com")!
-            )
-            AccountTypeSelectionView(viewModel: viewModel)
+            let viewModel = AccountTypeSelectionView(onTeamAccountCreation: {}, onPersonalAccountCreation: {})
         }
 }

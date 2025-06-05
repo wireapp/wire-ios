@@ -17,39 +17,33 @@
 //
 
 import NeedleFoundation
-internal import WireAuthenticationUI
+import SwiftUI
+import WireAPI
 import WireAuthenticationAPI
+internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
+import WireReusableUIComponents
 
-final class PersonalAccountCreationComponent: Component<PersonalAccountCreationComponentDependency> {
+protocol EmailVerificationCodeComponentDependency: Dependency {
 
-    private let email: String
-
-    init(
-        parent: any Scope,
-        email: String
-    ) {
-        self.email = email
-        super.init(parent: parent)
-    }
-
-    // MARK: - Children
+    @MainActor var router: any Router { get }
+    var networkStack: NetworkStack { get }
 
 }
 
-extension PersonalAccountCreationComponent: PersonalAccountCreationFactory {
+final class EmailVerificationCodeComponent: Component<EmailVerificationCodeComponentDependency> {
 
-    // MARK: - Factory
+    private let email: String
+    private let password: String
 
-    @MainActor var viewModel: PersonalAccountCreationViewModel {
-        PersonalAccountCreationViewModel()
-    }
-
-    // MARK: - Use cases
-
-    func requestEmailVerificationCodeUseCase() async throws -> any RequestEmailVerificationCodeUseCaseProtocol {
-        let authenticationAPI = try await dependency.networkStack.makeAuthenticationAPI()
-        return RequestEmailVerificationCodeUseCase(authenticationAPI: authenticationAPI)
+    init(
+        parent: any Scope,
+        email: String,
+        password: String
+    ) {
+        self.email = email
+        self.password = password
+        super.init(parent: parent)
     }
 
 }
