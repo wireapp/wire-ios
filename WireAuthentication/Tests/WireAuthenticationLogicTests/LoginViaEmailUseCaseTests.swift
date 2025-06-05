@@ -27,11 +27,11 @@ import XCTest
 
 final class LoginViaEmailUseCaseTests: XCTestCase {
 
-    private var mockAuthenticationAPI: MockAuthenticationAPI!
+    private var mockAuthenticationAPI: AuthenticationAPIMock!
     private var sut: LoginViaEmailUseCase!
 
     override func setUp() {
-        mockAuthenticationAPI = MockAuthenticationAPI()
+        mockAuthenticationAPI = AuthenticationAPIMock()
 
         sut = LoginViaEmailUseCase(
             authenticationAPI: mockAuthenticationAPI
@@ -47,7 +47,10 @@ final class LoginViaEmailUseCaseTests: XCTestCase {
         // given
         let accessToken = WireAPI.AccessToken(userID: UUID(), token: "token", type: "type", expirationDate: Date())
         mockAuthenticationAPI
-            .loginEmailPasswordVerificationCodeLabel_MockValue = ([Fixture.someCookie], accessToken)
+            .loginEmailStringPasswordStringVerificationCodeStringLabelString_HTTPCookieAccessTokenReturnValue = (
+                [Fixture.someCookie],
+                accessToken
+            )
 
         // when
         let result = try await sut.invoke(email: "email", password: "password", verificationCode: "code")
@@ -63,7 +66,7 @@ final class LoginViaEmailUseCaseTests: XCTestCase {
                 expirationDate: accessToken.expirationDate
             )
         )
-        let invocations = mockAuthenticationAPI.loginEmailPasswordVerificationCodeLabel_Invocations
+        let invocations = mockAuthenticationAPI.loginEmailStringPasswordStringVerificationCodeStringLabelString_HTTPCookieAccessTokenReceivedInvocations
         try XCTAssertCount(invocations, count: 1)
         XCTAssertEqual(invocations[0].email, "email")
         XCTAssertEqual(invocations[0].password, "password")
@@ -87,7 +90,7 @@ final class LoginViaEmailUseCaseTests: XCTestCase {
         ]
 
         for testCase in testCases {
-            mockAuthenticationAPI.loginEmailPasswordVerificationCodeLabel_MockError = testCase.underlyingError
+            mockAuthenticationAPI.loginEmailStringPasswordStringVerificationCodeStringLabelString_HTTPCookieAccessTokenThrowableError = testCase.underlyingError
 
             // when, then
             await XCTAssertThrowsErrorAsync(testCase.expected) { [self] in
@@ -98,7 +101,9 @@ final class LoginViaEmailUseCaseTests: XCTestCase {
 
     func testInvoke_otherFailure() async throws {
         // given
-        mockAuthenticationAPI.loginEmailPasswordVerificationCodeLabel_MockError = URLError(.notConnectedToInternet)
+        mockAuthenticationAPI.loginEmailStringPasswordStringVerificationCodeStringLabelString_HTTPCookieAccessTokenThrowableError = URLError(
+            .notConnectedToInternet
+        )
 
         // when, then
         await XCTAssertThrowsErrorAsync(URLError(.notConnectedToInternet)) { [self] in
