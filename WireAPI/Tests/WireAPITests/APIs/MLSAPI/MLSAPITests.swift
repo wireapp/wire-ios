@@ -59,7 +59,7 @@ final class MLSAPITests: XCTestCase {
             let testedVersions = APIVersion.v5.andNextVersions
 
             for version in testedVersions {
-                let apiService = MockAPIServiceProtocol.withResponses([
+                let apiService = APIServiceProtocolMock.withResponses([
                     (.ok, "GetBackendMLSPublicKeysSuccessResponse1")
                 ])
                 let sut = version.buildAPI(apiService: apiService)
@@ -90,7 +90,7 @@ final class MLSAPITests: XCTestCase {
 
     func testGetBackendMLSPublicKeys_givenV5AndErrorResponse() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withError(
+        let apiService = APIServiceProtocolMock.withError(
             statusCode: .badRequest,
             label: "mls-not-enabled"
         )
@@ -123,7 +123,7 @@ final class MLSAPITests: XCTestCase {
             let testedVersions = APIVersion.v5.andNextVersions
 
             for version in testedVersions {
-                let apiService = MockAPIServiceProtocol.withResponses([
+                let apiService = APIServiceProtocolMock.withResponses([
                     (.created, "PostCommitBundleSuccessResponse1")
                 ])
                 let sut = version.buildAPI(apiService: apiService)
@@ -147,7 +147,7 @@ final class MLSAPITests: XCTestCase {
             let testedVersions = APIVersion.v5.andNextVersions
 
             for version in testedVersions {
-                let apiService = MockAPIServiceProtocol.withResponses([
+                let apiService = APIServiceProtocolMock.withResponses([
                     (.created, "PostCommitBundleSuccessResponse2")
                 ])
                 let sut = version.buildAPI(apiService: apiService)
@@ -167,7 +167,7 @@ final class MLSAPITests: XCTestCase {
 
     func testPostCommitBundle_givenV5AndErrorResponse() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withError(
+        let apiService = APIServiceProtocolMock.withError(
             statusCode: .conflict,
             label: "mls-stale-message"
         )

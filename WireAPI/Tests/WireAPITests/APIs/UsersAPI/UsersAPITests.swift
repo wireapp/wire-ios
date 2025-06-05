@@ -59,7 +59,7 @@ final class UsersAPITests: XCTestCase {
 
     func testGetUserForID_SuccessResponse_200_V0_Then_Verify_Request() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
+        let apiService = APIServiceProtocolMock.withResponses([
             (.ok, "GetUserSuccessResponseV0")
         ])
 
@@ -77,7 +77,7 @@ final class UsersAPITests: XCTestCase {
 
     func testGetUsersForIDs_SuccessResponse_200_V0_Then_Verify_Request() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
+        let apiService = APIServiceProtocolMock.withResponses([
             (.ok, "GetUsersSuccessResponseV0")
         ])
 
@@ -95,7 +95,7 @@ final class UsersAPITests: XCTestCase {
 
     func testGetUsersForIDs_FailureResponse_NotFound_V0() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withError(
+        let apiService = APIServiceProtocolMock.withError(
             statusCode: .notFound,
             label: "not-found"
         )
@@ -113,7 +113,7 @@ final class UsersAPITests: XCTestCase {
 
     func testGetUserForID_SuccessResponse_200_V4_Then_Verify_Request() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
+        let apiService = APIServiceProtocolMock.withResponses([
             (.ok, "GetUserSuccessResponseV4")
         ])
 
@@ -133,7 +133,7 @@ final class UsersAPITests: XCTestCase {
 
     func testGetUsersForIDs_FailureResponse_NotFound_V4() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withError(
+        let apiService = APIServiceProtocolMock.withError(
             statusCode: .notFound,
             label: "not-found"
         )
@@ -149,7 +149,7 @@ final class UsersAPITests: XCTestCase {
 
     func testGetUsersForIDs_SuccessResponse_200_V4_Then_Verify_Request() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
+        let apiService = APIServiceProtocolMock.withResponses([
             (.ok, "GetUsersSuccessResponseV4")
         ])
 

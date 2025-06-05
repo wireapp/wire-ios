@@ -23,13 +23,13 @@ import XCTest
 
 final class WebSocketTests: XCTestCase {
 
-    var connection: MockURLSessionWebSocketTaskProtocol!
+    var connection: URLSessionWebSocketTaskProtocolMock!
 
     override func setUp() async throws {
         try await super.setUp()
-        connection = MockURLSessionWebSocketTaskProtocol()
-        connection.resume_MockMethod = {}
-        connection.cancelWithReason_MockMethod = { _, _ in }
+        connection = .init()
+        connection.resumeVoidClosure = {}
+        connection.cancelWithCloseCodeURLSessionWebSocketTaskCloseCodeReasonDataVoidClosure = { _, _ in }
     }
 
     override func tearDown() async throws {
@@ -44,7 +44,7 @@ final class WebSocketTests: XCTestCase {
         // Mock sending one message
         connection.underlyingIsOpen = true
 
-        connection.receive_MockMethod = {
+        connection.receiveURLSessionWebSocketTaskMessageClosure = {
             // Space the messages 0.5s apart
             try await Task.sleep(nanoseconds: 500_000)
             return .data(Data())
@@ -76,7 +76,7 @@ final class WebSocketTests: XCTestCase {
         await fulfillment(of: [didFinishIterating], timeout: 1)
 
         // Then the connection was cancelled
-        let invocations = connection.cancelWithReason_Invocations
+        let invocations = connection.cancelWithCloseCodeURLSessionWebSocketTaskCloseCodeReasonDataVoidReceivedInvocations
         try XCTAssertCount(invocations, count: 1)
         XCTAssertEqual(invocations[0].closeCode, .goingAway)
         XCTAssertNil(invocations[0].reason)
@@ -88,7 +88,7 @@ final class WebSocketTests: XCTestCase {
 
         // Mock sending messages
         connection.underlyingIsOpen = true
-        connection.receive_MockMethod = {
+        connection.receiveURLSessionWebSocketTaskMessageClosure = {
             // Space the messages 0.5s apart
             try await Task.sleep(nanoseconds: 500_000)
             return .data(Data())
@@ -128,7 +128,7 @@ final class WebSocketTests: XCTestCase {
 
         // Mock sending messages
         connection.underlyingIsOpen = true
-        connection.receive_MockMethod = {
+        connection.receiveURLSessionWebSocketTaskMessageClosure = {
             if shouldSendError {
                 throw "some error"
             }
@@ -172,7 +172,7 @@ final class WebSocketTests: XCTestCase {
 
         // Mock sending messages
         connection.underlyingIsOpen = true
-        connection.receive_MockMethod = {
+        connection.receiveURLSessionWebSocketTaskMessageClosure = {
             guard let message = messageData.popLast() else {
                 throw "no more messages"
             }

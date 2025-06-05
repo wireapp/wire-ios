@@ -25,15 +25,15 @@ final class PushChannelTests: XCTestCase {
 
     var sut: PushChannel!
     var request: URLRequest!
-    var webSocket: MockWebSocketProtocol!
+    var webSocket: WebSocketProtocolMock!
 
     override func setUp() async throws {
         try await super.setUp()
         let url = try XCTUnwrap(URL(string: "www.example.com"))
         request = URLRequest(url: url)
-        webSocket = MockWebSocketProtocol()
-        webSocket.close_MockMethod = {}
-        webSocket.sendPing_MockMethod = {}
+        webSocket = .init()
+        webSocket.closeVoidClosure = {}
+        webSocket.sendPingVoidClosure = {}
         sut = PushChannel(
             webSocket: webSocket,
             keepAliveInterval: 0.5
@@ -53,7 +53,7 @@ final class PushChannelTests: XCTestCase {
         let mockEnvelope2 = try MockJSONPayloadResource(name: "LiveUpdateEventEnvelope2")
         let mockEnvelope3 = try MockJSONPayloadResource(name: "LiveUpdateEventEnvelope3")
 
-        webSocket.open_MockValue = AsyncThrowingStream { continuation in
+        webSocket.openAsyncThrowingStreamURLSessionWebSocketTaskMessageAnyErrorReturnValue = AsyncThrowingStream { continuation in
             continuation.yield(.data(mockEnvelope1.jsonData))
             continuation.yield(.data(mockEnvelope2.jsonData))
             continuation.yield(.data(mockEnvelope3.jsonData))
@@ -77,19 +77,21 @@ final class PushChannelTests: XCTestCase {
 
     func testClosingPushChannel() async throws {
         // Given an open push channel
-        webSocket.open_MockValue = AsyncThrowingStream { _ in }
+        webSocket.openAsyncThrowingStreamURLSessionWebSocketTaskMessageAnyErrorReturnValue = AsyncThrowingStream {
+            _ in
+        }
         _ = try await sut.open()
 
         // When the push channel is closed
         await sut.close()
 
         // Then the web socket was closed
-        XCTAssertEqual(webSocket.close_Invocations.count, 1)
+        XCTAssertEqual(webSocket.closeVoidCallsCount, 1)
     }
 
     func testFailureToDecodeClosesPushChannel() async throws {
         // Given an open push channel that is being iterated
-        webSocket.open_MockValue = AsyncThrowingStream { continuation in
+        webSocket.openAsyncThrowingStreamURLSessionWebSocketTaskMessageAnyErrorReturnValue = AsyncThrowingStream { continuation in
             // Send some invalid data
             continuation.yield(.data(Data()))
             // Don't call finish, so the stream stays open.
@@ -108,12 +110,12 @@ final class PushChannelTests: XCTestCase {
         }
 
         // Then the web socket was closed
-        XCTAssertEqual(webSocket.close_Invocations.count, 1)
+        XCTAssertEqual(webSocket.closeVoidCallsCount, 1)
     }
 
     func testReceivingUnknownMessageClosesPushChannel() async throws {
         // Given an open push channel that is being iterated
-        webSocket.open_MockValue = AsyncThrowingStream { continuation in
+        webSocket.openAsyncThrowingStreamURLSessionWebSocketTaskMessageAnyErrorReturnValue = AsyncThrowingStream { continuation in
             // Send some invalid data.
             continuation.yield(.string("some string"))
             // Don't call finish, so the stream stays open.
@@ -132,12 +134,14 @@ final class PushChannelTests: XCTestCase {
         }
 
         // Then the web socket was closed
-        XCTAssertEqual(webSocket.close_Invocations.count, 1)
+        XCTAssertEqual(webSocket.closeVoidCallsCount, 1)
     }
 
     func testSendingKeepAlivePings() async throws {
         // Mock.
-        webSocket.open_MockValue = AsyncThrowingStream { _ in }
+        webSocket.openAsyncThrowingStreamURLSessionWebSocketTaskMessageAnyErrorReturnValue = AsyncThrowingStream {
+            _ in
+        }
 
         // Given an open push channel.
         _ = try await sut.open()
@@ -148,7 +152,7 @@ final class PushChannelTests: XCTestCase {
         // Then keep alive pings are sent periodically (the timer
         // is not exact so we will we generous in our assertion of
         // at least 2 in 1.5 seconds).
-        XCTAssertGreaterThanOrEqual(webSocket.sendPing_Invocations.count, 2)
+        XCTAssertGreaterThanOrEqual(webSocket.sendPingVoidCallsCount, 2)
     }
 
 }

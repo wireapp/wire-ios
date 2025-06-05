@@ -31,9 +31,9 @@ struct APIServiceSnapshotHelper<API> {
     }
 
     private let httpRequestHelper = HTTPRequestSnapshotHelper()
-    private let buildAPI: (MockAPIServiceProtocol, APIVersion) -> API
+    private let buildAPI: (APIServiceProtocolMock, APIVersion) -> API
 
-    init(buildAPI: @escaping (MockAPIServiceProtocol, APIVersion) -> API) {
+    init(buildAPI: @escaping (APIServiceProtocolMock, APIVersion) -> API) {
         self.buildAPI = buildAPI
     }
 
@@ -51,7 +51,7 @@ struct APIServiceSnapshotHelper<API> {
     ///   - line: The line invoking the test.
 
     func verifyRequestForAllAPIVersions(
-        apiService: @autoclosure () throws -> MockAPIServiceProtocol = .withResponses([]),
+        apiService: @autoclosure () throws -> APIServiceProtocolMock = .withResponses([]),
         when block: (API) async throws -> Void,
         file: StaticString = #filePath,
         function: String = #function,
@@ -83,7 +83,7 @@ struct APIServiceSnapshotHelper<API> {
 
     func verifyRequest(
         for apiVersions: any Sequence<APIVersion>,
-        apiService: @autoclosure () throws -> MockAPIServiceProtocol = .withResponses([]),
+        apiService: @autoclosure () throws -> APIServiceProtocolMock = .withResponses([]),
         when block: (API) async throws -> Void,
         file: StaticString = #filePath,
         function: String = #function,
@@ -119,7 +119,7 @@ struct APIServiceSnapshotHelper<API> {
 
     private func verifyRequest(
         apiVersion: APIVersion,
-        apiService: MockAPIServiceProtocol,
+        apiService: APIServiceProtocolMock,
         when block: (API) async throws -> Void,
         file: StaticString = #filePath,
         function: String = #function,
@@ -127,11 +127,13 @@ struct APIServiceSnapshotHelper<API> {
     ) async throws {
         let sut = buildAPI(apiService, apiVersion)
 
-        apiService.executeRequestRequiringAccessToken_Invocations = []
+        apiService.executeRequestRequestURLRequestRequiringAccessTokenBool_DataHTTPURLResponseReceivedInvocations = []
 
         try? await block(sut)
 
-        let receivedRequests = apiService.executeRequestRequiringAccessToken_Invocations.map(\.request)
+        let receivedRequests = apiService.executeRequestRequestURLRequestRequiringAccessTokenBool_DataHTTPURLResponseReceivedInvocations.map(
+            \.request
+        )
 
         guard !receivedRequests.isEmpty else {
             XCTFail("no requests to snapshot", file: file, line: line)
