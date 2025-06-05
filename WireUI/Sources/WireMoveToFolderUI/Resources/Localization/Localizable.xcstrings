@@ -10,6 +10,42 @@
             "value" : "إنشاء"
           }
         },
+        "be" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create"
+          }
+        },
+        "bn" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create"
+          }
+        },
+        "bs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create"
+          }
+        },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
@@ -20,6 +56,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Erstellen"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create"
+          }
+        },
+        "el-CY" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create"
           }
         },
         "en" : {
@@ -40,6 +88,18 @@
             "value" : "Loo"
           }
         },
+        "eu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create"
+          }
+        },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -50,6 +110,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Créer"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create"
+          }
+        },
+        "is" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create"
           }
         },
         "it" : {
@@ -64,10 +154,64 @@
             "value" : "新規作成"
           }
         },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create"
+          }
+        },
+        "lb" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create"
+          }
+        },
         "lt" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kurti"
+          }
+        },
+        "lv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create"
+          }
+        },
+        "me" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create"
+          }
+        },
+        "mt" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create"
+          }
+        },
+        "my" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create"
           }
         },
         "nl" : {
@@ -76,10 +220,22 @@
             "value" : "Aanmaken"
           }
         },
+        "no" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create"
+          }
+        },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Utwórz"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create"
           }
         },
         "pt-BR" : {
@@ -88,10 +244,28 @@
             "value" : "Criar"
           }
         },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Создать"
+          }
+        },
+        "si" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create"
           }
         },
         "sl" : {
@@ -100,16 +274,70 @@
             "value" : "Ustvari"
           }
         },
+        "sq" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create"
+          }
+        },
+        "sr-CS" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create"
+          }
+        },
+        "sr-Cyrl-ME" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create"
+          }
+        },
+        "sr-SP" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create"
+          }
+        },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Oluştur"
           }
         },
+        "tr-CY" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create"
+          }
+        },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Створити"
+          }
+        },
+        "ur-PK" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create"
           }
         },
         "zh-Hans" : {
@@ -135,6 +363,42 @@
             "value" : "Maximum 64 characters"
           }
         },
+        "be" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Maximum 64 characters"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Maximum 64 characters"
+          }
+        },
+        "bn" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Maximum 64 characters"
+          }
+        },
+        "bs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Maximum 64 characters"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Maximum 64 characters"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Maximum 64 characters"
+          }
+        },
         "da" : {
           "stringUnit" : {
             "state" : "new",
@@ -145,6 +409,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Maximal 64 Zeichen"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Maximum 64 characters"
+          }
+        },
+        "el-CY" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Maximum 64 characters"
           }
         },
         "en" : {
@@ -165,6 +441,18 @@
             "value" : "Maximum 64 characters"
           }
         },
+        "eu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Maximum 64 characters"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Maximum 64 characters"
+          }
+        },
         "fi" : {
           "stringUnit" : {
             "state" : "new",
@@ -175,6 +463,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "64 caractères maximum"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Maximum 64 characters"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Maximum 64 characters"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Maximum 64 characters"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Maximum 64 characters"
+          }
+        },
+        "is" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Maximum 64 characters"
           }
         },
         "it" : {
@@ -189,13 +507,73 @@
             "value" : "最大64文字"
           }
         },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Maximum 64 characters"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Maximum 64 characters"
+          }
+        },
+        "lb" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Maximum 64 characters"
+          }
+        },
         "lt" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Iki 64 simbolių"
           }
         },
+        "lv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Maximum 64 characters"
+          }
+        },
+        "me" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Maximum 64 characters"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Maximum 64 characters"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Maximum 64 characters"
+          }
+        },
+        "mt" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Maximum 64 characters"
+          }
+        },
+        "my" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Maximum 64 characters"
+          }
+        },
         "nl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Maximum 64 characters"
+          }
+        },
+        "no" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Maximum 64 characters"
@@ -207,10 +585,22 @@
             "value" : "Maksymalnie 64 znaki"
           }
         },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Maximum 64 characters"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Máximo: 64 caracteres"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Maximum 64 characters"
           }
         },
         "ru" : {
@@ -219,7 +609,55 @@
             "value" : "Не более 64 символов"
           }
         },
+        "si" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Maximum 64 characters"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Maximum 64 characters"
+          }
+        },
         "sl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Maximum 64 characters"
+          }
+        },
+        "sq" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Maximum 64 characters"
+          }
+        },
+        "sr-CS" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Maximum 64 characters"
+          }
+        },
+        "sr-Cyrl-ME" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Maximum 64 characters"
+          }
+        },
+        "sr-SP" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Maximum 64 characters"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Maximum 64 characters"
+          }
+        },
+        "th" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Maximum 64 characters"
@@ -231,10 +669,28 @@
             "value" : "En fazla 64 karakter"
           }
         },
+        "tr-CY" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Maximum 64 characters"
+          }
+        },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Максимум 64 символи"
+          }
+        },
+        "ur-PK" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Maximum 64 characters"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Maximum 64 characters"
           }
         },
         "zh-Hans" : {
@@ -260,6 +716,42 @@
             "value" : "Move the conversation %@ to a new folder"
           }
         },
+        "be" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move the conversation %@ to a new folder"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move the conversation %@ to a new folder"
+          }
+        },
+        "bn" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move the conversation %@ to a new folder"
+          }
+        },
+        "bs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move the conversation %@ to a new folder"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move the conversation %@ to a new folder"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move the conversation %@ to a new folder"
+          }
+        },
         "da" : {
           "stringUnit" : {
             "state" : "new",
@@ -270,6 +762,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Unterhaltung %@ in einen neuen Ordner verschieben"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move the conversation %@ to a new folder"
+          }
+        },
+        "el-CY" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move the conversation %@ to a new folder"
           }
         },
         "en" : {
@@ -290,6 +794,18 @@
             "value" : "Move the conversation %@ to a new folder"
           }
         },
+        "eu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move the conversation %@ to a new folder"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move the conversation %@ to a new folder"
+          }
+        },
         "fi" : {
           "stringUnit" : {
             "state" : "new",
@@ -297,6 +813,36 @@
           }
         },
         "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move the conversation %@ to a new folder"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move the conversation %@ to a new folder"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move the conversation %@ to a new folder"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move the conversation %@ to a new folder"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move the conversation %@ to a new folder"
+          }
+        },
+        "is" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Move the conversation %@ to a new folder"
@@ -314,7 +860,61 @@
             "value" : "Move the conversation %@ to a new folder"
           }
         },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move the conversation %@ to a new folder"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move the conversation %@ to a new folder"
+          }
+        },
+        "lb" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move the conversation %@ to a new folder"
+          }
+        },
         "lt" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move the conversation %@ to a new folder"
+          }
+        },
+        "lv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move the conversation %@ to a new folder"
+          }
+        },
+        "me" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move the conversation %@ to a new folder"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move the conversation %@ to a new folder"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move the conversation %@ to a new folder"
+          }
+        },
+        "mt" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move the conversation %@ to a new folder"
+          }
+        },
+        "my" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Move the conversation %@ to a new folder"
@@ -326,7 +926,19 @@
             "value" : "Move the conversation %@ to a new folder"
           }
         },
+        "no" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move the conversation %@ to a new folder"
+          }
+        },
         "pl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move the conversation %@ to a new folder"
+          }
+        },
+        "pt" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Move the conversation %@ to a new folder"
@@ -338,13 +950,67 @@
             "value" : "Mover a conversa %@ para uma nova pasta"
           }
         },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move the conversation %@ to a new folder"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Переместить беседу с %@ в новую папку."
           }
         },
+        "si" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move the conversation %@ to a new folder"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move the conversation %@ to a new folder"
+          }
+        },
         "sl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move the conversation %@ to a new folder"
+          }
+        },
+        "sq" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move the conversation %@ to a new folder"
+          }
+        },
+        "sr-CS" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move the conversation %@ to a new folder"
+          }
+        },
+        "sr-Cyrl-ME" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move the conversation %@ to a new folder"
+          }
+        },
+        "sr-SP" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move the conversation %@ to a new folder"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move the conversation %@ to a new folder"
+          }
+        },
+        "th" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Move the conversation %@ to a new folder"
@@ -356,7 +1022,25 @@
             "value" : "Move the conversation %@ to a new folder"
           }
         },
+        "tr-CY" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move the conversation %@ to a new folder"
+          }
+        },
         "uk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move the conversation %@ to a new folder"
+          }
+        },
+        "ur-PK" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move the conversation %@ to a new folder"
+          }
+        },
+        "vi" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Move the conversation %@ to a new folder"
@@ -385,6 +1069,42 @@
             "value" : "Create new folder"
           }
         },
+        "be" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create new folder"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create new folder"
+          }
+        },
+        "bn" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create new folder"
+          }
+        },
+        "bs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create new folder"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create new folder"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create new folder"
+          }
+        },
         "da" : {
           "stringUnit" : {
             "state" : "new",
@@ -395,6 +1115,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Neuen Ordner anlegen"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create new folder"
+          }
+        },
+        "el-CY" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create new folder"
           }
         },
         "en" : {
@@ -415,6 +1147,18 @@
             "value" : "Create new folder"
           }
         },
+        "eu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create new folder"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create new folder"
+          }
+        },
         "fi" : {
           "stringUnit" : {
             "state" : "new",
@@ -425,6 +1169,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Créer un nouveau dossier"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create new folder"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create new folder"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create new folder"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create new folder"
+          }
+        },
+        "is" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create new folder"
           }
         },
         "it" : {
@@ -439,13 +1213,73 @@
             "value" : "新規フォルダを作成"
           }
         },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create new folder"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create new folder"
+          }
+        },
+        "lb" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create new folder"
+          }
+        },
         "lt" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sukurti naują aplanką"
           }
         },
+        "lv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create new folder"
+          }
+        },
+        "me" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create new folder"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create new folder"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create new folder"
+          }
+        },
+        "mt" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create new folder"
+          }
+        },
+        "my" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create new folder"
+          }
+        },
         "nl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create new folder"
+          }
+        },
+        "no" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Create new folder"
@@ -457,10 +1291,22 @@
             "value" : "Utwórz nowy folder"
           }
         },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create new folder"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Criar nova pasta"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create new folder"
           }
         },
         "ru" : {
@@ -469,7 +1315,55 @@
             "value" : "Создание новой папки"
           }
         },
+        "si" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create new folder"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create new folder"
+          }
+        },
         "sl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create new folder"
+          }
+        },
+        "sq" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create new folder"
+          }
+        },
+        "sr-CS" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create new folder"
+          }
+        },
+        "sr-Cyrl-ME" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create new folder"
+          }
+        },
+        "sr-SP" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create new folder"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create new folder"
+          }
+        },
+        "th" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Create new folder"
@@ -481,10 +1375,28 @@
             "value" : "Yeni klasör oluştur"
           }
         },
+        "tr-CY" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create new folder"
+          }
+        },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Створити нову теку"
+          }
+        },
+        "ur-PK" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create new folder"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create new folder"
           }
         },
         "zh-Hans" : {
@@ -510,6 +1422,42 @@
             "value" : "انشئ مجلدا جديدا بالضغط على زر +"
           }
         },
+        "be" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create a new folder by pressing the + button"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create a new folder by pressing the + button"
+          }
+        },
+        "bn" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create a new folder by pressing the + button"
+          }
+        },
+        "bs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create a new folder by pressing the + button"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create a new folder by pressing the + button"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create a new folder by pressing the + button"
+          }
+        },
         "da" : {
           "stringUnit" : {
             "state" : "new",
@@ -520,6 +1468,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Neuen Ordner durch Drücken der + Taste anlegen"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create a new folder by pressing the + button"
+          }
+        },
+        "el-CY" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create a new folder by pressing the + button"
           }
         },
         "en" : {
@@ -540,6 +1500,18 @@
             "value" : "Loo uus kaust, vajutades + nuppu"
           }
         },
+        "eu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create a new folder by pressing the + button"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create a new folder by pressing the + button"
+          }
+        },
         "fi" : {
           "stringUnit" : {
             "state" : "new",
@@ -550,6 +1522,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Créer un nouveau dossier en cliquant sur the bouton +"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create a new folder by pressing the + button"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create a new folder by pressing the + button"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create a new folder by pressing the + button"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create a new folder by pressing the + button"
+          }
+        },
+        "is" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create a new folder by pressing the + button"
           }
         },
         "it" : {
@@ -564,13 +1566,73 @@
             "value" : "＋ボタンを押して、新しいフォルダを作成します。"
           }
         },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create a new folder by pressing the + button"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create a new folder by pressing the + button"
+          }
+        },
+        "lb" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create a new folder by pressing the + button"
+          }
+        },
         "lt" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Naują aplanką sukursite paspaudę + mygtuką"
           }
         },
+        "lv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create a new folder by pressing the + button"
+          }
+        },
+        "me" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create a new folder by pressing the + button"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create a new folder by pressing the + button"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create a new folder by pressing the + button"
+          }
+        },
+        "mt" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create a new folder by pressing the + button"
+          }
+        },
+        "my" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create a new folder by pressing the + button"
+          }
+        },
         "nl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create a new folder by pressing the + button"
+          }
+        },
+        "no" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Create a new folder by pressing the + button"
@@ -582,10 +1644,22 @@
             "value" : "Utwórz nowy folder naciskając przycisk +"
           }
         },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create a new folder by pressing the + button"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Criar uma nova pasta pressionando o botão +"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create a new folder by pressing the + button"
           }
         },
         "ru" : {
@@ -594,7 +1668,55 @@
             "value" : "Создайте новую папку кнопкой +"
           }
         },
+        "si" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create a new folder by pressing the + button"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create a new folder by pressing the + button"
+          }
+        },
         "sl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create a new folder by pressing the + button"
+          }
+        },
+        "sq" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create a new folder by pressing the + button"
+          }
+        },
+        "sr-CS" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create a new folder by pressing the + button"
+          }
+        },
+        "sr-Cyrl-ME" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create a new folder by pressing the + button"
+          }
+        },
+        "sr-SP" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create a new folder by pressing the + button"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create a new folder by pressing the + button"
+          }
+        },
+        "th" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Create a new folder by pressing the + button"
@@ -606,10 +1728,28 @@
             "value" : "+ Düğmesine basarak yeni bir klasör oluşturun"
           }
         },
+        "tr-CY" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create a new folder by pressing the + button"
+          }
+        },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Створити нову теку за допомогою кнопки +"
+          }
+        },
+        "ur-PK" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create a new folder by pressing the + button"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Create a new folder by pressing the + button"
           }
         },
         "zh-Hans" : {
@@ -635,6 +1775,42 @@
             "value" : "Move To"
           }
         },
+        "be" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move To"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move To"
+          }
+        },
+        "bn" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move To"
+          }
+        },
+        "bs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move To"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move To"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move To"
+          }
+        },
         "da" : {
           "stringUnit" : {
             "state" : "new",
@@ -645,6 +1821,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Verschieben nach"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move To"
+          }
+        },
+        "el-CY" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move To"
           }
         },
         "en" : {
@@ -665,6 +1853,18 @@
             "value" : "Move To"
           }
         },
+        "eu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move To"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move To"
+          }
+        },
         "fi" : {
           "stringUnit" : {
             "state" : "new",
@@ -672,6 +1872,36 @@
           }
         },
         "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move To"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move To"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move To"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move To"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move To"
+          }
+        },
+        "is" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Move To"
@@ -689,7 +1919,61 @@
             "value" : "Move To"
           }
         },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move To"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move To"
+          }
+        },
+        "lb" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move To"
+          }
+        },
         "lt" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move To"
+          }
+        },
+        "lv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move To"
+          }
+        },
+        "me" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move To"
+          }
+        },
+        "mk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move To"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move To"
+          }
+        },
+        "mt" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move To"
+          }
+        },
+        "my" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Move To"
@@ -701,7 +1985,19 @@
             "value" : "Move To"
           }
         },
+        "no" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move To"
+          }
+        },
         "pl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move To"
+          }
+        },
+        "pt" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Move To"
@@ -713,13 +2009,67 @@
             "value" : "Mover para"
           }
         },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move To"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Переместить в…"
           }
         },
+        "si" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move To"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move To"
+          }
+        },
         "sl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move To"
+          }
+        },
+        "sq" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move To"
+          }
+        },
+        "sr-CS" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move To"
+          }
+        },
+        "sr-Cyrl-ME" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move To"
+          }
+        },
+        "sr-SP" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move To"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move To"
+          }
+        },
+        "th" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Move To"
@@ -731,7 +2081,25 @@
             "value" : "Move To"
           }
         },
+        "tr-CY" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move To"
+          }
+        },
         "uk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move To"
+          }
+        },
+        "ur-PK" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Move To"
+          }
+        },
+        "vi" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Move To"
