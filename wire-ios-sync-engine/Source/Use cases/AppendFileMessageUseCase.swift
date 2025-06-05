@@ -18,6 +18,7 @@
 
 import WireAnalytics
 import WireDataModel
+import WireFoundation
 
 public protocol AppendFileMessageUseCaseProtocol {
     func invoke<Conversation: MessageAppendableConversation>(

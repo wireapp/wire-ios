@@ -16,7 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAnalytics
+public import WireFoundation
+
 import WireDataModel
 
 public protocol AppendTextMessageUseCaseProtocol {

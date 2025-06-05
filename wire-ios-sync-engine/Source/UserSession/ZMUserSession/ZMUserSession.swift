@@ -18,7 +18,6 @@
 
 import Combine
 import Foundation
-import WireAnalytics
 import WireAPI
 import WireCoreCrypto
 import WireDataModel
@@ -26,6 +25,7 @@ import WireDomain
 import WireLogging
 import WireRequestStrategy
 import WireSystem
+public import WireFoundation
 
 typealias UserSessionDelegate = UserSessionAppLockDelegate
     & UserSessionEncryptionAtRestDelegate

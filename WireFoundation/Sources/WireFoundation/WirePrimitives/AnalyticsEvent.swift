@@ -44,7 +44,7 @@ public struct AnalyticsEvent: Equatable, Sendable {
 
 // MARK: -
 
-extension AnalyticsEvent {
+public extension AnalyticsEvent {
 
     /// Represents a key-value pair for analytics event segmentation.
     ///
@@ -52,7 +52,7 @@ extension AnalyticsEvent {
     /// Each ``Segmentation`` consists of a key (identifying the type of information) and a value
     /// (the actual data point).
 
-    public struct Segmentation: Hashable, Sendable {
+    struct Segmentation: Hashable, Sendable {
 
         public let key: String
         public let value: String

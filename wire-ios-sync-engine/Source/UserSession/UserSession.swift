@@ -16,9 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import WireFoundation
+
 import Foundation
 import LocalAuthentication
-import WireAnalytics
 import WireDataModel
 
 /// An abstraction of the user session for use in the presentation
