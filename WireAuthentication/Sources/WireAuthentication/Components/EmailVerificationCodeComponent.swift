@@ -31,7 +31,7 @@ protocol EmailVerificationCodeComponentDependency: Dependency {
 
 }
 
-class EmailVerificationCodeComponent: Component<EmailVerificationCodeComponentDependency> {
+final class EmailVerificationCodeComponent: Component<EmailVerificationCodeComponentDependency> {
 
     private let email: String
     private let password: String
