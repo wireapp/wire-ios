@@ -18,8 +18,6 @@
 
 import Foundation
 
-// import WireUtilities
-
 class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
 
     let networkService: any NetworkServiceProtocol

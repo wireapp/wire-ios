@@ -390,7 +390,10 @@ final class AuthenticationAPITests: XCTestCase {
 
     func testRegisterAccount_Response_Handling_BadRequest() async throws {
         // Given
-        let networkService = MockNetworkServiceProtocol.withError(statusCode: .badRequest, label: "invalid-invitation-code")
+        let networkService = MockNetworkServiceProtocol.withError(
+            statusCode: .badRequest,
+            label: "invalid-invitation-code"
+        )
 
         let sut = AuthenticationAPIV8(networkService: networkService)
 

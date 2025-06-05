@@ -295,7 +295,7 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
 
                 unauthenticatedSession.continueAfterBackupImportStep()
 
-            case let .completeWireAuthenticationLogin(result): //
+            case let .completeWireAuthenticationLogin(result):
                 // Make sure we use the same backend from the authentication flow.
                 let backendEnvironment = BackendEnvironment(
                     type: result.backendEnvironment.environmentType,
@@ -611,7 +611,7 @@ extension AuthenticationCoordinator {
     }
 
     /// Asks the registration status to activate the credentials with the code provided by the user.
-    private func activateCredentials(unverifiedEmail: String, user: UnregisteredUser, code: String) { //
+    private func activateCredentials(unverifiedEmail: String, user: UnregisteredUser, code: String) {
         startActivityIndicator()
         stateController.transition(to: .activateCredentials(unverifiedEmail: unverifiedEmail, user: user, code: code))
         registrationStatus.checkActivationCode(unverifiedEmail: unverifiedEmail, code: code)
