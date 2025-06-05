@@ -239,7 +239,7 @@ private final class URLLabel: UIView {
 
     init(url: URL) {
         self.url = url
-        label = UILabel()
+        self.label = UILabel()
         super.init(frame: .zero)
         label.text = url.absoluteString
         label.lineBreakMode = .byTruncatingTail
@@ -253,6 +253,7 @@ private final class URLLabel: UIView {
         ])
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -265,8 +266,7 @@ private struct WebAuthURLView: View {
 
     let url: String
 
-    @Environment(\.dismiss)
-    var dismiss
+    @Environment(\.dismiss) var dismiss
 
     var body: some View {
         VStack(spacing: 40) {
