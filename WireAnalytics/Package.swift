@@ -35,7 +35,7 @@ let package = Package(
         ),
         .testTarget(
             name: "WireAnalyticsTests",
-            dependencies: ["WireAnalytics", "WireAnalyticsSupport"]
+            dependencies: ["WireAnalytics", "WireAnalyticsSupport", "WireFoundation"]
         ),
 
         .target(
