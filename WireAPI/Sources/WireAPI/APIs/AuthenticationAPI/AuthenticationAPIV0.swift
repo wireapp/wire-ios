@@ -221,7 +221,11 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
                 label: "blacklisted-email",
                 error: AuthenticationAPIError.RegistrationError.blacklistedEmail
             )
-            .failure(code: .conflict, label: "key-exists", error: AuthenticationAPIError.RegistrationError.keyExists)
+            .failure(
+                code: .conflict,
+                label: "key-exists",
+                error: AuthenticationAPIError.RegistrationError.keyExists
+            )
             .failure(
                 code: .domainBlocked,
                 label: "domain-blocked-for-registration",
