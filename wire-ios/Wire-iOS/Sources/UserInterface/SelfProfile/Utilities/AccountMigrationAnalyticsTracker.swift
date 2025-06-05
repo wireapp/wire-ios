@@ -21,7 +21,7 @@ import WireIndividualToTeamMigrationUI
 
 struct AccountMigrationAnalyticsTracker: AccountMigrationAnalyticsTrackerProtocol {
 
-    let analyticsEventTracker: any AnalyticsEventTracker
+    let analyticsEventTracker: any AnalyticsEventTrackerProtocol
 
     func trackMigrationReachedDisclaimerStep() {
         analyticsEventTracker.trackEvent(.User.personalTeamCreationFlowStarted(at: .disclaimer))

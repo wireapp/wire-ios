@@ -30,7 +30,7 @@ final class DisableAnalyticsUseCaseTests: XCTestCase, AnalyticsEventTrackerProvi
     private var sut: DisableAnalyticsUseCase!
     private var service: MockAnalyticsServiceProtocol!
 
-    var analyticsEventTracker: (any AnalyticsEventTracker)?
+    var analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?
 
     override func setUp() {
         super.setUp()
@@ -46,7 +46,7 @@ final class DisableAnalyticsUseCaseTests: XCTestCase, AnalyticsEventTrackerProvi
         super.tearDown()
     }
 
-    func setAnalyticsEventTracker(_ tracker: (any AnalyticsEventTracker)?) {
+    func setAnalyticsEventTracker(_ tracker: (any AnalyticsEventTrackerProtocol)?) {
         analyticsEventTracker = tracker
     }
 

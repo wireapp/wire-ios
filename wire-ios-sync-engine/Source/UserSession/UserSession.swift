@@ -86,7 +86,7 @@ public protocol UserSession: AnyObject {
 
     /// This property will be set or cleared depending on the user giving or removing consent for analytics tracking.
 
-    var analyticsEventTracker: AnalyticsEventTracker? { get }
+    var analyticsEventTracker: (any AnalyticsEventTrackerProtocol)? { get }
 
     /// Unlocks the database.
 

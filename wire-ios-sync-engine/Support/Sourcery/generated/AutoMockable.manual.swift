@@ -368,7 +368,7 @@ public class MockUserSession: UserSession {
 
     // MARK: - analyticsEventTracker
 
-    public var analyticsEventTracker: AnalyticsEventTracker?
+    public var analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?
 
     // MARK: - conversationDirectory
 

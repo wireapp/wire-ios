@@ -21,7 +21,7 @@ import WireFoundation
 
 struct PersonalAccountCreationAnalyticsTracker: PersonalAccountCreationAnalyticsTrackerProtocol {
 
-    private var analyticsTracker: (any AnalyticsEventTracker)!
+    private var analyticsTracker: (any AnalyticsEventTrackerProtocol)!
 
     init() {}
 

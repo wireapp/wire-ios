@@ -22,8 +22,8 @@ import WireFoundation
 
 protocol AnalyticsEventTrackerProvider: AnyObject {
 
-    var analyticsEventTracker: (any AnalyticsEventTracker)? { get }
-    func setAnalyticsEventTracker(_ tracker: (any AnalyticsEventTracker)?)
+    var analyticsEventTracker: (any AnalyticsEventTrackerProtocol)? { get }
+    func setAnalyticsEventTracker(_ tracker: (any AnalyticsEventTrackerProtocol)?)
     func createAnalyticsUser() async throws -> AnalyticsUser
 
 }

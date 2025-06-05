@@ -428,7 +428,7 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
     }
 }
 
-private class MockAnalyticsEventTracker: AnalyticsEventTracker {
+private class MockAnalyticsEventTracker: AnalyticsEventTrackerProtocol {
 
     var trackedEvents = [AnalyticsEvent]()
 

@@ -26,9 +26,9 @@ public protocol SubmitCallQualitySurveyUseCaseProtocol {
 
 public struct SubmitCallQualitySurveyUseCase: SubmitCallQualitySurveyUseCaseProtocol {
 
-    weak var analyticsEventTracker: (any AnalyticsEventTracker)?
+    weak var analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?
 
-    public init(analyticsEventTracker: (any AnalyticsEventTracker)?) {
+    public init(analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?) {
         self.analyticsEventTracker = analyticsEventTracker
     }
 

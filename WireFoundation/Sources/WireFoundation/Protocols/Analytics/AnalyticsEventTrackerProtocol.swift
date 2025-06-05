@@ -27,6 +27,3 @@ public protocol AnalyticsEventTrackerProtocol: AnyObject {
     func trackEvent(_ event: AnalyticsEvent)
 
 }
-
-// @available(*, deprecated, renamed: "AnalyticsEventTrackerProtocol")
-public typealias AnalyticsEventTracker = AnalyticsEventTrackerProtocol // TODO: delete

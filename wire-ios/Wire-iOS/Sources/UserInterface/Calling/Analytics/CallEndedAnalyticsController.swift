@@ -25,7 +25,7 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
 
     private let contextProvider: ContextProvider
     private let notificationCenter: NotificationCenter
-    private let analyticsEventTracker: () -> (any AnalyticsEventTracker)?
+    private let analyticsEventTracker: () -> (any AnalyticsEventTrackerProtocol)?
 
     private var eventInfos = [UUID: EventInfo]()
     private var callStateObservationToken: AnyObject?
@@ -38,7 +38,7 @@ final class CallEndedAnalyticsController<CallCenter: WireCallCenterV3> {
     init(
         contextProvider: ContextProvider,
         notificationCenter: NotificationCenter,
-        analyticsEventTracker: @escaping () -> (any AnalyticsEventTracker)?,
+        analyticsEventTracker: @escaping () -> (any AnalyticsEventTrackerProtocol)?,
         logger: LoggerProtocol,
         currentDateProvider: CurrentDateProviding
     ) {
