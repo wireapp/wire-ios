@@ -66,7 +66,8 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
         // given
         let backendURL = URL(string: "example.com")!
         mockAuthenticationAPI
-            .getDomainRegistrationForEmailEmailStringDomainRegistrationConfigurationThrowableError = AuthenticationAPIError.unsupportedEndpointForAPIVersion
+            .getDomainRegistrationForEmailEmailStringDomainRegistrationConfigurationThrowableError =
+            AuthenticationAPIError.unsupportedEndpointForAPIVersion
         mockAuthenticationAPI.getOnPremConfigURLForDomainDomainStringDomainInfoReturnValue = DomainInfo(
             configurationURL: backendURL
         )
@@ -84,7 +85,8 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
 
         for testCase in testCases {
             mockAuthenticationAPI
-                .getDomainRegistrationForEmailEmailStringDomainRegistrationConfigurationThrowableError = AuthenticationAPIError.unsupportedEndpointForAPIVersion
+                .getDomainRegistrationForEmailEmailStringDomainRegistrationConfigurationThrowableError =
+                AuthenticationAPIError.unsupportedEndpointForAPIVersion
             mockAuthenticationAPI.getOnPremConfigURLForDomainDomainStringDomainInfoThrowableError = testCase
 
             // when
@@ -123,7 +125,8 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
         ]
 
         for testCase in testCases {
-            mockAuthenticationAPI.getDomainRegistrationForEmailEmailStringDomainRegistrationConfigurationReturnValue = testCase.config
+            mockAuthenticationAPI
+                .getDomainRegistrationForEmailEmailStringDomainRegistrationConfigurationReturnValue = testCase.config
 
             // when
             let authMethod = try await sut.invoke(emailOrSSOCode: "user@example.com")
@@ -141,7 +144,8 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
         ]
 
         for config in testCases {
-            mockAuthenticationAPI.getDomainRegistrationForEmailEmailStringDomainRegistrationConfigurationReturnValue = config
+            mockAuthenticationAPI
+                .getDomainRegistrationForEmailEmailStringDomainRegistrationConfigurationReturnValue = config
 
             // when, then
             await XCTAssertThrowsErrorAsync(AuthenticationAPIError.invalidResponse) { [self] in
@@ -153,7 +157,9 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
     func testInvoke_withEmail_whenServiceUnavailable() async throws {
         // given
         let email = "user@example.com"
-        mockAuthenticationAPI.getDomainRegistrationForEmailEmailStringDomainRegistrationConfigurationThrowableError = AuthenticationAPIError.serviceUnavailable
+        mockAuthenticationAPI
+            .getDomainRegistrationForEmailEmailStringDomainRegistrationConfigurationThrowableError =
+            AuthenticationAPIError.serviceUnavailable
 
         // when
         let authMethod = try await sut.invoke(emailOrSSOCode: email)
@@ -164,9 +170,10 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
 
     func testInvoke_forwardsUnderlyingErrors() async throws {
         // given
-        mockAuthenticationAPI.getDomainRegistrationForEmailEmailStringDomainRegistrationConfigurationThrowableError = URLError(
-            .notConnectedToInternet
-        )
+        mockAuthenticationAPI
+            .getDomainRegistrationForEmailEmailStringDomainRegistrationConfigurationThrowableError = URLError(
+                .notConnectedToInternet
+            )
 
         // when, then
         await XCTAssertThrowsErrorAsync(URLError(.notConnectedToInternet)) { [self] in
@@ -186,11 +193,13 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
         """
         let data = json.data(using: .utf8)!
 
-        mockAuthenticationAPI.getDomainRegistrationForEmailEmailStringDomainRegistrationConfigurationReturnValue = DomainRegistrationConfiguration
-            .make(
-            backendURLString: backendURL.absoluteString,
-            domainRedirect: .backend
-        )
+        mockAuthenticationAPI
+            .getDomainRegistrationForEmailEmailStringDomainRegistrationConfigurationReturnValue =
+            DomainRegistrationConfiguration
+                .make(
+                    backendURLString: backendURL.absoluteString,
+                    domainRedirect: .backend
+                )
         URLProtocolMock.mockHandler = { request in
             XCTAssertEqual(request.url, backendURL)
             return (data, HTTPURLResponse(url: backendURL, statusCode: 200, httpVersion: nil, headerFields: nil)!)
@@ -208,10 +217,12 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
         let backendURL = URL(string: "https://backend.example.com/config")!
         let jsonData = Data("{}".utf8)
 
-        mockAuthenticationAPI.getDomainRegistrationForEmailEmailStringDomainRegistrationConfigurationReturnValue = DomainRegistrationConfiguration.make(
-            backendURLString: backendURL.absoluteString,
-            domainRedirect: .backend
-        )
+        mockAuthenticationAPI
+            .getDomainRegistrationForEmailEmailStringDomainRegistrationConfigurationReturnValue =
+            DomainRegistrationConfiguration.make(
+                backendURLString: backendURL.absoluteString,
+                domainRedirect: .backend
+            )
         URLProtocolMock.mockHandler = { request in
             XCTAssertEqual(request.url, backendURL)
             return (jsonData, HTTPURLResponse(url: backendURL, statusCode: 200, httpVersion: nil, headerFields: nil)!)

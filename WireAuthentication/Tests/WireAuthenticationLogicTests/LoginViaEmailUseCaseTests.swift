@@ -66,7 +66,8 @@ final class LoginViaEmailUseCaseTests: XCTestCase {
                 expirationDate: accessToken.expirationDate
             )
         )
-        let invocations = mockAuthenticationAPI.loginEmailStringPasswordStringVerificationCodeStringLabelString_HTTPCookieAccessTokenReceivedInvocations
+        let invocations = mockAuthenticationAPI
+            .loginEmailStringPasswordStringVerificationCodeStringLabelString_HTTPCookieAccessTokenReceivedInvocations
         try XCTAssertCount(invocations, count: 1)
         XCTAssertEqual(invocations[0].email, "email")
         XCTAssertEqual(invocations[0].password, "password")
@@ -90,7 +91,9 @@ final class LoginViaEmailUseCaseTests: XCTestCase {
         ]
 
         for testCase in testCases {
-            mockAuthenticationAPI.loginEmailStringPasswordStringVerificationCodeStringLabelString_HTTPCookieAccessTokenThrowableError = testCase.underlyingError
+            mockAuthenticationAPI
+                .loginEmailStringPasswordStringVerificationCodeStringLabelString_HTTPCookieAccessTokenThrowableError =
+                testCase.underlyingError
 
             // when, then
             await XCTAssertThrowsErrorAsync(testCase.expected) { [self] in
@@ -101,9 +104,11 @@ final class LoginViaEmailUseCaseTests: XCTestCase {
 
     func testInvoke_otherFailure() async throws {
         // given
-        mockAuthenticationAPI.loginEmailStringPasswordStringVerificationCodeStringLabelString_HTTPCookieAccessTokenThrowableError = URLError(
-            .notConnectedToInternet
-        )
+        mockAuthenticationAPI
+            .loginEmailStringPasswordStringVerificationCodeStringLabelString_HTTPCookieAccessTokenThrowableError =
+            URLError(
+                .notConnectedToInternet
+            )
 
         // when, then
         await XCTAssertThrowsErrorAsync(URLError(.notConnectedToInternet)) { [self] in

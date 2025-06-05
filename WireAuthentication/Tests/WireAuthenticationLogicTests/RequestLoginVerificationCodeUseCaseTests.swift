@@ -48,7 +48,8 @@ struct RequestLoginVerificationCodeUseCaseTests {
     func mapInvalidEmailError() async throws {
         // Given
         let mockAuthenticationAPI = AuthenticationAPIMock()
-        mockAuthenticationAPI.requestVerificationCodeForEmailStringVoidThrowableError = AuthenticationAPIError.invalidEmail
+        mockAuthenticationAPI.requestVerificationCodeForEmailStringVoidThrowableError = AuthenticationAPIError
+            .invalidEmail
         let sut = RequestLoginVerificationCodeUseCase(authenticationAPI: mockAuthenticationAPI)
 
         do {
