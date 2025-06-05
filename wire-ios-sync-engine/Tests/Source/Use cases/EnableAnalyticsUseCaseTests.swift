@@ -18,6 +18,8 @@
 
 import WireAnalytics
 import WireAnalyticsSupport
+import WireFoundation
+import WireFoundationSupport
 import XCTest
 
 @testable import WireSyncEngine

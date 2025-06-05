@@ -18,6 +18,8 @@
 
 import WireAnalytics
 import WireAnalyticsSupport
+import WireFoundation
+import WireFoundationSupport
 import XCTest
 
 @testable import WireSyncEngine
@@ -34,7 +36,7 @@ final class DisableAnalyticsUseCaseTests: XCTestCase, AnalyticsEventTrackerProvi
         super.setUp()
         service = MockAnalyticsServiceProtocol()
         sut = DisableAnalyticsUseCase(service: service, provider: self)
-        analyticsEventTracker = MockAnalyticsEventTracker()
+        analyticsEventTracker = AnalyticsEventTrackerProtocolMock()
     }
 
     override func tearDown() {
