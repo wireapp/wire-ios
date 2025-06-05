@@ -218,7 +218,7 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
         case let .name(isTeam):
             autocapitalizationType = .words
             accessibilityIdentifier = "NameField"
-            textContentType = isTeam ? .organizationName : .name//
+            textContentType = isTeam ? .organizationName : .name
         case .username:
             autocapitalizationType = .none
             accessibilityIdentifier = "UsernameField"

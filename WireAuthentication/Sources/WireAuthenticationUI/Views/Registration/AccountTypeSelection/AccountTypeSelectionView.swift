@@ -159,21 +159,6 @@ struct AccountTypeSelectionView: View {
         .bold()
     }
 
-//    @ViewBuilder
-//    private func sheetView(for sheet: AccountTypeSelectionSheet) -> some View {
-//        switch sheet {
-//        case let .team(teamAccountCreationURL):
-//            SafariBrowserView(url: teamAccountCreationURL).ignoresSafeArea()
-//        case let .personal(email):
-//            let viewModel = CreatePersonalAccountViewModel(
-//                email: email,
-//                privacyPolicyURL: viewModel.privacyPolicyURL,
-//                teamAccountCreationLink: viewModel.teamAccountCreationLink
-//            )
-//            CreatePersonalAccountView(viewModel: viewModel)
-//        }
-//    }
-
 }
 
 // MARK: -

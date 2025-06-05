@@ -43,7 +43,6 @@ package protocol LoginViaEmailFactory {
 package struct LoginViaEmailView: View {
 
     @StateObject private var viewModel: LoginViaEmailViewModel
-    @Environment(\.dismiss) private var dismiss
 
     private typealias Strings = L10n.Localizable
 
