@@ -17,6 +17,7 @@
 //
 
 import WireAnalytics
+import WireFoundation
 import WireAnalyticsSupport
 import XCTest
 

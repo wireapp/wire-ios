@@ -17,10 +17,11 @@
 //
 
 import WireAnalytics
-import WireAnalyticsSupport
 import WireDataModel
 import WireDataModelSupport
 import WireSyncEngineSupport
+import WireFoundation
+import WireFoundationSupport
 import XCTest
 
 @testable import WireSyncEngine
@@ -29,7 +30,7 @@ final class AppendKnockMessageUseCaseTests: XCTest {
 
     // MARK: - Properties
 
-    private var analyticsEventTracker: MockAnalyticsEventTracker!
+    private var analyticsEventTracker: AnalyticsEventTrackerProtocolMock!
     private var mockConversation: MockMessageAppendableConversation!
     private var sut: AppendKnockMessageUseCase!
 
@@ -58,7 +59,7 @@ final class AppendKnockMessageUseCaseTests: XCTest {
             MockZMConversationMessage()
         }
 
-        analyticsEventTracker.trackEvent_MockMethod = { _ in }
+        analyticsEventTracker.trackEventEventAnalyticsEventVoidClosure = { _ in }
 
         // WHEN
         try sut.invoke(
@@ -76,7 +77,7 @@ final class AppendKnockMessageUseCaseTests: XCTest {
         )
 
         XCTAssertEqual(
-            analyticsEventTracker.trackEvent_Invocations,
+            analyticsEventTracker.trackEventEventAnalyticsEventVoidReceivedInvocations,
             [expectedEvent]
         )
     }

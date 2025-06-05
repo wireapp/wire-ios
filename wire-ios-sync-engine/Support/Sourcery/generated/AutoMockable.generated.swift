@@ -24,8 +24,8 @@
 // swiftlint:disable variable_name
 
 
-import WireAnalytics
 import WireAPI
+import WireDataModel
 import WireDomain
 import Combine
 

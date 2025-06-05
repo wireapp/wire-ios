@@ -17,9 +17,10 @@
 //
 
 import WireAnalytics
-import WireAnalyticsSupport
 import WireDataModelSupport
 import WireSyncEngineSupport
+import WireFoundation
+import WireFoundationSupport
 import XCTest
 
 @testable import WireDataModel
@@ -29,7 +30,7 @@ final class AppendLocationMessageUseCaseTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var analyticsEventTracker: MockAnalyticsEventTracker!
+    private var analyticsEventTracker: AnalyticsEventTrackerProtocolMock!
     private var mockConversation: MockMessageAppendableConversation!
     private var sut: AppendLocationMessageUseCase!
 
@@ -58,7 +59,7 @@ final class AppendLocationMessageUseCaseTests: XCTestCase {
         mockConversation.appendLocation_MockMethod = { _, _ in
             MockZMConversationMessage()
         }
-        analyticsEventTracker.trackEvent_MockMethod = { _ in }
+        analyticsEventTracker.trackEventEventAnalyticsEventVoidClosure = { _ in }
 
         let testLocationData = LocationData(
             latitude: 37.7749,
@@ -86,7 +87,7 @@ final class AppendLocationMessageUseCaseTests: XCTestCase {
         )
 
         XCTAssertEqual(
-            analyticsEventTracker.trackEvent_Invocations,
+            analyticsEventTracker.trackEventEventAnalyticsEventVoidReceivedInvocations,
             [expectedEvent]
         )
     }

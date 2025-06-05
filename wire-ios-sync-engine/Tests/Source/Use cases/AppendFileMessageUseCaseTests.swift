@@ -17,7 +17,8 @@
 //
 
 import WireAnalytics
-import WireAnalyticsSupport
+import WireFoundation
+import WireFoundationSupport
 import WireDataModel
 import WireDataModelSupport
 import WireSyncEngineSupport
@@ -29,7 +30,7 @@ final class AppendFileMessageUseCaseTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var analyticsEventTracker: MockAnalyticsEventTracker!
+    private var analyticsEventTracker: AnalyticsEventTrackerProtocolMock!
     private var mockConversation: MockMessageAppendableConversation!
     private var sut: AppendFileMessageUseCase!
 
@@ -56,7 +57,7 @@ final class AppendFileMessageUseCaseTests: XCTestCase {
         mockConversation.appendFile_MockMethod = { _, _ in
             MockZMConversationMessage()
         }
-        analyticsEventTracker.trackEvent_MockMethod = { _ in }
+        analyticsEventTracker.trackEventEventAnalyticsEventVoidClosure = { _ in }
 
         let fileMetadata = ZMFileMetadata(fileURL: URL(fileURLWithPath: "/path/to/file.pdf"), thumbnail: nil)
 
@@ -78,7 +79,7 @@ final class AppendFileMessageUseCaseTests: XCTestCase {
         )
 
         XCTAssertEqual(
-            analyticsEventTracker.trackEvent_Invocations,
+            analyticsEventTracker.trackEventEventAnalyticsEventVoidReceivedInvocations,
             [expectedEvent]
         )
     }
