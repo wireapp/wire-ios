@@ -16,17 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
+import Foundation
+import WireCellsAPI
 
-public enum WireCellsUploadStatus: Equatable, Hashable, Sendable {
-    case uploading(progress: Float)
-    case uploaded(isDraft: Bool)
-    case failed(error: WireCellsUploadError)
-    case cancelled
-}
-
-public enum WireCellsUploadError: Error, Equatable, Hashable, Sendable {
-    case fileNotFound
-    case urlError(error: URLError)
-    case other(message: String)
+extension WireCellsDraft {
+    static func fixture(
+        id: WireCellsNodeID = .fixture(),
+        status: WireCellsUploadStatus = .uploaded(isDraft: true)
+    ) -> WireCellsDraft {
+        WireCellsDraft(
+            id: id,
+            assetURL: URL(string: "https://example.com")!,
+            fileType: nil,
+            status: status,
+            name: "Draft",
+            bytes: 1024
+        )
+    }
 }

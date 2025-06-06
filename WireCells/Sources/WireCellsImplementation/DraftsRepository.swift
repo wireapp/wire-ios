@@ -21,11 +21,20 @@ import Collections
 import Foundation
 package import UniformTypeIdentifiers
 package import WireCellsAPI
+import WireLogging
 
 package protocol DraftsRepositoryProtocol: Actor {
 
     func add(assetURL: URL, assetSize: Int, cellName: String, fileName: String, fileType: UTType?) async
     func drafts(for cellName: String) -> AsyncStream<[WireCellsDraft]>
+    func publishAll(for cellName: String) async throws
+
+}
+
+enum DraftsRepositoryError: Error, Equatable {
+
+    case notAllFilesAreUploaded
+    case notAllFilesArePublished
 
 }
 
@@ -33,13 +42,23 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
 
     typealias CellName = String
 
-    private var drafts: CurrentValueSubject<[CellName: OrderedDictionary<WireCellsNodeID, WireCellsDraft>], Never> =
-        .init([:])
+    private let drafts: CurrentValueSubject<[CellName: OrderedDictionary<WireCellsNodeID, WireCellsDraft>], Never>
     private var continuations: [UUID: AsyncStream<[WireCellsDraft]>.Continuation] = [:]
-    private var uploadManager: any WireCellsNodeUploadManagerProtocol
+    private let uploadManager: any WireCellsNodeUploadManagerProtocol
+    private let nodesAPI: any NodesAPIProtocol
 
-    package init(uploadManager: any WireCellsNodeUploadManagerProtocol) {
+    package init(uploadManager: any WireCellsNodeUploadManagerProtocol, nodesAPI: any NodesAPIProtocol) {
+        self.init(uploadManager: uploadManager, nodesAPI: nodesAPI, drafts: [:])
+    }
+
+    init(
+        uploadManager: any WireCellsNodeUploadManagerProtocol,
+        nodesAPI: any NodesAPIProtocol,
+        drafts: [CellName: OrderedDictionary<WireCellsNodeID, WireCellsDraft>]
+    ) {
         self.uploadManager = uploadManager
+        self.nodesAPI = nodesAPI
+        self.drafts = CurrentValueSubject(drafts)
     }
 
     deinit {
@@ -103,18 +122,98 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
         return stream
     }
 
+    /// Publishes **all** drafts for the specified cell name.
+    ///
+    /// - parameter cellName: The name of the cell for which to publish drafts.
+    /// - throws: An error if not **all** files have been uploaded before publishing or if not all files are published
+    /// when the method completes.
+
+    package func publishAll(for cellName: String) async throws {
+        guard let drafts = drafts.value[cellName] else { return }
+
+        guard drafts.areAllUploaded else {
+            throw DraftsRepositoryError.notAllFilesAreUploaded
+        }
+
+        let results = await withTaskGroup(
+            of: Result<WireCellsNodeID, any Error>.self,
+            returning: [Result<WireCellsNodeID, any Error>].self
+        ) { [nodesAPI] group in
+            for (nodeID, draft) in drafts where draft.status == .uploaded(isDraft: true) {
+                group.addTask {
+                    do {
+                        try await nodesAPI.publishDraft(nodeID: nodeID)
+                        return .success(nodeID)
+                    } catch {
+                        WireLogger.wireCells.error("Failed to publish draft: \(error)")
+                        return .failure(error)
+                    }
+                }
+            }
+
+            return await group.reduce(into: []) { partial, result in
+                partial.append(result)
+            }
+        }
+
+        let publishedIDs = results.compactMap { try? $0.get() }
+        for id in publishedIDs {
+            setStatus(.uploaded(isDraft: false), cellName: cellName, id: id)
+        }
+
+        guard self.drafts.value[cellName]?.areAllPublished == true else {
+            throw DraftsRepositoryError.notAllFilesArePublished
+        }
+    }
+
     private func removeContinuation(for uuid: UUID) async {
         continuations[uuid] = nil
+    }
+
+    private func allDraftsArePublished(cellName: CellName) -> Bool {
+        guard let drafts = drafts.value[cellName] else { return false }
+        return drafts.values.allSatisfy { $0.status == .uploaded(isDraft: false) }
+    }
+
+    private func getStatus(cellName: CellName, id: WireCellsNodeID) -> WireCellsUploadStatus? {
+        drafts.value[cellName]?[id]?.status
     }
 
     private func setStatus(_ status: WireCellsUploadStatus, cellName: CellName, id: WireCellsNodeID) {
         drafts.value[cellName]?[id]?.status = status
     }
 
+    #if DEBUG
+        var getDraftsForTesting: [CellName: OrderedDictionary<WireCellsNodeID, WireCellsDraft>] {
+            drafts.value
+        }
+
+        func setDraftsForTesting(_ drafts: [CellName: OrderedDictionary<WireCellsNodeID, WireCellsDraft>]) {
+            self.drafts.value = drafts
+        }
+    #endif
+
 }
 
 private extension WireCellsNodeID {
     static func new() -> WireCellsNodeID {
         WireCellsNodeID(uuid: UUID(), versionID: UUID())
+    }
+}
+
+private extension OrderedDictionary<WireCellsNodeID, WireCellsDraft> {
+    var areAllUploaded: Bool {
+        allSatisfy {
+            switch $0.value.status {
+            case .uploaded:
+                true
+            case .uploading, .failed, .cancelled:
+                false
+            }
+        }
+    }
+
+    var areAllPublished: Bool {
+        values.allSatisfy { $0.status == .uploaded(isDraft: false) }
     }
 }
