@@ -253,29 +253,19 @@ package struct LoginViaEmailView: View {
     private func sheetView(for sheet: LoginViaEmailSheet) -> some View {
         switch sheet {
         case let .teamAccountCreation(teamAccountCreationLink):
-            SafariBrowserView(url: teamAccountCreationLink).ignoresSafeArea()
+            SafariBrowserView(url: teamAccountCreationLink)
+                .ignoresSafeArea()
         case .accountTypeSelection:
             AccountTypeSelectionView(
-                onTeamAccountCreation: {
-                    onSheetDismiss = {
-                        onSheetDismiss = nil
-                        viewModel.handleTeamAccountCreation()
-                    }
-                },
-                onPersonalAccountCreation: {
-                    onSheetDismiss = {
-                        onSheetDismiss = nil
-                        viewModel.handlePersonalAccountCreation()
-                    }
-                }
+                onTeamAccountCreation: viewModel.handleTeamAccountCreation,
+                onPersonalAccountCreation: viewModel.handlePersonalAccountCreation
             )
         }
     }
 
-    @State private var onSheetDismiss: (() -> Void)?
-
-//    private func onSheetDismiss() {
-//        fatalError()
-//    }
+    private func onSheetDismiss() {
+        print("running onDismiss")
+        viewModel.onSheetDismissAction?()
+    }
 
 }

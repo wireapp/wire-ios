@@ -43,6 +43,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
     @Published private(set) var isLoading = false
     @Published var alert: Alert?
     @Published var modalDestination: LoginViaEmailSheet?
+    @Published var onSheetDismissAction: (() -> Void)?
 
     let backendInfo: BackendInfo
     let isEmailPrefilled: Bool
@@ -200,15 +201,25 @@ package final class LoginViaEmailViewModel: ObservableObject {
     }
 
     func handleTeamAccountCreation() {
-        if let teamAccountCreationLink {
-            modalDestination = .teamAccountCreation(url: teamAccountCreationLink)
+        onSheetDismissAction = { [weak self] in
+            guard let self else { return }
+            onSheetDismissAction = nil
+
+            if let teamAccountCreationLink {
+                modalDestination = .teamAccountCreation(url: teamAccountCreationLink)
+            }
         }
     }
 
     func handlePersonalAccountCreation() {
-        router.navigate(
-            to: LoginViaEmailDestination.createPersonalAccount
-        )
+        onSheetDismissAction = { [weak self] in
+            guard let self else { return }
+            onSheetDismissAction = nil
+
+            router.navigate(
+                to: LoginViaEmailDestination.createPersonalAccount
+            )
+        }
     }
 
     // MARK: - Private
