@@ -21,7 +21,7 @@ import Foundation
 @testable import WireAPI
 @testable import WireAPISupport
 
-extension MockNetworkServiceProtocol {
+extension NetworkServiceProtocolMock {
 
     typealias Response = (statusCode: HTTPStatusCode, resourceName: String?)
 
@@ -35,11 +35,11 @@ extension MockNetworkServiceProtocol {
     /// - Parameter responses: The responses to return, one per request received.
     /// - Returns: A mock network service.
 
-    static func withResponses(_ responses: [Response]) -> MockNetworkServiceProtocol {
-        let networkService = MockNetworkServiceProtocol()
+    static func withResponses(_ responses: [Response]) -> NetworkServiceProtocolMock {
+        let networkService = NetworkServiceProtocolMock()
         var responses = responses
 
-        networkService.executeRequest_MockMethod = { request in
+        networkService.executeRequestRequestURLRequest_DataHTTPURLResponseClosure = { request in
             guard !responses.isEmpty else {
                 throw "no response"
             }
@@ -55,9 +55,9 @@ extension MockNetworkServiceProtocol {
         return networkService
     }
 
-    static func withError(statusCode: HTTPStatusCode, label: String = "") -> MockNetworkServiceProtocol {
-        let networkService = MockNetworkServiceProtocol()
-        networkService.executeRequest_MockMethod = { request in
+    static func withError(statusCode: HTTPStatusCode, label: String = "") -> NetworkServiceProtocolMock {
+        let networkService = NetworkServiceProtocolMock()
+        networkService.executeRequestRequestURLRequest_DataHTTPURLResponseClosure = { request in
             try request.mockErrorResponse(
                 statusCode: statusCode,
                 label: label

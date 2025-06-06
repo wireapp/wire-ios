@@ -21,7 +21,7 @@ import Foundation
 @testable import WireAPI
 @testable import WireAPISupport
 
-extension MockAPIServiceProtocol {
+extension APIServiceProtocolMock {
 
     typealias Response = (statusCode: HTTPStatusCode, resourceName: String?)
 
@@ -35,11 +35,11 @@ extension MockAPIServiceProtocol {
     /// - Parameter responses: The responses to return, one per request received.
     /// - Returns: A mock api service.
 
-    static func withResponses(_ responses: [Response]) -> MockAPIServiceProtocol {
-        let apiService = MockAPIServiceProtocol()
+    static func withResponses(_ responses: [Response]) -> APIServiceProtocolMock {
+        let apiService = APIServiceProtocolMock()
         var responses = responses
 
-        apiService.executeRequestRequiringAccessToken_MockMethod = { request, _ in
+        apiService.executeRequestRequestURLRequestRequiringAccessTokenBool_DataHTTPURLResponseClosure = { request, _ in
             guard !responses.isEmpty else {
                 throw "no response"
             }
@@ -55,9 +55,9 @@ extension MockAPIServiceProtocol {
         return apiService
     }
 
-    static func withError(statusCode: HTTPStatusCode, label: String = "") -> MockAPIServiceProtocol {
-        let apiService = MockAPIServiceProtocol()
-        apiService.executeRequestRequiringAccessToken_MockMethod = { request, _ in
+    static func withError(statusCode: HTTPStatusCode, label: String = "") -> APIServiceProtocolMock {
+        let apiService = APIServiceProtocolMock()
+        apiService.executeRequestRequestURLRequestRequiringAccessTokenBool_DataHTTPURLResponseClosure = { request, _ in
             try request.mockErrorResponse(
                 statusCode: statusCode,
                 label: label

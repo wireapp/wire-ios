@@ -58,7 +58,7 @@ final class SelfUserAPITests: XCTestCase {
 
     func testPushSupportedProtocols_UnsupportedVersionError_V0_to_V4() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([])
+        let apiService = APIServiceProtocolMock.withResponses([])
 
         let unsupportedVersions: [APIVersion] = [.v0, .v1, .v2, .v3, .v4]
         let suts = unsupportedVersions.map {
@@ -80,7 +80,7 @@ final class SelfUserAPITests: XCTestCase {
 
     func testGetSelfUser_SuccessResponse_200_V0_Then_VerifyRequests() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
+        let apiService = APIServiceProtocolMock.withResponses([
             (.ok, "GetSelfUserSuccessResponseV0")
         ])
 
@@ -99,7 +99,7 @@ final class SelfUserAPITests: XCTestCase {
 
     func testGetSelfUser_FailureResponse() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withError(
+        let apiService = APIServiceProtocolMock.withError(
             statusCode: .notFound,
             label: "not-found"
         )
@@ -118,7 +118,7 @@ final class SelfUserAPITests: XCTestCase {
     func testGetSelfUser_SuccessResponse_200_V4_Then_VerifyRequests() async throws {
         // Given
 
-        let apiService = MockAPIServiceProtocol.withResponses([
+        let apiService = APIServiceProtocolMock.withResponses([
             (.ok, "GetSelfUserSuccessResponseV4")
         ])
 
@@ -139,7 +139,7 @@ final class SelfUserAPITests: XCTestCase {
 
     func testPushSupportedProtocols_SuccessResponse_200_V5_And_Next_Versions_Verify_Requests() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
+        let apiService = APIServiceProtocolMock.withResponses([
             (.ok, nil)
         ])
 
@@ -154,7 +154,7 @@ final class SelfUserAPITests: XCTestCase {
 
     func testPushSupportedProtocols_FailureResponse_InvalidRequest_V5() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withError(
+        let apiService = APIServiceProtocolMock.withError(
             statusCode: .notFound,
             label: ""
         )

@@ -17,7 +17,6 @@
 //
 
 import WireAnalytics
-import WireAnalyticsSupport
 import WireDataModel
 import WireDataModelSupport
 import WireFoundation

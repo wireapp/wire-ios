@@ -124,7 +124,7 @@ final class ConversationsAPITests: XCTestCase {
     func testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200_thenVerifyRequests() async throws {
         // given
 
-        let apiService = MockAPIServiceProtocol.withResponses([
+        let apiService = APIServiceProtocolMock.withResponses([
             (.ok, "testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200")
         ])
 
@@ -141,7 +141,7 @@ final class ConversationsAPITests: XCTestCase {
 
     func testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200_thenVerifyResponse() async throws {
         // given
-        let apiService = MockAPIServiceProtocol.withResponses([
+        let apiService = APIServiceProtocolMock.withResponses([
             (.ok, "testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200")
         ])
 
@@ -164,7 +164,7 @@ final class ConversationsAPITests: XCTestCase {
     func testGetLegacyConversationIdentifiers_givenV0AndErrorResponse() async throws {
         // given
 
-        let apiService = MockAPIServiceProtocol.withError(
+        let apiService = APIServiceProtocolMock.withError(
             statusCode: .serviceUnavailable,
             label: "service unavailable"
         )
@@ -187,7 +187,7 @@ final class ConversationsAPITests: XCTestCase {
 
     func testGetConversationIdentifiers_givenV1AndSuccessResponse200_thenVerifyRequests() async throws {
         // given
-        let apiService = MockAPIServiceProtocol.withResponses([
+        let apiService = APIServiceProtocolMock.withResponses([
             (.ok, "testGetConversationIdentifiers_givenV1AndSuccessResponse200")
         ])
 
@@ -203,7 +203,7 @@ final class ConversationsAPITests: XCTestCase {
 
     func testGetConversationIdentifiers_givenV1AndSuccessResponse200_thenVerifyResponse() async throws {
         // given
-        let apiService = MockAPIServiceProtocol.withResponses([
+        let apiService = APIServiceProtocolMock.withResponses([
             (.ok, "testGetConversationIdentifiers_givenV1AndSuccessResponse200")
         ])
 
@@ -228,7 +228,7 @@ final class ConversationsAPITests: XCTestCase {
 
     func testGetConversationIdentifiers_givenV1AndErrorResponse() async throws {
         // given
-        let apiService = MockAPIServiceProtocol.withError(
+        let apiService = APIServiceProtocolMock.withError(
             statusCode: .serviceUnavailable,
             label: "service unavailable"
         )
@@ -268,7 +268,7 @@ final class ConversationsAPITests: XCTestCase {
     func testGetConversations_givenV0AndSuccessResponse200_thenVerifyResponse() async throws {
         // given
 
-        let apiService = MockAPIServiceProtocol.withResponses([
+        let apiService = APIServiceProtocolMock.withResponses([
             (.ok, "testGetConversations_givenV0AndSuccessResponse200")
         ])
 
@@ -284,7 +284,7 @@ final class ConversationsAPITests: XCTestCase {
 
     func testGetConversations_givenV0AndSuccessResponse400() async throws {
         // given
-        let apiService = MockAPIServiceProtocol.withError(
+        let apiService = APIServiceProtocolMock.withError(
             statusCode: .badRequest
         )
 
@@ -303,7 +303,7 @@ final class ConversationsAPITests: XCTestCase {
 
     func testGetConversations_givenV0AndSuccessResponse503() async throws {
         // given
-        let apiService = MockAPIServiceProtocol.withError(
+        let apiService = APIServiceProtocolMock.withError(
             statusCode: .serviceUnavailable,
             label: "service unavailable"
         )
@@ -325,7 +325,7 @@ final class ConversationsAPITests: XCTestCase {
     func testGetConversations_givenV2AndSuccessResponse200_thenVerifyResponse() async throws {
         // given
 
-        let apiService = MockAPIServiceProtocol.withResponses([
+        let apiService = APIServiceProtocolMock.withResponses([
             (.ok, "testGetConversations_givenV2AndSuccessResponse200")
         ])
 
@@ -341,7 +341,7 @@ final class ConversationsAPITests: XCTestCase {
 
     func testGetConversations_givenV2AndSuccessResponse400() async throws {
         // given
-        let apiService = MockAPIServiceProtocol.withError(
+        let apiService = APIServiceProtocolMock.withError(
             statusCode: .badRequest
         )
 
@@ -361,7 +361,7 @@ final class ConversationsAPITests: XCTestCase {
     func testGetConversations_givenV2AndSuccessResponse503() async throws {
         // given
 
-        let apiService = MockAPIServiceProtocol.withError(
+        let apiService = APIServiceProtocolMock.withError(
             statusCode: .serviceUnavailable,
             label: "service unavailable"
         )
@@ -383,7 +383,7 @@ final class ConversationsAPITests: XCTestCase {
     func testGetConversations_givenV3AndSuccessResponse200_thenVerifyResponse() async throws {
         // given
 
-        let apiService = MockAPIServiceProtocol.withResponses([
+        let apiService = APIServiceProtocolMock.withResponses([
             (.ok, "testGetConversations_givenV3AndSuccessResponse200")
         ])
 
@@ -403,7 +403,7 @@ final class ConversationsAPITests: XCTestCase {
 
     func testGetConversations_givenV3AndSuccessResponse400() async throws {
         // given
-        let apiService = MockAPIServiceProtocol.withError(
+        let apiService = APIServiceProtocolMock.withError(
             statusCode: .badRequest
         )
 
@@ -422,7 +422,7 @@ final class ConversationsAPITests: XCTestCase {
 
     func testGetConversations_givenV3AndSuccessResponse503() async throws {
         // given
-        let apiService = MockAPIServiceProtocol.withError(
+        let apiService = APIServiceProtocolMock.withError(
             statusCode: .serviceUnavailable,
             label: "service unavailable"
         )
@@ -444,7 +444,7 @@ final class ConversationsAPITests: XCTestCase {
     func testGetConversations_givenV5AndSuccessResponse200_thenVerifyResponse() async throws {
         // given
 
-        let apiService = MockAPIServiceProtocol.withResponses([
+        let apiService = APIServiceProtocolMock.withResponses([
             (.ok, "testGetConversations_givenV5AndSuccessResponse200")
         ])
 
@@ -464,7 +464,7 @@ final class ConversationsAPITests: XCTestCase {
 
     func testGetConversations_givenV5AndSuccessResponse503() async throws {
         // given
-        let apiService = MockAPIServiceProtocol.withError(
+        let apiService = APIServiceProtocolMock.withError(
             statusCode: .serviceUnavailable,
             label: "service unavailable"
         )
@@ -486,7 +486,7 @@ final class ConversationsAPITests: XCTestCase {
     func testGetConversations_givenV8AndSuccessResponse200_thenVerifyResponse() async throws {
         // given
 
-        let apiService = MockAPIServiceProtocol.withResponses([
+        let apiService = APIServiceProtocolMock.withResponses([
             (.ok, "testGetConversations_givenV8AndSuccessResponse200")
         ])
 
@@ -510,12 +510,12 @@ final class ConversationsAPITests: XCTestCase {
 
         let supportedVersions = APIVersion.v5.andNextVersions
 
-        let mocks: [MockAPIServiceProtocol.Response] = Array(
+        let mocks: [APIServiceProtocolMock.Response] = Array(
             repeating: (.ok, "testGetMLSOneOnOneConversationV5SuccessResponse200"),
             count: supportedVersions.count
         )
 
-        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+        let apiService = APIServiceProtocolMock.withResponses(mocks)
 
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
 
@@ -534,7 +534,7 @@ final class ConversationsAPITests: XCTestCase {
     func testGetMLSOneToOneConversation_UnsupportedVersionError_V0_to_V4() async throws {
         // Given
 
-        let apiService = MockAPIServiceProtocol.withResponses([
+        let apiService = APIServiceProtocolMock.withResponses([
             (.ok, "")
         ])
 
@@ -562,7 +562,7 @@ final class ConversationsAPITests: XCTestCase {
     func testGetMLSOneToOneConversation_Failure_Response_MLS_Not_Enabled() async throws {
         // Given
 
-        let apiService = MockAPIServiceProtocol.withError(
+        let apiService = APIServiceProtocolMock.withError(
             statusCode: .badRequest,
             label: "mls-not-enabled"
         )
@@ -583,7 +583,7 @@ final class ConversationsAPITests: XCTestCase {
     func testGetMLSOneToOneConversation_Failure_Response_Not_Connected() async throws {
         // Given
 
-        let apiService = MockAPIServiceProtocol.withError(
+        let apiService = APIServiceProtocolMock.withError(
             statusCode: .forbidden,
             label: "not-connected"
         )
@@ -604,7 +604,7 @@ final class ConversationsAPITests: XCTestCase {
     func testGetMLSOneToOneConversation_Failure_UserID_And_Domain_Empty() async throws {
         // Given
 
-        let apiService = MockAPIServiceProtocol.withResponses([
+        let apiService = APIServiceProtocolMock.withResponses([
             (.ok, "testGetMLSOneOnOneConversationV5SuccessResponse200")
         ])
 
@@ -641,12 +641,12 @@ final class ConversationsAPITests: XCTestCase {
 
         let supportedVersions: [APIVersion] = [.v0, .v1, .v2, .v3]
 
-        let mocks: [MockAPIServiceProtocol.Response] = Array(
+        let mocks: [APIServiceProtocolMock.Response] = Array(
             repeating: (.ok, "testGetConversationGuestLinkV0SuccessResponse200"),
             count: supportedVersions.count
         )
 
-        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+        let apiService = APIServiceProtocolMock.withResponses(mocks)
 
         let conversationID = Scaffolding.conversationID.uuidString
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
@@ -665,12 +665,12 @@ final class ConversationsAPITests: XCTestCase {
 
         let supportedVersions = APIVersion.v4.andNextVersions
 
-        let mocks: [MockAPIServiceProtocol.Response] = Array(
+        let mocks: [APIServiceProtocolMock.Response] = Array(
             repeating: (.ok, "testGetConversationGuestLinkV4SuccessResponse200"),
             count: supportedVersions.count
         )
 
-        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+        let apiService = APIServiceProtocolMock.withResponses(mocks)
 
         let conversationID = Scaffolding.conversationID.uuidString
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
@@ -688,7 +688,7 @@ final class ConversationsAPITests: XCTestCase {
     func testGetConversationGuestLinkV0_Failure_Access_Denied() async throws {
         // Given
 
-        let apiService = MockAPIServiceProtocol.withError(
+        let apiService = APIServiceProtocolMock.withError(
             statusCode: .forbidden,
             label: "access-denied"
         )
@@ -708,7 +708,7 @@ final class ConversationsAPITests: XCTestCase {
     func testGetConversationGuestLinkV0_Failure_Invalid_Conversation_ID() async throws {
         // Given
 
-        let apiService = MockAPIServiceProtocol.withError(
+        let apiService = APIServiceProtocolMock.withError(
             statusCode: .notFound,
             label: "cnv"
         )
@@ -728,7 +728,7 @@ final class ConversationsAPITests: XCTestCase {
     func testGetConversationGuestLinkV0_Failure_No_Conversation_Found() async throws {
         // Given
 
-        let apiService = MockAPIServiceProtocol.withError(
+        let apiService = APIServiceProtocolMock.withError(
             statusCode: .notFound,
             label: "no-conversation"
         )
@@ -748,7 +748,7 @@ final class ConversationsAPITests: XCTestCase {
     func testGetConversationGuestLinkV0_Failure_No_Conversation_Code_Found() async throws {
         // Given
 
-        let apiService = MockAPIServiceProtocol.withError(
+        let apiService = APIServiceProtocolMock.withError(
             statusCode: .notFound,
             label: "no-conversation-code"
         )
@@ -768,7 +768,7 @@ final class ConversationsAPITests: XCTestCase {
     func testGetConversationGuestLinkV0_Failure_Guest_Links_Disabled() async throws {
         // Given
 
-        let apiService = MockAPIServiceProtocol.withError(
+        let apiService = APIServiceProtocolMock.withError(
             statusCode: .conflict,
             label: "guest-links-disabled"
         )
@@ -789,7 +789,7 @@ final class ConversationsAPITests: XCTestCase {
         // Given
 
         // Dedicated error code in V4
-        let apiService = MockAPIServiceProtocol.withError(
+        let apiService = APIServiceProtocolMock.withError(
             statusCode: .badRequest,
             label: "cnv"
         )
@@ -812,12 +812,12 @@ final class ConversationsAPITests: XCTestCase {
         // given
 
         let supportedVersions = [APIVersion.v0, .v1, .v2]
-        let mocks: [MockAPIServiceProtocol.Response] = Array(
+        let mocks: [APIServiceProtocolMock.Response] = Array(
             repeating: (.ok, "testCreateGroupConversation_givenV0AndSuccessResponse200"),
             count: supportedVersions.count
         )
 
-        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+        let apiService = APIServiceProtocolMock.withResponses(mocks)
 
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
 
@@ -841,12 +841,12 @@ final class ConversationsAPITests: XCTestCase {
         // given
 
         let supportedVersions = [APIVersion.v3, .v4]
-        let mocks: [MockAPIServiceProtocol.Response] = Array(
+        let mocks: [APIServiceProtocolMock.Response] = Array(
             repeating: (.ok, "testCreateGroupConversation_givenV3AndSuccessResponse200"),
             count: supportedVersions.count
         )
 
-        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+        let apiService = APIServiceProtocolMock.withResponses(mocks)
 
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
 
@@ -870,12 +870,12 @@ final class ConversationsAPITests: XCTestCase {
         // given
 
         let supportedVersions = [APIVersion.v5, .v7]
-        let mocks: [MockAPIServiceProtocol.Response] = Array(
+        let mocks: [APIServiceProtocolMock.Response] = Array(
             repeating: (.ok, "testCreateGroupConversation_givenV5AndSuccessResponse200"),
             count: supportedVersions.count
         )
 
-        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+        let apiService = APIServiceProtocolMock.withResponses(mocks)
 
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
 
@@ -899,12 +899,12 @@ final class ConversationsAPITests: XCTestCase {
         // given
 
         let supportedVersions = APIVersion.v8.andNextVersions
-        let mocks: [MockAPIServiceProtocol.Response] = Array(
+        let mocks: [APIServiceProtocolMock.Response] = Array(
             repeating: (.ok, "testCreateGroupConversation_givenV8AndSuccessResponse200"),
             count: supportedVersions.count
         )
 
-        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+        let apiService = APIServiceProtocolMock.withResponses(mocks)
 
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
 
@@ -928,12 +928,12 @@ final class ConversationsAPITests: XCTestCase {
         // given
 
         let supportedVersions = [APIVersion.v0, .v1, .v2]
-        let mocks: [MockAPIServiceProtocol.Response] = Array(
+        let mocks: [APIServiceProtocolMock.Response] = Array(
             repeating: (.created, "testCreateGroupConversation_givenV0AndSuccessResponse201"),
             count: supportedVersions.count
         )
 
-        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+        let apiService = APIServiceProtocolMock.withResponses(mocks)
 
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
 
@@ -957,12 +957,12 @@ final class ConversationsAPITests: XCTestCase {
         // given
 
         let supportedVersions = [APIVersion.v3, .v4]
-        let mocks: [MockAPIServiceProtocol.Response] = Array(
+        let mocks: [APIServiceProtocolMock.Response] = Array(
             repeating: (.created, "testCreateGroupConversation_givenV3AndSuccessResponse201"),
             count: supportedVersions.count
         )
 
-        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+        let apiService = APIServiceProtocolMock.withResponses(mocks)
 
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
 
@@ -986,12 +986,12 @@ final class ConversationsAPITests: XCTestCase {
         // given
 
         let supportedVersions = [APIVersion.v5, .v7]
-        let mocks: [MockAPIServiceProtocol.Response] = Array(
+        let mocks: [APIServiceProtocolMock.Response] = Array(
             repeating: (.created, "testCreateGroupConversation_givenV5AndSuccessResponse201"),
             count: supportedVersions.count
         )
 
-        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+        let apiService = APIServiceProtocolMock.withResponses(mocks)
 
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
 
@@ -1015,12 +1015,12 @@ final class ConversationsAPITests: XCTestCase {
         // given
 
         let supportedVersions = APIVersion.v8.andNextVersions
-        let mocks: [MockAPIServiceProtocol.Response] = Array(
+        let mocks: [APIServiceProtocolMock.Response] = Array(
             repeating: (.created, "testCreateGroupConversation_givenV8AndSuccessResponse201"),
             count: supportedVersions.count
         )
 
-        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+        let apiService = APIServiceProtocolMock.withResponses(mocks)
 
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
 
@@ -1044,7 +1044,7 @@ final class ConversationsAPITests: XCTestCase {
 
         // given
         let supportedVersions = APIVersion.v0.andNextVersions
-        let apiService = MockAPIServiceProtocol.withError(statusCode: .badRequest, label: "non-empty-member-list")
+        let apiService = APIServiceProtocolMock.withError(statusCode: .badRequest, label: "non-empty-member-list")
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
 
         // when
@@ -1065,7 +1065,7 @@ final class ConversationsAPITests: XCTestCase {
 
         // given
         let supportedVersions = APIVersion.v0.andNextVersions
-        let apiService = MockAPIServiceProtocol.withError(statusCode: .badRequest, label: "")
+        let apiService = APIServiceProtocolMock.withError(statusCode: .badRequest, label: "")
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
 
         // when
@@ -1087,7 +1087,7 @@ final class ConversationsAPITests: XCTestCase {
 
         // given
         let supportedVersions = APIVersion.v0.andNextVersions
-        let apiService = MockAPIServiceProtocol.withError(statusCode: .forbidden, label: "missing-legalhold-consent")
+        let apiService = APIServiceProtocolMock.withError(statusCode: .forbidden, label: "missing-legalhold-consent")
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
 
         // when
@@ -1108,7 +1108,7 @@ final class ConversationsAPITests: XCTestCase {
 
         // given
         let supportedVersions = APIVersion.v0.andNextVersions
-        let apiService = MockAPIServiceProtocol.withError(statusCode: .forbidden, label: "operation-denied")
+        let apiService = APIServiceProtocolMock.withError(statusCode: .forbidden, label: "operation-denied")
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
 
         // when
@@ -1129,7 +1129,7 @@ final class ConversationsAPITests: XCTestCase {
 
         // given
         let supportedVersions = APIVersion.v0.andNextVersions
-        let apiService = MockAPIServiceProtocol.withError(statusCode: .forbidden, label: "no-team-member")
+        let apiService = APIServiceProtocolMock.withError(statusCode: .forbidden, label: "no-team-member")
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
 
         // when
@@ -1150,7 +1150,7 @@ final class ConversationsAPITests: XCTestCase {
 
         // given
         let supportedVersions = APIVersion.v0.andNextVersions
-        let apiService = MockAPIServiceProtocol.withError(statusCode: .forbidden, label: "not-connected")
+        let apiService = APIServiceProtocolMock.withError(statusCode: .forbidden, label: "not-connected")
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
 
         // when
@@ -1171,7 +1171,7 @@ final class ConversationsAPITests: XCTestCase {
 
         // given
         let supportedVersions = APIVersion.v0.andNextVersions
-        let apiService = MockAPIServiceProtocol.withError(statusCode: .forbidden, label: "access-denied")
+        let apiService = APIServiceProtocolMock.withError(statusCode: .forbidden, label: "access-denied")
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
 
         // when
@@ -1192,7 +1192,7 @@ final class ConversationsAPITests: XCTestCase {
 
         // given
         let supportedVersions = APIVersion.v3.andNextVersions
-        let apiService = MockAPIServiceProtocol.withError(statusCode: .badRequest, label: "mls-not-enabled")
+        let apiService = APIServiceProtocolMock.withError(statusCode: .badRequest, label: "mls-not-enabled")
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
 
         // when
@@ -1213,12 +1213,12 @@ final class ConversationsAPITests: XCTestCase {
 
         // given
         let supportedVersions = APIVersion.v4.andNextVersions
-        let mocks: [MockAPIServiceProtocol.Response] = Array(
+        let mocks: [APIServiceProtocolMock.Response] = Array(
             repeating: (.conflict, "testCreateGroupConversation_givenV4AndFailureResponse409"),
             count: supportedVersions.count
         )
 
-        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+        let apiService = APIServiceProtocolMock.withResponses(mocks)
 
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
 
@@ -1240,7 +1240,7 @@ final class ConversationsAPITests: XCTestCase {
 
         // given
         let supportedVersions = APIVersion.v4.andNextVersions
-        let apiService = MockAPIServiceProtocol.withError(statusCode: .unreachable, label: "")
+        let apiService = APIServiceProtocolMock.withError(statusCode: .unreachable, label: "")
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
 
         // when
@@ -1261,7 +1261,7 @@ final class ConversationsAPITests: XCTestCase {
 
         // given
         let unsupportedVersions = Set(APIVersion.allCases).subtracting([.v8])
-        let apiService = MockAPIServiceProtocol.withError(statusCode: .unreachable, label: "")
+        let apiService = APIServiceProtocolMock.withError(statusCode: .unreachable, label: "")
         let suts = unsupportedVersions.map { $0.buildAPI(apiService: apiService) }
 
         // when
@@ -1283,12 +1283,12 @@ final class ConversationsAPITests: XCTestCase {
 
         // given
         let supportedVersions = APIVersion.v8.andNextVersions
-        let mocks: [MockAPIServiceProtocol.Response] = Array(
+        let mocks: [APIServiceProtocolMock.Response] = Array(
             repeating: (.created, "testCreateGroupConversation_givenV8AndSuccessResponse201"),
             count: supportedVersions.count
         )
 
-        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+        let apiService = APIServiceProtocolMock.withResponses(mocks)
 
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
 
@@ -1311,12 +1311,12 @@ final class ConversationsAPITests: XCTestCase {
     func testAddChannelPermission_givenV8_AndSuccessResponse200_thenVerifyResponse() async throws {
         // given
         let supportedVersions = APIVersion.v8.andNextVersions
-        let mocks: [MockAPIServiceProtocol.Response] = Array(
+        let mocks: [APIServiceProtocolMock.Response] = Array(
             repeating: (.ok, "testAddChannelPermission_givenV8AndSuccessResponse200"),
             count: supportedVersions.count
         )
 
-        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+        let apiService = APIServiceProtocolMock.withResponses(mocks)
 
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
 
@@ -1340,7 +1340,7 @@ final class ConversationsAPITests: XCTestCase {
 
         // given
         let unsupportedVersions = Set(APIVersion.allCases).subtracting([.v8])
-        let apiService = MockAPIServiceProtocol.withError(statusCode: .unreachable, label: "")
+        let apiService = APIServiceProtocolMock.withError(statusCode: .unreachable, label: "")
         let suts = unsupportedVersions.map { $0.buildAPI(apiService: apiService) }
 
         // when
@@ -1362,7 +1362,7 @@ final class ConversationsAPITests: XCTestCase {
     func testAddChannelPermission_givenV8_And_Next_Versions_AndFailureResponse_No_Team_Found() async throws {
         // given
         let supportedVersions = APIVersion.v8.andNextVersions
-        let apiService = MockAPIServiceProtocol.withError(statusCode: .notFound, label: "no-team")
+        let apiService = APIServiceProtocolMock.withError(statusCode: .notFound, label: "no-team")
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
 
         // when
@@ -1384,7 +1384,7 @@ final class ConversationsAPITests: XCTestCase {
     func testAddChannelPermission_givenV8_And_Next_Versions_AndFailureResponse_No_Conversation_Found() async throws {
         // given
         let supportedVersions = APIVersion.v8.andNextVersions
-        let apiService = MockAPIServiceProtocol.withError(statusCode: .notFound, label: "no-conversation")
+        let apiService = APIServiceProtocolMock.withError(statusCode: .notFound, label: "no-conversation")
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
 
         // when
@@ -1407,7 +1407,7 @@ final class ConversationsAPITests: XCTestCase {
     ) async throws {
         // given
         let supportedVersions = APIVersion.v8.andNextVersions
-        let apiService = MockAPIServiceProtocol.withError(statusCode: .forbidden, label: "action-denied")
+        let apiService = APIServiceProtocolMock.withError(statusCode: .forbidden, label: "action-denied")
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
 
         // when
@@ -1429,7 +1429,7 @@ final class ConversationsAPITests: XCTestCase {
     func testAddChannelPermission_givenV8_And_Next_Versions_AndFailureResponse_Invalid_Operation() async throws {
         // given
         let supportedVersions = APIVersion.v8.andNextVersions
-        let apiService = MockAPIServiceProtocol.withError(statusCode: .forbidden, label: "invalid-op")
+        let apiService = APIServiceProtocolMock.withError(statusCode: .forbidden, label: "invalid-op")
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
 
         // when
@@ -1451,7 +1451,7 @@ final class ConversationsAPITests: XCTestCase {
     func testAddChannelPermission_givenV8_And_Next_Versions_AndFailureResponse_Invalid_Body() async throws {
         // given
         let supportedVersions = APIVersion.v8.andNextVersions
-        let apiService = MockAPIServiceProtocol.withError(statusCode: .badRequest, label: "")
+        let apiService = APIServiceProtocolMock.withError(statusCode: .badRequest, label: "")
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
 
         // when
@@ -1474,7 +1474,7 @@ final class ConversationsAPITests: XCTestCase {
     ) async throws {
         // given
         let supportedVersions = APIVersion.v8.andNextVersions
-        let apiService = MockAPIServiceProtocol.withError(statusCode: .forbidden, label: "access-denied")
+        let apiService = APIServiceProtocolMock.withError(statusCode: .forbidden, label: "access-denied")
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
 
         // when
@@ -1496,7 +1496,7 @@ final class ConversationsAPITests: XCTestCase {
     func testAddChannelPermission_givenV8_And_Next_Versions_AndFailureResponse_Access_Denied() async throws {
         // given
         let supportedVersions = APIVersion.v8.andNextVersions
-        let apiService = MockAPIServiceProtocol.withError(statusCode: .forbidden, label: "access-denied")
+        let apiService = APIServiceProtocolMock.withError(statusCode: .forbidden, label: "access-denied")
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
 
         // when
@@ -1518,7 +1518,7 @@ final class ConversationsAPITests: XCTestCase {
     func testAddChannelPermission_givenV8_And_Next_Versions_AndFailureResponse_Not_A_Team_Member() async throws {
         // given
         let supportedVersions = APIVersion.v8.andNextVersions
-        let apiService = MockAPIServiceProtocol.withError(statusCode: .forbidden, label: "no-team-member")
+        let apiService = APIServiceProtocolMock.withError(statusCode: .forbidden, label: "no-team-member")
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
 
         // when
@@ -1540,7 +1540,7 @@ final class ConversationsAPITests: XCTestCase {
     func testAddChannelPermission_givenV8_And_Next_Versions_AndFailureResponse_Not_Connected() async throws {
         // given
         let supportedVersions = APIVersion.v8.andNextVersions
-        let apiService = MockAPIServiceProtocol.withError(statusCode: .forbidden, label: "not-connected")
+        let apiService = APIServiceProtocolMock.withError(statusCode: .forbidden, label: "not-connected")
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
 
         // when
@@ -1562,7 +1562,7 @@ final class ConversationsAPITests: XCTestCase {
     func testAddChannelPermission_givenV8_And_Next_Versions_AndFailureResponse_Operation_Denied() async throws {
         // given
         let supportedVersions = APIVersion.v8.andNextVersions
-        let apiService = MockAPIServiceProtocol.withError(statusCode: .forbidden, label: "operation-denied")
+        let apiService = APIServiceProtocolMock.withError(statusCode: .forbidden, label: "operation-denied")
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
 
         // when
@@ -1584,7 +1584,7 @@ final class ConversationsAPITests: XCTestCase {
     func testAddChannelPermission_givenV8_And_Next_Versions_AndFailureResponse_Unreachable_Backends() async throws {
         // given
         let supportedVersions = APIVersion.v8.andNextVersions
-        let apiService = MockAPIServiceProtocol.withError(statusCode: .unreachable, label: "")
+        let apiService = APIServiceProtocolMock.withError(statusCode: .unreachable, label: "")
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
 
         // when
@@ -1607,12 +1607,12 @@ final class ConversationsAPITests: XCTestCase {
 
         // given
         let supportedVersions = APIVersion.v8.andNextVersions
-        let mocks: [MockAPIServiceProtocol.Response] = Array(
+        let mocks: [APIServiceProtocolMock.Response] = Array(
             repeating: (.conflict, "testAddChannelPermission_givenV8AndFailureResponse409"),
             count: supportedVersions.count
         )
 
-        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+        let apiService = APIServiceProtocolMock.withResponses(mocks)
 
         let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
 
