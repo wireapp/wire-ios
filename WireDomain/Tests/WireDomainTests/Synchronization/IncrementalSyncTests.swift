@@ -18,6 +18,7 @@
 
 import Combine
 import XCTest
+
 @testable import WireAPI
 @testable import WireAPISupport
 @testable import WireDomain
@@ -27,7 +28,7 @@ final class IncrementalSyncTests: XCTestCase {
 
     var sut: IncrementalSync!
     var journal: Journal!
-    var pushChannelAPI: MockPushChannelAPI!
+    var pushChannelAPI: PushChannelAPIMock!
     var updateEventsSync: MockPullPendingUpdateEventsSyncProtocol!
     var decryptor: MockUpdateEventDecryptorProtocol!
     var store: MockUpdateEventsLocalStoreProtocol!
@@ -40,7 +41,7 @@ final class IncrementalSyncTests: XCTestCase {
             userID: UUID(),
             storage: UserDefaults.temporary()
         )
-        pushChannelAPI = MockPushChannelAPI()
+        pushChannelAPI = PushChannelAPIMock()
         updateEventsSync = MockPullPendingUpdateEventsSyncProtocol()
         decryptor = MockUpdateEventDecryptorProtocol()
         store = MockUpdateEventsLocalStoreProtocol()
@@ -95,18 +96,19 @@ final class IncrementalSyncTests: XCTestCase {
         store.deleteNextPendingEventsLimit_MockMethod = { _ in }
 
         // Some live events, some of which were already pulled.
-        let pushChannel = MockPushChannelProtocol()
-        pushChannel.open_MockValue = AsyncThrowingStream { continuation in
-            Task {
-                continuation.yield(Scaffolding.event2)
-                continuation.yield(Scaffolding.event3)
-                continuation.yield(Scaffolding.event4)
-                continuation.yield(Scaffolding.event5)
-                continuation.finish()
+        let pushChannel = PushChannelProtocolMock()
+        pushChannel
+            .openAsyncThrowingStreamUpdateEventEnvelopeAnyErrorReturnValue = AsyncThrowingStream { continuation in
+                Task {
+                    continuation.yield(Scaffolding.event2)
+                    continuation.yield(Scaffolding.event3)
+                    continuation.yield(Scaffolding.event4)
+                    continuation.yield(Scaffolding.event5)
+                    continuation.finish()
+                }
             }
-        }
 
-        pushChannelAPI.createPushChannelClientID_MockMethod = { _ in pushChannel }
+        pushChannelAPI.createPushChannelClientIDStringAnyPushChannelProtocolClosure = { _ in pushChannel }
 
         // Some indices at which live events will be stored.
         var indices = [Int64(10), 11, 12, 13, 14, 15]
@@ -143,12 +145,12 @@ final class IncrementalSyncTests: XCTestCase {
 
         // Then push channel was created.
         XCTAssertEqual(
-            pushChannelAPI.createPushChannelClientID_Invocations,
+            pushChannelAPI.createPushChannelClientIDStringAnyPushChannelProtocolReceivedInvocations,
             [Scaffolding.selfClientID]
         )
 
         // Then push channel was opened.
-        XCTAssertEqual(pushChannel.open_Invocations.count, 1)
+        XCTAssertEqual(pushChannel.openAsyncThrowingStreamUpdateEventEnvelopeAnyErrorCallsCount, 1)
 
         // Then pending events were pulled.
         XCTAssertEqual(updateEventsSync.pull_Invocations.count, 1)
@@ -227,7 +229,7 @@ final class IncrementalSyncTests: XCTestCase {
         store.deleteNextPendingEventsLimit_MockMethod = { _ in }
 
         // Some live events, some of which were already pulled.
-        let pushChannel = MockPushChannelProtocol()
+        let pushChannel = PushChannelProtocolMock()
         let liveEventsStream = AsyncThrowingStream { continuation in
             Task {
                 continuation.yield(Scaffolding.event2)
@@ -237,8 +239,8 @@ final class IncrementalSyncTests: XCTestCase {
                 continuation.finish()
             }
         }
-        pushChannel.open_MockValue = liveEventsStream
-        pushChannelAPI.createPushChannelClientID_MockMethod = { _ in pushChannel }
+        pushChannel.openAsyncThrowingStreamUpdateEventEnvelopeAnyErrorReturnValue = liveEventsStream
+        pushChannelAPI.createPushChannelClientIDStringAnyPushChannelProtocolClosure = { _ in pushChannel }
         // Some indices at which live events will be stored.
         var indices = [Int64(10), 11, 12, 13, 14, 15]
         store.indexOfLastEventEnvelope_MockMethod = { indices.remove(at: 0) }
@@ -264,7 +266,7 @@ final class IncrementalSyncTests: XCTestCase {
 
         // Database is saved.
         databaseSaver.save_MockMethod = {}
-        pushChannel.close_MockMethod = {}
+        pushChannel.closeVoidClosure = {}
 
         // When
         let task = Task {
@@ -275,7 +277,7 @@ final class IncrementalSyncTests: XCTestCase {
         do {
             _ = try await task.value
         } catch {
-            XCTAssertEqual(pushChannel.close_Invocations.count, 1)
+            XCTAssertEqual(pushChannel.closeVoidCallsCount, 1)
             XCTAssertTrue(error is CancellationError)
         }
     }

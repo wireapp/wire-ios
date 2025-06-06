@@ -19,6 +19,7 @@
 import WireAPISupport
 import WireDataModel
 import XCTest
+
 @testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport
@@ -26,11 +27,11 @@ import XCTest
 final class PullMLSStatusSyncTests: XCTestCase {
 
     private var sut: PullMLSStatusSync!
-    private var api: MockMLSAPI!
+    private var api: MLSAPIMock!
     private var store: MockBackendConfigLocalStoreProtocol!
 
     override func setUp() async throws {
-        api = MockMLSAPI()
+        api = MLSAPIMock()
         store = MockBackendConfigLocalStoreProtocol()
         sut = PullMLSStatusSync(
             api: api,
@@ -46,14 +47,14 @@ final class PullMLSStatusSyncTests: XCTestCase {
 
     func testPull() async throws {
         // Mock
-        api.getBackendMLSPublicKeys_MockValue = Scaffolding.keys
+        api.getBackendMLSPublicKeysBackendMLSPublicKeysReturnValue = Scaffolding.keys
         store.storeIsMLSEnabledStatusNewValue_MockMethod = { _ in }
 
         // When
         try await sut.pull()
 
         // Then
-        XCTAssertEqual(api.getBackendMLSPublicKeys_Invocations.count, 1)
+        XCTAssertEqual(api.getBackendMLSPublicKeysBackendMLSPublicKeysCallsCount, 1)
 
         let storeInvocations = store.storeIsMLSEnabledStatusNewValue_Invocations
         try XCTAssertCount(storeInvocations, count: 1)
@@ -65,14 +66,14 @@ final class PullMLSStatusSyncTests: XCTestCase {
     // like the same error.
     func testPull_EndpointUnavailable() async throws {
         // Mock
-        api.getBackendMLSPublicKeys_MockError = MLSAPIError.unsupportedEndpointForAPIVersion
+        api.getBackendMLSPublicKeysBackendMLSPublicKeysThrowableError = MLSAPIError.unsupportedEndpointForAPIVersion
         store.storeIsMLSEnabledStatusNewValue_MockMethod = { _ in }
 
         // When
         try await sut.pull()
 
         // Then
-        XCTAssertEqual(api.getBackendMLSPublicKeys_Invocations.count, 1)
+        XCTAssertEqual(api.getBackendMLSPublicKeysBackendMLSPublicKeysCallsCount, 1)
 
         let storeInvocations = store.storeIsMLSEnabledStatusNewValue_Invocations
         try XCTAssertCount(storeInvocations, count: 1)
@@ -84,14 +85,14 @@ final class PullMLSStatusSyncTests: XCTestCase {
     // like the same error.
     func testPull_MLSNotEnabled() async throws {
         // Mock
-        api.getBackendMLSPublicKeys_MockError = MLSAPIError.mlsNotEnabled
+        api.getBackendMLSPublicKeysBackendMLSPublicKeysThrowableError = MLSAPIError.mlsNotEnabled
         store.storeIsMLSEnabledStatusNewValue_MockMethod = { _ in }
 
         // When
         try await sut.pull()
 
         // Then
-        XCTAssertEqual(api.getBackendMLSPublicKeys_Invocations.count, 1)
+        XCTAssertEqual(api.getBackendMLSPublicKeysBackendMLSPublicKeysCallsCount, 1)
 
         let storeInvocations = store.storeIsMLSEnabledStatusNewValue_Invocations
         try XCTAssertCount(storeInvocations, count: 1)

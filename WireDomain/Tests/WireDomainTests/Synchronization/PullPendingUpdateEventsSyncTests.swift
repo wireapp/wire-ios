@@ -27,7 +27,7 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
 
     private var sut: PullPendingUpdateEventsSync!
     private var journal: Journal!
-    private var api: MockUpdateEventsAPI!
+    private var api: UpdateEventsAPIMock!
     private var store: MockUpdateEventsLocalStoreProtocol!
     private var decryptor: MockUpdateEventDecryptorProtocol!
     private var coreCrypto: MockSafeCoreCrypto!
@@ -38,7 +38,7 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
             userID: UUID(),
             storage: UserDefaults.temporary()
         )
-        api = MockUpdateEventsAPI()
+        api = UpdateEventsAPIMock()
         store = MockUpdateEventsLocalStoreProtocol()
         decryptor = MockUpdateEventDecryptorProtocol()
         coreCrypto = MockSafeCoreCrypto()
@@ -68,7 +68,9 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
         store.lastEventID_MockValue = Scaffolding.lastEventID
         store.indexOfLastEventEnvelope_MockValue = Scaffolding.indexOfLastEventEnvelope
 
-        api.getUpdateEventsSelfClientIDSinceEventID_MockValue = PayloadPager(start: "page1") { start in
+        api.getUpdateEventsSelfClientIDStringSinceEventIDUUIDPayloadPagerUpdateEventEnvelopeReturnValue = PayloadPager(
+            start: "page1"
+        ) { start in
             switch start {
             case "page1":
                 return Scaffolding.page1
@@ -92,7 +94,8 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
         try await sut.pull()
 
         // Then we used the api to fetch pending events.
-        let apiInvocations = api.getUpdateEventsSelfClientIDSinceEventID_Invocations
+        let apiInvocations = api
+            .getUpdateEventsSelfClientIDStringSinceEventIDUUIDPayloadPagerUpdateEventEnvelopeReceivedInvocations
         try XCTAssertCount(apiInvocations, count: 1)
         XCTAssertEqual(apiInvocations[0].selfClientID, Scaffolding.selfClientID)
         XCTAssertEqual(apiInvocations[0].sinceEventID, Scaffolding.lastEventID)

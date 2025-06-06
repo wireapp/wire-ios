@@ -19,6 +19,7 @@
 import WireAPISupport
 import WireDataModel
 import XCTest
+
 @testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport
@@ -26,11 +27,11 @@ import XCTest
 final class PullMLSOneOnOneSyncTests: XCTestCase {
 
     private var sut: PullMLSOneOnOneSync!
-    private var api: MockConversationsAPI!
+    private var api: ConversationsAPIMock!
     private var store: MockConversationLocalStoreProtocol!
 
     override func setUp() async throws {
-        api = MockConversationsAPI()
+        api = ConversationsAPIMock()
         store = MockConversationLocalStoreProtocol()
         sut = PullMLSOneOnOneSync(
             api: api,
@@ -48,7 +49,7 @@ final class PullMLSOneOnOneSyncTests: XCTestCase {
 
     func testPull() async throws {
         // Mock
-        api.getMLSOneToOneConversationUserIDIn_MockValue = Scaffolding.conversation
+        api.getMLSOneToOneConversationUserIDStringInDomainStringConversationReturnValue = Scaffolding.conversation
         store.storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod = { _, _, _, _ in }
 
         // When
@@ -58,7 +59,7 @@ final class PullMLSOneOnOneSyncTests: XCTestCase {
         )
 
         // Then
-        let apiInvocations = api.getMLSOneToOneConversationUserIDIn_Invocations
+        let apiInvocations = api.getMLSOneToOneConversationUserIDStringInDomainStringConversationReceivedInvocations
         try XCTAssertCount(apiInvocations, count: 1)
         XCTAssertEqual(apiInvocations[0].userID, Scaffolding.userID.uuidString.lowercased())
         XCTAssertEqual(apiInvocations[0].domain, Scaffolding.userDomain)

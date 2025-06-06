@@ -21,6 +21,7 @@ import WireDataModel
 import WireDataModelSupport
 import WireTestingPackage
 import XCTest
+
 @testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport
@@ -28,7 +29,7 @@ import XCTest
 final class VerifyUserSessionUseCaseTests: XCTestCase {
     private var sut: VerifyUserSessionUseCase!
     private var journal: Journal!
-    private var cookieStorage: MockCookieStorageProtocol!
+    private var cookieStorage: CookieStorageProtocolMock!
     private var stack: MockCoreDataStackProtocol!
 
     override func setUp() async throws {
@@ -37,7 +38,7 @@ final class VerifyUserSessionUseCaseTests: XCTestCase {
             storage: UserDefaults.temporary()
         )
         stack = MockCoreDataStackProtocol()
-        cookieStorage = MockCookieStorageProtocol()
+        cookieStorage = CookieStorageProtocolMock()
 
         sut = VerifyUserSessionUseCase(
             journal: journal,
@@ -63,13 +64,13 @@ final class VerifyUserSessionUseCaseTests: XCTestCase {
         stack.needsMigration = false
         stack.loadStoresCompletionHandler_MockMethod = { $0(nil) }
         let validCookie = try XCTUnwrap(Scaffolding.validCookie)
-        cookieStorage.fetchCookies_MockValue = [validCookie]
+        cookieStorage.fetchCookiesHTTPCookieReturnValue = [validCookie]
 
         // When
         try await sut.invoke()
 
         // Then
-        XCTAssertEqual(cookieStorage.fetchCookies_Invocations.count, 1)
+        XCTAssertEqual(cookieStorage.fetchCookiesHTTPCookieCallsCount, 1)
 
     }
 
@@ -89,7 +90,7 @@ final class VerifyUserSessionUseCaseTests: XCTestCase {
     func testVerify_It_Throws_User_Unauthenticated_Error() async throws {
 
         // Mock
-        cookieStorage.fetchCookies_MockValue = [.init()]
+        cookieStorage.fetchCookiesHTTPCookieReturnValue = [.init()]
 
         // Then
         await XCTAssertThrowsErrorAsync(VerifyUserSessionUseCase.Failure.userUnauthenticated) { [self] in
@@ -103,7 +104,7 @@ final class VerifyUserSessionUseCaseTests: XCTestCase {
 
         // Mock
         let expiredCookie = try XCTUnwrap(Scaffolding.expiredCookie)
-        cookieStorage.fetchCookies_MockValue = [expiredCookie]
+        cookieStorage.fetchCookiesHTTPCookieReturnValue = [expiredCookie]
 
         // Then
         await XCTAssertThrowsErrorAsync(VerifyUserSessionUseCase.Failure.userUnauthenticated) { [self] in
@@ -116,7 +117,7 @@ final class VerifyUserSessionUseCaseTests: XCTestCase {
     func testVerify_It_Throws_User_Unauthenticated_Error_When_No_Cookies_Found() async throws {
 
         // Mock
-        cookieStorage.fetchCookies_MockValue = []
+        cookieStorage.fetchCookiesHTTPCookieReturnValue = []
 
         // Then
         await XCTAssertThrowsErrorAsync(VerifyUserSessionUseCase.Failure.userUnauthenticated) { [self] in
@@ -129,7 +130,7 @@ final class VerifyUserSessionUseCaseTests: XCTestCase {
     func testStartSyncingEvents_It_Throws_Core_Data_Missing_Shared_Container() async throws {
         // Mock
         let validCookie = try XCTUnwrap(Scaffolding.validCookie)
-        cookieStorage.fetchCookies_MockValue = [validCookie]
+        cookieStorage.fetchCookiesHTTPCookieReturnValue = [validCookie]
         stack.storesExists = false
 
         // Then
@@ -144,7 +145,7 @@ final class VerifyUserSessionUseCaseTests: XCTestCase {
         stack.storesExists = true
         stack.needsMigration = true
         let validCookie = try XCTUnwrap(Scaffolding.validCookie)
-        cookieStorage.fetchCookies_MockValue = [validCookie]
+        cookieStorage.fetchCookiesHTTPCookieReturnValue = [validCookie]
 
         // Then
         await XCTAssertThrowsErrorAsync(VerifyUserSessionUseCase.Failure.coreDataMigrationRequired) { [self] in

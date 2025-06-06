@@ -20,17 +20,18 @@ import WireAPI
 import WireAPISupport
 import WireDataModel
 import XCTest
+
 @testable import WireDomain
 @testable import WireDomainSupport
 
 final class PullSelfLegalholdInfoSyncTests: XCTestCase {
 
     private var sut: PullSelfLegalholdInfoSync!
-    private var api: MockTeamsAPI!
+    private var api: TeamsAPIMock!
     private var store: MockUserLocalStoreProtocol!
 
     override func setUp() async throws {
-        api = MockTeamsAPI()
+        api = TeamsAPIMock()
         store = MockUserLocalStoreProtocol()
         sut = PullSelfLegalholdInfoSync(
             selfUserID: Scaffolding.selfUserID,
@@ -47,14 +48,15 @@ final class PullSelfLegalholdInfoSyncTests: XCTestCase {
 
     func testPull_Legalhold_Pending() async throws {
         // Mock
-        api.getLegalholdInfoForUserID_MockValue = Scaffolding.remoteLegalholdInfo(status: .pending)
+        api.getLegalholdInfoForTeamIDTeamIDUserIDUUIDTeamMemberLegalholdInfoReturnValue = Scaffolding
+            .remoteLegalholdInfo(status: .pending)
         store.addSelfLegalHoldRequestUserIDClientIDLastPrekey_MockMethod = { _, _, _ in }
 
         // When
         try await sut.pull(selfTeamID: Scaffolding.selfTeamID)
 
         // Then
-        let apiInvocations = api.getLegalholdInfoForUserID_Invocations
+        let apiInvocations = api.getLegalholdInfoForTeamIDTeamIDUserIDUUIDTeamMemberLegalholdInfoReceivedInvocations
         try XCTAssertCount(apiInvocations, count: 1)
         XCTAssertEqual(apiInvocations[0].teamID, Scaffolding.selfTeamID)
         XCTAssertEqual(apiInvocations[0].userID, Scaffolding.selfUserID)
@@ -68,14 +70,15 @@ final class PullSelfLegalholdInfoSyncTests: XCTestCase {
 
     func testPull_Legalhold_Disabled() async throws {
         // Mock
-        api.getLegalholdInfoForUserID_MockValue = Scaffolding.remoteLegalholdInfo(status: .disabled)
+        api.getLegalholdInfoForTeamIDTeamIDUserIDUUIDTeamMemberLegalholdInfoReturnValue = Scaffolding
+            .remoteLegalholdInfo(status: .disabled)
         store.cancelSelfUserLegalholdRequest_MockMethod = {}
 
         // When
         try await sut.pull(selfTeamID: Scaffolding.selfTeamID)
 
         // Then
-        let apiInvocations = api.getLegalholdInfoForUserID_Invocations
+        let apiInvocations = api.getLegalholdInfoForTeamIDTeamIDUserIDUUIDTeamMemberLegalholdInfoReceivedInvocations
         try XCTAssertCount(apiInvocations, count: 1)
         XCTAssertEqual(apiInvocations[0].teamID, Scaffolding.selfTeamID)
         XCTAssertEqual(apiInvocations[0].userID, Scaffolding.selfUserID)
@@ -85,13 +88,14 @@ final class PullSelfLegalholdInfoSyncTests: XCTestCase {
 
     func testPull_Legalhold_Enabled() async throws {
         // Mock
-        api.getLegalholdInfoForUserID_MockValue = Scaffolding.remoteLegalholdInfo(status: .enabled)
+        api.getLegalholdInfoForTeamIDTeamIDUserIDUUIDTeamMemberLegalholdInfoReturnValue = Scaffolding
+            .remoteLegalholdInfo(status: .enabled)
 
         // When
         try await sut.pull(selfTeamID: Scaffolding.selfTeamID)
 
         // Then
-        let apiInvocations = api.getLegalholdInfoForUserID_Invocations
+        let apiInvocations = api.getLegalholdInfoForTeamIDTeamIDUserIDUUIDTeamMemberLegalholdInfoReceivedInvocations
         try XCTAssertCount(apiInvocations, count: 1)
         XCTAssertEqual(apiInvocations[0].teamID, Scaffolding.selfTeamID)
         XCTAssertEqual(apiInvocations[0].userID, Scaffolding.selfUserID)
@@ -99,13 +103,14 @@ final class PullSelfLegalholdInfoSyncTests: XCTestCase {
 
     func testPull_Legalhold_No_Consent() async throws {
         // Mock
-        api.getLegalholdInfoForUserID_MockValue = Scaffolding.remoteLegalholdInfo(status: .noConsent)
+        api.getLegalholdInfoForTeamIDTeamIDUserIDUUIDTeamMemberLegalholdInfoReturnValue = Scaffolding
+            .remoteLegalholdInfo(status: .noConsent)
 
         // When
         try await sut.pull(selfTeamID: Scaffolding.selfTeamID)
 
         // Then
-        let apiInvocations = api.getLegalholdInfoForUserID_Invocations
+        let apiInvocations = api.getLegalholdInfoForTeamIDTeamIDUserIDUUIDTeamMemberLegalholdInfoReceivedInvocations
         try XCTAssertCount(apiInvocations, count: 1)
         XCTAssertEqual(apiInvocations[0].teamID, Scaffolding.selfTeamID)
         XCTAssertEqual(apiInvocations[0].userID, Scaffolding.selfUserID)

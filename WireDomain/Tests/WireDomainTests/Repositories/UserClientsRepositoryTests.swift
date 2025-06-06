@@ -22,13 +22,14 @@ import WireDataModelSupport
 import WireDomainSupport
 import WireTestingPackage
 import XCTest
+
 @testable import WireAPI
 @testable import WireDomain
 
 final class UserClientsRepositoryTests: XCTestCase {
 
     private var sut: UserClientsRepository!
-    private var userClientsAPI: MockUserClientsAPI!
+    private var userClientsAPI: UserClientsAPIMock!
     private var userRepository: MockUserRepositoryProtocol!
     private var userClientsLocalStore: MockUserClientsLocalStoreProtocol!
     private var stack: CoreDataStack!
@@ -43,7 +44,7 @@ final class UserClientsRepositoryTests: XCTestCase {
         coreDataStackHelper = CoreDataStackHelper()
         modelHelper = ModelHelper()
         stack = try await coreDataStackHelper.createStack()
-        userClientsAPI = MockUserClientsAPI()
+        userClientsAPI = UserClientsAPIMock()
         userRepository = MockUserRepositoryProtocol()
         userClientsLocalStore = MockUserClientsLocalStoreProtocol()
 
@@ -116,7 +117,7 @@ final class UserClientsRepositoryTests: XCTestCase {
             )
         }
 
-        userClientsAPI.getSelfClients_MockValue = [
+        userClientsAPI.getSelfClientsSelfUserClientReturnValue = [
             Scaffolding.selfUserClient
         ]
 

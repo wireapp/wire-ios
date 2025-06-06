@@ -21,6 +21,7 @@ import WireDataModelSupport
 import WireDomainSupport
 import WireTestingPackage
 import XCTest
+
 @testable import WireAPI
 @testable import WireDataModel
 @testable import WireDomain
@@ -28,13 +29,13 @@ import XCTest
 final class ConversationLabelsRepositoryTests: XCTestCase {
 
     private var sut: ConversationLabelsRepository!
-    private var userPropertiesAPI: MockUserPropertiesAPI!
+    private var userPropertiesAPI: UserPropertiesAPIMock!
     private var conversationLabelsLocalStore: MockConversationLabelsLocalStoreProtocol!
 
     override func setUp() async throws {
         conversationLabelsLocalStore = MockConversationLabelsLocalStoreProtocol()
 
-        userPropertiesAPI = MockUserPropertiesAPI()
+        userPropertiesAPI = UserPropertiesAPIMock()
 
         sut = ConversationLabelsRepository(
             userPropertiesAPI: userPropertiesAPI,
@@ -53,7 +54,7 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
     func testPullConversationLabels_It_Invokes_Local_Store_And_User_Properties_API_Methods() async throws {
         // Mock
 
-        userPropertiesAPI.getLabels_MockValue = [
+        userPropertiesAPI.getLabelsConversationLabelReturnValue = [
             Scaffolding.conversationLabel1
         ]
 
@@ -65,7 +66,7 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(userPropertiesAPI.getLabels_Invocations.count, 1)
+        XCTAssertEqual(userPropertiesAPI.getLabelsConversationLabelCallsCount, 1)
         XCTAssertEqual(conversationLabelsLocalStore.setLabels_Invocations.count, 1)
     }
 

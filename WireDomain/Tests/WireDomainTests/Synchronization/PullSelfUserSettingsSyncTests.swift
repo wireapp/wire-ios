@@ -25,11 +25,11 @@ import XCTest
 final class PullSelfUserSettingsSyncTests: XCTestCase {
 
     private var sut: PullSelfUserSettingsSync!
-    private var api: MockUserPropertiesAPI!
+    private var api: UserPropertiesAPIMock!
     private var store: MockUserLocalStoreProtocol!
 
     override func setUp() async throws {
-        api = MockUserPropertiesAPI()
+        api = UserPropertiesAPIMock()
         store = MockUserLocalStoreProtocol()
         sut = PullSelfUserSettingsSync(api: api, store: store)
     }

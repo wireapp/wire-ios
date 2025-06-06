@@ -25,11 +25,11 @@ import XCTest
 final class PullLastUpdateEventIDSyncTests: XCTestCase {
 
     private var sut: PullLastUpdateEventIDSync!
-    private var api: MockUpdateEventsAPI!
+    private var api: UpdateEventsAPIMock!
     private var store: MockUpdateEventsLocalStoreProtocol!
 
     override func setUp() async throws {
-        api = MockUpdateEventsAPI()
+        api = UpdateEventsAPIMock()
         store = MockUpdateEventsLocalStoreProtocol()
         sut = PullLastUpdateEventIDSync(
             selfClientID: Scaffolding.selfClientID,
@@ -46,14 +46,14 @@ final class PullLastUpdateEventIDSyncTests: XCTestCase {
 
     func testPull() async throws {
         // Mock
-        api.getLastUpdateEventSelfClientID_MockValue = Scaffolding.envelope1
+        api.getLastUpdateEventSelfClientIDStringUpdateEventEnvelopeReturnValue = Scaffolding.envelope1
         store.storeLastEventIDId_MockMethod = { _ in }
 
         // When
         try await sut.pull()
 
         // Then
-        let apiInvocations = api.getLastUpdateEventSelfClientID_Invocations
+        let apiInvocations = api.getLastUpdateEventSelfClientIDStringUpdateEventEnvelopeReceivedInvocations
         try XCTAssertCount(apiInvocations, count: 1)
         XCTAssertEqual(apiInvocations[0], Scaffolding.selfClientID)
 

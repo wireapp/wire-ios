@@ -28,11 +28,11 @@ import XCTest
 final class ConnectionsRepositoryTests: XCTestCase {
 
     private var sut: ConnectionsRepository!
-    private var connectionsAPI: MockConnectionsAPI!
+    private var connectionsAPI: ConnectionsAPIMock!
     private var connectionsLocalStore: MockConnectionsLocalStoreProtocol!
 
     override func setUp() async throws {
-        connectionsAPI = MockConnectionsAPI()
+        connectionsAPI = ConnectionsAPIMock()
         connectionsLocalStore = MockConnectionsLocalStoreProtocol()
 
         sut = ConnectionsRepository(
@@ -54,7 +54,7 @@ final class ConnectionsRepositoryTests: XCTestCase {
 
         let connection = Scaffolding.connection
 
-        connectionsAPI.getConnections_MockValue = .init(fetchPage: { _ in
+        connectionsAPI.getConnectionsPayloadPagerConnectionReturnValue = .init(fetchPage: { _ in
 
             WireAPI.PayloadPager.Page(
                 element: [connection],

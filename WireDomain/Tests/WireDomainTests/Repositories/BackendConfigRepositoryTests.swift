@@ -18,17 +18,18 @@
 
 import WireAPISupport
 import XCTest
+
 @testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport
 
 final class BackendConfigRepositoryTests: XCTestCase {
     private var sut: BackendConfigRepository!
-    private var mlsAPI: MockMLSAPI!
+    private var mlsAPI: MLSAPIMock!
     private var backendConfigLocalStore: MockBackendConfigLocalStoreProtocol!
 
     override func setUp() async throws {
-        mlsAPI = MockMLSAPI()
+        mlsAPI = MLSAPIMock()
         backendConfigLocalStore = MockBackendConfigLocalStoreProtocol()
         sut = BackendConfigRepository(
             mlsAPI: mlsAPI,
@@ -46,7 +47,7 @@ final class BackendConfigRepositoryTests: XCTestCase {
 
     func testPullMLSBackendStatus_MLSPublicKeysAreValid_It_Invokes_And_isMLSEnabledIsTrue() async {
         // Mock
-        mlsAPI.getBackendMLSPublicKeys_MockValue = BackendMLSPublicKeys(
+        mlsAPI.getBackendMLSPublicKeysBackendMLSPublicKeysReturnValue = BackendMLSPublicKeys(
             removal: .init(
                 ed25519: "YVAl3Nsu27aNpNbYlPB6fi",
                 ed448: nil,
@@ -63,14 +64,14 @@ final class BackendConfigRepositoryTests: XCTestCase {
         await sut.pullMLSBackendStatus()
 
         // Then
-        XCTAssertEqual(mlsAPI.getBackendMLSPublicKeys_Invocations.count, 1)
+        XCTAssertEqual(mlsAPI.getBackendMLSPublicKeysBackendMLSPublicKeysCallsCount, 1)
         XCTAssertEqual(backendConfigLocalStore.storeIsMLSEnabledStatusNewValue_Invocations.count, 1)
         XCTAssertTrue(backendConfigLocalStore.isMLSEnabled)
     }
 
     func testPullMLSBackendStatus_MLSPublicKeysAreInvalid_It_Invokes_And_isMLSEnabledIsFalse() async {
         // Mock
-        mlsAPI.getBackendMLSPublicKeys_MockValue = BackendMLSPublicKeys(
+        mlsAPI.getBackendMLSPublicKeysBackendMLSPublicKeysReturnValue = BackendMLSPublicKeys(
             removal: .init(
                 ed25519: nil,
                 ed448: nil,
@@ -87,7 +88,7 @@ final class BackendConfigRepositoryTests: XCTestCase {
         await sut.pullMLSBackendStatus()
 
         // Then
-        XCTAssertEqual(mlsAPI.getBackendMLSPublicKeys_Invocations.count, 1)
+        XCTAssertEqual(mlsAPI.getBackendMLSPublicKeysBackendMLSPublicKeysCallsCount, 1)
         XCTAssertEqual(backendConfigLocalStore.storeIsMLSEnabledStatusNewValue_Invocations.count, 1)
         XCTAssertFalse(backendConfigLocalStore.isMLSEnabled)
     }

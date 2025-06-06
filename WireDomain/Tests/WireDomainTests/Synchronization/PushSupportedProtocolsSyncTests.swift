@@ -18,6 +18,7 @@
 
 import WireAPISupport
 import XCTest
+
 @testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport
@@ -25,11 +26,11 @@ import XCTest
 final class PushSupportedProtocolsSyncTests: XCTestCase {
 
     private var sut: PushSupportedProtocolsSync!
-    private var api: MockSelfUserAPI!
+    private var api: SelfUserAPIMock!
     private var store: MockUserLocalStoreProtocol!
 
     override func setUp() async throws {
-        api = MockSelfUserAPI()
+        api = SelfUserAPIMock()
         store = MockUserLocalStoreProtocol()
         sut = PushSupportedProtocolsSync(api: api, store: store)
     }
@@ -42,14 +43,14 @@ final class PushSupportedProtocolsSyncTests: XCTestCase {
 
     func testPush() async throws {
         // Mock
-        api.pushSupportedProtocols_MockMethod = { _ in }
+        api.pushSupportedProtocolsSupportedProtocolsSetMessageProtocolVoidClosure = { _ in }
         store.updateSelfUserSupportedProtocolsSupportedProtocols_MockMethod = { _ in }
 
         // When
         try await sut.push(supportedProtocols: Scaffolding.supportedProtocols)
 
         // Then
-        let apiInvocations = api.pushSupportedProtocols_Invocations
+        let apiInvocations = api.pushSupportedProtocolsSupportedProtocolsSetMessageProtocolVoidReceivedInvocations
         try XCTAssertCount(apiInvocations, count: 1)
         XCTAssertEqual(apiInvocations[0], Scaffolding.supportedProtocols)
 
