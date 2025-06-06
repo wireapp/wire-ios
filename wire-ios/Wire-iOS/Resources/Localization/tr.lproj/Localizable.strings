@@ -102,8 +102,8 @@
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
 
 "add_participants.alert.title" = "Sohbet dolu";
-"add_participants.alert.message.new_conversation" = "%d kişiye kadar sohbete katılabilinir.";
-"add_participants.alert.message.existing_conversation" = "Bir sohbete %1$d kişi katılabilir. Şu anda %2$d kişilik daha yer var.";
+"add_participants.alert.message.new_conversation" = "Up to %@ people can join a conversation.";
+"add_participants.alert.message.existing_conversation" = "Up to %@ people can join a conversation. Currently there is only room for %@ more.";
 
 // Channel Creation UI - Navigation
 "conversation.create.channel.title" = "New channel";
@@ -860,7 +860,7 @@
 "participants.section.services" = "Hizmetler (%d)";
 "participants.section.settings" = "Ayarlar";
 "participants.footer.add_title" = "Katılımcı ekle";
-"participants.section.name.footer" = "Up to %1$d participants can join a conversation.";
+"participants.section.name.footer" = "Up to %@ participants can join a conversation.";
 "participants.section.admins.footer" = "Yönetici yok.";
 "participants.section.members.footer" = "There are no members.";
 
