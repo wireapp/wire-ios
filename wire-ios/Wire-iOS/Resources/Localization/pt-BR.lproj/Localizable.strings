@@ -102,8 +102,8 @@
 "peoplepicker.federation.domain_unvailable" = "O domínio federado não está disponível no momento. [Saiba mais](%@)";
 
 "add_participants.alert.title" = "A conversa está cheia";
-"add_participants.alert.message.new_conversation" = "Até %d pessoas podem participar de uma conversa.";
-"add_participants.alert.message.existing_conversation" = "Até %1$d pessoas podem participar de uma conversa. Atualmente, há apenas espaço para mais %2$d.";
+"add_participants.alert.message.new_conversation" = "Up to %@ people can join a conversation.";
+"add_participants.alert.message.existing_conversation" = "Up to %@ people can join a conversation. Currently there is only room for %@ more.";
 
 // Channel Creation UI - Navigation
 "conversation.create.channel.title" = "Novo canal";
@@ -860,7 +860,7 @@
 "participants.section.services" = "Serviços (%d)";
 "participants.section.settings" = "Opções";
 "participants.footer.add_title" = "Adicionar Participantes";
-"participants.section.name.footer" = "Até %1$d participantes podem se juntar à conversa.";
+"participants.section.name.footer" = "Up to %@ participants can join a conversation.";
 "participants.section.admins.footer" = "Não há administradores.";
 "participants.section.members.footer" = "Não há membros.";
 
