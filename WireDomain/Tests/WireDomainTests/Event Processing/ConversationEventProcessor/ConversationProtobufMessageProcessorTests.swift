@@ -19,6 +19,7 @@
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
+import WireTestingPackage
 import XCTest
 @testable import WireAPI
 @testable import WireDomain
@@ -95,7 +96,7 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
             conversationID: Scaffolding.conversationID,
             senderID: Scaffolding.userID,
             senderClientID: "",
-            date: .now,
+            date: Scaffolding.eventDate,
             eventMessage: ""
         )
 
@@ -107,7 +108,48 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
         )
     }
 
+    func testProcessEvent_It_Invokes_Local_Store_Add_Message_Confirmation_Method() async throws {
+        // Given
+        let conversation = await context.perform { [self] in
+            modelHelper.createGroupConversation(in: context)
+        }
+
+        messageLocalStore.addMessageConfirmationInSenderIDSenderDomainDate_MockMethod = { _, _, _, _, _ in }
+
+        let confirmation = Confirmation.with {
+            $0.firstMessageID = UUID().uuidString
+            $0.type = .read
+        }
+        let genericMessage = GenericMessage.with {
+            $0.messageID = UUID().uuidString
+            $0.confirmation = confirmation
+        }
+
+        // When
+        try await sut.processProtobufMessage(
+            genericMessage,
+            content: try XCTUnwrap(genericMessage.content),
+            conversation: conversation,
+            conversationID: Scaffolding.conversationID,
+            senderID: Scaffolding.userID,
+            senderClientID: "clientID123",
+            date: Scaffolding.eventDate,
+            eventMessage: "confirmation"
+        )
+
+        // Then
+        try XCTAssertCount(messageLocalStore.addMessageConfirmationInSenderIDSenderDomainDate_Invocations, count: 1)
+
+        let invocation = messageLocalStore.addMessageConfirmationInSenderIDSenderDomainDate_Invocations[0]
+        XCTAssertEqual(invocation.confirmation, confirmation)
+        XCTAssertEqual(invocation.conversation, conversation)
+        XCTAssertEqual(invocation.senderID, Scaffolding.userID.uuid)
+        XCTAssertEqual(invocation.senderDomain, Scaffolding.userID.domain)
+        XCTAssertEqual(invocation.date, Scaffolding.eventDate)
+    }
+
     private enum Scaffolding {
+        static let eventDate = Date()
         static let conversationID = ConversationID(uuid: .mockID1, domain: "domain.com")
         static let userID = ConversationID(uuid: .mockID1, domain: "domain.com")
         static let base64EncodedString = "CiQ5ZTU2NTQwOS0xODZiLTRlN2YtYTE4NC05NzE4MGE0MDAwMDQSDAoKRXZlcnl0aGluZw=="

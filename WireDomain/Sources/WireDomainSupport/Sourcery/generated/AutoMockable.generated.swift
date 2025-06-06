@@ -2241,6 +2241,21 @@ public class MockMessageLocalStoreProtocol: MessageLocalStoreProtocol {
         await mock(messageReaction, conversation, senderID, date)
     }
 
+    // MARK: - addMessageConfirmation
+
+    public var addMessageConfirmationInSenderIDSenderDomainDate_Invocations: [(confirmation: WireProtos.Confirmation, conversation: ZMConversation, senderID: UUID, senderDomain: String, date: Date)] = []
+    public var addMessageConfirmationInSenderIDSenderDomainDate_MockMethod: ((WireProtos.Confirmation, ZMConversation, UUID, String, Date) async -> Void)?
+
+    public func addMessageConfirmation(_ confirmation: WireProtos.Confirmation, in conversation: ZMConversation, senderID: UUID, senderDomain: String, date: Date) async {
+        addMessageConfirmationInSenderIDSenderDomainDate_Invocations.append((confirmation: confirmation, conversation: conversation, senderID: senderID, senderDomain: senderDomain, date: date))
+
+        guard let mock = addMessageConfirmationInSenderIDSenderDomainDate_MockMethod else {
+            fatalError("no mock for `addMessageConfirmationInSenderIDSenderDomainDate`")
+        }
+
+        await mock(confirmation, conversation, senderID, senderDomain, date)
+    }
+
     // MARK: - updateButtonStates
 
     public var updateButtonStatesIn_Invocations: [(buttonActionConfirmation: ButtonActionConfirmation, conversation: ZMConversation)] = []
