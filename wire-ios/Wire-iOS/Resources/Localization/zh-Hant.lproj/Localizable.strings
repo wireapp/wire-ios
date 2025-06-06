@@ -102,8 +102,8 @@
 "peoplepicker.federation.domain_unvailable" = "聯合域當前不可用。 [了解更多](%@)";
 
 "add_participants.alert.title" = "對話人數已達上限";
-"add_participants.alert.message.new_conversation" = "最多%d人可以加入對話。";
-"add_participants.alert.message.existing_conversation" = "最多%1$d人可以加入對話。當前還可加入%2$d人。";
+"add_participants.alert.message.new_conversation" = "Up to %@ people can join a conversation.";
+"add_participants.alert.message.existing_conversation" = "Up to %@ people can join a conversation. Currently there is only room for %@ more.";
 
 // Channel Creation UI - Navigation
 "conversation.create.channel.title" = "New channel";
@@ -860,7 +860,7 @@
 "participants.section.services" = "服務 (%d)";
 "participants.section.settings" = "選項";
 "participants.footer.add_title" = "加入參與者";
-"participants.section.name.footer" = "Up to %1$d participants can join a conversation.";
+"participants.section.name.footer" = "Up to %@ participants can join a conversation.";
 "participants.section.admins.footer" = "沒有管理員";
 "participants.section.members.footer" = "沒有成員";
 
