@@ -40,23 +40,26 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
         passwordValidator.localizedRulesDescription ?? ""
     }
 
-    package let factory: any Factory
+    private let factory: any Factory
     package let privacyPolicyURL: URL
-    package let termsOfUseURL: URL
+    private let termsOfUseURL: URL
     private let passwordValidator: any PasswordValidator
+    /*private*/ let personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
 
     package init(
         factory: any Factory,
         email: String,
         privacyPolicyURL: URL,
         termsOfUseURL: URL,
-        passwordValidator: any PasswordValidator
+        passwordValidator: any PasswordValidator,
+        personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
     ) {
         self.factory = factory
         self.email = email
         self.privacyPolicyURL = privacyPolicyURL
         self.termsOfUseURL = termsOfUseURL
         self.passwordValidator = passwordValidator
+        self.personalAccountCreationAnalyticsTracker = personalAccountCreationAnalyticsTracker
     }
 
     // MARK: - Validations

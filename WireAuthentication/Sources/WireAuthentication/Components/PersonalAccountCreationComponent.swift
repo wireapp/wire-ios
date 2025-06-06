@@ -47,7 +47,8 @@ extension PersonalAccountCreationComponent: PersonalAccountCreationViewModel.Fac
             email: email,
             privacyPolicyURL: dependency.privacyPolicyURL,
             termsOfUseURL: dependency.termsOfUseURL,
-            passwordValidator: dependency.passwordValidator
+            passwordValidator: dependency.passwordValidator,
+            personalAccountCreationAnalyticsTracker: dependency.personalAccountCreationAnalyticsTracker
         )
     }
 

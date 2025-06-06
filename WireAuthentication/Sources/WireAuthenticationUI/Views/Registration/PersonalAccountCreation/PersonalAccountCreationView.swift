@@ -53,7 +53,9 @@ struct PersonalAccountCreationView: View {
                         try? await viewModel.requestEmailVerificationCode()
                     }
                 })
-                Button(Strings.ConfirmationAlert.view, action: {})
+                Button(Strings.ConfirmationAlert.view) {
+                    viewModel.personalAccountCreationAnalyticsTracker.setUp()
+                }
                 Button(Strings.ConfirmationAlert.cancel, action: {})
             }
         )
