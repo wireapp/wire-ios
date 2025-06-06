@@ -89,6 +89,10 @@ package struct RootView: View {
                     switch alert {
                     case .obsoleteBackend:
                         Text(viewModel.multibackendEnabled ? L10n.Localizable.ObsoleteBackendMultibackend.Alert.message :  L10n.Localizable.ObsoleteBackend.Alert.message)
+                    case .obsoleteClient:
+                        Text(
+                            viewModel.multibackendEnabled ? L10n.Localizable.ObsoleteClientMultibackend
+                                .Alert.message : L10n.Localizable.ObsoleteClient.Alert.message)
                     default:
                         Text(alert.message)
                     }

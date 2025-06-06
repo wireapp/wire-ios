@@ -106,10 +106,13 @@
 "authentication.error.how_to_change_email" = "How to change email address";
 "authentication.error.how_to_delete_account" = "How to delete a private account";
 
-"obsolete_client_multibackend.alert.title" = "Update required";
 "obsolete_client.alert.title" = "Update necessary";
-"obsolete_client.alert.message" = "You are missing out on new features.\nGet the latest version of Wire to continue using the app with this account.";
+"obsolete_client.alert.message" = "You are missing out on new features.\nGet the latest version of Wire in the App Store.";
 "obsolete_client.alert.ok_button" = "Go to App Store";
+
+"obsolete_client_multibackend.alert.title" = "Update required";
+"obsolete_client_multibackend.alert.message" = "You are missing out on new features.\nGet the latest version of Wire to continue using the app with this account.";
+
 "obsolete.alert.update_button" = "Update";
 "obsolete.alert.switch_accounts" = "Switch Accounts";
 "obsolete.alert.logout" = "Log out";
