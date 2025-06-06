@@ -92,12 +92,8 @@ package struct LoginViaEmailView: View {
                 Button(Strings.Authentication.Error.confirm, action: {})
             }
         )
-        .sheet(item: $viewModel.modalDestination, content: { item in
-            sheetView(for: item)
-        })
-        .navigationDestination(for: LoginViaEmailDestination.self) { destination in
-            destinationView(destination)
-        }
+        .sheet(item: $viewModel.modalDestination, onDismiss: onSheetDismiss, content: sheetView(for:))
+        .navigationDestination(for: LoginViaEmailDestination.self, destination: destinationView)
         .presentationDetents(viewModel.areProxyCredentialsRequired ? [.large] : [.medium, .large])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
@@ -260,10 +256,26 @@ package struct LoginViaEmailView: View {
             SafariBrowserView(url: teamAccountCreationLink).ignoresSafeArea()
         case .accountTypeSelection:
             AccountTypeSelectionView(
-                onTeamAccountCreation: viewModel.handleOnTeamAccountCreation,
-                onPersonalAccountCreation: viewModel.handleoOnPersonalAccountCreation
+                onTeamAccountCreation: {
+                    onSheetDismiss = {
+                        onSheetDismiss = nil
+                        viewModel.handleTeamAccountCreation()
+                    }
+                },
+                onPersonalAccountCreation: {
+                    onSheetDismiss = {
+                        onSheetDismiss = nil
+                        viewModel.handlePersonalAccountCreation()
+                    }
+                }
             )
         }
     }
+
+    @State private var onSheetDismiss: (() -> Void)?
+
+//    private func onSheetDismiss() {
+//        fatalError()
+//    }
 
 }

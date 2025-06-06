@@ -199,13 +199,13 @@ package final class LoginViaEmailViewModel: ObservableObject {
         modalDestination = .accountTypeSelection
     }
 
-    func handleOnTeamAccountCreation() {
+    func handleTeamAccountCreation() {
         if let teamAccountCreationLink {
             modalDestination = .teamAccountCreation(url: teamAccountCreationLink)
         }
     }
 
-    func handleoOnPersonalAccountCreation() {
+    func handlePersonalAccountCreation() {
         router.navigate(
             to: LoginViaEmailDestination.createPersonalAccount
         )
