@@ -23,8 +23,19 @@ struct AccountTypeSelectionView: View {
 
     @Environment(\.dismiss) private var dismiss
 
+    private let onTeamAccountCreation: () -> Void
+    private let onPersonalAccountCreation: () -> Void
+
     private typealias Strings = L10n.Localizable.AccountTypeSelector
     private typealias Labels = L10n.Accessibility.AccountTypeSelector
+
+    init(
+        onTeamAccountCreation: @escaping () -> Void,
+        onPersonalAccountCreation: @escaping () -> Void
+    ) {
+        self.onTeamAccountCreation = onTeamAccountCreation
+        self.onPersonalAccountCreation = onPersonalAccountCreation
+    }
 
     var body: some View {
         NavigationStack {
@@ -90,7 +101,8 @@ struct AccountTypeSelectionView: View {
 
     @ViewBuilder private var teamAccountButton: some View {
         Button {
-            print("[WPB-17525]") // TODO: [WPB-17525] implement flow
+            dismiss()
+            onTeamAccountCreation()
         } label: {
             Text(Strings.OptionTeam.button)
                 .lineLimit(nil)
@@ -137,7 +149,8 @@ struct AccountTypeSelectionView: View {
 
     @ViewBuilder private var personalAccountButton: some View {
         Button {
-            print("[WPB-17453]") // TODO: [WPB-17453] implement flow
+            dismiss()
+            onPersonalAccountCreation()
         } label: {
             Text(Strings.OptionPersonal.button)
                 .lineLimit(nil)
@@ -190,6 +203,6 @@ private struct FeatureView: View {
 #Preview {
     Spacer()
         .sheet(isPresented: .constant(true)) {
-            AccountTypeSelectionView()
+            let viewModel = AccountTypeSelectionView(onTeamAccountCreation: {}, onPersonalAccountCreation: {})
         }
 }

@@ -35,6 +35,9 @@ package protocol LoginViaEmailFactory {
     @MainActor
     func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory
 
+    @MainActor
+    func personalAccountCreationFactory() -> any PersonalAccountCreationFactory
+
 }
 
 package struct LoginViaEmailView: View {
@@ -89,9 +92,9 @@ package struct LoginViaEmailView: View {
                 Button(Strings.Authentication.Error.confirm, action: {})
             }
         )
-        .sheet(isPresented: $viewModel.isCreateAccountPresented) {
-            AccountTypeSelectionView()
-        }
+        .sheet(item: $viewModel.modalDestination, content: { item in
+            sheetView(for: item)
+        })
         .navigationDestination(for: LoginViaEmailDestination.self) { destination in
             destinationView(destination)
         }
@@ -245,6 +248,21 @@ package struct LoginViaEmailView: View {
                 isValidPassword: viewModel.isPasswordValid
             )
             Spacer()
+        }
+    }
+
+    @ViewBuilder
+    private func sheetView(for sheet: LoginViaEmailSheet) -> some View {
+        switch sheet {
+        case let .teamAccountCreation:
+            if let teamAccountCreationLink = viewModel.teamAccountCreationLink {
+                SafariBrowserView(url: teamAccountCreationLink).ignoresSafeArea()
+            }
+        case .accountTypeSelection:
+            AccountTypeSelectionView(
+                onTeamAccountCreation: viewModel.handleOnTeamAccountCreation,
+                onPersonalAccountCreation: viewModel.handleoOnPersonalAccountCreation
+            )
         }
     }
 

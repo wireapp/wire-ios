@@ -18,9 +18,15 @@
 
 import Foundation
 
-struct SyncStatusLog: Codable {
-    var phase: String
-    var isSyncing: Bool
-    var pushChannelEstablishedDate: String?
-    var message: String?
+extension Locale {
+
+    static var formattedLocaleIdentifier: String {
+        let language = getFirstSupportedLanguage()
+        return language.replacingOccurrences(of: "_", with: "-")
+    }
+
+    private static func getFirstSupportedLanguage() -> String {
+        Locale.preferredLanguages.first ?? "en-US"
+    }
+
 }

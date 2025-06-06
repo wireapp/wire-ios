@@ -24,7 +24,7 @@ internal import WireAuthenticationUI
 import WireAuthenticationAPI
 internal import WireAuthenticationLogic
 
-class RootComponent: BootstrapComponent {
+final class RootComponent: BootstrapComponent {
 
     public let backendInfo: BackendInfo
     public let preferredAPIVersion: APIVersion?
@@ -32,11 +32,13 @@ class RootComponent: BootstrapComponent {
     public let minTLSVersion: TLSVersion
     public let howToChangeEmailURL: URL
     public let howToDeleteAccountURL: URL
+    public let privacyPolicyURL: URL
     public let passwordValidator: any PasswordValidator
     public let ssoCallbackURLScheme: String
     public let appStoreURL: URL
     public let existsAnotherAccount: Bool
     public let useLegacyRegistrationFlow: Bool
+    public let personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
 
     @MainActor public var bridge: WireAuthenticationBridge {
         shared {
@@ -54,11 +56,13 @@ class RootComponent: BootstrapComponent {
         minTLSVersion: TLSVersion,
         howToChangeEmailURL: URL,
         howToDeleteAccountURL: URL,
+        privacyPolicyURL: URL,
         passwordValidator: any PasswordValidator,
         ssoCallbackURLScheme: String,
         appStoreURL: URL,
         existsAnotherAccount: Bool,
-        useLegacyRegistrationFlow: Bool
+        useLegacyRegistrationFlow: Bool,
+        personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
     ) {
         self.backendInfo = backendInfo
         self.preferredAPIVersion = preferredAPIVersion
@@ -66,11 +70,13 @@ class RootComponent: BootstrapComponent {
         self.minTLSVersion = minTLSVersion
         self.howToChangeEmailURL = howToChangeEmailURL
         self.howToDeleteAccountURL = howToDeleteAccountURL
+        self.privacyPolicyURL = privacyPolicyURL
         self.passwordValidator = passwordValidator
         self.ssoCallbackURLScheme = ssoCallbackURLScheme
         self.appStoreURL = appStoreURL
         self.existsAnotherAccount = existsAnotherAccount
         self.useLegacyRegistrationFlow = useLegacyRegistrationFlow
+        self.personalAccountCreationAnalyticsTracker = personalAccountCreationAnalyticsTracker
     }
 
     // MARK: - Children

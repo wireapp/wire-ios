@@ -19,6 +19,7 @@
 import Foundation
 import WireAPI
 import WireDataModel
+import WireLogging
 
 // sourcery: AutoMockable
 protocol PullEventsUseCaseProtocol {
@@ -27,6 +28,7 @@ protocol PullEventsUseCaseProtocol {
 
 struct PullEventsUseCase: PullEventsUseCaseProtocol {
     private let pendingEventsSync: any PullPendingUpdateEventsSyncProtocol
+    private let logger = WireLogger.notifications
 
     enum Failure: Error {
         case unableToPullPendingEvents(Error)
@@ -39,6 +41,10 @@ struct PullEventsUseCase: PullEventsUseCaseProtocol {
     }
 
     func invoke() async throws -> AsyncStream<[UpdateEvent]> {
+        logger.info(
+            "Attempting to fetch pending events",
+            attributes: .newNSE
+        )
 
         do {
             return try await pendingEventsSync.pull()
