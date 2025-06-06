@@ -21,14 +21,20 @@ import WireUtilities
 
 private enum ExtensionSettingsKey: String, CaseIterable {
 
-    case disableAnalyticsSharing
+    case analyticsEnabledAccounts
     case disableLinkPreviews
+
+    // deprecated, to be removed
+    case disableAnalyticsSharing
 
     private var defaultValue: Any? {
         switch self {
         case .disableAnalyticsSharing:
             // No default value because the user needs to decide.
             nil
+        case .analyticsEnabledAccounts:
+            // No default value because the user needs to decide.
+            [String]?.none
         case .disableLinkPreviews:
             false
         }
@@ -63,13 +69,38 @@ public final class ExtensionSettings: NSObject {
         }
     }
 
-    public var disableAnalyticsSharing: Bool? {
-        get { defaults.object(forKey: ExtensionSettingsKey.disableAnalyticsSharing.rawValue) as? Bool }
-        set { defaults.set(newValue, forKey: ExtensionSettingsKey.disableAnalyticsSharing.rawValue) }
+    /// The accounts' `userIdentifier` values for which analytics tracking has been given consent.
+
+    public var analyticsEnabledAccounts: [UUID: Bool] {
+        get {
+            let key = ExtensionSettingsKey.analyticsEnabledAccounts.rawValue
+            if let accounts = defaults.object(forKey: key) as? [UUID: Bool] {
+                return accounts
+            }
+            // TODO: delete from here
+
+            // migrate from the old way of saving the consent, which was once per app
+            var accounts = [UUID]()
+            if let disabled = defaults.object(forKey: "disableAnalyticsSharing") as? Bool, !disabled {
+                // add all accounts to the array
+                //SessionManager.shared
+                accounts += []
+            }
+
+            defaults.set(accounts, forKey: key)
+            return accounts
+        }
+        set { defaults.set(newValue, forKey: ExtensionSettingsKey.analyticsEnabledAccounts.rawValue) }
     }
 
     public var disableLinkPreviews: Bool {
         get { defaults.bool(forKey: ExtensionSettingsKey.disableLinkPreviews.rawValue) }
         set { defaults.set(newValue, forKey: ExtensionSettingsKey.disableLinkPreviews.rawValue) }
+    }
+
+    @available(*, deprecated, message: "Use analyticsEnabledAccounts instead.")
+    public var disableAnalyticsSharing_: Bool? {
+        get { defaults.object(forKey: ExtensionSettingsKey.disableAnalyticsSharing.rawValue) as? Bool }
+        set { defaults.set(newValue, forKey: ExtensionSettingsKey.disableAnalyticsSharing.rawValue) }
     }
 }

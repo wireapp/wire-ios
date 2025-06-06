@@ -22,28 +22,35 @@ import WireCommonComponents
 import WireLogging
 import WireSyncEngine
 
-final class TrackingManager: NSObject, TrackingInterface {
+final class TrackingManager: TrackingInterface {
 
     private let sessionManager: SessionManager
     private var observerToken: NSObjectProtocol?
 
     init(sessionManager: SessionManager) {
         self.sessionManager = sessionManager
-        super.init()
-        AVSFlowManager.getInstance()?.setEnableMetrics(!isAnalyticsDisabled)
         self.observerToken = NotificationCenter.default.addObserver(
             forName: FlowManager.AVSFlowManagerCreatedNotification,
             object: nil,
-            queue: OperationQueue.main,
+            queue: .main,
             using: { [weak self] _ in
                 guard let self else { return }
                 AVSFlowManager.getInstance()?.setEnableMetrics(!isAnalyticsDisabled)
             }
         )
+
+        AVSFlowManager.getInstance()?.setEnableMetrics(!isAnalyticsDisabled)
+
+
     }
 
-    var doesUserConsentPreferenceExist: Bool {
-        ExtensionSettings.shared.disableAnalyticsSharing != nil
+    private var doesUserConsentPreferenceExist: Bool {
+
+
+
+        if let analyticsEnabledAccounts = ExtensionSettings.shared.analyticsEnabledAccounts, let selectedAccount = sessionManager.accountManager.selectedAccount {
+            return analyticsEnabledAccounts.contains(selectedAccount.userIdentifier)
+        }
     }
 
     var isAnalyticsDisabled: Bool {
@@ -79,6 +86,20 @@ final class TrackingManager: NSObject, TrackingInterface {
         try sessionManager.makeDisableAnalyticsUseCase().invoke()
         ExtensionSettings.shared.disableAnalyticsSharing = true
         AVSFlowManager.getInstance()?.setEnableMetrics(false)
+    }
+
+    /// Previously the consent for analytics tracking was stored only once per app.
+    /// If the consent has been given, mark all currently set up accounts as consent being given.
+
+    private func migrateFromLegacyStorageIfNeeded() {
+        guard let disableAnalyticsSharing = ExtensionSettings.shared.disableAnalyticsSharing_ else { return }
+
+        if !disableAnalyticsSharing {
+            let analyticsEnabledAccounts = sessionManager.accountManager.accounts.map(\.userIdentifier)
+            ExtensionSettings.shared.analyticsEnabledAccounts = analyticsEnabledAccounts
+        }
+
+        ExtensionSettings.shared.disableAnalyticsSharing_ = nil
     }
 
 }
