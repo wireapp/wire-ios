@@ -39,7 +39,6 @@ class RootComponent: BootstrapComponent {
     public let ssoCallbackURLScheme: String
     public let appStoreURL: URL
     public let accountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>
-    public let isLoggedInProvider: () -> Bool
     public let multibackendEnabled: Bool
     public let useLegacyRegistrationFlow: Bool
 
@@ -63,7 +62,6 @@ class RootComponent: BootstrapComponent {
         ssoCallbackURLScheme: String,
         appStoreURL: URL,
         accountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>,
-        isLoggedInProvider: @escaping () -> Bool,
         useLegacyRegistrationFlow: Bool,
         multibackendEnabled: Bool
     ) {
@@ -77,7 +75,6 @@ class RootComponent: BootstrapComponent {
         self.ssoCallbackURLScheme = ssoCallbackURLScheme
         self.appStoreURL = appStoreURL
         self.accountsPublisher = accountsPublisher
-        self.isLoggedInProvider = isLoggedInProvider
         self.useLegacyRegistrationFlow = useLegacyRegistrationFlow
         self.multibackendEnabled = multibackendEnabled
     }
@@ -113,8 +110,7 @@ extension RootComponent: RootViewModel.Factory {
                 multibackendEnabled: multibackendEnabled,
                 hasOtherAccountsProvider: { [accountsPublisher] in
                     !accountsPublisher.value.isEmpty
-                }, 
-                isLoggedInProvider: isLoggedInProvider
+                } 
             )
         }
     }

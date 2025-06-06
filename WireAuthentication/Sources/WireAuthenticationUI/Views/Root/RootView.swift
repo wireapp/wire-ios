@@ -94,16 +94,6 @@ package struct RootView: View {
     }
     
     @ViewBuilder
-    fileprivate func logoutAlertButtonIfNeeded() -> some View {
-        if viewModel.shouldShowLogOutAlertButton {
-            Button(
-                Strings.Obsolete.Alert.logout,
-                action: viewModel.logout
-            )
-        }
-    }
-    
-    @ViewBuilder
     fileprivate func switchAccountsAlertButtonIfNeeded() -> some View {
         if viewModel.shouldShowSwitchAccountsAlertButton {
             Button(
@@ -115,16 +105,11 @@ package struct RootView: View {
     
     @ViewBuilder
     private func obsoleteBackendAlertActions() -> some View {
-        if viewModel.shouldShowLogOutAlertButton {
-            switchAccountsAlertButtonIfNeeded()
-            logoutAlertButtonIfNeeded()
-        } else {
-            Button(
-                Strings.Obsolete.Alert.ok,
-                action: viewModel.dismissAlert
-            )
-            switchAccountsAlertButtonIfNeeded()
-        }
+        Button(
+            Strings.Obsolete.Alert.ok,
+            action: viewModel.dismissAlert
+        )
+        switchAccountsAlertButtonIfNeeded()
     }
     
     @ViewBuilder
@@ -135,17 +120,10 @@ package struct RootView: View {
         )
         switchAccountsAlertButtonIfNeeded()
         if viewModel.multibackendEnabled {
-            if viewModel.shouldShowLogOutAlertButton {
-                Button(
-                    Strings.Obsolete.Alert.logout,
-                    action: viewModel.logout
-                )
-            } else {
-                Button(
-                    Strings.Obsolete.Alert.cancel,
-                    action: viewModel.dismissAlert
-                )
-            }
+            Button(
+                Strings.Obsolete.Alert.cancel,
+                action: viewModel.dismissAlert
+            )
         }
     }
 

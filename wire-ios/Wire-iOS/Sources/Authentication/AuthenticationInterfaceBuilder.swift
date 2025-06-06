@@ -103,7 +103,6 @@ final class AuthenticationInterfaceBuilder {
                 ssoCallbackURLScheme: Bundle.ssoURLScheme ?? "wire-sso",
                 appStoreURL: WireURLs.shared.appOnItunes,
                 accountsPublisher: ReadOnlyCurrentValueSubject(subject: CurrentValueSubject(accounts)),
-                isLoggedInProvider: { SessionManager.shared?.accountManager.selectedAccount != nil },
                 useLegacyRegistrationFlow: !DeveloperFlag.newRegistration.isOn,
                 multibackendEnabled: DeveloperFlag.multibackend.isOn
             )

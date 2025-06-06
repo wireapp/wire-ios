@@ -188,7 +188,6 @@ extension RootComponent: NeedleFoundation.Registration {
         localTable["ssoCallbackURLScheme-String"] = { [unowned self] in self.ssoCallbackURLScheme as Any }
         localTable["appStoreURL-URL"] = { [unowned self] in self.appStoreURL as Any }
         localTable["accountsPublisher-ReadOnlyCurrentValueSubject<[AccountUIModel]>"] = { [unowned self] in self.accountsPublisher as Any }
-        localTable["isLoggedInProvider-() -> Bool"] = { [unowned self] in self.isLoggedInProvider as Any }
         localTable["multibackendEnabled-Bool"] = { [unowned self] in self.multibackendEnabled as Any }
         localTable["useLegacyRegistrationFlow-Bool"] = { [unowned self] in self.useLegacyRegistrationFlow as Any }
         localTable["bridge-WireAuthenticationBridge"] = { [unowned self] in self.bridge as Any }

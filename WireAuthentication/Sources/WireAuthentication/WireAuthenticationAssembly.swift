@@ -56,7 +56,6 @@ public struct WireAuthenticationAssembly {
         ssoCallbackURLScheme: String,
         appStoreURL: URL,
         accountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>,
-        isLoggedInProvider: @escaping () -> Bool,
         useLegacyRegistrationFlow: Bool,
         multibackendEnabled: Bool
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
@@ -74,7 +73,6 @@ public struct WireAuthenticationAssembly {
             ssoCallbackURLScheme: ssoCallbackURLScheme,
             appStoreURL: appStoreURL,
             accountsPublisher: accountsPublisher,
-            isLoggedInProvider: isLoggedInProvider,
             useLegacyRegistrationFlow: useLegacyRegistrationFlow,
             multibackendEnabled: multibackendEnabled
         )

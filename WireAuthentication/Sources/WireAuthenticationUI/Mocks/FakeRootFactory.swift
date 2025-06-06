@@ -30,7 +30,6 @@ struct FakeRootFactory: RootFactory, OpenAppStoreUseCaseFactory {
             backendInfo: mockDependencies.backendInfo,
             multibackendEnabled: false,
             hasOtherAccountsProvider: { true },
-            isLoggedInProvider: { false }
         )
     }
 

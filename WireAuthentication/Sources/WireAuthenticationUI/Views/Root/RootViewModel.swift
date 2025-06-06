@@ -35,14 +35,10 @@ package final class RootViewModel: ObservableObject, Router {
     @Published var alert: Alert?
     
     let multibackendEnabled: Bool
-    let isLoggedInProvider: () -> Bool
     let hasOtherAccountsProvider: () -> Bool
     
     var shouldShowSwitchAccountsAlertButton: Bool {
         multibackendEnabled && hasOtherAccountsProvider()
-    }
-    var shouldShowLogOutAlertButton: Bool {
-        multibackendEnabled && isLoggedInProvider()
     }
     
     // MARK: - Dependencies
@@ -59,13 +55,11 @@ package final class RootViewModel: ObservableObject, Router {
         bridge: WireAuthenticationBridge,
         backendInfo: BackendInfo,
         multibackendEnabled: Bool,
-        hasOtherAccountsProvider: @escaping () -> Bool,
-        isLoggedInProvider: @escaping () -> Bool
+        hasOtherAccountsProvider: @escaping () -> Bool
     ) {
         self.factory = factory
         self.modalDestination = .authFlow(backendInfo: backendInfo)
         self.multibackendEnabled = multibackendEnabled
-        self.isLoggedInProvider = isLoggedInProvider
         self.hasOtherAccountsProvider = hasOtherAccountsProvider
         self.bridge = bridge
         
@@ -118,10 +112,6 @@ package final class RootViewModel: ObservableObject, Router {
         navigate(to: RootDestination.switchAccounts)
     }
     
-    func logout() {
-        bridge.sendOutboundEvent(.userWantsToLogout)
-    }
-
     // MARK: - Private
 
     private func restoreSheet() {

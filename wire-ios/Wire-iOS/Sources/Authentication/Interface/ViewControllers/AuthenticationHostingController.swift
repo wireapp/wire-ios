@@ -57,10 +57,6 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
                 )
             case .exitFlowRequested:
                 self?.selectAccount()
-            case .userWantsToLogout:
-                self?.selectAccount(completion: {
-                    authenticationCoordinator?.wireAuthenticationUserWantsToLogOut()
-                })
             }
         }
         .store(in: &cancellables)
