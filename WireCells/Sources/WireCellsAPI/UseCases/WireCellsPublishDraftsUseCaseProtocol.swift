@@ -16,18 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAnalytics
+import Foundation
 
-public extension AnalyticsEvent.Segmentation.Conversation.ConversationType {
+// sourcery: AutoMockable
+/// Publishes all drafts associated with a given conversation.
 
-    init?(_ conversationType: ZMConversationType) {
-        switch conversationType {
-        case .oneOnOne:
-            self = .oneOnOne
-        case .group:
-            self = .group
-        case .invalid, .self, .connection:
-            return nil
-        }
-    }
+public protocol WireCellsPublishDraftsUseCaseProtocol {
+
+    /// Publish all drafts.
+    ///
+    /// - Throws: Throws an error if not **all** drafts have been uploaded or if there are unpublished drafts remaining
+    /// once the operation completes.
+
+    func invoke() async throws
+
 }

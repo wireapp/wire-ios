@@ -17,6 +17,7 @@
 //
 
 public import WireAnalytics
+public import WireFoundation
 
 // this mock is generated manually because of (any Error)?
 // TODO: [WPB-11829] update sourcery

@@ -28,8 +28,20 @@
 "cloud_user_login.input_password.placeholder" = "Passwort eingeben";
 "cloud_user_login.submit" = "Weiter";
 "cloud_user_login.forgot_password" = "Passwort vergessen?";
-"create_personal_account.title" = "Sie haben kein Benutzerkonto? ";
-"create_personal_account.button" = "Privates Benutzerkonto erstellen";
+"create_account_or_team.title" = "Sie haben kein Benutzerkonto? ";
+"create_account_or_team.button" = "Konto oder Team erstellen";
+
+"account_type_selector.title" = "Wie werden Sie Wire verwenden?";
+"account_type_selector.option_team.title" = "Für die Zusammenarbeit";
+"account_type_selector.option_team.subtitle" = "Arbeiten Sie sicher mit Ihrem Team.";
+"account_type_selector.option_team.feature0" = "Kommunizieren Sie mit Ihren Kollegen und teilen Sie Dokumente über eine einzige App";
+"account_type_selector.option_team.feature1" = "Kostenlos starten, jederzeit upgraden";
+"account_type_selector.option_team.button" = "Team erstellen";
+"account_type_selector.option_personal.title" = "Für den privaten Gebrauch";
+"account_type_selector.option_personal.subtitle" = "Chatten Sie mit Freunden und Ihrer Familie.";
+"account_type_selector.option_personal.feature0" = "Senden Sie Nachrichten und teilen Sie Bilder";
+"account_type_selector.option_personal.feature1" = "Immer kostenlos";
+"account_type_selector.option_personal.button" = "Privates Benutzerkonto erstellen";
 
 "on_prem_user_login.title" = "Willkommen bei Wire Enterprise für %@!";
 "on_prem_user_login.message" = "Geben Sie Ihr Passwort ein, um sich anzumelden ";

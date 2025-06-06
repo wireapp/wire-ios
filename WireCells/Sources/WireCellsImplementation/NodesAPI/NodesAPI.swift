@@ -23,7 +23,8 @@ package enum NodesAPIError: Error {
     case failedToCreateWriteStream
 }
 
-package protocol NodesAPIProtocol: Actor {
+// sourcery: AutoMockable
+package protocol NodesAPIProtocol: Sendable {
     func preCheck(nodePath: String) async throws -> WireCellsPreCheckResult
 
     func downloadFile(
@@ -45,7 +46,7 @@ package protocol NodesAPIProtocol: Actor {
 
     func cancelDraft(nodeID: WireCellsNodeID) async throws
 
-    func publishDrafts(nodes: [WireCellsNodeID]) async throws
+    func publishDraft(nodeID: WireCellsNodeID) async throws
 
     func getPreviews(nodeUUID: UUID) async throws -> [WireCellsNodePreview]
 
@@ -118,17 +119,8 @@ package final actor NodesAPI: NodesAPIProtocol {
         try await restAPI.delete(paths: paths)
     }
 
-    package func publishDrafts(nodes: [WireCellsNodeID]) async throws {
-        try await withThrowingTaskGroup(of: Void.self) { [weak self] group in
-            guard let self else { return }
-            for node in nodes {
-                group.addTask { [weak self] in
-                    guard let self else { return }
-                    try await restAPI.publishDraft(uuid: node.uuid, versionID: node.versionID)
-                }
-            }
-            try await group.waitForAll()
-        }
+    package func publishDraft(nodeID: WireCellsNodeID) async throws {
+        try await restAPI.publishDraft(uuid: nodeID.uuid, versionID: nodeID.versionID)
     }
 
     package func cancelDraft(nodeID: WireCellsNodeID) async throws {
