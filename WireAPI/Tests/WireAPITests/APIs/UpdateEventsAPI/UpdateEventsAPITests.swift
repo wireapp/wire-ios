@@ -61,7 +61,7 @@ final class UpdateEventsAPITests: XCTestCase {
 
     func testGetLastUpdateEvent_200_V0() async throws {
         // Given
-        let apiService = APIServiceProtocolMock.withResponses([
+        let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "GetLastEventSuccessResponseV0")
         ])
 
@@ -76,7 +76,7 @@ final class UpdateEventsAPITests: XCTestCase {
 
     func testGetLastUpdateEvent_400_V0() async throws {
         // Given
-        let apiService = APIServiceProtocolMock.withError(statusCode: .badRequest)
+        let apiService = MockAPIServiceProtocol.withError(statusCode: .badRequest)
         let sut = UpdateEventsAPIV0(apiService: apiService)
 
         // Then
@@ -88,7 +88,7 @@ final class UpdateEventsAPITests: XCTestCase {
 
     func testGetLastUpdateEvent_404_V0() async throws {
         // Given
-        let apiService = APIServiceProtocolMock.withError(
+        let apiService = MockAPIServiceProtocol.withError(
             statusCode: .notFound,
             label: "not-found"
         )
@@ -104,7 +104,7 @@ final class UpdateEventsAPITests: XCTestCase {
 
     func testGetUpdateEvents_200_V0() async throws {
         // Given
-        let apiService = APIServiceProtocolMock.withResponses([
+        let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "GetUpdateEventsSuccessResponse200_Page1"),
             (.ok, "GetUpdateEventsSuccessResponse200_Page2")
         ])
@@ -132,7 +132,7 @@ final class UpdateEventsAPITests: XCTestCase {
 
     func testGetUpdateEvents_400_V0() async throws {
         // Given
-        let apiService = APIServiceProtocolMock.withError(statusCode: .badRequest)
+        let apiService = MockAPIServiceProtocol.withError(statusCode: .badRequest)
         let sut = UpdateEventsAPIV0(apiService: apiService)
 
         // Then
@@ -149,7 +149,7 @@ final class UpdateEventsAPITests: XCTestCase {
 
     func testGetUpdateEvents_404_V0() async throws {
         // Given
-        let apiService = APIServiceProtocolMock.withError(statusCode: .notFound)
+        let apiService = MockAPIServiceProtocol.withError(statusCode: .notFound)
         let sut = UpdateEventsAPIV0(apiService: apiService)
 
         // Then
@@ -168,7 +168,7 @@ final class UpdateEventsAPITests: XCTestCase {
 
     func testGetLastUpdateEvent_200_V5() async throws {
         // Given
-        let apiService = APIServiceProtocolMock.withResponses([
+        let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "GetLastEventSuccessResponseV5")
         ])
 
@@ -183,7 +183,7 @@ final class UpdateEventsAPITests: XCTestCase {
 
     func testGetLastUpdateEvent_404_V5() async throws {
         // Given
-        let apiService = APIServiceProtocolMock.withError(
+        let apiService = MockAPIServiceProtocol.withError(
             statusCode: .notFound,
             label: "not-found"
         )
@@ -199,7 +199,7 @@ final class UpdateEventsAPITests: XCTestCase {
 
     func testGetUpdateEvents_200_V5() async throws {
         // Given
-        let apiService = APIServiceProtocolMock.withResponses([
+        let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "GetUpdateEventsSuccessResponse200_Page1"),
             (.ok, "GetUpdateEventsSuccessResponse200_Page2")
         ])
@@ -227,7 +227,7 @@ final class UpdateEventsAPITests: XCTestCase {
 
     func testGetUpdateEvents_404_V5() async throws {
         // Given
-        let apiService = APIServiceProtocolMock.withError(statusCode: .notFound)
+        let apiService = MockAPIServiceProtocol.withError(statusCode: .notFound)
         let sut = UpdateEventsAPIV5(apiService: apiService)
 
         // Then

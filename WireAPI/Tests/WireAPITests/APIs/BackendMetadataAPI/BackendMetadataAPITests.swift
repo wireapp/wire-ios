@@ -48,7 +48,7 @@ final class BackendMetadataAPITests: XCTestCase {
 
     func testGetBackendMetadata_SuccessResponse_200_V0_WithoutDevelopmentVersions() async throws {
         // Given
-        let networkService = NetworkServiceProtocolMock.withResponses([
+        let networkService = MockNetworkServiceProtocol.withResponses([
             (.ok, "GetBackendMetadataSuccessResponse1")
         ])
         let sut = BackendMetadataAPIUnversioned(networkService: networkService)
@@ -70,7 +70,7 @@ final class BackendMetadataAPITests: XCTestCase {
 
     func testGetBackendMetadata_SuccessResponse_200_V0_WithDevelopmentVersions() async throws {
         // Given
-        let networkService = NetworkServiceProtocolMock.withResponses([
+        let networkService = MockNetworkServiceProtocol.withResponses([
             (.ok, "GetBackendMetadataSuccessResponse2")
         ])
         let sut = BackendMetadataAPIUnversioned(networkService: networkService)

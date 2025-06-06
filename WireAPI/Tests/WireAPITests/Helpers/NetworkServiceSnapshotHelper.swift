@@ -31,9 +31,9 @@ struct NetworkServiceSnapshotHelper<API> {
     }
 
     private let httpRequestHelper = HTTPRequestSnapshotHelper()
-    private let buildAPI: (NetworkServiceProtocolMock, APIVersion) -> API
+    private let buildAPI: (MockNetworkServiceProtocol, APIVersion) -> API
 
-    init(buildAPI: @escaping (NetworkServiceProtocolMock, APIVersion) -> API) {
+    init(buildAPI: @escaping (MockNetworkServiceProtocol, APIVersion) -> API) {
         self.buildAPI = buildAPI
     }
 
@@ -51,7 +51,7 @@ struct NetworkServiceSnapshotHelper<API> {
     ///   - line: The line invoking the test.
 
     func verifyRequestForAllAPIVersions(
-        networkService: @autoclosure () throws -> NetworkServiceProtocolMock = .withResponses([]),
+        networkService: @autoclosure () throws -> MockNetworkServiceProtocol = .withResponses([]),
         when block: (API) async throws -> Void,
         file: StaticString = #filePath,
         function: String = #function,
@@ -83,7 +83,7 @@ struct NetworkServiceSnapshotHelper<API> {
 
     func verifyRequest(
         for apiVersions: any Sequence<APIVersion>,
-        networkService: @autoclosure () throws -> NetworkServiceProtocolMock = .withResponses([]),
+        networkService: @autoclosure () throws -> MockNetworkServiceProtocol = .withResponses([]),
         when block: (API) async throws -> Void,
         file: StaticString = #filePath,
         function: String = #function,
@@ -119,7 +119,7 @@ struct NetworkServiceSnapshotHelper<API> {
 
     private func verifyRequest(
         apiVersion: APIVersion,
-        networkService: NetworkServiceProtocolMock,
+        networkService: MockNetworkServiceProtocol,
         when block: (API) async throws -> Void,
         file: StaticString = #filePath,
         function: String = #function,
@@ -127,11 +127,11 @@ struct NetworkServiceSnapshotHelper<API> {
     ) async throws {
         let sut = buildAPI(networkService, apiVersion)
 
-        networkService.executeRequestRequestURLRequest_DataHTTPURLResponseReceivedInvocations = []
+        networkService.executeRequest_Invocations = []
 
         try? await block(sut)
 
-        let receivedRequests = networkService.executeRequestRequestURLRequest_DataHTTPURLResponseReceivedInvocations
+        let receivedRequests = networkService.executeRequest_Invocations
 
         guard !receivedRequests.isEmpty else {
             XCTFail("no requests to snapshot", file: file, line: line)

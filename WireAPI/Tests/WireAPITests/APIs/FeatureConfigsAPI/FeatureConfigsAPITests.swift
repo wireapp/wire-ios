@@ -54,7 +54,7 @@ final class FeatureConfigsAPITests: XCTestCase {
     func testGetFeatureConfigs_SuccessResponse_200_V0() async throws {
         // Given
 
-        let apiService = APIServiceProtocolMock.withResponses([
+        let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "GetFeatureConfigsSuccessResponseV0")
         ])
 
@@ -73,7 +73,7 @@ final class FeatureConfigsAPITests: XCTestCase {
 
     func testGetFeatureConfigs_SuccessResponse_200_V1_to_V3_Then_Verify_Requests() async throws {
         // Given
-        let apiService = APIServiceProtocolMock.withResponses([
+        let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "GetFeatureConfigsSuccessResponseV1")
         ])
 
@@ -94,7 +94,7 @@ final class FeatureConfigsAPITests: XCTestCase {
     func testGetFeatureConfigs_FailureResponse_No_Team() async throws {
         // Given
 
-        let apiService = APIServiceProtocolMock.withError(
+        let apiService = MockAPIServiceProtocol.withError(
             statusCode: .notFound,
             label: "no-team"
         )
@@ -110,7 +110,7 @@ final class FeatureConfigsAPITests: XCTestCase {
 
     func testGetFeatureConfigs_FailureResponse_No_Team_Member() async throws {
         // Given
-        let apiService = APIServiceProtocolMock.withError(
+        let apiService = MockAPIServiceProtocol.withError(
             statusCode: .forbidden,
             label: "no-team-member"
         )
@@ -126,7 +126,7 @@ final class FeatureConfigsAPITests: XCTestCase {
 
     func testGetFeatureConfigs_FailureResponse_Insufficient_Permissions() async throws {
         // Given
-        let apiService = APIServiceProtocolMock.withError(
+        let apiService = MockAPIServiceProtocol.withError(
             statusCode: .forbidden,
             label: "operation-denied"
         )
@@ -144,7 +144,7 @@ final class FeatureConfigsAPITests: XCTestCase {
 
     func testGetFeatureConfigs_SuccessResponse_200_V4_To_V5_Then_Verify_Requests() async throws {
         // Given
-        let apiService = APIServiceProtocolMock.withResponses([
+        let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "GetFeatureConfigsSuccessResponseV4")
         ])
 
@@ -166,7 +166,7 @@ final class FeatureConfigsAPITests: XCTestCase {
 
     func testGetFeatureConfigs_SuccessResponse_200_V6_And_Next_Versions_Then_Verify_Requests() async throws {
         // Given
-        let apiService = APIServiceProtocolMock.withResponses([
+        let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "GetFeatureConfigsSuccessResponseV6")
         ])
 
@@ -188,7 +188,7 @@ final class FeatureConfigsAPITests: XCTestCase {
 
     func testGetFeatureConfigs_SuccessResponse_200_V8_And_Next_Versions_Then_Verify_Requests() async throws {
         // Given
-        let apiService = APIServiceProtocolMock.withResponses([
+        let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "GetFeatureConfigsSuccessResponseV8")
         ])
 

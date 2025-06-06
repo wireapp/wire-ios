@@ -51,7 +51,7 @@ class ConnectionsAPITests: XCTestCase {
 
     func testGetConnections_SuccessResponse_200_V0() async throws {
         // Given
-        let apiService = APIServiceProtocolMock.withResponses([
+        let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "GetConnectionsSuccessResponseV0")
         ])
 
@@ -88,7 +88,7 @@ class ConnectionsAPITests: XCTestCase {
     func testGetConnections_FailureResponse_400_V0() async throws {
         // Given
 
-        let apiService = APIServiceProtocolMock.withError(
+        let apiService = MockAPIServiceProtocol.withError(
             statusCode: .badRequest,
             label: ""
         )
@@ -114,7 +114,7 @@ class ConnectionsAPITests: XCTestCase {
         // We fake responses with 1 element per page even if batchSize is 500
         // pager is driven by has_more attribute in response
 
-        let apiService = APIServiceProtocolMock.withResponses([
+        let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "GetConnectionsMultiplePagesSuccessResponseV0.0"),
             (.ok, "GetConnectionsMultiplePagesSuccessResponseV0.1"),
             (.ok, "GetConnectionsMultiplePagesSuccessResponseV0.2")
@@ -130,8 +130,7 @@ class ConnectionsAPITests: XCTestCase {
         }
 
         // THEN
-        let invokedRequestCount = apiService
-            .executeRequestRequestURLRequestRequiringAccessTokenBool_DataHTTPURLResponseCallsCount
-        XCTAssertEqual(invokedRequestCount, 3)
+        let invokedRequest = apiService.executeRequestRequiringAccessToken_Invocations
+        XCTAssertEqual(invokedRequest.count, 3)
     }
 }

@@ -25,15 +25,15 @@ final class PushChannelTests: XCTestCase {
 
     var sut: PushChannel!
     var request: URLRequest!
-    var webSocket: WebSocketProtocolMock!
+    var webSocket: MockWebSocketProtocol!
 
     override func setUp() async throws {
         try await super.setUp()
         let url = try XCTUnwrap(URL(string: "www.example.com"))
         request = URLRequest(url: url)
-        webSocket = .init()
-        webSocket.closeVoidClosure = {}
-        webSocket.sendPingVoidClosure = {}
+        webSocket = MockWebSocketProtocol()
+        webSocket.close_MockMethod = {}
+        webSocket.sendPing_MockMethod = {}
         sut = PushChannel(
             webSocket: webSocket,
             keepAliveInterval: 0.5
@@ -53,14 +53,12 @@ final class PushChannelTests: XCTestCase {
         let mockEnvelope2 = try MockJSONPayloadResource(name: "LiveUpdateEventEnvelope2")
         let mockEnvelope3 = try MockJSONPayloadResource(name: "LiveUpdateEventEnvelope3")
 
-        webSocket
-            .openAsyncThrowingStreamURLSessionWebSocketTaskMessageAnyErrorReturnValue =
-            AsyncThrowingStream { continuation in
-                continuation.yield(.data(mockEnvelope1.jsonData))
-                continuation.yield(.data(mockEnvelope2.jsonData))
-                continuation.yield(.data(mockEnvelope3.jsonData))
-                continuation.finish()
-            }
+        webSocket.open_MockValue = AsyncThrowingStream { continuation in
+            continuation.yield(.data(mockEnvelope1.jsonData))
+            continuation.yield(.data(mockEnvelope2.jsonData))
+            continuation.yield(.data(mockEnvelope3.jsonData))
+            continuation.finish()
+        }
 
         // When the push channel is open and the stream is iterated
         let liveEventEnvelopes = try await sut.open()
@@ -79,25 +77,23 @@ final class PushChannelTests: XCTestCase {
 
     func testClosingPushChannel() async throws {
         // Given an open push channel
-        webSocket.openAsyncThrowingStreamURLSessionWebSocketTaskMessageAnyErrorReturnValue = .init { _ in }
+        webSocket.open_MockValue = AsyncThrowingStream { _ in }
         _ = try await sut.open()
 
         // When the push channel is closed
         await sut.close()
 
         // Then the web socket was closed
-        XCTAssertEqual(webSocket.closeVoidCallsCount, 1)
+        XCTAssertEqual(webSocket.close_Invocations.count, 1)
     }
 
     func testFailureToDecodeClosesPushChannel() async throws {
         // Given an open push channel that is being iterated
-        webSocket
-            .openAsyncThrowingStreamURLSessionWebSocketTaskMessageAnyErrorReturnValue =
-            AsyncThrowingStream { continuation in
-                // Send some invalid data
-                continuation.yield(.data(Data()))
-                // Don't call finish, so the stream stays open.
-            }
+        webSocket.open_MockValue = AsyncThrowingStream { continuation in
+            // Send some invalid data
+            continuation.yield(.data(Data()))
+            // Don't call finish, so the stream stays open.
+        }
 
         let liveEventEnvelopes = try await sut.open()
 
@@ -112,18 +108,16 @@ final class PushChannelTests: XCTestCase {
         }
 
         // Then the web socket was closed
-        XCTAssertEqual(webSocket.closeVoidCallsCount, 1)
+        XCTAssertEqual(webSocket.close_Invocations.count, 1)
     }
 
     func testReceivingUnknownMessageClosesPushChannel() async throws {
         // Given an open push channel that is being iterated
-        webSocket
-            .openAsyncThrowingStreamURLSessionWebSocketTaskMessageAnyErrorReturnValue =
-            AsyncThrowingStream { continuation in
-                // Send some invalid data.
-                continuation.yield(.string("some string"))
-                // Don't call finish, so the stream stays open.
-            }
+        webSocket.open_MockValue = AsyncThrowingStream { continuation in
+            // Send some invalid data.
+            continuation.yield(.string("some string"))
+            // Don't call finish, so the stream stays open.
+        }
 
         let liveEventEnvelopes = try await sut.open()
 
@@ -138,12 +132,12 @@ final class PushChannelTests: XCTestCase {
         }
 
         // Then the web socket was closed
-        XCTAssertEqual(webSocket.closeVoidCallsCount, 1)
+        XCTAssertEqual(webSocket.close_Invocations.count, 1)
     }
 
     func testSendingKeepAlivePings() async throws {
         // Mock.
-        webSocket.openAsyncThrowingStreamURLSessionWebSocketTaskMessageAnyErrorReturnValue = .init { _ in }
+        webSocket.open_MockValue = AsyncThrowingStream { _ in }
 
         // Given an open push channel.
         _ = try await sut.open()
@@ -154,7 +148,7 @@ final class PushChannelTests: XCTestCase {
         // Then keep alive pings are sent periodically (the timer
         // is not exact so we will we generous in our assertion of
         // at least 2 in 1.5 seconds).
-        XCTAssertGreaterThanOrEqual(webSocket.sendPingVoidCallsCount, 2)
+        XCTAssertGreaterThanOrEqual(webSocket.sendPing_Invocations.count, 2)
     }
 
 }

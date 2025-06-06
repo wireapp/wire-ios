@@ -27,7 +27,7 @@ final class APIServiceTests: XCTestCase {
 
     var sut: APIService!
     var backendURL: URL!
-    var authenticationManager: AuthenticationManagerProtocolMock!
+    var authenticationManager: MockAuthenticationManagerProtocol!
 
     private var mockDateProvider: CurrentDateProvidingMock!
 
@@ -35,7 +35,7 @@ final class APIServiceTests: XCTestCase {
         mockDateProvider = CurrentDateProvidingMock()
         mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-04-09T12:34:56Z")
         backendURL = try XCTUnwrap(URL(string: "https://www.example.com"))
-        authenticationManager = .init()
+        authenticationManager = MockAuthenticationManagerProtocol()
         let networkService = NetworkService(
             baseURL: backendURL,
             serverTrustValidator: ServerTrustValidator(
@@ -87,7 +87,7 @@ final class APIServiceTests: XCTestCase {
     func testExecuteRequest_Requiring_Access_Token() async throws {
         // Given
         let request = Scaffolding.getRequest
-        authenticationManager.getValidAccessTokenAccessTokenReturnValue = Scaffolding.validAccessToken
+        authenticationManager.getValidAccessToken_MockValue = Scaffolding.validAccessToken
 
         // Mock a dummy response.
         var receivedRequests = [URLRequest]()
@@ -117,7 +117,7 @@ final class APIServiceTests: XCTestCase {
     func testExecuteRequest_Retry_After_First_Authentication_Error() async throws {
         // Given
         let request = Scaffolding.getRequest
-        authenticationManager.getValidAccessTokenAccessTokenReturnValue = Scaffolding.validAccessToken
+        authenticationManager.getValidAccessToken_MockValue = Scaffolding.validAccessToken
 
         // Mock a dummy response.
         var receivedRequests = [URLRequest]()
@@ -127,7 +127,7 @@ final class APIServiceTests: XCTestCase {
         }
 
         // Mock new access token.
-        authenticationManager.refreshAccessTokenAccessTokenReturnValue = Scaffolding.newAccessToken
+        authenticationManager.refreshAccessToken_MockValue = Scaffolding.newAccessToken
 
         // When
         _ = try await sut.executeRequest(
@@ -136,7 +136,7 @@ final class APIServiceTests: XCTestCase {
         )
 
         // Then an existing token was fetched.
-        XCTAssertEqual(authenticationManager.getValidAccessTokenAccessTokenCallsCount, 1)
+        XCTAssertEqual(authenticationManager.getValidAccessToken_Invocations.count, 1)
 
         // Then two request was received.
         try XCTAssertCount(receivedRequests, count: 2)
@@ -153,7 +153,7 @@ final class APIServiceTests: XCTestCase {
         )
 
         // Then a new token was requested.
-        XCTAssertEqual(authenticationManager.refreshAccessTokenAccessTokenCallsCount, 1)
+        XCTAssertEqual(authenticationManager.refreshAccessToken_Invocations.count, 1)
 
         // Then the second request has the new access token.
         let secondRequest = receivedRequests[1]

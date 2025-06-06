@@ -42,7 +42,7 @@ final class AuthenticationAPITests: XCTestCase {
 
     func testGetDomainRegistration_V0_To_V7() async throws {
         // Given
-        let networkService = NetworkServiceProtocolMock()
+        let networkService = MockNetworkServiceProtocol()
         let builder = AuthenticationAPIBuilder(networkService: networkService)
 
         for apiVersion in [APIVersion.v0, .v1, .v2, .v3, .v4, .v5, .v6, .v7] {
@@ -137,7 +137,7 @@ final class AuthenticationAPITests: XCTestCase {
 
     func testGetDomainRegistration_Response_Handling_V8_Success() async throws {
         // Given
-        let networkService = NetworkServiceProtocolMock.withResponses([
+        let networkService = MockNetworkServiceProtocol.withResponses([
             (.ok, "GetDomainRegistrationSuccessResponseV8")
         ])
 
@@ -160,7 +160,7 @@ final class AuthenticationAPITests: XCTestCase {
 
     func testGetDomainRegistration_ResponseWithNullValues_Handling_V8_Success() async throws {
         // Given
-        let networkService = NetworkServiceProtocolMock.withResponses([
+        let networkService = MockNetworkServiceProtocol.withResponses([
             (.ok, "GetDomainRegistrationSuccessResponse_WithNullValuesV8")
         ])
 
@@ -183,7 +183,7 @@ final class AuthenticationAPITests: XCTestCase {
 
     func testGetDomainRegistration_Response_Handling_V8_Invalid_Domain() async throws {
         // Given
-        let networkService = NetworkServiceProtocolMock.withResponses([
+        let networkService = MockNetworkServiceProtocol.withResponses([
             (.badRequest, "GetDomainRegistrationErrorResponse_InvalidDomainV8")
         ])
 
@@ -198,7 +198,7 @@ final class AuthenticationAPITests: XCTestCase {
 
     func testGetDomainRegistration_Response_Handling_V8_Service_Unavailable() async throws {
         // Given
-        let networkService = NetworkServiceProtocolMock.withResponses([
+        let networkService = MockNetworkServiceProtocol.withResponses([
             (.serviceUnavailable, "GetDomainRegistrationErrorResponse_ServiceUnavailableV8")
         ])
 
@@ -213,7 +213,7 @@ final class AuthenticationAPITests: XCTestCase {
 
     func testGetOnPremConfigURL_Response_Handling_Success() async throws {
         // Given
-        let networkService = NetworkServiceProtocolMock.withResponses([
+        let networkService = MockNetworkServiceProtocol.withResponses([
             (.ok, "GetOnPremConfigURLSuccessResponseV0")
         ])
 
@@ -231,7 +231,7 @@ final class AuthenticationAPITests: XCTestCase {
 
     func testGetOnPremConfigURL_Response_Handling_Custom_Backend_Not_Found() async throws {
         // Given
-        let networkService = NetworkServiceProtocolMock.withResponses([
+        let networkService = MockNetworkServiceProtocol.withResponses([
             (.notFound, "GetOnPremConfigURLErrorResponse_CustomBackendNotFound_V0")
         ])
 
@@ -246,7 +246,7 @@ final class AuthenticationAPITests: XCTestCase {
 
     func testLoginViaEmail_Response_Handling_Success() async throws {
         // Given
-        let networkService = NetworkServiceProtocolMock.withResponses([
+        let networkService = MockNetworkServiceProtocol.withResponses([
             (.ok, "LoginViaEmailSuccessResponseV0")
         ])
 
@@ -278,7 +278,7 @@ final class AuthenticationAPITests: XCTestCase {
 
     func testLoginViaEmail_Response_Handling_Custom_Backend_Not_Found() async throws {
         // Given
-        let networkService = NetworkServiceProtocolMock.withError(
+        let networkService = MockNetworkServiceProtocol.withError(
             statusCode: .forbidden,
             label: "code-authentication-required"
         )
@@ -299,7 +299,7 @@ final class AuthenticationAPITests: XCTestCase {
 
     func testValidateLoginToken_Response_Handling_InvalidSSOCode() async throws {
         // Given
-        let networkService = NetworkServiceProtocolMock.withResponses([
+        let networkService = MockNetworkServiceProtocol.withResponses([
             (.notFound, "")
         ])
 
@@ -315,7 +315,7 @@ final class AuthenticationAPITests: XCTestCase {
 
     func testRequestVerificationCode_Response_Handling_V8_Success() async throws {
         // Given
-        let networkService = NetworkServiceProtocolMock.withResponses([
+        let networkService = MockNetworkServiceProtocol.withResponses([
             (.ok, nil)
         ])
 
@@ -327,7 +327,7 @@ final class AuthenticationAPITests: XCTestCase {
 
     func testUpgradeToTeam_Response_Handling_V8_BadRequest() async throws {
         // Given
-        let networkService = NetworkServiceProtocolMock.withError(statusCode: .badRequest, label: "bad-request")
+        let networkService = MockNetworkServiceProtocol.withError(statusCode: .badRequest, label: "bad-request")
 
         let sut = AuthenticationAPIV8(networkService: networkService)
 
@@ -344,7 +344,7 @@ final class AuthenticationAPITests: XCTestCase {
 
     func testRequestEmailVerificationCode_Response_Handling_Success() async throws {
         // Given
-        let networkService = NetworkServiceProtocolMock.withResponses([
+        let networkService = MockNetworkServiceProtocol.withResponses([
             (.ok, nil)
         ])
 
@@ -356,7 +356,7 @@ final class AuthenticationAPITests: XCTestCase {
 
     func testRequestEmailVerificationCode_Response_Handling_InvalidEmail() async throws {
         // Given
-        let networkService = NetworkServiceProtocolMock.withError(statusCode: .badRequest, label: "invalid-email")
+        let networkService = MockNetworkServiceProtocol.withError(statusCode: .badRequest, label: "invalid-email")
 
         let sut = AuthenticationAPIV8(networkService: networkService)
 
@@ -373,7 +373,7 @@ final class AuthenticationAPITests: XCTestCase {
 
     func testRegisterAccount_Response_Handling_Success() async throws {
         // Given
-        let networkService = NetworkServiceProtocolMock.withResponses([
+        let networkService = MockNetworkServiceProtocol.withResponses([
             (.ok, nil)
         ])
 
@@ -390,7 +390,7 @@ final class AuthenticationAPITests: XCTestCase {
 
     func testRegisterAccount_Response_Handling_BadRequest() async throws {
         // Given
-        let networkService = NetworkServiceProtocolMock.withError(
+        let networkService = MockNetworkServiceProtocol.withError(
             statusCode: .badRequest,
             label: "invalid-invitation-code"
         )

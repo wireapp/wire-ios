@@ -41,8 +41,8 @@ final class RequestSnapshotter {
         )
         networkService.configure(with: .mockURLSession())
 
-        let authenticationManager = AuthenticationManagerProtocolMock()
-        authenticationManager.getValidAccessTokenAccessTokenReturnValue = AccessToken(
+        let authenticationManager = MockAuthenticationManagerProtocol()
+        authenticationManager.getValidAccessToken_MockValue = AccessToken(
             userID: UUID(),
             token: "a-valid-token",
             type: "Bearer",

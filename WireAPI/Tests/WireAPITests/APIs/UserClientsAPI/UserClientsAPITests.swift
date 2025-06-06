@@ -57,7 +57,7 @@ final class UserClientsAPITests: XCTestCase {
 
             for version in testedVersions {
                 // Given
-                let apiService = APIServiceProtocolMock.withResponses([
+                let apiService = MockAPIServiceProtocol.withResponses([
                     (.ok, "GetSelfClientsSuccessResponseV0")
                 ])
 
@@ -84,7 +84,7 @@ final class UserClientsAPITests: XCTestCase {
 
             for version in testedVersions {
                 // Given
-                let apiService = APIServiceProtocolMock.withResponses([
+                let apiService = MockAPIServiceProtocol.withResponses([
                     (.ok, "GetOtherUserClientsSuccessResponseV0")
                 ])
 
@@ -114,7 +114,7 @@ final class UserClientsAPITests: XCTestCase {
 
             for version in testedVersions {
                 // Given
-                let apiService = APIServiceProtocolMock.withResponses([
+                let apiService = MockAPIServiceProtocol.withResponses([
                     (.ok, "GetSelfClientsSuccessResponseV7")
                 ])
 

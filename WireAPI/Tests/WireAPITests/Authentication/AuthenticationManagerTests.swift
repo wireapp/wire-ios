@@ -26,7 +26,7 @@ final class AuthenticationManagerTests: XCTestCase {
 
     var sut: AuthenticationManager!
     var backendURL: URL!
-    var cookieStorage: CookieStorageProtocolMock!
+    var cookieStorage: MockCookieStorageProtocol!
 
     private var mockDateProvider: CurrentDateProvidingMock!
     private var accessTokenDidFail = false
@@ -34,7 +34,7 @@ final class AuthenticationManagerTests: XCTestCase {
     override func setUpWithError() throws {
         mockDateProvider = CurrentDateProvidingMock()
         mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-04-09T12:34:56Z")
-        cookieStorage = .init()
+        cookieStorage = MockCookieStorageProtocol()
         backendURL = try XCTUnwrap(URL(string: "https://www.example.com"))
         let networkService = NetworkService(
             baseURL: backendURL,
@@ -65,7 +65,7 @@ final class AuthenticationManagerTests: XCTestCase {
 
     func testGetValidAccessToken_CacheIsEmpty() async throws {
         // Mock valid cookie.
-        cookieStorage.fetchCookiesHTTPCookieReturnValue = [try Scaffolding.cookie()]
+        cookieStorage.fetchCookies_MockValue = [try Scaffolding.cookie()]
 
         // Mock successful token response.
         var receivedRequests = [URLRequest]()
@@ -133,7 +133,7 @@ final class AuthenticationManagerTests: XCTestCase {
     }
 
     private func setCachedExpiringAccessToken() async throws -> AccessToken {
-        cookieStorage.fetchCookiesHTTPCookieReturnValue = [try Scaffolding.cookie()]
+        cookieStorage.fetchCookies_MockValue = [try Scaffolding.cookie()]
 
         URLProtocolMock.mockHandler = {
             try $0.mockResponse(
@@ -147,7 +147,7 @@ final class AuthenticationManagerTests: XCTestCase {
 
     func testGetValidAccessToken_AwaitTokenRefresh() async throws {
         // Mock valid cookie.
-        cookieStorage.fetchCookiesHTTPCookieReturnValue = [try Scaffolding.cookie()]
+        cookieStorage.fetchCookies_MockValue = [try Scaffolding.cookie()]
 
         // Mock successful token response.
         var receivedRequests = [URLRequest]()
@@ -185,8 +185,8 @@ final class AuthenticationManagerTests: XCTestCase {
 
     func testRefreshAccessToken_AfterAnError_WeCanStillRefresh() async throws {
         // Mock token refresh error.
-        cookieStorage.fetchCookiesHTTPCookieReturnValue = [try Scaffolding.cookie()]
-        cookieStorage.removeCookiesVoidClosure = {}
+        cookieStorage.fetchCookies_MockValue = [try Scaffolding.cookie()]
+        cookieStorage.removeCookies_MockMethod = {}
         URLProtocolMock.mockHandler = {
             try $0.mockErrorResponse(
                 statusCode: .forbidden,

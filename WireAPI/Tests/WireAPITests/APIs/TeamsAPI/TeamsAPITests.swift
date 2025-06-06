@@ -71,7 +71,7 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetTeamForID_SuccessResponse_200_V0_Then_Verify_Request() async throws {
         // Given
-        let apiService = APIServiceProtocolMock.withResponses([
+        let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "GetTeamSuccessResponseV0")
         ])
 
@@ -99,7 +99,7 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetTeamForID_FailureResponse_InvalidID_V0() async throws {
         // Given
-        let apiService = APIServiceProtocolMock.withError(
+        let apiService = MockAPIServiceProtocol.withError(
             statusCode: .notFound,
             label: ""
         )
@@ -115,7 +115,7 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetTeamForID_FailureResponse_TeamNotFound_V0() async throws {
         // Given
-        let apiService = APIServiceProtocolMock.withError(
+        let apiService = MockAPIServiceProtocol.withError(
             statusCode: .notFound,
             label: "no-team"
         )
@@ -132,7 +132,7 @@ final class TeamsAPITests: XCTestCase {
     func testGetTeamRolesForID_SuccessResponse_200_V0_Then_Verify_Request() async throws {
 
         // Given
-        let apiService = APIServiceProtocolMock.withResponses([
+        let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "GetTeamRolesSuccessResponseV0")
         ])
 
@@ -159,7 +159,7 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetTeamRolesForID_FailureResponse_NoTeamMember_V0() async throws {
         // Given
-        let apiService = APIServiceProtocolMock.withError(
+        let apiService = MockAPIServiceProtocol.withError(
             statusCode: .forbidden,
             label: "no-team-member"
         )
@@ -175,7 +175,7 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetTeamRolesForID_FailureResponse_TeamNotFound_V0() async throws {
         // Given
-        let apiService = APIServiceProtocolMock.withError(
+        let apiService = MockAPIServiceProtocol.withError(
             statusCode: .notFound,
             label: ""
         )
@@ -191,7 +191,7 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetMembers_SuccessResponse_200_V0_Then_Verify_Request() async throws {
         // Given
-        let apiService = APIServiceProtocolMock.withResponses([
+        let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "GetTeamMembersSuccessResponseV0")
         ])
 
@@ -228,7 +228,7 @@ final class TeamsAPITests: XCTestCase {
     func testGetTeamMembers_FailureResponse_InvalidQueryParameter_V0() async throws {
 
         // Given
-        let apiService = APIServiceProtocolMock.withError(
+        let apiService = MockAPIServiceProtocol.withError(
             statusCode: .badRequest,
             label: ""
         )
@@ -247,7 +247,7 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetTeamMembers_FailureResponse_NoTeamMember_V0() async throws {
         // Given
-        let apiService = APIServiceProtocolMock.withError(
+        let apiService = MockAPIServiceProtocol.withError(
             statusCode: .forbidden,
             label: "no-team-member"
         )
@@ -266,7 +266,7 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetTeamMembers_FailureResponse_TeamNotFound_V0() async throws {
         // Given
-        let apiService = APIServiceProtocolMock.withError(
+        let apiService = MockAPIServiceProtocol.withError(
             statusCode: .notFound,
             label: ""
         )
@@ -285,7 +285,7 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetLegalholdInfo_SuccessResponse_200_V0_Then_Verify_Request() async throws {
         // Given
-        let apiService = APIServiceProtocolMock.withResponses([
+        let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "GetLegalHoldInfoSuccessResponseV0")
         ])
 
@@ -330,7 +330,7 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetTeamForID_SuccessResponse_200_V2_Then_Verify_Request() async throws {
         // Given
-        let apiService = APIServiceProtocolMock.withResponses([
+        let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "GetTeamSuccessResponseV2")
         ])
 
@@ -359,7 +359,7 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetTeamForID_FailureResponse_InvalidID_V4() async throws {
         // Given
-        let apiService = APIServiceProtocolMock.withError(
+        let apiService = MockAPIServiceProtocol.withError(
             statusCode: .badRequest,
             label: ""
         )
@@ -375,7 +375,7 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetTeamRolesForID_FailureResponse_TeamNotFound_V4() async throws {
         // Given
-        let apiService = APIServiceProtocolMock.withError(
+        let apiService = MockAPIServiceProtocol.withError(
             statusCode: .badRequest,
             label: ""
         )
@@ -391,7 +391,7 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetTeamMembers_FailureResponse_InvalidRequest_V4() async throws {
         // Given
-        let apiService = APIServiceProtocolMock.withError(
+        let apiService = MockAPIServiceProtocol.withError(
             statusCode: .badRequest,
             label: ""
         )
@@ -421,7 +421,7 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetTeamForID_FailureResponse_InvalidID_V5() async throws {
         // Given
-        let apiService = APIServiceProtocolMock.withError(
+        let apiService = MockAPIServiceProtocol.withError(
             statusCode: .notFound,
             label: ""
         )
@@ -453,7 +453,7 @@ final class TeamsAPITests: XCTestCase {
         line: UInt = #line
     ) async throws {
         // Given
-        let apiService = APIServiceProtocolMock.withError(
+        let apiService = MockAPIServiceProtocol.withError(
             statusCode: code,
             label: errorLabel
         )
