@@ -17,18 +17,15 @@
 //
 
 import Foundation
-import NeedleFoundation
-import WireAuthenticationAPI
-internal import WireAuthenticationUI
-internal import WireAuthenticationLogic
-import WireReusableUIComponents
 
-protocol PersonalAccountCreationComponentDependency: Dependency {
+package enum LoginViaEmailSheet: Identifiable, Hashable, Sendable {
 
-    @MainActor var router: any Router { get }
-    var networkStack: NetworkStack { get }
-    var passwordValidator: any PasswordValidator { get }
-    var privacyPolicyURL: URL { get }
-    var personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol { get }
+    package var id: Self { self }
+
+    /// Represents the account type selection screen.
+    case accountTypeSelection
+
+    /// Represents the flow to create a team account.
+    case teamAccountCreation
 
 }

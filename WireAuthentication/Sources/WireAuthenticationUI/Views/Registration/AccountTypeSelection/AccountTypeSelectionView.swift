@@ -21,14 +21,20 @@ import WireDesign
 
 struct AccountTypeSelectionView: View {
 
-    @StateObject private var viewModel: AccountTypeSelectionViewModel
     @Environment(\.dismiss) private var dismiss
+
+    private let onTeamAccountCreation: () -> Void
+    private let onPersonalAccountCreation: () -> Void
 
     private typealias Strings = L10n.Localizable.AccountTypeSelector
     private typealias Labels = L10n.Accessibility.AccountTypeSelector
 
-    package init(viewModel: AccountTypeSelectionViewModel) {
-        self._viewModel = StateObject(wrappedValue: viewModel)
+    init(
+        onTeamAccountCreation: @escaping () -> Void,
+        onPersonalAccountCreation: @escaping () -> Void
+    ) {
+        self.onTeamAccountCreation = onTeamAccountCreation
+        self.onPersonalAccountCreation = onPersonalAccountCreation
     }
 
     var body: some View {
@@ -36,14 +42,6 @@ struct AccountTypeSelectionView: View {
             ScrollView {
                 scrollViewContent
             }
-            .sheet(isPresented: $viewModel.isCreateTeamAccountPresented, onDismiss: {
-                dismiss()
-            }, content: {
-                if let teamAccountCreationLink = viewModel.teamAccountCreationLink {
-                    SafariBrowserView(url: teamAccountCreationLink)
-                        .ignoresSafeArea()
-                }
-            })
             .scrollBounceBehavior(.basedOnSize)
             .navigationTitle(Strings.title)
             .navigationBarTitleDisplayMode(.inline)
@@ -103,7 +101,8 @@ struct AccountTypeSelectionView: View {
 
     @ViewBuilder private var teamAccountButton: some View {
         Button {
-            viewModel.isCreateTeamAccountPresented = true
+            dismiss()
+            onTeamAccountCreation()
         } label: {
             Text(Strings.OptionTeam.button)
                 .lineLimit(nil)
@@ -150,7 +149,8 @@ struct AccountTypeSelectionView: View {
 
     @ViewBuilder private var personalAccountButton: some View {
         Button {
-            print("[WPB-17453]") // TODO: [WPB-17453] implement flow
+            dismiss()
+            onPersonalAccountCreation()
         } label: {
             Text(Strings.OptionPersonal.button)
                 .lineLimit(nil)
@@ -203,7 +203,6 @@ private struct FeatureView: View {
 #Preview {
     Spacer()
         .sheet(isPresented: .constant(true)) {
-            let viewModel = AccountTypeSelectionViewModel(teamsURL: URL(string: "https://www.wire.com")!)
-            AccountTypeSelectionView(viewModel: viewModel)
+            let viewModel = AccountTypeSelectionView(onTeamAccountCreation: {}, onPersonalAccountCreation: {})
         }
 }
