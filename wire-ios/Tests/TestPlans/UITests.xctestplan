@@ -24,7 +24,7 @@
           }
         ],
         "maximumTestRepetitions" : 3,
-        "repeatInNewRunnerProcess" : true,
+        "repeatInNewRunnerProcess" : false,
         "targetForVariableExpansion" : {
           "containerPath" : "container:Wire-iOS.xcodeproj",
           "identifier" : "01DFC4302D7B4C6F00D1962A",
