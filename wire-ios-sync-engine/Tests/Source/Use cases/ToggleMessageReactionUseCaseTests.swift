@@ -45,7 +45,7 @@ final class ToggleMessageReactionUseCaseTests: XCTestCase {
         coreDataStackHelper = CoreDataStackHelper()
         coreDataStack = try await coreDataStackHelper.createStack()
 
-        analyticsEventTracker = .init()
+        analyticsEventTracker = AnalyticsEventTrackerProtocolMock()
         analyticsEventTracker.trackEventEventAnalyticsEventVoidClosure = { _ in }
 
         sut = ToggleMessageReactionUseCase(analyticsEventTracker: analyticsEventTracker)
