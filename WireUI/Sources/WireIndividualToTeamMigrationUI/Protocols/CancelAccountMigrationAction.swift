@@ -16,14 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-/// An object that tracks analytic events.
-public protocol AnalyticsEventTracker: AnyObject {
+/// The choice the user makes when the confirmation for cancelling the account migration is presented.
 
-    /// Track an event.
-    ///
-    /// - Parameter event: The event to track.
-
-    func trackEvent(_ event: AnalyticsEvent)
-
+public enum CancelAccountMigrationChoice {
+    case confirm
+    case backOut
 }

@@ -16,15 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import WireFoundation
+/// The path the user chose to continue with after the personal to team account migration.
 
-public extension AnalyticsEvent {
-
-    enum App {
-
-        /// An event tracking when the user opens the app.
-
-        public static let open = AnalyticsEvent(name: "app.open")
-
-    }
+public enum PostAccountMigrationAction {
+    case returnToApp
+    case openTeamManagement
 }

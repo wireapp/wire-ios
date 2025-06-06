@@ -18,11 +18,11 @@
 
 import SwiftUI
 import WireAccountImageUI
-import WireAnalytics
 import WireAPI
 import WireCommonComponents
 import WireDesign
 import WireDomainPackage
+import WireFoundation
 import WireIndividualToTeamMigrationUI
 import WireMainNavigationUI
 import WireMultiBackendUI
@@ -53,7 +53,7 @@ final class SelfProfileViewController: UIViewController {
     private let accountSelector: AccountSelector?
     let mainCoordinator: AnyMainCoordinator
     private let selfProfileViewsMonitor: SelfProfileViewsMonitor
-    private let analyticsEventTracker: (any AnalyticsEventTracker)?
+    private let analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?
 
     // MARK: - Configuration
 
@@ -69,7 +69,7 @@ final class SelfProfileViewController: UIViewController {
         userSession: UserSession,
         accountSelector: AccountSelector?,
         mainCoordinator: AnyMainCoordinator,
-        analyticsEventTracker: (any AnalyticsEventTracker)?
+        analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?
     ) {
         self.accountSelector = accountSelector
         self.mainCoordinator = mainCoordinator
@@ -336,6 +336,10 @@ final class SelfProfileViewController: UIViewController {
     private func userDidTapCreateTeam(useCase: any IndividualToTeamMigrationUseCaseProtocol, userName: String) {
 
         analyticsEventTracker?.trackEvent(.UI.personalToTeamMigrationCTA)
+
+        let analyticsEventTracker = analyticsEventTracker.map {
+            AccountMigrationAnalyticsTracker(analyticsEventTracker: $0)
+        }
 
         let viewController = IndividualToTeamMigrationViewController(
             privacyPolicyURL: WireURLs.shared.privacyPolicy.absoluteString,

@@ -31,6 +31,7 @@ let package = Package(
                 "WireAuthenticationAPI",
                 "WireAuthenticationUI",
                 "WireAuthenticationLogic",
+                "WireFoundation",
                 .product(name: "NeedleFoundation", package: "needle")
             ]
         ),
@@ -52,7 +53,7 @@ let package = Package(
 
         .target(
             name: "WireAuthenticationLogic",
-            dependencies: ["WireAuthenticationAPI", "WireAPI"]
+            dependencies: ["WireAuthenticationAPI", "WireAPI", "WireFoundation"]
         ),
         .testTarget(
             name: "WireAuthenticationLogicTests",
@@ -68,7 +69,6 @@ let package = Package(
             dependencies: [
                 "WireAuthenticationAPI",
                 .product(name: "WireDesign", package: "WireUI"),
-                "WireFoundation",
                 .product(name: "WireReusableUIComponents", package: "WireUI"),
                 "WireLogging",
                 .product(name: "SwiftUIIntrospect", package: "swiftui-introspect")
@@ -80,6 +80,7 @@ let package = Package(
             dependencies: [
                 "WireAuthenticationUI",
                 "WireAuthenticationAPISupport",
+                "WireFoundation",
                 .product(name: "WireReusableUIComponentsSupport", package: "WireUI"),
             ]
         )
