@@ -322,5 +322,12 @@
 "searchGifs.gifItem.accessibilityHint" = "Tippen um GIF auszuwählen";
 "searchGifs.gifItems_loaded.announcement" = "%@ neue GIFs geladen";
 
+<<<<<<< HEAD
 // MARK: - Channel Creation UI - Navigation
 "conversation.create.channel.back" = "Zurück zur Übersicht der neuen Unterhaltung";
+=======
+// MARK: - E2EI
+
+"webAuth.urlLabel.description" = "Identity-Provider-URL";
+"webAuth.urlLabel.hint" = "Auswählen, um die vollständige URL zu öffnen.";
+>>>>>>> 40e84a9dbb (feat: embedded user agent - WPB-17889 (#3126))
