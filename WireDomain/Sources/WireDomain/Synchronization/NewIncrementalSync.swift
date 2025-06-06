@@ -89,6 +89,7 @@ public struct NewIncrementalSync: LiveSyncProtocol {
                 switch element {
                 case .upToDate:
                     logger.debug("upToDate event v3")
+                    // TODO: double check idle
                     syncStateSubject.send(.idle)
                     delegate?.didFinishSync(sync: self)
 
@@ -127,7 +128,7 @@ public struct NewIncrementalSync: LiveSyncProtocol {
         } catch {
             // if we end up here, the pushChannel is closed
             logger.warn("v3 live event stream encountered error: \(String(describing: error))")
-            syncStateSubject.send(.idle)
+            syncStateSubject.send(.liveSyncing(.finished))
             delegate?.didFail(sync: self, error: error)
             return
         }
