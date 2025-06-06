@@ -103,7 +103,7 @@
 
 "add_participants.alert.title" = "Беседа переполнена";
 "add_participants.alert.message.new_conversation" = "К беседе могут присоединиться до %@ человек.";
-"add_participants.alert.message.existing_conversation" = "К беседе может присоединиться до %1$d человек. На текущий момент в комнате есть места еще для %2$d.";
+"add_participants.alert.message.existing_conversation" = "К беседе может присоединиться до %@ человек. На текущий момент в комнате есть места еще для %@.";
 
 // Channel Creation UI - Navigation
 "conversation.create.channel.title" = "Новый канал";
