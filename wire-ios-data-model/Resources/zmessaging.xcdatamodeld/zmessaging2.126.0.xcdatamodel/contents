@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23605" systemVersion="24E263" minimumToolsVersion="Xcode 11.0" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="2.126.0">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23788.4" systemVersion="24F74" minimumToolsVersion="Xcode 11.0" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="2.126.0">
     <entity name="Action" representedClassName=".Action" syncable="YES">
         <attribute name="name" optional="YES" attributeType="String"/>
         <relationship name="role" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Role" inverseName="actions" inverseEntity="Role"/>
@@ -261,8 +261,12 @@
         <relationship name="participantRoles" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ParticipantRole" inverseName="role" inverseEntity="ParticipantRole"/>
         <relationship name="team" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Team" inverseName="roles" inverseEntity="Team"/>
     </entity>
+    <entity name="SelfUserPreferences" representedClassName=".SelfUserPreferences" syncable="YES">
+        <relationship name="session" maxCount="1" deletionRule="Nullify" destinationEntity="Session" inverseName="selfUserPreferences" inverseEntity="Session"/>
+    </entity>
     <entity name="Session" representedClassName="ZMSession" syncable="YES">
         <relationship name="selfUser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User"/>
+        <relationship name="selfUserPreferences" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="SelfUserPreferences" inverseName="session" inverseEntity="SelfUserPreferences"/>
     </entity>
     <entity name="SystemMessage" representedClassName="ZMSystemMessage" parentEntity="Message" syncable="YES">
         <attribute name="allTeamUsersAdded" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>

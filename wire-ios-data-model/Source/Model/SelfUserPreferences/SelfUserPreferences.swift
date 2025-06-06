@@ -18,16 +18,19 @@
 
 import CoreData
 
-extension NSManagedObjectContext {
+/// Per account preferences.
 
-    // This function setup the user info on the context, the session and self user must be initialised before end.
-    func setupLocalCachedSessionAndSelfUser() {
-        let request = Session.sortedFetchRequest()
+@objc(ZMUserPreferences)
+final class SelfUserPreferences: NSManagedObject {}
 
-        guard let session = fetchOrAssert(request: request).first as? Session else { return }
+extension SelfUserPreferences {
 
-        userInfo[SessionObjectIDKey] = session.objectID
-        ZMUser.boxSelfUser(session.selfUser, inContextUserInfo: self)
+    @nonobjc class func fetchRequest() -> NSFetchRequest<SelfUserPreferences> {
+        NSFetchRequest<SelfUserPreferences>(entityName: "SelfUserPreferences")
     }
 
+    @NSManaged var session: Session?
+
 }
+
+extension SelfUserPreferences : Identifiable {}

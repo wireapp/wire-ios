@@ -73,7 +73,6 @@ extern NSString * __nonnull const ReadReceiptsEnabledKey;
 @end
 
 
-
 @interface ZMUser (Editable) <ZMEditableUserType>
 
 @property (nullable, nonatomic, copy) NSString *emailAddress;
@@ -89,14 +88,12 @@ extern NSString * __nonnull const ReadReceiptsEnabledKey;
 @end
 
 
-
 @interface ZMUser (ImageData)
 
 + (nonnull NSPredicate *)predicateForSelfUser;
 + (nonnull NSPredicate *)predicateForUsersOtherThanSelf;
 
 @end
-
 
 
 @interface NSUUID (SelfUser)
@@ -106,15 +103,15 @@ extern NSString * __nonnull const ReadReceiptsEnabledKey;
 @end
 
 
+@class ZMUserPreferences;
 
-
+NS_SWIFT_NAME(Session)
 @interface ZMSession : ZMManagedObject
 
 @property (nonnull, nonatomic, strong) ZMUser *selfUser;
+@property (nullable, nonatomic, retain) ZMUserPreferences *selfUserPreferences;
 
 @end
-
-
 
 
 @interface ZMUser (OTR)
@@ -122,5 +119,3 @@ extern NSString * __nonnull const ReadReceiptsEnabledKey;
 - (nullable UserClient *)selfClient;
 
 @end
-
-
