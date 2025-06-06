@@ -97,6 +97,9 @@ private class PersonalAccountCreationComponentDependency9e5e5a00f5c85fcf54b5Prov
     var privacyPolicyURL: URL {
         return rootComponent.privacyPolicyURL
     }
+    var termsOfUseURL: URL {
+        return rootComponent.termsOfUseURL
+    }
     var personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol {
         return rootComponent.personalAccountCreationAnalyticsTracker
     }
@@ -193,6 +196,7 @@ extension PersonalAccountCreationComponent: NeedleFoundation.Registration {
         keyPathToName[\PersonalAccountCreationComponentDependency.networkStack] = "networkStack-NetworkStack"
         keyPathToName[\PersonalAccountCreationComponentDependency.passwordValidator] = "passwordValidator-any PasswordValidator"
         keyPathToName[\PersonalAccountCreationComponentDependency.privacyPolicyURL] = "privacyPolicyURL-URL"
+        keyPathToName[\PersonalAccountCreationComponentDependency.termsOfUseURL] = "termsOfUseURL-URL"
         keyPathToName[\PersonalAccountCreationComponentDependency.personalAccountCreationAnalyticsTracker] = "personalAccountCreationAnalyticsTracker-any PersonalAccountCreationAnalyticsTrackerProtocol"
     }
 }
@@ -206,6 +210,7 @@ extension RootComponent: NeedleFoundation.Registration {
         localTable["howToChangeEmailURL-URL"] = { [unowned self] in self.howToChangeEmailURL as Any }
         localTable["howToDeleteAccountURL-URL"] = { [unowned self] in self.howToDeleteAccountURL as Any }
         localTable["privacyPolicyURL-URL"] = { [unowned self] in self.privacyPolicyURL as Any }
+        localTable["termsOfUseURL-URL"] = { [unowned self] in self.termsOfUseURL as Any }
         localTable["passwordValidator-any PasswordValidator"] = { [unowned self] in self.passwordValidator as Any }
         localTable["ssoCallbackURLScheme-String"] = { [unowned self] in self.ssoCallbackURLScheme as Any }
         localTable["appStoreURL-URL"] = { [unowned self] in self.appStoreURL as Any }

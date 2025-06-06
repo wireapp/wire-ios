@@ -26,6 +26,7 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
     package typealias Factory = PersonalAccountCreationFactory & RequestEmailVerificationCodeUseCaseFactory &
         ValidateEmailUseCaseFactory
 
+    @Published var alert: Alert?
     @Published var isCreateTeamAccountPresented = false
     @Published var dataUsageAgreementAccepted: Bool = false
     @Published var name: String = ""
@@ -41,17 +42,20 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
 
     package let factory: any Factory
     package let privacyPolicyURL: URL
+    package let termsOfUseURL: URL
     private let passwordValidator: any PasswordValidator
 
     package init(
         factory: any Factory,
         email: String,
         privacyPolicyURL: URL,
+        termsOfUseURL: URL,
         passwordValidator: any PasswordValidator
     ) {
         self.factory = factory
         self.email = email
         self.privacyPolicyURL = privacyPolicyURL
+        self.termsOfUseURL = termsOfUseURL
         self.passwordValidator = passwordValidator
     }
 

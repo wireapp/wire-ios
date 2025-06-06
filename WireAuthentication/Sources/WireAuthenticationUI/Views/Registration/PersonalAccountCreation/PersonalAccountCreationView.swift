@@ -43,6 +43,20 @@ struct PersonalAccountCreationView: View {
                 .customBackButton()
                 .background(ColorTheme.Backgrounds.surface.color)
         }
+        .alert(
+            item: $viewModel.alert,
+            title: { Text($0.title) },
+            message: { Text($0.message) },
+            actions: { _ in
+                Button(Strings.ConfirmationAlert.accept, action: {
+                    Task {
+                        try? await viewModel.requestEmailVerificationCode()
+                    }
+                })
+                Button(Strings.ConfirmationAlert.view, action: {})
+                Button(Strings.ConfirmationAlert.cancel, action: {})
+            }
+        )
         .presentationDetents([.large])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
@@ -122,13 +136,7 @@ struct PersonalAccountCreationView: View {
 
     @ViewBuilder private var continueButton: some View {
         Button(action: {
-            Task {
-                do {
-                    try await viewModel.requestEmailVerificationCode()
-                } catch {
-                    print("error")
-                }
-            }
+            viewModel.alert = .termsOfUse
         }, label: {
             Text(Strings.continue)
                 .lineLimit(nil)
