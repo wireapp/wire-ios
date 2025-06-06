@@ -18,14 +18,24 @@
 
 import WireAnalytics
 import WireAuthenticationAPI
+import UIKit
 
-struct PersonalAccountCreationAnalyticsTracker: PersonalAccountCreationAnalyticsTrackerProtocol {
+final class PersonalAccountCreationAnalyticsTracker: PersonalAccountCreationAnalyticsTrackerProtocol {
 
+    private var analyticsService: AnalyticsService
     private var analyticsTracker: (any AnalyticsEventTracker)!
 
     init() {}
 
     func setUp() {
+
+        analyticsService = AnalyticsService(
+            config: analyticsConfig,
+            deviceModel: UIDevice.current.model,
+            osVersion: UIDevice.current.systemVersion,
+            countlyProvider: countlyProvider
+        )
+
         fatalError("WPB-17530")
     }
 
