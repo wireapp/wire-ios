@@ -16,8 +16,82 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package final class PersonalAccountCreationViewModel {
+import SwiftUI
+import WireAuthenticationAPI
+import WireReusableUIComponents
 
-    package init() {}
+@MainActor
+package final class PersonalAccountCreationViewModel: ObservableObject {
+
+    package typealias Factory = PersonalAccountCreationFactory & RequestEmailVerificationCodeUseCaseFactory &
+        ValidateEmailUseCaseFactory
+
+    @Published var alert: Alert?
+    @Published var isCreateTeamAccountPresented = false
+    @Published var dataUsageAgreementAccepted: Bool = false
+    @Published var name: String = ""
+    @Published var email: String
+    @Published var password: String = ""
+    @Published var confirmedPassword: String = ""
+
+    // MARK: - Dependencies
+
+    var localizedPasswordRules: String {
+        passwordValidator.localizedRulesDescription ?? ""
+    }
+
+    package let factory: any Factory
+    package let privacyPolicyURL: URL
+    package let termsOfUseURL: URL
+    private let passwordValidator: any PasswordValidator
+
+    package init(
+        factory: any Factory,
+        email: String,
+        privacyPolicyURL: URL,
+        termsOfUseURL: URL,
+        passwordValidator: any PasswordValidator
+    ) {
+        self.factory = factory
+        self.email = email
+        self.privacyPolicyURL = privacyPolicyURL
+        self.termsOfUseURL = termsOfUseURL
+        self.passwordValidator = passwordValidator
+    }
+
+    // MARK: - Validations
+
+    func isPasswordValid(_ password: String) -> Bool {
+        passwordValidator.isPasswordValid(password)
+    }
+
+    var isEmailValid: Bool {
+        factory.validateEmailUseCase().invoke(email: email) == .isValid
+    }
+
+    var isNameValid: Bool {
+        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.count > 2 && trimmed.count < 64
+    }
+
+    var isPasswordValid: Bool {
+        passwordValidator.isPasswordValid(password)
+    }
+
+    var isPasswordMatchConfirmedPassword: Bool {
+        password == confirmedPassword
+    }
+
+    var canRequestVerificationCode: Bool {
+        isNameValid && isEmailValid && isPasswordValid && isPasswordMatchConfirmedPassword
+    }
+
+    func requestEmailVerificationCode() async throws {
+        guard canRequestVerificationCode else {
+            return
+        }
+        let requestEmailVerificationCode = try await factory.requestEmailVerificationCodeUseCase()
+        return try await requestEmailVerificationCode.invoke(email: email)
+    }
 
 }

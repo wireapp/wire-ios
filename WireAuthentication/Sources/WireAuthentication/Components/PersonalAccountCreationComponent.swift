@@ -37,12 +37,18 @@ final class PersonalAccountCreationComponent: Component<PersonalAccountCreationC
 
 }
 
-extension PersonalAccountCreationComponent: PersonalAccountCreationFactory {
+extension PersonalAccountCreationComponent: PersonalAccountCreationViewModel.Factory {
 
     // MARK: - Factory
 
     @MainActor var viewModel: PersonalAccountCreationViewModel {
-        PersonalAccountCreationViewModel()
+        PersonalAccountCreationViewModel(
+            factory: self,
+            email: email,
+            privacyPolicyURL: dependency.privacyPolicyURL,
+            termsOfUseURL: dependency.termsOfUseURL,
+            passwordValidator: dependency.passwordValidator
+        )
     }
 
     // MARK: - Use cases
@@ -50,6 +56,10 @@ extension PersonalAccountCreationComponent: PersonalAccountCreationFactory {
     func requestEmailVerificationCodeUseCase() async throws -> any RequestEmailVerificationCodeUseCaseProtocol {
         let authenticationAPI = try await dependency.networkStack.makeAuthenticationAPI()
         return RequestEmailVerificationCodeUseCase(authenticationAPI: authenticationAPI)
+    }
+
+    func validateEmailUseCase() -> any ValidateEmailUseCaseProtocol {
+        ValidateEmailUseCase()
     }
 
 }

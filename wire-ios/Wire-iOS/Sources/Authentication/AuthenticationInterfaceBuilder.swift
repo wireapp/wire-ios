@@ -89,6 +89,7 @@ final class AuthenticationInterfaceBuilder {
                 howToChangeEmailURL: WireURLs.shared.howToChangeEmail,
                 howToDeleteAccountURL: WireURLs.shared.howToDeleteAccount,
                 privacyPolicyURL: WireURLs.shared.privacyPolicy,
+                termsOfUseURL: WireURLs.shared.legal,
                 passwordValidator: AuthenticationPasswordValidator(),
                 ssoCallbackURLScheme: Bundle.ssoURLScheme ?? "wire-sso",
                 appStoreURL: WireURLs.shared.appOnItunes,
@@ -197,7 +198,7 @@ final class AuthenticationInterfaceBuilder {
             )
             return viewController
 
-        case let .incrementalUserCreation(user, registrationStep):
+        case let .incrementalUserCreation(user, registrationStep): //
             return makeRegistrationStepViewController(for: registrationStep, user: user)
 
         case let .switchBackend(url):

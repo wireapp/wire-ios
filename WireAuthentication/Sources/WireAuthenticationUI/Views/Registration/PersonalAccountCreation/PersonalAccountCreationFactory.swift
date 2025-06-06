@@ -16,4 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package protocol PersonalAccountCreationFactory {}
+package protocol PersonalAccountCreationFactory {
+
+    @MainActor var viewModel: PersonalAccountCreationViewModel { get }
+
+}
