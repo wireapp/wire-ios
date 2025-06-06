@@ -305,6 +305,24 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         }
     }
 
+    public func addMessageConfirmation(
+        _ confirmation: WireProtos.Confirmation,
+        in conversation: ZMConversation,
+        senderID: UUID,
+        senderDomain: String,
+        date: Date
+    ) async {
+        await context.perform {
+            _ = ZMMessageConfirmation.createMessageConfirmations(
+                confirmation,
+                conversation: conversation,
+                senderUUID: senderID,
+                senderDomain: senderDomain,
+                timestamp: date
+            )
+        }
+    }
+
     public func updateButtonStates(
         _ buttonActionConfirmation: ButtonActionConfirmation,
         in conversation: ZMConversation
