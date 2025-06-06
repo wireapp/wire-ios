@@ -28,7 +28,7 @@ import XCTest
 final class FeatureConfigRepositoryTests: XCTestCase {
 
     private var sut: FeatureConfigRepository!
-    private var featureConfigsAPI: MockFeatureConfigsAPI!
+    private var featureConfigsAPI: FeatureConfigsAPIMock!
     private var featureConfigLocalStore: MockFeatureConfigLocalStoreProtocol!
     private var stack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
@@ -43,7 +43,7 @@ final class FeatureConfigRepositoryTests: XCTestCase {
         coreDataStackHelper = CoreDataStackHelper()
         modelHelper = ModelHelper()
         stack = try await coreDataStackHelper.createStack()
-        featureConfigsAPI = MockFeatureConfigsAPI()
+        featureConfigsAPI = FeatureConfigsAPIMock()
         featureConfigLocalStore = MockFeatureConfigLocalStoreProtocol()
 
         sut = FeatureConfigRepository(
@@ -78,7 +78,7 @@ final class FeatureConfigRepositoryTests: XCTestCase {
             )
         }
 
-        featureConfigsAPI.getFeatureConfigs_MockValue = Scaffolding.featureConfigs
+        featureConfigsAPI.getFeatureConfigsFeatureConfigReturnValue = Scaffolding.featureConfigs
         featureConfigLocalStore.storeFeatureNameIsEnabledConfig_MockMethod = { _, _, _ in }
         featureConfigLocalStore.fetchFeatureName_MockValue = feature
         featureConfigLocalStore.featureNeedsNotifyUserFeature_MockValue = true
@@ -203,7 +203,7 @@ final class FeatureConfigRepositoryTests: XCTestCase {
 
         // Mock
 
-        featureConfigsAPI.getFeatureConfigs_MockValue = Scaffolding.featureConfigs
+        featureConfigsAPI.getFeatureConfigsFeatureConfigReturnValue = Scaffolding.featureConfigs
         featureConfigLocalStore.storeFeatureNameIsEnabledConfig_MockMethod = { _, _, _ in }
         featureConfigLocalStore.fetchFeatureName_MockValue = feature
         featureConfigLocalStore.featureNeedsNotifyUserFeature_MockValue = true
@@ -216,7 +216,7 @@ final class FeatureConfigRepositoryTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(featureConfigsAPI.getFeatureConfigs_Invocations.count, 1)
+        XCTAssertEqual(featureConfigsAPI.getFeatureConfigsFeatureConfigCallsCount, 1)
         XCTAssertEqual(featureConfigLocalStore.fetchFeatureName_Invocations.count, 5)
         XCTAssertEqual(featureConfigLocalStore.featureNeedsNotifyUserFeature_Invocations.count, 5)
         XCTAssertEqual(

@@ -19,17 +19,18 @@
 import WireAPI
 import WireAPISupport
 import XCTest
+
 @testable import WireDomain
 @testable import WireDomainSupport
 
 final class PullSelfTeamSyncTests: XCTestCase {
 
     private var sut: PullSelfTeamSync!
-    private var api: MockTeamsAPI!
+    private var api: TeamsAPIMock!
     private var store: MockTeamLocalStoreProtocol!
 
     override func setUp() async throws {
-        api = MockTeamsAPI()
+        api = TeamsAPIMock()
         store = MockTeamLocalStoreProtocol()
         sut = PullSelfTeamSync(api: api, store: store)
     }
@@ -42,7 +43,7 @@ final class PullSelfTeamSyncTests: XCTestCase {
 
     func testPull() async throws {
         // Mock
-        api.getTeamFor_MockValue = WireAPI.Team(
+        api.getTeamForTeamIDTeamIDTeamReturnValue = WireAPI.Team(
             id: Scaffolding.selfTeamID,
             name: Scaffolding.teamName,
             creatorID: Scaffolding.teamCreatorID,
@@ -57,7 +58,7 @@ final class PullSelfTeamSyncTests: XCTestCase {
         try await sut.pull(selfTeamID: Scaffolding.selfTeamID)
 
         // Then
-        let apiInvocations = api.getTeamFor_Invocations
+        let apiInvocations = api.getTeamForTeamIDTeamIDTeamReceivedInvocations
         try XCTAssertCount(apiInvocations, count: 1)
         XCTAssertEqual(apiInvocations[0], Scaffolding.selfTeamID)
 

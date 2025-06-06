@@ -65,7 +65,7 @@ final class UserPropertiesAPITests: XCTestCase {
 
     func testGetUserReceiptModeProperty_SuccessResponse_200_V0_Then_Verify_Request() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
+        let apiService = APIServiceProtocolMock.withResponses([
             (.ok, "GetUserReceiptModePropertySuccessResponseV0")
         ])
 
@@ -84,7 +84,7 @@ final class UserPropertiesAPITests: XCTestCase {
 
     func testGetUserTypingIndicatorModeProperty_SuccessResponse_200_V0_Then_Verify_Request() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
+        let apiService = APIServiceProtocolMock.withResponses([
             (.ok, "GetUserTypingIndicatorModePropertySuccessResponseV0")
         ])
 
@@ -103,7 +103,7 @@ final class UserPropertiesAPITests: XCTestCase {
 
     func testGetUserLabelsProperty_SuccessResponse_200_V0_Then_Verify_Request() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withResponses([
+        let apiService = APIServiceProtocolMock.withResponses([
             (.ok, "GetUserLabelsPropertySuccessResponseV0")
         ])
 
@@ -121,7 +121,7 @@ final class UserPropertiesAPITests: XCTestCase {
 
     func testGetLabels_FailureResponse_PropertyNotFound_V0() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withError(
+        let apiService = APIServiceProtocolMock.withError(
             statusCode: .notFound
         )
 
@@ -136,7 +136,7 @@ final class UserPropertiesAPITests: XCTestCase {
 
     func testGetUserTypingIndicatorModeProperty_FailureResponse_PropertyNotFound_V0() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withError(
+        let apiService = APIServiceProtocolMock.withError(
             statusCode: .notFound
         )
 
@@ -151,7 +151,7 @@ final class UserPropertiesAPITests: XCTestCase {
 
     func testGetUserReceiptModeProperty_FailureResponse_PropertyNotFound_V0() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withError(
+        let apiService = APIServiceProtocolMock.withError(
             statusCode: .notFound
         )
 
@@ -168,7 +168,7 @@ final class UserPropertiesAPITests: XCTestCase {
 
     func testGetUserProperties_FailureResponse_InvalidKey_V4() async throws {
         // Given
-        let apiService = MockAPIServiceProtocol.withError(
+        let apiService = APIServiceProtocolMock.withError(
             statusCode: .badRequest
         )
 

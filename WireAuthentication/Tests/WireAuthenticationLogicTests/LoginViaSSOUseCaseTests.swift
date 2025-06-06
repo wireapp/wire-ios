@@ -28,7 +28,7 @@ import XCTest
 final class LoginViaSSOUseCaseTests: XCTestCase {
 
     private var sut: LoginViaSSOUseCase!
-    private var mockAuthenticationAPI: MockAuthenticationAPI!
+    private var mockAuthenticationAPI: AuthenticationAPIMock!
     private let baseURL = URL(string: "https://example.com")!
     private let ssoCallbackURLScheme = "sso-callback"
     private var mockTokenGenerator: MockSSOLoginVerificationTokenGenerator!
@@ -37,7 +37,7 @@ final class LoginViaSSOUseCaseTests: XCTestCase {
 
     @MainActor
     override func setUp() async throws {
-        mockAuthenticationAPI = MockAuthenticationAPI()
+        mockAuthenticationAPI = AuthenticationAPIMock()
         mockTokenGenerator = MockSSOLoginVerificationTokenGenerator()
         mockWebAuthenticator = MockWebAuthenticator()
         mockCreateAuthResultUseCase = MockCreateAuthenticationResultUseCaseProtocol()
@@ -69,7 +69,7 @@ final class LoginViaSSOUseCaseTests: XCTestCase {
 
     func testInvoke_NoDefaultCodeAvailable() async throws {
         // Mock
-        mockAuthenticationAPI.getSSOCode_MockValue = .some(.none)
+        mockAuthenticationAPI.getSSOCodeUuidReturnValue = nil
 
         // Then
         await XCTAssertThrowsErrorAsync(LoginViaSSOUseCaseError.noDefaultCodeAvailable) {
@@ -84,16 +84,16 @@ final class LoginViaSSOUseCaseTests: XCTestCase {
         let verificationToken = SSOLoginVerificationToken()
 
         // Mock
-        mockAuthenticationAPI.getSSOCode_MockValue = defaultCode
-        mockAuthenticationAPI.validateLoginTokenSsoCode_MockMethod = { _ in }
+        mockAuthenticationAPI.getSSOCodeUuidReturnValue = defaultCode
+        mockAuthenticationAPI.validateLoginTokenSsoCodeUUIDVoidClosure = { _ in }
         mockTokenGenerator.mockToken = verificationToken
 
         // When
         _ = try? await sut.invoke(code: nil)
 
         // Then
-        XCTAssertEqual(mockAuthenticationAPI.getSSOCode_Invocations.count, 1)
-        XCTAssertEqual(mockAuthenticationAPI.validateLoginTokenSsoCode_Invocations, [defaultCode])
+        XCTAssertEqual(mockAuthenticationAPI.getSSOCodeUuidCallsCount, 1)
+        XCTAssertEqual(mockAuthenticationAPI.validateLoginTokenSsoCodeUUIDVoidReceivedInvocations, [defaultCode])
     }
 
     func testInvoke_UsesProvidedCode() async throws {
@@ -102,15 +102,15 @@ final class LoginViaSSOUseCaseTests: XCTestCase {
         let verificationToken = SSOLoginVerificationToken()
 
         // Mock
-        mockAuthenticationAPI.validateLoginTokenSsoCode_MockMethod = { _ in }
+        mockAuthenticationAPI.validateLoginTokenSsoCodeUUIDVoidClosure = { _ in }
         mockTokenGenerator.mockToken = verificationToken
 
         // When
         _ = try? await sut.invoke(code: code)
 
         // Then
-        XCTAssertEqual(mockAuthenticationAPI.getSSOCode_Invocations.count, 0)
-        XCTAssertEqual(mockAuthenticationAPI.validateLoginTokenSsoCode_Invocations, [code])
+        XCTAssertEqual(mockAuthenticationAPI.getSSOCodeUuidCallsCount, 0)
+        XCTAssertEqual(mockAuthenticationAPI.validateLoginTokenSsoCodeUUIDVoidReceivedInvocations, [code])
     }
 
     func testInvoke_SuccessCallback() async throws {
@@ -119,7 +119,7 @@ final class LoginViaSSOUseCaseTests: XCTestCase {
         let verificationToken = SSOLoginVerificationToken()
 
         // Mock
-        mockAuthenticationAPI.validateLoginTokenSsoCode_MockMethod = { _ in }
+        mockAuthenticationAPI.validateLoginTokenSsoCodeUUIDVoidClosure = { _ in }
         mockTokenGenerator.mockToken = verificationToken
         mockWebAuthenticator.mockResult = nil
 
@@ -127,9 +127,8 @@ final class LoginViaSSOUseCaseTests: XCTestCase {
         _ = try? await sut.invoke(code: code)
 
         // Then
-        XCTAssertEqual(mockAuthenticationAPI.validateLoginTokenSsoCode_Invocations, [code])
+        XCTAssertEqual(mockAuthenticationAPI.validateLoginTokenSsoCodeUUIDVoidReceivedInvocations, [code])
 
-        let token = verificationToken.uuid.uuidString.lowercased()
         let success = "success_redirect=\(makeSuccessCallback(verificationToken: verificationToken))"
         let error = "error_redirect=\(makeErrorCallback(verificationToken: verificationToken))"
 

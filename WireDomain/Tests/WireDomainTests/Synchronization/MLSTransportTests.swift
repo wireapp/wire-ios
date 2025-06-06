@@ -28,11 +28,11 @@ import XCTest
 final class MLSTransportTests: XCTestCase {
 
     private var sut: MLSTransportImpl!
-    private var mlsAPI: MockMLSAPI!
+    private var mlsAPI: MLSAPIMock!
     private var conversationEventProcessor: MockConversationEventProcessorProtocol!
 
     override func setUp() async throws {
-        mlsAPI = MockMLSAPI()
+        mlsAPI = MLSAPIMock()
         conversationEventProcessor = MockConversationEventProcessorProtocol()
         sut = MLSTransportImpl(
             mlsAPI: mlsAPI,
@@ -48,18 +48,21 @@ final class MLSTransportTests: XCTestCase {
 
     func testOnSendCommitBundle_CommitBundleIsPostedToMLSAPI() async throws {
         // Given
-        mlsAPI.postCommitBundle_MockValue = []
+        mlsAPI.postCommitBundleBundleCommitBundleUpdateEventReturnValue = []
 
         // When
         _ = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle)
 
         // Then
-        XCTAssertEqual(mlsAPI.postCommitBundle_Invocations, [Scaffolding.commitBundle.toAPIModel()])
+        XCTAssertEqual(
+            mlsAPI.postCommitBundleBundleCommitBundleUpdateEventReceivedInvocations,
+            [Scaffolding.commitBundle.toAPIModel()]
+        )
     }
 
     func testOnSendCommitBundle_ConversationEventsAreForwaredToConversationEventProcessor() async throws {
         // Given
-        mlsAPI.postCommitBundle_MockValue = [Scaffolding.conversationUpdateEvent]
+        mlsAPI.postCommitBundleBundleCommitBundleUpdateEventReturnValue = [Scaffolding.conversationUpdateEvent]
         conversationEventProcessor.processEvent_MockMethod = { _ in }
 
         // When
@@ -71,7 +74,7 @@ final class MLSTransportTests: XCTestCase {
 
     func testOnSendCommitBundle_UnknownEventsAreNotForwaredToConversationEventProcessor() async throws {
         // Given
-        mlsAPI.postCommitBundle_MockValue = [Scaffolding.unknownUpdateEvent]
+        mlsAPI.postCommitBundleBundleCommitBundleUpdateEventReturnValue = [Scaffolding.unknownUpdateEvent]
         conversationEventProcessor.processEvent_MockMethod = { _ in }
 
         // When
@@ -83,7 +86,7 @@ final class MLSTransportTests: XCTestCase {
 
     func testOnSendCommitBundle_ReturnsSuccessWhenThereIsNoError() async throws {
         // Given
-        mlsAPI.postCommitBundle_MockValue = []
+        mlsAPI.postCommitBundleBundleCommitBundleUpdateEventReturnValue = []
 
         // When
         let result = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle)
@@ -94,7 +97,7 @@ final class MLSTransportTests: XCTestCase {
 
     func testOnSendCommitBundle_ReturnsAbortWhenThereIsAnError() async throws {
         // Given
-        mlsAPI.postCommitBundle_MockError = MLSAPIError.mlsStaleMessage
+        mlsAPI.postCommitBundleBundleCommitBundleUpdateEventThrowableError = MLSAPIError.mlsStaleMessage
 
         // When
         let result = await sut.sendCommitBundle(commitBundle: Scaffolding.commitBundle)

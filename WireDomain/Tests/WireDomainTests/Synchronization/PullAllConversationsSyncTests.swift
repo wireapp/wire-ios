@@ -26,11 +26,11 @@ import XCTest
 final class PullAllConversationsSyncTests: XCTestCase {
 
     private var sut: PullAllConversationsSync!
-    private var api: MockConversationsAPI!
+    private var api: ConversationsAPIMock!
     private var store: MockConversationLocalStoreProtocol!
 
     override func setUp() async throws {
-        api = MockConversationsAPI()
+        api = ConversationsAPIMock()
         store = MockConversationLocalStoreProtocol()
         sut = PullAllConversationsSync(
             localDomain: Scaffolding.localDomain,
@@ -49,7 +49,7 @@ final class PullAllConversationsSyncTests: XCTestCase {
 
     func testPull() async throws {
         // Mock
-        api.getConversationIdentifiers_MockValue = .init(fetchPage: { _ in
+        api.getConversationIdentifiersPayloadPagerQualifiedIDReturnValue = .init(fetchPage: { _ in
             .init(
                 element: Scaffolding.conversationIDs,
                 hasMore: false,
@@ -57,7 +57,7 @@ final class PullAllConversationsSyncTests: XCTestCase {
             )
         })
 
-        api.getConversationsFor_MockValue = .init(
+        api.getConversationsForIdentifiersQualifiedIDConversationListReturnValue = .init(
             found: [Scaffolding.remoteConversation1],
             notFound: [Scaffolding.conversationID2],
             failed: [Scaffolding.conversationID3]
@@ -71,10 +71,13 @@ final class PullAllConversationsSyncTests: XCTestCase {
         try await sut.pull()
 
         // Then
-        XCTAssertEqual(api.getConversationIdentifiers_Invocations.count, 1)
+        XCTAssertEqual(api.getConversationIdentifiersPayloadPagerQualifiedIDCallsCount, 1)
 
-        try XCTAssertCount(api.getConversationsFor_Invocations, count: 1)
-        XCTAssertEqual(api.getConversationsFor_Invocations[0], Scaffolding.conversationIDs)
+        XCTAssertEqual(api.getConversationsForIdentifiersQualifiedIDConversationListReceivedInvocations.count, 1)
+        XCTAssertEqual(
+            api.getConversationsForIdentifiersQualifiedIDConversationListReceivedInvocations.first,
+            Scaffolding.conversationIDs
+        )
 
         let storeFoundInvocations = store.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations
         try XCTAssertCount(storeFoundInvocations, count: 1)
@@ -98,8 +101,8 @@ final class PullAllConversationsSyncTests: XCTestCase {
     // TODO: [WPB-15185] Re-enable
     func testPull_LegacyIdentifiers() async throws {
         // Mock
-        api.getConversationIdentifiers_MockError = ConversationsAPIError.notImplemented
-        api.getLegacyConversationIdentifiers_MockValue = .init(fetchPage: { _ in
+        api.getConversationIdentifiersPayloadPagerQualifiedIDThrowableError = ConversationsAPIError.notImplemented
+        api.getLegacyConversationIdentifiersPayloadPagerUUIDReturnValue = .init(fetchPage: { _ in
             .init(
                 element: Scaffolding.conversationIDs.map(\.uuid),
                 hasMore: false,
@@ -107,7 +110,7 @@ final class PullAllConversationsSyncTests: XCTestCase {
             )
         })
 
-        api.getConversationsFor_MockValue = .init(
+        api.getConversationsForIdentifiersQualifiedIDConversationListReturnValue = .init(
             found: [Scaffolding.remoteConversation1],
             notFound: [Scaffolding.conversationID2],
             failed: [Scaffolding.conversationID3]
@@ -121,17 +124,20 @@ final class PullAllConversationsSyncTests: XCTestCase {
         try await sut.pull()
 
         // Then
-        XCTAssertEqual(api.getConversationsFor_Invocations.count, 1)
+        XCTAssertEqual(api.getConversationsForIdentifiersQualifiedIDConversationListReceivedInvocations.count, 1)
         XCTAssertEqual(
             store.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations.count,
             1
         )
 
         // Then
-        XCTAssertEqual(api.getConversationIdentifiers_Invocations.count, 1)
+        XCTAssertEqual(api.getConversationsForIdentifiersQualifiedIDConversationListReceivedInvocations.count, 1)
 
-        try XCTAssertCount(api.getConversationsFor_Invocations, count: 1)
-        XCTAssertEqual(api.getConversationsFor_Invocations[0], Scaffolding.conversationIDs)
+        try XCTAssertCount(api.getConversationsForIdentifiersQualifiedIDConversationListReceivedInvocations, count: 1)
+        XCTAssertEqual(
+            api.getConversationsForIdentifiersQualifiedIDConversationListReceivedInvocations.first,
+            Scaffolding.conversationIDs
+        )
 
         let storeFoundInvocations = store.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations
         try XCTAssertCount(storeFoundInvocations, count: 1)

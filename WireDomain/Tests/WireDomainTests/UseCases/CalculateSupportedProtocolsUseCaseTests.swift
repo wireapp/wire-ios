@@ -54,7 +54,7 @@ final class CalculateSupportedProtocolsUseCaseTests: XCTestCase {
 
         sut = CalculateSupportedProtocolsUseCase(
             featureConfigRepository: FeatureConfigRepository(
-                featureConfigsAPI: MockFeatureConfigsAPI(),
+                featureConfigsAPI: FeatureConfigsAPIMock(),
                 featureConfigLocalStore: FeatureConfigLocalStore(context: context)
             ),
             userClientsLocalStore: userClientsLocalStore,

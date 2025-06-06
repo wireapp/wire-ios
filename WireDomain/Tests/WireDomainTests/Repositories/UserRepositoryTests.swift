@@ -22,14 +22,15 @@ import WireDataModelSupport
 import WireDomainSupport
 import WireTestingPackage
 import XCTest
+
 @testable import WireAPI
 @testable import WireDomain
 
 final class UserRepositoryTests: XCTestCase {
 
     private var sut: UserRepository!
-    private var usersAPI: MockUsersAPI!
-    private var selfUsersAPI: MockSelfUserAPI!
+    private var usersAPI: UsersAPIMock!
+    private var selfUsersAPI: SelfUserAPIMock!
     private var userLocalStore: MockUserLocalStoreProtocol!
     private var conversationLabelsRepository: MockConversationLabelsRepositoryProtocol!
     private var stack: CoreDataStack!
@@ -44,8 +45,8 @@ final class UserRepositoryTests: XCTestCase {
         coreDataStackHelper = CoreDataStackHelper()
         modelHelper = ModelHelper()
         stack = try await coreDataStackHelper.createStack()
-        usersAPI = MockUsersAPI()
-        selfUsersAPI = MockSelfUserAPI()
+        usersAPI = UsersAPIMock()
+        selfUsersAPI = SelfUserAPIMock()
         conversationLabelsRepository = MockConversationLabelsRepositoryProtocol()
         userLocalStore = MockUserLocalStoreProtocol()
 
@@ -85,7 +86,7 @@ final class UserRepositoryTests: XCTestCase {
 
         // Mock
 
-        usersAPI.getUsersUserIDs_MockValue = WireAPI.UserList(
+        usersAPI.getUsersUserIDsUserIDUserListReturnValue = WireAPI.UserList(
             found: [Scaffolding.user1],
             failed: []
         )
@@ -111,7 +112,7 @@ final class UserRepositoryTests: XCTestCase {
 
         // Mock
 
-        usersAPI.getUsersUserIDs_MockValue = WireAPI.UserList(
+        usersAPI.getUsersUserIDsUserIDUserListReturnValue = WireAPI.UserList(
             found: [Scaffolding.user1],
             failed: []
         )
@@ -375,7 +376,7 @@ final class UserRepositoryTests: XCTestCase {
 
     func testPullSelfUser_It_Invokes_Local_Store_Methods() async throws {
         // Mock
-        selfUsersAPI.getSelfUser_MockValue = Scaffolding.selfUser
+        selfUsersAPI.getSelfUserSelfUserReturnValue = Scaffolding.selfUser
         userLocalStore.persistUserUserInfo_MockMethod = { _ in }
 
         // When
@@ -384,7 +385,7 @@ final class UserRepositoryTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(selfUsersAPI.getSelfUser_Invocations.count, 1)
+        XCTAssertEqual(selfUsersAPI.getSelfUserSelfUserCallsCount, 1)
         XCTAssertEqual(userLocalStore.persistUserUserInfo_Invocations.count, 1)
     }
 

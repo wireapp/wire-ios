@@ -29,7 +29,7 @@ final class TeamRepositoryTests: XCTestCase {
 
     private var sut: TeamRepository!
     private var userRespository: MockUserRepositoryProtocol!
-    private var teamsAPI: MockTeamsAPI!
+    private var teamsAPI: TeamsAPIMock!
     private var teamLocalStore: MockTeamLocalStoreProtocol!
     private var stack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
@@ -44,7 +44,7 @@ final class TeamRepositoryTests: XCTestCase {
         coreDataStackHelper = CoreDataStackHelper()
         stack = try await coreDataStackHelper.createStack()
         userRespository = MockUserRepositoryProtocol()
-        teamsAPI = MockTeamsAPI()
+        teamsAPI = TeamsAPIMock()
         teamLocalStore = MockTeamLocalStoreProtocol()
 
         sut = TeamRepository(
@@ -71,7 +71,7 @@ final class TeamRepositoryTests: XCTestCase {
     func testPullSelfTeam_It_Invokes_Local_Store_And_Team_API_Methods() async throws {
         // Mock
 
-        teamsAPI.getTeamFor_MockValue = WireAPI.Team(
+        teamsAPI.getTeamForTeamIDTeamIDTeamReturnValue = WireAPI.Team(
             id: Scaffolding.selfTeamID,
             name: Scaffolding.teamName,
             creatorID: Scaffolding.teamCreatorID,
@@ -88,14 +88,14 @@ final class TeamRepositoryTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(teamsAPI.getTeamFor_Invocations.count, 1)
+        XCTAssertEqual(teamsAPI.getTeamForTeamIDTeamIDTeamReceivedInvocations.count, 1)
         XCTAssertEqual(teamLocalStore.storeTeamIdNameCreatorIDLogoIDLogoKey_Invocations.count, 1)
     }
 
     func testPullSelfTeamRoles_It_Invokes_Local_Store_And_Team_API_Methods() async throws {
         // Mock
 
-        teamsAPI.getTeamRolesFor_MockValue = [
+        teamsAPI.getTeamRolesForTeamIDTeamIDConversationRoleReturnValue = [
             ConversationRole(
                 name: "admin",
                 actions: [
@@ -119,14 +119,14 @@ final class TeamRepositoryTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(teamsAPI.getTeamRolesFor_Invocations.count, 1)
+        XCTAssertEqual(teamsAPI.getTeamRolesForTeamIDTeamIDConversationRoleReceivedInvocations.count, 1)
         XCTAssertEqual(teamLocalStore.storeTeamRolesSelfTeamIDTeamRolesInfo_Invocations.count, 1)
     }
 
     func testPullSelfTeamMembers_It_Invokes_Local_Store_And_Team_API_Methods() async throws {
         // Mock
 
-        teamsAPI.getTeamMembersForMaxResults_MockValue = [
+        teamsAPI.getTeamMembersForTeamIDTeamIDMaxResultsUIntTeamMemberReturnValue = [
             TeamMember(
                 userID: Scaffolding.member1ID,
                 creationDate: Scaffolding.member1CreationDate,
@@ -157,7 +157,7 @@ final class TeamRepositoryTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(teamsAPI.getTeamMembersForMaxResults_Invocations.count, 1)
+        XCTAssertEqual(teamsAPI.getTeamMembersForTeamIDTeamIDMaxResultsUIntTeamMemberReceivedInvocations.count, 1)
         XCTAssertEqual(teamLocalStore.storeTeamMembersSelfTeamIDTeamMembersInfo_Invocations.count, 1)
     }
 
@@ -165,7 +165,8 @@ final class TeamRepositoryTests: XCTestCase {
     ) async throws {
         // Mock
 
-        teamsAPI.getLegalholdInfoForUserID_MockValue = Scaffolding.teamMemberLegalhold
+        teamsAPI.getLegalholdInfoForTeamIDTeamIDUserIDUUIDTeamMemberLegalholdInfoReturnValue = Scaffolding
+            .teamMemberLegalhold
         teamLocalStore.selfUserID_MockValue = UUID()
 
         // When
@@ -175,7 +176,10 @@ final class TeamRepositoryTests: XCTestCase {
         // Then
 
         XCTAssertEqual(teamLocalStore.selfUserID_Invocations.count, 1)
-        XCTAssertEqual(teamsAPI.getLegalholdInfoForUserID_Invocations.count, 1)
+        XCTAssertEqual(
+            teamsAPI.getLegalholdInfoForTeamIDTeamIDUserIDUUIDTeamMemberLegalholdInfoReceivedInvocations.count,
+            1
+        )
         XCTAssertEqual(result, .pending)
     }
 

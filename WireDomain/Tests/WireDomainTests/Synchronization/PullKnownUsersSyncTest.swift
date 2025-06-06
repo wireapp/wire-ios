@@ -18,6 +18,7 @@
 
 import WireAPISupport
 import XCTest
+
 @testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport
@@ -25,11 +26,11 @@ import XCTest
 final class PullKnownUsersSyncTests: XCTestCase {
 
     private var sut: PullKnownUsersSync!
-    private var api: MockUsersAPI!
+    private var api: UsersAPIMock!
     private var store: MockUserLocalStoreProtocol!
 
     override func setUp() async throws {
-        api = MockUsersAPI()
+        api = UsersAPIMock()
         store = MockUserLocalStoreProtocol()
         sut = PullKnownUsersSync(api: api, store: store)
     }
@@ -42,7 +43,7 @@ final class PullKnownUsersSyncTests: XCTestCase {
 
     func testPull() async throws {
         // Mock
-        api.getUsersUserIDs_MockValue = WireAPI.UserList(
+        api.getUsersUserIDsUserIDUserListReturnValue = WireAPI.UserList(
             found: [Scaffolding.user1],
             failed: [Scaffolding.user2.id]
         )
@@ -60,7 +61,7 @@ final class PullKnownUsersSyncTests: XCTestCase {
         // Then
         XCTAssertEqual(store.fetchUsersQualifiedIDs_Invocations.count, 1)
 
-        let apiInvocations = api.getUsersUserIDs_Invocations
+        let apiInvocations = api.getUsersUserIDsUserIDUserListReceivedInvocations
         try XCTAssertCount(apiInvocations, count: 1)
         XCTAssertEqual(apiInvocations[0], [Scaffolding.user1.id, Scaffolding.user2.id])
 

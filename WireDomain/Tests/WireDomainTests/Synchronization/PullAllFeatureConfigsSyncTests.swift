@@ -19,6 +19,7 @@
 import WireAPISupport
 import WireDataModel
 import XCTest
+
 @testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport
@@ -26,11 +27,11 @@ import XCTest
 final class PullAllFeatureConfigsSyncTests: XCTestCase {
 
     private var sut: PullAllFeatureConfigsSync!
-    private var api: MockFeatureConfigsAPI!
+    private var api: FeatureConfigsAPIMock!
     private var store: MockFeatureConfigLocalStoreProtocol!
 
     override func setUp() async throws {
-        api = MockFeatureConfigsAPI()
+        api = FeatureConfigsAPIMock()
         store = MockFeatureConfigLocalStoreProtocol()
         sut = PullAllFeatureConfigsSync(api: api, store: store)
     }
@@ -43,14 +44,14 @@ final class PullAllFeatureConfigsSyncTests: XCTestCase {
 
     func testPull() async throws {
         // Mock
-        api.getFeatureConfigs_MockValue = Scaffolding.featureConfigs
+        api.getFeatureConfigsFeatureConfigReturnValue = Scaffolding.featureConfigs
         store.storeFeatureNameIsEnabledConfig_MockMethod = { _, _, _ in }
 
         // When
         try await sut.pull()
 
         // Then
-        XCTAssertEqual(api.getFeatureConfigs_Invocations.count, 1)
+        XCTAssertEqual(api.getFeatureConfigsFeatureConfigCallsCount, 1)
 
         let storeInvocations = store.storeFeatureNameIsEnabledConfig_Invocations
         try XCTAssertCount(storeInvocations, count: 10)

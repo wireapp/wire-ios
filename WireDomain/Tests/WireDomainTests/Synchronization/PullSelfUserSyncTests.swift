@@ -18,6 +18,7 @@
 
 import WireAPISupport
 import XCTest
+
 @testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport
@@ -25,11 +26,11 @@ import XCTest
 final class PullSelfUserSyncTests: XCTestCase {
 
     private var sut: PullSelfUserSync!
-    private var api: MockSelfUserAPI!
+    private var api: SelfUserAPIMock!
     private var store: MockUserLocalStoreProtocol!
 
     override func setUp() async throws {
-        api = MockSelfUserAPI()
+        api = SelfUserAPIMock()
         store = MockUserLocalStoreProtocol()
         sut = PullSelfUserSync(api: api, store: store)
     }
@@ -42,14 +43,14 @@ final class PullSelfUserSyncTests: XCTestCase {
 
     func testPull() async throws {
         // Mock
-        api.getSelfUser_MockValue = Scaffolding.remoteSelfUser
+        api.getSelfUserSelfUserReturnValue = Scaffolding.remoteSelfUser
         store.persistUserUserInfo_MockMethod = { _ in }
 
         // When
         let result = try await sut.pull()
 
         // Then
-        XCTAssertEqual(api.getSelfUser_Invocations.count, 1)
+        XCTAssertEqual(api.getSelfUserSelfUserCallsCount, 1)
 
         let storeInvocations = store.persistUserUserInfo_Invocations
         try XCTAssertCount(storeInvocations, count: 1)

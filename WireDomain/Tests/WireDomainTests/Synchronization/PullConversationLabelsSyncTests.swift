@@ -18,6 +18,7 @@
 
 import WireAPISupport
 import XCTest
+
 @testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport
@@ -25,11 +26,11 @@ import XCTest
 final class PullConversationLabelsSyncTests: XCTestCase {
 
     private var sut: PullConversationLabelsSync!
-    private var api: MockUserPropertiesAPI!
+    private var api: UserPropertiesAPIMock!
     private var store: MockConversationLabelsLocalStoreProtocol!
 
     override func setUp() async throws {
-        api = MockUserPropertiesAPI()
+        api = UserPropertiesAPIMock()
         store = MockConversationLabelsLocalStoreProtocol()
         sut = PullConversationLabelsSync(api: api, store: store)
     }
@@ -42,14 +43,14 @@ final class PullConversationLabelsSyncTests: XCTestCase {
 
     func testPull() async throws {
         // Mock
-        api.getLabels_MockValue = Scaffolding.remoteLabels
+        api.getLabelsConversationLabelReturnValue = Scaffolding.remoteLabels
         store.setLabels_MockMethod = { _ in }
 
         // When
         try await sut.pull()
 
         // Then
-        XCTAssertEqual(api.getLabels_Invocations.count, 1)
+        XCTAssertEqual(api.getLabelsConversationLabelCallsCount, 1)
 
         try XCTAssertCount(store.setLabels_Invocations, count: 1)
         XCTAssertEqual(store.setLabels_Invocations[0], Scaffolding.localLabels)

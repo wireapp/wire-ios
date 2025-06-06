@@ -25,10 +25,10 @@ import XCTest
 
 final class ResolveBackendMetadataUseCaseTests: XCTestCase {
 
-    private var api: MockBackendMetadataAPI!
+    private var api: BackendMetadataAPIMock!
 
     override func setUp() {
-        api = MockBackendMetadataAPI()
+        api = BackendMetadataAPIMock()
     }
 
     override func tearDown() {
@@ -46,7 +46,7 @@ final class ResolveBackendMetadataUseCaseTests: XCTestCase {
         )
 
         // Mock
-        api.getBackendMetadata_MockValue = Scaffolding.backendMetadata
+        api.getBackendMetadataBackendMetadataReturnValue = Scaffolding.backendMetadata
 
         // When
         let backendMetadata = try await sut.invoke()
@@ -68,7 +68,7 @@ final class ResolveBackendMetadataUseCaseTests: XCTestCase {
         )
 
         // Mock
-        api.getBackendMetadata_MockValue = Scaffolding.backendMetadata
+        api.getBackendMetadataBackendMetadataReturnValue = Scaffolding.backendMetadata
 
         // When
         let backendMetadata = try await sut.invoke()
@@ -90,7 +90,7 @@ final class ResolveBackendMetadataUseCaseTests: XCTestCase {
         )
 
         // Mock
-        api.getBackendMetadata_MockValue = Scaffolding.obsoleteBackendMetadata
+        api.getBackendMetadataBackendMetadataReturnValue = Scaffolding.obsoleteBackendMetadata
 
         // Then
         await XCTAssertThrowsErrorAsync(ResolveBackendMetadataUseCase.Failure.backendAPIVersionObsolete) {
@@ -108,7 +108,7 @@ final class ResolveBackendMetadataUseCaseTests: XCTestCase {
         )
 
         // Mock
-        api.getBackendMetadata_MockValue = Scaffolding.backendMetadata
+        api.getBackendMetadataBackendMetadataReturnValue = Scaffolding.backendMetadata
 
         // Then
         await XCTAssertThrowsErrorAsync(ResolveBackendMetadataUseCase.Failure.clientVersionObsolete) {

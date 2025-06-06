@@ -19,17 +19,18 @@
 import WireAPI
 import WireAPISupport
 import XCTest
+
 @testable import WireDomain
 @testable import WireDomainSupport
 
 final class PullUserConnectionsSyncTests: XCTestCase {
 
     private var sut: PullUserConnectionsSync!
-    private var api: MockConnectionsAPI!
+    private var api: ConnectionsAPIMock!
     private var store: MockConnectionsLocalStoreProtocol!
 
     override func setUp() async throws {
-        api = MockConnectionsAPI()
+        api = ConnectionsAPIMock()
         store = MockConnectionsLocalStoreProtocol()
         sut = PullUserConnectionsSync(api: api, store: store)
     }
@@ -42,7 +43,7 @@ final class PullUserConnectionsSyncTests: XCTestCase {
 
     func testPull() async throws {
         // Mock
-        api.getConnections_MockValue = .init(fetchPage: { _ in
+        api.getConnectionsPayloadPagerConnectionReturnValue = .init(fetchPage: { _ in
             WireAPI.PayloadPager.Page(
                 element: [Scaffolding.remoteConnection],
                 hasMore: false,
@@ -56,7 +57,7 @@ final class PullUserConnectionsSyncTests: XCTestCase {
         try await sut.pull()
 
         // Then
-        XCTAssertEqual(api.getConnections_Invocations.count, 1)
+        XCTAssertEqual(api.getConnectionsPayloadPagerConnectionCallsCount, 1)
 
         let storeInvocations = store.storeConnection_Invocations
         try XCTAssertCount(storeInvocations, count: 1)
