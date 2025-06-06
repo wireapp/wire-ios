@@ -33,14 +33,14 @@ package final class RootViewModel: ObservableObject, Router {
     @Published var path = NavigationPath()
     @Published var modalDestination: RootViewSheet?
     @Published var alert: Alert?
-    
+
     let multibackendEnabled: Bool
     let hasOtherAccountsProvider: () -> Bool
-    
+
     var shouldShowSwitchAccountsAlertButton: Bool {
         multibackendEnabled && hasOtherAccountsProvider()
     }
-    
+
     // MARK: - Dependencies
 
     package let factory: any Factory
@@ -62,7 +62,7 @@ package final class RootViewModel: ObservableObject, Router {
         self.multibackendEnabled = multibackendEnabled
         self.hasOtherAccountsProvider = hasOtherAccountsProvider
         self.bridge = bridge
-        
+
         self.cancellable = bridge.inboundEvents.sink { [weak self] event in
             switch event {
             case .didRewindToThisView:
@@ -94,9 +94,9 @@ package final class RootViewModel: ObservableObject, Router {
     public func presentAlert(_ alert: Alert) {
         self.alert = alert
     }
-    
+
     public func dismissAlert() {
-        self.alert = nil
+        alert = nil
     }
 
     public func dismissSheet() {
@@ -111,7 +111,7 @@ package final class RootViewModel: ObservableObject, Router {
     func switchAccounts() {
         navigate(to: RootDestination.switchAccounts)
     }
-    
+
     // MARK: - Private
 
     private func restoreSheet() {

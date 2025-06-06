@@ -38,7 +38,7 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
 
     public let networkStack: NetworkStack
     private let existsAnotherAccount: Bool
-    
+
     init(
         parent: any Scope,
         networkStack: NetworkStack,

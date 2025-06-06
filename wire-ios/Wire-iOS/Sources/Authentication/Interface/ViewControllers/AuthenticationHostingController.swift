@@ -77,7 +77,7 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
             }
             .store(in: &cancellables)
     }
-    
+
     private func selectAccount(completion: (() -> Void)? = nil) {
         guard
             let sessionManager = SessionManager.shared,

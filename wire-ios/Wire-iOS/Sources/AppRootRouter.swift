@@ -21,8 +21,8 @@ import UIKit
 import WireAnalytics
 import WireCommonComponents
 import WireDesign
-import WireSyncEngine
 import WireReusableUIComponents
+import WireSyncEngine
 
 // MARK: - AppRootRouter
 
@@ -61,7 +61,7 @@ final class AppRootRouter {
     var zClientViewController: ZClientViewController? {
         mainWindow.rootViewController as? ZClientViewController
     }
-    
+
     // MARK: - Initialization
 
     init(

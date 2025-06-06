@@ -110,7 +110,7 @@ extension RootComponent: RootViewModel.Factory {
                 multibackendEnabled: multibackendEnabled,
                 hasOtherAccountsProvider: { [accountsPublisher] in
                     !accountsPublisher.value.isEmpty
-                } 
+                }
             )
         }
     }

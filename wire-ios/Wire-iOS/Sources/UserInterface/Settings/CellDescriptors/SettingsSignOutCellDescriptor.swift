@@ -23,13 +23,11 @@ import WireSyncEngine
 
 final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor {
 
-    lazy var logoutHelper: LogOutHelper? = {
-        LogOutHelper(showLoading: { [weak self] in
-            Task { @MainActor in self?.activityIndicator.start() }
-        }, hideLoading: { [weak self] in
-            Task { @MainActor in self?.activityIndicator.stop() }
-        })
-    }()
+    lazy var logoutHelper: LogOutHelper? = LogOutHelper(showLoading: { [weak self] in
+        Task { @MainActor in self?.activityIndicator.start() }
+    }, hideLoading: { [weak self] in
+        Task { @MainActor in self?.activityIndicator.stop() }
+    })
 
     private lazy var activityIndicator = {
         let topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)!

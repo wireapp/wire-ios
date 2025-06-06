@@ -16,18 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
 import avs
+import UIKit
 import WireDataModel
 import WireSyncEngine
 
 class LogOutHelper {
-    
+
     private var requestPasswordController: RequestPasswordController?
-    
+
     private let showLoading: () -> Void
     private let hideLoading: () -> Void
-    
+
     init(
         showLoading: @escaping () -> Void,
         hideLoading: @escaping () -> Void
@@ -35,7 +35,7 @@ class LogOutHelper {
         self.showLoading = showLoading
         self.hideLoading = hideLoading
     }
-    
+
     func makeLogOutViewControllerToPresent() -> UIViewController? {
         guard let selfUser = ZMUser.selfUser() else { return nil }
 

@@ -107,7 +107,7 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
     var unauthenticatedSession: UnauthenticatedSession {
         sessionManager.activeUnauthenticatedSession
     }
-    
+
     // MARK: - Initialization
 
     /// Creates a new authentication coordinator with the required supporting objects.
