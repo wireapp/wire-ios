@@ -324,5 +324,5 @@
 
 // MARK: - E2EI
 
-"webAuth.urlLabel.accessiblityLabel" = "Identity Provider URL";
+"webAuth.urlLabel.description" = "Identity Provider URL";
 "webAuth.urlLabel.hint" = "Select to open the complete URL.";

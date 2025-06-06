@@ -1084,9 +1084,9 @@ internal enum L10n {
     internal enum WebAuth {
       internal enum UrlLabel {
         /// Identity Provider URL
-        internal static let accessiblityLabel = L10n.tr("Accessibility", "webAuth.urlLabel.accessiblityLabel", fallback: "Identity Provider URL")
-        /// Tap to view this URL
-        internal static let hint = L10n.tr("Accessibility", "webAuth.urlLabel.hint", fallback: "Tap to view this URL")
+        internal static let description = L10n.tr("Accessibility", "webAuth.urlLabel.description", fallback: "Identity Provider URL")
+        /// Select to open the complete URL.
+        internal static let hint = L10n.tr("Accessibility", "webAuth.urlLabel.hint", fallback: "Select to open the complete URL.")
       }
     }
   }

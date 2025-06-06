@@ -99,7 +99,7 @@ final class WebAuthViewController: UIViewController, WKUIDelegate, WKNavigationD
         urlLabel = URLLabel(url: url)
         urlLabel.isUserInteractionEnabled = true
         urlLabel.isAccessibilityElement = true
-        urlLabel.accessibilityLabel = L10n.Accessibility.WebAuth.UrlLabel.accessiblityLabel
+        urlLabel.accessibilityLabel = L10n.Accessibility.WebAuth.UrlLabel.description
         urlLabel.accessibilityHint = L10n.Accessibility.WebAuth.UrlLabel.hint
 
         urlLabel.addGestureRecognizer(
