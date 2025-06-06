@@ -29,7 +29,9 @@ extension SelfUserPreferences {
         NSFetchRequest<SelfUserPreferences>(entityName: "SelfUserPreferences")
     }
 
-    @NSManaged var session: Session?
+    @NSManaged var session: Session!
+
+    // @NSManaged var isAnalyticsConsentGiven: String?
 
 }
 
