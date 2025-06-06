@@ -79,12 +79,10 @@ public final class NewPushChannel: NewPushChannelProtocol {
 
                     upToDateTask?.cancel()
                     await channelState.receivedMessage()
-                    await channelState.startProcessing()
 
-                    let result = try await receiveMessage(message)
+                    let result = try receiveMessage(message)
                     continuation.yield(result)
 
-                    await channelState.stopProcessing()
                     setupUpToDateTask()
                 }
             } catch {
@@ -111,14 +109,11 @@ public final class NewPushChannel: NewPushChannelProtocol {
         tearDownKeepAliveTask()
     }
 
-    func receiveMessage(_ message: URLSessionWebSocketTask.Message) async throws -> Element {
+    func receiveMessage(_ message: URLSessionWebSocketTask.Message) throws -> Element {
 
         switch message {
         case let .data(data):
-            WireLogger.pushChannel.debug(
-                "received web socket data, decoding..., \(String(data: data, encoding: .utf8))",
-                attributes: .pushChannelV3
-            )
+            WireLogger.pushChannel.debug("received web socket data, decoding...", attributes: .pushChannelV3)
             let envelope = try decoder.decode(WebSocketNotification.self, from: data)
             if envelope.type == .event {
                 return Element.event(envelope.toAPIModel())
@@ -144,11 +139,11 @@ public final class NewPushChannel: NewPushChannelProtocol {
             do {
                 while true {
                     try await Task.sleep(for: .seconds(keepAliveInterval))
-                    WireLogger.pushChannel.debug("sending keep alive ping")
+                    WireLogger.pushChannel.debug("sending keep alive ping", attributes: .pushChannelV3)
                     await webSocket.sendPing()
                 }
             } catch {
-                WireLogger.pushChannel.warn("keep alive task was cancelled")
+                WireLogger.pushChannel.warn("keep alive task was cancelled", attributes: .pushChannelV3)
                 tearDownKeepAliveTask()
             }
         }
@@ -156,7 +151,7 @@ public final class NewPushChannel: NewPushChannelProtocol {
 
     private func tearDownKeepAliveTask() {
         guard let keepAliveTask else { return }
-        WireLogger.pushChannel.debug("tearing down keep alive task")
+        WireLogger.pushChannel.debug("tearing down keep alive task", attributes: .pushChannelV3)
         keepAliveTask.cancel()
         self.keepAliveTask = nil
     }
@@ -165,20 +160,18 @@ public final class NewPushChannel: NewPushChannelProtocol {
 
     private func setupUpToDateTask() {
         tearDownUpToDateTask()
-        upToDateTask = Task { [upToDateThreshold] in
+        upToDateTask = Task {
             do {
-                while true {
-                    try Task.checkCancellation()
-                    try await Task.sleep(nanoseconds: 100_000_000)
-                    if await channelState.isCaughtUp() {
-                        WireLogger.pushChannel.debug("caught up")
-                        await channelState.caughtUp()
-                        continuation.yield(.upToDate)
-                        break
-                    }
+                try await Task.sleep(for: .seconds(channelState.timeUntilCaughtUp()))
+                // we reach here when time between events is significant enough that we're up to date
+                if await channelState.catchingUp {
+                    WireLogger.pushChannel.debug("caught up", attributes: .pushChannelV3)
+                    await channelState.caughtUp()
+                    continuation.yield(.upToDate)
                 }
+
             } catch {
-                WireLogger.pushChannel.warn("upToDateTask was cancelled")
+                WireLogger.pushChannel.warn("upToDateTask was cancelled", attributes: .pushChannelV3)
                 tearDownUpToDateTask()
             }
         }
@@ -186,7 +179,7 @@ public final class NewPushChannel: NewPushChannelProtocol {
 
     private func tearDownUpToDateTask() {
         guard let upToDateTask else { return }
-        WireLogger.pushChannel.debug("tearing down upToDateTask")
+        WireLogger.pushChannel.debug("tearing down upToDateTask", attributes: .pushChannelV3)
         upToDateTask.cancel()
         self.upToDateTask = nil
     }
@@ -256,6 +249,9 @@ private actor ChannelState {
         Date().timeIntervalSince(lastMessageUpdate)
     }
 
+    func timeUntilCaughtUp() -> TimeInterval {
+        caughtUpTimeInterval + timeSinceLastMessage()
+    }
     func caughtUp() {
         catchingUp = false
     }

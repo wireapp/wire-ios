@@ -173,7 +173,7 @@ final class NewPushChannelTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(webSocket.sendPing_Invocations.count, 2)
     }
 
-    func testOpen_ReceiveUpToDateAfterTimeout() async throws {
+    func testOpen_WithNoEventsReceiveUpToDateAfterTimeout() async throws {
         // Mock.
         webSocket.open_MockValue = AsyncThrowingStream { _ in }
 
@@ -195,6 +195,41 @@ final class NewPushChannelTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(webSocket.sendPing_Invocations.count, 2)
         try XCTAssertCount(receivedEnvelopes, count: 1)
         XCTAssertEqual(receivedEnvelopes[0], .upToDate)
+    }
+    
+    func testOpen_WithEventsReceiveUpToDateAfterTimeout() async throws {
+        // Mock.
+        let mockEnvelope1 = try MockJSONPayloadResource(name: "AsyncLiveUpdateEventEnvelope1")
+        let mockEnvelope2 = try MockJSONPayloadResource(name: "AsyncLiveUpdateEventEnvelope2")
+        let mockEnvelope3 = try MockJSONPayloadResource(name: "AsyncLiveUpdateEventEnvelope3")
+
+        webSocket.open_MockValue = AsyncThrowingStream { continuation in
+            continuation.yield(.data(mockEnvelope1.jsonData))
+            continuation.yield(.data(mockEnvelope2.jsonData))
+            continuation.yield(.data(mockEnvelope3.jsonData))
+        }
+
+        // Given an open push channel.
+        let liveEventEnvelopes = try await sut.open()
+
+        var receivedEnvelopes = [NewPushChannel.Element]()
+        Task.detached {
+            for try await envelope in liveEventEnvelopes {
+                receivedEnvelopes.append(envelope)
+            }
+        }
+        // When we wait for 1 second.
+        try await Task.sleep(for: .seconds(1.5))
+
+        // Then keep alive pings are sent periodically (the timer
+        // is not exact so we will we generous in our assertion of
+        // at least 2 in 1.5 seconds).
+        XCTAssertGreaterThanOrEqual(webSocket.sendPing_Invocations.count, 2)
+        try XCTAssertCount(receivedEnvelopes, count: 4)
+        XCTAssertEqual(receivedEnvelopes[0], .event(Scaffolding.envelope1))
+        XCTAssertEqual(receivedEnvelopes[1], .event(Scaffolding.envelope2))
+        XCTAssertEqual(receivedEnvelopes[2], .event(Scaffolding.envelope3))
+        XCTAssertEqual(receivedEnvelopes[3], .upToDate)
     }
 
     func testOpen_TimeoutTriggerIfNoEvents() async throws {
