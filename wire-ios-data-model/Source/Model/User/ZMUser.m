@@ -123,6 +123,7 @@ static NSString *const PrimaryKey = @"primaryKey";
 @implementation ZMSession
 
 @dynamic selfUser;
+@dynamic selfUserPreferences;
 
 + (NSArray *)defaultSortDescriptors;
 {

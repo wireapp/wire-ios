@@ -18,7 +18,7 @@
 
 import CoreData
 
-/// Per account preferences.
+/// Per account user preferences.
 
 @objc(ZMUserPreferences)
 final class SelfUserPreferences: NSManagedObject {}
