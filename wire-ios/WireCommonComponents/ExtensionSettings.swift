@@ -63,33 +63,10 @@ public final class ExtensionSettings: NSObject {
         defaults.register(defaults: ExtensionSettingsKey.defaultValueDictionary)
     }
 
-    func reset() {
-        ExtensionSettingsKey.allCases.forEach {
-            defaults.removeObject(forKey: $0.rawValue)
-        }
-    }
-
-    /// The accounts' `userIdentifier` values for which analytics tracking has been given consent.
+    /// The accounts' `userIdentifier` values mapped to a `Bool` value representing if the consent was given or declined.
 
     public var analyticsEnabledAccounts: [UUID: Bool] {
-        get {
-            let key = ExtensionSettingsKey.analyticsEnabledAccounts.rawValue
-            if let accounts = defaults.object(forKey: key) as? [UUID: Bool] {
-                return accounts
-            }
-            // TODO: delete from here
-
-            // migrate from the old way of saving the consent, which was once per app
-            var accounts = [UUID]()
-            if let disabled = defaults.object(forKey: "disableAnalyticsSharing") as? Bool, !disabled {
-                // add all accounts to the array
-                //SessionManager.shared
-                accounts += []
-            }
-
-            defaults.set(accounts, forKey: key)
-            return accounts
-        }
+        get { defaults.object(forKey: ExtensionSettingsKey.analyticsEnabledAccounts.rawValue) as? [UUID: Bool] ?? [:] }
         set { defaults.set(newValue, forKey: ExtensionSettingsKey.analyticsEnabledAccounts.rawValue) }
     }
 

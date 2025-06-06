@@ -23,9 +23,10 @@ import WireLogging
 import WireSyncEngine
 import WireUtilities
 
+// sourcery: AutoMockable
 protocol TrackingInterface {
 
-    var isAnalyticsDisabled: Bool { get }
+    var isAnalyticsEnabled: Bool { get }
     func requestAnalyticsConsent() async throws -> Bool
     func disableAnalytics() throws
     func enableAnalytics() async throws
@@ -238,7 +239,7 @@ final class SettingsPropertyFactory {
         case .disableAnalyticsSharing:
             let getAction: GetAction = { [unowned self] _ in
                 if let trackingManager {
-                    return SettingsPropertyValue(trackingManager.isAnalyticsDisabled)
+                    return SettingsPropertyValue(!trackingManager.isAnalyticsEnabled)
                 } else {
                     return SettingsPropertyValue(false)
                 }

@@ -17,6 +17,7 @@
 //
 
 import XCTest
+
 @testable import WireCommonComponents
 
 final class ExtensionSettingsTests: XCTestCase {
@@ -25,27 +26,27 @@ final class ExtensionSettingsTests: XCTestCase {
     var settings: ExtensionSettings!
 
     override func setUp() {
-        super.setUp()
-        defaults = UserDefaults(suiteName: name)
+        defaults = .temporary()
         settings = ExtensionSettings(defaults: defaults)
     }
 
     override func tearDown() {
-        settings.reset()
         settings = nil
         defaults = nil
-        super.tearDown()
     }
 
     func testThatItHandlesAnalyticsPreferenceChange() {
-        XCTAssertNil(settings.disableAnalyticsSharing)
-
-        settings.disableAnalyticsSharing = false
-        XCTAssertEqual(settings.disableAnalyticsSharing, false)
-
-        settings.disableAnalyticsSharing = true
-        XCTAssertEqual(settings.disableAnalyticsSharing, true)
+        fatalError("TODO")
+//        XCTAssertNil(settings.disableAnalyticsSharing)
+//
+//        settings.disableAnalyticsSharing = false
+//        XCTAssertEqual(settings.disableAnalyticsSharing, false)
+//
+//        settings.disableAnalyticsSharing = true
+//        XCTAssertEqual(settings.disableAnalyticsSharing, true)
     }
+
+    // TODO: test migration
 
     func testThatItEnablesLinkPreviewsByDefault() {
         XCTAssertFalse(settings.disableLinkPreviews)

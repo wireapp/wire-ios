@@ -29,32 +29,34 @@ final class TrackingManager: TrackingInterface {
 
     init(sessionManager: SessionManager) {
         self.sessionManager = sessionManager
+
+        migrateFromLegacyStorageIfNeeded()
+
         self.observerToken = NotificationCenter.default.addObserver(
             forName: FlowManager.AVSFlowManagerCreatedNotification,
             object: nil,
             queue: .main,
             using: { [weak self] _ in
                 guard let self else { return }
-                AVSFlowManager.getInstance()?.setEnableMetrics(!isAnalyticsDisabled)
+                AVSFlowManager.getInstance()?.setEnableMetrics(isAnalyticsEnabled)
             }
         )
 
-        AVSFlowManager.getInstance()?.setEnableMetrics(!isAnalyticsDisabled)
-
-
+        AVSFlowManager.getInstance()?.setEnableMetrics(isAnalyticsEnabled)
     }
 
     private var doesUserConsentPreferenceExist: Bool {
+        migrateFromLegacyStorageIfNeeded()
 
-
-
-        if let analyticsEnabledAccounts = ExtensionSettings.shared.analyticsEnabledAccounts, let selectedAccount = sessionManager.accountManager.selectedAccount {
-            return analyticsEnabledAccounts.contains(selectedAccount.userIdentifier)
-        }
+        guard let selectedAccount = sessionManager.accountManager.selectedAccount else { return false }
+        return ExtensionSettings.shared.analyticsEnabledAccounts.keys.contains(selectedAccount.userIdentifier)
     }
 
-    var isAnalyticsDisabled: Bool {
-        ExtensionSettings.shared.disableAnalyticsSharing ?? true
+    var isAnalyticsEnabled: Bool {
+        migrateFromLegacyStorageIfNeeded()
+
+        guard let selectedAccount = sessionManager.accountManager.selectedAccount else { return false }
+        return ExtensionSettings.shared.analyticsEnabledAccounts[selectedAccount.userIdentifier] ?? false
     }
 
     @MainActor
@@ -78,14 +80,20 @@ final class TrackingManager: TrackingInterface {
 
     func enableAnalytics() async throws {
         try await sessionManager.makeEnableAnalyticsUseCase().invoke()
-        ExtensionSettings.shared.disableAnalyticsSharing = false
         AVSFlowManager.getInstance()?.setEnableMetrics(true)
+
+        if let userIdentifier = sessionManager.accountManager.selectedAccount.map(\.userIdentifier) {
+            ExtensionSettings.shared.analyticsEnabledAccounts[userIdentifier] = true
+        }
     }
 
     func disableAnalytics() throws {
         try sessionManager.makeDisableAnalyticsUseCase().invoke()
-        ExtensionSettings.shared.disableAnalyticsSharing = true
         AVSFlowManager.getInstance()?.setEnableMetrics(false)
+
+        if let userIdentifier = sessionManager.accountManager.selectedAccount.map(\.userIdentifier) {
+            ExtensionSettings.shared.analyticsEnabledAccounts[userIdentifier] = false
+        }
     }
 
     /// Previously the consent for analytics tracking was stored only once per app.
@@ -94,10 +102,11 @@ final class TrackingManager: TrackingInterface {
     private func migrateFromLegacyStorageIfNeeded() {
         guard let disableAnalyticsSharing = ExtensionSettings.shared.disableAnalyticsSharing_ else { return }
 
-        if !disableAnalyticsSharing {
-            let analyticsEnabledAccounts = sessionManager.accountManager.accounts.map(\.userIdentifier)
-            ExtensionSettings.shared.analyticsEnabledAccounts = analyticsEnabledAccounts
+        let userIdentifiers = sessionManager.accountManager.accounts.map(\.userIdentifier)
+        let analyticsEnabledAccounts = userIdentifiers.reduce(into: [:]) { result, userIdentifier in
+            result[userIdentifier] = !disableAnalyticsSharing
         }
+        ExtensionSettings.shared.analyticsEnabledAccounts = analyticsEnabledAccounts
 
         ExtensionSettings.shared.disableAnalyticsSharing_ = nil
     }

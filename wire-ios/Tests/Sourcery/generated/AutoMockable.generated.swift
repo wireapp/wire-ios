@@ -1612,6 +1612,86 @@ class MockTopOverlayPresenting: TopOverlayPresenting {
 
 }
 
+class MockTrackingInterface: TrackingInterface {
+
+    // MARK: - Life cycle
+
+
+    // MARK: - isAnalyticsEnabled
+
+    var isAnalyticsEnabled: Bool {
+        get { return underlyingIsAnalyticsEnabled }
+        set(value) { underlyingIsAnalyticsEnabled = value }
+    }
+
+    var underlyingIsAnalyticsEnabled: Bool!
+
+
+    // MARK: - requestAnalyticsConsent
+
+    var requestAnalyticsConsent_Invocations: [Void] = []
+    var requestAnalyticsConsent_MockError: Error?
+    var requestAnalyticsConsent_MockMethod: (() async throws -> Bool)?
+    var requestAnalyticsConsent_MockValue: Bool?
+
+    func requestAnalyticsConsent() async throws -> Bool {
+        requestAnalyticsConsent_Invocations.append(())
+
+        if let error = requestAnalyticsConsent_MockError {
+            throw error
+        }
+
+        if let mock = requestAnalyticsConsent_MockMethod {
+            return try await mock()
+        } else if let mock = requestAnalyticsConsent_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `requestAnalyticsConsent`")
+        }
+    }
+
+    // MARK: - disableAnalytics
+
+    var disableAnalytics_Invocations: [Void] = []
+    var disableAnalytics_MockError: Error?
+    var disableAnalytics_MockMethod: (() throws -> Void)?
+
+    func disableAnalytics() throws {
+        disableAnalytics_Invocations.append(())
+
+        if let error = disableAnalytics_MockError {
+            throw error
+        }
+
+        guard let mock = disableAnalytics_MockMethod else {
+            fatalError("no mock for `disableAnalytics`")
+        }
+
+        try mock()
+    }
+
+    // MARK: - enableAnalytics
+
+    var enableAnalytics_Invocations: [Void] = []
+    var enableAnalytics_MockError: Error?
+    var enableAnalytics_MockMethod: (() async throws -> Void)?
+
+    func enableAnalytics() async throws {
+        enableAnalytics_Invocations.append(())
+
+        if let error = enableAnalytics_MockError {
+            throw error
+        }
+
+        guard let mock = enableAnalytics_MockMethod else {
+            fatalError("no mock for `enableAnalytics`")
+        }
+
+        try await mock()
+    }
+
+}
+
 // swiftlint:enable variable_name
 // swiftlint:enable line_length
 // swiftlint:enable vertical_whitespace
