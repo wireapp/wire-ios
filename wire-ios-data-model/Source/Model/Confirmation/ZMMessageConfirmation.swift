@@ -69,7 +69,6 @@ open class ZMMessageConfirmation: ZMManagedObject, ReadReceipt {
     ) -> [ZMMessageConfirmation] {
 
         guard
-            let managedObjectContext = conversation.managedObjectContext,
             let senderUUID = updateEvent.senderUUID,
             let timestamp = updateEvent.timestamp
         else {
