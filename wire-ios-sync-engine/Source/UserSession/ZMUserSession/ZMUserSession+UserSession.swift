@@ -18,7 +18,6 @@
 
 import Foundation
 import LocalAuthentication
-import WireAnalytics
 import WireDataModel
 
 extension ZMUserSession: UserSession {
