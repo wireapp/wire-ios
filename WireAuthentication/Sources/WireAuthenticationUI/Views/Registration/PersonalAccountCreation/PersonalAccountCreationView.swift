@@ -20,47 +20,36 @@ import SwiftUI
 import WireDesign
 import WireReusableUIComponents
 
-struct CreatePersonalAccountView: View {
+struct PersonalAccountCreationView: View {
 
-    @StateObject private var viewModel: CreatePersonalAccountViewModel
+    @StateObject private var viewModel: PersonalAccountCreationViewModel
     @Environment(\.dismiss) private var dismiss
 
     private typealias Strings = L10n.Localizable.CreatePersonalAccount
     private typealias Labels = L10n.Accessibility.CreatePersonalAccount
 
-    package init(viewModel: CreatePersonalAccountViewModel) {
-        self._viewModel = StateObject(wrappedValue: viewModel)
+    package init(
+        factory: @autoclosure @escaping () -> PersonalAccountCreationFactory
+    ) {
+        self._viewModel = StateObject(wrappedValue: factory().viewModel)
     }
 
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                scrollViewContent
-            }
-            .sheet(isPresented: $viewModel.isCreateTeamAccountPresented, onDismiss: {
-                dismiss()
-            }, content: {
-                if let teamAccountCreationLink = viewModel.teamAccountCreationLink {
-                    SafariBrowserView(url: teamAccountCreationLink)
-                        .ignoresSafeArea()
-                }
-            })
-            .scrollBounceBehavior(.basedOnSize)
-            .navigationTitle(Strings.title)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    SheetCloseButton {
-                        dismiss()
-                    }
-                    .accessibilityLabel(Labels.Close.label)
-                }
-            }
+    package var body: some View {
+        ScrollView {
+            scrollViewContent
+                .navigationTitle(Strings.title)
+                .navigationBarTitleDisplayMode(.inline)
+                .setPreferredSize(navigationBarHidden: false)
+                .customBackButton()
+                .background(ColorTheme.Backgrounds.surface.color)
         }
+        .presentationDetents([.large])
+        .interactiveDismissDisabled()
+        .presentationDragIndicator(.hidden)
     }
 
     @ViewBuilder private var scrollViewContent: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: 20) {
             nameField
             emailField
             passwordField
@@ -68,9 +57,10 @@ struct CreatePersonalAccountView: View {
             dataUsageAgreementView
             continueButton
             teamAccountCreationView
+
         }
         .padding(.horizontal, 24)
-        .padding(.top, 32)
+        .padding(.top, 18)
     }
 
     @ViewBuilder private var nameField: some View {
@@ -108,14 +98,13 @@ struct CreatePersonalAccountView: View {
 
     @ViewBuilder private var confirmPasswordField: some View {
         PasswordField(
-            password: $viewModel.password,
+            password: $viewModel.confirmedPassword,
             placeholder: Strings.InputConfirmPassword.placeholder,
             title: Strings.InputPassword.title,
             passwordRules: "",
             isValidPassword: viewModel.isPasswordValid
         )
     }
-
 
     @ViewBuilder private var dataUsageAgreementView: some View {
         Checkbox(
@@ -134,7 +123,11 @@ struct CreatePersonalAccountView: View {
     @ViewBuilder private var continueButton: some View {
         Button(action: {
             Task {
-                await viewModel.submitCredentials()
+                do {
+                    try await viewModel.requestEmailVerificationCode()
+                } catch {
+                    print("error")
+                }
             }
         }, label: {
             Text(Strings.continue)
@@ -142,7 +135,7 @@ struct CreatePersonalAccountView: View {
         })
         .wireButtonStyle(.primary)
         .bold()
-        .disabled(!viewModel.canSubmitCredentials)
+        .disabled(!viewModel.canRequestVerificationCode)
     }
 
     @ViewBuilder private var teamAccountCreationView: some View {

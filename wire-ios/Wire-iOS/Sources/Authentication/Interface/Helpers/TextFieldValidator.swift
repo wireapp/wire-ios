@@ -70,7 +70,7 @@ final class TextFieldValidator {
                 return .invalidPassword(violations)
             }
 
-        case .name:// validation for name
+        case .name: // validation for name
             // We should ignore leading/trailing whitespace when counting the number of characters in the string
             let stringToValidate = text.trimmingCharacters(in: .whitespacesAndNewlines)
             if stringToValidate.count > 64 {

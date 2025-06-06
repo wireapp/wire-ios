@@ -26,6 +26,6 @@ package enum LoginViaEmailSheet: Identifiable, Hashable, Sendable {
     case accountTypeSelection
 
     /// Represents the flow to create a team account.
-    case teamAccountCreation
+    case teamAccountCreation(url: URL)
 
 }
