@@ -77,8 +77,22 @@ package struct RootView: View {
             // it will dismiss the sheet.
             .alert(
                 item: $viewModel.alert,
-                title: { Text($0.title) },
-                message: { Text($0.message) },
+                title: { alert in
+                    switch alert {
+                    case .obsoleteClient:
+                        Text(viewModel.multibackendEnabled ? L10n.Localizable.ObsoleteClientMultibackend.Alert.title :  L10n.Localizable.ObsoleteClient.Alert.title)
+                    default:
+                        Text(alert.title)
+                    }
+                },
+                message: { alert in
+                    switch alert {
+                    case .obsoleteBackend:
+                        Text(viewModel.multibackendEnabled ? L10n.Localizable.ObsoleteBackendMultibackend.Alert.message :  L10n.Localizable.ObsoleteBackend.Alert.message)
+                    default:
+                        Text(alert.message)
+                    }
+                },
                 actions: { alert in
                     switch alert {
                     case .obsoleteClient:
