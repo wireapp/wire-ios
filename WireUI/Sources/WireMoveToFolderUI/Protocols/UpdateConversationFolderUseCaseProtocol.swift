@@ -18,6 +18,7 @@
 
 import Foundation
 
+// sourcery: AutoMockable
 /// Protocol for handling moving a conversation to a specified folder
 public protocol UpdateConversationFolderUseCaseProtocol {
     /// Moves a conversation to a specified folder

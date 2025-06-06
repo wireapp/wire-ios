@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// sourcery: AutoMockable
 /// A use case which cleans up old generated backup files from the temporary directory.
 public protocol CleanUpBackupsUseCaseProtocol: Sendable {
     func invoke() async throws

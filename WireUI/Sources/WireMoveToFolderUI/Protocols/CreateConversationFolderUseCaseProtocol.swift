@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// sourcery: AutoMockable
 /// Protocol for handling creating a folder
 public protocol CreateConversationFolderUseCaseProtocol {
     /// Creates a folder
