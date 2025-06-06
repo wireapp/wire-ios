@@ -16,17 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
+import Foundation
+import WireCellsAPI
+import WireLogging
 
-public enum WireCellsUploadStatus: Equatable, Hashable, Sendable {
-    case uploading(progress: Float)
-    case uploaded(isDraft: Bool)
-    case failed(error: WireCellsUploadError)
-    case cancelled
-}
+package final class PublishDraftsUseCase: WireCellsPublishDraftsUseCaseProtocol {
 
-public enum WireCellsUploadError: Error, Equatable, Hashable, Sendable {
-    case fileNotFound
-    case urlError(error: URLError)
-    case other(message: String)
+    private let cellName: String
+    private let draftRepository: any DraftsRepositoryProtocol
+
+    package init(cellName: String, draftRepository: any DraftsRepositoryProtocol) {
+        self.cellName = cellName
+        self.draftRepository = draftRepository
+    }
+
+    package func invoke() async throws {
+        try await draftRepository.publishAll(for: cellName)
+    }
 }

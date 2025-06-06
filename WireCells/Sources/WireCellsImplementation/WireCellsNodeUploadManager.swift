@@ -118,7 +118,7 @@ package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtoc
                     continuation.yield(.uploading(progress: Float(progress) / Float(assetSize)))
                 }
                 await uploads.remove(node.id)
-                continuation.yield(WireCellsUploadStatus.uploaded)
+                continuation.yield(WireCellsUploadStatus.uploaded(isDraft: true))
                 continuation.finish()
             } catch {
                 WireLogger.wireCells.info("Failed to upload file: \(error)")

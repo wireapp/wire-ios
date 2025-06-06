@@ -36,9 +36,9 @@ struct ObserveDraftsUseCaseTests {
         // When
         let output = await sut.invoke()
 
-        let a = WireCellsDraft.make()
-        let b = WireCellsDraft.make()
-        let c = WireCellsDraft.make()
+        let a = WireCellsDraft.fixture()
+        let b = WireCellsDraft.fixture()
+        let c = WireCellsDraft.fixture()
 
         continuation.yield([a, b])
         continuation.yield([b, c])
@@ -54,17 +54,4 @@ struct ObserveDraftsUseCaseTests {
         #expect(result == [[a, b], [b, c]])
     }
 
-}
-
-private extension WireCellsDraft {
-    static func make() -> WireCellsDraft {
-        WireCellsDraft(
-            id: WireCellsNodeID(uuid: UUID(), versionID: UUID()),
-            assetURL: URL(string: "https://example.com")!,
-            fileType: nil,
-            status: .uploaded,
-            name: "Draft",
-            bytes: 1024
-        )
-    }
 }
