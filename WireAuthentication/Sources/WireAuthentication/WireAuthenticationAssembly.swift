@@ -55,7 +55,7 @@ public struct WireAuthenticationAssembly {
         passwordValidator: any PasswordValidator,
         ssoCallbackURLScheme: String,
         appStoreURL: URL,
-        accountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>,
+        accountsPublisher: CurrentValuePublisher<[AccountUIModel]>,
         useLegacyRegistrationFlow: Bool,
         multibackendEnabled: Bool
     ) -> (view: some View, bridge: WireAuthenticationBridge) {

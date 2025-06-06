@@ -30,7 +30,7 @@ package class AccountSwitcherModalViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
 
     package init(
-        accountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>,
+        accountsPublisher: CurrentValuePublisher<[AccountUIModel]>,
         router: any Router
     ) {
         self.accounts = accountsPublisher.value

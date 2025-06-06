@@ -38,7 +38,7 @@ class RootComponent: BootstrapComponent {
     public let passwordValidator: any PasswordValidator
     public let ssoCallbackURLScheme: String
     public let appStoreURL: URL
-    public let accountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>
+    public let accountsPublisher: CurrentValuePublisher<[AccountUIModel]>
     public let multibackendEnabled: Bool
     public let useLegacyRegistrationFlow: Bool
 
@@ -61,7 +61,7 @@ class RootComponent: BootstrapComponent {
         passwordValidator: any PasswordValidator,
         ssoCallbackURLScheme: String,
         appStoreURL: URL,
-        accountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>,
+        accountsPublisher: CurrentValuePublisher<[AccountUIModel]>,
         useLegacyRegistrationFlow: Bool,
         multibackendEnabled: Bool
     ) {

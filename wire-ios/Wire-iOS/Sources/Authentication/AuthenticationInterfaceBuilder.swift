@@ -102,7 +102,7 @@ final class AuthenticationInterfaceBuilder {
                 passwordValidator: AuthenticationPasswordValidator(),
                 ssoCallbackURLScheme: Bundle.ssoURLScheme ?? "wire-sso",
                 appStoreURL: WireURLs.shared.appOnItunes,
-                accountsPublisher: ReadOnlyCurrentValueSubject(subject: CurrentValueSubject(accounts)),
+                accountsPublisher: CurrentValuePublisher(subject: CurrentValueSubject(accounts)),
                 useLegacyRegistrationFlow: !DeveloperFlag.newRegistration.isOn,
                 multibackendEnabled: DeveloperFlag.multibackend.isOn
             )

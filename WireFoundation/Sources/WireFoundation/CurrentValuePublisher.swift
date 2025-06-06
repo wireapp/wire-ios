@@ -20,7 +20,7 @@ public import Combine
 
 /// Helper subject to be able to pass object from which you can get current value and publisher
 /// but not able to send values as to regular subject (safety)
-public final class ReadOnlyCurrentValueSubject<Output>: Publisher {
+public final class CurrentValuePublisher<Output>: Publisher {
     
     
     public typealias Failure = Never
