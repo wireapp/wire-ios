@@ -24,7 +24,7 @@ import WireCellsAPI
 @testable import WireCellsImplementation
 @testable import WireCellsImplementationSupport
 
-class UploadDraftUseCaseTests {
+final class UploadDraftUseCaseTests {
 
     private let fileURL = URL.temporaryDirectory.appendingPathComponent("\(UUID().uuidString).txt")
     private let draftsRepository = DraftsRepositoryProtocolMock()

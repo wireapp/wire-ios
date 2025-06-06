@@ -148,9 +148,3 @@ private extension ByteStream {
         }
     }
 }
-
-private extension AsyncSequence {
-    func collect() async throws -> [Element] {
-        try await reduce(into: [Element]()) { $0.append($1) }
-    }
-}
