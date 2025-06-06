@@ -1585,6 +1585,7 @@
 "enroll_e2ei_certificate.subtitle" = "Das Zertifikat ist aktiv und Ihr Gerät überprüft.";
 "enroll_e2ei_certificate.certificate_details_button" = "Zertifikatsdetails";
 "enroll_e2ei_certificate.ok_button" = "OK";
+"enroll_e2ei_certificate.idp_url_title" = "Identity-Provider-URL";
 
 // Update e2ei certificate
 "update_e2ei_certificate.title" = "Zertifikat aktualisiert";
