@@ -41,7 +41,7 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
         self.bridge = bridge
         super.init(rootView: rootView)
 
-        bridge.outboundEvents.sink { [weak authenticationCoordinator] event in
+        bridge.outboundEvents.sink { [weak authenticationCoordinator, weak self] event in
             switch event {
             case let .userAuthenticated(authenticationResult):
                 authenticationCoordinator?.eventResponderChain.handleEvent(
@@ -56,15 +56,11 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
                     backendEnvironment: backendEnvironment
                 )
             case .exitFlowRequested:
-                guard
-                    let sessionManager = SessionManager.shared,
-                    let account = sessionManager.firstAuthenticatedAccount
-                else {
-                    WireLogger.authentication.error("WireAuthentication requested exit but no account to go back to")
-                    return
-                }
-
-                sessionManager.select(account)
+                self?.selectAccount()
+            case .userWantsToLogout:
+                self?.selectAccount(completion: {
+                    authenticationCoordinator?.wireAuthenticationUserWantsToLogOut()
+                })
             }
         }
         .store(in: &cancellables)
@@ -84,6 +80,20 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
 
             }
             .store(in: &cancellables)
+    }
+    
+    private func selectAccount(completion: (() -> Void)? = nil) {
+        guard
+            let sessionManager = SessionManager.shared,
+            let account = sessionManager.firstAuthenticatedAccount
+        else {
+            WireLogger.authentication.error("WireAuthentication requested exit but no account to go back to")
+            return
+        }
+
+        sessionManager.select(account, completion: { _ in
+            completion?()
+        })
     }
 
     @available(*, unavailable)

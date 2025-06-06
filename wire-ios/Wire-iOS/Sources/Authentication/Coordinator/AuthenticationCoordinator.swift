@@ -107,6 +107,8 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
     var unauthenticatedSession: UnauthenticatedSession {
         sessionManager.activeUnauthenticatedSession
     }
+    
+    var onLogOut: () -> Void
 
     // MARK: - Initialization
 
@@ -115,7 +117,8 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
         presenter: UINavigationController,
         sessionManager: ObservableSessionManager,
         featureProvider: AuthenticationFeatureProvider,
-        statusProvider: AuthenticationStatusProvider
+        statusProvider: AuthenticationStatusProvider,
+        onLogOut: @escaping () -> Void
     ) {
         self.presenter = presenter
         self.activityIndicator = BlockingActivityIndicator(view: presenter.view)
@@ -128,6 +131,7 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
             accountSelector: SessionManager.shared
         )
         self.eventResponderChain = AuthenticationEventResponderChain(featureProvider: featureProvider)
+        self.onLogOut = onLogOut
         super.init()
         updateLoginObservers()
         self.unauthenticatedSessionObserver = sessionManager

@@ -22,6 +22,7 @@ import WireAnalytics
 import WireCommonComponents
 import WireDesign
 import WireSyncEngine
+import WireReusableUIComponents
 
 // MARK: - AppRootRouter
 
@@ -60,6 +61,19 @@ final class AppRootRouter {
     var zClientViewController: ZClientViewController? {
         mainWindow.rootViewController as? ZClientViewController
     }
+    
+    private lazy var activityIndicator = {
+        let topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)!
+        return BlockingActivityIndicator(view: topMostViewController.view)
+    }()
+    
+    lazy var logoutHelper: LogOutHelper? = {
+        LogOutHelper(showLoading: { [weak self] in
+            Task { @MainActor in self?.activityIndicator.start() }
+        }, hideLoading: { [weak self] in
+            Task { @MainActor in self?.activityIndicator.stop() }
+        })
+    }()
 
     // MARK: - Initialization
 
@@ -390,7 +404,16 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             presenter: navigationController,
             sessionManager: sessionManager,
             featureProvider: BuildSettingAuthenticationFeatureProvider(),
-            statusProvider: AuthenticationStatusProvider()
+            statusProvider: AuthenticationStatusProvider(),
+            onLogOut: { [weak self] in
+                guard let vc = self?.logoutHelper?.makeLogOutViewControllerToPresent() else {
+                    return
+                }
+
+                self?.rootViewController.dismiss(animated: false) {
+                    self?.rootViewController.present(vc, animated: true)
+                }
+            }
         )
 
         guard let authenticationCoordinator else {

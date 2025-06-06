@@ -49,6 +49,10 @@ extension AuthenticationCoordinator: LandingViewControllerDelegate {
         let unregisteredUser = makeUnregisteredUser()
         stateController.transition(to: .createCredentials(unregisteredUser))
     }
+    
+    func wireAuthenticationUserWantsToLogOut() {
+        onLogOut()
+    }
 
     func wireAuthenticationDidRequestAccountRegistration(
         email: String?,

@@ -50,6 +50,7 @@ package final class RootViewModel: ObservableObject, Router {
     package let factory: any Factory
     private var cancellable: AnyCancellable?
     private var lastModalDestination: RootViewSheet?
+    private var bridge: WireAuthenticationBridge
 
     // MARK: - Life cycle
 
@@ -66,6 +67,7 @@ package final class RootViewModel: ObservableObject, Router {
         self.multibackendEnabled = multibackendEnabled
         self.isLoggedInProvider = isLoggedInProvider
         self.hasOtherAccountsProvider = hasOtherAccountsProvider
+        self.bridge = bridge
         
         self.cancellable = bridge.inboundEvents.sink { [weak self] event in
             switch event {
@@ -117,7 +119,7 @@ package final class RootViewModel: ObservableObject, Router {
     }
     
     func logout() {
-        // TODO: -
+        bridge.sendOutboundEvent(.userWantsToLogout)
     }
 
     // MARK: - Private

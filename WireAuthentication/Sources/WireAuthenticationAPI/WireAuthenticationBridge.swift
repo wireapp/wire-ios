@@ -54,6 +54,7 @@ public final class WireAuthenticationBridge {
         case userAuthenticated(AuthenticationResult)
         case accountRegistrationRequested(email: String?, WireAuthenticationBackendEnvironment)
         case exitFlowRequested
+        case userWantsToLogout
 
     }
 
