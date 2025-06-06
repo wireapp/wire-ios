@@ -30,9 +30,6 @@ package protocol RootFactory {
     func accountsSwitcherFactory() -> any AccountSwitcherFactory
 }
 
-enum RootDestination: Hashable {
-    case switchAccounts
-}
 
 package struct RootView: View {
 
