@@ -523,7 +523,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
             return [systemMessage]
 
-        case let .participantsAdded(participants, sender, _):
+        case let .participantsAdded(participants, sender, date):
             guard let sender = await fetchUser(
                 id: sender.id,
                 domain: sender.domain
@@ -544,7 +544,8 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             let systemMessage = await createSystemMessage(
                 messageType: .participantsAdded,
                 sender: sender,
-                users: Set(newUsers)
+                users: Set(newUsers),
+                timestamp: date
             )
 
             return [systemMessage]

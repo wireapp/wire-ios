@@ -18,7 +18,6 @@
 
 import Combine
 import Foundation
-import WireAnalytics
 import WireAPI
 import WireCoreCrypto
 import WireDataModel
@@ -26,6 +25,7 @@ import WireDomain
 import WireLogging
 import WireRequestStrategy
 import WireSystem
+public import WireFoundation
 
 typealias UserSessionDelegate = UserSessionAppLockDelegate
     & UserSessionEncryptionAtRestDelegate
@@ -92,7 +92,7 @@ public final class ZMUserSession: NSObject {
 
     let earService: EARServiceInterface
 
-    public private(set) weak var analyticsEventTracker: (any AnalyticsEventTracker)?
+    public private(set) weak var analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?
     private var pendingAnalyticsEvents = [AnalyticsEvent]()
 
     public internal(set) var appLockController: AppLockType
@@ -867,7 +867,7 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-    func setAnalyticsEventTracker(_ tracker: (any AnalyticsEventTracker)?) {
+    func setAnalyticsEventTracker(_ tracker: (any AnalyticsEventTrackerProtocol)?) {
         analyticsEventTracker = tracker
 
         // Track any events that were added before the service was configured.
@@ -1162,19 +1162,21 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     func syncAgentDidFailSyncing(_ syncAgent: SyncAgent, error: any Error) {
-        let onRetry: () -> Void = { [weak self] in
-            self?.managedObjectContext.performGroupedBlock {
-                self?.isPerformingSync = true
-                self?.updateNetworkState()
+        if Bundle.developerModeEnabled { // Only show sync error alert for debugging
+            let onRetry: () -> Void = { [weak self] in
+                self?.managedObjectContext.performGroupedBlock {
+                    self?.isPerformingSync = true
+                    self?.updateNetworkState()
+                }
+
+                syncAgent.resume()
             }
 
-            syncAgent.resume()
+            delegate?.clientDidFailSyncing(
+                error: error,
+                retryHandler: onRetry
+            )
         }
-
-        delegate?.clientDidFailSyncing(
-            error: error,
-            retryHandler: onRetry
-        )
 
         WireLogger.sync.error("failed to perform sync: \(String(describing: error))")
 

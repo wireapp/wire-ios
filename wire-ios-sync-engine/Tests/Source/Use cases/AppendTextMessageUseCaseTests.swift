@@ -20,6 +20,8 @@ import WireAnalytics
 import WireAnalyticsSupport
 import WireDataModel
 import WireDataModelSupport
+import WireFoundation
+import WireFoundationSupport
 import WireSyncEngineSupport
 import XCTest
 
@@ -29,7 +31,7 @@ final class AppendTextMessageUseCaseTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var analyticsEventTracker: MockAnalyticsEventTracker!
+    private var analyticsEventTracker: AnalyticsEventTrackerProtocolMock!
     private var mockConversation: MockMessageAppendableConversation!
     private var sut: AppendTextMessageUseCase!
 
@@ -56,7 +58,7 @@ final class AppendTextMessageUseCaseTests: XCTestCase {
         mockConversation.appendTextContentMentionsReplyingToFetchLinkPreviewNonce_MockMethod = { _, _, _, _, _ in
             MockZMConversationMessage()
         }
-        analyticsEventTracker.trackEvent_MockMethod = { _ in }
+        analyticsEventTracker.trackEventEventAnalyticsEventVoidClosure = { _ in }
 
         // WHEN
         try sut.invoke(
@@ -86,7 +88,7 @@ final class AppendTextMessageUseCaseTests: XCTestCase {
         )
 
         XCTAssertEqual(
-            analyticsEventTracker.trackEvent_Invocations,
+            analyticsEventTracker.trackEventEventAnalyticsEventVoidReceivedInvocations,
             [expectedEvent]
         )
     }
