@@ -36,6 +36,24 @@ public extension Bundle {
     @objc var appGroupIdentifier: String? {
         bundleIdentifier.map { "group." + $0 }
     }
+
+    static var developerModeEnabled: Bool {
+        Bundle.appMainBundle.infoForKey("EnableDeveloperMenu") == "1"
+    }
+
+    private static var appMainBundle: Bundle {
+        let mainBundle: Bundle
+        let runningInExtension = Bundle.main.bundlePath.hasSuffix(".appex")
+        if runningInExtension {
+            let extensionBundleURL = Bundle.main.bundleURL
+            let mainAppBundleURL = extensionBundleURL.deletingLastPathComponent().deletingLastPathComponent()
+            guard let bundle = Bundle(url: mainAppBundleURL) else { fatalError("Failed to find main app bundle") }
+            mainBundle = bundle
+        } else {
+            mainBundle = .main
+        }
+        return mainBundle
+    }
 }
 
 @objc
