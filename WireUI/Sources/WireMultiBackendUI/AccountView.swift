@@ -26,6 +26,12 @@ struct AccountView: View {
     let account: AccountUIModel
 
     var body: some View {
+        let details = [
+            account.handle,
+            account.teamName,
+            account.backendName
+        ].compactMap(\.self)
+        
         HStack {
             HStack(spacing: 22) {
 
@@ -33,8 +39,10 @@ struct AccountView: View {
                     source: account.avatarSource,
                     availability: nil,
                     showNotificationsBadge: false
-                ).frame(width: 28, height: 28)
-
+                )
+                .frame(width: 28, height: 28)
+                
+                
                 VStack(alignment: .leading, spacing: 2) {
 
                     Text(account.name)
@@ -43,17 +51,13 @@ struct AccountView: View {
                         .foregroundStyle(Color(SemanticColors.Label.textDefault))
 
                     DotSeparatedTextView(
-                        items: [
-                            account.handle,
-                            account.teamName,
-                            account.backendName
-                        ].compactMap(\.self)
+                        items: details
                     )
 
                 }
                 .padding(.vertical, 4)
             }
-
+            
             Spacer()
 
             Image("ChevronRight", bundle: Bundle.wireReusableUIComponentsBundle)
@@ -61,6 +65,11 @@ struct AccountView: View {
                 .scaledToFill()
                 .frame(width: 16, height: 16)
         }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(L10n.Accessibility.account)
+        .accessibilityValue(L10n.Accessibility.accountValue(account.name) + details.joined(separator: ","))
+        .accessibilityAddTraits(.isButton)
+        .accessibilityHint(L10n.Accessibility.accountHint)
         .contentShape(Rectangle())
         .onTapGesture {
             account.action()

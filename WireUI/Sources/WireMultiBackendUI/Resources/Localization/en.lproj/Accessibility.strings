@@ -16,3 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+"account" = "Account";
+"account_value" = "%@ account";
+"account_hint" = "Tap to switch account";
