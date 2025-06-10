@@ -1429,6 +1429,22 @@ class MockProfileViewControllerViewModeling: ProfileViewControllerViewModeling {
 
 }
 
+class MockSelfProfileAccountManager: SelfProfileAccountManager {
+
+    // MARK: - Life cycle
+
+
+    // MARK: - accounts
+
+    var accounts: [Account] = []
+
+    // MARK: - selectedAccount
+
+    var selectedAccount: Account?
+
+
+}
+
 class MockSelfProfileViewControllerBuilderProtocol: SelfProfileViewControllerBuilderProtocol {
 
     // MARK: - Life cycle

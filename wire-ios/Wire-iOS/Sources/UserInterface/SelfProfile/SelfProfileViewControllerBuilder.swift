@@ -51,7 +51,10 @@ final class SelfProfileViewControllerBuilder: SelfProfileViewControllerBuilderPr
             userSession: userSession,
             accountSelector: accountSelector,
             mainCoordinator: mainCoordinator,
-            analyticsEventTracker: analyticsEventTracker()
+            analyticsEventTracker: analyticsEventTracker(),
+            accountManager: SessionManager.shared?.accountManager
         )
     }
 }
+
+extension AccountManager: SelfProfileAccountManager { }
