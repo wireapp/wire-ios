@@ -40,15 +40,15 @@ package struct VerificationEmailCodeView: View {
                 .multilineTextAlignment(.center)
                 .foregroundStyle(Color.primaryText)
 
-//            verificationCodeView
+            verificationCodeView
 
             Button(action: {
-                //Task { await viewModel.confirm() }
+                Task { await viewModel.confirm() }
             }, label: {
                 HStack {
-//                    if viewModel.isLoading {
-//                        ProgressView()
-//                    }
+                    if viewModel.isLoading {
+                        ProgressView()
+                    }
 
                     Text(Strings.VerificationCode.confirm)
                 }

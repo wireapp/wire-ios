@@ -16,18 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
-import WireAuthenticationAPI
+import Foundation
 
-package protocol PersonalAccountCreationFactory {
+struct UserKeyV0: Decodable, ToAPIModelConvertible {
 
-    @MainActor var viewModel: PersonalAccountCreationViewModel { get }
+    let id: String
 
-    @MainActor
-    func verificationEmailCodeFactory(
-        email: String,
-        password: String,
-        name: String
-    ) -> any VerificationEmailCodeFactory
+    func toAPIModel() -> UserKey {
+        UserKey(uuidString: id)
+    }
 
 }

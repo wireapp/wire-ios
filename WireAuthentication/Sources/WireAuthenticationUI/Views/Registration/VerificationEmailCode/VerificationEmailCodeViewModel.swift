@@ -25,7 +25,10 @@ import WireLogging
 @MainActor
 public final class VerificationEmailCodeViewModel: ObservableObject {
 
-    package typealias Factory = VerificationEmailCodeFactory & RegisterPersonalAccountUseCaseFactory
+    package typealias Factory =
+        VerificationEmailCodeFactory &
+        RegisterPersonalAccountUseCaseFactory &
+        CreateAuthenticationResultUseCaseFactory
 
     // MARK: - View state
 
@@ -36,6 +39,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
 
     let email: String
     let password: String
+    let name: String
     let numberOfDigits: Int
 
     var isConfirmButtonDisabled: Bool {
@@ -46,6 +50,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
     // MARK: - Dependencies
 
     package let factory: any Factory
+    private let onFlowCompletion: (AuthenticationResult) -> Void
 
     private static let numberOfDigits = 6
 
@@ -55,6 +60,8 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
         factory: any Factory,
         email: String,
         password: String,
+        name: String,
+        onFlowCompletion: @escaping (AuthenticationResult) -> Void,
         numberOfDigits: Int = VerificationEmailCodeViewModel.numberOfDigits
     ) {
         precondition(numberOfDigits > 0)
@@ -62,6 +69,8 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
         self.factory = factory
         self.email = email
         self.password = password
+        self.name = name
+        self.onFlowCompletion = onFlowCompletion
         self.code = Array(repeating: "", count: numberOfDigits)
         self.numberOfDigits = numberOfDigits
     }
@@ -91,7 +100,65 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
         }
     }
 
+    private func register(verificationCode: String) async throws -> ([HTTPCookie], UUID?) {
+        let useCase = try await factory.registerPersonalAccountUseCase()
+        return try await Task.detached { [email, password, name] in
+            try await useCase.invoke(
+                email: email,
+                password: password,
+                verificationCode: verificationCode,
+                name: name
+            )
+        }.value
+    }
+
     func confirm() async {
+        isLoading = true
+        let verificationCode = code.joined()
+        do {
+            let (cookies, uuid) = try await register(verificationCode: verificationCode)
+            guard let uuid else {
+                // add logs and show the error
+                return
+            }
+            let emailCredentials = EmailCredentials(
+                email: email,
+                password: password,
+                verificationCode: nil
+            )
+            let authenticationResult = try await createAuthenticationResult(
+                cookies: cookies,
+                emailCredentials: emailCredentials,
+                userID: uuid
+            )
+            onFlowCompletion(authenticationResult)
+        } catch {
+            print(error)
+        }
+
+
+        isLoading = false
+
+    }
+
+    private func createAuthenticationResult(
+        cookies: [HTTPCookie],
+        emailCredentials: EmailCredentials,
+        userID: UUID
+    ) async throws -> AuthenticationResult {
+        let useCase = factory.createAuthenticationResultUseCase()
+        return try await Task.detached {
+            try await useCase.invoke(
+                userID: userID,
+                cookies: cookies,
+                accessToken: nil,
+                emailCredentials: emailCredentials
+            )
+        }.value
+    }
+
+
+//    func confirm() async {
 //        isLoading = true
 //
 //        do {
@@ -130,7 +197,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
 //        }
 //
 //        isLoading = false
-    }
+//    }
 
     func requestVerificationCode() async {
         isResending = true

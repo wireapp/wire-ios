@@ -81,6 +81,6 @@ public protocol AuthenticationAPI: Sendable {
         emailCode: String,
         name: String,
         password: String
-    ) async throws
+    ) async throws -> ([HTTPCookie], UUID?)
 
 }

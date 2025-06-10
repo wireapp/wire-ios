@@ -45,7 +45,11 @@ struct PersonalAccountCreationView: View {
         .navigationDestination(for: PersonalAccountCreationDestination.self) {
             switch $0 {
             case let .verifyEmail(email, password, name):
-                VerificationEmailCodeView(factory: viewModel.factory.verificationEmailCodeFactory())
+                VerificationEmailCodeView(factory: viewModel.factory.verificationEmailCodeFactory(
+                    email: email,
+                    password: password,
+                    name: name
+                ))
             }
         }
         .alert(

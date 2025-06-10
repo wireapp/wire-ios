@@ -16,18 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
-import WireAuthenticationAPI
+import Foundation
 
-package protocol PersonalAccountCreationFactory {
+public struct UserKey {
 
-    @MainActor var viewModel: PersonalAccountCreationViewModel { get }
+    public let uuid: UUID?
 
-    @MainActor
-    func verificationEmailCodeFactory(
-        email: String,
-        password: String,
-        name: String
-    ) -> any VerificationEmailCodeFactory
+    public init(uuidString: String) {
+        self.uuid = UUID(uuidString: uuidString)
+    }
 
 }

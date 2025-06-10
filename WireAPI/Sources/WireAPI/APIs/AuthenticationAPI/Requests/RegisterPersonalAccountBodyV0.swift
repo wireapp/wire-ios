@@ -16,18 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
-import WireAuthenticationAPI
+import Foundation
+import WireFoundation
 
-package protocol PersonalAccountCreationFactory {
+struct RegisterPersonalAccountBodyV0: Encodable {
 
-    @MainActor var viewModel: PersonalAccountCreationViewModel { get }
+    let accentId: Int16 = AccentColor.default.rawValue
+    let email: String
+    let emailCode: String
+    let label: String = UUID().uuidString
+    let locale: String
+    let name: String
+    let password: String
 
-    @MainActor
-    func verificationEmailCodeFactory(
-        email: String,
-        password: String,
-        name: String
-    ) -> any VerificationEmailCodeFactory
+
+    enum CodingKeys: String, CodingKey {
+
+        case accentId = "accent_id"
+        case email
+        case emailCode = "email_code"
+        case label
+        case locale
+        case name
+        case password
+
+    }
 
 }

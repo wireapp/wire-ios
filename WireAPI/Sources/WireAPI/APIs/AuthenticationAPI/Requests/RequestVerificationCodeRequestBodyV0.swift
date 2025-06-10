@@ -16,18 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
-import WireAuthenticationAPI
+struct RequestVerificationCodeRequestBodyV0: Encodable {
 
-package protocol PersonalAccountCreationFactory {
-
-    @MainActor var viewModel: PersonalAccountCreationViewModel { get }
-
-    @MainActor
-    func verificationEmailCodeFactory(
-        email: String,
-        password: String,
-        name: String
-    ) -> any VerificationEmailCodeFactory
+    var action: String
+    var email: String
 
 }

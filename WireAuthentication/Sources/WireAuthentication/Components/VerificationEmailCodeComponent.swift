@@ -28,6 +28,7 @@ protocol VerificationEmailCodeComponentDependency: Dependency {
 
     //@MainActor var router: any Router { get } // do we need?
     var networkStack: NetworkStack { get }
+    @MainActor var bridge: WireAuthenticationBridge { get }
 
 }
 
@@ -35,14 +36,18 @@ final class VerificationEmailCodeComponent: Component<VerificationEmailCodeCompo
 
     private let email: String
     private let password: String
+    private let name: String
+//    public let networkStack: NetworkStack maybe we need
 
     init(
         parent: any Scope,
         email: String,
-        password: String
+        password: String,
+        name: String
     ) {
         self.email = email
         self.password = password
+        self.name = name
         super.init(parent: parent)
     }
 
@@ -50,17 +55,27 @@ final class VerificationEmailCodeComponent: Component<VerificationEmailCodeCompo
 
 extension VerificationEmailCodeComponent: VerificationEmailCodeViewModel.Factory {
 
+    // MARK: - Factory
+
     var viewModel: VerificationEmailCodeViewModel {
         VerificationEmailCodeViewModel(
             factory: self,
             email: email,
-            password: password
+            password: password,
+            name: name,
+            onFlowCompletion: { [dependency] authenticationResult in
+                dependency?.bridge.sendOutboundEvent(.userAuthenticated(authenticationResult))
+            }
         )
     }
 
     func registerPersonalAccountUseCase() async throws -> any RegisterPersonalAccountUseCaseProtocol {
         let authenticationAPI = try await dependency.networkStack.makeAuthenticationAPI()
         return RegisterPersonalAccountUseCase(authenticationAPI: authenticationAPI)
+    }
+
+    func createAuthenticationResultUseCase() -> any CreateAuthenticationResultUseCaseProtocol {
+        CreateAuthenticationResultUseCase(networkStack: dependency.networkStack)
     }
 
 }

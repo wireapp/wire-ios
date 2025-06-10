@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import WireAPI
 import WireAuthenticationAPI
 
@@ -27,6 +28,17 @@ package struct RegisterPersonalAccountUseCase: RegisterPersonalAccountUseCasePro
         self.authenticationAPI = authenticationAPI
     }
 
-    package func invoke() async throws {
+    package func invoke(
+        email: String,
+        password: String,
+        verificationCode: String,
+        name: String
+    ) async throws -> ([HTTPCookie], UUID?) {
+        try await authenticationAPI.registerAccount(
+            email: email,
+            emailCode: verificationCode,
+            name: name,
+            password: password
+        )
     }
 }

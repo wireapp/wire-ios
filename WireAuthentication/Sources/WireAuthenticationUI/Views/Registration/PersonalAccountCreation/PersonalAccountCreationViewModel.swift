@@ -97,8 +97,8 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
 //        guard canRequestVerificationCode else {
 //            return
 //        }
-//        let requestEmailVerificationCode = try await factory.requestEmailVerificationCodeUseCase()
-//        try await requestEmailVerificationCode.invoke(email: email)
+        let requestEmailVerificationCode = try await factory.requestEmailVerificationCodeUseCase()
+        try await requestEmailVerificationCode.invoke(email: email)
 
         router.navigate(to: PersonalAccountCreationDestination.verifyEmail(
             email: email,

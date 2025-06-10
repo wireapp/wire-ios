@@ -24,6 +24,7 @@ internal import WireAuthenticationLogic
 final class PersonalAccountCreationComponent: Component<PersonalAccountCreationComponentDependency> {
 
     private let email: String
+//    public let networkStack: NetworkStack maybe we need
 
     init(
         parent: any Scope,
@@ -35,11 +36,16 @@ final class PersonalAccountCreationComponent: Component<PersonalAccountCreationC
 
     // MARK: - Children
 
-    func verificationEmailCodeComponent() -> VerificationEmailCodeComponent {
+    func verificationEmailCodeComponent(
+        email: String,
+        password: String,
+        name: String
+    ) -> VerificationEmailCodeComponent {
         VerificationEmailCodeComponent(
             parent: self,
             email: email,
-            password: ""
+            password: password,
+            name: name
         )
     }
 
@@ -60,8 +66,12 @@ extension PersonalAccountCreationComponent: PersonalAccountCreationViewModel.Fac
         )
     }
 
-    func verificationEmailCodeFactory() -> any VerificationEmailCodeFactory {
-        verificationEmailCodeComponent()
+    func verificationEmailCodeFactory(
+        email: String,
+        password: String,
+        name: String
+    ) -> any VerificationEmailCodeFactory {
+        verificationEmailCodeComponent(email: email, password: password, name: name)
     }
 
     // MARK: - Use cases
