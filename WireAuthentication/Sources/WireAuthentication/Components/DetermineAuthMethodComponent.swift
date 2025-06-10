@@ -76,7 +76,6 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
             didDetectDomainConflict: false
         )
     }
-
 }
 
 extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
