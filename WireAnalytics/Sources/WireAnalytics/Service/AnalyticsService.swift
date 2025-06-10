@@ -95,16 +95,14 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
     /// Stop sending analytics data.
 
     public func disableTracking() throws {
-        guard let countly else {
-            throw AnalyticsServiceError.serviceIsNotConfigured
-        }
 
         logger.debug("disabling tracking")
 
-        countly.endSession()
+        countly?.endSession()
         try clearCurrentUser()
-        countly.resetInstance()
+        countly?.resetInstance()
         self.countly = nil
+
     }
 
     // MARK: - User
@@ -114,11 +112,8 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
     /// - Parameter user: The user to switch to.
 
     public func switchUser(_ user: AnalyticsUser) throws {
-        guard let countly else {
-            throw AnalyticsServiceError.serviceIsNotConfigured
-        }
 
-        guard user != currentUser else {
+        guard let countly, user != currentUser else {
             return
         }
 
@@ -161,9 +156,7 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
         _ user: AnalyticsUser?,
         mergeData: Bool
     ) throws {
-        guard let countly else {
-            throw AnalyticsServiceError.serviceIsNotConfigured
-        }
+        guard let countly else { return }
 
         if let id = user?.analyticsIdentifier {
             countly.changeDeviceID(

@@ -76,19 +76,6 @@ final class AnalyticsServiceTests: XCTestCase {
         XCTAssertEqual(countlyMock.beginSessionVoidCallsCount, 0)
     }
 
-    func testDisableTracking_service_is_not_configured() throws {
-        // Given sut was not enabled.
-
-        // When tracking is disabled.
-        XCTAssertThrowsError(try sut.disableTracking()) {
-            // Then it throws an error.
-            guard case AnalyticsServiceError.serviceIsNotConfigured = $0 else {
-                XCTFail("unexpected error: \($0)")
-                return
-            }
-        }
-    }
-
     @MainActor
     func testDisableTracking_succeeds() async throws {
         // Given tracking is enabled.
@@ -116,18 +103,6 @@ final class AnalyticsServiceTests: XCTestCase {
         XCTAssertEqual(setUserInvocations[1].value, nil)
         XCTAssertEqual(setUserInvocations[2].key, "team_team_size")
         XCTAssertEqual(setUserInvocations[2].value, nil)
-    }
-
-    func testSwitchUser_tracking_disabled() throws {
-        // Given sut is not enabled.
-
-        do {
-            // When switching to a user.
-            try sut.switchUser(Scaffolding.user)
-            XCTFail("expected error AnalyticsServiceError.serviceIsNotConfigured")
-        } catch AnalyticsServiceError.serviceIsNotConfigured {
-            // Then
-        }
     }
 
     @MainActor
