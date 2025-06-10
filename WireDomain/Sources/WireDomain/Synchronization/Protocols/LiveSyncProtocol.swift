@@ -18,5 +18,5 @@
 
 public protocol LiveSyncProtocol {
 
-    func perform(acknowledgeFullSync: Bool) async throws -> IncrementalSync.Token
+    func perform() async throws -> IncrementalSync.Token
 }

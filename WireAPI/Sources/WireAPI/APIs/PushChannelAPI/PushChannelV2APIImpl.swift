@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class NewPushChannelAPIImpl: NewPushChannelAPI, VersionedAPI {
+final class PushChannelV2APIImpl: PushChannelV2API, VersionedAPI {
 
     let pushChannelService: any PushChannelServiceProtocol
     let apiVersion: APIVersion

@@ -141,7 +141,7 @@ public final class ClientSessionComponent {
         pushChannelService: pushChannelService
     ).makeAPI(for: apiVersion)
 
-    private lazy var newPushChannelAPI = NewPushChannelAPIBuilder(
+    private lazy var newPushChannelAPI = PushChannelV2APIBuilder(
         pushChannelService: pushChannelService
     ).makeAPI(for: apiVersion)
 

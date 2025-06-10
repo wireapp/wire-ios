@@ -25,7 +25,7 @@ import WireLogging
 public struct IncrementalSyncV2: LiveSyncProtocol {
 
     private let selfClientID: String
-    private let pushChannelAPI: any NewPushChannelAPI
+    private let pushChannelAPI: any PushChannelV2API
     private let decryptor: any UpdateEventDecryptorProtocol
     private let store: any UpdateEventsLocalStoreProtocol
     private let processor: any UpdateEventProcessorProtocol
@@ -37,7 +37,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
 
     public init(
         selfClientID: String,
-        pushChannelAPI: any NewPushChannelAPI,
+        pushChannelAPI: any PushChannelV2API,
         decryptor: any UpdateEventDecryptorProtocol,
         store: any UpdateEventsLocalStoreProtocol,
         processor: any UpdateEventProcessorProtocol,
@@ -55,13 +55,9 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         self.journal = journal
     }
 
-    public func perform(acknowledgeFullSync: Bool) async throws -> IncrementalSync.Token {
+    public func perform() async throws -> IncrementalSync.Token {
         logger.debug("performing live sync v3")
         let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID)
-
-        if acknowledgeFullSync {
-            try await pushChannel.acknowledgeFullSync()
-        }
 
         logger.debug("opening new push channel v3")
         syncStateSubject.send(.incrementalSyncing(.openPushChannel))
@@ -92,7 +88,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                 case .upToDate:
                     logger.debug("upToDate event", attributes:  .syncAttributes(initialSync: false))
                     syncStateSubject.send(.liveSyncing(.ongoing))
-                    delegate?.didFinishSync(sync: self)
+                    delegate?.isUpToDate(sync: self)
 
                 case .missedEvents:
                     logger.debug("missedEvents event", attributes:  .syncAttributes(initialSync: false))
@@ -201,7 +197,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
             }
         } catch {
             logger.error(
-                "failed to ack live event envelope: \(String(describing: error))",
+                "failed to acknowledge live event envelope: \(String(describing: error))",
                 attributes: [.eventEnvelopeID: envelope.id] + .syncAttributes(initialSync: false)
             )
         }

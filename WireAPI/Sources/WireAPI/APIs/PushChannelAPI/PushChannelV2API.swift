@@ -15,26 +15,19 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-import Foundation
 
-public struct NewPushChannelAPIBuilder {
+// sourcery: AutoMockable
+/// An API access object for endpoints concerning the push channel.
+public protocol PushChannelV2API {
 
-    private let pushChannelService: PushChannelService
-
-    /// Create a new builder.
+    /// Create a new push channel.
     ///
-    /// - Parameter pushChannelService: A push channel service to execute requests.
-    ///
-    public init(pushChannelService: PushChannelService) {
-        self.pushChannelService = pushChannelService
-    }
+    /// - Parameter clientID: The id of the self client.
+    /// - Returns: A push channel.
 
-    /// Make a `PushChannelAPI`.
-    ///
-    /// - Returns: A `PushChannelAPI`.
-
-    public func makeAPI(for apiVersion: APIVersion) -> any NewPushChannelAPI {
-        NewPushChannelAPIImpl(pushChannelService: pushChannelService, apiVersion: apiVersion)
-    }
+    func createPushChannel(clientID: String) async throws -> AnyNewPushChannel
 
 }
+
+// Workaround for automockable compiler error.
+public typealias AnyNewPushChannel = any PushChannelV2Protocol

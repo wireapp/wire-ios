@@ -195,7 +195,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
     /// Perform an incremental sync.
 
-    func performIncrementalSync(shouldAcknowledgeFullSync: Bool = false) async throws {
+    func performIncrementalSync() async throws {
         let liveSync = journal[.isSyncV3Enabled]
 
         if isSyncV2Enabled {
@@ -207,7 +207,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
                     if liveSync {
                         incrementalSyncToken = try await incrementalSyncProvider.provideLiveSync(delegate: self)
-                            .perform(acknowledgeFullSync: shouldAcknowledgeFullSync)
+                            .perform()
                     } else {
                         incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync()
                             .perform()
@@ -262,7 +262,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
 extension SyncAgent: LiveSyncDelegate {
 
-    func didFinishSync(sync: IncrementalSyncV2) {
+    func isUpToDate(sync: IncrementalSyncV2) {
         delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: false)
     }
 
