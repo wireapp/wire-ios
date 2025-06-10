@@ -24,6 +24,7 @@ import WireLogging
 public final class PushChannelV2: PushChannelV2Protocol {
 
     public enum Element: Equatable {
+        case syncing(eventsCount: Int)
         case upToDate
         case event(UpdateEventEnvelope)
         case missedEvents
@@ -37,7 +38,10 @@ public final class PushChannelV2: PushChannelV2Protocol {
 
     private var keepAliveTask: Task<Void, any Error>?
     private let keepAliveInterval: TimeInterval
-
+    
+    private var elementsToSync = 0
+    private var elementsUntilUpToDate: Int?
+    
     private var (stream, continuation) = AsyncThrowingStream<Element, any Error>.makeStream()
 
     /// Initialize PushChannel with Async Stream capabitilites
@@ -63,7 +67,11 @@ public final class PushChannelV2: PushChannelV2Protocol {
                 for try await message in sourceStream {
 
                     let result = try receiveMessage(message)
+                    
                     continuation.yield(result)
+                    if elementsToSync == elementsUntilUpToDate {
+                        continuation.yield(.upToDate)
+                    }
                 }
             } catch {
                 WireLogger.pushChannel.error("got error: \(error)", attributes: .pushChannelV2)
@@ -94,9 +102,17 @@ public final class PushChannelV2: PushChannelV2Protocol {
         case let .data(data):
             WireLogger.pushChannel.debug("received web socket data, decoding...", attributes: .pushChannelV2)
             let envelope = try decoder.decode(WebSocketNotification.self, from: data)
-            if envelope.type == .event {
+            
+            switch envelope.type {
+            case .event:
+                self.elementsToSync += 1
                 return Element.event(envelope.toAPIModel())
-            } else {
+            case .messagesCount:
+                WireLogger.pushChannel.info("\(envelope.messageCount) until we're up to date", attributes: .pushChannelV2)
+                self.elementsUntilUpToDate = envelope.messageCount
+                self.elementsToSync = 0
+                return .syncing(eventsCount: envelope.messageCount)
+            case .notificationsMissed:
                 return Element.missedEvents
             }
 
@@ -154,6 +170,14 @@ public final class PushChannelV2: PushChannelV2Protocol {
         try await write(data: data)
     }
 
+    public func acknowledgeMessageCount() async throws {
+        WireLogger.pushChannel.debug("acknowledgeMessageCount", attributes: .pushChannelV2)
+        let acknowledgement = MessageCountAcknowledgment()
+        let data = try encoder.encode(acknowledgement)
+        try await write(data: data)
+    }
+
+    
     // MARK: - Helpers
 
     private func write(data: Data) async throws {

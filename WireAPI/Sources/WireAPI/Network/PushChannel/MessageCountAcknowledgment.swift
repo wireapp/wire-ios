@@ -17,8 +17,7 @@
 //
 import Foundation
 
-enum AcknowledgmentType: String, Encodable {
-    case fullSync = "ack_full_sync"
-    case messageCount = "ack_message_count"
-    case ack
+/// Payload of acknowledgment of messageCount for async stream
+struct MessageCountAcknowledgment: Encodable {
+    let type: AcknowledgmentType = .messageCount
 }

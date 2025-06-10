@@ -75,8 +75,7 @@ public final class PushChannelService: PushChannelServiceProtocol {
 
         return PushChannelV2(
             webSocket: webSocket,
-            keepAliveInterval: keepAliveInterval,
-            upToDateThreshold: 1
+            keepAliveInterval: keepAliveInterval
         )
     }
 }

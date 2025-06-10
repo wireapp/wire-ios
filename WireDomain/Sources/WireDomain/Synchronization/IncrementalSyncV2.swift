@@ -82,23 +82,27 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     ) async {
         logger.debug("handling live event stream v3")
         syncStateSubject.send(.liveSyncing(.ongoing))
-
         do {
             for try await element in liveEventStream {
-                logger.debug("received live event envelope v3")
+                logger.debug(
+                    "received live element: \(element)",
+                    attributes: .syncAttributes(initialSync: false)
+                )
                 switch element {
                 case .upToDate:
-                    logger.debug("upToDate event v3")
+                    logger.debug("upToDate event", attributes:  .syncAttributes(initialSync: false))
                     // TODO: double check idle
                     syncStateSubject.send(.idle)
                     delegate?.didFinishSync(sync: self)
 
                 case .missedEvents:
-                    logger.debug("missedEvents event v3")
+                    logger.debug("missedEvents event", attributes:  .syncAttributes(initialSync: false))
                     await delegate?.didMissedEvents(sync: self)
                     // TODO: [WPB-17609] insert potential gap message here with messageLocalStore
                     try await pushChannel.acknowledgeFullSync()
-
+                case .syncing:
+                    // ignore this event, it gives the number of messages until we're caught up
+                    try await pushChannel.acknowledgeMessageCount()
                 case let .event(envelope):
                     do {
                         var envelope = envelope
@@ -127,7 +131,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
 
         } catch {
             // if we end up here, the pushChannel is closed
-            logger.warn("v3 live event stream encountered error: \(String(describing: error))")
+            logger.warn("live event stream encountered error: \(String(describing: error))", attributes: .syncAttributes(initialSync: false))
             syncStateSubject.send(.liveSyncing(.finished))
             delegate?.didFail(sync: self, error: error)
             return
@@ -156,8 +160,8 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
             return decryptionEventsResult.events
         } catch {
             logger.error(
-                "failed to decrypt live event envelope  v3: \(String(describing: error))",
-                attributes: [.eventEnvelopeID: envelope.id]
+                "failed to decrypt live event envelope: \(String(describing: error))",
+                attributes: [.eventEnvelopeID: envelope.id] + .syncAttributes(initialSync: false)
             )
             throw error
         }
@@ -168,15 +172,15 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         do {
             // Store.
             logger.debug(
-                "storing live event envelope  v3",
-                attributes: [.eventEnvelopeID: envelope.id]
+                "storing live event envelope",
+                attributes: [.eventEnvelopeID: envelope.id] + .syncAttributes(initialSync: false)
             )
             index = try await store.indexOfLastEventEnvelope() + 1
             try await store.persistEventEnvelope(envelope, index: index)
         } catch {
             logger.error(
-                "failed to store live event envelope v3: \(String(describing: error))",
-                attributes: [.eventEnvelopeID: envelope.id]
+                "failed to store live event envelope: \(String(describing: error))",
+                attributes: [.eventEnvelopeID: envelope.id] + .syncAttributes(initialSync: false)
             )
             throw error
         }
@@ -191,15 +195,15 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         do {
             if let deliveryTag = envelope.deliveryTag {
                 logger.debug(
-                    "ack event envelope v3",
-                    attributes: [.eventEnvelopeID: envelope.id]
+                    "ack event envelope",
+                    attributes: [.eventEnvelopeID: envelope.id] + .syncAttributes(initialSync: false)
                 )
                 try await pushChannel.acknowledgeEvent(deliveryTag: deliveryTag, multiple: false)
             }
         } catch {
             logger.error(
-                "failed to ack live event envelope v3: \(String(describing: error))",
-                attributes: [.eventEnvelopeID: envelope.id]
+                "failed to ack live event envelope: \(String(describing: error))",
+                attributes: [.eventEnvelopeID: envelope.id] + .syncAttributes(initialSync: false)
             )
         }
     }
@@ -215,7 +219,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
             } catch {
                 logger.error(
                     "failed to process live event: \(String(describing: error))",
-                    attributes: [.eventEnvelopeID: envelope.id]
+                    attributes: [.eventEnvelopeID: envelope.id] + .syncAttributes(initialSync: false)
                 )
             }
         }
@@ -226,13 +230,13 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
             // Delete.
             logger.debug(
                 "deleting live event envelope",
-                attributes: [.eventEnvelopeID: envelope.id]
+                attributes: [.eventEnvelopeID: envelope.id] + .syncAttributes(initialSync: false)
             )
             try await store.deleteEventEnvelope(atIndex: index)
         } catch {
             logger.error(
-                "failed to delete live event envelope v3: \(String(describing: error))",
-                attributes: [.eventEnvelopeID: envelope.id]
+                "failed to delete live event envelope: \(String(describing: error))",
+                attributes: [.eventEnvelopeID: envelope.id] + .syncAttributes(initialSync: false)
             )
         }
     }
@@ -242,7 +246,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
             // Save.
             try await databaseSaver.save()
         } catch {
-            logger.error("failed to save database v3: \(String(describing: error))")
+            logger.error("failed to save database: \(String(describing: error))", attributes: .syncAttributes(initialSync: false))
         }
     }
 }

@@ -19,49 +19,97 @@ import Foundation
 
 /// Received data from websocket when async stream enabled
 struct WebSocketNotification: Decodable {
-
+    
     enum NotificationType: String, Decodable {
         case event
         case notificationsMissed = "notifications_missed"
         case messagesCount = "message_count"
     }
-
-    struct NotificationData: Decodable {
+    
+    enum DataType: Decodable {
+        case event(EventNotificationData)
+        case messageCount(MessageCountData)
+    }
+    
+    struct MessageCountData: Decodable {
+        var count: Int
+    }
+    
+    struct EventNotificationData: Decodable {
         enum CodingKeys: String, CodingKey {
             case deliveryTag = "delivery_tag"
             case event
         }
-
+        
         var deliveryTag: UInt64
         var event: UpdateEventEnvelopeV8
     }
-
+    
     var type: NotificationType
-    var data: NotificationData?
-
-    init(type: NotificationType, data: NotificationData? = nil) {
+    var data: DataType?
+    
+    init(type: NotificationType, data: DataType? = nil) {
         self.type = type
         self.data = data
+    }
+    
+    init(eventData: EventNotificationData) {
+        self.type = .event
+        self.data = .event(eventData)
+    }
+    
+    init(messageCount: Int) {
+        self.type = .messagesCount
+        self.data = .messageCount(.init(count: messageCount))
+    }
+    
+    enum CodingKeys: CodingKey {
+        case type
+        case data
+    }
+    
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.type = try container.decode(WebSocketNotification.NotificationType.self, forKey: .type)
+        
+        switch type {
+        case .event:
+            let data = try container.decode(WebSocketNotification.EventNotificationData.self, forKey: .data)
+            self.data = .event(data)
+        case .notificationsMissed:
+            self.data = nil
+        case .messagesCount:
+            let data = try container.decode(WebSocketNotification.MessageCountData.self, forKey: .data)
+            self.data = .messageCount(data)
+        }
     }
 }
 
 extension WebSocketNotification: ToAPIModelConvertible {
 
-    func toAPIModel() -> UpdateEventEnvelope {
-        guard let event = data?.event  else {
-            assertionFailure("don't call toAPIModel() when type is `notificationsMissed`")
-            return UpdateEventEnvelope(
-                id: UUID(),
-                events: [],
-                isTransient: false
-            )
+    var messageCount: Int {
+        switch data {
+        case .messageCount(let data):
+            return data.count
+        case .event, .none:
+            return 0
         }
-        return UpdateEventEnvelope(
-            id: event.id,
-            events: event.payload.map(\.updateEvent),
-            isTransient: false,
-            deliveryTag: data?.deliveryTag
-        )
+    }
+    
+    func toAPIModel() -> UpdateEventEnvelope {
+        switch data {
+        case .event(let eventData):
+            return UpdateEventEnvelope(
+                id: eventData.event.id,
+                events: eventData.event.payload.map(\.updateEvent),
+                isTransient: false,
+                deliveryTag: eventData.deliveryTag
+            )
+        case .messageCount(let data):
+            fatalError()
+        case .none:
+            fatalError()
+        }
     }
 }
 
@@ -75,6 +123,6 @@ extension WebSocketNotification {
 
     public init(event: UpdateEventEnvelopeV8, deliveryTag: UInt64) {
         self.type = .event
-        self.data = .init(deliveryTag: deliveryTag, event: event)
+        self.data = .event(.init(deliveryTag: deliveryTag, event: event))
     }
 }
