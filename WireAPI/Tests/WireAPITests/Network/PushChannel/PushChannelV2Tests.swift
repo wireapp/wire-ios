@@ -21,7 +21,7 @@ import XCTest
 @testable import WireAPI
 @testable import WireAPISupport
 
-final class NewPushChannelTests: XCTestCase {
+final class PushChannelV2Tests: XCTestCase {
 
     var sut: PushChannelV2!
     var request: URLRequest!
