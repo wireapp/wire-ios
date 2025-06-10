@@ -78,7 +78,7 @@ struct ContentView: View {
                     )
                 ),
                 useLegacyRegistrationFlow: false,
-                multibackendEnabled: true
+                isMultibackendEnabled: true
             ).view
     }
 

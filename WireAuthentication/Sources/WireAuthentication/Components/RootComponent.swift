@@ -39,7 +39,7 @@ class RootComponent: BootstrapComponent {
     public let ssoCallbackURLScheme: String
     public let appStoreURL: URL
     public let accountsPublisher: CurrentValuePublisher<[AccountUIModel]>
-    public let multibackendEnabled: Bool
+    public let isMultibackendEnabled: Bool
     public let useLegacyRegistrationFlow: Bool
 
     @MainActor public var bridge: WireAuthenticationBridge {
@@ -63,7 +63,7 @@ class RootComponent: BootstrapComponent {
         appStoreURL: URL,
         accountsPublisher: CurrentValuePublisher<[AccountUIModel]>,
         useLegacyRegistrationFlow: Bool,
-        multibackendEnabled: Bool
+        isMultibackendEnabled: Bool
     ) {
         self.backendInfo = backendInfo
         self.preferredAPIVersion = preferredAPIVersion
@@ -76,7 +76,7 @@ class RootComponent: BootstrapComponent {
         self.appStoreURL = appStoreURL
         self.accountsPublisher = accountsPublisher
         self.useLegacyRegistrationFlow = useLegacyRegistrationFlow
-        self.multibackendEnabled = multibackendEnabled
+        self.isMultibackendEnabled = isMultibackendEnabled
     }
 
     // MARK: - Children
@@ -107,7 +107,7 @@ extension RootComponent: RootViewModel.Factory {
                 factory: self,
                 bridge: bridge,
                 backendInfo: backendInfo,
-                multibackendEnabled: multibackendEnabled,
+                isMultibackendEnabled: isMultibackendEnabled,
                 hasOtherAccountsProvider: { [accountsPublisher] in
                     !accountsPublisher.value.isEmpty
                 }

@@ -468,7 +468,7 @@ extension Account {
             handle: "@handle",
             // TODO: [WPB-18008] when data will be ready https://wearezeta.atlassian.net/browse/WPB-18008
             teamName: teamName,
-            backendName: "Back END INFO", // TODO: [WPB-18008] https://wearezeta.atlassian.net/browse/WPB-18008
+            backendName: nil, // TODO: [WPB-18008] "Back END INFO" https://wearezeta.atlassian.net/browse/WPB-18008
             action: action
         )
     }

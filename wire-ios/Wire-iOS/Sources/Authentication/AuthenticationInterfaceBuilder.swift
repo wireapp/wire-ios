@@ -104,7 +104,7 @@ final class AuthenticationInterfaceBuilder {
                 appStoreURL: WireURLs.shared.appOnItunes,
                 accountsPublisher: CurrentValuePublisher(subject: CurrentValueSubject(accounts)),
                 useLegacyRegistrationFlow: !DeveloperFlag.newRegistration.isOn,
-                multibackendEnabled: DeveloperFlag.multibackend.isOn
+                isMultibackendEnabled: DeveloperFlag.multibackend.isOn
             )
             return AuthenticationHostingController(
                 rootView: rootView,

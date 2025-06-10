@@ -57,7 +57,7 @@ public struct WireAuthenticationAssembly {
         appStoreURL: URL,
         accountsPublisher: CurrentValuePublisher<[AccountUIModel]>,
         useLegacyRegistrationFlow: Bool,
-        multibackendEnabled: Bool
+        isMultibackendEnabled: Bool
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
         let backendInfo = BackendInfo(
             environmentType: environmentType,
@@ -74,7 +74,7 @@ public struct WireAuthenticationAssembly {
             appStoreURL: appStoreURL,
             accountsPublisher: accountsPublisher,
             useLegacyRegistrationFlow: useLegacyRegistrationFlow,
-            multibackendEnabled: multibackendEnabled
+            isMultibackendEnabled: isMultibackendEnabled
         )
 
         return (view: RootView(factory: rootComponent), bridge: rootComponent.bridge)
