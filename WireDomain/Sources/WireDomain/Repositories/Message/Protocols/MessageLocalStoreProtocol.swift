@@ -156,6 +156,22 @@ public protocol MessageLocalStoreProtocol {
         date: Date
     ) async
 
+    /// Adds a message confirmation to a message. This is used for read receipts.
+    /// - Parameters:
+    ///    - confirmation: The confirmation protobuf object.
+    ///    - conversation: The related conversation.
+    ///    - senderID: The message sender id.
+    ///    - senderDomain: The message sender domain.
+    ///    - date: The date the confirmation was added.
+
+    func addMessageConfirmation(
+        _ confirmation: WireProtos.Confirmation,
+        in conversation: ZMConversation,
+        senderID: UUID,
+        senderDomain: String,
+        date: Date
+    ) async
+
     /// Updates button states.
     /// - Parameters:
     ///     - buttonActionConfirmation: The button action confirmation protobuf object.
