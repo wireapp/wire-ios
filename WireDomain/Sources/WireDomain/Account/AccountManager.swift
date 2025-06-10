@@ -90,7 +90,7 @@ public final class AccountManager: NSObject {
 
     // MARK: - Add / update
 
-    /// Add an account to the manager and persists it.
+    /// Add an account to the manager and persist it.
     ///
     /// - parameter account: The account to add.
 
@@ -99,7 +99,7 @@ public final class AccountManager: NSObject {
         refreshCache()
     }
 
-    /// Add an account to the mananger and immediately and selects it.
+    /// Add an account to the mananger and immediately and select it.
     ///
     /// - parameter account: The account to add and select.
 
@@ -166,7 +166,7 @@ public final class AccountManager: NSObject {
         cache[id]
     }
 
-    /// Loads and sorts the stored accounts.
+    /// Load and sort the stored accounts.
     ///
     /// - returns: An Array consisting of the sorted accounts. Accounts without team will
     /// be first, sorted by their user name. Accounts with team will be last,
@@ -195,7 +195,6 @@ public final class AccountManager: NSObject {
 
         // Add or update values in cache.
         for account in accounts {
-            // TODO: fix this
             // Since some objects (eg. AccountView) observe changes in the account, we must
             // make sure their object addresses are maintained after updating, i.e if
             // exisiting objects need to be updated from the account store, we just update
@@ -213,7 +212,6 @@ public final class AccountManager: NSObject {
             cache[key] = nil
         }
 
-        // TODO: get rid of this.
         NotificationCenter.default.post(
             name: AccountManagerDidUpdateAccountsNotificationName,
             object: self

@@ -42,7 +42,7 @@ struct AccountStore {
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
 
-    /// Creates a new `AccountStore`.
+    /// Create a new `AccountStore`.
     ///
     /// `Account` objects will be stored in a subdirectory of the passed in url.
     /// - parameter root: The root url in which the storage will use to store its data
