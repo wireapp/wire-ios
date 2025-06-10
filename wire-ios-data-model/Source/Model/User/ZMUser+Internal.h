@@ -103,13 +103,10 @@ extern NSString * __nonnull const ReadReceiptsEnabledKey;
 @end
 
 
-@class ZMUserPreferences;
-
 NS_SWIFT_NAME(Session)
 @interface ZMSession : ZMManagedObject
 
 @property (nonnull, nonatomic, strong) ZMUser *selfUser;
-@property (nullable, nonatomic, retain) ZMUserPreferences *selfUserPreferences;
 
 @end
 

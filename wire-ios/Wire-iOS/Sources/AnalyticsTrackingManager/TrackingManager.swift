@@ -29,14 +29,14 @@ final class TrackingManager: TrackingInterface {
     private let sessionManager: SessionManager
     private var observerToken: NSObjectProtocol?
 
-//    private var journal: Journal? {
-//        guard let userID = sessionManager.activeUserSession?.selfUser.remoteIdentifier else { return nil }
-//
-//        return Journal(
-//            userID: userID,
-//            storage: sharedUserDefaults
-//        )
-//    }
+    private var journal: Journal? {
+        sessionManager.accountManager.selectedAccount.map { selectedAccount in
+            Journal(
+                userID: selectedAccount.userIdentifier,
+                storage: sharedUserDefaults
+            )
+        }
+    }
 
     init(
         sharedUserDefaults: UserDefaults,
@@ -53,27 +53,21 @@ final class TrackingManager: TrackingInterface {
             queue: .main,
             using: { [weak self] _ in
                 guard let self else { return }
-                AVSFlowManager.getInstance()?.setEnableMetrics(isAnalyticsEnabled)
+                AVSFlowManager.getInstance()?.setEnableMetrics(isAnalyticsTrackingEnabled)
             }
         )
 
-        AVSFlowManager.getInstance()?.setEnableMetrics(isAnalyticsEnabled)
+        AVSFlowManager.getInstance()?.setEnableMetrics(isAnalyticsTrackingEnabled)
     }
 
     private var doesUserConsentPreferenceExist: Bool {
         migrateFromLegacyStorageIfNeeded()
-
-        guard let userID = sessionManager.accountManager.selectedAccount.map(\.userIdentifier) else { return false }
-        let journal = Journal(userID: userID, storage: sharedUserDefaults)
-        return journal[.isAnalyticsTrackingConsentGiven] != nil
+        return journal?[.isAnalyticsTrackingConsentGiven] != nil
     }
 
-    var isAnalyticsEnabled: Bool {
+    var isAnalyticsTrackingEnabled: Bool {
         migrateFromLegacyStorageIfNeeded()
-
-        guard let userID = sessionManager.accountManager.selectedAccount.map(\.userIdentifier) else { return false }
-        let journal = Journal(userID: userID, storage: sharedUserDefaults)
-        return journal[.isAnalyticsTrackingConsentGiven] ?? false
+        return journal?[.isAnalyticsTrackingConsentGiven] ?? false
     }
 
     @MainActor
@@ -98,21 +92,13 @@ final class TrackingManager: TrackingInterface {
     func enableAnalytics() async throws {
         try await sessionManager.makeEnableAnalyticsUseCase().invoke()
         AVSFlowManager.getInstance()?.setEnableMetrics(true)
-
-        if let userID = sessionManager.accountManager.selectedAccount.map(\.userIdentifier) {
-            let journal = Journal(userID: userID, storage: sharedUserDefaults)
-            journal[.isAnalyticsTrackingConsentGiven] = true
-        }
+        journal?[.isAnalyticsTrackingConsentGiven] = true
     }
 
     func disableAnalytics() throws {
         try sessionManager.makeDisableAnalyticsUseCase().invoke()
         AVSFlowManager.getInstance()?.setEnableMetrics(false)
-
-        if let userID = sessionManager.accountManager.selectedAccount.map(\.userIdentifier) {
-            let journal = Journal(userID: userID, storage: sharedUserDefaults)
-            journal[.isAnalyticsTrackingConsentGiven] = false
-        }
+        journal?[.isAnalyticsTrackingConsentGiven] = false
     }
 
     /// Previously the consent for analytics tracking was stored only once per app.

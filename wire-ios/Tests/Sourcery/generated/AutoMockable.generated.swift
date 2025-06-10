@@ -1617,14 +1617,14 @@ class MockTrackingInterface: TrackingInterface {
     // MARK: - Life cycle
 
 
-    // MARK: - isAnalyticsEnabled
+    // MARK: - isAnalyticsTrackingEnabled
 
-    var isAnalyticsEnabled: Bool {
-        get { return underlyingIsAnalyticsEnabled }
-        set(value) { underlyingIsAnalyticsEnabled = value }
+    var isAnalyticsTrackingEnabled: Bool {
+        get { return underlyingIsAnalyticsTrackingEnabled }
+        set(value) { underlyingIsAnalyticsTrackingEnabled = value }
     }
 
-    var underlyingIsAnalyticsEnabled: Bool!
+    var underlyingIsAnalyticsTrackingEnabled: Bool!
 
 
     // MARK: - requestAnalyticsConsent
