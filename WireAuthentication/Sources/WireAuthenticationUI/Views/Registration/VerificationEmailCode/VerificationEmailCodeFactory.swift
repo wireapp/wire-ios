@@ -16,14 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
-import WireAuthenticationAPI
+import Foundation
 
-package protocol PersonalAccountCreationFactory {
+package protocol VerificationEmailCodeFactory {
 
-    @MainActor var viewModel: PersonalAccountCreationViewModel { get }
-
-    @MainActor
-    func verificationEmailCodeFactory() -> any VerificationEmailCodeFactory
+    @MainActor var viewModel: VerificationEmailCodeViewModel { get }
 
 }

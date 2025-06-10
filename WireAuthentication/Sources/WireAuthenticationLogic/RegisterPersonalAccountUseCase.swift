@@ -16,14 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import WireAPI
 import WireAuthenticationAPI
 
-package protocol PersonalAccountCreationFactory {
+package struct RegisterPersonalAccountUseCase: RegisterPersonalAccountUseCaseProtocol {
 
-    @MainActor var viewModel: PersonalAccountCreationViewModel { get }
+    private let authenticationAPI: AuthenticationAPI
 
-    @MainActor
-    func verificationEmailCodeFactory() -> any VerificationEmailCodeFactory
+    package init(authenticationAPI: AuthenticationAPI) {
+        self.authenticationAPI = authenticationAPI
+    }
 
+    package func invoke() async throws {
+    }
 }

@@ -35,6 +35,19 @@ private func parent4(_ component: NeedleFoundation.Scope) -> NeedleFoundation.Sc
 
 #if !NEEDLE_DYNAMIC
 
+private class VerificationEmailCodeComponentDependency1187b119f31c839e0ba3Provider: VerificationEmailCodeComponentDependency {
+    var networkStack: NetworkStack {
+        return loginViaEmailComponent.networkStack
+    }
+    private let loginViaEmailComponent: LoginViaEmailComponent
+    init(loginViaEmailComponent: LoginViaEmailComponent) {
+        self.loginViaEmailComponent = loginViaEmailComponent
+    }
+}
+/// ^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->PersonalAccountCreationComponent->VerificationEmailCodeComponent
+private func factoryd09536bf5bccb74b4ca6f96625c6244b6fd4c279(_ component: NeedleFoundation.Scope) -> AnyObject {
+    return VerificationEmailCodeComponentDependency1187b119f31c839e0ba3Provider(loginViaEmailComponent: parent2(component) as! LoginViaEmailComponent)
+}
 private class VerificationCodeComponentDependency48f3b80358781bc7c928Provider: VerificationCodeComponentDependency {
     var router: any Router {
         return rootComponent.router
@@ -171,6 +184,11 @@ private func factory9bda312c16141c932061a9403e3301bb54f80df0(_ component: Needle
 }
 
 #else
+extension VerificationEmailCodeComponent: NeedleFoundation.Registration {
+    public func registerItems() {
+        keyPathToName[\VerificationEmailCodeComponentDependency.networkStack] = "networkStack-NetworkStack"
+    }
+}
 extension VerificationCodeComponent: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\VerificationCodeComponentDependency.router] = "router-any Router"
@@ -198,6 +216,7 @@ extension PersonalAccountCreationComponent: NeedleFoundation.Registration {
         keyPathToName[\PersonalAccountCreationComponentDependency.privacyPolicyURL] = "privacyPolicyURL-URL"
         keyPathToName[\PersonalAccountCreationComponentDependency.termsOfUseURL] = "termsOfUseURL-URL"
         keyPathToName[\PersonalAccountCreationComponentDependency.personalAccountCreationAnalyticsTracker] = "personalAccountCreationAnalyticsTracker-any PersonalAccountCreationAnalyticsTrackerProtocol"
+
     }
 }
 extension RootComponent: NeedleFoundation.Registration {
@@ -257,6 +276,7 @@ private func registerProviderFactory(_ componentPath: String, _ factory: @escapi
 #if !NEEDLE_DYNAMIC
 
 @inline(never) private func register1() {
+    registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->PersonalAccountCreationComponent->VerificationEmailCodeComponent", factoryd09536bf5bccb74b4ca6f96625c6244b6fd4c279)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->VerificationCodeComponent", factoryd3638676a47fce1fe62317031e1ba787d83cb463)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent", factoryd47fa74281e135cd9f10b3a8f24c1d289f2c0f2e)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->PersonalAccountCreationComponent", factory98c59649331d50383edd17031e1ba787d83cb463)

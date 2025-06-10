@@ -35,6 +35,14 @@ final class PersonalAccountCreationComponent: Component<PersonalAccountCreationC
 
     // MARK: - Children
 
+    func verificationEmailCodeComponent() -> VerificationEmailCodeComponent {
+        VerificationEmailCodeComponent(
+            parent: self,
+            email: email,
+            password: ""
+        )
+    }
+
 }
 
 extension PersonalAccountCreationComponent: PersonalAccountCreationViewModel.Factory {
@@ -44,11 +52,16 @@ extension PersonalAccountCreationComponent: PersonalAccountCreationViewModel.Fac
     @MainActor var viewModel: PersonalAccountCreationViewModel {
         PersonalAccountCreationViewModel(
             factory: self,
+            router: dependency.router,
             email: email,
             privacyPolicyURL: dependency.privacyPolicyURL,
             termsOfUseURL: dependency.termsOfUseURL,
             passwordValidator: dependency.passwordValidator
         )
+    }
+
+    func verificationEmailCodeFactory() -> any VerificationEmailCodeFactory {
+        verificationEmailCodeComponent()
     }
 
     // MARK: - Use cases
@@ -60,6 +73,11 @@ extension PersonalAccountCreationComponent: PersonalAccountCreationViewModel.Fac
 
     func validateEmailUseCase() -> any ValidateEmailUseCaseProtocol {
         ValidateEmailUseCase()
+    }
+
+    func registerPersonalAccountUseCase() async throws -> any RegisterPersonalAccountUseCaseProtocol {
+        let authenticationAPI = try await dependency.networkStack.makeAuthenticationAPI()
+        return RegisterPersonalAccountUseCase(authenticationAPI: authenticationAPI)
     }
 
 }

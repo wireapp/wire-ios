@@ -23,7 +23,6 @@ import WireReusableUIComponents
 struct PersonalAccountCreationView: View {
 
     @StateObject private var viewModel: PersonalAccountCreationViewModel
-    @Environment(\.dismiss) private var dismiss
 
     private typealias Strings = L10n.Localizable.CreatePersonalAccount
     private typealias Labels = L10n.Accessibility.CreatePersonalAccount
@@ -37,11 +36,17 @@ struct PersonalAccountCreationView: View {
     package var body: some View {
         ScrollView {
             scrollViewContent
-                .navigationTitle(Strings.title)
-                .navigationBarTitleDisplayMode(.inline)
-                .setPreferredSize(navigationBarHidden: false)
-                .customBackButton()
-                .background(ColorTheme.Backgrounds.surface.color)
+            .navigationTitle(Strings.title)
+            .navigationBarTitleDisplayMode(.inline)
+            .setPreferredSize(navigationBarHidden: false)
+            .customBackButton()
+            .background(ColorTheme.Backgrounds.surface.color)
+        }
+        .navigationDestination(for: PersonalAccountCreationDestination.self) {
+            switch $0 {
+            case let .verifyEmail(email, password, name):
+                VerificationEmailCodeView(factory: viewModel.factory.verificationEmailCodeFactory())
+            }
         }
         .alert(
             item: $viewModel.alert,
@@ -143,7 +148,7 @@ struct PersonalAccountCreationView: View {
         })
         .wireButtonStyle(.primary)
         .bold()
-        .disabled(!viewModel.canRequestVerificationCode)
+        //        .disabled(!viewModel.canRequestVerificationCode)
     }
 
     @ViewBuilder private var teamAccountCreationView: some View {

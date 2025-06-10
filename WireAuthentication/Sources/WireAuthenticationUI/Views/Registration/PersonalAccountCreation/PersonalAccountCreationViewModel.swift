@@ -23,8 +23,12 @@ import WireReusableUIComponents
 @MainActor
 package final class PersonalAccountCreationViewModel: ObservableObject {
 
-    package typealias Factory = PersonalAccountCreationFactory & RequestEmailVerificationCodeUseCaseFactory &
-        ValidateEmailUseCaseFactory
+    package typealias Factory =
+        RequestEmailVerificationCodeUseCaseFactory &
+        RegisterPersonalAccountUseCaseFactory &
+        ValidateEmailUseCaseFactory &
+        PersonalAccountCreationFactory
+
 
     @Published var alert: Alert?
     @Published var isCreateTeamAccountPresented = false
@@ -41,18 +45,21 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
     }
 
     package let factory: any Factory
+    private let router: any Router
     package let privacyPolicyURL: URL
     package let termsOfUseURL: URL
     private let passwordValidator: any PasswordValidator
 
     package init(
         factory: any Factory,
+        router: any Router,
         email: String,
         privacyPolicyURL: URL,
         termsOfUseURL: URL,
         passwordValidator: any PasswordValidator
     ) {
         self.factory = factory
+        self.router = router
         self.email = email
         self.privacyPolicyURL = privacyPolicyURL
         self.termsOfUseURL = termsOfUseURL
@@ -87,11 +94,17 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
     }
 
     func requestEmailVerificationCode() async throws {
-        guard canRequestVerificationCode else {
-            return
-        }
-        let requestEmailVerificationCode = try await factory.requestEmailVerificationCodeUseCase()
-        return try await requestEmailVerificationCode.invoke(email: email)
+//        guard canRequestVerificationCode else {
+//            return
+//        }
+//        let requestEmailVerificationCode = try await factory.requestEmailVerificationCodeUseCase()
+//        try await requestEmailVerificationCode.invoke(email: email)
+
+        router.navigate(to: PersonalAccountCreationDestination.verifyEmail(
+            email: email,
+            password: password,
+            name: name
+        ))
     }
 
 }
