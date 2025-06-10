@@ -22,26 +22,19 @@ import XCTest
 @testable import WireAnalytics
 @testable import WireAnalyticsSupport
 
-class AnalyticsServiceTests: XCTestCase {
+final class AnalyticsServiceTests: XCTestCase {
 
     private var sut: AnalyticsService!
-    private var countlyMock: MockCountlyProtocol!
+    private var countlyMock: CountlyProtocolMock!
 
-    override func setUpWithError() throws {
+    @MainActor
+    override func setUp() async throws {
         countlyMock = .init()
         sut = AnalyticsService(
             config: Scaffolding.config,
             baseSegmentation: Scaffolding.baseSegmentation,
             countlyProvider: { self.countlyMock }
         )
-
-        countlyMock.startAppKeyHost_MockMethod = { _, _ in }
-        countlyMock.resetInstance_MockMethod = {}
-        countlyMock.endSession_MockMethod = {}
-        countlyMock.beginSession_MockMethod = {}
-        countlyMock.changeDeviceIDMergeData_MockMethod = { _, _ in }
-        countlyMock.setUserValueForKey_MockMethod = { _, _ in }
-        countlyMock.recordEventSegmentation_MockMethod = { _, _ in }
     }
 
     override func tearDown() {
@@ -49,53 +42,26 @@ class AnalyticsServiceTests: XCTestCase {
         sut = nil
     }
 
-    func resetMockInvocations() {
-        countlyMock.startAppKeyHost_Invocations = []
-        countlyMock.endSession_Invocations = []
-        countlyMock.beginSession_Invocations = []
-        countlyMock.changeDeviceIDMergeData_Invocations = []
-        countlyMock.setUserValueForKey_Invocations = []
-        countlyMock.resetInstance_Invocations = []
-    }
-
     // MARK: - Tests
-
-    @MainActor
-    func testEnableTracking_service_is_not_configured() async throws {
-        // Given a service with no config.
-        let sut = AnalyticsService(
-            config: nil,
-            baseSegmentation: Scaffolding.baseSegmentation,
-            countlyProvider: { self.countlyMock }
-        )
-
-        do {
-            // When tracking is enabled.
-            try await sut.enableTracking()
-            XCTFail("expected error AnalyticsServiceError.serviceIsNotConfigured")
-        } catch AnalyticsServiceError.serviceIsNotConfigured {
-            // Then
-        }
-    }
 
     @MainActor
     func testEnableTracking_succeeds() async throws {
         // When tracking is enabled.
-        try await sut.enableTracking()
+        sut.enableTracking()
 
         // Then the service was started.
-        let invocations = countlyMock.startAppKeyHost_Invocations
+        let invocations = countlyMock.startAppKeyStringHostURLVoidReceivedInvocations
 
         guard invocations.count == 1 else {
             XCTFail("expected 1 invocation, got: \(invocations.count)")
             return
         }
 
-        XCTAssertEqual(invocations[0].appKey, Scaffolding.config.secretKey)
-        XCTAssertEqual(invocations[0].host, Scaffolding.config.serverHost)
+        XCTAssertEqual(invocations[0].appKey, Scaffolding.config.appKey)
+        XCTAssertEqual(invocations[0].host, Scaffolding.config.host)
 
         // Then no session has started yet.
-        XCTAssertEqual(countlyMock.beginSession_Invocations.count, 0)
+        XCTAssertEqual(countlyMock.beginSessionVoidCallsCount, 0)
     }
 
     func testDisableTracking_service_is_not_configured() throws {
@@ -114,18 +80,17 @@ class AnalyticsServiceTests: XCTestCase {
     @MainActor
     func testDisableTracking_succeeds() async throws {
         // Given tracking is enabled.
-        try await sut.enableTracking()
-        resetMockInvocations()
+        sut.enableTracking()
 
         // When tracking is disabled.
         try sut.disableTracking()
 
         // Then any session was ended and the service was reset.
-        XCTAssertEqual(countlyMock.endSession_Invocations.count, 1)
-        XCTAssertEqual(countlyMock.resetInstance_Invocations.count, 1)
+        XCTAssertEqual(countlyMock.endSessionVoidCallsCount, 1)
+        XCTAssertEqual(countlyMock.resetInstanceVoidCallsCount, 1)
 
         // Then the user was cleared.
-        let setUserInvocations = countlyMock.setUserValueForKey_Invocations
+        let setUserInvocations = countlyMock.setUserValueValueStringForKeyKeyStringVoidReceivedInvocations
 
         guard setUserInvocations.count == 3 else {
             XCTFail("expected 3 invocation, got: \(setUserInvocations.count)")
@@ -155,39 +120,37 @@ class AnalyticsServiceTests: XCTestCase {
     @MainActor
     func testSwitchUser_user_is_same() async throws {
         // Given tracking is enabled.
-        try await sut.enableTracking()
+        sut.enableTracking()
 
         // Given a user is set.
         try sut.switchUser(Scaffolding.user)
-        resetMockInvocations()
 
         // When switching to the same user.
         try sut.switchUser(Scaffolding.user)
 
         // Then the user was not switched again.
-        XCTAssertEqual(countlyMock.endSession_Invocations.count, 0)
-        XCTAssertEqual(countlyMock.changeDeviceIDMergeData_Invocations.count, 0)
-        XCTAssertEqual(countlyMock.setUserValueForKey_Invocations.count, 0)
-        XCTAssertEqual(countlyMock.beginSession_Invocations.count, 0)
+        XCTAssertEqual(countlyMock.endSessionVoidCallsCount, 0)
+        XCTAssertEqual(countlyMock.changeDeviceIDIdStringMergeDataBoolVoidCallsCount, 0)
+        XCTAssertEqual(countlyMock.setUserValueValueStringForKeyKeyStringVoidCallsCount, 0)
+        XCTAssertEqual(countlyMock.beginSessionVoidCallsCount, 0)
     }
 
     @MainActor
     func testSwitchUser_succeeds() async throws {
         // Given tracking is enabled.
-        try await sut.enableTracking()
+        sut.enableTracking()
 
         // Given a user is set.
         try sut.switchUser(Scaffolding.user)
-        resetMockInvocations()
 
         // When switching to a different user.
         try sut.switchUser(Scaffolding.userWithTeam)
 
         // Then the existing session was ended.
-        XCTAssertEqual(countlyMock.endSession_Invocations.count, 1)
+        XCTAssertEqual(countlyMock.endSessionVoidCallsCount, 1)
 
         // Then the device id was changed.
-        let deviceChangeInvocations = countlyMock.changeDeviceIDMergeData_Invocations
+        let deviceChangeInvocations = countlyMock.changeDeviceIDIdStringMergeDataBoolVoidReceivedInvocations
         guard deviceChangeInvocations.count == 1 else {
             XCTFail("expected 1 device change invocation, got \(deviceChangeInvocations.count)")
             return
@@ -197,7 +160,7 @@ class AnalyticsServiceTests: XCTestCase {
         XCTAssertEqual(deviceChangeInvocations[0].mergeData, false)
 
         // Then the user details were set.
-        let userSetInvocations = countlyMock.setUserValueForKey_Invocations
+        let userSetInvocations = countlyMock.setUserValueValueStringForKeyKeyStringVoidReceivedInvocations
         guard userSetInvocations.count == 3 else {
             XCTFail("expected 3 user set invocations, got \(userSetInvocations.count)")
             return
@@ -212,13 +175,13 @@ class AnalyticsServiceTests: XCTestCase {
         XCTAssertEqual(userSetInvocations[2].value, String(teamInfo.size.logRound()))
 
         // Then a new session was started.
-        XCTAssertEqual(countlyMock.beginSession_Invocations.count, 1)
+        XCTAssertEqual(countlyMock.beginSessionVoidCallsCount, 1)
     }
 
     @MainActor
     func testUpdateCurrentUser_no_current_user() async throws {
         // Given tracking is enabled.
-        try await sut.enableTracking()
+        sut.enableTracking()
 
         // Given no current user.
 
@@ -226,41 +189,39 @@ class AnalyticsServiceTests: XCTestCase {
         try sut.updateCurrentUser(Scaffolding.user)
 
         // Then the user was not updated.
-        XCTAssertEqual(countlyMock.changeDeviceIDMergeData_Invocations.count, 0)
-        XCTAssertEqual(countlyMock.setUserValueForKey_Invocations.count, 0)
+        XCTAssertEqual(countlyMock.changeDeviceIDIdStringMergeDataBoolVoidCallsCount, 0)
+        XCTAssertEqual(countlyMock.setUserValueValueStringForKeyKeyStringVoidCallsCount, 0)
     }
 
     @MainActor
     func testUpdateCurrentUser_no_change() async throws {
         // Given tracking is enabled.
-        try await sut.enableTracking()
+        sut.enableTracking()
 
         // Given a current user is set.
         try sut.switchUser(Scaffolding.user)
-        resetMockInvocations()
 
         // When updating the current user with no change.
         try sut.updateCurrentUser(Scaffolding.user)
 
         // Then no user data changed.
-        XCTAssertEqual(countlyMock.changeDeviceIDMergeData_Invocations.count, 0)
-        XCTAssertEqual(countlyMock.setUserValueForKey_Invocations.count, 0)
+        XCTAssertEqual(countlyMock.changeDeviceIDIdStringMergeDataBoolVoidCallsCount, 0)
+        XCTAssertEqual(countlyMock.setUserValueValueStringForKeyKeyStringVoidCallsCount, 0)
     }
 
     @MainActor
     func testUpdateCurrentUser_with_change() async throws {
         // Given tracking is enabled.
-        try await sut.enableTracking()
+        sut.enableTracking()
 
         // Given a current user is set.
         try sut.switchUser(Scaffolding.user)
-        resetMockInvocations()
 
         // When updating the current user.
         try sut.updateCurrentUser(Scaffolding.userWithTeam)
 
         // Then the device id was changed with a merge.
-        let deviceChangeInvocations = countlyMock.changeDeviceIDMergeData_Invocations
+        let deviceChangeInvocations = countlyMock.changeDeviceIDIdStringMergeDataBoolVoidReceivedInvocations
         guard deviceChangeInvocations.count == 1 else {
             XCTFail("expected 1 device change invocation, got \(deviceChangeInvocations.count)")
             return
@@ -270,7 +231,7 @@ class AnalyticsServiceTests: XCTestCase {
         XCTAssertEqual(deviceChangeInvocations[0].mergeData, true)
 
         // Then the user details were set.
-        let userSetInvocations = countlyMock.setUserValueForKey_Invocations
+        let userSetInvocations = countlyMock.setUserValueValueStringForKeyKeyStringVoidReceivedInvocations
         guard userSetInvocations.count == 3 else {
             XCTFail("expected 3 user set invocations, got \(userSetInvocations.count)")
             return
@@ -292,13 +253,13 @@ class AnalyticsServiceTests: XCTestCase {
         sut.trackEvent(Scaffolding.event)
 
         // Then no event was tracked.
-        XCTAssertEqual(countlyMock.recordEventSegmentation_Invocations.count, 0)
+        XCTAssertEqual(countlyMock.recordEventKeyStringSegmentationStringStringVoidCallsCount, 0)
     }
 
     @MainActor
     func testTrackEvent_no_current_user() async throws {
         // Given tracking is enabled.
-        try await sut.enableTracking()
+        sut.enableTracking()
 
         // Given no current user.
 
@@ -306,13 +267,13 @@ class AnalyticsServiceTests: XCTestCase {
         sut.trackEvent(Scaffolding.event)
 
         // Then no event was tracked.
-        XCTAssertEqual(countlyMock.recordEventSegmentation_Invocations.count, 0)
+        XCTAssertEqual(countlyMock.recordEventKeyStringSegmentationStringStringVoidCallsCount, 0)
     }
 
     @MainActor
     func testTrackEvent_succeeds() async throws {
         // Given tracking is enabled.
-        try await sut.enableTracking()
+        sut.enableTracking()
 
         // Given a current user.
         try sut.switchUser(Scaffolding.user)
@@ -321,7 +282,7 @@ class AnalyticsServiceTests: XCTestCase {
         sut.trackEvent(Scaffolding.event)
 
         // Then a single event was tracked.
-        let recordInvocations = countlyMock.recordEventSegmentation_Invocations
+        let recordInvocations = countlyMock.recordEventKeyStringSegmentationStringStringVoidReceivedInvocations
         guard recordInvocations.count == 1 else {
             XCTFail("expected 1 recordInvocation, got \(recordInvocations.count)")
             return
@@ -339,9 +300,9 @@ class AnalyticsServiceTests: XCTestCase {
 
 private enum Scaffolding {
 
-    static let config = AnalyticsService.Config(
-        secretKey: "SECRETKEY",
-        serverHost: URL(string: "www.example.com")!
+    @MainActor static let config = CountlyConfiguration(
+        appKey: "SECRETKEY",
+        host: URL(string: "www.example.com")!
     )
 
     static let user = AnalyticsUser(analyticsIdentifier: "user1")
