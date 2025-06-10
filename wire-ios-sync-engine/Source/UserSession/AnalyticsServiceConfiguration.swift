@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import Foundation
+
 /// Information needed to enable analytics tracking.
 
 public struct AnalyticsServiceConfiguration {
@@ -28,25 +30,18 @@ public struct AnalyticsServiceConfiguration {
 
     public let serverHost: URL
 
-    /// Whether the user has given consent to track events.
-
-    public let didUserGiveTrackingConsent: Bool
-
     /// Create a new `AnalyticsServiceConfiguration`.
     ///
     /// - Parameters:
     ///   - secretKey: The secret key used to connect to the analytics server.
     ///   - serverHost: The url of the analytics server.
-    ///   - didUserGiveTrackingConsent: Whether the user has given consent to track events.
 
     public init(
         secretKey: String,
-        serverHost: URL,
-        didUserGiveTrackingConsent: Bool
+        serverHost: URL
     ) {
         self.secretKey = secretKey
         self.serverHost = serverHost
-        self.didUserGiveTrackingConsent = didUserGiveTrackingConsent
     }
 
 }
