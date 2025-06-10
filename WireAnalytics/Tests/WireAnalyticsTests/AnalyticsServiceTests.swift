@@ -42,6 +42,14 @@ final class AnalyticsServiceTests: XCTestCase {
         sut = nil
     }
 
+    func resetMockInvocations() {
+        countlyMock.startAppKeyStringHostURLVoidReceivedInvocations = []
+        countlyMock.beginSessionVoidCallsCount = 0
+        countlyMock.changeDeviceIDIdStringMergeDataBoolVoidReceivedInvocations = []
+        countlyMock.setUserValueValueStringForKeyKeyStringVoidReceivedInvocations = []
+        countlyMock.resetInstanceVoidCallsCount = 0
+    }
+
     // MARK: - Tests
 
     @MainActor
@@ -81,6 +89,7 @@ final class AnalyticsServiceTests: XCTestCase {
     func testDisableTracking_succeeds() async throws {
         // Given tracking is enabled.
         sut.enableTracking()
+        resetMockInvocations()
 
         // When tracking is disabled.
         try sut.disableTracking()
@@ -124,6 +133,7 @@ final class AnalyticsServiceTests: XCTestCase {
 
         // Given a user is set.
         try sut.switchUser(Scaffolding.user)
+        resetMockInvocations()
 
         // When switching to the same user.
         try sut.switchUser(Scaffolding.user)
@@ -142,6 +152,7 @@ final class AnalyticsServiceTests: XCTestCase {
 
         // Given a user is set.
         try sut.switchUser(Scaffolding.user)
+        resetMockInvocations()
 
         // When switching to a different user.
         try sut.switchUser(Scaffolding.userWithTeam)
@@ -200,6 +211,7 @@ final class AnalyticsServiceTests: XCTestCase {
 
         // Given a current user is set.
         try sut.switchUser(Scaffolding.user)
+        resetMockInvocations()
 
         // When updating the current user with no change.
         try sut.updateCurrentUser(Scaffolding.user)
@@ -216,6 +228,7 @@ final class AnalyticsServiceTests: XCTestCase {
 
         // Given a current user is set.
         try sut.switchUser(Scaffolding.user)
+        resetMockInvocations()
 
         // When updating the current user.
         try sut.updateCurrentUser(Scaffolding.userWithTeam)
