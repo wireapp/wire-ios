@@ -66,9 +66,12 @@ struct AccountView: View {
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel(L10n.Accessibility.account)
-        .accessibilityValue(L10n.Accessibility.accountValue(account.name) + details.joined(separator: ","))
+        .accessibilityValue(
+            L10n.Accessibility.Account.value(account.name) + details
+                .joined(separator: ",")
+        )
         .accessibilityAddTraits(.isButton)
-        .accessibilityHint(L10n.Accessibility.accountHint)
+        .accessibilityHint(L10n.Accessibility.Account.hint)
         .contentShape(Rectangle())
         .onTapGesture {
             account.action()

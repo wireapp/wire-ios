@@ -17,5 +17,5 @@
 //
 
 "account" = "Account";
-"account_value" = "%@ account";
-"account_hint" = "Tap to switch account";
+"account.value" = "%@ account";
+"account.hint" = "Tap to switch account";
