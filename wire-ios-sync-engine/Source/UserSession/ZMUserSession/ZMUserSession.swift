@@ -1245,7 +1245,7 @@ extension ZMUserSession: SyncAgentDelegate {
             } else {
                 processLegacyEvents()
             }
-            
+
             NotificationInContext(
                 name: .quickSyncCompletedNotification,
                 context: notificationContext

@@ -21,4 +21,3 @@ import Foundation
 struct FullSyncAcknowledgment: Encodable {
     let type: AcknowledgmentType = .fullSync
 }
-

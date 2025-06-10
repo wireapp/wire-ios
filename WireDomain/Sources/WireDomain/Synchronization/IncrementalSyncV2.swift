@@ -86,12 +86,11 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                 )
                 switch element {
                 case .upToDate:
-                    logger.debug("upToDate event", attributes:  .syncAttributes(initialSync: false))
+                    logger.debug("upToDate event", attributes: .syncAttributes(initialSync: false))
                     syncStateSubject.send(.liveSyncing(.ongoing))
                     delegate?.isUpToDate(sync: self)
-
                 case .missedEvents:
-                    logger.debug("missedEvents event", attributes:  .syncAttributes(initialSync: false))
+                    logger.debug("missedEvents event", attributes: .syncAttributes(initialSync: false))
                     await delegate?.didMissedEvents(sync: self)
                     // TODO: [WPB-17609] insert potential gap message here with messageLocalStore
                     try await pushChannel.acknowledgeFullSync()
@@ -126,7 +125,10 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
 
         } catch {
             // if we end up here, the pushChannel is closed
-            logger.warn("live event stream encountered error: \(String(describing: error))", attributes: .syncAttributes(initialSync: false))
+            logger.warn(
+                "live event stream encountered error: \(String(describing: error))",
+                attributes: .syncAttributes(initialSync: false)
+            )
             syncStateSubject.send(.liveSyncing(.finished))
             delegate?.didFail(sync: self, error: error)
             return
@@ -241,7 +243,10 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
             // Save.
             try await databaseSaver.save()
         } catch {
-            logger.error("failed to save database: \(String(describing: error))", attributes: .syncAttributes(initialSync: false))
+            logger.error(
+                "failed to save database: \(String(describing: error))",
+                attributes: .syncAttributes(initialSync: false)
+            )
         }
     }
 }

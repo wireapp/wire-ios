@@ -36,9 +36,9 @@ public protocol PushChannelV2Protocol: Sendable {
     func acknowledgeFullSync() async throws
 
     /// Acknowledge a messageCount notification has been received
-    
+
     func acknowledgeMessageCount() async throws
-    
+
     /// Acknowledge an event has been received
     /// - Parameters:
     ///   - deliveryTag: the associated deliveryTag of the (last) event

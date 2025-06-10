@@ -38,10 +38,10 @@ public final class PushChannelV2: PushChannelV2Protocol {
 
     private var keepAliveTask: Task<Void, any Error>?
     private let keepAliveInterval: TimeInterval
-    
+
     private var elementsToSync = 0
     private var elementsUntilUpToDate: Int?
-    
+
     private var (stream, continuation) = AsyncThrowingStream<Element, any Error>.makeStream()
 
     /// Initialize PushChannel with Async Stream capabitilites
@@ -67,7 +67,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
                 for try await message in sourceStream {
 
                     let result = try receiveMessage(message)
-                    
+
                     continuation.yield(result)
                     if elementsToSync == elementsUntilUpToDate {
                         continuation.yield(.upToDate)
@@ -102,15 +102,18 @@ public final class PushChannelV2: PushChannelV2Protocol {
         case let .data(data):
             WireLogger.pushChannel.debug("received web socket data, decoding...", attributes: .pushChannelV2)
             let envelope = try decoder.decode(WebSocketNotification.self, from: data)
-            
+
             switch envelope.type {
             case .event:
-                self.elementsToSync += 1
+                elementsToSync += 1
                 return Element.event(envelope.toAPIModel())
             case .messagesCount:
-                WireLogger.pushChannel.info("\(envelope.messageCount) until we're up to date", attributes: .pushChannelV2)
-                self.elementsUntilUpToDate = envelope.messageCount
-                self.elementsToSync = 0
+                WireLogger.pushChannel.info(
+                    "\(envelope.messageCount) until we're up to date",
+                    attributes: .pushChannelV2
+                )
+                elementsUntilUpToDate = envelope.messageCount
+                elementsToSync = 0
                 return .syncing(eventsCount: envelope.messageCount)
             case .notificationsMissed:
                 return Element.missedEvents
@@ -177,7 +180,6 @@ public final class PushChannelV2: PushChannelV2Protocol {
         try await write(data: data)
     }
 
-    
     // MARK: - Helpers
 
     private func write(data: Data) async throws {

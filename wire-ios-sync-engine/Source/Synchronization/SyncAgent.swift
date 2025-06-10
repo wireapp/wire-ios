@@ -242,7 +242,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     private var skipPullingLastNotificationID: Bool {
         journal[.isSyncV3Enabled]
     }
-  
+
     private func setupBindings() {
         subscription = syncStateSubject
             .receive(on: DispatchQueue.main)

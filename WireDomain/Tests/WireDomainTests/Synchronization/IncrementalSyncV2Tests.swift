@@ -47,7 +47,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
             userID: UUID(),
             storage: UserDefaults.temporary()
         )
-        
+
         sut = IncrementalSyncV2(
             selfClientID: Scaffolding.selfClientID,
             pushChannelAPI: pushChannelAPI,
@@ -61,7 +61,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
         sut.delegate = liveDelegate
         liveDelegate.isUpToDateSync_MockMethod = { _ in }
         liveDelegate.didMissedEventsSync_MockMethod = { _ in }
-        
+
     }
 
     override func tearDown() {
@@ -93,7 +93,6 @@ final class IncrementalSyncV2Tests: XCTestCase {
         }
         pushChannel.acknowledgeEventDeliveryTagMultiple_MockMethod = { _, _ in }
         pushChannelAPI.createPushChannelClientID_MockMethod = { _ in pushChannel }
-
 
         // Some indices at which live events will be stored.
         var indices = [Int64(10)]
@@ -142,13 +141,13 @@ final class IncrementalSyncV2Tests: XCTestCase {
         // Then sync is up to date
         XCTAssertEqual(liveDelegate.isUpToDateSync_Invocations.count, 1)
         XCTAssertEqual(pushChannel.acknowledgeMessageCount_Invocations.count, 1)
-        
+
         // Then live events were stored.
         XCTAssertEqual(store.indexOfLastEventEnvelope_Invocations.count, 1)
 
         // Broken conversation IDs are stored
         XCTAssertEqual(journal[.brokenMLSGroupIDs].first, Scaffolding.mlsGroupID)
-        
+
         // Then live events were stored.
         let storeInvocations = store.persistEventEnvelopeIndex_Invocations
         try XCTAssertCount(storeInvocations, count: 1)
@@ -207,7 +206,6 @@ final class IncrementalSyncV2Tests: XCTestCase {
             EventDecryptorResult(events: envelope.events, brokenMLSGroupIDs: [])
         }
 
-
         // Last event is being updated.
         store.storeLastEventIDId_MockMethod = { _ in }
 
@@ -258,9 +256,9 @@ final class IncrementalSyncV2Tests: XCTestCase {
                 Scaffolding.event3
             ].flatMap(\.events)
         )
-        
+
         XCTAssertEqual(liveDelegate.didMissedEventsSync_Invocations.count, 1)
-        
+
         // Then live events were deleted.
         XCTAssertEqual(store.deleteEventEnvelopeAtIndex_Invocations, [11, 12])
 
@@ -279,7 +277,7 @@ private enum Scaffolding {
 
     static let selfClientID = "selfClientID"
     static let mlsGroupID = "ASDF"
-    
+
     static let event2 = createEvent(
         message: "ciao",
         timeIntervalSinceNow: -9,

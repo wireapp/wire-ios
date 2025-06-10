@@ -74,7 +74,7 @@ final class PushChannelV2Tests: XCTestCase {
         XCTAssertEqual(receivedEnvelopes[1], .event(Scaffolding.envelope2))
         XCTAssertEqual(receivedEnvelopes[2], .event(Scaffolding.envelope3))
     }
-    
+
     func testOpen_UntilUpToDate() async throws {
         // Given some envelopes that will be delivered through the push channel
         let mockEnvelope1 = try MockJSONPayloadResource(name: "AsyncLiveUpdateEventEnvelope1")
@@ -102,7 +102,7 @@ final class PushChannelV2Tests: XCTestCase {
 
         XCTAssertEqual(receivedEnvelopes[1], .event(Scaffolding.envelope1))
         XCTAssertEqual(receivedEnvelopes[2], .event(Scaffolding.envelope2))
-        
+
         XCTAssertEqual(receivedEnvelopes[3], .upToDate)
     }
 
@@ -231,7 +231,7 @@ final class PushChannelV2Tests: XCTestCase {
         XCTAssertEqual(receivedEnvelopes[0], .syncing(eventsCount: 0))
         XCTAssertEqual(receivedEnvelopes[1], .upToDate)
     }
-    
+
     func testOpen_TimeoutTriggerIfNoEvents() async throws {
         // Mock.
         webSocket.open_MockValue = AsyncThrowingStream { _ in }
