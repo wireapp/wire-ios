@@ -29,10 +29,11 @@ public struct WireCellsAssembly {
         gatewaySecret: "some-gateway-secret"
     )
 
-    private static let nodesRepository = WireCellsNodesDataSource(credentials: credentials)
+    private static let nodesAPI = NodesAPI(credentials: credentials)
 
     private static let draftsRepository = DraftsRepository(
-        uploadManager: WireCellsNodeUploadManager(repository: nodesRepository)
+        uploadManager: WireCellsNodeUploadManager(nodesAPI: nodesAPI),
+        nodesAPI: nodesAPI
     )
 
     public init() {}

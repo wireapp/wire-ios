@@ -88,10 +88,13 @@ final class AuthenticationInterfaceBuilder {
                 accountsURL: environment.accountsURL,
                 howToChangeEmailURL: WireURLs.shared.howToChangeEmail,
                 howToDeleteAccountURL: WireURLs.shared.howToDeleteAccount,
+                privacyPolicyURL: WireURLs.shared.privacyPolicy,
                 passwordValidator: AuthenticationPasswordValidator(),
                 ssoCallbackURLScheme: Bundle.ssoURLScheme ?? "wire-sso",
                 appStoreURL: WireURLs.shared.appOnItunes,
-                existsAnotherAccount: numberOfAccounts > 0
+                existsAnotherAccount: numberOfAccounts > 0,
+                useLegacyRegistrationFlow: !DeveloperFlag.newRegistration.isOn,
+                personalAccountCreationAnalyticsTracker: PersonalAccountCreationAnalyticsTracker()
             )
             return AuthenticationHostingController(
                 rootView: rootView,

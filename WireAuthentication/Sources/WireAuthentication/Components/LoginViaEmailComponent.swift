@@ -31,10 +31,11 @@ protocol LoginViaEmailComponentDependency: Dependency {
     var preferredAPIVersion: APIVersion? { get }
     var backendInfo: BackendInfo { get }
     var minTLSVersion: TLSVersion { get }
+    var useLegacyRegistrationFlow: Bool { get }
 
 }
 
-class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
+final class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
 
     public let email: String?
     private let canCreateAccount: Bool
@@ -80,6 +81,13 @@ class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> {
         )
     }
 
+    func personalAccountCreationComponent() -> PersonalAccountCreationComponent {
+        PersonalAccountCreationComponent(
+            parent: self,
+            email: email ?? ""
+        )
+    }
+
 }
 
 extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
@@ -94,29 +102,23 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
             backendInfo: networkStack.backendInfo,
             canCreateAccount: canCreateAccount,
             didDetectDomainConflict: didDetectDomainConflict,
-            onCreateAccount: { [dependency, networkStack, email] in
+            onCreateAccount: dependency.useLegacyRegistrationFlow ? { [dependency, networkStack, email] in
                 guard let dependency else { return }
-                Task.detached {
+                Task<Void, Never> { @MainActor in
                     do {
                         let backendEnvironment = try await networkStack.makeBackendEnvironment()
-                        await MainActor.run {
-                            dependency.router.dismissSheet()
-                            dependency.bridge.sendOutboundEvent(
-                                .accountRegistrationRequested(
-                                    email: email,
-                                    backendEnvironment
-                                )
+                        dependency.router.dismissSheet()
+                        dependency.bridge.sendOutboundEvent(
+                            .accountRegistrationRequested(
+                                email: email,
+                                backendEnvironment
                             )
-                        }
+                        )
                     } catch {
-                        await MainActor.run {
-                            dependency.router.presentAlert(for: error)
-                        }
+                        dependency.router.presentAlert(for: error)
                     }
-
                 }
-
-            }
+            } : nil
         )
     }
 
@@ -138,6 +140,10 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
         noHistoryComponent(
             authenticationResult: authenticationResult
         )
+    }
+
+    func personalAccountCreationFactory() -> any PersonalAccountCreationFactory {
+        personalAccountCreationComponent()
     }
 
     // MARK: - Use cases

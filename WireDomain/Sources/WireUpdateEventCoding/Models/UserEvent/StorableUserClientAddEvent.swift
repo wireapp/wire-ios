@@ -79,7 +79,7 @@ private struct StorableSelfUserClient: Equatable, Identifiable, Codable, Sendabl
 
     let id: String
     let type: StorableUserClientType
-    let activationDate: Date
+    let activationDate: Date?
     let label: String?
     let model: String?
     let deviceClass: StorableDeviceClass?

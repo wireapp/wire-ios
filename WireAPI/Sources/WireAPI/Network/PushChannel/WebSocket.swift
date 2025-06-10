@@ -16,7 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
+
 import WireLogging
 
 public actor WebSocket: WebSocketProtocol {
@@ -28,6 +29,11 @@ public actor WebSocket: WebSocketProtocol {
 
     public init(connection: any URLSessionWebSocketTaskProtocol) {
         self.connection = connection
+    }
+
+    deinit {
+        connection.cancel(with: .goingAway, reason: nil)
+        continuation?.finish()
     }
 
     public func open() async throws -> Stream {

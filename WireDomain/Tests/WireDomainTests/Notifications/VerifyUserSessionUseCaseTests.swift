@@ -21,6 +21,7 @@ import WireDataModel
 import WireDataModelSupport
 import WireTestingPackage
 import XCTest
+
 @testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport

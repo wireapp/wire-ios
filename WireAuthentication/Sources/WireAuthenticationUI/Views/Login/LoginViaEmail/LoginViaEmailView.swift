@@ -35,6 +35,9 @@ package protocol LoginViaEmailFactory {
     @MainActor
     func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory
 
+    @MainActor
+    func personalAccountCreationFactory() -> any PersonalAccountCreationFactory
+
 }
 
 package struct LoginViaEmailView: View {
@@ -89,6 +92,9 @@ package struct LoginViaEmailView: View {
                 Button(Strings.Authentication.Error.confirm, action: {})
             }
         )
+        .sheet(item: $viewModel.modalDestination, content: { item in
+            sheetView(for: item)
+        })
         .navigationDestination(for: LoginViaEmailDestination.self) { destination in
             destinationView(destination)
         }
@@ -176,7 +182,7 @@ package struct LoginViaEmailView: View {
 
     @ViewBuilder private var createAccount: some View {
         VStack(spacing: 4) {
-            Text(Strings.CreatePersonalAccount.title)
+            Text(Strings.CreateAccountOrTeam.title)
                 .multilineTextAlignment(.center)
                 .wireTextStyle(.body1)
                 .lineLimit(nil)
@@ -185,7 +191,7 @@ package struct LoginViaEmailView: View {
             Button(action: {
                 viewModel.createAccount()
             }, label: {
-                Text(Strings.CreatePersonalAccount.button)
+                Text(Strings.CreateAccountOrTeam.button)
                     .multilineTextAlignment(.center)
                     .lineLimit(nil)
                     .minimumScaleFactor(0.5)
@@ -242,6 +248,21 @@ package struct LoginViaEmailView: View {
                 isValidPassword: viewModel.isPasswordValid
             )
             Spacer()
+        }
+    }
+
+    @ViewBuilder
+    private func sheetView(for sheet: LoginViaEmailSheet) -> some View {
+        switch sheet {
+        case let .teamAccountCreation:
+            if let teamAccountCreationLink = viewModel.teamAccountCreationLink {
+                SafariBrowserView(url: teamAccountCreationLink).ignoresSafeArea()
+            }
+        case .accountTypeSelection:
+            AccountTypeSelectionView(
+                onTeamAccountCreation: viewModel.handleOnTeamAccountCreation,
+                onPersonalAccountCreation: viewModel.handleoOnPersonalAccountCreation
+            )
         }
     }
 

@@ -20,7 +20,7 @@ public import Foundation
 
 public enum WireCellsUploadStatus: Equatable, Hashable, Sendable {
     case uploading(progress: Float)
-    case uploaded
+    case uploaded(isDraft: Bool)
     case failed(error: WireCellsUploadError)
     case cancelled
 }

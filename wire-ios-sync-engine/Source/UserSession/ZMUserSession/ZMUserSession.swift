@@ -18,7 +18,6 @@
 
 import Combine
 import Foundation
-import WireAnalytics
 import WireAPI
 import WireCoreCrypto
 import WireDataModel
@@ -26,6 +25,7 @@ import WireDomain
 import WireLogging
 import WireRequestStrategy
 import WireSystem
+public import WireFoundation
 
 typealias UserSessionDelegate = UserSessionAppLockDelegate
     & UserSessionEncryptionAtRestDelegate
@@ -76,6 +76,7 @@ public final class ZMUserSession: NSObject {
     let legacyHotFix: ZMHotFix
 
     var accessTokenRenewalObserver: AccessTokenRenewalObserver?
+    private var mlsGroupRepairAgent: MLSGroupRepairAgentProtocol?
 
     var recurringActionService: any RecurringActionServiceInterface
 
@@ -91,7 +92,7 @@ public final class ZMUserSession: NSObject {
 
     let earService: EARServiceInterface
 
-    public private(set) weak var analyticsEventTracker: (any AnalyticsEventTracker)?
+    public private(set) weak var analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?
     private var pendingAnalyticsEvents = [AnalyticsEvent]()
 
     public internal(set) var appLockController: AppLockType
@@ -457,7 +458,8 @@ public final class ZMUserSession: NSObject {
             eventContext: coreDataStack.eventContext,
             mlsService: mlsService,
             mlsDecryptionService: mlsService,
-            proteusService: proteusService
+            proteusService: proteusService,
+            coreCryptoProvider: coreCryptoProvider
         )
         self.journal = journal
         super.init()
@@ -590,6 +592,11 @@ public final class ZMUserSession: NSObject {
         syncAgent.delegate = self
 
         mlsService.setSyncDelegate(syncAgent)
+        mlsGroupRepairAgent = MLSGroupRepairAgent(
+            journal: journal,
+            mlsService: mlsService,
+            syncStatePublisher: clientSessionComponent.syncStateSubject.eraseToAnyPublisher()
+        )
 
         // Finish setting up the final strategies.
         if
@@ -860,7 +867,7 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-    func setAnalyticsEventTracker(_ tracker: (any AnalyticsEventTracker)?) {
+    func setAnalyticsEventTracker(_ tracker: (any AnalyticsEventTrackerProtocol)?) {
         analyticsEventTracker = tracker
 
         // Track any events that were added before the service was configured.
@@ -934,6 +941,7 @@ public final class ZMUserSession: NSObject {
     public func triggerInitialSync() {
         Task {
             do {
+                syncAgent?.suspend()
                 try await syncAgent?.performInitialSync()
             } catch {
                 WireLogger.sync.error("failed to perform initial sync: \(String(describing: error))")
@@ -944,6 +952,7 @@ public final class ZMUserSession: NSObject {
     public func triggerResourcesSync() {
         Task {
             do {
+                syncAgent?.suspend()
                 try await syncAgent?.performResourceSync()
             } catch {
                 WireLogger.sync.error("failed to perform resource sync: \(String(describing: error))")

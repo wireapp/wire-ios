@@ -139,6 +139,10 @@ final class ImportBackupViewModel: ObservableObject {
                 logger.debug("password is required to open backup file")
                 state = .requestingPassword(url: url, isPasswordIncorrect: false)
                 return // don't clean up temporary file
+            } catch ImportLegacyBackupError.passwordRequired, ImportBackupError.incorrectPassword {
+                logger.debug("provided password is incorrect")
+                state = .requestingPassword(url: url, isPasswordIncorrect: false)
+                return // don't clean up temporary file
             } catch ImportLegacyBackupError.decryptionError {
                 logger.warn("failed to decrypt backup file, presenting the password input again")
                 state = .requestingPassword(url: url, isPasswordIncorrect: true)
@@ -223,32 +227,32 @@ final class ImportBackupViewModel: ObservableObject {
         }
 
         // Workarounds for presentation issues with several sheet or alert presentation flags toggled at once.
-        // This code assumes the presentation or dismissal of a modal view controller lasts less than 400ms.
+        // This code assumes the presentation or dismissal of a modal view controller lasts less than 600ms.
         if !isImportProgressPresented, self.isImportConfirmationPresented {
             // The outer sheet is dismissed while the inner sheet/alert is presented, so delay the outer dismissal.
             self.isImportConfirmationPresented = false
-            return DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(400)) { [weak self] in
+            return DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(600)) { [weak self] in
                 self?.updatePublishedProperties()
             }
         }
         if !isImportProgressPresented, self.isEnterBackupPasswordPresented {
             // The outer sheet is dismissed while the inner sheet is still presented, so delay the outer dismissal.
             self.isEnterBackupPasswordPresented = false
-            return DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(400)) { [weak self] in
+            return DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(600)) { [weak self] in
                 self?.updatePublishedProperties()
             }
         }
         if isEnterBackupPasswordPresented, !self.isImportProgressPresented {
             // The inner sheet is being presented while the outer sheet is not yet presented, so delay the inner.
             self.isImportProgressPresented = true
-            return DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(400)) { [weak self] in
+            return DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(600)) { [weak self] in
                 self?.updatePublishedProperties()
             }
         }
         if isAlertPresented, self.isImportProgressPresented {
             // The alert is being presented while there is still a sheet presented, so delay the alert.
             self.isImportProgressPresented = false
-            return DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(400)) { [weak self] in
+            return DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(600)) { [weak self] in
                 self?.updatePublishedProperties()
             }
         }

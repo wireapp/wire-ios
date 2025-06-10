@@ -42,6 +42,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
     @Published private(set) var isLoading = false
     @Published var alert: Alert?
+    @Published var modalDestination: LoginViaEmailSheet?
 
     let backendInfo: BackendInfo
     let isEmailPrefilled: Bool
@@ -71,11 +72,31 @@ package final class LoginViaEmailViewModel: ObservableObject {
         }
     }
 
+    lazy var teamAccountCreationLink: URL? = {
+        let teamsURL = backendInfo.backendConfig.endpoints.teamsURL
+        guard var components = URLComponents(url: teamsURL, resolvingAgainstBaseURL: false) else {
+            WireLogger.authentication
+                .warn("Unable to generate team account creation link. Invalid teamsURL: \(teamsURL.absoluteString)")
+            return nil
+        }
+
+        let appendedPath = components.path.appending("/signup/account")
+        components.path = appendedPath
+
+        components.queryItems = (components.queryItems ?? []) + [
+            URLQueryItem(name: "origin", value: "ios")
+        ]
+
+        return components.url
+    }()
+
     // MARK: - Dependencies
 
     package let factory: any Factory
     private let router: any Router
-    private let onCreateAccount: () -> Void
+    /// This property is used for presenting the legacy registration flow.
+    /// If `nil` the new registration flow is presented.
+    private let onCreateAccount: (() -> Void)?
     private let didDetectDomainConflict: Bool
 
     // MARK: - Life cycle
@@ -87,7 +108,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
         backendInfo: BackendInfo,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
-        onCreateAccount: @escaping () -> Void
+        onCreateAccount: (() -> Void)?
     ) {
         self.factory = factory
         self.router = router
@@ -169,8 +190,20 @@ package final class LoginViaEmailViewModel: ObservableObject {
     }
 
     func createAccount() {
-        onCreateAccount()
+        // legacy flow
+        if let onCreateAccount {
+            return onCreateAccount()
+        }
+
+        // new flow
+        modalDestination = .accountTypeSelection
     }
+
+    func handleOnTeamAccountCreation() {
+        modalDestination = .teamAccountCreation
+    }
+
+    func handleoOnPersonalAccountCreation() {}
 
     // MARK: - Private
 
