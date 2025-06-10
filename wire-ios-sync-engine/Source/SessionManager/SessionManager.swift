@@ -368,7 +368,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         deleteUserLogs: @escaping () -> Void,
         analyticsServiceConfiguration: AnalyticsServiceConfiguration?,
         countlyProvider: @escaping () -> CountlyProtocol
-    ) {
+    ) throws {
         let flowManager = FlowManager(mediaManager: mediaManager)
         let reachability = environment.reachabilityWrapper()
 
@@ -400,7 +400,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             minTLSVersion: minTLSVersion
         )
 
-        self.init(
+        try self.init(
             maxNumberAccounts: maxNumberAccounts,
             appVersion: appVersion,
             authenticatedSessionFactory: authenticatedSessionFactory,
@@ -484,7 +484,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         deleteUserLogs: (() -> Void)? = nil,
         analyticsServiceConfiguration: AnalyticsServiceConfiguration?,
         countlyProvider: @escaping () -> CountlyProtocol
-    ) {
+    ) throws {
         SessionManager.enableLogsByEnvironmentVariable()
         self.environment = environment
         self.appVersion = appVersion
@@ -506,7 +506,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
 
         self.sharedContainerURL = sharedContainerURL
-        self.accountManager = try! AccountManager(sharedDirectory: sharedContainerURL)
+        self.accountManager = try AccountManager(sharedDirectory: sharedContainerURL)
 
         WireLogger.sessionManager.debug("Starting the session manager:")
 
