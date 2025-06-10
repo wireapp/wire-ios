@@ -35,11 +35,6 @@ public final class PushChannelV2: PushChannelV2Protocol {
     private let decoder = JSONDecoder()
     private let encoder = JSONEncoder()
 
-    private let upToDateThreshold: TimeInterval
-    private var upToDateTask: Task<Void, any Error>?
-
-    private let channelState: ChannelState
-
     private var keepAliveTask: Task<Void, any Error>?
     private let keepAliveInterval: TimeInterval
 
@@ -49,41 +44,26 @@ public final class PushChannelV2: PushChannelV2Protocol {
     /// - Parameters:
     ///   - webSocket: webSocket to use
     ///   - keepAliveInterval: interval for sending ping and keep webSocket open
-    ///   - upToDateThreshold: interval after we consider we're up to date with events
     public init(
         webSocket: any WebSocketProtocol,
-        keepAliveInterval: TimeInterval,
-        upToDateThreshold: TimeInterval
+        keepAliveInterval: TimeInterval
     ) {
         self.webSocket = webSocket
         self.keepAliveInterval = keepAliveInterval
-        self.upToDateThreshold = upToDateThreshold
-        self.channelState = ChannelState(caughtUpTimeInterval: upToDateThreshold)
-    }
-
-    deinit {
-        upToDateTask?.cancel()
     }
 
     public func open() async throws -> AsyncThrowingStream<Element, any Error> {
         WireLogger.pushChannel.debug("opening new push channel", attributes: .pushChannelV2)
 
         let sourceStream = try await webSocket.open()
-        await channelState.websocketOpened()
-        setupUpToDateTask()
 
         Task { [weak self] in
             guard let self else { return }
             do {
                 for try await message in sourceStream {
 
-                    upToDateTask?.cancel()
-                    await channelState.receivedMessage()
-
                     let result = try receiveMessage(message)
                     continuation.yield(result)
-
-                    setupUpToDateTask()
                 }
             } catch {
                 WireLogger.pushChannel.error("got error: \(error)", attributes: .pushChannelV2)
@@ -105,7 +85,6 @@ public final class PushChannelV2: PushChannelV2Protocol {
         WireLogger.pushChannel.debug("closing push channel", attributes: .pushChannelV2)
 
         await webSocket.close()
-        tearDownUpToDateTask()
         tearDownKeepAliveTask()
     }
 
@@ -156,34 +135,6 @@ public final class PushChannelV2: PushChannelV2Protocol {
         self.keepAliveTask = nil
     }
 
-    // MARK: - Timeout
-
-    private func setupUpToDateTask() {
-        tearDownUpToDateTask()
-        upToDateTask = Task {
-            do {
-                try await Task.sleep(for: .seconds(channelState.timeUntilCaughtUp()))
-                // we reach here when time between events is significant enough that we're up to date
-                if await channelState.catchingUp {
-                    WireLogger.pushChannel.debug("caught up", attributes: .pushChannelV2)
-                    await channelState.caughtUp()
-                    continuation.yield(.upToDate)
-                }
-
-            } catch {
-                WireLogger.pushChannel.warn("upToDateTask was cancelled", attributes: .pushChannelV2)
-                tearDownUpToDateTask()
-            }
-        }
-    }
-
-    private func tearDownUpToDateTask() {
-        guard let upToDateTask else { return }
-        WireLogger.pushChannel.debug("tearing down upToDateTask", attributes: .pushChannelV2)
-        upToDateTask.cancel()
-        self.upToDateTask = nil
-    }
-
     // MARK: - Acknowledgement
 
     public func acknowledgeEvent(deliveryTag: UInt64, multiple: Bool = false) async throws {
@@ -208,55 +159,5 @@ public final class PushChannelV2: PushChannelV2Protocol {
     private func write(data: Data) async throws {
         WireLogger.pushChannel.debug("write data to push channel", attributes: .pushChannelV2)
         try await webSocket.write(data: data)
-    }
-}
-
-private actor ChannelState {
-    private var lastMessageUpdate = Date()
-    var isProcessing = false
-    var catchingUp = false
-    var caughtUpTimeInterval: TimeInterval = 0.0
-
-    init(
-        lastMessageUpdate: Date = Date(),
-        isProcessing: Bool = false,
-        catchingUp: Bool = false,
-        caughtUpTimeInterval: TimeInterval
-    ) {
-        self.lastMessageUpdate = lastMessageUpdate
-        self.isProcessing = isProcessing
-        self.catchingUp = catchingUp
-        self.caughtUpTimeInterval = caughtUpTimeInterval
-    }
-
-    func receivedMessage() {
-        lastMessageUpdate = Date()
-    }
-
-    func websocketOpened() {
-        catchingUp = true
-    }
-
-    func startProcessing() {
-        isProcessing = true
-    }
-
-    func stopProcessing() {
-        isProcessing = false
-    }
-
-    func timeSinceLastMessage() -> TimeInterval {
-        Date().timeIntervalSince(lastMessageUpdate)
-    }
-
-    func timeUntilCaughtUp() -> TimeInterval {
-        caughtUpTimeInterval + timeSinceLastMessage()
-    }
-    func caughtUp() {
-        catchingUp = false
-    }
-
-    func isCaughtUp() -> Bool {
-        timeSinceLastMessage() > caughtUpTimeInterval && !isProcessing && catchingUp
     }
 }
