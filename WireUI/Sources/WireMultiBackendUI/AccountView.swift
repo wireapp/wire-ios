@@ -31,7 +31,7 @@ struct AccountView: View {
             account.teamName,
             account.backendName
         ].compactMap(\.self)
-        
+
         HStack {
             HStack(spacing: 22) {
 
@@ -41,8 +41,7 @@ struct AccountView: View {
                     showNotificationsBadge: false
                 )
                 .frame(width: 28, height: 28)
-                
-                
+
                 VStack(alignment: .leading, spacing: 2) {
 
                     Text(account.name)
@@ -57,7 +56,7 @@ struct AccountView: View {
                 }
                 .padding(.vertical, 4)
             }
-            
+
             Spacer()
 
             Image("ChevronRight", bundle: Bundle.wireReusableUIComponentsBundle)
