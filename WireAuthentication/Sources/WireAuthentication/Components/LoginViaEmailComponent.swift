@@ -80,6 +80,7 @@ final class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> 
             didDetectDomainConflict: didDetectDomainConflict
         )
     }
+<<<<<<< HEAD
 
     func personalAccountCreationComponent() -> PersonalAccountCreationComponent {
         PersonalAccountCreationComponent(
@@ -88,6 +89,8 @@ final class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> 
         )
     }
 
+=======
+>>>>>>> 4cbdb629ef (chore: Account switcher modal - WPB-17806 (#3103))
 }
 
 extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {

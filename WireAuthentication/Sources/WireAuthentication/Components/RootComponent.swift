@@ -16,13 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import NeedleFoundation
 import SwiftUI
 import WireAPI
 import WireReusableUIComponents
 internal import WireAuthenticationUI
 import WireAuthenticationAPI
+import WireMultiBackendUI
 internal import WireAuthenticationLogic
+import WireFoundation
 
 final class RootComponent: BootstrapComponent {
 
@@ -37,6 +40,7 @@ final class RootComponent: BootstrapComponent {
     public let ssoCallbackURLScheme: String
     public let appStoreURL: URL
     public let existsAnotherAccount: Bool
+    public var otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>
     public let useLegacyRegistrationFlow: Bool
     public let personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
 
@@ -61,8 +65,13 @@ final class RootComponent: BootstrapComponent {
         ssoCallbackURLScheme: String,
         appStoreURL: URL,
         existsAnotherAccount: Bool,
+<<<<<<< HEAD
         useLegacyRegistrationFlow: Bool,
         personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
+=======
+        otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>,
+        useLegacyRegistrationFlow: Bool
+>>>>>>> 4cbdb629ef (chore: Account switcher modal - WPB-17806 (#3103))
     ) {
         self.backendInfo = backendInfo
         self.preferredAPIVersion = preferredAPIVersion
@@ -75,6 +84,7 @@ final class RootComponent: BootstrapComponent {
         self.ssoCallbackURLScheme = ssoCallbackURLScheme
         self.appStoreURL = appStoreURL
         self.existsAnotherAccount = existsAnotherAccount
+        self.otherAccountsPublisher = otherAccountsPublisher
         self.useLegacyRegistrationFlow = useLegacyRegistrationFlow
         self.personalAccountCreationAnalyticsTracker = personalAccountCreationAnalyticsTracker
     }
@@ -112,6 +122,14 @@ extension RootComponent: RootViewModel.Factory {
 
     func determineAuthMethodFactory(backendInfo: BackendInfo) -> any DetermineAuthMethodFactory {
         determineAuthMethodComponent(backendInfo: backendInfo)
+    }
+
+    func accountsSwitcherFactory() -> any AccountSwitcherFactory {
+        accountSwitcherComponent()
+    }
+
+    func accountSwitcherComponent() -> AccountSwitcherComponent {
+        AccountSwitcherComponent(parent: self)
     }
 
     // MARK: - Use cases

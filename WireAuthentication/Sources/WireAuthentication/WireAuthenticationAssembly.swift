@@ -16,11 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import Foundation
 import NeedleFoundation
 import SwiftUI
 import WireAPI
 import WireAuthenticationAPI
+import WireFoundation
+import WireMultiBackendUI
 import WireReusableUIComponents
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
@@ -54,8 +57,13 @@ public struct WireAuthenticationAssembly {
         ssoCallbackURLScheme: String,
         appStoreURL: URL,
         existsAnotherAccount: Bool,
+<<<<<<< HEAD
         useLegacyRegistrationFlow: Bool,
         personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
+=======
+        otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>,
+        useLegacyRegistrationFlow: Bool
+>>>>>>> 4cbdb629ef (chore: Account switcher modal - WPB-17806 (#3103))
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
         let backendInfo = BackendInfo(
             environmentType: environmentType,
@@ -72,8 +80,13 @@ public struct WireAuthenticationAssembly {
             ssoCallbackURLScheme: ssoCallbackURLScheme,
             appStoreURL: appStoreURL,
             existsAnotherAccount: existsAnotherAccount,
+<<<<<<< HEAD
             useLegacyRegistrationFlow: useLegacyRegistrationFlow,
             personalAccountCreationAnalyticsTracker: personalAccountCreationAnalyticsTracker
+=======
+            otherAccountsPublisher: otherAccountsPublisher,
+            useLegacyRegistrationFlow: useLegacyRegistrationFlow
+>>>>>>> 4cbdb629ef (chore: Account switcher modal - WPB-17806 (#3103))
         )
 
         return (view: RootView(factory: rootComponent), bridge: rootComponent.bridge)

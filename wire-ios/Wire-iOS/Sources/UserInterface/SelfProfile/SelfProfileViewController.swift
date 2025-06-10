@@ -154,37 +154,18 @@ final class SelfProfileViewController: UIViewController {
         }
 
         let accountManager = SessionManager.shared?.accountManager
-        let accounts = (accountManager?.accounts ?? [])
+        let otherAccounts = (accountManager?.accounts ?? [])
             .filter {
                 !$0.isEqual(accountManager?.selectedAccount)
             }
-            .map { domainAccount in
-                let avatarSource: WireAccountImageUI.AccountImageSource
-                if let imageData = domainAccount.imageData,
-                   let avatarImage = UIImage(data: imageData) {
-                    avatarSource = .image(avatarImage)
-                } else {
-                    let personName = PersonName.person(
-                        withName: domainAccount.userName,
-                        schemeTagger: nil
-                    )
-                    avatarSource = .text(personName.initials)
-                }
-                // track updates in user avatar and name?
-                return AccountUIModel(
-                    avatarSource: avatarSource,
-                    name: domainAccount.userName,
-                    handle: "@handle", // TODO:
-                    teamName: domainAccount.teamName,
-                    backendName: "Back END INFO", // TODO:
-                    action: { [weak self] in
-                        self?.handleAccountSelected(domainAccount)
-                    }
-                )
+            .map { account in
+                account.toUIModel(action: { [weak self] in
+                    self?.handleAccountSelected(account)
+                })
             }
 
         let appSwitcherController = AccountSwitcherHostingController(
-            accounts: accounts,
+            otherAccounts: otherAccounts,
             options: options
         )
         appSwitcherController.sizingOptions = .intrinsicContentSize
@@ -466,4 +447,29 @@ extension SelfProfileViewController: AccountSelectorViewDelegate {
 public extension Notification.Name {
     // Used to notify the app that the user has viewed their own profile
     static let userDidViewSelfProfile = Notification.Name("userDidViewSelfProfile")
+}
+
+extension Account {
+    func toUIModel(action: @escaping () -> Void) -> AccountUIModel {
+        let avatarSource: WireAccountImageUI.AccountImageSource
+        if let imageData,
+           let avatarImage = UIImage(data: imageData) {
+            avatarSource = .image(avatarImage)
+        } else {
+            let personName = PersonName.person(
+                withName: userName,
+                schemeTagger: nil
+            )
+            avatarSource = .text(personName.initials)
+        }
+        return AccountUIModel(
+            avatarSource: avatarSource,
+            name: userName,
+            handle: "@handle",
+            // TODO: [WPB-18008] when data will be ready https://wearezeta.atlassian.net/browse/WPB-18008
+            teamName: teamName,
+            backendName: "Back END INFO", // TODO: [WPB-18008] https://wearezeta.atlassian.net/browse/WPB-18008
+            action: action
+        )
+    }
 }
