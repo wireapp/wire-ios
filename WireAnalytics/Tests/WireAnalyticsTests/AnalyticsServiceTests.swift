@@ -43,9 +43,13 @@ final class AnalyticsServiceTests: XCTestCase {
     }
 
     func resetMockInvocations() {
+        countlyMock.startAppKeyStringHostURLVoidCallsCount = 0
         countlyMock.startAppKeyStringHostURLVoidReceivedInvocations = []
+        countlyMock.endSessionVoidCallsCount = 0
         countlyMock.beginSessionVoidCallsCount = 0
+        countlyMock.changeDeviceIDIdStringMergeDataBoolVoidCallsCount = 0
         countlyMock.changeDeviceIDIdStringMergeDataBoolVoidReceivedInvocations = []
+        countlyMock.setUserValueValueStringForKeyKeyStringVoidCallsCount = 0
         countlyMock.setUserValueValueStringForKeyKeyStringVoidReceivedInvocations = []
         countlyMock.resetInstanceVoidCallsCount = 0
     }
