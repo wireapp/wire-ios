@@ -69,7 +69,7 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
     public func storeLastEventID(id: UUID) {
         storage.setUUID(id, forKey: .lastEventID)
     }
-    
+
     public func resetLastEventID() {
         storage.setUUID(nil, forKey: .lastEventID)
     }

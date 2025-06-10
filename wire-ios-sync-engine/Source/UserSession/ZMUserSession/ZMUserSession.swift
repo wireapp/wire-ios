@@ -565,8 +565,7 @@ public final class ZMUserSession: NSObject {
                 onProcessedCallEvent: onProcessedCallEvent,
                 onSelfClientInvalidated: onSelfClientInvalidated,
                 onAuthenticationFailure: onAuthenticationFailure,
-                onProcessedTypingUsers: onProcessedTypingUsers,
-                onMissedEvents: onMissedEvents
+                onProcessedTypingUsers: onProcessedTypingUsers
             )
         )
 
@@ -1541,9 +1540,5 @@ extension ZMUserSession {
             callCenter.processCallEvent(callEvent)
         }
 
-    }
-    
-    func onMissedEvents() {
-        syncAgent?.resume()
     }
 }

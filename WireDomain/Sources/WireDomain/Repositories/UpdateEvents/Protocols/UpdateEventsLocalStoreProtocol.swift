@@ -31,7 +31,7 @@ public protocol UpdateEventsLocalStoreProtocol {
     /// - parameter id: The last event ID to store.
 
     func storeLastEventID(id: UUID)
-    
+
     /// Sets last event ID to nil.
 
     func resetLastEventID()

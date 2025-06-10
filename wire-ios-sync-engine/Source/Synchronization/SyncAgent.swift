@@ -219,7 +219,14 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
             } catch {
                 WireLogger.sync.error("failed to perform new incremental sync: \(String(describing: error))")
                 syncStateSubject.send(.suspended)
-                throw error
+
+                if let incrementalSyncError = error as? IncrementalSync.Failure,
+                   case .missedEvents = incrementalSyncError {
+                    // recovering with a full sync
+                    resume()
+                } else {
+                    throw error
+                }
             }
         } else {
             await legacySyncStatus.performQuickSync()

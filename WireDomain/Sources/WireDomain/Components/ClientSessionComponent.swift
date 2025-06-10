@@ -30,20 +30,17 @@ public final class ClientSessionComponent {
         let onSelfClientInvalidated: () async -> Void
         let onProcessedTypingUsers: ([ConversationTypingUsersInfo]) -> Void
         let onAuthenticationFailure: @Sendable () -> Void
-        let onMissedEvents: () -> Void
 
         public init(
             onProcessedCallEvent: @escaping (CallEventInfo) -> Void,
             onSelfClientInvalidated: @escaping () async -> Void,
             onAuthenticationFailure: @escaping @Sendable () -> Void,
             onProcessedTypingUsers: @escaping ([ConversationTypingUsersInfo]) -> Void,
-            onMissedEvents: @escaping () -> Void
         ) {
             self.onProcessedCallEvent = onProcessedCallEvent
             self.onSelfClientInvalidated = onSelfClientInvalidated
             self.onProcessedTypingUsers = onProcessedTypingUsers
             self.onAuthenticationFailure = onAuthenticationFailure
-            self.onMissedEvents = onMissedEvents
         }
     }
 
@@ -369,7 +366,8 @@ public final class ClientSessionComponent {
         pushChannelAPI: pushChannelAPI,
         updateEventsSync: pullPendingUpdateEventsSync,
         decryptor: updateEventDecryptor,
-        store: updateEventsLocalStore,
+        updateEventsStore: updateEventsLocalStore,
+        messageStore: messageLocalStore,
         processor: updateEventProcessor,
         databaseSaver: databaseSaver,
         syncStateSubject: syncStateSubject,

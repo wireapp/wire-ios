@@ -22,8 +22,8 @@ import WireAPI
 import WireLogging
 
 public struct IncrementalSync: IncrementalSyncProtocol {
-    
-    enum Failure: Error {
+
+    public enum Failure: Error {
         case missedEvents
     }
 
@@ -49,8 +49,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         processor: any UpdateEventProcessorProtocol,
         databaseSaver: any DatabaseSaverProtocol,
         syncStateSubject: CurrentValueSubject<SyncState, Never>,
-        journal: Journal,
-        onMissedEvents: @escaping () -> Void
+        journal: Journal
     ) {
         self.selfClientID = selfClientID
         self.pushChannelAPI = pushChannelAPI
@@ -83,15 +82,12 @@ public struct IncrementalSync: IncrementalSyncProtocol {
             logger.debug("processing stored update events")
             syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
             processedEnvelopeIDs = try await processStoredEvents()
-        } catch let apiError as UpdateEventsAPIError {
-            switch apiError {
-            case .notFound, .invalidParameters:
-                try await messageStore.addPotentialGapSystemMessage()
-                throw Failure.missedEvents
-            default:
-                throw apiError
-            }
         } catch {
+            func tearDown() async {
+                logger.debug("incremental sync interrupted, tearing down...")
+                await pushChannel.close()
+            }
+
             switch error {
             case let apiError as UpdateEventsAPIError:
                 switch apiError {
@@ -100,13 +96,14 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                     // reset with a full sync (initial + incremental)
                     updateEventsStore.resetLastEventID()
                     try await messageStore.addPotentialGapSystemMessage()
+                    await tearDown()
                     throw Failure.missedEvents
                 default:
+                    await tearDown()
                     throw error
                 }
             default:
-                logger.debug("incremental sync interrupted, tearing down...")
-                await pushChannel.close()
+                await tearDown()
                 throw error
             }
         }
