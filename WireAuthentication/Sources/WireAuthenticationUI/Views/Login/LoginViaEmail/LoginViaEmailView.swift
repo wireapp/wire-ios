@@ -34,13 +34,10 @@ package protocol LoginViaEmailFactory {
 
     @MainActor
     func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory
-<<<<<<< HEAD
 
     @MainActor
     func personalAccountCreationFactory() -> any PersonalAccountCreationFactory
 
-=======
->>>>>>> 4cbdb629ef (chore: Account switcher modal - WPB-17806 (#3103))
 }
 
 package struct LoginViaEmailView: View {

@@ -1,9 +1,6 @@
 
 
-<<<<<<< HEAD
-=======
 import Combine
->>>>>>> 4cbdb629ef (chore: Account switcher modal - WPB-17806 (#3103))
 import Foundation
 import NeedleFoundation
 import SwiftUI
@@ -90,7 +87,6 @@ private class DetermineAuthMethodComponentDependency527e70b5dbcfcb8f2023Provider
 private func factoryd47fa74281e135cd9f10b3a8f24c1d289f2c0f2e(_ component: NeedleFoundation.Scope) -> AnyObject {
     return DetermineAuthMethodComponentDependency527e70b5dbcfcb8f2023Provider(rootComponent: parent1(component) as! RootComponent)
 }
-<<<<<<< HEAD
 private class PersonalAccountCreationComponentDependency9e5e5a00f5c85fcf54b5Provider: PersonalAccountCreationComponentDependency {
     var router: any Router {
         return rootComponent.router
@@ -117,7 +113,7 @@ private class PersonalAccountCreationComponentDependency9e5e5a00f5c85fcf54b5Prov
 /// ^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->PersonalAccountCreationComponent
 private func factory98c59649331d50383edd17031e1ba787d83cb463(_ component: NeedleFoundation.Scope) -> AnyObject {
     return PersonalAccountCreationComponentDependency9e5e5a00f5c85fcf54b5Provider(loginViaEmailComponent: parent1(component) as! LoginViaEmailComponent, rootComponent: parent3(component) as! RootComponent)
-=======
+}
 private class AccountSwitcherComponentDependency65306f6262d465ec7963Provider: AccountSwitcherComponentDependency {
     var router: any Router {
         return rootComponent.router
@@ -133,7 +129,6 @@ private class AccountSwitcherComponentDependency65306f6262d465ec7963Provider: Ac
 /// ^->RootComponent->AccountSwitcherComponent
 private func factory74ea254f881cfa30d8aeb3a8f24c1d289f2c0f2e(_ component: NeedleFoundation.Scope) -> AnyObject {
     return AccountSwitcherComponentDependency65306f6262d465ec7963Provider(rootComponent: parent1(component) as! RootComponent)
->>>>>>> 4cbdb629ef (chore: Account switcher modal - WPB-17806 (#3103))
 }
 private class NoHistoryComponentDependencya1005f718577ea03ea08Provider: NoHistoryComponentDependency {
     var howToChangeEmailURL: URL {

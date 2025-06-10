@@ -65,13 +65,9 @@ final class RootComponent: BootstrapComponent {
         ssoCallbackURLScheme: String,
         appStoreURL: URL,
         existsAnotherAccount: Bool,
-<<<<<<< HEAD
+        otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>,
         useLegacyRegistrationFlow: Bool,
         personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
-=======
-        otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>,
-        useLegacyRegistrationFlow: Bool
->>>>>>> 4cbdb629ef (chore: Account switcher modal - WPB-17806 (#3103))
     ) {
         self.backendInfo = backendInfo
         self.preferredAPIVersion = preferredAPIVersion

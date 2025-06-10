@@ -108,13 +108,9 @@ final class AuthenticationInterfaceBuilder {
                 ssoCallbackURLScheme: Bundle.ssoURLScheme ?? "wire-sso",
                 appStoreURL: WireURLs.shared.appOnItunes,
                 existsAnotherAccount: numberOfAccounts > 0,
-<<<<<<< HEAD
+                otherAccountsPublisher: ReadOnlyCurrentValueSubject(subject: CurrentValueSubject(otherAccounts)),
                 useLegacyRegistrationFlow: !DeveloperFlag.newRegistration.isOn,
                 personalAccountCreationAnalyticsTracker: PersonalAccountCreationAnalyticsTracker()
-=======
-                otherAccountsPublisher: ReadOnlyCurrentValueSubject(subject: CurrentValueSubject(otherAccounts)),
-                useLegacyRegistrationFlow: !DeveloperFlag.newRegistration.isOn
->>>>>>> 4cbdb629ef (chore: Account switcher modal - WPB-17806 (#3103))
             )
             return AuthenticationHostingController(
                 rootView: rootView,
