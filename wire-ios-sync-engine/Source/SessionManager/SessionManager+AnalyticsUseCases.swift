@@ -16,34 +16,38 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public extension SessionManager {
+extension SessionManager {
 
-    internal enum AnalyticsError: Error {
+    enum AnalyticsError: Error {
 
         case noActiveSession
 
     }
 
-    func makeDisableAnalyticsUseCase() throws -> DisableAnalyticsUseCaseProtocol {
-        DisableAnalyticsUseCase(
-            service: analyticsService,
-            provider: activeUserSession
-        )
+    public func makeDisableAnalyticsUseCase() -> (any DisableAnalyticsUseCaseProtocol)? {
+        analyticsService.map { analyticsService in
+            DisableAnalyticsUseCase(
+                service: analyticsService,
+                provider: activeUserSession
+            )
+        }
     }
 
-    func makeEnableAnalyticsUseCase() async throws -> EnableAnalyticsUseCaseProtocol {
+    public func makeEnableAnalyticsUseCase() throws -> (any EnableAnalyticsUseCaseProtocol)? {
         guard let activeUserSession else {
             throw AnalyticsError.noActiveSession
         }
 
-        return EnableAnalyticsUseCase(
-            service: analyticsService,
-            provider: activeUserSession
-        )
+        return analyticsService.map { analyticsService in
+            EnableAnalyticsUseCase(
+                service: analyticsService,
+                provider: activeUserSession
+            )
+        }
     }
 
-    var canEnableTracking: Bool {
-        analyticsService.canEnableTracking
+    public var canEnableTracking: Bool {
+        analyticsService != nil
     }
 
 }

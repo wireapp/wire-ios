@@ -16,14 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
-/// Errors originating from `AnalyticsService`.
+public struct CountlyConfiguration {
 
-public enum AnalyticsServiceError: Error { // TODO: delete
+    package let appKey: String
+    package let host: URL
 
-    /// The analytics service has not been configured.
-
-    case serviceIsNotConfigured
+    public init(appKey: String, host: URL) {
+        self.appKey = appKey
+        self.host = host
+    }
 
 }
