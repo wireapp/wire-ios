@@ -30,7 +30,7 @@ import Foundation
 
 import WireFoundation
 
-public class Journal: JournalProtocol {
+public struct Journal: JournalProtocol {
 
     private let userID: UUID
     private let storage: any UserDefaultsProtocol
@@ -59,7 +59,7 @@ public class Journal: JournalProtocol {
         get {
             (storage.object(forKey: rawKey(for: key)) as? Bool) ?? key.defaultValue
         }
-        set {
+        nonmutating set {
             storage.set(newValue, forKey: rawKey(for: key))
         }
     }
@@ -74,7 +74,7 @@ public class Journal: JournalProtocol {
                 key.defaultValue
             }
         }
-        set {
+        nonmutating set {
             storage.set(Array(newValue), forKey: rawKey(for: key))
         }
     }
