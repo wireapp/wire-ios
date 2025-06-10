@@ -196,7 +196,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     /// Perform an incremental sync.
 
     func performIncrementalSync() async throws {
-        let liveSync = journal[.isSyncV3Enabled]
+        let liveSync = journal[.isAsyncStreamEnabled]
 
         if isSyncV2Enabled {
 
@@ -240,7 +240,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     }
 
     private var skipPullingLastNotificationID: Bool {
-        journal[.isSyncV3Enabled]
+        journal[.isAsyncStreamEnabled]
     }
 
     private func setupBindings() {

@@ -66,7 +66,7 @@ public final class AsyncStreamMigrator: AsyncStreamMigratorProtocol {
 
         // 3) we're done
         WireLogger.sync.debug("ready for async stream")
-        journal[.isSyncV3Enabled] = true
+        journal[.isAsyncStreamEnabled] = true
     }
 
     private func registerAsyncStreamCapability() async throws {

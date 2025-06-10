@@ -73,7 +73,7 @@ final class AsyncStreamMigratorTests: XCTestCase {
         // THEN
         XCTAssertEqual(mockUserClientsAPI.updateClientIdPayload_Invocations.count, 1)
         XCTAssertEqual(mockSync.pull_Invocations.count, 1)
-        XCTAssertTrue(journal[.isSyncV3Enabled])
+        XCTAssertTrue(journal[.isAsyncStreamEnabled])
     }
 
     func test_migrateToAsyncStream_userClientAlreadyCapable() async throws {
@@ -89,7 +89,7 @@ final class AsyncStreamMigratorTests: XCTestCase {
         // THEN
         XCTAssertEqual(mockUserClientsAPI.updateClientIdPayload_Invocations.count, 0)
         XCTAssertEqual(mockSync.pull_Invocations.count, 1)
-        XCTAssertTrue(journal[.isSyncV3Enabled])
+        XCTAssertTrue(journal[.isAsyncStreamEnabled])
     }
 
     func test_migrateToAsyncStream_syncFails_throws() async throws {
@@ -108,7 +108,7 @@ final class AsyncStreamMigratorTests: XCTestCase {
         // THEN
         XCTAssertEqual(mockUserClientsAPI.updateClientIdPayload_Invocations.count, 1)
         XCTAssertEqual(mockSync.pull_Invocations.count, 1)
-        XCTAssertFalse(journal[.isSyncV3Enabled])
+        XCTAssertFalse(journal[.isAsyncStreamEnabled])
     }
 
     func test_migrateToAsyncStream_registrationFails_throws() async throws {
@@ -128,7 +128,7 @@ final class AsyncStreamMigratorTests: XCTestCase {
         // THEN
         XCTAssertEqual(mockUserClientsAPI.updateClientIdPayload_Invocations.count, 1)
         XCTAssertEqual(mockSync.pull_Invocations.count, 0)
-        XCTAssertFalse(journal[.isSyncV3Enabled])
+        XCTAssertFalse(journal[.isAsyncStreamEnabled])
     }
 
     func test_migrateToAsyncStream_apiVersionTooLow_throws() async throws {

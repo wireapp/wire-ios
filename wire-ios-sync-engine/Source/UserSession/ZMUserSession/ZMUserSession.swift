@@ -614,7 +614,7 @@ public final class ZMUserSession: NSObject {
     }
 
     public func migrateToAsyncStreamIfNeeded() async {
-        guard !journal[.isSyncV3Enabled] else { return }
+        guard !journal[.isAsyncStreamEnabled] else { return }
         guard let migrator = clientSessionComponent?.asyncStreamMigrator() else {
             WireLogger.sync.warn("No async stream migrator available")
             return
@@ -1496,8 +1496,8 @@ extension ZMUserSession: ZMClientRegistrationStatusDelegate {
             setUpSyncAgent(clientID: selfClientID)
             // no migration needed from last sync system as it's a new client
             if userClient.asyncStreamCapable {
-                // activate new sync v3
-                journal[.isSyncV3Enabled] = true
+                // activate new sync with async notifications
+                journal[.isAsyncStreamEnabled] = true
             }
             triggerSync()
         }

@@ -288,7 +288,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
 
     func testPerformIncrementalSync_V3() async throws {
         // Given
-        journal[.isSyncV3Enabled] = true
+        journal[.isAsyncStreamEnabled] = true
 
         // Mock
         liveSync.performAcknowledgeFullSync_MockMethod = { _ in

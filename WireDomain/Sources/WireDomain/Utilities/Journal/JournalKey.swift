@@ -40,8 +40,8 @@ public extension JournalKey where Value == Bool {
 
     /// Whether new sync mechanism (async stream) is used.
 
-    static let isSyncV3Enabled = Self(
-        "isSyncV3Enabled",
+    static let isAsyncStreamEnabled = Self(
+        "isAsyncStreamEnabled",
         defaultValue: false
     )
 
