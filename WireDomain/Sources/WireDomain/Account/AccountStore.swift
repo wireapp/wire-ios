@@ -212,7 +212,7 @@ private struct StoredLoginCredentials: Codable {
 
 private extension Account {
 
-    init(_ storedAccount: StoredAccount) {
+    convenience init(_ storedAccount: StoredAccount) {
         self.init(
             userName: storedAccount.name,
             userIdentifier: storedAccount.identifier,
