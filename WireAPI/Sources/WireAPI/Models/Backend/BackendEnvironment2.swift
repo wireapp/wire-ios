@@ -57,8 +57,6 @@ public struct BackendEnvironment2: Sendable {
     public init(
         title: String,
         endpoints: Endpoints,
-        url: URL,
-        webSocketURL: URL,
         pinnedKeys: [PinnedKey],
         proxySettings: ProxySettings?,
         metadata: ResolvedBackendMetadata
