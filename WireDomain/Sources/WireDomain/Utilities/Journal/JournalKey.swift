@@ -62,6 +62,17 @@ public extension JournalKey where Value == Bool {
 
 }
 
+public extension JournalKey where Value == Bool? {
+
+    /// Whether the user has given consent to track analytics.
+
+    static let isAnalyticsTrackingConsentGiven = Self(
+        "isAnalyticsTrackingConsentGiven",
+        defaultValue: nil
+    )
+
+}
+
 public extension JournalKey where Value == Set<String> {
 
     /// The set of MLS group IDs to be repaired.

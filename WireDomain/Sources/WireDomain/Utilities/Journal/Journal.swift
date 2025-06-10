@@ -64,6 +64,17 @@ public struct Journal: JournalProtocol {
         }
     }
 
+    /// Get or set an optional boolean value.
+
+    public subscript(_ key: JournalKey<Bool?>) -> Bool? {
+        get {
+            (storage.object(forKey: rawKey(for: key)) as? Bool) ?? key.defaultValue
+        }
+        nonmutating set {
+            storage.set(newValue, forKey: rawKey(for: key))
+        }
+    }
+
     /// Get or set a list of string values.
 
     public subscript(_ key: JournalKey<Set<String>>) -> Set<String> {

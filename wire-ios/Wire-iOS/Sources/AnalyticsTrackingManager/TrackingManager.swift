@@ -19,15 +19,30 @@
 import avs
 import Foundation
 import WireCommonComponents
+import WireDomain
 import WireLogging
 import WireSyncEngine
 
 final class TrackingManager: TrackingInterface {
 
+    private let sharedUserDefaults: UserDefaults
     private let sessionManager: SessionManager
     private var observerToken: NSObjectProtocol?
 
-    init(sessionManager: SessionManager) {
+//    private var journal: Journal? {
+//        guard let userID = sessionManager.activeUserSession?.selfUser.remoteIdentifier else { return nil }
+//
+//        return Journal(
+//            userID: userID,
+//            storage: sharedUserDefaults
+//        )
+//    }
+
+    init(
+        sharedUserDefaults: UserDefaults,
+        sessionManager: SessionManager
+    ) {
+        self.sharedUserDefaults = sharedUserDefaults
         self.sessionManager = sessionManager
 
         migrateFromLegacyStorageIfNeeded()
@@ -48,15 +63,17 @@ final class TrackingManager: TrackingInterface {
     private var doesUserConsentPreferenceExist: Bool {
         migrateFromLegacyStorageIfNeeded()
 
-        guard let selectedAccount = sessionManager.accountManager.selectedAccount else { return false }
-        return ExtensionSettings.shared.analyticsEnabledAccounts.keys.contains(selectedAccount.userIdentifier)
+        guard let userID = sessionManager.accountManager.selectedAccount.map(\.userIdentifier) else { return false }
+        let journal = Journal(userID: userID, storage: sharedUserDefaults)
+        return journal[.isAnalyticsTrackingConsentGiven] != nil
     }
 
     var isAnalyticsEnabled: Bool {
         migrateFromLegacyStorageIfNeeded()
 
-        guard let selectedAccount = sessionManager.accountManager.selectedAccount else { return false }
-        return ExtensionSettings.shared.analyticsEnabledAccounts[selectedAccount.userIdentifier] ?? false
+        guard let userID = sessionManager.accountManager.selectedAccount.map(\.userIdentifier) else { return false }
+        let journal = Journal(userID: userID, storage: sharedUserDefaults)
+        return journal[.isAnalyticsTrackingConsentGiven] ?? false
     }
 
     @MainActor
@@ -82,8 +99,9 @@ final class TrackingManager: TrackingInterface {
         try await sessionManager.makeEnableAnalyticsUseCase().invoke()
         AVSFlowManager.getInstance()?.setEnableMetrics(true)
 
-        if let userIdentifier = sessionManager.accountManager.selectedAccount.map(\.userIdentifier) {
-            ExtensionSettings.shared.analyticsEnabledAccounts[userIdentifier] = true
+        if let userID = sessionManager.accountManager.selectedAccount.map(\.userIdentifier) {
+            let journal = Journal(userID: userID, storage: sharedUserDefaults)
+            journal[.isAnalyticsTrackingConsentGiven] = true
         }
     }
 
@@ -91,8 +109,9 @@ final class TrackingManager: TrackingInterface {
         try sessionManager.makeDisableAnalyticsUseCase().invoke()
         AVSFlowManager.getInstance()?.setEnableMetrics(false)
 
-        if let userIdentifier = sessionManager.accountManager.selectedAccount.map(\.userIdentifier) {
-            ExtensionSettings.shared.analyticsEnabledAccounts[userIdentifier] = false
+        if let userID = sessionManager.accountManager.selectedAccount.map(\.userIdentifier) {
+            let journal = Journal(userID: userID, storage: sharedUserDefaults)
+            journal[.isAnalyticsTrackingConsentGiven] = false
         }
     }
 
@@ -100,15 +119,15 @@ final class TrackingManager: TrackingInterface {
     /// If the consent has been given, mark all currently set up accounts as consent being given.
 
     private func migrateFromLegacyStorageIfNeeded() {
-        guard let disableAnalyticsSharing = ExtensionSettings.shared.disableAnalyticsSharing_ else { return }
+        guard let disableAnalyticsSharing = ExtensionSettings.shared.disableAnalyticsSharing else { return }
 
-        let userIdentifiers = sessionManager.accountManager.accounts.map(\.userIdentifier)
-        let analyticsEnabledAccounts = userIdentifiers.reduce(into: [:]) { result, userIdentifier in
-            result[userIdentifier] = !disableAnalyticsSharing
+        for account in sessionManager.accountManager.accounts {
+            let userID = account.userIdentifier
+            let journal = Journal(userID: userID, storage: sharedUserDefaults)
+            journal[.isAnalyticsTrackingConsentGiven] = !disableAnalyticsSharing
         }
-        ExtensionSettings.shared.analyticsEnabledAccounts = analyticsEnabledAccounts
 
-        ExtensionSettings.shared.disableAnalyticsSharing_ = nil
+        ExtensionSettings.shared.disableAnalyticsSharing = nil
     }
 
 }

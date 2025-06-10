@@ -21,20 +21,14 @@ import WireUtilities
 
 private enum ExtensionSettingsKey: String, CaseIterable {
 
-    case analyticsEnabledAccounts
-    case disableLinkPreviews
-
-    // deprecated, to be removed
     case disableAnalyticsSharing
+    case disableLinkPreviews
 
     private var defaultValue: Any? {
         switch self {
         case .disableAnalyticsSharing:
             // No default value because the user needs to decide.
             nil
-        case .analyticsEnabledAccounts:
-            // No default value because the user needs to decide.
-            [String]?.none
         case .disableLinkPreviews:
             false
         }
@@ -63,21 +57,20 @@ public final class ExtensionSettings: NSObject {
         defaults.register(defaults: ExtensionSettingsKey.defaultValueDictionary)
     }
 
-    /// The accounts' `userIdentifier` values mapped to a `Bool` value representing if the consent was given or declined.
+    func reset() {
+        ExtensionSettingsKey.allCases.forEach {
+            defaults.removeObject(forKey: $0.rawValue)
+        }
+    }
 
-    public var analyticsEnabledAccounts: [UUID: Bool] {
-        get { defaults.object(forKey: ExtensionSettingsKey.analyticsEnabledAccounts.rawValue) as? [UUID: Bool] ?? [:] }
-        set { defaults.set(newValue, forKey: ExtensionSettingsKey.analyticsEnabledAccounts.rawValue) }
+    @available(*, deprecated, message: "Use Journal[.isAnalyticsTrackingConsentGiven]!")
+    public var disableAnalyticsSharing: Bool? {
+        get { defaults.object(forKey: ExtensionSettingsKey.disableAnalyticsSharing.rawValue) as? Bool }
+        set { defaults.set(newValue, forKey: ExtensionSettingsKey.disableAnalyticsSharing.rawValue) }
     }
 
     public var disableLinkPreviews: Bool {
         get { defaults.bool(forKey: ExtensionSettingsKey.disableLinkPreviews.rawValue) }
         set { defaults.set(newValue, forKey: ExtensionSettingsKey.disableLinkPreviews.rawValue) }
-    }
-
-    @available(*, deprecated, message: "Use analyticsEnabledAccounts instead.")
-    public var disableAnalyticsSharing_: Bool? {
-        get { defaults.object(forKey: ExtensionSettingsKey.disableAnalyticsSharing.rawValue) as? Bool }
-        set { defaults.set(newValue, forKey: ExtensionSettingsKey.disableAnalyticsSharing.rawValue) }
     }
 }
