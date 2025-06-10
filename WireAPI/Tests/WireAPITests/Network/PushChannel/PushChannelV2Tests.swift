@@ -36,8 +36,7 @@ final class PushChannelV2Tests: XCTestCase {
         webSocket.sendPing_MockMethod = {}
         sut = PushChannelV2(
             webSocket: webSocket,
-            keepAliveInterval: 0.5,
-            upToDateThreshold: 0.1
+            keepAliveInterval: 0.5
         )
     }
 
@@ -74,6 +73,37 @@ final class PushChannelV2Tests: XCTestCase {
         XCTAssertEqual(receivedEnvelopes[0], .event(Scaffolding.envelope1))
         XCTAssertEqual(receivedEnvelopes[1], .event(Scaffolding.envelope2))
         XCTAssertEqual(receivedEnvelopes[2], .event(Scaffolding.envelope3))
+    }
+    
+    func testOpen_UntilUpToDate() async throws {
+        // Given some envelopes that will be delivered through the push channel
+        let mockEnvelope1 = try MockJSONPayloadResource(name: "AsyncLiveUpdateEventEnvelope1")
+        let mockEnvelope2 = try MockJSONPayloadResource(name: "AsyncLiveUpdateEventEnvelope2")
+        let mockEnvelope3 = try MockJSONPayloadResource(name: "MessagesCountEnvelope2")
+
+        webSocket.open_MockValue = AsyncThrowingStream { continuation in
+            continuation.yield(.data(mockEnvelope3.jsonData))
+            continuation.yield(.data(mockEnvelope1.jsonData))
+            continuation.yield(.data(mockEnvelope2.jsonData))
+            continuation.finish()
+        }
+
+        // When the push channel is open and the stream is iterated
+        let liveEventEnvelopes = try await sut.open()
+
+        var receivedEnvelopes = [PushChannelV2.Element]()
+        for try await envelope in liveEventEnvelopes {
+            receivedEnvelopes.append(envelope)
+        }
+
+        // Then envelopes are received
+        try XCTAssertCount(receivedEnvelopes, count: 4)
+        XCTAssertEqual(receivedEnvelopes[0], .syncing(eventsCount: 2))
+
+        XCTAssertEqual(receivedEnvelopes[1], .event(Scaffolding.envelope1))
+        XCTAssertEqual(receivedEnvelopes[2], .event(Scaffolding.envelope2))
+        
+        XCTAssertEqual(receivedEnvelopes[3], .upToDate)
     }
 
     func testOpen_MissedNotificationsEvent() async throws {
@@ -173,9 +203,13 @@ final class PushChannelV2Tests: XCTestCase {
         XCTAssertGreaterThanOrEqual(webSocket.sendPing_Invocations.count, 2)
     }
 
-    func testOpen_WithNoEventsReceiveUpToDateAfterTimeout() async throws {
+    func testOpen_WithReceiveUpToDate() async throws {
         // Mock.
-        webSocket.open_MockValue = AsyncThrowingStream { _ in }
+        let mockEnvelope1 = try MockJSONPayloadResource(name: "MessagesCountEnvelope0")
+
+        webSocket.open_MockValue = AsyncThrowingStream { continuation in
+            continuation.yield(.data(mockEnvelope1.jsonData))
+        }
 
         // Given an open push channel.
         let liveEventEnvelopes = try await sut.open()
@@ -193,8 +227,9 @@ final class PushChannelV2Tests: XCTestCase {
         // is not exact so we will we generous in our assertion of
         // at least 2 in 1.5 seconds).
         XCTAssertGreaterThanOrEqual(webSocket.sendPing_Invocations.count, 2)
-        try XCTAssertCount(receivedEnvelopes, count: 1)
-        XCTAssertEqual(receivedEnvelopes[0], .upToDate)
+        try XCTAssertCount(receivedEnvelopes, count: 2)
+        XCTAssertEqual(receivedEnvelopes[0], .syncing(eventsCount: 0))
+        XCTAssertEqual(receivedEnvelopes[1], .upToDate)
     }
     
     func testOpen_TimeoutTriggerIfNoEvents() async throws {
