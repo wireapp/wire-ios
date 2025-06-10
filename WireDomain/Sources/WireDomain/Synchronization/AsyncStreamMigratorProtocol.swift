@@ -44,7 +44,7 @@ public final class AsyncStreamMigrator: AsyncStreamMigratorProtocol {
         self.userClientsAPI = userClientsAPI
     }
 
-    enum Failure: Error {
+    public enum Failure: Error {
         case apiVersionTooLow
         case missingClient
         case missingClientID
@@ -56,16 +56,16 @@ public final class AsyncStreamMigrator: AsyncStreamMigratorProtocol {
             throw Failure.apiVersionTooLow
         }
 
-        if await !userClientsLocalStore.isClientAsyncStreamCapable() {
+        if await !userClientsLocalStore.hasRegisteredAsyncStreamCapable() {
             try await registerAsyncStreamCapability()
         }
 
-        // 2) do an initial sync
-        WireLogger.sync.debug("do initial sync")
+        // 2) pull pending events
+        WireLogger.sync.debug("pull pending events before migration to async stream")
         try await sync.pull()
 
         // 3) we're done
-        WireLogger.sync.debug("ready for sync v3")
+        WireLogger.sync.debug("ready for async stream")
         journal[.isSyncV3Enabled] = true
     }
 
@@ -75,7 +75,7 @@ public final class AsyncStreamMigrator: AsyncStreamMigratorProtocol {
         }
 
         WireLogger.sync.debug("registering client with async stream capabilities")
-        let payload: UpdateClientPayload = .init(
+        let payload: ClientUpdate = .init(
             capabilities: [.legalholdConsent, .consumableNotifications]
         )
         try await userClientsAPI.updateClient(id: id, payload: payload)

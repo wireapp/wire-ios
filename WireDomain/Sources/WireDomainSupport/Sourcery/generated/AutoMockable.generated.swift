@@ -4014,7 +4014,7 @@ public class MockUserClientsLocalStoreProtocol: UserClientsLocalStoreProtocol {
     public var isClientAsyncStreamCapable_MockMethod: (() async -> Bool)?
     public var isClientAsyncStreamCapable_MockValue: Bool?
 
-    public func isClientAsyncStreamCapable() async -> Bool {
+    public func hasRegisteredAsyncStreamCapable() async -> Bool {
         isClientAsyncStreamCapable_Invocations.append(())
 
         if let mock = isClientAsyncStreamCapable_MockMethod {

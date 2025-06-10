@@ -17,7 +17,7 @@
 //
 
 /// Payload to update a UserClient
-public struct UpdateClientPayload: Equatable, Encodable, Sendable {
+public struct ClientUpdate: Equatable, Sendable {
 
     /// The capabilities of the client.
     /// - Note: capabilities cannot be removed once added to a client,
@@ -40,15 +40,6 @@ public struct UpdateClientPayload: Equatable, Encodable, Sendable {
 
     public let preKeys: [Prekey]?
 
-    enum CodingKeys: String, CodingKey {
-        case label
-        case lastKey = "last_key"
-        case preKeys = "prekeys"
-        case mlsPublicKeys = "mls_public_keys"
-        case capabilities
-
-    }
-
     public init(
         capabilities: [UserClientCapability]? = nil,
         label: String? = nil,
@@ -61,5 +52,17 @@ public struct UpdateClientPayload: Equatable, Encodable, Sendable {
         self.lastKey = lastKey
         self.mlsPublicKeys = mlsPublicKeys
         self.preKeys = preKeys
+    }
+}
+
+extension ClientUpdate: Encodable {
+
+    enum CodingKeys: String, CodingKey {
+        case label
+        case lastKey = "last_key"
+        case preKeys = "prekeys"
+        case mlsPublicKeys = "mls_public_keys"
+        case capabilities
+
     }
 }

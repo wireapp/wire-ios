@@ -257,7 +257,7 @@ public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
         }
     }
 
-    public func isClientAsyncStreamCapable() async -> Bool {
+    public func hasRegisteredAsyncStreamCapable() async -> Bool {
         await context.perform { [context] in
             let selfClient = ZMUser.selfUser(in: context).selfClient()
             return selfClient?.asyncStreamCapable == true

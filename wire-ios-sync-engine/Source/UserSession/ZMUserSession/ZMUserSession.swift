@@ -621,6 +621,8 @@ public final class ZMUserSession: NSObject {
         }
         do {
             try await migrator.migrateToAsyncStream()
+        } catch AsyncStreamMigrator.Failure.apiVersionTooLow {
+            // ignore error
         } catch {
             WireLogger.session.error("Failed to migrate to async stream: \(String(describing: error))")
         }

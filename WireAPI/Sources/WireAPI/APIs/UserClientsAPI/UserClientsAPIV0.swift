@@ -70,7 +70,7 @@ class UserClientsAPIV0: UserClientsAPI, VersionedAPI {
             .parse(code: response.statusCode, data: data)
     }
 
-    func updateClient(id: UserClientID, payload: UpdateClientPayload) async throws {
+    func updateClient(id: UserClientID, payload: ClientUpdate) async throws {
         let body = try JSONEncoder.defaultEncoder.encode(payload)
 
         let path = "\(pathPrefix)/clients/\(id)"
