@@ -17,7 +17,7 @@
 //
 
 import WireTransport
-
+import WireAPI
 @testable import WireSyncEngine
 
 public extension MessagingTest {
@@ -93,6 +93,22 @@ public extension MessagingTest {
 
         var proteusViaCoreCrypto = DeveloperFlag.proteusViaCoreCrypto
         proteusViaCoreCrypto.isOn = false
+    }
+    
+    func createSelfClient(capabilities: [UserClientCapability] = []) -> UserClient {
+        let selfClient = self.setupSelfClient(inMoc: self.syncMOC)
+        var payload: [String : AnyObject] = [
+            "id": selfClient.remoteIdentifier as AnyObject,
+            "type": "permanent" as AnyObject,
+            "time": Date().transportString as AnyObject
+        ]
+        
+        if capabilities.isEmpty == false {
+            payload["capabilities"] = capabilities.map { $0.rawValue } as AnyObject
+        }
+        _ = UserClient.createOrUpdateSelfUserClient(payload, context: self.syncMOC)
+        self.syncMOC.saveOrRollback()
+        return selfClient
     }
 
 }

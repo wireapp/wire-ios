@@ -2029,13 +2029,18 @@ public class MockInitialSyncProtocol: InitialSyncProtocol {
 
 }
 
+<<<<<<< ours
 public class MockLiveSyncDelegate: LiveSyncDelegate {
+=======
+public class MockLiveSyncProtocol: LiveSyncProtocol {
+>>>>>>> theirs
 
     // MARK: - Life cycle
 
     public init() {}
 
 
+<<<<<<< ours
     // MARK: - isUpToDate
 
     public var isUpToDateSync_Invocations: [IncrementalSyncV2] = []
@@ -2079,6 +2084,29 @@ public class MockLiveSyncDelegate: LiveSyncDelegate {
         }
 
         mock(sync, error)
+=======
+    // MARK: - perform
+
+    public var performAcknowledgeFullSync_Invocations: [Bool] = []
+    public var performAcknowledgeFullSync_MockError: Error?
+    public var performAcknowledgeFullSync_MockMethod: ((Bool) async throws -> IncrementalSync.Token)?
+    public var performAcknowledgeFullSync_MockValue: IncrementalSync.Token?
+
+    public func perform(acknowledgeFullSync: Bool) async throws -> IncrementalSync.Token {
+        performAcknowledgeFullSync_Invocations.append(acknowledgeFullSync)
+
+        if let error = performAcknowledgeFullSync_MockError {
+            throw error
+        }
+
+        if let mock = performAcknowledgeFullSync_MockMethod {
+            return try await mock(acknowledgeFullSync)
+        } else if let mock = performAcknowledgeFullSync_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `performAcknowledgeFullSync`")
+        }
+>>>>>>> theirs
     }
 
 }
@@ -3961,10 +3989,10 @@ public class MockUserClientsLocalStoreProtocol: UserClientsLocalStoreProtocol {
     // MARK: - fetchSelfClientID
 
     public var fetchSelfClientID_Invocations: [Void] = []
-    public var fetchSelfClientID_MockMethod: (() async -> UUID)?
-    public var fetchSelfClientID_MockValue: UUID?
+    public var fetchSelfClientID_MockMethod: (() async -> String?)?
+    public var fetchSelfClientID_MockValue: String??
 
-    public func fetchSelfClientID() async -> UUID {
+    public func fetchSelfClientID() async -> String? {
         fetchSelfClientID_Invocations.append(())
 
         if let mock = fetchSelfClientID_MockMethod {
@@ -3973,6 +4001,24 @@ public class MockUserClientsLocalStoreProtocol: UserClientsLocalStoreProtocol {
             return mock
         } else {
             fatalError("no mock for `fetchSelfClientID`")
+        }
+    }
+
+    // MARK: - isClientAsyncStreamCapable
+
+    public var isClientAsyncStreamCapable_Invocations: [Void] = []
+    public var isClientAsyncStreamCapable_MockMethod: (() async -> Bool)?
+    public var isClientAsyncStreamCapable_MockValue: Bool?
+
+    public func isClientAsyncStreamCapable() async -> Bool {
+        isClientAsyncStreamCapable_Invocations.append(())
+
+        if let mock = isClientAsyncStreamCapable_MockMethod {
+            return await mock()
+        } else if let mock = isClientAsyncStreamCapable_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `isClientAsyncStreamCapable`")
         }
     }
 
