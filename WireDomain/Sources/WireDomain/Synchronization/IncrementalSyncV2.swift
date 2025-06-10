@@ -81,7 +81,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         pushChannel: PushChannelV2Protocol
     ) async {
         logger.debug("handling live event stream v3")
-        syncStateSubject.send(.liveSyncing(.ongoing))
+        syncStateSubject.send(.incrementalSyncing(.pullPendingEvents))
         do {
             for try await element in liveEventStream {
                 logger.debug(
@@ -91,8 +91,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                 switch element {
                 case .upToDate:
                     logger.debug("upToDate event", attributes:  .syncAttributes(initialSync: false))
-                    // TODO: double check idle
-                    syncStateSubject.send(.idle)
+                    syncStateSubject.send(.liveSyncing(.ongoing))
                     delegate?.didFinishSync(sync: self)
 
                 case .missedEvents:
