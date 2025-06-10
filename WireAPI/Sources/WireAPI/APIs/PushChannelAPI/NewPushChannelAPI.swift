@@ -30,4 +30,4 @@ public protocol NewPushChannelAPI {
 }
 
 // Workaround for automockable compiler error.
-public typealias AnyNewPushChannel = any NewPushChannelProtocol
+public typealias AnyNewPushChannel = any PushChannelV2Protocol

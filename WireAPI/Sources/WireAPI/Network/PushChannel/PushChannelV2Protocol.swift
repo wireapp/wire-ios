@@ -19,13 +19,13 @@ import Foundation
 
 // sourcery: AutoMockable
 /// Make a direct connection to a server to receive update events and acknowledge them.
-public protocol NewPushChannelProtocol: Sendable {
+public protocol PushChannelV2Protocol: Sendable {
 
     /// Open the push channel and start receiving update events.
     ///
     /// - Returns: An async stream of live update event envelopes.
 
-    func open() async throws -> NewPushChannel.Stream
+    func open() async throws -> PushChannelV2.Stream
 
     /// Close the push channel and stop receiving update events.
 

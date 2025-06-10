@@ -18,7 +18,7 @@
 
 /// Delegate steps of LiveSync
 public protocol LiveSyncDelegate: AnyObject {
-    func didFinishSync(sync: NewIncrementalSync)
-    func didMissedEvents(sync: NewIncrementalSync) async
-    func didFail(sync: NewIncrementalSync, error: any Error)
+    func didFinishSync(sync: IncrementalSyncV2)
+    func didMissedEvents(sync: IncrementalSyncV2) async
+    func didFail(sync: IncrementalSyncV2, error: any Error)
 }

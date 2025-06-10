@@ -35,14 +35,14 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
 
     var clientID: String? {
         didSet {
-            WireLogger.pushChannel.debug("Setting client ID", attributes: .pushChannelV1)
+            WireLogger.pushChannel.debug("Setting client ID", attributes: .pushChannelV0)
             scheduleOpen()
         }
     }
 
     var accessToken: AccessToken? {
         didSet {
-            WireLogger.pushChannel.debug("Setting access token", attributes: .pushChannelV1)
+            WireLogger.pushChannel.debug("Setting access token", attributes: .pushChannelV0)
         }
     }
 
@@ -116,7 +116,7 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
     }
 
     func close() {
-        WireLogger.pushChannel.info("Push channel was closed", attributes: .pushChannelV1)
+        WireLogger.pushChannel.info("Push channel was closed", attributes: .pushChannelV0)
 
         scheduler.performGroupedBlock {
             self.webSocket?.disconnect()
@@ -130,7 +130,7 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
             let accessToken,
             let websocketURL
         else {
-            WireLogger.pushChannel.warn("Can't connect websocket", attributes: .pushChannelV1)
+            WireLogger.pushChannel.warn("Can't connect websocket", attributes: .pushChannelV0)
             return
         }
 
@@ -169,7 +169,7 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
         let attributes: LogAttributes = [
             .selfClientId: clientID?.redactedAndTruncated(maxVisibleCharacters: 3, length: 8)
 
-        ].merging(.pushChannelV1, uniquingKeysWith: { _, new in new })
+        ].merging(.pushChannelV0, uniquingKeysWith: { _, new in new })
         WireLogger.pushChannel.info(
             "Connecting websocket with URL: \(websocketURL.endpointRemoteLogDescription)",
             attributes: attributes,
@@ -192,11 +192,11 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
         guard canOpenConnection else {
             WireLogger.pushChannel.debug(
                 "Conditions for scheduling opening not fulfilled, waiting...",
-                attributes: .pushChannelV1
+                attributes: .pushChannelV0
             )
             return
         }
-        WireLogger.pushChannel.debug("Schedule opening..", attributes: .pushChannelV1)
+        WireLogger.pushChannel.debug("Schedule opening..", attributes: .pushChannelV0)
         scheduler.add(ZMOpenPushChannelRequest())
     }
 
@@ -242,7 +242,7 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
 extension StarscreamPushChannel: ZMTimerClient {
 
     func timerDidFire(_ timer: ZMTimer!) {
-        WireLogger.pushChannel.debug("Sending ping", attributes: .pushChannelV1)
+        WireLogger.pushChannel.debug("Sending ping", attributes: .pushChannelV0)
         webSocket?.write(ping: Data())
         schedulePingTimer()
     }
@@ -254,15 +254,15 @@ extension StarscreamPushChannel: WebSocketDelegate {
         switch event {
 
         case .connected:
-            WireLogger.pushChannel.debug("Sending ping", attributes: .pushChannelV1)
+            WireLogger.pushChannel.debug("Sending ping", attributes: .pushChannelV0)
             onOpen()
         case .disconnected:
-            WireLogger.pushChannel.debug("Websocket disconnected", attributes: .pushChannelV1)
+            WireLogger.pushChannel.debug("Websocket disconnected", attributes: .pushChannelV0)
             onClose()
         case .text:
             break
         case let .binary(data):
-            WireLogger.pushChannel.debug("Received data", attributes: .pushChannelV1)
+            WireLogger.pushChannel.debug("Received data", attributes: .pushChannelV0)
             consumerQueue?.performGroupedBlock { [weak self] in
                 self?.consumer?.pushChannelDidReceive(data)
             }

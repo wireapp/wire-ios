@@ -26,7 +26,7 @@ final class NewPushChannelAPIImpl: NewPushChannelAPI, VersionedAPI {
         self.apiVersion = apiVersion
     }
 
-    func createPushChannel(clientID: String) async throws -> any NewPushChannelProtocol {
+    func createPushChannel(clientID: String) async throws -> any PushChannelV2Protocol {
         let path = "\(pathPrefix)/events"
 
         let request = try URLRequestBuilder(path: path)

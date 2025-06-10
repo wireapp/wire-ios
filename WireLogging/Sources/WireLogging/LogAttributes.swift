@@ -52,6 +52,6 @@ public enum LogAttributesKey: String, Comparable, Sendable {
 
 public extension LogAttributes {
     static let safePublic = [LogAttributesKey.public: true]
-    static let pushChannelV3 = [LogAttributesKey.pushChannelVersion: "v3"]
-    static let pushChannelV1 = [LogAttributesKey.pushChannelVersion: "v1"]
+    static let pushChannelV2 = [LogAttributesKey.pushChannelVersion: "v2"]
+    static let pushChannelV0 = [LogAttributesKey.pushChannelVersion: "v0"]
 }

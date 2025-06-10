@@ -22,7 +22,7 @@ import WireAPI
 import WireLogging
 
 /// IncrementalSync using new backend API async stream notifications
-public struct NewIncrementalSync: LiveSyncProtocol {
+public struct IncrementalSyncV2: LiveSyncProtocol {
 
     private let selfClientID: String
     private let pushChannelAPI: any NewPushChannelAPI
@@ -77,8 +77,8 @@ public struct NewIncrementalSync: LiveSyncProtocol {
     }
 
     private func processLiveStream(
-        _ liveEventStream: NewPushChannel.Stream,
-        pushChannel: NewPushChannelProtocol
+        _ liveEventStream: PushChannelV2.Stream,
+        pushChannel: PushChannelV2Protocol
     ) async {
         logger.debug("handling live event stream v3")
         syncStateSubject.send(.liveSyncing(.ongoing))
@@ -186,7 +186,7 @@ public struct NewIncrementalSync: LiveSyncProtocol {
 
     private func acknowledgeEnvelope(
         _ envelope: UpdateEventEnvelope,
-        through pushChannel: NewPushChannelProtocol
+        through pushChannel: PushChannelV2Protocol
     ) async {
         do {
             if let deliveryTag = envelope.deliveryTag {

@@ -23,7 +23,7 @@ import XCTest
 
 final class NewPushChannelTests: XCTestCase {
 
-    var sut: NewPushChannel!
+    var sut: PushChannelV2!
     var request: URLRequest!
     var webSocket: MockWebSocketProtocol!
 
@@ -34,7 +34,7 @@ final class NewPushChannelTests: XCTestCase {
         webSocket = MockWebSocketProtocol()
         webSocket.close_MockMethod = {}
         webSocket.sendPing_MockMethod = {}
-        sut = NewPushChannel(
+        sut = PushChannelV2(
             webSocket: webSocket,
             keepAliveInterval: 0.5,
             upToDateThreshold: 0.1
@@ -64,7 +64,7 @@ final class NewPushChannelTests: XCTestCase {
         // When the push channel is open and the stream is iterated
         let liveEventEnvelopes = try await sut.open()
 
-        var receivedEnvelopes = [NewPushChannel.Element]()
+        var receivedEnvelopes = [PushChannelV2.Element]()
         for try await envelope in liveEventEnvelopes {
             receivedEnvelopes.append(envelope)
         }
@@ -87,7 +87,7 @@ final class NewPushChannelTests: XCTestCase {
         // When the push channel is open and the stream is iterated
         let liveEventEnvelopes = try await sut.open()
 
-        var receivedEnvelopes = [NewPushChannel.Element]()
+        var receivedEnvelopes = [PushChannelV2.Element]()
         for try await envelope in liveEventEnvelopes {
             receivedEnvelopes.append(envelope)
         }
@@ -180,7 +180,7 @@ final class NewPushChannelTests: XCTestCase {
         // Given an open push channel.
         let liveEventEnvelopes = try await sut.open()
 
-        var receivedEnvelopes = [NewPushChannel.Element]()
+        var receivedEnvelopes = [PushChannelV2.Element]()
         Task.detached {
             for try await envelope in liveEventEnvelopes {
                 receivedEnvelopes.append(envelope)
@@ -212,7 +212,7 @@ final class NewPushChannelTests: XCTestCase {
         // Given an open push channel.
         let liveEventEnvelopes = try await sut.open()
 
-        var receivedEnvelopes = [NewPushChannel.Element]()
+        var receivedEnvelopes = [PushChannelV2.Element]()
         Task.detached {
             for try await envelope in liveEventEnvelopes {
                 receivedEnvelopes.append(envelope)

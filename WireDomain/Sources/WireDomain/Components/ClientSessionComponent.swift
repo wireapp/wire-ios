@@ -379,7 +379,7 @@ public final class ClientSessionComponent {
         journal: journal
     )
 
-    public lazy var newIncrementalSync = NewIncrementalSync(
+    public lazy var newIncrementalSync = IncrementalSyncV2(
         selfClientID: selfClientID,
         pushChannelAPI: newPushChannelAPI,
         decryptor: updateEventDecryptor,

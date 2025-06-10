@@ -21,6 +21,9 @@ public import Foundation
 import WireFoundation
 import WireLogging
 
+public typealias PushChannelV1 = PushChannel
+public typealias PushChannelV1Procotol = PushChannelProtocol
+
 public actor PushChannel: PushChannelProtocol {
 
     public typealias Stream = AsyncThrowingStream<UpdateEventEnvelope, any Error>

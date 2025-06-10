@@ -23,9 +23,9 @@ import XCTest
 @testable import WireDomain
 @testable import WireDomainSupport
 
-final class NewIncrementalSyncTests: XCTestCase {
+final class IncrementalSyncV2Tests: XCTestCase {
 
-    var sut: NewIncrementalSync!
+    var sut: IncrementalSyncV2!
     var pushChannelAPI: MockNewPushChannelAPI!
     var decryptor: MockUpdateEventDecryptorProtocol!
     var store: MockUpdateEventsLocalStoreProtocol!
@@ -46,7 +46,7 @@ final class NewIncrementalSyncTests: XCTestCase {
             storage: UserDefaults.temporary()
         )
         
-        sut = NewIncrementalSync(
+        sut = IncrementalSyncV2(
             selfClientID: Scaffolding.selfClientID,
             pushChannelAPI: pushChannelAPI,
             decryptor: decryptor,
@@ -73,10 +73,10 @@ final class NewIncrementalSyncTests: XCTestCase {
         // Mock
 
         // Some live events, some of which were already pulled.
-        let pushChannel = MockNewPushChannelProtocol()
+        let pushChannel = MockPushChannelV2Protocol()
         pushChannel.open_MockValue = AsyncThrowingStream { continuation in
             Task {
-                continuation.yield(NewPushChannel.Element.event(Scaffolding.event2))
+                continuation.yield(PushChannelV2.Element.event(Scaffolding.event2))
                 continuation.finish()
             }
         }
@@ -164,7 +164,7 @@ final class NewIncrementalSyncTests: XCTestCase {
 
     func testPerform_AcknowledgementFullSync() async throws {
         // Mock
-        let pushChannel = MockNewPushChannelProtocol()
+        let pushChannel = MockPushChannelV2Protocol()
         pushChannel.acknowledgeFullSync_MockMethod = {}
 
         pushChannel.open_MockValue = AsyncThrowingStream { continuation in

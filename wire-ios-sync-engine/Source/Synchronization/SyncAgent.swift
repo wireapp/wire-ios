@@ -262,11 +262,11 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
 extension SyncAgent: LiveSyncDelegate {
 
-    func didFinishSync(sync: NewIncrementalSync) {
+    func didFinishSync(sync: IncrementalSyncV2) {
         delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: false)
     }
 
-    func didMissedEvents(sync: NewIncrementalSync) async {
+    func didMissedEvents(sync: IncrementalSyncV2) async {
         WireLogger.sync.debug("slow sync requested by sync v3")
         do {
             try await performInitialSyncV2()
@@ -276,7 +276,7 @@ extension SyncAgent: LiveSyncDelegate {
         }
     }
 
-    func didFail(sync: NewIncrementalSync, error: any Error) {
+    func didFail(sync: IncrementalSyncV2, error: any Error) {
         delegate?.syncAgentDidFailSyncing(
             self,
             error: error

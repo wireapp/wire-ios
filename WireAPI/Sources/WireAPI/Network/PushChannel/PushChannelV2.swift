@@ -21,7 +21,7 @@ import WireFoundation
 import WireLogging
 
 /// PushChannel using new async stream
-public final class NewPushChannel: NewPushChannelProtocol {
+public final class PushChannelV2: PushChannelV2Protocol {
 
     public enum Element: Equatable {
         case upToDate
@@ -66,7 +66,7 @@ public final class NewPushChannel: NewPushChannelProtocol {
     }
 
     public func open() async throws -> AsyncThrowingStream<Element, any Error> {
-        WireLogger.pushChannel.debug("opening new push channel", attributes: .pushChannelV3)
+        WireLogger.pushChannel.debug("opening new push channel", attributes: .pushChannelV2)
 
         let sourceStream = try await webSocket.open()
         await channelState.websocketOpened()
@@ -86,7 +86,7 @@ public final class NewPushChannel: NewPushChannelProtocol {
                     setupUpToDateTask()
                 }
             } catch {
-                WireLogger.pushChannel.error("got error: \(error)", attributes: .pushChannelV3)
+                WireLogger.pushChannel.error("got error: \(error)", attributes: .pushChannelV2)
                 continuation.finish(throwing: error)
                 await close()
                 return
@@ -102,7 +102,7 @@ public final class NewPushChannel: NewPushChannelProtocol {
     }
 
     public func close() async {
-        WireLogger.pushChannel.debug("closing push channel", attributes: .pushChannelV3)
+        WireLogger.pushChannel.debug("closing push channel", attributes: .pushChannelV2)
 
         await webSocket.close()
         tearDownUpToDateTask()
@@ -113,7 +113,7 @@ public final class NewPushChannel: NewPushChannelProtocol {
 
         switch message {
         case let .data(data):
-            WireLogger.pushChannel.debug("received web socket data, decoding...", attributes: .pushChannelV3)
+            WireLogger.pushChannel.debug("received web socket data, decoding...", attributes: .pushChannelV2)
             let envelope = try decoder.decode(WebSocketNotification.self, from: data)
             if envelope.type == .event {
                 return Element.event(envelope.toAPIModel())
@@ -122,11 +122,11 @@ public final class NewPushChannel: NewPushChannelProtocol {
             }
 
         case .string:
-            WireLogger.pushChannel.debug("received web socket string, ignoring...", attributes: .pushChannelV3)
+            WireLogger.pushChannel.debug("received web socket string, ignoring...", attributes: .pushChannelV2)
             throw PushChannelError.receivedInvalidMessage
 
         @unknown default:
-            WireLogger.pushChannel.debug("received web socket message, ignoring...", attributes: .pushChannelV3)
+            WireLogger.pushChannel.debug("received web socket message, ignoring...", attributes: .pushChannelV2)
             throw PushChannelError.receivedInvalidMessage
         }
     }
@@ -139,11 +139,11 @@ public final class NewPushChannel: NewPushChannelProtocol {
             do {
                 while true {
                     try await Task.sleep(for: .seconds(keepAliveInterval))
-                    WireLogger.pushChannel.debug("sending keep alive ping", attributes: .pushChannelV3)
+                    WireLogger.pushChannel.debug("sending keep alive ping", attributes: .pushChannelV2)
                     await webSocket.sendPing()
                 }
             } catch {
-                WireLogger.pushChannel.warn("keep alive task was cancelled", attributes: .pushChannelV3)
+                WireLogger.pushChannel.warn("keep alive task was cancelled", attributes: .pushChannelV2)
                 tearDownKeepAliveTask()
             }
         }
@@ -151,7 +151,7 @@ public final class NewPushChannel: NewPushChannelProtocol {
 
     private func tearDownKeepAliveTask() {
         guard let keepAliveTask else { return }
-        WireLogger.pushChannel.debug("tearing down keep alive task", attributes: .pushChannelV3)
+        WireLogger.pushChannel.debug("tearing down keep alive task", attributes: .pushChannelV2)
         keepAliveTask.cancel()
         self.keepAliveTask = nil
     }
@@ -165,13 +165,13 @@ public final class NewPushChannel: NewPushChannelProtocol {
                 try await Task.sleep(for: .seconds(channelState.timeUntilCaughtUp()))
                 // we reach here when time between events is significant enough that we're up to date
                 if await channelState.catchingUp {
-                    WireLogger.pushChannel.debug("caught up", attributes: .pushChannelV3)
+                    WireLogger.pushChannel.debug("caught up", attributes: .pushChannelV2)
                     await channelState.caughtUp()
                     continuation.yield(.upToDate)
                 }
 
             } catch {
-                WireLogger.pushChannel.warn("upToDateTask was cancelled", attributes: .pushChannelV3)
+                WireLogger.pushChannel.warn("upToDateTask was cancelled", attributes: .pushChannelV2)
                 tearDownUpToDateTask()
             }
         }
@@ -179,7 +179,7 @@ public final class NewPushChannel: NewPushChannelProtocol {
 
     private func tearDownUpToDateTask() {
         guard let upToDateTask else { return }
-        WireLogger.pushChannel.debug("tearing down upToDateTask", attributes: .pushChannelV3)
+        WireLogger.pushChannel.debug("tearing down upToDateTask", attributes: .pushChannelV2)
         upToDateTask.cancel()
         self.upToDateTask = nil
     }
@@ -187,7 +187,7 @@ public final class NewPushChannel: NewPushChannelProtocol {
     // MARK: - Acknowledgement
 
     public func acknowledgeEvent(deliveryTag: UInt64, multiple: Bool = false) async throws {
-        WireLogger.pushChannel.debug("acknowledgeEvent \(deliveryTag)", attributes: .pushChannelV3)
+        WireLogger.pushChannel.debug("acknowledgeEvent \(deliveryTag)", attributes: .pushChannelV2)
         let acknowledgement = EventAcknowledgment(
             deliveryTag: deliveryTag,
             multiple: multiple
@@ -197,7 +197,7 @@ public final class NewPushChannel: NewPushChannelProtocol {
     }
 
     public func acknowledgeFullSync() async throws {
-        WireLogger.pushChannel.debug("acknowledgeFullSync", attributes: .pushChannelV3)
+        WireLogger.pushChannel.debug("acknowledgeFullSync", attributes: .pushChannelV2)
         let acknowledgement = FullSyncAcknowledgment()
         let data = try encoder.encode(acknowledgement)
         try await write(data: data)
@@ -206,7 +206,7 @@ public final class NewPushChannel: NewPushChannelProtocol {
     // MARK: - Helpers
 
     private func write(data: Data) async throws {
-        WireLogger.pushChannel.debug("write data to push channel", attributes: .pushChannelV3)
+        WireLogger.pushChannel.debug("write data to push channel", attributes: .pushChannelV2)
         try await webSocket.write(data: data)
     }
 }
