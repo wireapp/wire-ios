@@ -17,6 +17,7 @@
 //
 
 /// Delegate steps of LiveSync
+/// sourcery: AutoMockable
 public protocol LiveSyncDelegate: AnyObject {
     func isUpToDate(sync: IncrementalSyncV2)
     func didMissedEvents(sync: IncrementalSyncV2) async

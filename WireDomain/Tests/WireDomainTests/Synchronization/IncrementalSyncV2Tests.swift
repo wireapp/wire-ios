@@ -26,20 +26,22 @@ import XCTest
 final class IncrementalSyncV2Tests: XCTestCase {
 
     var sut: IncrementalSyncV2!
-    var pushChannelAPI: MockNewPushChannelAPI!
+    var pushChannelAPI: MockPushChannelV2API!
     var decryptor: MockUpdateEventDecryptorProtocol!
     var store: MockUpdateEventsLocalStoreProtocol!
     var processor: MockUpdateEventProcessorProtocol!
     var databaseSaver: MockDatabaseSaverProtocol!
     var syncStateSubject: CurrentValueSubject<SyncState, Never>!
+    var liveDelegate: MockLiveSyncDelegate!
     var journal: Journal!
 
     override func setUp() {
-        pushChannelAPI = MockNewPushChannelAPI()
+        pushChannelAPI = MockPushChannelV2API()
         decryptor = MockUpdateEventDecryptorProtocol()
         store = MockUpdateEventsLocalStoreProtocol()
         processor = MockUpdateEventProcessorProtocol()
         databaseSaver = MockDatabaseSaverProtocol()
+        liveDelegate = MockLiveSyncDelegate()
         syncStateSubject = .init(.idle)
         journal = Journal(
             userID: UUID(),
@@ -56,6 +58,10 @@ final class IncrementalSyncV2Tests: XCTestCase {
             syncStateSubject: syncStateSubject,
             journal: journal
         )
+        sut.delegate = liveDelegate
+        liveDelegate.isUpToDateSync_MockMethod = { _ in }
+        liveDelegate.didMissedEventsSync_MockMethod = { _ in }
+        
     }
 
     override func tearDown() {
@@ -67,6 +73,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
         databaseSaver = nil
         syncStateSubject = nil
         journal = nil
+        liveDelegate = nil
     }
 
     func testPerform_pendingEventsExist() async throws {
@@ -74,14 +81,19 @@ final class IncrementalSyncV2Tests: XCTestCase {
 
         // Some live events, some of which were already pulled.
         let pushChannel = MockPushChannelV2Protocol()
+        pushChannel.acknowledgeMessageCount_MockMethod = {}
+
         pushChannel.open_MockValue = AsyncThrowingStream { continuation in
             Task {
+                continuation.yield(PushChannelV2.Element.syncing(eventsCount: 1))
                 continuation.yield(PushChannelV2.Element.event(Scaffolding.event2))
+                continuation.yield(PushChannelV2.Element.upToDate)
                 continuation.finish()
             }
         }
         pushChannel.acknowledgeEventDeliveryTagMultiple_MockMethod = { _, _ in }
         pushChannelAPI.createPushChannelClientID_MockMethod = { _ in pushChannel }
+
 
         // Some indices at which live events will be stored.
         var indices = [Int64(10)]
@@ -109,7 +121,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
         databaseSaver.save_MockMethod = {}
 
         // When
-        let token = try await sut.perform(acknowledgeFullSync: false)
+        let token = try await sut.perform()
         await token.task.value
 
         // Then push channel was created.
@@ -127,6 +139,10 @@ final class IncrementalSyncV2Tests: XCTestCase {
             [Scaffolding.event2]
         )
 
+        // Then sync is up to date
+        XCTAssertEqual(liveDelegate.isUpToDateSync_Invocations.count, 1)
+        XCTAssertEqual(pushChannel.acknowledgeMessageCount_Invocations.count, 1)
+        
         // Then live events were stored.
         XCTAssertEqual(store.indexOfLastEventEnvelope_Invocations.count, 1)
 
@@ -205,7 +221,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
         databaseSaver.save_MockMethod = {}
 
         // When
-        let token = try await sut.perform(acknowledgeFullSync: false)
+        let token = try await sut.perform()
         await token.task.value
 
         // Then push channel was created.
@@ -242,7 +258,9 @@ final class IncrementalSyncV2Tests: XCTestCase {
                 Scaffolding.event3
             ].flatMap(\.events)
         )
-
+        
+        XCTAssertEqual(liveDelegate.didMissedEventsSync_Invocations.count, 1)
+        
         // Then live events were deleted.
         XCTAssertEqual(store.deleteEventEnvelopeAtIndex_Invocations, [11, 12])
 

@@ -2029,6 +2029,60 @@ public class MockInitialSyncProtocol: InitialSyncProtocol {
 
 }
 
+public class MockLiveSyncDelegate: LiveSyncDelegate {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - isUpToDate
+
+    public var isUpToDateSync_Invocations: [IncrementalSyncV2] = []
+    public var isUpToDateSync_MockMethod: ((IncrementalSyncV2) -> Void)?
+
+    public func isUpToDate(sync: IncrementalSyncV2) {
+        isUpToDateSync_Invocations.append(sync)
+
+        guard let mock = isUpToDateSync_MockMethod else {
+            fatalError("no mock for `isUpToDateSync`")
+        }
+
+        mock(sync)
+    }
+
+    // MARK: - didMissedEvents
+
+    public var didMissedEventsSync_Invocations: [IncrementalSyncV2] = []
+    public var didMissedEventsSync_MockMethod: ((IncrementalSyncV2) async -> Void)?
+
+    public func didMissedEvents(sync: IncrementalSyncV2) async {
+        didMissedEventsSync_Invocations.append(sync)
+
+        guard let mock = didMissedEventsSync_MockMethod else {
+            fatalError("no mock for `didMissedEventsSync`")
+        }
+
+        await mock(sync)
+    }
+
+    // MARK: - didFail
+
+    public var didFailSyncError_Invocations: [(sync: IncrementalSyncV2, error: any Error)] = []
+    public var didFailSyncError_MockMethod: ((IncrementalSyncV2, any Error) -> Void)?
+
+    public func didFail(sync: IncrementalSyncV2, error: any Error) {
+        didFailSyncError_Invocations.append((sync: sync, error: error))
+
+        guard let mock = didFailSyncError_MockMethod else {
+            fatalError("no mock for `didFailSyncError`")
+        }
+
+        mock(sync, error)
+    }
+
+}
+
 class MockMLSMessageDecryptorProtocol: MLSMessageDecryptorProtocol {
 
     // MARK: - Life cycle
