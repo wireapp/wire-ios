@@ -16,7 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
+public import WireFoundation
 
 import WireAnalytics
 
@@ -367,7 +368,7 @@ public class MockUserSession: UserSession {
 
     // MARK: - analyticsEventTracker
 
-    public var analyticsEventTracker: AnalyticsEventTracker?
+    public var analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?
 
     // MARK: - conversationDirectory
 

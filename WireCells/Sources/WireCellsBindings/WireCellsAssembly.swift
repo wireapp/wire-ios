@@ -32,7 +32,8 @@ public struct WireCellsAssembly {
     private static let nodesAPI = NodesAPI(credentials: credentials)
 
     private static let draftsRepository = DraftsRepository(
-        uploadManager: WireCellsNodeUploadManager(nodesAPI: nodesAPI)
+        uploadManager: WireCellsNodeUploadManager(nodesAPI: nodesAPI),
+        nodesAPI: nodesAPI
     )
 
     public init() {}

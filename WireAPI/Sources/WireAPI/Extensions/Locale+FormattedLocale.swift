@@ -16,14 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-/// An object that tracks analytic events.
-public protocol AnalyticsEventTracker: AnyObject {
+import Foundation
 
-    /// Track an event.
-    ///
-    /// - Parameter event: The event to track.
+extension Locale {
 
-    func trackEvent(_ event: AnalyticsEvent)
+    static var formattedLocaleIdentifier: String {
+        let language = getFirstSupportedLanguage()
+        return language.replacingOccurrences(of: "_", with: "-")
+    }
+
+    private static func getFirstSupportedLanguage() -> String {
+        Locale.preferredLanguages.first ?? "en-US"
+    }
 
 }

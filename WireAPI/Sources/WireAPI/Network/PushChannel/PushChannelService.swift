@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
 /// A service for creating push channel connections to a specific backend.
 public protocol PushChannelServiceProtocol {

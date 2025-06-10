@@ -21,6 +21,7 @@ import LocalAuthentication
 import WireAnalytics
 import WireDataModel
 import WireDataModelSupport
+import WireFoundation
 import WireRequestStrategySupport
 import WireSyncEngine
 import WireSyncEngineSupport
@@ -133,7 +134,7 @@ final class UserSessionMock: UserSession {
     var requireCustomAppLockPasscode: Bool = false
     var isCustomAppLockPasscodeSet: Bool = false
     var needsToNotifyUserOfAppLockConfiguration: Bool = false
-    var analyticsEventTracker: (any AnalyticsEventTracker)?
+    var analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?
 
     func openAppLock() throws {
         openApp.append(())

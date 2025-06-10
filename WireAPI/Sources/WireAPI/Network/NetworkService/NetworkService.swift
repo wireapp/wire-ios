@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireLogging
+public import Foundation
 
 // sourcery: AutoMockable
 public protocol NetworkServiceProtocol {

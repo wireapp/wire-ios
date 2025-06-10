@@ -16,9 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
+public import WireFoundation
+
 import WireCrypto
-import WireFoundation
 
 // sourcery: AutoMockable
 public protocol CookieStorageProtocol: Sendable {
