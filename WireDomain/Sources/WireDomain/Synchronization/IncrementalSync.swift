@@ -22,6 +22,10 @@ import WireAPI
 import WireLogging
 
 public struct IncrementalSync: IncrementalSyncProtocol {
+    
+    enum Failure: Error {
+        case missedEvents
+    }
 
     private let selfClientID: String
     private let pushChannelAPI: any PushChannelAPI
@@ -32,7 +36,6 @@ public struct IncrementalSync: IncrementalSyncProtocol {
     private let processor: any UpdateEventProcessorProtocol
     private let databaseSaver: any DatabaseSaverProtocol
     private let syncStateSubject: CurrentValueSubject<SyncState, Never>
-    private let onMissedEvents: () -> Void
     private let logger = WireLogger.sync
     private let journal: Journal
 
@@ -59,7 +62,6 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         self.databaseSaver = databaseSaver
         self.syncStateSubject = syncStateSubject
         self.journal = journal
-        self.onMissedEvents = onMissedEvents
     }
 
     public func perform() async throws -> Token {
@@ -85,8 +87,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
             switch apiError {
             case .notFound, .invalidParameters:
                 try await messageStore.addPotentialGapSystemMessage()
-                onMissedEvents()
-                throw apiError
+                throw Failure.missedEvents
             default:
                 throw apiError
             }
