@@ -16,17 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-"manageTeam.title" = "Manage Team & Billing";
-"addAccount.title" = "Add Account or Team";
-"accounts.header" = "Other accounts";
+import Combine
+import WireMultiBackendUI
+import WireFoundation
 
-"obsolete_client_alert.title" = "Update required";
-"obsolete_client_alert.message" = "You are missing out on new features.\nGet the latest version of Wire to continue using the app with this account.";
-
-"obsolete_server_alert.title" = "Server version not supported";
-"obsolete_server_alert.message" = "Your Wire server needs to be updated.\nPlease notify your system administrator.";
-
-"obsolete_alert.button.ok" = "OK";
-"obsolete_alert.button.update" = "Update";
-"obsolete_alert.button.switch_accounts" = "Switch Accounts";
-"obsolete_alert.button.logout" = "Log out";
+struct FakeAccountSwitcherFactory: AccountSwitcherFactory {
+    let accounts: [AccountUIModel]
+    
+    init(accounts: [AccountUIModel]) {
+        self.accounts = accounts
+    }
+    
+    var viewModel: AccountSwitcherModalViewModel {
+        .init(
+            accountsPublisher: CurrentValuePublisher(subject: CurrentValueSubject(accounts)),
+            router: FakeRootFactory().viewModel
+        )
+    }
+}
