@@ -198,7 +198,7 @@ final class AuthenticationInterfaceBuilder {
             )
             return viewController
 
-        case let .incrementalUserCreation(user, registrationStep): //
+        case let .incrementalUserCreation(user, registrationStep):
             return makeRegistrationStepViewController(for: registrationStep, user: user)
 
         case let .switchBackend(url):

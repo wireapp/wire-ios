@@ -26,7 +26,6 @@ final class PersonalAccountCreationComponent: Component<PersonalAccountCreationC
 
     private let email: String
     private let teamAccountCreationLink: URL?
-//    public let networkStack: NetworkStack maybe we need
 
     init(
         parent: any Scope,

@@ -36,7 +36,6 @@ final class VerificationEmailCodeComponent: Component<VerificationEmailCodeCompo
     private let email: String
     private let password: String
     private let name: String
-//    public let networkStack: NetworkStack maybe we need
 
     init(
         parent: any Scope,
