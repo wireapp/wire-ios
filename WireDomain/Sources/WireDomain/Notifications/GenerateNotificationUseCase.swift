@@ -47,7 +47,7 @@ struct GenerateNotificationUseCase: GenerateNotificationUseCaseProtocol {
                 }
             }
         }
-        
+
         // Ensures unread conversations count is up-to-date.
         try await databaseSaver.save()
 
