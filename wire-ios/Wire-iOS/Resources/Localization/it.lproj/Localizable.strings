@@ -1158,6 +1158,7 @@
 "self.settings.account_details.remove_device.password.error" = "Password errata";
 
 "self.settings.account_appearance_group.title" = "Aspetto";
+"self.settings.account_appearance_group.footer" = "When this is on, your conversations show a background based on your profile color and light or dark theme.";
 
 "self.settings.privacy_section_group.title" = "Privacy";
 "self.settings.enable_read_receipts.title" = "Invia conferme di lettura";
@@ -1176,6 +1177,7 @@
 "self.settings.account_picture_group.accent_color.amber" = "Amber";
 "self.settings.account_picture_group.accent_color.turquoise" = "Turquoise";
 "self.settings.account_picture_group.accent_color.purple" = "Purple";
+"self.settings.account_picture_group.background.title" = "Conversation background color";
 
 "self.settings.account_personal_information_group.title" = "Informazioni personali";
 
@@ -1327,7 +1329,7 @@
 "self.settings.privacy_security.disable_link_previews.footer" = "È possibile che vengano comunque mostrate delle anteprime per i link inviati dagli altri utenti.";
 
 "self.settings.privacy_security.collapse_own_messages.title" = "Collapse my messages";
-"self.settings.privacy_security.collapse_own_messages.footer" = "When this is on, all your messages collapse to a single line.";
+"self.settings.privacy_security.collapse_own_messages.footer" = "When this is on, all your messages collapse after three lines.";
 
 "self.settings.privacy_analytics_menu.devices.title" = "Dispositivi";
 

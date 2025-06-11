@@ -1158,6 +1158,7 @@
 "self.settings.account_details.remove_device.password.error" = "错误的密码";
 
 "self.settings.account_appearance_group.title" = "外观";
+"self.settings.account_appearance_group.footer" = "启用此项后，您的对话将根据您的个人资料颜色和明暗主题显示背景。";
 
 "self.settings.privacy_section_group.title" = "隐私";
 "self.settings.enable_read_receipts.title" = "发送已读回执";
@@ -1176,6 +1177,7 @@
 "self.settings.account_picture_group.accent_color.amber" = "琥珀";
 "self.settings.account_picture_group.accent_color.turquoise" = "青绿";
 "self.settings.account_picture_group.accent_color.purple" = "紫";
+"self.settings.account_picture_group.background.title" = "对话背景颜色";
 
 "self.settings.account_personal_information_group.title" = "个人资料";
 
@@ -1327,7 +1329,7 @@
 "self.settings.privacy_security.disable_link_previews.footer" = "仍会为其他人的链接显示预览";
 
 "self.settings.privacy_security.collapse_own_messages.title" = "折叠我的消息";
-"self.settings.privacy_security.collapse_own_messages.footer" = "如果开启此项，您所有的消息均被折叠到一行。";
+"self.settings.privacy_security.collapse_own_messages.footer" = "启用此项后，所有消息将在三行后折叠。";
 
 "self.settings.privacy_analytics_menu.devices.title" = "设备";
 

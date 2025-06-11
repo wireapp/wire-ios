@@ -1158,6 +1158,7 @@
 "self.settings.account_details.remove_device.password.error" = "Senha errada";
 
 "self.settings.account_appearance_group.title" = "Aparência";
+"self.settings.account_appearance_group.footer" = "Quando isso está ativado, as suas conversas mostram um fundo baseado na cor do seu perfil e tema claro ou escuro.";
 
 "self.settings.privacy_section_group.title" = "Privacidade";
 "self.settings.enable_read_receipts.title" = "Enviar Confirmações de Leitura";
@@ -1176,6 +1177,7 @@
 "self.settings.account_picture_group.accent_color.amber" = "Âmbar";
 "self.settings.account_picture_group.accent_color.turquoise" = "Turquês";
 "self.settings.account_picture_group.accent_color.purple" = "Roxo";
+"self.settings.account_picture_group.background.title" = "Cor do fundo da conversa";
 
 "self.settings.account_personal_information_group.title" = "Informações Pessoais";
 
@@ -1327,7 +1329,7 @@
 "self.settings.privacy_security.disable_link_previews.footer" = "Pré-Visualizações ainda serão mostradas para links de outras pessoas.";
 
 "self.settings.privacy_security.collapse_own_messages.title" = "Recolher minhas mensagens";
-"self.settings.privacy_security.collapse_own_messages.footer" = "Quando isso está ativado, todas as suas mensagens são recolhidas numa única linha.";
+"self.settings.privacy_security.collapse_own_messages.footer" = "Quando isto está ativado, suas mensagens colapsam ao fim de três linhas.";
 
 "self.settings.privacy_analytics_menu.devices.title" = "Dispositivos";
 

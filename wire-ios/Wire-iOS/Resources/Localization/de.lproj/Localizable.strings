@@ -1158,6 +1158,7 @@
 "self.settings.account_details.remove_device.password.error" = "Falsches Passwort";
 
 "self.settings.account_appearance_group.title" = "Erscheinungsbild";
+"self.settings.account_appearance_group.footer" = "When this is on, your conversations show a background based on your profile color and light or dark theme.";
 
 "self.settings.privacy_section_group.title" = "Datenschutz";
 "self.settings.enable_read_receipts.title" = "Lesebestätigungen senden";
@@ -1176,6 +1177,7 @@
 "self.settings.account_picture_group.accent_color.amber" = "Bernstein";
 "self.settings.account_picture_group.accent_color.turquoise" = "Türkis";
 "self.settings.account_picture_group.accent_color.purple" = "Lila";
+"self.settings.account_picture_group.background.title" = "Hintergrundfarbe für Unterhaltungen";
 
 "self.settings.account_personal_information_group.title" = "Persönliche Informationen";
 
@@ -1327,7 +1329,7 @@
 "self.settings.privacy_security.disable_link_previews.footer" = "Vorschauen für Links von anderen Personen können weiterhin angezeigt werden.";
 
 "self.settings.privacy_security.collapse_own_messages.title" = "Meine Nachrichten ausblenden";
-"self.settings.privacy_security.collapse_own_messages.footer" = "Wenn diese Option aktiviert ist, werden all Ihre Nachrichten bis auf eine Zeile ausgeblendet.";
+"self.settings.privacy_security.collapse_own_messages.footer" = "Wenn diese Option aktiviert ist, werden all Ihre Nachrichten nach drei Zeilen ausgeblendet.";
 
 "self.settings.privacy_analytics_menu.devices.title" = "Geräte";
 
