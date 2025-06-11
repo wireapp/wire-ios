@@ -2102,6 +2102,26 @@ public class MockMessageLocalStoreProtocol: MessageLocalStoreProtocol {
         await mock(messageType, conversationID, conversationDomain)
     }
 
+    // MARK: - addPotentialGapSystemMessage
+
+    public var addPotentialGapSystemMessage_Invocations: [Void] = []
+    public var addPotentialGapSystemMessage_MockError: Error?
+    public var addPotentialGapSystemMessage_MockMethod: (() async throws -> Void)?
+
+    public func addPotentialGapSystemMessage() async throws {
+        addPotentialGapSystemMessage_Invocations.append(())
+
+        if let error = addPotentialGapSystemMessage_MockError {
+            throw error
+        }
+
+        guard let mock = addPotentialGapSystemMessage_MockMethod else {
+            fatalError("no mock for `addPotentialGapSystemMessage`")
+        }
+
+        try await mock()
+    }
+
     // MARK: - fetchOrCreateClientMessage
 
     public var fetchOrCreateClientMessageIdConversationSenderDate_Invocations: [(id: String, conversation: ZMConversation, sender: (id: UUID, domain: String, clientID: String?), date: Date)] = []
@@ -3554,6 +3574,21 @@ public class MockUpdateEventsLocalStoreProtocol: UpdateEventsLocalStoreProtocol 
         }
 
         mock(id)
+    }
+
+    // MARK: - resetLastEventID
+
+    public var resetLastEventID_Invocations: [Void] = []
+    public var resetLastEventID_MockMethod: (() -> Void)?
+
+    public func resetLastEventID() {
+        resetLastEventID_Invocations.append(())
+
+        guard let mock = resetLastEventID_MockMethod else {
+            fatalError("no mock for `resetLastEventID`")
+        }
+
+        mock()
     }
 
     // MARK: - indexOfLastEventEnvelope
