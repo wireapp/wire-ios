@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAnalytics
+import WireFoundation
 import WireIndividualToTeamMigrationUI
 
 struct AccountMigrationAnalyticsTracker: AccountMigrationAnalyticsTrackerProtocol {
 
-    let analyticsEventTracker: any AnalyticsEventTracker
+    let analyticsEventTracker: any AnalyticsEventTrackerProtocol
 
     func trackMigrationReachedDisclaimerStep() {
         analyticsEventTracker.trackEvent(.User.personalTeamCreationFlowStarted(at: .disclaimer))

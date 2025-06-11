@@ -18,6 +18,7 @@
 
 import Foundation
 import WireAnalytics
+import WireFoundation
 
 // MARK: - EnableAnalyticsSharingUseCaseProtocol
 

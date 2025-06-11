@@ -18,6 +18,8 @@
 
 public import Foundation
 
+import WireFoundation
+
 /// User review for call quality.
 
 public enum CallQualitySurveyReview {
