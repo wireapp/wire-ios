@@ -213,11 +213,13 @@ final class WebAuthViewController: UIViewController, WKUIDelegate, WKNavigationD
 
     func wipeDataStore() {
         // Even though it's non persistent, clear it just to be safe.
-        let types = WKWebsiteDataStore.allWebsiteDataTypes()
-        webView.configuration.websiteDataStore.removeData(
-            ofTypes: types,
-            modifiedSince: Date.distantPast
-        ) {}
+        DispatchQueue.main.async { [weak self] in
+            let types = WKWebsiteDataStore.allWebsiteDataTypes()
+            self?.webView.configuration.websiteDataStore.removeData(
+                ofTypes: types,
+                modifiedSince: Date.distantPast
+            ) {}
+        }
     }
 
 }
