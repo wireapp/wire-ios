@@ -80,7 +80,6 @@ final class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> 
             didDetectDomainConflict: didDetectDomainConflict
         )
     }
-
 }
 
 extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {

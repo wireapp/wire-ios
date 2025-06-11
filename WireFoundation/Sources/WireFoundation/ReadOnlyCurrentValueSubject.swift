@@ -16,33 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAuthenticationUI
+public import Combine
 
-final class MockRouter: Router {
+/// Helper subject to be able to pass object from which you can get current value and publisher
+/// but not able to send values as to regular subject (safety)
+public final class ReadOnlyCurrentValueSubject<Output> {
 
-    public var navigate_Invocations: [any Hashable] = []
-    public var modalPresent_Invocations: [any Hashable] = []
-    public var alert_Invocations: [Alert] = []
-    public var dismissSheet_InvocationCount = 0
+    private let subject: CurrentValueSubject<Output, Never>
 
-    func popToRoot() {}
-
-    func pop() {}
-
-    func navigate(to destination: some Hashable) {
-        navigate_Invocations.append(destination)
+    public init(subject: CurrentValueSubject<Output, Never>) {
+        self.subject = subject
     }
 
-    func presentSheet(_ modalDestination: some Hashable) {
-        modalPresent_Invocations.append(modalDestination)
+    /// Current value
+    public var value: Output {
+        subject.value
     }
 
-    func presentAlert(_ alert: Alert) {
-        alert_Invocations.append(alert)
+    /// Read-only publisher
+    public var publisher: AnyPublisher<Output, Never> {
+        subject.eraseToAnyPublisher()
     }
-
-    func dismissSheet() {
-        dismissSheet_InvocationCount += 1
-    }
-
 }
