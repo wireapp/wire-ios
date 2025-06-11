@@ -36,11 +36,11 @@ struct PersonalAccountCreationView: View {
     package var body: some View {
         ScrollView {
             scrollViewContent
-            .navigationTitle(Strings.title)
-            .navigationBarTitleDisplayMode(.inline)
-            .setPreferredSize(navigationBarHidden: false)
-            .customBackButton()
-            .background(ColorTheme.Backgrounds.surface.color)
+                .navigationTitle(Strings.title)
+                .navigationBarTitleDisplayMode(.inline)
+                .setPreferredSize(navigationBarHidden: false)
+                .customBackButton()
+                .background(ColorTheme.Backgrounds.surface.color)
         }
         .navigationDestination(for: PersonalAccountCreationDestination.self) {
             switch $0 {

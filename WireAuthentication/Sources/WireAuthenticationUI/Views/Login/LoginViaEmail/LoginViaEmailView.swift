@@ -126,7 +126,8 @@ package struct LoginViaEmailView: View {
             )
         case .createPersonalAccount:
             PersonalAccountCreationView(
-                factory: viewModel.factory.personalAccountCreationFactory(teamAccountCreationLink: viewModel.teamAccountCreationLink)
+                factory: viewModel.factory
+                    .personalAccountCreationFactory(teamAccountCreationLink: viewModel.teamAccountCreationLink)
             )
         }
     }

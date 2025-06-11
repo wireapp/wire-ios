@@ -55,15 +55,15 @@ package struct VerificationEmailCodeView: View {
             })
             .wireButtonStyle(.primary)
             .padding(.horizontal)
-             .disabled(viewModel.isConfirmButtonDisabled)
+            .disabled(viewModel.isConfirmButtonDisabled)
 
             Button(action: {
-                 Task.detached { await viewModel.requestVerificationCode() }
+                Task.detached { await viewModel.requestVerificationCode() }
             }, label: {
                 Text(Strings.VerificationCode.resendCode)
             })
             .wireButtonStyle(.link)
-             .disabled(viewModel.isResending)
+            .disabled(viewModel.isResending)
         }
         .padding()
         .background(ColorTheme.Backgrounds.surface.color)
