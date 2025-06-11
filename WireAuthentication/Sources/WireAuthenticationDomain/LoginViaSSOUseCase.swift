@@ -19,7 +19,7 @@
 import AuthenticationServices
 import Foundation
 import WireAPI
-import WireAuthenticationAPI
+import WireAuthenticationDomain
 
 @MainActor
 package struct LoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {

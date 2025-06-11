@@ -18,7 +18,7 @@
 
 import Foundation
 import WireAPI
-import WireAuthenticationAPI
+import WireAuthenticationDomain
 import WireFoundation
 import WireLogging
 
@@ -28,7 +28,7 @@ package final class NetworkStack {
     package let minTLSVersion: TLSVersion
     package let preferredAPIVersion: APIVersion?
 
-    private var backendMetadata: WireAuthenticationAPI.BackendMetadata?
+    private var backendMetadata: WireAuthenticationDomain.BackendMetadata?
     private var state: NetworkState
     private var proxyCredentials: ProxyCredentials?
 
@@ -110,7 +110,7 @@ package final class NetworkStack {
         return APIVersion(backendMetadata.apiVersion)
     }
 
-    private func resolvedBackendMetadata() async throws -> WireAuthenticationAPI.BackendMetadata {
+    private func resolvedBackendMetadata() async throws -> WireAuthenticationDomain.BackendMetadata {
         if let backendMetadata {
             return backendMetadata
         }
@@ -158,7 +158,7 @@ private extension BackendConfig {
 
 private extension APIVersion {
 
-    init(_ apiVersion: WireAuthenticationAPI.BackendMetadata.APIVersion) {
+    init(_ apiVersion: WireAuthenticationDomain.BackendMetadata.APIVersion) {
         switch apiVersion {
         case .v0:
             self = .v0

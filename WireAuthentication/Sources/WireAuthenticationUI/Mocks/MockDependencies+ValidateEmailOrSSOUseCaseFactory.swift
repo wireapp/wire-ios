@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAuthenticationAPI
+import WireAuthenticationDomain
 
 extension MockDependencies: ValidateEmailOrSSOCodeUseCaseFactory {
 

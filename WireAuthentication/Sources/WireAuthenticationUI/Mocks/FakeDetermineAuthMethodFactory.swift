@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAuthenticationAPI
+import WireAuthenticationDomain
 import WireReusableUIComponents
 
 struct FakeDetermineAuthMethodFactory: DetermineAuthMethodFactory,
@@ -47,31 +47,31 @@ struct FakeDetermineAuthMethodFactory: DetermineAuthMethodFactory,
         email: String?,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
-        backendInfo: WireAuthenticationAPI.BackendInfo
+        backendInfo: WireAuthenticationDomain.BackendInfo
     ) -> any LoginViaEmailFactory {
         fatalError()
     }
 
-    func noHistoryFactory(authenticationResult: WireAuthenticationAPI.AuthenticationResult) -> any NoHistoryFactory {
+    func noHistoryFactory(authenticationResult: WireAuthenticationDomain.AuthenticationResult) -> any NoHistoryFactory {
         fatalError()
     }
 
     // MARK: - UseCases
 
-    func determineAuthMethodUseCase() async throws -> any WireAuthenticationAPI.DetermineAuthMethodUseCaseProtocol {
+    func determineAuthMethodUseCase() async throws -> any WireAuthenticationDomain.DetermineAuthMethodUseCaseProtocol {
         try await mockDependencies.determineAuthMethodUseCase()
     }
 
-    func fetchBackendConfigUseCase() -> any WireAuthenticationAPI.FetchBackendConfigUseCaseProtocol {
+    func fetchBackendConfigUseCase() -> any WireAuthenticationDomain.FetchBackendConfigUseCaseProtocol {
         mockDependencies.fetchBackendConfigUseCase()
     }
 
-    func loginViaSSOUseCase(backendInfo: WireAuthenticationAPI.BackendInfo?) async throws -> any WireAuthenticationAPI
+    func loginViaSSOUseCase(backendInfo: WireAuthenticationDomain.BackendInfo?) async throws -> any WireAuthenticationDomain
         .LoginViaSSOUseCaseProtocol {
         try await mockDependencies.loginViaSSOUseCase(backendInfo: backendInfo)
     }
 
-    func validateEmailOrSSOCodeUseCase() -> any WireAuthenticationAPI.ValidateEmailOrSSOCodeUseCaseProtocol {
+    func validateEmailOrSSOCodeUseCase() -> any WireAuthenticationDomain.ValidateEmailOrSSOCodeUseCaseProtocol {
         mockDependencies.validateEmailOrSSOCodeUseCase()
     }
 }

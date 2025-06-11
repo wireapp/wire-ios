@@ -16,24 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAuthenticationAPI
+import Foundation
+import UIKit
+import WireAuthenticationDomain
 
-package struct ValidateEmailOrSSOCodeUseCase: ValidateEmailOrSSOCodeUseCaseProtocol {
+public struct OpenAppStoreUseCase: OpenAppStoreUseCaseProtocol {
 
-    package init() {}
+    let url: URL
 
-    package func invoke(input: String) throws -> ValidatedEmailOrSSOCode {
-        let input = input.trimmingCharacters(in: .whitespacesAndNewlines)
+    public init(url: URL) {
+        self.url = url
+    }
 
-        if EmailValidator.isValid(email: input), let domain = input.components(separatedBy: "@").last {
-            return .email(email: input, domain: domain)
-        }
-
-        if let uuid = SSOCodeValidator.validate(ssoCode: input) {
-            return .ssoCode(uuid)
-        }
-
-        throw ValidatedEmailOrSSOCodeFailure.invalidInput
+    @MainActor
+    public func invoke() {
+        UIApplication.shared.open(url)
     }
 
 }

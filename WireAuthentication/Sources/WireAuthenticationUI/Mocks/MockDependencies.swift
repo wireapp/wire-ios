@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAuthenticationAPI
+import WireAuthenticationDomain
 import WireReusableUIComponents
 
 @MainActor

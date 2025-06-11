@@ -18,7 +18,7 @@
 
 import Foundation
 import WireAPI
-import WireAuthenticationAPI
+import WireAuthenticationDomain
 
 public struct LoginViaEmailUseCase: LoginViaEmailUseCaseProtocol {
 
@@ -32,7 +32,7 @@ public struct LoginViaEmailUseCase: LoginViaEmailUseCaseProtocol {
         email: String,
         password: String,
         verificationCode: String?
-    ) async throws -> ([HTTPCookie], WireAuthenticationAPI.AccessToken) {
+    ) async throws -> ([HTTPCookie], WireAuthenticationDomain.AccessToken) {
         do {
             let (cookies, token) = try await authenticationAPI.login(
                 email: email,

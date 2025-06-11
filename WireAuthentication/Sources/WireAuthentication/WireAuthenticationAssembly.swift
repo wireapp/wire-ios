@@ -20,19 +20,19 @@ import Foundation
 import NeedleFoundation
 import SwiftUI
 import WireAPI
-import WireAuthenticationAPI
+import WireAuthenticationDomain
 import WireReusableUIComponents
 internal import WireAuthenticationUI
-internal import WireAuthenticationLogic
+internal import WireAuthenticationData
 
-public typealias WireAuthenticationBridge = WireAuthenticationAPI.WireAuthenticationBridge
-public typealias WireAuthenticationBackendEnvironment = WireAuthenticationAPI.WireAuthenticationBackendEnvironment
-public typealias BackendEnvironmentType = WireAuthenticationAPI.BackendEnvironmentType
-public typealias BackendConfig = WireAuthenticationAPI.BackendConfig
-public typealias Endpoints = WireAuthenticationAPI.Endpoints
-public typealias ProxySettings = WireAuthenticationAPI.UnresolvedProxySettings
-public typealias TrustData = WireAuthenticationAPI.TrustData
-public typealias BackendMetadata = WireAuthenticationAPI.BackendMetadata
+public typealias WireAuthenticationBridge = WireAuthenticationDomain.WireAuthenticationBridge
+public typealias WireAuthenticationBackendEnvironment = WireAuthenticationDomain.WireAuthenticationBackendEnvironment
+public typealias BackendEnvironmentType = WireAuthenticationDomain.BackendEnvironmentType
+public typealias BackendConfig = WireAuthenticationDomain.BackendConfig
+public typealias Endpoints = WireAuthenticationDomain.Endpoints
+public typealias ProxySettings = WireAuthenticationDomain.UnresolvedProxySettings
+public typealias TrustData = WireAuthenticationDomain.TrustData
+public typealias BackendMetadata = WireAuthenticationDomain.BackendMetadata
 
 public struct WireAuthenticationAssembly {
 

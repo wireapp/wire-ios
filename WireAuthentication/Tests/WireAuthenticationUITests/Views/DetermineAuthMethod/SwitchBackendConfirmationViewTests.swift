@@ -20,7 +20,7 @@ import SwiftUI
 import WireTestingPackage
 import XCTest
 
-@testable import WireAuthenticationAPI
+@testable import WireAuthenticationDomain
 @testable import WireAuthenticationUI
 
 class SwitchBackendConfirmationViewTests: XCTestCase {

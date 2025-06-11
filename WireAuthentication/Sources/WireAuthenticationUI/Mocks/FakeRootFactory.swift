@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAuthenticationAPI
+import WireAuthenticationDomain
 import WireReusableUIComponents
 
 struct FakeRootFactory: RootFactory, OpenAppStoreUseCaseFactory {
@@ -32,11 +32,11 @@ struct FakeRootFactory: RootFactory, OpenAppStoreUseCaseFactory {
         )
     }
 
-    func determineAuthMethodFactory(backendInfo: WireAuthenticationAPI.BackendInfo) -> any DetermineAuthMethodFactory {
+    func determineAuthMethodFactory(backendInfo: WireAuthenticationDomain.BackendInfo) -> any DetermineAuthMethodFactory {
         FakeDetermineAuthMethodFactory()
     }
 
-    func openAppStoreUseCase() -> any WireAuthenticationAPI.OpenAppStoreUseCaseProtocol {
+    func openAppStoreUseCase() -> any WireAuthenticationDomain.OpenAppStoreUseCaseProtocol {
         mockDependencies.openAppStoreUseCase()
     }
 }

@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAuthenticationAPI
+import WireAuthenticationDomain
 
 package enum DetermineAuthMethodSheet: Identifiable, Hashable, Sendable {
 

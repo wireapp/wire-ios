@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 import Foundation
-import WireAuthenticationAPI
+import WireAuthenticationDomain
 import WireReusableUIComponents
 
 struct FakeVerificationCodeFactory: VerificationCodeFactory,
@@ -43,36 +43,36 @@ struct FakeVerificationCodeFactory: VerificationCodeFactory,
         )
     }
 
-    func noHistoryFactory(authenticationResult: WireAuthenticationAPI.AuthenticationResult) -> any NoHistoryFactory {
+    func noHistoryFactory(authenticationResult: WireAuthenticationDomain.AuthenticationResult) -> any NoHistoryFactory {
         fatalError()
     }
 
     // Use cases
 
     @MainActor
-    func createAuthenticationResultUseCase() -> any WireAuthenticationAPI
+    func createAuthenticationResultUseCase() -> any WireAuthenticationDomain
         .CreateAuthenticationResultUseCaseProtocol {
         mockDependencies.createAuthenticationResultUseCase()
     }
 
     @MainActor
-    func submitProxyCredentialsUseCase() -> any WireAuthenticationAPI.SubmitProxyCredentialsUseCaseProtocol {
+    func submitProxyCredentialsUseCase() -> any WireAuthenticationDomain.SubmitProxyCredentialsUseCaseProtocol {
         mockDependencies.submitProxyCredentialsUseCase()
     }
 
     @MainActor
-    func requestLoginVerificationCodeUseCase() async throws -> any WireAuthenticationAPI
+    func requestLoginVerificationCodeUseCase() async throws -> any WireAuthenticationDomain
         .RequestLoginVerificationCodeUseCaseProtocol {
         try await mockDependencies.requestLoginVerificationCodeUseCase()
     }
 
     @MainActor
-    func loginViaEmailUseCase() async throws -> any WireAuthenticationAPI.LoginViaEmailUseCaseProtocol {
+    func loginViaEmailUseCase() async throws -> any WireAuthenticationDomain.LoginViaEmailUseCaseProtocol {
         try await mockDependencies.loginViaEmailUseCase()
     }
 
     @MainActor
-    func openAppStoreUseCase() -> any WireAuthenticationAPI.OpenAppStoreUseCaseProtocol {
+    func openAppStoreUseCase() -> any WireAuthenticationDomain.OpenAppStoreUseCaseProtocol {
         mockDependencies.openAppStoreUseCase()
     }
 

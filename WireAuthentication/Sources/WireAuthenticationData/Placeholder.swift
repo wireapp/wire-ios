@@ -17,20 +17,3 @@
 //
 
 import Foundation
-import UIKit
-import WireAuthenticationAPI
-
-public struct OpenAppStoreUseCase: OpenAppStoreUseCaseProtocol {
-
-    let url: URL
-
-    public init(url: URL) {
-        self.url = url
-    }
-
-    @MainActor
-    public func invoke() {
-        UIApplication.shared.open(url)
-    }
-
-}

@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireAuthenticationAPI
 
 package struct CreateAuthenticationResultUseCase: CreateAuthenticationResultUseCaseProtocol {
 

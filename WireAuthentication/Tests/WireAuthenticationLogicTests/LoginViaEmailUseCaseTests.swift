@@ -18,12 +18,12 @@
 
 import WireAPI
 import WireAPISupport
-import WireAuthenticationAPI
-import WireAuthenticationAPISupport
+import WireAuthenticationDomain
+import WireAuthenticationDomainSupport
 import WireTestingPackage
 import XCTest
 
-@testable import WireAuthenticationLogic
+@testable import WireAuthenticationData
 
 final class LoginViaEmailUseCaseTests: XCTestCase {
 

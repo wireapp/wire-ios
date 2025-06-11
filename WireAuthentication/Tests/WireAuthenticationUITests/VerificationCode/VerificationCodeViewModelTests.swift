@@ -19,8 +19,8 @@
 import Combine
 import Foundation
 import Testing
-import WireAuthenticationAPI
-import WireAuthenticationAPISupport
+import WireAuthenticationDomain
+import WireAuthenticationDomainSupport
 
 @testable import WireAuthenticationUI
 
@@ -78,7 +78,7 @@ final class VerificationCodeViewModelTests: VerificationCodeViewModel.Factory {
         fatalError("not needed here")
     }
 
-    func noHistoryFactory(authenticationResult: WireAuthenticationAPI.AuthenticationResult) -> any WireAuthenticationUI
+    func noHistoryFactory(authenticationResult: WireAuthenticationDomain.AuthenticationResult) -> any WireAuthenticationUI
         .NoHistoryFactory {
         fatalError("not needed here")
     }

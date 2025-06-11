@@ -17,7 +17,7 @@
 //
 
 import SwiftUI
-import WireAuthenticationAPI
+import WireAuthenticationDomain
 import WireDesign
 
 package struct OnPremHeaderView: View {

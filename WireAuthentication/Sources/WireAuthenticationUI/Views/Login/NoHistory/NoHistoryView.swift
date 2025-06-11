@@ -17,7 +17,7 @@
 //
 
 import SwiftUI
-import WireAuthenticationAPI
+import WireAuthenticationDomain
 
 package struct NoHistoryView: View {
 

@@ -18,7 +18,7 @@
 
 import XCTest
 
-@testable import WireAuthenticationLogic
+@testable import WireAuthenticationData
 
 final class SSOCodeValidatorTests: XCTestCase {
 

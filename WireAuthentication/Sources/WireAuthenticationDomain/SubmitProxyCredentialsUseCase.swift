@@ -16,25 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
-import WireAuthenticationAPI
+import Foundation
+import WireAuthenticationDomain
 
-package struct RequestLoginVerificationCodeUseCase: RequestLoginVerificationCodeUseCaseProtocol {
+package struct SubmitProxyCredentialsUseCase: SubmitProxyCredentialsUseCaseProtocol {
 
-    private let authenticationAPI: AuthenticationAPI
+    private let networkStack: NetworkStack
 
-    package init(authenticationAPI: AuthenticationAPI) {
-        self.authenticationAPI = authenticationAPI
+    package init(networkStack: NetworkStack) {
+        self.networkStack = networkStack
     }
 
-    package func invoke(
-        email: String
-    ) async throws {
-        do {
-            try await authenticationAPI.requestVerificationCode(for: email)
-        } catch AuthenticationAPIError.invalidEmail {
-            throw RequestLoginVerificationCodeUseCaseFailure.invalidEmail
-        }
+    package func invoke(proxyCredentials: ProxyCredentials) throws {
+        try networkStack.setProxyCredentials(proxyCredentials)
     }
 
 }

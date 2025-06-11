@@ -11,8 +11,8 @@ let package = Package(
     platforms: [.iOS("16.4"), .macOS(.v12)],
     products: [
         .library(name: "WireAuthentication", targets: ["WireAuthentication"]),
-        .library(name: "WireAuthenticationAPI", targets: ["WireAuthenticationAPI"]),
-        .library(name: "WireAuthenticationLogic", targets: ["WireAuthenticationLogic"]),
+        .library(name: "WireAuthenticationDomain", targets: ["WireAuthenticationDomain"]),
+        .library(name: "WireAuthenticationData", targets: ["WireAuthenticationData"]),
         .library(name: "WireAuthenticationUI", targets: ["WireAuthenticationUI"])
     ],
     dependencies: [
@@ -28,9 +28,9 @@ let package = Package(
         .target(
             name: "WireAuthentication",
             dependencies: [
-                "WireAuthenticationAPI",
+                "WireAuthenticationDomain",
                 "WireAuthenticationUI",
-                "WireAuthenticationLogic",
+                "WireAuthenticationData",
                 "WireFoundation",
                 .product(name: "NeedleFoundation", package: "needle")
             ]
@@ -41,25 +41,26 @@ let package = Package(
         ),
 
         .target(
-            name: "WireAuthenticationAPI"
+            name: "WireAuthenticationDomain",
+            dependencies: ["WireAPI"] // TODO: NOT needed here
         ),
         .target(
-            name: "WireAuthenticationAPISupport",
-            dependencies: ["WireAuthenticationAPI"],
+            name: "WireAuthenticationDomainSupport",
+            dependencies: ["WireAuthenticationDomain"],
             plugins: [
                 .plugin(name: "SourceryPlugin", package: "WirePlugins")
             ]
         ),
 
         .target(
-            name: "WireAuthenticationLogic",
-            dependencies: ["WireAuthenticationAPI", "WireAPI", "WireFoundation"]
+            name: "WireAuthenticationData",
+            dependencies: ["WireAuthenticationDomain", "WireAPI", "WireFoundation"]
         ),
         .testTarget(
             name: "WireAuthenticationLogicTests",
             dependencies: [
-                "WireAuthenticationLogic",
-                "WireAuthenticationAPISupport",
+                "WireAuthenticationData",
+                "WireAuthenticationDomainSupport",
                 .product(name: "WireAPISupport", package: "WireAPI"),
             ]
         ),
@@ -67,7 +68,7 @@ let package = Package(
         .target(
             name: "WireAuthenticationUI",
             dependencies: [
-                "WireAuthenticationAPI",
+                "WireAuthenticationDomain",
                 .product(name: "WireDesign", package: "WireUI"),
                 .product(name: "WireReusableUIComponents", package: "WireUI"),
                 "WireLogging",
@@ -79,7 +80,7 @@ let package = Package(
             name: "WireAuthenticationUITests",
             dependencies: [
                 "WireAuthenticationUI",
-                "WireAuthenticationAPISupport",
+                "WireAuthenticationDomainSupport",
                 "WireFoundation",
                 .product(name: "WireReusableUIComponentsSupport", package: "WireUI"),
             ]

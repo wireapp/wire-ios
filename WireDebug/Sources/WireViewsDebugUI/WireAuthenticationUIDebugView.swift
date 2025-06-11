@@ -18,7 +18,7 @@
 
 public import SwiftUI
 
-import WireAuthenticationAPI
+import WireAuthenticationDomain
 import WireAuthenticationUI
 
 public struct WireAuthenticationUIDebugView: View {

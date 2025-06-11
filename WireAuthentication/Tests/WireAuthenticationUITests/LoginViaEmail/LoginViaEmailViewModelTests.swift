@@ -18,8 +18,8 @@
 
 import Combine
 import SwiftUI
-import WireAuthenticationAPI
-import WireAuthenticationAPISupport
+import WireAuthenticationDomain
+import WireAuthenticationDomainSupport
 import WireFoundation
 import WireReusableUIComponentsSupport
 import WireTestingPackage

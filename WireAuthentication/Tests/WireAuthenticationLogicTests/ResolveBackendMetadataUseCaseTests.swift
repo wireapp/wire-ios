@@ -18,10 +18,10 @@
 
 import WireAPI
 import WireAPISupport
-import WireAuthenticationAPI
+import WireAuthenticationDomain
 import XCTest
 
-@testable import WireAuthenticationLogic
+@testable import WireAuthenticationData
 
 final class ResolveBackendMetadataUseCaseTests: XCTestCase {
 

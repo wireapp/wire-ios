@@ -4,10 +4,10 @@ import Foundation
 import NeedleFoundation
 import SwiftUI
 import WireAPI
-import WireAuthenticationAPI
+import WireAuthenticationDomain
 import WireLogging
 import WireReusableUIComponents
-internal import WireAuthenticationLogic
+internal import WireAuthenticationData
 internal import WireAuthenticationUI
 
 // swiftlint:disable unused_declaration

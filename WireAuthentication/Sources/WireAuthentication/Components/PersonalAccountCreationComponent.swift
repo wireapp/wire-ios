@@ -18,8 +18,8 @@
 
 import NeedleFoundation
 internal import WireAuthenticationUI
-import WireAuthenticationAPI
-internal import WireAuthenticationLogic
+import WireAuthenticationDomain
+internal import WireAuthenticationData
 
 final class PersonalAccountCreationComponent: Component<PersonalAccountCreationComponentDependency> {
 
@@ -53,3 +53,74 @@ extension PersonalAccountCreationComponent: PersonalAccountCreationFactory {
     }
 
 }
+
+//import WireAPI
+//import WireTransport
+//
+//final class AuthenticationAPIRepositoryAdapter: AuthenticationAPIRepository {
+//
+//    private let api: AuthenticationAPI
+//
+//    init(api: AuthenticationAPI) {
+//        self.api = api
+//    }
+//
+//    func login(
+//        email: String,
+//        password: String,
+//        verificationCode: String?,
+//        label: String?
+//    ) async throws -> ([HTTPCookie], WireAuthenticationDomain.AccessToken) {
+//        let (cookies, accessToken) = try await api.login(
+//            email: email,
+//            password: password,
+//            verificationCode: verificationCode,
+//            label: label
+//        )
+//        return (cookies, WireAuthenticationDomain
+//                .AccessToken(
+//                    userID: accessToken.userID,
+//                    token: accessToken.token,
+//                    type: accessToken.type,
+//                    expirationDate: accessToken.expirationDate
+//                ))
+//    }
+//
+//    func getOnPremConfigURL(forDomain domain: String) async throws -> DomainInfo {
+//        try await api.getOnPremConfigURL(forDomain: domain)
+//    }
+//
+//    func getDomainRegistration(forEmail email: String) async throws -> DomainRegistrationConfiguration {
+//        try await api.getDomainRegistration(forEmail: email)
+//    }
+//
+//    func validateLoginToken(ssoCode: UUID) async throws {
+//        try await api.validateLoginToken(ssoCode: ssoCode)
+//    }
+//
+//    func getSSOCode() async throws -> UUID? {
+//        try await api.getSSOCode()
+//    }
+//
+//    func requestVerificationCode(for email: String) async throws {
+//        try await api.requestVerificationCode(for: email)
+//    }
+//
+//    func requestEmailVerificationCode(for email: String) async throws {
+//        try await api.requestEmailVerificationCode(for: email)
+//    }
+//
+//    func registerAccount(
+//        email: String,
+//        emailCode: String,
+//        name: String,
+//        password: String
+//    ) async throws {
+//        try await api.registerAccount(
+//            email: email,
+//            emailCode: emailCode,
+//            name: name,
+//            password: password
+//        )
+//    }
+//}

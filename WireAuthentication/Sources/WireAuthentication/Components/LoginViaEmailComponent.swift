@@ -19,9 +19,9 @@
 import NeedleFoundation
 import SwiftUI
 import WireAPI
-import WireAuthenticationAPI
+import WireAuthenticationDomain
 internal import WireAuthenticationUI
-internal import WireAuthenticationLogic
+internal import WireAuthenticationData
 import WireReusableUIComponents
 
 protocol LoginViaEmailComponentDependency: Dependency {

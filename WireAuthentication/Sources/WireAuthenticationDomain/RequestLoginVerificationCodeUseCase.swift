@@ -17,9 +17,8 @@
 //
 
 import WireAPI
-import WireAuthenticationAPI
 
-package struct RequestEmailVerificationCodeUseCase: RequestEmailVerificationCodeUseCaseProtocol {
+package struct RequestLoginVerificationCodeUseCase: RequestLoginVerificationCodeUseCaseProtocol {
 
     private let authenticationAPI: AuthenticationAPI
 
@@ -31,21 +30,9 @@ package struct RequestEmailVerificationCodeUseCase: RequestEmailVerificationCode
         email: String
     ) async throws {
         do {
-            try await authenticationAPI.requestEmailVerificationCode(for: email)
-        } catch let error as AuthenticationAPIError.RegistrationError {
-            switch error {
-            case .invalidEmail:
-                throw RequestEmailVerificationCodeUseCaseFailure.invalidEmail
-            case .blacklistedEmail:
-                throw RequestEmailVerificationCodeUseCaseFailure.blacklistedEmail
-            case .keyExists:
-                throw RequestEmailVerificationCodeUseCaseFailure.emailExists
-            case .domainBlocked:
-                throw RequestEmailVerificationCodeUseCaseFailure.domainBlockedForRegistration
-            default:
-                throw error
-            }
-
+            try await authenticationAPI.requestVerificationCode(for: email)
+        } catch AuthenticationAPIError.invalidEmail {
+            throw RequestLoginVerificationCodeUseCaseFailure.invalidEmail
         }
     }
 

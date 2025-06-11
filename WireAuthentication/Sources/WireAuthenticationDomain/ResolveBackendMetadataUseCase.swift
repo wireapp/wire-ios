@@ -18,7 +18,7 @@
 
 import Foundation
 import WireAPI
-import WireAuthenticationAPI
+import WireAuthenticationDomain
 
 public struct ResolveBackendMetadataUseCase: ResolveBackendMetadataUseCaseProtocol {
 
@@ -38,10 +38,10 @@ public struct ResolveBackendMetadataUseCase: ResolveBackendMetadataUseCaseProtoc
         self.preferredAPIVersion = preferredAPIVersion
     }
 
-    public func invoke() async throws -> WireAuthenticationAPI.BackendMetadata {
+    public func invoke() async throws -> WireAuthenticationDomain.BackendMetadata {
         let backendMetadata = try await backendMetadataAPI.getBackendMetadata()
         let resolvedAPIVersion = try resolveAPIVersion(from: backendMetadata)
-        return WireAuthenticationAPI.BackendMetadata(
+        return WireAuthenticationDomain.BackendMetadata(
             apiVersion: .init(resolvedAPIVersion),
             domain: backendMetadata.domain,
             isFederationEnabled: backendMetadata.isFederationEnabled
@@ -73,7 +73,7 @@ public struct ResolveBackendMetadataUseCase: ResolveBackendMetadataUseCaseProtoc
 
 }
 
-private extension WireAuthenticationAPI.BackendMetadata.APIVersion {
+private extension WireAuthenticationDomain.BackendMetadata.APIVersion {
 
     // TODO: [WPB-16272] remove when API version is deduplicated.
     init(_ apiVersion: WireAPI.APIVersion) {

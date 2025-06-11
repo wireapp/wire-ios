@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import WireAuthenticationAPI
+import WireAuthenticationDomain
 import WireSyncEngine
 
 /// Valid response actions for authentication events.

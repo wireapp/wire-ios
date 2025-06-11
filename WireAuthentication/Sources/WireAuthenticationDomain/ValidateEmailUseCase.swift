@@ -17,18 +17,14 @@
 //
 
 import Foundation
-import WireAuthenticationAPI
+import WireAuthenticationDomain
 
-package struct SubmitProxyCredentialsUseCase: SubmitProxyCredentialsUseCaseProtocol {
+package struct ValidateEmailUseCase: ValidateEmailUseCaseProtocol {
 
-    private let networkStack: NetworkStack
+    package init() {}
 
-    package init(networkStack: NetworkStack) {
-        self.networkStack = networkStack
-    }
-
-    package func invoke(proxyCredentials: ProxyCredentials) throws {
-        try networkStack.setProxyCredentials(proxyCredentials)
+    package func invoke(email: String) -> EmailValidationResult {
+        EmailValidator.isValid(email: email) ? .isValid : .isInvalid
     }
 
 }

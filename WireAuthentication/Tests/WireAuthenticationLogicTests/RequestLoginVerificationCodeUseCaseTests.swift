@@ -19,9 +19,9 @@
 import Testing
 import WireAPI
 import WireAPISupport
-import WireAuthenticationAPI
+import WireAuthenticationDomain
 
-@testable import WireAuthenticationLogic
+@testable import WireAuthenticationData
 
 struct RequestLoginVerificationCodeUseCaseTests {
 

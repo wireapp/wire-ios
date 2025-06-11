@@ -19,7 +19,7 @@
 import Combine
 import Foundation
 import SwiftUI
-import WireAuthenticationAPI
+import WireAuthenticationDomain
 
 @MainActor
 package final class NoHistoryViewModel: ObservableObject {

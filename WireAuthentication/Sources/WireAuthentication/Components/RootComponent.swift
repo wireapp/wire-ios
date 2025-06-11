@@ -21,8 +21,8 @@ import SwiftUI
 import WireAPI
 import WireReusableUIComponents
 internal import WireAuthenticationUI
-import WireAuthenticationAPI
-internal import WireAuthenticationLogic
+import WireAuthenticationDomain
+internal import WireAuthenticationData
 
 final class RootComponent: BootstrapComponent {
 

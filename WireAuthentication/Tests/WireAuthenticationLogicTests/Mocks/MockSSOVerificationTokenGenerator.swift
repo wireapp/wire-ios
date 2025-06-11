@@ -18,7 +18,7 @@
 
 import Foundation
 
-@testable import WireAuthenticationLogic
+@testable import WireAuthenticationData
 
 final class MockSSOLoginVerificationTokenGenerator: SSOLoginVerificationTokenGeneratorProtocol {
 

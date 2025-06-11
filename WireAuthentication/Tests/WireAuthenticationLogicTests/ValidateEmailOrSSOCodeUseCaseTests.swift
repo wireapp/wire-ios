@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAuthenticationAPI
+import WireAuthenticationDomain
 import XCTest
 
-@testable import WireAuthenticationLogic
+@testable import WireAuthenticationData
 
 final class ValidateEmailOrSSOCodeUseCaseTests: XCTestCase {
 

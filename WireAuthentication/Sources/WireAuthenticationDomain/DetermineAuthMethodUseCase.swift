@@ -18,7 +18,6 @@
 
 import Foundation
 import WireAPI
-import WireAuthenticationAPI
 
 package struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
 

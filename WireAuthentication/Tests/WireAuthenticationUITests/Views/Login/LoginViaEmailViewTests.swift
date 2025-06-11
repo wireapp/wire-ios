@@ -17,8 +17,8 @@
 //
 
 import SwiftUI
-import WireAuthenticationAPI
-import WireAuthenticationAPISupport
+import WireAuthenticationDomain
+import WireAuthenticationDomainSupport
 import WireTestingPackage
 import XCTest
 

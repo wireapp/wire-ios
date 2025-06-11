@@ -19,10 +19,10 @@
 import NeedleFoundation
 import SwiftUI
 import WireAPI
-import WireAuthenticationAPI
+import WireAuthenticationDomain
 import WireLogging
 internal import WireAuthenticationUI
-internal import WireAuthenticationLogic
+internal import WireAuthenticationData
 
 protocol DetermineAuthMethodComponentDependency: Dependency {
 
