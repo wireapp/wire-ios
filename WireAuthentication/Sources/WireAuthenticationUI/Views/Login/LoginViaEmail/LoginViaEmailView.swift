@@ -36,7 +36,7 @@ package protocol LoginViaEmailFactory {
     func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory
 
     @MainActor
-    func personalAccountCreationFactory() -> any PersonalAccountCreationFactory
+    func personalAccountCreationFactory(teamAccountCreationLink: URL?) -> any PersonalAccountCreationFactory
 
 }
 
@@ -125,7 +125,9 @@ package struct LoginViaEmailView: View {
                 )
             )
         case .createPersonalAccount:
-            PersonalAccountCreationView(factory: viewModel.factory.personalAccountCreationFactory())
+            PersonalAccountCreationView(
+                factory: viewModel.factory.personalAccountCreationFactory(teamAccountCreationLink: viewModel.teamAccountCreationLink)
+            )
         }
     }
 

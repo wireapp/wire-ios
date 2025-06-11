@@ -24,15 +24,14 @@ import WireReusableUIComponents
 package final class PersonalAccountCreationViewModel: ObservableObject {
 
     package typealias Factory =
-        RequestEmailVerificationCodeUseCaseFactory &
+        PersonalAccountCreationFactory &
         RegisterPersonalAccountUseCaseFactory &
-        ValidateEmailUseCaseFactory &
-        PersonalAccountCreationFactory
-
+        RequestEmailVerificationCodeUseCaseFactory &
+        ValidateEmailUseCaseFactory
 
     @Published var alert: Alert?
     @Published var isCreateTeamAccountPresented = false
-    @Published var dataUsageAgreementAccepted: Bool = false
+    @Published var dataUsageAgreementAccepted = false
     @Published var name: String = ""
     @Published var email: String
     @Published var password: String = ""
@@ -48,6 +47,7 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
     private let router: any Router
     package let privacyPolicyURL: URL
     package let termsOfUseURL: URL
+    package let teamAccountCreationLink: URL?
     private let passwordValidator: any PasswordValidator
 
     package init(
@@ -56,6 +56,7 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
         email: String,
         privacyPolicyURL: URL,
         termsOfUseURL: URL,
+        teamAccountCreationLink: URL?,
         passwordValidator: any PasswordValidator
     ) {
         self.factory = factory
@@ -63,14 +64,11 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
         self.email = email
         self.privacyPolicyURL = privacyPolicyURL
         self.termsOfUseURL = termsOfUseURL
+        self.teamAccountCreationLink = teamAccountCreationLink
         self.passwordValidator = passwordValidator
     }
 
     // MARK: - Validations
-
-    func isPasswordValid(_ password: String) -> Bool {
-        passwordValidator.isPasswordValid(password)
-    }
 
     var isEmailValid: Bool {
         factory.validateEmailUseCase().invoke(email: email) == .isValid
@@ -94,9 +92,9 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
     }
 
     func requestEmailVerificationCode() async throws {
-//        guard canRequestVerificationCode else {
-//            return
-//        }
+        guard canRequestVerificationCode else {
+            return
+        }
         let requestEmailVerificationCode = try await factory.requestEmailVerificationCodeUseCase()
         try await requestEmailVerificationCode.invoke(email: email)
 
@@ -105,6 +103,12 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
             password: password,
             name: name
         ))
+    }
+
+    func showTermsOfUse() {
+        UIApplication.shared.open(
+            termsOfUseURL
+        )
     }
 
 }

@@ -26,9 +26,9 @@ import WireLogging
 public final class VerificationEmailCodeViewModel: ObservableObject {
 
     package typealias Factory =
-        VerificationEmailCodeFactory &
+        CreateAuthenticationResultUseCaseFactory &
         RegisterPersonalAccountUseCaseFactory &
-        CreateAuthenticationResultUseCaseFactory
+        VerificationEmailCodeFactory
 
     // MARK: - View state
 
@@ -44,7 +44,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
 
     var isConfirmButtonDisabled: Bool {
         true
-        //code.contains { $0.isEmpty }
+        // code.contains { $0.isEmpty }
     }
 
     // MARK: - Dependencies
@@ -136,7 +136,6 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
             print(error)
         }
 
-
         isLoading = false
 
     }
@@ -156,7 +155,6 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
             )
         }.value
     }
-
 
 //    func confirm() async {
 //        isLoading = true
@@ -262,4 +260,3 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
 //    }
 
 }
-

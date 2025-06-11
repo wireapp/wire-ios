@@ -29,7 +29,6 @@ struct RegisterPersonalAccountBodyV0: Encodable {
     let name: String
     let password: String
 
-
     enum CodingKeys: String, CodingKey {
 
         case accentId = "accent_id"

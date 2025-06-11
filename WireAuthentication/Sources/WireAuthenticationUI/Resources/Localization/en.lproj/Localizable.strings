@@ -127,6 +127,7 @@
 "create_personal_account.input_password.title" = "Password";
 "create_personal_account.input_password.placeholder" = "Enter a password";
 "create_personal_account.input_confirm_password.placeholder" = "Confirm password";
+"create_personal_account.input_confirm_password.error" = "Passwords don’t match";
 "create_personal_account.confirmation_alert.title" = "Terms of use";
 "create_personal_account.confirmation_alert.message" = "Please accept the Terms of Use to continue.";
 "create_personal_account.confirmation_alert.accept" = "Accept";

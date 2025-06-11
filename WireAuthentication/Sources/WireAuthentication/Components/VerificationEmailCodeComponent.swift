@@ -26,7 +26,7 @@ import WireReusableUIComponents
 
 protocol VerificationEmailCodeComponentDependency: Dependency {
 
-    //@MainActor var router: any Router { get } // do we need?
+    // @MainActor var router: any Router { get } // do we need?
     var networkStack: NetworkStack { get }
     @MainActor var bridge: WireAuthenticationBridge { get }
 

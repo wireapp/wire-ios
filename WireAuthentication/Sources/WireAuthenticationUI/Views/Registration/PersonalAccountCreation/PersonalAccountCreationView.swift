@@ -52,6 +52,11 @@ struct PersonalAccountCreationView: View {
                 ))
             }
         }
+        .sheet(isPresented: $viewModel.isCreateTeamAccountPresented, content: {
+            if let teamAccountCreationLink = viewModel.teamAccountCreationLink {
+                SafariBrowserView(url: teamAccountCreationLink).ignoresSafeArea()
+            }
+        })
         .alert(
             item: $viewModel.alert,
             title: { Text($0.title) },
@@ -62,7 +67,9 @@ struct PersonalAccountCreationView: View {
                         try? await viewModel.requestEmailVerificationCode()
                     }
                 })
-                Button(Strings.ConfirmationAlert.view, action: {})
+                Button(Strings.ConfirmationAlert.view, action: {
+                    viewModel.showTermsOfUse()
+                })
                 Button(Strings.ConfirmationAlert.cancel, action: {})
             }
         )
@@ -114,8 +121,8 @@ struct PersonalAccountCreationView: View {
             password: $viewModel.password,
             placeholder: Strings.InputPassword.placeholder,
             title: Strings.InputPassword.title,
-            passwordRules: "",
-            isValidPassword: viewModel.isPasswordValid
+            passwordRules: viewModel.localizedPasswordRules,
+            isValidPassword: { _ in viewModel.isPasswordValid }
         )
     }
 
@@ -124,8 +131,8 @@ struct PersonalAccountCreationView: View {
             password: $viewModel.confirmedPassword,
             placeholder: Strings.InputConfirmPassword.placeholder,
             title: Strings.InputPassword.title,
-            passwordRules: "",
-            isValidPassword: viewModel.isPasswordValid
+            passwordRules: Strings.InputConfirmPassword.error,
+            isValidPassword: { _ in viewModel.isPasswordMatchConfirmedPassword }
         )
     }
 
@@ -152,7 +159,7 @@ struct PersonalAccountCreationView: View {
         })
         .wireButtonStyle(.primary)
         .bold()
-        //        .disabled(!viewModel.canRequestVerificationCode)
+        .disabled(!viewModel.canRequestVerificationCode)
     }
 
     @ViewBuilder private var teamAccountCreationView: some View {
@@ -174,36 +181,4 @@ struct PersonalAccountCreationView: View {
         .padding()
     }
 
-}
-
-// TODO: move to ReusableUIComponents
-struct Checkbox: View {
-    @Binding var isChecked: Bool
-
-    private let title: AttributedString
-
-    init(isChecked: Binding<Bool>, title: AttributedString) {
-        self._isChecked = isChecked
-        self.title = title
-    }
-
-    init(isChecked: Binding<Bool>, title: String) {
-        self._isChecked = isChecked
-        self.title = AttributedString(title)
-    }
-
-    var body: some View {
-        HStack {
-            Button(action: {
-                isChecked.toggle()
-            }, label: {
-                Image(systemName: isChecked ? "checkmark.square.fill" : "square")
-                    .font(.system(size: 24))
-            })
-            .buttonStyle(.plain)
-            .foregroundStyle(isChecked ? ColorTheme.Checkbox.selected.color : ColorTheme.Checkbox.enabled.color)
-            Text(title)
-                .wireTextStyle(.subline1)
-        }
-    }
 }

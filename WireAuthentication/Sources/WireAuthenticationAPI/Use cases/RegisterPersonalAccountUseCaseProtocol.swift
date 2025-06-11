@@ -20,10 +20,11 @@ import Foundation
 
 public protocol RegisterPersonalAccountUseCaseProtocol: Sendable {
 
-    func invoke(email: String,
-                password: String,
-                verificationCode: String,
-                name: String
+    func invoke(
+        email: String,
+        password: String,
+        verificationCode: String,
+        name: String
     ) async throws -> ([HTTPCookie], UUID?)
 
 }
@@ -49,4 +50,3 @@ public protocol RegisterPersonalAccountUseCaseFactory {
     func registerPersonalAccountUseCase() async throws -> any RegisterPersonalAccountUseCaseProtocol
 
 }
-

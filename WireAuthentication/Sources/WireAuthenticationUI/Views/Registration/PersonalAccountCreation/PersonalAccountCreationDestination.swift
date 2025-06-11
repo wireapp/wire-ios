@@ -20,7 +20,7 @@ import Foundation
 import WireAuthenticationAPI
 
 enum PersonalAccountCreationDestination: Hashable {
-    
+
     case verifyEmail(email: String, password: String, name: String)
-    
+
 }

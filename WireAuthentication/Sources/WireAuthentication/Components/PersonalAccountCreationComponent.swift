@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import NeedleFoundation
 internal import WireAuthenticationUI
 import WireAuthenticationAPI
@@ -24,13 +25,16 @@ internal import WireAuthenticationLogic
 final class PersonalAccountCreationComponent: Component<PersonalAccountCreationComponentDependency> {
 
     private let email: String
+    private let teamAccountCreationLink: URL?
 //    public let networkStack: NetworkStack maybe we need
 
     init(
         parent: any Scope,
-        email: String
+        email: String,
+        teamAccountCreationLink: URL?
     ) {
         self.email = email
+        self.teamAccountCreationLink = teamAccountCreationLink
         super.init(parent: parent)
     }
 
@@ -62,6 +66,7 @@ extension PersonalAccountCreationComponent: PersonalAccountCreationViewModel.Fac
             email: email,
             privacyPolicyURL: dependency.privacyPolicyURL,
             termsOfUseURL: dependency.termsOfUseURL,
+            teamAccountCreationLink: teamAccountCreationLink,
             passwordValidator: dependency.passwordValidator
         )
     }
