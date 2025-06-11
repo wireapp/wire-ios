@@ -16,13 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import NeedleFoundation
 import SwiftUI
 import WireAPI
 import WireReusableUIComponents
 internal import WireAuthenticationUI
 import WireAuthenticationAPI
+import WireMultiBackendUI
 internal import WireAuthenticationLogic
+import WireFoundation
 
 class RootComponent: BootstrapComponent {
 
@@ -36,6 +39,7 @@ class RootComponent: BootstrapComponent {
     public let ssoCallbackURLScheme: String
     public let appStoreURL: URL
     public let existsAnotherAccount: Bool
+    public var otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>
     public let useLegacyRegistrationFlow: Bool
 
     @MainActor public var bridge: WireAuthenticationBridge {
@@ -58,6 +62,7 @@ class RootComponent: BootstrapComponent {
         ssoCallbackURLScheme: String,
         appStoreURL: URL,
         existsAnotherAccount: Bool,
+        otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>,
         useLegacyRegistrationFlow: Bool
     ) {
         self.backendInfo = backendInfo
@@ -70,6 +75,7 @@ class RootComponent: BootstrapComponent {
         self.ssoCallbackURLScheme = ssoCallbackURLScheme
         self.appStoreURL = appStoreURL
         self.existsAnotherAccount = existsAnotherAccount
+        self.otherAccountsPublisher = otherAccountsPublisher
         self.useLegacyRegistrationFlow = useLegacyRegistrationFlow
     }
 
@@ -106,6 +112,14 @@ extension RootComponent: RootViewModel.Factory {
 
     func determineAuthMethodFactory(backendInfo: BackendInfo) -> any DetermineAuthMethodFactory {
         determineAuthMethodComponent(backendInfo: backendInfo)
+    }
+
+    func accountsSwitcherFactory() -> any AccountSwitcherFactory {
+        accountSwitcherComponent()
+    }
+
+    func accountSwitcherComponent() -> AccountSwitcherComponent {
+        AccountSwitcherComponent(parent: self)
     }
 
     // MARK: - Use cases

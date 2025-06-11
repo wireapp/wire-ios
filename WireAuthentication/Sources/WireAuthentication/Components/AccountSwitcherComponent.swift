@@ -16,6 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import Foundation
+import NeedleFoundation
+internal import WireAuthenticationUI
+import WireFoundation
+import WireMultiBackendUI
 
-// empty for now
+protocol AccountSwitcherComponentDependency: Dependency {
+
+    @MainActor var router: any Router { get }
+    var otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]> { get }
+
+}
+
+class AccountSwitcherComponent: Component<AccountSwitcherComponentDependency> {}
+
+extension AccountSwitcherComponent: AccountSwitcherFactory {
+
+    // MARK: - Factory
+
+    @MainActor var viewModel: AccountSwitcherModalViewModel {
+        AccountSwitcherModalViewModel(
+            otherAccountsPublisher: dependency.otherAccountsPublisher,
+            router: dependency.router
+        )
+    }
+}

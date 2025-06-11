@@ -65,6 +65,10 @@ package final class RootViewModel: ObservableObject, Router {
         path.removeLast(path.count)
     }
 
+    package func pop() {
+        path.removeLast()
+    }
+
     package func navigate(to destination: some Hashable) {
         path.append(destination)
     }
@@ -84,6 +88,10 @@ package final class RootViewModel: ObservableObject, Router {
 
     func goToAppStore() {
         factory.openAppStoreUseCase().invoke()
+    }
+
+    func switchAccounts() {
+        navigate(to: RootDestination.switchAccounts)
     }
 
     // MARK: - Private
