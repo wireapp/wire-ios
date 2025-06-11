@@ -82,17 +82,33 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 syncStateSubject.send(.incrementalSyncing(.pullPendingEvents))
                 try await updateEventsSync.pull()
 
-<<<<<<< HEAD
-                logger.debug("processing stored update events", attributes: .syncAttributes(initialSync: false))
+                logger.debug("processing stored update events")
                 syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
                 processedEnvelopeIDs = try await processStoredEvents()
             } catch {
-                logger.debug(
-                    "incremental sync interrupted, tearing down...",
-                    attributes: .syncAttributes(initialSync: false)
-                )
-                await pushChannel.close()
-                throw error
+                func tearDown() async {
+                    logger.debug("incremental sync interrupted, tearing down...")
+                    await pushChannel.close()
+                }
+
+                switch error {
+                case let apiError as UpdateEventsAPIError:
+                    switch apiError {
+                    case .notFound, .invalidParameters:
+                        // nullifying the last event ID since we missed events and we want to
+                        // reset with a full sync (initial + incremental)
+                        updateEventsStore.resetLastEventID()
+                        try await messageStore.addPotentialGapSystemMessage()
+                        await tearDown()
+                        throw Failure.missedEvents
+                    default:
+                        await tearDown()
+                        throw error
+                    }
+                default:
+                    await tearDown()
+                    throw error
+                }
             }
 
             let liveEventTask = Task { @Sendable [self] in
@@ -111,35 +127,6 @@ public struct IncrementalSync: IncrementalSyncProtocol {
             return Token(task: liveEventTask, closePushChannel: {
                 await pushChannel.close()
             })
-=======
-            logger.debug("processing stored update events")
-            syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
-            processedEnvelopeIDs = try await processStoredEvents()
-        } catch {
-            func tearDown() async {
-                logger.debug("incremental sync interrupted, tearing down...")
-                await pushChannel.close()
-            }
-
-            switch error {
-            case let apiError as UpdateEventsAPIError:
-                switch apiError {
-                case .notFound, .invalidParameters:
-                    // nullifying the last event ID since we missed events and we want to
-                    // reset with a full sync (initial + incremental)
-                    updateEventsStore.resetLastEventID()
-                    try await messageStore.addPotentialGapSystemMessage()
-                    await tearDown()
-                    throw Failure.missedEvents
-                default:
-                    await tearDown()
-                    throw error
-                }
-            default:
-                await tearDown()
-                throw error
-            }
->>>>>>> 963e473594 (fix: app recovery update events error - WPB-17609 (#3152))
         }
     }
 
