@@ -111,6 +111,9 @@ private class GenerateNotificationDependencye9ac54a4aea693448fe3Provider: Genera
     var userLocalStore: any UserLocalStoreProtocol {
         return verifyUserStep.userLocalStore
     }
+    var databaseSaver: any DatabaseSaverProtocol {
+        return pullEventsStep.databaseSaver
+    }
     private let pullEventsStep: PullEventsStep
     private let verifyUserStep: VerifyUserStep
     init(pullEventsStep: PullEventsStep, verifyUserStep: VerifyUserStep) {
@@ -205,6 +208,7 @@ extension GenerateNotificationStep: NeedleFoundation.Registration {
         keyPathToName[\GenerateNotificationDependency.messageLocalStore] = "messageLocalStore-any MessageLocalStoreProtocol"
         keyPathToName[\GenerateNotificationDependency.conversationLocalStore] = "conversationLocalStore-any ConversationLocalStoreProtocol"
         keyPathToName[\GenerateNotificationDependency.userLocalStore] = "userLocalStore-any UserLocalStoreProtocol"
+        keyPathToName[\GenerateNotificationDependency.databaseSaver] = "databaseSaver-any DatabaseSaverProtocol"
 
     }
 }
@@ -219,6 +223,7 @@ extension PullEventsStep: NeedleFoundation.Registration {
         keyPathToName[\PullEventsDependency.applicationIdentifier] = "applicationIdentifier-String"
         keyPathToName[\PullEventsDependency.sharedUserDefaults] = "sharedUserDefaults-UserDefaults"
         localTable["conversationLocalStore-any ConversationLocalStoreProtocol"] = { [unowned self] in self.conversationLocalStore as Any }
+        localTable["databaseSaver-any DatabaseSaverProtocol"] = { [unowned self] in self.databaseSaver as Any }
     }
 }
 

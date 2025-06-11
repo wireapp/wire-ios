@@ -28,6 +28,7 @@ protocol GenerateNotificationDependency: Dependency {
     var messageLocalStore: any MessageLocalStoreProtocol { get }
     var conversationLocalStore: any ConversationLocalStoreProtocol { get }
     var userLocalStore: any UserLocalStoreProtocol { get }
+    var databaseSaver: any DatabaseSaverProtocol { get }
 }
 
 protocol GenerateNotificationStepProtocol {
@@ -45,6 +46,7 @@ final class GenerateNotificationStep: Component<GenerateNotificationDependency>,
         let generateNotificationUseCase = GenerateNotificationUseCase(
             conversationEventBuilder: conversationEventNotificationBuilder,
             userEventBuilder: userEventNotificationBuilder,
+            databaseSaver: dependency.databaseSaver,
             eventID: dependency.eventID
         )
 

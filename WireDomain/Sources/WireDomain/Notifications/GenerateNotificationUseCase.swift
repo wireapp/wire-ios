@@ -33,6 +33,7 @@ struct GenerateNotificationUseCase: GenerateNotificationUseCaseProtocol {
 
     let conversationEventBuilder: any ConversationEventNotificationBuilderProtocol
     let userEventBuilder: any UserEventNotificationBuilderProtocol
+    let databaseSaver: any DatabaseSaverProtocol
     let eventID: UUID
 
     /// Processes the events stream.
@@ -46,6 +47,9 @@ struct GenerateNotificationUseCase: GenerateNotificationUseCaseProtocol {
                 }
             }
         }
+        
+        // Ensures unread conversations count is up-to-date.
+        try await databaseSaver.save()
 
         return notifications
     }
