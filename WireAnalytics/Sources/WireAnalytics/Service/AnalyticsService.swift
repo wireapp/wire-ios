@@ -101,7 +101,7 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
         countly?.endSession()
         try clearCurrentUser()
         countly?.resetInstance()
-        self.countly = nil
+        countly = nil
 
     }
 
