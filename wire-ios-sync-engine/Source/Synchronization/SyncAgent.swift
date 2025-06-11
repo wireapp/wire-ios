@@ -216,17 +216,17 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                     incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync().perform()
                     delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: false)
                 }
+            } catch IncrementalSync.Failure.missedEvents {
+                WireLogger.sync.error(
+                    "failed to perform new incremental sync (missed events): recovering with a full sync"
+                )
+
+                syncStateSubject.send(.suspended)
+                resume()
             } catch {
                 WireLogger.sync.error("failed to perform new incremental sync: \(String(describing: error))")
                 syncStateSubject.send(.suspended)
-
-                if let incrementalSyncError = error as? IncrementalSync.Failure,
-                   case .missedEvents = incrementalSyncError {
-                    // recovering with a full sync
-                    resume()
-                } else {
-                    throw error
-                }
+                throw error
             }
         } else {
             await legacySyncStatus.performQuickSync()
