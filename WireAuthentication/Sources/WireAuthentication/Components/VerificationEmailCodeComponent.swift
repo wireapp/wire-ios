@@ -26,7 +26,6 @@ import WireReusableUIComponents
 
 protocol VerificationEmailCodeComponentDependency: Dependency {
 
-    // @MainActor var router: any Router { get } // do we need?
     var networkStack: NetworkStack { get }
     @MainActor var bridge: WireAuthenticationBridge { get }
 
@@ -76,6 +75,11 @@ extension VerificationEmailCodeComponent: VerificationEmailCodeViewModel.Factory
 
     func createAuthenticationResultUseCase() -> any CreateAuthenticationResultUseCaseProtocol {
         CreateAuthenticationResultUseCase(networkStack: dependency.networkStack)
+    }
+
+    func requestEmailVerificationCodeUseCase() async throws -> any RequestEmailVerificationCodeUseCaseProtocol {
+        let authenticationAPI = try await dependency.networkStack.makeAuthenticationAPI()
+        return RequestEmailVerificationCodeUseCase(authenticationAPI: authenticationAPI)
     }
 
 }

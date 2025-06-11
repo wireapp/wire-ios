@@ -26,9 +26,10 @@ import WireLogging
 public final class VerificationEmailCodeViewModel: ObservableObject {
 
     package typealias Factory =
-        CreateAuthenticationResultUseCaseFactory &
-        RegisterPersonalAccountUseCaseFactory &
-        VerificationEmailCodeFactory
+    CreateAuthenticationResultUseCaseFactory &
+    RegisterPersonalAccountUseCaseFactory &
+    RequestEmailVerificationCodeUseCaseFactory &
+    VerificationEmailCodeFactory
 
     // MARK: - View state
 
@@ -43,15 +44,13 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
     let numberOfDigits: Int
 
     var isConfirmButtonDisabled: Bool {
-        true
-        // code.contains { $0.isEmpty }
+        code.contains { $0.isEmpty }
     }
 
     // MARK: - Dependencies
 
     package let factory: any Factory
     private let onFlowCompletion: (AuthenticationResult) -> Void
-
     private static let numberOfDigits = 6
 
     // MARK: - Life cycle
@@ -133,11 +132,52 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
             )
             onFlowCompletion(authenticationResult)
         } catch {
-            print(error)
+            //            WireLogger.authentication.error("email erification code login via email failed: \(error)")
+            //
+            //            switch error {
+            //            case LoginViaEmailUseCaseFailure.twoFactorAuthenticationFailed:
+            //                alert = .invalid2FACode
+            //            case LoginViaEmailUseCaseFailure.accountPendingActivation:
+            //                alert = .accountPendingActivation
+            //            case LoginViaEmailUseCaseFailure.accountSuspended:
+            //                alert = .accountSuspended
+            //            default:
+            //                router.presentAlert(for: error)
+            //            }
         }
 
         isLoading = false
 
+    }
+
+    func requestVerificationCode() async {
+        isResending = true
+
+        do {
+            try await resendVerificationCode(email: email)
+            WireLogger.authentication.info("Resend email erification code succeeded")
+        } catch {
+            WireLogger.authentication.error("Resend email erification code login failed: \(error)")
+
+            //            switch error {
+            //            case RequestLoginVerificationCodeUseCaseFailure.invalidEmail:
+            //                alert = .invalidEmail
+            //
+            //            default:
+            //                router.presentAlert(for: error)
+            //            }
+        }
+
+        isResending = false
+    }
+
+    // MARK: - Private
+
+    private func resendVerificationCode(email: String) async throws {
+        let useCase = try await factory.requestEmailVerificationCodeUseCase()
+        try await Task.detached {
+            try await useCase.invoke(email: email)
+        }.value
     }
 
     private func createAuthenticationResult(
@@ -155,108 +195,5 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
             )
         }.value
     }
-
-//    func confirm() async {
-//        isLoading = true
-//
-//        do {
-//            let verificationCode = code.joined()
-//            let (cookies, accessToken) = try await logIn(verificationCode: verificationCode)
-//
-//            let emailCredentials = EmailCredentials(
-//                email: email,
-//                password: password,
-//                verificationCode: verificationCode
-//            )
-//
-//            let authenticationResult = try await createAuthenticationResult(
-//                cookies: cookies,
-//                accessToken: accessToken,
-//                emailCredentials: emailCredentials
-//            )
-//
-//            router.navigate(
-//                to: VerificationCodeDestination.noHistory(authenticationResult: authenticationResult)
-//            )
-//            WireLogger.authentication.info("2FA login via email succeeded")
-//        } catch {
-//            WireLogger.authentication.error("2FA login via email failed: \(error)")
-//
-//            switch error {
-//            case LoginViaEmailUseCaseFailure.twoFactorAuthenticationFailed:
-//                alert = .invalid2FACode
-//            case LoginViaEmailUseCaseFailure.accountPendingActivation:
-//                alert = .accountPendingActivation
-//            case LoginViaEmailUseCaseFailure.accountSuspended:
-//                alert = .accountSuspended
-//            default:
-//                router.presentAlert(for: error)
-//            }
-//        }
-//
-//        isLoading = false
-//    }
-
-    func requestVerificationCode() async {
-        isResending = true
-
-        do {
-            try await resendVerificationCode(email: email)
-            WireLogger.authentication.info("Resend 2FA code succeeded")
-        } catch {
-            WireLogger.authentication.error("Resend 2FA login failed: \(error)")
-
-//            switch error {
-//            case RequestLoginVerificationCodeUseCaseFailure.invalidEmail:
-//                alert = .invalidEmail
-//
-//            default:
-//                router.presentAlert(for: error)
-//            }
-        }
-
-        isResending = false
-    }
-
-    // MARK: - Private
-
-    private func submitProxyCredentials(_ proxyCredentials: ProxyCredentials) throws {
-//        let useCase = factory.submitProxyCredentialsUseCase()
-//        try useCase.invoke(proxyCredentials: proxyCredentials)
-    }
-
-//    private func logIn(verificationCode: String) async throws -> ([HTTPCookie], AccessToken) {
-//        let useCase = try await factory.loginViaEmailUseCase()
-//        return try await Task.detached { [email, password] in
-//            try await useCase.invoke(
-//                email: email,
-//                password: password,
-//                verificationCode: verificationCode
-//            )
-//        }.value
-//    }
-
-    private func resendVerificationCode(email: String) async throws {
-//        let useCase = try await factory.requestLoginVerificationCodeUseCase()
-//        try await Task.detached {
-//            try await useCase.invoke(email: email)
-//        }.value
-    }
-
-//    private func createAuthenticationResult(
-//        cookies: [HTTPCookie],
-//        accessToken: AccessToken,
-//        emailCredentials: EmailCredentials
-//    ) async throws -> AuthenticationResult {
-//        let useCase = factory.createAuthenticationResultUseCase()
-//        return try await Task.detached {
-//            try await useCase.invoke(
-//                userID: accessToken.userID,
-//                cookies: cookies,
-//                accessToken: accessToken,
-//                emailCredentials: emailCredentials
-//            )
-//        }.value
-//    }
 
 }

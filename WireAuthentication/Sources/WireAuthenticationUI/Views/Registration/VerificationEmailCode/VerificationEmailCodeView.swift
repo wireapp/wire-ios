@@ -55,15 +55,15 @@ package struct VerificationEmailCodeView: View {
             })
             .wireButtonStyle(.primary)
             .padding(.horizontal)
-            // .disabled(viewModel.isConfirmButtonDisabled)
+             .disabled(viewModel.isConfirmButtonDisabled)
 
             Button(action: {
-                // Task.detached { await viewModel.requestVerificationCode() }
+                 Task.detached { await viewModel.requestVerificationCode() }
             }, label: {
                 Text(Strings.VerificationCode.resendCode)
             })
             .wireButtonStyle(.link)
-            // .disabled(viewModel.isResending)
+             .disabled(viewModel.isResending)
         }
         .padding()
         .background(ColorTheme.Backgrounds.surface.color)
@@ -71,14 +71,14 @@ package struct VerificationEmailCodeView: View {
         .navigationBarTitleDisplayMode(.inline)
         .setPreferredSize(navigationBarHidden: false)
         .customBackButton()
-//        .alert(
-//            item: $viewModel.alert,
-//            title: { Text($0.title) },
-//            message: { Text($0.message) },
-//            actions: { _ in
-//                Button(Strings.Authentication.Error.confirm, action: {})
-//            }
-//        )
+        .alert(
+            item: $viewModel.alert,
+            title: { Text($0.title) },
+            message: { Text($0.message) },
+            actions: { _ in
+                Button(Strings.Authentication.Error.confirm, action: {})
+            }
+        )
     }
 
     private var verificationCodeView: some View {
