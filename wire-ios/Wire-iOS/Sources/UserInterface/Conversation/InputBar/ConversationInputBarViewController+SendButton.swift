@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireSyncEngine
+import WireLogging
 
 extension ConversationInputBarViewController {
     func sendText() {
@@ -44,32 +45,31 @@ extension ConversationInputBarViewController {
             editingMessage = nil
             updateWritingState(animated: true)
         } else {
-            let publishTask = Task.detached { [wireCellsPublishDraftsUseCase] in
-                try await wireCellsPublishDraftsUseCase.invoke()
+            if !attachments.isEmpty {
+                do {
+                    try await wireCellsPublishDraftsUseCase.invoke()
+                    await wireCellsClearPublishedDraftsUseCase.invoke()
+                } catch {
+                    WireLogger.conversation.error("Failed to publish drafts: \(error)")
+                    return
+                }
             }
-            do {
-                try await publishTask.value
-                clearInputBar()
-                await wireCellsClearPublishedDraftsUseCase.invoke()
-                delegate?.conversationInputBarViewControllerDidComposeText(
-                    text: text,
-                    attachments: attachments.map { draft in
-                        MultipartAttachment(
-                            uuid: draft.id.uuid,
-                            contentType: draft.mimeType,
-                            initialName: draft.name,
-                            initialSize: draft.bytes,
-                            initialMetadata: nil // FIXME: [WPB-18130] Send metadata
-                        )
-                    },
-                    mentions: mentions,
-                    replyingTo: quote
-                )
 
-            } catch {
-                // TODO: handle error
-                print(">>> Failed to publish drafts: \(error)")
-            }
+            clearInputBar()
+            delegate?.conversationInputBarViewControllerDidComposeText(
+                text: text,
+                attachments: attachments.map { draft in
+                    MultipartAttachment(
+                        uuid: draft.id.uuid,
+                        contentType: draft.mimeType,
+                        initialName: draft.name,
+                        initialSize: draft.bytes,
+                        initialMetadata: nil // FIXME: [WPB-18130] Send metadata
+                    )
+                },
+                mentions: mentions,
+                replyingTo: quote
+            )
         }
 
         dismissMentionsIfNeeded()
