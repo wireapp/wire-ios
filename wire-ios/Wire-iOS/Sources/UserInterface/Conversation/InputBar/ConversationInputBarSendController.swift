@@ -53,9 +53,10 @@ final class ConversationInputBarSendController: NSObject {
 
     func sendTextMessage(
         _ text: String,
+        attachments: [MultipartAttachment],
         mentions: [Mention],
         userSession: UserSession,
-        replyingTo message: ZMConversationMessage?
+        replyingTo message: ZMConversationMessage?,
     ) {
         guard let conversation = conversation as? ZMConversation else { return }
 
@@ -63,14 +64,27 @@ final class ConversationInputBarSendController: NSObject {
             let shouldFetchLinkPreview = !Settings.disableLinkPreviews
 
             do {
-                let useCase = userSession.makeAppendTextMessageUseCase()
-                try useCase.invoke(
-                    text: text,
-                    mentions: mentions,
-                    replyingTo: message,
-                    in: conversation,
-                    fetchLinkPreview: shouldFetchLinkPreview
-                )
+                if attachments.isEmpty {
+                    let useCase = userSession.makeAppendTextMessageUseCase()
+                    try useCase.invoke(
+                        text: text,
+                        mentions: mentions,
+                        replyingTo: message,
+                        in: conversation,
+                        fetchLinkPreview: shouldFetchLinkPreview
+                    )
+
+                } else {
+                    let useCase = userSession.makeAppendMultipartMessageUseCase()
+                    try useCase.invoke(
+                        text: text,
+                        mentions: mentions,
+                        replyingTo: message,
+                        in: conversation,
+                        fetchLinkPreview: shouldFetchLinkPreview,
+                        attachments: attachments
+                    )
+                }
             } catch {
                 Logging.messageProcessing.warn("Failed to append text message. Reason: \(error.localizedDescription)")
             }

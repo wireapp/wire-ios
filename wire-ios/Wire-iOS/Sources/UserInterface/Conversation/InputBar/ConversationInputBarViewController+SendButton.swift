@@ -17,19 +17,21 @@
 //
 
 import UIKit
+import WireSyncEngine
 import WireCommonComponents
 
 extension ConversationInputBarViewController {
     func sendText() {
 
         let checker = PrivacyWarningChecker(conversation: conversation) {
-            self._sendText()
+            Task { await self._sendText() }
         }
 
         checker.performAction()
     }
 
-    private func _sendText() {
+    @MainActor
+    private func _sendText() async {
         let (text, mentions) = inputBar.textView.preparedText
         let quote = quotedMessage
 
@@ -42,12 +44,32 @@ extension ConversationInputBarViewController {
             editingMessage = nil
             updateWritingState(animated: true)
         } else {
-            clearInputBar()
-            delegate?.conversationInputBarViewControllerDidComposeText(
-                text: text,
-                mentions: mentions,
-                replyingTo: quote
-            )
+            let publishTask = Task.detached { [wireCellsPublishDraftsUseCase] in
+                try await wireCellsPublishDraftsUseCase.invoke()
+            }
+            do {
+                try await publishTask.value
+                clearInputBar()
+                await wireCellsClearPublishedDraftsUseCase.invoke()
+                delegate?.conversationInputBarViewControllerDidComposeText(
+                    text: text,
+                    attachments: attachments.map { draft in
+                        MultipartAttachment(
+                            uuid: draft.id.uuid,
+                            contentType: draft.mimeType,
+                            initialName: draft.name,
+                            initialSize: draft.bytes,
+                            initialMetadata: nil // FIXME: [WPB-18130] Send metadata
+                        )
+                    },
+                    mentions: mentions,
+                    replyingTo: quote
+                )
+
+            } catch {
+                // TODO: handle error
+                print(">>> Failed to publish drafts: \(error)")
+            }
         }
 
         dismissMentionsIfNeeded()
