@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Collections
 import Foundation
 import Testing
 import WireCellsAPI
-import Collections
 
 @testable import WireCellsImplementation
 @testable import WireCellsImplementationSupport

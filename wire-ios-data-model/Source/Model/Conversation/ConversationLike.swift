@@ -116,7 +116,7 @@ extension ZMConversation: ConversationLike {
     }
 
     public var wireCellName: String {
-        guard let qualifiedID = qualifiedID else { return "unknown" }
+        guard let qualifiedID else { return "unknown" }
 
         return "\(qualifiedID.uuid.uuidString.lowercased())@\(qualifiedID.domain)"
     }

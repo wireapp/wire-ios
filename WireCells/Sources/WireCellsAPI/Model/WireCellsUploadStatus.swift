@@ -27,9 +27,9 @@ public enum WireCellsUploadStatus: Equatable, Hashable, Sendable {
     public var isUploaded: Bool {
         switch self {
         case .uploaded:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 }

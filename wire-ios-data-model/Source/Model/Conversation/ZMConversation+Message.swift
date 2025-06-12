@@ -224,7 +224,7 @@ public extension ZMConversation {
         }
 
         let multipart = Multipart.with {
-            if let text = text {
+            if let text {
                 $0.text = text
             }
             $0.attachments = attachments.map { attachment in

@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireFoundation
 import WireAnalytics
 import WireDataModel
+import WireFoundation
 import WireLogging
 
 public protocol AppendMultipartMessageUseCaseProtocol {

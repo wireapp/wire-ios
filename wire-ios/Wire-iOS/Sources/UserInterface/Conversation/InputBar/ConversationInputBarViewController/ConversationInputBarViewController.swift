@@ -1230,7 +1230,7 @@ private extension AttachmentState {
     init(_ drafts: [WireCellsDraft]) {
         if drafts.isEmpty {
             self = .none
-        } else if drafts.allSatisfy({ $0.status.isUploaded }) {
+        } else if drafts.allSatisfy(\.status.isUploaded) {
             self = .allUploaded
         } else {
             self = .someUploaded

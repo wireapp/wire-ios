@@ -94,7 +94,7 @@ extension MultipartAttachment {
 
                 if let initialMetadata {
                     switch initialMetadata {
-                    case .image(let width, let height):
+                    case let .image(width, height):
                         asset.initialMetaData = .image(
                             CellAsset.ImageMetaData.with { metadata in
                                 // Only set if values are not nil to avoid protobufs setting nonsense defaults.
@@ -102,7 +102,7 @@ extension MultipartAttachment {
                                 metadata.height = Int32(height)
                             }
                         )
-                    case .video(let width, let height, let duration):
+                    case let .video(width, height, duration):
                         asset.initialMetaData = .video(
                             CellAsset.VideoMetaData.with { metadata in
                                 // Only set if values are not nil to avoid protobufs setting nonsense defaults.
@@ -111,7 +111,7 @@ extension MultipartAttachment {
                                 duration.map { metadata.durationInMillis = UInt64($0) }
                             }
                         )
-                    case .audio(let duration, let normalizedLoudness):
+                    case let .audio(duration, normalizedLoudness):
                         asset.initialMetaData = .audio(
                             CellAsset.AudioMetaData.with { metadata in
                                 // Only set if values are not nil to avoid protobufs setting nonsense defaults.
