@@ -16,11 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import Foundation
 import NeedleFoundation
 import SwiftUI
 import WireAPI
 import WireAuthenticationAPI
+import WireFoundation
+import WireMultiBackendUI
 import WireReusableUIComponents
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
@@ -55,6 +58,7 @@ public struct WireAuthenticationAssembly {
         ssoCallbackURLScheme: String,
         appStoreURL: URL,
         existsAnotherAccount: Bool,
+        otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>,
         useLegacyRegistrationFlow: Bool,
         personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
@@ -74,6 +78,7 @@ public struct WireAuthenticationAssembly {
             ssoCallbackURLScheme: ssoCallbackURLScheme,
             appStoreURL: appStoreURL,
             existsAnotherAccount: existsAnotherAccount,
+            otherAccountsPublisher: otherAccountsPublisher,
             useLegacyRegistrationFlow: useLegacyRegistrationFlow,
             personalAccountCreationAnalyticsTracker: personalAccountCreationAnalyticsTracker
         )
