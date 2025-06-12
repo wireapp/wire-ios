@@ -29,7 +29,6 @@ enum AttachmentState {
 final class ConversationInputBarButtonState {
 
     var sendButtonEnabled: Bool {
-        // TODO: Look into this more. There are bugs in existing implementation.
         switch attachmentState {
         case .none:
             break
@@ -39,6 +38,7 @@ final class ConversationInputBarButtonState {
             return true
         }
 
+        // TODO: [WPB-18166] Fix this messed up logic.
         let disableSendButton: Bool? = Settings.shared[.sendButtonDisabled]
         return hasText || (disableSendButton == false && !markingDown)
     }
