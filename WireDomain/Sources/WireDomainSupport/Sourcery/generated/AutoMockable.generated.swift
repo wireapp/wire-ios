@@ -3673,10 +3673,10 @@ public class MockUpdateEventsLocalStoreProtocol: UpdateEventsLocalStoreProtocol 
 
     public var fetchStoredEventEnvelopesLimit_Invocations: [UInt] = []
     public var fetchStoredEventEnvelopesLimit_MockError: Error?
-    public var fetchStoredEventEnvelopesLimit_MockMethod: ((UInt) async throws -> [UpdateEventEnvelope])?
-    public var fetchStoredEventEnvelopesLimit_MockValue: [UpdateEventEnvelope]?
+    public var fetchStoredEventEnvelopesLimit_MockMethod: ((UInt) async throws -> [(UpdateEventEnvelope, objectID: NSManagedObjectID)])?
+    public var fetchStoredEventEnvelopesLimit_MockValue: [(UpdateEventEnvelope, objectID: NSManagedObjectID)]?
 
-    public func fetchStoredEventEnvelopes(limit: UInt) async throws -> [UpdateEventEnvelope] {
+    public func fetchStoredEventEnvelopes(limit: UInt) async throws -> [(UpdateEventEnvelope, objectID: NSManagedObjectID)] {
         fetchStoredEventEnvelopesLimit_Invocations.append(limit)
 
         if let error = fetchStoredEventEnvelopesLimit_MockError {
@@ -3694,22 +3694,22 @@ public class MockUpdateEventsLocalStoreProtocol: UpdateEventsLocalStoreProtocol 
 
     // MARK: - deleteNextPendingEvents
 
-    public var deleteNextPendingEventsLimit_Invocations: [UInt] = []
-    public var deleteNextPendingEventsLimit_MockError: Error?
-    public var deleteNextPendingEventsLimit_MockMethod: ((UInt) async throws -> Void)?
+    public var deleteNextPendingEventsWith_Invocations: [[NSManagedObjectID]] = []
+    public var deleteNextPendingEventsWith_MockError: Error?
+    public var deleteNextPendingEventsWith_MockMethod: (([NSManagedObjectID]) async throws -> Void)?
 
-    public func deleteNextPendingEvents(limit: UInt) async throws {
-        deleteNextPendingEventsLimit_Invocations.append(limit)
+    public func deleteNextPendingEvents(with objectIDs: [NSManagedObjectID]) async throws {
+        deleteNextPendingEventsWith_Invocations.append(objectIDs)
 
-        if let error = deleteNextPendingEventsLimit_MockError {
+        if let error = deleteNextPendingEventsWith_MockError {
             throw error
         }
 
-        guard let mock = deleteNextPendingEventsLimit_MockMethod else {
-            fatalError("no mock for `deleteNextPendingEventsLimit`")
+        guard let mock = deleteNextPendingEventsWith_MockMethod else {
+            fatalError("no mock for `deleteNextPendingEventsWith`")
         }
 
-        try await mock(limit)
+        try await mock(objectIDs)
     }
 
     // MARK: - deleteEventEnvelope
