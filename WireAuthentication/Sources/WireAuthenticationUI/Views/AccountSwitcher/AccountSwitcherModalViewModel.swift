@@ -16,33 +16,31 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAuthenticationUI
+import Combine
+import SwiftUI
+import WireFoundation
+import WireMultiBackendUI
 
-final class MockRouter: Router {
+@MainActor
+package class AccountSwitcherModalViewModel: ObservableObject {
 
-    public var navigate_Invocations: [any Hashable] = []
-    public var modalPresent_Invocations: [any Hashable] = []
-    public var alert_Invocations: [Alert] = []
-    public var dismissSheet_InvocationCount = 0
+    @Published var otherAccounts: [AccountUIModel]
 
-    func popToRoot() {}
+    private let router: any Router
+    private var cancellables = Set<AnyCancellable>()
 
-    func pop() {}
-
-    func navigate(to destination: some Hashable) {
-        navigate_Invocations.append(destination)
+    package init(
+        otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>,
+        router: any Router
+    ) {
+        self.otherAccounts = otherAccountsPublisher.value
+        self.router = router
+        otherAccountsPublisher.publisher.sink { [weak self] accounts in
+            self?.otherAccounts = accounts
+        }.store(in: &cancellables)
     }
 
-    func presentSheet(_ modalDestination: some Hashable) {
-        modalPresent_Invocations.append(modalDestination)
+    func onCloseButtonTapped() {
+        router.pop()
     }
-
-    func presentAlert(_ alert: Alert) {
-        alert_Invocations.append(alert)
-    }
-
-    func dismissSheet() {
-        dismissSheet_InvocationCount += 1
-    }
-
 }
