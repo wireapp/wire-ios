@@ -19,59 +19,59 @@ import Foundation
 
 /// Received data from websocket when async stream enabled
 struct WebSocketNotification: Decodable {
-
+    
     enum NotificationType: String, Decodable {
         case event
         case notificationsMissed = "notifications_missed"
         case messagesCount = "message_count"
     }
-
+    
     enum DataType: Decodable {
         case event(EventNotificationData)
         case messageCount(MessageCountData)
     }
-
+    
     struct MessageCountData: Decodable {
         var count: Int
     }
-
+    
     struct EventNotificationData: Decodable {
         enum CodingKeys: String, CodingKey {
             case deliveryTag = "delivery_tag"
             case event
         }
-
+        
         var deliveryTag: UInt64
         var event: UpdateEventEnvelopeV8
     }
-
+    
     var type: NotificationType
     var data: DataType?
-
+    
     init(type: NotificationType, data: DataType? = nil) {
         self.type = type
         self.data = data
     }
-
+    
     init(eventData: EventNotificationData) {
         self.type = .event
         self.data = .event(eventData)
     }
-
+    
     init(messageCount: Int) {
         self.type = .messagesCount
         self.data = .messageCount(.init(count: messageCount))
     }
-
+    
     enum CodingKeys: CodingKey {
         case type
         case data
     }
-
+    
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.type = try container.decode(WebSocketNotification.NotificationType.self, forKey: .type)
-
+        
         switch type {
         case .event:
             let data = try container.decode(WebSocketNotification.EventNotificationData.self, forKey: .data)
@@ -83,10 +83,7 @@ struct WebSocketNotification: Decodable {
             self.data = .messageCount(data)
         }
     }
-}
-
-extension WebSocketNotification: ToAPIModelConvertible {
-
+    
     var messageCount: Int {
         switch data {
         case let .messageCount(data):
@@ -96,19 +93,19 @@ extension WebSocketNotification: ToAPIModelConvertible {
         }
     }
 
-    func toAPIModel() -> UpdateEventEnvelope {
+    var updateEventEnveloppe: UpdateEventEnvelope? {
         switch data {
         case let .event(eventData):
-            UpdateEventEnvelope(
+            return UpdateEventEnvelope(
                 id: eventData.event.id,
                 events: eventData.event.payload.map(\.updateEvent),
                 isTransient: false,
                 deliveryTag: eventData.deliveryTag
             )
-        case let .messageCount(data):
-            fatalError()
+        case .messageCount:
+            return nil
         case .none:
-            fatalError()
+            return nil
         }
     }
 }

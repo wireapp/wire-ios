@@ -39,8 +39,8 @@ public final class PushChannelV2: PushChannelV2Protocol {
     private var keepAliveTask: Task<Void, any Error>?
     private let keepAliveInterval: TimeInterval
 
-    private var elementsToSync = 0
-    private var elementsUntilUpToDate: Int?
+    private var numberOfReceivedEvents = 0
+    private var remainingEventCount: Int?
 
     private var (stream, continuation) = AsyncThrowingStream<Element, any Error>.makeStream()
 
@@ -69,7 +69,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
                     let result = try receiveMessage(message)
 
                     continuation.yield(result)
-                    if elementsToSync == elementsUntilUpToDate {
+                    if numberOfReceivedEvents == remainingEventCount {
                         continuation.yield(.upToDate)
                     }
                 }
@@ -94,39 +94,6 @@ public final class PushChannelV2: PushChannelV2Protocol {
 
         await webSocket.close()
         tearDownKeepAliveTask()
-    }
-
-    func receiveMessage(_ message: URLSessionWebSocketTask.Message) throws -> Element {
-
-        switch message {
-        case let .data(data):
-            WireLogger.pushChannel.debug("received web socket data, decoding...", attributes: .pushChannelV2)
-            let envelope = try decoder.decode(WebSocketNotification.self, from: data)
-
-            switch envelope.type {
-            case .event:
-                elementsToSync += 1
-                return Element.event(envelope.toAPIModel())
-            case .messagesCount:
-                WireLogger.pushChannel.info(
-                    "\(envelope.messageCount) until we're up to date",
-                    attributes: .pushChannelV2
-                )
-                elementsUntilUpToDate = envelope.messageCount
-                elementsToSync = 0
-                return .syncing(eventsCount: envelope.messageCount)
-            case .notificationsMissed:
-                return Element.missedEvents
-            }
-
-        case .string:
-            WireLogger.pushChannel.debug("received web socket string, ignoring...", attributes: .pushChannelV2)
-            throw PushChannelError.receivedInvalidMessage
-
-        @unknown default:
-            WireLogger.pushChannel.debug("received web socket message, ignoring...", attributes: .pushChannelV2)
-            throw PushChannelError.receivedInvalidMessage
-        }
     }
 
     // MARK: - Keep alive
@@ -181,6 +148,44 @@ public final class PushChannelV2: PushChannelV2Protocol {
     }
 
     // MARK: - Helpers
+    
+    private func receiveMessage(_ message: URLSessionWebSocketTask.Message) throws -> Element {
+
+        switch message {
+        case let .data(data):
+            WireLogger.pushChannel.debug("received web socket data, decoding...", attributes: .pushChannelV2)
+            let envelope = try decoder.decode(WebSocketNotification.self, from: data)
+
+            switch envelope.type {
+            case .event:
+                if let element = envelope.updateEventEnveloppe {
+                    numberOfReceivedEvents += 1
+                    return Element.event(element)
+                } else {
+                    WireLogger.pushChannel.debug("received web socket invalid data \(String(describing: data)), ignoring...", attributes: .pushChannelV2)
+                    throw PushChannelError.receivedInvalidMessage
+                }
+            case .messagesCount:
+                WireLogger.pushChannel.info(
+                    "\(envelope.messageCount) until we're up to date",
+                    attributes: .pushChannelV2
+                )
+                remainingEventCount = envelope.messageCount
+                numberOfReceivedEvents = 0
+                return .syncing(eventsCount: envelope.messageCount)
+            case .notificationsMissed:
+                return Element.missedEvents
+            }
+
+        case .string:
+            WireLogger.pushChannel.debug("received web socket string, ignoring...", attributes: .pushChannelV2)
+            throw PushChannelError.receivedInvalidMessage
+
+        @unknown default:
+            WireLogger.pushChannel.debug("received web socket message, ignoring...", attributes: .pushChannelV2)
+            throw PushChannelError.receivedInvalidMessage
+        }
+    }
 
     private func write(data: Data) async throws {
         WireLogger.pushChannel.debug("write data to push channel", attributes: .pushChannelV2)
