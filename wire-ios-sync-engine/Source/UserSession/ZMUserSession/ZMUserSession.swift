@@ -1292,7 +1292,7 @@ extension ZMUserSession: SyncAgentDelegate {
         guard !journal[.isSyncV2Enabled] else {
             return
         }
-        
+
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.isPerformingSync = true
             self?.updateNetworkState()
