@@ -18,4 +18,15 @@
 
 import Foundation
 
-// empty for now
+extension Locale {
+
+    static var formattedLocaleIdentifier: String {
+        let language = getFirstSupportedLanguage()
+        return language.replacingOccurrences(of: "_", with: "-")
+    }
+
+    private static func getFirstSupportedLanguage() -> String {
+        Locale.preferredLanguages.first ?? "en-US"
+    }
+
+}

@@ -16,14 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+
 // sourcery: AutoMockable
-/// An object that tracks analytic events.
-public protocol AnalyticsEventTracker: AnyObject {
+/// Publishes all drafts associated with a given conversation.
 
-    /// Track an event.
+public protocol WireCellsPublishDraftsUseCaseProtocol {
+
+    /// Publish all drafts.
     ///
-    /// - Parameter event: The event to track.
+    /// - Throws: Throws an error if not **all** drafts have been uploaded or if there are unpublished drafts remaining
+    /// once the operation completes.
 
-    func trackEvent(_ event: AnalyticsEvent)
+    func invoke() async throws
 
 }

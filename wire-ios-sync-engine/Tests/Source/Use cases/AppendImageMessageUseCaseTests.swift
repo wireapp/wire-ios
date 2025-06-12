@@ -17,9 +17,10 @@
 //
 
 import WireAnalytics
-import WireAnalyticsSupport
 import WireDataModel
 import WireDataModelSupport
+import WireFoundation
+import WireFoundationSupport
 import WireSyncEngineSupport
 import XCTest
 
@@ -29,7 +30,7 @@ final class AppendImageMessageUseCaseTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var analyticsEventTracker: MockAnalyticsEventTracker!
+    private var analyticsEventTracker: AnalyticsEventTrackerProtocolMock!
     private var mockConversation: MockMessageAppendableConversation!
     private var sut: AppendImageMessageUseCase!
 
@@ -58,7 +59,7 @@ final class AppendImageMessageUseCaseTests: XCTestCase {
         mockConversation.appendImage_MockMethod = { _, _ in
             MockZMConversationMessage()
         }
-        analyticsEventTracker.trackEvent_MockMethod = { _ in }
+        analyticsEventTracker.trackEventEventAnalyticsEventVoidClosure = { _ in }
 
         let testImageData = Data("test image data".utf8)
 
@@ -78,7 +79,7 @@ final class AppendImageMessageUseCaseTests: XCTestCase {
         )
 
         XCTAssertEqual(
-            analyticsEventTracker.trackEvent_Invocations,
+            analyticsEventTracker.trackEventEventAnalyticsEventVoidReceivedInvocations,
             [expectedEvent]
         )
     }

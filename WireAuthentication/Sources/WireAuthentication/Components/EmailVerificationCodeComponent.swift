@@ -16,18 +16,34 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAnalytics
+import NeedleFoundation
+import SwiftUI
+import WireAPI
+import WireAuthenticationAPI
+internal import WireAuthenticationUI
+internal import WireAuthenticationLogic
+import WireReusableUIComponents
 
-public extension AnalyticsEvent.Segmentation.Conversation.ConversationType {
+protocol EmailVerificationCodeComponentDependency: Dependency {
 
-    init?(_ conversationType: ZMConversationType) {
-        switch conversationType {
-        case .oneOnOne:
-            self = .oneOnOne
-        case .group:
-            self = .group
-        case .invalid, .self, .connection:
-            return nil
-        }
+    @MainActor var router: any Router { get }
+    var networkStack: NetworkStack { get }
+
+}
+
+final class EmailVerificationCodeComponent: Component<EmailVerificationCodeComponentDependency> {
+
+    private let email: String
+    private let password: String
+
+    init(
+        parent: any Scope,
+        email: String,
+        password: String
+    ) {
+        self.email = email
+        self.password = password
+        super.init(parent: parent)
     }
+
 }

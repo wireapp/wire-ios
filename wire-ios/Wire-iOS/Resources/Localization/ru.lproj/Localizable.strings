@@ -103,7 +103,7 @@
 
 "add_participants.alert.title" = "Беседа переполнена";
 "add_participants.alert.message.new_conversation" = "К беседе могут присоединиться до %@ человек.";
-"add_participants.alert.message.existing_conversation" = "К беседе может присоединиться до %1$d человек. На текущий момент в комнате есть места еще для %2$d.";
+"add_participants.alert.message.existing_conversation" = "К беседе может присоединиться до %@ человек. На текущий момент в комнате есть места еще для %@.";
 
 // Channel Creation UI - Navigation
 "conversation.create.channel.title" = "Новый канал";
@@ -1594,6 +1594,7 @@
 "enroll_e2ei_certificate.subtitle" = "Сертификат активен, а устройство верифицировано.";
 "enroll_e2ei_certificate.certificate_details_button" = "Сведения о сертификате";
 "enroll_e2ei_certificate.ok_button" = "OK";
+"enroll_e2ei_certificate.idp_url_title" = "URL провайдера идентификации";
 
 // Update e2ei certificate
 "update_e2ei_certificate.title" = "Сертификат обновлен";

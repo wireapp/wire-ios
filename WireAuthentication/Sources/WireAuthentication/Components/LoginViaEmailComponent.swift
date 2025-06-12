@@ -83,7 +83,8 @@ final class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> 
 
     func personalAccountCreationComponent() -> PersonalAccountCreationComponent {
         PersonalAccountCreationComponent(
-            parent: self
+            parent: self,
+            email: email ?? ""
         )
     }
 

@@ -18,8 +18,24 @@
 
 import NeedleFoundation
 internal import WireAuthenticationUI
+import WireAuthenticationAPI
+internal import WireAuthenticationLogic
 
-final class PersonalAccountCreationComponent: Component<PersonalAccountCreationComponentDependency> {}
+final class PersonalAccountCreationComponent: Component<PersonalAccountCreationComponentDependency> {
+
+    private let email: String
+
+    init(
+        parent: any Scope,
+        email: String
+    ) {
+        self.email = email
+        super.init(parent: parent)
+    }
+
+    // MARK: - Children
+
+}
 
 extension PersonalAccountCreationComponent: PersonalAccountCreationFactory {
 
@@ -27,6 +43,13 @@ extension PersonalAccountCreationComponent: PersonalAccountCreationFactory {
 
     @MainActor var viewModel: PersonalAccountCreationViewModel {
         PersonalAccountCreationViewModel()
+    }
+
+    // MARK: - Use cases
+
+    func requestEmailVerificationCodeUseCase() async throws -> any RequestEmailVerificationCodeUseCaseProtocol {
+        let authenticationAPI = try await dependency.networkStack.makeAuthenticationAPI()
+        return RequestEmailVerificationCodeUseCase(authenticationAPI: authenticationAPI)
     }
 
 }

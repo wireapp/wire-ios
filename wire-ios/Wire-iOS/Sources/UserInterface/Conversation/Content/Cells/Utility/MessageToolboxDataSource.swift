@@ -214,7 +214,7 @@ final class MessageToolboxDataSource {
     private func makeCallList() -> String {
         guard let childMessages = message.systemMessageData?.childMessages, !childMessages.isEmpty,
               let timestamp = timestampString(message) else {
-            return timestampString(message) ?? "-"
+            return timestampString(message) ?? ""
         }
 
         let childrenTimestamps = childMessages
