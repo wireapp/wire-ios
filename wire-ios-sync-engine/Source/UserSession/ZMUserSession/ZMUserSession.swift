@@ -1147,8 +1147,6 @@ extension ZMUserSession: SyncAgentDelegate {
 
             showSyncBar(true)
 
-            processLegacyEvents()
-
             NotificationInContext(
                 name: .quickSyncCompletedNotification,
                 context: notificationContext
@@ -1190,6 +1188,7 @@ extension ZMUserSession: SyncAgentDelegate {
                 await calculateSelfSupportedProtocolsIfNeeded()
                 await resolveOneOnOneConversationsIfNeeded()
 
+                // TODO: [WPB-18175] Port MLS client creation and related MLS operations from here to the InitialSync
                 showSyncBar(false)
             }
 
@@ -1290,6 +1289,15 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     func processLegacyEvents() {
+        guard !journal[.isSyncV2Enabled] else {
+            return
+        }
+        
+        managedObjectContext.performGroupedBlock { [weak self] in
+            self?.isPerformingSync = true
+            self?.updateNetworkState()
+        }
+
         let groups = syncContext.enterAllGroupsExceptSecondary()
         Task {
             var processingInterrupted = false
@@ -1309,6 +1317,10 @@ extension ZMUserSession: SyncAgentDelegate {
                 }
             }
 
+            await managedObjectContext.perform { [weak self] in
+                self?.isPerformingSync = isSyncing || processingInterrupted
+                self?.updateNetworkState()
+            }
             self.syncContext.leaveAllGroups(groups)
         }
     }
