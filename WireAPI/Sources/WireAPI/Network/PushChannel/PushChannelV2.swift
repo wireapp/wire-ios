@@ -129,7 +129,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
             deliveryTag: deliveryTag,
             multiple: multiple
         )
-        let data = try JSONEncoder().encode(acknowledgement)
+        let data = try encoder.encode(acknowledgement)
         try await write(data: data)
     }
 
