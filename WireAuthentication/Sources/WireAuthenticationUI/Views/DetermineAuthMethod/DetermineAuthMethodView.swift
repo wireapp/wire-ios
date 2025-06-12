@@ -25,22 +25,13 @@ package protocol DetermineAuthMethodFactory {
 
     @MainActor var viewModel: DetermineAuthMethodViewModel { get }
 
-    @MainActor
-    func loginViaEmailFactory(
-        email: String?,
-        canCreateAccount: Bool,
-        didDetectDomainConflict: Bool,
-        backendInfo: BackendInfo
-    ) -> any LoginViaEmailFactory
-
-    @MainActor
-    func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory
+    func destinationView(for destination: DetermineAuthMethodDestination) -> AnyView
 }
 
 package struct DetermineAuthMethodView: View {
 
     @StateObject var viewModel: DetermineAuthMethodViewModel
-
+    
     private typealias Strings = L10n.Localizable.Authentication
 
     package init(factory: @autoclosure @escaping () -> any DetermineAuthMethodFactory) {
@@ -163,32 +154,7 @@ package struct DetermineAuthMethodView: View {
 
     @ViewBuilder
     private func destinationView(for destination: DetermineAuthMethodDestination) -> some View {
-        switch destination {
-        case let .login(
-            email,
-            didDetectDomainConflict,
-            backendInfo
-        ):
-            LoginViaEmailView(factory: viewModel.factory.loginViaEmailFactory(
-                email: email,
-                canCreateAccount: false,
-                didDetectDomainConflict: didDetectDomainConflict,
-                backendInfo: backendInfo
-            ))
-        case let .loginOrRegister(
-            email,
-            didDetectDomainConflict,
-            backendInfo
-        ):
-            LoginViaEmailView(factory: viewModel.factory.loginViaEmailFactory(
-                email: email,
-                canCreateAccount: true,
-                didDetectDomainConflict: didDetectDomainConflict,
-                backendInfo: backendInfo
-            ))
-        case let .noHistory(authenticationResult):
-            NoHistoryView(factory: viewModel.factory.noHistoryFactory(authenticationResult: authenticationResult))
-        }
+        viewModel.factory.destinationView(for: destination)
     }
 
     @ViewBuilder

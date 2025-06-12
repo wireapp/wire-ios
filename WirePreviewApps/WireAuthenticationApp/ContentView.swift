@@ -52,6 +52,7 @@ struct ContentView: View {
                 accountsURL: configuration.accountsURL,
                 howToChangeEmailURL: URL(string: "www.example.com")!,
                 howToDeleteAccountURL: URL(string: "www.example.com")!,
+                privacyPolicyURL: URL(string: "www.example.com")!,
                 passwordValidator: configuration.passwordValidator,
                 ssoCallbackURLScheme: "some scheme",
                 appStoreURL: URL(string: "www.example.com")!,
@@ -77,7 +78,9 @@ struct ContentView: View {
                             )
                         ]
                     )
-                )
+                ),
+                useLegacyRegistrationFlow: false,
+                personalAccountCreationAnalyticsTracker: MockPersonalAccountCreationAnalyticsTracker()
             ).view
     }
 

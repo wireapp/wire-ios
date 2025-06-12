@@ -58,7 +58,7 @@ final class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> 
 
     // MARK: - Children
 
-    func verificationCodeComponent(
+    private func verificationCodeComponent(
         email: String,
         password: String,
         proxyCredentials: ProxyCredentials?
@@ -71,7 +71,7 @@ final class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> 
         )
     }
 
-    func noHistoryComponent(
+    private func noHistoryComponent(
         authenticationResult: AuthenticationResult
     ) -> NoHistoryComponent {
         NoHistoryComponent(
@@ -81,7 +81,7 @@ final class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> 
         )
     }
 
-    func personalAccountCreationComponent() -> PersonalAccountCreationComponent {
+    private func personalAccountCreationComponent() -> PersonalAccountCreationComponent {
         PersonalAccountCreationComponent(
             parent: self,
             email: email ?? ""
@@ -93,6 +93,30 @@ final class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> 
 extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
 
     // MARK: - Factory
+    
+    @MainActor
+    func destinationView(for destination: LoginViaEmailDestination) -> AnyView {
+        switch destination {
+        case let .verifyLogin(
+            email,
+            password,
+            proxyCredentials
+        ):
+            AnyView(VerificationCodeView(
+                factory: self.verificationCodeFactory(
+                    email: email,
+                    password: password,
+                    proxyCredentials: proxyCredentials
+                )
+            ))
+        case let .noHistory(authenticationResult):
+            AnyView(NoHistoryView(
+                factory: self.noHistoryFactory(
+                    authenticationResult: authenticationResult
+                )
+            ))
+        }
+    }
 
     @MainActor var viewModel: LoginViaEmailViewModel {
         LoginViaEmailViewModel(

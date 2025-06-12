@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import SwiftUI
 import WireAuthenticationAPI
 import WireReusableUIComponents
 
@@ -24,23 +25,7 @@ struct FakeLoginViaEmailFactory: LoginViaEmailFactory, CreateAuthenticationResul
     LoginViaEmailUseCaseFactory, SubmitProxyCredentialsUseCaseFactory, ValidateEmailUseCaseFactory {
 
     var mockDependencies = MockDependencies()
-
-    func verificationCodeFactory(
-        email: String,
-        password: String,
-        proxyCredentials: ProxyCredentials?
-    ) -> any VerificationCodeFactory {
-        fatalError()
-    }
-
-    func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory {
-        fatalError()
-    }
-
-    func personalAccountCreationFactory() -> any PersonalAccountCreationFactory {
-        fatalError()
-    }
-
+    
     var email: String?
     var backendInfo: BackendInfo
     var canCreateAccount: Bool
@@ -56,6 +41,10 @@ struct FakeLoginViaEmailFactory: LoginViaEmailFactory, CreateAuthenticationResul
             didDetectDomainConflict: didDetectDomainConflict,
             onCreateAccount: {}
         )
+    }
+    
+    func destinationView(for destination: LoginViaEmailDestination) -> AnyView {
+        fatalError()
     }
 
     @MainActor

@@ -24,20 +24,8 @@ import WireReusableUIComponents
 package protocol LoginViaEmailFactory {
 
     @MainActor var viewModel: LoginViaEmailViewModel { get }
-
-    @MainActor
-    func verificationCodeFactory(
-        email: String,
-        password: String,
-        proxyCredentials: ProxyCredentials?
-    ) -> any VerificationCodeFactory
-
-    @MainActor
-    func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory
-
-    @MainActor
-    func personalAccountCreationFactory() -> any PersonalAccountCreationFactory
-
+    
+    func destinationView(for destination: LoginViaEmailDestination) -> AnyView
 }
 
 package struct LoginViaEmailView: View {
@@ -105,26 +93,7 @@ package struct LoginViaEmailView: View {
 
     @ViewBuilder
     func destinationView(_ destination: LoginViaEmailDestination) -> some View {
-        switch destination {
-        case let .verifyLogin(
-            email,
-            password,
-            proxyCredentials
-        ):
-            VerificationCodeView(
-                factory: viewModel.factory.verificationCodeFactory(
-                    email: email,
-                    password: password,
-                    proxyCredentials: proxyCredentials
-                )
-            )
-        case let .noHistory(authenticationResult):
-            NoHistoryView(
-                factory: viewModel.factory.noHistoryFactory(
-                    authenticationResult: authenticationResult
-                )
-            )
-        }
+        viewModel.factory.destinationView(for: destination)
     }
 
     @ViewBuilder private var welcomeMessage: some View {

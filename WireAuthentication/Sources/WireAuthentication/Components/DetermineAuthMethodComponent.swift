@@ -49,7 +49,7 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
 
     // MARK: - Children
 
-    func loginViaEmailComponent(
+    private func loginViaEmailComponent(
         email: String?,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
@@ -69,7 +69,7 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         )
     }
 
-    func noHistoryComponent(authenticationResult: AuthenticationResult) -> NoHistoryComponent {
+    private func noHistoryComponent(authenticationResult: AuthenticationResult) -> NoHistoryComponent {
         NoHistoryComponent(
             parent: self,
             authenticationResult: authenticationResult,
@@ -81,6 +81,36 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
 extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
 
     // MARK: Factory
+    
+    @MainActor
+    func destinationView(for destination: DetermineAuthMethodDestination) -> AnyView {
+        switch destination {
+        case let .login(
+            email,
+            didDetectDomainConflict,
+            backendInfo
+        ):
+            AnyView(LoginViaEmailView(factory: self.loginViaEmailFactory(
+                email: email,
+                canCreateAccount: false,
+                didDetectDomainConflict: didDetectDomainConflict,
+                backendInfo: backendInfo
+            )))
+        case let .loginOrRegister(
+            email,
+            didDetectDomainConflict,
+            backendInfo
+        ):
+            AnyView(LoginViaEmailView(factory: self.loginViaEmailFactory(
+                email: email,
+                canCreateAccount: true,
+                didDetectDomainConflict: didDetectDomainConflict,
+                backendInfo: backendInfo
+            )))
+        case let .noHistory(authenticationResult):
+            AnyView(NoHistoryView(factory: self.noHistoryFactory(authenticationResult: authenticationResult)))
+        }
+    }
 
     @MainActor var viewModel: DetermineAuthMethodViewModel {
         DetermineAuthMethodViewModel(
@@ -92,7 +122,7 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
         )
     }
 
-    func loginViaEmailFactory(
+    private func loginViaEmailFactory(
         email: String?,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
@@ -106,7 +136,7 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
         )
     }
 
-    func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory {
+    private func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory {
         noHistoryComponent(authenticationResult: authenticationResult)
     }
 
