@@ -182,15 +182,6 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
         continuations[uuid] = nil
     }
 
-    private func allDraftsArePublished(cellName: CellName) -> Bool {
-        guard let drafts = drafts.value[cellName] else { return false }
-        return drafts.values.allSatisfy { $0.status == .uploaded(isDraft: false) }
-    }
-
-    private func getStatus(cellName: CellName, id: WireCellsNodeID) -> WireCellsUploadStatus? {
-        drafts.value[cellName]?[id]?.status
-    }
-
     private func setStatus(_ status: WireCellsUploadStatus, cellName: CellName, id: WireCellsNodeID) {
         drafts.value[cellName]?[id]?.status = status
     }
