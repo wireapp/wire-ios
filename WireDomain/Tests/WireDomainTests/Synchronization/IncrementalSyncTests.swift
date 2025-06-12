@@ -17,8 +17,8 @@
 //
 
 import Combine
-import XCTest
 import CoreData
+import XCTest
 @testable import WireAPI
 @testable import WireAPISupport
 @testable import WireDomain
@@ -86,7 +86,7 @@ final class IncrementalSyncTests: XCTestCase {
         let managedObjectID1 = NSManagedObjectID()
         let managedObjectID2 = NSManagedObjectID()
         let managedObjectID3 = NSManagedObjectID()
-        
+
         var storedEnvelopes = [
             (Scaffolding.event1, managedObjectID1),
             (Scaffolding.event2, managedObjectID2),
@@ -199,7 +199,10 @@ final class IncrementalSyncTests: XCTestCase {
         )
 
         // Then pending events were deleted.
-        XCTAssertEqual(updateEventsStore.deleteNextPendingEventsWith_Invocations, [[managedObjectID1, managedObjectID2, managedObjectID3]])
+        XCTAssertEqual(
+            updateEventsStore.deleteNextPendingEventsWith_Invocations,
+            [[managedObjectID1, managedObjectID2, managedObjectID3]]
+        )
 
         // Then live events were deleted (duplicates skipped).
         XCTAssertEqual(updateEventsStore.deleteEventEnvelopeAtIndex_Invocations, [11, 12])

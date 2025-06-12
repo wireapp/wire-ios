@@ -167,7 +167,7 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
             XCTAssertTrue(result.isEmpty)
         }
     }
-    
+
     func testDeleteNextPendingEvents_It_Deletes_Only_Selected_Envelopes() async throws {
         // Given there are stored envelopes.
 
@@ -176,7 +176,7 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
             Scaffolding.envelope2,
             Scaffolding.envelope3
         ])
-        
+
         let nonDeletedEnvelopeObjectID = objectIDs.removeLast()
 
         // When it deletes selected envelopes.
@@ -270,16 +270,16 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
             }
 
             try eventContext.save()
-            
+
             let fetchRequest = StoredUpdateEventEnvelope.fetchRequest()
             let results = try eventContext.fetch(fetchRequest) as! [StoredUpdateEventEnvelope]
-            
+
             XCTAssertEqual(results.count, envelopes.count)
-            
+
             return results.map(\.objectID)
         }
     }
-    
+
     func cleanUpEntity() async throws {
         try await eventContext.perform { [self] in
             let fetchRequest = StoredUpdateEventEnvelope.fetchRequest()

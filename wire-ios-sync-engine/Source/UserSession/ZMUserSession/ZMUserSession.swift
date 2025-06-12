@@ -1137,14 +1137,14 @@ extension ZMUserSession: SyncAgentDelegate {
         syncContext.performGroupedBlock { [weak self] in
             guard let self else { return }
             WireLogger.sync.debug("did finish incremental sync")
-            
+
             func showSyncBar(_ show: Bool) {
                 managedObjectContext.performGroupedBlock { [weak self] in
                     self?.isPerformingSync = show
                     self?.updateNetworkState()
                 }
             }
-            
+
             showSyncBar(true)
 
             NotificationInContext(
@@ -1187,7 +1187,7 @@ extension ZMUserSession: SyncAgentDelegate {
 
                 await calculateSelfSupportedProtocolsIfNeeded()
                 await resolveOneOnOneConversationsIfNeeded()
-                
+
                 showSyncBar(false)
             }
 
