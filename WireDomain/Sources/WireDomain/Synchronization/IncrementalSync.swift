@@ -23,11 +23,16 @@ import WireLogging
 
 public struct IncrementalSync: IncrementalSyncProtocol {
 
+    public enum Failure: Error {
+        case missedEvents
+    }
+
     private let selfClientID: String
     private let pushChannelAPI: any PushChannelAPI
     private let updateEventsSync: any PullPendingUpdateEventsSyncProtocol
     private let decryptor: any UpdateEventDecryptorProtocol
-    private let store: any UpdateEventsLocalStoreProtocol
+    private let updateEventsStore: any UpdateEventsLocalStoreProtocol
+    private let messageStore: any MessageLocalStoreProtocol
     private let processor: any UpdateEventProcessorProtocol
     private let databaseSaver: any DatabaseSaverProtocol
     private let syncStateSubject: CurrentValueSubject<SyncState, Never>
@@ -39,7 +44,8 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         pushChannelAPI: any PushChannelAPI,
         updateEventsSync: any PullPendingUpdateEventsSyncProtocol,
         decryptor: any UpdateEventDecryptorProtocol,
-        store: any UpdateEventsLocalStoreProtocol,
+        updateEventsStore: any UpdateEventsLocalStoreProtocol,
+        messageStore: any MessageLocalStoreProtocol,
         processor: any UpdateEventProcessorProtocol,
         databaseSaver: any DatabaseSaverProtocol,
         syncStateSubject: CurrentValueSubject<SyncState, Never>,
@@ -49,7 +55,8 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         self.pushChannelAPI = pushChannelAPI
         self.updateEventsSync = updateEventsSync
         self.decryptor = decryptor
-        self.store = store
+        self.updateEventsStore = updateEventsStore
+        self.messageStore = messageStore
         self.processor = processor
         self.databaseSaver = databaseSaver
         self.syncStateSubject = syncStateSubject
@@ -75,16 +82,33 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 syncStateSubject.send(.incrementalSyncing(.pullPendingEvents))
                 try await updateEventsSync.pull()
 
-                logger.debug("processing stored update events", attributes: .syncAttributes(initialSync: false))
+                logger.debug("processing stored update events")
                 syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
                 processedEnvelopeIDs = try await processStoredEvents()
             } catch {
-                logger.debug(
-                    "incremental sync interrupted, tearing down...",
-                    attributes: .syncAttributes(initialSync: false)
-                )
-                await pushChannel.close()
-                throw error
+                func tearDown() async {
+                    logger.debug("incremental sync interrupted, tearing down...")
+                    await pushChannel.close()
+                }
+
+                switch error {
+                case let apiError as UpdateEventsAPIError:
+                    switch apiError {
+                    case .notFound, .invalidParameters:
+                        // nullifying the last event ID since we missed events and we want to
+                        // reset with a full sync (initial + incremental)
+                        updateEventsStore.resetLastEventID()
+                        try await messageStore.addPotentialGapSystemMessage()
+                        await tearDown()
+                        throw Failure.missedEvents
+                    default:
+                        await tearDown()
+                        throw error
+                    }
+                default:
+                    await tearDown()
+                    throw error
+                }
             }
 
             let liveEventTask = Task { @Sendable [self] in
@@ -156,8 +180,8 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                         "storing live event envelope",
                         attributes: .syncAttributes(initialSync: false) + [.eventEnvelopeID: envelope.id]
                     )
-                    index = try await store.indexOfLastEventEnvelope() + 1
-                    try await store.persistEventEnvelope(envelope, index: index)
+                    index = try await updateEventsStore.indexOfLastEventEnvelope() + 1
+                    try await updateEventsStore.persistEventEnvelope(envelope, index: index)
                 } catch {
                     logger.error(
                         "failed to store live event envelope: \(String(describing: error))",
@@ -172,7 +196,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                         "updating last event id",
                         attributes: .syncAttributes(initialSync: false) + [.eventEnvelopeID: envelope.id]
                     )
-                    store.storeLastEventID(id: envelope.id)
+                    updateEventsStore.storeLastEventID(id: envelope.id)
                 }
 
                 // Process.
@@ -197,7 +221,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                         "deleting live event envelope",
                         attributes: .syncAttributes(initialSync: false) + [.eventEnvelopeID: envelope.id]
                     )
-                    try await store.deleteEventEnvelope(atIndex: index)
+                    try await updateEventsStore.deleteEventEnvelope(atIndex: index)
                 } catch {
                     logger.error(
                         "failed to delete live event envelope: \(String(describing: error))",
@@ -205,7 +229,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                     )
                 }
 
-                await store.calculateLastUnreadMessages()
+                await updateEventsStore.calculateLastUnreadMessages()
 
                 do {
                     // Save.
@@ -229,7 +253,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
             // If we need to abort, do it before processing the next batch.
             try Task.checkCancellation()
 
-            let envelopes = try await store.fetchStoredEventEnvelopes(limit: batchSize)
+            let envelopes = try await updateEventsStore.fetchStoredEventEnvelopes(limit: batchSize)
 
             guard !envelopes.isEmpty else {
                 break
@@ -258,8 +282,8 @@ public struct IncrementalSync: IncrementalSyncProtocol {
             }
 
             processedEnvelopeIDs.formUnion(envelopes.map(\.id))
-            try await store.deleteNextPendingEvents(limit: batchSize)
-            await store.calculateLastUnreadMessages()
+            try await updateEventsStore.deleteNextPendingEvents(limit: batchSize)
+            await updateEventsStore.calculateLastUnreadMessages()
 
             do {
                 try await databaseSaver.save()

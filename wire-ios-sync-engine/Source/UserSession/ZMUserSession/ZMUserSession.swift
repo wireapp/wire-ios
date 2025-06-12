@@ -562,12 +562,12 @@ public final class ZMUserSession: NSObject {
         let clientSessionComponent = userSessionComponent.clientSessionComponent(
             clientID: clientID,
             asyncStreamEnabled: asyncStreamEnabled,
-            processorHandlers: .init(
-                onProcessedCallEvent: onProcessedCallEvent(callEventInfo:),
+            completionHandlers: .init(
+                onProcessedCallEvent: onProcessedCallEvent,
                 onSelfClientInvalidated: onSelfClientInvalidated,
-                onProcessedTypingUsers: onProcessedTypingUsers(typingUsersInfo:)
-            ),
-            onAuthenticationFailure: onAuthenticationFailure
+                onAuthenticationFailure: onAuthenticationFailure,
+                onProcessedTypingUsers: onProcessedTypingUsers
+            )
         )
 
         if asyncStreamEnabled {
@@ -617,108 +617,6 @@ public final class ZMUserSession: NSObject {
 
         // TODO: [WPB-17223] remove `resume` call from here
         syncAgent.resume()
-    }
-
-    // MARK: - Callbacks from WireDomain
-
-    @Sendable
-    public func onAuthenticationFailure() {
-        managedObjectContext.performGroupedBlock { [weak self] in
-            guard let self else { return }
-
-            let selfUser = ZMUser.selfUser(in: managedObjectContext)
-
-            notifyAuthenticationInvalidated(
-                NSError.userSessionError(
-                    code: .accessTokenExpired,
-                    userInfo: selfUser.loginCredentials.dictionaryRepresentation
-                )
-            )
-        }
-    }
-
-    private func onProcessedTypingUsers(
-        typingUsersInfo: [ConversationTypingUsersInfo]
-    ) {
-
-        viewContext.performGroupedBlock { [viewContext] in
-            for typingUserInfo in typingUsersInfo {
-                let conversationID = typingUserInfo.conversationID
-                let usersID = typingUserInfo.users
-
-                if let conversation = viewContext.object(with: conversationID) as? ZMConversation {
-
-                    let users = usersID.compactMap {
-                        viewContext.object(with: $0) as? ZMUser
-                    }
-
-                    viewContext.typingUsers?.update(
-                        typingUsers: Set(users),
-                        in: conversation
-                    )
-
-                    conversation.notifyTyping(typingUsers: Set(users))
-                }
-            }
-        }
-    }
-
-    func onSelfClientInvalidated() async {
-        await syncContext.perform { [self] in
-            syncContext.tearDownCryptoStack()
-
-            let clientRegistrationStatus = applicationStatusDirectory.clientRegistrationStatus
-            let clientUpdateStatus = applicationStatusDirectory.clientUpdateStatus
-
-            clientRegistrationStatus.emailCredentials = nil
-            clientRegistrationStatus.cookieProvider.deleteKeychainItems()
-
-            let selfUser = ZMUser.selfUser(in: syncContext)
-            let clientDeletedRemotelyError = NSError.userSessionError(
-                code: .clientDeletedRemotely,
-                userInfo: selfUser.loginCredentials.dictionaryRepresentation
-            )
-
-            didDeleteSelfUserClient(error: clientDeletedRemotelyError)
-
-            clientUpdateStatus.needsToVerifySelfClient = false
-        }
-    }
-
-    private func onProcessedCallEvent(callEventInfo: CallEventInfo) {
-        let serverTimeDelta = syncContext.performAndWait {
-            syncContext.serverTimeDelta // serverTimeDelta can only be accessed on the sync context
-        }
-
-        viewContext.perform { [weak self] in // callCenter can only be accessed on the ui context
-            guard let self, let callCenter else { return }
-            guard !callEventInfo.isMuted else {
-                callCenter.isMuted = true
-                return
-            }
-
-            let conversationId = AVSIdentifier(
-                identifier: callEventInfo.conversationID,
-                domain: callEventInfo.conversationDomain
-            )
-
-            let userId = AVSIdentifier(
-                identifier: callEventInfo.userID,
-                domain: callEventInfo.userDomain
-            )
-
-            let callEvent = CallEvent(
-                data: callEventInfo.data,
-                currentTimestamp: Date.now.addingTimeInterval(serverTimeDelta),
-                serverTimestamp: callEventInfo.eventTimestamp,
-                conversationId: conversationId,
-                userId: userId,
-                clientId: callEventInfo.clientID
-            )
-
-            callCenter.processCallEvent(callEvent)
-        }
-
     }
 
     // MARK: - Deinitalize
@@ -1544,4 +1442,109 @@ extension ZMUserSession: ContextProvider {
 
 public extension Notification.Name {
     static let loggingRequestLoop = Self("LoggingRequestLoopNotificationName")
+}
+
+// MARK: - Callbacks from WireDomain
+
+extension ZMUserSession {
+
+    @Sendable
+    public func onAuthenticationFailure() {
+        managedObjectContext.performGroupedBlock { [weak self] in
+            guard let self else { return }
+
+            let selfUser = ZMUser.selfUser(in: managedObjectContext)
+
+            notifyAuthenticationInvalidated(
+                NSError.userSessionError(
+                    code: .accessTokenExpired,
+                    userInfo: selfUser.loginCredentials.dictionaryRepresentation
+                )
+            )
+        }
+    }
+
+    private func onProcessedTypingUsers(
+        typingUsersInfo: [ConversationTypingUsersInfo]
+    ) {
+
+        viewContext.performGroupedBlock { [viewContext] in
+            for typingUserInfo in typingUsersInfo {
+                let conversationID = typingUserInfo.conversationID
+                let usersID = typingUserInfo.users
+
+                if let conversation = viewContext.object(with: conversationID) as? ZMConversation {
+
+                    let users = usersID.compactMap {
+                        viewContext.object(with: $0) as? ZMUser
+                    }
+
+                    viewContext.typingUsers?.update(
+                        typingUsers: Set(users),
+                        in: conversation
+                    )
+
+                    conversation.notifyTyping(typingUsers: Set(users))
+                }
+            }
+        }
+    }
+
+    func onSelfClientInvalidated() async {
+        await syncContext.perform { [self] in
+            syncContext.tearDownCryptoStack()
+
+            let clientRegistrationStatus = applicationStatusDirectory.clientRegistrationStatus
+            let clientUpdateStatus = applicationStatusDirectory.clientUpdateStatus
+
+            clientRegistrationStatus.emailCredentials = nil
+            clientRegistrationStatus.cookieProvider.deleteKeychainItems()
+
+            let selfUser = ZMUser.selfUser(in: syncContext)
+            let clientDeletedRemotelyError = NSError.userSessionError(
+                code: .clientDeletedRemotely,
+                userInfo: selfUser.loginCredentials.dictionaryRepresentation
+            )
+
+            didDeleteSelfUserClient(error: clientDeletedRemotelyError)
+
+            clientUpdateStatus.needsToVerifySelfClient = false
+        }
+    }
+
+    private func onProcessedCallEvent(callEventInfo: CallEventInfo) {
+        let serverTimeDelta = syncContext.performAndWait {
+            syncContext.serverTimeDelta // serverTimeDelta can only be accessed on the sync context
+        }
+
+        viewContext.perform { [weak self] in // callCenter can only be accessed on the ui context
+            guard let self, let callCenter else { return }
+            guard !callEventInfo.isMuted else {
+                callCenter.isMuted = true
+                return
+            }
+
+            let conversationId = AVSIdentifier(
+                identifier: callEventInfo.conversationID,
+                domain: callEventInfo.conversationDomain
+            )
+
+            let userId = AVSIdentifier(
+                identifier: callEventInfo.userID,
+                domain: callEventInfo.userDomain
+            )
+
+            let callEvent = CallEvent(
+                data: callEventInfo.data,
+                currentTimestamp: Date.now.addingTimeInterval(serverTimeDelta),
+                serverTimestamp: callEventInfo.eventTimestamp,
+                conversationId: conversationId,
+                userId: userId,
+                clientId: callEventInfo.clientID
+            )
+
+            callCenter.processCallEvent(callEvent)
+        }
+
+    }
 }
