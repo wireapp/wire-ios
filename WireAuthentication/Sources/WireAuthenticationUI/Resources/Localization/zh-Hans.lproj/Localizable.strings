@@ -109,6 +109,10 @@
 "obsolete_client.alert.title" = "必要更新";
 "obsolete_client.alert.message" = "您错过了新功能。\n请在 App Store 获取最新版本的 Wire。";
 "obsolete_client.alert.ok_button" = "到App Store";
+"obsolete_client.alert.switch_accounts" = "Switch Accounts";
 
 "obsolete_backend.alert.title" = "不支持服务器版本";
 "obsolete_backend.alert.message" = "此应用不支持该服务器版本。请联系您的系统管理员。";
+
+"switching_accounts.title" = "Switch account";
+"switching_accounts.subtitle" = "Select another account on this device:";
