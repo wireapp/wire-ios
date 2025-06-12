@@ -40,11 +40,11 @@ public protocol AuthenticationAPI: Sendable {
 
     /// Get on-prem config `URL` for domain
 
-    func getOnPremConfigURL(forDomain domain: String) async throws -> DomainInfo
+    func getOnPremConfigURL(forDomain domain: String) async throws -> NetworkDomainInfo
 
     /// Get domain registration configuration by email
 
-    func getDomainRegistration(forEmail email: String) async throws -> DomainRegistrationConfiguration
+    func getDomainRegistration(forEmail email: String) async throws -> NetworkDomainRegistrationConfiguration
 
     /// Validated a company login token (SSO code).
     /// This method will verify a company login token with the backend.

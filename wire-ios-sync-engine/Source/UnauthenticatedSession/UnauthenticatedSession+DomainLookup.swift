@@ -26,7 +26,7 @@ public enum DomainLookupError: Error, Equatable {
     case unknown
 }
 
-public struct DomainInfo: Codable, Equatable {
+public struct NetworkDomainInfo: Codable, Equatable {
 
     public let configurationURL: URL
 
@@ -42,7 +42,7 @@ public struct DomainInfo: Codable, Equatable {
         let decoder = JSONDecoder()
 
         do {
-            let domainInfo = try decoder.decode(DomainInfo.self, from: data)
+            let domainInfo = try decoder.decode(NetworkDomainInfo.self, from: data)
 
             if domainInfo.configurationURL.scheme != nil {
                 self = domainInfo
@@ -62,7 +62,7 @@ public extension UnauthenticatedSession {
     /// - parameter domain: Domain to look up (e.g. example.com)
     /// - parameter completion: The result closure will with the result of the lookup.
 
-    func lookup(domain: String, completion: @escaping (Result<DomainInfo, Error>) -> Void) {
+    func lookup(domain: String, completion: @escaping (Result<NetworkDomainInfo, Error>) -> Void) {
         guard let apiVersion = BackendInfo.apiVersion else {
             return completion(.failure(DomainLookupError.noApiVersion))
         }
@@ -74,7 +74,7 @@ public extension UnauthenticatedSession {
 
             switch response.result {
             case .success:
-                guard let data = response.rawData, let domainInfo = DomainInfo(data) else {
+                guard let data = response.rawData, let domainInfo = NetworkDomainInfo(data) else {
                     return completion(.failure(DomainLookupError.malformedData))
                 }
 

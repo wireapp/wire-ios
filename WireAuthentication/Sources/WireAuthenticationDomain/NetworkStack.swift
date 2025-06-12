@@ -17,8 +17,6 @@
 //
 
 import Foundation
-import WireAPI
-import WireAuthenticationDomain
 import WireFoundation
 import WireLogging
 
@@ -28,9 +26,9 @@ package final class NetworkStack {
     package let minTLSVersion: TLSVersion
     package let preferredAPIVersion: APIVersion?
 
-    private var backendMetadata: WireAuthenticationDomain.BackendMetadata?
-    private var state: NetworkState
-    private var proxyCredentials: ProxyCredentials?
+    package var backendMetadata: WireAuthenticationDomain.BackendMetadata?
+    package var state: NetworkState
+    package var proxyCredentials: ProxyCredentials?
 
     package init(
         backendInfo: BackendInfo,
@@ -42,7 +40,7 @@ package final class NetworkStack {
         self.preferredAPIVersion = preferredAPIVersion
 
         do {
-            self.state = .ready(try NetworkService.make(
+            self.state = .ready(try NetworkServiceRepository.make(
                 backendConfig: backendInfo.backendConfig,
                 minTLSVersion: minTLSVersion,
                 proxyCredentials: nil
@@ -59,92 +57,21 @@ package final class NetworkStack {
 
     package func setProxyCredentials(_ proxyCredentials: ProxyCredentials) throws {
         self.proxyCredentials = proxyCredentials
-        state = .ready(try NetworkService.make(
+        state = .ready(try NetworkServiceRepository.make(
             backendConfig: backendInfo.backendConfig,
             minTLSVersion: minTLSVersion,
             proxyCredentials: proxyCredentials
         ))
     }
 
-    package func makeBackendEnvironment() async throws -> WireAuthenticationBackendEnvironment {
-        let backendMetadata = try await resolvedBackendMetadata()
-
-        var resolvedProxySettings: ResolvedProxySettings?
-        if let proxySettings = backendInfo.backendConfig.proxySettings {
-            if proxySettings.needsAuthentication {
-                guard let proxyCredentials else {
-                    throw ProxyModeError.proxyCredentialsRequired
-                }
-
-                resolvedProxySettings = .authenticated(
-                    host: proxySettings.host,
-                    port: proxySettings.port,
-                    username: proxyCredentials.username,
-                    password: proxyCredentials.password
-                )
-            } else {
-                resolvedProxySettings = .unauthenticated(
-                    host: proxySettings.host,
-                    port: proxySettings.port
-                )
-            }
-        }
-
-        return WireAuthenticationBackendEnvironment(
-            environmentType: backendInfo.environmentType,
-            config: backendInfo.backendConfig,
-            metadata: backendMetadata,
-            proxySettings: resolvedProxySettings
-        )
-    }
-
-    package func makeAuthenticationAPI() async throws -> some AuthenticationAPI {
-        let apiVersion = try await resolvedAPIVersion()
-        return AuthenticationAPIBuilder(networkService: try networkService).makeAPI(for: apiVersion)
-    }
-
     // MARK: - Private
-
-    private func resolvedAPIVersion() async throws -> APIVersion {
-        let backendMetadata = try await resolvedBackendMetadata()
-        return APIVersion(backendMetadata.apiVersion)
-    }
-
-    private func resolvedBackendMetadata() async throws -> WireAuthenticationDomain.BackendMetadata {
-        if let backendMetadata {
-            return backendMetadata
-        }
-
-        let api = BackendMetadataAPIBuilder(networkService: try networkService).makeAPI()
-
-        let useCase = ResolveBackendMetadataUseCase(
-            backendMetadataAPI: api,
-            clientProductionVersions: APIVersion.productionVersions,
-            preferredAPIVersion: preferredAPIVersion
-        )
-
-        let backendMetadata = try await useCase.invoke()
-        self.backendMetadata = backendMetadata
-        return backendMetadata
-    }
-
-    private var networkService: NetworkService {
-        get throws {
-            switch state {
-            case .awaitingProxyCredentials:
-                throw ProxyModeError.proxyCredentialsRequired
-            case let .ready(networkService):
-                networkService
-            }
-        }
-    }
 
 }
 
-private enum NetworkState {
+package enum NetworkState {
 
     case awaitingProxyCredentials
-    case ready(NetworkService)
+    case ready(NetworkServiceRepository)
 
 }
 
@@ -156,117 +83,6 @@ private extension BackendConfig {
 
 }
 
-private extension APIVersion {
-
-    init(_ apiVersion: WireAuthenticationDomain.BackendMetadata.APIVersion) {
-        switch apiVersion {
-        case .v0:
-            self = .v0
-        case .v1:
-            self = .v1
-        case .v2:
-            self = .v2
-        case .v3:
-            self = .v3
-        case .v4:
-            self = .v4
-        case .v5:
-            self = .v5
-        case .v6:
-            self = .v6
-        case .v7:
-            self = .v7
-        case .v8:
-            self = .v8
-        }
-    }
-
-}
-
-private extension PinnedKey {
-
-    init(_ trustData: TrustData) throws {
-        try self.init(
-            key: trustData.certificateKey,
-            hosts: trustData.hosts.map { host in
-                switch host.rule {
-                case .equals:
-                    .equals(host.value)
-                case .endsWith:
-                    .endsWith(host.value)
-                }
-            }
-        )
-    }
-
-}
-
-private extension NetworkService {
-
-    static func make(
-        backendConfig: BackendConfig,
-        minTLSVersion: TLSVersion,
-        proxyCredentials: ProxyCredentials? = nil
-    ) throws(InitializationError) -> NetworkService {
-        var pinnedKeys = [PinnedKey]()
-
-        do {
-            for trustData in backendConfig.pinnedKeys ?? [] {
-                pinnedKeys.append(try PinnedKey(trustData))
-            }
-        } catch {
-            pinnedKeys = []
-        }
-
-        let networkService = NetworkService(
-            baseURL: backendConfig.endpoints.backendURL,
-            serverTrustValidator: ServerTrustValidator(
-                pinnedKeys: pinnedKeys,
-                currentDateProvider: .system
-            )
-        )
-
-        let proxySettings: WireAPI.ProxySettings?
-        if let configProxySettings = backendConfig.proxySettings {
-            if configProxySettings.needsAuthentication {
-                guard let proxyCredentials else {
-                    throw .proxyCredentialsRequired
-                }
-                proxySettings = .authenticated(
-                    host: configProxySettings.host,
-                    port: configProxySettings.port,
-                    username: proxyCredentials.username,
-                    password: proxyCredentials.password
-                )
-            } else {
-                proxySettings = .unauthenticated(
-                    host: configProxySettings.host,
-                    port: configProxySettings.port
-                )
-            }
-        } else {
-            proxySettings = nil
-        }
-
-        let config = URLSessionConfigurationFactory(
-            minTLSVersion: minTLSVersion,
-            proxySettings: proxySettings
-        ).makeRESTAPISessionConfiguration()
-
-        let session = URLSession(
-            configuration: config,
-            delegate: networkService,
-            delegateQueue: nil
-        )
-
-        networkService.configure(with: session)
-        return networkService
-    }
-
-    enum InitializationError: Error {
-
-        case proxyCredentialsRequired
-
-    }
-
+public protocol NetworkServiceRepository {
+    func executeRequest(_ request: URLRequest) async throws -> (Data, HTTPURLResponse)
 }

@@ -20,7 +20,7 @@ public import Foundation
 
 /// Information about on-prem backend
 
-public struct DomainInfo: Equatable, Sendable {
+public struct NetworkDomainInfo: Equatable, Sendable {
 
     /// This `URL` is used to fetch the JSON configuration with all relevant endpoints.
 

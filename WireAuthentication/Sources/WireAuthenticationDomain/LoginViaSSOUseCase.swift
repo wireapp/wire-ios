@@ -18,13 +18,11 @@
 
 import AuthenticationServices
 import Foundation
-import WireAPI
-import WireAuthenticationDomain
 
 @MainActor
 package struct LoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
 
-    private let authenticationAPI: AuthenticationAPI
+    private let authenticationAPI: AuthenticationAPIRepository
     private let baseURL: URL
     private let ssoCallbackURLScheme: String
     private let verificationTokenGenerator: any SSOLoginVerificationTokenGeneratorProtocol
@@ -32,7 +30,7 @@ package struct LoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
     private let createAuthResultUseCase: any CreateAuthenticationResultUseCaseProtocol
 
     package init(
-        authenticationAPI: AuthenticationAPI,
+        authenticationAPI: AuthenticationAPIRepository,
         baseURL: URL,
         ssoCallbackURLScheme: String,
         verificationTokenGenerator: any SSOLoginVerificationTokenGeneratorProtocol,
@@ -58,7 +56,7 @@ package struct LoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
 
         do {
             try await authenticationAPI.validateLoginToken(ssoCode: ssoCode)
-        } catch AuthenticationAPIError.SSOLoginError.invalidSSOCode {
+        } catch DomainAuthenticationAPIError.DomainSSOLoginError.invalidSSOCode {
             throw LoginViaSSOUseCaseError.invalidCode
         }
 

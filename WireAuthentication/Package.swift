@@ -42,7 +42,10 @@ let package = Package(
 
         .target(
             name: "WireAuthenticationDomain",
-            dependencies: ["WireAPI"] // TODO: NOT needed here
+            dependencies: [
+                "WireLogging",
+                "WireTransport",
+            ]
         ),
         .target(
             name: "WireAuthenticationDomainSupport",

@@ -25,7 +25,7 @@ enum DomainRedirectV8: String, Decodable, Sendable {
     case preAuthorized = "pre-authorized"
     case none
 
-    func toAPIModel() -> DomainRedirect {
+    func toAPIModel() -> NetworkDomainRedirect {
         switch self {
         case .locked:
             .locked

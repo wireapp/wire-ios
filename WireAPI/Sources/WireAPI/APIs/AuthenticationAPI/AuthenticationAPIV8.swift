@@ -24,7 +24,7 @@ final class AuthenticationAPIV8: AuthenticationAPIV7 {
         .v8
     }
 
-    override func getDomainRegistration(forEmail email: String) async throws -> DomainRegistrationConfiguration {
+    override func getDomainRegistration(forEmail email: String) async throws -> NetworkDomainRegistrationConfiguration {
         let path = "/get-domain-registration"
         let body = GetDomainRegistrationParametersV8(email: email)
 

@@ -17,3 +17,96 @@
 //
 
 import Foundation
+import WireAPI
+import WireAuthenticationDomain
+
+public extension NetworkService {
+
+    static func make(
+        backendConfig: BackendConfig,
+        minTLSVersion: TLSVersion,
+        proxyCredentials: ProxyCredentials? = nil
+    ) throws(InitializationError) -> NetworkServiceRepository {
+        var pinnedKeys = [PinnedKey]()
+
+        do {
+            for trustData in backendConfig.pinnedKeys ?? [] {
+                pinnedKeys.append(try PinnedKey(trustData))
+            }
+        } catch {
+            pinnedKeys = []
+        }
+
+        let networkService = NetworkService(
+            baseURL: backendConfig.endpoints.backendURL,
+            serverTrustValidator: ServerTrustValidator(
+                pinnedKeys: pinnedKeys,
+                currentDateProvider: .system
+            )
+        )
+
+        let proxySettings: WireAPI.ProxySettings?
+        if let configProxySettings = backendConfig.proxySettings {
+            if configProxySettings.needsAuthentication {
+                guard let proxyCredentials else {
+                    throw .proxyCredentialsRequired
+                }
+                proxySettings = .authenticated(
+                    host: configProxySettings.host,
+                    port: configProxySettings.port,
+                    username: proxyCredentials.username,
+                    password: proxyCredentials.password
+                )
+            } else {
+                proxySettings = .unauthenticated(
+                    host: configProxySettings.host,
+                    port: configProxySettings.port
+                )
+            }
+        } else {
+            proxySettings = nil
+        }
+
+        let config = URLSessionConfigurationFactory(
+            minTLSVersion: minTLSVersion,
+            proxySettings: proxySettings
+        ).makeRESTAPISessionConfiguration()
+
+        let session = URLSession(
+            configuration: config,
+            delegate: networkService,
+            delegateQueue: nil
+        )
+
+        networkService.configure(with: session)
+        return networkService
+    }
+
+    enum InitializationError: Error {
+
+        case proxyCredentialsRequired
+
+    }
+
+}
+
+extension NetworkService: NetworkServiceRepository { }
+
+
+private extension PinnedKey {
+
+    init(_ trustData: TrustData) throws {
+        try self.init(
+            key: trustData.certificateKey,
+            hosts: trustData.hosts.map { host in
+                switch host.rule {
+                case .equals:
+                    .equals(host.value)
+                case .endsWith:
+                    .endsWith(host.value)
+                }
+            }
+        )
+    }
+
+}

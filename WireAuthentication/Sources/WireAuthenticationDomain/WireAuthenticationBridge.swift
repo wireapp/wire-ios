@@ -23,7 +23,7 @@ import Foundation
 /// (from outside into this module) and **outbound** (from inside this module
 /// to the external world).
 
-public final class WireAuthenticationBridge {
+public final class WireAuthenticationBridge { // TODO: MOVE to assembly
 
     private let inboundSubject = PassthroughSubject<InboundEvent, Never>()
     private let outboundSubject = PassthroughSubject<OutboundEvent, Never>()

@@ -149,7 +149,7 @@ final class AuthenticationAPITests: XCTestCase {
         // Then
         XCTAssertEqual(
             response,
-            DomainRegistrationConfiguration(
+            NetworkDomainRegistrationConfiguration(
                 backendURLString: "https://example.com",
                 domainRedirect: .none,
                 isCloudAccountAlreadyRegistered: false,
@@ -172,7 +172,7 @@ final class AuthenticationAPITests: XCTestCase {
         // Then
         XCTAssertEqual(
             response,
-            DomainRegistrationConfiguration(
+            NetworkDomainRegistrationConfiguration(
                 backendURLString: nil,
                 domainRedirect: .preAuthorized,
                 isCloudAccountAlreadyRegistered: false,
@@ -225,7 +225,7 @@ final class AuthenticationAPITests: XCTestCase {
         // Then
         XCTAssertEqual(
             response,
-            DomainInfo(configurationURL: URL(string: "https://wire.example.com/config.json")!)
+            NetworkDomainInfo(configurationURL: URL(string: "https://wire.example.com/config.json")!)
         )
     }
 

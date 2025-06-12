@@ -17,17 +17,16 @@
 //
 
 import Foundation
-import WireAPI
 
 package struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
 
     private let validateEmailOrSSOCode: any ValidateEmailOrSSOCodeUseCaseProtocol
-    private let authenticationAPI: AuthenticationAPI
+    private let authenticationAPI: AuthenticationAPIRepository
     private let urlSession: URLSession
 
     package init(
         validateEmailOrSSOCode: any ValidateEmailOrSSOCodeUseCaseProtocol,
-        authenticationAPI: AuthenticationAPI,
+        authenticationAPI: AuthenticationAPIRepository,
         urlSession: URLSession
     ) {
         self.validateEmailOrSSOCode = validateEmailOrSSOCode
@@ -65,16 +64,16 @@ package struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
         let configuration: DomainRegistrationConfiguration
         do {
             configuration = try await authenticationAPI.getDomainRegistration(forEmail: email)
-        } catch AuthenticationAPIError.unsupportedEndpointForAPIVersion {
+        } catch DomainAuthenticationAPIError.unsupportedEndpointForAPIVersion {
             // Fallback if the API doesn't support the getDomainRegistration endpoint
 
             do {
                 let onPremConfig = try await authenticationAPI.getOnPremConfigURL(forDomain: domain)
                 return .onPremLogin(email: email, backendConfig: onPremConfig.configurationURL)
-            } catch AuthenticationAPIError.configNotFound, AuthenticationAPIError.domainNotFound {
+            } catch DomainAuthenticationAPIError.configNotFound, DomainAuthenticationAPIError.domainNotFound {
                 return .loginOrRegisterViaEmail(email: email)
             }
-        } catch AuthenticationAPIError.serviceUnavailable {
+        } catch DomainAuthenticationAPIError.serviceUnavailable {
             return .loginOrRegisterViaEmail(email: email)
         }
 
@@ -92,20 +91,20 @@ package struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
 
         case .sso:
             guard let ssoCode = configuration.ssoCode else {
-                throw AuthenticationAPIError.invalidResponse
+                throw DomainAuthenticationAPIError.invalidResponse
             }
             return .loginViaSSO(code: ssoCode)
 
         case .backend:
             guard let configURL = configuration.backendURL else {
-                throw AuthenticationAPIError.invalidResponse
+                throw DomainAuthenticationAPIError.invalidResponse
             }
 
             do {
                 let backendURL = try await fetchBackendConfigURL(from: configURL)
                 return .onPremLogin(email: email, backendConfig: backendURL)
             } catch {
-                throw AuthenticationAPIError.invalidResponse
+                throw DomainAuthenticationAPIError.invalidResponse
             }
         }
     }
@@ -114,14 +113,14 @@ package struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
         let (data, _) = try await urlSession.data(from: backendURL)
 
         let decoder = JSONDecoder()
-        let domainInfo = try decoder.decode(DomainInfo.self, from: data)
+        let domainInfo = try decoder.decode(PrivateDomainInfo.self, from: data)
 
         return domainInfo.configJsonURL
     }
 
 }
 
-private struct DomainInfo: Codable {
+private struct PrivateDomainInfo: Codable {
 
     let configJsonURL: URL
     let webappWelcomeURL: URL

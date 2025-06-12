@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireAuthenticationDomain
 
 package struct ValidateEmailUseCase: ValidateEmailUseCaseProtocol {
 

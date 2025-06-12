@@ -20,10 +20,12 @@ import Foundation
 
 package struct CreateAuthenticationResultUseCase: CreateAuthenticationResultUseCaseProtocol {
 
-    private let networkStack: NetworkStack
-
-    package init(networkStack: NetworkStack) {
-        self.networkStack = networkStack
+    private let backendEnvironmentProvider: () async throws -> WireAuthenticationBackendEnvironment
+    
+    package init(
+        backendEnvironmentProvider: @escaping () async throws -> WireAuthenticationBackendEnvironment
+    ) {
+        self.backendEnvironmentProvider = backendEnvironmentProvider
     }
 
     package func invoke(
@@ -32,7 +34,7 @@ package struct CreateAuthenticationResultUseCase: CreateAuthenticationResultUseC
         accessToken: AccessToken?,
         emailCredentials: EmailCredentials?
     ) async throws -> AuthenticationResult {
-        let backendEnvironment = try await networkStack.makeBackendEnvironment()
+        let backendEnvironment = try await backendEnvironmentProvider()
         return AuthenticationResult(
             userID: userID,
             cookies: cookies,

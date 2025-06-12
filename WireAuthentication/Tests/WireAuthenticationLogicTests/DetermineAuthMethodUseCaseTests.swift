@@ -226,7 +226,7 @@ private extension DomainRegistrationConfiguration {
 
     static func make(
         backendURLString: String? = nil,
-        domainRedirect: DomainRedirect,
+        domainRedirect: NetworkDomainRedirect,
         isCloudAccountAlreadyRegistered: Bool? = nil,
         ssoCodeString: String? = nil
     ) -> DomainRegistrationConfiguration {

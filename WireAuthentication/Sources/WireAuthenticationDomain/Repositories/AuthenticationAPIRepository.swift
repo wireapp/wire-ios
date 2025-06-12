@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireAPI // TODO: not needed here
 
 // sourcery: AutoMockable
 public protocol AuthenticationAPIRepository: Sendable {
@@ -85,3 +84,83 @@ public protocol AuthenticationAPIRepository: Sendable {
     ) async throws
 
 }
+
+public struct DomainInfo: Equatable, Sendable {
+    
+    public let configurationURL: URL
+
+    public init(configurationURL: URL) {
+        self.configurationURL = configurationURL
+    }
+}
+
+public struct DomainRegistrationConfiguration: Equatable, Sendable {
+    
+    public let backendURL: URL?
+    public let domainRedirect: DomainRedirect
+    public let isCloudAccountAlreadyRegistered: Bool?
+    public let ssoCode: UUID?
+
+    public init(
+        backendURL: URL?,
+        domainRedirect: DomainRedirect,
+        isCloudAccountAlreadyRegistered: Bool?,
+        ssoCode: UUID?
+    ) {
+        self.backendURL = backendURL
+        self.domainRedirect = domainRedirect
+        self.isCloudAccountAlreadyRegistered = isCloudAccountAlreadyRegistered
+        self.ssoCode = ssoCode
+    }
+}
+
+public enum DomainRedirect: Sendable {
+    case locked
+    case sso
+    case backend
+    case noRegistration
+    case preAuthorized
+    case none
+}
+
+public enum DomainAuthenticationAPIError: Error {
+
+    case unsupportedEndpointForAPIVersion
+
+    case invalidDomain
+
+    case invalidRequestBody
+
+    case invalidResponse
+
+    case configNotFound
+
+    case domainNotFound
+
+    case twoFactorAuthenticationRequired
+
+    case twoFactorAuthenticationFailed
+
+    case accountPendingActivation
+
+    case accountSuspended
+
+    case invalidCredentials
+
+    case serviceUnavailable
+
+    /// Thrown by `requestVerificationCode(for:)`.
+
+    case invalidEmail
+
+}
+
+public extension DomainAuthenticationAPIError {
+    
+    public enum DomainSSOLoginError: Error, Equatable, Sendable {
+        case invalidSSOCode
+        case invalidStatus(Int)
+    }
+}
+
+

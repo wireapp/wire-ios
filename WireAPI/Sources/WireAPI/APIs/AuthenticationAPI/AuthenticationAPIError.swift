@@ -99,3 +99,4 @@ public extension AuthenticationAPIError {
     }
 
 }
+

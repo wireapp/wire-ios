@@ -20,9 +20,9 @@ import WireAPI
 
 package struct RequestEmailVerificationCodeUseCase: RequestEmailVerificationCodeUseCaseProtocol {
 
-    private let authenticationAPI: AuthenticationAPI
+    private let authenticationAPI: AuthenticationAPIRepository
 
-    package init(authenticationAPI: AuthenticationAPI) {
+    package init(authenticationAPI: AuthenticationAPIRepository) {
         self.authenticationAPI = authenticationAPI
     }
 

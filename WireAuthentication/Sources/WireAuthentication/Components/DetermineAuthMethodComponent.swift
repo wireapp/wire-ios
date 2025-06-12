@@ -150,8 +150,119 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
             ssoCallbackURLScheme: dependency.ssoCallbackURLScheme,
             verificationTokenGenerator: SSOLoginVerificationTokenGenerator(),
             webAuthenticator: WebAuthenticator(ssoCallbackURLScheme: dependency.ssoCallbackURLScheme),
-            createAuthResultUseCase: CreateAuthenticationResultUseCase(networkStack: networkStack)
+            createAuthResultUseCase: CreateAuthenticationResultUseCase(
+                backendEnvironmentProvider: { [networkStack] in
+                    try await networkStack.makeBackendEnvironment()
+                }
+            )
         )
+    }
+
+}
+
+import WireAPI
+
+extension NetworkStack {
+    
+    private var networkService: NetworkService {
+        get throws {
+            switch state {
+            case .awaitingProxyCredentials:
+                throw ProxyModeError.proxyCredentialsRequired
+            case let .ready(networkService):
+                networkService
+            }
+        }
+    }
+
+    package func makeAuthenticationAPI() async throws -> some AuthenticationAPIRepository {
+        let apiVersion = try await resolvedAPIVersion()
+        return AuthenticationAPIRepositoryAdapter(api: AuthenticationAPIBuilder(
+            networkService: try networkService
+        )
+        .makeAPI(for: apiVersion))
+    }
+    
+    private func resolvedAPIVersion() async throws -> APIVersion {
+        let backendMetadata = try await resolvedBackendMetadata()
+        return APIVersion(backendMetadata.apiVersion)
+    }
+
+    private func resolvedBackendMetadata() async throws -> WireAuthenticationDomain.BackendMetadata {
+        if let backendMetadata {
+            return backendMetadata
+        }
+
+        let api = BackendMetadataAPIBuilder(networkService: try networkService).makeAPI()
+
+        let useCase = ResolveBackendMetadataUseCase(
+            backendMetadataAPI: api,
+            clientProductionVersions: APIVersion.productionVersions,
+            preferredAPIVersion: preferredAPIVersion
+        )
+
+        let backendMetadata = try await useCase.invoke()
+        self.backendMetadata = backendMetadata
+        return backendMetadata
+    }
+
+    package func makeBackendEnvironment() async throws -> WireAuthenticationBackendEnvironment {
+        let backendMetadata = try await resolvedBackendMetadata()
+
+        var resolvedProxySettings: ResolvedProxySettings?
+        if let proxySettings = backendInfo.backendConfig.proxySettings {
+            if proxySettings.needsAuthentication {
+                guard let proxyCredentials else {
+                    throw ProxyModeError.proxyCredentialsRequired
+                }
+
+                resolvedProxySettings = .authenticated(
+                    host: proxySettings.host,
+                    port: proxySettings.port,
+                    username: proxyCredentials.username,
+                    password: proxyCredentials.password
+                )
+            } else {
+                resolvedProxySettings = .unauthenticated(
+                    host: proxySettings.host,
+                    port: proxySettings.port
+                )
+            }
+        }
+
+        return WireAuthenticationBackendEnvironment(
+            environmentType: backendInfo.environmentType,
+            config: backendInfo.backendConfig,
+            metadata: backendMetadata,
+            proxySettings: resolvedProxySettings
+        )
+    }
+
+}
+
+private extension APIVersion {
+
+    init(_ apiVersion: WireAuthenticationDomain.BackendMetadata.APIVersion) {
+        switch apiVersion {
+        case .v0:
+            self = .v0
+        case .v1:
+            self = .v1
+        case .v2:
+            self = .v2
+        case .v3:
+            self = .v3
+        case .v4:
+            self = .v4
+        case .v5:
+            self = .v5
+        case .v6:
+            self = .v6
+        case .v7:
+            self = .v7
+        case .v8:
+            self = .v8
+        }
     }
 
 }

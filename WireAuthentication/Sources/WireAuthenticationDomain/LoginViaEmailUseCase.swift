@@ -17,14 +17,12 @@
 //
 
 import Foundation
-import WireAPI
-import WireAuthenticationDomain
 
 public struct LoginViaEmailUseCase: LoginViaEmailUseCaseProtocol {
 
-    private let authenticationAPI: AuthenticationAPI
+    private let authenticationAPI: AuthenticationAPIRepository
 
-    public init(authenticationAPI: AuthenticationAPI) {
+    public init(authenticationAPI: AuthenticationAPIRepository) {
         self.authenticationAPI = authenticationAPI
     }
 
@@ -49,15 +47,15 @@ public struct LoginViaEmailUseCase: LoginViaEmailUseCaseProtocol {
                     expirationDate: token.expirationDate
                 )
             )
-        } catch AuthenticationAPIError.twoFactorAuthenticationRequired {
+        } catch DomainAuthenticationAPIError.twoFactorAuthenticationRequired {
             throw LoginViaEmailUseCaseFailure.twoFactorAuthenticationRequired
-        } catch AuthenticationAPIError.twoFactorAuthenticationFailed {
+        } catch DomainAuthenticationAPIError.twoFactorAuthenticationFailed {
             throw LoginViaEmailUseCaseFailure.twoFactorAuthenticationFailed
-        } catch AuthenticationAPIError.accountPendingActivation {
+        } catch DomainAuthenticationAPIError.accountPendingActivation {
             throw LoginViaEmailUseCaseFailure.accountPendingActivation
-        } catch AuthenticationAPIError.accountSuspended {
+        } catch DomainAuthenticationAPIError.accountSuspended {
             throw LoginViaEmailUseCaseFailure.accountSuspended
-        } catch AuthenticationAPIError.invalidCredentials {
+        } catch DomainAuthenticationAPIError.invalidCredentials {
             throw LoginViaEmailUseCaseFailure.invalidCredentials
         }
     }

@@ -141,7 +141,7 @@ public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
 
         checkThat(
             statusCode: 200,
-            isProcessedAs: .success(DomainInfo(configurationURL: url)),
+            isProcessedAs: .success(NetworkDomainInfo(configurationURL: url)),
             payload: payload as ZMTransportData
         )
     }
@@ -166,7 +166,7 @@ public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
 
     func checkThat(
         statusCode: Int,
-        isProcessedAs expectedResult: Result<DomainInfo, Error>,
+        isProcessedAs expectedResult: Result<NetworkDomainInfo, Error>,
         payload: ZMTransportData?
     ) {
         let resultExpectation = customExpectation(description: "Expected result: \(expectedResult)")

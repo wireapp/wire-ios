@@ -22,7 +22,7 @@ import WireLogging
 
 /// The domain redirect configuration.
 
-public struct DomainRegistrationConfiguration: Equatable, Sendable {
+public struct NetworkDomainRegistrationConfiguration: Equatable, Sendable {
 
     /// The `URL` of the on-prem backend.
 
@@ -30,7 +30,7 @@ public struct DomainRegistrationConfiguration: Equatable, Sendable {
 
     /// The configuration value that explains the appropriate login/registration flow.
 
-    public let domainRedirect: DomainRedirect
+    public let domainRedirect: NetworkDomainRedirect
 
     /// Whether the email is already in use on the cloud.
 
@@ -42,7 +42,7 @@ public struct DomainRegistrationConfiguration: Equatable, Sendable {
 
     public init(
         backendURLString: String?,
-        domainRedirect: DomainRedirect,
+        domainRedirect: NetworkDomainRedirect,
         isCloudAccountAlreadyRegistered: Bool?,
         ssoCodeString: String?
     ) {

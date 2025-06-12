@@ -110,7 +110,7 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
         return (cookies, accessToken)
     }
 
-    func getOnPremConfigURL(forDomain domain: String) async throws -> DomainInfo {
+    func getOnPremConfigURL(forDomain domain: String) async throws -> NetworkDomainInfo {
         guard !domain.isEmpty,
               let encodedDomain = domain.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)
         else {
@@ -132,7 +132,7 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
             .parse(code: response.statusCode, data: data)
     }
 
-    func getDomainRegistration(forEmail email: String) async throws -> DomainRegistrationConfiguration {
+    func getDomainRegistration(forEmail email: String) async throws -> NetworkDomainRegistrationConfiguration {
         throw AuthenticationAPIError.unsupportedEndpointForAPIVersion
     }
 

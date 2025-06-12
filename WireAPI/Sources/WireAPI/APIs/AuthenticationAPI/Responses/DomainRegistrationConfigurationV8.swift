@@ -32,8 +32,8 @@ struct DomainRegistrationConfigurationV8: Decodable, ToAPIModelConvertible {
     public let isCloudAccountAlreadyRegistered: Bool?
     public let ssoCodeString: String?
 
-    func toAPIModel() -> DomainRegistrationConfiguration {
-        DomainRegistrationConfiguration(
+    func toAPIModel() -> NetworkDomainRegistrationConfiguration {
+        NetworkDomainRegistrationConfiguration(
             backendURLString: backendURLString,
             domainRedirect: domainRedirect.toAPIModel(),
             isCloudAccountAlreadyRegistered: isCloudAccountAlreadyRegistered,

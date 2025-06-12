@@ -26,8 +26,8 @@ struct DomainInfoV0: Decodable, ToAPIModelConvertible {
 
     public let configurationURL: URL
 
-    func toAPIModel() -> DomainInfo {
-        DomainInfo(configurationURL: configurationURL)
+    func toAPIModel() -> NetworkDomainInfo {
+        NetworkDomainInfo(configurationURL: configurationURL)
     }
 
 }
