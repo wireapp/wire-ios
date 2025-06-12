@@ -37,7 +37,6 @@ public extension Bundle {
         bundleIdentifier.map { "group." + $0 }
     }
 
-    // Note: added for WPB-18060 - to be remove later
     static var developerModeEnabled: Bool {
         Bundle.appMainBundle.infoForKey("EnableDeveloperMenu") == "1"
     }

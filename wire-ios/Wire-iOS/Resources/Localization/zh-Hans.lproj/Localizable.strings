@@ -1594,6 +1594,7 @@
 "enroll_e2ei_certificate.subtitle" = "证书已生效并且您的设备已验证。";
 "enroll_e2ei_certificate.certificate_details_button" = "证书详情";
 "enroll_e2ei_certificate.ok_button" = "好";
+"enroll_e2ei_certificate.idp_url_title" = "身份提供商 URL";
 
 // Update e2ei certificate
 "update_e2ei_certificate.title" = "证书已更新";

@@ -123,7 +123,10 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
         self.statusProvider = statusProvider
         self.featureProvider = featureProvider
         self.stateController = AuthenticationStateController()
-        self.interfaceBuilder = AuthenticationInterfaceBuilder(featureProvider: featureProvider)
+        self.interfaceBuilder = AuthenticationInterfaceBuilder(
+            featureProvider: featureProvider,
+            accountSelector: SessionManager.shared
+        )
         self.eventResponderChain = AuthenticationEventResponderChain(featureProvider: featureProvider)
         super.init()
         updateLoginObservers()
