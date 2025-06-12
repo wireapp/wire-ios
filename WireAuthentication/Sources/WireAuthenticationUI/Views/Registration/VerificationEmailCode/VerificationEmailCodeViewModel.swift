@@ -50,6 +50,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
     // MARK: - Dependencies
 
     package let factory: any Factory
+    private let router: any Router
     private let onFlowCompletion: (AuthenticationResult) -> Void
     private static let numberOfDigits = 6
 
@@ -57,6 +58,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
 
     package init(
         factory: any Factory,
+        router: any Router,
         email: String,
         password: String,
         name: String,
@@ -66,6 +68,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
         precondition(numberOfDigits > 0)
 
         self.factory = factory
+        self.router = router
         self.email = email
         self.password = password
         self.name = name
@@ -132,18 +135,24 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
             )
             onFlowCompletion(authenticationResult)
         } catch {
-            //            WireLogger.authentication.error("email erification code login via email failed: \(error)")
-            //
-            //            switch error {
-            //            case LoginViaEmailUseCaseFailure.twoFactorAuthenticationFailed:
-            //                alert = .invalid2FACode
-            //            case LoginViaEmailUseCaseFailure.accountPendingActivation:
-            //                alert = .accountPendingActivation
-            //            case LoginViaEmailUseCaseFailure.accountSuspended:
-            //                alert = .accountSuspended
-            //            default:
-            //                router.presentAlert(for: error)
-            //            }
+            WireLogger.authentication.error("register personal account failed: \(error)")
+
+            switch error {
+            case RegisterPersonalAccountUseCaseError.invalidEmail:
+                alert = .invalidEmailForRegistration
+            case RegisterPersonalAccountUseCaseError.blacklistedEmail:
+                alert = .blacklistedEmail
+            case RegisterPersonalAccountUseCaseError.tooManyTeamMembers:
+                alert = .tooManyTeamMembers
+            case RegisterPersonalAccountUseCaseError.userCreationRestricted:
+                alert = .userCreationRestricted
+            case RegisterPersonalAccountUseCaseError.invalidCode:
+                alert = .invalidCode
+            case RegisterPersonalAccountUseCaseError.emailExists:
+                alert = .emailExists
+            default:
+                router.presentAlert(for: error)
+            }
         }
 
         isLoading = false
@@ -159,13 +168,18 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
         } catch {
             WireLogger.authentication.error("Resend email erification code login failed: \(error)")
 
-            //            switch error {
-            //            case RequestLoginVerificationCodeUseCaseFailure.invalidEmail:
-            //                alert = .invalidEmail
-            //
-            //            default:
-            //                router.presentAlert(for: error)
-            //            }
+            switch error {
+            case RequestEmailVerificationCodeUseCaseFailure.invalidEmail:
+                alert = .invalidEmailForRegistration
+            case RequestEmailVerificationCodeUseCaseFailure.blacklistedEmail:
+                alert = .blacklistedEmail
+            case RequestEmailVerificationCodeUseCaseFailure.emailExists:
+                alert = .emailExists
+            case RequestEmailVerificationCodeUseCaseFailure.domainBlockedForRegistration:
+                alert = .domainBlockedForRegistration
+            default:
+                router.presentAlert(for: error)
+            }
         }
 
         isResending = false

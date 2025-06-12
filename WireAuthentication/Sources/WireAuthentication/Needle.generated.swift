@@ -42,6 +42,9 @@ private class VerificationEmailCodeComponentDependency1187b119f31c839e0ba3Provid
     var bridge: WireAuthenticationBridge {
         return rootComponent.bridge
     }
+    var router: any Router {
+        return rootComponent.router
+    }
     private let loginViaEmailComponent: LoginViaEmailComponent
     private let rootComponent: RootComponent
     init(loginViaEmailComponent: LoginViaEmailComponent, rootComponent: RootComponent) {
@@ -193,6 +196,7 @@ extension VerificationEmailCodeComponent: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\VerificationEmailCodeComponentDependency.networkStack] = "networkStack-NetworkStack"
         keyPathToName[\VerificationEmailCodeComponentDependency.bridge] = "bridge-WireAuthenticationBridge"
+        keyPathToName[\VerificationEmailCodeComponentDependency.router] = "router-any Router"
     }
 }
 extension VerificationCodeComponent: NeedleFoundation.Registration {

@@ -34,11 +34,26 @@ package struct RegisterPersonalAccountUseCase: RegisterPersonalAccountUseCasePro
         verificationCode: String,
         name: String
     ) async throws -> ([HTTPCookie], UUID?) {
-        try await authenticationAPI.registerAccount(
-            email: email,
-            emailCode: verificationCode,
-            name: name,
-            password: password
-        )
+        do {
+            return try await authenticationAPI.registerAccount(
+                email: email,
+                emailCode: verificationCode,
+                name: name,
+                password: password
+            )
+        } catch AuthenticationAPIError.RegistrationError.invalidEmail {
+            throw RegisterPersonalAccountUseCaseError.invalidEmail
+        } catch AuthenticationAPIError.RegistrationError.blacklistedEmail {
+            throw RegisterPersonalAccountUseCaseError.blacklistedEmail
+        } catch AuthenticationAPIError.RegistrationError.tooManyTeamMembers {
+            throw RegisterPersonalAccountUseCaseError.tooManyTeamMembers
+        } catch AuthenticationAPIError.RegistrationError.userCreationRestricted {
+            throw RegisterPersonalAccountUseCaseError.userCreationRestricted
+        } catch AuthenticationAPIError.RegistrationError.invalidCode {
+            throw RegisterPersonalAccountUseCaseError.invalidCode
+        } catch AuthenticationAPIError.RegistrationError.keyExists {
+            throw RegisterPersonalAccountUseCaseError.emailExists
+        }
     }
+
 }

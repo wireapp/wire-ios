@@ -28,6 +28,7 @@ protocol VerificationEmailCodeComponentDependency: Dependency {
 
     var networkStack: NetworkStack { get }
     @MainActor var bridge: WireAuthenticationBridge { get }
+    @MainActor var router: any Router { get }
 
 }
 
@@ -58,6 +59,7 @@ extension VerificationEmailCodeComponent: VerificationEmailCodeViewModel.Factory
     var viewModel: VerificationEmailCodeViewModel {
         VerificationEmailCodeViewModel(
             factory: self,
+            router: dependency.router,
             email: email,
             password: password,
             name: name,

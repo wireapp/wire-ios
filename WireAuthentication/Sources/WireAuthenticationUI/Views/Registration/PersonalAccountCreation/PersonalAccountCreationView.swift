@@ -61,16 +61,18 @@ struct PersonalAccountCreationView: View {
             item: $viewModel.alert,
             title: { Text($0.title) },
             message: { Text($0.message) },
-            actions: { _ in
-                Button(Strings.ConfirmationAlert.accept, action: {
-                    Task {
-                        try? await viewModel.requestEmailVerificationCode()
-                    }
-                })
-                Button(Strings.ConfirmationAlert.view, action: {
-                    viewModel.showTermsOfUse()
-                })
-                Button(Strings.ConfirmationAlert.cancel, action: {})
+            actions: { alert in
+                if alert == .termsOfUse {
+                    Button(Strings.ConfirmationAlert.accept, action: {
+                        Task {
+                            try? await viewModel.requestEmailVerificationCode()
+                        }
+                    })
+                    Button(Strings.ConfirmationAlert.view, action: {
+                        viewModel.showTermsOfUse()
+                    })
+                    Button(Strings.ConfirmationAlert.cancel, action: {})
+                }
             }
         )
         .presentationDetents([.large])

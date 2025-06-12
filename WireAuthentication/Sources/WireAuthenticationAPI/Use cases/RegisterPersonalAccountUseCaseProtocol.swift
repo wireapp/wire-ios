@@ -31,16 +31,12 @@ public protocol RegisterPersonalAccountUseCaseProtocol: Sendable {
 
 public enum RegisterPersonalAccountUseCaseError: Error, Equatable {
 
-    case noDefaultCodeAvailable
+    case invalidEmail
+    case blacklistedEmail
+    case tooManyTeamMembers
+    case userCreationRestricted
     case invalidCode
-    case invalidURL
-    case userCancelled
-    case contextNotProvided
-    case invalidContext
-    case invalidCallbackURL
-    case callbackURLValidationFailed
-    case missingCookies
-    case unknown
+    case emailExists
 
 }
 
