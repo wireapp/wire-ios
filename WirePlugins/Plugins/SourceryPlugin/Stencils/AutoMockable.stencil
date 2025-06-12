@@ -37,9 +37,7 @@ public import {{ import }}
 
 {% macro cleanString string %}{{ string | replace:"(","_" | replace:")","" | replace:":","_" | replace:"`","" | replace:" ","_" | replace:"?","_" | replace:"!","_" | replace:",","_" | replace:"->","_" | replace:"@","_" | replace:".","_" | replace:"[","" | replace:"]","" | replace:"<","" | replace:">","" | replace:"&","" | snakeToCamelCase }}{% endmacro %}
 {%- macro swiftifyMethodName method -%}
-    {%- set cleanMethodName %}{% call cleanString method.name %}{% endset %}
-    {%- set cleanMethodReturnTypeName %}{% call cleanString method.actualReturnTypeName.name %}{% endset -%}
-    {{ cleanMethodName | lowerFirstLetter }}{{ cleanMethodReturnTypeName | upperFirstLetter }}
+    {%- set cleanMethodName %}{% call cleanString method.name %}{% endset %}{{ cleanMethodName | lowerFirstLetter }}
 {%- endmacro -%}
 
 {% macro accessLevel level %}{% if level != 'internal' %}{{ level }} {% endif %}{% endmacro %}
