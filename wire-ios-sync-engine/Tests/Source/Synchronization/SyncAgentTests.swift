@@ -55,6 +55,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
             legacySyncStatus: legacySyncStatus,
             syncStateSubject: syncStateSubject
         )
+        BackgroundActivityFactory.shared.activityManager = UIApplication.shared
     }
 
     override func tearDown() {
@@ -65,6 +66,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         initialSync = nil
         incrementalSync = nil
         syncStateSubject = nil
+        BackgroundActivityFactory.shared.activityManager = nil
     }
 
     func provideInitialSync() throws -> any InitialSyncProtocol {
@@ -244,7 +246,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         await fulfillment(of: [expectation])
     }
 
-    func testPerformIncrementalSync_Sync_State_Update_To_Suspended() async throws {
+    func testSuspend_Sync_State_Update_To_Suspended_And_Background_Task_Is_Active() async throws {
         // Given
         journal[.isSyncV2Enabled] = true
         let expectation = XCTestExpectation()
@@ -266,6 +268,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
                 switch state {
                 case .suspended:
                     // Then
+                    XCTAssertEqual(BackgroundActivityFactory.shared.isActive, true)
                     expectation.fulfill()
                 default:
                     XCTFail("Sync should be suspended")
