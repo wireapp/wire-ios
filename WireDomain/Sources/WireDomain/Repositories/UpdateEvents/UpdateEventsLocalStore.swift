@@ -113,13 +113,16 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
 
     public func fetchStoredEventEnvelopes(
         limit: UInt
-    ) async throws -> [StoredUpdateEventEnvelope] {
-        try await eventContext.perform { [eventContext] in
+    ) async throws -> [(UpdateEventEnvelope, objectID: NSManagedObjectID)] {
+        try await eventContext.perform { [eventContext, updateEventCoder] in
             do {
                 let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
                 request.fetchLimit = Int(limit)
                 request.returnsObjectsAsFaults = false
-                return try eventContext.fetch(request)
+                let storedEventEnvelopes = try eventContext.fetch(request)
+                return try storedEventEnvelopes.map {
+                    (try updateEventCoder.decode($0.data), $0.objectID)
+                }
             } catch {
                 throw Error.failedToFetchStoredEvents(error)
             }

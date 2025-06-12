@@ -16,9 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import CoreData
 import WireAPI
-import WireDataModel
 
 // sourcery: AutoMockable
 public protocol UpdateEventsLocalStoreProtocol {
@@ -64,11 +63,11 @@ public protocol UpdateEventsLocalStoreProtocol {
 
     /// Fetches stored event envelopes.
     /// - parameter limit: A fetch limit.
-    /// - returns: A list of event envelopes.
+    /// - returns: A list of decoded event envelopes and their related object IDs.
 
     func fetchStoredEventEnvelopes(
         limit: UInt
-    ) async throws -> [StoredUpdateEventEnvelope]
+    ) async throws -> [(UpdateEventEnvelope, objectID: NSManagedObjectID)]
 
     /// Deletes next pending events locally.
     /// - parameter objectIDs: The `StoredUpdateEventEnvelope` object IDs to delete.
