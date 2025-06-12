@@ -30,7 +30,7 @@ struct EventAcknowledgment: Encodable {
         var multiple: Bool
     }
 
-    let type: AcknowledgmentType = .ack
+    let type: AcknowledgmentType = .event
     var data: AcknowledgmentData
 
     init(deliveryTag: UInt64, multiple: Bool) {
