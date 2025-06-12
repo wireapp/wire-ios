@@ -18,11 +18,11 @@
 
 import Foundation
 
-/// Protocol for a use case that removes all published drafts from a cell.
+/// Use case that removes all published drafts from a given conversation. This should be called once a message is sent.
 
 public protocol WireCellsClearPublishedDraftsUseCaseProtocol {
 
-    /// Removes all published drafts from the specified cell.
+    /// Removes all published drafts from a conversation.
 
     func invoke() async
 }
