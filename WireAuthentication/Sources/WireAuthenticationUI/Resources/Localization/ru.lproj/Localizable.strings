@@ -109,6 +109,10 @@
 "obsolete_client.alert.title" = "Необходимо обновление";
 "obsolete_client.alert.message" = "Вы упускаете новые возможности.\nПолучите последнюю версию Wire в App Store.";
 "obsolete_client.alert.ok_button" = "Перейти в App Store";
+"obsolete_client.alert.switch_accounts" = "Сменить аккаунт";
 
 "obsolete_backend.alert.title" = "Версия сервера не поддерживается";
 "obsolete_backend.alert.message" = "Версия сервера не поддерживается этим приложением.  Пожалуйста, обратитесь к системному администратору.";
+
+"switching_accounts.title" = "Сменить аккаунт";
+"switching_accounts.subtitle" = "Выберите другой аккаунт на этом устройстве:";
