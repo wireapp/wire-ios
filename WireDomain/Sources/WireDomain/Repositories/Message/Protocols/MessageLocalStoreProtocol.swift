@@ -35,6 +35,11 @@ public protocol MessageLocalStoreProtocol {
         conversationDomain: String?
     ) async
 
+    /// Adds a system message (to all conversations) that inform that there are potential lost messages
+    /// and that some users were added to the conversation
+
+    func addPotentialGapSystemMessage() async throws
+
     /// Fetches or creates a `ZMClientMessage` locally.
     /// - Parameters:
     ///     - id: The message ID.
