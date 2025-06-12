@@ -4058,21 +4058,21 @@ public class MockUserClientsLocalStoreProtocol: UserClientsLocalStoreProtocol {
         }
     }
 
-    // MARK: - isClientAsyncStreamCapable
+    // MARK: - hasRegisteredAsyncStreamCapable
 
-    public var isClientAsyncStreamCapable_Invocations: [Void] = []
-    public var isClientAsyncStreamCapable_MockMethod: (() async -> Bool)?
-    public var isClientAsyncStreamCapable_MockValue: Bool?
+    public var hasRegisteredAsyncStreamCapable_Invocations: [Void] = []
+    public var hasRegisteredAsyncStreamCapable_MockMethod: (() async -> Bool)?
+    public var hasRegisteredAsyncStreamCapable_MockValue: Bool?
 
     public func hasRegisteredAsyncStreamCapable() async -> Bool {
-        isClientAsyncStreamCapable_Invocations.append(())
+        hasRegisteredAsyncStreamCapable_Invocations.append(())
 
-        if let mock = isClientAsyncStreamCapable_MockMethod {
+        if let mock = hasRegisteredAsyncStreamCapable_MockMethod {
             return await mock()
-        } else if let mock = isClientAsyncStreamCapable_MockValue {
+        } else if let mock = hasRegisteredAsyncStreamCapable_MockValue {
             return mock
         } else {
-            fatalError("no mock for `isClientAsyncStreamCapable`")
+            fatalError("no mock for `hasRegisteredAsyncStreamCapable`")
         }
     }
 

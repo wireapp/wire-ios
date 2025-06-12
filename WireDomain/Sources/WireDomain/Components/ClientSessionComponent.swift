@@ -100,7 +100,6 @@ public final class ClientSessionComponent {
         self.localDomain = localDomain
         self.isFederationEnabled = isFederationEnabled
         self.isMLSEnabled = isMLSEnabled
-        self.processorHandlers = processorHandlers
         self.coreCryptoProvider = coreCryptoProvider
         self.completionHandlers = completionHandlers
     }
@@ -391,7 +390,7 @@ public final class ClientSessionComponent {
 
     public func asyncStreamMigrator() -> AsyncStreamMigrator {
         AsyncStreamMigrator(
-            sync: pullPendingUpdateEventsSync,
+            sync: initialSync,
             userClientsAPI: userClientsAPI,
             userClientsLocalStore: userClientsLocalStore,
             apiVersion: apiVersion,

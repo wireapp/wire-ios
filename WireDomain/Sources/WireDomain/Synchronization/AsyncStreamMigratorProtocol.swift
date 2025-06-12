@@ -24,14 +24,14 @@ protocol AsyncStreamMigratorProtocol {
 }
 
 public final class AsyncStreamMigrator: AsyncStreamMigratorProtocol {
-    let sync: PullPendingUpdateEventsSyncProtocol
+    let sync: InitialSyncProtocol
     let apiVersion: WireAPI.APIVersion
     let userClientsLocalStore: UserClientsLocalStoreProtocol
     let userClientsAPI: UserClientsAPI
     var journal: JournalProtocol
 
     init(
-        sync: PullPendingUpdateEventsSyncProtocol,
+        sync: InitialSyncProtocol,
         userClientsAPI: UserClientsAPI,
         userClientsLocalStore: UserClientsLocalStoreProtocol,
         apiVersion: WireAPI.APIVersion,
@@ -60,9 +60,10 @@ public final class AsyncStreamMigrator: AsyncStreamMigratorProtocol {
             try await registerAsyncStreamCapability()
         }
 
-        // 2) pull pending events
-        WireLogger.sync.debug("pull pending events before migration to async stream")
-        try await sync.pull()
+        // 2) do an initial sync
+        WireLogger.sync.debug("do initial sync")
+        try await sync.perform(skipPullingLastUpdateEventID: true)
+        
 
         // 3) we're done
         WireLogger.sync.debug("ready for async stream")

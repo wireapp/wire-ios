@@ -24,7 +24,7 @@ import XCTest
 
 final class AsyncStreamMigratorTests: XCTestCase {
     var sut: AsyncStreamMigrator!
-    var mockSync: MockPullPendingUpdateEventsSyncProtocol!
+    var mockSync: MockInitialSyncProtocol!
     var mockUserClientsAPI: MockUserClientsAPI!
     var mockLocalStore: MockUserClientsLocalStoreProtocol!
     var journal: JournalProtocol!
@@ -63,42 +63,44 @@ final class AsyncStreamMigratorTests: XCTestCase {
     func test_migrateToAsyncStream_userClientNeedsRegistration() async throws {
         // GIVEN
         mockLocalStore.fetchSelfClientID_MockValue = Scaffolding.userID.uuidString
-        mockLocalStore.isClientAsyncStreamCapable_MockValue = false
+        mockLocalStore.hasRegisteredAsyncStreamCapable_MockValue = false
         mockUserClientsAPI.updateClientIdPayload_MockMethod = { _, _ in }
-        mockSync.pull_MockValue = AsyncStream { [] }
+        mockSync.performSkipPullingLastUpdateEventID_MockMethod = { _ in }
 
         // WHEN
         try await sut.migrateToAsyncStream()
 
         // THEN
         XCTAssertEqual(mockUserClientsAPI.updateClientIdPayload_Invocations.count, 1)
-        XCTAssertEqual(mockSync.pull_Invocations.count, 1)
+        XCTAssertEqual(mockSync.performSkipPullingLastUpdateEventID_Invocations.count, 1)
+        XCTAssertTrue(mockSync.performSkipPullingLastUpdateEventID_Invocations[0])
         XCTAssertTrue(journal[.isAsyncStreamEnabled])
     }
 
     func test_migrateToAsyncStream_userClientAlreadyCapable() async throws {
         // GIVEN
         mockLocalStore.fetchSelfClientID_MockValue = Scaffolding.userID.uuidString
-        mockLocalStore.isClientAsyncStreamCapable_MockValue = true
-        mockUserClientsAPI.updateClientIdPayload_MockMethod = { _, _ in }
-        mockSync.pull_MockValue = AsyncStream { [] }
+        mockLocalStore.hasRegisteredAsyncStreamCapable_MockValue = true
+        mockSync.performSkipPullingLastUpdateEventID_MockMethod = { _ in }
 
         // WHEN
         try await sut.migrateToAsyncStream()
 
         // THEN
         XCTAssertEqual(mockUserClientsAPI.updateClientIdPayload_Invocations.count, 0)
-        XCTAssertEqual(mockSync.pull_Invocations.count, 1)
+        XCTAssertEqual(mockSync.performSkipPullingLastUpdateEventID_Invocations.count, 1)
+        XCTAssertTrue(mockSync.performSkipPullingLastUpdateEventID_Invocations[0])
+
         XCTAssertTrue(journal[.isAsyncStreamEnabled])
     }
 
     func test_migrateToAsyncStream_syncFails_throws() async throws {
         // GIVEN
         mockLocalStore.fetchSelfClientID_MockValue = Scaffolding.userID.uuidString
-        mockLocalStore.isClientAsyncStreamCapable_MockValue = false
+        mockLocalStore.hasRegisteredAsyncStreamCapable_MockValue = false
         mockUserClientsAPI.updateClientIdPayload_MockMethod = { _, _ in }
         let error = TestError(message: "")
-        mockSync.pull_MockError = error
+        mockSync.performSkipPullingLastUpdateEventID_MockError = error
 
         // WHEN
         await XCTAssertThrowsErrorAsync(error) {
@@ -107,18 +109,19 @@ final class AsyncStreamMigratorTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(mockUserClientsAPI.updateClientIdPayload_Invocations.count, 1)
-        XCTAssertEqual(mockSync.pull_Invocations.count, 1)
+        XCTAssertEqual(mockSync.performSkipPullingLastUpdateEventID_Invocations.count, 1)
+        XCTAssertTrue(mockSync.performSkipPullingLastUpdateEventID_Invocations[0])
         XCTAssertFalse(journal[.isAsyncStreamEnabled])
     }
 
     func test_migrateToAsyncStream_registrationFails_throws() async throws {
         // GIVEN
         mockLocalStore.fetchSelfClientID_MockValue = Scaffolding.userID.uuidString
-        mockLocalStore.isClientAsyncStreamCapable_MockValue = false
+        mockLocalStore.hasRegisteredAsyncStreamCapable_MockValue = false
         let error = TestError(message: "")
         mockUserClientsAPI.updateClientIdPayload_MockError = error
 
-        mockSync.pull_MockValue = AsyncStream { [] }
+        mockSync.performSkipPullingLastUpdateEventID_MockMethod = { _ in }
 
         // WHEN
         await XCTAssertThrowsErrorAsync(error) {
@@ -127,7 +130,7 @@ final class AsyncStreamMigratorTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(mockUserClientsAPI.updateClientIdPayload_Invocations.count, 1)
-        XCTAssertEqual(mockSync.pull_Invocations.count, 0)
+        XCTAssertEqual(mockSync.performSkipPullingLastUpdateEventID_Invocations.count, 0)
         XCTAssertFalse(journal[.isAsyncStreamEnabled])
     }
 
@@ -141,7 +144,7 @@ final class AsyncStreamMigratorTests: XCTestCase {
             journal: journal
         )
 
-        mockSync.pull_MockValue = AsyncStream { [] }
+        mockSync.performSkipPullingLastUpdateEventID_MockMethod = { _ in }
 
         // WHEN / THEN
         await XCTAssertThrowsErrorAsync(AsyncStreamMigrator.Failure.apiVersionTooLow) {
