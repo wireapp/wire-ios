@@ -16,5 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+<<<<<<< HEAD
 WIRE_SHORT_VERSION = 4.1.0
 MAJOR_VERSION = 4
+=======
+WIRE_SHORT_VERSION = 3.124.1
+MAJOR_VERSION = 3
+>>>>>>> 294a7f8529 (chore: bump app version to 3.124.1 - WPB-18160 (#3167))
