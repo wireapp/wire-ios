@@ -18,8 +18,8 @@
 
 import UIKit
 import WireCommonComponents
-import WireSyncEngine
 import WireLogging
+import WireSyncEngine
 
 extension ConversationInputBarViewController {
     func sendText() {
