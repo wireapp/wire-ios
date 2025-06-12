@@ -74,7 +74,7 @@ final class SelfProfileViewControllerTests: XCTestCase, CoreDataFixtureTestHelpe
         createSut(userName: "Johannes Chrysostomus Wolfgangus Theophilus Mozart", teamMember: true)
         snapshotHelper.verify(matching: sut.view)
     }
-    
+
     @MainActor
     func testAccountSwitcher() {
         DeveloperFlag.multibackend.enable(true)

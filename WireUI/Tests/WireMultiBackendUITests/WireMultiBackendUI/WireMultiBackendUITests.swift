@@ -59,8 +59,8 @@ final class WireMultiBackendUITests: XCTestCase {
                 )
             ],
             options: [
-                .addAccountOption { },
-                .manageTeamOption { }
+                .addAccountOption {},
+                .manageTeamOption {}
             ],
             showLastSeparator: false
         ).frame(width: screenBounds.width)

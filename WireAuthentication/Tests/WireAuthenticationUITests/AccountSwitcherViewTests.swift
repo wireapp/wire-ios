@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import SwiftUI
-import WireTestingPackage
 import WireFoundation
-@testable import WireAuthenticationUI
 import WireMultiBackendUI
+import WireTestingPackage
+import XCTest
+@testable import WireAuthenticationUI
 
 final class AccountSwitcherViewTests: XCTestCase {
 
@@ -35,7 +35,7 @@ final class AccountSwitcherViewTests: XCTestCase {
     override func tearDown() {
         snapshotHelper = nil
     }
-    
+
     let accounts = [
         AccountUIModel(
             avatarSource: .image(.strokedCheckmark),
@@ -58,7 +58,7 @@ final class AccountSwitcherViewTests: XCTestCase {
     @MainActor
     func testAccountSwitcher() {
         let screenBounds = UIScreen.main.bounds
-        
+
         let view = AccountSwitcherModalView(FakeAccountSwitcherFactory(accounts: accounts))
             .inNavigationStack()
             .frame(width: screenBounds.width, height: screenBounds.height)

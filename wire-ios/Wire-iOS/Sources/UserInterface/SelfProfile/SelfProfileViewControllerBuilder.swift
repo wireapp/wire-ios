@@ -57,4 +57,4 @@ final class SelfProfileViewControllerBuilder: SelfProfileViewControllerBuilderPr
     }
 }
 
-extension AccountManager: SelfProfileAccountManager { }
+extension AccountManager: SelfProfileAccountManager {}

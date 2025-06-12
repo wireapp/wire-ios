@@ -83,7 +83,7 @@ final class SelfProfileViewController: UIViewController {
         self.mainCoordinator = mainCoordinator
         self.analyticsEventTracker = analyticsEventTracker
         self.accountManager = accountManager
-        
+
         // Create the settings hierarchy
         let settingsPropertyFactory = SettingsPropertyFactory(
             userSession: userSession,

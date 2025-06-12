@@ -17,16 +17,16 @@
 //
 
 import Combine
-import WireMultiBackendUI
 import WireFoundation
+import WireMultiBackendUI
 
 struct FakeAccountSwitcherFactory: AccountSwitcherFactory {
     let accounts: [AccountUIModel]
-    
+
     init(accounts: [AccountUIModel]) {
         self.accounts = accounts
     }
-    
+
     var viewModel: AccountSwitcherModalViewModel {
         .init(
             accountsPublisher: CurrentValuePublisher(subject: CurrentValueSubject(accounts)),
