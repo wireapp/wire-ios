@@ -25,7 +25,8 @@ package struct VerificationEmailCodeView: View {
     @StateObject private var viewModel: VerificationEmailCodeViewModel
     @FocusState private var focusedIndex: Int?
 
-    private typealias Strings = L10n.Localizable
+    private typealias Strings = L10n.Localizable.CreatePersonalAccount
+    private typealias Labels = L10n.Accessibility.CreatePersonalAccount
 
     package init(
         factory: @autoclosure @escaping () -> VerificationEmailCodeFactory
@@ -35,9 +36,11 @@ package struct VerificationEmailCodeView: View {
 
     package var body: some View {
         VStack(spacing: 20) {
-            Text(Strings.VerificationCode.message("viewModel.email"))
+            Text(Strings.VerificationCode.message(viewModel.email))
                 .wireTextStyle(.body1)
                 .multilineTextAlignment(.center)
+                .lineLimit(3)
+                .fixedSize(horizontal: false, vertical: true)
                 .foregroundStyle(Color.primaryText)
 
             verificationCodeView
@@ -67,7 +70,7 @@ package struct VerificationEmailCodeView: View {
         }
         .padding()
         .background(ColorTheme.Backgrounds.surface.color)
-        .navigationTitle(Strings.VerificationCode.title)
+        .navigationTitle(Strings.title)
         .navigationBarTitleDisplayMode(.inline)
         .setPreferredSize(navigationBarHidden: false)
         .customBackButton()
@@ -76,7 +79,7 @@ package struct VerificationEmailCodeView: View {
             title: { Text($0.title) },
             message: { Text($0.message) },
             actions: { _ in
-                Button(Strings.Authentication.Error.confirm, action: {})
+                Button(L10n.Localizable.Authentication.Error.confirm, action: {})
             }
         )
     }

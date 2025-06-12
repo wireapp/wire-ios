@@ -133,6 +133,9 @@
 "create_personal_account.confirmation_alert.accept" = "Accept";
 "create_personal_account.confirmation_alert.view" = "View";
 "create_personal_account.confirmation_alert.cancel" = "Cancel";
+"create_personal_account.verification_code.resend_code" = "Resend Code";
+"create_personal_account.verification_code.confirm" = "Confirm";
+"create_personal_account.verification_code.message" = "Enter the verification code we sent to %@.";
 
 "create_personal_account.error.title.email-exists" = "Account Exists";
 "create_personal_account.error.message.email-exists" = "The email address you used to register is already linked to an account.\n\n Use another email address, or try to log in if you own this account.";
