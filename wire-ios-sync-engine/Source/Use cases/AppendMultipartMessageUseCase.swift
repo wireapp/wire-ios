@@ -59,6 +59,6 @@ public struct AppendMultipartMessageUseCase: AppendMultipartMessageUseCaseProtoc
         )
         conversation.draftMessage = nil
 
-        // TODO: Track analytics event
+        // TODO: [WPB-18168] Track analytics event
     }
 }
