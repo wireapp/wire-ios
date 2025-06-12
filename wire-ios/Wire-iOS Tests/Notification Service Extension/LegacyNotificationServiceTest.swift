@@ -18,9 +18,9 @@
 
 import Foundation
 import Wire_Notification_Service_Extension
+import WireDomain
 import WireNotificationEngine
 import XCTest
-import WireDomain
 
 final class LegacyNotificationServiceTests: XCTestCase {
 

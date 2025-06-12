@@ -183,15 +183,15 @@ private struct StoredAccount: Codable {
     var unreadConversationCount: Int
 
     init(_ account: Account) {
-        identifier = account.userIdentifier
-        name = account.userName
-        image = account.imageData
-        team = account.teamName
-        teamImage = account.teamImageData
-        loginCredentials = account.loginCredentials.map {
+        self.identifier = account.userIdentifier
+        self.name = account.userName
+        self.image = account.imageData
+        self.team = account.teamName
+        self.teamImage = account.teamImageData
+        self.loginCredentials = account.loginCredentials.map {
             StoredLoginCredentials($0)
         }
-        unreadConversationCount = account.unreadConversationCount
+        self.unreadConversationCount = account.unreadConversationCount
     }
 
 }
@@ -203,9 +203,9 @@ private struct StoredLoginCredentials: Codable {
     var usesCompanyLogin: Bool
 
     init(_ loginCredentials: LoginCredentials) {
-        emailAddress = loginCredentials.emailAddress
-        hasPassword = loginCredentials.hasPassword
-        usesCompanyLogin = loginCredentials.usesCompanyLogin
+        self.emailAddress = loginCredentials.emailAddress
+        self.hasPassword = loginCredentials.hasPassword
+        self.usesCompanyLogin = loginCredentials.usesCompanyLogin
     }
 
 }
