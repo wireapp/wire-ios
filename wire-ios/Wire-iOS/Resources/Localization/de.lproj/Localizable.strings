@@ -1159,7 +1159,7 @@
 "self.settings.account_details.remove_device.password.error" = "Falsches Passwort";
 
 "self.settings.account_appearance_group.title" = "Erscheinungsbild";
-"self.settings.account_appearance_group.footer" = "When this is on, your conversations show a background based on your profile color and light or dark theme.";
+"self.settings.account_appearance_group.footer" = "Wenn diese Option aktiviert ist, zeigen Ihre Unterhaltungen einen auf Ihr Erscheinungsbild angepassten Hintergrund.";
 
 "self.settings.privacy_section_group.title" = "Datenschutz";
 "self.settings.enable_read_receipts.title" = "Lesebestätigungen senden";
