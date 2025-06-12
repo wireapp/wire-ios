@@ -479,7 +479,3 @@ enum CollapseKey: String, DefaultsKey {
 enum ConversationBackgroundKey: String, DefaultsKey {
     case conversationBackground
 }
-
-enum ConversationBackgroundKey: String, DefaultsKey {
-    case conversationBackground
-}
