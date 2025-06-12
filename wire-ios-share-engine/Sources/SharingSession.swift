@@ -548,19 +548,20 @@ public final class SharingSession {
             eventContext: coreDataStack.eventContext,
             mlsService: mlsService,
             mlsDecryptionService: mlsService,
-            proteusService: proteusService
+            proteusService: proteusService,
+            coreCryptoProvider: coreCryptoProvider
         )
 
-        let processHandlers = ClientSessionComponent.ProcessorHandlers(
+        let completionHandlers = ClientSessionComponent.CompletionHandlers(
             onProcessedCallEvent: { _ in },
             onSelfClientInvalidated: {},
+            onAuthenticationFailure: {},
             onProcessedTypingUsers: { _ in }
         )
 
         let clientUserSessionComponent = userSessionComponent.clientSessionComponent(
             clientID: selfClientID,
-            processorHandlers: processHandlers,
-            onAuthenticationFailure: {}
+            completionHandlers: completionHandlers
         )
 
         coreCryptoProvider.registerMlsTransport(clientUserSessionComponent.mlsTransport)

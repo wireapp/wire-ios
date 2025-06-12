@@ -62,7 +62,9 @@ final class PullEventsStep: Component<PullEventsDependency>, PullEventsStepProto
             selfClientID: selfClientID,
             api: try updateEventsAPI,
             store: updateEventsLocalStore,
-            decryptor: updateEventDecryptor
+            journal: journal,
+            decryptor: updateEventDecryptor,
+            coreCryptoProvider: coreCryptoProvider
         )
 
         let pullEventsUseCase = PullEventsUseCase(
@@ -93,15 +95,6 @@ extension PullEventsStep {
         )
     }
 
-    var updateEventDecryptor: any UpdateEventDecryptorProtocol {
-        UpdateEventDecryptor(
-            proteusMessageDecryptor: proteusMessageDecryptor,
-            mlsMessageDecryptor: mlsMessageDecryptor,
-            mlsService: nil,
-            messageLocalStore: dependency.messageLocalStore
-        )
-    }
-
     private var sharedUserDefaults: UserDefaults {
         UserDefaults(suiteName: dependency.applicationIdentifier)!
     }
@@ -110,6 +103,15 @@ extension PullEventsStep {
         Journal(
             userID: selfUserID,
             storage: sharedUserDefaults
+        )
+    }
+
+    var updateEventDecryptor: any UpdateEventDecryptorProtocol {
+        UpdateEventDecryptor(
+            proteusMessageDecryptor: proteusMessageDecryptor,
+            mlsMessageDecryptor: mlsMessageDecryptor,
+            mlsService: nil,
+            messageLocalStore: dependency.messageLocalStore
         )
     }
 

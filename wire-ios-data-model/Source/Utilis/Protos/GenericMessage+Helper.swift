@@ -83,6 +83,8 @@ public extension GenericMessage {
             return data
         case let .asset(data):
             return data
+        case let .multipart(data):
+            return data
         case let .ephemeral(data):
             return data.messageData
         case let .clientAction(data):

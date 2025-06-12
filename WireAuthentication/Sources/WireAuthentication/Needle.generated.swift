@@ -1,11 +1,14 @@
 
 
+import Combine
 import Foundation
 import NeedleFoundation
 import SwiftUI
 import WireAPI
 import WireAuthenticationAPI
+import WireFoundation
 import WireLogging
+import WireMultiBackendUI
 import WireReusableUIComponents
 internal import WireAuthenticationLogic
 internal import WireAuthenticationUI
@@ -84,6 +87,49 @@ private class DetermineAuthMethodComponentDependency527e70b5dbcfcb8f2023Provider
 private func factoryd47fa74281e135cd9f10b3a8f24c1d289f2c0f2e(_ component: NeedleFoundation.Scope) -> AnyObject {
     return DetermineAuthMethodComponentDependency527e70b5dbcfcb8f2023Provider(rootComponent: parent1(component) as! RootComponent)
 }
+private class PersonalAccountCreationComponentDependency9e5e5a00f5c85fcf54b5Provider: PersonalAccountCreationComponentDependency {
+    var router: any Router {
+        return rootComponent.router
+    }
+    var networkStack: NetworkStack {
+        return loginViaEmailComponent.networkStack
+    }
+    var passwordValidator: any PasswordValidator {
+        return rootComponent.passwordValidator
+    }
+    var privacyPolicyURL: URL {
+        return rootComponent.privacyPolicyURL
+    }
+    var personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol {
+        return rootComponent.personalAccountCreationAnalyticsTracker
+    }
+    private let loginViaEmailComponent: LoginViaEmailComponent
+    private let rootComponent: RootComponent
+    init(loginViaEmailComponent: LoginViaEmailComponent, rootComponent: RootComponent) {
+        self.loginViaEmailComponent = loginViaEmailComponent
+        self.rootComponent = rootComponent
+    }
+}
+/// ^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->PersonalAccountCreationComponent
+private func factory98c59649331d50383edd17031e1ba787d83cb463(_ component: NeedleFoundation.Scope) -> AnyObject {
+    return PersonalAccountCreationComponentDependency9e5e5a00f5c85fcf54b5Provider(loginViaEmailComponent: parent1(component) as! LoginViaEmailComponent, rootComponent: parent3(component) as! RootComponent)
+}
+private class AccountSwitcherComponentDependency65306f6262d465ec7963Provider: AccountSwitcherComponentDependency {
+    var router: any Router {
+        return rootComponent.router
+    }
+    var otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]> {
+        return rootComponent.otherAccountsPublisher
+    }
+    private let rootComponent: RootComponent
+    init(rootComponent: RootComponent) {
+        self.rootComponent = rootComponent
+    }
+}
+/// ^->RootComponent->AccountSwitcherComponent
+private func factory74ea254f881cfa30d8aeb3a8f24c1d289f2c0f2e(_ component: NeedleFoundation.Scope) -> AnyObject {
+    return AccountSwitcherComponentDependency65306f6262d465ec7963Provider(rootComponent: parent1(component) as! RootComponent)
+}
 private class NoHistoryComponentDependencya1005f718577ea03ea08Provider: NoHistoryComponentDependency {
     var howToChangeEmailURL: URL {
         return rootComponent.howToChangeEmailURL
@@ -127,6 +173,9 @@ private class LoginViaEmailComponentDependency6f812ea9ca4f0322dd27Provider: Logi
     var minTLSVersion: TLSVersion {
         return rootComponent.minTLSVersion
     }
+    var useLegacyRegistrationFlow: Bool {
+        return rootComponent.useLegacyRegistrationFlow
+    }
     private let rootComponent: RootComponent
     init(rootComponent: RootComponent) {
         self.rootComponent = rootComponent
@@ -157,6 +206,15 @@ extension DetermineAuthMethodComponent: NeedleFoundation.Registration {
         localTable["networkStack-NetworkStack"] = { [unowned self] in self.networkStack as Any }
     }
 }
+extension PersonalAccountCreationComponent: NeedleFoundation.Registration {
+    public func registerItems() {
+        keyPathToName[\PersonalAccountCreationComponentDependency.router] = "router-any Router"
+        keyPathToName[\PersonalAccountCreationComponentDependency.networkStack] = "networkStack-NetworkStack"
+        keyPathToName[\PersonalAccountCreationComponentDependency.passwordValidator] = "passwordValidator-any PasswordValidator"
+        keyPathToName[\PersonalAccountCreationComponentDependency.privacyPolicyURL] = "privacyPolicyURL-URL"
+        keyPathToName[\PersonalAccountCreationComponentDependency.personalAccountCreationAnalyticsTracker] = "personalAccountCreationAnalyticsTracker-any PersonalAccountCreationAnalyticsTrackerProtocol"
+    }
+}
 extension RootComponent: NeedleFoundation.Registration {
     public func registerItems() {
 
@@ -166,12 +224,22 @@ extension RootComponent: NeedleFoundation.Registration {
         localTable["minTLSVersion-TLSVersion"] = { [unowned self] in self.minTLSVersion as Any }
         localTable["howToChangeEmailURL-URL"] = { [unowned self] in self.howToChangeEmailURL as Any }
         localTable["howToDeleteAccountURL-URL"] = { [unowned self] in self.howToDeleteAccountURL as Any }
+        localTable["privacyPolicyURL-URL"] = { [unowned self] in self.privacyPolicyURL as Any }
         localTable["passwordValidator-any PasswordValidator"] = { [unowned self] in self.passwordValidator as Any }
         localTable["ssoCallbackURLScheme-String"] = { [unowned self] in self.ssoCallbackURLScheme as Any }
         localTable["appStoreURL-URL"] = { [unowned self] in self.appStoreURL as Any }
         localTable["existsAnotherAccount-Bool"] = { [unowned self] in self.existsAnotherAccount as Any }
+        localTable["otherAccountsPublisher-ReadOnlyCurrentValueSubject<[AccountUIModel]>"] = { [unowned self] in self.otherAccountsPublisher as Any }
+        localTable["useLegacyRegistrationFlow-Bool"] = { [unowned self] in self.useLegacyRegistrationFlow as Any }
+        localTable["personalAccountCreationAnalyticsTracker-any PersonalAccountCreationAnalyticsTrackerProtocol"] = { [unowned self] in self.personalAccountCreationAnalyticsTracker as Any }
         localTable["bridge-WireAuthenticationBridge"] = { [unowned self] in self.bridge as Any }
         localTable["router-any Router"] = { [unowned self] in self.router as Any }
+    }
+}
+extension AccountSwitcherComponent: NeedleFoundation.Registration {
+    public func registerItems() {
+        keyPathToName[\AccountSwitcherComponentDependency.router] = "router-any Router"
+        keyPathToName[\AccountSwitcherComponentDependency.otherAccountsPublisher] = "otherAccountsPublisher-ReadOnlyCurrentValueSubject<[AccountUIModel]>"
     }
 }
 extension NoHistoryComponent: NeedleFoundation.Registration {
@@ -188,6 +256,7 @@ extension LoginViaEmailComponent: NeedleFoundation.Registration {
         keyPathToName[\LoginViaEmailComponentDependency.preferredAPIVersion] = "preferredAPIVersion-APIVersion?"
         keyPathToName[\LoginViaEmailComponentDependency.backendInfo] = "backendInfo-BackendInfo"
         keyPathToName[\LoginViaEmailComponentDependency.minTLSVersion] = "minTLSVersion-TLSVersion"
+        keyPathToName[\LoginViaEmailComponentDependency.useLegacyRegistrationFlow] = "useLegacyRegistrationFlow-Bool"
         localTable["email-String?"] = { [unowned self] in self.email as Any }
         localTable["didDetectDomainConflict-Bool"] = { [unowned self] in self.didDetectDomainConflict as Any }
         localTable["networkStack-NetworkStack"] = { [unowned self] in self.networkStack as Any }
@@ -211,7 +280,9 @@ private func registerProviderFactory(_ componentPath: String, _ factory: @escapi
 @inline(never) private func register1() {
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->VerificationCodeComponent", factoryd3638676a47fce1fe62317031e1ba787d83cb463)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent", factoryd47fa74281e135cd9f10b3a8f24c1d289f2c0f2e)
+    registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->PersonalAccountCreationComponent", factory98c59649331d50383edd17031e1ba787d83cb463)
     registerProviderFactory("^->RootComponent", factoryEmptyDependencyProvider)
+    registerProviderFactory("^->RootComponent->AccountSwitcherComponent", factory74ea254f881cfa30d8aeb3a8f24c1d289f2c0f2e)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->VerificationCodeComponent->NoHistoryComponent", factory5f94de319ad3e04a942321a9c45ed079aafca21f)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->NoHistoryComponent", factory5f94de319ad3e04a9423a9403e3301bb54f80df0)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->NoHistoryComponent", factory5f94de319ad3e04a942342f5655bf2362a8495f6)

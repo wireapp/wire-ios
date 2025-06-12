@@ -41,11 +41,12 @@ extension MessageBackupModel {
     init?(_ message: ZMMessage, genericMessage: GenericMessage) {
 
         guard
+            !message.isEphemeral,
             let id = message.nonce,
             let senderUserID = message.senderUser?.qualifiedID,
             let creationDate = message.serverTimestamp,
             let conversationID = message.conversation?.qualifiedID,
-            let content = genericMessage.content.flatMap(MessageContent.init)
+            let content = genericMessage.content.flatMap(MessageBackupModel.Content.init)
         else { return nil }
 
         self.init(

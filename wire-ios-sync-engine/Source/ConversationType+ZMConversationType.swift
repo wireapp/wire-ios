@@ -17,6 +17,7 @@
 //
 
 import WireAnalytics
+import WireFoundation
 
 extension AnalyticsEvent.Segmentation.Conversation.ConversationType {
 

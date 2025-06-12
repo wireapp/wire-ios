@@ -16,15 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import NeedleFoundation
 import SwiftUI
 import WireAPI
 import WireReusableUIComponents
 internal import WireAuthenticationUI
 import WireAuthenticationAPI
+import WireMultiBackendUI
 internal import WireAuthenticationLogic
+import WireFoundation
 
-class RootComponent: BootstrapComponent {
+final class RootComponent: BootstrapComponent {
 
     public let backendInfo: BackendInfo
     public let preferredAPIVersion: APIVersion?
@@ -32,10 +35,14 @@ class RootComponent: BootstrapComponent {
     public let minTLSVersion: TLSVersion
     public let howToChangeEmailURL: URL
     public let howToDeleteAccountURL: URL
+    public let privacyPolicyURL: URL
     public let passwordValidator: any PasswordValidator
     public let ssoCallbackURLScheme: String
     public let appStoreURL: URL
     public let existsAnotherAccount: Bool
+    public var otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>
+    public let useLegacyRegistrationFlow: Bool
+    public let personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
 
     @MainActor public var bridge: WireAuthenticationBridge {
         shared {
@@ -53,10 +60,14 @@ class RootComponent: BootstrapComponent {
         minTLSVersion: TLSVersion,
         howToChangeEmailURL: URL,
         howToDeleteAccountURL: URL,
+        privacyPolicyURL: URL,
         passwordValidator: any PasswordValidator,
         ssoCallbackURLScheme: String,
         appStoreURL: URL,
-        existsAnotherAccount: Bool
+        existsAnotherAccount: Bool,
+        otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>,
+        useLegacyRegistrationFlow: Bool,
+        personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
     ) {
         self.backendInfo = backendInfo
         self.preferredAPIVersion = preferredAPIVersion
@@ -64,10 +75,14 @@ class RootComponent: BootstrapComponent {
         self.minTLSVersion = minTLSVersion
         self.howToChangeEmailURL = howToChangeEmailURL
         self.howToDeleteAccountURL = howToDeleteAccountURL
+        self.privacyPolicyURL = privacyPolicyURL
         self.passwordValidator = passwordValidator
         self.ssoCallbackURLScheme = ssoCallbackURLScheme
         self.appStoreURL = appStoreURL
         self.existsAnotherAccount = existsAnotherAccount
+        self.otherAccountsPublisher = otherAccountsPublisher
+        self.useLegacyRegistrationFlow = useLegacyRegistrationFlow
+        self.personalAccountCreationAnalyticsTracker = personalAccountCreationAnalyticsTracker
     }
 
     // MARK: - Children
@@ -103,6 +118,14 @@ extension RootComponent: RootViewModel.Factory {
 
     func determineAuthMethodFactory(backendInfo: BackendInfo) -> any DetermineAuthMethodFactory {
         determineAuthMethodComponent(backendInfo: backendInfo)
+    }
+
+    func accountsSwitcherFactory() -> any AccountSwitcherFactory {
+        accountSwitcherComponent()
+    }
+
+    func accountSwitcherComponent() -> AccountSwitcherComponent {
+        AccountSwitcherComponent(parent: self)
     }
 
     // MARK: - Use cases

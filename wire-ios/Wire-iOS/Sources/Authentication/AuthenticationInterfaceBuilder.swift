@@ -16,11 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import UIKit
 import WireAPI
 import WireAuthentication
 import WireCommonComponents
 import WireDataModel
+import WireFoundation
 import WireSyncEngine
 
 /// A type of view controller that can be managed by an authentication coordinator.
@@ -44,6 +46,8 @@ final class AuthenticationInterfaceBuilder {
         BackendEnvironment.shared
     }
 
+    private var accountSelector: AccountSelector?
+
     // MARK: - Initialization
 
     /// Creates an interface builder with the specified set of features.
@@ -51,10 +55,12 @@ final class AuthenticationInterfaceBuilder {
 
     init(
         featureProvider: AuthenticationFeatureProvider,
+        accountSelector: AccountSelector?,
         backendEnvironmentProvider: @escaping () -> BackendEnvironmentProvider = { BackendEnvironment.shared }
     ) {
         self.featureProvider = featureProvider
         self.backendEnvironmentProvider = backendEnvironmentProvider
+        self.accountSelector = accountSelector
     }
 
     // MARK: - Interface Building
@@ -76,7 +82,16 @@ final class AuthenticationInterfaceBuilder {
         switch step {
         case .wireAuthenticationModule:
             let assembly = WireAuthenticationAssembly()
-            let numberOfAccounts = SessionManager.shared?.accountManager.numberOfAccounts ?? 0
+            let numberOfAccounts = SessionManager.shared?.accountManager.accounts.count ?? 0
+            let otherAccounts = (SessionManager.shared?.accountManager.accounts ?? [])
+                .filter {
+                    !$0.isEqual(SessionManager.shared?.accountManager.selectedAccount)
+                }
+                .map { account in
+                    account.toUIModel { [weak self] in
+                        self?.accountSelector?.switchTo(account: account)
+                    }
+                }
             let preferredAPIVersion = BackendInfo.preferredAPIVersion.flatMap {
                 WireAPI.APIVersion(rawValue: UInt($0.rawValue))
             }
@@ -88,10 +103,14 @@ final class AuthenticationInterfaceBuilder {
                 accountsURL: environment.accountsURL,
                 howToChangeEmailURL: WireURLs.shared.howToChangeEmail,
                 howToDeleteAccountURL: WireURLs.shared.howToDeleteAccount,
+                privacyPolicyURL: WireURLs.shared.privacyPolicy,
                 passwordValidator: AuthenticationPasswordValidator(),
                 ssoCallbackURLScheme: Bundle.ssoURLScheme ?? "wire-sso",
                 appStoreURL: WireURLs.shared.appOnItunes,
-                existsAnotherAccount: numberOfAccounts > 0
+                existsAnotherAccount: numberOfAccounts > 0,
+                otherAccountsPublisher: ReadOnlyCurrentValueSubject(subject: CurrentValueSubject(otherAccounts)),
+                useLegacyRegistrationFlow: !DeveloperFlag.newRegistration.isOn,
+                personalAccountCreationAnalyticsTracker: PersonalAccountCreationAnalyticsTracker()
             )
             return AuthenticationHostingController(
                 rootView: rootView,

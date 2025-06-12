@@ -103,7 +103,7 @@
 
 "add_participants.alert.title" = "Die Unterhaltung ist voll";
 "add_participants.alert.message.new_conversation" = "Bis zu %@ Personen können an einer Unterhaltung teilnehmen.";
-"add_participants.alert.message.existing_conversation" = "Bis zu %@ Personen können an einer Unterhaltung teilnehmen. Jetzt ist noch Platz für %2$d weitere.";
+"add_participants.alert.message.existing_conversation" = "Bis zu %@ Personen können an einer Unterhaltung teilnehmen. Jetzt ist noch Platz für %@ weitere.";
 
 // Channel Creation UI - Navigation
 "conversation.create.channel.title" = "Neuer Channel";
@@ -1159,7 +1159,7 @@
 "self.settings.account_details.remove_device.password.error" = "Falsches Passwort";
 
 "self.settings.account_appearance_group.title" = "Erscheinungsbild";
-"self.settings.account_appearance_group.footer" = "When this is on, your conversations show a background based on your profile color and light or dark theme.";
+"self.settings.account_appearance_group.footer" = "Wenn diese Option aktiviert ist, zeigen Ihre Unterhaltungen einen auf Ihr Erscheinungsbild angepassten Hintergrund.";
 
 "self.settings.privacy_section_group.title" = "Datenschutz";
 "self.settings.enable_read_receipts.title" = "Lesebestätigungen senden";
@@ -1594,6 +1594,7 @@
 "enroll_e2ei_certificate.subtitle" = "Das Zertifikat ist aktiv und Ihr Gerät überprüft.";
 "enroll_e2ei_certificate.certificate_details_button" = "Zertifikatsdetails";
 "enroll_e2ei_certificate.ok_button" = "OK";
+"enroll_e2ei_certificate.idp_url_title" = "Identity-Provider-URL";
 
 // Update e2ei certificate
 "update_e2ei_certificate.title" = "Zertifikat aktualisiert";
