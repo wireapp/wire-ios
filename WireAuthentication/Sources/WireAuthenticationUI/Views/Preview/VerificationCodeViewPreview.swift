@@ -30,10 +30,10 @@ public struct VerificationCodeView_Previews: View {
 
     public var body: some View {
         NavigationStack {
-            VerificationCodeView(factory: FakeVerificationCodeFactory(
+            VerificationCodeView(factory: { FakeVerificationCodeFactory(
                 email: "name.name@mail.com",
                 password: "password"
-            ))
+            ) })
         }
     }
 

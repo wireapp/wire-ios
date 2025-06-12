@@ -37,7 +37,7 @@ package struct VerificationCodeView: View {
     private typealias Strings = L10n.Localizable
 
     package init(
-        factory: @autoclosure @escaping () -> VerificationCodeFactory
+        factory: @escaping () -> VerificationCodeFactory
     ) {
         self._viewModel = StateObject(wrappedValue: factory().viewModel)
     }
@@ -92,9 +92,9 @@ package struct VerificationCodeView: View {
             switch $0 {
             case let .noHistory(authenticationResult):
                 NoHistoryView(
-                    factory: viewModel.factory.noHistoryFactory(
+                    factory: { viewModel.factory.noHistoryFactory(
                         authenticationResult: authenticationResult
-                    )
+                    ) }
                 )
             }
         }

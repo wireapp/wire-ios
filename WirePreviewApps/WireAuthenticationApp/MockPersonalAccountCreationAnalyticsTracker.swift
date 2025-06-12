@@ -19,21 +19,21 @@
 import WireAuthenticationAPI
 
 struct MockPersonalAccountCreationAnalyticsTracker: PersonalAccountCreationAnalyticsTrackerProtocol {
-    
-    func setUp() { }
 
-    func tearDown() { }
+    func setUp() {}
 
-    func trackPersonalAccountCreationStart(multiplePasswordAttemptsNeeded: Bool) { }
+    func tearDown() {}
 
-    func trackPersonalAccountCreationReachedTermsOfUseConfirmation() { }
+    func trackPersonalAccountCreationStart(multiplePasswordAttemptsNeeded: Bool) {}
 
-    func trackPersonalAccountCreationReachedVerificationCode() { }
+    func trackPersonalAccountCreationReachedTermsOfUseConfirmation() {}
 
-    func trackPersonalAccountCreationFailedCodeVerification() { }
+    func trackPersonalAccountCreationReachedVerificationCode() {}
 
-    func trackPersonalAccountCreationReachedUsernameForm() { }
+    func trackPersonalAccountCreationFailedCodeVerification() {}
 
-    func trackPersonalAccountCreationCompletion() { }
+    func trackPersonalAccountCreationReachedUsernameForm() {}
+
+    func trackPersonalAccountCreationCompletion() {}
 
 }

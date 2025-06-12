@@ -43,7 +43,7 @@ struct FakeDetermineAuthMethodFactory: DetermineAuthMethodFactory,
         viewModel.emailOrSSOCode = emailOrSSOCode
         return viewModel
     }
-    
+
     func destinationView(for destination: DetermineAuthMethodDestination) -> AnyView {
         fatalError()
     }

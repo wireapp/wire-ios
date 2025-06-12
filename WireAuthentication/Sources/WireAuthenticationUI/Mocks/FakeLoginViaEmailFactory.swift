@@ -25,7 +25,7 @@ struct FakeLoginViaEmailFactory: LoginViaEmailFactory, CreateAuthenticationResul
     LoginViaEmailUseCaseFactory, SubmitProxyCredentialsUseCaseFactory, ValidateEmailUseCaseFactory {
 
     var mockDependencies = MockDependencies()
-    
+
     var email: String?
     var backendInfo: BackendInfo
     var canCreateAccount: Bool
@@ -42,7 +42,7 @@ struct FakeLoginViaEmailFactory: LoginViaEmailFactory, CreateAuthenticationResul
             onCreateAccount: {}
         )
     }
-    
+
     func destinationView(for destination: LoginViaEmailDestination) -> AnyView {
         fatalError()
     }

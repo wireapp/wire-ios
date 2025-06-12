@@ -26,7 +26,7 @@ package struct NoHistoryView: View {
     private typealias Strings = L10n.Localizable.Authentication
 
     package init(
-        factory: @autoclosure @escaping () -> NoHistoryFactory
+        factory: @escaping () -> NoHistoryFactory
     ) {
         self._viewModel = StateObject(wrappedValue: factory().viewModel)
     }

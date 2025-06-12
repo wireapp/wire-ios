@@ -31,7 +31,7 @@ package protocol DetermineAuthMethodFactory {
 package struct DetermineAuthMethodView: View {
 
     @StateObject var viewModel: DetermineAuthMethodViewModel
-    
+
     private typealias Strings = L10n.Localizable.Authentication
 
     package init(factory: @autoclosure @escaping () -> any DetermineAuthMethodFactory) {

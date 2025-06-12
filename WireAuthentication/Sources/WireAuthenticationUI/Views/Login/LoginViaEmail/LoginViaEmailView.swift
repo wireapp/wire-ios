@@ -24,7 +24,7 @@ import WireReusableUIComponents
 package protocol LoginViaEmailFactory {
 
     @MainActor var viewModel: LoginViaEmailViewModel { get }
-    
+
     func destinationView(for destination: LoginViaEmailDestination) -> AnyView
 }
 
@@ -35,7 +35,7 @@ package struct LoginViaEmailView: View {
     private typealias Strings = L10n.Localizable
 
     package init(
-        factory: @autoclosure @escaping () -> any LoginViaEmailFactory
+        factory: @escaping () -> any LoginViaEmailFactory
     ) {
         self._viewModel = StateObject(wrappedValue: factory().viewModel)
     }

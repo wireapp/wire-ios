@@ -81,7 +81,7 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
 extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
 
     // MARK: Factory
-    
+
     @MainActor
     func destinationView(for destination: DetermineAuthMethodDestination) -> AnyView {
         switch destination {
@@ -90,25 +90,27 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
             didDetectDomainConflict,
             backendInfo
         ):
-            AnyView(LoginViaEmailView(factory: self.loginViaEmailFactory(
+            AnyView(LoginViaEmailView(factory: { [unowned self] in loginViaEmailFactory(
                 email: email,
                 canCreateAccount: false,
                 didDetectDomainConflict: didDetectDomainConflict,
                 backendInfo: backendInfo
-            )))
+            ) }))
         case let .loginOrRegister(
             email,
             didDetectDomainConflict,
             backendInfo
         ):
-            AnyView(LoginViaEmailView(factory: self.loginViaEmailFactory(
+            AnyView(LoginViaEmailView(factory: { [unowned self] in loginViaEmailFactory(
                 email: email,
                 canCreateAccount: true,
                 didDetectDomainConflict: didDetectDomainConflict,
                 backendInfo: backendInfo
-            )))
+            ) }))
         case let .noHistory(authenticationResult):
-            AnyView(NoHistoryView(factory: self.noHistoryFactory(authenticationResult: authenticationResult)))
+            AnyView(NoHistoryView(factory: { [unowned self] in
+                noHistoryFactory(authenticationResult: authenticationResult)
+            }))
         }
     }
 

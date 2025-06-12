@@ -93,7 +93,7 @@ final class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> 
 extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
 
     // MARK: - Factory
-    
+
     @MainActor
     func destinationView(for destination: LoginViaEmailDestination) -> AnyView {
         switch destination {
@@ -103,18 +103,22 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
             proxyCredentials
         ):
             AnyView(VerificationCodeView(
-                factory: self.verificationCodeFactory(
-                    email: email,
-                    password: password,
-                    proxyCredentials: proxyCredentials
-                )
+                factory: { [unowned self] in
+                    verificationCodeFactory(
+                        email: email,
+                        password: password,
+                        proxyCredentials: proxyCredentials
+                    )
+                }
             ))
         case let .noHistory(authenticationResult):
-            AnyView(NoHistoryView(
-                factory: self.noHistoryFactory(
-                    authenticationResult: authenticationResult
+            AnyView(
+                NoHistoryView(
+                    factory: { [unowned self] in
+                        noHistoryFactory(authenticationResult: authenticationResult)
+                    }
                 )
-            ))
+            )
         }
     }
 
