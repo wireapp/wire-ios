@@ -195,7 +195,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                         await acknowledgeEnvelope(envelope, through: pushChannel)
 
                         await processEnvelope(envelope)
-
+                        
                         // finish
                         await deleteEnvelope(envelope, at: index)
                         await store.calculateLastUnreadMessages()
