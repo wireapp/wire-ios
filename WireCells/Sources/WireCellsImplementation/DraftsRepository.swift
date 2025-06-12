@@ -28,6 +28,7 @@ package protocol DraftsRepositoryProtocol: Actor {
     func add(assetURL: URL, assetSize: Int, cellName: String, fileName: String, fileType: UTType?) async
     func drafts(for cellName: String) -> AsyncStream<[WireCellsDraft]>
     func publishAll(for cellName: String) async throws
+    func clearPublished(for cellName: String)
 
 }
 
@@ -72,7 +73,8 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
             fileType: fileType,
             status: .uploading(progress: 0),
             name: fileName,
-            bytes: assetSize
+            bytes: assetSize,
+            mimeType: nil
         )
         drafts.value[cellName, default: [:]][draft.id] = draft
 
@@ -93,6 +95,12 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
                 setStatus(status, cellName: cellName, id: draft.id)
             }
 
+            // Set post upload values
+            let latestNode = try await nodesAPI.getNode(nodeUUID: draft.id.uuid)
+            if let mimeTime = latestNode.mimeType {
+                drafts.value[cellName]?[draft.id]?.mimeType = mimeTime
+            }
+
         } catch {
             setStatus(.failed(error: WireCellsUploadError(error)), cellName: cellName, id: draft.id)
         }
@@ -102,7 +110,7 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
         let continuationID = UUID()
         let (stream, continuation) = AsyncStream.makeStream(
             of: [WireCellsDraft].self,
-            bufferingPolicy: .bufferingOldest(0)
+            bufferingPolicy: .bufferingNewest(1)
         )
 
         let cancellable = drafts.sink { drafts in
@@ -164,6 +172,10 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
         guard self.drafts.value[cellName]?.areAllPublished == true else {
             throw DraftsRepositoryError.notAllFilesArePublished
         }
+    }
+
+    package func clearPublished(for cellName: String) {
+        drafts.value[cellName]?.removeAll { $0.value.status == .uploaded(isDraft: false) }
     }
 
     private func removeContinuation(for uuid: UUID) async {

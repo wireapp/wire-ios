@@ -41,8 +41,7 @@ public struct WireCellsPublicLinkID: Codable, Equatable, Hashable, Sendable {
 }
 
 public struct WireCellsNode: Equatable, Identifiable, Sendable {
-    public let id: WireCellsNodeID
-
+    public let id: UUID
     public let path: String
     public let modified: UInt64?
     public let size: UInt64?
@@ -60,7 +59,6 @@ public struct WireCellsNode: Equatable, Identifiable, Sendable {
 
     package init(
         uuid: UUID,
-        versionID: UUID,
         path: String,
         modified: UInt64? = nil,
         size: UInt64? = nil,
@@ -76,7 +74,7 @@ public struct WireCellsNode: Equatable, Identifiable, Sendable {
         conversationID: WireCellsConversationID? = nil,
         publicLinkID: WireCellsPublicLinkID? = nil
     ) {
-        self.id = WireCellsNodeID(uuid: uuid, versionID: versionID)
+        self.id = uuid
         self.path = path
         self.modified = modified
         self.size = size

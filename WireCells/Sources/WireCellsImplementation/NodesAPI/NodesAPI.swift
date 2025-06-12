@@ -33,7 +33,7 @@ package protocol NodesAPIProtocol: Sendable {
         onProgressUpdate: @escaping @Sendable (UInt64) -> Void
     ) async throws
 
-    func uploadFile(path: URL, node: WireCellsNode) async -> AsyncThrowingStream<Int, any Error>
+    func uploadFile(path: URL, node: WireCellsNode, versionID: UUID) async -> AsyncThrowingStream<Int, any Error>
 
     func getFiles(
         path: String?,
@@ -93,8 +93,12 @@ package final actor NodesAPI: NodesAPIProtocol {
             : .success
     }
 
-    package func uploadFile(path: URL, node: WireCellsNode) async -> AsyncThrowingStream<Int, any Error> {
-        await awsClient.upload(path: path, node: node.toDTO())
+    package func uploadFile(
+        path: URL,
+        node: WireCellsNode,
+        versionID: UUID
+    ) async -> AsyncThrowingStream<Int, any Error> {
+        await awsClient.upload(path: path, node: node.toDTO(), versionID: versionID)
     }
 
     package func getFiles(

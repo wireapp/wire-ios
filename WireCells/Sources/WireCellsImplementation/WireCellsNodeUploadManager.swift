@@ -77,7 +77,6 @@ package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtoc
 
         let node = WireCellsNode(
             uuid: id.uuid,
-            versionID: id.versionID,
             path: resolvedPath,
             modified: nil,
             size: assetSize,
@@ -94,7 +93,7 @@ package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtoc
             publicLinkID: nil
         )
 
-        let stream = await startUpload(assetPath: assetPath, assetSize: assetSize, node: node)
+        let stream = await startUpload(assetPath: assetPath, assetSize: assetSize, nodeID: id, node: node)
 
         return (node, stream)
     }
@@ -102,28 +101,29 @@ package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtoc
     private func startUpload(
         assetPath: URL,
         assetSize: UInt64,
+        nodeID: WireCellsNodeID,
         node: WireCellsNode
     ) async -> AsyncStream<WireCellsUploadStatus> {
         let (stream, continuation) = AsyncStream.makeStream(of: WireCellsUploadStatus.self)
         let task = Task { [nodesAPI] in
-            let upload = await nodesAPI.uploadFile(path: assetPath, node: node)
+            let upload = await nodesAPI.uploadFile(path: assetPath, node: node, versionID: nodeID.versionID)
 
             do {
                 for try await progress in upload {
                     await self.updateUploadProgress(
-                        nodeID: node.id,
+                        nodeID: nodeID,
                         uploaded: UInt64(progress),
                         total: assetSize
                     )
                     continuation.yield(.uploading(progress: Float(progress) / Float(assetSize)))
                 }
-                await uploads.remove(node.id)
+                await uploads.remove(nodeID)
                 continuation.yield(WireCellsUploadStatus.uploaded(isDraft: true))
                 continuation.finish()
             } catch {
                 WireLogger.wireCells.info("Failed to upload file: \(error)")
 
-                await uploads.update(node.id) { $0.withUploadFailed() }
+                await uploads.update(nodeID) { $0.withUploadFailed() }
                 continuation.yield(WireCellsUploadStatus.failed(error: WireCellsUploadError(error)))
                 continuation.finish()
             }
@@ -137,7 +137,7 @@ package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtoc
             stream: stream
         )
 
-        await uploads.set(node.id, info: info)
+        await uploads.set(nodeID, info: info)
 
         return stream
     }
@@ -149,7 +149,7 @@ package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtoc
     package func retryUpload(nodeID: WireCellsNodeID) async {
         if let info = await uploads.get(nodeID) {
             if fileManager.fileExists(atPath: info.localPath.path) == true, let assetSize = info.node.size {
-                _ = await startUpload(assetPath: info.localPath, assetSize: assetSize, node: info.node)
+                _ = await startUpload(assetPath: info.localPath, assetSize: assetSize, nodeID: nodeID, node: info.node)
             } else {
                 await uploads.update(nodeID) { $0.withUploadFailed() }
                 info.continuation.yield(.failed(error: .fileNotFound))
