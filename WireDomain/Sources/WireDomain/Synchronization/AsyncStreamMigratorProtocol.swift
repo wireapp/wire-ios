@@ -63,7 +63,6 @@ public final class AsyncStreamMigrator: AsyncStreamMigratorProtocol {
         // 2) do an initial sync
         WireLogger.sync.debug("do initial sync")
         try await sync.perform(skipPullingLastUpdateEventID: true)
-        
 
         // 3) we're done
         WireLogger.sync.debug("ready for async stream")

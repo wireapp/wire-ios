@@ -1398,7 +1398,7 @@ extension ZMUserSession: ZMClientRegistrationStatusDelegate {
                 journal[.isAsyncStreamEnabled] = true
             }
             triggerSync()
-        }   
+        }
     }
 
     public func didFailToRegisterSelfUserClient(error: Error) {
