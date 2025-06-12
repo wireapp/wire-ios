@@ -148,7 +148,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
     }
 
     // MARK: - Helpers
-    
+
     private func receiveMessage(_ message: URLSessionWebSocketTask.Message) throws -> Element {
 
         switch message {
@@ -162,7 +162,10 @@ public final class PushChannelV2: PushChannelV2Protocol {
                     numberOfReceivedEvents += 1
                     return Element.event(element)
                 } else {
-                    WireLogger.pushChannel.debug("received web socket invalid data \(String(describing: data)), ignoring...", attributes: .pushChannelV2)
+                    WireLogger.pushChannel.debug(
+                        "received web socket invalid data \(String(describing: data)), ignoring...",
+                        attributes: .pushChannelV2
+                    )
                     throw PushChannelError.receivedInvalidMessage
                 }
             case .messagesCount:

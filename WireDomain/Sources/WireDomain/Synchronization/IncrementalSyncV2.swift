@@ -56,15 +56,21 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     }
 
     public func perform() async throws -> IncrementalSync.Token {
-        logger.debug("performing live sync v3")
+        logger.debug("performing live sync", attributes: .syncAttributes(initialSync: false))
         let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID)
 
-        logger.debug("opening new push channel v3")
+        logger.debug("opening new push channel", attributes: .syncAttributes(initialSync: false))
         syncStateSubject.send(.incrementalSyncing(.openPushChannel))
         let liveEventStream = try await pushChannel.open()
 
+        let processedEnvelopeIDs = try await processPendingEvents(pushChannel: pushChannel)
+
         let task = Task { @Sendable [self, pushChannel] in
-            await processLiveStream(liveEventStream, pushChannel: pushChannel)
+            await processLiveStream(
+                liveEventStream,
+                pushChannel: pushChannel,
+                processedEnvelopeIDs: processedEnvelopeIDs
+            )
         }
 
         return IncrementalSync.Token(task: task, closePushChannel: {
@@ -72,12 +78,83 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         })
     }
 
+    /// Process pending events from the event database that were decrypted during the NSE
+    private func processPendingEvents(pushChannel: PushChannelV2Protocol) async throws -> Set<UUID> {
+        do {
+            logger.debug("processing stored update events", attributes: .syncAttributes(initialSync: false))
+            syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
+            return try await processStoredEvents()
+        } catch {
+            logger.debug(
+                "incremental sync interrupted, tearing down...",
+                attributes: .syncAttributes(initialSync: false)
+            )
+            await pushChannel.close()
+            throw error
+        }
+
+    }
+
+    private func processStoredEvents() async throws -> Set<UUID> {
+        let batchSize: UInt = 500
+        var processedEnvelopeIDs = Set<UUID>()
+
+        while true {
+            // If we need to abort, do it before processing the next batch.
+            try Task.checkCancellation()
+
+            let envelopes = try await store.fetchStoredEventEnvelopes(limit: batchSize)
+
+            guard !envelopes.isEmpty else {
+                break
+            }
+
+            logger.debug(
+                "fetched \(envelopes.count) stored envelopes for processing",
+                attributes: .syncAttributes(initialSync: false)
+            )
+
+            for envelope in envelopes {
+                for event in envelope.events {
+                    do {
+                        logger.debug(
+                            "processing pending event: \(event.name)",
+                            attributes: .syncAttributes(initialSync: false) + [.eventEnvelopeID: envelope.id]
+                        )
+                        try await processor.processEvent(event)
+                    } catch {
+                        logger.error(
+                            "failed to process stored event, dropping: \(error)",
+                            attributes: .syncAttributes(initialSync: false) + [.eventEnvelopeID: envelope.id]
+                        )
+                    }
+                }
+            }
+
+            processedEnvelopeIDs.formUnion(envelopes.map(\.id))
+            try await store.deleteNextPendingEvents(limit: batchSize)
+            await store.calculateLastUnreadMessages()
+
+            do {
+                try await databaseSaver.save()
+            } catch {
+                logger.error(
+                    "failed to save database: \(String(describing: error))",
+                    attributes: .syncAttributes(initialSync: false)
+                )
+            }
+        }
+
+        return processedEnvelopeIDs
+    }
+
     private func processLiveStream(
         _ liveEventStream: PushChannelV2.Stream,
-        pushChannel: PushChannelV2Protocol
+        pushChannel: PushChannelV2Protocol,
+        processedEnvelopeIDs: Set<UUID>
     ) async {
-        logger.debug("handling live event stream v3")
-        syncStateSubject.send(.incrementalSyncing(.pullPendingEvents))
+        logger.debug("handling live event stream", attributes: .syncAttributes(initialSync: false))
+        syncStateSubject.send(.incrementalSyncing(.receivingLiveEvents))
         do {
             for try await element in liveEventStream {
                 logger.debug(
@@ -99,12 +176,21 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                     try await pushChannel.acknowledgeMessageCount()
                 case let .event(envelope):
                     do {
+
+                        if processedEnvelopeIDs.contains(envelope.id) {
+                            logger.debug(
+                                "live event already processed, skipping...",
+                                attributes: .syncAttributes(initialSync: false) + [.eventEnvelopeID: envelope.id]
+                            )
+                            // TODO: [WPB-17947] handle duplicate events, reacknowledge and move on
+                            // will need to store the deliveryTag...
+                            continue
+                        }
+
                         var envelope = envelope
                         envelope.events = try await decryptEnvelope(envelope)
 
                         let index = try await storeEnvelope(envelope)
-
-                        // TODO: [WPB-17947] handle duplicate events, reacknowledge and move on
 
                         await acknowledgeEnvelope(envelope, through: pushChannel)
 
