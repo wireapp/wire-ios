@@ -2188,6 +2188,26 @@ public class MockMessageLocalStoreProtocol: MessageLocalStoreProtocol {
         await mock(messageType, conversationID, conversationDomain)
     }
 
+    // MARK: - addPotentialGapSystemMessage
+
+    public var addPotentialGapSystemMessage_Invocations: [Void] = []
+    public var addPotentialGapSystemMessage_MockError: Error?
+    public var addPotentialGapSystemMessage_MockMethod: (() async throws -> Void)?
+
+    public func addPotentialGapSystemMessage() async throws {
+        addPotentialGapSystemMessage_Invocations.append(())
+
+        if let error = addPotentialGapSystemMessage_MockError {
+            throw error
+        }
+
+        guard let mock = addPotentialGapSystemMessage_MockMethod else {
+            fatalError("no mock for `addPotentialGapSystemMessage`")
+        }
+
+        try await mock()
+    }
+
     // MARK: - fetchOrCreateClientMessage
 
     public var fetchOrCreateClientMessageIdConversationSenderDate_Invocations: [(id: String, conversation: ZMConversation, sender: (id: UUID, domain: String, clientID: String?), date: Date)] = []
@@ -2325,6 +2345,21 @@ public class MockMessageLocalStoreProtocol: MessageLocalStoreProtocol {
         }
 
         await mock(messageReaction, conversation, senderID, date)
+    }
+
+    // MARK: - addMessageConfirmation
+
+    public var addMessageConfirmationInSenderIDSenderDomainDate_Invocations: [(confirmation: WireProtos.Confirmation, conversation: ZMConversation, senderID: UUID, senderDomain: String, date: Date)] = []
+    public var addMessageConfirmationInSenderIDSenderDomainDate_MockMethod: ((WireProtos.Confirmation, ZMConversation, UUID, String, Date) async -> Void)?
+
+    public func addMessageConfirmation(_ confirmation: WireProtos.Confirmation, in conversation: ZMConversation, senderID: UUID, senderDomain: String, date: Date) async {
+        addMessageConfirmationInSenderIDSenderDomainDate_Invocations.append((confirmation: confirmation, conversation: conversation, senderID: senderID, senderDomain: senderDomain, date: date))
+
+        guard let mock = addMessageConfirmationInSenderIDSenderDomainDate_MockMethod else {
+            fatalError("no mock for `addMessageConfirmationInSenderIDSenderDomainDate`")
+        }
+
+        await mock(confirmation, conversation, senderID, senderDomain, date)
     }
 
     // MARK: - updateButtonStates
@@ -3640,6 +3675,21 @@ public class MockUpdateEventsLocalStoreProtocol: UpdateEventsLocalStoreProtocol 
         }
 
         mock(id)
+    }
+
+    // MARK: - resetLastEventID
+
+    public var resetLastEventID_Invocations: [Void] = []
+    public var resetLastEventID_MockMethod: (() -> Void)?
+
+    public func resetLastEventID() {
+        resetLastEventID_Invocations.append(())
+
+        guard let mock = resetLastEventID_MockMethod else {
+            fatalError("no mock for `resetLastEventID`")
+        }
+
+        mock()
     }
 
     // MARK: - indexOfLastEventEnvelope

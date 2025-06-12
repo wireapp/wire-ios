@@ -34,7 +34,7 @@ final class PushChannelV2APIImpl: PushChannelV2API, VersionedAPI {
             .withQueryItem(name: "client", value: clientID)
             .build()
 
-        return try await pushChannelService.createNewPushChannel(request)
+        return try await pushChannelService.createPushChannelV2(request)
     }
 
 }

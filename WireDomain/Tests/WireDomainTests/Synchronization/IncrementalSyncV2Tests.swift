@@ -94,6 +94,9 @@ final class IncrementalSyncV2Tests: XCTestCase {
         pushChannel.acknowledgeEventDeliveryTagMultiple_MockMethod = { _, _ in }
         pushChannelAPI.createPushChannelClientID_MockMethod = { _ in pushChannel }
 
+        // Events stored from NSE which needs to be processed
+        store.fetchStoredEventEnvelopesLimit_MockMethod = { _ in [Scaffolding.event4] }
+
         // Some indices at which live events will be stored.
         var indices = [Int64(10)]
         store.indexOfLastEventEnvelope_MockMethod = { indices.remove(at: 0) }
@@ -121,6 +124,13 @@ final class IncrementalSyncV2Tests: XCTestCase {
 
         // When
         let token = try await sut.perform()
+
+        // Then stored events were processed
+        XCTAssertEqual(store.fetchStoredEventEnvelopesLimit_Invocations.count, 1)
+        XCTAssertEqual(processor.processEvent_Invocations.count, 1)
+        XCTAssertEqual(store.deleteNextPendingEventsLimit_Invocations.count, 1)
+
+        // When
         await token.task.value
 
         // Then push channel was created.

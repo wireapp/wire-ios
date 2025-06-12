@@ -25,9 +25,9 @@ public protocol PushChannelV2API {
     /// - Parameter clientID: The id of the self client.
     /// - Returns: A push channel.
 
-    func createPushChannel(clientID: String) async throws -> AnyNewPushChannel
+    func createPushChannel(clientID: String) async throws -> AnyPushChannelV2
 
 }
 
 // Workaround for automockable compiler error.
-public typealias AnyNewPushChannel = any PushChannelV2Protocol
+public typealias AnyPushChannelV2 = any PushChannelV2Protocol

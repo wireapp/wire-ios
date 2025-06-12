@@ -83,9 +83,6 @@ struct WebSocketNotification: Decodable {
             self.data = .messageCount(data)
         }
     }
-}
-
-extension WebSocketNotification: ToAPIModelConvertible {
 
     var messageCount: Int {
         switch data {
@@ -96,7 +93,7 @@ extension WebSocketNotification: ToAPIModelConvertible {
         }
     }
 
-    func toAPIModel() -> UpdateEventEnvelope {
+    var updateEventEnveloppe: UpdateEventEnvelope? {
         switch data {
         case let .event(eventData):
             UpdateEventEnvelope(
@@ -105,10 +102,10 @@ extension WebSocketNotification: ToAPIModelConvertible {
                 isTransient: false,
                 deliveryTag: eventData.deliveryTag
             )
-        case let .messageCount(data):
-            fatalError()
+        case .messageCount:
+            nil
         case .none:
-            fatalError()
+            nil
         }
     }
 }

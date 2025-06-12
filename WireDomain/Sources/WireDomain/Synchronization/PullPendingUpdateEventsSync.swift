@@ -115,7 +115,7 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
 
                 if let lastEnvelopeID {
                     // We keep track of the last event id so next time we fetch
-                    // only new events. We don't track tranisent events because
+                    // only new events. We don't track transient events because
                     // these events aren't stored in the backend.
                     WireLogger.sync.debug("storing last event id", attributes: [.eventEnvelopeID: lastEnvelopeID])
                     store.storeLastEventID(id: lastEnvelopeID)

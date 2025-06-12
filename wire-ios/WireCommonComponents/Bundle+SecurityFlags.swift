@@ -39,6 +39,10 @@ public enum SecurityFlags {
 
     case minTLSVersion
 
+    /// Whether an embedded user agent should be used for IDP authentication.
+
+    case useEmbeddedIDPUserAgent
+
     var bundleKey: String {
         switch self {
         case .maxNumberAccounts:
@@ -65,6 +69,8 @@ public enum SecurityFlags {
             "ClipboardEnabled"
         case .collapseOwnMessages:
             "CollapseOwnMessages"
+        case .useEmbeddedIDPUserAgent:
+            "UseEmbeddedIDPUserAgent"
         }
     }
 

@@ -20,5 +20,5 @@ import Foundation
 enum AcknowledgmentType: String, Encodable {
     case fullSync = "ack_full_sync"
     case messageCount = "ack_message_count"
-    case ack
+    case event = "ack"
 }
