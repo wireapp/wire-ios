@@ -39,7 +39,8 @@ package struct RegisterPersonalAccountUseCase: RegisterPersonalAccountUseCasePro
                 email: email,
                 emailCode: verificationCode,
                 name: name,
-                password: password
+                password: password,
+                label: UUID().uuidString
             )
         } catch AuthenticationAPIError.RegistrationError.invalidEmail {
             throw RegisterPersonalAccountUseCaseError.invalidEmail

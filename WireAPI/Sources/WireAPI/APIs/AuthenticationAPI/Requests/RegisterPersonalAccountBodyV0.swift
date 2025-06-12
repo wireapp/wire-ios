@@ -24,7 +24,7 @@ struct RegisterPersonalAccountBodyV0: Encodable {
     let accentId: Int16 = AccentColor.default.rawValue
     let email: String
     let emailCode: String
-    let label: String = UUID().uuidString
+    let label: String
     let locale: String
     let name: String
     let password: String

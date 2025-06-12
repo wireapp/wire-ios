@@ -237,7 +237,8 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
         email: String,
         emailCode: String,
         name: String,
-        password: String
+        password: String,
+        label: String
     ) async throws -> ([HTTPCookie], UUID?) {
         let path = "\(pathPrefix)/register"
 
@@ -245,6 +246,7 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
             RegisterPersonalAccountBodyV0(
                 email: email,
                 emailCode: emailCode,
+                label: label,
                 locale: Locale.formattedLocaleIdentifier,
                 name: name,
                 password: password
