@@ -113,16 +113,13 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
 
     public func fetchStoredEventEnvelopes(
         limit: UInt
-    ) async throws -> [UpdateEventEnvelope] {
-        try await eventContext.perform { [eventContext, updateEventCoder] in
+    ) async throws -> [StoredUpdateEventEnvelope] {
+        try await eventContext.perform { [eventContext] in
             do {
                 let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
                 request.fetchLimit = Int(limit)
                 request.returnsObjectsAsFaults = false
-                let storedEventEnvelopes = try eventContext.fetch(request)
-                return try storedEventEnvelopes.map {
-                    try updateEventCoder.decode($0.data)
-                }
+                return try eventContext.fetch(request)
             } catch {
                 throw Error.failedToFetchStoredEvents(error)
             }
@@ -130,19 +127,29 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
     }
 
     public func deleteNextPendingEvents(
-        limit: UInt
+        with objectIDs: [NSManagedObjectID]
     ) async throws {
         try await eventContext.perform { [eventContext] in
-            do {
-                let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
-                request.fetchLimit = Int(limit)
-                let storedEventEnvelopes = try eventContext.fetch(request)
-                WireLogger.sync.debug("deleting \(storedEventEnvelopes.count) stored envelopes")
-                storedEventEnvelopes.forEach(eventContext.delete)
-                try eventContext.save()
-            } catch {
-                throw Error.failedToDeleteStoredEvents(error)
+            let deleteRequest = NSBatchDeleteRequest(objectIDs: objectIDs)
+            deleteRequest.resultType = .resultTypeObjectIDs
+            let batchDelete = try eventContext.execute(deleteRequest) as? NSBatchDeleteResult
+
+            guard let deleteResult = batchDelete?.result as? [NSManagedObjectID] else {
+                return assertionFailure(
+                    "batch deletion result should be of NSManagedObjectID type"
+                )
             }
+
+            WireLogger.sync.debug("deleting \(objectIDs.count) stored envelopes")
+
+            let deletedObjects: [AnyHashable: Any] = [
+                NSDeletedObjectsKey: deleteResult
+            ]
+
+            NSManagedObjectContext.mergeChanges(
+                fromRemoteContextSave: deletedObjects,
+                into: [eventContext]
+            )
         }
     }
 

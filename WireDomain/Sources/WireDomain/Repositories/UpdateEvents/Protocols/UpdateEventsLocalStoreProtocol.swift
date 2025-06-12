@@ -18,6 +18,7 @@
 
 import Foundation
 import WireAPI
+import WireDataModel
 
 // sourcery: AutoMockable
 public protocol UpdateEventsLocalStoreProtocol {
@@ -67,13 +68,13 @@ public protocol UpdateEventsLocalStoreProtocol {
 
     func fetchStoredEventEnvelopes(
         limit: UInt
-    ) async throws -> [UpdateEventEnvelope]
+    ) async throws -> [StoredUpdateEventEnvelope]
 
     /// Deletes next pending events locally.
-    /// - parameter limit: A fetch limit.
+    /// - parameter objectIDs: The `StoredUpdateEventEnvelope` object IDs to delete.
 
     func deleteNextPendingEvents(
-        limit: UInt
+        with objectIDs: [NSManagedObjectID]
     ) async throws
 
     /// Delete the event envelope with the given index.

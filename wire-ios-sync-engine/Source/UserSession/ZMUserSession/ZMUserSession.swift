@@ -1137,7 +1137,9 @@ extension ZMUserSession: SyncAgentDelegate {
         syncContext.performGroupedBlock { [weak self] in
             guard let self else { return }
             WireLogger.sync.debug("did finish incremental sync")
-            processLegacyEvents()
+            if !journal[.isSyncV2Enabled] {
+                processLegacyEvents()
+            }
 
             NotificationInContext(
                 name: .quickSyncCompletedNotification,

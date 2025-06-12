@@ -20,6 +20,7 @@ import Combine
 import Foundation
 import WireAPI
 import WireLogging
+import WireUpdateEventCoding
 
 public struct IncrementalSync: IncrementalSyncProtocol {
 
@@ -38,6 +39,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
     private let syncStateSubject: CurrentValueSubject<SyncState, Never>
     private let logger = WireLogger.sync
     private let journal: Journal
+    private let updateEventCoder = StorableUpdateEventCoder()
 
     public init(
         selfClientID: String,
@@ -246,7 +248,11 @@ public struct IncrementalSync: IncrementalSyncProtocol {
             // If we need to abort, do it before processing the next batch.
             try Task.checkCancellation()
 
-            let envelopes = try await updateEventsStore.fetchStoredEventEnvelopes(limit: batchSize)
+            let storedEnvelopes = try await updateEventsStore.fetchStoredEventEnvelopes(limit: batchSize)
+
+            let envelopes = try storedEnvelopes.map {
+                try updateEventCoder.decode($0.data)
+            }
 
             guard !envelopes.isEmpty else {
                 break
@@ -272,7 +278,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
             }
 
             processedEnvelopeIDs.formUnion(envelopes.map(\.id))
-            try await updateEventsStore.deleteNextPendingEvents(limit: batchSize)
+            try await updateEventsStore.deleteNextPendingEvents(with: storedEnvelopes.map(\.objectID))
             await updateEventsStore.calculateLastUnreadMessages()
 
             do {
