@@ -361,10 +361,10 @@ final class ConversationInputBarViewController: UIViewController,
         self.networkStatusObservable = networkStatusObservable
         self.fileMetaDataGenerator = FileMetaDataGenerator.shared
         self.wireCellsUploadDraftUseCase = wireCellsAssembly.makeUploadDraftUseCase(
-            cellName: "" // Pass in correct cell name.
+            cellName: conversation.wireCellName
         )
         self.wireCellsObserveDraftsUseCase = wireCellsAssembly.makeObserveDraftsUseCase(
-            cellName: "" // Pass in correct cell name.
+            cellName: conversation.wireCellName
         )
 
         super.init(nibName: nil, bundle: nil)
