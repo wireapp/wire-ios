@@ -54,15 +54,3 @@ public struct ClientUpdate: Equatable, Sendable {
         self.preKeys = preKeys
     }
 }
-
-extension ClientUpdate: Encodable {
-
-    enum CodingKeys: String, CodingKey {
-        case label
-        case lastKey = "last_key"
-        case preKeys = "prekeys"
-        case mlsPublicKeys = "mls_public_keys"
-        case capabilities
-
-    }
-}

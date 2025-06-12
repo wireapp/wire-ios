@@ -71,7 +71,7 @@ class UserClientsAPIV0: UserClientsAPI, VersionedAPI {
     }
 
     func updateClient(id: UserClientID, payload: ClientUpdate) async throws {
-        let body = try JSONEncoder.defaultEncoder.encode(payload)
+        let body = try JSONEncoder.defaultEncoder.encode(payload.toAPIModel())
 
         let path = "\(pathPrefix)/clients/\(id)"
 
@@ -211,4 +211,50 @@ struct OtherUserClientsV0: Decodable, ToAPIModelConvertible {
         }
     }
 
+}
+
+struct ClientUpdateV0: Equatable, Sendable, Encodable {
+
+    enum CodingKeys: String, CodingKey {
+        case label
+        case lastKey = "last_key"
+        case preKeys = "prekeys"
+        case mlsPublicKeys = "mls_public_keys"
+        case capabilities
+
+    }
+
+    /// The capabilities of the client.
+    /// - Note: capabilities cannot be removed once added to a client,
+    ///  so once 1 capability added it must always be present
+    let capabilities: [UserClientCapability]?
+
+    /// A label describing the client.
+
+    let label: String?
+
+    /// The last resort Prekey
+
+    let lastKey: Prekey?
+
+    /// The mls public keys for the client.
+
+    let mlsPublicKeys: MLSPublicKeys?
+
+    /// New prekeys for other clients to establish OTR sessions.
+
+    let preKeys: [Prekey]?
+}
+
+extension ClientUpdate: ToAPIModelConvertible {
+
+    func toAPIModel() -> ClientUpdateV0 {
+        ClientUpdateV0(
+            capabilities: capabilities,
+            label: label,
+            lastKey: lastKey,
+            mlsPublicKeys: mlsPublicKeys,
+            preKeys: preKeys
+        )
+    }
 }
