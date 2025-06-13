@@ -36,6 +36,7 @@ public struct DatabaseSaver: DatabaseSaverProtocol {
 
     public func save() async throws {
         try await context.perform {
+            guard context.hasChanges else { return }
             try context.save()
         }
     }
