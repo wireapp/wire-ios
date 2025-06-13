@@ -35,7 +35,8 @@ public protocol AppendMultipartMessageUseCaseProtocol {
 
 public struct AppendMultipartMessageUseCase: AppendMultipartMessageUseCaseProtocol {
 
-    weak var analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?
+    // TODO: [WPB-18168] Can we avoid making this weak? There has to be a better way.
+    private weak var analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?
 
     public init(analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?) {
         self.analyticsEventTracker = analyticsEventTracker
