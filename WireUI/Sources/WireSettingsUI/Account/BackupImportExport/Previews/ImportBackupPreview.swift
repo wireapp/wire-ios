@@ -17,13 +17,14 @@
 //
 
 import SwiftUI
+import WireFoundation
 
 @MainActor
 func ImportBackupPreview() -> some View {
     List {
         ImportBackupView(
             viewModel: ImportBackupViewModel(
-                importBackupUseCase: PreviewImportBackupUseCase(),
+                importBackupUseCaseFactory: PreviewImportBackupUseCaseFactory(),
                 logger: PreviewLogger()
             )
         )

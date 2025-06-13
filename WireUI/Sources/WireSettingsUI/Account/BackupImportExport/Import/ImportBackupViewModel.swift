@@ -24,7 +24,7 @@ import WireLogging
 @MainActor
 final class ImportBackupViewModel: ObservableObject {
 
-    let importBackupUseCase: any ImportBackupUseCaseProtocol
+    let importBackupUseCaseFactory: any ImportBackupUseCaseFactoryProtocol
 
     private var state: ImportBackupState? {
         didSet { updatePublishedProperties() }
@@ -49,10 +49,10 @@ final class ImportBackupViewModel: ObservableObject {
     private typealias Strings = L10n.Localizable.ImportBackup
 
     init(
-        importBackupUseCase: any ImportBackupUseCaseProtocol,
+        importBackupUseCaseFactory: any ImportBackupUseCaseFactoryProtocol,
         logger: any LoggerProtocol
     ) {
-        self.importBackupUseCase = importBackupUseCase
+        self.importBackupUseCaseFactory = importBackupUseCaseFactory
         self.logger = logger
     }
 
@@ -87,14 +87,6 @@ final class ImportBackupViewModel: ObservableObject {
                 }
 
                 importBackup(from: copy, password: "")
-                // TODO: show alert for legacy restore
-//                alertContent = .init(
-//                    title: Strings.OverwriteConfirmation.title,
-//                    message: Strings.OverwriteConfirmation.message,
-//                    cancel: Strings.OverwriteConfirmation.cancel,
-//                    action: Strings.OverwriteConfirmation.proceed
-//                )
-//                state = .requestConfirmation(url: copy)
             }
         } catch {
             logger.error("failed to pick backup file to restore: " + String(reflecting: error))
@@ -122,9 +114,23 @@ final class ImportBackupViewModel: ObservableObject {
         importTask?.cancel()
         importTask = Task {
             do {
+                let importBackupUseCase = try importBackupUseCaseFactory.importBackupUseCase(for: url)
+
+
+                // TODO: show alert for legacy restore
+                importBackupUseCase.isImportDestructive
+//                alertContent = .init(
+//                    title: Strings.OverwriteConfirmation.title,
+//                    message: Strings.OverwriteConfirmation.message,
+//                    cancel: Strings.OverwriteConfirmation.cancel,
+//                    action: Strings.OverwriteConfirmation.proceed
+//                )
+//                state = .requestConfirmation(url: copy)
+
+
                 backupPassword = password
                 state = .importingBackup(current: 0, total: 0)
-                for try await update in importBackupUseCase.invoke(url: url, password: password) {
+                for try await update in importBackupUseCase.invoke(password: password) {
                     switch update {
                     case let .progress(current, total):
                         state = .importingBackup(current: current, total: total)
