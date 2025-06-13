@@ -21,6 +21,7 @@ import UserNotifications
 import WireAccountImageUI
 import WireCommonComponents
 import WireDataModel
+import WireDomain
 import WireFoundation
 import WireLogging
 import WireMainNavigationUI
@@ -217,7 +218,7 @@ extension ConversationListViewController.ViewModel {
             // Therefore only update the account if the accountManager's accounts still contains the instance we have.
             if let self,
                let accountManager = notification.object as? AccountManager,
-               accountManager.accounts.contains(account),
+               accountManager.account(with: account.userIdentifier) != nil,
                accountManager.selectedAccount == account,
                !account.userName.isEmpty {
                 updateAccountImage()

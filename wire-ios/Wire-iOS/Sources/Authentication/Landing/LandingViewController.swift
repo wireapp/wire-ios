@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireDomain
 import WireSyncEngine
 import WireSystem
 import WireTransport
