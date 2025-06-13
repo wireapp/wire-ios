@@ -26,6 +26,7 @@ protocol ShowNotificationDependency: Dependency {
     var accountManager: AccountManager { get }
     var selectedAccount: Account { get }
     var conversationLocalStore: any ConversationLocalStoreProtocol { get }
+    var databaseSaver: any DatabaseSaverProtocol { get }
 }
 
 protocol ShowNotificationStepProtocol {
@@ -43,7 +44,8 @@ final class ShowNotificationStep: Component<ShowNotificationDependency>, ShowNot
             contentHandler: dependency.contentHandler,
             conversationLocalStore: dependency.conversationLocalStore,
             selectedAccount: dependency.selectedAccount,
-            accountManager: dependency.accountManager
+            accountManager: dependency.accountManager,
+            databaseSaver: dependency.databaseSaver
         )
 
         try await showNotificationUseCase.invoke(
