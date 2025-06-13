@@ -76,19 +76,13 @@ public protocol AuthenticationAPI: Sendable {
     ///   - emailCode: Activation code
     ///   - name: Full user name
     ///   - password: Password
+    /// - Returns: HTTP cookie and user ID.
     func registerAccount(
         email: String,
         emailCode: String,
         name: String,
         password: String,
         label: String
-    /// - Returns: The abcd and efgh.
-
-    func registerAccount(
-        email: String,
-        emailCode: String,
-        name: String,
-        password: String
-    ) async throws -> (abcd: [HTTPCookie], efgh: UUID?)
+    ) async throws -> (cookie: [HTTPCookie], userId: UUID?)
 
 }

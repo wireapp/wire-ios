@@ -239,7 +239,7 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
         name: String,
         password: String,
         label: String
-    ) async throws -> ([HTTPCookie], UUID?) {
+    ) async throws -> (cookie: [HTTPCookie], userId: UUID?) {
         let path = "\(pathPrefix)/register"
 
         let body = try JSONEncoder.defaultEncoder.encode(
