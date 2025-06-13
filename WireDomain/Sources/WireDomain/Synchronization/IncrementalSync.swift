@@ -82,12 +82,15 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 syncStateSubject.send(.incrementalSyncing(.pullPendingEvents))
                 try await updateEventsSync.pull()
 
-                logger.debug("processing stored update events")
+                logger.debug("processing stored update events", attributes: .syncAttributes(initialSync: false))
                 syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
                 processedEnvelopeIDs = try await processStoredEvents()
             } catch {
                 func tearDown() async {
-                    logger.debug("incremental sync interrupted, tearing down...")
+                    logger.debug(
+                        "incremental sync interrupted, tearing down...",
+                        attributes: .syncAttributes(initialSync: false)
+                    )
                     await pushChannel.close()
                 }
 

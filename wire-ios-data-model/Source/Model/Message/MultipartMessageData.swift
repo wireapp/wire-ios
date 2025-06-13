@@ -16,28 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import CoreData
-import Foundation
+// TODO: [WPB-16311] This is currently just a stub and needs to be implemented properly.
+public final class MultipartMessageData: NSObject {
 
-// sourcery: AutoMockable
-public protocol DatabaseSaverProtocol {
-
-    func save() async throws
-
-}
-
-public struct DatabaseSaver: DatabaseSaverProtocol {
-
-    private let context: NSManagedObjectContext
-
-    public init(context: NSManagedObjectContext) {
-        self.context = context
+    public struct Attachment {
+        public let fileName: String
     }
 
-    public func save() async throws {
-        try await context.perform {
-            guard context.hasChanges else { return }
-            try context.save()
+    public let attachments: [Attachment]
+
+    init(multipart: Multipart) {
+        self.attachments = multipart.attachments.map { attachment in
+            Attachment(
+                fileName: URL(string: attachment.cellAsset.initialName)?.lastPathComponent ?? "Unknown file name"
+            )
         }
     }
 

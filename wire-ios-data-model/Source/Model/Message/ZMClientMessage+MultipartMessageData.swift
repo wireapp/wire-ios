@@ -16,28 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import CoreData
 import Foundation
 
-// sourcery: AutoMockable
-public protocol DatabaseSaverProtocol {
+public extension ZMClientMessage {
 
-    func save() async throws
-
-}
-
-public struct DatabaseSaver: DatabaseSaverProtocol {
-
-    private let context: NSManagedObjectContext
-
-    public init(context: NSManagedObjectContext) {
-        self.context = context
-    }
-
-    public func save() async throws {
-        try await context.perform {
-            guard context.hasChanges else { return }
-            try context.save()
+    override var multipartMessageData: MultipartMessageData? {
+        switch underlyingMessage?.content {
+        case let .multipart(multipart):
+            MultipartMessageData(multipart: multipart)
+        default:
+            nil
         }
     }
 
