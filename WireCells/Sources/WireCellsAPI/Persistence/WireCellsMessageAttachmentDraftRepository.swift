@@ -17,7 +17,7 @@
 //
 
 import CellsSDK
-import Foundation
+public import Foundation
 
 public enum MessageAttachmentDraftRepositoryError: Error, Sendable {
     case genericError(any Error)
@@ -31,6 +31,7 @@ public protocol WireCellsMessageAttachmentDraftRepository {
     func add(
         conversationID: WireCellsConversationID,
         node: WireCellsNode,
+        versionID: UUID,
         mimeType: String,
         dataPath: String,
         metadata: WireCellsAssetMetadata?,

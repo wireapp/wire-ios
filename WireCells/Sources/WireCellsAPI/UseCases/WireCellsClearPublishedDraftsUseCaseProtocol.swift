@@ -17,10 +17,12 @@
 //
 
 import Foundation
-import WireCellsAPI
 
-extension WireCellsNodeID {
-    static func fixture() -> WireCellsNodeID {
-        WireCellsNodeID(uuid: UUID(), versionID: UUID())
-    }
+/// Use case that removes all published drafts from a given conversation. This should be called once a message is sent.
+
+public protocol WireCellsClearPublishedDraftsUseCaseProtocol {
+
+    /// Removes all published drafts from a conversation.
+
+    func invoke() async
 }

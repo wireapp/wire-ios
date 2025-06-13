@@ -358,6 +358,15 @@ public class MockConversationLike: ConversationLike {
 
     public var underlyingPrivateChannelPermission: PrivateChannelPermission!
 
+    // MARK: - wireCellName
+
+    public var wireCellName: String {
+        get { return underlyingWireCellName }
+        set(value) { underlyingWireCellName = value }
+    }
+
+    public var underlyingWireCellName: String!
+
 
     // MARK: - localParticipantsContain
 
