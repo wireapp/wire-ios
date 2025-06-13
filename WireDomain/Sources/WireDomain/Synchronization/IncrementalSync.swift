@@ -256,7 +256,9 @@ public struct IncrementalSync: IncrementalSyncProtocol {
             // If we need to abort, do it before processing the next batch.
             try Task.checkCancellation()
 
-            let envelopes = try await updateEventsStore.fetchStoredEventEnvelopes(limit: batchSize)
+            let envelopesWithObjectIDs = try await updateEventsStore.fetchStoredEventEnvelopes(limit: batchSize)
+            let envelopes = envelopesWithObjectIDs.map(\.envelope)
+            let envelopesObjectIDs = envelopesWithObjectIDs.map(\.objectID)
 
             guard !envelopes.isEmpty else {
                 break
@@ -285,7 +287,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
             }
 
             processedEnvelopeIDs.formUnion(envelopes.map(\.id))
-            try await updateEventsStore.deleteNextPendingEvents(limit: batchSize)
+            try await updateEventsStore.deleteNextPendingEvents(with: envelopesObjectIDs)
             await updateEventsStore.calculateLastUnreadMessages()
 
             do {
