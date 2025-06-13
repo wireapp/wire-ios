@@ -123,6 +123,23 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         )
     }
 
+    public func addPotentialGapSystemMessage() async throws {
+        try await context.perform { [context] in
+            guard let conversations = try context.fetch(ZMConversation.sortedFetchRequest()) as? [ZMConversation] else {
+                return
+            }
+            for conversation in conversations {
+                let offset = 0.1
+                let timestamp = conversation.lastModifiedDate?.addingTimeInterval(offset) ?? Date()
+
+                conversation.appendNewPotentialGapSystemMessage(
+                    users: conversation.localParticipants,
+                    timestamp: timestamp
+                )
+            }
+        }
+    }
+
     public func canAddMessage(
         conversation: ZMConversation,
         senderID: UUID
@@ -301,6 +318,24 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                 conversation: conversation,
                 creationDate: date,
                 inContext: context
+            )
+        }
+    }
+
+    public func addMessageConfirmation(
+        _ confirmation: WireProtos.Confirmation,
+        in conversation: ZMConversation,
+        senderID: UUID,
+        senderDomain: String,
+        date: Date
+    ) async {
+        await context.perform {
+            _ = ZMMessageConfirmation.createMessageConfirmations(
+                confirmation,
+                conversation: conversation,
+                senderUUID: senderID,
+                senderDomain: senderDomain,
+                timestamp: date
             )
         }
     }

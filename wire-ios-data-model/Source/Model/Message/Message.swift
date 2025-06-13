@@ -68,6 +68,10 @@ public extension ZMConversationMessage {
         systemMessageData != nil
     }
 
+    var isMultipart: Bool {
+        multipartMessageData != nil
+    }
+
     // Checks if message has link preview or link attachment
     // Does not check if there is Markdown links
     var hasLinks: Bool {

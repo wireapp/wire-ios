@@ -120,7 +120,7 @@ extension ConversationEventNotificationBuilder {
                     conversation
                 )
 
-            let isConversationMuted = conversationMutedMessages != .none
+            let isConversationMuted = conversationMutedMessages == .all
 
             let isSenderSelfUser = (try? await userLocalStore.isSelfUser(
                 id: senderID.uuid,

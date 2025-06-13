@@ -16,14 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+// TODO: [WPB-16311] This is currently just a stub and needs to be implemented properly.
+public final class MultipartMessageData: NSObject {
 
-/// Errors originating from `AnalyticsService`.
+    public struct Attachment {
+        public let fileName: String
+    }
 
-public enum AnalyticsServiceError: Error {
+    public let attachments: [Attachment]
 
-    /// The analytics service has not been configured.
-
-    case serviceIsNotConfigured
+    init(multipart: Multipart) {
+        self.attachments = multipart.attachments.map { attachment in
+            Attachment(
+                fileName: URL(string: attachment.cellAsset.initialName)?.lastPathComponent ?? "Unknown file name"
+            )
+        }
+    }
 
 }

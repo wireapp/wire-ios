@@ -95,6 +95,10 @@ extension PullEventsStep {
         )
     }
 
+    public var databaseSaver: any DatabaseSaverProtocol {
+        DatabaseSaver(context: dependency.coreData.syncContext)
+    }
+
     private var sharedUserDefaults: UserDefaults {
         UserDefaults(suiteName: dependency.applicationIdentifier)!
     }

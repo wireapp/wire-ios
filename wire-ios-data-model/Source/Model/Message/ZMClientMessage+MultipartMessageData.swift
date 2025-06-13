@@ -18,4 +18,15 @@
 
 import Foundation
 
-// empty for now
+public extension ZMClientMessage {
+
+    override var multipartMessageData: MultipartMessageData? {
+        switch underlyingMessage?.content {
+        case let .multipart(multipart):
+            MultipartMessageData(multipart: multipart)
+        default:
+            nil
+        }
+    }
+
+}

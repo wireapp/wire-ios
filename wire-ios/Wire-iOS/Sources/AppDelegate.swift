@@ -347,8 +347,10 @@ private extension AppDelegate {
     }
 
     private func createAppRootRouter() {
-
-        guard let sessionManager = createSessionManager() else {
+        let sessionManager: SessionManager
+        do {
+            sessionManager = try createSessionManager()
+        } catch {
             fatalError("sessionManager is not created")
         }
 
@@ -369,14 +371,20 @@ private extension AppDelegate {
         )
     }
 
-    private func createSessionManager() -> SessionManager? {
+    private func createSessionManager() throws -> SessionManager {
+        guard let appVersion = Bundle.main.infoDictionary?[kCFBundleVersionKey as String] as? String  else {
+            throw SessionManagerSetupError.missingAppVersion
+        }
+
         guard
-            let appVersion = Bundle.main.infoDictionary?[kCFBundleVersionKey as String] as? String,
             let url = Bundle.main.url(forResource: "session_manager", withExtension: "json"),
-            let configuration = SessionManagerConfiguration.load(from: url),
-            let mediaManager = AVSMediaManager.sharedInstance()
+            let configuration = SessionManagerConfiguration.load(from: url)
         else {
-            return nil
+            throw SessionManagerSetupError.missingConfiguration
+        }
+
+        guard let mediaManager = AVSMediaManager.sharedInstance() else {
+            throw SessionManagerSetupError.missingMediaManager
         }
 
         configuration.blacklistDownloadInterval = Settings.shared.blacklistDownloadInterval
@@ -386,7 +394,7 @@ private extension AppDelegate {
         // flag defined
         let maxNumberAccounts = SecurityFlags.maxNumberAccounts.intValue ?? SessionManager.defaultMaxNumberAccounts
 
-        let sessionManager = SessionManager(
+        let sessionManager = try SessionManager(
             maxNumberAccounts: maxNumberAccounts,
             appVersion: appVersion,
             mediaManager: mediaManager,
@@ -424,5 +432,14 @@ private extension AppDelegate {
     private func startAppRouter(launchOptions: LaunchOptions) {
         appRootRouter?.start(launchOptions: launchOptions)
     }
+
+}
+
+private enum SessionManagerSetupError: Error {
+
+    case missingAppVersion
+    case missingConfiguration
+    case missingMediaManager
+    case initializationFailed(any Error)
 
 }
