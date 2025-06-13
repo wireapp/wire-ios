@@ -84,7 +84,8 @@ struct OptionView: View {
                 .padding(.leading, 3)
 
             Text(option.text)
-                .font(FontSpec.bodyTwoSemibold.swiftUIFont)
+                .font(Font.textStyle(.body2))
+                .bold()
                 .foregroundStyle(Color(SemanticColors.Label.textDefault))
 
             Spacer()

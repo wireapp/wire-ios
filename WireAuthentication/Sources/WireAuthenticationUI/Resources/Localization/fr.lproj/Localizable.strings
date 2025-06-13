@@ -109,6 +109,10 @@
 "obsolete_client.alert.title" = "Mise à jour nécessaire";
 "obsolete_client.alert.message" = "You are missing out on new features.\nGet the latest version of Wire in the App Store.";
 "obsolete_client.alert.ok_button" = "Aller sur l'App Store";
+"obsolete_client.alert.switch_accounts" = "Switch Accounts";
 
 "obsolete_backend.alert.title" = "La version du serveur n'est pas supportée";
 "obsolete_backend.alert.message" = "La version du serveur n'est pas supportée par cette application. Veuillez contacter votre administrateur système.";
+
+"switching_accounts.title" = "Switch account";
+"switching_accounts.subtitle" = "Select another account on this device:";

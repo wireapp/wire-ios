@@ -21,7 +21,6 @@ import Foundation
 import WireAPI
 import WireUpdateEventCoding
 
-// sourcery: AutoMockable
 protocol UpdateEventMigratorDAOProtocol {
 
     func existsLegacyEvent() async throws -> Bool

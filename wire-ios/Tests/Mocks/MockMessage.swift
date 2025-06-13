@@ -395,6 +395,8 @@ class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage
         backingLocationMessageData
     }
 
+    var multipartMessageData: MultipartMessageData?
+
     var textMessageData: TextMessageData? {
         backingTextMessageData
     }

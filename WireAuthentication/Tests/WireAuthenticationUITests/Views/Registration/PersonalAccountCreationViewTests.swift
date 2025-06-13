@@ -16,14 +16,4 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-/// An object that tracks analytic events.
-public protocol AnalyticsEventTracker: AnyObject {
-
-    /// Track an event.
-    ///
-    /// - Parameter event: The event to track.
-
-    func trackEvent(_ event: AnalyticsEvent)
-
-}
+import Foundation

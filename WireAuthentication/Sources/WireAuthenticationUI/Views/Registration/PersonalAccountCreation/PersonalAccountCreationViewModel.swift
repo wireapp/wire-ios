@@ -18,17 +18,21 @@
 
 import SwiftUI
 import WireAuthenticationAPI
+import WireLogging
 import WireReusableUIComponents
 
 @MainActor
 package final class PersonalAccountCreationViewModel: ObservableObject {
 
-    package typealias Factory = PersonalAccountCreationFactory & RequestEmailVerificationCodeUseCaseFactory &
+    package typealias Factory =
+        PersonalAccountCreationFactory &
+        RegisterPersonalAccountUseCaseFactory &
+        RequestEmailVerificationCodeUseCaseFactory &
         ValidateEmailUseCaseFactory
 
     @Published var alert: Alert?
     @Published var isCreateTeamAccountPresented = false
-    @Published var dataUsageAgreementAccepted: Bool = false
+    @Published var dataUsageAgreementAccepted = false
     @Published var name: String = ""
     @Published var email: String
     @Published var password: String = ""
@@ -43,30 +47,33 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
     private let factory: any Factory
     package let privacyPolicyURL: URL
     private let termsOfUseURL: URL
+    package let termsOfUseURL: URL
+    package let teamAccountCreationLink: URL?
     private let passwordValidator: any PasswordValidator
     /*private*/ let personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
 
     package init(
         factory: any Factory,
+        router: any Router,
         email: String,
         privacyPolicyURL: URL,
         termsOfUseURL: URL,
+        teamAccountCreationLink: URL?,
+        passwordValidator: any PasswordValidator
         passwordValidator: any PasswordValidator,
         personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
     ) {
         self.factory = factory
+        self.router = router
         self.email = email
         self.privacyPolicyURL = privacyPolicyURL
         self.termsOfUseURL = termsOfUseURL
+        self.teamAccountCreationLink = teamAccountCreationLink
         self.passwordValidator = passwordValidator
         self.personalAccountCreationAnalyticsTracker = personalAccountCreationAnalyticsTracker
     }
 
     // MARK: - Validations
-
-    func isPasswordValid(_ password: String) -> Bool {
-        passwordValidator.isPasswordValid(password)
-    }
 
     var isEmailValid: Bool {
         factory.validateEmailUseCase().invoke(email: email) == .isValid
@@ -93,8 +100,79 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
         guard canRequestVerificationCode else {
             return
         }
-        let requestEmailVerificationCode = try await factory.requestEmailVerificationCodeUseCase()
-        return try await requestEmailVerificationCode.invoke(email: email)
+        do {
+            let requestEmailVerificationCode = try await factory.requestEmailVerificationCodeUseCase()
+            try await requestEmailVerificationCode.invoke(email: email)
+
+            router.navigate(to: PersonalAccountCreationDestination.verifyEmail(
+                email: email,
+                password: password,
+                name: name
+            ))
+        } catch {
+            WireLogger.authentication.error("request email erification code failed: \(error)")
+
+            switch error {
+            case RequestEmailVerificationCodeUseCaseFailure.invalidEmail:
+                alert = .invalidEmailForRegistration
+            case RequestEmailVerificationCodeUseCaseFailure.blacklistedEmail:
+                alert = .blacklistedEmail
+            case RequestEmailVerificationCodeUseCaseFailure.emailExists:
+                alert = .emailExists
+            case RequestEmailVerificationCodeUseCaseFailure.domainBlockedForRegistration:
+                alert = .domainBlockedForRegistration
+            default:
+                router.presentAlert(for: error)
+            }
+        }
     }
+
+    func showTermsOfUse() {
+        UIApplication.shared.open(
+            termsOfUseURL
+        )
+    }
+
+}
+
+extension Alert {
+
+    private typealias Title = L10n.Localizable.CreatePersonalAccount.Error.Title
+    private typealias Message = L10n.Localizable.CreatePersonalAccount.Error.Message
+
+    static let invalidEmailForRegistration = Alert(
+        title: Title.invalidEmail,
+        message: Message.invalidEmail
+    )
+
+    static let blacklistedEmail = Alert(
+        title: Title.blacklistedEmail,
+        message: Message.blacklistedEmail
+    )
+
+    static let emailExists = Alert(
+        title: Title.emailExists,
+        message: Message.emailExists
+    )
+
+    static let domainBlockedForRegistration = Alert(
+        title: Title.domainBlocked,
+        message: Message.domainBlocked
+    )
+
+    static let tooManyTeamMembers = Alert(
+        title: Title.tooManyTeamMembers,
+        message: Message.tooManyTeamMembers
+    )
+
+    static let userCreationRestricted = Alert(
+        title: Title.userCreationRestricted,
+        message: Message.userCreationRestricted
+    )
+
+    static let invalidCode = Alert(
+        title: Title.invalidCode,
+        message: Message.invalidCode
+    )
 
 }

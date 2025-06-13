@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireReusableUIComponents
 import WireTestingPackage
 import XCTest
 

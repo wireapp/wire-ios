@@ -22,11 +22,11 @@ import WireCellsImplementation
 
 public struct WireCellsAssembly {
 
-    // TODO: [WPB-17769] Somehow inject secrets without storing them in the code base
+    // This implementation is just for development. How authentication will be handled in production is not yet known.
     private static let credentials = WireCellsCredentials(
         serverURL: URL(string: "https://service.zeta.pydiocells.com")!,
-        accessToken: "some-access-token",
-        gatewaySecret: "some-gateway-secret"
+        accessToken: UserDefaults.standard.string(forKey: "ZMWireCellsAccessToken") ?? "unknown",
+        gatewaySecret: UserDefaults.standard.string(forKey: "ZMWireCellsGatewaySecret") ?? "unknown"
     )
 
     private static let nodesAPI = NodesAPI(credentials: credentials)

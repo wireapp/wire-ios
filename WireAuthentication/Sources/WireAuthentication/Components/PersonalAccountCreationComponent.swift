@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import NeedleFoundation
 internal import WireAuthenticationUI
 import WireAuthenticationAPI
@@ -24,16 +25,32 @@ internal import WireAuthenticationLogic
 final class PersonalAccountCreationComponent: Component<PersonalAccountCreationComponentDependency> {
 
     private let email: String
+    private let teamAccountCreationLink: URL?
 
     init(
         parent: any Scope,
-        email: String
+        email: String,
+        teamAccountCreationLink: URL?
     ) {
         self.email = email
+        self.teamAccountCreationLink = teamAccountCreationLink
         super.init(parent: parent)
     }
 
     // MARK: - Children
+
+    func verificationEmailCodeComponent(
+        email: String,
+        password: String,
+        name: String
+    ) -> VerificationEmailCodeComponent {
+        VerificationEmailCodeComponent(
+            parent: self,
+            email: email,
+            password: password,
+            name: name
+        )
+    }
 
 }
 
@@ -44,12 +61,23 @@ extension PersonalAccountCreationComponent: PersonalAccountCreationViewModel.Fac
     @MainActor var viewModel: PersonalAccountCreationViewModel {
         PersonalAccountCreationViewModel(
             factory: self,
+            router: dependency.router,
             email: email,
             privacyPolicyURL: dependency.privacyPolicyURL,
             termsOfUseURL: dependency.termsOfUseURL,
+            teamAccountCreationLink: teamAccountCreationLink,
+            passwordValidator: dependency.passwordValidator
             passwordValidator: dependency.passwordValidator,
             personalAccountCreationAnalyticsTracker: dependency.personalAccountCreationAnalyticsTracker
         )
+    }
+
+    func verificationEmailCodeFactory(
+        email: String,
+        password: String,
+        name: String
+    ) -> any VerificationEmailCodeFactory {
+        verificationEmailCodeComponent(email: email, password: password, name: name)
     }
 
     // MARK: - Use cases
@@ -61,6 +89,11 @@ extension PersonalAccountCreationComponent: PersonalAccountCreationViewModel.Fac
 
     func validateEmailUseCase() -> any ValidateEmailUseCaseProtocol {
         ValidateEmailUseCase()
+    }
+
+    func registerPersonalAccountUseCase() async throws -> any RegisterPersonalAccountUseCaseProtocol {
+        let authenticationAPI = try await dependency.networkStack.makeAuthenticationAPI()
+        return RegisterPersonalAccountUseCase(authenticationAPI: authenticationAPI)
     }
 
 }

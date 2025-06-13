@@ -34,6 +34,12 @@ public extension AttributedString {
     }
 
     static func markdown(from string: String) -> AttributedString {
-        (try? AttributedString(markdown: string)) ?? AttributedString(string)
+        var attributed = (try? AttributedString(markdown: string)) ?? AttributedString(string)
+
+        for run in attributed.runs where run.link != nil {
+            attributed[run.range].underlineStyle = .single
+        }
+
+        return attributed
     }
 }

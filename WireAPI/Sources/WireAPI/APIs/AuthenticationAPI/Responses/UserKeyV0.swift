@@ -18,4 +18,13 @@
 
 import Foundation
 
-// empty for now
+struct UserKeyV0: Decodable, ToAPIModelConvertible {
+
+    let id: UUID
+
+    func toAPIModel() -> UserKey {
+
+        UserKey(uuid: id)
+    }
+
+}

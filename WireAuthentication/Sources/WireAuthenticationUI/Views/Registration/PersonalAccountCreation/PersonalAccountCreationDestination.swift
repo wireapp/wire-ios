@@ -16,18 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAnalytics
+import Foundation
+import WireAuthenticationAPI
 
-public extension AnalyticsEvent.Segmentation.Conversation.ConversationType {
+enum PersonalAccountCreationDestination: Hashable {
 
-    init?(_ conversationType: ZMConversationType) {
-        switch conversationType {
-        case .oneOnOne:
-            self = .oneOnOne
-        case .group:
-            self = .group
-        case .invalid, .self, .connection:
-            return nil
-        }
-    }
+    case verifyEmail(email: String, password: String, name: String)
+
 }

@@ -16,14 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAnalytics
 import WireAuthenticationAPI
-import UIKit
+import WireFoundation
 
-final class PersonalAccountCreationAnalyticsTracker: PersonalAccountCreationAnalyticsTrackerProtocol {
+struct PersonalAccountCreationAnalyticsTracker: PersonalAccountCreationAnalyticsTrackerProtocol {
 
-    private var analyticsService: AnalyticsService
-    private var analyticsTracker: (any AnalyticsEventTracker)!
+private var analyticsService: AnalyticsService
+    private var analyticsTracker: (any AnalyticsEventTrackerProtocol)!
 
     init() {}
 
