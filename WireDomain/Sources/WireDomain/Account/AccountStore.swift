@@ -20,6 +20,7 @@ import Foundation
 import WireDataModel
 import WireLogging
 import WireSystem
+import WireAPI
 
 private let log = WireLogger(tag: "Accounts")
 
@@ -41,6 +42,7 @@ struct AccountStore {
 
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
+    
 
     /// Create a new `AccountStore`.
     ///
@@ -107,6 +109,39 @@ struct AccountStore {
             return false
         }
     }
+    
+    // MARK: Backend Environment
+    
+    @discardableResult
+    func storeBackendEnvironment(_ backendEnvironment: BackendEnvironment2, for accountId: UUID) -> Bool {
+        do {
+            let storedBackendEnvironment = backendEnvironment.toStored()
+            let url = backendEnvironmentUrl(for: accountId)
+            let data = try encoder.encode(storedBackendEnvironment)
+            try data.write(to: url, options: .atomic)
+            return true
+        } catch {
+            let errorDescription = error.safeForLoggingDescription
+            log.error("Unable to store account \(backendEnvironment), error: \(errorDescription)")
+            return false
+        }
+    }
+    
+    func fetchBackendEnvironment(accountId: UUID) -> BackendEnvironment2? {
+        let url = backendEnvironmentUrl(for: accountId)
+
+        guard
+            let data = try? Data(contentsOf: url),
+            let stored = try? decoder.decode(
+                StoredBackendEnvironment.self,
+                from: data
+            )
+        else {
+            return nil
+        }
+
+        return stored.toAPI()
+    }
 
     // MARK: - Delete
 
@@ -119,6 +154,20 @@ struct AccountStore {
     func deleteAccount(_ account: Account) -> Bool {
         do {
             try fileManager.removeItem(at: url(for: account.userIdentifier))
+            deleteBackgroundEnvironment(account: account)
+            return true
+        } catch {
+            let accountDescription = account.safeForLoggingDescription
+            let errorDescription = error.safeForLoggingDescription
+            log.error("Unable to delete account \(accountDescription), error: \(errorDescription)")
+            return false
+        }
+    }
+    
+    @discardableResult
+    func deleteBackgroundEnvironment(account: Account) -> Bool {
+        do {
+            try fileManager.removeItem(at: backendEnvironmentUrl(for: account.userIdentifier))
             return true
         } catch {
             let accountDescription = account.safeForLoggingDescription
@@ -161,81 +210,16 @@ struct AccountStore {
     private func url(for id: UUID) -> URL {
         directory.appendingPathComponent(id.uuidString)
     }
-
+    
+    private func backendEnvironmentUrl(for id: UUID) -> URL {
+        directory.appendingPathComponent("\(id.uuidString)-backend-environment.json")
+    }
 }
 
 private extension Error {
 
     var safeForLoggingDescription: String {
         (self as NSError).safeForLoggingDescription
-    }
-
-}
-
-private struct StoredAccount: Codable {
-
-    var identifier: UUID
-    var name: String
-    var image: Data?
-    var team: String?
-    var teamImage: Data?
-    var loginCredentials: StoredLoginCredentials?
-    var unreadConversationCount: Int
-
-    init(_ account: Account) {
-        self.identifier = account.userIdentifier
-        self.name = account.userName
-        self.image = account.imageData
-        self.team = account.teamName
-        self.teamImage = account.teamImageData
-        self.loginCredentials = account.loginCredentials.map {
-            StoredLoginCredentials($0)
-        }
-        self.unreadConversationCount = account.unreadConversationCount
-    }
-
-}
-
-private struct StoredLoginCredentials: Codable {
-
-    var emailAddress: String?
-    var hasPassword: Bool
-    var usesCompanyLogin: Bool
-
-    init(_ loginCredentials: LoginCredentials) {
-        self.emailAddress = loginCredentials.emailAddress
-        self.hasPassword = loginCredentials.hasPassword
-        self.usesCompanyLogin = loginCredentials.usesCompanyLogin
-    }
-
-}
-
-private extension Account {
-
-    convenience init(_ storedAccount: StoredAccount) {
-        self.init(
-            userName: storedAccount.name,
-            userIdentifier: storedAccount.identifier,
-            teamName: storedAccount.team,
-            imageData: storedAccount.image,
-            teamImageData: storedAccount.teamImage,
-            unreadConversationCount: storedAccount.unreadConversationCount,
-            loginCredentials: storedAccount.loginCredentials.map {
-                LoginCredentials($0)
-            }
-        )
-    }
-
-}
-
-private extension LoginCredentials {
-
-    convenience init(_ loginCredentials: StoredLoginCredentials) {
-        self.init(
-            emailAddress: loginCredentials.emailAddress,
-            hasPassword: loginCredentials.hasPassword,
-            usesCompanyLogin: loginCredentials.usesCompanyLogin
-        )
     }
 
 }

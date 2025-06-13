@@ -99,6 +99,24 @@ public struct BackendEnvironment2: Sendable {
         /// URL for the Countly analytics server.
 
         public let countlyURL: URL?
+        
+        public init(
+            restAPIURL: URL,
+            websocketURL: URL,
+            blacklistURL: URL,
+            teamsURL: URL,
+            accountsURL: URL,
+            websiteURL: URL,
+            countlyURL: URL?
+        ) {
+            self.restAPIURL = restAPIURL
+            self.websocketURL = websocketURL
+            self.blacklistURL = blacklistURL
+            self.teamsURL = teamsURL
+            self.accountsURL = accountsURL
+            self.websiteURL = websiteURL
+            self.countlyURL = countlyURL
+        }
 
     }
 
