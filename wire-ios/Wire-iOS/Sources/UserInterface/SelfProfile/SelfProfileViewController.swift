@@ -465,7 +465,7 @@ extension Account {
         return AccountUIModel(
             avatarSource: avatarSource,
             name: userName,
-            handle: "@handle",
+            handle: handle ?? "",
             // TODO: [WPB-18008] when data will be ready https://wearezeta.atlassian.net/browse/WPB-18008
             teamName: teamName,
             backendName: "Back END INFO", // TODO: [WPB-18008] https://wearezeta.atlassian.net/browse/WPB-18008

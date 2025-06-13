@@ -44,7 +44,7 @@ struct AccountView: View {
 
                     DotSeparatedTextView(
                         items: [
-                            account.handle,
+                            account.handle.isEmpty ? "" : "@\(account.handle)",
                             account.teamName,
                             account.backendName
                         ].compactMap(\.self)
@@ -73,7 +73,9 @@ private struct DotSeparatedTextView: View {
     let items: [String]
 
     var body: some View {
-        let combinedText = items.joined(separator: " • ")
+        let combinedText = items
+            .filter { !$0.isEmpty }
+            .joined(separator: " • ")
         Text(combinedText)
             .lineLimit(nil)
             .multilineTextAlignment(.leading)
@@ -89,7 +91,7 @@ private struct DotSeparatedTextView: View {
             account: AccountUIModel(
                 avatarSource: .image(.close),
                 name: "Deniz Agha",
-                handle: "@username",
+                handle: "username",
                 teamName: "team name",
                 backendName: "backend ",
                 action: {}
@@ -99,7 +101,7 @@ private struct DotSeparatedTextView: View {
             account: AccountUIModel(
                 avatarSource: .text("DS"),
                 name: "Deniz Agha",
-                handle: "@username",
+                handle: "username",
                 teamName: "team name",
                 backendName: "backend name long long long long long ",
                 action: {}
