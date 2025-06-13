@@ -52,7 +52,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         backgroundActivity = BackgroundActivityFactory.shared
         backgroundActivity.backgroundTaskTimeout = 2
         backgroundActivity.activityManager = backgroundActivityManager
-        
+
         sut = SyncAgent(
             journal: journal,
             lastUpdateEventIDRepository: lastUpdateEventIDRepository,
