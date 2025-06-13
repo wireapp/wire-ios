@@ -24,7 +24,7 @@ struct UserKeyV0: Decodable, ToAPIModelConvertible {
 
     func toAPIModel() -> UserKey {
 
-        return UserKey(uuid: uuid)
+        return UserKey(uuid: id)
     }
 
 }
