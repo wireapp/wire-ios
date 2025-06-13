@@ -20,10 +20,10 @@ import Foundation
 
 public struct UserKey {
 
-    public let uuid: UUID?
+    public let uuid: UUID
 
-    public init(uuidString: String) {
-        self.uuid = UUID(uuidString: uuidString)
+    public init(uuid: UUID) {
+        self.uuid = uuid
     }
 
 }
