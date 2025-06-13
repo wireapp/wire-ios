@@ -28,7 +28,7 @@ package protocol DraftsRepositoryProtocol: Actor {
     func add(assetURL: URL, assetSize: Int, cellName: String, fileName: String, fileType: UTType?) async
     func drafts(for cellName: String) -> AsyncStream<[WireCellsDraft]>
     func publishAll(for cellName: String) async throws
-    func clearPublished(for cellName: String)
+    func clearPublishedDrafts(for cellName: String)
 
 }
 
@@ -176,7 +176,7 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
         }
     }
 
-    package func clearPublished(for cellName: String) {
+    package func clearPublishedDrafts(for cellName: String) {
         drafts.value[cellName]?.removeAll { $0.value.status == .uploaded(isDraft: false) }
     }
 
