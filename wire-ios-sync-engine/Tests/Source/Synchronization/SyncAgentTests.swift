@@ -34,6 +34,8 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
     var incrementalSync: MockIncrementalSyncProtocol!
     var syncStateSubject: CurrentValueSubject<SyncState, Never>!
     var coreCryptoProvider: MockCoreCryptoProviderProtocol!
+    var backgroundActivity: BackgroundActivityFactory!
+    var backgroundActivityManager: MockBackgroundActivityManager!
 
     override func setUp() {
         journal = Journal(
@@ -46,6 +48,11 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         incrementalSync = MockIncrementalSyncProtocol()
         syncStateSubject = CurrentValueSubject(.idle)
         coreCryptoProvider = MockCoreCryptoProviderProtocol()
+        backgroundActivityManager = MockBackgroundActivityManager()
+        backgroundActivity = BackgroundActivityFactory.shared
+        backgroundActivity.backgroundTaskTimeout = 2
+        backgroundActivity.activityManager = backgroundActivityManager
+        
         sut = SyncAgent(
             journal: journal,
             lastUpdateEventIDRepository: lastUpdateEventIDRepository,
@@ -55,7 +62,6 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
             legacySyncStatus: legacySyncStatus,
             syncStateSubject: syncStateSubject
         )
-        BackgroundActivityFactory.shared.activityManager = UIApplication.shared
     }
 
     override func tearDown() {
@@ -66,7 +72,9 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         initialSync = nil
         incrementalSync = nil
         syncStateSubject = nil
-        BackgroundActivityFactory.shared.activityManager = nil
+        backgroundActivityManager.reset()
+        backgroundActivityManager = nil
+        backgroundActivity = nil
     }
 
     func provideInitialSync() throws -> any InitialSyncProtocol {
@@ -259,6 +267,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         incrementalSync.perform_MockMethod = {
             throw Failure.failed
         }
+        lastUpdateEventIDRepository.fetchLastEventID_MockValue = .mockID1
 
         var cancellable: AnyCancellable?
 

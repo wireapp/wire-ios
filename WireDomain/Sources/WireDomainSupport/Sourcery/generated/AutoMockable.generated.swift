@@ -3673,10 +3673,10 @@ public class MockUpdateEventsLocalStoreProtocol: UpdateEventsLocalStoreProtocol 
 
     public var fetchStoredEventEnvelopesLimit_Invocations: [UInt] = []
     public var fetchStoredEventEnvelopesLimit_MockError: Error?
-    public var fetchStoredEventEnvelopesLimit_MockMethod: ((UInt) async throws -> [(UpdateEventEnvelope, objectID: NSManagedObjectID)])?
-    public var fetchStoredEventEnvelopesLimit_MockValue: [(UpdateEventEnvelope, objectID: NSManagedObjectID)]?
+    public var fetchStoredEventEnvelopesLimit_MockMethod: ((UInt) async throws -> [(envelope: UpdateEventEnvelope, objectID: NSManagedObjectID)])?
+    public var fetchStoredEventEnvelopesLimit_MockValue: [(envelope: UpdateEventEnvelope, objectID: NSManagedObjectID)]?
 
-    public func fetchStoredEventEnvelopes(limit: UInt) async throws -> [(UpdateEventEnvelope, objectID: NSManagedObjectID)] {
+    public func fetchStoredEventEnvelopes(limit: UInt) async throws -> [(envelope: UpdateEventEnvelope, objectID: NSManagedObjectID)] {
         fetchStoredEventEnvelopesLimit_Invocations.append(limit)
 
         if let error = fetchStoredEventEnvelopesLimit_MockError {
