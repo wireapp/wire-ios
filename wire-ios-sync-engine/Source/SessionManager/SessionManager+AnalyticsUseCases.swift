@@ -24,26 +24,30 @@ public extension SessionManager {
 
     }
 
-    func makeDisableAnalyticsUseCase() throws -> DisableAnalyticsUseCaseProtocol {
-        DisableAnalyticsUseCase(
-            service: analyticsService,
-            provider: activeUserSession
-        )
+    func makeDisableAnalyticsUseCase() -> (any DisableAnalyticsUseCaseProtocol)? {
+        analyticsService.map { analyticsService in
+            DisableAnalyticsUseCase(
+                service: analyticsService,
+                provider: activeUserSession
+            )
+        }
     }
 
-    func makeEnableAnalyticsUseCase() async throws -> EnableAnalyticsUseCaseProtocol {
+    func makeEnableAnalyticsUseCase() throws -> (any EnableAnalyticsUseCaseProtocol)? {
         guard let activeUserSession else {
             throw AnalyticsError.noActiveSession
         }
 
-        return EnableAnalyticsUseCase(
-            service: analyticsService,
-            provider: activeUserSession
-        )
+        return analyticsService.map { analyticsService in
+            EnableAnalyticsUseCase(
+                service: analyticsService,
+                provider: activeUserSession
+            )
+        }
     }
 
     var canEnableTracking: Bool {
-        analyticsService.canEnableTracking
+        analyticsService != nil
     }
 
 }
