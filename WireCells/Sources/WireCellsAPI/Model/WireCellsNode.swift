@@ -18,20 +18,6 @@
 
 public import Foundation
 
-public struct WireCellsNodeID: Codable, Equatable, Hashable, Identifiable, Sendable {
-    public let uuid: UUID
-    public let versionID: UUID
-
-    public var id: String {
-        uuid.uuidString + versionID.uuidString
-    }
-
-    package init(uuid: UUID, versionID: UUID) {
-        self.uuid = uuid
-        self.versionID = versionID
-    }
-}
-
 public struct WireCellsPublicLinkID: Codable, Equatable, Hashable, Sendable {
     public let string: String
 

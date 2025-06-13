@@ -60,7 +60,7 @@ extension ConversationInputBarViewController {
                 text: text,
                 attachments: attachments.map { draft in
                     MultipartAttachment(
-                        uuid: draft.id.uuid,
+                        uuid: draft.nodeID,
                         contentType: draft.mimeType,
                         initialName: draft.name,
                         initialSize: draft.bytes,

@@ -42,19 +42,19 @@ package protocol NodesAPIProtocol: Sendable {
         offset: Int
     ) async throws -> [WireCellsNode]
 
-    func deleteFile(nodeUUID: UUID) async throws
+    func deleteFile(nodeID: UUID) async throws
 
-    func cancelDraft(nodeID: WireCellsNodeID) async throws
+    func cancelDraft(nodeID: UUID, versionID: UUID) async throws
 
-    func publishDraft(nodeID: WireCellsNodeID) async throws
+    func publishDraft(nodeID: UUID, versionID: UUID) async throws
 
-    func getPreviews(nodeUUID: UUID) async throws -> [WireCellsNodePreview]
+    func getPreviews(nodeID: UUID) async throws -> [WireCellsNodePreview]
 
-    func getNode(nodeUUID: UUID) async throws -> WireCellsNode
+    func getNode(nodeID: UUID) async throws -> WireCellsNode
 
     func deleteFiles(paths: [String]) async throws
 
-    func createPublicLink(nodeUUID: UUID, fileName: String) async throws -> WireCellsPublicLink
+    func createPublicLink(nodeID: UUID, fileName: String) async throws -> WireCellsPublicLink
 
     func getPublicLink(linkUUID: UUID) async throws -> URL
 
@@ -115,20 +115,20 @@ package final actor NodesAPI: NodesAPIProtocol {
         return response.nodes.map { $0.toModel() }
     }
 
-    package func deleteFile(nodeUUID: UUID) async throws {
-        try await restAPI.delete(uuid: nodeUUID)
+    package func deleteFile(nodeID: UUID) async throws {
+        try await restAPI.delete(uuid: nodeID)
     }
 
     package func deleteFiles(paths: [String]) async throws {
         try await restAPI.delete(paths: paths)
     }
 
-    package func publishDraft(nodeID: WireCellsNodeID) async throws {
-        try await restAPI.publishDraft(uuid: nodeID.uuid, versionID: nodeID.versionID)
+    package func publishDraft(nodeID: UUID, versionID: UUID) async throws {
+        try await restAPI.publishDraft(uuid: nodeID, versionID: versionID)
     }
 
-    package func cancelDraft(nodeID: WireCellsNodeID) async throws {
-        try await restAPI.cancelDraft(uuid: nodeID.uuid, versionID: nodeID.versionID)
+    package func cancelDraft(nodeID: UUID, versionID: UUID) async throws {
+        try await restAPI.cancelDraft(uuid: nodeID, versionID: versionID)
     }
 
     package func downloadFile(
@@ -146,20 +146,20 @@ package final actor NodesAPI: NodesAPIProtocol {
         try await awsClient.download(objectKey: cellPath, to: fileHandle, onProgressUpdate: onProgressUpdate)
     }
 
-    package func getPreviews(nodeUUID: UUID) async throws -> [WireCellsNodePreview] {
-        let dto = try await restAPI.getNode(uuid: nodeUUID)
+    package func getPreviews(nodeID: UUID) async throws -> [WireCellsNodePreview] {
+        let dto = try await restAPI.getNode(uuid: nodeID)
         return dto.previews.map {
             WireCellsNodePreview(url: $0.url, dimension: $0.dimension ?? 0)
         }
     }
 
-    package func getNode(nodeUUID: UUID) async throws -> WireCellsNode {
-        let dto = try await restAPI.getNode(uuid: nodeUUID)
+    package func getNode(nodeID: UUID) async throws -> WireCellsNode {
+        let dto = try await restAPI.getNode(uuid: nodeID)
         return dto.toModel()
     }
 
-    package func createPublicLink(nodeUUID: UUID, fileName: String) async throws -> WireCellsPublicLink {
-        try await restAPI.createPublicLink(uuid: nodeUUID, fileName: fileName)
+    package func createPublicLink(nodeID: UUID, fileName: String) async throws -> WireCellsPublicLink {
+        try await restAPI.createPublicLink(uuid: nodeID, fileName: fileName)
     }
 
     package func getPublicLink(linkUUID: UUID) async throws -> URL {

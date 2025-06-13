@@ -43,7 +43,7 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
 
     typealias CellName = String
 
-    private let drafts: CurrentValueSubject<[CellName: OrderedDictionary<WireCellsNodeID, WireCellsDraft>], Never>
+    private let drafts: CurrentValueSubject<[CellName: OrderedDictionary<UUID, WireCellsDraft>], Never>
     private var continuations: [UUID: AsyncStream<[WireCellsDraft]>.Continuation] = [:]
     private let uploadManager: any WireCellsNodeUploadManagerProtocol
     private let nodesAPI: any NodesAPIProtocol
@@ -55,7 +55,7 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
     init(
         uploadManager: any WireCellsNodeUploadManagerProtocol,
         nodesAPI: any NodesAPIProtocol,
-        drafts: [CellName: OrderedDictionary<WireCellsNodeID, WireCellsDraft>]
+        drafts: [CellName: OrderedDictionary<UUID, WireCellsDraft>]
     ) {
         self.uploadManager = uploadManager
         self.nodesAPI = nodesAPI
@@ -68,7 +68,8 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
 
     package func add(assetURL: URL, assetSize: Int, cellName: String, fileName: String, fileType: UTType?) async {
         let draft = WireCellsDraft(
-            id: .new(),
+            nodeID: UUID(),
+            versionID: UUID(),
             assetURL: assetURL,
             fileType: fileType,
             status: .uploading(progress: 0),
@@ -76,11 +77,12 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
             bytes: assetSize,
             mimeType: nil
         )
-        drafts.value[cellName, default: [:]][draft.id] = draft
+        drafts.value[cellName, default: [:]][draft.nodeID] = draft
 
         do {
             let (node, stream) = try await uploadManager.upload(
-                id: draft.id,
+                nodeID: draft.nodeID,
+                versionID: draft.versionID,
                 assetPath: assetURL,
                 assetSize: UInt64(assetSize),
                 destNodePath: "\(cellName)/\(fileName)"
@@ -88,21 +90,21 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
 
             // Update draft name if changed
             if let updatedName = URL(string: node.path)?.lastPathComponent, updatedName != draft.name {
-                drafts.value[cellName]?[draft.id]?.name = updatedName
+                drafts.value[cellName]?[draft.nodeID]?.name = updatedName
             }
 
             for await status in stream {
-                setStatus(status, cellName: cellName, id: draft.id)
+                setStatus(status, cellName: cellName, id: draft.nodeID)
             }
 
             // Set post upload values
-            let latestNode = try await nodesAPI.getNode(nodeUUID: draft.id.uuid)
+            let latestNode = try await nodesAPI.getNode(nodeID: draft.nodeID)
             if let mimeTime = latestNode.mimeType {
-                drafts.value[cellName]?[draft.id]?.mimeType = mimeTime
+                drafts.value[cellName]?[draft.nodeID]?.mimeType = mimeTime
             }
 
         } catch {
-            setStatus(.failed(error: WireCellsUploadError(error)), cellName: cellName, id: draft.id)
+            setStatus(.failed(error: WireCellsUploadError(error)), cellName: cellName, id: draft.nodeID)
         }
     }
 
@@ -144,13 +146,13 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
         }
 
         let results = await withTaskGroup(
-            of: Result<WireCellsNodeID, any Error>.self,
-            returning: [Result<WireCellsNodeID, any Error>].self
+            of: Result<UUID, any Error>.self,
+            returning: [Result<UUID, any Error>].self
         ) { [nodesAPI] group in
             for (nodeID, draft) in drafts where draft.status == .uploaded(isDraft: true) {
                 group.addTask {
                     do {
-                        try await nodesAPI.publishDraft(nodeID: nodeID)
+                        try await nodesAPI.publishDraft(nodeID: nodeID, versionID: draft.versionID)
                         return .success(nodeID)
                     } catch {
                         WireLogger.wireCells.error("Failed to publish draft: \(error)")
@@ -182,29 +184,23 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
         continuations[uuid] = nil
     }
 
-    private func setStatus(_ status: WireCellsUploadStatus, cellName: CellName, id: WireCellsNodeID) {
+    private func setStatus(_ status: WireCellsUploadStatus, cellName: CellName, id: UUID) {
         drafts.value[cellName]?[id]?.status = status
     }
 
     #if DEBUG
-        var getDraftsForTesting: [CellName: OrderedDictionary<WireCellsNodeID, WireCellsDraft>] {
+        var getDraftsForTesting: [CellName: OrderedDictionary<UUID, WireCellsDraft>] {
             drafts.value
         }
 
-        func setDraftsForTesting(_ drafts: [CellName: OrderedDictionary<WireCellsNodeID, WireCellsDraft>]) {
+        func setDraftsForTesting(_ drafts: [CellName: OrderedDictionary<UUID, WireCellsDraft>]) {
             self.drafts.value = drafts
         }
     #endif
 
 }
 
-private extension WireCellsNodeID {
-    static func new() -> WireCellsNodeID {
-        WireCellsNodeID(uuid: UUID(), versionID: UUID())
-    }
-}
-
-private extension OrderedDictionary<WireCellsNodeID, WireCellsDraft> {
+private extension OrderedDictionary<UUID, WireCellsDraft> {
     var areAllUploaded: Bool {
         allSatisfy {
             switch $0.value.status {

@@ -33,14 +33,14 @@ final class ClearPublishedDraftsUseCaseTests {
         nodesAPI: nodesAPI,
         drafts: [
             "cell-A": [
-                Scaffolding.cancelledDraft.id: Scaffolding.cancelledDraft,
-                Scaffolding.uploadingDraft.id: Scaffolding.uploadingDraft,
-                Scaffolding.uploadedDraft.id: Scaffolding.uploadedDraft,
-                Scaffolding.publishedDraft.id: Scaffolding.publishedDraft,
-                Scaffolding.failedDraft.id: Scaffolding.failedDraft
+                Scaffolding.cancelledDraft.nodeID: Scaffolding.cancelledDraft,
+                Scaffolding.uploadingDraft.nodeID: Scaffolding.uploadingDraft,
+                Scaffolding.uploadedDraft.nodeID: Scaffolding.uploadedDraft,
+                Scaffolding.publishedDraft.nodeID: Scaffolding.publishedDraft,
+                Scaffolding.failedDraft.nodeID: Scaffolding.failedDraft
             ],
             "cell-B": [
-                Scaffolding.publishedDraft.id: Scaffolding.publishedDraft
+                Scaffolding.publishedDraft.nodeID: Scaffolding.publishedDraft
             ]
         ]
     )

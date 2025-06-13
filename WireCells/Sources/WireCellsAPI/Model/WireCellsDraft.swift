@@ -16,21 +16,53 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
+public import Foundation
 package import UniformTypeIdentifiers
+
+/// Represents a draft for a file upload in WireCells.
+///
+/// When a file is uploaded to wire cells, it is first stored as a draft. A draft is not visible in conversations and
+/// is not searchable. When the user sends the file, the draft must be published so that it becomes visible in the
+/// conversation etc.
 
 public struct WireCellsDraft: Hashable, Sendable {
 
-    public let id: WireCellsNodeID
+    /// The ID of the node that represents the uploaded file.
+
+    public let nodeID: UUID
+
+    /// The ID of the version of the uploaded file. It is possible for the file for a particular node to be updated.
+    /// `versionID` is necessary for some operations such as publishing a draft.
+
+    package let versionID: UUID
+
+    /// The URL of the asset that contains the file data.
+
     package let assetURL: URL
+
+    /// The type of the file, represented as a Uniform Type Identifier (UTType). This value is determined locally.
+
     package let fileType: UTType?
+
+    /// The status of the upload. This value can change over time as the upload progresses.
+
     public var status: WireCellsUploadStatus
+
+    /// The name of the file. This value might be change if the desired name is already taken on the server.
+
     public var name: String
+
+    /// The size of the file in bytes.
+
     public let bytes: Int
+
+    /// The MIME type of the file, as determined by the server. This value is unknown until the file has been uploaded.
+
     public var mimeType: String?
 
     package init(
-        id: WireCellsNodeID,
+        nodeID: UUID,
+        versionID: UUID,
         assetURL: URL,
         fileType: UTType?,
         status: WireCellsUploadStatus,
@@ -38,7 +70,8 @@ public struct WireCellsDraft: Hashable, Sendable {
         bytes: Int,
         mimeType: String?
     ) {
-        self.id = id
+        self.nodeID = nodeID
+        self.versionID = versionID
         self.assetURL = assetURL
         self.fileType = fileType
         self.status = status
