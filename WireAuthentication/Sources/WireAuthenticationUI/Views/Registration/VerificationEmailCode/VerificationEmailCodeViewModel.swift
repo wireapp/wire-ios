@@ -120,7 +120,6 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
         do {
             let (cookies, uuid) = try await register(verificationCode: verificationCode)
             guard let uuid else {
-                // add logs and show the error
                 return
             }
             let emailCredentials = EmailCredentials(

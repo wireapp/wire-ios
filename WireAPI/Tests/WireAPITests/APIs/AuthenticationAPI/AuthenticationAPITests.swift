@@ -406,7 +406,7 @@ final class AuthenticationAPITests: XCTestCase {
 
         do {
             // When
-            let _ = try await sut.registerAccount(
+            _ = try await sut.registerAccount(
                 email: Scaffolding.email,
                 emailCode: Scaffolding.emailCode,
                 name: Scaffolding.name,

@@ -16,34 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+@testable import WireReusableUIComponents
 
-// sourcery: AutoMockable
-public protocol RegisterPersonalAccountUseCaseProtocol: Sendable {
+final class MockPasswordValidator: PasswordValidator {
 
-    func invoke(
-        email: String,
-        password: String,
-        verificationCode: String,
-        name: String
-    ) async throws -> ([HTTPCookie], UUID?)
+    func isPasswordValid(_ password: String) -> Bool {
+        true
+    }
 
-}
-
-public enum RegisterPersonalAccountUseCaseError: Error, Equatable {
-
-    case invalidEmail
-    case blacklistedEmail
-    case tooManyTeamMembers
-    case userCreationRestricted
-    case invalidCode
-    case emailExists
-
-}
-
-public protocol RegisterPersonalAccountUseCaseFactory {
-
-    @MainActor
-    func registerPersonalAccountUseCase() async throws -> any RegisterPersonalAccountUseCaseProtocol
+    var localizedRulesDescription: String? {
+        "localizedRulesDescription"
+    }
 
 }

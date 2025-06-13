@@ -17,33 +17,3 @@
 //
 
 import Foundation
-
-// sourcery: AutoMockable
-public protocol RegisterPersonalAccountUseCaseProtocol: Sendable {
-
-    func invoke(
-        email: String,
-        password: String,
-        verificationCode: String,
-        name: String
-    ) async throws -> ([HTTPCookie], UUID?)
-
-}
-
-public enum RegisterPersonalAccountUseCaseError: Error, Equatable {
-
-    case invalidEmail
-    case blacklistedEmail
-    case tooManyTeamMembers
-    case userCreationRestricted
-    case invalidCode
-    case emailExists
-
-}
-
-public protocol RegisterPersonalAccountUseCaseFactory {
-
-    @MainActor
-    func registerPersonalAccountUseCase() async throws -> any RegisterPersonalAccountUseCaseProtocol
-
-}

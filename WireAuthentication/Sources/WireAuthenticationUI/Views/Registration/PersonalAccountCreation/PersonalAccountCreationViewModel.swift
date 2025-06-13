@@ -18,8 +18,8 @@
 
 import SwiftUI
 import WireAuthenticationAPI
-import WireReusableUIComponents
 import WireLogging
+import WireReusableUIComponents
 
 @MainActor
 package final class PersonalAccountCreationViewModel: ObservableObject {
