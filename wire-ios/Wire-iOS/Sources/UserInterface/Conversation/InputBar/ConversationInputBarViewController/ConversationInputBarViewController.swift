@@ -226,10 +226,10 @@ final class ConversationInputBarViewController: UIViewController,
     private var typingObserverToken: Any?
     let userSession: UserSession
     let fileMetaDataGenerator: FileMetaDataGeneratorProtocol
-    let wireCellsUploadDraftUseCase: WireCellsUploadDraftUseCaseProtocol
-    let wireCellsPublishDraftsUseCase: WireCellsPublishDraftsUseCaseProtocol
-    let wireCellsClearPublishedDraftsUseCase: WireCellsClearPublishedDraftsUseCaseProtocol
-    private let wireCellsObserveDraftsUseCase: WireCellsObserveDraftsUseCaseProtocol
+    let uploadDraftUseCase: WireCellsUploadDraftUseCaseProtocol
+    let publishDraftsUseCase: WireCellsPublishDraftsUseCaseProtocol
+    let clearPublishedDraftsUseCase: WireCellsClearPublishedDraftsUseCaseProtocol
+    private let observeDraftsUseCase: WireCellsObserveDraftsUseCaseProtocol
     private let attachmentsCarouselViewModel = AttachmentsCarouselViewModel(items: [])
 
     private var inputBarButtons: [IconButton] {
@@ -363,16 +363,16 @@ final class ConversationInputBarViewController: UIViewController,
         self.classificationProvider = classificationProvider
         self.networkStatusObservable = networkStatusObservable
         self.fileMetaDataGenerator = FileMetaDataGenerator.shared
-        self.wireCellsUploadDraftUseCase = wireCellsAssembly.makeUploadDraftUseCase(
+        self.uploadDraftUseCase = wireCellsAssembly.makeUploadDraftUseCase(
             cellName: conversation.wireCellName
         )
-        self.wireCellsObserveDraftsUseCase = wireCellsAssembly.makeObserveDraftsUseCase(
+        self.observeDraftsUseCase = wireCellsAssembly.makeObserveDraftsUseCase(
             cellName: conversation.wireCellName
         )
-        self.wireCellsClearPublishedDraftsUseCase = wireCellsAssembly.makeClearPublishedDraftsUseCase(
+        self.clearPublishedDraftsUseCase = wireCellsAssembly.makeClearPublishedDraftsUseCase(
             cellName: conversation.wireCellName
         )
-        self.wireCellsPublishDraftsUseCase = wireCellsAssembly.makePublishDraftsUseCase(
+        self.publishDraftsUseCase = wireCellsAssembly.makePublishDraftsUseCase(
             cellName: conversation.wireCellName
         )
 
@@ -1202,8 +1202,8 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
     private func observeDraftAttachments() {
         guard useWireCells() else { return }
 
-        Task.detached { [weak self, wireCellsObserveDraftsUseCase, attachmentsCarouselViewModel] in
-            let observed = await wireCellsObserveDraftsUseCase.invoke()
+        Task.detached { [weak self, observeDraftsUseCase, attachmentsCarouselViewModel] in
+            let observed = await observeDraftsUseCase.invoke()
             for await drafts in observed {
                 await attachmentsCarouselViewModel.update(with: drafts)
                 await self?.syncCarouselVisible(drafts: drafts)
