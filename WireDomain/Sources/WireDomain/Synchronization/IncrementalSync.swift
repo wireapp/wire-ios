@@ -82,7 +82,11 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 syncStateSubject.send(.incrementalSyncing(.pullPendingEvents))
                 try await updateEventsSync.pull()
 
+<<<<<<< HEAD
                 logger.debug("processing stored update events")
+=======
+                logger.debug("processing stored update events", attributes: .syncAttributes(initialSync: false))
+>>>>>>> 7be8b80b28 (chore: sync logging cherry pick - WPB-16000 (#3178))
                 syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
                 processedEnvelopeIDs = try await processStoredEvents()
             } catch {
