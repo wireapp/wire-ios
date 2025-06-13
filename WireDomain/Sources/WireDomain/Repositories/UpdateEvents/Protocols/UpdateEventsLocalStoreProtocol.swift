@@ -67,7 +67,7 @@ public protocol UpdateEventsLocalStoreProtocol {
 
     func fetchStoredEventEnvelopes(
         limit: UInt
-    ) async throws -> [(UpdateEventEnvelope, objectID: NSManagedObjectID)]
+    ) async throws -> [(envelope: UpdateEventEnvelope, objectID: NSManagedObjectID)]
 
     /// Deletes next pending events locally.
     /// - parameter objectIDs: The `StoredUpdateEventEnvelope` object IDs to delete.

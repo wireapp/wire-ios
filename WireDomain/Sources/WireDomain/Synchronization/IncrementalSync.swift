@@ -254,7 +254,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
             try Task.checkCancellation()
 
             let envelopesWithObjectIDs = try await updateEventsStore.fetchStoredEventEnvelopes(limit: batchSize)
-            let envelopes = envelopesWithObjectIDs.map(\.0)
+            let envelopes = envelopesWithObjectIDs.map(\.envelope)
             let envelopesObjectIDs = envelopesWithObjectIDs.map(\.objectID)
 
             guard !envelopes.isEmpty else {

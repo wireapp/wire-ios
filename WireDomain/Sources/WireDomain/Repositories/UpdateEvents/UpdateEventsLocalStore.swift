@@ -113,7 +113,7 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
 
     public func fetchStoredEventEnvelopes(
         limit: UInt
-    ) async throws -> [(UpdateEventEnvelope, objectID: NSManagedObjectID)] {
+    ) async throws -> [(envelope: UpdateEventEnvelope, objectID: NSManagedObjectID)] {
         try await eventContext.perform { [eventContext, updateEventCoder] in
             do {
                 let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
@@ -143,7 +143,10 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
                 )
             }
 
-            WireLogger.sync.debug("deleting \(objectIDs.count) stored envelopes")
+            WireLogger.sync.debug(
+                "deleting \(objectIDs.count) stored envelopes",
+                attributes: .syncAttributes(initialSync: false)
+            )
 
             let deletedObjects: [AnyHashable: Any] = [
                 NSDeletedObjectsKey: deleteResult
@@ -162,7 +165,10 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
         try await eventContext.perform { [eventContext] in
             let request = StoredUpdateEventEnvelope.fetchRequest(sortIndex: index)
             guard let envelope = try eventContext.fetch(request).first else { return }
-            WireLogger.sync.debug("deleting stored envelope at index \(index)")
+            WireLogger.sync.debug(
+                "deleting stored envelope at index \(index)",
+                attributes: .syncAttributes(initialSync: false)
+            )
             eventContext.delete(envelope)
             try eventContext.save()
         }
