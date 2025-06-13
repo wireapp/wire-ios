@@ -17,13 +17,18 @@
 //
 
 import Foundation
+import WireAuthenticationAPI
 
-struct UserKeyV0: Decodable, ToAPIModelConvertible {
+extension MockDependencies: RequestEmailVerificationCodeUseCaseFactory {
 
-    let id: UUID
-
-    func toAPIModel() -> UserKey {
-        UserKey(uuid: id)
+    func requestEmailVerificationCodeUseCase() -> any RequestEmailVerificationCodeUseCaseProtocol {
+        MockRequestEmailVerificationCodeUseCase()
     }
+
+}
+
+struct MockRequestEmailVerificationCodeUseCase: RequestEmailVerificationCodeUseCaseProtocol {
+
+    func invoke(email: String) async throws {}
 
 }

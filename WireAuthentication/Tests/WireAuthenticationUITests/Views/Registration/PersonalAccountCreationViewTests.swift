@@ -16,4 +16,63 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import SwiftUI
+import WireTestingPackage
+import XCTest
+
+@testable import WireAuthenticationUI
+
+final class PersonalAccountCreationViewTests: XCTestCase {
+
+    private var snapshotHelper: SnapshotHelper!
+
+    override func setUp() {
+        snapshotHelper = .init()
+            .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
+    }
+
+    override func tearDown() {
+        snapshotHelper = nil
+    }
+
+    @MainActor
+    func testColorSchemeVariantsEmptyState() {
+        let screenBounds = UIScreen.main.bounds
+
+        let view = PersonalAccountCreationView(factory: FakePersonalAccountCreationFactory(
+            email: "foo@bar.com",
+            privacyPolicyURL: URL(string: "www.wire.com")!,
+            termsOfUseURL: URL(string: "www.wire.com")!,
+            passwordValidator: MockPasswordValidator()
+        )).frame(width: screenBounds.width, height: screenBounds.height)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
+    }
+
+    @MainActor
+    func testDynamicTypeVariantsEmptyState() {
+        let screenBounds = UIScreen.main.bounds
+
+        let view = PersonalAccountCreationView(factory: FakePersonalAccountCreationFactory(
+            email: "foo@bar.com",
+            privacyPolicyURL: URL(string: "www.wire.com")!,
+            termsOfUseURL: URL(string: "www.wire.com")!,
+            passwordValidator: MockPasswordValidator()
+        )).frame(width: screenBounds.width, height: screenBounds.height)
+
+
+        for dynamicTypeSize in DynamicTypeSize.allCases {
+            snapshotHelper
+                .verify(
+                    matching: view.dynamicTypeSize(dynamicTypeSize),
+                    named: "\(dynamicTypeSize)"
+                )
+        }
+    }
+
+}

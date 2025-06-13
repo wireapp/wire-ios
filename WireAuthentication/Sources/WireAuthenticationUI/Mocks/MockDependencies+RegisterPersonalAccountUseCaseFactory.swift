@@ -17,13 +17,26 @@
 //
 
 import Foundation
+import WireAuthenticationAPI
 
-struct UserKeyV0: Decodable, ToAPIModelConvertible {
+extension MockDependencies: RegisterPersonalAccountUseCaseFactory {
 
-    let id: UUID
+    nonisolated
+    func registerPersonalAccountUseCase() async throws -> any RegisterPersonalAccountUseCaseProtocol {
+        MockRegisterPersonalAccountUseCase()
+    }
 
-    func toAPIModel() -> UserKey {
-        UserKey(uuid: id)
+}
+
+struct MockRegisterPersonalAccountUseCase: RegisterPersonalAccountUseCaseProtocol {
+
+    func invoke(
+        email: String,
+        password: String,
+        verificationCode: String,
+        name: String
+    ) async throws -> ([HTTPCookie], UUID?) {
+        ([], UUID())
     }
 
 }
