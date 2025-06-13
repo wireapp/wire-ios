@@ -56,7 +56,7 @@ public enum SyncState: Equatable {
         case pullPendingEvents
         case processPendingEvents
         case receivingLiveEvents // in async stream notifications, we don't pullPendingEvents, the pushChannel is open
-        // and events until we're up to date come from the websocket.
+        // and events are received until we're up to date come from the websocket.
 
     }
 
