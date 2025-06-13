@@ -25,6 +25,7 @@ import WireCommonComponents
 import WireCoreCrypto
 import WireDataModel
 import WireDesign
+import WireDomain
 import WireLinkPreview
 import WireLogging
 import WireShareEngine
@@ -107,7 +108,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     private var accountManager: AccountManager? {
         guard let applicationGroupIdentifier = Bundle.main.applicationGroupIdentifier else { return nil }
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
-        return AccountManager(sharedDirectory: sharedContainerURL)
+        return try? AccountManager(sharedDirectory: sharedContainerURL)
     }
 
     // MARK: - Configuration
@@ -200,7 +201,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     }
 
     override func configurationItems() -> [Any]! {
-        if let count = accountManager?.accounts.count, count > 1 {
+        if let count = accountManager?.numberOfAccounts, count > 1 {
             [accountItem, conversationItem]
         } else {
             [conversationItem]
@@ -555,7 +556,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
         guard let accountManager else { return }
         let accountSelectionViewController = AccountSelectionViewController(
-            accounts: accountManager.accounts,
+            accounts: accountManager.sortedAccounts(),
             current: currentAccount
         )
 
