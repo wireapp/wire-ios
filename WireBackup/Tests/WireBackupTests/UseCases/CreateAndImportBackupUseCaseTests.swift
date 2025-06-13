@@ -76,13 +76,10 @@ final class CreateAndImportBackupUseCaseTests: XCTestCase {
         let conversation = exampleConversation
         let message = exampleMessage(of: user, in: conversation)
 
-        backupLocalStoreMock.countModels_UserCountIntConversationCountIntMessageCountIntReturnValue = (1, 1, 1)
-        backupLocalStoreMock.fetchAllUsersAsyncThrowingStreamUserBackupModelAnyErrorReturnValue =
-            .makeStream(of: [user])
-        backupLocalStoreMock.fetchAllConversationsAsyncThrowingStreamConversationBackupModelAnyErrorReturnValue =
-            .makeStream(of: [conversation])
-        backupLocalStoreMock.fetchAllMessagesAsyncThrowingStreamMessageBackupModelAnyErrorReturnValue =
-            .makeStream(of: [message])
+        backupLocalStoreMock.countModelsReturnValue = (1, 1, 1)
+        backupLocalStoreMock.fetchAllUsersReturnValue = .makeStream(of: [user])
+        backupLocalStoreMock.fetchAllConversationsReturnValue = .makeStream(of: [conversation])
+        backupLocalStoreMock.fetchAllMessagesReturnValue = .makeStream(of: [message])
 
         let password = UUID().uuidString
         let createEvents = try await createBackupUseCase.invoke(password: password)
@@ -91,16 +88,16 @@ final class CreateAndImportBackupUseCaseTests: XCTestCase {
 
         // import
 
-        backupLocalStoreMock.fetchAllUserIDsSetQualifiedIDReturnValue = []
-        backupLocalStoreMock.fetchAllMessageIDsSetStringReturnValue = []
+        backupLocalStoreMock.fetchAllUserIDsReturnValue = []
+        backupLocalStoreMock.fetchAllMessageIDsReturnValue = []
 
         let importEvents = try await importBackupUseCase.invoke(url: backupURL, password: password)
             .reduce(into: [ImportBackupProgress]()) { $0 += [$1] }
         await fulfillment(of: [syncTriggerExpectation], timeout: 1)
 
         XCTAssertEqual(importEvents.last, .done)
-        XCTAssertEqual(backupLocalStoreMock.addUserUserUserBackupModelVoidReceivedInvocations, [user])
-        XCTAssertEqual(backupLocalStoreMock.addMessageMessageMessageBackupModelVoidReceivedInvocations, [message])
+        XCTAssertEqual(backupLocalStoreMock.addUserUserUserBackupModelReceivedInvocations, [user])
+        XCTAssertEqual(backupLocalStoreMock.addMessageMessageMessageBackupModelReceivedInvocations, [message])
 
     }
 
