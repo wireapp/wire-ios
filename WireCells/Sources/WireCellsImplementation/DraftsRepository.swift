@@ -29,6 +29,7 @@ package protocol DraftsRepositoryProtocol: Actor {
     func drafts(for cellName: String) -> AsyncStream<[WireCellsDraft]>
     func publishAll(for cellName: String) async throws
     func clearPublishedDrafts(for cellName: String)
+    func deleteDraft(nodeID: UUID, cellName: String) async throws
 
 }
 
@@ -178,6 +179,16 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
 
     package func clearPublishedDrafts(for cellName: String) {
         drafts.value[cellName]?.removeAll { $0.value.status == .uploaded(isDraft: false) }
+    }
+
+    package func deleteDraft(nodeID: UUID, cellName: String) async throws {
+        guard let id = drafts.value[cellName]?.keys.first(where: { $0.uuid == nodeID }) else {
+            // FIXME: Do we need to do anything else?
+            return
+        }
+
+        drafts.value[cellName]?.removeValue(forKey: id)
+        await uploadManager.cancelUpload(nodeID: id)
     }
 
     private func removeContinuation(for uuid: UUID) async {

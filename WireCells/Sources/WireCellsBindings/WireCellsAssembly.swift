@@ -54,4 +54,8 @@ public struct WireCellsAssembly {
         ClearPublishedDraftsUseCase(cellName: cellName, draftRepository: Self.draftsRepository)
     }
 
+    public func makeDeleteDraftUseCase(cellName: String) -> any WireCellsDeleteDraftUseCaseProtocol {
+        DeleteDraftUseCase(cellName: cellName, draftRepository: Self.draftsRepository)
+    }
+
 }
