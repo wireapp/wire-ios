@@ -140,10 +140,7 @@ struct PersonalAccountCreationView: View {
 
     @ViewBuilder private var dataUsageAgreementView: some View {
         Checkbox(
-            isChecked: Binding(
-                get: { viewModel.dataUsageAgreementAccepted },
-                set: { viewModel.dataUsageAgreementAccepted = $0 }
-            ),
+            isChecked: $viewModel.dataUsageAgreementAccepted,
             title: .formattedMarkdown(
                 key: "create_personal_account.share_data_usage",
                 bundle: .module,
