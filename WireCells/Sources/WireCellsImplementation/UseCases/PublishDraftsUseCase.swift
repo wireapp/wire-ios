@@ -20,7 +20,7 @@ import Foundation
 import WireCellsAPI
 import WireLogging
 
-package final class PublishDraftsUseCase: WireCellsPublishDraftsUseCaseProtocol {
+package struct PublishDraftsUseCase: WireCellsPublishDraftsUseCaseProtocol {
 
     private let cellName: String
     private let draftRepository: any DraftsRepositoryProtocol
