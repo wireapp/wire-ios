@@ -86,13 +86,15 @@ final class ImportBackupViewModel: ObservableObject {
                     url.stopAccessingSecurityScopedResource()
                 }
 
-                alertContent = .init(
-                    title: Strings.OverwriteConfirmation.title,
-                    message: Strings.OverwriteConfirmation.message,
-                    cancel: Strings.OverwriteConfirmation.cancel,
-                    action: Strings.OverwriteConfirmation.proceed
-                )
-                state = .requestConfirmation(url: copy)
+                importBackup(from: copy, password: "")
+                // TODO: show alert for legacy restore
+//                alertContent = .init(
+//                    title: Strings.OverwriteConfirmation.title,
+//                    message: Strings.OverwriteConfirmation.message,
+//                    cancel: Strings.OverwriteConfirmation.cancel,
+//                    action: Strings.OverwriteConfirmation.proceed
+//                )
+//                state = .requestConfirmation(url: copy)
             }
         } catch {
             logger.error("failed to pick backup file to restore: " + String(reflecting: error))
