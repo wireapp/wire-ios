@@ -17,7 +17,7 @@
 //
 
 "backup.export.action" = "Back Up Now";
-"backup.export.description" = "Create a backup to preserve your conversation history. You can use this to restore history if you lose your computer or switch to a new one. The backup file is not protected by Wire end-to-end encryption, so store it in a safe place.";
+"backup.export.description" = "Create a backup to preserve your conversation history. This way, you can restore history if you lose your device or switch to a new one. The backup file is not end-to-end encrypted. Please store it safely.";
 
 "backup.import.action" = "Restore from Backup";
 "backup.import.description" = "The existing history on this device remains and will be completed by the new backup. You can restore history from all your devices and different platforms but not from another account.";
