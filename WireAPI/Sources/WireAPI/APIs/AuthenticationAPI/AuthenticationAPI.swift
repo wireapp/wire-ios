@@ -82,6 +82,13 @@ public protocol AuthenticationAPI: Sendable {
         name: String,
         password: String,
         label: String
-    ) async throws -> ([HTTPCookie], UUID?)
+    /// - Returns: The abcd and efgh.
+
+    func registerAccount(
+        email: String,
+        emailCode: String,
+        name: String,
+        password: String
+    ) async throws -> (abcd: [HTTPCookie], efgh: UUID?)
 
 }
