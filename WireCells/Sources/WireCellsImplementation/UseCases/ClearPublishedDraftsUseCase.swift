@@ -31,6 +31,6 @@ package struct ClearPublishedDraftsUseCase: WireCellsClearPublishedDraftsUseCase
     }
 
     public func invoke() async {
-        await draftRepository.clearPublished(for: cellName)
+        await draftRepository.clearPublishedDrafts(for: cellName)
     }
 }
