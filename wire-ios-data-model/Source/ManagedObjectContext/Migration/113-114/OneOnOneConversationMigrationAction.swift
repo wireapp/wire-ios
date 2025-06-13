@@ -54,7 +54,7 @@ final class OneOnOneConversationMigrationAction: CoreDataMigrationAction {
     }
 
     private func migrateTeamOneOnOne(user: NSManagedObject, context: NSManagedObjectContext) throws {
-        let sessionRequest = NSFetchRequest<NSManagedObject>(entityName: ZMSession.entityName())
+        let sessionRequest = NSFetchRequest<NSManagedObject>(entityName: Session.entityName())
         let result = try context.fetch(sessionRequest)
 
         guard

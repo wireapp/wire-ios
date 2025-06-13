@@ -364,7 +364,10 @@ private extension AppDelegate {
             mainWindow: mainWindow,
             sessionManager: sessionManager,
             appStateCalculator: appStateCalculator,
-            trackingManager: TrackingManager(sessionManager: sessionManager)
+            trackingManager: TrackingManager(
+                sharedUserDefaults: .applicationGroup,
+                sessionManager: sessionManager
+            )
         )
     }
 
@@ -406,7 +409,7 @@ private extension AppDelegate {
             sharedUserDefaults: .applicationGroup,
             minTLSVersion: SecurityFlags.minTLSVersion.stringValue,
             deleteUserLogs: LogFileDestination.deleteAllLogs,
-            analyticsServiceConfiguration: AnalyticsServiceConfigurationBuilder().build(),
+            analyticsServiceConfiguration: AnalyticsServiceConfigurationBuilder.build(),
             countlyProvider: { CountlyWrapper() }
         )
 
