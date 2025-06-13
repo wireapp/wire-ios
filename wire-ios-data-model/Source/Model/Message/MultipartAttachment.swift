@@ -92,34 +92,34 @@ extension MultipartAttachment {
                 initialName.map { asset.initialName = $0 }
                 initialSize.map { asset.initialSize = Int64($0) }
 
-                if let initialMetadata {
-                    switch initialMetadata {
-                    case let .image(width, height):
-                        asset.initialMetaData = .image(
-                            CellAsset.ImageMetaData.with { metadata in
-                                // Only set if values are not nil to avoid protobufs setting nonsense defaults.
-                                metadata.width = Int32(width)
-                                metadata.height = Int32(height)
-                            }
-                        )
-                    case let .video(width, height, duration):
-                        asset.initialMetaData = .video(
-                            CellAsset.VideoMetaData.with { metadata in
-                                // Only set if values are not nil to avoid protobufs setting nonsense defaults.
-                                width.map { metadata.width = Int32($0) }
-                                height.map { metadata.height = Int32($0) }
-                                duration.map { metadata.durationInMillis = UInt64($0) }
-                            }
-                        )
-                    case let .audio(duration, normalizedLoudness):
-                        asset.initialMetaData = .audio(
-                            CellAsset.AudioMetaData.with { metadata in
-                                // Only set if values are not nil to avoid protobufs setting nonsense defaults.
-                                duration.map { metadata.durationInMillis = UInt64($0) }
-                                normalizedLoudness.map { metadata.normalizedLoudness = $0 }
-                            }
-                        )
-                    }
+                switch initialMetadata {
+                case let .image(width, height):
+                    asset.initialMetaData = .image(
+                        CellAsset.ImageMetaData.with { metadata in
+                            // Only set if values are not nil to avoid protobufs setting nonsense defaults.
+                            metadata.width = Int32(width)
+                            metadata.height = Int32(height)
+                        }
+                    )
+                case let .video(width, height, duration):
+                    asset.initialMetaData = .video(
+                        CellAsset.VideoMetaData.with { metadata in
+                            // Only set if values are not nil to avoid protobufs setting nonsense defaults.
+                            width.map { metadata.width = Int32($0) }
+                            height.map { metadata.height = Int32($0) }
+                            duration.map { metadata.durationInMillis = UInt64($0) }
+                        }
+                    )
+                case let .audio(duration, normalizedLoudness):
+                    asset.initialMetaData = .audio(
+                        CellAsset.AudioMetaData.with { metadata in
+                            // Only set if values are not nil to avoid protobufs setting nonsense defaults.
+                            duration.map { metadata.durationInMillis = UInt64($0) }
+                            normalizedLoudness.map { metadata.normalizedLoudness = $0 }
+                        }
+                    )
+                case .none:
+                    break
                 }
             }
         }
