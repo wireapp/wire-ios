@@ -50,6 +50,9 @@ private class ShowNotificationDependencya0b9d9633053c7a7a814Provider: ShowNotifi
     var conversationLocalStore: any ConversationLocalStoreProtocol {
         return pullEventsStep.conversationLocalStore
     }
+    var databaseSaver: any DatabaseSaverProtocol {
+        return pullEventsStep.databaseSaver
+    }
     private let notificationServiceExtensionFlow: NotificationServiceExtensionFlow
     private let pullEventsStep: PullEventsStep
     private let verifyUserStep: VerifyUserStep
@@ -111,9 +114,6 @@ private class GenerateNotificationDependencye9ac54a4aea693448fe3Provider: Genera
     var userLocalStore: any UserLocalStoreProtocol {
         return verifyUserStep.userLocalStore
     }
-    var databaseSaver: any DatabaseSaverProtocol {
-        return pullEventsStep.databaseSaver
-    }
     private let pullEventsStep: PullEventsStep
     private let verifyUserStep: VerifyUserStep
     init(pullEventsStep: PullEventsStep, verifyUserStep: VerifyUserStep) {
@@ -169,6 +169,7 @@ extension ShowNotificationStep: NeedleFoundation.Registration {
         keyPathToName[\ShowNotificationDependency.accountManager] = "accountManager-AccountManager"
         keyPathToName[\ShowNotificationDependency.selectedAccount] = "selectedAccount-Account"
         keyPathToName[\ShowNotificationDependency.conversationLocalStore] = "conversationLocalStore-any ConversationLocalStoreProtocol"
+        keyPathToName[\ShowNotificationDependency.databaseSaver] = "databaseSaver-any DatabaseSaverProtocol"
     }
 }
 extension ProcessNotificationRequestStep: NeedleFoundation.Registration {
@@ -208,7 +209,6 @@ extension GenerateNotificationStep: NeedleFoundation.Registration {
         keyPathToName[\GenerateNotificationDependency.messageLocalStore] = "messageLocalStore-any MessageLocalStoreProtocol"
         keyPathToName[\GenerateNotificationDependency.conversationLocalStore] = "conversationLocalStore-any ConversationLocalStoreProtocol"
         keyPathToName[\GenerateNotificationDependency.userLocalStore] = "userLocalStore-any UserLocalStoreProtocol"
-        keyPathToName[\GenerateNotificationDependency.databaseSaver] = "databaseSaver-any DatabaseSaverProtocol"
 
     }
 }
