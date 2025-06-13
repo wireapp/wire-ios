@@ -188,9 +188,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
 
     private func resendVerificationCode(email: String) async throws {
         let useCase = try await factory.requestEmailVerificationCodeUseCase()
-        try await Task.detached {
-            try await useCase.invoke(email: email)
-        }.value
+        return try await useCase.invoke(email: email)
     }
 
     private func createAuthenticationResult(
@@ -199,14 +197,12 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
         userID: UUID
     ) async throws -> AuthenticationResult {
         let useCase = factory.createAuthenticationResultUseCase()
-        return try await Task.detached {
-            try await useCase.invoke(
-                userID: userID,
-                cookies: cookies,
-                accessToken: nil,
-                emailCredentials: emailCredentials
-            )
-        }.value
+        return try await useCase.invoke(
+            userID: userID,
+            cookies: cookies,
+            accessToken: nil,
+            emailCredentials: emailCredentials
+        )
     }
 
 }
