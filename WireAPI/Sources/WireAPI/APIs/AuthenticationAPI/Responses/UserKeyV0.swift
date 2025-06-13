@@ -20,12 +20,9 @@ import Foundation
 
 struct UserKeyV0: Decodable, ToAPIModelConvertible {
 
-    let id: String
+    let id: UUID
 
     func toAPIModel() -> UserKey {
-        guard let uuid = UUID(uuidString: id) else {
-            preconditionFailure("Invalid UUID string received: '\(id)' in UserKeyV0")
-        }
 
         return UserKey(uuid: uuid)
     }
