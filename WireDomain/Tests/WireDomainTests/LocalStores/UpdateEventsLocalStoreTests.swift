@@ -44,7 +44,10 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
     override func setUp() async throws {
         modelHelper = ModelHelper()
         coreDataStackHelper = CoreDataStackHelper()
-        stack = try await coreDataStackHelper.createStack()
+        stack = try await coreDataStackHelper.createStack(inMemoryStore: false)
+        /// Batch requests don't work with in-memory store
+        /// so we need to use a persistent store.
+        try await cleanUpEntity()
         mockUserDefaults = UserDefaults(
             suiteName: Scaffolding.defaultsTestSuiteName
         )
@@ -115,7 +118,7 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
 
         // Then it returns the one and only envelope.
         try XCTAssertCount(fetchedEnvelopes, count: 1)
-        let fetchedEnvelope1 = fetchedEnvelopes[0]
+        let fetchedEnvelope1 = fetchedEnvelopes[0].0
 
         XCTAssertEqual(fetchedEnvelope1, Scaffolding.envelope3)
     }
@@ -138,23 +141,23 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
         // Then the first 3 envelopes were returned.
         try XCTAssertCount(fetchedEnvelopes, count: 3)
 
-        XCTAssertEqual(fetchedEnvelopes[0], Scaffolding.envelope3)
-        XCTAssertEqual(fetchedEnvelopes[1], Scaffolding.envelope4)
-        XCTAssertEqual(fetchedEnvelopes[2], Scaffolding.envelope1)
+        XCTAssertEqual(fetchedEnvelopes[0].0, Scaffolding.envelope3)
+        XCTAssertEqual(fetchedEnvelopes[1].0, Scaffolding.envelope4)
+        XCTAssertEqual(fetchedEnvelopes[2].0, Scaffolding.envelope1)
     }
 
-    func testDeleteNextPendingEvents_It_Deletes_All_Stored_Envelopes_If_Limit_Exceeds_Total() async throws {
+    func testDeleteNextPendingEvents_It_Deletes_All_Stored_Envelopes() async throws {
         // Given there are stored envelopes.
 
-        try await insertStoredEventEnvelopes([
+        let objectIDs = try await insertStoredEventEnvelopes([
             Scaffolding.envelope1,
             Scaffolding.envelope2,
             Scaffolding.envelope3
         ])
 
-        // When it deletes more than 3.
+        // When it deletes all stored envelopes.
 
-        try await sut.deleteNextPendingEvents(limit: 10)
+        try await sut.deleteNextPendingEvents(with: objectIDs)
 
         // Then all stored events were deleted.
 
@@ -165,33 +168,28 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
         }
     }
 
-    func testDeleteNextPendingEvents_It_Deletes_Stored_Envelopes_Only_Up_To_The_Limit() async throws {
+    func testDeleteNextPendingEvents_It_Deletes_Only_Selected_Envelopes() async throws {
         // Given there are stored envelopes.
 
-        try await insertStoredEventEnvelopes([
+        var objectIDs = try await insertStoredEventEnvelopes([
             Scaffolding.envelope1,
             Scaffolding.envelope2,
             Scaffolding.envelope3
         ])
 
-        // When it deletes 2 envelopes.
+        let nonDeletedEnvelopeObjectID = objectIDs.removeLast()
 
-        try await sut.deleteNextPendingEvents(limit: 2)
+        // When it deletes selected envelopes.
 
-        // Then the first 2 envelopes were deleted.
+        try await sut.deleteNextPendingEvents(with: objectIDs)
+
+        // Then selected envelopes were deleted, remains only one.
 
         try await eventContext.perform { [eventContext] in
-            let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
-            let result = try eventContext.fetch(request)
-
+            let request = StoredUpdateEventEnvelope.fetchRequest()
+            let result = try eventContext.fetch(request) as! [StoredUpdateEventEnvelope]
             XCTAssertEqual(result.count, 1)
-
-            let envelope = try XCTUnwrap(result.first)
-            XCTAssertEqual(envelope.sortIndex, 2)
-
-            let coder = StorableUpdateEventCoder()
-            let decodedEnvelope = try coder.decode(envelope.data)
-            XCTAssertEqual(decodedEnvelope, Scaffolding.envelope3)
+            XCTAssertEqual(result.first!.objectID, nonDeletedEnvelopeObjectID)
         }
     }
 
@@ -258,7 +256,10 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
         }
     }
 
-    private func insertStoredEventEnvelopes(_ envelopes: [UpdateEventEnvelope]) async throws {
+    @discardableResult
+    private func insertStoredEventEnvelopes(
+        _ envelopes: [UpdateEventEnvelope]
+    ) async throws -> [NSManagedObjectID] {
         try await eventContext.perform { [eventContext] in
             let coder = StorableUpdateEventCoder()
 
@@ -269,6 +270,21 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
             }
 
             try eventContext.save()
+
+            let fetchRequest = StoredUpdateEventEnvelope.fetchRequest()
+            let results = try eventContext.fetch(fetchRequest) as! [StoredUpdateEventEnvelope]
+
+            XCTAssertEqual(results.count, envelopes.count)
+
+            return results.map(\.objectID)
+        }
+    }
+
+    func cleanUpEntity() async throws {
+        try await eventContext.perform { [self] in
+            let fetchRequest = StoredUpdateEventEnvelope.fetchRequest()
+            let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+            _ = try eventContext.execute(batchDeleteRequest)
         }
     }
 
