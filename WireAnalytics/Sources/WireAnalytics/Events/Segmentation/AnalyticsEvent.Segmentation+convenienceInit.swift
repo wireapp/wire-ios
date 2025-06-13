@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+<<<<<<<< HEAD:WireAnalytics/Sources/WireAnalytics/Events/Segmentation/AnalyticsEvent.Segmentation+convenienceInit.swift
 public import WireFoundation
 
 extension AnalyticsEvent.Segmentation {
@@ -41,4 +42,20 @@ extension AnalyticsEvent.Segmentation {
         )
     }
 
+========
+import WireBackup
+import WireProtos
+
+extension MessageBackupModel.Content.AssetContent.EncryptionAlgorithm {
+
+    init(_ encryptionAlgorithm: WireProtos.EncryptionAlgorithm) {
+        switch encryptionAlgorithm {
+        case .aesCbc:
+            self = .aesCBC
+        case .aesGcm:
+            self = .aesGCM
+        }
+    }
+
+>>>>>>>> e51ed70bed90c4d1b450f7b84370614c7f0fc57b:wire-ios/Wire-iOS/Sources/UserInterface/Settings/Backup/BackupLocalStore/MessageContent.AssetContent.EncryptionAlgorithm+initWithWireProtos.EncryptionAlgorithm.swift
 }

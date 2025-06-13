@@ -51,7 +51,7 @@
 "peoplepicker.navigation_header.title" = "新对话";
 "peoplepicker.search_placeholder" = "通过您的名字或用户名搜索";
 "peoplepicker.header.top_people" = "常联系的人";
-"peoplepicker.button.create_conversation" = "创建群聊";
+"peoplepicker.button.create_conversation" = "创建群组";
 "peoplepicker.button.add_to_conversation" = "添加参与者";
 "peoplepicker.header.conversations" = "群组";
 "peoplepicker.header.team_conversations" = "%@ 组";
@@ -102,8 +102,8 @@
 "peoplepicker.federation.domain_unvailable" = "联合域目前不可用。[进一步了解](%@)";
 
 "add_participants.alert.title" = "对话人数已达上限";
-"add_participants.alert.message.new_conversation" = "最多 %d 人可以加入同一个群聊。";
-"add_participants.alert.message.existing_conversation" = "最多 %1$d 人，可以加入群聊。目前还可加入 %2$d 人。";
+"add_participants.alert.message.new_conversation" = "最多可有 %@ 人加入对话。";
+"add_participants.alert.message.existing_conversation" = "最多 %@ 人可以加入对话。目前只能容纳 %@ 人。";
 
 // Channel Creation UI - Navigation
 "conversation.create.channel.title" = "新频道";
@@ -140,7 +140,7 @@
 "conversation_list.filter.favorites.title" = "收藏夾";
 "conversation_list.filter.groups.title" = "群组";
 "conversation_list.filter.channels.title" = "频道";
-"conversation_list.filter.oneOnOneConversations.title" = "一对一对话";
+"conversation_list.filter.oneOnOneConversations.title" = "1:1 对话";
 "conversation_list.filter.folders.title" = "文件夹";
 "conversation_list.filter_label.text" = "按 %@ 筛选";
 "conversation_list.filter.remove_button.title" = "移除";
@@ -301,7 +301,7 @@
 "conversation.input_bar.audio_message.tooltip.tap_send" = "点击发送";
 "conversation.input_bar.audio_message.too_long.title" = "录制停止";
 "conversation.input_bar.audio_message.too_long.message" = "语音讯息长度上限是%@。";
-"conversation.ping.many_participants_confirmation.title" = "您确定要提及 %d 个人吗？";
+"conversation.ping.many_participants_confirmation.title" = "您确定要ping %d 个人吗？";
 "conversation.ping.action.title" = "打招呼";
 
 "conversation.input_bar.audio_message.too_long_size.message" = "语音消息的文件大小不能超过 %@。";
@@ -654,6 +654,7 @@
 "content.collapsed.video.title" = "您发送了一个视频";
 "content.collapsed.audio.title" = "您发送了一条语音消息";
 "content.collapsed.location.title" = "您发送了您的位置";
+"content.collapsed.link.title" = "您发送了一条链接";
 
 "content.message.like" = "赞";
 "content.message.unlike" = "取消赞";
@@ -859,7 +860,7 @@
 "participants.section.services" = "服务 (%d)";
 "participants.section.settings" = "选项";
 "participants.footer.add_title" = "添加参与者";
-"participants.section.name.footer" = "最多 %1$d 位参与者可以加入对话。";
+"participants.section.name.footer" = "最多 %@ 名参与者可以加入对话。";
 "participants.section.admins.footer" = "没有管理员。";
 "participants.section.members.footer" = "暂时还没有成员";
 
@@ -1158,6 +1159,7 @@
 "self.settings.account_details.remove_device.password.error" = "错误的密码";
 
 "self.settings.account_appearance_group.title" = "外观";
+"self.settings.account_appearance_group.footer" = "启用此项后，您的对话将根据您的个人资料颜色和明暗主题显示背景。";
 
 "self.settings.privacy_section_group.title" = "隐私";
 "self.settings.enable_read_receipts.title" = "发送已读回执";
@@ -1176,6 +1178,7 @@
 "self.settings.account_picture_group.accent_color.amber" = "琥珀";
 "self.settings.account_picture_group.accent_color.turquoise" = "青绿";
 "self.settings.account_picture_group.accent_color.purple" = "紫";
+"self.settings.account_picture_group.background.title" = "对话背景颜色";
 
 "self.settings.account_personal_information_group.title" = "个人资料";
 
@@ -1327,7 +1330,7 @@
 "self.settings.privacy_security.disable_link_previews.footer" = "仍会为其他人的链接显示预览";
 
 "self.settings.privacy_security.collapse_own_messages.title" = "折叠我的消息";
-"self.settings.privacy_security.collapse_own_messages.footer" = "如果开启此项，您所有的消息均被折叠到一行。";
+"self.settings.privacy_security.collapse_own_messages.footer" = "启用此项后，所有消息将在三行后折叠。";
 
 "self.settings.privacy_analytics_menu.devices.title" = "设备";
 
@@ -1591,6 +1594,7 @@
 "enroll_e2ei_certificate.subtitle" = "证书已生效并且您的设备已验证。";
 "enroll_e2ei_certificate.certificate_details_button" = "证书详情";
 "enroll_e2ei_certificate.ok_button" = "好";
+"enroll_e2ei_certificate.idp_url_title" = "身份提供商 URL";
 
 // Update e2ei certificate
 "update_e2ei_certificate.title" = "证书已更新";

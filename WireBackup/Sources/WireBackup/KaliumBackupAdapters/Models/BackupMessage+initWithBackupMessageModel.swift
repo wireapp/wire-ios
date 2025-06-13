@@ -21,7 +21,7 @@ import KaliumBackup
 
 extension BackupMessage {
 
-    convenience init(_ message: BackupMessageModel) {
+    convenience init(_ message: MessageBackupModel) {
         self.init(
             id: message.id.lowercased(),
             conversationId: BackupQualifiedId(message.conversationID),
@@ -35,7 +35,7 @@ extension BackupMessage {
 
 }
 
-private func backupMessageContent(_ content: MessageContent) -> BackupMessageContent {
+private func backupMessageContent(_ content: MessageBackupModel.Content) -> BackupMessageContent {
     switch content {
 
     case let .text(content):
@@ -68,7 +68,7 @@ private func backupMessageContent(_ content: MessageContent) -> BackupMessageCon
 }
 
 private func assetEncryptionAlgorithm(
-    _ encryption: MessageContent.AssetContent.EncryptionAlgorithm
+    _ encryption: MessageBackupModel.Content.AssetContent.EncryptionAlgorithm
 ) -> BackupMessageContent.AssetEncryptionAlgorithm {
     switch encryption {
     case .aesCBC:
@@ -79,7 +79,7 @@ private func assetEncryptionAlgorithm(
 }
 
 private func assetAssetMetadata(
-    _ metadata: MessageContent.AssetContent.Metadata
+    _ metadata: MessageBackupModel.Content.AssetContent.Metadata
 ) -> BackupMessageContent.AssetAssetMetadata {
     switch metadata {
 

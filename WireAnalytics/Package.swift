@@ -3,8 +3,9 @@
 import Foundation
 import PackageDescription
 
-let isDatadogEnabled = ProcessInfo.processInfo.environment["ENABLE_DATADOG"] == "true"
-let isCountlyEnabled = ProcessInfo.processInfo.environment["ENABLE_COUNTLY"] == "true"
+// You can enable/disable Datadog for debugging by overriding the boolean.
+let isDatadogEnabled = hasEnvironmentVariable("ENABLE_DATADOG", "true")
+let isCountlyEnabled = hasEnvironmentVariable("ENABLE_COUNTLY", "true")
 
 let package = Package(
     name: "WireAnalytics",
@@ -17,7 +18,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/Countly/countly-sdk-ios.git", exact: "24.4.2"),
-        .package(url: "https://github.com/DataDog/dd-sdk-ios.git", exact: "2.18.0"),
+        .package(url: "https://github.com/DataDog/dd-sdk-ios.git", exact: "2.27.0"),
         .package(path: "../WireFoundation"),
         .package(path: "../WireLogging"),
         .package(path: "../WirePlugins")
@@ -34,7 +35,7 @@ let package = Package(
         ),
         .testTarget(
             name: "WireAnalyticsTests",
-            dependencies: ["WireAnalytics", "WireAnalyticsSupport"]
+            dependencies: ["WireAnalytics", "WireAnalyticsSupport", "WireFoundation"]
         ),
 
         .target(
@@ -103,6 +104,14 @@ func datadogFiles() -> [String] {
 }
 
 // MARK: -
+
+func hasEnvironmentVariable(_ name: String, _ value: String? = nil) -> Bool {
+    if let value {
+        ProcessInfo.processInfo.environment[name] == value
+    } else {
+        ProcessInfo.processInfo.environment[name] != nil
+    }
+}
 
 for target in package.targets {
     target.swiftSettings = (target.swiftSettings ?? []) + [

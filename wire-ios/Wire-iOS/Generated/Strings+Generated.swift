@@ -1093,6 +1093,14 @@ internal enum L10n {
         internal static let description = L10n.tr("Accessibility", "tabBar.phone.description", fallback: "Log in via phone number")
       }
     }
+    internal enum WebAuth {
+      internal enum UrlLabel {
+        /// Identity Provider URL
+        internal static let description = L10n.tr("Accessibility", "webAuth.urlLabel.description", fallback: "Identity Provider URL")
+        /// Select to open the complete URL.
+        internal static let hint = L10n.tr("Accessibility", "webAuth.urlLabel.hint", fallback: "Select to open the complete URL.")
+      }
+    }
   }
   internal enum InfoPlist {
     /// Allow Wire to access your camera so you can place video calls and send photos.
@@ -1172,13 +1180,13 @@ internal enum L10n {
         /// The conversation is full
         internal static let title = L10n.tr("Localizable", "add_participants.alert.title", fallback: "The conversation is full")
         internal enum Message {
-          /// Up to %1$d people can join a conversation. Currently there is only room for %2$d more.
-          internal static func existingConversation(_ p1: Int, _ p2: Int) -> String {
-            return L10n.tr("Localizable", "add_participants.alert.message.existing_conversation", p1, p2, fallback: "Up to %1$d people can join a conversation. Currently there is only room for %2$d more.")
+          /// Up to %@ people can join a conversation. Currently there is only room for %@ more.
+          internal static func existingConversation(_ p1: Any, _ p2: Any) -> String {
+            return L10n.tr("Localizable", "add_participants.alert.message.existing_conversation", String(describing: p1), String(describing: p2), fallback: "Up to %@ people can join a conversation. Currently there is only room for %@ more.")
           }
-          /// Up to %d people can join a conversation.
-          internal static func newConversation(_ p1: Int) -> String {
-            return L10n.tr("Localizable", "add_participants.alert.message.new_conversation", p1, fallback: "Up to %d people can join a conversation.")
+          /// Up to %@ people can join a conversation.
+          internal static func newConversation(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "add_participants.alert.message.new_conversation", String(describing: p1), fallback: "Up to %@ people can join a conversation.")
           }
         }
       }
@@ -3229,6 +3237,8 @@ internal enum L10n {
     internal enum EnrollE2eiCertificate {
       /// Certificate Details
       internal static let certificateDetailsButton = L10n.tr("Localizable", "enroll_e2ei_certificate.certificate_details_button", fallback: "Certificate Details")
+      /// Identity Provider URL
+      internal static let idpUrlTitle = L10n.tr("Localizable", "enroll_e2ei_certificate.idp_url_title", fallback: "Identity Provider URL")
       /// OK
       internal static let okButton = L10n.tr("Localizable", "enroll_e2ei_certificate.ok_button", fallback: "OK")
       /// The certificate is active and your device is verified.
@@ -4469,9 +4479,9 @@ internal enum L10n {
           internal static let footer = L10n.tr("Localizable", "participants.section.members.footer", fallback: "There are no members.")
         }
         internal enum Name {
-          /// Up to %1$d participants can join a conversation.
-          internal static func footer(_ p1: Int) -> String {
-            return L10n.tr("Localizable", "participants.section.name.footer", p1, fallback: "Up to %1$d participants can join a conversation.")
+          /// Up to %@ participants can join a conversation.
+          internal static func footer(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "participants.section.name.footer", String(describing: p1), fallback: "Up to %@ participants can join a conversation.")
           }
         }
       }

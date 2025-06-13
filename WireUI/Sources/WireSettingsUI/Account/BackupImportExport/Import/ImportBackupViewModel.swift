@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDomainPackage
+import WireFoundation
 import WireLogging
 
 @MainActor
@@ -38,7 +39,7 @@ final class ImportBackupViewModel: ObservableObject {
     @Published var isImportConfirmationPresented = false
     @Published var isAlertPresented = false
 
-    @Published private(set) var importProgress = Float()
+    @Published private(set) var importProgress = (current: 0, total: 0)
 
     private var importTask: Task<Void, Never>?
 
@@ -120,11 +121,11 @@ final class ImportBackupViewModel: ObservableObject {
         importTask = Task {
             do {
                 backupPassword = password
-                state = .importingBackup(progress: 0)
+                state = .importingBackup(current: 0, total: 0)
                 for try await update in importBackupUseCase.invoke(url: url, password: password) {
                     switch update {
-                    case let .progress(fraction):
-                        state = .importingBackup(progress: fraction)
+                    case let .progress(current, total):
+                        state = .importingBackup(current: current, total: total)
                     case .done:
                         alertContent = .init(
                             title: Strings.Alert.Success.title,
@@ -134,11 +135,15 @@ final class ImportBackupViewModel: ObservableObject {
                         state = .success
                     }
                 }
-            } catch ImportBackupError.passwordRequired {
+            } catch ImportLegacyBackupError.passwordRequired, ImportBackupError.passwordRequired {
                 logger.debug("password is required to open backup file")
                 state = .requestingPassword(url: url, isPasswordIncorrect: false)
                 return // don't clean up temporary file
-            } catch ImportBackupError.decryptionError {
+            } catch ImportLegacyBackupError.passwordRequired, ImportBackupError.incorrectPassword {
+                logger.debug("provided password is incorrect")
+                state = .requestingPassword(url: url, isPasswordIncorrect: false)
+                return // don't clean up temporary file
+            } catch ImportLegacyBackupError.decryptionError {
                 logger.warn("failed to decrypt backup file, presenting the password input again")
                 state = .requestingPassword(url: url, isPasswordIncorrect: true)
                 return // don't clean up temporary file
@@ -150,7 +155,7 @@ final class ImportBackupViewModel: ObservableObject {
                     action: Strings.Alert.ok
                 )
                 state = .restoreFailed
-            } catch ImportBackupError.invalidAccountID {
+            } catch ImportLegacyBackupError.invalidAccountID {
                 logger.warn("restore failed due to invalid account ID")
                 alertContent = .init(
                     title: Strings.Alert.WrongFileError.title,
@@ -180,13 +185,13 @@ final class ImportBackupViewModel: ObservableObject {
 
     private func updatePublishedProperties() {
 
-        importProgress = switch state {
-        case let .importingBackup(progress):
-            progress
+        switch state {
+        case let .importingBackup(current, total):
+            importProgress = (current, total)
         case .success:
-            1
+            importProgress = (1, 1)
         default:
-            0
+            importProgress = (0, 0)
         }
 
         let isImportProgressPresented = switch state {
@@ -222,32 +227,32 @@ final class ImportBackupViewModel: ObservableObject {
         }
 
         // Workarounds for presentation issues with several sheet or alert presentation flags toggled at once.
-        // This code assumes the presentation or dismissal of a modal view controller lasts less than 400ms.
+        // This code assumes the presentation or dismissal of a modal view controller lasts less than 600ms.
         if !isImportProgressPresented, self.isImportConfirmationPresented {
             // The outer sheet is dismissed while the inner sheet/alert is presented, so delay the outer dismissal.
             self.isImportConfirmationPresented = false
-            return DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(400)) { [weak self] in
+            return DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(600)) { [weak self] in
                 self?.updatePublishedProperties()
             }
         }
         if !isImportProgressPresented, self.isEnterBackupPasswordPresented {
             // The outer sheet is dismissed while the inner sheet is still presented, so delay the outer dismissal.
             self.isEnterBackupPasswordPresented = false
-            return DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(400)) { [weak self] in
+            return DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(600)) { [weak self] in
                 self?.updatePublishedProperties()
             }
         }
         if isEnterBackupPasswordPresented, !self.isImportProgressPresented {
             // The inner sheet is being presented while the outer sheet is not yet presented, so delay the inner.
             self.isImportProgressPresented = true
-            return DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(400)) { [weak self] in
+            return DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(600)) { [weak self] in
                 self?.updatePublishedProperties()
             }
         }
         if isAlertPresented, self.isImportProgressPresented {
             // The alert is being presented while there is still a sheet presented, so delay the alert.
             self.isImportProgressPresented = false
-            return DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(400)) { [weak self] in
+            return DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(600)) { [weak self] in
                 self?.updatePublishedProperties()
             }
         }

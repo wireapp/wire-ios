@@ -28,8 +28,20 @@
 "cloud_user_login.input_password.placeholder" = "Insira a senha";
 "cloud_user_login.submit" = "Próximo";
 "cloud_user_login.forgot_password" = "Esqueceu a senha?";
-"create_personal_account.title" = "Não tem uma conta Wire?";
-"create_personal_account.button" = "Criar Conta Pessoal";
+"create_account_or_team.title" = "Don’t have a Wire account?";
+"create_account_or_team.button" = "Create account or team";
+
+"account_type_selector.title" = "How will you use Wire?";
+"account_type_selector.option_team.title" = "For collaboration";
+"account_type_selector.option_team.subtitle" = "Work securely with your team.";
+"account_type_selector.option_team.feature0" = "Communicate with your colleagues and share documents via a single app";
+"account_type_selector.option_team.feature1" = "Start for free, upgrade anytime";
+"account_type_selector.option_team.button" = "Create Team";
+"account_type_selector.option_personal.title" = "For private use";
+"account_type_selector.option_personal.subtitle" = "Chat with friends and family.";
+"account_type_selector.option_personal.feature0" = "Send messages and share pictures";
+"account_type_selector.option_personal.feature1" = "Always free";
+"account_type_selector.option_personal.button" = "Create Personal Account";
 
 "on_prem_user_login.title" = "Bem-vindo ao Wire Enterprise para %@!";
 "on_prem_user_login.message" = "Digite sua senha para fazer login";
@@ -97,6 +109,10 @@
 "obsolete_client.alert.title" = "Atualização necessária";
 "obsolete_client.alert.message" = "Você está perdendo novas funcionalidades. \nObtenha a versão mais recente do Wire na App Store.";
 "obsolete_client.alert.ok_button" = "Vá para a App Store";
+"obsolete_client.alert.switch_accounts" = "Switch Accounts";
 
 "obsolete_backend.alert.title" = "Versão do servidor não suportada";
 "obsolete_backend.alert.message" = "A versão do servidor não é suportada por este aplicativo. Por favor, entre em contato com o administrador do sistema.";
+
+"switching_accounts.title" = "Switch account";
+"switching_accounts.subtitle" = "Select another account on this device:";

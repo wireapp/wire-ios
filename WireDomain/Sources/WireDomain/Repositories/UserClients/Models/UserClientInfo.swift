@@ -24,7 +24,7 @@ public struct UserClientInfo: Sendable {
     let id: String
     let label: String?
     let type: WireDataModel.DeviceType
-    let activationDate: Date
+    let activationDate: Date?
     let model: String?
     let deviceClass: WireDataModel.DeviceClass?
     let lastActiveDate: Date?

@@ -324,4 +324,10 @@
 "searchGifs.gifItems_loaded.announcement" = "Загружено %@ новых GIF";
 
 // MARK: - Channel Creation UI - Navigation
+
 "conversation.create.channel.back" = "Вернуться к обзору новой беседы";
+
+// MARK: - E2EI
+
+"webAuth.urlLabel.description" = "URL провайдера идентификации";
+"webAuth.urlLabel.hint" = "Нажмите, чтобы открыть полный URL.";

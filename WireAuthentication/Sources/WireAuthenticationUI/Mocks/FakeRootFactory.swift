@@ -36,6 +36,10 @@ struct FakeRootFactory: RootFactory, OpenAppStoreUseCaseFactory {
         FakeDetermineAuthMethodFactory()
     }
 
+    func accountsSwitcherFactory() -> any AccountSwitcherFactory {
+        fatalError()
+    }
+
     func openAppStoreUseCase() -> any WireAuthenticationAPI.OpenAppStoreUseCaseProtocol {
         mockDependencies.openAppStoreUseCase()
     }

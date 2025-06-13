@@ -66,13 +66,20 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         self.mlsService = mlsService
     }
 
-    func decryptEvents(in eventEnvelope: UpdateEventEnvelope) async throws -> [UpdateEvent] {
+    func decryptEvents(
+        in eventEnvelope: UpdateEventEnvelope,
+        context: CoreCryptoContextProtocol?
+    ) async throws -> EventDecryptorResult {
+        guard !DeveloperFlag.skipMLSMessagesDecryption.isOn else {
+            return EventDecryptorResult(events: [], brokenMLSGroupIDs: [])
+        }
         let logAttributes: LogAttributes = [
             .eventId: eventEnvelope.id.safeForLoggingDescription,
             .public: true
         ]
 
         var decryptedEvents = [UpdateEvent]()
+        var brokenMLSGroupIDs = Set<String>()
         var shouldCommitPendingProposals = false
 
         for event in eventEnvelope.events {
@@ -84,7 +91,10 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                 )
 
                 do {
-                    let decryptedEventData = try await proteusMessageDecryptor.decryptedEventData(from: eventData)
+                    let decryptedEventData = try await proteusMessageDecryptor.decryptedEventData(
+                        from: eventData,
+                        context: context
+                    )
                     decryptedEvents.append(.conversation(.proteusMessageAdd(decryptedEventData)))
                 } catch let error as ProteusService.DecryptionError {
                     WireLogger.updateEvent.error(
@@ -98,7 +108,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                     )
                 } catch {
                     WireLogger.updateEvent.error(
-                        "failed to decrypt proteus event, dropping: \(error.localizedDescription)",
+                        "failed to decrypt proteus event, dropping: \(String(describing: error))",
                         attributes: logAttributes
                     )
                 }
@@ -109,16 +119,32 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                     "decrypting MLS add message event...",
                     attributes: logAttributes
                 )
-
                 shouldCommitPendingProposals = true
 
                 do {
-                    let decryptedEventData = try await mlsMessageDecryptor.decryptedMessageAddEventData(from: eventData)
+                    let decryptedEventData = try await mlsMessageDecryptor.decryptedMessageAddEventData(
+                        from: eventData,
+                        context: context
+                    )
                     decryptedEvents.append(.conversation(.mlsMessageAdd(decryptedEventData)))
 
+                } catch let error as MLSMessageDecryptorError {
+                    switch error {
+                    case let .wrongEpoch(mlsGroupID):
+                        WireLogger.updateEvent.error(
+                            "failed to decrypt MLS due to `WrongEpoch` for group \(mlsGroupID)",
+                            attributes: logAttributes
+                        )
+                        brokenMLSGroupIDs.insert(mlsGroupID.description)
+                    default:
+                        WireLogger.updateEvent.error(
+                            "failed to decrypt MLS add message event, dropping: \(String(describing: error))",
+                            attributes: logAttributes
+                        )
+                    }
                 } catch {
                     WireLogger.updateEvent.error(
-                        "failed to decrypt MLS add message event, dropping: \(error.localizedDescription)",
+                        "failed to decrypt MLS add message event, dropping: \(String(describing: error))",
                         attributes: logAttributes
                     )
                 }
@@ -127,7 +153,8 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
 
                 do {
                     try await mlsMessageDecryptor.decryptedWelcomeMessageEventData(
-                        from: eventData
+                        from: eventData,
+                        context: context
                     )
                 } catch {
                     WireLogger.updateEvent.error(
@@ -150,7 +177,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
             }
         }
 
-        return decryptedEvents
+        return EventDecryptorResult(events: decryptedEvents, brokenMLSGroupIDs: brokenMLSGroupIDs)
     }
 
     private func commitPendingProposalsIfNeeded() async {

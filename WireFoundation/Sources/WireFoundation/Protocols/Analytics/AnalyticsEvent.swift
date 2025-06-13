@@ -16,12 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// An event that can be tracked.
+import Foundation
+import WireAccountImageUI
 
-public struct AnalyticsEvent: Equatable, Sendable {
+public struct AccountUIModel: Identifiable {
 
-    /// A unique name.
+    public let id = UUID()
 
+<<<<<<<< HEAD:WireFoundation/Sources/WireFoundation/Protocols/Analytics/AnalyticsEvent.swift
     public let name: String
 
     /// Additional metadata.
@@ -35,19 +37,29 @@ public struct AnalyticsEvent: Equatable, Sendable {
     ///   - segmentation: Additional metadata.
 
     public init<Collection>(
+========
+    let avatarSource: AccountImageSource
+    let name: String
+    let handle: String
+    let teamName: String?
+    let backendName: String?
+    let action: () -> Void
+
+    public init(
+        avatarSource: AccountImageSource,
+>>>>>>>> e51ed70bed90c4d1b450f7b84370614c7f0fc57b:WireUI/Sources/WireMultiBackendUI/AccountUIModel.swift
         name: String,
-        segmentation: Collection = []
-    ) where Collection: Swift.Collection, Collection.Element == Segmentation {
+        handle: String,
+        teamName: String?,
+        backendName: String?,
+        action: @escaping () -> Void
+    ) {
+        self.avatarSource = avatarSource
         self.name = name
-        self.segmentation = Set(segmentation)
-    }
-
-}
-
-extension AnalyticsEvent: CustomDebugStringConvertible {
-
-    public var debugDescription: String {
-        "event: \(name), segmentation: \(segmentation)"
+        self.handle = handle
+        self.teamName = teamName
+        self.backendName = backendName
+        self.action = action
     }
 
 }

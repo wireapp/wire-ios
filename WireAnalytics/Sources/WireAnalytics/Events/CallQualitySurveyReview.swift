@@ -17,7 +17,8 @@
 //
 
 public import Foundation
-public import WireFoundation
+
+import WireFoundation
 
 /// User review for call quality.
 

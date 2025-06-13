@@ -102,8 +102,8 @@
 "peoplepicker.federation.domain_unvailable" = "Domena federowana jest obecnie niedostępna. [Dowiedz się więcej](%@)";
 
 "add_participants.alert.title" = "Ta rozmowa jest przepełniona";
-"add_participants.alert.message.new_conversation" = "Do %d osób może dołączyć do rozmowy.";
-"add_participants.alert.message.existing_conversation" = "Do %1$d osób może dołączyć do rozmowy. Obecnie jest tylko miejsce dla dodatkowych %2$d osób.";
+"add_participants.alert.message.new_conversation" = "Up to %@ people can join a conversation.";
+"add_participants.alert.message.existing_conversation" = "Up to %@ people can join a conversation. Currently there is only room for %@ more.";
 
 // Channel Creation UI - Navigation
 "conversation.create.channel.title" = "New channel";
@@ -654,6 +654,7 @@
 "content.collapsed.video.title" = "You sent a video";
 "content.collapsed.audio.title" = "You sent an audio message";
 "content.collapsed.location.title" = "You sent your location";
+"content.collapsed.link.title" = "You sent a link";
 
 "content.message.like" = "Polub";
 "content.message.unlike" = "Przestań lubić";
@@ -859,7 +860,7 @@
 "participants.section.services" = "Usługi (%d)";
 "participants.section.settings" = "Opcje";
 "participants.footer.add_title" = "Dodaj uczestników";
-"participants.section.name.footer" = "Up to %1$d participants can join a conversation.";
+"participants.section.name.footer" = "Up to %@ participants can join a conversation.";
 "participants.section.admins.footer" = "Brak administratorów.";
 "participants.section.members.footer" = "Brak rozmówców.";
 
@@ -1158,6 +1159,7 @@
 "self.settings.account_details.remove_device.password.error" = "Hasło nieprawidłowe";
 
 "self.settings.account_appearance_group.title" = "Wygląd";
+"self.settings.account_appearance_group.footer" = "When this is on, your conversations show a background based on your profile color and light or dark theme.";
 
 "self.settings.privacy_section_group.title" = "Prywatność";
 "self.settings.enable_read_receipts.title" = "Wyświetlaj potwierdzenie przeczytania";
@@ -1176,6 +1178,7 @@
 "self.settings.account_picture_group.accent_color.amber" = "Bursztynowy";
 "self.settings.account_picture_group.accent_color.turquoise" = "Turkusowy";
 "self.settings.account_picture_group.accent_color.purple" = "Fioletowy";
+"self.settings.account_picture_group.background.title" = "Conversation background color";
 
 "self.settings.account_personal_information_group.title" = "Twoje dane";
 
@@ -1327,7 +1330,7 @@
 "self.settings.privacy_security.disable_link_previews.footer" = "Podglądy linków otrzymanych od innych osób mogą być nadal wyświetlane.";
 
 "self.settings.privacy_security.collapse_own_messages.title" = "Collapse my messages";
-"self.settings.privacy_security.collapse_own_messages.footer" = "When this is on, all your messages collapse to a single line.";
+"self.settings.privacy_security.collapse_own_messages.footer" = "When this is on, all your messages collapse after three lines.";
 
 "self.settings.privacy_analytics_menu.devices.title" = "Urządzenia";
 
@@ -1591,6 +1594,7 @@
 "enroll_e2ei_certificate.subtitle" = "The certificate is active and your device is verified.";
 "enroll_e2ei_certificate.certificate_details_button" = "Certificate Details";
 "enroll_e2ei_certificate.ok_button" = "OK";
+"enroll_e2ei_certificate.idp_url_title" = "Identity Provider URL";
 
 // Update e2ei certificate
 "update_e2ei_certificate.title" = "Certificate updated";

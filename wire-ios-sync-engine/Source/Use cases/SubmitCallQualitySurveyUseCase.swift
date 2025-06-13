@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAnalytics
-import WireFoundation
+public import WireFoundation
+public import WireAnalytics
 
 public protocol SubmitCallQualitySurveyUseCaseProtocol {
 

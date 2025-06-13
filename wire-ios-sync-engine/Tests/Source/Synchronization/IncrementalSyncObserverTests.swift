@@ -36,7 +36,7 @@ class IncrementalSyncObserverTests {
     func ifAppIsLiveThenDontWait() async {
         // Given
         syncAgent.isSyncV2Enabled = true
-        syncAgent.syncStatePublisher = Just(SyncState.liveSyncing).eraseToAnyPublisher()
+        syncAgent.syncStatePublisher = Just(SyncState.liveSyncing(.ongoing)).eraseToAnyPublisher()
 
         // When
         let before = Date.now
@@ -70,6 +70,13 @@ class IncrementalSyncObserverTests {
         Task {
             // Send the next state after a pause.
             try? await Task.sleep(for: .seconds(0.25))
+            syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
+
+            // Sending the states again to ensure we don't crash due to a misuse of `continuation.resume()` as it must
+            // be called only once.
+            // Since we're cancelling the subscription when `DecryptionState` is `.done` `continuation.resume()` should
+            // not be called again.
+            syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
             syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
         }
 

@@ -16,6 +16,34 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public struct AnalyticsEvent: Equatable, Sendable {
+
+    /// A unique name.
+
+    public let name: String
+
+    /// Additional metadata.
+
+    public let segmentation: Set<Segmentation>
+
+    /// Create a new `AnalyticsEvent`.
+    ///
+    /// - Parameters:
+    ///   - name: A unique name.
+    ///   - segmentation: Additional metadata.
+
+    public init(
+        name: String,
+        segmentation: some Collection<Segmentation> = []
+    ) {
+        self.name = name
+        self.segmentation = Set(segmentation)
+    }
+
+}
+
+// MARK: -
+
 public extension AnalyticsEvent {
 
     /// Represents a key-value pair for analytics event segmentation.
@@ -34,5 +62,34 @@ public extension AnalyticsEvent {
             self.value = value
         }
 
+<<<<<<<< HEAD:WireFoundation/Sources/WireFoundation/Protocols/Analytics/AnalyticsEvent+Segmentation.swift
+========
+        public init(key: String, value: Int) {
+            self.key = key
+            self.value = "\(value)"
+        }
+
+        public init(key: String, value: Int32) {
+            self.key = key
+            self.value = "\(value)"
+        }
+
+        public init(key: String, value: Bool) {
+            self.key = key
+            self.value = value ? "True" : "False"
+        }
+
+>>>>>>>> e51ed70bed90c4d1b450f7b84370614c7f0fc57b:WireFoundation/Sources/WireFoundation/WirePrimitives/AnalyticsEvent.swift
     }
+
+}
+
+// MARK: -
+
+extension AnalyticsEvent: CustomDebugStringConvertible {
+
+    public var debugDescription: String {
+        "event: \(name), segmentation: \(segmentation)"
+    }
+
 }

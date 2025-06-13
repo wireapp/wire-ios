@@ -34,6 +34,8 @@ package struct VerificationCodeView: View {
 
     @FocusState private var focusedIndex: Int?
 
+    private typealias Strings = L10n.Localizable
+
     package init(
         factory: @autoclosure @escaping () -> VerificationCodeFactory
     ) {
@@ -42,7 +44,7 @@ package struct VerificationCodeView: View {
 
     package var body: some View {
         VStack(spacing: 20) {
-            Text(L10n.VerificationCode.message(viewModel.email))
+            Text(Strings.VerificationCode.message(viewModel.email))
                 .wireTextStyle(.body1)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(Color.primaryText)
@@ -57,7 +59,7 @@ package struct VerificationCodeView: View {
                         ProgressView()
                     }
 
-                    Text(L10n.VerificationCode.confirm)
+                    Text(Strings.VerificationCode.confirm)
                 }
             })
             .wireButtonStyle(.primary)
@@ -67,14 +69,14 @@ package struct VerificationCodeView: View {
             Button(action: {
                 Task.detached { await viewModel.requestVerificationCode() }
             }, label: {
-                Text(L10n.VerificationCode.resendCode)
+                Text(Strings.VerificationCode.resendCode)
             })
             .wireButtonStyle(.link)
             .disabled(viewModel.isResending)
         }
         .padding()
         .background(ColorTheme.Backgrounds.surface.color)
-        .navigationTitle(L10n.VerificationCode.title)
+        .navigationTitle(Strings.VerificationCode.title)
         .navigationBarTitleDisplayMode(.inline)
         .setPreferredSize(navigationBarHidden: false)
         .customBackButton()
@@ -83,7 +85,7 @@ package struct VerificationCodeView: View {
             title: { Text($0.title) },
             message: { Text($0.message) },
             actions: { _ in
-                Button(L10n.Authentication.Error.confirm, action: {})
+                Button(Strings.Authentication.Error.confirm, action: {})
             }
         )
         .navigationDestination(for: VerificationCodeDestination.self) {

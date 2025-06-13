@@ -21,13 +21,23 @@ import WireDataModel
 import WireLogging
 import WireProtos
 
-struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcessorProtocol {
+public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcessorProtocol {
 
     let messageLocalStore: any MessageLocalStoreProtocol
     let conversationLocalStore: any ConversationLocalStoreProtocol
     let userLocalStore: any UserLocalStoreProtocol
 
-    func processProtobufMessage(
+    public init(
+        messageLocalStore: any MessageLocalStoreProtocol,
+        conversationLocalStore: any ConversationLocalStoreProtocol,
+        userLocalStore: any UserLocalStoreProtocol
+    ) {
+        self.messageLocalStore = messageLocalStore
+        self.conversationLocalStore = conversationLocalStore
+        self.userLocalStore = userLocalStore
+    }
+
+    public func processProtobufMessage(
         _ message: GenericMessage,
         content: GenericMessage.OneOf_Content,
         conversation: ZMConversation,
@@ -96,10 +106,15 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
                 date: date
             )
 
-        case .confirmation:
+        case let .confirmation(confirmation):
 
-            // Some logic was done here but it seems unnecessary - see legacy `ZMOTRMessage+UpdateEvent`
-            break
+            await messageLocalStore.addMessageConfirmation(
+                confirmation,
+                in: conversation,
+                senderID: senderID.uuid,
+                senderDomain: senderID.domain,
+                date: date
+            )
 
         case let .buttonActionConfirmation(buttonActionConfirmation):
 
@@ -181,7 +196,7 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
                 )
             }
 
-        case .text, .knock, .location, .composite, .buttonAction:
+        case .text, .knock, .location, .composite, .buttonAction, .multipart:
 
             try await processMessageContent(
                 message: message,

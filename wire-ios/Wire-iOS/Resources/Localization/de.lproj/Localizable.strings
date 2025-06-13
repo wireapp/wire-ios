@@ -102,8 +102,8 @@
 "peoplepicker.federation.domain_unvailable" = "Die föderierte Domain ist derzeit nicht verfügbar. [Mehr erfahren](%@)";
 
 "add_participants.alert.title" = "Die Unterhaltung ist voll";
-"add_participants.alert.message.new_conversation" = "Bis zu %d Personen können an einer Unterhaltung teilnehmen.";
-"add_participants.alert.message.existing_conversation" = "Bis zu %1$d Personen können an einer Unterhaltung teilnehmen. Jetzt ist noch Platz für %2$d weitere.";
+"add_participants.alert.message.new_conversation" = "Bis zu %@ Personen können an einer Unterhaltung teilnehmen.";
+"add_participants.alert.message.existing_conversation" = "Bis zu %@ Personen können an einer Unterhaltung teilnehmen. Jetzt ist noch Platz für %@ weitere.";
 
 // Channel Creation UI - Navigation
 "conversation.create.channel.title" = "Neuer Channel";
@@ -654,6 +654,7 @@
 "content.collapsed.video.title" = "Sie haben ein Video gesendet";
 "content.collapsed.audio.title" = "Sie haben eine Audionachricht gesendet";
 "content.collapsed.location.title" = "Sie haben Ihren Standort geteilt";
+"content.collapsed.link.title" = "Sie haben einen Link gesendet";
 
 "content.message.like" = "Gefällt mir";
 "content.message.unlike" = "Gefällt mir nicht mehr";
@@ -859,7 +860,7 @@
 "participants.section.services" = "Dienste (%d)";
 "participants.section.settings" = "Optionen";
 "participants.footer.add_title" = "Teilnehmer hinzufügen";
-"participants.section.name.footer" = "Bis zu %1$d Personen können an einer Unterhaltung teilnehmen.";
+"participants.section.name.footer" = "Bis zu %@ Personen können an einer Unterhaltung teilnehmen.";
 "participants.section.admins.footer" = "Es gibt keine Admins.";
 "participants.section.members.footer" = "Es gibt keine Mitglieder.";
 
@@ -1158,6 +1159,7 @@
 "self.settings.account_details.remove_device.password.error" = "Falsches Passwort";
 
 "self.settings.account_appearance_group.title" = "Erscheinungsbild";
+"self.settings.account_appearance_group.footer" = "Wenn diese Option aktiviert ist, zeigen Ihre Unterhaltungen einen auf Ihr Erscheinungsbild angepassten Hintergrund.";
 
 "self.settings.privacy_section_group.title" = "Datenschutz";
 "self.settings.enable_read_receipts.title" = "Lesebestätigungen senden";
@@ -1176,6 +1178,7 @@
 "self.settings.account_picture_group.accent_color.amber" = "Bernstein";
 "self.settings.account_picture_group.accent_color.turquoise" = "Türkis";
 "self.settings.account_picture_group.accent_color.purple" = "Lila";
+"self.settings.account_picture_group.background.title" = "Hintergrundfarbe für Unterhaltungen";
 
 "self.settings.account_personal_information_group.title" = "Persönliche Informationen";
 
@@ -1327,7 +1330,7 @@
 "self.settings.privacy_security.disable_link_previews.footer" = "Vorschauen für Links von anderen Personen können weiterhin angezeigt werden.";
 
 "self.settings.privacy_security.collapse_own_messages.title" = "Meine Nachrichten ausblenden";
-"self.settings.privacy_security.collapse_own_messages.footer" = "Wenn diese Option aktiviert ist, werden all Ihre Nachrichten bis auf eine Zeile ausgeblendet.";
+"self.settings.privacy_security.collapse_own_messages.footer" = "Wenn diese Option aktiviert ist, werden all Ihre Nachrichten nach drei Zeilen ausgeblendet.";
 
 "self.settings.privacy_analytics_menu.devices.title" = "Geräte";
 
@@ -1591,6 +1594,7 @@
 "enroll_e2ei_certificate.subtitle" = "Das Zertifikat ist aktiv und Ihr Gerät überprüft.";
 "enroll_e2ei_certificate.certificate_details_button" = "Zertifikatsdetails";
 "enroll_e2ei_certificate.ok_button" = "OK";
+"enroll_e2ei_certificate.idp_url_title" = "Identity-Provider-URL";
 
 // Update e2ei certificate
 "update_e2ei_certificate.title" = "Zertifikat aktualisiert";

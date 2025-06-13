@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import struct Foundation.TimeInterval
 import WireFoundation
+
+import struct Foundation.TimeInterval
 
 // The segmentation entries in this file are not to be used anymore.
 // As soon as we get the confirmation that these are not used anymore, we should delete this file.

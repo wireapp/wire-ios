@@ -22,7 +22,7 @@ import XCTest
 @testable import WireAnalytics
 @testable import WireAnalyticsSupport
 
-final class AnalyticsServiceTests: XCTestCase {
+class AnalyticsServiceTests: XCTestCase {
 
     private var sut: AnalyticsService!
     private var countlyMock: MockCountlyProtocol!

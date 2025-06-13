@@ -62,7 +62,9 @@ final class PullEventsStep: Component<PullEventsDependency>, PullEventsStepProto
             selfClientID: selfClientID,
             api: try updateEventsAPI,
             store: updateEventsLocalStore,
-            decryptor: updateEventDecryptor
+            journal: journal,
+            decryptor: updateEventDecryptor,
+            coreCryptoProvider: coreCryptoProvider
         )
 
         let pullEventsUseCase = PullEventsUseCase(
@@ -93,6 +95,21 @@ extension PullEventsStep {
         )
     }
 
+    public var databaseSaver: any DatabaseSaverProtocol {
+        DatabaseSaver(context: dependency.coreData.syncContext)
+    }
+
+    private var sharedUserDefaults: UserDefaults {
+        UserDefaults(suiteName: dependency.applicationIdentifier)!
+    }
+
+    private var journal: Journal {
+        Journal(
+            userID: selfUserID,
+            storage: sharedUserDefaults
+        )
+    }
+
     var updateEventDecryptor: any UpdateEventDecryptorProtocol {
         UpdateEventDecryptor(
             proteusMessageDecryptor: proteusMessageDecryptor,
@@ -109,6 +126,7 @@ extension PullEventsStep {
             accountDirectory: accountContainer,
             syncContext: dependency.coreData.syncContext,
             cryptoboxMigrationManager: CryptoboxMigrationManager(),
+            coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager(journal: journal),
             allowCreation: false
         )
     }

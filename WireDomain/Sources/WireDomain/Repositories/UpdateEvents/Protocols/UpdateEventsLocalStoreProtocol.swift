@@ -32,6 +32,10 @@ public protocol UpdateEventsLocalStoreProtocol {
 
     func storeLastEventID(id: UUID)
 
+    /// Sets last event ID to nil.
+
+    func resetLastEventID()
+
     /// Retrieves the index of the last event envelope.
     /// - returns: The last index event envelope.
 
@@ -44,6 +48,16 @@ public protocol UpdateEventsLocalStoreProtocol {
 
     func persistEventEnvelope(
         _ eventEnvelope: UpdateEventEnvelope,
+        index: Int64
+    ) async throws
+
+    /// Persists an event envelopes locally.
+    /// - Parameters:
+    ///     - eventEnvelopes: The event envelopes to persist.
+    ///     - index: The event envelope start index.
+
+    func persistEventEnvelopes(
+        _ eventEnvelopes: [UpdateEventEnvelope],
         index: Int64
     ) async throws
 

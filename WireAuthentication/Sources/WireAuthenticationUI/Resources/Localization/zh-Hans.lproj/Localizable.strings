@@ -28,8 +28,20 @@
 "cloud_user_login.input_password.placeholder" = "键入密码";
 "cloud_user_login.submit" = "继续";
 "cloud_user_login.forgot_password" = "忘记密码？";
-"create_personal_account.title" = "还没有 Wire 账户？";
-"create_personal_account.button" = "创建个人账户";
+"create_account_or_team.title" = "还没有 Wire 账户？";
+"create_account_or_team.button" = "创建账户或团队";
+
+"account_type_selector.title" = "您将如何使用 Wire？";
+"account_type_selector.option_team.title" = "用于协作";
+"account_type_selector.option_team.subtitle" = "与您的团队安全合作。";
+"account_type_selector.option_team.feature0" = "通过一个应用与同事沟通并共享文档";
+"account_type_selector.option_team.feature1" = "免费开始，随时升级";
+"account_type_selector.option_team.button" = "创建团队";
+"account_type_selector.option_personal.title" = "供私人使用";
+"account_type_selector.option_personal.subtitle" = "与亲朋好友畅聊。";
+"account_type_selector.option_personal.feature0" = "发送消息和分享图片";
+"account_type_selector.option_personal.feature1" = "始终免费";
+"account_type_selector.option_personal.button" = "创建个人账户";
 
 "on_prem_user_login.title" = "欢迎来到 %@ 的 Wire 企业版！";
 "on_prem_user_login.message" = "键入密码来登录";
@@ -97,6 +109,10 @@
 "obsolete_client.alert.title" = "必要更新";
 "obsolete_client.alert.message" = "您错过了新功能。\n请在 App Store 获取最新版本的 Wire。";
 "obsolete_client.alert.ok_button" = "到App Store";
+"obsolete_client.alert.switch_accounts" = "Switch Accounts";
 
 "obsolete_backend.alert.title" = "不支持服务器版本";
 "obsolete_backend.alert.message" = "此应用不支持该服务器版本。请联系您的系统管理员。";
+
+"switching_accounts.title" = "Switch account";
+"switching_accounts.subtitle" = "Select another account on this device:";

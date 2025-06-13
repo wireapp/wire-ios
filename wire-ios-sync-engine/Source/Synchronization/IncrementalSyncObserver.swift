@@ -57,7 +57,9 @@ final class IncrementalSyncObserver: IncrementalSyncObserverProtocol {
                     switch syncState {
                     case .incrementalSyncing(.pullPendingEvents):
                         self?.decryptionState = .inProgress
-                    case .incrementalSyncing(.processPendingEvents), .liveSyncing:
+                    case .incrementalSyncing(.processPendingEvents),
+                         .suspended,
+                         .liveSyncing:
                         self?.decryptionState = .done
                     default:
                         self?.decryptionState = .notStarted
@@ -105,6 +107,7 @@ final class IncrementalSyncObserver: IncrementalSyncObserverProtocol {
                 cancellable = $decryptionState.sink { newDecryptionState in
                     if newDecryptionState == .done {
                         continuation.resume()
+                        cancellable?.cancel()
                     }
                 }
             }

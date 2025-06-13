@@ -32,7 +32,7 @@ struct UserClientAddEventDecoder {
             client: SelfUserClient(
                 id: payload.id,
                 type: payload.type,
-                activationDate: payload.activationDate.date,
+                activationDate: payload.activationDate?.date,
                 label: payload.label,
                 model: payload.model,
                 deviceClass: payload.deviceClass,
@@ -48,7 +48,7 @@ struct UserClientAddEventDecoder {
 
         let id: String
         let type: UserClientType
-        let activationDate: UTCTime
+        let activationDate: UTCTime?
         let label: String?
         let model: String?
         let deviceClass: DeviceClass?

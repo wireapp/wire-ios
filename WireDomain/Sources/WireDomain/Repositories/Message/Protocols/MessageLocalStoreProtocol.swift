@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireDataModel
+public import Foundation
+public import WireDataModel
 
 // sourcery: AutoMockable
 /// Facilitate access to message related domain objects.
@@ -34,6 +34,11 @@ public protocol MessageLocalStoreProtocol {
         conversationID: UUID,
         conversationDomain: String?
     ) async
+
+    /// Adds a system message (to all conversations) that inform that there are potential lost messages
+    /// and that some users were added to the conversation
+
+    func addPotentialGapSystemMessage() async throws
 
     /// Fetches or creates a `ZMClientMessage` locally.
     /// - Parameters:
@@ -153,6 +158,22 @@ public protocol MessageLocalStoreProtocol {
         _ messageReaction: WireProtos.Reaction,
         in conversation: ZMConversation,
         senderID: UUID,
+        date: Date
+    ) async
+
+    /// Adds a message confirmation to a message. This is used for read receipts.
+    /// - Parameters:
+    ///    - confirmation: The confirmation protobuf object.
+    ///    - conversation: The related conversation.
+    ///    - senderID: The message sender id.
+    ///    - senderDomain: The message sender domain.
+    ///    - date: The date the confirmation was added.
+
+    func addMessageConfirmation(
+        _ confirmation: WireProtos.Confirmation,
+        in conversation: ZMConversation,
+        senderID: UUID,
+        senderDomain: String,
         date: Date
     ) async
 

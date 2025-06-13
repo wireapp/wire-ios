@@ -53,4 +53,22 @@ public extension JournalKey where Value == Bool {
         defaultValue: false
     )
 
+    /// Whether a core crypto key migration needs to be performed.
+
+    static let isCoreCryptoKeyMigrationRequired = Self(
+        "isCoreCryptoKeyMigrationRequired",
+        defaultValue: true
+    )
+
+}
+
+public extension JournalKey where Value == Set<String> {
+
+    /// The set of MLS group IDs to be repaired.
+
+    static let brokenMLSGroupIDs = Self(
+        "brokenMLSGroupIDs",
+        defaultValue: []
+    )
+
 }

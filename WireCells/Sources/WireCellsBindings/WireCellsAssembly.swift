@@ -16,8 +16,34 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public class WireCellsAssembly {
-    public init() {
-        print("Init")
+public import WireCellsAPI
+import Foundation
+import WireCellsImplementation
+
+public struct WireCellsAssembly {
+
+    // This implementation is just for development. How authentication will be handled in production is not yet known.
+    private static let credentials = WireCellsCredentials(
+        serverURL: URL(string: "https://service.zeta.pydiocells.com")!,
+        accessToken: UserDefaults.standard.string(forKey: "ZMWireCellsAccessToken") ?? "unknown",
+        gatewaySecret: UserDefaults.standard.string(forKey: "ZMWireCellsGatewaySecret") ?? "unknown"
+    )
+
+    private static let nodesAPI = NodesAPI(credentials: credentials)
+
+    private static let draftsRepository = DraftsRepository(
+        uploadManager: WireCellsNodeUploadManager(nodesAPI: nodesAPI),
+        nodesAPI: nodesAPI
+    )
+
+    public init() {}
+
+    public func makeUploadDraftUseCase(cellName: String) -> any WireCellsUploadDraftUseCaseProtocol {
+        UploadDraftUseCase(cellName: cellName, draftRepository: Self.draftsRepository)
     }
+
+    public func makeObserveDraftsUseCase(cellName: String) -> any WireCellsObserveDraftsUseCaseProtocol {
+        ObserveDraftsUseCase(cellName: cellName, draftRepository: Self.draftsRepository)
+    }
+
 }

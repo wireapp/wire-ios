@@ -28,20 +28,20 @@ public protocol CoreCryptoContextProtocol: WireCoreCryptoUniffi.CoreCryptoContex
     /// See [core_crypto::context::CentralContext::get_or_create_client_keypackages]
     func clientKeypackages(
         ciphersuite: WireCoreCryptoUniffi.Ciphersuite,
-        credentialType: WireCoreCryptoUniffi.MlsCredentialType,
+        credentialType: WireCoreCryptoUniffi.CredentialType,
         amountRequested: UInt32
     ) async throws -> [Data]
 
     /// See [core_crypto::mls::MlsCentral::client_public_key]
     func clientPublicKey(
         ciphersuite: WireCoreCryptoUniffi.Ciphersuite,
-        credentialType: WireCoreCryptoUniffi.MlsCredentialType
+        credentialType: WireCoreCryptoUniffi.CredentialType
     ) async throws -> Data
 
     /// See [core_crypto::context::CentralContext::client_valid_key_packages_count]
     func clientValidKeypackagesCount(
         ciphersuite: WireCoreCryptoUniffi.Ciphersuite,
-        credentialType: WireCoreCryptoUniffi.MlsCredentialType
+        credentialType: WireCoreCryptoUniffi.CredentialType
     ) async throws -> UInt64
 
     /// See [core_crypto::mls::conversation::conversation_guard::ConversationGuard::commit_pending_proposals]
@@ -59,7 +59,7 @@ public protocol CoreCryptoContextProtocol: WireCoreCryptoUniffi.CoreCryptoContex
     /// See [core_crypto::context::CentralContext::new_conversation]
     func createConversation(
         conversationId: Data,
-        creatorCredentialType: WireCoreCryptoUniffi.MlsCredentialType,
+        creatorCredentialType: WireCoreCryptoUniffi.CredentialType,
         config: WireCoreCryptoUniffi.ConversationConfiguration
     ) async throws
 
@@ -69,7 +69,7 @@ public protocol CoreCryptoContextProtocol: WireCoreCryptoUniffi.CoreCryptoContex
     /// See [core_crypto::context::CentralContext::delete_keypackages]
     func deleteKeypackages(refs: [Data]) async throws
 
-    /// See [core_crypto::context::CentralContext::delete_stale_key_packages]
+    /// See [core_crypto::transaction_context::TransactionContext::delete_stale_key_packages]
     func deleteStaleKeyPackages(ciphersuite: WireCoreCryptoUniffi.Ciphersuite) async throws
 
     /// See [core_crypto::mls::conversation::conversation_guard::ConversationGuard::e2ei_conversation_state]
@@ -77,26 +77,27 @@ public protocol CoreCryptoContextProtocol: WireCoreCryptoUniffi.CoreCryptoContex
 
     func e2eiDumpPkiEnv() async throws -> WireCoreCryptoUniffi.E2eiDumpedPkiEnv?
 
-    /// See [core_crypto::context::CentralContext::e2ei_enrollment_stash]
+    /// See [core_crypto::transaction_context::TransactionContext::e2ei_enrollment_stash]
+    /// Note that this can only succeed id the enrollment is unique and there are no other hard refs to it.
     func e2eiEnrollmentStash(enrollment: WireCoreCryptoUniffi.E2eiEnrollment) async throws -> Data
 
-    /// See [core_crypto::context::CentralContext::e2ei_enrollment_stash_pop]
+    /// See [core_crypto::transaction_context::TransactionContext::e2ei_enrollment_stash_pop]
     func e2eiEnrollmentStashPop(handle: Data) async throws -> WireCoreCryptoUniffi.E2eiEnrollment
 
-    /// See [core_crypto::mls::MlsCentral::e2ei_is_enabled]
+    /// See [core_crypto::mls::Client::e2ei_is_enabled]
     func e2eiIsEnabled(ciphersuite: WireCoreCryptoUniffi.Ciphersuite) async throws -> Bool
 
     /// See [core_crypto::mls::MlsCentral::e2ei_is_pki_env_setup]
     func e2eiIsPkiEnvSetup() async throws -> Bool
 
-    /// See [core_crypto::context::CentralContext::e2ei_mls_init_only]
+    /// See [core_crypto::transaction_context::TransactionContext::e2ei_mls_init_only]
     func e2eiMlsInitOnly(
         enrollment: WireCoreCryptoUniffi.E2eiEnrollment,
         certificateChain: String,
         nbKeyPackage: UInt32?
     ) async throws -> WireCoreCryptoUniffi.NewCrlDistributionPoints
 
-    /// See [core_crypto::context::CentralContext::e2ei_new_activation_enrollment]
+    /// See [core_crypto::transaction_context::TransactionContext::e2ei_new_activation_enrollment]
     func e2eiNewActivationEnrollment(
         displayName: String,
         handle: String,
@@ -105,7 +106,7 @@ public protocol CoreCryptoContextProtocol: WireCoreCryptoUniffi.CoreCryptoContex
         ciphersuite: WireCoreCryptoUniffi.Ciphersuite
     ) async throws -> WireCoreCryptoUniffi.E2eiEnrollment
 
-    /// See [core_crypto::context::CentralContext::e2ei_new_enrollment]
+    /// See [core_crypto::transaction_context::TransactionContext::e2ei_new_enrollment]
     func e2eiNewEnrollment(
         clientId: String,
         displayName: String,
@@ -115,7 +116,7 @@ public protocol CoreCryptoContextProtocol: WireCoreCryptoUniffi.CoreCryptoContex
         ciphersuite: WireCoreCryptoUniffi.Ciphersuite
     ) async throws -> WireCoreCryptoUniffi.E2eiEnrollment
 
-    /// See [core_crypto::context::CentralContext::e2ei_new_rotate_enrollment]
+    /// See [core_crypto::transaction_context::TransactionContext::e2ei_new_rotate_enrollment]
     func e2eiNewRotateEnrollment(
         displayName: String?,
         handle: String?,
@@ -124,13 +125,13 @@ public protocol CoreCryptoContextProtocol: WireCoreCryptoUniffi.CoreCryptoContex
         ciphersuite: WireCoreCryptoUniffi.Ciphersuite
     ) async throws -> WireCoreCryptoUniffi.E2eiEnrollment
 
-    /// See [core_crypto::context::CentralContext::e2ei_register_acme_ca]
+    /// See [core_crypto::transaction_context::TransactionContext::e2ei_register_acme_ca]
     func e2eiRegisterAcmeCa(trustAnchorPem: String) async throws
 
-    /// See [core_crypto::context::CentralContext::e2ei_register_crl]
+    /// See [core_crypto::transaction_context::TransactionContext::e2ei_register_crl]
     func e2eiRegisterCrl(crlDp: String, crlDer: Data) async throws -> WireCoreCryptoUniffi.CrlRegistration
 
-    /// See [core_crypto::context::CentralContext::e2ei_register_intermediate_ca_pem]
+    /// See [core_crypto::transaction_context::TransactionContext::e2ei_register_intermediate_ca_pem]
     func e2eiRegisterIntermediateCa(certPem: String) async throws -> WireCoreCryptoUniffi.NewCrlDistributionPoints
 
     /// See [core_crypto::mls::conversation::ConversationGuard::e2ei_rotate]
@@ -145,21 +146,21 @@ public protocol CoreCryptoContextProtocol: WireCoreCryptoUniffi.CoreCryptoContex
     /// See [core_crypto::mls::conversation::ImmutableConversation::get_client_ids]
     func getClientIds(conversationId: Data) async throws -> [WireCoreCryptoUniffi.ClientId]
 
-    /// See [core_crypto::mls::MlsCentral::get_credential_in_use]
-    func getCredentialInUse(groupInfo: Data, credentialType: WireCoreCryptoUniffi.MlsCredentialType) async throws
+    /// See [core_crypto::mls::Client::get_credential_in_use]
+    func getCredentialInUse(groupInfo: Data, credentialType: WireCoreCryptoUniffi.CredentialType) async throws
         -> WireCoreCryptoUniffi.E2eiConversationState
 
     /// See [core_crypto::context::CentralContext::get_data].
     func getData() async throws -> Data?
 
-    /// See [core_crypto::mls::MlsCentral::get_device_identities]
+    /// See [core_crypto::mls::Client::get_device_identities]
     func getDeviceIdentities(conversationId: Data, deviceIds: [WireCoreCryptoUniffi.ClientId]) async throws
         -> [WireCoreCryptoUniffi.WireIdentity]
 
     /// See [core_crypto::mls::conversation::ImmutableConversation::get_external_sender]
     func getExternalSender(conversationId: Data) async throws -> Data
 
-    /// See [core_crypto::mls::MlsCentral::get_user_identities]
+    /// See [core_crypto::mls::Client::get_user_identities]
     func getUserIdentities(conversationId: Data, userIds: [String]) async throws
         -> [String: [WireCoreCryptoUniffi.WireIdentity]]
 
@@ -167,7 +168,7 @@ public protocol CoreCryptoContextProtocol: WireCoreCryptoUniffi.CoreCryptoContex
     func joinByExternalCommit(
         groupInfo: Data,
         customConfiguration: WireCoreCryptoUniffi.CustomConfiguration,
-        credentialType: WireCoreCryptoUniffi.MlsCredentialType
+        credentialType: WireCoreCryptoUniffi.CredentialType
     ) async throws -> WireCoreCryptoUniffi.WelcomeBundle
 
     /// See [core_crypto::mls::conversation::ConversationGuard::mark_as_child_of]
@@ -228,7 +229,7 @@ public protocol CoreCryptoContextProtocol: WireCoreCryptoUniffi.CoreCryptoContex
     /// See [core_crypto::context::CentralContext::proteus_last_resort_prekey]
     func proteusLastResortPrekey() async throws -> Data
 
-    /// See [core_crypto::context::CentralContext::proteus_last_resort_prekey_id]
+    /// See [core_crypto::proteus::ProteusCentral::last_resort_prekey_id]
     func proteusLastResortPrekeyId() throws -> UInt16
 
     /// See [core_crypto::context::CentralContext::proteus_new_prekey]
@@ -257,10 +258,13 @@ public protocol CoreCryptoContextProtocol: WireCoreCryptoUniffi.CoreCryptoContex
     /// messages and initializing Sessions
     func proteusSessionSave(sessionId: String) async throws
 
+    /// See [core_crypto::mls::context::CentralContext::random_bytes]
+    func randomBytes(len: UInt32) async throws -> Data
+
     /// See [core_crypto::context::CentralContext::remove_members_from_conversation]
     func removeClientsFromConversation(conversationId: Data, clients: [WireCoreCryptoUniffi.ClientId]) async throws
 
-    /// See [core_crypto::context::CentralContext::save_x509_credential]
+    /// See [core_crypto::transaction_context::TransactionContext::save_x509_credential]
     func saveX509Credential(enrollment: WireCoreCryptoUniffi.E2eiEnrollment, certificateChain: String) async throws
         -> WireCoreCryptoUniffi.NewCrlDistributionPoints
 

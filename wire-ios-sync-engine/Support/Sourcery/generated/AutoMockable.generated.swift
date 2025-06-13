@@ -24,8 +24,7 @@
 // swiftlint:disable variable_name
 
 
-import WireAnalytics
-import WireAPI
+import WireDataModel
 import WireDomain
 import Combine
 
@@ -486,35 +485,7 @@ public class MockImportBackupEntityStorageProtocol: ImportBackupEntityStoragePro
 
 }
 
-class MockImportBackupFileArchiverProtocol: ImportBackupFileArchiverProtocol {
-
-    // MARK: - Life cycle
-
-
-
-    // MARK: - unzipFile
-
-    var unzipFileAtTo_Invocations: [(sourceURL: URL, destinationURL: URL)] = []
-    var unzipFileAtTo_MockError: Error?
-    var unzipFileAtTo_MockMethod: ((URL, URL) throws -> Void)?
-
-    func unzipFile(at sourceURL: URL, to destinationURL: URL) throws {
-        unzipFileAtTo_Invocations.append((sourceURL: sourceURL, destinationURL: destinationURL))
-
-        if let error = unzipFileAtTo_MockError {
-            throw error
-        }
-
-        guard let mock = unzipFileAtTo_MockMethod else {
-            fatalError("no mock for `unzipFileAtTo`")
-        }
-
-        try mock(sourceURL, destinationURL)
-    }
-
-}
-
-public class MockImportBackupStreamDecryptorProtocol: ImportBackupStreamDecryptorProtocol {
+public class MockImportLegacyBackupStreamDecryptorProtocol: ImportLegacyBackupStreamDecryptorProtocol {
 
     // MARK: - Life cycle
 
@@ -572,6 +543,23 @@ public class MockIsE2EICertificateEnrollmentRequiredProtocol: IsE2EICertificateE
             fatalError("no mock for `invoke`")
         }
     }
+
+}
+
+class MockMLSGroupRepairAgentProtocol: MLSGroupRepairAgentProtocol {
+
+    // MARK: - Life cycle
+
+
+    // MARK: - isSyncV2Enabled
+
+    var isSyncV2Enabled: Bool {
+        get { return underlyingIsSyncV2Enabled }
+        set(value) { underlyingIsSyncV2Enabled = value }
+    }
+
+    var underlyingIsSyncV2Enabled: Bool!
+
 
 }
 
@@ -1247,148 +1235,6 @@ class MockSyncAgentProtocol: SyncAgentProtocol {
 
     var underlyingSyncStatePublisher: AnyPublisher<SyncState, Never>!
 
-
-}
-
-class MockUpdateEventMigratorDAOProtocol: UpdateEventMigratorDAOProtocol {
-
-    // MARK: - Life cycle
-
-
-
-    // MARK: - existsLegacyEvent
-
-    var existsLegacyEvent_Invocations: [Void] = []
-    var existsLegacyEvent_MockError: Error?
-    var existsLegacyEvent_MockMethod: (() async throws -> Bool)?
-    var existsLegacyEvent_MockValue: Bool?
-
-    func existsLegacyEvent() async throws -> Bool {
-        existsLegacyEvent_Invocations.append(())
-
-        if let error = existsLegacyEvent_MockError {
-            throw error
-        }
-
-        if let mock = existsLegacyEvent_MockMethod {
-            return try await mock()
-        } else if let mock = existsLegacyEvent_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `existsLegacyEvent`")
-        }
-    }
-
-    // MARK: - indexOfLastEventEnvelope
-
-    var indexOfLastEventEnvelope_Invocations: [Void] = []
-    var indexOfLastEventEnvelope_MockError: Error?
-    var indexOfLastEventEnvelope_MockMethod: (() async throws -> Int64)?
-    var indexOfLastEventEnvelope_MockValue: Int64?
-
-    func indexOfLastEventEnvelope() async throws -> Int64 {
-        indexOfLastEventEnvelope_Invocations.append(())
-
-        if let error = indexOfLastEventEnvelope_MockError {
-            throw error
-        }
-
-        if let mock = indexOfLastEventEnvelope_MockMethod {
-            return try await mock()
-        } else if let mock = indexOfLastEventEnvelope_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `indexOfLastEventEnvelope`")
-        }
-    }
-
-    // MARK: - nextBatchOfLegacyEvents
-
-    var nextBatchOfLegacyEventsPrivateKeys_Invocations: [EARPrivateKeys?] = []
-    var nextBatchOfLegacyEventsPrivateKeys_MockMethod: ((EARPrivateKeys?) async -> [ZMUpdateEvent]?)?
-    var nextBatchOfLegacyEventsPrivateKeys_MockValue: [ZMUpdateEvent]??
-
-    func nextBatchOfLegacyEvents(privateKeys: EARPrivateKeys?) async -> [ZMUpdateEvent]? {
-        nextBatchOfLegacyEventsPrivateKeys_Invocations.append(privateKeys)
-
-        if let mock = nextBatchOfLegacyEventsPrivateKeys_MockMethod {
-            return await mock(privateKeys)
-        } else if let mock = nextBatchOfLegacyEventsPrivateKeys_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `nextBatchOfLegacyEventsPrivateKeys`")
-        }
-    }
-
-    // MARK: - insertEventEnvelope
-
-    var insertEventEnvelopeIndex_Invocations: [(eventEnvelope: UpdateEventEnvelope, index: Int64)] = []
-    var insertEventEnvelopeIndex_MockError: Error?
-    var insertEventEnvelopeIndex_MockMethod: ((UpdateEventEnvelope, Int64) async throws -> Void)?
-
-    func insertEventEnvelope(_ eventEnvelope: UpdateEventEnvelope, index: Int64) async throws {
-        insertEventEnvelopeIndex_Invocations.append((eventEnvelope: eventEnvelope, index: index))
-
-        if let error = insertEventEnvelopeIndex_MockError {
-            throw error
-        }
-
-        guard let mock = insertEventEnvelopeIndex_MockMethod else {
-            fatalError("no mock for `insertEventEnvelopeIndex`")
-        }
-
-        try await mock(eventEnvelope, index)
-    }
-
-    // MARK: - deleteNextBatchOfLegacyEvents
-
-    var deleteNextBatchOfLegacyEvents_Invocations: [Void] = []
-    var deleteNextBatchOfLegacyEvents_MockMethod: (() async -> Void)?
-
-    func deleteNextBatchOfLegacyEvents() async {
-        deleteNextBatchOfLegacyEvents_Invocations.append(())
-
-        guard let mock = deleteNextBatchOfLegacyEvents_MockMethod else {
-            fatalError("no mock for `deleteNextBatchOfLegacyEvents`")
-        }
-
-        await mock()
-    }
-
-    // MARK: - save
-
-    var save_Invocations: [Void] = []
-    var save_MockError: Error?
-    var save_MockMethod: (() async throws -> Void)?
-
-    func save() async throws {
-        save_Invocations.append(())
-
-        if let error = save_MockError {
-            throw error
-        }
-
-        guard let mock = save_MockMethod else {
-            fatalError("no mock for `save`")
-        }
-
-        try await mock()
-    }
-
-    // MARK: - discardChanges
-
-    var discardChanges_Invocations: [Void] = []
-    var discardChanges_MockMethod: (() async -> Void)?
-
-    func discardChanges() async {
-        discardChanges_Invocations.append(())
-
-        guard let mock = discardChanges_MockMethod else {
-            fatalError("no mock for `discardChanges`")
-        }
-
-        await mock()
-    }
 
 }
 
