@@ -24,7 +24,7 @@ public struct StoredBackendEnvironment: Codable, Sendable {
     public let title: String
     public let endpoints: Endpoints
 //    public let pinnedKeys: [PinnedKey]
-//    public let proxySettings: ProxySettings?
+    public let proxySettings: ProxySettings?
     public let metadata: ResolvedBackendMetadata
 
     public struct Endpoints: Codable, Sendable {
@@ -43,10 +43,10 @@ public struct StoredBackendEnvironment: Codable, Sendable {
         public let isFederationEnabled: Bool
     }
 
-//    public enum ProxySettings: Codable, Sendable {
-//        case unauthenticated(host: String, port: Int)
-//        case authenticated(host: String, port: Int, username: String, password: String)
-//    }
+    public enum ProxySettings: Codable, Sendable {
+        case unauthenticated(host: String, port: Int)
+        case authenticated(host: String, port: Int, username: String, password: String)
+    }
 
 //    public struct PinnedKey: Codable, Sendable {
 //        public enum Host: Codable, Sendable {
@@ -71,7 +71,7 @@ extension BackendEnvironment2 {
             title: title,
             endpoints: endpoints.toStored(),
 //            pinnedKeys: pinnedKeys.compactMap { $0.toStored() },
-//            proxySettings: proxySettings?.toStored(),
+            proxySettings: proxySettings?.toStored(),
             metadata: metadata.toStored()
         )
     }
@@ -116,17 +116,17 @@ extension WireAPI.APIVersion {
         }
     }
 }
-//
-//extension ProxySettings {
-//    func toStored() -> StoredBackendEnvironment.ProxySettings {
-//        switch self {
-//        case let .unauthenticated(host, port):
-//            return .unauthenticated(host: host, port: port)
-//        case let .authenticated(host, port, username, password):
-//            return .authenticated(host: host, port: port, username: username, password: password)
-//        }
-//    }
-//}
+
+extension ProxySettings {
+    func toStored() -> StoredBackendEnvironment.ProxySettings {
+        switch self {
+        case let .unauthenticated(host, port):
+            return .unauthenticated(host: host, port: port)
+        case let .authenticated(host, port, username, password):
+            return .authenticated(host: host, port: port, username: username, password: password)
+        }
+    }
+}
 
 //extension PinnedKey {
 //    func toStored() -> StoredBackendEnvironment.PinnedKey? {
