@@ -22,4 +22,12 @@ struct FakePersonalAccountCreationFactory: PersonalAccountCreationFactory {
         fatalError("WPB-17530")
     }
 
+    func verificationEmailCodeFactory(
+        email: String,
+        password: String,
+        name: String
+    ) -> any VerificationEmailCodeFactory {
+        fatalError("WPB-17530")
+    }
+
 }

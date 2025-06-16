@@ -18,20 +18,6 @@
 
 public import Foundation
 
-public struct WireCellsNodeID: Codable, Equatable, Hashable, Identifiable, Sendable {
-    public let uuid: UUID
-    public let versionID: UUID
-
-    public var id: String {
-        uuid.uuidString + versionID.uuidString
-    }
-
-    package init(uuid: UUID, versionID: UUID) {
-        self.uuid = uuid
-        self.versionID = versionID
-    }
-}
-
 public struct WireCellsPublicLinkID: Codable, Equatable, Hashable, Sendable {
     public let string: String
 
@@ -41,8 +27,7 @@ public struct WireCellsPublicLinkID: Codable, Equatable, Hashable, Sendable {
 }
 
 public struct WireCellsNode: Equatable, Identifiable, Sendable {
-    public let id: WireCellsNodeID
-
+    public let id: UUID
     public let path: String
     public let modified: UInt64?
     public let size: UInt64?
@@ -60,7 +45,6 @@ public struct WireCellsNode: Equatable, Identifiable, Sendable {
 
     package init(
         uuid: UUID,
-        versionID: UUID,
         path: String,
         modified: UInt64? = nil,
         size: UInt64? = nil,
@@ -76,7 +60,7 @@ public struct WireCellsNode: Equatable, Identifiable, Sendable {
         conversationID: WireCellsConversationID? = nil,
         publicLinkID: WireCellsPublicLinkID? = nil
     ) {
-        self.id = WireCellsNodeID(uuid: uuid, versionID: versionID)
+        self.id = uuid
         self.path = path
         self.modified = modified
         self.size = size

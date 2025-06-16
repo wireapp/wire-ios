@@ -30,7 +30,7 @@ let package = Package(
         ),
         .target(
             name: "WireAnalyticsSupport",
-            dependencies: ["WireAnalytics"],
+            dependencies: ["WireAnalytics", "WireFoundation"],
             plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
         ),
         .testTarget(

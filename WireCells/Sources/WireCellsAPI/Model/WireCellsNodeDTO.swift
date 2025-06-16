@@ -21,7 +21,6 @@ package import Foundation
 
 package struct WireCellsNodeDTO: Equatable, Hashable, Sendable {
     package let uuid: UUID
-    package let versionId: UUID
     package let path: String
     package let modified: UInt64?
     package let size: UInt64?
@@ -39,7 +38,6 @@ package struct WireCellsNodeDTO: Equatable, Hashable, Sendable {
 
     package init(
         uuid: UUID,
-        versionId: UUID,
         path: String,
         modified: UInt64? = nil,
         size: UInt64? = nil,
@@ -56,7 +54,6 @@ package struct WireCellsNodeDTO: Equatable, Hashable, Sendable {
         publicLinkId: String? = nil
     ) {
         self.uuid = uuid
-        self.versionId = versionId
         self.path = path
         self.modified = modified
         self.size = size
@@ -78,7 +75,6 @@ package extension WireCellsNodeDTO {
     func toModel() -> WireCellsNode {
         WireCellsNode(
             uuid: uuid,
-            versionID: versionId,
             path: path,
             modified: modified,
             size: size,
@@ -100,8 +96,7 @@ package extension WireCellsNodeDTO {
 package extension WireCellsNode {
     func toDTO() -> WireCellsNodeDTO {
         WireCellsNodeDTO(
-            uuid: id.uuid,
-            versionId: id.versionID,
+            uuid: id,
             path: path,
             modified: modified,
             size: size,
@@ -123,12 +118,9 @@ package extension WireCellsNode {
 package extension RestNode {
     func toDTO() -> WireCellsNodeDTO? {
         guard let uuid = UUID(uuidString: uuid) else { return nil }
-        // TODO: [WPB-17473] `versionMeta` is optional in the API response. Clarify whether this can actually be nil and
-        // what should we do in that case?
-        guard let versionMeta, let versionID = UUID(uuidString: versionMeta.versionId) else { return nil }
+
         return WireCellsNodeDTO(
             uuid: uuid,
-            versionId: versionID,
             path: path,
             modified: modified.flatMap(UInt64.init),
             size: size.flatMap(UInt64.init),

@@ -16,14 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+@testable import WireReusableUIComponents
 
-/// Errors originating from `AnalyticsService`.
+final class MockPasswordValidator: PasswordValidator {
 
-public enum AnalyticsServiceError: Error {
+    func isPasswordValid(_ password: String) -> Bool {
+        true
+    }
 
-    /// The analytics service has not been configured.
-
-    case serviceIsNotConfigured
+    var localizedRulesDescription: String? {
+        "localizedRulesDescription"
+    }
 
 }

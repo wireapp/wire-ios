@@ -88,6 +88,8 @@ class SwiftMockConversation: NSObject, Conversation {
     var ciphersuite: WireDataModel.MLSCipherSuite? = .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
 
     var privateChannelPermission: WireDataModel.PrivateChannelPermission = .unset
+
+    var wireCellName: String = ""
 }
 
 final class MockGroupDetailsConversation: SwiftMockConversation, GroupDetailsConversation {
