@@ -813,7 +813,7 @@
 				UserInterface/MainController/ConversationFilterSelectorTests.swift,
 				UserInterface/MainController/SidebarViewControllerBuilderSnapshotTests.swift,
 				UserInterface/MainCoordinator/MockMainCoordinator.swift,
-				UserInterface/Settings/CompositeImportBackupUseCaseTests.swift,
+				UserInterface/Settings/ImportBackupUseCaseFactoryTests.swift,
 				UserNameDetailViewTests.swift,
 				UserProfile/ProfileViewControllerTests.swift,
 				UserProfile/ProfileViewControllerViewModelTests.swift,
