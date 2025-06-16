@@ -65,7 +65,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
 
         logger.debug("processing stored update events", attributes: .syncAttributes(initialSync: false))
         syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
-        let processedEnvelopeIDs: Set<UUID>
+        var processedEnvelopeIDs: Set<UUID>
         do {
             processedEnvelopeIDs = try await processStoredEvents()
         } catch {
