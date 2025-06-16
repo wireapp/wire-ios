@@ -41,9 +41,9 @@ final class PersonalAccountCreationViewTests: XCTestCase {
 
         let view = PersonalAccountCreationView(factory: FakePersonalAccountCreationFactory(
             email: "foo@bar.com",
-                            privacyPolicyURL: URL(string: "www.wire.com")!,
-                            termsOfUseURL: URL(string: "www.wire.com")!,
-                            passwordValidator: MockPasswordValidator()
+            privacyPolicyURL: URL(string: "www.wire.com")!,
+            termsOfUseURL: URL(string: "www.wire.com")!,
+            passwordValidator: MockPasswordValidator()
         )).frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
