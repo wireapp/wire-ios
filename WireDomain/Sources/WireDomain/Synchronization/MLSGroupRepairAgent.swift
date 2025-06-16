@@ -16,60 +16,32 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Combine
-import Foundation
 import WireDataModel
-import WireDomain
-import WireFoundation
 import WireLogging
-import WireUtilities
 
 // sourcery: AutoMockable
-protocol MLSGroupRepairAgentProtocol {
+public protocol MLSGroupRepairAgentProtocol {
 
-    var isSyncV2Enabled: Bool { get }
+    func repairConversations() async
 
 }
 
 final class MLSGroupRepairAgent: MLSGroupRepairAgentProtocol {
 
-    var isSyncV2Enabled: Bool {
-        journal[.isSyncV2Enabled]
-    }
-
-    private let syncStatePublisher: AnyPublisher<SyncState, Never>
-
     private let journal: Journal
     private let mlsService: MLSServiceInterface
-    private let decryptionQueue = DispatchQueue(label: "decryptionQueue")
-    private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Life cycle
 
-    init(
+    public init(
         journal: Journal,
-        mlsService: MLSServiceInterface,
-        syncStatePublisher: AnyPublisher<SyncState, Never>
+        mlsService: MLSServiceInterface
     ) {
         self.journal = journal
         self.mlsService = mlsService
-        self.syncStatePublisher = syncStatePublisher
-        setupObservation()
     }
 
-    private func setupObservation() {
-        if isSyncV2Enabled {
-            syncStatePublisher
-                .receive(on: decryptionQueue)
-                .sink { [weak self] state in
-                    guard case .liveSyncing = state else { return }
-                    self?.repairConversations()
-                }
-                .store(in: &cancellables)
-        }
-    }
-
-    private func repairConversations() {
+    public func repairConversations() async {
         let brokenGroupIDs = journal[.brokenMLSGroupIDs]
         guard !brokenGroupIDs.isEmpty else {
             WireLogger.sync.debug("No broken MLS groups to repair")
@@ -86,12 +58,13 @@ final class MLSGroupRepairAgent: MLSGroupRepairAgentProtocol {
             return (groupIDString, mlsGroupID)
         }
 
-        Task {
-            for (groupID, mlsGroupID) in mlsGroups {
-                await mlsService.fetchAndRepairGroup(with: mlsGroupID)
-                journal.removeValue(groupID, for: .brokenMLSGroupIDs)
-                WireLogger.sync.debug("Successfully repaired group: \(groupID)")
-            }
+        for (groupID, mlsGroupID) in mlsGroups {
+            await mlsService.fetchAndRepairGroup(
+                with: mlsGroupID,
+                shouldPerformIncrementalSync: false
+            )
+            journal.removeValue(groupID, for: .brokenMLSGroupIDs)
+            WireLogger.sync.debug("Successfully repaired group: \(groupID)")
         }
     }
 
