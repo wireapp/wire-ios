@@ -182,76 +182,20 @@ struct PersonalAccountCreationView: View {
 
 }
 
-extension AttributedString {
-    static func formattedMarkdown1(
-        key: String,
-        bundle: Bundle? = nil,
-        _ arguments: CVarArg...
-    ) -> AttributedString {
-        let mainBundle = bundle ?? .main
+private extension AttributedString {
 
-        var string = String(format: NSLocalizedString(key, bundle: mainBundle, value: "", comment: ""), arguments)
-
-        if string == key,
-           let basePath = mainBundle.path(forResource: "en", ofType: "lproj"),
-           let baseBundle = Bundle(path: basePath) {
-            string = String(format: NSLocalizedString(key, bundle: baseBundle, value: "", comment: ""), arguments)
-        }
-
-        return (try? AttributedString(markdown: string)) ?? AttributedString(string)
-    }
-}
-
-public extension String {
-    static func formatedWithFallback(
+    static func formattedMarkdown(
         key: String.LocalizationValue,
         bundle: Bundle? = nil,
-        _ arguments: [CVarArg]
-    ) -> String {
-        let mainBundle = bundle ?? .main
-        let keyString = String(describing: key)
-
-        let localized = String(format: NSLocalizedString(keyString, bundle: mainBundle, value: "", comment: ""), arguments)
-
-        if localized != keyString {
-            return localized
-        }
-
-        // Fallback: explicitly load from en.lproj
-        if let enPath = mainBundle.path(forResource: "en", ofType: "lproj"),
-           let enBundle = Bundle(path: enPath) {
-            let fallback = NSLocalizedString(keyString, bundle: enBundle, value: "", comment: "")
-            return String(format: fallback, arguments: arguments)
-        }
-
-        return keyString // last resort
-    }
-}
-
-public extension AttributedString {
-    static func formattedMarkdown2(
-        key: String,
-        bundle: Bundle? = nil,
-        _ arguments: CVarArg...
+        _ arguments: any CVarArg...
     ) -> AttributedString {
-        let mainBundle = bundle ?? .main
+        let string: String = .formated(key: key, bundle: bundle, arguments)
+        return .markdown(from: string)
+    }
 
-        // Get localized string
-        let localized = String(format: NSLocalizedString(key, bundle: mainBundle, value: "", comment: ""), arguments)
-
-        // If key wasn't found, fallback to en.lproj
-        let resolved: String
-        if localized == key,
-           let enPath = mainBundle.path(forResource: "en", ofType: "lproj"),
-           let enBundle = Bundle(path: enPath) {
-            let fallback = NSLocalizedString(key, bundle: enBundle, value: "", comment: "")
-            resolved = String(format: fallback, arguments: arguments)
-        } else {
-            resolved = localized
-        }
-
-        // Parse Markdown
-        return markdown(from: resolved)
+    static func localizedMarkdown(key: String.LocalizationValue, bundle: Bundle? = nil) -> AttributedString {
+        let string: String = .localized(key: key, bundle: bundle)
+        return .markdown(from: string)
     }
 
     static func markdown(from string: String) -> AttributedString {
@@ -263,4 +207,5 @@ public extension AttributedString {
 
         return attributed
     }
+
 }
