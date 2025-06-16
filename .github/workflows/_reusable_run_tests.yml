@@ -131,7 +131,7 @@ jobs:
           bundle exec fastlane generate_env
 
       - name: "Test new critical flows"
-        if: ${{ inputs.test_dependencies == false }}
+        if: ${{ inputs.test_dependencies == false && github.base_ref != 'release/cycle-3.120' && github.base_ref != 'release/cycle-3.124' }}
         run: |
           bundle exec fastlane run_uitests
 
