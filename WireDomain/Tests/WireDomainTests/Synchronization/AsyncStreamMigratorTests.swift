@@ -74,7 +74,7 @@ final class AsyncStreamMigratorTests: XCTestCase {
         XCTAssertEqual(mockUserClientsAPI.updateClientIdPayload_Invocations.count, 1)
         XCTAssertEqual(mockSync.performSkipPullingLastUpdateEventID_Invocations.count, 1)
         XCTAssertTrue(mockSync.performSkipPullingLastUpdateEventID_Invocations[0])
-        XCTAssertTrue(journal[.isAsyncStreamEnabled])
+        XCTAssertTrue(journal[.isConsumableNotificationsEnabled])
     }
 
     func test_migrateToAsyncStream_userClientAlreadyCapable() async throws {
@@ -91,7 +91,7 @@ final class AsyncStreamMigratorTests: XCTestCase {
         XCTAssertEqual(mockSync.performSkipPullingLastUpdateEventID_Invocations.count, 1)
         XCTAssertTrue(mockSync.performSkipPullingLastUpdateEventID_Invocations[0])
 
-        XCTAssertTrue(journal[.isAsyncStreamEnabled])
+        XCTAssertTrue(journal[.isConsumableNotificationsEnabled])
     }
 
     func test_migrateToAsyncStream_syncFails_throws() async throws {
@@ -111,7 +111,7 @@ final class AsyncStreamMigratorTests: XCTestCase {
         XCTAssertEqual(mockUserClientsAPI.updateClientIdPayload_Invocations.count, 1)
         XCTAssertEqual(mockSync.performSkipPullingLastUpdateEventID_Invocations.count, 1)
         XCTAssertTrue(mockSync.performSkipPullingLastUpdateEventID_Invocations[0])
-        XCTAssertFalse(journal[.isAsyncStreamEnabled])
+        XCTAssertFalse(journal[.isConsumableNotificationsEnabled])
     }
 
     func test_migrateToAsyncStream_registrationFails_throws() async throws {
@@ -131,7 +131,7 @@ final class AsyncStreamMigratorTests: XCTestCase {
         // THEN
         XCTAssertEqual(mockUserClientsAPI.updateClientIdPayload_Invocations.count, 1)
         XCTAssertEqual(mockSync.performSkipPullingLastUpdateEventID_Invocations.count, 0)
-        XCTAssertFalse(journal[.isAsyncStreamEnabled])
+        XCTAssertFalse(journal[.isConsumableNotificationsEnabled])
     }
 
     func test_migrateToAsyncStream_apiVersionTooLow_throws() async throws {
