@@ -284,7 +284,7 @@ final class ZClientViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        firstTimeRequestToEnableAnalytics()
+        firstTimeRequestToEnableAnalytics() // TODO: maybe Countly could be setup here, but how to tear it down properly?
         view.backgroundColor = ColorTheme.Backgrounds.surface
     }
 
