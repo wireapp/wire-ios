@@ -200,10 +200,16 @@ package final class LoginViaEmailViewModel: ObservableObject {
     }
 
     func handleOnTeamAccountCreation() {
-        modalDestination = .teamAccountCreation
+        if let teamAccountCreationLink {
+            modalDestination = .teamAccountCreation(url: teamAccountCreationLink)
+        }
     }
 
-    func handleoOnPersonalAccountCreation() {}
+    func handleoOnPersonalAccountCreation() {
+        router.navigate(
+            to: LoginViaEmailDestination.createPersonalAccount
+        )
+    }
 
     // MARK: - Private
 

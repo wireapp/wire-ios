@@ -25,6 +25,13 @@ package protocol RootFactory {
 
     @MainActor
     func determineAuthMethodFactory(backendInfo: BackendInfo) -> any DetermineAuthMethodFactory
+
+    @MainActor
+    func accountsSwitcherFactory() -> any AccountSwitcherFactory
+}
+
+enum RootDestination: Hashable {
+    case switchAccounts
 }
 
 package struct RootView: View {
@@ -58,6 +65,12 @@ package struct RootView: View {
                         backendInfo: backendInfo
                     )
                 )
+                .navigationDestination(for: RootDestination.self) { destination in
+                    switch destination {
+                    case .switchAccounts:
+                        AccountSwitcherModalView(viewModel.factory.accountsSwitcherFactory())
+                    }
+                }
             }
             // We must provide an explicit id so it knows to create a new
             // view when the backend info changes.
@@ -72,7 +85,17 @@ package struct RootView: View {
                 actions: { alert in
                     switch alert {
                     case .obsoleteClient:
-                        Button(Strings.ObsoleteClient.Alert.okButton, action: viewModel.goToAppStore)
+                        Button(
+                            Strings.ObsoleteClient.Alert.okButton,
+                            action: viewModel.goToAppStore
+                        )
+                    // for dev purposes only
+                    // will be added in tickets to implement real alerts
+                    // TODO: [WPB-17804] https://wearezeta.atlassian.net/browse/WPB-17804
+//                        Button(
+//                            Strings.ObsoleteClient.Alert.switchAccounts,
+//                            action: viewModel.switchAccounts
+//                        )
                     default:
                         Button(Strings.Authentication.Error.confirm, action: {})
                     }

@@ -106,10 +106,15 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
                 date: date
             )
 
-        case .confirmation:
+        case let .confirmation(confirmation):
 
-            // Some logic was done here but it seems unnecessary - see legacy `ZMOTRMessage+UpdateEvent`
-            break
+            await messageLocalStore.addMessageConfirmation(
+                confirmation,
+                in: conversation,
+                senderID: senderID.uuid,
+                senderDomain: senderID.domain,
+                date: date
+            )
 
         case let .buttonActionConfirmation(buttonActionConfirmation):
 

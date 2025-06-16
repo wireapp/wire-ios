@@ -32,20 +32,20 @@ final class PublishDraftsUseCaseTests {
         nodesAPI: nodesAPI,
         drafts: [
             "cell-1": [
-                WireCellsNodeID.fixture(): WireCellsDraft.fixture(status: .cancelled),
-                WireCellsNodeID.fixture(): WireCellsDraft.fixture(status: .uploaded(isDraft: true))
+                UUID(): WireCellsDraft.fixture(status: .cancelled),
+                UUID(): WireCellsDraft.fixture(status: .uploaded(isDraft: true))
             ],
             "cell-2": [
-                WireCellsNodeID.fixture(): WireCellsDraft.fixture(status: .failed(error: .fileNotFound)),
-                WireCellsNodeID.fixture(): WireCellsDraft.fixture(status: .uploaded(isDraft: true))
+                UUID(): WireCellsDraft.fixture(status: .failed(error: .fileNotFound)),
+                UUID(): WireCellsDraft.fixture(status: .uploaded(isDraft: true))
             ],
             "cell-3": [
-                WireCellsNodeID.fixture(): WireCellsDraft.fixture(status: .uploading(progress: 0.5)),
-                WireCellsNodeID.fixture(): WireCellsDraft.fixture(status: .uploaded(isDraft: true))
+                UUID(): WireCellsDraft.fixture(status: .uploading(progress: 0.5)),
+                UUID(): WireCellsDraft.fixture(status: .uploaded(isDraft: true))
             ],
             "cell-4": [
-                WireCellsNodeID.fixture(): WireCellsDraft.fixture(status: .uploaded(isDraft: false)),
-                WireCellsNodeID.fixture(): WireCellsDraft.fixture(status: .uploaded(isDraft: true))
+                UUID(): WireCellsDraft.fixture(status: .uploaded(isDraft: false)),
+                UUID(): WireCellsDraft.fixture(status: .uploaded(isDraft: true))
             ],
             "cell-5": [:] // Empty cell
         ]
@@ -89,7 +89,7 @@ final class PublishDraftsUseCaseTests {
     func invoke_whenPublishingFails() async {
         // Given
         let sut = PublishDraftsUseCase(cellName: "cell-4", draftRepository: draftsRepository)
-        nodesAPI.publishDraftNodeIDWireCellsNodeIDVoidThrowableError = URLError(.notConnectedToInternet)
+        nodesAPI.publishDraftNodeIDUUIDVersionIDUUIDVoidThrowableError = URLError(.notConnectedToInternet)
 
         // When, Then
         await #expect(throws: DraftsRepositoryError.notAllFilesArePublished) {
@@ -101,7 +101,7 @@ final class PublishDraftsUseCaseTests {
     func invoke_whenPublishingSucceeds() async throws {
         // Given
         let sut = PublishDraftsUseCase(cellName: "cell-4", draftRepository: draftsRepository)
-        nodesAPI.publishDraftNodeIDWireCellsNodeIDVoidClosure = { _ in }
+        nodesAPI.publishDraftNodeIDUUIDVersionIDUUIDVoidClosure = { _, _ in }
 
         // When
         try await sut.invoke()
@@ -110,17 +110,17 @@ final class PublishDraftsUseCaseTests {
         let drafts = try await #require(draftsRepository.getDraftsForTesting["cell-4"]).values
         #expect(drafts.count == 2)
         #expect(drafts.allSatisfy { $0.status == .uploaded(isDraft: false) })
-        #expect(nodesAPI.publishDraftNodeIDWireCellsNodeIDVoidCallsCount == 1)
+        #expect(nodesAPI.publishDraftNodeIDUUIDVersionIDUUIDVoidCallsCount == 1)
     }
 
     @Test
     func invoke_whenNewDraftAddedConcurrently() async throws {
         // Given
         let sut = PublishDraftsUseCase(cellName: "cell-4", draftRepository: draftsRepository)
-        nodesAPI.publishDraftNodeIDWireCellsNodeIDVoidClosure = { [draftsRepository] _ in
+        nodesAPI.publishDraftNodeIDUUIDVersionIDUUIDVoidClosure = { [draftsRepository] _, _ in
             // Add a new draft while invoke is running
             var drafts = await draftsRepository.getDraftsForTesting
-            drafts["cell-4"]?[.fixture()] = WireCellsDraft.fixture(status: .uploading(progress: 0.5))
+            drafts["cell-4"]?[UUID()] = WireCellsDraft.fixture(status: .uploading(progress: 0.5))
             await draftsRepository.setDraftsForTesting(drafts)
         }
 

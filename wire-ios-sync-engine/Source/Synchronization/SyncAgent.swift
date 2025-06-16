@@ -139,11 +139,25 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     }
 
     private func suspend() async {
-        WireLogger.sync.debug("suspending sync")
+        let backgroundActivity = BackgroundActivityFactory.shared.startBackgroundActivity(
+            name: "suspending sync"
+        )
+
+        WireLogger.sync.debug(
+            "suspending sync \(backgroundActivity != nil ? "in a background task" : "")",
+            attributes: .syncAttributes(initialSync: !hasCompletedInitialSync)
+        )
+
         ongoingSyncTask?.cancel()
         await incrementalSyncToken?.suspend()
         incrementalSyncToken = nil
         syncStateSubject.send(.suspended)
+
+        if let backgroundActivity {
+            BackgroundActivityFactory.shared.endBackgroundActivity(
+                backgroundActivity
+            )
+        }
     }
 
     /// Performs the appropriate sync depending in the local state.
@@ -214,6 +228,13 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                     incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync().perform()
                     delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: false)
                 }
+            } catch IncrementalSync.Failure.missedEvents {
+                WireLogger.sync.error(
+                    "failed to perform new incremental sync (missed events): recovering with a full sync"
+                )
+
+                syncStateSubject.send(.suspended)
+                resume()
             } catch {
                 WireLogger.sync.error("failed to perform new incremental sync: \(String(describing: error))")
                 syncStateSubject.send(.suspended)

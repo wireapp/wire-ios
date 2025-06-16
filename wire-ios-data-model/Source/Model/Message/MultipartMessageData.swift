@@ -16,11 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireCellsAPI
+// TODO: [WPB-16311] This is currently just a stub and needs to be implemented properly.
+public final class MultipartMessageData: NSObject {
 
-extension WireCellsNodeID {
-    static func fixture() -> WireCellsNodeID {
-        WireCellsNodeID(uuid: UUID(), versionID: UUID())
+    public struct Attachment {
+        public let fileName: String
     }
+
+    public let attachments: [Attachment]
+
+    init(multipart: Multipart) {
+        self.attachments = multipart.attachments.map { attachment in
+            Attachment(
+                fileName: URL(string: attachment.cellAsset.initialName)?.lastPathComponent ?? "Unknown file name"
+            )
+        }
+    }
+
 }

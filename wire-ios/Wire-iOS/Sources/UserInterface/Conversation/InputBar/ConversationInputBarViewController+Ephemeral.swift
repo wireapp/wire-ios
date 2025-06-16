@@ -152,7 +152,7 @@ extension ConversationInputBarViewController: EphemeralKeyboardViewControllerDel
 
         userSession.enqueue {
             conversation.setMessageDestructionTimeoutValue(.init(rawValue: timeout), for: .selfUser)
-            self.updateRightAccessoryView()
+            self.updateButtonStates()
         }
     }
 
@@ -163,7 +163,7 @@ extension ConversationInputBarViewController {
     var ephemeralState: EphemeralState {
         var state = EphemeralState.none
 
-        if !sendButtonState.ephemeral {
+        if !inputBarButtonState.ephemeral {
             state = .none
         } else if conversation.hasSyncedMessageDestructionTimeout {
             state = .conversation
