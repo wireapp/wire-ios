@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import Foundation
+import WireAPI
 
 public struct StoredBackendEnvironment: Codable, Sendable {
-    
+
     public let title: String
     public let endpoints: Endpoints
     public let pinnedKeys: [PinnedKey]
@@ -54,12 +54,20 @@ public struct StoredBackendEnvironment: Codable, Sendable {
             case equals(String)
         }
 
-        public let keyDataBase64: String 
+        public let keyDataBase64: String
         public let hosts: [Host]
     }
 
     public enum APIVersion: UInt, Codable, Sendable {
-        case v0, v1, v2, v3, v4, v5, v6, v7, v8
+        case v0
+        case v1
+        case v2
+        case v3
+        case v4
+        case v5
+        case v6
+        case v7
+        case v8
     }
 }
 
@@ -104,15 +112,15 @@ extension BackendEnvironment2.ResolvedBackendMetadata {
 extension WireAPI.APIVersion {
     func toStored() -> StoredBackendEnvironment.APIVersion {
         switch self {
-        case .v0: return .v0
-        case .v1: return .v1
-        case .v2: return .v2
-        case .v3: return .v3
-        case .v4: return .v4
-        case .v5: return .v5
-        case .v6: return .v6
-        case .v7: return .v7
-        case .v8: return .v8
+        case .v0: .v0
+        case .v1: .v1
+        case .v2: .v2
+        case .v3: .v3
+        case .v4: .v4
+        case .v5: .v5
+        case .v6: .v6
+        case .v7: .v7
+        case .v8: .v8
         }
     }
 }
@@ -121,9 +129,9 @@ extension ProxySettings {
     func toStored() -> StoredBackendEnvironment.ProxySettings {
         switch self {
         case let .unauthenticated(host, port):
-            return .unauthenticated(host: host, port: port)
+            .unauthenticated(host: host, port: port)
         case let .authenticated(host, port, username, password):
-            return .authenticated(host: host, port: port, username: username, password: password)
+            .authenticated(host: host, port: port, username: username, password: password)
         }
     }
 }
@@ -141,8 +149,8 @@ extension PinnedKey {
 extension PinnedKey.Host {
     func toStored() -> StoredBackendEnvironment.PinnedKey.Host {
         switch self {
-        case let .endsWith(s): return .endsWith(s)
-        case let .equals(v): return .equals(v)
+        case let .endsWith(s): .endsWith(s)
+        case let .equals(v): .equals(v)
         }
     }
 }
@@ -150,20 +158,20 @@ extension PinnedKey.Host {
 // MARK: - To API
 
 extension StoredBackendEnvironment {
-    func toAPI() throws -> BackendEnvironment2 {
-        return BackendEnvironment2(
+    func toDomain() throws -> BackendEnvironment2 {
+        BackendEnvironment2(
             title: title,
-            endpoints: endpoints.toAPI(),
-            pinnedKeys: try pinnedKeys.map { try $0.toAPI() },
-            proxySettings: proxySettings?.toAPI(),
-            metadata: metadata.toAPI()
+            endpoints: endpoints.toDomain(),
+            pinnedKeys: try pinnedKeys.map { try $0.toDomain() },
+            proxySettings: proxySettings?.toDomain(),
+            metadata: metadata.toDomain()
         )
     }
 }
 
 extension StoredBackendEnvironment.Endpoints {
-    func toAPI() -> BackendEnvironment2.Endpoints {
-        return .init(
+    func toDomain() -> BackendEnvironment2.Endpoints {
+        .init(
             restAPIURL: restAPIURL,
             websocketURL: websocketURL,
             blacklistURL: blacklistURL,
@@ -176,9 +184,9 @@ extension StoredBackendEnvironment.Endpoints {
 }
 
 extension StoredBackendEnvironment.ResolvedBackendMetadata {
-    func toAPI() -> BackendEnvironment2.ResolvedBackendMetadata {
-        return .init(
-            apiVersion: apiVersion.toAPI(),
+    func toDomain() -> BackendEnvironment2.ResolvedBackendMetadata {
+        .init(
+            apiVersion: apiVersion.toDomain(),
             domain: domain,
             isFederationEnabled: isFederationEnabled
         )
@@ -186,34 +194,34 @@ extension StoredBackendEnvironment.ResolvedBackendMetadata {
 }
 
 extension StoredBackendEnvironment.APIVersion {
-    func toAPI() -> WireAPI.APIVersion {
+    func toDomain() -> WireAPI.APIVersion {
         switch self {
-        case .v0: return .v0
-        case .v1: return .v1
-        case .v2: return .v2
-        case .v3: return .v3
-        case .v4: return .v4
-        case .v5: return .v5
-        case .v6: return .v6
-        case .v7: return .v7
-        case .v8: return .v8
+        case .v0: .v0
+        case .v1: .v1
+        case .v2: .v2
+        case .v3: .v3
+        case .v4: .v4
+        case .v5: .v5
+        case .v6: .v6
+        case .v7: .v7
+        case .v8: .v8
         }
     }
 }
 
 extension StoredBackendEnvironment.ProxySettings {
-    func toAPI() -> ProxySettings {
+    func toDomain() -> ProxySettings {
         switch self {
         case let .unauthenticated(host, port):
-            return .unauthenticated(host: host, port: port)
+            .unauthenticated(host: host, port: port)
         case let .authenticated(host, port, username, password):
-            return .authenticated(host: host, port: port, username: username, password: password)
+            .authenticated(host: host, port: port, username: username, password: password)
         }
     }
 }
 
 extension StoredBackendEnvironment.PinnedKey {
-    func toAPI() throws -> PinnedKey {
+    func toDomain() throws -> PinnedKey {
         let attributes: [String: Any] = [
             kSecAttrKeyType as String: kSecAttrKeyTypeRSA,
             kSecAttrKeyClass as String: kSecAttrKeyClassPublic,
@@ -227,16 +235,16 @@ extension StoredBackendEnvironment.PinnedKey {
                 debugDescription: "Invalid base64 key data in StoredPinnedKey"
             ))
         }
-        
-        return PinnedKey(key: key, hosts: hosts.map { $0.toAPI() })
+
+        return PinnedKey(key: key, hosts: hosts.map { $0.toDomain() })
     }
 }
 
 extension StoredBackendEnvironment.PinnedKey.Host {
-    func toAPI() -> PinnedKey.Host {
+    func toDomain() -> PinnedKey.Host {
         switch self {
-        case let .endsWith(s): return .endsWith(s)
-        case let .equals(v): return .equals(v)
+        case let .endsWith(s): .endsWith(s)
+        case let .equals(v): .equals(v)
         }
     }
 }

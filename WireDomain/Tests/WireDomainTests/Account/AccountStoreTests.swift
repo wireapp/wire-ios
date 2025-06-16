@@ -28,7 +28,7 @@ final class AccountStoreTests {
     let url: URL
 
     init() {
-        url = FileManager.default.urls(
+        self.url = FileManager.default.urls(
             for: .applicationSupportDirectory,
             in: .userDomainMask
         )
@@ -104,7 +104,7 @@ final class AccountStoreTests {
     @Test("It returns false when trying to delete a non existent account store")
     func itReturnsFalseWhenTryingToDeleteANonExistentAccountStore() throws {
         // Then
-        #expect(AccountStore.delete(at: self.url) == false)
+        #expect(AccountStore.delete(at: url) == false)
     }
 
     @Test("It can store multiple accounts")

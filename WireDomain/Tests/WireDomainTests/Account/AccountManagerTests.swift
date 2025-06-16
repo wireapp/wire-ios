@@ -28,7 +28,7 @@ final class AccountManagerTests {
     let url: URL
 
     init() {
-        url = FileManager.default.urls(
+        self.url = FileManager.default.urls(
             for: .applicationSupportDirectory,
             in: .userDomainMask
         )

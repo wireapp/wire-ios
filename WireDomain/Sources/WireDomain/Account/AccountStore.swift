@@ -17,10 +17,10 @@
 //
 
 import Foundation
+import WireAPI
 import WireDataModel
 import WireLogging
 import WireSystem
-import WireAPI
 
 private let log = WireLogger(tag: "Accounts")
 
@@ -42,7 +42,6 @@ struct AccountStore {
 
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
-    
 
     /// Create a new `AccountStore`.
     ///
@@ -109,9 +108,9 @@ struct AccountStore {
             return false
         }
     }
-    
+
     // MARK: Backend Environment
-    
+
     @discardableResult
     func storeBackendEnvironment(_ backendEnvironment: BackendEnvironment2, for accountId: UUID) -> Bool {
         do {
@@ -126,7 +125,7 @@ struct AccountStore {
             return false
         }
     }
-    
+
     func fetchBackendEnvironment(accountId: UUID) throws -> BackendEnvironment2? {
         let url = backendEnvironmentUrl(for: accountId)
 
@@ -136,7 +135,7 @@ struct AccountStore {
                 StoredBackendEnvironment.self,
                 from: data
             )
-            return try stored.toAPI()
+            return try stored.toDomain()
         } catch {
             let errorDescription = error.safeForLoggingDescription
             log.error("Unable to fetch backend environment for account \(accountId), error: \(errorDescription)")
@@ -164,7 +163,7 @@ struct AccountStore {
             return false
         }
     }
-    
+
     @discardableResult
     func deleteBackgroundEnvironment(account: Account) -> Bool {
         do {
@@ -211,7 +210,7 @@ struct AccountStore {
     private func url(for id: UUID) -> URL {
         directory.appendingPathComponent(id.uuidString)
     }
-    
+
     private func backendEnvironmentUrl(for id: UUID) -> URL {
         directory.appendingPathComponent("\(id.uuidString)-backend-environment.json")
     }
