@@ -92,9 +92,9 @@ package struct LoginViaEmailView: View {
                 Button(Strings.Authentication.Error.confirm, action: {})
             }
         )
-        .sheet(item: $viewModel.modalDestination, content: { item in
+        .fullScreenCover(item: $viewModel.modalDestination) { item in
             sheetView(for: item)
-        })
+        }
         .navigationDestination(for: LoginViaEmailDestination.self) { destination in
             destinationView(destination)
         }
