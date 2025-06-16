@@ -267,7 +267,6 @@ package struct LoginViaEmailView: View {
     }
 
     private func onSheetDismiss() {
-        print("running onDismiss")
         viewModel.onSheetDismissAction?()
     }
 
