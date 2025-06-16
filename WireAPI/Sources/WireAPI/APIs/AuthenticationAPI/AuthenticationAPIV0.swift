@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireFoundation
 
 class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
 
@@ -236,17 +237,19 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
         email: String,
         emailCode: String,
         name: String,
-        password: String
-    ) async throws {
+        password: String,
+        label: String
+    ) async throws -> (cookie: [HTTPCookie], userId: UUID?) {
         let path = "\(pathPrefix)/register"
 
         let body = try JSONEncoder.defaultEncoder.encode(
-            RegisterAccountBodyV0(
+            RegisterPersonalAccountBodyV0(
                 email: email,
                 emailCode: emailCode,
+                label: label,
+                locale: Locale.formattedLocaleIdentifier,
                 name: name,
-                password: password,
-                locale: Locale.formattedLocaleIdentifier
+                password: password
             )
         )
 
@@ -256,8 +259,23 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
             .build()
 
         let (data, response) = try await networkService.executeRequest(request)
-        return try ResponseParser()
-            .success(code: .ok)
+        guard
+            let responseURL = response.url,
+            let responseHeaders = response.allHeaderFields as? [String: String]
+        else {
+            throw AuthenticationAPIError.invalidResponse
+        }
+
+        let cookies = HTTPCookie.cookies(
+            withResponseHeaderFields: responseHeaders,
+            for: responseURL
+        )
+
+        let userKey = try ResponseParser()
+            .success(
+                code: .created,
+                type: UserKeyV0.self
+            )
             .failure(
                 code: .badRequest,
                 label: "invalid-email",
@@ -298,27 +316,15 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
                 label: "invalid-code",
                 error: AuthenticationAPIError.RegistrationError.invalidCode
             )
-            .failure(code: .conflict, label: "key-exists", error: AuthenticationAPIError.RegistrationError.keyExists)
-            .parse(code: response.statusCode, data: data)
+            .failure(
+                code: .conflict,
+                label: "key-exists",
+                error: AuthenticationAPIError.RegistrationError.keyExists
+            )
+            .parse(
+                code: response.statusCode,
+                data: data
+            )
+        return (cookies, userKey.uuid)
     }
-}
-
-// MARK: Encodables
-
-private struct RequestVerificationCodeRequestBodyV0: Encodable {
-    var action: String
-    var email: String
-}
-
-private struct RequestEmailVerificationCodeBodyV0: Encodable {
-    var email: String
-    var locale: String
-}
-
-private struct RegisterAccountBodyV0: Encodable {
-    var email: String
-    var emailCode: String
-    var name: String
-    var password: String
-    var locale: String
 }

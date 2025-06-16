@@ -19,17 +19,8 @@
 import Foundation
 import WireAuthenticationAPI
 
-enum LoginViaEmailDestination: Hashable {
+enum PersonalAccountCreationDestination: Hashable {
 
-    case verifyLogin(
-        email: String,
-        password: String,
-        proxyCredentials: ProxyCredentials?
-    )
-    case noHistory(
-        authenticationResult: AuthenticationResult
-    )
-
-    case createPersonalAccount
+    case verifyEmail(email: String, password: String, name: String)
 
 }

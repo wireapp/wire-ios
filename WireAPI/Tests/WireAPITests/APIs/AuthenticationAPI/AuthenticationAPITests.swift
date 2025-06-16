@@ -128,7 +128,8 @@ final class AuthenticationAPITests: XCTestCase {
                 email: Scaffolding.email,
                 emailCode: Scaffolding.emailCode,
                 name: Scaffolding.name,
-                password: Scaffolding.password
+                password: Scaffolding.password,
+                label: "label"
             )
         }
     }
@@ -374,18 +375,24 @@ final class AuthenticationAPITests: XCTestCase {
     func testRegisterAccount_Response_Handling_Success() async throws {
         // Given
         let networkService = MockNetworkServiceProtocol.withResponses([
-            (.ok, nil)
+            (.created, "RegisterAccountSuccessResponseV8")
         ])
 
         let sut = AuthenticationAPIV8(networkService: networkService)
 
-        // When, Then no error thrown
-        try await sut.registerAccount(
+        // When
+        let response = try await sut.registerAccount(
             email: Scaffolding.email,
             emailCode: Scaffolding.emailCode,
             name: Scaffolding.name,
-            password: Scaffolding.password
+            password: Scaffolding.password,
+            label: "label"
         )
+
+        // Then
+        let expectedUserID = UUID(uuidString: "6396d5c6-e3fe-43cb-a635-75d3b7290c81")!
+
+        XCTAssertEqual(response.1, expectedUserID)
     }
 
     func testRegisterAccount_Response_Handling_BadRequest() async throws {
@@ -399,11 +406,12 @@ final class AuthenticationAPITests: XCTestCase {
 
         do {
             // When
-            try await sut.registerAccount(
+            _ = try await sut.registerAccount(
                 email: Scaffolding.email,
                 emailCode: Scaffolding.emailCode,
                 name: Scaffolding.name,
-                password: Scaffolding.password
+                password: Scaffolding.password,
+                label: "label"
             )
             XCTFail("Unexpected success")
         } catch AuthenticationAPIError.RegistrationError.invalidInvitationCode {

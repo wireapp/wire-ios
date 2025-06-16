@@ -19,6 +19,7 @@
 import SwiftUI
 import WireDesign
 import WireFoundation
+import WireReusableUIComponents
 
 struct ConfirmationView: View {
 

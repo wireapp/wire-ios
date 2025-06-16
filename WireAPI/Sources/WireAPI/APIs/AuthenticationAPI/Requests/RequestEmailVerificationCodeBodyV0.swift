@@ -16,20 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireAuthenticationAPI
+struct RequestEmailVerificationCodeBodyV0: Encodable {
 
-enum LoginViaEmailDestination: Hashable {
-
-    case verifyLogin(
-        email: String,
-        password: String,
-        proxyCredentials: ProxyCredentials?
-    )
-    case noHistory(
-        authenticationResult: AuthenticationResult
-    )
-
-    case createPersonalAccount
+    var email: String
+    var locale: String
 
 }

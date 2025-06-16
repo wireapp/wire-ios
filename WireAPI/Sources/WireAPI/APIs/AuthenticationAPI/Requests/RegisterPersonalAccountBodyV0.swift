@@ -17,19 +17,28 @@
 //
 
 import Foundation
-import WireAuthenticationAPI
+import WireFoundation
 
-enum LoginViaEmailDestination: Hashable {
+struct RegisterPersonalAccountBodyV0: Encodable {
 
-    case verifyLogin(
-        email: String,
-        password: String,
-        proxyCredentials: ProxyCredentials?
-    )
-    case noHistory(
-        authenticationResult: AuthenticationResult
-    )
+    let accentId: Int16 = AccentColor.default.rawValue
+    let email: String
+    let emailCode: String
+    let label: String
+    let locale: String
+    let name: String
+    let password: String
 
-    case createPersonalAccount
+    enum CodingKeys: String, CodingKey {
+
+        case accentId = "accent_id"
+        case email
+        case emailCode = "email_code"
+        case label
+        case locale
+        case name
+        case password
+
+    }
 
 }
