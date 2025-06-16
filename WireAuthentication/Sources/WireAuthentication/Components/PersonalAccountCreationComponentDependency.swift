@@ -29,6 +29,7 @@ protocol PersonalAccountCreationComponentDependency: Dependency {
     var networkStack: NetworkStack { get }
     var passwordValidator: any PasswordValidator { get }
     var privacyPolicyURL: URL { get }
+    var termsOfUseURL: URL { get }
     var personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol { get }
 
 }

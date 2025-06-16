@@ -19,22 +19,23 @@
 import SwiftUI
 import WireDesign
 
-struct Checkbox: View {
+public struct Checkbox: View {
+
     @Binding var isChecked: Bool
 
     private let title: AttributedString
 
-    init(isChecked: Binding<Bool>, title: AttributedString) {
+    public init(isChecked: Binding<Bool>, title: AttributedString) {
         self._isChecked = isChecked
         self.title = title
     }
 
-    init(isChecked: Binding<Bool>, title: String) {
+    public init(isChecked: Binding<Bool>, title: String) {
         self._isChecked = isChecked
         self.title = AttributedString(title)
     }
 
-    var body: some View {
+    public var body: some View {
         HStack {
             Button(action: {
                 isChecked.toggle()
@@ -48,4 +49,5 @@ struct Checkbox: View {
                 .wireTextStyle(.subline1)
         }
     }
+
 }

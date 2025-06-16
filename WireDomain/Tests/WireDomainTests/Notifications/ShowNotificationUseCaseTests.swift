@@ -26,10 +26,12 @@ import XCTest
 final class ShowNotificationUseCaseTests: XCTestCase {
     private var sut: ShowNotificationUseCase!
     private var conversationLocalStore: MockConversationLocalStoreProtocol!
+    private var databaseSaver: MockDatabaseSaverProtocol!
     private var didDisplayNotification = false
 
     override func setUp() async throws {
         conversationLocalStore = MockConversationLocalStoreProtocol()
+        databaseSaver = MockDatabaseSaverProtocol()
 
         let applicationSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
         let url = applicationSupport.appendingPathComponent(
@@ -40,7 +42,8 @@ final class ShowNotificationUseCaseTests: XCTestCase {
             contentHandler: { _ in self.didDisplayNotification = true },
             conversationLocalStore: conversationLocalStore,
             selectedAccount: Account(userName: .init(), userIdentifier: .mockID1),
-            accountManager: AccountManager(sharedDirectory: url)
+            accountManager: try AccountManager(sharedDirectory: url),
+            databaseSaver: databaseSaver
         )
     }
 
@@ -48,6 +51,7 @@ final class ShowNotificationUseCaseTests: XCTestCase {
         sut = nil
         conversationLocalStore = nil
         didDisplayNotification = false
+        databaseSaver = nil
     }
 
     func testProcess_It_Invokes_Notification_Content_Handler() async throws {
@@ -59,6 +63,7 @@ final class ShowNotificationUseCaseTests: XCTestCase {
         ]
 
         conversationLocalStore.unreadConversationCount_MockValue = 1
+        databaseSaver.save_MockMethod = {}
 
         // When
         try await sut.invoke(
@@ -67,6 +72,8 @@ final class ShowNotificationUseCaseTests: XCTestCase {
 
         // Then
         XCTAssertEqual(didDisplayNotification, true)
+        XCTAssertEqual(databaseSaver.save_Invocations.count, 1)
+        XCTAssertEqual(conversationLocalStore.unreadConversationCount_Invocations.count, 1)
     }
 
 }

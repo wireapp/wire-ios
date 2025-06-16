@@ -38,6 +38,27 @@ private func parent4(_ component: NeedleFoundation.Scope) -> NeedleFoundation.Sc
 
 #if !NEEDLE_DYNAMIC
 
+private class VerificationEmailCodeComponentDependency1187b119f31c839e0ba3Provider: VerificationEmailCodeComponentDependency {
+    var networkStack: NetworkStack {
+        return loginViaEmailComponent.networkStack
+    }
+    var bridge: WireAuthenticationBridge {
+        return rootComponent.bridge
+    }
+    var router: any Router {
+        return rootComponent.router
+    }
+    private let loginViaEmailComponent: LoginViaEmailComponent
+    private let rootComponent: RootComponent
+    init(loginViaEmailComponent: LoginViaEmailComponent, rootComponent: RootComponent) {
+        self.loginViaEmailComponent = loginViaEmailComponent
+        self.rootComponent = rootComponent
+    }
+}
+/// ^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->PersonalAccountCreationComponent->VerificationEmailCodeComponent
+private func factoryd09536bf5bccb74b4ca640b4d17f468382eeae3b(_ component: NeedleFoundation.Scope) -> AnyObject {
+    return VerificationEmailCodeComponentDependency1187b119f31c839e0ba3Provider(loginViaEmailComponent: parent2(component) as! LoginViaEmailComponent, rootComponent: parent4(component) as! RootComponent)
+}
 private class VerificationCodeComponentDependency48f3b80358781bc7c928Provider: VerificationCodeComponentDependency {
     var router: any Router {
         return rootComponent.router
@@ -99,6 +120,9 @@ private class PersonalAccountCreationComponentDependency9e5e5a00f5c85fcf54b5Prov
     }
     var privacyPolicyURL: URL {
         return rootComponent.privacyPolicyURL
+    }
+    var termsOfUseURL: URL {
+        return rootComponent.termsOfUseURL
     }
     var personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol {
         return rootComponent.personalAccountCreationAnalyticsTracker
@@ -187,6 +211,13 @@ private func factory9bda312c16141c932061a9403e3301bb54f80df0(_ component: Needle
 }
 
 #else
+extension VerificationEmailCodeComponent: NeedleFoundation.Registration {
+    public func registerItems() {
+        keyPathToName[\VerificationEmailCodeComponentDependency.networkStack] = "networkStack-NetworkStack"
+        keyPathToName[\VerificationEmailCodeComponentDependency.bridge] = "bridge-WireAuthenticationBridge"
+        keyPathToName[\VerificationEmailCodeComponentDependency.router] = "router-any Router"
+    }
+}
 extension VerificationCodeComponent: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\VerificationCodeComponentDependency.router] = "router-any Router"
@@ -212,7 +243,9 @@ extension PersonalAccountCreationComponent: NeedleFoundation.Registration {
         keyPathToName[\PersonalAccountCreationComponentDependency.networkStack] = "networkStack-NetworkStack"
         keyPathToName[\PersonalAccountCreationComponentDependency.passwordValidator] = "passwordValidator-any PasswordValidator"
         keyPathToName[\PersonalAccountCreationComponentDependency.privacyPolicyURL] = "privacyPolicyURL-URL"
+        keyPathToName[\PersonalAccountCreationComponentDependency.termsOfUseURL] = "termsOfUseURL-URL"
         keyPathToName[\PersonalAccountCreationComponentDependency.personalAccountCreationAnalyticsTracker] = "personalAccountCreationAnalyticsTracker-any PersonalAccountCreationAnalyticsTrackerProtocol"
+
     }
 }
 extension RootComponent: NeedleFoundation.Registration {
@@ -225,6 +258,7 @@ extension RootComponent: NeedleFoundation.Registration {
         localTable["howToChangeEmailURL-URL"] = { [unowned self] in self.howToChangeEmailURL as Any }
         localTable["howToDeleteAccountURL-URL"] = { [unowned self] in self.howToDeleteAccountURL as Any }
         localTable["privacyPolicyURL-URL"] = { [unowned self] in self.privacyPolicyURL as Any }
+        localTable["termsOfUseURL-URL"] = { [unowned self] in self.termsOfUseURL as Any }
         localTable["passwordValidator-any PasswordValidator"] = { [unowned self] in self.passwordValidator as Any }
         localTable["ssoCallbackURLScheme-String"] = { [unowned self] in self.ssoCallbackURLScheme as Any }
         localTable["appStoreURL-URL"] = { [unowned self] in self.appStoreURL as Any }
@@ -278,6 +312,7 @@ private func registerProviderFactory(_ componentPath: String, _ factory: @escapi
 #if !NEEDLE_DYNAMIC
 
 @inline(never) private func register1() {
+    registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->PersonalAccountCreationComponent->VerificationEmailCodeComponent", factoryd09536bf5bccb74b4ca640b4d17f468382eeae3b)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->VerificationCodeComponent", factoryd3638676a47fce1fe62317031e1ba787d83cb463)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent", factoryd47fa74281e135cd9f10b3a8f24c1d289f2c0f2e)
     registerProviderFactory("^->RootComponent->DetermineAuthMethodComponent->LoginViaEmailComponent->PersonalAccountCreationComponent", factory98c59649331d50383edd17031e1ba787d83cb463)

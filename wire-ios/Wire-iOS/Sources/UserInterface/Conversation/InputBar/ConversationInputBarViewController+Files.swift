@@ -51,11 +51,11 @@ extension ConversationInputBarViewController {
         guard !urls.isEmpty else { return }
 
         if DeveloperFlag.wireCells.isOn {
-            Task.detached { [wireCellsUploadDraftUseCase] in
-                // We don't care about the result of the operation here as we will be observing changes.
-                for url in urls {
+            for url in urls {
+                Task.detached { [uploadDraftUseCase] in
+                    // We don't care about the result of the operation here as we will be observing changes.
                     do {
-                        try await wireCellsUploadDraftUseCase.invoke(fileURL: url)
+                        try await uploadDraftUseCase.invoke(fileURL: url)
                     } catch {
                         WireLogger.conversation.error("Failed to upload file: \(error)")
                     }
