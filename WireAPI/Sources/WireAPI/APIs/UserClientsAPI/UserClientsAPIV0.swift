@@ -70,8 +70,8 @@ class UserClientsAPIV0: UserClientsAPI, VersionedAPI {
             .parse(code: response.statusCode, data: data)
     }
 
-    func updateClient(id: UserClientID, payload: ClientUpdate) async throws {
-        let body = try JSONEncoder.defaultEncoder.encode(payload.toAPIModel())
+    func updateClient(id: UserClientID, clientUpdate: ClientUpdate) async throws {
+        let body = try JSONEncoder.defaultEncoder.encode(clientUpdate.toAPIModel())
 
         let path = "\(pathPrefix)/clients/\(id)"
 
@@ -246,9 +246,9 @@ struct ClientUpdateV0: Equatable, Sendable, Encodable {
     let preKeys: [Prekey]?
 }
 
-extension ClientUpdate: ToAPIModelConvertible {
+extension ClientUpdate {
 
-    func toAPIModel() -> ClientUpdateV0 {
+    func toNetworkModel() -> ClientUpdateV0 {
         ClientUpdateV0(
             capabilities: capabilities,
             label: label,

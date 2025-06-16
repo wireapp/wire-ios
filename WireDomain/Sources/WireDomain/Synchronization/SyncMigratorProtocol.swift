@@ -16,16 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 
-// sourcery: AutoMockable
-/// An object that performs the incremental sync, i.e fetching/receiving
-/// pending update events and processing them.
-public protocol IncrementalSyncProtocol {
-
-    /// Perform the incremental sync.
-    ///
-    /// - Returns: A token to retain to keep the push channel open.
-
-    func perform() async throws -> IncrementalSync.Token
+public protocol SyncMigratorProtocol {
+    
+    func migrateFromIncrementalSyncV1() async throws
 }

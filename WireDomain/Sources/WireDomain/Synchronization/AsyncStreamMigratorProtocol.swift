@@ -23,15 +23,17 @@ protocol AsyncStreamMigratorProtocol {
     func migrateToAsyncStream() async throws
 }
 
+typealias IncrementalSyncV1 = IncrementalSync
+
 public final class AsyncStreamMigrator: AsyncStreamMigratorProtocol {
-    let sync: InitialSyncProtocol
+    let sync: SyncMigratorProtocol
     let apiVersion: WireAPI.APIVersion
     let userClientsLocalStore: UserClientsLocalStoreProtocol
     let userClientsAPI: UserClientsAPI
     var journal: JournalProtocol
 
     init(
-        sync: InitialSyncProtocol,
+        sync: SyncMigratorProtocol,
         userClientsAPI: UserClientsAPI,
         userClientsLocalStore: UserClientsLocalStoreProtocol,
         apiVersion: WireAPI.APIVersion,
@@ -62,7 +64,7 @@ public final class AsyncStreamMigrator: AsyncStreamMigratorProtocol {
 
         // 2) do an initial sync
         WireLogger.sync.debug("do initial sync")
-        try await sync.perform(skipPullingLastUpdateEventID: true)
+        try await sync.perform()
 
         // 3) we're done
         WireLogger.sync.debug("ready for async stream")

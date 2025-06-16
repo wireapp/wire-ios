@@ -37,7 +37,7 @@ public protocol UserClientsAPI {
     /// Update client with id
     /// - Parameters:
     ///   - id: id of User client
-    ///   - payload: payload containing properties to update
+    ///   - clientUpdate: payload containing properties to update
 
-    func updateClient(id: UserClientID, payload: ClientUpdate) async throws
+    func updateClient(id: UserClientID, clientUpdate: ClientUpdate) async throws
 }
