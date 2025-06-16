@@ -361,6 +361,11 @@ public final class ClientSessionComponent {
         authenticationManager: authenticationManager
     )
 
+    private lazy var mlsGroupRepairAgent = MLSGroupRepairAgent(
+        journal: journal,
+        mlsService: mlsService
+    )
+
     public lazy var incrementalSync = IncrementalSync(
         selfClientID: selfClientID,
         pushChannelAPI: pushChannelAPI,
@@ -371,7 +376,8 @@ public final class ClientSessionComponent {
         processor: updateEventProcessor,
         databaseSaver: databaseSaver,
         syncStateSubject: syncStateSubject,
-        journal: journal
+        journal: journal,
+        mlsGroupRepairAgent: mlsGroupRepairAgent
     )
 
     // MARK: - Repositories
