@@ -124,9 +124,12 @@ jobs:
           bundle exec fastlane prepare_for_tests
 
       - name: Install 1Password
+        if: ${{ inputs.test_dependencies == false && github.base_ref != 'release/cycle-3.120' && github.base_ref != 'release/cycle-3.124' }}
+
         uses: 1password/install-cli-action@v1
 
       - name: Generate env file
+        if: ${{ inputs.test_dependencies == false && github.base_ref != 'release/cycle-3.120' && github.base_ref != 'release/cycle-3.124' }}
         run: |
           bundle exec fastlane generate_env
 
