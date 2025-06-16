@@ -303,7 +303,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         journal[.isSyncV3Enabled] = true
 
         // Mock
-        liveSync.performAcknowledgeFullSync_MockMethod = { _ in
+        liveSync.perform_MockMethod = { _ in
             IncrementalSync.Token(
                 task: Task {},
                 closePushChannel: {}
@@ -314,6 +314,6 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         try await sut.performIncrementalSync()
 
         // Then
-        XCTAssertEqual(liveSync.performAcknowledgeFullSync_Invocations.count, 1)
+        XCTAssertEqual(liveSync.perform_Invocations.count, 1)
     }
 }
