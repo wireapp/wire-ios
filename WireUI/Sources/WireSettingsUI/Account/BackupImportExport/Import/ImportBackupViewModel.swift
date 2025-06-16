@@ -42,6 +42,7 @@ final class ImportBackupViewModel: ObservableObject {
     @Published private(set) var importProgress = (current: 0, total: 0)
 
     private var importTask: Task<Void, Never>?
+    private var hasDestructiveImportBeenConfirmed = false
 
     private let logger: any LoggerProtocol
     private let fileManager = FileManager.default
@@ -86,6 +87,7 @@ final class ImportBackupViewModel: ObservableObject {
                     url.stopAccessingSecurityScopedResource()
                 }
 
+                hasDestructiveImportBeenConfirmed = false
                 importBackup(from: copy, password: "")
             }
         } catch {
@@ -99,6 +101,7 @@ final class ImportBackupViewModel: ObservableObject {
             logger.error("confirmOverwrite called while not in state `.requestConfirmation`")
             return assertionFailure()
         }
+        hasDestructiveImportBeenConfirmed = true
         importBackup(from: url, password: "")
     }
 
@@ -116,17 +119,17 @@ final class ImportBackupViewModel: ObservableObject {
             do {
                 let importBackupUseCase = try importBackupUseCaseFactory.importBackupUseCase(for: url)
 
-
-                // TODO: show alert for legacy restore
-                importBackupUseCase.isImportDestructive
-//                alertContent = .init(
-//                    title: Strings.OverwriteConfirmation.title,
-//                    message: Strings.OverwriteConfirmation.message,
-//                    cancel: Strings.OverwriteConfirmation.cancel,
-//                    action: Strings.OverwriteConfirmation.proceed
-//                )
-//                state = .requestConfirmation(url: copy)
-
+                // for legacy backups we need to ask for confirmation
+                if importBackupUseCase.isImportDestructive, !hasDestructiveImportBeenConfirmed {
+                    alertContent = .init(
+                        title: Strings.OverwriteConfirmation.title,
+                        message: Strings.OverwriteConfirmation.message,
+                        cancel: Strings.OverwriteConfirmation.cancel,
+                        action: Strings.OverwriteConfirmation.proceed
+                    )
+                    state = .requestConfirmation(url: url)
+                    return
+                }
 
                 backupPassword = password
                 state = .importingBackup(current: 0, total: 0)
@@ -143,6 +146,8 @@ final class ImportBackupViewModel: ObservableObject {
                         state = .success
                     }
                 }
+
+                // we should consider using LocalizedError instead of this mapping:
             } catch ImportLegacyBackupError.passwordRequired, ImportBackupError.passwordRequired {
                 logger.debug("password is required to open backup file")
                 state = .requestingPassword(url: url, isPasswordIncorrect: false)
