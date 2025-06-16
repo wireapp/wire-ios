@@ -1137,14 +1137,14 @@ extension ZMUserSession: SyncAgentDelegate {
             guard let self else { return }
             WireLogger.sync.debug("did finish incremental sync")
 
-            if journal[.isSyncV2Enabled] {
+            func showSyncBar(_ show: Bool) {
                 managedObjectContext.performGroupedBlock { [weak self] in
-                    self?.isPerformingSync = false
+                    self?.isPerformingSync = show
                     self?.updateNetworkState()
                 }
-            } else {
-                processLegacyEvents()
             }
+
+            showSyncBar(true)
 
             NotificationInContext(
                 name: .quickSyncCompletedNotification,
@@ -1153,7 +1153,7 @@ extension ZMUserSession: SyncAgentDelegate {
 
             guard !isRecovering else {
                 // in case of recovery, we don't need more
-                return
+                return showSyncBar(false)
             }
 
             WaitingGroupTask(context: syncContext) { [weak self] in
@@ -1186,6 +1186,9 @@ extension ZMUserSession: SyncAgentDelegate {
 
                 await calculateSelfSupportedProtocolsIfNeeded()
                 await resolveOneOnOneConversationsIfNeeded()
+
+                // TODO: [WPB-18175] Port MLS client creation and related MLS operations from here to the InitialSync
+                showSyncBar(false)
             }
 
             recurringActionService.performActionsIfNeeded()
@@ -1285,7 +1288,10 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     func processLegacyEvents() {
-        guard !journal[.isSyncV2Enabled] else { return }
+        guard !journal[.isSyncV2Enabled] else {
+            return
+        }
+
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.isPerformingSync = true
             self?.updateNetworkState()
