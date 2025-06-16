@@ -65,14 +65,15 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
 
         logger.debug("processing stored update events", attributes: .syncAttributes(initialSync: false))
         syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
-        var processedEnvelopeIDs: Set<UUID>
+        let processedEnvelopeIDs: Set<UUID>
         do {
             processedEnvelopeIDs = try await processStoredEvents()
         } catch {
             await pushChannel.close()
+            throw error
         }
 
-        let task = Task { @Sendable [self, pushChannel] in
+        let task = Task { @Sendable [self, pushChannel, processedEnvelopeIDs] in
             await processLiveStream(
                 liveEventStream,
                 pushChannel: pushChannel,
