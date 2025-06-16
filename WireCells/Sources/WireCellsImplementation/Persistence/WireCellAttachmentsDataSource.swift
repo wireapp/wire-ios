@@ -31,6 +31,7 @@ package class MessageAttachmentDraftDataSource: WireCellsMessageAttachmentDraftR
     func add(
         conversationID: WireCellsConversationID,
         node: WireCellsNode,
+        versionID: UUID,
         mimeType: String,
         dataPath: String,
         metadata: WireCellsAssetMetadata?,
@@ -39,7 +40,7 @@ package class MessageAttachmentDraftDataSource: WireCellsMessageAttachmentDraftR
         do {
             return try await messageAttachmentDAO.addAttachment(
                 uuid: .init(),
-                versionID: node.id.versionID.uuidString,
+                versionID: versionID.uuidString,
                 conversationID: conversationID,
                 mimeType: mimeType,
                 fileName: (node.path as NSString).lastPathComponent,

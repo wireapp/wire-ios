@@ -18,22 +18,19 @@
 
 import Foundation
 import WireCellsAPI
+import WireLogging
 
-extension WireCellsDraft {
-    static func fixture(
-        nodeID: UUID = UUID(),
-        versionID: UUID = UUID(),
-        status: WireCellsUploadStatus = .uploaded(isDraft: true)
-    ) -> WireCellsDraft {
-        WireCellsDraft(
-            nodeID: nodeID,
-            versionID: versionID,
-            assetURL: URL(string: "https://example.com")!,
-            fileType: nil,
-            status: status,
-            name: "Draft",
-            bytes: 1024,
-            mimeType: nil
-        )
+package struct ClearPublishedDraftsUseCase: WireCellsClearPublishedDraftsUseCaseProtocol {
+
+    private let cellName: String
+    private let draftRepository: any DraftsRepositoryProtocol
+
+    package init(cellName: String, draftRepository: any DraftsRepositoryProtocol) {
+        self.cellName = cellName
+        self.draftRepository = draftRepository
+    }
+
+    public func invoke() async {
+        await draftRepository.clearPublishedDrafts(for: cellName)
     }
 }
