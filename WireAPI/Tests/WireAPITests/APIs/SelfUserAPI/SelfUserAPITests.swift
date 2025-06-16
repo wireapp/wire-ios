@@ -17,6 +17,7 @@
 //
 
 import XCTest
+
 @testable import WireAPI
 @testable import WireAPISupport
 
@@ -111,7 +112,7 @@ final class SelfUserAPITests: XCTestCase {
             // Then
             XCTAssertEqual(
                 result,
-                Scaffolding.selfUserV0
+                Scaffolding.selfUserV0NoSCIM
             )
         }
     }
@@ -169,7 +170,7 @@ final class SelfUserAPITests: XCTestCase {
             // Then
             XCTAssertEqual(
                 result,
-                Scaffolding.selfUserV5
+                Scaffolding.selfUserV5NoSCIM
             )
         }
     }
@@ -238,11 +239,60 @@ extension SelfUserAPITests {
             ),
             supportedProtocols: [.proteus]
         )
+        static let selfUserV0NoSCIM = SelfUser(
+            id: UUID(uuidString: "99DB9768-04E3-4B5D-9268-831B6A25C4AB")!,
+            qualifiedID: userID,
+            ssoID: SSOID(scimExternalId: nil, subject: "string", tenant: "string"),
+            name: "string",
+            handle: "string",
+            teamID: teamID,
+            phone: "string",
+            accentID: 2_147_483_647,
+            managedBy: .wire,
+            assets: [UserAsset(
+                key: "3-1-47de4580-ae51-4650-acbb-d10c028cb0ac",
+                size: .preview,
+                type: .image
+            )],
+            deleted: true,
+            email: "string",
+            expiresAt: ISO8601DateFormatter.fractionalInternetDateTime.date(from: "2021-05-12T10:52:02.671Z")!,
+            service: Service(
+                id: UUID(uuidString: "99DB9768-04E3-4B5D-9268-831B6A25C4AB")!,
+                provider: UUID(uuidString: "99DB9768-04E3-4B5D-9268-831B6A25C4AB")!
+            ),
+            supportedProtocols: [.proteus]
+        )
 
         static let selfUserV5 = SelfUser(
             id: UUID(uuidString: "99DB9768-04E3-4B5D-9268-831B6A25C4AB")!,
             qualifiedID: userID,
             ssoID: SSOID(scimExternalId: "string", subject: "string", tenant: "string"),
+            name: "string",
+            handle: "string",
+            teamID: teamID,
+            phone: "string",
+            accentID: 2_147_483_647,
+            managedBy: .wire,
+            assets: [UserAsset(
+                key: "3-1-47de4580-ae51-4650-acbb-d10c028cb0ac",
+                size: .preview,
+                type: .image
+            )],
+            deleted: true,
+            email: "string",
+            expiresAt: ISO8601DateFormatter.fractionalInternetDateTime.date(from: "2021-05-12T10:52:02.671Z")!,
+            service: Service(
+                id: UUID(uuidString: "99DB9768-04E3-4B5D-9268-831B6A25C4AB")!,
+                provider: UUID(uuidString: "99DB9768-04E3-4B5D-9268-831B6A25C4AB")!
+            ),
+            supportedProtocols: [.mls]
+        )
+
+        static let selfUserV5NoSCIM = SelfUser(
+            id: UUID(uuidString: "99DB9768-04E3-4B5D-9268-831B6A25C4AB")!,
+            qualifiedID: userID,
+            ssoID: SSOID(scimExternalId: nil, subject: "string", tenant: "string"),
             name: "string",
             handle: "string",
             teamID: teamID,
