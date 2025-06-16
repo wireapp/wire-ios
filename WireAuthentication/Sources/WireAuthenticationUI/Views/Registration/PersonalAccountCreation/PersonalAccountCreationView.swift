@@ -45,11 +45,13 @@ struct PersonalAccountCreationView: View {
         .navigationDestination(for: PersonalAccountCreationDestination.self) {
             switch $0 {
             case let .verifyEmail(email, password, name):
-                VerificationEmailCodeView(factory: viewModel.factory.verificationEmailCodeFactory(
-                    email: email,
-                    password: password,
-                    name: name
-                ))
+                VerificationEmailCodeView(
+                    factory: viewModel.factory.verificationEmailCodeFactory(
+                        email: email,
+                        password: password,
+                        name: name
+                    )
+                )
             }
         }
         .sheet(isPresented: $viewModel.isCreateTeamAccountPresented, content: {
@@ -73,16 +75,6 @@ struct PersonalAccountCreationView: View {
                     })
                     Button(Strings.ConfirmationAlert.cancel, action: {})
                 }
-            actions: { _ in
-                Button(Strings.ConfirmationAlert.accept, action: {
-                    Task {
-                        try? await viewModel.requestEmailVerificationCode()
-                    }
-                })
-                Button(Strings.ConfirmationAlert.view) {
-                    viewModel.personalAccountCreationAnalyticsTracker.setUp()
-                }
-                Button(Strings.ConfirmationAlert.cancel, action: {})
             }
         )
         .presentationDetents([.large])

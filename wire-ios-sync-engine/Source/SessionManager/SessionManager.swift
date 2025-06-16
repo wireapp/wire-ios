@@ -565,27 +565,11 @@ public final class SessionManager: NSObject, SessionManagerType {
             )
         }
 
-        self.analyticsService = AnalyticsService(
-            config: analyticsConfig,
-            deviceModel: UIDevice.current.model,
-            osVersion: UIDevice.current.systemVersion,
-            countlyProvider: countlyProvider
-        )
-
         // TODO: enable tracking later
 //        Journal(userID: account.userIdentifier, storage: sharedUserDefaults)
-//        if analyticsServiceConfiguration?.didUserGiveTrackingConsent == true {
-//            Task { [analyticsService] in
-//                do {
-//                    try await analyticsService.enableTracking()
-//                } catch {
-//                    WireLogger.analytics.error("failed to enable tracking: \(error)")
-//                }
-//            }
+//        if let analyticsService, analyticsServiceConfiguration?.didUserGiveTrackingConsent == true {
+//            analyticsService.enableTracking()
 //        }
-        if let analyticsService, analyticsServiceConfiguration?.didUserGiveTrackingConsent == true {
-            analyticsService.enableTracking()
-        }
 
         super.init()
 

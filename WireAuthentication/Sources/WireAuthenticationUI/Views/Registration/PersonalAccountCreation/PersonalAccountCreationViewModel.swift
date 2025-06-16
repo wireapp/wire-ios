@@ -44,10 +44,10 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
         passwordValidator.localizedRulesDescription ?? ""
     }
 
-    private let factory: any Factory
+    package let factory: any Factory
+    private let router: any Router
     package let privacyPolicyURL: URL
     private let termsOfUseURL: URL
-    package let termsOfUseURL: URL
     package let teamAccountCreationLink: URL?
     private let passwordValidator: any PasswordValidator
     /*private*/ let personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
@@ -59,7 +59,6 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
         privacyPolicyURL: URL,
         termsOfUseURL: URL,
         teamAccountCreationLink: URL?,
-        passwordValidator: any PasswordValidator
         passwordValidator: any PasswordValidator,
         personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
     ) {
@@ -101,8 +100,8 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
             return
         }
         do {
-            let requestEmailVerificationCode = try await factory.requestEmailVerificationCodeUseCase()
-            try await requestEmailVerificationCode.invoke(email: email)
+            let requestEmailVerificationCodeUseCase = try await factory.requestEmailVerificationCodeUseCase()
+            try await requestEmailVerificationCodeUseCase.invoke(email: email)
 
             router.navigate(to: PersonalAccountCreationDestination.verifyEmail(
                 email: email,

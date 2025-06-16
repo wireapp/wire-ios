@@ -47,8 +47,6 @@ final class TrackingManager: TrackingInterface {
 
         migrateFromLegacyStorageIfNeeded()
 
-
-        AVSFlowManager.getInstance()?.setEnableMetrics(!isAnalyticsDisabled)
         self.observerToken = NotificationCenter.default.addObserver(
             forName: FlowManager.AVSFlowManagerCreatedNotification,
             object: nil,
@@ -92,7 +90,6 @@ final class TrackingManager: TrackingInterface {
     }
 
     func enableAnalytics() async throws {
-        try await sessionManager.makeEnableAnalyticsUseCase().invoke()
         try await sessionManager.makeEnableAnalyticsUseCase()?.invoke()
         ExtensionSettings.shared.disableAnalyticsSharing = false
         AVSFlowManager.getInstance()?.setEnableMetrics(true)
@@ -100,7 +97,6 @@ final class TrackingManager: TrackingInterface {
     }
 
     func disableAnalytics() throws {
-        try sessionManager.makeDisableAnalyticsUseCase().invoke()
         try sessionManager.makeDisableAnalyticsUseCase()?.invoke()
         ExtensionSettings.shared.disableAnalyticsSharing = true
         AVSFlowManager.getInstance()?.setEnableMetrics(false)

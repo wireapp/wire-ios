@@ -16,24 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+//import UIKit
+import WireAnalytics
 import WireAuthenticationAPI
 import WireFoundation
 
 struct PersonalAccountCreationAnalyticsTracker: PersonalAccountCreationAnalyticsTrackerProtocol {
 
-private var analyticsService: AnalyticsService
+    private var analyticsService: AnalyticsService
     private var analyticsTracker: (any AnalyticsEventTrackerProtocol)!
 
-    init() {}
+    init() {
+        fatalError("WPB-17530")
+    }
 
     func setUp() {
 
-        analyticsService = AnalyticsService(
-            config: analyticsConfig,
-            deviceModel: UIDevice.current.model,
-            osVersion: UIDevice.current.systemVersion,
-            countlyProvider: countlyProvider
-        )
+//        analyticsService = AnalyticsService(
+//            config: analyticsConfig,
+//            deviceModel: UIDevice.current.model,
+//            osVersion: UIDevice.current.systemVersion,
+//            countlyProvider: countlyProvider
+//        )
 
         fatalError("WPB-17530")
     }
