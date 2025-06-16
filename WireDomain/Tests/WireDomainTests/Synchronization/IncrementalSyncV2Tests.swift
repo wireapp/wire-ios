@@ -227,6 +227,11 @@ final class IncrementalSyncV2Tests: XCTestCase {
         pushChannel.acknowledgeEventDeliveryTagMultiple_MockMethod = { _, _ in }
         pushChannelAPI.createPushChannelClientID_MockMethod = { _ in pushChannel }
 
+        // Events stored from NSE which needs to be processed
+        updateEventsStore.fetchStoredEventEnvelopesLimit_MockMethod = { _ in
+            []
+        }
+
         // Some indices at which live events will be stored.
         var indices = [Int64(10), 11]
         updateEventsStore.indexOfLastEventEnvelope_MockMethod = { indices.remove(at: 0) }
