@@ -3192,6 +3192,35 @@ public class MockSelfUserProviderProtocol: SelfUserProviderProtocol {
 
 }
 
+public class MockSyncMigratorProtocol: SyncMigratorProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - migrateFromIncrementalSyncV1
+
+    public var migrateFromIncrementalSyncV1_Invocations: [Void] = []
+    public var migrateFromIncrementalSyncV1_MockError: Error?
+    public var migrateFromIncrementalSyncV1_MockMethod: (() async throws -> Void)?
+
+    public func migrateFromIncrementalSyncV1() async throws {
+        migrateFromIncrementalSyncV1_Invocations.append(())
+
+        if let error = migrateFromIncrementalSyncV1_MockError {
+            throw error
+        }
+
+        guard let mock = migrateFromIncrementalSyncV1_MockMethod else {
+            fatalError("no mock for `migrateFromIncrementalSyncV1`")
+        }
+
+        try await mock()
+    }
+
+}
+
 public class MockTeamLocalStoreProtocol: TeamLocalStoreProtocol {
 
     // MARK: - Life cycle

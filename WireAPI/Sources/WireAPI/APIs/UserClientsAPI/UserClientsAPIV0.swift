@@ -71,7 +71,7 @@ class UserClientsAPIV0: UserClientsAPI, VersionedAPI {
     }
 
     func updateClient(id: UserClientID, clientUpdate: ClientUpdate) async throws {
-        let body = try JSONEncoder.defaultEncoder.encode(clientUpdate.toAPIModel())
+        let body = try JSONEncoder.defaultEncoder.encode(clientUpdate.toNetworkModel())
 
         let path = "\(pathPrefix)/clients/\(id)"
 

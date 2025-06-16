@@ -390,7 +390,7 @@ public final class ClientSessionComponent {
 
     public func asyncStreamMigrator() -> AsyncStreamMigrator {
         AsyncStreamMigrator(
-            sync: initialSync,
+            sync: incrementalSync,
             userClientsAPI: userClientsAPI,
             userClientsLocalStore: userClientsLocalStore,
             apiVersion: apiVersion,

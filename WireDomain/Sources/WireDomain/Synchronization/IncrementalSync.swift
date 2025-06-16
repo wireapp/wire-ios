@@ -330,7 +330,6 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 
 }
 
-
 extension IncrementalSyncV1: SyncMigratorProtocol {
     public func migrateFromIncrementalSyncV1() async throws {
         logger.debug("pulling pending update events", attributes: .syncAttributes(initialSync: false))

@@ -62,12 +62,12 @@ public final class AsyncStreamMigrator: AsyncStreamMigratorProtocol {
             try await registerAsyncStreamCapability()
         }
 
-        // 2) do an initial sync
-        WireLogger.sync.debug("do initial sync")
-        try await sync.perform()
+        // 2) do incremental sync with v1 with no push channel
+        WireLogger.sync.debug("incremental sync v1")
+        try await sync.migrateFromIncrementalSyncV1()
 
         // 3) we're done
-        WireLogger.sync.debug("ready for async stream")
+        WireLogger.sync.debug("ready for consumable notifications")
         journal[.isConsumableNotificationsEnabled] = true
     }
 
@@ -80,6 +80,6 @@ public final class AsyncStreamMigrator: AsyncStreamMigratorProtocol {
         let payload: ClientUpdate = .init(
             capabilities: [.legalholdConsent, .consumableNotifications]
         )
-        try await userClientsAPI.updateClient(id: id, payload: payload)
+        try await userClientsAPI.updateClient(id: id, clientUpdate: payload)
     }
 }

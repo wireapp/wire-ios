@@ -24,7 +24,7 @@ import XCTest
 
 final class AsyncStreamMigratorTests: XCTestCase {
     var sut: AsyncStreamMigrator!
-    var mockSync: MockInitialSyncProtocol!
+    var mockSync: MockSyncMigratorProtocol!
     var mockUserClientsAPI: MockUserClientsAPI!
     var mockLocalStore: MockUserClientsLocalStoreProtocol!
     var journal: JournalProtocol!
@@ -64,16 +64,15 @@ final class AsyncStreamMigratorTests: XCTestCase {
         // GIVEN
         mockLocalStore.fetchSelfClientID_MockValue = Scaffolding.userID.uuidString
         mockLocalStore.hasRegisteredAsyncStreamCapable_MockValue = false
-        mockUserClientsAPI.updateClientIdPayload_MockMethod = { _, _ in }
-        mockSync.performSkipPullingLastUpdateEventID_MockMethod = { _ in }
+        mockUserClientsAPI.updateClientIdClientUpdate_MockMethod = { _, _ in }
+        mockSync.migrateFromIncrementalSyncV1_MockMethod = { }
 
         // WHEN
         try await sut.migrateToAsyncStream()
 
         // THEN
-        XCTAssertEqual(mockUserClientsAPI.updateClientIdPayload_Invocations.count, 1)
-        XCTAssertEqual(mockSync.performSkipPullingLastUpdateEventID_Invocations.count, 1)
-        XCTAssertTrue(mockSync.performSkipPullingLastUpdateEventID_Invocations[0])
+        XCTAssertEqual(mockUserClientsAPI.updateClientIdClientUpdate_Invocations.count, 1)
+        XCTAssertEqual(mockSync.migrateFromIncrementalSyncV1_Invocations.count, 1)
         XCTAssertTrue(journal[.isConsumableNotificationsEnabled])
     }
 
@@ -81,15 +80,14 @@ final class AsyncStreamMigratorTests: XCTestCase {
         // GIVEN
         mockLocalStore.fetchSelfClientID_MockValue = Scaffolding.userID.uuidString
         mockLocalStore.hasRegisteredAsyncStreamCapable_MockValue = true
-        mockSync.performSkipPullingLastUpdateEventID_MockMethod = { _ in }
+        mockSync.migrateFromIncrementalSyncV1_MockMethod = { }
 
         // WHEN
         try await sut.migrateToAsyncStream()
 
         // THEN
-        XCTAssertEqual(mockUserClientsAPI.updateClientIdPayload_Invocations.count, 0)
-        XCTAssertEqual(mockSync.performSkipPullingLastUpdateEventID_Invocations.count, 1)
-        XCTAssertTrue(mockSync.performSkipPullingLastUpdateEventID_Invocations[0])
+        XCTAssertEqual(mockUserClientsAPI.updateClientIdClientUpdate_Invocations.count, 0)
+        XCTAssertEqual(mockSync.migrateFromIncrementalSyncV1_Invocations.count, 1)
 
         XCTAssertTrue(journal[.isConsumableNotificationsEnabled])
     }
@@ -98,9 +96,9 @@ final class AsyncStreamMigratorTests: XCTestCase {
         // GIVEN
         mockLocalStore.fetchSelfClientID_MockValue = Scaffolding.userID.uuidString
         mockLocalStore.hasRegisteredAsyncStreamCapable_MockValue = false
-        mockUserClientsAPI.updateClientIdPayload_MockMethod = { _, _ in }
+        mockUserClientsAPI.updateClientIdClientUpdate_MockMethod = { _, _ in }
         let error = TestError(message: "")
-        mockSync.performSkipPullingLastUpdateEventID_MockError = error
+        mockSync.migrateFromIncrementalSyncV1_MockError = error
 
         // WHEN
         await XCTAssertThrowsErrorAsync(error) {
@@ -108,9 +106,8 @@ final class AsyncStreamMigratorTests: XCTestCase {
         }
 
         // THEN
-        XCTAssertEqual(mockUserClientsAPI.updateClientIdPayload_Invocations.count, 1)
-        XCTAssertEqual(mockSync.performSkipPullingLastUpdateEventID_Invocations.count, 1)
-        XCTAssertTrue(mockSync.performSkipPullingLastUpdateEventID_Invocations[0])
+        XCTAssertEqual(mockUserClientsAPI.updateClientIdClientUpdate_Invocations.count, 1)
+        XCTAssertEqual(mockSync.migrateFromIncrementalSyncV1_Invocations.count, 1)
         XCTAssertFalse(journal[.isConsumableNotificationsEnabled])
     }
 
@@ -119,9 +116,9 @@ final class AsyncStreamMigratorTests: XCTestCase {
         mockLocalStore.fetchSelfClientID_MockValue = Scaffolding.userID.uuidString
         mockLocalStore.hasRegisteredAsyncStreamCapable_MockValue = false
         let error = TestError(message: "")
-        mockUserClientsAPI.updateClientIdPayload_MockError = error
+        mockUserClientsAPI.updateClientIdClientUpdate_MockError = error
 
-        mockSync.performSkipPullingLastUpdateEventID_MockMethod = { _ in }
+        mockSync.migrateFromIncrementalSyncV1_MockMethod = { }
 
         // WHEN
         await XCTAssertThrowsErrorAsync(error) {
@@ -129,8 +126,8 @@ final class AsyncStreamMigratorTests: XCTestCase {
         }
 
         // THEN
-        XCTAssertEqual(mockUserClientsAPI.updateClientIdPayload_Invocations.count, 1)
-        XCTAssertEqual(mockSync.performSkipPullingLastUpdateEventID_Invocations.count, 0)
+        XCTAssertEqual(mockUserClientsAPI.updateClientIdClientUpdate_Invocations.count, 1)
+        XCTAssertEqual(mockSync.migrateFromIncrementalSyncV1_Invocations.count, 0)
         XCTAssertFalse(journal[.isConsumableNotificationsEnabled])
     }
 
@@ -144,7 +141,7 @@ final class AsyncStreamMigratorTests: XCTestCase {
             journal: journal
         )
 
-        mockSync.performSkipPullingLastUpdateEventID_MockMethod = { _ in }
+        mockSync.migrateFromIncrementalSyncV1_MockMethod = { }
 
         // WHEN / THEN
         await XCTAssertThrowsErrorAsync(AsyncStreamMigrator.Failure.apiVersionTooLow) {

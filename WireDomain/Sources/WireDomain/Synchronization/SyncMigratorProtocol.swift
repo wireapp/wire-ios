@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
+// sourcery: AutoMockable
 public protocol SyncMigratorProtocol {
     
     func migrateFromIncrementalSyncV1() async throws
