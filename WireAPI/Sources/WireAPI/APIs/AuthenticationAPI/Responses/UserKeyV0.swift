@@ -17,10 +17,14 @@
 //
 
 import Foundation
-import WireCellsAPI
 
-extension WireCellsNodeID {
-    static func fixture() -> WireCellsNodeID {
-        WireCellsNodeID(uuid: UUID(), versionID: UUID())
+struct UserKeyV0: Decodable, ToAPIModelConvertible {
+
+    let id: UUID
+
+    func toAPIModel() -> UserKey {
+
+        UserKey(uuid: id)
     }
+
 }

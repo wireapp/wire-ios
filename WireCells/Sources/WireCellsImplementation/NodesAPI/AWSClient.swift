@@ -116,11 +116,11 @@ final class AWSClient: Sendable {
         }
     }
 
-    func upload(path: URL, node: WireCellsNodeDTO) async -> AsyncThrowingStream<Int, any Error> {
+    func upload(path: URL, node: WireCellsNodeDTO, versionID: UUID) async -> AsyncThrowingStream<Int, any Error> {
         AsyncThrowingStream { continuation in
             Task {
                 do {
-                    try await self.upload(path: path, node: node) { progress in
+                    try await self.upload(path: path, node: node, versionID: versionID) { progress in
                         continuation.yield(Int(progress))
                     }
                     continuation.finish()
@@ -134,20 +134,22 @@ final class AWSClient: Sendable {
     private func upload(
         path: URL,
         node: WireCellsNodeDTO,
+        versionID: UUID,
         onProgressUpdate: @escaping @Sendable (UInt64) -> Void
     ) async throws {
         let fileSize = try FileManager.default.attributesOfItem(atPath: path.path)[.size] as! Int64
 
         if fileSize > Constants.maxRegularUploadSize {
-            try await uploadMultipart(path: path, node: node, onProgressUpdate: onProgressUpdate)
+            try await uploadMultipart(path: path, node: node, versionID: versionID, onProgressUpdate: onProgressUpdate)
         } else {
-            try await uploadRegular(path: path, node: node, onProgressUpdate: onProgressUpdate)
+            try await uploadRegular(path: path, node: node, versionID: versionID, onProgressUpdate: onProgressUpdate)
         }
     }
 
     private func uploadRegular(
         path: URL,
         node: WireCellsNodeDTO,
+        versionID: UUID,
         onProgressUpdate: @escaping @Sendable (UInt64) -> Void
     ) async throws {
         let fileStream = FileStream(fileHandle: try FileHandle(forReadingFrom: path))
@@ -164,7 +166,7 @@ final class AWSClient: Sendable {
             body: .stream(stream),
             bucket: Constants.bucket,
             key: node.path,
-            metadata: node.createDraftNodeMetadata()
+            metadata: node.createDraftNodeMetadata(versionID: versionID)
         )
 
         _ = try await s3.putObject(input: input)
@@ -173,6 +175,7 @@ final class AWSClient: Sendable {
     private func uploadMultipart(
         path: URL,
         node: WireCellsNodeDTO,
+        versionID: UUID,
         onProgressUpdate: @escaping @Sendable (UInt64) -> Void
     ) async throws {
         let fileHandle = try FileHandle(forReadingFrom: path)
@@ -181,7 +184,11 @@ final class AWSClient: Sendable {
         let fileSize = try FileManager.default.attributesOfItem(atPath: path.path)[.size] as! Int64
 
         let createOutput = try await s3.createMultipartUpload(
-            input: .init(bucket: Constants.bucket, key: node.path, metadata: node.createDraftNodeMetadata())
+            input: .init(
+                bucket: Constants.bucket,
+                key: node.path,
+                metadata: node.createDraftNodeMetadata(versionID: versionID)
+            )
         )
         guard let uploadId = createOutput.uploadId else {
             throw WireCellsAWSClientError.missingUploadID
@@ -234,11 +241,11 @@ final class AWSClient: Sendable {
 }
 
 private extension WireCellsNodeDTO {
-    func createDraftNodeMetadata() -> [String: String] {
+    func createDraftNodeMetadata(versionID: UUID) -> [String: String] {
         [
             "Draft-Mode": "true",
             "Create-Resource-UUID": uuid.uuidString,
-            "Create-Version-ID": versionId.uuidString
+            "Create-Version-ID": versionID.uuidString
         ]
     }
 }

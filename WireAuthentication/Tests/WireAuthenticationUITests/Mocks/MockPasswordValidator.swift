@@ -16,34 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import NeedleFoundation
-import SwiftUI
-import WireAPI
-import WireAuthenticationAPI
-internal import WireAuthenticationUI
-internal import WireAuthenticationLogic
-import WireReusableUIComponents
+@testable import WireReusableUIComponents
 
-protocol EmailVerificationCodeComponentDependency: Dependency {
+final class MockPasswordValidator: PasswordValidator {
 
-    @MainActor var router: any Router { get }
-    var networkStack: NetworkStack { get }
+    func isPasswordValid(_ password: String) -> Bool {
+        true
+    }
 
-}
-
-final class EmailVerificationCodeComponent: Component<EmailVerificationCodeComponentDependency> {
-
-    private let email: String
-    private let password: String
-
-    init(
-        parent: any Scope,
-        email: String,
-        password: String
-    ) {
-        self.email = email
-        self.password = password
-        super.init(parent: parent)
+    var localizedRulesDescription: String? {
+        "localizedRulesDescription"
     }
 
 }

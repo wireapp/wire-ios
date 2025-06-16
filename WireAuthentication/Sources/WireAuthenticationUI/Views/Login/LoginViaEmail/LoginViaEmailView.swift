@@ -36,7 +36,7 @@ package protocol LoginViaEmailFactory {
     func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory
 
     @MainActor
-    func personalAccountCreationFactory() -> any PersonalAccountCreationFactory
+    func personalAccountCreationFactory(teamAccountCreationLink: URL?) -> any PersonalAccountCreationFactory
 
 }
 
@@ -123,6 +123,11 @@ package struct LoginViaEmailView: View {
                 factory: viewModel.factory.noHistoryFactory(
                     authenticationResult: authenticationResult
                 )
+            )
+        case .createPersonalAccount:
+            PersonalAccountCreationView(
+                factory: viewModel.factory
+                    .personalAccountCreationFactory(teamAccountCreationLink: viewModel.teamAccountCreationLink)
             )
         }
     }
@@ -254,10 +259,8 @@ package struct LoginViaEmailView: View {
     @ViewBuilder
     private func sheetView(for sheet: LoginViaEmailSheet) -> some View {
         switch sheet {
-        case let .teamAccountCreation:
-            if let teamAccountCreationLink = viewModel.teamAccountCreationLink {
-                SafariBrowserView(url: teamAccountCreationLink).ignoresSafeArea()
-            }
+        case let .teamAccountCreation(teamAccountCreationLink):
+            SafariBrowserView(url: teamAccountCreationLink).ignoresSafeArea()
         case .accountTypeSelection:
             AccountTypeSelectionView(
                 onTeamAccountCreation: viewModel.handleOnTeamAccountCreation,

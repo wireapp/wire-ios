@@ -104,6 +104,7 @@ final class AuthenticationInterfaceBuilder {
                 howToChangeEmailURL: WireURLs.shared.howToChangeEmail,
                 howToDeleteAccountURL: WireURLs.shared.howToDeleteAccount,
                 privacyPolicyURL: WireURLs.shared.privacyPolicy,
+                termsOfUseURL: WireURLs.shared.legal,
                 passwordValidator: AuthenticationPasswordValidator(),
                 ssoCallbackURLScheme: Bundle.ssoURLScheme ?? "wire-sso",
                 appStoreURL: WireURLs.shared.appOnItunes,
