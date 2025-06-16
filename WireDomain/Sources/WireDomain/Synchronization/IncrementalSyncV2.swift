@@ -62,8 +62,15 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         logger.debug("opening new push channel", attributes: .syncAttributes(initialSync: false))
         syncStateSubject.send(.incrementalSyncing(.openPushChannel))
         let liveEventStream = try await pushChannel.open()
-
-        let processedEnvelopeIDs = try await processPendingEvents(pushChannel: pushChannel)
+        
+        logger.debug("processing stored update events", attributes: .syncAttributes(initialSync: false))
+        syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
+        let processedEnvelopeIDs: Set<UUID>
+        do {
+            processedEnvelopeIDs = try await processStoredEvents()
+        } catch {
+            await pushChannel.close()
+        }
 
         let task = Task { @Sendable [self, pushChannel] in
             await processLiveStream(
@@ -79,22 +86,6 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     }
 
     /// Process pending events from the event database that were decrypted during the NSE
-    private func processPendingEvents(pushChannel: PushChannelV2Protocol) async throws -> Set<UUID> {
-        do {
-            logger.debug("processing stored update events", attributes: .syncAttributes(initialSync: false))
-            syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
-            return try await processStoredEvents()
-        } catch {
-            logger.debug(
-                "incremental sync interrupted, tearing down...",
-                attributes: .syncAttributes(initialSync: false)
-            )
-            await pushChannel.close()
-            throw error
-        }
-
-    }
-
     private func processStoredEvents() async throws -> Set<UUID> {
         let batchSize: UInt = 500
         var processedEnvelopeIDs = Set<UUID>()
