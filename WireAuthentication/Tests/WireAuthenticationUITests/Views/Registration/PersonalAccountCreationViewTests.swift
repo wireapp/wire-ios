@@ -36,7 +36,7 @@ final class PersonalAccountCreationViewTests: XCTestCase {
     }
 
     @MainActor
-    func testColorSchemeVariantsEmptyState() {
+    func testColorSchemeVariants() {
         let screenBounds = UIScreen.main.bounds
 
         let view = PersonalAccountCreationView(factory: FakePersonalAccountCreationFactory(
@@ -55,7 +55,7 @@ final class PersonalAccountCreationViewTests: XCTestCase {
     }
 
     @MainActor
-    func testDynamicTypeVariantsEmptyState() {
+    func testDynamicTypeVariants() {
         let screenBounds = UIScreen.main.bounds
 
         let view = PersonalAccountCreationView(factory: FakePersonalAccountCreationFactory(
