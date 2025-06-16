@@ -87,6 +87,7 @@ final class ConversationInputBarViewController: UIViewController,
 
     var textfieldObserverToken: Any?
     lazy var audioSession: AVAudioSessionType = AVAudioSession.sharedInstance()
+    private(set) var attachments: [WireCellsDraft] = []
 
     // MARK: buttons
 
@@ -216,7 +217,7 @@ final class ConversationInputBarViewController: UIViewController,
     var callCountWhileCameraKeyboardWasVisible = 0
     var callStateObserverToken: Any?
     var wasRecordingBeforeCall = false
-    let sendButtonState: ConversationInputBarButtonState = .init()
+    let inputBarButtonState: ConversationInputBarButtonState = .init()
     var inRotation = false
 
     private var singleTapGestureRecognizer: UITapGestureRecognizer = .init()
@@ -225,8 +226,10 @@ final class ConversationInputBarViewController: UIViewController,
     private var typingObserverToken: Any?
     let userSession: UserSession
     let fileMetaDataGenerator: FileMetaDataGeneratorProtocol
-    let wireCellsUploadDraftUseCase: WireCellsUploadDraftUseCaseProtocol
-    private let wireCellsObserveDraftsUseCase: WireCellsObserveDraftsUseCaseProtocol
+    let uploadDraftUseCase: WireCellsUploadDraftUseCaseProtocol
+    let publishDraftsUseCase: WireCellsPublishDraftsUseCaseProtocol
+    let clearPublishedDraftsUseCase: WireCellsClearPublishedDraftsUseCaseProtocol
+    private let observeDraftsUseCase: WireCellsObserveDraftsUseCaseProtocol
     private let attachmentsCarouselViewModel = AttachmentsCarouselViewModel(items: [])
 
     private var inputBarButtons: [IconButton] {
@@ -340,7 +343,7 @@ final class ConversationInputBarViewController: UIViewController,
             singleTapGestureRecognizer.isEnabled = singleTapGestureRecognizerEnabled
             selectInputControllerButton(selectedButton)
 
-            updateRightAccessoryView()
+            updateButtonStates()
         }
     }
 
@@ -360,17 +363,24 @@ final class ConversationInputBarViewController: UIViewController,
         self.classificationProvider = classificationProvider
         self.networkStatusObservable = networkStatusObservable
         self.fileMetaDataGenerator = FileMetaDataGenerator.shared
-        self.wireCellsUploadDraftUseCase = wireCellsAssembly.makeUploadDraftUseCase(
-            cellName: "" // Pass in correct cell name.
+        self.uploadDraftUseCase = wireCellsAssembly.makeUploadDraftUseCase(
+            cellName: conversation.wireCellName
         )
-        self.wireCellsObserveDraftsUseCase = wireCellsAssembly.makeObserveDraftsUseCase(
-            cellName: "" // Pass in correct cell name.
+        self.observeDraftsUseCase = wireCellsAssembly.makeObserveDraftsUseCase(
+            cellName: conversation.wireCellName
+        )
+        self.clearPublishedDraftsUseCase = wireCellsAssembly.makeClearPublishedDraftsUseCase(
+            cellName: conversation.wireCellName
+        )
+        self.publishDraftsUseCase = wireCellsAssembly.makePublishDraftsUseCase(
+            cellName: conversation.wireCellName
         )
 
         super.init(nibName: nil, bundle: nil)
 
         if !ProcessInfo.processInfo.isRunningTests,
            let conversation = conversation as? ZMConversation {
+            conversation.qualifiedID
             self.conversationObserverToken = ConversationChangeInfo.add(observer: self, for: conversation)
             self.typingObserverToken = conversation.addTypingObserver(self)
         }
@@ -457,7 +467,7 @@ final class ConversationInputBarViewController: UIViewController,
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        updateRightAccessoryView()
+        updateButtonStates()
         inputBar.updateReturnKey()
         inputBar.updateEphemeralState()
         updateMentionList()
@@ -522,12 +532,12 @@ final class ConversationInputBarViewController: UIViewController,
         view.addGestureRecognizer(singleTapGestureRecognizer)
     }
 
-    func updateRightAccessoryView() {
+    func updateButtonStates() {
         updateEphemeralIndicatorButtonTitle(ephemeralIndicatorButton)
 
         let trimmed = inputBar.textView.text.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
 
-        sendButtonState.update(
+        inputBarButtonState.update(
             textLength: trimmed.count,
             editing: editingMessage != nil,
             markingDown: inputBar.isMarkingDown,
@@ -535,13 +545,14 @@ final class ConversationInputBarViewController: UIViewController,
             mode: mode,
             syncedMessageDestructionTimeout: conversation.hasSyncedMessageDestructionTimeout,
             isEphemeralSendingDisabled: conversation.isSelfDeletingMessageSendingDisabled,
-            isEphemeralTimeoutForced: conversation.isSelfDeletingMessageTimeoutForced
+            isEphemeralTimeoutForced: conversation.isSelfDeletingMessageTimeoutForced,
+            attachmentState: AttachmentState(attachments)
         )
 
-        sendButton.isEnabled = sendButtonState.sendButtonEnabled
-        sendButton.isHidden = sendButtonState.sendButtonHidden
-        ephemeralIndicatorButton.isHidden = sendButtonState.ephemeralIndicatorButtonHidden
-        ephemeralIndicatorButton.isEnabled = sendButtonState.ephemeralIndicatorButtonEnabled
+        sendButton.isEnabled = inputBarButtonState.sendButtonEnabled
+        sendButton.isHidden = inputBarButtonState.sendButtonHidden
+        ephemeralIndicatorButton.isHidden = inputBarButtonState.ephemeralIndicatorButtonHidden
+        ephemeralIndicatorButton.isEnabled = inputBarButtonState.ephemeralIndicatorButtonEnabled
 
         ephemeralIndicatorButton.setBackgroundImage(conversation.timeoutImage, for: .normal)
         ephemeralIndicatorButton.setBackgroundImage(conversation.disabledTimeoutImage, for: .disabled)
@@ -555,7 +566,7 @@ final class ConversationInputBarViewController: UIViewController,
         inputBar.textView.text = ""
         inputBar.markdownView.resetIcons()
         inputBar.textView.resetMarkdown()
-        updateRightAccessoryView()
+        updateButtonStates()
         conversation.setIsTyping(false)
         replyComposingView?.removeFromSuperview()
         replyComposingView = nil
@@ -567,7 +578,7 @@ final class ConversationInputBarViewController: UIViewController,
     }
 
     func updateAccessoryViews() {
-        updateRightAccessoryView()
+        updateButtonStates()
     }
 
     func updateInputBarVisibility() {
@@ -1191,11 +1202,12 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
     private func observeDraftAttachments() {
         guard useWireCells() else { return }
 
-        Task.detached { [weak self, wireCellsObserveDraftsUseCase, attachmentsCarouselViewModel] in
-            let observed = await wireCellsObserveDraftsUseCase.invoke()
+        Task.detached { [weak self, observeDraftsUseCase, attachmentsCarouselViewModel] in
+            let observed = await observeDraftsUseCase.invoke()
             for await drafts in observed {
                 await attachmentsCarouselViewModel.update(with: drafts)
                 await self?.syncCarouselVisible(drafts: drafts)
+                await self?.setAttachments(drafts: drafts)
             }
         }
     }
@@ -1204,4 +1216,24 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
         inputBar.attachmentsContainer.isHidden = drafts.filter { $0.status != .cancelled }.isEmpty
     }
 
+    private func setAttachments(drafts: [WireCellsDraft]) {
+        attachments = drafts
+        let attachmentState = AttachmentState(drafts)
+        if inputBarButtonState.attachmentState != attachmentState {
+            updateButtonStates()
+        }
+    }
+
+}
+
+private extension AttachmentState {
+    init(_ drafts: [WireCellsDraft]) {
+        if drafts.isEmpty {
+            self = .none
+        } else if drafts.allSatisfy(\.status.isUploaded) {
+            self = .allUploaded
+        } else {
+            self = .someUploaded
+        }
+    }
 }
