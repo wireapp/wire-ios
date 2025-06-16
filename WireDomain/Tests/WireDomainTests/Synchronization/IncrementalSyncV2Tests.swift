@@ -17,8 +17,8 @@
 //
 
 import Combine
-import XCTest
 import CoreData
+import XCTest
 @testable import WireAPI
 @testable import WireAPISupport
 @testable import WireDomain
@@ -108,7 +108,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
         // Pending events are deleted in batches.
         updateEventsStore.deleteNextPendingEventsWith_MockMethod = { _ in }
 
-        
+
         // Some indices at which live events will be stored.
         var indices = [Int64(10)]
         updateEventsStore.indexOfLastEventEnvelope_MockMethod = { indices.remove(at: 0) }
@@ -139,10 +139,16 @@ final class IncrementalSyncV2Tests: XCTestCase {
         let numberOfStoredEventEnvelopesInvocations = 2
         let numberOfInvocationInProcessEvents = 1
         // Then stored events were processed
-        XCTAssertEqual(updateEventsStore.fetchStoredEventEnvelopesLimit_Invocations.count, numberOfStoredEventEnvelopesInvocations)
+        XCTAssertEqual(
+            updateEventsStore.fetchStoredEventEnvelopesLimit_Invocations.count,
+            numberOfStoredEventEnvelopesInvocations
+        )
         XCTAssertEqual(processor.processEvent_Invocations.count, 1)
         XCTAssertEqual(updateEventsStore.deleteNextPendingEventsWith_Invocations.count, 1)
-        XCTAssertEqual(updateEventsStore.calculateLastUnreadMessages_Invocations.count, numberOfInvocationInProcessEvents)
+        XCTAssertEqual(
+            updateEventsStore.calculateLastUnreadMessages_Invocations.count,
+            numberOfInvocationInProcessEvents
+        )
         XCTAssertEqual(databaseSaver.save_Invocations.count, numberOfInvocationInProcessEvents)
 
         // When
@@ -196,7 +202,10 @@ final class IncrementalSyncV2Tests: XCTestCase {
 
         // Then unread messages are calculated once after processing pending events
         // and once after processing each live event.
-        XCTAssertEqual(updateEventsStore.calculateLastUnreadMessages_Invocations.count, numberOfInvocationInProcessEvents + 1) //
+        XCTAssertEqual(
+            updateEventsStore.calculateLastUnreadMessages_Invocations.count,
+            numberOfInvocationInProcessEvents + 1
+        )
 
         // Then the database was saved once after processing pending events
         // and once after processing each live event.
