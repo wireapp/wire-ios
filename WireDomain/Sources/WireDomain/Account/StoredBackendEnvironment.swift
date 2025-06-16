@@ -23,7 +23,7 @@ public struct StoredBackendEnvironment: Codable, Sendable {
     
     public let title: String
     public let endpoints: Endpoints
-//    public let pinnedKeys: [PinnedKey]
+    public let pinnedKeys: [PinnedKey]
     public let proxySettings: ProxySettings?
     public let metadata: ResolvedBackendMetadata
 
@@ -48,15 +48,15 @@ public struct StoredBackendEnvironment: Codable, Sendable {
         case authenticated(host: String, port: Int, username: String, password: String)
     }
 
-//    public struct PinnedKey: Codable, Sendable {
-//        public enum Host: Codable, Sendable {
-//            case endsWith(String)
-//            case equals(String)
-//        }
-//
-//        public let keyDataBase64: String // SecKey cannot be persisted. Store raw Data as Base64.
-//        public let hosts: [Host]
-//    }
+    public struct PinnedKey: Codable, Sendable {
+        public enum Host: Codable, Sendable {
+            case endsWith(String)
+            case equals(String)
+        }
+
+        public let keyDataBase64: String 
+        public let hosts: [Host]
+    }
 
     public enum APIVersion: UInt, Codable, Sendable {
         case v0, v1, v2, v3, v4, v5, v6, v7, v8
@@ -70,7 +70,7 @@ extension BackendEnvironment2 {
         .init(
             title: title,
             endpoints: endpoints.toStored(),
-//            pinnedKeys: pinnedKeys.compactMap { $0.toStored() },
+            pinnedKeys: pinnedKeys.compactMap { $0.toStored() },
             proxySettings: proxySettings?.toStored(),
             metadata: metadata.toStored()
         )
@@ -128,34 +128,34 @@ extension ProxySettings {
     }
 }
 
-//extension PinnedKey {
-//    func toStored() -> StoredBackendEnvironment.PinnedKey? {
-//        guard let keyData = SecKeyCopyExternalRepresentation(key, nil) as Data? else { return nil }
-//        return .init(
-//            keyDataBase64: keyData.base64EncodedString(),
-//            hosts: hosts.map { $0.toStored() }
-//        )
-//    }
-//}
+extension PinnedKey {
+    func toStored() -> StoredBackendEnvironment.PinnedKey? {
+        guard let keyData = SecKeyCopyExternalRepresentation(key, nil) as Data? else { return nil }
+        return .init(
+            keyDataBase64: keyData.base64EncodedString(),
+            hosts: hosts.map { $0.toStored() }
+        )
+    }
+}
 
-//extension PinnedKey.Host {
-//    func toStored() -> StoredBackendEnvironment.PinnedKey.Host {
-//        switch self {
-//        case let .endsWith(s): return .endsWith(s)
-//        case let .equals(v): return .equals(v)
-//        }
-//    }
-//}
+extension PinnedKey.Host {
+    func toStored() -> StoredBackendEnvironment.PinnedKey.Host {
+        switch self {
+        case let .endsWith(s): return .endsWith(s)
+        case let .equals(v): return .equals(v)
+        }
+    }
+}
 
 // MARK: - To API
 
 extension StoredBackendEnvironment {
-    func toAPI() -> BackendEnvironment2 {
+    func toAPI() throws -> BackendEnvironment2 {
         return BackendEnvironment2(
             title: title,
             endpoints: endpoints.toAPI(),
-            pinnedKeys: [], // pinnedKeys.map { $0.toAPI() },
-            proxySettings: nil, // proxySettings?.toAPI(),
+            pinnedKeys: try pinnedKeys.map { try $0.toAPI() },
+            proxySettings: proxySettings?.toAPI(),
             metadata: metadata.toAPI()
         )
     }
@@ -201,34 +201,42 @@ extension StoredBackendEnvironment.APIVersion {
     }
 }
 
-//extension StoredBackendEnvironment.ProxySettings {
-//    func toAPI() -> ProxySettings {
-//        switch self {
-//        case let .unauthenticated(host, port):
-//            return .unauthenticated(host: host, port: port)
-//        case let .authenticated(host, port, username, password):
-//            return .authenticated(host: host, port: port, username: username, password: password)
-//        }
-//    }
-//}
-//
-//extension StoredBackendEnvironment.PinnedKey {
-//    func toAPI() -> PinnedKey {
-//        guard let keyData = Data(base64Encoded: keyDataBase64) else {
-//            throw DecodingError.dataCorrupted(.init(
-//                codingPath: [],
-//                debugDescription: "Invalid base64 key data in StoredPinnedKey"
-//            ))
-//        }
-//        return try PinnedKey(key: keyData, hosts: hosts.map { $0.toAPI() })
-//    }
-//}
-//
-//extension StoredBackendEnvironment.PinnedKey.Host {
-//    func toAPI() -> PinnedKey.Host {
-//        switch self {
-//        case let .endsWith(s): return .endsWith(s)
-//        case let .equals(v): return .equals(v)
-//        }
-//    }
-//}
+extension StoredBackendEnvironment.ProxySettings {
+    func toAPI() -> ProxySettings {
+        switch self {
+        case let .unauthenticated(host, port):
+            return .unauthenticated(host: host, port: port)
+        case let .authenticated(host, port, username, password):
+            return .authenticated(host: host, port: port, username: username, password: password)
+        }
+    }
+}
+
+extension StoredBackendEnvironment.PinnedKey {
+    func toAPI() throws -> PinnedKey {
+        let attributes: [String: Any] = [
+            kSecAttrKeyType as String: kSecAttrKeyTypeRSA,
+            kSecAttrKeyClass as String: kSecAttrKeyClassPublic,
+            kSecAttrKeySizeInBits as String: 2048
+        ]
+        guard let keyData = Data(base64Encoded: keyDataBase64),
+              let key = SecKeyCreateWithData(keyData as CFData, attributes as CFDictionary, nil)
+        else {
+            throw DecodingError.dataCorrupted(.init(
+                codingPath: [],
+                debugDescription: "Invalid base64 key data in StoredPinnedKey"
+            ))
+        }
+        
+        return PinnedKey(key: key, hosts: hosts.map { $0.toAPI() })
+    }
+}
+
+extension StoredBackendEnvironment.PinnedKey.Host {
+    func toAPI() -> PinnedKey.Host {
+        switch self {
+        case let .endsWith(s): return .endsWith(s)
+        case let .equals(v): return .equals(v)
+        }
+    }
+}

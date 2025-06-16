@@ -32,8 +32,8 @@ public struct PinnedKey: Sendable {
         case equals(String)
     }
 
-    let key: SecKey
-    let hosts: [Host]
+    public let key: SecKey
+    public let hosts: [Host]
 
     public init(key: SecKey, hosts: [Host]) {
         self.key = key

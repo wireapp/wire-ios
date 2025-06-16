@@ -127,20 +127,21 @@ struct AccountStore {
         }
     }
     
-    func fetchBackendEnvironment(accountId: UUID) -> BackendEnvironment2? {
+    func fetchBackendEnvironment(accountId: UUID) throws -> BackendEnvironment2? {
         let url = backendEnvironmentUrl(for: accountId)
 
-        guard
-            let data = try? Data(contentsOf: url),
-            let stored = try? decoder.decode(
+        do {
+            let data = try Data(contentsOf: url)
+            let stored = try decoder.decode(
                 StoredBackendEnvironment.self,
                 from: data
             )
-        else {
+            return try stored.toAPI()
+        } catch {
+            let errorDescription = error.safeForLoggingDescription
+            log.error("Unable to fetch backend environment for account \(accountId), error: \(errorDescription)")
             return nil
         }
-
-        return stored.toAPI()
     }
 
     // MARK: - Delete
