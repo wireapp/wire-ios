@@ -97,6 +97,25 @@ final class SelfUserAPITests: XCTestCase {
         }
     }
 
+    func testGetSelfUserNoSCIM_SuccessResponse_200_V0_Then_VerifyRequests() async throws {
+        // Given
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.ok, "GetSelfUserSuccessResponseV0NoSCIM")
+        ])
+
+        // Then
+        try await apiSnapshotHelper.verifyRequest(for: [.v0], apiService: apiService) { sut in
+            // When
+            let result = try await sut.getSelfUser()
+
+            // Then
+            XCTAssertEqual(
+                result,
+                Scaffolding.selfUserV0
+            )
+        }
+    }
+
     func testGetSelfUser_FailureResponse() async throws {
         // Given
         let apiService = MockAPIServiceProtocol.withError(
@@ -120,6 +139,26 @@ final class SelfUserAPITests: XCTestCase {
 
         let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "GetSelfUserSuccessResponseV4")
+        ])
+
+        // Then
+        try await apiSnapshotHelper.verifyRequest(for: [.v4], apiService: apiService) { sut in
+            // When
+            let result = try await sut.getSelfUser()
+
+            // Then
+            XCTAssertEqual(
+                result,
+                Scaffolding.selfUserV5
+            )
+        }
+    }
+
+    func testGetSelfUserNoSCIM_SuccessResponse_200_V4_Then_VerifyRequests() async throws {
+        // Given
+
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.ok, "GetSelfUserSuccessResponseV4NoSCIM")
         ])
 
         // Then
