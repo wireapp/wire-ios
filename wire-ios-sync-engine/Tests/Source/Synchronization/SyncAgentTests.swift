@@ -295,11 +295,12 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
 
     func provideLiveSync(delegate: any WireDomain.LiveSyncDelegate) throws -> any WireDomain.LiveSyncProtocol {
 
-        MockLiveSyncProtocol()
+        liveSync
     }
 
     func testPerformIncrementalSync_V3() async throws {
         // Given
+        journal[.isSyncV2Enabled] = true
         journal[.isSyncV3Enabled] = true
 
         // Mock
