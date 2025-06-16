@@ -81,10 +81,13 @@ final class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> 
         )
     }
 
-    func personalAccountCreationComponent() -> PersonalAccountCreationComponent {
+    func personalAccountCreationComponent(
+        teamAccountCreationLink: URL?
+    ) -> PersonalAccountCreationComponent {
         PersonalAccountCreationComponent(
             parent: self,
-            email: email ?? ""
+            email: email ?? "",
+            teamAccountCreationLink: teamAccountCreationLink
         )
     }
 
@@ -142,8 +145,10 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
         )
     }
 
-    func personalAccountCreationFactory() -> any PersonalAccountCreationFactory {
-        personalAccountCreationComponent()
+    func personalAccountCreationFactory(
+        teamAccountCreationLink: URL?
+    ) -> any PersonalAccountCreationFactory {
+        personalAccountCreationComponent(teamAccountCreationLink: teamAccountCreationLink)
     }
 
     // MARK: - Use cases

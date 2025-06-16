@@ -17,10 +17,10 @@
 //
 
 import Foundation
-import WireCellsAPI
+import WireAuthenticationAPI
 
-extension WireCellsNodeID {
-    static func fixture() -> WireCellsNodeID {
-        WireCellsNodeID(uuid: UUID(), versionID: UUID())
-    }
+enum PersonalAccountCreationDestination: Hashable {
+
+    case verifyEmail(email: String, password: String, name: String)
+
 }

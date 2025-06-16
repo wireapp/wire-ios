@@ -17,6 +17,7 @@
 //
 
 import Combine
+import CoreData
 import XCTest
 @testable import WireAPI
 @testable import WireAPISupport
@@ -82,10 +83,14 @@ final class IncrementalSyncTests: XCTestCase {
         updateEventsSync.pull_MockMethod = { AsyncStream { [] } }
 
         // Some pending events.
+        let managedObjectID1 = NSManagedObjectID()
+        let managedObjectID2 = NSManagedObjectID()
+        let managedObjectID3 = NSManagedObjectID()
+
         var storedEnvelopes = [
-            Scaffolding.event1,
-            Scaffolding.event2,
-            Scaffolding.event3
+            (Scaffolding.event1, managedObjectID1),
+            (Scaffolding.event2, managedObjectID2),
+            (Scaffolding.event3, managedObjectID3)
         ]
 
         // Pending events are stored in batches.
@@ -96,7 +101,7 @@ final class IncrementalSyncTests: XCTestCase {
         }
 
         // Pending events are deleted in batches.
-        updateEventsStore.deleteNextPendingEventsLimit_MockMethod = { _ in }
+        updateEventsStore.deleteNextPendingEventsWith_MockMethod = { _ in }
 
         // Some live events, some of which were already pulled.
         let pushChannel = MockPushChannelProtocol()
@@ -190,7 +195,10 @@ final class IncrementalSyncTests: XCTestCase {
         )
 
         // Then pending events were deleted.
-        XCTAssertEqual(updateEventsStore.deleteNextPendingEventsLimit_Invocations, [500])
+        XCTAssertEqual(
+            updateEventsStore.deleteNextPendingEventsWith_Invocations,
+            [[managedObjectID1, managedObjectID2, managedObjectID3]]
+        )
 
         // Then live events were deleted (duplicates skipped).
         XCTAssertEqual(updateEventsStore.deleteEventEnvelopeAtIndex_Invocations, [11, 12])
@@ -216,15 +224,15 @@ final class IncrementalSyncTests: XCTestCase {
             Scaffolding.event3
         ]
 
-        // Pendeng events are stored in batches.
+        // Pending events are stored in batches.
         updateEventsStore.fetchStoredEventEnvelopesLimit_MockMethod = { _ in
             let envelopes = storedEnvelopes
             storedEnvelopes = []
-            return envelopes
+            return envelopes.map { ($0, NSManagedObjectID()) }
         }
 
         // Pending events are deleted in batches.
-        updateEventsStore.deleteNextPendingEventsLimit_MockMethod = { _ in }
+        updateEventsStore.deleteNextPendingEventsWith_MockMethod = { _ in }
 
         // Some live events, some of which were already pulled.
         let pushChannel = MockPushChannelProtocol()

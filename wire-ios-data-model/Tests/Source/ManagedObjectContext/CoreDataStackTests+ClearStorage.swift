@@ -74,7 +74,14 @@ class CoreDataStackTests_ClearStorage: ZMTBaseTest {
 
     func testThatAccountStorageIsNotCleared_WhenTheInitialStoreIsCreated() throws {
         // given
-        createAccountDirectory()
+        let accountsDirectory = applicationContainer.appendingPathComponent("Accounts")
+        try FileManager.default.createDirectory(
+            at: accountsDirectory,
+            withIntermediateDirectories: true
+        )
+        XCTAssertTrue(
+            FileManager.default.fileExists(atPath: accountsDirectory.path)
+        )
 
         // when
         _ = CoreDataStack(
@@ -85,7 +92,6 @@ class CoreDataStackTests_ClearStorage: ZMTBaseTest {
         )
 
         // then
-        let accountsDirectory = applicationContainer.appendingPathComponent("Accounts")
         XCTAssertTrue(
             FileManager.default.fileExists(atPath: accountsDirectory.path),
             "\(accountsDirectory.path) should not have been deleted"
@@ -127,11 +133,6 @@ class CoreDataStackTests_ClearStorage: ZMTBaseTest {
             withIntermediateDirectories: true,
             attributes: nil
         )
-    }
-
-    func createAccountDirectory() {
-        let accountStore = AccountStore(root: applicationContainer)
-        accountStore.add(Account(userName: "", userIdentifier: UUID()))
     }
 
     func createStoreFilesInLegacyLocations() -> [URL] {
