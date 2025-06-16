@@ -224,7 +224,7 @@ final class IncrementalSyncTests: XCTestCase {
             Scaffolding.event3
         ]
 
-        // Pendeng events are stored in batches.
+        // Pending events are stored in batches.
         updateEventsStore.fetchStoredEventEnvelopesLimit_MockMethod = { _ in
             let envelopes = storedEnvelopes
             storedEnvelopes = []
