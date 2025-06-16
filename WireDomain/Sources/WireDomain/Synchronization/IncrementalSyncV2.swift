@@ -27,7 +27,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     private let selfClientID: String
     private let pushChannelAPI: any PushChannelV2API
     private let decryptor: any UpdateEventDecryptorProtocol
-    private let store: any UpdateEventsLocalStoreProtocol
+    private let updateEventsStore: any UpdateEventsLocalStoreProtocol
     private let processor: any UpdateEventProcessorProtocol
     private let databaseSaver: any DatabaseSaverProtocol
     private let syncStateSubject: CurrentValueSubject<SyncState, Never>
@@ -39,7 +39,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         selfClientID: String,
         pushChannelAPI: any PushChannelV2API,
         decryptor: any UpdateEventDecryptorProtocol,
-        store: any UpdateEventsLocalStoreProtocol,
+        updateEventsStore: any UpdateEventsLocalStoreProtocol,
         processor: any UpdateEventProcessorProtocol,
         databaseSaver: any DatabaseSaverProtocol,
         syncStateSubject: CurrentValueSubject<SyncState, Never>,
@@ -48,7 +48,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         self.selfClientID = selfClientID
         self.pushChannelAPI = pushChannelAPI
         self.decryptor = decryptor
-        self.store = store
+        self.updateEventsStore = updateEventsStore
         self.processor = processor
         self.databaseSaver = databaseSaver
         self.syncStateSubject = syncStateSubject
@@ -62,7 +62,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         logger.debug("opening new push channel", attributes: .syncAttributes(initialSync: false))
         syncStateSubject.send(.incrementalSyncing(.openPushChannel))
         let liveEventStream = try await pushChannel.open()
-        
+
         logger.debug("processing stored update events", attributes: .syncAttributes(initialSync: false))
         syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
         let processedEnvelopeIDs: Set<UUID>
@@ -94,7 +94,9 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
             // If we need to abort, do it before processing the next batch.
             try Task.checkCancellation()
 
-            let envelopes = try await store.fetchStoredEventEnvelopes(limit: batchSize)
+            let envelopesWithObjectIDs = try await updateEventsStore.fetchStoredEventEnvelopes(limit: batchSize)
+            let envelopes = envelopesWithObjectIDs.map(\.envelope)
+            let envelopesObjectIDs = envelopesWithObjectIDs.map(\.objectID)
 
             guard !envelopes.isEmpty else {
                 break
@@ -123,8 +125,8 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
             }
 
             processedEnvelopeIDs.formUnion(envelopes.map(\.id))
-            try await store.deleteNextPendingEvents(limit: batchSize)
-            await store.calculateLastUnreadMessages()
+            try await updateEventsStore.deleteNextPendingEvents(with: envelopesObjectIDs)
+            await updateEventsStore.calculateLastUnreadMessages()
 
             do {
                 try await databaseSaver.save()
@@ -189,7 +191,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
 
                         // finish
                         await deleteEnvelope(envelope, at: index)
-                        await store.calculateLastUnreadMessages()
+                        await updateEventsStore.calculateLastUnreadMessages()
 
                         await save()
                     } catch {
@@ -249,8 +251,8 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                 "storing live event envelope",
                 attributes: [.eventEnvelopeID: envelope.id] + .syncAttributes(initialSync: false)
             )
-            index = try await store.indexOfLastEventEnvelope() + 1
-            try await store.persistEventEnvelope(envelope, index: index)
+            index = try await updateEventsStore.indexOfLastEventEnvelope() + 1
+            try await updateEventsStore.persistEventEnvelope(envelope, index: index)
         } catch {
             logger.error(
                 "failed to store live event envelope: \(String(describing: error))",
@@ -306,7 +308,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                 "deleting live event envelope",
                 attributes: [.eventEnvelopeID: envelope.id] + .syncAttributes(initialSync: false)
             )
-            try await store.deleteEventEnvelope(atIndex: index)
+            try await updateEventsStore.deleteEventEnvelope(atIndex: index)
         } catch {
             logger.error(
                 "failed to delete live event envelope: \(String(describing: error))",

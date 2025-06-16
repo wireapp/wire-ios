@@ -381,11 +381,11 @@ public final class ClientSessionComponent {
         journal: journal
     )
 
-    public lazy var newIncrementalSync = IncrementalSyncV2(
+    public lazy var incrementalSyncV2 = IncrementalSyncV2(
         selfClientID: selfClientID,
-        pushChannelAPI: newPushChannelAPI,
+        pushChannelAPI: pushChannelV2API,
         decryptor: updateEventDecryptor,
-        store: updateEventsLocalStore,
+        updateEventsStore: updateEventsLocalStore,
         processor: updateEventProcessor,
         databaseSaver: databaseSaver,
         syncStateSubject: syncStateSubject,
