@@ -303,7 +303,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         journal[.isSyncV3Enabled] = true
 
         // Mock
-        liveSync.perform_MockMethod = { _ in
+        liveSync.perform_MockMethod = {
             IncrementalSync.Token(
                 task: Task {},
                 closePushChannel: {}

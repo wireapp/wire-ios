@@ -2083,6 +2083,38 @@ public class MockLiveSyncDelegate: LiveSyncDelegate {
 
 }
 
+public class MockLiveSyncProtocol: LiveSyncProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - perform
+
+    public var perform_Invocations: [Void] = []
+    public var perform_MockError: Error?
+    public var perform_MockMethod: (() async throws -> IncrementalSync.Token)?
+    public var perform_MockValue: IncrementalSync.Token?
+
+    public func perform() async throws -> IncrementalSync.Token {
+        perform_Invocations.append(())
+
+        if let error = perform_MockError {
+            throw error
+        }
+
+        if let mock = perform_MockMethod {
+            return try await mock()
+        } else if let mock = perform_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `perform`")
+        }
+    }
+
+}
+
 class MockMLSMessageDecryptorProtocol: MLSMessageDecryptorProtocol {
 
     // MARK: - Life cycle
