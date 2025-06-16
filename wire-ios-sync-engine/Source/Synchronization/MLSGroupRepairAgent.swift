@@ -37,8 +37,11 @@ final class MLSGroupRepairAgent: MLSGroupRepairAgentProtocol {
         journal[.isSyncV2Enabled]
     }
 
-    private let syncStatePublisher: AnyPublisher<SyncState, Never>
+    typealias AttemptCount = Int
 
+    private let syncStatePublisher: AnyPublisher<SyncState, Never>
+    private let maxAttemptCount = 4
+    private var attemptsToRepair: [String: AttemptCount] = [:]
     private let journal: Journal
     private let mlsService: MLSServiceInterface
     private let decryptionQueue = DispatchQueue(label: "decryptionQueue")
@@ -62,7 +65,7 @@ final class MLSGroupRepairAgent: MLSGroupRepairAgentProtocol {
             syncStatePublisher
                 .receive(on: decryptionQueue)
                 .sink { [weak self] state in
-                    guard case .liveSyncing = state else { return }
+                    guard case .liveSyncing(.ongoing) = state else { return }
                     self?.repairConversations()
                 }
                 .store(in: &cancellables)
@@ -70,6 +73,8 @@ final class MLSGroupRepairAgent: MLSGroupRepairAgentProtocol {
     }
 
     private func repairConversations() {
+        clearBrokenMLSGroups()
+
         let brokenGroupIDs = journal[.brokenMLSGroupIDs]
         guard !brokenGroupIDs.isEmpty else {
             WireLogger.sync.debug("No broken MLS groups to repair")
@@ -86,12 +91,38 @@ final class MLSGroupRepairAgent: MLSGroupRepairAgentProtocol {
             return (groupIDString, mlsGroupID)
         }
 
+        mlsGroups.forEach {
+            let attemptsToRepairCount = attemptsToRepair[$0.0, default: 0]
+            attemptsToRepair[$0.0] = attemptsToRepairCount + 1
+        }
+
         Task {
             for (groupID, mlsGroupID) in mlsGroups {
                 await mlsService.fetchAndRepairGroup(with: mlsGroupID)
                 journal.removeValue(groupID, for: .brokenMLSGroupIDs)
                 WireLogger.sync.debug("Successfully repaired group: \(groupID)")
             }
+        }
+    }
+
+    private func clearBrokenMLSGroups() {
+        let brokenGroupIDs = journal[.brokenMLSGroupIDs]
+
+        // Attempted to repair these MLS groups multiple times to no avail, clean them up to avoid an infinite loop
+        let unrecoverableMLSGroups = attemptsToRepair.filter {
+            $0.value == maxAttemptCount
+        }.map(\.key)
+
+        // These MLS groups were recovered
+        let recoveredMLSGroups = attemptsToRepair.filter {
+            !brokenGroupIDs.contains($0.key)
+        }.map(\.key)
+
+        let mlsGroupsToRemove = unrecoverableMLSGroups + recoveredMLSGroups
+
+        mlsGroupsToRemove.forEach {
+            attemptsToRepair[$0] = nil
+            journal.removeValue($0, for: .brokenMLSGroupIDs)
         }
     }
 

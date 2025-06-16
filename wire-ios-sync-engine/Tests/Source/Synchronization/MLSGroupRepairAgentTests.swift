@@ -81,4 +81,41 @@ class MLSGroupRepairAgentTests: XCTestCase {
         XCTAssertTrue(mockMLSService.fetchAndRepairGroupWith_Invocations.isEmpty)
     }
 
+    func test_itDoesNotTryToRepairAfterMaxAttemptsReached() async {
+        // Given
+        let expectation1 = expectation(description: "repair conversation method called 1")
+        let expectation2 = expectation(description: "repair conversation method called 2")
+        let expectation3 = expectation(description: "repair conversation method called 3")
+        let expectation4 = expectation(description: "repair conversation method not called")
+        expectation4
+            .isInverted =
+            true // expectation 4 should not be called when we exceed the max attempts on a same broken MLS group
+
+        let expectations: [Int: XCTestExpectation] = [
+            1: expectation1,
+            2: expectation2,
+            3: expectation3,
+            4: expectation4
+        ]
+
+        let validGroupID = Data("valid-group".utf8).base64EncodedString()
+        var fetchAndRepairCalledCount = 0
+        journal[.brokenMLSGroupIDs] = [validGroupID]
+
+        mockMLSService.fetchAndRepairGroupWith_MockMethod = { _ in
+            fetchAndRepairCalledCount += 1
+            expectations[fetchAndRepairCalledCount]?.fulfill()
+        }
+
+        // When
+        for _ in 1 ... 4 {
+            syncStateSubject.send(.liveSyncing(.ongoing))
+        }
+
+        // Then
+        await fulfillment(of: expectations.map(\.value), timeout: 5.0)
+        XCTAssertEqual(journal[.brokenMLSGroupIDs], [])
+
+    }
+
 }
