@@ -109,7 +109,7 @@ final class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Fact
         fatalError("not needed here")
     }
 
-    func personalAccountCreationFactory() -> any PersonalAccountCreationFactory {
+    func personalAccountCreationFactory(teamAccountCreationLink: URL?) -> any PersonalAccountCreationFactory {
         fatalError("not needed here")
     }
 

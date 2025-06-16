@@ -719,15 +719,17 @@ extension ConversationViewController: UserObserving {
 extension ConversationViewController: ConversationInputBarViewControllerDelegate {
     func conversationInputBarViewControllerDidComposeText(
         text: String,
+        attachments: [MultipartAttachment],
         mentions: [Mention],
         replyingTo message: ZMConversationMessage?
     ) {
         contentViewController.scrollToBottomIfNeeded()
         inputBarController.sendController.sendTextMessage(
             text,
+            attachments: attachments,
             mentions: mentions,
             userSession: userSession,
-            replyingTo: message
+            replyingTo: message,
         )
     }
 

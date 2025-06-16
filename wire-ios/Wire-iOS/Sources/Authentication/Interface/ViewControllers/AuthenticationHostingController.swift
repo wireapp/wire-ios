@@ -20,6 +20,7 @@ import Combine
 import Foundation
 import SwiftUI
 import WireAuthentication
+import WireDomain
 import WireLogging
 import WireSyncEngine
 
@@ -79,7 +80,7 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
             .publisher(for: AccountManagerDidUpdateAccountsNotificationName)
             .compactMap { $0.object as? AccountManager }
             .sink { accountManager in
-                let numberOfAccounts = accountManager.accounts.count
+                let numberOfAccounts = accountManager.numberOfAccounts
                 bridge.sendInboundEvent(.updateAnotherAccountExistence(newValue: numberOfAccounts > 0))
 
             }

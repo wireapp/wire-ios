@@ -16,8 +16,159 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package final class PersonalAccountCreationViewModel {
+import SwiftUI
+import WireAuthenticationAPI
+import WireLogging
+import WireReusableUIComponents
 
-    package init() {}
+@MainActor
+package final class PersonalAccountCreationViewModel: ObservableObject {
+
+    package typealias Factory =
+        PersonalAccountCreationFactory &
+        RegisterPersonalAccountUseCaseFactory &
+        RequestEmailVerificationCodeUseCaseFactory &
+        ValidateEmailUseCaseFactory
+
+    @Published var alert: Alert?
+    @Published var isCreateTeamAccountPresented = false
+    @Published var dataUsageAgreementAccepted = false
+    @Published var name: String = ""
+    @Published var email: String
+    @Published var password: String = ""
+    @Published var confirmedPassword: String = ""
+
+    // MARK: - Dependencies
+
+    var localizedPasswordRules: String {
+        passwordValidator.localizedRulesDescription ?? ""
+    }
+
+    package let factory: any Factory
+    private let router: any Router
+    package let privacyPolicyURL: URL
+    package let termsOfUseURL: URL
+    package let teamAccountCreationLink: URL?
+    private let passwordValidator: any PasswordValidator
+
+    package init(
+        factory: any Factory,
+        router: any Router,
+        email: String,
+        privacyPolicyURL: URL,
+        termsOfUseURL: URL,
+        teamAccountCreationLink: URL?,
+        passwordValidator: any PasswordValidator
+    ) {
+        self.factory = factory
+        self.router = router
+        self.email = email
+        self.privacyPolicyURL = privacyPolicyURL
+        self.termsOfUseURL = termsOfUseURL
+        self.teamAccountCreationLink = teamAccountCreationLink
+        self.passwordValidator = passwordValidator
+    }
+
+    // MARK: - Validations
+
+    var isEmailValid: Bool {
+        factory.validateEmailUseCase().invoke(email: email) == .isValid
+    }
+
+    var isNameValid: Bool {
+        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.count > 2 && trimmed.count < 64
+    }
+
+    var isPasswordValid: Bool {
+        passwordValidator.isPasswordValid(password)
+    }
+
+    var isPasswordMatchConfirmedPassword: Bool {
+        password == confirmedPassword
+    }
+
+    var canRequestVerificationCode: Bool {
+        isNameValid && isEmailValid && isPasswordValid && isPasswordMatchConfirmedPassword
+    }
+
+    func requestEmailVerificationCode() async throws {
+        guard canRequestVerificationCode else {
+            return
+        }
+        do {
+            let requestEmailVerificationCode = try await factory.requestEmailVerificationCodeUseCase()
+            try await requestEmailVerificationCode.invoke(email: email)
+
+            router.navigate(to: PersonalAccountCreationDestination.verifyEmail(
+                email: email,
+                password: password,
+                name: name
+            ))
+        } catch {
+            WireLogger.authentication.error("request email erification code failed: \(error)")
+
+            switch error {
+            case RequestEmailVerificationCodeUseCaseFailure.invalidEmail:
+                alert = .invalidEmailForRegistration
+            case RequestEmailVerificationCodeUseCaseFailure.blacklistedEmail:
+                alert = .blacklistedEmail
+            case RequestEmailVerificationCodeUseCaseFailure.emailExists:
+                alert = .emailExists
+            case RequestEmailVerificationCodeUseCaseFailure.domainBlockedForRegistration:
+                alert = .domainBlockedForRegistration
+            default:
+                router.presentAlert(for: error)
+            }
+        }
+    }
+
+    func showTermsOfUse() {
+        UIApplication.shared.open(
+            termsOfUseURL
+        )
+    }
+
+}
+
+extension Alert {
+
+    private typealias Title = L10n.Localizable.CreatePersonalAccount.Error.Title
+    private typealias Message = L10n.Localizable.CreatePersonalAccount.Error.Message
+
+    static let invalidEmailForRegistration = Alert(
+        title: Title.invalidEmail,
+        message: Message.invalidEmail
+    )
+
+    static let blacklistedEmail = Alert(
+        title: Title.blacklistedEmail,
+        message: Message.blacklistedEmail
+    )
+
+    static let emailExists = Alert(
+        title: Title.emailExists,
+        message: Message.emailExists
+    )
+
+    static let domainBlockedForRegistration = Alert(
+        title: Title.domainBlocked,
+        message: Message.domainBlocked
+    )
+
+    static let tooManyTeamMembers = Alert(
+        title: Title.tooManyTeamMembers,
+        message: Message.tooManyTeamMembers
+    )
+
+    static let userCreationRestricted = Alert(
+        title: Title.userCreationRestricted,
+        message: Message.userCreationRestricted
+    )
+
+    static let invalidCode = Alert(
+        title: Title.invalidCode,
+        message: Message.invalidCode
+    )
 
 }
