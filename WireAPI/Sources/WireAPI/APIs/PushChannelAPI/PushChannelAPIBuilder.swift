@@ -27,7 +27,7 @@ public struct PushChannelAPIBuilder {
     /// Create a new builder.
     ///
     /// - Parameter pushChannelService: A push channel service to execute requests.
-
+    ///
     public init(pushChannelService: PushChannelService) {
         self.pushChannelService = pushChannelService
     }
@@ -36,7 +36,7 @@ public struct PushChannelAPIBuilder {
     ///
     /// - Returns: A `PushChannelAPI`.
 
-    public func makeAPI() -> any PushChannelAPI {
+    public func makeAPI(for apiVersion: APIVersion) -> any PushChannelAPI {
         PushChannelAPIImpl(pushChannelService: pushChannelService)
     }
 

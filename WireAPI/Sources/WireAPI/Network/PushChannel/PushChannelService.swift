@@ -21,19 +21,25 @@ public import Foundation
 /// A service for creating push channel connections to a specific backend.
 public protocol PushChannelServiceProtocol {
 
-    /// Create a new push channel.
+    /// Create a new push channel (v1). Legacy
     ///
     /// - Parameter request: A request for a web socket connection.
     /// - Returns: A push channel.
 
     func createPushChannel(_ request: URLRequest) async throws -> any PushChannelProtocol
 
+    /// Create a new push channel (v2). Async notifications
+    ///
+    /// - Parameter request: A request for a web socket connection.
+    /// - Returns: A push channel.
+    func createPushChannelV2(_ request: URLRequest) async throws -> any PushChannelV2Protocol
 }
 
 /// A service for creating push channel connections to a specific backend.
 
 public final class PushChannelService: PushChannelServiceProtocol {
 
+    private let keepAliveInterval: TimeInterval = 30
     private let networkService: NetworkService
     private let authenticationManager: any AuthenticationManagerProtocol
 
@@ -57,8 +63,19 @@ public final class PushChannelService: PushChannelServiceProtocol {
         let webSocket = try networkService.executeWebSocketRequest(request)
         return PushChannel(
             webSocket: webSocket,
-            keepAliveInterval: 30
+            keepAliveInterval: keepAliveInterval
         )
     }
 
+    public func createPushChannelV2(_ request: URLRequest) async throws -> any PushChannelV2Protocol {
+        var request = request
+        let accessToken = try await authenticationManager.getValidAccessToken()
+        request.setAccessToken(accessToken)
+        let webSocket = try networkService.executeWebSocketRequest(request)
+
+        return PushChannelV2(
+            webSocket: webSocket,
+            keepAliveInterval: keepAliveInterval
+        )
+    }
 }

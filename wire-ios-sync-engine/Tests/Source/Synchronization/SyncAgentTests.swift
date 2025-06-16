@@ -32,6 +32,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
     var legacySyncStatus: MockSyncStatusProtocol!
     var initialSync: MockInitialSyncProtocol!
     var incrementalSync: MockIncrementalSyncProtocol!
+    var liveSync: MockLiveSyncProtocol!
     var syncStateSubject: CurrentValueSubject<SyncState, Never>!
     var coreCryptoProvider: MockCoreCryptoProviderProtocol!
     var backgroundActivity: BackgroundActivityFactory!
@@ -46,6 +47,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         legacySyncStatus = MockSyncStatusProtocol()
         initialSync = MockInitialSyncProtocol()
         incrementalSync = MockIncrementalSyncProtocol()
+        liveSync = MockLiveSyncProtocol()
         syncStateSubject = CurrentValueSubject(.idle)
         coreCryptoProvider = MockCoreCryptoProviderProtocol()
         backgroundActivityManager = MockBackgroundActivityManager()
@@ -71,6 +73,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         legacySyncStatus = nil
         initialSync = nil
         incrementalSync = nil
+        liveSync = nil
         syncStateSubject = nil
         backgroundActivityManager.reset()
         backgroundActivityManager = nil
@@ -290,4 +293,28 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         await fulfillment(of: [expectation])
     }
 
+    func provideLiveSync(delegate: any WireDomain.LiveSyncDelegate) throws -> any WireDomain.LiveSyncProtocol {
+
+        liveSync
+    }
+
+    func testPerformIncrementalSync_V3() async throws {
+        // Given
+        journal[.isSyncV2Enabled] = true
+        journal[.isSyncV3Enabled] = true
+
+        // Mock
+        liveSync.perform_MockMethod = {
+            IncrementalSync.Token(
+                task: Task {},
+                closePushChannel: {}
+            )
+        }
+
+        // When
+        try await sut.performIncrementalSync()
+
+        // Then
+        XCTAssertEqual(liveSync.perform_Invocations.count, 1)
+    }
 }
