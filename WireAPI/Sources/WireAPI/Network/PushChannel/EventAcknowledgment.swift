@@ -15,24 +15,25 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-
 import Foundation
 
-// TODO: [WPB-9612] make internal
-// This is public for testing purposes.
-public struct UpdateEventEnvelopeV0: Decodable, ToAPIModelConvertible {
+/// Payload sent via PushChannelV2 for acknowledgment of event in async stream
+struct EventAcknowledgment: Encodable {
 
-    let id: UUID
-    let payload: [UpdateEventDecodingProxy]?
-    let transient: Bool?
+    struct AcknowledgmentData: Encodable {
+        enum CodingKeys: String, CodingKey {
+            case deliveryTag = "delivery_tag"
+            case multiple
+        }
 
-    func toAPIModel() -> UpdateEventEnvelope {
-        UpdateEventEnvelope(
-            id: id,
-            events: (payload ?? []).map(\.updateEvent),
-            isTransient: transient ?? false,
-            deliveryTag: nil
-        )
+        var deliveryTag: UInt64
+        var multiple: Bool
     }
 
+    let type: AcknowledgmentType = .event
+    var data: AcknowledgmentData
+
+    init(deliveryTag: UInt64, multiple: Bool) {
+        self.data = .init(deliveryTag: deliveryTag, multiple: multiple)
+    }
 }

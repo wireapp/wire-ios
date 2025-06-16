@@ -15,24 +15,26 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-
 import Foundation
 
-// TODO: [WPB-9612] make internal
-// This is public for testing purposes.
-public struct UpdateEventEnvelopeV0: Decodable, ToAPIModelConvertible {
+public struct PushChannelV2APIBuilder {
 
-    let id: UUID
-    let payload: [UpdateEventDecodingProxy]?
-    let transient: Bool?
+    private let pushChannelService: PushChannelService
 
-    func toAPIModel() -> UpdateEventEnvelope {
-        UpdateEventEnvelope(
-            id: id,
-            events: (payload ?? []).map(\.updateEvent),
-            isTransient: transient ?? false,
-            deliveryTag: nil
-        )
+    /// Create a new builder.
+    ///
+    /// - Parameter pushChannelService: A push channel service to execute requests.
+    ///
+    public init(pushChannelService: PushChannelService) {
+        self.pushChannelService = pushChannelService
+    }
+
+    /// Make a `PushChannelAPI`.
+    ///
+    /// - Returns: A `PushChannelAPI`.
+
+    public func makeAPI(for apiVersion: APIVersion) -> any PushChannelV2API {
+        PushChannelV2APIImpl(pushChannelService: pushChannelService, apiVersion: apiVersion)
     }
 
 }

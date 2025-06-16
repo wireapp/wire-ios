@@ -16,23 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+// sourcery: AutoMockable
+/// An API access object for endpoints concerning the push channel.
+public protocol PushChannelV2API {
 
-// TODO: [WPB-9612] make internal
-// This is public for testing purposes.
-public struct UpdateEventEnvelopeV0: Decodable, ToAPIModelConvertible {
+    /// Create a new push channel.
+    ///
+    /// - Parameter clientID: The id of the self client.
+    /// - Returns: A push channel.
 
-    let id: UUID
-    let payload: [UpdateEventDecodingProxy]?
-    let transient: Bool?
-
-    func toAPIModel() -> UpdateEventEnvelope {
-        UpdateEventEnvelope(
-            id: id,
-            events: (payload ?? []).map(\.updateEvent),
-            isTransient: transient ?? false,
-            deliveryTag: nil
-        )
-    }
+    func createPushChannel(clientID: String) async throws -> AnyPushChannelV2
 
 }
+
+// Workaround for automockable compiler error.
+public typealias AnyPushChannelV2 = any PushChannelV2Protocol

@@ -16,23 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
-// TODO: [WPB-9612] make internal
-// This is public for testing purposes.
-public struct UpdateEventEnvelopeV0: Decodable, ToAPIModelConvertible {
-
-    let id: UUID
-    let payload: [UpdateEventDecodingProxy]?
-    let transient: Bool?
-
-    func toAPIModel() -> UpdateEventEnvelope {
-        UpdateEventEnvelope(
-            id: id,
-            events: (payload ?? []).map(\.updateEvent),
-            isTransient: transient ?? false,
-            deliveryTag: nil
-        )
-    }
-
+/// Delegate steps of LiveSync
+/// sourcery: AutoMockable
+public protocol LiveSyncDelegate: AnyObject {
+    func isUpToDate(sync: IncrementalSyncV2)
+    func didMissedEvents(sync: IncrementalSyncV2) async
+    func didFail(sync: IncrementalSyncV2, error: any Error)
 }
