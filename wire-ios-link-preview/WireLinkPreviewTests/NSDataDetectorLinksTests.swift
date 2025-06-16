@@ -19,18 +19,16 @@
 import WireLinkPreview
 import XCTest
 
-class NSDataDetectorLinksTests: XCTestCase {
+final class NSDataDetectorLinksTests: XCTestCase {
 
     var detector: NSDataDetector!
 
     override func setUp() {
-        super.setUp()
         detector = NSDataDetector.linkDetector
     }
 
     override func tearDown() {
         detector = nil
-        super.tearDown()
     }
 
     func testThatItReturnsTheDetectedLinkAndOffsetInAText() {
@@ -119,6 +117,31 @@ class NSDataDetectorLinksTests: XCTestCase {
 
         // then
         XCTAssertEqual(links.count, 1)
+    }
+
+    func testThatDetectLinksRecognizesASingleLink() {
+        // given
+        let text = "https://example.com/?redirect=https://evilsite.com"
+
+        // when
+        let links = detector.detectLinks(in: text)
+
+        // then
+        XCTAssertEqual(links.count, 1)
+        XCTAssertEqual(links.first, URL(string: text))
+    }
+
+    func testThatDetectLinksAndRangesRecognizesASingleLink() {
+        // given
+        let text = "https://example.com/?redirect=https://evilsite.com"
+
+        // when
+        let links = detector.detectLinksAndRanges(in: text)
+
+        // then
+        XCTAssertEqual(links.count, 1)
+        XCTAssertEqual(links.first?.URL, URL(string: text))
+        XCTAssertEqual(links.first?.range, .init(location: 0, length: 50))
     }
 
 }
