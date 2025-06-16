@@ -44,7 +44,7 @@ struct AccountView: View {
 
                     DotSeparatedTextView(
                         items: [
-                            account.handle.isEmpty ? "" : "@\(account.handle)",
+                            account.handle.map { "@\($0)" },
                             account.teamName,
                             account.backendName
                         ].compactMap(\.self)
@@ -74,7 +74,6 @@ private struct DotSeparatedTextView: View {
 
     var body: some View {
         let combinedText = items
-            .filter { !$0.isEmpty }
             .joined(separator: " • ")
         Text(combinedText)
             .lineLimit(nil)
