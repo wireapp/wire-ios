@@ -81,7 +81,7 @@ struct PersonalAccountCreationView: View {
     }
 
     @ViewBuilder private var scrollViewContent: some View {
-        VStack(spacing: 20) {
+        VStack(alignment: .leading, spacing: 20) {
             nameField
             emailField
             passwordField
@@ -141,7 +141,7 @@ struct PersonalAccountCreationView: View {
     @ViewBuilder private var dataUsageAgreementView: some View {
         Checkbox(
             isChecked: $viewModel.dataUsageAgreementAccepted,
-            title: .formattedMarkdown(
+            title: .formattedMarkdown2(
                 key: "create_personal_account.share_data_usage",
                 bundle: .module,
                 viewModel.privacyPolicyURL.absoluteString
@@ -180,4 +180,87 @@ struct PersonalAccountCreationView: View {
         .padding()
     }
 
+}
+
+extension AttributedString {
+    static func formattedMarkdown1(
+        key: String,
+        bundle: Bundle? = nil,
+        _ arguments: CVarArg...
+    ) -> AttributedString {
+        let mainBundle = bundle ?? .main
+
+        var string = String(format: NSLocalizedString(key, bundle: mainBundle, value: "", comment: ""), arguments)
+
+        if string == key,
+           let basePath = mainBundle.path(forResource: "en", ofType: "lproj"),
+           let baseBundle = Bundle(path: basePath) {
+            string = String(format: NSLocalizedString(key, bundle: baseBundle, value: "", comment: ""), arguments)
+        }
+
+        return (try? AttributedString(markdown: string)) ?? AttributedString(string)
+    }
+}
+
+public extension String {
+    static func formatedWithFallback(
+        key: String.LocalizationValue,
+        bundle: Bundle? = nil,
+        _ arguments: [CVarArg]
+    ) -> String {
+        let mainBundle = bundle ?? .main
+        let keyString = String(describing: key)
+
+        let localized = String(format: NSLocalizedString(keyString, bundle: mainBundle, value: "", comment: ""), arguments)
+
+        if localized != keyString {
+            return localized
+        }
+
+        // Fallback: explicitly load from en.lproj
+        if let enPath = mainBundle.path(forResource: "en", ofType: "lproj"),
+           let enBundle = Bundle(path: enPath) {
+            let fallback = NSLocalizedString(keyString, bundle: enBundle, value: "", comment: "")
+            return String(format: fallback, arguments: arguments)
+        }
+
+        return keyString // last resort
+    }
+}
+
+public extension AttributedString {
+    static func formattedMarkdown2(
+        key: String,
+        bundle: Bundle? = nil,
+        _ arguments: CVarArg...
+    ) -> AttributedString {
+        let mainBundle = bundle ?? .main
+
+        // Get localized string
+        let localized = String(format: NSLocalizedString(key, bundle: mainBundle, value: "", comment: ""), arguments)
+
+        // If key wasn't found, fallback to en.lproj
+        let resolved: String
+        if localized == key,
+           let enPath = mainBundle.path(forResource: "en", ofType: "lproj"),
+           let enBundle = Bundle(path: enPath) {
+            let fallback = NSLocalizedString(key, bundle: enBundle, value: "", comment: "")
+            resolved = String(format: fallback, arguments: arguments)
+        } else {
+            resolved = localized
+        }
+
+        // Parse Markdown
+        return markdown(from: resolved)
+    }
+
+    static func markdown(from string: String) -> AttributedString {
+        var attributed = (try? AttributedString(markdown: string)) ?? AttributedString(string)
+
+        for run in attributed.runs where run.link != nil {
+            attributed[run.range].underlineStyle = .single
+        }
+
+        return attributed
+    }
 }
