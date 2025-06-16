@@ -17,19 +17,33 @@
 //
 
 import Foundation
-import WireAuthenticationAPI
 
-enum LoginViaEmailDestination: Hashable {
+// sourcery: AutoMockable
+public protocol RegisterPersonalAccountUseCaseProtocol: Sendable {
 
-    case verifyLogin(
+    func invoke(
         email: String,
         password: String,
-        proxyCredentials: ProxyCredentials?
-    )
-    case noHistory(
-        authenticationResult: AuthenticationResult
-    )
+        verificationCode: String,
+        name: String
+    ) async throws -> ([HTTPCookie], UUID?)
 
-    case createPersonalAccount
+}
+
+public enum RegisterPersonalAccountUseCaseError: Error, Equatable {
+
+    case invalidEmail
+    case blacklistedEmail
+    case tooManyTeamMembers
+    case userCreationRestricted
+    case invalidCode
+    case emailExists
+
+}
+
+public protocol RegisterPersonalAccountUseCaseFactory {
+
+    @MainActor
+    func registerPersonalAccountUseCase() async throws -> any RegisterPersonalAccountUseCaseProtocol
 
 }

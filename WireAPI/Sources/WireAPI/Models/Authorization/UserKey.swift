@@ -17,19 +17,13 @@
 //
 
 import Foundation
-import WireAuthenticationAPI
 
-enum LoginViaEmailDestination: Hashable {
+public struct UserKey {
 
-    case verifyLogin(
-        email: String,
-        password: String,
-        proxyCredentials: ProxyCredentials?
-    )
-    case noHistory(
-        authenticationResult: AuthenticationResult
-    )
+    public let uuid: UUID
 
-    case createPersonalAccount
+    public init(uuid: UUID) {
+        self.uuid = uuid
+    }
 
 }

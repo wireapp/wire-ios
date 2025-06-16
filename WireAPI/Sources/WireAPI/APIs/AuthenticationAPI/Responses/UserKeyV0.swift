@@ -17,19 +17,14 @@
 //
 
 import Foundation
-import WireAuthenticationAPI
 
-enum LoginViaEmailDestination: Hashable {
+struct UserKeyV0: Decodable, ToAPIModelConvertible {
 
-    case verifyLogin(
-        email: String,
-        password: String,
-        proxyCredentials: ProxyCredentials?
-    )
-    case noHistory(
-        authenticationResult: AuthenticationResult
-    )
+    let id: UUID
 
-    case createPersonalAccount
+    func toAPIModel() -> UserKey {
+
+        UserKey(uuid: id)
+    }
 
 }
