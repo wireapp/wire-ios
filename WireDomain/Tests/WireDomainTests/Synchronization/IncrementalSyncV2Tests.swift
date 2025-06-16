@@ -108,7 +108,6 @@ final class IncrementalSyncV2Tests: XCTestCase {
         // Pending events are deleted in batches.
         updateEventsStore.deleteNextPendingEventsWith_MockMethod = { _ in }
 
-
         // Some indices at which live events will be stored.
         var indices = [Int64(10)]
         updateEventsStore.indexOfLastEventEnvelope_MockMethod = { indices.remove(at: 0) }
