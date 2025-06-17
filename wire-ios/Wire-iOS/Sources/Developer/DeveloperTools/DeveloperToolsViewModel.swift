@@ -179,7 +179,7 @@ final class DeveloperToolsViewModel: ObservableObject {
                     .text(TextItem(title: "1-1 MLS Conversations", value: oneOnOneMLSConversationsCount())),
                     .text(TextItem(
                         title: "Async Stream Enabled",
-                        value: selfClient?.asyncStreamCapable == true ? "Yes" : "No"
+                        value: selfClient?.isConsumableNotificationsCapable == true ? "Yes" : "No"
                     ))
                 ]
             ))

@@ -134,7 +134,7 @@ public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
             localClient.activationDate = userClientInfo.activationDate
             localClient.lastActiveDate = userClientInfo.lastActiveDate
             localClient.remoteIdentifier = userClientInfo.id
-            localClient.asyncStreamCapable = userClientInfo.capabilities.contains(.consumableNotifications)
+            localClient.isConsumableNotificationsCapable = userClientInfo.capabilities.contains(.consumableNotifications)
 
             let selfUser = ZMUser.selfUser(in: context)
             localClient.user = localClient.user ?? selfUser
@@ -260,7 +260,7 @@ public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
     public func hasRegisteredAsyncStreamCapable() async -> Bool {
         await context.perform { [context] in
             let selfClient = ZMUser.selfUser(in: context).selfClient()
-            return selfClient?.asyncStreamCapable == true
+            return selfClient?.isConsumableNotificationsCapable == true
         }
     }
 

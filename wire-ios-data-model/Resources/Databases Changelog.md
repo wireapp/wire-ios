@@ -4,6 +4,10 @@ As it is hard to spot changes from version to version of database models (.xcdat
 
 ## zmessaging
 
+### 2.127.0
+
+* renamed `asyncStreamCapable` attribute to `isConsumableNotificationsCapable` the UserClient entity
+
 ### 2.126.0
 
 * added `WireCellsMessageAttachmentDraft` entity

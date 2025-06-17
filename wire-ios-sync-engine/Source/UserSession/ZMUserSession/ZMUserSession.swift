@@ -1401,7 +1401,7 @@ extension ZMUserSession: ZMClientRegistrationStatusDelegate {
         if let selfClientID = userClient.remoteIdentifier {
             setUpSyncAgent(clientID: selfClientID)
             // no migration needed from last sync system as it's a new client
-            if userClient.asyncStreamCapable {
+            if userClient.isConsumableNotificationsCapable {
                 // activate new sync with async notifications
                 journal[.isConsumableNotificationsEnabled] = true
             }
