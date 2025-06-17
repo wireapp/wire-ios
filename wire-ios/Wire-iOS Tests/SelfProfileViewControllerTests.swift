@@ -47,6 +47,25 @@ final class SelfProfileViewControllerTests: XCTestCase, CoreDataFixtureTestHelpe
 
         userSession = UserSessionMock(mockUser: selfUser)
         accountManager = MockSelfProfileAccountManager()
+        let accounts = [
+            Account(
+                userName: "Iggy Pop",
+                userIdentifier: UUID(),
+                teamName: nil,
+                handle: "handle",
+                imageData: nil
+            ),
+            Account(
+                userName: "Rap Rock",
+                userIdentifier: UUID(),
+                teamName: nil,
+                handle: "handle",
+                imageData: nil
+            )
+        ]
+        accountManager.accounts = Set(accounts)
+        accountManager.sortedAccounts_MockValue = accounts
+
     }
 
     // MARK: - tearDown
@@ -78,10 +97,6 @@ final class SelfProfileViewControllerTests: XCTestCase, CoreDataFixtureTestHelpe
     @MainActor
     func testAccountSwitcher() {
         DeveloperFlag.multibackend.enable(true)
-        accountManager.accounts = [
-            Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: nil, imageData: nil),
-            Account(userName: "Rap Rock", userIdentifier: UUID(), teamName: nil, imageData: nil)
-        ]
         createSut(userName: "Tarja Turunen", teamMember: true, canManageTeam: true)
         snapshotHelper.verify(matching: sut.view)
     }

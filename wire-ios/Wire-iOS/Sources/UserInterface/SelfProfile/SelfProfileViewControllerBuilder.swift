@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDomain
 import WireFoundation
 import WireMainNavigationUI
 import WireSyncEngine

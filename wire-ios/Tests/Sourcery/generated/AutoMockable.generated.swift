@@ -1436,12 +1436,35 @@ class MockSelfProfileAccountManager: SelfProfileAccountManager {
 
     // MARK: - accounts
 
-    var accounts: [Account] = []
+    var accounts: Set<Account> {
+        get { return underlyingAccounts }
+        set(value) { underlyingAccounts = value }
+    }
+
+    var underlyingAccounts: Set<Account>!
 
     // MARK: - selectedAccount
 
     var selectedAccount: Account?
 
+
+    // MARK: - sortedAccounts
+
+    var sortedAccounts_Invocations: [Void] = []
+    var sortedAccounts_MockMethod: (() -> [Account])?
+    var sortedAccounts_MockValue: [Account]?
+
+    func sortedAccounts() -> [Account] {
+        sortedAccounts_Invocations.append(())
+
+        if let mock = sortedAccounts_MockMethod {
+            return mock()
+        } else if let mock = sortedAccounts_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `sortedAccounts`")
+        }
+    }
 
 }
 
