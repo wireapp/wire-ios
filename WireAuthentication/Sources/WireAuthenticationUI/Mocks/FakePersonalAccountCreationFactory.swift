@@ -16,10 +16,32 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-struct FakePersonalAccountCreationFactory: PersonalAccountCreationFactory {
+import Foundation
+import WireAuthenticationAPI
+import WireReusableUIComponents
+
+struct FakePersonalAccountCreationFactory: PersonalAccountCreationFactory, RegisterPersonalAccountUseCaseFactory,
+    RequestEmailVerificationCodeUseCaseFactory, ValidateEmailUseCaseFactory {
+
+    var mockDependencies = MockDependencies()
+
+    var email: String
+    var privacyPolicyURL: URL
+    var termsOfUseURL: URL
+    var teamAccountCreationLink: URL?
+    var passwordValidator: PasswordValidator
 
     var viewModel: PersonalAccountCreationViewModel {
-        fatalError("WPB-17530")
+        .init(
+            factory: self,
+            router: FakeRootFactory().viewModel,
+            email: email,
+            privacyPolicyURL: privacyPolicyURL,
+            termsOfUseURL: termsOfUseURL,
+            teamAccountCreationLink: teamAccountCreationLink,
+            passwordValidator: passwordValidator,
+            analyticsEventTracker: mockDependencies.analyticsEventTracker
+        )
     }
 
     func verificationEmailCodeFactory(
@@ -27,7 +49,19 @@ struct FakePersonalAccountCreationFactory: PersonalAccountCreationFactory {
         password: String,
         name: String
     ) -> any VerificationEmailCodeFactory {
-        fatalError("WPB-17530")
+        fatalError()
+    }
+
+    func registerPersonalAccountUseCase() async throws -> any RegisterPersonalAccountUseCaseProtocol {
+        try await mockDependencies.registerPersonalAccountUseCase()
+    }
+
+    func requestEmailVerificationCodeUseCase() async throws -> any RequestEmailVerificationCodeUseCaseProtocol {
+        await mockDependencies.requestEmailVerificationCodeUseCase()
+    }
+
+    func validateEmailUseCase() -> any ValidateEmailUseCaseProtocol {
+        mockDependencies.validateEmailUseCase()
     }
 
 }

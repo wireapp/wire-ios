@@ -92,7 +92,7 @@ package struct LoginViaEmailView: View {
                 Button(Strings.Authentication.Error.confirm, action: {})
             }
         )
-        .sheet(item: $viewModel.modalDestination, onDismiss: onSheetDismiss, content: sheetView(for:))
+        .fullScreenCover(item: $viewModel.modalDestination, onDismiss: onSheetDismiss, content: sheetView(for:))
         .navigationDestination(for: LoginViaEmailDestination.self, destination: destinationView)
         .presentationDetents(viewModel.areProxyCredentialsRequired ? [.large] : [.medium, .large])
         .interactiveDismissDisabled()
