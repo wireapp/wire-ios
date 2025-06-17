@@ -17,6 +17,7 @@
 //
 
 import XCTest
+
 @testable import WireAPI
 @testable import WireAPISupport
 
