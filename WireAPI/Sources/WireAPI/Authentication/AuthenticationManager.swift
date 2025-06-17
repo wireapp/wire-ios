@@ -148,13 +148,6 @@ public actor AuthenticationManager: AuthenticationManagerProtocol {
                 .withAcceptType(.json)
                 .withCookies(cookies)
 
-            if let clientID {
-                requestBuilder = requestBuilder.withQueryItem(
-                    name: "client_id",
-                    value: clientID
-                )
-            }
-
             var request = requestBuilder.build()
 
             if let lastKnownToken {
