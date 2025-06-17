@@ -98,7 +98,7 @@ final class IncrementalSyncTests: XCTestCase {
             (Scaffolding.event3, managedObjectID3)
         ]
 
-        // Pendeng events are stored in batches.
+        // Pending events are stored in batches.
         updateEventsStore.fetchStoredEventEnvelopesLimit_MockMethod = { _ in
             let envelopes = storedEnvelopes
             storedEnvelopes = []
@@ -131,10 +131,6 @@ final class IncrementalSyncTests: XCTestCase {
         updateEventsStore.deleteEventEnvelopeAtIndex_MockMethod = { _ in }
 
         // Live events are decrypted.
-//        decryptor.decryptEventsIn_MockMethod = { EventDecryptorResult(
-//            events: $0.events,
-//            brokenMLSGroupIDs: [Scaffolding.mlsGroupID]
-//        ) }
         decryptor.decryptEventsInContext_MockMethod = { envelope, _ in
             EventDecryptorResult(events: envelope.events, brokenMLSGroupIDs: [Scaffolding.mlsGroupID])
         }
@@ -236,7 +232,7 @@ final class IncrementalSyncTests: XCTestCase {
             Scaffolding.event3
         ]
 
-        // Pendeng events are stored in batches.
+        // Pending events are stored in batches.
         updateEventsStore.fetchStoredEventEnvelopesLimit_MockMethod = { _ in
             let envelopes = storedEnvelopes
             storedEnvelopes = []

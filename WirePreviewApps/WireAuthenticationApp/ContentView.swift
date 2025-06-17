@@ -55,8 +55,7 @@ struct ContentView: View {
                 passwordValidator: configuration.passwordValidator,
                 ssoCallbackURLScheme: "some scheme",
                 appStoreURL: URL(string: "www.example.com")!,
-                existsAnotherAccount: true,
-                otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>(
+                accountsPublisher: CurrentValuePublisher<[AccountUIModel]>(
                     subject: CurrentValueSubject<[AccountUIModel], Never>(
                         [
                             AccountUIModel(
@@ -77,7 +76,9 @@ struct ContentView: View {
                             )
                         ]
                     )
-                )
+                ),
+                useLegacyRegistrationFlow: false,
+                multibackendEnabled: true
             ).view
     }
 

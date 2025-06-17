@@ -23,4 +23,5 @@ public protocol IncrementalSyncProvider {
 
     func provideIncrementalSync() throws -> any IncrementalSyncProtocol
 
+    func provideLiveSync(delegate: any LiveSyncDelegate) throws -> any LiveSyncProtocol
 }
