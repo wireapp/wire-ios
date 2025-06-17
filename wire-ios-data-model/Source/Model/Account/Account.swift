@@ -32,6 +32,7 @@ public final class Account: NSObject, Codable {
     public var userName: String
     public var teamName: String?
     public let userIdentifier: UUID
+    public var handle: String?
     public var imageData: Data?
     public var teamImageData: Data?
     public var loginCredentials: LoginCredentials?
@@ -48,16 +49,19 @@ public final class Account: NSObject, Codable {
         case userName = "name"
         case teamName = "team"
         case userIdentifier = "identifier"
+        case handle
         case imageData = "image"
         case teamImageData = "teamImage"
         case unreadConversationCount
         case loginCredentials
+
     }
 
     public required init(
         userName: String,
         userIdentifier: UUID,
         teamName: String? = nil,
+        handle: String? = nil,
         imageData: Data? = nil,
         teamImageData: Data? = nil,
         unreadConversationCount: Int = 0,
@@ -70,6 +74,7 @@ public final class Account: NSObject, Codable {
         self.teamImageData = teamImageData
         self.unreadConversationCount = unreadConversationCount
         self.loginCredentials = loginCredentials
+        self.handle = handle
         super.init()
     }
 
@@ -84,6 +89,7 @@ public final class Account: NSObject, Codable {
         imageData = account.imageData
         teamImageData = account.teamImageData
         loginCredentials = account.loginCredentials
+        handle = account.handle
     }
 
     public override func isEqual(_ object: Any?) -> Bool {
