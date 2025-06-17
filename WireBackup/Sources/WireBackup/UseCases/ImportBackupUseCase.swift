@@ -22,19 +22,24 @@ public import WireFoundation
 
 public struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
 
+    let url: URL
     let selfUserID: QualifiedID
     let backupLocalStore: any BackupLocalStoreProtocol
     let fileUnarchiver: any FileUnarchiverProtocol
     let syncTrigger: @Sendable () -> Void
     let logger: @Sendable () -> any LoggerProtocol
 
+    public let isImportDestructive = false
+
     public init(
+        url: URL,
         selfUserID: QualifiedID,
         backupLocalStore: any BackupLocalStoreProtocol,
         fileUnarchiver: any FileUnarchiverProtocol,
         syncTrigger: @escaping @Sendable () -> Void,
         logger: @escaping @autoclosure @Sendable () -> any LoggerProtocol
     ) {
+        self.url = url
         self.selfUserID = selfUserID
         self.backupLocalStore = backupLocalStore
         self.fileUnarchiver = fileUnarchiver
@@ -42,7 +47,7 @@ public struct ImportBackupUseCase: ImportBackupUseCaseProtocol {
         self.logger = logger
     }
 
-    public func invoke(url: URL, password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error> {
+    public func invoke(password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error> {
         AsyncThrowingStream { continuation in
             let task = Task<Void, Never> { [fileUnarchiver, logger, selfUserID] in
 
