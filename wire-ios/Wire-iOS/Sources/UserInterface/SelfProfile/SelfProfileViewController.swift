@@ -33,7 +33,6 @@ import WireUtilities
 
 // sourcery: AutoMockable
 protocol SelfProfileAccountManager {
-    var accounts: Set<Account> { get }
     func sortedAccounts() -> [Account]
     var selectedAccount: Account? { get }
 }
@@ -163,7 +162,7 @@ final class SelfProfileViewController: UIViewController {
             }))
         }
 
-        let otherAccounts = (accountManager?.accounts ?? [])
+        let otherAccounts = (accountManager?.sortedAccounts() ?? [])
             .filter {
                 !$0.isEqual(accountManager?.selectedAccount)
             }

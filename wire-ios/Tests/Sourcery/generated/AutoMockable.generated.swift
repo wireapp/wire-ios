@@ -1434,15 +1434,6 @@ class MockSelfProfileAccountManager: SelfProfileAccountManager {
     // MARK: - Life cycle
 
 
-    // MARK: - accounts
-
-    var accounts: Set<Account> {
-        get { return underlyingAccounts }
-        set(value) { underlyingAccounts = value }
-    }
-
-    var underlyingAccounts: Set<Account>!
-
     // MARK: - selectedAccount
 
     var selectedAccount: Account?

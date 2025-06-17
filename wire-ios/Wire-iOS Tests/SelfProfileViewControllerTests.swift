@@ -63,7 +63,6 @@ final class SelfProfileViewControllerTests: XCTestCase, CoreDataFixtureTestHelpe
                 imageData: nil
             )
         ]
-        accountManager.accounts = Set(accounts)
         accountManager.sortedAccounts_MockValue = accounts
 
     }
