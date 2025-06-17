@@ -33,7 +33,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case forceCRLExpiryAfterOneMinute
     case useWireAuthentication
     case wireCells
-    case asyncStreamNotifications
+    case consumableNotifications
     case multibackend
     case newRegistration
 
@@ -72,7 +72,7 @@ public enum DeveloperFlag: String, CaseIterable {
         case .wireCells:
             "Use the wire cells feature"
 
-        case .asyncStreamNotifications:
+        case .consumableNotifications:
             "Turn on to enable new sync with consumable notifications"
 
         case .multibackend:

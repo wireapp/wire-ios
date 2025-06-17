@@ -68,7 +68,7 @@ final class UserClientRequestFactoryTests: MessagingTest {
     func testThatItCreatesRegistrationRequestWithConsumableNotificationsCapabitilityCorrectly() throws {
         // GIVEN
         let credentials = UserEmailCredentials(email: "some@example.com", password: "123")
-        DeveloperFlag.asyncStreamNotifications.enable(true, storage: .temporary())
+        DeveloperFlag.consumableNotifications.enable(true, storage: .temporary())
 
         try testThatItCreatesRegistrationRequestCorrectly(
             credentials: credentials,
@@ -175,7 +175,7 @@ final class UserClientRequestFactoryTests: MessagingTest {
             XCTAssertEqual(payload.verificationCode, emailVerificationCode)
         }
 
-        if apiVersion >= .v8, DeveloperFlag.asyncStreamNotifications.isOn {
+        if apiVersion >= .v8, DeveloperFlag.consumableNotifications.isOn {
             XCTAssertEqual(payload.capabilities, ["legalhold-implicit-consent", "consumable-notifications"])
         } else {
             XCTAssertEqual(payload.capabilities, ["legalhold-implicit-consent"])

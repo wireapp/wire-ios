@@ -148,7 +148,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
     func test_didRegisterSelfUserClient_withAsyncStreamCapabableEnablesSyncV3() async throws {
         // GIVEN
         mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
-        DeveloperFlag.asyncStreamNotifications.enable(true, storage: .temporary())
+        DeveloperFlag.consumableNotifications.enable(true, storage: .temporary())
         let userClient = await syncMOC.perform {
             self.createSelfClient(capabilities: [.consumableNotifications, .legalholdConsent])
         }
