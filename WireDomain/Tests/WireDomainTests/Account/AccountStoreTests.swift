@@ -15,10 +15,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+// swiftlint:disable line_length
 
 import Foundation
 import Testing
 import WireDataModel
+@testable import WireAPI
 
 @testable import WireDomain
 
@@ -185,7 +187,7 @@ final class AccountStoreTests {
         }
 
         // Then
-        let account = try try #require(sut.fetchAccount(with: uuid))
+        let account = try #require(sut.fetchAccount(with: uuid))
         #expect(account.userName == name)
         #expect(account.teamName == team)
         #expect(account.imageData == nil)
@@ -377,4 +379,136 @@ final class AccountStoreTests {
         #expect(account == expectedAccount)
     }
 
+    @Test("Store and fetch Backend environment")
+    func storeAndFetchBackendEnvironment() throws {
+        let sut = try AccountStore(root: url)
+        let accountId = UUID()
+        let environment = makeBackendEnvironment()
+
+        sut.storeBackendEnvironment(environment, for: accountId)
+        let fetched = try sut.fetchBackendEnvironment(accountId: accountId)
+
+        #expect(fetched == environment)
+        #expect(fetched?.pinnedKeys.count == 1)
+        #expect(fetched?.proxySettings != nil)
+    }
+    
+    @Test
+    func storeAndFetchBackendEnvironment_noPinnedKey() throws {
+        let sut = try AccountStore(root: url)
+        let accountId = UUID()
+        let environment = makeBackendEnvironment(withPinnedKey: false)
+
+        sut.storeBackendEnvironment(environment, for: accountId)
+        let fetched = try sut.fetchBackendEnvironment(accountId: accountId)
+
+        #expect(fetched == environment)
+        #expect(fetched?.pinnedKeys.count == 0)
+        #expect(fetched?.proxySettings != nil)
+    }
+    
+    @Test
+    func storeAndFetchBackendEnvironment_noPinnedKey_noProxySettings() throws {
+        let sut = try AccountStore(root: url)
+        let accountId = UUID()
+        let environment = makeBackendEnvironment(
+            proxyIncluded: false, withPinnedKey: false
+        )
+
+        sut.storeBackendEnvironment(environment, for: accountId)
+        let fetched = try sut.fetchBackendEnvironment(accountId: accountId)
+
+        #expect(fetched == environment)
+        #expect(fetched?.pinnedKeys.count == 0)
+        #expect(fetched?.proxySettings == nil)
+    }
+    
+    @Test
+    func storeAndFetchBackendEnvironment_unauthenticatedProxySettings() throws {
+        let sut = try AccountStore(root: url)
+        let accountId = UUID()
+        let environment = makeBackendEnvironment(proxyAuthenticated: false)
+
+        sut.storeBackendEnvironment(environment, for: accountId)
+        let fetched = try sut.fetchBackendEnvironment(accountId: accountId)
+
+        #expect(fetched == environment)
+        #expect(fetched?.pinnedKeys.count == 1)
+        #expect(fetched?.proxySettings == .unauthenticated(host: "Host.com", port: 9999))
+    }
+
+    @Test
+    func fetchMissingBackendEnvironmentReturnsNil() throws {
+        let sut = try AccountStore(root: url)
+        let accountId = UUID()
+
+        let fetched = try sut.fetchBackendEnvironment(accountId: accountId)
+
+        #expect(fetched == nil)
+    }
+
+    @Test
+    func deleteBackendEnvironment() throws {
+        let sut = try AccountStore(root: url)
+        let environment = makeBackendEnvironment()
+        let validAccount = Account(userName: "Alice", userIdentifier: UUID())
+
+        sut.storeBackendEnvironment(environment, for: validAccount.userIdentifier)
+        sut.deleteBackendEnvironment(account: validAccount)
+
+        let fetched = try sut.fetchBackendEnvironment(accountId: validAccount.userIdentifier)
+
+        #expect(fetched == nil)
+
+    }
+
+    private func makeBackendEnvironment(
+        proxyIncluded: Bool = true,
+        proxyAuthenticated: Bool = true,
+        withPinnedKey: Bool = true
+    ) -> BackendEnvironment2 {
+        let key =
+            """
+            MIIE/jCCA+agAwIBAgIQBmeNK7xaqmvwoGsKbGiEuzANBgkqhkiG9w0BAQsFADBNMQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMScwJQYDVQQDEx5EaWdpQ2VydCBTSEEyIFNlY3VyZSBTZXJ2ZXIgQ0EwHhcNMTcxMjEyMDAwMDAwWhcNMTkwMjAxMTIwMDAwWjBKMQswCQYDVQQGEwJDSDEMMAoGA1UEBxMDWnVnMRgwFgYDVQQKEw9XaXJlIFN3aXNzIEdtYkgxEzARBgNVBAMMCioud2lyZS5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCt5jMFa6+dUph+A01fd1WNSeohW2XhepCcJxjqb+xYzXlNMrRuj0UqczE0A+0PMHpWJG+lmwoR59fymLXklyzi5mK5nzUhJXVurG2myMnnpiN6Z730NxrlyTfmlOFi4rqNny8bqkmJj2ZFj2cZp2J3ipYvu7AB6gifHaY4zsd6kIKHY05d34SNDiwGx+Bv6RatxVCYHO8sc9QOjKSb+b4G8vZ4nWeM82Iz8ah5duYhbVYzeJ+5xgmgP2D5Xk18d8A2tW7bDhhwsNp3QLzk1vxTWyAU2SuA6rOF3/XEeiTW47KOh4tMgcdiSvK9sESZ2Xq/5/YnUQzT4WP2+x4jZNitAgMBAAGjggHbMIIB1zAfBgNVHSMEGDAWgBQPgGEcgjFh1S8o541GOLQs4cbZ4jAdBgNVHQ4EFgQU/0iA8JzB4tDtwNB/3NyYfCtfTZwwHwYDVR0RBBgwFoIKKi53aXJlLmNvbYIId2lyZS5jb20wDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjBrBgNVHR8EZDBiMC+gLaArhilodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vc3NjYS1zaGEyLWc2LmNybDAvoC2gK4YpaHR0cDovL2NybDQuZGlnaWNlcnQuY29tL3NzY2Etc2hhMi1nNi5jcmwwTAYDVR0gBEUwQzA3BglghkgBhv1sAQEwKjAoBggrBgEFBQcCARYcaHR0cHM6Ly93d3cuZGlnaWNlcnQuY29tL0NQUzAIBgZngQwBAgIwfAYIKwYBBQUHAQEEcDBuMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wRgYIKwYBBQUHMAKGOmh0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydFNIQTJTZWN1cmVTZXJ2ZXJDQS5jcnQwDAYDVR0TAQH/BAIwADANBgkqhkiG9w0BAQsFAAOCAQEAc6v6cf/EQmmeGU2nC87F6QgEIAIL3svgabImao3f01QFVxC0XX2Cf9+wofijspqq5Uj80nb04o5HNnZWX1agJmqp8jTYH2hw4+uiwFCld0QEptHMrCwEAyyouf0/cl2dfRv2V8m29W6Qb4+7pc1rEbFLl3fywmjgzpGkr1+cKE7pwkpgKqhulKkE4CDXant0Slj7cvDisSPy/kInJ5uHI29Z/SBCpACyHah6lkdIQyTo4uem1XH6i5UP9sTvCAZl0acHcPsvcJ50LeJvJC7sPNXr60xZYLIK5LIVrSSRhxtOB1WPMbzIQc5bF2LcSjXJNvXA5+RCO79om91mlheqPQ==
+            """
+
+        guard let keyData = Data(base64Encoded: key),
+              let pinnedKey = try? PinnedKey(key: keyData, hosts: [
+                  .endsWith("prod-nginz-https.wire.com"),
+                  .equals("clientblacklist.wire.com")
+              ])
+        else {
+            fatalError()
+        }
+        
+        var proxy: WireAPI.ProxySettings? = nil
+        if proxyIncluded {
+            proxy = proxyAuthenticated ? .authenticated(host: "Host.com", port: 9999, username: "username", password: "pass") :
+                .unauthenticated(host: "Host.com", port: 9999)
+        }
+
+        return BackendEnvironment2(
+            title: "Staging",
+            endpoints: BackendEnvironment2
+                .Endpoints(
+                    restAPIURL: URL(string: "example.com")!,
+                    websocketURL: URL(string: "example.com")!,
+                    blacklistURL: URL(string: "example.com")!,
+                    teamsURL: URL(string: "example.com")!,
+                    accountsURL: URL(string: "example.com")!,
+                    websiteURL: URL(string: "example.com")!,
+                    countlyURL: URL(string: "example.com")!
+                ),
+            pinnedKeys: withPinnedKey ? [pinnedKey] : [],
+            proxySettings: proxy,
+            metadata: BackendEnvironment2
+                .ResolvedBackendMetadata(
+                    apiVersion: .v8,
+                    domain: "example.com",
+                    isFederationEnabled: false
+                )
+        )
+    }
 }
+
+// swiftlint:enable line_length

@@ -58,3 +58,7 @@ public enum ProxySettings: Sendable {
     }
 
 }
+
+#if DEBUG
+    extension ProxySettings: Equatable {}
+#endif

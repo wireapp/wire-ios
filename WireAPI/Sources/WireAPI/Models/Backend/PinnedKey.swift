@@ -72,3 +72,8 @@ public struct PinnedKey: Sendable {
     }
 
 }
+
+#if DEBUG
+    extension PinnedKey: Equatable {}
+    extension PinnedKey.Host: Equatable {}
+#endif

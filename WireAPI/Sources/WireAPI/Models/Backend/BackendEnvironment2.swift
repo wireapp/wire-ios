@@ -149,3 +149,9 @@ public struct BackendEnvironment2: Sendable {
     }
 
 }
+
+#if DEBUG
+    extension BackendEnvironment2: Equatable {}
+    extension BackendEnvironment2.Endpoints: Equatable {}
+    extension BackendEnvironment2.ResolvedBackendMetadata: Equatable {}
+#endif

@@ -174,7 +174,7 @@ struct AccountStore {
     func deleteAccount(_ account: Account) -> Bool {
         do {
             try fileManager.removeItem(at: url(for: account.userIdentifier))
-            deleteBackgroundEnvironment(account: account)
+            deleteBackendEnvironment(account: account)
             return true
         } catch {
             let accountDescription = account.safeForLoggingDescription
@@ -192,7 +192,7 @@ struct AccountStore {
     /// - returns: `false` if the BackendEnvironment cannot be found or cannot be deleted otherwise `true`.
 
     @discardableResult
-    func deleteBackgroundEnvironment(account: Account) -> Bool {
+    func deleteBackendEnvironment(account: Account) -> Bool {
         do {
             try fileManager.removeItem(at: backendEnvironmentUrl(for: account.userIdentifier))
             return true
