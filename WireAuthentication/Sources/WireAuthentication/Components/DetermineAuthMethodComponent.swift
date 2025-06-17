@@ -31,19 +31,21 @@ protocol DetermineAuthMethodComponentDependency: Dependency {
     var preferredAPIVersion: APIVersion? { get }
     var minTLSVersion: TLSVersion { get }
     var ssoCallbackURLScheme: String { get }
-    var existsAnotherAccount: Bool { get }
 
 }
 
 class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDependency> {
 
     public let networkStack: NetworkStack
+    private let existsAnotherAccount: Bool
 
     init(
         parent: any Scope,
-        networkStack: NetworkStack
+        networkStack: NetworkStack,
+        existsAnotherAccount: Bool
     ) {
         self.networkStack = networkStack
+        self.existsAnotherAccount = existsAnotherAccount
         super.init(parent: parent)
     }
 
@@ -88,7 +90,7 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
             router: dependency.router,
             bridge: dependency.bridge,
             backendInfo: networkStack.backendInfo,
-            existsAnotherAccount: dependency.existsAnotherAccount
+            existsAnotherAccount: existsAnotherAccount
         )
     }
 

@@ -38,8 +38,8 @@ class RootComponent: BootstrapComponent {
     public let passwordValidator: any PasswordValidator
     public let ssoCallbackURLScheme: String
     public let appStoreURL: URL
-    public let existsAnotherAccount: Bool
-    public var otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>
+    public let accountsPublisher: CurrentValuePublisher<[AccountUIModel]>
+    public let multibackendEnabled: Bool
     public let useLegacyRegistrationFlow: Bool
 
     @MainActor public var bridge: WireAuthenticationBridge {
@@ -61,9 +61,9 @@ class RootComponent: BootstrapComponent {
         passwordValidator: any PasswordValidator,
         ssoCallbackURLScheme: String,
         appStoreURL: URL,
-        existsAnotherAccount: Bool,
-        otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>,
-        useLegacyRegistrationFlow: Bool
+        accountsPublisher: CurrentValuePublisher<[AccountUIModel]>,
+        useLegacyRegistrationFlow: Bool,
+        multibackendEnabled: Bool
     ) {
         self.backendInfo = backendInfo
         self.preferredAPIVersion = preferredAPIVersion
@@ -74,9 +74,9 @@ class RootComponent: BootstrapComponent {
         self.passwordValidator = passwordValidator
         self.ssoCallbackURLScheme = ssoCallbackURLScheme
         self.appStoreURL = appStoreURL
-        self.existsAnotherAccount = existsAnotherAccount
-        self.otherAccountsPublisher = otherAccountsPublisher
+        self.accountsPublisher = accountsPublisher
         self.useLegacyRegistrationFlow = useLegacyRegistrationFlow
+        self.multibackendEnabled = multibackendEnabled
     }
 
     // MARK: - Children
@@ -90,7 +90,8 @@ class RootComponent: BootstrapComponent {
 
         return DetermineAuthMethodComponent(
             parent: self,
-            networkStack: networkStack
+            networkStack: networkStack,
+            existsAnotherAccount: !accountsPublisher.value.isEmpty
         )
     }
 
@@ -105,7 +106,11 @@ extension RootComponent: RootViewModel.Factory {
             RootViewModel(
                 factory: self,
                 bridge: bridge,
-                backendInfo: backendInfo
+                backendInfo: backendInfo,
+                multibackendEnabled: multibackendEnabled,
+                hasOtherAccountsProvider: { [accountsPublisher] in
+                    !accountsPublisher.value.isEmpty
+                }
             )
         }
     }
@@ -115,10 +120,6 @@ extension RootComponent: RootViewModel.Factory {
     }
 
     func accountsSwitcherFactory() -> any AccountSwitcherFactory {
-        accountSwitcherComponent()
-    }
-
-    func accountSwitcherComponent() -> AccountSwitcherComponent {
         AccountSwitcherComponent(parent: self)
     }
 

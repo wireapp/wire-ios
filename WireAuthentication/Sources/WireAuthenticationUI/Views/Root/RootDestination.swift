@@ -16,31 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Combine
-import SwiftUI
-import WireFoundation
-import WireMultiBackendUI
-
-@MainActor
-package class AccountSwitcherModalViewModel: ObservableObject {
-
-    @Published var accounts: [AccountUIModel]
-
-    private let router: any Router
-    private var cancellables = Set<AnyCancellable>()
-
-    package init(
-        accountsPublisher: CurrentValuePublisher<[AccountUIModel]>,
-        router: any Router
-    ) {
-        self.accounts = accountsPublisher.value
-        self.router = router
-        accountsPublisher.sink { [weak self] accounts in
-            self?.accounts = accounts
-        }.store(in: &cancellables)
-    }
-
-    func onCloseButtonTapped() {
-        router.pop()
-    }
+enum RootDestination: Hashable {
+    case switchAccounts
 }
