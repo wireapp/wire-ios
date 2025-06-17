@@ -57,6 +57,9 @@ public protocol ConversationLike: AnyObject {
     var domain: String? { get }
     var isChannel: Bool { get }
     var privateChannelPermission: PrivateChannelPermission { get }
+
+    /// The name of the `cell` used for Wire Cells file management.
+    var wireCellName: String { get }
 }
 
 // Since ConversationLike must have @objc signature(@objc UserType has a ConversationLike property), create another
@@ -110,5 +113,11 @@ extension ZMConversation: ConversationLike {
 
     public var isProteusConversationDegraded: Bool {
         securityLevel == .secureWithIgnored
+    }
+
+    public var wireCellName: String {
+        guard let qualifiedID else { return "unknown" }
+
+        return "\(qualifiedID.uuid.uuidString.lowercased())@\(qualifiedID.domain)"
     }
 }

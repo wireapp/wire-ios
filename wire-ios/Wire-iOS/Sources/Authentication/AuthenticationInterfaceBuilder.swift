@@ -99,12 +99,15 @@ final class AuthenticationInterfaceBuilder {
                 accountsURL: environment.accountsURL,
                 howToChangeEmailURL: WireURLs.shared.howToChangeEmail,
                 howToDeleteAccountURL: WireURLs.shared.howToDeleteAccount,
+                privacyPolicyURL: WireURLs.shared.privacyPolicy,
+                termsOfUseURL: WireURLs.shared.legal,
                 passwordValidator: AuthenticationPasswordValidator(),
                 ssoCallbackURLScheme: Bundle.ssoURLScheme ?? "wire-sso",
                 appStoreURL: WireURLs.shared.appOnItunes,
                 accountsPublisher: CurrentValuePublisher(subject: CurrentValueSubject(accounts)),
                 useLegacyRegistrationFlow: !DeveloperFlag.newRegistration.isOn,
-                isMultibackendEnabled: DeveloperFlag.multibackend.isOn
+                isMultibackendEnabled: DeveloperFlag.multibackend.isOn,
+                personalAccountCreationAnalyticsTracker: PersonalAccountCreationAnalyticsTracker()
             )
             return AuthenticationHostingController(
                 rootView: rootView,

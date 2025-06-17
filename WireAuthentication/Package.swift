@@ -16,10 +16,10 @@ let package = Package(
         .library(name: "WireAuthenticationUI", targets: ["WireAuthenticationUI"])
     ],
     dependencies: [
-        .package(name: "WireAPI", path: "../WireAPI"),
-        .package(name: "WireFoundation", path: "../WireFoundation"),
+        .package(path: "../WireAPI"),
+        .package(path: "../WireFoundation"),
         .package(path: "../WireLogging"),
-        .package(name: "WireUI", path: "../WireUI"),
+        .package(path: "../WireUI"),
         .package(path: "../WirePlugins"),
         .package(url: "https://github.com/uber/needle.git", .upToNextMinor(from: "0.25.1")),
         .package(url: "https://github.com/siteline/swiftui-introspect", from: "1.0.0")

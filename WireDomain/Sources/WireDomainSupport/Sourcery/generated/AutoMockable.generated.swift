@@ -2029,6 +2029,92 @@ public class MockInitialSyncProtocol: InitialSyncProtocol {
 
 }
 
+public class MockLiveSyncDelegate: LiveSyncDelegate {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - isUpToDate
+
+    public var isUpToDateSync_Invocations: [IncrementalSyncV2] = []
+    public var isUpToDateSync_MockMethod: ((IncrementalSyncV2) -> Void)?
+
+    public func isUpToDate(sync: IncrementalSyncV2) {
+        isUpToDateSync_Invocations.append(sync)
+
+        guard let mock = isUpToDateSync_MockMethod else {
+            fatalError("no mock for `isUpToDateSync`")
+        }
+
+        mock(sync)
+    }
+
+    // MARK: - didMissedEvents
+
+    public var didMissedEventsSync_Invocations: [IncrementalSyncV2] = []
+    public var didMissedEventsSync_MockMethod: ((IncrementalSyncV2) async -> Void)?
+
+    public func didMissedEvents(sync: IncrementalSyncV2) async {
+        didMissedEventsSync_Invocations.append(sync)
+
+        guard let mock = didMissedEventsSync_MockMethod else {
+            fatalError("no mock for `didMissedEventsSync`")
+        }
+
+        await mock(sync)
+    }
+
+    // MARK: - didFail
+
+    public var didFailSyncError_Invocations: [(sync: IncrementalSyncV2, error: any Error)] = []
+    public var didFailSyncError_MockMethod: ((IncrementalSyncV2, any Error) -> Void)?
+
+    public func didFail(sync: IncrementalSyncV2, error: any Error) {
+        didFailSyncError_Invocations.append((sync: sync, error: error))
+
+        guard let mock = didFailSyncError_MockMethod else {
+            fatalError("no mock for `didFailSyncError`")
+        }
+
+        mock(sync, error)
+    }
+
+}
+
+public class MockLiveSyncProtocol: LiveSyncProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - perform
+
+    public var perform_Invocations: [Void] = []
+    public var perform_MockError: Error?
+    public var perform_MockMethod: (() async throws -> IncrementalSync.Token)?
+    public var perform_MockValue: IncrementalSync.Token?
+
+    public func perform() async throws -> IncrementalSync.Token {
+        perform_Invocations.append(())
+
+        if let error = perform_MockError {
+            throw error
+        }
+
+        if let mock = perform_MockMethod {
+            return try await mock()
+        } else if let mock = perform_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `perform`")
+        }
+    }
+
+}
+
 class MockMLSMessageDecryptorProtocol: MLSMessageDecryptorProtocol {
 
     // MARK: - Life cycle
@@ -2100,6 +2186,26 @@ public class MockMessageLocalStoreProtocol: MessageLocalStoreProtocol {
         }
 
         await mock(messageType, conversationID, conversationDomain)
+    }
+
+    // MARK: - addPotentialGapSystemMessage
+
+    public var addPotentialGapSystemMessage_Invocations: [Void] = []
+    public var addPotentialGapSystemMessage_MockError: Error?
+    public var addPotentialGapSystemMessage_MockMethod: (() async throws -> Void)?
+
+    public func addPotentialGapSystemMessage() async throws {
+        addPotentialGapSystemMessage_Invocations.append(())
+
+        if let error = addPotentialGapSystemMessage_MockError {
+            throw error
+        }
+
+        guard let mock = addPotentialGapSystemMessage_MockMethod else {
+            fatalError("no mock for `addPotentialGapSystemMessage`")
+        }
+
+        try await mock()
     }
 
     // MARK: - fetchOrCreateClientMessage
@@ -2239,6 +2345,21 @@ public class MockMessageLocalStoreProtocol: MessageLocalStoreProtocol {
         }
 
         await mock(messageReaction, conversation, senderID, date)
+    }
+
+    // MARK: - addMessageConfirmation
+
+    public var addMessageConfirmationInSenderIDSenderDomainDate_Invocations: [(confirmation: WireProtos.Confirmation, conversation: ZMConversation, senderID: UUID, senderDomain: String, date: Date)] = []
+    public var addMessageConfirmationInSenderIDSenderDomainDate_MockMethod: ((WireProtos.Confirmation, ZMConversation, UUID, String, Date) async -> Void)?
+
+    public func addMessageConfirmation(_ confirmation: WireProtos.Confirmation, in conversation: ZMConversation, senderID: UUID, senderDomain: String, date: Date) async {
+        addMessageConfirmationInSenderIDSenderDomainDate_Invocations.append((confirmation: confirmation, conversation: conversation, senderID: senderID, senderDomain: senderDomain, date: date))
+
+        guard let mock = addMessageConfirmationInSenderIDSenderDomainDate_MockMethod else {
+            fatalError("no mock for `addMessageConfirmationInSenderIDSenderDomainDate`")
+        }
+
+        await mock(confirmation, conversation, senderID, senderDomain, date)
     }
 
     // MARK: - updateButtonStates
@@ -3556,6 +3677,21 @@ public class MockUpdateEventsLocalStoreProtocol: UpdateEventsLocalStoreProtocol 
         mock(id)
     }
 
+    // MARK: - resetLastEventID
+
+    public var resetLastEventID_Invocations: [Void] = []
+    public var resetLastEventID_MockMethod: (() -> Void)?
+
+    public func resetLastEventID() {
+        resetLastEventID_Invocations.append(())
+
+        guard let mock = resetLastEventID_MockMethod else {
+            fatalError("no mock for `resetLastEventID`")
+        }
+
+        mock()
+    }
+
     // MARK: - indexOfLastEventEnvelope
 
     public var indexOfLastEventEnvelope_Invocations: [Void] = []
@@ -3623,10 +3759,10 @@ public class MockUpdateEventsLocalStoreProtocol: UpdateEventsLocalStoreProtocol 
 
     public var fetchStoredEventEnvelopesLimit_Invocations: [UInt] = []
     public var fetchStoredEventEnvelopesLimit_MockError: Error?
-    public var fetchStoredEventEnvelopesLimit_MockMethod: ((UInt) async throws -> [UpdateEventEnvelope])?
-    public var fetchStoredEventEnvelopesLimit_MockValue: [UpdateEventEnvelope]?
+    public var fetchStoredEventEnvelopesLimit_MockMethod: ((UInt) async throws -> [(envelope: UpdateEventEnvelope, objectID: NSManagedObjectID)])?
+    public var fetchStoredEventEnvelopesLimit_MockValue: [(envelope: UpdateEventEnvelope, objectID: NSManagedObjectID)]?
 
-    public func fetchStoredEventEnvelopes(limit: UInt) async throws -> [UpdateEventEnvelope] {
+    public func fetchStoredEventEnvelopes(limit: UInt) async throws -> [(envelope: UpdateEventEnvelope, objectID: NSManagedObjectID)] {
         fetchStoredEventEnvelopesLimit_Invocations.append(limit)
 
         if let error = fetchStoredEventEnvelopesLimit_MockError {
@@ -3644,22 +3780,22 @@ public class MockUpdateEventsLocalStoreProtocol: UpdateEventsLocalStoreProtocol 
 
     // MARK: - deleteNextPendingEvents
 
-    public var deleteNextPendingEventsLimit_Invocations: [UInt] = []
-    public var deleteNextPendingEventsLimit_MockError: Error?
-    public var deleteNextPendingEventsLimit_MockMethod: ((UInt) async throws -> Void)?
+    public var deleteNextPendingEventsWith_Invocations: [[NSManagedObjectID]] = []
+    public var deleteNextPendingEventsWith_MockError: Error?
+    public var deleteNextPendingEventsWith_MockMethod: (([NSManagedObjectID]) async throws -> Void)?
 
-    public func deleteNextPendingEvents(limit: UInt) async throws {
-        deleteNextPendingEventsLimit_Invocations.append(limit)
+    public func deleteNextPendingEvents(with objectIDs: [NSManagedObjectID]) async throws {
+        deleteNextPendingEventsWith_Invocations.append(objectIDs)
 
-        if let error = deleteNextPendingEventsLimit_MockError {
+        if let error = deleteNextPendingEventsWith_MockError {
             throw error
         }
 
-        guard let mock = deleteNextPendingEventsLimit_MockMethod else {
-            fatalError("no mock for `deleteNextPendingEventsLimit`")
+        guard let mock = deleteNextPendingEventsWith_MockMethod else {
+            fatalError("no mock for `deleteNextPendingEventsWith`")
         }
 
-        try await mock(limit)
+        try await mock(objectIDs)
     }
 
     // MARK: - deleteEventEnvelope

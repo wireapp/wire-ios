@@ -41,8 +41,8 @@ package final class LoginViaEmailViewModel: ObservableObject {
     @Published var proxyPassword: String = ""
 
     @Published private(set) var isLoading = false
-    @Published var isCreateAccountPresented = false
     @Published var alert: Alert?
+    @Published var modalDestination: LoginViaEmailSheet?
 
     let backendInfo: BackendInfo
     let isEmailPrefilled: Bool
@@ -71,6 +71,24 @@ package final class LoginViaEmailViewModel: ObservableObject {
             areAccountCredentialsValid
         }
     }
+
+    lazy var teamAccountCreationLink: URL? = {
+        let teamsURL = backendInfo.backendConfig.endpoints.teamsURL
+        guard var components = URLComponents(url: teamsURL, resolvingAgainstBaseURL: false) else {
+            WireLogger.authentication
+                .warn("Unable to generate team account creation link. Invalid teamsURL: \(teamsURL.absoluteString)")
+            return nil
+        }
+
+        let appendedPath = components.path.appending("/signup/account")
+        components.path = appendedPath
+
+        components.queryItems = (components.queryItems ?? []) + [
+            URLQueryItem(name: "origin", value: "ios")
+        ]
+
+        return components.url
+    }()
 
     // MARK: - Dependencies
 
@@ -178,7 +196,19 @@ package final class LoginViaEmailViewModel: ObservableObject {
         }
 
         // new flow
-        isCreateAccountPresented = true
+        modalDestination = .accountTypeSelection
+    }
+
+    func handleOnTeamAccountCreation() {
+        if let teamAccountCreationLink {
+            modalDestination = .teamAccountCreation(url: teamAccountCreationLink)
+        }
+    }
+
+    func handleoOnPersonalAccountCreation() {
+        router.navigate(
+            to: LoginViaEmailDestination.createPersonalAccount
+        )
     }
 
     // MARK: - Private

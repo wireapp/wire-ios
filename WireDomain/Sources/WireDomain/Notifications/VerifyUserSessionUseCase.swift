@@ -18,6 +18,7 @@
 
 import WireAPI
 import WireDataModel
+import WireLogging
 
 /// Observes pending events, process them and generates new notifications content.
 struct VerifyUserSessionUseCase {
@@ -41,6 +42,7 @@ struct VerifyUserSessionUseCase {
     private let journal: any JournalProtocol
     private let cookieStorage: any CookieStorageProtocol
     private let coreData: any CoreDataStackProtocol
+    private let logger = WireLogger.notifications
 
     init(
         journal: any JournalProtocol,
@@ -67,6 +69,11 @@ struct VerifyUserSessionUseCase {
     }
 
     private func isAuthenticated() async throws -> Bool {
+        logger.info(
+            "Verifying whether user is authenticated..",
+            attributes: .newNSE
+        )
+
         let cookies = try await cookieStorage.fetchCookies()
 
         for cookie in cookies where cookie.name == Constants.cookieName {

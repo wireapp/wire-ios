@@ -49,4 +49,7 @@ package actor DraftsRepositoryProtocolMock: DraftsRepositoryProtocol {
         draftsForCellNameStringAsyncStreamWireCellsDraftReturnValue = value
     }
 
+    func publishAll(for cellName: String) async throws {}
+
+    func clearPublishedDrafts(for cellName: String) {}
 }

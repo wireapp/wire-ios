@@ -1099,6 +1099,24 @@ public class MockUserSession: UserSession {
         }
     }
 
+    // MARK: - makeAppendMultipartMessageUseCase
+
+    public var makeAppendMultipartMessageUseCase_Invocations: [Void] = []
+    public var makeAppendMultipartMessageUseCase_MockMethod: (() -> any AppendMultipartMessageUseCaseProtocol)?
+    public var makeAppendMultipartMessageUseCase_MockValue: (any AppendMultipartMessageUseCaseProtocol)?
+
+    public func makeAppendMultipartMessageUseCase() -> any AppendMultipartMessageUseCaseProtocol {
+        makeAppendMultipartMessageUseCase_Invocations.append(())
+
+        if let mock = makeAppendMultipartMessageUseCase_MockMethod {
+            return mock()
+        } else if let mock = makeAppendMultipartMessageUseCase_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeAppendMultipartMessageUseCase`")
+        }
+    }
+
     // MARK: - makeAppendImageMessageUseCase
 
     public var makeAppendImageMessageUseCase_Invocations: [Void] = []

@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireFoundation
+public import Foundation
+public import WireFoundation
 
 public final class Assembly {
 
@@ -55,22 +55,6 @@ public final class Assembly {
     public lazy var apiNetworkService: NetworkService = {
         let service = NetworkService(baseURL: backendEnvironment.url, serverTrustValidator: serverTrustValidator)
         let config = urlSessionConfigurationFactory.makeRESTAPISessionConfiguration()
-        let session = URLSession(configuration: config, delegate: service, delegateQueue: nil)
-        service.configure(with: session)
-        return service
-    }()
-
-    private lazy var pushChannelService: some PushChannelServiceProtocol = PushChannelService(
-        networkService: pushChannelNetworkService,
-        authenticationManager: authenticationManager
-    )
-
-    private lazy var pushChannelNetworkService: NetworkService = {
-        let service = NetworkService(
-            baseURL: backendEnvironment.webSocketURL,
-            serverTrustValidator: serverTrustValidator
-        )
-        let config = urlSessionConfigurationFactory.makeWebSocketSessionConfiguration()
         let session = URLSession(configuration: config, delegate: service, delegateQueue: nil)
         service.configure(with: session)
         return service

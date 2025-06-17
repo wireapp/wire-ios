@@ -21,26 +21,27 @@ public import Foundation
 public protocol WireCellsNodeUploadManagerProtocol: Actor {
     /// Starts file upload. Returns the new node after pre-checking.
     func upload(
-        id: WireCellsNodeID,
+        nodeID: UUID,
+        versionID: UUID,
         assetPath: URL,
         assetSize: UInt64,
         destNodePath: String
     ) async throws -> (node: WireCellsNode, stream: AsyncStream<WireCellsUploadStatus>)
 
     /// Observe upload events for a specific node UUID.
-    func observeUpload(nodeID: WireCellsNodeID) async -> AsyncStream<WireCellsUploadStatus>?
+    func observeUpload(nodeID: UUID) async -> AsyncStream<WireCellsUploadStatus>?
 
     /// Retry a failed upload.
-    func retryUpload(nodeID: WireCellsNodeID) async
+    func retryUpload(nodeID: UUID) async
 
     /// Cancel an ongoing upload.
-    func cancelUpload(nodeID: WireCellsNodeID) async
+    func cancelUpload(nodeID: UUID) async
 
     /// Get current upload info for a node, if any.
-    func getUploadInfo(nodeID: WireCellsNodeID) async -> WireCellsNodeUploadInfo?
+    func getUploadInfo(nodeID: UUID) async -> WireCellsNodeUploadInfo?
 
     /// Check if a node is currently uploading.
-    func isUploading(nodeID: WireCellsNodeID) async -> Bool
+    func isUploading(nodeID: UUID) async -> Bool
 }
 
 public struct WireCellsNodeUploadInfo: Equatable, Hashable, Sendable {

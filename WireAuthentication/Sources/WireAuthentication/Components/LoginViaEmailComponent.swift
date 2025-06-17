@@ -80,6 +80,17 @@ final class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> 
             didDetectDomainConflict: didDetectDomainConflict
         )
     }
+
+    func personalAccountCreationComponent(
+        teamAccountCreationLink: URL?
+    ) -> PersonalAccountCreationComponent {
+        PersonalAccountCreationComponent(
+            parent: self,
+            email: email ?? "",
+            teamAccountCreationLink: teamAccountCreationLink
+        )
+    }
+
 }
 
 extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
@@ -132,6 +143,12 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
         noHistoryComponent(
             authenticationResult: authenticationResult
         )
+    }
+
+    func personalAccountCreationFactory(
+        teamAccountCreationLink: URL?
+    ) -> any PersonalAccountCreationFactory {
+        personalAccountCreationComponent(teamAccountCreationLink: teamAccountCreationLink)
     }
 
     // MARK: - Use cases
