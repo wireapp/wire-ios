@@ -37,6 +37,10 @@ public struct UpdateEventEnvelope: Equatable, Sendable {
 
     public let isTransient: Bool
 
+    /// The deliveryTag is used to acknowledge receiving the event to the backend.
+
+    public let deliveryTag: UInt64?
+
     /// Create a new `UpdateEventEnvelope`.
     ///
     /// - Parameters:
@@ -47,11 +51,13 @@ public struct UpdateEventEnvelope: Equatable, Sendable {
     public init(
         id: UUID,
         events: [UpdateEvent],
-        isTransient: Bool
+        isTransient: Bool,
+        deliveryTag: UInt64? = nil
     ) {
         self.id = id
         self.events = events
         self.isTransient = isTransient
+        self.deliveryTag = deliveryTag
     }
 
 }

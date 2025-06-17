@@ -43,9 +43,14 @@ class WebViewUserAgent: NSObject, OIDExternalUserAgent, WebAuthViewControllerDel
         return true
     }
 
-    func dismiss(animated: Bool) async {
-        await targetViewController.presentedViewController?.dismiss(animated: animated)
-        destroyWebAuthViewController()
+    func dismiss(
+        animated: Bool,
+        completion: @escaping () -> Void
+    ) {
+        targetViewController.presentedViewController?.dismiss(animated: animated) { [weak self] in
+            self?.destroyWebAuthViewController()
+            completion()
+        }
     }
 
     func webAuthViewDidReceiveCallback(url: URL) {
@@ -56,6 +61,12 @@ class WebViewUserAgent: NSObject, OIDExternalUserAgent, WebAuthViewControllerDel
     func webAuthViewDidCancel() {
         session?.cancel()
         destroyWebAuthViewController()
+    }
+
+    func webAuthViewDidFail(error: any Error) {
+        dismiss(animated: true) { [weak self] in
+            self?.session?.failExternalUserAgentFlowWithError(error)
+        }
     }
 
     private func destroyWebAuthViewController() {
