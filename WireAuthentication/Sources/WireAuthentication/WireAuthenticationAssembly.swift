@@ -52,12 +52,15 @@ public struct WireAuthenticationAssembly {
         accountsURL: URL,
         howToChangeEmailURL: URL,
         howToDeleteAccountURL: URL,
+        privacyPolicyURL: URL,
+        termsOfUseURL: URL,
         passwordValidator: any PasswordValidator,
         ssoCallbackURLScheme: String,
         appStoreURL: URL,
         accountsPublisher: CurrentValuePublisher<[AccountUIModel]>,
         useLegacyRegistrationFlow: Bool,
-        multibackendEnabled: Bool
+        multibackendEnabled: Bool,
+        personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
         let backendInfo = BackendInfo(
             environmentType: environmentType,
@@ -69,12 +72,15 @@ public struct WireAuthenticationAssembly {
             minTLSVersion: minTLSVersion,
             howToChangeEmailURL: howToChangeEmailURL,
             howToDeleteAccountURL: howToDeleteAccountURL,
+            privacyPolicyURL: privacyPolicyURL,
+            termsOfUseURL: termsOfUseURL,
             passwordValidator: passwordValidator,
             ssoCallbackURLScheme: ssoCallbackURLScheme,
             appStoreURL: appStoreURL,
             accountsPublisher: accountsPublisher,
             useLegacyRegistrationFlow: useLegacyRegistrationFlow,
-            multibackendEnabled: multibackendEnabled
+            multibackendEnabled: multibackendEnabled,
+            personalAccountCreationAnalyticsTracker: personalAccountCreationAnalyticsTracker
         )
 
         return (view: RootView(factory: rootComponent), bridge: rootComponent.bridge)

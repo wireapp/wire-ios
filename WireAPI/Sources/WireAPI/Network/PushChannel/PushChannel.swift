@@ -16,9 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
+
 import WireFoundation
 import WireLogging
+
+public typealias PushChannelV1 = PushChannel
+public typealias PushChannelV1Procotol = PushChannelProtocol
 
 public actor PushChannel: PushChannelProtocol {
 
@@ -111,4 +115,7 @@ public actor PushChannel: PushChannelProtocol {
         self.keepAliveTask = nil
     }
 
+    public func write(data: Data) async throws {
+        // do nothing
+    }
 }

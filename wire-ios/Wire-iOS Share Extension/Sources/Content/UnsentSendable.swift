@@ -22,6 +22,7 @@ import MobileCoreServices
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDomain
 import WireShareEngine
 
 /// Error that can happen during the preparation or sending operation
@@ -424,7 +425,7 @@ extension AccountManager {
     static var sharedAccountManager: AccountManager? {
         guard let applicationGroupIdentifier = Bundle.main.applicationGroupIdentifier else { return nil }
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
-        return AccountManager(sharedDirectory: sharedContainerURL)
+        return try? AccountManager(sharedDirectory: sharedContainerURL)
     }
 
     static var fileSizeLimitInBytes: UInt64 {

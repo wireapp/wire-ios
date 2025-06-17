@@ -16,12 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
 // sourcery: AutoMockable
 public protocol URLSessionWebSocketTaskProtocol: Sendable {
 
     var isOpen: Bool { get }
+
+    var networkInformation: String { get }
 
     func resume()
 
@@ -34,6 +36,8 @@ public protocol URLSessionWebSocketTaskProtocol: Sendable {
 
     func receive() async throws -> URLSessionWebSocketTask.Message
 
+    func send(_ message: URLSessionWebSocketTask.Message) async throws
+
     typealias AnyError = any Error
     func sendPing(pongReceiveHandler: @escaping @Sendable (AnyError?) -> Void)
 
@@ -43,6 +47,10 @@ extension URLSessionWebSocketTask: URLSessionWebSocketTaskProtocol {
 
     public var isOpen: Bool {
         closeCode == .invalid
+    }
+
+    public var networkInformation: String {
+        "request: \(String(describing: currentRequest)), body: \(currentRequest?.httpBodyStream), response: \(String(describing: response)), payload: \((response as? HTTPURLResponse)?.description))"
     }
 
 }

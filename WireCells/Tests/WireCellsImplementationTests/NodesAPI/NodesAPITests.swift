@@ -61,11 +61,12 @@ final class NodesAPITests {
     @Test
     func testUploadRegularUpload_sendsCorrectData() async throws {
         // Given
-        let node = WireCellsNode(uuid: UUID(), versionID: UUID(), path: "node-path")
+        let versionID = UUID()
+        let node = WireCellsNode(uuid: UUID(), path: "node-path")
         s3.putObjectInputPutObjectInputPutObjectOutputReturnValue = PutObjectOutput()
 
         // When
-        let stream = await sut.uploadFile(path: smallFileURL, node: node)
+        let stream = await sut.uploadFile(path: smallFileURL, node: node, versionID: versionID)
         _ = try await stream.collect() // Wait for upload to complete
 
         // Then
@@ -75,15 +76,15 @@ final class NodesAPITests {
         #expect(inputPutObject.key == "node-path")
         #expect(inputPutObject.metadata == [
             "Draft-Mode": "true",
-            "Create-Resource-UUID": node.id.uuid.uuidString,
-            "Create-Version-ID": node.id.versionID.uuidString
+            "Create-Resource-UUID": node.id.uuidString,
+            "Create-Version-ID": versionID.uuidString
         ])
     }
 
     @Test
     func testUploadRegularUpload_whenSuccess() async throws {
         // Given
-        let node = WireCellsNode(uuid: UUID(), versionID: UUID(), path: "node-path")
+        let node = WireCellsNode(uuid: UUID(), path: "node-path")
         s3.putObjectInputPutObjectInputPutObjectOutputClosure = { input in
             let stream = try #require(input.body?.stream)
             _ = try stream.read(upToCount: 1)
@@ -96,7 +97,7 @@ final class NodesAPITests {
         }
 
         // When
-        let stream = await sut.uploadFile(path: smallFileURL, node: node)
+        let stream = await sut.uploadFile(path: smallFileURL, node: node, versionID: UUID())
 
         // Then
         let progresses = try await stream.collect()
@@ -106,7 +107,7 @@ final class NodesAPITests {
     @Test
     func testUploadRegularUpload_whenUploadFailure() async throws {
         // Given
-        let node = WireCellsNode(uuid: UUID(), versionID: UUID(), path: "node-path")
+        let node = WireCellsNode(uuid: UUID(), path: "node-path")
         s3.putObjectInputPutObjectInputPutObjectOutputClosure = { _ in
             try await Task.sleep(nanoseconds: 100_000_000) // Pause is necessary for progress to complete emitting
 
@@ -114,7 +115,7 @@ final class NodesAPITests {
         }
 
         // When
-        let stream = await sut.uploadFile(path: smallFileURL, node: node)
+        let stream = await sut.uploadFile(path: smallFileURL, node: node, versionID: UUID())
 
         // Then
         await #expect(throws: URLError(.notConnectedToInternet)) {
@@ -125,11 +126,11 @@ final class NodesAPITests {
     @Test
     func testUploadRegularUpload_whenFileUnreadable() async throws {
         // Given
-        let node = WireCellsNode(uuid: UUID(), versionID: UUID(), path: "node-path")
+        let node = WireCellsNode(uuid: UUID(), path: "node-path")
         let unreadableFileURL = URL.temporaryDirectory.appendingPathComponent("unreadable-file")
 
         // When
-        let stream = await sut.uploadFile(path: unreadableFileURL, node: node)
+        let stream = await sut.uploadFile(path: unreadableFileURL, node: node, versionID: UUID())
 
         // Then
         await #expect(throws: (any Error).self) {
@@ -146,11 +147,5 @@ private extension ByteStream {
         default:
             nil
         }
-    }
-}
-
-private extension AsyncSequence {
-    func collect() async throws -> [Element] {
-        try await reduce(into: [Element]()) { $0.append($1) }
     }
 }

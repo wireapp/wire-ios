@@ -127,7 +127,7 @@ public final class NotificationSession {
         minTLSVersion: String?
     ) throws {
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
-        let accountManager = AccountManager(sharedDirectory: sharedContainerURL)
+        let accountManager = try AccountManager(sharedDirectory: sharedContainerURL)
 
         guard let account = accountManager.account(with: accountIdentifier) else {
             throw InitializationError.noAccount
@@ -678,4 +678,14 @@ public struct CallEventPayload {
         self.hasVideo = hasVideo
     }
 
+}
+
+extension LogAttributes {
+    static let newNSE = [
+        LogAttributesKey.nse: "new"
+    ]
+
+    static let legacyNSE = [
+        LogAttributesKey.nse: "legacy"
+    ]
 }

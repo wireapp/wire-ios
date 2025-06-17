@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
 // sourcery: AutoMockable
 public protocol AuthenticationAPI: Sendable {
@@ -64,5 +64,25 @@ public protocol AuthenticationAPI: Sendable {
     /// - Returns: The user details.
 
     func requestVerificationCode(for email: String) async throws
+
+    /// Send (or resend) an email activation code.
+    /// - Parameters:
+    ///   - email: Email address of the account
+    func requestEmailVerificationCode(for email: String) async throws
+
+    /// Register a new user.
+    /// - Parameters:
+    ///   - email: Email address of the account
+    ///   - emailCode: Activation code
+    ///   - name: Full user name
+    ///   - password: Password
+    /// - Returns: HTTP cookie and user ID.
+    func registerAccount(
+        email: String,
+        emailCode: String,
+        name: String,
+        password: String,
+        label: String
+    ) async throws -> (cookie: [HTTPCookie], userId: UUID?)
 
 }

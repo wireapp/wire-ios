@@ -247,7 +247,7 @@ extension ArticleView: UIContextMenuInteractionDelegate {
 
 extension LinkMetadata {
 
-    /// Returns a `URL` that can be openened using `openURL()` on `UIApplication` or `nil` if no openable `URL` could be
+    /// Returns a `URL` that can be opened using `openURL()` on `UIApplication` or `nil` if no openable `URL` could be
     /// created.
     var openableURL: URL? {
         let application = UIApplication.shared
