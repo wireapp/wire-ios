@@ -46,7 +46,8 @@ final class VerificationEmailCodeViewModelTests: XCTestCase, VerificationEmailCo
             email: "mika@example.com",
             password: "password",
             name: "mika",
-            onFlowCompletion: { [self] _ in onRegisterAccountCalled = true }
+            onFlowCompletion: { [self] _ in onRegisterAccountCalled = true },
+            analyticsEventTracker: MockPersonalAccountCreationAnalyticsTrackerProtocol()
         )
     }
 
@@ -120,5 +121,42 @@ final class VerificationEmailCodeViewModelTests: XCTestCase, VerificationEmailCo
         // then
         XCTAssertEqual(sut.alert, .blacklistedEmail)
     }
+
+}
+
+
+class MockPersonalAccountCreationAnalyticsTrackerProtocol: PersonalAccountCreationAnalyticsTrackerProtocol {
+    func setUp() {
+
+    }
+
+    func tearDown() {
+
+    }
+
+    func trackPersonalAccountCreationStart() {
+
+    }
+
+    func trackPersonalAccountCreationReachedTermsOfUseConfirmation() {
+
+    }
+
+    func trackPersonalAccountCreationReachedVerificationCode() {
+
+    }
+
+    func trackPersonalAccountCreationFailedCodeVerification() {
+
+    }
+
+    func trackPersonalAccountCreationReachedUsernameForm() {
+
+    }
+
+    func trackPersonalAccountCreationCompletion() {
+
+    }
+
 
 }

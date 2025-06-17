@@ -29,6 +29,7 @@ protocol VerificationEmailCodeComponentDependency: Dependency {
     var networkStack: NetworkStack { get }
     @MainActor var bridge: WireAuthenticationBridge { get }
     @MainActor var router: any Router { get }
+    var personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol { get }
 
 }
 
@@ -65,7 +66,8 @@ extension VerificationEmailCodeComponent: VerificationEmailCodeViewModel.Factory
             name: name,
             onFlowCompletion: { [dependency] authenticationResult in
                 dependency?.bridge.sendOutboundEvent(.userAuthenticated(authenticationResult))
-            }
+            },
+            analyticsEventTracker: dependency.personalAccountCreationAnalyticsTracker
         )
     }
 

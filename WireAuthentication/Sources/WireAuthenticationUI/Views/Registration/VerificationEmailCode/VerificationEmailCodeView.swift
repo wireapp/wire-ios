@@ -82,6 +82,9 @@ package struct VerificationEmailCodeView: View {
                 Button(L10n.Localizable.Authentication.Error.confirm, action: {})
             }
         )
+        .onAppear {
+            viewModel.trackReachedVerificationCodeIfNeeded()
+        }
     }
 
     private var verificationCodeView: some View {

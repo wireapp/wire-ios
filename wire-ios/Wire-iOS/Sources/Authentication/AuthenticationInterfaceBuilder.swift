@@ -24,6 +24,7 @@ import WireCommonComponents
 import WireDataModel
 import WireFoundation
 import WireSyncEngine
+import WireCountly
 
 /// A type of view controller that can be managed by an authentication coordinator.
 
@@ -111,7 +112,11 @@ final class AuthenticationInterfaceBuilder {
                 existsAnotherAccount: numberOfAccounts > 0,
                 otherAccountsPublisher: ReadOnlyCurrentValueSubject(subject: CurrentValueSubject(otherAccounts)),
                 useLegacyRegistrationFlow: !DeveloperFlag.newRegistration.isOn,
-                personalAccountCreationAnalyticsTracker: PersonalAccountCreationAnalyticsTracker()
+                personalAccountCreationAnalyticsTracker: PersonalAccountCreationAnalyticsTracker(
+                    analyticsServiceConfiguration: AnalyticsServiceConfigurationBuilder.build(),
+                    countlyProvider: { CountlyWrapper() },
+                    userDefaults: .applicationGroup
+                )
             )
             return AuthenticationHostingController(
                 rootView: rootView,

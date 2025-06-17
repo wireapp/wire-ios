@@ -50,7 +50,7 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
     private let termsOfUseURL: URL
     package let teamAccountCreationLink: URL?
     private let passwordValidator: any PasswordValidator
-    /*private*/ let personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
+    private var analyticsEventTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
 
     package init(
         factory: any Factory,
@@ -60,7 +60,7 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
         termsOfUseURL: URL,
         teamAccountCreationLink: URL?,
         passwordValidator: any PasswordValidator,
-        personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
+        analyticsEventTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
     ) {
         self.factory = factory
         self.router = router
@@ -69,7 +69,7 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
         self.termsOfUseURL = termsOfUseURL
         self.teamAccountCreationLink = teamAccountCreationLink
         self.passwordValidator = passwordValidator
-        self.personalAccountCreationAnalyticsTracker = personalAccountCreationAnalyticsTracker
+        self.analyticsEventTracker = analyticsEventTracker
     }
 
     // MARK: - Validations
@@ -102,6 +102,13 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
         do {
             let requestEmailVerificationCodeUseCase = try await factory.requestEmailVerificationCodeUseCase()
             try await requestEmailVerificationCodeUseCase.invoke(email: email)
+            if dataUsageAgreementAccepted {
+                analyticsEventTracker.setUp()
+                analyticsEventTracker.trackPersonalAccountCreationStart()
+                analyticsEventTracker.trackPersonalAccountCreationReachedTermsOfUseConfirmation()
+            } else {
+                analyticsEventTracker.tearDown()
+            }
 
             router.navigate(to: PersonalAccountCreationDestination.verifyEmail(
                 email: email,

@@ -53,6 +53,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
     private let router: any Router
     private let onFlowCompletion: (AuthenticationResult) -> Void
     private static let numberOfDigits = 6
+    private var analyticsEventTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
 
     // MARK: - Life cycle
 
@@ -63,7 +64,8 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
         password: String,
         name: String,
         onFlowCompletion: @escaping (AuthenticationResult) -> Void,
-        numberOfDigits: Int = VerificationEmailCodeViewModel.numberOfDigits
+        numberOfDigits: Int = VerificationEmailCodeViewModel.numberOfDigits,
+        analyticsEventTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
     ) {
         precondition(numberOfDigits > 0)
 
@@ -75,6 +77,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
         self.onFlowCompletion = onFlowCompletion
         self.code = Array(repeating: "", count: numberOfDigits)
         self.numberOfDigits = numberOfDigits
+        self.analyticsEventTracker = analyticsEventTracker
     }
 
     // MARK: - Actions
@@ -135,6 +138,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
             onFlowCompletion(authenticationResult)
         } catch {
             WireLogger.authentication.error("register personal account failed: \(error)")
+            analyticsEventTracker.trackPersonalAccountCreationFailedCodeVerification()
 
             switch error {
             case RegisterPersonalAccountUseCaseError.invalidEmail:
@@ -182,6 +186,10 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
         }
 
         isResending = false
+    }
+
+    func trackReachedVerificationCodeIfNeeded() {
+        analyticsEventTracker.trackPersonalAccountCreationReachedVerificationCode()
     }
 
     // MARK: - Private

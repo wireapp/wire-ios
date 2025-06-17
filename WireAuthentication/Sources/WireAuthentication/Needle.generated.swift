@@ -48,6 +48,9 @@ private class VerificationEmailCodeComponentDependency1187b119f31c839e0ba3Provid
     var router: any Router {
         return rootComponent.router
     }
+    var personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol {
+        return rootComponent.personalAccountCreationAnalyticsTracker
+    }
     private let loginViaEmailComponent: LoginViaEmailComponent
     private let rootComponent: RootComponent
     init(loginViaEmailComponent: LoginViaEmailComponent, rootComponent: RootComponent) {
@@ -216,6 +219,7 @@ extension VerificationEmailCodeComponent: NeedleFoundation.Registration {
         keyPathToName[\VerificationEmailCodeComponentDependency.networkStack] = "networkStack-NetworkStack"
         keyPathToName[\VerificationEmailCodeComponentDependency.bridge] = "bridge-WireAuthenticationBridge"
         keyPathToName[\VerificationEmailCodeComponentDependency.router] = "router-any Router"
+        keyPathToName[\VerificationEmailCodeComponentDependency.personalAccountCreationAnalyticsTracker] = "personalAccountCreationAnalyticsTracker-any PersonalAccountCreationAnalyticsTrackerProtocol"
     }
 }
 extension VerificationCodeComponent: NeedleFoundation.Registration {

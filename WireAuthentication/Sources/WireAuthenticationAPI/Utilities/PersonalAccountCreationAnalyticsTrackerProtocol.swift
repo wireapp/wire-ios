@@ -21,17 +21,15 @@ public protocol PersonalAccountCreationAnalyticsTrackerProtocol {
 
     /// Start analytics after the user agreed.
 
-    func setUp()
+    mutating func setUp()
 
     /// Stop analytics when the account creation flow is left.
 
-    func tearDown()
+    mutating func tearDown()
 
     /// Invoked when the user submits the personal account creation form.
-    /// - Parameter multiplePasswordAttemptsNeeded: `true` if it took the user more than one try to enter a valid
-    /// password.
 
-    func trackPersonalAccountCreationStart(multiplePasswordAttemptsNeeded: Bool)
+    func trackPersonalAccountCreationStart()
 
     /// Invoked when the user is presented the UI for accepting the terms of use.
 
