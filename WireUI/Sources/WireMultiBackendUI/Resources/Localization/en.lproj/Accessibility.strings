@@ -16,6 +16,4 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-"account" = "Account";
-"account.value" = "%@ account";
-"account.hint" = "Tap to switch account";
+"account.hint" = "Double tap to open account";
