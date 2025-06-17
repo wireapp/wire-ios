@@ -17,10 +17,9 @@
 //
 
 import Combine
-import Testing
-import WireDomain
+import XCTest
 @testable import WireDataModelSupport
-@testable import WireSyncEngine
+@testable import WireDomain
 
 class MLSGroupRepairAgentTests: XCTestCase {
 
@@ -39,8 +38,7 @@ class MLSGroupRepairAgentTests: XCTestCase {
         syncStateSubject = CurrentValueSubject(.idle)
         sut = MLSGroupRepairAgent(
             journal: journal,
-            mlsService: mockMLSService,
-            syncStatePublisher: syncStateSubject.eraseToAnyPublisher()
+            mlsService: mockMLSService
         )
     }
 
@@ -51,34 +49,23 @@ class MLSGroupRepairAgentTests: XCTestCase {
         syncStateSubject = nil
     }
 
-    func test_itRepairsGroupsWhenLiveSyncing() async throws {
+    func test_itInvokesMLSService_Fetch_And_Repair_Group() async throws {
         // Given
-        let expectation = expectation(description: "repair conversation method called")
         let validGroupID = Data("valid-group".utf8).base64EncodedString()
-
         journal[.brokenMLSGroupIDs] = [validGroupID]
 
-        mockMLSService.fetchAndRepairGroupWith_MockMethod = { _ in
-            expectation.fulfill()
-        }
+        mockMLSService.fetchAndRepairGroupWithShouldPerformIncrementalSync_MockMethod = { _, _ in }
 
         // When
-        syncStateSubject.send(.liveSyncing(.ongoing))
+        await sut.repairConversations()
 
         // Then
-        await fulfillment(of: [expectation], timeout: 1.0)
-        XCTAssertEqual(mockMLSService.fetchAndRepairGroupWith_Invocations.count, 1)
-    }
+        XCTAssertEqual(
+            mockMLSService.fetchAndRepairGroupWithShouldPerformIncrementalSync_Invocations.count,
+            1
+        )
 
-    func test_itDoesNotRepairGroupsWhenLiveSyncing() async {
-        // Given
-        mockMLSService.fetchAndRepairGroupWith_MockMethod = { _ in }
-
-        // When
-        syncStateSubject.send(.liveSyncing(.ongoing))
-
-        // Then
-        XCTAssertTrue(mockMLSService.fetchAndRepairGroupWith_Invocations.isEmpty)
+        XCTAssertEqual(journal[.brokenMLSGroupIDs], [])
     }
 
 }
