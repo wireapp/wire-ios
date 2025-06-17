@@ -17,6 +17,7 @@
 //
 
 import Combine
+import CoreData
 import XCTest
 @testable import WireAPI
 @testable import WireAPISupport
@@ -35,6 +36,7 @@ final class IncrementalSyncTests: XCTestCase {
     var processor: MockUpdateEventProcessorProtocol!
     var databaseSaver: MockDatabaseSaverProtocol!
     var syncStateSubject: CurrentValueSubject<SyncState, Never>!
+    var mlsGroupRepairAgent: MockMLSGroupRepairAgentProtocol!
 
     override func setUp() {
         journal = Journal(
@@ -49,6 +51,8 @@ final class IncrementalSyncTests: XCTestCase {
         processor = MockUpdateEventProcessorProtocol()
         databaseSaver = MockDatabaseSaverProtocol()
         syncStateSubject = CurrentValueSubject(.idle)
+        mlsGroupRepairAgent = MockMLSGroupRepairAgentProtocol()
+
         sut = IncrementalSync(
             selfClientID: Scaffolding.selfClientID,
             pushChannelAPI: pushChannelAPI,
@@ -59,7 +63,8 @@ final class IncrementalSyncTests: XCTestCase {
             processor: processor,
             databaseSaver: databaseSaver,
             syncStateSubject: syncStateSubject,
-            journal: journal
+            journal: journal,
+            mlsGroupRepairAgent: mlsGroupRepairAgent
         )
     }
 
@@ -74,6 +79,7 @@ final class IncrementalSyncTests: XCTestCase {
         processor = nil
         databaseSaver = nil
         syncStateSubject = nil
+        mlsGroupRepairAgent = nil
     }
 
     func test_perform_pendingEventsExist() async throws {
@@ -82,10 +88,14 @@ final class IncrementalSyncTests: XCTestCase {
         updateEventsSync.pull_MockMethod = { AsyncStream { [] } }
 
         // Some pending events.
+        let managedObjectID1 = NSManagedObjectID()
+        let managedObjectID2 = NSManagedObjectID()
+        let managedObjectID3 = NSManagedObjectID()
+
         var storedEnvelopes = [
-            Scaffolding.event1,
-            Scaffolding.event2,
-            Scaffolding.event3
+            (Scaffolding.event1, managedObjectID1),
+            (Scaffolding.event2, managedObjectID2),
+            (Scaffolding.event3, managedObjectID3)
         ]
 
         // Pendeng events are stored in batches.
@@ -96,7 +106,7 @@ final class IncrementalSyncTests: XCTestCase {
         }
 
         // Pending events are deleted in batches.
-        updateEventsStore.deleteNextPendingEventsLimit_MockMethod = { _ in }
+        updateEventsStore.deleteNextPendingEventsWith_MockMethod = { _ in }
 
         // Some live events, some of which were already pulled.
         let pushChannel = MockPushChannelProtocol()
@@ -140,6 +150,9 @@ final class IncrementalSyncTests: XCTestCase {
 
         // Database is saved.
         databaseSaver.save_MockMethod = {}
+
+        // Repair broken MLS conversations
+        mlsGroupRepairAgent.repairConversations_MockMethod = {}
 
         // When
         let token = try await sut.perform()
@@ -194,7 +207,10 @@ final class IncrementalSyncTests: XCTestCase {
         )
 
         // Then pending events were deleted.
-        XCTAssertEqual(updateEventsStore.deleteNextPendingEventsLimit_Invocations, [500])
+        XCTAssertEqual(
+            updateEventsStore.deleteNextPendingEventsWith_Invocations,
+            [[managedObjectID1, managedObjectID2, managedObjectID3]]
+        )
 
         // Then live events were deleted (duplicates skipped).
         XCTAssertEqual(updateEventsStore.deleteEventEnvelopeAtIndex_Invocations, [11, 12])
@@ -224,11 +240,11 @@ final class IncrementalSyncTests: XCTestCase {
         updateEventsStore.fetchStoredEventEnvelopesLimit_MockMethod = { _ in
             let envelopes = storedEnvelopes
             storedEnvelopes = []
-            return envelopes
+            return envelopes.map { ($0, NSManagedObjectID()) }
         }
 
         // Pending events are deleted in batches.
-        updateEventsStore.deleteNextPendingEventsLimit_MockMethod = { _ in }
+        updateEventsStore.deleteNextPendingEventsWith_MockMethod = { _ in }
 
         // Some live events, some of which were already pulled.
         let pushChannel = MockPushChannelProtocol()
@@ -269,6 +285,9 @@ final class IncrementalSyncTests: XCTestCase {
         // Database is saved.
         databaseSaver.save_MockMethod = {}
         pushChannel.close_MockMethod = {}
+
+        // Repair broken MLS conversations
+        mlsGroupRepairAgent.repairConversations_MockMethod = {}
 
         // When
         let task = Task {

@@ -34,6 +34,8 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
     var incrementalSync: MockIncrementalSyncProtocol!
     var syncStateSubject: CurrentValueSubject<SyncState, Never>!
     var coreCryptoProvider: MockCoreCryptoProviderProtocol!
+    var backgroundActivity: BackgroundActivityFactory!
+    var backgroundActivityManager: MockBackgroundActivityManager!
 
     override func setUp() {
         journal = Journal(
@@ -46,6 +48,11 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         incrementalSync = MockIncrementalSyncProtocol()
         syncStateSubject = CurrentValueSubject(.idle)
         coreCryptoProvider = MockCoreCryptoProviderProtocol()
+        backgroundActivityManager = MockBackgroundActivityManager()
+        backgroundActivity = BackgroundActivityFactory.shared
+        backgroundActivity.backgroundTaskTimeout = 2
+        backgroundActivity.activityManager = backgroundActivityManager
+
         sut = SyncAgent(
             journal: journal,
             lastUpdateEventIDRepository: lastUpdateEventIDRepository,
@@ -65,6 +72,9 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         initialSync = nil
         incrementalSync = nil
         syncStateSubject = nil
+        backgroundActivityManager.reset()
+        backgroundActivityManager = nil
+        backgroundActivity = nil
     }
 
     func provideInitialSync() throws -> any InitialSyncProtocol {
@@ -244,7 +254,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         await fulfillment(of: [expectation])
     }
 
-    func testPerformIncrementalSync_Sync_State_Update_To_Suspended() async throws {
+    func testSuspend_Sync_State_Update_To_Suspended_And_Background_Task_Is_Active() async throws {
         // Given
         journal[.isSyncV2Enabled] = true
         let expectation = XCTestExpectation()
@@ -257,6 +267,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
         incrementalSync.perform_MockMethod = {
             throw Failure.failed
         }
+        lastUpdateEventIDRepository.fetchLastEventID_MockValue = .mockID1
 
         var cancellable: AnyCancellable?
 
@@ -266,6 +277,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
                 switch state {
                 case .suspended:
                     // Then
+                    XCTAssertEqual(BackgroundActivityFactory.shared.isActive, true)
                     expectation.fulfill()
                 default:
                     XCTFail("Sync should be suspended")
