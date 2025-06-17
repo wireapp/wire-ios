@@ -37,8 +37,7 @@ public struct WireConversationChannelCreationForm: View {
         Form {
             channelNameSection
             channelAccessSection
-            // TODO: [WPB-16814] This will be used when implementing the channels history settings.
-//            channelHistorySection
+            channelHistorySection
             servicesSection
             // TODO: [WPB-16771] Uncomment when read receipts supported on MLS
 //            readReceiptsSection
@@ -62,19 +61,6 @@ public struct WireConversationChannelCreationForm: View {
 
     var channelAccessSection: some View {
         Section(content: {
-            // Channel access is always hard coded to private for now.
-//            Picker(
-//                L10n.Localizable.Conversation.CreationForm.Options.channelAccess,
-//                selection: $viewModel.channelAccess
-//            ) {
-//                Text(L10n.Localizable.Conversation.CreationForm.Options.ChannelAccess.public)
-//                    .tag(ViewModel.ChannelAccessOption.public)
-//                Label(
-//                    L10n.Localizable.Conversation.CreationForm.Options.ChannelAccess.private,
-//                    systemImage: "lock.fill"
-//                )
-//                .tag(ViewModel.ChannelAccessOption.private)
-//            }
             HStack {
                 Text(L10n.Localizable.Conversation.CreationForm.Options.channelAccess)
 
@@ -108,24 +94,37 @@ public struct WireConversationChannelCreationForm: View {
         })
     }
 
-    // TODO: [WPB-16814] This will be used when implementing the channels history settings.
-//    var channelHistorySection: some View {
-//            Section(content: {
-//                Picker("Channel history", selection: $channelHistory) {
-//                    Text("Off")
-//                        .tag(ChannelHistoryOption.off)
-//                    Text("1 day")
-//                        .tag(ChannelHistoryOption.oneDay)
-//                    Text("1 week")
-//                        .tag(ChannelHistoryOption.oneWeek)
-//                    Text("Unlimited")
-//                        .tag(ChannelHistoryOption.unlimited)
-//                }
-//            }, footer: {
-//                Text("Select a period. When participants join this channel, they can follow the history for this time
-//                frame.")
-//            })
-//    }
+    var channelHistorySection: some View {
+            Section(content: {
+                Picker("Channel history", selection: $viewModel.channelHistoryOption) {
+                    Text("Off")
+                        .tag(WireConversationChannelCreationFormViewModel.ChannelHistoryOption.off)
+                    Text("1 day")
+                        .tag(WireConversationChannelCreationFormViewModel.ChannelHistoryOption.oneDay)
+                    
+                    if viewModel.isPremium() {
+                        Text("1 week")
+                            .tag(WireConversationChannelCreationFormViewModel.ChannelHistoryOption.oneWeek)
+                        Text("4 weeks")
+                            .tag(WireConversationChannelCreationFormViewModel.ChannelHistoryOption.fourWeeks)
+                        Text("Unlimited")
+                            .tag(WireConversationChannelCreationFormViewModel.ChannelHistoryOption.unlimited)
+                    }
+                    
+                    HStack {
+                        Text("Custom")
+
+                        Image(systemName: "chevron.right")
+                            .foregroundColor(.blue)
+                        
+                    }.tag(WireConversationChannelCreationFormViewModel.ChannelHistoryOption.custom)
+                    .padding(.horizontal)
+
+                }
+            }, footer: {
+                Text("Select a period. When participants join this channel, they can follow the history for this time")
+            })
+    }
 
     var servicesSection: some View {
         Section(content: {

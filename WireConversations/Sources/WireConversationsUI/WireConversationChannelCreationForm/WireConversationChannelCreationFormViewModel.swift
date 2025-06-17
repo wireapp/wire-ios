@@ -35,14 +35,14 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
 
     typealias TextFieldValue<ValidationError: Error & Equatable> = Result<String, ValidationError>
 
-    // TODO: [WPB-16814] This will be used when implementing the channels history settings.
-//    enum ChannelHistoryOption: Equatable, Hashable {
-//        case off
-//        case oneDay
-//        case oneWeek
-//        case unlimited
-//        case custom(WireConversationChannelHistorySetting.LimitedHistoryValue)
-//    }
+    public enum ChannelHistoryOption: Equatable, Hashable {
+        case off
+        case oneDay
+        case oneWeek
+        case fourWeeks
+        case unlimited
+        case custom
+    }
 
     public enum ChannelAccessOption: Equatable, Hashable {
         case `public`
@@ -81,8 +81,7 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
 
     @Published var channelAccess: ChannelAccessOption
     @Published var channelInvitePolicy: ChannelInvitePolicyOption
-    // TODO: [WPB-16814] This will be used when implementing the channels history settings.
-//    @Published internal(set) public channelHistory: ChannelHistoryOption
+    @Published var channelHistoryOption: ChannelHistoryOption
     @Published var servicesAllowed: Bool
     @Published var guestsAllowed: Bool
     @Published var readReceiptsEnabled: Bool
@@ -96,6 +95,7 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
         // Channel access is always hard coded to private for now.
         channelAccess: ChannelAccessOption = .private,
         channelInvitePolicy: ChannelInvitePolicyOption = .admins,
+        channelHistoryOption: ChannelHistoryOption = .oneDay,
         servicesAllowed: Bool = true,
         guestsAllowed: Bool = true,
         readReceiptsEnabled: Bool = true,
@@ -107,11 +107,16 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
         self.channelName = channelName
         self.channelAccess = channelAccess
         self.channelInvitePolicy = channelInvitePolicy
+        self.channelHistoryOption = channelHistoryOption
         self.servicesAllowed = servicesAllowed
         self.guestsAllowed = guestsAllowed
         self.readReceiptsEnabled = readReceiptsEnabled
 
         self.onFormValidityUpdate = onFormValidityUpdate
+    }
+    
+    func isPremium() -> Bool {
+        true
     }
 
     func onChannelNameUpdate(_ value: String) {

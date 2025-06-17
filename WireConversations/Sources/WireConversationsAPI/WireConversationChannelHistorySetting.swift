@@ -16,21 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// TODO: [WPB-16814] This will be used when implementing the channels history settings.
-
-// public enum WireConversationChannelHistorySetting: Equatable, Hashable {
-//    public struct LimitedHistoryValue: Equatable, Hashable {
-//        public enum Unit: Equatable, Hashable {
-//            case day
-//            case week
-//            case month
-//        }
-//
-//        public var unit: Unit
-//        public var value: UInt
-//    }
-//
-//    case off
-//    case unlimited
-//    case limited(LimitedHistoryValue)
-// }
+public enum WireConversationChannelHistorySetting: Equatable, Hashable {
+    public struct LimitedHistoryValue: Equatable, Hashable {
+        public enum Unit: Equatable, Hashable {
+            case day
+            case week
+            case month
+        }
+        
+        public var unit: Unit
+        public var value: UInt
+    }
+    
+    case off
+    case unlimited
+    case limited(LimitedHistoryValue)
+}
