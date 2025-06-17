@@ -33,7 +33,9 @@ struct UserConnectionEventNotificationBuilder {
     func buildContent(
         event: UserConnectionEvent
     ) async -> UserNotification? {
-        let canBuildNotification = await validator.validate()
+        let canBuildNotification = await validator.validate(
+            connectionStatus: event.connection.status
+        )
 
         guard canBuildNotification else {
             return nil
@@ -168,8 +170,13 @@ struct UserConnectionEventNotificationBuilder {
 extension UserConnectionEventNotificationBuilder {
     struct Validator {
 
-        func validate() async -> Bool {
-            true // No validation criteria for this notification
+        func validate(connectionStatus: WireAPI.ConnectionStatus) async -> Bool {
+            switch connectionStatus {
+            case .accepted, .pending:
+                true
+            default:
+                false // do not display notifications for other statuses
+            }
         }
     }
 
