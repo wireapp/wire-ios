@@ -562,6 +562,7 @@ public final class SharingSession {
         let selfClient = ZMUser.selfUser(in: coreDataStack.viewContext).selfClient()
         let clientUserSessionComponent = userSessionComponent.clientSessionComponent(
             clientID: selfClientID,
+            asyncStreamEnabled: selfClient?.asyncStreamCapable == true,
             completionHandlers: completionHandlers
         )
 

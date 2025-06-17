@@ -57,9 +57,9 @@ public struct WireAuthenticationAssembly {
         passwordValidator: any PasswordValidator,
         ssoCallbackURLScheme: String,
         appStoreURL: URL,
-        existsAnotherAccount: Bool,
-        otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>,
+        accountsPublisher: CurrentValuePublisher<[AccountUIModel]>,
         useLegacyRegistrationFlow: Bool,
+        multibackendEnabled: Bool,
         personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
         let backendInfo = BackendInfo(
@@ -77,9 +77,9 @@ public struct WireAuthenticationAssembly {
             passwordValidator: passwordValidator,
             ssoCallbackURLScheme: ssoCallbackURLScheme,
             appStoreURL: appStoreURL,
-            existsAnotherAccount: existsAnotherAccount,
-            otherAccountsPublisher: otherAccountsPublisher,
+            accountsPublisher: accountsPublisher,
             useLegacyRegistrationFlow: useLegacyRegistrationFlow,
+            multibackendEnabled: multibackendEnabled,
             personalAccountCreationAnalyticsTracker: personalAccountCreationAnalyticsTracker
         )
 
