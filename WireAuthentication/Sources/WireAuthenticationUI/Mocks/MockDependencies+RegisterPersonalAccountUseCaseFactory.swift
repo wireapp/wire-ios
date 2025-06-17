@@ -46,37 +46,20 @@ struct MockRegisterPersonalAccountUseCase: RegisterPersonalAccountUseCaseProtoco
 }
 
 struct MockPersonalAccountCreationAnalyticsTracker: PersonalAccountCreationAnalyticsTrackerProtocol {
-    mutating func setUp() {
+    mutating func setUp() {}
 
-    }
-    
-    mutating func tearDown() {
+    mutating func tearDown() {}
 
-    }
-    
-    func trackPersonalAccountCreationStart() {
+    func trackPersonalAccountCreationStart() {}
 
-    }
-    
-    func trackPersonalAccountCreationReachedTermsOfUseConfirmation() {
+    func trackPersonalAccountCreationReachedTermsOfUseConfirmation() {}
 
-    }
-    
-    func trackPersonalAccountCreationReachedVerificationCode() {
+    func trackPersonalAccountCreationReachedVerificationCode() {}
 
-    }
-    
-    func trackPersonalAccountCreationFailedCodeVerification() {
+    func trackPersonalAccountCreationFailedCodeVerification() {}
 
-    }
-    
-    func trackPersonalAccountCreationReachedUsernameForm() {
+    func trackPersonalAccountCreationReachedUsernameForm() {}
 
-    }
-    
-    func trackPersonalAccountCreationCompletion() {
-
-    }
-    
+    func trackPersonalAccountCreationCompletion() {}
 
 }

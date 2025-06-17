@@ -124,39 +124,21 @@ final class VerificationEmailCodeViewModelTests: XCTestCase, VerificationEmailCo
 
 }
 
-
 class MockPersonalAccountCreationAnalyticsTrackerProtocol: PersonalAccountCreationAnalyticsTrackerProtocol {
-    func setUp() {
+    func setUp() {}
 
-    }
+    func tearDown() {}
 
-    func tearDown() {
+    func trackPersonalAccountCreationStart() {}
 
-    }
+    func trackPersonalAccountCreationReachedTermsOfUseConfirmation() {}
 
-    func trackPersonalAccountCreationStart() {
+    func trackPersonalAccountCreationReachedVerificationCode() {}
 
-    }
+    func trackPersonalAccountCreationFailedCodeVerification() {}
 
-    func trackPersonalAccountCreationReachedTermsOfUseConfirmation() {
+    func trackPersonalAccountCreationReachedUsernameForm() {}
 
-    }
-
-    func trackPersonalAccountCreationReachedVerificationCode() {
-
-    }
-
-    func trackPersonalAccountCreationFailedCodeVerification() {
-
-    }
-
-    func trackPersonalAccountCreationReachedUsernameForm() {
-
-    }
-
-    func trackPersonalAccountCreationCompletion() {
-
-    }
-
+    func trackPersonalAccountCreationCompletion() {}
 
 }

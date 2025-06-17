@@ -21,10 +21,10 @@ import UIKit
 import WireAPI
 import WireAuthentication
 import WireCommonComponents
+import WireCountly
 import WireDataModel
 import WireFoundation
 import WireSyncEngine
-import WireCountly
 
 /// A type of view controller that can be managed by an authentication coordinator.
 

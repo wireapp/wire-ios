@@ -117,4 +117,3 @@ struct PersonalAccountCreationAnalyticsTracker: PersonalAccountCreationAnalytics
     }
 
 }
-
