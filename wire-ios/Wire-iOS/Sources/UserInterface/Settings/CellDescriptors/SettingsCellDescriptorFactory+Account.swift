@@ -410,7 +410,7 @@ extension SettingsCellDescriptorFactory {
             ),
             legacyImportBackupUseCase: sessionManager.importLegacyBackupUseCase!
         )
-        let createBackupUseCase: CreateBackupUseCaseProtocol = if DeveloperFlag.createLegacyBackups.isOn {
+        let createBackupUseCase: CreateBackupUseCaseProtocol = if Bool(true) { // last-minute change
             CreateLegacyBackupUseCase(sessionManager: sessionManager)
         } else {
             CreateBackupUseCase(
