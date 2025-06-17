@@ -51,6 +51,7 @@ final class ImportBackupViewModelTests: XCTestCase {
         try Data("data".utf8).write(to: temporaryFile)
 
         mockImportBackupUseCase = .init()
+        mockImportBackupUseCase.isImportDestructive = true
 
         mockLogger = WireLogger(tag: "mock")
 
