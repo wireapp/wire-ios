@@ -73,7 +73,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         guard !DeveloperFlag.skipMLSMessagesDecryption.isOn else {
             return EventDecryptorResult(events: [], brokenMLSGroupIDs: [])
         }
-        let logAttributes: LogAttributes = [
+        var logAttributes: LogAttributes = [
             .eventId: eventEnvelope.id.safeForLoggingDescription,
             .public: true
         ]
@@ -83,6 +83,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         var shouldCommitPendingProposals = false
 
         for event in eventEnvelope.events {
+            logAttributes[.messageType] = event.name
             switch event {
             case let .conversation(.proteusMessageAdd(eventData)):
                 WireLogger.updateEvent.info(

@@ -24,76 +24,81 @@ import XCTest
 @testable import WireDomain
 @testable import WireDomainSupport
 
-final class IncrementalSyncTests: XCTestCase {
+final class IncrementalSyncV2Tests: XCTestCase {
 
-    var sut: IncrementalSync!
-    var journal: Journal!
-    var pushChannelAPI: MockPushChannelAPI!
-    var updateEventsSync: MockPullPendingUpdateEventsSyncProtocol!
+    var sut: IncrementalSyncV2!
+    var pushChannelAPI: MockPushChannelV2API!
     var decryptor: MockUpdateEventDecryptorProtocol!
     var updateEventsStore: MockUpdateEventsLocalStoreProtocol!
-    var messageLocalStore: MockMessageLocalStoreProtocol!
     var processor: MockUpdateEventProcessorProtocol!
     var databaseSaver: MockDatabaseSaverProtocol!
     var syncStateSubject: CurrentValueSubject<SyncState, Never>!
+    var liveDelegate: MockLiveSyncDelegate!
+    var journal: Journal!
 
     override func setUp() {
+        pushChannelAPI = MockPushChannelV2API()
+        decryptor = MockUpdateEventDecryptorProtocol()
+        updateEventsStore = MockUpdateEventsLocalStoreProtocol()
+        processor = MockUpdateEventProcessorProtocol()
+        databaseSaver = MockDatabaseSaverProtocol()
+        liveDelegate = MockLiveSyncDelegate()
+        syncStateSubject = .init(.idle)
         journal = Journal(
             userID: UUID(),
             storage: UserDefaults.temporary()
         )
-        pushChannelAPI = MockPushChannelAPI()
-        updateEventsSync = MockPullPendingUpdateEventsSyncProtocol()
-        decryptor = MockUpdateEventDecryptorProtocol()
-        updateEventsStore = MockUpdateEventsLocalStoreProtocol()
-        messageLocalStore = MockMessageLocalStoreProtocol()
-        processor = MockUpdateEventProcessorProtocol()
-        databaseSaver = MockDatabaseSaverProtocol()
-        syncStateSubject = CurrentValueSubject(.idle)
-        sut = IncrementalSync(
+
+        sut = IncrementalSyncV2(
             selfClientID: Scaffolding.selfClientID,
             pushChannelAPI: pushChannelAPI,
-            updateEventsSync: updateEventsSync,
             decryptor: decryptor,
             updateEventsStore: updateEventsStore,
-            messageStore: messageLocalStore,
             processor: processor,
             databaseSaver: databaseSaver,
             syncStateSubject: syncStateSubject,
             journal: journal
         )
+        sut.delegate = liveDelegate
+        liveDelegate.isUpToDateSync_MockMethod = { _ in }
+        liveDelegate.didMissedEventsSync_MockMethod = { _ in }
+
     }
 
     override func tearDown() {
         sut = nil
-        journal = nil
         pushChannelAPI = nil
-        updateEventsSync = nil
         decryptor = nil
         updateEventsStore = nil
-        messageLocalStore = nil
         processor = nil
         databaseSaver = nil
         syncStateSubject = nil
+        journal = nil
+        liveDelegate = nil
     }
 
-    func test_perform_pendingEventsExist() async throws {
+    func testPerform_pendingEventsExist() async throws {
         // Mock
-        // Pending events are pulled.
-        updateEventsSync.pull_MockMethod = { AsyncStream { [] } }
 
-        // Some pending events.
-        let managedObjectID1 = NSManagedObjectID()
-        let managedObjectID2 = NSManagedObjectID()
-        let managedObjectID3 = NSManagedObjectID()
+        // Some live events, some of which were already pulled.
+        let pushChannel = MockPushChannelV2Protocol()
+        pushChannel.acknowledgeMessageCount_MockMethod = {}
 
+        pushChannel.open_MockValue = AsyncThrowingStream { continuation in
+            Task {
+                continuation.yield(PushChannelV2.Element.syncing(eventsCount: 1))
+                continuation.yield(PushChannelV2.Element.event(Scaffolding.event2))
+                continuation.yield(PushChannelV2.Element.upToDate)
+                continuation.finish()
+            }
+        }
+        pushChannel.acknowledgeEventDeliveryTagMultiple_MockMethod = { _, _ in }
+        pushChannelAPI.createPushChannelClientID_MockMethod = { _ in pushChannel }
+
+        // Events stored from NSE which needs to be processed
         var storedEnvelopes = [
-            (Scaffolding.event1, managedObjectID1),
-            (Scaffolding.event2, managedObjectID2),
-            (Scaffolding.event3, managedObjectID3)
+            (Scaffolding.event4, NSManagedObjectID())
         ]
-
-        // Pending events are stored in batches.
         updateEventsStore.fetchStoredEventEnvelopesLimit_MockMethod = { _ in
             let envelopes = storedEnvelopes
             storedEnvelopes = []
@@ -103,22 +108,8 @@ final class IncrementalSyncTests: XCTestCase {
         // Pending events are deleted in batches.
         updateEventsStore.deleteNextPendingEventsWith_MockMethod = { _ in }
 
-        // Some live events, some of which were already pulled.
-        let pushChannel = MockPushChannelProtocol()
-        pushChannel.open_MockValue = AsyncThrowingStream { continuation in
-            Task {
-                continuation.yield(Scaffolding.event2)
-                continuation.yield(Scaffolding.event3)
-                continuation.yield(Scaffolding.event4)
-                continuation.yield(Scaffolding.event5)
-                continuation.finish()
-            }
-        }
-
-        pushChannelAPI.createPushChannelClientID_MockMethod = { _ in pushChannel }
-
         // Some indices at which live events will be stored.
-        var indices = [Int64(10), 11, 12, 13, 14, 15]
+        var indices = [Int64(10)]
         updateEventsStore.indexOfLastEventEnvelope_MockMethod = { indices.remove(at: 0) }
 
         // Live envelopes are peristed and deleted one by one.
@@ -128,6 +119,130 @@ final class IncrementalSyncTests: XCTestCase {
         // Live events are decrypted.
         decryptor.decryptEventsInContext_MockMethod = { envelope, _ in
             EventDecryptorResult(events: envelope.events, brokenMLSGroupIDs: [Scaffolding.mlsGroupID])
+        }
+
+        // Last event is being updated.
+        updateEventsStore.storeLastEventIDId_MockMethod = { _ in }
+
+        // Events are processed.
+        processor.processEvent_MockMethod = { _ in }
+
+        // Unread messages are set
+        updateEventsStore.calculateLastUnreadMessages_MockMethod = {}
+
+        // Database is saved.
+        databaseSaver.save_MockMethod = {}
+
+        // When
+        let token = try await sut.perform()
+        let numberOfStoredEventEnvelopesInvocations = 2
+        let numberOfInvocationInProcessEvents = 1
+        // Then stored events were processed
+        XCTAssertEqual(
+            updateEventsStore.fetchStoredEventEnvelopesLimit_Invocations.count,
+            numberOfStoredEventEnvelopesInvocations
+        )
+        XCTAssertEqual(processor.processEvent_Invocations.count, 1)
+        XCTAssertEqual(updateEventsStore.deleteNextPendingEventsWith_Invocations.count, 1)
+        XCTAssertEqual(
+            updateEventsStore.calculateLastUnreadMessages_Invocations.count,
+            numberOfInvocationInProcessEvents
+        )
+        XCTAssertEqual(databaseSaver.save_Invocations.count, numberOfInvocationInProcessEvents)
+
+        // When
+        await token.task.value
+
+        // Then push channel was created.
+        XCTAssertEqual(
+            pushChannelAPI.createPushChannelClientID_Invocations,
+            [Scaffolding.selfClientID]
+        )
+
+        // Then push channel was opened.
+        XCTAssertEqual(pushChannel.open_Invocations.count, 1)
+
+        // Then live events were decrypted (duplicates skipped).
+        XCTAssertEqual(
+            decryptor.decryptEventsInContext_Invocations.map(\.eventEnvelope),
+            [Scaffolding.event2]
+        )
+
+        // Then sync is up to date
+        XCTAssertEqual(liveDelegate.isUpToDateSync_Invocations.count, 1)
+        XCTAssertEqual(pushChannel.acknowledgeMessageCount_Invocations.count, 1)
+
+        // Then live events were stored.
+        XCTAssertEqual(updateEventsStore.indexOfLastEventEnvelope_Invocations.count, 1)
+
+        // Broken conversation IDs are stored
+        XCTAssertEqual(journal[.brokenMLSGroupIDs].first, Scaffolding.mlsGroupID)
+
+        // Then live events were stored.
+        let storeInvocations = updateEventsStore.persistEventEnvelopeIndex_Invocations
+        try XCTAssertCount(storeInvocations, count: 1)
+        XCTAssertEqual(storeInvocations[0].eventEnvelope, Scaffolding.event2)
+        XCTAssertEqual(storeInvocations[0].index, 11)
+
+        // Then ack of events done adter storing
+        XCTAssertEqual(pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations.count, 1)
+
+        // Then all events were processed once.
+        XCTAssertEqual(
+            processor.processEvent_Invocations,
+            [
+                Scaffolding.event4,
+                Scaffolding.event2
+            ].flatMap(\.events)
+        )
+
+        // Then live events were deleted.
+        XCTAssertEqual(updateEventsStore.deleteEventEnvelopeAtIndex_Invocations, [11])
+
+        // Then unread messages are calculated once after processing pending events
+        // and once after processing each live event.
+        XCTAssertEqual(
+            updateEventsStore.calculateLastUnreadMessages_Invocations.count,
+            numberOfInvocationInProcessEvents + 1
+        )
+
+        // Then the database was saved once after processing pending events
+        // and once after processing each live event.
+        XCTAssertEqual(databaseSaver.save_Invocations.count, numberOfInvocationInProcessEvents + 1)
+    }
+
+    func testPerform_AcknowledgementFullSync() async throws {
+        // Mock
+        let pushChannel = MockPushChannelV2Protocol()
+        pushChannel.acknowledgeFullSync_MockMethod = {}
+
+        pushChannel.open_MockValue = AsyncThrowingStream { continuation in
+            Task {
+                continuation.yield(.event(Scaffolding.event2))
+                continuation.yield(.event(Scaffolding.event3))
+                continuation.yield(.missedEvents)
+                continuation.finish()
+            }
+        }
+        pushChannel.acknowledgeEventDeliveryTagMultiple_MockMethod = { _, _ in }
+        pushChannelAPI.createPushChannelClientID_MockMethod = { _ in pushChannel }
+
+        // Events stored from NSE which needs to be processed
+        updateEventsStore.fetchStoredEventEnvelopesLimit_MockMethod = { _ in
+            []
+        }
+
+        // Some indices at which live events will be stored.
+        var indices = [Int64(10), 11]
+        updateEventsStore.indexOfLastEventEnvelope_MockMethod = { indices.remove(at: 0) }
+
+        // Live envelopes are peristed and deleted one by one.
+        updateEventsStore.persistEventEnvelopeIndex_MockMethod = { _, _ async throws in }
+        updateEventsStore.deleteEventEnvelopeAtIndex_MockMethod = { _ in }
+
+        // Live events are decrypted.
+        decryptor.decryptEventsInContext_MockMethod = { envelope, _ in
+            EventDecryptorResult(events: envelope.events, brokenMLSGroupIDs: [])
         }
 
         // Last event is being updated.
@@ -155,159 +270,46 @@ final class IncrementalSyncTests: XCTestCase {
         // Then push channel was opened.
         XCTAssertEqual(pushChannel.open_Invocations.count, 1)
 
-        // Then pending events were pulled.
-        XCTAssertEqual(updateEventsSync.pull_Invocations.count, 1)
-
         // Then live events were decrypted (duplicates skipped).
         XCTAssertEqual(
             decryptor.decryptEventsInContext_Invocations.map(\.eventEnvelope),
-            [Scaffolding.event4, Scaffolding.event5]
+            [Scaffolding.event2, Scaffolding.event3]
         )
 
-        // Then live events were stored (duplicates skipped).
+        // Then live events were stored.
         XCTAssertEqual(updateEventsStore.indexOfLastEventEnvelope_Invocations.count, 2)
 
-        // Broken conversation IDs are stored
-        XCTAssertEqual(journal[.brokenMLSGroupIDs].first, Scaffolding.mlsGroupID)
-
+        // Then live events were stored.
         let storeInvocations = updateEventsStore.persistEventEnvelopeIndex_Invocations
         try XCTAssertCount(storeInvocations, count: 2)
-        XCTAssertEqual(storeInvocations[0].eventEnvelope, Scaffolding.event4)
-        XCTAssertEqual(storeInvocations[0].index, 11)
-        XCTAssertEqual(storeInvocations[1].eventEnvelope, Scaffolding.event5)
-        XCTAssertEqual(storeInvocations[1].index, 12)
+        XCTAssertEqual(storeInvocations[0].eventEnvelope, Scaffolding.event2)
+        XCTAssertEqual(storeInvocations[1].eventEnvelope, Scaffolding.event3)
+        // Then ack of events done after storing
+        XCTAssertEqual(pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations.count, 2)
 
-        // Then last event id was updated once (for the non-transient live
-        // event)
-        try XCTAssertCount(updateEventsStore.storeLastEventIDId_Invocations, count: 1)
-        XCTAssertEqual(updateEventsStore.storeLastEventIDId_Invocations[0], Scaffolding.event5.id)
-
-        // Then all events were processed once (duplicates skipped).
+        // Then all events were processed once.
         XCTAssertEqual(
             processor.processEvent_Invocations,
             [
-                Scaffolding.event1,
                 Scaffolding.event2,
-                Scaffolding.event3,
-                Scaffolding.event4,
-                Scaffolding.event5
+                Scaffolding.event3
             ].flatMap(\.events)
         )
 
-        // Then pending events were deleted.
-        XCTAssertEqual(
-            updateEventsStore.deleteNextPendingEventsWith_Invocations,
-            [[managedObjectID1, managedObjectID2, managedObjectID3]]
-        )
+        XCTAssertEqual(liveDelegate.didMissedEventsSync_Invocations.count, 1)
 
-        // Then live events were deleted (duplicates skipped).
+        // Then live events were deleted.
         XCTAssertEqual(updateEventsStore.deleteEventEnvelopeAtIndex_Invocations, [11, 12])
 
         // Then unread messages are calculated once after processing pending events
         // and once after processing each live event.
-        XCTAssertEqual(updateEventsStore.calculateLastUnreadMessages_Invocations.count, 3)
+        XCTAssertEqual(updateEventsStore.calculateLastUnreadMessages_Invocations.count, 2)
 
         // Then the database was saved once after processing pending events
         // and once after processing each live event.
-        XCTAssertEqual(databaseSaver.save_Invocations.count, 3)
+        XCTAssertEqual(databaseSaver.save_Invocations.count, 2)
     }
 
-    func test_perform_Cancelled_Push_Channel_Closed() async throws {
-        // Mock
-        // Pending events are pulled.
-        updateEventsSync.pull_MockMethod = { AsyncStream { [] } }
-
-        // Some pending events.
-        var storedEnvelopes = [
-            Scaffolding.event1,
-            Scaffolding.event2,
-            Scaffolding.event3
-        ]
-
-        // Pending events are stored in batches.
-        updateEventsStore.fetchStoredEventEnvelopesLimit_MockMethod = { _ in
-            let envelopes = storedEnvelopes
-            storedEnvelopes = []
-            return envelopes.map { ($0, NSManagedObjectID()) }
-        }
-
-        // Pending events are deleted in batches.
-        updateEventsStore.deleteNextPendingEventsWith_MockMethod = { _ in }
-
-        // Some live events, some of which were already pulled.
-        let pushChannel = MockPushChannelProtocol()
-        let liveEventsStream = AsyncThrowingStream { continuation in
-            Task {
-                continuation.yield(Scaffolding.event2)
-                continuation.yield(Scaffolding.event3)
-                continuation.yield(Scaffolding.event4)
-                continuation.yield(Scaffolding.event5)
-                continuation.finish()
-            }
-        }
-        pushChannel.open_MockValue = liveEventsStream
-        pushChannelAPI.createPushChannelClientID_MockMethod = { _ in pushChannel }
-        // Some indices at which live events will be stored.
-        var indices = [Int64(10), 11, 12, 13, 14, 15]
-        updateEventsStore.indexOfLastEventEnvelope_MockMethod = { indices.remove(at: 0) }
-
-        // Live envelopes are peristed and deleted one by one.
-        updateEventsStore.persistEventEnvelopeIndex_MockMethod = { _, _ async throws in }
-        updateEventsStore.deleteEventEnvelopeAtIndex_MockMethod = { _ in }
-
-        // Live events are decrypted.
-        decryptor.decryptEventsInContext_MockMethod = { envelope, _ async throws in .init(
-            events: envelope.events,
-            brokenMLSGroupIDs: []
-        ) }
-
-        // Last event is being updated.
-        updateEventsStore.storeLastEventIDId_MockMethod = { _ in }
-
-        // Events are processed.
-        processor.processEvent_MockMethod = { _ in }
-
-        // Unread messages are set
-        updateEventsStore.calculateLastUnreadMessages_MockMethod = {}
-
-        // Database is saved.
-        databaseSaver.save_MockMethod = {}
-        pushChannel.close_MockMethod = {}
-
-        // When
-        let task = Task {
-            try await sut.perform()
-        }
-
-        // Then
-        do {
-            _ = try await task.value
-        } catch {
-            XCTAssertEqual(pushChannel.close_Invocations.count, 1)
-            XCTAssertTrue(error is CancellationError)
-        }
-    }
-
-    func test_perform_Missed_Events() async throws {
-        // Mock
-        let pushChannel = MockPushChannelProtocol()
-        pushChannel.open_MockValue = AsyncThrowingStream { _ in [] }
-        pushChannel.close_MockMethod = {}
-        pushChannelAPI.createPushChannelClientID_MockMethod = { _ in pushChannel }
-        updateEventsSync.pull_MockError = UpdateEventsAPIError.notFound
-        messageLocalStore.addPotentialGapSystemMessage_MockMethod = {}
-        updateEventsStore.storeLastEventIDId_MockMethod = { _ in }
-        updateEventsStore.resetLastEventID_MockMethod = {}
-
-        await XCTAssertThrowsErrorAsync(IncrementalSync.Failure.missedEvents) {
-            // When
-            try await self.sut.perform()
-        }
-
-        // Then
-        XCTAssertEqual(messageLocalStore.addPotentialGapSystemMessage_Invocations.count, 1)
-        XCTAssertEqual(updateEventsStore.resetLastEventID_Invocations.count, 1)
-    }
 }
 
 private enum Scaffolding {
@@ -315,36 +317,34 @@ private enum Scaffolding {
     static let selfClientID = "selfClientID"
     static let mlsGroupID = "ASDF"
 
-    static let event1 = createEvent(
-        message: "hello",
-        timeIntervalSinceNow: -10
-    )
-
     static let event2 = createEvent(
         message: "ciao",
-        timeIntervalSinceNow: -9
+        timeIntervalSinceNow: -9,
+        deliveryTag: 2
     )
 
     static let event3 = createEvent(
         message: "hola",
-        timeIntervalSinceNow: -8
+        timeIntervalSinceNow: -8,
+        deliveryTag: 3
     )
 
     static let event4 = createEvent(
         message: "hallo",
         timeIntervalSinceNow: -7,
-        isTransient: true
+        deliveryTag: 4
     )
 
     static let event5 = createEvent(
         message: "bonjour",
-        timeIntervalSinceNow: -6
+        timeIntervalSinceNow: -6,
+        deliveryTag: 5
     )
 
     static func createEvent(
         message: String,
         timeIntervalSinceNow: TimeInterval,
-        isTransient: Bool = false
+        deliveryTag: UInt64? = nil
     ) -> UpdateEventEnvelope {
         let event = ConversationProteusMessageAddEvent(
             conversationID: ConversationID(
@@ -367,7 +367,8 @@ private enum Scaffolding {
         return UpdateEventEnvelope(
             id: UUID(),
             events: [.conversation(.proteusMessageAdd(event))],
-            isTransient: isTransient
+            isTransient: false,
+            deliveryTag: deliveryTag
         )
     }
 
