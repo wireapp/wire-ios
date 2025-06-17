@@ -28,7 +28,7 @@ import XCTest
 @testable import WireSettingsUISupport
 
 @MainActor
-final class ImportBackupViewModelTest: XCTestCase {
+final class ImportBackupViewModelTests: XCTestCase {
 
     private var temporaryDirectory: URL!
     private var temporaryFile: URL!
