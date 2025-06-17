@@ -81,7 +81,7 @@ struct PersonalAccountCreationView: View {
     }
 
     @ViewBuilder private var scrollViewContent: some View {
-        VStack(spacing: 20) {
+        VStack(alignment: .leading, spacing: 20) {
             nameField
             emailField
             passwordField
@@ -178,6 +178,34 @@ struct PersonalAccountCreationView: View {
         }
         .frame(maxWidth: .infinity)
         .padding()
+    }
+
+}
+
+private extension AttributedString {
+
+    static func formattedMarkdown(
+        key: String.LocalizationValue,
+        bundle: Bundle? = nil,
+        _ arguments: any CVarArg...
+    ) -> AttributedString {
+        let string: String = .formated(key: key, bundle: bundle, arguments)
+        return .markdown(from: string)
+    }
+
+    static func localizedMarkdown(key: String.LocalizationValue, bundle: Bundle? = nil) -> AttributedString {
+        let string: String = .localized(key: key, bundle: bundle)
+        return .markdown(from: string)
+    }
+
+    static func markdown(from string: String) -> AttributedString {
+        var attributed = (try? AttributedString(markdown: string)) ?? AttributedString(string)
+
+        for run in attributed.runs where run.link != nil {
+            attributed[run.range].underlineStyle = .single
+        }
+
+        return attributed
     }
 
 }
