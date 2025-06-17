@@ -26,7 +26,7 @@ public struct BackupImportExportBuilder {
 
     let backupPasswordValidator: any BackupPasswordValidatorProtocol
     let createBackupUseCase: any CreateBackupUseCaseProtocol
-    let importBackupUseCase: any ImportBackupUseCaseProtocol
+    let importBackupUseCaseFactory: any ImportBackupUseCaseFactoryProtocol
     let cleanUpBackupsUseCase: any CleanUpBackupsUseCaseProtocol
     let exportBackupLogger: any LoggerProtocol
     let importBackupLogger: any LoggerProtocol
@@ -36,7 +36,7 @@ public struct BackupImportExportBuilder {
     public init(
         backupPasswordValidator: any BackupPasswordValidatorProtocol,
         createBackupUseCase: any CreateBackupUseCaseProtocol,
-        importBackupUseCase: any ImportBackupUseCaseProtocol,
+        importBackupUseCaseFactory: any ImportBackupUseCaseFactoryProtocol,
         cleanUpBackupsUseCase: any CleanUpBackupsUseCaseProtocol,
         exportBackupLogger: any LoggerProtocol,
         importBackupLogger: any LoggerProtocol,
@@ -45,7 +45,7 @@ public struct BackupImportExportBuilder {
     ) {
         self.backupPasswordValidator = backupPasswordValidator
         self.createBackupUseCase = createBackupUseCase
-        self.importBackupUseCase = importBackupUseCase
+        self.importBackupUseCaseFactory = importBackupUseCaseFactory
         self.cleanUpBackupsUseCase = cleanUpBackupsUseCase
         self.exportBackupLogger = exportBackupLogger
         self.importBackupLogger = importBackupLogger
@@ -115,7 +115,7 @@ public struct BackupImportExportBuilder {
     func buildImportBackupView() -> some View {
 
         let viewModel = ImportBackupViewModel(
-            importBackupUseCase: importBackupUseCase,
+            importBackupUseCaseFactory: importBackupUseCaseFactory,
             logger: importBackupLogger
         )
         ImportBackupView(viewModel: viewModel)
@@ -131,7 +131,7 @@ extension BackupImportExportBuilder {
         BackupImportExportBuilder(
             backupPasswordValidator: PreviewBackupPasswordValidator(),
             createBackupUseCase: PreviewCreateBackupUseCase(),
-            importBackupUseCase: PreviewImportBackupUseCase(),
+            importBackupUseCaseFactory: PreviewImportBackupUseCaseFactory(),
             cleanUpBackupsUseCase: PreviewCleanUpBackupsUseCase(),
             exportBackupLogger: PreviewLogger(),
             importBackupLogger: PreviewLogger(),

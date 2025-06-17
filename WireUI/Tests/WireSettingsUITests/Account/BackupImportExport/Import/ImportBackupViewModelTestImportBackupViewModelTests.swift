@@ -16,8 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import WireDomainPackage
 import WireFoundation
+import WireFoundationSupport
 import WireLogging
 import WireTestingPackage
 import XCTest
@@ -26,11 +28,11 @@ import XCTest
 @testable import WireSettingsUISupport
 
 @MainActor
-final class ImportBackupViewModelTest: XCTestCase {
+final class ImportBackupViewModelTests: XCTestCase {
 
     private var temporaryDirectory: URL!
     private var temporaryFile: URL!
-    private var mockImportBackupUseCase: MockImportBackupUseCaseProtocol!
+    private var mockImportBackupUseCase: ImportBackupUseCaseProtocolMock!
     private var mockLogger: (any LoggerProtocol)!
     private var sut: ImportBackupViewModel!
 
@@ -49,11 +51,12 @@ final class ImportBackupViewModelTest: XCTestCase {
         try Data("data".utf8).write(to: temporaryFile)
 
         mockImportBackupUseCase = .init()
+        mockImportBackupUseCase.isImportDestructive = true
 
         mockLogger = WireLogger(tag: "mock")
 
         sut = .init(
-            importBackupUseCase: mockImportBackupUseCase,
+            importBackupUseCaseFactory: ImportBackupUseCaseFactory(useCase: mockImportBackupUseCase),
             logger: mockLogger
         )
     }
@@ -83,8 +86,10 @@ final class ImportBackupViewModelTest: XCTestCase {
 
     func testPasswordIsRequested() {
         // Given
-        var continuation: AsyncThrowingStream<ImportBackupProgress, any Error>.Continuation!
-        mockImportBackupUseCase.invokeUrlPassword_MockValue = .init { continuation = $0 }
+        let (stream, continuation) = AsyncThrowingStream<ImportBackupProgress, any Error>.makeStream()
+        mockImportBackupUseCase.invokePasswordStringAsyncThrowingStreamImportBackupProgressAnyErrorClosure = { _ in
+            stream
+        }
         let sut = sut as ImportBackupViewModel
 
         // When
@@ -100,8 +105,8 @@ final class ImportBackupViewModelTest: XCTestCase {
 
     func testProgressIsReported() {
         // Given
-        var continuation: AsyncThrowingStream<ImportBackupProgress, any Error>.Continuation!
-        mockImportBackupUseCase.invokeUrlPassword_MockValue = .init { continuation = $0 }
+        var (stream, continuation) = AsyncThrowingStream<ImportBackupProgress, any Error>.makeStream()
+        mockImportBackupUseCase.invokePasswordStringAsyncThrowingStreamImportBackupProgressAnyErrorReturnValue = stream
         let sut = sut as ImportBackupViewModel
 
         // When
@@ -111,7 +116,8 @@ final class ImportBackupViewModelTest: XCTestCase {
         wait(forConditionToBeTrue: sut.importProgress == (0, 0), timeout: 3)
         continuation.finish(throwing: ImportBackupError.passwordRequired)
         wait(forConditionToBeTrue: sut.isEnterBackupPasswordPresented, timeout: 3)
-        mockImportBackupUseCase.invokeUrlPassword_MockValue = .init { continuation = $0 }
+        (stream, continuation) = AsyncThrowingStream<ImportBackupProgress, any Error>.makeStream()
+        mockImportBackupUseCase.invokePasswordStringAsyncThrowingStreamImportBackupProgressAnyErrorReturnValue = stream
         sut.enterPassword("pw")
 
         // Then
@@ -123,4 +129,9 @@ final class ImportBackupViewModelTest: XCTestCase {
         wait(forConditionToBeTrue: sut.isAlertPresented, timeout: 3)
     }
 
+}
+
+private struct ImportBackupUseCaseFactory: ImportBackupUseCaseFactoryProtocol {
+    var useCase: any ImportBackupUseCaseProtocol
+    func importBackupUseCase(for url: URL) throws -> any ImportBackupUseCaseProtocol { useCase }
 }
