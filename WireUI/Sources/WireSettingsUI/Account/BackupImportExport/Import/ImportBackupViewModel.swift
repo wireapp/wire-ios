@@ -139,8 +139,8 @@ final class ImportBackupViewModel: ObservableObject {
                         state = .importingBackup(current: current, total: total)
                     case .done:
                         alertContent = .init(
-                            title: Strings.Alert.Success.title,
-                            message: Strings.Alert.Success.message,
+                            title: Strings.Alert.Success.message,
+                            message: "",
                             action: Strings.Alert.ok
                         )
                         state = .success
