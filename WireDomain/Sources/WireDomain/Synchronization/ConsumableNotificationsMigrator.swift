@@ -19,13 +19,9 @@ import WireAPI
 import WireDataModel
 import WireLogging
 
-protocol AsyncStreamMigratorProtocol {
-    func migrateToAsyncStream() async throws
-}
-
 typealias IncrementalSyncV1 = IncrementalSync
 
-public final class AsyncStreamMigrator: AsyncStreamMigratorProtocol {
+public final class ConsumableNotificationsMigrator: ConsumableNotificationsMigratorProtocol {
     let sync: SyncMigratorProtocol
     let apiVersion: WireAPI.APIVersion
     let userClientsLocalStore: UserClientsLocalStoreProtocol
@@ -52,7 +48,7 @@ public final class AsyncStreamMigrator: AsyncStreamMigratorProtocol {
         case missingClientID
     }
 
-    public func migrateToAsyncStream() async throws {
+    public func migrate() async throws {
         // 1) register asyncStream capabilities
         guard apiVersion >= .v8 else {
             throw Failure.apiVersionTooLow

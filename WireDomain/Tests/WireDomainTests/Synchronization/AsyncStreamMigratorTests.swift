@@ -22,8 +22,8 @@ import WireSystem
 import XCTest
 @testable import WireDomain
 
-final class AsyncStreamMigratorTests: XCTestCase {
-    var sut: AsyncStreamMigrator!
+final class ConsumableNotificationsMigratorTests: XCTestCase {
+    var sut: ConsumableNotificationsMigrator!
     var mockSync: MockSyncMigratorProtocol!
     var mockUserClientsAPI: MockUserClientsAPI!
     var mockLocalStore: MockUserClientsLocalStoreProtocol!
@@ -41,7 +41,7 @@ final class AsyncStreamMigratorTests: XCTestCase {
         mockLocalStore = .init()
         journal = Journal(userID: Scaffolding.userID, storage: UserDefaults.temporary())
 
-        sut = AsyncStreamMigrator(
+        sut = ConsumableNotificationsMigrator(
             sync: mockSync,
             userClientsAPI: mockUserClientsAPI,
             userClientsLocalStore: mockLocalStore,
@@ -60,7 +60,7 @@ final class AsyncStreamMigratorTests: XCTestCase {
         sut = nil
     }
 
-    func test_migrateToAsyncStream_userClientNeedsRegistration() async throws {
+    func test_migrate_userClientNeedsRegistration() async throws {
         // GIVEN
         mockLocalStore.fetchSelfClientID_MockValue = Scaffolding.userID.uuidString
         mockLocalStore.hasRegisteredAsyncStreamCapable_MockValue = false
@@ -68,7 +68,7 @@ final class AsyncStreamMigratorTests: XCTestCase {
         mockSync.migrateFromIncrementalSyncV1_MockMethod = { }
 
         // WHEN
-        try await sut.migrateToAsyncStream()
+        try await sut.migrate()
 
         // THEN
         XCTAssertEqual(mockUserClientsAPI.updateClientIdClientUpdate_Invocations.count, 1)
@@ -76,14 +76,14 @@ final class AsyncStreamMigratorTests: XCTestCase {
         XCTAssertTrue(journal[.isConsumableNotificationsEnabled])
     }
 
-    func test_migrateToAsyncStream_userClientAlreadyCapable() async throws {
+    func test_migrate_userClientAlreadyCapable() async throws {
         // GIVEN
         mockLocalStore.fetchSelfClientID_MockValue = Scaffolding.userID.uuidString
         mockLocalStore.hasRegisteredAsyncStreamCapable_MockValue = true
         mockSync.migrateFromIncrementalSyncV1_MockMethod = { }
 
         // WHEN
-        try await sut.migrateToAsyncStream()
+        try await sut.migrate()
 
         // THEN
         XCTAssertEqual(mockUserClientsAPI.updateClientIdClientUpdate_Invocations.count, 0)
@@ -92,7 +92,7 @@ final class AsyncStreamMigratorTests: XCTestCase {
         XCTAssertTrue(journal[.isConsumableNotificationsEnabled])
     }
 
-    func test_migrateToAsyncStream_syncFails_throws() async throws {
+    func test_migrate_syncFails_throws() async throws {
         // GIVEN
         mockLocalStore.fetchSelfClientID_MockValue = Scaffolding.userID.uuidString
         mockLocalStore.hasRegisteredAsyncStreamCapable_MockValue = false
@@ -102,7 +102,7 @@ final class AsyncStreamMigratorTests: XCTestCase {
 
         // WHEN
         await XCTAssertThrowsErrorAsync(error) {
-            try await self.sut.migrateToAsyncStream()
+            try await self.sut.migrate()
         }
 
         // THEN
@@ -111,7 +111,7 @@ final class AsyncStreamMigratorTests: XCTestCase {
         XCTAssertFalse(journal[.isConsumableNotificationsEnabled])
     }
 
-    func test_migrateToAsyncStream_registrationFails_throws() async throws {
+    func test_migrate_registrationFails_throws() async throws {
         // GIVEN
         mockLocalStore.fetchSelfClientID_MockValue = Scaffolding.userID.uuidString
         mockLocalStore.hasRegisteredAsyncStreamCapable_MockValue = false
@@ -122,7 +122,7 @@ final class AsyncStreamMigratorTests: XCTestCase {
 
         // WHEN
         await XCTAssertThrowsErrorAsync(error) {
-            try await self.sut.migrateToAsyncStream()
+            try await self.sut.migrate()
         }
 
         // THEN
@@ -131,9 +131,9 @@ final class AsyncStreamMigratorTests: XCTestCase {
         XCTAssertFalse(journal[.isConsumableNotificationsEnabled])
     }
 
-    func test_migrateToAsyncStream_apiVersionTooLow_throws() async throws {
+    func test_migrate_apiVersionTooLow_throws() async throws {
         // GIVEN
-        sut = AsyncStreamMigrator(
+        sut = ConsumableNotificationsMigrator(
             sync: mockSync,
             userClientsAPI: mockUserClientsAPI,
             userClientsLocalStore: mockLocalStore,
@@ -144,8 +144,8 @@ final class AsyncStreamMigratorTests: XCTestCase {
         mockSync.migrateFromIncrementalSyncV1_MockMethod = { }
 
         // WHEN / THEN
-        await XCTAssertThrowsErrorAsync(AsyncStreamMigrator.Failure.apiVersionTooLow) {
-            try await self.sut.migrateToAsyncStream()
+        await XCTAssertThrowsErrorAsync(ConsumableNotificationsMigrator.Failure.apiVersionTooLow) {
+            try await self.sut.migrate()
         }
     }
 }

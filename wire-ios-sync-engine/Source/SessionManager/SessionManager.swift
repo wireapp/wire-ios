@@ -1089,7 +1089,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                         journal: journal
                     )
 
-                    await userSession.migrateToAsyncStreamIfNeeded()
+                    await userSession.migrateIfNeeded()
 
                     await MainActor.run {
                         userSession.triggerSync()

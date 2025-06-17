@@ -613,15 +613,15 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-    public func migrateToAsyncStreamIfNeeded() async {
+    public func migrateIfNeeded() async {
         guard !journal[.isConsumableNotificationsEnabled] else { return }
         guard let migrator = clientSessionComponent?.asyncStreamMigrator() else {
             WireLogger.sync.warn("No async stream migrator available")
             return
         }
         do {
-            try await migrator.migrateToAsyncStream()
-        } catch AsyncStreamMigrator.Failure.apiVersionTooLow {
+            try await migrator.migrate()
+        } catch ConsumableNotificationsMigrator.Failure.apiVersionTooLow {
             // ignore error
         } catch {
             WireLogger.session.error("Failed to migrate to async stream: \(String(describing: error))")

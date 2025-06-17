@@ -388,8 +388,8 @@ public final class ClientSessionComponent {
         journal: journal
     )
 
-    public func asyncStreamMigrator() -> AsyncStreamMigrator {
-        AsyncStreamMigrator(
+    public func asyncStreamMigrator() -> ConsumableNotificationsMigrator {
+        ConsumableNotificationsMigrator(
             sync: incrementalSync,
             userClientsAPI: userClientsAPI,
             userClientsLocalStore: userClientsLocalStore,
