@@ -32,7 +32,7 @@ final class CreateAndImportBackupUseCaseTests: XCTestCase {
     private var fileArchiver: ZIPFoundationFileArchiver!
     private var fileUnarchiver: ZIPFoundationFileUnarchiver!
     private var createBackupUseCase: CreateBackupUseCase!
-    private var importBackupUseCase: ImportBackupUseCase!
+    private var importBackupUseCaseFactory: ((_ url: URL) -> ImportBackupUseCase)!
     private var syncTriggerExpectation: XCTestExpectation!
 
     override func setUpWithError() throws {
@@ -51,17 +51,20 @@ final class CreateAndImportBackupUseCaseTests: XCTestCase {
 
         let syncTriggerExpectation = XCTestExpectation()
         self.syncTriggerExpectation = syncTriggerExpectation
-        importBackupUseCase = ImportBackupUseCase(
-            selfUserID: selfUserID,
-            backupLocalStore: backupLocalStoreMock,
-            fileUnarchiver: fileUnarchiver,
-            syncTrigger: { syncTriggerExpectation.fulfill() },
-            logger: WireLogger(tag: "???")
-        )
+        importBackupUseCaseFactory = { [backupLocalStoreMock, fileUnarchiver] url in
+            ImportBackupUseCase(
+                url: url,
+                selfUserID: selfUserID,
+                backupLocalStore: backupLocalStoreMock!,
+                fileUnarchiver: fileUnarchiver!,
+                syncTrigger: { syncTriggerExpectation.fulfill() },
+                logger: WireLogger(tag: "???")
+            )
+        }
     }
 
     override func tearDownWithError() throws {
-        importBackupUseCase = nil
+        importBackupUseCaseFactory = nil
         createBackupUseCase = nil
         fileArchiver = nil
         fileUnarchiver = nil
@@ -94,7 +97,8 @@ final class CreateAndImportBackupUseCaseTests: XCTestCase {
         backupLocalStoreMock.fetchAllUserIDsSetQualifiedIDReturnValue = []
         backupLocalStoreMock.fetchAllMessageIDsSetStringReturnValue = []
 
-        let importEvents = try await importBackupUseCase.invoke(url: backupURL, password: password)
+        let importBackupUseCase = importBackupUseCaseFactory(backupURL)
+        let importEvents = try await importBackupUseCase.invoke(password: password)
             .reduce(into: [ImportBackupProgress]()) { $0 += [$1] }
         await fulfillment(of: [syncTriggerExpectation], timeout: 1)
 
