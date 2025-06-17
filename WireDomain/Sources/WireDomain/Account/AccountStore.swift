@@ -111,6 +111,15 @@ struct AccountStore {
 
     // MARK: Backend Environment
 
+    // MARK: - Store
+
+    /// Store an `BackendEnvironment`.
+    ///
+    /// If the BackendEnvironment for an account already exists, it will be overwritten.
+    ///
+    /// - parameter backendEnvironment: Object to store.
+    /// - returns: Whether the operation was successful.
+
     @discardableResult
     func storeBackendEnvironment(_ backendEnvironment: BackendEnvironment2, for accountId: UUID) -> Bool {
         do {
@@ -121,10 +130,18 @@ struct AccountStore {
             return true
         } catch {
             let errorDescription = error.safeForLoggingDescription
-            log.error("Unable to store account \(backendEnvironment), error: \(errorDescription)")
+            log
+                .error(
+                    "Unable to store backend environment \(backendEnvironment) for account with ID \(accountId.safeForLoggingDescription), error: \(errorDescription)"
+                )
             return false
         }
     }
+
+    /// Fetch a backend environment for account.
+    ///
+    /// - parameter accountId: The `UUID` of the user the account belongs to.
+    /// - returns: The `BackendEnvironment` if it exists.
 
     func fetchBackendEnvironment(accountId: UUID) throws -> BackendEnvironment2? {
         let url = backendEnvironmentUrl(for: accountId)
@@ -138,7 +155,10 @@ struct AccountStore {
             return try stored.toDomain()
         } catch {
             let errorDescription = error.safeForLoggingDescription
-            log.error("Unable to fetch backend environment for account \(accountId), error: \(errorDescription)")
+            log
+                .error(
+                    "Unable to fetch backend environment for account with ID \(accountId.safeForLoggingDescription), error: \(errorDescription)"
+                )
             return nil
         }
     }
@@ -164,6 +184,13 @@ struct AccountStore {
         }
     }
 
+    // MARK: - Delete
+
+    /// Delete an `BackendEnvironment`.
+    ///
+    /// - parameter account: The account for which backend environment should be deleted.
+    /// - returns: `false` if the BackendEnvironment cannot be found or cannot be deleted otherwise `true`.
+
     @discardableResult
     func deleteBackgroundEnvironment(account: Account) -> Bool {
         do {
@@ -172,7 +199,10 @@ struct AccountStore {
         } catch {
             let accountDescription = account.safeForLoggingDescription
             let errorDescription = error.safeForLoggingDescription
-            log.error("Unable to delete account \(accountDescription), error: \(errorDescription)")
+            log
+                .error(
+                    "Unable to delete BackendEnvironment for account \(accountDescription), error: \(errorDescription)"
+                )
             return false
         }
     }
