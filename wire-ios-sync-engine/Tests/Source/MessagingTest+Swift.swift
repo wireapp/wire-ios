@@ -95,6 +95,11 @@ public extension MessagingTest {
         proteusViaCoreCrypto.isOn = false
     }
 
+    @objc
+    func createSelfClient() -> UserClient {
+        createSelfClient(capabilities: [])
+    }
+
     func createSelfClient(capabilities: [UserClientCapability] = []) -> UserClient {
         let selfClient = setupSelfClient(inMoc: syncMOC)
         let time = Date().transportString()
