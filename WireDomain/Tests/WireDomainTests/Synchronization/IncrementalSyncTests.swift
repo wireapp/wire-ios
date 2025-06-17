@@ -36,6 +36,7 @@ final class IncrementalSyncTests: XCTestCase {
     var processor: MockUpdateEventProcessorProtocol!
     var databaseSaver: MockDatabaseSaverProtocol!
     var syncStateSubject: CurrentValueSubject<SyncState, Never>!
+    var mlsGroupRepairAgent: MockMLSGroupRepairAgentProtocol!
 
     override func setUp() {
         journal = Journal(
@@ -50,6 +51,8 @@ final class IncrementalSyncTests: XCTestCase {
         processor = MockUpdateEventProcessorProtocol()
         databaseSaver = MockDatabaseSaverProtocol()
         syncStateSubject = CurrentValueSubject(.idle)
+        mlsGroupRepairAgent = MockMLSGroupRepairAgentProtocol()
+
         sut = IncrementalSync(
             selfClientID: Scaffolding.selfClientID,
             pushChannelAPI: pushChannelAPI,
@@ -60,7 +63,8 @@ final class IncrementalSyncTests: XCTestCase {
             processor: processor,
             databaseSaver: databaseSaver,
             syncStateSubject: syncStateSubject,
-            journal: journal
+            journal: journal,
+            mlsGroupRepairAgent: mlsGroupRepairAgent
         )
     }
 
@@ -75,6 +79,7 @@ final class IncrementalSyncTests: XCTestCase {
         processor = nil
         databaseSaver = nil
         syncStateSubject = nil
+        mlsGroupRepairAgent = nil
     }
 
     func test_perform_pendingEventsExist() async throws {
@@ -145,6 +150,9 @@ final class IncrementalSyncTests: XCTestCase {
 
         // Database is saved.
         databaseSaver.save_MockMethod = {}
+
+        // Repair broken MLS conversations
+        mlsGroupRepairAgent.repairConversations_MockMethod = {}
 
         // When
         let token = try await sut.perform()
@@ -277,6 +285,9 @@ final class IncrementalSyncTests: XCTestCase {
         // Database is saved.
         databaseSaver.save_MockMethod = {}
         pushChannel.close_MockMethod = {}
+
+        // Repair broken MLS conversations
+        mlsGroupRepairAgent.repairConversations_MockMethod = {}
 
         // When
         let task = Task {
