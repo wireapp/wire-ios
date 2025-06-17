@@ -20,9 +20,17 @@ import Foundation
 import WireDomainPackage
 import WireFoundation
 
-struct PreviewImportBackupUseCase: ImportBackupUseCaseProtocol {
+struct PreviewImportBackupUseCaseFactory: ImportBackupUseCaseFactoryProtocol {
+    func importBackupUseCase(for url: URL) throws -> any ImportBackupUseCaseProtocol {
+        PreviewImportBackupUseCase()
+    }
+}
 
-    func invoke(url: URL, password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error> {
+private struct PreviewImportBackupUseCase: ImportBackupUseCaseProtocol {
+
+    let isImportDestructive = false
+
+    func invoke(password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error> {
         AsyncThrowingStream { continuation in
             let task = Task<Void, Never>.detached {
                 do {

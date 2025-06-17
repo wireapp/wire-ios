@@ -48,7 +48,6 @@ Die Sicherungsdatei ist nicht durch eine Ende-zu-Ende-Verschlüsselung geschütz
 "importBackup.overwriteConfirmation.proceed" = "Fortfahren";
 
 "importBackup.alert.ok" = "OK";
-"importBackup.alert.success.title" = "Success";
 "importBackup.alert.success.message" = "Ihr Verlauf wurde wiederhergestellt.";
 "importBackup.alert.genericError.title" = "Ein Fehler ist aufgetreten";
 "importBackup.alert.genericError.message" = "Ihr Gesprächsverlauf konnte nicht wiederhergestellt werden. Bitte versuchen Sie es erneut oder kontaktieren Sie Wire Support.";
