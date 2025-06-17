@@ -16,13 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-public protocol ImportBackupUseCaseProtocol: Sendable {
+public import Foundation
+public import WireFoundation
 
-    /// Returns `true` if the implementation will replace the existing data or `false` if existing data is not modified.
+public protocol ImportBackupUseCaseFactoryProtocol {
 
-    var isImportDestructive: Bool { get }
+    /// Returns an implementation of an import backup use case based on the provided file (extension).
+    /// - Parameter url: The backup file to import.
+    /// - Returns: An implementation which can import the provided file.
 
-    func invoke(password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error>
+    func importBackupUseCase(for url: URL) throws -> any ImportBackupUseCaseProtocol
 
 }
