@@ -392,7 +392,7 @@ final class AccountStoreTests {
         #expect(fetched?.pinnedKeys.count == 1)
         #expect(fetched?.proxySettings != nil)
     }
-    
+
     @Test
     func storeAndFetchBackendEnvironment_noPinnedKey() throws {
         let sut = try AccountStore(root: url)
@@ -403,10 +403,10 @@ final class AccountStoreTests {
         let fetched = try sut.fetchBackendEnvironment(accountId: accountId)
 
         #expect(fetched == environment)
-        #expect(fetched?.pinnedKeys.count == 0)
+        #expect(fetched?.pinnedKeys.isEmpty == true)
         #expect(fetched?.proxySettings != nil)
     }
-    
+
     @Test
     func storeAndFetchBackendEnvironment_noPinnedKey_noProxySettings() throws {
         let sut = try AccountStore(root: url)
@@ -419,10 +419,10 @@ final class AccountStoreTests {
         let fetched = try sut.fetchBackendEnvironment(accountId: accountId)
 
         #expect(fetched == environment)
-        #expect(fetched?.pinnedKeys.count == 0)
+        #expect(fetched?.pinnedKeys.isEmpty == true)
         #expect(fetched?.proxySettings == nil)
     }
-    
+
     @Test
     func storeAndFetchBackendEnvironment_unauthenticatedProxySettings() throws {
         let sut = try AccountStore(root: url)
@@ -480,10 +480,15 @@ final class AccountStoreTests {
         else {
             fatalError()
         }
-        
+
         var proxy: WireAPI.ProxySettings? = nil
         if proxyIncluded {
-            proxy = proxyAuthenticated ? .authenticated(host: "Host.com", port: 9999, username: "username", password: "pass") :
+            proxy = proxyAuthenticated ? .authenticated(
+                host: "Host.com",
+                port: 9999,
+                username: "username",
+                password: "pass"
+            ) :
                 .unauthenticated(host: "Host.com", port: 9999)
         }
 
