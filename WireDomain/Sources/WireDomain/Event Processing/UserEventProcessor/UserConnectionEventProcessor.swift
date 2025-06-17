@@ -28,16 +28,6 @@ struct UserConnectionEventProcessor: UserConnectionEventProcessorProtocol {
 
     private var oneOnOneResolutionDelay: TimeInterval = 3
 
-    public init(
-        context: NSManagedObjectContext,
-        connectionsRepository: any ConnectionsRepositoryProtocol,
-        oneOnOneResolver: any OneOnOneResolverProtocol
-    ) {
-        self.context = context
-        self.connectionsRepository = connectionsRepository
-        self.oneOnOneResolver = oneOnOneResolver
-    }
-
     func processEvent(_ event: UserConnectionEvent) async throws {
         let connection = event.connection
 
