@@ -123,7 +123,7 @@ enum ManagedByV0: String, Decodable, ToAPIModelConvertible {
 
 struct SSOIDV0: Decodable, ToAPIModelConvertible {
 
-    let scimExternalId: String
+    let scimExternalId: String?
     let subject: String
     let tenant: String
 
