@@ -556,7 +556,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         // non nil in order to process the notification
         BackgroundActivityFactory.shared.activityManager = UIApplication.shared
 
-        //
         self.analyticsService = analyticsServiceConfiguration.map { config in
             AnalyticsService(
                 config: CountlyConfiguration(appKey: config.secretKey, host: config.serverHost),
@@ -1552,7 +1551,7 @@ extension SessionManager: UserObserving {
 
             Task {
                 do {
-                    try await analyticsService?.updateCurrentUser(userSession.createAnalyticsUser()) //
+                    try await analyticsService?.updateCurrentUser(userSession.createAnalyticsUser())
                 } catch {
                     WireLogger.analytics.error("failed to update current user: \(error)")
                 }

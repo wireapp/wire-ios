@@ -158,7 +158,7 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
     ) throws {
         guard let countly else { return }
 
-        if let id = user?.analyticsIdentifier {// here's analyticsIdentifier
+        if let id = user?.analyticsIdentifier {
             countly.changeDeviceID(
                 id,
                 mergeData: mergeData
