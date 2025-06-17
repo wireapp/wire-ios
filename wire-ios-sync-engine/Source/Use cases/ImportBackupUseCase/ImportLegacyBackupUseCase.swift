@@ -29,6 +29,7 @@ struct ImportLegacyBackupUseCase: ImportBackupUseCaseProtocol {
     // using WireFoundation.QualifiedID leads to linking errors
     private typealias QualifiedID = WireDataModel.QualifiedID
 
+    let url: URL
     let userSession: @Sendable () -> UserSession?
     let dispatchGroup: ZMSDispatchGroup
     let streamDecryptor: ImportLegacyBackupStreamDecryptorProtocol
@@ -39,7 +40,9 @@ struct ImportLegacyBackupUseCase: ImportBackupUseCaseProtocol {
     let sharedContainerURL: URL
     let logger: WireLogger
 
-    func invoke(url: URL, password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error> {
+    let isImportDestructive = true
+
+    func invoke(password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error> {
         AsyncThrowingStream { continuation in
             let task = Task<Void, Never> { @MainActor in
                 do {

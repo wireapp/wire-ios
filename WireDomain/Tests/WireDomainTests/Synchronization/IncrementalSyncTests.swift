@@ -36,6 +36,7 @@ final class IncrementalSyncTests: XCTestCase {
     var processor: MockUpdateEventProcessorProtocol!
     var databaseSaver: MockDatabaseSaverProtocol!
     var syncStateSubject: CurrentValueSubject<SyncState, Never>!
+    var mlsGroupRepairAgent: MockMLSGroupRepairAgentProtocol!
 
     override func setUp() {
         journal = Journal(
@@ -50,6 +51,8 @@ final class IncrementalSyncTests: XCTestCase {
         processor = MockUpdateEventProcessorProtocol()
         databaseSaver = MockDatabaseSaverProtocol()
         syncStateSubject = CurrentValueSubject(.idle)
+        mlsGroupRepairAgent = MockMLSGroupRepairAgentProtocol()
+
         sut = IncrementalSync(
             selfClientID: Scaffolding.selfClientID,
             pushChannelAPI: pushChannelAPI,
@@ -60,7 +63,8 @@ final class IncrementalSyncTests: XCTestCase {
             processor: processor,
             databaseSaver: databaseSaver,
             syncStateSubject: syncStateSubject,
-            journal: journal
+            journal: journal,
+            mlsGroupRepairAgent: mlsGroupRepairAgent
         )
     }
 
@@ -75,6 +79,7 @@ final class IncrementalSyncTests: XCTestCase {
         processor = nil
         databaseSaver = nil
         syncStateSubject = nil
+        mlsGroupRepairAgent = nil
     }
 
     func test_perform_pendingEventsExist() async throws {
@@ -93,7 +98,7 @@ final class IncrementalSyncTests: XCTestCase {
             (Scaffolding.event3, managedObjectID3)
         ]
 
-        // Pendeng events are stored in batches.
+        // Pending events are stored in batches.
         updateEventsStore.fetchStoredEventEnvelopesLimit_MockMethod = { _ in
             let envelopes = storedEnvelopes
             storedEnvelopes = []
@@ -126,10 +131,6 @@ final class IncrementalSyncTests: XCTestCase {
         updateEventsStore.deleteEventEnvelopeAtIndex_MockMethod = { _ in }
 
         // Live events are decrypted.
-//        decryptor.decryptEventsIn_MockMethod = { EventDecryptorResult(
-//            events: $0.events,
-//            brokenMLSGroupIDs: [Scaffolding.mlsGroupID]
-//        ) }
         decryptor.decryptEventsInContext_MockMethod = { envelope, _ in
             EventDecryptorResult(events: envelope.events, brokenMLSGroupIDs: [Scaffolding.mlsGroupID])
         }
@@ -145,6 +146,9 @@ final class IncrementalSyncTests: XCTestCase {
 
         // Database is saved.
         databaseSaver.save_MockMethod = {}
+
+        // Repair broken MLS conversations
+        mlsGroupRepairAgent.repairConversations_MockMethod = {}
 
         // When
         let token = try await sut.perform()
@@ -228,7 +232,7 @@ final class IncrementalSyncTests: XCTestCase {
             Scaffolding.event3
         ]
 
-        // Pendeng events are stored in batches.
+        // Pending events are stored in batches.
         updateEventsStore.fetchStoredEventEnvelopesLimit_MockMethod = { _ in
             let envelopes = storedEnvelopes
             storedEnvelopes = []
@@ -277,6 +281,9 @@ final class IncrementalSyncTests: XCTestCase {
         // Database is saved.
         databaseSaver.save_MockMethod = {}
         pushChannel.close_MockMethod = {}
+
+        // Repair broken MLS conversations
+        mlsGroupRepairAgent.repairConversations_MockMethod = {}
 
         // When
         let task = Task {

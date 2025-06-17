@@ -43,7 +43,7 @@ public struct AccountSwitcherView: View {
             ForEach(0 ..< totalCount, id: \.self) { index in
                 if index < otherAccounts.count {
                     AccountView(account: otherAccounts[index])
-                        .padding(EdgeInsets(top: 8.5, leading: 16, bottom: 10.5, trailing: 20))
+                        .padding(EdgeInsets(top: 8.5, leading: 16, bottom: 8.5, trailing: 20))
                 } else {
                     OptionView(option: options[index - otherAccounts.count])
                         .padding(EdgeInsets(top: 16.5, leading: 16, bottom: 18.5, trailing: 20))

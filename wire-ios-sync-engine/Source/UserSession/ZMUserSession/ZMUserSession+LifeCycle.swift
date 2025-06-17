@@ -78,6 +78,7 @@ public extension ZMUserSession {
     }
 
     internal func processPendingEvents() {
+        guard !journal[.isSyncV2Enabled] else { return }
         syncContext.performGroupedBlock {
             self.processLegacyEvents()
         }

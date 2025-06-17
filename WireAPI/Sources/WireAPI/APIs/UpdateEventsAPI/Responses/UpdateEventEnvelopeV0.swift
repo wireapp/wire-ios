@@ -30,7 +30,8 @@ public struct UpdateEventEnvelopeV0: Decodable, ToAPIModelConvertible {
         UpdateEventEnvelope(
             id: id,
             events: (payload ?? []).map(\.updateEvent),
-            isTransient: transient ?? false
+            isTransient: transient ?? false,
+            deliveryTag: nil
         )
     }
 

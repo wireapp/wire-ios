@@ -76,7 +76,6 @@ public final class ZMUserSession: NSObject {
     let legacyHotFix: ZMHotFix
 
     var accessTokenRenewalObserver: AccessTokenRenewalObserver?
-    private var mlsGroupRepairAgent: MLSGroupRepairAgentProtocol?
 
     var recurringActionService: any RecurringActionServiceInterface
 
@@ -561,6 +560,7 @@ public final class ZMUserSession: NSObject {
     private func setUpSyncAgent(clientID: String, asyncStreamEnabled: Bool) {
         let clientSessionComponent = userSessionComponent.clientSessionComponent(
             clientID: clientID,
+            asyncStreamEnabled: asyncStreamEnabled,
             completionHandlers: .init(
                 onProcessedCallEvent: onProcessedCallEvent,
                 onSelfClientInvalidated: onSelfClientInvalidated,
@@ -569,21 +569,19 @@ public final class ZMUserSession: NSObject {
             )
         )
 
-        coreCryptoProvider.registerMlsTransport(clientSessionComponent.mlsTransport)
-
-        let incrementalSyncProvider: IncrementalSyncProvider = if !asyncStreamEnabled {
-            clientSessionComponent
-        } else {
-            // TODO: [WPB-17225] replace syncProvider here
-            clientSessionComponent
+        if asyncStreamEnabled {
+            // TODO: [WPB-17223] move this just after the migration is done
+            journal[.isSyncV3Enabled] = true
         }
+
+        coreCryptoProvider.registerMlsTransport(clientSessionComponent.mlsTransport)
 
         let syncAgent = SyncAgent(
             journal: journal,
             lastUpdateEventIDRepository: lastEventIDRepository,
             coreCryptoProvider: coreCryptoProvider,
             initialSyncProvider: clientSessionComponent,
-            incrementalSyncProvider: incrementalSyncProvider,
+            incrementalSyncProvider: clientSessionComponent,
             legacySyncStatus: applicationStatusDirectory.syncStatus,
             syncStateSubject: clientSessionComponent.syncStateSubject
         )
@@ -592,11 +590,6 @@ public final class ZMUserSession: NSObject {
         syncAgent.delegate = self
 
         mlsService.setSyncDelegate(syncAgent)
-        mlsGroupRepairAgent = MLSGroupRepairAgent(
-            journal: journal,
-            mlsService: mlsService,
-            syncStatePublisher: clientSessionComponent.syncStateSubject.eraseToAnyPublisher()
-        )
 
         // Finish setting up the final strategies.
         if
@@ -1137,7 +1130,15 @@ extension ZMUserSession: SyncAgentDelegate {
         syncContext.performGroupedBlock { [weak self] in
             guard let self else { return }
             WireLogger.sync.debug("did finish incremental sync")
-            processLegacyEvents()
+
+            func showSyncBar(_ show: Bool) {
+                managedObjectContext.performGroupedBlock { [weak self] in
+                    self?.isPerformingSync = show
+                    self?.updateNetworkState()
+                }
+            }
+
+            showSyncBar(true)
 
             NotificationInContext(
                 name: .quickSyncCompletedNotification,
@@ -1146,7 +1147,7 @@ extension ZMUserSession: SyncAgentDelegate {
 
             guard !isRecovering else {
                 // in case of recovery, we don't need more
-                return
+                return showSyncBar(false)
             }
 
             WaitingGroupTask(context: syncContext) { [weak self] in
@@ -1179,6 +1180,9 @@ extension ZMUserSession: SyncAgentDelegate {
 
                 await calculateSelfSupportedProtocolsIfNeeded()
                 await resolveOneOnOneConversationsIfNeeded()
+
+                // TODO: [WPB-18175] Port MLS client creation and related MLS operations from here to the InitialSync
+                showSyncBar(false)
             }
 
             recurringActionService.performActionsIfNeeded()
@@ -1278,6 +1282,10 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     func processLegacyEvents() {
+        guard !journal[.isSyncV2Enabled] else {
+            return
+        }
+
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.isPerformingSync = true
             self?.updateNetworkState()

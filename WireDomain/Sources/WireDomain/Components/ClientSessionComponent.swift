@@ -65,6 +65,7 @@ public final class ClientSessionComponent {
     private let proteusService: any ProteusServiceInterface
     private let coreCryptoProvider: any CoreCryptoProviderProtocol
 
+    public let asyncStreamEnabled: Bool
     private let completionHandlers: CompletionHandlers
 
     public init(
@@ -83,6 +84,7 @@ public final class ClientSessionComponent {
         mlsService: any MLSServiceInterface,
         mlsDecryptionService: any MLSDecryptionServiceInterface,
         proteusService: any ProteusServiceInterface,
+        asyncStreamEnabled: Bool,
         coreCryptoProvider: any CoreCryptoProviderProtocol,
         completionHandlers: CompletionHandlers
     ) {
@@ -101,6 +103,7 @@ public final class ClientSessionComponent {
         self.localDomain = localDomain
         self.isFederationEnabled = isFederationEnabled
         self.isMLSEnabled = isMLSEnabled
+        self.asyncStreamEnabled = asyncStreamEnabled
         self.coreCryptoProvider = coreCryptoProvider
         self.completionHandlers = completionHandlers
     }
@@ -137,7 +140,11 @@ public final class ClientSessionComponent {
 
     private lazy var pushChannelAPI = PushChannelAPIBuilder(
         pushChannelService: pushChannelService
-    ).makeAPI()
+    ).makeAPI(for: apiVersion)
+
+    private lazy var pushChannelV2API = PushChannelV2APIBuilder(
+        pushChannelService: pushChannelService
+    ).makeAPI(for: apiVersion)
 
     private lazy var selfUserAPI = SelfUserAPIBuilder(
         apiService: apiService
@@ -361,6 +368,11 @@ public final class ClientSessionComponent {
         authenticationManager: authenticationManager
     )
 
+    private lazy var mlsGroupRepairAgent = MLSGroupRepairAgent(
+        journal: journal,
+        mlsService: mlsService
+    )
+
     public lazy var incrementalSync = IncrementalSync(
         selfClientID: selfClientID,
         pushChannelAPI: pushChannelAPI,
@@ -368,6 +380,18 @@ public final class ClientSessionComponent {
         decryptor: updateEventDecryptor,
         updateEventsStore: updateEventsLocalStore,
         messageStore: messageLocalStore,
+        processor: updateEventProcessor,
+        databaseSaver: databaseSaver,
+        syncStateSubject: syncStateSubject,
+        journal: journal,
+        mlsGroupRepairAgent: mlsGroupRepairAgent
+    )
+
+    public lazy var incrementalSyncV2 = IncrementalSyncV2(
+        selfClientID: selfClientID,
+        pushChannelAPI: pushChannelV2API,
+        decryptor: updateEventDecryptor,
+        updateEventsStore: updateEventsLocalStore,
         processor: updateEventProcessor,
         databaseSaver: databaseSaver,
         syncStateSubject: syncStateSubject,
