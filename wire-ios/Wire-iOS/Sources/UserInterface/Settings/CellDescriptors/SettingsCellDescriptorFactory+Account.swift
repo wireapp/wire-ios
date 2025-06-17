@@ -400,16 +400,18 @@ extension SettingsCellDescriptorFactory {
             processor: ConversationProtobufMessageProcessor(context: context)
         )
         let userSession = sessionManager.activeUserSession!
-        let importBackupUseCase = CompositeImportBackupUseCase(
-            importBackupUseCase: ImportBackupUseCase(
+        let importBackupUseCaseFactory = ImportBackupUseCaseFactory { url in
+            ImportBackupUseCase(
+                url: url,
                 selfUserID: .init(selfUser.qualifiedID!),
                 backupLocalStore: backupLocalStore,
                 fileUnarchiver: ZipArchiveFileUnarchiver(),
                 syncTrigger: { userSession.triggerResourcesSync() },
                 logger: WireLogger.backupImport
-            ),
-            legacyImportBackupUseCase: sessionManager.importLegacyBackupUseCase!
-        )
+            )
+        } legacyImportBackupUseCase: { url in
+            sessionManager.importLegacyBackupUseCase(url: url)!
+        }
         let createBackupUseCase: CreateBackupUseCaseProtocol = if DeveloperFlag.createLegacyBackups.isOn {
             CreateLegacyBackupUseCase(sessionManager: sessionManager)
         } else {
@@ -424,7 +426,7 @@ extension SettingsCellDescriptorFactory {
         return BackupImportExportBuilder(
             backupPasswordValidator: BackupPasswordValidator(),
             createBackupUseCase: createBackupUseCase,
-            importBackupUseCase: importBackupUseCase,
+            importBackupUseCaseFactory: importBackupUseCaseFactory,
             cleanUpBackupsUseCase: CleanUpBackupsUseCase(sessionManager: sessionManager),
             exportBackupLogger: WireLogger.backupExport,
             importBackupLogger: WireLogger.backupImport,
