@@ -35,7 +35,7 @@ class UserManager {
         networkStack = NetworkStack(backendEnvironment: .staging, minTLSVersion: .v1_2, cookieEncryptionKey: Data())
         cookieStorage = MockCookieStorage()
         authenticationManager = AuthenticationManager(
-            clientID: "selfClientID",
+            clientID: nil,
             cookieStorage: cookieStorage,
             networkService: networkStack.apiNetworkService,
             onAuthenticationFailure: { @Sendable () in return}

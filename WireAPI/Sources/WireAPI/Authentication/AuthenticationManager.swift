@@ -22,25 +22,18 @@ import WireLogging
 
 // sourcery: AutoMockable
 public protocol AuthenticationManagerProtocol {
-
     func getValidAccessToken() async throws -> AccessToken
     func refreshAccessToken() async throws -> AccessToken
-
 }
 
 public actor AuthenticationManager: AuthenticationManagerProtocol {
-
     enum Failure: Error, Equatable {
-
         case invalidCredentials
-
     }
 
     private enum CurrentToken {
-
         case cached(AccessToken)
         case renewing(Task<AccessToken, any Error>)
-
     }
 
     private var currentToken: CurrentToken?
@@ -148,6 +141,13 @@ public actor AuthenticationManager: AuthenticationManagerProtocol {
                 .withAcceptType(.json)
                 .withCookies(cookies)
 
+            if let clientID {
+                requestBuilder = requestBuilder.withQueryItem(
+                    name: "client_id",
+                    value: clientID
+                )
+            }
+
             var request = requestBuilder.build()
 
             if let lastKnownToken {
@@ -165,20 +165,16 @@ public actor AuthenticationManager: AuthenticationManagerProtocol {
                 .parse(code: response.statusCode, data: data)
         }
     }
-
 }
 
 extension AccessToken {
-
     var isExpiring: Bool {
         let secondsRemaining = expirationDate.timeIntervalSinceNow
         return secondsRemaining < 40
     }
-
 }
 
 private struct AccessTokenPayload: Decodable, ToAPIModelConvertible {
-
     let user: UUID
     let accessToken: String
     let tokenType: String
@@ -192,5 +188,4 @@ private struct AccessTokenPayload: Decodable, ToAPIModelConvertible {
             expirationDate: Date(timeIntervalSinceNow: TimeInterval(expiresIn))
         )
     }
-
 }
