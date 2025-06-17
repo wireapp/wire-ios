@@ -481,7 +481,7 @@ final class AccountStoreTests {
             fatalError()
         }
 
-        var proxy: WireAPI.ProxySettings? = nil
+        var proxy: WireAPI.ProxySettings?
         if proxyIncluded {
             proxy = proxyAuthenticated ? .authenticated(
                 host: "Host.com",
