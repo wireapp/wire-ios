@@ -561,6 +561,7 @@ public final class ZMUserSession: NSObject {
     private func setUpSyncAgent(clientID: String, asyncStreamEnabled: Bool) {
         let clientSessionComponent = userSessionComponent.clientSessionComponent(
             clientID: clientID,
+            asyncStreamEnabled: asyncStreamEnabled,
             completionHandlers: .init(
                 onProcessedCallEvent: onProcessedCallEvent,
                 onSelfClientInvalidated: onSelfClientInvalidated,
@@ -569,21 +570,19 @@ public final class ZMUserSession: NSObject {
             )
         )
 
-        coreCryptoProvider.registerMlsTransport(clientSessionComponent.mlsTransport)
-
-        let incrementalSyncProvider: IncrementalSyncProvider = if !asyncStreamEnabled {
-            clientSessionComponent
-        } else {
-            // TODO: [WPB-17225] replace syncProvider here
-            clientSessionComponent
+        if asyncStreamEnabled {
+            // TODO: [WPB-17223] move this just after the migration is done
+            journal[.isSyncV3Enabled] = true
         }
+
+        coreCryptoProvider.registerMlsTransport(clientSessionComponent.mlsTransport)
 
         let syncAgent = SyncAgent(
             journal: journal,
             lastUpdateEventIDRepository: lastEventIDRepository,
             coreCryptoProvider: coreCryptoProvider,
             initialSyncProvider: clientSessionComponent,
-            incrementalSyncProvider: incrementalSyncProvider,
+            incrementalSyncProvider: clientSessionComponent,
             legacySyncStatus: applicationStatusDirectory.syncStatus,
             syncStateSubject: clientSessionComponent.syncStateSubject
         )
