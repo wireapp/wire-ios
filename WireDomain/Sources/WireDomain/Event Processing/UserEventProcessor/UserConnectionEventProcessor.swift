@@ -26,7 +26,7 @@ struct UserConnectionEventProcessor: UserConnectionEventProcessorProtocol {
     let connectionsRepository: any ConnectionsRepositoryProtocol
     let oneOnOneResolver: any OneOnOneResolverProtocol
 
-    private var oneOnOneResolutionDelay: TimeInterval = 3
+    private let oneOnOneResolutionDelay: TimeInterval = 3
 
     func processEvent(_ event: UserConnectionEvent) async throws {
         let connection = event.connection
