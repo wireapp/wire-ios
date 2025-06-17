@@ -102,6 +102,11 @@ extension Alert {
         message: Message.incorrectSsoCode
     )
 
+    static let termsOfUse = Alert(
+        title: L10n.Localizable.CreatePersonalAccount.ConfirmationAlert.title,
+        message: L10n.Localizable.CreatePersonalAccount.ConfirmationAlert.message
+    )
+
 }
 
 extension Alert {

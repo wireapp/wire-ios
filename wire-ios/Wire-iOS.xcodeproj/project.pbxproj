@@ -809,6 +809,7 @@
 				UserInterface/ConversationList/ArchivedList/ArchivedListViewControllerSnapshotTests.swift,
 				UserInterface/ConversationList/ArchivedList/ArchivedListViewModelTests.swift,
 				UserInterface/E2EIdentity/SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift,
+				UserInterface/E2EIdentity/WebViewUserAgentTests.swift,
 				UserInterface/GroupDetails/Cells/GroupDetailsNotificationOptionsCellTests.swift,
 				UserInterface/GroupDetails/GroupDetailsViewControllerTests.swift,
 				UserInterface/MainController/ConversationFilterSelectorTests.swift,

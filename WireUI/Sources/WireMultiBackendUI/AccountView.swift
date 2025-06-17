@@ -49,10 +49,7 @@ struct AccountView: View {
                         .bold()
                         .foregroundStyle(Color(SemanticColors.Label.textDefault))
 
-                    DotSeparatedTextView(
-                        items: details
-                    )
-
+                    DotSeparatedTextView(items: details)
                 }
                 .padding(.vertical, 4)
             }
@@ -65,11 +62,7 @@ struct AccountView: View {
                 .frame(width: 16, height: 16)
         }
         .accessibilityElement(children: .combine)
-        .accessibilityLabel(L10n.Accessibility.account)
-        .accessibilityValue(
-            L10n.Accessibility.Account.value(account.name) + details
-                .joined(separator: ",")
-        )
+        .accessibilityLabel(([account.name] + details).joined(separator: ","))
         .accessibilityAddTraits(.isButton)
         .accessibilityHint(L10n.Accessibility.Account.hint)
         .contentShape(Rectangle())

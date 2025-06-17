@@ -75,7 +75,7 @@ extension ConversationInputBarViewController {
         }
 
         updateMarkdownButton()
-        updateRightAccessoryView()
+        updateButtonStates()
         inputBar.markdownView.updateAccessibilityElements(isAccessible: inputBar.isMarkingDown)
     }
 }

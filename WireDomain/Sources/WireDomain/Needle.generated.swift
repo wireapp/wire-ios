@@ -50,6 +50,9 @@ private class ShowNotificationDependencya0b9d9633053c7a7a814Provider: ShowNotifi
     var conversationLocalStore: any ConversationLocalStoreProtocol {
         return pullEventsStep.conversationLocalStore
     }
+    var databaseSaver: any DatabaseSaverProtocol {
+        return pullEventsStep.databaseSaver
+    }
     private let notificationServiceExtensionFlow: NotificationServiceExtensionFlow
     private let pullEventsStep: PullEventsStep
     private let verifyUserStep: VerifyUserStep
@@ -166,6 +169,7 @@ extension ShowNotificationStep: NeedleFoundation.Registration {
         keyPathToName[\ShowNotificationDependency.accountManager] = "accountManager-AccountManager"
         keyPathToName[\ShowNotificationDependency.selectedAccount] = "selectedAccount-Account"
         keyPathToName[\ShowNotificationDependency.conversationLocalStore] = "conversationLocalStore-any ConversationLocalStoreProtocol"
+        keyPathToName[\ShowNotificationDependency.databaseSaver] = "databaseSaver-any DatabaseSaverProtocol"
     }
 }
 extension ProcessNotificationRequestStep: NeedleFoundation.Registration {
@@ -219,6 +223,7 @@ extension PullEventsStep: NeedleFoundation.Registration {
         keyPathToName[\PullEventsDependency.applicationIdentifier] = "applicationIdentifier-String"
         keyPathToName[\PullEventsDependency.sharedUserDefaults] = "sharedUserDefaults-UserDefaults"
         localTable["conversationLocalStore-any ConversationLocalStoreProtocol"] = { [unowned self] in self.conversationLocalStore as Any }
+        localTable["databaseSaver-any DatabaseSaverProtocol"] = { [unowned self] in self.databaseSaver as Any }
     }
 }
 

@@ -66,19 +66,18 @@ extension CallContent {
         let decoder = JSONDecoder()
 
         guard let data = calling.content.data(using: .utf8) else {
-            WireLogger.notifications.info(
-                "No calling payload found - this is not a call",
-                attributes: .newNSE
-            )
-
             return nil
         }
 
         do {
+            WireLogger.notifications.debug(
+                "Checking if a call needs to be handled..",
+                attributes: .newNSE
+            )
             return try decoder.decode(Self.self, from: data)
         } catch {
-            WireLogger.notifications.error(
-                "Error decoding the notification calling payload: \(error.localizedDescription)",
+            WireLogger.notifications.debug(
+                "No call to handle",
                 attributes: .newNSE
             )
 

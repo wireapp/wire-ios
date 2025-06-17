@@ -117,6 +117,10 @@ public class MockZMConversationMessage: NSObject, ZMConversationMessage {
 
     public var locationMessageData: LocationMessageData?
 
+    // MARK: - multipartMessageData
+
+    public var multipartMessageData: WireDataModel.MultipartMessageData?
+
     // MARK: - usersReaction
 
     public var usersReaction: [String: [UserType]] = [:]

@@ -126,8 +126,8 @@ public final class UserSessionComponent {
 
     public func clientSessionComponent(
         clientID: String,
-        processorHandlers: ClientSessionComponent.ProcessorHandlers,
-        onAuthenticationFailure: @escaping @Sendable () -> Void
+        asyncStreamEnabled: Bool,
+        completionHandlers: ClientSessionComponent.CompletionHandlers
     ) -> ClientSessionComponent {
         ClientSessionComponent(
             selfUserID: selfUserID,
@@ -145,9 +145,9 @@ public final class UserSessionComponent {
             mlsService: mlsService,
             mlsDecryptionService: mlsDecryptionService,
             proteusService: proteusService,
-            processorHandlers: processorHandlers,
+            asyncStreamEnabled: asyncStreamEnabled, // TODO: [WPB-17223] check if still needed
             coreCryptoProvider: coreCryptoProvider,
-            onAuthenticationFailure: onAuthenticationFailure
+            completionHandlers: completionHandlers
         )
     }
 
