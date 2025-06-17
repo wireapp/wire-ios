@@ -134,7 +134,8 @@ public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
             localClient.activationDate = userClientInfo.activationDate
             localClient.lastActiveDate = userClientInfo.lastActiveDate
             localClient.remoteIdentifier = userClientInfo.id
-            localClient.isConsumableNotificationsCapable = userClientInfo.capabilities.contains(.consumableNotifications)
+            localClient.isConsumableNotificationsCapable = userClientInfo.capabilities
+                .contains(.consumableNotifications)
 
             let selfUser = ZMUser.selfUser(in: context)
             localClient.user = localClient.user ?? selfUser

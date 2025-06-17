@@ -18,6 +18,6 @@
 
 // sourcery: AutoMockable
 public protocol SyncMigratorProtocol {
-    
+
     func migrateFromIncrementalSyncV1() async throws
 }

@@ -126,7 +126,6 @@ public final class UserSessionComponent {
 
     public func clientSessionComponent(
         clientID: String,
-        asyncStreamEnabled: Bool,
         completionHandlers: ClientSessionComponent.CompletionHandlers
     ) -> ClientSessionComponent {
         ClientSessionComponent(
@@ -145,7 +144,6 @@ public final class UserSessionComponent {
             mlsService: mlsService,
             mlsDecryptionService: mlsDecryptionService,
             proteusService: proteusService,
-            asyncStreamEnabled: asyncStreamEnabled, // TODO: [WPB-17223] check if still needed
             coreCryptoProvider: coreCryptoProvider,
             completionHandlers: completionHandlers
         )

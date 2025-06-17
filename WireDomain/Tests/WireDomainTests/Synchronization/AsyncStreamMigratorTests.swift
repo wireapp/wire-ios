@@ -65,7 +65,7 @@ final class ConsumableNotificationsMigratorTests: XCTestCase {
         mockLocalStore.fetchSelfClientID_MockValue = Scaffolding.userID.uuidString
         mockLocalStore.hasRegisteredAsyncStreamCapable_MockValue = false
         mockUserClientsAPI.updateClientIdClientUpdate_MockMethod = { _, _ in }
-        mockSync.migrateFromIncrementalSyncV1_MockMethod = { }
+        mockSync.migrateFromIncrementalSyncV1_MockMethod = {}
 
         // WHEN
         try await sut.migrate()
@@ -80,7 +80,7 @@ final class ConsumableNotificationsMigratorTests: XCTestCase {
         // GIVEN
         mockLocalStore.fetchSelfClientID_MockValue = Scaffolding.userID.uuidString
         mockLocalStore.hasRegisteredAsyncStreamCapable_MockValue = true
-        mockSync.migrateFromIncrementalSyncV1_MockMethod = { }
+        mockSync.migrateFromIncrementalSyncV1_MockMethod = {}
 
         // WHEN
         try await sut.migrate()
@@ -118,7 +118,7 @@ final class ConsumableNotificationsMigratorTests: XCTestCase {
         let error = TestError(message: "")
         mockUserClientsAPI.updateClientIdClientUpdate_MockError = error
 
-        mockSync.migrateFromIncrementalSyncV1_MockMethod = { }
+        mockSync.migrateFromIncrementalSyncV1_MockMethod = {}
 
         // WHEN
         await XCTAssertThrowsErrorAsync(error) {
@@ -141,7 +141,7 @@ final class ConsumableNotificationsMigratorTests: XCTestCase {
             journal: journal
         )
 
-        mockSync.migrateFromIncrementalSyncV1_MockMethod = { }
+        mockSync.migrateFromIncrementalSyncV1_MockMethod = {}
 
         // WHEN / THEN
         await XCTAssertThrowsErrorAsync(ConsumableNotificationsMigrator.Failure.apiVersionTooLow) {

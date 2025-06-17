@@ -17,7 +17,7 @@
 //
 
 protocol ConsumableNotificationsMigratorProtocol {
-    
+
     /// Perform necessary migration to move from current system to consumable notifications synchronisation system
     func migrate() async throws
 }

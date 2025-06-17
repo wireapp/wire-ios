@@ -83,7 +83,7 @@ enum CoreDataMessagingMigrationVersion: String, CoreDataMigrationVersion {
         case .v127:
             nil
         case .v125, .v126:
-            .v126
+            .v127
         case .v120, .v121, .v122, .v123, .v124:
             .v125
         case .v119:

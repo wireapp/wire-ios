@@ -388,7 +388,7 @@ public final class ClientSessionComponent {
         journal: journal
     )
 
-    public func asyncStreamMigrator() -> ConsumableNotificationsMigrator {
+    public func consumableNotificationsMigrator() -> ConsumableNotificationsMigrator {
         ConsumableNotificationsMigrator(
             sync: incrementalSync,
             userClientsAPI: userClientsAPI,

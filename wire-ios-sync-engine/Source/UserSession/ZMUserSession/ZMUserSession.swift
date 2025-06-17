@@ -613,10 +613,10 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-    public func migrateIfNeeded() async {
+    public func migrateToConsumableNotificationsIfNeeded() async {
         guard !journal[.isConsumableNotificationsEnabled] else { return }
-        guard let migrator = clientSessionComponent?.asyncStreamMigrator() else {
-            WireLogger.sync.warn("No async stream migrator available")
+        guard let migrator = clientSessionComponent?.consumableNotificationsMigrator() else {
+            WireLogger.sync.warn("No consumable-notifications migrator available")
             return
         }
         do {
@@ -624,7 +624,7 @@ public final class ZMUserSession: NSObject {
         } catch ConsumableNotificationsMigrator.Failure.apiVersionTooLow {
             // ignore error
         } catch {
-            WireLogger.session.error("Failed to migrate to async stream: \(String(describing: error))")
+            WireLogger.session.error("Failed to migrate to consumable-notifications: \(String(describing: error))")
         }
     }
 
@@ -1402,7 +1402,7 @@ extension ZMUserSession: ZMClientRegistrationStatusDelegate {
             setUpSyncAgent(clientID: selfClientID)
             // no migration needed from last sync system as it's a new client
             if userClient.isConsumableNotificationsCapable {
-                // activate new sync with async notifications
+                // activate new sync with consumable notifications
                 journal[.isConsumableNotificationsEnabled] = true
             }
             triggerSync()
