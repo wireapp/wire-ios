@@ -24,18 +24,22 @@ import XCTest
 
 @testable import Wire
 
-final class CompositeImportBackupUseCaseTests: XCTestCase {
+final class ImportBackupUseCaseFactoryTests: XCTestCase {
 
     private var useCaseMock: ImportBackupUseCaseProtocolMock!
     private var legacyUseCaseMock: ImportBackupUseCaseProtocolMock!
-    private var sut: CompositeImportBackupUseCase!
+    private var sut: ImportBackupUseCaseFactory!
 
     override func setUp() {
         useCaseMock = ImportBackupUseCaseProtocolMock()
+        useCaseMock.isImportDestructive = false
+
         legacyUseCaseMock = ImportBackupUseCaseProtocolMock()
-        sut = CompositeImportBackupUseCase(
-            importBackupUseCase: useCaseMock,
-            legacyImportBackupUseCase: useCaseMock
+        legacyUseCaseMock.isImportDestructive = true
+
+        sut = ImportBackupUseCaseFactory(
+            importBackupUseCase: { [useCaseMock] _ in useCaseMock! },
+            legacyImportBackupUseCase: { [legacyUseCaseMock] _ in legacyUseCaseMock! }
         )
     }
 
@@ -45,42 +49,29 @@ final class CompositeImportBackupUseCaseTests: XCTestCase {
         useCaseMock = nil
     }
 
-    func testUseCaseIsInvoked() async throws {
+    func testUseCaseIsReturned() throws {
         // Given
         let fileExtension = "wbu"
-        let expectation = XCTestExpectation()
-        useCaseMock.invokeUrlURLPasswordStringAsyncThrowingStreamImportBackupProgressAnyErrorReturnValue =
-            AsyncThrowingStream { continuation in
-                expectation.fulfill()
-                continuation.finish()
-            }
+        let backupFile = URL(filePath: "backup.\(fileExtension)", directoryHint: .notDirectory)
 
         // When
-        let filePath = "/path/to/file.\(fileExtension)"
-        for try await _ in sut.invoke(url: URL(fileURLWithPath: filePath), password: "") {}
+        let useCaseImplementation = try sut.importBackupUseCase(for: backupFile)
 
         // Then
-        await fulfillment(of: [expectation])
+        XCTAssertFalse(useCaseImplementation.isImportDestructive)
     }
 
-    func testLegacyUseCaseIsInvoked() async throws {
+    func testLegacyUseCaseIsReturned() async throws {
         // Given
         let fileExtensions = ["ios_wbu", "ios-wbu"]
-
         for fileExtension in fileExtensions {
-            let expectation = XCTestExpectation()
-            useCaseMock.invokeUrlURLPasswordStringAsyncThrowingStreamImportBackupProgressAnyErrorReturnValue =
-                AsyncThrowingStream { continuation in
-                    expectation.fulfill()
-                    continuation.finish()
-                }
+            let backupFile = URL(filePath: "backup.\(fileExtension)", directoryHint: .notDirectory)
 
             // When
-            let filePath = "/path/to/file.\(fileExtension)"
-            for try await _ in sut.invoke(url: URL(fileURLWithPath: filePath), password: "") {}
+            let useCaseImplementation = try sut.importBackupUseCase(for: backupFile)
 
             // Then
-            await fulfillment(of: [expectation])
+            XCTAssertTrue(useCaseImplementation.isImportDestructive)
         }
     }
 
@@ -90,14 +81,15 @@ final class CompositeImportBackupUseCaseTests: XCTestCase {
         #else
             // Given
             let fileExtension = "zip"
+            let backupFile = URL(filePath: "backup.\(fileExtension)", directoryHint: .notDirectory)
 
-            do {
-                // When
-                let filePath = "/path/to/file.\(fileExtension)"
-                for try await _ in sut.invoke(url: URL(fileURLWithPath: filePath), password: "") {}
-                XCTFail("Unexpected success")
-            } catch ImportBackupError.invalidFileExtension {
+            // When
+            XCTAssertThrowsError(try sut.importBackupUseCase(for: backupFile)) { error in
+
                 // Then
+                guard case ImportBackupError.invalidFileExtension = error else {
+                    return XCTFail("unexpected error: \(error)")
+                }
             }
         #endif
     }

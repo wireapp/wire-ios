@@ -16,16 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import Foundation
+
 import WireFoundation
 
 public extension SessionManager {
 
-    var importLegacyBackupUseCase: ImportBackupUseCaseProtocol? {
+    func importLegacyBackupUseCase(url: URL) -> ImportBackupUseCaseProtocol? {
 
         // return `nil` immediately if there is no active user session
         activeUserSession.map { _ in
 
             ImportLegacyBackupUseCase(
+                url: url,
                 userSession: { [weak self] in self?.activeUserSession },
                 dispatchGroup: dispatchGroup,
                 streamDecryptor: ImportLegacyBackupStreamDecryptor(),
