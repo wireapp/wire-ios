@@ -49,13 +49,13 @@ public final class ConsumableNotificationsMigrator: ConsumableNotificationsMigra
     }
 
     public func migrate() async throws {
-        // 1) register asyncStream capabilities
+        // 1) register consumable notifications capabilities
         guard apiVersion >= .v8 else {
             throw Failure.apiVersionTooLow
         }
 
-        if await !userClientsLocalStore.hasRegisteredAsyncStreamCapable() {
-            try await registerAsyncStreamCapability()
+        if await !userClientsLocalStore.hasRegisteredConsumableNotificationsCapable() {
+            try await registerConsumableNotificationsCapability()
         }
 
         // 2) do incremental sync with v1 with no push channel
@@ -67,12 +67,12 @@ public final class ConsumableNotificationsMigrator: ConsumableNotificationsMigra
         journal[.isConsumableNotificationsEnabled] = true
     }
 
-    private func registerAsyncStreamCapability() async throws {
+    private func registerConsumableNotificationsCapability() async throws {
         guard let id = await userClientsLocalStore.fetchSelfClientID() else {
             throw Failure.missingClientID
         }
 
-        WireLogger.sync.debug("registering client with async stream capabilities")
+        WireLogger.sync.debug("registering client with consumable notifications capabilities")
         let payload: ClientUpdate = .init(
             capabilities: [.legalholdConsent, .consumableNotifications]
         )

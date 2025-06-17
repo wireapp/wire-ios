@@ -21,7 +21,7 @@ import Foundation
 import WireAPI
 import WireLogging
 
-/// IncrementalSync using new backend API async stream notifications
+/// IncrementalSync using new backend API consumable notifications sync system
 public struct IncrementalSyncV2: LiveSyncProtocol {
 
     private let selfClientID: String

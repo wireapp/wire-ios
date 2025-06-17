@@ -128,5 +128,5 @@ public protocol UserClientsLocalStoreProtocol {
 
     /// Checks if self client has consumable notifications capability
     /// - Returns: True if capability is there, false otherwise
-    func hasRegisteredAsyncStreamCapable() async -> Bool
+    func hasRegisteredConsumableNotificationsCapable() async -> Bool
 }

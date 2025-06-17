@@ -17,7 +17,7 @@
 //
 import Foundation
 
-/// Received data from websocket when async stream enabled
+/// Received data from websocket when consumable notifications sync system enabled
 struct WebSocketNotification: Decodable {
 
     enum NotificationType: String, Decodable {

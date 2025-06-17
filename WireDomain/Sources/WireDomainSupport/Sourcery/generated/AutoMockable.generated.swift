@@ -4087,21 +4087,21 @@ public class MockUserClientsLocalStoreProtocol: UserClientsLocalStoreProtocol {
         }
     }
 
-    // MARK: - hasRegisteredAsyncStreamCapable
+    // MARK: - hasRegisteredConsumableNotificationsCapable
 
-    public var hasRegisteredAsyncStreamCapable_Invocations: [Void] = []
-    public var hasRegisteredAsyncStreamCapable_MockMethod: (() async -> Bool)?
-    public var hasRegisteredAsyncStreamCapable_MockValue: Bool?
+    public var hasRegisteredConsumableNotificationsCapable_Invocations: [Void] = []
+    public var hasRegisteredConsumableNotificationsCapable_MockMethod: (() async -> Bool)?
+    public var hasRegisteredConsumableNotificationsCapable_MockValue: Bool?
 
-    public func hasRegisteredAsyncStreamCapable() async -> Bool {
-        hasRegisteredAsyncStreamCapable_Invocations.append(())
+    public func hasRegisteredConsumableNotificationsCapable() async -> Bool {
+        hasRegisteredConsumableNotificationsCapable_Invocations.append(())
 
-        if let mock = hasRegisteredAsyncStreamCapable_MockMethod {
+        if let mock = hasRegisteredConsumableNotificationsCapable_MockMethod {
             return await mock()
-        } else if let mock = hasRegisteredAsyncStreamCapable_MockValue {
+        } else if let mock = hasRegisteredConsumableNotificationsCapable_MockValue {
             return mock
         } else {
-            fatalError("no mock for `hasRegisteredAsyncStreamCapable`")
+            fatalError("no mock for `hasRegisteredConsumableNotificationsCapable`")
         }
     }
 

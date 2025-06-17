@@ -38,7 +38,7 @@ public struct JournalKey<Value>: Sendable where Value: Sendable {
 
 public extension JournalKey where Value == Bool {
 
-    /// Whether new sync mechanism (use consumableNotifications aka IncrementalSyncV2
+    /// Whether new sync mechanism (use consumable-notifications aka IncrementalSyncV2)
 
     static let isConsumableNotificationsEnabled = Self(
         "isConsumableNotificationsEnabled",

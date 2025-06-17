@@ -63,7 +63,7 @@ final class ConsumableNotificationsMigratorTests: XCTestCase {
     func test_migrate_userClientNeedsRegistration() async throws {
         // GIVEN
         mockLocalStore.fetchSelfClientID_MockValue = Scaffolding.userID.uuidString
-        mockLocalStore.hasRegisteredAsyncStreamCapable_MockValue = false
+        mockLocalStore.hasRegisteredConsumableNotificationsCapable_MockValue = false
         mockUserClientsAPI.updateClientIdClientUpdate_MockMethod = { _, _ in }
         mockSync.migrateFromIncrementalSyncV1_MockMethod = {}
 
@@ -79,7 +79,7 @@ final class ConsumableNotificationsMigratorTests: XCTestCase {
     func test_migrate_userClientAlreadyCapable() async throws {
         // GIVEN
         mockLocalStore.fetchSelfClientID_MockValue = Scaffolding.userID.uuidString
-        mockLocalStore.hasRegisteredAsyncStreamCapable_MockValue = true
+        mockLocalStore.hasRegisteredConsumableNotificationsCapable_MockValue = true
         mockSync.migrateFromIncrementalSyncV1_MockMethod = {}
 
         // WHEN
@@ -95,7 +95,7 @@ final class ConsumableNotificationsMigratorTests: XCTestCase {
     func test_migrate_syncFails_throws() async throws {
         // GIVEN
         mockLocalStore.fetchSelfClientID_MockValue = Scaffolding.userID.uuidString
-        mockLocalStore.hasRegisteredAsyncStreamCapable_MockValue = false
+        mockLocalStore.hasRegisteredConsumableNotificationsCapable_MockValue = false
         mockUserClientsAPI.updateClientIdClientUpdate_MockMethod = { _, _ in }
         let error = TestError(message: "")
         mockSync.migrateFromIncrementalSyncV1_MockError = error
@@ -114,7 +114,7 @@ final class ConsumableNotificationsMigratorTests: XCTestCase {
     func test_migrate_registrationFails_throws() async throws {
         // GIVEN
         mockLocalStore.fetchSelfClientID_MockValue = Scaffolding.userID.uuidString
-        mockLocalStore.hasRegisteredAsyncStreamCapable_MockValue = false
+        mockLocalStore.hasRegisteredConsumableNotificationsCapable_MockValue = false
         let error = TestError(message: "")
         mockUserClientsAPI.updateClientIdClientUpdate_MockError = error
 
