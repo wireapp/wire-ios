@@ -1507,6 +1507,9 @@ extension SessionManager {
             if let teamImageData = selfUser.team?.imageData {
                 account.teamImageData = teamImageData
             }
+            if let handle = selfUser.handle {
+                account.handle = handle
+            }
 
             account.loginCredentials = selfUser.loginCredentials
 
