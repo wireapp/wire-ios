@@ -16,9 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
-
 // sourcery: AutoMockable
 public protocol ImportBackupUseCaseProtocol: Sendable {
-    func invoke(url: URL, password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error>
+
+    /// Returns `true` if the implementation will replace the existing data or `false` if existing data is not modified.
+
+    var isImportDestructive: Bool { get }
+
+    func invoke(password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error>
+
 }
