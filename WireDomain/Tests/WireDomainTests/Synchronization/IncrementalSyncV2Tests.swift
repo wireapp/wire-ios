@@ -30,6 +30,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
     var pushChannelAPI: MockPushChannelV2API!
     var decryptor: MockUpdateEventDecryptorProtocol!
     var updateEventsStore: MockUpdateEventsLocalStoreProtocol!
+    var messageLocalStore: MockMessageLocalStoreProtocol!
     var processor: MockUpdateEventProcessorProtocol!
     var databaseSaver: MockDatabaseSaverProtocol!
     var syncStateSubject: CurrentValueSubject<SyncState, Never>!
@@ -40,6 +41,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
         pushChannelAPI = MockPushChannelV2API()
         decryptor = MockUpdateEventDecryptorProtocol()
         updateEventsStore = MockUpdateEventsLocalStoreProtocol()
+        messageLocalStore = MockMessageLocalStoreProtocol()
         processor = MockUpdateEventProcessorProtocol()
         databaseSaver = MockDatabaseSaverProtocol()
         liveDelegate = MockLiveSyncDelegate()
@@ -54,6 +56,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
             pushChannelAPI: pushChannelAPI,
             decryptor: decryptor,
             updateEventsStore: updateEventsStore,
+            messageStore: messageLocalStore,
             processor: processor,
             databaseSaver: databaseSaver,
             syncStateSubject: syncStateSubject,
@@ -70,6 +73,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
         pushChannelAPI = nil
         decryptor = nil
         updateEventsStore = nil
+        messageLocalStore = nil
         processor = nil
         databaseSaver = nil
         syncStateSubject = nil
@@ -213,6 +217,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
 
     func testPerform_AcknowledgementFullSync() async throws {
         // Mock
+        messageLocalStore.addPotentialGapSystemMessage_MockMethod = {}
         let pushChannel = MockPushChannelV2Protocol()
         pushChannel.acknowledgeFullSync_MockMethod = {}
 
@@ -296,6 +301,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
             ].flatMap(\.events)
         )
 
+        XCTAssertEqual(messageLocalStore.addPotentialGapSystemMessage_Invocations.count, 1)
         XCTAssertEqual(liveDelegate.didMissedEventsSync_Invocations.count, 1)
 
         // Then live events were deleted.

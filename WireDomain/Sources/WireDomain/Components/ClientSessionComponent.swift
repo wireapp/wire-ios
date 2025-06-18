@@ -392,6 +392,7 @@ public final class ClientSessionComponent {
         pushChannelAPI: pushChannelV2API,
         decryptor: updateEventDecryptor,
         updateEventsStore: updateEventsLocalStore,
+        messageStore: messageLocalStore,
         processor: updateEventProcessor,
         databaseSaver: databaseSaver,
         syncStateSubject: syncStateSubject,
