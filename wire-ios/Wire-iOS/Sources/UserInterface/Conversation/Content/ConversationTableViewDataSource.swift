@@ -718,7 +718,8 @@ extension ConversationTableViewDataSource: ConversationMessageSectionControllerD
         _ controller: ConversationMessageSectionController,
         didRequestRefreshForMessage message: ZMConversationMessage
     ) {
-        debouncer.call(id: message.nonce!) { [weak self] in
+        guard let nonce = message.nonce else { return }
+        debouncer.call(id: nonce) { [weak self] in
             guard let self else { return }
             reloadSections(newSections: calculateSections(updating: controller))
         }
