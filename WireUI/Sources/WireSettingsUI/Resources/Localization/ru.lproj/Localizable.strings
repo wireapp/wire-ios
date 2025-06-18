@@ -47,7 +47,6 @@
 "importBackup.overwriteConfirmation.proceed" = "Продолжить";
 
 "importBackup.alert.ok" = "OK";
-"importBackup.alert.success.title" = "Успешно";
 "importBackup.alert.success.message" = "Ваша история восстановлена.";
 "importBackup.alert.genericError.title" = "Что-то пошло не так";
 "importBackup.alert.genericError.message" = "Ваша история не может быть восстановлена. Пожалуйста, попробуйте еще раз или обратитесь в службу поддержки Wire.";

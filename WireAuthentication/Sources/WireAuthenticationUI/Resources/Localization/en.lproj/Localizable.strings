@@ -111,8 +111,18 @@
 "obsolete_client.alert.ok_button" = "Go to App Store";
 "obsolete_client.alert.switch_accounts" = "Switch Accounts";
 
+"obsolete_client_multibackend.alert.title" = "Update required";
+"obsolete_client_multibackend.alert.message" = "You are missing out on new features.\nGet the latest version of Wire to continue using the app with this account.";
+
+"obsolete.alert.update_button" = "Update";
+"obsolete.alert.switch_accounts" = "Switch Accounts";
+"obsolete.alert.logout" = "Log out";
+"obsolete.alert.cancel" = "Cancel";
+"obsolete.alert.ok" = "OK";
+
 "obsolete_backend.alert.title" = "Server version not supported";
 "obsolete_backend.alert.message" = "The server version is not supported by this app. Please contact your system administrator.";
+"obsolete_backend_multibackend.alert.message" = "Your Wire server needs to be updated. Please notify your system administrator.";
 
 // Registration
 

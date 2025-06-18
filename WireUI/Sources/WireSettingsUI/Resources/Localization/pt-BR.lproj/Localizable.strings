@@ -47,7 +47,6 @@
 "importBackup.overwriteConfirmation.proceed" = "Continuar";
 
 "importBackup.alert.ok" = "OK";
-"importBackup.alert.success.title" = "Sucesso";
 "importBackup.alert.success.message" = "Seu histórico foi restaurado.";
 "importBackup.alert.genericError.title" = "Algo deu errado";
 "importBackup.alert.genericError.message" = "Seu histórico não pôde ser restaurado. Tente novamente ou entre em contato com o suporte ao cliente Wire.";

@@ -47,7 +47,6 @@
 "importBackup.overwriteConfirmation.proceed" = "Proceed";
 
 "importBackup.alert.ok" = "V redu";
-"importBackup.alert.success.title" = "Success";
 "importBackup.alert.success.message" = "Your history is restored.";
 "importBackup.alert.genericError.title" = "Nekaj je šlo narobe";
 "importBackup.alert.genericError.message" = "Your history could not be restored. Please try again or contact the Wire customer support.";

@@ -96,9 +96,6 @@ private class DetermineAuthMethodComponentDependency527e70b5dbcfcb8f2023Provider
     var ssoCallbackURLScheme: String {
         return rootComponent.ssoCallbackURLScheme
     }
-    var existsAnotherAccount: Bool {
-        return rootComponent.existsAnotherAccount
-    }
     private let rootComponent: RootComponent
     init(rootComponent: RootComponent) {
         self.rootComponent = rootComponent
@@ -142,8 +139,8 @@ private class AccountSwitcherComponentDependency65306f6262d465ec7963Provider: Ac
     var router: any Router {
         return rootComponent.router
     }
-    var otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]> {
-        return rootComponent.otherAccountsPublisher
+    var accountsPublisher: CurrentValuePublisher<[AccountUIModel]> {
+        return rootComponent.accountsPublisher
     }
     private let rootComponent: RootComponent
     init(rootComponent: RootComponent) {
@@ -233,7 +230,6 @@ extension DetermineAuthMethodComponent: NeedleFoundation.Registration {
         keyPathToName[\DetermineAuthMethodComponentDependency.preferredAPIVersion] = "preferredAPIVersion-APIVersion?"
         keyPathToName[\DetermineAuthMethodComponentDependency.minTLSVersion] = "minTLSVersion-TLSVersion"
         keyPathToName[\DetermineAuthMethodComponentDependency.ssoCallbackURLScheme] = "ssoCallbackURLScheme-String"
-        keyPathToName[\DetermineAuthMethodComponentDependency.existsAnotherAccount] = "existsAnotherAccount-Bool"
         localTable["networkStack-NetworkStack"] = { [unowned self] in self.networkStack as Any }
     }
 }
@@ -262,8 +258,8 @@ extension RootComponent: NeedleFoundation.Registration {
         localTable["passwordValidator-any PasswordValidator"] = { [unowned self] in self.passwordValidator as Any }
         localTable["ssoCallbackURLScheme-String"] = { [unowned self] in self.ssoCallbackURLScheme as Any }
         localTable["appStoreURL-URL"] = { [unowned self] in self.appStoreURL as Any }
-        localTable["existsAnotherAccount-Bool"] = { [unowned self] in self.existsAnotherAccount as Any }
-        localTable["otherAccountsPublisher-ReadOnlyCurrentValueSubject<[AccountUIModel]>"] = { [unowned self] in self.otherAccountsPublisher as Any }
+        localTable["accountsPublisher-CurrentValuePublisher<[AccountUIModel]>"] = { [unowned self] in self.accountsPublisher as Any }
+        localTable["isMultibackendEnabled-Bool"] = { [unowned self] in self.isMultibackendEnabled as Any }
         localTable["useLegacyRegistrationFlow-Bool"] = { [unowned self] in self.useLegacyRegistrationFlow as Any }
         localTable["personalAccountCreationAnalyticsTracker-any PersonalAccountCreationAnalyticsTrackerProtocol"] = { [unowned self] in self.personalAccountCreationAnalyticsTracker as Any }
         localTable["bridge-WireAuthenticationBridge"] = { [unowned self] in self.bridge as Any }
@@ -273,7 +269,7 @@ extension RootComponent: NeedleFoundation.Registration {
 extension AccountSwitcherComponent: NeedleFoundation.Registration {
     public func registerItems() {
         keyPathToName[\AccountSwitcherComponentDependency.router] = "router-any Router"
-        keyPathToName[\AccountSwitcherComponentDependency.otherAccountsPublisher] = "otherAccountsPublisher-ReadOnlyCurrentValueSubject<[AccountUIModel]>"
+        keyPathToName[\AccountSwitcherComponentDependency.accountsPublisher] = "accountsPublisher-CurrentValuePublisher<[AccountUIModel]>"
     }
 }
 extension NoHistoryComponent: NeedleFoundation.Registration {

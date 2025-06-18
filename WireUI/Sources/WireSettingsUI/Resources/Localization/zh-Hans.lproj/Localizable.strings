@@ -47,7 +47,6 @@
 "importBackup.overwriteConfirmation.proceed" = "继续";
 
 "importBackup.alert.ok" = "好";
-"importBackup.alert.success.title" = "成功";
 "importBackup.alert.success.message" = "您的历史记录已恢复。";
 "importBackup.alert.genericError.title" = "好像出了点问题。";
 "importBackup.alert.genericError.message" = "无法恢复您的历史记录。请重试或联系 Wire 顾客支持。";

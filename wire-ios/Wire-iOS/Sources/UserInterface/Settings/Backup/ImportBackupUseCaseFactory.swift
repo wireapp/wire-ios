@@ -19,26 +19,25 @@
 import Foundation
 import WireBackup
 import WireFoundation
+import WireSettingsUI
 
-struct CompositeImportBackupUseCase: ImportBackupUseCaseProtocol {
+struct ImportBackupUseCaseFactory: ImportBackupUseCaseFactoryProtocol {
 
-    let importBackupUseCase: ImportBackupUseCaseProtocol
-    let legacyImportBackupUseCase: ImportBackupUseCaseProtocol
+    let importBackupUseCase: (_ url: URL) -> any ImportBackupUseCaseProtocol
+    let legacyImportBackupUseCase: (_ url: URL) -> any ImportBackupUseCaseProtocol
 
-    func invoke(url: URL, password: String) -> AsyncThrowingStream<ImportBackupProgress, any Error> {
+    func importBackupUseCase(for url: URL) throws -> any ImportBackupUseCaseProtocol {
         let fileExtension = url.pathExtension.lowercased()
         switch WireBackup.BackupFileExtension(rawValue: fileExtension) {
 
         case .crossPlatform:
-            return importBackupUseCase.invoke(url: url, password: password)
+            return importBackupUseCase(url)
 
         case .fileExtensionWithUnderscore, .fileExtensionWithHyphen:
-            return legacyImportBackupUseCase.invoke(url: url, password: password)
+            return legacyImportBackupUseCase(url)
 
         case nil:
-            return AsyncThrowingStream { continuation in
-                continuation.finish(throwing: ImportBackupError.invalidFileExtension)
-            }
+            throw ImportBackupError.invalidFileExtension
         }
     }
 

@@ -111,7 +111,9 @@ final class ImportLegacyBackupUseCaseTests: XCTestCase {
             try viewContext.save()
         }
 
+        let backupFile = URL(fileURLWithPath: "backup.ios_wbu")
         sut = ImportLegacyBackupUseCase(
+            url: backupFile,
             userSession: { [weak self] in self?.mockUserSession },
             dispatchGroup: dispatchGroup,
             streamDecryptor: mockStreamDecryptor,
@@ -135,31 +137,12 @@ final class ImportLegacyBackupUseCaseTests: XCTestCase {
         sharedContainerURL = nil
     }
 
-    func testFileExtensionsAreAccepted() async throws {
-        // Given
-        let extensions = ["ios_Wbu", "ioS-wbu"]
-        // produce another error which is thrown after the file extension check
-        mockUserSession = nil // expect `BackupRestoreError.noActiveAccount` (but not `.invalidFileExtension`)
-
-        for extensions in extensions {
-            do {
-                // When
-                let filePath = "/path/to/file.\(extensions)"
-                for try await _ in sut.invoke(url: URL(fileURLWithPath: filePath), password: "") {}
-                XCTFail("Unexpected success")
-            } catch ImportLegacyBackupError.noActiveAccountForImport {
-                // Then
-            }
-        }
-    }
-
     func testMockInvocations() async throws {
         // Given
-        let url = URL(fileURLWithPath: "backup.ios_wbu")
         let accountID = coreDataStack.account.userIdentifier
 
         // When
-        let sequence = try await sut.invoke(url: url, password: "c<%I2f41\"6!'")
+        let sequence = try await sut.invoke(password: "c<%I2f41\"6!'")
             .reduce(into: [ImportBackupProgress]()) { $0 += [$1] }
 
         // Then
