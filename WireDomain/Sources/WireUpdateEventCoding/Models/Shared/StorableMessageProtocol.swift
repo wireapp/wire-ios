@@ -17,14 +17,14 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 enum StorableMessageProtocol: String, Codable, Sendable {
 
     case proteus
     case mls
 
-    init(_ value: WireAPI.MessageProtocol) {
+    init(_ value: WireNetwork.MessageProtocol) {
         switch value {
         case .proteus:
             self = .proteus
@@ -33,7 +33,7 @@ enum StorableMessageProtocol: String, Codable, Sendable {
         }
     }
 
-    func toAPIModel() -> WireAPI.MessageProtocol {
+    func toAPIModel() -> WireNetwork.MessageProtocol {
         switch self {
         case .proteus:
             .proteus

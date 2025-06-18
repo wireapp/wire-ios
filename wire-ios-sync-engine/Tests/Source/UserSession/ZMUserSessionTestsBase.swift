@@ -17,7 +17,7 @@
 //
 
 import Combine
-import WireAPI
+import WireNetwork
 import WireDataModelSupport
 import WireDomain
 import WireRequestStrategySupport
@@ -33,7 +33,7 @@ class ZMUserSessionTestsBase: MessagingTest {
     var mockEARService: MockEARServiceInterface!
     var mockMLSService: MockMLSServiceInterface!
     var backendEnvironment: WireTransport.BackendEnvironment!
-    var wireAPIBackendEnvironment: WireAPI.BackendEnvironment!
+    var wireAPIBackendEnvironment: WireNetwork.BackendEnvironment!
     var transportSession: RecordingMockTransportSession!
     var cookieStorage: ZMPersistentCookieStorage!
     var validCookie: Data!
@@ -81,7 +81,7 @@ class ZMUserSessionTestsBase: MessagingTest {
             certificateTrust: ServerCertificateTrust(trustData: [], currentDateProvider: .system)
         )
 
-        wireAPIBackendEnvironment = WireAPI.BackendEnvironment(
+        wireAPIBackendEnvironment = WireNetwork.BackendEnvironment(
             url: backendEnvironment.backendURL,
             webSocketURL: backendEnvironment.backendWSURL,
             pinnedKeys: [],

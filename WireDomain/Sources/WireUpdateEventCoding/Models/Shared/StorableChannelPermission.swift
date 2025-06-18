@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import WireNetwork
 
 enum StorableChannelPermission: String, Equatable, Codable, Sendable {
 
     case everyone
     case admins
 
-    init(_ value: WireAPI.ChannelPermission) {
+    init(_ value: WireNetwork.ChannelPermission) {
         switch value {
         case .everyone:
             self = .everyone
@@ -32,7 +32,7 @@ enum StorableChannelPermission: String, Equatable, Codable, Sendable {
         }
     }
 
-    func toAPIModel() -> WireAPI.ChannelPermission {
+    func toAPIModel() -> WireNetwork.ChannelPermission {
         switch self {
         case .everyone:
             .everyone

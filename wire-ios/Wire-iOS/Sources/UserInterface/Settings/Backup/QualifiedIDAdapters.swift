@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import WireNetwork
 import WireDataModel
 import WireFoundation
 
@@ -42,7 +42,7 @@ extension WireDataModel.QualifiedID {
 
 }
 
-extension WireAPI.QualifiedID {
+extension WireNetwork.QualifiedID {
 
     init(_ qualifiedID: WireFoundation.QualifiedID) {
         self.init(

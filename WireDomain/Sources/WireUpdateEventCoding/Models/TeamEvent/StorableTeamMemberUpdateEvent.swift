@@ -17,19 +17,19 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 struct StorableTeamMemberUpdateEvent: Equatable, Codable, Sendable {
 
     private let teamID: UUID
     private let membershipID: UUID
 
-    init(_ value: WireAPI.TeamMemberUpdateEvent) {
+    init(_ value: WireNetwork.TeamMemberUpdateEvent) {
         self.teamID = value.teamID
         self.membershipID = value.membershipID
     }
 
-    func toAPIModel() -> WireAPI.TeamMemberUpdateEvent {
+    func toAPIModel() -> WireNetwork.TeamMemberUpdateEvent {
         .init(
             teamID: teamID,
             membershipID: membershipID

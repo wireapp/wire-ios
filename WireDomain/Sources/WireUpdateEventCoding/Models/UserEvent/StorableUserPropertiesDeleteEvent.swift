@@ -17,17 +17,17 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 struct StorableUserPropertiesDeleteEvent: Equatable, Codable, Sendable {
 
     private let key: String
 
-    init(_ value: WireAPI.UserPropertiesDeleteEvent) {
+    init(_ value: WireNetwork.UserPropertiesDeleteEvent) {
         self.key = value.key
     }
 
-    func toAPIModel() -> WireAPI.UserPropertiesDeleteEvent {
+    func toAPIModel() -> WireNetwork.UserPropertiesDeleteEvent {
         .init(key: key)
     }
 

@@ -17,10 +17,10 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 import WireDataModel
 
-extension WireAPI.MLSFeatureConfig {
+extension WireNetwork.MLSFeatureConfig {
 
     func toDomainModel() -> WireDataModel.Feature.MLS.Config {
         .init(
@@ -43,7 +43,7 @@ extension WireAPI.MLSFeatureConfig {
 
 }
 
-extension WireAPI.EndToEndIdentityFeatureConfig {
+extension WireNetwork.EndToEndIdentityFeatureConfig {
 
     func toDomainModel() -> WireDataModel.Feature.E2EI.Config {
         .init(
@@ -56,7 +56,7 @@ extension WireAPI.EndToEndIdentityFeatureConfig {
 
 }
 
-extension WireAPI.AppLockFeatureConfig {
+extension WireNetwork.AppLockFeatureConfig {
 
     func toDomainModel() -> Feature.AppLock.Config {
         .init(
@@ -66,7 +66,7 @@ extension WireAPI.AppLockFeatureConfig {
     }
 }
 
-extension WireAPI.ClassifiedDomainsFeatureConfig {
+extension WireNetwork.ClassifiedDomainsFeatureConfig {
 
     func toDomainModel() -> Feature.ClassifiedDomains.Config {
         .init(
@@ -76,7 +76,7 @@ extension WireAPI.ClassifiedDomainsFeatureConfig {
 
 }
 
-extension WireAPI.ConferenceCallingFeatureConfig {
+extension WireNetwork.ConferenceCallingFeatureConfig {
 
     func toDomainModel() -> Feature.ConferenceCalling.Config {
         .init(useSFTForOneToOneCalls: useSFTForOneToOneCalls)
@@ -84,7 +84,7 @@ extension WireAPI.ConferenceCallingFeatureConfig {
 
 }
 
-extension WireAPI.MLSMigrationFeatureConfig {
+extension WireNetwork.MLSMigrationFeatureConfig {
 
     func toDomainModel() -> Feature.MLSMigration.Config {
         .init(
@@ -95,7 +95,7 @@ extension WireAPI.MLSMigrationFeatureConfig {
 
 }
 
-extension WireAPI.SelfDeletingMessagesFeatureConfig {
+extension WireNetwork.SelfDeletingMessagesFeatureConfig {
 
     func toDomainModel() -> Feature.SelfDeletingMessages.Config {
         .init(enforcedTimeoutSeconds: enforcedTimeoutSeconds)
@@ -103,7 +103,7 @@ extension WireAPI.SelfDeletingMessagesFeatureConfig {
 
 }
 
-extension WireAPI.ChannelsFeatureConfig {
+extension WireNetwork.ChannelsFeatureConfig {
 
     func toDomainModel() -> Feature.Channels.Config {
         .init(

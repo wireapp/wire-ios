@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 import WireDataModel
 
 public struct UserClientsRepository: UserClientsRepositoryProtocol {
@@ -102,7 +102,7 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
 
     public func updateClient(
         id: String,
-        from remoteClient: WireAPI.SelfUserClient,
+        from remoteClient: WireNetwork.SelfUserClient,
         isNewClient: Bool
     ) async throws {
         await userClientsLocalStore.updateClient(

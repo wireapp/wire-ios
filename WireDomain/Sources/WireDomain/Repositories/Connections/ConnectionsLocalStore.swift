@@ -49,7 +49,7 @@ final class ConnectionsLocalStore: ConnectionsLocalStoreProtocol {
 
     /// Create or update conversation related to the connection's sender
     /// - Parameters:
-    ///   - connection: connection payload from WireAPI
+    ///   - connection: connection payload from WireNetwork
     ///   - storedConnection: ZMConnection object stored locally
     /// - Returns: conversation object stored locally
 
@@ -74,7 +74,7 @@ final class ConnectionsLocalStore: ConnectionsLocalStoreProtocol {
     }
 
     /// Create or update  connection locally related to the connection's sender
-    /// - Parameter connection: connection payload from WireAPI
+    /// - Parameter connection: connection payload from WireNetwork
     /// - Returns: connection object stored locally
 
     private func storedConnection(

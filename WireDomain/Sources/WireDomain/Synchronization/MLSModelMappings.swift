@@ -16,13 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import WireNetwork
 import WireCoreCrypto
 
 extension WireCoreCryptoUniffi.CommitBundle {
 
-    func toAPIModel() -> WireAPI.CommitBundle {
-        WireAPI.CommitBundle(
+    func toAPIModel() -> WireNetwork.CommitBundle {
+        WireNetwork.CommitBundle(
             welcome: welcome,
             commit: commit,
             groupInfo: groupInfo.payload

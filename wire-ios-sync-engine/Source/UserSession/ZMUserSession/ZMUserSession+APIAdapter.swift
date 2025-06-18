@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 import WireSystem
 
 // Note: this is just a tempory helper for debugging

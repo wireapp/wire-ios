@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 import WireDataModel
 
 // sourcery: AutoMockable
@@ -110,7 +110,7 @@ public protocol UserRepositoryProtocol {
     ///     - userProperty: The user property to update.
 
     func updateUserProperty(
-        _ userProperty: WireAPI.UserProperty
+        _ userProperty: WireNetwork.UserProperty
     ) async throws
 
     /// Deletes a user property.

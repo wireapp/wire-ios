@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import WireNetwork
 import WireDataModel
 
-extension WireAPI.MLSCipherSuite {
+extension WireNetwork.MLSCipherSuite {
 
     func toDomainModel() -> WireDataModel.MLSCipherSuite {
         switch self {
@@ -41,7 +41,7 @@ extension WireAPI.MLSCipherSuite {
     }
 }
 
-extension WireAPI.ConversationAccessRoleLegacy {
+extension WireNetwork.ConversationAccessRoleLegacy {
 
     func toDomainModel() -> WireDataModel.ConversationAccessRole {
         switch self {
@@ -57,7 +57,7 @@ extension WireAPI.ConversationAccessRoleLegacy {
     }
 }
 
-extension WireAPI.ConversationMessageProtocol {
+extension WireNetwork.ConversationMessageProtocol {
 
     func toDomainModel() -> WireDataModel.MessageProtocol {
         switch self {
@@ -72,7 +72,7 @@ extension WireAPI.ConversationMessageProtocol {
 
 }
 
-extension WireAPI.ConversationMemberLeaveReason {
+extension WireNetwork.ConversationMemberLeaveReason {
 
     func toDomainModel() -> ZMSystemMessageType {
         switch self {
@@ -84,7 +84,7 @@ extension WireAPI.ConversationMemberLeaveReason {
     }
 }
 
-extension WireAPI.ConversationType {
+extension WireNetwork.ConversationType {
 
     func toDomainModel() -> WireDataModel.BackendConversationType {
         switch self {
@@ -101,7 +101,7 @@ extension WireAPI.ConversationType {
 
 }
 
-extension WireAPI.Conversation.Members {
+extension WireNetwork.Conversation.Members {
 
     func toDomainModel() -> WireDomain.Conversation.Members {
         .init(
@@ -112,7 +112,7 @@ extension WireAPI.Conversation.Members {
 
 }
 
-extension WireAPI.Conversation.Member {
+extension WireNetwork.Conversation.Member {
 
     func toDomainModel() -> WireDomain.Conversation.Members.Member {
         .init(
@@ -133,7 +133,7 @@ extension WireAPI.Conversation.Member {
 
 }
 
-extension WireAPI.Conversation {
+extension WireNetwork.Conversation {
 
     func toDomainModel() -> WireDomain.Conversation {
         .init(
@@ -163,7 +163,7 @@ extension WireAPI.Conversation {
 
 }
 
-extension WireAPI.ConversationGroupType {
+extension WireNetwork.ConversationGroupType {
 
     func toDomainModel() -> WireDomain.Conversation.GroupType {
         switch self {
@@ -176,7 +176,7 @@ extension WireAPI.ConversationGroupType {
 
 }
 
-extension WireAPI.ChannelPermission {
+extension WireNetwork.ChannelPermission {
 
     func toDomainModel() -> WireDomain.Conversation.ChannelPermission {
         switch self {

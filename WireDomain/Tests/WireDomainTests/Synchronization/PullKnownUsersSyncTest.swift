@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPISupport
+import WireNetworkSupport
 import XCTest
-@testable import WireAPI
+@testable import WireNetwork
 @testable import WireDomain
 @testable import WireDomainSupport
 
@@ -42,7 +42,7 @@ final class PullKnownUsersSyncTests: XCTestCase {
 
     func testPull() async throws {
         // Mock
-        api.getUsersUserIDs_MockValue = WireAPI.UserList(
+        api.getUsersUserIDs_MockValue = WireNetwork.UserList(
             found: [Scaffolding.user1],
             failed: [Scaffolding.user2.id]
         )

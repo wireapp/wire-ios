@@ -17,17 +17,17 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 struct StorableUserClientRemoveEvent: Equatable, Codable, Sendable {
 
     private let clientID: String
 
-    init(_ value: WireAPI.UserClientRemoveEvent) {
+    init(_ value: WireNetwork.UserClientRemoveEvent) {
         self.clientID = value.clientID
     }
 
-    func toAPIModel() -> WireAPI.UserClientRemoveEvent {
+    func toAPIModel() -> WireNetwork.UserClientRemoveEvent {
         .init(clientID: clientID)
     }
 

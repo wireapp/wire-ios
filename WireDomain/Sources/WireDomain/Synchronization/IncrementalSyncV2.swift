@@ -18,7 +18,7 @@
 
 @preconcurrency import Combine
 import Foundation
-import WireAPI
+import WireNetwork
 import WireLogging
 
 /// IncrementalSync using new backend API async stream notifications

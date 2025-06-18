@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 // sourcery: AutoMockable
 /// Facilitate access to team related domain objects.

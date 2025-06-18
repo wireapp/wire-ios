@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireAPI
-import WireAPISupport
+import WireNetwork
+import WireNetworkSupport
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
@@ -361,12 +361,12 @@ final class OneOnOneResolverTests: XCTestCase {
         static let username = "username"
         static let senderID = UUID()
         static let receiverID = UUID()
-        static let receiverQualifiedID = WireAPI.QualifiedID(
+        static let receiverQualifiedID = WireNetwork.QualifiedID(
             uuid: receiverID,
             domain: "domain.com"
         )
         static let conversationID = UUID()
-        static let qualifiedConversationID = WireAPI.QualifiedID(
+        static let qualifiedConversationID = WireNetwork.QualifiedID(
             uuid: conversationID,
             domain: "domain.com"
         )

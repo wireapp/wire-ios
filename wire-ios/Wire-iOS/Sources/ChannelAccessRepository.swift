@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import WireNetwork
 import WireConversationsAPI
 import WireConversationsImplementation
 import WireDomain
@@ -44,7 +44,7 @@ class ChannelAccessRepository: ChannelAccessRepositoryProtocol {
     ) async throws -> WireConversationsAPI.ChannelAccessLevelPermission {
 
         guard let backendInfoApiVersion = BackendInfo.apiVersion,
-              let apiVersion = WireAPI.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
+              let apiVersion = WireNetwork.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
               let apiService = session.apiService else {
             throw ChannelAccessError.notEnoughData
         }
@@ -64,7 +64,7 @@ class ChannelAccessRepository: ChannelAccessRepositoryProtocol {
 }
 
 extension WireConversationsAPI.ChannelAccessLevelPermission {
-    func toNetworkPermission() -> WireAPI.ChannelPermission {
+    func toNetworkPermission() -> WireNetwork.ChannelPermission {
         switch self {
         case .admins:
             .admins
@@ -74,7 +74,7 @@ extension WireConversationsAPI.ChannelAccessLevelPermission {
     }
 }
 
-extension WireAPI.ChannelPermission {
+extension WireNetwork.ChannelPermission {
     func toDomain() -> WireConversationsAPI.ChannelAccessLevelPermission {
         switch self {
         case .admins:

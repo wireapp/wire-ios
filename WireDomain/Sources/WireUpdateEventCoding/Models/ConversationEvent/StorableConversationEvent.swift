@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 enum StorableConversationEvent: Equatable, Codable, Sendable {
 
@@ -38,7 +38,7 @@ enum StorableConversationEvent: Equatable, Codable, Sendable {
     case typing(StorableConversationTypingEvent)
     case permissionUpdate(StorableConversationAddPermissionEvent)
 
-    init(_ value: WireAPI.ConversationEvent) {
+    init(_ value: WireNetwork.ConversationEvent) {
         switch value {
         case let .accessUpdate(event):
             self = .accessUpdate(StorableConversationAccessUpdateEvent(event))
@@ -75,7 +75,7 @@ enum StorableConversationEvent: Equatable, Codable, Sendable {
         }
     }
 
-    func toAPIModel() -> WireAPI.ConversationEvent {
+    func toAPIModel() -> WireNetwork.ConversationEvent {
         switch self {
         case let .accessUpdate(event):
             .accessUpdate(event.toAPIModel())

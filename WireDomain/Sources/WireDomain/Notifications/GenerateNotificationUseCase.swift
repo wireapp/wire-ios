@@ -18,7 +18,7 @@
 
 import CallKit
 import UserNotifications
-import WireAPI
+import WireNetwork
 import WireDataModel
 import WireLogging
 

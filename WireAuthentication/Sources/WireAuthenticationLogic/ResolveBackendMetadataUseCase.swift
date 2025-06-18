@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 import WireAuthenticationAPI
 
 public struct ResolveBackendMetadataUseCase: ResolveBackendMetadataUseCaseProtocol {
@@ -48,7 +48,7 @@ public struct ResolveBackendMetadataUseCase: ResolveBackendMetadataUseCaseProtoc
         )
     }
 
-    private func resolveAPIVersion(from backendMetadata: WireAPI.BackendMetadata) throws -> APIVersion {
+    private func resolveAPIVersion(from backendMetadata: WireNetwork.BackendMetadata) throws -> APIVersion {
         let backendProductionVersions = backendMetadata.supportedVersions
         let allBackendVersions = backendMetadata.supportedVersions.union(backendMetadata.developmentVersions)
         let commonProductionVersions = clientProductionVersions.intersection(backendProductionVersions)
@@ -76,7 +76,7 @@ public struct ResolveBackendMetadataUseCase: ResolveBackendMetadataUseCaseProtoc
 private extension WireAuthenticationAPI.BackendMetadata.APIVersion {
 
     // TODO: [WPB-16272] remove when API version is deduplicated.
-    init(_ apiVersion: WireAPI.APIVersion) {
+    init(_ apiVersion: WireNetwork.APIVersion) {
         switch apiVersion {
         case .v0:
             self = .v0

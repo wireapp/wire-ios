@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 // sourcery: AutoMockable
 /// A sync to pull pending update events from the remote, decrypts,

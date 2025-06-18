@@ -17,17 +17,17 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 struct StorableUserContactJoinEvent: Equatable, Codable {
 
     private let name: String
 
-    init(_ value: WireAPI.UserContactJoinEvent) {
+    init(_ value: WireNetwork.UserContactJoinEvent) {
         self.name = value.name
     }
 
-    func toAPIModel() -> WireAPI.UserContactJoinEvent {
+    func toAPIModel() -> WireNetwork.UserContactJoinEvent {
         .init(name: name)
     }
 

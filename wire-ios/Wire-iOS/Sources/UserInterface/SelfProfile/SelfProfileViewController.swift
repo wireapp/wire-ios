@@ -18,7 +18,7 @@
 
 import SwiftUI
 import WireAccountImageUI
-import WireAPI
+import WireNetwork
 import WireCommonComponents
 import WireDesign
 import WireDomainPackage
@@ -117,7 +117,7 @@ final class SelfProfileViewController: UIViewController {
             }
         } else if
             let backendInfoApiVersion = BackendInfo.apiVersion,
-            let apiVersion = WireAPI.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
+            let apiVersion = WireNetwork.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
             apiVersion >= .v7 {
             self.teamMigrationBanner = SelfProfileViewCallToActionBannerHostingController(
                 actionCallback: { [weak self] action in
@@ -299,7 +299,7 @@ final class SelfProfileViewController: UIViewController {
 
     private func onTeamCreationBannerInteraction(
         _ action: SelfProfileViewCallToActionBanner.Action,
-        apiVersion: WireAPI.APIVersion
+        apiVersion: WireNetwork.APIVersion
     ) {
         switch action {
         case .createWireTeam:

@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 struct StorableConversationRenameEvent: Equatable, Codable, Sendable {
 
@@ -26,14 +26,14 @@ struct StorableConversationRenameEvent: Equatable, Codable, Sendable {
     private let timestamp: Date
     private let newName: String
 
-    init(_ value: WireAPI.ConversationRenameEvent) {
+    init(_ value: WireNetwork.ConversationRenameEvent) {
         self.conversationID = StorableQualifiedID(value.conversationID)
         self.senderID = StorableQualifiedID(value.senderID)
         self.timestamp = value.timestamp
         self.newName = value.newName
     }
 
-    func toAPIModel() -> WireAPI.ConversationRenameEvent {
+    func toAPIModel() -> WireNetwork.ConversationRenameEvent {
         .init(
             conversationID: conversationID.toAPIModel(),
             senderID: senderID.toAPIModel(),

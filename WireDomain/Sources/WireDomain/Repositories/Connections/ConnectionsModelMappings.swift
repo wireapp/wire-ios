@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import WireNetwork
 import WireDataModel
 
-extension WireAPI.ConnectionStatus {
+extension WireNetwork.ConnectionStatus {
 
     func toDomainModel() -> WireDataModel.ZMConnectionStatus {
         switch self {
@@ -42,7 +42,7 @@ extension WireAPI.ConnectionStatus {
 
 }
 
-extension WireAPI.Connection {
+extension WireNetwork.Connection {
 
     func toDomainModel() -> ConnectionInfo {
         .init(

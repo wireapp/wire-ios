@@ -16,13 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPISupport
+import WireNetworkSupport
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
 import WireTestingPackage
 import XCTest
-@testable import WireAPI
+@testable import WireNetwork
 @testable import WireDomain
 
 final class PullSelfUserClientsSyncTests: XCTestCase {
@@ -97,7 +97,7 @@ final class PullSelfUserClientsSyncTests: XCTestCase {
         static let userClientID = UUID.mockID1.uuidString
         static let otherUserClientID = UUID.mockID2.uuidString
 
-        static let selfUserClient = WireAPI.SelfUserClient(
+        static let selfUserClient = WireNetwork.SelfUserClient(
             id: userClientID,
             type: .permanent,
             activationDate: .now,

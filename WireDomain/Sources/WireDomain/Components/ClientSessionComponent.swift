@@ -18,7 +18,7 @@
 
 import Combine
 import Foundation
-import WireAPI
+import WireNetwork
 import WireCoreCrypto
 import WireDataModel
 
@@ -49,7 +49,7 @@ public final class ClientSessionComponent {
 
     private let networkService: NetworkService
     private let pushChannelNetworkService: NetworkService
-    private let apiVersion: WireAPI.APIVersion
+    private let apiVersion: WireNetwork.APIVersion
 
     private let localDomain: String
     private let isFederationEnabled: Bool
@@ -73,7 +73,7 @@ public final class ClientSessionComponent {
         selfClientID: String,
         networkService: NetworkService,
         pushChannelNetworkService: NetworkService,
-        apiVersion: WireAPI.APIVersion,
+        apiVersion: WireNetwork.APIVersion,
         localDomain: String,
         isFederationEnabled: Bool,
         isMLSEnabled: Bool,

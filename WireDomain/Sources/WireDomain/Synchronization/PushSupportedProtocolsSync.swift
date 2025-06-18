@@ -17,12 +17,12 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 // sourcery: AutoMockable
 public protocol PushSupportedProtocolsSyncProtocol {
 
-    func push(supportedProtocols: Set<WireAPI.MessageProtocol>) async throws
+    func push(supportedProtocols: Set<WireNetwork.MessageProtocol>) async throws
 
 }
 
@@ -44,7 +44,7 @@ public struct PushSupportedProtocolsSync: PushSupportedProtocolsSyncProtocol {
 
     /// Update the supported protocols remotely then update locally.
 
-    public func push(supportedProtocols: Set<WireAPI.MessageProtocol>) async throws {
+    public func push(supportedProtocols: Set<WireNetwork.MessageProtocol>) async throws {
         try await api.pushSupportedProtocols(supportedProtocols)
         await store.updateSelfUserSupportedProtocols(supportedProtocols: supportedProtocols.toDomainModel())
     }

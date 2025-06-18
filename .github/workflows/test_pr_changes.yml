@@ -46,9 +46,9 @@ jobs:
               - 'wire-ios-sync-engine/**'
             wire-ios-request-strategy:
               - 'wire-ios-request-strategy/**'
-            WireAPI:
-              - 'WireAPI/**'
-              - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireAPIAll.xcscheme'
+            WireNetwork:
+              - 'WireNetwork/**'
+              - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireNetworkAll.xcscheme'
             WireAnalytics:
               - 'WireAnalytics/**'
               - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireAnalyticsAll.xcscheme'

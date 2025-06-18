@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 enum StorableTeamEvent: Equatable, Codable, Sendable {
 
@@ -26,7 +26,7 @@ enum StorableTeamEvent: Equatable, Codable, Sendable {
     case memberUpdate(StorableTeamMemberUpdateEvent)
     case create(StorableTeamCreateEvent)
 
-    init(_ value: WireAPI.TeamEvent) {
+    init(_ value: WireNetwork.TeamEvent) {
         switch value {
         case .delete:
             self = .delete
@@ -39,7 +39,7 @@ enum StorableTeamEvent: Equatable, Codable, Sendable {
         }
     }
 
-    func toAPIModel() -> WireAPI.TeamEvent {
+    func toAPIModel() -> WireNetwork.TeamEvent {
         switch self {
         case .delete:
             .delete

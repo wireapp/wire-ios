@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 import WireAuthenticationAPI
 
 package struct RegisterPersonalAccountUseCase: RegisterPersonalAccountUseCaseProtocol {

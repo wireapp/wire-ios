@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPISupport
+import WireNetworkSupport
 import XCTest
-@testable import WireAPI
+@testable import WireNetwork
 @testable import WireDataModelSupport
 @testable import WireDomain
 @testable import WireDomainSupport

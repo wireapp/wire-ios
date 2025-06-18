@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import WireNetwork
 import WireDataModel
 
 /// Handles a calling notification (using CallKit in priority if available) related to an incoming / missed call

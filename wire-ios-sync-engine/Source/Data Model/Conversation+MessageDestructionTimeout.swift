@@ -40,7 +40,7 @@ public enum MessageDestructionTimerError: Error {
 
 extension ZMTransportResponse {
     /// Convenience method to pass events from REST api calls response to processors, not storing the event
-    /// - Note: this will need to be cleared out when moving calls to WireAPI
+    /// - Note: this will need to be cleared out when moving calls to WireNetwork
     var updateEvent: ZMUpdateEvent? {
         guard let payload else {
             return nil

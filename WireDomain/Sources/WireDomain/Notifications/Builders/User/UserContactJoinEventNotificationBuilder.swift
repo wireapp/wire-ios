@@ -17,7 +17,7 @@
 //
 
 import UserNotifications
-import WireAPI
+import WireNetwork
 import WireDataModel
 
 struct UserContactJoinEventNotificationBuilder {

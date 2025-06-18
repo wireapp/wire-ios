@@ -18,7 +18,7 @@
 
 import Foundation
 import SwiftUI
-import WireAPI
+import WireNetwork
 import WireDataModel
 import WireFoundation
 import WireLogging

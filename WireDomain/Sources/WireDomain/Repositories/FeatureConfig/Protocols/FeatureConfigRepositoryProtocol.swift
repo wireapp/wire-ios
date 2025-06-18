@@ -17,7 +17,7 @@
 //
 
 import Combine
-import WireAPI
+import WireNetwork
 import WireDataModel
 
 /// Facilitates access to feature configs related domain objects.

@@ -18,7 +18,7 @@
 
 import NeedleFoundation
 import UserNotifications
-import WireAPI
+import WireNetwork
 import WireCrypto
 import WireDataModel
 import WireFoundation

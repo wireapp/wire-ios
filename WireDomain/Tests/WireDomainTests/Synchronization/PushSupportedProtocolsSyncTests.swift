@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPISupport
+import WireNetworkSupport
 import XCTest
-@testable import WireAPI
+@testable import WireNetwork
 @testable import WireDomain
 @testable import WireDomainSupport
 
@@ -62,7 +62,7 @@ final class PushSupportedProtocolsSyncTests: XCTestCase {
 
 private enum Scaffolding {
 
-    static let supportedProtocols: Set<WireAPI.MessageProtocol> = [
+    static let supportedProtocols: Set<WireNetwork.MessageProtocol> = [
         .proteus, .mls
     ]
 

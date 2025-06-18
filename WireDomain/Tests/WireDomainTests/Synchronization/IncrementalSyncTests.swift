@@ -19,8 +19,8 @@
 import Combine
 import CoreData
 import XCTest
-@testable import WireAPI
-@testable import WireAPISupport
+@testable import WireNetwork
+@testable import WireNetworkSupport
 @testable import WireDomain
 @testable import WireDomainSupport
 

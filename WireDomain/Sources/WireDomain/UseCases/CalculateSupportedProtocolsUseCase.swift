@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import WireNetwork
 import WireDataModel
 import WireLogging
 import WireSystem
@@ -24,7 +24,7 @@ import WireSystem
 // sourcery: AutoMockable
 /// Calculates the supported protocols.
 public protocol CalculateSupportedProtocolsUseCaseProtocol {
-    func invoke() async -> Set<WireAPI.MessageProtocol>
+    func invoke() async -> Set<WireNetwork.MessageProtocol>
 }
 
 public struct CalculateSupportedProtocolsUseCase: CalculateSupportedProtocolsUseCaseProtocol {
@@ -42,11 +42,11 @@ public struct CalculateSupportedProtocolsUseCase: CalculateSupportedProtocolsUse
 
     private let logger = WireLogger(tag: "supported-protocols")
 
-    public func invoke() async -> Set<WireAPI.MessageProtocol> {
+    public func invoke() async -> Set<WireNetwork.MessageProtocol> {
         await calculateSupportedProtocols()
     }
 
-    private func calculateSupportedProtocols() async -> Set<WireAPI.MessageProtocol> {
+    private func calculateSupportedProtocols() async -> Set<WireNetwork.MessageProtocol> {
         logger.debug("calculating supported protocols...")
 
         let remoteProtocols = await remotelySupportedProtocols()
@@ -58,7 +58,7 @@ public struct CalculateSupportedProtocolsUseCase: CalculateSupportedProtocolsUse
             "remote protocols: \(remoteProtocols), migration state: \(migrationState), allClientsMLSReady: \(allClientsMLSReady)"
         )
 
-        var result = Set<WireAPI.MessageProtocol>()
+        var result = Set<WireNetwork.MessageProtocol>()
 
         /// All clients are proteus ready so we support it if the backend does.
         if remoteProtocols.contains(.proteus) {
@@ -100,7 +100,7 @@ public struct CalculateSupportedProtocolsUseCase: CalculateSupportedProtocolsUse
         return result
     }
 
-    private func remotelySupportedProtocols() async -> Set<WireAPI.MessageProtocol> {
+    private func remotelySupportedProtocols() async -> Set<WireNetwork.MessageProtocol> {
         let mlsFeature = try? await featureConfigRepository.fetchFeatureConfig(
             name: .mls,
             type: Feature.MLS.Config.self
@@ -116,7 +116,7 @@ public struct CalculateSupportedProtocolsUseCase: CalculateSupportedProtocolsUse
             return [.proteus]
         }
 
-        var result = Set<WireAPI.MessageProtocol>()
+        var result = Set<WireNetwork.MessageProtocol>()
 
         if mls.config.supportedProtocols.contains(.proteus) {
             result.insert(.proteus)

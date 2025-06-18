@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireAPI
-import WireAPISupport
+import WireNetwork
+import WireNetworkSupport
 import WireAuthentication
 import WireReusableUIComponents
 

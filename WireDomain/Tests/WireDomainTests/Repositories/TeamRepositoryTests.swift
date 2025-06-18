@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
-import WireAPISupport
+import WireNetwork
+import WireNetworkSupport
 import WireDataModel
 import WireDataModelSupport
 import WireTestingPackage
@@ -71,7 +71,7 @@ final class TeamRepositoryTests: XCTestCase {
     func testPullSelfTeam_It_Invokes_Local_Store_And_Team_API_Methods() async throws {
         // Mock
 
-        teamsAPI.getTeamFor_MockValue = WireAPI.Team(
+        teamsAPI.getTeamFor_MockValue = WireNetwork.Team(
             id: Scaffolding.selfTeamID,
             name: Scaffolding.teamName,
             creatorID: Scaffolding.teamCreatorID,

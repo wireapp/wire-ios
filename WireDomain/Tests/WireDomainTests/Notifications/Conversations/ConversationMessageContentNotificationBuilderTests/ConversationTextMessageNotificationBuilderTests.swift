@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPISupport
+import WireNetworkSupport
 import WireDataModel
 import WireDataModelSupport
 import WireTestingPackage
 import XCTest
-@testable import WireAPI
+@testable import WireNetwork
 @testable import WireDomain
 @testable import WireDomainSupport
 
@@ -247,7 +247,7 @@ final class ConversationTextMessageNotificationBuilderTests: XCTestCase {
         static let senderName = "User1"
         static let conversationName = "Conversation1"
         static let teamName = "Team1"
-        static let conversationID = WireAPI.QualifiedID(uuid: .mockID2, domain: "domain.com")
+        static let conversationID = WireNetwork.QualifiedID(uuid: .mockID2, domain: "domain.com")
         static let userID = UserID(uuid: .mockID3, domain: "domain.com")
     }
 }

@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import WireNetwork
 import WireDataModel
 
 // sourcery: AutoMockable
@@ -57,7 +57,7 @@ public protocol UserClientsRepositoryProtocol {
 
     func updateClient(
         id: String,
-        from remoteClient: WireAPI.SelfUserClient,
+        from remoteClient: WireNetwork.SelfUserClient,
         isNewClient: Bool
     ) async throws
 

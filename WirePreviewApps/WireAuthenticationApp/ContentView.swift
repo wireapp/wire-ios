@@ -18,7 +18,7 @@
 
 import Combine
 import SwiftUI
-import WireAPI
+import WireNetwork
 import WireAuthentication
 import WireAuthenticationUI
 import WireFoundation

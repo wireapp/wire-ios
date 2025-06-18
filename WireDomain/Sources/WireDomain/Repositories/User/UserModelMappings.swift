@@ -17,12 +17,12 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 import WireDataModel
 
 extension Collection<WireDataModel.QualifiedID> {
 
-    func toAPIModel() -> [WireAPI.QualifiedID] {
+    func toAPIModel() -> [WireNetwork.QualifiedID] {
         map { $0.toAPIModel() }
     }
 
@@ -30,13 +30,13 @@ extension Collection<WireDataModel.QualifiedID> {
 
 extension WireDataModel.QualifiedID {
 
-    func toAPIModel() -> WireAPI.QualifiedID {
+    func toAPIModel() -> WireNetwork.QualifiedID {
         UserID(uuid: uuid, domain: domain)
     }
 
 }
 
-extension WireAPI.QualifiedID {
+extension WireNetwork.QualifiedID {
 
     func toDomainModel() -> WireDataModel.QualifiedID {
         WireDataModel.QualifiedID(uuid: uuid, domain: domain)
@@ -44,7 +44,7 @@ extension WireAPI.QualifiedID {
 
 }
 
-extension Set<WireAPI.MessageProtocol> {
+extension Set<WireNetwork.MessageProtocol> {
 
     func toDomainModel() -> Set<WireDataModel.MessageProtocol> {
         .init(map { $0.toDomainModel() })
@@ -52,7 +52,7 @@ extension Set<WireAPI.MessageProtocol> {
 
 }
 
-extension WireAPI.MessageProtocol {
+extension WireNetwork.MessageProtocol {
 
     func toDomainModel() -> WireDataModel.MessageProtocol {
         switch self {
@@ -62,7 +62,7 @@ extension WireAPI.MessageProtocol {
     }
 }
 
-extension WireAPI.UserClientType {
+extension WireNetwork.UserClientType {
 
     func toDomainModel() -> WireDataModel.DeviceType {
         switch self {
@@ -77,7 +77,7 @@ extension WireAPI.UserClientType {
 
 }
 
-extension WireAPI.DeviceClass {
+extension WireNetwork.DeviceClass {
     func toDomainModel() -> WireDataModel.DeviceClass {
         switch self {
         case .phone:
@@ -92,7 +92,7 @@ extension WireAPI.DeviceClass {
     }
 }
 
-extension WireAPI.Prekey {
+extension WireNetwork.Prekey {
 
     func toDomainModel() -> WireDataModel.LegalHoldRequest.Prekey? {
         guard let data = Data(base64Encoded: base64EncodedKey) else {
@@ -104,7 +104,7 @@ extension WireAPI.Prekey {
 
 }
 
-extension WireAPI.UserUpdateEvent {
+extension WireNetwork.UserUpdateEvent {
 
     func toDomainModel() -> UserUpdateInfo {
         .init(
@@ -126,7 +126,7 @@ extension WireAPI.UserUpdateEvent {
 
 }
 
-extension WireAPI.User {
+extension WireNetwork.User {
 
     func toDomainModel() -> NewUserInfo {
 
@@ -154,7 +154,7 @@ extension WireAPI.User {
 
 }
 
-extension WireAPI.SelfUser {
+extension WireNetwork.SelfUser {
 
     func toDomainModel() -> NewUserInfo {
         .init(

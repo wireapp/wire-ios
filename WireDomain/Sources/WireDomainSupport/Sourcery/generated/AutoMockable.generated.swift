@@ -24,7 +24,7 @@
 // swiftlint:disable variable_name
 
 
-import WireAPI
+import WireNetwork
 import WireDataModel
 import WireDomainPackage
 import WireCoreCrypto
@@ -118,10 +118,10 @@ public class MockCalculateSupportedProtocolsUseCaseProtocol: CalculateSupportedP
     // MARK: - invoke
 
     public var invoke_Invocations: [Void] = []
-    public var invoke_MockMethod: (() async -> Set<WireAPI.MessageProtocol>)?
-    public var invoke_MockValue: Set<WireAPI.MessageProtocol>?
+    public var invoke_MockMethod: (() async -> Set<WireNetwork.MessageProtocol>)?
+    public var invoke_MockValue: Set<WireNetwork.MessageProtocol>?
 
-    public func invoke() async -> Set<WireAPI.MessageProtocol> {
+    public func invoke() async -> Set<WireNetwork.MessageProtocol> {
         invoke_Invocations.append(())
 
         if let mock = invoke_MockMethod {
@@ -1853,12 +1853,12 @@ public class MockCreateChannelUseCaseProtocol: CreateChannelUseCaseProtocol {
 
     // MARK: - invoke
 
-    public var invokeTeamIDNameUsersAccessModeAccessRolesEnableReceipts_Invocations: [(teamID: UUID, name: String?, users: Set<ZMUser>, accessMode: Set<WireAPI.ConversationAccessMode>, accessRoles: Set<WireAPI.ConversationAccessRole>, enableReceipts: Bool)] = []
+    public var invokeTeamIDNameUsersAccessModeAccessRolesEnableReceipts_Invocations: [(teamID: UUID, name: String?, users: Set<ZMUser>, accessMode: Set<WireNetwork.ConversationAccessMode>, accessRoles: Set<WireNetwork.ConversationAccessRole>, enableReceipts: Bool)] = []
     public var invokeTeamIDNameUsersAccessModeAccessRolesEnableReceipts_MockError: Error?
-    public var invokeTeamIDNameUsersAccessModeAccessRolesEnableReceipts_MockMethod: ((UUID, String?, Set<ZMUser>, Set<WireAPI.ConversationAccessMode>, Set<WireAPI.ConversationAccessRole>, Bool) async throws -> ZMConversation)?
+    public var invokeTeamIDNameUsersAccessModeAccessRolesEnableReceipts_MockMethod: ((UUID, String?, Set<ZMUser>, Set<WireNetwork.ConversationAccessMode>, Set<WireNetwork.ConversationAccessRole>, Bool) async throws -> ZMConversation)?
     public var invokeTeamIDNameUsersAccessModeAccessRolesEnableReceipts_MockValue: ZMConversation?
 
-    public func invoke(teamID: UUID, name: String?, users: Set<ZMUser>, accessMode: Set<WireAPI.ConversationAccessMode>, accessRoles: Set<WireAPI.ConversationAccessRole>, enableReceipts: Bool) async throws -> ZMConversation {
+    public func invoke(teamID: UUID, name: String?, users: Set<ZMUser>, accessMode: Set<WireNetwork.ConversationAccessMode>, accessRoles: Set<WireNetwork.ConversationAccessRole>, enableReceipts: Bool) async throws -> ZMConversation {
         invokeTeamIDNameUsersAccessModeAccessRolesEnableReceipts_Invocations.append((teamID: teamID, name: name, users: users, accessMode: accessMode, accessRoles: accessRoles, enableReceipts: enableReceipts))
 
         if let error = invokeTeamIDNameUsersAccessModeAccessRolesEnableReceipts_MockError {
@@ -1885,12 +1885,12 @@ public class MockCreateGroupConversationUseCaseProtocol: CreateGroupConversation
 
     // MARK: - invoke
 
-    public var invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsIsMLSEnabled_Invocations: [(teamID: UUID?, messageProtocol: WireAPI.ConversationMessageProtocol, name: String?, users: Set<ZMUser>, accessMode: Set<WireAPI.ConversationAccessMode>, accessRoles: Set<WireAPI.ConversationAccessRole>, enableReceipts: Bool, isMLSEnabled: Bool)] = []
+    public var invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsIsMLSEnabled_Invocations: [(teamID: UUID?, messageProtocol: WireNetwork.ConversationMessageProtocol, name: String?, users: Set<ZMUser>, accessMode: Set<WireNetwork.ConversationAccessMode>, accessRoles: Set<WireNetwork.ConversationAccessRole>, enableReceipts: Bool, isMLSEnabled: Bool)] = []
     public var invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsIsMLSEnabled_MockError: Error?
-    public var invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsIsMLSEnabled_MockMethod: ((UUID?, WireAPI.ConversationMessageProtocol, String?, Set<ZMUser>, Set<WireAPI.ConversationAccessMode>, Set<WireAPI.ConversationAccessRole>, Bool, Bool) async throws -> ZMConversation)?
+    public var invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsIsMLSEnabled_MockMethod: ((UUID?, WireNetwork.ConversationMessageProtocol, String?, Set<ZMUser>, Set<WireNetwork.ConversationAccessMode>, Set<WireNetwork.ConversationAccessRole>, Bool, Bool) async throws -> ZMConversation)?
     public var invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsIsMLSEnabled_MockValue: ZMConversation?
 
-    public func invoke(teamID: UUID?, messageProtocol: WireAPI.ConversationMessageProtocol, name: String?, users: Set<ZMUser>, accessMode: Set<WireAPI.ConversationAccessMode>, accessRoles: Set<WireAPI.ConversationAccessRole>, enableReceipts: Bool, isMLSEnabled: Bool) async throws -> ZMConversation {
+    public func invoke(teamID: UUID?, messageProtocol: WireNetwork.ConversationMessageProtocol, name: String?, users: Set<ZMUser>, accessMode: Set<WireNetwork.ConversationAccessMode>, accessRoles: Set<WireNetwork.ConversationAccessRole>, enableReceipts: Bool, isMLSEnabled: Bool) async throws -> ZMConversation {
         invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsIsMLSEnabled_Invocations.append((teamID: teamID, messageProtocol: messageProtocol, name: name, users: users, accessMode: accessMode, accessRoles: accessRoles, enableReceipts: enableReceipts, isMLSEnabled: isMLSEnabled))
 
         if let error = invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsIsMLSEnabled_MockError {
@@ -3116,11 +3116,11 @@ public class MockPushSupportedProtocolsSyncProtocol: PushSupportedProtocolsSyncP
 
     // MARK: - push
 
-    public var pushSupportedProtocols_Invocations: [Set<WireAPI.MessageProtocol>] = []
+    public var pushSupportedProtocols_Invocations: [Set<WireNetwork.MessageProtocol>] = []
     public var pushSupportedProtocols_MockError: Error?
-    public var pushSupportedProtocols_MockMethod: ((Set<WireAPI.MessageProtocol>) async throws -> Void)?
+    public var pushSupportedProtocols_MockMethod: ((Set<WireNetwork.MessageProtocol>) async throws -> Void)?
 
-    public func push(supportedProtocols: Set<WireAPI.MessageProtocol>) async throws {
+    public func push(supportedProtocols: Set<WireNetwork.MessageProtocol>) async throws {
         pushSupportedProtocols_Invocations.append(supportedProtocols)
 
         if let error = pushSupportedProtocols_MockError {
@@ -4130,11 +4130,11 @@ public class MockUserClientsRepositoryProtocol: UserClientsRepositoryProtocol {
 
     // MARK: - updateClient
 
-    public var updateClientIdFromIsNewClient_Invocations: [(id: String, remoteClient: WireAPI.SelfUserClient, isNewClient: Bool)] = []
+    public var updateClientIdFromIsNewClient_Invocations: [(id: String, remoteClient: WireNetwork.SelfUserClient, isNewClient: Bool)] = []
     public var updateClientIdFromIsNewClient_MockError: Error?
-    public var updateClientIdFromIsNewClient_MockMethod: ((String, WireAPI.SelfUserClient, Bool) async throws -> Void)?
+    public var updateClientIdFromIsNewClient_MockMethod: ((String, WireNetwork.SelfUserClient, Bool) async throws -> Void)?
 
-    public func updateClient(id: String, from remoteClient: WireAPI.SelfUserClient, isNewClient: Bool) async throws {
+    public func updateClient(id: String, from remoteClient: WireNetwork.SelfUserClient, isNewClient: Bool) async throws {
         updateClientIdFromIsNewClient_Invocations.append((id: id, remoteClient: remoteClient, isNewClient: isNewClient))
 
         if let error = updateClientIdFromIsNewClient_MockError {
@@ -4863,11 +4863,11 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
 
     // MARK: - updateUserProperty
 
-    public var updateUserProperty_Invocations: [WireAPI.UserProperty] = []
+    public var updateUserProperty_Invocations: [WireNetwork.UserProperty] = []
     public var updateUserProperty_MockError: Error?
-    public var updateUserProperty_MockMethod: ((WireAPI.UserProperty) async throws -> Void)?
+    public var updateUserProperty_MockMethod: ((WireNetwork.UserProperty) async throws -> Void)?
 
-    public func updateUserProperty(_ userProperty: WireAPI.UserProperty) async throws {
+    public func updateUserProperty(_ userProperty: WireNetwork.UserProperty) async throws {
         updateUserProperty_Invocations.append(userProperty)
 
         if let error = updateUserProperty_MockError {

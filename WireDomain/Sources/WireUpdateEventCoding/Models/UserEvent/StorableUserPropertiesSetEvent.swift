@@ -17,17 +17,17 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 struct StorableUserPropertiesSetEvent: Equatable, Codable {
 
     private let property: StorableUserProperty
 
-    init(_ value: WireAPI.UserPropertiesSetEvent) {
+    init(_ value: WireNetwork.UserPropertiesSetEvent) {
         self.property = StorableUserProperty(value.property)
     }
 
-    func toAPIModel() -> WireAPI.UserPropertiesSetEvent {
+    func toAPIModel() -> WireNetwork.UserPropertiesSetEvent {
         .init(property: property.toAPIModel())
     }
 
@@ -40,7 +40,7 @@ private enum StorableUserProperty: Equatable, Codable {
     case conversationLabels([StorableConversationLabel])
     case unknown(key: String)
 
-    init(_ value: WireAPI.UserProperty) {
+    init(_ value: WireNetwork.UserProperty) {
         switch value {
         case let .areReadReceiptsEnabled(isEnabled):
             self = .areReadReceiptsEnabled(isEnabled)
@@ -62,7 +62,7 @@ private enum StorableUserProperty: Equatable, Codable {
         }
     }
 
-    func toAPIModel() -> WireAPI.UserProperty {
+    func toAPIModel() -> WireNetwork.UserProperty {
         switch self {
         case let .areReadReceiptsEnabled(isEnabled):
             .areReadReceiptsEnabled(isEnabled)
@@ -71,7 +71,7 @@ private enum StorableUserProperty: Equatable, Codable {
         case let .conversationLabels(labels):
             .conversationLabels(
                 labels.map {
-                    WireAPI.ConversationLabel(
+                    WireNetwork.ConversationLabel(
                         id: $0.id,
                         name: $0.name,
                         type: $0.type,

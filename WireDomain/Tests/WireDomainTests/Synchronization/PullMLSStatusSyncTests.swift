@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPISupport
+import WireNetworkSupport
 import WireDataModel
 import XCTest
-@testable import WireAPI
+@testable import WireNetwork
 @testable import WireDomain
 @testable import WireDomainSupport
 
@@ -60,7 +60,7 @@ final class PullMLSStatusSyncTests: XCTestCase {
         XCTAssertEqual(storeInvocations[0], true)
     }
 
-    // Disabled: we have a problem with duplicate linking of WireAPI which means
+    // Disabled: we have a problem with duplicate linking of WireNetwork which means
     // the mock error being thrown isn't caught in the sut even though it looks
     // like the same error.
     func testPull_EndpointUnavailable() async throws {
@@ -79,7 +79,7 @@ final class PullMLSStatusSyncTests: XCTestCase {
         XCTAssertEqual(storeInvocations[0], false)
     }
 
-    // Disabled: we have a problem with duplicate linking of WireAPI which means
+    // Disabled: we have a problem with duplicate linking of WireNetwork which means
     // the mock error being thrown isn't caught in the sut even though it looks
     // like the same error.
     func testPull_MLSNotEnabled() async throws {

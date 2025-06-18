@@ -17,7 +17,7 @@
 //
 
 import avs
-import WireAPI
+import WireNetwork
 import WireDataModel
 import WireDomain
 
@@ -83,11 +83,11 @@ open class AuthenticatedSessionFactory {
         )
 
         let apiServiceFactory: APIServiceFactory = { [wireAPIBackendEnvironment, minTLSVersion] clientID, userID in
-            let wireAssembly = WireAPI.Assembly(
+            let wireAssembly = WireNetwork.Assembly(
                 userID: userID,
                 clientID: clientID,
                 backendEnvironment: wireAPIBackendEnvironment,
-                minTLSVersion: WireAPI.TLSVersion.minVersionFrom(minTLSVersion),
+                minTLSVersion: WireNetwork.TLSVersion.minVersionFrom(minTLSVersion),
                 cookieEncryptionKey: UserDefaults.cookiesKey()
             )
 
@@ -179,7 +179,7 @@ open class AuthenticatedSessionFactory {
     private(set) var proxyUsername: String?
     private(set) var proxyPassword: String?
 
-    private var proxySettings: WireAPI.ProxySettings? {
+    private var proxySettings: WireNetwork.ProxySettings? {
         guard let proxy = environment.proxy else { return nil }
 
         if proxy.needsAuthentication {

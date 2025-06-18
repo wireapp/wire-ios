@@ -16,13 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPISupport
+import WireNetworkSupport
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
 import XCTest
 
-@testable import WireAPI
+@testable import WireNetwork
 @testable import WireDomain
 
 final class ConnectionsRepositoryTests: XCTestCase {
@@ -56,7 +56,7 @@ final class ConnectionsRepositoryTests: XCTestCase {
 
         connectionsAPI.getConnections_MockValue = .init(fetchPage: { _ in
 
-            WireAPI.PayloadPager.Page(
+            WireNetwork.PayloadPager.Page(
                 element: [connection],
                 hasMore: false,
                 nextStart: "first"
@@ -90,13 +90,13 @@ final class ConnectionsRepositoryTests: XCTestCase {
     }
 
     private enum Scaffolding {
-        static let member1ID = WireAPI.QualifiedID(uuid: .mockID1, domain: String.randomDomain())
-        static let conversationID = WireAPI.QualifiedID(uuid: .mockID2, domain: String.randomDomain())
-        static let member2ID = WireAPI.QualifiedID(uuid: .mockID3, domain: String.randomDomain())
+        static let member1ID = WireNetwork.QualifiedID(uuid: .mockID1, domain: String.randomDomain())
+        static let conversationID = WireNetwork.QualifiedID(uuid: .mockID2, domain: String.randomDomain())
+        static let member2ID = WireNetwork.QualifiedID(uuid: .mockID3, domain: String.randomDomain())
         static let lastUpdate = Date()
         static let connectionStatus = ConnectionStatus.accepted
 
-        static let connection = WireAPI.Connection(
+        static let connection = WireNetwork.Connection(
             senderID: Scaffolding.member1ID.uuid,
             receiverID: Scaffolding.member2ID.uuid,
             receiverQualifiedID: Scaffolding.member2ID,

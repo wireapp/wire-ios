@@ -17,7 +17,7 @@
 //
 
 import NeedleFoundation
-import WireAPI
+import WireNetwork
 import WireDataModel
 import WireFoundation
 
@@ -202,7 +202,7 @@ extension PullEventsStep {
         }
     }
 
-    var apiVersion: WireAPI.APIVersion {
+    var apiVersion: WireNetwork.APIVersion {
         get throws {
             let key = "SelectedAPIVersion"
             let sharedUserDefaults = dependency.sharedUserDefaults
@@ -215,7 +215,7 @@ extension PullEventsStep {
             let legacyAPIVersion = APIVersion(rawValue: Int32(storedValue))
 
             guard let legacyAPIVersion,
-                  let apiVersion = WireAPI.APIVersion(rawValue: UInt(legacyAPIVersion.rawValue)) else {
+                  let apiVersion = WireNetwork.APIVersion(rawValue: UInt(legacyAPIVersion.rawValue)) else {
                 throw Failure.apiVersionNotFound
             }
 
@@ -257,7 +257,7 @@ extension PullEventsStep {
         return backendEnvironment
     }
 
-    var backendEnvironment: WireAPI.BackendEnvironment {
+    var backendEnvironment: WireNetwork.BackendEnvironment {
         get async throws {
             BackendEnvironment(
                 url: legacyBackendEnvironment.backendURL,
@@ -280,7 +280,7 @@ extension PullEventsStep {
         }
     }
 
-    var proxySettings: WireAPI.ProxySettings? {
+    var proxySettings: WireNetwork.ProxySettings? {
         get async throws {
             guard let proxy = legacyBackendEnvironment.proxy else { return nil }
 
@@ -339,7 +339,7 @@ extension PullEventsStep {
                 )
             )
 
-            let minTLSVersion = WireAPI.TLSVersion.minVersionFrom(minTLSVersion)
+            let minTLSVersion = WireNetwork.TLSVersion.minVersionFrom(minTLSVersion)
             let config = await URLSessionConfigurationFactory(
                 minTLSVersion: minTLSVersion,
                 proxySettings: try proxySettings

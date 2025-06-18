@@ -18,7 +18,7 @@
 
 import AuthenticationServices
 import Foundation
-import WireAPI
+import WireNetwork
 import WireAuthenticationAPI
 
 @MainActor

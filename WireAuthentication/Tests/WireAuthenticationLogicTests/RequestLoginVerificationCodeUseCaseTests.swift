@@ -17,8 +17,8 @@
 //
 
 import Testing
-import WireAPI
-import WireAPISupport
+import WireNetwork
+import WireNetworkSupport
 import WireAuthenticationAPI
 
 @testable import WireAuthenticationLogic

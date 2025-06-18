@@ -18,7 +18,7 @@
 
 import Combine
 import UIKit
-import WireAPI
+import WireNetwork
 import WireAuthentication
 import WireCommonComponents
 import WireDataModel
@@ -89,7 +89,7 @@ final class AuthenticationInterfaceBuilder {
                     }
                 }
             let preferredAPIVersion = BackendInfo.preferredAPIVersion.flatMap {
-                WireAPI.APIVersion(rawValue: UInt($0.rawValue))
+                WireNetwork.APIVersion(rawValue: UInt($0.rawValue))
             }
             let (rootView, bridge) = assembly.assemble(
                 environmentType: BackendEnvironmentType(environment.environmentType.value),

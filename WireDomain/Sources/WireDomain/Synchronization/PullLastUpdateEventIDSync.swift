@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 import WireLogging
 
 struct PullLastUpdateEventIDSync: PullLastUpdateEventIDSyncProtocol {

@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import WireNetwork
 import WireDomainSupport
 import XCTest
 @testable import WireDomain
@@ -74,12 +74,12 @@ final class UserConnectionEventProcessorTests: XCTestCase {
         static let connection = Connection(
             senderID: UUID(),
             receiverID: UUID(),
-            receiverQualifiedID: WireAPI.QualifiedID(
+            receiverQualifiedID: WireNetwork.QualifiedID(
                 uuid: UUID(),
                 domain: "domain.com"
             ),
             conversationID: UUID(),
-            qualifiedConversationID: WireAPI.QualifiedID(
+            qualifiedConversationID: WireNetwork.QualifiedID(
                 uuid: UUID(),
                 domain: "domain.com"
             ),

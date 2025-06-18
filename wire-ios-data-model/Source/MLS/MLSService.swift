@@ -18,7 +18,7 @@
 
 import Combine
 import Foundation
-import WireAPI
+import WireNetwork
 import WireCoreCrypto
 import WireFoundation
 import WireLogging

@@ -17,11 +17,11 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 import WireCoreCrypto
 import XCTest
 
-@testable import WireAPISupport
+@testable import WireNetworkSupport
 @testable import WireDomain
 @testable import WireDomainSupport
 

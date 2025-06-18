@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import WireNetwork
 import WireDataModel
 import WireSystem
 
@@ -44,7 +44,7 @@ struct ConversationMemberJoinEventProcessor: ConversationMemberJoinEventProcesso
     }
 
     private func getParticipantInfo(
-        from member: WireAPI.Conversation.Member
+        from member: WireNetwork.Conversation.Member
     ) -> (id: UUID, domain: String?, role: String?)? {
         guard let userID = member.id ?? member.qualifiedID?.uuid else {
             return nil

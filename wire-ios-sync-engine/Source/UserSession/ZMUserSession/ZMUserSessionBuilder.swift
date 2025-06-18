@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 import WireDataModel
 import WireDomain
 import WireFoundation
@@ -30,7 +30,7 @@ struct ZMUserSessionBuilder {
 
     private var apiServiceFactory: APIServiceFactory?
     private var backendEnvironment: WireTransport.BackendEnvironment?
-    private var wireAPIBackendEnvironment: WireAPI.BackendEnvironment?
+    private var wireAPIBackendEnvironment: WireNetwork.BackendEnvironment?
     private var appVersion: String?
     private var appLock: (any AppLockType)?
     private var application: (any ZMApplication)?
@@ -53,7 +53,7 @@ struct ZMUserSessionBuilder {
     private var transportSession: (any TransportSessionType)?
     private var userId: UUID?
     private var minTLSVersion: String?
-    private var apiVersion: WireAPI.APIVersion?
+    private var apiVersion: WireNetwork.APIVersion?
     private var journal: Journal?
 
     // MARK: - Initialize
@@ -128,7 +128,7 @@ struct ZMUserSessionBuilder {
     mutating func withAllDependencies(
         apiServiceFactory: @escaping APIServiceFactory,
         backendEnvironment: WireTransport.BackendEnvironment,
-        wireAPIBackendEnvironment: WireAPI.BackendEnvironment,
+        wireAPIBackendEnvironment: WireNetwork.BackendEnvironment,
         appVersion: String,
         application: any ZMApplication,
         cryptoboxMigrationManager: any CryptoboxMigrationManagerInterface,
@@ -212,7 +212,7 @@ struct ZMUserSessionBuilder {
 
         if
             let wireTransportAPIVersion = WireTransport.BackendInfo.apiVersion,
-            let apiVersion = WireAPI.APIVersion(rawValue: UInt(wireTransportAPIVersion.rawValue)) {
+            let apiVersion = WireNetwork.APIVersion(rawValue: UInt(wireTransportAPIVersion.rawValue)) {
             self.apiVersion = apiVersion
         }
 

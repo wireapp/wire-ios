@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
-import WireAPISupport
+import WireNetwork
+import WireNetworkSupport
 import WireAuthenticationAPI
 import XCTest
 
@@ -121,14 +121,14 @@ final class ResolveBackendMetadataUseCaseTests: XCTestCase {
 
 private enum Scaffolding {
 
-    static let backendMetadata = WireAPI.BackendMetadata(
+    static let backendMetadata = WireNetwork.BackendMetadata(
         domain: "wire.com",
         isFederationEnabled: true,
         supportedVersions: [.v4, .v5, .v6, .v7],
         developmentVersions: [.v8]
     )
 
-    static let obsoleteBackendMetadata = WireAPI.BackendMetadata(
+    static let obsoleteBackendMetadata = WireNetwork.BackendMetadata(
         domain: "wire.com",
         isFederationEnabled: true,
         supportedVersions: [.v4, .v5],

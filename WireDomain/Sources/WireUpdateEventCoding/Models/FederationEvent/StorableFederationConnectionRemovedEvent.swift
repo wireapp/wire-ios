@@ -17,17 +17,17 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 struct StorableFederationConnectionRemovedEvent: Equatable, Codable, Sendable {
 
     private let domains: [String]
 
-    init(_ value: WireAPI.FederationConnectionRemovedEvent) {
+    init(_ value: WireNetwork.FederationConnectionRemovedEvent) {
         self.domains = Array(value.domains)
     }
 
-    func toAPIModel() -> WireAPI.FederationConnectionRemovedEvent {
+    func toAPIModel() -> WireNetwork.FederationConnectionRemovedEvent {
         .init(domains: Set(domains))
     }
 

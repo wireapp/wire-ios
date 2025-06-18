@@ -18,7 +18,7 @@
 
 import WireDomainSupport
 import XCTest
-@testable import WireAPI
+@testable import WireNetwork
 @testable import WireDomain
 
 final class ConversationCreateEventProcessorTests: XCTestCase {
@@ -63,7 +63,7 @@ final class ConversationCreateEventProcessorTests: XCTestCase {
 
         static let senderID = UserID(uuid: UUID(), domain: "domain.com")
 
-        static let conversation = WireAPI.Conversation(
+        static let conversation = WireNetwork.Conversation(
             id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ad")!,
             qualifiedID: .init(uuid: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ad")!, domain: "example.com"),
             teamID: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ad")!,

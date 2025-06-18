@@ -18,7 +18,7 @@
 
 @preconcurrency import CoreData
 import Foundation
-import WireAPI
+import WireNetwork
 import WireUpdateEventCoding
 
 protocol UpdateEventMigratorDAOProtocol {

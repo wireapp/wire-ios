@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 import WireDataModelSupport
 import WireDomain
 import XCTest
@@ -275,7 +275,7 @@ final class APIMigrationManagerTests: MessagingTest {
             certificateTrust: ServerCertificateTrust(trustData: [], currentDateProvider: .system)
         )
 
-        let wireAPIBackendEnvironment = WireAPI.BackendEnvironment(
+        let wireAPIBackendEnvironment = WireNetwork.BackendEnvironment(
             url: backendEnvironment.backendURL,
             webSocketURL: backendEnvironment.backendWSURL,
             pinnedKeys: [],

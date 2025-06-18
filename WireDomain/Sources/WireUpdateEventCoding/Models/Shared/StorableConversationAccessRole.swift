@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import WireNetwork
 
 enum StorableConversationAccessRole: String, Equatable, Codable, Sendable {
 
@@ -25,7 +25,7 @@ enum StorableConversationAccessRole: String, Equatable, Codable, Sendable {
     case guest
     case service
 
-    init(_ value: WireAPI.ConversationAccessRole) {
+    init(_ value: WireNetwork.ConversationAccessRole) {
         switch value {
         case .teamMember:
             self = .teamMember
@@ -38,7 +38,7 @@ enum StorableConversationAccessRole: String, Equatable, Codable, Sendable {
         }
     }
 
-    func toAPIModel() -> WireAPI.ConversationAccessRole {
+    func toAPIModel() -> WireNetwork.ConversationAccessRole {
         switch self {
         case .teamMember:
             .teamMember

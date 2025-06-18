@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 enum StorableMLSCipherSuite: Int, Codable, Sendable {
 
@@ -29,7 +29,7 @@ enum StorableMLSCipherSuite: Int, Codable, Sendable {
     case MLS_256_DHKEMX448_CHACHA20POLY1305_SHA512_Ed448 = 6
     case MLS_256_DHKEMP384_AES256GCM_SHA384_P384 = 7
 
-    init(_ value: WireAPI.MLSCipherSuite) {
+    init(_ value: WireNetwork.MLSCipherSuite) {
         switch value {
         case .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519:
             self = .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
@@ -48,7 +48,7 @@ enum StorableMLSCipherSuite: Int, Codable, Sendable {
         }
     }
 
-    func toAPIModel() -> WireAPI.MLSCipherSuite {
+    func toAPIModel() -> WireNetwork.MLSCipherSuite {
         switch self {
         case .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519:
             .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
