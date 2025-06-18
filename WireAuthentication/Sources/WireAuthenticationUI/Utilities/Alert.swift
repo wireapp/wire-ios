@@ -117,9 +117,9 @@ extension Alert {
         switch error {
         case URLError.notConnectedToInternet, URLError.networkConnectionLost:
             .noInternet
-        case ResolveBackendMetadataUseCaseFailure.clientVersionObsolete:
+        case ResolveBackendMetadataError.clientVersionObsolete:
             .obsoleteClient
-        case ResolveBackendMetadataUseCaseFailure.backendAPIVersionObsolete:
+        case ResolveBackendMetadataError.backendAPIVersionObsolete:
             .obsoleteBackend
         default:
             .unknownError

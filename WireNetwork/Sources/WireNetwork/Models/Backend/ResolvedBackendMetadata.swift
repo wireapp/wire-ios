@@ -18,26 +18,30 @@
 
 import Foundation
 
-public protocol ResolveBackendMetadataUseCaseProtocol: Sendable {
+/// Information about a connected backend.
 
-    func invoke() async throws -> BackendMetadata
+public struct ResolvedBackendMetadata: Sendable {
 
-}
+    /// The REST API version to use when making requests.
 
-public enum ResolveBackendMetadataUseCaseFailure: Error, Sendable {
+    public let apiVersion: APIVersion
 
-    /// The API version of the connected backend is
-    /// too old for this client, i.e the max available
-    /// API version is lower than the min API version
-    /// that this client supports.
+    /// The backend's domain.
 
-    case backendAPIVersionObsolete
+    public let domain: String
 
-    /// The API version of this client is too old
-    /// for the connected backend, i.e the max API version
-    /// that this client supports is lower than the min
-    /// available API version on the backend.
+    /// Whether this backend can communicate with other backends.
 
-    case clientVersionObsolete
+    public let isFederationEnabled: Bool
+
+    public init(
+        apiVersion: APIVersion,
+        domain: String,
+        isFederationEnabled: Bool
+    ) {
+        self.apiVersion = apiVersion
+        self.domain = domain
+        self.isFederationEnabled = isFederationEnabled
+    }
 
 }

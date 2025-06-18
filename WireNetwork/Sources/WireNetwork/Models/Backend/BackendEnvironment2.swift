@@ -102,32 +102,4 @@ public struct BackendEnvironment2: Sendable {
 
     }
 
-    /// Information about a connected backend.
-
-    public struct ResolvedBackendMetadata: Sendable {
-
-        /// The REST API version to use when making requests.
-
-        public let apiVersion: APIVersion
-
-        /// The backend's domain.
-
-        public let domain: String
-
-        /// Whether this backend can communicate with other backends.
-
-        public let isFederationEnabled: Bool
-
-        public init(
-            apiVersion: APIVersion,
-            domain: String,
-            isFederationEnabled: Bool
-        ) {
-            self.apiVersion = apiVersion
-            self.domain = domain
-            self.isFederationEnabled = isFederationEnabled
-        }
-
-    }
-
 }

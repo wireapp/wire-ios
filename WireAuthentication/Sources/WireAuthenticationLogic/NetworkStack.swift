@@ -28,7 +28,7 @@ package final class NetworkStack {
     package let minTLSVersion: TLSVersion
     package let preferredAPIVersion: APIVersion?
 
-    private var backendMetadata: WireAuthenticationAPI.BackendMetadata?
+    private var backendMetadata: ResolvedBackendMetadata?
     private var state: NetworkState
     private var proxyCredentials: ProxyCredentials?
 
@@ -90,10 +90,16 @@ package final class NetworkStack {
             }
         }
 
+        let metadata = BackendMetadata(
+            apiVersion: .init(backendMetadata.apiVersion),
+            domain: backendMetadata.domain,
+            isFederationEnabled: backendMetadata.isFederationEnabled
+        )
+
         return WireAuthenticationBackendEnvironment(
             environmentType: backendInfo.environmentType,
             config: backendInfo.backendConfig,
-            metadata: backendMetadata,
+            metadata: metadata,
             proxySettings: resolvedProxySettings
         )
     }
@@ -107,10 +113,10 @@ package final class NetworkStack {
 
     private func resolvedAPIVersion() async throws -> APIVersion {
         let backendMetadata = try await resolvedBackendMetadata()
-        return APIVersion(backendMetadata.apiVersion)
+        return backendMetadata.apiVersion
     }
 
-    private func resolvedBackendMetadata() async throws -> WireAuthenticationAPI.BackendMetadata {
+    private func resolvedBackendMetadata() async throws -> ResolvedBackendMetadata {
         if let backendMetadata {
             return backendMetadata
         }
@@ -123,9 +129,15 @@ package final class NetworkStack {
             preferredAPIVersion: preferredAPIVersion
         )
 
-        let backendMetadata = try await useCase.invoke()
-        self.backendMetadata = backendMetadata
-        return backendMetadata
+        do {
+            let backendMetadata = try await useCase.invoke()
+            self.backendMetadata = backendMetadata
+            return backendMetadata
+        } catch ResolveBackendMetadataUseCaseFailure.backendAPIVersionObsolete {
+            throw ResolveBackendMetadataError.backendAPIVersionObsolete
+        } catch ResolveBackendMetadataUseCaseFailure.clientVersionObsolete {
+            throw ResolveBackendMetadataError.clientVersionObsolete
+        }
     }
 
     private var networkService: NetworkService {
@@ -152,33 +164,6 @@ private extension BackendConfig {
 
     var requiresProxyCredentials: Bool {
         proxySettings?.needsAuthentication == true
-    }
-
-}
-
-private extension APIVersion {
-
-    init(_ apiVersion: WireAuthenticationAPI.BackendMetadata.APIVersion) {
-        switch apiVersion {
-        case .v0:
-            self = .v0
-        case .v1:
-            self = .v1
-        case .v2:
-            self = .v2
-        case .v3:
-            self = .v3
-        case .v4:
-            self = .v4
-        case .v5:
-            self = .v5
-        case .v6:
-            self = .v6
-        case .v7:
-            self = .v7
-        case .v8:
-            self = .v8
-        }
     }
 
 }
@@ -267,6 +252,33 @@ private extension NetworkService {
 
         case proxyCredentialsRequired
 
+    }
+
+}
+
+private extension WireAuthenticationAPI.BackendMetadata.APIVersion {
+
+    init(_ apiVersion: APIVersion) {
+        switch apiVersion {
+        case .v0:
+            self = .v0
+        case .v1:
+            self = .v1
+        case .v2:
+            self = .v2
+        case .v3:
+            self = .v3
+        case .v4:
+            self = .v4
+        case .v5:
+            self = .v5
+        case .v6:
+            self = .v6
+        case .v7:
+            self = .v7
+        case .v8:
+            self = .v8
+        }
     }
 
 }
