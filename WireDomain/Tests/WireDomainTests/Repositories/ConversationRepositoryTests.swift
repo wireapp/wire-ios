@@ -580,26 +580,6 @@ final class ConversationRepositoryTests: XCTestCase {
         }
     }
 
-    func testUpdateTypingUsers_It_Invokes_Local_Store_Method() async throws {
-
-        // Mock
-
-        conversationsLocalStore.updateTypingUsersConversationIDUsersID_MockMethod = { _, _ in }
-
-        let typingUsersInfo = ConversationTypingUsersInfo(
-            users: Set([NSManagedObjectID()]),
-            conversationID: NSManagedObjectID()
-        )
-
-        // When
-
-        await sut.updateTypingUsers([typingUsersInfo])
-
-        // Then
-
-        XCTAssertEqual(conversationsLocalStore.updateTypingUsersConversationIDUsersID_Invocations.count, 1)
-    }
-
     private enum Scaffolding {
 
         static let id = UUID.mockID1

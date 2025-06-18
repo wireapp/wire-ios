@@ -21,18 +21,6 @@ import WireCoreCrypto
 
 class MockE2EIEnrollment: E2eiEnrollmentProtocol {
 
-    // MARK: - contextNewOidcChallengeResponse
-
-    var mockContextNewOidcChallengeResponse: ((WireCoreCrypto.CoreCryptoContext, Data) async throws -> Void)?
-
-    func contextNewOidcChallengeResponse(cc: WireCoreCrypto.CoreCryptoContext, challenge: Data) async throws {
-        guard let mock = mockContextNewOidcChallengeResponse else {
-            fatalError("no mock for `mockContextNewOidcChallengeResponse`")
-        }
-
-        return try await mock(cc, challenge)
-    }
-
     // MARK: - directoryResponse
 
     var mockDirectoryResponse: ((Data) async throws -> AcmeDirectory)?
@@ -179,9 +167,9 @@ class MockE2EIEnrollment: E2eiEnrollmentProtocol {
 
     // MARK: - newOidcChallengeResponse
 
-    var mockNewOidcChallengeResponse: ((WireCoreCrypto.CoreCrypto, Data) async throws -> Void)?
+    var mockNewOidcChallengeResponse: ((WireCoreCrypto.CoreCryptoContext, Data) async throws -> Void)?
 
-    func newOidcChallengeResponse(cc: WireCoreCrypto.CoreCrypto, challenge: Data) async throws {
+    func newOidcChallengeResponse(cc: WireCoreCrypto.CoreCryptoContext, challenge: Data) async throws {
         guard let mock = mockNewOidcChallengeResponse else {
             fatalError("no mock for `mockNewOidcChallengeResponse`")
         }

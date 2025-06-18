@@ -48,12 +48,13 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
 
     var userSession: UserSessionMock!
     var forceRecord: Bool = false
-    var mockUserDefaults = MockUserDefaultsProtocol()
+    var mockUserDefaults = UserDefaultsProtocolMock()
 
     override func setUp() {
         super.setUp()
         userSession = UserSessionMock()
-        mockUserDefaults.boolForKey_MockValue = false
+        mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = []
+        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = false
     }
 
     override func tearDown() {
@@ -180,6 +181,7 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
         let section = ConversationMessageSectionController(
             message: message,
             context: context,
+            selfUser: userSession.selfUser,
             userSession: userSession,
             useInvertedIndices: false,
             contentWidth: width,

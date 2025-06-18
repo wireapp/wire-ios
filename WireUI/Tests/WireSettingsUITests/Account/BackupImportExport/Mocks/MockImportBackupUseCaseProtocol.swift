@@ -17,9 +17,10 @@
 //
 
 import Foundation
-import WireDomainPkg
+import WireDomainPackage
+import WireFoundation
 
-public final class MockImportBackupUseCaseProtocol: ImportBackupUseCaseProtocol {
+public final class MockImportBackupUseCaseProtocol: ImportBackupUseCaseProtocol, @unchecked Sendable {
 
     // MARK: - Life cycle
 

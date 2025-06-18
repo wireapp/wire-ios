@@ -26,7 +26,7 @@ extension URL {
 
     @discardableResult
     func open() -> Bool {
-        let opened = openAsTweet() || openAsLink()
+        let opened = openAsLink()
         if opened {
             return true
         } else {

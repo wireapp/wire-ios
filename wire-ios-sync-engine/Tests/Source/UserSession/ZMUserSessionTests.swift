@@ -109,6 +109,9 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
             self.createSelfClient()
         }
 
+        mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
+        mockCoreCryptoProvider.registerEpochObserver_MockMethod = { _ in }
+
         // WHEN
         syncMOC.performGroupedBlock { [self] in
             sut.didRegisterSelfUserClient(userClient)
@@ -520,6 +523,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         mockMLSService.commitPendingProposalsIfNeeded_MockMethod = {}
         mockMLSService.uploadKeyPackagesIfNeeded_MockMethod = {}
         mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod = {}
+        mockCoreCryptoProvider.initialiseMLSWithBasicCredentialsMlsClientID_MockMethod = { _ in }
 
         syncMOC.performAndWait {
             XCTAssertTrue(selfUserClient.mlsPublicKeys.isEmpty)
@@ -545,8 +549,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
 
         // THEN
         syncMOC.performAndWait {
-            XCTAssertFalse(selfUserClient.mlsPublicKeys.isEmpty)
-
+            XCTAssertEqual(mockCoreCryptoProvider.initialiseMLSWithBasicCredentialsMlsClientID_Invocations.count, 1)
             XCTAssertTrue(BackendInfo.isMLSEnabled)
             XCTAssertTrue(sut.featureRepository.fetchMLS().isEnabled)
         }
@@ -567,5 +570,26 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         let supportedProtocols = syncMOC.performAndWait { ZMUser.selfUser(in: self.syncMOC).supportedProtocols }
 
         XCTAssertTrue(supportedProtocols.contains(.proteus))
+    }
+
+    func test_OnSelfClientInvalidated() async throws {
+        // GIVEN
+        let applicationStatusDirectory = sut.applicationStatusDirectory
+        let clientRegistrationStatus = applicationStatusDirectory.clientRegistrationStatus
+        let clientUpdateStatus = applicationStatusDirectory.clientUpdateStatus
+        clientRegistrationStatus.emailCredentials = .credentials(
+            email: "test@wire.com",
+            password: "7@9xIZ"
+        )
+
+        clientUpdateStatus.needsToVerifySelfClient = true
+
+        // WHEN
+        await sut.onSelfClientInvalidated()
+
+        // THEN
+        XCTAssertEqual(clientRegistrationStatus.emailCredentials, nil)
+        XCTAssertEqual(clientRegistrationStatus.cookieProvider.isAuthenticated, false)
+        XCTAssertEqual(clientUpdateStatus.needsToVerifySelfClient, false)
     }
 }

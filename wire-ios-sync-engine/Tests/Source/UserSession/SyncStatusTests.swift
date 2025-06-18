@@ -39,7 +39,8 @@ final class SyncStatusTests: MessagingTest {
     private func createSut() -> SyncStatus {
         let sut = SyncStatus(
             managedObjectContext: uiMOC,
-            lastEventIDRepository: lastEventIDRepository
+            lastEventIDRepository: lastEventIDRepository,
+            isSyncV2Enabled: false
         )
         sut.syncStateDelegate = mockSyncDelegate
         return sut

@@ -24,6 +24,7 @@ struct ConversationTypingEventProcessor: ConversationTypingEventProcessorProtoco
     let conversationRepository: any ConversationRepositoryProtocol
     let conversationLocalStore: any ConversationLocalStoreProtocol
     let userRepository: any UserRepositoryProtocol
+    let onProcessedTypingUsers: ([ConversationTypingUsersInfo]) -> Void
 
     private let typingUsersTimeout = ConversationTypingUsersTimeout()
 
@@ -41,6 +42,8 @@ struct ConversationTypingEventProcessor: ConversationTypingEventProcessorProtoco
             id: conversationID.uuid,
             domain: conversationID.domain
         )
+
+        typingUsersTimeout.timerFiredCallback = timerDidFire
 
         // Since we'll be manipulating managed object IDs in `ConversationTypingUsersTimeout`
         // we need to make sure we have valid, consistent IDs for the user and conversation.
@@ -88,10 +91,8 @@ struct ConversationTypingEventProcessor: ConversationTypingEventProcessorProtoco
             )
 
             // Updates non timed out typing users
-            await conversationRepository.updateTypingUsers([typingUsersInfo])
+            onProcessedTypingUsers([typingUsersInfo])
         }
-
-        typingUsersTimeout.timerFiredCallback = timerDidFire
 
         typingUsersTimeout.updateExpirationIfNeeded()
     }
@@ -111,7 +112,7 @@ struct ConversationTypingEventProcessor: ConversationTypingEventProcessorProtoco
             return .init(users: userObjectIDs, conversationID: $0)
         }
 
-        await conversationRepository.updateTypingUsers(typingUsersInfo)
+        onProcessedTypingUsers(typingUsersInfo)
 
         typingUsersTimeout.updateExpirationIfNeeded()
     }

@@ -31,7 +31,7 @@ final class ForegroundNotificationFilter {
     }
 }
 
-// TO DO: Ask for the logic, not clear when a notification shuld be presented
+// TO DO: Ask for the logic, not clear when a notification should be presented
 extension ForegroundNotificationFilter: ForegroundNotificationResponder {
 
     @MainActor

@@ -20,6 +20,7 @@ import WireDataModelSupport
 import WireDomainSupport
 import WireSyncEngineSupport
 import XCTest
+
 @testable import WireSyncEngine
 
 final class SupportedProtocolsServiceTests: XCTestCase {

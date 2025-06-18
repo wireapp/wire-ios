@@ -32,6 +32,7 @@ final class ConversationTypingEventProcessorTests: XCTestCase {
     private var coreDataStack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
+    private var didProcessTypingUsers = false
 
     private var context: NSManagedObjectContext {
         coreDataStack.syncContext
@@ -48,7 +49,8 @@ final class ConversationTypingEventProcessorTests: XCTestCase {
         sut = ConversationTypingEventProcessor(
             conversationRepository: conversationRepository,
             conversationLocalStore: conversationLocalStore,
-            userRepository: userRepository
+            userRepository: userRepository,
+            onProcessedTypingUsers: { _ in self.didProcessTypingUsers = true }
         )
     }
 
@@ -61,6 +63,7 @@ final class ConversationTypingEventProcessorTests: XCTestCase {
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
         coreDataStackHelper = nil
+        didProcessTypingUsers = false
     }
 
     // MARK: - Tests
@@ -78,7 +81,6 @@ final class ConversationTypingEventProcessorTests: XCTestCase {
 
         userRepository.fetchOrCreateUserIdDomain_MockValue = user
         conversationRepository.fetchOrCreateConversationIdDomain_MockValue = conversation
-        conversationRepository.updateTypingUsers_MockMethod = { _ in }
         conversationLocalStore.obtainPermanentIDsUserConversation_MockMethod = { _, _ in }
 
         // When
@@ -90,7 +92,7 @@ final class ConversationTypingEventProcessorTests: XCTestCase {
         XCTAssertEqual(conversationLocalStore.obtainPermanentIDsUserConversation_Invocations.count, 1)
         XCTAssertEqual(userRepository.fetchOrCreateUserIdDomain_Invocations.count, 1)
         XCTAssertEqual(conversationRepository.fetchOrCreateConversationIdDomain_Invocations.count, 1)
-        XCTAssertEqual(conversationRepository.updateTypingUsers_Invocations.count, 1)
+        XCTAssertEqual(didProcessTypingUsers, true)
     }
 
     private enum Scaffolding {

@@ -74,6 +74,9 @@ NSString *const ZMConversationIsDeletedRemotelyKey = @"isDeletedRemotely";
 NSString *const ZMConversationIsForcedReadOnlyKey = @"isForcedReadOnly";
 NSString *const ZMConversationIsPendingInitialFetch = @"isPendingInitialFetch";
 NSString *const ZMConversationPrivateChannelPermission = @"privateChannelPermission";
+NSString *const ZMConversationMigratedToMLS = @"migratedToMLS";
+NSString *const ZMConversationCellNameKey = @"cellName";
+NSString *const ZMConversationWireCellsMessageAttachmentDraftsKey = @"wireCellsMessageAttachmentDrafts";
 
 static NSString *const ConnectedUserKey = @"connectedUser";
 static NSString *const CreatorKey = @"creator";
@@ -360,7 +363,10 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             PrimaryKey,
             ZMConversationIsPendingInitialFetch,
             ZMConversationGroupTypeKey,
-            ZMConversationPrivateChannelPermission
+            ZMConversationPrivateChannelPermission,
+            ZMConversationMigratedToMLS,
+            ZMConversationCellNameKey,
+            ZMConversationWireCellsMessageAttachmentDraftsKey
         };
         
         NSSet *additionalKeys = [NSSet setWithObjects:KeysIgnoredForTrackingModifications count:(sizeof(KeysIgnoredForTrackingModifications) / sizeof(*KeysIgnoredForTrackingModifications))];

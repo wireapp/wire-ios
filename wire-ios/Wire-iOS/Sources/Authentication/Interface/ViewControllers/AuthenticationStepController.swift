@@ -193,7 +193,7 @@ class AuthenticationStepController: AuthenticationStepViewController {
             mainView,
             errorLabelContainer,
             secondaryViewsStackView
-        ].compactMap { $0 }
+        ].compactMap(\.self)
 
         contentStack = CustomSpacingStackView(customSpacedArrangedSubviews: subviews)
         contentStack.axis = .vertical

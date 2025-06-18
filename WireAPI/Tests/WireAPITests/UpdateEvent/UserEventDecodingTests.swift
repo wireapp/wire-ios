@@ -320,7 +320,7 @@ final class UserEventDecodingTests: XCTestCase {
                     uuid: UUID(uuidString: "ef84379d-9bd6-432f-b2d6-ff636343596b")!,
                     domain: "example.com"
                 ),
-                lastUpdate: date(from: "2024-06-05T08:34:21Z"),
+                lastUpdate: fractionalDate(from: "2024-06-04T15:03:07.598Z"),
                 status: .accepted
             )
         )

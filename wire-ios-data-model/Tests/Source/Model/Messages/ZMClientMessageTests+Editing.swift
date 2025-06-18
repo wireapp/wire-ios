@@ -692,39 +692,4 @@ extension ZMClientMessageTests_Editing {
         XCTAssertEqual(editedMessage.textMessageData?.messageText, editedText)
         XCTAssertEqual(editedMessage, newMessage)
     }
-
-    func testThatMessageNonPersistedIdentifierDoesNotChangeAfterEdit() {
-        // given
-        let oldText = "Mamma mia"
-        let newText = "here we go again"
-        let oldNonce = UUID.create()
-
-        let sender = ZMUser.insertNewObject(in: uiMOC)
-        sender.remoteIdentifier = UUID.create()
-
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.remoteIdentifier = UUID.create()
-        let message: ZMMessage = try! conversation.appendText(content: oldText) as! ZMMessage
-        message.sender = sender
-        message.nonce = oldNonce
-
-        let oldIdentifier = message.nonpersistedObjectIdentifer
-        let updateEvent = createMessageEditUpdateEvent(
-            oldNonce: message.nonce!,
-            newNonce: UUID.create(),
-            conversationID: conversation.remoteIdentifier!,
-            senderID: message.sender!.remoteIdentifier!,
-            newText: newText
-        )
-
-        // when
-        var newMessage: ZMClientMessage?
-        performPretendingUiMocIsSyncMoc {
-            newMessage = ZMClientMessage.createOrUpdate(from: updateEvent!, in: self.uiMOC, prefetchResult: nil)
-        }
-
-        // then
-        XCTAssertNotEqual(oldNonce, newMessage!.nonce)
-        XCTAssertEqual(oldIdentifier, newMessage!.nonpersistedObjectIdentifer)
-    }
 }

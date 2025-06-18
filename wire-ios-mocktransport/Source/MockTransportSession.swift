@@ -65,7 +65,7 @@ public extension MockTransportSession {
             changedValues: team.changedValues(),
             selfUser: selfUser
         )
-        let membersPushEvents = membersEvents.compactMap { $0 }.map { MockPushEvent(
+        let membersPushEvents = membersEvents.compactMap(\.self).map { MockPushEvent(
             with: $0.payload,
             uuid: UUID.create(),
             isTransient: false
@@ -76,7 +76,7 @@ public extension MockTransportSession {
             team: team,
             changedValues: team.changedValues()
         )
-        let conversationsPushEvents = conversationsEvents.compactMap { $0 }.map { MockPushEvent(
+        let conversationsPushEvents = conversationsEvents.compactMap(\.self).map { MockPushEvent(
             with: $0.payload,
             uuid: UUID.create(),
             isTransient: false

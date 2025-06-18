@@ -40,6 +40,7 @@ public final class UserSessionComponent {
     private let mlsService: any MLSServiceInterface
     private let mlsDecryptionService: any MLSDecryptionServiceInterface
     private let proteusService: any ProteusServiceInterface
+    private let coreCryptoProvider: any CoreCryptoProviderProtocol
 
     public init(
         selfUserID: UUID,
@@ -54,7 +55,8 @@ public final class UserSessionComponent {
         eventContext: NSManagedObjectContext,
         mlsService: any MLSServiceInterface,
         mlsDecryptionService: any MLSDecryptionServiceInterface,
-        proteusService: any ProteusServiceInterface
+        proteusService: any ProteusServiceInterface,
+        coreCryptoProvider: any CoreCryptoProviderProtocol
     ) {
         self.selfUserID = selfUserID
         self.backendEnvironment = backendEnvironment
@@ -69,6 +71,7 @@ public final class UserSessionComponent {
         self.mlsService = mlsService
         self.mlsDecryptionService = mlsDecryptionService
         self.proteusService = proteusService
+        self.coreCryptoProvider = coreCryptoProvider
     }
 
     private lazy var keychain: some KeychainProtocol = WireFoundation.Keychain()
@@ -80,7 +83,8 @@ public final class UserSessionComponent {
     )
 
     private lazy var serverTrustValidator = ServerTrustValidator(
-        pinnedKeys: backendEnvironment.pinnedKeys
+        pinnedKeys: backendEnvironment.pinnedKeys,
+        currentDateProvider: .system
     )
 
     private lazy var urlSessionConfigurationFactory = URLSessionConfigurationFactory(
@@ -122,7 +126,8 @@ public final class UserSessionComponent {
 
     public func clientSessionComponent(
         clientID: String,
-        onSelfClientInvalidated: @escaping () async -> Void
+        asyncStreamEnabled: Bool,
+        completionHandlers: ClientSessionComponent.CompletionHandlers
     ) -> ClientSessionComponent {
         ClientSessionComponent(
             selfUserID: selfUserID,
@@ -140,7 +145,9 @@ public final class UserSessionComponent {
             mlsService: mlsService,
             mlsDecryptionService: mlsDecryptionService,
             proteusService: proteusService,
-            onSelfClientInvalidated: onSelfClientInvalidated
+            asyncStreamEnabled: asyncStreamEnabled, // TODO: [WPB-17223] check if still needed
+            coreCryptoProvider: coreCryptoProvider,
+            completionHandlers: completionHandlers
         )
     }
 

@@ -65,6 +65,29 @@ final class UserClientRequestFactoryTests: MessagingTest {
 
     // MARK: - Registration request creation
 
+    func testThatItCreatesRegistrationRequestWithConsumableNotificationsCapabitilityCorrectly() throws {
+        // GIVEN
+        let credentials = UserEmailCredentials(email: "some@example.com", password: "123")
+        DeveloperFlag.asyncStreamNotifications.enable(true, storage: .temporary())
+
+        try testThatItCreatesRegistrationRequestCorrectly(
+            credentials: credentials,
+            usingProteusService: true,
+            apiVersion: .v8
+        )
+    }
+
+    func testThatItCreatesRegistrationRequestWithLegalholdCapabitilityCorrectly() throws {
+        // GIVEN
+        let credentials = UserEmailCredentials(email: "some@example.com", password: "123")
+
+        try testThatItCreatesRegistrationRequestCorrectly(
+            credentials: credentials,
+            usingProteusService: true,
+            apiVersion: .v0
+        )
+    }
+
     func testThatItCreatesRegistrationRequestWithEmailCorrectly() throws {
         let credentials = UserEmailCredentials(email: "some@example.com", password: "123")
 
@@ -111,7 +134,8 @@ final class UserClientRequestFactoryTests: MessagingTest {
 
     private func testThatItCreatesRegistrationRequestCorrectly(
         credentials: UserEmailCredentials?,
-        usingProteusService: Bool
+        usingProteusService: Bool,
+        apiVersion: APIVersion = .v0
     ) throws {
         let request = try syncMOC.performAndWait {
             // given
@@ -126,14 +150,18 @@ final class UserClientRequestFactoryTests: MessagingTest {
                 cookieLabel: "mycookie",
                 prekeys: prekeys,
                 lastRestortPrekey: lastRestortPrekey,
-                apiVersion: .v0
+                apiVersion: apiVersion
             )
 
         }
 
         // then
         let transportRequest = try XCTUnwrap(request.transportRequest)
-        assertRequest(transportRequest, path: "/clients", method: .post)
+        if apiVersion >= .v8 {
+            assertRequest(transportRequest, path: "/v8/clients", method: .post)
+        } else {
+            assertRequest(transportRequest, path: "/clients", method: .post)
+        }
 
         let payload = try XCTUnwrap(payload(from: transportRequest))
 
@@ -145,6 +173,12 @@ final class UserClientRequestFactoryTests: MessagingTest {
 
         if let emailVerificationCode = credentials?.emailVerificationCode {
             XCTAssertEqual(payload.verificationCode, emailVerificationCode)
+        }
+
+        if apiVersion >= .v8, DeveloperFlag.asyncStreamNotifications.isOn {
+            XCTAssertEqual(payload.capabilities, ["legalhold-implicit-consent", "consumable-notifications"])
+        } else {
+            XCTAssertEqual(payload.capabilities, ["legalhold-implicit-consent"])
         }
     }
 
@@ -364,6 +398,11 @@ private extension [String: Any] {
         case mackey
         case mlsPublicKeys = "mls_public_keys"
         case ed25519
+        case capabilities
+    }
+
+    var capabilities: [String]? {
+        value(forKey: .capabilities)
     }
 
     var type: String? {

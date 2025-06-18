@@ -364,8 +364,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close team account overview"
+            "state" : "translated",
+            "value" : "关闭团队账户概览"
           }
         },
         "zh-Hant" : {
@@ -489,8 +489,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Close team name view"
+            "state" : "translated",
+            "value" : "关闭团队名称视图"
           }
         },
         "zh-Hant" : {

@@ -19,6 +19,7 @@
 import Foundation
 import WireAPI
 import WireAuthenticationAPI
+import WireFoundation
 import WireLogging
 
 package final class NetworkStack {
@@ -219,7 +220,10 @@ private extension NetworkService {
 
         let networkService = NetworkService(
             baseURL: backendConfig.endpoints.backendURL,
-            serverTrustValidator: ServerTrustValidator(pinnedKeys: pinnedKeys)
+            serverTrustValidator: ServerTrustValidator(
+                pinnedKeys: pinnedKeys,
+                currentDateProvider: .system
+            )
         )
 
         let proxySettings: WireAPI.ProxySettings?

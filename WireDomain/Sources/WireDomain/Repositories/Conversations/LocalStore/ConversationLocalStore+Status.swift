@@ -76,8 +76,6 @@ extension ConversationLocalStore {
         localConversation: ZMConversation,
         fallbackGroupID: MLSGroupID?
     ) async {
-        guard let mlsService else { return }
-
         let (messageProtocol, mlsGroupID) = await context.perform {
             (
                 localConversation.messageProtocol,
@@ -99,6 +97,12 @@ extension ConversationLocalStore {
         }
 
         let conversationExists: Bool
+
+        guard let mlsService else {
+            return mlsLogger.error(
+                "Cannot update conversation MLS status: MLS service is missing"
+            )
+        }
 
         do {
             conversationExists = try await mlsService.conversationExists(

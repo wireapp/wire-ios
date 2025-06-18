@@ -20,6 +20,6 @@ import CoreData
 
 /// The typing users for a given conversation
 public struct ConversationTypingUsersInfo {
-    let users: Set<NSManagedObjectID>
-    let conversationID: NSManagedObjectID
+    public let users: Set<NSManagedObjectID>
+    public let conversationID: NSManagedObjectID
 }

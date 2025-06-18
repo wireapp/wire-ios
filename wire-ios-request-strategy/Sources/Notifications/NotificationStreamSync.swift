@@ -119,7 +119,7 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
 
         let events = eventsDictionaries
             .compactMap { ZMUpdateEvent.eventsArray(from: $0 as ZMTransportData, source: source) }
-            .flatMap { $0 }
+            .flatMap(\.self)
 
         notificationStreamSyncDelegate?.fetchedEvents(events, hasMoreToFetch: listPaginator.hasMoreToFetch)
         latestEventId = events.last(where: { !$0.isTransient })?.uuid

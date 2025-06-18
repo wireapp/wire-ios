@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
 /// An event where the conversation's name was changed.
 
-public struct ConversationRenameEvent: Equatable, Codable, Sendable {
+public struct ConversationRenameEvent: Equatable, Sendable {
 
     /// The id of the conversation.
 

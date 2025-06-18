@@ -24,9 +24,17 @@ struct DeveloperDebugActionsView: View {
     @State var userInput: String = ""
 
     var body: some View {
-        List(viewModel.buttons) { button in
-            Button(action: button.action) {
-                Text(button.title)
+        List(viewModel.debugItems) { debugItem in
+            switch debugItem {
+            case let .button(buttonItem):
+                Button(action: buttonItem.action) {
+                    Text(buttonItem.title)
+                }
+            case let .toggle(toggleItem):
+                Toggle(isOn: toggleItem.isOn) {
+                    Text(toggleItem.title)
+                        .foregroundColor(.accentColor)
+                }.disabled(!toggleItem.enabled)
             }
         }
         .sheet(item: $viewModel.mlsGroupSearchItem, content: mlsGroupSearchView)

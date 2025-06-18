@@ -18,7 +18,7 @@
 
 import Foundation
 
-class PushChannelAPIImpl: PushChannelAPI {
+final class PushChannelAPIImpl: PushChannelAPI {
 
     let pushChannelService: any PushChannelServiceProtocol
 

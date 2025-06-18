@@ -43,7 +43,8 @@
                           initialAccessToken:(ZMAccessToken *)initialAccessToken
                                    userAgent:(NSString *)userAgent
                                minTLSVersion:(NSString *)minTLSVersion
-                                selfClientID: (NSString *)selfClientID;
+                                selfClientID: (NSString *)selfClientID
+                             isSyncV2Enabled:(bool)isSyncV2Enabled;
 
 - (NSURLSessionTask *)suspendedTaskForRequest:(ZMTransportRequest *)request onSession:(ZMURLSession *)session;
 

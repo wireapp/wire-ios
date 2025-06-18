@@ -18,6 +18,7 @@
 
 import WireAPISupport
 import XCTest
+
 @testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport
@@ -159,11 +160,11 @@ private enum Scaffolding {
     static let isFederationEnabled = false
     static let isMLSEnabled = false
 
-    static let conversationID1 = QualifiedID(uuid: UUID(), domain: localDomain)
-    static let conversationID2 = QualifiedID(uuid: UUID(), domain: localDomain)
-    static let conversationID3 = QualifiedID(uuid: UUID(), domain: localDomain)
+    static let conversationID1 = WireAPI.QualifiedID(uuid: UUID(), domain: localDomain)
+    static let conversationID2 = WireAPI.QualifiedID(uuid: UUID(), domain: localDomain)
+    static let conversationID3 = WireAPI.QualifiedID(uuid: UUID(), domain: localDomain)
 
-    static var conversationIDs: [QualifiedID] {
+    static var conversationIDs: [WireAPI.QualifiedID] {
         [
             conversationID1,
             conversationID2,

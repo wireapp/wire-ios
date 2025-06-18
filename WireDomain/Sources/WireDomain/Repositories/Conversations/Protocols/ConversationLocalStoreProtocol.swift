@@ -75,6 +75,12 @@ public protocol ConversationLocalStoreProtocol {
         conversationDomain: String
     ) async
 
+    func createMLSConversation(
+        conversationID: UUID,
+        conversationDomain: String?,
+        mlsGroupID: MLSGroupID
+    ) async
+
     /// Fetches a MLS conversation locally.
     ///
     /// - parameters:
@@ -329,17 +335,6 @@ public protocol ConversationLocalStoreProtocol {
         in conversation: ZMConversation
     ) async
 
-    /// Sends a notification using the main context informing typing users
-    /// have been updated for a given conversation.
-    /// - Parameters:
-    ///     - conversationID: The conversation managed object ID.
-    ///     - usersID: The updated typing users managed object IDs.
-
-    func updateTypingUsers(
-        conversationID: NSManagedObjectID,
-        usersID: Set<NSManagedObjectID>
-    ) async
-
     /// Obtain permanent stored object IDs.
     /// - Parameters:
     ///     - user: The user to get the permanent managed object ID for.
@@ -394,6 +389,48 @@ public protocol ConversationLocalStoreProtocol {
     func fetchOtherUserIDInOneOnOneConversation(
         conversation: ZMConversation
     ) async -> WireDataModel.QualifiedID?
+
+    func name(
+        for conversation: ZMConversation
+    ) async -> String?
+
+    func shouldHideNotification() async -> Bool
+
+    func isMessageSilenced(
+        _ message: GenericMessage,
+        senderID: UUID?,
+        conversation: ZMConversation
+    ) async -> Bool
+
+    func conversationMutedMessageTypesIncludingAvailability(
+        _ conversation: ZMConversation
+    ) async -> MutedMessageTypes
+
+    func lastReadServerTimestamp(
+        _ conversation: ZMConversation
+    ) async -> Date?
+
+    func conversationNeedsBackendUpdate(
+        _ conversation: ZMConversation
+    ) async -> Bool
+
+    func increaseUnreadCount(
+        for conversation: ZMConversation
+    ) async
+
+    func decreaseUnreadCount(
+        for conversation: ZMConversation
+    ) async
+
+    func increaseUnreadSelfMentionCount(
+        for conversation: ZMConversation
+    ) async
+
+    func increaseUnreadSelfReplyCount(
+        for conversation: ZMConversation
+    ) async
+
+    func unreadConversationCount() async -> UInt
 
     /// Stores the private conversation (aka channel) permission locally.
     /// - Parameters

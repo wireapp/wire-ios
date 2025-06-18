@@ -49,7 +49,6 @@ final class MLSMessageDecryptorTests: XCTestCase {
 
         sut = MLSMessageDecryptor(
             mlsDecryptionService: mlsDecryptionService,
-            mlsService: mlsService,
             conversationLocalStore: conversationLocalStore
         )
     }
@@ -67,7 +66,7 @@ final class MLSMessageDecryptorTests: XCTestCase {
 
     // MARK: - Tests
 
-    func testDecryptedEventData_It_Decrypts_An_Event_And_Invokes_Repo_Methods() async throws {
+    func testDecryptedEventData_It_Decrypts_Add_Message_Event_And_Invokes_Repo_Methods() async throws {
         // Mock
 
         let conversation = await context.perform { [self] in
@@ -89,18 +88,45 @@ final class MLSMessageDecryptorTests: XCTestCase {
 
         conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
         conversationLocalStore.mlsConversationInfoConversation_MockValue = (try XCTUnwrap(Scaffolding.mlsGroupID), true)
-        mlsDecryptionService.decryptMessageForSubconversationType_MockValue = [mockDecryptionResult]
+        mlsDecryptionService.decryptMessageForSubconversationTypeContext_MockValue = [mockDecryptionResult]
 
         // When
 
-        let event = try await sut.decryptedEventData(from: Scaffolding.makeEvent(content: encryptedMessage))
+        let event = try await sut
+            .decryptedMessageAddEventData(
+                from: Scaffolding.makeAddMessageEvent(content: encryptedMessage),
+                context: nil
+            )
 
         // Then
 
         XCTAssertEqual(conversationLocalStore.fetchConversationIdDomain_Invocations.count, 1)
         XCTAssertEqual(conversationLocalStore.mlsConversationInfoConversation_Invocations.count, 1)
-        XCTAssertEqual(mlsDecryptionService.decryptMessageForSubconversationType_Invocations.count, 1)
+        XCTAssertEqual(mlsDecryptionService.decryptMessageForSubconversationTypeContext_Invocations.count, 1)
         XCTAssertEqual(event.decryptedMessages.first?.message, decryptedMessage)
+    }
+
+    func testDecryptedEventData_It_Decrypts_A_Welcome_Message_Event_And_Invokes_Repo_Methods() async throws {
+        // Mock
+
+        mlsDecryptionService.processWelcomeMessageWelcomeMessageContext_MockValue = Scaffolding.mlsGroupID
+        conversationLocalStore
+            .createMLSConversationConversationIDConversationDomainMlsGroupID_MockMethod = { _, _, _ in }
+
+        // When
+
+        try await sut.decryptedWelcomeMessageEventData(
+            from: Scaffolding.makeWelcomeEvent(),
+            context: nil
+        )
+
+        // Then
+
+        XCTAssertEqual(mlsDecryptionService.processWelcomeMessageWelcomeMessageContext_Invocations.count, 1)
+        XCTAssertEqual(
+            conversationLocalStore.createMLSConversationConversationIDConversationDomainMlsGroupID_Invocations.count,
+            1
+        )
     }
 
     private enum Scaffolding {
@@ -122,13 +148,22 @@ final class MLSMessageDecryptorTests: XCTestCase {
 
         static let mlsGroupID = MLSGroupID(base64Encoded: base64EncodedString)
 
-        static func makeEvent(content: String) -> ConversationMLSMessageAddEvent {
+        static func makeAddMessageEvent(content: String) -> ConversationMLSMessageAddEvent {
             ConversationMLSMessageAddEvent(
                 conversationID: conversationID,
                 senderID: aliceID,
                 subconversation: nil,
                 message: content,
-                timestamp: timestamp
+                timestamp: timestamp,
+                decryptedMessages: []
+            )
+        }
+
+        static func makeWelcomeEvent() -> ConversationMLSWelcomeEvent {
+            ConversationMLSWelcomeEvent(
+                conversationID: conversationID,
+                senderID: UserID(uuid: .mockID1, domain: ""),
+                welcomeMessage: ""
             )
         }
 

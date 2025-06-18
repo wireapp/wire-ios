@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
 /// A configuration for the *MLS Migration* feature.
 
@@ -33,5 +33,15 @@ public struct MLSMigrationFeatureConfig: Equatable, Codable, Sendable {
     /// The date until the migration has to finalise.
 
     public let finaliseRegardlessAfter: Date?
+
+    public init(
+        status: FeatureConfigStatus,
+        startTime: Date? = nil,
+        finaliseRegardlessAfter: Date? = nil
+    ) {
+        self.status = status
+        self.startTime = startTime
+        self.finaliseRegardlessAfter = finaliseRegardlessAfter
+    }
 
 }

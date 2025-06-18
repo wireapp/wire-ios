@@ -26,6 +26,7 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
     let messageLocalStore: any MessageLocalStoreProtocol
     let userLocalStore: any UserLocalStoreProtocol
     let protobufMessageProcessor: any ConversationProtobufMessageProcessorProtocol
+    let onProcessedCallEvent: (CallEventInfo) -> Void
 
     func processEvent(_ event: ConversationProteusMessageAddEvent) async throws {
         let senderID = event.senderID
@@ -84,6 +85,15 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
                 conversationID: conversationID,
                 date: date
             )
+        }
+
+        // Handle calling if there's one.
+
+        if let callEventInfo = getCallEventInfo(
+            event: event,
+            genericMessage: genericMessage
+        ) {
+            return onProcessedCallEvent(callEventInfo)
         }
 
         await conversationLocalStore.updateSecurityLevelAfterReceivingMessage(
@@ -188,6 +198,50 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
             messageType: systemMessageType,
             conversationID: conversationID.uuid,
             conversationDomain: conversationID.domain
+        )
+    }
+
+    // MARK: - Calling
+
+    func getCallEventInfo(
+        event: ConversationProteusMessageAddEvent,
+        genericMessage: GenericMessage
+    ) -> CallEventInfo? {
+        guard genericMessage.hasCalling else {
+            return nil
+        }
+
+        guard let callContent: CallContent = .decode(from: genericMessage.calling) else {
+            return nil
+        }
+
+        guard let payload = genericMessage.calling.content.data(
+            using: .utf8, allowLossyConversion: false
+        ) else {
+            return nil
+        }
+
+        let isRemoteMute = callContent.type == "REMOTEMUTE"
+        let callingConversationID = genericMessage.calling.qualifiedConversationID
+        let senderID = event.senderID
+        let eventTimestamp = event.timestamp
+        let clientID = event.messageSenderClientID
+
+        let conversationID = !callingConversationID.id
+            .isEmpty ? UUID(uuidString: callingConversationID.id)! : event.conversationID.uuid
+
+        let conversationDomain = !callingConversationID.domain.isEmpty ? callingConversationID.domain : event
+            .conversationID.domain
+
+        return CallEventInfo(
+            data: payload,
+            conversationID: conversationID,
+            conversationDomain: conversationDomain,
+            userID: senderID.uuid,
+            userDomain: senderID.domain,
+            eventTimestamp: eventTimestamp,
+            clientID: clientID,
+            isMuted: isRemoteMute
         )
     }
 

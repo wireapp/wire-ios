@@ -26,4 +26,10 @@ public struct FileSharingFeatureConfig: Codable, Equatable, Sendable {
 
     public let status: FeatureConfigStatus
 
+    public init(
+        status: FeatureConfigStatus
+    ) {
+        self.status = status
+    }
+
 }

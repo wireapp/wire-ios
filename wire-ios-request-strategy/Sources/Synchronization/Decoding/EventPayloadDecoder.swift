@@ -22,15 +22,15 @@ enum EventPayloadDecoderError: Error {
     case invalidSerializationJSONObject
 }
 
-struct EventPayloadDecoder {
+public struct EventPayloadDecoder {
 
     private let decoder: JSONDecoder
 
-    init(decoder: JSONDecoder = .defaultDecoder) {
+    public init(decoder: JSONDecoder = .defaultDecoder) {
         self.decoder = decoder
     }
 
-    func decode<T>(
+    public func decode<T>(
         _ type: T.Type,
         from eventPayload: [AnyHashable: Any]
     ) throws -> T where T: Decodable {
@@ -51,7 +51,7 @@ struct EventPayloadDecoder {
         return try decode(type, from: data)
     }
 
-    func decode<T>(
+    public func decode<T>(
         _ type: T.Type,
         from eventPayload: Data
     ) throws -> T where T: Decodable {

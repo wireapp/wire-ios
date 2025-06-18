@@ -79,7 +79,7 @@ struct SettingsCellDescriptorFactory {
 
         let presentationAction: () -> UIViewController? = {
             if
-                let count = sessionManager?.accountManager.accounts.count,
+                let count = sessionManager?.accountManager.numberOfAccounts,
                 let maxNumberAccounts = sessionManager?.maxNumberAccounts,
                 count < maxNumberAccounts {
                 sessionManager?.addAccount()

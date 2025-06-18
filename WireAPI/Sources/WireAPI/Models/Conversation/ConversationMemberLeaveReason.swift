@@ -29,10 +29,10 @@ public enum ConversationMemberLeaveReason: String, Codable, Sendable {
 
     /// The user left the conversation by themselves.
 
-    case userLeft
+    case userLeft = "left"
 
     /// The user was removed from the conversation by an admin.
 
-    case userRemoved
+    case userRemoved = "removed"
 
 }

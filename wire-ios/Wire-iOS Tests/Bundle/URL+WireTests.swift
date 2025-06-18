@@ -28,7 +28,7 @@ final class URL_WireTests: XCTestCase {
         super.setUp()
         let bundle = Bundle.backendBundle
         let defaults = UserDefaults(suiteName: "URLWireTests")!
-        EnvironmentType.production.save(in: defaults)
+        EnvironmentType.default.save(in: defaults)
         be = BackendEnvironment(userDefaults: defaults, configurationBundle: bundle)
     }
 

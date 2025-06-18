@@ -104,6 +104,8 @@ public extension UpdateEvent {
                 "team.memberLeave"
             case .memberUpdate:
                 "team.memberUpdate"
+            case .create:
+                "team.create"
             }
         case let .unknown(eventType):
             "unknown.\(eventType)"

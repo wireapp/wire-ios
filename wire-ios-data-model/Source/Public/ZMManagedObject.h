@@ -34,11 +34,3 @@ extern NSString * _Nonnull const ZMDataPropertySuffix;
 - (nullable NSString *)objectIDURLString;
 
 @end
-
-@interface ZMManagedObject (NonpersistedObjectIdentifer)
-
-@property (nonatomic, readonly, nonnull) NSString *nonpersistedObjectIdentifer;
-
-+ (nullable instancetype)existingObjectWithNonpersistedObjectIdentifer:(nullable NSString *)identifier inUserSession:(nonnull id<ContextProvider>)userSession;
-
-@end

@@ -37,6 +37,10 @@ extension UpdateEventDecodingProxy {
         case .memberUpdate:
             let event = try TeamMemberUpdateEventDecoder().decode(from: container)
             updateEvent = .team(.memberUpdate(event))
+
+        case .create:
+            let event = try TeamCreateEventDecoder().decode(from: container)
+            updateEvent = .team(.create(event))
         }
     }
 

@@ -74,7 +74,7 @@ extension ZMConversation {
         code: String,
         password: String?,
         transportSession: TransportSessionType,
-        eventProcessor: ConversationEventProcessorProtocol,
+        eventProcessor: LegacyConversationEventProcessorProtocol,
         contextProvider: ContextProvider,
         completion: @escaping (Result<ZMConversation, Error>) -> Void
     ) {

@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
 /// An event where some participants were added to a conversation.
 
-public struct ConversationMemberJoinEvent: Equatable, Codable, Sendable {
+public struct ConversationMemberJoinEvent: Equatable, Sendable {
 
     /// The id of the conversation.
 
@@ -37,5 +37,17 @@ public struct ConversationMemberJoinEvent: Equatable, Codable, Sendable {
     /// The members who were added.
 
     public let members: [Conversation.Member]
+
+    public init(
+        conversationID: ConversationID,
+        senderID: UserID,
+        timestamp: Date,
+        members: [Conversation.Member]
+    ) {
+        self.conversationID = conversationID
+        self.senderID = senderID
+        self.timestamp = timestamp
+        self.members = members
+    }
 
 }

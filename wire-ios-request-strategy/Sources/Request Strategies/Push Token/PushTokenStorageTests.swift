@@ -47,8 +47,7 @@ final class PushTokenStorageTests: MessagingTestBase {
         let pushToken = PushToken(
             deviceToken: deviceToken,
             appIdentifier: "com.wire",
-            transportType: "APNS_VOIP",
-            tokenType: .voip
+            transportType: "APNS"
         )
         XCTAssertNil(PushTokenStorage.pushToken)
 

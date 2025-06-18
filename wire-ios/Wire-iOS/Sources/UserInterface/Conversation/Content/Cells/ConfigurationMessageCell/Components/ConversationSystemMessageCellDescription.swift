@@ -18,13 +18,17 @@
 
 import UIKit
 import WireDataModel
+import WireSyncEngine
 
 enum ConversationSystemMessageCellDescription {
 
     static func cells(
         for message: ZMConversationMessage,
         isCollapsed: Bool,
-        buttonAction: Completion?
+        buttonAction: Completion?,
+        selfUser: any UserType,
+        accentColor: UIColor,
+        userSession: UserSession
     ) -> [AnyConversationMessageCellDescription] {
 
         guard let systemMessageData = message.systemMessageData,
@@ -63,7 +67,11 @@ enum ConversationSystemMessageCellDescription {
             return []
 
         case .messageDeletedForEveryone:
-            let senderCell = ConversationSenderMessageCellDescription(sender: sender, message: message)
+            let senderCell = ConversationSenderMessageCellDescription(
+                sender: sender,
+                selfUser: selfUser,
+                message: message
+            )
             return [AnyConversationMessageCellDescription(senderCell)]
 
         case .messageTimerUpdate:
@@ -103,7 +111,8 @@ enum ConversationSystemMessageCellDescription {
             let decryptionCell = ConversationCannotDecryptSystemMessageCellDescription(
                 message: message,
                 data: systemMessageData,
-                sender: sender
+                sender: sender,
+                accentColor: accentColor
             )
             return [AnyConversationMessageCellDescription(decryptionCell)]
 
@@ -111,7 +120,13 @@ enum ConversationSystemMessageCellDescription {
             let newClientCell = ConversationNewDeviceSystemMessageCellDescription(
                 message: message,
                 systemMessageData: systemMessageData,
-                conversation: conversation as! ZMConversation
+                conversation: conversation,
+                onUserTap: { userID in
+                    showUser(id: userID, userSession: userSession)
+                },
+                onConversationTap: { conversationID in
+                    showConversation(id: conversationID, userSession: userSession)
+                }
             )
             return [AnyConversationMessageCellDescription(newClientCell)]
 
@@ -120,7 +135,10 @@ enum ConversationSystemMessageCellDescription {
             let ignoredClientCell = ConversationIgnoredDeviceSystemMessageCellDescription(
                 message: message,
                 data: systemMessageData,
-                user: user
+                user: user,
+                onUserTap: { userID in
+                    showUser(id: userID, userSession: userSession)
+                }
             )
             return [AnyConversationMessageCellDescription(ignoredClientCell)]
 
@@ -156,16 +174,12 @@ enum ConversationSystemMessageCellDescription {
 
         case .newConversation:
             var cells: [AnyConversationMessageCellDescription] = []
-            let startedConversationCell = ConversationStartedSystemMessageCellDescription(
-                message: message,
-                data: systemMessageData
-            )
+            let startedConversationCell = ConversationStartedSystemMessageCellDescription(message: message)
             cells.append(AnyConversationMessageCellDescription(startedConversationCell))
 
             // Only display invite user cell for team members
-            if let user = SelfUser.provider?.providedSelfUser,
-               user.isTeamMember,
-               conversation.selfCanAddUsers,
+            if selfUser.isTeamMember,
+               conversation.selfCanAddUsers(selfUser: selfUser),
                conversation.isOpenGroup {
                 cells.append(
                     AnyConversationMessageCellDescription(
@@ -219,6 +233,33 @@ enum ConversationSystemMessageCellDescription {
 
         return []
     }
+
+    private static func showUser(
+        id: Any,
+        userSession: UserSession
+    ) {
+        guard let managedId = id as? NSManagedObjectID,
+              let zClientViewController = ZClientViewController.shared,
+              let user = ZMUser.existingObject(with: managedId, inUserSession: userSession.contextProvider) else {
+            return
+        }
+        zClientViewController.openClientListScreen(for: user)
+    }
+
+    private static func showConversation(
+        id: Any,
+        userSession: UserSession
+    ) {
+        guard let managedId = id as? NSManagedObjectID,
+              let zClientViewController = ZClientViewController.shared,
+              let conversation = ZMConversation.existingObject(
+                  with: managedId,
+                  inUserSession: userSession.contextProvider
+              ) else {
+            return
+        }
+        zClientViewController.openDetailScreen(for: conversation)
+    }
 }
 
 private extension ConversationLike {
@@ -226,8 +267,8 @@ private extension ConversationLike {
         conversationType == .group && allowGuests
     }
 
-    var selfCanAddUsers: Bool {
-        guard let user = SelfUser.provider?.providedSelfUser else {
+    func selfCanAddUsers(selfUser: (any UserType)?) -> Bool {
+        guard let user = selfUser else {
             assertionFailure("expected available 'user'!")
             return false
         }

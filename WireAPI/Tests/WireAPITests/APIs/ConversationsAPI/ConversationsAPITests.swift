@@ -285,8 +285,7 @@ final class ConversationsAPITests: XCTestCase {
     func testGetConversations_givenV0AndSuccessResponse400() async throws {
         // given
         let apiService = MockAPIServiceProtocol.withError(
-            statusCode: .badRequest,
-            label: "invalid body"
+            statusCode: .badRequest
         )
 
         let api = ConversationsAPIV0(apiService: apiService)
@@ -295,11 +294,10 @@ final class ConversationsAPITests: XCTestCase {
         // then
         do {
             _ = try await api.getConversations(for: [])
-        } catch let error as FailureResponse {
-            XCTAssertEqual(error.code, 400)
-            XCTAssertEqual(error.label, "invalid body")
+        } catch ConversationsAPIError.invalidBody {
+            XCTAssertTrue(true)
         } catch {
-            XCTFail("expected error 'FailureResponse'")
+            XCTFail("expected error 'ConversationsAPIError.invalidBody'")
         }
     }
 
@@ -344,8 +342,7 @@ final class ConversationsAPITests: XCTestCase {
     func testGetConversations_givenV2AndSuccessResponse400() async throws {
         // given
         let apiService = MockAPIServiceProtocol.withError(
-            statusCode: .badRequest,
-            label: "invalid body"
+            statusCode: .badRequest
         )
 
         let api = ConversationsAPIV2(apiService: apiService)
@@ -354,11 +351,10 @@ final class ConversationsAPITests: XCTestCase {
         // then
         do {
             _ = try await api.getConversations(for: [])
-        } catch let error as FailureResponse {
-            XCTAssertEqual(error.code, 400)
-            XCTAssertEqual(error.label, "invalid body")
+        } catch ConversationsAPIError.invalidBody {
+            XCTAssertTrue(true)
         } catch {
-            XCTFail("expected error 'FailureResponse'")
+            XCTFail("expected error 'ConversationsAPIError.invalidBody'")
         }
     }
 
@@ -408,8 +404,7 @@ final class ConversationsAPITests: XCTestCase {
     func testGetConversations_givenV3AndSuccessResponse400() async throws {
         // given
         let apiService = MockAPIServiceProtocol.withError(
-            statusCode: .badRequest,
-            label: "invalid body"
+            statusCode: .badRequest
         )
 
         let api = ConversationsAPIV3(apiService: apiService)
@@ -418,11 +413,10 @@ final class ConversationsAPITests: XCTestCase {
         // then
         do {
             _ = try await api.getConversations(for: [])
-        } catch let error as FailureResponse {
-            XCTAssertEqual(error.code, 400)
-            XCTAssertEqual(error.label, "invalid body")
+        } catch ConversationsAPIError.invalidBody {
+            XCTAssertTrue(true)
         } catch {
-            XCTFail("expected error 'FailureResponse'")
+            XCTFail("expected error 'ConversationsAPIError.invalidBody'")
         }
     }
 

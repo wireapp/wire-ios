@@ -31,4 +31,12 @@ public struct MessageContent: Equatable, Codable, Sendable {
 
     public var decryptedMessage: String?
 
+    public init(
+        encryptedMessage: String,
+        decryptedMessage: String? = nil
+    ) {
+        self.encryptedMessage = encryptedMessage
+        self.decryptedMessage = decryptedMessage
+    }
+
 }

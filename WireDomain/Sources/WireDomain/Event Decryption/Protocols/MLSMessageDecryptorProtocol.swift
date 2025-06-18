@@ -17,6 +17,7 @@
 //
 
 import WireAPI
+import WireCoreCrypto
 
 // sourcery: AutoMockable
 /// Decrypt MLS messages.
@@ -27,9 +28,17 @@ protocol MLSMessageDecryptorProtocol {
     /// - Parameter eventData: A payload containing the encrypted message.
     /// - Returns: The payload containing the decrypted message.
 
-    func decryptedEventData(
-        from eventData: ConversationMLSMessageAddEvent
+    func decryptedMessageAddEventData(
+        from eventData: ConversationMLSMessageAddEvent,
+        context: CoreCryptoContextProtocol?
     ) async throws -> ConversationMLSMessageAddEvent
 
-    func commitPendingProposalsIfNeeded() async
+    /// Decrypt a MLS welcome message
+    ///
+    /// - Parameter eventData: A payload containing the encrypted welcome message
+
+    func decryptedWelcomeMessageEventData(
+        from eventData: ConversationMLSWelcomeEvent,
+        context: CoreCryptoContextProtocol?
+    ) async throws
 }

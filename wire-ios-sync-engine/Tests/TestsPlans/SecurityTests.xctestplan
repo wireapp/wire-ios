@@ -21,6 +21,8 @@
   "testTargets" : [
     {
       "selectedTests" : [
+        "SessionManagerEncryptionAtRestMigrationTests\/testThatDatabaseIsMigrated_WhenEncryptionAtRestIsDisabled()",
+        "SessionManagerEncryptionAtRestMigrationTests\/testThatDatabaseIsMigrated_WhenEncryptionAtRestIsEnabled()",
         "ZMUserSessionTests_EncryptionAtRest\/testThatDatabaseIsLocked_AfterEnteringBackground()",
         "ZMUserSessionTests_EncryptionAtRest\/testThatDatabaseIsLocked_WhenTheCustomTimeoutHasExpiredInTheBackground()",
         "ZMUserSessionTests_EncryptionAtRest\/testThatDatabaseLockedHandlerIsCalled_AfterDatabaseIsLocked()",

@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
 /// Changed metadata for a member of a conversation.
 
@@ -53,5 +53,21 @@ public struct ConversationMemberChange: Equatable, Codable, Sendable {
     /// This is only relevant for the self user.
 
     public let archivedStatusReferenceDate: Date?
+
+    public init(
+        id: UserID,
+        newRoleName: String? = nil,
+        newMuteStatus: Int? = nil,
+        muteStatusReferenceDate: Date? = nil,
+        newArchivedStatus: Bool? = nil,
+        archivedStatusReferenceDate: Date? = nil
+    ) {
+        self.id = id
+        self.newRoleName = newRoleName
+        self.newMuteStatus = newMuteStatus
+        self.muteStatusReferenceDate = muteStatusReferenceDate
+        self.newArchivedStatus = newArchivedStatus
+        self.archivedStatusReferenceDate = archivedStatusReferenceDate
+    }
 
 }

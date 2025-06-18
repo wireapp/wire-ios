@@ -196,7 +196,7 @@ public final class MainTabBarController<
     private func setConversationListUI(_ conversationListUI: ConversationListUI?, animated: Bool) {
         _conversationListUI = conversationListUI
 
-        let viewControllers = [conversationListUI, conversationUI].compactMap { $0 }
+        let viewControllers = [conversationListUI, conversationUI].compactMap(\.self)
         conversationListNavigationController.setViewControllers(viewControllers, animated: animated)
         conversationListNavigationController.view.layoutIfNeeded()
     }
@@ -204,7 +204,7 @@ public final class MainTabBarController<
     private func setArchiveUI(_ archiveUI: ArchiveUI?, animated: Bool) {
         _archiveUI = archiveUI
 
-        let viewControllers = [archiveUI].compactMap { $0 }
+        let viewControllers = [archiveUI].compactMap(\.self)
         archiveNavigationController.setViewControllers(viewControllers, animated: animated)
         archiveNavigationController.view.layoutIfNeeded()
     }
@@ -212,7 +212,7 @@ public final class MainTabBarController<
     private func setSettingsUI(_ settingsUI: SettingsUI?, animated: Bool) {
         _settingsUI = settingsUI
 
-        let viewControllers = [settingsUI].compactMap { $0 }
+        let viewControllers = [settingsUI].compactMap(\.self)
         settingsNavigationController.setViewControllers(viewControllers, animated: animated)
         settingsNavigationController.view.layoutIfNeeded()
     }
@@ -224,7 +224,7 @@ public final class MainTabBarController<
             return assertionFailure("conversationListUI == nil, conversationUI != nil")
         }
 
-        let viewControllers = [conversationListUI, conversationUI].compactMap { $0 }
+        let viewControllers = [conversationListUI, conversationUI].compactMap(\.self)
         conversationListNavigationController.setViewControllers(viewControllers, animated: animated)
         conversationListNavigationController.view.layoutIfNeeded()
     }
@@ -236,7 +236,7 @@ public final class MainTabBarController<
             return assertionFailure("settingsUI == nil, settingsContentUI != nil")
         }
 
-        let viewControllers = [settingsUI, settingsContentUI].compactMap { $0 }
+        let viewControllers = [settingsUI, settingsContentUI].compactMap(\.self)
         settingsNavigationController.setViewControllers(viewControllers, animated: animated)
         settingsNavigationController.view.layoutIfNeeded()
     }

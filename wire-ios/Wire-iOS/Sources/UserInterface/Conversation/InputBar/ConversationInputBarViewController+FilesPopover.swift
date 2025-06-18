@@ -46,7 +46,7 @@ extension ConversationInputBarViewController {
                         .appendingPathComponent(sourceLocation.lastPathComponent)
 
                     try? FileManager.default.copyItem(at: sourceLocation, to: destLocation)
-                    self.uploadFile(at: destLocation)
+                    self.uploadFiles(at: [destLocation])
                 }
             }
 
@@ -190,7 +190,7 @@ extension ConversationInputBarViewController {
                         let fileURL = dir.appendingPathComponent(fileName)
                         try? randomData.write(to: fileURL)
 
-                        self.uploadFile(at: fileURL)
+                        self.uploadFiles(at: [fileURL])
                     }
                 }
             })

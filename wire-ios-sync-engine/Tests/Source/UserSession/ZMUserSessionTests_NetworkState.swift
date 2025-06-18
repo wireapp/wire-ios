@@ -17,6 +17,7 @@
 //
 
 import WireDataModelSupport
+import WireDomain
 import XCTest
 @testable import WireSyncEngine
 
@@ -33,6 +34,13 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
             useCache: true
         )
         let transportSession = RecordingMockTransportSession(cookieStorage: cookieStorage, pushChannel: mockPushChannel)
+        let mockCoreCrypto = MockCoreCryptoProtocol()
+        mockCoreCrypto.registerEpochObserver_MockMethod = { _ in }
+        let mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
+        let coreCryptoProvider = MockCoreCryptoProviderProtocol()
+        coreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
+        coreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
+        coreCryptoProvider.registerEpochObserver_MockMethod = { _ in }
         let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
         let coreDataStack = createCoreDataStack()
         let selfClient = coreDataStack.syncContext.performAndWait {
@@ -44,6 +52,11 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
         mockContextStore.clear_MockMethod = {}
         let configuration = ZMUserSession.Configuration()
 
+        let journal = Journal(
+            userID: coreDataStack.account.userIdentifier,
+            storage: UserDefaults.temporary()
+        )
+
         var builder = ZMUserSessionBuilder()
         builder.withAllDependencies(
             apiServiceFactory: { _, _ in MockAPIService() },
@@ -53,6 +66,7 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
             application: application,
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             coreDataStack: coreDataStack,
+            coreCryptoProvider: coreCryptoProvider,
             configuration: configuration,
             contextStorage: mockContextStore,
             earService: mockEARService,
@@ -64,7 +78,8 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
             sharedUserDefaults: sharedUserDefaults,
             transportSession: transportSession,
             userId: userId,
-            minTLSVersion: nil
+            minTLSVersion: nil,
+            journal: journal
         )
         let testSession = builder.build()
         testSession.setup(

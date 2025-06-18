@@ -187,7 +187,7 @@ extension UserProfileImageUpdateStatus {
         assetsToDelete
             .formUnion(
                 [selfUser.previewProfileAssetIdentifier, selfUser.completeProfileAssetIdentifier]
-                    .compactMap { $0 }
+                    .compactMap(\.self)
             )
         selfUser.updateAndSyncProfileAssetIdentifiers(
             previewIdentifier: previewAssetId,

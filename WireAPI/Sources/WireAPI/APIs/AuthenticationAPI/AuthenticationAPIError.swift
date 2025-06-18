@@ -52,6 +52,34 @@ public enum AuthenticationAPIError: Error {
 
 public extension AuthenticationAPIError {
 
+    enum RegistrationError: Equatable, Error {
+
+        case invalidEmail
+
+        case invalidCode
+
+        case invalidInvitationCode
+
+        case blacklistedEmail
+
+        case keyExists
+
+        case domainBlocked
+
+        case missingIdentity
+
+        case tooManyTeamMembers
+
+        case userCreationRestricted
+
+        case unauthorized
+
+    }
+
+}
+
+public extension AuthenticationAPIError {
+
     enum SSOLoginError: Equatable, Error {
 
         case invalidSSOCode

@@ -23,7 +23,7 @@ public class SearchTask {
 
     public enum Task {
         case search(searchRequest: SearchRequest)
-        case lookup(userId: UUID)
+        case lookup(qualifiedID: QualifiedID)
     }
 
     public typealias ResultHandler = (_ result: SearchResult, _ isCompleted: Bool) -> Void
@@ -80,14 +80,14 @@ public class SearchTask {
     }
 
     convenience init(
-        lookupUserId userId: UUID,
+        qualifiedID: QualifiedID,
         searchContext: NSManagedObjectContext,
         contextProvider: ContextProvider,
         transportSession: TransportSessionType,
         searchUsersCache: SearchUsersCache?
     ) {
         self.init(
-            task: .lookup(userId: userId),
+            task: .lookup(qualifiedID: qualifiedID),
             searchContext: searchContext,
             contextProvider: contextProvider,
             transportSession: transportSession,
@@ -137,10 +137,11 @@ public class SearchTask {
         performLocalSearch()
 
         // v1
-        performUserLookup()
         performRemoteSearchForTeamUser()
+
         // v2+
         performRemoteSearch()
+        performUserLookup()
     }
 }
 
@@ -148,7 +149,7 @@ extension SearchTask {
 
     /// look up a user ID from contacts and teamMembers locally.
     private func performLocalLookup() {
-        guard case let .lookup(userId) = task else { return }
+        guard case let .lookup(qualifiedID) = task else { return }
 
         tasksRemaining += 1
 
@@ -161,9 +162,9 @@ extension SearchTask {
 
             /// search for the local user with matching user ID and active
             let activeMembers = teamMembers(matchingQuery: "", team: selfUser.team, searchOptions: options)
-            let teamMembers = activeMembers.filter { $0.remoteIdentifier == userId }
+            let teamMembers = activeMembers.filter { $0.remoteIdentifier == qualifiedID.uuid }
             let connectedUsers = connectedUsers(matchingQuery: "", hostedOnDomain: nil)
-                .filter { $0.remoteIdentifier == userId }
+                .filter { $0.remoteIdentifier == qualifiedID.uuid }
 
             contextProvider.viewContext.performGroupedBlock { [self] in
 
@@ -360,16 +361,14 @@ extension SearchTask {
 
     func performUserLookup() {
         guard
-            case let .lookup(userId) = task,
-            let apiVersion = BackendInfo.apiVersion,
-            apiVersion <= .v1
+            case let .lookup(qualifiedID) = task,
+            let apiVersion = BackendInfo.apiVersion
         else { return }
 
         tasksRemaining += 1
 
         searchContext.performGroupedBlock { [self] in
-            let request = type(of: self).searchRequestForUser(withUUID: userId, apiVersion: apiVersion)
-
+            let request = type(of: self).searchRequestForUser(qualifiedID: qualifiedID, apiVersion: apiVersion)
             request.add(ZMCompletionHandler(on: contextProvider.viewContext) { [weak self] response in
                 defer {
                     self?.tasksRemaining -= 1
@@ -399,8 +398,16 @@ extension SearchTask {
 
     }
 
-    static func searchRequestForUser(withUUID uuid: UUID, apiVersion: APIVersion) -> ZMTransportRequest {
-        .init(getFromPath: "/users/\(uuid.transportString())", apiVersion: apiVersion.rawValue)
+    // GET /users/:id has been removed in v1.
+    // We should use the qualified endpoint GET /users/:domain/:id instead.
+    // https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/603095166/API+changes+v1+v2
+    static func searchRequestForUser(qualifiedID: QualifiedID, apiVersion: APIVersion) -> ZMTransportRequest {
+        (apiVersion <= .v1)
+            ? .init(getFromPath: "/users/\(qualifiedID.uuid.transportString())", apiVersion: apiVersion.rawValue)
+            : .init(
+                getFromPath: "/users/\(qualifiedID.domain)/\(qualifiedID.uuid.transportString())",
+                apiVersion: apiVersion.rawValue
+            )
     }
 
 }

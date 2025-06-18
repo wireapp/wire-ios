@@ -102,6 +102,7 @@ static NSInteger const DefaultMaximumRequests = 6;
                   applicationVersion:@"1.0"
                        minTLSVersion:nil
                         selfClientID:nil
+                     isSyncV2Enabled:false
     ];
 }
 
@@ -114,7 +115,8 @@ static NSInteger const DefaultMaximumRequests = 6;
          applicationGroupIdentifier:(NSString *)applicationGroupIdentifier
                  applicationVersion:(NSString *)appliationVersion
                       minTLSVersion:(NSString * _Nullable)minTLSVersion
-                       selfClientID: (nullable NSString *)selfClientID
+                       selfClientID:(nullable NSString *)selfClientID
+                    isSyncV2Enabled:(bool)isSyncV2Enabled
 {
     NSString *userAgent = [ZMUserAgent userAgentWithAppVersion:appliationVersion];
     NSUUID *userIdentifier = cookieStorage.userIdentifier;
@@ -174,7 +176,8 @@ static NSInteger const DefaultMaximumRequests = 6;
                            initialAccessToken:initialAccessToken
                                     userAgent:userAgent
                                 minTLSVersion:minTLSVersion
-                                 selfClientID:selfClientID];
+                                 selfClientID:selfClientID
+                              isSyncV2Enabled:isSyncV2Enabled];
 }
 
 - (instancetype)initWithURLSessionsDirectory:(id<URLSessionsDirectory, TearDownCapable>)directory
@@ -190,7 +193,8 @@ static NSInteger const DefaultMaximumRequests = 6;
                           initialAccessToken:(ZMAccessToken *)initialAccessToken
                                    userAgent:(NSString *)userAgent
                                minTLSVersion:(NSString * _Nullable)minTLSVersion
-                                selfClientID: (nullable NSString *)selfClientID
+                                selfClientID:(nullable NSString *)selfClientID
+                             isSyncV2Enabled:(bool)isSyncV2Enabled
 {
     self = [super init];
     if (self) {
@@ -228,7 +232,8 @@ static NSInteger const DefaultMaximumRequests = 6;
                                                                   proxyUsername:proxyUsername
                                                                   proxyPassword:proxyPassword
                                                                   minTLSVersion:minTLSVersion
-                                                                          queue:queue];
+                                                                          queue:queue
+                                                                      isEnabled:!isSyncV2Enabled];
 
         self.firstRequestFired = NO;
         self.accessTokenHandler = [[ZMAccessTokenHandler alloc] initWithBaseURL:self.baseURL

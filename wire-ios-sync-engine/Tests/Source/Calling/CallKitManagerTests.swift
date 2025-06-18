@@ -22,6 +22,7 @@ import Intents
 import OCMock
 import WireDataModel
 
+import WireMockTransport
 @testable import WireSyncEngine
 
 class MockCallKitProvider: CXProvider {
@@ -268,7 +269,6 @@ class CallKitManagerTest: DatabaseTest {
         sut = CallKitManager(
             isEnabled: true,
             application: ApplicationMock(),
-            requiredPushTokenType: .standard,
             provider: callKitProvider,
             callController: callKitController,
             mediaManager: nil,
@@ -314,7 +314,6 @@ class CallKitManagerTest: DatabaseTest {
         sut = CallKitManager(
             isEnabled: true,
             application: ApplicationMock(),
-            requiredPushTokenType: .standard,
             provider: callKitProvider,
             callController: callKitController,
             mediaManager: nil,

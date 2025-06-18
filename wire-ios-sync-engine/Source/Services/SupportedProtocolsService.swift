@@ -24,7 +24,7 @@ import WireRequestStrategy
 // sourcery: AutoMockable
 public protocol SupportedProtocolsServiceInterface {
 
-    func calculateSupportedProtocols() -> Set<MessageProtocol>
+    func calculateSupportedProtocols() -> Set<WireDataModel.MessageProtocol>
 
 }
 

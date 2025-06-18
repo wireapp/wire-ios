@@ -20,7 +20,7 @@ import Foundation
 
 /// An event where the message protocol was updated in a conversation.
 
-public struct ConversationProtocolUpdateEvent: Equatable, Codable, Sendable {
+public struct ConversationProtocolUpdateEvent: Equatable, Sendable {
 
     /// The id of the conversation.
 
@@ -33,5 +33,15 @@ public struct ConversationProtocolUpdateEvent: Equatable, Codable, Sendable {
     /// The new conversation message protocol.
 
     public let newProtocol: ConversationMessageProtocol
+
+    public init(
+        conversationID: ConversationID,
+        senderID: UserID,
+        newProtocol: ConversationMessageProtocol
+    ) {
+        self.conversationID = conversationID
+        self.senderID = senderID
+        self.newProtocol = newProtocol
+    }
 
 }

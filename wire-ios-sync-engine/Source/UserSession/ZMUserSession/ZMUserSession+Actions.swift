@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 @objc
 public extension ZMUserSession {
@@ -93,6 +94,16 @@ public extension ZMUserSession {
         }
     }
 
+    func callback(with userInfo: NotificationUserInfo, completionHandler: @escaping () -> Void) {
+        guard let conversation = userInfo.conversation(in: managedObjectContext) else {
+            return
+        }
+
+        _ = conversation.voiceChannel?.join(video: false, userSession: self)
+        showConversation(conversation)
+        completionHandler()
+    }
+
     func muteConversation(with userInfo: NotificationUserInfo, completionHandler: @escaping () -> Void) {
         guard let activity = BackgroundActivityFactory.shared
             .startBackgroundActivity(name: "Mute Conversation Action Handler") else {
@@ -128,7 +139,7 @@ public extension ZMUserSession {
 
                 let conversationOnSyncContext = userInfo.conversation(in: self.syncManagedObjectContext)
                 if result == .failed {
-                    Logging.push.safePublic("failed to reply via push notification action")
+                    WireLogger.notifications.error("failed to reply via push notification action")
                     self.localNotificationDispatcher?.didFailToSendMessage(in: conversationOnSyncContext!)
                 }
 
@@ -190,7 +201,7 @@ public extension ZMUserSession {
 
             likeMesssageObserver = nil
             if result == .failed {
-                Logging.push.safePublic("failed to like message via push notification action")
+                WireLogger.notifications.error("failed to like message via push notification action")
             }
             BackgroundActivityFactory.shared.endBackgroundActivity(activity)
             completionHandler()

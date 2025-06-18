@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundationSupport
 import WireTestingPackage
 import XCTest
 
@@ -28,15 +29,23 @@ final class NetworkServiceTests: XCTestCase {
     var sut: NetworkService!
     var backendURL: URL!
 
+    private var mockDateProvider: CurrentDateProvidingMock!
+
     override func setUp() async throws {
-        try await super.setUp()
+        // certificate expires on 2025-04-10 GMT
+        mockDateProvider = CurrentDateProvidingMock()
+        mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-04-09T23:59:59Z")
+
         session = .mockURLSession()
         backendURL = try XCTUnwrap(URL(string: "https://www.example.com"))
         sut = NetworkService(
             baseURL: backendURL,
-            serverTrustValidator: ServerTrustValidator(pinnedKeys: [
-                try PinnedKey(key: PublicKeys.wire, hosts: [.equals("prod-nginz-https.wire.com")])
-            ])
+            serverTrustValidator: ServerTrustValidator(
+                pinnedKeys: [
+                    try PinnedKey(key: PublicKeys.wire, hosts: [.equals("prod-nginz-https.wire.com")])
+                ],
+                currentDateProvider: mockDateProvider
+            )
         )
         sut.configure(with: session)
     }
@@ -45,7 +54,7 @@ final class NetworkServiceTests: XCTestCase {
         session = nil
         backendURL = nil
         sut = nil
-        try await super.tearDown()
+        mockDateProvider = nil
     }
 
     // MARK: - Execute request

@@ -66,7 +66,8 @@ struct ConversationCreateEventDecoder {
                 accessRoles: payload.accessRoles,
                 legacyAccessRole: payload.legacyAccessRole,
                 lastEvent: payload.lastEvent,
-                lastEventTime: payload.lastEventTime?.date
+                lastEventTime: payload.lastEventTime?.date,
+                groupType: payload.groupType
             )
         )
     }
@@ -92,6 +93,7 @@ struct ConversationCreateEventDecoder {
         let legacyAccessRole: ConversationAccessRoleLegacy?
         let lastEvent: String?
         let lastEventTime: UTCTime?
+        let groupType: ConversationGroupType?
 
         enum CodingKeys: String, CodingKey {
 
@@ -114,6 +116,7 @@ struct ConversationCreateEventDecoder {
             case legacyAccessRole = "access_role"
             case lastEvent = "last_event"
             case lastEventTime = "last_event_time"
+            case groupType = "group_conv_type"
 
         }
 

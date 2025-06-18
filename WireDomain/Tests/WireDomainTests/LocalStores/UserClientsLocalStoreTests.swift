@@ -42,8 +42,7 @@ final class UserClientsLocalStoreTests: XCTestCase {
         userLocalStore = MockUserLocalStoreProtocol()
 
         sut = UserClientsLocalStore(
-            context: context,
-            userLocalStore: userLocalStore
+            context: context
         )
     }
 
@@ -201,7 +200,8 @@ final class UserClientsLocalStoreTests: XCTestCase {
             model: "test",
             deviceClass: .phone,
             lastActiveDate: nil,
-            mlsPublicKeys: nil
+            mlsPublicKeys: nil,
+            capabilities: [.legalholdConsent]
         )
 
     }

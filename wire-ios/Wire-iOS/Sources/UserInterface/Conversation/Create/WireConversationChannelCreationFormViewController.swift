@@ -58,6 +58,7 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
     ) {
         self.userSession = userSession
         self.values = ConversationCreationValues(
+            isChannel: true,
             encryptionProtocol: userSession.defaultProtocol,
             selfUser: userSession.selfUser
         )
@@ -132,6 +133,9 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
         }
 
         values.name = channelCreationSettings.channelName
+        values.allowGuests = channelCreationSettings.guestsAllowed
+        values.allowServices = channelCreationSettings.servicesAllowed
+        values.enableReceipts = channelCreationSettings.readReceiptsEnabled
 
         let participantsController = AddParticipantsViewController(
             context: .create(values),
@@ -273,16 +277,18 @@ private extension WireConversationChannelCreationFormViewController {
             apiService: apiService
         ).makeAPI(for: apiVersion)
 
-        let userLocalStore = UserLocalStore(context: context)
         let messageLocalStore = MessageLocalStore(
+            context: context
+        )
+
+        let userLocalStore = UserLocalStore(
             context: context,
-            userLocalStore: userLocalStore
+            messageLocalStore: messageLocalStore
         )
 
         let store = ConversationLocalStore(
             context: context,
             mlsService: nil,
-            userLocalStore: userLocalStore,
             messageLocalStore: messageLocalStore
         )
 

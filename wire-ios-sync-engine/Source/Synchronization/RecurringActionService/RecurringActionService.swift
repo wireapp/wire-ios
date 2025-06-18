@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireSystem
+import WireFoundation
 import WireUtilities
 
 final class RecurringActionService: RecurringActionServiceInterface {

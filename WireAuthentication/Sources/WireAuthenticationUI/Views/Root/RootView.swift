@@ -25,6 +25,9 @@ package protocol RootFactory {
 
     @MainActor
     func determineAuthMethodFactory(backendInfo: BackendInfo) -> any DetermineAuthMethodFactory
+
+    @MainActor
+    func accountsSwitcherFactory() -> any AccountSwitcherFactory
 }
 
 package struct RootView: View {
@@ -32,6 +35,8 @@ package struct RootView: View {
     @StateObject private var viewModel: RootViewModel
 
     private let cornerRadius: CGFloat = 10
+
+    private typealias Strings = L10n.Localizable
 
     package init(
         factory: @autoclosure @escaping () -> any RootFactory
@@ -56,6 +61,12 @@ package struct RootView: View {
                         backendInfo: backendInfo
                     )
                 )
+                .navigationDestination(for: RootDestination.self) { destination in
+                    switch destination {
+                    case .switchAccounts:
+                        AccountSwitcherModalView(viewModel.factory.accountsSwitcherFactory())
+                    }
+                }
             }
             // We must provide an explicit id so it knows to create a new
             // view when the backend info changes.
@@ -65,16 +76,77 @@ package struct RootView: View {
             // it will dismiss the sheet.
             .alert(
                 item: $viewModel.alert,
-                title: { Text($0.title) },
-                message: { Text($0.message) },
+                title: { alert in
+                    switch alert {
+                    case .obsoleteClient:
+                        Text(
+                            viewModel.multibackendEnabled ? L10n.Localizable.ObsoleteClientMultibackend.Alert
+                                .title : L10n.Localizable.ObsoleteClient.Alert.title
+                        )
+                    default:
+                        Text(alert.title)
+                    }
+                },
+                message: { alert in
+                    switch alert {
+                    case .obsoleteBackend:
+                        Text(
+                            viewModel.multibackendEnabled ? L10n.Localizable.ObsoleteBackendMultibackend.Alert
+                                .message : L10n.Localizable.ObsoleteBackend.Alert.message
+                        )
+                    case .obsoleteClient:
+                        Text(
+                            viewModel.multibackendEnabled ? L10n.Localizable.ObsoleteClientMultibackend
+                                .Alert.message : L10n.Localizable.ObsoleteClient.Alert.message
+                        )
+                    default:
+                        Text(alert.message)
+                    }
+                },
                 actions: { alert in
                     switch alert {
                     case .obsoleteClient:
-                        Button(L10n.ObsoleteClient.Alert.okButton, action: viewModel.goToAppStore)
+                        obsoleteClientAlertActions()
+                    case .obsoleteBackend where viewModel.multibackendEnabled:
+                        obsoleteBackendAlertActions()
                     default:
-                        Button(L10n.Authentication.Error.confirm, action: {})
+                        Button(Strings.Authentication.Error.confirm, action: {})
                     }
                 }
+            )
+        }
+    }
+
+    @ViewBuilder
+    fileprivate func switchAccountsAlertButtonIfNeeded() -> some View {
+        if viewModel.shouldShowSwitchAccountsAlertButton {
+            Button(
+                Strings.Obsolete.Alert.switchAccounts,
+                action: viewModel.switchAccounts
+            )
+        }
+    }
+
+    @ViewBuilder
+    private func obsoleteBackendAlertActions() -> some View {
+        Button(
+            Strings.Obsolete.Alert.ok,
+            action: viewModel.dismissAlert
+        )
+        switchAccountsAlertButtonIfNeeded()
+    }
+
+    @ViewBuilder
+    private func obsoleteClientAlertActions() -> some View {
+        Button(
+            viewModel.multibackendEnabled ? Strings.Obsolete.Alert.updateButton : Strings.ObsoleteClient.Alert.okButton,
+            action: viewModel.goToAppStore
+        )
+        switchAccountsAlertButtonIfNeeded()
+        if viewModel.multibackendEnabled {
+            Button(
+                Strings.Obsolete.Alert.cancel,
+                action: viewModel.dismissAlert
             )
         }
     }

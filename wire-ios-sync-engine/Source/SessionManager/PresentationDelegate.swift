@@ -32,8 +32,8 @@ public protocol PresentationDelegate: AnyObject {
     func showUserProfile(user: UserType)
 
     /// Called when the connection screen for a centain user shold be presented
-    /// - parameter userId: The userId which will be connected to.
-    func showConnectionRequest(userId: UUID)
+    /// - parameter qualifiedID: The qualified user ID which will be connected to.
+    func showConnectionRequest(qualifiedID: QualifiedID)
 
     /// Called when an attempt was made to process a URLAction but failed
     ///

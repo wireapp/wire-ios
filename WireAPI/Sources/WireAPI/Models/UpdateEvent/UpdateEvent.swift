@@ -22,7 +22,7 @@ import Foundation
 /// that can be used to incrementaly update the state of
 /// the client.
 
-public enum UpdateEvent: Equatable, Codable, Sendable {
+public enum UpdateEvent: Equatable, Sendable {
 
     /// A conversation event.
 

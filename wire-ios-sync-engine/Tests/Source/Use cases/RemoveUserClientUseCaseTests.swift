@@ -100,6 +100,29 @@ final class RemoveUserClientUseCaseTests: XCTestCase {
         }
     }
 
+    func testThatItDoesNotRemoveUserClient_WhenTooManyRequests() async throws {
+        // Given
+        let clientId = "222"
+        try await createSelfClient(clientId: clientId)
+        let tooManyRequestsResponseCode = 429
+        let mockResponseFailure = Payload.ResponseFailure(
+            code: tooManyRequestsResponseCode,
+            label: .unknown,
+            message: "Please try again later.",
+            data: nil
+        )
+
+        userClientAPI.deleteUserClientClientIdPassword_MockError = NetworkError.invalidRequestError(
+            mockResponseFailure,
+            ZMTransportResponse()
+        )
+
+        // When / Then
+        await assertItThrows(error: RemoveUserClientError.tooManyRequests) {
+            try await sut.invoke(clientId: clientId, password: "")
+        }
+    }
+
     private func createSelfClient(clientId: String) async throws {
         let selfUserHandle = "foo"
         let selfUserName = "Ms Foo"

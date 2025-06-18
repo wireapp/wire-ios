@@ -160,6 +160,24 @@ public class TeamRepository: TeamRepositoryProtocol {
         )
     }
 
+    public func createOrUpdateTeam(
+        identifier: UUID,
+        name: String,
+        creator: UUID,
+        icon: String,
+        iconKey: String?
+    ) async {
+        await teamLocalStore.createOrUpdateTeam(
+            identifier: identifier,
+            name: name,
+            creator: creator,
+            icon: icon,
+            iconKey: iconKey
+        )
+    }
+
+    // MARK: - Private
+
     private func getSelfTeamID() async throws -> UUID {
         guard let selfTeamID = await teamLocalStore.selfTeamID() else {
             throw TeamRepositoryError.selfUserIsNotATeamMember

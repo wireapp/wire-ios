@@ -688,7 +688,7 @@ final class GroupActivityMatcher: TypedConversationStatusMatcher {
             addedString(for: allStatusMessagesByType[.addParticipants] ?? [], in: conversation),
             removedString(for: allStatusMessagesByType[.removeParticipants] ?? [], in: conversation)
         ]
-        .compactMap { $0 }.joined(separator: "; " && type(of: self).regularStyle)
+        .compactMap(\.self).joined(separator: "; " && type(of: self).regularStyle)
     }
 
     var combinesWith: [ConversationStatusMatcher] = []

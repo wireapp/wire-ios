@@ -45,7 +45,7 @@ struct ImportBackupView: View {
             .sheet(isPresented: $viewModel.isImportProgressPresented) {
 
                 ImportProgressView(
-                    progressValue: viewModel.importProgress,
+                    progressValues: viewModel.importProgress,
                     cancelAction: viewModel.reset
                 )
                 .interactiveDismissDisabled()

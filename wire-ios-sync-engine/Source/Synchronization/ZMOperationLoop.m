@@ -64,6 +64,7 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
                                    uiMOC:(NSManagedObjectContext *)uiMOC
                                  syncMOC:(NSManagedObjectContext *)syncMOC
                   isDeveloperModeEnabled:(BOOL)isDeveloperModeEnabled
+                         isSyncV2Enabled:(BOOL)isSyncV2Enabled
 {
     Check(uiMOC != nil);
     Check(syncMOC != nil);
@@ -80,6 +81,7 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
         self.shouldStopEnqueueing = NO;
         self.operationStatus.delegate = self;
         self.isDeveloperModeEnabled = isDeveloperModeEnabled;
+        self.isSyncV2Enabled = isSyncV2Enabled;
 
         [ZMRequestAvailableNotification addObserver:self];
         
@@ -87,7 +89,11 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
         // this is needed to avoid loading from syncMOC on the main queue
         [moc performGroupedBlock:^{
             [self.transportSession configurePushChannelWithConsumer:self groupQueue:moc];
-            [self.transportSession.pushChannel setKeepOpen:operationStatus.operationState == SyncEngineOperationStateForeground];
+            if (isSyncV2Enabled) {
+                [self.transportSession.pushChannel setKeepOpen:false];
+            } else {
+                [self.transportSession.pushChannel setKeepOpen:operationStatus.operationState == SyncEngineOperationStateForeground];
+            }
         }];
     }
 

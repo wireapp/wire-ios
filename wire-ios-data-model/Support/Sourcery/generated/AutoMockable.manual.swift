@@ -117,6 +117,10 @@ public class MockZMConversationMessage: NSObject, ZMConversationMessage {
 
     public var locationMessageData: LocationMessageData?
 
+    // MARK: - multipartMessageData
+
+    public var multipartMessageData: WireDataModel.MultipartMessageData?
+
     // MARK: - usersReaction
 
     public var usersReaction: [String: [UserType]] = [:]
@@ -209,15 +213,6 @@ public class MockZMConversationMessage: NSObject, ZMConversationMessage {
     }
 
     public var underlyingReplies: Set<ZMMessage>!
-
-    // MARK: - objectIdentifier
-
-    public var objectIdentifier: String {
-        get { return underlyingObjectIdentifier }
-        set(value) { underlyingObjectIdentifier = value }
-    }
-
-    public var underlyingObjectIdentifier: String!
 
     // MARK: - linkAttachments
 

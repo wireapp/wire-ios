@@ -17,7 +17,9 @@
 //
 
 import Foundation
+import WireAPI
 import WireDataModel
+import WireDomain
 import WireLinkPreview
 import WireRequestStrategy
 import WireTransport
@@ -158,6 +160,7 @@ struct SyncStatus: SyncStatusProtocol {
     func resyncResources() {}
     func forceSlowSync() {}
     func recoverWithQuickSync() async {}
+    var isLive: Bool = false
 }
 
 /// A Wire session to share content from a share extension
@@ -251,7 +254,7 @@ public final class SharingSession {
         applicationGroupIdentifier: String,
         accountIdentifier: UUID,
         hostBundleIdentifier: String,
-        environment: BackendEnvironmentProvider,
+        environment: WireTransport.BackendEnvironment,
         appLockConfig: AppLockController.LegacyConfig?,
         sharedUserDefaults: UserDefaults,
         minTLSVersion: String?
@@ -306,11 +309,62 @@ public final class SharingSession {
             applicationGroupIdentifier: applicationGroupIdentifier,
             applicationVersion: "1.0.0",
             minTLSVersion: minTLSVersion,
-            selfClientID: selfClientID
+            selfClientID: selfClientID,
+            // This flag only concerns the push channel which isn't relevant
+            // in the sharing session.
+            isSyncV2Enabled: false
         )
+
+        let proxySettings: WireAPI.ProxySettings? = {
+            guard let proxy = environment.proxy else { return nil }
+
+            if proxy.needsAuthentication {
+                guard
+                    let proxyUsername = credentials?.username,
+                    let proxyPassword = credentials?.password else {
+                    fatalInternal("Proxy needs authentication but credentials are missing")
+                    return nil
+                }
+
+                return .authenticated(
+                    host: proxy.host,
+                    port: proxy.port,
+                    username: proxyUsername,
+                    password: proxyPassword
+                )
+            } else {
+                return .unauthenticated(host: proxy.host, port: proxy.port)
+            }
+        }()
+
+        let wireAPIBackendEnvironment = BackendEnvironment(
+            url: environment.backendURL,
+            webSocketURL: environment.backendWSURL,
+            pinnedKeys: environment.trustData.map { trustData in
+                PinnedKey(
+                    key: trustData.certificateKey,
+                    hosts: trustData.hosts.map { host in
+                        switch host.rule {
+                        case .equals:
+                            .equals(host.value)
+                        case .endsWith:
+                            .endsWith(host.value)
+                        }
+                    }
+                )
+            },
+            proxySettings: proxySettings
+        )
+
+        guard let apiVersion = BackendInfo.apiVersion,
+              let wireAPIVersion = WireAPI.APIVersion(rawValue: UInt(apiVersion.rawValue)) else {
+            fatal("cannot resolve api version")
+
+        }
 
         try self.init(
             accountIdentifier: accountIdentifier,
+            selfClientID: selfClientID!,
             coreDataStack: coreDataStack,
             transportSession: transportSession,
             cachesDirectory: FileManager.default.cachesURLForAccount(with: accountIdentifier, in: sharedContainerURL),
@@ -319,6 +373,9 @@ public final class SharingSession {
                 applicationContainer: sharedContainerURL
             ),
             appLockConfig: appLockConfig,
+            wireAPIBackendEnvironment: wireAPIBackendEnvironment,
+            minTLSVersion: .minVersionFrom(minTLSVersion),
+            apiVersion: wireAPIVersion,
             sharedUserDefaults: sharedUserDefaults
         )
     }
@@ -393,11 +450,15 @@ public final class SharingSession {
 
     public convenience init(
         accountIdentifier: UUID,
+        selfClientID: String,
         coreDataStack: CoreDataStack,
         transportSession: ZMTransportSession,
         cachesDirectory: URL,
         accountContainer: URL,
         appLockConfig: AppLockController.LegacyConfig?,
+        wireAPIBackendEnvironment: WireAPI.BackendEnvironment,
+        minTLSVersion: WireAPI.TLSVersion,
+        apiVersion: WireAPI.APIVersion,
         sharedUserDefaults: UserDefaults
     ) throws {
 
@@ -431,22 +492,22 @@ public final class SharingSession {
         let analyticsEventPersistence = ShareExtensionAnalyticsPersistence(accountContainer: accountContainer)
 
         let cryptoboxMigrationManager = CryptoboxMigrationManager()
+        let journal = Journal(
+            userID: accountIdentifier,
+            storage: sharedUserDefaults
+        )
         let coreCryptoProvider = CoreCryptoProvider(
             selfUserID: accountIdentifier,
             sharedContainerURL: coreDataStack.applicationContainer,
             accountDirectory: coreDataStack.accountContainer,
             syncContext: coreDataStack.syncContext,
             cryptoboxMigrationManager: cryptoboxMigrationManager,
+            coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager(journal: journal),
             allowCreation: false
-        )
-        let commitSender = CommitSender(
-            coreCryptoProvider: coreCryptoProvider,
-            notificationContext: coreDataStack.syncContext.notificationContext
         )
         let featureRepository = FeatureRepository(context: coreDataStack.syncContext)
         let mlsActionExecutor = MLSActionExecutor(
             coreCryptoProvider: coreCryptoProvider,
-            commitSender: commitSender,
             featureRepository: featureRepository
         )
         let contextStorage = LAContextStorage()
@@ -469,12 +530,43 @@ public final class SharingSession {
             context: coreDataStack.syncContext,
             notificationContext: coreDataStack.syncContext.notificationContext,
             coreCryptoProvider: coreCryptoProvider,
-            conversationEventProcessor: ConversationEventProcessor(context: coreDataStack.syncContext),
             featureRepository: FeatureRepository(context: coreDataStack.syncContext),
             userDefaults: .standard,
-            syncStatus: applicationStatusDirectory.syncStatus,
             userID: coreDataStack.account.userIdentifier
         )
+
+        let userSessionComponent = UserSessionComponent(
+            selfUserID: accountIdentifier,
+            backendEnvironment: wireAPIBackendEnvironment,
+            minTLSVersion: minTLSVersion,
+            apiVersion: apiVersion,
+            localDomain: WireTransport.BackendInfo.domain!,
+            isFederationEnabled: WireTransport.BackendInfo.isFederationEnabled,
+            isMLSEnabled: WireTransport.BackendInfo.isMLSEnabled,
+            sharedUserDefaults: sharedUserDefaults,
+            syncContext: coreDataStack.syncContext,
+            eventContext: coreDataStack.eventContext,
+            mlsService: mlsService,
+            mlsDecryptionService: mlsService,
+            proteusService: proteusService,
+            coreCryptoProvider: coreCryptoProvider
+        )
+
+        let completionHandlers = ClientSessionComponent.CompletionHandlers(
+            onProcessedCallEvent: { _ in },
+            onSelfClientInvalidated: {},
+            onAuthenticationFailure: {},
+            onProcessedTypingUsers: { _ in }
+        )
+
+        let selfClient = ZMUser.selfUser(in: coreDataStack.viewContext).selfClient()
+        let clientUserSessionComponent = userSessionComponent.clientSessionComponent(
+            clientID: selfClientID,
+            asyncStreamEnabled: selfClient?.asyncStreamCapable == true,
+            completionHandlers: completionHandlers
+        )
+
+        coreCryptoProvider.registerMlsTransport(clientUserSessionComponent.mlsTransport)
 
         try self.init(
             accountIdentifier: accountIdentifier,
@@ -561,7 +653,7 @@ extension SharingSession: LinkPreviewDetectorType {
 
 // MARK: - Helper
 
-private extension ConversationList {
+private extension WireDataModel.ConversationList {
 
     var writeableConversations: [Conversation] {
         items.filter { !$0.isReadOnly }

@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
 /// A label used to categorize conversations.
 
@@ -37,5 +37,17 @@ public struct ConversationLabel: Equatable, Codable, Sendable {
     /// The conversation ids associated with the label.
 
     public let conversationIDs: [UUID]
+
+    public init(
+        id: UUID,
+        name: String? = nil,
+        type: Int16,
+        conversationIDs: [UUID]
+    ) {
+        self.id = id
+        self.name = name
+        self.type = type
+        self.conversationIDs = conversationIDs
+    }
 
 }

@@ -18,7 +18,7 @@
 
 import UIKit
 import WireConversationUI
-import WireSystem
+import WireFoundation
 
 final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellDescription {
     typealias View = BurstTimestampSenderMessageCell
@@ -114,7 +114,7 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
 
     init(
         configuration: View.Configuration,
-        currentDateProvider: CurrentDateProviding = SystemDateProvider()
+        currentDateProvider: CurrentDateProviding
     ) {
         self.configuration = configuration
         self.currentDateProvider = currentDateProvider
@@ -131,14 +131,14 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
             showUnreadDot: context.isFirstUnreadMessage,
             accentColor: accentColor
         )
-        self.init(configuration: configuration)
+        self.init(configuration: configuration, currentDateProvider: .system)
     }
 
 }
 
 final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
 
-    struct Configuration {
+    struct Configuration: Equatable {
         let date: Date
         let isFirstMessageOfTheDay: Bool
         let showUnreadDot: Bool

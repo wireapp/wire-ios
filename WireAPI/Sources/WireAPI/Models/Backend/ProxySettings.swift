@@ -20,7 +20,7 @@ import Foundation
 
 /// Proxy settings for communicating with a backend server.
 
-public enum ProxySettings {
+public enum ProxySettings: Sendable {
 
     /// Settings for an unauthenticated proxy.
 

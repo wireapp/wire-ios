@@ -26,7 +26,7 @@ final class ConversationStartedSystemMessageCell<
     struct Configuration {
         let title: NSAttributedString?
         let message: NSAttributedString
-        let selectedUsers: [UserType]
+        var selectedUsers: [UserType]
         let icon: UIImage?
     }
 

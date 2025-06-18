@@ -31,17 +31,18 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
     var consumerQueue: GroupQueue?
     var pingTimer: ZMTimer?
     private let minTLSVersion: TLSVersion
+    private let isEnabled: Bool
 
     var clientID: String? {
         didSet {
-            WireLogger.pushChannel.debug("Setting client ID")
+            WireLogger.pushChannel.debug("Setting client ID", attributes: .pushChannelV0)
             scheduleOpen()
         }
     }
 
     var accessToken: AccessToken? {
         didSet {
-            WireLogger.pushChannel.debug("Setting access token")
+            WireLogger.pushChannel.debug("Setting access token", attributes: .pushChannelV0)
         }
     }
 
@@ -56,8 +57,7 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
     }
 
     var canOpenConnection: Bool {
-        // This is a legacy push channel, so don't open it if we should use the new one.
-        guard !DeveloperFlag.newInitialSync.isOn else { return false }
+        guard isEnabled else { return false }
         return keepOpen && websocketURL != nil && consumer != nil
     }
 
@@ -78,7 +78,8 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
         proxyUsername: String?,
         proxyPassword: String?,
         minTLSVersion: String?,
-        queue: OperationQueue
+        queue: OperationQueue,
+        isEnabled: Bool
     ) {
         self.environment = environment
         self.scheduler = scheduler
@@ -86,6 +87,7 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
         self.proxyPassword = proxyPassword
         self.workQueue = queue
         self.minTLSVersion = TLSVersion.minVersionFrom(minTLSVersion)
+        self.isEnabled = isEnabled
     }
 
     func reachabilityDidChange(_ reachability: ReachabilityProvider) {
@@ -114,7 +116,7 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
     }
 
     func close() {
-        WireLogger.pushChannel.info("Push channel was closed")
+        WireLogger.pushChannel.info("Push channel was closed", attributes: .pushChannelV0)
 
         scheduler.performGroupedBlock {
             self.webSocket?.disconnect()
@@ -128,7 +130,7 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
             let accessToken,
             let websocketURL
         else {
-            WireLogger.pushChannel.warn("Can't connect websocket")
+            WireLogger.pushChannel.warn("Can't connect websocket", attributes: .pushChannelV0)
             return
         }
 
@@ -166,7 +168,8 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
 
         let attributes: LogAttributes = [
             .selfClientId: clientID?.redactedAndTruncated(maxVisibleCharacters: 3, length: 8)
-        ]
+
+        ].merging(.pushChannelV0, uniquingKeysWith: { _, new in new })
         WireLogger.pushChannel.info(
             "Connecting websocket with URL: \(websocketURL.endpointRemoteLogDescription)",
             attributes: attributes,
@@ -187,10 +190,13 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
 
     private func scheduleOpenInternal() {
         guard canOpenConnection else {
-            WireLogger.pushChannel.debug("Conditions for scheduling opening not fulfilled, waiting...")
+            WireLogger.pushChannel.debug(
+                "Conditions for scheduling opening not fulfilled, waiting...",
+                attributes: .pushChannelV0
+            )
             return
         }
-        WireLogger.pushChannel.debug("Schedule opening..")
+        WireLogger.pushChannel.debug("Schedule opening..", attributes: .pushChannelV0)
         scheduler.add(ZMOpenPushChannelRequest())
     }
 
@@ -236,7 +242,7 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
 extension StarscreamPushChannel: ZMTimerClient {
 
     func timerDidFire(_ timer: ZMTimer!) {
-        WireLogger.pushChannel.debug("Sending ping")
+        WireLogger.pushChannel.debug("Sending ping", attributes: .pushChannelV0)
         webSocket?.write(ping: Data())
         schedulePingTimer()
     }
@@ -248,15 +254,15 @@ extension StarscreamPushChannel: WebSocketDelegate {
         switch event {
 
         case .connected:
-            WireLogger.pushChannel.debug("Sending ping")
+            WireLogger.pushChannel.debug("Sending ping", attributes: .pushChannelV0)
             onOpen()
         case .disconnected:
-            WireLogger.pushChannel.debug("Websocket disconnected")
+            WireLogger.pushChannel.debug("Websocket disconnected", attributes: .pushChannelV0)
             onClose()
         case .text:
             break
         case let .binary(data):
-            WireLogger.pushChannel.debug("Received data")
+            WireLogger.pushChannel.debug("Received data", attributes: .pushChannelV0)
             consumerQueue?.performGroupedBlock { [weak self] in
                 self?.consumer?.pushChannelDidReceive(data)
             }

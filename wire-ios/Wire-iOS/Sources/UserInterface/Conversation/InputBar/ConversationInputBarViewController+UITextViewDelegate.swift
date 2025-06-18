@@ -38,7 +38,7 @@ extension ConversationInputBarViewController: UITextViewDelegate {
         conversation.setIsTyping(!textView.text.isEmpty)
 
         triggerMentionsIfNeeded(from: textView)
-        updateRightAccessoryView()
+        updateButtonStates()
     }
 
     func textView(

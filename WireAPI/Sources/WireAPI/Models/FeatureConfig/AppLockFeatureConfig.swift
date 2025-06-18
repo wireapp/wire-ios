@@ -35,4 +35,14 @@ public struct AppLockFeatureConfig: Codable, Equatable, Sendable {
 
     public let inactivityTimeoutInSeconds: UInt
 
+    public init(
+        status: FeatureConfigStatus,
+        isMandatory: Bool,
+        inactivityTimeoutInSeconds: UInt
+    ) {
+        self.status = status
+        self.isMandatory = isMandatory
+        self.inactivityTimeoutInSeconds = inactivityTimeoutInSeconds
+    }
+
 }

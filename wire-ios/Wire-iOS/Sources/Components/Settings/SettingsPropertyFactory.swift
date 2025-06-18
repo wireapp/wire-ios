@@ -19,6 +19,7 @@
 import avs
 import WireCommonComponents
 import WireFoundation
+import WireLogging
 import WireSyncEngine
 import WireUtilities
 
@@ -70,8 +71,6 @@ final class SettingsPropertyFactory {
         SettingsPropertyName.disableSendButton: .sendButtonDisabled,
         SettingsPropertyName.mapsOpeningOption: .mapsOpeningRawValue,
         SettingsPropertyName.browserOpeningOption: .browserOpeningRawValue,
-        SettingsPropertyName.tweetOpeningOption: .twitterOpeningRawValue,
-        SettingsPropertyName.callingProtocolStrategy: .callingProtocolStrategy,
         SettingsPropertyName.enableBatchCollections: .enableBatchCollections,
         SettingsPropertyName.callingConstantBitRate: .callingConstantBitRate,
         SettingsPropertyName.collapseOwnMessages: .collapseOwnMessages
@@ -425,7 +424,10 @@ final class SettingsPropertyFactory {
             )
 
         case .collapseOwnMessages:
-            let userId = selfUser!.remoteIdentifier!
+            guard let userId = selfUser?.remoteIdentifier else {
+                WireLogger.system.error("No self user for settings key \(propertyName)")
+                break
+            }
             let storage = PrivateUserDefaults<CollapseKey>(userID: userId)
             return SettingsBlockProperty(
                 propertyName: propertyName,
@@ -435,6 +437,23 @@ final class SettingsPropertyFactory {
                 setAction: { _, value, _ in
                     guard case let .number(enabled) = value else { return }
                     storage.set(enabled.boolValue, forKey: .collapseOwnMessages)
+                }
+            )
+
+        case .conversationBackground:
+            guard let userId = selfUser?.remoteIdentifier else {
+                WireLogger.system.error("No self user for settings key \(propertyName)")
+                break
+            }
+            let storage = PrivateUserDefaults<ConversationBackgroundKey>(userID: userId)
+            return SettingsBlockProperty(
+                propertyName: propertyName,
+                getAction: { _ in
+                    SettingsPropertyValue(storage.bool(forKey: .conversationBackground))
+                },
+                setAction: { _, value, _ in
+                    guard case let .number(enabled) = value else { return }
+                    storage.set(enabled.boolValue, forKey: .conversationBackground)
                 }
             )
 
@@ -454,4 +473,9 @@ final class SettingsPropertyFactory {
 
 enum CollapseKey: String, DefaultsKey {
     case collapseOwnMessages
+    case uncollapsedMessages
+}
+
+enum ConversationBackgroundKey: String, DefaultsKey {
+    case conversationBackground
 }

@@ -45,7 +45,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     private lazy var voIPPushManager: VoIPPushManager = .init(
         application: UIApplication.shared,
-        requiredPushTokenType: requiredPushTokenType,
         pushTokenService: pushTokenService
     )
 
@@ -168,6 +167,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         )
 
         self.launchOptions = launchOptions ?? [:]
+
+        _ = NSAttributedString.paragraphStyle
 
         setupWindowAndRootViewController()
 
@@ -346,8 +347,10 @@ private extension AppDelegate {
     }
 
     private func createAppRootRouter() {
-
-        guard let sessionManager = createSessionManager() else {
+        let sessionManager: SessionManager
+        do {
+            sessionManager = try createSessionManager()
+        } catch {
             fatalError("sessionManager is not created")
         }
 
@@ -365,14 +368,20 @@ private extension AppDelegate {
         )
     }
 
-    private func createSessionManager() -> SessionManager? {
+    private func createSessionManager() throws -> SessionManager {
+        guard let appVersion = Bundle.main.infoDictionary?[kCFBundleVersionKey as String] as? String  else {
+            throw SessionManagerSetupError.missingAppVersion
+        }
+
         guard
-            let appVersion = Bundle.main.infoDictionary?[kCFBundleVersionKey as String] as? String,
             let url = Bundle.main.url(forResource: "session_manager", withExtension: "json"),
-            let configuration = SessionManagerConfiguration.load(from: url),
-            let mediaManager = AVSMediaManager.sharedInstance()
+            let configuration = SessionManagerConfiguration.load(from: url)
         else {
-            return nil
+            throw SessionManagerSetupError.missingConfiguration
+        }
+
+        guard let mediaManager = AVSMediaManager.sharedInstance() else {
+            throw SessionManagerSetupError.missingMediaManager
         }
 
         configuration.blacklistDownloadInterval = Settings.shared.blacklistDownloadInterval
@@ -382,7 +391,7 @@ private extension AppDelegate {
         // flag defined
         let maxNumberAccounts = SecurityFlags.maxNumberAccounts.intValue ?? SessionManager.defaultMaxNumberAccounts
 
-        let sessionManager = SessionManager(
+        let sessionManager = try SessionManager(
             maxNumberAccounts: maxNumberAccounts,
             appVersion: appVersion,
             mediaManager: mediaManager,
@@ -391,7 +400,6 @@ private extension AppDelegate {
             environment: BackendEnvironment.shared,
             configuration: configuration,
             detector: jailbreakDetector,
-            requiredPushTokenType: requiredPushTokenType,
             pushTokenService: pushTokenService,
             callKitManager: voIPPushManager.callKitManager,
             isDeveloperModeEnabled: Bundle.developerModeEnabled,
@@ -422,9 +430,13 @@ private extension AppDelegate {
         appRootRouter?.start(launchOptions: launchOptions)
     }
 
-    private var requiredPushTokenType: PushToken.TokenType {
-        // Previously VoIP push were available for iOS <15
-        // this forces transition to standard ones.
-        .standard
-    }
+}
+
+private enum SessionManagerSetupError: Error {
+
+    case missingAppVersion
+    case missingConfiguration
+    case missingMediaManager
+    case initializationFailed(any Error)
+
 }

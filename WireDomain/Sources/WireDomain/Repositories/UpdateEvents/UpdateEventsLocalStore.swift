@@ -20,6 +20,7 @@ import WireAPI
 import WireDataModel
 import WireFoundation
 import WireLogging
+import WireUpdateEventCoding
 
 final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
 
@@ -36,19 +37,21 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
 
     // MARK: - Properties
 
-    private let context: NSManagedObjectContext
+    private let eventContext: NSManagedObjectContext
+    private let syncContext: NSManagedObjectContext
     private let storage: PrivateUserDefaults<Key>
-    private let encoder = JSONEncoder()
-    private let decoder = JSONDecoder()
+    private let updateEventCoder = StorableUpdateEventCoder()
 
     // MARK: - Object lifecycle
 
     init(
-        context: NSManagedObjectContext,
+        eventContext: NSManagedObjectContext,
+        syncContext: NSManagedObjectContext,
         userID: UUID,
         sharedUserDefaults: UserDefaults
     ) {
-        self.context = context
+        self.eventContext = eventContext
+        self.syncContext = syncContext
         self.storage = PrivateUserDefaults(
             userID: userID,
             storage: sharedUserDefaults
@@ -67,11 +70,15 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
         storage.setUUID(id, forKey: .lastEventID)
     }
 
+    public func resetLastEventID() {
+        storage.setUUID(nil, forKey: .lastEventID)
+    }
+
     public func indexOfLastEventEnvelope() async throws -> Int64 {
-        try await context.perform { [context] in
+        try await eventContext.perform { [eventContext] in
             let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: false)
             request.fetchBatchSize = 1
-            let lastEnvelope = try context.fetch(request).first
+            let lastEnvelope = try eventContext.fetch(request).first
             return lastEnvelope?.sortIndex ?? 0
         }
     }
@@ -80,25 +87,41 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
         _ eventEnvelope: UpdateEventEnvelope,
         index: Int64
     ) async throws {
-        try await context.perform { [context, encoder] in
-            let storedEventEnvelope = StoredUpdateEventEnvelope(context: context)
-            storedEventEnvelope.data = try encoder.encode(eventEnvelope)
+        try await eventContext.perform { [eventContext, updateEventCoder] in
+            let storedEventEnvelope = StoredUpdateEventEnvelope(context: eventContext)
+            storedEventEnvelope.data = try updateEventCoder.encode(eventEnvelope)
             storedEventEnvelope.sortIndex = index
-            try context.save()
+            try eventContext.save()
+        }
+    }
+
+    public func persistEventEnvelopes(
+        _ eventEnvelopes: [UpdateEventEnvelope],
+        index: Int64
+    ) async throws {
+        try await eventContext.perform { [eventContext, updateEventCoder] in
+            var currentIndex = index
+            for eventEnvelope in eventEnvelopes {
+                let storedEventEnvelope = StoredUpdateEventEnvelope(context: eventContext)
+                storedEventEnvelope.data = try updateEventCoder.encode(eventEnvelope)
+                storedEventEnvelope.sortIndex = currentIndex
+                currentIndex += 1
+            }
+            try eventContext.save()
         }
     }
 
     public func fetchStoredEventEnvelopes(
         limit: UInt
-    ) async throws -> [UpdateEventEnvelope] {
-        try await context.perform { [context, decoder] in
+    ) async throws -> [(envelope: UpdateEventEnvelope, objectID: NSManagedObjectID)] {
+        try await eventContext.perform { [eventContext, updateEventCoder] in
             do {
                 let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
                 request.fetchLimit = Int(limit)
                 request.returnsObjectsAsFaults = false
-                let storedEventEnvelopes = try context.fetch(request)
+                let storedEventEnvelopes = try eventContext.fetch(request)
                 return try storedEventEnvelopes.map {
-                    try decoder.decode(UpdateEventEnvelope.self, from: $0.data)
+                    (try updateEventCoder.decode($0.data), $0.objectID)
                 }
             } catch {
                 throw Error.failedToFetchStoredEvents(error)
@@ -107,31 +130,53 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
     }
 
     public func deleteNextPendingEvents(
-        limit: UInt
+        with objectIDs: [NSManagedObjectID]
     ) async throws {
-        try await context.perform { [context] in
-            do {
-                let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
-                request.fetchLimit = Int(limit)
-                let storedEventEnvelopes = try context.fetch(request)
-                WireLogger.sync.debug("deleting \(storedEventEnvelopes.count) stored envelopes")
-                storedEventEnvelopes.forEach(context.delete)
-                try context.save()
-            } catch {
-                throw Error.failedToDeleteStoredEvents(error)
+        try await eventContext.perform { [eventContext] in
+            let deleteRequest = NSBatchDeleteRequest(objectIDs: objectIDs)
+            deleteRequest.resultType = .resultTypeObjectIDs
+            let batchDelete = try eventContext.execute(deleteRequest) as? NSBatchDeleteResult
+
+            guard let deleteResult = batchDelete?.result as? [NSManagedObjectID] else {
+                return assertionFailure(
+                    "batch deletion result should be of NSManagedObjectID type"
+                )
             }
+
+            WireLogger.sync.debug(
+                "deleting \(objectIDs.count) stored envelopes",
+                attributes: .syncAttributes(initialSync: false)
+            )
+
+            let deletedObjects: [AnyHashable: Any] = [
+                NSDeletedObjectsKey: deleteResult
+            ]
+
+            NSManagedObjectContext.mergeChanges(
+                fromRemoteContextSave: deletedObjects,
+                into: [eventContext]
+            )
         }
     }
 
     public func deleteEventEnvelope(
         atIndex index: Int64
     ) async throws {
-        try await context.perform { [context] in
+        try await eventContext.perform { [eventContext] in
             let request = StoredUpdateEventEnvelope.fetchRequest(sortIndex: index)
-            guard let envelope = try context.fetch(request).first else { return }
-            WireLogger.sync.debug("deleting stored envelope at index \(index)")
-            context.delete(envelope)
-            try context.save()
+            guard let envelope = try eventContext.fetch(request).first else { return }
+            WireLogger.sync.debug(
+                "deleting stored envelope at index \(index)",
+                attributes: .syncAttributes(initialSync: false)
+            )
+            eventContext.delete(envelope)
+            try eventContext.save()
+        }
+    }
+
+    func calculateLastUnreadMessages() async {
+        await syncContext.perform { [syncContext] in
+            ZMConversation.calculateLastUnreadMessages(in: syncContext)
         }
     }
 

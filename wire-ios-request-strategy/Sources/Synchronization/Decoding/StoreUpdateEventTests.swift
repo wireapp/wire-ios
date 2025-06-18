@@ -17,6 +17,7 @@
 //
 
 import WireTesting
+@testable import WireDataModel
 @testable import WireRequestStrategy
 
 final class StoreUpdateEventTests: MessagingTestBase {
@@ -141,7 +142,8 @@ final class StoreUpdateEventTests: MessagingTestBase {
             guard let storedEvent = StoredUpdateEvent.encryptAndCreate(
                 event,
                 context: eventMOC,
-                index: Int64(index)
+                index: Int64(index),
+                isCallEvent: event.isCallEvent
             ) else {
                 throw Failure("Could not create storedEvents")
             }
@@ -159,6 +161,7 @@ final class StoreUpdateEventTests: MessagingTestBase {
             event1,
             context: eventMOC,
             index: 2,
+            isCallEvent: event1.isCallEvent,
             publicKeys: encrypt ? publicKeys : nil
         ) else {
             throw Failure("Did not create storedEvent")
@@ -168,6 +171,7 @@ final class StoreUpdateEventTests: MessagingTestBase {
             event2,
             context: eventMOC,
             index: 3,
+            isCallEvent: event2.isCallEvent,
             publicKeys: encrypt ? publicKeys : nil
         ) else {
             throw Failure("Did not create storedEvent")
@@ -239,6 +243,7 @@ final class StoreUpdateEventTests: MessagingTestBase {
                 event1,
                 context: self.eventMOC,
                 index: 2,
+                isCallEvent: event1.isCallEvent,
                 publicKeys: nil
             ) else {
                 return XCTFail("Did not create storedEvent")
@@ -248,6 +253,7 @@ final class StoreUpdateEventTests: MessagingTestBase {
                 event1,
                 context: self.eventMOC,
                 index: 2,
+                isCallEvent: event1.isCallEvent,
                 publicKeys: nil
             )
 
@@ -276,6 +282,7 @@ final class StoreUpdateEventTests: MessagingTestBase {
                 ),
                 eventHash: 0,
                 index: 1,
+                isCallEvent: event1.isCallEvent,
                 context: eventMOC
             )
             // WHEN
@@ -283,6 +290,7 @@ final class StoreUpdateEventTests: MessagingTestBase {
                 event1,
                 context: self.eventMOC,
                 index: 1,
+                isCallEvent: event1.isCallEvent,
                 publicKeys: nil
             )
 
@@ -301,6 +309,7 @@ final class StoreUpdateEventTests: MessagingTestBase {
                 event1,
                 context: self.eventMOC,
                 index: 1,
+                isCallEvent: event1.isCallEvent,
                 publicKeys: nil
             ) else {
                 return XCTFail("Did not create storedEvent")
@@ -310,6 +319,7 @@ final class StoreUpdateEventTests: MessagingTestBase {
                 event2,
                 context: self.eventMOC,
                 index: 2,
+                isCallEvent: event2.isCallEvent,
                 publicKeys: nil
             ))
 
@@ -340,6 +350,7 @@ final class StoreUpdateEventTests: MessagingTestBase {
                 event1,
                 context: self.eventMOC,
                 index: 2,
+                isCallEvent: event1.isCallEvent,
                 publicKeys: nil
             ) else {
                 return XCTFail("Did not create storedEvent")
@@ -349,6 +360,7 @@ final class StoreUpdateEventTests: MessagingTestBase {
                 event2,
                 context: self.eventMOC,
                 index: 3,
+                isCallEvent: event2.isCallEvent,
                 publicKeys: nil
             ) else {
                 return XCTFail("Did not create storedEvent")
@@ -380,6 +392,7 @@ final class StoreUpdateEventTests: MessagingTestBase {
                 event1,
                 context: self.eventMOC,
                 index: 2,
+                isCallEvent: event1.isCallEvent,
                 publicKeys: self.publicKeys
             ) else {
                 return XCTFail("Did not create storedEvent")
@@ -389,6 +402,7 @@ final class StoreUpdateEventTests: MessagingTestBase {
                 event1,
                 context: self.eventMOC,
                 index: 2,
+                isCallEvent: event1.isCallEvent,
                 publicKeys: self.publicKeys
             )
 
@@ -414,6 +428,7 @@ final class StoreUpdateEventTests: MessagingTestBase {
                 event1,
                 context: self.eventMOC,
                 index: 2,
+                isCallEvent: event1.isCallEvent,
                 publicKeys: nil
             )
             XCTAssertNotNil(storedEvent1)
@@ -423,6 +438,7 @@ final class StoreUpdateEventTests: MessagingTestBase {
                 event2,
                 context: self.eventMOC,
                 index: 1,
+                isCallEvent: event2.isCallEvent,
                 publicKeys: nil
             )
             XCTAssertNotNil(storedEvent2)
@@ -442,6 +458,7 @@ final class StoreUpdateEventTests: MessagingTestBase {
                 event1,
                 context: self.eventMOC,
                 index: 2,
+                isCallEvent: event1.isCallEvent,
                 publicKeys: self.publicKeys
             ) else {
                 return XCTFail("Did not create storedEvent")
@@ -451,6 +468,7 @@ final class StoreUpdateEventTests: MessagingTestBase {
                 event2,
                 context: self.eventMOC,
                 index: 3,
+                isCallEvent: event2.isCallEvent,
                 publicKeys: self.publicKeys
             ) else {
                 return XCTFail("Did not create storedEvent")

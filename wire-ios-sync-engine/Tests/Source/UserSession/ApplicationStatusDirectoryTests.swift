@@ -38,7 +38,8 @@ class ApplicationStatusDirectoryTests: MessagingTest {
                 requestCancellation: self,
                 application: mockApplication,
                 lastEventIDRepository: lastEventIDRepository,
-                coreCryptoProvider: MockCoreCryptoProviderProtocol()
+                coreCryptoProvider: MockCoreCryptoProviderProtocol(),
+                isSyncV2Enabled: false
             )
         }
     }

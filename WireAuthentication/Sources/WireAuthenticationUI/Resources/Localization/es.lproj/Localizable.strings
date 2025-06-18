@@ -28,8 +28,20 @@
 "cloud_user_login.input_password.placeholder" = "Enter password";
 "cloud_user_login.submit" = "Siguiente";
 "cloud_user_login.forgot_password" = "¿Olvidaste tu contraseña?";
-"create_personal_account.title" = "Don’t have a Wire account?";
-"create_personal_account.button" = "Create Personal Account";
+"create_account_or_team.title" = "Don’t have a Wire account?";
+"create_account_or_team.button" = "Create account or team";
+
+"account_type_selector.title" = "How will you use Wire?";
+"account_type_selector.option_team.title" = "For collaboration";
+"account_type_selector.option_team.subtitle" = "Work securely with your team.";
+"account_type_selector.option_team.feature0" = "Communicate with your colleagues and share documents via a single app";
+"account_type_selector.option_team.feature1" = "Start for free, upgrade anytime";
+"account_type_selector.option_team.button" = "Create Team";
+"account_type_selector.option_personal.title" = "For private use";
+"account_type_selector.option_personal.subtitle" = "Chat with friends and family.";
+"account_type_selector.option_personal.feature0" = "Send messages and share pictures";
+"account_type_selector.option_personal.feature1" = "Always free";
+"account_type_selector.option_personal.button" = "Create Personal Account";
 
 "on_prem_user_login.title" = "Welcome to Wire Enterprise for %@!";
 "on_prem_user_login.message" = "Enter your password to log in";
@@ -97,6 +109,10 @@
 "obsolete_client.alert.title" = "Actualización necesaria";
 "obsolete_client.alert.message" = "You are missing out on new features.\nGet the latest version of Wire in the App Store.";
 "obsolete_client.alert.ok_button" = "Ir a la App Store";
+"obsolete_client.alert.switch_accounts" = "Switch Accounts";
 
 "obsolete_backend.alert.title" = "Server version not supported";
 "obsolete_backend.alert.message" = "The server version is not supported by this app. Please contact your system administrator.";
+
+"switching_accounts.title" = "Switch account";
+"switching_accounts.subtitle" = "Select another account on this device:";

@@ -364,8 +364,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Move the conversation %@ to a new folder"
+            "state" : "translated",
+            "value" : "将对话 %@ 移动到新文件夹"
           }
         },
         "zh-Hant" : {
@@ -739,8 +739,8 @@
         },
         "zh-Hans" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Move To"
+            "state" : "translated",
+            "value" : "移至"
           }
         },
         "zh-Hant" : {

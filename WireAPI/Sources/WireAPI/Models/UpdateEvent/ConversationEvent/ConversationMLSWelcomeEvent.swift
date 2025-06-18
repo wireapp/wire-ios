@@ -20,7 +20,7 @@ import Foundation
 
 /// An event where an mls welcome message was received in a conversation.
 
-public struct ConversationMLSWelcomeEvent: Equatable, Codable, Sendable {
+public struct ConversationMLSWelcomeEvent: Equatable, Sendable {
 
     /// The id of the conversation.
 
@@ -33,5 +33,15 @@ public struct ConversationMLSWelcomeEvent: Equatable, Codable, Sendable {
     /// The base 64 encoded welcome message.
 
     public let welcomeMessage: String
+
+    public init(
+        conversationID: ConversationID,
+        senderID: UserID,
+        welcomeMessage: String
+    ) {
+        self.conversationID = conversationID
+        self.senderID = senderID
+        self.welcomeMessage = welcomeMessage
+    }
 
 }

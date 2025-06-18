@@ -115,7 +115,7 @@ final class AuthenticationStateController {
             let rewindedStep = stack.first { milestone.shouldRewind(to: $0) }
             if rewindedStep != nil {
                 stack = [Array(stack.prefix { !milestone.shouldRewind(to: $0) }), milestone.stepsToAdd, [step]]
-                    .flatMap { $0 }
+                    .flatMap(\.self)
             } else {
                 stack = [step]
             }

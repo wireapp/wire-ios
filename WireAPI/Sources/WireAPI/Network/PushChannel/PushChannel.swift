@@ -16,24 +16,45 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
+
 import WireFoundation
 import WireLogging
 
-public final class PushChannel: PushChannelProtocol {
+public typealias PushChannelV1 = PushChannel
+public typealias PushChannelV1Procotol = PushChannelProtocol
+
+public actor PushChannel: PushChannelProtocol {
 
     public typealias Stream = AsyncThrowingStream<UpdateEventEnvelope, any Error>
+
+    // MARK: - Properties
 
     private let webSocket: any WebSocketProtocol
     private let decoder = JSONDecoder()
 
-    public init(webSocket: any WebSocketProtocol) {
+    private var keepAliveTask: Task<Void, any Error>?
+    private let keepAliveInterval: TimeInterval
+
+    // MARK: - Init
+
+    public init(
+        webSocket: any WebSocketProtocol,
+        keepAliveInterval: TimeInterval
+    ) {
         self.webSocket = webSocket
+        self.keepAliveInterval = keepAliveInterval
     }
 
+    // MARK: - Public
+
     public func open() async throws -> Stream {
+        // We don't want to proceed if not necessary (in case we've
+        // gone to the background)
+        try Task.checkCancellation()
+
         WireLogger.pushChannel.debug("opening new push channel")
-        return try await webSocket.open().map { [weak self, decoder] message in
+        let stream = try await webSocket.open().map { [weak self, decoder] message in
             do {
                 switch message {
                 case let .data(data):
@@ -46,7 +67,7 @@ public final class PushChannel: PushChannelProtocol {
                     throw PushChannelError.receivedInvalidMessage
 
                 @unknown default:
-                    WireLogger.pushChannel.debug("received web socket message, ignoring...")
+                    WireLogger.pushChannel.debug("received unknown web socket message, ignoring...")
                     throw PushChannelError.receivedInvalidMessage
                 }
             } catch {
@@ -55,11 +76,46 @@ public final class PushChannel: PushChannelProtocol {
                 throw error
             }
         }.toStream()
+
+        // The server will drop the connection (possibly silently)
+        // if the client doesn’t send a ping message every so often.
+        setUpKeepAliveTask()
+
+        return stream
     }
 
     public func close() async {
         WireLogger.pushChannel.debug("closing push channel")
         await webSocket.close()
+        tearDownKeepAliveTask()
     }
 
+    // MARK: - Keep alive
+
+    private func setUpKeepAliveTask() {
+        tearDownKeepAliveTask()
+        keepAliveTask = Task { [keepAliveInterval] in
+            do {
+                while true {
+                    try await Task.sleep(for: .seconds(keepAliveInterval))
+                    WireLogger.pushChannel.debug("sending keep alive ping")
+                    await webSocket.sendPing()
+                }
+            } catch {
+                WireLogger.pushChannel.warn("keep alive task was cancelled")
+                tearDownKeepAliveTask()
+            }
+        }
+    }
+
+    private func tearDownKeepAliveTask() {
+        guard let keepAliveTask else { return }
+        WireLogger.pushChannel.debug("tearing down keep alive task")
+        keepAliveTask.cancel()
+        self.keepAliveTask = nil
+    }
+
+    public func write(data: Data) async throws {
+        // do nothing
+    }
 }

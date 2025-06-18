@@ -1093,6 +1093,14 @@ internal enum L10n {
         internal static let description = L10n.tr("Accessibility", "tabBar.phone.description", fallback: "Log in via phone number")
       }
     }
+    internal enum WebAuth {
+      internal enum UrlLabel {
+        /// Identity Provider URL
+        internal static let description = L10n.tr("Accessibility", "webAuth.urlLabel.description", fallback: "Identity Provider URL")
+        /// Select to open the complete URL.
+        internal static let hint = L10n.tr("Accessibility", "webAuth.urlLabel.hint", fallback: "Select to open the complete URL.")
+      }
+    }
   }
   internal enum InfoPlist {
     /// Allow Wire to access your camera so you can place video calls and send photos.
@@ -1172,13 +1180,13 @@ internal enum L10n {
         /// The conversation is full
         internal static let title = L10n.tr("Localizable", "add_participants.alert.title", fallback: "The conversation is full")
         internal enum Message {
-          /// Up to %1$d people can join a conversation. Currently there is only room for %2$d more.
-          internal static func existingConversation(_ p1: Int, _ p2: Int) -> String {
-            return L10n.tr("Localizable", "add_participants.alert.message.existing_conversation", p1, p2, fallback: "Up to %1$d people can join a conversation. Currently there is only room for %2$d more.")
+          /// Up to %@ people can join a conversation. Currently there is only room for %@ more.
+          internal static func existingConversation(_ p1: Any, _ p2: Any) -> String {
+            return L10n.tr("Localizable", "add_participants.alert.message.existing_conversation", String(describing: p1), String(describing: p2), fallback: "Up to %@ people can join a conversation. Currently there is only room for %@ more.")
           }
-          /// Up to %d people can join a conversation.
-          internal static func newConversation(_ p1: Int) -> String {
-            return L10n.tr("Localizable", "add_participants.alert.message.new_conversation", p1, fallback: "Up to %d people can join a conversation.")
+          /// Up to %@ people can join a conversation.
+          internal static func newConversation(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "add_participants.alert.message.new_conversation", String(describing: p1), fallback: "Up to %@ people can join a conversation.")
           }
         }
       }
@@ -1702,6 +1710,10 @@ internal enum L10n {
         internal enum Image {
           /// You sent a picture
           internal static let title = L10n.tr("Localizable", "content.collapsed.image.title", fallback: "You sent a picture")
+        }
+        internal enum Link {
+          /// You sent a link
+          internal static let title = L10n.tr("Localizable", "content.collapsed.link.title", fallback: "You sent a link")
         }
         internal enum Location {
           /// You sent your location
@@ -3225,6 +3237,8 @@ internal enum L10n {
     internal enum EnrollE2eiCertificate {
       /// Certificate Details
       internal static let certificateDetailsButton = L10n.tr("Localizable", "enroll_e2ei_certificate.certificate_details_button", fallback: "Certificate Details")
+      /// Identity Provider URL
+      internal static let idpUrlTitle = L10n.tr("Localizable", "enroll_e2ei_certificate.idp_url_title", fallback: "Identity Provider URL")
       /// OK
       internal static let okButton = L10n.tr("Localizable", "enroll_e2ei_certificate.ok_button", fallback: "OK")
       /// The certificate is active and your device is verified.
@@ -4419,16 +4433,6 @@ internal enum L10n {
           internal static let google = L10n.tr("Localizable", "open_link.maps.option.google", fallback: "Google Maps")
         }
       }
-      internal enum Twitter {
-        internal enum Option {
-          /// Browser / Twitter
-          internal static let `default` = L10n.tr("Localizable", "open_link.twitter.option.default", fallback: "Browser / Twitter")
-          /// Tweetbot
-          internal static let tweetbot = L10n.tr("Localizable", "open_link.twitter.option.tweetbot", fallback: "Tweetbot")
-          /// Twitterrific
-          internal static let twitterrific = L10n.tr("Localizable", "open_link.twitter.option.twitterrific", fallback: "Twitterrific")
-        }
-      }
     }
     internal enum Participants {
       /// Add
@@ -4475,9 +4479,9 @@ internal enum L10n {
           internal static let footer = L10n.tr("Localizable", "participants.section.members.footer", fallback: "There are no members.")
         }
         internal enum Name {
-          /// Up to %1$d participants can join a conversation.
-          internal static func footer(_ p1: Int) -> String {
-            return L10n.tr("Localizable", "participants.section.name.footer", p1, fallback: "Up to %1$d participants can join a conversation.")
+          /// Up to %@ participants can join a conversation.
+          internal static func footer(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "participants.section.name.footer", String(describing: p1), fallback: "Up to %@ participants can join a conversation.")
           }
         }
       }
@@ -5275,6 +5279,8 @@ internal enum L10n {
           }
         }
         internal enum AccountAppearanceGroup {
+          /// When this is on, your conversations show a background based on your profile color and light or dark theme.
+          internal static let footer = L10n.tr("Localizable", "self.settings.account_appearance_group.footer", fallback: "When this is on, your conversations show a background based on your profile color and light or dark theme.")
           /// Appearance
           internal static let title = L10n.tr("Localizable", "self.settings.account_appearance_group.title", fallback: "Appearance")
         }
@@ -5366,6 +5372,10 @@ internal enum L10n {
             internal static let takePicture = L10n.tr("Localizable", "self.settings.account_picture_group.alert.take_picture", fallback: "Take Photo")
             /// Change your profile picture
             internal static let title = L10n.tr("Localizable", "self.settings.account_picture_group.alert.title", fallback: "Change your profile picture")
+          }
+          internal enum Background {
+            /// Conversation background color
+            internal static let title = L10n.tr("Localizable", "self.settings.account_picture_group.background.title", fallback: "Conversation background color")
           }
         }
         internal enum AccountSection {
@@ -5502,10 +5512,6 @@ internal enum L10n {
             }
           }
         }
-        internal enum ApnsLogging {
-          /// APNS Logging
-          internal static let title = L10n.tr("Localizable", "self.settings.apns_logging.title", fallback: "APNS Logging")
-        }
         internal enum Callkit {
           /// Share with iOS
           internal static let caption = L10n.tr("Localizable", "self.settings.callkit.caption", fallback: "Share with iOS")
@@ -5588,10 +5594,6 @@ internal enum L10n {
           internal enum Maps {
             /// Locations
             internal static let title = L10n.tr("Localizable", "self.settings.link_options.maps.title", fallback: "Locations")
-          }
-          internal enum Twitter {
-            /// Tweets
-            internal static let title = L10n.tr("Localizable", "self.settings.link_options.twitter.title", fallback: "Tweets")
           }
         }
         internal enum ManageTeam {
@@ -5708,8 +5710,8 @@ internal enum L10n {
           /// Lock With Passcode
           internal static let lockApp = L10n.tr("Localizable", "self.settings.privacy_security.lock_app", fallback: "Lock With Passcode")
           internal enum CollapseOwnMessages {
-            /// When this is on, all your messages collapse to a single line.
-            internal static let footer = L10n.tr("Localizable", "self.settings.privacy_security.collapse_own_messages.footer", fallback: "When this is on, all your messages collapse to a single line.")
+            /// When this is on, all your messages collapse after three lines.
+            internal static let footer = L10n.tr("Localizable", "self.settings.privacy_security.collapse_own_messages.footer", fallback: "When this is on, all your messages collapse after three lines.")
             /// Collapse my messages
             internal static let title = L10n.tr("Localizable", "self.settings.privacy_security.collapse_own_messages.title", fallback: "Collapse my messages")
           }

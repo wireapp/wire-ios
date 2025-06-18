@@ -17,9 +17,12 @@
 //
 
 import SwiftUI
+import WireAPI
+import WireBackup
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireDomain
 import WireFoundation
 import WireLogging
 import WireSettingsUI
@@ -131,8 +134,13 @@ extension SettingsCellDescriptorFactory {
 
     private func appearanceSection() -> SettingsSectionDescriptorType {
         SettingsSectionDescriptor(
-            cellDescriptors: [pictureElement(), colorElement()],
-            header: L10n.Localizable.Self.Settings.AccountAppearanceGroup.title
+            cellDescriptors: [
+                pictureElement(),
+                colorElement(),
+                conversationBackgroundEnabledElement()
+            ],
+            header: L10n.Localizable.Self.Settings.AccountAppearanceGroup.title,
+            footer: L10n.Localizable.Self.Settings.AccountAppearanceGroup.footer
         )
     }
 
@@ -331,6 +339,16 @@ extension SettingsCellDescriptorFactory {
         )
     }
 
+    func conversationBackgroundEnabledElement() -> any SettingsCellDescriptorType {
+
+        SettingsPropertyToggleCellDescriptor(
+            settingsProperty:
+            settingsPropertyFactory.property(.conversationBackground),
+            inverse: false,
+            identifier: "ConversationBackgroundSwitch"
+        )
+    }
+
     private func colorElementPreviewGenerator(cellDescriptorType: any SettingsCellDescriptorType)
         -> SettingsCellPreview {
         guard let selfUser = ZMUser.selfUser() else {
@@ -373,17 +391,45 @@ extension SettingsCellDescriptorFactory {
 
         // force-unwrapping should be fine, since we should have a session manager and an active user session here
         let sessionManager = SessionManager.shared!
-        let importBackupUseCase = sessionManager.importBackupUseCase!
+        let selfUser = ZMUser.selfUser()!
+        let context = selfUser.managedObjectContext!.performAndWait {
+            selfUser.managedObjectContext!.zm_sync!
+        }
+        let backupLocalStore = BackupLocalStore(
+            context: context,
+            processor: ConversationProtobufMessageProcessor(context: context)
+        )
+        let userSession = sessionManager.activeUserSession!
+        let importBackupUseCase = CompositeImportBackupUseCase(
+            importBackupUseCase: ImportBackupUseCase(
+                selfUserID: .init(selfUser.qualifiedID!),
+                backupLocalStore: backupLocalStore,
+                fileUnarchiver: ZipArchiveFileUnarchiver(),
+                syncTrigger: { userSession.triggerResourcesSync() },
+                logger: WireLogger.backupImport
+            ),
+            legacyImportBackupUseCase: sessionManager.importLegacyBackupUseCase!
+        )
+        let createBackupUseCase: CreateBackupUseCaseProtocol = if DeveloperFlag.createLegacyBackups.isOn {
+            CreateLegacyBackupUseCase(sessionManager: sessionManager)
+        } else {
+            CreateBackupUseCase(
+                selfUserID: .init(selfUser.qualifiedID!),
+                backupLocalStore: backupLocalStore,
+                fileArchiver: ZIPFoundationFileArchiver(),
+                logger: WireLogger.backupExport
+            )
+        }
 
         return BackupImportExportBuilder(
             backupPasswordValidator: BackupPasswordValidator(),
-            createBackupUseCase: CreateLegacyBackupUseCase(sessionManager: sessionManager),
+            createBackupUseCase: createBackupUseCase,
             importBackupUseCase: importBackupUseCase,
             cleanUpBackupsUseCase: CleanUpBackupsUseCase(sessionManager: sessionManager),
             exportBackupLogger: WireLogger.backupExport,
             importBackupLogger: WireLogger.backupImport,
             wireAccentColorMapping: WireAccentColorMapping(),
-            wireAccentColor: ZMUser.selfUser()?.accentColor ?? .default
+            wireAccentColor: selfUser.accentColor ?? .default
         )
     }
 
@@ -467,6 +513,28 @@ extension SettingsCellDescriptorFactory {
 
     func signOutElement() -> any SettingsCellDescriptorType {
         SettingsSignOutCellDescriptor()
+    }
+
+}
+
+// MARK: -
+
+private extension ConversationProtobufMessageProcessor {
+
+    init(context: NSManagedObjectContext) {
+        let messageLocalStore = MessageLocalStore(context: context)
+        self.init(
+            messageLocalStore: messageLocalStore,
+            conversationLocalStore: ConversationLocalStore(
+                context: context,
+                mlsService: context.performAndWait { context.mlsService },
+                messageLocalStore: messageLocalStore
+            ),
+            userLocalStore: UserLocalStore(
+                context: context,
+                messageLocalStore: messageLocalStore
+            )
+        )
     }
 
 }

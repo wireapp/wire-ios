@@ -16,7 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireLogging
+public import Foundation
 
 // sourcery: AutoMockable
 public protocol NetworkServiceProtocol {
@@ -102,7 +103,7 @@ extension NetworkService: URLSessionWebSocketDelegate {
         webSocketTask: URLSessionWebSocketTask,
         didOpenWithProtocol protocol: String?
     ) {
-        print("web socket task did open")
+        WireLogger.network.debug("web socket task did open")
     }
 
     public func urlSession(
@@ -111,6 +112,10 @@ extension NetworkService: URLSessionWebSocketDelegate {
         didCloseWith closeCode: URLSessionWebSocketTask.CloseCode,
         reason: Data?
     ) {
+        WireLogger.network
+            .debug(
+                "web socket task did close. Close code: \(closeCode), Reason: \(String(data: reason ?? Data(), encoding: .utf8) ?? "No reason")"
+            )
         Task {
             await webSocketsByTask[webSocketTask]?.close()
             webSocketsByTask[webSocketTask] = nil
@@ -128,9 +133,9 @@ extension NetworkService: URLSessionTaskDelegate {
     ) {
         // NOTE: This method is not called when when using async/await APIs.
         if let error {
-            print("task did complete with error: \(error)")
+            WireLogger.network.error("task did complete with error: \(error)")
         } else {
-            print("task did complete")
+            WireLogger.network.debug("task did complete")
         }
     }
 

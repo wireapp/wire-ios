@@ -50,6 +50,10 @@ public enum ConversationAction: Hashable, Sendable {
 
     case modifyOtherConversationMember
 
+    /// The action of changing which members can add new members to the conversation.
+
+    case modifyAddPermission
+
     /// The action of removing yourself as a member of the conversation.
 
     case leaveConversation

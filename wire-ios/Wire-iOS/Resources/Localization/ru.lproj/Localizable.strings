@@ -102,8 +102,8 @@
 "peoplepicker.federation.domain_unvailable" = "Федеративный домен в настоящее время недоступен. [Подробнее](%@)";
 
 "add_participants.alert.title" = "Беседа переполнена";
-"add_participants.alert.message.new_conversation" = "К беседе могут присоединиться до %d человек.";
-"add_participants.alert.message.existing_conversation" = "К беседе может присоединиться до %1$d человек. На текущий момент в комнате есть места еще для %2$d.";
+"add_participants.alert.message.new_conversation" = "К беседе могут присоединиться до %@ человек.";
+"add_participants.alert.message.existing_conversation" = "К беседе может присоединиться до %@ человек. На текущий момент в комнате есть места еще для %@.";
 
 // Channel Creation UI - Navigation
 "conversation.create.channel.title" = "Новый канал";
@@ -343,7 +343,7 @@
 "conversation.create.mls.subtitle" = "Выберите MLS для создания группы с использованием протокола Messaging Layer Security.";
 "conversation.create.mls.picker_title" = "Выбрать протокол";
 "conversation.create.mls.cancel" = "Отмена";
-"conversation.create.non_federating_domains_error.title" = "Разговор не может быть создан";
+"conversation.create.non_federating_domains_error.title" = "Беседа не может быть создана";
 "conversation.create.non_federating_domains_error.message" = "Пользователи бэкендов %@ не могут присоединиться к одной беседе.\nДля создания беседы удалите затронутых участников.";
 "conversation.create.non_federating_domains_error.edit_participant_list" = "Изменить список участников";
 "conversation.create.non_federating_domains_error.learn_more" = "Подробнее";
@@ -654,6 +654,7 @@
 "content.collapsed.video.title" = "Вы отправили видео";
 "content.collapsed.audio.title" = "Вы отправили аудиосообщение";
 "content.collapsed.location.title" = "Вы отправили свое местоположение";
+"content.collapsed.link.title" = "Вы отправили ссылку";
 
 "content.message.like" = "Нравится";
 "content.message.unlike" = "Не нравится";
@@ -859,11 +860,11 @@
 "participants.section.services" = "Сервисы (%d)";
 "participants.section.settings" = "Настройки";
 "participants.footer.add_title" = "Добавить участников";
-"participants.section.name.footer" = "К беседе могут присоединиться до %1$d участников.";
+"participants.section.name.footer" = "К беседе могут присоединиться до %@ участников.";
 "participants.section.admins.footer" = "Здесь нет администраторов.";
 "participants.section.members.footer" = "Здесь нет участников.";
 
-"profile.profile.group_admin_options.title" = "Conversation admin";
+"profile.profile.group_admin_options.title" = "Администратор беседы";
 
 // Meta Menu
 "meta.menu.accessibility_more_options_button" = "Дополнительные действия";
@@ -926,8 +927,8 @@
 "profile.remove_dialog_title" = "Удалить?";
 "profile.remove_dialog_message" = "%@ больше не сможет отправлять и получать сообщения в этой беседе.";
 "profile.remove_dialog_button_cancel" = "Отмена";
-"profile.remove_dialog_button_remove" = "Remove From Conversation…";
-"profile.remove_dialog_button_remove_confirm" = "Remove From Conversation";
+"profile.remove_dialog_button_remove" = "Удалить из беседы…";
+"profile.remove_dialog_button_remove_confirm" = "Удалить из беседы";
 
 // Block dialog
 "profile.block_dialog.title" = "Заблокировать?";
@@ -989,7 +990,7 @@
 // User Details
 "profile.details.title" = "Подробности";
 "profile.details.guest" = "Гость";
-"profile.details.group_admin" = "Conversation admin";
+"profile.details.group_admin" = "Администратор беседы";
 "profile.details.partner" = "внешний";
 "profile.details.federated" = "Федеративный";
 "profile.details.blocking_reason" = "Этот пользователь заблокирован из-за юридических ограничений. [ПОДРОБНЕЕ](%@)";
@@ -1158,6 +1159,7 @@
 "self.settings.account_details.remove_device.password.error" = "Неверный пароль";
 
 "self.settings.account_appearance_group.title" = "Внешний вид";
+"self.settings.account_appearance_group.footer" = "Когда эта функция включена, фон ваших бесед будет соответствовать цвету вашего профиля, а также светлой или темной теме.";
 
 "self.settings.privacy_section_group.title" = "Конфиденциальность";
 "self.settings.enable_read_receipts.title" = "Отправлять отчеты о прочтении";
@@ -1176,6 +1178,7 @@
 "self.settings.account_picture_group.accent_color.amber" = "Янтарный";
 "self.settings.account_picture_group.accent_color.turquoise" = "Бирюзовый";
 "self.settings.account_picture_group.accent_color.purple" = "Фиолетовый";
+"self.settings.account_picture_group.background.title" = "Цвет фона беседы";
 
 "self.settings.account_personal_information_group.title" = "Личные данные";
 
@@ -1280,13 +1283,8 @@
 // Open in
 "self.settings.external_apps.header" = "Открыть с помощью";
 
-"self.settings.link_options.twitter.title" = "Твиты";
 "self.settings.link_options.maps.title" = "Местоположения";
 "self.settings.link_options.browser.title" = "Браузер";
-
-"open_link.twitter.option.default" = "Браузер / Твиттер";
-"open_link.twitter.option.tweetbot" = "Tweetbot";
-"open_link.twitter.option.twitterrific" = "Twitterrific";
 
 "open_link.maps.option.apple" = "Карты";
 "open_link.maps.option.google" = "Google Maps";
@@ -1308,7 +1306,6 @@
 "self.settings.developer_options.title" = "Опции для разработчиков";
 "self.settings.developer_options.loggin.title" = "Настройки";
 "self.settings.developer_options.database_statistics.title" = "Статистика базы данных";
-"self.settings.apns_logging.title" = "APNS журналирование";
 
 // Privacy (visibility) options
 "self.settings.options_menu.title" = "Настройки";
@@ -1333,7 +1330,7 @@
 "self.settings.privacy_security.disable_link_previews.footer" = "Эта опция не влияет на предварительный просмотр ссылок от других пользователей.";
 
 "self.settings.privacy_security.collapse_own_messages.title" = "Свернуть мои сообщения";
-"self.settings.privacy_security.collapse_own_messages.footer" = "Когда эта функция включена, все ваши сообщения сворачиваются в одну строку.";
+"self.settings.privacy_security.collapse_own_messages.footer" = "Когда эта функция включена, все ваши сообщения сворачиваются после трех строк.";
 
 "self.settings.privacy_analytics_menu.devices.title" = "Устройства";
 
@@ -1597,6 +1594,7 @@
 "enroll_e2ei_certificate.subtitle" = "Сертификат активен, а устройство верифицировано.";
 "enroll_e2ei_certificate.certificate_details_button" = "Сведения о сертификате";
 "enroll_e2ei_certificate.ok_button" = "OK";
+"enroll_e2ei_certificate.idp_url_title" = "URL провайдера идентификации";
 
 // Update e2ei certificate
 "update_e2ei_certificate.title" = "Сертификат обновлен";
@@ -1739,8 +1737,8 @@
 "feature_config.alert.self_deleting_messages.message.forced_on" = "Самоудаляющиеся сообщения теперь обязательны. Новые сообщения будут самоудаляться спустя %@.";
 
 // Feature configs: conversation guest links
-"feature_config.alert.conversation_guest_links.message.disabled" = "Generating guest links is now disabled for all conversation admins.";
-"feature_config.alert.conversation_guest_links.message.enabled" = "Generating guest links is now enabled for all conversation admins.";
+"feature_config.alert.conversation_guest_links.message.disabled" = "Генерация гостевых ссылок теперь отключена для всех администраторов беседы.";
+"feature_config.alert.conversation_guest_links.message.enabled" = "Генерация гостевых ссылок теперь включена для всех администраторов беседы.";
 
 // Feature configs: mlsE2EId
 "feature_config.alert.mls_e2ei.title" = "Сертификат сквозной идентификации";

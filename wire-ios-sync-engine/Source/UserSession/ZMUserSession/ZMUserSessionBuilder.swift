@@ -20,6 +20,7 @@ import Foundation
 import WireAPI
 import WireDataModel
 import WireDomain
+import WireFoundation
 import WireRequestStrategy
 import WireUtilities
 
@@ -53,6 +54,7 @@ struct ZMUserSessionBuilder {
     private var userId: UUID?
     private var minTLSVersion: String?
     private var apiVersion: WireAPI.APIVersion?
+    private var journal: Journal?
 
     // MARK: - Initialize
 
@@ -85,7 +87,8 @@ struct ZMUserSessionBuilder {
             let transportSession,
             let userId,
             let wireAPIBackendEnvironment,
-            let apiVersion
+            let apiVersion,
+            let journal
         else {
             fatalError("cannot build 'ZMUserSession' without required dependencies")
         }
@@ -115,7 +118,8 @@ struct ZMUserSessionBuilder {
             dependencies: dependencies,
             backendEnvironment: wireAPIBackendEnvironment,
             minTLSVersion: .minVersionFrom(minTLSVersion),
-            apiVersion: apiVersion
+            apiVersion: apiVersion,
+            journal: journal
         )
     }
 
@@ -129,6 +133,7 @@ struct ZMUserSessionBuilder {
         application: any ZMApplication,
         cryptoboxMigrationManager: any CryptoboxMigrationManagerInterface,
         coreDataStack: CoreDataStack,
+        coreCryptoProvider: CoreCryptoProviderProtocol,
         configuration: ZMUserSession.Configuration,
         contextStorage: any LAContextStorable,
         earService: (any EARServiceInterface)?,
@@ -140,17 +145,11 @@ struct ZMUserSessionBuilder {
         sharedUserDefaults: UserDefaults,
         transportSession: any TransportSessionType,
         userId: UUID,
-        minTLSVersion: String?
+        minTLSVersion: String?,
+        journal: Journal
     ) {
         // reused dependencies
 
-        let coreCryptoProvider = CoreCryptoProvider(
-            selfUserID: userId,
-            sharedContainerURL: coreDataStack.applicationContainer,
-            accountDirectory: coreDataStack.accountContainer,
-            syncContext: coreDataStack.syncContext,
-            cryptoboxMigrationManager: cryptoboxMigrationManager
-        )
         let lastEventIDRepository = LastEventIDRepository(
             userID: userId,
             sharedUserDefaults: sharedUserDefaults
@@ -172,7 +171,8 @@ struct ZMUserSessionBuilder {
             requestCancellation: transportSession,
             application: application,
             lastEventIDRepository: lastEventIDRepository,
-            coreCryptoProvider: coreCryptoProvider
+            coreCryptoProvider: coreCryptoProvider,
+            isSyncV2Enabled: journal[.isSyncV2Enabled]
         )
         let e2eiActivationDateRepository = E2EIActivationDateRepository(
             userID: userId,
@@ -197,11 +197,8 @@ struct ZMUserSessionBuilder {
             context: coreDataStack.syncContext,
             notificationContext: coreDataStack.syncContext.notificationContext,
             coreCryptoProvider: coreCryptoProvider,
-            conversationEventProcessor: ConversationEventProcessor(context: coreDataStack.syncContext),
             featureRepository: FeatureRepository(context: coreDataStack.syncContext),
             userDefaults: .standard,
-            // TODO: [WPB-15440] when integrating new quick sync, we'll need to pass the sync agent here.
-            syncStatus: applicationStatusDirectory.syncStatus,
             userID: coreDataStack.account.userIdentifier
         )
         let proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator ?? ProteusToMLSMigrationCoordinator(
@@ -245,6 +242,7 @@ struct ZMUserSessionBuilder {
         self.userId = userId
         self.minTLSVersion = minTLSVersion
         self.wireAPIBackendEnvironment = wireAPIBackendEnvironment
+        self.journal = journal
     }
 
     // MARK: UserSesssionDependencies

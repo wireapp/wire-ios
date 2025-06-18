@@ -111,6 +111,70 @@ indirect enum AuthenticationFlowStep: Equatable {
 
 }
 
+extension AuthenticationFlowStep: CustomStringConvertible {
+
+    // Don't include any of the associated values as they may be
+    // sensitve and it's know everywhere we log steps.
+
+    var description: String {
+        switch self {
+        case .start:
+            "start"
+        case .wireAuthenticationModule:
+            "wireAuthenticationModule"
+        case .landingScreen:
+            "landingScreen"
+        case .reauthenticate:
+            "reauthenticate"
+        case .provideCredentials:
+            "provideCredentials"
+        case .enterEmailVerificationCode:
+            "enterEmailVerificationCode"
+        case .authenticateEmailCredentials:
+            "authenticateEmailCredentials"
+        case .companyLogin:
+            "companyLogin"
+        case .switchBackend:
+            "switchBackend"
+        case .noHistory:
+            "noHistory"
+        case .clientManagement:
+            "clientManagement"
+        case .deleteClient:
+            "deleteClient"
+        case .addEmailAndPassword:
+            "addEmailAndPassword"
+        case .enrollE2EIdentity:
+            "enrollE2EIdentity"
+        case .enrollE2EIdentitySuccess:
+            "enrollE2EIdentitySuccess"
+        case .addUsername:
+            "addUsername"
+        case .registerEmailCredentials:
+            "registerEmailCredentials"
+        case .pendingEmailLinkVerification:
+            "pendingEmailLinkVerification"
+        case .pendingInitialSync:
+            "pendingInitialSync"
+        case .createCredentials:
+            "createCredentials"
+        case .sendActivationCode:
+            "sendActivationCode"
+        case .enterActivationCode:
+            "enterActivationCode"
+        case .activateCredentials:
+            "activateCredentials"
+        case .incrementalUserCreation:
+            "incrementalUserCreation"
+        case .createUser:
+            "createUser"
+        case .configureDevice:
+            "configureDevice"
+        }
+    }
+
+}
+
 // MARK: - Intermediate Steps
 
 /// Intermediate steps required for user registration.

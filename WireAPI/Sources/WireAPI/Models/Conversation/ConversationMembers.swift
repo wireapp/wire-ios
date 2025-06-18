@@ -37,6 +37,14 @@ public extension Conversation {
 
         }
 
+        public init(
+            others: [Conversation.Member],
+            selfMember: Conversation.Member
+        ) {
+            self.others = others
+            self.selfMember = selfMember
+        }
+
     }
 
 }

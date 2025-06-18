@@ -23,9 +23,8 @@ enum BuildType: Equatable {
     case production
     case alpha
     case beta
-    case development
-    case `internal`
-    case releaseCandidate
+    case playground
+    case edge
     case custom(bundleID: String)
 
     init(bundleID: String) {
@@ -39,14 +38,11 @@ enum BuildType: Equatable {
         case BuildType.beta.bundleID:
             self = .beta
 
-        case BuildType.development.bundleID:
-            self = .development
+        case BuildType.playground.bundleID:
+            self = .playground
 
-        case BuildType.internal.bundleID:
-            self = .internal
-
-        case BuildType.releaseCandidate.bundleID:
-            self = .releaseCandidate
+        case BuildType.edge.bundleID:
+            self = .edge
 
         default:
             self = .custom(bundleID: bundleID)
@@ -58,7 +54,7 @@ enum BuildType: Equatable {
         case .production:
             "com.wire"
 
-        case .alpha, .beta, .development, .internal, .releaseCandidate:
+        case .alpha, .beta, .playground, .edge:
             bundleID
 
         case let .custom(bundleID):
@@ -77,14 +73,11 @@ enum BuildType: Equatable {
         case .beta:
             "com.wearezeta.zclient.ios.beta"
 
-        case .development:
+        case .playground:
             "com.wearezeta.zclient.development"
 
-        case .internal:
-            "com.wearezeta.zclient.internal"
-
-        case .releaseCandidate:
-            "com.wearezeta.zclient.rc"
+        case .edge:
+            "com.wearezeta.zclient.ios.edge"
 
         case let .custom(bundleID):
             bundleID

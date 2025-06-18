@@ -27,7 +27,7 @@ public protocol ResolveOneOnOneConversationsUseCaseProtocol {
 
 }
 
-typealias PullSelfUserClientsFactory = (NSManagedObjectContext) -> PullSelfUserClientsProtocol
+typealias PullSelfUserClientsFactory = (NSManagedObjectContext) -> PullSelfUserClientsSyncProtocol
 
 struct ResolveOneOnOneConversationsUseCase: ResolveOneOnOneConversationsUseCaseProtocol {
 
@@ -62,7 +62,7 @@ struct ResolveOneOnOneConversationsUseCase: ResolveOneOnOneConversationsUseCaseP
         // we need the self clients to be up to date before calculating supported protocols
         let pullSelfUserClients = pullSelfUserClientsFactory(context)
         do {
-            try await pullSelfUserClients.pullSelfClients()
+            try await pullSelfUserClients.pull()
         } catch {
             WireLogger.userClient.error("error syncing selfclients: \(error.localizedDescription)")
         }

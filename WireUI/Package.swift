@@ -24,10 +24,11 @@ let package = Package(
         .library(name: "WireSettingsUI", targets: ["WireSettingsUI"]),
         .library(name: "WireSettingsUISupport", targets: ["WireSettingsUISupport"]),
         .library(name: "WireSidebarUI", targets: ["WireSidebarUI"]),
+        .library(name: "WireMultiBackendUI", targets: ["WireMultiBackendUI"]),
+        .library(name: "WireMultiBackendUISupport", targets: ["WireMultiBackendUISupport"])
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
-        .package(path: "../WireAnalytics"),
         .package(name: "WireDomainPackage", path: "../WireDomain"),
         .package(name: "WireFoundation", path: "../WireFoundation"),
         .package(path: "../WireLogging"),
@@ -55,9 +56,22 @@ let package = Package(
         .target(name: "WireFolderPickerUI", dependencies: ["WireReusableUIComponents"]),
 
         .target(
+            name: "WireMultiBackendUI",
+            dependencies: ["WireDesign", "WireAccountImageUI", "WireReusableUIComponents"],
+            plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
+        ),
+        .target(
+            name: "WireMultiBackendUISupport",
+            dependencies: ["WireMultiBackendUI"],
+            plugins: [
+                .plugin(name: "SourceryPlugin", package: "WirePlugins")
+            ]
+        ),
+        .testTarget(name: "WireMultiBackendUITests", dependencies: ["WireMultiBackendUI"]),
+
+        .target(
             name: "WireIndividualToTeamMigrationUI",
             dependencies: [
-                "WireAnalytics",
                 .product(name: "WireDomainPackage", package: "WireDomainPackage"),
                 "WireFoundation",
                 "WireReusableUIComponents"
@@ -110,7 +124,11 @@ let package = Package(
                 .plugin(name: "SourceryPlugin", package: "WirePlugins")
             ]
         ),
-        .testTarget(name: "WireSettingsUITests", dependencies: ["WireSettingsUI", "WireSettingsUISupport"]),
+        .testTarget(name: "WireSettingsUITests", dependencies: [
+            .product(name: "WireFoundationSupport", package: "WireFoundation"),
+            "WireSettingsUI",
+            "WireSettingsUISupport"
+        ]),
 
         .target(
             name: "WireSidebarUI",

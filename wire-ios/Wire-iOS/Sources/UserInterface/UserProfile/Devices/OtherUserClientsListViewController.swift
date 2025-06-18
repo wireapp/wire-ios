@@ -272,7 +272,7 @@ extension Array where Element: UserClientType {
                 nil
             }
         })
-        let mlsClienIds = mlsClients.values.map { $0 }
+        let mlsClienIds = mlsClients.values.map(\.self)
         do {
             let certificates = try await userSession.getE2eIdentityCertificates.invoke(
                 mlsGroupId: mlsGroupId,

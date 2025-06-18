@@ -26,4 +26,10 @@ public struct DigitalSignatureFeatureConfig: Codable, Equatable, Sendable {
 
     public let status: FeatureConfigStatus
 
+    public init(
+        status: FeatureConfigStatus
+    ) {
+        self.status = status
+    }
+
 }

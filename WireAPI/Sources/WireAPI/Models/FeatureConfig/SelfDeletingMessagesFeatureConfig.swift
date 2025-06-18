@@ -33,4 +33,12 @@ public struct SelfDeletingMessagesFeatureConfig: Equatable, Codable, Sendable {
 
     public let enforcedTimeoutSeconds: UInt
 
+    public init(
+        status: FeatureConfigStatus,
+        enforcedTimeoutSeconds: UInt
+    ) {
+        self.status = status
+        self.enforcedTimeoutSeconds = enforcedTimeoutSeconds
+    }
+
 }

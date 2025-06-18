@@ -45,6 +45,7 @@ public protocol ContextProvider {
     var account: Account { get }
 
     var viewContext: NSManagedObjectContext { get }
+    func newBackgroundContext() -> NSManagedObjectContext
     var syncContext: NSManagedObjectContext { get }
     var searchContext: NSManagedObjectContext { get }
     var eventContext: NSManagedObjectContext { get }
@@ -103,13 +104,29 @@ public extension NSURL {
 
 // MARK: -
 
+// sourcery: AutoMockable
+public protocol CoreDataStackProtocol: ContextProvider {
+    var storesExists: Bool { get }
+    var needsMigration: Bool { get }
+
+    func loadStores(completionHandler: @escaping (Error?) -> Void)
+}
+
 @objcMembers
-public class CoreDataStack: NSObject, ContextProvider {
+public class CoreDataStack: NSObject, CoreDataStackProtocol {
 
     public let account: Account
 
     public var viewContext: NSManagedObjectContext {
         messagesContainer.viewContext
+    }
+
+    public func newBackgroundContext() -> NSManagedObjectContext {
+        #if DEBUG
+            return newBackgroundContextProvider?() ?? messagesContainer.newBackgroundContext()
+        #else
+            return messagesContainer.newBackgroundContext()
+        #endif
     }
 
     public lazy var syncContext: NSManagedObjectContext = messagesContainer.newBackgroundContext()
@@ -121,10 +138,13 @@ public class CoreDataStack: NSObject, ContextProvider {
     public let accountContainer: URL
     public let applicationContainer: URL
 
-    let messagesContainer: PersistentContainer
+    public let messagesContainer: PersistentContainer
     let eventsContainer: PersistentContainer
     let dispatchGroup: ZMSDispatchGroup?
 
+    #if DEBUG
+        public var newBackgroundContextProvider: (() -> NSManagedObjectContext)?
+    #endif
     private let messagesMigrator: CoreDataMigrator<CoreDataMessagingMigrationVersion>
     private let eventsMigrator: CoreDataMigrator<CoreDataEventsMigrationVersion>
     private var hasBeenClosed = false
@@ -562,7 +582,7 @@ public class CoreDataStack: NSObject, ContextProvider {
 
 // MARK: -
 
-class PersistentContainer: NSPersistentContainer {
+public class PersistentContainer: NSPersistentContainer {
 
     var storeURL: URL? {
         persistentStoreDescriptions.first?.url

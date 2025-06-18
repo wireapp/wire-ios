@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
 public extension Conversation {
 
@@ -36,6 +36,34 @@ public extension Conversation {
         public let hiddenReference: String?
         public let mutedStatus: Int?
         public let mutedReference: Date?
+
+        public init(
+            qualifiedID: QualifiedID? = nil,
+            id: UUID? = nil,
+            qualifiedTarget: QualifiedID? = nil,
+            target: UUID? = nil,
+            conversationRole: String? = nil,
+            service: Service? = nil,
+            archived: Bool? = nil,
+            archivedReference: Date? = nil,
+            hidden: Bool? = nil,
+            hiddenReference: String? = nil,
+            mutedStatus: Int? = nil,
+            mutedReference: Date? = nil
+        ) {
+            self.qualifiedID = qualifiedID
+            self.id = id
+            self.qualifiedTarget = qualifiedTarget
+            self.target = target
+            self.conversationRole = conversationRole
+            self.service = service
+            self.archived = archived
+            self.archivedReference = archivedReference
+            self.hidden = hidden
+            self.hiddenReference = hiddenReference
+            self.mutedStatus = mutedStatus
+            self.mutedReference = mutedReference
+        }
 
         enum CodingKeys: String, CodingKey {
 

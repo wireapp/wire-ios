@@ -19,7 +19,6 @@
 import avs
 import Combine
 import Foundation
-import WireAnalytics
 import WireLogging
 
 /// WireCallCenter is used for making Wire calls and observing their state. There can only be one instance of the
@@ -1030,7 +1029,7 @@ extension WireCallCenterV3 {
         updateMLSConferenceIfNeededForMissedCall(conversationID: conversationId)
     }
 
-    /// Handles incoming OTR calling messages, and transmist them to AVS when it is ready to process events, or adds it
+    /// Handles incoming calling messages, and transmist them to AVS when it is ready to process events, or adds it
     /// to the `bufferedEvents`.
     /// - parameter callEvent: calling event to process.
     func processCallEvent(_ callEvent: CallEvent) {

@@ -390,17 +390,6 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         await deleteMembership(for: removedUserIDs, time: date)
     }
 
-    public func updateTypingUsers(
-        _ typingUsersInfo: [ConversationTypingUsersInfo]
-    ) async {
-        for typingUserInfo in typingUsersInfo {
-            await conversationsLocalStore.updateTypingUsers(
-                conversationID: typingUserInfo.conversationID,
-                usersID: typingUserInfo.users
-            )
-        }
-    }
-
     // MARK: - Private
 
     private func addSystemMessage(
@@ -413,12 +402,12 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         reason: ConversationMemberLeaveReason
     ) async {
         let systemMessageType: SystemMessageType = switch reason {
-        case .userDeleted, .userLeft:
+        case .userDeleted:
             .teamMemberRemoved(
                 member: (senderID, senderDomain),
                 date: date
             )
-        case .userRemoved:
+        case .userRemoved, .userLeft:
             .participantsRemoved(
                 participants: removedUsers.map { ($0.uuid, $0.domain) },
                 sender: (senderID, senderDomain),

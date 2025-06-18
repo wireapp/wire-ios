@@ -18,7 +18,7 @@
 
 import SwiftUI
 import WireDesign
-import WireDomainPkg
+import WireDomainPackage
 import WireFoundation
 import WireLogging
 

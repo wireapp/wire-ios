@@ -32,4 +32,12 @@ public struct ClassifiedDomainsFeatureConfig: Equatable, Codable, Sendable {
 
     public let domains: Set<String>
 
+    public init(
+        status: FeatureConfigStatus,
+        domains: Set<String>
+    ) {
+        self.status = status
+        self.domains = domains
+    }
+
 }

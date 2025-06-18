@@ -18,6 +18,7 @@
 
 import Foundation
 import UserNotifications
+import WireLogging
 
 /// Creates and cancels local notifications
 @objcMembers
@@ -64,14 +65,13 @@ public class LocalNotificationDispatcher: NSObject {
     }
 
     func scheduleLocalNotification(_ note: ZMLocalNotification) {
-        Logging.push.safePublic("Scheduling local notification with id=\(note.id)")
+        WireLogger.notifications.debug("Scheduling local notification with id=\(note.id)")
 
         notificationCenter.add(note.request) { error in
             if let error {
-                Logging.push.safePublic("Error scheduling local notification")
-                Logging.push.error("Scheduling Error: \(error)")
+                WireLogger.notifications.error("Scheduling local notification error: \(error)")
             } else {
-                Logging.push.safePublic("Successfully scheduled local notification")
+                WireLogger.notifications.debug("Successfully scheduled local notification")
             }
         }
     }

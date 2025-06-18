@@ -189,6 +189,71 @@ public extension ZMConversation {
         return clientMessage
     }
 
+    /// Appends a multipart message.
+    ///
+    /// - Parameters:
+    ///     - text: The message text.
+    ///     - attachments: The list of attachments to be included in the message.
+    ///     - mentions: The list of mentioned participants.
+    ///     - quotedMessage: The message being replied to.
+    ///     - fetchLinkPreview: Whether link previews should be fetched.
+    ///     - nonce: The nonce of the message.
+    ///
+    /// - Throws:
+    ///     - `AppendMessageError` if the message couldn't be appended.
+    ///
+    /// - Returns:
+    ///     The appended message.
+
+    @discardableResult
+    func appendMultipart(
+        text: String?,
+        attachments: [MultipartAttachment],
+        mentions: [Mention],
+        replyingTo quotedMessage: ZMConversationMessage?,
+        fetchLinkPreview: Bool,
+        nonce: UUID
+    ) throws -> ZMConversationMessage {
+        let text = text.map { content in
+            Text(
+                content: content,
+                mentions: mentions,
+                linkPreviews: [],
+                replyingTo: quotedMessage as? ZMOTRMessage
+            )
+        }
+
+        let multipart = Multipart.with {
+            if let text {
+                $0.text = text
+            }
+            $0.attachments = attachments.map { attachment in
+                attachment.toProto()
+            }
+        }
+
+        let genericMessage = GenericMessage(
+            content: multipart,
+            nonce: nonce
+        )
+
+        let clientMessage = try appendClientMessage(with: genericMessage, expires: true, hidden: false, configure: {
+            $0.linkPreviewState = fetchLinkPreview ? .waitingToBeProcessed : .done
+            $0.needsLinkAttachmentsUpdate = fetchLinkPreview
+            $0.quote = quotedMessage as? ZMMessage
+        })
+
+        if let notificationContext = managedObjectContext?.notificationContext {
+            NotificationInContext(
+                name: ZMConversation.clearTypingNotificationName,
+                context: notificationContext,
+                object: self
+            ).post()
+        }
+
+        return clientMessage
+    }
+
     /// Append an image message.
     ///
     /// - Parameters:

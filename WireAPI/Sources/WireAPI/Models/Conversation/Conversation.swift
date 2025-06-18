@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
 /// Metadata for a conversation.
 
@@ -124,6 +124,52 @@ public struct Conversation: Equatable, Codable, Sendable {
         case groupType = "group_conv_type"
         case addPermission = "add_permission"
 
+    }
+
+    public init(
+        id: UUID? = nil,
+        qualifiedID: ConversationID? = nil,
+        teamID: UUID? = nil,
+        type: ConversationType? = nil,
+        messageProtocol: ConversationMessageProtocol? = nil,
+        mlsGroupID: String? = nil,
+        cipherSuite: MLSCipherSuite? = nil,
+        epoch: UInt? = nil,
+        epochTimestamp: Date? = nil,
+        creator: UUID? = nil,
+        members: Conversation.Members? = nil,
+        name: String? = nil,
+        messageTimer: TimeInterval? = nil,
+        readReceiptMode: Int? = nil,
+        access: Set<ConversationAccessMode>? = nil,
+        accessRoles: Set<ConversationAccessRole>? = nil,
+        legacyAccessRole: ConversationAccessRoleLegacy? = nil,
+        lastEvent: String? = nil,
+        lastEventTime: Date? = nil,
+        groupType: ConversationGroupType? = nil,
+        addPermission: ChannelPermission? = nil
+    ) {
+        self.id = id
+        self.qualifiedID = qualifiedID
+        self.teamID = teamID
+        self.type = type
+        self.messageProtocol = messageProtocol
+        self.mlsGroupID = mlsGroupID
+        self.cipherSuite = cipherSuite
+        self.epoch = epoch
+        self.epochTimestamp = epochTimestamp
+        self.creator = creator
+        self.members = members
+        self.name = name
+        self.messageTimer = messageTimer
+        self.readReceiptMode = readReceiptMode
+        self.access = access
+        self.accessRoles = accessRoles
+        self.legacyAccessRole = legacyAccessRole
+        self.lastEvent = lastEvent
+        self.lastEventTime = lastEventTime
+        self.groupType = groupType
+        self.addPermission = addPermission
     }
 
 }

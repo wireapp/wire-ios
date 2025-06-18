@@ -227,6 +227,11 @@ extension ConversationMessageCellDescription {
         cell.cellView.delegate = delegate
         cell.cellView.message = message
         cell.cellView.actionController = actionController
+        if let message {
+            // sometimes action controller still has background context message
+            // so re-set message from main context to avoid crash
+            actionController?.message = message
+        }
         cell.accessibilityCustomActions = actionController?.makeAccessibilityActions()
         return cell
     }
@@ -349,14 +354,14 @@ final class AnyConversationMessageCellDescription: NSObject, @unchecked Sendable
 
     override func isEqual(_ object: Any?) -> Bool {
         guard let other = object as? AnyConversationMessageCellDescription else { return false }
-        return message?.objectIdentifier == other.message?.objectIdentifier
+        return message?.nonce == other.message?.nonce
         && String(describing: baseType) == String(describing: other.baseType)
         && isConfigurationEqual(with: other)
     }
 
     override var hash: Int {
         var hasher = Hasher()
-        hasher.combine(message?.objectIdentifier)
+        hasher.combine(message?.nonce)
         hasher.combine(String(describing: baseType))
         return hasher.finalize()
     }

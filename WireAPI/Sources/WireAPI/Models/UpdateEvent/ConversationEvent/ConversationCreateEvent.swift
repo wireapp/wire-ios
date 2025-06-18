@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
 /// An event where a new conversation was created.
 
-public struct ConversationCreateEvent: Equatable, Codable, Sendable {
+public struct ConversationCreateEvent: Equatable, Sendable {
 
     /// The id of the conversation.
 

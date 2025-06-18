@@ -123,7 +123,10 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
         self.statusProvider = statusProvider
         self.featureProvider = featureProvider
         self.stateController = AuthenticationStateController()
-        self.interfaceBuilder = AuthenticationInterfaceBuilder(featureProvider: featureProvider)
+        self.interfaceBuilder = AuthenticationInterfaceBuilder(
+            featureProvider: featureProvider,
+            accountSelector: SessionManager.shared
+        )
         self.eventResponderChain = AuthenticationEventResponderChain(featureProvider: featureProvider)
         super.init()
         updateLoginObservers()
@@ -207,7 +210,7 @@ extension AuthenticationCoordinator: @preconcurrency AuthenticationStateControll
                     viewControllers.prefix { !milestone.shouldRewind(to: $0) },
                     [rewindedController],
                     [stepViewController]
-                ].flatMap { $0 }
+                ].flatMap(\.self)
                 presenter.setViewControllers(viewControllers, animated: true)
             } else {
                 presenter.setViewControllers([stepViewController], animated: true)

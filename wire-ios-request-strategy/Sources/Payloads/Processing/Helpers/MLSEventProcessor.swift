@@ -182,7 +182,7 @@ public class MLSEventProcessor: MLSEventProcessing {
             conversationID: conversationID,
             in: context,
             mlsService: mlsService,
-            oneOnOneResolver: OneOnOneResolver(migrator: migrator, isMLSEnabled: mlsFeature.isEnabled)
+            oneOnOneResolver: LegacyOneOnOneResolver(migrator: migrator, isMLSEnabled: mlsFeature.isEnabled)
         )
     }
 

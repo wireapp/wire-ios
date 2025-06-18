@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-@preconcurrency import Security
+public import Foundation
+@preconcurrency public import Security
 
 /// Associates a list of `hosts` with a public `key`.
 

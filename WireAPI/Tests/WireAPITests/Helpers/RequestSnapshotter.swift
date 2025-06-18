@@ -18,7 +18,9 @@
 
 import Foundation
 import SnapshotTesting
+import WireFoundation
 import XCTest
+
 @testable import WireAPI
 @testable import WireAPISupport
 
@@ -29,10 +31,13 @@ final class RequestSnapshotter {
     private let apiService: APIService
     private var receivedRequests = [URLRequest]()
 
-    init() {
+    init(currentDateProvider: any CurrentDateProviding) {
         self.networkService = NetworkService(
             baseURL: URL(string: "https://www.wire.com")!,
-            serverTrustValidator: ServerTrustValidator(pinnedKeys: [])
+            serverTrustValidator: ServerTrustValidator(
+                pinnedKeys: [],
+                currentDateProvider: currentDateProvider
+            )
         )
         networkService.configure(with: .mockURLSession())
 

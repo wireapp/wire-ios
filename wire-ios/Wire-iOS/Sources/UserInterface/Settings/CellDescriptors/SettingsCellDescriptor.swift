@@ -289,20 +289,18 @@ extension SettingsPropertyName {
             return SoundMenu.Ping.title
         case .accentColor:
             return Settings.AccountPictureGroup.color
+        case .conversationBackground:
+            return Settings.AccountPictureGroup.Background.title
         case .disableSendButton:
             return Settings.PopularDemand.SendButton.title
         case .disableCallKit:
             return Settings.Callkit.caption
         case .muteIncomingCallsWhileInACall:
             return Settings.MuteOtherCall.caption
-        case .tweetOpeningOption:
-            return LinkOptions.Twitter.title
         case .mapsOpeningOption:
             return LinkOptions.Maps.title
         case .browserOpeningOption:
             return LinkOptions.Browser.title
-        case .callingProtocolStrategy:
-            return "Calling protocol"
         case .enableBatchCollections:
             return "Use AssetCollectionBatched"
         case .lockApp:

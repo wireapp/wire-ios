@@ -28,6 +28,11 @@ struct ConversationAddPermissionEventDecoder {
             forKey: .conversationQualifiedID
         )
 
+        let senderID = try container.decode(
+            UserID.self,
+            forKey: .senderQualifiedID
+        )
+
         let payload = try container.decode(
             Payload.self,
             forKey: .payload
@@ -35,6 +40,7 @@ struct ConversationAddPermissionEventDecoder {
 
         return ConversationAddPermissionEvent(
             conversationID: conversationID,
+            senderID: senderID,
             addPermission: payload.addPermission
         )
     }

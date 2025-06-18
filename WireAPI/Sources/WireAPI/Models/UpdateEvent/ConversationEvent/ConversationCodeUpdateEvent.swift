@@ -20,7 +20,7 @@ import Foundation
 
 /// An event where the conversation's guest link code was updated.
 
-public struct ConversationCodeUpdateEvent: Equatable, Codable, Sendable {
+public struct ConversationCodeUpdateEvent: Equatable, Sendable {
 
     /// The id of the conversation.
 
@@ -45,5 +45,21 @@ public struct ConversationCodeUpdateEvent: Equatable, Codable, Sendable {
     /// Whether a password is required to accss the conversation.
 
     public let isPasswordProtected: Bool
+
+    public init(
+        conversationID: ConversationID,
+        senderID: UserID,
+        uri: String? = nil,
+        key: String,
+        code: String,
+        isPasswordProtected: Bool
+    ) {
+        self.conversationID = conversationID
+        self.senderID = senderID
+        self.uri = uri
+        self.key = key
+        self.code = code
+        self.isPasswordProtected = isPasswordProtected
+    }
 
 }

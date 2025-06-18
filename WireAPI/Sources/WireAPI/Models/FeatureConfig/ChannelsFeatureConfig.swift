@@ -31,6 +31,16 @@ public struct ChannelsFeatureConfig: Codable, Equatable, Sendable {
     /// This determines which users can create public channels
 
     public let allowedToOpenChannels: ChannelsPermision
+
+    public init(
+        status: FeatureConfigStatus,
+        allowedToCreateChannels: ChannelsPermision,
+        allowedToOpenChannels: ChannelsPermision
+    ) {
+        self.status = status
+        self.allowedToCreateChannels = allowedToCreateChannels
+        self.allowedToOpenChannels = allowedToOpenChannels
+    }
 }
 
 public enum ChannelsPermision: String, Codable, Sendable {

@@ -37,8 +37,13 @@ public enum LogAttributesKey: String, Comparable, Sendable {
     case processId = "process_id"
     case processName = "process_name"
     case coreCryptoContext = "core_crypto_context"
+    case nse = "NSE"
     case accountID = "account_id"
     case mlsGroupID = "mls_group_id"
+    case pushChannelVersion = "push_channel"
+    case duration
+    case syncType = "sync_type"
+    case syncVersion = "sync_version"
 
     public static func < (lhs: LogAttributesKey, rhs: LogAttributesKey) -> Bool {
         lhs.rawValue < rhs.rawValue
@@ -47,4 +52,6 @@ public enum LogAttributesKey: String, Comparable, Sendable {
 
 public extension LogAttributes {
     static let safePublic = [LogAttributesKey.public: true]
+    static let pushChannelV2 = [LogAttributesKey.pushChannelVersion: "v2"]
+    static let pushChannelV0 = [LogAttributesKey.pushChannelVersion: "v0"]
 }

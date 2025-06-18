@@ -1207,6 +1207,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
                 from: nil,
                 qualifiedID: self.groupConversation.qualifiedID,
                 qualifiedFrom: nil,
+                subconversationType: nil,
                 timestamp: nil,
                 type: nil
             )
@@ -1471,7 +1472,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
             let memberLeavePayload = Payload.UpdateConversationMemberLeave(
                 userIDs: .none,
-                qualifiedUserIDs: [users[userIndex].qualifiedID].compactMap { $0 },
+                qualifiedUserIDs: [users[userIndex].qualifiedID].compactMap(\.self),
                 reason: .userDeleted
             )
             let conversationEvent = Payload.ConversationEvent(
@@ -1480,6 +1481,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
                 from: nil,
                 qualifiedID: groupConversation.qualifiedID,
                 qualifiedFrom: nil,
+                subconversationType: nil,
                 timestamp: nil,
                 type: nil
             )

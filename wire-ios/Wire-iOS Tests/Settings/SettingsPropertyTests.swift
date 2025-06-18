@@ -16,55 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import avs
 import XCTest
 
 @testable import Wire
 @testable import WireCommonComponents
-
-final class MockZMEditableUser: MockUser, EditableUserType {
-
-    var needsRichProfileUpdate: Bool = false
-
-    var enableReadReceipts: Bool = false
-    var originalProfileImageData: Data!
-
-    func deleteProfileImage() {
-        // no-op
-    }
-
-    static func validate(name: inout String?) throws -> Bool {
-        false
-    }
-}
-
-final class ZMMockAVSMediaManager: AVSMediaManagerInterface {
-    var isMicrophoneMuted: Bool = false
-
-    var intensityLevel: AVSIntensityLevel = .none
-
-    func playMediaByName(_ name: String!) {}
-}
-
-final class ZMMockTracking: TrackingInterface {
-
-    var isAnalyticsDisabled: Bool = true
-    var disableCrashAndAnalyticsSharing: Bool = false
-
-    func requestAnalyticsConsent() async throws -> Bool {
-        // no op
-        false
-    }
-
-    func disableAnalytics() throws {
-        // no op
-    }
-
-    func enableAnalytics() async throws {
-        // no op
-    }
-
-}
 
 final class SettingsPropertyTests: XCTestCase {
 
@@ -215,7 +170,7 @@ final class SettingsPropertyTests: XCTestCase {
             trackingManager: ZMMockTracking()
         )
 
-        let property = factory.property(.tweetOpeningOption)
+        let property = factory.property(.browserOpeningOption)
         // when & then
         try? saveAndCheck(property, value: 2)
     }
@@ -266,4 +221,24 @@ final class SettingsPropertyTests: XCTestCase {
         XCTAssertNil(settingVal)
         XCTAssertEqual(result, value)
     }
+}
+
+private final class ZMMockTracking: TrackingInterface {
+
+    var isAnalyticsDisabled: Bool = true
+    var disableCrashAndAnalyticsSharing: Bool = false
+
+    func requestAnalyticsConsent() async throws -> Bool {
+        // no op
+        false
+    }
+
+    func disableAnalytics() throws {
+        // no op
+    }
+
+    func enableAnalytics() async throws {
+        // no op
+    }
+
 }

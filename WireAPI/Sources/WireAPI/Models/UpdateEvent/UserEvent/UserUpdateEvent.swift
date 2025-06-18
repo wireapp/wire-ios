@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
 /// An event where a user's metadata was updated.
 
-public struct UserUpdateEvent: Equatable, Codable, Sendable {
+public struct UserUpdateEvent: Equatable, Sendable {
 
     /// The updated user's id.
 

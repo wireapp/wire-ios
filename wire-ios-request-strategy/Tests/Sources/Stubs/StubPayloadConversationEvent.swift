@@ -33,6 +33,7 @@ extension Payload.ConversationEvent {
             from: qualifiedFrom?.uuid,
             qualifiedID: qualifiedID,
             qualifiedFrom: qualifiedFrom,
+            subconversationType: nil,
             timestamp: timestamp,
             type: type
         )

@@ -273,6 +273,26 @@ final class TeamRepositoryTests: XCTestCase {
         }
     }
 
+    func testCreateOrUpdateTeam_It_Invokes_Local_Store_And_User_Repo_Methods() async throws {
+        // Mock
+
+        teamLocalStore.createOrUpdateTeamIdentifierNameCreatorIconIconKey_MockMethod = { _, _, _, _, _ in }
+
+        // When
+
+        await sut.createOrUpdateTeam(
+            identifier: Scaffolding.teamID,
+            name: Scaffolding.teamName,
+            creator: Scaffolding.teamCreatorID,
+            icon: Scaffolding.logoID,
+            iconKey: Scaffolding.logoKey
+        )
+
+        // Then
+
+        XCTAssertEqual(teamLocalStore.createOrUpdateTeamIdentifierNameCreatorIconIconKey_Invocations.count, 1)
+    }
+
     private enum Scaffolding {
         static let userID = UUID.mockID1
         static let selfUserID = UUID.mockID2

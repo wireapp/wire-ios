@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import XCTest
 @testable import WireDomain
 @testable import WireDomainSupport
@@ -27,17 +28,20 @@ final class InitialSyncTests: XCTestCase {
     private var pullResourcesSync: MockPullResourcesSyncProtocol!
     private var pushSupportedProtocolsUseCase: MockPushSupportedProtocolsUseCaseProtocol!
     private var oneOnOneResolver: MockOneOnOneResolverProtocol!
+    private var syncStateSubject: CurrentValueSubject<SyncState, Never>!
 
     override func setUp() async throws {
         pullLastUpdateEventIDSync = MockPullLastUpdateEventIDSyncProtocol()
         pullResourcesSync = MockPullResourcesSyncProtocol()
         pushSupportedProtocolsUseCase = MockPushSupportedProtocolsUseCaseProtocol()
         oneOnOneResolver = MockOneOnOneResolverProtocol()
+        syncStateSubject = CurrentValueSubject(.idle)
         sut = InitialSync(
             pullLastUpdateEventIDSync: pullLastUpdateEventIDSync,
             pullResourcesSync: pullResourcesSync,
             pushSupportedProtocolsUseCase: pushSupportedProtocolsUseCase,
-            oneOnOneResolver: oneOnOneResolver
+            oneOnOneResolver: oneOnOneResolver,
+            syncStateSubject: syncStateSubject
         )
     }
 
@@ -46,6 +50,7 @@ final class InitialSyncTests: XCTestCase {
         pullResourcesSync = nil
         pushSupportedProtocolsUseCase = nil
         oneOnOneResolver = nil
+        syncStateSubject = nil
         sut = nil
     }
 

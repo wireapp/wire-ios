@@ -220,6 +220,11 @@ final class RemoveClientsViewController: UIViewController,
 
 extension RemoveUserClientError: LocalizedError {
     public var errorDescription: String? {
-        L10n.Localizable.General.failure
+        switch self {
+        case .tooManyRequests:
+            L10n.Localizable.Error.User.tooManyRequests
+        default:
+            L10n.Localizable.General.failure
+        }
     }
 }

@@ -28,8 +28,20 @@
 "cloud_user_login.input_password.placeholder" = "Введите пароль";
 "cloud_user_login.submit" = "Вперед";
 "cloud_user_login.forgot_password" = "Забыли пароль?";
-"create_personal_account.title" = "У вас нет аккаунта Wire?";
-"create_personal_account.button" = "Создать личный аккаунт";
+"create_account_or_team.title" = "У вас нет аккаунта Wire?";
+"create_account_or_team.button" = "Создать аккаунт или команду";
+
+"account_type_selector.title" = "Как вы будете использовать Wire?";
+"account_type_selector.option_team.title" = "Для совместной работы";
+"account_type_selector.option_team.subtitle" = "Работайте безопасно вместе со своей командой.";
+"account_type_selector.option_team.feature0" = "Общайтесь с коллегами и делитесь документами через одно приложение";
+"account_type_selector.option_team.feature1" = "Начните бесплатно, улучшите в любое время";
+"account_type_selector.option_team.button" = "Создать команду";
+"account_type_selector.option_personal.title" = "Для частного использования";
+"account_type_selector.option_personal.subtitle" = "Общаться с друзьями и близкими.";
+"account_type_selector.option_personal.feature0" = "Отправлять сообщения и делиться фотографиями";
+"account_type_selector.option_personal.feature1" = "Всегда бесплатно";
+"account_type_selector.option_personal.button" = "Создать личный аккаунт";
 
 "on_prem_user_login.title" = "Приветствуем вас в Wire Enterprise для %@!";
 "on_prem_user_login.message" = "Введите пароль для входа";
@@ -97,6 +109,10 @@
 "obsolete_client.alert.title" = "Необходимо обновление";
 "obsolete_client.alert.message" = "Вы упускаете новые возможности.\nПолучите последнюю версию Wire в App Store.";
 "obsolete_client.alert.ok_button" = "Перейти в App Store";
+"obsolete_client.alert.switch_accounts" = "Сменить аккаунт";
 
 "obsolete_backend.alert.title" = "Версия сервера не поддерживается";
 "obsolete_backend.alert.message" = "Версия сервера не поддерживается этим приложением.  Пожалуйста, обратитесь к системному администратору.";
+
+"switching_accounts.title" = "Сменить аккаунт";
+"switching_accounts.subtitle" = "Выберите другой аккаунт на этом устройстве:";

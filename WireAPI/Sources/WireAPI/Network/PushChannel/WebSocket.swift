@@ -16,7 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
+
+import WireLogging
 
 public actor WebSocket: WebSocketProtocol {
 
@@ -29,7 +31,13 @@ public actor WebSocket: WebSocketProtocol {
         self.connection = connection
     }
 
+    deinit {
+        connection.cancel(with: .goingAway, reason: nil)
+        continuation?.finish()
+    }
+
     public func open() async throws -> Stream {
+        WireLogger.webSocket.debug("open")
         connection.resume()
 
         if #available(iOS 17, *) {
@@ -42,6 +50,7 @@ public actor WebSocket: WebSocketProtocol {
                     while isAlive, connection.isOpen {
                         do {
                             let message = try await connection.receive()
+                            WireLogger.webSocket.debug("received message")
                             continuation.yield(message)
                         } catch {
                             continuation.finish(throwing: error)
@@ -85,6 +94,23 @@ public actor WebSocket: WebSocketProtocol {
     public func close() async {
         connection.cancel(with: .goingAway, reason: nil)
         continuation?.finish()
+        continuation = nil
+    }
+
+    public func sendPing() async {
+        connection.sendPing { error in
+            if let error {
+                WireLogger.pushChannel.warn("failed to send keep alive ping: \(error)")
+            }
+        }
+    }
+
+    public func write(data: Data) async throws {
+        try await connection.send(.data(data))
+    }
+
+    public func write(string: String) async throws {
+        try await connection.send(.string(string))
     }
 
 }

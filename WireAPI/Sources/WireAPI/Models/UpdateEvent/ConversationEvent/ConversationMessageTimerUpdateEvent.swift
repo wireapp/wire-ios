@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
 /// An event where the message timer of a conversation was updated.
 
-public struct ConversationMessageTimerUpdateEvent: Equatable, Codable, Sendable {
+public struct ConversationMessageTimerUpdateEvent: Equatable, Sendable {
 
     /// The id of the conversation.
 
@@ -39,5 +39,17 @@ public struct ConversationMessageTimerUpdateEvent: Equatable, Codable, Sendable 
     /// A `nil` value means the timer is off.
 
     public let newTimer: Int64?
+
+    public init(
+        conversationID: ConversationID,
+        senderID: UserID,
+        timestamp: Date,
+        newTimer: Int64? = nil
+    ) {
+        self.conversationID = conversationID
+        self.senderID = senderID
+        self.timestamp = timestamp
+        self.newTimer = newTimer
+    }
 
 }

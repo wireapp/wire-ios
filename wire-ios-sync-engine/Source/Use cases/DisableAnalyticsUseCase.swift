@@ -34,12 +34,7 @@ struct DisableAnalyticsUseCase: DisableAnalyticsUseCaseProtocol {
     let provider: (any AnalyticsEventTrackerProvider)?
 
     func invoke() throws {
-        do {
-            try service.disableTracking()
-        } catch AnalyticsServiceError.serviceIsNotConfigured {
-            // Already disabled, don't consider it an error
-        }
-
+        try service.disableTracking()
         provider?.setAnalyticsEventTracker(nil)
     }
 

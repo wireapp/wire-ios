@@ -110,7 +110,7 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
         let migrated = customExpectation(description: "Cryptobox was migrated")
         mockFileManager.fileExistsAtPath_MockValue = true
         proteusViaCoreCryptoFlag.isOn = true
-        mockSafeCoreCrypto.coreCrypto.proteusCryptoboxMigratePath_MockMethod = { _ in
+        mockSafeCoreCrypto.coreCryptoContext.proteusCryptoboxMigratePath_MockMethod = { _ in
             migrated.fulfill()
         }
 
@@ -127,7 +127,7 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
         mockFileManager.fileExistsAtPath_MockValue = true
         proteusViaCoreCryptoFlag.isOn = true
 
-        mockSafeCoreCrypto.coreCrypto.proteusCryptoboxMigratePath_MockMethod = { _ in
+        mockSafeCoreCrypto.coreCryptoContext.proteusCryptoboxMigratePath_MockMethod = { _ in
             throw CryptoboxMigrationManager.Failure.failedToMigrateData
         }
 

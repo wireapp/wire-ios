@@ -118,7 +118,24 @@ final class ConversationEventDecodingTests: XCTestCase {
         )
     }
 
-    func testDecodingConversationMemberLeaveEvent() throws {
+    func testDecodingConversationMemberLeaveEvent_Deleted() throws {
+        // Given
+        let mockEventData = try MockJSONPayloadResource(name: "ConversationMemberDelete")
+
+        // When
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .conversation(.memberLeave(Scaffolding.memberDeletedEvent))
+        )
+    }
+
+    func testDecodingConversationMemberLeaveEvent_Left() throws {
         // Given
         let mockEventData = try MockJSONPayloadResource(name: "ConversationMemberLeave")
 
@@ -131,7 +148,24 @@ final class ConversationEventDecodingTests: XCTestCase {
         // Then
         XCTAssertEqual(
             decodedEvent,
-            .conversation(.memberLeave(Scaffolding.memberLeaveEvent))
+            .conversation(.memberLeave(Scaffolding.memberLeftEvent))
+        )
+    }
+
+    func testDecodingConversationMemberLeaveEvent_Removed() throws {
+        // Given
+        let mockEventData = try MockJSONPayloadResource(name: "ConversationMemberRemove")
+
+        // When
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .conversation(.memberLeave(Scaffolding.memberRemovedEvent))
         )
     }
 
@@ -425,12 +459,28 @@ final class ConversationEventDecodingTests: XCTestCase {
             ]
         )
 
-        static let memberLeaveEvent = ConversationMemberLeaveEvent(
+        static let memberDeletedEvent = ConversationMemberLeaveEvent(
             conversationID: conversationID,
             senderID: senderID,
             timestamp: timestamp,
             removedUserIDs: [senderID],
             reason: .userDeleted
+        )
+
+        static let memberLeftEvent = ConversationMemberLeaveEvent(
+            conversationID: conversationID,
+            senderID: senderID,
+            timestamp: timestamp,
+            removedUserIDs: [senderID],
+            reason: .userLeft
+        )
+
+        static let memberRemovedEvent = ConversationMemberLeaveEvent(
+            conversationID: conversationID,
+            senderID: senderID,
+            timestamp: timestamp,
+            removedUserIDs: [senderID],
+            reason: .userRemoved
         )
 
         static let memberUpdateEvent = ConversationMemberUpdateEvent(
@@ -459,7 +509,8 @@ final class ConversationEventDecodingTests: XCTestCase {
             senderID: senderID,
             subconversation: "subconversation",
             message: "message",
-            timestamp: fractionalDate(from: "2024-06-04T15:03:07.598Z")
+            timestamp: fractionalDate(from: "2024-06-04T15:03:07.598Z"),
+            decryptedMessages: []
         )
 
         static let mlsWelcomeEvent = ConversationMLSWelcomeEvent(

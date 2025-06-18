@@ -65,8 +65,8 @@ class MockPresentationDelegate: PresentationDelegate {
         showUserProfileCalls.append(user)
     }
 
-    func showConnectionRequest(userId: UUID) {
-        showConnectionRequestCalls.append(userId)
+    func showConnectionRequest(qualifiedID: QualifiedID) {
+        showConnectionRequestCalls.append(qualifiedID.uuid)
     }
 
     func showPasswordPrompt(for conversationName: String, completion: @escaping (String?) -> Void) {

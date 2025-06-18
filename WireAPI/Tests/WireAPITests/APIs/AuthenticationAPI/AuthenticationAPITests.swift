@@ -106,6 +106,34 @@ final class AuthenticationAPITests: XCTestCase {
         }
     }
 
+    func testRequestEmailVerificationCode_Request_Generation_V0_Onwards() async throws {
+        // Given
+        let apiVersions = APIVersion.v0.andNextVersions
+
+        // Then
+        try await apiSnapshotHelper.verifyRequest(for: apiVersions) { sut in
+            // When
+            _ = try await sut.requestEmailVerificationCode(for: Scaffolding.email)
+        }
+    }
+
+    func testRegisterAccount_Request_Generation_V0_Onwards() async throws {
+        // Given
+        let apiVersions = APIVersion.v0.andNextVersions
+
+        // Then
+        try await apiSnapshotHelper.verifyRequest(for: apiVersions) { sut in
+            // When
+            _ = try await sut.registerAccount(
+                email: Scaffolding.email,
+                emailCode: Scaffolding.emailCode,
+                name: Scaffolding.name,
+                password: Scaffolding.password,
+                label: "label"
+            )
+        }
+    }
+
     // MARK: - Response handling
 
     func testGetDomainRegistration_Response_Handling_V8_Success() async throws {
@@ -315,11 +343,92 @@ final class AuthenticationAPITests: XCTestCase {
         }
     }
 
+    func testRequestEmailVerificationCode_Response_Handling_Success() async throws {
+        // Given
+        let networkService = MockNetworkServiceProtocol.withResponses([
+            (.ok, nil)
+        ])
+
+        let sut = AuthenticationAPIV8(networkService: networkService)
+
+        // When, Then no error thrown
+        try await sut.requestEmailVerificationCode(for: Scaffolding.email)
+    }
+
+    func testRequestEmailVerificationCode_Response_Handling_InvalidEmail() async throws {
+        // Given
+        let networkService = MockNetworkServiceProtocol.withError(statusCode: .badRequest, label: "invalid-email")
+
+        let sut = AuthenticationAPIV8(networkService: networkService)
+
+        do {
+            // When
+            try await sut.requestEmailVerificationCode(for: Scaffolding.email)
+            XCTFail("Unexpected success")
+        } catch AuthenticationAPIError.RegistrationError.invalidEmail {
+            // Then
+        } catch {
+            XCTFail("unexpected error: " + String(reflecting: error))
+        }
+    }
+
+    func testRegisterAccount_Response_Handling_Success() async throws {
+        // Given
+        let networkService = MockNetworkServiceProtocol.withResponses([
+            (.created, "RegisterAccountSuccessResponseV8")
+        ])
+
+        let sut = AuthenticationAPIV8(networkService: networkService)
+
+        // When
+        let response = try await sut.registerAccount(
+            email: Scaffolding.email,
+            emailCode: Scaffolding.emailCode,
+            name: Scaffolding.name,
+            password: Scaffolding.password,
+            label: "label"
+        )
+
+        // Then
+        let expectedUserID = UUID(uuidString: "6396d5c6-e3fe-43cb-a635-75d3b7290c81")!
+
+        XCTAssertEqual(response.1, expectedUserID)
+    }
+
+    func testRegisterAccount_Response_Handling_BadRequest() async throws {
+        // Given
+        let networkService = MockNetworkServiceProtocol.withError(
+            statusCode: .badRequest,
+            label: "invalid-invitation-code"
+        )
+
+        let sut = AuthenticationAPIV8(networkService: networkService)
+
+        do {
+            // When
+            _ = try await sut.registerAccount(
+                email: Scaffolding.email,
+                emailCode: Scaffolding.emailCode,
+                name: Scaffolding.name,
+                password: Scaffolding.password,
+                label: "label"
+            )
+            XCTFail("Unexpected success")
+        } catch AuthenticationAPIError.RegistrationError.invalidInvitationCode {
+            // Then
+        } catch {
+            XCTFail("unexpected error: " + String(reflecting: error))
+        }
+    }
+
 }
 
 private enum Scaffolding {
 
     static let email = "john.smith@example.com"
     static let wrongAddress = "john.smith-example.com"
+    static let name = "John Smith"
+    static let emailCode = "555666"
+    static let password = "abcd"
 
 }
