@@ -35,43 +35,45 @@ struct UserConnectionEventProcessor: UserConnectionEventProcessorProtocol {
 
         guard let userID = event.connection.receiverQualifiedID?.toDomainModel() else { return }
 
-        if connection.status == .accepted {
-            do {
-                // The client who accepts the connection resolves the conversation immediately.
-                // Other clients (from self and other user) resolve after a delay to avoid a race condition,
-                // but also to re-attempt resolution in case of failure.
-                try await Task.sleep(for: .seconds(oneOnOneResolutionDelay))
+        Task {
+            if connection.status == .accepted {
+                do {
+                    // The client who accepts the connection resolves the conversation immediately.
+                    // Other clients (from self and other user) resolve after a delay to avoid a race condition,
+                    // but also to re-attempt resolution in case of failure.
+                    try await Task.sleep(for: .seconds(oneOnOneResolutionDelay))
 
-                try await oneOnOneResolver.resolveOneOnOneConversation(with: userID)
+                    try await oneOnOneResolver.resolveOneOnOneConversation(with: userID)
 
-                await context.perform {
-                    _ = context.saveOrRollback()
+                    await context.perform {
+                        _ = context.saveOrRollback()
+                    }
+                } catch {
+                    WireLogger.conversation.error("Error resolving one-on-one conversation: \(error)")
                 }
-            } catch {
-                WireLogger.conversation.error("Error resolving one-on-one conversation: \(error)")
-            }
 
-        } else {
-            let userObjectID = await context.perform { [context] in
-                ZMUser.fetch(with: userID.uuid, domain: userID.domain, in: context)?.objectID
-            }
+            } else {
+                let userObjectID = await context.perform { [context] in
+                    ZMUser.fetch(with: userID.uuid, domain: userID.domain, in: context)?.objectID
+                }
 
-            guard let userObjectID else {
-                return WireLogger.individualToTeamMigration.error(
-                    "User not found for connection event"
-                )
-            }
+                guard let userObjectID else {
+                    return WireLogger.individualToTeamMigration.error(
+                        "User not found for connection event"
+                    )
+                }
 
-            do {
-                let connectionValidator = ConnectionValidator(context: context)
-                try await connectionValidator.cleanUpInvalidConnectionIfNeeded(userObjectID: userObjectID)
-                try await oneOnOneResolver.resolveOneOnOneConversation(with: userID)
-            } catch {
-                WireLogger.individualToTeamMigration.error(
-                    "failed to clean up invalid connection: \(String(describing: error))"
-                )
-            }
+                do {
+                    let connectionValidator = ConnectionValidator(context: context)
+                    try await connectionValidator.cleanUpInvalidConnectionIfNeeded(userObjectID: userObjectID)
+                    try await oneOnOneResolver.resolveOneOnOneConversation(with: userID)
+                } catch {
+                    WireLogger.individualToTeamMigration.error(
+                        "failed to clean up invalid connection: \(String(describing: error))"
+                    )
+                }
 
+            }
         }
     }
 }
