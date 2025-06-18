@@ -52,7 +52,7 @@ extension ZMConversationMessage {
 /// To achieve this, each section controller is assigned a cell description, that is responsible for dequeing
 /// the cells from the table or collection view and configuring them with a message.
 
-final class ConversationMessageSectionController: NSObject, ZMMessageObserver, @unchecked Sendable {
+final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     /// The view descriptor of the section.
     private var cellDescriptions = [AnyConversationMessageCellDescription]()
@@ -115,10 +115,6 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver, @
 
     /// width of a container view to calculate whether message should be collapsed
     var contentWidth: CGFloat
-    
-//    var objectId: String {
-//        message.objectIdentifier
-//    }
 
     deinit {
         changeObservers.removeAll()
@@ -157,25 +153,6 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver, @
         if let quotedMessage = message.textMessageData?.quoteMessage {
             startObservingChanges(for: quotedMessage)
         }
-    }
-    
-    static func == (
-        lhs: ConversationMessageSectionController,
-        rhs: ConversationMessageSectionController
-    ) -> Bool {
-        return lhs.isEqual(rhs)
-    }
-
-    override func isEqual(_ object: Any?) -> Bool {
-        guard let other = object as? ConversationMessageSectionController else { return false }
-        return message.nonce == other.message.nonce && cellDescriptions.count == other.cellDescriptions.count // TODO: actual cell descriptions ?
-    }
-
-    override var hash: Int {
-        var hasher = Hasher()
-        hasher.combine(message.nonce)
-        hasher.combine(cellDescriptions)
-        return hasher.finalize()
     }
 
     private var collapseOwnMessagesEnabled: Bool {

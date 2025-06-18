@@ -344,19 +344,19 @@ final class AnyConversationMessageCellDescription: NSObject, @unchecked Sendable
         self._axIdentifier = AnyConstantProperty(description, keyPath: \.accessibilityIdentifier)
         self._axLabel = AnyConstantProperty(description, keyPath: \.accessibilityLabel)
     }
-    
+
     static func == (
         lhs: AnyConversationMessageCellDescription,
         rhs: AnyConversationMessageCellDescription
     ) -> Bool {
-        return lhs.isEqual(rhs)
+        lhs.isEqual(rhs)
     }
 
     override func isEqual(_ object: Any?) -> Bool {
         guard let other = object as? AnyConversationMessageCellDescription else { return false }
         return message?.nonce == other.message?.nonce
-        && String(describing: baseType) == String(describing: other.baseType)
-        && isConfigurationEqual(with: other)
+            && String(describing: baseType) == String(describing: other.baseType)
+            && isConfigurationEqual(with: other)
     }
 
     override var hash: Int {

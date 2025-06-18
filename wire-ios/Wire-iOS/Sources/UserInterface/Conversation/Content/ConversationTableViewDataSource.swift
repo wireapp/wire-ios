@@ -24,8 +24,8 @@ import WireSyncEngine
 
 extension Int: Differentiable {}
 
-//extension String: Differentiable {}
-//extension AnyConversationMessageCellDescription: Differentiable {
+// extension String: Differentiable {}
+// extension AnyConversationMessageCellDescription: Differentiable {
 //
 //    typealias DifferenceIdentifier = String
 //
@@ -41,7 +41,7 @@ extension Int: Differentiable {}
 //        isConfigurationEqual(with: source)
 //    }
 //
-//}
+// }
 
 @MainActor
 final class ConversationTableViewDataSource: NSObject {
@@ -60,15 +60,6 @@ final class ConversationTableViewDataSource: NSObject {
 
     let userSession: UserSession
 
-//    func resetSectionControllers() {
-//        sectionControllers = [:]
-//        calculateSections()
-//    }
-//    
-//    func forceReload() {
-//        reloadDataSource(sections: self.currentSections)
-//    }
-
     var actionControllers = ThreadSafeDictionary<UUID, ConversationMessageActionController>()
 
     let conversation: ZMConversation
@@ -84,34 +75,18 @@ final class ConversationTableViewDataSource: NSObject {
 
     let debouncer = LeadingTrailingDebouncer<UUID>(cooldownTime: 0.3)
 
-    private var updateWorkItem: DispatchWorkItem?
-    private var changesPending = false
-    
     var contentWidth: CGFloat = UIScreen.main.bounds.width {
         didSet {
             guard UIDevice.current.userInterfaceIdiom == .pad else { return }
             resetSectionControllers()
-//<<<<<<< HEAD
-//            reloadSections(newSections: postProcessedSections(calculateSections()))
-////            tableView.reloadData() // TODO
-//            
-//=======
-//>>>>>>> develop
         }
     }
 
     var searchQueries: [String] = [] {
         didSet {
-//<<<<<<< HEAD
-//            let currentSections = calculateSections()
-//            self.currentSections = postProcessedSections(currentSections)
-////            tableView.reloadData()
-//            reloadDataSource(sections: self.currentSections)
-//=======
             calculateSections { [weak self] sections in
                 self?.reloadSections(newSections: sections)
             }
-//>>>>>>> develop
         }
     }
 
@@ -129,37 +104,20 @@ final class ConversationTableViewDataSource: NSObject {
     }
 
     private(set) var currentSections: [Section] = []
-    
-    public typealias SectionIdentifier = String
 
-    typealias ItemIdentifier = NSManagedObjectID // ConversationCellModel
+    private var dataSource: UITableViewDiffableDataSource<UUID, AnyConversationMessageCellDescription>!
 
-    private var dataSource: UITableViewDiffableDataSource<ConversationMessageSectionController, AnyConversationMessageCellDescription>!
-    
     private func setupDataSource() {
-        dataSource = UITableViewDiffableDataSource(tableView: tableView) { tableView, indexPath, _ in
-            return self.makeCell(indexPath: indexPath)
+        dataSource = UITableViewDiffableDataSource(tableView: tableView) { _, indexPath, _ in
+            self.makeCell(indexPath: indexPath)
         }
     }
-
 
     /// calculate cell sections
     ///
     /// - Parameter forceRecalculate: true if force recreate cell with context check
     /// - Returns: arraySection of cell descriptions
     func calculateSections(
-//<<<<<<< HEAD
-//        forceRecalculate: Bool = false
-//    ) -> [Section] {
-//        messages.enumerated().map { offset, element in
-//            let context = context(
-//                for: element,
-//                at: offset,
-//                firstUnreadMessage: firstUnreadMessage,
-//                searchQueries: searchQueries
-//            )
-//            let sectionController = sectionController(for: element, at: offset)
-//=======
         forceRecalculate: Bool = false,
         completion: @escaping ([Section]) -> Void
     ) {
@@ -169,7 +127,6 @@ final class ConversationTableViewDataSource: NSObject {
         let selfUserOnMainThread = userSession.selfUser
         let selfUserObjectID = selfUserOnMainThread.objectId
         let firstUnreadMessageNonce = firstUnreadMessage?.nonce
-//>>>>>>> develop
 
         // Dispatching to background thread to offload sections calculation
 
@@ -181,9 +138,6 @@ final class ConversationTableViewDataSource: NSObject {
                 try? backgroundContext.existingObject(with: objectID) as? ZMMessage
             }
 
-//<<<<<<< HEAD
-//            return sectionController
-//=======
             // sort if needed
             messages = messages.sorted {
                 ($0.serverTimestamp ?? .distantPast) > ($1.serverTimestamp ?? .distantPast)
@@ -270,7 +224,6 @@ final class ConversationTableViewDataSource: NSObject {
                     )
                 )
             }
-//>>>>>>> develop
         }
 
     }
@@ -284,7 +237,8 @@ final class ConversationTableViewDataSource: NSObject {
 
         guard let section = currentSections.firstIndex(
             where: { $0.message.nonce == sectionIdentifier
-            })
+            }
+        )
         else { return currentSections }
 
         for (row, description) in sectionController.tableViewCellDescriptions.enumerated() {
@@ -311,22 +265,17 @@ final class ConversationTableViewDataSource: NSObject {
         sectionController.recreateCellDescriptions(in: context)
 
         var updatedSections = currentSections
-//<<<<<<< HEAD
-//        updatedSections[section] = sectionController
-//        updatedSections = postProcessedSections(updatedSections)
-//=======
 //        updatedSections[section] = ArraySection(
 //            model: sectionIdentifier,
 //            elements: sectionController.tableViewCellDescriptions
 //        )
-        
+
         updatedSections[section] = sectionController
         updatedSections = postProcessedSections(
             updatedSections,
             selfUser: userSession.selfUser,
             allMessages: messages
         )
-//>>>>>>> develop
 
         return updatedSections
     }
@@ -346,17 +295,10 @@ final class ConversationTableViewDataSource: NSObject {
         self.userSession = userSession
         self.getUserByIDUseCase = getUserByIDUseCase
         super.init()
-
-//        tableView.dataSource = self
         setupDataSource()
 
     }
 
-//<<<<<<< HEAD
-//    func section(for message: ZMConversationMessage) -> Int? {
-//        currentSections
-//            .firstIndex(where: { $0.objectId == message.objectIdentifier })
-//=======
     func resetSectionControllers() {
         debouncer.call(id: nil) { [weak self] in
             self?.sectionControllers.reset()
@@ -366,7 +308,6 @@ final class ConversationTableViewDataSource: NSObject {
                 tableView.reloadData()
             }
         }
-//>>>>>>> develop
     }
 
     func section(for message: ZMConversationMessage) -> Int? {
@@ -520,10 +461,10 @@ final class ConversationTableViewDataSource: NSObject {
         let fetchRequest = fetchRequest()
         fetchRequest
             .fetchLimit = limit +
-        5 // We need to fetch a bit more than requested so that there is overlap between messages in different
+            5 // We need to fetch a bit more than requested so that there is overlap between messages in different
         // fetches
         fetchRequest.fetchOffset = offset
-        
+
         fetchController = NSFetchedResultsController<ZMMessage>(
             fetchRequest: fetchRequest,
             managedObjectContext: conversation
@@ -531,42 +472,36 @@ final class ConversationTableViewDataSource: NSObject {
             sectionNameKeyPath: nil,
             cacheName: nil
         )
-        
+
         fetchController?.delegate = self
         try! fetchController?.performFetch()
-        
+
         lastFetchedObjectCount = fetchController?.fetchedObjects?.count ?? 0
         hasOlderMessagesToLoad = allMessages.count == fetchRequest.fetchLimit
         hasNewerMessagesToLoad = offset > 0
         firstUnreadMessage = conversation.firstUnreadMessage
-//<<<<<<< HEAD
-//        let currentSections = calculateSections(forceRecalculate: forceRecalculate)
-//        self.currentSections = postProcessedSections(currentSections)
-//        
-//        reloadDataSource(sections: self.currentSections)
-//=======
 
         debouncer.call(id: nil) { [weak self] in
             self?.calculateSections(forceRecalculate: forceRecalculate) { [weak self] sections in
-                self?.currentSections = sections
-                self?.tableView.reloadData()
+                self?.reloadSections(newSections: sections)
                 completion?()
             }
         }
-//>>>>>>> develop
     }
-    
+
     private func reloadDataSource(sections: [Section]) {
-        var snapshot = NSDiffableDataSourceSnapshot<ConversationMessageSectionController, AnyConversationMessageCellDescription>()
+        // TODO: move snapshot calculation to background thread
+        var snapshot = NSDiffableDataSourceSnapshot<UUID, AnyConversationMessageCellDescription>()
         for section in currentSections {
-            snapshot.appendSections([section])
+            let sectionID = section.message.nonce!
+            snapshot.appendSections([sectionID])
             snapshot
                 .appendItems(
                     section.tableViewCellDescriptions,
-                    toSection: section
+                    toSection: sectionID
                 )
         }
-        
+
         let oldItems = dataSource.snapshot().itemIdentifiers
         let newItems = snapshot.itemIdentifiers
 
@@ -580,11 +515,11 @@ final class ConversationTableViewDataSource: NSObject {
                 print("DS: ➕ Inserted \(element) at \(offset)")
             }
         }
-        
+
+        let shouldAnimate = !dataSource.snapshot().sectionIdentifiers.isEmpty
         dataSource.defaultRowAnimation = .fade
-        dataSource.apply(snapshot, animatingDifferences: true)
+        dataSource.apply(snapshot, animatingDifferences: shouldAnimate)
     }
-    
 
     var loadingMessages = false
 
@@ -701,8 +636,9 @@ extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
         for changeType: NSFetchedResultsChangeType,
         newIndexPath: IndexPath?
     ) {
-        print("DS: NSFetchedResultsController didChange anObject at indexPath: \(String(describing: indexPath)) for changeType: \(changeType) newIndexPath: \(String(describing: newIndexPath))")
-        changesPending = true
+        print(
+            "DS: NSFetchedResultsController didChange anObject at indexPath: \(String(describing: indexPath)) for changeType: \(changeType) newIndexPath: \(String(describing: newIndexPath))"
+        )
 
         if let message = anObject as? ZMConversationMessage, changeType == .insert {
             /// VoiceOver will output the announcement string from the message
@@ -716,52 +652,26 @@ extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
         atSectionIndex sectionIndex: Int,
         for changeType: NSFetchedResultsChangeType
     ) {
-        print("DS: NSFetchedResultsController didChange sectionInfo at sectionIndex: \(sectionIndex) for changeType: \(changeType)")
-        changesPending = true
+        print(
+            "DS: NSFetchedResultsController didChange sectionInfo at sectionIndex: \(sectionIndex) for changeType: \(changeType)"
+        )
     }
 
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-//<<<<<<< HEAD
-//        guard changesPending else {
-//            print("DS: skip changes pending")
-//            return
-//        }
-//        print("DS: call reload with debounce")
-//        debounceTableViewReload()
-//        changesPending = false
-//=======
         debouncer.call(id: nil) { [weak self] in
             self?.calculateSections { sections in
                 self?.reloadSections(newSections: sections)
             }
         }
-//>>>>>>> develop
     }
 
     func reloadSections(newSections: [Section]) {
-        self.currentSections = newSections
+        currentSections = newSections
         reloadDataSource(sections: newSections)
     }
-    
-    
-//    private func debounceTableViewReload(delay: TimeInterval = 0.2) {
-//        updateWorkItem?.cancel()
-//        updateWorkItem = DispatchWorkItem { [weak self] in
-//            print("DS: call reload AFTER debounce")
-//            guard let self else { return }
-//            self.reloadSections(newSections: self.postProcessedSections(calculateSections()))
-//        }
-//        DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: updateWorkItem!)
-//    }
-
 }
 
 extension ConversationTableViewDataSource {
-//extension ConversationTableViewDataSource: UITableViewDataSource {
-//
-//    func numberOfSections(in tableView: UITableView) -> Int {
-//        currentSections.count
-//    }
 
     func select(indexPath: IndexPath) {
         let sectionController = sectionController(
@@ -808,12 +718,12 @@ extension ConversationTableViewDataSource {
 //
 //        return currentSections[section].elements.count
 //    }
-    
+
     func updateVisibleCells() {
         guard let visibleIndexPaths = tableView.indexPathsForVisibleRows else { return }
         updateCells(with: visibleIndexPaths)
     }
-    
+
     func updateCells(with indexPaths: [IndexPath]) {
         // Get current snapshot
         var snapshot = dataSource.snapshot()
@@ -842,12 +752,7 @@ extension ConversationTableViewDataSource {
         registeredCells.append(description.baseType)
     }
 
-//    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//
-//    }
-//
-    fileprivate func makeCell(indexPath: IndexPath) -> UITableViewCell {
-        // TODO: itemIdentifier?
+    private func makeCell(indexPath: IndexPath) -> UITableViewCell {
         guard currentSections.indices.contains(indexPath.section) else {
             fatal("currentSections has \(currentSections.count) elements, but try to access #\(indexPath)")
         }
@@ -954,11 +859,7 @@ extension ConversationTableViewDataSource {
         return !Calendar.current.isDate(current, inSameDayAs: previous)
     }
 
-//<<<<<<< HEAD
     typealias Section = ConversationMessageSectionController
-//=======
-//    typealias Section = ArraySection<UUID, AnyConversationMessageCellDescription>
-//>>>>>>> develop
 
     /// Iterates over the sections (messages) and compares two subsequent messages. Based on that some minor
     /// modifications are applied.
@@ -972,6 +873,9 @@ extension ConversationTableViewDataSource {
         allMessages: [ZMMessage]
     ) -> [Section] {
 
+        // TODO: do not post process all at once, only what changed
+        // (it's only messages within some small time interval and from one sender
+        // and apply specific changes to snapshot, like update, remove, append but not recalculation everything
         var sections = sections
 
         let messages = allMessages
@@ -982,13 +886,15 @@ extension ConversationTableViewDataSource {
             let previousSectionIndex = currentSectionIndex + 1
 
             // Calling `elements.last` because the indices are reversed.
-            guard let currentSectionFirstElement = sections[currentSectionIndex].tableViewCellDescriptions.last?.instance else {
+            guard let currentSectionFirstElement = sections[currentSectionIndex].tableViewCellDescriptions.last?
+                .instance else {
                 continue
             }
 
             guard
                 sections.indices.contains(previousSectionIndex),
-                var previousSectionLastElement = sections[previousSectionIndex].tableViewCellDescriptions.first?.instance
+                var previousSectionLastElement = sections[previousSectionIndex].tableViewCellDescriptions.first?
+                .instance
             else {
                 // no previous message, so reset the margins
                 currentSectionFirstElement.topMargin = 8
@@ -1021,7 +927,8 @@ extension ConversationTableViewDataSource {
                 previousStatus?.replace(newCellDescription, &sections)
 
                 // for collapsing the space we will refer to the cell description before the previous message's status
-                if let newPreviousSectionLastElement = sections[previousSectionIndex].tableViewCellDescriptions.first?.instance {
+                if let newPreviousSectionLastElement = sections[previousSectionIndex].tableViewCellDescriptions.first?
+                    .instance {
                     previousSectionLastElement = newPreviousSectionLastElement
                 }
             }
@@ -1061,7 +968,8 @@ extension ConversationTableViewDataSource {
                     in sections: inout [Section]
                 ) {
 //                    sections[sectionIndex]
-//                        .sectionController.tableViewCellDescriptions[elementIndex] = AnyConversationMessageCellDescription(newCellDescription)
+//                        .sectionController.tableViewCellDescriptions[elementIndex] =
+//                        AnyConversationMessageCellDescription(newCellDescription)
                 }
 
                 return (cellDescription, replace)
@@ -1112,7 +1020,8 @@ extension ConversationTableViewDataSource {
         }
 
         // time divider could be the first and sender the second
-        if sections[currentIndex].tableViewCellDescriptions.dropLast().last?.instance is ConversationSenderMessageCellDescription {
+        if sections[currentIndex].tableViewCellDescriptions.dropLast().last?
+            .instance is ConversationSenderMessageCellDescription {
             return false
         }
 

@@ -280,10 +280,6 @@ final class ConversationContentViewController: UIViewController {
     @objc
     private func applicationDidBecomeActive(_ notification: Notification) {
         dataSource.resetSectionControllers()
-//<<<<<<< HEAD
-//        dataSource.forceReload()
-//=======
-//>>>>>>> develop
     }
 
     private func handleScrollToBottomTapped() {
@@ -603,7 +599,8 @@ extension ConversationContentViewController: UITableViewDelegate {
         isLeading: Bool
     ) -> ConversationMessageActionController? {
 
-        let section = dataSource.currentSections[ifExists: indexPath.section]?.tableViewCellDescriptions[ifExists: indexPath.row]
+        let section = dataSource.currentSections[ifExists: indexPath.section]?
+            .tableViewCellDescriptions[ifExists: indexPath.row]
         let actionController = section?.actionController
         let cellDescription = section?.instance
         // There were a bug with no able to swipe https://wearezeta.atlassian.net/browse/WPB-17839
