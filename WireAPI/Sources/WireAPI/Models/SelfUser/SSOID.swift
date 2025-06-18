@@ -16,15 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 /// The sso id of the self user
 
 public struct SSOID: Equatable, Sendable {
 
     /// The self user's scim external id
 
-    public let scimExternalId: String
+    public let scimExternalId: String?
 
     /// The self user's sso subject
 
