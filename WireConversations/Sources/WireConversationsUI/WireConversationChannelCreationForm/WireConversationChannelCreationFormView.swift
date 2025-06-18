@@ -17,13 +17,14 @@
 //
 
 public import SwiftUI
+import WireDesign
 import WireConversationsAPI
 
 public struct WireConversationChannelCreationForm: View {
     public typealias ViewModel = WireConversationChannelCreationFormViewModel
 
     @State private var channelName: String
-
+    @State private var showUpgradeBanner: Bool = false
     @ObservedObject private var viewModel: WireConversationChannelCreationFormViewModel
 
     public init(
@@ -34,17 +35,30 @@ public struct WireConversationChannelCreationForm: View {
     }
 
     public var body: some View {
-        Form {
-            channelNameSection
-            channelAccessSection
-            channelHistorySection
-            servicesSection
-            // TODO: [WPB-16771] Uncomment when read receipts supported on MLS
-//            readReceiptsSection
-        }
-        .onChange(of: channelName) { newValue in
-            viewModel.onChannelNameUpdate(newValue)
-        }
+            Form {
+                channelNameSection
+                channelAccessSection
+                channelHistorySection
+                servicesSection
+                // TODO: [WPB-16771] Uncomment when read receipts supported on MLS
+                //            readReceiptsSection
+            }
+            .onChange(of: channelName) { newValue in
+                viewModel.onChannelNameUpdate(newValue)
+            }
+            .onChange(of: viewModel.channelHistoryOption) { newValue in
+                guard newValue == .custom && !viewModel.isPremium() else {
+                    return
+                }
+                
+                showUpgradeBanner = true
+            }
+            .overlay {
+                if showUpgradeBanner {
+                    channelUpgradeBanner
+                }
+            }
+        
     }
 
     var channelNameSection: some View {
@@ -56,6 +70,34 @@ public struct WireConversationChannelCreationForm: View {
                     Text(L10n.Localizable.Conversation.CreationForm.ChannelName.label)
                 }
             )
+        }
+    }
+    
+    var channelUpgradeBanner: some View {
+        ZStack {
+            Rectangle()
+                .foregroundColor(Color.black.opacity(0.5))
+                .edgesIgnoringSafeArea(.all)
+            
+            VStack(alignment: .leading, spacing: 15) {
+                Text("Show older messages?").foregroundStyle(.white)
+                
+                Text("Upgrade to a paid plan to offer channel members the whole history").foregroundStyle(.white)
+                
+                Button("Upgrade now") {
+                    
+                }
+                .wireButtonStyle(.tertiary)
+                
+            }
+            .roundedBorderAndBackground(
+                backgroundColor: ColorTheme.Base.onHighlight.color,
+                borderColor: ColorTheme.Base.onHighlight.color,
+                borderWidth: 1,
+                cornerRadius: 10,
+                padding: 15
+            )
+            .frame(width: UIScreen.main.bounds.width - 20)
         }
     }
 
@@ -96,35 +138,62 @@ public struct WireConversationChannelCreationForm: View {
 
     var channelHistorySection: some View {
             Section(content: {
-                Picker("Channel history", selection: $viewModel.channelHistoryOption) {
-                    Text("Off")
-                        .tag(WireConversationChannelCreationFormViewModel.ChannelHistoryOption.off)
-                    Text("1 day")
-                        .tag(WireConversationChannelCreationFormViewModel.ChannelHistoryOption.oneDay)
+                VStack {
+                    channelHistoryPicker
                     
-                    if viewModel.isPremium() {
-                        Text("1 week")
-                            .tag(WireConversationChannelCreationFormViewModel.ChannelHistoryOption.oneWeek)
-                        Text("4 weeks")
-                            .tag(WireConversationChannelCreationFormViewModel.ChannelHistoryOption.fourWeeks)
-                        Text("Unlimited")
-                            .tag(WireConversationChannelCreationFormViewModel.ChannelHistoryOption.unlimited)
-                    }
-                    
-                    HStack {
-                        Text("Custom")
-
-                        Image(systemName: "chevron.right")
-                            .foregroundColor(.blue)
-                        
-                    }.tag(WireConversationChannelCreationFormViewModel.ChannelHistoryOption.custom)
-                    .padding(.horizontal)
-
+                    ZStack {
+                        if viewModel.channelHistoryOption == .custom && viewModel.isPremium() {
+                            channelCustomHistoryPicker
+                                .transition(.opacity)
+                        }
+                    }.animation(.smooth, value: viewModel.channelHistoryOption)
                 }
+                
             }, footer: {
                 Text("Select a period. When participants join this channel, they can follow the history for this time")
             })
     }
+    
+    var channelHistoryPicker: some View {
+        Picker("Channel history", selection: $viewModel.channelHistoryOption) {
+            Text("Off")
+                .tag(WireConversationChannelCreationFormViewModel.ChannelHistoryOption.off)
+            Text("1 day")
+                .tag(WireConversationChannelCreationFormViewModel.ChannelHistoryOption.oneDay)
+            
+            if viewModel.isPremium() {
+                Text("1 week")
+                    .tag(WireConversationChannelCreationFormViewModel.ChannelHistoryOption.oneWeek)
+                Text("4 weeks")
+                    .tag(WireConversationChannelCreationFormViewModel.ChannelHistoryOption.fourWeeks)
+                Text("Unlimited")
+                    .tag(WireConversationChannelCreationFormViewModel.ChannelHistoryOption.unlimited)
+            }
+            
+            Text("Custom")
+                .tag(WireConversationChannelCreationFormViewModel.ChannelHistoryOption.custom)
+        }
+    }
+    
+    var channelCustomHistoryPicker: some View {
+        HStack {
+            Picker("Number", selection: $viewModel.channelHistoryOptionCustom.value) {
+                ForEach(1...99, id: \.self) { number in
+                    Text("\(number)").tag(number)
+                }
+            }
+            .pickerStyle(.wheel)
+
+            Picker("Unit", selection: $viewModel.channelHistoryOptionCustom.unit) {
+                ForEach(ViewModel.ChannelHistoryOption.Custom.Unit.allCases, id: \.self) { unit in
+                    Text(unit.rawValue).tag(unit)
+                }
+            }
+            .pickerStyle(.wheel)
+        }
+        .padding()
+    }
+
 
     var servicesSection: some View {
         Section(content: {
@@ -143,6 +212,35 @@ public struct WireConversationChannelCreationForm: View {
         })
     }
 }
+
+struct NavigationControllerAccessor: UIViewControllerRepresentable {
+    var callback: (UINavigationController?) -> Void
+
+    func makeUIViewController(context: Context) -> UIViewController {
+        ViewController(callback: callback)
+    }
+
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+
+    private class ViewController: UIViewController {
+        let callback: (UINavigationController?) -> Void
+
+        init(callback: @escaping (UINavigationController?) -> Void) {
+            self.callback = callback
+            super.init(nibName: nil, bundle: nil)
+        }
+
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+
+        override func didMove(toParent parent: UIViewController?) {
+            super.didMove(toParent: parent)
+            callback(self.navigationController)
+        }
+    }
+}
+
 
 #Preview {
     WireConversationChannelCreationForm(

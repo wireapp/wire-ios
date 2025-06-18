@@ -42,6 +42,16 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
         case fourWeeks
         case unlimited
         case custom
+        
+        public struct Custom: Equatable, Hashable {
+            public enum Unit: String, Equatable, Hashable, CaseIterable {
+                case days
+                case week
+            }
+            
+            public var unit: Unit = .days
+            public var value: Int = 1
+        }
     }
 
     public enum ChannelAccessOption: Equatable, Hashable {
@@ -82,10 +92,10 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
     @Published var channelAccess: ChannelAccessOption
     @Published var channelInvitePolicy: ChannelInvitePolicyOption
     @Published var channelHistoryOption: ChannelHistoryOption
+    @Published var channelHistoryOptionCustom: ChannelHistoryOption.Custom = .init()
     @Published var servicesAllowed: Bool
     @Published var guestsAllowed: Bool
     @Published var readReceiptsEnabled: Bool
-
     @Published public private(set) var isFormValid: Bool
 
     private let onFormValidityUpdate: @Sendable (_ isValid: Bool) -> Void
@@ -116,7 +126,7 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
     }
     
     func isPremium() -> Bool {
-        true
+        false
     }
 
     func onChannelNameUpdate(_ value: String) {
