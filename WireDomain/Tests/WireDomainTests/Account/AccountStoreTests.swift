@@ -378,63 +378,26 @@ final class AccountStoreTests {
         )
         #expect(account == expectedAccount)
     }
-
-    @Test("Store and fetch Backend environment")
-    func storeAndFetchBackendEnvironment() throws {
+    
+    @Test(
+        "Store and fetch backend environment",
+        arguments: [
+            makeBackendEnvironment(),
+            makeBackendEnvironment(withPinnedKey: false),
+            makeBackendEnvironment(
+                proxyIncluded: false, withPinnedKey: false
+            ),
+            makeBackendEnvironment(proxyAuthenticated: false)
+        ]
+    )
+    func storeAndFetchBackendEnvironment(_ backendEnvironment: BackendEnvironment2) throws {
         let sut = try AccountStore(root: url)
         let accountId = UUID()
-        let environment = makeBackendEnvironment()
+        
+        sut.storeBackendEnvironment(backendEnvironment, for: accountId)
+        let fetched = try sut.fetchBackendEnvironment(accountID: accountId)
 
-        sut.storeBackendEnvironment(environment, for: accountId)
-        let fetched = try sut.fetchBackendEnvironment(accountId: accountId)
-
-        #expect(fetched == environment)
-        #expect(fetched?.pinnedKeys.count == 1)
-        #expect(fetched?.proxySettings != nil)
-    }
-
-    @Test
-    func storeAndFetchBackendEnvironment_noPinnedKey() throws {
-        let sut = try AccountStore(root: url)
-        let accountId = UUID()
-        let environment = makeBackendEnvironment(withPinnedKey: false)
-
-        sut.storeBackendEnvironment(environment, for: accountId)
-        let fetched = try sut.fetchBackendEnvironment(accountId: accountId)
-
-        #expect(fetched == environment)
-        #expect(fetched?.pinnedKeys.isEmpty == true)
-        #expect(fetched?.proxySettings != nil)
-    }
-
-    @Test
-    func storeAndFetchBackendEnvironment_noPinnedKey_noProxySettings() throws {
-        let sut = try AccountStore(root: url)
-        let accountId = UUID()
-        let environment = makeBackendEnvironment(
-            proxyIncluded: false, withPinnedKey: false
-        )
-
-        sut.storeBackendEnvironment(environment, for: accountId)
-        let fetched = try sut.fetchBackendEnvironment(accountId: accountId)
-
-        #expect(fetched == environment)
-        #expect(fetched?.pinnedKeys.isEmpty == true)
-        #expect(fetched?.proxySettings == nil)
-    }
-
-    @Test
-    func storeAndFetchBackendEnvironment_unauthenticatedProxySettings() throws {
-        let sut = try AccountStore(root: url)
-        let accountId = UUID()
-        let environment = makeBackendEnvironment(proxyAuthenticated: false)
-
-        sut.storeBackendEnvironment(environment, for: accountId)
-        let fetched = try sut.fetchBackendEnvironment(accountId: accountId)
-
-        #expect(fetched == environment)
-        #expect(fetched?.pinnedKeys.count == 1)
-        #expect(fetched?.proxySettings == .unauthenticated(host: "Host.com", port: 9999))
+        #expect(fetched == backendEnvironment)
     }
 
     @Test
@@ -442,7 +405,7 @@ final class AccountStoreTests {
         let sut = try AccountStore(root: url)
         let accountId = UUID()
 
-        let fetched = try sut.fetchBackendEnvironment(accountId: accountId)
+        let fetched = try sut.fetchBackendEnvironment(accountID: accountId)
 
         #expect(fetched == nil)
     }
@@ -450,19 +413,18 @@ final class AccountStoreTests {
     @Test
     func deleteBackendEnvironment() throws {
         let sut = try AccountStore(root: url)
-        let environment = makeBackendEnvironment()
+        let environment = Self.makeBackendEnvironment()
         let validAccount = Account(userName: "Alice", userIdentifier: UUID())
-
+        
         sut.storeBackendEnvironment(environment, for: validAccount.userIdentifier)
         sut.deleteBackendEnvironment(account: validAccount)
-
-        let fetched = try sut.fetchBackendEnvironment(accountId: validAccount.userIdentifier)
-
+        
+        let fetched = try sut.fetchBackendEnvironment(accountID: validAccount.userIdentifier)
+        
         #expect(fetched == nil)
-
     }
 
-    private func makeBackendEnvironment(
+    private static func makeBackendEnvironment(
         proxyIncluded: Bool = true,
         proxyAuthenticated: Bool = true,
         withPinnedKey: Bool = true

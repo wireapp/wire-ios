@@ -113,18 +113,19 @@ struct AccountStore {
 
     // MARK: - Store
 
-    /// Store an `BackendEnvironment`.
+    /// Store a `BackendEnvironment`.
     ///
     /// If the BackendEnvironment for an account already exists, it will be overwritten.
     ///
     /// - parameter backendEnvironment: Object to store.
+    /// - parameter accountID: The `UUID` of the user the account belongs to.
     /// - returns: Whether the operation was successful.
 
     @discardableResult
-    func storeBackendEnvironment(_ backendEnvironment: BackendEnvironment2, for accountId: UUID) -> Bool {
+    func storeBackendEnvironment(_ backendEnvironment: BackendEnvironment2, for accountID: UUID) -> Bool {
         do {
             let storedBackendEnvironment = backendEnvironment.toStored()
-            let url = backendEnvironmentUrl(for: accountId)
+            let url = backendEnvironmentURL(for: accountID)
             let data = try encoder.encode(storedBackendEnvironment)
             try data.write(to: url, options: .atomic)
             return true
@@ -132,7 +133,7 @@ struct AccountStore {
             let errorDescription = error.safeForLoggingDescription
             log
                 .error(
-                    "Unable to store backend environment \(backendEnvironment) for account with ID \(accountId.safeForLoggingDescription), error: \(errorDescription)"
+                    "Unable to store backend environment \(backendEnvironment) for account with ID \(accountID.safeForLoggingDescription), error: \(errorDescription)"
                 )
             return false
         }
@@ -140,11 +141,11 @@ struct AccountStore {
 
     /// Fetch a backend environment for account.
     ///
-    /// - parameter accountId: The `UUID` of the user the account belongs to.
+    /// - parameter accountID: The `UUID` of the user the account belongs to.
     /// - returns: The `BackendEnvironment` if it exists.
 
-    func fetchBackendEnvironment(accountId: UUID) throws -> BackendEnvironment2? {
-        let url = backendEnvironmentUrl(for: accountId)
+    func fetchBackendEnvironment(accountID: UUID) throws -> BackendEnvironment2? {
+        let url = backendEnvironmentURL(for: accountID)
 
         do {
             let data = try Data(contentsOf: url)
@@ -157,7 +158,7 @@ struct AccountStore {
             let errorDescription = error.safeForLoggingDescription
             log
                 .error(
-                    "Unable to fetch backend environment for account with ID \(accountId.safeForLoggingDescription), error: \(errorDescription)"
+                    "Unable to fetch backend environment for account with ID \(accountID.safeForLoggingDescription), error: \(errorDescription)"
                 )
             return nil
         }
@@ -194,7 +195,7 @@ struct AccountStore {
     @discardableResult
     func deleteBackendEnvironment(account: Account) -> Bool {
         do {
-            try fileManager.removeItem(at: backendEnvironmentUrl(for: account.userIdentifier))
+            try fileManager.removeItem(at: backendEnvironmentURL(for: account.userIdentifier))
             return true
         } catch {
             let accountDescription = account.safeForLoggingDescription
@@ -241,7 +242,7 @@ struct AccountStore {
         directory.appendingPathComponent(id.uuidString)
     }
 
-    private func backendEnvironmentUrl(for id: UUID) -> URL {
+    private func backendEnvironmentURL(for id: UUID) -> URL {
         directory.appendingPathComponent("\(id.uuidString)-backend-environment.json")
     }
 }
