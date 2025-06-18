@@ -622,8 +622,17 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-    public func triggerSync() {
-        syncAgent?.resume()
+    /// Executes specific or regular sync after db migration
+    public func triggerSync() async {
+        let (initialSync, resoucesSync) = await syncContext.perform({ (self.syncContext.readMigrationNeedsSlowSyncFlag(), self.syncContext.readMigrationNeedsSyncResourcesFlag()) })
+        
+        if initialSync || journal[.isInitialSyncRequired] {
+            await triggerInitialSync()
+        } else if resoucesSync {
+            await triggerResourcesSync()
+        } else {
+            syncAgent?.resume()
+        }
     }
 
     // MARK: - Deinitalize
@@ -842,25 +851,21 @@ public final class ZMUserSession: NSObject {
 
     // MARK: - Trigger syncing
 
-    public func triggerInitialSync() {
-        Task {
-            do {
-                syncAgent?.suspend()
-                try await syncAgent?.performInitialSync()
-            } catch {
-                WireLogger.sync.error("failed to perform initial sync: \(String(describing: error))")
-            }
+    public func triggerInitialSync() async {
+        do {
+            syncAgent?.suspend()
+            try await syncAgent?.performInitialSync()
+        } catch {
+            WireLogger.sync.error("failed to perform initial sync: \(String(describing: error))")
         }
     }
 
-    public func triggerResourcesSync() {
-        Task {
-            do {
-                syncAgent?.suspend()
-                try await syncAgent?.performResourceSync()
-            } catch {
-                WireLogger.sync.error("failed to perform resource sync: \(String(describing: error))")
-            }
+    public func triggerResourcesSync() async {
+        do {
+            syncAgent?.suspend()
+            try await syncAgent?.performResourceSync()
+        } catch {
+            WireLogger.sync.error("failed to perform resource sync: \(String(describing: error))")
         }
     }
 
@@ -1399,7 +1404,9 @@ extension ZMUserSession: ZMClientRegistrationStatusDelegate {
                 // activate new sync with consumable notifications
                 journal[.isConsumableNotificationsEnabled] = true
             }
-            triggerSync()
+            Task {
+                await triggerSync()
+            }
         }
     }
 
