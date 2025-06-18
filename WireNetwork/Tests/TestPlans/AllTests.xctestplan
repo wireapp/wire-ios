@@ -4,11 +4,6 @@
       "id" : "FDB58F5E-9DC3-4935-B919-AA295F684D19",
       "name" : "Configuration 1",
       "options" : {
-        "targetForVariableExpansion" : {
-          "containerPath" : "container:..\/..\/..\/..\/..\/..\/..\/..\/Repos\/wire-ios\/WireNetwork",
-          "identifier" : "WireNetworkTests",
-          "name" : "WireNetworkTests"
-        }
       }
     }
   ],
@@ -22,9 +17,9 @@
     "language" : "en",
     "region" : "DE",
     "targetForVariableExpansion" : {
-      "containerPath" : "container:WireAPI",
-      "identifier" : "WireAPITests",
-      "name" : "WireAPITests"
+      "containerPath" : "container:WireNetwork",
+      "identifier" : "WireNetworkTests",
+      "name" : "WireNetworkTests"
     },
     "testExecutionOrdering" : "random"
   },
