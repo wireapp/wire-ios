@@ -18,11 +18,11 @@
 
 import Combine
 import UIKit
-import WireNetwork
 import WireAuthentication
 import WireCommonComponents
 import WireDataModel
 import WireFoundation
+import WireNetwork
 import WireSyncEngine
 
 /// A type of view controller that can be managed by an authentication coordinator.

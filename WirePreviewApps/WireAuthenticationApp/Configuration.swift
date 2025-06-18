@@ -17,9 +17,9 @@
 //
 
 import Foundation
+import WireAuthentication
 import WireNetwork
 import WireNetworkSupport
-import WireAuthentication
 import WireReusableUIComponents
 
 struct Configuration {

@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import WireNetwork
 import WireDomain
 import WireLogging
+import WireNetwork
 import WireTransport
 
 struct UpdateEventMigrator {

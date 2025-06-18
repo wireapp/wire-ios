@@ -17,9 +17,9 @@
 //
 
 import Combine
-import WireNetwork
 import WireDataModelSupport
 import WireDomain
+import WireNetwork
 import WireRequestStrategySupport
 import WireTransportSupport
 @testable import WireSyncEngine

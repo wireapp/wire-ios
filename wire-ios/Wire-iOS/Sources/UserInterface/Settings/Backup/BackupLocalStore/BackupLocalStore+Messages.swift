@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireNetwork
 import WireBackup
 import WireDataModel
 import WireFoundation
+import WireNetwork
 
 extension BackupLocalStore {
 

@@ -18,9 +18,9 @@
 
 import Combine
 import Foundation
-import WireNetwork
 import WireCoreCrypto
 import WireDataModel
+import WireNetwork
 
 public final class ClientSessionComponent {
 

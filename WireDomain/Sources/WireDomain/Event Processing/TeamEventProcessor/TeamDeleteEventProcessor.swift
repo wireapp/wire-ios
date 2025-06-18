@@ -17,8 +17,8 @@
 //
 
 import CoreData
-import WireNetwork
 import WireDataModel
+import WireNetwork
 
 struct TeamDeleteEventProcessor: TeamDeleteEventProcessorProtocol {
 

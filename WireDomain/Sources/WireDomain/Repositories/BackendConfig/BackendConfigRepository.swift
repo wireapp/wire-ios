@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireNetwork
 import WireLogging
+import WireNetwork
 
 final class BackendConfigRepository: BackendConfigRepositoryProtocol {
 

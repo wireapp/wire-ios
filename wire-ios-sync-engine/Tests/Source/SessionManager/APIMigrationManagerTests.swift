@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import WireNetwork
 import WireDataModelSupport
 import WireDomain
+import WireNetwork
 import XCTest
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport

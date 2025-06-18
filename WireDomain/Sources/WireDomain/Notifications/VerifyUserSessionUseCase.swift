@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireNetwork
 import WireDataModel
 import WireLogging
+import WireNetwork
 
 /// Observes pending events, process them and generates new notifications content.
 struct VerifyUserSessionUseCase {

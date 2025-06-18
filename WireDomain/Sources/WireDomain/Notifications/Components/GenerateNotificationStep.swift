@@ -18,8 +18,8 @@
 
 import NeedleFoundation
 import UserNotifications
-import WireNetwork
 import WireDataModel
+import WireNetwork
 
 protocol GenerateNotificationDependency: Dependency {
     var sharedUserDefaults: UserDefaults { get }

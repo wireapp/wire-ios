@@ -21,9 +21,9 @@ import WireDataModelSupport
 import WireTestingPackage
 import WireUpdateEventCoding
 import XCTest
-@testable import WireNetwork
 @testable import WireDomain
 @testable import WireDomainSupport
+@testable import WireNetwork
 
 final class UpdateEventsLocalStoreTests: XCTestCase {
 

@@ -17,10 +17,10 @@
 //
 
 import Foundation
-import WireNetwork
 import WireDataModel
 import WireFoundation
 import WireLogging
+import WireNetwork
 
 public final class UserRepository: UserRepositoryProtocol {
 

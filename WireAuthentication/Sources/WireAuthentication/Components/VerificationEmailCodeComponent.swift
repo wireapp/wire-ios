@@ -18,8 +18,8 @@
 
 import NeedleFoundation
 import SwiftUI
-import WireNetwork
 import WireAuthenticationAPI
+import WireNetwork
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
 import WireReusableUIComponents

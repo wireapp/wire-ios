@@ -34,7 +34,8 @@ extension SecTrust {
     /// ```
     /// openssl s_client -connect google.com:443 -showcerts
     /// ```
-    /// Then copy each certificate into the `other` section of `certificates.json` file of `WireNetwork`. This requires a
+    /// Then copy each certificate into the `other` section of `certificates.json` file of `WireNetwork`. This requires
+    /// a
     /// bit of text wrangling such as removing line breaks etc.
 
     static var other: SecTrust {

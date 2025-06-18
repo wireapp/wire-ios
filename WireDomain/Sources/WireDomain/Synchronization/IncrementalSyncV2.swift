@@ -18,8 +18,8 @@
 
 @preconcurrency import Combine
 import Foundation
-import WireNetwork
 import WireLogging
+import WireNetwork
 
 /// IncrementalSync using new backend API async stream notifications
 public struct IncrementalSyncV2: LiveSyncProtocol {

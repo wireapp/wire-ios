@@ -19,9 +19,9 @@
 import WireNetworkSupport
 import XCTest
 
-@testable import WireNetwork
 @testable import WireDomain
 @testable import WireDomainSupport
+@testable import WireNetwork
 
 final class PullAllConversationsSyncTests: XCTestCase {
 

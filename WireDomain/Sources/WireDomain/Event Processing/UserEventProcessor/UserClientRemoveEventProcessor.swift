@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireNetwork
 import WireDataModel
 import WireLogging
+import WireNetwork
 
 struct UserClientRemoveEventProcessor: UserClientRemoveEventProcessorProtocol {
     let userClientsRepository: any UserClientsRepositoryProtocol

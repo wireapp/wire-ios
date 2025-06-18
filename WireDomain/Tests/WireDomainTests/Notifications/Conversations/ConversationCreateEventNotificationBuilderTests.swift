@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireNetworkSupport
 import WireDataModel
 import WireDataModelSupport
+import WireNetworkSupport
 import WireTestingPackage
 import XCTest
-@testable import WireNetwork
 @testable import WireDomain
 @testable import WireDomainSupport
+@testable import WireNetwork
 
 final class ConversationCreateEventNotificationBuilderTests: XCTestCase {
     private var sut: ConversationCreateEventNotificationBuilder!

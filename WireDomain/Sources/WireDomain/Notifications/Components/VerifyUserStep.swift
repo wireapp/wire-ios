@@ -18,10 +18,10 @@
 
 import NeedleFoundation
 import UserNotifications
-import WireNetwork
 import WireCrypto
 import WireDataModel
 import WireFoundation
+import WireNetwork
 
 protocol VerifyUserDependency: Dependency {
     var applicationIdentifier: String { get }

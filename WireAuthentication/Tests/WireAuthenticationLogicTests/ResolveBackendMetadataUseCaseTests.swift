@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireAuthenticationAPI
 import WireNetwork
 import WireNetworkSupport
-import WireAuthenticationAPI
 import XCTest
 
 @testable import WireAuthenticationLogic

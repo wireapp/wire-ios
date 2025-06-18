@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireNetwork
 import WireCoreCrypto
+import WireNetwork
 
 // sourcery: AutoMockable
 /// Decrypt the E2EE content within update events.

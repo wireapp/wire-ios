@@ -17,13 +17,13 @@
 //
 
 import Combine
-import WireNetworkSupport
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
+import WireNetworkSupport
 import XCTest
-@testable import WireNetwork
 @testable import WireDomain
+@testable import WireNetwork
 
 final class FeatureConfigRepositoryTests: XCTestCase {
 

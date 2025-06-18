@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireNetworkSupport
 import WireDataModel
+import WireNetworkSupport
 import XCTest
-@testable import WireNetwork
 @testable import WireDomain
 @testable import WireDomainSupport
+@testable import WireNetwork
 
 final class PullAllFeatureConfigsSyncTests: XCTestCase {
 

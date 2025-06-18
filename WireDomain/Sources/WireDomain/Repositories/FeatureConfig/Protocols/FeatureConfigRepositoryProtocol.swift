@@ -17,8 +17,8 @@
 //
 
 import Combine
-import WireNetwork
 import WireDataModel
+import WireNetwork
 
 /// Facilitates access to feature configs related domain objects.
 protocol FeatureConfigRepositoryProtocol {

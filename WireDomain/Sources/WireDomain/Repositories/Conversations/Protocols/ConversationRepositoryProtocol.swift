@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireNetwork
 import WireDataModel
+import WireNetwork
 
 // sourcery: AutoMockable
 /// Facilitate access to conversations related domain objects.

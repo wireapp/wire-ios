@@ -17,13 +17,13 @@
 //
 
 import Foundation
-import WireNetwork
 import WireCoreCrypto
+import WireNetwork
 import XCTest
 
-@testable import WireNetworkSupport
 @testable import WireDomain
 @testable import WireDomainSupport
+@testable import WireNetworkSupport
 
 final class MLSTransportTests: XCTestCase {
 

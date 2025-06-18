@@ -20,8 +20,8 @@ import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
 import XCTest
-@testable import WireNetwork
 @testable import WireDomain
+@testable import WireNetwork
 
 final class ConversationMemberJoinEventProcessorTests: XCTestCase {
 

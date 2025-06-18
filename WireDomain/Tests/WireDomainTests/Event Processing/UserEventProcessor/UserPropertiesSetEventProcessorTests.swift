@@ -18,8 +18,8 @@
 
 import WireDomainSupport
 import XCTest
-@testable import WireNetwork
 @testable import WireDomain
+@testable import WireNetwork
 
 final class UserPropertiesSetEventProcessorTests: XCTestCase {
 

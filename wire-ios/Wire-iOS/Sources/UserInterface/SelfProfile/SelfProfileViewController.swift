@@ -18,7 +18,6 @@
 
 import SwiftUI
 import WireAccountImageUI
-import WireNetwork
 import WireCommonComponents
 import WireDesign
 import WireDomainPackage
@@ -26,6 +25,7 @@ import WireFoundation
 import WireIndividualToTeamMigrationUI
 import WireMainNavigationUI
 import WireMultiBackendUI
+import WireNetwork
 import WireReusableUIComponents
 import WireSettingsUI
 import WireSyncEngine

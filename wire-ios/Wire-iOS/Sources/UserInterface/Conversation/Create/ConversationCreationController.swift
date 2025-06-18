@@ -17,12 +17,12 @@
 //
 
 import UIKit
-import WireNetwork
 import WireCommonComponents
 import WireDataModel
 import WireDesign
 import WireDomain
 import WireLogging
+import WireNetwork
 import WireSyncEngine
 
 protocol ConversationCreationControllerDelegate: AnyObject {

@@ -18,11 +18,11 @@
 
 import SwiftUI
 import UIKit
-import WireNetwork
 import WireConversationsAPI
 import WireConversationsUI
 import WireDomain
 import WireLogging
+import WireNetwork
 import WireReusableUIComponents
 import WireSyncEngine
 

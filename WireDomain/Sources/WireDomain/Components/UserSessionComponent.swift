@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import WireNetwork
 import WireDataModel
 import WireFoundation
+import WireNetwork
 
 public final class UserSessionComponent {
 

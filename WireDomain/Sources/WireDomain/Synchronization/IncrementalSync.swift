@@ -18,8 +18,8 @@
 
 import Combine
 import Foundation
-import WireNetwork
 import WireLogging
+import WireNetwork
 
 public struct IncrementalSync: IncrementalSyncProtocol {
 

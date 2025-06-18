@@ -21,8 +21,8 @@ import WireFoundation
 import WireTestingPackage
 import XCTest
 
-@testable import WireNetwork
 @testable import WireFoundationSupport
+@testable import WireNetwork
 
 final class CookieStorageTests: XCTestCase {
 

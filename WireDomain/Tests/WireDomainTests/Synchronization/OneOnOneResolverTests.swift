@@ -17,11 +17,11 @@
 //
 
 import Foundation
-import WireNetwork
-import WireNetworkSupport
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
+import WireNetwork
+import WireNetworkSupport
 import XCTest
 @testable import WireDomain
 

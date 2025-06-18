@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireNetwork
 import WireDataModel
+import WireNetwork
 
 /// Handles a calling notification (using CallKit in priority if available) related to an incoming / missed call
 struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNotificationBuilderProtocol {

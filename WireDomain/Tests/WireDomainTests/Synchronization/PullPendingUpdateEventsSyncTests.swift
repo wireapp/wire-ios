@@ -18,10 +18,10 @@
 
 import WireNetworkSupport
 import XCTest
-@testable import WireNetwork
 @testable import WireDataModelSupport
 @testable import WireDomain
 @testable import WireDomainSupport
+@testable import WireNetwork
 
 final class PullPendingUpdateEventsSyncTests: XCTestCase {
 

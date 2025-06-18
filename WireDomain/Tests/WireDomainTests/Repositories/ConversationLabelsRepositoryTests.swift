@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireNetworkSupport
 import WireDataModelSupport
 import WireDomainSupport
+import WireNetworkSupport
 import WireTestingPackage
 import XCTest
-@testable import WireNetwork
 @testable import WireDataModel
 @testable import WireDomain
+@testable import WireNetwork
 
 final class ConversationLabelsRepositoryTests: XCTestCase {
 

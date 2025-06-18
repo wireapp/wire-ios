@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireNetwork
 import WireConversationsAPI
 import WireConversationsImplementation
 import WireDomain
+import WireNetwork
 import WireSyncEngine
 import WireTransport
 

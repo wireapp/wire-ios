@@ -20,9 +20,9 @@ import WireDataModel
 import WireDataModelSupport
 import XCTest
 
-@testable import WireNetwork
 @testable import WireDomain
 @testable import WireDomainSupport
+@testable import WireNetwork
 
 final class MLSMessageDecryptorTests: XCTestCase {
 

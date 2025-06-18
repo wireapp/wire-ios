@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireNetwork
 import WireDataModel
+import WireNetwork
 
 public class TeamRepository: TeamRepositoryProtocol {
 

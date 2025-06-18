@@ -18,11 +18,11 @@
 
 import Combine
 import Foundation
-import WireNetwork
 import WireCoreCrypto
 import WireDataModel
 import WireDomain
 import WireLogging
+import WireNetwork
 import WireRequestStrategy
 import WireSystem
 public import WireFoundation

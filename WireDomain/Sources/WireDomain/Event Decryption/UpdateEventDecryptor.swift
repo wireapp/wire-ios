@@ -17,10 +17,10 @@
 //
 
 import Foundation
-import WireNetwork
 import WireCoreCrypto
 import WireDataModel
 import WireLogging
+import WireNetwork
 
 struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
 

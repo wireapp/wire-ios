@@ -17,9 +17,9 @@
 //
 
 import NeedleFoundation
-import WireNetwork
 import WireDataModel
 import WireFoundation
+import WireNetwork
 
 protocol PullEventsDependency: Dependency {
     var userID: UUID { get }

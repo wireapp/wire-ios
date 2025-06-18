@@ -17,10 +17,10 @@
 //
 
 import Foundation
-import WireNetwork
 import WireDataModel
 import WireDomain
 import WireFoundation
+import WireNetwork
 import WireRequestStrategy
 import WireUtilities
 

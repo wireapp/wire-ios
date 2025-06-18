@@ -17,7 +17,6 @@
 //
 
 import SwiftUI
-import WireNetwork
 import WireBackup
 import WireCommonComponents
 import WireDataModel
@@ -25,6 +24,7 @@ import WireDesign
 import WireDomain
 import WireFoundation
 import WireLogging
+import WireNetwork
 import WireSettingsUI
 import WireSyncEngine
 

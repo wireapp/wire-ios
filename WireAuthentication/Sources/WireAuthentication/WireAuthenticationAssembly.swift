@@ -20,10 +20,10 @@ import Combine
 import Foundation
 import NeedleFoundation
 import SwiftUI
-import WireNetwork
 import WireAuthenticationAPI
 import WireFoundation
 import WireMultiBackendUI
+import WireNetwork
 import WireReusableUIComponents
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic

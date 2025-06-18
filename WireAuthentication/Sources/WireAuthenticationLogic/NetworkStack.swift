@@ -17,10 +17,10 @@
 //
 
 import Foundation
-import WireNetwork
 import WireAuthenticationAPI
 import WireFoundation
 import WireLogging
+import WireNetwork
 
 package final class NetworkStack {
 

@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireNetwork
-import WireNetworkSupport
 import WireDataModel
 import WireDataModelSupport
+import WireNetwork
+import WireNetworkSupport
 import XCTest
 
 @testable import WireDomain

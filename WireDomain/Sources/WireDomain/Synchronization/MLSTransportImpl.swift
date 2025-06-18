@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireNetwork
 import WireCoreCrypto
 import WireLogging
+import WireNetwork
 
 final class MLSTransportImpl: MlsTransport {
 

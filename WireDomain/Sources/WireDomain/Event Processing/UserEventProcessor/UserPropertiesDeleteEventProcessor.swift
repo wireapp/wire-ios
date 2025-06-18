@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireNetwork
 import WireLogging
+import WireNetwork
 import WireSystem
 
 struct UserPropertiesDeleteEventProcessor: UserPropertiesDeleteEventProcessorProtocol {
