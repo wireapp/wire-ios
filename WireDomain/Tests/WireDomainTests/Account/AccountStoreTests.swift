@@ -391,36 +391,45 @@ final class AccountStoreTests {
         ]
     )
     func storeAndFetchBackendEnvironment(_ backendEnvironment: BackendEnvironment2) throws {
+        // Given
         let sut = try AccountStore(root: url)
         let accountId = UUID()
 
+        // When
         sut.storeBackendEnvironment(backendEnvironment, for: accountId)
         let fetched = try sut.fetchBackendEnvironment(accountID: accountId)
 
+        // Then
         #expect(fetched == backendEnvironment)
     }
 
     @Test
     func fetchMissingBackendEnvironmentReturnsNil() throws {
+        // Given
         let sut = try AccountStore(root: url)
         let accountId = UUID()
 
+        // When
         let fetched = try sut.fetchBackendEnvironment(accountID: accountId)
 
+        // Then
         #expect(fetched == nil)
     }
 
     @Test
     func deleteBackendEnvironment() throws {
+        // Given
         let sut = try AccountStore(root: url)
         let environment = Self.makeBackendEnvironment()
         let validAccount = Account(userName: "Alice", userIdentifier: UUID())
 
+        // When
         sut.storeBackendEnvironment(environment, for: validAccount.userIdentifier)
         sut.deleteBackendEnvironment(account: validAccount)
 
         let fetched = try sut.fetchBackendEnvironment(accountID: validAccount.userIdentifier)
 
+        // Then
         #expect(fetched == nil)
     }
 
