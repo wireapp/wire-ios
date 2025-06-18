@@ -52,14 +52,14 @@ final class UserClientsAPITests: XCTestCase {
         try await apiSnapshotHelper.verifyRequest(for: APIVersion.allCasesUpTo(.v8)) { sut in
             _ = try await sut.updateClient(
                 id: "000600d0-000b-9c1a-000d-a4130002c221",
-                payload: .init(capabilities: [.legalholdConsent])
+                clientUpdate: .init(capabilities: [.legalholdConsent])
             )
         }
 
         try await apiSnapshotHelper.verifyRequest(for: APIVersion.v8.andNextVersions) { sut in
             _ = try await sut.updateClient(
                 id: "000600d0-000b-9c1a-000d-a4130002c221",
-                payload: .init(capabilities: [.legalholdConsent, .consumableNotifications])
+                clientUpdate: .init(capabilities: [.legalholdConsent, .consumableNotifications])
             )
         }
     }
