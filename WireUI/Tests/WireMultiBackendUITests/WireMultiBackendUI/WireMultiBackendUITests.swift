@@ -44,7 +44,7 @@ final class WireMultiBackendUITests: XCTestCase {
                 AccountUIModel(
                     avatarSource: .image(.strokedCheckmark),
                     name: "Kim Dawson",
-                    handle: "@username",
+                    handle: "username",
                     teamName: nil,
                     backendName: nil,
                     action: {}
@@ -52,7 +52,7 @@ final class WireMultiBackendUITests: XCTestCase {
                 AccountUIModel(
                     avatarSource: .text("DS"),
                     name: "Deniz Agha",
-                    handle: "@username",
+                    handle: "username",
                     teamName: "team name",
                     backendName: "backend name",
                     action: {}
