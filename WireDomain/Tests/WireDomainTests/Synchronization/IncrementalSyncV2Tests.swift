@@ -300,7 +300,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
                 Scaffolding.event3
             ].flatMap(\.events)
         )
-        
+
         XCTAssertEqual(messageLocalStore.addPotentialGapSystemMessage_Invocations.count, 1)
         XCTAssertEqual(liveDelegate.didMissedEventsSync_Invocations.count, 1)
 
