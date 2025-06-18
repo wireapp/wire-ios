@@ -106,6 +106,8 @@ extern NSString * __nonnull const ReadReceiptsEnabledKey;
 @end
 
 
+
+
 @interface ZMSession : ZMManagedObject
 
 @property (nonnull, nonatomic, strong) ZMUser *selfUser;
