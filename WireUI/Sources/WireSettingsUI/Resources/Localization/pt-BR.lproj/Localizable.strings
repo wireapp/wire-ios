@@ -17,7 +17,7 @@
 //
 
 "backup.export.action" = "Fazer backup agora";
-"backup.export.description" = "Crie um backup para preservar seu histórico de conversas. Você pode usar isso para restaurar o histórico se perder seu computador ou mudar para um novo. O arquivo de backup não é protegido pela criptografia de ponta a ponta do Wire, então armazene-o em um local seguro.";
+"backup.export.description" = "Create a backup to preserve your conversation history. This way, you can restore history if you lose your device or switch to a new one. The backup file is not end-to-end encrypted. Please store it safely.";
 
 "backup.import.action" = "Restaurar de um backup";
 "backup.import.description" = "O histórico existente neste dispositivo permanece e será concluído pelo novo backup. Você pode restaurar o histórico de todos os seus dispositivos e plataformas diferentes, mas não de outra conta.";
