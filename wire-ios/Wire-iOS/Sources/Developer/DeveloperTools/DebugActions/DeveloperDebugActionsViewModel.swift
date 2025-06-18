@@ -208,7 +208,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
 
     private func triggerResourcesSync() {
         Task {
-           await userSession?.triggerResourcesSync()
+            await userSession?.triggerResourcesSync()
         }
     }
 

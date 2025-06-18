@@ -408,7 +408,7 @@ extension SettingsCellDescriptorFactory {
                 fileUnarchiver: ZipArchiveFileUnarchiver(),
                 syncTrigger: {
                     Task {
-                       await userSession.triggerResourcesSync()
+                        await userSession.triggerResourcesSync()
                     }
                 },
                 logger: WireLogger.backupImport

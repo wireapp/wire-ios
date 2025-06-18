@@ -153,7 +153,7 @@ enum DebugActions {
 
     static func triggerSlowSync(_ type: any SettingsCellDescriptorType) {
         Task {
-           await ZMUserSession.shared()?.triggerInitialSync()
+            await ZMUserSession.shared()?.triggerInitialSync()
         }
     }
 

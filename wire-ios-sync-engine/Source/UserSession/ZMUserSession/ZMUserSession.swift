@@ -624,8 +624,11 @@ public final class ZMUserSession: NSObject {
 
     /// Executes specific or regular sync after db migration
     public func triggerSync() async {
-        let (initialSync, resoucesSync) = await syncContext.perform({ (self.syncContext.readMigrationNeedsSlowSyncFlag(), self.syncContext.readMigrationNeedsSyncResourcesFlag()) })
-        
+        let (initialSync, resoucesSync) = await syncContext.perform { (
+            self.syncContext.readMigrationNeedsSlowSyncFlag(),
+            self.syncContext.readMigrationNeedsSyncResourcesFlag()
+        ) }
+
         if initialSync || journal[.isInitialSyncRequired] {
             await triggerInitialSync()
         } else if resoucesSync {
