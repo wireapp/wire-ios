@@ -40,7 +40,7 @@ final class AccountSwitcherViewTests: XCTestCase {
         AccountUIModel(
             avatarSource: .image(.strokedCheckmark),
             name: "Name",
-            handle: "@handle",
+            handle: "handle",
             teamName: "Team",
             backendName: nil,
             action: {}
@@ -48,7 +48,7 @@ final class AccountSwitcherViewTests: XCTestCase {
         AccountUIModel(
             avatarSource: .text("DS"),
             name: "Name 2",
-            handle: "@handle 2",
+            handle: "handle 2",
             teamName: "Team two",
             backendName: "Backend two",
             action: {}
