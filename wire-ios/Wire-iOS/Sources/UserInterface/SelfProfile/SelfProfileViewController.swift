@@ -31,6 +31,12 @@ import WireSettingsUI
 import WireSyncEngine
 import WireUtilities
 
+// sourcery: AutoMockable
+protocol SelfProfileAccountManager {
+    func sortedAccounts() -> [Account]
+    var selectedAccount: Account? { get }
+}
+
 /// The first page of the user settings.
 final class SelfProfileViewController: UIViewController {
 
@@ -54,6 +60,7 @@ final class SelfProfileViewController: UIViewController {
     let mainCoordinator: AnyMainCoordinator
     private let selfProfileViewsMonitor: SelfProfileViewsMonitor
     private let analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?
+    private let accountManager: (any SelfProfileAccountManager)?
 
     // MARK: - Configuration
 
@@ -69,11 +76,13 @@ final class SelfProfileViewController: UIViewController {
         userSession: UserSession,
         accountSelector: AccountSelector?,
         mainCoordinator: AnyMainCoordinator,
-        analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?
+        analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?,
+        accountManager: (any SelfProfileAccountManager)?
     ) {
         self.accountSelector = accountSelector
         self.mainCoordinator = mainCoordinator
         self.analyticsEventTracker = analyticsEventTracker
+        self.accountManager = accountManager
 
         // Create the settings hierarchy
         let settingsPropertyFactory = SettingsPropertyFactory(
@@ -153,8 +162,7 @@ final class SelfProfileViewController: UIViewController {
             }))
         }
 
-        let accountManager = SessionManager.shared?.accountManager
-        let otherAccounts = (accountManager?.accounts ?? [])
+        let otherAccounts = (accountManager?.sortedAccounts() ?? [])
             .filter {
                 !$0.isEqual(accountManager?.selectedAccount)
             }
@@ -230,10 +238,10 @@ final class SelfProfileViewController: UIViewController {
         guard !DeveloperFlag.multibackend.isOn else {
             return
         }
-        if let accounts = SessionManager.shared?.accountManager.sortedAccounts(), accounts.count > 1 {
+        if let accounts = accountManager?.sortedAccounts(), accounts.count > 1 {
             let accountSelectorView = AccountSelectorView()
             accountSelectorView.delegate = self
-            accountSelectorView.accounts = Array(accounts)
+            accountSelectorView.accounts = accounts
             navigationItem.titleView = accountSelectorView
             self.accountSelectorView = accountSelectorView
         } else {
@@ -426,7 +434,7 @@ extension SelfProfileViewController: UIAdaptivePresentationControllerDelegate {
 extension SelfProfileViewController: AccountSelectorViewDelegate {
 
     private func handleAccountSelected(_ account: Account) {
-        guard SessionManager.shared?.accountManager.selectedAccount != account else { return }
+        guard accountManager?.selectedAccount != account else { return }
 
         sendDismissAnalyticsEventIfNeeded()
         presentingViewController?.dismiss(animated: true) {
@@ -467,7 +475,7 @@ extension Account {
             name: userName,
             handle: handle,
             teamName: teamName,
-            backendName: "Back END INFO", // TODO: [WPB-18008] https://wearezeta.atlassian.net/browse/WPB-18008
+            backendName: nil, // TODO: [WPB-18008] "Back END INFO" https://wearezeta.atlassian.net/browse/WPB-18008
             action: action
         )
     }

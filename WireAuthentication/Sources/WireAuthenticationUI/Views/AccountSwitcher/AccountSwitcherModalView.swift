@@ -42,8 +42,11 @@ struct AccountSwitcherModalView: View {
                     .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
                 Text(L10n.Localizable.SwitchingAccounts.subtitle)
+                    .lineLimit(nil)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .font(Font.textStyle(.body1))
                     .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-                    .font(.textStyle(.body1))
 
                 AccountSwitcherView(
                     otherAccounts: viewModel.accounts,
