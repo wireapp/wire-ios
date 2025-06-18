@@ -2115,6 +2115,30 @@ public class MockLiveSyncProtocol: LiveSyncProtocol {
 
 }
 
+public class MockMLSGroupRepairAgentProtocol: MLSGroupRepairAgentProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - repairConversations
+
+    public var repairConversations_Invocations: [Void] = []
+    public var repairConversations_MockMethod: (() async -> Void)?
+
+    public func repairConversations() async {
+        repairConversations_Invocations.append(())
+
+        guard let mock = repairConversations_MockMethod else {
+            fatalError("no mock for `repairConversations`")
+        }
+
+        await mock()
+    }
+
+}
+
 class MockMLSMessageDecryptorProtocol: MLSMessageDecryptorProtocol {
 
     // MARK: - Life cycle

@@ -76,7 +76,6 @@ public final class ZMUserSession: NSObject {
     let legacyHotFix: ZMHotFix
 
     var accessTokenRenewalObserver: AccessTokenRenewalObserver?
-    private var mlsGroupRepairAgent: MLSGroupRepairAgentProtocol?
 
     var recurringActionService: any RecurringActionServiceInterface
 
@@ -591,11 +590,6 @@ public final class ZMUserSession: NSObject {
         syncAgent.delegate = self
 
         mlsService.setSyncDelegate(syncAgent)
-        mlsGroupRepairAgent = MLSGroupRepairAgent(
-            journal: journal,
-            mlsService: mlsService,
-            syncStatePublisher: clientSessionComponent.syncStateSubject.eraseToAnyPublisher()
-        )
 
         // Finish setting up the final strategies.
         if
