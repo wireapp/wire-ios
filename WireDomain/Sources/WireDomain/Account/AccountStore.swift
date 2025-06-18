@@ -36,8 +36,10 @@ private let log = WireLogger(tag: "Accounts")
 
 struct AccountStore {
 
-    private let directory: URL
-    private static let directoryName = "Accounts"
+    private let accountsDirectory: URL
+    private let accountDataDirectory: URL
+    private static let accountsDirectoryName = "Accounts"
+    private static let accountDataDirectoryName = "AccountData"
     private let fileManager = FileManager.default
 
     private let encoder = JSONEncoder()
@@ -49,8 +51,10 @@ struct AccountStore {
     /// - parameter root: The root url in which the storage will use to store its data
 
     init(root: URL) throws {
-        self.directory = root.appendingPathComponent(AccountStore.directoryName)
-        try fileManager.createAndProtectDirectory(at: directory)
+        self.accountsDirectory = root.appendingPathComponent(AccountStore.accountsDirectoryName)
+        self.accountDataDirectory = root
+            .appendingPathComponent(AccountStore.accountDataDirectoryName)
+        try fileManager.createAndProtectDirectory(at: accountsDirectory)
     }
 
     // MARK: - Fetch
@@ -217,7 +221,7 @@ struct AccountStore {
     @discardableResult
     static func delete(at root: URL) -> Bool {
         do {
-            try FileManager.default.removeItem(at: root.appendingPathComponent(directoryName))
+            try FileManager.default.removeItem(at: root.appendingPathComponent(accountsDirectoryName))
             return true
         } catch {
             log.error("Unable to remove all accounts, error: \(error.safeForLoggingDescription)")
@@ -229,7 +233,7 @@ struct AccountStore {
 
     private func listAccountIDs() -> Set<UUID> {
         do {
-            let paths = try fileManager.contentsOfDirectory(atPath: directory.path)
+            let paths = try fileManager.contentsOfDirectory(atPath: accountsDirectory.path)
             let ids = paths.compactMap(UUID.init(uuidString:))
             return Set(ids)
         } catch {
@@ -239,11 +243,13 @@ struct AccountStore {
     }
 
     private func url(for id: UUID) -> URL {
-        directory.appendingPathComponent(id.uuidString)
+        accountsDirectory.appendingPathComponent(id.uuidString)
     }
 
     private func backendEnvironmentURL(for id: UUID) -> URL {
-        directory.appendingPathComponent("\(id.uuidString)-backend-environment.json")
+        accountDataDirectory
+            .appendingPathComponent(id.uuidString)
+            .appendingPathComponent("backend-environment.json")
     }
 }
 

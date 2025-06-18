@@ -378,7 +378,7 @@ final class AccountStoreTests {
         )
         #expect(account == expectedAccount)
     }
-    
+
     @Test(
         "Store and fetch backend environment",
         arguments: [
@@ -393,7 +393,7 @@ final class AccountStoreTests {
     func storeAndFetchBackendEnvironment(_ backendEnvironment: BackendEnvironment2) throws {
         let sut = try AccountStore(root: url)
         let accountId = UUID()
-        
+
         sut.storeBackendEnvironment(backendEnvironment, for: accountId)
         let fetched = try sut.fetchBackendEnvironment(accountID: accountId)
 
@@ -415,12 +415,12 @@ final class AccountStoreTests {
         let sut = try AccountStore(root: url)
         let environment = Self.makeBackendEnvironment()
         let validAccount = Account(userName: "Alice", userIdentifier: UUID())
-        
+
         sut.storeBackendEnvironment(environment, for: validAccount.userIdentifier)
         sut.deleteBackendEnvironment(account: validAccount)
-        
+
         let fetched = try sut.fetchBackendEnvironment(accountID: validAccount.userIdentifier)
-        
+
         #expect(fetched == nil)
     }
 
