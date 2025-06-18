@@ -210,7 +210,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     /// Perform an incremental sync.
 
     func performIncrementalSync() async throws {
-        let liveSync = journal[.isConsumableNotificationsEnabled]
+        let isConsumableNotificationsEnabled = journal[.isConsumableNotificationsEnabled]
 
         if isSyncV2Enabled {
 
@@ -219,7 +219,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                     guard let self else { return }
                     delegate?.syncAgentDidStartIncrementalSync(self)
 
-                    if liveSync {
+                    if isConsumableNotificationsEnabled {
                         incrementalSyncToken = try await incrementalSyncProvider.provideLiveSync(delegate: self)
                             .perform()
                     } else {
