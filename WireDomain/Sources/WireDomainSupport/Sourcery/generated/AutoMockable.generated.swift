@@ -2873,6 +2873,39 @@ public class MockPullPendingUpdateEventsSyncProtocol: PullPendingUpdateEventsSyn
 
 }
 
+public class MockPullPendingUpdateEventsSyncV2Protocol: PullPendingUpdateEventsSyncV2Protocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - pull
+
+    public var pull_Invocations: [Void] = []
+    public var pull_MockError: Error?
+    public var pull_MockMethod: (() async throws -> AsyncStream<[UpdateEvent]>)?
+    public var pull_MockValue: AsyncStream<[UpdateEvent]>?
+
+    @discardableResult
+    public func pull() async throws -> AsyncStream<[UpdateEvent]> {
+        pull_Invocations.append(())
+
+        if let error = pull_MockError {
+            throw error
+        }
+
+        if let mock = pull_MockMethod {
+            return try await mock()
+        } else if let mock = pull_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `pull`")
+        }
+    }
+
+}
+
 public class MockPullResourcesSyncProtocol: PullResourcesSyncProtocol {
 
     // MARK: - Life cycle
