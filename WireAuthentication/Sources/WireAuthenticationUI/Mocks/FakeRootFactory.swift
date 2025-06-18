@@ -28,7 +28,7 @@ struct FakeRootFactory: RootFactory, OpenAppStoreUseCaseFactory {
             factory: self,
             bridge: WireAuthenticationBridge(),
             backendInfo: mockDependencies.backendInfo,
-            multibackendEnabled: false,
+            isMultibackendEnabled: false,
             hasOtherAccountsProvider: { true },
         )
     }

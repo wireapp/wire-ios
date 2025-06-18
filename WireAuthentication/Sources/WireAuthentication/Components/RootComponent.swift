@@ -41,7 +41,7 @@ final class RootComponent: BootstrapComponent {
     public let ssoCallbackURLScheme: String
     public let appStoreURL: URL
     public let accountsPublisher: CurrentValuePublisher<[AccountUIModel]>
-    public let multibackendEnabled: Bool
+    public let isMultibackendEnabled: Bool
     public let useLegacyRegistrationFlow: Bool
     public let personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
 
@@ -68,7 +68,7 @@ final class RootComponent: BootstrapComponent {
         appStoreURL: URL,
         accountsPublisher: CurrentValuePublisher<[AccountUIModel]>,
         useLegacyRegistrationFlow: Bool,
-        multibackendEnabled: Bool,
+        isMultibackendEnabled: Bool,
         personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
     ) {
         self.backendInfo = backendInfo
@@ -84,7 +84,7 @@ final class RootComponent: BootstrapComponent {
         self.appStoreURL = appStoreURL
         self.accountsPublisher = accountsPublisher
         self.useLegacyRegistrationFlow = useLegacyRegistrationFlow
-        self.multibackendEnabled = multibackendEnabled
+        self.isMultibackendEnabled = isMultibackendEnabled
         self.personalAccountCreationAnalyticsTracker = personalAccountCreationAnalyticsTracker
     }
 
@@ -116,7 +116,7 @@ extension RootComponent: RootViewModel.Factory {
                 factory: self,
                 bridge: bridge,
                 backendInfo: backendInfo,
-                multibackendEnabled: multibackendEnabled,
+                isMultibackendEnabled: isMultibackendEnabled,
                 hasOtherAccountsProvider: { [accountsPublisher] in
                     !accountsPublisher.value.isEmpty
                 }

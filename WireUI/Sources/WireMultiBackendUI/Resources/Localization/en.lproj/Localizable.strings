@@ -17,7 +17,7 @@
 //
 
 "manageTeam.title" = "Manage Team & Billing";
-"addAccount.title" = "Add account or team";
+"addAccount.title" = "Add Account or Team";
 "accounts.header" = "Other accounts";
 
 "obsolete_client_alert.title" = "Update required";
