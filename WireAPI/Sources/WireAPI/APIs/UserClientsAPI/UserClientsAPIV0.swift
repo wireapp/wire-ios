@@ -227,7 +227,7 @@ struct ClientUpdateV0: Equatable, Sendable, Encodable {
     /// The capabilities of the client.
     /// - Note: capabilities cannot be removed once added to a client,
     ///  so once 1 capability added it must always be present
-    let capabilities: [UserClientCapability]?
+    let capabilities: [UserClientCapability]? // TODO: [WPB-18279] remove public conformance of Encodable, don't rely on public models
 
     /// A label describing the client.
 
@@ -235,15 +235,15 @@ struct ClientUpdateV0: Equatable, Sendable, Encodable {
 
     /// The last resort Prekey
 
-    let lastKey: Prekey?
+    let lastKey: Prekey? // TODO: [WPB-18279] remove public conformance of Encodable, don't rely on public models
 
     /// The mls public keys for the client.
 
-    let mlsPublicKeys: MLSPublicKeys?
+    let mlsPublicKeys: MLSPublicKeys? // TODO: [WPB-18279] remove public conformance of Encodable, don't rely on public models
 
     /// New prekeys for other clients to establish OTR sessions.
 
-    let preKeys: [Prekey]?
+    let preKeys: [Prekey]? // TODO: [WPB-18279] remove public conformance of Encodable, don't rely on public models
 }
 
 extension ClientUpdate {
