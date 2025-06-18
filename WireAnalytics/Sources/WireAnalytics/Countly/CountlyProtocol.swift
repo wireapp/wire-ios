@@ -26,7 +26,8 @@ public protocol CountlyProtocol {
 
     func start(
         appKey: String,
-        host: URL
+        host: URL,
+        useTemporaryID: Bool
     )
 
     func setUserValue(
@@ -42,6 +43,10 @@ public protocol CountlyProtocol {
     func beginSession()
 
     func endSession()
+
+//    func enableTemporaryDeviceIDMode()
+
+    var currentDeviceID: String { get }
 
     func recordEvent(
         _ key: String,

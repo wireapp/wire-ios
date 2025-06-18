@@ -5,7 +5,7 @@ import PackageDescription
 
 // You can enable/disable Datadog for debugging by overriding the boolean.
 let isDatadogEnabled = hasEnvironmentVariable("ENABLE_DATADOG", "true")
-let isCountlyEnabled = hasEnvironmentVariable("ENABLE_COUNTLY", "true")
+let isCountlyEnabled = true//hasEnvironmentVariable("ENABLE_COUNTLY", "true")
 
 let package = Package(
     name: "WireAnalytics",
@@ -17,7 +17,7 @@ let package = Package(
         .library(name: "WireDatadog", targets: ["WireDatadog"])
     ],
     dependencies: [
-        .package(url: "https://github.com/Countly/countly-sdk-ios.git", exact: "24.4.2"),
+        .package(url: "https://github.com/Countly/countly-sdk-ios.git", exact: "24.7.1"),
         .package(url: "https://github.com/DataDog/dd-sdk-ios.git", exact: "2.27.0"),
         .package(path: "../WireFoundation"),
         .package(path: "../WireLogging"),

@@ -49,8 +49,8 @@ struct PersonalAccountCreationAnalyticsTracker: PersonalAccountCreationAnalytics
 
     mutating func setUp() {
         do {
-            let analyticsUser = createAnalyticsUserIfNeeded()
-            try enableAnalytics(user: analyticsUser)
+            //let analyticsUser = createAnalyticsUserIfNeeded()
+            try enableAnalytics()
 
         } catch {
             logger.error("Can't set up analytics during personal account registration")
@@ -66,11 +66,17 @@ struct PersonalAccountCreationAnalyticsTracker: PersonalAccountCreationAnalytics
     }
 
     func trackPersonalAccountCreationStart() {
-        analyticsTracker?.trackEvent(.Registration.accountSetupStep0)
+        if let analyticsTracker {
+            print("KKKK accountSetupStep0")
+            analyticsTracker.trackEvent(.Registration.accountSetupStep0)
+        }
     }
 
     func trackPersonalAccountCreationReachedTermsOfUseConfirmation() {
-        analyticsTracker?.trackEvent(.Registration.accountSetupStep1)
+        if let analyticsTracker {
+            print("KKKK accountSetupStep1")
+            analyticsTracker.trackEvent(.Registration.accountSetupStep1)
+        }
     }
 
     func trackPersonalAccountCreationReachedVerificationCode() {
@@ -91,10 +97,13 @@ struct PersonalAccountCreationAnalyticsTracker: PersonalAccountCreationAnalytics
 
     // MARK: - Helpers
 
-    private mutating func enableAnalytics(user: AnalyticsUser) throws {
-        analyticsService?.enableTracking()
-        try analyticsService?.switchUser(user)
+    private mutating func enableAnalytics(/*user: AnalyticsUser*/) throws {
+        analyticsService?.enableTracking(useTemporaryID: true)
+        //analyticsService?.enableTemporaryDeviceIDMode()
+//        try analyticsService?.switchUser(user)
         analyticsTracker = analyticsService
+        let currentDeviceID = analyticsService?.currentDeviceID
+        print("KKKK currentDeviceID: \(currentDeviceID)")
     }
 
     private mutating func disableAnalytics() throws {
@@ -104,11 +113,13 @@ struct PersonalAccountCreationAnalyticsTracker: PersonalAccountCreationAnalytics
 
     private func createAnalyticsUserIfNeeded() -> AnalyticsUser {
         if let existingID = userDefaults.string(forKey: Constants.analyticsIdentifierKey) {
+            print("KKKK existingID: \(existingID)")
             return AnalyticsUser(analyticsIdentifier: existingID, teamInfo: nil)
         }
 
         let newAnalyticsID = UUID().uuidString
         userDefaults.set(newAnalyticsID, forKey: Constants.analyticsIdentifierKey)
+        print("KKKK new: \(newAnalyticsID)")
         return AnalyticsUser(analyticsIdentifier: newAnalyticsID, teamInfo: nil)
     }
 

@@ -51,8 +51,8 @@
         "repositoryURL": "https://github.com/Countly/countly-sdk-ios.git",
         "state": {
           "branch": null,
-          "revision": "5bd619c77df5770a0e2ad65f92e98a464f692b7c",
-          "version": "24.4.2"
+          "revision": "19da125cee710e79078c79d48fca55a2d109a4b5",
+          "version": "24.7.1"
         }
       },
       {

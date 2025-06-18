@@ -34,12 +34,16 @@ public struct CountlyWrapper: CountlyProtocol {
 
     public func start(
         appKey: String,
-        host: URL
+        host: URL,
+        useTemporaryID: Bool
     ) {
         let config = CountlyConfig()
         config.appKey = appKey
         config.manualSessionHandling = true
         config.host = host.absoluteString
+        if useTemporaryID {
+            countly().enableTemporaryDeviceIDMode()
+        }
         countly().start(with: config)
     }
 
@@ -71,6 +75,10 @@ public struct CountlyWrapper: CountlyProtocol {
 
     public func endSession() {
         countly().endSession()
+    }
+
+    public var currentDeviceID: String {
+        countly().deviceID()
     }
 
     public func recordEvent(
