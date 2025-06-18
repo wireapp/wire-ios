@@ -17,12 +17,13 @@
 //
 
 import SwiftUI
+import WireFoundation
+import WireMultiBackendUI
 import WireTestingPackage
 import XCTest
-@testable import WireMultiBackendUI
+@testable import WireAuthenticationUI
 
-// placeholder for now
-final class WireMultiBackendUITests: XCTestCase {
+final class AccountSwitcherViewTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
@@ -35,35 +36,40 @@ final class WireMultiBackendUITests: XCTestCase {
         snapshotHelper = nil
     }
 
+    let accounts = [
+        AccountUIModel(
+            avatarSource: .image(.strokedCheckmark),
+            name: "Name",
+            handle: "handle",
+            teamName: "Team",
+            backendName: nil,
+            action: {}
+        ),
+        AccountUIModel(
+            avatarSource: .text("DS"),
+            name: "Name 2",
+            handle: "handle 2",
+            teamName: "Team two",
+            backendName: "Backend two",
+            action: {}
+        )
+    ]
+
     @MainActor
     func testAccountSwitcher() {
         let screenBounds = UIScreen.main.bounds
 
-        let sut = AccountSwitcherView(
-            otherAccounts: [
-                AccountUIModel(
-                    avatarSource: .image(.strokedCheckmark),
-                    name: "Kim Dawson",
-                    handle: "username",
-                    teamName: nil,
-                    backendName: nil,
-                    action: {}
-                ),
-                AccountUIModel(
-                    avatarSource: .text("DS"),
-                    name: "Deniz Agha",
-                    handle: "username",
-                    teamName: "team name",
-                    backendName: "backend name",
-                    action: {}
+        let view = AccountSwitcherModalView(FakeAccountSwitcherFactory(accounts: accounts))
+            .inNavigationStack()
+            .frame(width: screenBounds.width, height: screenBounds.height)
+            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+
+        for dynamicTypeSize in DynamicTypeSize.allCases {
+            snapshotHelper
+                .verify(
+                    matching: view.dynamicTypeSize(dynamicTypeSize),
+                    named: "\(dynamicTypeSize)"
                 )
-            ],
-            options: [
-                .addAccountOption {},
-                .manageTeamOption {}
-            ],
-            showLastSeparator: false
-        ).frame(width: screenBounds.width)
-        snapshotHelper.verify(matching: sut)
+        }
     }
 }
