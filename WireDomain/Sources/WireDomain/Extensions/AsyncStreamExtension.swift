@@ -26,46 +26,20 @@ extension AsyncThrowingStream {
         AsyncThrowingStream<[Element], Error> { continuation in
             Task {
                 var iterator = self.makeAsyncIterator()
-
+                var batch: [Element] = []
                 do {
-                    while let first = try await iterator.next() {
-                        var batch: [Element] = [first]
-                        let deadline = ContinuousClock.now.advanced(by: .seconds(timeout))
-
-                        while batch.count < maxCount {
-                            let now = ContinuousClock.now
-                            let remaining = now.duration(to: deadline)
-                            if remaining <= .zero {
-                                break
-                            }
-
-                            let next = try await withThrowingTaskGroup(of: Element?.self) { group in
-                                group.addTask {
-                                    try await iterator.next()
-                                }
-
-                                group.addTask {
-                                    try await Task.sleep(nanoseconds: UInt64(remaining.components.seconds * 1_000_000_000))
-                                    return nil
-                                }
-
-                                let result = try await group.next()
-                                group.cancelAll()
-                                return result
-                            }
-
-                            guard let element = next else {
-                                break // timeout
-                            }
-                            if element != nil {
-                                batch.append(element!)
-                            }
-
+                    while let element = try await iterator.next() {
+                        print("😅",element)
+                        batch.append(element)
+                        
+                        if batch.count == maxCount {
+                            continuation.yield(batch)
+                            batch = []
                         }
-
-                        continuation.yield(batch)
+                        
+                        
                     }
-
+                    continuation.yield(batch)
                     continuation.finish()
                 } catch {
                     continuation.finish(throwing: error)
