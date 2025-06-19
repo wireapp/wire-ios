@@ -23,10 +23,26 @@ public enum UserClientCapability: String, Sendable {
     /// The client consents to being subject legalhold
     /// (directly or indirectly).
 
-    case legalholdConsent = "legalhold-implicit-consent"
+    case legalholdConsent
 
     /// The client is able to use new incremental sync from server using websocket acknowledgement (async notifications)
 
-    case consumableNotifications = "consumable-notifications"
+    case consumableNotifications
 
 }
+
+
+enum UserClientCapabilityV0: String, Codable, Sendable, ToAPIModelConvertible {
+    case legalholdConsent = "legalhold-implicit-consent"
+    case consumableNotifications = "consumable-notifications"
+
+    func toAPIModel() -> UserClientCapability {
+        switch self {
+        case .legalholdConsent:
+            return .legalholdConsent
+        case .consumableNotifications:
+            return .consumableNotifications
+        }
+    }
+}
+

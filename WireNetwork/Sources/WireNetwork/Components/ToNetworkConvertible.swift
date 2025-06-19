@@ -16,29 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
+import Foundation
 
-/// Fully qualified identifier in a federated environment.
+/// A type that can be converted to an associated network model.
 
-public struct QualifiedID: Hashable, Sendable {
+protocol ToNetworkConvertible {
 
-    public var id: UUID
-    public var domain: String
+    associatedtype NetworkModel
 
-    public init(
-        id: UUID,
-        domain: String
-    ) {
-        self.id = id
-        self.domain = domain
-    }
-
-}
-
-extension QualifiedID: CustomDebugStringConvertible {
-
-    public var debugDescription: String {
-        "\(id)@\(domain)"
-    }
+    func toNetworkModel() -> NetworkModel
 
 }

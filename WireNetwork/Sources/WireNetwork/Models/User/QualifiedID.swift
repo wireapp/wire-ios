@@ -16,11 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
+internal import Foundation
+import WireFoundation
 
 /// Fully qualified identifier in a federated environment.
 
-public struct QualifiedID: Hashable, Equatable, Sendable {
+public typealias QualifiedID = WireFoundation.QualifiedID
+
+struct QualifiedIDV0: Hashable, Equatable, Sendable, Codable, ToAPIModelConvertible {
 
     public let uuid: UUID
     public let domain: String
@@ -38,4 +41,13 @@ public struct QualifiedID: Hashable, Equatable, Sendable {
         case domain
     }
 
+    func toAPIModel() -> QualifiedID {
+        QualifiedID(id: uuid, domain: domain)
+    }
+}
+
+extension QualifiedID: ToNetworkConvertible {
+    func toNetworkModel() ->QualifiedIDV0 {
+        QualifiedIDV0(uuid: id, domain: domain)
+    }
 }

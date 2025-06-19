@@ -101,7 +101,7 @@ struct SelfUserClientV0: Decodable, ToAPIModelConvertible {
 
     struct CapabilitiesList: Decodable {
 
-        let capabilities: [UserClientCapability]
+        let capabilities: [UserClientCapabilityV0]
 
     }
 
@@ -131,7 +131,7 @@ struct SelfUserClientV0: Decodable, ToAPIModelConvertible {
             lastActiveDate: lastActiveDate?.date,
             mlsPublicKeys: mlsPublicKeys,
             cookie: cookie,
-            capabilities: capabilities?.capabilities ?? []
+            capabilities: capabilities?.capabilities.map { $0.toAPIModel() } ?? []
         )
     }
 

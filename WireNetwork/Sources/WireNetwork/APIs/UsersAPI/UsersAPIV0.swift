@@ -33,7 +33,7 @@ class UsersAPIV0: UsersAPI, VersionedAPI {
     // MARK: - Get team
 
     func getUser(for userID: UserID) async throws -> User {
-        let path = "\(pathPrefix)/users/\(userID.domain)/\(userID.uuid.transportString())"
+        let path = "\(pathPrefix)/users/\(userID.domain)/\(userID.id.transportString())"
 
         let request = try URLRequestBuilder(path: path)
             .withMethod(.get)
@@ -51,7 +51,7 @@ class UsersAPIV0: UsersAPI, VersionedAPI {
     }
 
     func getUsers(userIDs: [UserID]) async throws -> UserList {
-        let body = try JSONEncoder.defaultEncoder.encode(ListUsersRequestV0(qualifiedIDs: userIDs))
+        let body = try JSONEncoder.defaultEncoder.encode(ListUsersRequestV0(qualifiedIDs: userIDs.toNetworkModel()))
         let path = "\(pathPrefix)/list-users"
 
         let request = try URLRequestBuilder(path: path)
@@ -120,7 +120,7 @@ struct UserResponseV0: Decodable, ToAPIModelConvertible {
 
 struct ListUsersRequestV0: Encodable {
 
-    let qualifiedIDs: [QualifiedID]
+    let qualifiedIDs: [QualifiedIDV0]
 
     enum CodingKeys: String, CodingKey {
 
