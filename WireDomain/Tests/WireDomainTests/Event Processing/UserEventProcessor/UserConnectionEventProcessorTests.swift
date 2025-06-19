@@ -92,7 +92,6 @@ final class UserConnectionEventProcessorTests: XCTestCase {
     func testProcessEvent_Pending_Connection_It_Invokes_Repo_And_Resolver_Methods() async throws {
         // Given
 
-        let expectation = expectation(description: "resolved 1:1 conversation")
         let event = UserConnectionEvent(
             userName: Scaffolding.username,
             connection: Scaffolding.pendingConnection
@@ -101,9 +100,7 @@ final class UserConnectionEventProcessorTests: XCTestCase {
         // Mock
 
         connectionsRepository.updateConnection_MockMethod = { _ in }
-        oneOnOneResolver.resolveOneOnOneConversationWith_MockMethod = { _ in
-            expectation.fulfill()
-        }
+        oneOnOneResolver.resolveOneOnOneConversationWith_MockMethod = { _ in }
         _ = await context.perform { [self] in
             modelHelper.createUser(
                 qualifiedID: Scaffolding.receiverQualifiedID.toDomainModel(),
@@ -114,7 +111,6 @@ final class UserConnectionEventProcessorTests: XCTestCase {
         // When
 
         try await sut.processEvent(event)
-        await fulfillment(of: [expectation])
 
         // Then
 
