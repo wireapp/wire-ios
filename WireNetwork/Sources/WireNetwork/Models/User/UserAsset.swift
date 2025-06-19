@@ -20,7 +20,7 @@ import Foundation
 
 /// Describes the size of the user asset.
 
-public enum UserAssetSize: String, Codable, Equatable, Sendable {
+public enum UserAssetSize: String, Equatable, Sendable {
 
     /// Smaller version of the asset optimised for size
 
@@ -33,7 +33,7 @@ public enum UserAssetSize: String, Codable, Equatable, Sendable {
 
 /// Describes the purpose of the user asset.
 
-public enum UserAssetType: String, Codable, Equatable, Sendable {
+public enum UserAssetType: String, Equatable, Sendable {
 
     /// User profile image
 
@@ -42,7 +42,7 @@ public enum UserAssetType: String, Codable, Equatable, Sendable {
 
 /// An asset associated with a user, typically a profile picture.
 
-public struct UserAsset: Codable, Equatable, Sendable {
+public struct UserAsset: Equatable, Sendable {
 
     /// Unique key for this asset, if the asset is updated it will be assigned new key.
 

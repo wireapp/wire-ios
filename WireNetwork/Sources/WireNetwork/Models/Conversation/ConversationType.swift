@@ -20,7 +20,7 @@ import Foundation
 
 /// The various types of conversations.
 
-public enum ConversationType: Int, Codable, Sendable {
+public enum ConversationType: Int, Sendable {
 
     /// A conversation with many participants.
 

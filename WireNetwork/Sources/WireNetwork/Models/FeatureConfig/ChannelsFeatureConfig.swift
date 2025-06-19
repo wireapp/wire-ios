@@ -18,7 +18,7 @@
 
 /// A configuration for the *Channels* feature.
 
-public struct ChannelsFeatureConfig: Codable, Equatable, Sendable {
+public struct ChannelsFeatureConfig: Equatable, Sendable {
 
     /// The feature's status.
 
@@ -43,7 +43,7 @@ public struct ChannelsFeatureConfig: Codable, Equatable, Sendable {
     }
 }
 
-public enum ChannelsPermision: String, Codable, Sendable {
+public enum ChannelsPermision: String, Sendable {
 
     /// Member, Admin, Owner
     case teamMembers = "team-members"

@@ -20,7 +20,7 @@ import Foundation
 
 /// The current message protocol used in a conversation.
 
-public enum ConversationMessageProtocol: String, Codable, Sendable {
+public enum ConversationMessageProtocol: String, Sendable {
 
     /// The Proteus messaging protocol.
 
