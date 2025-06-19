@@ -18,6 +18,7 @@
 
 public import SwiftUI
 public import WireConversationsAPI
+public import Combine
 
 public final class WireConversationChannelCreationFormViewModel: ObservableObject {
 
@@ -43,10 +44,36 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
         case unlimited
         case custom
         
+        var title: String {
+            switch self {
+            case .off:
+                "Off"
+            case .oneDay:
+                "1 day"
+            case .oneWeek:
+                "1 week"
+            case .fourWeeks:
+                "4 weeks"
+            case .unlimited:
+                "Unlimited"
+            case .custom:
+                "Custom"
+            }
+        }
+        
         public struct Custom: Equatable, Hashable {
-            public enum Unit: String, Equatable, Hashable, CaseIterable {
+            public enum Unit: Equatable, Hashable, CaseIterable {
                 case days
                 case week
+                
+                var title: String {
+                    switch self {
+                    case .days:
+                        "Days"
+                    case .week:
+                        "Week"
+                    }
+                }
             }
             
             public var unit: Unit = .days
@@ -93,12 +120,14 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
     @Published var channelInvitePolicy: ChannelInvitePolicyOption
     @Published var channelHistoryOption: ChannelHistoryOption
     @Published var channelHistoryOptionCustom: ChannelHistoryOption.Custom = .init()
+    @Published var showUpgradeBanner: Bool = false
     @Published var servicesAllowed: Bool
     @Published var guestsAllowed: Bool
     @Published var readReceiptsEnabled: Bool
     @Published public private(set) var isFormValid: Bool
 
     private let onFormValidityUpdate: @Sendable (_ isValid: Bool) -> Void
+    private var subscriptions = Set<AnyCancellable>()
 
     public init(
         channelName: String,
@@ -123,10 +152,39 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
         self.readReceiptsEnabled = readReceiptsEnabled
 
         self.onFormValidityUpdate = onFormValidityUpdate
+        
+        self.bind()
     }
     
-    func isPremium() -> Bool {
+    // MARK: History sharing
+    
+    private func isPremium() -> Bool {
         false
+    }
+    
+    private func bind() {
+        $channelHistoryOption
+            .filter { [self] in $0 == .custom && !isPremium() }
+            .map { _ in true }
+            .assign(to: \.showUpgradeBanner, on: self)
+            .store(in: &subscriptions)
+    }
+    
+    func channelHistoryAvailableOptions() -> [ChannelHistoryOption] {
+        if isPremium() {
+            [.off, .oneDay, .oneWeek, .fourWeeks, .unlimited, .custom]
+        } else {
+            [.off, .oneDay, .custom]
+        }
+    }
+    
+    func showChannelCustomHistoryPickers() -> Bool {
+        channelHistoryOption == .custom && isPremium()
+    }
+    
+    func hideUpgradeBanner() {
+        showUpgradeBanner = false
+        channelHistoryOption = .oneDay
     }
 
     func onChannelNameUpdate(_ value: String) {

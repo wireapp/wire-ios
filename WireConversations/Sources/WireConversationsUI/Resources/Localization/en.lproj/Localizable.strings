@@ -76,3 +76,17 @@ Do you want to change channel access to private?";
 
 "conversation.creationForm.readReceipts.toggle" = "Read receipts";
 "conversation.creationForm.readReceipts.description" = "When this is on, people can see when their messages in this conversation are read.";
+
+// MARK: - Channel history
+"conversation.creationForm.channelHistory.upgradeBanner.title" = "Show older messages?";
+"conversation.creationForm.channelHistory.upgradeBanner.message" = "Upgrade to a paid plan to offer channel members the whole history.";
+"conversation.creationForm.channelHistory.upgradeBanner.button" = "Upgrade now";
+"conversation.creationForm.channelHistory.picker.title" = "Channel history";
+"conversation.creationForm.channelHistory.picker.off" = "Off";
+"conversation.creationForm.channelHistory.picker.oneDay" = "1 day";
+"conversation.creationForm.channelHistory.picker.oneWeek" = "1 week";
+"conversation.creationForm.channelHistory.picker.fourWeeks" = "4 weeks";
+"conversation.creationForm.channelHistory.picker.unlimited" = "Unlimited";
+"conversation.creationForm.channelHistory.picker.custom" = "Custom";
+"conversation.creationForm.channelHistory.customPicker.days" = "Days";
+"conversation.creationForm.channelHistory.customPicker.weeks" = "Weeks";

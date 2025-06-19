@@ -19,12 +19,12 @@
 public import SwiftUI
 import WireDesign
 import WireConversationsAPI
+import WireReusableUIComponents
 
 public struct WireConversationChannelCreationForm: View {
     public typealias ViewModel = WireConversationChannelCreationFormViewModel
 
     @State private var channelName: String
-    @State private var showUpgradeBanner: Bool = false
     @ObservedObject private var viewModel: WireConversationChannelCreationFormViewModel
 
     public init(
@@ -46,17 +46,14 @@ public struct WireConversationChannelCreationForm: View {
             .onChange(of: channelName) { newValue in
                 viewModel.onChannelNameUpdate(newValue)
             }
-            .onChange(of: viewModel.channelHistoryOption) { newValue in
-                guard newValue == .custom && !viewModel.isPremium() else {
-                    return
-                }
-                
-                showUpgradeBanner = true
-            }
             .overlay {
-                if showUpgradeBanner {
-                    channelUpgradeBanner
+                ZStack {
+                    if viewModel.showUpgradeBanner {
+                        channelUpgradeBanner
+                            .transition(.opacity)
+                    }
                 }
+                .animation(.easeInOut, value: viewModel.showUpgradeBanner)
             }
         
     }
@@ -76,18 +73,48 @@ public struct WireConversationChannelCreationForm: View {
     var channelUpgradeBanner: some View {
         ZStack {
             Rectangle()
-                .foregroundColor(Color.black.opacity(0.5))
+                .foregroundColor(Color.black.opacity(0.6))
                 .edgesIgnoringSafeArea(.all)
             
             VStack(alignment: .leading, spacing: 15) {
-                Text("Show older messages?").foregroundStyle(.white)
-                
-                Text("Upgrade to a paid plan to offer channel members the whole history").foregroundStyle(.white)
-                
-                Button("Upgrade now") {
+                HStack {
+                    Text("Show older messages?")
+                        .wireTextStyle(.buttonSmall)
+                        .foregroundStyle(Color.white)
+                        .bold()
                     
+                    Spacer()
+                    
+                    CloseButton(
+                        action: {
+                            viewModel.hideUpgradeBanner()
+                        },
+                        foregroundColor: SemanticColors.Label.textWhite,
+                        accessibilityLabel: String(
+                            localized: "",
+                            table: "Accessibility",
+                            bundle: .module
+                        )
+                    )
                 }
-                .wireButtonStyle(.tertiary)
+                
+                Text("Upgrade to a paid plan to offer channel members the whole history.")
+                    .foregroundStyle(.white)
+                
+                Link(
+                    "Upgrade now",
+                    destination: URL(string: "https://teams.wire.com/billing/)")!
+                )
+                .lineLimit(1)
+                .padding(8)
+                .background(Color.white.opacity(0.2))
+                .foregroundStyle(Color.white)
+                .wireTextStyle(.buttonSmall)
+                .overlay {
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(.black)
+                }
+                .clipShape(.rect(cornerRadius: 12))
                 
             }
             .roundedBorderAndBackground(
@@ -97,7 +124,8 @@ public struct WireConversationChannelCreationForm: View {
                 cornerRadius: 10,
                 padding: 15
             )
-            .frame(width: UIScreen.main.bounds.width - 20)
+            .frame(maxWidth: .infinity)
+            .padding([.leading, .trailing], 30)
         }
     }
 
@@ -142,7 +170,7 @@ public struct WireConversationChannelCreationForm: View {
                     channelHistoryPicker
                     
                     ZStack {
-                        if viewModel.channelHistoryOption == .custom && viewModel.isPremium() {
+                        if viewModel.showChannelCustomHistoryPickers() {
                             channelCustomHistoryPicker
                                 .transition(.opacity)
                         }
@@ -156,22 +184,11 @@ public struct WireConversationChannelCreationForm: View {
     
     var channelHistoryPicker: some View {
         Picker("Channel history", selection: $viewModel.channelHistoryOption) {
-            Text("Off")
-                .tag(WireConversationChannelCreationFormViewModel.ChannelHistoryOption.off)
-            Text("1 day")
-                .tag(WireConversationChannelCreationFormViewModel.ChannelHistoryOption.oneDay)
-            
-            if viewModel.isPremium() {
-                Text("1 week")
-                    .tag(WireConversationChannelCreationFormViewModel.ChannelHistoryOption.oneWeek)
-                Text("4 weeks")
-                    .tag(WireConversationChannelCreationFormViewModel.ChannelHistoryOption.fourWeeks)
-                Text("Unlimited")
-                    .tag(WireConversationChannelCreationFormViewModel.ChannelHistoryOption.unlimited)
+            ForEach(viewModel.channelHistoryAvailableOptions(), id: \.self) { channelHistoryOption in
+                Text(channelHistoryOption.title)
+                    .tag(channelHistoryOption)
+
             }
-            
-            Text("Custom")
-                .tag(WireConversationChannelCreationFormViewModel.ChannelHistoryOption.custom)
         }
     }
     
@@ -186,7 +203,7 @@ public struct WireConversationChannelCreationForm: View {
 
             Picker("Unit", selection: $viewModel.channelHistoryOptionCustom.unit) {
                 ForEach(ViewModel.ChannelHistoryOption.Custom.Unit.allCases, id: \.self) { unit in
-                    Text(unit.rawValue).tag(unit)
+                    Text(unit.title).tag(unit)
                 }
             }
             .pickerStyle(.wheel)
