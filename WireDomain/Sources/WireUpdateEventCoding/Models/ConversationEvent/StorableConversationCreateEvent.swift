@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 struct StorableConversationCreateEvent: Equatable, Codable, Sendable {
 
@@ -26,7 +26,7 @@ struct StorableConversationCreateEvent: Equatable, Codable, Sendable {
     private let timestamp: Date
     private let conversation: StorableConversation
 
-    init(_ value: WireAPI.ConversationCreateEvent) {
+    init(_ value: WireNetwork.ConversationCreateEvent) {
         self.conversationID = StorableQualifiedID(value.conversationID)
         self.senderID = StorableQualifiedID(value.senderID)
         self.timestamp = value.timestamp
@@ -55,12 +55,12 @@ struct StorableConversationCreateEvent: Equatable, Codable, Sendable {
         )
     }
 
-    func toAPIModel() -> WireAPI.ConversationCreateEvent {
+    func toAPIModel() -> WireNetwork.ConversationCreateEvent {
         .init(
             conversationID: conversationID.toAPIModel(),
             senderID: senderID.toAPIModel(),
             timestamp: timestamp,
-            conversation: WireAPI.Conversation(
+            conversation: WireNetwork.Conversation(
                 id: conversation.id,
                 qualifiedID: conversation.qualifiedID?.toAPIModel(),
                 teamID: conversation.teamID,
@@ -121,7 +121,7 @@ private enum StorableConversationType: String, Codable, Sendable {
     case oneOnOne
     case connection
 
-    init(_ value: WireAPI.ConversationType) {
+    init(_ value: WireNetwork.ConversationType) {
         switch value {
         case .group:
             self = .group
@@ -134,7 +134,7 @@ private enum StorableConversationType: String, Codable, Sendable {
         }
     }
 
-    func toAPIModel() -> WireAPI.ConversationType {
+    func toAPIModel() -> WireNetwork.ConversationType {
         switch self {
         case .group:
             .group
@@ -154,7 +154,7 @@ private enum StorableConversationGroupType: String, Codable, Sendable {
     case group
     case channel
 
-    init(_ value: WireAPI.ConversationGroupType) {
+    init(_ value: WireNetwork.ConversationGroupType) {
         switch value {
         case .group:
             self = .group
@@ -163,7 +163,7 @@ private enum StorableConversationGroupType: String, Codable, Sendable {
         }
     }
 
-    func toAPIModel() -> WireAPI.ConversationGroupType {
+    func toAPIModel() -> WireNetwork.ConversationGroupType {
         switch self {
         case .group:
             .group
@@ -179,12 +179,12 @@ private struct StorableConversationMembers: Equatable, Codable, Sendable {
     let others: [StorableConversationMember]
     let selfMember: StorableConversationMember
 
-    init(_ value: WireAPI.Conversation.Members) {
+    init(_ value: WireNetwork.Conversation.Members) {
         self.others = value.others.map { StorableConversationMember($0) }
         self.selfMember = StorableConversationMember(value.selfMember)
     }
 
-    func toAPIModel() -> WireAPI.Conversation.Members {
+    func toAPIModel() -> WireNetwork.Conversation.Members {
         .init(
             others: others.map { $0.toAPIModel() },
             selfMember: selfMember.toAPIModel()

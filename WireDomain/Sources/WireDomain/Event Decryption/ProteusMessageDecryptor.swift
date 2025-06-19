@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import WireAPI
 import WireCoreCrypto
 import WireDataModel
+import WireNetwork
 
 struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
 

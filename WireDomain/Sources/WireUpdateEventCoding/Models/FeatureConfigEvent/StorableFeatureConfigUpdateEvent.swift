@@ -17,13 +17,13 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
 
     private let featureConfig: StorableFeatureConfig
 
-    init(_ value: WireAPI.FeatureConfigUpdateEvent) {
+    init(_ value: WireNetwork.FeatureConfigUpdateEvent) {
         self.featureConfig = switch value.featureConfig {
         case let .appLock(config):
             .appLock(
@@ -115,8 +115,8 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
         }
     }
 
-    func toAPIModel() -> WireAPI.FeatureConfigUpdateEvent {
-        let config: WireAPI.FeatureConfig = switch featureConfig {
+    func toAPIModel() -> WireNetwork.FeatureConfigUpdateEvent {
+        let config: WireNetwork.FeatureConfig = switch featureConfig {
         case let .appLock(config):
             .appLock(
                 .init(
@@ -239,7 +239,7 @@ enum StorableFeatureConfigStatus: String, Codable, Sendable {
     case enabled
     case disabled
 
-    init(_ value: WireAPI.FeatureConfigStatus) {
+    init(_ value: WireNetwork.FeatureConfigStatus) {
         switch value {
         case .enabled:
             self = .enabled
@@ -248,7 +248,7 @@ enum StorableFeatureConfigStatus: String, Codable, Sendable {
         }
     }
 
-    func toAPIModel() -> WireAPI.FeatureConfigStatus {
+    func toAPIModel() -> WireNetwork.FeatureConfigStatus {
         switch self {
         case .enabled:
             .enabled
@@ -333,7 +333,7 @@ struct StorableChannelsFeatureConfig: Codable, Equatable, Sendable {
         case everyone
         case admins
 
-        init(_ value: WireAPI.ChannelsPermision) {
+        init(_ value: WireNetwork.ChannelsPermision) {
             switch value {
             case .teamMembers:
                 self = .teamMembers
@@ -344,7 +344,7 @@ struct StorableChannelsFeatureConfig: Codable, Equatable, Sendable {
             }
         }
 
-        func toAPIModel() -> WireAPI.ChannelsPermision {
+        func toAPIModel() -> WireNetwork.ChannelsPermision {
             switch self {
             case .teamMembers:
                 .teamMembers

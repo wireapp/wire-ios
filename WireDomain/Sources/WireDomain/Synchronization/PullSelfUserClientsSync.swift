@@ -17,7 +17,7 @@
 //
 
 import CoreData
-import WireAPI
+import WireNetwork
 
 public struct PullSelfUserClientsSync: PullSelfUserClientsSyncProtocol {
 
@@ -58,7 +58,7 @@ public struct PullSelfUserClientsSync: PullSelfUserClientsSyncProtocol {
 
     func updateClient(
         id: String,
-        from remoteClient: WireAPI.SelfUserClient,
+        from remoteClient: WireNetwork.SelfUserClient,
         isNewClient: Bool
     ) async throws {
         await store.updateClient(
@@ -74,7 +74,7 @@ public extension PullSelfUserClientsSync {
 
     static func make(
         apiService: any APIServiceProtocol,
-        apiVersion: WireAPI.APIVersion,
+        apiVersion: WireNetwork.APIVersion,
         context: NSManagedObjectContext
     ) -> PullSelfUserClientsSyncProtocol {
         let userClientsAPI = UserClientsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
