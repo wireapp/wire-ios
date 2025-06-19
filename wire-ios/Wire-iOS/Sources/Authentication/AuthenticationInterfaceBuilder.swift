@@ -18,11 +18,11 @@
 
 import Combine
 import UIKit
-import WireAPI
 import WireAuthentication
 import WireCommonComponents
 import WireDataModel
 import WireFoundation
+import WireNetwork
 import WireSyncEngine
 
 /// A type of view controller that can be managed by an authentication coordinator.
@@ -89,7 +89,7 @@ final class AuthenticationInterfaceBuilder {
                     }
                 }
             let preferredAPIVersion = BackendInfo.preferredAPIVersion.flatMap {
-                WireAPI.APIVersion(rawValue: UInt($0.rawValue))
+                WireNetwork.APIVersion(rawValue: UInt($0.rawValue))
             }
             let (rootView, bridge) = assembly.assemble(
                 environmentType: BackendEnvironmentType(environment.environmentType.value),
@@ -106,7 +106,7 @@ final class AuthenticationInterfaceBuilder {
                 appStoreURL: WireURLs.shared.appOnItunes,
                 accountsPublisher: CurrentValuePublisher(subject: CurrentValueSubject(accounts)),
                 useLegacyRegistrationFlow: !DeveloperFlag.newRegistration.isOn,
-                multibackendEnabled: DeveloperFlag.multibackend.isOn,
+                isMultibackendEnabled: DeveloperFlag.multibackend.isOn,
                 personalAccountCreationAnalyticsTracker: PersonalAccountCreationAnalyticsTracker()
             )
             return AuthenticationHostingController(

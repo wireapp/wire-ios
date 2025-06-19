@@ -21,8 +21,8 @@ import WireDataModelSupport
 import WireDomainSupport
 import WireTestingPackage
 import XCTest
-@testable import WireAPI
 @testable import WireDomain
+@testable import WireNetwork
 
 final class ConversationProtobufMessageProcessorTests: XCTestCase {
 

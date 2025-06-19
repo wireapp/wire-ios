@@ -18,11 +18,11 @@
 
 import Combine
 import Foundation
-import WireAPI
 import WireCoreCrypto
 import WireDataModel
 import WireDomain
 import WireLogging
+import WireNetwork
 import WireRequestStrategy
 import WireSystem
 public import WireFoundation
@@ -409,9 +409,9 @@ public final class ZMUserSession: NSObject {
         contextStorage: LAContextStorable,
         recurringActionService: any RecurringActionServiceInterface,
         dependencies: UserSessionDependencies,
-        backendEnvironment: WireAPI.BackendEnvironment,
-        minTLSVersion: WireAPI.TLSVersion,
-        apiVersion: WireAPI.APIVersion,
+        backendEnvironment: WireNetwork.BackendEnvironment,
+        minTLSVersion: WireNetwork.TLSVersion,
+        apiVersion: WireNetwork.APIVersion,
         journal: Journal
     ) {
         self.apiServiceFactory = apiServiceFactory
@@ -1250,7 +1250,7 @@ extension ZMUserSession: SyncAgentDelegate {
             fatal("cannot initialize ResolveOneOnOneConversationsUseCase")
         }
         guard let apiVersion = BackendInfo.apiVersion,
-              let wireAPIVersion = WireAPI.APIVersion(rawValue: UInt(apiVersion.rawValue)) else {
+              let wireAPIVersion = WireNetwork.APIVersion(rawValue: UInt(apiVersion.rawValue)) else {
             WireLogger.backend.warn("apiVersion not resolved")
 
             fatal("cannot initialize ResolveOneOnOneConversationsUseCase")

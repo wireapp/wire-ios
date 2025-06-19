@@ -17,8 +17,8 @@
 //
 
 import UserNotifications
-import WireAPI
 import WireDataModel
+import WireNetwork
 
 // sourcery: AutoMockable
 protocol ConversationEventNotificationBuilderProtocol {

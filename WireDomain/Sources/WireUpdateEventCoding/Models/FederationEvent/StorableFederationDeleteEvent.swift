@@ -17,17 +17,17 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 struct StorableFederationDeleteEvent: Equatable, Codable, Sendable {
 
     private let domain: String
 
-    init(_ value: WireAPI.FederationDeleteEvent) {
+    init(_ value: WireNetwork.FederationDeleteEvent) {
         self.domain = value.domain
     }
 
-    func toAPIModel() -> WireAPI.FederationDeleteEvent {
+    func toAPIModel() -> WireNetwork.FederationDeleteEvent {
         .init(domain: domain)
     }
 

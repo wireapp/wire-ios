@@ -21,7 +21,7 @@ import UIKit
 import WireDataModel
 import WireSyncEngine
 
-class LogOutHelper {
+final class LogOutHelper {
 
     private var requestPasswordController: RequestPasswordController?
 

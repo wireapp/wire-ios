@@ -34,11 +34,11 @@ package final class RootViewModel: ObservableObject, Router {
     @Published var modalDestination: RootViewSheet?
     @Published var alert: Alert?
 
-    let multibackendEnabled: Bool
+    let isMultibackendEnabled: Bool
     let hasOtherAccountsProvider: () -> Bool
 
     var shouldShowSwitchAccountsAlertButton: Bool {
-        multibackendEnabled && hasOtherAccountsProvider()
+        isMultibackendEnabled && hasOtherAccountsProvider()
     }
 
     // MARK: - Dependencies
@@ -54,12 +54,12 @@ package final class RootViewModel: ObservableObject, Router {
         factory: any Factory,
         bridge: WireAuthenticationBridge,
         backendInfo: BackendInfo,
-        multibackendEnabled: Bool,
+        isMultibackendEnabled: Bool,
         hasOtherAccountsProvider: @escaping () -> Bool
     ) {
         self.factory = factory
         self.modalDestination = .authFlow(backendInfo: backendInfo)
-        self.multibackendEnabled = multibackendEnabled
+        self.isMultibackendEnabled = isMultibackendEnabled
         self.hasOtherAccountsProvider = hasOtherAccountsProvider
         self.bridge = bridge
 
