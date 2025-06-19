@@ -16,12 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-<<<<<<< HEAD
-=======
 import WireAPI
 import WireDataModel
 import WireDataModelSupport
->>>>>>> fa3904baa1 (fix: connections requests not working - WPB-18159 (#3205))
 import WireDomainSupport
 import WireNetwork
 import XCTest
@@ -124,21 +121,17 @@ final class UserConnectionEventProcessorTests: XCTestCase {
 
     private enum Scaffolding {
         static let username = "username"
-        static let receiverQualifiedID = WireAPI.QualifiedID(
+        static let receiverQualifiedID = WireNetwork.QualifiedID(
             uuid: UUID(),
             domain: "domain.com"
         )
         static let acceptedConnection = Connection(
             senderID: UUID(),
             receiverID: UUID(),
-<<<<<<< HEAD
             receiverQualifiedID: WireNetwork.QualifiedID(
                 uuid: UUID(),
                 domain: "domain.com"
             ),
-=======
-            receiverQualifiedID: receiverQualifiedID,
->>>>>>> fa3904baa1 (fix: connections requests not working - WPB-18159 (#3205))
             conversationID: UUID(),
             qualifiedConversationID: WireNetwork.QualifiedID(
                 uuid: UUID(),
@@ -153,7 +146,7 @@ final class UserConnectionEventProcessorTests: XCTestCase {
             receiverID: UUID(),
             receiverQualifiedID: receiverQualifiedID,
             conversationID: UUID(),
-            qualifiedConversationID: WireAPI.QualifiedID(
+            qualifiedConversationID: WireNetwork.QualifiedID(
                 uuid: UUID(),
                 domain: "domain.com"
             ),

@@ -170,7 +170,7 @@ struct UserConnectionEventNotificationBuilder {
 extension UserConnectionEventNotificationBuilder {
     struct Validator {
 
-        func validate(connectionStatus: WireAPI.ConnectionStatus) async -> Bool {
+        func validate(connectionStatus: WireNetwork.ConnectionStatus) async -> Bool {
             switch connectionStatus {
             case .accepted, .pending:
                 true

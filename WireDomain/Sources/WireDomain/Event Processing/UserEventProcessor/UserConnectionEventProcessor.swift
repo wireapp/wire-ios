@@ -17,11 +17,8 @@
 //
 
 import WireDataModel
-<<<<<<< HEAD
-import WireNetwork
-=======
 import WireLogging
->>>>>>> fa3904baa1 (fix: connections requests not working - WPB-18159 (#3205))
+import WireNetwork
 
 struct UserConnectionEventProcessor: UserConnectionEventProcessorProtocol {
 
