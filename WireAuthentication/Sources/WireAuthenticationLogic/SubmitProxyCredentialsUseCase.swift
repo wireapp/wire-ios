@@ -18,6 +18,7 @@
 
 import Foundation
 import WireAuthenticationAPI
+import WireNetwork
 
 package struct SubmitProxyCredentialsUseCase: SubmitProxyCredentialsUseCaseProtocol {
 
@@ -28,7 +29,10 @@ package struct SubmitProxyCredentialsUseCase: SubmitProxyCredentialsUseCaseProto
     }
 
     package func invoke(proxyCredentials: ProxyCredentials) throws {
-        try networkStack.setProxyCredentials(proxyCredentials)
+        try networkStack.setProxyCredentials(
+            username: proxyCredentials.username,
+            password: proxyCredentials.password
+        )
     }
 
 }

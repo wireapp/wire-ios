@@ -23,21 +23,26 @@ import WireDesign
 package struct OnPremHeaderView: View {
 
     @State private var showCustomBackendAlert = false
-    private let backendConfig: BackendConfig
+    private let backendTitle: String
+    private let restAPIURL: URL
 
     private typealias Strings = L10n.Localizable.OnPremUserLogin
 
-    package init(backendConfig: BackendConfig) {
-        self.backendConfig = backendConfig
+    package init(
+        backendTitle: String,
+        restAPIURL: URL
+    ) {
+        self.backendTitle = backendTitle
+        self.restAPIURL = restAPIURL
     }
 
     private var backendInfo: String {
         [
             Strings.Alert.Message.backendName,
-            backendConfig.title,
+            backendTitle,
             "",
             Strings.Alert.Message.backendUrl,
-            backendConfig.endpoints.backendURL.absoluteString
+            restAPIURL.absoluteString
         ].joined(separator: "\n")
     }
 
@@ -45,7 +50,7 @@ package struct OnPremHeaderView: View {
         Button(action: {
             showCustomBackendAlert.toggle()
         }, label: {
-            Text(Strings.title(backendConfig.title) + " ")
+            Text(Strings.title(backendTitle) + " ")
                 .foregroundColor(ColorTheme.Buttons.Secondary.onEnabled.color)
                 + Text(Image(systemName: "info.circle"))
                 .foregroundColor(.gray)
@@ -64,19 +69,7 @@ package struct OnPremHeaderView: View {
 
 #Preview {
     OnPremHeaderView(
-        backendConfig: BackendConfig(
-            title: "<backend name>",
-            endpoints: Endpoints(
-                backendURL: URL(string: "example")!,
-                backendWSURL: URL(string: "example")!,
-                blackListURL: URL(string: "example")!,
-                teamsURL: URL(string: "example")!,
-                accountsURL: URL(string: "example")!,
-                websiteURL: URL(string: "example")!,
-                countlyURL: nil
-            ),
-            proxySettings: nil,
-            pinnedKeys: nil
-        )
+        backendTitle: "<backend name>",
+        restAPIURL: URL(string: "example")!
     )
 }

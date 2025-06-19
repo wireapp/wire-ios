@@ -32,7 +32,8 @@ let package = Package(
                 "WireAuthenticationUI",
                 "WireAuthenticationLogic",
                 "WireFoundation",
-                .product(name: "NeedleFoundation", package: "needle")
+                .product(name: "NeedleFoundation", package: "needle"),
+                .product(name: "WireNetworkInterface", package: "WireNetwork")
             ]
         ),
         .testTarget(
@@ -41,7 +42,10 @@ let package = Package(
         ),
 
         .target(
-            name: "WireAuthenticationAPI"
+            name: "WireAuthenticationAPI",
+            dependencies: [
+                .product(name: "WireNetworkInterface", package: "WireNetwork")
+            ]
         ),
         .target(
             name: "WireAuthenticationAPISupport",
@@ -73,7 +77,8 @@ let package = Package(
                 .product(name: "WireDesign", package: "WireUI"),
                 .product(name: "WireMultiBackendUI", package: "WireUI"),
                 .product(name: "WireReusableUIComponents", package: "WireUI"),
-                .product(name: "SwiftUIIntrospect", package: "swiftui-introspect")
+                .product(name: "SwiftUIIntrospect", package: "swiftui-introspect"),
+                .product(name: "WireNetworkInterface", package: "WireNetwork")
             ],
             plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
         ),

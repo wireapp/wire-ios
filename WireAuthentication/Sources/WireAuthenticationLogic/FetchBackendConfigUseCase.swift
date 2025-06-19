@@ -20,21 +20,24 @@ import Foundation
 import WireAuthenticationAPI
 import WireLogging
 import WireNetwork
+import WireNetworkInterface
 
-public struct FetchBackendConfigUseCase: FetchBackendConfigUseCaseProtocol {
+public struct FetchBackendEnvironmentUseCase: FetchBackendEnvironmentUseCaseProtocol {
 
     public init() {}
 
-    public func invoke(at configURL: URL) async throws -> BackendConfig {
+    public func invoke(at configURL: URL) async throws -> BackendEnvironment2 {
         do {
             let (data, _) = try await URLSession.shared.data(from: configURL)
 
             let decoder = JSONDecoder()
             decoder.keyDecodingStrategy = .convertFromSnakeCase
-            let environmentResponse = try decoder.decode(BackendConfig.self, from: data)
-
+            let payload = try decoder.decode(Payload.self, from: data)
             WireLogger.backend.info("Fetched custom configuration from \(configURL)")
-            return environmentResponse
+            return try BackendEnvironment2(
+                url: configURL,
+                payload: payload
+            )
         } catch let decodingError as DecodingError {
             WireLogger.backend.error("Error decoding response from \(configURL): \(decodingError)")
             throw FetchBackendConfigFailure.invalidResponse
@@ -42,6 +45,119 @@ public struct FetchBackendConfigUseCase: FetchBackendConfigUseCaseProtocol {
             WireLogger.backend.error("Error fetching configuration from \(configURL): \(error)")
             throw error
         }
+    }
+
+}
+
+private struct Payload: Decodable {
+
+    let title: String
+    let endpoints: Endpoints
+    let apiProxy: APIProxy?
+    let pinnedKeys: [TrustData]?
+
+}
+
+private struct Endpoints: Decodable {
+
+    let backendURL: URL
+    let backendWSURL: URL
+    let blackListURL: URL
+    let teamsURL: URL
+    let accountsURL: URL
+    let websiteURL: URL
+    let countlyURL: URL?
+}
+
+private struct APIProxy: Decodable {
+
+    let host: String
+    let port: Int
+    let needsAuthentication: Bool
+
+}
+
+private struct TrustData: Decodable {
+
+    let certificateKey: Data
+    let hosts: [Host]
+
+}
+
+private struct Host: Decodable {
+
+    let rule: Rule
+    let value: String
+
+}
+
+private enum Rule: String, Decodable {
+
+    case endsWith = "ends_with"
+    case equals
+
+}
+
+private extension BackendEnvironment2 {
+
+    init(
+        url: URL,
+        payload: Payload
+    ) throws {
+        let endpoints = BackendEnvironment2.Endpoints(
+            restAPIURL: payload.endpoints.backendURL,
+            websocketURL: payload.endpoints.backendWSURL,
+            blacklistURL: payload.endpoints.blackListURL,
+            teamsURL: payload.endpoints.teamsURL,
+            accountsURL: payload.endpoints.accountsURL,
+            websiteURL: payload.endpoints.websiteURL,
+            countlyURL: payload.endpoints.countlyURL
+        )
+
+        var pinnedKeys = [PinnedKey]()
+        if let payload = payload.pinnedKeys {
+            pinnedKeys = try payload.map {
+                try PinnedKey($0)
+            }
+        }
+
+        let proxyConfig = payload.apiProxy.map {
+            BackendEnvironment2.ProxyConfig(
+                host: $0.host,
+                port: $0.port,
+                needsAuthentication: $0.needsAuthentication
+            )
+        }
+
+        let config = BackendEnvironment2.Config(
+            endpoints: endpoints,
+            pinnedKeys: pinnedKeys,
+            proxyConfig: proxyConfig
+        )
+
+        self.init(
+            title: payload.title,
+            environmentType: .custom(url: url),
+            config: config
+        )
+    }
+
+}
+
+private extension PinnedKey {
+
+    init(_ trustData: TrustData) throws {
+        try self.init(
+            key: trustData.certificateKey,
+            hosts: trustData.hosts.map { host in
+                switch host.rule {
+                case .equals:
+                    .equals(host.value)
+                case .endsWith:
+                    .endsWith(host.value)
+                }
+            }
+        )
     }
 
 }

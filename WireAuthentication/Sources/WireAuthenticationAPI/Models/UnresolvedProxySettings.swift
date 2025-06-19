@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct UnresolvedProxySettings: Decodable, Sendable, Hashable {
+public struct UnresolvedProxySettings: Sendable, Hashable {
 
     public let host: String
     public let port: Int

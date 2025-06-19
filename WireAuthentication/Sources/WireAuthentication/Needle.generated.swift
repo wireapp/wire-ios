@@ -4,11 +4,12 @@ import Combine
 import Foundation
 import NeedleFoundation
 import SwiftUI
-import WireNetwork
 import WireAuthenticationAPI
 import WireFoundation
 import WireLogging
 import WireMultiBackendUI
+import WireNetwork
+import WireNetworkInterface
 import WireReusableUIComponents
 internal import WireAuthenticationLogic
 internal import WireAuthenticationUI
@@ -188,8 +189,8 @@ private class LoginViaEmailComponentDependency6f812ea9ca4f0322dd27Provider: Logi
     var preferredAPIVersion: APIVersion? {
         return rootComponent.preferredAPIVersion
     }
-    var backendInfo: BackendInfo {
-        return rootComponent.backendInfo
+    var backendEnvironment: BackendEnvironment2 {
+        return rootComponent.backendEnvironment
     }
     var minTLSVersion: TLSVersion {
         return rootComponent.minTLSVersion
@@ -247,7 +248,7 @@ extension PersonalAccountCreationComponent: NeedleFoundation.Registration {
 extension RootComponent: NeedleFoundation.Registration {
     public func registerItems() {
 
-        localTable["backendInfo-BackendInfo"] = { [unowned self] in self.backendInfo as Any }
+        localTable["backendEnvironment-BackendEnvironment2"] = { [unowned self] in self.backendEnvironment as Any }
         localTable["preferredAPIVersion-APIVersion?"] = { [unowned self] in self.preferredAPIVersion as Any }
         localTable["productionVersions-Set<APIVersion>"] = { [unowned self] in self.productionVersions as Any }
         localTable["minTLSVersion-TLSVersion"] = { [unowned self] in self.minTLSVersion as Any }
@@ -284,7 +285,7 @@ extension LoginViaEmailComponent: NeedleFoundation.Registration {
         keyPathToName[\LoginViaEmailComponentDependency.router] = "router-any Router"
         keyPathToName[\LoginViaEmailComponentDependency.bridge] = "bridge-WireAuthenticationBridge"
         keyPathToName[\LoginViaEmailComponentDependency.preferredAPIVersion] = "preferredAPIVersion-APIVersion?"
-        keyPathToName[\LoginViaEmailComponentDependency.backendInfo] = "backendInfo-BackendInfo"
+        keyPathToName[\LoginViaEmailComponentDependency.backendEnvironment] = "backendEnvironment-BackendEnvironment2"
         keyPathToName[\LoginViaEmailComponentDependency.minTLSVersion] = "minTLSVersion-TLSVersion"
         keyPathToName[\LoginViaEmailComponentDependency.useLegacyRegistrationFlow] = "useLegacyRegistrationFlow-Bool"
         localTable["email-String?"] = { [unowned self] in self.email as Any }

@@ -18,6 +18,7 @@
 
 import Foundation
 import WireAuthenticationAPI
+import WireNetworkInterface
 import WireReusableUIComponents
 
 struct FakeLoginViaEmailFactory: LoginViaEmailFactory, CreateAuthenticationResultUseCaseFactory,
@@ -28,7 +29,7 @@ struct FakeLoginViaEmailFactory: LoginViaEmailFactory, CreateAuthenticationResul
     func verificationCodeFactory(
         email: String,
         password: String,
-        proxyCredentials: ProxyCredentials?
+        proxyCredentials: WireAuthenticationAPI.ProxyCredentials?
     ) -> any VerificationCodeFactory {
         fatalError()
     }
@@ -42,7 +43,7 @@ struct FakeLoginViaEmailFactory: LoginViaEmailFactory, CreateAuthenticationResul
     }
 
     var email: String?
-    var backendInfo: BackendInfo
+    var backendEnvironment: BackendEnvironment2
     var canCreateAccount: Bool
     var didDetectDomainConflict: Bool
 
@@ -51,7 +52,7 @@ struct FakeLoginViaEmailFactory: LoginViaEmailFactory, CreateAuthenticationResul
             factory: self,
             router: FakeRootFactory().viewModel,
             email: email,
-            backendInfo: backendInfo,
+            backendEnvironment: backendEnvironment,
             canCreateAccount: canCreateAccount,
             didDetectDomainConflict: didDetectDomainConflict,
             onCreateAccount: {}

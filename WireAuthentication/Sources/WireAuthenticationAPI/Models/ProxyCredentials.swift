@@ -20,7 +20,7 @@ import Foundation
 
 /// Proxy credentials for a user.
 
-public struct ProxyCredentials: Equatable, Hashable {
+public struct ProxyCredentials: Sendable, Equatable, Hashable {
 
     /// The proxy username.
 

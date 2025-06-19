@@ -17,18 +17,22 @@
 //
 
 import Foundation
+import WireNetworkInterface
 
-public struct BackendInfo: Equatable, Hashable, Sendable {
+public protocol FetchBackendEnvironmentUseCaseProtocol: Sendable {
 
-    public let environmentType: BackendEnvironmentType
-    public let backendConfig: BackendConfig
+    func invoke(at configURL: URL) async throws -> BackendEnvironment2
 
-    public init(
-        environmentType: BackendEnvironmentType,
-        backendConfig: BackendConfig
-    ) {
-        self.environmentType = environmentType
-        self.backendConfig = backendConfig
-    }
+}
+
+public enum FetchBackendConfigFailure: Error, Equatable {
+
+    case invalidResponse
+
+}
+
+public protocol FetchBackendEnvironmentUseCaseFactory {
+
+    func fetchBackendEnvironmentUseCase() -> any FetchBackendEnvironmentUseCaseProtocol
 
 }

@@ -19,6 +19,7 @@
 import SwiftUI
 import WireAuthenticationAPI
 import WireDesign
+import WireNetworkInterface
 import WireReusableUIComponents
 
 package protocol DetermineAuthMethodFactory {
@@ -30,7 +31,7 @@ package protocol DetermineAuthMethodFactory {
         email: String?,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
-        backendInfo: BackendInfo
+        backendEnvironment: BackendEnvironment2
     ) -> any LoginViaEmailFactory
 
     @MainActor
@@ -90,8 +91,11 @@ package struct DetermineAuthMethodView: View {
     @ViewBuilder private var header: some View {
         Group {
             if viewModel.isOnPremiseBackend {
-                OnPremHeaderView(backendConfig: viewModel.backendInfo.backendConfig)
-                    .frame(maxWidth: .infinity, alignment: .center)
+                OnPremHeaderView(
+                    backendTitle: viewModel.backendEnvironment.title,
+                    restAPIURL: viewModel.backendEnvironment.config.endpoints.restAPIURL
+                )
+                .frame(maxWidth: .infinity, alignment: .center)
             } else {
                 Logo().frame(width: 164, height: 95)
             }
@@ -160,24 +164,24 @@ package struct DetermineAuthMethodView: View {
         case let .login(
             email,
             didDetectDomainConflict,
-            backendInfo
+            backendEnvironment
         ):
             LoginViaEmailView(factory: viewModel.factory.loginViaEmailFactory(
                 email: email,
                 canCreateAccount: false,
                 didDetectDomainConflict: didDetectDomainConflict,
-                backendInfo: backendInfo
+                backendEnvironment: backendEnvironment
             ))
         case let .loginOrRegister(
             email,
             didDetectDomainConflict,
-            backendInfo
+            backendEnvironment
         ):
             LoginViaEmailView(factory: viewModel.factory.loginViaEmailFactory(
                 email: email,
                 canCreateAccount: true,
                 didDetectDomainConflict: didDetectDomainConflict,
-                backendInfo: backendInfo
+                backendEnvironment: backendEnvironment
             ))
         case let .noHistory(authenticationResult):
             NoHistoryView(factory: viewModel.factory.noHistoryFactory(authenticationResult: authenticationResult))
@@ -189,14 +193,19 @@ package struct DetermineAuthMethodView: View {
         switch sheet {
         case let .switchBackendConfirmation(
             email,
-            backendInfo
+            backendEnvironment
         ):
-            SwitchBackendConfirmation(backendConfig: backendInfo.backendConfig) { didConfirm in
-                guard didConfirm else { return }
+            SwitchBackendConfirmation(
+                backendTitle: backendEnvironment.title,
+                endpoints: backendEnvironment.config.endpoints
+            ) { didConfirm in
+                guard didConfirm else {
+                    return
+                }
                 Task {
                     await viewModel.switchBackend(
                         email: email,
-                        backendInfo: backendInfo
+                        backendEnvironment: backendEnvironment
                     )
                 }
             }

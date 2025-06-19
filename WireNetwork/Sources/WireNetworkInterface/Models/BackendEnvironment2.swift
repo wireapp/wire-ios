@@ -23,54 +23,81 @@ import Foundation
 /// A collection of data for connecting to a given backend environment
 /// (e.g. Production, Staging, etc).
 
-public struct BackendEnvironment2: Sendable {
+public struct BackendEnvironment2: Sendable, Equatable, Hashable {
 
     /// The  name of the backend.
 
     public let title: String
 
-    /// The endpoints exposed by the backend.
+    /// The type of backend environment.
 
-    public let endpoints: Endpoints
+    public let environmentType: EnvironmentType
 
-    /// The pinned keys for the backend for use with certificate pinning.
+    /// Information regarding how to connect to the backend.
 
-    public let pinnedKeys: [PinnedKey]
-
-    /// The proxy settings for the backend if any.
-
-    public let proxySettings: ProxySettings?
-
-    /// Information about the connected backend.
-
-    public let metadata: ResolvedBackendMetadata
+    public let config: Config
 
     /// Create a new `BackendEnvironment`.
     ///
     /// - Parameters:
     ///   - title: The name of the backend.
-    ///   - endpoints: The endpoints exposed by the backend.
-    ///   - pinnedKeys: Keys for use with certificate pinning.
-    ///   - proxySettings: Settings to connect via a proxy.
-    ///   - metadata: Information about the connected backend.
+    ///   - environmentType: The type of backend environment.
+    ///   - config: Information regarding how to connect to the backend.
 
     public init(
         title: String,
-        endpoints: Endpoints,
-        pinnedKeys: [PinnedKey],
-        proxySettings: ProxySettings?,
-        metadata: ResolvedBackendMetadata
+        environmentType: EnvironmentType,
+        config: Config,
     ) {
         self.title = title
-        self.endpoints = endpoints
-        self.pinnedKeys = pinnedKeys
-        self.proxySettings = proxySettings
-        self.metadata = metadata
+        self.environmentType = environmentType
+        self.config = config
+    }
+
+    // TODO: delete when no longer needed.
+    public enum EnvironmentType: Sendable, Equatable, Hashable {
+
+        case `default`
+        case staging
+        case anta
+        case bella
+        case chala
+        case diya
+        case elna
+        case foma
+        case custom(url: URL)
+
+    }
+
+    public struct Config: Sendable, Equatable, Hashable {
+
+        /// The endpoints exposed by the backend.
+
+        public let endpoints: Endpoints
+
+        /// Configuration for certificate pinning.
+
+        public let pinnedKeys: [PinnedKey]
+
+        /// Configuration for proxy mode.
+
+        public let proxyConfig: ProxyConfig?
+
+        public init(
+            endpoints: Endpoints,
+            pinnedKeys: [PinnedKey],
+            proxyConfig: ProxyConfig?
+        ) {
+            self.endpoints = endpoints
+            self.pinnedKeys = pinnedKeys
+            self.proxyConfig = proxyConfig
+        }
+
     }
 
     /// Endpoints exposed by the backend.
 
-    public struct Endpoints: Sendable {
+    public struct Endpoints: Sendable, Equatable, Hashable {
 
         /// URL for the REST API.
 
@@ -100,6 +127,46 @@ public struct BackendEnvironment2: Sendable {
 
         public let countlyURL: URL?
 
+        public init(
+            restAPIURL: URL,
+            websocketURL: URL,
+            blacklistURL: URL,
+            teamsURL: URL,
+            accountsURL: URL,
+            websiteURL: URL,
+            countlyURL: URL?
+        ) {
+            self.restAPIURL = restAPIURL
+            self.websocketURL = websocketURL
+            self.blacklistURL = blacklistURL
+            self.teamsURL = teamsURL
+            self.accountsURL = accountsURL
+            self.websiteURL = websiteURL
+            self.countlyURL = countlyURL
+        }
+
     }
 
+    public struct ProxyConfig: Decodable, Sendable, Hashable {
+
+        public let host: String
+        public let port: Int
+        public let needsAuthentication: Bool
+
+        public init(
+            host: String,
+            port: Int,
+            needsAuthentication: Bool = false
+        ) {
+            self.host = host
+            self.port = port
+            self.needsAuthentication = needsAuthentication
+
+        }
+
+    }
+
+
 }
+
+

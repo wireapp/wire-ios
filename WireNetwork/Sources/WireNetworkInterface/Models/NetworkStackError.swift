@@ -16,18 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+/// Errors originating from `NetworkStack`.
 
-public enum BackendEnvironmentType: Sendable, Equatable, Hashable {
+public enum NetworkStackError: Error {
 
-    case `default`
-    case staging
-    case anta
-    case bella
-    case chala
-    case diya
-    case elna
-    case foma
-    case custom(url: URL)
+    /// Proxy credentials are required but none are
+    /// available
+
+    case proxyCredentialsRequired
+
+    /// The API version of the connected backend is
+    /// too old for this client, i.e the max available
+    /// API version is lower than the min API version
+    /// that this client supports.
+
+    case backendAPIVersionObsolete
+
+    /// The API version of this client is too old
+    /// for the connected backend, i.e the max API version
+    /// that this client supports is lower than the min
+    /// available API version on the backend.
+
+    case clientVersionObsolete
 
 }

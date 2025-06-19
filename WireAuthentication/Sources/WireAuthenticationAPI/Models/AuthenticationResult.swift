@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireNetworkInterface
 
 /// The result of an authentication flow.
 
@@ -40,20 +41,34 @@ public struct AuthenticationResult: Equatable, Hashable, Sendable {
 
     /// The connected backend.
 
-    public let backendEnvironment: WireAuthenticationBackendEnvironment
+    public let backendEnvironment: BackendEnvironment2
+
+    /// Proxy mode credentials.
+
+    public let proxyCredentials: ProxyCredentials?
+
+    /// Resolve backend metadata.
+
+    public let backendMetadata: ResolvedBackendMetadata
+
+    /// Create a new `AuthenticationResult`.
 
     public init(
         userID: UUID,
         cookies: [HTTPCookie],
         accessToken: AccessToken?,
         emailCredentials: EmailCredentials?,
-        backendEnvironment: WireAuthenticationBackendEnvironment
+        backendEnvironment: BackendEnvironment2,
+        proxyCredentials: ProxyCredentials?,
+        backendMetadata: ResolvedBackendMetadata
     ) {
         self.userID = userID
         self.cookies = cookies
         self.accessToken = accessToken
         self.emailCredentials = emailCredentials
         self.backendEnvironment = backendEnvironment
+        self.proxyCredentials = proxyCredentials
+        self.backendMetadata = backendMetadata
     }
 
 }

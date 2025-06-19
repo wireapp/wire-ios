@@ -21,6 +21,7 @@ import SwiftUI
 import WireAuthenticationAPI
 import WireLogging
 import WireNetwork
+import WireNetworkInterface
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
 
@@ -55,12 +56,13 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         email: String?,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
-        backendInfo: BackendInfo
+        backendEnvironment: BackendEnvironment2
     ) -> LoginViaEmailComponent {
         let networkStack = NetworkStack(
-            backendInfo: backendInfo,
+            backendEnvironment: backendEnvironment,
             minTLSVersion: dependency.minTLSVersion,
-            preferredAPIVersion: dependency.preferredAPIVersion
+            preferredAPIVersion: dependency.preferredAPIVersion,
+            proxyCredentials: nil
         )
         return LoginViaEmailComponent(
             parent: self,
@@ -89,7 +91,7 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
             factory: self,
             router: dependency.router,
             bridge: dependency.bridge,
-            backendInfo: networkStack.backendInfo,
+            backendEnvironment: networkStack.backendEnvironment,
             existsAnotherAccount: existsAnotherAccount
         )
     }
@@ -98,13 +100,13 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
         email: String?,
         canCreateAccount: Bool,
         didDetectDomainConflict: Bool,
-        backendInfo: BackendInfo
+        backendEnvironment: BackendEnvironment2
     ) -> any WireAuthenticationUI.LoginViaEmailFactory {
         loginViaEmailComponent(
             email: email,
             canCreateAccount: canCreateAccount,
             didDetectDomainConflict: didDetectDomainConflict,
-            backendInfo: backendInfo
+            backendEnvironment: backendEnvironment
         )
     }
 
@@ -119,7 +121,7 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
     }
 
     func determineAuthMethodUseCase() async throws -> any DetermineAuthMethodUseCaseProtocol {
-        let authenticationAPI = try await networkStack.makeAuthenticationAPI()
+        let authenticationAPI = try await networkStack.authenticationAPI()
         return DetermineAuthMethodUseCase(
             validateEmailOrSSOCode: validateEmailOrSSOCodeUseCase(),
             authenticationAPI: authenticationAPI,
@@ -127,27 +129,28 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
         )
     }
 
-    func fetchBackendConfigUseCase() -> any FetchBackendConfigUseCaseProtocol {
-        FetchBackendConfigUseCase()
+    func fetchBackendEnvironmentUseCase() -> any FetchBackendEnvironmentUseCaseProtocol {
+        FetchBackendEnvironmentUseCase()
     }
 
     @MainActor
-    func loginViaSSOUseCase(backendInfo: BackendInfo?) async throws -> any LoginViaSSOUseCaseProtocol {
-        let networkStack: NetworkStack = if let backendInfo {
+    func loginViaSSOUseCase(backendEnvironment: BackendEnvironment2?) async throws -> any LoginViaSSOUseCaseProtocol {
+        let networkStack: NetworkStack = if let backendEnvironment {
             NetworkStack(
-                backendInfo: backendInfo,
+                backendEnvironment: backendEnvironment,
                 minTLSVersion: dependency.minTLSVersion,
-                preferredAPIVersion: dependency.preferredAPIVersion
+                preferredAPIVersion: dependency.preferredAPIVersion,
+                proxyCredentials: nil
             )
         } else {
             self.networkStack
         }
 
-        let authenticationAPI = try await networkStack.makeAuthenticationAPI()
+        let authenticationAPI = try await networkStack.authenticationAPI()
 
         return LoginViaSSOUseCase(
             authenticationAPI: authenticationAPI,
-            baseURL: networkStack.backendInfo.backendConfig.endpoints.backendURL,
+            baseURL: networkStack.backendEnvironment.config.endpoints.restAPIURL,
             ssoCallbackURLScheme: dependency.ssoCallbackURLScheme,
             verificationTokenGenerator: SSOLoginVerificationTokenGenerator(),
             webAuthenticator: WebAuthenticator(ssoCallbackURLScheme: dependency.ssoCallbackURLScheme),

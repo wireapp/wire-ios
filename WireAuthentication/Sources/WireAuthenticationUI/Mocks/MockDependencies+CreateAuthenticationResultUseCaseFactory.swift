@@ -18,19 +18,24 @@
 
 import Foundation
 import WireAuthenticationAPI
+import WireNetworkInterface
 
 extension MockDependencies: CreateAuthenticationResultUseCaseFactory {
 
     @MainActor
     func createAuthenticationResultUseCase() -> any CreateAuthenticationResultUseCaseProtocol {
-        MockCreateAuthenticationResultUseCase(backendEnvironment: backendEnvironment)
+        MockCreateAuthenticationResultUseCase(
+            backendEnvironment: backendEnvironment,
+            backendMetadata: backendMetadata
+        )
     }
 
 }
 
 struct MockCreateAuthenticationResultUseCase: CreateAuthenticationResultUseCaseProtocol {
 
-    let backendEnvironment: WireAuthenticationBackendEnvironment
+    let backendEnvironment: BackendEnvironment2
+    let backendMetadata: ResolvedBackendMetadata
 
     func invoke(
         userID: UUID,
@@ -43,7 +48,9 @@ struct MockCreateAuthenticationResultUseCase: CreateAuthenticationResultUseCaseP
             cookies: cookies,
             accessToken: accessToken,
             emailCredentials: emailCredentials,
-            backendEnvironment: backendEnvironment
+            backendEnvironment: backendEnvironment,
+            proxyCredentials: nil,
+            backendMetadata: backendMetadata
         )
     }
 

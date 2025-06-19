@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireNetworkInterface
 
 public protocol LoginViaSSOUseCaseProtocol: Sendable {
 
@@ -59,6 +60,6 @@ public enum SAMLError: Error, Equatable {
 public protocol LoginViaSSOUseCaseFactory {
 
     @MainActor
-    func loginViaSSOUseCase(backendInfo: BackendInfo?) async throws -> any LoginViaSSOUseCaseProtocol
+    func loginViaSSOUseCase(backendEnvironment: BackendEnvironment2?) async throws -> any LoginViaSSOUseCaseProtocol
 
 }

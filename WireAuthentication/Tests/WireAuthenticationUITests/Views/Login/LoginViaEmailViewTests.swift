@@ -43,7 +43,7 @@ final class LoginViaEmailViewTests: XCTestCase {
 
         let view = LoginViaEmailView(factory: FakeLoginViaEmailFactory(
             email: "foo@bar.com",
-            backendInfo: BackendInfo(
+            backendEnvironment: BackendEnvironment2(
                 environmentType: .default,
                 backendConfig: MockDependencies()._backendConfig
             ),
@@ -67,7 +67,7 @@ final class LoginViaEmailViewTests: XCTestCase {
 
         let view = LoginViaEmailView(factory: FakeLoginViaEmailFactory(
             email: "foo@bar.com",
-            backendInfo: BackendInfo(
+            backendEnvironment: BackendEnvironment2(
                 environmentType: .default,
                 backendConfig: MockDependencies()._backendConfig
             ),
@@ -92,7 +92,7 @@ final class LoginViaEmailViewTests: XCTestCase {
 
         let view = LoginViaEmailView(factory: FakeLoginViaEmailFactory(
             email: "foo@bar.com",
-            backendInfo: BackendInfo(
+            backendEnvironment: BackendEnvironment2(
                 environmentType: .anta,
                 backendConfig: MockDependencies()._backendConfig
             ),
@@ -116,7 +116,7 @@ final class LoginViaEmailViewTests: XCTestCase {
 
         let view = LoginViaEmailView(factory: FakeLoginViaEmailFactory(
             email: "foo@bar.com",
-            backendInfo: BackendInfo(
+            backendEnvironment: BackendEnvironment2(
                 environmentType: .anta,
                 backendConfig: MockDependencies()._backendConfig
             ),
@@ -155,7 +155,7 @@ final class LoginViaEmailViewTests: XCTestCase {
 
         let view = LoginViaEmailView(factory: FakeLoginViaEmailFactory(
             email: "foo@bar.com",
-            backendInfo: BackendInfo(
+            backendEnvironment: BackendEnvironment2(
                 environmentType: .default,
                 backendConfig: backendConfig
             ),
@@ -193,7 +193,7 @@ final class LoginViaEmailViewTests: XCTestCase {
         )
         let view = LoginViaEmailView(factory: FakeLoginViaEmailFactory(
             email: "foo@bar.com",
-            backendInfo: BackendInfo(
+            backendEnvironment: BackendEnvironment2(
                 environmentType: .default,
                 backendConfig: backendConfig
             ),

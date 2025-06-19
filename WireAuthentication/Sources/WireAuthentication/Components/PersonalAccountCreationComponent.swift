@@ -81,7 +81,7 @@ extension PersonalAccountCreationComponent: PersonalAccountCreationViewModel.Fac
     // MARK: - Use cases
 
     func requestEmailVerificationCodeUseCase() async throws -> any RequestEmailVerificationCodeUseCaseProtocol {
-        let authenticationAPI = try await dependency.networkStack.makeAuthenticationAPI()
+        let authenticationAPI = try await dependency.networkStack.authenticationAPI()
         return RequestEmailVerificationCodeUseCase(authenticationAPI: authenticationAPI)
     }
 
@@ -90,7 +90,7 @@ extension PersonalAccountCreationComponent: PersonalAccountCreationViewModel.Fac
     }
 
     func registerPersonalAccountUseCase() async throws -> any RegisterPersonalAccountUseCaseProtocol {
-        let authenticationAPI = try await dependency.networkStack.makeAuthenticationAPI()
+        let authenticationAPI = try await dependency.networkStack.authenticationAPI()
         return RegisterPersonalAccountUseCase(authenticationAPI: authenticationAPI)
     }
 

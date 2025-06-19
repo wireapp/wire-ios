@@ -18,6 +18,7 @@
 
 import Combine
 import Foundation
+import WireNetworkInterface
 
 /// A object that facilitates intermodule communication, both **inbound**
 /// (from outside into this module) and **outbound** (from inside this module
@@ -52,7 +53,7 @@ public final class WireAuthenticationBridge {
     public enum OutboundEvent {
 
         case userAuthenticated(AuthenticationResult)
-        case accountRegistrationRequested(email: String?, WireAuthenticationBackendEnvironment)
+        case accountRegistrationRequested(email: String?, BackendEnvironment2)
         case exitFlowRequested
     }
 

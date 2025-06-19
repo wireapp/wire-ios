@@ -16,22 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+/// Proxy credentials for a user.
 
-public protocol FetchBackendConfigUseCaseProtocol: Sendable {
+public struct ProxyCredentials: Sendable, Equatable, Hashable {
 
-    func invoke(at configURL: URL) async throws -> BackendConfig
+    /// The proxy username.
 
-}
+    public let username: String
 
-public enum FetchBackendConfigFailure: Error, Equatable {
+    /// The proxy password.
 
-    case invalidResponse
+    public let password: String
 
-}
+    /// Create new `ProxyCredentials`.
 
-public protocol FetchBackendConfigUseCaseFactory {
-
-    func fetchBackendConfigUseCase() -> any FetchBackendConfigUseCaseProtocol
+    public init(
+        username: String,
+        password: String
+    ) {
+        self.username = username
+        self.password = password
+    }
 
 }

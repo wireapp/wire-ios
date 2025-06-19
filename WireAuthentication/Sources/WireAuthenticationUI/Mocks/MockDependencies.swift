@@ -18,55 +18,38 @@
 
 import Foundation
 import WireAuthenticationAPI
+import WireNetworkInterface
 import WireReusableUIComponents
 
 @MainActor
 final class MockDependencies {
 
-    var backendInfo: BackendInfo {
-        BackendInfo(
-            environmentType: environmentType,
-            backendConfig: backendConfig
+    var backendEnvironment: BackendEnvironment2 {
+        BackendEnvironment2(
+            title: "Mock backend",
+            environmentType: .default,
+            config: .init(
+                endpoints: .init(
+                    restAPIURL: URL(string: "www.example.com")!,
+                    websocketURL: URL(string: "www.example.com")!,
+                    blacklistURL: URL(string: "www.example.com")!,
+                    teamsURL: URL(string: "www.example.com")!,
+                    accountsURL: URL(string: "www.example.com")!,
+                    websiteURL: URL(string: "www.example.com")!,
+                    countlyURL: nil
+                ),
+                pinnedKeys: [],
+                proxyConfig: nil
+            )
         )
     }
 
-    var environmentType: BackendEnvironmentType {
-        .default
-    }
-
-    private var backendConfig: BackendConfig {
-        _backendConfig
-    }
-
-    var backendMetadata: BackendMetadata {
-        BackendMetadata(
+    var backendMetadata: ResolvedBackendMetadata {
+        ResolvedBackendMetadata(
             apiVersion: .v8,
             domain: "example.com",
             isFederationEnabled: true
         )
     }
 
-    var backendEnvironment: WireAuthenticationBackendEnvironment {
-        WireAuthenticationBackendEnvironment(
-            environmentType: environmentType,
-            config: backendConfig,
-            metadata: backendMetadata,
-            proxySettings: nil
-        )
-    }
-
-    var _backendConfig = BackendConfig(
-        title: "backen name",
-        endpoints: Endpoints(
-            backendURL: URL(string: "https://example.com")!,
-            backendWSURL: URL(string: "https://example.com")!,
-            blackListURL: URL(string: "https://example.com")!,
-            teamsURL: URL(string: "https://example.com")!,
-            accountsURL: URL(string: "https://example.com")!,
-            websiteURL: URL(string: "https://example.com")!,
-            countlyURL: URL(string: "https://example.com")!
-        ),
-        proxySettings: nil,
-        pinnedKeys: nil
-    )
 }

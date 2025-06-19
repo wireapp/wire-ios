@@ -20,7 +20,7 @@ import Foundation
 
 /// Information about a connected backend.
 
-public struct ResolvedBackendMetadata: Sendable {
+public struct ResolvedBackendMetadata: Sendable, Equatable, Hashable {
 
     /// The REST API version to use when making requests.
 

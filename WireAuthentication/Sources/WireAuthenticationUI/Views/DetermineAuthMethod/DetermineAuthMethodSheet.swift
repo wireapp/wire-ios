@@ -18,6 +18,7 @@
 
 import Foundation
 import WireAuthenticationAPI
+import WireNetworkInterface
 
 package enum DetermineAuthMethodSheet: Identifiable, Hashable, Sendable {
 
@@ -25,7 +26,7 @@ package enum DetermineAuthMethodSheet: Identifiable, Hashable, Sendable {
 
     case switchBackendConfirmation(
         email: String?,
-        backendInfo: BackendInfo
+        backendEnvironment: BackendEnvironment2
     )
 
 }

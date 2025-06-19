@@ -20,6 +20,7 @@ import NeedleFoundation
 import SwiftUI
 import WireAuthenticationAPI
 import WireNetwork
+import WireNetworkInterface
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
 import WireReusableUIComponents
@@ -29,7 +30,7 @@ protocol LoginViaEmailComponentDependency: Dependency {
     @MainActor var router: any Router { get }
     @MainActor var bridge: WireAuthenticationBridge { get }
     var preferredAPIVersion: APIVersion? { get }
-    var backendInfo: BackendInfo { get }
+    var backendEnvironment: BackendEnvironment2 { get }
     var minTLSVersion: TLSVersion { get }
     var useLegacyRegistrationFlow: Bool { get }
 
@@ -61,7 +62,7 @@ final class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> 
     func verificationCodeComponent(
         email: String,
         password: String,
-        proxyCredentials: ProxyCredentials?
+        proxyCredentials: WireAuthenticationAPI.ProxyCredentials?
     ) -> VerificationCodeComponent {
         VerificationCodeComponent(
             parent: self,
@@ -102,19 +103,20 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
             factory: self,
             router: dependency.router,
             email: email,
-            backendInfo: networkStack.backendInfo,
+            backendEnvironment: networkStack.backendEnvironment,
             canCreateAccount: canCreateAccount,
             didDetectDomainConflict: didDetectDomainConflict,
             onCreateAccount: dependency.useLegacyRegistrationFlow ? { [dependency, networkStack, email] in
-                guard let dependency else { return }
+                guard let dependency else {
+                    return
+                }
                 Task<Void, Never> { @MainActor in
                     do {
-                        let backendEnvironment = try await networkStack.makeBackendEnvironment()
                         dependency.router.dismissSheet()
                         dependency.bridge.sendOutboundEvent(
                             .accountRegistrationRequested(
                                 email: email,
-                                backendEnvironment
+                                networkStack.backendEnvironment
                             )
                         )
                     } catch {
@@ -128,7 +130,7 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
     func verificationCodeFactory(
         email: String,
         password: String,
-        proxyCredentials: ProxyCredentials?
+        proxyCredentials: WireAuthenticationAPI.ProxyCredentials?
     ) -> any VerificationCodeFactory {
         verificationCodeComponent(
             email: email,
@@ -158,7 +160,7 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
     }
 
     func loginViaEmailUseCase() async throws -> any LoginViaEmailUseCaseProtocol {
-        let authenticationAPI = try await networkStack.makeAuthenticationAPI()
+        let authenticationAPI = try await networkStack.authenticationAPI()
         return LoginViaEmailUseCase(authenticationAPI: authenticationAPI)
     }
 

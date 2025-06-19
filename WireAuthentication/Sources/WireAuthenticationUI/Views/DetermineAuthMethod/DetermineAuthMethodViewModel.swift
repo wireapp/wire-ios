@@ -21,6 +21,7 @@ import Foundation
 import SwiftUI
 import WireAuthenticationAPI
 import WireLogging
+import WireNetworkInterface
 
 @MainActor
 package final class DetermineAuthMethodViewModel: ObservableObject {
@@ -28,7 +29,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     package typealias Factory =
         DetermineAuthMethodFactory &
         DetermineAuthMethodUseCaseFactory &
-        FetchBackendConfigUseCaseFactory &
+        FetchBackendEnvironmentUseCaseFactory &
         LoginViaSSOUseCaseFactory &
         ValidateEmailOrSSOCodeUseCaseFactory
 
@@ -45,7 +46,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     }
 
     var isOnPremiseBackend: Bool {
-        backendInfo.environmentType != .default
+        backendEnvironment.environmentType != .default
     }
 
     // MARK: - Dependencies
@@ -53,7 +54,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     package let factory: any Factory
     private let router: any Router
     private let bridge: WireAuthenticationBridge
-    package let backendInfo: BackendInfo
+    package let backendEnvironment: BackendEnvironment2
     private var cancellable: AnyCancellable?
 
     // MARK: - Life cycle
@@ -62,7 +63,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         factory: any Factory,
         router: any Router,
         bridge: WireAuthenticationBridge,
-        backendInfo: BackendInfo,
+        backendEnvironment: BackendEnvironment2,
         emailOrSSOCode: String = "",
         existsAnotherAccount: Bool,
         isLoading: Bool = false
@@ -70,7 +71,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         self.factory = factory
         self.router = router
         self.bridge = bridge
-        self.backendInfo = backendInfo
+        self.backendEnvironment = backendEnvironment
         self.emailOrSSOCode = emailOrSSOCode
         self.existsAnotherAccount = existsAnotherAccount
         self.isLoading = isLoading
@@ -119,7 +120,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                     to: DetermineAuthMethodDestination.login(
                         email: nil,
                         didDetectDomainConflict: false,
-                        backendInfo: backendInfo
+                        backendEnvironment: backendEnvironment
                     )
                 )
 
@@ -147,19 +148,19 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             router.navigate(to: DetermineAuthMethodDestination.login(
                 email: email,
                 didDetectDomainConflict: didDetectDomainConflict,
-                backendInfo: backendInfo
+                backendEnvironment: backendEnvironment
             ))
 
         case let .loginOrRegisterViaEmail(email):
             router.navigate(to: DetermineAuthMethodDestination.loginOrRegister(
                 email: email,
                 didDetectDomainConflict: false,
-                backendInfo: backendInfo
+                backendEnvironment: backendEnvironment
             ))
 
         case let .loginViaSSO(code):
             do {
-                let authResult = try await loginViaSSO(code: code, backendInfo: nil)
+                let authResult = try await loginViaSSO(code: code, backendEnvironment: nil)
                 router.navigate(to: DetermineAuthMethodDestination.noHistory(authResult))
             } catch let error as LoginViaSSOUseCaseError {
                 switch error {
@@ -192,9 +193,9 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
 
     private func loginViaSSO(
         code: UUID?,
-        backendInfo: BackendInfo?
+        backendEnvironment: BackendEnvironment2?
     ) async throws -> AuthenticationResult {
-        let loginViaSSO = try await factory.loginViaSSOUseCase(backendInfo: backendInfo)
+        let loginViaSSO = try await factory.loginViaSSOUseCase(backendEnvironment: backendEnvironment)
         return try await loginViaSSO.invoke(code: code)
     }
 
@@ -208,29 +209,26 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         }
 
         do {
-            let useCase = factory.fetchBackendConfigUseCase()
-            let backendConfig = try await Task.detached {
+            let useCase = factory.fetchBackendEnvironmentUseCase()
+            let backendEnvironment = try await Task.detached {
                 try await useCase.invoke(at: backendConfigURL)
             }.value
 
-            WireLogger.authentication.info("Fetching backend config succeeded")
+            WireLogger.authentication.info("Fetching backend environment succeeded")
 
             modalDestination = .switchBackendConfirmation(
                 email: email,
-                backendInfo: BackendInfo(
-                    environmentType: .custom(url: backendConfigURL),
-                    backendConfig: backendConfig
-                )
+                backendEnvironment: backendEnvironment
             )
         } catch {
-            WireLogger.authentication.error("Fetching backend config failed: \(error)")
+            WireLogger.authentication.error("Fetching backend environment failed: \(error)")
             router.presentAlert(for: error)
         }
     }
 
     func switchBackend(
         email: String?,
-        backendInfo: BackendInfo
+        backendEnvironment: BackendEnvironment2
     ) async {
         isLoading = true
         defer { isLoading = false }
@@ -238,7 +236,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         do {
             let authResult = try await loginViaSSO(
                 code: nil,
-                backendInfo: backendInfo
+                backendEnvironment: backendEnvironment
             )
             router.navigate(
                 to: DetermineAuthMethodDestination.noHistory(authResult)
@@ -254,7 +252,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 break
             case .noDefaultCodeAvailable:
                 router.popToRoot() // clear the navigation stack before replacing root
-                router.presentSheet(.authFlow(backendInfo: backendInfo))
+                router.presentSheet(.authFlow(backendEnvironment: backendEnvironment))
             case let .authenticationFailed(samlError):
                 WireLogger.authentication.error(
                     "sso authentication failed with SAML error: \(String(describing: samlError))"
@@ -269,7 +267,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 to: DetermineAuthMethodDestination.login(
                     email: email,
                     didDetectDomainConflict: false,
-                    backendInfo: backendInfo
+                    backendEnvironment: backendEnvironment
                 )
             )
         } catch {

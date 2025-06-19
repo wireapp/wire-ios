@@ -133,7 +133,10 @@ package struct LoginViaEmailView: View {
     }
 
     @ViewBuilder private var welcomeMessage: some View {
-        OnPremHeaderView(backendConfig: viewModel.backendInfo.backendConfig)
+        OnPremHeaderView(
+            backendTitle: viewModel.backendEnvironment.title,
+            restAPIURL: viewModel.backendEnvironment.config.endpoints.restAPIURL
+        )
     }
 
     @ViewBuilder private var emailField: some View {

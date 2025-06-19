@@ -20,6 +20,7 @@ import Combine
 import NeedleFoundation
 import SwiftUI
 import WireNetwork
+import WireNetworkInterface
 import WireReusableUIComponents
 internal import WireAuthenticationUI
 import WireAuthenticationAPI
@@ -29,7 +30,7 @@ import WireFoundation
 
 final class RootComponent: BootstrapComponent {
 
-    public let backendInfo: BackendInfo
+    public let backendEnvironment: BackendEnvironment2
     public let preferredAPIVersion: APIVersion?
     public let productionVersions: Set<APIVersion>
     public let minTLSVersion: TLSVersion
@@ -56,7 +57,7 @@ final class RootComponent: BootstrapComponent {
     }
 
     init(
-        backendInfo: BackendInfo,
+        backendEnvironment: BackendEnvironment2,
         preferredAPIVersion: APIVersion?,
         minTLSVersion: TLSVersion,
         howToChangeEmailURL: URL,
@@ -71,7 +72,7 @@ final class RootComponent: BootstrapComponent {
         isMultibackendEnabled: Bool,
         personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
     ) {
-        self.backendInfo = backendInfo
+        self.backendEnvironment = backendEnvironment
         self.preferredAPIVersion = preferredAPIVersion
         self.productionVersions = APIVersion.productionVersions
         self.minTLSVersion = minTLSVersion
@@ -90,11 +91,12 @@ final class RootComponent: BootstrapComponent {
 
     // MARK: - Children
 
-    func determineAuthMethodComponent(backendInfo: BackendInfo) -> DetermineAuthMethodComponent {
+    func determineAuthMethodComponent(backendEnvironment: BackendEnvironment2) -> DetermineAuthMethodComponent {
         let networkStack = NetworkStack(
-            backendInfo: backendInfo,
+            backendEnvironment: backendEnvironment,
             minTLSVersion: minTLSVersion,
-            preferredAPIVersion: preferredAPIVersion
+            preferredAPIVersion: preferredAPIVersion,
+            proxyCredentials: nil
         )
 
         return DetermineAuthMethodComponent(
@@ -115,7 +117,7 @@ extension RootComponent: RootViewModel.Factory {
             RootViewModel(
                 factory: self,
                 bridge: bridge,
-                backendInfo: backendInfo,
+                backendEnvironment: backendEnvironment,
                 isMultibackendEnabled: isMultibackendEnabled,
                 hasOtherAccountsProvider: { [accountsPublisher] in
                     !accountsPublisher.value.isEmpty
@@ -124,8 +126,8 @@ extension RootComponent: RootViewModel.Factory {
         }
     }
 
-    func determineAuthMethodFactory(backendInfo: BackendInfo) -> any DetermineAuthMethodFactory {
-        determineAuthMethodComponent(backendInfo: backendInfo)
+    func determineAuthMethodFactory(backendEnvironment: BackendEnvironment2) -> any DetermineAuthMethodFactory {
+        determineAuthMethodComponent(backendEnvironment: backendEnvironment)
     }
 
     func accountsSwitcherFactory() -> any AccountSwitcherFactory {

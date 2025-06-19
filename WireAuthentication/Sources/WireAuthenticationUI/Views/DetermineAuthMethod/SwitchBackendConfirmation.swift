@@ -19,6 +19,7 @@
 import SwiftUI
 import WireAuthenticationAPI
 import WireDesign
+import WireNetworkInterface
 
 public struct SwitchBackendConfirmation: View {
 
@@ -41,48 +42,49 @@ public struct SwitchBackendConfirmation: View {
     private let onConfirm: (Bool) -> Void
 
     public init(
-        backendConfig: BackendConfig,
+        backendTitle: String,
+        endpoints: BackendEnvironment2.Endpoints,
         onConfirm: @escaping (Bool) -> Void
     ) {
         var items = [
             Item(
                 title: Strings.backendName,
-                value: backendConfig.title,
+                value: backendTitle,
                 isURL: false
             ),
             Item(
                 title: Strings.backendUrl,
-                value: backendConfig.endpoints.backendURL.absoluteString,
+                value: endpoints.restAPIURL.absoluteString,
                 isURL: true
             ),
             Item(
                 title: Strings.backendWsurl,
-                value: backendConfig.endpoints.backendWSURL.absoluteString,
+                value: endpoints.websocketURL.absoluteString,
                 isURL: true
             ),
             Item(
                 title: Strings.blacklistUrl,
-                value: backendConfig.endpoints.blackListURL.absoluteString,
+                value: endpoints.blacklistURL.absoluteString,
                 isURL: true
             ),
             Item(
                 title: Strings.teamsUrl,
-                value: backendConfig.endpoints.teamsURL.absoluteString,
+                value: endpoints.teamsURL.absoluteString,
                 isURL: true
             ),
             Item(
                 title: Strings.accountsUrl,
-                value: backendConfig.endpoints.accountsURL.absoluteString,
+                value: endpoints.accountsURL.absoluteString,
                 isURL: true
             ),
             Item(
                 title: Strings.websiteUrl,
-                value: backendConfig.endpoints.websiteURL.absoluteString,
+                value: endpoints.websiteURL.absoluteString,
                 isURL: true
             )
         ]
 
-        if let countlyURL = backendConfig.endpoints.countlyURL {
+        if let countlyURL = endpoints.countlyURL {
             items.append(
                 Item(
                     title: Strings.countlyUrl,
