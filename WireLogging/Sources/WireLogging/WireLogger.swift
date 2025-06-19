@@ -105,6 +105,7 @@ public struct WireLogger: LoggerProtocol, Sendable {
 // MARK: - Helpers
 
 public extension WireLogger {
+
     func setClientID(_ clientID: String) {
         addTag(.selfClientId, value: clientID)
     }
@@ -119,6 +120,19 @@ public extension WireLogger {
 
     func clearActiveAccount() {
         addTag(.accountID, value: nil)
+    }
+
+    // MARK: -
+
+    @resultBuilder
+    struct LoggersBuilder {
+        public static func buildBlock(_ loggers: any LoggerProtocol...) -> [any LoggerProtocol] {
+            loggers
+        }
+    }
+
+    static func initialize(@LoggersBuilder _ makeLoggers: () -> [any LoggerProtocol]) {
+        initialize(loggers: makeLoggers())
     }
 
 }
