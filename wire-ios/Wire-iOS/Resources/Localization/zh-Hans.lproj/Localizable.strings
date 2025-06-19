@@ -102,8 +102,8 @@
 "peoplepicker.federation.domain_unvailable" = "联合域目前不可用。[进一步了解](%@)";
 
 "add_participants.alert.title" = "对话人数已达上限";
-"add_participants.alert.message.new_conversation" = "最多 %d 人可以加入同一个群聊。";
-"add_participants.alert.message.existing_conversation" = "最多 %1$d 人，可以加入群聊。目前还可加入 %2$d 人。";
+"add_participants.alert.message.new_conversation" = "最多可有 %@ 人加入对话。";
+"add_participants.alert.message.existing_conversation" = "最多 %@ 人可以加入对话。目前只能容纳 %@ 人。";
 
 // Channel Creation UI - Navigation
 "conversation.create.channel.title" = "新频道";
@@ -860,7 +860,7 @@
 "participants.section.services" = "服务 (%d)";
 "participants.section.settings" = "选项";
 "participants.footer.add_title" = "添加参与者";
-"participants.section.name.footer" = "最多 %1$d 位参与者可以加入对话。";
+"participants.section.name.footer" = "最多 %@ 名参与者可以加入对话。";
 "participants.section.admins.footer" = "没有管理员。";
 "participants.section.members.footer" = "暂时还没有成员";
 
@@ -1594,6 +1594,7 @@
 "enroll_e2ei_certificate.subtitle" = "证书已生效并且您的设备已验证。";
 "enroll_e2ei_certificate.certificate_details_button" = "证书详情";
 "enroll_e2ei_certificate.ok_button" = "好";
+"enroll_e2ei_certificate.idp_url_title" = "身份提供商 URL";
 
 // Update e2ei certificate
 "update_e2ei_certificate.title" = "证书已更新";

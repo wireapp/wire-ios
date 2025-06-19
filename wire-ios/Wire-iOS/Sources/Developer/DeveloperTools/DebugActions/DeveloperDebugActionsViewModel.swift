@@ -18,10 +18,10 @@
 
 import Foundation
 import SwiftUI
-import WireAPI
 import WireDataModel
 import WireFoundation
 import WireLogging
+import WireNetwork
 import WireSyncEngine
 
 struct ConversationResult {

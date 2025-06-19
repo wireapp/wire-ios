@@ -19,9 +19,9 @@
 public import Foundation
 
 // sourcery: AutoMockable
-/// Uploads file data to the cells server.
+/// Uploads file as a draft to the cells server.
 
-public protocol WireCellsUploadFileUseCaseProtocol: Sendable {
+public protocol WireCellsUploadDraftUseCaseProtocol: Sendable {
 
     /// Uploads the file at `fileURL` to the cells server.
 
@@ -32,7 +32,7 @@ public protocol WireCellsUploadFileUseCaseProtocol: Sendable {
     func invoke(imageData: Data) async throws
 }
 
-public enum WireCellsUploadFileUseCaseError: Error, Sendable {
+public enum WireCellsUploadDraftUseCaseError: Error, Sendable {
 
     /// The file size of the requested file cannot be determined.
 

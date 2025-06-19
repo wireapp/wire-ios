@@ -17,9 +17,9 @@
 //
 
 import avs
-import WireAPI
 import WireDataModel
 import WireDomain
+import WireNetwork
 
 open class AuthenticatedSessionFactory {
 
@@ -83,11 +83,11 @@ open class AuthenticatedSessionFactory {
         )
 
         let apiServiceFactory: APIServiceFactory = { [wireAPIBackendEnvironment, minTLSVersion] clientID, userID in
-            let wireAssembly = WireAPI.Assembly(
+            let wireAssembly = WireNetwork.Assembly(
                 userID: userID,
                 clientID: clientID,
                 backendEnvironment: wireAPIBackendEnvironment,
-                minTLSVersion: WireAPI.TLSVersion.minVersionFrom(minTLSVersion),
+                minTLSVersion: WireNetwork.TLSVersion.minVersionFrom(minTLSVersion),
                 cookieEncryptionKey: UserDefaults.cookiesKey()
             )
 
@@ -119,13 +119,15 @@ open class AuthenticatedSessionFactory {
         )
 
         let cryptoboxMigrationManager = CryptoboxMigrationManager()
+        let coreCryptoKeyMigrationManager = CoreCryptoKeyMigrationManager(journal: journal)
 
         let coreCryptoProvider = CoreCryptoProvider(
             selfUserID: account.userIdentifier,
             sharedContainerURL: coreDataStack.applicationContainer,
             accountDirectory: coreDataStack.accountContainer,
             syncContext: coreDataStack.syncContext,
-            cryptoboxMigrationManager: cryptoboxMigrationManager
+            cryptoboxMigrationManager: cryptoboxMigrationManager,
+            coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager
         )
 
         var userSessionBuilder = ZMUserSessionBuilder()
@@ -177,7 +179,7 @@ open class AuthenticatedSessionFactory {
     private(set) var proxyUsername: String?
     private(set) var proxyPassword: String?
 
-    private var proxySettings: WireAPI.ProxySettings? {
+    private var proxySettings: WireNetwork.ProxySettings? {
         guard let proxy = environment.proxy else { return nil }
 
         if proxy.needsAuthentication {

@@ -17,10 +17,12 @@
 //
 
 import WireDataModel
+import WireSyncEngine
 
 protocol ConversationInputBarViewControllerDelegate: AnyObject {
     func conversationInputBarViewControllerDidComposeText(
         text: String,
+        attachments: [MultipartAttachment],
         mentions: [Mention],
         replyingTo message: ZMConversationMessage?
     )

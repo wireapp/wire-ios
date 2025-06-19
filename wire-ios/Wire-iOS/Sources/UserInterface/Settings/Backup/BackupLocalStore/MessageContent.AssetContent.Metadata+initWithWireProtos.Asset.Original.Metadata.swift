@@ -19,7 +19,7 @@
 import WireBackup
 import WireProtos
 
-extension MessageContent.AssetContent.Metadata {
+extension MessageBackupModel.Content.AssetContent.Metadata {
 
     init(_ metadata: Asset.Original.OneOf_MetaData) {
         switch metadata {

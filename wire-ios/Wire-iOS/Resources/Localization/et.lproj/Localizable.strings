@@ -102,8 +102,8 @@
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
 
 "add_participants.alert.title" = "Vestlus on täis";
-"add_participants.alert.message.new_conversation" = "Vestlusega saab liituda kuni %d inimest.";
-"add_participants.alert.message.existing_conversation" = "Vestlusega saab liituda kuni %1$d inimest. Hetkel on siin ruumi veel %2$d inimesele.";
+"add_participants.alert.message.new_conversation" = "Up to %@ people can join a conversation.";
+"add_participants.alert.message.existing_conversation" = "Up to %@ people can join a conversation. Currently there is only room for %@ more.";
 
 // Channel Creation UI - Navigation
 "conversation.create.channel.title" = "New channel";
@@ -860,7 +860,7 @@
 "participants.section.services" = "Teenused (%d)";
 "participants.section.settings" = "Valikud";
 "participants.footer.add_title" = "Lisa osalejaid";
-"participants.section.name.footer" = "Up to %1$d participants can join a conversation.";
+"participants.section.name.footer" = "Up to %@ participants can join a conversation.";
 "participants.section.admins.footer" = "Adminid puuduvad.";
 "participants.section.members.footer" = "There are no members.";
 
@@ -1594,6 +1594,7 @@
 "enroll_e2ei_certificate.subtitle" = "The certificate is active and your device is verified.";
 "enroll_e2ei_certificate.certificate_details_button" = "Certificate Details";
 "enroll_e2ei_certificate.ok_button" = "OK";
+"enroll_e2ei_certificate.idp_url_title" = "Identity Provider URL";
 
 // Update e2ei certificate
 "update_e2ei_certificate.title" = "Certificate updated";

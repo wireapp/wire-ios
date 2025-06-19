@@ -137,25 +137,25 @@ final class ExportBackupViewModel: ObservableObject {
         }
 
         // Workarounds for presentation issues with several sheet or alert presentation flags toggled at once.
-        // This code assumes the presentation or dismissal of a modal view controller lasts less than 400ms.
+        // This code assumes the presentation or dismissal of a modal view controller lasts less than 600ms.
         if !isCreatingBackupProgressPresented, self.isSetBackupPasswordPresented {
             // The outer sheet is dismissed while the inner sheet is still presented, so delay the outer dismissal.
             self.isSetBackupPasswordPresented = false
-            return DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(400)) { [weak self] in
+            return DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(600)) { [weak self] in
                 self?.updatePublishedProperties()
             }
         }
         if isSetBackupPasswordPresented, !self.isCreatingBackupProgressPresented {
             // The inner sheet is being presented while the outer sheet is not yet presented, so delay the inner.
             self.isCreatingBackupProgressPresented = true
-            return DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(400)) { [weak self] in
+            return DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(600)) { [weak self] in
                 self?.updatePublishedProperties()
             }
         }
         if isErrorAlertPresented, self.isCreatingBackupProgressPresented {
             // The alert is being presented while there is still a sheet presented, so delay the alert.
             self.isCreatingBackupProgressPresented = false
-            return DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(400)) { [weak self] in
+            return DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(600)) { [weak self] in
                 self?.updatePublishedProperties()
             }
         }

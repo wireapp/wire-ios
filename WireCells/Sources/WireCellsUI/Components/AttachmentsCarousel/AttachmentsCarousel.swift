@@ -20,18 +20,18 @@ public import SwiftUI
 
 public struct AttachmentsCarousel: View {
 
-    @State private var items: [AttachmentsCarouselItem]
+    @ObservedObject private var viewModel: AttachmentsCarouselViewModel
     private let onTap: (AttachmentsCarouselItem) -> Void
     private let onRemove: (AttachmentsCarouselItem) -> Void
     private let onOptions: (AttachmentsCarouselItem) -> Void
 
     public init(
-        items: [AttachmentsCarouselItem],
+        viewModel: AttachmentsCarouselViewModel,
         onTap: @escaping (AttachmentsCarouselItem) -> Void,
         onRemove: @escaping (AttachmentsCarouselItem) -> Void,
         onOptions: @escaping (AttachmentsCarouselItem) -> Void
     ) {
-        self.items = items
+        self.viewModel = viewModel
         self.onTap = onTap
         self.onRemove = onRemove
         self.onOptions = onOptions
@@ -40,7 +40,7 @@ public struct AttachmentsCarousel: View {
     public var body: some View {
         ScrollView(.horizontal) {
             HStack(spacing: 4) {
-                ForEach(items) { item in
+                ForEach(viewModel.items) { item in
                     AttachmentsCarouselItemView(
                         item: item,
                         onTap: { onTap(item) },
@@ -163,22 +163,24 @@ private extension AttachmentsCarouselItem.State {
 
 #Preview {
     AttachmentsCarousel(
-        items: [
-            AttachmentsCarouselItem(
-                id: UUID(),
-                state: .uploading(progress: 0.5),
-                kind: .audio(samples: [0.1, 0.2, 0.3]),
-                name: "Image",
-                size: "1.2 MB"
-            ),
-            AttachmentsCarouselItem(
-                id: UUID(),
-                state: .failed,
-                kind: .image(thumbnail: UIImage()),
-                name: "Image",
-                size: "1.2 MB"
-            )
-        ],
+        viewModel: AttachmentsCarouselViewModel(
+            items: [
+                AttachmentsCarouselItem(
+                    id: UUID(),
+                    state: .uploaded,
+                    kind: .image(thumbnail: UIImage()),
+                    name: "Image",
+                    size: "1.2 MB"
+                ),
+                AttachmentsCarouselItem(
+                    id: UUID(),
+                    state: .uploading(progress: 0.5),
+                    kind: .video(thumbnail: UIImage()),
+                    name: "Video",
+                    size: "1.2 MB"
+                )
+            ]
+        ),
         onTap: { _ in },
         onRemove: { _ in },
         onOptions: { _ in }

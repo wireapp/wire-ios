@@ -17,7 +17,6 @@
 //
 
 import SwiftUI
-import WireAPI
 import WireBackup
 import WireCommonComponents
 import WireDataModel
@@ -25,6 +24,7 @@ import WireDesign
 import WireDomain
 import WireFoundation
 import WireLogging
+import WireNetwork
 import WireSettingsUI
 import WireSyncEngine
 
@@ -395,18 +395,30 @@ extension SettingsCellDescriptorFactory {
         let context = selfUser.managedObjectContext!.performAndWait {
             selfUser.managedObjectContext!.zm_sync!
         }
-
-        let importBackupUseCase = sessionManager.importLegacyBackupUseCase!
-        // TODO: [WPB-16658] enable new backup when restore is ready
-        let createBackupUseCase: CreateBackupUseCaseProtocol = if true || DeveloperFlag.createLegacyBackups.isOn {
+        let backupLocalStore = BackupLocalStore(
+            context: context,
+            processor: ConversationProtobufMessageProcessor(context: context)
+        )
+        let userSession = sessionManager.activeUserSession!
+        let importBackupUseCaseFactory = ImportBackupUseCaseFactory { url in
+            ImportBackupUseCase(
+                url: url,
+                selfUserID: .init(selfUser.qualifiedID!),
+                backupLocalStore: backupLocalStore,
+                fileUnarchiver: ZipArchiveFileUnarchiver(),
+                syncTrigger: { userSession.triggerResourcesSync() },
+                logger: WireLogger.backupImport
+            )
+        } legacyImportBackupUseCase: { url in
+            sessionManager.importLegacyBackupUseCase(url: url)!
+        }
+        let createBackupUseCase: CreateBackupUseCaseProtocol = if DeveloperFlag.createLegacyBackups.isOn {
             CreateLegacyBackupUseCase(sessionManager: sessionManager)
         } else {
             CreateBackupUseCase(
                 selfUserID: .init(selfUser.qualifiedID!),
-                selfUserHandle: selfUser.handle,
-                backupLocalStore: BackupLocalStore(context: context),
+                backupLocalStore: backupLocalStore,
                 fileArchiver: ZIPFoundationFileArchiver(),
-                currentDateProvider: SystemDateProvider(),
                 logger: WireLogger.backupExport
             )
         }
@@ -414,7 +426,7 @@ extension SettingsCellDescriptorFactory {
         return BackupImportExportBuilder(
             backupPasswordValidator: BackupPasswordValidator(),
             createBackupUseCase: createBackupUseCase,
-            importBackupUseCase: importBackupUseCase,
+            importBackupUseCaseFactory: importBackupUseCaseFactory,
             cleanUpBackupsUseCase: CleanUpBackupsUseCase(sessionManager: sessionManager),
             exportBackupLogger: WireLogger.backupExport,
             importBackupLogger: WireLogger.backupImport,
@@ -503,6 +515,28 @@ extension SettingsCellDescriptorFactory {
 
     func signOutElement() -> any SettingsCellDescriptorType {
         SettingsSignOutCellDescriptor()
+    }
+
+}
+
+// MARK: -
+
+private extension ConversationProtobufMessageProcessor {
+
+    init(context: NSManagedObjectContext) {
+        let messageLocalStore = MessageLocalStore(context: context)
+        self.init(
+            messageLocalStore: messageLocalStore,
+            conversationLocalStore: ConversationLocalStore(
+                context: context,
+                mlsService: context.performAndWait { context.mlsService },
+                messageLocalStore: messageLocalStore
+            ),
+            userLocalStore: UserLocalStore(
+                context: context,
+                messageLocalStore: messageLocalStore
+            )
+        )
     }
 
 }

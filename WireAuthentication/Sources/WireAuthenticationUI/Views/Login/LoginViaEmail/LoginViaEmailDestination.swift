@@ -30,4 +30,6 @@ enum LoginViaEmailDestination: Hashable {
         authenticationResult: AuthenticationResult
     )
 
+    case createPersonalAccount
+
 }

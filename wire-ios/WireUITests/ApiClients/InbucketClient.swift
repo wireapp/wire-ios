@@ -40,7 +40,7 @@ enum InbucketClient {
             (inbucketData, response) = try await URLSession.shared.data(for: request)
             pureResponse = response as! HTTPURLResponse
             timeout += 1
-            if(timeout == 100 && pureResponse.statusCode != 200) {
+            if timeout == 100, pureResponse.statusCode != 200 {
                 throw fatalError("Unable to retrieve latest message for \(email)")
             }
         }

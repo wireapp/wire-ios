@@ -19,6 +19,7 @@
 import WireBackup
 import WireDataModel
 import WireFoundation
+import WireNetwork
 
 extension BackupLocalStore {
 
@@ -28,6 +29,15 @@ extension BackupLocalStore {
         fetchRequest.returnsObjectsAsFaults = true
         fetchRequest.includesPropertyValues = false
         return fetchRequest
+    }
+
+    func fetchAllMessageIDs() async throws -> Set<String> {
+        let fetchRequest = ZMMessage.fetchRequest()
+        fetchRequest.propertiesToFetch = ["nonce_data"]
+        return try await context.perform { [context] in
+            let messages = try context.fetch(fetchRequest) as! [ZMMessage]
+            return Set(messages.compactMap(\.nonce).map(\.uuidString))
+        }
     }
 
     func fetchAllMessages() -> AsyncThrowingStream<MessageBackupModel, any Error> {
@@ -50,6 +60,29 @@ extension BackupLocalStore {
                 }
             }
         }
+    }
+
+    func addMessage(_ backupMessage: MessageBackupModel) async throws {
+        let conversationID = backupMessage.conversationID
+        let conversation = await context.perform {
+            ZMConversation.fetch(with: conversationID.id, domain: conversationID.domain, in: context)
+        }
+        guard
+            let conversation,
+            let nonce = UUID(transportString: backupMessage.id),
+            let genericMessage = GenericMessage(nonce: nonce, messageContent: backupMessage.content)
+        else { return }
+
+        try await processor.processProtobufMessage(
+            genericMessage,
+            content: genericMessage.content!,
+            conversation: conversation,
+            conversationID: WireNetwork.QualifiedID(conversationID),
+            senderID: WireNetwork.QualifiedID(backupMessage.senderUserID),
+            senderClientID: backupMessage.senderClientID,
+            date: backupMessage.creationDate,
+            eventMessage: ""
+        )
     }
 
 }

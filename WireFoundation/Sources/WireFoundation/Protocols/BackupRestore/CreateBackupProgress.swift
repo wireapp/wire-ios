@@ -18,7 +18,7 @@
 
 public import Foundation
 
-public enum CreateBackupProgress: Sendable {
+public enum CreateBackupProgress: Equatable, Sendable {
 
     case progress(current: Int, total: Int)
     case done(url: URL)

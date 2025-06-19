@@ -35,6 +35,11 @@ public protocol MessageLocalStoreProtocol {
         conversationDomain: String?
     ) async
 
+    /// Adds a system message (to all conversations) that inform that there are potential lost messages
+    /// and that some users were added to the conversation
+
+    func addPotentialGapSystemMessage() async throws
+
     /// Fetches or creates a `ZMClientMessage` locally.
     /// - Parameters:
     ///     - id: The message ID.
@@ -153,6 +158,22 @@ public protocol MessageLocalStoreProtocol {
         _ messageReaction: WireProtos.Reaction,
         in conversation: ZMConversation,
         senderID: UUID,
+        date: Date
+    ) async
+
+    /// Adds a message confirmation to a message. This is used for read receipts.
+    /// - Parameters:
+    ///    - confirmation: The confirmation protobuf object.
+    ///    - conversation: The related conversation.
+    ///    - senderID: The message sender id.
+    ///    - senderDomain: The message sender domain.
+    ///    - date: The date the confirmation was added.
+
+    func addMessageConfirmation(
+        _ confirmation: WireProtos.Confirmation,
+        in conversation: ZMConversation,
+        senderID: UUID,
+        senderDomain: String,
         date: Date
     ) async
 

@@ -99,6 +99,10 @@ public protocol ZMConversationMessage: NSObjectProtocol {
     /// The location message data associated with the message. If the message is not a location message, it will be nil
     var locationMessageData: LocationMessageData? { get }
 
+    /// The multipart message data associated with the message. If the message is not a multipart message, it will be
+    /// nil
+    var multipartMessageData: MultipartMessageData? { get }
+
     var usersReaction: [String: [UserType]] { get }
     var reactionData: Set<ReactionData> { get }
     func reactionsSortedByCreationDate() -> [ReactionData]
@@ -332,6 +336,10 @@ public extension ZMMessage {
     }
 
     @objc var locationMessageData: LocationMessageData? {
+        nil
+    }
+
+    @objc var multipartMessageData: MultipartMessageData? {
         nil
     }
 

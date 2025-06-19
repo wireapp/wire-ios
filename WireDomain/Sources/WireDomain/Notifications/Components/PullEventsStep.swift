@@ -17,9 +17,9 @@
 //
 
 import NeedleFoundation
-import WireAPI
 import WireDataModel
 import WireFoundation
+import WireNetwork
 
 protocol PullEventsDependency: Dependency {
     var userID: UUID { get }
@@ -62,7 +62,9 @@ final class PullEventsStep: Component<PullEventsDependency>, PullEventsStepProto
             selfClientID: selfClientID,
             api: try updateEventsAPI,
             store: updateEventsLocalStore,
-            decryptor: updateEventDecryptor
+            journal: journal,
+            decryptor: updateEventDecryptor,
+            coreCryptoProvider: coreCryptoProvider
         )
 
         let pullEventsUseCase = PullEventsUseCase(
@@ -93,6 +95,21 @@ extension PullEventsStep {
         )
     }
 
+    public var databaseSaver: any DatabaseSaverProtocol {
+        DatabaseSaver(context: dependency.coreData.syncContext)
+    }
+
+    private var sharedUserDefaults: UserDefaults {
+        UserDefaults(suiteName: dependency.applicationIdentifier)!
+    }
+
+    private var journal: Journal {
+        Journal(
+            userID: selfUserID,
+            storage: sharedUserDefaults
+        )
+    }
+
     var updateEventDecryptor: any UpdateEventDecryptorProtocol {
         UpdateEventDecryptor(
             proteusMessageDecryptor: proteusMessageDecryptor,
@@ -109,6 +126,7 @@ extension PullEventsStep {
             accountDirectory: accountContainer,
             syncContext: dependency.coreData.syncContext,
             cryptoboxMigrationManager: CryptoboxMigrationManager(),
+            coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager(journal: journal),
             allowCreation: false
         )
     }
@@ -184,7 +202,7 @@ extension PullEventsStep {
         }
     }
 
-    var apiVersion: WireAPI.APIVersion {
+    var apiVersion: WireNetwork.APIVersion {
         get throws {
             let key = "SelectedAPIVersion"
             let sharedUserDefaults = dependency.sharedUserDefaults
@@ -197,7 +215,7 @@ extension PullEventsStep {
             let legacyAPIVersion = APIVersion(rawValue: Int32(storedValue))
 
             guard let legacyAPIVersion,
-                  let apiVersion = WireAPI.APIVersion(rawValue: UInt(legacyAPIVersion.rawValue)) else {
+                  let apiVersion = WireNetwork.APIVersion(rawValue: UInt(legacyAPIVersion.rawValue)) else {
                 throw Failure.apiVersionNotFound
             }
 
@@ -239,7 +257,7 @@ extension PullEventsStep {
         return backendEnvironment
     }
 
-    var backendEnvironment: WireAPI.BackendEnvironment {
+    var backendEnvironment: WireNetwork.BackendEnvironment {
         get async throws {
             BackendEnvironment(
                 url: legacyBackendEnvironment.backendURL,
@@ -262,7 +280,7 @@ extension PullEventsStep {
         }
     }
 
-    var proxySettings: WireAPI.ProxySettings? {
+    var proxySettings: WireNetwork.ProxySettings? {
         get async throws {
             guard let proxy = legacyBackendEnvironment.proxy else { return nil }
 
@@ -321,7 +339,7 @@ extension PullEventsStep {
                 )
             )
 
-            let minTLSVersion = WireAPI.TLSVersion.minVersionFrom(minTLSVersion)
+            let minTLSVersion = WireNetwork.TLSVersion.minVersionFrom(minTLSVersion)
             let config = await URLSessionConfigurationFactory(
                 minTLSVersion: minTLSVersion,
                 proxySettings: try proxySettings

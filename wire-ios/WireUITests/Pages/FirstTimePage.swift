@@ -23,16 +23,16 @@ class FirstTimePage: PageModel {
         let expectation = okButton.waitForExistence(timeout: 10)
         XCTAssert(expectation, "First time page not loaded - can't find Ok button")
     }
-    
+
     var okButton: XCUIElement {
-        return app.buttons["OK"]
+        app.buttons["OK"]
     }
-    
+
     func acceptFirstTimeAlert() -> FirstTimePage {
         okButton.tap()
         return self
     }
-    
+
     func acceptPopup() -> ConversationsPage {
         let button = app.otherElements.buttons.firstMatch
         button.tap()

@@ -74,4 +74,3 @@ class WireUITestCase: XCTestCase {
         }
     }
 }
-

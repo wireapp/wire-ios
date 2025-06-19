@@ -18,7 +18,6 @@
 
 import Foundation
 import LocalAuthentication
-import WireAnalytics
 import WireDataModel
 
 extension ZMUserSession: UserSession {
@@ -335,6 +334,10 @@ extension ZMUserSession: UserSession {
 
     public func makeAppendTextMessageUseCase() -> AppendTextMessageUseCaseProtocol {
         AppendTextMessageUseCase(analyticsEventTracker: analyticsEventTracker)
+    }
+
+    public func makeAppendMultipartMessageUseCase() -> AppendMultipartMessageUseCaseProtocol {
+        AppendMultipartMessageUseCase(analyticsEventTracker: analyticsEventTracker)
     }
 
     public func makeAppendImageMessageUseCase() -> AppendImageMessageUseCaseProtocol {

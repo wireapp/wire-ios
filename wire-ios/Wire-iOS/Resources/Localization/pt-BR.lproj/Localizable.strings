@@ -102,8 +102,8 @@
 "peoplepicker.federation.domain_unvailable" = "O domínio federado não está disponível no momento. [Saiba mais](%@)";
 
 "add_participants.alert.title" = "A conversa está cheia";
-"add_participants.alert.message.new_conversation" = "Até %d pessoas podem participar de uma conversa.";
-"add_participants.alert.message.existing_conversation" = "Até %1$d pessoas podem participar de uma conversa. Atualmente, há apenas espaço para mais %2$d.";
+"add_participants.alert.message.new_conversation" = "Up to %@ people can join a conversation.";
+"add_participants.alert.message.existing_conversation" = "Up to %@ people can join a conversation. Currently there is only room for %@ more.";
 
 // Channel Creation UI - Navigation
 "conversation.create.channel.title" = "Novo canal";
@@ -860,7 +860,7 @@
 "participants.section.services" = "Serviços (%d)";
 "participants.section.settings" = "Opções";
 "participants.footer.add_title" = "Adicionar Participantes";
-"participants.section.name.footer" = "Até %1$d participantes podem se juntar à conversa.";
+"participants.section.name.footer" = "Up to %@ participants can join a conversation.";
 "participants.section.admins.footer" = "Não há administradores.";
 "participants.section.members.footer" = "Não há membros.";
 
@@ -1594,6 +1594,7 @@
 "enroll_e2ei_certificate.subtitle" = "O certificado está ativo e seu dispositivo foi verificado.";
 "enroll_e2ei_certificate.certificate_details_button" = "Detalhes do Certificado";
 "enroll_e2ei_certificate.ok_button" = "OK";
+"enroll_e2ei_certificate.idp_url_title" = "Identity Provider URL";
 
 // Update e2ei certificate
 "update_e2ei_certificate.title" = "Certificado atualizado";

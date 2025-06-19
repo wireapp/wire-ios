@@ -49,7 +49,7 @@ final class ProcessNotificationRequestStep: Component<ProcessNotificationRequest
         userID: UUID,
         eventID: UUID
     ) throws -> VerifyUserStep {
-        let accountManager = AccountManager(
+        let accountManager = try AccountManager(
             sharedDirectory: dependency.applicationContainer
         )
 

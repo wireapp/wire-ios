@@ -169,7 +169,7 @@ final class CreatingBackupProgressViewController: UIViewController {
     private func updateProgressValue() {
         let progressValue = Float(progressValues.current) / Float(progressValues.total)
         if progressValue.isFinite {
-            progressLabel.text = progressValue.formatted(.percent)
+            progressLabel.text = progressValue.formatted(.percent.precision(.fractionLength(0)))
             progressView.progress = progressValue
         } else {
             progressLabel.text = 0.formatted(.percent)

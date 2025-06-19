@@ -17,8 +17,7 @@
 //
 
 "backup.export.action" = "Jetzt sichern";
-"backup.export.description" = "Erstellen Sie ein Datensicherung, um Ihren Gesprächsverlauf zu erhalten. Sie können damit den Verlauf wiederherstellen, wenn Sie Ihr Gerät verlieren oder zu einem neuen wechseln.
-Die Sicherungsdatei ist nicht durch eine Ende-zu-Ende-Verschlüsselung geschützt, also bewahren Sie sie an einem sicheren Ort auf.";
+"backup.export.description" = "Erstellen Sie eine Datensicherung, um Ihren Gesprächsverlauf zu erhalten. Auf diese Weise können Sie den Verlauf wiederherstellen, wenn Sie Ihr Gerät verlieren oder zu einem neuen Gerät wechseln. Die Sicherungsdatei ist nicht Ende-zu-Ende-verschlüsselt. Bitte bewahren Sie sie sicher auf.";
 
 "backup.import.action" = "Backup wiederherstellen";
 "backup.import.description" = "Der vorhandene Gesprächsverlauf auf diesem Gerät bleibt erhalten und wird durch das neue Backup ergänzt. Sie können den Verlauf von all Ihren Geräten und verschiedenen Plattformen wiederherstellen, aber nicht von einem anderen Benutzerkonto.";
@@ -48,7 +47,6 @@ Die Sicherungsdatei ist nicht durch eine Ende-zu-Ende-Verschlüsselung geschütz
 "importBackup.overwriteConfirmation.proceed" = "Fortfahren";
 
 "importBackup.alert.ok" = "OK";
-"importBackup.alert.success.title" = "Success";
 "importBackup.alert.success.message" = "Ihr Verlauf wurde wiederhergestellt.";
 "importBackup.alert.genericError.title" = "Ein Fehler ist aufgetreten";
 "importBackup.alert.genericError.message" = "Ihr Gesprächsverlauf konnte nicht wiederhergestellt werden. Bitte versuchen Sie es erneut oder kontaktieren Sie Wire Support.";

@@ -17,7 +17,7 @@
 //
 
 class UserInfo {
-    
+
     var name: String
     var username: String
     var email: String
@@ -35,7 +35,7 @@ class UserInfo {
         self.id = ""
         self.backend_domain = ""
     }
-    
+
     init(email: String, password: String) {
         self.name = ""
         self.username = ""
@@ -45,7 +45,7 @@ class UserInfo {
         self.id = ""
         self.backend_domain = ""
     }
-    
+
     init() {
         self.name = ""
         self.username = ""
@@ -55,25 +55,25 @@ class UserInfo {
         self.id = ""
         self.backend_domain = ""
     }
-    
+
     func updateUserInfo(newInfo: UserInfo) {
-        if(newInfo.name != "") {
-            self.name = newInfo.name
+        if newInfo.name != "" {
+            name = newInfo.name
         }
-        if(newInfo.username != "") {
-            self.username = newInfo.username
+        if newInfo.username != "" {
+            username = newInfo.username
         }
-        if(newInfo.password != "") {
-            self.password = newInfo.password
+        if newInfo.password != "" {
+            password = newInfo.password
         }
-        if(newInfo.domain != "") {
-            self.domain = newInfo.domain
+        if newInfo.domain != "" {
+            domain = newInfo.domain
         }
-        if(newInfo.id != "") {
-            self.id = newInfo.id
+        if newInfo.id != "" {
+            id = newInfo.id
         }
-        if(newInfo.backend_domain != "") {
-            self.backend_domain = newInfo.backend_domain
+        if newInfo.backend_domain != "" {
+            backend_domain = newInfo.backend_domain
         }
     }
 }

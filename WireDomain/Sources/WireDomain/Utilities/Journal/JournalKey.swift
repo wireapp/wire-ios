@@ -38,6 +38,13 @@ public struct JournalKey<Value>: Sendable where Value: Sendable {
 
 public extension JournalKey where Value == Bool {
 
+    /// Whether new sync mechanism (async stream) is used.
+
+    static let isSyncV3Enabled = Self(
+        "isSyncV3Enabled",
+        defaultValue: false
+    )
+
     /// Whether new sync mechanism (initial sync, incremental
     /// sync, live sync) is used.
 
@@ -51,6 +58,24 @@ public extension JournalKey where Value == Bool {
     static let isInitialSyncRequired = Self(
         "isInitialSyncRequired",
         defaultValue: false
+    )
+
+    /// Whether a core crypto key migration needs to be performed.
+
+    static let isCoreCryptoKeyMigrationRequired = Self(
+        "isCoreCryptoKeyMigrationRequired",
+        defaultValue: true
+    )
+
+}
+
+public extension JournalKey where Value == Set<String> {
+
+    /// The set of MLS group IDs to be repaired.
+
+    static let brokenMLSGroupIDs = Self(
+        "brokenMLSGroupIDs",
+        defaultValue: []
     )
 
 }

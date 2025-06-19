@@ -36,7 +36,7 @@ class IncrementalSyncObserverTests {
     func ifAppIsLiveThenDontWait() async {
         // Given
         syncAgent.isSyncV2Enabled = true
-        syncAgent.syncStatePublisher = Just(SyncState.liveSyncing).eraseToAnyPublisher()
+        syncAgent.syncStatePublisher = Just(SyncState.liveSyncing(.ongoing)).eraseToAnyPublisher()
 
         // When
         let before = Date.now

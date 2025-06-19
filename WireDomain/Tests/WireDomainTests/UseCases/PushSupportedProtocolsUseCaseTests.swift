@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
-import WireAPISupport
+import WireNetwork
+import WireNetworkSupport
 import XCTest
 
 @testable import WireDomain
@@ -53,7 +53,7 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
 
     func test_PushSupportedProtocols_It_Invokes_Sync_Method() async throws {
         // Given
-        let supportedProtocols = Set([WireAPI.MessageProtocol.mls, .proteus])
+        let supportedProtocols = Set([WireNetwork.MessageProtocol.mls, .proteus])
         calculateSupportedProtocolsUseCase.invoke_MockValue = supportedProtocols
         mockPushSupportedProtocolsSync.pushSupportedProtocols_MockMethod = { _ in }
 

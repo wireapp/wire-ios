@@ -26,6 +26,23 @@
 // For information on using the generated types, please see the documentation:
 //   https://github.com/apple/swift-protobuf/
 
+//
+// Wire
+// Copyright (C) 2021 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+
 import Foundation
 import SwiftProtobuf
 
@@ -39,80 +56,32 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
   typealias Version = _2
 }
 
-public enum ClientAction: SwiftProtobuf.Enum, Swift.CaseIterable {
-  public typealias RawValue = Int
-  case resetSession // = 0
+public enum ClientAction: Int, SwiftProtobuf.Enum, Swift.CaseIterable {
+  case resetSession = 0
 
   public init() {
     self = .resetSession
   }
 
-  public init?(rawValue: Int) {
-    switch rawValue {
-    case 0: self = .resetSession
-    default: return nil
-    }
-  }
-
-  public var rawValue: Int {
-    switch self {
-    case .resetSession: return 0
-    }
-  }
-
 }
 
-public enum EncryptionAlgorithm: SwiftProtobuf.Enum, Swift.CaseIterable {
-  public typealias RawValue = Int
-  case aesCbc // = 0
-  case aesGcm // = 1
+public enum EncryptionAlgorithm: Int, SwiftProtobuf.Enum, Swift.CaseIterable {
+  case aesCbc = 0
+  case aesGcm = 1
 
   public init() {
     self = .aesCbc
   }
 
-  public init?(rawValue: Int) {
-    switch rawValue {
-    case 0: self = .aesCbc
-    case 1: self = .aesGcm
-    default: return nil
-    }
-  }
-
-  public var rawValue: Int {
-    switch self {
-    case .aesCbc: return 0
-    case .aesGcm: return 1
-    }
-  }
-
 }
 
-public enum LegalHoldStatus: SwiftProtobuf.Enum, Swift.CaseIterable {
-  public typealias RawValue = Int
-  case unknown // = 0
-  case disabled // = 1
-  case enabled // = 2
+public enum LegalHoldStatus: Int, SwiftProtobuf.Enum, Swift.CaseIterable {
+  case unknown = 0
+  case disabled = 1
+  case enabled = 2
 
   public init() {
     self = .unknown
-  }
-
-  public init?(rawValue: Int) {
-    switch rawValue {
-    case 0: self = .unknown
-    case 1: self = .disabled
-    case 2: self = .enabled
-    default: return nil
-    }
-  }
-
-  public var rawValue: Int {
-    switch self {
-    case .unknown: return 0
-    case .disabled: return 1
-    case .enabled: return 2
-    }
   }
 
 }
@@ -205,6 +174,14 @@ public struct GenericMessage: Sendable {
       return Asset()
     }
     set {content = .asset(newValue)}
+  }
+
+  public var multipart: Multipart {
+    get {
+      if case .multipart(let v)? = content {return v}
+      return Multipart()
+    }
+    set {content = .multipart(newValue)}
   }
 
   public var hidden: MessageHide {
@@ -344,6 +321,7 @@ public struct GenericMessage: Sendable {
     case clientAction(ClientAction)
     case calling(Calling)
     case asset(Asset)
+    case multipart(Multipart)
     case hidden(MessageHide)
     case location(Location)
     case deleted(MessageDelete)
@@ -397,6 +375,10 @@ public struct GenericMessage: Sendable {
       }()
       case .asset: return {
         guard case .asset(let v) = self else { preconditionFailure() }
+        return v.isInitialized
+      }()
+      case .multipart: return {
+        guard case .multipart(let v) = self else { preconditionFailure() }
         return v.isInitialized
       }()
       case .hidden: return {
@@ -458,37 +440,19 @@ public struct GenericMessage: Sendable {
   }
 
   /// See internal RFC: "2024-07-18 RFC Improve future-proofing for new OTR message types"
-  public enum UnknownStrategy: SwiftProtobuf.Enum, Swift.CaseIterable {
-    public typealias RawValue = Int
+  public enum UnknownStrategy: Int, SwiftProtobuf.Enum, Swift.CaseIterable {
 
     /// Ignore the message completely. Trash. Bye
-    case ignore // = 0
+    case ignore = 0
 
     /// Warn the user, but discard the message, as it won't be helpful in the future.
-    case discardAndWarn // = 1
+    case discardAndWarn = 1
 
     /// Warn the user. Client has freedom to store it and retry in the future.
-    case warnUserAllowRetry // = 2
+    case warnUserAllowRetry = 2
 
     public init() {
       self = .ignore
-    }
-
-    public init?(rawValue: Int) {
-      switch rawValue {
-      case 0: self = .ignore
-      case 1: self = .discardAndWarn
-      case 2: self = .warnUserAllowRetry
-      default: return nil
-      }
-    }
-
-    public var rawValue: Int {
-      switch self {
-      case .ignore: return 0
-      case .discardAndWarn: return 1
-      case .warnUserAllowRetry: return 2
-      }
     }
 
   }
@@ -754,34 +718,14 @@ public struct Availability: Sendable {
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public enum TypeEnum: SwiftProtobuf.Enum, Swift.CaseIterable {
-    public typealias RawValue = Int
-    case none // = 0
-    case available // = 1
-    case away // = 2
-    case busy // = 3
+  public enum TypeEnum: Int, SwiftProtobuf.Enum, Swift.CaseIterable {
+    case none = 0
+    case available = 1
+    case away = 2
+    case busy = 3
 
     public init() {
       self = .none
-    }
-
-    public init?(rawValue: Int) {
-      switch rawValue {
-      case 0: self = .none
-      case 1: self = .available
-      case 2: self = .away
-      case 3: self = .busy
-      default: return nil
-      }
-    }
-
-    public var rawValue: Int {
-      switch self {
-      case .none: return 0
-      case .available: return 1
-      case .away: return 2
-      case .busy: return 3
-      }
     }
 
   }
@@ -1428,7 +1372,6 @@ public struct MessageEdit: Sendable {
     set {content = .text(newValue)}
   }
 
-  /// Reply can also be edited, but the edit will only affect the Text part
   public var composite: Composite {
     get {
       if case .composite(let v)? = content {return v}
@@ -1441,7 +1384,6 @@ public struct MessageEdit: Sendable {
 
   public enum OneOf_Content: Equatable, Sendable {
     case text(Text)
-    /// Reply can also be edited, but the edit will only affect the Text part
     case composite(Composite)
 
     fileprivate var isInitialized: Bool {
@@ -1525,28 +1467,12 @@ public struct Confirmation: Sendable {
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public enum TypeEnum: SwiftProtobuf.Enum, Swift.CaseIterable {
-    public typealias RawValue = Int
-    case delivered // = 0
-    case read // = 1
+  public enum TypeEnum: Int, SwiftProtobuf.Enum, Swift.CaseIterable {
+    case delivered = 0
+    case read = 1
 
     public init() {
       self = .delivered
-    }
-
-    public init?(rawValue: Int) {
-      switch rawValue {
-      case 0: self = .delivered
-      case 1: self = .read
-      default: return nil
-      }
-    }
-
-    public var rawValue: Int {
-      switch self {
-      case .delivered: return 0
-      case .read: return 1
-      }
     }
 
   }
@@ -1757,6 +1683,299 @@ public struct ImageAsset: @unchecked Sendable {
   fileprivate var _sha256: Data? = nil
 }
 
+/// Attachment can attach different kind of assets to a Multipart message
+public struct Attachment: Sendable {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var content: Attachment.OneOf_Content? = nil
+
+  public var asset: Asset {
+    get {
+      if case .asset(let v)? = content {return v}
+      return Asset()
+    }
+    set {content = .asset(newValue)}
+  }
+
+  public var cellAsset: CellAsset {
+    get {
+      if case .cellAsset(let v)? = content {return v}
+      return CellAsset()
+    }
+    set {content = .cellAsset(newValue)}
+  }
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public enum OneOf_Content: Equatable, Sendable {
+    case asset(Asset)
+    case cellAsset(CellAsset)
+
+    fileprivate var isInitialized: Bool {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch self {
+      case .asset: return {
+        guard case .asset(let v) = self else { preconditionFailure() }
+        return v.isInitialized
+      }()
+      case .cellAsset: return {
+        guard case .cellAsset(let v) = self else { preconditionFailure() }
+        return v.isInitialized
+      }()
+      }
+    }
+
+  }
+
+  public init() {}
+}
+
+/// Multipart message combines optional text with multiple attachments
+public struct Multipart: Sendable {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var text: Text {
+    get {return _text ?? Text()}
+    set {_text = newValue}
+  }
+  /// Returns true if `text` has been explicitly set.
+  public var hasText: Bool {return self._text != nil}
+  /// Clears the value of `text`. Subsequent reads from it will return its default value.
+  public mutating func clearText() {self._text = nil}
+
+  public var attachments: [Attachment] = []
+
+  /// Standard flags for all message types
+  public var expectsReadConfirmation: Bool {
+    get {return _expectsReadConfirmation ?? false}
+    set {_expectsReadConfirmation = newValue}
+  }
+  /// Returns true if `expectsReadConfirmation` has been explicitly set.
+  public var hasExpectsReadConfirmation: Bool {return self._expectsReadConfirmation != nil}
+  /// Clears the value of `expectsReadConfirmation`. Subsequent reads from it will return its default value.
+  public mutating func clearExpectsReadConfirmation() {self._expectsReadConfirmation = nil}
+
+  public var legalHoldStatus: LegalHoldStatus {
+    get {return _legalHoldStatus ?? .unknown}
+    set {_legalHoldStatus = newValue}
+  }
+  /// Returns true if `legalHoldStatus` has been explicitly set.
+  public var hasLegalHoldStatus: Bool {return self._legalHoldStatus != nil}
+  /// Clears the value of `legalHoldStatus`. Subsequent reads from it will return its default value.
+  public mutating func clearLegalHoldStatus() {self._legalHoldStatus = nil}
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+
+  fileprivate var _text: Text? = nil
+  fileprivate var _expectsReadConfirmation: Bool? = nil
+  fileprivate var _legalHoldStatus: LegalHoldStatus? = nil
+}
+
+/// CellAsset represents a file uploaded to a conversation cell
+public struct CellAsset: Sendable {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  /// Required pydio backend reference
+  public var uuid: String {
+    get {return _uuid ?? String()}
+    set {_uuid = newValue}
+  }
+  /// Returns true if `uuid` has been explicitly set.
+  public var hasUuid: Bool {return self._uuid != nil}
+  /// Clears the value of `uuid`. Subsequent reads from it will return its default value.
+  public mutating func clearUuid() {self._uuid = nil}
+
+  /// known mime_type
+  public var contentType: String {
+    get {return _contentType ?? String()}
+    set {_contentType = newValue}
+  }
+  /// Returns true if `contentType` has been explicitly set.
+  public var hasContentType: Bool {return self._contentType != nil}
+  /// Clears the value of `contentType`. Subsequent reads from it will return its default value.
+  public mutating func clearContentType() {self._contentType = nil}
+
+  /// Path contains full path including name (last path part)
+  public var initialName: String {
+    get {return _initialName ?? String()}
+    set {_initialName = newValue}
+  }
+  /// Returns true if `initialName` has been explicitly set.
+  public var hasInitialName: Bool {return self._initialName != nil}
+  /// Clears the value of `initialName`. Subsequent reads from it will return its default value.
+  public mutating func clearInitialName() {self._initialName = nil}
+
+  /// Size of the file
+  public var initialSize: Int64 {
+    get {return _initialSize ?? 0}
+    set {_initialSize = newValue}
+  }
+  /// Returns true if `initialSize` has been explicitly set.
+  public var hasInitialSize: Bool {return self._initialSize != nil}
+  /// Clears the value of `initialSize`. Subsequent reads from it will return its default value.
+  public mutating func clearInitialSize() {self._initialSize = nil}
+
+  public var initialMetaData: CellAsset.OneOf_InitialMetaData? = nil
+
+  public var image: CellAsset.ImageMetaData {
+    get {
+      if case .image(let v)? = initialMetaData {return v}
+      return CellAsset.ImageMetaData()
+    }
+    set {initialMetaData = .image(newValue)}
+  }
+
+  public var video: CellAsset.VideoMetaData {
+    get {
+      if case .video(let v)? = initialMetaData {return v}
+      return CellAsset.VideoMetaData()
+    }
+    set {initialMetaData = .video(newValue)}
+  }
+
+  public var audio: CellAsset.AudioMetaData {
+    get {
+      if case .audio(let v)? = initialMetaData {return v}
+      return CellAsset.AudioMetaData()
+    }
+    set {initialMetaData = .audio(newValue)}
+  }
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public enum OneOf_InitialMetaData: Equatable, Sendable {
+    case image(CellAsset.ImageMetaData)
+    case video(CellAsset.VideoMetaData)
+    case audio(CellAsset.AudioMetaData)
+
+    fileprivate var isInitialized: Bool {
+      guard case .image(let v) = self else {return true}
+      return v.isInitialized
+    }
+
+  }
+
+  public struct ImageMetaData: Sendable {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    public var width: Int32 {
+      get {return _width ?? 0}
+      set {_width = newValue}
+    }
+    /// Returns true if `width` has been explicitly set.
+    public var hasWidth: Bool {return self._width != nil}
+    /// Clears the value of `width`. Subsequent reads from it will return its default value.
+    public mutating func clearWidth() {self._width = nil}
+
+    public var height: Int32 {
+      get {return _height ?? 0}
+      set {_height = newValue}
+    }
+    /// Returns true if `height` has been explicitly set.
+    public var hasHeight: Bool {return self._height != nil}
+    /// Clears the value of `height`. Subsequent reads from it will return its default value.
+    public mutating func clearHeight() {self._height = nil}
+
+    public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    public init() {}
+
+    fileprivate var _width: Int32? = nil
+    fileprivate var _height: Int32? = nil
+  }
+
+  public struct VideoMetaData: Sendable {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    public var width: Int32 {
+      get {return _width ?? 0}
+      set {_width = newValue}
+    }
+    /// Returns true if `width` has been explicitly set.
+    public var hasWidth: Bool {return self._width != nil}
+    /// Clears the value of `width`. Subsequent reads from it will return its default value.
+    public mutating func clearWidth() {self._width = nil}
+
+    public var height: Int32 {
+      get {return _height ?? 0}
+      set {_height = newValue}
+    }
+    /// Returns true if `height` has been explicitly set.
+    public var hasHeight: Bool {return self._height != nil}
+    /// Clears the value of `height`. Subsequent reads from it will return its default value.
+    public mutating func clearHeight() {self._height = nil}
+
+    public var durationInMillis: UInt64 {
+      get {return _durationInMillis ?? 0}
+      set {_durationInMillis = newValue}
+    }
+    /// Returns true if `durationInMillis` has been explicitly set.
+    public var hasDurationInMillis: Bool {return self._durationInMillis != nil}
+    /// Clears the value of `durationInMillis`. Subsequent reads from it will return its default value.
+    public mutating func clearDurationInMillis() {self._durationInMillis = nil}
+
+    public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    public init() {}
+
+    fileprivate var _width: Int32? = nil
+    fileprivate var _height: Int32? = nil
+    fileprivate var _durationInMillis: UInt64? = nil
+  }
+
+  public struct AudioMetaData: @unchecked Sendable {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    public var durationInMillis: UInt64 {
+      get {return _durationInMillis ?? 0}
+      set {_durationInMillis = newValue}
+    }
+    /// Returns true if `durationInMillis` has been explicitly set.
+    public var hasDurationInMillis: Bool {return self._durationInMillis != nil}
+    /// Clears the value of `durationInMillis`. Subsequent reads from it will return its default value.
+    public mutating func clearDurationInMillis() {self._durationInMillis = nil}
+
+    public var normalizedLoudness: Data {
+      get {return _normalizedLoudness ?? Data()}
+      set {_normalizedLoudness = newValue}
+    }
+    /// Returns true if `normalizedLoudness` has been explicitly set.
+    public var hasNormalizedLoudness: Bool {return self._normalizedLoudness != nil}
+    /// Clears the value of `normalizedLoudness`. Subsequent reads from it will return its default value.
+    public mutating func clearNormalizedLoudness() {self._normalizedLoudness = nil}
+
+    public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    public init() {}
+
+    fileprivate var _durationInMillis: UInt64? = nil
+    fileprivate var _normalizedLoudness: Data? = nil
+  }
+
+  public init() {}
+
+  fileprivate var _uuid: String? = nil
+  fileprivate var _contentType: String? = nil
+  fileprivate var _initialName: String? = nil
+  fileprivate var _initialSize: Int64? = nil
+}
+
 public struct Asset: @unchecked Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -1836,28 +2055,12 @@ public struct Asset: @unchecked Sendable {
 
   }
 
-  public enum NotUploaded: SwiftProtobuf.Enum, Swift.CaseIterable {
-    public typealias RawValue = Int
-    case cancelled // = 0
-    case failed // = 1
+  public enum NotUploaded: Int, SwiftProtobuf.Enum, Swift.CaseIterable {
+    case cancelled = 0
+    case failed = 1
 
     public init() {
       self = .cancelled
-    }
-
-    public init?(rawValue: Int) {
-      switch rawValue {
-      case 0: self = .cancelled
-      case 1: self = .failed
-      default: return nil
-      }
-    }
-
-    public var rawValue: Int {
-      switch self {
-      case .cancelled: return 0
-      case .failed: return 1
-      }
     }
 
   }
@@ -2445,6 +2648,7 @@ extension GenericMessage: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     9: .same(proto: "clientAction"),
     10: .same(proto: "calling"),
     11: .same(proto: "asset"),
+    27: .same(proto: "multipart"),
     12: .same(proto: "hidden"),
     13: .same(proto: "location"),
     14: .same(proto: "deleted"),
@@ -2770,6 +2974,19 @@ extension GenericMessage: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
           self.content = .inCallHandRaise(v)
         }
       }()
+      case 27: try {
+        var v: Multipart?
+        var hadOneofValue = false
+        if let current = self.content {
+          hadOneofValue = true
+          if case .multipart(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.content = .multipart(v)
+        }
+      }()
       default: break
       }
     }
@@ -2877,9 +3094,17 @@ extension GenericMessage: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     try { if let v = self._unknownStrategy {
       try visitor.visitSingularEnumField(value: v, fieldNumber: 25)
     } }()
-    try { if case .inCallHandRaise(let v)? = self.content {
+    switch self.content {
+    case .inCallHandRaise?: try {
+      guard case .inCallHandRaise(let v)? = self.content else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 26)
-    } }()
+    }()
+    case .multipart?: try {
+      guard case .multipart(let v)? = self.content else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 27)
+    }()
+    default: break
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -4430,6 +4655,398 @@ extension ImageAsset: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
     if lhs._macKey != rhs._macKey {return false}
     if lhs._mac != rhs._mac {return false}
     if lhs._sha256 != rhs._sha256 {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Attachment: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = "Attachment"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "asset"),
+    2: .standard(proto: "cell_asset"),
+  ]
+
+  public var isInitialized: Bool {
+    if let v = self.content, !v.isInitialized {return false}
+    return true
+  }
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try {
+        var v: Asset?
+        var hadOneofValue = false
+        if let current = self.content {
+          hadOneofValue = true
+          if case .asset(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.content = .asset(v)
+        }
+      }()
+      case 2: try {
+        var v: CellAsset?
+        var hadOneofValue = false
+        if let current = self.content {
+          hadOneofValue = true
+          if case .cellAsset(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.content = .cellAsset(v)
+        }
+      }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    switch self.content {
+    case .asset?: try {
+      guard case .asset(let v)? = self.content else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+    }()
+    case .cellAsset?: try {
+      guard case .cellAsset(let v)? = self.content else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+    }()
+    case nil: break
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Attachment, rhs: Attachment) -> Bool {
+    if lhs.content != rhs.content {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Multipart: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = "Multipart"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "text"),
+    2: .same(proto: "attachments"),
+    3: .standard(proto: "expects_read_confirmation"),
+    4: .standard(proto: "legal_hold_status"),
+  ]
+
+  public var isInitialized: Bool {
+    if let v = self._text, !v.isInitialized {return false}
+    if !SwiftProtobuf.Internal.areAllInitialized(self.attachments) {return false}
+    return true
+  }
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularMessageField(value: &self._text) }()
+      case 2: try { try decoder.decodeRepeatedMessageField(value: &self.attachments) }()
+      case 3: try { try decoder.decodeSingularBoolField(value: &self._expectsReadConfirmation) }()
+      case 4: try { try decoder.decodeSingularEnumField(value: &self._legalHoldStatus) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._text {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+    } }()
+    if !self.attachments.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.attachments, fieldNumber: 2)
+    }
+    try { if let v = self._expectsReadConfirmation {
+      try visitor.visitSingularBoolField(value: v, fieldNumber: 3)
+    } }()
+    try { if let v = self._legalHoldStatus {
+      try visitor.visitSingularEnumField(value: v, fieldNumber: 4)
+    } }()
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Multipart, rhs: Multipart) -> Bool {
+    if lhs._text != rhs._text {return false}
+    if lhs.attachments != rhs.attachments {return false}
+    if lhs._expectsReadConfirmation != rhs._expectsReadConfirmation {return false}
+    if lhs._legalHoldStatus != rhs._legalHoldStatus {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension CellAsset: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = "CellAsset"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "uuid"),
+    2: .standard(proto: "content_type"),
+    3: .standard(proto: "initial_name"),
+    4: .standard(proto: "initial_size"),
+    5: .same(proto: "image"),
+    6: .same(proto: "video"),
+    7: .same(proto: "audio"),
+  ]
+
+  public var isInitialized: Bool {
+    if self._uuid == nil {return false}
+    if self._contentType == nil {return false}
+    if let v = self.initialMetaData, !v.isInitialized {return false}
+    return true
+  }
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self._uuid) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self._contentType) }()
+      case 3: try { try decoder.decodeSingularStringField(value: &self._initialName) }()
+      case 4: try { try decoder.decodeSingularInt64Field(value: &self._initialSize) }()
+      case 5: try {
+        var v: CellAsset.ImageMetaData?
+        var hadOneofValue = false
+        if let current = self.initialMetaData {
+          hadOneofValue = true
+          if case .image(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.initialMetaData = .image(v)
+        }
+      }()
+      case 6: try {
+        var v: CellAsset.VideoMetaData?
+        var hadOneofValue = false
+        if let current = self.initialMetaData {
+          hadOneofValue = true
+          if case .video(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.initialMetaData = .video(v)
+        }
+      }()
+      case 7: try {
+        var v: CellAsset.AudioMetaData?
+        var hadOneofValue = false
+        if let current = self.initialMetaData {
+          hadOneofValue = true
+          if case .audio(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.initialMetaData = .audio(v)
+        }
+      }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._uuid {
+      try visitor.visitSingularStringField(value: v, fieldNumber: 1)
+    } }()
+    try { if let v = self._contentType {
+      try visitor.visitSingularStringField(value: v, fieldNumber: 2)
+    } }()
+    try { if let v = self._initialName {
+      try visitor.visitSingularStringField(value: v, fieldNumber: 3)
+    } }()
+    try { if let v = self._initialSize {
+      try visitor.visitSingularInt64Field(value: v, fieldNumber: 4)
+    } }()
+    switch self.initialMetaData {
+    case .image?: try {
+      guard case .image(let v)? = self.initialMetaData else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
+    }()
+    case .video?: try {
+      guard case .video(let v)? = self.initialMetaData else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 6)
+    }()
+    case .audio?: try {
+      guard case .audio(let v)? = self.initialMetaData else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 7)
+    }()
+    case nil: break
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: CellAsset, rhs: CellAsset) -> Bool {
+    if lhs._uuid != rhs._uuid {return false}
+    if lhs._contentType != rhs._contentType {return false}
+    if lhs._initialName != rhs._initialName {return false}
+    if lhs._initialSize != rhs._initialSize {return false}
+    if lhs.initialMetaData != rhs.initialMetaData {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension CellAsset.ImageMetaData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = CellAsset.protoMessageName + ".ImageMetaData"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "width"),
+    2: .same(proto: "height"),
+  ]
+
+  public var isInitialized: Bool {
+    if self._width == nil {return false}
+    if self._height == nil {return false}
+    return true
+  }
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularInt32Field(value: &self._width) }()
+      case 2: try { try decoder.decodeSingularInt32Field(value: &self._height) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._width {
+      try visitor.visitSingularInt32Field(value: v, fieldNumber: 1)
+    } }()
+    try { if let v = self._height {
+      try visitor.visitSingularInt32Field(value: v, fieldNumber: 2)
+    } }()
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: CellAsset.ImageMetaData, rhs: CellAsset.ImageMetaData) -> Bool {
+    if lhs._width != rhs._width {return false}
+    if lhs._height != rhs._height {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension CellAsset.VideoMetaData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = CellAsset.protoMessageName + ".VideoMetaData"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "width"),
+    2: .same(proto: "height"),
+    3: .standard(proto: "duration_in_millis"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularInt32Field(value: &self._width) }()
+      case 2: try { try decoder.decodeSingularInt32Field(value: &self._height) }()
+      case 3: try { try decoder.decodeSingularUInt64Field(value: &self._durationInMillis) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._width {
+      try visitor.visitSingularInt32Field(value: v, fieldNumber: 1)
+    } }()
+    try { if let v = self._height {
+      try visitor.visitSingularInt32Field(value: v, fieldNumber: 2)
+    } }()
+    try { if let v = self._durationInMillis {
+      try visitor.visitSingularUInt64Field(value: v, fieldNumber: 3)
+    } }()
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: CellAsset.VideoMetaData, rhs: CellAsset.VideoMetaData) -> Bool {
+    if lhs._width != rhs._width {return false}
+    if lhs._height != rhs._height {return false}
+    if lhs._durationInMillis != rhs._durationInMillis {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension CellAsset.AudioMetaData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = CellAsset.protoMessageName + ".AudioMetaData"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .standard(proto: "duration_in_millis"),
+    2: .standard(proto: "normalized_loudness"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularUInt64Field(value: &self._durationInMillis) }()
+      case 2: try { try decoder.decodeSingularBytesField(value: &self._normalizedLoudness) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._durationInMillis {
+      try visitor.visitSingularUInt64Field(value: v, fieldNumber: 1)
+    } }()
+    try { if let v = self._normalizedLoudness {
+      try visitor.visitSingularBytesField(value: v, fieldNumber: 2)
+    } }()
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: CellAsset.AudioMetaData, rhs: CellAsset.AudioMetaData) -> Bool {
+    if lhs._durationInMillis != rhs._durationInMillis {return false}
+    if lhs._normalizedLoudness != rhs._normalizedLoudness {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

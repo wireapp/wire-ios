@@ -239,6 +239,8 @@
 			</dict>
 		</dict>
 	</array>
+	<key>UseEmbeddedIDPUserAgent</key>
+	<string>${USE_EMBEDDED_IDP_USER_AGENT}</string>
 	<key>Wire SSO URL Scheme</key>
 	<string>${WIRE_SSO_URL_SCHEME}</string>
 	<key>WireGroupId</key>

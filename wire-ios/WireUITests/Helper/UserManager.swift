@@ -23,33 +23,45 @@ class UserManager {
     var createdUsers: [UserInfo]
     var networkStack: NetworkStack
     var apiService: APIService
-    
+
     let authenticationAPI: AuthenticationAPI
     let selfUserAPI: SelfUserAPI
     let authenticationManager: AuthenticationManager
-    
+
     private let cookieStorage: any CookieStorageProtocol
-    
+
     init() {
-        createdUsers = []
-        networkStack = NetworkStack(backendEnvironment: .staging, minTLSVersion: .v1_2, cookieEncryptionKey: Data())
-        cookieStorage = MockCookieStorage()
-        authenticationManager = AuthenticationManager(
+        self.createdUsers = []
+        self.networkStack = NetworkStack(
+            backendEnvironment: .staging,
+            minTLSVersion: .v1_2,
+            cookieEncryptionKey: Data()
+        )
+        self.cookieStorage = MockCookieStorage()
+        self.authenticationManager = AuthenticationManager(
             clientID: nil,
             cookieStorage: cookieStorage,
             networkService: networkStack.apiNetworkService,
-            onAuthenticationFailure: { @Sendable () in return}
+            onAuthenticationFailure: { @Sendable () in }
         )
-        apiService = APIService(networkService: networkStack.apiNetworkService, authenticationManager: authenticationManager)
-        authenticationAPI = AuthenticationAPIBuilder(networkService: networkStack.apiNetworkService).makeAPI(for: .v8)
-        selfUserAPI = SelfUserAPIBuilder(apiService: apiService).makeAPI(for: .v8)
+        self.apiService = APIService(
+            networkService: networkStack.apiNetworkService,
+            authenticationManager: authenticationManager
+        )
+        self.authenticationAPI = AuthenticationAPIBuilder(networkService: networkStack.apiNetworkService)
+            .makeAPI(for: .v8)
+        self.selfUserAPI = SelfUserAPIBuilder(apiService: apiService).makeAPI(for: .v8)
     }
-    
+
     func createPersonalUser() async throws -> UserInfo {
         let user = UserGenerator.generateUniqueUserInfo()
 
         // Start registration
-        let cookies = try await authenticationAPI.testRegisterPersonalAccount(name: user.name, email: user.email, password: user.password)
+        let cookies = try await authenticationAPI.testRegisterPersonalAccount(
+            name: user.name,
+            email: user.email,
+            password: user.password
+        )
         try await cookieStorage.storeCookies(cookies)
 
         // Get activation code
@@ -64,19 +76,19 @@ class UserManager {
         createdUsers.append(user)
         return user
     }
-    
+
     func addUser(_ user: UserInfo) {
         createdUsers.append(user)
     }
-    
+
     func addUser(email: String, password: String) {
         createdUsers.append(UserInfo(email: email, password: password))
     }
-    
+
     func deleteUser(_ user: UserInfo) async throws {
         try await selfUserAPI.testDeleteSelf(password: user.password)
     }
-    
+
     func deleteCreatedUsers() async throws {
         for user in createdUsers {
             print("Deleting \(user.email)")
@@ -87,26 +99,31 @@ class UserManager {
 
 private extension BackendEnvironment {
     static let backendURL = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL"]!)"
-    static let staging = BackendEnvironment(url: URL(string: backendURL)!, webSocketURL: URL(string: backendURL)!, pinnedKeys: [], proxySettings: nil)
+    static let staging = BackendEnvironment(
+        url: URL(string: backendURL)!,
+        webSocketURL: URL(string: backendURL)!,
+        pinnedKeys: [],
+        proxySettings: nil
+    )
 }
 
 final class MockCookieStorage: CookieStorageProtocol {
     var cookies: [HTTPCookie]
-    
+
     init() {
-        cookies = []
+        self.cookies = []
     }
-    
+
     func storeCookies(_ cookies: [HTTPCookie]) async throws {
         print("Storing \(cookies)")
         self.cookies = cookies
     }
-    
+
     func fetchCookies() async throws -> [HTTPCookie] {
         print("Giving \(cookies)")
         return cookies
     }
-    
+
     func removeCookies() async throws {
         print("Clearing cookies")
         cookies = []

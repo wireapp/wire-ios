@@ -18,33 +18,34 @@
 
 package import Foundation
 package import WireCellsAPI
+import WireLogging
 
 package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtocol {
     private let fileManager: FileManager
-    private let repository: any WireCellsNodesRepository
+    private let nodesAPI: any NodesAPIProtocol
 
     private actor Uploads {
-        var uploads: [WireCellsNodeID: WireCellsUploadInfo] = [:]
+        var uploads: [UUID: WireCellsUploadInfo] = [:]
 
-        func set(_ nodeID: WireCellsNodeID, info: WireCellsUploadInfo) {
+        func set(_ nodeID: UUID, info: WireCellsUploadInfo) {
             uploads[nodeID] = info
         }
 
-        func get(_ nodeID: WireCellsNodeID) -> WireCellsUploadInfo? {
+        func get(_ nodeID: UUID) -> WireCellsUploadInfo? {
             uploads[nodeID]
         }
 
-        func remove(_ nodeID: WireCellsNodeID) {
+        func remove(_ nodeID: UUID) {
             uploads.removeValue(forKey: nodeID)
         }
 
-        func update(_ nodeID: WireCellsNodeID, with transform: (WireCellsUploadInfo) -> WireCellsUploadInfo) {
+        func update(_ nodeID: UUID, with transform: (WireCellsUploadInfo) -> WireCellsUploadInfo) {
             if let current = uploads[nodeID] {
                 uploads[nodeID] = transform(current)
             }
         }
 
-        func allKeys() -> [WireCellsNodeID] {
+        func allKeys() -> [UUID] {
             Array(uploads.keys)
         }
     }
@@ -53,19 +54,20 @@ package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtoc
 
     package init(
         fileManager: FileManager = .default,
-        repository: any WireCellsNodesRepository
+        nodesAPI: any NodesAPIProtocol
     ) {
         self.fileManager = fileManager
-        self.repository = repository
+        self.nodesAPI = nodesAPI
     }
 
     package func upload(
-        id: WireCellsNodeID,
+        nodeID: UUID,
+        versionID: UUID,
         assetPath: URL,
         assetSize: UInt64,
         destNodePath: String
     ) async throws -> (node: WireCellsNode, stream: AsyncStream<WireCellsUploadStatus>) {
-        let result = try await repository.preCheck(nodePath: destNodePath)
+        let result = try await nodesAPI.preCheck(nodePath: destNodePath)
 
         let resolvedPath: String = switch result {
         case let .fileExists(nextPath):
@@ -75,8 +77,7 @@ package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtoc
         }
 
         let node = WireCellsNode(
-            uuid: id.uuid,
-            versionID: id.versionID,
+            uuid: nodeID,
             path: resolvedPath,
             modified: nil,
             size: assetSize,
@@ -93,45 +94,45 @@ package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtoc
             publicLinkID: nil
         )
 
-        let stream = await startUpload(assetPath: assetPath, node: node)
+        let stream = await startUpload(assetPath: assetPath, assetSize: assetSize, node: node, versionID: versionID)
 
         return (node, stream)
     }
 
-    private func startUpload(assetPath: URL, node: WireCellsNode) async -> AsyncStream<WireCellsUploadStatus> {
+    private func startUpload(
+        assetPath: URL,
+        assetSize: UInt64,
+        node: WireCellsNode,
+        versionID: UUID
+    ) async -> AsyncStream<WireCellsUploadStatus> {
         let (stream, continuation) = AsyncStream.makeStream(of: WireCellsUploadStatus.self)
-        let task = Task {
+        let task = Task { [nodesAPI] in
+            let upload = await nodesAPI.uploadFile(path: assetPath, node: node, versionID: versionID)
+
             do {
-                try await repository.uploadFile(
-                    path: assetPath,
-                    node: node,
-                    onProgressUpdate: { [weak self] uploaded in
-                        Task { [weak self] in
-                            await self?.updateUploadProgress(
-                                nodeID: node.id,
-                                uploaded: uploaded,
-                                total: node.size ?? 1
-                            )
-                            continuation
-                                .yield(
-                                    WireCellsUploadStatus
-                                        .uploading(progress: Float(uploaded) / Float(node.size ?? 1))
-                                )
-                        }
-                    }
-                )
+                for try await progress in upload {
+                    await self.updateUploadProgress(
+                        nodeID: node.id,
+                        uploaded: UInt64(progress),
+                        total: assetSize
+                    )
+                    continuation.yield(.uploading(progress: Float(progress) / Float(assetSize)))
+                }
                 await uploads.remove(node.id)
-                continuation.yield(WireCellsUploadStatus.uploaded)
+                continuation.yield(WireCellsUploadStatus.uploaded(isDraft: true))
                 continuation.finish()
             } catch {
+                WireLogger.wireCells.info("Failed to upload file: \(error)")
+
                 await uploads.update(node.id) { $0.withUploadFailed() }
-                continuation.yield(WireCellsUploadStatus.failed)
+                continuation.yield(WireCellsUploadStatus.failed(error: WireCellsUploadError(error)))
                 continuation.finish()
             }
         }
 
         let info = WireCellsUploadInfo(
             node: node,
+            versionID: versionID,
             localPath: assetPath,
             task: task,
             continuation: continuation,
@@ -143,23 +144,28 @@ package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtoc
         return stream
     }
 
-    package func observeUpload(nodeID: WireCellsNodeID) async -> AsyncStream<WireCellsUploadStatus>? {
+    package func observeUpload(nodeID: UUID) async -> AsyncStream<WireCellsUploadStatus>? {
         await uploads.get(nodeID)?.stream
     }
 
-    package func retryUpload(nodeID: WireCellsNodeID) async {
+    package func retryUpload(nodeID: UUID) async {
         if let info = await uploads.get(nodeID) {
-            if fileManager.fileExists(atPath: info.localPath.path) == true {
-                _ = await startUpload(assetPath: info.localPath, node: info.node)
+            if fileManager.fileExists(atPath: info.localPath.path) == true, let assetSize = info.node.size {
+                _ = await startUpload(
+                    assetPath: info.localPath,
+                    assetSize: assetSize,
+                    node: info.node,
+                    versionID: info.versionID
+                )
             } else {
                 await uploads.update(nodeID) { $0.withUploadFailed() }
-                info.continuation.yield(.failed)
+                info.continuation.yield(.failed(error: .fileNotFound))
                 info.continuation.finish()
             }
         }
     }
 
-    package func cancelUpload(nodeID: WireCellsNodeID) async {
+    package func cancelUpload(nodeID: UUID) async {
         if let info = await uploads.get(nodeID) {
             info.continuation.yield(.cancelled)
             info.continuation.finish()
@@ -168,15 +174,15 @@ package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtoc
         }
     }
 
-    package func getUploadInfo(nodeID: WireCellsNodeID) async -> WireCellsNodeUploadInfo? {
+    package func getUploadInfo(nodeID: UUID) async -> WireCellsNodeUploadInfo? {
         await uploads.get(nodeID)?.toUploadInfo()
     }
 
-    package func isUploading(nodeID: WireCellsNodeID) async -> Bool {
+    package func isUploading(nodeID: UUID) async -> Bool {
         await uploads.get(nodeID) != nil
     }
 
-    private func updateUploadProgress(nodeID: WireCellsNodeID, uploaded: UInt64, total: UInt64) async {
+    private func updateUploadProgress(nodeID: UUID, uploaded: UInt64, total: UInt64) async {
         let progress = Float(uploaded) / Float(total)
         await uploads.update(nodeID) { $0.withProgress(progress) }
     }
@@ -184,6 +190,7 @@ package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtoc
 
 struct WireCellsUploadInfo {
     let node: WireCellsNode
+    let versionID: UUID
     let localPath: URL
     let task: Task<Void, Never>
 

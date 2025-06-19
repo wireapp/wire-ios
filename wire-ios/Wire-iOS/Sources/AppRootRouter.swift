@@ -21,6 +21,7 @@ import UIKit
 import WireAnalytics
 import WireCommonComponents
 import WireDesign
+import WireReusableUIComponents
 import WireSyncEngine
 
 // MARK: - AppRootRouter
@@ -259,11 +260,6 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         error: any Error,
         onRetry: @escaping () -> Void
     ) {
-        // Only show sync error alert for debugging
-        guard Bundle.developerModeEnabled else {
-            return appStateTransitionGroup.leave()
-        }
-
         let alert = UIAlertController(
             title: L10n.Localizable.General.failure,
             message: (error as NSError).description,

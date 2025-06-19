@@ -19,27 +19,27 @@
 public import Foundation
 public import WireFoundation
 
-public struct MessageBackupModel: Codable, Hashable, Sendable {
+public struct MessageBackupModel: Hashable, Sendable {
 
     public var id: String
     public var conversationID: QualifiedID
     public var senderUserID: QualifiedID
     public var senderClientID: String?
     public var creationDate: Date
-    public var content: MessageContent
+    public var content: Content
 
     public init(
         id: String,
         conversationID: QualifiedID,
         senderUserID: QualifiedID,
-        senderClientID: String? = nil,
+        senderClientID: String?,
         creationDate: Date,
-        content: MessageContent
+        content: Content
     ) {
         self.id = id
         self.conversationID = conversationID
         self.senderUserID = senderUserID
-        self.senderClientID = senderClientID
+        self.senderClientID = senderClientID?.isEmpty == true ? nil : senderClientID
         self.creationDate = creationDate
         self.content = content
     }
@@ -51,30 +51,35 @@ public struct MessageBackupModel: Codable, Hashable, Sendable {
 // The following types replicate the API of the multi-platform backup library in a Swift friendlier way.
 // (e.g. enums instead of class hierarchy)
 
-public enum MessageContent: Codable, Hashable, Sendable {
+public extension MessageBackupModel {
 
-    case text(TextContent)
-    case location(LocationContent)
-    case asset(AssetContent)
+    enum Content: Hashable, Sendable {
+
+        case text(TextContent)
+        case location(LocationContent)
+        case asset(AssetContent)
+
+    }
 
 }
 
 // MARK: - Nested Types
 
-public extension MessageContent {
+public extension MessageBackupModel.Content {
 
-    struct TextContent: Codable, Hashable, Sendable {
+    struct TextContent: Hashable, Sendable {
         public var text: String
     }
 
-    struct LocationContent: Codable, Hashable, Sendable {
+    struct LocationContent: Hashable, Sendable {
         public var longitude: Float
         public var latitude: Float
         public var name: String?
         public var zoom: Int32?
     }
 
-    struct AssetContent: Codable, Hashable, Sendable {
+    struct AssetContent: Hashable, Sendable {
+
         public var mimeType: String
         public var size: UInt64
         public var name: String?
@@ -86,44 +91,42 @@ public extension MessageContent {
         public var encryption: EncryptionAlgorithm?
         public var metadata: Metadata?
 
-        public enum EncryptionAlgorithm: Codable, Hashable, Sendable {
+        public enum EncryptionAlgorithm: String, Hashable, Sendable {
             case aesCBC
             case aesGCM
         }
 
-        public enum Metadata: Codable, Hashable, Sendable {
-
+        public enum Metadata: Hashable, Sendable {
             case image(ImageMetadata)
             case video(VideoMetadata)
             case audio(AudioMetadata)
-            // TODO: [WPB-16658] check if the `.generic` case needs to be used
             case generic(GenericMetadata)
-
         }
+
     }
 
 }
 
-public extension MessageContent.AssetContent.Metadata {
+public extension MessageBackupModel.Content.AssetContent.Metadata {
 
-    struct ImageMetadata: Codable, Hashable, Sendable {
+    struct ImageMetadata: Hashable, Sendable {
         public var width: Int32
         public var height: Int32
         public var tag: String?
     }
 
-    struct VideoMetadata: Codable, Hashable, Sendable {
+    struct VideoMetadata: Hashable, Sendable {
         public var width: Int32?
         public var height: Int32?
         public var duration: UInt64?
     }
 
-    struct AudioMetadata: Codable, Hashable, Sendable {
+    struct AudioMetadata: Hashable, Sendable {
         public var normalization: Data?
         public var duration: UInt64?
     }
 
-    struct GenericMetadata: Codable, Hashable, Sendable {
+    struct GenericMetadata: Hashable, Sendable {
         public var name: String?
     }
 
@@ -131,7 +134,7 @@ public extension MessageContent.AssetContent.Metadata {
 
 // MARK: - Convenience
 
-public extension MessageContent {
+public extension MessageBackupModel.Content {
 
     static func text(
         _ text: String
@@ -189,7 +192,7 @@ public extension MessageContent {
 
 }
 
-public extension MessageContent.AssetContent.Metadata {
+public extension MessageBackupModel.Content.AssetContent.Metadata {
 
     static func image(
         width: Int32,

@@ -19,9 +19,9 @@
 import Foundation
 
 enum BackendClient {
-    
+
     static let backendURL = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL"]!)"
-    
+
     static func loginViaAPI(email: String, password: String) async throws -> String {
         let envVariables = try EnvironmentVariables()
         let requestUrl = envVariables.backendURL.appending(path: "v8/login")
@@ -62,7 +62,7 @@ enum BackendClient {
             throw (RuntimeError("Error \(pureResponse.description)"))
         }
     }
-    
+
     static func getActivationCode(email: String) async throws -> (String, String) {
         let url = URL(string: "\(backendURL)/i/users/activation-code?email=\(email)")
         let auth = ProcessInfo.processInfo.environment["BASIC_AUTH"]!
@@ -72,7 +72,7 @@ enum BackendClient {
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue("application/json", forHTTPHeaderField: "Accept")
         request.addValue("Basic \(auth)", forHTTPHeaderField: "Authorization")
-        
+
         let (responseData, response) = try await URLSession.shared.data(for: request)
 
         let pureResponse = response as! HTTPURLResponse
@@ -85,7 +85,7 @@ enum BackendClient {
         let message: ActivationCodeReponse = try JSONDecoder().decode(ActivationCodeReponse.self, from: responseData)
         return (message.code, message.key)
     }
-    
+
     static func registerPersonalUser(_ user: UserInfo) async throws -> UserInfo {
         var body: [String: Any] = [
             "email": user.email,
@@ -101,7 +101,7 @@ enum BackendClient {
         updatedUser.backend_domain = userData.qualified_id.domain
         return updatedUser
     }
-    
+
     private static func httpPostRequest(url: String, body: [String: Any]) async throws -> Data {
         guard let requestUrl = URL(string: url) else { fatalError() }
         var request = URLRequest(url: requestUrl)

@@ -48,13 +48,11 @@ final class PersonalUsersTests: WireUITestCase {
         accountPage.logout()
             .enterPassword(user.password)
     }
-    
-    
+
     @MainActor
     func test_Login_asExistingPersonalUser() async throws {
-        // TODO: Get userManager to also set the user's username
         let user = try await userManager.createPersonalUser()
-        
+
         let page = WelcomePage()
             .enterEmailOrSSO(user.email)
             .enterPassword(user.password)
