@@ -47,17 +47,17 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
         var title: String {
             switch self {
             case .off:
-                "Off"
+                L10n.Localizable.Conversation.CreationForm.ChannelHistory.Picker.off
             case .oneDay:
-                "1 day"
+                L10n.Localizable.Conversation.CreationForm.ChannelHistory.Picker.oneDay
             case .oneWeek:
-                "1 week"
+                L10n.Localizable.Conversation.CreationForm.ChannelHistory.Picker.oneWeek
             case .fourWeeks:
-                "4 weeks"
+                L10n.Localizable.Conversation.CreationForm.ChannelHistory.Picker.fourWeeks
             case .unlimited:
-                "Unlimited"
+                L10n.Localizable.Conversation.CreationForm.ChannelHistory.Picker.unlimited
             case .custom:
-                "Custom"
+                L10n.Localizable.Conversation.CreationForm.ChannelHistory.Picker.custom
             }
         }
         
@@ -69,9 +69,9 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
                 var title: String {
                     switch self {
                     case .days:
-                        "Days"
+                        L10n.Localizable.Conversation.CreationForm.ChannelHistory.CustomPicker.days
                     case .week:
-                        "Week"
+                        L10n.Localizable.Conversation.CreationForm.ChannelHistory.CustomPicker.weeks
                     }
                 }
             }

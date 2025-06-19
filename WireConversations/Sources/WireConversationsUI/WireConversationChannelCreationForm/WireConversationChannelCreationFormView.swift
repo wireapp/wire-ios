@@ -78,7 +78,7 @@ public struct WireConversationChannelCreationForm: View {
             
             VStack(alignment: .leading, spacing: 15) {
                 HStack {
-                    Text("Show older messages?")
+                    Text(L10n.Localizable.Conversation.CreationForm.ChannelHistory.UpgradeBanner.title)
                         .wireTextStyle(.buttonSmall)
                         .foregroundStyle(Color.white)
                         .bold()
@@ -98,11 +98,11 @@ public struct WireConversationChannelCreationForm: View {
                     )
                 }
                 
-                Text("Upgrade to a paid plan to offer channel members the whole history.")
+                Text(L10n.Localizable.Conversation.CreationForm.ChannelHistory.UpgradeBanner.message)
                     .foregroundStyle(.white)
                 
                 Link(
-                    "Upgrade now",
+                    L10n.Localizable.Conversation.CreationForm.ChannelHistory.UpgradeBanner.button,
                     destination: URL(string: "https://teams.wire.com/billing/)")!
                 )
                 .lineLimit(1)
