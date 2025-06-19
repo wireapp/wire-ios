@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireNetworkInterface
 
 public struct ResolveBackendMetadataUseCase: ResolveBackendMetadataUseCaseProtocol {
 

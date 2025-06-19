@@ -17,6 +17,7 @@
 //
 
 public import Foundation
+import WireNetworkInterface
 
 /// A collection of data for connecting to a given backend environment (e.g. Production, Staging, etc).
 

@@ -17,6 +17,7 @@
 //
 
 import XCTest
+import WireNetworkInterface
 
 @testable import WireNetwork
 

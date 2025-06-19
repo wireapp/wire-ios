@@ -19,6 +19,7 @@
 import WireFoundationSupport
 import WireTestingPackage
 import XCTest
+import WireNetworkInterface
 
 @testable import WireNetwork
 @testable import WireNetworkSupport

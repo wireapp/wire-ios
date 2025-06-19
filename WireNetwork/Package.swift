@@ -6,7 +6,8 @@ let package = Package(
     name: "WireNetwork",
     platforms: [.iOS("16.4"), .macOS(.v12)],
     products: [
-        .library(name: "WireNetwork", targets: ["WireNetwork"]),
+        .library(name: "WireNetworkInterface", targets: ["WireNetworkInterface"]),
+        .library(name: "WireNetwork", targets: ["WireNetwork", "WireNetworkInterface"]),
         .library(name: "WireNetworkSupport", targets: ["WireNetworkSupport"])
     ],
     dependencies: [
@@ -18,8 +19,12 @@ let package = Package(
     ],
     targets: [
         .target(
+            name: "WireNetworkInterface"
+        ),
+        .target(
             name: "WireNetwork",
             dependencies: [
+                "WireNetworkInterface",
                 "WireFoundation",
                 "WireLogging",
                 .product(name: "WireCrypto", package: "WireFoundation")

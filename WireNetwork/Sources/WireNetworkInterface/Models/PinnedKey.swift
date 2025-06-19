@@ -32,8 +32,8 @@ public struct PinnedKey: Sendable {
         case equals(String)
     }
 
-    let key: SecKey
-    let hosts: [Host]
+    public let key: SecKey
+    public let hosts: [Host]
 
     public init(key: SecKey, hosts: [Host]) {
         self.key = key
@@ -43,19 +43,6 @@ public struct PinnedKey: Sendable {
     public init(key: Data, hosts: [Host]) throws(Failure) {
         self.key = try Self.key(for: key)
         self.hosts = hosts
-    }
-
-    /// Returns `true` if `host` matches any of the `hosts` in `self`.
-
-    func matches(host: String) -> Bool {
-        hosts.contains {
-            switch $0 {
-            case let .endsWith(suffix):
-                host.hasSuffix(suffix)
-            case let .equals(value):
-                host == value
-            }
-        }
     }
 
     // MARK: - Private

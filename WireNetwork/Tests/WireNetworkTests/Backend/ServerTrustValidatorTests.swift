@@ -17,6 +17,7 @@
 //
 
 import WireFoundationSupport
+import WireNetworkInterface
 import WireTestingPackage
 import XCTest
 

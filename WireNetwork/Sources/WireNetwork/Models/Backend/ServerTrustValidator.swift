@@ -19,6 +19,7 @@
 public import WireFoundation
 
 import Foundation
+import WireNetworkInterface
 @preconcurrency import Security
 
 public struct ServerTrustValidator: Sendable {
@@ -123,6 +124,23 @@ public struct ServerTrustValidator: Sendable {
         }
 
         return result
+    }
+
+}
+
+extension PinnedKey {
+
+    /// Returns `true` if `host` matches any of the `hosts` in `self`.
+
+    func matches(host: String) -> Bool {
+        hosts.contains {
+            switch $0 {
+            case let .endsWith(suffix):
+                host.hasSuffix(suffix)
+            case let .equals(value):
+                host == value
+            }
+        }
     }
 
 }
