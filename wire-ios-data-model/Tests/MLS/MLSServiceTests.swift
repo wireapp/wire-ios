@@ -18,9 +18,9 @@
 
 import Combine
 import Foundation
-import WireAPI
 import WireCoreCrypto
 import WireFoundation
+import WireNetwork
 import WireTesting
 import XCTest
 

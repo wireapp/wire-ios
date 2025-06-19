@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireBackup
 import WireDataModel
 import WireFoundation
+import WireNetwork
 
 extension BackupLocalStore {
 
@@ -77,8 +77,8 @@ extension BackupLocalStore {
             genericMessage,
             content: genericMessage.content!,
             conversation: conversation,
-            conversationID: WireAPI.QualifiedID(conversationID),
-            senderID: WireAPI.QualifiedID(backupMessage.senderUserID),
+            conversationID: WireNetwork.QualifiedID(conversationID),
+            senderID: WireNetwork.QualifiedID(backupMessage.senderUserID),
             senderClientID: backupMessage.senderClientID,
             date: backupMessage.creationDate,
             eventMessage: ""

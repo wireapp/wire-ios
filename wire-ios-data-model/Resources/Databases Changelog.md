@@ -104,7 +104,7 @@ PostAction to migrate oneOneOneConversations
 
 ### 6.0
 
-* add new `StoredUpdateEventEnvelope` entity to persist new `WireAPI.UpdateEventEnvelope` instances. This replaces `StoredUpdateEvent` which can be deleted after some time.
+* add new `StoredUpdateEventEnvelope` entity to persist new `WireNetwork.UpdateEventEnvelope` instances. This replaces `StoredUpdateEvent` which can be deleted after some time.
 
 ### 5.0
 

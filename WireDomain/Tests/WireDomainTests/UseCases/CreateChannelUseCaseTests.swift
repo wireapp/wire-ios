@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
+import WireNetworkSupport
 import XCTest
 
-@testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport
+@testable import WireNetwork
 
 final class CreateChannelUseCaseTests: XCTestCase {
 
@@ -585,7 +585,7 @@ final class CreateChannelUseCaseTests: XCTestCase {
 
     private enum Scaffolding {
         static let conversationID = UUID.mockID1
-        static let conversation = WireAPI.Conversation(
+        static let conversation = WireNetwork.Conversation(
             id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ad")!,
             qualifiedID: .init(uuid: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ad")!, domain: "example.com"),
             teamID: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ad")!,
