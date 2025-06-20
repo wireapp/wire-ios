@@ -69,6 +69,13 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
             let timestamp = timestampedEnvelope.time
             let batchCount = envelopes.count
             var count = 0
+            
+            if let timestamp {
+                WireLogger.sync.debug("storing server time delta")
+                await store.storeServerTimeDelta(
+                    timestamp.timeIntervalSinceNow
+                )
+            }
 
             if batchCount > 0 {
                 WireLogger.sync.debug("fetched \(batchCount) envelopes from remote")
@@ -125,13 +132,6 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
                     store.storeLastEventID(id: lastEnvelopeID)
                 }
 
-            }
-
-            if let timestamp {
-                WireLogger.sync.debug("storing server time delta")
-                await store.storeServerTimeDelta(
-                    timestamp.timeIntervalSinceNow
-                )
             }
         }
 

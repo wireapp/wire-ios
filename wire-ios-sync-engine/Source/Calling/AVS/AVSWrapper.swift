@@ -206,11 +206,16 @@ public final class AVSWrapper: AVSWrapperType {
             let currentTime = UInt32(callEvent.currentTimestamp.timeIntervalSince1970)
             let serverTime = UInt32(callEvent.serverTimestamp.timeIntervalSince1970)
             zmLog.debug("wcall_recv_msg: currentTime = \(currentTime), serverTime = \(serverTime)")
+            /* An OTR call-type message has been received,
+             * curr_time is the timestamp (synced as close as possible)
+             * msg_time is the backend timestamp of when the message was received
+             * to the backend time when this function is called.
+             */
             result = CallError(wcall_error: wcall_recv_msg(
                 handle,
                 bytes,
                 callEvent.data.count,
-                currentTime,
+                currentTime, 
                 serverTime,
                 callEvent.conversationId.serialized,
                 callEvent.userId.serialized,
