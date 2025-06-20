@@ -23,7 +23,7 @@ import WireFoundation
 import WireLogging
 import WireSyncEngine
 
-struct RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
+final class RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
 
     private var analyticsService: AnalyticsService?
     private var analyticsTracker: (any AnalyticsEventTrackerProtocol)?
@@ -48,7 +48,7 @@ struct RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
     }
 
     @MainActor
-    mutating func setUp() {
+    func setUp() {
         do {
             let analyticsUser = createAnalyticsUserIfNeeded()
             try enableAnalytics(user: analyticsUser)
@@ -58,7 +58,7 @@ struct RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
         }
     }
 
-    mutating func tearDown() {
+    func tearDown() {
         do {
             try disableAnalytics()
         } catch {
@@ -99,13 +99,13 @@ struct RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
     // MARK: - Helpers
 
     @MainActor
-    private mutating func enableAnalytics(user: AnalyticsUser) throws {
+    private func enableAnalytics(user: AnalyticsUser) throws {
         analyticsService?.enableTracking()
         try analyticsService?.switchUser(user)
         analyticsTracker = analyticsService
     }
 
-    private mutating func disableAnalytics() throws {
+    private func disableAnalytics() throws {
         try analyticsService?.disableTracking()
         analyticsTracker = nil
     }
