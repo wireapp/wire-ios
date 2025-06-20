@@ -53,7 +53,7 @@ class SelfUserAPIV0: SelfUserAPI, VersionedAPI {
         throw SelfUserAPIError.unsupportedEndpointForAPIVersion
     }
 
-    func testDeleteSelf(password: String) async throws {
+    func deleteSelf(password: String) async throws {
         let body = try JSONEncoder.defaultEncoder.encode(
             DeleteSelfRequestBodyV0(password: password)
         )
@@ -69,7 +69,7 @@ class SelfUserAPIV0: SelfUserAPI, VersionedAPI {
             .parse(code: response.statusCode, data: data)
     }
 
-    func testUpdateHandle(handle: String) async throws {
+    func updateHandle(handle: String) async throws {
         let body = try JSONEncoder.defaultEncoder.encode(
             UpdateHandleRequestBodyV0(handle: handle)
         )

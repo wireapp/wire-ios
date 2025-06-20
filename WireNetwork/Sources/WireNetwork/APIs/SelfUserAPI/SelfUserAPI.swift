@@ -33,7 +33,11 @@ public protocol SelfUserAPI {
     ///
     func pushSupportedProtocols(_ supportedProtocols: Set<MessageProtocol>) async throws
 
-    func testDeleteSelf(password: String) async throws
+    #if DEBUG
+        func deleteSelf(password: String) async throws
+    #endif
 
-    func testUpdateHandle(handle: String) async throws
+    #if DEBUG
+        func updateHandle(handle: String) async throws
+    #endif
 }

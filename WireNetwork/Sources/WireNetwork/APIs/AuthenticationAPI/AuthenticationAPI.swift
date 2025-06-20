@@ -69,14 +69,17 @@ public protocol AuthenticationAPI: Sendable {
     ///
     /// - Returns: The user details.
     ///
-    func testRegisterPersonalAccount(name: String, email: String, password: String) async throws -> [HTTPCookie]
-
+    #if DEBUG
+        func registerPersonalAccount(name: String, email: String, password: String) async throws -> [HTTPCookie]
+    #endif
     /// Activate user
     ///
     /// - Returns: The user details.
     ///
     ///
-    func testActivateUser(email: String, key: String, code: String) async throws
+    #if DEBUG
+        func activateUser(email: String, key: String, code: String) async throws
+    #endif
     /// Send (or resend) an email activation code.
     /// - Parameters:
     ///   - email: Email address of the account

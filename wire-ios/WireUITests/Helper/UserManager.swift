@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 class UserManager {
     var createdUsers: [UserInfo]
@@ -57,7 +57,7 @@ class UserManager {
         let user = UserGenerator.generateUniqueUserInfo()
 
         // Start registration
-        let cookies = try await authenticationAPI.testRegisterPersonalAccount(
+        let cookies = try await authenticationAPI.registerPersonalAccount(
             name: user.name,
             email: user.email,
             password: user.password
@@ -68,10 +68,10 @@ class UserManager {
         let (activationCode, activationKey) = try await BackendClient.getActivationCode(email: user.email)
 
         // Activate user
-        try await authenticationAPI.testActivateUser(email: user.email, key: activationKey, code: activationCode)
+        try await authenticationAPI.activateUser(email: user.email, key: activationKey, code: activationCode)
 
         // Set username
-        try await selfUserAPI.testUpdateHandle(handle: user.username)
+        try await selfUserAPI.updateHandle(handle: user.username)
 
         createdUsers.append(user)
         return user
@@ -86,7 +86,7 @@ class UserManager {
     }
 
     func deleteUser(_ user: UserInfo) async throws {
-        try await selfUserAPI.testDeleteSelf(password: user.password)
+        try await selfUserAPI.deleteSelf(password: user.password)
     }
 
     func deleteCreatedUsers() async throws {

@@ -20,14 +20,6 @@ import Foundation
 import WireFoundation
 
 class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
-    //    func requestEmailVerificationCode(for email: String) async throws {
-    //        <#code#>
-    //    }
-    //
-    //    func registerAccount(email: String, emailCode: String, name: String, password: String, label: String) async
-    //    throws -> (cookie: [HTTPCookie], userId: UUID?) {
-    //        <#code#>
-    //    }
 
     let networkService: any NetworkServiceProtocol
 
@@ -200,7 +192,7 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
             .parse(code: response.statusCode, data: data)
     }
 
-    func testRegisterPersonalAccount(name: String, email: String, password: String) async throws -> [HTTPCookie] {
+    func registerPersonalAccount(name: String, email: String, password: String) async throws -> [HTTPCookie] {
         let path = "\(pathPrefix)/register"
 
         let body = try JSONEncoder.defaultEncoder.encode(
@@ -227,7 +219,7 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
         )
     }
 
-    func testActivateUser(email: String, key: String, code: String) async throws {
+    func activateUser(email: String, key: String, code: String) async throws {
         let path = "\(pathPrefix)/activate"
 
         let body = try JSONEncoder.defaultEncoder.encode(

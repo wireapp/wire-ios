@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireAPI
 import WireFoundation
+import WireNetwork
 
 public final class NetworkStack {
 
@@ -63,11 +63,11 @@ public final class NetworkStack {
 }
 
 private struct MockAuthManager: AuthenticationManagerProtocol {
-    func getValidAccessToken() async throws -> WireAPI.AccessToken {
+    func getValidAccessToken() async throws -> WireNetwork.AccessToken {
         fatalError()
     }
 
-    func refreshAccessToken() async throws -> WireAPI.AccessToken {
+    func refreshAccessToken() async throws -> WireNetwork.AccessToken {
         fatalError()
     }
 
