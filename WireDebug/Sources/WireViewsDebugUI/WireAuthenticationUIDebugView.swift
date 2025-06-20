@@ -64,7 +64,16 @@ public struct WireAuthenticationUIDebugView: View {
                                 .overlay(
                                     ZStack {
                                         SwitchBackendConfirmation(
-                                            backendConfig: .preview,
+                                            backendTitle: "Example backend",
+                                            endpoints: .init(
+                                                restAPIURL: URL(string: "www.example.com")!,
+                                                websocketURL: URL(string: "www.example.com")!,
+                                                blacklistURL: URL(string: "www.example.com")!,
+                                                teamsURL: URL(string: "www.example.com")!,
+                                                accountsURL: URL(string: "www.example.com")!,
+                                                websiteURL: URL(string: "www.example.com")!,
+                                                countlyURL: URL(string: "www.example.com")!
+                                            ),
                                             onConfirm: { _ in }
                                         ).padding()
                                     }
@@ -117,23 +126,4 @@ public struct WireAuthenticationUIDebugView: View {
     NavigationView {
         WireAuthenticationUIDebugView()
     }
-}
-
-private extension BackendConfig {
-
-    static let preview = BackendConfig(
-        title: "Example backend",
-        endpoints: Endpoints(
-            backendURL: URL(string: "example.com")!,
-            backendWSURL: URL(string: "example.com")!,
-            blackListURL: URL(string: "example.com")!,
-            teamsURL: URL(string: "example.com")!,
-            accountsURL: URL(string: "example.com")!,
-            websiteURL: URL(string: "example.com")!,
-            countlyURL: nil
-        ),
-        proxySettings: nil,
-        pinnedKeys: nil
-    )
-
 }

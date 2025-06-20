@@ -56,7 +56,9 @@ final class LoginViaSSOUseCaseTests: XCTestCase {
                 cookies: [],
                 accessToken: nil,
                 emailCredentials: nil,
-                backendEnvironment: Fixture.backendEnvironment
+                backendEnvironment: Fixture.backendEnvironment,
+                proxyCredentials: nil,
+                backendMetadata: Fixture.backendMetadata
             )
     }
 

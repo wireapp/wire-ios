@@ -91,7 +91,9 @@ final class VerificationEmailCodeViewModelTests: XCTestCase, VerificationEmailCo
                 password: "password",
                 verificationCode: nil
             ),
-            backendEnvironment: Fixture.backendEnvironment
+            backendEnvironment: Fixture.backendEnvironment,
+            proxyCredentials: nil,
+            backendMetadata: Fixture.backendMetadata
         )
         // mock
         mockRegisterPersonalAccountUseCase.invokeEmailPasswordVerificationCodeName_MockMethod = { _, _, _, _ in

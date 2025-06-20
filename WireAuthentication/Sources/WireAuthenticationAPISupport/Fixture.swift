@@ -18,31 +18,56 @@
 
 import Foundation
 import WireAuthenticationAPI
+import WireNetworkInterface
 
 public enum Fixture {
 
-    public static let backendEnvironment = WireAuthenticationBackendEnvironment(
+    public static func backendEnvironment(
+        name: String,
+        isOnPrem: Bool = false,
+        proxyConfig: BackendEnvironment2.ProxyConfig? = nil
+    ) -> BackendEnvironment2 {
+        BackendEnvironment2(
+            title: "\(name) backend",
+            environmentType: isOnPrem ? .custom(url: URL(string: "www.\(name).com/config")!) : .default,
+            config: .init(
+                endpoints: .init(
+                    restAPIURL: URL(string: "www.restAPI.\(name).com")!,
+                    websocketURL: URL(string: "www.websocket.\(name).com")!,
+                    blacklistURL: URL(string: "www.blacklist.\(name).com")!,
+                    teamsURL: URL(string: "www.teams.\(name).com")!,
+                    accountsURL: URL(string: "www.accounts.\(name).com")!,
+                    websiteURL: URL(string: "www.website.\(name).com")!,
+                    countlyURL: URL(string: "www.countly.\(name).com")!
+                ),
+                pinnedKeys: [],
+                proxyConfig: proxyConfig
+            )
+        )
+    }
+
+    public static let backendEnvironment = BackendEnvironment2(
+        title: "Mock backend",
         environmentType: .default,
-        config: BackendConfig(
-            title: "Mock backend",
-            endpoints: Endpoints(
-                backendURL: URL(string: "www.mock.com")!,
-                backendWSURL: URL(string: "www.mock.com")!,
-                blackListURL: URL(string: "www.mock.com")!,
+        config: .init(
+            endpoints: .init(
+                restAPIURL: URL(string: "www.mock.com")!,
+                websocketURL: URL(string: "www.mock.com")!,
+                blacklistURL: URL(string: "www.mock.com")!,
                 teamsURL: URL(string: "www.mock.com")!,
                 accountsURL: URL(string: "www.mock.com")!,
                 websiteURL: URL(string: "www.mock.com")!,
                 countlyURL: URL(string: "www.mock.com")!
             ),
-            proxySettings: nil,
-            pinnedKeys: nil
-        ),
-        metadata: BackendMetadata(
-            apiVersion: .v8,
-            domain: "mock.com",
-            isFederationEnabled: true
-        ),
-        proxySettings: nil
+            pinnedKeys: [],
+            proxyConfig: nil
+        )
+    )
+
+    public static let backendMetadata = ResolvedBackendMetadata(
+        apiVersion: .v8,
+        domain: "mock.com",
+        isFederationEnabled: true
     )
 
     public static let someCookie = HTTPCookie(properties: [

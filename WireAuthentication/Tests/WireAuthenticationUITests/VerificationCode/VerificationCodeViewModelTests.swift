@@ -117,7 +117,9 @@ final class VerificationCodeViewModelTests: VerificationCodeViewModel.Factory {
                     password: "aaaaaa",
                     verificationCode: "123"
                 ),
-                backendEnvironment: Fixture.backendEnvironment
+                backendEnvironment: Fixture.backendEnvironment,
+                proxyCredentials: nil,
+                backendMetadata: Fixture.backendMetadata
             )
 
         // when
@@ -147,7 +149,9 @@ final class VerificationCodeViewModelTests: VerificationCodeViewModel.Factory {
                     password: "aaaaaa",
                     verificationCode: "123"
                 ),
-                backendEnvironment: Fixture.backendEnvironment
+                backendEnvironment: Fixture.backendEnvironment,
+                proxyCredentials: nil,
+                backendMetadata: Fixture.backendMetadata
             )
 
         // when
@@ -169,7 +173,9 @@ final class VerificationCodeViewModelTests: VerificationCodeViewModel.Factory {
                             password: "aaaaaa",
                             verificationCode: "123"
                         ),
-                        backendEnvironment: Fixture.backendEnvironment
+                        backendEnvironment: Fixture.backendEnvironment,
+                        proxyCredentials: nil,
+                        backendMetadata: Fixture.backendMetadata
                     )
                 )
         )

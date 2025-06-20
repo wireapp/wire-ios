@@ -53,7 +53,7 @@ final class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Fact
             factory: self,
             router: router,
             email: "mika@example.com",
-            backendInfo: MockDependencies().backendInfo,
+            backendEnvironment: MockDependencies().backendEnvironment,
             canCreateAccount: true,
             didDetectDomainConflict: false,
             onCreateAccount: { [self] in onCreateAccountCalled = true }
@@ -130,7 +130,9 @@ final class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Fact
                 password: "password",
                 verificationCode: nil
             ),
-            backendEnvironment: Fixture.backendEnvironment
+            backendEnvironment: Fixture.backendEnvironment,
+            proxyCredentials: nil,
+            backendMetadata: Fixture.backendMetadata
         )
 
         // mock
@@ -166,7 +168,9 @@ final class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Fact
                 password: "password",
                 verificationCode: nil
             ),
-            backendEnvironment: Fixture.backendEnvironment
+            backendEnvironment: Fixture.backendEnvironment,
+            proxyCredentials: nil,
+            backendMetadata: Fixture.backendMetadata
         )
 
         // mock

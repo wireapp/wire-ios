@@ -49,13 +49,19 @@ package final class LoginViaEmailViewModel: ObservableObject {
     let isEmailPrefilled: Bool
     let canCreateAccount: Bool
 
-    var areProxyCredentialsRequired: Bool {
-        backendEnvironment.config.proxyConfig?.needsAuthentication == true
+    var authenticatedProxyServerName: String? {
+        guard
+            let proxyConfig = backendEnvironment.config.proxyConfig,
+            proxyConfig.needsAuthentication
+        else {
+            return nil
+        }
+
+        return proxyConfig.host
     }
 
-    // TODO: fix this.
-    var proxyServer: String {
-        backendEnvironment.config.endpoints.restAPIURL.absoluteString
+    var areProxyCredentialsRequired: Bool {
+        authenticatedProxyServerName != nil
     }
 
     func isPasswordValid(_ password: String) -> Bool {

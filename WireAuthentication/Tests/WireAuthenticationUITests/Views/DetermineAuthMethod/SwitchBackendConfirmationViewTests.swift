@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireNetworkInterface
 import WireTestingPackage
 import XCTest
 
@@ -27,19 +28,14 @@ class SwitchBackendConfirmationViewTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
-    private let backendConfig = BackendConfig(
-        title: "Staging",
-        endpoints: Endpoints(
-            backendURL: URL(string: "www.staging.com")!,
-            backendWSURL: URL(string: "www.staging.com")!,
-            blackListURL: URL(string: "www.staging.com")!,
-            teamsURL: URL(string: "www.staging.com")!,
-            accountsURL: URL(string: "www.staging.com")!,
-            websiteURL: URL(string: "www.staging.com")!,
-            countlyURL: URL(string: "www.staging.com")
-        ),
-        proxySettings: nil,
-        pinnedKeys: nil
+    private let endpoints = BackendEnvironment2.Endpoints(
+        restAPIURL: URL(string: "www.staging.com")!,
+        websocketURL: URL(string: "www.staging.com")!,
+        blacklistURL: URL(string: "www.staging.com")!,
+        teamsURL: URL(string: "www.staging.com")!,
+        accountsURL: URL(string: "www.staging.com")!,
+        websiteURL: URL(string: "www.staging.com")!,
+        countlyURL: URL(string: "www.staging.com")!
     )
 
     override func setUp() {
@@ -56,7 +52,8 @@ class SwitchBackendConfirmationViewTests: XCTestCase {
         let screenBounds = UIScreen.main.bounds
 
         let view = SwitchBackendConfirmation(
-            backendConfig: backendConfig,
+            backendTitle: "Staging",
+            endpoints: endpoints,
             onConfirm: { _ in }
         ).frame(
             width: screenBounds.width,
@@ -76,7 +73,8 @@ class SwitchBackendConfirmationViewTests: XCTestCase {
         let screenBounds = UIScreen.main.bounds
 
         let view = SwitchBackendConfirmation(
-            backendConfig: backendConfig,
+            backendTitle: "Staging",
+            endpoints: endpoints,
             onConfirm: { _ in }
         ).frame(
             width: screenBounds.width,

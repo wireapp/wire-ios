@@ -55,14 +55,14 @@ package struct LoginViaEmailView: View {
     package var body: some View {
         ScrollView {
             VStack(alignment: .center, spacing: 14) {
-                if viewModel.areProxyCredentialsRequired {
+                if let proxyServer = viewModel.authenticatedProxyServerName {
                     if viewModel.isOnPremiseBackend {
                         welcomeMessage
                     }
                     emailField
                     passwordField
                     forgotPasswordButton
-                    proxyCredentials
+                    proxyCredentials(proxyServer: proxyServer)
                     submitButton
                 } else {
                     if viewModel.isOnPremiseBackend {
@@ -223,7 +223,7 @@ package struct LoginViaEmailView: View {
         }
     }
 
-    @ViewBuilder private var proxyCredentials: some View {
+    @ViewBuilder private func proxyCredentials(proxyServer: String) -> some View {
         Spacer()
         VStack(spacing: 14) {
             Text(Strings.ProxyCredentials.title)
@@ -232,7 +232,7 @@ package struct LoginViaEmailView: View {
                 .lineLimit(nil)
                 .fixedSize(horizontal: false, vertical: true)
 
-            Text(Strings.ProxyCredentials.message(viewModel.proxyServer))
+            Text(Strings.ProxyCredentials.message(proxyServer))
                 .multilineTextAlignment(.center)
                 .wireTextStyle(.body1)
                 .lineLimit(nil)
