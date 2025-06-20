@@ -49,8 +49,7 @@ class WireUITestCase: XCTestCase {
     }
 
     override func tearDown() async throws {
-//        TODO: [WPB-17516] Make sure the personal user created via registration flow also gets cleaned up
-//        try await userManager.deleteCreatedUsers()
+        try await userManager.deleteCreatedUsers()
     }
 
     // MARK: - Helpers

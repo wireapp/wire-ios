@@ -45,8 +45,10 @@ final class PersonalUsersTests: WireUITestCase {
         XCTAssertTrue(accountPage.getUsername().contains(user.username), "Username didn't contain \(user.username)")
         XCTAssertTrue(accountPage.getEmail().elementsEqual(user.email))
 
-        accountPage.logout()
+        let welcomePage = accountPage.logout()
             .enterPassword(user.password)
+
+        XCTAssertTrue(welcomePage.emailTextField.exists, "Account logout failed")
     }
 
     @MainActor
@@ -62,5 +64,7 @@ final class PersonalUsersTests: WireUITestCase {
             .openAccountSettings()
             .logout()
             .enterPassword(user.password)
+        
+        XCTAssertTrue(page.emailTextField.exists, "Account logout failed")
     }
 }

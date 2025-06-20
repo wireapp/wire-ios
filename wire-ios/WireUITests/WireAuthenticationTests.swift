@@ -33,7 +33,7 @@ final class WireAuthenticationTests: WireUITestCase {
         XCTAssertFalse(welcomePage.nextButton.isEnabled, "nextButton should be disabled if no email")
     }
 
-    @MainActor // note: comment @MainActor to use recorder
+    @MainActor
     func test_Login_withoutPassword_NextIsDisabled() throws {
 
         let loginPage = WelcomePage()

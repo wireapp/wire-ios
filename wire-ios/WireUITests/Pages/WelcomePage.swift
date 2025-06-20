@@ -36,8 +36,7 @@ class WelcomePage: PageModel {
     }
 
     func enterEmailOrSSO(_ input: String) -> LoginPage {
-        emailTextField.tap()
-        emailTextField.typeText(input)
+        typeEmailOrSSO(input)
         nextButton.tap()
         return LoginPage()
     }
