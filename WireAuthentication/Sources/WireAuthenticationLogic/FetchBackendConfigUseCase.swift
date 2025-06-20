@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import WireAPI
 import WireAuthenticationAPI
 import WireLogging
+import WireNetwork
 
 public struct FetchBackendConfigUseCase: FetchBackendConfigUseCaseProtocol {
 

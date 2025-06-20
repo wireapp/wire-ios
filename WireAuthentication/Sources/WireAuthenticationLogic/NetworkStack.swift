@@ -17,10 +17,10 @@
 //
 
 import Foundation
-import WireAPI
 import WireAuthenticationAPI
 import WireFoundation
 import WireLogging
+import WireNetwork
 
 package final class NetworkStack {
 
@@ -226,7 +226,7 @@ private extension NetworkService {
             )
         )
 
-        let proxySettings: WireAPI.ProxySettings?
+        let proxySettings: WireNetwork.ProxySettings?
         if let configProxySettings = backendConfig.proxySettings {
             if configProxySettings.needsAuthentication {
                 guard let proxyCredentials else {

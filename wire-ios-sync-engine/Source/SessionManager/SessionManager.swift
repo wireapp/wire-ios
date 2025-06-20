@@ -367,6 +367,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private let sharedUserDefaults: UserDefaults
 
+    @MainActor
     public convenience init(
         maxNumberAccounts: Int = defaultMaxNumberAccounts,
         appVersion: String,
@@ -480,6 +481,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     }
 
+    @MainActor
     init(
         maxNumberAccounts: Int = defaultMaxNumberAccounts,
         appVersion: String,

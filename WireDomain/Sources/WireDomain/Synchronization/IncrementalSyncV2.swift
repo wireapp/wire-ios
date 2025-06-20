@@ -18,8 +18,8 @@
 
 @preconcurrency import Combine
 import Foundation
-import WireAPI
 import WireLogging
+import WireNetwork
 
 /// IncrementalSync using new backend API async stream notifications
 public struct IncrementalSyncV2: LiveSyncProtocol {
@@ -28,6 +28,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     private let pushChannelAPI: any PushChannelV2API
     private let decryptor: any UpdateEventDecryptorProtocol
     private let updateEventsStore: any UpdateEventsLocalStoreProtocol
+    private let messageStore: any MessageLocalStoreProtocol
     private let processor: any UpdateEventProcessorProtocol
     private let databaseSaver: any DatabaseSaverProtocol
     private let syncStateSubject: CurrentValueSubject<SyncState, Never>
@@ -40,6 +41,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         pushChannelAPI: any PushChannelV2API,
         decryptor: any UpdateEventDecryptorProtocol,
         updateEventsStore: any UpdateEventsLocalStoreProtocol,
+        messageStore: any MessageLocalStoreProtocol,
         processor: any UpdateEventProcessorProtocol,
         databaseSaver: any DatabaseSaverProtocol,
         syncStateSubject: CurrentValueSubject<SyncState, Never>,
@@ -49,6 +51,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         self.pushChannelAPI = pushChannelAPI
         self.decryptor = decryptor
         self.updateEventsStore = updateEventsStore
+        self.messageStore = messageStore
         self.processor = processor
         self.databaseSaver = databaseSaver
         self.syncStateSubject = syncStateSubject
@@ -163,7 +166,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                 case .missedEvents:
                     logger.debug("missedEvents event", attributes: .syncAttributes(initialSync: false))
                     await delegate?.didMissedEvents(sync: self)
-                    // TODO: [WPB-17609] insert potential gap message here with messageLocalStore
+                    try await messageStore.addPotentialGapSystemMessage()
                     try await pushChannel.acknowledgeFullSync()
                 case .syncing:
                     // ignore this event, it gives the number of messages until we're caught up

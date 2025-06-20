@@ -4,7 +4,7 @@ import Combine
 import Foundation
 import NeedleFoundation
 import SwiftUI
-import WireAPI
+import WireNetwork
 import WireAuthenticationAPI
 import WireFoundation
 import WireLogging

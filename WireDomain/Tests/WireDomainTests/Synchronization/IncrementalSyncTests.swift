@@ -19,11 +19,10 @@
 import Combine
 import CoreData
 import XCTest
-
-@testable import WireAPI
-@testable import WireAPISupport
 @testable import WireDomain
 @testable import WireDomainSupport
+@testable import WireNetwork
+@testable import WireNetworkSupport
 
 final class IncrementalSyncTests: XCTestCase {
 

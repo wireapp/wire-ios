@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 struct StorableUpdateEventEnvelope: Equatable, Codable, Sendable {
 
@@ -25,13 +25,13 @@ struct StorableUpdateEventEnvelope: Equatable, Codable, Sendable {
     private let events: [StorableUpdateEvent]
     private let isTransient: Bool
 
-    init(_ value: WireAPI.UpdateEventEnvelope) {
+    init(_ value: WireNetwork.UpdateEventEnvelope) {
         self.id = value.id
         self.events = value.events.map(StorableUpdateEvent.init)
         self.isTransient = value.isTransient
     }
 
-    func toAPIModel() -> WireAPI.UpdateEventEnvelope {
+    func toAPIModel() -> WireNetwork.UpdateEventEnvelope {
         .init(
             id: id,
             events: events.map { $0.toAPIModel() },

@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import WireNetwork
 
 struct StorableConversationReceiptModeUpdateEvent: Equatable, Codable, Sendable {
 
@@ -24,13 +24,13 @@ struct StorableConversationReceiptModeUpdateEvent: Equatable, Codable, Sendable 
     private let senderID: StorableQualifiedID
     private let newReceiptMode: Int
 
-    init(_ value: WireAPI.ConversationReceiptModeUpdateEvent) {
+    init(_ value: WireNetwork.ConversationReceiptModeUpdateEvent) {
         self.conversationID = StorableQualifiedID(value.conversationID)
         self.senderID = StorableQualifiedID(value.senderID)
         self.newReceiptMode = value.newReceiptMode
     }
 
-    func toAPIModel() -> WireAPI.ConversationReceiptModeUpdateEvent {
+    func toAPIModel() -> WireNetwork.ConversationReceiptModeUpdateEvent {
         .init(
             conversationID: conversationID.toAPIModel(),
             senderID: senderID.toAPIModel(),
