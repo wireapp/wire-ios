@@ -406,7 +406,11 @@ extension SettingsCellDescriptorFactory {
                 selfUserID: .init(selfUser.qualifiedID!),
                 backupLocalStore: backupLocalStore,
                 fileUnarchiver: ZipArchiveFileUnarchiver(),
-                syncTrigger: { userSession.triggerResourcesSync() },
+                syncTrigger: {
+                    Task {
+                        await userSession.triggerResourcesSync()
+                    }
+                },
                 logger: WireLogger.backupImport
             )
         } legacyImportBackupUseCase: { url in
