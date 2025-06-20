@@ -55,6 +55,7 @@ struct AccountStore {
         self.accountDataDirectory = root
             .appendingPathComponent(AccountStore.accountDataDirectoryName)
         try fileManager.createAndProtectDirectory(at: accountsDirectory)
+        try fileManager.createAndProtectDirectory(at: accountDataDirectory)
     }
 
     // MARK: - Fetch
@@ -128,6 +129,11 @@ struct AccountStore {
     @discardableResult
     func storeBackendEnvironment(_ backendEnvironment: BackendEnvironment2, for accountID: UUID) -> Bool {
         do {
+            let accountDataURL = accountDataURL(accountID: accountID)
+            if !FileManager.default
+                .fileExists(atPath: accountDataURL.absoluteString) {
+                try FileManager.default.createAndProtectDirectory(at: accountDataURL)
+            }
             let storedBackendEnvironment = backendEnvironment.toStored()
             let url = backendEnvironmentURL(for: accountID)
             let data = try encoder.encode(storedBackendEnvironment)
@@ -246,9 +252,13 @@ struct AccountStore {
         accountsDirectory.appendingPathComponent(id.uuidString)
     }
 
-    private func backendEnvironmentURL(for id: UUID) -> URL {
+    private func accountDataURL(accountID: UUID) -> URL {
         accountDataDirectory
-            .appendingPathComponent(id.uuidString)
+            .appendingPathComponent(accountID.uuidString, isDirectory: true)
+    }
+
+    private func backendEnvironmentURL(for id: UUID) -> URL {
+        accountDataURL(accountID: id)
             .appendingPathComponent("backend-environment.json")
     }
 }
