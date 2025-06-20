@@ -76,7 +76,6 @@ public enum MLSDecryptResult: Equatable {
 protocol DecryptedMessageBundle {
 
     var message: Data? { get }
-    var proposals: [WireCoreCrypto.ProposalBundle] { get }
     var isActive: Bool { get }
     var commitDelay: UInt64? { get }
     var senderClientId: WireCoreCrypto.ClientId? { get }

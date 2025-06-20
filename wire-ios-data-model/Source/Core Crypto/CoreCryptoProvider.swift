@@ -96,7 +96,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
 
     public func coreCrypto() async throws -> SafeCoreCryptoProtocol {
         let coreCrypto = try await getCoreCrypto()
-        try await registerMlsTransportIfNecessary(coreCrypto: coreCrypto)
+        try await registerMlsTransportIfNecessary(with: coreCrypto)
         return coreCrypto
     }
 
@@ -112,7 +112,6 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             )
             try await self.generateClientPublicKeys(with: context, credentialType: .basic)
         }
-        try await registerEpochObserverIfNecessary(with: coreCrypto)
     }
 
     public func initialiseMLSWithEndToEndIdentity(
@@ -130,7 +129,6 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             try await self.generateClientPublicKeys(with: context, credentialType: .x509)
             return CRLsDistributionPoints(from: crlsDistributionPoints)
         }
-        try await registerEpochObserverIfNecessary(with: coreCrypto)
         return crls
     }
 
@@ -140,7 +138,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         do {
             try await registerEpochObserverIfNecessary(with: coreCrypto())
         } catch {
-            WireLogger.mls.warn("Failed to register epoch observer, will try again later: \(error)")
+            WireLogger.mls.error("Failed to register epoch observer: \(error)")
         }
     }
 
@@ -158,7 +156,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         mlsTransport = transport
     }
 
-    private func registerMlsTransportIfNecessary(coreCrypto: SafeCoreCrypto) async throws {
+    private func registerMlsTransportIfNecessary(with coreCrypto: SafeCoreCrypto) async throws {
         guard let mlsTransport, !hasRegisteredMlsTransport else {
             return
         }
@@ -259,7 +257,6 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
                 ciphersuites: [cipherSuite],
                 nbKeyPackage: nil
             ) }
-            try await registerEpochObserverIfNecessary(with: coreCrypto)
         }
     }
 
