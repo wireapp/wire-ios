@@ -20,7 +20,7 @@ import Combine
 import Foundation
 import SwiftUI
 import WireAuthenticationAPI
-import WireDomainPackage
+//import WireDomainPackage
 import WireLogging
 
 @MainActor
@@ -140,7 +140,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
                 userID: uuid
             )
 
-            let journal = Journal(userID: uuid, storage: UserDefaults() /*sharedUserDefaults*/) // TODO: fix
+            //let journal = Journal(userID: uuid, storage: sharedUserDefaults)
             if dataUsageAgreementAccepted {
                 // save isAnalyticsTrackingConsentGiven
                 //save  analyticsIDFromRegistration

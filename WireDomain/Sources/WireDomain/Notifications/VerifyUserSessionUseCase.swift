@@ -17,7 +17,6 @@
 //
 
 import WireDataModel
-import WireDomainPackage
 import WireLogging
 import WireNetwork
 

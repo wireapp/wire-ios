@@ -20,7 +20,6 @@ import NeedleFoundation
 import UserNotifications
 import WireCrypto
 import WireDataModel
-import WireDomainPackage
 import WireFoundation
 import WireNetwork
 

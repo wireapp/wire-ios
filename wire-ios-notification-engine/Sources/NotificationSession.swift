@@ -18,7 +18,6 @@
 
 import Foundation
 import WireDomain
-import WireDomainPackage
 import WireLogging
 import WireRequestStrategy
 

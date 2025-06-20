@@ -18,7 +18,6 @@
 
 import NeedleFoundation
 import WireDataModel
-import WireDomainPackage
 import WireFoundation
 import WireNetwork
 

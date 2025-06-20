@@ -20,7 +20,6 @@ import Combine
 import Foundation
 import WireCoreCrypto
 import WireDataModel
-import WireDomainPackage
 import WireNetwork
 
 public final class ClientSessionComponent {
