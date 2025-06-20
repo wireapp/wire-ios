@@ -48,7 +48,7 @@ final class VerificationEmailCodeViewModelTests: XCTestCase, VerificationEmailCo
             name: "mika",
             dataUsageAgreementAccepted: false,
             onFlowCompletion: { [self] _ in onRegisterAccountCalled = true },
-            analyticsEventTracker: MockPersonalAccountCreationAnalyticsTrackerProtocol()
+            analyticsEventTracker: MockRegistrationAnalyticsTrackerProtocol()
         )
     }
 
@@ -125,7 +125,7 @@ final class VerificationEmailCodeViewModelTests: XCTestCase, VerificationEmailCo
 
 }
 
-class MockPersonalAccountCreationAnalyticsTrackerProtocol: PersonalAccountCreationAnalyticsTrackerProtocol {
+class MockRegistrationAnalyticsTrackerProtocol: RegistrationAnalyticsTrackerProtocol {
     func setUp() {}
 
     func tearDown() {}

@@ -26,7 +26,7 @@ extension MockDependencies: RegisterPersonalAccountUseCaseFactory {
         MockRegisterPersonalAccountUseCase()
     }
 
-    var analyticsEventTracker: PersonalAccountCreationAnalyticsTrackerProtocol {
+    var analyticsEventTracker: RegistrationAnalyticsTrackerProtocol {
         MockPersonalAccountCreationAnalyticsTracker()
     }
 
@@ -45,7 +45,7 @@ struct MockRegisterPersonalAccountUseCase: RegisterPersonalAccountUseCaseProtoco
 
 }
 
-struct MockPersonalAccountCreationAnalyticsTracker: PersonalAccountCreationAnalyticsTrackerProtocol {
+struct MockPersonalAccountCreationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
     mutating func setUp() {}
 
     mutating func tearDown() {}

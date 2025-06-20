@@ -55,7 +55,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
     private let router: any Router
     private let onFlowCompletion: (AuthenticationResult) -> Void
     private static let numberOfDigits = 6
-    private var analyticsEventTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
+    private var analyticsEventTracker: any RegistrationAnalyticsTrackerProtocol
 
     // MARK: - Life cycle
 
@@ -68,7 +68,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
         dataUsageAgreementAccepted: Bool,
         onFlowCompletion: @escaping (AuthenticationResult) -> Void,
         numberOfDigits: Int = VerificationEmailCodeViewModel.numberOfDigits,
-        analyticsEventTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
+        analyticsEventTracker: any RegistrationAnalyticsTrackerProtocol
     ) {
         precondition(numberOfDigits > 0)
 

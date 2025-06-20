@@ -49,7 +49,7 @@ struct FakePersonalAccountCreationFactory: PersonalAccountCreationFactory, Regis
         password: String,
         name: String,
         dataUsageAgreementAccepted: Bool,
-        analyticsEventTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
+        analyticsEventTracker: any RegistrationAnalyticsTrackerProtocol
     ) -> any VerificationEmailCodeFactory {
         fatalError()
     }

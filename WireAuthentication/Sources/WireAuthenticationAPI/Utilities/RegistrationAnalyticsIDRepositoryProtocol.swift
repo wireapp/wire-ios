@@ -16,20 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
-import WireAuthenticationAPI
+public import Foundation
 
-package protocol PersonalAccountCreationFactory {
+// sourcery: AutoMockable
+/// A repository which allows reading, writing and deleting a temporary analytics id for the account creation (registration) UI.
+public protocol RegistrationAnalyticsIDRepositoryProtocol {
 
-    @MainActor var viewModel: PersonalAccountCreationViewModel { get }
-
-    @MainActor
-    func verificationEmailCodeFactory(
-        email: String,
-        password: String,
-        name: String,
-        dataUsageAgreementAccepted: Bool,
-        analyticsEventTracker: any RegistrationAnalyticsTrackerProtocol
-    ) -> any VerificationEmailCodeFactory
+    func storeAnalyticsID(for userID: UUID, analyticsID: UUID)
+    func fetchAnalyticsID(for userID: UUID) -> UUID?
+    func deleteAnalyticsID(for userID: UUID)
 
 }

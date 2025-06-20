@@ -17,7 +17,8 @@
 //
 
 // sourcery: AutoMockable
-public protocol PersonalAccountCreationAnalyticsTrackerProtocol {
+/// Allows for setting up and tearing down an analytics events tracker and submitting tracking events.
+public protocol RegistrationAnalyticsTrackerProtocol {
 
     /// Start analytics after the user agreed.
 

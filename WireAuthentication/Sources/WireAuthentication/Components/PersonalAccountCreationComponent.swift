@@ -44,7 +44,7 @@ final class PersonalAccountCreationComponent: Component<PersonalAccountCreationC
         password: String,
         name: String,
         dataUsageAgreementAccepted: Bool,
-        analyticsEventTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
+        analyticsEventTracker: any RegistrationAnalyticsTrackerProtocol
     ) -> VerificationEmailCodeComponent {
         VerificationEmailCodeComponent(
             parent: self,
@@ -80,7 +80,7 @@ extension PersonalAccountCreationComponent: PersonalAccountCreationViewModel.Fac
         password: String,
         name: String,
         dataUsageAgreementAccepted: Bool,
-        analyticsEventTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
+        analyticsEventTracker: any RegistrationAnalyticsTrackerProtocol
     ) -> any VerificationEmailCodeFactory {
         verificationEmailCodeComponent(
             email: email,

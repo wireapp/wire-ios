@@ -50,7 +50,7 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
     private let termsOfUseURL: URL
     package let teamAccountCreationLink: URL?
     private let passwordValidator: any PasswordValidator
-    var analyticsEventTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
+    var analyticsEventTracker: any RegistrationAnalyticsTrackerProtocol
 
     package init(
         factory: any Factory,
@@ -60,7 +60,7 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
         termsOfUseURL: URL,
         teamAccountCreationLink: URL?,
         passwordValidator: any PasswordValidator,
-        analyticsEventTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
+        analyticsEventTracker: any RegistrationAnalyticsTrackerProtocol
     ) {
         self.factory = factory
         self.router = router
