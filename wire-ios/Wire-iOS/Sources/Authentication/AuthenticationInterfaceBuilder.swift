@@ -92,6 +92,12 @@ final class AuthenticationInterfaceBuilder {
             let preferredAPIVersion = BackendInfo.preferredAPIVersion.flatMap {
                 WireNetwork.APIVersion(rawValue: UInt($0.rawValue))
             }
+            let registrationAnalyticsTracker = RegistrationAnalyticsTracker(
+                analyticsServiceConfiguration: AnalyticsServiceConfigurationBuilder.build(),
+                countlyProvider: { CountlyWrapper() },
+                userDefaults: .applicationGroup
+            )
+            let registrationAnalyticsIDRepository = RegistrationAnalyticsIDRepository(userDefaults: .applicationGroup)
             let (rootView, bridge) = assembly.assemble(
                 environmentType: BackendEnvironmentType(environment.environmentType.value),
                 backendConfig: BackendConfig(environment),
@@ -108,11 +114,8 @@ final class AuthenticationInterfaceBuilder {
                 accountsPublisher: CurrentValuePublisher(subject: CurrentValueSubject(accounts)),
                 useLegacyRegistrationFlow: !DeveloperFlag.newRegistration.isOn,
                 isMultibackendEnabled: DeveloperFlag.multibackend.isOn,
-                registrationAnalyticsTracker: RegistrationAnalyticsTracker(
-                    analyticsServiceConfiguration: AnalyticsServiceConfigurationBuilder.build(),
-                    countlyProvider: { CountlyWrapper() },
-                    userDefaults: .applicationGroup
-                )
+                registrationAnalyticsTracker: registrationAnalyticsTracker,
+                registrationAnalyticsIDRepository: registrationAnalyticsIDRepository
             )
             return AuthenticationHostingController(
                 rootView: rootView,
