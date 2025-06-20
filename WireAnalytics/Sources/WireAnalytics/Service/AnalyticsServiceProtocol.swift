@@ -28,7 +28,7 @@ public protocol AnalyticsServiceProtocol: AnalyticsEventTrackerProtocol {
 
     /// Start sending analytics data.
 
-    func enableTracking(useTemporaryID: Bool) async throws
+    func enableTracking() async throws
 
     /// Stop sending analytics data.
 

@@ -20,6 +20,7 @@ import Combine
 import Foundation
 import SwiftUI
 import WireAuthenticationAPI
+//import WireDomainPackage
 import WireLogging
 
 @MainActor
@@ -41,6 +42,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
     let email: String
     let password: String
     let name: String
+    let dataUsageAgreementAccepted: Bool
     let numberOfDigits: Int
 
     var isConfirmButtonDisabled: Bool {
@@ -63,6 +65,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
         email: String,
         password: String,
         name: String,
+        dataUsageAgreementAccepted: Bool,
         onFlowCompletion: @escaping (AuthenticationResult) -> Void,
         numberOfDigits: Int = VerificationEmailCodeViewModel.numberOfDigits,
         analyticsEventTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
@@ -74,6 +77,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
         self.email = email
         self.password = password
         self.name = name
+        self.dataUsageAgreementAccepted = dataUsageAgreementAccepted
         self.onFlowCompletion = onFlowCompletion
         self.code = Array(repeating: "", count: numberOfDigits)
         self.numberOfDigits = numberOfDigits
@@ -135,6 +139,16 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
                 emailCredentials: emailCredentials,
                 userID: uuid
             )
+
+            //let journal = Journal(userID: uuid, storage: sharedUserDefaults)
+            if dataUsageAgreementAccepted {
+                // save isAnalyticsTrackingConsentGiven
+                //save  analyticsIDFromRegistration
+            } else {
+                // remove isAnalyticsTrackingConsentGiven
+                //remove  analyticsIDFromRegistration
+            }
+            // TODO: remove "analytics_identifier"
             onFlowCompletion(authenticationResult)
         } catch {
             WireLogger.authentication.error("register personal account failed: \(error)")

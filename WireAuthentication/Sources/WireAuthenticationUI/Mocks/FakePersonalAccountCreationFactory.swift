@@ -47,7 +47,9 @@ struct FakePersonalAccountCreationFactory: PersonalAccountCreationFactory, Regis
     func verificationEmailCodeFactory(
         email: String,
         password: String,
-        name: String
+        name: String,
+        dataUsageAgreementAccepted: Bool,
+        analyticsEventTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
     ) -> any VerificationEmailCodeFactory {
         fatalError()
     }

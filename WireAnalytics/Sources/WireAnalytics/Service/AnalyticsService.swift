@@ -76,7 +76,8 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
 
     /// Start sending analytics data.
 
-    public func enableTracking(useTemporaryID: Bool) {
+    @MainActor
+    public func enableTracking() {
 
         logger.debug("enabling tracking")
 
@@ -87,8 +88,7 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
         assert(Thread.isMainThread)
         countly.start(
             appKey: config.appKey,
-            host: config.host,
-            useTemporaryID: useTemporaryID
+            host: config.host
         )
 
     }
@@ -130,9 +130,6 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
         countly.beginSession()
     }
 
-    public var currentDeviceID: String? {
-        countly?.currentDeviceID
-    }
 
     /// Update the current user.
     ///

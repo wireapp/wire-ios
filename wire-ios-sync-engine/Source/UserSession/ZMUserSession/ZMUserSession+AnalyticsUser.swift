@@ -44,6 +44,10 @@ extension ZMUserSession: AnalyticsEventTrackerProvider {
 
             if let existingID = selfUser.analyticsIdentifier {
                 analyticsID = existingID
+            } else if journal[.analyticsIDFromRegistration] != nil {
+                analyticsID = journal[.analyticsIDFromRegistration]
+                try self.broadcastAnalyticsID(UUID(uuidString: analyticsID))
+                selfUser.analyticsIdentifier = analyticsID
             } else {
                 let newID = UUID()
                 analyticsID = newID.transportString()

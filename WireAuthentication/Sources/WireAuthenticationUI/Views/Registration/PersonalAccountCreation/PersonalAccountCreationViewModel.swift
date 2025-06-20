@@ -50,7 +50,7 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
     private let termsOfUseURL: URL
     package let teamAccountCreationLink: URL?
     private let passwordValidator: any PasswordValidator
-    private var analyticsEventTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
+    var analyticsEventTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
 
     package init(
         factory: any Factory,

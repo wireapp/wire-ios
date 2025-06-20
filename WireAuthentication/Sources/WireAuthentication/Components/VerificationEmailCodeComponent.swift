@@ -38,16 +38,22 @@ final class VerificationEmailCodeComponent: Component<VerificationEmailCodeCompo
     private let email: String
     private let password: String
     private let name: String
+    private let dataUsageAgreementAccepted: Bool
+    private let personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
 
     init(
         parent: any Scope,
         email: String,
         password: String,
-        name: String
+        name: String,
+        dataUsageAgreementAccepted: Bool,
+        analyticsEventTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
     ) {
         self.email = email
         self.password = password
         self.name = name
+        self.dataUsageAgreementAccepted = dataUsageAgreementAccepted
+        self.personalAccountCreationAnalyticsTracker = analyticsEventTracker
         super.init(parent: parent)
     }
 
@@ -64,10 +70,11 @@ extension VerificationEmailCodeComponent: VerificationEmailCodeViewModel.Factory
             email: email,
             password: password,
             name: name,
+            dataUsageAgreementAccepted: dataUsageAgreementAccepted,
             onFlowCompletion: { [dependency] authenticationResult in
                 dependency?.bridge.sendOutboundEvent(.userAuthenticated(authenticationResult))
             },
-            analyticsEventTracker: dependency.personalAccountCreationAnalyticsTracker
+            analyticsEventTracker: personalAccountCreationAnalyticsTracker
         )
     }
 

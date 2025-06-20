@@ -42,13 +42,17 @@ final class PersonalAccountCreationComponent: Component<PersonalAccountCreationC
     func verificationEmailCodeComponent(
         email: String,
         password: String,
-        name: String
+        name: String,
+        dataUsageAgreementAccepted: Bool,
+        analyticsEventTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
     ) -> VerificationEmailCodeComponent {
         VerificationEmailCodeComponent(
             parent: self,
             email: email,
             password: password,
-            name: name
+            name: name,
+            dataUsageAgreementAccepted: dataUsageAgreementAccepted,
+            analyticsEventTracker: analyticsEventTracker
         )
     }
 
@@ -74,9 +78,17 @@ extension PersonalAccountCreationComponent: PersonalAccountCreationViewModel.Fac
     func verificationEmailCodeFactory(
         email: String,
         password: String,
-        name: String
+        name: String,
+        dataUsageAgreementAccepted: Bool,
+        analyticsEventTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
     ) -> any VerificationEmailCodeFactory {
-        verificationEmailCodeComponent(email: email, password: password, name: name)
+        verificationEmailCodeComponent(
+            email: email,
+            password: password,
+            name: name,
+            dataUsageAgreementAccepted: dataUsageAgreementAccepted,
+            analyticsEventTracker: analyticsEventTracker
+        )
     }
 
     // MARK: - Use cases

@@ -47,10 +47,11 @@ struct PersonalAccountCreationAnalyticsTracker: PersonalAccountCreationAnalytics
         self.logger = .authentication
     }
 
+    @MainActor
     mutating func setUp() {
         do {
-            //let analyticsUser = createAnalyticsUserIfNeeded()
-            try enableAnalytics()
+            let analyticsUser = createAnalyticsUserIfNeeded()
+            try enableAnalytics(user: analyticsUser)
 
         } catch {
             logger.error("Can't set up analytics during personal account registration")
@@ -97,13 +98,11 @@ struct PersonalAccountCreationAnalyticsTracker: PersonalAccountCreationAnalytics
 
     // MARK: - Helpers
 
-    private mutating func enableAnalytics(/*user: AnalyticsUser*/) throws {
-        analyticsService?.enableTracking(useTemporaryID: true)
-        //analyticsService?.enableTemporaryDeviceIDMode()
-//        try analyticsService?.switchUser(user)
+    @MainActor
+    private mutating func enableAnalytics(user: AnalyticsUser) throws {
+        analyticsService?.enableTracking()
+        try analyticsService?.switchUser(user)
         analyticsTracker = analyticsService
-        let currentDeviceID = analyticsService?.currentDeviceID
-        print("KKKK currentDeviceID: \(currentDeviceID)")
     }
 
     private mutating func disableAnalytics() throws {
@@ -117,7 +116,7 @@ struct PersonalAccountCreationAnalyticsTracker: PersonalAccountCreationAnalytics
             return AnalyticsUser(analyticsIdentifier: existingID, teamInfo: nil)
         }
 
-        let newAnalyticsID = UUID().uuidString
+        let newAnalyticsID = UUID().transportString()
         userDefaults.set(newAnalyticsID, forKey: Constants.analyticsIdentifierKey)
         print("KKKK new: \(newAnalyticsID)")
         return AnalyticsUser(analyticsIdentifier: newAnalyticsID, teamInfo: nil)

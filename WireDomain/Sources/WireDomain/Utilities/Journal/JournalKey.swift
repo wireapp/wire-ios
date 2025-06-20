@@ -80,6 +80,17 @@ public extension JournalKey where Value == Bool? {
 
 }
 
+public extension JournalKey where Value == String {
+
+    ///
+
+    static let analyticsIDFromRegistration = Self(
+        "analyticsIDFromRegistration",
+        defaultValue: nil
+    )
+
+}
+
 public extension JournalKey where Value == Set<String> {
 
     /// The set of MLS group IDs to be repaired.

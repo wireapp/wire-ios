@@ -41,7 +41,7 @@ struct EnableAnalyticsUseCase: EnableAnalyticsUseCaseProtocol {
 
     func invoke() async throws {
         let user = try await provider.createAnalyticsUser()
-        try await service.enableTracking(useTemporaryID: false)
+        try await service.enableTracking()
         try service.switchUser(user)
         provider.setAnalyticsEventTracker(service)
     }

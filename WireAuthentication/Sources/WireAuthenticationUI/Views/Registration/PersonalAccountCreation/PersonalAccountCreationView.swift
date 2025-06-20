@@ -49,7 +49,9 @@ struct PersonalAccountCreationView: View {
                     factory: viewModel.factory.verificationEmailCodeFactory(
                         email: email,
                         password: password,
-                        name: name
+                        name: name,
+                        dataUsageAgreementAccepted: viewModel.dataUsageAgreementAccepted,
+                        analyticsEventTracker: viewModel.analyticsEventTracker
                     )
                 )
             }
