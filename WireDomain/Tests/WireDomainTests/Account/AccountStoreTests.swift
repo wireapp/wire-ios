@@ -20,7 +20,7 @@
 import Foundation
 import Testing
 import WireDataModel
-@testable import WireAPI
+@testable import WireNetwork
 
 @testable import WireDomain
 
@@ -452,7 +452,7 @@ final class AccountStoreTests {
             fatalError()
         }
 
-        var proxy: WireAPI.ProxySettings?
+        var proxy: WireNetwork.ProxySettings?
         if proxyIncluded {
             proxy = proxyAuthenticated ? .authenticated(
                 host: "Host.com",

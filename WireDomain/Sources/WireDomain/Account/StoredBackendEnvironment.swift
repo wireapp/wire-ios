@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 public struct StoredBackendEnvironment: Codable, Sendable {
 
@@ -109,7 +109,7 @@ extension BackendEnvironment2.ResolvedBackendMetadata {
     }
 }
 
-extension WireAPI.APIVersion {
+extension WireNetwork.APIVersion {
     func toStored() -> StoredBackendEnvironment.APIVersion {
         switch self {
         case .v0: .v0
@@ -194,7 +194,7 @@ extension StoredBackendEnvironment.ResolvedBackendMetadata {
 }
 
 extension StoredBackendEnvironment.APIVersion {
-    func toDomain() -> WireAPI.APIVersion {
+    func toDomain() -> WireNetwork.APIVersion {
         switch self {
         case .v0: .v0
         case .v1: .v1
