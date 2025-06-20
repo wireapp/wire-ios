@@ -22,11 +22,11 @@ public protocol RegistrationAnalyticsTrackerProtocol {
 
     /// Start analytics after the user agreed.
 
-    mutating func setUp()
+    func setUp()
 
     /// Stop analytics when the account creation flow is left.
 
-    mutating func tearDown()
+    func tearDown()
 
     /// Invoked when the user submits the personal account creation form.
 

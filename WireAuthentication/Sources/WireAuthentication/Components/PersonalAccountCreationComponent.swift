@@ -44,7 +44,8 @@ final class PersonalAccountCreationComponent: Component<PersonalAccountCreationC
         password: String,
         name: String,
         dataUsageAgreementAccepted: Bool,
-        analyticsEventTracker: any RegistrationAnalyticsTrackerProtocol
+        analyticsEventTracker: any RegistrationAnalyticsTrackerProtocol,
+        analyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
     ) -> VerificationEmailCodeComponent {
         VerificationEmailCodeComponent(
             parent: self,
@@ -52,7 +53,8 @@ final class PersonalAccountCreationComponent: Component<PersonalAccountCreationC
             password: password,
             name: name,
             dataUsageAgreementAccepted: dataUsageAgreementAccepted,
-            analyticsEventTracker: analyticsEventTracker
+            analyticsEventTracker: analyticsEventTracker,
+            analyticsIDRepository: analyticsIDRepository
         )
     }
 
@@ -71,7 +73,8 @@ extension PersonalAccountCreationComponent: PersonalAccountCreationViewModel.Fac
             termsOfUseURL: dependency.termsOfUseURL,
             teamAccountCreationLink: teamAccountCreationLink,
             passwordValidator: dependency.passwordValidator,
-            analyticsEventTracker: dependency.personalAccountCreationAnalyticsTracker
+            analyticsEventTracker: dependency.registrationAnalyticsTracker,
+            analyticsIDRepository: dependency.registrationAnalyticsIDRepository
         )
     }
 
@@ -80,14 +83,16 @@ extension PersonalAccountCreationComponent: PersonalAccountCreationViewModel.Fac
         password: String,
         name: String,
         dataUsageAgreementAccepted: Bool,
-        analyticsEventTracker: any RegistrationAnalyticsTrackerProtocol
+        analyticsEventTracker: any RegistrationAnalyticsTrackerProtocol,
+        analyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
     ) -> any VerificationEmailCodeFactory {
         verificationEmailCodeComponent(
             email: email,
             password: password,
             name: name,
             dataUsageAgreementAccepted: dataUsageAgreementAccepted,
-            analyticsEventTracker: analyticsEventTracker
+            analyticsEventTracker: analyticsEventTracker,
+            analyticsIDRepository: analyticsIDRepository
         )
     }
 

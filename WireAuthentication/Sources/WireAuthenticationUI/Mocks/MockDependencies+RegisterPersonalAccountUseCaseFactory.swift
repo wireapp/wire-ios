@@ -27,7 +27,11 @@ extension MockDependencies: RegisterPersonalAccountUseCaseFactory {
     }
 
     var analyticsEventTracker: RegistrationAnalyticsTrackerProtocol {
-        MockPersonalAccountCreationAnalyticsTracker()
+        MockRegistrationAnalyticsTracker()
+    }
+
+    var analyticsIDRepository: RegistrationAnalyticsIDRepositoryProtocol {
+        RegistrationAnalyticsIDRepositoryProtocolMock()
     }
 
 }
@@ -45,21 +49,24 @@ struct MockRegisterPersonalAccountUseCase: RegisterPersonalAccountUseCaseProtoco
 
 }
 
-struct MockPersonalAccountCreationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
-    mutating func setUp() {}
+private struct MockRegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
 
-    mutating func tearDown() {}
+    func setUp() {}
+    func tearDown() {}
 
     func trackPersonalAccountCreationStart() {}
-
     func trackPersonalAccountCreationReachedTermsOfUseConfirmation() {}
-
     func trackPersonalAccountCreationReachedVerificationCode() {}
-
     func trackPersonalAccountCreationFailedCodeVerification() {}
-
     func trackPersonalAccountCreationReachedUsernameForm() {}
-
     func trackPersonalAccountCreationCompletion() {}
+
+}
+
+private struct RegistrationAnalyticsIDRepositoryProtocolMock: RegistrationAnalyticsIDRepositoryProtocol {
+
+    func storeAnalyticsID(for userID: UUID, analyticsID: UUID) {}
+    func fetchAnalyticsID(for userID: UUID) -> UUID? { .none }
+    func deleteAnalyticsID(for userID: UUID) {}
 
 }

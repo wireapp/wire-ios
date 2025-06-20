@@ -40,7 +40,8 @@ struct FakePersonalAccountCreationFactory: PersonalAccountCreationFactory, Regis
             termsOfUseURL: termsOfUseURL,
             teamAccountCreationLink: teamAccountCreationLink,
             passwordValidator: passwordValidator,
-            analyticsEventTracker: mockDependencies.analyticsEventTracker
+            analyticsEventTracker: mockDependencies.analyticsEventTracker,
+            analyticsIDRepository: mockDependencies.analyticsIDRepository
         )
     }
 
@@ -49,7 +50,8 @@ struct FakePersonalAccountCreationFactory: PersonalAccountCreationFactory, Regis
         password: String,
         name: String,
         dataUsageAgreementAccepted: Bool,
-        analyticsEventTracker: any RegistrationAnalyticsTrackerProtocol
+        analyticsEventTracker: any RegistrationAnalyticsTrackerProtocol,
+        analyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
     ) -> any VerificationEmailCodeFactory {
         fatalError()
     }

@@ -108,7 +108,7 @@ final class AuthenticationInterfaceBuilder {
                 accountsPublisher: CurrentValuePublisher(subject: CurrentValueSubject(accounts)),
                 useLegacyRegistrationFlow: !DeveloperFlag.newRegistration.isOn,
                 isMultibackendEnabled: DeveloperFlag.multibackend.isOn,
-                personalAccountCreationAnalyticsTracker: PersonalAccountCreationAnalyticsTracker(
+                registrationAnalyticsTracker: RegistrationAnalyticsTracker(
                     analyticsServiceConfiguration: AnalyticsServiceConfigurationBuilder.build(),
                     countlyProvider: { CountlyWrapper() },
                     userDefaults: .applicationGroup

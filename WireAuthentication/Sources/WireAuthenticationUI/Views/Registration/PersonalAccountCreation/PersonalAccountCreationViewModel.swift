@@ -50,7 +50,8 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
     private let termsOfUseURL: URL
     package let teamAccountCreationLink: URL?
     private let passwordValidator: any PasswordValidator
-    var analyticsEventTracker: any RegistrationAnalyticsTrackerProtocol
+    let analyticsEventTracker: any RegistrationAnalyticsTrackerProtocol
+    let analyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
 
     package init(
         factory: any Factory,
@@ -60,7 +61,8 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
         termsOfUseURL: URL,
         teamAccountCreationLink: URL?,
         passwordValidator: any PasswordValidator,
-        analyticsEventTracker: any RegistrationAnalyticsTrackerProtocol
+        analyticsEventTracker: any RegistrationAnalyticsTrackerProtocol,
+        analyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
     ) {
         self.factory = factory
         self.router = router
@@ -70,6 +72,7 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
         self.teamAccountCreationLink = teamAccountCreationLink
         self.passwordValidator = passwordValidator
         self.analyticsEventTracker = analyticsEventTracker
+        self.analyticsIDRepository = analyticsIDRepository
     }
 
     // MARK: - Validations
@@ -116,7 +119,7 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
                 name: name
             ))
         } catch {
-            WireLogger.authentication.error("request email erification code failed: \(error)")
+            WireLogger.authentication.error("request email verification code failed: \(error)")
 
             switch error {
             case RequestEmailVerificationCodeUseCaseFailure.invalidEmail:

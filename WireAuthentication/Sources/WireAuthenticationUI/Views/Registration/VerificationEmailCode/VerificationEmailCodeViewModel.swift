@@ -56,6 +56,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
     private let onFlowCompletion: (AuthenticationResult) -> Void
     private static let numberOfDigits = 6
     private var analyticsEventTracker: any RegistrationAnalyticsTrackerProtocol
+    private var analyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
 
     // MARK: - Life cycle
 
@@ -68,7 +69,8 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
         dataUsageAgreementAccepted: Bool,
         onFlowCompletion: @escaping (AuthenticationResult) -> Void,
         numberOfDigits: Int = VerificationEmailCodeViewModel.numberOfDigits,
-        analyticsEventTracker: any RegistrationAnalyticsTrackerProtocol
+        analyticsEventTracker: any RegistrationAnalyticsTrackerProtocol,
+        analyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
     ) {
         precondition(numberOfDigits > 0)
 
@@ -82,6 +84,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
         self.code = Array(repeating: "", count: numberOfDigits)
         self.numberOfDigits = numberOfDigits
         self.analyticsEventTracker = analyticsEventTracker
+        self.analyticsIDRepository = analyticsIDRepository
     }
 
     // MARK: - Actions
@@ -125,8 +128,8 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
         isLoading = true
         let verificationCode = code.joined()
         do {
-            let (cookies, uuid) = try await register(verificationCode: verificationCode)
-            guard let uuid else {
+            let (cookies, userID) = try await register(verificationCode: verificationCode)
+            guard let userID else {
                 return
             }
             let emailCredentials = EmailCredentials(
@@ -137,10 +140,10 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
             let authenticationResult = try await createAuthenticationResult(
                 cookies: cookies,
                 emailCredentials: emailCredentials,
-                userID: uuid
+                userID: userID
             )
 
-            //let journal = Journal(userID: uuid, storage: sharedUserDefaults)
+            // analyticsIDRepository.storeAnalyticsID(for: userID, analyticsID: <#T##UUID#>)
             if dataUsageAgreementAccepted {
                 // save isAnalyticsTrackingConsentGiven
                 //save  analyticsIDFromRegistration
@@ -149,6 +152,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
                 //remove  analyticsIDFromRegistration
             }
             // TODO: remove "analytics_identifier"
+            // analyticsIDRepository.deleteAnalyticsID(for: userID)
             onFlowCompletion(authenticationResult)
         } catch {
             WireLogger.authentication.error("register personal account failed: \(error)")
@@ -181,9 +185,9 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
 
         do {
             try await resendVerificationCode(email: email)
-            WireLogger.authentication.info("Resend email erification code succeeded")
+            WireLogger.authentication.info("Resend email verification code succeeded")
         } catch {
-            WireLogger.authentication.error("Resend email erification code login failed: \(error)")
+            WireLogger.authentication.error("Resend email verification code login failed: \(error)")
 
             switch error {
             case RequestEmailVerificationCodeUseCaseFailure.invalidEmail:

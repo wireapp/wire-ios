@@ -29,7 +29,8 @@ protocol VerificationEmailCodeComponentDependency: Dependency {
     var networkStack: NetworkStack { get }
     @MainActor var bridge: WireAuthenticationBridge { get }
     @MainActor var router: any Router { get }
-    var personalAccountCreationAnalyticsTracker: any RegistrationAnalyticsTrackerProtocol { get }
+    var registrationAnalyticsTracker: any RegistrationAnalyticsTrackerProtocol { get }
+    var registrationAnalyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol { get }
 
 }
 
@@ -39,7 +40,8 @@ final class VerificationEmailCodeComponent: Component<VerificationEmailCodeCompo
     private let password: String
     private let name: String
     private let dataUsageAgreementAccepted: Bool
-    private let personalAccountCreationAnalyticsTracker: any RegistrationAnalyticsTrackerProtocol
+    private let registrationAnalyticsTracker: any RegistrationAnalyticsTrackerProtocol
+    private let registrationAnalyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
 
     init(
         parent: any Scope,
@@ -47,13 +49,15 @@ final class VerificationEmailCodeComponent: Component<VerificationEmailCodeCompo
         password: String,
         name: String,
         dataUsageAgreementAccepted: Bool,
-        analyticsEventTracker: any RegistrationAnalyticsTrackerProtocol
+        analyticsEventTracker: any RegistrationAnalyticsTrackerProtocol,
+        analyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
     ) {
         self.email = email
         self.password = password
         self.name = name
         self.dataUsageAgreementAccepted = dataUsageAgreementAccepted
-        self.personalAccountCreationAnalyticsTracker = analyticsEventTracker
+        self.registrationAnalyticsTracker = analyticsEventTracker
+        self.registrationAnalyticsIDRepository = analyticsIDRepository
         super.init(parent: parent)
     }
 
@@ -74,7 +78,8 @@ extension VerificationEmailCodeComponent: VerificationEmailCodeViewModel.Factory
             onFlowCompletion: { [dependency] authenticationResult in
                 dependency?.bridge.sendOutboundEvent(.userAuthenticated(authenticationResult))
             },
-            analyticsEventTracker: personalAccountCreationAnalyticsTracker
+            analyticsEventTracker: registrationAnalyticsTracker,
+            analyticsIDRepository: registrationAnalyticsIDRepository
         )
     }
 

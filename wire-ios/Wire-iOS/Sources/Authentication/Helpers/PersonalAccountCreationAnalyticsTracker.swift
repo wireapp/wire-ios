@@ -23,7 +23,7 @@ import WireFoundation
 import WireLogging
 import WireSyncEngine
 
-struct PersonalAccountCreationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
+struct RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
 
     private var analyticsService: AnalyticsService?
     private var analyticsTracker: (any AnalyticsEventTrackerProtocol)?
