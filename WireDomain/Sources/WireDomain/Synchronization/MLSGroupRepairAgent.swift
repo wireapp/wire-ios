@@ -17,6 +17,7 @@
 //
 
 import WireDataModel
+import WireDomainPackage
 import WireLogging
 
 // sourcery: AutoMockable

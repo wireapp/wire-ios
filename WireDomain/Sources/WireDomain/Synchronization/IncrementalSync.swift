@@ -18,6 +18,7 @@
 
 import Combine
 import Foundation
+import WireDomainPackage
 import WireLogging
 import WireNetwork
 

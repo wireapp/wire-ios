@@ -16,9 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import WireDomainPackage
-
-import Foundation
+public import Foundation
+public import WireFoundation
 
 /// A storage mechanism scoped to a single user for keeping
 /// track of various bits of information.
@@ -29,8 +28,6 @@ import Foundation
 ///
 /// The Journal users a scoped `UserDefaults` suite that is accessible
 /// within the app group.
-
-import WireFoundation
 
 public struct Journal: JournalProtocol {
 

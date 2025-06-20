@@ -19,6 +19,7 @@
 import Foundation
 import WireDataModel
 import WireDomain
+import WireDomainPackage
 import WireLinkPreview
 import WireNetwork
 import WireRequestStrategy

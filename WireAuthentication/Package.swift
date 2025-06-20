@@ -16,11 +16,12 @@ let package = Package(
         .library(name: "WireAuthenticationUI", targets: ["WireAuthenticationUI"])
     ],
     dependencies: [
-        .package(path: "../WireNetwork"),
+        .package(path: "../WireDomain"),
         .package(path: "../WireFoundation"),
         .package(path: "../WireLogging"),
-        .package(path: "../WireUI"),
+        .package(path: "../WireNetwork"),
         .package(path: "../WirePlugins"),
+        .package(path: "../WireUI"),
         .package(url: "https://github.com/uber/needle.git", .upToNextMinor(from: "0.25.1")),
         .package(url: "https://github.com/siteline/swiftui-introspect", from: "1.0.0")
     ],
@@ -71,6 +72,7 @@ let package = Package(
                 "WireFoundation",
                 "WireAuthenticationAPI",
                 .product(name: "WireDesign", package: "WireUI"),
+                .product(name: "WireDomainPackage", package: "WireDomain"),
                 .product(name: "WireMultiBackendUI", package: "WireUI"),
                 .product(name: "WireReusableUIComponents", package: "WireUI"),
                 .product(name: "SwiftUIIntrospect", package: "swiftui-introspect")
