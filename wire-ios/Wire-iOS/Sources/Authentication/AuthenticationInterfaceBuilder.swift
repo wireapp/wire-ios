@@ -42,10 +42,6 @@ final class AuthenticationInterfaceBuilder {
         backendEnvironmentProvider()
     }
 
-    private var environment: WireTransport.BackendEnvironment {
-        BackendEnvironment.shared
-    }
-
     private var accountSelector: AccountSelector?
 
     // MARK: - Initialization
@@ -61,6 +57,24 @@ final class AuthenticationInterfaceBuilder {
         self.featureProvider = featureProvider
         self.backendEnvironmentProvider = backendEnvironmentProvider
         self.accountSelector = accountSelector
+    }
+    
+    private func makeDefaultBackendConfig() -> BackendConfig? {
+        guard let path = Bundle.backendBundle.path(forResource: "default", ofType: "json"),
+              let data = try? Data(contentsOf: URL(fileURLWithPath: path)) else {
+            Logging.backendEnvironment.error("Could not read get backend config file")
+            return nil
+        }
+        
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        do {
+            let backendData = try decoder.decode(BackendConfig.self, from: data)
+            return backendData
+        } catch {
+            Logging.backendEnvironment.error("Could not decode information from data: \(error)")
+            return nil
+        }
     }
 
     // MARK: - Interface Building
@@ -91,12 +105,17 @@ final class AuthenticationInterfaceBuilder {
             let preferredAPIVersion = BackendInfo.preferredAPIVersion.flatMap {
                 WireAPI.APIVersion(rawValue: UInt($0.rawValue))
             }
+            
+            guard let backendConfig = makeDefaultBackendConfig() else {
+                fatalError("Failed to get backendConfig")
+            }
+            
             let (rootView, bridge) = assembly.assemble(
-                environmentType: BackendEnvironmentType(environment.environmentType.value),
-                backendConfig: BackendConfig(environment),
+                environmentType: .default,
+                backendConfig: backendConfig,
                 minTLSVersion: TLSVersion.minVersionFrom(SecurityFlags.minTLSVersion.stringValue),
                 preferredAPIVersion: Bundle.developerModeEnabled ? preferredAPIVersion : nil,
-                accountsURL: environment.accountsURL,
+                accountsURL: backendConfig.endpoints.accountsURL,
                 howToChangeEmailURL: WireURLs.shared.howToChangeEmail,
                 howToDeleteAccountURL: WireURLs.shared.howToDeleteAccount,
                 privacyPolicyURL: WireURLs.shared.privacyPolicy,
