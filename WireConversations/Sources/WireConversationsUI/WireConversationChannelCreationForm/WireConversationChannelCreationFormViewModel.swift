@@ -127,6 +127,7 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
     @Published public private(set) var isFormValid: Bool
 
     private let onFormValidityUpdate: @Sendable (_ isValid: Bool) -> Void
+    private let isUserPremium: Bool
     private var subscriptions = Set<AnyCancellable>()
 
     public init(
@@ -138,6 +139,7 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
         servicesAllowed: Bool = true,
         guestsAllowed: Bool = true,
         readReceiptsEnabled: Bool = true,
+        isUserPremium: Bool,
         onFormValidityUpdate: @escaping @Sendable (_ isValid: Bool) -> Void
     ) {
         let channelName = Self.validateChannelName(channelName)
@@ -150,7 +152,7 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
         self.servicesAllowed = servicesAllowed
         self.guestsAllowed = guestsAllowed
         self.readReceiptsEnabled = readReceiptsEnabled
-
+        self.isUserPremium = isUserPremium
         self.onFormValidityUpdate = onFormValidityUpdate
         
         self.bind()
@@ -158,20 +160,16 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
     
     // MARK: History sharing
     
-    private func isPremium() -> Bool {
-        false
-    }
-    
     private func bind() {
         $channelHistoryOption
-            .filter { [self] in $0 == .custom && !isPremium() }
+            .filter { [self] in $0 == .custom && !isUserPremium }
             .map { _ in true }
             .assign(to: \.showUpgradeBanner, on: self)
             .store(in: &subscriptions)
     }
     
     func channelHistoryAvailableOptions() -> [ChannelHistoryOption] {
-        if isPremium() {
+        if isUserPremium {
             [.off, .oneDay, .oneWeek, .fourWeeks, .unlimited, .custom]
         } else {
             [.off, .oneDay, .custom]
@@ -179,7 +177,7 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
     }
     
     func showChannelCustomHistoryPickers() -> Bool {
-        channelHistoryOption == .custom && isPremium()
+        channelHistoryOption == .custom && isUserPremium
     }
     
     func hideUpgradeBanner() {

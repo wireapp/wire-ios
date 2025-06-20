@@ -33,12 +33,20 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
 
     private lazy var viewModel = WireConversationChannelCreationFormViewModel(
         channelName: "",
+        isUserPremium: isUserPremium,
         onFormValidityUpdate: { formIsValid in
             Task { @MainActor [weak self] in
                 self?.onFormValidityUpdate(formIsValid: formIsValid)
             }
         }
     )
+    
+    private lazy var isUserPremium: Bool = {
+        guard let userSession = userSession as? ZMUserSession else { return false }
+        let featureRepository = FeatureRepository(context: userSession.syncContext)
+        let conferenceCalling = featureRepository.fetchConferenceCalling()
+        return conferenceCalling.status == .enabled
+    }()
 
     weak var delegate: ConversationCreationControllerDelegate?
 

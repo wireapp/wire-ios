@@ -236,6 +236,9 @@ public struct WireConversationChannelCreationForm: View {
 
 #Preview {
     WireConversationChannelCreationForm(
-        viewModel: WireConversationChannelCreationFormViewModel(channelName: "") { _ in }
+        viewModel: WireConversationChannelCreationFormViewModel(
+            channelName: "",
+            isUserPremium: true
+        ) { _ in }
     )
 }
