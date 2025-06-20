@@ -58,11 +58,15 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
 
         var events: [UpdateEvent] = []
 
-        // Events are fetched in batches.
-        for try await envelopes in api.getUpdateEvents(
+        let timestampedUpdateEvents = api.getUpdateEvents(
             selfClientID: selfClientID,
             sinceEventID: lastEventID
-        ) {
+        )
+
+        // Events are fetched in batches.
+        for try await timestampedEnvelope in timestampedUpdateEvents {
+            let envelopes = timestampedEnvelope.updateEventEnvelopes
+            let timestamp = timestampedEnvelope.time
             let batchCount = envelopes.count
             var count = 0
 
@@ -121,6 +125,13 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
                     store.storeLastEventID(id: lastEnvelopeID)
                 }
 
+            }
+
+            if let timestamp {
+                WireLogger.sync.debug("storing server time delta")
+                await store.storeServerTimeDelta(
+                    timestamp.timeIntervalSinceNow
+                )
             }
         }
 

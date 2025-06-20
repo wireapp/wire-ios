@@ -67,7 +67,7 @@ class UpdateEventsAPIV0: UpdateEventsAPI, VersionedAPI {
     func getUpdateEvents(
         selfClientID: String?,
         sinceEventID: UUID
-    ) -> PayloadPager<UpdateEventEnvelope> {
+    ) -> PayloadPager<TimestampedUpdateEventEnvelope> {
         let resourcePath = "\(pathPrefix)\(basePath)"
 
         return PayloadPager(start: sinceEventID.transportString()) { nextSince in

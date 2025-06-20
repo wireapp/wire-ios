@@ -46,7 +46,7 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
         let displayCallNotification = await validator.validateCallNotification(
             conversationID: conversationID,
             senderID: senderID,
-            time: time,
+            eventTimestamp: time,
             callContent: callContent
         )
 
@@ -415,7 +415,7 @@ extension ConversationCallingEventNotificationBuilder {
         func validateCallNotification(
             conversationID: ConversationID,
             senderID: UserID,
-            time: Date?,
+            eventTimestamp: Date?,
             callContent: CallContent
         ) async -> Bool {
             let conversation = await conversationLocalStore.fetchOrCreateConversation(
@@ -430,10 +430,14 @@ extension ConversationCallingEventNotificationBuilder {
                 domain: senderID.domain
             )
 
+            let serverTimeDelta = await conversationLocalStore.fetchServerTimeDelta()
+            let currentTimestamp = Date.now.addingTimeInterval(serverTimeDelta)
+
             let mutedMessagesTypes = await conversationLocalStore
                 .conversationMutedMessageTypesIncludingAvailability(conversation)
             let isConversationMuted = mutedMessagesTypes == .all
-            let isCallTimeOut = time != nil ? Int(Date.now.timeIntervalSince(time!)) > 30 : true
+            let isCallTimeOut = eventTimestamp != nil ? Int(currentTimestamp.timeIntervalSince(eventTimestamp!)) > 30 :
+                true
             let isCallerSelf = selfUser == caller
 
             let isIncomingCall = callContent.isIncomingCall

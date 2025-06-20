@@ -386,26 +386,18 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
 
     }
 
-    func testGenerateCallNotification_IsOneOnOne_Team_Should_Build_Notification_Returns_False() async {
+    func testGenerateCallNotification_It_Does_Not_Generate_Notification_When_Timed_Out() async throws {
+
         // Mock
 
         let isGroup = false
         let isTeam = true
 
-        await setupMock(isGroup: isGroup, isTeam: isTeam)
-
-        // An example payload that will be treated as an `unhandled` case.
-        let unhandledCallJson = """
-        {
-            "type": "REJECT",
-            "src_clientid": "clientid",
-            "resp": true,
-            "props": { "videosend": "false" }
-        }
-        """
+        await setupMock(isGroup: isGroup, isTeam: isTeam, isTimeout: true)
+        let callingContent = setupCallingContentMock(type: "SETUP")
 
         var calling = Calling()
-        calling.content = unhandledCallJson
+        calling.content = callingContent
 
         sut = ConversationCallingEventNotificationBuilder(
             context: .init(
@@ -427,6 +419,53 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
             senderID: Scaffolding.userID
         )
 
+        XCTAssertNil(userNotification)
+    }
+
+    func testGenerateCallNotification_IsOneOnOne_Team_Should_Build_Notification_Returns_False() async {
+        // Mock
+
+        let isGroup = false
+        let isTeam = true
+
+        await setupMock(isGroup: isGroup, isTeam: isTeam)
+
+        // An example payload that will be treated as an `unhandled` case.
+        let unhandledCallJson = """
+        {
+            "type": "REJECT",
+            "src_clientid": "clientid",
+            "resp": true,
+            "props": { "videosend": "false" }
+        }
+        """
+
+        var calling = Calling()
+        calling.content = unhandledCallJson
+
+        // When
+
+        sut = ConversationCallingEventNotificationBuilder(
+            context: .init(
+                conversationLocalStore: conversationLocalStore,
+                userLocalStore: userLocalStore
+            ),
+            validator: .init(
+                userLocalStore: userLocalStore,
+                conversationLocalStore: conversationLocalStore,
+                userDefaults: defaults
+            ),
+            accountID: .mockID1
+        )
+
+        let userNotification = await sut.buildContent(
+            calling: calling,
+            at: .now,
+            conversationID: Scaffolding.conversationID,
+            senderID: Scaffolding.userID
+        )
+
+        // Then, not display calling notification because timed out
         XCTAssertNil(userNotification)
     }
 
@@ -552,7 +591,6 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
         XCTAssertEqual(notificationContent.userInfo["selfUserIDString"] as! String, UUID.mockID1.uuidString)
         XCTAssertNil(notificationContent.userInfo["senderIDString"])
         XCTAssertEqual(notificationContent.userInfo["conversationIDString"] as! String, UUID.mockID2.uuidString)
-
     }
 
     // MARK: - Tested use cases
@@ -639,7 +677,8 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
 
     private func setupMock(
         isGroup: Bool,
-        isTeam: Bool
+        isTeam: Bool,
+        isTimeout: Bool = false
     ) async {
 
         defaults.set(true, forKey: "isAVSReady")
@@ -668,6 +707,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
         userLocalStore.teamNameFor_MockValue = .some(isTeam ? Scaffolding.teamName : nil)
         conversationLocalStore.shouldHideNotification_MockValue = false
         conversationLocalStore.increaseUnreadCountFor_MockMethod = { _ in }
+        conversationLocalStore.fetchServerTimeDelta_MockValue = isTimeout ? .oneHour : .oneSecond
     }
 
     private enum Scaffolding {

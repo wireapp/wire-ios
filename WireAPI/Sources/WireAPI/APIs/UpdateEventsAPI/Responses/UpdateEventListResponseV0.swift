@@ -32,7 +32,7 @@ struct UpdateEventListResponseV0: Decodable, ToAPIModelConvertible {
 
     }
 
-    func toAPIModel() -> PayloadPager<UpdateEventEnvelope>.Page {
+    func toAPIModel() -> PayloadPager<TimestampedUpdateEventEnvelope>.Page {
         let eventEnvelopes = notifications.map {
             $0.toAPIModel()
         }
@@ -41,8 +41,13 @@ struct UpdateEventListResponseV0: Decodable, ToAPIModelConvertible {
             !$0.isTransient
         }
 
+        let timestampedUpdateEventEnvelope = TimestampedUpdateEventEnvelope(
+            time: time?.date,
+            updateEventEnvelopes: notifications.map { $0.toAPIModel() }
+        )
+
         return .init(
-            element: notifications.map { $0.toAPIModel() },
+            element: timestampedUpdateEventEnvelope,
             hasMore: hasMore ?? false,
             nextStart: lastNonTransientEvent?.id.transportString() ?? ""
         )
