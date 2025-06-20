@@ -23,8 +23,8 @@ import WireFoundation
 
 public struct JournalKey<Value>: Sendable where Value: Sendable {
 
-    let name: String
-    let defaultValue: Value
+    public let name: String
+    public let defaultValue: Value
 
     init(
         _ name: String,
@@ -80,9 +80,9 @@ public extension JournalKey where Value == Bool? {
 
 }
 
-public extension JournalKey where Value == String {
+public extension JournalKey where Value == String? {
 
-    ///
+    /// If the user went through the flow of registering a new personal account and gave consent to analytics tracking, the newly created analytics id is temporarily stored in this property. After setting up the user session this property will be cleared and the value stored in the database under `ZMUser.analyticsIdentifier` property.
 
     static let analyticsIDFromRegistration = Self(
         "analyticsIDFromRegistration",

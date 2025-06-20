@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import WireDomainPackage
+
 import Foundation
 
 /// A storage mechanism scoped to a single user for keeping
@@ -69,6 +71,17 @@ public struct Journal: JournalProtocol {
     public subscript(_ key: JournalKey<Bool?>) -> Bool? {
         get {
             (storage.object(forKey: rawKey(for: key)) as? Bool) ?? key.defaultValue
+        }
+        nonmutating set {
+            storage.set(newValue, forKey: rawKey(for: key))
+        }
+    }
+
+    /// Get or set an optional boolean value.
+
+    public subscript(_ key: JournalKey<String?>) -> String? {
+        get {
+            (storage.object(forKey: rawKey(for: key)) as? String) ?? key.defaultValue
         }
         nonmutating set {
             storage.set(newValue, forKey: rawKey(for: key))
