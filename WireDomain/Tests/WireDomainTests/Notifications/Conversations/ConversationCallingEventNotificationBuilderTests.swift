@@ -369,6 +369,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
                 accountID: .mockID1
             )
 
+            // When
             let userNotification = await sut.buildContent(
                 calling: calling,
                 at: .now,
@@ -376,6 +377,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
                 senderID: Scaffolding.userID
             )
 
+            // Then
             try await internalTest_assertNotificationContent(
                 try XCTUnwrap(userNotification),
                 callingTestUsecase: callingTestUsecase,
@@ -399,6 +401,8 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
         var calling = Calling()
         calling.content = callingContent
 
+        // When
+
         sut = ConversationCallingEventNotificationBuilder(
             context: .init(
                 conversationLocalStore: conversationLocalStore,
@@ -419,6 +423,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
             senderID: Scaffolding.userID
         )
 
+        // Then, not display calling notification because timed out
         XCTAssertNil(userNotification)
     }
 
@@ -465,7 +470,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
             senderID: Scaffolding.userID
         )
 
-        // Then, not display calling notification because timed out
+        // Then
         XCTAssertNil(userNotification)
     }
 

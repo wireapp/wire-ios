@@ -40,6 +40,7 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
             conversationID: conversationID,
             senderID: senderID,
             accountID: accountID,
+            eventTimestamp: time,
             callContent: callContent
         )
 
@@ -372,6 +373,7 @@ extension ConversationCallingEventNotificationBuilder {
             conversationID: ConversationID,
             senderID: UserID,
             accountID: UUID,
+            eventTimestamp: Date?,
             callContent: CallContent
         ) async -> Bool {
             let conversation = await conversationLocalStore.fetchOrCreateConversation(
@@ -402,12 +404,18 @@ extension ConversationCallingEventNotificationBuilder {
 
             let isValidState = initiatesRinging || terminatesRinging
 
+            let serverTimeDelta = await conversationLocalStore.fetchServerTimeDelta()
+            let currentTimestamp = Date.now.addingTimeInterval(serverTimeDelta)
+            let isCallTimeOut = eventTimestamp != nil ? Int(currentTimestamp.timeIntervalSince(eventTimestamp!)) > 30 :
+                true
+
             return !needsToBeUpdatedFromBackend
                 && !isConversationMuted
                 && !isConversationForcedReadOnly
                 && isAVSReady
                 && isCallKitReady
                 && isUserSessionLoaded
+                && !isCallTimeOut
                 && isValidState
         }
 
