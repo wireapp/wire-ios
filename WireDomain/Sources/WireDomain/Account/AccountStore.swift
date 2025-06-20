@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import WireNetwork
 import WireDataModel
 import WireLogging
+import WireNetwork
 import WireSystem
 
 private let log = WireLogger(tag: "Accounts")
