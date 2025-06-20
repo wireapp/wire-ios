@@ -915,11 +915,12 @@ extension ConversationTableViewDataSource {
                     by newCellDescription: ConversationMessageToolboxCellDescription,
                     in sections: inout [Section]
                 ) {
-//                    sections[ifExists: sectionIndex]?
-//                        .updateCellDescription(
-//                            description: newCellDescription,
-//                            at: elementIndex
-//                        )
+                    // TODO: FIX
+                    sections[ifExists: sectionIndex]?
+                        .updateCellDescription(
+                            description: newCellDescription,
+                            at: elementIndex
+                        )
                 }
 
                 return (cellDescription, replace)
