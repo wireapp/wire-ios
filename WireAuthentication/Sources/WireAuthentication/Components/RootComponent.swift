@@ -19,7 +19,7 @@
 import Combine
 import NeedleFoundation
 import SwiftUI
-import WireAPI
+import WireNetwork
 import WireReusableUIComponents
 internal import WireAuthenticationUI
 import WireAuthenticationAPI

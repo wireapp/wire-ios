@@ -18,9 +18,9 @@
 
 import CallKit
 import UserNotifications
-import WireAPI
 import WireDataModel
 import WireLogging
+import WireNetwork
 
 // sourcery: AutoMockable
 protocol GenerateNotificationUseCaseProtocol {

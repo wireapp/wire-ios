@@ -17,7 +17,7 @@
 //
 
 import CoreData
-import WireAPI
+import WireNetwork
 
 // sourcery: AutoMockable
 public protocol UpdateEventsLocalStoreProtocol {

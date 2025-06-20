@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireAPI
 import WireAuthenticationAPI
+import WireNetwork
 
 public struct LoginViaEmailUseCase: LoginViaEmailUseCaseProtocol {
 
