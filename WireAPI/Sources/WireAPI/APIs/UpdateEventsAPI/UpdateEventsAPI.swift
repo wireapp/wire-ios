@@ -40,6 +40,6 @@ public protocol UpdateEventsAPI {
     func getUpdateEvents(
         selfClientID: String?,
         sinceEventID: UUID
-    ) -> PayloadPager<TimestampedUpdateEventEnvelope>
+    ) -> PayloadPager<UpdateEventBatch>
 
 }

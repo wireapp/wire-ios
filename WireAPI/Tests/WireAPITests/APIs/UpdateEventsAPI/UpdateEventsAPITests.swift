@@ -112,7 +112,7 @@ final class UpdateEventsAPITests: XCTestCase {
         let sut = UpdateEventsAPIV0(apiService: apiService)
 
         // When
-        var pages = [TimestampedUpdateEventEnvelope]()
+        var pages = [UpdateEventBatch]()
         for try await page in sut.getUpdateEvents(
             selfClientID: Scaffolding.selfClientID,
             sinceEventID: Scaffolding.lastUpdateEventID
@@ -207,7 +207,7 @@ final class UpdateEventsAPITests: XCTestCase {
         let sut = UpdateEventsAPIV5(apiService: apiService)
 
         // When
-        var pages = [TimestampedUpdateEventEnvelope]()
+        var pages = [UpdateEventBatch]()
         for try await page in sut.getUpdateEvents(
             selfClientID: Scaffolding.selfClientID,
             sinceEventID: Scaffolding.lastUpdateEventID

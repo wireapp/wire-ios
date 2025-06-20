@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct TimestampedUpdateEventEnvelope {
+public struct UpdateEventBatch {
     public let time: Date?
     public let updateEventEnvelopes: [UpdateEventEnvelope]
 }

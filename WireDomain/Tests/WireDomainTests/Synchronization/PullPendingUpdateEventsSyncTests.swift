@@ -195,13 +195,13 @@ private enum Scaffolding {
     static let time20SecondsAgo = Date(timeIntervalSinceNow: -20)
     static let time10SecondsAgo = Date(timeIntervalSinceNow: -10)
 
-    nonisolated(unsafe) static let page1 = PayloadPager<TimestampedUpdateEventEnvelope>.Page(
+    nonisolated(unsafe) static let page1 = PayloadPager<UpdateEventBatch>.Page(
         element: .init(time: .now, updateEventEnvelopes: [envelope1, envelope2]),
         hasMore: true,
         nextStart: "page2"
     )
 
-    nonisolated(unsafe) static let page2 = PayloadPager<TimestampedUpdateEventEnvelope>.Page(
+    nonisolated(unsafe) static let page2 = PayloadPager<UpdateEventBatch>.Page(
         element: .init(time: .now, updateEventEnvelopes: [envelope3, envelope4]),
         hasMore: false,
         nextStart: ""
