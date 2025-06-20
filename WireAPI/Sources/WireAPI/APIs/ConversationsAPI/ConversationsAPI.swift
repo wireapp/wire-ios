@@ -23,10 +23,10 @@ import Foundation
 public protocol ConversationsAPI {
 
     /// Fetch all conversation identifiers in batches for ``APIVersion`` v0.
-    func getLegacyConversationIdentifiers() async throws -> PayloadPager<UUID>
+    func getLegacyConversationIdentifiers() async throws -> PayloadPager<[UUID]>
 
     /// Fetch all conversation identifiers in batches available from ``APIVersion`` v1.
-    func getConversationIdentifiers() async throws -> PayloadPager<QualifiedID>
+    func getConversationIdentifiers() async throws -> PayloadPager<[QualifiedID]>
 
     /// Fetch conversation list with qualified identifiers.
     func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList

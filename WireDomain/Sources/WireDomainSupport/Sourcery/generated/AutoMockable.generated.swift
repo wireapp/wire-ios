@@ -3789,6 +3789,21 @@ public class MockUpdateEventsLocalStoreProtocol: UpdateEventsLocalStoreProtocol 
         await mock()
     }
 
+    // MARK: - storeServerTimeDelta
+
+    public var storeServerTimeDelta_Invocations: [TimeInterval] = []
+    public var storeServerTimeDelta_MockMethod: ((TimeInterval) async -> Void)?
+
+    public func storeServerTimeDelta(_ serverTimeDelta: TimeInterval) async {
+        storeServerTimeDelta_Invocations.append(serverTimeDelta)
+
+        guard let mock = storeServerTimeDelta_MockMethod else {
+            fatalError("no mock for `storeServerTimeDelta`")
+        }
+
+        await mock(serverTimeDelta)
+    }
+
 }
 
 public class MockUserClientsLocalStoreProtocol: UserClientsLocalStoreProtocol {

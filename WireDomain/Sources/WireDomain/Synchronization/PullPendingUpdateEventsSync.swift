@@ -69,7 +69,7 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
             let timestamp = timestampedEnvelope.time
             let batchCount = envelopes.count
             var count = 0
-            
+
             if let timestamp {
                 WireLogger.sync.debug("storing server time delta")
                 await store.storeServerTimeDelta(

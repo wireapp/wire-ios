@@ -60,7 +60,7 @@ class UpdateEventsAPIV5: UpdateEventsAPIV4 {
     override func getUpdateEvents(
         selfClientID: String?,
         sinceEventID: UUID
-    ) -> PayloadPager<UpdateEventEnvelope> {
+    ) -> PayloadPager<TimestampedUpdateEventEnvelope> {
         let resourcePath = "\(pathPrefix)\(basePath)"
 
         return PayloadPager(start: sinceEventID.transportString()) { nextSince in
