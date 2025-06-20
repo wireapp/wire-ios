@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import XCTest
 
 @testable import WireDomain
@@ -24,7 +23,7 @@ import XCTest
 final class AsyncStreamExtensionTests: XCTestCase {
 
     func testCollectFlushesOnMaxCount() async throws {
-        let elements = Array(1...100)
+        let elements = Array(1 ... 100)
         let stream = AsyncThrowingStream<Int, Error> { continuation in
             for element in elements {
                 continuation.yield(element)
@@ -39,15 +38,20 @@ final class AsyncStreamExtensionTests: XCTestCase {
             collected.append(batch)
         }
 
-        XCTAssertEqual(collected.count, 4)
+        let expectedBatches = 4
+        XCTAssertEqual(collected.count, expectedBatches)
+        guard collected.count == expectedBatches else {
+            XCTFail("wrong number of batches, got \(collected.count), expected \(expectedBatches)")
+            return
+        }
         XCTAssertTrue(collected.allSatisfy { $0.count == 25 })
-        for i in 0..<4 {
-            XCTAssertEqual(collected[i], Array(elements[i * 25..<(i + 1) * 25]))
+        for i in 0 ..< 4 {
+            XCTAssertEqual(collected[i], Array(elements[i * 25 ..< (i + 1) * 25]))
         }
     }
-    
+
     func testCollectFlushes() async throws {
-        let elements = Array(1...100)
+        let elements = Array(1 ... 100)
         let stream = AsyncThrowingStream<Int, Error> { continuation in
             for element in elements {
                 continuation.yield(element)
@@ -62,17 +66,21 @@ final class AsyncStreamExtensionTests: XCTestCase {
             collected.append(batch)
         }
 
-        XCTAssertEqual(collected.count, 6)
-        XCTAssertTrue(collected.prefix(5).allSatisfy { $0.count == 18 })
-        XCTAssertEqual(collected[5].count, 10)
-        for i in 0..<4 {
-            XCTAssertEqual(collected[i], Array(elements[i * 18..<(i + 1) * 18]))
+        guard collected.count == 6 else {
+            XCTFail("wrong number of batches, got \(collected.count), expected 6")
+            return
         }
-        XCTAssertEqual(collected[5], Array(elements[90..<100]))
+        XCTAssertTrue(collected.prefix(5).allSatisfy { $0.count == 18 })
+        XCTAssertEqual(collected.last?.count, 10)
+        for i in 0 ..< 4 {
+            print(i)
+            XCTAssertEqual(collected[i], Array(elements[i * 18 ..< (i + 1) * 18]))
+        }
+        XCTAssertEqual(collected[5], Array(elements[90 ..< 100]))
     }
 
     func testCollectFlushesMaxCountHigherThanElements() async throws {
-        let elements = Array(1...5)
+        let elements = Array(1 ... 5)
         let stream = AsyncThrowingStream<Int, Error> { continuation in
             for element in elements {
                 continuation.yield(element)
@@ -89,17 +97,16 @@ final class AsyncStreamExtensionTests: XCTestCase {
 
         XCTAssertEqual(collected.count, 1)
         XCTAssertTrue(collected.allSatisfy { $0.count == 5 })
-        XCTAssertEqual(collected[0], Array(elements[0..<5]))
+        XCTAssertEqual(collected[0], Array(elements[0 ..< 5]))
     }
 
-    
-    
-    
     func testCollectFlushesOnTimeout() async throws {
         let stream = AsyncThrowingStream<Int, Error> { continuation in
-            continuation.yield(1)
-            DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
+            Task {
+                continuation.yield(1)
+                try await Task.sleep(for: .seconds(1))
                 continuation.yield(2)
+                continuation.yield(3)
                 continuation.finish()
             }
         }
@@ -110,43 +117,51 @@ final class AsyncStreamExtensionTests: XCTestCase {
         for try await batch in batches {
             result.append(batch)
         }
-
-        XCTAssertEqual(result.count, 2)
+        let expectedBatches = 2
+        XCTAssertEqual(result.count, expectedBatches)
+        guard result.count == expectedBatches else {
+            XCTFail("wrong number of batches, got \(result.count), expected \(expectedBatches)")
+            return
+        }
         XCTAssertEqual(result[0], [1])
-        XCTAssertEqual(result[1], [2])
+        XCTAssertEqual(result[1], [2, 3])
     }
-//
-////    func testCollectHandlesStreamEndGracefully() async throws {
-////        let stream = AsyncThrowingStream<Int, Error> { continuation in
-////            continuation.yield(42)
-////            continuation.finish()
-////        }
-////
-////        let batches = stream.collect(maxCount: 5, timeout: 1.0)
-////        let allBatches = try await Array(batches)
-////
-////        XCTAssertEqual(allBatches.count, 1)
-////        XCTAssertEqual(allBatches.first, [42])
-////    }
-//
-//    func testCollectMultipleSmallBatches() async throws {
-//        let stream = AsyncThrowingStream<Int, Error> { continuation in
-//            for i in 1...10 {
-//                continuation.yield(i)
-//                usleep(200_000) // 0.2s
-//            }
-//            continuation.finish()
-//        }
-//
-//        let batches = stream.collect(maxCount: 3, timeout: 0.5)
-//        var allBatches: [[Int]] = []
-//
-//        for try await batch in batches {
-//            allBatches.append(batch)
-//        }
-//
-//        XCTAssertGreaterThanOrEqual(allBatches.count, 3)
-//        XCTAssertLessThanOrEqual(allBatches.count, 5)
-//        XCTAssertEqual(allBatches.flatMap { $0 }, Array(1...10))
-//    }
+
+    func testCollectHandlesStreamEndGracefully() async throws {
+        let stream = AsyncThrowingStream<Int, Error> { continuation in
+            continuation.yield(42)
+            continuation.finish()
+        }
+
+        let batches = stream.collect(maxCount: 5, timeout: 1.0)
+        var result: [[Int]] = []
+
+        for try await batch in batches {
+            result.append(batch)
+        }
+
+        XCTAssertEqual(result.count, 1)
+        XCTAssertEqual(result.first, [42])
+    }
+
+    func testCollectMultipleSmallBatches() async throws {
+        let stream = AsyncThrowingStream<Int, Error> { continuation in
+            for i in 1 ... 10 {
+                continuation.yield(i)
+                usleep(200_000) // 0.2s
+            }
+            continuation.finish()
+        }
+
+        let batches = stream.collect(maxCount: 3, timeout: 0.5)
+        var allBatches: [[Int]] = []
+
+        for try await batch in batches {
+            allBatches.append(batch)
+        }
+
+        XCTAssertGreaterThanOrEqual(allBatches.count, 3)
+        XCTAssertLessThanOrEqual(allBatches.count, 5)
+        XCTAssertEqual(allBatches.flatMap(\.self), Array(1 ... 10))
+    }
 }

@@ -27,19 +27,26 @@ extension AsyncThrowingStream {
             Task {
                 var iterator = self.makeAsyncIterator()
                 var batch: [Element] = []
+                var timeoutTask: Task<Void, any Error>?
                 do {
                     while let element = try await iterator.next() {
-                        print("😅",element)
-                        batch.append(element)
-                        
-                        if batch.count == maxCount {
+                        timeoutTask?.cancel()
+                        timeoutTask = Task {
+                            try await Task.sleep(for: .seconds(timeout))
                             continuation.yield(batch)
                             batch = []
                         }
-                        
-                        
+                        batch.append(element)
+
+                        if batch.count == maxCount {
+                            continuation.yield(batch)
+                            batch = []
+                            timeoutTask?.cancel()
+                        }
                     }
-                    continuation.yield(batch)
+                    if !batch.isEmpty {
+                        continuation.yield(batch)
+                    }
                     continuation.finish()
                 } catch {
                     continuation.finish(throwing: error)

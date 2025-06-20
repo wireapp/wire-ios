@@ -149,9 +149,9 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     ) async {
         logger.debug("handling live event stream", attributes: .syncAttributes(initialSync: false))
         syncStateSubject.send(.incrementalSyncing(.receivingLiveEvents))
-        
+
         let batchedEventStream = liveEventStream
-        
+
         do {
             for try await element in liveEventStream {
                 logger.debug(
