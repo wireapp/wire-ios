@@ -3216,6 +3216,35 @@ public class MockSelfUserProviderProtocol: SelfUserProviderProtocol {
 
 }
 
+public class MockSyncMigratorProtocol: SyncMigratorProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - migrateFromIncrementalSyncV1
+
+    public var migrateFromIncrementalSyncV1_Invocations: [Void] = []
+    public var migrateFromIncrementalSyncV1_MockError: Error?
+    public var migrateFromIncrementalSyncV1_MockMethod: (() async throws -> Void)?
+
+    public func migrateFromIncrementalSyncV1() async throws {
+        migrateFromIncrementalSyncV1_Invocations.append(())
+
+        if let error = migrateFromIncrementalSyncV1_MockError {
+            throw error
+        }
+
+        guard let mock = migrateFromIncrementalSyncV1_MockMethod else {
+            fatalError("no mock for `migrateFromIncrementalSyncV1`")
+        }
+
+        try await mock()
+    }
+
+}
+
 public class MockTeamLocalStoreProtocol: TeamLocalStoreProtocol {
 
     // MARK: - Life cycle
@@ -4067,10 +4096,10 @@ public class MockUserClientsLocalStoreProtocol: UserClientsLocalStoreProtocol {
     // MARK: - fetchSelfClientID
 
     public var fetchSelfClientID_Invocations: [Void] = []
-    public var fetchSelfClientID_MockMethod: (() async -> UUID)?
-    public var fetchSelfClientID_MockValue: UUID?
+    public var fetchSelfClientID_MockMethod: (() async -> String?)?
+    public var fetchSelfClientID_MockValue: String??
 
-    public func fetchSelfClientID() async -> UUID {
+    public func fetchSelfClientID() async -> String? {
         fetchSelfClientID_Invocations.append(())
 
         if let mock = fetchSelfClientID_MockMethod {
@@ -4079,6 +4108,24 @@ public class MockUserClientsLocalStoreProtocol: UserClientsLocalStoreProtocol {
             return mock
         } else {
             fatalError("no mock for `fetchSelfClientID`")
+        }
+    }
+
+    // MARK: - hasRegisteredConsumableNotificationsCapable
+
+    public var hasRegisteredConsumableNotificationsCapable_Invocations: [Void] = []
+    public var hasRegisteredConsumableNotificationsCapable_MockMethod: (() async -> Bool)?
+    public var hasRegisteredConsumableNotificationsCapable_MockValue: Bool?
+
+    public func hasRegisteredConsumableNotificationsCapable() async -> Bool {
+        hasRegisteredConsumableNotificationsCapable_Invocations.append(())
+
+        if let mock = hasRegisteredConsumableNotificationsCapable_MockMethod {
+            return await mock()
+        } else if let mock = hasRegisteredConsumableNotificationsCapable_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `hasRegisteredConsumableNotificationsCapable`")
         }
     }
 

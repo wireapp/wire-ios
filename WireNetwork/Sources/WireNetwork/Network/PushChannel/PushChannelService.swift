@@ -28,7 +28,7 @@ public protocol PushChannelServiceProtocol {
 
     func createPushChannel(_ request: URLRequest) async throws -> any PushChannelProtocol
 
-    /// Create a new push channel (v2). Async notifications
+    /// Create a new push channel (v2). consumable-notifications
     ///
     /// - Parameter request: A request for a web socket connection.
     /// - Returns: A push channel.

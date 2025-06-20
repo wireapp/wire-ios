@@ -64,8 +64,6 @@ public final class ClientSessionComponent {
     private let mlsDecryptionService: any MLSDecryptionServiceInterface
     private let proteusService: any ProteusServiceInterface
     private let coreCryptoProvider: any CoreCryptoProviderProtocol
-
-    public let asyncStreamEnabled: Bool
     private let completionHandlers: CompletionHandlers
 
     public init(
@@ -84,7 +82,6 @@ public final class ClientSessionComponent {
         mlsService: any MLSServiceInterface,
         mlsDecryptionService: any MLSDecryptionServiceInterface,
         proteusService: any ProteusServiceInterface,
-        asyncStreamEnabled: Bool,
         coreCryptoProvider: any CoreCryptoProviderProtocol,
         completionHandlers: CompletionHandlers
     ) {
@@ -103,7 +100,6 @@ public final class ClientSessionComponent {
         self.localDomain = localDomain
         self.isFederationEnabled = isFederationEnabled
         self.isMLSEnabled = isMLSEnabled
-        self.asyncStreamEnabled = asyncStreamEnabled
         self.coreCryptoProvider = coreCryptoProvider
         self.completionHandlers = completionHandlers
     }
@@ -398,6 +394,19 @@ public final class ClientSessionComponent {
         syncStateSubject: syncStateSubject,
         journal: journal
     )
+
+    public func consumableNotificationsMigrator() -> ConsumableNotificationsMigrator {
+        ConsumableNotificationsMigrator(
+            sync: incrementalSync,
+            userClientsAPI: userClientsAPI,
+            userClientsLocalStore: userClientsLocalStore,
+            apiVersion: apiVersion,
+            journal: Journal(
+                userID: selfUserID,
+                storage: sharedUserDefaults
+            )
+        )
+    }
 
     // MARK: - Repositories
 

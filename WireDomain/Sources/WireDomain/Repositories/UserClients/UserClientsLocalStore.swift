@@ -40,10 +40,10 @@ public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
         }
     }
 
-    public func fetchSelfClientID() async -> UUID {
+    public func fetchSelfClientID() async -> String? {
         await context.perform { [context] in
             let selfUser = ZMUser.selfUser(in: context)
-            return selfUser.remoteIdentifier
+            return selfUser.selfClient()?.remoteIdentifier
         }
     }
 
@@ -134,7 +134,8 @@ public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
             localClient.activationDate = userClientInfo.activationDate
             localClient.lastActiveDate = userClientInfo.lastActiveDate
             localClient.remoteIdentifier = userClientInfo.id
-            localClient.asyncStreamCapable = userClientInfo.capabilities.contains(.consumableNotifications)
+            localClient.isConsumableNotificationsCapable = userClientInfo.capabilities
+                .contains(.consumableNotifications)
 
             let selfUser = ZMUser.selfUser(in: context)
             localClient.user = localClient.user ?? selfUser
@@ -254,6 +255,13 @@ public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
             selfClient.clearMLSPublicKeys()
             context.setPersistentStoreMetadata(nil as String?, key: ZMPersistedClientIdKey)
             context.saveOrRollback()
+        }
+    }
+
+    public func hasRegisteredConsumableNotificationsCapable() async -> Bool {
+        await context.perform { [context] in
+            let selfClient = ZMUser.selfUser(in: context).selfClient()
+            return selfClient?.isConsumableNotificationsCapable == true
         }
     }
 

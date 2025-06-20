@@ -17,7 +17,7 @@
 //
 import Foundation
 
-/// Payload of acknowledgment of initial sync for async stream
+/// Payload of acknowledgment of initial sync for consumable notifications sync system
 struct FullSyncAcknowledgment: Encodable {
     let type: AcknowledgmentType = .fullSync
 }
