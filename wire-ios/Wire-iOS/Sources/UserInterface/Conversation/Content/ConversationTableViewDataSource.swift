@@ -24,25 +24,6 @@ import WireSyncEngine
 
 extension Int: Differentiable {}
 
-// extension String: Differentiable {}
-// extension AnyConversationMessageCellDescription: Differentiable {
-//
-//    typealias DifferenceIdentifier = String
-//
-//    var differenceIdentifier: String {
-//        message!.objectIdentifier + String(describing: baseType)
-//    }
-//
-//    override var debugDescription: String {
-//        differenceIdentifier
-//    }
-//
-//    func isContentEqual(to source: AnyConversationMessageCellDescription) -> Bool {
-//        isConfigurationEqual(with: source)
-//    }
-//
-// }
-
 @MainActor
 final class ConversationTableViewDataSource: NSObject {
 
@@ -209,10 +190,6 @@ final class ConversationTableViewDataSource: NSObject {
                         sectionController.recreateCellDescriptions(in: context)
                     }
 
-//                    sections.append(ArraySection(
-//                        model: messageObjectId,
-//                        elements: sectionController.tableViewCellDescriptions
-//                    ))
                     sections.append(sectionController)
                 }
 
@@ -265,10 +242,6 @@ final class ConversationTableViewDataSource: NSObject {
         sectionController.recreateCellDescriptions(in: context)
 
         var updatedSections = currentSections
-//        updatedSections[section] = ArraySection(
-//            model: sectionIdentifier,
-//            elements: sectionController.tableViewCellDescriptions
-//        )
 
         updatedSections[section] = sectionController
         updatedSections = postProcessedSections(
@@ -490,7 +463,7 @@ final class ConversationTableViewDataSource: NSObject {
     }
 
     private func reloadDataSource(sections: [Section]) {
-        // TODO: move snapshot calculation to background thread
+        // can move snapshot calculation to background thread
         var snapshot = NSDiffableDataSourceSnapshot<UUID, AnyConversationMessageCellDescription>()
         for section in currentSections {
             let sectionID = section.message.nonce!
@@ -500,20 +473,6 @@ final class ConversationTableViewDataSource: NSObject {
                     section.tableViewCellDescriptions,
                     toSection: sectionID
                 )
-        }
-
-        let oldItems = dataSource.snapshot().itemIdentifiers
-        let newItems = snapshot.itemIdentifiers
-
-        let changes = newItems.difference(from: oldItems)
-
-        for change in changes {
-            switch change {
-            case let .remove(offset, element, _):
-                print("DS: ❌ Removed \(element) at \(offset)")
-            case let .insert(offset, element, _):
-                print("DS: ➕ Inserted \(element) at \(offset)")
-            }
         }
 
         let shouldAnimate = !dataSource.snapshot().sectionIdentifiers.isEmpty
@@ -636,9 +595,6 @@ extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
         for changeType: NSFetchedResultsChangeType,
         newIndexPath: IndexPath?
     ) {
-        print(
-            "DS: NSFetchedResultsController didChange anObject at indexPath: \(String(describing: indexPath)) for changeType: \(changeType) newIndexPath: \(String(describing: newIndexPath))"
-        )
 
         if let message = anObject as? ZMConversationMessage, changeType == .insert {
             /// VoiceOver will output the announcement string from the message
@@ -652,9 +608,7 @@ extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
         atSectionIndex sectionIndex: Int,
         for changeType: NSFetchedResultsChangeType
     ) {
-        print(
-            "DS: NSFetchedResultsController didChange sectionInfo at sectionIndex: \(sectionIndex) for changeType: \(changeType)"
-        )
+        // no-op
     }
 
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
@@ -712,12 +666,6 @@ extension ConversationTableViewDataSource {
         }
         section.collapse()
     }
-
-//    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        guard currentSections.indices.contains(section) else { return 0 }
-//
-//        return currentSections[section].elements.count
-//    }
 
     func updateVisibleCells() {
         guard let visibleIndexPaths = tableView.indexPathsForVisibleRows else { return }
@@ -967,9 +915,11 @@ extension ConversationTableViewDataSource {
                     by newCellDescription: ConversationMessageToolboxCellDescription,
                     in sections: inout [Section]
                 ) {
-//                    sections[sectionIndex]
-//                        .sectionController.tableViewCellDescriptions[elementIndex] =
-//                        AnyConversationMessageCellDescription(newCellDescription)
+//                    sections[ifExists: sectionIndex]?
+//                        .updateCellDescription(
+//                            description: newCellDescription,
+//                            at: elementIndex
+//                        )
                 }
 
                 return (cellDescription, replace)

@@ -487,6 +487,15 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         createCellDescriptions(in: context)
         updateDelegates()
     }
+    
+    func updateCellDescription(
+        description: ConversationMessageToolboxCellDescription,
+        at index: Int
+    ) {
+        var tableViewCellDescriptions = tableViewCellDescriptions
+        tableViewCellDescriptions[index] = AnyConversationMessageCellDescription(description)
+        self.cellDescriptions = tableViewCellDescriptions
+    }
 
     func isBurstTimestampVisible(in context: ConversationMessageContext) -> Bool {
         context.isFirstUnreadMessage || context.isFirstMessageOfTheDay
