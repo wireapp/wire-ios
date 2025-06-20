@@ -23,7 +23,7 @@ import Foundation
 
 public struct PayloadPager<Payload>: AsyncSequence {
 
-    public typealias Element = [Payload]
+    public typealias Element = Payload
     public typealias PageFetcher = (String?) async throws -> Page
 
     var start: String?
@@ -76,7 +76,7 @@ public struct PayloadPager<Payload>: AsyncSequence {
             self.fetchPage = fetchPage
         }
 
-        public mutating func next() async throws -> [Payload]? {
+        public mutating func next() async throws -> Payload? {
             guard hasMore else { return nil }
             let page = try await fetchPage(start)
             hasMore = page.hasMore
