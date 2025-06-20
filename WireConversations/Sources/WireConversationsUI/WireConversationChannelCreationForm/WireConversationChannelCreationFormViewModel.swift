@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import SwiftUI
+public import Foundation
 public import WireConversationsAPI
 public import Combine
 
@@ -185,6 +185,10 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
     func hideUpgradeBanner() {
         showUpgradeBanner = false
         channelHistoryOption = .oneDay
+    }
+    
+    func upgradeBannerURL() -> URL {
+        URL(string: "https://teams.wire.com/billing/)")!
     }
 
     func onChannelNameUpdate(_ value: String) {

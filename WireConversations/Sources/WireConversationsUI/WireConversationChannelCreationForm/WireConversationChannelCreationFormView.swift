@@ -86,9 +86,7 @@ public struct WireConversationChannelCreationForm: View {
                     Spacer()
                     
                     CloseButton(
-                        action: {
-                            viewModel.hideUpgradeBanner()
-                        },
+                        action: { viewModel.hideUpgradeBanner() },
                         foregroundColor: SemanticColors.Label.textWhite,
                         accessibilityLabel: String(
                             localized: "",
@@ -98,12 +96,17 @@ public struct WireConversationChannelCreationForm: View {
                     )
                 }
                 
-                Text(L10n.Localizable.Conversation.CreationForm.ChannelHistory.UpgradeBanner.message)
-                    .foregroundStyle(.white)
+                HStack {
+                    Text(L10n.Localizable.Conversation.CreationForm.ChannelHistory.UpgradeBanner.message)
+                        .foregroundStyle(.white)
+                    
+                    Spacer()
+                        .frame(width: 80)
+                }
                 
                 Link(
                     L10n.Localizable.Conversation.CreationForm.ChannelHistory.UpgradeBanner.button,
-                    destination: URL(string: "https://teams.wire.com/billing/)")!
+                    destination: viewModel.upgradeBannerURL()
                 )
                 .lineLimit(1)
                 .padding(8)
@@ -117,13 +120,14 @@ public struct WireConversationChannelCreationForm: View {
                 .clipShape(.rect(cornerRadius: 12))
                 
             }
-            .roundedBorderAndBackground(
-                backgroundColor: ColorTheme.Base.onHighlight.color,
-                borderColor: ColorTheme.Base.onHighlight.color,
-                borderWidth: 1,
-                cornerRadius: 10,
-                padding: 15
-            )
+            .padding(.all, 15)
+            .background(alignment: .top) {
+                Image("wire_upgrade_banner", bundle: .resources)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+            }
+            .cornerRadius(10)
+            .clipped()
             .frame(maxWidth: .infinity)
             .padding([.leading, .trailing], 30)
         }
@@ -229,35 +233,6 @@ public struct WireConversationChannelCreationForm: View {
         })
     }
 }
-
-struct NavigationControllerAccessor: UIViewControllerRepresentable {
-    var callback: (UINavigationController?) -> Void
-
-    func makeUIViewController(context: Context) -> UIViewController {
-        ViewController(callback: callback)
-    }
-
-    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
-
-    private class ViewController: UIViewController {
-        let callback: (UINavigationController?) -> Void
-
-        init(callback: @escaping (UINavigationController?) -> Void) {
-            self.callback = callback
-            super.init(nibName: nil, bundle: nil)
-        }
-
-        required init?(coder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-
-        override func didMove(toParent parent: UIViewController?) {
-            super.didMove(toParent: parent)
-            callback(self.navigationController)
-        }
-    }
-}
-
 
 #Preview {
     WireConversationChannelCreationForm(
