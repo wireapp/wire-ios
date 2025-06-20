@@ -41,7 +41,13 @@ final class ConnectionsLocalStore: ConnectionsLocalStoreProtocol {
 
             let conversation = try storedConversation(from: connectionInfo, with: connection)
 
+            conversation.needsToBeUpdatedFromBackend = true
+            conversation.lastModifiedDate = connectionInfo.lastUpdate
+            conversation.addParticipantAndUpdateConversationState(user: connection.to, role: nil)
+
             connection.to.oneOnOneConversation = conversation
+            connection.status = connectionInfo.status
+            connection.lastUpdateDateInGMT = connectionInfo.lastUpdate
 
             try context.save()
         }
@@ -61,16 +67,11 @@ final class ConnectionsLocalStore: ConnectionsLocalStoreProtocol {
             throw ConnectionsRepositoryError.missingConversationId
         }
 
-        let conversation = ZMConversation.fetchOrCreate(
+        return ZMConversation.fetchOrCreate(
             with: conversationID,
             domain: connection.qualifiedConversationID?.domain,
             in: context
         )
-
-        conversation.needsToBeUpdatedFromBackend = true
-        conversation.lastModifiedDate = connection.lastUpdate
-        conversation.addParticipantAndUpdateConversationState(user: storedConnection.to, role: nil)
-        return conversation
     }
 
     /// Create or update  connection locally related to the connection's sender
@@ -84,14 +85,10 @@ final class ConnectionsLocalStore: ConnectionsLocalStoreProtocol {
             throw ConnectionsRepositoryError.missingReceiverId
         }
 
-        let storedConnection = ZMConnection.fetchOrCreate(
+        return ZMConnection.fetchOrCreate(
             userID: userID,
             domain: connection.receiverQualifiedID?.domain,
             in: context
         )
-
-        storedConnection.status = connection.status
-        storedConnection.lastUpdateDateInGMT = connection.lastUpdate
-        return storedConnection
     }
 }
