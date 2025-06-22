@@ -15,9 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-import Foundation
 
-/// Payload of acknowledgment of messageCount for consumable notifications sync system
-struct MessageCountAcknowledgment: Encodable {
-    let type: AcknowledgmentType = .messageCount
+protocol ConsumableNotificationsMigratorProtocol {
+
+    /// Perform necessary migration to move from current system to consumable notifications synchronisation system
+    func migrate() async throws
 }
