@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import WireNetwork
 
 struct StorableConversationAddPermissionEvent: Equatable, Codable, Sendable {
 
@@ -24,13 +24,13 @@ struct StorableConversationAddPermissionEvent: Equatable, Codable, Sendable {
     private let senderID: StorableQualifiedID
     private let addPermission: StorableChannelPermission
 
-    init(_ value: WireAPI.ConversationAddPermissionEvent) {
+    init(_ value: WireNetwork.ConversationAddPermissionEvent) {
         self.conversationID = StorableQualifiedID(value.conversationID)
         self.senderID = StorableQualifiedID(value.senderID)
         self.addPermission = StorableChannelPermission(value.addPermission)
     }
 
-    func toAPIModel() -> WireAPI.ConversationAddPermissionEvent {
+    func toAPIModel() -> WireNetwork.ConversationAddPermissionEvent {
         .init(
             conversationID: conversationID.toAPIModel(),
             senderID: senderID.toAPIModel(),

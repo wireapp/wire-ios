@@ -18,9 +18,9 @@
 
 import Combine
 import Foundation
-import WireAPI
 import WireCoreCrypto
 import WireDataModel
+import WireNetwork
 
 public final class ClientSessionComponent {
 
@@ -49,7 +49,7 @@ public final class ClientSessionComponent {
 
     private let networkService: NetworkService
     private let pushChannelNetworkService: NetworkService
-    private let apiVersion: WireAPI.APIVersion
+    private let apiVersion: WireNetwork.APIVersion
 
     private let localDomain: String
     private let isFederationEnabled: Bool
@@ -64,8 +64,6 @@ public final class ClientSessionComponent {
     private let mlsDecryptionService: any MLSDecryptionServiceInterface
     private let proteusService: any ProteusServiceInterface
     private let coreCryptoProvider: any CoreCryptoProviderProtocol
-
-    public let asyncStreamEnabled: Bool
     private let completionHandlers: CompletionHandlers
 
     public init(
@@ -73,7 +71,7 @@ public final class ClientSessionComponent {
         selfClientID: String,
         networkService: NetworkService,
         pushChannelNetworkService: NetworkService,
-        apiVersion: WireAPI.APIVersion,
+        apiVersion: WireNetwork.APIVersion,
         localDomain: String,
         isFederationEnabled: Bool,
         isMLSEnabled: Bool,
@@ -84,7 +82,6 @@ public final class ClientSessionComponent {
         mlsService: any MLSServiceInterface,
         mlsDecryptionService: any MLSDecryptionServiceInterface,
         proteusService: any ProteusServiceInterface,
-        asyncStreamEnabled: Bool,
         coreCryptoProvider: any CoreCryptoProviderProtocol,
         completionHandlers: CompletionHandlers
     ) {
@@ -103,7 +100,6 @@ public final class ClientSessionComponent {
         self.localDomain = localDomain
         self.isFederationEnabled = isFederationEnabled
         self.isMLSEnabled = isMLSEnabled
-        self.asyncStreamEnabled = asyncStreamEnabled
         self.coreCryptoProvider = coreCryptoProvider
         self.completionHandlers = completionHandlers
     }
@@ -392,11 +388,25 @@ public final class ClientSessionComponent {
         pushChannelAPI: pushChannelV2API,
         decryptor: updateEventDecryptor,
         updateEventsStore: updateEventsLocalStore,
+        messageStore: messageLocalStore,
         processor: updateEventProcessor,
         databaseSaver: databaseSaver,
         syncStateSubject: syncStateSubject,
         journal: journal
     )
+
+    public func consumableNotificationsMigrator() -> ConsumableNotificationsMigrator {
+        ConsumableNotificationsMigrator(
+            sync: incrementalSync,
+            userClientsAPI: userClientsAPI,
+            userClientsLocalStore: userClientsLocalStore,
+            apiVersion: apiVersion,
+            journal: Journal(
+                userID: selfUserID,
+                storage: sharedUserDefaults
+            )
+        )
+    }
 
     // MARK: - Repositories
 

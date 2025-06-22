@@ -18,8 +18,8 @@
 
 import Combine
 import Foundation
-import WireAPI
 import WireLogging
+import WireNetwork
 
 public struct IncrementalSync: IncrementalSyncProtocol {
 
@@ -333,4 +333,16 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         }
     }
 
+}
+
+extension IncrementalSyncV1: SyncMigratorProtocol {
+    public func migrateFromIncrementalSyncV1() async throws {
+        logger.debug("pulling pending update events", attributes: .syncAttributes(initialSync: false))
+        syncStateSubject.send(.incrementalSyncing(.pullPendingEvents))
+        try await updateEventsSync.pull()
+
+        logger.debug("processing stored update events", attributes: .syncAttributes(initialSync: false))
+        syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
+        _ = try await processStoredEvents()
+    }
 }
