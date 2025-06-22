@@ -26,6 +26,13 @@ public final class PushChannelV2: PushChannelV2Protocol {
     public enum Element: Equatable {
         case syncing(eventsCount: Int)
         case upToDate
+        case events([UpdateEventEnvelope])
+        case missedEvents
+    }
+    
+    
+    enum InternalElement: Equatable {
+        case syncing(eventsCount: Int)
         case event(UpdateEventEnvelope)
         case missedEvents
     }
@@ -38,6 +45,8 @@ public final class PushChannelV2: PushChannelV2Protocol {
 
     private var keepAliveTask: Task<Void, any Error>?
     private let keepAliveInterval: TimeInterval
+    let maxBatchEventsCount: Int
+    let batchDelay: TimeInterval
 
     private var numberOfReceivedEvents = 0
     private var remainingEventCount: Int?
@@ -50,28 +59,58 @@ public final class PushChannelV2: PushChannelV2Protocol {
     ///   - keepAliveInterval: interval for sending ping and keep webSocket open
     public init(
         webSocket: any WebSocketProtocol,
-        keepAliveInterval: TimeInterval
+        keepAliveInterval: TimeInterval,
+        maxBatchEventsCount: Int,
+        batchDelay: TimeInterval
     ) {
         self.webSocket = webSocket
         self.keepAliveInterval = keepAliveInterval
+        self.maxBatchEventsCount = maxBatchEventsCount
+        self.batchDelay = batchDelay
     }
 
     public func open() async throws -> AsyncThrowingStream<Element, any Error> {
         WireLogger.pushChannel.debug("opening new push channel", attributes: .pushChannelV2)
 
         let sourceStream = try await webSocket.open()
-
+        var batch: [UpdateEventEnvelope] = []
+        var batchTask: Task<Void, any Error>?
         Task { [weak self] in
             guard let self else { return }
             do {
                 for try await message in sourceStream {
 
+                    batchTask?.cancel()
+                    batchTask = Task {
+                        try await Task.sleep(for: .seconds(batchDelay))
+                        continuation.yield(.events(batch))
+                        batch = []
+                    }
+
                     let result = try receiveMessage(message)
 
-                    continuation.yield(result)
+                    switch result {
+                    case .event(let event):
+                        batch.append(event)
+
+                        if batch.count == maxBatchEventsCount {
+                            continuation.yield(.events(batch))
+                            batch = []
+                            batchTask?.cancel()
+                        }
+                        break
+                    case .missedEvents:
+                        continuation.yield(.missedEvents)
+                    case .syncing(let eventsCount):
+                        continuation.yield(.syncing(eventsCount: eventsCount))
+                    }
+                    
                     if numberOfReceivedEvents == remainingEventCount {
                         continuation.yield(.upToDate)
                     }
+                }
+                if !batch.isEmpty {
+                    continuation.yield(.events(batch))
                 }
             } catch {
                 WireLogger.pushChannel.error("got error: \(error)", attributes: .pushChannelV2)
@@ -149,7 +188,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
 
     // MARK: - Helpers
 
-    private func receiveMessage(_ message: URLSessionWebSocketTask.Message) throws -> Element {
+    private func receiveMessage(_ message: URLSessionWebSocketTask.Message) throws -> InternalElement {
 
         switch message {
         case let .data(data):
@@ -160,7 +199,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
             case .event:
                 if let element = envelope.updateEventEnveloppe {
                     numberOfReceivedEvents += 1
-                    return Element.event(element)
+                    return .event(element)
                 } else {
                     WireLogger.pushChannel.debug(
                         "received web socket invalid data \(String(describing: data)), ignoring...",
@@ -177,7 +216,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
                 numberOfReceivedEvents = 0
                 return .syncing(eventsCount: envelope.messageCount)
             case .notificationsMissed:
-                return Element.missedEvents
+                return .missedEvents
             }
 
         case .string:
