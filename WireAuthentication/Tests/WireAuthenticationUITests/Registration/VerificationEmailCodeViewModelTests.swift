@@ -128,6 +128,7 @@ final class VerificationEmailCodeViewModelTests: XCTestCase, VerificationEmailCo
 
 private struct MockRegistrationAnalyticsTrackerProtocol: RegistrationAnalyticsTrackerProtocol {
 
+    var currentDeviceID: String?
     func setUp() {}
     func tearDown() {}
 
@@ -137,13 +138,15 @@ private struct MockRegistrationAnalyticsTrackerProtocol: RegistrationAnalyticsTr
     func trackPersonalAccountCreationFailedCodeVerification() {}
     func trackPersonalAccountCreationReachedUsernameForm() {}
     func trackPersonalAccountCreationCompletion() {}
+    func deleteTempAnalyticsID() {}
 
 }
 
 private struct RegistrationAnalyticsIDRepositoryProtocolMock: RegistrationAnalyticsIDRepositoryProtocol {
 
     func storeAnalyticsID(for userID: UUID, analyticsID: UUID) {}
-    func fetchAnalyticsID(for userID: UUID) -> UUID? { .none }
+    func updateAnalyticsTrackingConsent(for userID: UUID, isGiven: Bool) {}
+//    func fetchAnalyticsID(for userID: UUID) -> UUID? { .none }
     func deleteAnalyticsID(for userID: UUID) {}
 
 }

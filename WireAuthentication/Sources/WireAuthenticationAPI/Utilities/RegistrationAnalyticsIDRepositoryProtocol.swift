@@ -23,7 +23,7 @@ public import Foundation
 public protocol RegistrationAnalyticsIDRepositoryProtocol {
 
     func storeAnalyticsID(for userID: UUID, analyticsID: UUID)
-    func fetchAnalyticsID(for userID: UUID) -> UUID?
+//    func fetchAnalyticsID(for userID: UUID) -> UUID?
     func deleteAnalyticsID(for userID: UUID)
-
+    func updateAnalyticsTrackingConsent(for userID: UUID, isGiven: Bool)
 }

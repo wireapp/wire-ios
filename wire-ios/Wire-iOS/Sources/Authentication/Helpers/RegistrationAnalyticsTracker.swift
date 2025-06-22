@@ -47,6 +47,10 @@ final class RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
         self.logger = .authentication
     }
 
+    var currentDeviceID: String? {
+        analyticsService?.currentDeviceID
+    }
+
     @MainActor
     func setUp() {
         do {
@@ -67,17 +71,11 @@ final class RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
     }
 
     func trackPersonalAccountCreationStart() {
-        if let analyticsTracker {
-            print("KKKK accountSetupStep0")
-            analyticsTracker.trackEvent(.Registration.accountSetupStep0)
-        }
+        analyticsTracker?.trackEvent(.Registration.accountSetupStep0)
     }
 
     func trackPersonalAccountCreationReachedTermsOfUseConfirmation() {
-        if let analyticsTracker {
-            print("KKKK accountSetupStep1")
-            analyticsTracker.trackEvent(.Registration.accountSetupStep1)
-        }
+        analyticsTracker?.trackEvent(.Registration.accountSetupStep1)
     }
 
     func trackPersonalAccountCreationReachedVerificationCode() {
@@ -96,6 +94,10 @@ final class RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
         analyticsTracker?.trackEvent(.Registration.accountSetupStep5)
     }
 
+    func deleteTempAnalyticsID() {
+        userDefaults.removeObject(forKey: Constants.analyticsIdentifierKey)
+    }
+
     // MARK: - Helpers
 
     @MainActor
@@ -112,18 +114,16 @@ final class RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
 
     private func createAnalyticsUserIfNeeded() -> AnalyticsUser {
         if let existingID = userDefaults.string(forKey: Constants.analyticsIdentifierKey) {
-            print("KKKK existingID: \(existingID)")
             return AnalyticsUser(analyticsIdentifier: existingID, teamInfo: nil)
         }
 
         let newAnalyticsID = UUID().transportString()
         userDefaults.set(newAnalyticsID, forKey: Constants.analyticsIdentifierKey)
-        print("KKKK new: \(newAnalyticsID)")
         return AnalyticsUser(analyticsIdentifier: newAnalyticsID, teamInfo: nil)
     }
 
     private enum Constants {
-        static let analyticsIdentifierKey = "analytics_identifier"
+        static let analyticsIdentifierKey = "temp_analytics_identifier"
     }
 
 }

@@ -142,17 +142,8 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
                 emailCredentials: emailCredentials,
                 userID: userID
             )
+            configureAnalytics(for: userID)
 
-            // analyticsIDRepository.storeAnalyticsID(for: userID, analyticsID: <#T##UUID#>)
-            if dataUsageAgreementAccepted {
-                // save isAnalyticsTrackingConsentGiven
-                //save  analyticsIDFromRegistration
-            } else {
-                // remove isAnalyticsTrackingConsentGiven
-                //remove  analyticsIDFromRegistration
-            }
-            // TODO: remove "analytics_identifier"
-            // analyticsIDRepository.deleteAnalyticsID(for: userID)
             onFlowCompletion(authenticationResult)
         } catch {
             WireLogger.authentication.error("register personal account failed: \(error)")
@@ -229,6 +220,20 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
             accessToken: nil,
             emailCredentials: emailCredentials
         )
+    }
+
+    private func configureAnalytics(for userID: UUID) {
+        if dataUsageAgreementAccepted {
+            if let analyticsIDString = analyticsEventTracker.currentDeviceID,
+               let analyticsID = UUID(uuidString: analyticsIDString) {
+                analyticsIDRepository.storeAnalyticsID(for: userID, analyticsID: analyticsID)
+            }
+            analyticsEventTracker.deleteTempAnalyticsID()
+            analyticsIDRepository.updateAnalyticsTrackingConsent(for: userID, isGiven: true)
+        } else {
+            analyticsIDRepository.updateAnalyticsTrackingConsent(for: userID, isGiven: false)
+            analyticsIDRepository.deleteAnalyticsID(for: userID)
+        }
     }
 
 }
