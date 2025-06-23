@@ -46,7 +46,7 @@ final class PersonalUsersTests: WireUITestCase {
         let setPasswordPage = try setNamePage
             .setName(user.name)
             .assertHasLoaded()
-            
+
         let setUsernamePage = try setPasswordPage
             .setPassword(user.password)
             .acceptPopup()

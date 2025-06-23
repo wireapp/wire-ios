@@ -19,11 +19,11 @@
 import XCTest
 
 class SettingsPage: PageModel {
-    
+
     override var pageMainElement: XCUIElement {
         accountSettingsMenu
     }
-    
+
     var accountSettingsMenu: XCUIElement {
         let elementsQuery = app.cells
         return elementsQuery["Account"]

@@ -22,11 +22,11 @@ class PageModel {
 
     enum Failure: Error {
         case notLoaded(PageModel)
-        
+
         var localizedDescription: String {
             switch self {
-            case .notLoaded(let pageModel):
-                return "Page \(String(describing: pageModel)) not loaded"
+            case let .notLoaded(pageModel):
+                "Page \(String(describing: pageModel)) not loaded"
             }
         }
     }
@@ -40,7 +40,7 @@ class PageModel {
     var pageMainElement: XCUIElement {
         fatalError("override this in subclass \(String(describing: self))")
     }
-    
+
     func assertHasLoaded() throws -> Self {
         guard pageMainElement.waitForExistence(timeout: 10) else {
             throw Failure.notLoaded(self)

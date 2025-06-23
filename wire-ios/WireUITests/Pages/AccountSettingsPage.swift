@@ -23,7 +23,7 @@ class AccountSettingsPage: PageModel {
     override var pageMainElement: XCUIElement {
         nameField
     }
-    
+
     var nameField: XCUIElement {
         let elementsQuery = app.textFields.matching(identifier: "NameField")
         return elementsQuery.firstMatch
