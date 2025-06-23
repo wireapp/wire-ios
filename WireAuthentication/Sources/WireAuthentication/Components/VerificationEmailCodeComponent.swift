@@ -39,7 +39,7 @@ final class VerificationEmailCodeComponent: Component<VerificationEmailCodeCompo
     private let email: String
     private let password: String
     private let name: String
-    private let dataUsageAgreementAccepted: Bool
+    private let isDataUsageAgreementAccepted: Bool
     private let registrationAnalyticsTracker: any RegistrationAnalyticsTrackerProtocol
     private let registrationAnalyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
 
@@ -48,14 +48,14 @@ final class VerificationEmailCodeComponent: Component<VerificationEmailCodeCompo
         email: String,
         password: String,
         name: String,
-        dataUsageAgreementAccepted: Bool,
+        isDataUsageAgreementAccepted: Bool,
         analyticsEventTracker: any RegistrationAnalyticsTrackerProtocol,
         analyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
     ) {
         self.email = email
         self.password = password
         self.name = name
-        self.dataUsageAgreementAccepted = dataUsageAgreementAccepted
+        self.isDataUsageAgreementAccepted = isDataUsageAgreementAccepted
         self.registrationAnalyticsTracker = analyticsEventTracker
         self.registrationAnalyticsIDRepository = analyticsIDRepository
         super.init(parent: parent)
@@ -74,7 +74,7 @@ extension VerificationEmailCodeComponent: VerificationEmailCodeViewModel.Factory
             email: email,
             password: password,
             name: name,
-            dataUsageAgreementAccepted: dataUsageAgreementAccepted,
+            isDataUsageAgreementAccepted: isDataUsageAgreementAccepted,
             onFlowCompletion: { [dependency] authenticationResult in
                 dependency?.bridge.sendOutboundEvent(.userAuthenticated(authenticationResult))
             },

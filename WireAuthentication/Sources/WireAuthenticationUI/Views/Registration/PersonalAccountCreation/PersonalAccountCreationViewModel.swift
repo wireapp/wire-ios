@@ -32,7 +32,7 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
 
     @Published var alert: Alert?
     @Published var isCreateTeamAccountPresented = false
-    @Published var dataUsageAgreementAccepted = false
+    @Published var isDataUsageAgreementAccepted = false
     @Published var name: String = ""
     @Published var email: String
     @Published var password: String = ""
@@ -105,7 +105,7 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
         do {
             let requestEmailVerificationCodeUseCase = try await factory.requestEmailVerificationCodeUseCase()
             try await requestEmailVerificationCodeUseCase.invoke(email: email)
-            if dataUsageAgreementAccepted {
+            if isDataUsageAgreementAccepted {
                 analyticsEventTracker.setUp()
                 analyticsEventTracker.trackPersonalAccountCreationStart()
                 analyticsEventTracker.trackPersonalAccountCreationReachedTermsOfUseConfirmation()

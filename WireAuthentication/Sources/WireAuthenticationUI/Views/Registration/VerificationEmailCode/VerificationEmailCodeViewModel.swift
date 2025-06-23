@@ -42,7 +42,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
     let email: String
     let password: String
     let name: String
-    let dataUsageAgreementAccepted: Bool
+    let isDataUsageAgreementAccepted: Bool
     let numberOfDigits: Int
 
     var isConfirmButtonDisabled: Bool {
@@ -66,7 +66,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
         email: String,
         password: String,
         name: String,
-        dataUsageAgreementAccepted: Bool,
+        isDataUsageAgreementAccepted: Bool,
         onFlowCompletion: @escaping (AuthenticationResult) -> Void,
         numberOfDigits: Int = VerificationEmailCodeViewModel.numberOfDigits,
         analyticsEventTracker: any RegistrationAnalyticsTrackerProtocol,
@@ -79,7 +79,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
         self.email = email
         self.password = password
         self.name = name
-        self.dataUsageAgreementAccepted = dataUsageAgreementAccepted
+        self.isDataUsageAgreementAccepted = isDataUsageAgreementAccepted
         self.onFlowCompletion = onFlowCompletion
         self.code = Array(repeating: "", count: numberOfDigits)
         self.numberOfDigits = numberOfDigits

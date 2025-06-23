@@ -28,7 +28,7 @@ package protocol PersonalAccountCreationFactory {
         email: String,
         password: String,
         name: String,
-        dataUsageAgreementAccepted: Bool,
+        isDataUsageAgreementAccepted: Bool,
         analyticsEventTracker: any RegistrationAnalyticsTrackerProtocol,
         analyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
     ) -> any VerificationEmailCodeFactory

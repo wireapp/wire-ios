@@ -26,6 +26,7 @@ public protocol RegistrationAnalyticsTrackerProtocol {
 
     /// Start analytics after the user agreed.
 
+    @MainActor
     func setUp()
 
     /// Stop analytics when the account creation flow is left.

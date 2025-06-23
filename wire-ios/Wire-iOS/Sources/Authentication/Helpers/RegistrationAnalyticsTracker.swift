@@ -72,14 +72,12 @@ final class RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
 
     func trackPersonalAccountCreationStart() {
         if let analyticsTracker {
-            print("KKKKK accountSetupStep0")
             analyticsTracker.trackEvent(.Registration.accountSetupStep0)
         }
     }
 
     func trackPersonalAccountCreationReachedTermsOfUseConfirmation() {
         if let analyticsTracker {
-            print("KKKKK accountSetupStep1")
             analyticsTracker.trackEvent(.Registration.accountSetupStep1)
         }
     }
@@ -130,7 +128,7 @@ final class RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
         let newAnalyticsID = UUID().transportString()
         userDefaults.set(newAnalyticsID, forKey: Constants.analyticsIdentifierKey)
         print("KKKKK newAnalyticsID \(newAnalyticsID)")
-        return AnalyticsUser(analyticsIdentifier: newAnalyticsID, teamInfo: nil)
+        return AnalyticsUser(analyticsIdentifier: newAnalyticsID, teamInfo: nil) // TODO: make sure team info is updated later
     }
 
     private enum Constants {

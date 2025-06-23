@@ -50,7 +50,7 @@ struct PersonalAccountCreationView: View {
                         email: email,
                         password: password,
                         name: name,
-                        dataUsageAgreementAccepted: viewModel.dataUsageAgreementAccepted,
+                        isDataUsageAgreementAccepted: viewModel.isDataUsageAgreementAccepted,
                         analyticsEventTracker: viewModel.analyticsEventTracker,
                         analyticsIDRepository: viewModel.analyticsIDRepository
                     )
@@ -145,7 +145,7 @@ struct PersonalAccountCreationView: View {
 
     @ViewBuilder private var dataUsageAgreementView: some View {
         Checkbox(
-            isChecked: $viewModel.dataUsageAgreementAccepted,
+            isChecked: $viewModel.isDataUsageAgreementAccepted,
             title: .formattedMarkdown(
                 key: "create_personal_account.share_data_usage",
                 bundle: .module,
