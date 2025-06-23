@@ -55,7 +55,7 @@ final class PersonalUsersTests: WireUITestCase {
     func test_Login_asExistingPersonalUser() async throws {
         let user = try await userManager.createPersonalUser()
 
-        let page = WelcomePage()
+        let welcomePage = WelcomePage()
             .enterEmailOrSSO(user.email)
             .enterPassword(user.password)
             .acceptFirstTimeAlert()
@@ -65,6 +65,6 @@ final class PersonalUsersTests: WireUITestCase {
             .logout()
             .enterPassword(user.password)
 
-        XCTAssertTrue(page.emailTextField.exists, "Account logout failed")
+        XCTAssertTrue(welcomePage.emailTextField.exists, "Account logout failed")
     }
 }
