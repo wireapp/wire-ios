@@ -27,14 +27,20 @@ final class PushChannelV2APIImpl: PushChannelV2API, VersionedAPI {
     }
 
     func createPushChannel(clientID: String) async throws -> any PushChannelV2Protocol {
-        let path = "\(pathPrefix)/events"
+        switch apiVersion {
+        case .v0, .v1, .v2, .v3, .v4, .v5, .v6, .v7:
+            // TODO: [WPB-18374] move to own folder PushChannelV2API and use inheritance for old apiVersion
+            throw PushChannelV2APIError.unsupportedEndpointForAPIVersion
+        case .v8:
+            let path = "\(pathPrefix)/events"
 
-        let request = try URLRequestBuilder(path: path)
-            .withMethod(.get)
-            .withQueryItem(name: "client", value: clientID)
-            .build()
+            let request = try URLRequestBuilder(path: path)
+                .withMethod(.get)
+                .withQueryItem(name: "client", value: clientID)
+                .build()
 
-        return try await pushChannelService.createPushChannelV2(request)
+            return try await pushChannelService.createPushChannelV2(request)
+        }
     }
 
 }
