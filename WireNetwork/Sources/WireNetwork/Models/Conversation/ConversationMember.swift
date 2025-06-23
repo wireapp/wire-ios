@@ -24,9 +24,9 @@ public extension Conversation {
 
     struct Member: Equatable, Sendable {
 
-        public let qualifiedID: QualifiedID?
+        public let qualifiedID: QualifiedIDV0?
         public let id: UUID?
-        public let qualifiedTarget: QualifiedID?
+        public let qualifiedTarget: QualifiedIDV0?
         public let target: UUID?
         public let conversationRole: String?
         public let service: Service?
@@ -38,9 +38,9 @@ public extension Conversation {
         public let mutedReference: Date?
 
         public init(
-            qualifiedID: QualifiedID? = nil,
+            qualifiedID: QualifiedIDV0? = nil,
             id: UUID? = nil,
-            qualifiedTarget: QualifiedID? = nil,
+            qualifiedTarget: QualifiedIDV0? = nil,
             target: UUID? = nil,
             conversationRole: String? = nil,
             service: Service? = nil,

@@ -28,23 +28,25 @@ struct MLSFeatureConfigDecoder {
             forKey: .payload
         )
 
+        let supportedProtocols = payload.config.supportedProtocols.map { $0.toAPIModel() }
+        
         return MLSFeatureConfig(
             status: payload.status,
             protocolToggleUsers: payload.config.protocolToggleUsers,
-            defaultProtocol: payload.config.defaultProtocol,
-            allowedCipherSuites: payload.config.allowedCipherSuites,
-            defaultCipherSuite: payload.config.defaultCipherSuite,
-            supportedProtocols: payload.config.supportedProtocols
+            defaultProtocol: payload.config.defaultProtocol.toAPIModel(),
+            allowedCipherSuites: payload.config.allowedCipherSuites.map { $0.toAPIModel() },
+            defaultCipherSuite: payload.config.defaultCipherSuite.toAPIModel(),
+            supportedProtocols: Set(supportedProtocols)
         )
     }
 
     private struct Payload: Decodable {
 
         let protocolToggleUsers: Set<UUID>
-        let defaultProtocol: MessageProtocol
-        let allowedCipherSuites: [MLSCipherSuite]
-        let defaultCipherSuite: MLSCipherSuite
-        let supportedProtocols: Set<MessageProtocol>
+        let defaultProtocol: MessageProtocolV0
+        let allowedCipherSuites: [MLSCipherSuiteV0]
+        let defaultCipherSuite: MLSCipherSuiteV0
+        let supportedProtocols: Set<MessageProtocolV0>
 
     }
 

@@ -24,12 +24,12 @@ struct ConversationMemberJoinEventDecoder {
         from container: KeyedDecodingContainer<ConversationEventCodingKeys>
     ) throws -> ConversationMemberJoinEvent {
         let conversationID = try container.decode(
-            ConversationID.self,
+            QualifiedIDV0.self,
             forKey: .conversationQualifiedID
         )
 
         let senderID = try container.decode(
-            UserID.self,
+            QualifiedIDV0.self,
             forKey: .senderQualifiedID
         )
 
@@ -44,8 +44,8 @@ struct ConversationMemberJoinEventDecoder {
         )
 
         return ConversationMemberJoinEvent(
-            conversationID: conversationID,
-            senderID: senderID,
+            conversationID: conversationID.toAPIModel(),
+            senderID: senderID.toAPIModel(),
             timestamp: timestamp.date,
             members: payload.users
         )
