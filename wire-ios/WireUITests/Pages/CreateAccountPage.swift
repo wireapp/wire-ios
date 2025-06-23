@@ -20,9 +20,8 @@ import XCTest
 
 class CreateAccountPage: PageModel {
 
-    override func hasLoaded() {
-        let expectation = confirmButton.waitForExistence(timeout: 10)
-        XCTAssert(expectation, "Registration page not loaded - can't find next button")
+    override var pageMainElement: XCUIElement {
+        confirmButton
     }
 
     var confirmButton: XCUIElement {

@@ -20,9 +20,8 @@ import XCTest
 
 class SetUsernamePage: PageModel {
 
-    override func hasLoaded() {
-        let expectation = usernameField.waitForExistence(timeout: 10)
-        XCTAssert(expectation, "Registration page not loaded - can't find next button")
+    override var pageMainElement: XCUIElement {
+        usernameField
     }
 
     var usernameField: XCUIElement {

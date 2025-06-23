@@ -19,14 +19,32 @@
 import XCTest
 
 class PageModel {
+
+    enum Failure: Error {
+        case notLoaded(PageModel)
+        
+        var localizedDescription: String {
+            switch self {
+            case .notLoaded(let pageModel):
+                return "Page \(String(describing: pageModel)) not loaded"
+            }
+        }
+    }
+
     let app: XCUIApplication
 
     init() {
         self.app = XCUIApplication()
-        hasLoaded()
     }
 
-    func hasLoaded() {
-        print("Warning: hasLoaded should be implemented by inheritor")
+    var pageMainElement: XCUIElement {
+        fatalError("override this in subclass \(String(describing: self))")
+    }
+    
+    func assertHasLoaded() throws -> Self {
+        guard pageMainElement.waitForExistence(timeout: 10) else {
+            throw Failure.notLoaded(self)
+        }
+        return self
     }
 }
