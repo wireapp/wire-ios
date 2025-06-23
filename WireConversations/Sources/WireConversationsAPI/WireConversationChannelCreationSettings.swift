@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
+import Foundation
 
 public struct WireConversationChannelCreationSettings: Equatable, Hashable {
     public let channelName: String
@@ -24,7 +24,7 @@ public struct WireConversationChannelCreationSettings: Equatable, Hashable {
     public let servicesAllowed: Bool
     public let guestsAllowed: Bool
     public let readReceiptsEnabled: Bool
-    public let historyLength: TimeInterval?
+    public let historyLength: Int?
 
     package init(
         channelName: String,
@@ -32,7 +32,7 @@ public struct WireConversationChannelCreationSettings: Equatable, Hashable {
         servicesAllowed: Bool,
         guestsAllowed: Bool,
         readReceiptsEnabled: Bool,
-        historyLength: TimeInterval?
+        historyLength: Int?
     ) {
         self.channelName = channelName
             .trimmingCharacters(in: .whitespacesAndNewlines)

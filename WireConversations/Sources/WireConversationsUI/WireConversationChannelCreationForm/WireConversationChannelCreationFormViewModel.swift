@@ -19,6 +19,7 @@
 public import Foundation
 public import WireConversationsAPI
 public import Combine
+import WireUtilities
 
 public final class WireConversationChannelCreationFormViewModel: ObservableObject {
 
@@ -43,7 +44,7 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
         case fourWeeks
         case unlimited
         case custom
-        
+
         var title: String {
             switch self {
             case .off:
@@ -60,12 +61,12 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
                 L10n.Localizable.Conversation.CreationForm.ChannelHistory.Picker.custom
             }
         }
-        
+
         public struct Custom: Equatable, Hashable {
             public enum Unit: Equatable, Hashable, CaseIterable {
                 case days
                 case week
-                
+
                 var title: String {
                     switch self {
                     case .days:
@@ -75,9 +76,9 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
                     }
                 }
             }
-            
+
             public var unit: Unit = .days
-            public var value: Int = 1
+            public var value: Int = 10
         }
     }
 
@@ -135,7 +136,7 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
         // Channel access is always hard coded to private for now.
         channelAccess: ChannelAccessOption = .private,
         channelInvitePolicy: ChannelInvitePolicyOption = .admins,
-        channelHistoryOption: ChannelHistoryOption = .oneDay,
+        channelHistoryOption: ChannelHistoryOption = .off,
         servicesAllowed: Bool = true,
         guestsAllowed: Bool = true,
         readReceiptsEnabled: Bool = true,
@@ -154,12 +155,12 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
         self.readReceiptsEnabled = readReceiptsEnabled
         self.isUserPremium = isUserPremium
         self.onFormValidityUpdate = onFormValidityUpdate
-        
-        self.bind()
+
+        bind()
     }
-    
+
     // MARK: History sharing
-    
+
     private func bind() {
         $channelHistoryOption
             .filter { [self] in $0 == .custom && !isUserPremium }
@@ -167,7 +168,7 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
             .assign(to: \.showUpgradeBanner, on: self)
             .store(in: &subscriptions)
     }
-    
+
     func channelHistoryAvailableOptions() -> [ChannelHistoryOption] {
         if isUserPremium {
             [.off, .oneDay, .oneWeek, .fourWeeks, .unlimited, .custom]
@@ -175,16 +176,16 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
             [.off, .oneDay, .custom]
         }
     }
-    
+
     func showChannelCustomHistoryPickers() -> Bool {
         channelHistoryOption == .custom && isUserPremium
     }
-    
+
     func hideUpgradeBanner() {
         showUpgradeBanner = false
         channelHistoryOption = .oneDay
     }
-    
+
     func upgradeBannerURL() -> URL {
         URL(string: "https://teams.wire.com/billing/)")!
     }
@@ -228,7 +229,24 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
     }
 
     public func getChannelCreationSettings() -> WireConversationChannelCreationSettings? {
-        try? channelName
+
+        // TODO: [WPB-18347] - check history length expected type when endpoint is ready
+        let historyLength: TimeInterval? = switch channelHistoryOption {
+        case .off:
+            nil
+        case .oneDay:
+            TimeInterval.oneDay
+        case .oneWeek:
+            TimeInterval.oneWeek
+        case .fourWeeks:
+            TimeInterval.fourWeeks
+        case .unlimited:
+            TimeInterval.infinity
+        case .custom:
+            computeHistoryCustomLength()
+        }
+
+        return try? channelName
             .map { value in
                 WireConversationChannelCreationSettings(
                     channelName: value,
@@ -238,11 +256,22 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
                     servicesAllowed: servicesAllowed,
                     guestsAllowed: guestsAllowed,
                     readReceiptsEnabled: readReceiptsEnabled,
-                    // TODO: [WPB-18347] - pass history length given the selected `ChannelHistoryOption`
-                    historyLength: nil
+                    historyLength: historyLength != nil ? Int(historyLength!) : nil
                 )
             }
             .get()
+    }
+
+    private func computeHistoryCustomLength() -> TimeInterval {
+        let value = TimeInterval(channelHistoryOptionCustom.value)
+        let oneDay = TimeInterval.oneDay
+
+        switch channelHistoryOptionCustom.unit {
+        case .days:
+            return value * oneDay
+        case .week:
+            return value * 7 * oneDay
+        }
     }
 }
 

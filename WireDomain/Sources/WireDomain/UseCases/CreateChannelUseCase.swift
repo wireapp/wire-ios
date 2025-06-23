@@ -27,6 +27,7 @@ public protocol CreateChannelUseCaseProtocol {
     func invoke(
         teamID: UUID,
         name: String?,
+        historyLength: Int?,
         users: Set<ZMUser>,
         accessMode: Set<WireAPI.ConversationAccessMode>,
         accessRoles: Set<WireAPI.ConversationAccessRole>,
@@ -76,6 +77,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
     public func invoke(
         teamID: UUID,
         name: String?,
+        historyLength: Int?,
         users: Set<ZMUser>,
         accessMode: Set<WireAPI.ConversationAccessMode>,
         accessRoles: Set<WireAPI.ConversationAccessRole>,
@@ -85,6 +87,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
             return try await createChannel(
                 teamID: teamID,
                 name: name,
+                historyLength: historyLength,
                 users: users,
                 accessMode: accessMode,
                 accessRoles: accessRoles,
@@ -128,6 +131,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
     private func createChannel(
         teamID: UUID,
         name: String?,
+        historyLength: Int?,
         users: Set<ZMUser>,
         accessMode: Set<WireAPI.ConversationAccessMode>,
         accessRoles: Set<WireAPI.ConversationAccessRole>,
@@ -162,6 +166,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
                 unqualifiedUserIDs
             )
         }
+        // TODO: [WPB-18347] - add history length parameter to body when API is ready
 
         let apiParameters = CreateGroupConversationParameters(
             groupType: .channel,

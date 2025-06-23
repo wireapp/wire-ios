@@ -40,11 +40,14 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
             }
         }
     )
-    
+
     private lazy var isUserPremium: Bool = {
         guard let userSession = userSession as? ZMUserSession else { return false }
         let featureRepository = FeatureRepository(context: userSession.syncContext)
-        let conferenceCalling = featureRepository.fetchConferenceCalling()
+        let conferenceCalling = userSession.syncContext.performAndWait {
+            featureRepository.fetchConferenceCalling()
+        }
+
         return conferenceCalling.status == .enabled
     }()
 
@@ -144,6 +147,7 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
         values.allowGuests = channelCreationSettings.guestsAllowed
         values.allowServices = channelCreationSettings.servicesAllowed
         values.enableReceipts = channelCreationSettings.readReceiptsEnabled
+        values.channelHistoryLength = channelCreationSettings.historyLength
 
         let participantsController = AddParticipantsViewController(
             context: .create(values),
@@ -229,10 +233,13 @@ extension WireConversationChannelCreationFormViewController: AddParticipantsConv
             WireAPI.ConversationAccessRole(rawValue: $0.rawValue)
         }
 
+        let channelHistoryLength = values.channelHistoryLength
+
         do {
             let conversation = try await channelUseCase.invoke(
                 teamID: teamID,
                 name: values.name,
+                historyLength: channelHistoryLength,
                 users: Set(users),
                 accessMode: Set(accessMode),
                 accessRoles: Set(accessRoles),

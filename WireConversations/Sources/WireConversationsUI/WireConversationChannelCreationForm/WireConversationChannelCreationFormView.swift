@@ -17,8 +17,8 @@
 //
 
 public import SwiftUI
-import WireDesign
 import WireConversationsAPI
+import WireDesign
 import WireReusableUIComponents
 
 public struct WireConversationChannelCreationForm: View {
@@ -35,27 +35,27 @@ public struct WireConversationChannelCreationForm: View {
     }
 
     public var body: some View {
-            Form {
-                channelNameSection
-                channelAccessSection
-                channelHistorySection
-                servicesSection
-                // TODO: [WPB-16771] Uncomment when read receipts supported on MLS
-                //            readReceiptsSection
-            }
-            .onChange(of: channelName) { newValue in
-                viewModel.onChannelNameUpdate(newValue)
-            }
-            .overlay {
-                ZStack {
-                    if viewModel.showUpgradeBanner {
-                        channelUpgradeBanner
-                            .transition(.opacity)
-                    }
+        Form {
+            channelNameSection
+            channelAccessSection
+            channelHistorySection
+            servicesSection
+            // TODO: [WPB-16771] Uncomment when read receipts supported on MLS
+            //            readReceiptsSection
+        }
+        .onChange(of: channelName) { newValue in
+            viewModel.onChannelNameUpdate(newValue)
+        }
+        .overlay {
+            ZStack {
+                if viewModel.showUpgradeBanner {
+                    channelUpgradeBanner
+                        .transition(.opacity)
                 }
-                .animation(.easeInOut, value: viewModel.showUpgradeBanner)
             }
-        
+            .animation(.easeInOut, value: viewModel.showUpgradeBanner)
+        }
+
     }
 
     var channelNameSection: some View {
@@ -69,41 +69,46 @@ public struct WireConversationChannelCreationForm: View {
             )
         }
     }
-    
+
     var channelUpgradeBanner: some View {
         ZStack {
             Rectangle()
                 .foregroundColor(Color.black.opacity(0.6))
                 .edgesIgnoringSafeArea(.all)
-            
+
             VStack(alignment: .leading, spacing: 15) {
                 HStack {
                     Text(L10n.Localizable.Conversation.CreationForm.ChannelHistory.UpgradeBanner.title)
                         .wireTextStyle(.buttonSmall)
                         .foregroundStyle(Color.white)
                         .bold()
-                    
+                        .accessibilityLabel(Text(
+                            L10n.Localizable.Conversation.CreationForm.ChannelHistory.UpgradeBanner
+                                .title
+                        ))
+
                     Spacer()
-                    
+
                     CloseButton(
                         action: { viewModel.hideUpgradeBanner() },
                         foregroundColor: SemanticColors.Label.textWhite,
-                        accessibilityLabel: String(
-                            localized: "",
-                            table: "Accessibility",
-                            bundle: .module
-                        )
+                        accessibilityLabel: L10n.Accessibility.Conversation.CreationForm.ChannelHistory.UpgradeBanner
+                            .close
                     )
                 }
-                
+
                 HStack {
                     Text(L10n.Localizable.Conversation.CreationForm.ChannelHistory.UpgradeBanner.message)
                         .foregroundStyle(.white)
-                    
+                        .accessibilityLabel(
+                            L10n.Localizable.Conversation.CreationForm.ChannelHistory.UpgradeBanner
+                                .message
+                        )
+
                     Spacer()
                         .frame(width: 80)
                 }
-                
+
                 Link(
                     L10n.Localizable.Conversation.CreationForm.ChannelHistory.UpgradeBanner.button,
                     destination: viewModel.upgradeBannerURL()
@@ -118,7 +123,7 @@ public struct WireConversationChannelCreationForm: View {
                         .stroke(.black)
                 }
                 .clipShape(.rect(cornerRadius: 12))
-                
+
             }
             .padding(.all, 15)
             .background(alignment: .top) {
@@ -169,37 +174,38 @@ public struct WireConversationChannelCreationForm: View {
     }
 
     var channelHistorySection: some View {
-            Section(content: {
-                VStack {
-                    channelHistoryPicker
-                    
-                    ZStack {
-                        if viewModel.showChannelCustomHistoryPickers() {
-                            channelCustomHistoryPicker
-                                .transition(.opacity)
-                        }
-                    }.animation(.smooth, value: viewModel.channelHistoryOption)
-                }
-                
-            }, footer: {
-                Text("Select a period. When participants join this channel, they can follow the history for this time")
-            })
+        Section(content: {
+            VStack {
+                channelHistoryPicker
+
+                ZStack {
+                    if viewModel.showChannelCustomHistoryPickers() {
+                        channelCustomHistoryPicker
+                            .transition(.opacity)
+                    }
+                }.animation(.smooth, value: viewModel.channelHistoryOption)
+            }
+
+        }, footer: {
+            Text(L10n.Localizable.Conversation.CreationForm.ChannelHistory.sectionFootnote)
+        })
     }
-    
+
     var channelHistoryPicker: some View {
         Picker("Channel history", selection: $viewModel.channelHistoryOption) {
             ForEach(viewModel.channelHistoryAvailableOptions(), id: \.self) { channelHistoryOption in
                 Text(channelHistoryOption.title)
                     .tag(channelHistoryOption)
+                    .accessibilityLabel(channelHistoryOption.title)
 
             }
         }
     }
-    
+
     var channelCustomHistoryPicker: some View {
         HStack {
             Picker("Number", selection: $viewModel.channelHistoryOptionCustom.value) {
-                ForEach(1...99, id: \.self) { number in
+                ForEach(1 ... 99, id: \.self) { number in
                     Text("\(number)").tag(number)
                 }
             }
@@ -214,7 +220,6 @@ public struct WireConversationChannelCreationForm: View {
         }
         .padding()
     }
-
 
     var servicesSection: some View {
         Section(content: {
