@@ -284,9 +284,19 @@ final class ZClientViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        // we don't have analyticsService to call enableTracking()
+        migrateAnalytics()
         firstTimeRequestToEnableAnalytics() // TODO: maybe Countly could be setup here, but how to tear it down properly?
         view.backgroundColor = ColorTheme.Backgrounds.surface
+    }
+
+    private func migrateAnalytics() {
+        Task {
+            do {
+                try await trackingManager?.migrateAnalyticsSetupIfNeeded()
+            } catch {
+                WireLogger.analytics.error("failed to migrate analytics between accounts: \(error)")
+            }
+        }
     }
 
     private func firstTimeRequestToEnableAnalytics() {

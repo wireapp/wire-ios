@@ -71,11 +71,17 @@ final class RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
     }
 
     func trackPersonalAccountCreationStart() {
-        analyticsTracker?.trackEvent(.Registration.accountSetupStep0)
+        if let analyticsTracker {
+            print("KKKKK accountSetupStep0")
+            analyticsTracker.trackEvent(.Registration.accountSetupStep0)
+        }
     }
 
     func trackPersonalAccountCreationReachedTermsOfUseConfirmation() {
-        analyticsTracker?.trackEvent(.Registration.accountSetupStep1)
+        if let analyticsTracker {
+            print("KKKKK accountSetupStep1")
+            analyticsTracker.trackEvent(.Registration.accountSetupStep1)
+        }
     }
 
     func trackPersonalAccountCreationReachedVerificationCode() {

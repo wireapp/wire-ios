@@ -70,13 +70,23 @@ final class TrackingManager: TrackingInterface {
         return journal?[.isAnalyticsTrackingConsentGiven] ?? false
     }
 
+    func migrateAnalyticsSetupIfNeeded() async throws {
+        if doesUserConsentPreferenceExist {
+            if isAnalyticsTrackingEnabled {
+                try await enableAnalytics()
+            } else {
+                try disableAnalytics()
+            }
+        }
+    }
+
     @MainActor
     func firstTimeRequestToEnableAnalytics() async throws {
         // Ask if user has not given a preference yet
         // and tracking can be enabled
-//        guard !doesUserConsentPreferenceExist, sessionManager.canEnableTracking else {
-//            return
-//        }
+        guard !doesUserConsentPreferenceExist, sessionManager.canEnableTracking else {
+            return
+        }
 
         WireLogger.analytics.debug("requesting first time analytics content")
         let didConsent = try await requestAnalyticsConsent()

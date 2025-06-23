@@ -223,15 +223,13 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
     }
 
     private func configureAnalytics(for userID: UUID) {
+        analyticsEventTracker.deleteTempAnalyticsID()
         if dataUsageAgreementAccepted {
             if let analyticsIDString = analyticsEventTracker.currentDeviceID,
                let analyticsID = UUID(uuidString: analyticsIDString) {
                 analyticsIDRepository.storeAnalyticsID(for: userID, analyticsID: analyticsID)
             }
-            analyticsEventTracker.deleteTempAnalyticsID()
-            analyticsIDRepository.updateAnalyticsTrackingConsent(for: userID, isGiven: true)
         } else {
-            analyticsIDRepository.updateAnalyticsTrackingConsent(for: userID, isGiven: false)
             analyticsIDRepository.deleteAnalyticsID(for: userID)
         }
     }

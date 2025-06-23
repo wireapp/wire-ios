@@ -32,7 +32,7 @@ struct RegistrationAnalyticsIDRepository: RegistrationAnalyticsIDRepositoryProto
     }
 
     func storeAnalyticsID(for userID: UUID, analyticsID: UUID) {
-        journal(for: userID)[.analyticsIDFromRegistration] = analyticsID.uuidString
+        journal(for: userID)[.analyticsIDFromRegistration] = analyticsID.transportString()
     }
 
 //    func fetchAnalyticsID(for userID: UUID) -> UUID? {
