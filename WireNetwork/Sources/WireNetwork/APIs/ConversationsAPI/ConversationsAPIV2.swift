@@ -22,7 +22,7 @@ class ConversationsAPIV2: ConversationsAPIV1 {
     override var apiVersion: APIVersion { .v2 }
 
     override func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList {
-        let parameters = GetConversationsParametersV0(qualifiedIdentifiers: identifiers)
+        let parameters = GetConversationsParametersV0(qualifiedIdentifiers: identifiers.map { $0.toNetworkModel() })
         let body = try JSONEncoder.defaultEncoder.encode(parameters)
 
         // New change for v2
@@ -87,7 +87,7 @@ class ConversationsAPIV2: ConversationsAPIV1 {
 
 struct CreateGroupConversationParametersV2: Encodable {
     let users: [UUID]?
-    let qualifiedUsers: [QualifiedID]?
+    let qualifiedUsers: [QualifiedIDV0]?
     let access: [String]?
     let legacyAccessRole: String?
     let accessRoles: [String]?
@@ -116,7 +116,7 @@ struct CreateGroupConversationParametersV2: Encodable {
 
     init(from parameters: CreateGroupConversationParameters) {
         self.users = parameters.messageProtocol == .proteus ? parameters.unqualifiedUserIDs : nil
-        self.qualifiedUsers = parameters.messageProtocol == .proteus ? parameters.qualifiedUserIDs : nil
+        self.qualifiedUsers = parameters.messageProtocol == .proteus ? parameters.qualifiedUserIDs.map { $0.toNetworkModel() } : nil
         self.access = parameters.accessMode.map(\.rawValue)
         self.legacyAccessRole = parameters.legacyAccessRole?.rawValue
         self.accessRoles = parameters.accessRoles.map(\.rawValue)

@@ -34,7 +34,7 @@ public enum MessageProtocol: String, Sendable {
 }
 
 
-enum MessageProtocolV0: String, Sendable, Decodable {
+enum MessageProtocolV0: String, Sendable, Codable {
 
     case proteus
     case mls
@@ -44,6 +44,17 @@ enum MessageProtocolV0: String, Sendable, Decodable {
 extension MessageProtocolV0: ToAPIModelConvertible {
 
     func toAPIModel() -> MessageProtocol {
+        switch self {
+        case .proteus:
+            return .proteus
+        case .mls:
+            return .mls
+        }
+    }
+}
+extension MessageProtocol: ToNetworkConvertible {
+
+    func toNetworkModel() -> MessageProtocolV0 {
         switch self {
         case .proteus:
             return .proteus

@@ -67,37 +67,37 @@ struct FeatureConfigsResponseAPIV6: Decodable, ToAPIModelConvertible {
         featureConfigs.append(.classifiedDomains(classifiedDomainsConfig))
 
         let conferenceCallingConfig = ConferenceCallingFeatureConfig(
-            status: conferenceCalling.status,
+            status: conferenceCalling.status.toAPIModel(),
             useSFTForOneToOneCalls: conferenceCalling.config.useSFTForOneToOneCalls
         )
 
         featureConfigs.append(.conferenceCalling(conferenceCallingConfig))
 
-        let conversationGuestLinksConfig = ConversationGuestLinksFeatureConfig(status: conversationGuestLinks.status)
+        let conversationGuestLinksConfig = ConversationGuestLinksFeatureConfig(status: conversationGuestLinks.status.toAPIModel())
         featureConfigs.append(.conversationGuestLinks(conversationGuestLinksConfig))
 
-        let digitalSignaturesConfig = DigitalSignatureFeatureConfig(status: digitalSignatures.status)
+        let digitalSignaturesConfig = DigitalSignatureFeatureConfig(status: digitalSignatures.status.toAPIModel())
         featureConfigs.append(.digitalSignature(digitalSignaturesConfig))
 
-        let fileSharingConfig = FileSharingFeatureConfig(status: fileSharing.status)
+        let fileSharingConfig = FileSharingFeatureConfig(status: fileSharing.status.toAPIModel())
         featureConfigs.append(.fileSharing(fileSharingConfig))
 
         let selfDeletingMessagesConfig = selfDeletingMessages.toAPIModel()
         featureConfigs.append(.selfDeletingMessages(selfDeletingMessagesConfig))
 
         let mlsConfig = MLSFeatureConfig(
-            status: mls.status,
+            status: mls.status.toAPIModel(),
             protocolToggleUsers: mls.config.protocolToggleUsers,
-            defaultProtocol: mls.config.defaultProtocol,
-            allowedCipherSuites: mls.config.allowedCipherSuites,
-            defaultCipherSuite: mls.config.defaultCipherSuite,
-            supportedProtocols: mls.config.supportedProtocols
+            defaultProtocol: mls.config.defaultProtocol.toAPIModel(),
+            allowedCipherSuites: mls.config.allowedCipherSuites.map { $0.toAPIModel() },
+            defaultCipherSuite: mls.config.defaultCipherSuite.toAPIModel(),
+            supportedProtocols: Set(mls.config.supportedProtocols.map { $0.toAPIModel() })
         )
 
         featureConfigs.append(.mls(mlsConfig))
 
         let mlsMigrationConfig = MLSMigrationFeatureConfig(
-            status: mlsMigration.status,
+            status: mlsMigration.status.toAPIModel(),
             startTime: mlsMigration.config.startTime?.date,
             finaliseRegardlessAfter: mlsMigration.config.finaliseRegardlessAfter?.date
         )
@@ -105,7 +105,7 @@ struct FeatureConfigsResponseAPIV6: Decodable, ToAPIModelConvertible {
         featureConfigs.append(.mlsMigration(mlsMigrationConfig))
 
         let mlsE2EIdConfig = EndToEndIdentityFeatureConfig(
-            status: mlsE2EId.status,
+            status: mlsE2EId.status.toAPIModel(),
             acmeDiscoveryURL: mlsE2EId.config.acmeDiscoveryUrl,
             verificationExpiration: mlsE2EId.config.verificationExpiration,
             crlProxy: mlsE2EId.config.crlProxy,

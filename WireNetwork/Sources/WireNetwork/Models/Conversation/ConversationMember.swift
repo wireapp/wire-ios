@@ -22,28 +22,28 @@ public extension Conversation {
 
     /// Represents a conversation's member.
 
-    struct Member: Equatable, Sendable {
+    struct Member: Equatable, Sendable, Decodable {
 
-        public let qualifiedID: QualifiedIDV0?
-        public let id: UUID?
-        public let qualifiedTarget: QualifiedIDV0?
-        public let target: UUID?
-        public let conversationRole: String?
-        public let service: Service?
-        public let archived: Bool?
-        public let archivedReference: Date?
-        public let hidden: Bool?
-        public let hiddenReference: String?
-        public let mutedStatus: Int?
-        public let mutedReference: Date?
+        let qualifiedID: QualifiedIDV0?
+        let id: UUID?
+        let qualifiedTarget: QualifiedIDV0?
+        let target: UUID?
+        let conversationRole: String?
+        let service: ServiceV0?
+        let archived: Bool?
+        let archivedReference: Date?
+        let hidden: Bool?
+        let hiddenReference: String?
+        let mutedStatus: Int?
+        let mutedReference: Date?
 
-        public init(
+        init(
             qualifiedID: QualifiedIDV0? = nil,
             id: UUID? = nil,
             qualifiedTarget: QualifiedIDV0? = nil,
             target: UUID? = nil,
             conversationRole: String? = nil,
-            service: Service? = nil,
+            service: ServiceV0? = nil,
             archived: Bool? = nil,
             archivedReference: Date? = nil,
             hidden: Bool? = nil,

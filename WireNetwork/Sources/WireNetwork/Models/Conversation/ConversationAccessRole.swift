@@ -39,3 +39,23 @@ public enum ConversationAccessRole: String, Sendable {
     case service
 
 }
+
+enum ConversationAccessRoleV0: String, Sendable, Decodable, ToAPIModelConvertible {
+    case teamMember = "team_member"
+    case nonTeamMember = "non_team_member"
+    case guest
+    case service
+    
+    func toAPIModel() -> ConversationAccessRole {
+        switch self {
+        case .teamMember:
+            return .teamMember
+        case .nonTeamMember:
+            return .nonTeamMember
+        case .guest:
+            return .guest
+        case .service:
+            return .service
+        }
+    }
+}

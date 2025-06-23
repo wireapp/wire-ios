@@ -25,14 +25,33 @@ public enum ConversationMemberLeaveReason: String, Sendable {
     /// The user has been removed from the team and therefore removed
     /// from all conversations.
 
-    case userDeleted = "user-deleted"
+    case userDeleted
 
     /// The user left the conversation by themselves.
 
-    case userLeft = "left"
+    case userLeft
 
     /// The user was removed from the conversation by an admin.
 
+    case userRemoved
+
+}
+
+enum ConversationMemberLeaveReasonV0: String, Sendable, Decodable, ToAPIModelConvertible {
+
+    case userDeleted = "user-deleted"
+    case userLeft = "left"
     case userRemoved = "removed"
+    
+    func toAPIModel() -> ConversationMemberLeaveReason {
+        switch self {
+        case .userDeleted:
+            return .userDeleted
+        case .userLeft:
+            return .userLeft
+        case .userRemoved:
+            return .userRemoved
+        }
+    }
 
 }

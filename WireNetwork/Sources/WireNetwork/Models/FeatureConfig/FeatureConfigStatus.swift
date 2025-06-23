@@ -33,3 +33,19 @@ public enum FeatureConfigStatus: String, Sendable {
     case disabled
 
 }
+
+enum FeatureConfigStatusV0: String, Sendable, Decodable, ToAPIModelConvertible {
+
+    case enabled
+    case disabled
+
+    func toAPIModel() -> FeatureConfigStatus {
+        switch self {
+        case .enabled:
+            return .enabled
+        case .disabled:
+            return .disabled
+        }
+    }
+}
+

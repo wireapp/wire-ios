@@ -24,12 +24,12 @@ struct ConversationCreateEventDecoder {
         from container: KeyedDecodingContainer<ConversationEventCodingKeys>
     ) throws -> ConversationCreateEvent {
         let conversationID = try container.decode(
-            ConversationID.self,
+            QualifiedIDV0.self,
             forKey: .conversationQualifiedID
         )
 
         let senderID = try container.decode(
-            UserID.self,
+            QualifiedIDV0.self,
             forKey: .senderQualifiedID
         )
 
@@ -42,45 +42,48 @@ struct ConversationCreateEventDecoder {
             Payload.self,
             forKey: .payload
         )
-
+        let accessRoles = payload.accessRoles?.map { $0.toAPIModel() }
+        let access = payload.access?.map { $0.toAPIModel() }
+        
+        let conversation = Conversation(
+            id: payload.id,
+            qualifiedID: payload.qualifiedID?.toAPIModel(),
+            teamID: payload.teamID,
+            type: payload.type?.toAPIModel(),
+            messageProtocol: payload.messageProtocol?.toAPIModel(),
+            mlsGroupID: payload.mlsGroupID,
+            cipherSuite: payload.cipherSuite?.toAPIModel(),
+            epoch: payload.epoch,
+            epochTimestamp: payload.epochTimestamp?.date,
+            creator: payload.creator,
+            members: payload.members?.toAPIModel(),
+            name: payload.name,
+            messageTimer: payload.messageTimer,
+            readReceiptMode: payload.readReceiptMode,
+            access: access.flatMap { Set($0) },
+            accessRoles: accessRoles.flatMap { Set($0) },
+            legacyAccessRole: payload.legacyAccessRole?.toAPIModel(),
+            lastEvent: payload.lastEvent,
+            lastEventTime: payload.lastEventTime?.date,
+            groupType: payload.groupType?.toAPIModel()
+        )
         return ConversationCreateEvent(
-            conversationID: conversationID,
-            senderID: senderID,
+            conversationID: conversationID.toAPIModel(),
+            senderID: senderID.toAPIModel(),
             timestamp: timestamp.date,
-            conversation: .init(
-                id: payload.id,
-                qualifiedID: payload.qualifiedID,
-                teamID: payload.teamID,
-                type: payload.type,
-                messageProtocol: payload.messageProtocol,
-                mlsGroupID: payload.mlsGroupID,
-                cipherSuite: payload.cipherSuite,
-                epoch: payload.epoch,
-                epochTimestamp: payload.epochTimestamp?.date,
-                creator: payload.creator,
-                members: payload.members?.toAPIModel(),
-                name: payload.name,
-                messageTimer: payload.messageTimer,
-                readReceiptMode: payload.readReceiptMode,
-                access: payload.access,
-                accessRoles: payload.accessRoles,
-                legacyAccessRole: payload.legacyAccessRole,
-                lastEvent: payload.lastEvent,
-                lastEventTime: payload.lastEventTime?.date,
-                groupType: payload.groupType
-            )
+            conversation: conversation
         )
     }
 
     private struct Payload: Decodable {
 
         let id: UUID?
-        let qualifiedID: ConversationID?
+        let qualifiedID: QualifiedIDV0?
         let teamID: UUID?
-        let type: ConversationType?
-        let messageProtocol: ConversationMessageProtocol?
+        let type: ConversationTypeV0?
+        let messageProtocol: ConversationMessageProtocolV0?
         let mlsGroupID: String?
-        let cipherSuite: MLSCipherSuite?
+        let cipherSuite: MLSCipherSuiteV0?
         let epoch: UInt?
         let epochTimestamp: UTCTime?
         let creator: UUID?
@@ -88,12 +91,12 @@ struct ConversationCreateEventDecoder {
         let name: String?
         let messageTimer: TimeInterval?
         let readReceiptMode: Int?
-        let access: Set<ConversationAccessMode>?
-        let accessRoles: Set<ConversationAccessRole>?
-        let legacyAccessRole: ConversationAccessRoleLegacy?
+        let access: Set<ConversationAccessModeV0>?
+        let accessRoles: Set<ConversationAccessRoleV0>?
+        let legacyAccessRole: ConversationAccessRoleLegacyV0?
         let lastEvent: String?
         let lastEventTime: UTCTime?
-        let groupType: ConversationGroupType?
+        let groupType: ConversationGroupTypeV0?
 
         enum CodingKeys: String, CodingKey {
 
@@ -145,12 +148,12 @@ struct ConversationCreateEventDecoder {
 
     struct Member: Decodable, ToAPIModelConvertible {
 
-        let qualifiedID: QualifiedID?
+        let qualifiedID: QualifiedIDV0?
         let id: UUID?
-        let qualifiedTarget: QualifiedID?
+        let qualifiedTarget: QualifiedIDV0?
         let target: UUID?
         let conversationRole: String?
-        let service: Service?
+        let service: ServiceV0?
         let archived: Bool?
         let archivedReference: UTCTime?
         let hidden: Bool?
@@ -176,20 +179,22 @@ struct ConversationCreateEventDecoder {
         }
 
         func toAPIModel() -> Conversation.Member {
-            Conversation.Member(
-                qualifiedID: qualifiedID,
-                id: id,
-                qualifiedTarget: qualifiedTarget,
-                target: target,
-                conversationRole: conversationRole,
-                service: service,
-                archived: archived,
-                archivedReference: archivedReference?.date,
-                hidden: hidden,
-                hiddenReference: hiddenReference,
-                mutedStatus: mutedStatus,
-                mutedReference: mutedReference?.date
-            )
+            // TODO: fix me
+            Conversation.Member()
+//            Conversation.Member(
+//                qualifiedID: qualifiedID?.toAPIModel(),
+//                id: id,
+//                qualifiedTarget: qualifiedTarget?.toAPIModel(),
+//                target: target,
+//                conversationRole: conversationRole,
+//                service: service,
+//                archived: archived,
+//                archivedReference: archivedReference?.date,
+//                hidden: hidden,
+//                hiddenReference: hiddenReference,
+//                mutedStatus: mutedStatus,
+//                mutedReference: mutedReference?.date
+//            )
         }
 
     }

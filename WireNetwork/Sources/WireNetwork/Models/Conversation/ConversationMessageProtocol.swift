@@ -36,3 +36,21 @@ public enum ConversationMessageProtocol: String, Sendable {
     case mls
 
 }
+
+enum ConversationMessageProtocolV0: String, Sendable, Decodable, ToAPIModelConvertible {
+
+    case proteus
+    case mixed
+    case mls
+
+    func toAPIModel() -> ConversationMessageProtocol {
+        switch self {
+        case .proteus:
+            return .proteus
+        case .mixed:
+            return .mixed
+        case .mls:
+            return .mls
+        }
+    }
+}

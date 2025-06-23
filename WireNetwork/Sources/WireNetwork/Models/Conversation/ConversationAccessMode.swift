@@ -40,3 +40,24 @@ public enum ConversationAccessMode: String, Sendable {
     case code
 
 }
+
+enum ConversationAccessModeV0: String, Sendable, Decodable, ToAPIModelConvertible {
+    
+    case `private`
+    case invite
+    case link
+    case code
+    
+    func toAPIModel() -> ConversationAccessMode {
+        switch self {
+        case .private:
+            return .private
+        case .invite:
+            return .invite
+        case .link:
+            return .link
+        case .code:
+            return .code
+        }
+    }
+}

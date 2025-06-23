@@ -82,7 +82,7 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
     }
 
     func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList {
-        let parameters = GetConversationsParametersV0(qualifiedIdentifiers: identifiers)
+        let parameters = GetConversationsParametersV0(qualifiedIdentifiers: identifiers.map { $0.toNetworkModel() })
         let body = try JSONEncoder.defaultEncoder.encode(parameters)
         let path = "\(pathPrefix)\(basePath)/list/v2"
 
@@ -189,7 +189,7 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
 
 struct CreateGroupConversationParametersV0: Encodable {
     let users: [UUID]?
-    let qualifiedUsers: [QualifiedID]?
+    let qualifiedUsers: [QualifiedIDV0]?
     let access: [String]?
     let legacyAccessRole: String?
     let accessRoles: [String]?
@@ -216,7 +216,7 @@ struct CreateGroupConversationParametersV0: Encodable {
 
     init(from parameters: CreateGroupConversationParameters) {
         self.users = parameters.messageProtocol == .proteus ? parameters.unqualifiedUserIDs : nil
-        self.qualifiedUsers = parameters.messageProtocol == .proteus ? parameters.qualifiedUserIDs : nil
+        self.qualifiedUsers = parameters.messageProtocol == .proteus ? parameters.qualifiedUserIDs.map { $0.toNetworkModel() } : nil
         self.access = parameters.accessMode.map(\.rawValue)
         self.legacyAccessRole = parameters.legacyAccessRole?.rawValue
         self.accessRoles = parameters.accessRoles.map(\.rawValue)
@@ -245,7 +245,7 @@ struct GetConversationsParametersV0: Encodable {
         case qualifiedIdentifiers = "qualified_ids"
     }
 
-    let qualifiedIdentifiers: [QualifiedID]
+    let qualifiedIdentifiers: [QualifiedIDV0]
 }
 
 // MARK: - Decodables
@@ -281,14 +281,14 @@ struct QualifiedConversationListV0: Decodable, ToAPIModelConvertible {
     }
 
     let found: [ConversationV0]
-    let notFound: [QualifiedID]
-    let failed: [QualifiedID]
+    let notFound: [QualifiedIDV0]
+    let failed: [QualifiedIDV0]
 
     func toAPIModel() -> ConversationList {
         ConversationList(
             found: found.map { $0.toAPIModel() },
-            notFound: notFound,
-            failed: failed
+            notFound: notFound.map { $0.toAPIModel() },
+            failed: failed.map { $0.toAPIModel() }
         )
     }
 }
@@ -316,31 +316,33 @@ struct ConversationV0: Decodable, ToAPIModelConvertible {
         case type
     }
 
-    var access: Set<ConversationAccessMode>?
-    var accessRoles: Set<ConversationAccessRole>?
+    var access: Set<ConversationAccessModeV0>?
+    var accessRoles: Set<ConversationAccessRoleV0>?
     var creator: UUID?
     var epoch: UInt?
     var id: UUID?
     var lastEvent: String?
     var lastEventTime: UTCTime?
-    var legacyAccessRole: ConversationAccessRoleLegacy?
+    var legacyAccessRole: ConversationAccessRoleLegacyV0?
     var members: QualifiedConversationMembers?
-    var messageProtocol: ConversationMessageProtocol?
+    var messageProtocol: ConversationMessageProtocolV0?
     var messageTimer: TimeInterval?
     var mlsGroupID: String?
     var name: String?
-    var qualifiedID: QualifiedID?
+    var qualifiedID: QualifiedIDV0?
     var readReceiptMode: Int?
     var teamID: UUID?
-    var type: ConversationType?
+    var type: ConversationTypeV0?
 
     func toAPIModel() -> Conversation {
-        Conversation(
+        let access = access?.map { $0.toAPIModel() }
+        let accessRoles = accessRoles?.map { $0.toAPIModel() }
+        return Conversation(
             id: id,
-            qualifiedID: qualifiedID,
+            qualifiedID: qualifiedID?.toAPIModel(),
             teamID: teamID,
-            type: type,
-            messageProtocol: messageProtocol,
+            type: type?.toAPIModel(),
+            messageProtocol: messageProtocol?.toAPIModel(),
             mlsGroupID: mlsGroupID,
             cipherSuite: nil,
             epoch: epoch,
@@ -350,9 +352,9 @@ struct ConversationV0: Decodable, ToAPIModelConvertible {
             name: name,
             messageTimer: messageTimer,
             readReceiptMode: readReceiptMode,
-            access: access,
-            accessRoles: accessRoles,
-            legacyAccessRole: legacyAccessRole,
+            access: access.flatMap { Set($0) },
+            accessRoles: accessRoles.flatMap { Set($0) },
+            legacyAccessRole: legacyAccessRole?.toAPIModel(),
             lastEvent: lastEvent,
             lastEventTime: lastEventTime?.date
         )

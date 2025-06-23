@@ -38,6 +38,27 @@ public enum ConversationAccessRoleLegacy: String, Sendable {
 
     /// Any user, including services.
 
+    case nonActivated
+
+}
+
+enum ConversationAccessRoleLegacyV0: String, Sendable, Decodable, ToAPIModelConvertible {
+
+    case `private`
+    case team
+    case activated
     case nonActivated = "non_activated"
 
+    func toAPIModel() -> ConversationAccessRoleLegacy {
+        switch self {
+        case .private:
+            return .private
+        case .team:
+            return .team
+        case .activated:
+            return .activated
+        case .nonActivated:
+            return .nonActivated
+        }
+    }
 }

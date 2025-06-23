@@ -80,7 +80,7 @@ struct ResponseParser<Success> {
     ) -> ResponseParser<Success> {
         addParseBlock(code: code, prioritize: label != nil) { data in
             if let label {
-                guard let data, let failure = try? decoder.decode(FailureResponse.self, from: data),
+                guard let data, let failure = try? decoder.decode(FailureResponseV0.self, from: data),
                       failure.label == label else { return nil }
 
                 throw error
@@ -125,7 +125,7 @@ struct ResponseParser<Success> {
         }
 
         if let data {
-            let failure = try decoder.decode(FailureResponse.self, from: data)
+            let failure = try decoder.decode(FailureResponseV0.self, from: data)
             throw failure
         } else {
             throw ParsingError.noParseResult

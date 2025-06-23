@@ -24,12 +24,12 @@ struct ConversationAddPermissionEventDecoder {
         from container: KeyedDecodingContainer<ConversationEventCodingKeys>
     ) throws -> ConversationAddPermissionEvent {
         let conversationID = try container.decode(
-            ConversationID.self,
+            QualifiedIDV0.self,
             forKey: .conversationQualifiedID
         )
 
         let senderID = try container.decode(
-            UserID.self,
+            QualifiedIDV0.self,
             forKey: .senderQualifiedID
         )
 
@@ -39,15 +39,15 @@ struct ConversationAddPermissionEventDecoder {
         )
 
         return ConversationAddPermissionEvent(
-            conversationID: conversationID,
-            senderID: senderID,
-            addPermission: payload.addPermission
+            conversationID: conversationID.toAPIModel(),
+            senderID: senderID.toAPIModel(),
+            addPermission: payload.addPermission.toAPIModel()
         )
     }
 
     private struct Payload: Decodable {
 
-        let addPermission: ChannelPermission
+        let addPermission: ChannelPermissionV0
 
         enum CodingKeys: String, CodingKey {
             case addPermission = "add_permission"
