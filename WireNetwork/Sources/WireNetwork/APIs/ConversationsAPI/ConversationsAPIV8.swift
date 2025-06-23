@@ -185,7 +185,7 @@ private struct ChannelPermissionResponseV8: Decodable, ToAPIModelConvertible {
 
     struct Payload: Decodable {
 
-        let addPermission: ChannelPermissionV0
+        let addPermission: ChannelPermissionV8
 
         enum CodingKeys: String, CodingKey {
             case addPermission = "add_permission"
@@ -210,9 +210,9 @@ private struct ChannelPermissionResponseV8: Decodable, ToAPIModelConvertible {
 }
 
 struct ChannelPermissionParametersV8: Encodable {
-    let addPermission: ChannelPermissionV0
+    let addPermission: ChannelPermissionV8
 
-    init(from channelPermission: ChannelPermissionV0) {
+    init(from channelPermission: ChannelPermissionV8) {
         self.addPermission = channelPermission
     }
 
@@ -232,7 +232,7 @@ struct CreateGroupConversationParametersV8: Encodable {
     let readReceiptMode: Int?
     let conversationRole: String?
     let messageProtocol: String
-    let conversationGroupType: ConversationGroupTypeV0 // Introduced in v8
+    let conversationGroupType: ConversationGroupTypeV8 // Introduced in v8
 
     enum CodingKeys: String, CodingKey {
         case users
@@ -309,8 +309,8 @@ struct ConversationV8: Decodable, ToAPIModelConvertible {
     var readReceiptMode: Int?
     var teamID: UUID?
     var type: ConversationTypeV0?
-    var groupType: ConversationGroupTypeV0? // Introduced in v8
-    var addPermission: ChannelPermissionV0? // Introduced in v8
+    var groupType: ConversationGroupTypeV8? // Introduced in v8
+    var addPermission: ChannelPermissionV8? // Introduced in v8
 
     func toAPIModel() -> Conversation {
         let access = access?.map { $0.toAPIModel() }

@@ -47,7 +47,7 @@ struct ConversationAddPermissionEventDecoder {
 
     private struct Payload: Decodable {
 
-        let addPermission: ChannelPermissionV0
+        let addPermission: ChannelPermissionV8
 
         enum CodingKeys: String, CodingKey {
             case addPermission = "add_permission"
