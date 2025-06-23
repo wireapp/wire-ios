@@ -33,12 +33,12 @@ struct ConversationReceiptModeUpdateEventProcessor: ConversationReceiptModeUpdat
         let isEnabled = event.newReceiptMode == 1
 
         let sender = try await userRepository.fetchUser(
-            id: senderID.uuid,
+            id: senderID.id,
             domain: senderID.domain
         )
 
         let conversation = await conversationRepository.fetchConversation(
-            id: conversationID.uuid,
+            id: conversationID.id,
             domain: conversationID.domain
         )
 
@@ -61,13 +61,13 @@ struct ConversationReceiptModeUpdateEventProcessor: ConversationReceiptModeUpdat
 
         let systemMessageType: SystemMessageType = .readReceiptsStatus(
             isEnabled: isEnabled,
-            sender: (senderID.uuid, senderID.domain),
+            sender: (senderID.id, senderID.domain),
             date: .now
         )
 
         await messageRepository.addSystemMessage(
             messageType: systemMessageType,
-            conversationID: conversationID.uuid,
+            conversationID: conversationID.id,
             conversationDomain: conversationID.domain
         )
     }

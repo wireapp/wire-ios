@@ -23,22 +23,24 @@ import WireNetwork
 extension WireNetwork.MLSFeatureConfig {
 
     func toDomainModel() -> WireDataModel.Feature.MLS.Config {
-        .init(
-            protocolToggleUsers: Array(protocolToggleUsers),
-            defaultProtocol: defaultProtocol == .mls ? .mls : .proteus,
-            allowedCipherSuites: allowedCipherSuites.map {
-                .init(rawValue: $0.rawValue)!
-            },
-            defaultCipherSuite: .init(rawValue: defaultCipherSuite.rawValue)!,
-            supportedProtocols: Set(supportedProtocols.map {
-                switch $0 {
-                case .proteus:
-                    .proteus
-                case .mls:
-                    .mls
-                }
-            })
-        )
+        //TODO: FIXME
+        fatalError("fix me")
+//        .init(
+//            protocolToggleUsers: Array(protocolToggleUsers),
+//            defaultProtocol: defaultProtocol == .mls ? .mls : .proteus,
+//            allowedCipherSuites: allowedCipherSuites.map {
+//                .init(rawValue: $0.rawValue)!
+//            },
+//            defaultCipherSuite: .init(rawValue: defaultCipherSuite.rawValue)!,
+//            supportedProtocols: Set(supportedProtocols.map {
+//                switch $0 {
+//                case .proteus:
+//                    .proteus
+//                case .mls:
+//                    .mls
+//                }
+//            })
+//        )
     }
 
 }

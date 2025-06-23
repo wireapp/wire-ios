@@ -75,12 +75,12 @@ final class UserConnectionEventProcessorTests: XCTestCase {
             senderID: UUID(),
             receiverID: UUID(),
             receiverQualifiedID: WireNetwork.QualifiedID(
-                uuid: UUID(),
+                id: UUID(),
                 domain: "domain.com"
             ),
             conversationID: UUID(),
             qualifiedConversationID: WireNetwork.QualifiedID(
-                uuid: UUID(),
+                id: UUID(),
                 domain: "domain.com"
             ),
             lastUpdate: .now,

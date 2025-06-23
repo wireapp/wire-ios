@@ -143,15 +143,15 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
         let invocation = messageLocalStore.addMessageConfirmationInSenderIDSenderDomainDate_Invocations[0]
         XCTAssertEqual(invocation.confirmation, confirmation)
         XCTAssertEqual(invocation.conversation, conversation)
-        XCTAssertEqual(invocation.senderID, Scaffolding.userID.uuid)
+        XCTAssertEqual(invocation.senderID, Scaffolding.userID.id)
         XCTAssertEqual(invocation.senderDomain, Scaffolding.userID.domain)
         XCTAssertEqual(invocation.date, Scaffolding.eventDate)
     }
 
     private enum Scaffolding {
         static let eventDate = Date()
-        static let conversationID = ConversationID(uuid: .mockID1, domain: "domain.com")
-        static let userID = ConversationID(uuid: .mockID1, domain: "domain.com")
+        static let conversationID = ConversationID(id: .mockID1, domain: "domain.com")
+        static let userID = ConversationID(id: .mockID1, domain: "domain.com")
         static let base64EncodedString = "CiQ5ZTU2NTQwOS0xODZiLTRlN2YtYTE4NC05NzE4MGE0MDAwMDQSDAoKRXZlcnl0aGluZw=="
     }
 }

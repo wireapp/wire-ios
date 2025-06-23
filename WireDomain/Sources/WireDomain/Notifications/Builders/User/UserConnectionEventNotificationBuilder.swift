@@ -45,7 +45,7 @@ struct UserConnectionEventNotificationBuilder {
         if let qualifiedConversationID = connection.qualifiedConversationID {
             qualifiedID = qualifiedConversationID
         } else if let conversationID = connection.conversationID {
-            qualifiedID = .init(uuid: conversationID, domain: "")
+            qualifiedID = .init(id: conversationID, domain: "")
         }
 
         let isPendingConnection = event.connection.status == .pending
@@ -56,7 +56,7 @@ struct UserConnectionEventNotificationBuilder {
         let username: String? = if let receiverQualifiedID = connection.receiverQualifiedID {
             await context.username(
                 for: context.getUser(
-                    id: receiverQualifiedID.uuid,
+                    id: receiverQualifiedID.id,
                     domain: receiverQualifiedID.domain
                 )
             )
@@ -158,7 +158,7 @@ struct UserConnectionEventNotificationBuilder {
 
         userInfo[NotificationUserInfoKey.selfUserID] = selfUserID.uuidString
         userInfo[NotificationUserInfoKey.senderID] = senderID?.uuidString
-        userInfo[NotificationUserInfoKey.conversationID] = conversationID?.uuid.uuidString
+        userInfo[NotificationUserInfoKey.conversationID] = conversationID?.id.uuidString
 
         return userInfo
     }
@@ -181,7 +181,7 @@ extension UserConnectionEventNotificationBuilder {
             conversationID: ConversationID
         ) async -> ZMConversation {
             await conversationLocalStore.fetchOrCreateConversation(
-                id: conversationID.uuid,
+                id: conversationID.id,
                 domain: conversationID.domain
             )
         }

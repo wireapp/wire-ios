@@ -57,7 +57,7 @@ final class UserDeleteEventProcessorTests: XCTestCase {
     private enum Scaffolding {
         static let event = UserDeleteEvent(
             qualifiedUserID: QualifiedID(
-                uuid: UUID(),
+                id: UUID(),
                 domain: "domain.com"
             ),
             time: .now

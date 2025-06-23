@@ -47,13 +47,13 @@ struct ConversationMemberJoinEventDecoder {
             conversationID: conversationID.toAPIModel(),
             senderID: senderID.toAPIModel(),
             timestamp: timestamp.date,
-            members: payload.users
+            members: payload.users.map { $0.toAPIModel() }
         )
     }
 
     private struct Payload: Decodable {
 
-        let users: [Conversation.Member]
+        let users: [Conversation.MemberV0]
 
     }
 

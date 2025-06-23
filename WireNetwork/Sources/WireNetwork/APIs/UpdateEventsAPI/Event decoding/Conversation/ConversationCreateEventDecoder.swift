@@ -180,12 +180,12 @@ struct ConversationCreateEventDecoder {
 
         func toAPIModel() -> Conversation.Member {
             Conversation.Member(
-                qualifiedID: qualifiedID,
+                qualifiedID: qualifiedID?.toAPIModel(),
                 id: id,
-                qualifiedTarget: qualifiedTarget,
+                qualifiedTarget: qualifiedTarget?.toAPIModel(),
                 target: target,
                 conversationRole: conversationRole,
-                service: service,
+                service: service?.toAPIModel(),
                 archived: archived,
                 archivedReference: archivedReference?.date,
                 hidden: hidden,

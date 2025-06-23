@@ -379,8 +379,8 @@ final class ConversationEventDecodingTests: XCTestCase {
                 members: Conversation.Members(
                     others: [
                         Conversation.Member(
-                            qualifiedID: QualifiedIDV0(
-                                uuid: UUID(uuidString: "2accd221-c35e-4806-a3dd-30718cff5230")!,
+                            qualifiedID: QualifiedID(
+                                id: UUID(uuidString: "2accd221-c35e-4806-a3dd-30718cff5230")!,
                                 domain: "example.com"
                             ),
                             id: UUID(uuidString: "2accd221-c35e-4806-a3dd-30718cff5230")!,
@@ -397,15 +397,15 @@ final class ConversationEventDecodingTests: XCTestCase {
                         )
                     ],
                     selfMember: Conversation.Member(
-                        qualifiedID: QualifiedIDV0(
-                            uuid: UUID(uuidString: "04162d93-2e13-4787-87b5-60ac601fb3b3")!,
+                        qualifiedID: QualifiedID(
+                            id: UUID(uuidString: "04162d93-2e13-4787-87b5-60ac601fb3b3")!,
                             domain: "example.com"
                         ),
                         id: UUID(uuidString: "04162d93-2e13-4787-87b5-60ac601fb3b3")!,
                         qualifiedTarget: nil,
                         target: nil,
                         conversationRole: "admin",
-                        service: ServiceV0(
+                        service: Service(
                             id: UUID(uuidString: "a728282b-795d-4087-a1b5-c79ca0b56cd0")!,
                             provider: UUID(uuidString: "69322b27-4fb8-41b6-add4-7b4ecc9e0c73")!
                         ),
@@ -440,8 +440,8 @@ final class ConversationEventDecodingTests: XCTestCase {
             timestamp: timestamp,
             members: [
                 Conversation.Member(
-                    qualifiedID: QualifiedIDV0(
-                        uuid: UUID(uuidString: "2accd221-c35e-4806-a3dd-30718cff5230")!,
+                    qualifiedID: QualifiedID(
+                        id: UUID(uuidString: "2accd221-c35e-4806-a3dd-30718cff5230")!,
                         domain: "example.com"
                     ),
                     id: UUID(uuidString: "2accd221-c35e-4806-a3dd-30718cff5230")!,

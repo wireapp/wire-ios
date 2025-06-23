@@ -99,8 +99,8 @@ final class ConversationTypingEventProcessorTests: XCTestCase {
         static let id = UUID()
         static let domain = "domain.com"
         static let event = ConversationTypingEvent(
-            conversationID: ConversationID(uuid: id, domain: domain),
-            senderID: UserID(uuid: id, domain: domain),
+            conversationID: ConversationID(id: id, domain: domain),
+            senderID: UserID(id: id, domain: domain),
             isTyping: true
         )
     }

@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 /// Errors originating from `PushChannelV2API`.
 public enum PushChannelV2APIError: Error {
 

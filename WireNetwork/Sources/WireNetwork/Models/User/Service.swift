@@ -42,3 +42,9 @@ struct ServiceV0: Equatable, Sendable, Decodable {
     let provider: UUID
 
 }
+
+extension ServiceV0: ToAPIModelConvertible {
+    func toAPIModel() -> Service {
+        Service(id: id, provider: provider)
+    }
+}
