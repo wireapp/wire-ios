@@ -209,7 +209,7 @@ final class ConversationsAPITests: XCTestCase {
 
         let expectedIDs: [QualifiedID] = [
             QualifiedID(
-                uuid: try XCTUnwrap(UUID(uuidString: "14c3f0ff-1a46-4e66-8845-ae084f09c483")),
+                id: try XCTUnwrap(UUID(uuidString: "14c3f0ff-1a46-4e66-8845-ae084f09c483")),
                 domain: "staging.zinfra.io"
             )
         ]
@@ -254,7 +254,7 @@ final class ConversationsAPITests: XCTestCase {
         let apiVersions = APIVersion.allCases
 
         let qualifiedID = QualifiedID(
-            uuid: try XCTUnwrap(UUID(uuidString: "213248a1-5499-418f-8173-5010d1c1e506")),
+            id: try XCTUnwrap(UUID(uuidString: "213248a1-5499-418f-8173-5010d1c1e506")),
             domain: "wire.com"
         )
 

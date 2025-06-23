@@ -36,7 +36,7 @@ public struct FailureResponse: Error {
 
 }
 
-struct FailureResponseV0: Error, Decodable {
+struct FailureResponseV0: Error, Codable {
    let code: Int
    let label: String
    let message: String

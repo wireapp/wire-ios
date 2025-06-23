@@ -333,12 +333,12 @@ final class ConversationEventDecodingTests: XCTestCase {
         }
 
         static let conversationID = ConversationID(
-            uuid: UUID(uuidString: "a644fa88-2d83-406b-8a85-d4fd8dedad6b")!,
+            id: UUID(uuidString: "a644fa88-2d83-406b-8a85-d4fd8dedad6b")!,
             domain: "example.com"
         )
 
         static let senderID = UserID(
-            uuid: UUID(uuidString: "f55fe9b0-a0cc-4b11-944b-125c834d9b6a")!,
+            id: UUID(uuidString: "f55fe9b0-a0cc-4b11-944b-125c834d9b6a")!,
             domain: "example.com"
         )
 
@@ -366,7 +366,7 @@ final class ConversationEventDecodingTests: XCTestCase {
             senderID: senderID,
             timestamp: timestamp,
             conversation: Conversation(
-                id: conversationID.uuid,
+                id: conversationID.id,
                 qualifiedID: conversationID,
                 teamID: UUID(uuidString: "acfb3399-5be5-4cee-b896-1230576c94a2")!,
                 type: .group,
@@ -379,7 +379,7 @@ final class ConversationEventDecodingTests: XCTestCase {
                 members: Conversation.Members(
                     others: [
                         Conversation.Member(
-                            qualifiedID: QualifiedID(
+                            qualifiedID: QualifiedIDV0(
                                 uuid: UUID(uuidString: "2accd221-c35e-4806-a3dd-30718cff5230")!,
                                 domain: "example.com"
                             ),
@@ -397,7 +397,7 @@ final class ConversationEventDecodingTests: XCTestCase {
                         )
                     ],
                     selfMember: Conversation.Member(
-                        qualifiedID: QualifiedID(
+                        qualifiedID: QualifiedIDV0(
                             uuid: UUID(uuidString: "04162d93-2e13-4787-87b5-60ac601fb3b3")!,
                             domain: "example.com"
                         ),
@@ -405,7 +405,7 @@ final class ConversationEventDecodingTests: XCTestCase {
                         qualifiedTarget: nil,
                         target: nil,
                         conversationRole: "admin",
-                        service: Service(
+                        service: ServiceV0(
                             id: UUID(uuidString: "a728282b-795d-4087-a1b5-c79ca0b56cd0")!,
                             provider: UUID(uuidString: "69322b27-4fb8-41b6-add4-7b4ecc9e0c73")!
                         ),
@@ -440,7 +440,7 @@ final class ConversationEventDecodingTests: XCTestCase {
             timestamp: timestamp,
             members: [
                 Conversation.Member(
-                    qualifiedID: QualifiedID(
+                    qualifiedID: QualifiedIDV0(
                         uuid: UUID(uuidString: "2accd221-c35e-4806-a3dd-30718cff5230")!,
                         domain: "example.com"
                     ),
