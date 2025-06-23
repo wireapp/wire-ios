@@ -16,13 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+
 import SwiftUI
 import WireTestingPackage
 import XCTest
+@testable import WireConversationsUI
+import WireConversationsUIBindings
 
-import WireConversationsUI
-
-class WireConversationChannelCreationFormTests: XCTestCase {
+class WireChannelUpgradeBannerTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
@@ -37,7 +38,7 @@ class WireConversationChannelCreationFormTests: XCTestCase {
 
     @MainActor
     func testColorSchemeVariantsEmptyState() {
-        let view = WireConversationChannelCreationForm(
+        let view = WireChannelUpgradeBannerView(
             viewModel: WireConversationChannelCreationFormViewModel(
                 channelName: "",
                 isUserPremium: true
@@ -56,7 +57,7 @@ class WireConversationChannelCreationFormTests: XCTestCase {
 
     @MainActor
     func testDynamicTypeVariantsEmptyState() {
-        let view = WireConversationChannelCreationForm(
+        let view = WireChannelUpgradeBannerView(
             viewModel: WireConversationChannelCreationFormViewModel(
                 channelName: "",
                 isUserPremium: true
