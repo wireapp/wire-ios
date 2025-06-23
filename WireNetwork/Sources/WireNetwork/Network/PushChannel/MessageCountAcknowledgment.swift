@@ -17,7 +17,7 @@
 //
 import Foundation
 
-/// Payload of acknowledgment of messageCount for async stream
+/// Payload of acknowledgment of messageCount for consumable notifications sync system
 struct MessageCountAcknowledgment: Encodable {
     let type: AcknowledgmentType = .messageCount
 }
