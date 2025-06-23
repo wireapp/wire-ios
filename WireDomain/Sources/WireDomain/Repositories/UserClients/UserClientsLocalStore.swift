@@ -19,19 +19,13 @@
 import WireDataModel
 import WireLogging
 
-public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
+public struct UserClientsLocalStore: UserClientsLocalStoreProtocol {
 
     // MARK: - Properties
 
-    private let context: NSManagedObjectContext
+    let context: NSManagedObjectContext
 
-    // MARK: - Object lifecycle
-
-    init(
-        context: NSManagedObjectContext
-    ) {
-        self.context = context
-    }
+    // MARK: - Methods
 
     public func fetchSelfClient() async -> UserClient? {
         await context.perform { [context] in
@@ -172,8 +166,10 @@ public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
                 }
             }
 
-            selfUser.selfClient()?.addNewClientToIgnored(localClient)
-            selfUser.selfClient()?.updateSecurityLevelAfterDiscovering(Set([localClient]))
+            if isNewClient {
+                selfUser.selfClient()?.addNewClientToIgnored(localClient)
+                selfUser.selfClient()?.updateSecurityLevelAfterDiscovering(Set([localClient]))
+            }
         }
     }
 
