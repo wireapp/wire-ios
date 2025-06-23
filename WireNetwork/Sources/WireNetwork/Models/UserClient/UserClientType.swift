@@ -40,7 +40,6 @@ public enum UserClientType: String, Sendable {
 
 }
 
-
 enum UserClientTypeV0: String, Sendable, Codable, ToAPIModelConvertible {
     case permanent
     case temporary
@@ -57,4 +56,3 @@ enum UserClientTypeV0: String, Sendable, Codable, ToAPIModelConvertible {
         }
     }
 }
-

@@ -37,14 +37,8 @@ public struct Service: Equatable, Sendable {
 
 }
 
-
 struct ServiceV0: Equatable, Sendable, Decodable {
     let id: UUID
     let provider: UUID
-
-    init(id: UUID, provider: UUID) {
-        self.id = id
-        self.provider = provider
-    }
 
 }

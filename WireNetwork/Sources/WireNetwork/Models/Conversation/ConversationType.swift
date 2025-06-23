@@ -41,7 +41,6 @@ public enum ConversationType: Int, Sendable {
 
 }
 
-
 enum ConversationTypeV0: Int, Sendable, Decodable, ToAPIModelConvertible {
 
     case group = 0

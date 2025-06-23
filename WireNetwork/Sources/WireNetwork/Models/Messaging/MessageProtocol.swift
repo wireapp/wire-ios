@@ -33,7 +33,6 @@ public enum MessageProtocol: String, Sendable {
 
 }
 
-
 enum MessageProtocolV0: String, Sendable, Codable {
 
     case proteus

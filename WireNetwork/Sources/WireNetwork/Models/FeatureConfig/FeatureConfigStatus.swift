@@ -48,4 +48,3 @@ enum FeatureConfigStatusV0: String, Sendable, Decodable, ToAPIModelConvertible {
         }
     }
 }
-

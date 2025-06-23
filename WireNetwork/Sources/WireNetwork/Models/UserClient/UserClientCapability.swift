@@ -31,7 +31,6 @@ public enum UserClientCapability: String, Sendable {
 
 }
 
-
 enum UserClientCapabilityV0: String, Codable, Sendable, ToAPIModelConvertible {
     case legalholdConsent = "legalhold-implicit-consent"
     case consumableNotifications = "consumable-notifications"
@@ -45,4 +44,3 @@ enum UserClientCapabilityV0: String, Codable, Sendable, ToAPIModelConvertible {
         }
     }
 }
-

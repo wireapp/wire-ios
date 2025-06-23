@@ -73,21 +73,10 @@ struct UserAssetV0: Equatable, Sendable, Decodable, ToAPIModelConvertible {
     let size: UserAssetSizeV0
     let type: UserAssetTypeV0
 
-    init(
-        key: String,
-        size: UserAssetSizeV0,
-        type: UserAssetTypeV0
-    ) {
-        self.key = key
-        self.size = size
-        self.type = type
-    }
-
     func toAPIModel() -> UserAsset {
         UserAsset(key: key, size: size.toAPIModel(), type: type.toAPIModel())
     }
 }
-
 
 enum UserAssetSizeV0: String, Equatable, Sendable, Decodable, ToAPIModelConvertible {
 
