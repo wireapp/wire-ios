@@ -35,3 +35,15 @@ public struct FailureResponse: Error {
     public let message: String
 
 }
+
+struct FailureResponseV0: Error, Decodable {
+   let code: Int
+   let label: String
+   let message: String
+}
+
+extension FailureResponseV0: ToAPIModelConvertible {
+    func toAPIModel() -> FailureResponse {
+        .init(code: code, label: label, message: message)
+    }
+}

@@ -66,3 +66,53 @@ public struct UserAsset: Equatable, Sendable {
         self.type = type
     }
 }
+
+struct UserAssetV0: Equatable, Sendable, Decodable, ToAPIModelConvertible {
+
+    let key: String
+    let size: UserAssetSizeV0
+    let type: UserAssetTypeV0
+
+    init(
+       key: String,
+       size: UserAssetSizeV0,
+       type: UserAssetTypeV0
+   ) {
+       self.key = key
+       self.size = size
+       self.type = type
+   }
+    
+    func toAPIModel() -> UserAsset {
+        return UserAsset(key: key, size: size.toAPIModel(), type: type.toAPIModel())
+    }
+}
+
+
+enum UserAssetSizeV0: String, Equatable, Sendable, Decodable, ToAPIModelConvertible {
+
+    case preview
+    case complete
+    
+    func toAPIModel() -> UserAssetSize {
+        switch self {
+            
+        case .preview:
+           return .preview
+        case .complete:
+            return .complete
+        }
+    }
+}
+
+enum UserAssetTypeV0: String, Equatable, Sendable, Decodable, ToAPIModelConvertible {
+
+    case image
+    
+    func toAPIModel() -> UserAssetType {
+        switch self {
+        case .image:
+            return .image
+        }
+    }
+}

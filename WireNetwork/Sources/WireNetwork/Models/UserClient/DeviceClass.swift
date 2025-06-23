@@ -39,3 +39,23 @@ public enum DeviceClass: String, Sendable {
     case legalhold
 
 }
+
+enum DeviceClassV0: String, Sendable, Codable, ToAPIModelConvertible {
+    case phone
+    case tablet
+    case desktop
+    case legalhold
+    
+    func toAPIModel() -> DeviceClass {
+        switch self {
+        case .phone:
+            return .phone
+        case .tablet:
+            return .tablet
+        case .desktop:
+            return .desktop
+        case .legalhold:
+            return .legalhold
+        }
+    }
+}

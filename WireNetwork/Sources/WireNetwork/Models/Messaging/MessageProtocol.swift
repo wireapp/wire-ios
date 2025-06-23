@@ -32,3 +32,23 @@ public enum MessageProtocol: String, Sendable {
     case mls
 
 }
+
+
+enum MessageProtocolV0: String, Sendable, Decodable {
+
+    case proteus
+    case mls
+
+}
+
+extension MessageProtocolV0: ToAPIModelConvertible {
+
+    func toAPIModel() -> MessageProtocol {
+        switch self {
+        case .proteus:
+            return .proteus
+        case .mls:
+            return .mls
+        }
+    }
+}

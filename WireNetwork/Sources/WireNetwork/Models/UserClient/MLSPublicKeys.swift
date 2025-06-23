@@ -42,16 +42,6 @@ public struct MLSPublicKeys: Equatable, Sendable {
 
     public let p512: String?
 
-    enum CodingKeys: String, CodingKey {
-
-        case ed25519
-        case ed448
-        case p256 = "ecdsa_secp256r1_sha256"
-        case p384 = "ecdsa_secp384r1_sha384"
-        case p512 = "ecdsa_secp521r1_sha512"
-
-    }
-
     public init(
         ed25519: String? = nil,
         ed448: String? = nil,
@@ -65,5 +55,50 @@ public struct MLSPublicKeys: Equatable, Sendable {
         self.p384 = p384
         self.p512 = p512
     }
+}
 
+struct MLSPublicKeysV0: Equatable, Sendable, Codable {
+
+    let ed25519: String?
+    let ed448: String?
+    let p256: String?
+    let p384: String?
+    let p512: String?
+
+    enum CodingKeys: String, CodingKey {
+
+        case ed25519
+        case ed448
+        case p256 = "ecdsa_secp256r1_sha256"
+        case p384 = "ecdsa_secp384r1_sha384"
+        case p512 = "ecdsa_secp521r1_sha512"
+
+    }
+
+    init(
+        ed25519: String? = nil,
+        ed448: String? = nil,
+        p256: String? = nil,
+        p384: String? = nil,
+        p512: String? = nil
+    ) {
+        self.ed25519 = ed25519
+        self.ed448 = ed448
+        self.p256 = p256
+        self.p384 = p384
+        self.p512 = p512
+    }
+}
+
+extension MLSPublicKeysV0: ToAPIModelConvertible {
+    
+    func toAPIModel() -> MLSPublicKeys {
+        return MLSPublicKeys(
+            ed25519: ed25519,
+            ed448: ed448,
+            p256: p256,
+            p384: p384,
+            p512: p512
+        )
+    }
 }

@@ -47,7 +47,7 @@ struct QualifiedIDV0: Hashable, Equatable, Sendable, Codable, ToAPIModelConverti
 }
 
 extension QualifiedID: ToNetworkConvertible {
-    func toNetworkModel() ->QualifiedIDV0 {
+    func toNetworkModel() -> QualifiedIDV0 {
         QualifiedIDV0(uuid: id, domain: domain)
     }
 }

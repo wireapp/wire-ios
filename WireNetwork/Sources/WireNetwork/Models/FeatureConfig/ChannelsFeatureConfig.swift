@@ -46,9 +46,27 @@ public struct ChannelsFeatureConfig: Equatable, Sendable {
 public enum ChannelsPermision: String, Sendable {
 
     /// Member, Admin, Owner
-    case teamMembers = "team-members"
+    case teamMembers
     /// Partner (a.k.a. external), Member, Admin, Owner
     case everyone
     /// Admin, Owner
     case admins
+}
+
+enum ChannelsPermisionV0: String, Sendable, Decodable, ToAPIModelConvertible {
+
+    case teamMembers = "team-members"
+    case everyone
+    case admins
+    
+    func toAPIModel() -> ChannelsPermision {
+        switch self {
+        case .teamMembers:
+            return .teamMembers
+        case .everyone:
+            return .everyone
+        case .admins:
+            return .admins
+        }
+    }
 }

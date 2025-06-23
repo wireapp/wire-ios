@@ -39,3 +39,22 @@ public enum UserClientType: String, Sendable {
     case legalhold
 
 }
+
+
+enum UserClientTypeV0: String, Sendable, Codable, ToAPIModelConvertible {
+    case permanent
+    case temporary
+    case legalhold
+    
+    func toAPIModel() -> UserClientType {
+        switch self {
+        case .permanent:
+            return .permanent
+        case .temporary:
+            return .temporary
+        case .legalhold:
+            return .legalhold
+        }
+    }
+}
+

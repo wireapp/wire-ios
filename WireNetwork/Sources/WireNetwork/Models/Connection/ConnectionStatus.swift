@@ -46,5 +46,37 @@ public enum ConnectionStatus: String, Equatable, Sendable {
 
     /// The connection is missing legal hold consent
 
+    case missingLegalholdConsent
+}
+
+enum ConnectionStatusV0: String, Equatable, Sendable, Decodable {
+
+    case accepted
+    case blocked
+    case pending
+    case ignored
+    case sent
+    case cancelled
     case missingLegalholdConsent = "missing-legalhold-consent"
+}
+
+extension ConnectionStatusV0: ToAPIModelConvertible {
+    func toAPIModel() -> ConnectionStatus {
+        switch self {
+        case .accepted:
+            return .accepted
+        case .blocked:
+            return .blocked
+        case .pending:
+            return .pending
+        case .ignored:
+            return .ignored
+        case .sent:
+            return .sent
+        case .cancelled:
+            return .cancelled
+        case .missingLegalholdConsent:
+            return .missingLegalholdConsent
+        }
+    }
 }

@@ -112,8 +112,8 @@ struct FeatureConfigsResponseAPIV8: Decodable, ToAPIModelConvertible {
 
         let channelsConfig = ChannelsFeatureConfig(
             status: channels.status, // this is added in v8
-            allowedToCreateChannels: channels.config.allowedToCreateChannels,
-            allowedToOpenChannels: channels.config.allowedToOpenChannels
+            allowedToCreateChannels: channels.config.allowedToCreateChannels.toAPIModel(),
+            allowedToOpenChannels: channels.config.allowedToOpenChannels.toAPIModel()
         )
         featureConfigs.append(.channels(channelsConfig))
 
@@ -130,18 +130,18 @@ extension FeatureConfigResponse {
             case allowedToOpenChannels = "allowed_to_open_channels"
         }
 
-        public let allowedToCreateChannels: ChannelsPermision
-        public let allowedToOpenChannels: ChannelsPermision
+        let allowedToCreateChannels: ChannelsPermisionV0
+        let allowedToOpenChannels: ChannelsPermisionV0
 
-        public init(from decoder: any Decoder) throws {
+        init(from decoder: any Decoder) throws {
             let container: KeyedDecodingContainer<CodingKeys> = try decoder
                 .container(keyedBy: CodingKeys.self)
 
             self.allowedToCreateChannels = try container.decode(
-                ChannelsPermision.self,
+                ChannelsPermisionV0.self,
                 forKey: .allowedToCreateChannels
             )
-            self.allowedToOpenChannels = try container.decode(ChannelsPermision.self, forKey: .allowedToOpenChannels)
+            self.allowedToOpenChannels = try container.decode(ChannelsPermisionV0.self, forKey: .allowedToOpenChannels)
         }
     }
 }
