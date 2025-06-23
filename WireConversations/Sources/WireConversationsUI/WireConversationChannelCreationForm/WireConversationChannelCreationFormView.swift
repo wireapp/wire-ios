@@ -49,7 +49,7 @@ public struct WireConversationChannelCreationForm: View {
         .overlay {
             ZStack {
                 if viewModel.showUpgradeBanner {
-                    channelUpgradeBanner
+                    WireChannelUpgradeBannerView(viewModel: viewModel)
                         .transition(.opacity)
                 }
             }
@@ -67,74 +67,6 @@ public struct WireConversationChannelCreationForm: View {
                     Text(L10n.Localizable.Conversation.CreationForm.ChannelName.label)
                 }
             )
-        }
-    }
-
-    var channelUpgradeBanner: some View {
-        ZStack {
-            Rectangle()
-                .foregroundColor(Color.black.opacity(0.6))
-                .edgesIgnoringSafeArea(.all)
-
-            VStack(alignment: .leading, spacing: 15) {
-                HStack {
-                    Text(L10n.Localizable.Conversation.CreationForm.ChannelHistory.UpgradeBanner.title)
-                        .wireTextStyle(.buttonSmall)
-                        .foregroundStyle(Color.white)
-                        .bold()
-                        .accessibilityLabel(Text(
-                            L10n.Localizable.Conversation.CreationForm.ChannelHistory.UpgradeBanner
-                                .title
-                        ))
-
-                    Spacer()
-
-                    CloseButton(
-                        action: { viewModel.hideUpgradeBanner() },
-                        foregroundColor: SemanticColors.Label.textWhite,
-                        accessibilityLabel: L10n.Accessibility.Conversation.CreationForm.ChannelHistory.UpgradeBanner
-                            .close
-                    )
-                }
-
-                HStack {
-                    Text(L10n.Localizable.Conversation.CreationForm.ChannelHistory.UpgradeBanner.message)
-                        .foregroundStyle(.white)
-                        .accessibilityLabel(
-                            L10n.Localizable.Conversation.CreationForm.ChannelHistory.UpgradeBanner
-                                .message
-                        )
-
-                    Spacer()
-                        .frame(width: 80)
-                }
-
-                Link(
-                    L10n.Localizable.Conversation.CreationForm.ChannelHistory.UpgradeBanner.button,
-                    destination: viewModel.upgradeBannerURL()
-                )
-                .lineLimit(1)
-                .padding(8)
-                .background(Color.white.opacity(0.2))
-                .foregroundStyle(Color.white)
-                .wireTextStyle(.buttonSmall)
-                .overlay {
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(.black)
-                }
-                .clipShape(.rect(cornerRadius: 12))
-
-            }
-            .padding(.all, 15)
-            .background(alignment: .top) {
-                Image("wire_upgrade_banner", bundle: .resources)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-            }
-            .cornerRadius(10)
-            .clipped()
-            .frame(maxWidth: .infinity)
-            .padding([.leading, .trailing], 30)
         }
     }
 
@@ -243,7 +175,7 @@ public struct WireConversationChannelCreationForm: View {
     WireConversationChannelCreationForm(
         viewModel: WireConversationChannelCreationFormViewModel(
             channelName: "",
-            isUserPremium: true
+            isUserPremium: false
         ) { _ in }
     )
 }
