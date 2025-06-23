@@ -126,7 +126,7 @@ struct ResponseParser<Success> {
 
         if let data {
             let failure = try decoder.decode(FailureResponseV0.self, from: data)
-            throw failure
+            throw failure.toAPIModel()
         } else {
             throw ParsingError.noParseResult
         }

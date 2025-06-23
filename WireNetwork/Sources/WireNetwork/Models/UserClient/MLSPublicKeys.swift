@@ -91,9 +91,9 @@ struct MLSPublicKeysV0: Equatable, Sendable, Codable {
 }
 
 extension MLSPublicKeysV0: ToAPIModelConvertible {
-    
+
     func toAPIModel() -> MLSPublicKeys {
-        return MLSPublicKeys(
+        MLSPublicKeys(
             ed25519: ed25519,
             ed448: ed448,
             p256: p256,

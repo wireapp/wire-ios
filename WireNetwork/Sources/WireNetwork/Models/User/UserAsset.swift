@@ -74,17 +74,17 @@ struct UserAssetV0: Equatable, Sendable, Decodable, ToAPIModelConvertible {
     let type: UserAssetTypeV0
 
     init(
-       key: String,
-       size: UserAssetSizeV0,
-       type: UserAssetTypeV0
-   ) {
-       self.key = key
-       self.size = size
-       self.type = type
-   }
-    
+        key: String,
+        size: UserAssetSizeV0,
+        type: UserAssetTypeV0
+    ) {
+        self.key = key
+        self.size = size
+        self.type = type
+    }
+
     func toAPIModel() -> UserAsset {
-        return UserAsset(key: key, size: size.toAPIModel(), type: type.toAPIModel())
+        UserAsset(key: key, size: size.toAPIModel(), type: type.toAPIModel())
     }
 }
 
@@ -93,14 +93,14 @@ enum UserAssetSizeV0: String, Equatable, Sendable, Decodable, ToAPIModelConverti
 
     case preview
     case complete
-    
+
     func toAPIModel() -> UserAssetSize {
         switch self {
-            
+
         case .preview:
-           return .preview
+            .preview
         case .complete:
-            return .complete
+            .complete
         }
     }
 }
@@ -108,11 +108,11 @@ enum UserAssetSizeV0: String, Equatable, Sendable, Decodable, ToAPIModelConverti
 enum UserAssetTypeV0: String, Equatable, Sendable, Decodable, ToAPIModelConvertible {
 
     case image
-    
+
     func toAPIModel() -> UserAssetType {
         switch self {
         case .image:
-            return .image
+            .image
         }
     }
 }

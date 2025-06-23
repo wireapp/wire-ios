@@ -44,7 +44,7 @@ struct ConversationCreateEventDecoder {
         )
         let accessRoles = payload.accessRoles?.map { $0.toAPIModel() }
         let access = payload.access?.map { $0.toAPIModel() }
-        
+
         let conversation = Conversation(
             id: payload.id,
             qualifiedID: payload.qualifiedID?.toAPIModel(),
@@ -179,22 +179,20 @@ struct ConversationCreateEventDecoder {
         }
 
         func toAPIModel() -> Conversation.Member {
-            // TODO: fix me
-            Conversation.Member()
-//            Conversation.Member(
-//                qualifiedID: qualifiedID?.toAPIModel(),
-//                id: id,
-//                qualifiedTarget: qualifiedTarget?.toAPIModel(),
-//                target: target,
-//                conversationRole: conversationRole,
-//                service: service,
-//                archived: archived,
-//                archivedReference: archivedReference?.date,
-//                hidden: hidden,
-//                hiddenReference: hiddenReference,
-//                mutedStatus: mutedStatus,
-//                mutedReference: mutedReference?.date
-//            )
+            Conversation.Member(
+                qualifiedID: qualifiedID,
+                id: id,
+                qualifiedTarget: qualifiedTarget,
+                target: target,
+                conversationRole: conversationRole,
+                service: service,
+                archived: archived,
+                archivedReference: archivedReference?.date,
+                hidden: hidden,
+                hiddenReference: hiddenReference,
+                mutedStatus: mutedStatus,
+                mutedReference: mutedReference?.date
+            )
         }
 
     }

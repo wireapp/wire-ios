@@ -52,13 +52,13 @@ enum ConversationTypeV0: Int, Sendable, Decodable, ToAPIModelConvertible {
     func toAPIModel() -> ConversationType {
         switch self {
         case .group:
-            return .group
+            .group
         case .self:
-            return .self
+            .self
         case .oneOnOne:
-            return .oneOnOne
+            .oneOnOne
         case .connection:
-            return .connection
+            .connection
         }
     }
 }

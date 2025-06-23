@@ -52,13 +52,13 @@ enum ConversationAccessRoleLegacyV0: String, Sendable, Decodable, ToAPIModelConv
     func toAPIModel() -> ConversationAccessRoleLegacy {
         switch self {
         case .private:
-            return .private
+            .private
         case .team:
-            return .team
+            .team
         case .activated:
-            return .activated
+            .activated
         case .nonActivated:
-            return .nonActivated
+            .nonActivated
         }
     }
 }

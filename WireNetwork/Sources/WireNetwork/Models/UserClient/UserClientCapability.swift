@@ -39,9 +39,9 @@ enum UserClientCapabilityV0: String, Codable, Sendable, ToAPIModelConvertible {
     func toAPIModel() -> UserClientCapability {
         switch self {
         case .legalholdConsent:
-            return .legalholdConsent
+            .legalholdConsent
         case .consumableNotifications:
-            return .consumableNotifications
+            .consumableNotifications
         }
     }
 }

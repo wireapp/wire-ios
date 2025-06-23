@@ -37,9 +37,9 @@ public struct FailureResponse: Error {
 }
 
 struct FailureResponseV0: Error, Codable {
-   let code: Int
-   let label: String
-   let message: String
+    let code: Int
+    let label: String
+    let message: String
 }
 
 extension FailureResponseV0: ToAPIModelConvertible {

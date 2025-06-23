@@ -51,7 +51,8 @@ class UsersAPIV0: UsersAPI, VersionedAPI {
     }
 
     func getUsers(userIDs: [UserID]) async throws -> UserList {
-        let body = try JSONEncoder.defaultEncoder.encode(ListUsersRequestV0(qualifiedIDs: userIDs.map { $0.toNetworkModel() }))
+        let body = try JSONEncoder.defaultEncoder
+            .encode(ListUsersRequestV0(qualifiedIDs: userIDs.map { $0.toNetworkModel() }))
         let path = "\(pathPrefix)/list-users"
 
         let request = try URLRequestBuilder(path: path)

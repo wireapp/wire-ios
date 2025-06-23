@@ -43,7 +43,8 @@ class UsersAPIV4: UsersAPIV3 {
     }
 
     override func getUsers(userIDs: [UserID]) async throws -> UserList {
-        let body = try JSONEncoder.defaultEncoder.encode(ListUsersRequestV0(qualifiedIDs: userIDs.map({ $0.toNetworkModel() })))
+        let body = try JSONEncoder.defaultEncoder
+            .encode(ListUsersRequestV0(qualifiedIDs: userIDs.map { $0.toNetworkModel() }))
         let path = "\(pathPrefix)/list-users"
 
         let request = try URLRequestBuilder(path: path)
@@ -74,8 +75,10 @@ struct UserListResponseV4: Decodable, ToAPIModelConvertible {
     let failed: [QualifiedIDV0]?
 
     func toAPIModel() -> UserList {
-        UserList(found: found.map { $0.toAPIModel() },
-                 failed: failed?.map { $0.toAPIModel() } ?? [])
+        UserList(
+            found: found.map { $0.toAPIModel() },
+            failed: failed?.map { $0.toAPIModel() } ?? []
+        )
     }
 }
 

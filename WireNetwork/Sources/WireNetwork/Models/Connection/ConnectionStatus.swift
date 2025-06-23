@@ -64,19 +64,19 @@ extension ConnectionStatusV0: ToAPIModelConvertible {
     func toAPIModel() -> ConnectionStatus {
         switch self {
         case .accepted:
-            return .accepted
+            .accepted
         case .blocked:
-            return .blocked
+            .blocked
         case .pending:
-            return .pending
+            .pending
         case .ignored:
-            return .ignored
+            .ignored
         case .sent:
-            return .sent
+            .sent
         case .cancelled:
-            return .cancelled
+            .cancelled
         case .missingLegalholdConsent:
-            return .missingLegalholdConsent
+            .missingLegalholdConsent
         }
     }
 }

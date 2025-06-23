@@ -46,11 +46,11 @@ enum ConversationMessageProtocolV0: String, Sendable, Decodable, ToAPIModelConve
     func toAPIModel() -> ConversationMessageProtocol {
         switch self {
         case .proteus:
-            return .proteus
+            .proteus
         case .mixed:
-            return .mixed
+            .mixed
         case .mls:
-            return .mls
+            .mls
         }
     }
 }

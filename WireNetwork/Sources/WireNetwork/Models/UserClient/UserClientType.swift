@@ -45,15 +45,15 @@ enum UserClientTypeV0: String, Sendable, Codable, ToAPIModelConvertible {
     case permanent
     case temporary
     case legalhold
-    
+
     func toAPIModel() -> UserClientType {
         switch self {
         case .permanent:
-            return .permanent
+            .permanent
         case .temporary:
-            return .temporary
+            .temporary
         case .legalhold:
-            return .legalhold
+            .legalhold
         }
     }
 }

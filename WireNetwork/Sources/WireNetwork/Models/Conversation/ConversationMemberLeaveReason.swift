@@ -42,15 +42,15 @@ enum ConversationMemberLeaveReasonV0: String, Sendable, Decodable, ToAPIModelCon
     case userDeleted = "user-deleted"
     case userLeft = "left"
     case userRemoved = "removed"
-    
+
     func toAPIModel() -> ConversationMemberLeaveReason {
         switch self {
         case .userDeleted:
-            return .userDeleted
+            .userDeleted
         case .userLeft:
-            return .userLeft
+            .userLeft
         case .userRemoved:
-            return .userRemoved
+            .userRemoved
         }
     }
 

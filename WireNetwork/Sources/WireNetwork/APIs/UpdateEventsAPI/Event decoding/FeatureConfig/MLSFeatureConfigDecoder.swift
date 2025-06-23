@@ -29,7 +29,7 @@ struct MLSFeatureConfigDecoder {
         )
 
         let supportedProtocols = payload.config.supportedProtocols.map { $0.toAPIModel() }
-        
+
         return MLSFeatureConfig(
             status: payload.status.toAPIModel(),
             protocolToggleUsers: payload.config.protocolToggleUsers,

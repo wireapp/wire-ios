@@ -42,9 +42,9 @@ enum FeatureConfigStatusV0: String, Sendable, Decodable, ToAPIModelConvertible {
     func toAPIModel() -> FeatureConfigStatus {
         switch self {
         case .enabled:
-            return .enabled
+            .enabled
         case .disabled:
-            return .disabled
+            .disabled
         }
     }
 }

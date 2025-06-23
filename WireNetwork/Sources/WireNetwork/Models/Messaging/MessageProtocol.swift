@@ -46,20 +46,21 @@ extension MessageProtocolV0: ToAPIModelConvertible {
     func toAPIModel() -> MessageProtocol {
         switch self {
         case .proteus:
-            return .proteus
+            .proteus
         case .mls:
-            return .mls
+            .mls
         }
     }
 }
+
 extension MessageProtocol: ToNetworkConvertible {
 
     func toNetworkModel() -> MessageProtocolV0 {
         switch self {
         case .proteus:
-            return .proteus
+            .proteus
         case .mls:
-            return .mls
+            .mls
         }
     }
 }

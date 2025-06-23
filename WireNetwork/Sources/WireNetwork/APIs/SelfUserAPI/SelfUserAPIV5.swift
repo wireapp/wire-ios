@@ -26,7 +26,8 @@ class SelfUserAPIV5: SelfUserAPIV4 {
 
     override func pushSupportedProtocols(_ supportedProtocols: Set<MessageProtocol>) async throws {
         let encoder = JSONEncoder.defaultEncoder
-        let payload = SupportedProtocolsPayloadV5(supportedProtocols: Set(supportedProtocols.map({ $0.toNetworkModel() })))
+        let payload =
+            SupportedProtocolsPayloadV5(supportedProtocols: Set(supportedProtocols.map { $0.toNetworkModel() }))
         let body = try encoder.encode(payload)
         let path = resourcePath + "/supported-protocols"
 

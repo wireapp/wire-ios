@@ -47,7 +47,7 @@ struct ConversationMemberLeaveEventDecoder {
             conversationID: conversationID.toAPIModel(),
             senderID: senderID.toAPIModel(),
             timestamp: timestamp.date,
-            removedUserIDs: Set(payload.userIDs.map({ $0.toAPIModel() })),
+            removedUserIDs: Set(payload.userIDs.map { $0.toAPIModel() }),
             reason: payload.reason?.toAPIModel() ?? .userLeft
         )
     }

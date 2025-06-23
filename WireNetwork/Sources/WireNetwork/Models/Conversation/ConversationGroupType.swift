@@ -26,13 +26,13 @@ public enum ConversationGroupType: String, Sendable {
 enum ConversationGroupTypeV0: String, Sendable, Codable, ToAPIModelConvertible {
     case group = "group_conversation"
     case channel
-    
+
     func toAPIModel() -> ConversationGroupType {
         switch self {
         case .group:
-            return .group
+            .group
         case .channel:
-            return .channel
+            .channel
         }
     }
 }
@@ -41,9 +41,9 @@ extension ConversationGroupType: ToNetworkConvertible {
     func toNetworkModel() -> ConversationGroupTypeV0 {
         switch self {
         case .group:
-            return .group
+            .group
         case .channel:
-            return .channel
+            .channel
         }
     }
 }

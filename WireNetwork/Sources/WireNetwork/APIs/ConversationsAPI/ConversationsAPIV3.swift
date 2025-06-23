@@ -116,7 +116,8 @@ struct CreateGroupConversationParametersV3: Encodable {
 
     init(from parameters: CreateGroupConversationParameters) {
         self.users = parameters.messageProtocol == .proteus ? parameters.unqualifiedUserIDs : nil
-        self.qualifiedUsers = parameters.messageProtocol == .proteus ? parameters.qualifiedUserIDs.map { $0.toNetworkModel() } : nil
+        self.qualifiedUsers = parameters.messageProtocol == .proteus ? parameters.qualifiedUserIDs
+            .map { $0.toNetworkModel() } : nil
         self.access = parameters.accessMode.map(\.rawValue)
         self.accessRoles = parameters.accessRoles.map(\.rawValue)
         self.name = parameters.name

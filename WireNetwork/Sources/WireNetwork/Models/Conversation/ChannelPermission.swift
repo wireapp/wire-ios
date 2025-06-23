@@ -26,13 +26,13 @@ public enum ChannelPermission: String, Sendable {
 enum ChannelPermissionV0: String, Sendable, Codable, ToAPIModelConvertible {
     case everyone
     case admins
-    
+
     func toAPIModel() -> ChannelPermission {
         switch self {
         case .everyone:
-            return .everyone
+            .everyone
         case .admins:
-            return .admins
+            .admins
         }
     }
 }
@@ -41,9 +41,9 @@ extension ChannelPermission: ToNetworkConvertible {
     func toNetworkModel() -> ChannelPermissionV0 {
         switch self {
         case .everyone:
-            return .everyone
+            .everyone
         case .admins:
-            return .admins
+            .admins
         }
     }
 }

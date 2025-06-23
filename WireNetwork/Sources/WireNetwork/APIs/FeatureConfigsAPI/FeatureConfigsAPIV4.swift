@@ -72,7 +72,10 @@ struct FeatureConfigsResponseAPIV4: Decodable, ToAPIModelConvertible {
 
         featureConfigs.append(.conferenceCalling(conferenceCallingConfig))
 
-        let conversationGuestLinksConfig = ConversationGuestLinksFeatureConfig(status: conversationGuestLinks.status.toAPIModel())
+        let conversationGuestLinksConfig = ConversationGuestLinksFeatureConfig(
+            status: conversationGuestLinks.status
+                .toAPIModel()
+        )
         featureConfigs.append(.conversationGuestLinks(conversationGuestLinksConfig))
 
         let digitalSignaturesConfig = DigitalSignatureFeatureConfig(status: digitalSignatures.status.toAPIModel())

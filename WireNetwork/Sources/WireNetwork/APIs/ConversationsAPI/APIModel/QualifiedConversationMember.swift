@@ -61,21 +61,19 @@ struct QualifiedConversationMember: Decodable, ToAPIModelConvertible {
     let target: UUID?
 
     func toAPIModel() -> Conversation.Member {
-        // TODO: fix me
-        Conversation.Member()
-//        Conversation.Member(
-//            qualifiedID: qualifiedID?.toAPIModel(),
-//            id: id,
-//            qualifiedTarget: qualifiedTarget?.toAPIModel(),
-//            target: target,
-//            conversationRole: conversationRole,
-//            service: service?.toAPIModel(),
-//            archived: archived,
-//            archivedReference: archivedReference?.date,
-//            hidden: hidden,
-//            hiddenReference: hiddenReference,
-//            mutedStatus: mutedStatus,
-//            mutedReference: mutedReference?.date
-//        )
+        Conversation.Member(
+            qualifiedID: qualifiedID,
+            id: id,
+            qualifiedTarget: qualifiedTarget,
+            target: target,
+            conversationRole: conversationRole,
+            service: service,
+            archived: archived,
+            archivedReference: archivedReference?.date,
+            hidden: hidden,
+            hiddenReference: hiddenReference,
+            mutedStatus: mutedStatus,
+            mutedReference: mutedReference?.date
+        )
     }
 }

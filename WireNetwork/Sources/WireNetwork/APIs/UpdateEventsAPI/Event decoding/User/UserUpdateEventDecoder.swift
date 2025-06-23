@@ -28,7 +28,7 @@ struct UserUpdateEventDecoder {
             forKey: .user
         )
 
-        let supportedProtocols = payload.supportedProtocols?.map({ $0.toAPIModel() })
+        let supportedProtocols = payload.supportedProtocols?.map { $0.toAPIModel() }
         return UserUpdateEvent(
             userID: payload.userID,
             accentColorID: payload.accentColorID,
@@ -37,7 +37,7 @@ struct UserUpdateEventDecoder {
             email: payload.email,
             isSSOIDDeleted: payload.isSSOIDDeleted,
             assets: payload.assets?.map { $0.toAPIModel() },
-            supportedProtocols: supportedProtocols.flatMap({ Set($0) })
+            supportedProtocols: supportedProtocols.flatMap { Set($0) }
         )
     }
 

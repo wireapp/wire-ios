@@ -58,15 +58,15 @@ enum ChannelsPermisionV0: String, Sendable, Decodable, ToAPIModelConvertible {
     case teamMembers = "team-members"
     case everyone
     case admins
-    
+
     func toAPIModel() -> ChannelsPermision {
         switch self {
         case .teamMembers:
-            return .teamMembers
+            .teamMembers
         case .everyone:
-            return .everyone
+            .everyone
         case .admins:
-            return .admins
+            .admins
         }
     }
 }

@@ -318,7 +318,7 @@ final class ConversationsAPITests: XCTestCase {
             XCTAssertEqual(error.code, 503)
             XCTAssertEqual(error.label, "service unavailable")
         } catch {
-            XCTFail("expected error 'FailureResponse'")
+            XCTFail("expected error 'FailureResponse', got \(String(describing: error))")
         }
     }
 
@@ -376,7 +376,7 @@ final class ConversationsAPITests: XCTestCase {
             XCTAssertEqual(error.code, 503)
             XCTAssertEqual(error.label, "service unavailable")
         } catch {
-            XCTFail("expected error 'FailureResponse'")
+            XCTFail("expected error 'FailureResponse', got \(String(describing: error))")
         }
     }
 
@@ -437,7 +437,7 @@ final class ConversationsAPITests: XCTestCase {
             XCTAssertEqual(error.code, 503)
             XCTAssertEqual(error.label, "service unavailable")
         } catch {
-            XCTFail("expected error 'FailureResponse'")
+            XCTFail("expected error 'FailureResponse', got \(String(describing: error))")
         }
     }
 
@@ -479,7 +479,7 @@ final class ConversationsAPITests: XCTestCase {
             XCTAssertEqual(error.code, 503)
             XCTAssertEqual(error.label, "service unavailable")
         } catch {
-            XCTFail("expected error 'FailureResponse'")
+            XCTFail("expected error 'FailureResponse', got \(String(describing: error))")
         }
     }
 
