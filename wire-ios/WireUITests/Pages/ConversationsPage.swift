@@ -33,9 +33,15 @@ class ConversationsPage: PageModel {
         let elementsQuery = app.buttons.matching(identifier: "bottomBarSettingsButton")
         return elementsQuery.firstMatch
     }
+    
 
     func openSettings() -> SettingsPage {
         settingsButton.tap()
         return SettingsPage()
     }
+    
+    func openUserAccount() -> UserAccountPage {
+        profileButton.tap()
+        return UserAccountPage()
+        }
 }

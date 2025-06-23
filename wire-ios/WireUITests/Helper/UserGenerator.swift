@@ -26,7 +26,8 @@ enum UserGenerator {
         let username = "smoketester\(time)"
         let domain = "wire.engineering"
         let name = "Smoke Tester \(time)"
-        return UserInfo(name: name, username: username, password: password, domain: domain)
+        let teamname = "Team-Smoke \(time)"
+        return UserInfo(name: name, username: username, password: password, domain: domain, teamname: teamname)
     }
 
     static func generateRandomPassword() -> String {
