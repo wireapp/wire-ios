@@ -20,10 +20,10 @@ import Combine
 import Foundation
 import NeedleFoundation
 import SwiftUI
-import WireAPI
 import WireAuthenticationAPI
 import WireFoundation
 import WireMultiBackendUI
+import WireNetwork
 import WireReusableUIComponents
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
@@ -59,7 +59,7 @@ public struct WireAuthenticationAssembly {
         appStoreURL: URL,
         accountsPublisher: CurrentValuePublisher<[AccountUIModel]>,
         useLegacyRegistrationFlow: Bool,
-        multibackendEnabled: Bool,
+        isMultibackendEnabled: Bool,
         personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
         let backendInfo = BackendInfo(
@@ -79,7 +79,7 @@ public struct WireAuthenticationAssembly {
             appStoreURL: appStoreURL,
             accountsPublisher: accountsPublisher,
             useLegacyRegistrationFlow: useLegacyRegistrationFlow,
-            multibackendEnabled: multibackendEnabled,
+            isMultibackendEnabled: isMultibackendEnabled,
             personalAccountCreationAnalyticsTracker: personalAccountCreationAnalyticsTracker
         )
 

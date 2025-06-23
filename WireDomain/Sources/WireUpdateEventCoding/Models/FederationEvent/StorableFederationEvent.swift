@@ -17,14 +17,14 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 enum StorableFederationEvent: Equatable, Codable, Sendable {
 
     case connectionRemoved(StorableFederationConnectionRemovedEvent)
     case delete(StorableFederationDeleteEvent)
 
-    init(_ value: WireAPI.FederationEvent) {
+    init(_ value: WireNetwork.FederationEvent) {
         switch value {
         case let .connectionRemoved(event):
             self = .connectionRemoved(StorableFederationConnectionRemovedEvent(event))
@@ -33,7 +33,7 @@ enum StorableFederationEvent: Equatable, Codable, Sendable {
         }
     }
 
-    func toAPIModel() -> WireAPI.FederationEvent {
+    func toAPIModel() -> WireNetwork.FederationEvent {
         switch self {
         case let .connectionRemoved(event):
             .connectionRemoved(event.toAPIModel())

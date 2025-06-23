@@ -17,15 +17,15 @@
 //
 
 import Combine
-import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
+import WireNetworkSupport
 import WireTestingPackage
 import XCTest
 
-@testable import WireAPI
 @testable import WireDomain
+@testable import WireNetwork
 
 final class ConversationLocalStoreTests: XCTestCase {
 

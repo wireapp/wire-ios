@@ -18,11 +18,11 @@
 
 import Combine
 import Foundation
-import WireAPI
 import WireCoreCrypto
 import WireDataModel
 import WireDomain
 import WireLogging
+import WireNetwork
 import WireRequestStrategy
 import WireSystem
 public import WireFoundation
@@ -409,9 +409,9 @@ public final class ZMUserSession: NSObject {
         contextStorage: LAContextStorable,
         recurringActionService: any RecurringActionServiceInterface,
         dependencies: UserSessionDependencies,
-        backendEnvironment: WireAPI.BackendEnvironment,
-        minTLSVersion: WireAPI.TLSVersion,
-        apiVersion: WireAPI.APIVersion,
+        backendEnvironment: WireNetwork.BackendEnvironment,
+        minTLSVersion: WireNetwork.TLSVersion,
+        apiVersion: WireNetwork.APIVersion,
         journal: Journal
     ) {
         self.apiServiceFactory = apiServiceFactory
@@ -622,8 +622,20 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-    public func triggerSync() {
-        syncAgent?.resume()
+    /// Executes specific or regular sync after db migration
+    public func triggerSync() async {
+        let (initialSync, resoucesSync) = await syncContext.perform { (
+            self.syncContext.readMigrationNeedsSlowSyncFlag(),
+            self.syncContext.readMigrationNeedsSyncResourcesFlag()
+        ) }
+
+        if initialSync || journal[.isInitialSyncRequired] {
+            await triggerInitialSync()
+        } else if resoucesSync {
+            await triggerResourcesSync()
+        } else {
+            syncAgent?.resume()
+        }
     }
 
     // MARK: - Deinitalize
@@ -842,25 +854,21 @@ public final class ZMUserSession: NSObject {
 
     // MARK: - Trigger syncing
 
-    public func triggerInitialSync() {
-        Task {
-            do {
-                syncAgent?.suspend()
-                try await syncAgent?.performInitialSync()
-            } catch {
-                WireLogger.sync.error("failed to perform initial sync: \(String(describing: error))")
-            }
+    public func triggerInitialSync() async {
+        do {
+            syncAgent?.suspend()
+            try await syncAgent?.performInitialSync()
+        } catch {
+            WireLogger.sync.error("failed to perform initial sync: \(String(describing: error))")
         }
     }
 
-    public func triggerResourcesSync() {
-        Task {
-            do {
-                syncAgent?.suspend()
-                try await syncAgent?.performResourceSync()
-            } catch {
-                WireLogger.sync.error("failed to perform resource sync: \(String(describing: error))")
-            }
+    public func triggerResourcesSync() async {
+        do {
+            syncAgent?.suspend()
+            try await syncAgent?.performResourceSync()
+        } catch {
+            WireLogger.sync.error("failed to perform resource sync: \(String(describing: error))")
         }
     }
 
@@ -1242,7 +1250,7 @@ extension ZMUserSession: SyncAgentDelegate {
             fatal("cannot initialize ResolveOneOnOneConversationsUseCase")
         }
         guard let apiVersion = BackendInfo.apiVersion,
-              let wireAPIVersion = WireAPI.APIVersion(rawValue: UInt(apiVersion.rawValue)) else {
+              let wireAPIVersion = WireNetwork.APIVersion(rawValue: UInt(apiVersion.rawValue)) else {
             WireLogger.backend.warn("apiVersion not resolved")
 
             fatal("cannot initialize ResolveOneOnOneConversationsUseCase")
@@ -1399,7 +1407,9 @@ extension ZMUserSession: ZMClientRegistrationStatusDelegate {
                 // activate new sync with consumable notifications
                 journal[.isConsumableNotificationsEnabled] = true
             }
-            triggerSync()
+            Task {
+                await triggerSync()
+            }
         }
     }
 

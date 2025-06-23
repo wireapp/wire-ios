@@ -80,7 +80,7 @@ package struct RootView: View {
                     switch alert {
                     case .obsoleteClient:
                         Text(
-                            viewModel.multibackendEnabled ? L10n.Localizable.ObsoleteClientMultibackend.Alert
+                            viewModel.isMultibackendEnabled ? L10n.Localizable.ObsoleteClientMultibackend.Alert
                                 .title : L10n.Localizable.ObsoleteClient.Alert.title
                         )
                     default:
@@ -91,12 +91,12 @@ package struct RootView: View {
                     switch alert {
                     case .obsoleteBackend:
                         Text(
-                            viewModel.multibackendEnabled ? L10n.Localizable.ObsoleteBackendMultibackend.Alert
+                            viewModel.isMultibackendEnabled ? L10n.Localizable.ObsoleteBackendMultibackend.Alert
                                 .message : L10n.Localizable.ObsoleteBackend.Alert.message
                         )
                     case .obsoleteClient:
                         Text(
-                            viewModel.multibackendEnabled ? L10n.Localizable.ObsoleteClientMultibackend
+                            viewModel.isMultibackendEnabled ? L10n.Localizable.ObsoleteClientMultibackend
                                 .Alert.message : L10n.Localizable.ObsoleteClient.Alert.message
                         )
                     default:
@@ -107,7 +107,7 @@ package struct RootView: View {
                     switch alert {
                     case .obsoleteClient:
                         obsoleteClientAlertActions()
-                    case .obsoleteBackend where viewModel.multibackendEnabled:
+                    case .obsoleteBackend where viewModel.isMultibackendEnabled:
                         obsoleteBackendAlertActions()
                     default:
                         Button(Strings.Authentication.Error.confirm, action: {})
@@ -139,11 +139,12 @@ package struct RootView: View {
     @ViewBuilder
     private func obsoleteClientAlertActions() -> some View {
         Button(
-            viewModel.multibackendEnabled ? Strings.Obsolete.Alert.updateButton : Strings.ObsoleteClient.Alert.okButton,
+            viewModel.isMultibackendEnabled ? Strings.Obsolete.Alert.updateButton : Strings.ObsoleteClient.Alert
+                .okButton,
             action: viewModel.goToAppStore
         )
         switchAccountsAlertButtonIfNeeded()
-        if viewModel.multibackendEnabled {
+        if viewModel.isMultibackendEnabled {
             Button(
                 Strings.Obsolete.Alert.cancel,
                 action: viewModel.dismissAlert

@@ -18,11 +18,11 @@
 
 import Combine
 import SwiftUI
-import WireAPI
 import WireAuthentication
 import WireAuthenticationUI
 import WireFoundation
 import WireMultiBackendUI
+import WireNetwork
 import WireReusableUIComponents
 
 struct ContentView: View {
@@ -78,7 +78,7 @@ struct ContentView: View {
                     )
                 ),
                 useLegacyRegistrationFlow: false,
-                multibackendEnabled: true
+                isMultibackendEnabled: true
             ).view
     }
 

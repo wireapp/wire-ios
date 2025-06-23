@@ -367,6 +367,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private let sharedUserDefaults: UserDefaults
 
+    @MainActor
     public convenience init(
         maxNumberAccounts: Int = defaultMaxNumberAccounts,
         appVersion: String,
@@ -480,6 +481,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     }
 
+    @MainActor
     init(
         maxNumberAccounts: Int = defaultMaxNumberAccounts,
         appVersion: String,
@@ -1091,14 +1093,9 @@ public final class SessionManager: NSObject, SessionManagerType {
 
                     await userSession.migrateToConsumableNotificationsIfNeeded()
 
+                    await userSession.triggerSync()
+
                     await MainActor.run {
-                        userSession.triggerSync()
-
-                        self.triggerMigrationsNeedsActionsIfNeeded(
-                            journal: journal,
-                            userSession: userSession
-                        )
-
                         onCompletion(userSession)
                     }
                 }
@@ -1153,21 +1150,6 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         } catch {
             WireLogger.sync.critical("failed to migrate update events: \(error)")
-        }
-    }
-
-    /// Executes post migration slow sync or sync resources
-    private func triggerMigrationsNeedsActionsIfNeeded(
-        journal: Journal,
-        userSession: ZMUserSession
-    ) {
-        let context = userSession.syncContext
-        context.perform {
-            if context.readMigrationNeedsSlowSyncFlag() || journal[.isInitialSyncRequired] {
-                userSession.triggerInitialSync()
-            } else if context.readMigrationNeedsSyncResourcesFlag() {
-                userSession.triggerResourcesSync()
-            }
         }
     }
 

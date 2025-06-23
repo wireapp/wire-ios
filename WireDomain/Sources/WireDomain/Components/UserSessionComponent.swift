@@ -17,17 +17,17 @@
 //
 
 import Foundation
-import WireAPI
 import WireDataModel
 import WireFoundation
+import WireNetwork
 
 public final class UserSessionComponent {
 
     private let selfUserID: UUID
 
-    private let backendEnvironment: WireAPI.BackendEnvironment
-    private let minTLSVersion: WireAPI.TLSVersion
-    private let apiVersion: WireAPI.APIVersion
+    private let backendEnvironment: WireNetwork.BackendEnvironment
+    private let minTLSVersion: WireNetwork.TLSVersion
+    private let apiVersion: WireNetwork.APIVersion
 
     private let localDomain: String
     private let isFederationEnabled: Bool
@@ -44,9 +44,9 @@ public final class UserSessionComponent {
 
     public init(
         selfUserID: UUID,
-        backendEnvironment: WireAPI.BackendEnvironment,
-        minTLSVersion: WireAPI.TLSVersion,
-        apiVersion: WireAPI.APIVersion,
+        backendEnvironment: WireNetwork.BackendEnvironment,
+        minTLSVersion: WireNetwork.TLSVersion,
+        apiVersion: WireNetwork.APIVersion,
         localDomain: String,
         isFederationEnabled: Bool,
         isMLSEnabled: Bool,

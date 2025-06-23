@@ -32,11 +32,13 @@ final class SelfProfileViewControllerTests: XCTestCase, CoreDataFixtureTestHelpe
     private var sut: SelfProfileViewController!
     private var selfUser: MockUserType!
     private var userSession: UserSessionMock!
+    private var accountManager: MockSelfProfileAccountManager!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        DeveloperFlag.multibackend.enable(false)
         snapshotHelper = .init()
         coreDataFixture = CoreDataFixture()
 
@@ -44,6 +46,25 @@ final class SelfProfileViewControllerTests: XCTestCase, CoreDataFixtureTestHelpe
         selfUser = MockUserType.createSelfUser(name: "", inTeam: UUID())
 
         userSession = UserSessionMock(mockUser: selfUser)
+        accountManager = MockSelfProfileAccountManager()
+        let accounts = [
+            Account(
+                userName: "Iggy Pop",
+                userIdentifier: UUID(),
+                teamName: nil,
+                handle: "handle",
+                imageData: nil
+            ),
+            Account(
+                userName: "Rap Rock",
+                userIdentifier: UUID(),
+                teamName: nil,
+                handle: "handle",
+                imageData: nil
+            )
+        ]
+        accountManager.sortedAccounts_MockValue = accounts
+
     }
 
     // MARK: - tearDown
@@ -69,6 +90,13 @@ final class SelfProfileViewControllerTests: XCTestCase, CoreDataFixtureTestHelpe
     @MainActor
     func testForAUserWithALongName() {
         createSut(userName: "Johannes Chrysostomus Wolfgangus Theophilus Mozart", teamMember: true)
+        snapshotHelper.verify(matching: sut.view)
+    }
+
+    @MainActor
+    func testAccountSwitcher() {
+        DeveloperFlag.multibackend.enable(true)
+        createSut(userName: "Tarja Turunen", teamMember: true, canManageTeam: true)
         snapshotHelper.verify(matching: sut.view)
     }
 
@@ -152,15 +180,18 @@ final class SelfProfileViewControllerTests: XCTestCase, CoreDataFixtureTestHelpe
     // MARK: Helper Method
 
     @MainActor
-    private func createSut(userName: String, teamMember: Bool) {
+    private func createSut(userName: String, teamMember: Bool, canManageTeam: Bool = false) {
         selfUser = MockUserType.createSelfUser(name: userName, inTeam: teamMember ? UUID() : nil)
+        selfUser.canManageTeam = canManageTeam
+        userSession.selfUser = selfUser
         sut = SelfProfileViewController(
             selfUser: selfUser,
             userRightInterfaceType: MockUserRight.self,
             userSession: userSession,
             accountSelector: MockAccountSelector(),
             mainCoordinator: .init(mainCoordinator: MockMainCoordinator()),
-            analyticsEventTracker: nil
+            analyticsEventTracker: nil,
+            accountManager: accountManager
         )
         sut.view.backgroundColor = SemanticColors.View.backgroundDefault
     }

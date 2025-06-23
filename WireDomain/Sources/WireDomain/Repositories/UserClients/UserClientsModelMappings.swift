@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import WireNetwork
 
-extension WireAPI.SelfUserClient {
+extension WireNetwork.SelfUserClient {
 
     func toDomainModel() -> UserClientInfo {
         .init(

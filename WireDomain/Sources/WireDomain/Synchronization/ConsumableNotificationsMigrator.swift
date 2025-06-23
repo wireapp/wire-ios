@@ -15,15 +15,16 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-import WireAPI
+
 import WireDataModel
 import WireLogging
+import WireNetwork
 
 typealias IncrementalSyncV1 = IncrementalSync
 
 public final class ConsumableNotificationsMigrator: ConsumableNotificationsMigratorProtocol {
     let sync: SyncMigratorProtocol
-    let apiVersion: WireAPI.APIVersion
+    let apiVersion: WireNetwork.APIVersion
     let userClientsLocalStore: UserClientsLocalStoreProtocol
     let userClientsAPI: UserClientsAPI
     var journal: JournalProtocol
@@ -32,7 +33,7 @@ public final class ConsumableNotificationsMigrator: ConsumableNotificationsMigra
         sync: SyncMigratorProtocol,
         userClientsAPI: UserClientsAPI,
         userClientsLocalStore: UserClientsLocalStoreProtocol,
-        apiVersion: WireAPI.APIVersion,
+        apiVersion: WireNetwork.APIVersion,
         journal: JournalProtocol
     ) {
         self.sync = sync
