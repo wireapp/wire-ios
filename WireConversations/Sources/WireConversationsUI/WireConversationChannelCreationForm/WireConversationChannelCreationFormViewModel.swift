@@ -237,7 +237,9 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
                     ),
                     servicesAllowed: servicesAllowed,
                     guestsAllowed: guestsAllowed,
-                    readReceiptsEnabled: readReceiptsEnabled
+                    readReceiptsEnabled: readReceiptsEnabled,
+                    // TODO: [WPB-18347] - pass history length given the selected `ChannelHistoryOption`
+                    historyLength: nil
                 )
             }
             .get()

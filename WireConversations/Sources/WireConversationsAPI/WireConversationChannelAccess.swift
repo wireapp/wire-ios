@@ -24,4 +24,5 @@ public enum WireConversationChannelAccess: Equatable, Hashable {
 
     case `public`
     case `private`(PrivateChannelInvitePolicy)
+    case shared
 }
