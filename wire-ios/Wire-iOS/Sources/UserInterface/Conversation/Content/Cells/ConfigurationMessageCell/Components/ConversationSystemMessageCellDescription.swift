@@ -35,7 +35,8 @@ enum ConversationSystemMessageCellDescription {
               let sender = message.senderUser,
               let conversation = message.conversationLike
         else {
-            preconditionFailure("Invalid system message")
+            assertionFailure("Invalid system message")
+            return []
         }
 
         switch systemMessageData.systemMessageType {
