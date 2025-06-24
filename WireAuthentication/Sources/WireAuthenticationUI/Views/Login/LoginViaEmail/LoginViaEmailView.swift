@@ -223,7 +223,8 @@ package struct LoginViaEmailView: View {
         }
     }
 
-    @ViewBuilder private func proxyCredentials(proxyServer: String) -> some View {
+    @ViewBuilder
+    private func proxyCredentials(proxyServer: String) -> some View {
         Spacer()
         VStack(spacing: 14) {
             Text(Strings.ProxyCredentials.title)

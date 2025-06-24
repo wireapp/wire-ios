@@ -19,8 +19,8 @@
 public import WireFoundation
 
 import Foundation
-import WireNetworkInterface
 @preconcurrency import Security
+import WireNetworkInterface
 
 public struct ServerTrustValidator: Sendable {
 

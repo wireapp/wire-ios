@@ -78,7 +78,7 @@ public final class NetworkStack {
         username: String,
         password: String
     ) throws {
-        self.proxyCredentials = ProxyCredentials(
+        proxyCredentials = ProxyCredentials(
             username: username,
             password: password
         )
@@ -89,7 +89,7 @@ public final class NetworkStack {
             proxyCredentials: proxyCredentials
         )
 
-        self.state = .ready(
+        state = .ready(
             rest: restService,
             webSocket: webSocketService
         )

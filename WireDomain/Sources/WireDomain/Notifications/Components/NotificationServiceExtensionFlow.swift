@@ -53,7 +53,7 @@ final class NotificationServiceExtensionFlow: BootstrapComponent {
 
         self.applicationIdentifier = applicationIdentifier
         self.applicationContainer = applicationContainer
-        accountManager = try AccountManager(sharedDirectory: applicationContainer)
+        self.accountManager = try AccountManager(sharedDirectory: applicationContainer)
     }
 
     func start(request: UNNotificationRequest) async throws {
@@ -87,13 +87,12 @@ final class NotificationServiceExtensionFlow: BootstrapComponent {
     }
 
     private var legacyBackendEnvironment: WireDataModel.BackendEnvironment {
-        let environmentType: EnvironmentType
-        if let override = sharedUserDefaults.string(
+        let environmentType = if let override = sharedUserDefaults.string(
             forKey: "BackendEnvironmentTypeOverrideKey"
         ) {
-            environmentType = EnvironmentType(stringValue: override)
+            EnvironmentType(stringValue: override)
         } else {
-            environmentType = EnvironmentType(userDefaults: sharedUserDefaults)
+            EnvironmentType(userDefaults: sharedUserDefaults)
         }
 
         guard let backendEnvironment = WireTransport.BackendEnvironment(
