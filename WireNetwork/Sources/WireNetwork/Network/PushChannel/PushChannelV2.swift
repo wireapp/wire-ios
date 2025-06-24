@@ -135,6 +135,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
             self.remainingEventCount = nil
         }
     }
+
     public func close() async {
         WireLogger.pushChannel.debug("closing push channel", attributes: .pushChannelV2)
 
