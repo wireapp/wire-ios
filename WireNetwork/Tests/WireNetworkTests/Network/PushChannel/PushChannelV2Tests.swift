@@ -386,6 +386,57 @@ final class PushChannelV2Tests: XCTestCase {
         
         let firstElement = try XCTUnwrap(collected.first)
         XCTAssertEqual(firstElement, .syncing(eventsCount: nbElements))
+    }
+    
+    func testOpen_CollectFlushesOnTimeout() async throws {
+        // GIVEN
+        let batchSize = 10  // the batch changes
+        let nbElements = 3
+        sut = PushChannelV2(
+            webSocket: webSocket,
+            keepAliveInterval: 0.5,
+            maxBatchEventsCount: batchSize,
+            batchDelay: 0.5
+        )
+        
+        let messageCount = try MockJSONPayloadResource(name: "MessagesCountEnvelope3")
+        let mockEnvelope5 = try MockJSONPayloadResource(name: "AsyncLiveUpdateEventEnvelope1")
+        webSocket.open_MockValue = AsyncThrowingStream { continuation in
+            Task {
+                continuation.yield(.data(messageCount.jsonData))
+                continuation.yield(.data(mockEnvelope5.jsonData))
+                try await Task.sleep(for: .seconds(1))
+                continuation.yield(.data(mockEnvelope5.jsonData))
+                continuation.yield(.data(mockEnvelope5.jsonData))
+                continuation.finish()
+            }
+        }
+
+        // WHEN
+        let stream = try await sut.open()
+
+        var collected: [PushChannelV2.Element] = []
+        for try await element in stream {
+            collected.append(element)
+        }
+
+        // THEN
+        let expectedBatches = 4
+        guard collected.count == expectedBatches else {
+            XCTFail("wrong number of batches, got \(collected.count), expected \(expectedBatches)")
+            return
+        }
+        let batches = collected[1...2]
+        try XCTAssertCount(batches, count: 2)
+        for (index, batch) in batches.enumerated() {
+            if case .events(let events) = batch {
+                try XCTAssertCount(events, count: index == 0 ? 1 : 2)
+            } else {
+                XCTFail("wrong number of events in batch, got \(batch), expected .events")
+            }
+        }
+        let firstElement = try XCTUnwrap(collected.first)
+        XCTAssertEqual(firstElement, .syncing(eventsCount: nbElements))
         let upToDate = try XCTUnwrap(collected.last)
         XCTAssertEqual(upToDate, .upToDate)
     }
