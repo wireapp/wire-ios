@@ -407,7 +407,7 @@ final class PushChannelV2Tests: XCTestCase {
             Task {
                 continuation.yield(.data(messageCount.jsonData))
                 continuation.yield(.data(mockEnvelope5.jsonData))
-                try await Task.sleep(for: .seconds(1))
+                try? await Task.sleep(for: .seconds(1))
                 continuation.yield(.data(mockEnvelope5.jsonData))
                 continuation.yield(.data(mockEnvelope5.jsonData))
                 continuation.finish()
