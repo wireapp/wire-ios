@@ -35,7 +35,10 @@ extension UITableViewCell {
     }
 
     func showExternalLinkAccessoryView() {
-        fatalError()
+        let externalLinkImage = UIImage(resource: .externalLink)
+        let imageView = UIImageView(image: externalLinkImage)
+        imageView.tintColor = ColorTheme.Base.secondaryText
+        accessoryView = imageView
     }
 
     func hideAccessoryView() {

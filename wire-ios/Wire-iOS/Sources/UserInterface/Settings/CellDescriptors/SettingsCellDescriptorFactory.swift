@@ -65,7 +65,7 @@ struct SettingsCellDescriptorFactory {
             },
             previewGenerator: nil,
             icon: .team,
-            accessoryView: .none,
+            accessoryView: .externalLink,
             copiableText: nil,
             settingsTopLevelMenuItem: nil
         )
