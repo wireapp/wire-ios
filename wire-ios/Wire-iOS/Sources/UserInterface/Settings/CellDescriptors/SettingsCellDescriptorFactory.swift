@@ -132,8 +132,11 @@ struct SettingsCellDescriptorFactory {
             advancedGroup(userSession: userSession, mainCoordinator: mainCoordinator),
             helpSection(),
             aboutSection()
-            // TODO: manage team
         ]
+
+        if userSession.selfUser.canManageTeam {
+            topLevelElements.append(manageTeamLink)
+        }
 
         if Bundle.developerModeEnabled {
             topLevelElements.append(developerGroup)
@@ -336,4 +339,23 @@ struct SettingsCellDescriptorFactory {
             settingsCoordinator: settingsCoordinator
         )
     }
+
+    private var manageTeamLink: some SettingsCellDescriptorType {
+        // TODO: check
+        SettingsExternalScreenCellDescriptor(
+            title: L10n.Localizable.Self.Settings.ManageTeam.title,
+            isDestructive: false,
+            presentationStyle: .modal,
+            identifier: nil,
+            presentationAction: { () -> (UIViewController?) in
+                return BrowserViewController(url: URL.manageTeam(source: .settings))
+            },
+            previewGenerator: nil,
+            icon: .team,
+            accessoryView: .externalLink,
+            copiableText: nil,
+            settingsTopLevelMenuItem: nil
+        )
+    }
+
 }
