@@ -63,7 +63,7 @@ enum BackendClient {
         }
     }
 
-    static func getActivationCode(email: String) async throws -> (String, String) {
+    static func getActivationCode(email: String) async throws -> (code: String, key: String) {
         let url = URL(string: "\(backendURL)/i/users/activation-code?email=\(email)")
         let auth = ProcessInfo.processInfo.environment["BASIC_AUTH"]!
         guard let requestUrl = url else { fatalError() }
@@ -79,7 +79,7 @@ enum BackendClient {
         if pureResponse.statusCode != 200 {
             print("Error! got status code \(pureResponse.statusCode)")
             print("Response: \(pureResponse.description)")
-            throw (RuntimeError("Error \(pureResponse.description)"))
+            throw RuntimeError("Error \(pureResponse.description)")
         }
 
         let message: ActivationCodeReponse = try JSONDecoder().decode(ActivationCodeReponse.self, from: responseData)
@@ -98,7 +98,7 @@ enum BackendClient {
         updatedUser.name = userData.name
         updatedUser.email = userData.email
         updatedUser.id = userData.id
-        updatedUser.backend_domain = userData.qualified_id.domain
+        updatedUser.backendDomain = userData.qualified_id.domain
         return updatedUser
     }
 
@@ -112,7 +112,7 @@ enum BackendClient {
         let (responseData, response) = try await URLSession.shared.data(for: request)
         let pureResponse = response as! HTTPURLResponse
         if pureResponse.statusCode != 201 {
-            throw (RuntimeError("Error \(pureResponse.description)"))
+            throw RuntimeError("Error \(pureResponse.description)")
         }
         return responseData
     }

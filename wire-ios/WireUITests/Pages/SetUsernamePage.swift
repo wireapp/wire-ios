@@ -26,7 +26,7 @@ class SetUsernamePage: PageModel {
     }
 
     var usernameField: XCUIElement {
-        let elementsQuery = app.textFields.matching(identifier: "UsernameField")
+        let elementsQuery = app.descendants(matching: .any)["UsernameField"]
         return elementsQuery.firstMatch
     }
 

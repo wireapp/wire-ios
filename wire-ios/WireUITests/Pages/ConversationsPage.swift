@@ -20,7 +20,7 @@ import XCTest
 
 class ConversationsPage: PageModel {
     var profileButton: XCUIElement {
-        let elementsQuery = app.buttons.matching(identifier: "account_profile_image_view")
+        let elementsQuery = app.descendants(matching: .any)["account_profile_image_view"]
         return elementsQuery.firstMatch
     }
 
@@ -30,7 +30,7 @@ class ConversationsPage: PageModel {
     }
 
     var settingsButton: XCUIElement {
-        let elementsQuery = app.buttons.matching(identifier: "bottomBarSettingsButton")
+        let elementsQuery = app.descendants(matching: .any)["bottomBarSettingsButton"]
         return elementsQuery.firstMatch
     }
 

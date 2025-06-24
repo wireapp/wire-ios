@@ -112,7 +112,6 @@ public actor AuthenticationManager: AuthenticationManagerProtocol {
             currentToken = .cached(newToken)
             return newToken
         } catch {
-            print(error.localizedDescription)
             WireLogger.authentication.error(
                 "Failed to renew access token with error: \(error.localizedDescription)"
             )
@@ -141,7 +140,6 @@ public actor AuthenticationManager: AuthenticationManagerProtocol {
     ) -> Task<AccessToken, any Error> {
         Task {
             let cookies = try await cookieStorage.fetchCookies()
-            print("Received \(cookies)")
 
             var requestBuilder = try URLRequestBuilder(path: "/access")
                 .withMethod(.post)

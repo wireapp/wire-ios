@@ -18,6 +18,7 @@
 
 import XCTest
 
+/// Page for popup on first time user login
 class FirstTimePage: PageModel {
     override func hasLoaded() {
         let expectation = okButton.waitForExistence(timeout: 10)

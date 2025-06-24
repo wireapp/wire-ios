@@ -31,12 +31,12 @@ class SetPasswordPage: PageModel {
     }
 
     var passwordNextButton: XCUIElement {
-        let elementsQuery = passwordField.buttons.matching(identifier: "RevealButton")
+        let elementsQuery = passwordField.descendants(matching: .any)["RevealButton"]
         return elementsQuery.firstMatch
     }
 
     var passwordField: XCUIElement {
-        let elementsQuery = app.otherElements.secureTextFields.matching(identifier: "PasswordField")
+        let elementsQuery = app.descendants(matching: .any)["PasswordField"]
         return elementsQuery.firstMatch
     }
 

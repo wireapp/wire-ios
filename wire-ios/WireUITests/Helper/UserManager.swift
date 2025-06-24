@@ -107,7 +107,7 @@ private extension BackendEnvironment {
     )
 }
 
-final class MockCookieStorage: CookieStorageProtocol {
+private final class MockCookieStorage: CookieStorageProtocol {
     var cookies: [HTTPCookie]
 
     init() {

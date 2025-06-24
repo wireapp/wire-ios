@@ -26,12 +26,12 @@ class SetNamePage: PageModel {
     }
 
     var nameNextButton: XCUIElement {
-        let elementsQuery = nameField.buttons.matching(identifier: "ConfirmButton")
+        let elementsQuery = nameField.descendants(matching: .any)["ConfirmButton"]
         return elementsQuery.firstMatch
     }
 
     var nameField: XCUIElement {
-        let elementsQuery = app.otherElements.textFields.matching(identifier: "NameField")
+        let elementsQuery = app.descendants(matching: .any)["NameField"]
         return elementsQuery.firstMatch
     }
 
