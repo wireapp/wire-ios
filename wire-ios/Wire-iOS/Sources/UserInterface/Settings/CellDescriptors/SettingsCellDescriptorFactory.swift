@@ -35,17 +35,15 @@ struct SettingsCellDescriptorFactory {
         SettingsInternalGroupCellDescriptorType {
         var rootElements: [any SettingsCellDescriptorType] = []
 
+        #if !MULTIPLE_ACCOUNTS_DISABLED
+            rootElements.append(addAccountOrTeamCell())
+        #endif
+
         if ZMUser.selfUser()?.canManageTeam == true {
             rootElements.append(manageTeamCell())
         }
 
-        #if MULTIPLE_ACCOUNTS_DISABLED
-        // We skip "add account" cell
-        #else
-            rootElements.append(addAccountOrTeamCell())
-        #endif
         let topSection = SettingsSectionDescriptor(cellDescriptors: rootElements)
-
         return SettingsGroupCellDescriptor(
             items: [topSection],
             title: L10n.Localizable.Self.profile,
