@@ -100,6 +100,24 @@ public struct BackendEnvironment2: Sendable {
 
         public let countlyURL: URL?
 
+        public init(
+            restAPIURL: URL,
+            websocketURL: URL,
+            blacklistURL: URL,
+            teamsURL: URL,
+            accountsURL: URL,
+            websiteURL: URL,
+            countlyURL: URL?
+        ) {
+            self.restAPIURL = restAPIURL
+            self.websocketURL = websocketURL
+            self.blacklistURL = blacklistURL
+            self.teamsURL = teamsURL
+            self.accountsURL = accountsURL
+            self.websiteURL = websiteURL
+            self.countlyURL = countlyURL
+        }
+
     }
 
     /// Information about a connected backend.
@@ -131,3 +149,9 @@ public struct BackendEnvironment2: Sendable {
     }
 
 }
+
+#if DEBUG
+    extension BackendEnvironment2: Equatable {}
+    extension BackendEnvironment2.Endpoints: Equatable {}
+    extension BackendEnvironment2.ResolvedBackendMetadata: Equatable {}
+#endif
