@@ -83,8 +83,14 @@ public final class PushChannelV2: PushChannelV2Protocol {
                     batchTask?.cancel()
                     batchTask = Task {
                         try await Task.sleep(for: .seconds(batchDelay))
-                        continuation.yield(.events(batch))
+                        if !batch.isEmpty {
+                            continuation.yield(.events(batch))
+                        }
+                        WireLogger.pushChannel.debug("🏆 delay passed, yield batch \(batch.count)", attributes: .pushChannelV2)
                         batch = []
+                        if numberOfReceivedEvents == remainingEventCount {
+                            continuation.yield(.upToDate)
+                        }
                     }
 
                     let result = try receiveMessage(message)
@@ -92,25 +98,31 @@ public final class PushChannelV2: PushChannelV2Protocol {
                     switch result {
                     case .event(let event):
                         batch.append(event)
-
+                        WireLogger.pushChannel.debug("🏆 current batch count \(batch.count)", attributes: .pushChannelV2)
                         if batch.count == maxBatchEventsCount {
-                            continuation.yield(.events(batch))
+                            WireLogger.pushChannel.debug("🏆 batch count reached, yield batch \(batch.count)", attributes: .pushChannelV2)
+                            if !batch.isEmpty {
+                                continuation.yield(.events(batch))
+                            }
                             batch = []
                             batchTask?.cancel()
+                            if numberOfReceivedEvents == remainingEventCount {
+                                continuation.yield(.upToDate)
+                            }
                         }
-                        break
                     case .missedEvents:
                         continuation.yield(.missedEvents)
                     case .syncing(let eventsCount):
                         continuation.yield(.syncing(eventsCount: eventsCount))
                     }
                     
+                }
+                if !batch.isEmpty {
+                    WireLogger.pushChannel.debug("🏆 batch remain, yield batch \(batch.count)", attributes: .pushChannelV2)
+                    continuation.yield(.events(batch))
                     if numberOfReceivedEvents == remainingEventCount {
                         continuation.yield(.upToDate)
                     }
-                }
-                if !batch.isEmpty {
-                    continuation.yield(.events(batch))
                 }
             } catch {
                 WireLogger.pushChannel.error("got error: \(error)", attributes: .pushChannelV2)

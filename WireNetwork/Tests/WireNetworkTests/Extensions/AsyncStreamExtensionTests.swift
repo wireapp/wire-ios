@@ -18,7 +18,7 @@
 
 import XCTest
 
-@testable import WireDomain
+@testable import WireNetwork
 
 final class AsyncStreamExtensionTests: XCTestCase {
 
