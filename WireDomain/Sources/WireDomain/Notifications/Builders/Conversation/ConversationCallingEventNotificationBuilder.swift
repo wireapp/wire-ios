@@ -394,7 +394,7 @@ extension ConversationCallingEventNotificationBuilder {
             let knownCallHandles = userDefaults.object(forKey: Constants.knownCalls) as? [String] ?? []
             let wasCallHandleReported = knownCallHandles.contains(handle)
 
-            let initiatesRinging = callContent.isIncomingCall || wasCallHandleReported
+            let initiatesRinging = callContent.isIncomingCall && !wasCallHandleReported
             let terminatesRinging = (
                 callContent.isEndCall || callContent.isAnsweredElsewhere || callContent
                     .isRejected
