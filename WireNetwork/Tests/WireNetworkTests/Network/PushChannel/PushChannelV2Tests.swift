@@ -288,6 +288,107 @@ final class PushChannelV2Tests: XCTestCase {
         let upToDate = try XCTUnwrap(collected.last)
         XCTAssertEqual(upToDate, .upToDate)
     }
+    
+    
+    func testOpen_CollectFlushes_withUnevenBatchCount() async throws {
+        // GIVEN
+        let batchSize = 18  // the batch changes
+        sut = PushChannelV2(
+            webSocket: webSocket,
+            keepAliveInterval: 0.5,
+            maxBatchEventsCount: batchSize,
+            batchDelay: 0.5
+        )
+        
+        let elements = Array(1 ... 100)
+        let messageCount = try MockJSONPayloadResource(name: "MessagesCountEnvelope100")
+        let mockEnvelope5 = try MockJSONPayloadResource(name: "AsyncLiveUpdateEventEnvelope5")
+        webSocket.open_MockValue = AsyncThrowingStream { continuation in
+            continuation.yield(.data(messageCount.jsonData))
+            for _ in elements {
+                continuation.yield(.data(mockEnvelope5.jsonData))
+            }
+            continuation.finish()
+        }
+
+        // WHEN
+        let stream = try await sut.open()
+
+        var collected: [PushChannelV2.Element] = []
+        for try await element in stream {
+            collected.append(element)
+        }
+
+        // THEN
+        let expectedBatches = 8
+        guard collected.count == expectedBatches else {
+            XCTFail("wrong number of batches, got \(collected.count), expected \(expectedBatches)")
+            return
+        }
+        let batches = collected[1...6]
+        try XCTAssertCount(batches, count: 6)
+        for (index, batch) in batches.enumerated() {
+            if case .events(let events) = batch {
+                try XCTAssertCount(events, count: index == 5 ? 10 : batchSize)
+            } else {
+                XCTFail("wrong number of events in batch, got \(batch), expected .events")
+            }
+        }
+        let firstElement = try XCTUnwrap(collected.first)
+        XCTAssertEqual(firstElement, .syncing(eventsCount: 100))
+        let upToDate = try XCTUnwrap(collected.last)
+        XCTAssertEqual(upToDate, .upToDate)
+    }
+    
+    func testOpen_CollectFlushesMaxCountHigherThanElements() async throws {
+        // GIVEN
+        let batchSize = 150  // the batch changes
+        let nbElements = 100
+        sut = PushChannelV2(
+            webSocket: webSocket,
+            keepAliveInterval: 0.5,
+            maxBatchEventsCount: batchSize,
+            batchDelay: 0.5
+        )
+        
+        let elements = Array(1 ... nbElements)
+        let messageCount = try MockJSONPayloadResource(name: "MessagesCountEnvelope100")
+        let mockEnvelope5 = try MockJSONPayloadResource(name: "AsyncLiveUpdateEventEnvelope5")
+        webSocket.open_MockValue = AsyncThrowingStream { continuation in
+            continuation.yield(.data(messageCount.jsonData))
+            for _ in elements {
+                continuation.yield(.data(mockEnvelope5.jsonData))
+            }
+            continuation.finish()
+        }
+
+        // WHEN
+        let stream = try await sut.open()
+
+        var collected: [PushChannelV2.Element] = []
+        for try await element in stream {
+            collected.append(element)
+        }
+
+        // THEN
+        let expectedBatches = 3
+        guard collected.count == expectedBatches else {
+            XCTFail("wrong number of batches, got \(collected.count), expected \(expectedBatches)")
+            return
+        }
+        let batch = collected[1]
+        
+        if case .events(let events) = batch {
+            try XCTAssertCount(events, count: nbElements)
+        } else {
+            XCTFail("wrong number of events in batch, got \(batch), expected .events")
+        }
+        
+        let firstElement = try XCTUnwrap(collected.first)
+        XCTAssertEqual(firstElement, .syncing(eventsCount: nbElements))
+        let upToDate = try XCTUnwrap(collected.last)
+        XCTAssertEqual(upToDate, .upToDate)
+    }
 }
 
 private enum Scaffolding {
