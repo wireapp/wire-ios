@@ -321,6 +321,10 @@ public final class ClientSessionComponent {
         api: userConnectionsAPI,
         store: userConnectionsStore
     )
+    
+    private lazy var pullServerTimeSync = PullServerTimeSync(api: updateEventsAPI, store: updateEventsLocalStore
+    )
+    
 
     // MARK: - Push syncs
 
@@ -385,6 +389,7 @@ public final class ClientSessionComponent {
 
     public lazy var incrementalSyncV2 = IncrementalSyncV2(
         selfClientID: selfClientID,
+        pullServerTimeSync: pullServerTimeSync,
         pushChannelAPI: pushChannelV2API,
         decryptor: updateEventDecryptor,
         updateEventsStore: updateEventsLocalStore,

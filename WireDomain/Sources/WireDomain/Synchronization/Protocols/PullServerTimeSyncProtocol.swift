@@ -16,26 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+// sourcery: AutoMockable
+/// An object to keep the server time up to date.
+protocol PullServerTimeSyncProtocol {
 
-final class UpdateEventsAPIV8: UpdateEventsAPIV7 {
-    override var apiVersion: APIVersion { .v8 }
-    
-    func getServerTime() async throws -> Date {
-        let path = "\(pathPrefix)/time"
+    /// Fetch servertime from remote, then store it locally.
 
-        var requestBuilder = try URLRequestBuilder(path: path).withMethod(.get)
+    func pull() async throws
 
-        let request = requestBuilder.build()
-
-        let (data, response) = try await apiService.executeRequest(
-            request,
-            requiringAccessToken: true
-        )
-
-        return try ResponseParser()
-            .success(code: .ok, type: ServerTimeResponseV8.self)
-            .parse(code: response.statusCode, data: data)
-        
-    }
 }

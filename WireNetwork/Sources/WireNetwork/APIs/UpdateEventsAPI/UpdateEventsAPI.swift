@@ -42,4 +42,6 @@ public protocol UpdateEventsAPI {
         sinceEventID: UUID
     ) -> PayloadPager<UpdateEventEnvelope>
 
+    /// Get the current server time in UTC with seconds precision.
+    func getServerTime() async throws -> Date
 }
