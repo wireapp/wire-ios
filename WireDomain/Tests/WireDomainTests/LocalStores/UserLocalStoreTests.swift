@@ -313,6 +313,24 @@ final class UserLocalStoreTests: XCTestCase {
         }
     }
 
+    func testUpdateUserAvailability() async throws {
+        // Mock
+        let selfUser = await context.perform { [self] in
+            return modelHelper.createSelfUser(id: Scaffolding.selfUserID, in: context)
+        }
+
+        // When
+        await sut.updateUser(
+            with: QualifiedID(uuid: Scaffolding.selfUserID, domain: Scaffolding.domain),
+            availability: .available
+        )
+
+        // Then
+        await context.perform {
+            XCTAssertEqual(selfUser.availability, .available)
+        }
+    }
+
     func testIsSelfUser_It_Returns_Correct_Flag() async throws {
         // Mock
 
