@@ -595,7 +595,7 @@ extension UserClientTests {
         XCTAssertEqual(newClient.user, ZMUser.selfUser(in: uiMOC))
         XCTAssertNotNil(newClient.sessionIdentifier)
         XCTAssertEqual(newClient.mlsPublicKeys.ed25519, "some key")
-        XCTAssertEqual(newClient.asyncStreamCapable, false)
+        XCTAssertEqual(newClient.isConsumableNotificationsCapable, false)
     }
 
     func test_createOrUpdateSelfUserClient_WithAsyncStreamCapableTrue() {
@@ -617,7 +617,7 @@ extension UserClientTests {
 
         // then
         XCTAssertNotNil(newClient)
-        XCTAssertTrue(newClient.asyncStreamCapable)
+        XCTAssertTrue(newClient.isConsumableNotificationsCapable)
     }
 
     func testThatItSetsTheUserWhenInsertingANewSelfUserClient_NoExistingSelfClient() {
