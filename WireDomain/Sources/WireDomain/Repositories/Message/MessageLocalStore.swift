@@ -216,8 +216,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                 clientMessage: clientMessage,
                 senderID: senderID,
                 senderDomain: senderDomain,
-                conversation: conversation,
-                updateLastReadTimestamp: true
+                conversation: conversation
             )
         }
     }
@@ -270,8 +269,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                 clientMessage: assetClientMessage,
                 senderID: senderID,
                 senderDomain: senderDomain,
-                conversation: conversation,
-                updateLastReadTimestamp: true
+                conversation: conversation
             )
         }
     }
@@ -474,8 +472,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         clientMessage: ZMOTRMessage,
         senderID: UUID,
         senderDomain: String,
-        conversation: ZMConversation,
-        updateLastReadTimestamp: Bool
+        conversation: ZMConversation
     ) {
         let sender = ZMUser.fetchOrCreate(
             with: senderID,
@@ -486,10 +483,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         clientMessage.visibleInConversation = conversation
         clientMessage.sender = sender
         updateQuoteRelationships(message: clientMessage)
-        conversation.updateTimestampsAfterUpdatingMessage(
-            clientMessage,
-            updateLastReadTimestamp: updateLastReadTimestamp
-        )
+        conversation.updateTimestampsAfterUpdatingMessage(clientMessage)
         clientMessage.unarchiveIfNeeded(conversation)
         clientMessage.updateCategoryCache()
         clientMessage.markAsSent()
@@ -880,7 +874,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             await context.perform {
                 systemMessage.text = newName
                 systemMessage.visibleInConversation = conversation
-                conversation.updateTimestampsAfterUpdatingMessage(systemMessage, updateLastReadTimestamp: true)
+                conversation.updateTimestampsAfterUpdatingMessage(systemMessage)
             }
 
             return [systemMessage]

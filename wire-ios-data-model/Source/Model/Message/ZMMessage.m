@@ -327,7 +327,7 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
     }
     
     [self updateQuoteRelationships];
-    [conversation updateTimestampsAfterUpdatingMessage:self updateLastReadTimestamp:YES];
+    [conversation updateTimestampsAfterUpdatingMessage:self];
 }
 
 + (ZMConversation *)conversationForUpdateEvent:(ZMUpdateEvent *)event inContext:(NSManagedObjectContext *)moc prefetchResult:(ZMFetchRequestBatchResult *)prefetchResult
@@ -390,7 +390,7 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
         self.serverTimestamp = timestamp;
     }
     
-    [self.conversation updateTimestampsAfterUpdatingMessage:self updateLastReadTimestamp:YES];
+    [self.conversation updateTimestampsAfterUpdatingMessage:self];
 }
 
 - (NSString *)shortDebugDescription;
@@ -728,8 +728,8 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
     message.users = usersSet;
     message.text = messageText != nil ? messageText : name;
     
-    [conversation updateTimestampsAfterUpdatingMessage:message updateLastReadTimestamp:YES];
-
+    [conversation updateTimestampsAfterUpdatingMessage:message];
+    
     return message;
 }
 

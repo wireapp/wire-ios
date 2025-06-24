@@ -230,7 +230,7 @@ public class ZMAssetClientMessage: ZMOTRMessage {
             expectsReadConfirmation = conversation?.hasReadReceiptsEnabled ?? false
         }
 
-        conversation?.updateTimestampsAfterUpdatingMessage(self, updateLastReadTimestamp: true)
+        conversation?.updateTimestampsAfterUpdatingMessage(self)
 
         // NOTE: Calling super since this is method overriden to handle special cases when receiving an asset
         super.startDestructionIfNeeded()
