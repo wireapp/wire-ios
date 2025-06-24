@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import WireNetwork
 
 enum StorableConversationAccessMode: String, Equatable, Codable, Sendable {
 
@@ -25,7 +25,7 @@ enum StorableConversationAccessMode: String, Equatable, Codable, Sendable {
     case link
     case code
 
-    init(_ value: WireAPI.ConversationAccessMode) {
+    init(_ value: WireNetwork.ConversationAccessMode) {
         switch value {
         case .private:
             self = .private
@@ -38,7 +38,7 @@ enum StorableConversationAccessMode: String, Equatable, Codable, Sendable {
         }
     }
 
-    func toAPIModel() -> WireAPI.ConversationAccessMode {
+    func toAPIModel() -> WireNetwork.ConversationAccessMode {
         switch self {
         case .private:
             .private

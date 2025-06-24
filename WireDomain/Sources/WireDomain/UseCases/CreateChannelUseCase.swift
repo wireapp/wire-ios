@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
 import WireLogging
+import WireNetwork
 
 // sourcery: AutoMockable
 /// Creates and setup a channel.
@@ -29,8 +29,8 @@ public protocol CreateChannelUseCaseProtocol {
         name: String?,
         historyLength: Int?,
         users: Set<ZMUser>,
-        accessMode: Set<WireAPI.ConversationAccessMode>,
-        accessRoles: Set<WireAPI.ConversationAccessRole>,
+        accessMode: Set<WireNetwork.ConversationAccessMode>,
+        accessRoles: Set<WireNetwork.ConversationAccessRole>,
         enableReceipts: Bool
     ) async throws -> ZMConversation
 }
@@ -79,8 +79,8 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
         name: String?,
         historyLength: Int?,
         users: Set<ZMUser>,
-        accessMode: Set<WireAPI.ConversationAccessMode>,
-        accessRoles: Set<WireAPI.ConversationAccessRole>,
+        accessMode: Set<WireNetwork.ConversationAccessMode>,
+        accessRoles: Set<WireNetwork.ConversationAccessRole>,
         enableReceipts: Bool
     ) async throws -> ZMConversation {
         do {
@@ -133,8 +133,8 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
         name: String?,
         historyLength: Int?,
         users: Set<ZMUser>,
-        accessMode: Set<WireAPI.ConversationAccessMode>,
-        accessRoles: Set<WireAPI.ConversationAccessRole>,
+        accessMode: Set<WireNetwork.ConversationAccessMode>,
+        accessRoles: Set<WireNetwork.ConversationAccessRole>,
         enableReceipts: Bool
     ) async throws -> ZMConversation {
         let (
@@ -149,7 +149,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
             }
 
             let usersExcludingSelfUser = users.filter { !$0.isSelfUser }
-            let qualifiedUserIDs: [WireAPI.QualifiedID]
+            let qualifiedUserIDs: [WireNetwork.QualifiedID]
             let unqualifiedUserIDs: [UUID]
 
             if let ids = usersExcludingSelfUser.qualifiedUserIDs {
@@ -204,8 +204,8 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
         _ excludedDomains: [String],
         teamID: UUID,
         name: String?,
-        accessMode: Set<WireAPI.ConversationAccessMode>,
-        accessRoles: Set<WireAPI.ConversationAccessRole>,
+        accessMode: Set<WireNetwork.ConversationAccessMode>,
+        accessRoles: Set<WireNetwork.ConversationAccessRole>,
         enableReceipts: Bool,
         users: Set<ZMUser>
     ) async throws -> ZMConversation {
@@ -354,7 +354,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
     }
 
     private func createConversationLocally(
-        _ conversation: WireAPI.Conversation
+        _ conversation: WireNetwork.Conversation
     ) async throws -> ZMConversation {
         await store.storeConversation(
             conversation.toDomainModel(),

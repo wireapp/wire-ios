@@ -16,7 +16,7 @@ let package = Package(
         .library(name: "WireAuthenticationUI", targets: ["WireAuthenticationUI"])
     ],
     dependencies: [
-        .package(path: "../WireAPI"),
+        .package(path: "../WireNetwork"),
         .package(path: "../WireFoundation"),
         .package(path: "../WireLogging"),
         .package(path: "../WireUI"),
@@ -53,14 +53,14 @@ let package = Package(
 
         .target(
             name: "WireAuthenticationLogic",
-            dependencies: ["WireAuthenticationAPI", "WireAPI", "WireFoundation"]
+            dependencies: ["WireAuthenticationAPI", "WireNetwork", "WireFoundation"]
         ),
         .testTarget(
             name: "WireAuthenticationLogicTests",
             dependencies: [
                 "WireAuthenticationLogic",
                 "WireAuthenticationAPISupport",
-                .product(name: "WireAPISupport", package: "WireAPI"),
+                .product(name: "WireNetworkSupport", package: "WireNetwork"),
             ]
         ),
 

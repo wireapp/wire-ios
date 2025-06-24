@@ -55,6 +55,9 @@ public enum SyncState: Equatable {
         case openPushChannel
         case pullPendingEvents
         case processPendingEvents
+        case receivingLiveEvents // with consumable-notifications sync system (IncrementalSyncV2), we don't do
+        // pullPendingEvents, the pushChannel is open
+        // and events are received until we're up to date come from the websocket.
 
     }
 

@@ -17,8 +17,8 @@
 //
 
 import Combine
-import WireAPI
 import WireDataModel
+import WireNetwork
 
 @testable import WireDomain
 

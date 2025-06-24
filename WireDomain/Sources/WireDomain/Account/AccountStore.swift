@@ -19,6 +19,7 @@
 import Foundation
 import WireDataModel
 import WireLogging
+import WireNetwork
 import WireSystem
 
 private let log = WireLogger(tag: "Accounts")
@@ -35,8 +36,10 @@ private let log = WireLogger(tag: "Accounts")
 
 struct AccountStore {
 
-    private let directory: URL
-    private static let directoryName = "Accounts"
+    private let accountsDirectory: URL
+    private let accountDataDirectory: URL
+    private static let accountsDirectoryName = "Accounts"
+    private static let accountDataDirectoryName = "AccountData"
     private let fileManager = FileManager.default
 
     private let encoder = JSONEncoder()
@@ -48,8 +51,11 @@ struct AccountStore {
     /// - parameter root: The root url in which the storage will use to store its data
 
     init(root: URL) throws {
-        self.directory = root.appendingPathComponent(AccountStore.directoryName)
-        try fileManager.createAndProtectDirectory(at: directory)
+        self.accountsDirectory = root.appendingPathComponent(AccountStore.accountsDirectoryName)
+        self.accountDataDirectory = root
+            .appendingPathComponent(AccountStore.accountDataDirectoryName)
+        try fileManager.createAndProtectDirectory(at: accountsDirectory)
+        try fileManager.createAndProtectDirectory(at: accountDataDirectory)
     }
 
     // MARK: - Fetch
@@ -108,6 +114,66 @@ struct AccountStore {
         }
     }
 
+    // MARK: Backend Environment
+
+    // MARK: - Store
+
+    /// Store a `BackendEnvironment`.
+    ///
+    /// If the BackendEnvironment for an account already exists, it will be overwritten.
+    ///
+    /// - parameter backendEnvironment: Object to store.
+    /// - parameter accountID: The `UUID` of the user the account belongs to.
+    /// - returns: Whether the operation was successful.
+
+    @discardableResult
+    func storeBackendEnvironment(_ backendEnvironment: BackendEnvironment2, for accountID: UUID) -> Bool {
+        do {
+            let accountDataURL = accountDataURL(accountID: accountID)
+            if !FileManager.default
+                .fileExists(atPath: accountDataURL.absoluteString) {
+                try FileManager.default.createAndProtectDirectory(at: accountDataURL)
+            }
+            let storedBackendEnvironment = backendEnvironment.toStored()
+            let url = backendEnvironmentURL(for: accountID)
+            let data = try encoder.encode(storedBackendEnvironment)
+            try data.write(to: url, options: .atomic)
+            return true
+        } catch {
+            let errorDescription = error.safeForLoggingDescription
+            log
+                .error(
+                    "Unable to store backend environment \(backendEnvironment) for account with ID \(accountID.safeForLoggingDescription), error: \(errorDescription)"
+                )
+            return false
+        }
+    }
+
+    /// Fetch a backend environment for account.
+    ///
+    /// - parameter accountID: The `UUID` of the user the account belongs to.
+    /// - returns: The `BackendEnvironment` if it exists.
+
+    func fetchBackendEnvironment(accountID: UUID) throws -> BackendEnvironment2? {
+        let url = backendEnvironmentURL(for: accountID)
+
+        do {
+            let data = try Data(contentsOf: url)
+            let stored = try decoder.decode(
+                StoredBackendEnvironment.self,
+                from: data
+            )
+            return try stored.toDomain()
+        } catch {
+            let errorDescription = error.safeForLoggingDescription
+            log
+                .error(
+                    "Unable to fetch backend environment for account with ID \(accountID.safeForLoggingDescription), error: \(errorDescription)"
+                )
+            return nil
+        }
+    }
+
     // MARK: - Delete
 
     /// Delete an `Account`.
@@ -119,11 +185,35 @@ struct AccountStore {
     func deleteAccount(_ account: Account) -> Bool {
         do {
             try fileManager.removeItem(at: url(for: account.userIdentifier))
+            deleteBackendEnvironment(account: account)
             return true
         } catch {
             let accountDescription = account.safeForLoggingDescription
             let errorDescription = error.safeForLoggingDescription
             log.error("Unable to delete account \(accountDescription), error: \(errorDescription)")
+            return false
+        }
+    }
+
+    // MARK: - Delete
+
+    /// Delete an `BackendEnvironment`.
+    ///
+    /// - parameter account: The account for which backend environment should be deleted.
+    /// - returns: `false` if the BackendEnvironment cannot be found or cannot be deleted otherwise `true`.
+
+    @discardableResult
+    func deleteBackendEnvironment(account: Account) -> Bool {
+        do {
+            try fileManager.removeItem(at: backendEnvironmentURL(for: account.userIdentifier))
+            return true
+        } catch {
+            let accountDescription = account.safeForLoggingDescription
+            let errorDescription = error.safeForLoggingDescription
+            log
+                .error(
+                    "Unable to delete BackendEnvironment for account \(accountDescription), error: \(errorDescription)"
+                )
             return false
         }
     }
@@ -137,7 +227,7 @@ struct AccountStore {
     @discardableResult
     static func delete(at root: URL) -> Bool {
         do {
-            try FileManager.default.removeItem(at: root.appendingPathComponent(directoryName))
+            try FileManager.default.removeItem(at: root.appendingPathComponent(accountsDirectoryName))
             return true
         } catch {
             log.error("Unable to remove all accounts, error: \(error.safeForLoggingDescription)")
@@ -149,7 +239,7 @@ struct AccountStore {
 
     private func listAccountIDs() -> Set<UUID> {
         do {
-            let paths = try fileManager.contentsOfDirectory(atPath: directory.path)
+            let paths = try fileManager.contentsOfDirectory(atPath: accountsDirectory.path)
             let ids = paths.compactMap(UUID.init(uuidString:))
             return Set(ids)
         } catch {
@@ -159,83 +249,24 @@ struct AccountStore {
     }
 
     private func url(for id: UUID) -> URL {
-        directory.appendingPathComponent(id.uuidString)
+        accountsDirectory.appendingPathComponent(id.uuidString)
     }
 
+    private func accountDataURL(accountID: UUID) -> URL {
+        accountDataDirectory
+            .appendingPathComponent(accountID.uuidString, isDirectory: true)
+    }
+
+    private func backendEnvironmentURL(for id: UUID) -> URL {
+        accountDataURL(accountID: id)
+            .appendingPathComponent("backend-environment.json")
+    }
 }
 
 private extension Error {
 
     var safeForLoggingDescription: String {
         (self as NSError).safeForLoggingDescription
-    }
-
-}
-
-private struct StoredAccount: Codable {
-
-    var identifier: UUID
-    var name: String
-    var image: Data?
-    var team: String?
-    var teamImage: Data?
-    var loginCredentials: StoredLoginCredentials?
-    var unreadConversationCount: Int
-
-    init(_ account: Account) {
-        self.identifier = account.userIdentifier
-        self.name = account.userName
-        self.image = account.imageData
-        self.team = account.teamName
-        self.teamImage = account.teamImageData
-        self.loginCredentials = account.loginCredentials.map {
-            StoredLoginCredentials($0)
-        }
-        self.unreadConversationCount = account.unreadConversationCount
-    }
-
-}
-
-private struct StoredLoginCredentials: Codable {
-
-    var emailAddress: String?
-    var hasPassword: Bool
-    var usesCompanyLogin: Bool
-
-    init(_ loginCredentials: LoginCredentials) {
-        self.emailAddress = loginCredentials.emailAddress
-        self.hasPassword = loginCredentials.hasPassword
-        self.usesCompanyLogin = loginCredentials.usesCompanyLogin
-    }
-
-}
-
-private extension Account {
-
-    convenience init(_ storedAccount: StoredAccount) {
-        self.init(
-            userName: storedAccount.name,
-            userIdentifier: storedAccount.identifier,
-            teamName: storedAccount.team,
-            imageData: storedAccount.image,
-            teamImageData: storedAccount.teamImage,
-            unreadConversationCount: storedAccount.unreadConversationCount,
-            loginCredentials: storedAccount.loginCredentials.map {
-                LoginCredentials($0)
-            }
-        )
-    }
-
-}
-
-private extension LoginCredentials {
-
-    convenience init(_ loginCredentials: StoredLoginCredentials) {
-        self.init(
-            emailAddress: loginCredentials.emailAddress,
-            hasPassword: loginCredentials.hasPassword,
-            usesCompanyLogin: loginCredentials.usesCompanyLogin
-        )
     }
 
 }

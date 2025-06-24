@@ -17,8 +17,8 @@
 //
 
 import UserNotifications
-import WireAPI
 import WireDataModel
+import WireNetwork
 
 struct UserConnectionEventNotificationBuilder {
 
@@ -33,13 +33,15 @@ struct UserConnectionEventNotificationBuilder {
     func buildContent(
         event: UserConnectionEvent
     ) async -> UserNotification? {
-        let canBuildNotification = await validator.validate()
+        let canBuildNotification = await validator.validate(
+            connectionStatus: event.connection.status
+        )
 
         guard canBuildNotification else {
             return nil
         }
 
-        var qualifiedID: WireAPI.QualifiedID?
+        var qualifiedID: WireNetwork.QualifiedID?
         let connection = event.connection
 
         if let qualifiedConversationID = connection.qualifiedConversationID {
@@ -88,7 +90,7 @@ struct UserConnectionEventNotificationBuilder {
         username: String?,
         selfUserID: UUID,
         senderID: UUID?,
-        conversationID: WireAPI.QualifiedID?
+        conversationID: WireNetwork.QualifiedID?
     ) -> UserNotification {
         let content = UNMutableNotificationContent()
 
@@ -152,7 +154,7 @@ struct UserConnectionEventNotificationBuilder {
     private func makeUserInfo(
         selfUserID: UUID,
         senderID: UUID?,
-        conversationID: WireAPI.QualifiedID?
+        conversationID: WireNetwork.QualifiedID?
     ) -> [AnyHashable: Any] {
         var userInfo: [AnyHashable: Any] = [:]
 
@@ -168,8 +170,13 @@ struct UserConnectionEventNotificationBuilder {
 extension UserConnectionEventNotificationBuilder {
     struct Validator {
 
-        func validate() async -> Bool {
-            true // No validation criteria for this notification
+        func validate(connectionStatus: WireNetwork.ConnectionStatus) async -> Bool {
+            switch connectionStatus {
+            case .accepted, .pending:
+                true
+            default:
+                false // do not display notifications for other statuses
+            }
         }
     }
 

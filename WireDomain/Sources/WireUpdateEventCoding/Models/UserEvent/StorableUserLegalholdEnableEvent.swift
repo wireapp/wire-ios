@@ -17,17 +17,17 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 struct StorableUserLegalholdEnableEvent: Equatable, Codable, Sendable {
 
     private let userID: UUID
 
-    init(_ value: WireAPI.UserLegalholdEnableEvent) {
+    init(_ value: WireNetwork.UserLegalholdEnableEvent) {
         self.userID = value.userID
     }
 
-    func toAPIModel() -> WireAPI.UserLegalholdEnableEvent {
+    func toAPIModel() -> WireNetwork.UserLegalholdEnableEvent {
         .init(userID: userID)
     }
 
