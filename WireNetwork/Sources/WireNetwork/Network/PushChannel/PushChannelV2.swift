@@ -86,13 +86,10 @@ public final class PushChannelV2: PushChannelV2Protocol {
                             continuation.yield(.events(batch))
                         }
                         batch = []
-                        if numberOfReceivedEvents == remainingEventCount {
-                            continuation.yield(.upToDate)
-                        }
+                        notifyUpToDateIfNeeded()
                     }
 
                     let result = try receiveMessage(message)
-
                     switch result {
                     case let .event(event):
                         batch.append(event)
@@ -103,9 +100,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
                             }
                             batch = []
                             batchTask?.cancel()
-                            if numberOfReceivedEvents == remainingEventCount {
-                                continuation.yield(.upToDate)
-                            }
+                            notifyUpToDateIfNeeded()
                         }
                     case .missedEvents:
                         continuation.yield(.missedEvents)
@@ -116,9 +111,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
                 }
                 if !batch.isEmpty {
                     continuation.yield(.events(batch))
-                    if numberOfReceivedEvents == remainingEventCount {
-                        continuation.yield(.upToDate)
-                    }
+                    notifyUpToDateIfNeeded()
                 }
             } catch {
                 WireLogger.pushChannel.error("got error: \(error)", attributes: .pushChannelV2)
@@ -136,6 +129,12 @@ public final class PushChannelV2: PushChannelV2Protocol {
         return stream
     }
 
+    private func notifyUpToDateIfNeeded() {
+        if let remainingEventCount, numberOfReceivedEvents >= remainingEventCount {
+            continuation.yield(.upToDate)
+            self.remainingEventCount = nil
+        }
+    }
     public func close() async {
         WireLogger.pushChannel.debug("closing push channel", attributes: .pushChannelV2)
 
