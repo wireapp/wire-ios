@@ -30,7 +30,7 @@ class UserManager {
 
     private let cookieStorage: any CookieStorageProtocol
 
-    init() {
+    init(apiVersion: APIVersion = .v8) {
         self.createdUsers = []
         self.networkStack = NetworkStack(
             backendEnvironment: .staging,
@@ -49,8 +49,8 @@ class UserManager {
             authenticationManager: authenticationManager
         )
         self.authenticationAPI = AuthenticationAPIBuilder(networkService: networkStack.apiNetworkService)
-            .makeAPI(for: .v8)
-        self.selfUserAPI = SelfUserAPIBuilder(apiService: apiService).makeAPI(for: .v8)
+            .makeAPI(for: apiVersion)
+        self.selfUserAPI = SelfUserAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
     }
 
     func createPersonalUser() async throws -> UserInfo {
