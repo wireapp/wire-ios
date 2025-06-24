@@ -1040,6 +1040,7 @@
 "group_details.receipt_options_cell.title" = "Read receipts";
 "group_details.receipt_options_cell.description" = "When this is on, people can see when their messages in this conversation are read.";
 "group_details.access_options_cell.title" = "Channel access";
+"group_details.channel_history_options_cell.title" = "Conversation history";
 
 "group_details.message_protocol.section_tile" = "Protocol details";
 "group_details.message_protocol.title" = "Protocol";
@@ -1051,6 +1052,16 @@
 // Channel Access level
 "channel_access_level.public" = "Public";
 "channel_access_level.private" = "Private";
+
+// Channel History Length
+"channel_history_length.off" = "Off";
+"channel_history_length.oneDay" = "One day";
+"channel_history_length.oneWeek" = "One week";
+"channel_history_length.oneDay" = "Four weeks";
+"channel_history_length.unlimited" = "Unlimited";
+"channel_history_length.custom" = "Custom";
+"channel_history_length.days" = "Days";
+"channel_history_length.weeks" = "Weeks";
 
 // Secured Guest link with password
 "secured_guest_link_with_password.header.title" = "Create password secured link";

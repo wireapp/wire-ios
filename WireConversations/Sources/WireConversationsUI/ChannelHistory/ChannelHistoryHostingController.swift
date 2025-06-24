@@ -25,17 +25,15 @@ import WireConversationsImplementationSupport
 import WireDesign
 import WireReusableUIComponents
 
-package  final class ChannelAccessHostingController: UIHostingController<ChannelAccessView> {
+package final class ChannelHistoryHostingController: UIHostingController<ChannelHistoryView> {
 
-    private let viewModel: ChannelAccessViewModel
-
+    private let viewModel: ChannelHistoryViewModel
     private var activityIndicator: BlockingActivityIndicator!
-
     private var cancellables = Set<AnyCancellable>()
 
-    package init(viewModel: ChannelAccessViewModel) {
+    package init(viewModel: ChannelHistoryViewModel) {
         self.viewModel = viewModel
-        super.init(rootView: ChannelAccessView(viewModel: viewModel))
+        super.init(rootView: ChannelHistoryView(viewModel: viewModel))
     }
 
     @available(*, unavailable)
@@ -76,26 +74,31 @@ package  final class ChannelAccessHostingController: UIHostingController<Channel
     }
 }
 
-struct ChannelAccessHostingController_Previews: PreviewProvider {
+struct ChannelHistoryHostingController_Previews: PreviewProvider {
     static var previews: some View {
-        ChannelAccessHostingControllerPreview()
+        ChannelHistoryHostingControllerPreview()
             .edgesIgnoringSafeArea(.all)
             .previewDisplayName("UIKit NavController Preview")
     }
 }
 
-struct ChannelAccessHostingControllerPreview: UIViewControllerRepresentable {
+struct ChannelHistoryHostingControllerPreview: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
 
-        let useCase = ChannelAccessUseCase(
-            permission: .everyone,
+        let useCase = ChannelHistoryUseCase(
             repository: MockChannelRepositoryProtocol()
         )
-        let viewModel = ChannelAccessViewModel(accentColor: .red, useCase: useCase)
+        
+        let viewModel = ChannelHistoryViewModel(
+            historyLength: 10_000,
+            accentColor: .red,
+            useCase: useCase
+        )
 
-        let channelAccessVC = ChannelAccessHostingController(viewModel: viewModel)
+        let channelAccessVC = ChannelHistoryHostingController(viewModel: viewModel)
         return UINavigationController(rootViewController: channelAccessVC)
     }
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }
+

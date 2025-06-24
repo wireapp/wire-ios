@@ -56,6 +56,7 @@ public protocol ConversationLike: AnyObject {
     var areServicesPresent: Bool { get }
     var domain: String? { get }
     var isChannel: Bool { get }
+    var channelHistoryLength: Int { get }
     var privateChannelPermission: PrivateChannelPermission { get }
 
     /// The name of the `cell` used for Wire Cells file management.

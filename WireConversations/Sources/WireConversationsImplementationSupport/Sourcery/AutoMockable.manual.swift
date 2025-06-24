@@ -69,7 +69,7 @@ public class MockChannelAccessUseCaseProtocol: ChannelAccessUseCaseProtocol {
 
 }
 
-public class MockChannelAccessRepositoryProtocol: ChannelAccessRepositoryProtocol {
+public class MockChannelRepositoryProtocol: ChannelRepositoryProtocol {
 
     // MARK: - Life cycle
 

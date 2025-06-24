@@ -17,7 +17,7 @@
 //
 
 public import SwiftUI
-public import WireConversationsImplementation
+import WireConversationsImplementation
 public import WireConversationsAPI
 import WireConversationsUI
 
@@ -26,7 +26,7 @@ public class ChannelViewFactory {
     public static func makeChannelAccessView(
         permission: ChannelAccessLevelPermission?,
         accentColor: Color,
-        repository: any ChannelAccessRepositoryProtocol
+        repository: any ChannelRepositoryProtocol
     ) -> UIViewController {
         let useCase = ChannelAccessUseCase(permission: permission, repository: repository)
         let viewModel = ChannelAccessViewModel(
@@ -34,5 +34,24 @@ public class ChannelViewFactory {
         )
 
         return ChannelAccessHostingController(viewModel: viewModel)
+    }
+    
+    @MainActor
+    public static func makeChannelHistoryView(
+        historyLength: Int,
+        accentColor: Color,
+        repository: any ChannelRepositoryProtocol
+    ) -> UIViewController {
+        let useCase = ChannelHistoryUseCase(
+            repository: repository
+        )
+        
+        let viewModel = ChannelHistoryViewModel(
+            historyLength: historyLength,
+            accentColor: accentColor,
+            useCase: useCase
+        )
+        
+        return ChannelHistoryHostingController(viewModel: viewModel)
     }
 }

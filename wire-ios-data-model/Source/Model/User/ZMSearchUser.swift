@@ -398,6 +398,10 @@ public class ZMSearchUser: NSObject, UserType {
     public func canModifyChannelAccessLevelSettings(in conversation: ConversationLike) -> Bool {
         user?.canModifyChannelAccessLevelSettings(in: conversation) == true
     }
+    
+    public func canModifyChannelHistoryLengthSettings(in conversation: ConversationLike) -> Bool {
+        user?.canModifyChannelHistoryLengthSettings(in: conversation) == true
+    }
 
     public func canLeave(_ conversation: ZMConversation) -> Bool {
         user?.canLeave(conversation) == true

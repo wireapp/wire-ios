@@ -26,13 +26,6 @@ public protocol ChannelAccessUseCaseProtocol {
     func updateParticipantPermission(to permission: ChannelAccessLevelPermission) async throws -> ChannelAccessSettings
 }
 
-@MainActor
-public protocol ChannelAccessRepositoryProtocol {
-    func updateParticipantPermission(
-        to permission: ChannelAccessLevelPermission
-    ) async throws -> WireConversationsAPI.ChannelAccessLevelPermission
-}
-
 public enum ChannelAccessError: Error {
     case notAllowed
     case notEnoughData
@@ -41,11 +34,11 @@ public enum ChannelAccessError: Error {
 public class ChannelAccessUseCase: ChannelAccessUseCaseProtocol {
 
     public private(set) var settings: ChannelAccessSettings
-    public let repository: any ChannelAccessRepositoryProtocol
+    public let repository: any ChannelRepositoryProtocol
 
     public init(
         permission: ChannelAccessLevelPermission?,
-        repository: any ChannelAccessRepositoryProtocol
+        repository: any ChannelRepositoryProtocol
     ) {
         let settings = ChannelAccessSettings(
             // for MVP only private supported, uncomment for next phase

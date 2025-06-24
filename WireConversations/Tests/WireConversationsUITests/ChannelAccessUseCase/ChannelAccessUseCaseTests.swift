@@ -23,7 +23,7 @@ import XCTest
 @MainActor
 final class ChannelAccessUseCaseTests: XCTestCase {
 
-    lazy var repo = MockChannelAccessRepositoryProtocol()
+    lazy var repo = MockChannelRepositoryProtocol()
 
     // for channels MVP, only public is supported, comment out for next phase
     // TODO: [WPB-16860] https://wearezeta.atlassian.net/browse/WPB-16860

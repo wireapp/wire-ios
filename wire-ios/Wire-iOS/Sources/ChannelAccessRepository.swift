@@ -23,7 +23,7 @@ import WireNetwork
 import WireSyncEngine
 import WireTransport
 
-class ChannelAccessRepository: ChannelAccessRepositoryProtocol {
+class ChannelRepository: ChannelRepositoryProtocol {
 
     private let conversationID: String
     private let conversationDomain: String
