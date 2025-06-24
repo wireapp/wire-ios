@@ -65,25 +65,24 @@ public extension Conversation {
             self.mutedReference = mutedReference
         }
     }
-    
 
 }
 
 extension Conversation {
     struct MemberV0: Equatable, Decodable, Sendable, ToAPIModelConvertible {
 
-       let qualifiedID: QualifiedIDV0?
-       let id: UUID?
-       let qualifiedTarget: QualifiedIDV0?
-       let target: UUID?
-       let conversationRole: String?
-       let service: ServiceV0?
-       let archived: Bool?
-       let archivedReference: Date?
-       let hidden: Bool?
-       let hiddenReference: String?
-       let mutedStatus: Int?
-       let mutedReference: Date?
+        let qualifiedID: QualifiedIDV0?
+        let id: UUID?
+        let qualifiedTarget: QualifiedIDV0?
+        let target: UUID?
+        let conversationRole: String?
+        let service: ServiceV0?
+        let archived: Bool?
+        let archivedReference: Date?
+        let hidden: Bool?
+        let hiddenReference: String?
+        let mutedStatus: Int?
+        let mutedReference: Date?
 
         init(
             qualifiedID: QualifiedIDV0? = nil,

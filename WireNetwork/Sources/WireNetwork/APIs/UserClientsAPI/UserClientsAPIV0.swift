@@ -227,7 +227,7 @@ struct ClientUpdateV0: Equatable, Sendable, Encodable {
     /// The capabilities of the client.
     /// - Note: capabilities cannot be removed once added to a client,
     ///  so once 1 capability added it must always be present
-    let capabilities: [UserClientCapability]? // TODO: [WPB-18279] remove public conformance of Encodable, don't rely on public models
+    let capabilities: [UserClientCapabilityV0]?
 
     /// A label describing the client.
 
@@ -235,26 +235,26 @@ struct ClientUpdateV0: Equatable, Sendable, Encodable {
 
     /// The last resort Prekey
 
-    let lastKey: Prekey? // TODO: [WPB-18279] remove public conformance of Encodable, don't rely on public models
+    let lastKey: PrekeyV0?
 
     /// The mls public keys for the client.
 
-    let mlsPublicKeys: MLSPublicKeys? // TODO: [WPB-18279] remove public conformance of Encodable, don't rely on public models
+    let mlsPublicKeys: MLSPublicKeysV0?
 
     /// New prekeys for other clients to establish OTR sessions.
 
-    let preKeys: [Prekey]? // TODO: [WPB-18279] remove public conformance of Encodable, don't rely on public models
+    let preKeys: [PrekeyV0]?
 }
 
 extension ClientUpdate {
 
     func toNetworkModel() -> ClientUpdateV0 {
         ClientUpdateV0(
-            capabilities: capabilities,
+            capabilities: capabilities?.map { $0.toNetworkModel() },
             label: label,
-            lastKey: lastKey,
-            mlsPublicKeys: mlsPublicKeys,
-            preKeys: preKeys
+            lastKey: lastKey?.toNetworkModel(),
+            mlsPublicKeys: mlsPublicKeys?.toNetworkModel(),
+            preKeys: preKeys?.map { $0.toNetworkModel() }
         )
     }
 }

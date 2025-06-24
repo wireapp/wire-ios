@@ -39,7 +39,6 @@ extension WireNetwork.MLSCipherSuite {
             .MLS_256_DHKEMP384_AES256GCM_SHA384_P384
         }
     }
-    
 
     func toConfigModel() -> Feature.MLS.Config.MLSCipherSuite {
         switch self {
@@ -59,7 +58,7 @@ extension WireNetwork.MLSCipherSuite {
             .MLS_256_DHKEMP384_AES256GCM_SHA384_P384
         }
     }
-    
+
 }
 
 extension WireNetwork.ConversationAccessRoleLegacy {

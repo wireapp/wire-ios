@@ -102,3 +102,16 @@ extension MLSPublicKeysV0: ToAPIModelConvertible {
         )
     }
 }
+
+extension MLSPublicKeys: ToNetworkConvertible {
+
+    func toNetworkModel() -> MLSPublicKeysV0 {
+        MLSPublicKeysV0(
+            ed25519: ed25519,
+            ed448: ed448,
+            p256: p256,
+            p384: p384,
+            p512: p512
+        )
+    }
+}

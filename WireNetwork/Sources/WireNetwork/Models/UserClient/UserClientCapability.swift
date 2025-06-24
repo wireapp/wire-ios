@@ -44,3 +44,14 @@ enum UserClientCapabilityV0: String, Codable, Sendable, ToAPIModelConvertible {
         }
     }
 }
+
+extension UserClientCapability: ToNetworkConvertible {
+    func toNetworkModel() -> UserClientCapabilityV0 {
+        switch self {
+        case .legalholdConsent:
+            .legalholdConsent
+        case .consumableNotifications:
+            .consumableNotifications
+        }
+    }
+}
