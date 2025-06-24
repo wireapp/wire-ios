@@ -22,19 +22,19 @@ import WireReusableUIComponents
 
 public struct WireChannelUpgradeBannerView: View {
     @ObservedObject private var viewModel: WireConversationChannelCreationFormViewModel
-    
+
     public init(
         viewModel: WireConversationChannelCreationFormViewModel
     ) {
         self.viewModel = viewModel
     }
-    
+
     public var body: some View {
         ZStack {
             Rectangle()
                 .foregroundColor(Color.black.opacity(0.6))
                 .edgesIgnoringSafeArea(.all)
-            
+
             VStack(alignment: .leading, spacing: 15) {
                 HStack {
                     Text(L10n.Localizable.Conversation.CreationForm.ChannelHistory.UpgradeBanner.title)
@@ -45,9 +45,9 @@ public struct WireChannelUpgradeBannerView: View {
                             L10n.Localizable.Conversation.CreationForm.ChannelHistory.UpgradeBanner
                                 .title
                         ))
-                    
+
                     Spacer()
-                    
+
                     CloseButton(
                         action: { viewModel.hideUpgradeBanner() },
                         foregroundColor: SemanticColors.Label.textWhite,
@@ -55,7 +55,7 @@ public struct WireChannelUpgradeBannerView: View {
                             .close
                     )
                 }
-                
+
                 HStack {
                     Text(L10n.Localizable.Conversation.CreationForm.ChannelHistory.UpgradeBanner.message)
                         .foregroundStyle(.white)
@@ -63,11 +63,11 @@ public struct WireChannelUpgradeBannerView: View {
                             L10n.Localizable.Conversation.CreationForm.ChannelHistory.UpgradeBanner
                                 .message
                         )
-                    
+
                     Spacer()
                         .frame(width: 80)
                 }
-                
+
                 Link(
                     L10n.Localizable.Conversation.CreationForm.ChannelHistory.UpgradeBanner.button,
                     destination: viewModel.upgradeBannerURL()
@@ -82,7 +82,7 @@ public struct WireChannelUpgradeBannerView: View {
                         .stroke(.black)
                 }
                 .clipShape(.rect(cornerRadius: 12))
-                
+
             }
             .padding(.all, 15)
             .background(alignment: .top) {

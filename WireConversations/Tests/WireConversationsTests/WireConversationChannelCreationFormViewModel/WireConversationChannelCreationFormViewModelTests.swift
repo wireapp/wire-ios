@@ -25,7 +25,10 @@ final class WireConversationChannelCreationFormViewModelTests: XCTestCase {
 
     func testOnChannelNameUpdate_emptyValue() {
         // Given
-        let sut = WireConversationChannelCreationFormViewModel(channelName: "") { _ in }
+        let sut = WireConversationChannelCreationFormViewModel(
+            channelName: "",
+            isUserPremium: true
+        ) { _ in }
         let value = ""
 
         // When
@@ -39,7 +42,10 @@ final class WireConversationChannelCreationFormViewModelTests: XCTestCase {
 
     func testOnChannelNameUpdate_longString() {
         // Given
-        let sut = WireConversationChannelCreationFormViewModel(channelName: "") { _ in }
+        let sut = WireConversationChannelCreationFormViewModel(
+            channelName: "",
+            isUserPremium: true
+        ) { _ in }
         let value = String(
             repeating: "a",
             count: WireConversationChannelCreationFormViewModel.Constants.channelNameMaxStringLength + 1
@@ -56,7 +62,10 @@ final class WireConversationChannelCreationFormViewModelTests: XCTestCase {
 
     func testOnChannelNameUpdate_bigString() {
         // Given
-        let sut = WireConversationChannelCreationFormViewModel(channelName: "") { _ in }
+        let sut = WireConversationChannelCreationFormViewModel(
+            channelName: "",
+            isUserPremium: true
+        ) { _ in }
         let value = String(
             repeating: "\(0x27BF)",
             count: WireConversationChannelCreationFormViewModel.Constants.channelNameMaxByteLength + 1
@@ -73,7 +82,10 @@ final class WireConversationChannelCreationFormViewModelTests: XCTestCase {
 
     func testOnChannelNameUpdate_whitespaceString() {
         // Given
-        let sut = WireConversationChannelCreationFormViewModel(channelName: "") { _ in }
+        let sut = WireConversationChannelCreationFormViewModel(
+            channelName: "",
+            isUserPremium: true
+        ) { _ in }
         let value = String(
             repeating: " ",
             count: WireConversationChannelCreationFormViewModel.Constants.channelNameMaxStringLength
@@ -90,7 +102,10 @@ final class WireConversationChannelCreationFormViewModelTests: XCTestCase {
 
     func testOnChannelNameUpdate_whitespaceSurroundedString() {
         // Given
-        let sut = WireConversationChannelCreationFormViewModel(channelName: "") { _ in }
+        let sut = WireConversationChannelCreationFormViewModel(
+            channelName: "",
+            isUserPremium: true
+        ) { _ in }
         let value = " " +
             String(
                 repeating: "a",
@@ -112,7 +127,10 @@ final class WireConversationChannelCreationFormViewModelTests: XCTestCase {
 
     func testOnChannelNameUpdate_validString() {
         // Given
-        let sut = WireConversationChannelCreationFormViewModel(channelName: "") { _ in }
+        let sut = WireConversationChannelCreationFormViewModel(
+            channelName: "",
+            isUserPremium: true
+        ) { _ in }
         let value = "a"
         let expectedValue = "a"
 
@@ -121,5 +139,45 @@ final class WireConversationChannelCreationFormViewModelTests: XCTestCase {
 
         // Then
         XCTAssertEqual(sut.channelName, .success(expectedValue))
+    }
+
+    // MARK: - History option
+
+    func testOnHistoryOptionSelected_Returns_Correct_Value() {
+        // Given
+        let sut = WireConversationChannelCreationFormViewModel(
+            channelName: "Test",
+            isUserPremium: true
+        ) { _ in }
+
+        let useCases = [
+            WireConversationChannelCreationFormViewModel.ChannelHistoryOption.oneDay,
+            .oneWeek,
+            .fourWeeks,
+            .unlimited,
+            .custom
+        ]
+
+        for useCase in useCases {
+            // When
+            sut.channelHistoryOption = useCase
+            let channelCreationSettings = sut.getChannelCreationSettings()
+            // Then
+            switch useCase {
+            case .off:
+                XCTAssertNil(channelCreationSettings?.historyLength)
+            case .oneDay:
+                XCTAssertEqual(channelCreationSettings?.historyLength, 86_400)
+            case .oneWeek:
+                XCTAssertEqual(channelCreationSettings?.historyLength, 604_800)
+            case .fourWeeks:
+                XCTAssertEqual(channelCreationSettings?.historyLength, 2_419_200)
+            case .unlimited:
+                XCTAssertEqual(channelCreationSettings?.historyLength, 31_536_000)
+            case .custom: // 10 days
+                XCTAssertEqual(channelCreationSettings?.historyLength, 864_000)
+            }
+        }
+
     }
 }

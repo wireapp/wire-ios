@@ -241,7 +241,7 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
         case .fourWeeks:
             TimeInterval.fourWeeks
         case .unlimited:
-            TimeInterval.infinity
+            TimeInterval.oneYearFromNow
         case .custom:
             computeHistoryCustomLength()
         }
