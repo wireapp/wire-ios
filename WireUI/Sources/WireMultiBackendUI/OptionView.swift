@@ -97,6 +97,9 @@ struct OptionView: View {
             }
         }
         .contentShape(Rectangle())
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(.isButton)
+        .accessibilityLabel(option.text)
         .onTapGesture {
             option.action()
         }
