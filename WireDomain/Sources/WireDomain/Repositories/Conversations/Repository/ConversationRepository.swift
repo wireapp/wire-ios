@@ -36,7 +36,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     private let userLocalStore: any UserLocalStoreProtocol
     private let teamRepository: any TeamRepositoryProtocol
     private let messageRepository: any MessageRepositoryProtocol
-    private let backendEnvironment: BackendEnvironment2
+    private let backendInfo: BackendInfo
     private let mlsProvider: MLSProvider
 
     private let pullAllConversationsSync: PullAllConversationsSync
@@ -49,7 +49,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         userLocalStore: any UserLocalStoreProtocol,
         teamRepository: any TeamRepositoryProtocol,
         messageRepository: any MessageRepositoryProtocol,
-        backendEnvironment: BackendEnvironment2,
+        backendInfo: BackendInfo,
         mlsProvider: MLSProvider
     ) {
         self.conversationsAPI = conversationsAPI

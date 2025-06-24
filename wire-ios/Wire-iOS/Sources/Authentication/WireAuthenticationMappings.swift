@@ -19,11 +19,89 @@
 import Foundation
 import WireAuthentication
 import WireFoundation
+import WireNetwork
+import WireNetworkInterface
 import WireTransport
+
+extension WireTransport.BackendEnvironment {
+
+    convenience init(_ backendEnvironment: BackendEnvironment2) {
+        let endpoints = BackendEndpoints(
+            backendURL: backendEnvironment.config.endpoints.restAPIURL,
+            backendWSURL: backendEnvironment.config.endpoints.websocketURL,
+            blackListURL: backendEnvironment.config.endpoints.blacklistURL,
+            teamsURL: backendEnvironment.config.endpoints.teamsURL,
+            accountsURL: backendEnvironment.config.endpoints.accountsURL,
+            websiteURL: backendEnvironment.config.endpoints.websiteURL,
+            countlyURL: backendEnvironment.config.endpoints.countlyURL
+        )
+        let proxySettings = backendEnvironment.config.proxyConfig.map {
+            WireTransport.ProxySettings(
+                host: $0.host,
+                port: $0.port,
+                needsAuthentication: $0.needsAuthentication
+            )
+        }
+
+        var trustData = [WireTransport.TrustData]()
+        trustData = backendEnvironment.config.pinnedKeys.compactMap {
+            try? TrustData(
+                rawCertificateKey: $0.rawKey,
+                hosts: $0.hosts.map { host in
+                    switch host {
+                    case let .endsWith(value):
+                        TrustData.Host(
+                            rule: .endsWith,
+                            value: value
+                        )
+                    case let .equals(value):
+                        TrustData.Host(
+                            rule: .equals,
+                            value: value
+                        )
+                    }
+                }
+            )
+        }
+
+        let certificateTrust = ServerCertificateTrust(trustData: trustData, currentDateProvider: .system)
+
+        let environmentType: EnvironmentType = switch backendEnvironment.environmentType {
+        case .default:
+            .default
+        case .staging:
+            .staging
+        case .anta:
+            .anta
+        case .bella:
+            .bella
+        case .chala:
+            .chala
+        case .diya:
+            .diya
+        case .elna:
+            .elna
+        case .foma:
+            .foma
+        case let .custom(url):
+            .custom(url: url)
+        }
+
+        self.init(
+            title: backendEnvironment.title,
+            trustData: trustData,
+            environmentType: environmentType,
+            endpoints: endpoints,
+            proxySettings: proxySettings,
+            certificateTrust: certificateTrust
+        )
+    }
+
+}
 
 extension WireTransport.APIVersion {
 
-    init(_ apiVersion: WireAuthentication.BackendMetadata.APIVersion) {
+    init(_ apiVersion: WireNetworkInterface.APIVersion) {
         switch apiVersion {
         case .v0:
             self = .v0
@@ -43,178 +121,6 @@ extension WireTransport.APIVersion {
             self = .v7
         case .v8:
             self = .v8
-        }
-    }
-
-}
-
-extension WireAuthentication.BackendConfig {
-
-    init(_ backendEnvironment: WireTransport.BackendEnvironment) {
-        let endpoints = Endpoints(
-            backendURL: backendEnvironment.backendURL,
-            backendWSURL: backendEnvironment.backendWSURL,
-            blackListURL: backendEnvironment.blackListURL,
-            teamsURL: backendEnvironment.teamsURL,
-            accountsURL: backendEnvironment.accountsURL,
-            websiteURL: backendEnvironment.websiteURL,
-            countlyURL: backendEnvironment.countlyURL
-        )
-
-        let proxySettings = backendEnvironment.proxy.map { proxy in
-            WireAuthentication.ProxySettings(
-                host: proxy.host,
-                port: proxy.port,
-                needsAuthentication: proxy.needsAuthentication
-            )
-        }
-
-        let pinnedKeys = backendEnvironment.trustData.map { trustData in
-            TrustData(trustData)
-        }
-
-        self.init(
-            title: backendEnvironment.title,
-            endpoints: endpoints,
-            proxySettings: proxySettings,
-            pinnedKeys: pinnedKeys
-        )
-    }
-
-}
-
-extension WireAuthentication.TrustData {
-
-    init(_ trustData: WireTransport.TrustData) {
-        let hosts = trustData.hosts.map { host in
-            let rule: Host.Rule = switch host.rule {
-            case .endsWith:
-                .endsWith
-            case .equals:
-                .equals
-            }
-
-            return Host(
-                rule: rule,
-                value: host.value
-            )
-        }
-
-        self.init(
-            certificateKey: trustData.rawCertificateKey,
-            hosts: hosts
-        )
-    }
-
-}
-
-extension WireTransport.BackendEnvironment {
-
-    convenience init(
-        type: WireAuthentication.BackendEnvironmentType,
-        backendConfig: WireAuthentication.BackendConfig
-    ) {
-        let endpoints = BackendEndpoints(
-            backendURL: backendConfig.endpoints.backendURL,
-            backendWSURL: backendConfig.endpoints.backendWSURL,
-            blackListURL: backendConfig.endpoints.blackListURL,
-            teamsURL: backendConfig.endpoints.teamsURL,
-            accountsURL: backendConfig.endpoints.accountsURL,
-            websiteURL: backendConfig.endpoints.websiteURL,
-            countlyURL: backendConfig.endpoints.countlyURL
-        )
-        let proxySettings = backendConfig.proxySettings.map {
-            WireTransport.ProxySettings(
-                host: $0.host,
-                port: $0.port,
-                needsAuthentication: $0.needsAuthentication
-            )
-        }
-
-        var trustData = [WireTransport.TrustData]()
-        if let pinnedKeys = backendConfig.pinnedKeys {
-            trustData = pinnedKeys.compactMap {
-                try? TrustData(
-                    rawCertificateKey: $0.certificateKey,
-                    hosts: $0.hosts.map { host in
-                        let rule: WireTransport.TrustData.Host.Rule = switch host.rule {
-                        case .endsWith:
-                            .endsWith
-                        case .equals:
-                            .equals
-                        }
-                        return TrustData.Host(
-                            rule: rule,
-                            value: host.value
-                        )
-                    }
-                )
-            }
-        }
-
-        let certificateTrust = ServerCertificateTrust(trustData: trustData, currentDateProvider: .system)
-
-        self.init(
-            title: backendConfig.title,
-            trustData: trustData,
-            environmentType: EnvironmentType(type),
-            endpoints: endpoints,
-            proxySettings: proxySettings,
-            certificateTrust: certificateTrust
-        )
-    }
-
-}
-
-extension WireTransport.EnvironmentType {
-
-    init(_ environmentType: WireAuthentication.BackendEnvironmentType) {
-        switch environmentType {
-        case .default:
-            self = .default
-        case .staging:
-            self = .staging
-        case .anta:
-            self = .anta
-        case .bella:
-            self = .bella
-        case .chala:
-            self = .chala
-        case .diya:
-            self = .diya
-        case .elna:
-            self = .elna
-        case .foma:
-            self = .foma
-        case let .custom(url):
-            self = .custom(url: url)
-        }
-    }
-
-}
-
-extension WireAuthentication.BackendEnvironmentType {
-
-    init(_ environmentType: WireTransport.EnvironmentType) {
-        switch environmentType {
-        case .default:
-            self = .default
-        case .staging:
-            self = .staging
-        case .anta:
-            self = .anta
-        case .bella:
-            self = .bella
-        case .chala:
-            self = .chala
-        case .diya:
-            self = .diya
-        case .elna:
-            self = .elna
-        case .foma:
-            self = .foma
-        case let .custom(url):
-            self = .custom(url: url)
         }
     }
 

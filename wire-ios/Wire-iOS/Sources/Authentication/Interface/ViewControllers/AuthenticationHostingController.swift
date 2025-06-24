@@ -50,11 +50,13 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
                 )
             case let .accountRegistrationRequested(
                 email,
-                backendEnvironment
+                backendEnvironment,
+                backendMetadata
             ):
                 authenticationCoordinator?.wireAuthenticationDidRequestAccountRegistration(
                     email: email,
-                    backendEnvironment: backendEnvironment
+                    backendEnvironment: backendEnvironment,
+                    backendMetadata: backendMetadata
                 )
             case .exitFlowRequested:
                 self?.selectAccount()

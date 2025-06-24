@@ -201,15 +201,14 @@ extension WireConversationChannelCreationFormViewController: AddParticipantsConv
         session: ZMUserSession,
         users: [ZMUser]
     ) async {
-        guard let backendInfoApiVersion = BackendInfo.apiVersion,
-              let apiVersion = WireNetwork.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
-              let apiService = session.apiService else { return }
+        guard let conversationsAPI = session.conversationsAPI else {
+            return
+        }
 
         let context = session.syncContext
 
         let channelUseCase = makeCreateChannelUseCase(
-            apiService: apiService,
-            apiVersion: apiVersion,
+            conversationsAPI: conversationsAPI,
             context: context
         )
 
@@ -269,14 +268,9 @@ extension WireConversationChannelCreationFormViewController: AddParticipantsConv
 
 private extension WireConversationChannelCreationFormViewController {
     func makeCreateChannelUseCase(
-        apiService: any APIServiceProtocol,
-        apiVersion: WireNetwork.APIVersion,
+        conversationsAPI: some ConversationsAPI,
         context: NSManagedObjectContext
     ) -> any CreateChannelUseCaseProtocol {
-        let conversationsAPI = ConversationsAPIBuilder(
-            apiService: apiService
-        ).makeAPI(for: apiVersion)
-
         let messageLocalStore = MessageLocalStore(
             context: context
         )

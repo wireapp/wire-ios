@@ -181,7 +181,8 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         return accountManager.accounts.filter { BackendEnvironment.shared.isAuthenticated($0) }
     }
 
-    private func recreateSharingSession(account: Account?) throws {
+    @MainActor
+    private func recreateSharingSession(account: Account?) async throws {
         guard let applicationGroupIdentifier = Bundle.main.applicationGroupIdentifier,
               let hostBundleIdentifier = Bundle.main.hostBundleIdentifier,
               let accountIdentifier = account?.userIdentifier
@@ -189,7 +190,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
         let legacyConfig = AppLockController.LegacyConfig.fromBundle()
 
-        sharingSession = try SharingSession(
+        sharingSession = try await SharingSession(
             applicationGroupIdentifier: applicationGroupIdentifier,
             accountIdentifier: accountIdentifier,
             hostBundleIdentifier: hostBundleIdentifier,
@@ -480,7 +481,6 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     }
 
     func updateAccount(_ account: Account?) {
-
         var account = account
         let authenticated = authenticatedAccounts
 
@@ -493,33 +493,35 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
             account = firstLogged
         }
 
-        do {
-            try recreateSharingSession(account: account)
-        } catch let error as SharingSession.InitializationError {
-            guard error == .loggedOut else { return }
+        Task {
+            do {
+                try await recreateSharingSession(account: account)
+            } catch let error as SharingSession.InitializationError {
+                guard error == .loggedOut else { return }
 
-            let alert = UIAlertController(
-                title: L10n.ShareExtension.LoggedOut.title,
-                message: L10n.ShareExtension.LoggedOut.message,
-                preferredStyle: .alert
-            )
-            alert.addAction(UIAlertAction(
-                title: L10n.General.ok,
-                style: .cancel
-            ))
+                let alert = UIAlertController(
+                    title: L10n.ShareExtension.LoggedOut.title,
+                    message: L10n.ShareExtension.LoggedOut.message,
+                    preferredStyle: .alert
+                )
+                alert.addAction(UIAlertAction(
+                    title: L10n.General.ok,
+                    style: .cancel
+                ))
 
-            self.present(alert, animated: true)
-            return
-        } catch { // any other error
-            return
+                self.present(alert, animated: true)
+                return
+            } catch { // any other error
+                return
+            }
+
+            currentAccount = account
+            accountItem.value = account?.shareExtensionDisplayName ?? ""
+            conversationItem.value = L10n.ShareExtension.ConversationSelection.Empty.value
+
+            guard account != currentAccount else { return }
+            postContent?.target = nil
         }
-
-        currentAccount = account
-        accountItem.value = account?.shareExtensionDisplayName ?? ""
-        conversationItem.value = L10n.ShareExtension.ConversationSelection.Empty.value
-
-        guard account != currentAccount else { return }
-        postContent?.target = nil
     }
 
     private func presentChooseAccount() {

@@ -32,8 +32,6 @@ typealias UserSessionDelegate = UserSessionAppLockDelegate
     & UserSessionLogoutDelegate
     & UserSessionSelfUserClientDelegate
 
-public typealias APIServiceFactory = @Sendable (_ clientID: String, _ userID: UUID) -> APIServiceProtocol
-
 @objcMembers
 public final class ZMUserSession: NSObject {
 
@@ -46,13 +44,6 @@ public final class ZMUserSession: NSObject {
     private(set) var isNetworkOnline = true
 
     public private(set) var coreDataStack: CoreDataStack!
-    private let apiServiceFactory: APIServiceFactory
-    public var apiService: APIServiceProtocol? {
-        guard let clientId = selfUserClient?.remoteIdentifier else {
-            return nil
-        }
-        return apiServiceFactory(clientId, userId)
-    }
 
     let application: ZMApplication
     let flowManager: FlowManagerType
@@ -366,6 +357,10 @@ public final class ZMUserSession: NSObject {
         mlsService: mlsService
     )
 
+    public var conversationsAPI: (some ConversationsAPI)? {
+        clientSessionComponent?.conversationsAPI
+    }
+
     // MARK: Dependency Injection
 
     let dependencies: UserSessionDependencies
@@ -380,7 +375,8 @@ public final class ZMUserSession: NSObject {
 
     var callStateObserverToken: AnyObject?
 
-    private let userSessionComponent: UserSessionComponent
+    let userSessionComponent: UserSessionComponent
+    var clientSessionComponent: ClientSessionComponent?
 
     // MARK: - Initialize
 
@@ -389,7 +385,6 @@ public final class ZMUserSession: NSObject {
         transportSession: any TransportSessionType,
         mediaManager: any MediaManagerType,
         flowManager: any FlowManagerType,
-        apiServiceFactory: @escaping @Sendable (_ clientID: String, _ userID: UUID) -> APIServiceProtocol,
         application: ZMApplication,
         appVersion: String,
         coreDataStack: CoreDataStack,
@@ -407,12 +402,9 @@ public final class ZMUserSession: NSObject {
         contextStorage: LAContextStorable,
         recurringActionService: any RecurringActionServiceInterface,
         dependencies: UserSessionDependencies,
-        backendEnvironment: WireNetwork.BackendEnvironment,
-        minTLSVersion: WireNetwork.TLSVersion,
-        apiVersion: WireNetwork.APIVersion,
+        networkStack: NetworkStack,
         journal: Journal
     ) {
-        self.apiServiceFactory = apiServiceFactory
         self.application = application
         self.appVersion = appVersion
         self.flowManager = flowManager
@@ -446,9 +438,7 @@ public final class ZMUserSession: NSObject {
         self.analyiticsLogger = .analytics
         self.userSessionComponent = UserSessionComponent(
             selfUserID: userId,
-            backendEnvironment: backendEnvironment,
-            minTLSVersion: minTLSVersion,
-            apiVersion: apiVersion,
+            networkStack: networkStack,
             localDomain: WireTransport.BackendInfo.domain!,
             isFederationEnabled: WireTransport.BackendInfo.isFederationEnabled,
             isMLSEnabled: WireTransport.BackendInfo.isMLSEnabled,
@@ -552,13 +542,23 @@ public final class ZMUserSession: NSObject {
 
             // Create and perform sync if there is a self client.
             if let selfClientID = selfUserClient.remoteIdentifier {
-                setUpSyncAgent(clientID: selfClientID, asyncStreamEnabled: selfUserClient.asyncStreamCapable)
+                Task { @MainActor in
+                    do {
+                        try await setUpSyncAgent(
+                            clientID: selfClientID,
+                            asyncStreamEnabled: selfUserClient.asyncStreamCapable
+                        )
+                    } catch {
+                        fatalError("failed to set up sync agent: \(error)")
+                    }
+                }
             }
         }
     }
 
-    private func setUpSyncAgent(clientID: String, asyncStreamEnabled: Bool) {
-        let clientSessionComponent = userSessionComponent.clientSessionComponent(
+    @MainActor
+    private func setUpSyncAgent(clientID: String, asyncStreamEnabled: Bool) async throws {
+        let clientSessionComponent = try await userSessionComponent.clientSessionComponent(
             clientID: clientID,
             asyncStreamEnabled: asyncStreamEnabled,
             completionHandlers: .init(
@@ -568,6 +568,7 @@ public final class ZMUserSession: NSObject {
                 onProcessedTypingUsers: onProcessedTypingUsers
             )
         )
+        self.clientSessionComponent = clientSessionComponent
 
         if asyncStreamEnabled {
             // TODO: [WPB-17223] move this just after the migration is done
@@ -1225,22 +1226,11 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     private func pullSelfUserClientsFactory(context: NSManagedObjectContext) -> PullSelfUserClientsSyncProtocol {
-        guard let apiService = managedObjectContext.performAndWait({ self.apiService }) else {
+        guard let clientSessionComponent else {
             fatal("cannot initialize ResolveOneOnOneConversationsUseCase")
         }
-        guard let apiVersion = BackendInfo.apiVersion,
-              let wireAPIVersion = WireNetwork.APIVersion(rawValue: UInt(apiVersion.rawValue)) else {
-            WireLogger.backend.warn("apiVersion not resolved")
 
-            fatal("cannot initialize ResolveOneOnOneConversationsUseCase")
-
-        }
-
-        return PullSelfUserClientsSync.make(
-            apiService: apiService,
-            apiVersion: wireAPIVersion,
-            context: context
-        )
+        return clientSessionComponent.pullSelfUserClientsSync
     }
 
     private func resolveOneOnOneConversationsIfNeeded() async {
@@ -1380,7 +1370,16 @@ extension ZMUserSession: ZMClientRegistrationStatusDelegate {
         // The client was just registered and still needs to perform the
         // initial sync.
         if let selfClientID = userClient.remoteIdentifier {
-            setUpSyncAgent(clientID: selfClientID, asyncStreamEnabled: userClient.asyncStreamCapable)
+            Task {
+                do {
+                    try await setUpSyncAgent(
+                        clientID: selfClientID,
+                        asyncStreamEnabled: userClient.asyncStreamCapable
+                    )
+                } catch {
+                    fatalError("failed to set up sync agent: \(error)")
+                }
+            }
         }
     }
 

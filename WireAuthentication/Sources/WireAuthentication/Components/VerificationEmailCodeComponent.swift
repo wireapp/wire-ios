@@ -70,8 +70,7 @@ extension VerificationEmailCodeComponent: VerificationEmailCodeViewModel.Factory
     }
 
     func registerPersonalAccountUseCase() async throws -> any RegisterPersonalAccountUseCaseProtocol {
-        let authenticationAPI = try await dependency.networkStack.authenticationAPI()
-        return RegisterPersonalAccountUseCase(authenticationAPI: authenticationAPI)
+        RegisterPersonalAccountUseCase(authenticationAPI: try await authenticationAPI())
     }
 
     func createAuthenticationResultUseCase() -> any CreateAuthenticationResultUseCaseProtocol {
@@ -79,8 +78,13 @@ extension VerificationEmailCodeComponent: VerificationEmailCodeViewModel.Factory
     }
 
     func requestEmailVerificationCodeUseCase() async throws -> any RequestEmailVerificationCodeUseCaseProtocol {
-        let authenticationAPI = try await dependency.networkStack.authenticationAPI()
-        return RequestEmailVerificationCodeUseCase(authenticationAPI: authenticationAPI)
+        RequestEmailVerificationCodeUseCase(authenticationAPI: try await authenticationAPI())
+    }
+
+    private func authenticationAPI() async throws -> any AuthenticationAPI {
+        try await dependency.networkStack
+            .unauthenticatedRESTAPI()
+            .authenticationAPI()
     }
 
 }

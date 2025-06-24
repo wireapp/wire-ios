@@ -87,17 +87,21 @@ extension VerificationCodeComponent: VerificationCodeViewModel.Factory {
     }
 
     func loginViaEmailUseCase() async throws -> any LoginViaEmailUseCaseProtocol {
-        let authenticationAPI = try await dependency.networkStack.authenticationAPI()
-        return LoginViaEmailUseCase(authenticationAPI: authenticationAPI)
+        LoginViaEmailUseCase(authenticationAPI: try await authenticationAPI())
     }
 
     func requestLoginVerificationCodeUseCase() async throws -> any RequestLoginVerificationCodeUseCaseProtocol {
-        let authenticationAPI = try await dependency.networkStack.authenticationAPI()
-        return RequestLoginVerificationCodeUseCase(authenticationAPI: authenticationAPI)
+        RequestLoginVerificationCodeUseCase(authenticationAPI: try await authenticationAPI())
     }
 
     func createAuthenticationResultUseCase() -> any CreateAuthenticationResultUseCaseProtocol {
         CreateAuthenticationResultUseCase(networkStack: dependency.networkStack)
+    }
+
+    private func authenticationAPI() async throws -> any AuthenticationAPI {
+        try await dependency.networkStack
+            .unauthenticatedRESTAPI()
+            .authenticationAPI()
     }
 
 }

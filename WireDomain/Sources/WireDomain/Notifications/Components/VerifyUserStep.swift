@@ -26,6 +26,7 @@ import WireNetwork
 protocol VerifyUserDependency: Dependency {
     var applicationIdentifier: String { get }
     var applicationContainer: URL { get }
+    var sharedUserDefaults: UserDefaults { get }
 }
 
 protocol VerifyUserStepProtocol {
@@ -102,14 +103,10 @@ final class VerifyUserStep: Component<VerifyUserDependency>, VerifyUserStepProto
 
 extension VerifyUserStep {
 
-    public var sharedUserDefaults: UserDefaults {
-        UserDefaults(suiteName: dependency.applicationIdentifier)!
-    }
-
     private var journal: Journal {
         Journal(
             userID: userID,
-            storage: sharedUserDefaults
+            storage: dependency.sharedUserDefaults
         )
     }
 
@@ -158,14 +155,14 @@ extension VerifyUserStep {
     func makeCookieStorage(userID: UUID) -> any CookieStorageProtocol {
         let cookiesEncryptionKey: Data = {
             let cookieKey = "ZMCookieKey"
-            if let key = sharedUserDefaults.data(forKey: cookieKey) {
+            if let key = dependency.sharedUserDefaults.data(forKey: cookieKey) {
                 return key
             }
 
             // Creates a new key
             do {
                 let newKey = try AES256Crypto.generateRandomEncryptionKey()
-                sharedUserDefaults.set(newKey, forKey: cookieKey)
+                dependency.sharedUserDefaults.set(newKey, forKey: cookieKey)
                 return newKey
             } catch {
                 fatal("Could not generate random encryption key: \(error.localizedDescription)")

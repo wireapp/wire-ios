@@ -27,7 +27,7 @@ final class PinnedKeyTests: XCTestCase {
         // GIVEN, WHEN, THEN
         XCTAssertThrowsError(
             try PinnedKey(
-                key: Data(),
+                rawKey: Data(),
                 hosts: [.equals("foo.example.com")]
             )
         ) { error in
@@ -38,7 +38,7 @@ final class PinnedKeyTests: XCTestCase {
     func testMatchesHost() throws {
         // GIVEN
         let sut = try PinnedKey(
-            key: try PublicKeys.wire,
+            rawKey: try PublicKeys.wire,
             hosts: [
                 .equals("foo.example.com"),
                 .equals("bar.example.com"),

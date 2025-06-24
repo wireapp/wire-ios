@@ -47,9 +47,7 @@ public final class ClientSessionComponent {
     private let selfUserID: UUID
     private let selfClientID: String
 
-    private let networkService: NetworkService
-    private let pushChannelNetworkService: NetworkService
-    private let apiVersion: WireNetwork.APIVersion
+    private let authenticatedRESTAPI: AuthenticatedRESTAPI
 
     private let localDomain: String
     private let isFederationEnabled: Bool
@@ -71,9 +69,7 @@ public final class ClientSessionComponent {
     public init(
         selfUserID: UUID,
         selfClientID: String,
-        networkService: NetworkService,
-        pushChannelNetworkService: NetworkService,
-        apiVersion: WireNetwork.APIVersion,
+        authenticatedRESTAPI: AuthenticatedRESTAPI,
         localDomain: String,
         isFederationEnabled: Bool,
         isMLSEnabled: Bool,
@@ -91,9 +87,7 @@ public final class ClientSessionComponent {
         self.selfUserID = selfUserID
         self.selfClientID = selfClientID
         self.cookieStorage = cookieStorage
-        self.networkService = networkService
-        self.pushChannelNetworkService = pushChannelNetworkService
-        self.apiVersion = apiVersion
+        self.authenticatedRESTAPI = authenticatedRESTAPI
         self.sharedUserDefaults = sharedUserDefaults
         self.syncContext = syncContext
         self.eventContext = eventContext
@@ -108,71 +102,21 @@ public final class ClientSessionComponent {
         self.completionHandlers = completionHandlers
     }
 
-    private lazy var authenticationManager = AuthenticationManager(
-        clientID: selfClientID,
-        cookieStorage: cookieStorage,
-        networkService: networkService,
-        onAuthenticationFailure: completionHandlers.onAuthenticationFailure
-    )
-
     // MARK: - Network API clients
 
-    private lazy var apiService = APIService(
-        networkService: networkService,
-        authenticationManager: authenticationManager
-    )
-
-    private lazy var backendMetadataAPI = BackendMetadataAPIBuilder(
-        networkService: networkService
-    ).makeAPI()
-
-    private lazy var conversationsAPI = ConversationsAPIBuilder(
-        apiService: apiService
-    ).makeAPI(for: apiVersion)
-
-    private lazy var featureConfigsAPI = FeatureConfigsAPIBuilder(
-        apiService: apiService
-    ).makeAPI(for: apiVersion)
-
-    private lazy var mlsAPI = MLSAPIBuilder(
-        apiService: apiService
-    ).makeAPI(for: apiVersion)
-
-    private lazy var pushChannelAPI = PushChannelAPIBuilder(
-        pushChannelService: pushChannelService
-    ).makeAPI(for: apiVersion)
-
-    private lazy var pushChannelV2API = PushChannelV2APIBuilder(
-        pushChannelService: pushChannelService
-    ).makeAPI(for: apiVersion)
-
-    private lazy var selfUserAPI = SelfUserAPIBuilder(
-        apiService: apiService
-    ).makeAPI(for: apiVersion)
-
-    private lazy var teamsAPI = TeamsAPIBuilder(
-        apiService: apiService
-    ).makeAPI(for: apiVersion)
-
-    private lazy var updateEventsAPI = UpdateEventsAPIBuilder(
-        apiService: apiService
-    ).makeAPI(for: apiVersion)
-
-    private lazy var userClientsAPI = UserClientsAPIBuilder(
-        apiService: apiService
-    ).makeAPI(for: apiVersion)
-
-    private lazy var userConnectionsAPI = ConnectionsAPIBuilder(
-        apiService: apiService
-    ).makeAPI(for: apiVersion)
-
-    private lazy var usersAPI = UsersAPIBuilder(
-        apiService: apiService
-    ).makeAPI(for: apiVersion)
-
-    private lazy var userPropertiesAPI = UserPropertiesAPIBuilder(
-        apiService: apiService
-    ).makeAPI(for: apiVersion)
+    public lazy var accountsAPI: some AccountsAPI = authenticatedRESTAPI.accountsAPI()
+    public lazy var conversationsAPI: some ConversationsAPI = authenticatedRESTAPI.conversationsAPI()
+    private lazy var featureConfigsAPI: some FeatureConfigsAPI = authenticatedRESTAPI.featureConfigsAPI()
+    private lazy var mlsAPI: some MLSAPI = authenticatedRESTAPI.mlsAPI()
+    private lazy var pushChannelAPI: some PushChannelAPI = authenticatedRESTAPI.pushChannelAPI()
+    private lazy var pushChannelV2API: some PushChannelV2API = authenticatedRESTAPI.pushChannelV2API()
+    private lazy var selfUserAPI: some SelfUserAPI = authenticatedRESTAPI.selfUserAPI()
+    private lazy var teamsAPI: some TeamsAPI = authenticatedRESTAPI.teamsAPI()
+    private lazy var updateEventsAPI: some UpdateEventsAPI = authenticatedRESTAPI.updateEventsAPI()
+    private lazy var userClientsAPI: some UserClientsAPI = authenticatedRESTAPI.userClientsAPI()
+    private lazy var userConnectionsAPI: some ConnectionsAPI = authenticatedRESTAPI.connectionsAPI()
+    private lazy var usersAPI: some UsersAPI = authenticatedRESTAPI.usersAPI()
+    private lazy var userPropertiesAPI: some UserPropertiesAPI = authenticatedRESTAPI.userPropertiesAPI()
 
     // MARK: - Local storage
 
@@ -316,7 +260,7 @@ public final class ClientSessionComponent {
         store: userLocalStore
     )
 
-    private lazy var pullSelfUserClientsSync = PullSelfUserClientsSync(
+    public lazy var pullSelfUserClientsSync = PullSelfUserClientsSync(
         api: userClientsAPI,
         store: userClientsLocalStore
     )
@@ -363,11 +307,6 @@ public final class ClientSessionComponent {
         )
     }()
 
-    private lazy var pushChannelService = PushChannelService(
-        networkService: pushChannelNetworkService,
-        authenticationManager: authenticationManager
-    )
-
     private lazy var mlsGroupRepairAgent = MLSGroupRepairAgent(
         journal: journal,
         mlsService: mlsService
@@ -412,7 +351,7 @@ public final class ClientSessionComponent {
         userLocalStore: userLocalStore,
         teamRepository: teamRepository,
         messageRepository: messageRepository,
-        backendInfo: .init(
+        backendInfo: ConversationRepository.BackendInfo(
             domain: localDomain,
             isFederationEnabled: isFederationEnabled,
             isMLSEnabled: isMLSEnabled

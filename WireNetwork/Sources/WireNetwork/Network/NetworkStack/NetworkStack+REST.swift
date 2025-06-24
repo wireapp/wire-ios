@@ -17,30 +17,53 @@
 //
 
 import Foundation
+import WireFoundation
 
 public extension NetworkStack {
 
-    func authenticationAPI() async throws -> some AuthenticationAPI {
-        switch try await resolvedAPIVersion() {
-        case .v0:
-            AuthenticationAPIV0(networkService: try networkService)
-        case .v1:
-            AuthenticationAPIV1(networkService: try networkService)
-        case .v2:
-            AuthenticationAPIV2(networkService: try networkService)
-        case .v3:
-            AuthenticationAPIV3(networkService: try networkService)
-        case .v4:
-            AuthenticationAPIV4(networkService: try networkService)
-        case .v5:
-            AuthenticationAPIV5(networkService: try networkService)
-        case .v6:
-            AuthenticationAPIV6(networkService: try networkService)
-        case .v7:
-            AuthenticationAPIV7(networkService: try networkService)
-        case .v8:
-            AuthenticationAPIV8(networkService: try networkService)
-        }
+    func unauthenticatedRESTAPI() async throws -> UnauthenticatedRESTAPI {
+        UnauthenticatedRESTAPI(
+            apiVersion: try await resolvedAPIVersion(),
+            networkService: try networkServices.rest
+        )
+    }
+
+    func authenticatedRESTAPI(
+        userID: UUID,
+        clientID: String?,
+        cookieEncryptionKey: Data
+    ) async throws -> AuthenticatedRESTAPI {
+        let apiVersion = try await resolvedAPIVersion()
+        let networkServices = try networkServices
+
+        let cookieStorage = CookieStorage(
+            userID: userID,
+            cookieEncryptionKey: cookieEncryptionKey,
+            keychain: Keychain()
+        )
+
+        let authenticationManager = AuthenticationManager(
+            clientID: clientID,
+            cookieStorage: cookieStorage,
+            networkService: networkServices.rest,
+            onAuthenticationFailure: {} // TODO: network stack should bubble this up
+        )
+
+        let apiService = APIService(
+            networkService: networkServices.rest,
+            authenticationManager: authenticationManager
+        )
+
+        let pushChannelService = PushChannelService(
+            networkService: networkServices.webSocket,
+            authenticationManager: authenticationManager
+        )
+
+        return AuthenticatedRESTAPI(
+            apiVersion: apiVersion,
+            apiService: apiService,
+            pushChannelService: pushChannelService
+        )
     }
 
 }

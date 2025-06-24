@@ -25,16 +25,13 @@ public extension ZMUserSession {
     func createIndividualToTeamMigrationUseCase(
         apiVersion: WireNetwork.APIVersion
     ) -> IndividualToTeamMigrationUseCaseProtocol? {
-        guard let apiService else {
-            assertionFailure("apiService is nil")
+        guard let clientSessionComponent else {
+            assertionFailure("can't create IndividualToTeamMigrationUseCase")
             return nil
         }
 
-        let builder = AccountsAPIBuilder(apiService: apiService)
-        let accountsAPI = builder.makeAPI(for: apiVersion)
-
         return IndividualToTeamMigrationUseCase(
-            accountsAPI: accountsAPI,
+            accountsAPI: clientSessionComponent.accountsAPI,
             context: syncContext
         )
     }

@@ -25,10 +25,7 @@ public final class UserSessionComponent {
 
     private let selfUserID: UUID
 
-    private let backendEnvironment: WireNetwork.BackendEnvironment
-    private let minTLSVersion: WireNetwork.TLSVersion
-    private let apiVersion: WireNetwork.APIVersion
-
+    private let networkStack: NetworkStack
     private let localDomain: String
     private let isFederationEnabled: Bool
     private let isMLSEnabled: Bool
@@ -44,9 +41,7 @@ public final class UserSessionComponent {
 
     public init(
         selfUserID: UUID,
-        backendEnvironment: WireNetwork.BackendEnvironment,
-        minTLSVersion: WireNetwork.TLSVersion,
-        apiVersion: WireNetwork.APIVersion,
+        networkStack: NetworkStack,
         localDomain: String,
         isFederationEnabled: Bool,
         isMLSEnabled: Bool,
@@ -59,9 +54,7 @@ public final class UserSessionComponent {
         coreCryptoProvider: any CoreCryptoProviderProtocol
     ) {
         self.selfUserID = selfUserID
-        self.backendEnvironment = backendEnvironment
-        self.minTLSVersion = minTLSVersion
-        self.apiVersion = apiVersion
+        self.networkStack = networkStack
         self.localDomain = localDomain
         self.isFederationEnabled = isFederationEnabled
         self.isMLSEnabled = isMLSEnabled
@@ -82,59 +75,23 @@ public final class UserSessionComponent {
         keychain: keychain
     )
 
-    private lazy var serverTrustValidator = ServerTrustValidator(
-        pinnedKeys: backendEnvironment.pinnedKeys,
-        currentDateProvider: .system
-    )
-
-    private lazy var urlSessionConfigurationFactory = URLSessionConfigurationFactory(
-        minTLSVersion: minTLSVersion,
-        proxySettings: backendEnvironment.proxySettings
-    )
-
-    private lazy var networkService: NetworkService = {
-        let networkService = NetworkService(
-            baseURL: backendEnvironment.url,
-            serverTrustValidator: serverTrustValidator
-        )
-        let config = urlSessionConfigurationFactory.makeRESTAPISessionConfiguration()
-        let session = URLSession(
-            configuration: config,
-            delegate: networkService,
-            delegateQueue: nil
-        )
-        networkService.configure(with: session)
-        return networkService
-    }()
-
-    private lazy var pushChannelNetworkService: NetworkService = {
-        let networkService = NetworkService(
-            baseURL: backendEnvironment.webSocketURL,
-            serverTrustValidator: serverTrustValidator
-        )
-        let config = urlSessionConfigurationFactory.makeWebSocketSessionConfiguration()
-        let session = URLSession(
-            configuration: config,
-            delegate: networkService,
-            delegateQueue: nil
-        )
-        networkService.configure(with: session)
-        return networkService
-    }()
-
     // MARK: - Children
 
     public func clientSessionComponent(
         clientID: String,
         asyncStreamEnabled: Bool,
         completionHandlers: ClientSessionComponent.CompletionHandlers
-    ) -> ClientSessionComponent {
-        ClientSessionComponent(
+    ) async throws -> ClientSessionComponent {
+        let authenticatedRESTAPI = try await networkStack.authenticatedRESTAPI(
+            userID: selfUserID,
+            clientID: clientID,
+            cookieEncryptionKey: UserDefaults.cookiesKey()
+        )
+
+        return ClientSessionComponent(
             selfUserID: selfUserID,
             selfClientID: clientID,
-            networkService: networkService,
-            pushChannelNetworkService: pushChannelNetworkService,
-            apiVersion: apiVersion,
+            authenticatedRESTAPI: authenticatedRESTAPI,
             localDomain: localDomain,
             isFederationEnabled: isFederationEnabled,
             isMLSEnabled: isMLSEnabled,

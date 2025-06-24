@@ -148,7 +148,7 @@ private extension PinnedKey {
 
     init(_ trustData: TrustData) throws {
         try self.init(
-            key: trustData.certificateKey,
+            rawKey: trustData.certificateKey,
             hosts: trustData.hosts.map { host in
                 switch host.rule {
                 case .equals:

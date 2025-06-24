@@ -19,6 +19,7 @@
 import UIKit
 import WireAuthentication
 import WireCommonComponents
+import WireNetworkInterface
 import WireSyncEngine
 import WireTransport
 
@@ -52,7 +53,8 @@ extension AuthenticationCoordinator: LandingViewControllerDelegate {
 
     func wireAuthenticationDidRequestAccountRegistration(
         email: String?,
-        backendEnvironment: WireAuthenticationBackendEnvironment
+        backendEnvironment: BackendEnvironment2,
+        backendMetadata: ResolvedBackendMetadata
     ) {
         typealias Alert = L10n.Localizable.Landing.Alert.CreateNewAccount.NotSupported
 
@@ -62,11 +64,7 @@ extension AuthenticationCoordinator: LandingViewControllerDelegate {
         }
 
         // Make sure we use the same backend from the WireAuthentication.
-        let backendMetadata = backendEnvironment.metadata
-        let backendEnvironment = BackendEnvironment(
-            type: backendEnvironment.environmentType,
-            backendConfig: backendEnvironment.config
-        )
+        let backendEnvironment = BackendEnvironment(backendEnvironment)
 
         BackendEnvironment.shared = backendEnvironment
         SessionManager.shared?.switchBackendWithoutResolving(to: backendEnvironment)
@@ -130,7 +128,7 @@ extension EnvironmentTypeProvider {
 
 extension BackendEnvironment {
 
-    var proxyCredentials: ProxyCredentials? {
+    var proxyCredentials: WireTransport.ProxyCredentials? {
         proxy.flatMap { proxy in
             ProxyCredentials.retrieve(for: proxy)
         }

@@ -20,9 +20,13 @@ import NeedleFoundation
 import WireDataModel
 import WireFoundation
 import WireNetwork
+import WireNetworkInterface
 
 protocol PullEventsDependency: Dependency {
     var userID: UUID { get }
+    var backendEnvironment: BackendEnvironment2 { get }
+    var minTLSVersion: WireNetwork.TLSVersion { get }
+    var preferredAPIVersion: WireNetwork.APIVersion? { get }
     var coreData: CoreDataStack { get }
     var cookieStorage: any CookieStorageProtocol { get }
     var messageLocalStore: any MessageLocalStoreProtocol { get }
@@ -188,17 +192,26 @@ extension PullEventsStep {
 }
 
 extension PullEventsStep {
-    // TODO: [WPB-17284] Encapsulate objects in NetworkStack (similar to what's done in WireAuthentication) to build the UpdateEventsAPI.
+
+    var networkStack: NetworkStack {
+        get async throws {
+            NetworkStack(
+                backendEnvironment: dependency.backendEnvironment,
+                minTLSVersion: dependency.minTLSVersion,
+                preferredAPIVersion: dependency.preferredAPIVersion,
+                proxyCredentials: try await proxyCredentials
+            )
+        }
+    }
+
     var updateEventsAPI: any UpdateEventsAPI {
         get async throws {
-            let apiService = await APIService(
-                networkService: try networkService,
-                authenticationManager: try authenticationManager
+            try await networkStack.authenticatedRESTAPI(
+                userID: dependency.userID,
+                clientID: selfClientID,
+                cookieEncryptionKey: UserDefaults.cookiesKey()
             )
-
-            return UpdateEventsAPIBuilder(
-                apiService: apiService
-            ).makeAPI(for: try apiVersion)
+            .updateEventsAPI()
         }
     }
 
@@ -223,66 +236,14 @@ extension PullEventsStep {
         }
     }
 
-    var authenticationManager: any AuthenticationManagerProtocol {
+    private var proxyCredentials: WireNetworkInterface.ProxyCredentials? {
         get async throws {
-            await AuthenticationManager(
-                clientID: selfClientID,
-                cookieStorage: dependency.cookieStorage,
-                networkService: try networkService,
-                onAuthenticationFailure: {}
-            )
-        }
-    }
-
-    var legacyBackendEnvironment: WireDataModel.BackendEnvironment {
-        let sharedUserDefaults = dependency.sharedUserDefaults
-        let backendEnvironmentTypeOverride = sharedUserDefaults.string(forKey: "BackendEnvironmentTypeOverrideKey")
-
-        let environmentType = if let backendEnvironmentTypeOverride {
-            EnvironmentType(
-                stringValue: backendEnvironmentTypeOverride
-            )
-        } else {
-            EnvironmentType(userDefaults: sharedUserDefaults)
-        }
-
-        guard let backendEnvironment = BackendEnvironment(
-            userDefaults: sharedUserDefaults,
-            configurationBundle: backendBundle,
-            environmentType: environmentType
-        ) else {
-            fatal("Malformed backend configuration data")
-        }
-
-        return backendEnvironment
-    }
-
-    var backendEnvironment: WireNetwork.BackendEnvironment {
-        get async throws {
-            BackendEnvironment(
-                url: legacyBackendEnvironment.backendURL,
-                webSocketURL: legacyBackendEnvironment.backendWSURL,
-                pinnedKeys: legacyBackendEnvironment.trustData.map { trustData in
-                    PinnedKey(
-                        key: trustData.certificateKey,
-                        hosts: trustData.hosts.map { host in
-                            switch host.rule {
-                            case .equals:
-                                .equals(host.value)
-                            case .endsWith:
-                                .endsWith(host.value)
-                            }
-                        }
-                    )
-                },
-                proxySettings: try await proxySettings
-            )
-        }
-    }
-
-    var proxySettings: WireNetwork.ProxySettings? {
-        get async throws {
-            guard let proxy = legacyBackendEnvironment.proxy else { return nil }
+            guard
+                let proxy = dependency.backendEnvironment.config.proxyConfig,
+                proxy.needsAuthentication
+            else {
+                return nil
+            }
 
             let keychain = WireFoundation.Keychain()
             let usernameItemID = "proxy-\(proxy.host):\(proxy.port)-username"
@@ -307,87 +268,18 @@ extension PullEventsStep {
                 ]
             )
 
-            if proxy.needsAuthentication {
-                guard let proxyUsername, let proxyPassword else {
-                    throw Failure.missingProxyCredentials
-                }
-
-                return .authenticated(
-                    host: proxy.host,
-                    port: proxy.port,
-                    username: proxyUsername,
-                    password: proxyPassword
-                )
-            } else {
-                return .unauthenticated(
-                    host: proxy.host,
-                    port: proxy.port
-                )
+            guard
+                let proxyUsername,
+                let proxyPassword
+            else {
+                throw Failure.missingProxyCredentials
             }
-        }
-    }
 
-    var networkService: NetworkService {
-        get async throws {
-            let backendEnvironment = try await backendEnvironment
-
-            let service = NetworkService(
-                baseURL: backendEnvironment.url,
-                serverTrustValidator: ServerTrustValidator(
-                    pinnedKeys: backendEnvironment.pinnedKeys,
-                    currentDateProvider: .system
-                )
+            return .init(
+                username: proxyUsername,
+                password: proxyPassword
             )
-
-            let minTLSVersion = WireNetwork.TLSVersion.minVersionFrom(minTLSVersion)
-            let config = await URLSessionConfigurationFactory(
-                minTLSVersion: minTLSVersion,
-                proxySettings: try proxySettings
-            )
-
-            let session = URLSession(
-                configuration: config.makeRESTAPISessionConfiguration(),
-                delegate: service,
-                delegateQueue: nil
-            )
-            service.configure(with: session)
-
-            return service
         }
     }
 
-    var minTLSVersion: String? {
-        appMainBundle.infoForKey("MinTLSVersion")
-    }
-
-    var appMainBundle: Bundle {
-        let mainBundle: Bundle
-
-        let runningInExtension = Bundle.main.bundlePath.hasSuffix(".appex")
-
-        if runningInExtension {
-            let extensionBundleURL = Bundle.main.bundleURL
-            let mainAppBundleURL = extensionBundleURL.deletingLastPathComponent().deletingLastPathComponent()
-            guard let bundle = Bundle(url: mainAppBundleURL) else { fatal("Failed to find main app bundle") }
-            mainBundle = bundle
-        } else {
-            mainBundle = .main
-        }
-        return mainBundle
-    }
-
-    var backendBundle: Bundle {
-        guard let backendBundlePath = appMainBundle.path(
-            forResource: "Backend",
-            ofType: "bundle"
-        ) else {
-            fatal("Could not find backend.bundle")
-        }
-
-        guard let bundle = Bundle(path: backendBundlePath) else {
-            fatal("Could not load backend.bundle")
-        }
-
-        return bundle
-    }
 }

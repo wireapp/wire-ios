@@ -23,6 +23,7 @@ import WireCommonComponents
 import WireDataModel
 import WireFoundation
 import WireNetwork
+import WireNetworkInterface
 import WireSyncEngine
 
 /// A type of view controller that can be managed by an authentication coordinator.
@@ -92,8 +93,7 @@ final class AuthenticationInterfaceBuilder {
                 WireNetwork.APIVersion(rawValue: UInt($0.rawValue))
             }
             let (rootView, bridge) = assembly.assemble(
-                environmentType: BackendEnvironmentType(environment.environmentType.value),
-                backendConfig: BackendConfig(environment),
+                backendEnvironment: BackendEnvironment2(environment),
                 minTLSVersion: TLSVersion.minVersionFrom(SecurityFlags.minTLSVersion.stringValue),
                 preferredAPIVersion: Bundle.developerModeEnabled ? preferredAPIVersion : nil,
                 accountsURL: environment.accountsURL,

@@ -116,7 +116,8 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
                         dependency.bridge.sendOutboundEvent(
                             .accountRegistrationRequested(
                                 email: email,
-                                networkStack.backendEnvironment
+                                networkStack.backendEnvironment,
+                                try await networkStack.resolvedBackendMetadata()
                             )
                         )
                     } catch {
@@ -160,7 +161,10 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
     }
 
     func loginViaEmailUseCase() async throws -> any LoginViaEmailUseCaseProtocol {
-        let authenticationAPI = try await networkStack.authenticationAPI()
+        let authenticationAPI = try await networkStack
+            .unauthenticatedRESTAPI()
+            .authenticationAPI()
+
         return LoginViaEmailUseCase(authenticationAPI: authenticationAPI)
     }
 

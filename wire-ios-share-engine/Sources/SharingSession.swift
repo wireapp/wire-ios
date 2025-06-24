@@ -21,6 +21,7 @@ import WireDataModel
 import WireDomain
 import WireLinkPreview
 import WireNetwork
+import WireNetworkInterface
 import WireRequestStrategy
 import WireTransport
 
@@ -250,6 +251,7 @@ public final class SharingSession {
     /// no user is currently logged in.
     /// - returns: The initialized session object if no error is thrown
 
+    @MainActor
     public convenience init(
         applicationGroupIdentifier: String,
         accountIdentifier: UUID,
@@ -258,7 +260,7 @@ public final class SharingSession {
         appLockConfig: AppLockController.LegacyConfig?,
         sharedUserDefaults: UserDefaults,
         minTLSVersion: String?
-    ) throws {
+    ) async throws {
 
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
 
@@ -280,7 +282,9 @@ public final class SharingSession {
             storeError = storeError
         }
 
-        guard storeError == nil else { throw InitializationError.missingSharedContainer }
+        guard storeError == nil else {
+            throw InitializationError.missingSharedContainer
+        }
 
         // Don't cache the cookie because if the user logs out and back in again in the main app
         // process, then the cached cookie will be invalid.
@@ -295,7 +299,7 @@ public final class SharingSession {
 
         let credentials = environment.proxy.flatMap { ProxyCredentials.retrieve(for: $0) }
 
-        let selfClientID = coreDataStack.syncContext.performAndWait {
+        let selfClientID = await coreDataStack.syncContext.perform {
             ZMUser.selfUser(in: coreDataStack.syncContext).selfClient()?.remoteIdentifier
         }
 
@@ -315,54 +319,21 @@ public final class SharingSession {
             isSyncV2Enabled: false
         )
 
-        let proxySettings: WireNetwork.ProxySettings? = {
-            guard let proxy = environment.proxy else { return nil }
-
-            if proxy.needsAuthentication {
-                guard
-                    let proxyUsername = credentials?.username,
-                    let proxyPassword = credentials?.password else {
-                    fatalInternal("Proxy needs authentication but credentials are missing")
-                    return nil
-                }
-
-                return .authenticated(
-                    host: proxy.host,
-                    port: proxy.port,
-                    username: proxyUsername,
-                    password: proxyPassword
-                )
-            } else {
-                return .unauthenticated(host: proxy.host, port: proxy.port)
-            }
-        }()
-
-        let wireAPIBackendEnvironment = BackendEnvironment(
-            url: environment.backendURL,
-            webSocketURL: environment.backendWSURL,
-            pinnedKeys: environment.trustData.map { trustData in
-                PinnedKey(
-                    key: trustData.certificateKey,
-                    hosts: trustData.hosts.map { host in
-                        switch host.rule {
-                        case .equals:
-                            .equals(host.value)
-                        case .endsWith:
-                            .endsWith(host.value)
-                        }
-                    }
-                )
+        let networkStack = NetworkStack(
+            backendEnvironment: BackendEnvironment2(environment),
+            minTLSVersion: minTLSVersion.flatMap(TLSVersion.init) ?? .v1_2,
+            preferredAPIVersion: BackendInfo.preferredAPIVersion.flatMap {
+                WireNetworkInterface.APIVersion(rawValue: UInt($0.rawValue))
             },
-            proxySettings: proxySettings
+            proxyCredentials: credentials.map {
+                WireNetworkInterface.ProxyCredentials(
+                    username: $0.username,
+                    password: $0.password
+                )
+            }
         )
 
-        guard let apiVersion = BackendInfo.apiVersion,
-              let wireAPIVersion = WireNetwork.APIVersion(rawValue: UInt(apiVersion.rawValue)) else {
-            fatal("cannot resolve api version")
-
-        }
-
-        try self.init(
+        try await self.init(
             accountIdentifier: accountIdentifier,
             selfClientID: selfClientID!,
             coreDataStack: coreDataStack,
@@ -373,9 +344,7 @@ public final class SharingSession {
                 applicationContainer: sharedContainerURL
             ),
             appLockConfig: appLockConfig,
-            wireAPIBackendEnvironment: wireAPIBackendEnvironment,
-            minTLSVersion: .minVersionFrom(minTLSVersion),
-            apiVersion: wireAPIVersion,
+            networkStack: networkStack,
             sharedUserDefaults: sharedUserDefaults
         )
     }
@@ -448,6 +417,7 @@ public final class SharingSession {
         setupObservers()
     }
 
+    @MainActor
     public convenience init(
         accountIdentifier: UUID,
         selfClientID: String,
@@ -456,11 +426,9 @@ public final class SharingSession {
         cachesDirectory: URL,
         accountContainer: URL,
         appLockConfig: AppLockController.LegacyConfig?,
-        wireAPIBackendEnvironment: WireNetwork.BackendEnvironment,
-        minTLSVersion: WireNetwork.TLSVersion,
-        apiVersion: WireNetwork.APIVersion,
+        networkStack: NetworkStack,
         sharedUserDefaults: UserDefaults
-    ) throws {
+    ) async throws {
 
         let applicationStatusDirectory = ApplicationStatusDirectory(
             syncContext: coreDataStack.syncContext,
@@ -537,9 +505,7 @@ public final class SharingSession {
 
         let userSessionComponent = UserSessionComponent(
             selfUserID: accountIdentifier,
-            backendEnvironment: wireAPIBackendEnvironment,
-            minTLSVersion: minTLSVersion,
-            apiVersion: apiVersion,
+            networkStack: networkStack,
             localDomain: WireTransport.BackendInfo.domain!,
             isFederationEnabled: WireTransport.BackendInfo.isFederationEnabled,
             isMLSEnabled: WireTransport.BackendInfo.isMLSEnabled,
@@ -560,7 +526,7 @@ public final class SharingSession {
         )
 
         let selfClient = ZMUser.selfUser(in: coreDataStack.viewContext).selfClient()
-        let clientUserSessionComponent = userSessionComponent.clientSessionComponent(
+        let clientUserSessionComponent = try await userSessionComponent.clientSessionComponent(
             clientID: selfClientID,
             asyncStreamEnabled: selfClient?.asyncStreamCapable == true,
             completionHandlers: completionHandlers
@@ -658,4 +624,84 @@ private extension WireDataModel.ConversationList {
     var writeableConversations: [Conversation] {
         items.filter { !$0.isReadOnly }
     }
+}
+
+private extension BackendEnvironment2 {
+
+    init(_ legacyEnvironment: WireTransport.BackendEnvironment) {
+        let environmentType = switch legacyEnvironment.environmentType.value {
+        case .default:
+            BackendEnvironment2.EnvironmentType.default
+        case .staging:
+            BackendEnvironment2.EnvironmentType.staging
+        case .anta:
+            BackendEnvironment2.EnvironmentType.anta
+        case .bella:
+            BackendEnvironment2.EnvironmentType.bella
+        case .chala:
+            BackendEnvironment2.EnvironmentType.chala
+        case .diya:
+            BackendEnvironment2.EnvironmentType.diya
+        case .elna:
+            BackendEnvironment2.EnvironmentType.elna
+        case .foma:
+            BackendEnvironment2.EnvironmentType.foma
+        case let .custom(url: url):
+            BackendEnvironment2.EnvironmentType.custom(url: url)
+        }
+
+        let endpoints = Endpoints(
+            restAPIURL: legacyEnvironment.backendURL,
+            websocketURL: legacyEnvironment.backendWSURL,
+            blacklistURL: legacyEnvironment.blackListURL,
+            teamsURL: legacyEnvironment.teamsURL,
+            accountsURL: legacyEnvironment.accountsURL,
+            websiteURL: legacyEnvironment.websiteURL,
+            countlyURL: legacyEnvironment.countlyURL
+        )
+
+        let pinnedKeys = legacyEnvironment.trustData.map {
+            PinnedKey($0)
+        }
+
+        let proxyConfig = legacyEnvironment.proxy.map {
+            ProxyConfig(
+                host: $0.host,
+                port: $0.port,
+                needsAuthentication: $0.needsAuthentication
+            )
+        }
+
+        let config = BackendEnvironment2.Config(
+            endpoints: endpoints,
+            pinnedKeys: pinnedKeys,
+            proxyConfig: proxyConfig
+        )
+
+        self.init(
+            title: legacyEnvironment.title,
+            environmentType: environmentType,
+            config: config
+        )
+    }
+
+}
+
+private extension PinnedKey {
+
+    init(_ trustData: TrustData) {
+        self.init(
+            key: trustData.certificateKey,
+            rawKey: trustData.rawCertificateKey,
+            hosts: trustData.hosts.map { host in
+                switch host.rule {
+                case .equals:
+                    .equals(host.value)
+                case .endsWith:
+                    .endsWith(host.value)
+                }
+            }
+        )
+    }
+
 }

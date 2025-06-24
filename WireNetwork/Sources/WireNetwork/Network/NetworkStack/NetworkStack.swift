@@ -33,13 +33,13 @@ public final class NetworkStack {
     private var state: NetworkState
     private var backendMetadata: ResolvedBackendMetadata?
 
-    var networkService: NetworkService {
+    var networkServices: (rest: NetworkService, webSocket: NetworkService) {
         get throws {
             switch state {
             case .awaitingProxyCredentials:
                 throw NetworkStackError.proxyCredentialsRequired
-            case let .ready(networkService):
-                networkService
+            case let .ready(rest, webSocket):
+                (rest, webSocket)
             }
         }
     }
@@ -55,11 +55,15 @@ public final class NetworkStack {
         self.preferredAPIVersion = preferredAPIVersion
 
         do {
-            self.state = .ready(try NetworkService.make(
+            let (restService, webSocketService) = try NetworkService.makeServices(
                 backendConfig: backendEnvironment.config,
                 minTLSVersion: minTLSVersion,
                 proxyCredentials: proxyCredentials
-            ))
+            )
+            self.state = .ready(
+                rest: restService,
+                webSocket: webSocketService
+            )
         } catch .proxyCredentialsRequired {
             self.state = .awaitingProxyCredentials
         } catch {
@@ -79,11 +83,16 @@ public final class NetworkStack {
             password: password
         )
 
-        state = .ready(try NetworkService.make(
+        let (restService, webSocketService) = try NetworkService.makeServices(
             backendConfig: backendEnvironment.config,
             minTLSVersion: minTLSVersion,
             proxyCredentials: proxyCredentials
-        ))
+        )
+
+        self.state = .ready(
+            rest: restService,
+            webSocket: webSocketService
+        )
     }
 
     public func resolvedAPIVersion() async throws -> APIVersion {
@@ -96,7 +105,7 @@ public final class NetworkStack {
             return backendMetadata
         }
 
-        let api = BackendMetadataAPIBuilder(networkService: try networkService).makeAPI()
+        let api = BackendMetadataAPIBuilder(networkService: try networkServices.rest).makeAPI()
 
         let useCase = ResolveBackendMetadataUseCase(
             backendMetadataAPI: api,
@@ -120,26 +129,21 @@ public final class NetworkStack {
 private enum NetworkState {
 
     case awaitingProxyCredentials
-    case ready(NetworkService)
+    case ready(rest: NetworkService, webSocket: NetworkService)
 
 }
 
 // TODO: move to network service
 private extension NetworkService {
 
-    static func make(
+    static func makeServices(
         backendConfig: BackendEnvironment2.Config,
         minTLSVersion: TLSVersion,
         proxyCredentials: ProxyCredentials? = nil
-    ) throws(InitializationError) -> NetworkService {
-        let networkService = NetworkService(
-            baseURL: backendConfig.endpoints.restAPIURL,
-            serverTrustValidator: ServerTrustValidator(
-                pinnedKeys: backendConfig.pinnedKeys,
-                currentDateProvider: .system
-            )
-        )
-
+    ) throws(InitializationError) -> (
+        rest: NetworkService,
+        webSocket: NetworkService
+    ) {
         let proxySettings: ProxySettings?
         if let proxyConfig = backendConfig.proxyConfig {
             if proxyConfig.needsAuthentication {
@@ -162,19 +166,47 @@ private extension NetworkService {
             proxySettings = nil
         }
 
-        let config = URLSessionConfigurationFactory(
+        let configFactory = URLSessionConfigurationFactory(
             minTLSVersion: minTLSVersion,
             proxySettings: proxySettings
-        ).makeRESTAPISessionConfiguration()
+        )
 
-        let session = URLSession(
-            configuration: config,
-            delegate: networkService,
+        let restService = NetworkService(
+            baseURL: backendConfig.endpoints.restAPIURL,
+            serverTrustValidator: ServerTrustValidator(
+                pinnedKeys: backendConfig.pinnedKeys,
+                currentDateProvider: .system
+            )
+        )
+
+        let restSession = URLSession(
+            configuration: configFactory.makeRESTAPISessionConfiguration(),
+            delegate: restService,
             delegateQueue: nil
         )
 
-        networkService.configure(with: session)
-        return networkService
+        restService.configure(with: restSession)
+
+        let webSocketService = NetworkService(
+            baseURL: backendConfig.endpoints.websocketURL,
+            serverTrustValidator: ServerTrustValidator(
+                pinnedKeys: backendConfig.pinnedKeys,
+                currentDateProvider: .system
+            )
+        )
+
+        let webSocketSession = URLSession(
+            configuration: configFactory.makeWebSocketSessionConfiguration(),
+            delegate: webSocketService,
+            delegateQueue: nil
+        )
+
+        webSocketService.configure(with: webSocketSession)
+
+        return (
+            rest: restService,
+            webSocket: webSocketService
+        )
     }
 
     enum InitializationError: Error {

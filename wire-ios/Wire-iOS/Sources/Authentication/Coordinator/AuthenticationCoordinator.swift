@@ -300,16 +300,13 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
 
             case let .completeWireAuthenticationLogin(result):
                 // Make sure we use the same backend from the authentication flow.
-                let backendEnvironment = BackendEnvironment(
-                    type: result.backendEnvironment.environmentType,
-                    backendConfig: result.backendEnvironment.config
-                )
+                let backendEnvironment = BackendEnvironment(result.backendEnvironment)
 
                 BackendEnvironment.shared = backendEnvironment
                 SessionManager.shared?.switchBackendWithoutResolving(to: backendEnvironment)
 
                 // Make sure we persist and backend info gathered during authentication.
-                let backendMetadata = result.backendEnvironment.metadata
+                let backendMetadata = result.backendMetadata
                 BackendInfo.apiVersion = APIVersion(backendMetadata.apiVersion)
                 BackendInfo.domain = backendMetadata.domain
                 BackendInfo.isFederationEnabled = backendMetadata.isFederationEnabled
@@ -329,10 +326,10 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                     cookies: result.cookies
                 )
 
-                if case let .authenticated(_, _, username, password) = result.backendEnvironment.proxySettings {
+                if let proxyCredentials = backendEnvironment.proxyCredentials {
                     sessionManager.saveProxyCredentials(
-                        username: username,
-                        password: password
+                        username: proxyCredentials.username,
+                        password: proxyCredentials.password
                     )
                 }
 

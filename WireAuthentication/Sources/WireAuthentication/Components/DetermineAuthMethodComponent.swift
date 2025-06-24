@@ -121,7 +121,10 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
     }
 
     func determineAuthMethodUseCase() async throws -> any DetermineAuthMethodUseCaseProtocol {
-        let authenticationAPI = try await networkStack.authenticationAPI()
+        let authenticationAPI = try await networkStack
+            .unauthenticatedRESTAPI()
+            .authenticationAPI()
+
         return DetermineAuthMethodUseCase(
             validateEmailOrSSOCode: validateEmailOrSSOCodeUseCase(),
             authenticationAPI: authenticationAPI,
@@ -146,7 +149,9 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
             self.networkStack
         }
 
-        let authenticationAPI = try await networkStack.authenticationAPI()
+        let authenticationAPI = try await networkStack
+            .unauthenticatedRESTAPI()
+            .authenticationAPI()
 
         return LoginViaSSOUseCase(
             authenticationAPI: authenticationAPI,

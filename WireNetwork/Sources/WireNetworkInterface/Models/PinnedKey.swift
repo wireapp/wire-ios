@@ -33,15 +33,27 @@ public struct PinnedKey: Sendable, Equatable, Hashable {
     }
 
     public let key: SecKey
+    public let rawKey: Data
     public let hosts: [Host]
 
-    public init(key: SecKey, hosts: [Host]) {
+    public init(
+        key: SecKey,
+        rawKey: Data,
+        hosts: [Host]
+    ) {
         self.key = key
+        self.rawKey = rawKey
         self.hosts = hosts
     }
 
-    public init(key: Data, hosts: [Host]) throws(Failure) {
-        self.key = try Self.key(for: key)
+    public init(
+        rawKey: Data,
+        hosts: [Host]
+    ) throws(
+        Failure
+    ) {
+        self.key = try Self.key(for: rawKey)
+        self.rawKey = rawKey
         self.hosts = hosts
     }
 
