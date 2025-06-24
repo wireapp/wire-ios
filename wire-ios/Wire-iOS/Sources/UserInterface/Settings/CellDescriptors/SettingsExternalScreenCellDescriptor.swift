@@ -33,7 +33,7 @@ class SettingsExternalScreenCellDescriptor: SettingsGroupCellDescriptorType, Set
 
     let settingsTopLevelMenuItem: SettingsTopLevelMenuItem?
 
-    private let accessoryViewMode: AccessoryView? // TODO: rename `accessoryView`
+    private let accessoryView: AccessoryView?
 
     weak var group: SettingsGroupCellDescriptorType?
     weak var viewController: UIViewController?
@@ -63,7 +63,7 @@ class SettingsExternalScreenCellDescriptor: SettingsGroupCellDescriptorType, Set
         presentationAction: @escaping () -> (UIViewController?),
         previewGenerator: PreviewGeneratorType? = .none,
         icon: StyleKitIcon? = nil,
-        accessoryViewMode: AccessoryView? = .automatic,
+        accessoryView: AccessoryView? = .automatic,
         copiableText: String? = nil
     ) {
         self.init(
@@ -74,7 +74,7 @@ class SettingsExternalScreenCellDescriptor: SettingsGroupCellDescriptorType, Set
             presentationAction: presentationAction,
             previewGenerator: previewGenerator,
             icon: icon,
-            accessoryViewMode: accessoryViewMode,
+            accessoryView: accessoryView,
             copiableText: copiableText,
             settingsTopLevelMenuItem: nil
         )
@@ -88,7 +88,7 @@ class SettingsExternalScreenCellDescriptor: SettingsGroupCellDescriptorType, Set
         presentationAction: @escaping () -> (UIViewController?),
         previewGenerator: PreviewGeneratorType? = .none,
         icon: StyleKitIcon? = nil,
-        accessoryViewMode: AccessoryView? = .automatic,
+        accessoryView: AccessoryView? = .automatic,
         copiableText: String?,
         settingsTopLevelMenuItem: SettingsTopLevelMenuItem?
     ) {
@@ -99,7 +99,7 @@ class SettingsExternalScreenCellDescriptor: SettingsGroupCellDescriptorType, Set
         self.identifier = identifier
         self.previewGenerator = previewGenerator
         self.icon = icon
-        self.accessoryViewMode = accessoryViewMode
+        self.accessoryView = accessoryView
         self.copiableText = copiableText
         self.settingsTopLevelMenuItem = settingsTopLevelMenuItem
     }
@@ -142,7 +142,7 @@ class SettingsExternalScreenCellDescriptor: SettingsGroupCellDescriptorType, Set
         }
         cell.icon = icon
         if let groupCell = cell as? SettingsTableCell {
-            switch accessoryViewMode {
+            switch accessoryView {
             case .automatic:
                 if presentationStyle == .modal {
                     groupCell.hideAccessoryView()

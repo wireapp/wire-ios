@@ -240,7 +240,7 @@ extension SettingsCellDescriptorFactory {
                         SettingsCellPreview.text(L10n.Localizable.Self.addEmailPassword)
                     }
                 },
-                accessoryViewMode: .none
+                accessoryView: .none
             )
         } else {
             textValueCellDescriptor(propertyName: .email, enabled: enabled)
@@ -278,7 +278,7 @@ extension SettingsCellDescriptorFactory {
                     presentationStyle: .navigation,
                     presentationAction: presentation,
                     previewGenerator: preview,
-                    accessoryViewMode: .none,
+                    accessoryView: .none,
                     copiableText: copiableText
                 )
             }
