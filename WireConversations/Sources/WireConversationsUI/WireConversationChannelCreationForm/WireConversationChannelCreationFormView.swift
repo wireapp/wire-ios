@@ -107,15 +107,10 @@ public struct WireConversationChannelCreationForm: View {
 
     var channelHistorySection: some View {
         Section(content: {
-            VStack {
-                channelHistoryPicker
+            channelHistoryPicker
 
-                ZStack {
-                    if viewModel.showChannelCustomHistoryPickers() {
-                        channelCustomHistoryPicker
-                            .transition(.opacity)
-                    }
-                }.animation(.smooth, value: viewModel.channelHistoryOption)
+            if viewModel.showChannelCustomHistoryPickers() {
+                channelCustomHistoryPickers
             }
 
         }, footer: {
@@ -134,7 +129,7 @@ public struct WireConversationChannelCreationForm: View {
         }
     }
 
-    var channelCustomHistoryPicker: some View {
+    var channelCustomHistoryPickers: some View {
         HStack {
             Picker("Number", selection: $viewModel.channelHistoryOptionCustom.value) {
                 ForEach(1 ... 99, id: \.self) { number in
@@ -150,7 +145,6 @@ public struct WireConversationChannelCreationForm: View {
             }
             .pickerStyle(.wheel)
         }
-        .padding()
     }
 
     var servicesSection: some View {
@@ -175,7 +169,7 @@ public struct WireConversationChannelCreationForm: View {
     WireConversationChannelCreationForm(
         viewModel: WireConversationChannelCreationFormViewModel(
             channelName: "",
-            isUserPremium: false
+            isUserPremium: true
         ) { _ in }
     )
 }
