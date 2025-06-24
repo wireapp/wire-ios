@@ -132,6 +132,7 @@ struct SettingsCellDescriptorFactory {
             advancedGroup(userSession: userSession, mainCoordinator: mainCoordinator),
             helpSection(),
             aboutSection()
+            // TODO: manage team
         ]
 
         if Bundle.developerModeEnabled {
