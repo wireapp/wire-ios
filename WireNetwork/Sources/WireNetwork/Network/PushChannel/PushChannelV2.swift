@@ -29,8 +29,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
         case events([UpdateEventEnvelope])
         case missedEvents
     }
-    
-    
+
     enum InternalElement: Equatable {
         case syncing(eventsCount: Int)
         case event(UpdateEventEnvelope)
@@ -86,7 +85,10 @@ public final class PushChannelV2: PushChannelV2Protocol {
                         if !batch.isEmpty {
                             continuation.yield(.events(batch))
                         }
-                        WireLogger.pushChannel.debug("🏆 delay passed, yield batch \(batch.count)", attributes: .pushChannelV2)
+                        WireLogger.pushChannel.debug(
+                            "🏆 delay passed, yield batch \(batch.count)",
+                            attributes: .pushChannelV2
+                        )
                         batch = []
                         if numberOfReceivedEvents == remainingEventCount {
                             continuation.yield(.upToDate)
@@ -96,11 +98,14 @@ public final class PushChannelV2: PushChannelV2Protocol {
                     let result = try receiveMessage(message)
 
                     switch result {
-                    case .event(let event):
+                    case let .event(event):
                         batch.append(event)
                         WireLogger.pushChannel.debug("🏆 current batch count \(batch.count)", attributes: .pushChannelV2)
                         if batch.count == maxBatchEventsCount {
-                            WireLogger.pushChannel.debug("🏆 batch count reached, yield batch \(batch.count)", attributes: .pushChannelV2)
+                            WireLogger.pushChannel.debug(
+                                "🏆 batch count reached, yield batch \(batch.count)",
+                                attributes: .pushChannelV2
+                            )
                             if !batch.isEmpty {
                                 continuation.yield(.events(batch))
                             }
@@ -112,13 +117,16 @@ public final class PushChannelV2: PushChannelV2Protocol {
                         }
                     case .missedEvents:
                         continuation.yield(.missedEvents)
-                    case .syncing(let eventsCount):
+                    case let .syncing(eventsCount):
                         continuation.yield(.syncing(eventsCount: eventsCount))
                     }
-                    
+
                 }
                 if !batch.isEmpty {
-                    WireLogger.pushChannel.debug("🏆 batch remain, yield batch \(batch.count)", attributes: .pushChannelV2)
+                    WireLogger.pushChannel.debug(
+                        "🏆 batch remain, yield batch \(batch.count)",
+                        attributes: .pushChannelV2
+                    )
                     continuation.yield(.events(batch))
                     if numberOfReceivedEvents == remainingEventCount {
                         continuation.yield(.upToDate)

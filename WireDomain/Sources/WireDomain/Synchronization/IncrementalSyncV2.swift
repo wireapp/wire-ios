@@ -18,14 +18,14 @@
 
 @preconcurrency import Combine
 import Foundation
-import WireLogging
-import WireDataModel
 import WireCoreCrypto
+import WireDataModel
+import WireLogging
 import WireNetwork
 
 /// IncrementalSync using new backend API consumable notifications sync system
 public struct IncrementalSyncV2: LiveSyncProtocol {
-    
+
     private let selfClientID: String
     private let pushChannelAPI: any PushChannelV2API
     private let decryptor: any UpdateEventDecryptorProtocol
@@ -38,7 +38,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     private let logger = WireLogger.sync
     private let journal: Journal
     weak var delegate: (any LiveSyncDelegate)?
-    
+
     public init(
         selfClientID: String,
         pushChannelAPI: any PushChannelV2API,
@@ -62,15 +62,15 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         self.coreCryptoProvider = coreCryptoProvider
         self.journal = journal
     }
-    
+
     public func perform() async throws -> IncrementalSync.Token {
         logger.debug("performing live sync", attributes: .syncAttributes(initialSync: false))
         let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID)
-        
+
         logger.debug("opening new push channel", attributes: .syncAttributes(initialSync: false))
         syncStateSubject.send(.incrementalSyncing(.openPushChannel))
         let liveEventStream = try await pushChannel.open()
-        
+
         logger.debug("processing stored update events", attributes: .syncAttributes(initialSync: false))
         syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
         let processedEnvelopeIDs: Set<UUID>
@@ -80,7 +80,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
             await pushChannel.close()
             throw error
         }
-        
+
         let task = Task { @Sendable [self, pushChannel, processedEnvelopeIDs] in
             await processLiveStream(
                 liveEventStream,
@@ -88,34 +88,34 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                 processedEnvelopeIDs: processedEnvelopeIDs
             )
         }
-        
+
         return IncrementalSync.Token(task: task, closePushChannel: {
             await pushChannel.close()
         })
     }
-    
+
     /// Process pending events from the event database that were decrypted during the NSE
     private func processStoredEvents() async throws -> Set<UUID> {
         let batchSize: UInt = 500
         var processedEnvelopeIDs = Set<UUID>()
-        
+
         while true {
             // If we need to abort, do it before processing the next batch.
             try Task.checkCancellation()
-            
+
             let envelopesWithObjectIDs = try await updateEventsStore.fetchStoredEventEnvelopes(limit: batchSize)
             let envelopes = envelopesWithObjectIDs.map(\.envelope)
             let envelopesObjectIDs = envelopesWithObjectIDs.map(\.objectID)
-            
+
             guard !envelopes.isEmpty else {
                 break
             }
-            
+
             logger.debug(
                 "fetched \(envelopes.count) stored envelopes for processing",
                 attributes: .syncAttributes(initialSync: false)
             )
-            
+
             for envelope in envelopes {
                 for event in envelope.events {
                     do {
@@ -132,11 +132,11 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                     }
                 }
             }
-            
+
             processedEnvelopeIDs.formUnion(envelopes.map(\.id))
             try await updateEventsStore.deleteNextPendingEvents(with: envelopesObjectIDs)
             await updateEventsStore.calculateLastUnreadMessages()
-            
+
             do {
                 try await databaseSaver.save()
             } catch {
@@ -146,10 +146,10 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                 )
             }
         }
-        
+
         return processedEnvelopeIDs
     }
-    
+
     private func processLiveStream(
         _ liveEventStream: PushChannelV2.Stream,
         pushChannel: PushChannelV2Protocol,
@@ -157,7 +157,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     ) async {
         logger.debug("handling live event stream", attributes: .syncAttributes(initialSync: false))
         syncStateSubject.send(.incrementalSyncing(.receivingLiveEvents))
-        
+
         do {
             for try await element in liveEventStream {
                 logger.debug(
@@ -178,9 +178,13 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                     // ignore this event, it gives the number of messages until we're caught up
                     try await pushChannel.acknowledgeMessageCount()
                 case let .events(envelopes):
-                    
+
                     do {
-                        try await processEnvelopes(envelopes, pushChannel: pushChannel, processedEnvelopeIDs: processedEnvelopeIDs)
+                        try await processEnvelopes(
+                            envelopes,
+                            pushChannel: pushChannel,
+                            processedEnvelopeIDs: processedEnvelopeIDs
+                        )
                     } catch {
                         // in case of thrown errors, we skip to the next event
                         // errors are already logged if needed
@@ -198,16 +202,18 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
             delegate?.didFail(sync: self, error: error)
             return
         }
-        
+
         logger.debug("live event stream did finish v3")
         syncStateSubject.send(.liveSyncing(.finished))
     }
-    
+
     // MARK: - Event Steps
-    
-    private func processEnvelopes(_ envelopes: [UpdateEventEnvelope],
-                                  pushChannel: PushChannelV2Protocol,
-                                  processedEnvelopeIDs: Set<UUID>) async throws {
+
+    private func processEnvelopes(
+        _ envelopes: [UpdateEventEnvelope],
+        pushChannel: PushChannelV2Protocol,
+        processedEnvelopeIDs: Set<UUID>
+    ) async throws {
         var lastEnvelope: UpdateEventEnvelope?
         try await coreCryptoProvider.coreCrypto().perform { coreCryptoContext in
             for envelope in envelopes {
@@ -220,25 +226,27 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                     // will need to store the deliveryTag...
                     continue
                 }
-                
+
                 var envelope = envelope
                 envelope.events = try await decryptEnvelope(envelope, in: coreCryptoContext)
-                
+
                 await processEnvelope(envelope)
-                
+
                 lastEnvelope = envelope
             }
         }
-        
+
         await updateEventsStore.calculateLastUnreadMessages()
         await save()
         if let lastEnvelope {
             await acknowledgeUntilEnvelope(lastEnvelope, through: pushChannel)
         }
     }
-    
-    
-    private func decryptEnvelope(_ envelope: UpdateEventEnvelope, in context: CoreCryptoContextProtocol) async throws -> [UpdateEvent] {
+
+    private func decryptEnvelope(
+        _ envelope: UpdateEventEnvelope,
+        in context: CoreCryptoContextProtocol
+    ) async throws -> [UpdateEvent] {
         do {
             // Decrypt.
             logger.debug(
@@ -246,7 +254,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                 attributes: [.eventEnvelopeID: envelope.id]
             )
             let decryptionEventsResult = try await decryptor.decryptEvents(in: envelope, context: context)
-            
+
             let brokenMLSGroupIDs = decryptionEventsResult.brokenMLSGroupIDs
             if !brokenMLSGroupIDs.isEmpty {
                 journal.addValues(Set(brokenMLSGroupIDs), for: .brokenMLSGroupIDs)
@@ -280,7 +288,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
             )
         }
     }
-    
+
     private func processEnvelope(_ envelope: UpdateEventEnvelope) async {
         for event in envelope.events {
             do {
@@ -297,7 +305,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
             }
         }
     }
-    
+
     private func save() async {
         do {
             // Save.
