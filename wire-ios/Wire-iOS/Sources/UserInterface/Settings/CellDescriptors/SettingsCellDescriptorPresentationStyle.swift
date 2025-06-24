@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-PROTEUS_BY_CORECRYPTO_ENABLED=1
-WIRE_AUTHENTICATION_ENABLED=1
-NEW_REGISTRATION_ENABLED=1
+enum SettingsCellDescriptorPresentationStyle: Int {
+    case modal
+    case navigation
+    case alert
+}
