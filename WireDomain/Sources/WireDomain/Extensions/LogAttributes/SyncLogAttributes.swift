@@ -115,8 +115,8 @@ public extension LogAttributes {
         ]
     }
 
-    private static var syncVersion: String {
-        DeveloperFlag.asyncStreamNotifications.isOn ? Constants.v3 : Constants.v2
+    static var syncVersion: String {
+        DeveloperFlag.consumableNotifications.isOn ? Constants.v3 : Constants.v2
     }
 }
 

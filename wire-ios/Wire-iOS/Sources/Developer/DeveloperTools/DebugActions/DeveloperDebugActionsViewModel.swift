@@ -207,7 +207,9 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
     // MARK: Resync resources
 
     private func triggerResourcesSync() {
-        userSession?.triggerResourcesSync()
+        Task {
+            await userSession?.triggerResourcesSync()
+        }
     }
 
     // MARK: Proteus to MLS migration

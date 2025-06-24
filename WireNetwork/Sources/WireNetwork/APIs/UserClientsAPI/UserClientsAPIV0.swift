@@ -69,6 +69,29 @@ class UserClientsAPIV0: UserClientsAPI, VersionedAPI {
             .success(code: .ok, type: OtherUserClientsV0.self)
             .parse(code: response.statusCode, data: data)
     }
+
+    func updateClient(id: UserClientID, clientUpdate: ClientUpdate) async throws {
+        let body = try JSONEncoder.defaultEncoder.encode(clientUpdate.toNetworkModel())
+
+        let path = "\(pathPrefix)/clients/\(id)"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.put)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            .success(code: .ok)
+            .failure(code: .badRequest, error: UserClientsAPIError.invalidBody)
+            .failure(code: .badRequest, label: "bad-request", error: UserClientsAPIError.malformedPrekeysUploaded)
+            .failure(code: .notFound, error: UserClientsAPIError.clientNotFound)
+            .parse(code: response.statusCode, data: data)
+    }
 }
 
 struct ListUserClientV0: Decodable, ToAPIModelConvertible {
@@ -188,4 +211,50 @@ struct OtherUserClientsV0: Decodable, ToAPIModelConvertible {
         }
     }
 
+}
+
+struct ClientUpdateV0: Equatable, Sendable, Encodable {
+
+    enum CodingKeys: String, CodingKey {
+        case label
+        case lastKey = "last_key"
+        case preKeys = "prekeys"
+        case mlsPublicKeys = "mls_public_keys"
+        case capabilities
+
+    }
+
+    /// The capabilities of the client.
+    /// - Note: capabilities cannot be removed once added to a client,
+    ///  so once 1 capability added it must always be present
+    let capabilities: [UserClientCapability]? // TODO: [WPB-18279] remove public conformance of Encodable, don't rely on public models
+
+    /// A label describing the client.
+
+    let label: String?
+
+    /// The last resort Prekey
+
+    let lastKey: Prekey? // TODO: [WPB-18279] remove public conformance of Encodable, don't rely on public models
+
+    /// The mls public keys for the client.
+
+    let mlsPublicKeys: MLSPublicKeys? // TODO: [WPB-18279] remove public conformance of Encodable, don't rely on public models
+
+    /// New prekeys for other clients to establish OTR sessions.
+
+    let preKeys: [Prekey]? // TODO: [WPB-18279] remove public conformance of Encodable, don't rely on public models
+}
+
+extension ClientUpdate {
+
+    func toNetworkModel() -> ClientUpdateV0 {
+        ClientUpdateV0(
+            capabilities: capabilities,
+            label: label,
+            lastKey: lastKey,
+            mlsPublicKeys: mlsPublicKeys,
+            preKeys: preKeys
+        )
+    }
 }
