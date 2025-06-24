@@ -61,7 +61,7 @@ struct SettingsCellDescriptorFactory {
             presentationStyle: .modal,
             identifier: nil,
             presentationAction: { () -> (UIViewController?) in
-                return BrowserViewController(url: URL.manageTeam(source: .settings))
+                BrowserViewController(url: URL.manageTeam(source: .settings))
             },
             previewGenerator: nil,
             icon: .team,
@@ -341,14 +341,13 @@ struct SettingsCellDescriptorFactory {
     }
 
     private var manageTeamLink: some SettingsCellDescriptorType {
-        // TODO: check
         SettingsExternalScreenCellDescriptor(
             title: L10n.Localizable.Self.Settings.ManageTeam.title,
             isDestructive: false,
             presentationStyle: .modal,
             identifier: nil,
             presentationAction: { () -> (UIViewController?) in
-                return BrowserViewController(url: URL.manageTeam(source: .settings))
+                BrowserViewController(url: URL.manageTeam(source: .settings))
             },
             previewGenerator: nil,
             icon: .team,
