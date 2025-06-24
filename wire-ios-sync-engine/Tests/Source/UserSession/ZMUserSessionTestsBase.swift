@@ -33,7 +33,6 @@ class ZMUserSessionTestsBase: MessagingTest {
     var mockEARService: MockEARServiceInterface!
     var mockMLSService: MockMLSServiceInterface!
     var backendEnvironment: WireTransport.BackendEnvironment!
-    var wireAPIBackendEnvironment: WireNetwork.BackendEnvironment!
     var transportSession: RecordingMockTransportSession!
     var cookieStorage: ZMPersistentCookieStorage!
     var validCookie: Data!
@@ -81,13 +80,6 @@ class ZMUserSessionTestsBase: MessagingTest {
             certificateTrust: ServerCertificateTrust(trustData: [], currentDateProvider: .system)
         )
 
-        wireAPIBackendEnvironment = WireNetwork.BackendEnvironment(
-            url: backendEnvironment.backendURL,
-            webSocketURL: backendEnvironment.backendWSURL,
-            pinnedKeys: [],
-            proxySettings: nil
-        )
-
         cookieStorage = ZMPersistentCookieStorage(
             forServerName: "usersessiontest.example.com",
             userIdentifier: .create(),
@@ -130,7 +122,6 @@ class ZMUserSessionTestsBase: MessagingTest {
         WireCallCenterV3Factory.wireCallCenterClass = WireCallCenterV3.self
 
         backendEnvironment = nil
-        wireAPIBackendEnvironment = nil
         baseURL = nil
         cookieStorage = nil
         validCookie = nil
@@ -178,9 +169,7 @@ class ZMUserSessionTestsBase: MessagingTest {
 
         var builder = ZMUserSessionBuilder()
         builder.withAllDependencies(
-            apiServiceFactory: { _, _ in MockAPIService() },
             backendEnvironment: backendEnvironment,
-            wireAPIBackendEnvironment: wireAPIBackendEnvironment,
             appVersion: "00000",
             application: application,
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
@@ -198,7 +187,8 @@ class ZMUserSessionTestsBase: MessagingTest {
             transportSession: transportSession,
             userId: coreDataStack.account.userIdentifier,
             minTLSVersion: nil,
-            journal: journal
+            journal: journal,
+            proxyCredentials: nil
         )
 
         let userSession = builder.build()

@@ -18,7 +18,6 @@
 
 import Combine
 import Foundation
-import WireNetwork
 import WireNetworkInterface
 
 /// A object that facilitates intermodule communication, both **inbound**

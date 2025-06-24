@@ -52,6 +52,7 @@
 		061F341B2B1E2ED50099CBAB /* AppAuthCore in Frameworks */ = {isa = PBXBuildFile; productRef = 061F341A2B1E2ED50099CBAB /* AppAuthCore */; };
 		065A5AE5279B07AC002D4D1E /* Wire Notification Service Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 065A5ADE279B07AC002D4D1E /* Wire Notification Service Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		16EE08AE2D92E861001B372C /* WireCoreCryptoUniffi in Frameworks */ = {isa = PBXBuildFile; productRef = 16EE08AD2D92E861001B372C /* WireCoreCryptoUniffi */; };
+		34600FDB2E0AB37200D28BA1 /* WireNetworkInterface in Frameworks */ = {isa = PBXBuildFile; productRef = 34600FDA2E0AB37200D28BA1 /* WireNetworkInterface */; };
 		34DC44AD2E01C1E6004D5DD5 /* WireNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = 34DC44AC2E01C1E6004D5DD5 /* WireNetwork */; };
 		407831AD2AC4636F005C2978 /* DifferenceKit in Frameworks */ = {isa = PBXBuildFile; productRef = 407831AC2AC4636F005C2978 /* DifferenceKit */; };
 		59076F952C934A9800AE7529 /* WireAccountImageUI in Frameworks */ = {isa = PBXBuildFile; productRef = 59076F942C934A9800AE7529 /* WireAccountImageUI */; };
@@ -984,6 +985,7 @@
 				59592D202D4B9527005EDF16 /* WireLogging in Frameworks */,
 				59592D1F2D4B9527005EDF16 /* WireFoundation in Frameworks */,
 				59B48C622C89CD3D00EA7999 /* WireTestingPackage in Frameworks */,
+				34600FDB2E0AB37200D28BA1 /* WireNetworkInterface in Frameworks */,
 				01C1A7C72A54C45A0058D578 /* SnapshotTesting in Frameworks */,
 				CB4870F22C7F4FE5001E9151 /* WireTransportSupport.framework in Frameworks */,
 				59B7684B2D2D5A17007B5F1E /* WireFoundationSupport in Frameworks */,
@@ -1400,6 +1402,7 @@
 				590DCA092C971AFF002D0A2C /* WireFoundation */,
 				59B7684A2D2D5A17007B5F1E /* WireFoundationSupport */,
 				59191A642D0051C7001AB388 /* WireLogging */,
+				34600FDA2E0AB37200D28BA1 /* WireNetworkInterface */,
 			);
 			productName = "ZClient-iOS Tests";
 			productReference = BACB88511AF7C48900DDCDB0 /* Wire-iOS-Tests.xctest */;
@@ -2812,6 +2815,10 @@
 		16EE08AD2D92E861001B372C /* WireCoreCryptoUniffi */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireCoreCryptoUniffi;
+		};
+		34600FDA2E0AB37200D28BA1 /* WireNetworkInterface */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireNetworkInterface;
 		};
 		34DC44AC2E01C1E6004D5DD5 /* WireNetwork */ = {
 			isa = XCSwiftPackageProductDependency;

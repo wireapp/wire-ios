@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		017F67942C207AA000B6E02D /* WireDomainSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 017F67822C207A3200B6E02D /* WireDomainSupport.framework */; };
 		01D0DCC62C1C8CD90076CB1C /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D0DCC52C1C8CD90076CB1C /* WireTransport.framework */; };
-		34DC44B32E01C206004D5DD5 /* WireNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = 34DC44B22E01C206004D5DD5 /* WireNetwork */; };
+		34600FD72E0AB30300D28BA1 /* WireNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = 34600FD62E0AB30300D28BA1 /* WireNetwork */; };
 		34F8CA9A2E02C003000FE4E0 /* WireNetworkSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 34F8CA992E02C003000FE4E0 /* WireNetworkSupport */; };
 		34F8CA9C2E02C012000FE4E0 /* WireNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = 34F8CA9B2E02C012000FE4E0 /* WireNetwork */; };
 		5904B1B32D31582700E866D1 /* WireDomainSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 017F67822C207A3200B6E02D /* WireDomainSupport.framework */; };
@@ -97,7 +97,7 @@
 			files = (
 				CB64B1362DDE0BCA00B43127 /* WireCellsAPI in Frameworks */,
 				598D042D2C89C63100B64D71 /* WireFoundation in Frameworks */,
-				34DC44B32E01C206004D5DD5 /* WireNetwork in Frameworks */,
+				34600FD72E0AB30300D28BA1 /* WireNetwork in Frameworks */,
 				CB6343F02DB7EF3D00A1C892 /* WireUpdateEventCoding in Frameworks */,
 				C91D188E2D7212FC00B63B66 /* NeedleFoundation in Frameworks */,
 				59DBDE982D395BB50069C64C /* WireDomainPackage in Frameworks */,
@@ -226,7 +226,7 @@
 				C91D188D2D7212FC00B63B66 /* NeedleFoundation */,
 				CB6343EF2DB7EF3D00A1C892 /* WireUpdateEventCoding */,
 				CB64B1352DDE0BCA00B43127 /* WireCellsAPI */,
-				34DC44B22E01C206004D5DD5 /* WireNetwork */,
+				34600FD62E0AB30300D28BA1 /* WireNetwork */,
 			);
 			productName = WireDomain;
 			productReference = 01D0DCA62C1C8C870076CB1C /* WireDomain.framework */;
@@ -781,7 +781,7 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		34DC44B22E01C206004D5DD5 /* WireNetwork */ = {
+		34600FD62E0AB30300D28BA1 /* WireNetwork */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireNetwork;
 		};

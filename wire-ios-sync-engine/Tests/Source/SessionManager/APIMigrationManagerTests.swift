@@ -302,9 +302,7 @@ final class APIMigrationManagerTests: MessagingTest {
 
         var builder = ZMUserSessionBuilder()
         builder.withAllDependencies(
-            apiServiceFactory: { _, _ in MockAPIService() },
             backendEnvironment: backendEnvironment,
-            wireAPIBackendEnvironment: wireAPIBackendEnvironment,
             appVersion: "999",
             application: application,
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
@@ -322,7 +320,8 @@ final class APIMigrationManagerTests: MessagingTest {
             transportSession: mockTransportSession,
             userId: userID,
             minTLSVersion: nil,
-            journal: journal
+            journal: journal,
+            proxyCredentials: nil
         )
 
         let userSession = builder.build()
