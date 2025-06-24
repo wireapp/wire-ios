@@ -21,18 +21,6 @@ import WireCommonComponents
 import WireDesign
 import WireSettingsUI
 
-enum PresentationStyle: Int {
-    case modal
-    case navigation
-    case alert
-}
-
-enum AccessoryViewMode: Int {
-    case `default`
-    case disclosureIndicator
-    case externalLink
-}
-
 class SettingsExternalScreenCellDescriptor: SettingsGroupCellDescriptorType, SettingsControllerGeneratorType {
     static let cellType: SettingsTableCellProtocol.Type = SettingsTableCell.self
     var visible: Bool = true
@@ -174,4 +162,19 @@ class SettingsExternalScreenCellDescriptor: SettingsGroupCellDescriptorType, Set
     func generateViewController() -> UIViewController? {
         presentationAction()
     }
+
+    // MARK: Nested Types
+
+    enum PresentationStyle: Int {
+        case modal
+        case navigation
+        case alert
+    }
+
+    enum AccessoryViewMode {
+        case `default`
+        case disclosureIndicator
+        case externalLink
+    }
+
 }
