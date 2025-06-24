@@ -85,7 +85,10 @@ final class RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
     }
 
     func trackPersonalAccountCreationReachedVerificationCode() {
-        analyticsTracker?.trackEvent(.Registration.accountSetupStep2)
+        if let analyticsTracker {
+            print("KKKKK accountSetupStep2")
+            analyticsTracker.trackEvent(.Registration.accountSetupStep2)
+        }
     }
 
     func trackPersonalAccountCreationFailedCodeVerification() {
@@ -120,11 +123,13 @@ final class RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
 
     private func createAnalyticsUserIfNeeded() -> AnalyticsUser {
         if let existingID = userDefaults.string(forKey: Constants.analyticsIdentifierKey) {
+            print("KKKKK existingID \(existingID)")
             return AnalyticsUser(analyticsIdentifier: existingID, teamInfo: nil)
         }
 
         let newAnalyticsID = UUID().transportString()
         userDefaults.set(newAnalyticsID, forKey: Constants.analyticsIdentifierKey)
+        print("KKKKK newAnalyticsID \(newAnalyticsID)")
         return AnalyticsUser(analyticsIdentifier: newAnalyticsID, teamInfo: nil)
     }
 
