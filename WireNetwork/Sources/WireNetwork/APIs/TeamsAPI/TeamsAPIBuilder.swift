@@ -37,7 +37,7 @@ public struct TeamsAPIBuilder {
     /// - Parameter version: An api version.
     /// - Returns: A versioned `TeamsAPI`.
 
-    public func makeAPI(for version: APIVersion) -> any TeamsAPI {
+    public func makeAPI(for version: APIVersion) -> some TeamsAPI {
         switch version {
         case .v0:
             TeamsAPIV0(apiService: apiService)

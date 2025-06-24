@@ -35,7 +35,7 @@ public struct AccountsAPIBuilder {
     /// - Parameter version: An api version.
     /// - Returns: A versioned `AccountsAPI`.
 
-    public func makeAPI(for version: APIVersion) -> any AccountsAPI {
+    public func makeAPI(for version: APIVersion) -> some AccountsAPI {
         switch version {
         case .v0:
             AccountsAPIV0(apiService: apiService)

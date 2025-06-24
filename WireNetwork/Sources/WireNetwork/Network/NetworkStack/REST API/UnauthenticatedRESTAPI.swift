@@ -22,26 +22,8 @@ public struct UnauthenticatedRESTAPI: Sendable {
     let networkService: NetworkService
 
     public func authenticationAPI() -> some AuthenticationAPI {
-        switch apiVersion {
-        case .v0:
-            AuthenticationAPIV0(networkService: networkService)
-        case .v1:
-            AuthenticationAPIV1(networkService: networkService)
-        case .v2:
-            AuthenticationAPIV2(networkService: networkService)
-        case .v3:
-            AuthenticationAPIV3(networkService: networkService)
-        case .v4:
-            AuthenticationAPIV4(networkService: networkService)
-        case .v5:
-            AuthenticationAPIV5(networkService: networkService)
-        case .v6:
-            AuthenticationAPIV6(networkService: networkService)
-        case .v7:
-            AuthenticationAPIV7(networkService: networkService)
-        case .v8:
-            AuthenticationAPIV8(networkService: networkService)
-        }
+        AuthenticationAPIBuilder(networkService: networkService)
+            .makeAPI(for: apiVersion)
     }
 
 }

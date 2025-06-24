@@ -36,7 +36,7 @@ public struct PushChannelAPIBuilder {
     ///
     /// - Returns: A `PushChannelAPI`.
 
-    public func makeAPI(for apiVersion: APIVersion) -> any PushChannelAPI {
+    public func makeAPI() -> some PushChannelAPI {
         PushChannelAPIImpl(pushChannelService: pushChannelService)
     }
 

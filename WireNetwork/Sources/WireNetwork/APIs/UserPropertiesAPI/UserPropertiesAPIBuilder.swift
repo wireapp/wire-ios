@@ -37,7 +37,7 @@ public struct UserPropertiesAPIBuilder {
     /// - Parameter version: An api version.
     /// - Returns: A versioned `UserPropertiesAPI`.
 
-    public func makeAPI(for version: APIVersion) -> any UserPropertiesAPI {
+    public func makeAPI(for version: APIVersion) -> some UserPropertiesAPI {
         switch version {
         case .v0:
             UserPropertiesAPIV0(apiService: apiService)

@@ -37,7 +37,7 @@ public struct FeatureConfigsAPIBuilder {
     /// - Parameter version: An api version.
     /// - Returns: A versioned `FeatureConfigsAPI`.
 
-    public func makeAPI(for version: APIVersion) -> any FeatureConfigsAPI {
+    public func makeAPI(for version: APIVersion) -> some FeatureConfigsAPI {
         switch version {
         case .v0:
             FeatureConfigsAPIV0(apiService: apiService)

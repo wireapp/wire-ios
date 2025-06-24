@@ -37,7 +37,7 @@ public struct ConnectionsAPIBuilder {
     /// - Parameter version: An api version.
     /// - Returns: A versioned `ConnectionsAPI`.
 
-    public func makeAPI(for version: APIVersion) -> any ConnectionsAPI {
+    public func makeAPI(for version: APIVersion) -> some ConnectionsAPI {
         switch version {
         case .v0:
             ConnectionsAPIV0(apiService: apiService)
