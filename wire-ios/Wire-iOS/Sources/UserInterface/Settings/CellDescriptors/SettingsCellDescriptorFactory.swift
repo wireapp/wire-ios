@@ -101,7 +101,7 @@ struct SettingsCellDescriptorFactory {
         }
 
         return SettingsExternalScreenCellDescriptor(
-            title: L10n.Localizable.Self.Settings.AddTeamOrAccount.title,
+            title: L10n.Localizable.Self.Settings.AddAccountOrTeam.title,
             isDestructive: false,
             presentationStyle: PresentationStyle.modal,
             identifier: nil,

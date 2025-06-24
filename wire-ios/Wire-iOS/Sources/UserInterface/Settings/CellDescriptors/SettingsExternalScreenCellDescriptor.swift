@@ -157,14 +157,14 @@ class SettingsExternalScreenCellDescriptor: SettingsGroupCellDescriptorType, Set
             switch accessoryViewMode {
             case .default:
                 if presentationStyle == .modal {
-                    groupCell.hideDisclosureIndicator()
+                    groupCell.hideAccessoryView()
                 } else {
-                    groupCell.showDisclosureIndicator()
+                    groupCell.showDisclosureIndicatorAccessoryView()
                 }
             case .alwaysHide:
-                groupCell.hideDisclosureIndicator()
+                groupCell.hideAccessoryView()
             case .alwaysShow:
-                groupCell.showDisclosureIndicator()
+                groupCell.showDisclosureIndicatorAccessoryView()
             }
         }
     }

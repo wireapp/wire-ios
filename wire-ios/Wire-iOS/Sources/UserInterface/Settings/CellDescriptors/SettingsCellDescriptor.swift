@@ -230,7 +230,7 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
         }
         cell.icon = icon
         if let cell = cell as? SettingsTableCell {
-            cell.showDisclosureIndicator()
+            cell.showDisclosureIndicatorAccessoryView()
         }
     }
 

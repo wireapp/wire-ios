@@ -20,7 +20,8 @@ import UIKit
 import WireDesign
 
 extension UITableViewCell {
-    func showDisclosureIndicator() {
+
+    func showDisclosureIndicatorAccessoryView() {
         let image = UIImage(systemName: "chevron.right")
         let accessory = UIImageView(frame: CGRect(
             x: 0,
@@ -33,7 +34,12 @@ extension UITableViewCell {
         accessoryView = accessory
     }
 
-    func hideDisclosureIndicator() {
+    func showCustomAccessoryView(image: UIImage) {
+        fatalError()
+    }
+
+    func hideAccessoryView() {
         accessoryView = nil
     }
+
 }
