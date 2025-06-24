@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireFoundation
 @preconcurrency import KaliumBackup
+import WireFoundation
 
 extension BackupImporter {
 
