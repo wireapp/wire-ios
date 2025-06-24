@@ -34,7 +34,7 @@ extension UITableViewCell {
         accessoryView = accessory
     }
 
-    func showCustomAccessoryView(image: UIImage) {
+    func showExternalLinkAccessoryView() {
         fatalError()
     }
 

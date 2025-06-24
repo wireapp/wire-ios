@@ -65,7 +65,7 @@ struct SettingsCellDescriptorFactory {
             },
             previewGenerator: nil,
             icon: .team,
-            accessoryViewMode: .alwaysHide,
+            accessoryViewMode: .none,
             copiableText: nil,
             settingsTopLevelMenuItem: nil
         )
@@ -108,7 +108,7 @@ struct SettingsCellDescriptorFactory {
             presentationAction: presentationAction,
             previewGenerator: nil,
             icon: .plus,
-            accessoryViewMode: .alwaysHide,
+            accessoryViewMode: .none,
             copiableText: nil,
             settingsTopLevelMenuItem: nil
         )

@@ -29,8 +29,8 @@ enum PresentationStyle: Int {
 
 enum AccessoryViewMode: Int {
     case `default`
-    case alwaysShow
-    case alwaysHide
+    case disclosureIndicator
+    case externalLink
 }
 
 class SettingsExternalScreenCellDescriptor: SettingsGroupCellDescriptorType, SettingsControllerGeneratorType {
@@ -45,7 +45,7 @@ class SettingsExternalScreenCellDescriptor: SettingsGroupCellDescriptorType, Set
 
     let settingsTopLevelMenuItem: SettingsTopLevelMenuItem?
 
-    private let accessoryViewMode: AccessoryViewMode
+    private let accessoryViewMode: AccessoryViewMode? // TODO: rename `accessoryView`
 
     weak var group: SettingsGroupCellDescriptorType?
     weak var viewController: UIViewController?
@@ -75,7 +75,7 @@ class SettingsExternalScreenCellDescriptor: SettingsGroupCellDescriptorType, Set
         presentationAction: @escaping () -> (UIViewController?),
         previewGenerator: PreviewGeneratorType? = .none,
         icon: StyleKitIcon? = nil,
-        accessoryViewMode: AccessoryViewMode = .default,
+        accessoryViewMode: AccessoryViewMode? = .default,
         copiableText: String? = nil
     ) {
         self.init(
@@ -100,7 +100,7 @@ class SettingsExternalScreenCellDescriptor: SettingsGroupCellDescriptorType, Set
         presentationAction: @escaping () -> (UIViewController?),
         previewGenerator: PreviewGeneratorType? = .none,
         icon: StyleKitIcon? = nil,
-        accessoryViewMode: AccessoryViewMode = .default,
+        accessoryViewMode: AccessoryViewMode? = .default,
         copiableText: String?,
         settingsTopLevelMenuItem: SettingsTopLevelMenuItem?
     ) {
@@ -161,10 +161,12 @@ class SettingsExternalScreenCellDescriptor: SettingsGroupCellDescriptorType, Set
                 } else {
                     groupCell.showDisclosureIndicatorAccessoryView()
                 }
-            case .alwaysHide:
+            case .none:
                 groupCell.hideAccessoryView()
-            case .alwaysShow:
+            case .disclosureIndicator:
                 groupCell.showDisclosureIndicatorAccessoryView()
+            case .externalLink:
+                groupCell.showExternalLinkAccessoryView()
             }
         }
     }
