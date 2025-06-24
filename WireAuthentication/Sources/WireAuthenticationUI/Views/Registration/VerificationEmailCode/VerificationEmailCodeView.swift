@@ -35,53 +35,54 @@ package struct VerificationEmailCodeView: View {
     }
 
     package var body: some View {
-        VStack(spacing: 20) {
-            Text(Strings.VerificationCode.message(viewModel.email))
-                .wireTextStyle(.body1)
-                .multilineTextAlignment(.center)
-                .lineLimit(3)
-                .fixedSize(horizontal: false, vertical: true)
-                .foregroundStyle(Color.primaryText)
+        ScrollView {
+            VStack(spacing: 20) {
+                Text(Strings.VerificationCode.message(viewModel.email))
+                    .wireTextStyle(.body1)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(3)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .foregroundStyle(Color.primaryText)
 
-            verificationCodeView
+                verificationCodeView
 
-            Button(action: {
-                Task { await viewModel.confirm() }
-            }, label: {
-                HStack {
-                    if viewModel.isLoading {
-                        ProgressView()
+                Button(action: {
+                    Task { await viewModel.confirm() }
+                }, label: {
+                    HStack {
+                        if viewModel.isLoading {
+                            ProgressView()
+                        }
+
+                        Text(Strings.VerificationCode.confirm)
                     }
+                })
+                .wireButtonStyle(.primary)
+                .padding(.horizontal)
+                .disabled(viewModel.isConfirmButtonDisabled)
 
-                    Text(Strings.VerificationCode.confirm)
-                }
-            })
-            .wireButtonStyle(.primary)
-            .padding(.horizontal)
-            .disabled(viewModel.isConfirmButtonDisabled)
-
-            Button(action: {
-                Task.detached { await viewModel.requestVerificationCode() }
-            }, label: {
-                Text(Strings.VerificationCode.resendCode)
-            })
-            .wireButtonStyle(.link)
-            .disabled(viewModel.isResending)
-        }
-        .padding()
-        .background(ColorTheme.Backgrounds.surface.color)
-        .navigationTitle(Strings.title)
-        .navigationBarTitleDisplayMode(.inline)
-        .setPreferredSize(navigationBarHidden: false)
-        .customBackButton()
-        .alert(
-            item: $viewModel.alert,
-            title: { Text($0.title) },
-            message: { Text($0.message) },
-            actions: { _ in
-                Button(L10n.Localizable.Authentication.Error.confirm, action: {})
+                Button(action: {
+                    Task.detached { await viewModel.requestVerificationCode() }
+                }, label: {
+                    Text(Strings.VerificationCode.resendCode)
+                })
+                .wireButtonStyle(.link)
+                .disabled(viewModel.isResending)
             }
-        )
+            .background(ColorTheme.Backgrounds.surface.color)
+            .navigationTitle(Strings.title)
+            .navigationBarTitleDisplayMode(.inline)
+            .setPreferredSize(navigationBarHidden: false)
+            .customBackButton()
+            .alert(
+                item: $viewModel.alert,
+                title: { Text($0.title) },
+                message: { Text($0.message) },
+                actions: { _ in
+                    Button(L10n.Localizable.Authentication.Error.confirm, action: {})
+                }
+            )
+        }
     }
 
     private var verificationCodeView: some View {
