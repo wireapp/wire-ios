@@ -81,7 +81,7 @@ Do you want to change channel access to private?";
 "conversation.creationForm.channelHistory.upgradeBanner.title" = "Show older messages?";
 "conversation.creationForm.channelHistory.upgradeBanner.message" = "Upgrade to a paid plan to offer channel members the whole history.";
 "conversation.creationForm.channelHistory.upgradeBanner.button" = "Upgrade now";
-"conversation.creationForm.channelHistory.picker.title" = "Channel history";
+"conversation.creationForm.channelHistory.picker.title" = "Conversation history";
 "conversation.creationForm.channelHistory.picker.off" = "Off";
 "conversation.creationForm.channelHistory.picker.oneDay" = "1 day";
 "conversation.creationForm.channelHistory.picker.oneWeek" = "1 week";

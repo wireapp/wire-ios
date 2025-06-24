@@ -119,7 +119,7 @@ public struct WireConversationChannelCreationForm: View {
     }
 
     var channelHistoryPicker: some View {
-        Picker("Channel history", selection: $viewModel.channelHistoryOption) {
+        Picker(L10n.Localizable.Conversation.CreationForm.ChannelHistory.Picker.title, selection: $viewModel.channelHistoryOption) {
             ForEach(viewModel.channelHistoryAvailableOptions(), id: \.self) { channelHistoryOption in
                 Text(channelHistoryOption.title)
                     .tag(channelHistoryOption)
