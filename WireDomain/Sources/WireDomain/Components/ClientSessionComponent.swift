@@ -580,6 +580,7 @@ public final class ClientSessionComponent {
     )
 
     private lazy var userConnectionEventProcessor = UserConnectionEventProcessor(
+        context: syncContext,
         connectionsRepository: userConnectionsRepository,
         oneOnOneResolver: oneOnOneResolver
     )

@@ -148,6 +148,38 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
         XCTAssertEqual(invocation.date, Scaffolding.eventDate)
     }
 
+    func testProcessEvent_Availability_Invokes_UserLocalStoreMethod() async throws {
+        // Given
+        let conversation = await context.perform { [self] in
+            modelHelper.createGroupConversation(in: context)
+        }
+        userLocalStore.updateUserWithAvailability_MockMethod = { _, _ in }
+        messageLocalStore.addMessageConfirmationInSenderIDSenderDomainDate_MockMethod = { _, _, _, _, _ in }
+
+        let genericMessage = GenericMessage.with {
+            $0.messageID = UUID().uuidString
+            $0.availability = WireProtos.Availability(.available)
+        }
+
+        // When
+        try await sut.processProtobufMessage(
+            genericMessage,
+            content: try XCTUnwrap(genericMessage.content),
+            conversation: conversation,
+            conversationID: Scaffolding.conversationID,
+            senderID: Scaffolding.userID,
+            senderClientID: "clientID123",
+            date: Scaffolding.eventDate,
+            eventMessage: "confirmation"
+        )
+
+        // Then
+        let invocation = try XCTUnwrap(userLocalStore.updateUserWithAvailability_Invocations.first)
+        XCTAssertEqual(invocation.availability, .available)
+        XCTAssertEqual(invocation.userID.uuid, Scaffolding.userID.uuid)
+        XCTAssertEqual(invocation.userID.domain, Scaffolding.userID.domain)
+    }
+
     private enum Scaffolding {
         static let eventDate = Date()
         static let conversationID = ConversationID(id: .mockID1, domain: "domain.com")
