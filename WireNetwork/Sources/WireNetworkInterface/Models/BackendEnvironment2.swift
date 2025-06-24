@@ -147,7 +147,7 @@ public struct BackendEnvironment2: Sendable, Equatable, Hashable {
 
     }
 
-    public struct ProxyConfig: Decodable, Sendable, Hashable {
+    public struct ProxyConfig: Sendable, Hashable {
 
         public let host: String
         public let port: Int

@@ -20,7 +20,7 @@ import Foundation
 import WireFoundation
 import WireLogging
 
-/// PushChannel using new async stream
+/// PushChannel using new consumable notifications
 public final class PushChannelV2: PushChannelV2Protocol {
 
     public enum Element: Equatable {

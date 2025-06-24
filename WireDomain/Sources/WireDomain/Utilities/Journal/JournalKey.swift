@@ -38,10 +38,10 @@ public struct JournalKey<Value>: Sendable where Value: Sendable {
 
 public extension JournalKey where Value == Bool {
 
-    /// Whether new sync mechanism (async stream) is used.
+    /// Whether new sync mechanism (use consumable-notifications aka IncrementalSyncV2)
 
-    static let isSyncV3Enabled = Self(
-        "isSyncV3Enabled",
+    static let isConsumableNotificationsEnabled = Self(
+        "isConsumableNotificationsEnabled",
         defaultValue: false
     )
 

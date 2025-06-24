@@ -20,7 +20,7 @@ import Foundation
 
 /// Proxy settings for communicating with a backend server.
 
-public enum ProxySettings: Sendable, Equatable, Hashable {
+public enum ProxySettings: Sendable, Hashable {
 
     /// Settings for an unauthenticated proxy.
 
@@ -31,3 +31,7 @@ public enum ProxySettings: Sendable, Equatable, Hashable {
     case authenticated(host: String, port: Int, username: String, password: String)
 
 }
+
+#if DEBUG
+    extension ProxySettings: Equatable {}
+#endif

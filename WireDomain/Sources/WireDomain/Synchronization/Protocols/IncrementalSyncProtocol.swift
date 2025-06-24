@@ -28,5 +28,4 @@ public protocol IncrementalSyncProtocol {
     /// - Returns: A token to retain to keep the push channel open.
 
     func perform() async throws -> IncrementalSync.Token
-
 }

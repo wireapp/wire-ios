@@ -18,7 +18,7 @@
 
 public struct AuthenticatedRESTAPI {
 
-    let apiVersion: APIVersion
+    public let apiVersion: APIVersion
     let apiService: APIService
     let pushChannelService: PushChannelService
 

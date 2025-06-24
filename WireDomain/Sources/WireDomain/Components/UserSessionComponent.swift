@@ -79,7 +79,6 @@ public final class UserSessionComponent {
 
     public func clientSessionComponent(
         clientID: String,
-        asyncStreamEnabled: Bool,
         completionHandlers: ClientSessionComponent.CompletionHandlers
     ) async throws -> ClientSessionComponent {
         let authenticatedRESTAPI = try await networkStack.authenticatedRESTAPI(
@@ -102,7 +101,6 @@ public final class UserSessionComponent {
             mlsService: mlsService,
             mlsDecryptionService: mlsDecryptionService,
             proteusService: proteusService,
-            asyncStreamEnabled: asyncStreamEnabled, // TODO: [WPB-17223] check if still needed
             coreCryptoProvider: coreCryptoProvider,
             completionHandlers: completionHandlers
         )

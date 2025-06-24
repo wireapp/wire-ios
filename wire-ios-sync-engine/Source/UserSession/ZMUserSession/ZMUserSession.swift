@@ -94,6 +94,7 @@ public final class ZMUserSession: NSObject {
     let conversationEventProcessor: ConversationEventProcessor
 
     var syncAgent: SyncAgent?
+
     public var hasCompletedInitialSync: Bool = false
 
     public var topConversationsDirectory: TopConversationsDirectory
@@ -544,10 +545,7 @@ public final class ZMUserSession: NSObject {
             if let selfClientID = selfUserClient.remoteIdentifier {
                 Task { @MainActor in
                     do {
-                        try await setUpSyncAgent(
-                            clientID: selfClientID,
-                            asyncStreamEnabled: selfUserClient.asyncStreamCapable
-                        )
+                        try await setUpSyncAgent(clientID: selfClientID)
                     } catch {
                         fatalError("failed to set up sync agent: \(error)")
                     }
@@ -557,10 +555,9 @@ public final class ZMUserSession: NSObject {
     }
 
     @MainActor
-    private func setUpSyncAgent(clientID: String, asyncStreamEnabled: Bool) async throws {
+    private func setUpSyncAgent(clientID: String) async throws {
         let clientSessionComponent = try await userSessionComponent.clientSessionComponent(
             clientID: clientID,
-            asyncStreamEnabled: asyncStreamEnabled,
             completionHandlers: .init(
                 onProcessedCallEvent: onProcessedCallEvent,
                 onSelfClientInvalidated: onSelfClientInvalidated,
@@ -569,11 +566,6 @@ public final class ZMUserSession: NSObject {
             )
         )
         self.clientSessionComponent = clientSessionComponent
-
-        if asyncStreamEnabled {
-            // TODO: [WPB-17223] move this just after the migration is done
-            journal[.isSyncV3Enabled] = true
-        }
 
         coreCryptoProvider.registerMlsTransport(clientSessionComponent.mlsTransport)
 
@@ -609,9 +601,37 @@ public final class ZMUserSession: NSObject {
                 incrementalSyncObserver: incrementalSyncObserver
             )
         }
+    }
 
-        // TODO: [WPB-17223] remove `resume` call from here
-        syncAgent.resume()
+    public func migrateToConsumableNotificationsIfNeeded() async {
+        guard !journal[.isConsumableNotificationsEnabled] else { return }
+        guard let migrator = clientSessionComponent?.consumableNotificationsMigrator() else {
+            WireLogger.sync.warn("No consumable-notifications migrator available")
+            return
+        }
+        do {
+            try await migrator.migrate()
+        } catch ConsumableNotificationsMigrator.Failure.apiVersionTooLow {
+            // ignore error
+        } catch {
+            WireLogger.session.error("Failed to migrate to consumable-notifications: \(String(describing: error))")
+        }
+    }
+
+    /// Executes specific or regular sync after db migration
+    public func triggerSync() async {
+        let (initialSync, resoucesSync) = await syncContext.perform { (
+            self.syncContext.readMigrationNeedsSlowSyncFlag(),
+            self.syncContext.readMigrationNeedsSyncResourcesFlag()
+        ) }
+
+        if initialSync || journal[.isInitialSyncRequired] {
+            await triggerInitialSync()
+        } else if resoucesSync {
+            await triggerResourcesSync()
+        } else {
+            syncAgent?.resume()
+        }
     }
 
     // MARK: - Deinitalize
@@ -830,25 +850,21 @@ public final class ZMUserSession: NSObject {
 
     // MARK: - Trigger syncing
 
-    public func triggerInitialSync() {
-        Task {
-            do {
-                syncAgent?.suspend()
-                try await syncAgent?.performInitialSync()
-            } catch {
-                WireLogger.sync.error("failed to perform initial sync: \(String(describing: error))")
-            }
+    public func triggerInitialSync() async {
+        do {
+            syncAgent?.suspend()
+            try await syncAgent?.performInitialSync()
+        } catch {
+            WireLogger.sync.error("failed to perform initial sync: \(String(describing: error))")
         }
     }
 
-    public func triggerResourcesSync() {
-        Task {
-            do {
-                syncAgent?.suspend()
-                try await syncAgent?.performResourceSync()
-            } catch {
-                WireLogger.sync.error("failed to perform resource sync: \(String(describing: error))")
-            }
+    public func triggerResourcesSync() async {
+        do {
+            syncAgent?.suspend()
+            try await syncAgent?.performResourceSync()
+        } catch {
+            WireLogger.sync.error("failed to perform resource sync: \(String(describing: error))")
         }
     }
 
@@ -1370,15 +1386,21 @@ extension ZMUserSession: ZMClientRegistrationStatusDelegate {
         // The client was just registered and still needs to perform the
         // initial sync.
         if let selfClientID = userClient.remoteIdentifier {
+            let isConsumableNotificationsCapable = userClient.isConsumableNotificationsCapable
+
             Task {
                 do {
-                    try await setUpSyncAgent(
-                        clientID: selfClientID,
-                        asyncStreamEnabled: userClient.asyncStreamCapable
-                    )
+                    try await setUpSyncAgent(clientID: selfClientID)
                 } catch {
                     fatalError("failed to set up sync agent: \(error)")
                 }
+
+                if isConsumableNotificationsCapable {
+                    // activate new sync with consumable notifications
+                    journal[.isConsumableNotificationsEnabled] = true
+                }
+
+                await triggerSync()
             }
         }
     }
