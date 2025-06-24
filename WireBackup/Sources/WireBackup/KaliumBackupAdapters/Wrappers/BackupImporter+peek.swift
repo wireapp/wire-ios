@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireFoundation
 @preconcurrency import KaliumBackup
 
 extension BackupImporter {
@@ -28,7 +29,7 @@ extension BackupImporter {
         switch result {
         case let result as BackupPeekResult.Success:
             let userIDMatches = try await result.isCreatedBySameUser(userId: BackupQualifiedId(selfUserID)).boolValue
-            guard userIDMatches else { throw PeekBackupFileError.selfUserIDMismatch }
+            guard userIDMatches else { throw ImportBackupError.selfUserIDMismatch }
             return PeekResult(result.version, result.isEncrypted)
         case is BackupPeekResult.FailureUnknownFormat:
             throw PeekBackupFileError.unknownFormat
@@ -55,7 +56,6 @@ extension BackupImporter {
 
     enum PeekBackupFileError: Error {
 
-        case selfUserIDMismatch
         case unknownFormat
         case unsupportedVersion(_ backupVersion: String)
         case unexpectedPeekResultType
