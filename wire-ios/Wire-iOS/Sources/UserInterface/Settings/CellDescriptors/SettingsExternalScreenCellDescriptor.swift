@@ -33,7 +33,7 @@ class SettingsExternalScreenCellDescriptor: SettingsGroupCellDescriptorType, Set
 
     let settingsTopLevelMenuItem: SettingsTopLevelMenuItem?
 
-    private let accessoryViewMode: AccessoryViewMode? // TODO: rename `accessoryView`
+    private let accessoryViewMode: AccessoryView? // TODO: rename `accessoryView`
 
     weak var group: SettingsGroupCellDescriptorType?
     weak var viewController: UIViewController?
@@ -63,7 +63,7 @@ class SettingsExternalScreenCellDescriptor: SettingsGroupCellDescriptorType, Set
         presentationAction: @escaping () -> (UIViewController?),
         previewGenerator: PreviewGeneratorType? = .none,
         icon: StyleKitIcon? = nil,
-        accessoryViewMode: AccessoryViewMode? = .default,
+        accessoryViewMode: AccessoryView? = .automatic,
         copiableText: String? = nil
     ) {
         self.init(
@@ -88,7 +88,7 @@ class SettingsExternalScreenCellDescriptor: SettingsGroupCellDescriptorType, Set
         presentationAction: @escaping () -> (UIViewController?),
         previewGenerator: PreviewGeneratorType? = .none,
         icon: StyleKitIcon? = nil,
-        accessoryViewMode: AccessoryViewMode? = .default,
+        accessoryViewMode: AccessoryView? = .automatic,
         copiableText: String?,
         settingsTopLevelMenuItem: SettingsTopLevelMenuItem?
     ) {
@@ -143,38 +143,24 @@ class SettingsExternalScreenCellDescriptor: SettingsGroupCellDescriptorType, Set
         cell.icon = icon
         if let groupCell = cell as? SettingsTableCell {
             switch accessoryViewMode {
-            case .default:
+            case .automatic:
                 if presentationStyle == .modal {
                     groupCell.hideAccessoryView()
                 } else {
                     groupCell.showDisclosureIndicatorAccessoryView()
                 }
-            case .none:
-                groupCell.hideAccessoryView()
             case .disclosureIndicator:
                 groupCell.showDisclosureIndicatorAccessoryView()
             case .externalLink:
                 groupCell.showExternalLinkAccessoryView()
+            case .none:
+                groupCell.hideAccessoryView()
             }
         }
     }
 
     func generateViewController() -> UIViewController? {
         presentationAction()
-    }
-
-    // MARK: Nested Types
-
-    enum PresentationStyle: Int {
-        case modal
-        case navigation
-        case alert
-    }
-
-    enum AccessoryViewMode {
-        case `default`
-        case disclosureIndicator
-        case externalLink
     }
 
 }

@@ -58,7 +58,7 @@ struct SettingsCellDescriptorFactory {
         SettingsExternalScreenCellDescriptor(
             title: L10n.Localizable.Self.Settings.ManageTeam.title,
             isDestructive: false,
-            presentationStyle: PresentationStyle.modal,
+            presentationStyle: .modal,
             identifier: nil,
             presentationAction: { () -> (UIViewController?) in
                 return BrowserViewController(url: URL.manageTeam(source: .settings))
@@ -103,7 +103,7 @@ struct SettingsCellDescriptorFactory {
         return SettingsExternalScreenCellDescriptor(
             title: L10n.Localizable.Self.Settings.AddAccountOrTeam.title,
             isDestructive: false,
-            presentationStyle: PresentationStyle.modal,
+            presentationStyle: .modal,
             identifier: nil,
             presentationAction: presentationAction,
             previewGenerator: nil,
@@ -156,7 +156,7 @@ struct SettingsCellDescriptorFactory {
         SettingsExternalScreenCellDescriptor(
             title: L10n.Localizable.Self.Settings.PrivacyAnalyticsMenu.Devices.title,
             isDestructive: false,
-            presentationStyle: PresentationStyle.navigation,
+            presentationStyle: .navigation,
             identifier: type(of: self).settingsDevicesCellIdentifier,
             presentationAction: { () -> (UIViewController?) in
                 return ClientListViewController(

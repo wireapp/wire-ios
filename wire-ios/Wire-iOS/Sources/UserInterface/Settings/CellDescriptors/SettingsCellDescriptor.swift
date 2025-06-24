@@ -38,6 +38,8 @@ import WireSettingsUI
 protocol SettingsCellDescriptorType: AnyObject {
 
     static var cellType: SettingsTableCellProtocol.Type { get }
+    typealias PresentationStyle = SettingsCellDescriptorPresentationStyle
+    typealias AccessoryView = SettingsCellDescriptorAccessoryView
 
     var visible: Bool { get }
     var title: String { get }
