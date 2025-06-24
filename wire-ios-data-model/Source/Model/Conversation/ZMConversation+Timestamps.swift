@@ -174,9 +174,12 @@ extension ZMConversation {
 
     // MARK: - Update timestamps on messages events
 
-    /// Update timetamps after an message has been updated or created from an update event
+    /// Update timestamps after a message has been updated or created from an update event
     @objc
-    public func updateTimestampsAfterUpdatingMessage(_ message: ZMMessage) {
+    public func updateTimestampsAfterUpdatingMessage(
+        _ message: ZMMessage,
+        updateLastReadTimestamp: Bool
+    ) {
         guard let timestamp = message.serverTimestamp else { return }
 
         updateServerModified(timestamp)
@@ -185,7 +188,7 @@ extension ZMConversation {
             updateLastModified(timestamp)
         }
 
-        if let sender = message.sender, sender.isSelfUser {
+        if updateLastReadTimestamp, let sender = message.sender, sender.isSelfUser {
             // if the message was sent by the self user we don't want to send a lastRead event, since we consider this
             // message to be already read
             updateLastRead(timestamp, synchronize: false)
@@ -194,7 +197,7 @@ extension ZMConversation {
         needsToCalculateUnreadMessages = true
     }
 
-    /// Update timetamps after an message has been inserted locally by the self user
+    /// Update timestamps after an message has been inserted locally by the self user
     @objc
     func updateTimestampsAfterInsertingMessage(_ message: ZMMessage) {
         guard let timestamp = message.serverTimestamp else { return }

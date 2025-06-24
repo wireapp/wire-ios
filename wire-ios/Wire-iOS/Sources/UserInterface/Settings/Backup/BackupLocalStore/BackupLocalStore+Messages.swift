@@ -64,8 +64,9 @@ extension BackupLocalStore {
 
     func addMessage(_ backupMessage: MessageBackupModel) async throws {
         let conversationID = backupMessage.conversationID
-        let conversation = await context.perform {
-            ZMConversation.fetch(with: conversationID.id, domain: conversationID.domain, in: context)
+        let (conversation, lastReadServerTimeStamp) = await context.perform {
+            let conversation = ZMConversation.fetch(with: conversationID.id, domain: conversationID.domain, in: context)
+            return (conversation, conversation?.lastReadServerTimeStamp)
         }
         guard
             let conversation,
@@ -83,6 +84,13 @@ extension BackupLocalStore {
             date: backupMessage.creationDate,
             eventMessage: ""
         )
+
+        // restore `lastReadServerTimeStamp`, it shouldn't be modified when importing backups
+        await context.perform {
+            print("conversation.lastReadServerTimeStamp: \(String(describing: conversation.lastReadServerTimeStamp))")
+            print("resetting to \(lastReadServerTimeStamp)")
+            conversation.lastReadServerTimeStamp = lastReadServerTimeStamp
+        }
     }
 
 }
