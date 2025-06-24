@@ -70,10 +70,10 @@ class SettingsAppearanceCellDescriptor: SettingsGroupCellDescriptorType, Setting
             switch presentationStyle {
             case .modal, .alert:
                 tableCell.isAccessoryIconHidden = false
-                tableCell.hideDisclosureIndicator()
+                tableCell.hideAccessoryView()
             case .navigation:
                 tableCell.isAccessoryIconHidden = true
-                tableCell.showDisclosureIndicator()
+                tableCell.showDisclosureIndicatorAccessoryView()
             }
         }
     }
