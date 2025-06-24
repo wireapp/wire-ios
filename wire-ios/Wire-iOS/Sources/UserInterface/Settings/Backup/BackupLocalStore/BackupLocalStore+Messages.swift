@@ -85,10 +85,8 @@ extension BackupLocalStore {
             eventMessage: ""
         )
 
-        // restore `lastReadServerTimeStamp`, it shouldn't be modified when importing backups
+        // restore `lastReadServerTimeStamp`, messages imported from backups shouldn't be marked as unread
         await context.perform {
-            print("conversation.lastReadServerTimeStamp: \(String(describing: conversation.lastReadServerTimeStamp))")
-            print("resetting to \(lastReadServerTimeStamp)")
             conversation.lastReadServerTimeStamp = lastReadServerTimeStamp
         }
     }
