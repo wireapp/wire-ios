@@ -33,5 +33,9 @@ public enum UpdateEventsAPIError: Error {
     /// The requested notification(s) was not found.
 
     case notFound
+    
+    /// Unsupported endpoint for API version
+
+    case unsupportedEndpointForAPIVersion
 
 }

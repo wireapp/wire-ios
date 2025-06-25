@@ -54,6 +54,13 @@ final class UpdateEventsAPITests: XCTestCase {
             }
         )
     }
+    
+    func testGetServerTime() async throws {
+        try await createSnapshotter().verifyRequestForAllAPIVersions { sut in
+            _ = try await sut.getServerTime()
+        }
+    }
+
 
     // MARK: - Response handling
 
@@ -242,6 +249,41 @@ final class UpdateEventsAPITests: XCTestCase {
         }
     }
 
+    // MARK: - V8
+    
+    func testServerTime_givenV0_To_V7_AndFailure_Unsupported_Endpoint_For_API_Version() async throws {
+
+        // given
+        let unsupportedVersions = Set(APIVersion.allCases).subtracting([.v8])
+        let apiService = MockAPIServiceProtocol.withError(statusCode: .unreachable, label: "")
+        
+        let builder = UpdateEventsAPIBuilder(apiService: apiService)
+        
+        let suts = unsupportedVersions.map { builder.makeAPI(for: $0) }
+
+        // when
+        // then
+
+        XCTAssertEqual(suts.count, unsupportedVersions.count)
+
+        for sut in suts {
+            await XCTAssertThrowsErrorAsync(ConversationsAPIError.unsupportedEndpointForAPIVersion) {
+                try await sut.getServerTime()
+            }
+        }
+    }
+    
+    func testServerTime_200_V8() async throws {
+        let apiService = MockAPIServiceProtocol.withResponses([
+            (.ok, "GetServerTimeSuccessResponseV8")
+        ])
+        
+        let sut = UpdateEventsAPIV8(apiService: apiService)
+        
+        let serverTimeResponse = try await sut.getServerTime()
+        XCTAssertEqual(serverTimeResponse, try Date("2021-05-12T10:52:02Z", strategy: .iso8601))
+    }
+    
     // MARK: - Helpers
 
     enum Scaffolding {

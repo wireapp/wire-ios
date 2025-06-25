@@ -97,5 +97,10 @@ class UpdateEventsAPIV0: UpdateEventsAPI, VersionedAPI {
                 .parse(code: response.statusCode, data: data)
         }
     }
-
+    
+    // MARK: - Get ServerTime
+    
+    func getServerTime() async throws -> Date {
+        throw UpdateEventsAPIError.unsupportedEndpointForAPIVersion
+    }
 }

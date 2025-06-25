@@ -21,7 +21,7 @@ import Foundation
 final class UpdateEventsAPIV8: UpdateEventsAPIV7 {
     override var apiVersion: APIVersion { .v8 }
     
-    func getServerTime() async throws -> Date {
+    override func getServerTime() async throws -> Date {
         let path = "\(pathPrefix)/time"
 
         var requestBuilder = try URLRequestBuilder(path: path).withMethod(.get)
