@@ -4730,6 +4730,21 @@ public class MockUserLocalStoreProtocol: UserLocalStoreProtocol {
         }
     }
 
+    // MARK: - updateUser
+
+    public var updateUserWithAvailability_Invocations: [(userID: WireDataModel.QualifiedID, availability: Availability)] = []
+    public var updateUserWithAvailability_MockMethod: ((WireDataModel.QualifiedID, Availability) async -> Void)?
+
+    public func updateUser(with userID: WireDataModel.QualifiedID, availability: Availability) async {
+        updateUserWithAvailability_Invocations.append((userID: userID, availability: availability))
+
+        guard let mock = updateUserWithAvailability_MockMethod else {
+            fatalError("no mock for `updateUserWithAvailability`")
+        }
+
+        await mock(userID, availability)
+    }
+
 }
 
 public class MockUserRepositoryProtocol: UserRepositoryProtocol {

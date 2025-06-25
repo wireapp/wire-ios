@@ -168,7 +168,7 @@ final class ImportBackupViewModel: ObservableObject {
                     action: Strings.Alert.ok
                 )
                 state = .restoreFailed
-            } catch ImportLegacyBackupError.invalidAccountID {
+            } catch ImportBackupError.selfUserIDMismatch, ImportLegacyBackupError.invalidAccountID {
                 logger.warn("restore failed due to invalid account ID")
                 alertContent = .init(
                     title: Strings.Alert.WrongFileError.title,

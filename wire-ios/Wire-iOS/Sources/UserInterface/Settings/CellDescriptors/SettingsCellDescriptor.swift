@@ -38,6 +38,8 @@ import WireSettingsUI
 protocol SettingsCellDescriptorType: AnyObject {
 
     static var cellType: SettingsTableCellProtocol.Type { get }
+    typealias PresentationStyle = SettingsCellDescriptorPresentationStyle
+    typealias AccessoryView = SettingsCellDescriptorAccessoryView
 
     var visible: Bool { get }
     var title: String { get }
@@ -230,7 +232,7 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
         }
         cell.icon = icon
         if let cell = cell as? SettingsTableCell {
-            cell.showDisclosureIndicator()
+            cell.showDisclosureIndicatorAccessoryView()
         }
     }
 

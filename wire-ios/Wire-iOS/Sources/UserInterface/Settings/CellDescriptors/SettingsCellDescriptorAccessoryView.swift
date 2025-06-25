@@ -16,12 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum ImportBackupError: Error {
-    case invalidFileExtension
-    case incompatibleFileFormat
-    /// The backup file is encrypted and a password is needed for decryption.
-    case passwordRequired
-    case incorrectPassword
-    /// The use tried to import a backup from another user account.
-    case selfUserIDMismatch
+enum SettingsCellDescriptorAccessoryView {
+    case automatic
+    case disclosureIndicator
+    case externalLink
 }

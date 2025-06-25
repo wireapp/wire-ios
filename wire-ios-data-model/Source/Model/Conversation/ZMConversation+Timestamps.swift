@@ -174,7 +174,7 @@ extension ZMConversation {
 
     // MARK: - Update timestamps on messages events
 
-    /// Update timetamps after an message has been updated or created from an update event
+    /// Update timestamps after a message has been updated or created from an update event
     @objc
     public func updateTimestampsAfterUpdatingMessage(_ message: ZMMessage) {
         guard let timestamp = message.serverTimestamp else { return }
@@ -194,7 +194,7 @@ extension ZMConversation {
         needsToCalculateUnreadMessages = true
     }
 
-    /// Update timetamps after an message has been inserted locally by the self user
+    /// Update timestamps after an message has been inserted locally by the self user
     @objc
     func updateTimestampsAfterInsertingMessage(_ message: ZMMessage) {
         guard let timestamp = message.serverTimestamp else { return }
