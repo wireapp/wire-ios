@@ -121,7 +121,7 @@ private class PersonalAccountCreationComponentDependency9e5e5a00f5c85fcf54b5Prov
     var termsOfUseURL: URL {
         return rootComponent.termsOfUseURL
     }
-    var personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol {
+    var personalAccountCreationAnalyticsTracker: (any PersonalAccountCreationAnalyticsTrackerProtocol)? {
         return rootComponent.personalAccountCreationAnalyticsTracker
     }
     private let loginViaEmailComponent: LoginViaEmailComponent
@@ -240,7 +240,7 @@ extension PersonalAccountCreationComponent: NeedleFoundation.Registration {
         keyPathToName[\PersonalAccountCreationComponentDependency.passwordValidator] = "passwordValidator-any PasswordValidator"
         keyPathToName[\PersonalAccountCreationComponentDependency.privacyPolicyURL] = "privacyPolicyURL-URL"
         keyPathToName[\PersonalAccountCreationComponentDependency.termsOfUseURL] = "termsOfUseURL-URL"
-        keyPathToName[\PersonalAccountCreationComponentDependency.personalAccountCreationAnalyticsTracker] = "personalAccountCreationAnalyticsTracker-any PersonalAccountCreationAnalyticsTrackerProtocol"
+        keyPathToName[\PersonalAccountCreationComponentDependency.personalAccountCreationAnalyticsTracker] = "personalAccountCreationAnalyticsTracker-(any PersonalAccountCreationAnalyticsTrackerProtocol)?"
 
     }
 }
@@ -261,7 +261,7 @@ extension RootComponent: NeedleFoundation.Registration {
         localTable["accountsPublisher-CurrentValuePublisher<[AccountUIModel]>"] = { [unowned self] in self.accountsPublisher as Any }
         localTable["isMultibackendEnabled-Bool"] = { [unowned self] in self.isMultibackendEnabled as Any }
         localTable["useLegacyRegistrationFlow-Bool"] = { [unowned self] in self.useLegacyRegistrationFlow as Any }
-        localTable["personalAccountCreationAnalyticsTracker-any PersonalAccountCreationAnalyticsTrackerProtocol"] = { [unowned self] in self.personalAccountCreationAnalyticsTracker as Any }
+        localTable["personalAccountCreationAnalyticsTracker-(any PersonalAccountCreationAnalyticsTrackerProtocol)?"] = { [unowned self] in self.personalAccountCreationAnalyticsTracker as Any }
         localTable["bridge-WireAuthenticationBridge"] = { [unowned self] in self.bridge as Any }
         localTable["router-any Router"] = { [unowned self] in self.router as Any }
     }
