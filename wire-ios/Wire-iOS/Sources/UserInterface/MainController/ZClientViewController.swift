@@ -97,7 +97,7 @@ final class ZClientViewController: UIViewController {
     private lazy var channelConversationFormFactory = WireConversationChannelCreationFormViewControllerFactory()
 
     private lazy var settingsViewControllerBuilder = SettingsViewControllerBuilder(
-        isPublicDomain: userSession.selfUser.domain.map(DomainType.init) == .publicDomain,
+        isAnalyticsTrackingAvailable: userSession.selfUser.domain.map(DomainType.init) == .publicDomain,
         userSession: userSession,
         trackingManager: trackingManager
     )
