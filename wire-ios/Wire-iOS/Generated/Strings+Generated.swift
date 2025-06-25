@@ -5470,9 +5470,9 @@ internal enum L10n {
             internal static let title = L10n.tr("Localizable", "self.settings.add_account.error.title", fallback: "Three accounts active")
           }
         }
-        internal enum AddTeamOrAccount {
-          /// Add Account
-          internal static let title = L10n.tr("Localizable", "self.settings.add_team_or_account.title", fallback: "Add Account")
+        internal enum AddAccountOrTeam {
+          /// Add Account or Team
+          internal static let title = L10n.tr("Localizable", "self.settings.add_account_or_team.title", fallback: "Add Account or Team")
         }
         internal enum Advanced {
           /// Advanced

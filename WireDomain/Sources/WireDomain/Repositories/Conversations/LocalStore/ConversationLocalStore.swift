@@ -277,9 +277,15 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             id: conversationID,
             domain: conversationDomain
         )
-
+        
         await context.perform {
             conversation?.channelHistoryDepth = historyDepth
+        }
+    }
+    
+    public func fetchServerTimeDelta() async -> TimeInterval {
+        await context.perform { [context] in
+            context.serverTimeDelta
         }
     }
 
