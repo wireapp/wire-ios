@@ -24,7 +24,7 @@ public struct WireConversationChannelCreationSettings: Equatable, Hashable {
     public let servicesAllowed: Bool
     public let guestsAllowed: Bool
     public let readReceiptsEnabled: Bool
-    public let historyLength: Int?
+    public let historyDepth: Int?
 
     package init(
         channelName: String,
@@ -32,7 +32,7 @@ public struct WireConversationChannelCreationSettings: Equatable, Hashable {
         servicesAllowed: Bool,
         guestsAllowed: Bool,
         readReceiptsEnabled: Bool,
-        historyLength: Int?
+        historyDepth: Int?
     ) {
         self.channelName = channelName
             .trimmingCharacters(in: .whitespacesAndNewlines)
@@ -40,6 +40,6 @@ public struct WireConversationChannelCreationSettings: Equatable, Hashable {
         self.servicesAllowed = servicesAllowed
         self.guestsAllowed = guestsAllowed
         self.readReceiptsEnabled = readReceiptsEnabled
-        self.historyLength = historyLength
+        self.historyDepth = historyDepth
     }
 }

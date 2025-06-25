@@ -147,7 +147,7 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
         values.allowGuests = channelCreationSettings.guestsAllowed
         values.allowServices = channelCreationSettings.servicesAllowed
         values.enableReceipts = channelCreationSettings.readReceiptsEnabled
-        values.channelHistoryLength = channelCreationSettings.historyLength
+        values.channelHistoryDepth = channelCreationSettings.historyDepth
 
         let participantsController = AddParticipantsViewController(
             context: .create(values),
@@ -233,13 +233,13 @@ extension WireConversationChannelCreationFormViewController: AddParticipantsConv
             WireNetwork.ConversationAccessRole(rawValue: $0.rawValue)
         }
 
-        let channelHistoryLength = values.channelHistoryLength
+        let channelHistoryDepth = values.channelHistoryDepth
 
         do {
             let conversation = try await channelUseCase.invoke(
                 teamID: teamID,
                 name: values.name,
-                historyLength: channelHistoryLength,
+                historyDepth: channelHistoryDepth,
                 users: Set(users),
                 accessMode: Set(accessMode),
                 accessRoles: Set(accessRoles),

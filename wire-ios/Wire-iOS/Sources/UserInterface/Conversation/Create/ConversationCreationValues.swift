@@ -33,7 +33,7 @@ final class ConversationCreationValues {
     private let selfUser: UserType
 
     let isChannel: Bool
-    var channelHistoryLength: Int?
+    var channelHistoryDepth: Int?
     var name: String
     var allowGuests: Bool
     var allowServices: Bool

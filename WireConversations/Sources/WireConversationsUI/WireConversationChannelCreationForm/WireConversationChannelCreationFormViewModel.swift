@@ -231,7 +231,7 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
     public func getChannelCreationSettings() -> WireConversationChannelCreationSettings? {
 
         // TODO: [WPB-18347] - check history length expected type when endpoint is ready
-        let historyLength: TimeInterval? = switch channelHistoryOption {
+        let historyDepth: TimeInterval? = switch channelHistoryOption {
         case .off:
             nil
         case .oneDay:
@@ -256,7 +256,7 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
                     servicesAllowed: servicesAllowed,
                     guestsAllowed: guestsAllowed,
                     readReceiptsEnabled: readReceiptsEnabled,
-                    historyLength: historyLength != nil ? Int(historyLength!) : nil
+                    historyDepth: historyDepth != nil ? Int(historyDepth!) : nil
                 )
             }
             .get()
