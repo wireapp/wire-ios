@@ -155,7 +155,7 @@ public extension ZMUser {
             conversation: conversation
         )) || isChannelAdmin(conversation)
     }
-    
+
     @objc(canModifyChannelHistoryLengthSettingsInConversation:)
     func canModifyChannelHistoryLengthSettings(in conversation: ConversationLike) -> Bool {
         (conversation.isChannel && hasRoleWithAction(

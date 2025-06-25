@@ -570,20 +570,20 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
 
         navigationController?.pushViewController(accessView, animated: animated)
     }
-    
+
     func presentChannelHistoryOptions(animated: Bool) {
         guard let conversation = conversation as? ZMConversation,
               let session = ZMUserSession.shared() else { return }
-        
+
         // TODO: [WPB-18396] - get correct stored value in DB
         let channelHistoryLength = conversation.channelHistoryLength
-        
+
         let repository = ChannelRepository(
             conversationID: conversation.remoteIdentifier.uuidString,
             conversationDomain: conversation.domain ?? "",
             session: session
         )
-        
+
         let historyView = ChannelViewFactory.makeChannelHistoryView(
             historyLength: channelHistoryLength,
             accentColor: session.selfUser.accentColor.color,

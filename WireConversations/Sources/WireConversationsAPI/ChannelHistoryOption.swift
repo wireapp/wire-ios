@@ -24,13 +24,13 @@ public enum ChannelHistoryOption: Equatable, Hashable, CaseIterable {
     case fourWeeks
     case unlimited
     case custom
-    
+
     public struct Custom: Equatable, Hashable {
         public enum Unit: Equatable, Hashable, CaseIterable {
             case days
             case week
         }
-        
+
         public init(
             unit: Unit = .days,
             value: Int = 10
@@ -38,7 +38,7 @@ public enum ChannelHistoryOption: Equatable, Hashable, CaseIterable {
             self.unit = unit
             self.value = value
         }
-        
+
         public var unit: Unit
         public var value: Int
     }

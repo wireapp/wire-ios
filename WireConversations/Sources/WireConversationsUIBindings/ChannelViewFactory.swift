@@ -35,7 +35,7 @@ public class ChannelViewFactory {
 
         return ChannelAccessHostingController(viewModel: viewModel)
     }
-    
+
     @MainActor
     public static func makeChannelHistoryView(
         historyLength: Int,
@@ -45,13 +45,13 @@ public class ChannelViewFactory {
         let useCase = ChannelHistoryUseCase(
             repository: repository
         )
-        
+
         let viewModel = ChannelHistoryViewModel(
             historyLength: historyLength,
             accentColor: accentColor,
             useCase: useCase
         )
-        
+
         return ChannelHistoryHostingController(viewModel: viewModel)
     }
 }
