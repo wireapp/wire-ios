@@ -57,8 +57,8 @@ class AccountSettingsPage: PageModel {
     }
 
     @discardableResult
-    func logout() -> LogOutPage {
+    func logout() throws -> LogOutPage {
         logoutButton.tap()
-        return LogOutPage()
+        return try LogOutPage()
     }
 }

@@ -29,8 +29,8 @@ class LoginPage: PageModel {
         return elementsQuery.buttons["Create account or team"]
     }
 
-    func tapCreatePersonalAccountLink() -> CreateAccountPage {
+    func tapCreatePersonalAccountLink() throws -> CreateAccountPage {
         createPersonalAccountLink.tap()
-        return CreateAccountPage()
+        return try CreateAccountPage()
     }
 }

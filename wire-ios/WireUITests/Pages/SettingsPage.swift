@@ -29,8 +29,8 @@ class SettingsPage: PageModel {
         return elementsQuery["Account"]
     }
 
-    func openAccountSettings() -> AccountSettingsPage {
+    func openAccountSettings() throws -> AccountSettingsPage {
         accountSettingsMenu.tap()
-        return AccountSettingsPage()
+        return try AccountSettingsPage()
     }
 }

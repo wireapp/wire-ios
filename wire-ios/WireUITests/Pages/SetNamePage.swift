@@ -34,10 +34,10 @@ class SetNamePage: PageModel {
         return elementsQuery.firstMatch
     }
 
-    func setName(_ name: String) -> SetPasswordPage {
+    func setName(_ name: String) throws -> SetPasswordPage {
         nameField.tap()
         nameField.typeText(name)
         nameNextButton.tap()
-        return SetPasswordPage()
+        return try SetPasswordPage()
     }
 }

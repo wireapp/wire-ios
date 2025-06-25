@@ -33,8 +33,8 @@ class ConversationsPage: PageModel {
         return elementsQuery.firstMatch
     }
 
-    func openSettings() -> SettingsPage {
+    func openSettings() throws -> SettingsPage {
         settingsButton.tap()
-        return SettingsPage()
+        return try SettingsPage()
     }
 }

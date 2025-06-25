@@ -29,9 +29,9 @@ class VerificationCodePage: PageModel {
         return elementsQuery.firstMatch
     }
 
-    func enterVerificationCode(_ verificationCode: String) -> SetNamePage {
+    func enterVerificationCode(_ verificationCode: String) throws -> SetNamePage {
         verificationCodeInput.tap()
         verificationCodeInput.typeText(verificationCode)
-        return SetNamePage()
+        return try SetNamePage()
     }
 }

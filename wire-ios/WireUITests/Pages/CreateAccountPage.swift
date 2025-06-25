@@ -40,9 +40,9 @@ class CreateAccountPage: PageModel {
         return self
     }
 
-    func tapAcceptButton() -> VerificationCodePage {
+    func tapAcceptButton() throws -> VerificationCodePage {
         _ = acceptButton.waitForExistence(timeout: 10)
         acceptButton.tap()
-        return VerificationCodePage()
+        return try VerificationCodePage()
     }
 }

@@ -34,10 +34,10 @@ class SetUsernamePage: PageModel {
         return elementsQuery.firstMatch
     }
 
-    func setUsername(_ username: String) -> ConversationsPage {
+    func setUsername(_ username: String) throws -> ConversationsPage {
         usernameField.tap()
         usernameField.typeText(username)
         usernameConfirmButton.tap()
-        return ConversationsPage()
+        return try ConversationsPage()
     }
 }

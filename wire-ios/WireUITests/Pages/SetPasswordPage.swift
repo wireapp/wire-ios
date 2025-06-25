@@ -46,9 +46,9 @@ class SetPasswordPage: PageModel {
         return self
     }
 
-    func acceptPopup() -> SetUsernamePage {
+    func acceptPopup() throws -> SetUsernamePage {
         let button = app.otherElements.buttons.firstMatch
         button.tap()
-        return SetUsernamePage()
+        return try SetUsernamePage()
     }
 }

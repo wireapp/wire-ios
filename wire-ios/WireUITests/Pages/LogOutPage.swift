@@ -20,6 +20,10 @@ import XCTest
 
 class LogOutPage: PageModel {
 
+    override var pageMainElement: XCUIElement {
+        passwordField
+    }
+    
     var passwordField: XCUIElement {
         app.secureTextFields.firstMatch
     }
@@ -29,10 +33,10 @@ class LogOutPage: PageModel {
     }
 
     @discardableResult
-    func enterPassword(_ password: String) -> WelcomePage {
+    func enterPassword(_ password: String) throws -> WelcomePage {
         passwordField.tap()
         passwordField.typeText(password)
         okButton.tap()
-        return WelcomePage()
+        return try WelcomePage()
     }
 }

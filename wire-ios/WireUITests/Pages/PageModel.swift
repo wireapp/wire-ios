@@ -33,18 +33,18 @@ class PageModel {
 
     let app: XCUIApplication
 
-    init() {
+    init() throws {
         self.app = XCUIApplication()
+        try assertHasLoaded()
     }
 
     var pageMainElement: XCUIElement {
         fatalError("override this in subclass \(String(describing: self))")
     }
 
-    func assertHasLoaded() throws -> Self {
+    func assertHasLoaded() throws {
         guard pageMainElement.waitForExistence(timeout: 10) else {
             throw Failure.notLoaded(self)
         }
-        return self
     }
 }
