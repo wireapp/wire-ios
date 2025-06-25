@@ -268,6 +268,12 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
+    public func fetchServerTimeDelta() async -> TimeInterval {
+        await context.perform { [context] in
+            context.serverTimeDelta
+        }
+    }
+
     public func addParticipants(
         _ participants: [(id: UUID, domain: String?, role: String?)],
         addedBy sender: (id: UUID, domain: String?),

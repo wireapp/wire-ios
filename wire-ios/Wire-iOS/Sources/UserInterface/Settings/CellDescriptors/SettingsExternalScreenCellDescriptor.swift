@@ -21,18 +21,6 @@ import WireCommonComponents
 import WireDesign
 import WireSettingsUI
 
-enum PresentationStyle: Int {
-    case modal
-    case navigation
-    case alert
-}
-
-enum AccessoryViewMode: Int {
-    case `default`
-    case alwaysShow
-    case alwaysHide
-}
-
 class SettingsExternalScreenCellDescriptor: SettingsGroupCellDescriptorType, SettingsControllerGeneratorType {
     static let cellType: SettingsTableCellProtocol.Type = SettingsTableCell.self
     var visible: Bool = true
@@ -45,7 +33,7 @@ class SettingsExternalScreenCellDescriptor: SettingsGroupCellDescriptorType, Set
 
     let settingsTopLevelMenuItem: SettingsTopLevelMenuItem?
 
-    private let accessoryViewMode: AccessoryViewMode
+    private let accessoryView: AccessoryView?
 
     weak var group: SettingsGroupCellDescriptorType?
     weak var viewController: UIViewController?
@@ -75,7 +63,7 @@ class SettingsExternalScreenCellDescriptor: SettingsGroupCellDescriptorType, Set
         presentationAction: @escaping () -> (UIViewController?),
         previewGenerator: PreviewGeneratorType? = .none,
         icon: StyleKitIcon? = nil,
-        accessoryViewMode: AccessoryViewMode = .default,
+        accessoryView: AccessoryView? = .automatic,
         copiableText: String? = nil
     ) {
         self.init(
@@ -86,7 +74,7 @@ class SettingsExternalScreenCellDescriptor: SettingsGroupCellDescriptorType, Set
             presentationAction: presentationAction,
             previewGenerator: previewGenerator,
             icon: icon,
-            accessoryViewMode: accessoryViewMode,
+            accessoryView: accessoryView,
             copiableText: copiableText,
             settingsTopLevelMenuItem: nil
         )
@@ -100,7 +88,7 @@ class SettingsExternalScreenCellDescriptor: SettingsGroupCellDescriptorType, Set
         presentationAction: @escaping () -> (UIViewController?),
         previewGenerator: PreviewGeneratorType? = .none,
         icon: StyleKitIcon? = nil,
-        accessoryViewMode: AccessoryViewMode = .default,
+        accessoryView: AccessoryView? = .automatic,
         copiableText: String?,
         settingsTopLevelMenuItem: SettingsTopLevelMenuItem?
     ) {
@@ -111,7 +99,7 @@ class SettingsExternalScreenCellDescriptor: SettingsGroupCellDescriptorType, Set
         self.identifier = identifier
         self.previewGenerator = previewGenerator
         self.icon = icon
-        self.accessoryViewMode = accessoryViewMode
+        self.accessoryView = accessoryView
         self.copiableText = copiableText
         self.settingsTopLevelMenuItem = settingsTopLevelMenuItem
     }
@@ -154,17 +142,19 @@ class SettingsExternalScreenCellDescriptor: SettingsGroupCellDescriptorType, Set
         }
         cell.icon = icon
         if let groupCell = cell as? SettingsTableCell {
-            switch accessoryViewMode {
-            case .default:
+            switch accessoryView {
+            case .automatic:
                 if presentationStyle == .modal {
-                    groupCell.hideDisclosureIndicator()
+                    groupCell.hideAccessoryView()
                 } else {
-                    groupCell.showDisclosureIndicator()
+                    groupCell.showDisclosureIndicatorAccessoryView()
                 }
-            case .alwaysHide:
-                groupCell.hideDisclosureIndicator()
-            case .alwaysShow:
-                groupCell.showDisclosureIndicator()
+            case .disclosureIndicator:
+                groupCell.showDisclosureIndicatorAccessoryView()
+            case .externalLink:
+                groupCell.showExternalLinkAccessoryView()
+            case .none:
+                groupCell.hideAccessoryView()
             }
         }
     }
@@ -172,4 +162,5 @@ class SettingsExternalScreenCellDescriptor: SettingsGroupCellDescriptorType, Set
     func generateViewController() -> UIViewController? {
         presentationAction()
     }
+
 }

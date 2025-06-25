@@ -24,28 +24,43 @@ final class PersonalUsersTests: WireUITestCase {
     func test_Register_asPersonalUser() async throws {
         let user = UserGenerator.generateUniqueUserInfo()
 
-        let page = WelcomePage()
+        let welcomePage = try WelcomePage()
+
+        let createAccountPage = try welcomePage
             .typeEmailOrSSO(user.email)
             .tapCreatePersonalAccountLink()
+
+        let verificationPage = try createAccountPage
             .tapConfirmCreateAccount()
             .tapAcceptButton()
 
         let verificationCode = try await InbucketClient.getVerificationCode(email: user.email)
 
-        let accountPage = page
+        let setNamePage = try verificationPage
             .enterVerificationCode(verificationCode)
+
+        let setPasswordPage = try setNamePage
             .setName(user.name)
+
+        let setUsernamePage = try setPasswordPage
             .setPassword(user.password)
             .acceptPopup()
+
+        let conversationsPage = try setUsernamePage
             .setUsername(user.username)
+
+        let settingsPage = try conversationsPage
             .openSettings()
+
+        let accountPage = try settingsPage
             .openAccountSettings()
 
-        XCTAssertTrue(accountPage.getAccountName().elementsEqual(user.name), "Account name didn't match \(user.name)")
+        let accountName = try XCTUnwrap(accountPage.getAccountName())
+        XCTAssertEqual(accountName, user.name, "Account name didn't match \(user.name)")
         XCTAssertTrue(accountPage.getUsername().contains(user.username), "Username didn't contain \(user.username)")
-        XCTAssertTrue(accountPage.getEmail().elementsEqual(user.email))
+        XCTAssertEqual(accountPage.getEmail(), user.email, "Email didn't contain \(user.email)")
 
-        accountPage.logout()
+        try accountPage.logout()
             .enterPassword(user.password)
     }
 }
