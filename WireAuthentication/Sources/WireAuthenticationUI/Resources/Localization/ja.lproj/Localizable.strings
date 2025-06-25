@@ -128,7 +128,7 @@
 
 "create_personal_account.title" = "Create personal account";
 "create_personal_account.continue" = "続行";
-"create_personal_account.share_data_usage" = "I agree to share anonymous usage data. Find all details in our [Privacy Policy](%@)";
+"create_personal_account.share_data_usage" = "I agree to share anonymous usage data. Find all details in our [Privacy Policy](%@) (optional)";
 "create_personal_account.looking_for_collaboration" = "Looking for team collaboration?";
 "create_personal_account.create_team" = "新しいチームを作成";
 "create_personal_account.input_name.title" = "名前";
