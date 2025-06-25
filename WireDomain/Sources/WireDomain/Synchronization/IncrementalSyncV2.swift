@@ -185,6 +185,10 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                             pushChannel: pushChannel,
                             processedEnvelopeIDs: processedEnvelopeIDs
                         )
+                        
+                        if let lastEnvelope = envelopes.last {
+                            await acknowledgeUntilEnvelope(lastEnvelope, through: pushChannel)
+                        }
                     } catch {
                         // in case of thrown errors, we skip to the next event
                         // errors are already logged if needed
@@ -247,9 +251,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         await updateEventsStore.calculateLastUnreadMessages()
         await save()
 
-        if let lastEnvelope = storedEnvelopes.last?.0 {
-            await acknowledgeUntilEnvelope(lastEnvelope, through: pushChannel)
-        }
+       
     }
 
     private func decryptEnvelope(
