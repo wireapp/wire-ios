@@ -84,9 +84,11 @@ struct ChannelHistoryHostingController_Previews: PreviewProvider {
 
 struct ChannelHistoryHostingControllerPreview: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
+        let repository = MockChannelRepositoryProtocol()
+        repository.updateHistoryDepth_MockMethod = { _ in }
 
         let useCase = ChannelHistoryUseCase(
-            repository: MockChannelRepositoryProtocol()
+            repository: repository
         )
 
         let viewModel = ChannelHistoryViewModel(

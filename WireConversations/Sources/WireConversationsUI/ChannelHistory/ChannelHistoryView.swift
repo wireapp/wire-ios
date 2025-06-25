@@ -152,12 +152,18 @@ struct ChannelHistoryView_Previews: PreviewProvider {
                     historyDepth: 10_000,
                     accentColor: .blue,
                     useCase: ChannelHistoryUseCase(
-                        repository: MockChannelRepositoryProtocol()
+                        repository: channelRepository()
                     )
                 ))
 
             }
         }
 
+    }
+
+    static func channelRepository() -> MockChannelRepositoryProtocol {
+        let channelRepository = MockChannelRepositoryProtocol()
+        channelRepository.updateHistoryDepth_MockMethod = { _ in }
+        return channelRepository
     }
 }
