@@ -73,16 +73,16 @@ class WireConversationChannelCreationFormTests: XCTestCase {
                 )
         }
     }
-    
+
     @MainActor
     func testColorSchemeVariantsEmptyState_Visible_Picker() {
         let viewModel = WireConversationChannelCreationFormViewModel(
             channelName: "",
             isUserPremium: true
         ) { _ in }
-        
+
         viewModel.channelHistoryOption = .custom
-        
+
         let view = WireConversationChannelCreationForm(
             viewModel: viewModel
         )
@@ -103,7 +103,7 @@ class WireConversationChannelCreationFormTests: XCTestCase {
             channelName: "",
             isUserPremium: true
         ) { _ in }
-        
+
         viewModel.channelHistoryOption = .custom
         let view = WireConversationChannelCreationForm(
             viewModel: viewModel
