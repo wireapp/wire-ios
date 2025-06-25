@@ -66,6 +66,14 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
         )
     }
 
+    public func storeServerTimeDelta(
+        _ serverTimeDelta: TimeInterval
+    ) async {
+        await syncContext.perform { [syncContext] in
+            syncContext.serverTimeDelta = serverTimeDelta
+        }
+    }
+
     public func storeLastEventID(id: UUID) {
         storage.setUUID(id, forKey: .lastEventID)
     }

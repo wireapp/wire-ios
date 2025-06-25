@@ -16,21 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-
-class LoginPage: PageModel {
-
-    override var pageMainElement: XCUIElement {
-        createPersonalAccountLink
-    }
-
-    var createPersonalAccountLink: XCUIElement {
-        let elementsQuery = app.scrollViews.otherElements
-        return elementsQuery.buttons["Create account or team"]
-    }
-
-    func tapCreatePersonalAccountLink() throws -> CreateAccountPage {
-        createPersonalAccountLink.tap()
-        return try CreateAccountPage()
-    }
+enum SettingsCellDescriptorPresentationStyle: Int {
+    case modal
+    case navigation
+    case alert
 }
