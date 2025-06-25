@@ -42,7 +42,7 @@ struct ContentView: View {
                         teamsURL: URL(string: "https://teams.wire.com")!,
                         accountsURL: URL(string: "https://account.wire.com")!,
                         websiteURL: URL(string: "https://wire.com")!,
-                        countlyURL: URL(string: "https://countly.wire.com")!
+                        countlyURL: URL(string: "https://wire.count.ly")!
                     ),
                     proxySettings: nil,
                     pinnedKeys: nil
