@@ -1,0 +1,53 @@
+//
+// Wire
+// Copyright (C) 2025 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import XCTest
+@testable import WireConversationsAPI
+@testable import WireConversationsImplementationSupport
+@testable import WireConversationsUI
+
+@MainActor
+final class ChannelHistoryViewModelTests: XCTestCase {
+
+    lazy var viewModel = ChannelHistoryViewModel(
+        historyDepth: 10_000,
+        accentColor: .red,
+        useCase: useCase
+    )
+
+    lazy var useCase = {
+        let useCase = MockChannelHistoryUseCaseProtocol()
+
+        return useCase
+    }()
+
+    func test_selectHistoryDepth_triggersUseCaseUpdate() async {
+        viewModel.channelHistoryOption = .fourWeeks
+        let expectation = XCTestExpectation()
+        useCase.updateHistoryDepth_MockMethod = { _ in
+            expectation.fulfill()
+        }
+        
+        await fulfillment(of: [expectation])
+        XCTAssertEqual(
+            useCase.updateHistoryDepth_Invocations.count,
+            1
+        )
+    }
+}
+
