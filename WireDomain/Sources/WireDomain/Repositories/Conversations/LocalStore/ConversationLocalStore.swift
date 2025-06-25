@@ -267,7 +267,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             conversation.privateChannelPermission = PrivateChannelPermission(permission)
         }
     }
-    
+
     public func storeConversation(
         historyDepth: Int,
         conversationID: UUID,
@@ -277,7 +277,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             id: conversationID,
             domain: conversationDomain
         )
-        
+
         await context.perform {
             conversation?.channelHistoryDepth = historyDepth
         }

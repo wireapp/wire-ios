@@ -21,11 +21,11 @@ import UIKit
 import WireConversationsAPI
 import WireConversationsUIBindings
 import WireDesign
+import WireDomain
 import WireLogging
 import WireMainNavigationUI
-import WireSyncEngine
 import WireNetwork
-import WireDomain
+import WireSyncEngine
 
 final class GroupDetailsViewController: UIViewController, ZMConversationObserver, GroupDetailsFooterViewDelegate {
 
@@ -559,7 +559,7 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
         case .admins: .admins
         case .everyone: .everyone
         }
-        
+
         guard let backendInfoApiVersion = BackendInfo.apiVersion,
               let apiVersion = WireNetwork.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
               let apiService = session.apiService else {
@@ -569,15 +569,15 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
         let conversationsAPI = ConversationsAPIBuilder(
             apiService: apiService
         ).makeAPI(for: apiVersion)
-        
+
         let messageLocalStore = MessageLocalStore(context: session.syncContext)
-        
+
         let conversationsLocalStore = ConversationLocalStore(
             context: session.syncContext,
             mlsService: session.syncContext.mlsService,
             messageLocalStore: messageLocalStore
         )
-        
+
         let repository = ChannelRepository(
             api: conversationsAPI,
             store: conversationsLocalStore,
@@ -597,7 +597,7 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
     func presentChannelHistoryOptions(animated: Bool) {
         guard let conversation = conversation as? ZMConversation,
               let session = ZMUserSession.shared() else { return }
-        
+
         guard let backendInfoApiVersion = BackendInfo.apiVersion,
               let apiVersion = WireNetwork.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
               let apiService = session.apiService else {
@@ -607,9 +607,9 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
         let conversationsAPI = ConversationsAPIBuilder(
             apiService: apiService
         ).makeAPI(for: apiVersion)
-        
+
         let messageLocalStore = MessageLocalStore(context: session.syncContext)
-        
+
         let conversationsLocalStore = ConversationLocalStore(
             context: session.syncContext,
             mlsService: session.syncContext.mlsService,

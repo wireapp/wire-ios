@@ -25,7 +25,7 @@ public extension ZMConversation {
 
     var channelHistoryDepth: Int {
         get { 0 }
-        set { }
+        set {}
     }
 
 }

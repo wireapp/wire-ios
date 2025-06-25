@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 package import SwiftUI
 import WireConversationsAPI
-import Combine
 package import WireConversationsImplementation
 
 @MainActor
@@ -36,13 +36,15 @@ package class ChannelHistoryViewModel: ObservableObject {
         accentColor: Color,
         useCase: any ChannelHistoryUseCaseProtocol
     ) {
-        self.channelHistoryOption = switch historyDepth { default: .off }
+        self.channelHistoryOption = switch historyDepth {
+        default: .off
+        }
         self.useCase = useCase
         self.accentColor = accentColor
-        
+
         bind()
     }
-    
+
     private func bind() {
         $channelHistoryOption
             .dropFirst()
@@ -50,13 +52,15 @@ package class ChannelHistoryViewModel: ObservableObject {
             .sink { [self] channelHistoryOption in
                 isLoading = true
                 Task {
-                    try await useCase.updateHistoryDepth(
-                        channelHistoryOption: channelHistoryOption,
-                        channelHistoryOptionCustom: channelHistoryOptionCustom
-                    )
+                    do {
+                        try await useCase.updateHistoryDepth(
+                            channelHistoryOption: channelHistoryOption,
+                            channelHistoryOptionCustom: channelHistoryOptionCustom
+                        )
+                    } catch {}
                     isLoading = false
                 }
             }.store(in: &subscriptions)
-        
+
     }
 }

@@ -26,7 +26,7 @@ import WireTransport
 class ChannelRepository: ChannelRepositoryProtocol {
     private let api: any ConversationsAPI
     private let store: any ConversationLocalStoreProtocol
-    
+
     private let conversationID: String
     private let conversationDomain: String
 
@@ -53,20 +53,20 @@ class ChannelRepository: ChannelRepositoryProtocol {
             )
         return permission.toDomain()
     }
-    
+
     // TODO: [WPB-18347] - call endpoint when backend ready - PUT /conversations/{cnv_domain}/{cnv_id}/history and store history depth to local store
     func updateHistoryDepth(_ historyDepth: Int?) async throws {
-        /*let historyDepth = api.updateChannelHistoryDepth(
-            conversationID: conversationID,
-            conversationDomain: conversationDomain,
-            historyDepth: WireAPI.ChannelHistoryDepth)*/
-        
+        // let historyDepth = api.updateChannelHistoryDepth(
+        // conversationID: conversationID,
+        // conversationDomain: conversationDomain,
+        // historyDepth: WireAPI.ChannelHistoryDepth)
+
 //        store.storeConversation(
 //            historyDepth: historyDepth,
 //            conversationID: conversationID,
 //            conversationDomain: conversationDomain
 //        )
-        
+
         // return historyDepth
     }
 }

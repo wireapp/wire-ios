@@ -22,14 +22,13 @@ public import WireConversationsAPI
 import UIKit
 
 public class MockChannelHistoryUseCaseProtocol: ChannelHistoryUseCaseProtocol {
-    
 
     // MARK: - Life cycle
 
     public init() {}
-    
+
     // MARK: updateHistoryDepth
-    
+
     public var updateHistoryDepth_Invocations: [(WireConversationsAPI.ChannelHistoryOption, WireConversationsAPI.ChannelHistoryOption.Custom)] = []
     public var updateHistoryDepth_MockMethod: (((WireConversationsAPI.ChannelHistoryOption, WireConversationsAPI.ChannelHistoryOption.Custom)) async throws -> Void)?
     public var updateHistoryDepth_MockError: (any Error)?
@@ -126,13 +125,13 @@ public class MockChannelRepositoryProtocol: ChannelRepositoryProtocol {
             fatalError("no mock for `updateParticipantPermissionTo`")
         }
     }
-    
+
     // MARK: - updateHistoryDepth
-    
+
     public var updateHistoryDepth_Invocations: [Void] = []
     public var updateHistoryDepth_MockMethod: ((Int?) async throws -> Void)?
     public var updateHistoryDepth_MockError: (any Error)?
-    
+
     public func updateHistoryDepth(_ historyDepth: Int?) async throws {
         updateHistoryDepth_Invocations.append(())
 

@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 public enum ChannelHistoryOption: Equatable, Hashable, CaseIterable, Sendable {
     case off
     case oneDay

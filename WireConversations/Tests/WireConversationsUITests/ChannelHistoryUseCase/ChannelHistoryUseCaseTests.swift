@@ -24,23 +24,23 @@ import XCTest
 final class ChannelHistoryUseCaseTests: XCTestCase {
 
     lazy var repo = MockChannelRepositoryProtocol()
-    
+
     func testFetchHistory_callsRepo() async throws {
         // Given
-        
+
         let useCase = ChannelHistoryUseCase(repository: repo)
         repo.updateHistoryDepth_MockMethod = { _ in }
-        
+
         // When
-        
+
         _ = try await useCase.updateHistoryDepth(
             channelHistoryOption: .oneDay,
             channelHistoryOptionCustom: .init()
         )
-        
+
         // Then
-        
+
         XCTAssertEqual(repo.updateHistoryDepth_Invocations.count, 1)
-        
+
     }
 }

@@ -45,12 +45,12 @@ public class ChannelHistoryUseCase: ChannelHistoryUseCaseProtocol {
             channelHistoryOption: channelHistoryOption,
             channelHistoryOptionCustom: channelHistoryOptionCustom
         )
-        
+
         try await repository.updateHistoryDepth(
             historyDepth
         )
     }
-    
+
     private func computeHistoryDepth(
         channelHistoryOption: ChannelHistoryOption,
         channelHistoryOptionCustom: ChannelHistoryOption.Custom
@@ -69,10 +69,10 @@ public class ChannelHistoryUseCase: ChannelHistoryUseCaseProtocol {
         case .custom:
             computeHistoryCustomDepth(channelHistoryOptionCustom: channelHistoryOptionCustom)
         }
-        
+
         return historyDepth != nil ? Int(historyDepth!) : nil
     }
-    
+
     private func computeHistoryCustomDepth(
         channelHistoryOptionCustom: ChannelHistoryOption.Custom
     ) -> TimeInterval {

@@ -149,7 +149,7 @@ struct ChannelHistoryView_Previews: PreviewProvider {
         Group {
             NavigationStack {
                 ChannelHistoryView(viewModel: ChannelHistoryViewModel(
-                    historyDepth: 10000,
+                    historyDepth: 10_000,
                     accentColor: .blue,
                     useCase: ChannelHistoryUseCase(
                         repository: MockChannelRepositoryProtocol()
@@ -161,4 +161,3 @@ struct ChannelHistoryView_Previews: PreviewProvider {
 
     }
 }
-

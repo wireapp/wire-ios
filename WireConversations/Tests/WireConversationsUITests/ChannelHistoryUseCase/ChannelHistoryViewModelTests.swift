@@ -30,11 +30,7 @@ final class ChannelHistoryViewModelTests: XCTestCase {
         useCase: useCase
     )
 
-    lazy var useCase = {
-        let useCase = MockChannelHistoryUseCaseProtocol()
-
-        return useCase
-    }()
+    lazy var useCase = MockChannelHistoryUseCaseProtocol()
 
     func test_selectHistoryDepth_triggersUseCaseUpdate() async {
         viewModel.channelHistoryOption = .fourWeeks
@@ -42,7 +38,7 @@ final class ChannelHistoryViewModelTests: XCTestCase {
         useCase.updateHistoryDepth_MockMethod = { _ in
             expectation.fulfill()
         }
-        
+
         await fulfillment(of: [expectation])
         XCTAssertEqual(
             useCase.updateHistoryDepth_Invocations.count,
@@ -50,4 +46,3 @@ final class ChannelHistoryViewModelTests: XCTestCase {
         )
     }
 }
-

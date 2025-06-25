@@ -23,8 +23,8 @@ import WireTestingPackage
 import XCTest
 
 import WireConversationsAPI
-@testable import WireConversationsUI
 @testable import WireConversationsImplementationSupport
+@testable import WireConversationsUI
 
 class ChannelHistoryViewSnapshotTests: XCTestCase {
 
@@ -57,7 +57,7 @@ class ChannelHistoryViewSnapshotTests: XCTestCase {
             accentColor: .red,
             useCase: useCase
         )
-        
+
         viewModel.channelHistoryOption = customHistory ? .custom : .oneDay
 
         let viewController = ChannelHistoryHostingController(viewModel: viewModel)

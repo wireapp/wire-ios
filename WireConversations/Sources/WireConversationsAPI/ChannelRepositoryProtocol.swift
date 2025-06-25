@@ -16,13 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 @MainActor
 public protocol ChannelRepositoryProtocol {
     func updateParticipantPermission(
         to permission: ChannelAccessLevelPermission
     ) async throws -> WireConversationsAPI.ChannelAccessLevelPermission
-    
+
     func updateHistoryDepth(
         _ historyDepth: Int?
     ) async throws
