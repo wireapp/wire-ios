@@ -23,7 +23,7 @@ final class PayloadPagerTests: XCTestCase {
 
     func test_PagerIteratesThroughPages() async throws {
         // Given
-        let sut = PayloadPager<String>(start: "first") { index in
+        let sut = PayloadPager<[String]>(start: "first") { index in
             switch index {
             case "first":
                 return PayloadPager.Page(
@@ -71,7 +71,7 @@ final class PayloadPagerTests: XCTestCase {
     func test_PagerStopIteratesThroughPagesIfThrowingError() async throws {
         // Given
         let expectedError = TestError(message: "unexpected error from api")
-        let sut = PayloadPager<String>(start: "first") { index in
+        let sut = PayloadPager<[String]>(start: "first") { index in
             switch index {
             case "first":
                 return PayloadPager.Page(

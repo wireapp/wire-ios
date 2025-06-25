@@ -85,7 +85,7 @@ extension SettingsCellDescriptorFactory {
         let pushButton = SettingsExternalScreenCellDescriptor(
             title: SelfSettingsAdvancedLocale.ResetPushToken.title,
             isDestructive: false,
-            presentationStyle: PresentationStyle.modal,
+            presentationStyle: .modal,
             presentationAction: { () -> (UIViewController?) in
                 ZMUserSession.shared()?.validatePushToken()
                 return self.pushButtonAlertController
