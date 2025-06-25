@@ -23,7 +23,7 @@ class LogOutPage: PageModel {
     override var pageMainElement: XCUIElement {
         passwordField
     }
-    
+
     var passwordField: XCUIElement {
         app.secureTextFields.firstMatch
     }
