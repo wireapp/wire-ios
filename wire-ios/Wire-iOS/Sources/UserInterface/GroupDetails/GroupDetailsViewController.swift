@@ -574,7 +574,7 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
 
         let conversationsLocalStore = ConversationLocalStore(
             context: session.syncContext,
-            mlsService: session.syncContext.mlsService,
+            mlsService: nil,
             messageLocalStore: messageLocalStore
         )
 
@@ -612,7 +612,7 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
 
         let conversationsLocalStore = ConversationLocalStore(
             context: session.syncContext,
-            mlsService: session.syncContext.mlsService,
+            mlsService: nil,
             messageLocalStore: messageLocalStore
         )
 

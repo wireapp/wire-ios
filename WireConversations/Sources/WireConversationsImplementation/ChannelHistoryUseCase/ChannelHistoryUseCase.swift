@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireUtilities
+import WireFoundation
 public import WireConversationsAPI
 
 @MainActor
