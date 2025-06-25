@@ -214,7 +214,8 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         pushChannel: PushChannelV2Protocol,
         processedEnvelopeIDs: Set<UUID>
     ) async throws {
-        var lastEnvelope: UpdateEventEnvelope?
+
+        var storedEnvelopes: [(UpdateEventEnvelope, Int64)] = []
         try await coreCryptoProvider.coreCrypto().perform { coreCryptoContext in
             for envelope in envelopes {
                 if processedEnvelopeIDs.contains(envelope.id) {
@@ -226,19 +227,27 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                     // will need to store the deliveryTag...
                     continue
                 }
-
+                
                 var envelope = envelope
                 envelope.events = try await decryptEnvelope(envelope, in: coreCryptoContext)
-
-                await processEnvelope(envelope)
-
-                lastEnvelope = envelope
+                
+                let index = try await storeEnvelope(envelope)
+                storedEnvelopes.append((envelope, index))
             }
         }
 
+
+        for (envelope, index) in storedEnvelopes {
+            await processEnvelope(envelope)
+            // CHECK should not delete failed to process envelope so it's retried later
+        }
+
+        await deleteEnvelopes(at: storedEnvelopes.map { $0.1 })
+        
         await updateEventsStore.calculateLastUnreadMessages()
         await save()
-        if let lastEnvelope {
+
+        if let lastEnvelope = storedEnvelopes.last?.0 {
             await acknowledgeUntilEnvelope(lastEnvelope, through: pushChannel)
         }
     }
@@ -267,6 +276,28 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
             )
             throw error
         }
+    }
+    
+    
+    private func storeEnvelope(_ envelope: UpdateEventEnvelope) async throws -> Int64 {
+        let index: Int64
+        do {
+            // Store.
+            logger.debug(
+                "storing live event envelope",
+                attributes: [.eventEnvelopeID: envelope.id] + .syncAttributes(initialSync: false)
+            )
+            index = try await updateEventsStore.indexOfLastEventEnvelope() + 1
+            try await updateEventsStore.persistEventEnvelope(envelope, index: index)
+        } catch {
+            logger.error(
+                "failed to store live event envelope: \(String(describing: error))",
+                attributes: [.eventEnvelopeID: envelope.id] + .syncAttributes(initialSync: false)
+            )
+            throw error
+        }
+
+        return index
     }
 
     private func acknowledgeUntilEnvelope(
@@ -303,6 +334,17 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                     attributes: [.eventEnvelopeID: envelope.id] + .syncAttributes(initialSync: false)
                 )
             }
+        }
+    }
+
+    private func deleteEnvelopes(at indexes: [Int64]) async {
+        do {
+            try await updateEventsStore.deleteEventEnvelopes(at: indexes)
+        } catch {
+            logger.error(
+                "failed to delete live event envelopes: \(String(describing: error))",
+                attributes: .syncAttributes(initialSync: false)
+            )
         }
     }
 
