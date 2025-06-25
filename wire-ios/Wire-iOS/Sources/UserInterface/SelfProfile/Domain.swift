@@ -19,24 +19,20 @@
 /// Enum representing the type of domain.
 ///
 /// - publicDomain: Represents a public domain, like "wire.com".
-/// - privateDomain: Represents a private domain (any domain other than public).
 /// - unknown: Represents an unknown or undefined domain.
+
 enum DomainType {
 
     case publicDomain
-    case privateDomain
     case unknown
 
-}
-
-extension String {
-
-    var domainType: DomainType {
-        switch self {
+    init(domain: String) {
+        switch domain {
         case "wire.com", "staging.zinfra.io":
-            .publicDomain
+            self = .publicDomain
         default:
-            .privateDomain
+            self = .unknown
         }
     }
+
 }

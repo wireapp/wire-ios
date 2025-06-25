@@ -32,7 +32,7 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
 
     @Published var alert: Alert?
     @Published var isCreateTeamAccountPresented = false
-    @Published var dataUsageAgreementAccepted = false
+    @Published var isDataUsageAgreementAccepted = false
     @Published var name: String = ""
     @Published var email: String
     @Published var password: String = ""
@@ -43,6 +43,8 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
     var localizedPasswordRules: String {
         passwordValidator.localizedRulesDescription ?? ""
     }
+
+    let isAnalyticsTrackingAvailable: Bool
 
     package let factory: any Factory
     private let router: any Router
@@ -58,7 +60,8 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
         privacyPolicyURL: URL,
         termsOfUseURL: URL,
         teamAccountCreationLink: URL?,
-        passwordValidator: any PasswordValidator
+        passwordValidator: any PasswordValidator,
+        isAnalyticsTrackingAvailable: Bool
     ) {
         self.factory = factory
         self.router = router
@@ -67,6 +70,7 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
         self.termsOfUseURL = termsOfUseURL
         self.teamAccountCreationLink = teamAccountCreationLink
         self.passwordValidator = passwordValidator
+        self.isAnalyticsTrackingAvailable = isAnalyticsTrackingAvailable
     }
 
     // MARK: - Validations

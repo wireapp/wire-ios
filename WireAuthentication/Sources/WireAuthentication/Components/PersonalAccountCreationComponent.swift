@@ -66,7 +66,8 @@ extension PersonalAccountCreationComponent: PersonalAccountCreationViewModel.Fac
             privacyPolicyURL: dependency.privacyPolicyURL,
             termsOfUseURL: dependency.termsOfUseURL,
             teamAccountCreationLink: teamAccountCreationLink,
-            passwordValidator: dependency.passwordValidator
+            passwordValidator: dependency.passwordValidator,
+            isAnalyticsTrackingAvailable: dependency.personalAccountCreationAnalyticsTracker != nil // TODO: non-optional!
         )
     }
 
