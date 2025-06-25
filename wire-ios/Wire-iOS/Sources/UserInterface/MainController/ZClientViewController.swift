@@ -96,11 +96,15 @@ final class ZClientViewController: UIViewController {
 
     private lazy var channelConversationFormFactory = WireConversationChannelCreationFormViewControllerFactory()
 
-    private lazy var settingsViewControllerBuilder = SettingsViewControllerBuilder(
-        isAnalyticsTrackingAvailable: userSession.selfUser.domain.map(DomainType.init) == .publicDomain,
-        userSession: userSession,
-        trackingManager: trackingManager
-    )
+    private lazy var settingsViewControllerBuilder = {
+        let whitelistedDomains = ["wire.com", "staging.zinfra.io"]
+        let isAnalyticsTrackingAvailable = userSession.selfUser.domain.map(whitelistedDomains.contains) ?? true
+        return SettingsViewControllerBuilder(
+            isAnalyticsTrackingAvailable: isAnalyticsTrackingAvailable,
+            userSession: userSession,
+            trackingManager: trackingManager
+        )
+    }()
 
     private lazy var defaultSettingsPropertyFactoryDelegate = {
         var settingsTableViewController = { [weak self] in
