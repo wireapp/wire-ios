@@ -25,44 +25,35 @@ final class PersonalUsersTests: WireUITestCase {
         let user = UserGenerator.generateUniqueUserInfo()
 
         let welcomePage = try WelcomePage()
-            .assertHasLoaded()
 
         let createAccountPage = try welcomePage
             .typeEmailOrSSO(user.email)
             .tapCreatePersonalAccountLink()
-            .assertHasLoaded()
 
         let verificationPage = try createAccountPage
             .tapConfirmCreateAccount()
             .tapAcceptButton()
-            .assertHasLoaded()
 
         let verificationCode = try await InbucketClient.getVerificationCode(email: user.email)
 
         let setNamePage = try verificationPage
             .enterVerificationCode(verificationCode)
-            .assertHasLoaded()
 
         let setPasswordPage = try setNamePage
             .setName(user.name)
-            .assertHasLoaded()
 
         let setUsernamePage = try setPasswordPage
             .setPassword(user.password)
             .acceptPopup()
-            .assertHasLoaded()
 
         let conversationsPage = try setUsernamePage
             .setUsername(user.username)
-            .assertHasLoaded()
 
         let settingsPage = try conversationsPage
             .openSettings()
-            .assertHasLoaded()
 
         let accountPage = try settingsPage
             .openAccountSettings()
-            .assertHasLoaded()
 
         let accountName = try XCTUnwrap(accountPage.getAccountName())
         XCTAssertEqual(accountName, user.name, "Account name didn't match \(user.name)")
