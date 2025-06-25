@@ -155,7 +155,7 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
             )
 
         case let .availability(availability):
-            let userID = WireDataModel.QualifiedID(uuid: senderID.uuid, domain: senderID.domain)
+            let userID = WireDataModel.QualifiedID(uuid: senderID.id, domain: senderID.domain)
             let userAvailability = WireDataModel.Availability(proto: availability)
             await userLocalStore.updateUser(
                 with: userID,
