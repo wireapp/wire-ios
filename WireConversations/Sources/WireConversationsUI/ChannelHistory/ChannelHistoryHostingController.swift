@@ -45,7 +45,7 @@ package final class ChannelHistoryHostingController: UIHostingController<Channel
     public override func viewDidLoad() {
         super.viewDidLoad()
 
-        title = L10n.Localizable.ChannelAccessLevel.navigationTitle
+        title = L10n.Localizable.Conversation.UpdateHistory.ChannelHistory.navigationTitle
         view.backgroundColor = SemanticColors.View.backgroundDefault
 
         navigationItem.rightBarButtonItem = UIBarButtonItem(

@@ -103,6 +103,7 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
         collectionView.flatMap(GroupDetailsTimeoutOptionsCell.register)
         collectionView.flatMap(GroupDetailsNotificationOptionsCell.register)
         collectionView.flatMap(GroupDetailsAccessOptionsCell.register)
+        collectionView.flatMap(GroupDetailsChannelHistoryOptionsCell.register)
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
