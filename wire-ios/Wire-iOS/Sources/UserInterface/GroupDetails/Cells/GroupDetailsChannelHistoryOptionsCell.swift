@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import UIKit
 import WireDesign
 
 final class GroupDetailsChannelHistoryOptionsCell: GroupDetailsDisclosureOptionsCell {
@@ -27,7 +27,7 @@ final class GroupDetailsChannelHistoryOptionsCell: GroupDetailsDisclosureOptions
         title = L10n.Localizable.GroupDetails.ChannelHistoryOptionsCell.title
         accessibilityHint = L10n.Accessibility.ConversationDetails.OptionButton.hint
 
-        icon = .init(resource: .access).withRenderingMode(.alwaysTemplate)
+        icon = UIImage(systemName: "clock.arrow.trianglehead.counterclockwise.rotate.90")
         iconColor = SemanticColors.Icon.foregroundDefault
     }
 
@@ -35,7 +35,7 @@ final class GroupDetailsChannelHistoryOptionsCell: GroupDetailsDisclosureOptions
         let historyLengthValue = mapHistoryLength(conversation.channelHistoryLength)
         status = historyLengthValue
     }
-    
+
     private func mapHistoryLength(_ historyLength: Int) -> String {
         // TODO: [WPB-18396] - return correct `historyLength` value from db
         "Off"

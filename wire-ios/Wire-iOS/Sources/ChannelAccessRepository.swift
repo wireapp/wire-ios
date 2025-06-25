@@ -61,6 +61,28 @@ class ChannelRepository: ChannelRepositoryProtocol {
             )
         return permission.toDomain()
     }
+    
+    // TODO: [WPB-18347] - call endpoint when backend ready
+    func updateHistoryLength(_ historyLength: Int) async throws {
+        guard let backendInfoApiVersion = BackendInfo.apiVersion,
+              let apiVersion = WireNetwork.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
+              let apiService = session.apiService else {
+            throw ChannelHistoryError.notEnoughData
+        }
+        
+        let conversationsAPI = ConversationsAPIBuilder(
+            apiService: apiService
+        ).makeAPI(for: apiVersion)
+        
+        // PUT /conversations/{cnv_domain}/{cnv_id}/history
+        
+        /*let historyDepth = conversationsAPI.updateChannelHistoryDepth(
+            conversationID: conversationID,
+            conversationDomain: conversationDomain,
+            historyDepth: WireAPI.ChannelHistoryDepth)*/
+        
+        // return historyDepth
+    }
 }
 
 extension WireConversationsAPI.ChannelAccessLevelPermission {

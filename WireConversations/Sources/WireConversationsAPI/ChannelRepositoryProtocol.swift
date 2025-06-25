@@ -22,4 +22,6 @@ public protocol ChannelRepositoryProtocol {
     func updateParticipantPermission(
         to permission: ChannelAccessLevelPermission
     ) async throws -> WireConversationsAPI.ChannelAccessLevelPermission
+    
+    func updateHistoryLength(_ historyLength: Int)
 }

@@ -18,6 +18,7 @@
 
 package import SwiftUI
 import WireConversationsAPI
+import Combine
 package import WireConversationsImplementation
 
 @MainActor
@@ -28,6 +29,7 @@ package class ChannelHistoryViewModel: ObservableObject {
 
     public var accentColor: Color
     private let useCase: any ChannelHistoryUseCaseProtocol
+    private var subscriptions = Set<AnyCancellable>()
 
     package init(
         historyLength: Int,
@@ -37,5 +39,14 @@ package class ChannelHistoryViewModel: ObservableObject {
         self.channelHistoryOption = switch historyLength { default: .off }
         self.useCase = useCase
         self.accentColor = accentColor
+        
+        bind()
+    }
+    
+    private func bind() {
+        $channelHistoryOption
+            .removeDuplicates()
+            .sink(receiveValue: useCase.updateHistoryLength)
+            .store(in: &subscriptions)
     }
 }

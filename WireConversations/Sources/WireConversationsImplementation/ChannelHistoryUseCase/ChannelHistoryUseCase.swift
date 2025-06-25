@@ -24,6 +24,10 @@ public protocol ChannelHistoryUseCaseProtocol {
     func updateHistoryLength(_ historyOption: ChannelHistoryOption)
 }
 
+public enum ChannelHistoryError: Error {
+    case notEnoughData
+}
+
 public class ChannelHistoryUseCase: ChannelHistoryUseCaseProtocol {
     public let repository: any ChannelRepositoryProtocol
 
@@ -32,7 +36,7 @@ public class ChannelHistoryUseCase: ChannelHistoryUseCaseProtocol {
     ) {
         self.repository = repository
     }
-    
+
     public func updateHistoryLength(_ historyOption: ChannelHistoryOption) {
         
     }
