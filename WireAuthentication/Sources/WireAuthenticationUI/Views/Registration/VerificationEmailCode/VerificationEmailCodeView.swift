@@ -85,6 +85,7 @@ package struct VerificationEmailCodeView: View {
             .onAppear {
                 viewModel.trackReachedVerificationCodeIfNeeded()
             }
+        }
     }
 
     private var verificationCodeView: some View {
