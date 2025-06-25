@@ -69,7 +69,7 @@ final class PersonalUsersTests: WireUITestCase {
         XCTAssertTrue(accountPage.getUsername().contains(user.username), "Username didn't contain \(user.username)")
         XCTAssertEqual(accountPage.getEmail(), user.email, "Email didn't contain \(user.email)")
 
-        accountPage.logout()
+        try accountPage.logout()
             .enterPassword(user.password)
     }
 }
