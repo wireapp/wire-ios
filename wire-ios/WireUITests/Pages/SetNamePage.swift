@@ -20,9 +20,8 @@ import XCTest
 
 class SetNamePage: PageModel {
 
-    override func hasLoaded() {
-        let expectation = nameField.waitForExistence(timeout: 10)
-        XCTAssert(expectation, "Registration page not loaded - can't find next button")
+    override var pageMainElement: XCUIElement {
+        nameField
     }
 
     var nameNextButton: XCUIElement {
@@ -35,10 +34,10 @@ class SetNamePage: PageModel {
         return elementsQuery.firstMatch
     }
 
-    func setName(_ name: String) -> SetPasswordPage {
+    func setName(_ name: String) throws -> SetPasswordPage {
         nameField.tap()
         nameField.typeText(name)
         nameNextButton.tap()
-        return SetPasswordPage()
+        return try SetPasswordPage()
     }
 }
