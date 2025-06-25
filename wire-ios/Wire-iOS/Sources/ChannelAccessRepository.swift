@@ -24,36 +24,28 @@ import WireSyncEngine
 import WireTransport
 
 class ChannelRepository: ChannelRepositoryProtocol {
-
+    private let api: any ConversationsAPI
+    private let store: any ConversationLocalStoreProtocol
+    
     private let conversationID: String
     private let conversationDomain: String
-    private let session: ZMUserSession
 
     init(
+        api: any ConversationsAPI,
+        store: any ConversationLocalStoreProtocol,
         conversationID: String,
-        conversationDomain: String,
-        session: ZMUserSession
+        conversationDomain: String
     ) {
+        self.api = api
+        self.store = store
         self.conversationID = conversationID
         self.conversationDomain = conversationDomain
-        self.session = session
     }
 
     func updateParticipantPermission(
         to permission: WireConversationsAPI.ChannelAccessLevelPermission
     ) async throws -> WireConversationsAPI.ChannelAccessLevelPermission {
-
-        guard let backendInfoApiVersion = BackendInfo.apiVersion,
-              let apiVersion = WireNetwork.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
-              let apiService = session.apiService else {
-            throw ChannelAccessError.notEnoughData
-        }
-
-        let conversationsAPI = ConversationsAPIBuilder(
-            apiService: apiService
-        ).makeAPI(for: apiVersion)
-
-        let permission = try await conversationsAPI
+        let permission = try await api
             .addChannelPermission(
                 conversationID: conversationID,
                 conversationDomain: conversationDomain,
@@ -62,21 +54,9 @@ class ChannelRepository: ChannelRepositoryProtocol {
         return permission.toDomain()
     }
     
-    // TODO: [WPB-18347] - call endpoint when backend ready
-    func updateHistoryDepth(_ historyDepth: Int) async throws {
-        guard let backendInfoApiVersion = BackendInfo.apiVersion,
-              let apiVersion = WireNetwork.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
-              let apiService = session.apiService else {
-            throw ChannelHistoryError.notEnoughData
-        }
-        
-        let conversationsAPI = ConversationsAPIBuilder(
-            apiService: apiService
-        ).makeAPI(for: apiVersion)
-        
-        // PUT /conversations/{cnv_domain}/{cnv_id}/history
-        
-        /*let historyDepth = conversationsAPI.updateChannelHistoryDepth(
+    // TODO: [WPB-18347] - call endpoint when backend ready - PUT /conversations/{cnv_domain}/{cnv_id}/history
+    func updateHistoryDepth(_ historyDepth: Int?) async throws {
+        /*let historyDepth = api.updateChannelHistoryDepth(
             conversationID: conversationID,
             conversationDomain: conversationDomain,
             historyDepth: WireAPI.ChannelHistoryDepth)*/

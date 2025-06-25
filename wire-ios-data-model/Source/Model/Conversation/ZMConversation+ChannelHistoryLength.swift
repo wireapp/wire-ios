@@ -23,6 +23,9 @@ public extension ZMConversation {
 
     /// The channel history depth.
 
-    var channelHistoryDepth: Int { 0 }
+    var channelHistoryDepth: Int {
+        get { 0 }
+        set { }
+    }
 
 }

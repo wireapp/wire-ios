@@ -440,5 +440,15 @@ public protocol ConversationLocalStoreProtocol {
         permission: WireDomain.Conversation.ChannelPermission,
         conversation: ZMConversation
     ) async
+    
+    /// Stores the conversation history depth (for channels only) locally.
+    /// - Parameters
+    ///     - historyDepth: The history depth (one day, one week, four weeks..)
+    
+    func storeConversation(
+        historyDepth: Int,
+        conversationID: UUID,
+        conversationDomain: String?
+    ) async throws
 
 }

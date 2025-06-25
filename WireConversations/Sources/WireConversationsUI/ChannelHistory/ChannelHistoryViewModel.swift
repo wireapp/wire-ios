@@ -45,8 +45,18 @@ package class ChannelHistoryViewModel: ObservableObject {
     
     private func bind() {
         $channelHistoryOption
+            .dropFirst()
             .removeDuplicates()
-            .sink(receiveValue: useCase.updateHistoryDepth)
-            .store(in: &subscriptions)
+            .sink { [self] channelHistoryOption in
+                isLoading = true
+                Task {
+                    try await useCase.updateHistoryDepth(
+                        channelHistoryOption: channelHistoryOption,
+                        channelHistoryOptionCustom: channelHistoryOptionCustom
+                    )
+                    isLoading = false
+                }
+            }.store(in: &subscriptions)
+        
     }
 }

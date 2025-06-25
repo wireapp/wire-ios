@@ -267,6 +267,21 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             conversation.privateChannelPermission = PrivateChannelPermission(permission)
         }
     }
+    
+    public func storeConversation(
+        historyDepth: Int,
+        conversationID: UUID,
+        conversationDomain: String?
+    ) async throws {
+        let conversation = await fetchConversation(
+            id: conversationID,
+            domain: conversationDomain
+        )
+        
+        await context.perform {
+            conversation?.channelHistoryDepth = historyDepth
+        }
+    }
 
     public func addParticipants(
         _ participants: [(id: UUID, domain: String?, role: String?)],

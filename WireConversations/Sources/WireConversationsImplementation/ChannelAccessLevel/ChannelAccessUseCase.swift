@@ -28,7 +28,6 @@ public protocol ChannelAccessUseCaseProtocol {
 
 public enum ChannelAccessError: Error {
     case notAllowed
-    case notEnoughData
 }
 
 public class ChannelAccessUseCase: ChannelAccessUseCaseProtocol {

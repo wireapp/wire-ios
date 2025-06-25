@@ -17,7 +17,7 @@
 //
 
 
-public enum ChannelHistoryOption: Equatable, Hashable, CaseIterable {
+public enum ChannelHistoryOption: Equatable, Hashable, CaseIterable, Sendable {
     case off
     case oneDay
     case oneWeek
@@ -25,8 +25,8 @@ public enum ChannelHistoryOption: Equatable, Hashable, CaseIterable {
     case unlimited
     case custom
 
-    public struct Custom: Equatable, Hashable {
-        public enum Unit: Equatable, Hashable, CaseIterable {
+    public struct Custom: Equatable, Hashable, Sendable {
+        public enum Unit: Equatable, Hashable, CaseIterable, Sendable {
             case days
             case week
         }

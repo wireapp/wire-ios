@@ -17,15 +17,15 @@
 //
 
 import Foundation
+import WireUtilities
 public import WireConversationsAPI
 
 @MainActor
 public protocol ChannelHistoryUseCaseProtocol {
-    func updateHistoryDepth(_ historyOption: ChannelHistoryOption)
-}
-
-public enum ChannelHistoryError: Error {
-    case notEnoughData
+    func updateHistoryDepth(
+        channelHistoryOption: ChannelHistoryOption,
+        channelHistoryOptionCustom: ChannelHistoryOption.Custom
+    ) async throws
 }
 
 public class ChannelHistoryUseCase: ChannelHistoryUseCaseProtocol {
@@ -37,7 +37,53 @@ public class ChannelHistoryUseCase: ChannelHistoryUseCaseProtocol {
         self.repository = repository
     }
 
-    public func updateHistoryDepth(_ historyOption: ChannelHistoryOption) {
+    public func updateHistoryDepth(
+        channelHistoryOption: ChannelHistoryOption,
+        channelHistoryOptionCustom: ChannelHistoryOption.Custom
+    ) async throws {
+        let historyDepth = computeHistoryDepth(
+            channelHistoryOption: channelHistoryOption,
+            channelHistoryOptionCustom: channelHistoryOptionCustom
+        )
         
+        try await repository.updateHistoryDepth(
+            historyDepth
+        )
+    }
+    
+    private func computeHistoryDepth(
+        channelHistoryOption: ChannelHistoryOption,
+        channelHistoryOptionCustom: ChannelHistoryOption.Custom
+    ) -> Int? {
+        let historyDepth: TimeInterval? = switch channelHistoryOption {
+        case .off:
+            nil
+        case .oneDay:
+            TimeInterval.oneDay
+        case .oneWeek:
+            TimeInterval.oneWeek
+        case .fourWeeks:
+            TimeInterval.fourWeeks
+        case .unlimited:
+            TimeInterval.oneYearFromNow
+        case .custom:
+            computeHistoryCustomDepth(channelHistoryOptionCustom: channelHistoryOptionCustom)
+        }
+        
+        return historyDepth != nil ? Int(historyDepth!) : nil
+    }
+    
+    private func computeHistoryCustomDepth(
+        channelHistoryOptionCustom: ChannelHistoryOption.Custom
+    ) -> TimeInterval {
+        let value = TimeInterval(channelHistoryOptionCustom.value)
+        let oneDay = TimeInterval.oneDay
+
+        switch channelHistoryOptionCustom.unit {
+        case .days:
+            return value * oneDay
+        case .week:
+            return value * 7 * oneDay
+        }
     }
 }
