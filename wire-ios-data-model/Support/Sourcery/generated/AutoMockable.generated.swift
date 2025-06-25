@@ -349,14 +349,14 @@ public class MockConversationLike: ConversationLike {
 
     public var underlyingIsChannel: Bool!
 
-    // MARK: - channelHistoryLength
+    // MARK: - channelHistoryDepth
 
-    public var channelHistoryLength: Int {
-        get { return underlyingChannelHistoryLength }
-        set(value) { underlyingChannelHistoryLength = value }
+    public var channelHistoryDepth: Int {
+        get { return underlyingChannelHistoryDepth }
+        set(value) { underlyingChannelHistoryDepth = value }
     }
 
-    public var underlyingChannelHistoryLength: Int!
+    public var underlyingChannelHistoryDepth: Int!
 
     // MARK: - privateChannelPermission
 
