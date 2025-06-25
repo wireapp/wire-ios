@@ -19,11 +19,11 @@
 import Combine
 import CoreData
 import XCTest
+@testable import WireDataModelSupport
 @testable import WireDomain
 @testable import WireDomainSupport
 @testable import WireNetwork
 @testable import WireNetworkSupport
-@testable import WireDataModelSupport
 
 final class IncrementalSyncV2Tests: XCTestCase {
 
@@ -207,7 +207,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
         // Then the database was saved once after processing pending events
         // and once after processing each live event.
         XCTAssertEqual(databaseSaver.save_Invocations.count, numberOfInvocationInProcessEvents + 1)
-        
+
         // Then ack of events done after processing
         XCTAssertEqual(pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations.count, 1)
         XCTAssertTrue(pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations.first?.multiple == true)
@@ -290,11 +290,10 @@ final class IncrementalSyncV2Tests: XCTestCase {
         // Then ack of events done after processing
         XCTAssertEqual(pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations.count, 1)
         XCTAssertTrue(pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations.first?.multiple == true)
-        
+
         XCTAssertEqual(messageLocalStore.addPotentialGapSystemMessage_Invocations.count, 1)
         XCTAssertEqual(liveDelegate.didMissedEventsSync_Invocations.count, 1)
 
-        
         // Then unread messages are calculated once after each batch of events.
         XCTAssertEqual(updateEventsStore.calculateLastUnreadMessages_Invocations.count, 1)
 
@@ -323,7 +322,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
 
         // Events stored from NSE which needs to be processed
         updateEventsStore.fetchStoredEventEnvelopesLimit_MockMethod = { _ in
-            return []
+            []
         }
 
         // Live events are decrypted.
@@ -403,7 +402,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
         // Then the database was saved once after processing pending events
         // and once after processing each live event.
         XCTAssertEqual(databaseSaver.save_Invocations.count, numberOfInvocationInProcessEvents + 2)
-        
+
         // Then ack of events done after processing
         XCTAssertEqual(pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations.count, 2)
         XCTAssertTrue(pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations.first?.multiple == true)
