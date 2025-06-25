@@ -1123,8 +1123,8 @@
 
 // Settings - top level
 "self.settings.create_team.title" = "Luo tiimi";
+"self.settings.add_account_or_team.title" = "Add Account or Team";
 "self.settings.manage_team.title" = "Hallinnoi tiimiä";
-"self.settings.add_team_or_account.title" = "Lisää tili";
 "self.settings.add_account.title" = "Lisää tili";
 
 "self.settings.add_account.error.title" = "Three accounts active";
