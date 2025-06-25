@@ -165,17 +165,17 @@ final class WireConversationChannelCreationFormViewModelTests: XCTestCase {
             // Then
             switch useCase {
             case .off:
-                XCTAssertNil(channelCreationSettings?.historyLength)
+                XCTAssertNil(channelCreationSettings?.historyDepth)
             case .oneDay:
-                XCTAssertEqual(channelCreationSettings?.historyLength, 86_400)
+                XCTAssertEqual(channelCreationSettings?.historyDepth, 86_400)
             case .oneWeek:
-                XCTAssertEqual(channelCreationSettings?.historyLength, 604_800)
+                XCTAssertEqual(channelCreationSettings?.historyDepth, 604_800)
             case .fourWeeks:
-                XCTAssertEqual(channelCreationSettings?.historyLength, 2_419_200)
+                XCTAssertEqual(channelCreationSettings?.historyDepth, 2_419_200)
             case .unlimited:
-                XCTAssertEqual(channelCreationSettings?.historyLength, 31_536_000)
+                XCTAssertEqual(channelCreationSettings?.historyDepth, 31_536_000)
             case .custom: // 10 days
-                XCTAssertEqual(channelCreationSettings?.historyLength, 864_000)
+                XCTAssertEqual(channelCreationSettings?.historyDepth, 864_000)
             }
         }
 

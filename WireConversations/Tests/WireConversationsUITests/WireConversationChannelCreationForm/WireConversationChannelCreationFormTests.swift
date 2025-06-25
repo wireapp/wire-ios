@@ -20,7 +20,7 @@ import SwiftUI
 import WireTestingPackage
 import XCTest
 
-import WireConversationsUI
+@testable import WireConversationsUI
 
 class WireConversationChannelCreationFormTests: XCTestCase {
 
@@ -61,6 +61,52 @@ class WireConversationChannelCreationFormTests: XCTestCase {
                 channelName: "",
                 isUserPremium: true
             ) { _ in }
+        )
+        .frame(width: 375, height: 667)
+        .padding()
+
+        for dynamicTypeSize in DynamicTypeSize.allCases {
+            snapshotHelper
+                .verify(
+                    matching: view.dynamicTypeSize(dynamicTypeSize),
+                    named: "\(dynamicTypeSize)"
+                )
+        }
+    }
+    
+    @MainActor
+    func testColorSchemeVariantsEmptyState_Visible_Picker() {
+        let viewModel = WireConversationChannelCreationFormViewModel(
+            channelName: "",
+            isUserPremium: true
+        ) { _ in }
+        
+        viewModel.channelHistoryOption = .custom
+        
+        let view = WireConversationChannelCreationForm(
+            viewModel: viewModel
+        )
+        .frame(width: 375, height: 667)
+        .padding()
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
+    }
+
+    @MainActor
+    func testDynamicTypeVariantsEmptyState_Visible_Picker() {
+        let viewModel = WireConversationChannelCreationFormViewModel(
+            channelName: "",
+            isUserPremium: true
+        ) { _ in }
+        
+        viewModel.channelHistoryOption = .custom
+        let view = WireConversationChannelCreationForm(
+            viewModel: viewModel
         )
         .frame(width: 375, height: 667)
         .padding()
