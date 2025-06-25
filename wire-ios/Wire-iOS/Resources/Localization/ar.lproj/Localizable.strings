@@ -1123,8 +1123,8 @@
 
 // Settings - top level
 "self.settings.create_team.title" = "إنشاء فريق";
+"self.settings.add_account_or_team.title" = "Add Account or Team";
 "self.settings.manage_team.title" = "إدارة الفريق";
-"self.settings.add_team_or_account.title" = "إضافة حساب";
 "self.settings.add_account.title" = "إضافة حساب";
 
 "self.settings.add_account.error.title" = "ثلاث حساب نشطة";
