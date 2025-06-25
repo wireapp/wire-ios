@@ -128,7 +128,7 @@
 
 "create_personal_account.title" = "Privates Benutzerkonto erstellen";
 "create_personal_account.continue" = "Weiter";
-"create_personal_account.share_data_usage" = "Ich bin mit dem Teilen anonymer Nutzungsdaten einverstanden. Alle Details finden Sie in unserer [Datenschutzerklärung](%@)";
+"create_personal_account.share_data_usage" = "Ich bin mit dem Teilen anonymer Nutzungsdaten einverstanden. Alle Details finden Sie in unserer [Datenschutzerklärung](%@) (optional)";
 "create_personal_account.looking_for_collaboration" = "Wollen Sie eher im Team zusammenarbeiten?";
 "create_personal_account.create_team" = "Team erstellen";
 "create_personal_account.input_name.title" = "Name";

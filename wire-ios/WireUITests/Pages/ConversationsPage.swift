@@ -24,9 +24,8 @@ class ConversationsPage: PageModel {
         return elementsQuery.firstMatch
     }
 
-    override func hasLoaded() {
-        let expectation = profileButton.waitForExistence(timeout: 10)
-        XCTAssert(expectation, "Conversations page can't be loaded - can't find profile button")
+    override var pageMainElement: XCUIElement {
+        profileButton
     }
 
     var settingsButton: XCUIElement {
@@ -34,8 +33,8 @@ class ConversationsPage: PageModel {
         return elementsQuery.firstMatch
     }
 
-    func openSettings() -> SettingsPage {
+    func openSettings() throws -> SettingsPage {
         settingsButton.tap()
-        return SettingsPage()
+        return try SettingsPage()
     }
 }

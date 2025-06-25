@@ -80,8 +80,6 @@ class SelfUserAPIV0: SelfUserAPI, VersionedAPI {
             .build()
 
         let (data, response) = try await apiService.executeRequest(request, requiringAccessToken: true)
-        print(response.statusCode)
-        print(response.description)
         return try ResponseParser()
             .success(code: .ok)
             .parse(code: response.statusCode, data: data)

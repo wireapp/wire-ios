@@ -20,6 +20,10 @@ import XCTest
 
 class AccountSettingsPage: PageModel {
 
+    override var pageMainElement: XCUIElement {
+        nameField
+    }
+
     var nameField: XCUIElement {
         let elementsQuery = app.descendants(matching: .any)["NameField"]
         return elementsQuery.firstMatch
@@ -40,8 +44,8 @@ class AccountSettingsPage: PageModel {
         return elementsQuery.firstMatch
     }
 
-    func getAccountName() -> String {
-        nameField.value as! String
+    func getAccountName() -> String? {
+        nameField.value as? String
     }
 
     func getUsername() -> String {
@@ -53,8 +57,8 @@ class AccountSettingsPage: PageModel {
     }
 
     @discardableResult
-    func logout() -> LogOutPage {
+    func logout() throws -> LogOutPage {
         logoutButton.tap()
-        return LogOutPage()
+        return try LogOutPage()
     }
 }

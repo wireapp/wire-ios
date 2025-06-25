@@ -16,21 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-
-class SettingsPage: PageModel {
-
-    override var pageMainElement: XCUIElement {
-        accountSettingsMenu
-    }
-
-    var accountSettingsMenu: XCUIElement {
-        let elementsQuery = app.cells
-        return elementsQuery["Account"]
-    }
-
-    func openAccountSettings() throws -> AccountSettingsPage {
-        accountSettingsMenu.tap()
-        return try AccountSettingsPage()
-    }
+enum SettingsCellDescriptorPresentationStyle: Int {
+    case modal
+    case navigation
+    case alert
 }

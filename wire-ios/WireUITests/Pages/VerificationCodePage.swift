@@ -20,9 +20,8 @@ import XCTest
 
 class VerificationCodePage: PageModel {
 
-    override func hasLoaded() {
-        let expectation = verificationCodeInput.waitForExistence(timeout: 20)
-        XCTAssert(expectation, "Verification code page not loaded - can't find verification input")
+    override var pageMainElement: XCUIElement {
+        verificationCodeInput
     }
 
     var verificationCodeInput: XCUIElement {
@@ -30,9 +29,9 @@ class VerificationCodePage: PageModel {
         return elementsQuery.firstMatch
     }
 
-    func enterVerificationCode(_ verificationCode: String) -> SetNamePage {
+    func enterVerificationCode(_ verificationCode: String) throws -> SetNamePage {
         verificationCodeInput.tap()
         verificationCodeInput.typeText(verificationCode)
-        return SetNamePage()
+        return try SetNamePage()
     }
 }

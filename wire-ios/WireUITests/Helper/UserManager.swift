@@ -91,7 +91,6 @@ class UserManager {
 
     func deleteCreatedUsers() async throws {
         for user in createdUsers {
-            print("Deleting \(user.email)")
             try await deleteUser(user)
         }
     }
@@ -115,17 +114,14 @@ private final class MockCookieStorage: CookieStorageProtocol {
     }
 
     func storeCookies(_ cookies: [HTTPCookie]) async throws {
-        print("Storing \(cookies)")
         self.cookies = cookies
     }
 
     func fetchCookies() async throws -> [HTTPCookie] {
-        print("Giving \(cookies)")
         return cookies
     }
 
     func removeCookies() async throws {
-        print("Clearing cookies")
         cookies = []
     }
 }

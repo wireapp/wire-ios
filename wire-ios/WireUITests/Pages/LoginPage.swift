@@ -20,9 +20,8 @@ import XCTest
 
 class LoginPage: PageModel {
 
-    override func hasLoaded() {
-        let expectation = createPersonalAccountLink.waitForExistence(timeout: 10)
-        XCTAssert(expectation, "Login page not loaded - can't find email field")
+    override var pageMainElement: XCUIElement {
+        createPersonalAccountLink
     }
 
     var createPersonalAccountLink: XCUIElement {
@@ -39,15 +38,15 @@ class LoginPage: PageModel {
         app.secureTextFields["Enter password"]
     }
 
-    func tapCreatePersonalAccountLink() -> CreateAccountPage {
+    func tapCreatePersonalAccountLink() throws -> CreateAccountPage {
         createPersonalAccountLink.tap()
-        return CreateAccountPage()
+        return try CreateAccountPage()
     }
 
-    func enterPassword(_ password: String) -> FirstTimePage {
+    func enterPassword(_ password: String) throws -> FirstTimePage {
         passwordField.tap()
         passwordField.typeText(password)
         nextButton.tap()
-        return FirstTimePage()
+        return try FirstTimePage()
     }
 }

@@ -123,6 +123,7 @@ public final class AutomationHelper: NSObject {
 
         super.init()
         persistBackendTypeOverrideIfNeeded(with: backendType)
+
     }
 
     private enum AutomationKey: String {
