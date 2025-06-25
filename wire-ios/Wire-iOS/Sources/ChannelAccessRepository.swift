@@ -63,7 +63,7 @@ class ChannelRepository: ChannelRepositoryProtocol {
     }
     
     // TODO: [WPB-18347] - call endpoint when backend ready
-    func updateHistoryLength(_ historyLength: Int) async throws {
+    func updateHistoryDepth(_ historyDepth: Int) async throws {
         guard let backendInfoApiVersion = BackendInfo.apiVersion,
               let apiVersion = WireNetwork.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
               let apiService = session.apiService else {

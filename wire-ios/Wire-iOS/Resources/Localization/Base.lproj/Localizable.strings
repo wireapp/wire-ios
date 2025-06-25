@@ -1053,15 +1053,15 @@
 "channel_access_level.public" = "Public";
 "channel_access_level.private" = "Private";
 
-// Channel History Length
-"channel_history_length.off" = "Off";
-"channel_history_length.oneDay" = "One day";
-"channel_history_length.oneWeek" = "One week";
-"channel_history_length.oneDay" = "Four weeks";
-"channel_history_length.unlimited" = "Unlimited";
-"channel_history_length.custom" = "Custom";
-"channel_history_length.days" = "Days";
-"channel_history_length.weeks" = "Weeks";
+// Channel History Depth
+"channel_history_depth.off" = "Off";
+"channel_history_depth.oneDay" = "One day";
+"channel_history_depth.oneWeek" = "One week";
+"channel_history_depth.oneDay" = "Four weeks";
+"channel_history_depth.unlimited" = "Unlimited";
+"channel_history_depth.custom" = "Custom";
+"channel_history_depth.days" = "Days";
+"channel_history_depth.weeks" = "Weeks";
 
 // Secured Guest link with password
 "secured_guest_link_with_password.header.title" = "Create password secured link";

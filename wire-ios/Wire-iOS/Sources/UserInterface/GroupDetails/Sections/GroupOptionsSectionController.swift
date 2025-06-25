@@ -33,7 +33,7 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
     enum Option: Int, CaseIterable {
 
         case channelAccess = 0
-        case channelHistoryLength
+        case channelHistoryDepth
         case notifications
         case guests
         case services
@@ -50,7 +50,7 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
             case .services:      user.canModifyGuestsAccessControlSettings(in: conversation) && conversation
                 .botCanBeAdded
             case .timeout:       user.canModifyEphemeralSettings(in: conversation)
-            case .channelHistoryLength: user.canModifyChannelHistoryLengthSettings(in: conversation)
+            case .channelHistoryDepth: user.canModifyChannelHistoryDepthSettings(in: conversation)
             }
         }
 
@@ -61,7 +61,7 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
             case .timeout: GroupDetailsTimeoutOptionsCell.zm_reuseIdentifier
             case .notifications: GroupDetailsNotificationOptionsCell.zm_reuseIdentifier
             case .channelAccess: GroupDetailsAccessOptionsCell.zm_reuseIdentifier
-            case .channelHistoryLength: GroupDetailsChannelHistoryOptionsCell.zm_reuseIdentifier
+            case .channelHistoryDepth: GroupDetailsChannelHistoryOptionsCell.zm_reuseIdentifier
             }
         }
 
@@ -149,7 +149,7 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
             delegate?.presentNotificationsOptions(animated: true)
         case .channelAccess:
             delegate?.presentAccessOptions(animated: true)
-        case .channelHistoryLength:
+        case .channelHistoryDepth:
             delegate?.presentChannelHistoryOptions(animated: true)
         }
 

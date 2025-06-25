@@ -38,7 +38,7 @@ public class ChannelViewFactory {
 
     @MainActor
     public static func makeChannelHistoryView(
-        historyLength: Int,
+        historyDepth: Int,
         accentColor: Color,
         repository: any ChannelRepositoryProtocol
     ) -> UIViewController {
@@ -47,7 +47,7 @@ public class ChannelViewFactory {
         )
 
         let viewModel = ChannelHistoryViewModel(
-            historyLength: historyLength,
+            historyDepth: historyDepth,
             accentColor: accentColor,
             useCase: useCase
         )

@@ -1561,21 +1561,21 @@ internal enum L10n {
       /// Public
       internal static let `public` = L10n.tr("Localizable", "channel_access_level.public", fallback: "Public")
     }
-    internal enum ChannelHistoryLength {
+    internal enum ChannelHistoryDepth {
       /// Custom
-      internal static let custom = L10n.tr("Localizable", "channel_history_length.custom", fallback: "Custom")
+      internal static let custom = L10n.tr("Localizable", "channel_history_depth.custom", fallback: "Custom")
       /// Days
-      internal static let days = L10n.tr("Localizable", "channel_history_length.days", fallback: "Days")
+      internal static let days = L10n.tr("Localizable", "channel_history_depth.days", fallback: "Days")
       /// Off
-      internal static let off = L10n.tr("Localizable", "channel_history_length.off", fallback: "Off")
+      internal static let off = L10n.tr("Localizable", "channel_history_depth.off", fallback: "Off")
       /// Four weeks
-      internal static let oneDay = L10n.tr("Localizable", "channel_history_length.oneDay", fallback: "Four weeks")
+      internal static let oneDay = L10n.tr("Localizable", "channel_history_depth.oneDay", fallback: "Four weeks")
       /// One week
-      internal static let oneWeek = L10n.tr("Localizable", "channel_history_length.oneWeek", fallback: "One week")
+      internal static let oneWeek = L10n.tr("Localizable", "channel_history_depth.oneWeek", fallback: "One week")
       /// Unlimited
-      internal static let unlimited = L10n.tr("Localizable", "channel_history_length.unlimited", fallback: "Unlimited")
+      internal static let unlimited = L10n.tr("Localizable", "channel_history_depth.unlimited", fallback: "Unlimited")
       /// Weeks
-      internal static let weeks = L10n.tr("Localizable", "channel_history_length.weeks", fallback: "Weeks")
+      internal static let weeks = L10n.tr("Localizable", "channel_history_depth.weeks", fallback: "Weeks")
     }
     internal enum Collections {
       internal enum ImageViewer {

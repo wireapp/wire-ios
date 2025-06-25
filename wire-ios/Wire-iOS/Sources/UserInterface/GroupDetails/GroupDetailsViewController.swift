@@ -576,7 +576,7 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
               let session = ZMUserSession.shared() else { return }
 
         // TODO: [WPB-18396] - get correct stored value in DB
-        let channelHistoryLength = conversation.channelHistoryLength
+        let channelHistoryDepth = conversation.channelHistoryDepth
 
         let repository = ChannelRepository(
             conversationID: conversation.remoteIdentifier.uuidString,
@@ -585,7 +585,7 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
         )
 
         let historyView = ChannelViewFactory.makeChannelHistoryView(
-            historyLength: channelHistoryLength,
+            historyDepth: channelHistoryDepth,
             accentColor: session.selfUser.accentColor.color,
             repository: repository
         )

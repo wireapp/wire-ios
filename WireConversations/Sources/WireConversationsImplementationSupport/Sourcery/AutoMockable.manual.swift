@@ -94,5 +94,12 @@ public class MockChannelRepositoryProtocol: ChannelRepositoryProtocol {
             fatalError("no mock for `updateParticipantPermissionTo`")
         }
     }
+    
+    // MARK: - updateHistoryDepth
+    
+    public func updateHistoryDepth(_ historyDepth: Int) {
+
+    }
+    
 
 }

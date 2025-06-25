@@ -21,7 +21,7 @@ public import WireConversationsAPI
 
 @MainActor
 public protocol ChannelHistoryUseCaseProtocol {
-    func updateHistoryLength(_ historyOption: ChannelHistoryOption)
+    func updateHistoryDepth(_ historyOption: ChannelHistoryOption)
 }
 
 public enum ChannelHistoryError: Error {
@@ -37,7 +37,7 @@ public class ChannelHistoryUseCase: ChannelHistoryUseCaseProtocol {
         self.repository = repository
     }
 
-    public func updateHistoryLength(_ historyOption: ChannelHistoryOption) {
+    public func updateHistoryDepth(_ historyOption: ChannelHistoryOption) {
         
     }
 }

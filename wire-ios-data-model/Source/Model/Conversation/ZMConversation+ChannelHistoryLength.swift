@@ -18,11 +18,11 @@
 
 import Foundation
 
-// TODO: [WPB-18396] - Update with expected type when backend ready, update local db and make `channelHistoryLength` property @NSManaged
+// TODO: [WPB-18396] - Update with expected type when backend ready, update local db and make `channelHistoryDepth` property @NSManaged
 public extension ZMConversation {
 
-    /// The channel history length.
+    /// The channel history depth.
 
-    var channelHistoryLength: Int { 0 }
+    var channelHistoryDepth: Int { 0 }
 
 }

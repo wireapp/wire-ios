@@ -32,11 +32,11 @@ package class ChannelHistoryViewModel: ObservableObject {
     private var subscriptions = Set<AnyCancellable>()
 
     package init(
-        historyLength: Int,
+        historyDepth: Int,
         accentColor: Color,
         useCase: any ChannelHistoryUseCaseProtocol
     ) {
-        self.channelHistoryOption = switch historyLength { default: .off }
+        self.channelHistoryOption = switch historyDepth { default: .off }
         self.useCase = useCase
         self.accentColor = accentColor
         
@@ -46,7 +46,7 @@ package class ChannelHistoryViewModel: ObservableObject {
     private func bind() {
         $channelHistoryOption
             .removeDuplicates()
-            .sink(receiveValue: useCase.updateHistoryLength)
+            .sink(receiveValue: useCase.updateHistoryDepth)
             .store(in: &subscriptions)
     }
 }

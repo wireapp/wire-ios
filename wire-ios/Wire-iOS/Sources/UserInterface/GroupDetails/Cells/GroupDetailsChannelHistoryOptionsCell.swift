@@ -32,12 +32,12 @@ final class GroupDetailsChannelHistoryOptionsCell: GroupDetailsDisclosureOptions
     }
 
     func configure(with conversation: GroupDetailsConversationType) {
-        let historyLengthValue = mapHistoryLength(conversation.channelHistoryLength)
-        status = historyLengthValue
+        let historyDepthValue = mapHistoryDepth(conversation.channelHistoryDepth)
+        status = historyDepthValue
     }
 
-    private func mapHistoryLength(_ historyLength: Int) -> String {
-        // TODO: [WPB-18396] - return correct `historyLength` value from db
+    private func mapHistoryDepth(_ historyDepth: Int) -> String {
+        // TODO: [WPB-18396] - return correct `historyDepth` value from db
         "Off"
     }
 

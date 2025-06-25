@@ -90,7 +90,7 @@ struct ChannelHistoryHostingControllerPreview: UIViewControllerRepresentable {
         )
         
         let viewModel = ChannelHistoryViewModel(
-            historyLength: 10_000,
+            historyDepth: 10_000,
             accentColor: .red,
             useCase: useCase
         )

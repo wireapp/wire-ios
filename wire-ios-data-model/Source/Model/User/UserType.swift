@@ -220,8 +220,8 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     @objc(canModifyChannelAccessLevelSettingsInConversation:)
     func canModifyChannelAccessLevelSettings(in conversation: ConversationLike) -> Bool
 
-    @objc(canModifyChannelHistoryLengthSettingsInConversation:)
-    func canModifyChannelHistoryLengthSettings(in conversation: ConversationLike) -> Bool
+    @objc(canModifyChannelHistoryDepthSettingsInConversation:)
+    func canModifyChannelHistoryDepthSettings(in conversation: ConversationLike) -> Bool
 
     /// Whether the user can update the title of the conversation.
     @objc(canModifyTitleInConversation:)
