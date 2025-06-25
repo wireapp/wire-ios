@@ -1123,8 +1123,8 @@
 
 // Settings - top level
 "self.settings.create_team.title" = "Sukurti komandą";
-"self.settings.add_account_or_team.title" = "Add Account or Team";
 "self.settings.manage_team.title" = "Valdyti komandą";
+"self.settings.add_team_or_account.title" = "Pridėti paskyrą";
 "self.settings.add_account.title" = "Pridėti paskyrą";
 
 "self.settings.add_account.error.title" = "Aktyvios trys paskyros";

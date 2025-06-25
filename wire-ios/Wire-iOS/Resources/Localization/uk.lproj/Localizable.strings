@@ -1123,8 +1123,8 @@
 
 // Settings - top level
 "self.settings.create_team.title" = "Створити команду";
-"self.settings.add_account_or_team.title" = "Add Account or Team";
 "self.settings.manage_team.title" = "Керування командою";
+"self.settings.add_team_or_account.title" = "Додати акаунт";
 "self.settings.add_account.title" = "Додати акаунт";
 
 "self.settings.add_account.error.title" = "Три акаунти вже активні";
