@@ -118,7 +118,7 @@ private final class MockCookieStorage: CookieStorageProtocol {
     }
 
     func fetchCookies() async throws -> [HTTPCookie] {
-        return cookies
+        cookies
     }
 
     func removeCookies() async throws {
