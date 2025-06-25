@@ -39,13 +39,13 @@ public enum WireAnalytics {
 
         WireAnalytics.Datadog.shared.enable()
 
-        WireLogger.initialize(
-            loggers: [
-                SystemLogger(),
-                CocoaLumberjackLogger(),
-                WireAnalytics.Datadog.shared
-            ]
-        )
+        WireLogger.initialize {
+            #if DEBUG
+                SystemLogger()
+            #endif
+            CocoaLumberjackLogger()
+            WireAnalytics.Datadog.shared
+        }
 
         // pass tags to Datadog through WireLogger
         WireLogger.system.addTag(.processId, value: "\(ProcessInfo.processInfo.processIdentifier)")

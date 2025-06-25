@@ -21,16 +21,16 @@ import Foundation
 class ConversationsAPIV1: ConversationsAPIV0 {
     override var apiVersion: APIVersion { .v1 }
 
-    override func getLegacyConversationIdentifiers() async throws -> PayloadPager<UUID> {
+    override func getLegacyConversationIdentifiers() async throws -> PayloadPager<[UUID]> {
         assertionFailure("not implemented! use getConversationIdentifiers() instead")
         throw ConversationsAPIError.notImplemented
     }
 
-    override func getConversationIdentifiers() async throws -> PayloadPager<QualifiedID> {
+    override func getConversationIdentifiers() async throws -> PayloadPager<[QualifiedID]> {
         let path = "\(pathPrefix)\(basePath)/list-ids/"
         let jsonEncoder = JSONEncoder.defaultEncoder
 
-        return PayloadPager<QualifiedID> { start in
+        return PayloadPager<[QualifiedID]> { start in
             // body Params
             let params = PaginationRequest(pagingState: start, size: Constants.batchSize)
             let body = try jsonEncoder.encode(params)
@@ -66,8 +66,8 @@ private struct PaginatedConversationIDsV1: Decodable, ToAPIModelConvertible {
     let pagingState: String
     let hasMore: Bool
 
-    func toAPIModel() -> PayloadPager<QualifiedID>.Page {
-        PayloadPager<QualifiedID>.Page(
+    func toAPIModel() -> PayloadPager<[QualifiedID]>.Page {
+        PayloadPager<[QualifiedID]>.Page(
             element: conversationIDs.map { $0.toAPIModel() },
             hasMore: hasMore,
             nextStart: pagingState

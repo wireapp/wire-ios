@@ -38,8 +38,8 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
         "\(pathPrefix)/list-connections"
     }
 
-    func getConnections() async throws -> PayloadPager<Connection> {
-        PayloadPager<Connection> { start in
+    func getConnections() async throws -> PayloadPager<[Connection]> {
+        PayloadPager<[Connection]> { start in
 
             // body Params
             let params = PaginationRequest(pagingState: start, size: Constants.batchSize)
@@ -79,8 +79,8 @@ private struct PaginatedConnectionListV0: Decodable, ToAPIModelConvertible {
     let pagingState: String
     let hasMore: Bool
 
-    func toAPIModel() -> PayloadPager<Connection>.Page {
-        PayloadPager<Connection>.Page(
+    func toAPIModel() -> PayloadPager<[Connection]>.Page {
+        PayloadPager<[Connection]>.Page(
             element: connections.map { $0.toAPIModel() },
             hasMore: hasMore,
             nextStart: pagingState

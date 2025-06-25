@@ -42,7 +42,7 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
         self.apiService = apiService
     }
 
-    func getLegacyConversationIdentifiers() async throws -> PayloadPager<UUID> {
+    func getLegacyConversationIdentifiers() async throws -> PayloadPager<[UUID]> {
         // This function needs to be used in APIVersion.v0 instead of `getConversationIdentifiers`,
         // because the backend API returns only `UUID`s instead of `QualifiedID`s in later versions.
         // We are missing the related domain to map the UUID to a valid `QualifiedID` object.
@@ -55,7 +55,7 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
         let path = "\(basePath)/list-ids/"
         let jsonEncoder = JSONEncoder.defaultEncoder
 
-        return PayloadPager<UUID> { start in
+        return PayloadPager<[UUID]> { start in
             // body Params
             let params = PaginationRequest(pagingState: start, size: Constants.batchSize)
             let body = try jsonEncoder.encode(params)
@@ -76,7 +76,7 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
         }
     }
 
-    func getConversationIdentifiers() async throws -> PayloadPager<QualifiedID> {
+    func getConversationIdentifiers() async throws -> PayloadPager<[QualifiedID]> {
         assertionFailure("not implemented! use getLegacyConversationIdentifiers() instead")
         throw ConversationsAPIError.notImplemented
     }
@@ -263,7 +263,7 @@ private struct PaginatedConversationIDsV0: Decodable, ToAPIModelConvertible {
     let pagingState: String
     let hasMore: Bool
 
-    func toAPIModel() -> PayloadPager<UUID>.Page {
+    func toAPIModel() -> PayloadPager<[UUID]>.Page {
         .init(
             element: conversationIdentifiers,
             hasMore: hasMore,
