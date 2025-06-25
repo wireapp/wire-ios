@@ -19,7 +19,7 @@
 public import Foundation
 public import WireConversationsAPI
 public import Combine
-import WireUtilities
+import WireFoundation
 
 public final class WireConversationChannelCreationFormViewModel: ObservableObject {
 
