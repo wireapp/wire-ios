@@ -25,9 +25,9 @@ class UserInfo {
     var password: String
     var id: String
     var backend_domain: String
-    var teamname: String
+    var teamName: String
 
-    init(name: String, username: String, password: String, domain: String, teamname: String) {
+    init(name: String, username: String, password: String, domain: String, teamName: String) {
         self.name = name
         self.username = username
         self.password = password
@@ -35,7 +35,7 @@ class UserInfo {
         self.email = username + "@" + domain
         self.id = ""
         self.backend_domain = ""
-        self.teamname = teamname
+        self.teamName = teamName
     }
 
     init(email: String, password: String) {
@@ -46,7 +46,7 @@ class UserInfo {
         self.email = email
         self.id = ""
         self.backend_domain = ""
-        self.teamname = ""
+        self.teamName = ""
     }
 
     init() {
@@ -57,7 +57,7 @@ class UserInfo {
         self.email = ""
         self.id = ""
         self.backend_domain = ""
-        self.teamname = ""
+        self.teamName = ""
     }
 
     func updateUserInfo(newInfo: UserInfo) {

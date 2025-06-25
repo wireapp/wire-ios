@@ -19,55 +19,56 @@
 import XCTest
 
 class UserAccountPage: PageModel {
-    
+
     override func hasLoaded() {
         let expectation = profileButton.waitForExistence(timeout: 10)
         XCTAssert(expectation, "Can't find profile button")
     }
-    
+
     var profileButton: XCUIElement {
-        let elementsQuery = app.buttons.matching(identifier: "account_profile_image_view")
+        let elementsQuery = app.descendants(matching: .any)["account_profile_image_view"]
         return elementsQuery.firstMatch
     }
 
-    
     var createTeamButton: XCUIElement {
         let elementsQuery = app.otherElements
         return elementsQuery.buttons["Create Wire Team"]
     }
-    
+
     var teamNameTextField: XCUIElement {
         let elementsQuery = app.textFields
         return elementsQuery["Your Team"]
     }
-    
+
     var continueButton: XCUIElement {
         let elementsQuery = app.scrollViews.otherElements
         return elementsQuery.buttons["Continue"]
     }
-    
+
     var checkbox: XCUIElement {
-        return app.buttons.matching(identifier: "square").element(boundBy: 0)
+        app.descendants(matching: .any)["square"].firstMatch
     }
-    
+
     var goToTeamManagementButton: XCUIElement {
         let elementsQuery = app.buttons
         return elementsQuery["Go To Team Management"]
     }
-    
+
     var backToWireButton: XCUIElement {
         let elementsQuery = app.buttons
         return elementsQuery["Back To Wire"]
     }
-    
+
     var teamNameOnAccountPage: XCUIElement {
         let elementsQuery = app.staticTexts
         return elementsQuery["team name"].firstMatch
     }
-    
-    
-    
-    
+
+    var manageTeamButton: XCUIElement {
+        let elementsQuery = app.staticTexts
+        return elementsQuery["Manage Team"]
+    }
+
     func tapCreateTeamButtonAndContinue() -> UserAccountPage {
         createTeamButton.tap()
         continueButton.tap()
@@ -80,24 +81,21 @@ class UserAccountPage: PageModel {
         continueButton.tap()
         return self
     }
-    
+
     func acceptTheConfirmationAndContinue() -> UserAccountPage {
         checkbox.tap()
         checkbox.tap()
         continueButton.tap()
         return self
     }
-    
+
     func tapBackToWireButton() -> ConversationsPage {
         backToWireButton.tap()
         return ConversationsPage()
     }
-    
-    func getTeamName() -> String {
-        return teamNameOnAccountPage.value as! String
+
+    func getTeamName() -> String? {
+        teamNameOnAccountPage.value as? String
     }
-    
-    
-    
-    
+
 }

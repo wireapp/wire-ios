@@ -116,30 +116,6 @@ enum BackendClient {
         }
         return responseData
     }
-    
-    static func getTeamIDFromSelfRequest(email: String, password: String) async throws -> String {
-        let access_token = try await loginViaAPI(email: email, password: password)
-        
-        let envVariables = try EnvironmentVariables()
-        let requestUrl = envVariables.backendURL.appending(path: "v8/self")
-
-        var request = URLRequest(url: requestUrl)
-        request.httpMethod = "GET"
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.addValue("application/json", forHTTPHeaderField: "Accept")
-        request.addValue("Bearer \(access_token)", forHTTPHeaderField: "Authorization")
-        let (responseData, response) = try await URLSession.shared.data(for: request)
-
-        let pureResponse = response as! HTTPURLResponse
-        if pureResponse.statusCode != 200 {
-            print("Error! got status code \(pureResponse.statusCode)")
-            print("Response: \(pureResponse.description)")
-            throw (RuntimeError("Error \(pureResponse.description)"))
-        }
-
-        let userData: SelfAPIResponse = try JSONDecoder().decode(SelfAPIResponse.self, from: responseData)
-        return (userData.team)
-    }
 }
 
 private struct LoginMessage: Decodable {
@@ -161,8 +137,4 @@ private struct QualifiedID: Decodable {
 private struct ActivationCodeReponse: Decodable {
     let code: String
     let key: String
-}
-
-private struct SelfAPIResponse: Decodable {
-    let team: String
 }
