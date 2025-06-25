@@ -18,11 +18,7 @@
 
 import Foundation
 
-// sourcery: AutoMockable
-/// An API access object for endpoints concerning connections.
-public protocol ConnectionsAPI {
-
-    /// Fetch all connections .
-
-    func getConnections() async throws -> PayloadPager<[Connection]>
+public struct UpdateEventBatch {
+    public let time: Date?
+    public let updateEventEnvelopes: [UpdateEventEnvelope]
 }

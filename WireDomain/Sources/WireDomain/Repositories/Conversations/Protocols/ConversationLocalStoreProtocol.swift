@@ -441,4 +441,6 @@ public protocol ConversationLocalStoreProtocol {
         conversation: ZMConversation
     ) async
 
+    func fetchServerTimeDelta() async -> TimeInterval
+
 }
