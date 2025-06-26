@@ -450,7 +450,7 @@ public protocol ConversationLocalStoreProtocol {
         conversationID: UUID,
         conversationDomain: String?
     ) async throws
-    
+
     func fetchServerTimeDelta() async -> TimeInterval
 
 }
