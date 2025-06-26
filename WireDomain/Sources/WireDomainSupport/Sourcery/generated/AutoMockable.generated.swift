@@ -1357,6 +1357,26 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         await mock(permission, conversation)
     }
 
+    // MARK: - storeConversation
+
+    public var storeConversationHistoryDepthConversationIDConversationDomain_Invocations: [(historyDepth: Int, conversationID: UUID, conversationDomain: String?)] = []
+    public var storeConversationHistoryDepthConversationIDConversationDomain_MockError: Error?
+    public var storeConversationHistoryDepthConversationIDConversationDomain_MockMethod: ((Int, UUID, String?) async throws -> Void)?
+
+    public func storeConversation(historyDepth: Int, conversationID: UUID, conversationDomain: String?) async throws {
+        storeConversationHistoryDepthConversationIDConversationDomain_Invocations.append((historyDepth: historyDepth, conversationID: conversationID, conversationDomain: conversationDomain))
+
+        if let error = storeConversationHistoryDepthConversationIDConversationDomain_MockError {
+            throw error
+        }
+
+        guard let mock = storeConversationHistoryDepthConversationIDConversationDomain_MockMethod else {
+            fatalError("no mock for `storeConversationHistoryDepthConversationIDConversationDomain`")
+        }
+
+        try await mock(historyDepth, conversationID, conversationDomain)
+    }
+
     // MARK: - fetchServerTimeDelta
 
     public var fetchServerTimeDelta_Invocations: [Void] = []
