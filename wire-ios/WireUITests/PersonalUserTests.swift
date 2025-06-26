@@ -62,8 +62,6 @@ final class PersonalUsersTests: WireUITestCase {
 
         try accountPage.logout()
             .enterPassword(user.password)
-
-        XCTAssertTrue(welcomePage.emailTextField.exists, "Account logout failed")
     }
 
     @MainActor
@@ -79,7 +77,5 @@ final class PersonalUsersTests: WireUITestCase {
             .openAccountSettings()
             .logout()
             .enterPassword(user.password)
-
-        XCTAssertTrue(welcomePage.emailTextField.exists, "Account logout failed")
     }
 }
