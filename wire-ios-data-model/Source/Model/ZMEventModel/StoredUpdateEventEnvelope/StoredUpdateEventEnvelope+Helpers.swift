@@ -77,7 +77,6 @@ public extension StoredUpdateEventEnvelope {
         return request
     }
 
-
     static func fetchRequest(sortIndexes: [Int64]) -> NSFetchRequest<StoredUpdateEventEnvelope> {
         let request = NSFetchRequest<StoredUpdateEventEnvelope>(entityName: entityName)
         request.predicate = NSPredicate(

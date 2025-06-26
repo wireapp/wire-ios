@@ -23,7 +23,7 @@ struct FeatureConfigUpdateEventProcessor: FeatureConfigUpdateEventProcessorProto
     let repository: any FeatureConfigRepositoryProtocol
 
     func processEvent(_ event: FeatureConfigUpdateEvent) async {
-        try await repository.updateFeatureConfig(event.featureConfig)
+        await repository.updateFeatureConfig(event.featureConfig)
     }
 
 }

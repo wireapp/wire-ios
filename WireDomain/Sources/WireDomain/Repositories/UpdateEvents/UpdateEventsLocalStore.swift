@@ -159,7 +159,6 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
         }
     }
 
-    
     public func deleteEventEnvelopes(
         at indexes: [Int64]
     ) async throws {
@@ -192,7 +191,6 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
         }
     }
 
-    
     public func deleteEventEnvelope(
         atIndex index: Int64
     ) async throws {

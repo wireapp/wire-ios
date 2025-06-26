@@ -185,7 +185,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                             pushChannel: pushChannel,
                             processedEnvelopeIDs: processedEnvelopeIDs
                         )
-                        
+
                         if let lastEnvelope = envelopes.last {
                             await acknowledgeUntilEnvelope(lastEnvelope, through: pushChannel)
                         }
@@ -220,6 +220,8 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     ) async throws {
 
         var storedEnvelopes: [(UpdateEventEnvelope, Int64)] = []
+
+        // decrypt
         try await coreCryptoProvider.coreCrypto().perform { coreCryptoContext in
             for envelope in envelopes {
                 if processedEnvelopeIDs.contains(envelope.id) {
@@ -231,27 +233,25 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                     // will need to store the deliveryTag...
                     continue
                 }
-                
+
                 var envelope = envelope
                 envelope.events = try await decryptEnvelope(envelope, in: coreCryptoContext)
-                
+
                 let index = try await storeEnvelope(envelope)
                 storedEnvelopes.append((envelope, index))
             }
         }
 
-
+        // store
         for (envelope, index) in storedEnvelopes {
             await processEnvelope(envelope)
             // CHECK should not delete failed to process envelope so it's retried later
         }
 
-        await deleteEnvelopes(at: storedEnvelopes.map { $0.1 })
-        
+        await deleteEnvelopes(at: storedEnvelopes.map(\.1))
+
         await updateEventsStore.calculateLastUnreadMessages()
         await save()
-
-       
     }
 
     private func decryptEnvelope(
@@ -279,8 +279,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
             throw error
         }
     }
-    
-    
+
     private func storeEnvelope(_ envelope: UpdateEventEnvelope) async throws -> Int64 {
         let index: Int64
         do {

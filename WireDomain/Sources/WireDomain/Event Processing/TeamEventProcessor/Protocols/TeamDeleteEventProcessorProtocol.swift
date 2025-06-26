@@ -22,6 +22,6 @@ protocol TeamDeleteEventProcessorProtocol {
 
     /// Process a team delete event.
 
-    func processEvent() async throws
+    func processEvent() async
 
 }

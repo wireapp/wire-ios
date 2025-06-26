@@ -329,11 +329,9 @@ final class IncrementalSyncV2Tests: XCTestCase {
         updateEventsStore.persistEventEnvelopeIndex_MockMethod = { _, _ async throws in }
         updateEventsStore.deleteEventEnvelopesAt_MockMethod = { _ in }
 
-
         // Some indices at which live events will be stored.
         var indices = [Int64(10), Int64(11), Int64(12), Int64(13)]
         updateEventsStore.indexOfLastEventEnvelope_MockMethod = { indices.remove(at: 0) }
-
 
         // Live events are decrypted.
         decryptor.decryptEventsInContext_MockMethod = { envelope, _ in
