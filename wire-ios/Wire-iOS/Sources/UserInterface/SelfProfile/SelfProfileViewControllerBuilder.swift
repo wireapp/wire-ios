@@ -17,8 +17,9 @@
 //
 
 import UIKit
-import WireAnalytics
 import WireCommonComponents
+import WireDomain
+import WireFoundation
 import WireMainNavigationUI
 import WireSyncEngine
 
@@ -28,14 +29,14 @@ final class SelfProfileViewControllerBuilder: SelfProfileViewControllerBuilderPr
     var userRightInterfaceType: UserRightInterface.Type
     var userSession: UserSession
     var accountSelector: AccountSelector?
-    var analyticsEventTracker: () -> (any AnalyticsEventTracker)?
+    var analyticsEventTracker: () -> (any AnalyticsEventTrackerProtocol)?
 
     init(
         selfUser: SettingsSelfUser,
         userRightInterfaceType: UserRightInterface.Type,
         userSession: UserSession,
         accountSelector: AccountSelector?,
-        analyticsEventTracker: @escaping () -> (any AnalyticsEventTracker)?
+        analyticsEventTracker: @escaping () -> (any AnalyticsEventTrackerProtocol)?
     ) {
         self.selfUser = selfUser
         self.userRightInterfaceType = userRightInterfaceType
@@ -51,7 +52,10 @@ final class SelfProfileViewControllerBuilder: SelfProfileViewControllerBuilderPr
             userSession: userSession,
             accountSelector: accountSelector,
             mainCoordinator: mainCoordinator,
-            analyticsEventTracker: analyticsEventTracker()
+            analyticsEventTracker: analyticsEventTracker(),
+            accountManager: SessionManager.shared?.accountManager
         )
     }
 }
+
+extension AccountManager: SelfProfileAccountManager {}

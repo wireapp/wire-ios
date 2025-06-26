@@ -61,7 +61,7 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: XCTestCase {
         // GIVEN
         mockUser.teamRole = .partner
         let configuration = ConversationSenderMessageDetailsCell.Configuration(
-            user: mockUser,
+            sender: mockUser,
             indicator: .none,
             teamRoleIndicator: .externalPartner
         )
@@ -77,7 +77,7 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: XCTestCase {
         // GIVEN
         mockUser.isFederated = true
         let configuration = ConversationSenderMessageDetailsCell.Configuration(
-            user: mockUser,
+            sender: mockUser,
             indicator: .none,
             teamRoleIndicator: .federated
         )
@@ -93,7 +93,7 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: XCTestCase {
         // GIVEN
         mockUser.isGuestInConversation = true
         let configuration = ConversationSenderMessageDetailsCell.Configuration(
-            user: mockUser,
+            sender: mockUser,
             indicator: .none,
             teamRoleIndicator: .guest
         )
@@ -109,7 +109,7 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: XCTestCase {
         // GIVEN
         mockUser.mockedIsServiceUser = true
         let configuration = ConversationSenderMessageDetailsCell.Configuration(
-            user: mockUser,
+            sender: mockUser,
             indicator: .none,
             teamRoleIndicator: .service
         )
@@ -125,7 +125,7 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: XCTestCase {
         // GIVEN
         mockUser.teamRole = .member
         let configuration = ConversationSenderMessageDetailsCell.Configuration(
-            user: mockUser,
+            sender: mockUser,
             indicator: .none,
             teamRoleIndicator: .none
         )
@@ -140,7 +140,7 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: XCTestCase {
     func test_MessageHasBeenDeleted() {
         mockUser.teamRole = .member
         let configuration = ConversationSenderMessageDetailsCell.Configuration(
-            user: mockUser,
+            sender: mockUser,
             indicator: .deleted,
             teamRoleIndicator: .none
         )
@@ -160,7 +160,7 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: XCTestCase {
         )
         mockUser.isGuestInConversation = true
         let configuration = ConversationSenderMessageDetailsCell.Configuration(
-            user: mockUser,
+            sender: mockUser,
             indicator: .deleted,
             teamRoleIndicator: .guest
         )
@@ -177,7 +177,7 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: XCTestCase {
         mockUser.name = nil
         mockUser.teamRole = .member
         let configuration = ConversationSenderMessageDetailsCell.Configuration(
-            user: mockUser,
+            sender: mockUser,
             indicator: .none,
             teamRoleIndicator: .none
         )

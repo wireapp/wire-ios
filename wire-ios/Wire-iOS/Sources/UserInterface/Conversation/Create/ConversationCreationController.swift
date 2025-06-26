@@ -17,12 +17,12 @@
 //
 
 import UIKit
-import WireAPI
 import WireCommonComponents
 import WireDataModel
 import WireDesign
 import WireDomain
 import WireLogging
+import WireNetwork
 import WireSyncEngine
 
 protocol ConversationCreationControllerDelegate: AnyObject {
@@ -59,6 +59,7 @@ final class ConversationCreationController: UIViewController {
 
     private lazy var nameSection = ConversationCreateNameSectionController(
         selfUser: userSession.selfUser,
+        isChannel: values.isChannel,
         delegate: self
     )
     private lazy var errorSection = ConversationCreateErrorSectionController()
@@ -162,6 +163,7 @@ final class ConversationCreationController: UIViewController {
         self.preSelectedParticipants = preSelectedParticipants
         self.userSession = userSession
         self.values = ConversationCreationValues(
+            isChannel: false,
             encryptionProtocol: userSession.defaultProtocol,
             selfUser: userSession.selfUser
         )
@@ -342,7 +344,7 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
         users: [ZMUser]
     ) async {
         guard let backendInfoApiVersion = BackendInfo.apiVersion,
-              let apiVersion = WireAPI.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
+              let apiVersion = WireNetwork.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
               let apiService = session.apiService else { return }
 
         let context = session.syncContext
@@ -353,15 +355,15 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
             context: context
         )
 
-        let accessMode: [WireAPI.ConversationAccessMode] = values.allowGuests ? [.invite, .code] : []
+        let accessMode: [WireNetwork.ConversationAccessMode] = values.allowGuests ? [.invite, .code] : []
         let accessRoles = ConversationAccessRoleV2.from(
             allowGuests: values.allowGuests,
             allowServices: values.shouldIncludeServices ? values.allowServices : false
         ).compactMap {
-            WireAPI.ConversationAccessRole(rawValue: $0.rawValue)
+            WireNetwork.ConversationAccessRole(rawValue: $0.rawValue)
         }
 
-        let conversationMessageProtocol: WireAPI.ConversationMessageProtocol = switch values.encryptionProtocol {
+        let conversationMessageProtocol: WireNetwork.ConversationMessageProtocol = switch values.encryptionProtocol {
         case .mls:
             .mls
         case .proteus:
@@ -419,7 +421,7 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
 
     private func makeCreateGroupConversationUseCase(
         apiService: any APIServiceProtocol,
-        apiVersion: WireAPI.APIVersion,
+        apiVersion: WireNetwork.APIVersion,
         context: NSManagedObjectContext
     ) -> any CreateGroupConversationUseCaseProtocol {
         let conversationsAPI = ConversationsAPIBuilder(

@@ -178,8 +178,8 @@ final class DeveloperToolsViewModel: ObservableObject {
                     )),
                     .text(TextItem(title: "1-1 MLS Conversations", value: oneOnOneMLSConversationsCount())),
                     .text(TextItem(
-                        title: "Async Stream Enabled",
-                        value: selfClient?.asyncStreamCapable == true ? "Yes" : "No"
+                        title: "Consumable Notifications Capability",
+                        value: selfClient?.isConsumableNotificationsCapable == true ? "Yes" : "No"
                     ))
                 ]
             ))
@@ -210,7 +210,6 @@ final class DeveloperToolsViewModel: ObservableObject {
             sections.append(Section(
                 header: "Push token",
                 items: [
-                    .text(TextItem(title: "Token type", value: String(describing: pushToken.tokenType))),
                     .text(TextItem(title: "Token data", value: pushToken.deviceTokenString)),
                     .button(ButtonItem(title: "Check registered tokens", action: { [weak self] in
                         self?.checkRegisteredTokens()
@@ -457,26 +456,12 @@ final class DeveloperToolsViewModel: ObservableObject {
 
 }
 
-extension PushToken.TokenType: CustomStringConvertible {
-
-    public var description: String {
-        switch self {
-        case .standard:
-            "Standard"
-
-        case .voip:
-            "VoIP"
-        }
-    }
-
-}
-
 extension PushToken: CustomDebugStringConvertible {
 
     public var debugDescription: String {
         """
         token: \(deviceTokenString),
-        type: \(tokenType),
+        type: standard,
         transport: \(transportType)
         app: \(appIdentifier)
         """

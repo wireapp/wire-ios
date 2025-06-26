@@ -4,6 +4,16 @@ As it is hard to spot changes from version to version of database models (.xcdat
 
 ## zmessaging
 
+### 2.127.0
+
+* renamed `asyncStreamCapable` attribute to `isConsumableNotificationsCapable` the UserClient entity
+
+### 2.126.0
+
+* added `WireCellsMessageAttachmentDraft` entity
+* added `wireCellsMessageAttachmentDrafts` attribute to Conversation entity
+* added `cellName` attribute to Conversation entity
+
 ### 2.125.0
 
 * added `asyncStreamCapable` attribute on the UserClient entity
@@ -98,7 +108,7 @@ PostAction to migrate oneOneOneConversations
 
 ### 6.0
 
-* add new `StoredUpdateEventEnvelope` entity to persist new `WireAPI.UpdateEventEnvelope` instances. This replaces `StoredUpdateEvent` which can be deleted after some time.
+* add new `StoredUpdateEventEnvelope` entity to persist new `WireNetwork.UpdateEventEnvelope` instances. This replaces `StoredUpdateEvent` which can be deleted after some time.
 
 ### 5.0
 

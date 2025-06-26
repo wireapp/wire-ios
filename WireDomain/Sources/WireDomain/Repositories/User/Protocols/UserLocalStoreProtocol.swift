@@ -177,4 +177,6 @@ public protocol UserLocalStoreProtocol {
     ) async -> UUID
 
     func fetchSelfUserAvailability() async -> Availability
+
+    func updateUser(with userID: WireDataModel.QualifiedID, availability: Availability) async
 }

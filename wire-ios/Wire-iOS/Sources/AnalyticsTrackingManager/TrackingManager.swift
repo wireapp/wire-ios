@@ -22,14 +22,14 @@ import WireCommonComponents
 import WireLogging
 import WireSyncEngine
 
-final class TrackingManager: NSObject, TrackingInterface {
+final class TrackingManager: TrackingInterface {
 
     private let sessionManager: SessionManager
     private var observerToken: NSObjectProtocol?
 
     init(sessionManager: SessionManager) {
         self.sessionManager = sessionManager
-        super.init()
+
         AVSFlowManager.getInstance()?.setEnableMetrics(!isAnalyticsDisabled)
         self.observerToken = NotificationCenter.default.addObserver(
             forName: FlowManager.AVSFlowManagerCreatedNotification,
@@ -70,13 +70,13 @@ final class TrackingManager: NSObject, TrackingInterface {
     }
 
     func enableAnalytics() async throws {
-        try await sessionManager.makeEnableAnalyticsUseCase().invoke()
+        try await sessionManager.makeEnableAnalyticsUseCase()?.invoke()
         ExtensionSettings.shared.disableAnalyticsSharing = false
         AVSFlowManager.getInstance()?.setEnableMetrics(true)
     }
 
     func disableAnalytics() throws {
-        try sessionManager.makeDisableAnalyticsUseCase().invoke()
+        try sessionManager.makeDisableAnalyticsUseCase()?.invoke()
         ExtensionSettings.shared.disableAnalyticsSharing = true
         AVSFlowManager.getInstance()?.setEnableMetrics(false)
     }

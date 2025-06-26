@@ -20,8 +20,8 @@ import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
 import XCTest
-@testable import WireAPI
 @testable import WireDomain
+@testable import WireNetwork
 
 final class ConversationMLSWelcomeEventProcessorTests: XCTestCase {
 
@@ -88,7 +88,7 @@ final class ConversationMLSWelcomeEventProcessorTests: XCTestCase {
             )
         }
 
-        mlsDecryptionService.processWelcomeMessageWelcomeMessage_MockValue = Scaffolding.mlsGroupID
+        mlsDecryptionService.processWelcomeMessageWelcomeMessageContext_MockValue = Scaffolding.mlsGroupID
         conversationRepository.fetchConversationIdDomain_MockValue = conversation
         conversationLocalStore.storeMLSConversationEstablishedMlsGroupIDConversation_MockMethod = { _, _ in }
         conversationLocalStore.updateOrCreateMLSGroupGroupID_MockMethod = { _ in }
@@ -102,7 +102,7 @@ final class ConversationMLSWelcomeEventProcessorTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(mlsDecryptionService.processWelcomeMessageWelcomeMessage_Invocations.count, 1)
+        XCTAssertEqual(mlsDecryptionService.processWelcomeMessageWelcomeMessageContext_Invocations.count, 1)
         XCTAssertEqual(conversationRepository.fetchConversationIdDomain_Invocations.count, 1)
         XCTAssertEqual(
             conversationLocalStore.storeMLSConversationEstablishedMlsGroupIDConversation_Invocations.count,

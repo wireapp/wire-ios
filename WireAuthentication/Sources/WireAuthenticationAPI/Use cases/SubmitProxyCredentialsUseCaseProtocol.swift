@@ -27,6 +27,7 @@ public protocol SubmitProxyCredentialsUseCaseProtocol: Sendable {
 
 public protocol SubmitProxyCredentialsUseCaseFactory {
 
+    @MainActor
     func submitProxyCredentialsUseCase() -> any SubmitProxyCredentialsUseCaseProtocol
 
 }

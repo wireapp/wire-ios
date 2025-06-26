@@ -96,6 +96,7 @@ typedef NS_ENUM(int16_t, ZMBlockState) {
 
 
 
+
 @interface ZMUser (Connections)
 
 @property (nonatomic, readonly) BOOL isBlocked;

@@ -18,6 +18,7 @@
 
 import WireDataModel
 import WireLogging
+import WireNetwork
 
 public final class UserLocalStore: UserLocalStoreProtocol {
 
@@ -100,9 +101,10 @@ public final class UserLocalStore: UserLocalStoreProtocol {
     }
 
     public func fetchUsersQualifiedIDs() async throws -> [WireDataModel.QualifiedID] {
-        try await context.perform {
+        try await context.perform { [context] in
             let fetchRequest = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
-            let knownUsers = try self.context.fetch(fetchRequest)
+            fetchRequest.propertiesToFetch = ["remoteIdentifier_data", "domain"]
+            let knownUsers = try context.fetch(fetchRequest)
             return knownUsers.compactMap(\.qualifiedID)
         }
     }
@@ -407,9 +409,18 @@ public final class UserLocalStore: UserLocalStoreProtocol {
         }
     }
 
+    public func updateUser(with userID: WireDataModel.QualifiedID, availability: Availability) async {
+        await context.perform { [context] in
+            let user = ZMUser.fetch(with: userID.uuid, domain: userID.domain, in: context)
+            user?.updateAvailability(availability)
+            context.saveOrRollback()
+        }
+    }
+
     public func fetchSelfUserSupportedProtocols() async -> Set<WireDataModel.MessageProtocol> {
         await context.perform { [context] in
             ZMUser.selfUser(in: context).supportedProtocols
         }
     }
+
 }

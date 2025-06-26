@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import WireAPI
 import WireDataModelSupport
 import WireDomain
+import WireNetwork
 import XCTest
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
@@ -240,6 +240,14 @@ final class APIMigrationManagerTests: MessagingTest {
     @MainActor
     private func stubUserSession() -> ZMUserSession {
         let mockStrategyDirectory = MockStrategyDirectory()
+        let mockCoreCrypto = MockCoreCryptoProtocol()
+        let mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
+        let mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
+        mockCoreCrypto.registerEpochObserver_MockMethod = { _ in }
+        mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
+        mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
+        mockCoreCryptoProvider.registerEpochObserver_MockMethod = { _ in }
+
         let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
 
         let cookieStorage = ZMPersistentCookieStorage(
@@ -253,7 +261,7 @@ final class APIMigrationManagerTests: MessagingTest {
         let backendEnvironment = WireTransport.BackendEnvironment(
             title: "Mock backend environment",
             trustData: [],
-            environmentType: .production,
+            environmentType: .default,
             endpoints: BackendEndpoints(
                 backendURL: baseURL,
                 backendWSURL: baseURL,
@@ -267,7 +275,7 @@ final class APIMigrationManagerTests: MessagingTest {
             certificateTrust: ServerCertificateTrust(trustData: [], currentDateProvider: .system)
         )
 
-        let wireAPIBackendEnvironment = WireAPI.BackendEnvironment(
+        let wireAPIBackendEnvironment = WireNetwork.BackendEnvironment(
             url: backendEnvironment.backendURL,
             webSocketURL: backendEnvironment.backendWSURL,
             pinnedKeys: [],
@@ -301,6 +309,7 @@ final class APIMigrationManagerTests: MessagingTest {
             application: application,
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             coreDataStack: createCoreDataStack(),
+            coreCryptoProvider: mockCoreCryptoProvider,
             configuration: configuration,
             contextStorage: mockContextStorable,
             earService: nil,

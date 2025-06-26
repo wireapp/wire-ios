@@ -21,7 +21,7 @@ import WireSyncEngine
 
 final class AccentColorChangeHandler: UserObserving {
 
-    typealias AccentColorChangeHandlerBlock = (_ newColor: UIColor?, _ observer: NSObjectProtocol?) -> Void
+    typealias AccentColorChangeHandlerBlock = (_ newColor: ZMAccentColor?, _ observer: NSObjectProtocol?) -> Void
     private var handlerBlock: AccentColorChangeHandlerBlock?
     private var observer: NSObjectProtocol?
     private var userObserverToken: NSObjectProtocol?
@@ -49,7 +49,7 @@ final class AccentColorChangeHandler: UserObserving {
 
     func userDidChange(_ change: UserChangeInfo) {
         if change.accentColorValueChanged {
-            handlerBlock?(change.user.accentColor, observer)
+            handlerBlock?(change.user.zmAccentColor, observer)
         }
     }
 }

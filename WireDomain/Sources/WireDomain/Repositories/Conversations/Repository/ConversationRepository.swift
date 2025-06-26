@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import WireAPI
 import WireDataModel
 import WireLogging
+import WireNetwork
 
 public final class ConversationRepository: ConversationRepositoryProtocol {
 
@@ -86,7 +86,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     }
 
     public func pullConversation(id: UUID, domain: String) async throws {
-        let qualifiedID = WireAPI.QualifiedID(uuid: id, domain: domain)
+        let qualifiedID = WireNetwork.QualifiedID(uuid: id, domain: domain)
         let conversationList = try await conversationsAPI.getConversations(
             for: [qualifiedID]
         )
@@ -390,17 +390,6 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         await deleteMembership(for: removedUserIDs, time: date)
     }
 
-    public func updateTypingUsers(
-        _ typingUsersInfo: [ConversationTypingUsersInfo]
-    ) async {
-        for typingUserInfo in typingUsersInfo {
-            await conversationsLocalStore.updateTypingUsers(
-                conversationID: typingUserInfo.conversationID,
-                usersID: typingUserInfo.users
-            )
-        }
-    }
-
     // MARK: - Private
 
     private func addSystemMessage(
@@ -413,12 +402,12 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         reason: ConversationMemberLeaveReason
     ) async {
         let systemMessageType: SystemMessageType = switch reason {
-        case .userDeleted, .userLeft:
+        case .userDeleted:
             .teamMemberRemoved(
                 member: (senderID, senderDomain),
                 date: date
             )
-        case .userRemoved:
+        case .userRemoved, .userLeft:
             .participantsRemoved(
                 participants: removedUsers.map { ($0.uuid, $0.domain) },
                 sender: (senderID, senderDomain),

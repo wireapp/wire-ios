@@ -21,25 +21,25 @@ import Foundation
 @testable import WireDataModel
 @testable import WireDataModelSupport
 
-class E2EIVerificationStatusServiceTests: ZMConversationTestsBase {
+class E2EIVerificationStatusServiceTests: XCTestCase {
 
     var sut: E2EIVerificationStatusService!
-    var mockCoreCrypto: MockCoreCryptoProtocol!
+    var mockCoreCryptoContext: MockCoreCryptoContextProtocol!
     var mockSafeCoreCrypto: MockSafeCoreCrypto!
     var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
 
     override func setUp() {
         super.setUp()
 
-        mockCoreCrypto = MockCoreCryptoProtocol()
-        mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
+        mockCoreCryptoContext = MockCoreCryptoContextProtocol()
+        mockSafeCoreCrypto = MockSafeCoreCrypto(coreCryptoContext: mockCoreCryptoContext)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
         sut = E2EIVerificationStatusService(coreCryptoProvider: mockCoreCryptoProvider)
     }
 
     override func tearDown() {
-        mockCoreCrypto = nil
+        mockCoreCryptoContext = nil
         mockSafeCoreCrypto = nil
         mockCoreCryptoProvider = nil
 
@@ -53,7 +53,7 @@ class E2EIVerificationStatusServiceTests: ZMConversationTestsBase {
     func test_GetConversationStatus_IsSuccessful() async throws {
         // Given
         let groupID = MLSGroupID.random()
-        mockCoreCrypto.e2eiConversationStateConversationId_MockMethod = { _ in
+        mockCoreCryptoContext.e2eiConversationStateConversationId_MockMethod = { _ in
             .verified
         }
 

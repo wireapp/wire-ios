@@ -19,7 +19,6 @@
 import UIKit
 import WireConversationUI
 import WireFoundation
-import WireSystem
 
 final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellDescription {
     typealias View = BurstTimestampSenderMessageCell
@@ -139,7 +138,7 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
 
 final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
 
-    struct Configuration {
+    struct Configuration: Equatable {
         let date: Date
         let isFirstMessageOfTheDay: Bool
         let showUnreadDot: Bool

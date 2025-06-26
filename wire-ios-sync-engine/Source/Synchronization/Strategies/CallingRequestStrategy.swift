@@ -18,7 +18,6 @@
 
 import Combine
 import Foundation
-import WireAnalytics
 import WireDataModel
 import WireLogging
 import WireRequestStrategy
@@ -55,7 +54,6 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
     public init(
         managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
-        clientRegistrationDelegate: ClientRegistrationDelegate,
         flowManager: FlowManagerType,
         fetchUserClientsUseCase: FetchUserClientsUseCaseProtocol = FetchUserClientsUseCase(),
         messageSender: MessageSenderInterface
@@ -81,13 +79,15 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
 
         if let clientId = selfUser.selfClient()?.remoteIdentifier {
-            self.callCenter = WireCallCenterV3Factory.callCenter(
-                withUserId: selfUser.avsIdentifier,
-                clientId: clientId,
-                uiMOC: managedObjectContext.zm_userInterface,
-                flowManager: flowManager,
-                transport: self
-            )
+            managedObjectContext.zm_userInterface.performAndWait {
+                self.callCenter = WireCallCenterV3Factory.callCenter(
+                    withUserId: selfUser.avsIdentifier,
+                    clientId: clientId,
+                    uiMOC: managedObjectContext.zm_userInterface,
+                    flowManager: flowManager,
+                    transport: self
+                )
+            }
         }
 
         setupEventProcessingNotifications()

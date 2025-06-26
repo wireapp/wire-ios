@@ -145,11 +145,3 @@ public extension SessionManager {
         presentationDelegate?.showUserProfile(user: user)
     }
 }
-
-extension SessionManager {
-
-    var shouldProcessLegacyPushes: Bool {
-        requiredPushTokenType == .voip
-    }
-
-}

@@ -24,7 +24,7 @@ import WireConversationsUIBindings
 
 class WireConversationGroupIconTests: XCTestCase {
 
-    private let conversationID = "12345"
+    private let conversationID = "df712f85-662d-42c5-9a82-0de2a710f754"
     private let viewFactory = WireConversationGroupIconFactory()
     private var snapshotHelper: SnapshotHelper!
 

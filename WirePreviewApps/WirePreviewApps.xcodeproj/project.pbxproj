@@ -11,6 +11,8 @@
 		CB342A1E2D5399DA00810BE0 /* WireAuthenticationUI in Frameworks */ = {isa = PBXBuildFile; productRef = CB342A1D2D5399DA00810BE0 /* WireAuthenticationUI */; };
 		CB89CD8D2D5C7C0E006DDA23 /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = CB89CD8C2D5C7C0E006DDA23 /* WireAPI */; };
 		CB89CD8F2D5C7C0E006DDA23 /* WireAPISupport in Frameworks */ = {isa = PBXBuildFile; productRef = CB89CD8E2D5C7C0E006DDA23 /* WireAPISupport */; };
+		E45380B12DEDCCBF0018F560 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = E45380B02DEDCCBF0018F560 /* WireFoundation */; };
+		E45380B32DEDCCDE0018F560 /* WireMultiBackendUI in Frameworks */ = {isa = PBXBuildFile; productRef = E45380B22DEDCCDE0018F560 /* WireMultiBackendUI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,7 +32,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E45380B32DEDCCDE0018F560 /* WireMultiBackendUI in Frameworks */,
 				CB89CD8F2D5C7C0E006DDA23 /* WireAPISupport in Frameworks */,
+				E45380B12DEDCCBF0018F560 /* WireFoundation in Frameworks */,
 				CB89CD8D2D5C7C0E006DDA23 /* WireAPI in Frameworks */,
 				CB342A1C2D53984600810BE0 /* WireAuthentication in Frameworks */,
 				CB342A1E2D5399DA00810BE0 /* WireAuthenticationUI in Frameworks */,
@@ -88,6 +92,8 @@
 				CB342A1D2D5399DA00810BE0 /* WireAuthenticationUI */,
 				CB89CD8C2D5C7C0E006DDA23 /* WireAPI */,
 				CB89CD8E2D5C7C0E006DDA23 /* WireAPISupport */,
+				E45380B02DEDCCBF0018F560 /* WireFoundation */,
+				E45380B22DEDCCDE0018F560 /* WireMultiBackendUI */,
 			);
 			productName = WireAuthenticationApp;
 			productReference = CB342A0C2D53976B00810BE0 /* WireAuthenticationApp.app */;
@@ -364,6 +370,14 @@
 		CB89CD8E2D5C7C0E006DDA23 /* WireAPISupport */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireAPISupport;
+		};
+		E45380B02DEDCCBF0018F560 /* WireFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireFoundation;
+		};
+		E45380B22DEDCCDE0018F560 /* WireMultiBackendUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireMultiBackendUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

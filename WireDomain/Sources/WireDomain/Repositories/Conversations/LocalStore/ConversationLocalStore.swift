@@ -351,30 +351,6 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
-    public func updateTypingUsers(
-        conversationID: NSManagedObjectID,
-        usersID: Set<NSManagedObjectID>
-    ) async {
-        await context.perform { [context] in
-            if let conversation = context.object(with: conversationID) as? ZMConversation {
-
-                let users = usersID.compactMap {
-                    context.object(with: $0) as? ZMUser
-                }
-
-                context.typingUsers?.update(
-                    typingUsers: Set(users),
-                    in: conversation
-                )
-
-                self.notifyTypingUsers(
-                    Set(users),
-                    in: conversation
-                )
-            }
-        }
-    }
-
     public func obtainPermanentIDs(
         user: ZMUser,
         conversation: ZMConversation

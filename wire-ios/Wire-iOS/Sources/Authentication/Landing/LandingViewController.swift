@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireDomain
 import WireSyncEngine
 import WireSystem
 import WireTransport
@@ -464,7 +465,7 @@ final class LandingViewController: AuthenticationStepViewController {
 
     var isCustomBackend: Bool {
         switch backendEnvironment.environmentType.value {
-        case .production, .staging, .qaDemo, .qaDemo2, .anta, .bella, .chala, .diya, .elna, .foma:
+        case .default, .staging, .anta, .bella, .chala, .diya, .elna, .foma:
             false
         case .custom:
             true

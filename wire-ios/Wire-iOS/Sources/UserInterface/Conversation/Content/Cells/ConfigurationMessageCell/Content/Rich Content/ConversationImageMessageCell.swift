@@ -22,12 +22,17 @@ import WireDesign
 
 final class ConversationImageMessageCell: UIView, ConversationMessageCell, ContextMenuDelegate {
 
-    struct Configuration {
-        let image: ZMImageMessageData
-        let message: ZMConversationMessage
-        var isObfuscated: Bool {
-            message.isObfuscated
+    struct Configuration: Equatable {
+        var image: ZMImageMessageData
+        var message: ZMConversationMessage
+        var isObfuscated: Bool
+
+        static func == (lhs: Configuration, rhs: Configuration) -> Bool {
+            lhs.message == rhs.message &&
+                lhs.image.imageDataIdentifier == rhs.image.imageDataIdentifier &&
+                lhs.isObfuscated == rhs.isObfuscated
         }
+
     }
 
     private var containerView = UIView()
@@ -169,9 +174,17 @@ final class ConversationImageMessageCell: UIView, ConversationMessageCell, Conte
 final class ConversationImageMessageCellDescription: ConversationMessageCellDescription {
 
     typealias View = ConversationImageMessageCell
-    let configuration: View.Configuration
+    var configuration: View.Configuration
 
-    var message: ZMConversationMessage?
+    var message: ZMConversationMessage? {
+        didSet {
+            if let message {
+                configuration.message = message
+                configuration.image = message.imageMessageData!
+            }
+        }
+    }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
@@ -187,7 +200,12 @@ final class ConversationImageMessageCellDescription: ConversationMessageCellDesc
 
     init(message: ZMConversationMessage, image: ZMImageMessageData) {
         self.message = message
-        self.configuration = View.Configuration(image: image, message: message)
+        self.configuration = View
+            .Configuration(
+                image: image,
+                message: message,
+                isObfuscated: message.isObfuscated
+            )
         self.accessibilityLabel = L10n.Accessibility.ConversationSearch.ImageMessage.description
     }
 

@@ -210,10 +210,10 @@
       location = "group:WireAnalytics">
    </FileRef>
    <FileRef
-      location = "group:WireAPI">
+      location = "group:WireAuthentication">
    </FileRef>
    <FileRef
-      location = "group:WireAuthentication">
+      location = "group:WireBackup">
    </FileRef>
    <FileRef
       location = "group:WireCells">
@@ -232,6 +232,9 @@
    </FileRef>
    <FileRef
       location = "group:WireLogging">
+   </FileRef>
+   <FileRef
+      location = "group:WireNetwork">
    </FileRef>
    <FileRef
       location = "group:WirePlugins">

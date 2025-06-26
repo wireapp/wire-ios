@@ -55,10 +55,36 @@ final class ConversationCollapsedMessageCellSnapshotTests: ConversationMessageSn
             "location": MockMessageFactory.locationMessage(),
             "text": MockMessageFactory
                 .textMessage(
-                    withText: "Long long long Long long long Long long long Long long long Long long long Long long long"
+                    withText:
+                    """
+                    Long long long Long long long Long long long Long long long Long long long Long long long\n
+                    Long long long Long long long Long long long Long long long Long long long Long long long
+                    Long long long Long long long Long long long Long long long Long long long Long long long
+                    """
                 )
         ]
         messages.forEach { verify(message: $0.value, named: $0.key) }
+    }
+
+    func testTextCollapsed() {
+        let messages: [String: MockMessage] = [
+            "singleLineText": MockMessageFactory.textMessage(withText: "Single Line text"),
+            "twoLineText": MockMessageFactory.textMessage(withText: "First Line text\n Second line"),
+            "threeLineText": MockMessageFactory.textMessage(
+                withText: "Long long long Long long long Long long long Long long long Long long long Long long long"
+            ),
+            "moreThenThreeLineText": MockMessageFactory
+                .textMessage(
+                    withText:
+                    """
+                    Long long long Long long long Long long long Long long long Long long long Long long long\n
+                    Long long long Long long long Long long long Long long long Long long long Long long long
+                    Long long long Long long long Long long long Long long long Long long long Long long long
+                    """
+                )
+        ]
+        messages.forEach { verify(message: $0.value, named: $0.key) }
+
     }
 
     func testUploadedCell_fromThisDevice_collapseOwnMessagesDisabled() {

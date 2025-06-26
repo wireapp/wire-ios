@@ -24,6 +24,8 @@ import WireRequestStrategy
 // TODO: rename to MockConversation after objc MockConversation is retired
 class SwiftMockConversation: NSObject, Conversation {
 
+    var objectId: Any = UUID()
+
     var isMLSConversationDegraded: Bool = false
     var isProteusConversationDegraded: Bool = false
 
@@ -86,6 +88,8 @@ class SwiftMockConversation: NSObject, Conversation {
     var ciphersuite: WireDataModel.MLSCipherSuite? = .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
 
     var privateChannelPermission: WireDataModel.PrivateChannelPermission = .unset
+
+    var wireCellName: String = ""
 }
 
 final class MockGroupDetailsConversation: SwiftMockConversation, GroupDetailsConversation {

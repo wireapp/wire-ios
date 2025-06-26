@@ -35,7 +35,7 @@ extension ConversationInputBarViewController {
             if UIDevice.isSimulator {
                 let testFilePath = "/var/tmp/video.mp4"
                 if FileManager.default.fileExists(atPath: testFilePath) {
-                    uploadFile(at: URL(fileURLWithPath: testFilePath))
+                    uploadFiles(at: [URL(fileURLWithPath: testFilePath)])
                 }
             }
             return
@@ -120,7 +120,7 @@ extension ConversationInputBarViewController {
             ) { resultURL, _, error in
                 if error == nil,
                    let resultURL {
-                    self.uploadFile(at: resultURL)
+                    self.uploadFiles(at: [resultURL])
                 }
 
                 self.parent?.dismiss(animated: true)

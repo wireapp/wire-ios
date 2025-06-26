@@ -62,7 +62,7 @@ final class UserConnectionView: UIView, Copyable {
 
     private func setup() {
         labelContainer.spacing = 0.0
-        backgroundColor = SemanticColors.View.backgroundConversationView
+        backgroundColor = .clear
         [firstLabel, secondLabel].forEach {
             $0.numberOfLines = 0
             $0.textAlignment = .center

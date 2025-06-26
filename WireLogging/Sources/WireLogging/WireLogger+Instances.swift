@@ -46,6 +46,7 @@ public extension WireLogger {
     static let performance = WireLogger(tag: "performance")
     static let push = WireLogger(tag: "push")
     static let pushChannel = WireLogger(tag: "push-channel")
+    static let webSocket = WireLogger(tag: "websocket")
     static let proteus = WireLogger(tag: "proteus")
     static let session = WireLogger(tag: "session")
     static let sessionManager = WireLogger(tag: "SessionManager")
@@ -63,4 +64,5 @@ public extension WireLogger {
     static let analytics = WireLogger(tag: "analytics")
     static let supportedProtocols = WireLogger(tag: "supported-protocols")
     static let search = WireLogger(tag: "search")
+    static let wireCells = WireLogger(tag: "wire-cells")
 }

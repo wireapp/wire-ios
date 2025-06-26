@@ -17,8 +17,8 @@
 //
 
 import XCTest
-@testable import WireAPI
 @testable import WireDomain
+@testable import WireNetwork
 
 final class UserContactJoinEventNotificationBuilderTests: XCTestCase {
     private var sut: UserContactJoinEventNotificationBuilder!

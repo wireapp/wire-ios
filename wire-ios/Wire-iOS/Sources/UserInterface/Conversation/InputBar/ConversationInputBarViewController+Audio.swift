@@ -238,7 +238,7 @@ extension ConversationInputBarViewController: AudioRecordViewControllerDelegate 
     ) {
 
         let checker = PrivacyWarningChecker(conversation: conversation) { [weak self] in
-            self?.uploadFile(at: recordingURL as URL)
+            self?.uploadFiles(at: [recordingURL])
 
             self?.hideAudioRecordViewController()
         }

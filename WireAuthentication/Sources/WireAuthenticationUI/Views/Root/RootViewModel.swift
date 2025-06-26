@@ -34,21 +34,35 @@ package final class RootViewModel: ObservableObject, Router {
     @Published var modalDestination: RootViewSheet?
     @Published var alert: Alert?
 
+    let isMultibackendEnabled: Bool
+    let hasOtherAccountsProvider: () -> Bool
+
+    var shouldShowSwitchAccountsAlertButton: Bool {
+        isMultibackendEnabled && hasOtherAccountsProvider()
+    }
+
     // MARK: - Dependencies
 
     package let factory: any Factory
     private var cancellable: AnyCancellable?
     private var lastModalDestination: RootViewSheet?
+    private var bridge: WireAuthenticationBridge
 
     // MARK: - Life cycle
 
     package init(
         factory: any Factory,
         bridge: WireAuthenticationBridge,
-        backendInfo: BackendInfo
+        backendInfo: BackendInfo,
+        isMultibackendEnabled: Bool,
+        hasOtherAccountsProvider: @escaping () -> Bool
     ) {
         self.factory = factory
         self.modalDestination = .authFlow(backendInfo: backendInfo)
+        self.isMultibackendEnabled = isMultibackendEnabled
+        self.hasOtherAccountsProvider = hasOtherAccountsProvider
+        self.bridge = bridge
+
         self.cancellable = bridge.inboundEvents.sink { [weak self] event in
             switch event {
             case .didRewindToThisView:
@@ -65,6 +79,10 @@ package final class RootViewModel: ObservableObject, Router {
         path.removeLast(path.count)
     }
 
+    package func pop() {
+        path.removeLast()
+    }
+
     package func navigate(to destination: some Hashable) {
         path.append(destination)
     }
@@ -77,6 +95,10 @@ package final class RootViewModel: ObservableObject, Router {
         self.alert = alert
     }
 
+    public func dismissAlert() {
+        alert = nil
+    }
+
     public func dismissSheet() {
         lastModalDestination = modalDestination
         modalDestination = nil
@@ -84,6 +106,10 @@ package final class RootViewModel: ObservableObject, Router {
 
     func goToAppStore() {
         factory.openAppStoreUseCase().invoke()
+    }
+
+    func switchAccounts() {
+        navigate(to: RootDestination.switchAccounts)
     }
 
     // MARK: - Private

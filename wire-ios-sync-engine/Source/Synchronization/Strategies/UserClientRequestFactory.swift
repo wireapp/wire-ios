@@ -48,7 +48,7 @@ extension UserClientRequestFactory {
         let lastPreKeyPayloadData = payloadForLastPreKey(lastRestortPrekey)
 
         var capabilities = ["legalhold-implicit-consent"]
-        if DeveloperFlag.asyncStreamNotifications.isOn, apiVersion >= .v8 {
+        if DeveloperFlag.consumableNotifications.isOn, apiVersion >= .v8 {
             capabilities.append("consumable-notifications")
         }
 
@@ -178,7 +178,7 @@ extension UserClientRequestFactory {
         // TODO: [WPB-17223] recheck this when this should be triggered `WireDataModel.UserClient.triggerSelfClientCapabilityUpdate(syncContext)`
 
         var capabilities = ["legalhold-implicit-consent"]
-        if DeveloperFlag.asyncStreamNotifications.isOn, apiVersion >= .v8 {
+        if DeveloperFlag.consumableNotifications.isOn, apiVersion >= .v8 {
             capabilities.append("consumable-notifications")
         }
 

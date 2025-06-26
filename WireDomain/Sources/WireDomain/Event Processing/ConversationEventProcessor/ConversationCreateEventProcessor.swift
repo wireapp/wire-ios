@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireLogging
+import WireNetwork
 import WireSystem
 
 struct ConversationCreateEventProcessor: ConversationCreateEventProcessorProtocol {
@@ -25,7 +25,6 @@ struct ConversationCreateEventProcessor: ConversationCreateEventProcessorProtoco
     let repository: any ConversationRepositoryProtocol
 
     func processEvent(_ event: ConversationCreateEvent) async {
-        let conversationID = event.conversationID
         let conversation = event.conversation
         let timestamp = event.timestamp
 

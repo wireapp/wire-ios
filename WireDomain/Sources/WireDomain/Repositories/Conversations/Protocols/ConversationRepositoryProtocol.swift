@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireAPI
 import WireDataModel
+import WireNetwork
 
 // sourcery: AutoMockable
 /// Facilitate access to conversations related domain objects.
@@ -186,14 +186,6 @@ public protocol ConversationRepositoryProtocol {
         senderID: UUID,
         senderDomain: String?,
         date: Date
-    ) async
-
-    /// Updates the typing users for a given conversation.
-    /// - Parameters:
-    ///     - typingUsersInfo: A list of typing users for a given conversation.
-
-    func updateTypingUsers(
-        _ typingUsersInfo: [ConversationTypingUsersInfo]
     ) async
 
     /// Fetches the guest link for a given conversation.

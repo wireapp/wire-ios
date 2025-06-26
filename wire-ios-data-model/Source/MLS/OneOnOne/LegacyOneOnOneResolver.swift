@@ -68,10 +68,18 @@ public final class LegacyOneOnOneResolver: OneOnOneResolverInterface {
                         try await self.resolveOneOnOneConversation(with: userID, in: context)
                     } catch {
                         // skip conversation migration for this user
-                        WireLogger.conversation.error(
-                            "resolve 1-1 conversation failed: \(error)",
-                            attributes: [.senderUserId: userID.safeForLoggingDescription]
-                        )
+                        switch error {
+                        case MigrateMLSOneOnOneConversationError.alreadyMigrated:
+                            WireLogger.conversation.warn(
+                                "Skipping conversation migration: the 1-1 conversation for this user is already migrated.",
+                                attributes: [.senderUserId: userID.safeForLoggingDescription]
+                            )
+                        default:
+                            WireLogger.conversation.error(
+                                "resolve 1-1 conversation failed: \(error)",
+                                attributes: [.senderUserId: userID.safeForLoggingDescription]
+                            )
+                        }
                     }
                 }
             }

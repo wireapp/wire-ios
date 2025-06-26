@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
+import WireNetwork
 
 /// Handles a calling notification (using CallKit in priority if available) related to an incoming / missed call
 struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNotificationBuilderProtocol {
@@ -394,7 +394,7 @@ extension ConversationCallingEventNotificationBuilder {
             let knownCallHandles = userDefaults.object(forKey: Constants.knownCalls) as? [String] ?? []
             let wasCallHandleReported = knownCallHandles.contains(handle)
 
-            let initiatesRinging = callContent.isIncomingCall || wasCallHandleReported
+            let initiatesRinging = callContent.isIncomingCall && !wasCallHandleReported
             let terminatesRinging = (
                 callContent.isEndCall || callContent.isAnsweredElsewhere || callContent
                     .isRejected

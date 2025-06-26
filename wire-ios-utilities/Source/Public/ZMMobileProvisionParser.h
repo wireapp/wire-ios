@@ -29,7 +29,6 @@ typedef NS_ENUM(int8_t, ZMAPSEnvironment) {
 typedef NS_ENUM(int8_t, ZMProvisionTeam) {
     ZMProvisionTeamUnknown = 0,
     ZMProvisionTeamAppStore,
-    ZMProvisionTeamEnterprise,
 };
 
 

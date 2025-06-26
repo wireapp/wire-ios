@@ -144,12 +144,12 @@ final class AudioRecorder: NSObject, AudioRecorderType {
         }
 
         let fileName = String.filename(for: selfUser).appendingPathExtension(format.fileExtension())!
-        let fileURL = NSURL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(fileName)
+        let fileURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(fileName)
         self.fileURL = fileURL
 
         let audioRecorder = makeAudioRecorder(
             audioFormatID: format.audioFormat(),
-            fileURL: fileURL!
+            fileURL: fileURL
         )
 
         NotificationCenter.default.addObserver(

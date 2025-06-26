@@ -16,18 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
 import WireLogging
+import WireNetwork
 import WireProtos
 
-struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcessorProtocol {
+public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcessorProtocol {
 
     let messageLocalStore: any MessageLocalStoreProtocol
     let conversationLocalStore: any ConversationLocalStoreProtocol
     let userLocalStore: any UserLocalStoreProtocol
 
-    func processProtobufMessage(
+    public init(
+        messageLocalStore: any MessageLocalStoreProtocol,
+        conversationLocalStore: any ConversationLocalStoreProtocol,
+        userLocalStore: any UserLocalStoreProtocol
+    ) {
+        self.messageLocalStore = messageLocalStore
+        self.conversationLocalStore = conversationLocalStore
+        self.userLocalStore = userLocalStore
+    }
+
+    public func processProtobufMessage(
         _ message: GenericMessage,
         content: GenericMessage.OneOf_Content,
         conversation: ZMConversation,
@@ -96,10 +106,15 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
                 date: date
             )
 
-        case .confirmation:
+        case let .confirmation(confirmation):
 
-            // Some logic was done here but it seems unnecessary - see legacy `ZMOTRMessage+UpdateEvent`
-            break
+            await messageLocalStore.addMessageConfirmation(
+                confirmation,
+                in: conversation,
+                senderID: senderID.uuid,
+                senderDomain: senderID.domain,
+                date: date
+            )
 
         case let .buttonActionConfirmation(buttonActionConfirmation):
 
@@ -139,14 +154,22 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
                 conversationDomain: conversationID.domain
             )
 
-        case .calling, .availability:
+        case let .availability(availability):
+            let userID = WireDataModel.QualifiedID(uuid: senderID.uuid, domain: senderID.domain)
+            let userAvailability = WireDataModel.Availability(proto: availability)
+            await userLocalStore.updateUser(
+                with: userID,
+                availability: userAvailability
+            )
 
-            // cases not handled
+        case .calling:
+
+            // case not handled here, see `onProcessedCallEvent`
             break
 
         case .inCallEmoji:
 
-            // Not supported yet, just discard.
+            // Not supported yet, just discard. TODO: [WPB-11770] implement here
             break
 
         case .image, .asset:
@@ -181,7 +204,7 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
                 )
             }
 
-        case .text, .knock, .location, .composite, .buttonAction:
+        case .text, .knock, .location, .composite, .buttonAction, .multipart:
 
             try await processMessageContent(
                 message: message,
@@ -199,7 +222,7 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
             break
 
         case .inCallHandRaise:
-            break // Not handled yet
+            break // Not handled yet, TODO: [WPB-11769] implement here
         }
     }
 

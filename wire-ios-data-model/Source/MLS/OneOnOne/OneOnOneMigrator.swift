@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol OneOnOneMigratorInterface {
@@ -147,13 +148,19 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
             ) else {
                 throw MigrateMLSOneOnOneConversationError.failedToActivateConversation
             }
-            guard !mlsConversation.migratedToMLS else {
-                throw MigrateMLSOneOnOneConversationError.alreadyMigrated
-            }
+
             guard let otherUser = ZMUser.fetch(with: userID, in: context) else {
                 throw MigrateMLSOneOnOneConversationError.failedToActivateConversation
             }
 
+            guard !(mlsConversation.migratedToMLS && otherUser.oneOnOneConversation == mlsConversation) else {
+                throw MigrateMLSOneOnOneConversationError.alreadyMigrated
+            }
+
+            WireLogger.conversation
+                .info(
+                    "Migrating messages and link the MLS conversation if needed. Conversation is migrated to MLS: \(mlsConversation.migratedToMLS), is oneOnOneConversation MLS: \(otherUser.oneOnOneConversation == mlsConversation)"
+                )
             // Note on proteus, it's possible to have duplicate 1-1 conversations, so we need to fetch all relevant
             // 1-1 conversations here.
             let source = OneOnOneSource(context: context)

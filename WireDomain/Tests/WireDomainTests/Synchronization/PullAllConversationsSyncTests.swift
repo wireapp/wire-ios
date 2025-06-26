@@ -16,11 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPISupport
+import WireNetworkSupport
 import XCTest
-@testable import WireAPI
+
 @testable import WireDomain
 @testable import WireDomainSupport
+@testable import WireNetwork
 
 final class PullAllConversationsSyncTests: XCTestCase {
 
@@ -159,11 +160,11 @@ private enum Scaffolding {
     static let isFederationEnabled = false
     static let isMLSEnabled = false
 
-    static let conversationID1 = QualifiedID(uuid: UUID(), domain: localDomain)
-    static let conversationID2 = QualifiedID(uuid: UUID(), domain: localDomain)
-    static let conversationID3 = QualifiedID(uuid: UUID(), domain: localDomain)
+    static let conversationID1 = WireNetwork.QualifiedID(uuid: UUID(), domain: localDomain)
+    static let conversationID2 = WireNetwork.QualifiedID(uuid: UUID(), domain: localDomain)
+    static let conversationID3 = WireNetwork.QualifiedID(uuid: UUID(), domain: localDomain)
 
-    static var conversationIDs: [QualifiedID] {
+    static var conversationIDs: [WireNetwork.QualifiedID] {
         [
             conversationID1,
             conversationID2,
@@ -171,7 +172,7 @@ private enum Scaffolding {
         ]
     }
 
-    static let remoteConversation1 = WireAPI.Conversation(
+    static let remoteConversation1 = WireNetwork.Conversation(
         id: conversationID1.uuid,
         qualifiedID: conversationID1,
         teamID: UUID(),

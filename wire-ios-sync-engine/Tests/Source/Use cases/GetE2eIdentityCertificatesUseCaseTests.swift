@@ -30,13 +30,13 @@ final class GetE2eIdentityCertificatesUseCaseTests: XCTestCase {
     private var sut: GetE2eIdentityCertificatesUseCase!
     private var coreCryptoProvider: MockCoreCryptoProviderProtocol!
     private var safeCoreCrypto: MockSafeCoreCrypto!
-    private var coreCrypto: MockCoreCryptoProtocol!
+    private var coreCryptoContext: MockCoreCryptoContextProtocol!
 
     override func setUp() async throws {
         try await super.setUp()
         stack = try await coreDataStackHelper.createStack()
-        coreCrypto = MockCoreCryptoProtocol()
-        safeCoreCrypto = MockSafeCoreCrypto(coreCrypto: coreCrypto)
+        coreCryptoContext = MockCoreCryptoContextProtocol()
+        safeCoreCrypto = MockSafeCoreCrypto(coreCryptoContext: coreCryptoContext)
         coreCryptoProvider = MockCoreCryptoProviderProtocol()
         coreCryptoProvider.coreCrypto_MockValue = safeCoreCrypto
         sut = GetE2eIdentityCertificatesUseCase(
@@ -48,7 +48,7 @@ final class GetE2eIdentityCertificatesUseCaseTests: XCTestCase {
     override func tearDown() async throws {
         stack = nil
         sut = nil
-        coreCrypto = nil
+        coreCryptoContext = nil
         safeCoreCrypto = nil
         coreCryptoProvider = nil
         try coreDataStackHelper.cleanupDirectory()
@@ -135,7 +135,7 @@ final class GetE2eIdentityCertificatesUseCaseTests: XCTestCase {
             status: .revoked
         )
 
-        coreCrypto.getDeviceIdentitiesConversationIdDeviceIds_MockMethod = { _, _ in
+        coreCryptoContext.getDeviceIdentitiesConversationIdDeviceIds_MockMethod = { _, _ in
             [
                 validIdentity,
                 identityWithInvalidHandle,

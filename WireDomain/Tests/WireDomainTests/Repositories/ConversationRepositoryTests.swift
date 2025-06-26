@@ -16,13 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
+import WireNetworkSupport
 import XCTest
-@testable import WireAPI
 @testable import WireDomain
+@testable import WireNetwork
 
 final class ConversationRepositoryTests: XCTestCase {
 
@@ -578,26 +578,6 @@ final class ConversationRepositoryTests: XCTestCase {
                 conversationID: Scaffolding.id.uuidString
             )
         }
-    }
-
-    func testUpdateTypingUsers_It_Invokes_Local_Store_Method() async throws {
-
-        // Mock
-
-        conversationsLocalStore.updateTypingUsersConversationIDUsersID_MockMethod = { _, _ in }
-
-        let typingUsersInfo = ConversationTypingUsersInfo(
-            users: Set([NSManagedObjectID()]),
-            conversationID: NSManagedObjectID()
-        )
-
-        // When
-
-        await sut.updateTypingUsers([typingUsersInfo])
-
-        // Then
-
-        XCTAssertEqual(conversationsLocalStore.updateTypingUsersConversationIDUsersID_Invocations.count, 1)
     }
 
     private enum Scaffolding {

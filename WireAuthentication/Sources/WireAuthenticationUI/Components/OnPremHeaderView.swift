@@ -25,16 +25,18 @@ package struct OnPremHeaderView: View {
     @State private var showCustomBackendAlert = false
     private let backendConfig: BackendConfig
 
+    private typealias Strings = L10n.Localizable.OnPremUserLogin
+
     package init(backendConfig: BackendConfig) {
         self.backendConfig = backendConfig
     }
 
     private var backendInfo: String {
         [
-            L10n.OnPremUserLogin.Alert.Message.backendName,
+            Strings.Alert.Message.backendName,
             backendConfig.title,
             "",
-            L10n.OnPremUserLogin.Alert.Message.backendUrl,
+            Strings.Alert.Message.backendUrl,
             backendConfig.endpoints.backendURL.absoluteString
         ].joined(separator: "\n")
     }
@@ -43,7 +45,7 @@ package struct OnPremHeaderView: View {
         Button(action: {
             showCustomBackendAlert.toggle()
         }, label: {
-            Text(L10n.OnPremUserLogin.title(backendConfig.title) + " ")
+            Text(Strings.title(backendConfig.title) + " ")
                 .foregroundColor(ColorTheme.Buttons.Secondary.onEnabled.color)
                 + Text(Image(systemName: "info.circle"))
                 .foregroundColor(.gray)
@@ -52,8 +54,8 @@ package struct OnPremHeaderView: View {
         .font(.textStyle(.h2))
         .lineLimit(nil)
         .fixedSize(horizontal: false, vertical: true)
-        .alert(L10n.OnPremUserLogin.Alert.title, isPresented: $showCustomBackendAlert) {
-            Button(L10n.OnPremUserLogin.Alert.button, role: .cancel) {}
+        .alert(Strings.Alert.title, isPresented: $showCustomBackendAlert) {
+            Button(Strings.Alert.button, role: .cancel) {}
         } message: {
             Text(backendInfo)
         }

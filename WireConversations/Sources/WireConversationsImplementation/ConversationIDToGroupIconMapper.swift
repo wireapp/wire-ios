@@ -26,8 +26,10 @@ package final class ConversationIDToGroupIconMapper: ConversationIDToPaletteMapp
     package init() {}
 
     package func palette(for conversationID: String) -> WireConversationGroupIconAsset {
+        // make sure id is lowercased
+        let id = conversationID.lowercased()
         // Calculate the combined hash
-        let hashValue = stringHashCode(conversationID)
+        let hashValue = stringHashCode(id)
         // Convert to positive Int for indexing
         let index = abs(Int(hashValue)) % palette.count
         return palette[index]

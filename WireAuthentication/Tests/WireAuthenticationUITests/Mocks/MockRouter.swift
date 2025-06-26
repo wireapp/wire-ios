@@ -27,6 +27,8 @@ final class MockRouter: Router {
 
     func popToRoot() {}
 
+    func pop() {}
+
     func navigate(to destination: some Hashable) {
         navigate_Invocations.append(destination)
     }

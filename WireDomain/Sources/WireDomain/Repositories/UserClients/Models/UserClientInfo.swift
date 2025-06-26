@@ -16,15 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
+import WireNetwork
 
 public struct UserClientInfo: Sendable {
 
     let id: String
     let label: String?
     let type: WireDataModel.DeviceType
-    let activationDate: Date
+    let activationDate: Date?
     let model: String?
     let deviceClass: WireDataModel.DeviceClass?
     let lastActiveDate: Date?

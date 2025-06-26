@@ -27,7 +27,7 @@ class CheckOneOnOneConversationIsReadyUseCaseTests: XCTestCase {
     private var sut: CheckOneOnOneConversationIsReadyUseCase!
     private var coreDataStack: CoreDataStack!
     private var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
-    private var mockCoreCrypto: MockCoreCryptoProtocol!
+    private var mockCoreCryptoContext: MockCoreCryptoContextProtocol!
     private var syncMOC: NSManagedObjectContext!
     private var user: ZMUser!
     private var userID: QualifiedID!
@@ -38,9 +38,9 @@ class CheckOneOnOneConversationIsReadyUseCaseTests: XCTestCase {
         coreDataStack = try await coreDataStackHelper.createStack()
         syncMOC = coreDataStack.syncContext
 
-        mockCoreCrypto = MockCoreCryptoProtocol()
+        mockCoreCryptoContext = MockCoreCryptoContextProtocol()
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
-        mockCoreCryptoProvider.coreCrypto_MockValue = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
+        mockCoreCryptoProvider.coreCrypto_MockValue = MockSafeCoreCrypto(coreCryptoContext: mockCoreCryptoContext)
 
         sut = CheckOneOnOneConversationIsReadyUseCase(
             context: syncMOC,
@@ -54,7 +54,7 @@ class CheckOneOnOneConversationIsReadyUseCaseTests: XCTestCase {
         sut = nil
         coreDataStack = nil
         mockCoreCryptoProvider = nil
-        mockCoreCrypto = nil
+        mockCoreCryptoContext = nil
         syncMOC = nil
         user = nil
         super.tearDown()
@@ -88,7 +88,7 @@ class CheckOneOnOneConversationIsReadyUseCaseTests: XCTestCase {
     func test_ItReturnsTrue_WhenConversationExists_MLS_Established() async throws {
         // Given
         await setupOneOnOne(messageProtocol: .mls, groupID: .random())
-        mockCoreCrypto.conversationExistsConversationId_MockValue = true
+        mockCoreCryptoContext.conversationExistsConversationId_MockValue = true
 
         // When
         let isReady = try await sut.invoke(userID: userID)
@@ -100,7 +100,7 @@ class CheckOneOnOneConversationIsReadyUseCaseTests: XCTestCase {
     func test_ItReturnsFalse_WhenConversationExists_MLS_NotEstablished() async throws {
         // Given
         await setupOneOnOne(messageProtocol: .mls, groupID: .random())
-        mockCoreCrypto.conversationExistsConversationId_MockValue = false
+        mockCoreCryptoContext.conversationExistsConversationId_MockValue = false
 
         // When
         let isReady = try await sut.invoke(userID: userID)

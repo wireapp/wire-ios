@@ -28,7 +28,6 @@ class CallingRequestStrategyTests: MessagingTest {
 
     var sut: CallingRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
-    var mockRegistrationDelegate: ClientRegistrationDelegate!
     var mockFetchUserClientsUseCase: MockFetchUserClientsUseCase!
     var mockMessageSender: MockMessageSenderInterface!
 
@@ -44,7 +43,6 @@ class CallingRequestStrategyTests: MessagingTest {
 
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .online
-        mockRegistrationDelegate = MockClientRegistrationDelegate()
         mockFetchUserClientsUseCase = MockFetchUserClientsUseCase()
         mockMessageSender = MockMessageSenderInterface()
 
@@ -52,7 +50,6 @@ class CallingRequestStrategyTests: MessagingTest {
             sut = CallingRequestStrategy(
                 managedObjectContext: syncMOC,
                 applicationStatus: mockApplicationStatus,
-                clientRegistrationDelegate: mockRegistrationDelegate,
                 flowManager: FlowManagerMock(),
                 fetchUserClientsUseCase: mockFetchUserClientsUseCase,
                 messageSender: mockMessageSender
@@ -71,7 +68,6 @@ class CallingRequestStrategyTests: MessagingTest {
 
     override func tearDown() {
         sut = nil
-        mockRegistrationDelegate = nil
         mockApplicationStatus = nil
         mockFetchUserClientsUseCase = nil
 
@@ -499,7 +495,6 @@ class CallingRequestStrategyTests: MessagingTest {
             sut = CallingRequestStrategy(
                 managedObjectContext: syncMOC,
                 applicationStatus: mockApplicationStatus,
-                clientRegistrationDelegate: mockRegistrationDelegate,
                 flowManager: FlowManagerMock(),
                 fetchUserClientsUseCase: mockFetchUserClientsUseCase,
                 messageSender: mockMessageSender

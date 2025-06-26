@@ -170,14 +170,10 @@ extension WireTransport.EnvironmentType {
 
     init(_ environmentType: WireAuthentication.BackendEnvironmentType) {
         switch environmentType {
-        case .production:
-            self = .production
+        case .default:
+            self = .default
         case .staging:
             self = .staging
-        case .qaDemo:
-            self = .qaDemo
-        case .qaDemo2:
-            self = .qaDemo2
         case .anta:
             self = .anta
         case .bella:
@@ -201,14 +197,10 @@ extension WireAuthentication.BackendEnvironmentType {
 
     init(_ environmentType: WireTransport.EnvironmentType) {
         switch environmentType {
-        case .production:
-            self = .production
+        case .default:
+            self = .default
         case .staging:
             self = .staging
-        case .qaDemo:
-            self = .qaDemo
-        case .qaDemo2:
-            self = .qaDemo2
         case .anta:
             self = .anta
         case .bella:

@@ -20,7 +20,7 @@ import Foundation
 import WireDataModel
 import WireLogging
 
-public class ConversationEventProcessor: NSObject, ConversationEventProcessorProtocol, ZMEventAsyncConsumer {
+public class ConversationEventProcessor: NSObject, LegacyConversationEventProcessorProtocol, ZMEventAsyncConsumer {
 
     // MARK: - Properties
 

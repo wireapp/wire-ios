@@ -123,7 +123,13 @@ public extension ZMConversation {
         _ content: MessageCapable,
         in context: NSManagedObjectContext
     ) throws -> ZMClientMessage? {
-        guard let selfConversation = ZMConversation.fetchSelfMLSConversation(in: context) else {
+        let selfClient = ZMUser.selfUser(in: context).selfClient()
+        let hasRegisteredMLSClient = selfClient?.hasRegisteredMLSClient ?? false
+
+        guard
+            hasRegisteredMLSClient,
+            let selfConversation = ZMConversation.fetchSelfMLSConversation(in: context)
+        else {
             return nil
         }
 
