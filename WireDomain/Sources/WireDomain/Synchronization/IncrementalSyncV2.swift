@@ -26,6 +26,11 @@ import WireNetwork
 /// IncrementalSync using new backend API consumable notifications sync system
 public struct IncrementalSyncV2: LiveSyncProtocol {
 
+    enum Failure: Error {
+        /// Contains the error of envelope that failed + all envelopes that did succeed processed
+        case processingError(Error, processedEnvelopes: [UpdateEventEnvelope])
+    }
+
     private let selfClientID: String
     private let pushChannelAPI: any PushChannelV2API
     private let decryptor: any UpdateEventDecryptorProtocol
@@ -125,6 +130,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                         )
                         try await processor.processEvent(event)
                     } catch {
+                        // TODO: [WPB-10458] review handling errors of processingEvents
                         logger.error(
                             "failed to process stored event, dropping: \(error)",
                             attributes: .syncAttributes(initialSync: false) + [.eventEnvelopeID: envelope.id]
@@ -178,10 +184,10 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                     // ignore this event, it gives the number of messages until we're caught up
                     try await pushChannel.acknowledgeMessageCount()
                 case let .events(envelopes):
-
+                    // should we let it throw and we start again
                     do {
-                        try await processEnvelopes(
-                            envelopes,
+                        try await processBatch(
+                            envelopes: envelopes,
                             pushChannel: pushChannel,
                             processedEnvelopeIDs: processedEnvelopeIDs
                         )
@@ -189,7 +195,16 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                         if let lastEnvelope = envelopes.last {
                             await acknowledgeUntilEnvelope(lastEnvelope, through: pushChannel)
                         }
+                    } catch let Failure.processingError(_, processedEnvelopes) {
+                        for envelope in processedEnvelopes {
+                            await acknowledgeEnvelope(envelope, through: pushChannel)
+                        }
+                        // TODO: [WPB-10458] review handling errors of processingEvents
+                        // in case of thrown errors, we skip to the next event
+                        // errors are already logged if needed
+                        continue
                     } catch {
+                        // TODO: [WPB-10458] review handling errors of processingEvents
                         // in case of thrown errors, we skip to the next event
                         // errors are already logged if needed
                         continue
@@ -213,8 +228,8 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
 
     // MARK: - Event Steps
 
-    private func processEnvelopes(
-        _ envelopes: [UpdateEventEnvelope],
+    private func processBatch(
+        envelopes: [UpdateEventEnvelope],
         pushChannel: PushChannelV2Protocol,
         processedEnvelopeIDs: Set<UUID>
     ) async throws {
@@ -229,8 +244,10 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                         "live event already processed, skipping...",
                         attributes: .syncAttributes(initialSync: false) + [.eventEnvelopeID: envelope.id]
                     )
-                    // TODO: [WPB-17947] handle duplicate events, reacknowledge and move on
-                    // will need to store the deliveryTag...
+                    // TODO: [WPB-17947] handle duplicate events
+                    if let deliveryTag = envelope.deliveryTag {
+                        await acknowledgeEnvelope(envelope, through: pushChannel)
+                    }
                     continue
                 }
 
@@ -243,12 +260,23 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         }
 
         // store
+        var envelopeIdsToDelete = [Int64]()
         for (envelope, index) in storedEnvelopes {
-            await processEnvelope(envelope)
-            // CHECK should not delete failed to process envelope so it's retried later
+            do {
+                try await processEnvelope(envelope)
+                envelopeIdsToDelete.append(index)
+            } catch {
+                logger.error(
+                    "Failed to process envelope: \(error)",
+                    attributes: .syncAttributes(initialSync: false) + [.eventEnvelopeID: envelope.id]
+                )
+                let envelopes = storedEnvelopes.filter { envelopeIdsToDelete.contains($0.1) }.compactMap(\.0)
+                throw Failure.processingError(error, processedEnvelopes: envelopes)
+            }
         }
 
-        await deleteEnvelopes(at: storedEnvelopes.map(\.1))
+        // only delete successful processed envelopes
+        await deleteEnvelopes(at: envelopeIdsToDelete)
 
         await updateEventsStore.calculateLastUnreadMessages()
         await save()
@@ -315,26 +343,39 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
             }
         } catch {
             logger.error(
+                "failed to acknowledge multiple event envelopes up to: \(String(describing: error))",
+                attributes: [.eventEnvelopeID: envelope.id] + .syncAttributes(initialSync: false)
+            )
+        }
+    }
+
+    private func acknowledgeEnvelope(
+        _ envelope: UpdateEventEnvelope,
+        through pushChannel: PushChannelV2Protocol
+    ) async {
+        do {
+            if let deliveryTag = envelope.deliveryTag {
+                logger.debug(
+                    "ack event envelope",
+                    attributes: [.eventEnvelopeID: envelope.id] + .syncAttributes(initialSync: false)
+                )
+                try await pushChannel.acknowledgeEvent(deliveryTag: deliveryTag, multiple: false)
+            }
+        } catch {
+            logger.error(
                 "failed to acknowledge live event envelope: \(String(describing: error))",
                 attributes: [.eventEnvelopeID: envelope.id] + .syncAttributes(initialSync: false)
             )
         }
     }
 
-    private func processEnvelope(_ envelope: UpdateEventEnvelope) async {
+    private func processEnvelope(_ envelope: UpdateEventEnvelope) async throws {
         for event in envelope.events {
-            do {
-                logger.debug(
-                    "processing live event: \(event.name)",
-                    attributes: [.eventEnvelopeID: envelope.id]
-                )
-                try await processor.processEvent(event)
-            } catch {
-                logger.error(
-                    "failed to process live event: \(String(describing: error))",
-                    attributes: [.eventEnvelopeID: envelope.id] + .syncAttributes(initialSync: false)
-                )
-            }
+            logger.debug(
+                "processing live event: \(event.name)",
+                attributes: [.eventEnvelopeID: envelope.id]
+            )
+            try await processor.processEvent(event)
         }
     }
 
