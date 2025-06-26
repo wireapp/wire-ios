@@ -36,7 +36,7 @@ struct HistoryDepthViewModel {
             systemName: "clock.arrow.trianglehead.counterclockwise.rotate.90"
         )?.withTintColor(iconColor, renderingMode: .alwaysOriginal)
     }
-    
+
     func createSystemMessage(template: String) -> NSAttributedString {
         var updateText: NSAttributedString
 
@@ -60,13 +60,19 @@ struct HistoryDepthViewModel {
         } else {
             if let text {
                 let otherUserName = sender.name ?? L10n.Localizable.Conversation.Status.someone
-                updateText = NSAttributedString(string: template.localized(args: otherUserName, text), attributes: baseAttributes)
-                    .adding(font: .mediumSemiboldFont, to: otherUserName)
-                    .adding(font: .mediumSemiboldFont, to: text)
+                updateText = NSAttributedString(
+                    string: template.localized(args: otherUserName, text),
+                    attributes: baseAttributes
+                )
+                .adding(font: .mediumSemiboldFont, to: otherUserName)
+                .adding(font: .mediumSemiboldFont, to: text)
             } else {
                 let otherUserName = sender.name ?? L10n.Localizable.Conversation.Status.someone
-                updateText = NSAttributedString(string: template.localized(args: otherUserName), attributes: baseAttributes)
-                    .adding(font: .mediumSemiboldFont, to: otherUserName)
+                updateText = NSAttributedString(
+                    string: template.localized(args: otherUserName),
+                    attributes: baseAttributes
+                )
+                .adding(font: .mediumSemiboldFont, to: otherUserName)
             }
         }
 
@@ -75,7 +81,8 @@ struct HistoryDepthViewModel {
 
     func attributedTitle() -> NSAttributedString? {
         createSystemMessage(
-            template: text != nil ? "content.system.message_history_depth" : "content.system.message_history_depth_disabled"
+            template: text != nil ? "content.system.message_history_depth" :
+                "content.system.message_history_depth_disabled"
         )
     }
 

@@ -51,7 +51,7 @@ final class ConversationSystemMessageChannelHistoryDepthSnapshotTests: Conversat
             messageType: .channelHistoryDepthModified,
             text: "13 days"
         )
-        
+
         verify(message: message)
     }
 
@@ -60,24 +60,24 @@ final class ConversationSystemMessageChannelHistoryDepthSnapshotTests: Conversat
             messageType: .channelHistoryDepthModified,
             text: "13 days"
         )
-        
+
         message.senderUser = otherUser
         verify(message: message)
     }
-    
+
     func testChannelHistoryDepthDisabledForSelfUser() {
         let message = makeMessage(
             messageType: .channelHistoryDepthModified
         )
-        
+
         verify(message: message)
     }
-    
+
     func testChannelHistoryDepthDisabledForOtherUser() {
         let message = makeMessage(
             messageType: .channelHistoryDepthModified
         )
-        
+
         message.senderUser = otherUser
         verify(message: message)
     }

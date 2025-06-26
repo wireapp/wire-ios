@@ -110,7 +110,7 @@ public enum SystemMessageType: Sendable {
         sender: (id: UUID, domain: String?),
         date: Date
     )
-    
+
     case channelHistoryDepthModified(
         sender: (id: UUID, domain: String?),
         newHistoryDepth: String?

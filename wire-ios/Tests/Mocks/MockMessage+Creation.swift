@@ -128,7 +128,7 @@ enum MockMessageFactory {
             reason: reason,
             domains: domains
         )
-        
+
         mockSystemMessageData.text = text
 
         message.serverTimestamp = Date(timeIntervalSince1970: 12_345_678_564)
