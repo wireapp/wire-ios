@@ -321,10 +321,11 @@ public final class ClientSessionComponent {
         api: userConnectionsAPI,
         store: userConnectionsStore
     )
-    
-    private lazy var pullServerTimeSync = PullServerTimeSync(api: updateEventsAPI, store: updateEventsLocalStore
+
+    private lazy var pullServerTimeSync = PullServerTimeSync(
+        api: updateEventsAPI,
+        store: updateEventsLocalStore
     )
-    
 
     // MARK: - Push syncs
 

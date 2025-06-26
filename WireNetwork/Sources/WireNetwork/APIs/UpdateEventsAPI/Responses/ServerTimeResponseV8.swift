@@ -19,7 +19,7 @@ import Foundation
 
 struct ServerTimeResponseV8: Decodable, ToAPIModelConvertible {
     let time: UTCTime
-    
+
     func toAPIModel() -> Date {
         time.date
     }

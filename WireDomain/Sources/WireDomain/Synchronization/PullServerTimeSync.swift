@@ -33,7 +33,6 @@ struct PullServerTimeSync: PullServerTimeSyncProtocol {
     func pull() async throws {
         let serverTime = try await api.getServerTime()
         await store.storeServerTimeDelta(serverTime.timeIntervalSinceNow)
-        )
     }
 
 }

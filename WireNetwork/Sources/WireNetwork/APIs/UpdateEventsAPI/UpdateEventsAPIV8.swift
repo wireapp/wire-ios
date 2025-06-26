@@ -20,7 +20,7 @@ import Foundation
 
 final class UpdateEventsAPIV8: UpdateEventsAPIV7 {
     override var apiVersion: APIVersion { .v8 }
-    
+
     override func getServerTime() async throws -> Date {
         let path = "\(pathPrefix)/time"
 
@@ -36,6 +36,6 @@ final class UpdateEventsAPIV8: UpdateEventsAPIV7 {
         return try ResponseParser()
             .success(code: .ok, type: ServerTimeResponseV8.self)
             .parse(code: response.statusCode, data: data)
-        
+
     }
 }

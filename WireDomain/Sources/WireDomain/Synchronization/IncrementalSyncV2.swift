@@ -65,7 +65,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         logger.debug("performing live sync", attributes: .syncAttributes(initialSync: false))
 
         try await pullServerTimeSync.pull()
-        
+
         let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID)
 
         logger.debug("opening new push channel", attributes: .syncAttributes(initialSync: false))

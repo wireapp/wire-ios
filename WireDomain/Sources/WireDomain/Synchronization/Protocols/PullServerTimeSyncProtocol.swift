@@ -18,7 +18,7 @@
 
 // sourcery: AutoMockable
 /// An object to keep the server time up to date.
-protocol PullServerTimeSyncProtocol {
+public protocol PullServerTimeSyncProtocol {
 
     /// Fetch servertime from remote, then store it locally.
 
