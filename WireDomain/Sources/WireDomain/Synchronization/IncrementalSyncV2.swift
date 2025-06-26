@@ -27,7 +27,7 @@ import WireNetwork
 public struct IncrementalSyncV2: LiveSyncProtocol {
 
     enum Failure: Error {
-        /// Contains the error of envelope that failed + all envelopes that did succeed processed
+        /// Contains all envelopes that were successfully processed
         case uncompleteBatchProcessed(processedEnvelopes: [UpdateEventEnvelope])
     }
 
