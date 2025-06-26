@@ -20,6 +20,8 @@ import Foundation
 
 enum BackendClient {
 
+    static let backendURL = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL"]!)"
+
     static func loginViaAPI(email: String, password: String) async throws -> String {
         let envVariables = try EnvironmentVariables()
         let requestUrl = envVariables.backendURL.appending(path: "v8/login")
@@ -27,7 +29,6 @@ enum BackendClient {
         var request = URLRequest(url: requestUrl)
         request.httpMethod = "POST"
         let body: [String: Any] = ["email": "\(email)", "password": "\(password)"]
-        print(body)
         request.httpBody = try? JSONSerialization.data(withJSONObject: body, options: .prettyPrinted)
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue("application/json", forHTTPHeaderField: "Accept")
@@ -62,8 +63,78 @@ enum BackendClient {
         }
     }
 
+    static func getActivationCode(email: String) async throws -> (code: String, key: String) {
+        let url = URL(string: "\(backendURL)/i/users/activation-code?email=\(email)")
+        let auth = ProcessInfo.processInfo.environment["BASIC_AUTH"]!
+        guard let requestUrl = url else { fatalError() }
+        var request = URLRequest(url: requestUrl)
+        request.httpMethod = "GET"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        request.addValue("Basic \(auth)", forHTTPHeaderField: "Authorization")
+
+        let (responseData, response) = try await URLSession.shared.data(for: request)
+
+        let pureResponse = response as! HTTPURLResponse
+        if pureResponse.statusCode != 200 {
+            print("Error! got status code \(pureResponse.statusCode)")
+            print("Response: \(pureResponse.description)")
+            throw RuntimeError("Error \(pureResponse.description)")
+        }
+
+        let message: ActivationCodeReponse = try JSONDecoder().decode(ActivationCodeReponse.self, from: responseData)
+        return (message.code, message.key)
+    }
+
+    static func registerPersonalUser(_ user: UserInfo) async throws -> UserInfo {
+        var body: [String: Any] = [
+            "email": user.email,
+            "password": user.password,
+            "name": user.name
+        ]
+        let response = try await httpPostRequest(url: "\(backendURL)/register", body: body)
+        let userData: UserResponse = try JSONDecoder().decode(UserResponse.self, from: response)
+        var updatedUser = UserInfo()
+        updatedUser.name = userData.name
+        updatedUser.email = userData.email
+        updatedUser.id = userData.id
+        updatedUser.backendDomain = userData.qualified_id.domain
+        return updatedUser
+    }
+
+    private static func httpPostRequest(url: String, body: [String: Any]) async throws -> Data {
+        guard let requestUrl = URL(string: url) else { fatalError() }
+        var request = URLRequest(url: requestUrl)
+        request.httpMethod = "POST"
+        request.httpBody = try? JSONSerialization.data(withJSONObject: body, options: .prettyPrinted)
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        let (responseData, response) = try await URLSession.shared.data(for: request)
+        let pureResponse = response as! HTTPURLResponse
+        if pureResponse.statusCode != 201 {
+            throw RuntimeError("Error \(pureResponse.description)")
+        }
+        return responseData
+    }
 }
 
 private struct LoginMessage: Decodable {
     let access_token: String
+}
+
+private struct UserResponse: Decodable {
+    let email: String
+    let id: String
+    let name: String
+    let qualified_id: QualifiedID
+}
+
+private struct QualifiedID: Decodable {
+    let domain: String
+    let id: String
+}
+
+private struct ActivationCodeReponse: Decodable {
+    let code: String
+    let key: String
 }

@@ -119,7 +119,7 @@ final class UpdateEventsAPITests: XCTestCase {
         let sut = UpdateEventsAPIV0(apiService: apiService)
 
         // When
-        var pages = [[UpdateEventEnvelope]]()
+        var pages = [UpdateEventBatch]()
         for try await page in sut.getUpdateEvents(
             selfClientID: Scaffolding.selfClientID,
             sinceEventID: Scaffolding.lastUpdateEventID
@@ -130,10 +130,10 @@ final class UpdateEventsAPITests: XCTestCase {
         // Then
         XCTAssertEqual(pages.count, 2)
 
-        let page1 = try XCTUnwrap(pages.first)
+        let page1 = try XCTUnwrap(pages.first?.updateEventEnvelopes)
         XCTAssertEqual(page1, Scaffolding.updateEventPage1)
 
-        let page2 = try XCTUnwrap(pages.last)
+        let page2 = try XCTUnwrap(pages.last?.updateEventEnvelopes)
         XCTAssertEqual(page2, Scaffolding.updateEventPage2)
     }
 
@@ -214,7 +214,7 @@ final class UpdateEventsAPITests: XCTestCase {
         let sut = UpdateEventsAPIV5(apiService: apiService)
 
         // When
-        var pages = [[UpdateEventEnvelope]]()
+        var pages = [UpdateEventBatch]()
         for try await page in sut.getUpdateEvents(
             selfClientID: Scaffolding.selfClientID,
             sinceEventID: Scaffolding.lastUpdateEventID
@@ -225,10 +225,10 @@ final class UpdateEventsAPITests: XCTestCase {
         // Then
         XCTAssertEqual(pages.count, 2)
 
-        let page1 = try XCTUnwrap(pages.first)
+        let page1 = try XCTUnwrap(pages.first?.updateEventEnvelopes)
         XCTAssertEqual(page1, Scaffolding.updateEventPage1)
 
-        let page2 = try XCTUnwrap(pages.last)
+        let page2 = try XCTUnwrap(pages.last?.updateEventEnvelopes)
         XCTAssertEqual(page2, Scaffolding.updateEventPage2)
     }
 

@@ -16,21 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import Foundation
 
-class SettingsPage: PageModel {
-
-    override var pageMainElement: XCUIElement {
-        accountSettingsMenu
-    }
-
-    var accountSettingsMenu: XCUIElement {
-        let elementsQuery = app.cells
-        return elementsQuery["Account"]
-    }
-
-    func openAccountSettings() throws -> AccountSettingsPage {
-        accountSettingsMenu.tap()
-        return try AccountSettingsPage()
-    }
+public struct UpdateEventBatch {
+    public let time: Date?
+    public let updateEventEnvelopes: [UpdateEventEnvelope]
 }

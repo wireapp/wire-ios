@@ -128,7 +128,7 @@
 
 "create_personal_account.title" = "Создание личного аккаунта";
 "create_personal_account.continue" = "Продолжить";
-"create_personal_account.share_data_usage" = "I agree to share anonymous usage data. Find all details in our [Privacy Policy](%@)";
+"create_personal_account.share_data_usage" = "Я согласен делиться анонимными данными об использовании. Найдите все детали в [Политике конфиденциальности](%@) (необязательно)";
 "create_personal_account.looking_for_collaboration" = "Looking for team collaboration?";
 "create_personal_account.create_team" = "Создать команду";
 "create_personal_account.input_name.title" = "Имя";

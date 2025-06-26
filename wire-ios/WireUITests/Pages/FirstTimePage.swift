@@ -18,19 +18,25 @@
 
 import XCTest
 
-class SettingsPage: PageModel {
-
-    override var pageMainElement: XCUIElement {
-        accountSettingsMenu
+/// Page for popup on first time user login
+class FirstTimePage: PageModel {
+    override func assertHasLoaded() {
+        let expectation = okButton.waitForExistence(timeout: 10)
+        XCTAssert(expectation, "First time page not loaded - can't find Ok button")
     }
 
-    var accountSettingsMenu: XCUIElement {
-        let elementsQuery = app.cells
-        return elementsQuery["Account"]
+    var okButton: XCUIElement {
+        app.buttons["OK"]
     }
 
-    func openAccountSettings() throws -> AccountSettingsPage {
-        accountSettingsMenu.tap()
-        return try AccountSettingsPage()
+    func acceptFirstTimeAlert() -> FirstTimePage {
+        okButton.tap()
+        return self
+    }
+
+    func acceptPopup() throws -> ConversationsPage {
+        let button = app.otherElements.buttons.firstMatch
+        button.tap()
+        return try ConversationsPage()
     }
 }
