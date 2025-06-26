@@ -170,7 +170,8 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                     try await pushChannel.acknowledgeFullSync()
                 case .syncing:
                     // ignore this event, it gives the number of messages until we're caught up
-                    try await pushChannel.acknowledgeMessageCount()
+//                    try await pushChannel.acknowledgeMessageCount()
+                    break
                 case let .event(envelope):
                     do {
 
@@ -189,7 +190,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
 
                         let index = try await storeEnvelope(envelope)
 
-                        await acknowledgeEnvelope(envelope, through: pushChannel)
+                        try await acknowledgeEnvelope(envelope, through: pushChannel)
 
                         await processEnvelope(envelope)
 
@@ -271,7 +272,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     private func acknowledgeEnvelope(
         _ envelope: UpdateEventEnvelope,
         through pushChannel: PushChannelV2Protocol
-    ) async {
+    ) async throws {
         do {
             if let deliveryTag = envelope.deliveryTag {
                 logger.debug(
@@ -285,6 +286,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                 "failed to acknowledge live event envelope: \(String(describing: error))",
                 attributes: [.eventEnvelopeID: envelope.id] + .syncAttributes(initialSync: false)
             )
+            throw error
         }
     }
 
