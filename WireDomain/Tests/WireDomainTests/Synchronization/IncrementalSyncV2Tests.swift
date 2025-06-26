@@ -125,9 +125,9 @@ final class IncrementalSyncV2Tests: XCTestCase {
         var indices = [Int64(10)]
         updateEventsStore.indexOfLastEventEnvelope_MockMethod = { indices.remove(at: 0) }
 
-        // Live envelopes are peristed and deleted one by one.
+        // Live envelopes are peristed one by one and deleted by batch.
         updateEventsStore.persistEventEnvelopeIndex_MockMethod = { _, _ async throws in }
-        updateEventsStore.deleteEventEnvelopeAtIndex_MockMethod = { _ in }
+        updateEventsStore.deleteEventEnvelopesAt_MockMethod = { _ in }
 
         // Live events are decrypted.
         decryptor.decryptEventsInContext_MockMethod = { envelope, _ in
@@ -238,9 +238,9 @@ final class IncrementalSyncV2Tests: XCTestCase {
         var indices = [Int64(10), 11]
         updateEventsStore.indexOfLastEventEnvelope_MockMethod = { indices.remove(at: 0) }
 
-        // Live envelopes are peristed and deleted one by one.
+        // Live envelopes are peristed one by one and deleted by batch.
         updateEventsStore.persistEventEnvelopeIndex_MockMethod = { _, _ async throws in }
-        updateEventsStore.deleteEventEnvelopeAtIndex_MockMethod = { _ in }
+        updateEventsStore.deleteEventEnvelopesAt_MockMethod = { _ in }
 
         // Live events are decrypted.
         decryptor.decryptEventsInContext_MockMethod = { envelope, _ in
@@ -324,6 +324,16 @@ final class IncrementalSyncV2Tests: XCTestCase {
         updateEventsStore.fetchStoredEventEnvelopesLimit_MockMethod = { _ in
             []
         }
+
+        // Live envelopes are peristed one by one and deleted by batch.
+        updateEventsStore.persistEventEnvelopeIndex_MockMethod = { _, _ async throws in }
+        updateEventsStore.deleteEventEnvelopesAt_MockMethod = { _ in }
+
+
+        // Some indices at which live events will be stored.
+        var indices = [Int64(10), Int64(11), Int64(12), Int64(13)]
+        updateEventsStore.indexOfLastEventEnvelope_MockMethod = { indices.remove(at: 0) }
+
 
         // Live events are decrypted.
         decryptor.decryptEventsInContext_MockMethod = { envelope, _ in
