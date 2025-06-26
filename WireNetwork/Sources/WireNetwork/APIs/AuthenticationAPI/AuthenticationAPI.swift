@@ -59,7 +59,7 @@ public protocol AuthenticationAPI: Sendable {
 
     func getSSOCode() async throws -> UUID?
 
-    /// Request a verification code for a provided email address
+    /// Request a verification code for a provided email address.
     ///
     /// - Parameter
     ///     - email: Email address of the account
@@ -89,7 +89,7 @@ public protocol AuthenticationAPI: Sendable {
     ///   - email: Email address of the account
     func requestEmailVerificationCode(for email: String) async throws
 
-    /// Register a new user account
+    /// Register a new user.
     /// - Parameters:
     ///   - email: Email address of the account
     ///   - emailCode: Activation code
