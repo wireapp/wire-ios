@@ -226,6 +226,8 @@ final class MessageLocalStoreTests: XCTestCase {
             (messagesCount: 1, [.decryptionFailed_RemoteIdentityChanged])
         case .sessionReset:
             (messagesCount: 1, [.sessionReset])
+        case .channelHistoryDepthModified:
+            (messagesCount: 1, [.channelHistoryDepthModified])
         }
     }
 
@@ -270,7 +272,8 @@ final class MessageLocalStoreTests: XCTestCase {
                 date: date
             ),
             .conversationNameChanged(newName: "newName", sender: (userID, domain1), date: date),
-            .readReceiptsStatus(isEnabled: Bool.random(), sender: (userID, domain1), date: date)
+            .readReceiptsStatus(isEnabled: Bool.random(), sender: (userID, domain1), date: date),
+            .channelHistoryDepthModified(sender: (userID, domain1), newHistoryDepth: "13 days")
         ]
     }
 
