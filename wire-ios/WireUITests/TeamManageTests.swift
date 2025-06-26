@@ -39,9 +39,5 @@ final class TeamManageTests: WireUITestCase {
         XCTAssertEqual(teamName, user.teamName, "Team name didn't match \(user.teamName)")
         XCTAssertTrue(userAccountPage.manageTeamButton.exists, "Manage team button doesn't exist")
 
-        /// ISSUE: Not able to delete user due to team so teardown is failing  FailureResponse(code: 403, label:
-        /// "no-self-delete-for-team-owner", message: "Team owners are not allowed to delete themselves; ask a fellow
-        /// owner")"
     }
-
 }

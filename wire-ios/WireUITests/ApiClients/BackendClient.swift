@@ -36,8 +36,6 @@ enum BackendClient {
 
         let pureResponse = response as! HTTPURLResponse
         if pureResponse.statusCode != 200 {
-            print("Error! got status code \(pureResponse.statusCode)")
-            print("Response: \(pureResponse.description)")
             throw (RuntimeError("Error \(pureResponse.description)"))
         }
 
@@ -77,13 +75,36 @@ enum BackendClient {
 
         let pureResponse = response as! HTTPURLResponse
         if pureResponse.statusCode != 200 {
-            print("Error! got status code \(pureResponse.statusCode)")
-            print("Response: \(pureResponse.description)")
             throw (RuntimeError("Error \(pureResponse.description)"))
         }
 
         let message: ActivationCodeReponse = try JSONDecoder().decode(ActivationCodeReponse.self, from: responseData)
         return (message.code, message.key)
+    }
+
+    static func sendVerificationCode(email: String, password: String) async throws {
+        let access_token = try await loginViaAPI(email: email, password: password)
+        let body: [String: Any] = [
+            "action": "delete_team",
+            "email": email
+        ]
+
+        let url = URL(string: "\(backendURL)/v8/verification-code/send")
+        guard let requestUrl = url else { fatalError() }
+
+        var request = URLRequest(url: requestUrl)
+        request.httpMethod = "POST"
+        request.httpBody = try JSONSerialization.data(withJSONObject: body, options: .prettyPrinted)
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        request.addValue("Bearer \(access_token)", forHTTPHeaderField: "Authorization")
+
+        let (responseData, response) = try await URLSession.shared.data(for: request)
+
+        let pureResponse = response as! HTTPURLResponse
+        if pureResponse.statusCode != 200 {
+            throw (RuntimeError("Error \(pureResponse.description)"))
+        }
     }
 
     static func registerPersonalUser(_ user: UserInfo) async throws -> UserInfo {
@@ -116,6 +137,28 @@ enum BackendClient {
         }
         return responseData
     }
+
+    static func getTeamIDFromSelfRequest(email: String, password: String) async throws -> UUID? {
+        let access_token = try await loginViaAPI(email: email, password: password)
+
+        let envVariables = try EnvironmentVariables()
+        let requestUrl = envVariables.backendURL.appending(path: "v8/self")
+
+        var request = URLRequest(url: requestUrl)
+        request.httpMethod = "GET"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        request.addValue("Bearer \(access_token)", forHTTPHeaderField: "Authorization")
+        let (responseData, response) = try await URLSession.shared.data(for: request)
+
+        let pureResponse = response as! HTTPURLResponse
+        if pureResponse.statusCode != 200 {
+            throw (RuntimeError("Error \(pureResponse.description)"))
+        }
+
+        let userData: SelfAPIResponse = try JSONDecoder().decode(SelfAPIResponse.self, from: responseData)
+        return userData.team
+    }
 }
 
 private struct LoginMessage: Decodable {
@@ -137,4 +180,8 @@ private struct QualifiedID: Decodable {
 private struct ActivationCodeReponse: Decodable {
     let code: String
     let key: String
+}
+
+private struct SelfAPIResponse: Decodable {
+    let team: UUID?
 }

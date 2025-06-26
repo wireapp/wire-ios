@@ -40,4 +40,9 @@ public protocol SelfUserAPI {
     #if DEBUG
         func updateHandle(handle: String) async throws
     #endif
+
+    #if DEBUG
+        func deleteTeam(teamId: UUID, password: String, verificationCode: String) async throws
+    #endif
+
 }

@@ -77,9 +77,31 @@ class UserManager {
         return user
     }
 
+//    func migratePersonalUserToTeam() async throws -> TeamInfo {
+//
+//        let user = try await createPersonalUser()
+//        let team = try await selfUserAPI.migratePersonalUserToTeam(icon: "default", name: user.teamName)
+//        return team
+//
+//    }
+
     func addUser(_ user: UserInfo) {
         createdUsers.append(user)
     }
+
+//    func addTeamToUserInfo(_ user: UserInfo) async throws -> UUID? {
+//        // Get teamID
+//        let teamID = try await BackendClient.getTeamIDFromSelfRequest(email: user.email, password: user.password)
+//
+//        if let teamID = teamID {
+//            var updatedUserInfo = user
+//            updatedUserInfo.teamID = teamID
+//            createdUsers.append(updatedUserInfo)
+//        } else {
+//            // Team not created so teamID is nil — bypass appending
+//            print("No teamID found, user not appended.")
+//        }
+//    }
 
     func addUser(email: String, password: String) {
         createdUsers.append(UserInfo(email: email, password: password))
@@ -89,10 +111,25 @@ class UserManager {
         try await selfUserAPI.deleteSelf(password: user.password)
     }
 
+//    func deleteTeam(_ user: UserInfo) async throws {
+//        try await selfUserAPI.deleteTeam(teamId: user.teamID!, email: user.email)
+//    }
+
     func deleteCreatedUsers() async throws {
         for user in createdUsers {
-            print("Deleting \(user.email)")
-            try await deleteUser(user)
+            if let teamID = try await BackendClient.getTeamIDFromSelfRequest(
+                email: user.email,
+                password: user.password
+            ) {
+                var updatedUser = user
+                updatedUser.teamID = teamID
+                createdUsers.append(updatedUser)
+                try await BackendClient.sendVerificationCode(email: user.email, password: user.password)
+                let code = try await InbucketClient.getVerificationCode(email: user.email)
+                try await selfUserAPI.deleteTeam(teamId: teamID, password: user.password, verificationCode: code)
+            } else {
+                try await deleteUser(user)
+            }
         }
     }
 }
