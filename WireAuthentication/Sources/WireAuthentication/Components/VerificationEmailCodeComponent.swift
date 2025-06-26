@@ -29,6 +29,8 @@ protocol VerificationEmailCodeComponentDependency: Dependency {
     var networkStack: NetworkStack { get }
     @MainActor var bridge: WireAuthenticationBridge { get }
     @MainActor var router: any Router { get }
+    var registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)? { get }
+    var registrationAnalyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol { get }
 
 }
 
@@ -37,16 +39,25 @@ final class VerificationEmailCodeComponent: Component<VerificationEmailCodeCompo
     private let email: String
     private let password: String
     private let name: String
+    private let isDataUsageAgreementAccepted: Bool
+    private let registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
+    private let registrationAnalyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
 
     init(
         parent: any Scope,
         email: String,
         password: String,
-        name: String
+        name: String,
+        isDataUsageAgreementAccepted: Bool,
+        analyticsEventTracker: (any RegistrationAnalyticsTrackerProtocol)?,
+        analyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
     ) {
         self.email = email
         self.password = password
         self.name = name
+        self.isDataUsageAgreementAccepted = isDataUsageAgreementAccepted
+        self.registrationAnalyticsTracker = analyticsEventTracker
+        self.registrationAnalyticsIDRepository = analyticsIDRepository
         super.init(parent: parent)
     }
 
@@ -63,9 +74,12 @@ extension VerificationEmailCodeComponent: VerificationEmailCodeViewModel.Factory
             email: email,
             password: password,
             name: name,
+            isDataUsageAgreementAccepted: isDataUsageAgreementAccepted,
             onFlowCompletion: { [dependency] authenticationResult in
                 dependency?.bridge.sendOutboundEvent(.userAuthenticated(authenticationResult))
-            }
+            },
+            analyticsEventTracker: registrationAnalyticsTracker,
+            analyticsIDRepository: registrationAnalyticsIDRepository
         )
     }
 

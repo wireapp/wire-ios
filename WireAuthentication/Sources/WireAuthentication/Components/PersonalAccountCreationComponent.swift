@@ -42,13 +42,19 @@ final class PersonalAccountCreationComponent: Component<PersonalAccountCreationC
     func verificationEmailCodeComponent(
         email: String,
         password: String,
-        name: String
+        name: String,
+        isDataUsageAgreementAccepted: Bool,
+        analyticsEventTracker: (any RegistrationAnalyticsTrackerProtocol)?,
+        analyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
     ) -> VerificationEmailCodeComponent {
         VerificationEmailCodeComponent(
             parent: self,
             email: email,
             password: password,
-            name: name
+            name: name,
+            isDataUsageAgreementAccepted: isDataUsageAgreementAccepted,
+            analyticsEventTracker: analyticsEventTracker,
+            analyticsIDRepository: analyticsIDRepository
         )
     }
 
@@ -67,16 +73,27 @@ extension PersonalAccountCreationComponent: PersonalAccountCreationViewModel.Fac
             termsOfUseURL: dependency.termsOfUseURL,
             teamAccountCreationLink: teamAccountCreationLink,
             passwordValidator: dependency.passwordValidator,
-            isAnalyticsTrackingAvailable: dependency.personalAccountCreationAnalyticsTracker != nil
+            analyticsEventTracker: dependency.registrationAnalyticsTracker,
+            analyticsIDRepository: dependency.registrationAnalyticsIDRepository
         )
     }
 
     func verificationEmailCodeFactory(
         email: String,
         password: String,
-        name: String
+        name: String,
+        isDataUsageAgreementAccepted: Bool,
+        analyticsEventTracker: (any RegistrationAnalyticsTrackerProtocol)?,
+        analyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
     ) -> any VerificationEmailCodeFactory {
-        verificationEmailCodeComponent(email: email, password: password, name: name)
+        verificationEmailCodeComponent(
+            email: email,
+            password: password,
+            name: name,
+            isDataUsageAgreementAccepted: isDataUsageAgreementAccepted,
+            analyticsEventTracker: analyticsEventTracker,
+            analyticsIDRepository: analyticsIDRepository
+        )
     }
 
     // MARK: - Use cases

@@ -16,12 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol JournalProtocol {
+public import Foundation
 
-    subscript(_ key: JournalKey<Bool>) -> Bool { get set }
-    subscript(_ key: JournalKey<Bool?>) -> Bool? { get set }
-    subscript(_ key: JournalKey<String?>) -> String? { get set }
-    subscript(_ key: JournalKey<Set<String>>) -> Set<String> { get set }
-    func erase()
+// sourcery: AutoMockable
+/// A repository which allows reading, writing and deleting a temporary analytics id for the account creation (registration) UI.
+public protocol RegistrationAnalyticsIDRepositoryProtocol {
 
+    func storeAnalyticsID(for userID: UUID, analyticsID: UUID)
+//    func fetchAnalyticsID(for userID: UUID) -> UUID?
+    func deleteAnalyticsID(for userID: UUID)
+    func updateAnalyticsTrackingConsent(for userID: UUID, isGiven: Bool)
 }

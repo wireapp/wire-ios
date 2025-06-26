@@ -16,7 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
+public import WireFoundation
 
 /// A storage mechanism scoped to a single user for keeping
 /// track of various bits of information.
@@ -28,9 +29,7 @@ import Foundation
 /// The Journal users a scoped `UserDefaults` suite that is accessible
 /// within the app group.
 
-import WireFoundation
-
-public class Journal: JournalProtocol {
+public struct Journal: JournalProtocol {
 
     private let userID: UUID
     private let storage: any UserDefaultsProtocol
@@ -59,7 +58,29 @@ public class Journal: JournalProtocol {
         get {
             (storage.object(forKey: rawKey(for: key)) as? Bool) ?? key.defaultValue
         }
-        set {
+        nonmutating set {
+            storage.set(newValue, forKey: rawKey(for: key))
+        }
+    }
+
+    /// Get or set an optional boolean value.
+
+    public subscript(_ key: JournalKey<Bool?>) -> Bool? {
+        get {
+            (storage.object(forKey: rawKey(for: key)) as? Bool) ?? key.defaultValue
+        }
+        nonmutating set {
+            storage.set(newValue, forKey: rawKey(for: key))
+        }
+    }
+
+    /// Get or set an optional boolean value.
+
+    public subscript(_ key: JournalKey<String?>) -> String? {
+        get {
+            (storage.object(forKey: rawKey(for: key)) as? String) ?? key.defaultValue
+        }
+        nonmutating set {
             storage.set(newValue, forKey: rawKey(for: key))
         }
     }
@@ -74,7 +95,7 @@ public class Journal: JournalProtocol {
                 key.defaultValue
             }
         }
-        set {
+        nonmutating set {
             storage.set(Array(newValue), forKey: rawKey(for: key))
         }
     }

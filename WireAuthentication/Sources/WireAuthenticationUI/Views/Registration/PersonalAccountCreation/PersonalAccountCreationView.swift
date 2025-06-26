@@ -45,11 +45,16 @@ struct PersonalAccountCreationView: View {
         .navigationDestination(for: PersonalAccountCreationDestination.self) {
             switch $0 {
             case let .verifyEmail(email, password, name):
-                VerificationEmailCodeView(factory: viewModel.factory.verificationEmailCodeFactory(
-                    email: email,
-                    password: password,
-                    name: name
-                ))
+                VerificationEmailCodeView(
+                    factory: viewModel.factory.verificationEmailCodeFactory(
+                        email: email,
+                        password: password,
+                        name: name,
+                        isDataUsageAgreementAccepted: viewModel.isDataUsageAgreementAccepted,
+                        analyticsEventTracker: viewModel.analyticsEventTracker,
+                        analyticsIDRepository: viewModel.analyticsIDRepository
+                    )
+                )
             }
         }
         .sheet(isPresented: $viewModel.isCreateTeamAccountPresented, content: {

@@ -31,7 +31,7 @@ extension ZMUserSession: AnalyticsEventTrackerProvider {
     }
 
     func createAnalyticsUser() async throws -> AnalyticsUser {
-        let (analyticsID, teamInfo) = try await syncContext.perform { [syncContext] in
+        let (analyticsID, teamInfo) = try await syncContext.perform { [syncContext, journal] in
             let selfUser = ZMUser.selfUser(in: syncContext)
 
             // Sanity check that we don't setup analytics too early.
@@ -44,6 +44,12 @@ extension ZMUserSession: AnalyticsEventTrackerProvider {
 
             if let existingID = selfUser.analyticsIdentifier {
                 analyticsID = existingID
+            } else if let existingIDFromRegistration = journal[.analyticsIDFromRegistration] {
+                analyticsID = existingIDFromRegistration
+                if let analyticsUUID = UUID(uuidString: existingIDFromRegistration) {
+                    try self.broadcastAnalyticsID(analyticsUUID)
+                }
+                selfUser.analyticsIdentifier = analyticsID
             } else {
                 let newID = UUID()
                 analyticsID = newID.transportString()

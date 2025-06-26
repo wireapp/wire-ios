@@ -26,6 +26,14 @@ extension MockDependencies: RegisterPersonalAccountUseCaseFactory {
         MockRegisterPersonalAccountUseCase()
     }
 
+    var analyticsEventTracker: RegistrationAnalyticsTrackerProtocol {
+        MockRegistrationAnalyticsTracker()
+    }
+
+    var analyticsIDRepository: RegistrationAnalyticsIDRepositoryProtocol {
+        RegistrationAnalyticsIDRepositoryProtocolMock()
+    }
+
 }
 
 struct MockRegisterPersonalAccountUseCase: RegisterPersonalAccountUseCaseProtocol {
@@ -38,5 +46,30 @@ struct MockRegisterPersonalAccountUseCase: RegisterPersonalAccountUseCaseProtoco
     ) async throws -> ([HTTPCookie], UUID?) {
         ([], UUID())
     }
+
+}
+
+private struct MockRegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
+
+    var currentDeviceID: String?
+    func setUp() {}
+    func tearDown() {}
+
+    func trackPersonalAccountCreationStart() {}
+    func trackPersonalAccountCreationReachedTermsOfUseConfirmation() {}
+    func trackPersonalAccountCreationReachedVerificationCode() {}
+    func trackPersonalAccountCreationFailedCodeVerification() {}
+    func trackPersonalAccountCreationReachedUsernameForm() {}
+    func trackPersonalAccountCreationCompletion() {}
+    func deleteTempAnalyticsID() {}
+
+}
+
+private struct RegistrationAnalyticsIDRepositoryProtocolMock: RegistrationAnalyticsIDRepositoryProtocol {
+
+    func storeAnalyticsID(for userID: UUID, analyticsID: UUID) {}
+    func updateAnalyticsTrackingConsent(for userID: UUID, isGiven: Bool) {}
+//    func fetchAnalyticsID(for userID: UUID) -> UUID? { .none }
+    func deleteAnalyticsID(for userID: UUID) {}
 
 }

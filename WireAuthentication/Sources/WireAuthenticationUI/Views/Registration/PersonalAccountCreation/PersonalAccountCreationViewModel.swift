@@ -44,14 +44,18 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
         passwordValidator.localizedRulesDescription ?? ""
     }
 
-    let isAnalyticsTrackingAvailable: Bool
+    var isAnalyticsTrackingAvailable: Bool { // TODO: check if needed
+        analyticsEventTracker != nil
+    }
 
     package let factory: any Factory
     private let router: any Router
     package let privacyPolicyURL: URL
-    package let termsOfUseURL: URL
+    private let termsOfUseURL: URL
     package let teamAccountCreationLink: URL?
     private let passwordValidator: any PasswordValidator
+    let analyticsEventTracker: (any RegistrationAnalyticsTrackerProtocol)?
+    let analyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
 
     package init(
         factory: any Factory,
@@ -61,7 +65,8 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
         termsOfUseURL: URL,
         teamAccountCreationLink: URL?,
         passwordValidator: any PasswordValidator,
-        isAnalyticsTrackingAvailable: Bool
+        analyticsEventTracker: (any RegistrationAnalyticsTrackerProtocol)?,
+        analyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
     ) {
         self.factory = factory
         self.router = router
@@ -70,7 +75,8 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
         self.termsOfUseURL = termsOfUseURL
         self.teamAccountCreationLink = teamAccountCreationLink
         self.passwordValidator = passwordValidator
-        self.isAnalyticsTrackingAvailable = isAnalyticsTrackingAvailable
+        self.analyticsEventTracker = analyticsEventTracker
+        self.analyticsIDRepository = analyticsIDRepository
     }
 
     // MARK: - Validations
@@ -101,8 +107,16 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
             return
         }
         do {
-            let requestEmailVerificationCode = try await factory.requestEmailVerificationCodeUseCase()
-            try await requestEmailVerificationCode.invoke(email: email)
+            let requestEmailVerificationCodeUseCase = try await factory.requestEmailVerificationCodeUseCase()
+            try await requestEmailVerificationCodeUseCase.invoke(email: email)
+
+            if isDataUsageAgreementAccepted {
+                analyticsEventTracker?.setUp()
+                analyticsEventTracker?.trackPersonalAccountCreationStart()
+                analyticsEventTracker?.trackPersonalAccountCreationReachedTermsOfUseConfirmation()
+            } else {
+                analyticsEventTracker?.tearDown()
+            }
 
             router.navigate(to: PersonalAccountCreationDestination.verifyEmail(
                 email: email,
@@ -110,7 +124,7 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
                 name: name
             ))
         } catch {
-            WireLogger.authentication.error("request email erification code failed: \(error)")
+            WireLogger.authentication.error("request email verification code failed: \(error)")
 
             switch error {
             case RequestEmailVerificationCodeUseCaseFailure.invalidEmail:

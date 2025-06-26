@@ -20,6 +20,7 @@ import Combine
 import Foundation
 import SwiftUI
 import WireAuthenticationAPI
+//import WireDomainPackage
 import WireLogging
 
 @MainActor
@@ -41,6 +42,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
     let email: String
     let password: String
     let name: String
+    let isDataUsageAgreementAccepted: Bool
     let numberOfDigits: Int
 
     var isConfirmButtonDisabled: Bool {
@@ -53,6 +55,8 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
     private let router: any Router
     private let onFlowCompletion: (AuthenticationResult) -> Void
     private static let numberOfDigits = 6
+    private var analyticsEventTracker: (any RegistrationAnalyticsTrackerProtocol)?
+    private var analyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
 
     // MARK: - Life cycle
 
@@ -62,8 +66,11 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
         email: String,
         password: String,
         name: String,
+        isDataUsageAgreementAccepted: Bool,
         onFlowCompletion: @escaping (AuthenticationResult) -> Void,
-        numberOfDigits: Int = VerificationEmailCodeViewModel.numberOfDigits
+        numberOfDigits: Int = VerificationEmailCodeViewModel.numberOfDigits,
+        analyticsEventTracker: (any RegistrationAnalyticsTrackerProtocol)?,
+        analyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
     ) {
         precondition(numberOfDigits > 0)
 
@@ -72,9 +79,12 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
         self.email = email
         self.password = password
         self.name = name
+        self.isDataUsageAgreementAccepted = isDataUsageAgreementAccepted
         self.onFlowCompletion = onFlowCompletion
         self.code = Array(repeating: "", count: numberOfDigits)
         self.numberOfDigits = numberOfDigits
+        self.analyticsEventTracker = analyticsEventTracker
+        self.analyticsIDRepository = analyticsIDRepository
     }
 
     // MARK: - Actions
@@ -118,8 +128,8 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
         isLoading = true
         let verificationCode = code.joined()
         do {
-            let (cookies, uuid) = try await register(verificationCode: verificationCode)
-            guard let uuid else {
+            let (cookies, userID) = try await register(verificationCode: verificationCode)
+            guard let userID else {
                 return
             }
             let emailCredentials = EmailCredentials(
@@ -130,11 +140,14 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
             let authenticationResult = try await createAuthenticationResult(
                 cookies: cookies,
                 emailCredentials: emailCredentials,
-                userID: uuid
+                userID: userID
             )
+            configureAnalytics(for: userID)
+
             onFlowCompletion(authenticationResult)
         } catch {
             WireLogger.authentication.error("register personal account failed: \(error)")
+            analyticsEventTracker?.trackPersonalAccountCreationFailedCodeVerification()
 
             switch error {
             case RegisterPersonalAccountUseCaseError.invalidEmail:
@@ -163,9 +176,9 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
 
         do {
             try await resendVerificationCode(email: email)
-            WireLogger.authentication.info("Resend email erification code succeeded")
+            WireLogger.authentication.info("Resend email verification code succeeded")
         } catch {
-            WireLogger.authentication.error("Resend email erification code login failed: \(error)")
+            WireLogger.authentication.error("Resend email verification code login failed: \(error)")
 
             switch error {
             case RequestEmailVerificationCodeUseCaseFailure.invalidEmail:
@@ -182,6 +195,10 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
         }
 
         isResending = false
+    }
+
+    func trackReachedVerificationCodeIfNeeded() {
+        analyticsEventTracker?.trackPersonalAccountCreationReachedVerificationCode()
     }
 
     // MARK: - Private
@@ -203,6 +220,18 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
             accessToken: nil,
             emailCredentials: emailCredentials
         )
+    }
+
+    private func configureAnalytics(for userID: UUID) {
+        analyticsEventTracker?.deleteTempAnalyticsID()
+        if isDataUsageAgreementAccepted {
+            if let analyticsIDString = analyticsEventTracker?.currentDeviceID,
+               let analyticsID = UUID(uuidString: analyticsIDString) {
+                analyticsIDRepository.storeAnalyticsID(for: userID, analyticsID: analyticsID)
+            }
+        } else {
+            analyticsIDRepository.deleteAnalyticsID(for: userID)
+        }
     }
 
 }

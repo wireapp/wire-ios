@@ -74,6 +74,10 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
         countly != nil
     }
 
+    public var currentDeviceID: String? {
+        countly?.currentDeviceID
+    }
+
     /// Start sending analytics data.
 
     @MainActor
@@ -129,6 +133,7 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
 
         countly.beginSession()
     }
+
 
     /// Update the current user.
     ///

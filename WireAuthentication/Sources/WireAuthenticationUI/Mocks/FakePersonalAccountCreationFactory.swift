@@ -40,14 +40,18 @@ struct FakePersonalAccountCreationFactory: PersonalAccountCreationFactory, Regis
             termsOfUseURL: termsOfUseURL,
             teamAccountCreationLink: teamAccountCreationLink,
             passwordValidator: passwordValidator,
-            isAnalyticsTrackingAvailable: true
+            analyticsEventTracker: mockDependencies.analyticsEventTracker,
+            analyticsIDRepository: mockDependencies.analyticsIDRepository
         )
     }
 
     func verificationEmailCodeFactory(
         email: String,
         password: String,
-        name: String
+        name: String,
+        isDataUsageAgreementAccepted: Bool,
+        analyticsEventTracker: (any RegistrationAnalyticsTrackerProtocol)?,
+        analyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
     ) -> any VerificationEmailCodeFactory {
         fatalError()
     }

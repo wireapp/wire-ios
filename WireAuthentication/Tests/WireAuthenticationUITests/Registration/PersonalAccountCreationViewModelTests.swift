@@ -49,7 +49,8 @@ final class PersonalAccountCreationViewModelTests: XCTestCase, PersonalAccountCr
             termsOfUseURL: URL(string: "https://wire.com")!,
             teamAccountCreationLink: URL(string: "https://wire.com")!,
             passwordValidator: passwordValidator,
-            isAnalyticsTrackingAvailable: true
+            analyticsEventTracker: MockRegistrationAnalyticsTrackerProtocol(),
+            analyticsIDRepository: MockRegistrationAnalyticsIDRepositoryProtocol()
         )
     }
 
@@ -83,7 +84,10 @@ final class PersonalAccountCreationViewModelTests: XCTestCase, PersonalAccountCr
     func verificationEmailCodeFactory(
         email: String,
         password: String,
-        name: String
+        name: String,
+        isDataUsageAgreementAccepted: Bool,
+        analyticsEventTracker: (any RegistrationAnalyticsTrackerProtocol)?,
+        analyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
     ) -> any VerificationEmailCodeFactory {
         fatalError("not needed here")
     }

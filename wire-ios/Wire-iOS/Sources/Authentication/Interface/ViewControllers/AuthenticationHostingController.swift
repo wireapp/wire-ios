@@ -45,6 +45,9 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
         bridge.outboundEvents.sink { [weak authenticationCoordinator, weak self] event in
             switch event {
             case let .userAuthenticated(authenticationResult):
+                /// save to journal if the user gave the consent
+                /// broadcastAnalyticsID
+                /// selfUser.analyticsIdentifier = analyticsID // TODO: let's use `RegistrationAnalyticsIDRepositoryProtocol` instead
                 authenticationCoordinator?.eventResponderChain.handleEvent(
                     ofType: .wireAuthenticationModuleComplete(authenticationResult)
                 )

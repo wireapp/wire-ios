@@ -63,6 +63,7 @@ public final class ExtensionSettings: NSObject {
         }
     }
 
+    @available(*, deprecated, message: "Use Journal[.isAnalyticsTrackingConsentGiven]!")
     public var disableAnalyticsSharing: Bool? {
         get { defaults.object(forKey: ExtensionSettingsKey.disableAnalyticsSharing.rawValue) as? Bool }
         set { defaults.set(newValue, forKey: ExtensionSettingsKey.disableAnalyticsSharing.rawValue) }

@@ -4,11 +4,11 @@ import Combine
 import Foundation
 import NeedleFoundation
 import SwiftUI
-import WireNetwork
 import WireAuthenticationAPI
 import WireFoundation
 import WireLogging
 import WireMultiBackendUI
+import WireNetwork
 import WireReusableUIComponents
 internal import WireAuthenticationLogic
 internal import WireAuthenticationUI
@@ -47,6 +47,12 @@ private class VerificationEmailCodeComponentDependency1187b119f31c839e0ba3Provid
     }
     var router: any Router {
         return rootComponent.router
+    }
+    var registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)? {
+        return rootComponent.registrationAnalyticsTracker
+    }
+    var registrationAnalyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol {
+        return rootComponent.registrationAnalyticsIDRepository
     }
     private let loginViaEmailComponent: LoginViaEmailComponent
     private let rootComponent: RootComponent
@@ -121,8 +127,11 @@ private class PersonalAccountCreationComponentDependency9e5e5a00f5c85fcf54b5Prov
     var termsOfUseURL: URL {
         return rootComponent.termsOfUseURL
     }
-    var personalAccountCreationAnalyticsTracker: (any PersonalAccountCreationAnalyticsTrackerProtocol)? {
-        return rootComponent.personalAccountCreationAnalyticsTracker
+    var registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)? {
+        return rootComponent.registrationAnalyticsTracker
+    }
+    var registrationAnalyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol {
+        return rootComponent.registrationAnalyticsIDRepository
     }
     private let loginViaEmailComponent: LoginViaEmailComponent
     private let rootComponent: RootComponent
@@ -213,6 +222,8 @@ extension VerificationEmailCodeComponent: NeedleFoundation.Registration {
         keyPathToName[\VerificationEmailCodeComponentDependency.networkStack] = "networkStack-NetworkStack"
         keyPathToName[\VerificationEmailCodeComponentDependency.bridge] = "bridge-WireAuthenticationBridge"
         keyPathToName[\VerificationEmailCodeComponentDependency.router] = "router-any Router"
+        keyPathToName[\VerificationEmailCodeComponentDependency.registrationAnalyticsTracker] = "registrationAnalyticsTracker-(any RegistrationAnalyticsTrackerProtocol)?"
+        keyPathToName[\VerificationEmailCodeComponentDependency.registrationAnalyticsIDRepository] = "registrationAnalyticsIDRepository-any RegistrationAnalyticsIDRepositoryProtocol"
     }
 }
 extension VerificationCodeComponent: NeedleFoundation.Registration {
@@ -240,7 +251,8 @@ extension PersonalAccountCreationComponent: NeedleFoundation.Registration {
         keyPathToName[\PersonalAccountCreationComponentDependency.passwordValidator] = "passwordValidator-any PasswordValidator"
         keyPathToName[\PersonalAccountCreationComponentDependency.privacyPolicyURL] = "privacyPolicyURL-URL"
         keyPathToName[\PersonalAccountCreationComponentDependency.termsOfUseURL] = "termsOfUseURL-URL"
-        keyPathToName[\PersonalAccountCreationComponentDependency.personalAccountCreationAnalyticsTracker] = "personalAccountCreationAnalyticsTracker-(any PersonalAccountCreationAnalyticsTrackerProtocol)?"
+        keyPathToName[\PersonalAccountCreationComponentDependency.registrationAnalyticsTracker] = "registrationAnalyticsTracker-(any RegistrationAnalyticsTrackerProtocol)?"
+        keyPathToName[\PersonalAccountCreationComponentDependency.registrationAnalyticsIDRepository] = "registrationAnalyticsIDRepository-any RegistrationAnalyticsIDRepositoryProtocol"
 
     }
 }
@@ -261,7 +273,8 @@ extension RootComponent: NeedleFoundation.Registration {
         localTable["accountsPublisher-CurrentValuePublisher<[AccountUIModel]>"] = { [unowned self] in self.accountsPublisher as Any }
         localTable["isMultibackendEnabled-Bool"] = { [unowned self] in self.isMultibackendEnabled as Any }
         localTable["useLegacyRegistrationFlow-Bool"] = { [unowned self] in self.useLegacyRegistrationFlow as Any }
-        localTable["personalAccountCreationAnalyticsTracker-(any PersonalAccountCreationAnalyticsTrackerProtocol)?"] = { [unowned self] in self.personalAccountCreationAnalyticsTracker as Any }
+        localTable["registrationAnalyticsTracker-(any RegistrationAnalyticsTrackerProtocol)?"] = { [unowned self] in self.registrationAnalyticsTracker as Any }
+        localTable["registrationAnalyticsIDRepository-any RegistrationAnalyticsIDRepositoryProtocol"] = { [unowned self] in self.registrationAnalyticsIDRepository as Any }
         localTable["bridge-WireAuthenticationBridge"] = { [unowned self] in self.bridge as Any }
         localTable["router-any Router"] = { [unowned self] in self.router as Any }
     }

@@ -46,7 +46,10 @@ final class VerificationEmailCodeViewModelTests: XCTestCase, VerificationEmailCo
             email: "mika@example.com",
             password: "password",
             name: "mika",
-            onFlowCompletion: { [self] _ in onRegisterAccountCalled = true }
+            isDataUsageAgreementAccepted: false,
+            onFlowCompletion: { [self] _ in onRegisterAccountCalled = true },
+            analyticsEventTracker: MockRegistrationAnalyticsTrackerProtocol(),
+            analyticsIDRepository: RegistrationAnalyticsIDRepositoryProtocolMock()
         )
     }
 
@@ -120,5 +123,30 @@ final class VerificationEmailCodeViewModelTests: XCTestCase, VerificationEmailCo
         // then
         XCTAssertEqual(sut.alert, .blacklistedEmail)
     }
+
+}
+
+private struct MockRegistrationAnalyticsTrackerProtocol: RegistrationAnalyticsTrackerProtocol {
+
+    var currentDeviceID: String?
+    func setUp() {}
+    func tearDown() {}
+
+    func trackPersonalAccountCreationStart() {}
+    func trackPersonalAccountCreationReachedTermsOfUseConfirmation() {}
+    func trackPersonalAccountCreationReachedVerificationCode() {}
+    func trackPersonalAccountCreationFailedCodeVerification() {}
+    func trackPersonalAccountCreationReachedUsernameForm() {}
+    func trackPersonalAccountCreationCompletion() {}
+    func deleteTempAnalyticsID() {}
+
+}
+
+private struct RegistrationAnalyticsIDRepositoryProtocolMock: RegistrationAnalyticsIDRepositoryProtocol {
+
+    func storeAnalyticsID(for userID: UUID, analyticsID: UUID) {}
+    func updateAnalyticsTrackingConsent(for userID: UUID, isGiven: Bool) {}
+//    func fetchAnalyticsID(for userID: UUID) -> UUID? { .none }
+    func deleteAnalyticsID(for userID: UUID) {}
 
 }
