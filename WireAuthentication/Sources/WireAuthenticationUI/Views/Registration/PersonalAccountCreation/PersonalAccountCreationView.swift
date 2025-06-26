@@ -86,7 +86,9 @@ struct PersonalAccountCreationView: View {
             emailField
             passwordField
             confirmPasswordField
-            dataUsageAgreementView
+            if viewModel.isAnalyticsTrackingAvailable {
+                dataUsageAgreementView
+            }
             continueButton
             teamAccountCreationView
 
@@ -140,7 +142,7 @@ struct PersonalAccountCreationView: View {
 
     @ViewBuilder private var dataUsageAgreementView: some View {
         Checkbox(
-            isChecked: $viewModel.dataUsageAgreementAccepted,
+            isChecked: $viewModel.isDataUsageAgreementAccepted,
             title: .formattedMarkdown(
                 key: "create_personal_account.share_data_usage",
                 bundle: .module,

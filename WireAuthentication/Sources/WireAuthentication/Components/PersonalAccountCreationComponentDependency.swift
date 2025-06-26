@@ -30,6 +30,6 @@ protocol PersonalAccountCreationComponentDependency: Dependency {
     var passwordValidator: any PasswordValidator { get }
     var privacyPolicyURL: URL { get }
     var termsOfUseURL: URL { get }
-    var personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol { get }
+    var personalAccountCreationAnalyticsTracker: (any PersonalAccountCreationAnalyticsTrackerProtocol)? { get }
 
 }

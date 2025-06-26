@@ -39,7 +39,8 @@ struct FakePersonalAccountCreationFactory: PersonalAccountCreationFactory, Regis
             privacyPolicyURL: privacyPolicyURL,
             termsOfUseURL: termsOfUseURL,
             teamAccountCreationLink: teamAccountCreationLink,
-            passwordValidator: passwordValidator
+            passwordValidator: passwordValidator,
+            isAnalyticsTrackingAvailable: true
         )
     }
 

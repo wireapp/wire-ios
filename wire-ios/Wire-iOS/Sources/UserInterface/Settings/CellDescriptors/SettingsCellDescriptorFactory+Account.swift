@@ -42,7 +42,7 @@ extension SettingsCellDescriptorFactory {
 
     @MainActor
     func accountGroup(
-        isPublicDomain: Bool,
+        isAnalyticsTrackingAvailable: Bool,
         userSession: UserSession,
         useTypeIntrinsicSizeTableView: Bool
     ) -> any SettingsCellDescriptorType {
@@ -62,7 +62,7 @@ extension SettingsCellDescriptorFactory {
         }
 
         #if !DATA_COLLECTION_DISABLED
-            sections.append(personalInformationSection(isPublicDomain: isPublicDomain))
+            sections.append(personalInformationSection(isAnalyticsTrackingAvailable: isAnalyticsTrackingAvailable))
         #endif
 
         sections.append(conversationsSection())
@@ -163,9 +163,9 @@ extension SettingsCellDescriptorFactory {
         )
     }
 
-    func personalInformationSection(isPublicDomain: Bool) -> SettingsSectionDescriptorType {
+    func personalInformationSection(isAnalyticsTrackingAvailable: Bool) -> SettingsSectionDescriptorType {
         SettingsSectionDescriptor(
-            cellDescriptors: [dateUsagePermissionsElement(isPublicDomain: isPublicDomain)],
+            cellDescriptors: [dateUsagePermissionsElement(isAnalyticsTrackingAvailable: isAnalyticsTrackingAvailable)],
             header: L10n.Localizable.Self.Settings.AccountPersonalInformationGroup.title
         )
     }
@@ -469,8 +469,8 @@ extension SettingsCellDescriptorFactory {
         )
     }
 
-    func dateUsagePermissionsElement(isPublicDomain: Bool) -> any SettingsCellDescriptorType {
-        dataUsagePermissionsGroup(isPublicDomain: isPublicDomain)
+    func dateUsagePermissionsElement(isAnalyticsTrackingAvailable: Bool) -> any SettingsCellDescriptorType {
+        dataUsagePermissionsGroup(isAnalyticsTrackingAvailable: isAnalyticsTrackingAvailable)
     }
 
     func resetPasswordElement() -> any SettingsCellDescriptorType {
