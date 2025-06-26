@@ -25,7 +25,7 @@ class VerificationCodePage: PageModel {
     }
 
     var verificationCodeInput: XCUIElement {
-        let elementsQuery = app.textViews.matching(identifier: "VerificationCode")
+        let elementsQuery = app.descendants(matching: .any)["VerificationCode"]
         return elementsQuery.firstMatch
     }
 

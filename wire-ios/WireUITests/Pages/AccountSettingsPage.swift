@@ -25,22 +25,22 @@ class AccountSettingsPage: PageModel {
     }
 
     var nameField: XCUIElement {
-        let elementsQuery = app.textFields.matching(identifier: "NameField")
+        let elementsQuery = app.descendants(matching: .any)["NameField"]
         return elementsQuery.firstMatch
     }
 
     var usernameField: XCUIElement {
-        let elementsQuery = app.staticTexts.matching(identifier: "UsernameField")
+        let elementsQuery = app.descendants(matching: .any)["UsernameField"]
         return elementsQuery.firstMatch
     }
 
     var emailField: XCUIElement {
-        let elementsQuery = app.staticTexts.matching(identifier: "EmailField")
+        let elementsQuery = app.descendants(matching: .any)["EmailField"]
         return elementsQuery.firstMatch
     }
 
     var logoutButton: XCUIElement {
-        let elementsQuery = app.staticTexts.matching(identifier: "Log OutField")
+        let elementsQuery = app.descendants(matching: .any)["Log OutField"]
         return elementsQuery.firstMatch
     }
 
