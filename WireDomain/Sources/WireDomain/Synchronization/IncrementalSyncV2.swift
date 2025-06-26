@@ -28,7 +28,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
 
     enum Failure: Error {
         /// Contains the error of envelope that failed + all envelopes that did succeed processed
-        case processingError(Error, processedEnvelopes: [UpdateEventEnvelope])
+        case uncompleteBatchProcessed(processedEnvelopes: [UpdateEventEnvelope])
     }
 
     private let selfClientID: String
@@ -184,7 +184,6 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                     // ignore this event, it gives the number of messages until we're caught up
                     try await pushChannel.acknowledgeMessageCount()
                 case let .events(envelopes):
-                    // should we let it throw and we start again
                     do {
                         try await processBatch(
                             envelopes: envelopes,
@@ -195,14 +194,10 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                         if let lastEnvelope = envelopes.last {
                             await acknowledgeUntilEnvelope(lastEnvelope, through: pushChannel)
                         }
-                    } catch let Failure.processingError(_, processedEnvelopes) {
+                    } catch let Failure.uncompleteBatchProcessed(processedEnvelopes) {
                         for envelope in processedEnvelopes {
                             await acknowledgeEnvelope(envelope, through: pushChannel)
                         }
-                        // TODO: [WPB-10458] review handling errors of processingEvents
-                        // in case of thrown errors, we skip to the next event
-                        // errors are already logged if needed
-                        continue
                     } catch {
                         // TODO: [WPB-10458] review handling errors of processingEvents
                         // in case of thrown errors, we skip to the next event
@@ -270,8 +265,6 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                     "Failed to process envelope: \(error)",
                     attributes: .syncAttributes(initialSync: false) + [.eventEnvelopeID: envelope.id]
                 )
-                let envelopes = storedEnvelopes.filter { envelopeIdsToDelete.contains($0.1) }.compactMap(\.0)
-                throw Failure.processingError(error, processedEnvelopes: envelopes)
             }
         }
 
@@ -280,6 +273,11 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
 
         await updateEventsStore.calculateLastUnreadMessages()
         await save()
+
+        let successfulEnvelopes = storedEnvelopes.filter { envelopeIdsToDelete.contains($0.1) }.compactMap(\.0)
+        if successfulEnvelopes.count != storedEnvelopes.count {
+            throw Failure.uncompleteBatchProcessed(processedEnvelopes: successfulEnvelopes)
+        }
     }
 
     private func decryptEnvelope(
