@@ -32,6 +32,11 @@ class AppVersionMigrationService {
         self.journal = journal
         self.currentVersion = currentVersion
         self.allMigrations = allMigrations
+
+        assert(
+            allMigrations.allSatisfy { $0.version <= currentVersion },
+            "There should be no migration pinned to a future version"
+        )
     }
 
     func performAppMigrations() async throws {
@@ -48,6 +53,34 @@ class AppVersionMigrationService {
             try await nextMigration.perform()
             journal.lastCompletedAppVersionMigration = nextMigration.version
         }
+    }
+
+}
+
+extension JournalProtocol {
+
+    mutating func markInitialAppVersionForExistingAccount() {
+        guard lastCompletedAppVersionMigration == nil else {
+            return
+        }
+
+        // We mark this special null version because the account exists
+        // and there is no marked version yet. This means the user has
+        // upgraded from a version prior to this system, to a version
+        // post this system. To ensure all known migrations are run, we
+        // set the lowest possible version.
+        lastCompletedAppVersionMigration = "0.0.0"
+    }
+
+    mutating func markInitialAppVersionForNewAccount(currentVersion: String) {
+        guard lastCompletedAppVersionMigration == nil else {
+            return
+        }
+
+        // We mark the current version because a new account should not
+        // run any migration and there should be no migrations greater
+        // than the current version.
+        lastCompletedAppVersionMigration = SemanticVersion(stringLiteral: currentVersion)
     }
 
 }
