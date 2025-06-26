@@ -107,7 +107,7 @@ final class AuthenticationInterfaceBuilder {
                 accountsPublisher: CurrentValuePublisher(subject: CurrentValueSubject(accounts)),
                 useLegacyRegistrationFlow: !DeveloperFlag.newRegistration.isOn,
                 isMultibackendEnabled: DeveloperFlag.multibackend.isOn,
-                personalAccountCreationAnalyticsTracker: PersonalAccountCreationAnalyticsTracker()
+                personalAccountCreationAnalyticsTracker: PersonalAccountCreationAnalyticsTracker() // TODO: only pass instance if countly is enabled
             )
             return AuthenticationHostingController(
                 rootView: rootView,
