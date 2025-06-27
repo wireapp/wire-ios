@@ -55,6 +55,14 @@ public final class FeatureConfigLocalStore: FeatureConfigLocalStoreProtocol {
             return feature
         }
     }
+    
+    public func isFeatureEnabled(
+        feature: Feature
+    ) async -> Bool {
+        await context.perform {
+            feature.status == .enabled
+        }
+    }
 
     public func storeFeature(
         needsNotifyUser: Bool,
