@@ -76,12 +76,10 @@ class ChannelRepository: ChannelRepositoryProtocol {
         let confCallingFeature = try await featureConfigLocalStore.fetchFeature(
             name: .conferenceCalling
         )
-        
-        let isFeatureEnabled = await featureConfigLocalStore.isFeatureEnabled(
+
+        return await featureConfigLocalStore.isFeatureEnabled(
             feature: confCallingFeature
         )
-
-        return isFeatureEnabled
     }
 }
 

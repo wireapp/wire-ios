@@ -65,10 +65,10 @@ public protocol FeatureConfigLocalStoreProtocol {
     func featureConfig(
         feature: Feature
     ) async -> (status: Feature.Status, config: Data?)
-    
+
     /// Checks whether a feature is enabled.
     /// - parameter feature: The feature to check the status for.
-    
+
     func isFeatureEnabled(
         feature: Feature
     ) async -> Bool

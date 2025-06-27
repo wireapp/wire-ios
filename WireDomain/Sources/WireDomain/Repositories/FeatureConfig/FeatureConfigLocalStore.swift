@@ -55,7 +55,7 @@ public final class FeatureConfigLocalStore: FeatureConfigLocalStoreProtocol {
             return feature
         }
     }
-    
+
     public func isFeatureEnabled(
         feature: Feature
     ) async -> Bool {
