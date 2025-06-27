@@ -82,7 +82,7 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
                     break
                 case .syncing:
                     // ignore this event, it gives the number of messages until we're caught up
-                    try await pushChannel.acknowledgeMessageCount()
+                    break
                 case let .event(envelope):
                     do {
 
@@ -108,6 +108,7 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
                 attributes: logAttributes
             )
             // TODO: handle error
+            continuation.finish()
             //continuation.finish(throwing: error)
         }
         return finalStream
