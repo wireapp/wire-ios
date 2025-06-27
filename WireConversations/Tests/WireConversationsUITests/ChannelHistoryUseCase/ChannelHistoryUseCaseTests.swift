@@ -43,7 +43,7 @@ final class ChannelHistoryUseCaseTests: XCTestCase {
         XCTAssertEqual(repo.updateHistoryDepth_Invocations.count, 1)
 
     }
-    
+
     func testFetchConferenceCallingFeatureConfig_callsRepo() async throws {
         // Given
 

@@ -24,7 +24,7 @@ public struct CloseButton: View {
     private let action: () -> Void
     private let accessibilityLabel: String
     private let foregroundColor: UIColor
-    
+
     public init(
         action: @escaping @MainActor () -> Void,
         foregroundColor: UIColor = SemanticColors.Icon.foregroundDefaultBlack,

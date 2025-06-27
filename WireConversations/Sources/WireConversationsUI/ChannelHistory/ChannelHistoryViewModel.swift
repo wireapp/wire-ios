@@ -46,16 +46,27 @@ package class ChannelHistoryViewModel: ObservableObject {
 
         bind()
     }
-    
+
     func fetchData() async {
         isLoading = true
         do {
             isUserPremium = try await useCase.isUserPremium()
-            channelHistoryAvailableOptions = isUserPremium ? [.off, .oneDay, .oneWeek, .fourWeeks, .unlimited, .custom] : [.off, .oneDay]
+            channelHistoryAvailableOptions = isUserPremium ? [
+                .off,
+                .oneDay,
+                .oneWeek,
+                .fourWeeks,
+                .unlimited,
+                .custom
+            ] :
+                [
+                    .off,
+                    .oneDay
+                ]
         } catch {}
         isLoading = false
     }
-    
+
     func upgradeBannerURL() -> URL {
         URL(string: "https://teams.wire.com/billing/)")!
     }

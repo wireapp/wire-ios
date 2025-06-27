@@ -44,7 +44,7 @@ class ChannelHistoryViewSnapshotTests: XCTestCase {
 
         snapshotHelper.verifyLightAndDark(matching: sut)
     }
-    
+
     @MainActor
     func testChannelHistory_UserNotPremium() async {
         let sut = await makeSUT(isPremium: false)

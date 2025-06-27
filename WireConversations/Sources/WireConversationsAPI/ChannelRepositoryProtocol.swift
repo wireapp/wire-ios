@@ -26,6 +26,6 @@ public protocol ChannelRepositoryProtocol {
     func updateHistoryDepth(
         _ historyDepth: Int?
     ) async throws
-    
+
     func isConferenceCallingFeatureEnabled() async throws -> Bool
 }

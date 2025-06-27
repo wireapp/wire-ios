@@ -45,20 +45,20 @@ package struct ChannelHistoryView: View {
                                 withAnimation(.easeInOut(duration: 0.3)) {
                                     rotationAngle = channelHistoryOption == .custom ? 90 : 0
                                 }
-                                
+
                                 isExpanded = channelHistoryOption == .custom
                                 viewModel.channelHistoryOption = channelHistoryOption
                             } label: {
                                 Text(channelHistoryOption.title)
                                     .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
                             }
-                            
+
                             Spacer()
-                            
+
                             if viewModel.channelHistoryOption == channelHistoryOption {
                                 Checkmark(accentColor: viewModel.accentColor)
                             }
-                            
+
                             if channelHistoryOption == .custom {
                                 Image("wire_conversations_chevron_right", bundle: .resources)
                                     .renderingMode(.template)
@@ -68,13 +68,13 @@ package struct ChannelHistoryView: View {
                             }
                         }
                     }
-                    
+
                     if viewModel.channelHistoryOption == .custom {
                         channelCustomHistoryPickers
                     }
-                    
+
                 }.background(.clear)
-                
+
                 Section {
                     if !viewModel.isUserPremium {
                         WireChannelBannerView(

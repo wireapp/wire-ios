@@ -17,10 +17,10 @@
 //
 
 import SwiftUI
+import WireConversationsUIBindings
 import WireTestingPackage
 import XCTest
 @testable import WireConversationsUI
-import WireConversationsUIBindings
 
 class WireChannelBannerTests: XCTestCase {
 

@@ -45,14 +45,17 @@ final class ChannelHistoryViewModelTests: XCTestCase {
             1
         )
     }
-    
+
     func test_fetchData_UserIsPremium_triggersValuesUpdates() async {
         useCase.isUserPremium_MockValue = true
         await viewModel.fetchData()
         XCTAssertEqual(viewModel.isUserPremium, true)
-        XCTAssertEqual(viewModel.channelHistoryAvailableOptions, [.off, .oneDay, .oneWeek, .fourWeeks, .unlimited, .custom])
+        XCTAssertEqual(
+            viewModel.channelHistoryAvailableOptions,
+            [.off, .oneDay, .oneWeek, .fourWeeks, .unlimited, .custom]
+        )
     }
-    
+
     func test_fetchData_UserIsNotPremium_triggersValuesUpdates() async {
         useCase.isUserPremium_MockValue = false
         await viewModel.fetchData()

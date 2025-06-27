@@ -71,12 +71,12 @@ class ChannelRepository: ChannelRepositoryProtocol {
 
         // return historyDepth
     }
-    
+
     func isConferenceCallingFeatureEnabled() async throws -> Bool {
         let confCallingFeature = try await featureConfigLocalStore.fetchFeature(
             name: .conferenceCalling
         )
-        
+
         return confCallingFeature.status == .enabled
     }
 }

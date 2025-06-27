@@ -21,7 +21,7 @@ import WireDesign
 import WireReusableUIComponents
 
 public struct WireChannelBannerView: View {
-    
+
     public struct Configuration {
         let title: String
         let message: String
@@ -31,15 +31,15 @@ public struct WireChannelBannerView: View {
         let showCloseButton: Bool
         let closeAction: () -> Void
     }
-    
+
     private let configuration: Configuration
-    
+
     init(
         configuration: Configuration
     ) {
         self.configuration = configuration
     }
-    
+
     public var body: some View {
         VStack(alignment: .leading, spacing: 15) {
             HStack {
@@ -48,9 +48,9 @@ public struct WireChannelBannerView: View {
                     .foregroundStyle(Color.white)
                     .bold()
                     .accessibilityLabel(Text(configuration.title))
-                
+
                 Spacer()
-                
+
                 if configuration.showCloseButton {
                     CloseButton(
                         action: { configuration.closeAction() },
@@ -59,13 +59,13 @@ public struct WireChannelBannerView: View {
                     )
                 }
             }
-            
+
             Text(configuration.message)
                 .foregroundStyle(.white)
                 .accessibilityLabel(
                     configuration.message
                 )
-            
+
             Link(
                 configuration.buttonTitle,
                 destination: configuration.buttonURL
@@ -80,7 +80,7 @@ public struct WireChannelBannerView: View {
                     .stroke(.black)
             }
             .clipShape(.rect(cornerRadius: 12))
-            
+
         }
         .padding(.all, 15)
         .background(alignment: .top) {
@@ -104,7 +104,7 @@ public struct WireChannelBannerView: View {
             buttonURL: URL(string: "https://example.com")!,
             padding: 30,
             showCloseButton: true,
-            closeAction: { }
+            closeAction: {}
         )
     )
 }
