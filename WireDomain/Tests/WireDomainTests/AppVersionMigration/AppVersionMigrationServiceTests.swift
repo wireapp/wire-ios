@@ -20,9 +20,8 @@ import Foundation
 import Testing
 @testable import WireDomain
 
-class AppVersionMigrationServiceTests {
+final class AppVersionMigrationServiceTests {
 
-    let currentVersion: SemanticVersion = "3.4.5"
     var migrationsPeformed = [SemanticVersion]()
     var migrationToInterrupt: SemanticVersion?
 
@@ -31,17 +30,17 @@ class AppVersionMigrationServiceTests {
         storage: UserDefaults.temporary()
     )
 
-    lazy var sut = AppVersionMigrationService(
-        journal: journal,
-        currentVersion: currentVersion,
-        allMigrations: [
-            createMigration(for: "1.0.1"),
-            createMigration(for: "1.3.2"),
-            createMigration(for: "2.0.0")
-        ]
-    )
+    func makeSUT(
+        currentVersion: SemanticVersion,
+        migrations: [SemanticVersion]
+    ) -> AppVersionMigrationService {
+        AppVersionMigrationService(
+            journal: journal,
+            currentVersion: currentVersion,
+            allMigrations: migrations.map(makeMigration))
+    }
 
-    func createMigration(for version: SemanticVersion) -> MockMigration {
+    func makeMigration(for version: SemanticVersion) -> MockMigration {
         MockMigration(version: version) {
             if self.migrationToInterrupt == $0 {
                 throw "Interrupted migration: \($0)"
@@ -50,105 +49,200 @@ class AppVersionMigrationServiceTests {
         }
     }
 
-    @Test("No migrations run on first install")
-    func noMigrationsRunOnFreshInstall() async throws {
+    // MARK: - Special cases
+
+    @Test("No migrations are run for new account", arguments: [
+        TestData(
+            description: "No migrations exist",
+            allMigrations: [],
+            currentVersion: "1.0.0",
+            migrationsExpectedToBeRun: [],
+            newMigrationMarker: "1.0.0"
+        ),
+        TestData(
+            description: "One migration exists",
+            allMigrations: ["1.0.0"],
+            currentVersion: "1.0.0",
+            migrationsExpectedToBeRun: [],
+            newMigrationMarker: "1.0.0"
+        ),
+        TestData(
+            description: "Several migrations exist",
+            allMigrations: ["1.0.0", "1.2.0"],
+            currentVersion: "1.2.0",
+            migrationsExpectedToBeRun: [],
+            newMigrationMarker: "1.2.0"
+        )
+    ])
+    func noMigrationsRunForNewAccount(testData: TestData) async throws {
         // Given
-        #expect(journal[.lastCompletedAppVersionMigration] == nil)
+        let sut = makeSUT(
+            currentVersion: testData.currentVersion,
+            migrations: testData.allMigrations
+        )
+
+        journal.markInitialAppVersionForNewAccount(
+            currentVersion: testData.currentVersion.string
+        )
 
         // When
         try await sut.performAppMigrations()
 
         // Then
-        #expect(migrationsPeformed.isEmpty)
-        #expect(journal[.lastCompletedAppVersionMigration] == nil)
+        #expect(migrationsPeformed == testData.migrationsExpectedToBeRun)
+        #expect(journal[.lastCompletedAppVersionMigration] == testData.newMigrationMarker.string)
     }
 
-    @Test("No migrations run if last version is current")
-    func noMigrationsRunIfLastVersionIsCurrent() async throws {
+    @Test("Update from pre-service version", arguments: [
+        TestData(
+            description: "From pre to version service was introduced",
+            allMigrations: ["1.0.1"],
+            currentVersion: "1.0.1",
+            migrationsExpectedToBeRun: ["1.0.1"],
+            newMigrationMarker: "1.0.1"
+        ),
+        TestData(
+            description: "A bigger jump (a few versions but one migration)",
+            allMigrations: ["1.0.1"],
+            currentVersion: "1.0.5",
+            migrationsExpectedToBeRun: ["1.0.1"],
+            newMigrationMarker: "1.0.1"
+        ),
+        TestData(
+            description: "A even bigger jump (a few versions ad serveal migrations)",
+            allMigrations: ["1.0.1", "1.2.0", "1.5.2"],
+            currentVersion: "1.5.2",
+            migrationsExpectedToBeRun: ["1.0.1", "1.2.0", "1.5.2"],
+            newMigrationMarker: "1.5.2"
+        )
+    ])
+    func updateFromPreServiceVersion(testData: TestData) async throws {
         // Given
-        journal[.lastCompletedAppVersionMigration] = currentVersion.string
+        let sut = makeSUT(
+            currentVersion: testData.currentVersion,
+            migrations: testData.allMigrations
+        )
+
+        journal.markInitialAppVersionForExistingAccount()
 
         // When
         try await sut.performAppMigrations()
 
         // Then
-        #expect(migrationsPeformed.isEmpty)
-        #expect(journal[.lastCompletedAppVersionMigration] == currentVersion.string)
+        #expect(migrationsPeformed == testData.migrationsExpectedToBeRun)
+        #expect(journal[.lastCompletedAppVersionMigration] == testData.newMigrationMarker.string)
     }
 
-    @Test("No migrations run if none are eligible")
-    func noMigrationsRunIfNoneAreEligbile() async throws {
+    // MARK: - Normal upgrades
+
+    @Test("Only eligible migrations are run", arguments: [
+        TestData(
+            description: "All migrations have already been run",
+            allMigrations: ["1.0.0", "1.0.1"],
+            prevMigrationMarker: "1.0.1",
+            currentVersion: "1.0.1",
+            migrationsExpectedToBeRun: [],
+            newMigrationMarker: "1.0.1"
+        ),
+        TestData(
+            description: "No new migrations",
+            allMigrations: ["1.0.0", "1.0.1"],
+            prevMigrationMarker: "1.0.1",
+            currentVersion: "1.2.0",
+            migrationsExpectedToBeRun: [],
+            newMigrationMarker: "1.0.1"
+        ),
+        TestData(
+            description: "One migration available upon update",
+            allMigrations: ["1.0.0", "1.0.1"],
+            prevMigrationMarker: "1.0.0",
+            currentVersion: "1.0.1",
+            migrationsExpectedToBeRun: ["1.0.1"],
+            newMigrationMarker: "1.0.1"
+        ),
+        TestData(
+            description: "Several migrations available upon update",
+            allMigrations: ["1.0.0", "1.0.1", "1.2.0"],
+            prevMigrationMarker: "1.0.0",
+            currentVersion: "1.3.0",
+            migrationsExpectedToBeRun: ["1.0.1", "1.2.0"],
+            newMigrationMarker: "1.2.0"
+        )
+    ])
+    func onlyEligibleMigrationsAreRun(testData: TestData) async throws {
         // Given
-        journal[.lastCompletedAppVersionMigration] = "2.1.0"
+        let sut = makeSUT(
+            currentVersion: testData.currentVersion,
+            migrations: testData.allMigrations
+        )
+
+        journal[.lastCompletedAppVersionMigration] = try #require(
+            testData.prevMigrationMarker?.string
+        )
 
         // When
         try await sut.performAppMigrations()
 
         // Then
-        #expect(migrationsPeformed.isEmpty)
-        #expect(journal[.lastCompletedAppVersionMigration] == "2.1.0")
-    }
-
-    @Test("One migration run if one is eligible")
-    func oneMigrationIsRunIfOneIsEligble() async throws {
-        // Given
-        journal[.lastCompletedAppVersionMigration] = "1.9.0"
-
-        // When
-        try await sut.performAppMigrations()
-
-        // Then
-        #expect(migrationsPeformed == ["2.0.0"])
-        #expect(journal[.lastCompletedAppVersionMigration] == "2.0.0")
-    }
-
-    @Test("Several migrations run if several are eligible")
-    func severalMigrationsRunIfSeveralAreEligble() async throws {
-        // Given
-        journal[.lastCompletedAppVersionMigration] = "1.0.0"
-
-        // When
-        try await sut.performAppMigrations()
-
-        // Then
-        #expect(migrationsPeformed == ["1.0.1", "1.3.2", "2.0.0"])
-        #expect(journal[.lastCompletedAppVersionMigration] == "2.0.0")
+        #expect(migrationsPeformed == testData.migrationsExpectedToBeRun)
+        #expect(journal[.lastCompletedAppVersionMigration] == testData.newMigrationMarker.string)
     }
 
     @Test("Interrupted migrations will be retried")
     func interruptedMigrationsWillBeRetried() async throws {
         // Given
-        journal[.lastCompletedAppVersionMigration] = "1.0.0"
-        migrationToInterrupt = "1.3.2"
+        let currentVersion: SemanticVersion = "1.2.3"
+        let sut = makeSUT(
+            currentVersion: currentVersion,
+            migrations: ["0.1.0", "0.2.0", "1.0.0", "1.2.3"]
+        )
+        
+        journal[.lastCompletedAppVersionMigration] = "0.1.0"
+        migrationToInterrupt = "1.0.0"
 
         // When
         let error = await #expect(throws: String.self) {
-            try await self.sut.performAppMigrations()
+            try await sut.performAppMigrations()
         }
 
         // Then
-        #expect(error == "Interrupted migration: 1.3.2")
-        #expect(migrationsPeformed == ["1.0.1"])
-        #expect(journal[.lastCompletedAppVersionMigration] == "1.0.1")
+        #expect(error == "Interrupted migration: 1.0.0")
+        #expect(migrationsPeformed == ["0.2.0"])
+        #expect(journal[.lastCompletedAppVersionMigration] == "0.2.0")
 
         // When
         migrationToInterrupt = nil
         try await sut.performAppMigrations()
 
         // Then
-        #expect(migrationsPeformed == ["1.0.1", "1.3.2", "2.0.0"])
-        #expect(journal[.lastCompletedAppVersionMigration] == "2.0.0")
+        #expect(migrationsPeformed == ["0.2.0", "1.0.0", "1.2.3"])
+        #expect(journal[.lastCompletedAppVersionMigration] == "1.2.3")
     }
 
 }
 
-struct MockMigration: AppVersionMigration {
+extension AppVersionMigrationServiceTests {
 
-    let version: SemanticVersion
-    let block: (SemanticVersion) async throws -> Void
+    struct TestData {
 
-    func perform() async throws {
-        try await block(version)
+        let description: String
+        var allMigrations: [SemanticVersion]
+        var prevMigrationMarker: SemanticVersion? = nil
+        var currentVersion: SemanticVersion
+        var migrationsExpectedToBeRun: [SemanticVersion]
+        var newMigrationMarker: SemanticVersion
+
+    }
+
+    struct MockMigration: AppVersionMigration {
+
+        let version: SemanticVersion
+        let block: (SemanticVersion) async throws -> Void
+
+        func perform() async throws {
+            try await block(version)
+        }
+
     }
 
 }
