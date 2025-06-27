@@ -28,7 +28,6 @@ protocol PersonalAccountCreationComponentDependency: Dependency {
     @MainActor var router: any Router { get }
     var networkStack: NetworkStack { get }
     var passwordValidator: any PasswordValidator { get }
-    var backendInfo: BackendInfo { get }
     var privacyPolicyURL: URL { get }
     var termsOfUseURL: URL { get }
     var registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)? { get }

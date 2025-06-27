@@ -121,9 +121,6 @@ private class PersonalAccountCreationComponentDependency9e5e5a00f5c85fcf54b5Prov
     var passwordValidator: any PasswordValidator {
         return rootComponent.passwordValidator
     }
-    var backendInfo: BackendInfo {
-        return rootComponent.backendInfo
-    }
     var privacyPolicyURL: URL {
         return rootComponent.privacyPolicyURL
     }
@@ -252,7 +249,6 @@ extension PersonalAccountCreationComponent: NeedleFoundation.Registration {
         keyPathToName[\PersonalAccountCreationComponentDependency.router] = "router-any Router"
         keyPathToName[\PersonalAccountCreationComponentDependency.networkStack] = "networkStack-NetworkStack"
         keyPathToName[\PersonalAccountCreationComponentDependency.passwordValidator] = "passwordValidator-any PasswordValidator"
-        keyPathToName[\PersonalAccountCreationComponentDependency.backendInfo] = "backendInfo-BackendInfo"
         keyPathToName[\PersonalAccountCreationComponentDependency.privacyPolicyURL] = "privacyPolicyURL-URL"
         keyPathToName[\PersonalAccountCreationComponentDependency.termsOfUseURL] = "termsOfUseURL-URL"
         keyPathToName[\PersonalAccountCreationComponentDependency.registrationAnalyticsTracker] = "registrationAnalyticsTracker-(any RegistrationAnalyticsTrackerProtocol)?"

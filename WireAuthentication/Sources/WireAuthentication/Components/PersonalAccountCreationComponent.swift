@@ -25,14 +25,17 @@ internal import WireAuthenticationLogic
 final class PersonalAccountCreationComponent: Component<PersonalAccountCreationComponentDependency> {
 
     private let email: String
+    private let backendURL: URL
     private let teamAccountCreationLink: URL?
 
     init(
         parent: any Scope,
         email: String,
+        backendURL: URL,
         teamAccountCreationLink: URL?
     ) {
         self.email = email
+        self.backendURL = backendURL
         self.teamAccountCreationLink = teamAccountCreationLink
         super.init(parent: parent)
     }
@@ -69,7 +72,7 @@ extension PersonalAccountCreationComponent: PersonalAccountCreationViewModel.Fac
             factory: self,
             router: dependency.router,
             email: email,
-            backendURL: dependency.backendInfo.backendConfig.endpoints.backendURL,
+            backendURL: backendURL,
             privacyPolicyURL: dependency.privacyPolicyURL,
             termsOfUseURL: dependency.termsOfUseURL,
             teamAccountCreationLink: teamAccountCreationLink,
