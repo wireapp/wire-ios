@@ -25,7 +25,7 @@ final class ChannelHistoryUseCaseTests: XCTestCase {
 
     lazy var repo = MockChannelRepositoryProtocol()
 
-    func testFetchHistory_callsRepo() async throws {
+    func testUpdateHistory_callsRepo() async throws {
         // Given
 
         let useCase = ChannelHistoryUseCase(repository: repo)
@@ -41,6 +41,22 @@ final class ChannelHistoryUseCaseTests: XCTestCase {
         // Then
 
         XCTAssertEqual(repo.updateHistoryDepth_Invocations.count, 1)
+
+    }
+    
+    func testFetchConferenceCallingFeatureConfig_callsRepo() async throws {
+        // Given
+
+        let useCase = ChannelHistoryUseCase(repository: repo)
+        repo.isConferenceCallingFeatureEnabled_MockValue = true
+
+        // When
+
+        _ = try await useCase.isUserPremium()
+
+        // Then
+
+        XCTAssertEqual(repo.isConferenceCallingFeatureEnabled_Invocations.count, 1)
 
     }
 }

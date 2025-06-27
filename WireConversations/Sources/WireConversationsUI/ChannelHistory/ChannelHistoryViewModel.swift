@@ -26,7 +26,7 @@ package class ChannelHistoryViewModel: ObservableObject {
     @Published var channelHistoryOption: ChannelHistoryOption
     @Published var channelHistoryOptionCustom: ChannelHistoryOption.Custom = .init()
     @Published var isLoading: Bool = false
-    @Published var isUserPremium: Bool = false
+    @Published var isUserPremium: Bool = true
     @Published var channelHistoryAvailableOptions: [ChannelHistoryOption] = []
 
     public var accentColor: Color

@@ -32,31 +32,43 @@ class ChannelHistoryViewSnapshotTests: XCTestCase {
         .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
 
     @MainActor
-    func testChannelHistory() {
-        let sut = makeSUT()
+    func testChannelHistory_UserPremium() async {
+        let sut = await makeSUT()
 
         snapshotHelper.verifyLightAndDark(matching: sut)
     }
 
     @MainActor
-    func testCustomChannelHistory() {
-        let sut = makeSUT(customHistory: true)
+    func testCustomChannelHistory_UserPremium() async {
+        let sut = await makeSUT(customHistory: true)
+
+        snapshotHelper.verifyLightAndDark(matching: sut)
+    }
+    
+    @MainActor
+    func testChannelHistory_UserNotPremium() async {
+        let sut = await makeSUT(isPremium: false)
 
         snapshotHelper.verifyLightAndDark(matching: sut)
     }
 
     @MainActor
-    private func makeSUT(customHistory: Bool = false) -> UIViewController {
+    private func makeSUT(
+        customHistory: Bool = false,
+        isPremium: Bool = true
+    ) async -> UIViewController {
         let screenBounds = UIScreen.main.bounds
 
         let useCase = MockChannelHistoryUseCaseProtocol()
         useCase.updateHistoryDepth_MockMethod = { _ in }
+        useCase.isUserPremium_MockValue = isPremium
 
         let viewModel = ChannelHistoryViewModel(
             historyDepth: 10_000,
             accentColor: .red,
             useCase: useCase
         )
+        await viewModel.fetchData()
 
         viewModel.channelHistoryOption = customHistory ? .custom : .oneDay
 
