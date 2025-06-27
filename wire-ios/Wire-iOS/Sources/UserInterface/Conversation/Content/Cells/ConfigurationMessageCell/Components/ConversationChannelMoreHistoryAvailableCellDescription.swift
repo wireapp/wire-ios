@@ -21,7 +21,7 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-final class ConversationChannelHistoryAvailableCellDescription: ConversationMessageCellDescription {
+final class ConversationChannelMoreHistoryAvailableCellDescription: ConversationMessageCellDescription {
 
     // MARK: Properties
 
@@ -41,7 +41,7 @@ final class ConversationChannelHistoryAvailableCellDescription: ConversationMess
 
     init(hasMoreHistory: Bool) {
         let image = hasMoreHistory ? UIImage(systemName: "arrow.trianglehead.counterclockwise") : nil
-        let title = hasMoreHistory ? "Loading conversation history..." : "You made it to the top\nYou see all available messages"
+        let title = hasMoreHistory ? L10n.Localizable.Content.System.messageMoreHistoryAvailable: L10n.Localizable.Content.System.messageNoMoreHistoryAvailable
         self.configuration = View.Configuration(image: image, title: title)
         self.actionController = nil
     }
@@ -101,7 +101,7 @@ final class ConversationChannelHistoryAvailableCell: UIView, ConversationMessage
         containerView.addSubview(stackView)
         
         [imageView, titleLabel].forEach(stackView.addArrangedSubview)
-        imageView.image = UIImage(systemName: "arrow.trianglehead.counterclockwise")?.withTintColor(SemanticColors.Label.textDefaultWhite, renderingMode: .alwaysOriginal)
+        imageView.image = UIImage(systemName: "arrow.trianglehead.counterclockwise")
         titleLabel.numberOfLines = 0
         titleLabel.textColor = SemanticColors.Label.textDefault
         titleLabel.font = FontSpec.mediumFont.font!

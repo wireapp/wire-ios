@@ -1894,6 +1894,11 @@ internal enum L10n {
         internal static let isVerified = L10n.tr("Localizable", "content.system.is_verified", fallback: "All fingerprints are verified")
         /// Tap to like
         internal static let likeTooltip = L10n.tr("Localizable", "content.system.like_tooltip", fallback: "Tap to like")
+        /// Loading conversation history...
+        internal static let messageMoreHistoryAvailable = L10n.tr("Localizable", "content.system.message_more_history_available", fallback: "Loading conversation history...")
+        /// You made it to the top 🥳
+        /// You see all available messages.
+        internal static let messageNoMoreHistoryAvailable = L10n.tr("Localizable", "content.system.message_no_more_history_available", fallback: "You made it to the top 🥳\nYou see all available messages.")
         /// %@ turned read receipts off for everyone
         internal static func messageReadReceiptOff(_ p1: Any) -> String {
           return L10n.tr("Localizable", "content.system.message_read_receipt_off", String(describing: p1), fallback: "%@ turned read receipts off for everyone")

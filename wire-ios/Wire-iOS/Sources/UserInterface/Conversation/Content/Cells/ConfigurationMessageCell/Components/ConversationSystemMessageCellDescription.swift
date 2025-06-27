@@ -230,6 +230,12 @@ enum ConversationSystemMessageCellDescription {
         case .invalid:
             let unknownMessage = UnknownMessageCellDescription()
             return [AnyConversationMessageCellDescription(unknownMessage)]
+        case .moreHistoryAvailable:
+            let moreHistoryAvailableCellDescription = ConversationChannelMoreHistoryAvailableCellDescription(hasMoreHistory: true)
+            return [AnyConversationMessageCellDescription(moreHistoryAvailableCellDescription)]
+        case .noMoreHistoryAvailable:
+            let noMoreHistoryAvailableCellDescription = ConversationChannelMoreHistoryAvailableCellDescription(hasMoreHistory: false)
+            return [AnyConversationMessageCellDescription(noMoreHistoryAvailableCellDescription)]
         }
 
         return []
