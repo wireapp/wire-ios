@@ -54,7 +54,12 @@ final class StartUIViewController: UIViewController {
                     }
                 case .channel:
                     Task { @MainActor [weak self] in
-                        self?.navigateToChannelCreation()
+                        guard let self else { return }
+                        if canCreateChannel {
+                            navigateToChannelCreation()
+                        } else {
+                            presentCreateTeamBanner()
+                        }
                     }
                 }
             }
@@ -322,6 +327,11 @@ final class StartUIViewController: UIViewController {
         }
         return true
     }
+
+    private func presentCreateTeamBanner() {
+        fatalError("TODO")
+    }
+
 }
 
 // MARK: - UISearchResultsUpdating, UISearchBarDelegate
