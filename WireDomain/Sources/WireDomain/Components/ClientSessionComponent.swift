@@ -208,7 +208,7 @@ public final class ClientSessionComponent {
         sharedUserDefaults: sharedUserDefaults
     )
 
-    private lazy var userClientsLocalStore: some UserClientsLocalStore = UserClientsLocalStore(
+    private lazy var userClientsLocalStore: some UserClientsLocalStoreProtocol = UserClientsLocalStore(
         context: syncContext
     )
 
@@ -580,6 +580,7 @@ public final class ClientSessionComponent {
     )
 
     private lazy var userConnectionEventProcessor = UserConnectionEventProcessor(
+        context: syncContext,
         connectionsRepository: userConnectionsRepository,
         oneOnOneResolver: oneOnOneResolver
     )

@@ -40,13 +40,14 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
             conversationID: conversationID,
             senderID: senderID,
             accountID: accountID,
+            eventTimestamp: time,
             callContent: callContent
         )
 
         let displayCallNotification = await validator.validateCallNotification(
             conversationID: conversationID,
             senderID: senderID,
-            time: time,
+            eventTimestamp: time,
             callContent: callContent
         )
 
@@ -372,6 +373,7 @@ extension ConversationCallingEventNotificationBuilder {
             conversationID: ConversationID,
             senderID: UserID,
             accountID: UUID,
+            eventTimestamp: Date?,
             callContent: CallContent
         ) async -> Bool {
             let conversation = await conversationLocalStore.fetchOrCreateConversation(
@@ -394,7 +396,7 @@ extension ConversationCallingEventNotificationBuilder {
             let knownCallHandles = userDefaults.object(forKey: Constants.knownCalls) as? [String] ?? []
             let wasCallHandleReported = knownCallHandles.contains(handle)
 
-            let initiatesRinging = callContent.isIncomingCall || wasCallHandleReported
+            let initiatesRinging = callContent.isIncomingCall && !wasCallHandleReported
             let terminatesRinging = (
                 callContent.isEndCall || callContent.isAnsweredElsewhere || callContent
                     .isRejected
@@ -402,12 +404,18 @@ extension ConversationCallingEventNotificationBuilder {
 
             let isValidState = initiatesRinging || terminatesRinging
 
+            let serverTimeDelta = await conversationLocalStore.fetchServerTimeDelta()
+            let currentTimestamp = Date.now.addingTimeInterval(serverTimeDelta)
+            let isCallTimeOut = eventTimestamp != nil ? Int(currentTimestamp.timeIntervalSince(eventTimestamp!)) > 30 :
+                true
+
             return !needsToBeUpdatedFromBackend
                 && !isConversationMuted
                 && !isConversationForcedReadOnly
                 && isAVSReady
                 && isCallKitReady
                 && isUserSessionLoaded
+                && !isCallTimeOut
                 && isValidState
         }
 
@@ -415,7 +423,7 @@ extension ConversationCallingEventNotificationBuilder {
         func validateCallNotification(
             conversationID: ConversationID,
             senderID: UserID,
-            time: Date?,
+            eventTimestamp: Date?,
             callContent: CallContent
         ) async -> Bool {
             let conversation = await conversationLocalStore.fetchOrCreateConversation(
@@ -430,10 +438,14 @@ extension ConversationCallingEventNotificationBuilder {
                 domain: senderID.domain
             )
 
+            let serverTimeDelta = await conversationLocalStore.fetchServerTimeDelta()
+            let currentTimestamp = Date.now.addingTimeInterval(serverTimeDelta)
+
             let mutedMessagesTypes = await conversationLocalStore
                 .conversationMutedMessageTypesIncludingAvailability(conversation)
             let isConversationMuted = mutedMessagesTypes == .all
-            let isCallTimeOut = time != nil ? Int(Date.now.timeIntervalSince(time!)) > 30 : true
+            let isCallTimeOut = eventTimestamp != nil ? Int(currentTimestamp.timeIntervalSince(eventTimestamp!)) > 30 :
+                true
             let isCallerSelf = selfUser == caller
 
             let isIncomingCall = callContent.isIncomingCall

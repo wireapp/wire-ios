@@ -1357,6 +1357,24 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         await mock(permission, conversation)
     }
 
+    // MARK: - fetchServerTimeDelta
+
+    public var fetchServerTimeDelta_Invocations: [Void] = []
+    public var fetchServerTimeDelta_MockMethod: (() async -> TimeInterval)?
+    public var fetchServerTimeDelta_MockValue: TimeInterval?
+
+    public func fetchServerTimeDelta() async -> TimeInterval {
+        fetchServerTimeDelta_Invocations.append(())
+
+        if let mock = fetchServerTimeDelta_MockMethod {
+            return await mock()
+        } else if let mock = fetchServerTimeDelta_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchServerTimeDelta`")
+        }
+    }
+
 }
 
 class MockConversationLocationMessageNotificationBuilderProtocol: ConversationLocationMessageNotificationBuilderProtocol {
@@ -3919,6 +3937,21 @@ public class MockUpdateEventsLocalStoreProtocol: UpdateEventsLocalStoreProtocol 
         await mock()
     }
 
+    // MARK: - storeServerTimeDelta
+
+    public var storeServerTimeDelta_Invocations: [TimeInterval] = []
+    public var storeServerTimeDelta_MockMethod: ((TimeInterval) async -> Void)?
+
+    public func storeServerTimeDelta(_ serverTimeDelta: TimeInterval) async {
+        storeServerTimeDelta_Invocations.append(serverTimeDelta)
+
+        guard let mock = storeServerTimeDelta_MockMethod else {
+            fatalError("no mock for `storeServerTimeDelta`")
+        }
+
+        await mock(serverTimeDelta)
+    }
+
 }
 
 public class MockUserClientsLocalStoreProtocol: UserClientsLocalStoreProtocol {
@@ -4775,6 +4808,21 @@ public class MockUserLocalStoreProtocol: UserLocalStoreProtocol {
         } else {
             fatalError("no mock for `fetchSelfUserAvailability`")
         }
+    }
+
+    // MARK: - updateUser
+
+    public var updateUserWithAvailability_Invocations: [(userID: WireDataModel.QualifiedID, availability: Availability)] = []
+    public var updateUserWithAvailability_MockMethod: ((WireDataModel.QualifiedID, Availability) async -> Void)?
+
+    public func updateUser(with userID: WireDataModel.QualifiedID, availability: Availability) async {
+        updateUserWithAvailability_Invocations.append((userID: userID, availability: availability))
+
+        guard let mock = updateUserWithAvailability_MockMethod else {
+            fatalError("no mock for `updateUserWithAvailability`")
+        }
+
+        await mock(userID, availability)
     }
 
 }

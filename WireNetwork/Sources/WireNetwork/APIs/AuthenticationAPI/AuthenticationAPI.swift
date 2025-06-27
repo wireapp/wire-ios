@@ -47,25 +47,44 @@ public protocol AuthenticationAPI: Sendable {
     func getDomainRegistration(forEmail email: String) async throws -> DomainRegistrationConfiguration
 
     /// Validated a company login token (SSO code).
-    /// This method will verify a company login token with the backend.
+    /// This method will verify a company login token with the backend
     ///
     /// - Parameters:
-    ///   - ssoCode: Company login token (SSO code).
+    ///   - ssoCode: Company login token (SSO code)
 
     func validateLoginToken(ssoCode: UUID) async throws
 
     /// Get the default SSO code associated with the backend
+    /// - Returns: user UUID
 
     func getSSOCode() async throws -> UUID?
 
     /// Request a verification code for a provided email address.
     ///
-    /// - Parameter email: Email address of the account
-    /// - Returns: The user details.
+    /// - Parameter
+    ///     - email: Email address of the account
+    /// - Returns: The user details
 
     func requestVerificationCode(for email: String) async throws
 
-    /// Send (or resend) an email activation code.
+    /// Register Personal Account
+    /// - Parameters:
+    ///   - name: name of the user
+    ///   - email: email of the user
+    ///   - password: password to authenticate the account
+    /// - Returns: HTTP cookie for access token
+    #if DEBUG
+        func registerPersonalAccount(name: String, email: String, password: String) async throws -> [HTTPCookie]
+    #endif
+    /// Activate user
+    /// - Parameters:
+    ///   - email: user email address
+    ///   - key: key to activate user
+    ///   - code: code to activate user
+    #if DEBUG
+        func activateUser(email: String, key: String, code: String) async throws
+    #endif
+    /// Send (or resend) an email activation code
     /// - Parameters:
     ///   - email: Email address of the account
     func requestEmailVerificationCode(for email: String) async throws
@@ -76,6 +95,7 @@ public protocol AuthenticationAPI: Sendable {
     ///   - emailCode: Activation code
     ///   - name: Full user name
     ///   - password: Password
+    ///   - label: Label
     /// - Returns: HTTP cookie and user ID.
     func registerAccount(
         email: String,
@@ -84,5 +104,4 @@ public protocol AuthenticationAPI: Sendable {
         password: String,
         label: String
     ) async throws -> (cookie: [HTTPCookie], userId: UUID?)
-
 }

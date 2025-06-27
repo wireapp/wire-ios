@@ -22,4 +22,6 @@ public enum ImportBackupError: Error {
     /// The backup file is encrypted and a password is needed for decryption.
     case passwordRequired
     case incorrectPassword
+    /// The use tried to import a backup from another user account.
+    case selfUserIDMismatch
 }
