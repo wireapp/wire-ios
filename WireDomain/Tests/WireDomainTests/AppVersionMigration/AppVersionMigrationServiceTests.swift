@@ -37,7 +37,8 @@ final class AppVersionMigrationServiceTests {
         AppVersionMigrationService(
             journal: journal,
             currentVersion: currentVersion,
-            allMigrations: migrations.map(makeMigration))
+            allMigrations: migrations.map(makeMigration)
+        )
     }
 
     func makeMigration(for version: SemanticVersion) -> MockMigration {
@@ -196,7 +197,7 @@ final class AppVersionMigrationServiceTests {
             currentVersion: currentVersion,
             migrations: ["0.1.0", "0.2.0", "1.0.0", "1.2.3"]
         )
-        
+
         journal[.lastCompletedAppVersionMigration] = "0.1.0"
         migrationToInterrupt = "1.0.0"
 
@@ -227,7 +228,7 @@ extension AppVersionMigrationServiceTests {
 
         let description: String
         var allMigrations: [SemanticVersion]
-        var prevMigrationMarker: SemanticVersion? = nil
+        var prevMigrationMarker: SemanticVersion?
         var currentVersion: SemanticVersion
         var migrationsExpectedToBeRun: [SemanticVersion]
         var newMigrationMarker: SemanticVersion

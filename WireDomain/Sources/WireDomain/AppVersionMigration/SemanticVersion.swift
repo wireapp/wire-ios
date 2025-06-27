@@ -33,9 +33,9 @@ struct SemanticVersion: ExpressibleByStringLiteral {
             .split(separator: ".")
             .compactMap { UInt($0) }
 
-        major = components.first ?? 0
-        minor = components.dropFirst().first ?? 0
-        patch = components.dropFirst(2).first ?? 0
+        self.major = components.first ?? 0
+        self.minor = components.dropFirst().first ?? 0
+        self.patch = components.dropFirst(2).first ?? 0
     }
 
 }
