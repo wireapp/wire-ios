@@ -42,14 +42,9 @@ final class StartUIViewController: UIViewController {
     let groupSelector = SearchGroupSelector()
 
     lazy var conversationTypePicker: UIViewController = {
-        let availableConversationTypes: Set<WireMultiParticipantConversationType> = if canCreateChannel {
-            [.channel, .group]
-        } else {
-            [.group]
-        }
-
+        let availableConversationTypes = [WireMultiParticipantConversationType.channel, .group]
         let view = WireConversationTypePickerFactory().create(
-            availableConversationTypes: availableConversationTypes,
+            availableConversationTypes: Set(availableConversationTypes),
             onConversationTypeSelected: { [weak self] selectedConversationType in
                 guard let self else { return }
                 switch selectedConversationType {
