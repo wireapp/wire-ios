@@ -69,6 +69,7 @@ extension PersonalAccountCreationComponent: PersonalAccountCreationViewModel.Fac
             factory: self,
             router: dependency.router,
             email: email,
+            backendURL: dependency.backendInfo.backendConfig.endpoints.backendURL,
             privacyPolicyURL: dependency.privacyPolicyURL,
             termsOfUseURL: dependency.termsOfUseURL,
             teamAccountCreationLink: teamAccountCreationLink,

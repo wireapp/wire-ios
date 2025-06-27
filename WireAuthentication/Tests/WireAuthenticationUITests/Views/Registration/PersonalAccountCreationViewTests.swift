@@ -41,6 +41,7 @@ final class PersonalAccountCreationViewTests: XCTestCase {
 
         let view = PersonalAccountCreationView(factory: FakePersonalAccountCreationFactory(
             email: "foo@bar.com",
+            backendURL: URL(string: "https://wire.com")!,
             privacyPolicyURL: URL(string: "www.wire.com")!,
             termsOfUseURL: URL(string: "www.wire.com")!,
             passwordValidator: MockPasswordValidator()
@@ -60,6 +61,7 @@ final class PersonalAccountCreationViewTests: XCTestCase {
 
         let view = PersonalAccountCreationView(factory: FakePersonalAccountCreationFactory(
             email: "foo@bar.com",
+            backendURL: URL(string: "https://wire.com")!,
             privacyPolicyURL: URL(string: "www.wire.com")!,
             termsOfUseURL: URL(string: "www.wire.com")!,
             passwordValidator: MockPasswordValidator()

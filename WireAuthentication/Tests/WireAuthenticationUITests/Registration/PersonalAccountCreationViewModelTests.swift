@@ -45,6 +45,7 @@ final class PersonalAccountCreationViewModelTests: XCTestCase, PersonalAccountCr
             factory: self,
             router: router,
             email: "mika@example.com",
+            backendURL: URL(string: "https://wire.com")!,
             privacyPolicyURL: URL(string: "https://wire.com")!,
             termsOfUseURL: URL(string: "https://wire.com")!,
             teamAccountCreationLink: URL(string: "https://wire.com")!,

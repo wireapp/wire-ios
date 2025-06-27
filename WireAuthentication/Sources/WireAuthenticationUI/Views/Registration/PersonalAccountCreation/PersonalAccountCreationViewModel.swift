@@ -44,12 +44,22 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
         passwordValidator.localizedRulesDescription ?? ""
     }
 
-    var isAnalyticsTrackingAvailable: Bool { // TODO: check if needed
-        analyticsEventTracker != nil
+    var isAnalyticsTrackingAvailable: Bool {
+        if analyticsEventTracker != nil, let backendHost = backendURL.host() {
+            [
+                // prod
+                "prod-nginz-https.wire.com",
+                // staging
+                "staging-nginz-https.zinfra.io"
+            ].contains(backendHost)
+        } else {
+            false
+        }
     }
 
     package let factory: any Factory
     private let router: any Router
+    package let backendURL: URL
     package let privacyPolicyURL: URL
     private let termsOfUseURL: URL
     package let teamAccountCreationLink: URL?
@@ -61,6 +71,7 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
         factory: any Factory,
         router: any Router,
         email: String,
+        backendURL: URL,
         privacyPolicyURL: URL,
         termsOfUseURL: URL,
         teamAccountCreationLink: URL?,
@@ -71,6 +82,7 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
         self.factory = factory
         self.router = router
         self.email = email
+        self.backendURL = backendURL
         self.privacyPolicyURL = privacyPolicyURL
         self.termsOfUseURL = termsOfUseURL
         self.teamAccountCreationLink = teamAccountCreationLink
