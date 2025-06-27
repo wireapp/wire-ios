@@ -81,17 +81,16 @@ final class VerifyUserStep: Component<VerifyUserDependency>, VerifyUserStepProto
         }
 
         if journal[.isConsumableNotificationsEnabled] {
-            try await pullEventsStep(
-                selfUserID: selfUser.id,
-                selfClientID: selfClientID
-            ).pullEvents()
-
-        } else {
             try await syncEventsStep(
                 selfUserID: selfUser.id,
                 selfClientID: selfClientID
             ).pullEvents()
 
+        } else {
+            try await pullEventsStep(
+                selfUserID: selfUser.id,
+                selfClientID: selfClientID
+            ).pullEvents()
         }
     }
 
