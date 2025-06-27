@@ -110,7 +110,7 @@ final class AppVersionMigrationServiceTests {
             newMigrationMarker: "1.0.1"
         ),
         TestData(
-            description: "A even bigger jump (a few versions ad serveal migrations)",
+            description: "A even bigger jump (a few versions and several migrations)",
             allMigrations: ["1.0.1", "1.2.0", "1.5.2"],
             currentVersion: "1.5.2",
             migrationsExpectedToBeRun: ["1.0.1", "1.2.0", "1.5.2"],
