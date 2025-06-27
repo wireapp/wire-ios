@@ -322,6 +322,10 @@ final class SelfProfileViewController: UIViewController {
         }
     }
 
+    func triggerCreateTeamFlow() {
+        fatalError()
+    }
+
     private func userDidTapCreateTeam(useCase: any IndividualToTeamMigrationUseCaseProtocol, userName: String) {
 
         analyticsEventTracker?.trackEvent(.UI.personalToTeamMigrationCTA)

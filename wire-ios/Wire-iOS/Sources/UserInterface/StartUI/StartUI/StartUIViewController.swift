@@ -329,7 +329,17 @@ final class StartUIViewController: UIViewController {
     }
 
     private func presentCreateTeamBanner() {
-        fatalError("TODO")
+        // TODO: test ipad
+        let mainCoordinator = mainCoordinator
+        let alertController = UIAlertController(title: "upgrade", message: "upgrade", preferredStyle: .alert)
+        alertController.addAction(.init(title: "upgrade", style: .default) { _ in
+            Task {
+                print("TODO")
+                // SelfProfileViewControllerBuilder(
+                // await mainCoordinator.presentViewController(<#T##viewController: UIViewController##UIViewController#>)
+            }
+        })
+        present(alertController, animated: true)
     }
 
 }
