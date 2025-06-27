@@ -192,6 +192,57 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
             .parse(code: response.statusCode, data: data)
     }
 
+    func registerPersonalAccount(name: String, email: String, password: String) async throws -> [HTTPCookie] {
+        let path = "\(pathPrefix)/register"
+
+        let body = try JSONEncoder.defaultEncoder.encode(
+            RegisterAccountRequestBodyV0(email: email, name: name, password: password)
+        )
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.post)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await networkService.executeRequest(request)
+
+        guard
+            let responseURL = response.url,
+            let responseHeaders = response.allHeaderFields as? [String: String]
+        else {
+            throw AuthenticationAPIError.invalidResponse
+        }
+
+        return HTTPCookie.cookies(
+            withResponseHeaderFields: responseHeaders,
+            for: responseURL
+        )
+    }
+
+    func activateUser(email: String, key: String, code: String) async throws {
+        let path = "\(pathPrefix)/activate"
+
+        let body = try JSONEncoder.defaultEncoder.encode(
+            ActivateRequestBodyV0(
+                key: key,
+                code: code,
+                email: email,
+                dryrun: false
+            )
+        )
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.post)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await networkService.executeRequest(request)
+
+        try ResponseParser()
+            .success(code: .ok)
+            .failure(code: .badRequest, label: "bad-request", error: AuthenticationAPIError.invalidEmail)
+    }
+
     func requestEmailVerificationCode(for email: String) async throws {
         let path = "\(pathPrefix)/activate/send"
 
@@ -326,5 +377,18 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
                 data: data
             )
         return (cookies, userKey.uuid)
+    }
+
+    private struct RegisterAccountRequestBodyV0: Encodable {
+        var email: String
+        var name: String
+        var password: String
+    }
+
+    private struct ActivateRequestBodyV0: Encodable {
+        var key: String
+        var code: String
+        var email: String
+        var dryrun: Bool
     }
 }

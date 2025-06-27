@@ -128,7 +128,7 @@
 
 "create_personal_account.title" = "创建个人账户";
 "create_personal_account.continue" = "继续";
-"create_personal_account.share_data_usage" = "我同意分享匿名使用数据。所有详情请参阅我们的[隐私政策](%@)";
+"create_personal_account.share_data_usage" = "我同意分享匿名使用数据。所有详情请参阅我们的[隐私政策](%@)（可选）";
 "create_personal_account.looking_for_collaboration" = "寻求团队协作？";
 "create_personal_account.create_team" = "创建团队";
 "create_personal_account.input_name.title" = "名称";
