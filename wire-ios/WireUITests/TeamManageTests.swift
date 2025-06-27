@@ -23,21 +23,36 @@ final class TeamManageTests: WireUITestCase {
     @MainActor
     func test_MigrateToTeam_FromPersonalUser() async throws {
         let user = try await userManager.createPersonalUser()
-        let userAccountPage = WelcomePage()
+
+        let welcomePage = try WelcomePage()
+
+        var conversationPage = try welcomePage
             .enterEmailOrSSO(user.email)
             .enterPassword(user.password)
             .acceptFirstTimeAlert()
             .acceptPopup()
-            .openUserAccount()
+
+        var userAccountPage = try conversationPage.openUserAccount()
+
+        let teamCreationStepsPage = try userAccountPage
             .tapCreateTeamButtonAndContinue()
+            .tapContinue()
             .typeTeamNameAndContinue(user.teamName)
             .acceptTheConfirmationAndContinue()
-            .tapBackToWireButton()
-            .openUserAccount()
+
+         conversationPage = try teamCreationStepsPage.tapBackToWireButton()
+
+        userAccountPage = try conversationPage.openUserAccount()
 
         let teamName = try XCTUnwrap(userAccountPage.getTeamName())
-        XCTAssertEqual(teamName, user.teamName, "Team name didn't match \(user.teamName)")
-        XCTAssertTrue(userAccountPage.manageTeamButton.exists, "Manage team button doesn't exist")
+        XCTAssertEqual(teamName, user.teamName, "Team name didn't match expected value \(user.teamName)")
+        XCTAssertTrue(userAccountPage.manageTeamButton.exists, "Manage Team button is not visible")
 
+        conversationPage = try userAccountPage.closeAccountPage()
+        let settingsPage = try conversationPage.openSettings()
+
+        try settingsPage.openAccountSettings()
+            .logout()
+            .enterPassword(user.password)
     }
 }

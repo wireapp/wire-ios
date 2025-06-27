@@ -64,7 +64,6 @@ class SelfUserAPIV0: SelfUserAPI, VersionedAPI {
             .build()
 
         let (data, response) = try await apiService.executeRequest(request, requiringAccessToken: true)
-
         return try ResponseParser()
             .success(code: .ok)
             .parse(code: response.statusCode, data: data)
@@ -98,31 +97,10 @@ class SelfUserAPIV0: SelfUserAPI, VersionedAPI {
             .build()
 
         let (data, response) = try await apiService.executeRequest(request, requiringAccessToken: true)
-        print(response.statusCode)
-        print(response.description)
         return try ResponseParser()
             .success(code: .ok)
             .parse(code: response.statusCode, data: data)
     }
-
-//    func migratePersonalUserToTeam(icon: String, name: String) async throws {
-//        let body = try JSONEncoder.defaultEncoder.encode(
-//            MigratePersonalToTeamBodyV0(icon: icon, name: name)
-//        )
-//
-//        let request = try URLRequestBuilder(path: "/upgrade-personal-to-team")
-//            .withMethod(.post)
-//            .withBody(body, contentType: .json)
-//            .build()
-//
-//        let (data, response) = try await apiService.executeRequest(request, requiringAccessToken: true)
-//        print(response.statusCode)
-//        print(response.description)
-//        return try ResponseParser()
-//            .success(code: .ok)
-//            .parse(code: response.statusCode, data: data)
-//
-//    }
 }
 
 struct SelfUserV0: Decodable, ToAPIModelConvertible {
@@ -223,9 +201,4 @@ private struct UpdateHandleRequestBodyV0: Encodable {
 private struct DeleteTeamRequestBodyV0: Encodable {
     var password: String
     var verificationCode: String
-}
-
-private struct MigratePersonalToTeamBodyV0: Encodable {
-    var icon: String
-    var name: String
 }

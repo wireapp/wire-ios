@@ -63,12 +63,17 @@ public final class NetworkStack {
 }
 
 private struct MockAuthManager: AuthenticationManagerProtocol {
+
+    enum AccessTokenError: Error {
+        case notImplemented
+    }
+
     func getValidAccessToken() async throws -> WireNetwork.AccessToken {
-        fatalError()
+        throw AccessTokenError.notImplemented
     }
 
     func refreshAccessToken() async throws -> WireNetwork.AccessToken {
-        fatalError()
+        throw AccessTokenError.notImplemented
     }
 
 }

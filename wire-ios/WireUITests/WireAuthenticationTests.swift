@@ -27,7 +27,7 @@ final class WireAuthenticationTests: WireUITestCase {
     @MainActor
     func test_Login_withWrongEmail_NextIsDisabled() throws {
 
-        let welcomePage = WelcomePage()
+        let welcomePage = try WelcomePage()
             .typeEmailOrSSO("notAnEmail.com")
 
         XCTAssertFalse(welcomePage.nextButton.isEnabled, "nextButton should be disabled if no email")
@@ -36,7 +36,7 @@ final class WireAuthenticationTests: WireUITestCase {
     @MainActor
     func test_Login_withoutPassword_NextIsDisabled() throws {
 
-        let loginPage = WelcomePage()
+        let loginPage = try WelcomePage()
             .enterEmailOrSSO(LoginCredentials.email)
 
         XCTAssertFalse(loginPage.nextButton.isEnabled, "nextButton should be disabled if no password")

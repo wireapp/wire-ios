@@ -33,15 +33,24 @@ enum InbucketClient {
         let base64LoginString = loginData.base64EncodedString()
         request.setValue("Basic \(base64LoginString)", forHTTPHeaderField: "Authorization")
 
+        enum EmailFetchError: Error {
+            case unableToRetrieveLatestMessage(email: String, statusCode: Int)
+        }
         var (inbucketData, response) = try await URLSession.shared.data(for: request)
         var pureResponse = response as! HTTPURLResponse
         var timeout = 0
         while pureResponse.statusCode != 200, timeout < 100 {
             (inbucketData, response) = try await URLSession.shared.data(for: request)
-            pureResponse = response as! HTTPURLResponse
+
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw EmailFetchError.unableToRetrieveLatestMessage(email: email, statusCode: -1)
+            }
+            pureResponse = httpResponse
             timeout += 1
             if timeout == 100, pureResponse.statusCode != 200 {
-                throw fatalError("Unable to retrieve latest message for \(email)")
+
+                throw EmailFetchError.unableToRetrieveLatestMessage(email: email, statusCode: pureResponse.statusCode)
+
             }
         }
 

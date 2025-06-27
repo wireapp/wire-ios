@@ -1357,6 +1357,24 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         await mock(permission, conversation)
     }
 
+    // MARK: - fetchServerTimeDelta
+
+    public var fetchServerTimeDelta_Invocations: [Void] = []
+    public var fetchServerTimeDelta_MockMethod: (() async -> TimeInterval)?
+    public var fetchServerTimeDelta_MockValue: TimeInterval?
+
+    public func fetchServerTimeDelta() async -> TimeInterval {
+        fetchServerTimeDelta_Invocations.append(())
+
+        if let mock = fetchServerTimeDelta_MockMethod {
+            return await mock()
+        } else if let mock = fetchServerTimeDelta_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchServerTimeDelta`")
+        }
+    }
+
 }
 
 class MockConversationLocationMessageNotificationBuilderProtocol: ConversationLocationMessageNotificationBuilderProtocol {
@@ -3884,6 +3902,21 @@ public class MockUpdateEventsLocalStoreProtocol: UpdateEventsLocalStoreProtocol 
         }
 
         await mock()
+    }
+
+    // MARK: - storeServerTimeDelta
+
+    public var storeServerTimeDelta_Invocations: [TimeInterval] = []
+    public var storeServerTimeDelta_MockMethod: ((TimeInterval) async -> Void)?
+
+    public func storeServerTimeDelta(_ serverTimeDelta: TimeInterval) async {
+        storeServerTimeDelta_Invocations.append(serverTimeDelta)
+
+        guard let mock = storeServerTimeDelta_MockMethod else {
+            fatalError("no mock for `storeServerTimeDelta`")
+        }
+
+        await mock(serverTimeDelta)
     }
 
 }

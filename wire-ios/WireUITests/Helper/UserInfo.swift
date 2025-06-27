@@ -26,7 +26,7 @@ class UserInfo {
     var domain: String
     var password: String
     var id: String
-    var backend_domain: String
+    var backendDomain: String
     var teamName: String
     var teamID: UUID?
 
@@ -37,7 +37,7 @@ class UserInfo {
         self.domain = domain
         self.email = username + "@" + domain
         self.id = ""
-        self.backend_domain = ""
+        self.backendDomain = ""
         self.teamName = teamName
         self.teamID = teamID
     }
@@ -49,7 +49,7 @@ class UserInfo {
         self.domain = ""
         self.email = email
         self.id = ""
-        self.backend_domain = ""
+        self.backendDomain = ""
         self.teamName = ""
     }
 
@@ -60,29 +60,29 @@ class UserInfo {
         self.domain = ""
         self.email = ""
         self.id = ""
-        self.backend_domain = ""
+        self.backendDomain = ""
         self.teamName = ""
         self.teamID = nil
     }
 
     func updateUserInfo(newInfo: UserInfo) {
-        if newInfo.name != "" {
+        if !newInfo.name.isEmpty {
             name = newInfo.name
         }
-        if newInfo.username != "" {
+        if !newInfo.username.isEmpty {
             username = newInfo.username
         }
-        if newInfo.password != "" {
+        if !newInfo.password.isEmpty {
             password = newInfo.password
         }
-        if newInfo.domain != "" {
+        if !newInfo.domain.isEmpty {
             domain = newInfo.domain
         }
-        if newInfo.id != "" {
+        if !newInfo.id.isEmpty {
             id = newInfo.id
         }
-        if newInfo.backend_domain != "" {
-            backend_domain = newInfo.backend_domain
+        if !newInfo.backendDomain.isEmpty {
+            backendDomain = newInfo.backendDomain
         }
     }
 }

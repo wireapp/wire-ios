@@ -30,7 +30,7 @@ class UserManager {
 
     private let cookieStorage: any CookieStorageProtocol
 
-    init() {
+    init(apiVersion: APIVersion = .v8) {
         self.createdUsers = []
         self.networkStack = NetworkStack(
             backendEnvironment: .staging,
@@ -49,8 +49,8 @@ class UserManager {
             authenticationManager: authenticationManager
         )
         self.authenticationAPI = AuthenticationAPIBuilder(networkService: networkStack.apiNetworkService)
-            .makeAPI(for: .v8)
-        self.selfUserAPI = SelfUserAPIBuilder(apiService: apiService).makeAPI(for: .v8)
+            .makeAPI(for: apiVersion)
+        self.selfUserAPI = SelfUserAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
     }
 
     func createPersonalUser() async throws -> UserInfo {
@@ -77,31 +77,9 @@ class UserManager {
         return user
     }
 
-//    func migratePersonalUserToTeam() async throws -> TeamInfo {
-//
-//        let user = try await createPersonalUser()
-//        let team = try await selfUserAPI.migratePersonalUserToTeam(icon: "default", name: user.teamName)
-//        return team
-//
-//    }
-
     func addUser(_ user: UserInfo) {
         createdUsers.append(user)
     }
-
-//    func addTeamToUserInfo(_ user: UserInfo) async throws -> UUID? {
-//        // Get teamID
-//        let teamID = try await BackendClient.getTeamIDFromSelfRequest(email: user.email, password: user.password)
-//
-//        if let teamID = teamID {
-//            var updatedUserInfo = user
-//            updatedUserInfo.teamID = teamID
-//            createdUsers.append(updatedUserInfo)
-//        } else {
-//            // Team not created so teamID is nil — bypass appending
-//            print("No teamID found, user not appended.")
-//        }
-//    }
 
     func addUser(email: String, password: String) {
         createdUsers.append(UserInfo(email: email, password: password))
@@ -111,24 +89,27 @@ class UserManager {
         try await selfUserAPI.deleteSelf(password: user.password)
     }
 
-//    func deleteTeam(_ user: UserInfo) async throws {
-//        try await selfUserAPI.deleteTeam(teamId: user.teamID!, email: user.email)
-//    }
-
-    func deleteCreatedUsers() async throws {
+    func deleteCreatedUsers() async {
         for user in createdUsers {
-            if let teamID = try await BackendClient.getTeamIDFromSelfRequest(
-                email: user.email,
-                password: user.password
-            ) {
-                var updatedUser = user
-                updatedUser.teamID = teamID
-                createdUsers.append(updatedUser)
-                try await BackendClient.sendVerificationCode(email: user.email, password: user.password)
-                let code = try await InbucketClient.getVerificationCode(email: user.email)
-                try await selfUserAPI.deleteTeam(teamId: teamID, password: user.password, verificationCode: code)
-            } else {
-                try await deleteUser(user)
+            do {
+                if let teamID = try await BackendClient.getTeamIDFromSelfRequest(
+                    email: user.email,
+                    password: user.password
+                ) {
+                    try await BackendClient.sendVerificationCode(email: user.email, password: user.password)
+                    let code = try await InbucketClient.getVerificationCode(email: user.email)
+                    try await selfUserAPI.deleteTeam(teamId: teamID, password: user.password, verificationCode: code)
+                } else {
+                    try await deleteUser(user)
+                }
+            } catch {
+                print("Teardown failed for user \(user.email): \(error)")
+                // Attempt to delete user anyway
+                do {
+                    try await deleteUser(user)
+                } catch {
+                    print("Failed to delete user \(user.email): \(error)")
+                }
             }
         }
     }
@@ -144,7 +125,7 @@ private extension BackendEnvironment {
     )
 }
 
-final class MockCookieStorage: CookieStorageProtocol {
+private final class MockCookieStorage: CookieStorageProtocol {
     var cookies: [HTTPCookie]
 
     init() {
@@ -152,17 +133,14 @@ final class MockCookieStorage: CookieStorageProtocol {
     }
 
     func storeCookies(_ cookies: [HTTPCookie]) async throws {
-        print("Storing \(cookies)")
         self.cookies = cookies
     }
 
     func fetchCookies() async throws -> [HTTPCookie] {
-        print("Giving \(cookies)")
-        return cookies
+        cookies
     }
 
     func removeCookies() async throws {
-        print("Clearing cookies")
         cookies = []
     }
 }

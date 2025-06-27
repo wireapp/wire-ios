@@ -16,27 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import Foundation
 
-/// Page for popup on first time user login
-class FirstTimePage: PageModel {
-    override func assertHasLoaded() {
-        let expectation = okButton.waitForExistence(timeout: 10)
-        XCTAssert(expectation, "First time page not loaded - can't find Ok button")
-    }
-
-    var okButton: XCUIElement {
-        app.buttons["OK"]
-    }
-
-    func acceptFirstTimeAlert() -> FirstTimePage {
-        okButton.tap()
-        return self
-    }
-
-    func acceptPopup() throws -> ConversationsPage {
-        let button = app.otherElements.buttons.firstMatch
-        button.tap()
-        return try ConversationsPage()
-    }
+public struct UpdateEventBatch {
+    public let time: Date?
+    public let updateEventEnvelopes: [UpdateEventEnvelope]
 }
