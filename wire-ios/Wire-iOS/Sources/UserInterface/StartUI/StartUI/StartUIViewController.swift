@@ -77,6 +77,7 @@ final class StartUIViewController: UIViewController {
     let mainCoordinator: AnyMainCoordinator
     let createGroupConversationUIBuilder: CreateGroupConversationViewControllerBuilderProtocol
     let channelConversationFormFactory: WireConversationChannelCreationFormViewControllerFactory
+    let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
 
     let isFederationEnabled: Bool
 
@@ -123,6 +124,7 @@ final class StartUIViewController: UIViewController {
         self.mainCoordinator = mainCoordinator
         self.createGroupConversationUIBuilder = createGroupConversationUIBuilder
         self.channelConversationFormFactory = channelConversationFormFactory
+        self.selfProfileUIBuilder = selfProfileUIBuilder
         self.profilePresenter = .init(
             mainCoordinator: mainCoordinator,
             selfProfileUIBuilder: selfProfileUIBuilder
@@ -329,14 +331,20 @@ final class StartUIViewController: UIViewController {
     }
 
     private func presentCreateTeamBanner() {
-        // TODO: test ipad
+        // TODO: use real banner and test on iPad
         let mainCoordinator = mainCoordinator
         let alertController = UIAlertController(title: "upgrade", message: "upgrade", preferredStyle: .alert)
-        alertController.addAction(.init(title: "upgrade", style: .default) { _ in
+        alertController.addAction(.init(title: "upgrade", style: .default) { [weak self] _ in
             Task {
-                print("TODO")
-                // SelfProfileViewControllerBuilder(
-                // await mainCoordinator.presentViewController(<#T##viewController: UIViewController##UIViewController#>)
+                guard let self else { return }
+                let rootViewController = self.selfProfileUIBuilder.build(mainCoordinator: mainCoordinator)
+                let navigationController = UINavigationController(rootViewController: rootViewController)
+                navigationController.modalPresentationStyle = .formSheet
+                navigationController.presentationController?.delegate = rootViewController
+                await mainCoordinator.presentViewController(navigationController)
+                if let selfProfileViewController = rootViewController as? SelfProfileViewController {
+                    selfProfileViewController.triggerCreateTeamFlow()
+                }
             }
         })
         present(alertController, animated: true)

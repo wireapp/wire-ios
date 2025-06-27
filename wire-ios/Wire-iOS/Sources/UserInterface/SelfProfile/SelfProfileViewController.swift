@@ -323,7 +323,11 @@ final class SelfProfileViewController: UIViewController {
     }
 
     func triggerCreateTeamFlow() {
-        fatalError()
+        if let backendInfoApiVersion = BackendInfo.apiVersion,
+           let apiVersion = WireAPI.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
+           apiVersion >= .v7 {
+            onTeamCreationBannerInteraction(.createWireTeam, apiVersion: apiVersion)
+        }
     }
 
     private func userDidTapCreateTeam(useCase: any IndividualToTeamMigrationUseCaseProtocol, userName: String) {
