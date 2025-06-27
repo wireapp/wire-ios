@@ -26,6 +26,8 @@ public protocol ChannelHistoryUseCaseProtocol {
         channelHistoryOption: ChannelHistoryOption,
         channelHistoryOptionCustom: ChannelHistoryOption.Custom
     ) async throws
+    
+    func isUserPremium() async throws -> Bool
 }
 
 public class ChannelHistoryUseCase: ChannelHistoryUseCaseProtocol {
@@ -49,6 +51,10 @@ public class ChannelHistoryUseCase: ChannelHistoryUseCaseProtocol {
         try await repository.updateHistoryDepth(
             historyDepth
         )
+    }
+    
+    public func isUserPremium() async throws -> Bool {
+        try await repository.isConferenceCallingFeatureEnabled()
     }
 
     private func computeHistoryDepth(

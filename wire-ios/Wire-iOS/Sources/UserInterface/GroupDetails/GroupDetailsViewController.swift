@@ -577,10 +577,15 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
             mlsService: nil,
             messageLocalStore: messageLocalStore
         )
+        
+        let featureConfigLocalStore = FeatureConfigLocalStore(
+            context: session.syncContext
+        )
 
         let repository = ChannelRepository(
             api: conversationsAPI,
-            store: conversationsLocalStore,
+            conversationLocalStore: conversationsLocalStore,
+            featureConfigLocalStore: featureConfigLocalStore,
             conversationID: conversation.remoteIdentifier.uuidString,
             conversationDomain: conversation.domain ?? ""
         )
@@ -615,13 +620,18 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
             mlsService: nil,
             messageLocalStore: messageLocalStore
         )
+        
+        let featureConfigLocalStore = FeatureConfigLocalStore(
+            context: session.syncContext
+        )
 
         // TODO: [WPB-18396] - get correct stored value in DB
         let channelHistoryDepth = conversation.channelHistoryDepth
 
         let repository = ChannelRepository(
             api: conversationsAPI,
-            store: conversationsLocalStore,
+            conversationLocalStore: conversationsLocalStore,
+            featureConfigLocalStore: featureConfigLocalStore,
             conversationID: conversation.remoteIdentifier.uuidString,
             conversationDomain: conversation.domain ?? ""
         )

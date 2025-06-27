@@ -49,7 +49,22 @@ public class MockChannelHistoryUseCaseProtocol: ChannelHistoryUseCaseProtocol {
             fatalError("no mock for `updateHistoryDepth`")
         }
     }
-
+    
+    // MARK: - isUserPremium
+    
+    public var isUserPremium_Invocations: [Void] = []
+    public var isUserPremium_MockValue: Bool?
+    
+    public func isUserPremium() async throws -> Bool {
+        isUserPremium_Invocations.append(())
+        
+        if let mock = isUserPremium_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `isUserPremium`")
+        }
+    }
+    
 }
 
 public class MockChannelAccessUseCaseProtocol: ChannelAccessUseCaseProtocol {
@@ -145,5 +160,21 @@ public class MockChannelRepositoryProtocol: ChannelRepositoryProtocol {
             fatalError("no mock for `updateHistoryDepth`")
         }
     }
+    
+    // MARK: - isConferenceCallingFeatureEnabled
+    
+    public var isConferenceCallingFeatureEnabled_Invocations: [Void] = []
+    public var isConferenceCallingFeatureEnabled_MockValue: Bool?
+    
+    public func isConferenceCallingFeatureEnabled() async throws -> Bool {
+        isConferenceCallingFeatureEnabled_Invocations.append(())
+        
+        if let mock = isConferenceCallingFeatureEnabled_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `isConferenceCallingFeatureEnabled`")
+        }
+    }
+    
 
 }

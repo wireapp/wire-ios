@@ -26,6 +26,8 @@ package class ChannelHistoryViewModel: ObservableObject {
     @Published var channelHistoryOption: ChannelHistoryOption
     @Published var channelHistoryOptionCustom: ChannelHistoryOption.Custom = .init()
     @Published var isLoading: Bool = false
+    @Published var isUserPremium: Bool = false
+    @Published var channelHistoryAvailableOptions: [ChannelHistoryOption] = []
 
     public var accentColor: Color
     private let useCase: any ChannelHistoryUseCaseProtocol
@@ -43,6 +45,19 @@ package class ChannelHistoryViewModel: ObservableObject {
         self.accentColor = accentColor
 
         bind()
+    }
+    
+    func fetchData() async {
+        isLoading = true
+        do {
+            isUserPremium = try await useCase.isUserPremium()
+            channelHistoryAvailableOptions = isUserPremium ? [.off, .oneDay, .oneWeek, .fourWeeks, .unlimited, .custom] : [.off, .oneDay]
+        } catch {}
+        isLoading = false
+    }
+    
+    func upgradeBannerURL() -> URL {
+        URL(string: "https://teams.wire.com/billing/)")!
     }
 
     private func bind() {

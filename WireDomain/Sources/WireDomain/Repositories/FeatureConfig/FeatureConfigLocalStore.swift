@@ -19,7 +19,7 @@
 import WireDataModel
 import WireLogging
 
-final class FeatureConfigLocalStore: FeatureConfigLocalStoreProtocol {
+public final class FeatureConfigLocalStore: FeatureConfigLocalStoreProtocol {
 
     // MARK: - Error
 
@@ -33,7 +33,7 @@ final class FeatureConfigLocalStore: FeatureConfigLocalStoreProtocol {
 
     // MARK: - Object lifecycle
 
-    init(
+    public init(
         context: NSManagedObjectContext
     ) {
         self.context = context
@@ -73,7 +73,7 @@ final class FeatureConfigLocalStore: FeatureConfigLocalStoreProtocol {
         }
     }
 
-    func featureNeedsNotifyUser(
+    public func featureNeedsNotifyUser(
         feature: Feature
     ) async -> Bool {
         await context.perform {

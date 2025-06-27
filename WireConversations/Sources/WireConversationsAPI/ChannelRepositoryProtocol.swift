@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+
 @MainActor
 public protocol ChannelRepositoryProtocol {
     func updateParticipantPermission(
@@ -25,4 +26,6 @@ public protocol ChannelRepositoryProtocol {
     func updateHistoryDepth(
         _ historyDepth: Int?
     ) async throws
+    
+    func isConferenceCallingFeatureEnabled() async throws -> Bool
 }

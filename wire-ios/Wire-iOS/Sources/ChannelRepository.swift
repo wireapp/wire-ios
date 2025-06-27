@@ -25,19 +25,21 @@ import WireTransport
 
 class ChannelRepository: ChannelRepositoryProtocol {
     private let api: any ConversationsAPI
-    private let store: any ConversationLocalStoreProtocol
-
+    private let conversationLocalStore: any ConversationLocalStoreProtocol
+    private let featureConfigLocalStore: any FeatureConfigLocalStoreProtocol
     private let conversationID: String
     private let conversationDomain: String
 
     init(
         api: any ConversationsAPI,
-        store: any ConversationLocalStoreProtocol,
+        conversationLocalStore: any ConversationLocalStoreProtocol,
+        featureConfigLocalStore: any FeatureConfigLocalStoreProtocol,
         conversationID: String,
         conversationDomain: String
     ) {
         self.api = api
-        self.store = store
+        self.conversationLocalStore = conversationLocalStore
+        self.featureConfigLocalStore = featureConfigLocalStore
         self.conversationID = conversationID
         self.conversationDomain = conversationDomain
     }
@@ -68,6 +70,14 @@ class ChannelRepository: ChannelRepositoryProtocol {
 //        )
 
         // return historyDepth
+    }
+    
+    func isConferenceCallingFeatureEnabled() async throws -> Bool {
+        let confCallingFeature = try await featureConfigLocalStore.fetchFeature(
+            name: .conferenceCalling
+        )
+        
+        return confCallingFeature.status == .enabled
     }
 }
 

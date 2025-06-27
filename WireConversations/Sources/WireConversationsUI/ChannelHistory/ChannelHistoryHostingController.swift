@@ -45,7 +45,7 @@ package final class ChannelHistoryHostingController: UIHostingController<Channel
     public override func viewDidLoad() {
         super.viewDidLoad()
 
-        title = L10n.Localizable.Conversation.UpdateHistory.ChannelHistory.navigationTitle
+        title = L10n.Localizable.Conversation.ChannelHistory.navigationTitle
         view.backgroundColor = SemanticColors.View.backgroundDefault
 
         navigationItem.rightBarButtonItem = UIBarButtonItem(
@@ -86,6 +86,7 @@ struct ChannelHistoryHostingControllerPreview: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
         let repository = MockChannelRepositoryProtocol()
         repository.updateHistoryDepth_MockMethod = { _ in }
+        repository.isConferenceCallingFeatureEnabled_MockValue = true
 
         let useCase = ChannelHistoryUseCase(
             repository: repository

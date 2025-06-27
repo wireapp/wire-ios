@@ -35,30 +35,30 @@ package struct ChannelHistoryView: View {
         NavigationView {
             Form {
                 Section(
-                    footer: Text(L10n.Localizable.Conversation.UpdateHistory.ChannelHistory.sectionFootnote)
+                    footer: Text(L10n.Localizable.Conversation.ChannelHistory.Share.sectionFootnote)
                         .font(.footnote)
                         .foregroundColor(ColorTheme.Base.secondaryText.color)
                 ) {
-                    ForEach(ChannelHistoryOption.allCases, id: \.self) { channelHistoryOption in
+                    ForEach(viewModel.channelHistoryAvailableOptions, id: \.self) { channelHistoryOption in
                         HStack {
                             Button {
                                 withAnimation(.easeInOut(duration: 0.3)) {
                                     rotationAngle = channelHistoryOption == .custom ? 90 : 0
                                 }
-
+                                
                                 isExpanded = channelHistoryOption == .custom
                                 viewModel.channelHistoryOption = channelHistoryOption
                             } label: {
                                 Text(channelHistoryOption.title)
                                     .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
                             }
-
+                            
                             Spacer()
-
+                            
                             if viewModel.channelHistoryOption == channelHistoryOption {
                                 Checkmark(accentColor: viewModel.accentColor)
                             }
-
+                            
                             if channelHistoryOption == .custom {
                                 Image("wire_conversations_chevron_right", bundle: .resources)
                                     .renderingMode(.template)
@@ -68,19 +68,37 @@ package struct ChannelHistoryView: View {
                             }
                         }
                     }
-
+                    
                     if viewModel.channelHistoryOption == .custom {
                         channelCustomHistoryPickers
                     }
-
-                }
-                .background(.clear)
+                    
+                }.background(.clear)
+                
+                Section {
+                    if !viewModel.isUserPremium {
+                        WireChannelBannerView(
+                            configuration: .init(
+                                title: L10n.Localizable.Conversation.ChannelHistory.UpgradeBanner.title,
+                                message: L10n.Localizable.Conversation.ChannelHistory.UpgradeBanner.message,
+                                buttonTitle: L10n.Localizable.Conversation.ChannelHistory.UpgradeBanner.button,
+                                buttonURL: viewModel.upgradeBannerURL(),
+                                padding: 0,
+                                showCloseButton: false,
+                                closeAction: {}
+                            )
+                        )
+                    }
+                }.listRowBackground(Color.clear)
             }
             .background(ColorTheme.Backgrounds.background.color)
             .animation(.easeInOut(duration: 2), value: isExpanded)
         }
         .scrollContentBackground(.hidden)
         .background(ColorTheme.Backgrounds.background.color.ignoresSafeArea())
+        .task {
+            await viewModel.fetchData()
+        }
     }
 
     var channelCustomHistoryPickers: some View {
@@ -118,17 +136,17 @@ extension ChannelHistoryOption {
     var title: String {
         switch self {
         case .off:
-            L10n.Localizable.Conversation.CreationForm.ChannelHistory.Picker.off
+            L10n.Localizable.Conversation.ChannelHistory.Picker.off
         case .oneDay:
-            L10n.Localizable.Conversation.CreationForm.ChannelHistory.Picker.oneDay
+            L10n.Localizable.Conversation.ChannelHistory.Picker.oneDay
         case .oneWeek:
-            L10n.Localizable.Conversation.CreationForm.ChannelHistory.Picker.oneWeek
+            L10n.Localizable.Conversation.ChannelHistory.Picker.oneWeek
         case .fourWeeks:
-            L10n.Localizable.Conversation.CreationForm.ChannelHistory.Picker.fourWeeks
+            L10n.Localizable.Conversation.ChannelHistory.Picker.fourWeeks
         case .unlimited:
-            L10n.Localizable.Conversation.CreationForm.ChannelHistory.Picker.unlimited
+            L10n.Localizable.Conversation.ChannelHistory.Picker.unlimited
         case .custom:
-            L10n.Localizable.Conversation.CreationForm.ChannelHistory.Picker.custom
+            L10n.Localizable.Conversation.ChannelHistory.Picker.custom
         }
     }
 }
@@ -137,9 +155,9 @@ extension ChannelHistoryOption.Custom.Unit {
     var title: String {
         switch self {
         case .days:
-            L10n.Localizable.Conversation.CreationForm.ChannelHistory.CustomPicker.days
+            L10n.Localizable.Conversation.ChannelHistory.CustomPicker.days
         case .week:
-            L10n.Localizable.Conversation.CreationForm.ChannelHistory.CustomPicker.weeks
+            L10n.Localizable.Conversation.ChannelHistory.CustomPicker.weeks
         }
     }
 }
@@ -164,6 +182,7 @@ struct ChannelHistoryView_Previews: PreviewProvider {
     static func channelRepository() -> MockChannelRepositoryProtocol {
         let channelRepository = MockChannelRepositoryProtocol()
         channelRepository.updateHistoryDepth_MockMethod = { _ in }
+        channelRepository.isConferenceCallingFeatureEnabled_MockValue = false
         return channelRepository
     }
 }
