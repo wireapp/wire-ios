@@ -57,6 +57,8 @@ final class SyncEventsStep: Component<SyncEventsDependency>, SyncEventsStepProto
         super.init(parent: parent)
     }
 
+    var currentTask: Task<Void, any Error>?
+    
     func pullEvents() async throws {
         let pendingEventsSync = try await PullPendingUpdateEventsSyncV2(
             selfClientID: selfClientID,
@@ -66,12 +68,16 @@ final class SyncEventsStep: Component<SyncEventsDependency>, SyncEventsStepProto
             decryptor: updateEventDecryptor,
             coreCryptoProvider: coreCryptoProvider
         )
-       
-        let eventsStream = try await pendingEventsSync.pull()
 
-        try await generateNotificationStep.generateNotification(
-            eventsStream: eventsStream
-        )
+        let generateNotificationTask = Task {
+            try await generateNotificationStep.generateNotification(
+                eventsStream: pendingEventsSync.stream
+            )
+        }
+
+        try await pendingEventsSync.pull()
+        
+        try await generateNotificationTask.value
     }
 
     // MARK: - Children

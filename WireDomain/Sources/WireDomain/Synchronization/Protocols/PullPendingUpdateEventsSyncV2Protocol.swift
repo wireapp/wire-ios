@@ -26,8 +26,6 @@ public protocol PullPendingUpdateEventsSyncV2Protocol {
 
     /// Sync pending update events from the remote, decrypt (if needed),
     /// and store them locally.
-
-    @discardableResult
-    func pull() async throws -> AsyncStream<[UpdateEvent]>//AsyncThrowingStream<[UpdateEvent], any Error>
+    func pull() async throws
 
 }

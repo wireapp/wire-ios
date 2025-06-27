@@ -36,6 +36,9 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
     private let jsonEncoder = JSONEncoder()
     private let logger = WireLogger.sync
     
+    let stream: AsyncStream<[UpdateEvent]>
+    private let continuation: AsyncStream<[UpdateEvent]>.Continuation
+    
     public init(
         selfClientID: String,
         pushChannelAPI: any PushChannelV2API,
@@ -50,20 +53,21 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
         self.journal = journal
         self.decryptor = decryptor
         self.coreCryptoProvider = coreCryptoProvider
+        
+        let (finalStream, continuation) = AsyncStream<[UpdateEvent]>.makeStream()
+        self.stream = finalStream
+        self.continuation = continuation
     }
 
     private var logAttributes: WireLogging.LogAttributes {
         .syncAttributes(initialSync: true) + .newNSE
     }
-
-    @discardableResult
-    public func pull() async throws -> AsyncStream<[UpdateEvent]> {
-
-        let (finalStream, continuation) = AsyncStream<[UpdateEvent]>.makeStream()
+    
+    public func pull() async throws {
         let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID)
         
         let liveEventStream = try await pushChannel.open()
-
+        
         logger.debug("handling live event stream", attributes: logAttributes)
         do {
             for try await element in liveEventStream {
@@ -85,14 +89,14 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
                     break
                 case let .event(envelope):
                     do {
-
+                        
                         var decryptedEnvelope = envelope
                         decryptedEnvelope.events = try await decryptEnvelope(decryptedEnvelope)
                         continuation.yield(decryptedEnvelope.events)
                         
                         _ = try await storeEnvelope(decryptedEnvelope)
                         try await acknowledgeEnvelope(decryptedEnvelope, through: pushChannel)
-
+                        
                     } catch {
                         // in case of thrown errors, we skip to the next event
                         // errors are already logged if needed
@@ -100,7 +104,7 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
                     }
                 }
             }
-
+            
         } catch {
             // if we end up here, the pushChannel is closed
             logger.warn(
@@ -111,7 +115,6 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
             continuation.finish()
             //continuation.finish(throwing: error)
         }
-        return finalStream
     }
     
     private func decryptEnvelope(_ envelope: UpdateEventEnvelope) async throws -> [UpdateEvent] {
