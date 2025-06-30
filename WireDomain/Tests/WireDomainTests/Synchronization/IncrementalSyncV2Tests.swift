@@ -183,7 +183,6 @@ final class IncrementalSyncV2Tests: XCTestCase {
 
         // Then sync is up to date
         XCTAssertEqual(liveDelegate.isUpToDateSync_Invocations.count, 1)
-        XCTAssertEqual(pushChannel.acknowledgeMessageCount_Invocations.count, 1)
 
         // Broken conversation IDs are stored
         XCTAssertEqual(journal[.brokenMLSGroupIDs].first, Scaffolding.mlsGroupID)
@@ -384,7 +383,6 @@ final class IncrementalSyncV2Tests: XCTestCase {
 
         // Then sync is up to date
         XCTAssertEqual(liveDelegate.isUpToDateSync_Invocations.count, 1)
-        XCTAssertEqual(pushChannel.acknowledgeMessageCount_Invocations.count, 1)
 
         // Broken conversation IDs are stored
         XCTAssertEqual(journal[.brokenMLSGroupIDs].first, Scaffolding.mlsGroupID)

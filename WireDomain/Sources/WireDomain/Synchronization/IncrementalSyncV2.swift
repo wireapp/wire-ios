@@ -174,8 +174,8 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                     try await messageStore.addPotentialGapSystemMessage()
                     try await pushChannel.acknowledgeFullSync()
                 case .syncing:
-                // ignore this event, it gives the number of messages until we're caught up
-                // TODO: [WPB-18485] remove this event and add endofqueue
+                    // ignore this event, it gives the number of messages until we're caught up
+                    // TODO: [WPB-18485] remove this event and add endofqueue
                     break
                 case let .events(envelopes):
                     do {
@@ -229,7 +229,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         }
 
         // ack
-        if let lastEnvelope = envelopes.last {
+        if let lastEnvelope = storedEnvelopes.last?.0 {
             await acknowledgeUntilEnvelope(lastEnvelope, through: pushChannel)
         }
 
