@@ -88,4 +88,8 @@ public protocol UpdateEventsLocalStoreProtocol {
     ) async throws
 
     func calculateLastUnreadMessages() async
+
+    func storeServerTimeDelta(
+        _ serverTimeDelta: TimeInterval
+    ) async
 }
