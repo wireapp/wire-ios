@@ -22,10 +22,12 @@ import WireDataModel
 final class NotificationServiceExtensionFlow: BootstrapComponent {
 
     enum Failure: Error {
+        case missingCurrentAppVersion
         case missingAppGroupID
     }
 
     public let contentHandler: (UNNotificationContent) -> Void
+    public let currentAppVersion: String
     public let applicationIdentifier: String
     public let applicationContainer: URL
 
@@ -35,6 +37,11 @@ final class NotificationServiceExtensionFlow: BootstrapComponent {
         self.contentHandler = contentHandler
 
         let infoDictionary = Bundle.main.infoDictionary
+
+        guard let currentAppVersion = infoDictionary?["CFBundleShortVersionString"] as? String else {
+            throw Failure.missingCurrentAppVersion
+        }
+
         guard let appGroupID = infoDictionary?["WireGroupId"] as? String else {
             throw Failure.missingAppGroupID
         }
@@ -44,6 +51,7 @@ final class NotificationServiceExtensionFlow: BootstrapComponent {
             for: applicationIdentifier
         )
 
+        self.currentAppVersion = currentAppVersion
         self.applicationIdentifier = applicationIdentifier
         self.applicationContainer = applicationContainer
     }
