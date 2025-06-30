@@ -28,7 +28,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
 
     enum Failure: Error {
         /// Contains all envelopes that were successfully processed
-        case uncompleteBatchProcessed(processedEnvelopes: [UpdateEventEnvelope])
+        case incompleteBatchProcessed(processedEnvelopes: [UpdateEventEnvelope])
     }
 
     private let selfClientID: String
