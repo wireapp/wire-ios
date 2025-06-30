@@ -21,7 +21,7 @@ import XCTest
 
 @testable import Wire
 
-final class ConversationViewControllerGuestBarTests: XCTestCase, CoreDataFixtureTestHelper  {
+final class ConversationViewControllerGuestBarTests: XCTestCase, CoreDataFixtureTestHelper {
 
     private var mockMainCoordinator: AnyMainCoordinator!
     private var sut: ConversationViewController!
@@ -59,50 +59,80 @@ final class ConversationViewControllerGuestBarTests: XCTestCase, CoreDataFixture
     func testAllKnownStatesAreHandled() {
         typealias BannerStrings = L10n.Localizable.Conversation.Banner
 
-        assertLabel(for: [.visibleRemotes],
-                    expected: BannerStrings.remotesPresent)
+        assertLabel(
+            for: [.visibleRemotes],
+            expected: BannerStrings.remotesPresent
+        )
 
-        assertLabel(for: [.visibleExternals],
-                    expected: BannerStrings.externalsPresent)
+        assertLabel(
+            for: [.visibleExternals],
+            expected: BannerStrings.externalsPresent
+        )
 
-        assertLabel(for: [.visibleGuests],
-                    expected: BannerStrings.guestsPresent)
+        assertLabel(
+            for: [.visibleGuests],
+            expected: BannerStrings.guestsPresent
+        )
 
-        assertLabel(for: [.visibleServices],
-                    expected: BannerStrings.servicesActive)
+        assertLabel(
+            for: [.visibleServices],
+            expected: BannerStrings.servicesActive
+        )
 
-        assertLabel(for: [.visibleRemotes, .visibleExternals],
-                    expected: BannerStrings.remotesExternalsPresent)
+        assertLabel(
+            for: [.visibleRemotes, .visibleExternals],
+            expected: BannerStrings.remotesExternalsPresent
+        )
 
-        assertLabel(for: [.visibleRemotes, .visibleGuests],
-                    expected: BannerStrings.remotesGuestsPresent)
+        assertLabel(
+            for: [.visibleRemotes, .visibleGuests],
+            expected: BannerStrings.remotesGuestsPresent
+        )
 
-        assertLabel(for: [.visibleRemotes, .visibleServices],
-                    expected: BannerStrings.remotesServicesPresent)
+        assertLabel(
+            for: [.visibleRemotes, .visibleServices],
+            expected: BannerStrings.remotesServicesPresent
+        )
 
-        assertLabel(for: [.visibleExternals, .visibleGuests],
-                    expected: BannerStrings.externalsGuestsPresent)
+        assertLabel(
+            for: [.visibleExternals, .visibleGuests],
+            expected: BannerStrings.externalsGuestsPresent
+        )
 
-        assertLabel(for: [.visibleExternals, .visibleServices],
-                    expected: BannerStrings.externalsServicesPresent)
+        assertLabel(
+            for: [.visibleExternals, .visibleServices],
+            expected: BannerStrings.externalsServicesPresent
+        )
 
-        assertLabel(for: [.visibleGuests, .visibleServices],
-                    expected: BannerStrings.guestsServicesPresent)
+        assertLabel(
+            for: [.visibleGuests, .visibleServices],
+            expected: BannerStrings.guestsServicesPresent
+        )
 
-        assertLabel(for: [.visibleRemotes, .visibleExternals, .visibleGuests],
-                    expected: BannerStrings.remotesExternalsGuestsPresent)
+        assertLabel(
+            for: [.visibleRemotes, .visibleExternals, .visibleGuests],
+            expected: BannerStrings.remotesExternalsGuestsPresent
+        )
 
-        assertLabel(for: [.visibleRemotes, .visibleExternals, .visibleServices],
-                    expected: BannerStrings.remotesExternalsServicesPresent)
+        assertLabel(
+            for: [.visibleRemotes, .visibleExternals, .visibleServices],
+            expected: BannerStrings.remotesExternalsServicesPresent
+        )
 
-        assertLabel(for: [.visibleRemotes, .visibleGuests, .visibleServices],
-                    expected: BannerStrings.remotesGuestsServicesPresent)
+        assertLabel(
+            for: [.visibleRemotes, .visibleGuests, .visibleServices],
+            expected: BannerStrings.remotesGuestsServicesPresent
+        )
 
-        assertLabel(for: [.visibleExternals, .visibleGuests, .visibleServices],
-                    expected: BannerStrings.externalsGuestsServicesPresent)
+        assertLabel(
+            for: [.visibleExternals, .visibleGuests, .visibleServices],
+            expected: BannerStrings.externalsGuestsServicesPresent
+        )
 
-        assertLabel(for: [.visibleRemotes, .visibleExternals, .visibleGuests, .visibleServices],
-                    expected: BannerStrings.remotesExternalsGuestsServicesPresent)
+        assertLabel(
+            for: [.visibleRemotes, .visibleExternals, .visibleGuests, .visibleServices],
+            expected: BannerStrings.remotesExternalsGuestsServicesPresent
+        )
     }
 
     // MARK: - Helper Method
