@@ -233,7 +233,7 @@ final class AppVersionMigrationServiceTests {
 
 extension AppVersionMigrationServiceTests {
 
-    struct TestData : Sendable {
+    struct TestData: Sendable {
 
         let description: String
         let allMigrations: [SemanticVersion]
