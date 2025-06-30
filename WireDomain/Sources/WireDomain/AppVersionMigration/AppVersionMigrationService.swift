@@ -37,6 +37,11 @@ class AppVersionMigrationService {
             allMigrations.allSatisfy { $0.version <= currentVersion },
             "There should be no migration pinned to a future version"
         )
+
+        assert(
+            Set(allMigrations.map(\.version)).count == allMigrations.count,
+            "There should only be one migration per version"
+        )
     }
 
     func performAppMigrations() async throws {
