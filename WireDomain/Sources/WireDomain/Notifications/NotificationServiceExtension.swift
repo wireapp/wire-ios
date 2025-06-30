@@ -152,6 +152,11 @@ extension NotificationServiceExtension {
 
     private func logNotificationServiceError(_ error: NotificationServiceExtensionFlow.Failure) {
         switch error {
+        case .missingCurrentAppVersion:
+            logger.error(
+                "Missing current app version",
+                attributes: .newNSE
+            )
         case .missingAppGroupID:
             logger.error(
                 "Missing app group ID",
