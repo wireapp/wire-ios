@@ -76,6 +76,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
         let sourceStream = try await webSocket.open()
         var batch: [UpdateEventEnvelope] = []
         var batchTask: Task<Void, any Error>?
+
         Task { [weak self] in
             guard let self else { return }
             do {
@@ -96,10 +97,8 @@ public final class PushChannelV2: PushChannelV2Protocol {
                     case let .event(event):
                         batch.append(event)
                         if batch.count == maxBatchEventsCount {
+                            continuation.yield(.events(batch))
 
-                            if !batch.isEmpty {
-                                continuation.yield(.events(batch))
-                            }
                             batch = []
                             batchTask?.cancel()
                             notifyUpToDateIfNeeded()
@@ -111,6 +110,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
                     }
 
                 }
+                // just in case to handle left batch if haven't deal with everything when we go to background
                 if !batch.isEmpty {
                     continuation.yield(.events(batch))
                     notifyUpToDateIfNeeded()

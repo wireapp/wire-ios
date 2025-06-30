@@ -78,19 +78,17 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
 
         logger.debug("processing stored update events", attributes: .syncAttributes(initialSync: false))
         syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
-        let processedEnvelopeIDs: Set<UUID>
         do {
-            processedEnvelopeIDs = try await processStoredEvents()
+            try await processStoredEvents()
         } catch {
             await pushChannel.close()
             throw error
         }
 
-        let task = Task { @Sendable [self, pushChannel, processedEnvelopeIDs] in
+        let task = Task { @Sendable [self, pushChannel] in
             await processLiveStream(
                 liveEventStream,
-                pushChannel: pushChannel,
-                processedEnvelopeIDs: processedEnvelopeIDs
+                pushChannel: pushChannel
             )
         }
 
@@ -100,7 +98,8 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     }
 
     /// Process pending events from the event database that were decrypted during the NSE
-    private func processStoredEvents() async throws -> Set<UUID> {
+    @discardableResult
+    private func processStoredEvents() async throws {
         let batchSize: UInt = 500
         var processedEnvelopeIDs = Set<UUID>()
 
@@ -159,11 +158,10 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     private func processLiveStream(
         _ liveEventStream: PushChannelV2.Stream,
         pushChannel: PushChannelV2Protocol,
-        processedEnvelopeIDs: Set<UUID>
     ) async {
         logger.debug("handling live event stream", attributes: .syncAttributes(initialSync: false))
         syncStateSubject.send(.incrementalSyncing(.receivingLiveEvents))
-        var shouldAcknowledgeInBatch = true
+
         do {
             for try await element in liveEventStream {
                 logger.debug(
@@ -181,30 +179,15 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                     try await messageStore.addPotentialGapSystemMessage()
                     try await pushChannel.acknowledgeFullSync()
                 case .syncing:
-                    // ignore this event, it gives the number of messages until we're caught up
-                    try await pushChannel.acknowledgeMessageCount()
+                // ignore this event, it gives the number of messages until we're caught up
+                // TODO: [WPB-18485] remove this event and add endofqueue
                 case let .events(envelopes):
                     do {
                         try await processBatch(
                             envelopes: envelopes,
-                            pushChannel: pushChannel,
-                            processedEnvelopeIDs: processedEnvelopeIDs
+                            pushChannel: pushChannel
                         )
 
-                        if let lastEnvelope = envelopes.last, shouldAcknowledgeInBatch {
-                            await acknowledgeUntilEnvelope(lastEnvelope, through: pushChannel)
-                        } else {
-                            for envelope in envelopes {
-                                await acknowledgeEnvelope(envelope, through: pushChannel)
-                            }
-                        }
-                    } catch let Failure.incompleteBatchProcessed(processedEnvelopes) {
-                        // from now on, no batch acknowledgement otherwise in the next batch we would acknowledge the
-                        // missed ones.
-                        shouldAcknowledgeInBatch = false
-                        for envelope in processedEnvelopes {
-                            await acknowledgeEnvelope(envelope, through: pushChannel)
-                        }
 
                     } catch {
                         // TODO: [WPB-10458] review handling errors of processingEvents
@@ -233,8 +216,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
 
     private func processBatch(
         envelopes: [UpdateEventEnvelope],
-        pushChannel: PushChannelV2Protocol,
-        processedEnvelopeIDs: Set<UUID>
+        pushChannel: PushChannelV2Protocol
     ) async throws {
 
         var storedEnvelopes: [(UpdateEventEnvelope, Int64)] = []
@@ -242,24 +224,18 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         // decrypt
         try await coreCryptoProvider.coreCrypto().perform { coreCryptoContext in
             for envelope in envelopes {
-                if processedEnvelopeIDs.contains(envelope.id) {
-                    logger.debug(
-                        "live event already processed, skipping...",
-                        attributes: .syncAttributes(initialSync: false) + [.eventEnvelopeID: envelope.id]
-                    )
-                    // TODO: [WPB-17947] handle duplicate events
-                    if let deliveryTag = envelope.deliveryTag {
-                        await acknowledgeEnvelope(envelope, through: pushChannel)
-                    }
-                    continue
-                }
-
                 var envelope = envelope
                 envelope.events = try await decryptEnvelope(envelope, in: coreCryptoContext)
 
+                // store
                 let index = try await storeEnvelope(envelope)
                 storedEnvelopes.append((envelope, index))
             }
+        }
+
+        // ack
+        if let lastEnvelope = envelopes.last {
+            await acknowledgeUntilEnvelope(lastEnvelope, through: pushChannel)
         }
 
         // process
@@ -269,7 +245,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                 try await processEnvelope(envelope)
                 envelopeIdsToDelete.append(index)
             } catch {
-                logger.error(
+                logger.critical(
                     "Failed to process envelope: \(error)",
                     attributes: .syncAttributes(initialSync: false) + [.eventEnvelopeID: envelope.id]
                 )
@@ -279,14 +255,10 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
 
         // only delete successful processed envelopes
         await deleteEnvelopes(at: envelopeIdsToDelete)
+        // TODO: [WPB-10458] save the message db and then event db
 
         await updateEventsStore.calculateLastUnreadMessages()
         await save()
-
-        let successfulEnvelopes = storedEnvelopes.filter { envelopeIdsToDelete.contains($0.1) }.compactMap(\.0)
-        if successfulEnvelopes.count != storedEnvelopes.count {
-            throw Failure.incompleteBatchProcessed(processedEnvelopes: successfulEnvelopes)
-        }
     }
 
     private func decryptEnvelope(
