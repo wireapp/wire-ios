@@ -163,7 +163,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     ) async {
         logger.debug("handling live event stream", attributes: .syncAttributes(initialSync: false))
         syncStateSubject.send(.incrementalSyncing(.receivingLiveEvents))
-
+        var shouldAcknowledgeInBatch = true
         do {
             for try await element in liveEventStream {
                 logger.debug(
@@ -191,13 +191,20 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                             processedEnvelopeIDs: processedEnvelopeIDs
                         )
 
-                        if let lastEnvelope = envelopes.last {
+                        if let lastEnvelope = envelopes.last, shouldAcknowledgeInBatch {
                             await acknowledgeUntilEnvelope(lastEnvelope, through: pushChannel)
+                        } else {
+                            for envelope in envelopes {
+                                await acknowledgeEnvelope(envelope, through: pushChannel)
+                            }
                         }
                     } catch let Failure.incompleteBatchProcessed(processedEnvelopes) {
+                        // from now on, no batch acknowledgement otherwise in the next batch we would acknowledge the missed ones.
+                        shouldAcknowledgeInBatch = false
                         for envelope in processedEnvelopes {
                             await acknowledgeEnvelope(envelope, through: pushChannel)
                         }
+                        
                     } catch {
                         // TODO: [WPB-10458] review handling errors of processingEvents
                         // in case of thrown errors, we skip to the next event
