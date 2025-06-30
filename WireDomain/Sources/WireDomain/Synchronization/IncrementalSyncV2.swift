@@ -377,7 +377,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         }
     }
 
-    private func deleteEnvelopes(at indexes: [Int64]) async {
+    private func deleteEnvelopes(at indices: [Int64]) async {
         do {
             try await updateEventsStore.deleteEventEnvelopes(at: indexes)
         } catch {
