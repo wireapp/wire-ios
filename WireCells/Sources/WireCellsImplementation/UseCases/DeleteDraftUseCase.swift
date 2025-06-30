@@ -48,7 +48,7 @@ package struct DeleteDraftUseCase: WireCellsDeleteDraftUseCaseProtocol {
         case .uploading:
             await uploadManager.cancelUpload(nodeID: nodeID)
         case .uploaded:
-            try await nodesAPI.cancelDraft(nodeID: nodeID, versionID: draft.versionID)
+            try await nodesAPI.deleteVersion(nodeID: nodeID, versionID: draft.versionID)
         case .failed, .cancelled:
             break // no op
         }
