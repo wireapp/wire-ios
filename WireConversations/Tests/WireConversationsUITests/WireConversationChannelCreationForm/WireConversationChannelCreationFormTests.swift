@@ -119,7 +119,7 @@ class WireConversationChannelCreationFormTests: XCTestCase {
                 )
         }
     }
-    
+
     @MainActor
     func testDynamicTypeVariants_Upgrade_Banner_Visible() {
         let viewModel = WireConversationChannelCreationFormViewModel(
@@ -129,7 +129,7 @@ class WireConversationChannelCreationFormTests: XCTestCase {
 
         viewModel.channelHistoryOption = .custom
         viewModel.showUpgradeBanner = true
-        
+
         let view = WireConversationChannelCreationForm(
             viewModel: viewModel
         )
@@ -144,7 +144,7 @@ class WireConversationChannelCreationFormTests: XCTestCase {
                 )
         }
     }
-    
+
     @MainActor
     func testColorSchemeVariants_Upgrade_Banner_Visible() {
         let viewModel = WireConversationChannelCreationFormViewModel(
@@ -154,13 +154,13 @@ class WireConversationChannelCreationFormTests: XCTestCase {
 
         viewModel.channelHistoryOption = .custom
         viewModel.showUpgradeBanner = true
-        
+
         let view = WireConversationChannelCreationForm(
             viewModel: viewModel
         )
         .frame(width: 375, height: 667)
         .padding()
-        
+
         snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(matching: view, named: "light")
@@ -168,5 +168,5 @@ class WireConversationChannelCreationFormTests: XCTestCase {
             .withUserInterfaceStyle(.dark)
             .verify(matching: view, named: "dark")
     }
-    
+
 }

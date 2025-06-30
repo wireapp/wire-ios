@@ -53,15 +53,17 @@ public struct WireConversationChannelCreationForm: View {
                         Rectangle()
                             .foregroundColor(Color.black.opacity(0.6))
                             .edgesIgnoringSafeArea(.all)
-                        
-                        WireChannelBannerView(configuration: .init(
-                            title: L10n.Localizable.Conversation.ChannelHistory.UpgradeBanner.title,
-                            message: L10n.Localizable.Conversation.ChannelHistory.UpgradeBanner.message,
-                            buttonTitle: L10n.Localizable.Conversation.ChannelHistory.UpgradeBanner.button,
-                            buttonURL: viewModel.upgradeBannerURL(),
-                            padding: 30,
-                            showCloseButton: true,
-                            closeAction: { viewModel.hideUpgradeBanner() })
+
+                        WireChannelBannerView(
+                            configuration: .init(
+                                title: L10n.Localizable.Conversation.ChannelHistory.UpgradeBanner.title,
+                                message: L10n.Localizable.Conversation.ChannelHistory.UpgradeBanner.message,
+                                buttonTitle: L10n.Localizable.Conversation.ChannelHistory.UpgradeBanner.button,
+                                buttonURL: viewModel.upgradeBannerURL(),
+                                padding: 30,
+                                showCloseButton: true,
+                                closeAction: { viewModel.hideUpgradeBanner() }
+                            )
                         ).transition(.opacity)
                     }
                 }
