@@ -18,37 +18,25 @@
 
 import XCTest
 
-class SetPasswordPage: PageModel {
-
-    override var pageMainElement: XCUIElement {
-        passwordField
+/// Page for popup on first time user login
+class FirstTimePage: PageModel {
+    override func assertHasLoaded() {
+        let expectation = okButton.waitForExistence(timeout: 10)
+        XCTAssert(expectation, "First time page not loaded - can't find Ok button")
     }
 
-    var acceptButton: XCUIElement {
-        let elementsQuery = app.otherElements
-        return elementsQuery.buttons["Accept"]
+    var okButton: XCUIElement {
+        app.buttons["OK"]
     }
 
-    var passwordNextButton: XCUIElement {
-        let elementsQuery = passwordField.descendants(matching: .any)["RevealButton"]
-        return elementsQuery.firstMatch
-    }
-
-    var passwordField: XCUIElement {
-        let elementsQuery = app.descendants(matching: .any)["PasswordField"]
-        return elementsQuery.firstMatch
-    }
-
-    func setPassword(_ password: String) -> SetPasswordPage {
-        passwordField.tap()
-        passwordField.typeText(password)
-        passwordNextButton.tap()
+    func acceptFirstTimeAlert() -> FirstTimePage {
+        okButton.tap()
         return self
     }
 
-    func acceptPopup() throws -> SetUsernamePage {
+    func acceptPopup() throws -> ConversationsPage {
         let button = app.otherElements.buttons.firstMatch
         button.tap()
-        return try SetUsernamePage()
+        return try ConversationsPage()
     }
 }
