@@ -168,6 +168,14 @@ final class AppVersionMigrationServiceTests {
             currentVersion: "1.3.0",
             migrationsExpectedToBeRun: ["1.0.1", "1.2.0"],
             newMigrationMarker: "1.2.0"
+        ),
+        TestData(
+            description: "Migrations are run in order",
+            allMigrations: ["2.0.5", "1.1.0", "2.0.0", "1.0.1", "1.0.0"],
+            prevMigrationMarker: "0.0.0",
+            currentVersion: "3.0.0",
+            migrationsExpectedToBeRun: ["1.0.0", "1.0.1", "1.1.0", "2.0.0", "2.0.5"],
+            newMigrationMarker: "3.0.0"
         )
     ])
     func onlyEligibleMigrationsAreRun(testData: TestData) async throws {
