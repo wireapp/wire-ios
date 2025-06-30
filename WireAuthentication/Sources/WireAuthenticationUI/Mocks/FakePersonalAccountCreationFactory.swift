@@ -26,6 +26,7 @@ struct FakePersonalAccountCreationFactory: PersonalAccountCreationFactory, Regis
     var mockDependencies = MockDependencies()
 
     var email: String
+    var backendURL: URL
     var privacyPolicyURL: URL
     var termsOfUseURL: URL
     var teamAccountCreationLink: URL?
@@ -36,6 +37,7 @@ struct FakePersonalAccountCreationFactory: PersonalAccountCreationFactory, Regis
             factory: self,
             router: FakeRootFactory().viewModel,
             email: email,
+            backendURL: backendURL,
             privacyPolicyURL: privacyPolicyURL,
             termsOfUseURL: termsOfUseURL,
             teamAccountCreationLink: teamAccountCreationLink,
@@ -50,7 +52,7 @@ struct FakePersonalAccountCreationFactory: PersonalAccountCreationFactory, Regis
         password: String,
         name: String,
         isDataUsageAgreementAccepted: Bool,
-        analyticsEventTracker: any RegistrationAnalyticsTrackerProtocol,
+        analyticsEventTracker: (any RegistrationAnalyticsTrackerProtocol)?,
         analyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
     ) -> any VerificationEmailCodeFactory {
         fatalError()

@@ -43,7 +43,7 @@ final class RootComponent: BootstrapComponent {
     public let accountsPublisher: CurrentValuePublisher<[AccountUIModel]>
     public let isMultibackendEnabled: Bool
     public let useLegacyRegistrationFlow: Bool
-    public let registrationAnalyticsTracker: any RegistrationAnalyticsTrackerProtocol
+    public let registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
     public let registrationAnalyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
 
     @MainActor public var bridge: WireAuthenticationBridge {
@@ -70,7 +70,7 @@ final class RootComponent: BootstrapComponent {
         accountsPublisher: CurrentValuePublisher<[AccountUIModel]>,
         useLegacyRegistrationFlow: Bool,
         isMultibackendEnabled: Bool,
-        registrationAnalyticsTracker: any RegistrationAnalyticsTrackerProtocol,
+        registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?,
         registrationAnalyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
     ) {
         self.backendInfo = backendInfo

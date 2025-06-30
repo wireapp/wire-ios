@@ -44,29 +44,47 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
         passwordValidator.localizedRulesDescription ?? ""
     }
 
+    var isAnalyticsTrackingAvailable: Bool {
+        // `analyticsEventTracker` will nil if the app is not shipped with Countly credentials.
+        // If credentials are available, we only want to enable Countly for prod and staging backends.
+        if analyticsEventTracker != nil, let backendHost = backendURL.host() {
+            [
+                // prod
+                "prod-nginz-https.wire.com",
+                // staging
+                "staging-nginz-https.zinfra.io"
+            ].contains(backendHost)
+        } else {
+            false
+        }
+    }
+
     package let factory: any Factory
     private let router: any Router
+    package let backendURL: URL
     package let privacyPolicyURL: URL
     private let termsOfUseURL: URL
     package let teamAccountCreationLink: URL?
     private let passwordValidator: any PasswordValidator
-    let analyticsEventTracker: any RegistrationAnalyticsTrackerProtocol
+    let analyticsEventTracker: (any RegistrationAnalyticsTrackerProtocol)?
     let analyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
 
     package init(
         factory: any Factory,
         router: any Router,
         email: String,
+        backendURL: URL,
         privacyPolicyURL: URL,
         termsOfUseURL: URL,
         teamAccountCreationLink: URL?,
         passwordValidator: any PasswordValidator,
-        analyticsEventTracker: any RegistrationAnalyticsTrackerProtocol,
+        analyticsEventTracker: (any RegistrationAnalyticsTrackerProtocol)?,
         analyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
     ) {
         self.factory = factory
         self.router = router
         self.email = email
+        self.backendURL = backendURL
         self.privacyPolicyURL = privacyPolicyURL
         self.termsOfUseURL = termsOfUseURL
         self.teamAccountCreationLink = teamAccountCreationLink
@@ -105,12 +123,13 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
         do {
             let requestEmailVerificationCodeUseCase = try await factory.requestEmailVerificationCodeUseCase()
             try await requestEmailVerificationCodeUseCase.invoke(email: email)
+
             if isDataUsageAgreementAccepted {
-                analyticsEventTracker.setUp()
-                analyticsEventTracker.trackPersonalAccountCreationStart()
-                analyticsEventTracker.trackPersonalAccountCreationReachedTermsOfUseConfirmation()
+                analyticsEventTracker?.setUp()
+                analyticsEventTracker?.trackPersonalAccountCreationStart()
+                analyticsEventTracker?.trackPersonalAccountCreationReachedTermsOfUseConfirmation()
             } else {
-                analyticsEventTracker.tearDown()
+                analyticsEventTracker?.tearDown()
             }
 
             router.navigate(to: PersonalAccountCreationDestination.verifyEmail(

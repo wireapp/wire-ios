@@ -55,7 +55,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
     private let router: any Router
     private let onFlowCompletion: (AuthenticationResult) -> Void
     private static let numberOfDigits = 6
-    private var analyticsEventTracker: any RegistrationAnalyticsTrackerProtocol
+    private var analyticsEventTracker: (any RegistrationAnalyticsTrackerProtocol)?
     private var analyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
 
     // MARK: - Life cycle
@@ -69,7 +69,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
         isDataUsageAgreementAccepted: Bool,
         onFlowCompletion: @escaping (AuthenticationResult) -> Void,
         numberOfDigits: Int = VerificationEmailCodeViewModel.numberOfDigits,
-        analyticsEventTracker: any RegistrationAnalyticsTrackerProtocol,
+        analyticsEventTracker: (any RegistrationAnalyticsTrackerProtocol)?,
         analyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
     ) {
         precondition(numberOfDigits > 0)
@@ -147,7 +147,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
             onFlowCompletion(authenticationResult)
         } catch {
             WireLogger.authentication.error("register personal account failed: \(error)")
-            analyticsEventTracker.trackPersonalAccountCreationFailedCodeVerification()
+            analyticsEventTracker?.trackPersonalAccountCreationFailedCodeVerification()
 
             switch error {
             case RegisterPersonalAccountUseCaseError.invalidEmail:
@@ -198,7 +198,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
     }
 
     func trackReachedVerificationCodeIfNeeded() {
-        analyticsEventTracker.trackPersonalAccountCreationReachedVerificationCode()
+        analyticsEventTracker?.trackPersonalAccountCreationReachedVerificationCode()
     }
 
     // MARK: - Private
@@ -223,9 +223,9 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
     }
 
     private func configureAnalytics(for userID: UUID) {
-        analyticsEventTracker.deleteTempAnalyticsID()
-        if dataUsageAgreementAccepted {
-            if let analyticsIDString = analyticsEventTracker.currentDeviceID,
+        analyticsEventTracker?.deleteTempAnalyticsID()
+        if isDataUsageAgreementAccepted {
+            if let analyticsIDString = analyticsEventTracker?.currentDeviceID,
                let analyticsID = UUID(uuidString: analyticsIDString) {
                 analyticsIDRepository.storeAnalyticsID(for: userID, analyticsID: analyticsID)
             }

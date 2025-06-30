@@ -29,7 +29,7 @@ protocol VerificationEmailCodeComponentDependency: Dependency {
     var networkStack: NetworkStack { get }
     @MainActor var bridge: WireAuthenticationBridge { get }
     @MainActor var router: any Router { get }
-    var registrationAnalyticsTracker: any RegistrationAnalyticsTrackerProtocol { get }
+    var registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)? { get }
     var registrationAnalyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol { get }
 
 }
@@ -40,7 +40,7 @@ final class VerificationEmailCodeComponent: Component<VerificationEmailCodeCompo
     private let password: String
     private let name: String
     private let isDataUsageAgreementAccepted: Bool
-    private let registrationAnalyticsTracker: any RegistrationAnalyticsTrackerProtocol
+    private let registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
     private let registrationAnalyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
 
     init(
@@ -49,7 +49,7 @@ final class VerificationEmailCodeComponent: Component<VerificationEmailCodeCompo
         password: String,
         name: String,
         isDataUsageAgreementAccepted: Bool,
-        analyticsEventTracker: any RegistrationAnalyticsTrackerProtocol,
+        analyticsEventTracker: (any RegistrationAnalyticsTrackerProtocol)?,
         analyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
     ) {
         self.email = email

@@ -91,7 +91,9 @@ struct PersonalAccountCreationView: View {
             emailField
             passwordField
             confirmPasswordField
-            dataUsageAgreementView
+            if viewModel.isAnalyticsTrackingAvailable {
+                dataUsageAgreementView
+            }
             continueButton
             teamAccountCreationView
 

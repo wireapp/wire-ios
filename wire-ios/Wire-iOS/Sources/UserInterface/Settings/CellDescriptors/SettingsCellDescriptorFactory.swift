@@ -116,14 +116,14 @@ struct SettingsCellDescriptorFactory {
 
     @MainActor
     func settingsGroup(
-        isPublicDomain: Bool,
+        isAnalyticsTrackingAvailable: Bool,
         userSession: UserSession,
         useTypeIntrinsicSizeTableView: Bool,
         mainCoordinator: some MainCoordinatorProtocol
     ) -> any SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType {
         var topLevelElements = [
             accountGroup(
-                isPublicDomain: isPublicDomain,
+                isAnalyticsTrackingAvailable: isAnalyticsTrackingAvailable,
                 userSession: userSession,
                 useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView
             ),

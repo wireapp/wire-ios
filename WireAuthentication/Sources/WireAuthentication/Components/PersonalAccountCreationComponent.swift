@@ -25,14 +25,17 @@ internal import WireAuthenticationLogic
 final class PersonalAccountCreationComponent: Component<PersonalAccountCreationComponentDependency> {
 
     private let email: String
+    private let backendURL: URL
     private let teamAccountCreationLink: URL?
 
     init(
         parent: any Scope,
         email: String,
+        backendURL: URL,
         teamAccountCreationLink: URL?
     ) {
         self.email = email
+        self.backendURL = backendURL
         self.teamAccountCreationLink = teamAccountCreationLink
         super.init(parent: parent)
     }
@@ -44,7 +47,7 @@ final class PersonalAccountCreationComponent: Component<PersonalAccountCreationC
         password: String,
         name: String,
         isDataUsageAgreementAccepted: Bool,
-        analyticsEventTracker: any RegistrationAnalyticsTrackerProtocol,
+        analyticsEventTracker: (any RegistrationAnalyticsTrackerProtocol)?,
         analyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
     ) -> VerificationEmailCodeComponent {
         VerificationEmailCodeComponent(
@@ -69,6 +72,7 @@ extension PersonalAccountCreationComponent: PersonalAccountCreationViewModel.Fac
             factory: self,
             router: dependency.router,
             email: email,
+            backendURL: backendURL,
             privacyPolicyURL: dependency.privacyPolicyURL,
             termsOfUseURL: dependency.termsOfUseURL,
             teamAccountCreationLink: teamAccountCreationLink,
@@ -83,7 +87,7 @@ extension PersonalAccountCreationComponent: PersonalAccountCreationViewModel.Fac
         password: String,
         name: String,
         isDataUsageAgreementAccepted: Bool,
-        analyticsEventTracker: any RegistrationAnalyticsTrackerProtocol,
+        analyticsEventTracker: (any RegistrationAnalyticsTrackerProtocol)?,
         analyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
     ) -> any VerificationEmailCodeFactory {
         verificationEmailCodeComponent(

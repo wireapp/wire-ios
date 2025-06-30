@@ -33,6 +33,7 @@ final class PersonalAccountCreationViewModelTests: XCTestCase, PersonalAccountCr
     private var mockRequestEmailVerificationCodeUseCase: MockRequestEmailVerificationCodeUseCaseProtocol!
     private var mockValidateEmailUseCase: MockValidateEmailUseCaseProtocol!
     private var passwordValidator: (any PasswordValidator)!
+    private var analyticsEventTracker: MockRegistrationAnalyticsTrackerProtocol!
 
     @MainActor
     override func setUp() async throws {
@@ -41,17 +42,9 @@ final class PersonalAccountCreationViewModelTests: XCTestCase, PersonalAccountCr
         mockRequestEmailVerificationCodeUseCase = MockRequestEmailVerificationCodeUseCaseProtocol()
         mockValidateEmailUseCase = MockValidateEmailUseCaseProtocol()
         passwordValidator = MockPasswordValidator()
-        sut = PersonalAccountCreationViewModel(
-            factory: self,
-            router: router,
-            email: "mika@example.com",
-            privacyPolicyURL: URL(string: "https://wire.com")!,
-            termsOfUseURL: URL(string: "https://wire.com")!,
-            teamAccountCreationLink: URL(string: "https://wire.com")!,
-            passwordValidator: passwordValidator,
-            analyticsEventTracker: MockRegistrationAnalyticsTrackerProtocol(),
-            analyticsIDRepository: MockRegistrationAnalyticsIDRepositoryProtocol()
-        )
+        analyticsEventTracker = MockRegistrationAnalyticsTrackerProtocol()
+        analyticsEventTracker.tearDown_MockMethod = {}
+        sut = makeSUT(analyticsEventTracker: analyticsEventTracker)
     }
 
     override func tearDown() {
@@ -85,8 +78,8 @@ final class PersonalAccountCreationViewModelTests: XCTestCase, PersonalAccountCr
         email: String,
         password: String,
         name: String,
-        dataUsageAgreementAccepted: Bool,
-        analyticsEventTracker: any RegistrationAnalyticsTrackerProtocol,
+        isDataUsageAgreementAccepted: Bool,
+        analyticsEventTracker: (any RegistrationAnalyticsTrackerProtocol)?,
         analyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
     ) -> any VerificationEmailCodeFactory {
         fatalError("not needed here")
@@ -169,6 +162,56 @@ final class PersonalAccountCreationViewModelTests: XCTestCase, PersonalAccountCr
 
         mockValidateEmailUseCase.invokeEmail_MockValue = .isValid
         XCTAssertTrue(sut.canRequestVerificationCode)
+    }
+
+    @MainActor
+    func testIsAnalyticsTrackingAvailable() {
+        // Given
+        let suts = [
+            makeSUT(backendURL: URL(string: "https://prod-nginz-https.wire.com")!),
+            makeSUT(backendURL: URL(string: "https://staging-nginz-https.zinfra.io")!)
+        ]
+
+        // Then
+        for sut in suts {
+            XCTAssertTrue(sut.isAnalyticsTrackingAvailable, sut.backendURL.path())
+        }
+    }
+
+    @MainActor
+    func testIsAnalyticsTrackingUnavailable() {
+        // Given
+        let suts = [
+            makeSUT(backendURL: URL(string: "https://account.bella.wire.link")!),
+            makeSUT(backendURL: URL(string: "https://some-other.link")!),
+            makeSUT(backendURL: URL(string: "https://prod-nginz-https.wire.com")!, analyticsEventTracker: nil),
+        ]
+
+        // Then
+        for sut in suts {
+            XCTAssertFalse(sut.isAnalyticsTrackingAvailable, sut.backendURL.path())
+        }
+    }
+
+    // MARK: - Helper
+
+    @MainActor
+    private func makeSUT(
+        backendURL: URL = URL(string: "https://wire.com")!,
+        analyticsEventTracker: (any RegistrationAnalyticsTrackerProtocol)? = MockRegistrationAnalyticsTrackerProtocol()
+    ) -> PersonalAccountCreationViewModel {
+        PersonalAccountCreationViewModel(
+            factory: self,
+            router: router,
+            email: "mika@example.com",
+            backendURL: backendURL,
+            privacyPolicyURL: URL(string: "https://wire.com")!,
+            termsOfUseURL: URL(string: "https://wire.com")!,
+            teamAccountCreationLink: URL(string: "https://wire.com")!,
+            passwordValidator: passwordValidator,
+            analyticsEventTracker: analyticsEventTracker,
+            analyticsIDRepository: MockRegistrationAnalyticsIDRepositoryProtocol()
+        )
     }
 
 }

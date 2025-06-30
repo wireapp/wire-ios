@@ -46,7 +46,7 @@ final class VerificationEmailCodeViewModelTests: XCTestCase, VerificationEmailCo
             email: "mika@example.com",
             password: "password",
             name: "mika",
-            dataUsageAgreementAccepted: false,
+            isDataUsageAgreementAccepted: false,
             onFlowCompletion: { [self] _ in onRegisterAccountCalled = true },
             analyticsEventTracker: MockRegistrationAnalyticsTrackerProtocol(),
             analyticsIDRepository: RegistrationAnalyticsIDRepositoryProtocolMock()

@@ -23,7 +23,7 @@ import WireSyncEngine
 @MainActor
 final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSettingsContentUIBuilderProtocol {
 
-    let isPublicDomain: Bool
+    let isAnalyticsTrackingAvailable: Bool
     let userSession: UserSession
     let trackingManager: (any TrackingInterface)?
     weak var settingsPropertyFactoryDelegate: SettingsPropertyFactoryDelegate?
@@ -48,11 +48,11 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
     }
 
     init(
-        isPublicDomain: Bool,
+        isAnalyticsTrackingAvailable: Bool,
         userSession: UserSession,
         trackingManager: (any TrackingInterface)?
     ) {
-        self.isPublicDomain = isPublicDomain
+        self.isAnalyticsTrackingAvailable = isAnalyticsTrackingAvailable
         self.userSession = userSession
         self.trackingManager = trackingManager
     }
@@ -62,7 +62,7 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
         let factory =
             settingsCellDescriptorFactory(settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
         let group = factory.settingsGroup(
-            isPublicDomain: isPublicDomain,
+            isAnalyticsTrackingAvailable: isAnalyticsTrackingAvailable,
             userSession: userSession,
             useTypeIntrinsicSizeTableView: false,
             mainCoordinator: mainCoordinator
@@ -99,7 +99,7 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
         let factory =
             settingsCellDescriptorFactory(settingsCoordinator: .init(settingsCoordinator: settingsCoordinator))
         let group = factory.accountGroup(
-            isPublicDomain: isPublicDomain,
+            isAnalyticsTrackingAvailable: isAnalyticsTrackingAvailable,
             userSession: userSession,
             useTypeIntrinsicSizeTableView: false
         ) as! SettingsGroupCellDescriptor

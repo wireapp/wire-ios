@@ -60,7 +60,7 @@ public struct WireAuthenticationAssembly {
         accountsPublisher: CurrentValuePublisher<[AccountUIModel]>,
         useLegacyRegistrationFlow: Bool,
         isMultibackendEnabled: Bool,
-        registrationAnalyticsTracker: any RegistrationAnalyticsTrackerProtocol,
+        registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?,
         registrationAnalyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
         let backendInfo = BackendInfo(
