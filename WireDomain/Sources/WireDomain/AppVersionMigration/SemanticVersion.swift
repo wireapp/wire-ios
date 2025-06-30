@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct SemanticVersion: Hashable, ExpressibleByStringLiteral {
+public struct SemanticVersion: Sendable, Hashable, ExpressibleByStringLiteral {
 
     public let major: UInt
     public let minor: UInt

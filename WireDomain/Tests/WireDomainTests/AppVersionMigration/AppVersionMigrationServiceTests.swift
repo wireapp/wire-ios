@@ -175,7 +175,7 @@ final class AppVersionMigrationServiceTests {
             prevMigrationMarker: "0.0.0",
             currentVersion: "3.0.0",
             migrationsExpectedToBeRun: ["1.0.0", "1.0.1", "1.1.0", "2.0.0", "2.0.5"],
-            newMigrationMarker: "3.0.0"
+            newMigrationMarker: "2.0.5"
         )
     ])
     func onlyEligibleMigrationsAreRun(testData: TestData) async throws {
@@ -233,14 +233,14 @@ final class AppVersionMigrationServiceTests {
 
 extension AppVersionMigrationServiceTests {
 
-    struct TestData {
+    struct TestData : Sendable {
 
         let description: String
-        var allMigrations: [SemanticVersion]
+        let allMigrations: [SemanticVersion]
         var prevMigrationMarker: SemanticVersion?
-        var currentVersion: SemanticVersion
-        var migrationsExpectedToBeRun: [SemanticVersion]
-        var newMigrationMarker: SemanticVersion
+        let currentVersion: SemanticVersion
+        let migrationsExpectedToBeRun: [SemanticVersion]
+        let newMigrationMarker: SemanticVersion
 
     }
 
