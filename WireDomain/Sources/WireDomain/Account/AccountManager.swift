@@ -75,7 +75,7 @@ public final class AccountManager: NSObject {
     private let currentAppVersion: String
     private var cache = [UUID: Account]()
     private var store: AccountStore
-    private let defaults = UserDefaults.shared()!
+    private let defaults: UserDefaults
 
     // MARK: - Init
 
@@ -85,10 +85,12 @@ public final class AccountManager: NSObject {
 
     public init(
         currentAppVersion: String,
-        sharedDirectory: URL
+        sharedDirectory: URL,
+        defaults: UserDefaults = .shared()!
     ) throws {
         self.currentAppVersion = currentAppVersion
         self.store = try AccountStore(root: sharedDirectory)
+        self.defaults = defaults
         super.init()
         refreshCache()
 
