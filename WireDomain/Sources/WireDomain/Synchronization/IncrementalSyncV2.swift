@@ -261,11 +261,11 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                 try await processEnvelope(envelope)
                 envelopeIdsToDelete.append(index)
             } catch {
-                // TODO: add assertionFailure?
                 logger.error(
                     "Failed to process envelope: \(error)",
                     attributes: .syncAttributes(initialSync: false) + [.eventEnvelopeID: envelope.id]
                 )
+                assertionFailure("Failed to process envelope: \(error)")
             }
         }
 
