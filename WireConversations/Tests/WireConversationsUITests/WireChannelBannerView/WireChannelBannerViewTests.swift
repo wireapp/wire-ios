@@ -22,7 +22,7 @@ import WireTestingPackage
 import XCTest
 @testable import WireConversationsUI
 
-class WireChannelUpgradeBannerTests: XCTestCase {
+class WireChannelBannerTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
@@ -37,11 +37,16 @@ class WireChannelUpgradeBannerTests: XCTestCase {
 
     @MainActor
     func testColorSchemeVariantsEmptyState() {
-        let view = WireChannelUpgradeBannerView(
-            viewModel: WireConversationChannelCreationFormViewModel(
-                channelName: "",
-                isUserPremium: true
-            ) { _ in }
+        let view = WireChannelBannerView(
+            configuration: .init(
+                title: "Show older messages?",
+                message: "Upgrade to a paid plan to offer channel members the whole history.",
+                buttonTitle: "Upgrade now",
+                buttonURL: URL(string: "https://example.com")!,
+                padding: 30,
+                showCloseButton: true,
+                closeAction: {}
+            )
         )
         .frame(width: 375, height: 667)
         .padding()
@@ -56,11 +61,16 @@ class WireChannelUpgradeBannerTests: XCTestCase {
 
     @MainActor
     func testDynamicTypeVariantsEmptyState() {
-        let view = WireChannelUpgradeBannerView(
-            viewModel: WireConversationChannelCreationFormViewModel(
-                channelName: "",
-                isUserPremium: true
-            ) { _ in }
+        let view = WireChannelBannerView(
+            configuration: .init(
+                title: "Show older messages?",
+                message: "Upgrade to a paid plan to offer channel members the whole history.",
+                buttonTitle: "Upgrade now",
+                buttonURL: URL(string: "https://example.com")!,
+                padding: 30,
+                showCloseButton: true,
+                closeAction: {}
+            )
         )
         .frame(width: 375, height: 667)
         .padding()

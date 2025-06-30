@@ -119,4 +119,54 @@ class WireConversationChannelCreationFormTests: XCTestCase {
                 )
         }
     }
+    
+    @MainActor
+    func testDynamicTypeVariants_Upgrade_Banner_Visible() {
+        let viewModel = WireConversationChannelCreationFormViewModel(
+            channelName: "",
+            isUserPremium: true
+        ) { _ in }
+
+        viewModel.channelHistoryOption = .custom
+        viewModel.showUpgradeBanner = true
+        
+        let view = WireConversationChannelCreationForm(
+            viewModel: viewModel
+        )
+        .frame(width: 375, height: 667)
+        .padding()
+
+        for dynamicTypeSize in DynamicTypeSize.allCases {
+            snapshotHelper
+                .verify(
+                    matching: view.dynamicTypeSize(dynamicTypeSize),
+                    named: "\(dynamicTypeSize)"
+                )
+        }
+    }
+    
+    @MainActor
+    func testColorSchemeVariants_Upgrade_Banner_Visible() {
+        let viewModel = WireConversationChannelCreationFormViewModel(
+            channelName: "",
+            isUserPremium: true
+        ) { _ in }
+
+        viewModel.channelHistoryOption = .custom
+        viewModel.showUpgradeBanner = true
+        
+        let view = WireConversationChannelCreationForm(
+            viewModel: viewModel
+        )
+        .frame(width: 375, height: 667)
+        .padding()
+        
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
+    }
+    
 }
