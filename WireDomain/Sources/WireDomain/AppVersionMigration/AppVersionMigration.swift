@@ -16,10 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol JournalProtocol {
+import Foundation
 
-    subscript(_ key: JournalKey<Bool>) -> Bool { get set }
-    subscript(_ key: JournalKey<String?>) -> String? { get set }
-    func erase()
+/// A migration to be performed when the app updates
+/// to or past a particular version.
+
+protocol AppVersionMigration {
+
+    /// The app version for which this migration should
+    /// be run.
+
+    var version: SemanticVersion { get }
+
+    /// Perform the migration.
+
+    func perform() async throws
 
 }
