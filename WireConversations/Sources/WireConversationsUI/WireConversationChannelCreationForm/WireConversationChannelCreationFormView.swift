@@ -49,8 +49,21 @@ public struct WireConversationChannelCreationForm: View {
         .overlay {
             ZStack {
                 if viewModel.showUpgradeBanner {
-                    WireChannelUpgradeBannerView(viewModel: viewModel)
-                        .transition(.opacity)
+                    ZStack {
+                        Rectangle()
+                            .foregroundColor(Color.black.opacity(0.6))
+                            .edgesIgnoringSafeArea(.all)
+                        
+                        WireChannelBannerView(configuration: .init(
+                            title: L10n.Localizable.Conversation.ChannelHistory.UpgradeBanner.title,
+                            message: L10n.Localizable.Conversation.ChannelHistory.UpgradeBanner.message,
+                            buttonTitle: L10n.Localizable.Conversation.ChannelHistory.UpgradeBanner.button,
+                            buttonURL: viewModel.upgradeBannerURL(),
+                            padding: 30,
+                            showCloseButton: true,
+                            closeAction: { viewModel.hideUpgradeBanner() })
+                        ).transition(.opacity)
+                    }
                 }
             }
             .animation(.easeInOut, value: viewModel.showUpgradeBanner)
@@ -120,7 +133,7 @@ public struct WireConversationChannelCreationForm: View {
 
     var channelHistoryPicker: some View {
         Picker(
-            L10n.Localizable.Conversation.CreationForm.ChannelHistory.Picker.title,
+            L10n.Localizable.Conversation.ChannelHistory.Picker.title,
             selection: $viewModel.channelHistoryOption
         ) {
             ForEach(viewModel.channelHistoryAvailableOptions(), id: \.self) { channelHistoryOption in
@@ -172,7 +185,7 @@ public struct WireConversationChannelCreationForm: View {
     WireConversationChannelCreationForm(
         viewModel: WireConversationChannelCreationFormViewModel(
             channelName: "",
-            isUserPremium: true
+            isUserPremium: false
         ) { _ in }
     )
 }

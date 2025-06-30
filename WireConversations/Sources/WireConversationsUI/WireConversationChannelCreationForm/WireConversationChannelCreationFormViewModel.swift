@@ -48,17 +48,17 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
         var title: String {
             switch self {
             case .off:
-                L10n.Localizable.Conversation.CreationForm.ChannelHistory.Picker.off
+                L10n.Localizable.Conversation.ChannelHistory.Picker.off
             case .oneDay:
-                L10n.Localizable.Conversation.CreationForm.ChannelHistory.Picker.oneDay
+                L10n.Localizable.Conversation.ChannelHistory.Picker.oneDay
             case .oneWeek:
-                L10n.Localizable.Conversation.CreationForm.ChannelHistory.Picker.oneWeek
+                L10n.Localizable.Conversation.ChannelHistory.Picker.oneWeek
             case .fourWeeks:
-                L10n.Localizable.Conversation.CreationForm.ChannelHistory.Picker.fourWeeks
+                L10n.Localizable.Conversation.ChannelHistory.Picker.fourWeeks
             case .unlimited:
-                L10n.Localizable.Conversation.CreationForm.ChannelHistory.Picker.unlimited
+                L10n.Localizable.Conversation.ChannelHistory.Picker.unlimited
             case .custom:
-                L10n.Localizable.Conversation.CreationForm.ChannelHistory.Picker.custom
+                L10n.Localizable.Conversation.ChannelHistory.Picker.custom
             }
         }
 
@@ -70,9 +70,9 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
                 var title: String {
                     switch self {
                     case .days:
-                        L10n.Localizable.Conversation.CreationForm.ChannelHistory.CustomPicker.days
+                        L10n.Localizable.Conversation.ChannelHistory.CustomPicker.days
                     case .week:
-                        L10n.Localizable.Conversation.CreationForm.ChannelHistory.CustomPicker.weeks
+                        L10n.Localizable.Conversation.ChannelHistory.CustomPicker.weeks
                     }
                 }
             }
