@@ -55,7 +55,7 @@ final class PullServerTimeSyncTests: XCTestCase {
 
         let storeInvocations = store.storeServerTimeDelta_Invocations
         try XCTAssertCount(storeInvocations, count: 1)
-        XCTAssertEqual(storeInvocations[0], expectedValue, accuracy:  0.1)
+        XCTAssertEqual(storeInvocations[0], expectedValue, accuracy: 0.1)
     }
 
 }
