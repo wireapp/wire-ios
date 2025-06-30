@@ -99,14 +99,4 @@ extension ConversationViewController {
         }
     }
 
-    func setGuestBarForceHidden(_ isGuestBarForceHidden: Bool) {
-        if isGuestBarForceHidden {
-            guestsBarController.setState(.hidden, animated: true)
-            guestsBarController.shouldIgnoreUpdates = true
-        } else {
-            guestsBarController.shouldIgnoreUpdates = false
-            updateGuestsBarVisibility()
-        }
-    }
-
 }
