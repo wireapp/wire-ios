@@ -70,7 +70,9 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
         
         logger.debug("handling live event stream", attributes: logAttributes)
         do {
-            for try await element in liveEventStream {
+            streamLoop: for try await element in liveEventStream {
+                try Task.checkCancellation()
+                
                 logger.debug(
                     "received live element: \(element)",
                     attributes: .syncAttributes(initialSync: false)
@@ -79,14 +81,13 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
                 case .upToDate:
                     logger.debug("upToDate event", attributes: logAttributes)
                     continuation.finish()
-                    break
+                    break streamLoop
                 case .missedEvents:
                     logger.debug("missedEvents event", attributes: logAttributes)
                     // do nothing
-                    break
                 case .syncing:
                     // ignore this event, it gives the number of messages until we're caught up
-                    break
+                    continue
                 case let .event(envelope):
                     do {
                         
@@ -104,13 +105,16 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
                     }
                 }
             }
-            
+            WireLogger.sync.debug("end of forloop closing pushChannel")
+            // end of stream so we close the pushChannel1ww
+            await pushChannel.close()
         } catch {
             // if we end up here, the pushChannel is closed
             logger.warn(
                 "live event stream encountered error: \(String(describing: error))",
                 attributes: logAttributes
             )
+            await pushChannel.close()
             // TODO: handle error
             continuation.finish()
             //continuation.finish(throwing: error)

@@ -20,6 +20,7 @@ import NeedleFoundation
 import WireNetwork
 import WireDataModel
 import WireFoundation
+import WireLogging
 
 protocol SyncEventsDependency: Dependency {
     var userID: UUID { get }
@@ -68,16 +69,37 @@ final class SyncEventsStep: Component<SyncEventsDependency>, SyncEventsStepProto
             decryptor: updateEventDecryptor,
             coreCryptoProvider: coreCryptoProvider
         )
+  
+        await perform(pendingEventsSync: pendingEventsSync)
+        WireLogger.sync.debug("Finish to pull pending events", attributes: .syncAttributes(initialSync: false))
+        try await generateNotificationStep.generateNotification(
+            eventsStream: pendingEventsSync.stream
+        )
+    }
+    
+    private func perform(pendingEventsSync: PullPendingUpdateEventsSyncV2, within time: Duration = .seconds(25)) async {
+        do {
+            try await withThrowingTaskGroup(of: Void.self) { group in
+                group.addTask {
+                    try await pendingEventsSync.pull()
+                }
 
-        let generateNotificationTask = Task {
-            try await generateNotificationStep.generateNotification(
-                eventsStream: pendingEventsSync.stream
-            )
+                group.addTask {
+                    try await Task.sleep(for: time)
+                    // we're almost out of time better to stop the pulling
+                    throw CancellationError()
+                }
+
+                defer { group.cancelAll() }
+                // get the first task to finish
+                try await group.next()
+            }
+        } catch is CancellationError {
+            WireLogger.sync.warn("Timed out waiting for pendingEventsSync.pull()", attributes: .syncAttributes(initialSync: false))
+        } catch {
+            WireLogger.sync.warn("Error during pendingEventsSync.pull(): \(error)")
         }
-
-        try await pendingEventsSync.pull()
         
-        try await generateNotificationTask.value
     }
 
     // MARK: - Children
