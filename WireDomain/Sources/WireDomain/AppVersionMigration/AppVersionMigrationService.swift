@@ -18,7 +18,15 @@
 
 import Foundation
 
-class AppVersionMigrationService {
+/// A service that runs interruptible migrations when the app
+/// is updated from one version to another.
+///
+/// Once a migration is completed it will not be run again. However
+/// if it could not complete then it will be retried, so each
+/// migration should be written in a way that can handle repeated
+/// executions.
+
+final class AppVersionMigrationService {
 
     var journal: any JournalProtocol
     let currentVersion: SemanticVersion
