@@ -21,41 +21,40 @@ public import Foundation
 
 /// Associates a list of `hosts` with a public `key`.
 
-public struct PinnedKey: Sendable {
+public struct PinnedKey: Sendable, Equatable, Hashable {
 
     public enum Failure: Error {
         case invalidKeyData
     }
 
-    public enum Host: Sendable {
+    public enum Host: Sendable, Equatable, Hashable {
         case endsWith(String)
         case equals(String)
     }
 
     public let key: SecKey
+    public let rawKey: Data
     public let hosts: [Host]
 
-    public init(key: SecKey, hosts: [Host]) {
+    public init(
+        key: SecKey,
+        rawKey: Data,
+        hosts: [Host]
+    ) {
         self.key = key
+        self.rawKey = rawKey
         self.hosts = hosts
     }
 
-    public init(key: Data, hosts: [Host]) throws(Failure) {
-        self.key = try Self.key(for: key)
+    public init(
+        rawKey: Data,
+        hosts: [Host]
+    ) throws(
+        Failure
+    ) {
+        self.key = try Self.key(for: rawKey)
+        self.rawKey = rawKey
         self.hosts = hosts
-    }
-
-    /// Returns `true` if `host` matches any of the `hosts` in `self`.
-
-    func matches(host: String) -> Bool {
-        hosts.contains {
-            switch $0 {
-            case let .endsWith(suffix):
-                host.hasSuffix(suffix)
-            case let .equals(value):
-                host == value
-            }
-        }
     }
 
     // MARK: - Private
@@ -72,8 +71,3 @@ public struct PinnedKey: Sendable {
     }
 
 }
-
-#if DEBUG
-    extension PinnedKey: Equatable {}
-    extension PinnedKey.Host: Equatable {}
-#endif

@@ -22,10 +22,23 @@ import WireNetwork
 public struct StoredBackendEnvironment: Codable, Sendable {
 
     public let title: String
+    public let environmentType: EnvironmentType
     public let endpoints: Endpoints
     public let pinnedKeys: [PinnedKey]
-    public let proxySettings: ProxySettings?
+    public let proxyConfig: ProxyConfig?
     public let metadata: ResolvedBackendMetadata
+
+    public enum EnvironmentType: Codable, Sendable {
+        case `default`
+        case staging
+        case anta
+        case bella
+        case chala
+        case diya
+        case elna
+        case foma
+        case custom(url: URL)
+    }
 
     public struct Endpoints: Codable, Sendable {
         public let restAPIURL: URL
@@ -43,9 +56,10 @@ public struct StoredBackendEnvironment: Codable, Sendable {
         public let isFederationEnabled: Bool
     }
 
-    public enum ProxySettings: Codable, Sendable {
-        case unauthenticated(host: String, port: Int)
-        case authenticated(host: String, port: Int, username: String, password: String)
+    public struct ProxyConfig: Codable, Sendable {
+        public let host: String
+        public let port: Int
+        public let needsAuthentication: Bool
     }
 
     public struct PinnedKey: Codable, Sendable {
@@ -74,14 +88,40 @@ public struct StoredBackendEnvironment: Codable, Sendable {
 // MARK: - To Stored
 
 extension BackendEnvironment2 {
-    func toStored() -> StoredBackendEnvironment {
+    func toStored(with metadata: ResolvedBackendMetadata) -> StoredBackendEnvironment {
         .init(
             title: title,
-            endpoints: endpoints.toStored(),
-            pinnedKeys: pinnedKeys.compactMap { $0.toStored() },
-            proxySettings: proxySettings?.toStored(),
+            environmentType: environmentType.toStored(),
+            endpoints: config.endpoints.toStored(),
+            pinnedKeys: config.pinnedKeys.compactMap { $0.toStored() },
+            proxyConfig: config.proxyConfig?.toStored(),
             metadata: metadata.toStored()
         )
+    }
+}
+
+extension BackendEnvironment2.EnvironmentType {
+    func toStored() -> StoredBackendEnvironment.EnvironmentType {
+        switch self {
+        case .default:
+                .default
+        case .staging:
+                .staging
+        case .anta:
+                .anta
+        case .bella:
+                .bella
+        case .chala:
+                .chala
+        case .diya:
+                .diya
+        case .elna:
+                .elna
+        case .foma:
+                .foma
+        case let .custom(url):
+                .custom(url: url)
+        }
     }
 }
 
@@ -99,7 +139,17 @@ extension BackendEnvironment2.Endpoints {
     }
 }
 
-extension BackendEnvironment2.ResolvedBackendMetadata {
+extension BackendEnvironment2.ProxyConfig {
+    func toStored() -> StoredBackendEnvironment.ProxyConfig {
+        .init(
+            host: host,
+            port: port,
+            needsAuthentication: needsAuthentication
+        )
+    }
+}
+
+extension ResolvedBackendMetadata {
     func toStored() -> StoredBackendEnvironment.ResolvedBackendMetadata {
         .init(
             apiVersion: apiVersion.toStored(),
@@ -125,22 +175,10 @@ extension WireNetwork.APIVersion {
     }
 }
 
-extension ProxySettings {
-    func toStored() -> StoredBackendEnvironment.ProxySettings {
-        switch self {
-        case let .unauthenticated(host, port):
-            .unauthenticated(host: host, port: port)
-        case let .authenticated(host, port, username, password):
-            .authenticated(host: host, port: port, username: username, password: password)
-        }
-    }
-}
-
 extension PinnedKey {
     func toStored() -> StoredBackendEnvironment.PinnedKey? {
-        guard let keyData = SecKeyCopyExternalRepresentation(key, nil) as Data? else { return nil }
         return .init(
-            keyDataBase64: keyData.base64EncodedString(),
+            keyDataBase64: rawKey.base64EncodedString(),
             hosts: hosts.map { $0.toStored() }
         )
     }
@@ -158,14 +196,43 @@ extension PinnedKey.Host {
 // MARK: - To API
 
 extension StoredBackendEnvironment {
-    func toDomain() throws -> BackendEnvironment2 {
-        BackendEnvironment2(
+    func toDomain() throws -> (BackendEnvironment2, WireNetwork.ResolvedBackendMetadata) {
+        let backendEnvironment = BackendEnvironment2(
             title: title,
-            endpoints: endpoints.toDomain(),
-            pinnedKeys: try pinnedKeys.map { try $0.toDomain() },
-            proxySettings: proxySettings?.toDomain(),
-            metadata: metadata.toDomain()
+            environmentType: environmentType.toDomain(),
+            config: BackendEnvironment2.Config(
+                endpoints: endpoints.toDomain(),
+                pinnedKeys: try pinnedKeys.map { try $0.toDomain() },
+                proxyConfig: proxyConfig?.toDomain()
+            )
         )
+        let metadata = metadata.toDomain()
+        return (backendEnvironment, metadata)
+    }
+}
+
+extension StoredBackendEnvironment.EnvironmentType {
+    func toDomain() -> BackendEnvironment2.EnvironmentType {
+        switch self {
+        case .default:
+                .default
+        case .staging:
+                .staging
+        case .anta:
+                .anta
+        case .bella:
+                .bella
+        case .chala:
+                .chala
+        case .diya:
+                .diya
+        case .elna:
+                .elna
+        case .foma:
+                .foma
+        case let .custom(url):
+                .custom(url: url)
+        }
     }
 }
 
@@ -184,7 +251,7 @@ extension StoredBackendEnvironment.Endpoints {
 }
 
 extension StoredBackendEnvironment.ResolvedBackendMetadata {
-    func toDomain() -> BackendEnvironment2.ResolvedBackendMetadata {
+    func toDomain() -> ResolvedBackendMetadata {
         .init(
             apiVersion: apiVersion.toDomain(),
             domain: domain,
@@ -209,34 +276,29 @@ extension StoredBackendEnvironment.APIVersion {
     }
 }
 
-extension StoredBackendEnvironment.ProxySettings {
-    func toDomain() -> ProxySettings {
-        switch self {
-        case let .unauthenticated(host, port):
-            .unauthenticated(host: host, port: port)
-        case let .authenticated(host, port, username, password):
-            .authenticated(host: host, port: port, username: username, password: password)
-        }
+extension StoredBackendEnvironment.ProxyConfig {
+    func toDomain() -> BackendEnvironment2.ProxyConfig {
+        .init(
+            host: host,
+            port: port,
+            needsAuthentication: needsAuthentication
+        )
     }
 }
 
 extension StoredBackendEnvironment.PinnedKey {
     func toDomain() throws -> PinnedKey {
-        let attributes: [String: Any] = [
-            kSecAttrKeyType as String: kSecAttrKeyTypeRSA,
-            kSecAttrKeyClass as String: kSecAttrKeyClassPublic,
-            kSecAttrKeySizeInBits as String: 2048
-        ]
-        guard let keyData = Data(base64Encoded: keyDataBase64),
-              let key = SecKeyCreateWithData(keyData as CFData, attributes as CFDictionary, nil)
-        else {
+        guard let rawKey = Data(base64Encoded: keyDataBase64) else {
             throw DecodingError.dataCorrupted(.init(
                 codingPath: [],
                 debugDescription: "Invalid base64 key data in StoredPinnedKey"
             ))
         }
 
-        return PinnedKey(key: key, hosts: hosts.map { $0.toDomain() })
+        return try .init(
+            rawKey: rawKey,
+            hosts: hosts.map { $0.toDomain() }
+        )
     }
 }
 
