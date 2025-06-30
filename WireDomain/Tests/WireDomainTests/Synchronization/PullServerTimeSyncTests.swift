@@ -43,6 +43,7 @@ final class PullServerTimeSyncTests: XCTestCase {
     func testPull() async throws {
         // Mock
         let value = Date()
+        let expectedValue = value.timeIntervalSinceNow
         api.getServerTime_MockValue = value
         store.storeServerTimeDelta_MockMethod = { _ in }
 
@@ -50,12 +51,11 @@ final class PullServerTimeSyncTests: XCTestCase {
         try await sut.pull()
 
         // Then
-        let apiInvocations = api.getServerTime_Invocations
-        try XCTAssertCount(apiInvocations, count: 1)
+        try XCTAssertCount(api.getServerTime_Invocations, count: 1)
 
         let storeInvocations = store.storeServerTimeDelta_Invocations
         try XCTAssertCount(storeInvocations, count: 1)
-        XCTAssertEqual(storeInvocations[0], value.timeIntervalSinceNow)
+        XCTAssertEqual(storeInvocations[0], expectedValue, accuracy:  0.1)
     }
 
 }
