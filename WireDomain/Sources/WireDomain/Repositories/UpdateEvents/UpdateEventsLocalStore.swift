@@ -168,10 +168,10 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
     }
 
     public func deleteEventEnvelopes(
-        at indexes: [Int64]
+        at indices: [Int64]
     ) async throws {
         try await eventContext.perform { [eventContext] in
-            let request = StoredUpdateEventEnvelope.fetchRequest(sortIndexes: indexes)
+            let request = StoredUpdateEventEnvelope.fetchRequest(sortIndices: indices)
             let untypedRequest: NSFetchRequest<NSFetchRequestResult> = request as! NSFetchRequest<NSFetchRequestResult>
             let deleteRequest = NSBatchDeleteRequest(fetchRequest: untypedRequest)
             deleteRequest.resultType = .resultTypeObjectIDs
@@ -184,7 +184,7 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
             }
 
             WireLogger.sync.debug(
-                "deleting \(indexes.count) stored envelopes",
+                "deleting \(indices.count) stored envelopes",
                 attributes: .syncAttributes(initialSync: false)
             )
 

@@ -56,6 +56,8 @@ public final class PushChannelV2: PushChannelV2Protocol {
     /// - Parameters:
     ///   - webSocket: webSocket to use
     ///   - keepAliveInterval: interval for sending ping and keep webSocket open
+    ///   - maxBatchEventsCount: maxBatchEventsCount number of events per batch. Minimum valid value is 1.
+    ///   - batchDelay: timeInterval to wait for elements until batch is returned
     public init(
         webSocket: any WebSocketProtocol,
         keepAliveInterval: TimeInterval,
@@ -64,7 +66,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
     ) {
         self.webSocket = webSocket
         self.keepAliveInterval = keepAliveInterval
-        self.maxBatchEventsCount = maxBatchEventsCount
+        self.maxBatchEventsCount = max(maxBatchEventsCount, 1)
         self.batchDelay = batchDelay
     }
 

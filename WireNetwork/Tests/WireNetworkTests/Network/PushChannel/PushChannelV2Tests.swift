@@ -78,6 +78,18 @@ final class PushChannelV2Tests: XCTestCase {
         )
     }
 
+    func testMaxBatchCount0_DefaultsTo1() {
+        sut = PushChannelV2(webSocket: webSocket, keepAliveInterval: 0.1, maxBatchEventsCount: 0, batchDelay: 0)
+
+        XCTAssertEqual(sut.maxBatchEventsCount, 1)
+    }
+
+    func testMaxBatchCount100() {
+        sut = PushChannelV2(webSocket: webSocket, keepAliveInterval: 0.1, maxBatchEventsCount: 100, batchDelay: 0)
+
+        XCTAssertEqual(sut.maxBatchEventsCount, 100)
+    }
+
     func testOpen_UntilUpToDate() async throws {
         // Given some envelopes that will be delivered through the push channel
         let mockEnvelope1 = try MockJSONPayloadResource(name: "AsyncLiveUpdateEventEnvelope1")

@@ -82,7 +82,7 @@ public extension StoredUpdateEventEnvelope {
         request.predicate = NSPredicate(
             format: "%K IN %@",
             #keyPath(StoredUpdateEventEnvelope.sortIndex),
-            sortIndexes
+            sortIndices
         )
         return request
     }

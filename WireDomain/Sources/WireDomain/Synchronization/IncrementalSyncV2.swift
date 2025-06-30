@@ -194,7 +194,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                         if let lastEnvelope = envelopes.last {
                             await acknowledgeUntilEnvelope(lastEnvelope, through: pushChannel)
                         }
-                    } catch let Failure.uncompleteBatchProcessed(processedEnvelopes) {
+                    } catch let Failure.incompleteBatchProcessed(processedEnvelopes) {
                         for envelope in processedEnvelopes {
                             await acknowledgeEnvelope(envelope, through: pushChannel)
                         }
@@ -254,13 +254,14 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
             }
         }
 
-        // store
+        // process
         var envelopeIdsToDelete = [Int64]()
         for (envelope, index) in storedEnvelopes {
             do {
                 try await processEnvelope(envelope)
                 envelopeIdsToDelete.append(index)
             } catch {
+                // TODO: add assertionFailure?
                 logger.error(
                     "Failed to process envelope: \(error)",
                     attributes: .syncAttributes(initialSync: false) + [.eventEnvelopeID: envelope.id]
@@ -276,7 +277,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
 
         let successfulEnvelopes = storedEnvelopes.filter { envelopeIdsToDelete.contains($0.1) }.compactMap(\.0)
         if successfulEnvelopes.count != storedEnvelopes.count {
-            throw Failure.uncompleteBatchProcessed(processedEnvelopes: successfulEnvelopes)
+            throw Failure.incompleteBatchProcessed(processedEnvelopes: successfulEnvelopes)
         }
     }
 
@@ -379,7 +380,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
 
     private func deleteEnvelopes(at indices: [Int64]) async {
         do {
-            try await updateEventsStore.deleteEventEnvelopes(at: indexes)
+            try await updateEventsStore.deleteEventEnvelopes(at: indices)
         } catch {
             logger.error(
                 "failed to delete live event envelopes: \(String(describing: error))",
