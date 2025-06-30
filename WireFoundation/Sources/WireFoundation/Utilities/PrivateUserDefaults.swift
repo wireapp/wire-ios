@@ -120,3 +120,27 @@ public extension PrivateUserDefaults where Key == Never {
     }
 
 }
+
+// sourcery: AutoMockable
+public protocol UserDefaultsProtocol {
+    func set(_ value: Any?, forKey defaultName: String)
+    func object(forKey defaultName: String) -> Any?
+    func integer(forKey defaultName: String) -> Int
+    func string(forKey defaultName: String) -> String?
+    func bool(forKey defaultName: String) -> Bool
+
+    func removeObject(forKey defaultName: String)
+    func dictionaryRepresentation() -> [String: Any]
+
+    func stringArray(forKey defaultName: String) -> [String]?
+}
+
+public extension UserDefaultsProtocol {
+
+    func keys() -> [String] {
+        Array(dictionaryRepresentation().keys)
+    }
+
+}
+
+extension UserDefaults: UserDefaultsProtocol {}
