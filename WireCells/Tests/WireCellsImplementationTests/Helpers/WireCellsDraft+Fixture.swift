@@ -33,7 +33,8 @@ extension WireCellsDraft {
             status: status,
             name: "Draft",
             bytes: 1024,
-            mimeType: nil
+            mimeType: nil,
+            deleteAfterUpload: false
         )
     }
 }

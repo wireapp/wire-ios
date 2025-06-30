@@ -28,7 +28,14 @@ package actor DraftsRepositoryProtocolMock: DraftsRepositoryProtocol {
     package var addAssetURLURLAssetSizeIntCellNameStringFileNameStringFileTypeUTTypeVoidReceivedArguments:
         (assetURL: URL, assetSize: Int, cellName: String, fileName: String, fileType: UTType?)?
 
-    package func add(assetURL: URL, assetSize: Int, cellName: String, fileName: String, fileType: UTType?) async {
+    package func add(
+        assetURL: URL,
+        assetSize: Int,
+        cellName: String,
+        fileName: String,
+        fileType: UTType?,
+        deleteAfterUpload: Bool
+    ) async {
         addAssetURLURLAssetSizeIntCellNameStringFileNameStringFileTypeUTTypeVoidReceivedArguments =
             (assetURL, assetSize, cellName, fileName, fileType)
     }
@@ -52,4 +59,10 @@ package actor DraftsRepositoryProtocolMock: DraftsRepositoryProtocol {
     func publishAll(for cellName: String) async throws {}
 
     func clearPublishedDrafts(for cellName: String) {}
+
+    func fetchDraft(nodeID: UUID, cellName: String) -> WireCellsAPI.WireCellsDraft? {
+        return nil
+    }
+
+    func deleteDraft(nodeID: UUID, cellName: String) {}
 }
