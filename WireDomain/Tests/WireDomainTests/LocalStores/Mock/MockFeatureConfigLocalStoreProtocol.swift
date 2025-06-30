@@ -125,5 +125,4 @@ class MockFeatureConfigLocalStoreProtocol: FeatureConfigLocalStoreProtocol {
         return mock
     }
 
-
 }
