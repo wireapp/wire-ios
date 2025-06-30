@@ -221,10 +221,11 @@ final class AppVersionMigrationServiceTests {
 
         // When
         migrationToInterrupt = nil
+        migrationsPeformed = []
         try await sut.performAppMigrations()
 
         // Then
-        #expect(migrationsPeformed == ["0.2.0", "1.0.0", "1.2.3"])
+        #expect(migrationsPeformed == ["1.0.0", "1.2.3"])
         #expect(journal[.lastCompletedAppVersionMigration] == "1.2.3")
     }
 
