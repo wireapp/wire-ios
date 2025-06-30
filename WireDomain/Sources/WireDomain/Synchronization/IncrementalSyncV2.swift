@@ -314,26 +314,6 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         }
     }
 
-    private func acknowledgeEnvelope(
-        _ envelope: UpdateEventEnvelope,
-        through pushChannel: PushChannelV2Protocol
-    ) async {
-        do {
-            if let deliveryTag = envelope.deliveryTag {
-                logger.debug(
-                    "ack event envelope",
-                    attributes: [.eventEnvelopeID: envelope.id] + .syncAttributes(initialSync: false)
-                )
-                try await pushChannel.acknowledgeEvent(deliveryTag: deliveryTag, multiple: false)
-            }
-        } catch {
-            logger.error(
-                "failed to acknowledge live event envelope: \(String(describing: error))",
-                attributes: [.eventEnvelopeID: envelope.id] + .syncAttributes(initialSync: false)
-            )
-        }
-    }
-
     private func processEnvelope(_ envelope: UpdateEventEnvelope) async throws {
         for event in envelope.events {
             logger.debug(
