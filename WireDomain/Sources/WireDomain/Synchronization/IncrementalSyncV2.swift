@@ -188,7 +188,6 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                             pushChannel: pushChannel
                         )
 
-
                     } catch {
                         // TODO: [WPB-10458] review handling errors of processingEvents
                         // in case of thrown errors, we skip to the next event
@@ -225,7 +224,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         try await coreCryptoProvider.coreCrypto().perform { coreCryptoContext in
             for envelope in envelopes {
                 var envelope = envelope
-                envelope.events = try await decryptEnvelope(envelope, in: coreCryptoContext)
+                envelope.events = await decryptEnvelope(envelope, in: coreCryptoContext)
 
                 // store
                 let index = try await storeEnvelope(envelope)
@@ -264,27 +263,19 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     private func decryptEnvelope(
         _ envelope: UpdateEventEnvelope,
         in context: CoreCryptoContextProtocol
-    ) async throws -> [UpdateEvent] {
-        do {
-            // Decrypt.
-            logger.debug(
-                "decrypting live event envelope  v3",
-                attributes: [.eventEnvelopeID: envelope.id]
-            )
-            let decryptionEventsResult = try await decryptor.decryptEvents(in: envelope, context: context)
+    ) async -> [UpdateEvent] {
+        // Decrypt.
+        logger.debug(
+            "decrypting live event envelope  v3",
+            attributes: [.eventEnvelopeID: envelope.id]
+        )
+        let decryptionEventsResult = await decryptor.decryptEvents(in: envelope, context: context)
 
-            let brokenMLSGroupIDs = decryptionEventsResult.brokenMLSGroupIDs
-            if !brokenMLSGroupIDs.isEmpty {
-                journal.addValues(Set(brokenMLSGroupIDs), for: .brokenMLSGroupIDs)
-            }
-            return decryptionEventsResult.events
-        } catch {
-            logger.error(
-                "failed to decrypt live event envelope: \(String(describing: error))",
-                attributes: [.eventEnvelopeID: envelope.id] + .syncAttributes(initialSync: false)
-            )
-            throw error
+        let brokenMLSGroupIDs = decryptionEventsResult.brokenMLSGroupIDs
+        if !brokenMLSGroupIDs.isEmpty {
+            journal.addValues(Set(brokenMLSGroupIDs), for: .brokenMLSGroupIDs)
         }
+        return decryptionEventsResult.events
     }
 
     private func storeEnvelope(_ envelope: UpdateEventEnvelope) async throws -> Int64 {
