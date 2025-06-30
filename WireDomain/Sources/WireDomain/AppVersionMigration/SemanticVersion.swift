@@ -18,17 +18,17 @@
 
 import Foundation
 
-struct SemanticVersion: Hashable, ExpressibleByStringLiteral {
+public struct SemanticVersion: Hashable, ExpressibleByStringLiteral {
 
-    let major: UInt
-    let minor: UInt
-    let patch: UInt
+    public let major: UInt
+    public let minor: UInt
+    public let patch: UInt
 
-    var string: String {
+    public var string: String {
         "\(major).\(minor).\(patch)"
     }
 
-    init(stringLiteral value: String) {
+    public init(stringLiteral value: String) {
         let components = value
             .split(separator: ".")
             .compactMap { UInt($0) }
@@ -42,7 +42,7 @@ struct SemanticVersion: Hashable, ExpressibleByStringLiteral {
 
 extension SemanticVersion: Comparable {
 
-    static func < (lhs: SemanticVersion, rhs: SemanticVersion) -> Bool {
+    public static func < (lhs: SemanticVersion, rhs: SemanticVersion) -> Bool {
         guard lhs.major == rhs.major else {
             // Major determines order.
             return lhs.major < rhs.major
@@ -61,7 +61,7 @@ extension SemanticVersion: Comparable {
 
 extension SemanticVersion: CustomStringConvertible {
 
-    var description: String {
+    public var description: String {
         string
     }
 
