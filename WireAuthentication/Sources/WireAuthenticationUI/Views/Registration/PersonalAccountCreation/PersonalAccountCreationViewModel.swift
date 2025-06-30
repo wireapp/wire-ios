@@ -45,7 +45,7 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
     }
 
     var isAnalyticsTrackingAvailable: Bool {
-        // `analyticsEventTracker` will nil if the app is not shipped with Countly credentials.
+        // `analyticsEventTracker` will be nil if the app is not shipped with Countly credentials.
         // If credentials are available, we only want to enable Countly for prod and staging backends.
         if analyticsEventTracker != nil, let backendHost = backendURL.host() {
             [
