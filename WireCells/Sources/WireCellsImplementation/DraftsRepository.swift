@@ -25,11 +25,19 @@ import WireLogging
 
 package protocol DraftsRepositoryProtocol: Actor {
 
-    func add(assetURL: URL, assetSize: Int, cellName: String, fileName: String, fileType: UTType?) async
+    func add(
+        assetURL: URL,
+        assetSize: Int,
+        cellName: String,
+        fileName: String,
+        fileType: UTType?,
+        deleteAfterUpload: Bool
+    ) async
     func drafts(for cellName: String) -> AsyncStream<[WireCellsDraft]>
     func publishAll(for cellName: String) async throws
     func clearPublishedDrafts(for cellName: String)
-    func deleteDraft(nodeID: UUID, cellName: String) async throws
+    func fetchDraft(nodeID: UUID, cellName: String) -> WireCellsDraft?
+    func deleteDraft(nodeID: UUID, cellName: String)
 
 }
 
@@ -67,7 +75,14 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
         continuations.values.forEach { $0.finish() }
     }
 
-    package func add(assetURL: URL, assetSize: Int, cellName: String, fileName: String, fileType: UTType?) async {
+    package func add(
+        assetURL: URL,
+        assetSize: Int,
+        cellName: String,
+        fileName: String,
+        fileType: UTType?,
+        deleteAfterUpload: Bool
+    ) async {
         let draft = WireCellsDraft(
             nodeID: UUID(),
             versionID: UUID(),
@@ -76,7 +91,8 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
             status: .uploading(progress: 0),
             name: fileName,
             bytes: assetSize,
-            mimeType: nil
+            mimeType: nil,
+            deleteAfterUpload: deleteAfterUpload
         )
         drafts.value[cellName, default: [:]][draft.nodeID] = draft
 
@@ -181,15 +197,19 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
         drafts.value[cellName]?.removeAll { $0.value.status == .uploaded(isDraft: false) }
     }
 
-    package func deleteDraft(nodeID: UUID, cellName: String) async throws {
-        guard let id = drafts.value[cellName]?.keys.first(where: { $0.uuid == nodeID }) else {
-            // FIXME: Do we need to do anything else?
-            return
-        }
+    /// Returns the draft for the given node ID and cell name, if it exists.
 
-        drafts.value[cellName]?.removeValue(forKey: id)
-        await uploadManager.cancelUpload(nodeID: id)
+    package func fetchDraft(nodeID: UUID, cellName: String) -> WireCellsDraft? {
+        drafts.value[cellName]?[nodeID]
     }
+
+    /// Deletes draft for the given node ID and cell name.
+
+    package func deleteDraft(nodeID: UUID, cellName: String) {
+        drafts.value[cellName]?.removeValue(forKey: nodeID)
+    }
+
+    // MARK: - Private
 
     private func removeContinuation(for uuid: UUID) async {
         continuations[uuid] = nil

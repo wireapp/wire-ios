@@ -16,24 +16,47 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireCellsAPI
-import Foundation
+package import WireCellsAPI
+package import Foundation
 
 package struct DeleteDraftUseCase: WireCellsDeleteDraftUseCaseProtocol {
 
     private let cellName: String
     private let draftRepository: any DraftsRepositoryProtocol
+    private let uploadManager: any WireCellsNodeUploadManagerProtocol
+    private let nodesAPI: any NodesAPIProtocol
+    private let fileManager: FileManager
 
-    package init(cellName: String, draftRepository: any DraftsRepositoryProtocol) {
+    package init(
+        cellName: String,
+        draftRepository: any DraftsRepositoryProtocol,
+        uploadManager: any WireCellsNodeUploadManagerProtocol,
+        nodesAPI: any NodesAPIProtocol,
+        fileManager: FileManager = .default
+    ) {
         self.cellName = cellName
         self.draftRepository = draftRepository
+        self.uploadManager = uploadManager
+        self.nodesAPI = nodesAPI
+        self.fileManager = fileManager
     }
 
-    func invoke(nodeID: UUID) async throws {
-        try await draftRepository.deleteDraft(
-            nodeID: nodeID,
-            cellName: cellName
-        )
+    package func invoke(nodeID: UUID) async throws {
+        guard let draft = await draftRepository.fetchDraft(nodeID: nodeID, cellName: cellName) else { return }
+
+        switch draft.status {
+        case .uploading:
+            await uploadManager.cancelUpload(nodeID: nodeID)
+        case .uploaded:
+            try await nodesAPI.cancelDraft(nodeID: nodeID, versionID: draft.versionID)
+        case .failed, .cancelled:
+            break // no op
+        }
+        await draftRepository.deleteDraft(nodeID: nodeID, cellName: cellName)
+
+        if draft.deleteAfterUpload {
+            try fileManager.removeItem(at: draft.assetURL)
+        }
     }
 
 }
