@@ -199,12 +199,13 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                             }
                         }
                     } catch let Failure.incompleteBatchProcessed(processedEnvelopes) {
-                        // from now on, no batch acknowledgement otherwise in the next batch we would acknowledge the missed ones.
+                        // from now on, no batch acknowledgement otherwise in the next batch we would acknowledge the
+                        // missed ones.
                         shouldAcknowledgeInBatch = false
                         for envelope in processedEnvelopes {
                             await acknowledgeEnvelope(envelope, through: pushChannel)
                         }
-                        
+
                     } catch {
                         // TODO: [WPB-10458] review handling errors of processingEvents
                         // in case of thrown errors, we skip to the next event
