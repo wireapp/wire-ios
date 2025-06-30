@@ -98,10 +98,8 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     }
 
     /// Process pending events from the event database that were decrypted during the NSE
-    @discardableResult
     private func processStoredEvents() async throws {
         let batchSize: UInt = 500
-        var processedEnvelopeIDs = Set<UUID>()
 
         while true {
             // If we need to abort, do it before processing the next batch.
@@ -138,7 +136,6 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                 }
             }
 
-            processedEnvelopeIDs.formUnion(envelopes.map(\.id))
             try await updateEventsStore.deleteNextPendingEvents(with: envelopesObjectIDs)
             await updateEventsStore.calculateLastUnreadMessages()
 
@@ -151,8 +148,6 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                 )
             }
         }
-
-        return processedEnvelopeIDs
     }
 
     private func processLiveStream(
@@ -181,6 +176,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                 case .syncing:
                 // ignore this event, it gives the number of messages until we're caught up
                 // TODO: [WPB-18485] remove this event and add endofqueue
+                    break
                 case let .events(envelopes):
                     do {
                         try await processBatch(
@@ -264,7 +260,6 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         _ envelope: UpdateEventEnvelope,
         in context: CoreCryptoContextProtocol
     ) async -> [UpdateEvent] {
-        // Decrypt.
         logger.debug(
             "decrypting live event envelope  v3",
             attributes: [.eventEnvelopeID: envelope.id]
