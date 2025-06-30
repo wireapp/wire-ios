@@ -22,16 +22,21 @@ import Testing
 
 struct SemanticVersionTests {
 
-    @Test("initializedWithSensibleDefaults", arguments: [
-        "0",
-        "0.0",
-        "0.0.0",
-        "0.0.0.0",
-        "-1.0.0",
-        "a.b.c"
+    @Test("It initialized with sensible defaults", arguments: [
+        ("0", "0.0.0"),
+        ("0.0", "0.0.0"),
+        ("0.0.0", "0.0.0"),
+        ("0.0.0.0", "0.0.0"),
+        ("-1.0.0", "0.0.0"),
+        ("a.b.c", "0.0.0"),
+        ("1", "1.0.0"),
+        ("1.2", "1.2.0")
     ])
-    func initializedWithSensibleDefaults(string: String) {
-        #expect(SemanticVersion(stringLiteral: string) == "0.0.0")
+    func itInitializesWithSensibleDefaults(
+        string: String,
+        expectedVersion: SemanticVersion
+    ) {
+        #expect(SemanticVersion(stringLiteral: string) == expectedVersion)
     }
 
     @Test("Lower versions are ordered before higher ones", arguments: [
