@@ -29,8 +29,24 @@ class LoginPage: PageModel {
         return elementsQuery.buttons["Create account or team"]
     }
 
+    var nextButton: XCUIElement {
+        let elementsQuery = app.scrollViews.otherElements
+        return elementsQuery.buttons["Next"]
+    }
+
+    var passwordField: XCUIElement {
+        app.secureTextFields["Enter password"]
+    }
+
     func tapCreatePersonalAccountLink() throws -> CreateAccountPage {
         createPersonalAccountLink.tap()
         return try CreateAccountPage()
+    }
+
+    func enterPassword(_ password: String) throws -> FirstTimePage {
+        passwordField.tap()
+        passwordField.typeText(password)
+        nextButton.tap()
+        return try FirstTimePage()
     }
 }
