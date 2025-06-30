@@ -39,7 +39,7 @@ final class NotificationServiceExtensionFlow: BootstrapComponent {
         let infoDictionary = Bundle.main.infoDictionary
 
         guard let currentAppVersion = infoDictionary?["CFBundleShortVersionString"] as? String else {
-            throw Failure.missingAppGroupID
+            throw Failure.missingCurrentAppVersion
         }
 
         guard let appGroupID = infoDictionary?["WireGroupId"] as? String else {
