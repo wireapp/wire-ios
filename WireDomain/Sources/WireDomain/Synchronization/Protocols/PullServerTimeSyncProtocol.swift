@@ -20,7 +20,7 @@
 /// An object to keep the server time up to date.
 public protocol PullServerTimeSyncProtocol {
 
-    /// Fetch servertime from remote, then store it locally.
+    /// Fetch server time from remote, then store it locally.
 
     func pull() async throws
 
