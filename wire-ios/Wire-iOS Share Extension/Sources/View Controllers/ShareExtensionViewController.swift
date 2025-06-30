@@ -106,9 +106,17 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     // MARK: - Host App State
 
     private var accountManager: AccountManager? {
-        guard let applicationGroupIdentifier = Bundle.main.applicationGroupIdentifier else { return nil }
+        guard
+            let currentAppVersion = Bundle.main.shortVersionString,
+            let applicationGroupIdentifier = Bundle.main.applicationGroupIdentifier
+        else {
+            return nil
+        }
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
-        return try? AccountManager(sharedDirectory: sharedContainerURL)
+        return try? AccountManager(
+            currentAppVersion: currentAppVersion,
+            sharedDirectory: sharedContainerURL
+        )
     }
 
     // MARK: - Configuration

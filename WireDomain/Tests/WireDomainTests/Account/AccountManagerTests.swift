@@ -42,10 +42,18 @@ final class AccountManagerTests {
         }
     }
 
+    func makeSUT() throws -> AccountManager {
+        try AccountManager(
+            currentAppVersion: "1.0.0",
+            sharedDirectory: url,
+            defaults: .temporary()
+        )
+    }
+
     @Test("When first initializing there are no accounts")
     func whenFirstInitializingThereAreNoAccounts() throws {
         // Given
-        let sut = try AccountManager(sharedDirectory: url)
+        let sut = try makeSUT()
 
         // Then
         #expect(sut.selectedAccount == nil)
@@ -55,7 +63,7 @@ final class AccountManagerTests {
     @Test("It can add and remove an account")
     func itCanAddAndRemoveAnAccount() throws {
         // Given
-        let sut = try AccountManager(sharedDirectory: url)
+        let sut = try makeSUT()
         let account = Account(userName: "Alice", userIdentifier: UUID())
 
         // When
@@ -76,7 +84,7 @@ final class AccountManagerTests {
     @Test("It can select an account")
     func itCanSelectAnAccount() throws {
         // Given
-        let sut = try AccountManager(sharedDirectory: url)
+        let sut = try makeSUT()
         let account = Account(userName: "Alice", userIdentifier: UUID())
 
         // When
@@ -91,7 +99,7 @@ final class AccountManagerTests {
     @Test("It can add and select an account")
     func itCanAddAndSelectAnAccount() throws {
         // Given
-        let sut = try AccountManager(sharedDirectory: url)
+        let sut = try makeSUT()
         let account1 = Account(userName: "Alice", userIdentifier: UUID())
         let account2 = Account(userName: "Bob", userIdentifier: UUID())
 
@@ -114,7 +122,7 @@ final class AccountManagerTests {
     func itCanDeleteAnAccountManager() throws {
         // Given
         do {
-            let sut = try AccountManager(sharedDirectory: url)
+            let sut = try makeSUT()
             let account1 = Account(userName: "Alice", userIdentifier: UUID())
             let account2 = Account(userName: "Bob", userIdentifier: UUID(), teamName: "Wire")
 
@@ -133,7 +141,7 @@ final class AccountManagerTests {
 
         // Then
         do {
-            let sut = try AccountManager(sharedDirectory: url)
+            let sut = try makeSUT()
             #expect(sut.selectedAccount == nil)
             #expect(sut.hasAccounts == false)
         }
@@ -142,7 +150,7 @@ final class AccountManagerTests {
     @Test("It removes the selected account when it is removed")
     func itRemovesTheSelectedAccountWhenItIsRemoved() throws {
         // Given
-        let sut = try AccountManager(sharedDirectory: url)
+        let sut = try makeSUT()
         let account = Account(userName: "Alice", userIdentifier: UUID())
 
         // When
@@ -164,7 +172,7 @@ final class AccountManagerTests {
     @Test("It updates exisiting account properties from store")
     func itUpdatesExisitingAccountPropertiesFromStore() throws {
         // Given
-        let sut = try AccountManager(sharedDirectory: url)
+        let sut = try makeSUT()
         let accountID = UUID()
         sut.addAndSelect(Account(userName: "Alice", userIdentifier: accountID))
         let account = try #require(sut.selectedAccount)
@@ -183,7 +191,7 @@ final class AccountManagerTests {
     @Test("It sorts accounts without team before accounts with team")
     func testThatItSortsAccountsWithoutTeamBeforeAccountsWithTeam() throws {
         // Given
-        let sut = try AccountManager(sharedDirectory: url)
+        let sut = try makeSUT()
         let account1 = Account(userName: "Alice", userIdentifier: UUID())
         let account2 = Account(userName: "Alice", userIdentifier: UUID(), teamName: "Wire")
 
@@ -198,7 +206,7 @@ final class AccountManagerTests {
     @Test("It sorts team accounts alphabetically")
     func itSortsTeamAccountsAlphabetically() throws {
         // Given
-        let sut = try AccountManager(sharedDirectory: url)
+        let sut = try makeSUT()
         let account1 = Account(userName: "Alice", userIdentifier: UUID(), teamName: "Wire")
         let account2 = Account(userName: "Bob", userIdentifier: UUID(), teamName: "Wire")
 
@@ -213,7 +221,7 @@ final class AccountManagerTests {
     @Test("It sorts accounts alphabetically")
     func itSortsAccountsAlphabetically() throws {
         // Given
-        let sut = try AccountManager(sharedDirectory: url)
+        let sut = try makeSUT()
         let account1 = Account(userName: "Alice", userIdentifier: UUID())
         let account2 = Account(userName: "Bob", userIdentifier: UUID())
         let account3 = Account(userName: "Alice", userIdentifier: UUID(), teamName: "Wire")
