@@ -98,9 +98,9 @@ extension JournalProtocol {
 
 }
 
-extension JournalProtocol {
+public extension JournalProtocol {
 
-    public internal(set) var lastCompletedAppVersionMigration: SemanticVersion? {
+    internal(set) var lastCompletedAppVersionMigration: SemanticVersion? {
         get {
             self[.lastCompletedAppVersionMigration].map(SemanticVersion.init)
         }
