@@ -27,7 +27,7 @@ final class PersonalUsersTests: WireUITestCase {
         let welcomePage = try WelcomePage()
 
         let createAccountPage = try welcomePage
-            .typeEmailOrSSO(user.email)
+            .enterEmailOrSSO(user.email)
             .tapCreatePersonalAccountLink()
 
         let verificationPage = try createAccountPage
@@ -61,6 +61,21 @@ final class PersonalUsersTests: WireUITestCase {
         XCTAssertEqual(accountPage.getEmail(), user.email, "Email didn't contain \(user.email)")
 
         try accountPage.logout()
+            .enterPassword(user.password)
+    }
+
+    @MainActor
+    func test_Login_asExistingPersonalUser() async throws {
+        let user = try await userManager.createPersonalUser()
+
+        let welcomePage = try WelcomePage()
+            .enterEmailOrSSO(user.email)
+            .enterPassword(user.password)
+            .acceptFirstTimeAlert()
+            .acceptPopup()
+            .openSettings()
+            .openAccountSettings()
+            .logout()
             .enterPassword(user.password)
     }
 }
