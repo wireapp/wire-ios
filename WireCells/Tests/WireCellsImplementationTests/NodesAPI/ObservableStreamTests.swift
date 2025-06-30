@@ -117,4 +117,23 @@ final class ObservableStreamTests {
         // Then
         #expect(await progressesTask.value == [2, 5])
     }
+
+    @Test
+    func seekToOffset() async throws {
+        // Given
+        let progressesTask = Task { [sut] in
+            var progresses: [Int] = []
+            for await progress in sut.readProgress.prefix(2) {
+                progresses.append(progress)
+            }
+            return progresses
+        }
+
+        // When
+        try sut.seek(toOffset: 2)
+        try sut.seek(toOffset: 5)
+
+        // Then
+        #expect(await progressesTask.value == [2, 5])
+    }
 }
