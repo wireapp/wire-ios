@@ -18,7 +18,10 @@
 
 public protocol JournalProtocol {
 
+<<<<<<< HEAD
     subscript(_ key: JournalKey<Bool>) -> Bool { get set }
+=======
+>>>>>>> 3c27423f89 (feat: app version migration service - WPB-18482 (#3287))
     subscript(_ key: JournalKey<String?>) -> String? { get set }
     func erase()
 

@@ -53,6 +53,7 @@ public class Journal: JournalProtocol {
         self.storage = storage
     }
 
+<<<<<<< HEAD
     /// Get or set a boolean value.
 
     public subscript(_ key: JournalKey<Bool>) -> Bool {
@@ -64,6 +65,8 @@ public class Journal: JournalProtocol {
         }
     }
 
+=======
+>>>>>>> 3c27423f89 (feat: app version migration service - WPB-18482 (#3287))
     /// Get or set a string value.
 
     public subscript(_ key: JournalKey<String?>) -> String? {
@@ -75,6 +78,7 @@ public class Journal: JournalProtocol {
         }
     }
 
+<<<<<<< HEAD
     /// Get or set a list of string values.
 
     public subscript(_ key: JournalKey<Set<String>>) -> Set<String> {
@@ -90,6 +94,8 @@ public class Journal: JournalProtocol {
         }
     }
 
+=======
+>>>>>>> 3c27423f89 (feat: app version migration service - WPB-18482 (#3287))
     /// Delete all values in the journal.
 
     public func erase() {
@@ -104,6 +110,7 @@ public class Journal: JournalProtocol {
     }
 
 }
+<<<<<<< HEAD
 
 public extension Journal {
 
@@ -126,3 +133,5 @@ public extension Journal {
     }
 
 }
+=======
+>>>>>>> 3c27423f89 (feat: app version migration service - WPB-18482 (#3287))

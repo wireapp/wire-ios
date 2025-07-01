@@ -35,6 +35,7 @@ public struct JournalKey<Value>: Sendable where Value: Sendable {
     }
 
 }
+<<<<<<< HEAD
 
 public extension JournalKey where Value == Bool {
 
@@ -79,3 +80,5 @@ public extension JournalKey where Value == Set<String> {
     )
 
 }
+=======
+>>>>>>> 3c27423f89 (feat: app version migration service - WPB-18482 (#3287))
