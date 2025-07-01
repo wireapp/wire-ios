@@ -20,6 +20,42 @@ package import Foundation
 package import WireCellsAPI
 import WireLogging
 
+package protocol WireCellsNodeUploadManagerProtocol: Sendable {
+    /// Starts file upload. Returns the new node after pre-checking.
+    func upload(
+        nodeID: UUID,
+        versionID: UUID,
+        assetPath: URL,
+        assetSize: UInt64,
+        destNodePath: String
+    ) async throws -> (node: WireCellsNode, stream: AsyncStream<WireCellsUploadStatus>)
+
+    /// Observe upload events for a specific node UUID.
+    func observeUpload(nodeID: UUID) async -> AsyncStream<WireCellsUploadStatus>?
+
+    /// Retry a failed upload.
+    func retryUpload(nodeID: UUID) async
+
+    /// Cancel an ongoing upload.
+    func cancelUpload(nodeID: UUID) async
+
+    /// Get current upload info for a node, if any.
+    func getUploadInfo(nodeID: UUID) async -> WireCellsNodeUploadInfo?
+
+    /// Check if a node is currently uploading.
+    func isUploading(nodeID: UUID) async -> Bool
+}
+
+package struct WireCellsNodeUploadInfo: Equatable, Hashable, Sendable {
+    public let progress: Float
+    public let uploadFailed: Bool
+
+    package init(progress: Float = 0.0, uploadFailed: Bool = false) {
+        self.progress = progress
+        self.uploadFailed = uploadFailed
+    }
+}
+
 package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtocol {
     private let fileManager: FileManager
     private let nodesAPI: any NodesAPIProtocol
