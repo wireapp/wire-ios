@@ -953,6 +953,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
+    @MainActor
     func configureAnalytics(for userSession: ZMUserSession) async {
         guard let isTrackingEnabled = analyticsService?.isTrackingEnabled, isTrackingEnabled else {
             return
