@@ -16,18 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireNetwork
+import Foundation
 
-struct UserLegalholdRequestEventProcessor: UserLegalholdRequestEventProcessorProtocol {
+/// A migration to be performed when the app updates
+/// to or past a particular version.
 
-    let repository: any UserRepositoryProtocol
+protocol AppVersionMigration {
 
-    func processEvent(_ event: UserLegalholdRequestEvent) async {
-        await repository.addLegalHoldRequest(
-            userID: event.userID,
-            clientID: event.clientID,
-            lastPrekey: event.lastPrekey
-        )
-    }
+    /// The app version for which this migration should
+    /// be run.
+
+    var version: SemanticVersion { get }
+
+    /// Perform the migration.
+
+    func perform() async throws
 
 }
