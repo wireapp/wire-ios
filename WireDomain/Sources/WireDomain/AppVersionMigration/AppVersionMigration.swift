@@ -16,28 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import Foundation
 
-class SetNamePage: PageModel {
+/// A migration to be performed when the app updates
+/// to or past a particular version.
 
-    override var pageMainElement: XCUIElement {
-        nameField
-    }
+protocol AppVersionMigration {
 
-    var nameNextButton: XCUIElement {
-        let elementsQuery = nameField.descendants(matching: .any)["ConfirmButton"]
-        return elementsQuery.firstMatch
-    }
+    /// The app version for which this migration should
+    /// be run.
 
-    var nameField: XCUIElement {
-        let elementsQuery = app.descendants(matching: .any)["NameField"]
-        return elementsQuery.firstMatch
-    }
+    var version: SemanticVersion { get }
 
-    func setName(_ name: String) throws -> SetPasswordPage {
-        nameField.tap()
-        nameField.typeText(name)
-        nameNextButton.tap()
-        return try SetPasswordPage()
-    }
+    /// Perform the migration.
+
+    func perform() async throws
+
 }

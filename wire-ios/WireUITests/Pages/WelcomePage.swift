@@ -34,10 +34,15 @@ class WelcomePage: PageModel {
         return elementsQuery["Email or SSO code"]
     }
 
-    func typeEmailOrSSO(_ input: String) throws -> LoginPage {
-        emailTextField.tap()
-        emailTextField.typeText(input)
+    func enterEmailOrSSO(_ input: String) throws -> LoginPage {
+        try typeEmailOrSSO(input)
         nextButton.tap()
         return try LoginPage()
+    }
+
+    func typeEmailOrSSO(_ input: String) -> WelcomePage {
+        emailTextField.tap()
+        emailTextField.typeText(input)
+        return self
     }
 }
