@@ -104,23 +104,23 @@ extension BackendEnvironment2.EnvironmentType {
     func toStored() -> StoredBackendEnvironment.EnvironmentType {
         switch self {
         case .default:
-                .default
+            .default
         case .staging:
-                .staging
+            .staging
         case .anta:
-                .anta
+            .anta
         case .bella:
-                .bella
+            .bella
         case .chala:
-                .chala
+            .chala
         case .diya:
-                .diya
+            .diya
         case .elna:
-                .elna
+            .elna
         case .foma:
-                .foma
+            .foma
         case let .custom(url):
-                .custom(url: url)
+            .custom(url: url)
         }
     }
 }
@@ -177,7 +177,7 @@ extension WireNetwork.APIVersion {
 
 extension PinnedKey {
     func toStored() -> StoredBackendEnvironment.PinnedKey? {
-        return .init(
+        .init(
             keyDataBase64: rawKey.base64EncodedString(),
             hosts: hosts.map { $0.toStored() }
         )
@@ -215,23 +215,23 @@ extension StoredBackendEnvironment.EnvironmentType {
     func toDomain() -> BackendEnvironment2.EnvironmentType {
         switch self {
         case .default:
-                .default
+            .default
         case .staging:
-                .staging
+            .staging
         case .anta:
-                .anta
+            .anta
         case .bella:
-                .bella
+            .bella
         case .chala:
-                .chala
+            .chala
         case .diya:
-                .diya
+            .diya
         case .elna:
-                .elna
+            .elna
         case .foma:
-                .foma
+            .foma
         case let .custom(url):
-                .custom(url: url)
+            .custom(url: url)
         }
     }
 }

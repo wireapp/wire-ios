@@ -54,7 +54,7 @@ public struct BackendEnvironment2: Sendable, Equatable, Hashable {
         self.config = config
     }
 
-    // TODO: delete when no longer needed.
+    // TODO: [WPB-12140] delete when no longer needed.
     public enum EnvironmentType: Sendable, Equatable, Hashable {
 
         case `default`
