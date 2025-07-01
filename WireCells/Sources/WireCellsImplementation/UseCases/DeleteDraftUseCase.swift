@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import WireCellsAPI
+import WireCellsAPI
 package import Foundation
 
 package struct DeleteDraftUseCase: WireCellsDeleteDraftUseCaseProtocol {

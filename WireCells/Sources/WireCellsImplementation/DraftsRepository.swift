@@ -23,7 +23,8 @@ package import UniformTypeIdentifiers
 package import WireCellsAPI
 import WireLogging
 
-package protocol DraftsRepositoryProtocol: Actor {
+// sourcery: AutoMockable
+package protocol DraftsRepositoryProtocol: Sendable {
 
     func add(
         assetURL: URL,
@@ -33,11 +34,11 @@ package protocol DraftsRepositoryProtocol: Actor {
         fileType: UTType?,
         deleteAfterUpload: Bool
     ) async
-    func drafts(for cellName: String) -> AsyncStream<[WireCellsDraft]>
+    func drafts(for cellName: String) async -> AsyncStream<[WireCellsDraft]>
     func publishAll(for cellName: String) async throws
-    func clearPublishedDrafts(for cellName: String)
-    func fetchDraft(nodeID: UUID, cellName: String) -> WireCellsDraft?
-    func deleteDraft(nodeID: UUID, cellName: String)
+    func clearPublishedDrafts(for cellName: String) async
+    func fetchDraft(nodeID: UUID, cellName: String) async -> WireCellsDraft?
+    func deleteDraft(nodeID: UUID, cellName: String) async
 
 }
 
