@@ -22,6 +22,11 @@ public protocol ChannelRepositoryProtocol {
         to permission: ChannelAccessLevelPermission
     ) async throws -> WireConversationsAPI.ChannelAccessLevelPermission
 
+    /// Updates the history depth (one day, one week, 4 weeks, unlimited..) for a given channel.
+    /// Past messages for a channel will be shown according to that value.
+    /// 
+    /// - parameter historyDepth: The new history depth value.
+
     func updateHistoryDepth(
         _ historyDepth: Int?
     ) async throws
