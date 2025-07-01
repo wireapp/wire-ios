@@ -43,13 +43,7 @@ final class ObservableStreamTests {
     @Test
     func readUpToCount() async throws {
         // Given
-        let progressesTask = Task { [sut] in
-            var progresses: [Int] = []
-            for await progress in sut.readProgress.prefix(3) {
-                progresses.append(progress)
-            }
-            return progresses
-        }
+        let progressesTask = makeObservationProgressTask(readingCount: 3)
 
         // When
         _ = try sut.read(upToCount: 2)
@@ -63,13 +57,7 @@ final class ObservableStreamTests {
     @Test
     func readAsyncUpToCount() async throws {
         // Given
-        let progressesTask = Task { [sut] in
-            var progresses: [Int] = []
-            for await progress in sut.readProgress.prefix(3) {
-                progresses.append(progress)
-            }
-            return progresses
-        }
+        let progressesTask = makeObservationProgressTask(readingCount: 3)
 
         // When
         _ = try await sut.readAsync(upToCount: 2)
@@ -83,13 +71,7 @@ final class ObservableStreamTests {
     @Test
     func readToEnd() async throws {
         // Given
-        let progressesTask = Task { [sut] in
-            var progresses: [Int] = []
-            for await progress in sut.readProgress.prefix(2) {
-                progresses.append(progress)
-            }
-            return progresses
-        }
+        let progressesTask = makeObservationProgressTask(readingCount: 2)
 
         // When
         _ = try sut.read(upToCount: 2)
@@ -102,13 +84,7 @@ final class ObservableStreamTests {
     @Test
     func readToEndAsync() async throws {
         // Given
-        let progressesTask = Task { [sut] in
-            var progresses: [Int] = []
-            for await progress in sut.readProgress.prefix(2) {
-                progresses.append(progress)
-            }
-            return progresses
-        }
+        let progressesTask = makeObservationProgressTask(readingCount: 2)
 
         // When
         _ = try await sut.readAsync(upToCount: 2)
@@ -121,13 +97,7 @@ final class ObservableStreamTests {
     @Test
     func seekToOffset() async throws {
         // Given
-        let progressesTask = Task { [sut] in
-            var progresses: [Int] = []
-            for await progress in sut.readProgress.prefix(2) {
-                progresses.append(progress)
-            }
-            return progresses
-        }
+        let progressesTask = makeObservationProgressTask(readingCount: 2)
 
         // When
         try sut.seek(toOffset: 2)
@@ -135,5 +105,15 @@ final class ObservableStreamTests {
 
         // Then
         #expect(await progressesTask.value == [2, 5])
+    }
+
+    private func makeObservationProgressTask(readingCount: Int) -> Task<[Int], Never> {
+        Task { [sut] in
+            var progresses: [Int] = []
+            for await progress in sut.readProgress.prefix(readingCount) {
+                progresses.append(progress)
+            }
+            return progresses
+        }
     }
 }
