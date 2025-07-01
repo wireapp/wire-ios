@@ -61,8 +61,10 @@ public struct WireConversationChannelCreationForm: View {
                                 buttonTitle: L10n.Localizable.Conversation.ChannelHistory.UpgradeBanner.button,
                                 buttonURL: viewModel.upgradeBannerURL(),
                                 padding: 30,
-                                showCloseButton: true,
-                                closeAction: { viewModel.hideUpgradeBanner() }
+                                closeButton: .init(
+                                    accessibilityLabel: "close",
+                                    action: { viewModel.hideUpgradeBanner() }
+                                )
                             )
                         ).transition(.opacity)
                     }
