@@ -96,10 +96,10 @@ public class SystemLogger: LoggerProtocol {
                 finalMessage += extraInfo
             }
         #endif
-//        if mergedAttributes[.public] as? Bool == true {
+        if mergedAttributes[.public] as? Bool == true {
             os_log(osLogType, log: logger, "%{public}@", finalMessage)
-//        } else {
-//            os_log(osLogType, log: logger, "\(finalMessage)")
-//        }
+        } else {
+            os_log(osLogType, log: logger, "\(finalMessage)")
+        }
     }
 }
