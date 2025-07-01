@@ -150,14 +150,14 @@ public struct WireConversationChannelCreationForm: View {
 
     var channelCustomHistoryPickers: some View {
         HStack {
-            Picker("Number", selection: $viewModel.channelHistoryOptionCustom.value) {
+            Picker("", selection: $viewModel.channelHistoryOptionCustom.value) {
                 ForEach(1 ... 99, id: \.self) { number in
                     Text("\(number)").tag(number)
                 }
             }
             .pickerStyle(.wheel)
 
-            Picker("Unit", selection: $viewModel.channelHistoryOptionCustom.unit) {
+            Picker("", selection: $viewModel.channelHistoryOptionCustom.unit) {
                 ForEach(ViewModel.ChannelHistoryOption.Custom.Unit.allCases, id: \.self) { unit in
                     Text(unit.title).tag(unit)
                 }
