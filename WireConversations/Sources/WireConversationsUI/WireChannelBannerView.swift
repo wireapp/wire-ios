@@ -39,6 +39,8 @@ public struct WireChannelBannerView: View {
 
     private let configuration: Configuration
 
+    @ScaledMetric private var maxWidth: CGFloat = 350
+
     init(
         configuration: Configuration
     ) {
@@ -95,7 +97,7 @@ public struct WireChannelBannerView: View {
         }
         .cornerRadius(10)
         .clipped()
-        .frame(maxWidth: .infinity)
+        .frame(maxWidth: maxWidth)
         .overlay(
             RoundedRectangle(cornerRadius: 10)
                 .stroke(SemanticColors.View.channelBannerBorderColor.color, lineWidth: 1)
