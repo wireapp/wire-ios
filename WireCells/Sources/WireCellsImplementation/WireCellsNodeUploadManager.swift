@@ -20,6 +20,7 @@ package import Foundation
 package import WireCellsAPI
 import WireLogging
 
+// sourcery: AutoMockable
 package protocol WireCellsNodeUploadManagerProtocol: Sendable {
     /// Starts file upload. Returns the new node after pre-checking.
     func upload(

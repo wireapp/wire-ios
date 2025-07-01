@@ -23,18 +23,20 @@ extension WireCellsDraft {
     static func fixture(
         nodeID: UUID = UUID(),
         versionID: UUID = UUID(),
-        status: WireCellsUploadStatus = .uploaded(isDraft: true)
+        assetURL: URL = URL(string: "https://example.com")!,
+        status: WireCellsUploadStatus = .uploaded(isDraft: true),
+        deleteAfterUpload: Bool = false
     ) -> WireCellsDraft {
         WireCellsDraft(
             nodeID: nodeID,
             versionID: versionID,
-            assetURL: URL(string: "https://example.com")!,
+            assetURL: assetURL,
             fileType: nil,
             status: status,
             name: "Draft",
             bytes: 1024,
             mimeType: nil,
-            deleteAfterUpload: false
+            deleteAfterUpload: deleteAfterUpload
         )
     }
 }
