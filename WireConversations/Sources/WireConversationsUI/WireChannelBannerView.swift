@@ -31,6 +31,8 @@ public struct WireChannelBannerView: View {
         let showCloseButton: Bool
         let closeAction: () -> Void
     }
+    
+    typealias ChannelHistory = L10n.Localizable.Conversation.ChannelHistory
 
     private let configuration: Configuration
 
@@ -55,7 +57,7 @@ public struct WireChannelBannerView: View {
                     CloseButton(
                         action: { configuration.closeAction() },
                         foregroundColor: SemanticColors.Label.textWhite,
-                        accessibilityLabel: L10n.Localizable.Conversation.ChannelHistory.UpgradeBanner.closeMessage
+                        accessibilityLabel: ChannelHistory.UpgradeBanner.closeMessage
                     )
                 }
             }

@@ -26,6 +26,8 @@ package struct ChannelHistoryView: View {
     @ObservedObject var viewModel: ChannelHistoryViewModel
     @State private var rotationAngle: Double = 0
     @State private var isExpanded: Bool = false
+    
+    typealias ChannelHistory = L10n.Localizable.Conversation.ChannelHistory
 
     package init(viewModel: ChannelHistoryViewModel) {
         self.viewModel = viewModel
@@ -35,7 +37,7 @@ package struct ChannelHistoryView: View {
         NavigationView {
             Form {
                 Section(
-                    footer: Text(L10n.Localizable.Conversation.ChannelHistory.Share.sectionFootnote)
+                    footer: Text(ChannelHistory.Share.sectionFootnote)
                         .font(.footnote)
                         .foregroundColor(ColorTheme.Base.secondaryText.color)
                 ) {
@@ -80,9 +82,9 @@ package struct ChannelHistoryView: View {
 
                         WireChannelBannerView(
                             configuration: .init(
-                                title: L10n.Localizable.Conversation.ChannelHistory.UpgradeBanner.title,
-                                message: L10n.Localizable.Conversation.ChannelHistory.UpgradeBanner.message,
-                                buttonTitle: L10n.Localizable.Conversation.ChannelHistory.UpgradeBanner.button,
+                                title: ChannelHistory.UpgradeBanner.title,
+                                message: ChannelHistory.UpgradeBanner.message,
+                                buttonTitle: ChannelHistory.UpgradeBanner.button,
                                 buttonURL: viewModel.upgradeBannerURL(),
                                 padding: 0,
                                 showCloseButton: false,
@@ -135,31 +137,35 @@ package struct ChannelHistoryView: View {
 }
 
 extension ChannelHistoryOption {
+    typealias ChannelHistory = L10n.Localizable.Conversation.ChannelHistory
+    
     var title: String {
         switch self {
         case .off:
-            L10n.Localizable.Conversation.ChannelHistory.Picker.off
+            ChannelHistory.Picker.off
         case .oneDay:
-            L10n.Localizable.Conversation.ChannelHistory.Picker.oneDay
+            ChannelHistory.Picker.oneDay
         case .oneWeek:
-            L10n.Localizable.Conversation.ChannelHistory.Picker.oneWeek
+            ChannelHistory.Picker.oneWeek
         case .fourWeeks:
-            L10n.Localizable.Conversation.ChannelHistory.Picker.fourWeeks
+            ChannelHistory.Picker.fourWeeks
         case .unlimited:
-            L10n.Localizable.Conversation.ChannelHistory.Picker.unlimited
+            ChannelHistory.Picker.unlimited
         case .custom:
-            L10n.Localizable.Conversation.ChannelHistory.Picker.custom
+            ChannelHistory.Picker.custom
         }
     }
 }
 
 extension ChannelHistoryOption.Custom.Unit {
+    typealias ChannelHistory = L10n.Localizable.Conversation.ChannelHistory
+    
     var title: String {
         switch self {
         case .days:
-            L10n.Localizable.Conversation.ChannelHistory.CustomPicker.days
+            ChannelHistory.CustomPicker.days
         case .week:
-            L10n.Localizable.Conversation.ChannelHistory.CustomPicker.weeks
+            ChannelHistory.CustomPicker.weeks
         }
     }
 }
