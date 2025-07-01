@@ -120,6 +120,7 @@ public final class NotificationSession {
     /// - returns: The initialized session object if no error is thrown
 
     public convenience init(
+        currentAppVersion: String,
         applicationGroupIdentifier: String,
         accountIdentifier: UUID,
         environment: BackendEnvironmentProvider,
@@ -127,7 +128,10 @@ public final class NotificationSession {
         minTLSVersion: String?
     ) throws {
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
-        let accountManager = try AccountManager(sharedDirectory: sharedContainerURL)
+        let accountManager = try AccountManager(
+            currentAppVersion: currentAppVersion,
+            sharedDirectory: sharedContainerURL
+        )
 
         guard let account = accountManager.account(with: accountIdentifier) else {
             throw InitializationError.noAccount
