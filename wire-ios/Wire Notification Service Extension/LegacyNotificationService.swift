@@ -21,6 +21,7 @@ import UIKit
 import UserNotifications
 import WireCommonComponents
 import WireDataModel
+import WireDomain
 import WireLogging
 import WireNotificationEngine
 import WireRequestStrategy
@@ -53,9 +54,9 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
     private var session: NotificationSession?
     private var contentHandler: ((UNNotificationContent) -> Void)?
 
-    private lazy var accountManager: AccountManager = {
+    private lazy var accountManager: AccountManager? = {
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: appGroupID)
-        return AccountManager(sharedDirectory: sharedContainerURL)
+        return try? AccountManager(sharedDirectory: sharedContainerURL)
     }()
 
     private var appGroupID: String {
@@ -204,13 +205,19 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
     }
 
     private func totalUnreadCount(_ unreadConversationCount: Int) -> NSNumber? {
-        guard let session else {
+        guard
+            let session,
+            let accountManager
+        else {
             return nil
         }
-        let account = accountManager.account(with: session.accountIdentifier)
-        account?.unreadConversationCount = unreadConversationCount
-        let totalUnreadCount = accountManager.totalUnreadCount
 
+        if let account = accountManager.account(with: session.accountIdentifier) {
+            account.unreadConversationCount = unreadConversationCount
+            accountManager.addOrUpdate(account)
+        }
+
+        let totalUnreadCount = accountManager.totalUnreadCount
         return NSNumber(value: totalUnreadCount)
     }
 
