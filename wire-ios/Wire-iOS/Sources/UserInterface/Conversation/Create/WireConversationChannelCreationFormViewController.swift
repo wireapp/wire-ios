@@ -43,9 +43,8 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
 
     private lazy var isUserPremium: Bool = {
         guard let userSession = userSession as? ZMUserSession else { return false }
-        let featureRepository = FeatureRepository(context: userSession.syncContext)
         let conferenceCalling = userSession.syncContext.performAndWait {
-            featureRepository.fetchConferenceCalling()
+            userSession.featureRepository.fetchConferenceCalling()
         }
 
         return conferenceCalling.status == .enabled
