@@ -44,8 +44,10 @@ class WireChannelBannerTests: XCTestCase {
                 buttonTitle: "Upgrade now",
                 buttonURL: URL(string: "https://example.com")!,
                 padding: 30,
-                showCloseButton: true,
-                closeAction: {}
+                closeButton: .init(
+                    accessibilityLabel: "",
+                    action: {}
+                )
             )
         )
         .frame(width: 375, height: 667)
@@ -68,8 +70,10 @@ class WireChannelBannerTests: XCTestCase {
                 buttonTitle: "Upgrade now",
                 buttonURL: URL(string: "https://example.com")!,
                 padding: 30,
-                showCloseButton: true,
-                closeAction: {}
+                closeButton: .init(
+                    accessibilityLabel: "",
+                    action: {}
+                )
             )
         )
         .frame(width: 375, height: 667)

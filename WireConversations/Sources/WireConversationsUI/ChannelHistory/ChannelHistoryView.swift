@@ -87,8 +87,7 @@ package struct ChannelHistoryView: View {
                                 buttonTitle: ChannelHistory.UpgradeBanner.button,
                                 buttonURL: viewModel.upgradeBannerURL(),
                                 padding: 0,
-                                showCloseButton: false,
-                                closeAction: {}
+                                closeButton: .none
                             )
                         )
 
