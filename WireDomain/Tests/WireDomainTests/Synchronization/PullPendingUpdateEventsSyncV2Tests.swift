@@ -1,4 +1,3 @@
-//
 // Wire
 // Copyright (C) 2025 Wire Swiss GmbH
 //
@@ -15,17 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+
+import Combine
+import WireDataModelSupport
+import WireDomainSupport
+import WireNetwork
+import WireNetworkSupport
+import WireProtos
 import XCTest
 @testable import WireDomain
-import WireDomainSupport
-import WireNetworkSupport
-import WireNetwork
-import WireDataModelSupport
-import WireProtos
-import Combine
 
 class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
-    
+
     var sut: PullPendingUpdateEventsSyncV2!
     var pushChannelAPI: MockPushChannelV2API!
     var decryptor: MockUpdateEventDecryptorProtocol!
@@ -35,6 +35,7 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
     var databaseSaver: MockDatabaseSaverProtocol!
     var journal: Journal!
     var coreCryptoProvider: MockCoreCryptoProviderProtocol!
+    var coreCrypto: MockSafeCoreCrypto!
 
     override func setUp() {
         pushChannelAPI = MockPushChannelV2API()
@@ -43,6 +44,8 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
         messageLocalStore = MockMessageLocalStoreProtocol()
         processor = MockUpdateEventProcessorProtocol()
         coreCryptoProvider = MockCoreCryptoProviderProtocol()
+        coreCrypto = MockSafeCoreCrypto()
+
         journal = Journal(
             userID: UUID(),
             storage: UserDefaults.temporary()
@@ -55,14 +58,13 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
             decryptor: decryptor,
             coreCryptoProvider: coreCryptoProvider
         )
-        
-        
-        decryptor.decryptEventsInContext_MockMethod = { envelope, _ async throws in .init(
-            events: envelope.events,
-            brokenMLSGroupIDs: []
-        ) }
-        
-        
+
+        // Setup mocks
+        coreCryptoProvider.coreCrypto_MockValue = coreCrypto
+        decryptor.decryptEventsInContext_MockMethod = { envelope, _ in
+            EventDecryptorResult(events: envelope.events, brokenMLSGroupIDs: [Scaffolding.mlsGroupID])
+        }
+
         var indices = [Int64(10), 11, 12, 13, 14, 15]
         updateEventsStore.indexOfLastEventEnvelope_MockMethod = { indices.remove(at: 0) }
         updateEventsStore.persistEventEnvelopeIndex_MockMethod = { _, _ async throws in }
@@ -76,10 +78,12 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
         processor = nil
         databaseSaver = nil
         coreCryptoProvider = nil
+        coreCrypto = nil
         journal = nil
     }
 
-    private func setupPushChannel(stream: AsyncThrowingStream<PushChannelV2.Element, any Error>) -> MockPushChannelV2Protocol {
+    private func setupPushChannel(stream: AsyncThrowingStream<PushChannelV2.Element, any Error>)
+        -> MockPushChannelV2Protocol {
         // Some live events, some of which were already pulled.
         let pushChannel = MockPushChannelV2Protocol()
         pushChannel.acknowledgeMessageCount_MockMethod = {}
@@ -89,57 +93,102 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
         pushChannelAPI.createPushChannelClientID_MockMethod = { _ in pushChannel }
         return pushChannel
     }
-    
-    
-    func test_pull_receiving_no_events() async throws {
-        let upstream = AsyncThrowingStream { continuation in
-            Task {
-                continuation.yield(PushChannelV2.Element.syncing(eventsCount: 0))
-                continuation.yield(PushChannelV2.Element.upToDate)
-            }
-        }
-        let pushChannel = setupPushChannel(stream: upstream)
-        
-        
-        try await sut.pull()
 
-        var receivedEvents: [[UpdateEvent]] = []
-        for try await element in sut.stream {
-            receivedEvents.append(element)
-        }
+    func testPull_receiving_no_events() async throws {
+        let nbEventsToPull = 0
+        let nbOfBatches = 0
 
-        try XCTAssertCount(pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations, count: 0)
-        try XCTAssertCount(receivedEvents, count: 0)
-    }
-    
-    func test_pull_receiving_events() async throws {
-        let nbEventsToPull: Int = 1
-        
         let upstream = AsyncThrowingStream { continuation in
             Task {
                 continuation.yield(PushChannelV2.Element.syncing(eventsCount: nbEventsToPull))
-                continuation.yield(PushChannelV2.Element.event(Scaffolding.event2))
+                continuation.yield(PushChannelV2.Element.upToDate)
+            }
+        }
+        try await internalTestPull(
+            stream: upstream,
+            receivedEventsCount: nbEventsToPull,
+            decryptionCount: nbEventsToPull,
+            storedEventsCount: nbEventsToPull,
+            acknowledgementCount: nbOfBatches
+        )
+    }
+
+    func testPull_receiving_events() async throws {
+        let nbEventsToPull = 5
+        let nbOfBatches = 3
+
+        let upstream = AsyncThrowingStream { continuation in
+            Task {
+                continuation.yield(PushChannelV2.Element.syncing(eventsCount: nbEventsToPull))
+                continuation.yield(PushChannelV2.Element.events([Scaffolding.event2, Scaffolding.event3]))
+                continuation.yield(PushChannelV2.Element.events([Scaffolding.event4, Scaffolding.event5]))
+                continuation.yield(PushChannelV2.Element.events([Scaffolding.createEvent(
+                    message: "test",
+                    timeIntervalSinceNow: -5,
+                    deliveryTag: 6
+                )]))
                 continuation.yield(PushChannelV2.Element.upToDate)
                 continuation.finish()
             }
         }
-        let pushChannel = setupPushChannel(stream: upstream)
-        
-        
+        try await internalTestPull(
+            stream: upstream,
+            receivedEventsCount: nbEventsToPull,
+            decryptionCount: nbEventsToPull,
+            storedEventsCount: nbEventsToPull,
+            acknowledgementCount: nbOfBatches
+        )
+    }
+
+    func internalTestPull(
+        stream: AsyncThrowingStream<PushChannelV2.Element, any Error>,
+        receivedEventsCount: Int,
+        decryptionCount: Int,
+        storedEventsCount: Int,
+        acknowledgementCount: Int,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) async throws {
+        let pushChannel = setupPushChannel(stream: stream)
+
         try await sut.pull()
-        
+
         var receivedEvents: [[UpdateEvent]] = []
         for try await element in sut.stream {
             receivedEvents.append(element)
         }
 
-        
-        try XCTAssertCount(updateEventsStore.indexOfLastEventEnvelope_Invocations, count: nbEventsToPull)
-        try XCTAssertCount(updateEventsStore.persistEventEnvelopeIndex_Invocations, count: nbEventsToPull)
-        try XCTAssertCount(pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations, count: 1)
-        XCTAssertEqual(receivedEvents.count, 1)
+        // check decryption of events
+        XCTAssertEqual(receivedEvents.count, receivedEventsCount, file: file, line: line)
+        try XCTAssertCount(
+            decryptor.decryptEventsInContext_Invocations,
+            count: decryptionCount,
+            file: file,
+            line: line
+        )
+        // check events stored
+        try XCTAssertCount(
+            updateEventsStore.indexOfLastEventEnvelope_Invocations,
+            count: storedEventsCount,
+            file: file,
+            line: line
+        )
+        try XCTAssertCount(
+            updateEventsStore.persistEventEnvelopeIndex_Invocations,
+            count: storedEventsCount,
+            file: file,
+            line: line
+        )
+
+        // check events ack
+        try XCTAssertCount(
+            pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations,
+            count: acknowledgementCount,
+            file: file,
+            line: line
+        )
+
     }
-    
 }
 
 private enum Scaffolding {

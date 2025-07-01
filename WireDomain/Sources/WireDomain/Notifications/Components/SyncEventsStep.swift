@@ -17,10 +17,10 @@
 //
 
 import NeedleFoundation
-import WireNetwork
 import WireDataModel
 import WireFoundation
 import WireLogging
+import WireNetwork
 
 protocol SyncEventsDependency: Dependency {
     var userID: UUID { get }
@@ -59,7 +59,7 @@ final class SyncEventsStep: Component<SyncEventsDependency>, SyncEventsStepProto
     }
 
     func pullEvents() async throws {
-        
+
         let pendingEventsSync = try await PullPendingUpdateEventsSyncV2(
             selfClientID: selfClientID,
             pushChannelAPI: pushChannelAPI,
@@ -68,20 +68,23 @@ final class SyncEventsStep: Component<SyncEventsDependency>, SyncEventsStepProto
             decryptor: updateEventDecryptor,
             coreCryptoProvider: coreCryptoProvider
         )
-        
+
         let useCase = SyncEventsUseCase(pendingEventsSync: pendingEventsSync)
-            
+
         do {
             try await useCase.invoke()
         } catch {
-            WireLogger.sync.warn("syncing events via websocket: \(error.localizedDescription)", attributes: .syncAttributes(initialSync: false))
+            WireLogger.sync.warn(
+                "syncing events via websocket: \(error.localizedDescription)",
+                attributes: .syncAttributes(initialSync: false)
+            )
         }
 
         try await generateNotificationStep.generateNotification(
             eventsStream: pendingEventsSync.stream
         )
     }
-    
+
     // MARK: - Children
 
     var generateNotificationStep: GenerateNotificationStep {
@@ -90,20 +93,22 @@ final class SyncEventsStep: Component<SyncEventsDependency>, SyncEventsStepProto
 }
 
 extension SyncEventsStep {
-    
+
     var pushChannelService: PushChannelService {
         get async throws {
-            try await PushChannelService(networkService: pushChannelNetworkService, authenticationManager: authenticationManager
+            try await PushChannelService(
+                networkService: pushChannelNetworkService,
+                authenticationManager: authenticationManager
             )
         }
     }
-    
+
     public var pushChannelAPI: any PushChannelV2API {
         get async throws {
             try await PushChannelV2APIBuilder(pushChannelService: pushChannelService).makeAPI(for: apiVersion)
         }
     }
-    
+
     public var conversationLocalStore: any ConversationLocalStoreProtocol {
         ConversationLocalStore(
             context: dependency.coreData.syncContext,
@@ -343,7 +348,7 @@ extension SyncEventsStep {
             }
         }
     }
-    
+
     var serverTrustValidator: ServerTrustValidator {
         get async throws {
             ServerTrustValidator(
@@ -352,11 +357,11 @@ extension SyncEventsStep {
             )
         }
     }
-    
+
     var pushChannelNetworkService: NetworkService {
         get async throws {
             let backendEnvironment = try await backendEnvironment
-            
+
             let networkService = NetworkService(
                 baseURL: backendEnvironment.webSocketURL,
                 serverTrustValidator: try await serverTrustValidator
@@ -376,7 +381,7 @@ extension SyncEventsStep {
             return networkService
         }
     }
-    
+
     var networkService: NetworkService {
         get async throws {
             let backendEnvironment = try await backendEnvironment

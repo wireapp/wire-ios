@@ -24,7 +24,7 @@ import WireUtilities
 struct ConversationDeveloperActionsProvider: DeveloperToolsContextItemsProvider {
 
     private typealias ButtonItem = DeveloperToolsViewModel.ButtonItem
-    private let conversation: ZMConversation // TODO: fix this when logout
+    private let conversation: ZMConversation
 
     init?(context: DeveloperToolsContext) {
         guard let conversation = context.currentConversation else {

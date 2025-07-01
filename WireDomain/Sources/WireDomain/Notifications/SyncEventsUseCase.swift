@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireNetwork
 import WireLogging
+import WireNetwork
 
 // sourcery: AutoMockable
 protocol SyncEventsUseCaseProtocol {
@@ -29,16 +29,18 @@ struct SyncEventsUseCase: SyncEventsUseCaseProtocol {
         case timedOut
         case pendingEventsSyncFailed(Error)
     }
-    
+
     let pendingEventsSync: PullPendingUpdateEventsSyncV2Protocol
     let timeout: Duration
-    
-    init(pendingEventsSync: PullPendingUpdateEventsSyncV2Protocol,
-         timeout: Duration = .seconds(25)) {
+
+    init(
+        pendingEventsSync: PullPendingUpdateEventsSyncV2Protocol,
+        timeout: Duration = .seconds(25)
+    ) {
         self.pendingEventsSync = pendingEventsSync
         self.timeout = timeout
     }
-    
+
     func invoke() async throws {
         do {
             try await withThrowingTaskGroup(of: Void.self) { group in

@@ -106,7 +106,7 @@ final class VerifyUserStep: Component<VerifyUserDependency>, VerifyUserStepProto
             selfClientID: selfClientID
         )
     }
-    
+
     func syncEventsStep(
         selfUserID: UUID,
         selfClientID: String

@@ -16,31 +16,33 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-import WireNetwork
-@testable import WireDomain
 import WireDomainSupport
+import WireNetwork
+import XCTest
+@testable import WireDomain
 
 class SyncEventUseCaseTests: XCTestCase {
-    
+
     var sut: SyncEventsUseCase!
     var sync: MockPullPendingUpdateEventsSyncV2Protocol!
-    
+
     override func setUp() async throws {
         sync = MockPullPendingUpdateEventsSyncV2Protocol()
-        sut = SyncEventsUseCase(pendingEventsSync: sync,
-                                timeout: .seconds(0.5))
+        sut = SyncEventsUseCase(
+            pendingEventsSync: sync,
+            timeout: .seconds(0.5)
+        )
     }
-    
+
     func test_invoke_ItFailsWithError() async throws {
         let error = TestError(message: "any")
         sync.pull_MockError = error
-        
+
         await XCTAssertThrowsErrorAsync(SyncEventsUseCase.Failure.pendingEventsSyncFailed(error)) {
             try await self.sut.invoke()
         }
     }
-    
+
     func test_invoke_ItFailsWithCancellableError() async throws {
         sync.pull_MockMethod = {
             try await Task.sleep(for: .seconds(0.75))
@@ -54,15 +56,15 @@ class SyncEventUseCaseTests: XCTestCase {
 }
 
 extension SyncEventsUseCase.Failure: @retroactive Equatable {
-    
+
     public static func == (lhs: Self, rhs: Self) -> Bool {
         switch (lhs, rhs) {
         case (.timedOut, .timedOut):
-            return true
+            true
         case (.pendingEventsSyncFailed, .pendingEventsSyncFailed):
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 }
