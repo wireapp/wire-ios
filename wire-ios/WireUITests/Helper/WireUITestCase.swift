@@ -28,11 +28,10 @@ class WireUITestCase: XCTestCase {
     let userManager = UserManager()
 
     override func setUpWithError() throws {
-        // Delete app, useful since resetting sim between runs made it unstable
         XCUIApplication().terminate()
-        deleteApp()
 
         let launchArguments = [
+            "-resetData",
             "--BackendEnvironmentTypeOverrideKey=staging",
             "--persist-backend-type",
             "--preferred-api-version=8"
@@ -50,26 +49,5 @@ class WireUITestCase: XCTestCase {
 
     override func tearDown() async throws {
         try await userManager.deleteCreatedUsers()
-    }
-
-    // MARK: - Helpers
-
-    func deleteApp() {
-        let icon = springboard.icons["Wire"]
-        if icon.exists {
-            icon.press(forDuration: 1.3)
-
-            springboard.buttons["com.apple.springboardhome.application-shortcut-item.remove-app"].tap()
-
-            // For some reason the following commands were unreliable when called once
-            let deleteApp = springboard.buttons["Delete App"]
-            if deleteApp.waitForExistence(timeout: 1) {
-                deleteApp.tap()
-            }
-            let delete = springboard.buttons["Delete"]
-            if delete.waitForExistence(timeout: 1) {
-                delete.tap()
-            }
-        }
     }
 }
