@@ -22,6 +22,8 @@
 ///
 ///  "<screen>.<component>.<usage>"
 
+"peoplepicker.upgrade_banner.close_button.label" = "TODO"; // TODO: fix
+
 "conversation.backButton.description" = "Go back to conversation list";
 "conversation.searchButton.description" = "Open search";
 "conversation.profileImage.description" = "Profile picture";

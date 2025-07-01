@@ -20,6 +20,7 @@ import SwiftUI
 import UIKit
 import WireCommonComponents
 import WireConversationsAPI
+import WireConversationsUI
 import WireConversationsUIBindings
 import WireDesign
 import WireMainNavigationUI
@@ -331,6 +332,25 @@ final class StartUIViewController: UIViewController {
     }
 
     private func presentCreateTeamBanner() {
+
+        typealias Localizable = L10n.Localizable.Peoplepicker
+        typealias Accessibility = L10n.Accessibility.Peoplepicker
+
+        let configuration = WireChannelBannerView.Configuration(
+            title: Localizable.UpgradeBanner.headline,
+            message: Localizable.UpgradeBanner.subheadline,
+            buttonTitle: Localizable.UpgradeBanner.Button.title,
+            buttonURL: URL(string: "")!, // TODO: fix
+            padding: 0, // TODO: fix
+            closeButton: .init(
+                accessibilityLabel: Accessibility.UpgradeBanner.CloseButton.label,
+                action: {} // TODO: fix
+            )
+        )
+        let banner = WireChannelBannerView(configuration: configuration)
+        let hostingController = UIHostingController(rootView: banner)
+        return present(hostingController, animated: true)
+
         // TODO: use real banner and test on iPad
         let mainCoordinator = mainCoordinator
         let alertController = UIAlertController(title: "upgrade", message: "upgrade", preferredStyle: .alert)

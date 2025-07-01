@@ -324,7 +324,7 @@ final class SelfProfileViewController: UIViewController {
 
     func triggerCreateTeamFlow() {
         if let backendInfoApiVersion = BackendInfo.apiVersion,
-           let apiVersion = WireAPI.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
+           let apiVersion = APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
            apiVersion >= .v7 {
             onTeamCreationBannerInteraction(.createWireTeam, apiVersion: apiVersion)
         }

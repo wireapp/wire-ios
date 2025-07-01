@@ -23,27 +23,11 @@ import WireReusableUIComponents
 
 public struct WireChannelBannerView: View {
 
-    public struct Configuration {
-        var title: String
-        var message: String
-        var buttonTitle: String
-        var buttonURL: URL
-        var padding: CGFloat
-        var closeButton: CloseButton?
-
-        struct CloseButton {
-            var accessibilityLabel: String
-            var action: () -> Void
-        }
-    }
-
     private let configuration: Configuration
 
     @ScaledMetric private var maxWidth: CGFloat = 350
 
-    init(
-        configuration: Configuration
-    ) {
+    public init(configuration: Configuration) {
         self.configuration = configuration
     }
 
