@@ -142,7 +142,6 @@ public struct WireConversationChannelCreationForm: View {
                 Text(channelHistoryOption.title)
                     .tag(channelHistoryOption)
                     .accessibilityLabel(channelHistoryOption.title)
-
             }
         }
     }
