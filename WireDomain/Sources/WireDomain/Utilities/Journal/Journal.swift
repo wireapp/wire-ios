@@ -53,17 +53,6 @@ public class Journal: JournalProtocol {
         self.storage = storage
     }
 
-    /// Get or set a boolean value.
-
-    public subscript(_ key: JournalKey<Bool>) -> Bool {
-        get {
-            (storage.object(forKey: rawKey(for: key)) as? Bool) ?? key.defaultValue
-        }
-        set {
-            storage.set(newValue, forKey: rawKey(for: key))
-        }
-    }
-
     /// Get or set a string value.
 
     public subscript(_ key: JournalKey<String?>) -> String? {
@@ -72,21 +61,6 @@ public class Journal: JournalProtocol {
         }
         set {
             storage.set(newValue, forKey: rawKey(for: key))
-        }
-    }
-
-    /// Get or set a list of string values.
-
-    public subscript(_ key: JournalKey<Set<String>>) -> Set<String> {
-        get {
-            if let array = storage.object(forKey: rawKey(for: key)) as? [String] {
-                Set(array)
-            } else {
-                key.defaultValue
-            }
-        }
-        set {
-            storage.set(Array(newValue), forKey: rawKey(for: key))
         }
     }
 
@@ -101,28 +75,6 @@ public class Journal: JournalProtocol {
     func rawKey(for key: JournalKey<some Any>) -> String {
         // Prefix to avoid possible namespace conflicts.
         "\(namespace).\(key.name)"
-    }
-
-}
-
-public extension Journal {
-
-    func removeValue(_ value: String, for key: JournalKey<Set<String>>) {
-        var currentSet = self[key]
-        currentSet.remove(value)
-        self[key] = currentSet
-    }
-
-    func addValue(_ value: String, for key: JournalKey<Set<String>>) {
-        var currentSet = self[key]
-        currentSet.insert(value)
-        self[key] = currentSet
-    }
-
-    func addValues(_ values: Set<String>, for key: JournalKey<Set<String>>) {
-        var currentSet = self[key]
-        currentSet.formUnion(values)
-        self[key] = currentSet
     }
 
 }
