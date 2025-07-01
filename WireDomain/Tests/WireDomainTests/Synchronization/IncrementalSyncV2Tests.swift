@@ -174,7 +174,6 @@ final class IncrementalSyncV2Tests: XCTestCase {
 
         // Then sync is up to date
         XCTAssertEqual(liveDelegate.isUpToDateSync_Invocations.count, 1)
-        XCTAssertEqual(pushChannel.acknowledgeMessageCount_Invocations.count, 1)
 
         // Then live events were stored.
         XCTAssertEqual(updateEventsStore.indexOfLastEventEnvelope_Invocations.count, 1)

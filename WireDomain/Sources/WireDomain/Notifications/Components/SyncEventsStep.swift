@@ -58,9 +58,8 @@ final class SyncEventsStep: Component<SyncEventsDependency>, SyncEventsStepProto
         super.init(parent: parent)
     }
 
-    var currentTask: Task<Void, any Error>?
-    
     func pullEvents() async throws {
+        
         let pendingEventsSync = try await PullPendingUpdateEventsSyncV2(
             selfClientID: selfClientID,
             pushChannelAPI: pushChannelAPI,
@@ -69,39 +68,20 @@ final class SyncEventsStep: Component<SyncEventsDependency>, SyncEventsStepProto
             decryptor: updateEventDecryptor,
             coreCryptoProvider: coreCryptoProvider
         )
-  
-        await perform(pendingEventsSync: pendingEventsSync)
-        WireLogger.sync.debug("Finish to pull pending events", attributes: .syncAttributes(initialSync: false))
+        
+        let useCase = SyncEventsUseCase(pendingEventsSync: pendingEventsSync)
+            
+        do {
+            try await useCase.invoke()
+        } catch {
+            WireLogger.sync.warn("syncing events via websocket: \(error.localizedDescription)", attributes: .syncAttributes(initialSync: false))
+        }
+
         try await generateNotificationStep.generateNotification(
             eventsStream: pendingEventsSync.stream
         )
     }
     
-    private func perform(pendingEventsSync: PullPendingUpdateEventsSyncV2, within time: Duration = .seconds(25)) async {
-        do {
-            try await withThrowingTaskGroup(of: Void.self) { group in
-                group.addTask {
-                    try await pendingEventsSync.pull()
-                }
-
-                group.addTask {
-                    try await Task.sleep(for: time)
-                    // we're almost out of time better to stop the pulling
-                    throw CancellationError()
-                }
-
-                defer { group.cancelAll() }
-                // get the first task to finish
-                try await group.next()
-            }
-        } catch is CancellationError {
-            WireLogger.sync.warn("Timed out waiting for pendingEventsSync.pull()", attributes: .syncAttributes(initialSync: false))
-        } catch {
-            WireLogger.sync.warn("Error during pendingEventsSync.pull(): \(error)")
-        }
-        
-    }
-
     // MARK: - Children
 
     var generateNotificationStep: GenerateNotificationStep {

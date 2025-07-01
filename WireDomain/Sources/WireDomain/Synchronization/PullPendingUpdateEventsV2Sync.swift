@@ -109,15 +109,12 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
             // end of stream so we close the pushChannel1ww
             await pushChannel.close()
         } catch {
-            // if we end up here, the pushChannel is closed
             logger.warn(
                 "live event stream encountered error: \(String(describing: error))",
                 attributes: logAttributes
             )
             await pushChannel.close()
-            // TODO: handle error
             continuation.finish()
-            //continuation.finish(throwing: error)
         }
     }
     

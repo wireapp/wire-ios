@@ -2902,24 +2902,20 @@ public class MockPullPendingUpdateEventsSyncV2Protocol: PullPendingUpdateEventsS
 
     public var pull_Invocations: [Void] = []
     public var pull_MockError: Error?
-    public var pull_MockMethod: (() async throws -> AsyncStream<[UpdateEvent]>)?
-    public var pull_MockValue: AsyncStream<[UpdateEvent]>?
+    public var pull_MockMethod: (() async throws -> Void)?
 
-    @discardableResult
-    public func pull() async throws -> AsyncStream<[UpdateEvent]> {
+    public func pull() async throws {
         pull_Invocations.append(())
 
         if let error = pull_MockError {
             throw error
         }
 
-        if let mock = pull_MockMethod {
-            return try await mock()
-        } else if let mock = pull_MockValue {
-            return mock
-        } else {
+        guard let mock = pull_MockMethod else {
             fatalError("no mock for `pull`")
         }
+
+        try await mock()
     }
 
 }
@@ -3263,6 +3259,34 @@ public class MockSelfUserProviderProtocol: SelfUserProviderProtocol {
         } else {
             fatalError("no mock for `fetchSelfUser`")
         }
+    }
+
+}
+
+class MockSyncEventsUseCaseProtocol: SyncEventsUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - invoke
+
+    var invoke_Invocations: [Void] = []
+    var invoke_MockError: Error?
+    var invoke_MockMethod: (() async throws -> Void)?
+
+    func invoke() async throws {
+        invoke_Invocations.append(())
+
+        if let error = invoke_MockError {
+            throw error
+        }
+
+        guard let mock = invoke_MockMethod else {
+            fatalError("no mock for `invoke`")
+        }
+
+        try await mock()
     }
 
 }
