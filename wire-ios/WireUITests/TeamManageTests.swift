@@ -21,7 +21,7 @@ import XCTest
 final class TeamManageTests: WireUITestCase {
 
     @MainActor
-    func test_MigrateToTeam_FromPersonalUser() async throws {
+    func test_Migrate_PersonalUserToTeam() async throws {
         let user = try await userManager.createPersonalUser()
 
         let welcomePage = try WelcomePage()
@@ -57,7 +57,7 @@ final class TeamManageTests: WireUITestCase {
     }
 
     @MainActor
-    func test_User_JoiningTeamSetup() async throws {
+    func test_UserJoining_TeamSetup() async throws {
         let owner = try await userManager.createPersonalUser()
         let memberUser = UserGenerator.generateUniqueUserInfo()
         let teamID = try await BackendClient.upgradePersonalToTeam(
