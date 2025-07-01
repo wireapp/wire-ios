@@ -23,16 +23,18 @@ import WireReusableUIComponents
 public struct WireChannelBannerView: View {
 
     public struct Configuration {
-        let title: String
-        let message: String
-        let buttonTitle: String
-        let buttonURL: URL
-        let padding: CGFloat
-        let showCloseButton: Bool
-        let closeAction: () -> Void
-    }
+        var title: String
+        var message: String
+        var buttonTitle: String
+        var buttonURL: URL
+        var padding: CGFloat
+        var closeButton: CloseButton?
 
-    typealias ChannelHistory = L10n.Localizable.Conversation.ChannelHistory
+        struct CloseButton {
+            var accessibilityLabel: String
+            var action: () -> Void
+        }
+    }
 
     private let configuration: Configuration
 
@@ -53,11 +55,11 @@ public struct WireChannelBannerView: View {
 
                 Spacer()
 
-                if configuration.showCloseButton {
+                if let closeButtonConfiguration = configuration.closeButton {
                     CloseButton(
-                        action: { configuration.closeAction() },
+                        action: { closeButtonConfiguration.action() },
                         foregroundColor: SemanticColors.Label.textWhite,
-                        accessibilityLabel: ChannelHistory.UpgradeBanner.closeMessage
+                        accessibilityLabel: closeButtonConfiguration.accessibilityLabel
                     )
                 }
             }
@@ -109,8 +111,10 @@ public struct WireChannelBannerView: View {
             buttonTitle: "Upgrade now",
             buttonURL: URL(string: "https://example.com")!,
             padding: 30,
-            showCloseButton: true,
-            closeAction: {}
+            closeButton: .init(
+                accessibilityLabel: "close banner",
+                action: {}
+            )
         )
     )
 }
