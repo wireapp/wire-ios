@@ -105,14 +105,14 @@ package struct ChannelHistoryView: View {
 
     var channelCustomHistoryPickers: some View {
         HStack {
-            Picker("Number", selection: $viewModel.channelHistoryOptionCustom.value) {
+            Picker("", selection: $viewModel.channelHistoryOptionCustom.value) {
                 ForEach(1 ... 99, id: \.self) { number in
                     Text("\(number)").tag(number)
                 }
             }
             .pickerStyle(.wheel)
 
-            Picker("Unit", selection: $viewModel.channelHistoryOptionCustom.unit) {
+            Picker("", selection: $viewModel.channelHistoryOptionCustom.unit) {
                 ForEach(ChannelHistoryOption.Custom.Unit.allCases, id: \.self) { unit in
                     Text(unit.title).tag(unit)
                 }
@@ -184,7 +184,7 @@ struct ChannelHistoryView_Previews: PreviewProvider {
     static func channelRepository() -> MockChannelRepositoryProtocol {
         let channelRepository = MockChannelRepositoryProtocol()
         channelRepository.updateHistoryDepth_MockMethod = { _ in }
-        channelRepository.isConferenceCallingFeatureEnabled_MockValue = false
+        channelRepository.isConferenceCallingFeatureEnabled_MockValue = true
         return channelRepository
     }
 }
