@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDomain
 import WireLogging
 import WireRequestStrategy
 
@@ -126,7 +127,7 @@ public final class NotificationSession {
         minTLSVersion: String?
     ) throws {
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
-        let accountManager = AccountManager(sharedDirectory: sharedContainerURL)
+        let accountManager = try AccountManager(sharedDirectory: sharedContainerURL)
 
         guard let account = accountManager.account(with: accountIdentifier) else {
             throw InitializationError.noAccount
