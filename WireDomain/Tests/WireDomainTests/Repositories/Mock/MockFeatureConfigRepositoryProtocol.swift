@@ -74,21 +74,16 @@ class MockFeatureConfigRepositoryProtocol: FeatureConfigRepositoryProtocol {
     // MARK: - updateFeatureConfig
 
     var updateFeatureConfig_Invocations: [FeatureConfig] = []
-    var updateFeatureConfig_MockError: Error?
-    var updateFeatureConfig_MockMethod: ((FeatureConfig) async throws -> Void)?
+    var updateFeatureConfig_MockMethod: ((FeatureConfig) async -> Void)?
 
-    func updateFeatureConfig(_ featureConfig: FeatureConfig) async throws {
+    func updateFeatureConfig(_ featureConfig: FeatureConfig) async {
         updateFeatureConfig_Invocations.append(featureConfig)
-
-        if let error = updateFeatureConfig_MockError {
-            throw error
-        }
 
         guard let mock = updateFeatureConfig_MockMethod else {
             fatalError("no mock for `updateFeatureConfig`")
         }
 
-        try await mock(featureConfig)
+        await mock(featureConfig)
     }
 
     // MARK: - fetchNeedsToNotifyUser

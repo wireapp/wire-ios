@@ -245,7 +245,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
         id: UUID,
         domain: String?,
         date: Date
-    ) async throws {
+    ) async {
         let user = await context.perform { [context] in
             ZMUser.fetchOrCreate(
                 with: id,
