@@ -26,6 +26,6 @@ protocol TeamCreateEventProcessorProtocol {
     ///
     /// - Parameter event: A team create event.
 
-    func processEvent(_ event: TeamCreateEvent) async throws
+    func processEvent(_ event: TeamCreateEvent) async
 
 }

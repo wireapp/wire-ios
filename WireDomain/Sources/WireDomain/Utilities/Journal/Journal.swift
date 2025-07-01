@@ -64,6 +64,17 @@ public class Journal: JournalProtocol {
         }
     }
 
+    /// Get or set a string value.
+
+    public subscript(_ key: JournalKey<String?>) -> String? {
+        get {
+            storage.string(forKey: rawKey(for: key))
+        }
+        set {
+            storage.set(newValue, forKey: rawKey(for: key))
+        }
+    }
+
     /// Get or set a list of string values.
 
     public subscript(_ key: JournalKey<Set<String>>) -> Set<String> {

@@ -72,9 +72,10 @@ public final class AccountManager: NSObject {
         !cache.isEmpty
     }
 
+    private let currentAppVersion: String
     private var cache = [UUID: Account]()
     private var store: AccountStore
-    private let defaults = UserDefaults.shared()!
+    private let defaults: UserDefaults
 
     // MARK: - Init
 
@@ -82,10 +83,25 @@ public final class AccountManager: NSObject {
     ///
     /// - parameter sharedDirectory: The directory of the shared container.
 
-    public init(sharedDirectory: URL) throws {
+    public init(
+        currentAppVersion: String,
+        sharedDirectory: URL,
+        defaults: UserDefaults = .shared()!
+    ) throws {
+        self.currentAppVersion = currentAppVersion
         self.store = try AccountStore(root: sharedDirectory)
+        self.defaults = defaults
         super.init()
         refreshCache()
+
+        for account in accounts {
+            var journal = Journal(
+                userID: account.userIdentifier,
+                storage: defaults
+            )
+
+            journal.markInitialAppVersionForExistingAccount()
+        }
     }
 
     // MARK: - Add / update
@@ -95,7 +111,13 @@ public final class AccountManager: NSObject {
     /// - parameter account: The account to add.
 
     public func addOrUpdate(_ account: Account) {
-        store.storeAccount(account)
+        if store.storeAccount(account) {
+            var journal = Journal(
+                userID: account.userIdentifier,
+                storage: defaults
+            )
+            journal.markInitialAppVersionForNewAccount(currentVersion: currentAppVersion)
+        }
         refreshCache()
     }
 
