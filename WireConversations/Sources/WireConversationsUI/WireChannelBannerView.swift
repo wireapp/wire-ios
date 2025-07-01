@@ -95,6 +95,10 @@ public struct WireChannelBannerView: View {
         .cornerRadius(10)
         .clipped()
         .frame(maxWidth: .infinity)
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(SemanticColors.View.channelBannerBorderColor.color, lineWidth: 1)
+        )
         .padding([.leading, .trailing], configuration.padding)
     }
 }
@@ -107,7 +111,7 @@ public struct WireChannelBannerView: View {
             buttonTitle: "Upgrade now",
             buttonURL: URL(string: "https://example.com")!,
             padding: 30,
-            closeButton: WireChannelBannerView.Configuration.CloseButton(
+            closeButton: .init(
                 accessibilityLabel: "close banner",
                 action: {}
             )
