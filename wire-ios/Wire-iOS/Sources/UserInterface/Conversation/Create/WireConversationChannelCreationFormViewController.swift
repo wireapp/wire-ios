@@ -41,7 +41,7 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
             }
         }
     )
-    
+
     private var teamsURL: URL {
         let baseURL = BackendEnvironment.shared.teamsURL
 
