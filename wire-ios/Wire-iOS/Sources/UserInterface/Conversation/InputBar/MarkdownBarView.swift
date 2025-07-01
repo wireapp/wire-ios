@@ -214,15 +214,15 @@ final class MarkdownBarView: UIView {
     func updateAccessibilityElements(isAccessible: Bool) {
         buttons.forEach { $0.isAccessibilityElement = isAccessible }
     }
-    
+
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        
+
         if traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
             redrawButtons()
         }
     }
-    
+
     private func redrawButtons() {
         for button in buttons {
             button.setIconColor(enabledStateIconColor, for: .normal)

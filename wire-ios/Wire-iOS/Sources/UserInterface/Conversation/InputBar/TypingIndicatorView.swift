@@ -39,9 +39,9 @@ final class AnimatedPenView: UIView {
         let backgroundColor = SemanticColors.View.backgroundConversationView
         pen.backgroundColor = backgroundColor
         pen.contentMode = .center
-        
+
         setIcons()
-        
+
         addSubview(dots)
         addSubview(pen)
 
@@ -108,14 +108,14 @@ final class AnimatedPenView: UIView {
     func applicationDidBecomeActive(_ notification: Notification) {
         startWritingAnimation()
     }
-    
+
     fileprivate func setIcons() {
         let iconColor = SemanticColors.Icon.foregroundDefault
-        
+
         dots.setIcon(.typingDots, size: 8, color: iconColor)
         pen.setIcon(.pencil, size: 8, color: iconColor)
     }
-    
+
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 
