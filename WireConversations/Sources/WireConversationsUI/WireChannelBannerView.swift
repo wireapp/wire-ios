@@ -93,6 +93,10 @@ public struct WireChannelBannerView: View {
         .cornerRadius(10)
         .clipped()
         .frame(maxWidth: .infinity)
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(SemanticColors.View.channelBannerBorderColor.color, lineWidth: 1)
+        )
         .padding([.leading, .trailing], configuration.padding)
     }
 }
