@@ -82,7 +82,7 @@ class SelfUserAPIV0: SelfUserAPI, VersionedAPI {
 
         let (data, response) = try await apiService.executeRequest(request, requiringAccessToken: true)
         return try ResponseParser()
-            .success(code: .ok)
+            .success(code: .accepted)
             .parse(code: response.statusCode, data: data)
     }
 

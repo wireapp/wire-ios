@@ -57,20 +57,19 @@ final class TeamManageTests: WireUITestCase {
     }
 
     @MainActor
-    func test_Member_JoiningTeamSetup() async throws {
-        let Owner = try await userManager.createPersonalUser()
+    func test_User_JoiningTeamSetup() async throws {
+        let owner = try await userManager.createPersonalUser()
         let memberUser = UserGenerator.generateUniqueUserInfo()
-        userManager.addUser(memberUser)
         let teamID = try await BackendClient.upgradePersonalToTeam(
-            email: Owner.email,
-            password: Owner.password,
-            teamName: Owner.teamName
+            email: owner.email,
+            password: owner.password,
+            teamName: owner.teamName
         )
 
         let invitationID = try await BackendClient.inviteUserToTeam(
             teamID: teamID,
-            email: Owner.email,
-            password: Owner.password,
+            email: owner.email,
+            password: owner.password,
             memberName: memberUser.name,
             memberEmail: memberUser.email
         )
@@ -91,7 +90,7 @@ final class TeamManageTests: WireUITestCase {
         let userAccountPage = try conversationPage.openUserAccount()
 
         let teamName = try XCTUnwrap(userAccountPage.getTeamName())
-        XCTAssertEqual(teamName, Owner.teamName, "Team name didn't match expected value \(Owner.teamName)")
+        XCTAssertEqual(teamName, owner.teamName, "Team name didn't match expected value \(owner.teamName)")
 
         conversationPage = try userAccountPage.closeAccountPage()
         let settingsPage = try conversationPage.openSettings()
