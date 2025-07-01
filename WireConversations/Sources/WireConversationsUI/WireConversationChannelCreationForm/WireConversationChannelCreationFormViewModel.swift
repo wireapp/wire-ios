@@ -116,7 +116,6 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
     }
 
     @Published private(set) var channelName: TextFieldValue<ChannelNameValidationError>
-
     @Published var channelAccess: ChannelAccessOption
     @Published var channelInvitePolicy: ChannelInvitePolicyOption
     @Published var channelHistoryOption: ChannelHistoryOption
@@ -127,6 +126,7 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
     @Published var readReceiptsEnabled: Bool
     @Published public private(set) var isFormValid: Bool
 
+    let teamsURL: URL
     private let onFormValidityUpdate: @Sendable (_ isValid: Bool) -> Void
     private let isUserPremium: Bool
     private var subscriptions = Set<AnyCancellable>()
@@ -141,6 +141,7 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
         guestsAllowed: Bool = true,
         readReceiptsEnabled: Bool = true,
         isUserPremium: Bool,
+        teamsURL: URL,
         onFormValidityUpdate: @escaping @Sendable (_ isValid: Bool) -> Void
     ) {
         let channelName = Self.validateChannelName(channelName)
@@ -154,6 +155,7 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
         self.guestsAllowed = guestsAllowed
         self.readReceiptsEnabled = readReceiptsEnabled
         self.isUserPremium = isUserPremium
+        self.teamsURL = teamsURL
         self.onFormValidityUpdate = onFormValidityUpdate
 
         bind()
@@ -184,10 +186,6 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
     func hideUpgradeBanner() {
         showUpgradeBanner = false
         channelHistoryOption = .oneDay
-    }
-
-    func upgradeBannerURL() -> URL {
-        URL(string: "https://teams.wire.com/billing/)")!
     }
 
     func onChannelNameUpdate(_ value: String) {

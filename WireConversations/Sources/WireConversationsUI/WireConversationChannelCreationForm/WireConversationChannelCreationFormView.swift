@@ -59,7 +59,7 @@ public struct WireConversationChannelCreationForm: View {
                                 title: L10n.Localizable.Conversation.ChannelHistory.UpgradeBanner.title,
                                 message: L10n.Localizable.Conversation.ChannelHistory.UpgradeBanner.message,
                                 buttonTitle: L10n.Localizable.Conversation.ChannelHistory.UpgradeBanner.button,
-                                buttonURL: viewModel.upgradeBannerURL(),
+                                buttonURL: viewModel.teamsURL,
                                 padding: 30,
                                 closeButton: .init(
                                     accessibilityLabel: "close",
@@ -188,7 +188,8 @@ public struct WireConversationChannelCreationForm: View {
     WireConversationChannelCreationForm(
         viewModel: WireConversationChannelCreationFormViewModel(
             channelName: "",
-            isUserPremium: false
+            isUserPremium: false,
+            teamsURL: URL(string: "https://google.com")!
         ) { _ in }
     )
 }

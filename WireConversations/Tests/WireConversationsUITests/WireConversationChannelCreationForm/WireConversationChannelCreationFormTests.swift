@@ -40,7 +40,8 @@ class WireConversationChannelCreationFormTests: XCTestCase {
         let view = WireConversationChannelCreationForm(
             viewModel: WireConversationChannelCreationFormViewModel(
                 channelName: "",
-                isUserPremium: true
+                isUserPremium: true,
+                teamsURL: URL(string: "https://google.com")!
             ) { _ in }
         )
         .frame(width: 375, height: 667)
@@ -59,7 +60,8 @@ class WireConversationChannelCreationFormTests: XCTestCase {
         let view = WireConversationChannelCreationForm(
             viewModel: WireConversationChannelCreationFormViewModel(
                 channelName: "",
-                isUserPremium: true
+                isUserPremium: true,
+                teamsURL: URL(string: "https://google.com")!
             ) { _ in }
         )
         .frame(width: 375, height: 667)
@@ -78,7 +80,8 @@ class WireConversationChannelCreationFormTests: XCTestCase {
     func testColorSchemeVariantsEmptyState_Visible_Picker() {
         let viewModel = WireConversationChannelCreationFormViewModel(
             channelName: "",
-            isUserPremium: true
+            isUserPremium: true,
+            teamsURL: URL(string: "https://google.com")!
         ) { _ in }
 
         viewModel.channelHistoryOption = .custom
@@ -101,7 +104,8 @@ class WireConversationChannelCreationFormTests: XCTestCase {
     func testDynamicTypeVariantsEmptyState_Visible_Picker() {
         let viewModel = WireConversationChannelCreationFormViewModel(
             channelName: "",
-            isUserPremium: true
+            isUserPremium: true,
+            teamsURL: URL(string: "https://google.com")!
         ) { _ in }
 
         viewModel.channelHistoryOption = .custom
@@ -124,7 +128,8 @@ class WireConversationChannelCreationFormTests: XCTestCase {
     func testDynamicTypeVariants_Upgrade_Banner_Visible() {
         let viewModel = WireConversationChannelCreationFormViewModel(
             channelName: "",
-            isUserPremium: true
+            isUserPremium: true,
+            teamsURL: URL(string: "https://google.com")!
         ) { _ in }
 
         viewModel.channelHistoryOption = .custom
@@ -149,7 +154,8 @@ class WireConversationChannelCreationFormTests: XCTestCase {
     func testColorSchemeVariants_Upgrade_Banner_Visible() {
         let viewModel = WireConversationChannelCreationFormViewModel(
             channelName: "",
-            isUserPremium: true
+            isUserPremium: true,
+            teamsURL: URL(string: "https://google.com")!
         ) { _ in }
 
         viewModel.channelHistoryOption = .custom
