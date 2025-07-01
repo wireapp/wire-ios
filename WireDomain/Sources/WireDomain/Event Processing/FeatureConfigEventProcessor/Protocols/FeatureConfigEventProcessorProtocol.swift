@@ -29,6 +29,6 @@ protocol FeatureConfigEventProcessorProtocol {
     ///
     /// - Parameter event: A feature config update event.
 
-    func processEvent(_ event: FeatureConfigEvent) async throws
+    func processEvent(_ event: FeatureConfigEvent) async
 
 }

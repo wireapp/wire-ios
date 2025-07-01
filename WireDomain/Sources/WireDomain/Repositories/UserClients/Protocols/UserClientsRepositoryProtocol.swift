@@ -46,7 +46,7 @@ public protocol UserClientsRepositoryProtocol {
 
     func fetchOrCreateClient(
         id: String
-    ) async throws -> (client: WireDataModel.UserClient, isNew: Bool)
+    ) async -> (client: WireDataModel.UserClient, isNew: Bool)
 
     /// Updates the user client informations locally.
     ///
@@ -59,7 +59,7 @@ public protocol UserClientsRepositoryProtocol {
         id: String,
         from remoteClient: WireNetwork.SelfUserClient,
         isNewClient: Bool
-    ) async throws
+    ) async
 
     /// Deletes client locally.
     /// - parameter id: The client id.

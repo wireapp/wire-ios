@@ -77,4 +77,13 @@ public extension StoredUpdateEventEnvelope {
         return request
     }
 
+    static func fetchRequest(sortIndices: [Int64]) -> NSFetchRequest<StoredUpdateEventEnvelope> {
+        let request = NSFetchRequest<StoredUpdateEventEnvelope>(entityName: entityName)
+        request.predicate = NSPredicate(
+            format: "%K IN %@",
+            #keyPath(StoredUpdateEventEnvelope.sortIndex),
+            sortIndices
+        )
+        return request
+    }
 }

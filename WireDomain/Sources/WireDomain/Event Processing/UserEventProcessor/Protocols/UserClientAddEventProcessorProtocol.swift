@@ -26,6 +26,6 @@ protocol UserClientAddEventProcessorProtocol {
     ///
     /// - Parameter event: A user client add event.
 
-    func processEvent(_ event: UserClientAddEvent) async throws
+    func processEvent(_ event: UserClientAddEvent) async
 
 }
