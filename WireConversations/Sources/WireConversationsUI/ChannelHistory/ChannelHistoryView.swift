@@ -26,7 +26,7 @@ package struct ChannelHistoryView: View {
     @ObservedObject var viewModel: ChannelHistoryViewModel
     @State private var rotationAngle: Double = 0
     @State private var isExpanded: Bool = false
-    
+
     typealias ChannelHistory = L10n.Localizable.Conversation.ChannelHistory
 
     package init(viewModel: ChannelHistoryViewModel) {
@@ -138,7 +138,7 @@ package struct ChannelHistoryView: View {
 
 extension ChannelHistoryOption {
     typealias ChannelHistory = L10n.Localizable.Conversation.ChannelHistory
-    
+
     var title: String {
         switch self {
         case .off:
@@ -159,7 +159,7 @@ extension ChannelHistoryOption {
 
 extension ChannelHistoryOption.Custom.Unit {
     typealias ChannelHistory = L10n.Localizable.Conversation.ChannelHistory
-    
+
     var title: String {
         switch self {
         case .days:
