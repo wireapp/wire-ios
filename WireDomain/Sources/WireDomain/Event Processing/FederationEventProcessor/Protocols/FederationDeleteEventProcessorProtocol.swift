@@ -26,6 +26,6 @@ protocol FederationDeleteEventProcessorProtocol {
     ///
     /// - Parameter event: A federation delete event.
 
-    func processEvent(_ event: FederationDeleteEvent) async throws
+    func processEvent(_ event: FederationDeleteEvent) async
 
 }

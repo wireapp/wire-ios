@@ -85,7 +85,7 @@ final class ConversationViewController: UIViewController {
     let conversationBarController: BarController = .init()
     let guestsBarController: GuestsBarController = .init()
     let invisibleInputAccessoryView: InvisibleInputAccessoryView = .init()
-    let mediaBarViewController: MediaBarViewController
+    private let mediaBarViewController: MediaBarViewController
 
     private let titleView: WireConversationUI.ConversationTitleView
 
@@ -742,13 +742,11 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
             contentViewController.scrollToBottomIfNeeded()
         }
 
-        setGuestBarForceHidden(true)
         return true
     }
 
     func conversationInputBarViewControllerShouldEndEditing(_ controller: ConversationInputBarViewController) -> Bool {
-        setGuestBarForceHidden(false)
-        return true
+        true
     }
 
     func conversationInputBarViewControllerDidFinishEditing(

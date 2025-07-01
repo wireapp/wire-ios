@@ -194,7 +194,7 @@ public final class UserRepository: UserRepositoryProtocol {
         } else {
             await userLocalStore.markAccountAsDeleted(for: user)
 
-            try await userLocalStore.removeUserFromAllConversations(
+            await userLocalStore.removeUserFromAllConversations(
                 id: id,
                 domain: domain,
                 date: date
