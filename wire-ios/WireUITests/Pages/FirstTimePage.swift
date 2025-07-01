@@ -39,4 +39,10 @@ class FirstTimePage: PageModel {
         button.tap()
         return try ConversationsPage()
     }
+
+    func acceptPopupOnTeamMemberSetup() throws -> SetUsernamePage {
+        let button = app.otherElements.buttons.firstMatch
+        button.tap()
+        return try SetUsernamePage()
+    }
 }

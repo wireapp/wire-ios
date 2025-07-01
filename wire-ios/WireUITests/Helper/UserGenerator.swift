@@ -35,14 +35,6 @@ enum UserGenerator {
             teamName: teamName,
             teamID: nil
         )
-        return UserInfo(
-            name: name,
-            username: username,
-            password: password,
-            domain: domain,
-            teamName: teamName,
-            teamID: nil
-        )
     }
 
     static func generateRandomPassword() -> String {

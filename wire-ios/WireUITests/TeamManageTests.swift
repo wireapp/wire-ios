@@ -40,7 +40,7 @@ final class TeamManageTests: WireUITestCase {
             .typeTeamNameAndContinue(user.teamName)
             .acceptTheConfirmationAndContinue()
 
-         conversationPage = try teamCreationStepsPage.tapBackToWireButton()
+        conversationPage = try teamCreationStepsPage.tapBackToWireButton()
 
         userAccountPage = try conversationPage.openUserAccount()
 
@@ -54,5 +54,51 @@ final class TeamManageTests: WireUITestCase {
         try settingsPage.openAccountSettings()
             .logout()
             .enterPassword(user.password)
+    }
+
+    @MainActor
+    func test_Member_JoiningTeamSetup() async throws {
+        let Owner = try await userManager.createPersonalUser()
+        let memberUser = UserGenerator.generateUniqueUserInfo()
+        userManager.addUser(memberUser)
+        let teamID = try await BackendClient.upgradePersonalToTeam(
+            email: Owner.email,
+            password: Owner.password,
+            teamName: Owner.teamName
+        )
+
+        let invitationID = try await BackendClient.inviteUserToTeam(
+            teamID: teamID,
+            email: Owner.email,
+            password: Owner.password,
+            memberName: memberUser.name,
+            memberEmail: memberUser.email
+        )
+        let code = try await BackendClient.getInvitationCode(team: teamID, invitationID: invitationID)
+        try await BackendClient.registerTeamMember(memberUser, invitationCode: code)
+
+        let welcomePage = try WelcomePage()
+
+        let loginPage = try welcomePage
+            .enterEmailOrSSO(memberUser.email)
+
+        let firstTimePage = try loginPage.enterPassword(memberUser.password)
+        let setUsernamePage = try firstTimePage.acceptFirstTimeAlert()
+            .acceptPopupOnTeamMemberSetup()
+
+        var conversationPage = try setUsernamePage.setUsername(memberUser.username)
+
+        let userAccountPage = try conversationPage.openUserAccount()
+
+        let teamName = try XCTUnwrap(userAccountPage.getTeamName())
+        XCTAssertEqual(teamName, Owner.teamName, "Team name didn't match expected value \(Owner.teamName)")
+
+        conversationPage = try userAccountPage.closeAccountPage()
+        let settingsPage = try conversationPage.openSettings()
+
+        try settingsPage.openAccountSettings()
+            .logout()
+            .enterPassword(memberUser.password)
+
     }
 }

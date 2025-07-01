@@ -96,15 +96,21 @@ class UserManager {
                     email: user.email,
                     password: user.password
                 ) {
-                    try await BackendClient.sendVerificationCode(email: user.email, password: user.password)
-                    let code = try await InbucketClient.getVerificationCode(email: user.email)
-                    try await selfUserAPI.deleteTeam(teamId: teamID, password: user.password, verificationCode: code)
+                    do {
+                        try await BackendClient.sendVerificationCode(email: user.email, password: user.password)
+                        let code = try await InbucketClient.getVerificationCode(email: user.email)
+                        try await selfUserAPI.deleteTeam(
+                            teamId: teamID,
+                            password: user.password,
+                            verificationCode: code
+                        )
+                    } catch {
+                        print("Failed to delete team for user \(user.email): \(error)")
+                    }
                 } else {
                     try await deleteUser(user)
                 }
             } catch {
-                print("Teardown failed for user \(user.email): \(error)")
-                // Attempt to delete user anyway
                 do {
                     try await deleteUser(user)
                 } catch {

@@ -101,7 +101,7 @@ enum BackendClient {
         request.addValue("application/json", forHTTPHeaderField: "Accept")
         request.addValue("Bearer \(access_token)", forHTTPHeaderField: "Authorization")
 
-        let (responseData, response) = try await URLSession.shared.data(for: request)
+        let (_, response) = try await URLSession.shared.data(for: request)
 
         let pureResponse = response as! HTTPURLResponse
         if pureResponse.statusCode != 200 {
@@ -110,7 +110,7 @@ enum BackendClient {
     }
 
     static func registerPersonalUser(_ user: UserInfo) async throws -> UserInfo {
-        var body: [String: Any] = [
+        let body: [String: Any] = [
             "email": user.email,
             "password": user.password,
             "name": user.name
@@ -162,12 +162,110 @@ enum BackendClient {
         let userData: SelfAPIResponse = try JSONDecoder().decode(SelfAPIResponse.self, from: responseData)
         return userData.team
     }
-    // =======
-//            throw RuntimeError("Error \(pureResponse.description)")
-//        }
-//        return responseData
-//    }
-    // >>>>>>> origin/develop
+
+    static func upgradePersonalToTeam(email: String, password: String, teamName: String) async throws -> UUID {
+        let access_token = try await loginViaAPI(email: email, password: password)
+        let body: [String: Any] = [
+            "icon": "default",
+            "name": teamName
+        ]
+
+        let url = URL(string: "\(backendURL)/upgrade-personal-to-team")
+        guard let requestUrl = url else { fatalError() }
+
+        var request = URLRequest(url: requestUrl)
+        request.httpMethod = "POST"
+        request.httpBody = try JSONSerialization.data(withJSONObject: body, options: .prettyPrinted)
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        request.addValue("Bearer \(access_token)", forHTTPHeaderField: "Authorization")
+
+        let (responseData, response) = try await URLSession.shared.data(for: request)
+
+        let pureResponse = response as! HTTPURLResponse
+        if pureResponse.statusCode != 200 {
+            throw (RuntimeError("Error \(pureResponse.description)"))
+        }
+
+        let userData: PersonalToTeamResponse = try JSONDecoder().decode(PersonalToTeamResponse.self, from: responseData)
+        return userData.team_id
+
+    }
+
+    static func inviteUserToTeam(
+        teamID: UUID,
+        email: String,
+        password: String,
+        memberName: String,
+        memberEmail: String
+    ) async throws -> UUID {
+        let access_token = try await loginViaAPI(email: email, password: password)
+        let body: [String: Any] = [
+            "email": memberEmail,
+            "name": memberName,
+            "role": "member"
+        ]
+
+        let envVariables = try EnvironmentVariables()
+        let requestUrl = envVariables.backendURL.appending(path: "/v8/teams/\(teamID)/invitations")
+
+        var request = URLRequest(url: requestUrl)
+        request.httpMethod = "POST"
+        request.httpBody = try JSONSerialization.data(withJSONObject: body, options: .prettyPrinted)
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        request.addValue("Bearer \(access_token)", forHTTPHeaderField: "Authorization")
+
+        let (responseData, response) = try await URLSession.shared.data(for: request)
+
+        let pureResponse = response as! HTTPURLResponse
+        if pureResponse.statusCode != 201 {
+            throw (RuntimeError("Error \(pureResponse.description)"))
+        }
+
+        let userData: InviteUserToTeamResponse = try JSONDecoder().decode(
+            InviteUserToTeamResponse.self,
+            from: responseData
+        )
+        return userData.id
+    }
+
+    static func getInvitationCode(team: UUID, invitationID: UUID) async throws -> String {
+        let url = URL(string: "\(backendURL)/i/teams/invitation-code?team=\(team)&invitation_id=\(invitationID)")
+        let auth = ProcessInfo.processInfo.environment["BASIC_AUTH"]!
+        guard let requestUrl = url else { fatalError() }
+        var request = URLRequest(url: requestUrl)
+        request.httpMethod = "GET"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        request.addValue("Basic \(auth)", forHTTPHeaderField: "Authorization")
+
+        let (responseData, response) = try await URLSession.shared.data(for: request)
+
+        let pureResponse = response as! HTTPURLResponse
+        if pureResponse.statusCode != 200 {
+
+            throw RuntimeError("Error \(pureResponse.description)")
+
+        }
+
+        let message: InvitationCodeReponse = try JSONDecoder().decode(InvitationCodeReponse.self, from: responseData)
+        return message.code
+    }
+
+    static func registerTeamMember(
+        _ memberUser: UserInfo, invitationCode: String
+    ) async throws {
+        let body: [String: Any] = [
+            "email": memberUser.email,
+            "password": memberUser.password,
+            "name": memberUser.email,
+            "team_code": invitationCode
+        ]
+
+        _ = try await httpPostRequest(url: "\(backendURL)/register", body: body)
+    }
+
 }
 
 private struct LoginMessage: Decodable {
@@ -193,4 +291,16 @@ private struct ActivationCodeReponse: Decodable {
 
 private struct SelfAPIResponse: Decodable {
     let team: UUID?
+}
+
+private struct PersonalToTeamResponse: Decodable {
+    let team_id: UUID
+}
+
+private struct InviteUserToTeamResponse: Decodable {
+    let id: UUID
+}
+
+private struct InvitationCodeReponse: Decodable {
+    let code: String
 }

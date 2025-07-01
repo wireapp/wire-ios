@@ -101,6 +101,7 @@ class SelfUserAPIV0: SelfUserAPI, VersionedAPI {
             .success(code: .ok)
             .parse(code: response.statusCode, data: data)
     }
+
 }
 
 struct SelfUserV0: Decodable, ToAPIModelConvertible {
@@ -201,4 +202,9 @@ private struct UpdateHandleRequestBodyV0: Encodable {
 private struct DeleteTeamRequestBodyV0: Encodable {
     var password: String
     var verificationCode: String
+}
+
+private struct MigratePersonalToTeamBodyV0: Encodable {
+    var icon: String
+    var name: String
 }
