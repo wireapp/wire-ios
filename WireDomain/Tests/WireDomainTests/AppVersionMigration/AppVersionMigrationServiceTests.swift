@@ -209,13 +209,15 @@ final class AppVersionMigrationServiceTests {
         journal[.lastCompletedAppVersionMigration] = "0.1.0"
         migrationToInterrupt = "1.0.0"
 
-        // When
-        let error = await #expect(throws: String.self) {
+        do {
+            // When
             try await sut.performAppMigrations()
+        } catch let error as String {
+            // Then
+            #expect(error == "Interrupted migration: 1.0.0")
         }
 
         // Then
-        #expect(error == "Interrupted migration: 1.0.0")
         #expect(migrationsPeformed == ["0.2.0"])
         #expect(journal[.lastCompletedAppVersionMigration] == "0.2.0")
 
