@@ -107,7 +107,7 @@ public struct WireChannelBannerView: View {
             buttonTitle: "Upgrade now",
             buttonURL: URL(string: "https://example.com")!,
             padding: 30,
-            closeButton: WireChannelBannerView.Configuration.CloseButton(
+            closeButton: .init(
                 accessibilityLabel: "close banner",
                 action: {}
             )

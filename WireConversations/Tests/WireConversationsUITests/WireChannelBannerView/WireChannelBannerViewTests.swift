@@ -20,9 +20,10 @@ import SwiftUI
 import WireConversationsUIBindings
 import WireTestingPackage
 import XCTest
+
 @testable import WireConversationsUI
 
-class WireChannelBannerTests: XCTestCase {
+final class WireChannelBannerTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
