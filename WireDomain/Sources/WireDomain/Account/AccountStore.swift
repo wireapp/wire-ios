@@ -19,7 +19,10 @@
 import Foundation
 import WireDataModel
 import WireLogging
+<<<<<<< HEAD
 import WireNetwork
+=======
+>>>>>>> 830afb8513 (refactor: clean up `AccountManager` and `AccountStore` - WPB-12067 (#3283))
 import WireSystem
 
 private let log = WireLogger(tag: "Accounts")
@@ -36,10 +39,15 @@ private let log = WireLogger(tag: "Accounts")
 
 struct AccountStore {
 
+<<<<<<< HEAD
     private let accountsDirectory: URL
     private let accountDataDirectory: URL
     private static let accountsDirectoryName = "Accounts"
     private static let accountDataDirectoryName = "AccountData"
+=======
+    private let directory: URL
+    private static let directoryName = "Accounts"
+>>>>>>> 830afb8513 (refactor: clean up `AccountManager` and `AccountStore` - WPB-12067 (#3283))
     private let fileManager = FileManager.default
 
     private let encoder = JSONEncoder()
@@ -51,11 +59,16 @@ struct AccountStore {
     /// - parameter root: The root url in which the storage will use to store its data
 
     init(root: URL) throws {
+<<<<<<< HEAD
         self.accountsDirectory = root.appendingPathComponent(AccountStore.accountsDirectoryName)
         self.accountDataDirectory = root
             .appendingPathComponent(AccountStore.accountDataDirectoryName)
         try fileManager.createAndProtectDirectory(at: accountsDirectory)
         try fileManager.createAndProtectDirectory(at: accountDataDirectory)
+=======
+        self.directory = root.appendingPathComponent(AccountStore.directoryName)
+        try fileManager.createAndProtectDirectory(at: directory)
+>>>>>>> 830afb8513 (refactor: clean up `AccountManager` and `AccountStore` - WPB-12067 (#3283))
     }
 
     // MARK: - Fetch
@@ -114,6 +127,7 @@ struct AccountStore {
         }
     }
 
+<<<<<<< HEAD
     // MARK: Backend Environment
 
     // MARK: - Store
@@ -174,6 +188,8 @@ struct AccountStore {
         }
     }
 
+=======
+>>>>>>> 830afb8513 (refactor: clean up `AccountManager` and `AccountStore` - WPB-12067 (#3283))
     // MARK: - Delete
 
     /// Delete an `Account`.
@@ -185,7 +201,10 @@ struct AccountStore {
     func deleteAccount(_ account: Account) -> Bool {
         do {
             try fileManager.removeItem(at: url(for: account.userIdentifier))
+<<<<<<< HEAD
             deleteBackendEnvironment(account: account)
+=======
+>>>>>>> 830afb8513 (refactor: clean up `AccountManager` and `AccountStore` - WPB-12067 (#3283))
             return true
         } catch {
             let accountDescription = account.safeForLoggingDescription
@@ -195,6 +214,7 @@ struct AccountStore {
         }
     }
 
+<<<<<<< HEAD
     // MARK: - Delete
 
     /// Delete an `BackendEnvironment`.
@@ -218,6 +238,8 @@ struct AccountStore {
         }
     }
 
+=======
+>>>>>>> 830afb8513 (refactor: clean up `AccountManager` and `AccountStore` - WPB-12067 (#3283))
     /// Delete the persistence layer of an `AccountStore` from the file system.
     ///
     /// Mostly useful for cleaning up after tests or for complete account resets.
@@ -227,7 +249,11 @@ struct AccountStore {
     @discardableResult
     static func delete(at root: URL) -> Bool {
         do {
+<<<<<<< HEAD
             try FileManager.default.removeItem(at: root.appendingPathComponent(accountsDirectoryName))
+=======
+            try FileManager.default.removeItem(at: root.appendingPathComponent(directoryName))
+>>>>>>> 830afb8513 (refactor: clean up `AccountManager` and `AccountStore` - WPB-12067 (#3283))
             return true
         } catch {
             log.error("Unable to remove all accounts, error: \(error.safeForLoggingDescription)")
@@ -239,7 +265,11 @@ struct AccountStore {
 
     private func listAccountIDs() -> Set<UUID> {
         do {
+<<<<<<< HEAD
             let paths = try fileManager.contentsOfDirectory(atPath: accountsDirectory.path)
+=======
+            let paths = try fileManager.contentsOfDirectory(atPath: directory.path)
+>>>>>>> 830afb8513 (refactor: clean up `AccountManager` and `AccountStore` - WPB-12067 (#3283))
             let ids = paths.compactMap(UUID.init(uuidString:))
             return Set(ids)
         } catch {
@@ -249,6 +279,7 @@ struct AccountStore {
     }
 
     private func url(for id: UUID) -> URL {
+<<<<<<< HEAD
         accountsDirectory.appendingPathComponent(id.uuidString)
     }
 
@@ -261,6 +292,11 @@ struct AccountStore {
         accountDataURL(accountID: id)
             .appendingPathComponent("backend-environment.json")
     }
+=======
+        directory.appendingPathComponent(id.uuidString)
+    }
+
+>>>>>>> 830afb8513 (refactor: clean up `AccountManager` and `AccountStore` - WPB-12067 (#3283))
 }
 
 private extension Error {
@@ -270,3 +306,74 @@ private extension Error {
     }
 
 }
+<<<<<<< HEAD
+=======
+
+private struct StoredAccount: Codable {
+
+    var identifier: UUID
+    var name: String
+    var image: Data?
+    var team: String?
+    var teamImage: Data?
+    var loginCredentials: StoredLoginCredentials?
+    var unreadConversationCount: Int
+
+    init(_ account: Account) {
+        self.identifier = account.userIdentifier
+        self.name = account.userName
+        self.image = account.imageData
+        self.team = account.teamName
+        self.teamImage = account.teamImageData
+        self.loginCredentials = account.loginCredentials.map {
+            StoredLoginCredentials($0)
+        }
+        self.unreadConversationCount = account.unreadConversationCount
+    }
+
+}
+
+private struct StoredLoginCredentials: Codable {
+
+    var emailAddress: String?
+    var hasPassword: Bool
+    var usesCompanyLogin: Bool
+
+    init(_ loginCredentials: LoginCredentials) {
+        self.emailAddress = loginCredentials.emailAddress
+        self.hasPassword = loginCredentials.hasPassword
+        self.usesCompanyLogin = loginCredentials.usesCompanyLogin
+    }
+
+}
+
+private extension Account {
+
+    convenience init(_ storedAccount: StoredAccount) {
+        self.init(
+            userName: storedAccount.name,
+            userIdentifier: storedAccount.identifier,
+            teamName: storedAccount.team,
+            imageData: storedAccount.image,
+            teamImageData: storedAccount.teamImage,
+            unreadConversationCount: storedAccount.unreadConversationCount,
+            loginCredentials: storedAccount.loginCredentials.map {
+                LoginCredentials($0)
+            }
+        )
+    }
+
+}
+
+private extension LoginCredentials {
+
+    convenience init(_ loginCredentials: StoredLoginCredentials) {
+        self.init(
+            emailAddress: loginCredentials.emailAddress,
+            hasPassword: loginCredentials.hasPassword,
+            usesCompanyLogin: loginCredentials.usesCompanyLogin
+        )
+    }
+
+}
+>>>>>>> 830afb8513 (refactor: clean up `AccountManager` and `AccountStore` - WPB-12067 (#3283))

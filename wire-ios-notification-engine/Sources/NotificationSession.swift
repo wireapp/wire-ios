@@ -128,10 +128,14 @@ public final class NotificationSession {
         minTLSVersion: String?
     ) throws {
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
+<<<<<<< HEAD
         let accountManager = try AccountManager(
             currentAppVersion: currentAppVersion,
             sharedDirectory: sharedContainerURL
         )
+=======
+        let accountManager = try AccountManager(sharedDirectory: sharedContainerURL)
+>>>>>>> 830afb8513 (refactor: clean up `AccountManager` and `AccountStore` - WPB-12067 (#3283))
 
         guard let account = accountManager.account(with: accountIdentifier) else {
             throw InitializationError.noAccount

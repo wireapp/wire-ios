@@ -15,12 +15,18 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+<<<<<<< HEAD
 // swiftlint:disable line_length
+=======
+>>>>>>> 830afb8513 (refactor: clean up `AccountManager` and `AccountStore` - WPB-12067 (#3283))
 
 import Foundation
 import Testing
 import WireDataModel
+<<<<<<< HEAD
 @testable import WireNetwork
+=======
+>>>>>>> 830afb8513 (refactor: clean up `AccountManager` and `AccountStore` - WPB-12067 (#3283))
 
 @testable import WireDomain
 
@@ -187,7 +193,11 @@ final class AccountStoreTests {
         }
 
         // Then
+<<<<<<< HEAD
         let account = try #require(sut.fetchAccount(with: uuid))
+=======
+        let account = try try #require(sut.fetchAccount(with: uuid))
+>>>>>>> 830afb8513 (refactor: clean up `AccountManager` and `AccountStore` - WPB-12067 (#3283))
         #expect(account.userName == name)
         #expect(account.teamName == team)
         #expect(account.imageData == nil)
@@ -379,6 +389,7 @@ final class AccountStoreTests {
         #expect(account == expectedAccount)
     }
 
+<<<<<<< HEAD
     @Test(
         "Store and fetch backend environment",
         arguments: [
@@ -488,3 +499,6 @@ final class AccountStoreTests {
 }
 
 // swiftlint:enable line_length
+=======
+}
+>>>>>>> 830afb8513 (refactor: clean up `AccountManager` and `AccountStore` - WPB-12067 (#3283))

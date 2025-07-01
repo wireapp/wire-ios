@@ -369,6 +369,7 @@ private extension AppDelegate {
     }
 
     private func createSessionManager() throws -> SessionManager {
+<<<<<<< HEAD
         let infoDictionary = Bundle.main.infoDictionary
 
         guard let currentAppVersion = infoDictionary?["CFBundleShortVersionString"] as? String  else {
@@ -377,6 +378,10 @@ private extension AppDelegate {
 
         guard let currentBuildVersion = infoDictionary?[kCFBundleVersionKey as String] as? String  else {
             throw SessionManagerSetupError.missingCurrentBuildVersion
+=======
+        guard let appVersion = Bundle.main.infoDictionary?[kCFBundleVersionKey as String] as? String  else {
+            throw SessionManagerSetupError.missingAppVersion
+>>>>>>> 830afb8513 (refactor: clean up `AccountManager` and `AccountStore` - WPB-12067 (#3283))
         }
 
         guard
@@ -443,6 +448,15 @@ private enum SessionManagerSetupError: Error {
 
     case missingCurrentAppVersion
     case missingCurrentBuildVersion
+    case missingConfiguration
+    case missingMediaManager
+    case initializationFailed(any Error)
+
+}
+
+private enum SessionManagerSetupError: Error {
+
+    case missingAppVersion
     case missingConfiguration
     case missingMediaManager
     case initializationFailed(any Error)
