@@ -337,12 +337,27 @@ final class StartUIViewController: UIViewController {
         typealias Localizable = L10n.Localizable.Peoplepicker
         typealias Accessibility = L10n.Accessibility.Peoplepicker
 
-        let buttonURL = URL(string: "https://teams.wire.com/register/email")!
+        let mainCoordinator = mainCoordinator
         let configuration = WireChannelBannerView.Configuration(
             title: Localizable.UpgradeBanner.headline,
             message: Localizable.UpgradeBanner.subheadline,
             mainButtonTitle: Localizable.UpgradeBanner.Button.title,
-            mainButtonAction: {},
+            mainButtonAction: { [weak self] in
+                let buttonURL = URL(string: "https://teams.wire.com/register/email")!
+                self?.dismiss(animated: true) {
+                    Task {
+                        guard let self else { return }
+                        let rootViewController = self.selfProfileUIBuilder.build(mainCoordinator: mainCoordinator)
+                        let navigationController = UINavigationController(rootViewController: rootViewController)
+                        navigationController.modalPresentationStyle = .formSheet
+                        navigationController.presentationController?.delegate = rootViewController
+                        await mainCoordinator.presentViewController(navigationController)
+                        if let selfProfileViewController = rootViewController as? SelfProfileViewController {
+                            selfProfileViewController.triggerCreateTeamFlow()
+                        }
+                    }
+                }
+            },
             closeButton: .init(
                 accessibilityLabel: Accessibility.UpgradeBanner.CloseButton.label,
                 action: { [weak self] in self?.dismiss(animated: true) }
@@ -362,25 +377,7 @@ final class StartUIViewController: UIViewController {
         hostingController.modalPresentationStyle = .overFullScreen
         hostingController.modalTransitionStyle   = .crossDissolve
         hostingController.overrideUserInterfaceStyle = .dark
-        return present(hostingController, animated: true)
-
-        // TODO: use real banner and test on iPad
-        let mainCoordinator = mainCoordinator
-        let alertController = UIAlertController(title: "upgrade", message: "upgrade", preferredStyle: .alert)
-        alertController.addAction(.init(title: "upgrade", style: .default) { [weak self] _ in
-            Task {
-                guard let self else { return }
-                let rootViewController = self.selfProfileUIBuilder.build(mainCoordinator: mainCoordinator)
-                let navigationController = UINavigationController(rootViewController: rootViewController)
-                navigationController.modalPresentationStyle = .formSheet
-                navigationController.presentationController?.delegate = rootViewController
-                await mainCoordinator.presentViewController(navigationController)
-                if let selfProfileViewController = rootViewController as? SelfProfileViewController {
-                    selfProfileViewController.triggerCreateTeamFlow()
-                }
-            }
-        })
-        present(alertController, animated: true)
+        present(hostingController, animated: true)
     }
 
 }
