@@ -34,7 +34,6 @@ public enum MLSAPIError: Error, Equatable {
         return String(decoding: try encoder.encode(encodableObject), as: UTF8.self)
     }
 
-
     /// Unsupported endpoint for API version
 
     case unsupportedEndpointForAPIVersion
@@ -60,7 +59,6 @@ public enum MLSAPIError: Error, Equatable {
     case mlsError(_ label: String, _ message: String)
 
 }
-
 
 enum MLSAPIV0Error: Error, Codable, Equatable {
 

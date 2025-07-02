@@ -60,7 +60,6 @@ enum ConversationAccessRoleV0: String, Sendable, Decodable, ToAPIModelConvertibl
     }
 }
 
-
 extension ConversationAccessRole: ToNetworkConvertible {
 
     func toNetworkModel() -> ConversationAccessRoleV0 {
