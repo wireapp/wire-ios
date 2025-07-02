@@ -26,13 +26,13 @@ import Foundation
 /// migration should be written in a way that can handle repeated
 /// executions.
 
-final class AppVersionMigrationService {
+public final class AppVersionMigrationService {
 
     var journal: any JournalProtocol
     let currentVersion: SemanticVersion
     let allMigrations: [any AppVersionMigration]
 
-    init(
+    public init(
         journal: any JournalProtocol,
         currentVersion: SemanticVersion,
         allMigrations: [any AppVersionMigration]
@@ -52,7 +52,7 @@ final class AppVersionMigrationService {
         )
     }
 
-    func performAppMigrations() async throws {
+    public func performAppMigrations() async throws {
         // Get the last completed migration version.
         let lastVersion = journal.lastCompletedAppVersionMigration ?? currentVersion
 

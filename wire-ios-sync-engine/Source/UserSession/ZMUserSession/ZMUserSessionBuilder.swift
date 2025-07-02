@@ -31,7 +31,8 @@ struct ZMUserSessionBuilder {
     private var apiServiceFactory: APIServiceFactory?
     private var backendEnvironment: WireTransport.BackendEnvironment?
     private var wireAPIBackendEnvironment: WireAPI.BackendEnvironment?
-    private var appVersion: String?
+    private var currentAppVersion: String?
+    private var currentBuildNumber: String?
     private var appLock: (any AppLockType)?
     private var application: (any ZMApplication)?
     private var applicationStatusDirectory: ApplicationStatusDirectory?
@@ -65,7 +66,8 @@ struct ZMUserSessionBuilder {
     func build() -> ZMUserSession {
         guard
             let apiServiceFactory,
-            let appVersion,
+            let currentAppVersion,
+            let currentBuildNumber,
             let appLock,
             let application,
             let applicationStatusDirectory,
@@ -100,7 +102,8 @@ struct ZMUserSessionBuilder {
             flowManager: flowManager,
             apiServiceFactory: apiServiceFactory,
             application: application,
-            appVersion: appVersion,
+            currentAppVersion: currentAppVersion,
+            currentBuildNumber: currentBuildNumber,
             coreDataStack: coreDataStack,
             earService: earService,
             mlsService: mlsService,
@@ -129,7 +132,8 @@ struct ZMUserSessionBuilder {
         apiServiceFactory: @escaping APIServiceFactory,
         backendEnvironment: WireTransport.BackendEnvironment,
         wireAPIBackendEnvironment: WireAPI.BackendEnvironment,
-        appVersion: String,
+        currentAppVersion: String,
+        currentBuildNumber: String,
         application: any ZMApplication,
         cryptoboxMigrationManager: any CryptoboxMigrationManagerInterface,
         coreDataStack: CoreDataStack,
@@ -219,7 +223,8 @@ struct ZMUserSessionBuilder {
         // setup builder
 
         self.apiServiceFactory = apiServiceFactory
-        self.appVersion = appVersion
+        self.currentAppVersion = currentAppVersion
+        self.currentBuildNumber = currentBuildNumber
         self.appLock = appLock
         self.application = application
         self.applicationStatusDirectory = applicationStatusDirectory

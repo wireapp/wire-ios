@@ -39,7 +39,8 @@ public final class ZMUserSession: NSObject {
 
     // MARK: Properties
 
-    private let appVersion: String
+    private let currentAppVersion: String
+    private let currentBuildNumber: String
     private var tokens: [Any] = []
     public private(set) var isTornDown = false
 
@@ -365,6 +366,12 @@ public final class ZMUserSession: NSObject {
         coreCryptoProvider: coreCryptoProvider,
         mlsService: mlsService
     )
+    
+    private lazy var appVersionMigrationService: AppVersionMigrationService = .init(
+        journal: journal,
+        currentVersion: SemanticVersion(stringLiteral: currentAppVersion),
+        allMigrations: makeAppVersionMigrations()
+    )
 
     // MARK: Dependency Injection
 
@@ -391,7 +398,8 @@ public final class ZMUserSession: NSObject {
         flowManager: any FlowManagerType,
         apiServiceFactory: @escaping @Sendable (_ clientID: String, _ userID: UUID) -> APIServiceProtocol,
         application: ZMApplication,
-        appVersion: String,
+        currentAppVersion: String,
+        currentBuildNumber: String,
         coreDataStack: CoreDataStack,
         earService: any EARServiceInterface,
         mlsService: any MLSServiceInterface,
@@ -414,7 +422,8 @@ public final class ZMUserSession: NSObject {
     ) {
         self.apiServiceFactory = apiServiceFactory
         self.application = application
-        self.appVersion = appVersion
+        self.currentAppVersion = currentAppVersion
+        self.currentBuildNumber = currentBuildNumber
         self.flowManager = flowManager
         self.mediaManager = mediaManager
         self.coreDataStack = coreDataStack
@@ -644,6 +653,14 @@ public final class ZMUserSession: NSObject {
     }
 
     // MARK: - Methods
+    
+    public func performAppMigrationsIfNeeded() async {
+        do {
+            try await appVersionMigrationService.performAppMigrations()
+        } catch {
+            WireLogger.session.error("Failed to perform app version migrations: \(String(describing: error))")
+        }
+    }
 
     private func configureTransportSession() {
         transportSession.pushChannel.clientID = selfUserClient?.remoteIdentifier
@@ -1549,4 +1566,16 @@ extension ZMUserSession {
         }
 
     }
+}
+
+extension ZMUserSession {
+
+    private func makeAppVersionMigrations() -> [any AppVersionMigration] {
+        [
+            AppVersionMigration_4_1_0(
+                performResourceSync: triggerResourcesSync
+            )
+        ]
+    }
+
 }

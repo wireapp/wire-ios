@@ -16,20 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+
 import Foundation
+import WireDomain
+import WireLogging
 
-/// A migration to be performed when the app updates
-/// to or past a particular version.
-
-public protocol AppVersionMigration {
-
-    /// The app version for which this migration should
-    /// be run.
-
-    var version: SemanticVersion { get }
-
-    /// Perform the migration.
-
-    func perform() async throws
-
+struct AppVersionMigration_4_1_0: AppVersionMigration {
+    
+    var version: SemanticVersion { SemanticVersion("4.1.0") }
+    private let performResourceSync: () -> Void
+    
+    init(
+        performResourceSync: @escaping () -> Void
+    ) {
+        self.performResourceSync = performResourceSync
+    }
+    
+    func perform() async throws {
+        // Performs a resources sync to ensure all conversations are up to date.
+        performResourceSync()
+    }
 }

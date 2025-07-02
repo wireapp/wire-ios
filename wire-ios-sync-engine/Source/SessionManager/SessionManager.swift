@@ -410,7 +410,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         )
 
         let authenticatedSessionFactory = AuthenticatedSessionFactory(
-            appVersion: currentBuildVersion,
+            currentAppVersion: currentAppVersion,
+            currentBuildNumber: currentBuildVersion,
             application: application,
             mediaManager: mediaManager,
             flowManager: flowManager,
@@ -1093,19 +1094,21 @@ public final class SessionManager: NSObject, SessionManagerType {
                             coreDataStack: coreDataStack
                         )
                     }
-
+                    
+                    let userSession = self.startBackgroundSession(
+                        for: account,
+                        with: coreDataStack,
+                        journal: journal
+                    )
+                    
+                    await userSession.performAppMigrationsIfNeeded()
+                    
+                    self.triggerMigrationsNeedsActionsIfNeeded(
+                        journal: journal,
+                        userSession: userSession
+                    )
+                    
                     await MainActor.run {
-                        let userSession = self.startBackgroundSession(
-                            for: account,
-                            with: coreDataStack,
-                            journal: journal
-                        )
-
-                        self.triggerMigrationsNeedsActionsIfNeeded(
-                            journal: journal,
-                            userSession: userSession
-                        )
-
                         onCompletion(userSession)
                     }
                 }
