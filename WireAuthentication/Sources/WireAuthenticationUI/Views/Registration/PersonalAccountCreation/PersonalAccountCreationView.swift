@@ -86,7 +86,7 @@ struct PersonalAccountCreationView: View {
             emailField
             passwordField
             confirmPasswordField
-            dataUsageAgreementView
+            // dataUsageAgreementView // TODO: [WPB-18385] re-enable
             continueButton
             teamAccountCreationView
 
