@@ -22,7 +22,7 @@ struct TeamCreateEventProcessor: TeamCreateEventProcessorProtocol {
 
     let repository: any TeamRepositoryProtocol
 
-    func processEvent(_ event: TeamCreateEvent) async throws {
+    func processEvent(_ event: TeamCreateEvent) async {
         let identifier = event.identifier
         let name = event.name
         let creator = event.creator

@@ -69,7 +69,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
     func decryptEvents(
         in eventEnvelope: UpdateEventEnvelope,
         context: CoreCryptoContextProtocol?
-    ) async throws -> EventDecryptorResult {
+    ) async -> EventDecryptorResult {
         guard !DeveloperFlag.skipMLSMessagesDecryption.isOn else {
             return EventDecryptorResult(events: [], brokenMLSGroupIDs: [])
         }

@@ -28,7 +28,7 @@ public protocol UpdateEventDecryptorProtocol {
     /// - Parameter eventEnvelope: An event envelope that contains events received from the server.
     /// - Returns: A list of decrypted update events.
 
-    func decryptEvents(in eventEnvelope: UpdateEventEnvelope, context: CoreCryptoContextProtocol?) async throws
+    func decryptEvents(in eventEnvelope: UpdateEventEnvelope, context: CoreCryptoContextProtocol?) async
         -> EventDecryptorResult
 
 }
