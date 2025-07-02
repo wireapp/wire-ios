@@ -171,8 +171,8 @@ extension WireNetwork.Conversation {
             name: name,
             messageTimer: messageTimer,
             readReceiptMode: readReceiptMode,
-            access: access?.map(\.rawValue),
-            accessRoles: accessRoles?.map(\.rawValue),
+            access: access?.map { $0.toDomainModel() },
+            accessRoles: accessRoles?.map { $0.toDomainModel() },
             legacyAccessRole: legacyAccessRole?.toDomainModel(),
             lastEvent: lastEvent,
             lastEventTime: lastEventTime,
@@ -180,7 +180,38 @@ extension WireNetwork.Conversation {
             addPermission: addPermission?.toDomainModel()
         )
     }
+}
 
+extension WireNetwork.ConversationAccessRole {
+    func toDomainModel() -> String {
+        switch self {
+        case .teamMember:
+            return "team_member"
+        case .nonTeamMember:
+            return "non_team_member"
+        case .guest:
+            return "guest"
+        case .service:
+            return "service"
+        }
+    }
+
+}
+
+extension WireNetwork.ConversationAccessMode {
+    func toDomainModel() -> String {
+        switch self {
+
+        case .private:
+            return "private"
+        case .invite:
+            return "invite"
+        case .link:
+            return "link"
+        case .code:
+            return "code"
+        }
+    }
 }
 
 extension WireNetwork.ConversationGroupType {

@@ -176,7 +176,7 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
         // Then
         let invocation = try XCTUnwrap(userLocalStore.updateUserWithAvailability_Invocations.first)
         XCTAssertEqual(invocation.availability, .available)
-        XCTAssertEqual(invocation.userID.uuid, Scaffolding.userID.uuid)
+        XCTAssertEqual(invocation.userID.uuid, Scaffolding.userID.id)
         XCTAssertEqual(invocation.userID.domain, Scaffolding.userID.domain)
     }
 

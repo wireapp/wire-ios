@@ -39,8 +39,8 @@ struct ConversationAccessUpdateEventProcessor: ConversationAccessUpdateEventProc
 
         await localStore.updateAccesses(
             for: localConversation,
-            accessModes: event.accessModes.map(\.rawValue),
-            accessRoles: accessRoles.map(\.rawValue)
+            accessModes: event.accessModes.map { $0.toDataModel() },
+            accessRoles: accessRoles.map { $0.toDataModel() }
         )
     }
 
@@ -59,4 +59,34 @@ struct ConversationAccessUpdateEventProcessor: ConversationAccessUpdateEventProc
         }
     }
 
+}
+
+private extension WireNetwork.ConversationAccessMode {
+    func toDataModel() -> String {
+        switch self {
+        case .`private`:
+            return "private"
+        case .invite:
+            return "invite"
+        case .link:
+            return "link"
+        case .code:
+            return "code"
+        }
+    }
+}
+
+private extension WireNetwork.ConversationAccessRole {
+    func toDataModel() -> String {
+        switch self {
+        case .teamMember:
+            return "team_member"
+        case .nonTeamMember:
+            return "non_team_member"
+        case .guest:
+            return "guest"
+        case .service:
+            return "service"
+        }
+    }
 }

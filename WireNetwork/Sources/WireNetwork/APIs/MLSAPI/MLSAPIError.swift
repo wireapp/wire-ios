@@ -22,6 +22,19 @@ import Foundation
 
 public enum MLSAPIError: Error, Equatable {
 
+    public init(from string: String) throws {
+        let error = try JSONDecoder().decode(MLSAPIV0Error.self, from: Data(string.utf8))
+        self = error.toAPIModel()
+    }
+    
+    public func encodeAsString() throws -> String {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .sortedKeys
+        let encodableObject = self.toNetworkModel()
+        return String(decoding: try encoder.encode(encodableObject), as: UTF8.self)
+    }
+
+
     /// Unsupported endpoint for API version
 
     case unsupportedEndpointForAPIVersion
@@ -51,16 +64,6 @@ public enum MLSAPIError: Error, Equatable {
 
 enum MLSAPIV0Error: Error, Codable, Equatable {
 
-    init(from string: String) throws {
-        self = try JSONDecoder().decode(MLSAPIV0Error.self, from: Data(string.utf8))
-    }
-
-    func encodeAsString() throws -> String {
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = .sortedKeys
-        return String(decoding: try encoder.encode(self), as: UTF8.self)
-    }
-
     /// Unsupported endpoint for API version
 
     case unsupportedEndpointForAPIVersion
@@ -85,4 +88,46 @@ enum MLSAPIV0Error: Error, Codable, Equatable {
 
     case mlsError(_ label: String, _ message: String)
 
+}
+
+extension MLSAPIV0Error: ToAPIModelConvertible {
+    
+    func toAPIModel() -> MLSAPIError {
+        switch self {
+            
+        case .unsupportedEndpointForAPIVersion:
+            return .unsupportedEndpointForAPIVersion
+        case .mlsNotEnabled:
+            return .mlsNotEnabled
+        case .mlsStaleMessage:
+            return .mlsStaleMessage
+        case .mlsClientMismatch:
+            return .mlsClientMismatch
+        case .mlsCommitMissingReferences:
+            return .mlsCommitMissingReferences
+        case let .mlsError(label, message):
+            return .mlsError(label, message)
+        }
+    }
+}
+
+extension MLSAPIError: ToNetworkConvertible {
+    
+    func toNetworkModel() -> MLSAPIV0Error {
+        switch self {
+            
+        case .unsupportedEndpointForAPIVersion:
+            return .unsupportedEndpointForAPIVersion
+        case .mlsNotEnabled:
+            return .mlsNotEnabled
+        case .mlsStaleMessage:
+            return .mlsStaleMessage
+        case .mlsClientMismatch:
+            return .mlsClientMismatch
+        case .mlsCommitMissingReferences:
+            return .mlsCommitMissingReferences
+        case let .mlsError(label, message):
+            return .mlsError(label, message)
+        }
+    }
 }

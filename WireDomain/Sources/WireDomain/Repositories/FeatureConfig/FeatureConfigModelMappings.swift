@@ -107,9 +107,22 @@ extension WireNetwork.ChannelsFeatureConfig {
 
     func toDomainModel() -> Feature.Channels.Config {
         .init(
-            allowedToCreateChannels: .init(rawValue: allowedToCreateChannels.rawValue)!,
-            allowedToOpenChannels: .init(rawValue: allowedToOpenChannels.rawValue)!
+            allowedToCreateChannels: allowedToCreateChannels.toDomainModel(),
+            allowedToOpenChannels: allowedToOpenChannels.toDomainModel()
         )
     }
 
+}
+
+extension WireNetwork.ChannelsPermision {
+    func toDomainModel() -> Feature.Channels.Config.ChannelsPermision {
+        switch self {
+        case .admins:
+            return .admins
+        case .everyone:
+            return .everyone
+        case .teamMembers:
+            return .teamMembers
+        }
+    }
 }
