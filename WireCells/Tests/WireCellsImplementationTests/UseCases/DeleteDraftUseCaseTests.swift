@@ -1,3 +1,21 @@
+//
+// Wire
+// Copyright (C) 2025 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
 import Foundation
 import Testing
 import WireCellsAPI
@@ -10,15 +28,13 @@ final class DeleteDraftUseCaseTests {
     private let draftsRepository = DraftsRepositoryProtocolMock()
     private let uploadManager = WireCellsNodeUploadManagerProtocolMock()
     private let nodesAPI = NodesAPIProtocolMock()
-    private let fileURL: URL = URL.temporaryDirectory.appendingPathComponent(UUID().uuidString)
-    private lazy var sut: DeleteDraftUseCase = {
-        DeleteDraftUseCase(
-            cellName: "test-cell",
-            draftRepository: draftsRepository,
-            uploadManager: uploadManager,
-            nodesAPI: nodesAPI
-        )
-    }()
+    private let fileURL = URL.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+    private lazy var sut = DeleteDraftUseCase(
+        cellName: "test-cell",
+        draftRepository: draftsRepository,
+        uploadManager: uploadManager,
+        nodesAPI: nodesAPI
+    )
 
     init() throws {
         let data = Data(repeating: 0, count: 5)
@@ -114,7 +130,8 @@ final class DeleteDraftUseCaseTests {
         #expect(nodesAPI.deleteVersionNodeIDUUIDVersionIDUUIDVoidCalled == false)
     }
 
-    @Test(arguments:
+    @Test(
+        arguments:
         [
             WireCellsUploadStatus.uploading(progress: 0.5),
             WireCellsUploadStatus.uploaded(isDraft: true),
@@ -137,7 +154,8 @@ final class DeleteDraftUseCaseTests {
         #expect(draftsRepository.deleteDraftNodeIDUUIDCellNameStringVoidReceivedInvocations == [(nodeID, "test-cell")])
     }
 
-    @Test(arguments:
+    @Test(
+        arguments:
         [
             WireCellsUploadStatus.uploading(progress: 0.5),
             WireCellsUploadStatus.uploaded(isDraft: true),
@@ -167,6 +185,6 @@ final class DeleteDraftUseCaseTests {
 // MARK: - Helpers
 
 /// Returns true if two arrays of tuples are equal.
-private func ==<A: Equatable, B: Equatable>(lhs: [(A, B)], rhs: [(A, B)]) -> Bool {
-    lhs.map {  $0.0 } == rhs.map { $0.0 } && rhs.map { $0.1 } == lhs.map { $0.1 }
+private func == <A: Equatable, B: Equatable>(lhs: [(A, B)], rhs: [(A, B)]) -> Bool {
+    lhs.map(\.0) == rhs.map(\.0) && rhs.map(\.1) == lhs.map(\.1)
 }
