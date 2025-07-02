@@ -44,9 +44,14 @@ final class StartUIViewController: UIViewController {
     let groupSelector = SearchGroupSelector()
 
     lazy var conversationTypePicker: UIViewController = {
-        let availableConversationTypes = [WireMultiParticipantConversationType.channel, .group]
+        let availableConversationTypes: Set<WireMultiParticipantConversationType> = if areChannelsSupported {
+            [.channel, .group]
+        } else {
+            [.group]
+        }
+
         let view = WireConversationTypePickerFactory().create(
-            availableConversationTypes: Set(availableConversationTypes),
+            availableConversationTypes: availableConversationTypes,
             onConversationTypeSelected: { [weak self] selectedConversationType in
                 guard let self else { return }
                 switch selectedConversationType {
@@ -57,7 +62,7 @@ final class StartUIViewController: UIViewController {
                 case .channel:
                     Task { @MainActor [weak self] in
                         guard let self else { return }
-                        if canCreateChannel {
+                        if userSession.channelsFeature.canCreateChannels(role: userSession.selfUser.teamRole) {
                             navigateToChannelCreation()
                         } else {
                             presentCreateTeamBanner()
@@ -96,8 +101,8 @@ final class StartUIViewController: UIViewController {
 
     var showsGroupSelector: Bool {
         SearchGroup.all.count > 1 &&
-            userSession.selfUser.canSeeServices &&
-            userSession.defaultProtocol != .mls
+        userSession.selfUser.canSeeServices &&
+        userSession.defaultProtocol != .mls
     }
 
     // MARK: - Init
@@ -316,11 +321,8 @@ final class StartUIViewController: UIViewController {
     /// - API >= v8
     /// https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/1712979983/Channels
 
-    private var canCreateChannel: Bool {
+    private var areChannelsSupported: Bool {
         guard let backendInfoApiVersion = BackendInfo.apiVersion else {
-            return false
-        }
-        guard userSession.channelsFeature.canCreateChannels(role: userSession.selfUser.teamRole) else {
             return false
         }
         guard BackendInfo.isMLSEnabled else {
