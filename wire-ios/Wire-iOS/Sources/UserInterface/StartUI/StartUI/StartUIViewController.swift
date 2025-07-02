@@ -336,19 +336,33 @@ final class StartUIViewController: UIViewController {
         typealias Localizable = L10n.Localizable.Peoplepicker
         typealias Accessibility = L10n.Accessibility.Peoplepicker
 
+        let buttonURL = URL(string: "https://teams.wire.com/register/email")!
         let configuration = WireChannelBannerView.Configuration(
             title: Localizable.UpgradeBanner.headline,
             message: Localizable.UpgradeBanner.subheadline,
             buttonTitle: Localizable.UpgradeBanner.Button.title,
-            buttonURL: URL(string: "")!, // TODO: fix
+            buttonURL: buttonURL,
             padding: 0, // TODO: fix
             closeButton: .init(
                 accessibilityLabel: Accessibility.UpgradeBanner.CloseButton.label,
-                action: {} // TODO: fix
+                action: { [weak self] in self?.dismiss(animated: true) }
             )
         )
         let banner = WireChannelBannerView(configuration: configuration)
-        let hostingController = UIHostingController(rootView: banner)
+
+        let rootView = ZStack {            // Dimmer that covers entire screen and intercepts taps
+            Color.black.opacity(0.4)
+                .edgesIgnoringSafeArea(.all)
+                // (optional) add a tapGesture if you want tapping outside to dismiss:
+                // .onTapGesture { hosting.dismiss(animated: true) }
+            banner
+                // .padding(.horizontal, 40)
+        }
+
+        let hostingController = UIHostingController(rootView: rootView)
+        hostingController.view.backgroundColor = .clear
+        hostingController.modalPresentationStyle = .overFullScreen
+        hostingController.modalTransitionStyle   = .crossDissolve
         return present(hostingController, animated: true)
 
         // TODO: use real banner and test on iPad

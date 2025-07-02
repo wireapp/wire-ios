@@ -33,7 +33,7 @@ public struct WireChannelBannerView: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 15) {
-            HStack {
+            HStack(alignment: .top) {
                 Text(configuration.title)
                     .wireTextStyle(.buttonSmall)
                     .foregroundStyle(Color.white)
@@ -57,6 +57,9 @@ public struct WireChannelBannerView: View {
                     configuration.message
                 )
 
+//            Link(destination: configuration.buttonURL) {
+//                <#code#>
+//            } // how to dismiss?
             Link(
                 configuration.buttonTitle,
                 destination: configuration.buttonURL
