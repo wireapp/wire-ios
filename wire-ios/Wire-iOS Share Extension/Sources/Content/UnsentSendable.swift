@@ -430,10 +430,14 @@ extension AccountManager {
             return nil
         }
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
+<<<<<<< HEAD
         return try? AccountManager(
             currentAppVersion: currentAppVersion,
             sharedDirectory: sharedContainerURL
         )
+=======
+        return try? AccountManager(sharedDirectory: sharedContainerURL)
+>>>>>>> a497dabb9e (refactor: clean up `AccountManager` and `AccountStore` - WPB-12067 (#3292))
     }
 
     static var fileSizeLimitInBytes: UInt64 {

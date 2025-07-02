@@ -51,7 +51,10 @@ final class ProcessNotificationRequestStep: Component<ProcessNotificationRequest
         eventID: UUID
     ) throws -> VerifyUserStep {
         let accountManager = try AccountManager(
+<<<<<<< HEAD
             currentAppVersion: dependency.currentAppVersion,
+=======
+>>>>>>> a497dabb9e (refactor: clean up `AccountManager` and `AccountStore` - WPB-12067 (#3292))
             sharedDirectory: dependency.applicationContainer
         )
 

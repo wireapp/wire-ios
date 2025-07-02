@@ -531,10 +531,14 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
 
         self.sharedContainerURL = sharedContainerURL
+<<<<<<< HEAD
         self.accountManager = try AccountManager(
             currentAppVersion: currentAppVersion,
             sharedDirectory: sharedContainerURL
         )
+=======
+        self.accountManager = try AccountManager(sharedDirectory: sharedContainerURL)
+>>>>>>> a497dabb9e (refactor: clean up `AccountManager` and `AccountStore` - WPB-12067 (#3292))
 
         WireLogger.sessionManager.debug("Starting the session manager:")
 

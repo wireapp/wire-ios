@@ -238,10 +238,14 @@ final class SelfProfileViewController: UIViewController {
         guard !DeveloperFlag.multibackend.isOn else {
             return
         }
+<<<<<<< HEAD
         if let accounts = accountManager?.sortedAccounts(), accounts.count > 1 {
+=======
+        if let accounts = SessionManager.shared?.accountManager.sortedAccounts(), accounts.count > 1 {
+>>>>>>> a497dabb9e (refactor: clean up `AccountManager` and `AccountStore` - WPB-12067 (#3292))
             let accountSelectorView = AccountSelectorView()
             accountSelectorView.delegate = self
-            accountSelectorView.accounts = accounts
+            accountSelectorView.accounts = Array(accounts)
             navigationItem.titleView = accountSelectorView
             self.accountSelectorView = accountSelectorView
         } else {

@@ -72,10 +72,16 @@ public final class AccountManager: NSObject {
         !cache.isEmpty
     }
 
+<<<<<<< HEAD
     private let currentAppVersion: String
     private var cache = [UUID: Account]()
     private var store: AccountStore
     private let defaults: UserDefaults
+=======
+    private var cache = [UUID: Account]()
+    private var store: AccountStore
+    private let defaults = UserDefaults.shared()!
+>>>>>>> a497dabb9e (refactor: clean up `AccountManager` and `AccountStore` - WPB-12067 (#3292))
 
     // MARK: - Init
 
@@ -83,6 +89,7 @@ public final class AccountManager: NSObject {
     ///
     /// - parameter sharedDirectory: The directory of the shared container.
 
+<<<<<<< HEAD
     public init(
         currentAppVersion: String,
         sharedDirectory: URL,
@@ -102,6 +109,12 @@ public final class AccountManager: NSObject {
 
             journal.markInitialAppVersionForExistingAccount()
         }
+=======
+    public init(sharedDirectory: URL) throws {
+        self.store = try AccountStore(root: sharedDirectory)
+        super.init()
+        refreshCache()
+>>>>>>> a497dabb9e (refactor: clean up `AccountManager` and `AccountStore` - WPB-12067 (#3292))
     }
 
     // MARK: - Add / update
@@ -111,6 +124,7 @@ public final class AccountManager: NSObject {
     /// - parameter account: The account to add.
 
     public func addOrUpdate(_ account: Account) {
+<<<<<<< HEAD
         if store.storeAccount(account) {
             var journal = Journal(
                 userID: account.userIdentifier,
@@ -118,6 +132,9 @@ public final class AccountManager: NSObject {
             )
             journal.markInitialAppVersionForNewAccount(currentVersion: currentAppVersion)
         }
+=======
+        store.storeAccount(account)
+>>>>>>> a497dabb9e (refactor: clean up `AccountManager` and `AccountStore` - WPB-12067 (#3292))
         refreshCache()
     }
 
