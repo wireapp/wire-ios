@@ -62,4 +62,13 @@ public struct WireCellsAssembly {
         )
     }
 
+    public func makeRetryUploadDraftUseCase(cellName: String) -> any WireCellsRetryUploadDraftUseCaseProtocol {
+        RetryUploadDraftUseCase(
+            cellName: cellName,
+            draftRepository: Self.draftsRepository,
+            uploadManager: Self.uploadManager,
+            nodesAPI: Self.nodesAPI
+        )
+    }
+
 }
