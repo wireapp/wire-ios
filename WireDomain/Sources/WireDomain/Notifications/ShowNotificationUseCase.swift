@@ -118,6 +118,8 @@ struct ShowNotificationUseCase: ShowNotificationUseCaseProtocol {
         )
 
         selectedAccount.unreadConversationCount = unreadConversationCount
+        accountManager.addOrUpdate(selectedAccount)
+
         let totalUnreadCount = accountManager.totalUnreadCount
 
         return NSNumber(value: totalUnreadCount)
