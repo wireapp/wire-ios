@@ -126,7 +126,11 @@ final class LegacyNotificationServiceTests: XCTestCase {
             fatalError()
         }
 
-        let manager = try? AccountManager(sharedDirectory: sharedContainer)
+        let manager = try? AccountManager(
+            currentAppVersion: "1.0.0",
+            sharedDirectory: sharedContainer,
+            defaults: .temporary()
+        )
         let account = Account(userName: "Test Account", userIdentifier: id)
         manager?.addOrUpdate(account)
     }

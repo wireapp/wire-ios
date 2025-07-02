@@ -42,7 +42,11 @@ final class ShowNotificationUseCaseTests: XCTestCase {
             contentHandler: { _ in self.didDisplayNotification = true },
             conversationLocalStore: conversationLocalStore,
             selectedAccount: Account(userName: .init(), userIdentifier: .mockID1),
-            accountManager: try AccountManager(sharedDirectory: url),
+            accountManager: try AccountManager(
+                currentAppVersion: "1.0.0",
+                sharedDirectory: url,
+                defaults: .temporary()
+            ),
             databaseSaver: databaseSaver
         )
     }
