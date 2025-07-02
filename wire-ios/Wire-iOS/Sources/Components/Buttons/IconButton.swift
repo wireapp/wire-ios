@@ -279,7 +279,7 @@ class IconButton: ButtonWithLargerHitArea {
             )
         }
 
-        updateTintColor(for: state)
+        updateTintColor()
     }
 
     func iconDefinition(for state: UIControl.State) -> IconDefinition? {
@@ -294,13 +294,12 @@ class IconButton: ButtonWithLargerHitArea {
         borderColorByState[state.rawValue] ?? borderColorByState[UIControl.State.normal.rawValue]
     }
 
-    private func updateBorderColor(for state: UIControl.State) {
-        layer.borderColor = borderColor(for: state)?.cgColor
+    func updateBorderColor(state newState: UIControl.State? = nil) {
+        layer.borderColor = borderColor(for: newState ?? state)?.cgColor
     }
 
-    func updateTintColor(for state: UIControl.State) {
-        tintColor = iconColor(for: state)
-        print("DS: IconButton set tintColor for state: \(state): \(tintColor ?? .clear)")
+    func updateTintColor(state newState: UIControl.State? = nil) {
+        tintColor = iconColor(for: newState ?? state)
     }
 
     private func updateCircularCornerRadius() {
@@ -330,15 +329,18 @@ class IconButton: ButtonWithLargerHitArea {
 
         priorState = state
         // Update for new state (selected, highlighted, disabled) here if needed
-        updateTintColor(for: state)
-        updateBorderColor(for: state)
+        updateTintColor()
+        updateBorderColor()
     }
 
     func icon(for state: UIControl.State) -> StyleKitIcon? {
         iconDefinition(for: state)?.type
     }
 
-    func setBorderColor(_ color: UIColor?, for state: UIControl.State) {
+    func setBorderColor(
+        _ color: UIColor?,
+        for state: UIControl.State
+    ) {
         state.expanded.forEach { expandedState in
             if color != nil {
                 borderColorByState[expandedState.rawValue] = color
@@ -350,6 +352,6 @@ class IconButton: ButtonWithLargerHitArea {
             }
         }
 
-        updateBorderColor(for: state)
+        updateBorderColor()
     }
 }

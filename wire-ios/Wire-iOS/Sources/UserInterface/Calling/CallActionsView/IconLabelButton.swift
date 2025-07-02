@@ -33,6 +33,8 @@ class IconLabelButton: ButtonWithLargerHitArea {
     private(set) var subtitleTransformLabel = TransformLabel()
     private let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
     private var widthConstraint: NSLayoutConstraint!
+    
+    var shouldUseCurrentStateToSetTintAndBorder: Bool = true
 
     var appearance: CallActionAppearance = .dark(blurred: false) {
         didSet {
@@ -137,17 +139,25 @@ class IconLabelButton: ButtonWithLargerHitArea {
         setTitleColor(configuration.iconColorNormal, for: .normal)
         iconButton.setIconColor(configuration.iconColorNormal, for: .normal)
         iconButton.setBackgroundImageColor(configuration.backgroundColorNormal, for: .normal)
+        iconButton.updateTintColor(state: .normal)
+        iconButton.updateBorderColor(state: .normal)
 
         iconButton.setIconColor(configuration.iconColorSelected, for: .selected)
         iconButton.setBackgroundImageColor(configuration.backgroundColorSelected, for: .selected)
-
+        iconButton.updateTintColor(state: .selected)
+        iconButton.updateBorderColor(state: .selected)
+        
         setTitleColor(configuration.iconColorNormal.withAlphaComponent(0.4), for: .disabled)
         iconButton.setIconColor(configuration.iconColorNormal.withAlphaComponent(0.4), for: .disabled)
         iconButton.setBackgroundImageColor(configuration.backgroundColorNormal, for: .disabled)
+        iconButton.updateTintColor(state: .disabled)
+        iconButton.updateBorderColor(state: .disabled)
 
         setTitleColor(configuration.iconColorNormal.withAlphaComponent(0.4), for: .disabledAndSelected)
         iconButton.setIconColor(configuration.iconColorSelected.withAlphaComponent(0.4), for: .disabledAndSelected)
         iconButton.setBackgroundImageColor(configuration.backgroundColorSelected, for: .disabledAndSelected)
+        iconButton.updateTintColor(state: .disabledAndSelected)
+        iconButton.updateBorderColor(state: .disabledAndSelected)
 
         iconButton.setBackgroundImageColor(
             configuration.backgroundColorSelectedAndHighlighted,
