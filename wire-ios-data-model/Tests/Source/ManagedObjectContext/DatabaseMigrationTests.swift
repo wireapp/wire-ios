@@ -138,7 +138,6 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
         }
 
         try allVersions.forEach { version in
-            print("😀 \(version)")
             // GIVEN
             try helper.createFixtureDatabase(
                 applicationContainer: DatabaseBaseTest.applicationContainer,
