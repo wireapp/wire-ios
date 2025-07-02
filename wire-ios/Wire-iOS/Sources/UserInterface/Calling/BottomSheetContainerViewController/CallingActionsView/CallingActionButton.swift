@@ -29,6 +29,7 @@ class CallingActionButton: IconLabelButton {
         subtitleTransformLabel.textTransform = .capitalize
         titleLabel?.font = UIFont.systemFont(ofSize: 12)
         subtitleTransformLabel.font = titleLabel?.font
+        iconButton.shouldUsePassedStateForTintAndBorder = true
         iconButton.setIcon(input.icon(forState: .normal), size: iconSize, for: .normal)
         iconButton.setIcon(input.icon(forState: .selected), size: iconSize, for: .selected)
     }

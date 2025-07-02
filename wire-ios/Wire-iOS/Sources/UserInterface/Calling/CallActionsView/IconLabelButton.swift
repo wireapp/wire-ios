@@ -33,7 +33,7 @@ class IconLabelButton: ButtonWithLargerHitArea {
     private(set) var subtitleTransformLabel = TransformLabel()
     private let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
     private var widthConstraint: NSLayoutConstraint!
-    
+
     var shouldUseCurrentStateToSetTintAndBorder: Bool = true
 
     var appearance: CallActionAppearance = .dark(blurred: false) {
@@ -62,10 +62,12 @@ class IconLabelButton: ButtonWithLargerHitArea {
     }
 
     private func setupViews() {
-        iconButton.translatesAutoresizingMaskIntoConstraints = false
+        iconButton
+            .translatesAutoresizingMaskIntoConstraints = false
         iconButton.isUserInteractionEnabled = false
         iconButton.borderWidth = 0
         iconButton.circular = true
+        iconButton.shouldUsePassedStateForTintAndBorder = true
         blurView.translatesAutoresizingMaskIntoConstraints = false
         blurView.clipsToBounds = true
         blurView.layer.cornerRadius = IconLabelButton.width / 2
@@ -146,7 +148,7 @@ class IconLabelButton: ButtonWithLargerHitArea {
         iconButton.setBackgroundImageColor(configuration.backgroundColorSelected, for: .selected)
         iconButton.updateTintColor(state: .selected)
         iconButton.updateBorderColor(state: .selected)
-        
+
         setTitleColor(configuration.iconColorNormal.withAlphaComponent(0.4), for: .disabled)
         iconButton.setIconColor(configuration.iconColorNormal.withAlphaComponent(0.4), for: .disabled)
         iconButton.setBackgroundImageColor(configuration.backgroundColorNormal, for: .disabled)
