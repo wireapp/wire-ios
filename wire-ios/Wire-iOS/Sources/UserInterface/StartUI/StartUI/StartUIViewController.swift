@@ -345,7 +345,6 @@ final class StartUIViewController: UIViewController {
             message: Localizable.UpgradeBanner.subheadline,
             mainButtonTitle: Localizable.UpgradeBanner.Button.title,
             mainButtonAction: { [weak self] in
-                // let buttonURL = URL(string: "https://teams.wire.com/register/email")! // TODO: Figma mentions this URL
                 self?.dismiss(animated: true) { [weak self] in self?.presentPersonalToTeamMigration() }
             },
             closeButton: .init(
