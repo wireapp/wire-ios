@@ -1100,7 +1100,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             // If we discover this group is actually a fake one on one,
             // then we should link the one on one user.
             linkOneOnOneUserIfNeeded(for: localConversation)
-            
+
             // All metadata has been updated, object does not need to be updated from backend
             localConversation.needsToBeUpdatedFromBackend = false
         }
