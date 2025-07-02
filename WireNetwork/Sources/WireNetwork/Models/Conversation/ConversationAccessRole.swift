@@ -62,17 +62,17 @@ enum ConversationAccessRoleV0: String, Sendable, Decodable, ToAPIModelConvertibl
 
 
 extension ConversationAccessRole: ToNetworkConvertible {
-    
+
     func toNetworkModel() -> ConversationAccessRoleV0 {
         switch self {
         case .teamMember:
-            return .teamMember
+            .teamMember
         case .nonTeamMember:
-            return .nonTeamMember
+            .nonTeamMember
         case .guest:
-            return .guest
+            .guest
         case .service:
-            return .service
+            .service
         }
     }
 }

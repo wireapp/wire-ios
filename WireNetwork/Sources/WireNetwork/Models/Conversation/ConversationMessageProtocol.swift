@@ -59,10 +59,11 @@ extension ConversationMessageProtocol: ToNetworkConvertible {
     func toNetworkModel() -> ConversationMessageProtocolV0 {
         switch self {
         case .proteus:
-            return .proteus
+            .proteus
         case .mixed:
-            return .mixed
+            .mixed
         case .mls:
-            return .mls
-        }}
+            .mls
+        }
+    }
 }

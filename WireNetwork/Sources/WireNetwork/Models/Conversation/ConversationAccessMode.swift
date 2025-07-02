@@ -63,17 +63,17 @@ enum ConversationAccessModeV0: String, Sendable, Decodable, ToAPIModelConvertibl
 }
 
 extension ConversationAccessMode: ToNetworkConvertible {
-    
+
     func toNetworkModel() -> ConversationAccessModeV0 {
         switch self {
         case .private:
-            return .private
+            .private
         case .invite:
-            return .invite
+            .invite
         case .link:
-            return .link
+            .link
         case .code:
-            return .code
+            .code
         }
     }
 }

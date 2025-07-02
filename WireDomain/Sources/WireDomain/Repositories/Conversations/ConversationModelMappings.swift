@@ -186,13 +186,13 @@ extension WireNetwork.ConversationAccessRole {
     func toDomainModel() -> String {
         switch self {
         case .teamMember:
-            return "team_member"
+            "team_member"
         case .nonTeamMember:
-            return "non_team_member"
+            "non_team_member"
         case .guest:
-            return "guest"
+            "guest"
         case .service:
-            return "service"
+            "service"
         }
     }
 
@@ -203,13 +203,13 @@ extension WireNetwork.ConversationAccessMode {
         switch self {
 
         case .private:
-            return "private"
+            "private"
         case .invite:
-            return "invite"
+            "invite"
         case .link:
-            return "link"
+            "link"
         case .code:
-            return "code"
+            "code"
         }
     }
 }

@@ -26,11 +26,11 @@ public enum MLSAPIError: Error, Equatable {
         let error = try JSONDecoder().decode(MLSAPIV0Error.self, from: Data(string.utf8))
         self = error.toAPIModel()
     }
-    
+
     public func encodeAsString() throws -> String {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .sortedKeys
-        let encodableObject = self.toNetworkModel()
+        let encodableObject = toNetworkModel()
         return String(decoding: try encoder.encode(encodableObject), as: UTF8.self)
     }
 
@@ -91,43 +91,43 @@ enum MLSAPIV0Error: Error, Codable, Equatable {
 }
 
 extension MLSAPIV0Error: ToAPIModelConvertible {
-    
+
     func toAPIModel() -> MLSAPIError {
         switch self {
-            
+
         case .unsupportedEndpointForAPIVersion:
-            return .unsupportedEndpointForAPIVersion
+            .unsupportedEndpointForAPIVersion
         case .mlsNotEnabled:
-            return .mlsNotEnabled
+            .mlsNotEnabled
         case .mlsStaleMessage:
-            return .mlsStaleMessage
+            .mlsStaleMessage
         case .mlsClientMismatch:
-            return .mlsClientMismatch
+            .mlsClientMismatch
         case .mlsCommitMissingReferences:
-            return .mlsCommitMissingReferences
+            .mlsCommitMissingReferences
         case let .mlsError(label, message):
-            return .mlsError(label, message)
+            .mlsError(label, message)
         }
     }
 }
 
 extension MLSAPIError: ToNetworkConvertible {
-    
+
     func toNetworkModel() -> MLSAPIV0Error {
         switch self {
-            
+
         case .unsupportedEndpointForAPIVersion:
-            return .unsupportedEndpointForAPIVersion
+            .unsupportedEndpointForAPIVersion
         case .mlsNotEnabled:
-            return .mlsNotEnabled
+            .mlsNotEnabled
         case .mlsStaleMessage:
-            return .mlsStaleMessage
+            .mlsStaleMessage
         case .mlsClientMismatch:
-            return .mlsClientMismatch
+            .mlsClientMismatch
         case .mlsCommitMissingReferences:
-            return .mlsCommitMissingReferences
+            .mlsCommitMissingReferences
         case let .mlsError(label, message):
-            return .mlsError(label, message)
+            .mlsError(label, message)
         }
     }
 }

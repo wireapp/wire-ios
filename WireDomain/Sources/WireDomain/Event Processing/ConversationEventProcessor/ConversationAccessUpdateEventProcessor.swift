@@ -64,14 +64,14 @@ struct ConversationAccessUpdateEventProcessor: ConversationAccessUpdateEventProc
 private extension WireNetwork.ConversationAccessMode {
     func toDataModel() -> String {
         switch self {
-        case .`private`:
-            return "private"
+        case .private:
+            "private"
         case .invite:
-            return "invite"
+            "invite"
         case .link:
-            return "link"
+            "link"
         case .code:
-            return "code"
+            "code"
         }
     }
 }
@@ -80,13 +80,13 @@ private extension WireNetwork.ConversationAccessRole {
     func toDataModel() -> String {
         switch self {
         case .teamMember:
-            return "team_member"
+            "team_member"
         case .nonTeamMember:
-            return "non_team_member"
+            "non_team_member"
         case .guest:
-            return "guest"
+            "guest"
         case .service:
-            return "service"
+            "service"
         }
     }
 }

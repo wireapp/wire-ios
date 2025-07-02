@@ -113,9 +113,9 @@ public extension MessagingTest {
             let rawCapabilities: [String] = capabilities.map {
                 switch $0 {
                 case .consumableNotifications:
-                    return "consumable-notifications"
+                    "consumable-notifications"
                 case .legalholdConsent:
-                    return "legalhold-implicit-consent"
+                    "legalhold-implicit-consent"
                 }
             }
             payload["capabilities"] = rawCapabilities as AnyObject

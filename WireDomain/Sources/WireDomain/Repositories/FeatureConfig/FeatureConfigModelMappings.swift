@@ -118,11 +118,11 @@ extension WireNetwork.ChannelsPermision {
     func toDomainModel() -> Feature.Channels.Config.ChannelsPermision {
         switch self {
         case .admins:
-            return .admins
+            .admins
         case .everyone:
-            return .everyone
+            .everyone
         case .teamMembers:
-            return .teamMembers
+            .teamMembers
         }
     }
 }
