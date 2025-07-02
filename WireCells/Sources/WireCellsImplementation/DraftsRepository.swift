@@ -39,6 +39,7 @@ package protocol DraftsRepositoryProtocol: Sendable {
     func clearPublishedDrafts(for cellName: String) async
     func fetchDraft(nodeID: UUID, cellName: String) async -> WireCellsDraft?
     func deleteDraft(nodeID: UUID, cellName: String) async
+    func updateDraft(_ draft: WireCellsDraft, for cellName: String) async
 
 }
 
@@ -208,6 +209,14 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
 
     package func deleteDraft(nodeID: UUID, cellName: String) {
         drafts.value[cellName]?.removeValue(forKey: nodeID)
+    }
+
+    /// Updates draft for the given cell name.
+
+    package func updateDraft(_ new: WireCellsDraft, for cellName: String) {
+        guard let old = fetchDraft(nodeID: new.nodeID, cellName: cellName), new != old else { return }
+
+        drafts.value[cellName]?[new.nodeID] = new
     }
 
     // MARK: - Private

@@ -42,9 +42,42 @@ package struct RetryUploadDraftUseCase: WireCellsRetryUploadDraftUseCaseProtocol
     }
 
     package func invoke(nodeID: UUID) async throws {
-        guard let draft = await draftRepository.fetchDraft(nodeID: nodeID, cellName: cellName) else { return }
+        guard var draft = await draftRepository.fetchDraft(nodeID: nodeID, cellName: cellName) else { return }
 
-        print(">>>>", draft)
+        draft.status = .uploading(progress: 0)
+        await draftRepository.updateDraft(draft, for: cellName)
+
+        do {
+            let (node, stream) = try await uploadManager.upload(
+                nodeID: draft.nodeID,
+                versionID: draft.versionID,
+                assetPath: draft.assetURL,
+                assetSize: UInt64(draft.bytes),
+                destNodePath: "\(cellName)/\(draft.name)"
+            )
+
+            // Update draft name if changed
+            if let updatedName = URL(string: node.path)?.lastPathComponent {
+                draft.name = updatedName
+                await draftRepository.updateDraft(draft, for: cellName)
+            }
+
+            for await status in stream {
+                draft.status = status
+                await draftRepository.updateDraft(draft, for: cellName)
+            }
+
+            // Set post upload values
+            let latestNode = try await nodesAPI.getNode(nodeID: draft.nodeID)
+            if let mimeTime = latestNode.mimeType {
+                draft.mimeType = mimeTime
+                await draftRepository.updateDraft(draft, for: cellName)
+            }
+
+        } catch {
+            draft.status = .failed(error: WireCellsUploadError(error))
+            await draftRepository.updateDraft(draft, for: cellName)
+        }
     }
 
 }
