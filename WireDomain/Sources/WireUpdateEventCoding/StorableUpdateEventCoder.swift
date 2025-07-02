@@ -17,7 +17,7 @@
 //
 
 public import Foundation
-public import WireAPI
+public import WireNetwork
 
 /// Encodes and decodes `UpdateEventEnvelope` objects to and from data for the sole purpose of storing them in a
 /// database.

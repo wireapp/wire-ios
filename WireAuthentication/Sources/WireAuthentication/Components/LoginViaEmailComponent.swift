@@ -18,8 +18,8 @@
 
 import NeedleFoundation
 import SwiftUI
-import WireAPI
 import WireAuthenticationAPI
+import WireNetwork
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
 import WireReusableUIComponents
@@ -81,10 +81,14 @@ final class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> 
         )
     }
 
-    func personalAccountCreationComponent() -> PersonalAccountCreationComponent {
+    func personalAccountCreationComponent(
+        teamAccountCreationLink: URL?
+    ) -> PersonalAccountCreationComponent {
         PersonalAccountCreationComponent(
             parent: self,
-            email: email ?? ""
+            email: email ?? "",
+            backendURL: networkStack.backendInfo.backendConfig.endpoints.backendURL,
+            teamAccountCreationLink: teamAccountCreationLink
         )
     }
 
@@ -142,8 +146,10 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
         )
     }
 
-    func personalAccountCreationFactory() -> any PersonalAccountCreationFactory {
-        personalAccountCreationComponent()
+    func personalAccountCreationFactory(
+        teamAccountCreationLink: URL?
+    ) -> any PersonalAccountCreationFactory {
+        personalAccountCreationComponent(teamAccountCreationLink: teamAccountCreationLink)
     }
 
     // MARK: - Use cases

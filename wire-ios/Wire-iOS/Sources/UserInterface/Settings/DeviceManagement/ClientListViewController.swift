@@ -410,7 +410,7 @@ final class ClientListViewController: UIViewController,
             for: indexPath
         ) as? ClientTableViewCell {
             cell.selectionStyle = .none
-            cell.showDisclosureIndicator()
+            cell.showDisclosureIndicatorAccessoryView()
 
             switch convertSection((indexPath as NSIndexPath).section) {
             case 0:

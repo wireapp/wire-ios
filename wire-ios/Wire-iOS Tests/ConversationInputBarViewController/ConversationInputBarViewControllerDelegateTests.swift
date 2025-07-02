@@ -82,6 +82,7 @@ private final class MockDelegate: NSObject, ConversationInputBarViewControllerDe
 
     func conversationInputBarViewControllerDidComposeText(
         text: String,
+        attachments: [MultipartAttachment],
         mentions: [Mention],
         replyingTo message: ZMConversationMessage?
     ) {}

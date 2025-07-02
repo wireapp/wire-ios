@@ -36,3 +36,9 @@ public enum RequestEmailVerificationCodeUseCaseFailure: Error {
     case domainBlockedForRegistration
 
 }
+
+public protocol RequestEmailVerificationCodeUseCaseFactory {
+
+    func requestEmailVerificationCodeUseCase() async throws -> any RequestEmailVerificationCodeUseCaseProtocol
+
+}

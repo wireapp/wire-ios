@@ -5,7 +5,7 @@ import PackageDescription
 
 // You can enable/disable Datadog for debugging by overriding the boolean.
 let isDatadogEnabled = hasEnvironmentVariable("ENABLE_DATADOG", "true")
-let isCountlyEnabled = hasEnvironmentVariable("ENABLE_COUNTLY", "true")
+let isCountlyEnabled = true // hasEnvironmentVariable("ENABLE_COUNTLY", "true") // TODO: revert
 
 let package = Package(
     name: "WireAnalytics",
@@ -30,7 +30,7 @@ let package = Package(
         ),
         .target(
             name: "WireAnalyticsSupport",
-            dependencies: ["WireAnalytics"],
+            dependencies: ["WireAnalytics", "WireFoundation"],
             plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
         ),
         .testTarget(

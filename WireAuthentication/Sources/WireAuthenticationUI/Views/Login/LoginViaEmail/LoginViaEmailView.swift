@@ -36,7 +36,7 @@ package protocol LoginViaEmailFactory {
     func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory
 
     @MainActor
-    func personalAccountCreationFactory() -> any PersonalAccountCreationFactory
+    func personalAccountCreationFactory(teamAccountCreationLink: URL?) -> any PersonalAccountCreationFactory
 
 }
 
@@ -92,12 +92,8 @@ package struct LoginViaEmailView: View {
                 Button(Strings.Authentication.Error.confirm, action: {})
             }
         )
-        .sheet(item: $viewModel.modalDestination, content: { item in
-            sheetView(for: item)
-        })
-        .navigationDestination(for: LoginViaEmailDestination.self) { destination in
-            destinationView(destination)
-        }
+        .fullScreenCover(item: $viewModel.modalDestination, onDismiss: onSheetDismiss, content: sheetView(for:))
+        .navigationDestination(for: LoginViaEmailDestination.self, destination: destinationView)
         .presentationDetents(viewModel.areProxyCredentialsRequired ? [.large] : [.medium, .large])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
@@ -123,6 +119,11 @@ package struct LoginViaEmailView: View {
                 factory: viewModel.factory.noHistoryFactory(
                     authenticationResult: authenticationResult
                 )
+            )
+        case .createPersonalAccount:
+            PersonalAccountCreationView(
+                factory: viewModel.factory
+                    .personalAccountCreationFactory(teamAccountCreationLink: viewModel.teamAccountCreationLink)
             )
         }
     }
@@ -254,16 +255,19 @@ package struct LoginViaEmailView: View {
     @ViewBuilder
     private func sheetView(for sheet: LoginViaEmailSheet) -> some View {
         switch sheet {
-        case let .teamAccountCreation:
-            if let teamAccountCreationLink = viewModel.teamAccountCreationLink {
-                SafariBrowserView(url: teamAccountCreationLink).ignoresSafeArea()
-            }
+        case let .teamAccountCreation(teamAccountCreationLink):
+            SafariBrowserView(url: teamAccountCreationLink)
+                .ignoresSafeArea()
         case .accountTypeSelection:
             AccountTypeSelectionView(
-                onTeamAccountCreation: viewModel.handleOnTeamAccountCreation,
-                onPersonalAccountCreation: viewModel.handleoOnPersonalAccountCreation
+                onTeamAccountCreation: viewModel.handleTeamAccountCreation,
+                onPersonalAccountCreation: viewModel.handlePersonalAccountCreation
             )
         }
+    }
+
+    private func onSheetDismiss() {
+        viewModel.onSheetDismissAction?()
     }
 
 }

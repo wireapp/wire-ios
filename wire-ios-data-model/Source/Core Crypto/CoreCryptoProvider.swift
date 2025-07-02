@@ -140,7 +140,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         do {
             try await registerEpochObserverIfNecessary(with: coreCrypto())
         } catch {
-            WireLogger.mls.warn("Failed to register epoch observer, will try again later")
+            WireLogger.mls.warn("Failed to register epoch observer, will try again later: \(error)")
         }
     }
 

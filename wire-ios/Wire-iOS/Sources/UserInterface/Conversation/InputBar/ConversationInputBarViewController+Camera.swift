@@ -164,7 +164,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
 
         let context = ConfirmAssetViewController.Context(
             asset: .image(mediaAsset: mediaAsset),
-            onConfirm: { [weak self, wireCellsUploadDraftUseCase] (editedImage: UIImage?) in
+            onConfirm: { [weak self, uploadDraftUseCase] (editedImage: UIImage?) in
                 guard let self else { return }
                 dismiss(animated: true) {
                     self.writeToSavedPhotoAlbumIfNecessary(
@@ -176,7 +176,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
                         Task.detached {
                             // We don't care about the result of the operation here as we will be observing changes.
                             do {
-                                try await wireCellsUploadDraftUseCase.invoke(imageData: dataToSend)
+                                try await uploadDraftUseCase.invoke(imageData: dataToSend)
                             } catch {
                                 WireLogger.conversation.error("Failed to upload file: \(error)")
                             }

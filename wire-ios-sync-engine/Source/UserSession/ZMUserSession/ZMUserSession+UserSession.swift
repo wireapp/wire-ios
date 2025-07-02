@@ -336,6 +336,10 @@ extension ZMUserSession: UserSession {
         AppendTextMessageUseCase(analyticsEventTracker: analyticsEventTracker)
     }
 
+    public func makeAppendMultipartMessageUseCase() -> AppendMultipartMessageUseCaseProtocol {
+        AppendMultipartMessageUseCase(analyticsEventTracker: analyticsEventTracker)
+    }
+
     public func makeAppendImageMessageUseCase() -> AppendImageMessageUseCaseProtocol {
         AppendImageMessageUseCase(analyticsEventTracker: analyticsEventTracker)
     }

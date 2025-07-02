@@ -96,11 +96,15 @@ final class ZClientViewController: UIViewController {
 
     private lazy var channelConversationFormFactory = WireConversationChannelCreationFormViewControllerFactory()
 
-    private lazy var settingsViewControllerBuilder = SettingsViewControllerBuilder(
-        isPublicDomain: userSession.selfUser.domain?.domainType == .publicDomain,
-        userSession: userSession,
-        trackingManager: trackingManager
-    )
+    private lazy var settingsViewControllerBuilder = {
+        let whitelistedDomains = ["wire.com", "staging.zinfra.io"]
+        let isAnalyticsTrackingAvailable = userSession.selfUser.domain.map(whitelistedDomains.contains) ?? true
+        return SettingsViewControllerBuilder(
+            isAnalyticsTrackingAvailable: isAnalyticsTrackingAvailable,
+            userSession: userSession,
+            trackingManager: trackingManager
+        )
+    }()
 
     private lazy var defaultSettingsPropertyFactoryDelegate = {
         var settingsTableViewController = { [weak self] in
@@ -109,6 +113,7 @@ final class ZClientViewController: UIViewController {
                 self?.mainSplitViewController.settingsUI as? SettingsTableViewController ??
                 self?.mainTabBarController.settingsUI as? SettingsTableViewController
         }
+
         return DefaultSettingsPropertyFactoryDelegate(
             userSession: userSession,
             settingsTableViewController: settingsTableViewController,
@@ -284,8 +289,19 @@ final class ZClientViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        firstTimeRequestToEnableAnalytics()
+        migrateAnalytics()
+        firstTimeRequestToEnableAnalytics() // TODO: maybe Countly could be setup here, but how to tear it down properly?
         view.backgroundColor = ColorTheme.Backgrounds.surface
+    }
+
+    private func migrateAnalytics() {
+        Task {
+            do {
+                try await trackingManager?.migrateAnalyticsSetupIfNeeded()
+            } catch {
+                WireLogger.analytics.error("failed to migrate analytics between accounts: \(error)")
+            }
+        }
     }
 
     private func firstTimeRequestToEnableAnalytics() {

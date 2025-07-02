@@ -17,9 +17,9 @@
 //
 
 import CoreData
-import WireAPI
 import WireDataModel
 import WireLogging
+import WireNetwork
 
 public struct OneOnOneResolver: OneOnOneResolverProtocol {
 

@@ -118,6 +118,7 @@ final class ConversationContentViewController: UIViewController {
     private var token: NSObjectProtocol?
 
     private(set) lazy var activityIndicator = BlockingActivityIndicator(view: view)
+    let linkDetector = NSDataDetector.linkDetector
 
     private let logger: WireLogger
     private var accentColorChangeHandler: AccentColorChangeHandler?

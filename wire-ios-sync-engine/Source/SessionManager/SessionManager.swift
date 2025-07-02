@@ -359,7 +359,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private let minTLSVersion: String?
 
-    let analyticsService: AnalyticsService
+    let analyticsService: AnalyticsService?
 
     public override init() {
         fatal("init() not implemented")
@@ -367,6 +367,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private let sharedUserDefaults: UserDefaults
 
+    @MainActor
     public convenience init(
         maxNumberAccounts: Int = defaultMaxNumberAccounts,
         appVersion: String,
@@ -480,6 +481,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     }
 
+    @MainActor
     init(
         maxNumberAccounts: Int = defaultMaxNumberAccounts,
         appVersion: String,
@@ -556,29 +558,20 @@ public final class SessionManager: NSObject, SessionManagerType {
         // non nil in order to process the notification
         BackgroundActivityFactory.shared.activityManager = UIApplication.shared
 
-        let analyticsConfig = analyticsServiceConfiguration.map {
-            AnalyticsService.Config(
-                secretKey: $0.secretKey,
-                serverHost: $0.serverHost
+        self.analyticsService = analyticsServiceConfiguration.map { config in
+            AnalyticsService(
+                config: CountlyConfiguration(appKey: config.secretKey, host: config.serverHost),
+                deviceModel: UIDevice.current.model,
+                osVersion: UIDevice.current.systemVersion,
+                countlyProvider: countlyProvider
             )
         }
 
-        self.analyticsService = AnalyticsService(
-            config: analyticsConfig,
-            deviceModel: UIDevice.current.model,
-            osVersion: UIDevice.current.systemVersion,
-            countlyProvider: countlyProvider
-        )
-
-        if analyticsServiceConfiguration?.didUserGiveTrackingConsent == true {
-            Task { [analyticsService] in
-                do {
-                    try await analyticsService.enableTracking()
-                } catch {
-                    WireLogger.analytics.error("failed to enable tracking: \(error)")
-                }
-            }
-        }
+        // TODO: enable tracking later
+//        Journal(userID: account.userIdentifier, storage: sharedUserDefaults)
+//        if let analyticsService, analyticsServiceConfiguration?.didUserGiveTrackingConsent == true {
+//            analyticsService.enableTracking()
+//        }
 
         super.init()
 
@@ -955,14 +948,15 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     func configureAnalytics(for userSession: ZMUserSession) async {
-        guard analyticsService.isTrackingEnabled else {
+        guard let isTrackingEnabled = analyticsService?.isTrackingEnabled, isTrackingEnabled else {
             return
         }
 
         do {
             WireLogger.analytics.debug("configuring analytics for user session")
             let user = try await userSession.createAnalyticsUser()
-            try analyticsService.switchUser(user)
+            try analyticsService?.switchUser(user)
+
             userSession.setAnalyticsEventTracker(analyticsService)
         } catch {
             WireLogger.analytics.error("failed to configure analytics for user session: \(error)")
@@ -1094,18 +1088,17 @@ public final class SessionManager: NSObject, SessionManagerType {
                         )
                     }
 
+                    let userSession = await self.startBackgroundSession(
+                        for: account,
+                        with: coreDataStack,
+                        journal: journal
+                    )
+
+                    await userSession.migrateToConsumableNotificationsIfNeeded()
+
+                    await userSession.triggerSync()
+
                     await MainActor.run {
-                        let userSession = self.startBackgroundSession(
-                            for: account,
-                            with: coreDataStack,
-                            journal: journal
-                        )
-
-                        self.triggerMigrationsNeedsActionsIfNeeded(
-                            journal: journal,
-                            userSession: userSession
-                        )
-
                         onCompletion(userSession)
                     }
                 }
@@ -1160,21 +1153,6 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         } catch {
             WireLogger.sync.critical("failed to migrate update events: \(error)")
-        }
-    }
-
-    /// Executes post migration slow sync or sync resources
-    private func triggerMigrationsNeedsActionsIfNeeded(
-        journal: Journal,
-        userSession: ZMUserSession
-    ) {
-        let context = userSession.syncContext
-        context.perform {
-            if context.readMigrationNeedsSlowSyncFlag() || journal[.isInitialSyncRequired] {
-                userSession.triggerInitialSync()
-            } else if context.readMigrationNeedsSyncResourcesFlag() {
-                userSession.triggerResourcesSync()
-            }
         }
     }
 
@@ -1300,6 +1278,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     // Creates the user session for @c account given, calls @c completion when done.
+    @MainActor
     private func startBackgroundSession(
         for account: Account,
         with coreDataStack: CoreDataStack,
@@ -1513,6 +1492,9 @@ extension SessionManager {
             if let teamImageData = selfUser.team?.imageData {
                 account.teamImageData = teamImageData
             }
+            if let handle = selfUser.handle {
+                account.handle = handle
+            }
 
             account.loginCredentials = selfUser.loginCredentials
 
@@ -1546,7 +1528,8 @@ extension SessionManager: UserObserving {
 
         if changeInfo.analyticsIdentifierChanged {
             guard
-                analyticsService.isTrackingEnabled,
+                let isTrackingEnabled = analyticsService?.isTrackingEnabled,
+                isTrackingEnabled,
                 changeInfo.user.isSelfUser,
                 let userSession = activeUserSession
             else {
@@ -1555,7 +1538,7 @@ extension SessionManager: UserObserving {
 
             Task {
                 do {
-                    try await analyticsService.updateCurrentUser(userSession.createAnalyticsUser())
+                    try await analyticsService?.updateCurrentUser(userSession.createAnalyticsUser())
                 } catch {
                     WireLogger.analytics.error("failed to update current user: \(error)")
                 }

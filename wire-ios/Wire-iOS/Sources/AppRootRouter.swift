@@ -21,6 +21,7 @@ import UIKit
 import WireAnalytics
 import WireCommonComponents
 import WireDesign
+import WireReusableUIComponents
 import WireSyncEngine
 
 // MARK: - AppRootRouter

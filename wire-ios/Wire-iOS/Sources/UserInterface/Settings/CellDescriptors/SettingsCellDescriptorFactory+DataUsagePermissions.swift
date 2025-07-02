@@ -19,12 +19,12 @@
 import Foundation
 
 extension SettingsCellDescriptorFactory {
-    func dataUsagePermissionsGroup(isPublicDomain: Bool) -> any SettingsCellDescriptorType {
+    func dataUsagePermissionsGroup(isAnalyticsTrackingAvailable: Bool) -> any SettingsCellDescriptorType {
 
         var items: [SettingsSectionDescriptor] = []
 
         // show analytics toggle for public domain
-        if isPublicDomain {
+        if isAnalyticsTrackingAvailable {
             let sendAnalyticsData = SettingsPropertyToggleCellDescriptor(
                 settingsProperty: settingsPropertyFactory.property(.disableAnalyticsSharing),
                 inverse: true

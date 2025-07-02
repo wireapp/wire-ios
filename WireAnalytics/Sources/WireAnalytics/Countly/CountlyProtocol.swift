@@ -43,6 +43,8 @@ public protocol CountlyProtocol {
 
     func endSession()
 
+    var currentDeviceID: String { get }
+
     func recordEvent(
         _ key: String,
         segmentation: [String: String]?

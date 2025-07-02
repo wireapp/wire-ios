@@ -3,7 +3,7 @@ class Framework
     
     def self.all 
         all_folders = [
-            "WireAPI",
+            "WireNetwork",
             "WireAnalytics",
             "WireAuthentication",
             "WireBackup",
@@ -48,7 +48,7 @@ class Framework
         frameworks["wire-ios-notification-engine"].add_dependency(frameworks["wire-ios-request-strategy"])
 
         frameworks["wire-ios-sync-engine"].add_dependency(frameworks["wire-ios-request-strategy"])
-        frameworks["wire-ios-sync-engine"].add_dependency(frameworks["WireAPI"])
+        frameworks["wire-ios-sync-engine"].add_dependency(frameworks["WireNetwork"])
         frameworks["wire-ios-sync-engine"].add_dependency(frameworks["WireAnalytics"])
         frameworks["wire-ios-sync-engine"].add_dependency(frameworks["WireDomain"])
         frameworks["wire-ios-sync-engine"].add_dependency(frameworks["wire-ios-testing"]) # included in WireSyncEngineiOSTests
@@ -56,7 +56,7 @@ class Framework
         frameworks["wire-ios-share-engine"].add_dependency(frameworks["wire-ios-request-strategy"])
 
         frameworks["wire-ios-request-strategy"].add_dependency(frameworks["wire-ios-data-model"])
-        frameworks["wire-ios-request-strategy"].add_dependency(frameworks["WireAPI"])
+        frameworks["wire-ios-request-strategy"].add_dependency(frameworks["WireNetwork"])
 
         frameworks["wire-ios-data-model"].add_dependency(frameworks["wire-ios-cryptobox"])
         frameworks["wire-ios-data-model"].add_dependency(frameworks["wire-ios-images"])
@@ -86,10 +86,10 @@ class Framework
 
         frameworks["WireDomain"].add_dependency(frameworks["wire-ios-transport"])
         frameworks["WireDomain"].add_dependency(frameworks["wire-ios-data-model"])
-        frameworks["WireDomain"].add_dependency(frameworks["WireAPI"])
+        frameworks["WireDomain"].add_dependency(frameworks["WireNetwork"])
         frameworks["WireDomain"].add_dependency(frameworks["WireFoundation"])
 
-        frameworks["WireAPI"].add_dependency(frameworks["WireFoundation"])
+        frameworks["WireNetwork"].add_dependency(frameworks["WireFoundation"])
 
         frameworks["WireAuthentication"].add_dependency(frameworks["WireDomain"])
         frameworks["WireAuthentication"].add_dependency(frameworks["WireFoundation"])
@@ -136,8 +136,8 @@ class Framework
             "WireFoundationAll" # use a custom scheme that includes all targets of WireFoundation, fastlane does not found WireUI-Package
         when "WireUI"
             "WireUIAll" # use a custom scheme that includes all targets of WireUI, fastlane does not found WireUI-Package
-        when "WireAPI"
-            "WireAPIAll" # if a package has multiple targets, fastlane does not found <Package>-Package
+        when "WireNetwork"
+            "WireNetworkAll" # if a package has multiple targets, fastlane does not found <Package>-Package
         when "WireAuthentication"
             "WireAuthenticationAll"
         when "wire-ios-ziphy"

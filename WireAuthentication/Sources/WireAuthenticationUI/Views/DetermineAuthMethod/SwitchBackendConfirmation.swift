@@ -82,16 +82,6 @@ public struct SwitchBackendConfirmation: View {
             )
         ]
 
-        if let countlyURL = backendConfig.endpoints.countlyURL {
-            items.append(
-                Item(
-                    title: Strings.countlyUrl,
-                    value: countlyURL.absoluteString,
-                    isURL: true
-                )
-            )
-        }
-
         self.items = items
         self.onConfirm = onConfirm
     }

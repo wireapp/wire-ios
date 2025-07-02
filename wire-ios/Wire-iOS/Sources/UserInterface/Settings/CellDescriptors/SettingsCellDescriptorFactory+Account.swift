@@ -17,7 +17,6 @@
 //
 
 import SwiftUI
-import WireAPI
 import WireBackup
 import WireCommonComponents
 import WireDataModel
@@ -25,6 +24,7 @@ import WireDesign
 import WireDomain
 import WireFoundation
 import WireLogging
+import WireNetwork
 import WireSettingsUI
 import WireSyncEngine
 
@@ -42,7 +42,7 @@ extension SettingsCellDescriptorFactory {
 
     @MainActor
     func accountGroup(
-        isPublicDomain: Bool,
+        isAnalyticsTrackingAvailable: Bool,
         userSession: UserSession,
         useTypeIntrinsicSizeTableView: Bool
     ) -> any SettingsCellDescriptorType {
@@ -62,7 +62,7 @@ extension SettingsCellDescriptorFactory {
         }
 
         #if !DATA_COLLECTION_DISABLED
-            sections.append(personalInformationSection(isPublicDomain: isPublicDomain))
+            sections.append(personalInformationSection(isAnalyticsTrackingAvailable: isAnalyticsTrackingAvailable))
         #endif
 
         sections.append(conversationsSection())
@@ -163,9 +163,9 @@ extension SettingsCellDescriptorFactory {
         )
     }
 
-    func personalInformationSection(isPublicDomain: Bool) -> SettingsSectionDescriptorType {
+    func personalInformationSection(isAnalyticsTrackingAvailable: Bool) -> SettingsSectionDescriptorType {
         SettingsSectionDescriptor(
-            cellDescriptors: [dateUsagePermissionsElement(isPublicDomain: isPublicDomain)],
+            cellDescriptors: [dateUsagePermissionsElement(isAnalyticsTrackingAvailable: isAnalyticsTrackingAvailable)],
             header: L10n.Localizable.Self.Settings.AccountPersonalInformationGroup.title
         )
     }
@@ -240,7 +240,7 @@ extension SettingsCellDescriptorFactory {
                         SettingsCellPreview.text(L10n.Localizable.Self.addEmailPassword)
                     }
                 },
-                accessoryViewMode: .alwaysHide
+                accessoryView: .none
             )
         } else {
             textValueCellDescriptor(propertyName: .email, enabled: enabled)
@@ -278,7 +278,7 @@ extension SettingsCellDescriptorFactory {
                     presentationStyle: .navigation,
                     presentationAction: presentation,
                     previewGenerator: preview,
-                    accessoryViewMode: .alwaysHide,
+                    accessoryView: .none,
                     copiableText: copiableText
                 )
             }
@@ -400,16 +400,22 @@ extension SettingsCellDescriptorFactory {
             processor: ConversationProtobufMessageProcessor(context: context)
         )
         let userSession = sessionManager.activeUserSession!
-        let importBackupUseCase = CompositeImportBackupUseCase(
-            importBackupUseCase: ImportBackupUseCase(
+        let importBackupUseCaseFactory = ImportBackupUseCaseFactory { url in
+            ImportBackupUseCase(
+                url: url,
                 selfUserID: .init(selfUser.qualifiedID!),
                 backupLocalStore: backupLocalStore,
                 fileUnarchiver: ZipArchiveFileUnarchiver(),
-                syncTrigger: { userSession.triggerResourcesSync() },
+                syncTrigger: {
+                    Task {
+                        await userSession.triggerResourcesSync()
+                    }
+                },
                 logger: WireLogger.backupImport
-            ),
-            legacyImportBackupUseCase: sessionManager.importLegacyBackupUseCase!
-        )
+            )
+        } legacyImportBackupUseCase: { url in
+            sessionManager.importLegacyBackupUseCase(url: url)!
+        }
         let createBackupUseCase: CreateBackupUseCaseProtocol = if DeveloperFlag.createLegacyBackups.isOn {
             CreateLegacyBackupUseCase(sessionManager: sessionManager)
         } else {
@@ -424,7 +430,7 @@ extension SettingsCellDescriptorFactory {
         return BackupImportExportBuilder(
             backupPasswordValidator: BackupPasswordValidator(),
             createBackupUseCase: createBackupUseCase,
-            importBackupUseCase: importBackupUseCase,
+            importBackupUseCaseFactory: importBackupUseCaseFactory,
             cleanUpBackupsUseCase: CleanUpBackupsUseCase(sessionManager: sessionManager),
             exportBackupLogger: WireLogger.backupExport,
             importBackupLogger: WireLogger.backupImport,
@@ -467,8 +473,8 @@ extension SettingsCellDescriptorFactory {
         )
     }
 
-    func dateUsagePermissionsElement(isPublicDomain: Bool) -> any SettingsCellDescriptorType {
-        dataUsagePermissionsGroup(isPublicDomain: isPublicDomain)
+    func dateUsagePermissionsElement(isAnalyticsTrackingAvailable: Bool) -> any SettingsCellDescriptorType {
+        dataUsagePermissionsGroup(isAnalyticsTrackingAvailable: isAnalyticsTrackingAvailable)
     }
 
     func resetPasswordElement() -> any SettingsCellDescriptorType {

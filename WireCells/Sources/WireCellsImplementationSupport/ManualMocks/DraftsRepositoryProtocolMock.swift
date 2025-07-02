@@ -51,4 +51,5 @@ package actor DraftsRepositoryProtocolMock: DraftsRepositoryProtocol {
 
     func publishAll(for cellName: String) async throws {}
 
+    func clearPublishedDrafts(for cellName: String) {}
 }

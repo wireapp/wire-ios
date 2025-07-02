@@ -6,6 +6,7 @@
         "blackListURL": "https://clientblacklist.wire.com/staging",
         "teamsURL": "https://teams.anta.wire.link",
         "accountsURL": "https://account.anta.wire.link",
-        "websiteURL": "https://wire.com"
+        "websiteURL": "https://wire.com",
+        "countlyURL": "https://countly.wire.com"
     }
 }

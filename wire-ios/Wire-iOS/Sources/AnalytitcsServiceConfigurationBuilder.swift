@@ -19,9 +19,9 @@
 import WireCommonComponents
 import WireSyncEngine
 
-struct AnalyticsServiceConfigurationBuilder {
+enum AnalyticsServiceConfigurationBuilder {
 
-    func build() -> AnalyticsServiceConfiguration? {
+    static func build() -> AnalyticsServiceConfiguration? {
         guard
             let secretKey = Bundle.countlyAppKey,
             !secretKey.isEmpty,
@@ -32,8 +32,7 @@ struct AnalyticsServiceConfigurationBuilder {
 
         return AnalyticsServiceConfiguration(
             secretKey: secretKey,
-            serverHost: countlyURL,
-            didUserGiveTrackingConsent: !(ExtensionSettings.shared.disableAnalyticsSharing ?? true)
+            serverHost: countlyURL
         )
     }
 

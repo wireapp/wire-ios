@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireAPI
 import WireFoundation
+import WireNetwork
 
 extension NetworkService {
 

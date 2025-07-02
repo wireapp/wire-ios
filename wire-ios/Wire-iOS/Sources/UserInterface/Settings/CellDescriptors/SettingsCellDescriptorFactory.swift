@@ -35,17 +35,15 @@ struct SettingsCellDescriptorFactory {
         SettingsInternalGroupCellDescriptorType {
         var rootElements: [any SettingsCellDescriptorType] = []
 
+        #if !MULTIPLE_ACCOUNTS_DISABLED
+            rootElements.append(addAccountOrTeamCell())
+        #endif
+
         if ZMUser.selfUser()?.canManageTeam == true {
             rootElements.append(manageTeamCell())
         }
 
-        #if MULTIPLE_ACCOUNTS_DISABLED
-        // We skip "add account" cell
-        #else
-            rootElements.append(addAccountOrTeamCell())
-        #endif
         let topSection = SettingsSectionDescriptor(cellDescriptors: rootElements)
-
         return SettingsGroupCellDescriptor(
             items: [topSection],
             title: L10n.Localizable.Self.profile,
@@ -60,14 +58,14 @@ struct SettingsCellDescriptorFactory {
         SettingsExternalScreenCellDescriptor(
             title: L10n.Localizable.Self.Settings.ManageTeam.title,
             isDestructive: false,
-            presentationStyle: PresentationStyle.modal,
+            presentationStyle: .modal,
             identifier: nil,
             presentationAction: { () -> (UIViewController?) in
-                return BrowserViewController(url: URL.manageTeam(source: .settings))
+                BrowserViewController(url: URL.manageTeam(source: .settings))
             },
             previewGenerator: nil,
             icon: .team,
-            accessoryViewMode: .alwaysHide,
+            accessoryView: .externalLink,
             copiableText: nil,
             settingsTopLevelMenuItem: nil
         )
@@ -103,14 +101,14 @@ struct SettingsCellDescriptorFactory {
         }
 
         return SettingsExternalScreenCellDescriptor(
-            title: L10n.Localizable.Self.Settings.AddTeamOrAccount.title,
+            title: L10n.Localizable.Self.Settings.AddAccountOrTeam.title,
             isDestructive: false,
-            presentationStyle: PresentationStyle.modal,
+            presentationStyle: .modal,
             identifier: nil,
             presentationAction: presentationAction,
             previewGenerator: nil,
             icon: .plus,
-            accessoryViewMode: .alwaysHide,
+            accessoryView: .none,
             copiableText: nil,
             settingsTopLevelMenuItem: nil
         )
@@ -118,14 +116,14 @@ struct SettingsCellDescriptorFactory {
 
     @MainActor
     func settingsGroup(
-        isPublicDomain: Bool,
+        isAnalyticsTrackingAvailable: Bool,
         userSession: UserSession,
         useTypeIntrinsicSizeTableView: Bool,
         mainCoordinator: some MainCoordinatorProtocol
     ) -> any SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType {
         var topLevelElements = [
             accountGroup(
-                isPublicDomain: isPublicDomain,
+                isAnalyticsTrackingAvailable: isAnalyticsTrackingAvailable,
                 userSession: userSession,
                 useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView
             ),
@@ -135,6 +133,10 @@ struct SettingsCellDescriptorFactory {
             helpSection(),
             aboutSection()
         ]
+
+        if userSession.selfUser.canManageTeam {
+            topLevelElements.append(manageTeamLink)
+        }
 
         if Bundle.developerModeEnabled {
             topLevelElements.append(developerGroup)
@@ -158,7 +160,7 @@ struct SettingsCellDescriptorFactory {
         SettingsExternalScreenCellDescriptor(
             title: L10n.Localizable.Self.Settings.PrivacyAnalyticsMenu.Devices.title,
             isDestructive: false,
-            presentationStyle: PresentationStyle.navigation,
+            presentationStyle: .navigation,
             identifier: type(of: self).settingsDevicesCellIdentifier,
             presentationAction: { () -> (UIViewController?) in
                 return ClientListViewController(
@@ -337,4 +339,22 @@ struct SettingsCellDescriptorFactory {
             settingsCoordinator: settingsCoordinator
         )
     }
+
+    private var manageTeamLink: some SettingsCellDescriptorType {
+        SettingsExternalScreenCellDescriptor(
+            title: L10n.Localizable.Self.Settings.ManageTeam.title,
+            isDestructive: false,
+            presentationStyle: .modal,
+            identifier: nil,
+            presentationAction: { () -> (UIViewController?) in
+                BrowserViewController(url: URL.manageTeam(source: .settings))
+            },
+            previewGenerator: nil,
+            icon: .team,
+            accessoryView: .externalLink,
+            copiableText: nil,
+            settingsTopLevelMenuItem: nil
+        )
+    }
+
 }

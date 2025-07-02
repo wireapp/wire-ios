@@ -19,6 +19,7 @@
 import Foundation
 import WireLogging
 
+// TODO: remove it?
 public struct AnalyticsIdentifierProvider {
 
     public var selfUser: UserType

@@ -73,6 +73,10 @@ public struct CountlyWrapper: CountlyProtocol {
         countly().endSession()
     }
 
+    public var currentDeviceID: String {
+        countly().deviceID()
+    }
+
     public func recordEvent(
         _ key: String,
         segmentation: [String: String]?
