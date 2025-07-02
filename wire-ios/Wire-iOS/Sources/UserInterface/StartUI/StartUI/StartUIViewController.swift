@@ -23,6 +23,7 @@ import WireConversationsAPI
 import WireConversationsUI
 import WireConversationsUIBindings
 import WireDesign
+import WireFoundation                               
 import WireMainNavigationUI
 import WireReusableUIComponents
 import WireSyncEngine
@@ -340,29 +341,27 @@ final class StartUIViewController: UIViewController {
         let configuration = WireChannelBannerView.Configuration(
             title: Localizable.UpgradeBanner.headline,
             message: Localizable.UpgradeBanner.subheadline,
-            buttonTitle: Localizable.UpgradeBanner.Button.title,
-            buttonURL: buttonURL,
-            padding: 0, // TODO: fix
+            mainButtonTitle: Localizable.UpgradeBanner.Button.title,
+            mainButtonAction: {},
             closeButton: .init(
                 accessibilityLabel: Accessibility.UpgradeBanner.CloseButton.label,
                 action: { [weak self] in self?.dismiss(animated: true) }
             )
         )
         let banner = WireChannelBannerView(configuration: configuration)
-
-        let rootView = ZStack {            // Dimmer that covers entire screen and intercepts taps
-            Color.black.opacity(0.4)
+        // Dimmer that covers entire screen and intercepts taps
+        let rootView = ZStack {
+            Color.black.opacity(0.5)
                 .edgesIgnoringSafeArea(.all)
-                // (optional) add a tapGesture if you want tapping outside to dismiss:
-                // .onTapGesture { hosting.dismiss(animated: true) }
             banner
-                // .padding(.horizontal, 40)
         }
+            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
         let hostingController = UIHostingController(rootView: rootView)
         hostingController.view.backgroundColor = .clear
         hostingController.modalPresentationStyle = .overFullScreen
         hostingController.modalTransitionStyle   = .crossDissolve
+        hostingController.overrideUserInterfaceStyle = .dark
         return present(hostingController, animated: true)
 
         // TODO: use real banner and test on iPad

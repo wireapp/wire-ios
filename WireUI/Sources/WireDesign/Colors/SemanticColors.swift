@@ -180,7 +180,7 @@ public enum SemanticColors {
 
         // Channel banner view
 
-        public static let channelBannerBorderColor = UIColor(light: .gray90, dark: .gray90)
+        public static let channelBannerBorderColor = UIColor(light: .gray90, dark: .gray90) // TODO: delete
     }
 
     public enum TabBar {

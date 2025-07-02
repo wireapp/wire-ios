@@ -16,32 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
-
 extension WireChannelBannerView {
 
     public struct Configuration {
 
         public var title: String
         public var message: String
-        public var buttonTitle: String
-        public var buttonURL: URL
-        public var padding: CGFloat
+        public var mainButtonTitle: String
+        public var mainButtonAction: () -> Void
         public var closeButton: CloseButton?
 
         public init(
             title: String,
             message: String,
-            buttonTitle: String,
-            buttonURL: URL,
-            padding: CGFloat,
+            mainButtonTitle: String,
+            mainButtonAction: @escaping () -> Void,
             closeButton: CloseButton? = nil
         ) {
             self.title = title
             self.message = message
-            self.buttonTitle = buttonTitle
-            self.buttonURL = buttonURL
-            self.padding = padding
+            self.mainButtonTitle = mainButtonTitle
+            self.mainButtonAction = mainButtonAction
             self.closeButton = closeButton
         }
 

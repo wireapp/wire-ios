@@ -42,9 +42,8 @@ final class WireChannelBannerTests: XCTestCase {
             configuration: .init(
                 title: "Show older messages?",
                 message: "Upgrade to a paid plan to offer channel members the whole history.",
-                buttonTitle: "Upgrade now",
-                buttonURL: URL(string: "https://example.com")!,
-                padding: 30,
+                mainButtonTitle: "Upgrade now",
+                mainButtonAction: {},
                 closeButton: .init(
                     accessibilityLabel: "",
                     action: {}
@@ -68,9 +67,8 @@ final class WireChannelBannerTests: XCTestCase {
             configuration: .init(
                 title: "Show older messages?",
                 message: "Upgrade to a paid plan to offer channel members the whole history.",
-                buttonTitle: "Upgrade now",
-                buttonURL: URL(string: "https://example.com")!,
-                padding: 30,
+                mainButtonTitle: "Upgrade now",
+                mainButtonAction: {},
                 closeButton: .init(
                     accessibilityLabel: "",
                     action: {}
