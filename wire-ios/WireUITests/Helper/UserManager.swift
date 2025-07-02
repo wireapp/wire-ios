@@ -89,7 +89,7 @@ class UserManager {
         try await selfUserAPI.deleteSelf(password: user.password)
     }
 
-    func deleteteam(teamID: UUID, password: String, code: String) async throws {
+    func deleteTeam(teamID: UUID, password: String, code: String) async throws {
         try await selfUserAPI.deleteTeam(
             teamId: teamID,
             password: password,
@@ -107,7 +107,7 @@ class UserManager {
                     // If team exists, try deleting the team
                     try await BackendClient.sendVerificationCode(email: user.email, password: user.password)
                     let code = try await InbucketClient.getVerificationCode(email: user.email)
-                    try await deleteteam(teamID: teamID, password: user.password, code: code)
+                    try await deleteTeam(teamID: teamID, password: user.password, code: code)
                 } else {
                     // If no team, delete user
                     try await deleteUser(user)

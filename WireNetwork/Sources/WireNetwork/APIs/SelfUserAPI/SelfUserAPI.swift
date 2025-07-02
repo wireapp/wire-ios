@@ -44,7 +44,7 @@ public protocol SelfUserAPI {
         func updateHandle(handle: String) async throws
     #endif
 
-    /// Delete team on teardown
+    /// Delete a team
     /// - Parameters:
     ///   - teamId: teamId fetched by user
     ///   - password: password

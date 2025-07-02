@@ -18,8 +18,8 @@
 
 import XCTest
 
-/// Team creation pages from user account
-class TeamCreationStepsPage: PageModel {
+/// Some steps followed while setting up team i.e name, disclaimers etc
+class TeamSetupStepsPage: PageModel {
 
     override var pageMainElement: XCUIElement {
         continueButton
@@ -44,19 +44,19 @@ class TeamCreationStepsPage: PageModel {
         return elementsQuery["Back To Wire"]
     }
 
-    func tapContinue() throws -> TeamCreationStepsPage {
+    func tapContinue() throws -> TeamSetupStepsPage {
         continueButton.tap()
-        return try TeamCreationStepsPage()
+        return try TeamSetupStepsPage()
     }
 
-    func typeTeamNameAndContinue(_ input: String) -> TeamCreationStepsPage {
+    func typeTeamNameAndContinue(_ input: String) -> TeamSetupStepsPage {
         teamNameTextField.tap()
         teamNameTextField.typeText(input)
         continueButton.tap()
         return self
     }
 
-    func acceptTheConfirmationAndContinue() -> TeamCreationStepsPage {
+    func acceptTheConfirmationAndContinue() -> TeamSetupStepsPage {
         checkbox.tap()
         checkbox.tap()
         continueButton.tap()

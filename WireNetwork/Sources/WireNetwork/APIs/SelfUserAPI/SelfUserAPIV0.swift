@@ -75,7 +75,7 @@ class SelfUserAPIV0: SelfUserAPI, VersionedAPI {
             DeleteTeamRequestBodyV0(password: password, verificationCode: verificationCode)
         )
 
-        let request = try URLRequestBuilder(path: "/v8/teams/\(teamId)")
+        let request = try URLRequestBuilder(path: "\(pathPrefix)/teams/\(teamId)")
             .withMethod(.delete)
             .withBody(body, contentType: .json)
             .build()

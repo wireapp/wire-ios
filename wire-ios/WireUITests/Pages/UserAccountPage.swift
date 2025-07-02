@@ -26,38 +26,32 @@ class UserAccountPage: PageModel {
     }
 
     var profileButton: XCUIElement {
-        let elementsQuery = app.descendants(matching: .any)["account_profile_image_view"]
-        return elementsQuery.firstMatch
+        app.descendants(matching: .any)["account_profile_image_view"].firstMatch
     }
 
     var qrCodeButton: XCUIElement {
-        let elementsQuery = app.descendants(matching: .any)["QR code button"]
-        return elementsQuery.firstMatch
+        app.descendants(matching: .any)["QR code button"].firstMatch
     }
 
     var createTeamButton: XCUIElement {
-        let elementsQuery = app.otherElements
-        return elementsQuery.buttons["Create Wire Team"]
+        app.otherElements.buttons["Create Wire Team"].firstMatch
     }
 
     var teamNameOnAccountPage: XCUIElement {
-        let elementsQuery = app.staticTexts
-        return elementsQuery["team name"].firstMatch
+        app.staticTexts["team name"].firstMatch
     }
 
     var manageTeamButton: XCUIElement {
-        let elementsQuery = app.staticTexts
-        return elementsQuery["Manage Team"]
+        app.staticTexts["Manage Team"].firstMatch
     }
 
     var closeButton: XCUIElement {
-        let elementsQuery = app.descendants(matching: .any)["close"]
-        return elementsQuery.firstMatch
+        app.descendants(matching: .any)["close"].firstMatch
     }
 
-    func tapCreateTeamButtonAndContinue() throws -> TeamCreationStepsPage {
+    func tapCreateTeamButtonAndContinue() throws -> TeamSetupStepsPage {
         createTeamButton.tap()
-        return try TeamCreationStepsPage()
+        return try TeamSetupStepsPage()
     }
 
     func closeAccountPage() throws -> ConversationsPage {
