@@ -379,7 +379,14 @@ final class SelfProfileViewController: UIViewController {
         )
         viewController.modalPresentationStyle = .formSheet
         viewController.presentationController?.delegate = viewController
-        present(viewController, animated: true)
+
+        if presentedViewController != nil {
+            dismiss(animated: true) {
+                self.present(viewController, animated: true)
+            }
+        } else {
+            present(viewController, animated: true)
+        }
     }
 
     private func dismissIndividualToTeamMigrationBanner() {
