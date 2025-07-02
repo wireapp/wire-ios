@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-extension WireChannelBannerView {
+public extension WireChannelBannerView {
 
-    public struct Configuration {
+    struct Configuration {
 
         public var title: String
         public var message: String
@@ -44,9 +44,9 @@ extension WireChannelBannerView {
 
 }
 
-extension WireChannelBannerView.Configuration {
+public extension WireChannelBannerView.Configuration {
 
-    public struct CloseButton {
+    struct CloseButton {
 
         public var accessibilityLabel: String
         public var action: () -> Void

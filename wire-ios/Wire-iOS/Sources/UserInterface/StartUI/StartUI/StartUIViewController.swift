@@ -23,7 +23,7 @@ import WireConversationsAPI
 import WireConversationsUI
 import WireConversationsUIBindings
 import WireDesign
-import WireFoundation                               
+import WireFoundation
 import WireMainNavigationUI
 import WireReusableUIComponents
 import WireSyncEngine
@@ -101,8 +101,8 @@ final class StartUIViewController: UIViewController {
 
     var showsGroupSelector: Bool {
         SearchGroup.all.count > 1 &&
-        userSession.selfUser.canSeeServices &&
-        userSession.defaultProtocol != .mls
+            userSession.selfUser.canSeeServices &&
+            userSession.defaultProtocol != .mls
     }
 
     // MARK: - Init
@@ -339,7 +339,6 @@ final class StartUIViewController: UIViewController {
         typealias Localizable = L10n.Localizable.Peoplepicker
         typealias Accessibility = L10n.Accessibility.Peoplepicker
 
-        let mainCoordinator = mainCoordinator
         let configuration = WireChannelBannerView.Configuration(
             title: Localizable.UpgradeBanner.headline,
             message: Localizable.UpgradeBanner.subheadline,
@@ -359,7 +358,7 @@ final class StartUIViewController: UIViewController {
                 .edgesIgnoringSafeArea(.all)
             banner
         }
-            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
         let hostingController = UIHostingController(rootView: rootView)
         hostingController.view.backgroundColor = .clear

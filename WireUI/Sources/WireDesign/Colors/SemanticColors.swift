@@ -178,9 +178,6 @@ public enum SemanticColors {
         public static let conversationBackgroundRed = UIColor(light: .red50Light, dark: .red900Dark)
         public static let conversationBackgroundTurquoise = UIColor(light: .turquoise50Light, dark: .turquoise900Dark)
 
-        // Channel banner view
-
-        public static let channelBannerBorderColor = UIColor(light: .gray90, dark: .gray90) // TODO: delete
     }
 
     public enum TabBar {
