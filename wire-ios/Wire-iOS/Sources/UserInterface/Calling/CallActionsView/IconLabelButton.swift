@@ -67,7 +67,6 @@ class IconLabelButton: ButtonWithLargerHitArea {
         iconButton.isUserInteractionEnabled = false
         iconButton.borderWidth = 0
         iconButton.circular = true
-        iconButton.shouldUsePassedStateForTintAndBorder = true
         blurView.translatesAutoresizingMaskIntoConstraints = false
         blurView.clipsToBounds = true
         blurView.layer.cornerRadius = IconLabelButton.width / 2

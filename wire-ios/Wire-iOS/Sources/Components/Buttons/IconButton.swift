@@ -69,7 +69,6 @@ class IconButton: ButtonWithLargerHitArea {
     var adjustsTitleWhenHighlighted = false
     var adjustsBorderColorWhenHighlighted = false
     var adjustBackgroundImageWhenHighlighted = false
-    var shouldUsePassedStateForTintAndBorder = false
 
     private var iconColorsByState: [UIControl.State.RawValue: UIColor] = [:]
     private var borderColorByState: [UIControl.State.RawValue: UIColor] = [:]
@@ -280,7 +279,7 @@ class IconButton: ButtonWithLargerHitArea {
             )
         }
 
-        updateTintColor(state: shouldUsePassedStateForTintAndBorder ? state : nil)
+        updateTintColor()
     }
 
     func iconDefinition(for state: UIControl.State) -> IconDefinition? {
@@ -353,6 +352,6 @@ class IconButton: ButtonWithLargerHitArea {
             }
         }
 
-        updateBorderColor(state: shouldUsePassedStateForTintAndBorder ? state : nil)
+        updateBorderColor()
     }
 }
