@@ -366,7 +366,7 @@ public final class ZMUserSession: NSObject {
         coreCryptoProvider: coreCryptoProvider,
         mlsService: mlsService
     )
-    
+
     private lazy var appVersionMigrationService: AppVersionMigrationService = .init(
         journal: journal,
         currentVersion: SemanticVersion(stringLiteral: currentAppVersion),
@@ -653,7 +653,7 @@ public final class ZMUserSession: NSObject {
     }
 
     // MARK: - Methods
-    
+
     public func performAppMigrationsIfNeeded() async {
         do {
             try await appVersionMigrationService.performAppMigrations()

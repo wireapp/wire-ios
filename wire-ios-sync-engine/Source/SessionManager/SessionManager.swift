@@ -1094,20 +1094,20 @@ public final class SessionManager: NSObject, SessionManagerType {
                             coreDataStack: coreDataStack
                         )
                     }
-                    
+
                     let userSession = self.startBackgroundSession(
                         for: account,
                         with: coreDataStack,
                         journal: journal
                     )
-                    
+
                     await userSession.performAppMigrationsIfNeeded()
-                    
+
                     self.triggerMigrationsNeedsActionsIfNeeded(
                         journal: journal,
                         userSession: userSession
                     )
-                    
+
                     await MainActor.run {
                         onCompletion(userSession)
                     }

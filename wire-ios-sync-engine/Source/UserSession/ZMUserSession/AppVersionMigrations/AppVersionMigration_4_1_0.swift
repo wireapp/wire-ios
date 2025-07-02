@@ -22,16 +22,16 @@ import WireDomain
 import WireLogging
 
 struct AppVersionMigration_4_1_0: AppVersionMigration {
-    
+
     var version: SemanticVersion { SemanticVersion("4.1.0") }
     private let performResourceSync: () -> Void
-    
+
     init(
         performResourceSync: @escaping () -> Void
     ) {
         self.performResourceSync = performResourceSync
     }
-    
+
     func perform() async throws {
         // Performs a resources sync to ensure all conversations are up to date.
         performResourceSync()
