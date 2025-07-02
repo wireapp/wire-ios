@@ -20,7 +20,15 @@ import Foundation
 import WireCellsAPI
 import WireLogging
 
-package struct UploadDraftUseCase: WireCellsUploadDraftUseCaseProtocol {
+enum UploadDraftUseCaseError: Error {
+
+    /// The draft was not found in the draft repository.
+
+    case draftNotFound
+
+}
+
+package struct UploadDraftUseCase: WireCellsUploadDraftUseCaseProtocol, WireCellsRetryUploadDraftUseCaseProtocol {
 
     private let cellName: String
     private let draftRepository: any DraftsRepositoryProtocol
@@ -58,11 +66,17 @@ package struct UploadDraftUseCase: WireCellsUploadDraftUseCaseProtocol {
         )
 
         await draftRepository.addDraft(draft, for: cellName)
-        await invoke(draft: draft)
+        try await invoke(nodeID: draft.nodeID)
     }
 
-    func invoke(draft: WireCellsDraft) async {
-        var draft = draft
+    /// Uploads a file using an existing draft's nodeID.
+    ///
+    /// - throws: `UploadDraftUseCaseError.draftNotFound` if the draft does not exist in the draft repository.
+
+    func invoke(nodeID: UUID) async throws {
+        guard var draft = await draftRepository.fetchDraft(nodeID: nodeID, cellName: cellName) else {
+            throw UploadDraftUseCaseError.draftNotFound
+        }
 
         draft.status = .uploading(progress: 0)
         await draftRepository.updateDraft(draft, for: cellName)
