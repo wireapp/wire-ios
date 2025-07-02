@@ -18,7 +18,7 @@
 
 /// Capabilities of a user client.
 
-public enum UserClientCapability: String, Sendable {
+public enum UserClientCapability: Sendable {
 
     /// The client consents to being subject legalhold
     /// (directly or indirectly).

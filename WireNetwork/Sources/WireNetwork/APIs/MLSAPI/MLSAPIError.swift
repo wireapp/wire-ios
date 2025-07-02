@@ -20,13 +20,42 @@ import Foundation
 
 /// Errors originating from `MLSAPI`.
 
-public enum MLSAPIError: Error, Codable, Equatable {
+public enum MLSAPIError: Error, Equatable {
 
-    public init(from string: String) throws {
-        self = try JSONDecoder().decode(MLSAPIError.self, from: Data(string.utf8))
+    /// Unsupported endpoint for API version
+
+    case unsupportedEndpointForAPIVersion
+
+    /// MLS is not configured on this backend
+
+    case mlsNotEnabled
+
+    /// Message was sent in an too old epoch
+
+    case mlsStaleMessage
+
+    /// A proposal of type Add or Remove does not apply to the full list of clients for a user
+
+    case mlsClientMismatch
+
+    /// The commit is not referencing all pending proposals
+
+    case mlsCommitMissingReferences
+
+    /// Generic error for all non recoverable MLS error
+
+    case mlsError(_ label: String, _ message: String)
+
+}
+
+
+enum MLSAPIV0Error: Error, Codable, Equatable {
+
+    init(from string: String) throws {
+        self = try JSONDecoder().decode(MLSAPIV0Error.self, from: Data(string.utf8))
     }
 
-    public func encodeAsString() throws -> String {
+    func encodeAsString() throws -> String {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .sortedKeys
         return String(decoding: try encoder.encode(self), as: UTF8.self)

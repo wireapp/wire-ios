@@ -21,7 +21,7 @@ import Foundation
 /// A message protocol to use in end to end
 /// encrypted communication.
 
-public enum MessageProtocol: String, Sendable {
+public enum MessageProtocol: Sendable {
 
     /// The Proteus messaging protocol.
 

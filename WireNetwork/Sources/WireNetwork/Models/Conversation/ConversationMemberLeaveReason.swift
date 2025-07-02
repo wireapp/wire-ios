@@ -20,7 +20,7 @@ import Foundation
 
 /// The reason why a member was removed from a conversation.
 
-public enum ConversationMemberLeaveReason: String, Sendable {
+public enum ConversationMemberLeaveReason: Sendable {
 
     /// The user has been removed from the team and therefore removed
     /// from all conversations.

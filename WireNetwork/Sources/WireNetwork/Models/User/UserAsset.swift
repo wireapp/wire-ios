@@ -20,7 +20,7 @@ import Foundation
 
 /// Describes the size of the user asset.
 
-public enum UserAssetSize: String, Equatable, Sendable {
+public enum UserAssetSize: Equatable, Sendable {
 
     /// Smaller version of the asset optimised for size
 
@@ -33,7 +33,7 @@ public enum UserAssetSize: String, Equatable, Sendable {
 
 /// Describes the purpose of the user asset.
 
-public enum UserAssetType: String, Equatable, Sendable {
+public enum UserAssetType: Equatable, Sendable {
 
     /// User profile image
 

@@ -252,14 +252,14 @@ struct CreateGroupConversationParametersV8: Encodable {
         self.users = parameters.messageProtocol == .proteus ? parameters.unqualifiedUserIDs : nil
         self.qualifiedUsers = parameters.messageProtocol == .proteus ? parameters.qualifiedUserIDs
             .map { $0.toNetworkModel() } : nil
-        self.access = parameters.accessMode.map(\.rawValue)
-        self.accessRoles = parameters.accessRoles.map(\.rawValue)
+        self.access = parameters.accessMode.map { $0.toNetworkModel().rawValue }
+        self.accessRoles = parameters.accessRoles.map { $0.toNetworkModel().rawValue }
         self.name = parameters.name
         self.team = parameters.teamID.map { .init(teamID: $0) }
         self.messageTimer = nil
         self.readReceiptMode = parameters.isReadReceiptsEnabled ? 1 : 0
         self.conversationRole = "wire_member"
-        self.messageProtocol = parameters.messageProtocol.rawValue
+        self.messageProtocol = parameters.messageProtocol.toNetworkModel().rawValue
         self.conversationGroupType = parameters.groupType.toNetworkModel()
     }
 

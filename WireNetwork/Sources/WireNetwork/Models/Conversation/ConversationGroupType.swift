@@ -18,7 +18,7 @@
 
 import Foundation
 
-public enum ConversationGroupType: String, Sendable {
+public enum ConversationGroupType: Sendable {
     case group
     case channel
 }

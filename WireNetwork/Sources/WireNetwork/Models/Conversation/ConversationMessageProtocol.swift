@@ -20,7 +20,7 @@ import Foundation
 
 /// The current message protocol used in a conversation.
 
-public enum ConversationMessageProtocol: String, Sendable {
+public enum ConversationMessageProtocol: Sendable {
 
     /// The Proteus messaging protocol.
 
@@ -53,4 +53,16 @@ enum ConversationMessageProtocolV0: String, Sendable, Decodable, ToAPIModelConve
             .mls
         }
     }
+}
+
+extension ConversationMessageProtocol: ToNetworkConvertible {
+    func toNetworkModel() -> ConversationMessageProtocolV0 {
+        switch self {
+        case .proteus:
+            return .proteus
+        case .mixed:
+            return .mixed
+        case .mls:
+            return .mls
+        }}
 }

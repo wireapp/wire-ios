@@ -18,7 +18,7 @@
 
 import Foundation
 
-public enum ChannelPermission: String, Sendable {
+public enum ChannelPermission: Sendable {
     case everyone
     case admins
 }

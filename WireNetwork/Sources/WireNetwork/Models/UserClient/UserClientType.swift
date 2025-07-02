@@ -20,7 +20,7 @@ import Foundation
 
 /// Types of a user client.
 
-public enum UserClientType: String, Sendable {
+public enum UserClientType: Sendable {
 
     /// A client intended to be used for long periods of time,
     /// such as a mobile device or web application.

@@ -27,7 +27,7 @@ import Foundation
 /// In other cases, `enabled` may mean that the feature
 /// is turned on, because it is always available.
 
-public enum FeatureConfigStatus: String, Sendable {
+public enum FeatureConfigStatus: Sendable {
 
     case enabled
     case disabled

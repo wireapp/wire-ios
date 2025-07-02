@@ -20,7 +20,7 @@ import Foundation
 
 /// Classes of user client devices.
 
-public enum DeviceClass: String, Sendable {
+public enum DeviceClass: Sendable {
 
     /// The client is a phone.
 

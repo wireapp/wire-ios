@@ -43,7 +43,7 @@ public struct ChannelsFeatureConfig: Equatable, Sendable {
     }
 }
 
-public enum ChannelsPermision: String, Sendable {
+public enum ChannelsPermision: Sendable {
 
     /// Member, Admin, Owner
     case teamMembers

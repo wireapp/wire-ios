@@ -20,7 +20,7 @@ import Foundation
 
 /// How users can join a conversation.
 
-public enum ConversationAccessMode: String, Sendable {
+public enum ConversationAccessMode: Sendable {
 
     /// Used in one-to-one and self conversations where no one else can
     /// be added or removed.
@@ -58,6 +58,22 @@ enum ConversationAccessModeV0: String, Sendable, Decodable, ToAPIModelConvertibl
             .link
         case .code:
             .code
+        }
+    }
+}
+
+extension ConversationAccessMode: ToNetworkConvertible {
+    
+    func toNetworkModel() -> ConversationAccessModeV0 {
+        switch self {
+        case .private:
+            return .private
+        case .invite:
+            return .invite
+        case .link:
+            return .link
+        case .code:
+            return .code
         }
     }
 }
