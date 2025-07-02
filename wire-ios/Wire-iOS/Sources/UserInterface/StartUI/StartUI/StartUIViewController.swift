@@ -343,20 +343,8 @@ final class StartUIViewController: UIViewController {
             message: Localizable.UpgradeBanner.subheadline,
             mainButtonTitle: Localizable.UpgradeBanner.Button.title,
             mainButtonAction: { [weak self] in
-                let buttonURL = URL(string: "https://teams.wire.com/register/email")!
-                self?.dismiss(animated: true) {
-                    Task {
-                        guard let self else { return }
-                        let rootViewController = self.selfProfileUIBuilder.build(mainCoordinator: mainCoordinator)
-                        let navigationController = UINavigationController(rootViewController: rootViewController)
-                        navigationController.modalPresentationStyle = .formSheet
-                        navigationController.presentationController?.delegate = rootViewController
-                        await mainCoordinator.presentViewController(navigationController)
-                        if let selfProfileViewController = rootViewController as? SelfProfileViewController {
-                            selfProfileViewController.triggerCreateTeamFlow()
-                        }
-                    }
-                }
+                // let buttonURL = URL(string: "https://teams.wire.com/register/email")! // TODO: Figma mentions this URL
+                self?.dismiss(animated: true) { [weak self] in self?.presentPersonalToTeamMigration() }
             },
             closeButton: .init(
                 accessibilityLabel: Accessibility.UpgradeBanner.CloseButton.label,
@@ -378,6 +366,19 @@ final class StartUIViewController: UIViewController {
         hostingController.modalTransitionStyle   = .crossDissolve
         hostingController.overrideUserInterfaceStyle = .dark
         present(hostingController, animated: true)
+    }
+
+    private func presentPersonalToTeamMigration() {
+        Task {
+            let rootViewController = self.selfProfileUIBuilder.build(mainCoordinator: mainCoordinator)
+            let navigationController = UINavigationController(rootViewController: rootViewController)
+            navigationController.modalPresentationStyle = .formSheet
+            navigationController.presentationController?.delegate = rootViewController
+            await mainCoordinator.presentViewController(navigationController)
+            if let selfProfileViewController = rootViewController as? SelfProfileViewController {
+                selfProfileViewController.triggerCreateTeamFlow()
+            }
+        }
     }
 
 }
