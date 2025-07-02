@@ -82,13 +82,11 @@ final class VerifyUserStep: Component<VerifyUserDependency>, VerifyUserStepProto
 
         if journal[.isConsumableNotificationsEnabled] {
             try await syncEventsStep(
-                selfUserID: selfUser.id,
                 selfClientID: selfClientID
             ).pullEvents()
 
         } else {
             try await pullEventsStep(
-                selfUserID: selfUser.id,
                 selfClientID: selfClientID
             ).pullEvents()
         }
@@ -97,23 +95,19 @@ final class VerifyUserStep: Component<VerifyUserDependency>, VerifyUserStepProto
     // MARK: - Children
 
     func pullEventsStep(
-        selfUserID: UUID,
         selfClientID: String
     ) -> PullEventsStep {
         PullEventsStep(
             parent: self,
-            selfUserID: selfUserID,
             selfClientID: selfClientID
         )
     }
 
     func syncEventsStep(
-        selfUserID: UUID,
         selfClientID: String
     ) -> SyncEventsStep {
         SyncEventsStep(
             parent: self,
-            selfUserID: selfUserID,
             selfClientID: selfClientID
         )
     }

@@ -45,15 +45,16 @@ final class SyncEventsStep: Component<SyncEventsDependency>, SyncEventsStepProto
         case apiVersionNotFound
     }
 
-    private var selfUserID: UUID
+    private var selfUserID: UUID {
+        dependency.userID
+    }
+
     private var selfClientID: String
 
     init(
         parent: any Scope,
-        selfUserID: UUID,
         selfClientID: String
     ) {
-        self.selfUserID = selfUserID
         self.selfClientID = selfClientID
         super.init(parent: parent)
     }
