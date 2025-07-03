@@ -244,7 +244,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     public static let defaultMaxNumberAccounts: Int = 3
 
     public let currentAppVersion: String
-    public let currentBuildVersion: String
+    public let currentBuildNumber: String
     var isAppVersionBlacklisted = false
     public weak var delegate: SessionManagerDelegate?
     public let accountManager: AccountManager
@@ -372,7 +372,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     public convenience init(
         maxNumberAccounts: Int = defaultMaxNumberAccounts,
         currentAppVersion: String,
-        currentBuildVersion: String,
+        currentBuildNumber: String,
         mediaManager: MediaManagerType,
         delegate: SessionManagerDelegate?,
         application: ZMApplication,
@@ -402,7 +402,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         let dispatchGroup = dispatchGroup ?? ZMSDispatchGroup(label: "WireSyncEngine.SessionManager.private")
 
         let unauthenticatedSessionFactory = UnauthenticatedSessionFactory(
-            appVersion: currentBuildVersion,
+            appVersion: currentBuildNumber,
             environment: environment,
             proxyUsername: proxyCredentials?.username,
             proxyPassword: proxyCredentials?.password,
@@ -411,7 +411,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         let authenticatedSessionFactory = AuthenticatedSessionFactory(
             currentAppVersion: currentAppVersion,
-            currentBuildNumber: currentBuildVersion,
+            currentBuildNumber: currentBuildNumber,
             application: application,
             mediaManager: mediaManager,
             flowManager: flowManager,
@@ -425,7 +425,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         try self.init(
             maxNumberAccounts: maxNumberAccounts,
             currentAppVersion: currentAppVersion,
-            currentBuildVersion: currentBuildVersion,
+            currentBuildNumber: currentBuildNumber,
             authenticatedSessionFactory: authenticatedSessionFactory,
             unauthenticatedSessionFactory: unauthenticatedSessionFactory,
             reachability: reachability,
@@ -489,7 +489,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     init(
         maxNumberAccounts: Int = defaultMaxNumberAccounts,
         currentAppVersion: String,
-        currentBuildVersion: String,
+        currentBuildNumber: String,
         authenticatedSessionFactory: AuthenticatedSessionFactory,
         unauthenticatedSessionFactory: UnauthenticatedSessionFactory,
         reachability: ReachabilityWrapper,
@@ -513,7 +513,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         SessionManager.enableLogsByEnvironmentVariable()
         self.environment = environment
         self.currentAppVersion = currentAppVersion
-        self.currentBuildVersion = currentBuildVersion
+        self.currentBuildNumber = currentBuildNumber
         self.application = application
         self.delegate = delegate
         self.dispatchGroup = dispatchGroup
@@ -607,7 +607,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             blacklistVerificator?.tearDown()
             blacklistVerificator = ZMBlacklistVerificator(
                 checkInterval: configuration.blacklistDownloadInterval,
-                version: currentBuildVersion,
+                version: currentBuildNumber,
                 environment: environment,
                 proxyUsername: proxyCredentials?.username,
                 proxyPassword: proxyCredentials?.password,
@@ -1095,20 +1095,21 @@ public final class SessionManager: NSObject, SessionManagerType {
                         )
                     }
 
-                    let userSession = self.startBackgroundSession(
-                        for: account,
-                        with: coreDataStack,
-                        journal: journal
-                    )
-
-                    await userSession.performAppMigrationsIfNeeded()
-
-                    self.triggerMigrationsNeedsActionsIfNeeded(
-                        journal: journal,
-                        userSession: userSession
-                    )
-
                     await MainActor.run {
+                        let userSession = self.startBackgroundSession(
+                            for: account,
+                            with: coreDataStack,
+                            journal: journal
+                        )
+                        
+                        Task {
+                            await userSession.performAppMigrationsIfNeeded()
+                        }
+
+                        self.triggerMigrationsNeedsActionsIfNeeded(
+                            journal: journal,
+                            userSession: userSession
+                        )
                         onCompletion(userSession)
                     }
                 }

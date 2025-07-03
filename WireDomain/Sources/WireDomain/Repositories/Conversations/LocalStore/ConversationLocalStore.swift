@@ -1015,7 +1015,6 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         )
 
         await context.perform { [self] in
-            localConversation.needsToBeUpdatedFromBackend = true
             isInitialFetch = localConversation.isPendingInitialFetch
 
             localConversation.conversationType = .group
