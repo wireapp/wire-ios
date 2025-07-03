@@ -643,6 +643,7 @@
 				ConversationStatusTests.swift,
 				"ConversationStatusTests+Icon.swift",
 				ConversationTitleViewTests.swift,
+				"ConversationViewController+GuestBarTests.swift",
 				ConversationViewControllerSnapshotTests.swift,
 				CreateSecureGuestLinkViewModelTests.swift,
 				CustomAppLock/AppLockChangeWarningViewControllerTests.swift,
