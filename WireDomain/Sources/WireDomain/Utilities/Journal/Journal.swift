@@ -74,24 +74,13 @@ public struct Journal: JournalProtocol {
         }
     }
 
-    /// Get or set an optional boolean value.
+    /// Get or set an optional string value.
 
     public subscript(_ key: JournalKey<String?>) -> String? {
         get {
-            (storage.object(forKey: rawKey(for: key)) as? String) ?? key.defaultValue
+            storage.string(forKey: rawKey(for: key)) ?? key.defaultValue
         }
         nonmutating set {
-            storage.set(newValue, forKey: rawKey(for: key))
-        }
-    }
-
-    /// Get or set a string value.
-
-    public subscript(_ key: JournalKey<String?>) -> String? {
-        get {
-            storage.string(forKey: rawKey(for: key))
-        }
-        set {
             storage.set(newValue, forKey: rawKey(for: key))
         }
     }
