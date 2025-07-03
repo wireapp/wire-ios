@@ -123,18 +123,23 @@ struct AccountStore {
     /// If the BackendEnvironment for an account already exists, it will be overwritten.
     ///
     /// - parameter backendEnvironment: Object to store.
+    /// - parameter metadata: Resolved metadata about the backend.
     /// - parameter accountID: The `UUID` of the user the account belongs to.
     /// - returns: Whether the operation was successful.
 
     @discardableResult
-    func storeBackendEnvironment(_ backendEnvironment: BackendEnvironment2, for accountID: UUID) -> Bool {
+    func storeBackendEnvironment(
+        _ backendEnvironment: BackendEnvironment2,
+        metadata: ResolvedBackendMetadata,
+        for accountID: UUID
+    ) -> Bool {
         do {
             let accountDataURL = accountDataURL(accountID: accountID)
             if !FileManager.default
                 .fileExists(atPath: accountDataURL.absoluteString) {
                 try FileManager.default.createAndProtectDirectory(at: accountDataURL)
             }
-            let storedBackendEnvironment = backendEnvironment.toStored()
+            let storedBackendEnvironment = backendEnvironment.toStored(with: metadata)
             let url = backendEnvironmentURL(for: accountID)
             let data = try encoder.encode(storedBackendEnvironment)
             try data.write(to: url, options: .atomic)
@@ -152,9 +157,9 @@ struct AccountStore {
     /// Fetch a backend environment for account.
     ///
     /// - parameter accountID: The `UUID` of the user the account belongs to.
-    /// - returns: The `BackendEnvironment` if it exists.
+    /// - returns: The `BackendEnvironment` and `ResolvedBackendMetadata` if it exists.
 
-    func fetchBackendEnvironment(accountID: UUID) throws -> BackendEnvironment2? {
+    func fetchBackendEnvironment(accountID: UUID) throws -> (BackendEnvironment2, ResolvedBackendMetadata)? {
         let url = backendEnvironmentURL(for: accountID)
 
         do {
@@ -166,10 +171,9 @@ struct AccountStore {
             return try stored.toDomain()
         } catch {
             let errorDescription = error.safeForLoggingDescription
-            log
-                .error(
-                    "Unable to fetch backend environment for account with ID \(accountID.safeForLoggingDescription), error: \(errorDescription)"
-                )
+            log.error(
+                "Unable to fetch backend environment for account with ID \(accountID.safeForLoggingDescription), error: \(errorDescription)"
+            )
             return nil
         }
     }
