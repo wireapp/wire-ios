@@ -31,8 +31,9 @@ public class ThreadSafeDictionary<Key: Hashable, Value> {
         }
     }
 
-    public func get(for key: Key) -> Value? {
-        queue.sync {
+    public func get(for key: Key?) -> Value? {
+        guard let key else { return nil }
+        return queue.sync {
             self.dictionary[key]
         }
     }
