@@ -26,7 +26,7 @@ class AccountSettingsPage: PageModel {
 
     var nameField: XCUIElement {
         app.descendants(matching: .any)["NameField"].firstMatch
-    
+
     }
 
     var usernameField: XCUIElement {
