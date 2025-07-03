@@ -263,6 +263,8 @@ package struct LoginViaEmailView: View {
                 onTeamAccountCreation: viewModel.handleTeamAccountCreation,
                 onPersonalAccountCreation: viewModel.handlePersonalAccountCreation
             )
+            // TODO: the sheet is presented in full size, not like the rest of the auth ui
+            // use .universalSheet(...) maybe?
         }
     }
 
