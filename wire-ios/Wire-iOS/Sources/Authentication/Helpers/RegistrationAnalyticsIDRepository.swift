@@ -35,12 +35,6 @@ struct RegistrationAnalyticsIDRepository: RegistrationAnalyticsIDRepositoryProto
         journal(for: userID)[.analyticsIDFromRegistration] = analyticsID.transportString()
     }
 
-//    func fetchAnalyticsID(for userID: UUID) -> UUID? {
-//        journal(for: userID)[.analyticsIDFromRegistration].flatMap { uuidString in
-//            UUID(uuidString: uuidString)
-//        }
-//    }
-
     func deleteAnalyticsID(for userID: UUID) {
         journal(for: userID)[.analyticsIDFromRegistration] = nil
     }

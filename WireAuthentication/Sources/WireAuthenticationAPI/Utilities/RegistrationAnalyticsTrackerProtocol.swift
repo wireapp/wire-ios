@@ -20,9 +20,13 @@
 /// Allows for setting up and tearing down an analytics events tracker and submitting tracking events.
 public protocol RegistrationAnalyticsTrackerProtocol {
 
-    ///
+    /// The current analytics identifier.
 
     var currentDeviceID: String? { get }
+
+    // TODO: add doc comment
+
+    func deleteTempAnalyticsID()
 
     /// Start analytics after the user agreed.
 
@@ -56,9 +60,5 @@ public protocol RegistrationAnalyticsTrackerProtocol {
     /// Invoked when the user completed the account creation.
 
     func trackPersonalAccountCreationCompletion()
-
-    ///
-
-    func deleteTempAnalyticsID()
 
 }

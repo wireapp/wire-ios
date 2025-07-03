@@ -69,7 +69,6 @@ private struct RegistrationAnalyticsIDRepositoryProtocolMock: RegistrationAnalyt
 
     func storeAnalyticsID(for userID: UUID, analyticsID: UUID) {}
     func updateAnalyticsTrackingConsent(for userID: UUID, isGiven: Bool) {}
-//    func fetchAnalyticsID(for userID: UUID) -> UUID? { .none }
     func deleteAnalyticsID(for userID: UUID) {}
 
 }
