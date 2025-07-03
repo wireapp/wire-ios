@@ -84,7 +84,6 @@ final class RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
 
     func trackPersonalAccountCreationReachedVerificationCode() {
         if let analyticsTracker {
-            print("KKKKK accountSetupStep2")
             analyticsTracker.trackEvent(.Registration.accountSetupStep2)
         }
     }
