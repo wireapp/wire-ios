@@ -67,6 +67,9 @@ private func factory7cf4b2b30a4398b50d11a9cc2ff26e57789f8e96(_ component: Needle
     return ShowNotificationDependencya0b9d9633053c7a7a814Provider(notificationServiceExtensionFlow: parent5(component) as! NotificationServiceExtensionFlow, pullEventsStep: parent2(component) as! PullEventsStep, verifyUserStep: parent3(component) as! VerifyUserStep)
 }
 private class ProcessNotificationRequestDependency40b6d936f379fb50f3b3Provider: ProcessNotificationRequestDependency {
+    var currentAppVersion: String {
+        return notificationServiceExtensionFlow.currentAppVersion
+    }
     var applicationContainer: URL {
         return notificationServiceExtensionFlow.applicationContainer
     }
@@ -174,6 +177,7 @@ extension ShowNotificationStep: NeedleFoundation.Registration {
 }
 extension ProcessNotificationRequestStep: NeedleFoundation.Registration {
     public func registerItems() {
+        keyPathToName[\ProcessNotificationRequestDependency.currentAppVersion] = "currentAppVersion-String"
         keyPathToName[\ProcessNotificationRequestDependency.applicationContainer] = "applicationContainer-URL"
 
     }
@@ -197,6 +201,7 @@ extension NotificationServiceExtensionFlow: NeedleFoundation.Registration {
     public func registerItems() {
 
         localTable["contentHandler-(UNNotificationContent) -> Void"] = { [unowned self] in self.contentHandler as Any }
+        localTable["currentAppVersion-String"] = { [unowned self] in self.currentAppVersion as Any }
         localTable["applicationIdentifier-String"] = { [unowned self] in self.applicationIdentifier as Any }
         localTable["applicationContainer-URL"] = { [unowned self] in self.applicationContainer as Any }
     }

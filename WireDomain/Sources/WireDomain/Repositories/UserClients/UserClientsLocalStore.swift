@@ -19,19 +19,13 @@
 import WireDataModel
 import WireLogging
 
-public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
+public struct UserClientsLocalStore: UserClientsLocalStoreProtocol {
 
     // MARK: - Properties
 
-    private let context: NSManagedObjectContext
+    let context: NSManagedObjectContext
 
-    // MARK: - Object lifecycle
-
-    init(
-        context: NSManagedObjectContext
-    ) {
-        self.context = context
-    }
+    // MARK: - Methods
 
     public func fetchSelfClient() async -> UserClient? {
         await context.perform { [context] in
@@ -158,22 +152,18 @@ public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
                 )
             }
 
-            let selfClient = selfUser.selfClient()
-            let isNotSameId = localClient.remoteIdentifier != selfClient?.remoteIdentifier
-            let localClientActivationDate = localClient.activationDate
-            let selfClientActivationDate = selfClient?.activationDate
+            guard let selfClient = selfUser.selfClient(), isNewClient else { return }
 
-            if selfClient != nil, isNotSameId, let localClientActivationDate, let selfClientActivationDate {
-                let comparisonResult = localClientActivationDate
-                    .compare(selfClientActivationDate)
-
-                if comparisonResult == .orderedDescending {
-                    localClient.needsToNotifyUser = true
-                }
+            if
+                localClient.remoteIdentifier != selfClient.remoteIdentifier,
+                let localClientActivationDate = localClient.activationDate,
+                let selfClientActivationDate = selfClient.activationDate,
+                localClientActivationDate.compare(selfClientActivationDate) == .orderedDescending {
+                localClient.needsToNotifyUser = true
             }
 
-            selfUser.selfClient()?.addNewClientToIgnored(localClient)
-            selfUser.selfClient()?.updateSecurityLevelAfterDiscovering(Set([localClient]))
+            selfClient.addNewClientToIgnored(localClient)
+            selfClient.updateSecurityLevelAfterDiscovering(Set([localClient]))
         }
     }
 
