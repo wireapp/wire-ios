@@ -73,7 +73,7 @@ public struct CountlyWrapper: CountlyProtocol {
         countly().endSession()
     }
 
-    public var currentDeviceID: String {
+    public func deviceID() -> String {
         countly().deviceID()
     }
 

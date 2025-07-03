@@ -90,16 +90,17 @@ final class LoginViaEmailViewTests: XCTestCase {
     func testColorSchemeVariantsWithoutCreateAccount() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = LoginViaEmailView(factory: FakeLoginViaEmailFactory(
-            email: "foo@bar.com",
-            backendInfo: BackendInfo(
-                environmentType: .anta,
-                backendConfig: MockDependencies()._backendConfig
-            ),
-            canCreateAccount: false,
-            didDetectDomainConflict: false
-        ))
-        .inNavigationStack()
+        let view = NavigationStack {
+            LoginViaEmailView(factory: FakeLoginViaEmailFactory(
+                email: "foo@bar.com",
+                backendInfo: BackendInfo(
+                    environmentType: .anta,
+                    backendConfig: MockDependencies()._backendConfig
+                ),
+                canCreateAccount: false,
+                didDetectDomainConflict: false
+            ))
+        }
         .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
@@ -114,15 +115,17 @@ final class LoginViaEmailViewTests: XCTestCase {
     func testDynamicTypeVariantsWithoutCreateAccount() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = LoginViaEmailView(factory: FakeLoginViaEmailFactory(
-            email: "foo@bar.com",
-            backendInfo: BackendInfo(
-                environmentType: .anta,
-                backendConfig: MockDependencies()._backendConfig
-            ),
-            canCreateAccount: false,
-            didDetectDomainConflict: false
-        ))
+        let view = NavigationStack {
+            LoginViaEmailView(factory: FakeLoginViaEmailFactory(
+                email: "foo@bar.com",
+                backendInfo: BackendInfo(
+                    environmentType: .anta,
+                    backendConfig: MockDependencies()._backendConfig
+                ),
+                canCreateAccount: false,
+                didDetectDomainConflict: false
+            ))
+        }
         .frame(width: screenBounds.width, height: screenBounds.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
@@ -153,16 +156,17 @@ final class LoginViaEmailViewTests: XCTestCase {
             pinnedKeys: nil
         )
 
-        let view = LoginViaEmailView(factory: FakeLoginViaEmailFactory(
-            email: "foo@bar.com",
-            backendInfo: BackendInfo(
-                environmentType: .default,
-                backendConfig: backendConfig
-            ),
-            canCreateAccount: false,
-            didDetectDomainConflict: false
-        ))
-        .inNavigationStack()
+        let view = NavigationStack {
+            LoginViaEmailView(factory: FakeLoginViaEmailFactory(
+                email: "foo@bar.com",
+                backendInfo: BackendInfo(
+                    environmentType: .default,
+                    backendConfig: backendConfig
+                ),
+                canCreateAccount: false,
+                didDetectDomainConflict: false
+            ))
+        }
         .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
@@ -191,17 +195,17 @@ final class LoginViaEmailViewTests: XCTestCase {
             proxySettings: UnresolvedProxySettings(host: "host", port: 111, needsAuthentication: true),
             pinnedKeys: nil
         )
-        let view = LoginViaEmailView(factory: FakeLoginViaEmailFactory(
-            email: "foo@bar.com",
-            backendInfo: BackendInfo(
-                environmentType: .default,
-                backendConfig: backendConfig
-            ),
-            canCreateAccount: false,
-            didDetectDomainConflict: false
-
-        ))
-        .inNavigationStack()
+        let view = NavigationStack {
+            LoginViaEmailView(factory: FakeLoginViaEmailFactory(
+                email: "foo@bar.com",
+                backendInfo: BackendInfo(
+                    environmentType: .default,
+                    backendConfig: backendConfig
+                ),
+                canCreateAccount: false,
+                didDetectDomainConflict: false
+            ))
+        }
         .frame(width: screenBounds.width, height: screenBounds.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {

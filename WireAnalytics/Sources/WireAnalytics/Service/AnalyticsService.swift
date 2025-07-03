@@ -75,7 +75,7 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
     }
 
     public var currentDeviceID: String? {
-        countly?.currentDeviceID
+        countly?.deviceID()
     }
 
     /// Start sending analytics data.
