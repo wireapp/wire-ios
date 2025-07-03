@@ -16,29 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAuthenticationAPI
-import WireNetwork
-import WireNetworkSupport
-import XCTest
+import Testing
 
-@testable import WireAuthenticationLogic
+@testable import WireNetwork
+@testable import WireNetworkSupport
 
-// TODO: [WPB-12140] Delete after multibackend support
-final class ResolveBackendMetadataUseCaseTests: XCTestCase {
+struct ResolveBackendMetadataUseCaseTests {
 
-    private var api: MockBackendMetadataAPI!
-
-    override func setUp() {
-        api = MockBackendMetadataAPI()
-    }
-
-    override func tearDown() {
-        api = nil
-    }
+    let api = MockBackendMetadataAPI()
 
     // MARK: - Resolve for preferred version
 
-    func testInvoke_ResolvesToPreferredVersion() async throws {
+    @Test("Resolves to preferred version")
+    func resolvesToPreferredVersion() async throws {
         // Given
         let sut = ResolveBackendMetadataUseCase(
             backendMetadataAPI: api,
@@ -53,14 +43,15 @@ final class ResolveBackendMetadataUseCaseTests: XCTestCase {
         let backendMetadata = try await sut.invoke()
 
         // Then
-        XCTAssertEqual(backendMetadata.apiVersion, .v8)
-        XCTAssertEqual(backendMetadata.domain, "wire.com")
-        XCTAssertEqual(backendMetadata.isFederationEnabled, true)
+        #expect(backendMetadata.apiVersion == .v8)
+        #expect(backendMetadata.domain == "wire.com")
+        #expect(backendMetadata.isFederationEnabled == true)
     }
 
     // MARK: - Resolve for production
 
-    func testInvoke_ResolvesToMaxProductionVersion() async throws {
+    @Test("Resolves to max production version")
+    func resolvesToMaxProductionVersion() async throws {
         // Given
         let sut = ResolveBackendMetadataUseCase(
             backendMetadataAPI: api,
@@ -75,14 +66,15 @@ final class ResolveBackendMetadataUseCaseTests: XCTestCase {
         let backendMetadata = try await sut.invoke()
 
         // Then
-        XCTAssertEqual(backendMetadata.apiVersion, .v7)
-        XCTAssertEqual(backendMetadata.domain, "wire.com")
-        XCTAssertEqual(backendMetadata.isFederationEnabled, true)
+        #expect(backendMetadata.apiVersion == .v7)
+        #expect(backendMetadata.domain == "wire.com")
+        #expect(backendMetadata.isFederationEnabled == true)
     }
 
     // MARK: - Failed to resolve
 
-    func testInvoke_BackendVersionIsObsolete() async throws {
+    @Test("Backend version is obsolete")
+    func backendVersionIsObsolete() async throws {
         // Given
         let sut = ResolveBackendMetadataUseCase(
             backendMetadataAPI: api,
@@ -94,13 +86,14 @@ final class ResolveBackendMetadataUseCaseTests: XCTestCase {
         api.getBackendMetadata_MockValue = Scaffolding.obsoleteBackendMetadata
 
         // Then
-        await XCTAssertThrowsErrorAsync(ResolveBackendMetadataUseCase.Failure.backendAPIVersionObsolete) {
+        await #expect(throws: ResolveBackendMetadataUseCase.Failure.backendAPIVersionObsolete) {
             // When
             try await sut.invoke()
         }
     }
 
-    func testInvoke_ClientVersionIsObsolete() async throws {
+    @Test("Client version is obsolete")
+    func clientVersionIsObsolete() async throws {
         // Given
         let sut = ResolveBackendMetadataUseCase(
             backendMetadataAPI: api,
@@ -112,7 +105,7 @@ final class ResolveBackendMetadataUseCaseTests: XCTestCase {
         api.getBackendMetadata_MockValue = Scaffolding.backendMetadata
 
         // Then
-        await XCTAssertThrowsErrorAsync(ResolveBackendMetadataUseCase.Failure.clientVersionObsolete) {
+        await #expect(throws: ResolveBackendMetadataUseCase.Failure.clientVersionObsolete) {
             // When
             try await sut.invoke()
         }
@@ -122,14 +115,14 @@ final class ResolveBackendMetadataUseCaseTests: XCTestCase {
 
 private enum Scaffolding {
 
-    static let backendMetadata = WireNetwork.BackendMetadata(
+    static let backendMetadata = BackendMetadata(
         domain: "wire.com",
         isFederationEnabled: true,
         supportedVersions: [.v4, .v5, .v6, .v7],
         developmentVersions: [.v8]
     )
 
-    static let obsoleteBackendMetadata = WireNetwork.BackendMetadata(
+    static let obsoleteBackendMetadata = BackendMetadata(
         domain: "wire.com",
         isFederationEnabled: true,
         supportedVersions: [.v4, .v5],

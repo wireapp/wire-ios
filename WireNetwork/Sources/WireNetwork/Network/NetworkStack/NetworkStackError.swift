@@ -16,16 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+/// Errors originating from `NetworkStack`.
 
-// TODO: [WPB-12140] Delete after multibackend support
-public protocol ResolveBackendMetadataUseCaseProtocol: Sendable {
+enum NetworkStackError: Error {
 
-    func invoke() async throws -> BackendMetadata
+    /// Proxy credentials are required but none are
+    /// available
 
-}
-
-public enum ResolveBackendMetadataUseCaseFailure: Error, Sendable {
+    case proxyCredentialsRequired
 
     /// The API version of the connected backend is
     /// too old for this client, i.e the max available
