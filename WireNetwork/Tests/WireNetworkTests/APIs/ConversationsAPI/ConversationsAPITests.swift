@@ -1260,7 +1260,7 @@ final class ConversationsAPITests: XCTestCase {
     func testCreateGroupConversation_givenV0_To_V7_Unsupported_Channel_Creation() async throws {
 
         // given
-        let unsupportedVersions = Set(APIVersion.allCases).subtracting([.v8])
+        let unsupportedVersions = APIVersion.allCasesUpTo(.v8)
         let apiService = MockAPIServiceProtocol.withError(statusCode: .unreachable, label: "")
         let suts = unsupportedVersions.map { $0.buildAPI(apiService: apiService) }
 
@@ -1339,7 +1339,7 @@ final class ConversationsAPITests: XCTestCase {
     func testAddChannelPermission_givenV0_To_V7_AndFailure_Unsupported_Endpoint_For_API_Version() async throws {
 
         // given
-        let unsupportedVersions = Set(APIVersion.allCases).subtracting([.v8])
+        let unsupportedVersions = APIVersion.allCasesUpTo(.v8)
         let apiService = MockAPIServiceProtocol.withError(statusCode: .unreachable, label: "")
         let suts = unsupportedVersions.map { $0.buildAPI(apiService: apiService) }
 
