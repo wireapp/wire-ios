@@ -22,7 +22,7 @@ struct UserUpdateEventProcessor: UserUpdateEventProcessorProtocol {
 
     let repository: any UserRepositoryProtocol
 
-    func processEvent(_ event: UserUpdateEvent) async throws {
+    func processEvent(_ event: UserUpdateEvent) async {
         await repository.updateUser(from: event)
     }
 

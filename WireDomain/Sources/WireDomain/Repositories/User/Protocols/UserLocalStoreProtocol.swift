@@ -69,7 +69,7 @@ public protocol UserLocalStoreProtocol {
         id: UUID,
         domain: String?,
         date: Date
-    ) async throws
+    ) async
 
     /// Adds a legal hold request to self.
     ///

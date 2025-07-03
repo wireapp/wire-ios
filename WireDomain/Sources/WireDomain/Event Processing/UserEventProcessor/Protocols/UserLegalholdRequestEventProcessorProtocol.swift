@@ -26,6 +26,6 @@ protocol UserLegalholdRequestEventProcessorProtocol {
     ///
     /// - Parameter event: A user legalhold request event.
 
-    func processEvent(_ event: UserLegalholdRequestEvent) async throws
+    func processEvent(_ event: UserLegalholdRequestEvent) async
 
 }

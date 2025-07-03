@@ -23,18 +23,18 @@ public struct AttachmentsCarousel: View {
     @ObservedObject private var viewModel: AttachmentsCarouselViewModel
     private let onTap: (AttachmentsCarouselItem) -> Void
     private let onRemove: (AttachmentsCarouselItem) -> Void
-    private let onOptions: (AttachmentsCarouselItem) -> Void
+    private let onRetry: (AttachmentsCarouselItem) -> Void
 
     public init(
         viewModel: AttachmentsCarouselViewModel,
         onTap: @escaping (AttachmentsCarouselItem) -> Void,
         onRemove: @escaping (AttachmentsCarouselItem) -> Void,
-        onOptions: @escaping (AttachmentsCarouselItem) -> Void
+        onRetry: @escaping (AttachmentsCarouselItem) -> Void
     ) {
         self.viewModel = viewModel
         self.onTap = onTap
         self.onRemove = onRemove
-        self.onOptions = onOptions
+        self.onRetry = onRetry
     }
 
     public var body: some View {
@@ -45,7 +45,7 @@ public struct AttachmentsCarousel: View {
                         item: item,
                         onTap: { onTap(item) },
                         onRemove: { onRemove(item) },
-                        onOptions: { onOptions(item) }
+                        onRetry: { onRetry(item) }
                     )
                 }
             }
@@ -66,7 +66,7 @@ private struct AttachmentsCarouselItemView: View {
     let item: AttachmentsCarouselItem
     let onTap: () -> Void
     let onRemove: () -> Void
-    let onOptions: () -> Void
+    let onRetry: () -> Void
 
     var body: some View {
         ZStack {
@@ -95,19 +95,31 @@ private struct AttachmentsCarouselItemView: View {
             .onTapGesture(perform: onTap)
     }
 
+    // TODO: [WPB-17604] Add missing accessibility labels
     var cornerButton: some View {
         VStack {
             HStack {
                 Spacer()
-                Button(
-                    action: item.state.isFailed ? onOptions : onRemove,
-                    label: {
-                        Image(systemName: item.state.isFailed ? "ellipsis.circle.fill" : "xmark.circle.fill")
-                            .font(.system(size: Constants.cornerButtonRadius * 2))
-                            .foregroundStyle(.black)
+
+                if item.state.isFailed {
+                    Menu {
+                        Button(L10n.Conversation.Draft.AttachmentMenu.retry, action: onRetry)
+                        Button(L10n.Conversation.Draft.AttachmentMenu.remove, action: onRemove)
+                    } label: {
+                        Image(systemName: "ellipsis.circle.fill")
                     }
-                )
+                } else {
+                    Button(
+                        action: onRemove,
+                        label: {
+                            Image(systemName: "xmark.circle.fill")
+                        }
+                    )
+                }
             }
+            .font(.system(size: Constants.cornerButtonRadius * 2))
+            .foregroundStyle(.black)
+
             Spacer()
         }
     }
@@ -167,7 +179,7 @@ private extension AttachmentsCarouselItem.State {
             items: [
                 AttachmentsCarouselItem(
                     id: UUID(),
-                    state: .uploaded,
+                    state: .failed,
                     kind: .image(thumbnail: UIImage()),
                     name: "Image",
                     size: "1.2 MB"
@@ -183,7 +195,7 @@ private extension AttachmentsCarouselItem.State {
         ),
         onTap: { _ in },
         onRemove: { _ in },
-        onOptions: { _ in }
+        onRetry: { _ in }
     )
     .frame(height: 74)
     .background(Color.red)
