@@ -110,7 +110,7 @@ final class AnimatedPenView: UIView {
     }
 
     fileprivate func setIcons() {
-        let iconColor = SemanticColors.Icon.foregroundDefault
+        let iconColor = SemanticColors.Icon.foregroundDefault.resolvedColor(with: traitCollection)
 
         dots.setIcon(.typingDots, size: 8, color: iconColor)
         pen.setIcon(.pencil, size: 8, color: iconColor)

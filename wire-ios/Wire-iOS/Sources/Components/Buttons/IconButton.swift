@@ -294,7 +294,7 @@ class IconButton: ButtonWithLargerHitArea {
         borderColorByState[state.rawValue] ?? borderColorByState[UIControl.State.normal.rawValue]
     }
 
-    func updateBorderColor() {
+    private func updateBorderColor() {
         layer.borderColor = borderColor(for: state)?.cgColor
     }
 
@@ -337,10 +337,7 @@ class IconButton: ButtonWithLargerHitArea {
         iconDefinition(for: state)?.type
     }
 
-    func setBorderColor(
-        _ color: UIColor?,
-        for state: UIControl.State
-    ) {
+    func setBorderColor(_ color: UIColor?, for state: UIControl.State) {
         state.expanded.forEach { expandedState in
             if color != nil {
                 borderColorByState[expandedState.rawValue] = color

@@ -383,7 +383,6 @@ final class InputBar: UIView {
 
         updateLeftAccessoryViewWidth()
         updateRightAccessoryStackViewLayoutMargins()
-
     }
 
     fileprivate func updateLeftAccessoryViewWidth() {
