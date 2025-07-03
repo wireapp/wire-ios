@@ -303,7 +303,7 @@ final class ConversationTableViewDataSource: NSObject {
         selfUser: any UserType
     ) -> ConversationMessageActionController {
         if let nonce = message.nonce,
-            let cachedEntry = actionControllers.get(for: nonce) {
+           let cachedEntry = actionControllers.get(for: nonce) {
             return cachedEntry
         }
 
@@ -370,7 +370,7 @@ final class ConversationTableViewDataSource: NSObject {
         messages: [ZMMessage]
     ) -> ConversationMessageSectionController {
         if let nonce = message.nonce,
-            let cachedEntry = sectionControllers.get(for: nonce) {
+           let cachedEntry = sectionControllers.get(for: nonce) {
             cachedEntry.contentWidth = contentWidth
             return cachedEntry
         }
