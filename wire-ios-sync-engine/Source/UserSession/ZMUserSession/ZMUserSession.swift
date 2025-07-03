@@ -467,10 +467,7 @@ public final class ZMUserSession: NSObject {
     }
 
     func trackAppOpenAnalyticEventWhenAppBecomesActive() {
-        if let analyticsEventTracker {
-            print("KKKKK App.open")
-            analyticsEventTracker.trackEvent(.App.open)
-        }
+        analyticsEventTracker?.trackEvent(.App.open)
     }
 
     func setup(
