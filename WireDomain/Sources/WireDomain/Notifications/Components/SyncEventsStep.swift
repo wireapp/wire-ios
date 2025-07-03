@@ -75,6 +75,9 @@ final class SyncEventsStep: Component<SyncEventsDependency>, SyncEventsStepProto
         do {
             try await useCase.invoke()
         } catch {
+            // either we timeout during decrypting/storing events OR an issue with the sync
+            // In both cases, we end up with a stream of notifications that has not been shown, so we need to continue
+            // to show them
             WireLogger.sync.warn(
                 "syncing events via websocket: \(error.localizedDescription)",
                 attributes: .syncAttributes(initialSync: false)
