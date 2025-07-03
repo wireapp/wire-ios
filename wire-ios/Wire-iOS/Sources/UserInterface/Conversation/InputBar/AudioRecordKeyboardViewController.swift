@@ -104,6 +104,10 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         }
     }
 
+    deinit {
+        accentColorChangeHandler = nil
+    }
+    
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
