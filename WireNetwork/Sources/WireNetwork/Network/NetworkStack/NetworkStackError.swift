@@ -16,6 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-PROTEUS_BY_CORECRYPTO_ENABLED=1
-WIRE_AUTHENTICATION_ENABLED=1
-NEW_REGISTRATION_ENABLED=1
+/// Errors originating from `NetworkStack`.
+
+enum NetworkStackError: Error {
+
+    /// Proxy credentials are required but none are
+    /// available
+
+    case proxyCredentialsRequired
+
+    /// The API version of the connected backend is
+    /// too old for this client, i.e the max available
+    /// API version is lower than the min API version
+    /// that this client supports.
+
+    case backendAPIVersionObsolete
+
+    /// The API version of this client is too old
+    /// for the connected backend, i.e the max API version
+    /// that this client supports is lower than the min
+    /// available API version on the backend.
+
+    case clientVersionObsolete
+
+}

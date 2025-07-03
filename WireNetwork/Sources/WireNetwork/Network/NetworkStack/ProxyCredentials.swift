@@ -16,6 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-PROTEUS_BY_CORECRYPTO_ENABLED=1
-WIRE_AUTHENTICATION_ENABLED=1
-NEW_REGISTRATION_ENABLED=1
+/// Proxy credentials for a user.
+
+struct ProxyCredentials: Sendable, Equatable, Hashable {
+
+    /// The proxy username.
+
+    let username: String
+
+    /// The proxy password.
+
+    let password: String
+
+}

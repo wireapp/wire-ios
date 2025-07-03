@@ -16,6 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-PROTEUS_BY_CORECRYPTO_ENABLED=1
-WIRE_AUTHENTICATION_ENABLED=1
-NEW_REGISTRATION_ENABLED=1
+import Foundation
+import WireNetwork
+
+// sourcery: AutoMockable
+/// A sync to receive pending update events from backend via websocket, decrypts,
+/// and stores them locally.
+public protocol PullPendingUpdateEventsSyncV2Protocol {
+
+    /// Sync pending update events from the remote, decrypt (if needed),
+    /// and store them locally.
+    func pull() async throws
+}

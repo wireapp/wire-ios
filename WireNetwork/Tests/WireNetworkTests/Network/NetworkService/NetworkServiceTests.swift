@@ -42,7 +42,7 @@ final class NetworkServiceTests: XCTestCase {
             baseURL: backendURL,
             serverTrustValidator: ServerTrustValidator(
                 pinnedKeys: [
-                    try PinnedKey(key: PublicKeys.wire, hosts: [.equals("prod-nginz-https.wire.com")])
+                    try PinnedKey(rawKey: PublicKeys.wire, hosts: [.equals("prod-nginz-https.wire.com")])
                 ],
                 currentDateProvider: mockDateProvider
             )

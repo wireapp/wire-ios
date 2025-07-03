@@ -16,6 +16,34 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-PROTEUS_BY_CORECRYPTO_ENABLED=1
-WIRE_AUTHENTICATION_ENABLED=1
-NEW_REGISTRATION_ENABLED=1
+import Foundation
+
+/// Information about a connected backend.
+
+public struct ResolvedBackendMetadata: Sendable, Equatable, Hashable {
+
+    /// The REST API version to use when making requests.
+
+    public let apiVersion: APIVersion
+
+    /// The backend's domain.
+
+    public let domain: String
+
+    /// Whether this backend can communicate with other backends.
+
+    public let isFederationEnabled: Bool
+
+    /// Create new `ResolvedBackendMetadata`.
+
+    public init(
+        apiVersion: APIVersion,
+        domain: String,
+        isFederationEnabled: Bool
+    ) {
+        self.apiVersion = apiVersion
+        self.domain = domain
+        self.isFederationEnabled = isFederationEnabled
+    }
+
+}
