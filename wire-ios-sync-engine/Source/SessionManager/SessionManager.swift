@@ -1095,21 +1095,15 @@ public final class SessionManager: NSObject, SessionManagerType {
                         )
                     }
 
+                    let userSession = await self.startBackgroundSession(
+                        for: account,
+                        with: coreDataStack,
+                        journal: journal
+                    )
+
+                    await userSession.performAppMigrationsIfNeeded()
+
                     await MainActor.run {
-                        let userSession = self.startBackgroundSession(
-                            for: account,
-                            with: coreDataStack,
-                            journal: journal
-                        )
-
-                        Task {
-                            await userSession.performAppMigrationsIfNeeded()
-                        }
-
-                        self.triggerMigrationsNeedsActionsIfNeeded(
-                            journal: journal,
-                            userSession: userSession
-                        )
                         onCompletion(userSession)
                     }
                 }
@@ -1300,6 +1294,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     // Creates the user session for @c account given, calls @c completion when done.
+    @MainActor
     private func startBackgroundSession(
         for account: Account,
         with coreDataStack: CoreDataStack,
