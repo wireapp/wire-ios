@@ -924,8 +924,8 @@ internal enum L10n {
     internal enum Peoplepicker {
       internal enum UpgradeBanner {
         internal enum CloseButton {
-          /// TODO
-          internal static let label = L10n.tr("Accessibility", "peoplepicker.upgrade_banner.close_button.label", fallback: "TODO")
+          /// Close team creation option
+          internal static let label = L10n.tr("Accessibility", "peoplepicker.upgrade_banner.close_button.label", fallback: "Close team creation option")
         }
       }
     }
