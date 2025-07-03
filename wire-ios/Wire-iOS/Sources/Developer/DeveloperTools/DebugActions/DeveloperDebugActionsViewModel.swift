@@ -20,10 +20,10 @@ import Foundation
 import SwiftUI
 import WireAPI
 import WireDataModel
+import WireDomain
 import WireFoundation
 import WireLogging
 import WireSyncEngine
-import WireDomain
 
 struct ConversationResult {
     var id: String
@@ -83,7 +83,10 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             .init(title: "Find Conversation with MLS Group", action: showSearchMLSConversations),
             .init(title: "Clear collapsed messages cache", action: clearCollapsedMessagesCache),
             .init(title: "Simulate access token failure", action: simulateAccessTokenFailure),
-            .init(title: "Create MLS group conversation with missing metadata", action: createMLSGroupConversationWithMissingMetadata),
+            .init(
+                title: "Create MLS group conversation with missing metadata",
+                action: createMLSGroupConversationWithMissingMetadata
+            ),
             .init(title: "Perform app migrations", action: performAppMigrations)
         ]
 
@@ -96,31 +99,31 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
 
         debugItems = buttonItems.map { .button($0) } + toggleItems.map { .toggle($0) }
     }
-    
+
     // MARK: - Create broken MLS group conversation
-    
+
     private func createMLSGroupConversationWithMissingMetadata() {
-        guard let userSession = userSession,
-        let apiService = userSession.apiService,
-        let backendInfoApiVersion = BackendInfo.apiVersion,
+        guard let userSession,
+              let apiService = userSession.apiService,
+              let backendInfoApiVersion = BackendInfo.apiVersion,
               let apiVersion = WireAPI.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue))
         else { return }
-        
+
         let conversationsAPI = ConversationsAPIBuilder(apiService: apiService)
             .makeAPI(for: apiVersion)
-        
+
         let mlsService = userSession.syncContext.performAndWait {
             userSession.syncContext.mlsService
         }
-        
+
         let messageLocalStore = MessageLocalStore(context: userSession.syncContext)
-        
+
         let conversationsLocalStore = ConversationLocalStore(
             context: userSession.syncContext,
             mlsService: mlsService,
             messageLocalStore: messageLocalStore
         )
-        
+
         let groupConversationUseCase = CreateGroupConversationUseCase(
             api: conversationsAPI,
             store: conversationsLocalStore,
@@ -129,17 +132,16 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             isFederationEnabled: BackendInfo.isFederationEnabled,
             isMLSEnabled: BackendInfo.isMLSEnabled
         )
-        
+
         let selfUser = userSession.syncContext.performAndWait {
-            let selfUser = ZMUser.selfUser(in: userSession.syncContext)
-            return selfUser
+            ZMUser.selfUser(in: userSession.syncContext)
         }
-        
+
         let team = userSession.syncContext.performAndWait {
             let selfUser = ZMUser.selfUser(in: userSession.syncContext)
             return selfUser.teamIdentifier
         }
-        
+
         Task {
             do {
                 let result = try await groupConversationUseCase.invoke(
@@ -152,7 +154,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
                     enableReceipts: false,
                     isMLSEnabled: BackendInfo.isMLSEnabled
                 )
-                
+
                 // group will not not show up in the list
                 await userSession.syncContext.perform {
                     result.conversationType = .invalid
@@ -164,25 +166,25 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             }
         }
     }
-    
+
     private func performAppMigrations() {
-        guard let userSession = userSession else { return }
-        
+        guard let userSession else { return }
+
         let selfUserID = userSession.syncContext.performAndWait {
             let selfUser = ZMUser.selfUser(in: userSession.syncContext)
             return selfUser.remoteIdentifier!
         }
-         
+
         var journal = Journal(
             userID: selfUserID,
             storage: UserDefaults.shared()
         )
-        
+
         let lastCompletedAppVersionMigration = journal.lastCompletedAppVersionMigration
-        
+
         // mock to ensure migration actions are performed
         journal.lastCompletedAppVersionMigration = "0.0.0"
-        
+
         Task { @MainActor in
             await userSession.performAppMigrationsIfNeeded()
             // setting back the value

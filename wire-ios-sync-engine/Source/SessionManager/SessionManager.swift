@@ -1101,7 +1101,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                             with: coreDataStack,
                             journal: journal
                         )
-                        
+
                         Task {
                             await userSession.performAppMigrationsIfNeeded()
                         }
