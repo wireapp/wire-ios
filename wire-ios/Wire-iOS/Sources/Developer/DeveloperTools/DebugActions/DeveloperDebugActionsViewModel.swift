@@ -87,7 +87,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
                 title: "Create MLS group conversation with missing metadata",
                 action: createMLSGroupConversationWithMissingMetadata
             ),
-            .init(title: "Perform app migrations", action: performAppMigrations)
+            .init(title: "Perform app version migrations", action: performAppVersionMigrations)
         ]
 
         let toggleItems: [DeveloperDebugActionsDisplayModel.ToggleItem] = [
@@ -167,7 +167,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
         }
     }
 
-    private func performAppMigrations() {
+    private func performAppVersionMigrations() {
         guard let userSession else { return }
 
         let selfUserID = userSession.syncContext.performAndWait {
