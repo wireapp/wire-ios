@@ -953,6 +953,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
+    @MainActor
     func configureAnalytics(for userSession: ZMUserSession) async {
         guard let isTrackingEnabled = analyticsService?.isTrackingEnabled, isTrackingEnabled else {
             return
@@ -1114,10 +1115,6 @@ public final class SessionManager: NSObject, SessionManagerType {
     private func shouldEnableSyncV2(journal: Journal) -> Bool {
         guard let apiVersion = BackendInfo.apiVersion else {
             fatalError("api version unknown")
-        }
-        guard isDeveloperModeEnabled else {
-            // [WPB-18030] disabled new sync for Cloud build 3.124
-            return false
         }
 
         let isAvailable = apiVersion >= .v8

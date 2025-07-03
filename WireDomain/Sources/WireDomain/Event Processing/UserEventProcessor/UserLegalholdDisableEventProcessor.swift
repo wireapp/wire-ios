@@ -22,7 +22,7 @@ struct UserLegalholdDisableEventProcessor: UserLegalholdDisableEventProcessorPro
 
     let repository: any UserRepositoryProtocol
 
-    func processEvent(_: UserLegalholdDisableEvent) async throws {
+    func processEvent(_: UserLegalholdDisableEvent) async {
         await repository.disableUserLegalHold()
     }
 
