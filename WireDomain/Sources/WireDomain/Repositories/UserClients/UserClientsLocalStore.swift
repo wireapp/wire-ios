@@ -152,24 +152,18 @@ public struct UserClientsLocalStore: UserClientsLocalStoreProtocol {
                 )
             }
 
-            let selfClient = selfUser.selfClient()
-            let isNotSameId = localClient.remoteIdentifier != selfClient?.remoteIdentifier
-            let localClientActivationDate = localClient.activationDate
-            let selfClientActivationDate = selfClient?.activationDate
+            guard let selfClient = selfUser.selfClient(), isNewClient else { return }
 
-            if selfClient != nil, isNotSameId, let localClientActivationDate, let selfClientActivationDate {
-                let comparisonResult = localClientActivationDate
-                    .compare(selfClientActivationDate)
-
-                if comparisonResult == .orderedDescending {
-                    localClient.needsToNotifyUser = true
-                }
+            if
+                localClient.remoteIdentifier != selfClient.remoteIdentifier,
+                let localClientActivationDate = localClient.activationDate,
+                let selfClientActivationDate = selfClient.activationDate,
+                localClientActivationDate.compare(selfClientActivationDate) == .orderedDescending {
+                localClient.needsToNotifyUser = true
             }
 
-            if isNewClient {
-                selfUser.selfClient()?.addNewClientToIgnored(localClient)
-                selfUser.selfClient()?.updateSecurityLevelAfterDiscovering(Set([localClient]))
-            }
+            selfClient.addNewClientToIgnored(localClient)
+            selfClient.updateSecurityLevelAfterDiscovering(Set([localClient]))
         }
     }
 
