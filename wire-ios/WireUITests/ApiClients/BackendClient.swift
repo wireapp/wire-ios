@@ -17,9 +17,11 @@
 //
 
 import Foundation
+import WireNetwork
 
 enum BackendClient {
 
+    static var apiVersion: APIVersion = .v8
     static let backendURL = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL"]!)"
 
     static func loginViaAPI(email: String, password: String) async throws -> String {
@@ -91,7 +93,7 @@ enum BackendClient {
             "email": email
         ]
 
-        let url = URL(string: "\(backendURL)/v8/verification-code/send")
+        let url = URL(string: "\(backendURL)/\(apiVersion)/verification-code/send")
         guard let requestUrl = url else { fatalError() }
 
         var request = URLRequest(url: requestUrl)

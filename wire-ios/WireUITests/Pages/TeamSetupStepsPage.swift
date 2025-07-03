@@ -26,13 +26,11 @@ class TeamSetupStepsPage: PageModel {
     }
 
     var teamNameTextField: XCUIElement {
-        let elementsQuery = app.textFields
-        return elementsQuery["Your Team"]
+        app.descendants(matching: .any)["Your Team"].firstMatch
     }
 
     var continueButton: XCUIElement {
-        let elementsQuery = app.scrollViews.otherElements
-        return elementsQuery.buttons["Continue"]
+        app.descendants(matching: .any)["Continue"].firstMatch
     }
 
     var checkbox: XCUIElement {
@@ -40,8 +38,7 @@ class TeamSetupStepsPage: PageModel {
     }
 
     var backToWireButton: XCUIElement {
-        let elementsQuery = app.buttons
-        return elementsQuery["Back To Wire"]
+        app.descendants(matching: .any)["Back To Wire"].firstMatch
     }
 
     func tapContinue() throws -> TeamSetupStepsPage {

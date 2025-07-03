@@ -29,8 +29,7 @@ class ConversationsPage: PageModel {
     }
 
     var settingsButton: XCUIElement {
-        let elementsQuery = app.descendants(matching: .any)["bottomBarSettingsButton"]
-        return elementsQuery.firstMatch
+        app.descendants(matching: .any)["bottomBarSettingsButton"].firstMatch
     }
 
     func openSettings() throws -> SettingsPage {

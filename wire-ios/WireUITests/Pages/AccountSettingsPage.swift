@@ -25,23 +25,21 @@ class AccountSettingsPage: PageModel {
     }
 
     var nameField: XCUIElement {
-        let elementsQuery = app.descendants(matching: .any)["NameField"]
-        return elementsQuery.firstMatch
+        app.descendants(matching: .any)["NameField"].firstMatch
+    
     }
 
     var usernameField: XCUIElement {
-        let elementsQuery = app.descendants(matching: .any)["UsernameField"]
-        return elementsQuery.firstMatch
+        app.descendants(matching: .any)["UsernameField"].firstMatch
+
     }
 
     var emailField: XCUIElement {
-        let elementsQuery = app.descendants(matching: .any)["EmailField"]
-        return elementsQuery.firstMatch
+        app.descendants(matching: .any)["EmailField"].firstMatch
     }
 
     var logoutButton: XCUIElement {
-        let elementsQuery = app.descendants(matching: .any)["Log OutField"]
-        return elementsQuery.firstMatch
+        app.descendants(matching: .any)["Log OutField"].firstMatch
     }
 
     func getAccountName() -> String? {
