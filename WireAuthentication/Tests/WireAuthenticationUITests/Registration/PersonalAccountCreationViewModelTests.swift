@@ -184,7 +184,7 @@ final class PersonalAccountCreationViewModelTests: XCTestCase, PersonalAccountCr
         let suts = [
             makeSUT(backendURL: URL(string: "https://account.bella.wire.link")!),
             makeSUT(backendURL: URL(string: "https://some-other.link")!),
-            makeSUT(backendURL: URL(string: "https://prod-nginz-https.wire.com")!, analyticsEventTracker: nil),
+            makeSUT(backendURL: URL(string: "https://prod-nginz-https.wire.com")!, analyticsEventTracker: nil)
         ]
 
         // Then

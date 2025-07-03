@@ -19,7 +19,8 @@
 public import Foundation
 
 // sourcery: AutoMockable
-/// A repository which allows reading, writing and deleting a temporary analytics id for the account creation (registration) UI.
+/// A repository which allows reading, writing and deleting a temporary analytics id for the account creation
+/// (registration) UI.
 public protocol RegistrationAnalyticsIDRepositoryProtocol {
 
     func storeAnalyticsID(for userID: UUID, analyticsID: UUID)

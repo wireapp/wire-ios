@@ -128,7 +128,10 @@ final class RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
         let newAnalyticsID = UUID().transportString()
         userDefaults.set(newAnalyticsID, forKey: Constants.analyticsIdentifierKey)
         print("KKKKK newAnalyticsID \(newAnalyticsID)")
-        return AnalyticsUser(analyticsIdentifier: newAnalyticsID, teamInfo: nil) // TODO: make sure team info is updated later
+        return AnalyticsUser(
+            analyticsIdentifier: newAnalyticsID,
+            teamInfo: nil
+        ) // TODO: make sure team info is updated later
     }
 
     private enum Constants {

@@ -134,7 +134,6 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
         countly.beginSession()
     }
 
-
     /// Update the current user.
     ///
     /// If the user's id changed, all previously tracked data associated with
