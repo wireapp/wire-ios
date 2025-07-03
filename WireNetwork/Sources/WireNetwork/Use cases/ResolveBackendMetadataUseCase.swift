@@ -17,19 +17,16 @@
 //
 
 import Foundation
-import WireAuthenticationAPI
-import WireNetwork
 
-// TODO: [WPB-12140] Delete after multibackend support
-public struct ResolveBackendMetadataUseCase: ResolveBackendMetadataUseCaseProtocol {
+struct ResolveBackendMetadataUseCase: ResolveBackendMetadataUseCaseProtocol {
 
-    public typealias Failure = ResolveBackendMetadataUseCaseFailure
+    typealias Failure = ResolveBackendMetadataUseCaseFailure
 
     private let backendMetadataAPI: any BackendMetadataAPI
     private let clientProductionVersions: Set<APIVersion>
     private let preferredAPIVersion: APIVersion?
 
-    public init(
+    init(
         backendMetadataAPI: any BackendMetadataAPI,
         clientProductionVersions: Set<APIVersion>,
         preferredAPIVersion: APIVersion?
@@ -39,24 +36,28 @@ public struct ResolveBackendMetadataUseCase: ResolveBackendMetadataUseCaseProtoc
         self.preferredAPIVersion = preferredAPIVersion
     }
 
-    public func invoke() async throws -> WireAuthenticationAPI.BackendMetadata {
+    func invoke() async throws -> ResolvedBackendMetadata {
         let backendMetadata = try await backendMetadataAPI.getBackendMetadata()
         let resolvedAPIVersion = try resolveAPIVersion(from: backendMetadata)
-        return WireAuthenticationAPI.BackendMetadata(
-            apiVersion: .init(resolvedAPIVersion),
+        return ResolvedBackendMetadata(
+            apiVersion: resolvedAPIVersion,
             domain: backendMetadata.domain,
             isFederationEnabled: backendMetadata.isFederationEnabled
         )
     }
 
-    private func resolveAPIVersion(from backendMetadata: WireNetwork.BackendMetadata) throws -> APIVersion {
+    private func resolveAPIVersion(
+        from backendMetadata: BackendMetadata
+    ) throws -> APIVersion {
+        let allVersions = backendMetadata.allVersions
         let backendProductionVersions = backendMetadata.supportedVersions
-        let allBackendVersions = backendMetadata.supportedVersions.union(backendMetadata.developmentVersions)
         let commonProductionVersions = clientProductionVersions.intersection(backendProductionVersions)
 
-        if let preferredAPIVersion, allBackendVersions.contains(preferredAPIVersion) {
+        if let preferredAPIVersion, allVersions.contains(preferredAPIVersion) {
+            // The preferred version is available.
             return preferredAPIVersion
         } else if let resolvedAPIVersion = commonProductionVersions.max() {
+            // Using the max prod version.
             return resolvedAPIVersion
         } else {
             // API version can't be resolved.
@@ -68,36 +69,20 @@ public struct ResolveBackendMetadataUseCase: ResolveBackendMetadataUseCaseProtoc
                 throw Failure.clientVersionObsolete
             }
 
-            throw maxBackendVersion < minClientVersion ? Failure.backendAPIVersionObsolete : .clientVersionObsolete
+            if maxBackendVersion < minClientVersion {
+                throw Failure.backendAPIVersionObsolete
+            } else {
+                throw Failure.clientVersionObsolete
+            }
         }
     }
 
 }
 
-private extension WireAuthenticationAPI.BackendMetadata.APIVersion {
+private extension BackendMetadata {
 
-    // TODO: [WPB-16272] remove when API version is deduplicated.
-    init(_ apiVersion: WireNetwork.APIVersion) {
-        switch apiVersion {
-        case .v0:
-            self = .v0
-        case .v1:
-            self = .v1
-        case .v2:
-            self = .v2
-        case .v3:
-            self = .v3
-        case .v4:
-            self = .v4
-        case .v5:
-            self = .v5
-        case .v6:
-            self = .v6
-        case .v7:
-            self = .v7
-        case .v8:
-            self = .v8
-        }
+    var allVersions: Set<APIVersion> {
+        supportedVersions.union(developmentVersions)
     }
 
 }
