@@ -29,12 +29,14 @@ package class ChannelHistoryViewModel: ObservableObject {
     @Published var isUserPremium: Bool = true
     @Published var channelHistoryAvailableOptions: [ChannelHistoryOption] = []
 
-    public var accentColor: Color
+    public let accentColor: Color
+    public let teamsURL: URL
     private let useCase: any ChannelHistoryUseCaseProtocol
     private var subscriptions = Set<AnyCancellable>()
 
     package init(
         historyDepth: Int,
+        teamsURL: URL,
         accentColor: Color,
         useCase: any ChannelHistoryUseCaseProtocol
     ) {
@@ -43,6 +45,7 @@ package class ChannelHistoryViewModel: ObservableObject {
         }
         self.useCase = useCase
         self.accentColor = accentColor
+        self.teamsURL = teamsURL
 
         bind()
     }
@@ -65,10 +68,6 @@ package class ChannelHistoryViewModel: ObservableObject {
                 ]
         } catch {}
         isLoading = false
-    }
-
-    func upgradeBannerURL() -> URL {
-        URL(string: "https://teams.wire.com/billing/)")!
     }
 
     private func bind() {

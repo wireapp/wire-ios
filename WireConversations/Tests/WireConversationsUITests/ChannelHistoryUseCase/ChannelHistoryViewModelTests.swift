@@ -26,6 +26,7 @@ final class ChannelHistoryViewModelTests: XCTestCase {
 
     lazy var viewModel = ChannelHistoryViewModel(
         historyDepth: 10_000,
+        teamsURL: URL(string: "https://google.com")!,
         accentColor: .red,
         useCase: useCase
     )

@@ -85,7 +85,7 @@ package struct ChannelHistoryView: View {
                                 title: ChannelHistory.UpgradeBanner.title,
                                 message: ChannelHistory.UpgradeBanner.message,
                                 buttonTitle: ChannelHistory.UpgradeBanner.button,
-                                buttonURL: viewModel.upgradeBannerURL(),
+                                buttonURL: viewModel.teamsURL,
                                 padding: 0,
                                 closeButton: .none
                             )
@@ -175,6 +175,7 @@ struct ChannelHistoryView_Previews: PreviewProvider {
             NavigationStack {
                 ChannelHistoryView(viewModel: ChannelHistoryViewModel(
                     historyDepth: 10_000,
+                    teamsURL: URL(string: "https://google.com")!,
                     accentColor: .blue,
                     useCase: ChannelHistoryUseCase(
                         repository: channelRepository()

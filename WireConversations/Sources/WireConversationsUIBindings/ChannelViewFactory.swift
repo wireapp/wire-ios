@@ -40,6 +40,7 @@ public class ChannelViewFactory {
     public static func makeChannelHistoryView(
         historyDepth: Int,
         accentColor: Color,
+        teamsURL: URL,
         repository: any ChannelRepositoryProtocol
     ) -> UIViewController {
         let useCase = ChannelHistoryUseCase(
@@ -48,6 +49,7 @@ public class ChannelViewFactory {
 
         let viewModel = ChannelHistoryViewModel(
             historyDepth: historyDepth,
+            teamsURL: teamsURL,
             accentColor: accentColor,
             useCase: useCase
         )
