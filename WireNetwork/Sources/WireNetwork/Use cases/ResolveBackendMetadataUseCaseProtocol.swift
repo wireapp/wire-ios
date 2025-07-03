@@ -18,14 +18,20 @@
 
 import Foundation
 
-// TODO: [WPB-12140] Delete after multibackend support
-public protocol ResolveBackendMetadataUseCaseProtocol: Sendable {
+protocol ResolveBackendMetadataUseCaseProtocol {
 
-    func invoke() async throws -> BackendMetadata
+    /// Resolve the metadata of the currently connected backend.
+    ///
+    /// - returns: The resolved backend metadata.
+    /// - throws: `ResolveBackendMetadataUseCaseFailure`
+
+    func invoke() async throws -> ResolvedBackendMetadata
 
 }
 
-public enum ResolveBackendMetadataUseCaseFailure: Error, Sendable {
+/// Errors originating from `ResolveBackendMetadataUseCase`.
+
+enum ResolveBackendMetadataUseCaseFailure: Error, Sendable {
 
     /// The API version of the connected backend is
     /// too old for this client, i.e the max available

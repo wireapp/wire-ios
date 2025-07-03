@@ -38,7 +38,7 @@ final class ServerTrustValidatorTests: XCTestCase {
     func testValidate_whenNoMatchingHosts() async throws {
         let sut = ServerTrustValidator(
             pinnedKeys: [
-                try PinnedKey(key: PublicKeys.wire, hosts: [.equals("prod-nginz-https.wire.com")])
+                try PinnedKey(rawKey: PublicKeys.wire, hosts: [.equals("prod-nginz-https.wire.com")])
             ],
             currentDateProvider: mockDateProvider
         )
@@ -50,7 +50,7 @@ final class ServerTrustValidatorTests: XCTestCase {
         // GIVEN
         let sut = ServerTrustValidator(
             pinnedKeys: [
-                try PinnedKey(key: PublicKeys.wire, hosts: [.equals("prod-nginz-https.wire.com")])
+                try PinnedKey(rawKey: PublicKeys.wire, hosts: [.equals("prod-nginz-https.wire.com")])
             ],
             currentDateProvider: mockDateProvider
         )
@@ -66,7 +66,7 @@ final class ServerTrustValidatorTests: XCTestCase {
         // GIVEN
         let sut = ServerTrustValidator(
             pinnedKeys: [
-                try PinnedKey(key: PublicKeys.wire, hosts: [.equals("example.com")])
+                try PinnedKey(rawKey: PublicKeys.wire, hosts: [.equals("example.com")])
             ],
             currentDateProvider: mockDateProvider
         )
@@ -107,7 +107,7 @@ final class ServerTrustValidatorTests: XCTestCase {
 
             let sut = ServerTrustValidator(
                 pinnedKeys: [
-                    try PinnedKey(key: PublicKeys.wire, hosts: [.endsWith("wire.com")])
+                    try PinnedKey(rawKey: PublicKeys.wire, hosts: [.endsWith("wire.com")])
                 ],
                 currentDateProvider: mockDateProvider
             )

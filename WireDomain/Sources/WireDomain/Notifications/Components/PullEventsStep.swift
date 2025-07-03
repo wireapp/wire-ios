@@ -265,6 +265,7 @@ extension PullEventsStep {
                 pinnedKeys: legacyBackendEnvironment.trustData.map { trustData in
                     PinnedKey(
                         key: trustData.certificateKey,
+                        rawKey: trustData.rawCertificateKey,
                         hosts: trustData.hosts.map { host in
                             switch host.rule {
                             case .equals:
