@@ -294,12 +294,12 @@ class IconButton: ButtonWithLargerHitArea {
         borderColorByState[state.rawValue] ?? borderColorByState[UIControl.State.normal.rawValue]
     }
 
-    func updateBorderColor(state newState: UIControl.State? = nil) {
-        layer.borderColor = borderColor(for: newState ?? state)?.cgColor
+    func updateBorderColor() {
+        layer.borderColor = borderColor(for: state)?.cgColor
     }
 
-    func updateTintColor(state newState: UIControl.State? = nil) {
-        tintColor = iconColor(for: newState ?? state)
+    func updateTintColor() {
+        tintColor = iconColor(for: state)
     }
 
     private func updateCircularCornerRadius() {

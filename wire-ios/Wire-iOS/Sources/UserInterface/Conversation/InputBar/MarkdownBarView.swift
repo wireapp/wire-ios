@@ -32,14 +32,35 @@ final class MarkdownBarView: UIView {
 
     private let stackView = UIStackView()
 
-    private let enabledStateIconColor = SemanticColors.Button.textInputBarItemEnabled
-    private let highlightedStateIconColor = SemanticColors.Button.textInputBarItemHighlighted
+    private var enabledStateIconColor: UIColor {
+        SemanticColors.Button.textInputBarItemEnabled
+            .resolvedColor(with: traitCollection)
+    }
 
-    private let enabledStateBackgroundColor = SemanticColors.Button.backgroundInputBarItemEnabled
-    private let highlightedStateBackgroundColor = SemanticColors.Button.backgroundInputBarItemHighlighted
+    private var highlightedStateIconColor: UIColor {
+        SemanticColors.Button.textInputBarItemHighlighted
+            .resolvedColor(with: traitCollection)
+    }
 
-    private let enabledStateBorderColor = SemanticColors.Button.borderInputBarItemEnabled
-    private let highlightedStateBorderColor = SemanticColors.Button.borderInputBarItemHighlighted
+    private var enabledStateBackgroundColor: UIColor {
+        SemanticColors.Button.backgroundInputBarItemEnabled
+            .resolvedColor(with: traitCollection)
+    }
+
+    private var highlightedStateBackgroundColor: UIColor {
+        SemanticColors.Button.backgroundInputBarItemHighlighted
+            .resolvedColor(with: traitCollection)
+    }
+
+    private var enabledStateBorderColor: UIColor {
+        SemanticColors.Button.borderInputBarItemEnabled
+            .resolvedColor(with: traitCollection)
+    }
+
+    private var highlightedStateBorderColor: UIColor {
+        SemanticColors.Button.borderInputBarItemHighlighted
+            .resolvedColor(with: traitCollection)
+    }
 
     let headerButton         = PopUpIconButton()
     let boldButton           = IconButton()
@@ -53,6 +74,8 @@ final class MarkdownBarView: UIView {
     private var buttonMargin: CGFloat {
         conversationHorizontalMargins.left / 2 - StyleKitIcon.Size.tiny.rawValue / 2
     }
+
+    private var prevMarkdown: Markdown?
 
     required init() {
         self.buttons = [headerButton, boldButton, italicButton, numberListButton, bulletListButton, codeButton]
@@ -200,6 +223,8 @@ final class MarkdownBarView: UIView {
             button.setBorderColor(borderColor, for: .normal)
             button.setBackgroundImageColor(backgroundColor, for: .normal)
         }
+
+        prevMarkdown = markdown
     }
 
     @objc
@@ -219,19 +244,7 @@ final class MarkdownBarView: UIView {
         super.traitCollectionDidChange(previousTraitCollection)
 
         if traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
-            redrawButtons()
-        }
-    }
-
-    private func redrawButtons() {
-        for button in buttons {
-            button.setIconColor(enabledStateIconColor, for: .normal)
-            button.setBorderColor(enabledStateBorderColor, for: .normal)
-            button.setBackgroundImageColor(enabledStateBackgroundColor, for: .normal)
-
-            button.setIconColor(highlightedStateIconColor, for: .highlighted)
-            button.setBorderColor(highlightedStateBorderColor, for: .highlighted)
-            button.setBackgroundImageColor(highlightedStateBackgroundColor, for: .highlighted)
+            updateIcons(for: prevMarkdown ?? Markdown())
         }
     }
 }

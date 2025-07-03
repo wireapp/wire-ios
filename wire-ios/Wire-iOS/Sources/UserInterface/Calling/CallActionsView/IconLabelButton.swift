@@ -34,8 +34,6 @@ class IconLabelButton: ButtonWithLargerHitArea {
     private let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
     private var widthConstraint: NSLayoutConstraint!
 
-    var shouldUseCurrentStateToSetTintAndBorder: Bool = true
-
     var appearance: CallActionAppearance = .dark(blurred: false) {
         didSet {
             updateState()
