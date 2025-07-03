@@ -1089,7 +1089,7 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
                 viewModel: attachmentsCarouselViewModel,
                 onTap: { WireLogger.conversation.debug("Did tap draft attachment: \($0)") },
                 onRemove: { WireLogger.conversation.debug("Did tap remove draft attachment: \($0)") },
-                onOptions: { WireLogger.conversation.debug("Did tap options on draft attachment: \($0)") }
+                onRetry: { WireLogger.conversation.debug("Did tap retry on draft attachment: \($0)") }
             )
         )
         addChild(carouselViewController)
