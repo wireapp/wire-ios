@@ -259,6 +259,7 @@ final class ConversationContentViewController: UIViewController {
 
         updateBackgroundColor(color: userSession.selfUser.zmAccentColor)
 
+        // TODO: check with Dmitry why we observe in case we don't have the conversationBackground option on?
         accentColorChangeHandler = AccentColorChangeHandler
             .addObserver(self, userSession: userSession) { [unowned self] color, _ in
                 updateBackgroundColor(color: color)

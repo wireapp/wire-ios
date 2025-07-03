@@ -23,7 +23,7 @@ final class AccentColorChangeHandler: UserObserving {
 
     typealias AccentColorChangeHandlerBlock = (_ newColor: ZMAccentColor?, _ observer: NSObjectProtocol?) -> Void
     private var handlerBlock: AccentColorChangeHandlerBlock?
-    private var observer: NSObjectProtocol?
+    private weak var observer: NSObjectProtocol?
     private var userObserverToken: NSObjectProtocol?
 
     static func addObserver(
