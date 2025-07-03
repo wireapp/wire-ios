@@ -179,11 +179,8 @@ final class ConversationContentViewController: UIViewController {
 
     deinit {
         DeveloperToolsViewModel.context.currentConversation = nil
-        NotificationCenter.default.removeObserver(
-            self,
-            name: ZMConversation.failedToSendMessageNotificationName,
-            object: nil
-        )
+        NotificationCenter.default.removeObserver(self)
+        accentColorChangeHandler = nil
     }
 
     @available(*, unavailable)
