@@ -243,7 +243,8 @@ public final class SessionManager: NSObject, SessionManagerType {
     /// Default Maximum number of accounts which can be logged in simultanously
     public static let defaultMaxNumberAccounts: Int = 3
 
-    public let appVersion: String
+    public let currentAppVersion: String
+    public let currentBuildVersion: String
     var isAppVersionBlacklisted = false
     public weak var delegate: SessionManagerDelegate?
     public let accountManager: AccountManager
@@ -370,7 +371,8 @@ public final class SessionManager: NSObject, SessionManagerType {
     @MainActor
     public convenience init(
         maxNumberAccounts: Int = defaultMaxNumberAccounts,
-        appVersion: String,
+        currentAppVersion: String,
+        currentBuildVersion: String,
         mediaManager: MediaManagerType,
         delegate: SessionManagerDelegate?,
         application: ZMApplication,
@@ -400,7 +402,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         let dispatchGroup = dispatchGroup ?? ZMSDispatchGroup(label: "WireSyncEngine.SessionManager.private")
 
         let unauthenticatedSessionFactory = UnauthenticatedSessionFactory(
-            appVersion: appVersion,
+            appVersion: currentBuildVersion,
             environment: environment,
             proxyUsername: proxyCredentials?.username,
             proxyPassword: proxyCredentials?.password,
@@ -408,7 +410,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         )
 
         let authenticatedSessionFactory = AuthenticatedSessionFactory(
-            appVersion: appVersion,
+            appVersion: currentBuildVersion,
             application: application,
             mediaManager: mediaManager,
             flowManager: flowManager,
@@ -421,7 +423,8 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         try self.init(
             maxNumberAccounts: maxNumberAccounts,
-            appVersion: appVersion,
+            currentAppVersion: currentAppVersion,
+            currentBuildVersion: currentBuildVersion,
             authenticatedSessionFactory: authenticatedSessionFactory,
             unauthenticatedSessionFactory: unauthenticatedSessionFactory,
             reachability: reachability,
@@ -484,7 +487,8 @@ public final class SessionManager: NSObject, SessionManagerType {
     @MainActor
     init(
         maxNumberAccounts: Int = defaultMaxNumberAccounts,
-        appVersion: String,
+        currentAppVersion: String,
+        currentBuildVersion: String,
         authenticatedSessionFactory: AuthenticatedSessionFactory,
         unauthenticatedSessionFactory: UnauthenticatedSessionFactory,
         reachability: ReachabilityWrapper,
@@ -507,7 +511,8 @@ public final class SessionManager: NSObject, SessionManagerType {
     ) throws {
         SessionManager.enableLogsByEnvironmentVariable()
         self.environment = environment
-        self.appVersion = appVersion
+        self.currentAppVersion = currentAppVersion
+        self.currentBuildVersion = currentBuildVersion
         self.application = application
         self.delegate = delegate
         self.dispatchGroup = dispatchGroup
@@ -526,7 +531,10 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
 
         self.sharedContainerURL = sharedContainerURL
-        self.accountManager = try AccountManager(sharedDirectory: sharedContainerURL)
+        self.accountManager = try AccountManager(
+            currentAppVersion: currentAppVersion,
+            sharedDirectory: sharedContainerURL
+        )
 
         WireLogger.sessionManager.debug("Starting the session manager:")
 
@@ -598,7 +606,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             blacklistVerificator?.tearDown()
             blacklistVerificator = ZMBlacklistVerificator(
                 checkInterval: configuration.blacklistDownloadInterval,
-                version: appVersion,
+                version: currentBuildVersion,
                 environment: environment,
                 proxyUsername: proxyCredentials?.username,
                 proxyPassword: proxyCredentials?.password,
@@ -945,6 +953,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
+    @MainActor
     func configureAnalytics(for userSession: ZMUserSession) async {
         guard let isTrackingEnabled = analyticsService?.isTrackingEnabled, isTrackingEnabled else {
             return
@@ -1106,10 +1115,6 @@ public final class SessionManager: NSObject, SessionManagerType {
     private func shouldEnableSyncV2(journal: Journal) -> Bool {
         guard let apiVersion = BackendInfo.apiVersion else {
             fatalError("api version unknown")
-        }
-        guard isDeveloperModeEnabled else {
-            // [WPB-18030] disabled new sync for Cloud build 3.124
-            return false
         }
 
         let isAvailable = apiVersion >= .v8

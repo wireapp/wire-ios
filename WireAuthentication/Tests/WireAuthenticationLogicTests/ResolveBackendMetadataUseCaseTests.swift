@@ -23,6 +23,7 @@ import XCTest
 
 @testable import WireAuthenticationLogic
 
+// TODO: [WPB-12140] Delete after multibackend support
 final class ResolveBackendMetadataUseCaseTests: XCTestCase {
 
     private var api: MockBackendMetadataAPI!
