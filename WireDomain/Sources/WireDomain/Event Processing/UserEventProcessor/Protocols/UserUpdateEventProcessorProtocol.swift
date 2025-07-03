@@ -26,6 +26,6 @@ protocol UserUpdateEventProcessorProtocol {
     ///
     /// - Parameter event: A user update event.
 
-    func processEvent(_ event: UserUpdateEvent) async throws
+    func processEvent(_ event: UserUpdateEvent) async
 
 }

@@ -30,7 +30,7 @@ struct FederationEventProcessor: FederationEventProcessorProtocol {
             try await connectionRemovedEventProcessor.processEvent(event)
 
         case let .delete(event):
-            try await deleteEventProcessor.processEvent(event)
+            await deleteEventProcessor.processEvent(event)
         }
     }
 

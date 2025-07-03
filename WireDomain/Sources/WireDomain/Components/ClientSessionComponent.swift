@@ -398,6 +398,7 @@ public final class ClientSessionComponent {
         processor: updateEventProcessor,
         databaseSaver: databaseSaver,
         syncStateSubject: syncStateSubject,
+        coreCryptoProvider: coreCryptoProvider,
         journal: journal
     )
 

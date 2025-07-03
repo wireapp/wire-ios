@@ -167,6 +167,38 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
         }
     }
 
+    public func deleteEventEnvelopes(
+        at indices: [Int64]
+    ) async throws {
+        try await eventContext.perform { [eventContext] in
+            let request = StoredUpdateEventEnvelope.fetchRequest(sortIndices: indices)
+            let untypedRequest: NSFetchRequest<NSFetchRequestResult> = request as! NSFetchRequest<NSFetchRequestResult>
+            let deleteRequest = NSBatchDeleteRequest(fetchRequest: untypedRequest)
+            deleteRequest.resultType = .resultTypeObjectIDs
+            let batchDelete = try eventContext.execute(deleteRequest) as? NSBatchDeleteResult
+
+            guard let deleteResult = batchDelete?.result as? [NSManagedObjectID] else {
+                return assertionFailure(
+                    "batch deletion result should be of NSManagedObjectID type"
+                )
+            }
+
+            WireLogger.sync.debug(
+                "deleting \(indices.count) stored envelopes",
+                attributes: .syncAttributes(initialSync: false)
+            )
+
+            let deletedObjects: [AnyHashable: Any] = [
+                NSDeletedObjectsKey: deleteResult
+            ]
+
+            NSManagedObjectContext.mergeChanges(
+                fromRemoteContextSave: deletedObjects,
+                into: [eventContext]
+            )
+        }
+    }
+
     public func deleteEventEnvelope(
         atIndex index: Int64
     ) async throws {

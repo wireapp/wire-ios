@@ -164,4 +164,4 @@
 "create_personal_account.error.message.user-creation-restricted" = "In dieser Version der App können Sie keine privaten Konten erstellen.";
 
 "switching_accounts.title" = "Konto wechseln";
-"switching_accounts.subtitle" = "Select another account on this device:";
+"switching_accounts.subtitle" = "Wählen Sie ein anderes Konto auf diesem Gerät:";

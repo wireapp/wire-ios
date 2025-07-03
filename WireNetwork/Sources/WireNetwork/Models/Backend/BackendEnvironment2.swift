@@ -23,54 +23,83 @@ import Foundation
 /// A collection of data for connecting to a given backend environment
 /// (e.g. Production, Staging, etc).
 
-public struct BackendEnvironment2: Sendable {
+public struct BackendEnvironment2: Sendable, Equatable, Hashable {
 
     /// The  name of the backend.
 
     public let title: String
 
-    /// The endpoints exposed by the backend.
+    /// The type of backend environment.
 
-    public let endpoints: Endpoints
+    public let environmentType: EnvironmentType
 
-    /// The pinned keys for the backend for use with certificate pinning.
+    /// Information regarding how to connect to the backend.
 
-    public let pinnedKeys: [PinnedKey]
-
-    /// The proxy settings for the backend if any.
-
-    public let proxySettings: ProxySettings?
-
-    /// Information about the connected backend.
-
-    public let metadata: ResolvedBackendMetadata
+    public let config: Config
 
     /// Create a new `BackendEnvironment`.
     ///
     /// - Parameters:
     ///   - title: The name of the backend.
-    ///   - endpoints: The endpoints exposed by the backend.
-    ///   - pinnedKeys: Keys for use with certificate pinning.
-    ///   - proxySettings: Settings to connect via a proxy.
-    ///   - metadata: Information about the connected backend.
+    ///   - environmentType: The type of backend environment.
+    ///   - config: Information regarding how to connect to the backend.
 
     public init(
         title: String,
-        endpoints: Endpoints,
-        pinnedKeys: [PinnedKey],
-        proxySettings: ProxySettings?,
-        metadata: ResolvedBackendMetadata
+        environmentType: EnvironmentType,
+        config: Config,
     ) {
         self.title = title
-        self.endpoints = endpoints
-        self.pinnedKeys = pinnedKeys
-        self.proxySettings = proxySettings
-        self.metadata = metadata
+        self.environmentType = environmentType
+        self.config = config
+    }
+
+    // TODO: [WPB-12140] delete when no longer needed.
+    public enum EnvironmentType: Sendable, Equatable, Hashable {
+
+        case `default`
+        case staging
+        case anta
+        case bella
+        case chala
+        case diya
+        case elna
+        case foma
+        case custom(url: URL)
+
+    }
+
+    /// Configuration data for the environment.
+
+    public struct Config: Sendable, Equatable, Hashable {
+
+        /// The endpoints exposed by the backend.
+
+        public let endpoints: Endpoints
+
+        /// Configuration for certificate pinning.
+
+        public let pinnedKeys: [PinnedKey]
+
+        /// Configuration for proxy mode.
+
+        public let proxyConfig: ProxyConfig?
+
+        public init(
+            endpoints: Endpoints,
+            pinnedKeys: [PinnedKey],
+            proxyConfig: ProxyConfig?
+        ) {
+            self.endpoints = endpoints
+            self.pinnedKeys = pinnedKeys
+            self.proxyConfig = proxyConfig
+        }
+
     }
 
     /// Endpoints exposed by the backend.
 
-    public struct Endpoints: Sendable {
+    public struct Endpoints: Sendable, Equatable, Hashable {
 
         /// URL for the REST API.
 
@@ -120,38 +149,35 @@ public struct BackendEnvironment2: Sendable {
 
     }
 
-    /// Information about a connected backend.
+    /// Configuration for proxy mode.
 
-    public struct ResolvedBackendMetadata: Sendable {
+    public struct ProxyConfig: Sendable, Equatable, Hashable {
 
-        /// The REST API version to use when making requests.
+        /// The proxy host.
 
-        public let apiVersion: APIVersion
+        public let host: String
 
-        /// The backend's domain.
+        /// The proxy port.
 
-        public let domain: String
+        public let port: Int
 
-        /// Whether this backend can communicate with other backends.
+        /// Whether proxy credentials are required.
 
-        public let isFederationEnabled: Bool
+        public let needsAuthentication: Bool
+
+        /// Create a new `ProxyConfig`.
 
         public init(
-            apiVersion: APIVersion,
-            domain: String,
-            isFederationEnabled: Bool
+            host: String,
+            port: Int,
+            needsAuthentication: Bool = false
         ) {
-            self.apiVersion = apiVersion
-            self.domain = domain
-            self.isFederationEnabled = isFederationEnabled
+            self.host = host
+            self.port = port
+            self.needsAuthentication = needsAuthentication
+
         }
 
     }
 
 }
-
-#if DEBUG
-    extension BackendEnvironment2: Equatable {}
-    extension BackendEnvironment2.Endpoints: Equatable {}
-    extension BackendEnvironment2.ResolvedBackendMetadata: Equatable {}
-#endif

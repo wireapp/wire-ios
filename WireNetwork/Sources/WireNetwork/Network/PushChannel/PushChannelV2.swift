@@ -26,6 +26,12 @@ public final class PushChannelV2: PushChannelV2Protocol {
     public enum Element: Equatable {
         case syncing(eventsCount: Int)
         case upToDate
+        case events([UpdateEventEnvelope])
+        case missedEvents
+    }
+
+    enum InternalElement: Equatable {
+        case syncing(eventsCount: Int)
         case event(UpdateEventEnvelope)
         case missedEvents
     }
@@ -38,6 +44,8 @@ public final class PushChannelV2: PushChannelV2Protocol {
 
     private var keepAliveTask: Task<Void, any Error>?
     private let keepAliveInterval: TimeInterval
+    let maxBatchEventsCount: Int
+    let batchDelay: TimeInterval
 
     private var numberOfReceivedEvents = 0
     private var remainingEventCount: Int?
@@ -48,30 +56,64 @@ public final class PushChannelV2: PushChannelV2Protocol {
     /// - Parameters:
     ///   - webSocket: webSocket to use
     ///   - keepAliveInterval: interval for sending ping and keep webSocket open
+    ///   - maxBatchEventsCount: maxBatchEventsCount number of events per batch. Minimum valid value is 1.
+    ///   - batchDelay: timeInterval to wait for elements until batch is returned
     public init(
         webSocket: any WebSocketProtocol,
-        keepAliveInterval: TimeInterval
+        keepAliveInterval: TimeInterval,
+        maxBatchEventsCount: Int,
+        batchDelay: TimeInterval
     ) {
         self.webSocket = webSocket
         self.keepAliveInterval = keepAliveInterval
+        self.maxBatchEventsCount = max(maxBatchEventsCount, 1)
+        self.batchDelay = batchDelay
     }
 
     public func open() async throws -> AsyncThrowingStream<Element, any Error> {
         WireLogger.pushChannel.debug("opening new push channel", attributes: .pushChannelV2)
 
         let sourceStream = try await webSocket.open()
+        var batch: [UpdateEventEnvelope] = []
+        var batchTask: Task<Void, any Error>?
 
         Task { [weak self] in
             guard let self else { return }
             do {
                 for try await message in sourceStream {
 
-                    let result = try receiveMessage(message)
-
-                    continuation.yield(result)
-                    if numberOfReceivedEvents == remainingEventCount {
-                        continuation.yield(.upToDate)
+                    batchTask?.cancel()
+                    batchTask = Task {
+                        try await Task.sleep(for: .seconds(batchDelay))
+                        if !batch.isEmpty {
+                            continuation.yield(.events(batch))
+                        }
+                        batch = []
+                        notifyUpToDateIfNeeded()
                     }
+
+                    let result = try receiveMessage(message)
+                    switch result {
+                    case let .event(event):
+                        batch.append(event)
+                        if batch.count == maxBatchEventsCount {
+                            continuation.yield(.events(batch))
+
+                            batch = []
+                            batchTask?.cancel()
+                            notifyUpToDateIfNeeded()
+                        }
+                    case .missedEvents:
+                        continuation.yield(.missedEvents)
+                    case let .syncing(eventsCount):
+                        continuation.yield(.syncing(eventsCount: eventsCount))
+                    }
+
+                }
+                // just in case to handle left batch if haven't deal with everything when we go to background
+                if !batch.isEmpty {
+                    continuation.yield(.events(batch))
+                    notifyUpToDateIfNeeded()
                 }
             } catch {
                 WireLogger.pushChannel.error("got error: \(error)", attributes: .pushChannelV2)
@@ -87,6 +129,13 @@ public final class PushChannelV2: PushChannelV2Protocol {
         setUpKeepAliveTask()
 
         return stream
+    }
+
+    private func notifyUpToDateIfNeeded() {
+        if let remainingEventCount, numberOfReceivedEvents >= remainingEventCount {
+            continuation.yield(.upToDate)
+            self.remainingEventCount = nil
+        }
     }
 
     public func close() async {
@@ -149,18 +198,21 @@ public final class PushChannelV2: PushChannelV2Protocol {
 
     // MARK: - Helpers
 
-    private func receiveMessage(_ message: URLSessionWebSocketTask.Message) throws -> Element {
+    private func receiveMessage(_ message: URLSessionWebSocketTask.Message) throws -> InternalElement {
 
         switch message {
         case let .data(data):
-            WireLogger.pushChannel.debug("received web socket data, decoding...", attributes: .pushChannelV2)
+            WireLogger.pushChannel.debug(
+                "received web socket data, decoding...",
+                attributes: .pushChannelV2
+            )
             let envelope = try decoder.decode(WebSocketNotification.self, from: data)
 
             switch envelope.type {
             case .event:
                 if let element = envelope.updateEventEnveloppe {
                     numberOfReceivedEvents += 1
-                    return Element.event(element)
+                    return .event(element)
                 } else {
                     WireLogger.pushChannel.debug(
                         "received web socket invalid data \(String(describing: data)), ignoring...",
@@ -177,7 +229,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
                 numberOfReceivedEvents = 0
                 return .syncing(eventsCount: envelope.messageCount)
             case .notificationsMissed:
-                return Element.missedEvents
+                return .missedEvents
             }
 
         case .string:

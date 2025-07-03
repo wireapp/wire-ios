@@ -18,6 +18,7 @@
 
 import Foundation
 
+// TODO: [WPB-12140] Delete after multibackend support
 public protocol ResolveBackendMetadataUseCaseProtocol: Sendable {
 
     func invoke() async throws -> BackendMetadata
