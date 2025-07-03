@@ -1574,7 +1574,7 @@ extension ZMUserSession {
         let performResourcesSync: () -> Void = { [weak self] in
             self?.triggerResourcesSync()
         }
-        
+
         return [
             AppVersionMigration_4_1_0(
                 performResourceSync: performResourcesSync
