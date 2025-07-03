@@ -635,21 +635,21 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
             conversationID: conversation.remoteIdentifier.uuidString,
             conversationDomain: conversation.domain ?? ""
         )
-        
+
         func getTeamsURL() -> URL {
             let baseURL = BackendEnvironment.shared.teamsURL
-            
+
             let queryItems = [
                 URLQueryItem(name: "utm_source", value: "client_settings"),
                 URLQueryItem(name: "utm_term", value: "ios")
             ]
-            
+
             var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)
             components?.queryItems = queryItems
-            
+
             return components!.url!.appendingLocaleParameter
         }
-        
+
         let teamsURL = getTeamsURL()
 
         let historyView = ChannelViewFactory.makeChannelHistoryView(
