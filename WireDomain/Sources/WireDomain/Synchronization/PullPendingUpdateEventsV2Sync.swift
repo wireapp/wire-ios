@@ -65,7 +65,9 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
     }
 
     public func pull() async throws {
-        let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID)
+        let syncMarker = UUID().uuidString
+        
+        let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID, marker: syncMarker)
 
         let liveEventStream = try await pushChannel.open()
 
@@ -79,17 +81,15 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
                     attributes: .syncAttributes(initialSync: false)
                 )
                 switch element {
-                case .upToDate:
-                    logger.debug("upToDate event", attributes: logAttributes)
-                    continuation.finish()
-                    break streamLoop
+                case let .syncMarker(marker, deliveryTag):
+                    try await pushChannel.acknowledgeEvent(deliveryTag: deliveryTag, multiple: false)
+                    if marker == syncMarker {
+                        logger.debug("upToDate event", attributes: logAttributes)
+                        continuation.finish()
+                        break streamLoop
+                    }
                 case .missedEvents:
                     logger.debug("missedEvents event", attributes: logAttributes)
-                // do nothing
-                case .syncing:
-                    // ignore this event, it gives the number of messages until we're caught up
-                    // TODO: [WPB-18485] remove this event and add endofqueue
-                    continue
                 case let .events(envelopes):
                     do {
                         try await processBatch(

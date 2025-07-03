@@ -23,16 +23,12 @@ struct WebSocketNotification: Decodable {
     enum NotificationType: String, Decodable {
         case event
         case notificationsMissed = "notifications_missed"
-        case messagesCount = "message_count"
+        case synchronization = "synchronization"
     }
 
     enum DataType: Decodable {
         case event(EventNotificationData)
-        case messageCount(MessageCountData)
-    }
-
-    struct MessageCountData: Decodable {
-        var count: Int
+        case synchronization(SynchronisationData)
     }
 
     struct EventNotificationData: Decodable {
@@ -43,6 +39,16 @@ struct WebSocketNotification: Decodable {
 
         var deliveryTag: UInt64
         var event: UpdateEventEnvelopeV8
+    }
+    
+    struct SynchronisationData: Decodable {
+        enum CodingKeys: String, CodingKey {
+            case deliveryTag = "delivery_tag"
+            case markerId = "marker_id"
+        }
+
+        var deliveryTag: UInt64
+        var markerId: String
     }
 
     var type: NotificationType
@@ -56,11 +62,6 @@ struct WebSocketNotification: Decodable {
     init(eventData: EventNotificationData) {
         self.type = .event
         self.data = .event(eventData)
-    }
-
-    init(messageCount: Int) {
-        self.type = .messagesCount
-        self.data = .messageCount(.init(count: messageCount))
     }
 
     enum CodingKeys: CodingKey {
@@ -78,18 +79,9 @@ struct WebSocketNotification: Decodable {
             self.data = .event(data)
         case .notificationsMissed:
             self.data = nil
-        case .messagesCount:
-            let data = try container.decode(WebSocketNotification.MessageCountData.self, forKey: .data)
-            self.data = .messageCount(data)
-        }
-    }
-
-    var messageCount: Int {
-        switch data {
-        case let .messageCount(data):
-            data.count
-        case .event, .none:
-            0
+        case .synchronization:
+            let data = try container.decode(WebSocketNotification.SynchronisationData.self, forKey: .data)
+            self.data = .synchronization(data)
         }
     }
 
@@ -102,7 +94,18 @@ struct WebSocketNotification: Decodable {
                 isTransient: false,
                 deliveryTag: eventData.deliveryTag
             )
-        case .messageCount:
+        case .synchronization:
+            nil
+        case .none:
+            nil
+        }
+    }
+    
+    var synchronizationData: SynchronisationData? {
+        switch data {
+        case let .synchronization(data):
+            data
+        case .event:
             nil
         case .none:
             nil
