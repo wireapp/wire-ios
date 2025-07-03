@@ -179,11 +179,8 @@ final class ConversationContentViewController: UIViewController {
 
     deinit {
         DeveloperToolsViewModel.context.currentConversation = nil
-        NotificationCenter.default.removeObserver(
-            self,
-            name: ZMConversation.failedToSendMessageNotificationName,
-            object: nil
-        )
+        NotificationCenter.default.removeObserver(self)
+        accentColorChangeHandler = nil
     }
 
     @available(*, unavailable)
@@ -260,7 +257,7 @@ final class ConversationContentViewController: UIViewController {
         updateBackgroundColor(color: userSession.selfUser.zmAccentColor)
 
         accentColorChangeHandler = AccentColorChangeHandler
-            .addObserver(self, userSession: userSession) { [unowned self] color, _ in
+            .addObserver(userSession: userSession) { [unowned self] color in
                 updateBackgroundColor(color: color)
             }
     }
