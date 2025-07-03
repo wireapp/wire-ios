@@ -16,25 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class PushChannelV2APIImpl: PushChannelV2API, VersionedAPI {
+import Foundation
 
-    let pushChannelService: any PushChannelServiceProtocol
-    let apiVersion: APIVersion
-
-    init(pushChannelService: any PushChannelServiceProtocol, apiVersion: APIVersion) {
-        self.pushChannelService = pushChannelService
-        self.apiVersion = apiVersion
-    }
-
-    func createPushChannel(clientID: String) async throws -> any PushChannelV2Protocol {
+final class PushChannelV2APIV9: PushChannelV2APIV8 {
+    
+    override var apiVersion: APIVersion { .v9 }
+    
+    override func createPushChannel(clientID: String, marker: String) async throws -> any PushChannelV2Protocol {
         let path = "\(pathPrefix)/events"
 
         let request = try URLRequestBuilder(path: path)
             .withMethod(.get)
             .withQueryItem(name: "client", value: clientID)
+            .withQueryItem(name: "sync_marker", value: marker)
             .build()
 
         return try await pushChannelService.createPushChannelV2(request)
     }
+
 
 }

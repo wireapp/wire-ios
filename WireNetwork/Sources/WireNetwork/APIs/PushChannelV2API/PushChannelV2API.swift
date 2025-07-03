@@ -21,11 +21,12 @@
 public protocol PushChannelV2API {
 
     /// Create a new push channel.
-    ///
+    /// 
     /// - Parameter clientID: The id of the self client.
+    /// - Parameter marker: synchronisation marker used to detect end of notifications' queue
     /// - Returns: A push channel.
 
-    func createPushChannel(clientID: String) async throws -> AnyPushChannelV2
+    func createPushChannel(clientID: String, marker: String) async throws -> AnyPushChannelV2
 
 }
 
