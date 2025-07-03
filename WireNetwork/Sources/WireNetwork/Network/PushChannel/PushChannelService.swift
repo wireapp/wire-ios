@@ -76,7 +76,7 @@ public final class PushChannelService: PushChannelServiceProtocol {
         return PushChannelV2(
             webSocket: webSocket,
             keepAliveInterval: keepAliveInterval,
-            maxBatchEventsCount: 100, // backend delivers events by 100
+            maxBatchEventsCount: 500, // Backend page size is 500, we need to acknowledge the 500 to get the rest.
             batchDelay: 0.5
         )
     }
