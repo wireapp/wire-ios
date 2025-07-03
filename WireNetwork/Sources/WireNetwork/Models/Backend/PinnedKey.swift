@@ -57,6 +57,21 @@ public struct PinnedKey: Sendable, Equatable, Hashable {
         self.hosts = hosts
     }
 
+    /// Whether the given host matches the pinned key.
+    ///
+    /// - returns: `true` if `host` matches any of the `hosts` in `self`.
+
+    func matches(host: String) -> Bool {
+        hosts.contains {
+            switch $0 {
+            case let .endsWith(suffix):
+                host.hasSuffix(suffix)
+            case let .equals(value):
+                host == value
+            }
+        }
+    }
+
     // MARK: - Private
 
     private static func key(for data: Data) throws(Failure) -> SecKey {
