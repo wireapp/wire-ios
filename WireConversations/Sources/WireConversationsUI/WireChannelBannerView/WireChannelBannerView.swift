@@ -37,7 +37,7 @@ public struct WireChannelBannerView: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(alignment: .top) {
                 Text(configuration.title)
-                    .wireTextStyle(.body2)
+                    .wireTextStyle(.body3)
                     .foregroundStyle(Color.white)
                     .accessibilityLabel(Text(configuration.title))
 
