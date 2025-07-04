@@ -20,19 +20,21 @@ import Foundation
 import WireDomain
 import WireLogging
 
+/// An app version migration targeting 4.1.0 which performs the following actions:
+/// - pull conversations to ensure their metadata is up to date.
+
 struct AppVersionMigration_4_1_0: AppVersionMigration {
 
     var version: SemanticVersion { SemanticVersion("4.1.0") }
-    private let performResourceSync: () -> Void
+    private let pullAllConversationsSync: any PullAllConversationsSyncProtocol
 
     init(
-        performResourceSync: @escaping () -> Void
+        pullAllConversationsSync: any PullAllConversationsSyncProtocol
     ) {
-        self.performResourceSync = performResourceSync
+        self.pullAllConversationsSync = pullAllConversationsSync
     }
 
     func perform() async throws {
-        // Performs a resources sync to ensure all conversations are up to date.
-        performResourceSync()
+        try await pullAllConversationsSync.pull()
     }
 }

@@ -367,12 +367,6 @@ public final class ZMUserSession: NSObject {
         mlsService: mlsService
     )
 
-    private lazy var appVersionMigrationService: AppVersionMigrationService = .init(
-        journal: journal,
-        currentVersion: SemanticVersion(stringLiteral: currentAppVersion),
-        allMigrations: makeAppVersionMigrations()
-    )
-
     // MARK: Dependency Injection
 
     let dependencies: UserSessionDependencies
@@ -656,6 +650,13 @@ public final class ZMUserSession: NSObject {
 
     public func performAppMigrationsIfNeeded() async {
         do {
+
+            let appVersionMigrationService: AppVersionMigrationService = .init(
+                journal: journal,
+                currentVersion: SemanticVersion(stringLiteral: currentAppVersion),
+                allMigrations: makeAppVersionMigrations()
+            )
+
             try await appVersionMigrationService.performAppMigrations()
         } catch {
             WireLogger.session.error("Failed to perform app version migrations: \(String(describing: error))")
@@ -1571,15 +1572,50 @@ extension ZMUserSession {
 extension ZMUserSession {
 
     private func makeAppVersionMigrations() -> [any AppVersionMigration] {
-        let performResourcesSync: () -> Void = { [weak self] in
-            self?.triggerResourcesSync()
+        var appVersionMigrations: [any AppVersionMigration] = []
+
+        if let pullAllConversationsSync = makePullAllConversationsSync() {
+            let appVersionMigration4_1_0 = AppVersionMigration_4_1_0(
+                pullAllConversationsSync: pullAllConversationsSync
+            )
+
+            appVersionMigrations.append(appVersionMigration4_1_0)
         }
 
-        return [
-            AppVersionMigration_4_1_0(
-                performResourceSync: performResourcesSync
+        return appVersionMigrations
+    }
+
+    private func makePullAllConversationsSync() -> (any PullAllConversationsSyncProtocol)? {
+        guard let apiService,
+              let backendInfoApiVersion = BackendInfo.apiVersion,
+              let apiVersion = WireAPI.APIVersion(
+                  rawValue: UInt(backendInfoApiVersion.rawValue)
+              ) else {
+            WireLogger.appVersionMigration.debug(
+                "Could not perform app version migration on 4.1.0 - missing dependencies"
             )
-        ]
+            return nil
+        }
+
+        let conversationsAPI = ConversationsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
+
+        let messageLocalStore = MessageLocalStore(
+            context: syncContext
+        )
+
+        let conversationsLocalStore = ConversationLocalStore(
+            context: syncContext,
+            mlsService: nil,
+            messageLocalStore: messageLocalStore
+        )
+
+        return PullAllConversationsSync(
+            localDomain: WireTransport.BackendInfo.domain!,
+            isFederationEnabled: BackendInfo.isFederationEnabled,
+            isMLSEnabled: BackendInfo.isMLSEnabled,
+            api: conversationsAPI,
+            store: conversationsLocalStore
+        )
     }
 
 }

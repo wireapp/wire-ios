@@ -19,7 +19,7 @@
 import Foundation
 import WireAPI
 
-struct PullAllConversationsSync: PullAllConversationsSyncProtocol {
+public struct PullAllConversationsSync: PullAllConversationsSyncProtocol {
 
     private let localDomain: String
     private let isFederationEnabled: Bool
@@ -27,7 +27,7 @@ struct PullAllConversationsSync: PullAllConversationsSyncProtocol {
     private let api: any ConversationsAPI
     private let store: any ConversationLocalStoreProtocol
 
-    init(
+    public init(
         localDomain: String,
         isFederationEnabled: Bool,
         isMLSEnabled: Bool,
@@ -41,7 +41,7 @@ struct PullAllConversationsSync: PullAllConversationsSyncProtocol {
         self.store = store
     }
 
-    func pull() async throws {
+    public func pull() async throws {
         var conversationIDs = [QualifiedID]()
         do {
             for try await ids in try await api.getConversationIdentifiers() {
