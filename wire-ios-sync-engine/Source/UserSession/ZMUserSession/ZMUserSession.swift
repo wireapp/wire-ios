@@ -1594,6 +1594,9 @@ extension ZMUserSession {
         }
 
         guard let clientID, let asyncStreamCapable else {
+            WireLogger.appVersionMigration.debug(
+                "Could not perform app version migration on 4.1.0 - missing clientID or asyncStreamCapable"
+            )
             return nil
         }
 
