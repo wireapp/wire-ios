@@ -20,12 +20,12 @@ import Foundation
 import WireDomain
 import WireLogging
 
-/// An app version migration targeting 4.1.0 which performs the following actions:
-/// - pull conversations to ensure their metadata is up to date.
+/// Issue: some users had conversations in their database that weren't fully up do date with the backend.
+/// Fix: re-sync all conversations.
 
 struct AppVersionMigration_4_1_0: AppVersionMigration {
 
-    var version: SemanticVersion { SemanticVersion("4.1.0") }
+    let version: SemanticVersion = "4.1.0"
     private let pullAllConversationsSync: any PullAllConversationsSyncProtocol
 
     init(
@@ -35,6 +35,7 @@ struct AppVersionMigration_4_1_0: AppVersionMigration {
     }
 
     func perform() async throws {
+        
         try await pullAllConversationsSync.pull()
     }
 }
