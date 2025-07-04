@@ -69,6 +69,7 @@ open class AuthenticatedSessionFactory {
             pinnedKeys: environment.trustData.map { trustData in
                 PinnedKey(
                     key: trustData.certificateKey,
+                    rawKey: trustData.rawCertificateKey,
                     hosts: trustData.hosts.map { host in
                         switch host.rule {
                         case .equals:
