@@ -210,7 +210,8 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     /// Perform an incremental sync.
 
     func performIncrementalSync() async throws {
-        let isConsumableNotificationsEnabled = journal[.isConsumableNotificationsEnabled] && DeveloperFlag.consumableNotifications.isOn
+        let isConsumableNotificationsEnabled = journal[.isConsumableNotificationsEnabled] && DeveloperFlag
+            .consumableNotifications.isOn
 
         if isSyncV2Enabled {
 
