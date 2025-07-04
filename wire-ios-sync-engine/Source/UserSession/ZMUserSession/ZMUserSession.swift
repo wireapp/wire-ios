@@ -1586,36 +1586,29 @@ extension ZMUserSession {
     }
 
     private func makePullAllConversationsSync() -> (any PullAllConversationsSyncProtocol)? {
-        guard let apiService = viewContext.performAndWait({ apiService }),
-              let backendInfoApiVersion = BackendInfo.apiVersion,
-              let apiVersion = WireAPI.APIVersion(
-                  rawValue: UInt(backendInfoApiVersion.rawValue)
-              ) else {
-            WireLogger.appVersionMigration.debug(
-                "Could not perform app version migration on 4.1.0 - missing dependencies"
-            )
+        let (clientID, asyncStreamCapable) = syncContext.performAndWait {
+            let selfUser = ZMUser.selfUser(in: syncContext)
+            let selfClient = selfUser.selfClient()
+
+            return (selfClient?.remoteIdentifier, selfClient?.asyncStreamCapable)
+        }
+
+        guard let clientID, let asyncStreamCapable else {
             return nil
         }
 
-        let conversationsAPI = ConversationsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
-
-        let messageLocalStore = MessageLocalStore(
-            context: syncContext
+        let clientSessionComponent = userSessionComponent.clientSessionComponent(
+            clientID: clientID,
+            asyncStreamEnabled: asyncStreamCapable,
+            completionHandlers: .init(
+                onProcessedCallEvent: onProcessedCallEvent,
+                onSelfClientInvalidated: onSelfClientInvalidated,
+                onAuthenticationFailure: onAuthenticationFailure,
+                onProcessedTypingUsers: onProcessedTypingUsers
+            )
         )
 
-        let conversationsLocalStore = ConversationLocalStore(
-            context: syncContext,
-            mlsService: nil,
-            messageLocalStore: messageLocalStore
-        )
-
-        return PullAllConversationsSync(
-            localDomain: WireTransport.BackendInfo.domain!,
-            isFederationEnabled: BackendInfo.isFederationEnabled,
-            isMLSEnabled: BackendInfo.isMLSEnabled,
-            api: conversationsAPI,
-            store: conversationsLocalStore
-        )
+        return clientSessionComponent.pullAllConversationsSync
     }
 
 }
