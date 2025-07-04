@@ -15,25 +15,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-
 import Foundation
 
-final class UpdateEventsAPIV8: UpdateEventsAPIV7 {
-    override var apiVersion: APIVersion { .v8 }
+struct ServerTimeResponseV8: Decodable, ToAPIModelConvertible {
+    let time: UTCTime
 
-    override func getServerTime() async throws -> Date {
-        let request = try URLRequestBuilder(path: "\(pathPrefix)/time")
-            .withMethod(.get)
-            .build()
-
-        let (data, response) = try await apiService.executeRequest(
-            request,
-            requiringAccessToken: true
-        )
-
-        return try ResponseParser()
-            .success(code: .ok, type: ServerTimeResponseV8.self)
-            .parse(code: response.statusCode, data: data)
-
+    func toAPIModel() -> Date {
+        time.date
     }
 }
