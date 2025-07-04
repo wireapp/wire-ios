@@ -29,6 +29,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
 
     var sut: IncrementalSyncV2!
     var pushChannelAPI: MockPushChannelV2API!
+    var pullServerTimeSync: MockPullServerTimeSyncProtocol!
     var decryptor: MockUpdateEventDecryptorProtocol!
     var updateEventsStore: MockUpdateEventsLocalStoreProtocol!
     var messageLocalStore: MockMessageLocalStoreProtocol!
@@ -42,6 +43,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
 
     override func setUp() {
         pushChannelAPI = MockPushChannelV2API()
+        pullServerTimeSync = MockPullServerTimeSyncProtocol()
         decryptor = MockUpdateEventDecryptorProtocol()
         updateEventsStore = MockUpdateEventsLocalStoreProtocol()
         messageLocalStore = MockMessageLocalStoreProtocol()
@@ -59,6 +61,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
 
         sut = IncrementalSyncV2(
             selfClientID: Scaffolding.selfClientID,
+            pullServerTimeSync: pullServerTimeSync,
             pushChannelAPI: pushChannelAPI,
             decryptor: decryptor,
             updateEventsStore: updateEventsStore,
@@ -72,12 +75,14 @@ final class IncrementalSyncV2Tests: XCTestCase {
         sut.delegate = liveDelegate
         liveDelegate.isUpToDateSync_MockMethod = { _ in }
         liveDelegate.didMissedEventsSync_MockMethod = { _ in }
+        pullServerTimeSync.pull_MockMethod = {}
 
     }
 
     override func tearDown() {
         sut = nil
         pushChannelAPI = nil
+        pullServerTimeSync = nil
         decryptor = nil
         updateEventsStore = nil
         messageLocalStore = nil
@@ -150,6 +155,9 @@ final class IncrementalSyncV2Tests: XCTestCase {
         let token = try await sut.perform()
         let numberOfStoredEventEnvelopesInvocations = 2
         let numberOfInvocationInProcessEvents = 1
+
+        XCTAssertEqual(pullServerTimeSync.pull_Invocations.count, 1)
+
         // Then stored events were processed
         XCTAssertEqual(
             updateEventsStore.fetchStoredEventEnvelopesLimit_Invocations.count,
