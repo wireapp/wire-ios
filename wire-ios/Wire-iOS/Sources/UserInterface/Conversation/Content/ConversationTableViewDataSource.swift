@@ -155,8 +155,8 @@ final class ConversationTableViewDataSource: NSObject {
                     messages: messages
                 )
 
-                let sectionController = if let cachedSectionController = self.sectionControllers
-                    .get(for: element.nonce) {
+                let sectionController = if let nonce = element.nonce,
+                                           let cachedSectionController = self.sectionControllers.get(for: nonce) {
                     cachedSectionController
                 } else {
                     self.makeSectionController(
