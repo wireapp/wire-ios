@@ -230,7 +230,7 @@ final class ConversationInputBarViewController: UIViewController,
     let publishDraftsUseCase: WireCellsPublishDraftsUseCaseProtocol
     let clearPublishedDraftsUseCase: WireCellsClearPublishedDraftsUseCaseProtocol
     private let observeDraftsUseCase: WireCellsObserveDraftsUseCaseProtocol
-	private let deleteDraftUseCase: WireCellsDeleteDraftUseCaseProtocol
+    private let deleteDraftUseCase: WireCellsDeleteDraftUseCaseProtocol
     private let retryUploadDraftUseCase: WireCellsRetryUploadDraftUseCaseProtocol
     private let attachmentsCarouselViewModel = AttachmentsCarouselViewModel(items: [])
 
