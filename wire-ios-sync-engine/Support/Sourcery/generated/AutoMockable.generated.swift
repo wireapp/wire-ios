@@ -1031,6 +1031,21 @@ public class MockSessionManagerDelegate: SessionManagerDelegate {
         mock(error, retryHandler)
     }
 
+    // MARK: - sessionManagerWillMigrateAppVersions
+
+    public var sessionManagerWillMigrateAppVersions_Invocations: [Void] = []
+    public var sessionManagerWillMigrateAppVersions_MockMethod: (() -> Void)?
+
+    public func sessionManagerWillMigrateAppVersions() {
+        sessionManagerWillMigrateAppVersions_Invocations.append(())
+
+        guard let mock = sessionManagerWillMigrateAppVersions_MockMethod else {
+            fatalError("no mock for `sessionManagerWillMigrateAppVersions`")
+        }
+
+        mock()
+    }
+
     // MARK: - sessionManagerDidChangeActiveUserSession
 
     public var sessionManagerDidChangeActiveUserSessionUserSession_Invocations: [ZMUserSession] = []
