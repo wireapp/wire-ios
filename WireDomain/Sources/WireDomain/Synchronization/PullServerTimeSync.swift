@@ -15,7 +15,24 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+import WireNetwork
 
-PROTEUS_BY_CORECRYPTO_ENABLED=1
-WIRE_AUTHENTICATION_ENABLED=1
-NEW_REGISTRATION_ENABLED=1
+struct PullServerTimeSync: PullServerTimeSyncProtocol {
+
+    private let api: any UpdateEventsAPI
+    private let store: any UpdateEventsLocalStoreProtocol
+
+    init(
+        api: any UpdateEventsAPI,
+        store: any UpdateEventsLocalStoreProtocol
+    ) {
+        self.api = api
+        self.store = store
+    }
+
+    func pull() async throws {
+        let serverTime = try await api.getServerTime()
+        await store.storeServerTimeDelta(serverTime.timeIntervalSinceNow)
+    }
+
+}

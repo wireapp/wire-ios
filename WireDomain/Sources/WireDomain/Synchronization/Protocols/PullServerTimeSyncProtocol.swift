@@ -16,6 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-PROTEUS_BY_CORECRYPTO_ENABLED=1
-WIRE_AUTHENTICATION_ENABLED=1
-NEW_REGISTRATION_ENABLED=1
+// sourcery: AutoMockable
+/// An object to keep the server time up to date.
+public protocol PullServerTimeSyncProtocol {
+
+    /// Fetch server time from remote, then store it locally.
+
+    func pull() async throws
+
+}

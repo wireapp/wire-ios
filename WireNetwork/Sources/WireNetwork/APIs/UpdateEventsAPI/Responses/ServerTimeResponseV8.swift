@@ -15,7 +15,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+import Foundation
 
-PROTEUS_BY_CORECRYPTO_ENABLED=1
-WIRE_AUTHENTICATION_ENABLED=1
-NEW_REGISTRATION_ENABLED=1
+struct ServerTimeResponseV8: Decodable, ToAPIModelConvertible {
+    let time: UTCTime
+
+    func toAPIModel() -> Date {
+        time.date
+    }
+}

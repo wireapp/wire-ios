@@ -19,9 +19,10 @@
 import NeedleFoundation
 import WireDataModel
 import WireFoundation
+import WireLogging
 import WireNetwork
 
-protocol PullEventsDependency: Dependency {
+protocol SyncEventsDependency: Dependency {
     var userID: UUID { get }
     var coreData: CoreDataStack { get }
     var cookieStorage: any CookieStorageProtocol { get }
@@ -32,12 +33,12 @@ protocol PullEventsDependency: Dependency {
     var sharedUserDefaults: UserDefaults { get }
 }
 
-protocol PullEventsStepProtocol {
+protocol SyncEventsStepProtocol {
     func pullEvents() async throws
 }
 
 /// Provides sync objects.
-final class PullEventsStep: Component<PullEventsDependency>, PullEventsStepProtocol {
+final class SyncEventsStep: Component<SyncEventsDependency>, SyncEventsStepProtocol {
 
     enum Failure: Error {
         case missingProxyCredentials
@@ -59,23 +60,32 @@ final class PullEventsStep: Component<PullEventsDependency>, PullEventsStepProto
     }
 
     func pullEvents() async throws {
-        let pendingEventsSync = await PullPendingUpdateEventsSync(
+
+        let pendingEventsSync = try await PullPendingUpdateEventsSyncV2(
             selfClientID: selfClientID,
-            api: try updateEventsAPI,
-            store: updateEventsLocalStore,
+            pushChannelAPI: pushChannelAPI,
+            updateEventsStore: updateEventsLocalStore,
             journal: journal,
             decryptor: updateEventDecryptor,
             coreCryptoProvider: coreCryptoProvider
         )
 
-        let pullEventsUseCase = PullEventsUseCase(
-            pendingEventsSync: pendingEventsSync
-        )
+        let useCase = SyncEventsUseCase(pendingEventsSync: pendingEventsSync)
 
-        let eventsStream = try await pullEventsUseCase.invoke()
+        do {
+            try await useCase.invoke()
+        } catch {
+            // either we timeout during decrypting/storing events OR an issue with the sync
+            // In both cases, we end up with a stream of notifications that has not been shown, so we need to continue
+            // to show them
+            WireLogger.sync.warn(
+                "syncing events via websocket: \(error.localizedDescription)",
+                attributes: .syncAttributes(initialSync: false)
+            )
+        }
 
         try await generateNotificationStep.generateNotification(
-            eventsStream: eventsStream
+            eventsStream: pendingEventsSync.stream
         )
     }
 
@@ -84,10 +94,25 @@ final class PullEventsStep: Component<PullEventsDependency>, PullEventsStepProto
     var generateNotificationStep: GenerateNotificationStep {
         GenerateNotificationStep(parent: self)
     }
-
 }
 
-extension PullEventsStep {
+extension SyncEventsStep {
+
+    var pushChannelService: PushChannelService {
+        get async throws {
+            try await PushChannelService(
+                networkService: pushChannelNetworkService,
+                authenticationManager: authenticationManager
+            )
+        }
+    }
+
+    public var pushChannelAPI: any PushChannelV2API {
+        get async throws {
+            try await PushChannelV2APIBuilder(pushChannelService: pushChannelService).makeAPI(for: apiVersion)
+        }
+    }
+
     public var conversationLocalStore: any ConversationLocalStoreProtocol {
         ConversationLocalStore(
             context: dependency.coreData.syncContext,
@@ -188,7 +213,7 @@ extension PullEventsStep {
     }
 }
 
-extension PullEventsStep {
+extension SyncEventsStep {
     // TODO: [WPB-17284] Encapsulate objects in NetworkStack (similar to what's done in WireAuthentication) to build the UpdateEventsAPI.
     var updateEventsAPI: any UpdateEventsAPI {
         get async throws {
@@ -329,16 +354,46 @@ extension PullEventsStep {
         }
     }
 
+    var serverTrustValidator: ServerTrustValidator {
+        get async throws {
+            ServerTrustValidator(
+                pinnedKeys: try await backendEnvironment.pinnedKeys,
+                currentDateProvider: .system
+            )
+        }
+    }
+
+    var pushChannelNetworkService: NetworkService {
+        get async throws {
+            let backendEnvironment = try await backendEnvironment
+
+            let networkService = NetworkService(
+                baseURL: backendEnvironment.webSocketURL,
+                serverTrustValidator: try await serverTrustValidator
+            )
+            let minTLSVersion = WireNetwork.TLSVersion.minVersionFrom(minTLSVersion)
+            let configFactory = await URLSessionConfigurationFactory(
+                minTLSVersion: minTLSVersion,
+                proxySettings: try proxySettings
+            )
+            let config = configFactory.makeWebSocketSessionConfiguration()
+            let session = URLSession(
+                configuration: config,
+                delegate: networkService,
+                delegateQueue: nil
+            )
+            networkService.configure(with: session)
+            return networkService
+        }
+    }
+
     var networkService: NetworkService {
         get async throws {
             let backendEnvironment = try await backendEnvironment
 
             let service = NetworkService(
                 baseURL: backendEnvironment.url,
-                serverTrustValidator: ServerTrustValidator(
-                    pinnedKeys: backendEnvironment.pinnedKeys,
-                    currentDateProvider: .system
-                )
+                serverTrustValidator: try await serverTrustValidator
             )
 
             let minTLSVersion = WireNetwork.TLSVersion.minVersionFrom(minTLSVersion)
