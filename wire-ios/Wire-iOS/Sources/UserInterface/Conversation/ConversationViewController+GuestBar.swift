@@ -28,40 +28,67 @@ extension ConversationViewController {
 
         let state = conversation.externalParticipantsState
 
-        if state.isEmpty {
+        guard
+            !state.isEmpty,
+            let labelKey = label(for: state)
+        else {
             return .hidden
-        } else {
-            return .visible(labelKey: label(for: state), identifier: identifier(for: state))
         }
+        return .visible(labelKey: labelKey, identifier: identifier(for: state))
+
     }
 
-    func label(for state: ZMConversation.ExternalParticipantsState) -> String {
-        var states: [String] = []
+    func label(for state: ZMConversation.ExternalParticipantsState) -> String? {
+        typealias BannerStrings = L10n.Localizable.Conversation.Banner
 
-        if conversation.externalParticipantsState.contains(.visibleRemotes) {
-            states.append(ConversationBanner.remotes)
-        }
+        switch state {
+        case [.visibleRemotes, .visibleExternals, .visibleGuests, .visibleServices]:
+            return BannerStrings.remotesExternalsGuestsServicesPresent
 
-        if conversation.externalParticipantsState.contains(.visibleExternals) {
-            states.append(ConversationBanner.externals)
-        }
+        case [.visibleRemotes, .visibleExternals, .visibleGuests]:
+            return BannerStrings.remotesExternalsGuestsPresent
 
-        if conversation.externalParticipantsState.contains(.visibleGuests) {
-            states.append(ConversationBanner.guests)
-        }
+        case [.visibleRemotes, .visibleExternals, .visibleServices]:
+            return BannerStrings.remotesExternalsServicesPresent
 
-        if conversation.externalParticipantsState.contains(.visibleServices) {
-            states.append(ConversationBanner.services)
-        }
+        case [.visibleRemotes, .visibleGuests, .visibleServices]:
+            return BannerStrings.remotesGuestsServicesPresent
 
-        let head = states[0]
-        let tail = states.dropFirst().map(\.localizedLowercase)
-        let list = ([head] + tail).joined(separator: ConversationBanner.separator)
+        case [.visibleExternals, .visibleGuests, .visibleServices]:
+            return BannerStrings.externalsGuestsServicesPresent
 
-        if state == .visibleServices {
-            return ConversationBanner.areActive(list)
-        } else {
-            return ConversationBanner.arePresent(list)
+        case [.visibleRemotes, .visibleExternals]:
+            return BannerStrings.remotesExternalsPresent
+
+        case [.visibleRemotes, .visibleGuests]:
+            return BannerStrings.remotesGuestsPresent
+
+        case [.visibleRemotes, .visibleServices]:
+            return BannerStrings.remotesServicesPresent
+
+        case [.visibleExternals, .visibleGuests]:
+            return BannerStrings.externalsGuestsPresent
+
+        case [.visibleExternals, .visibleServices]:
+            return BannerStrings.externalsServicesPresent
+
+        case [.visibleGuests, .visibleServices]:
+            return BannerStrings.guestsServicesPresent
+
+        case [.visibleRemotes]:
+            return BannerStrings.remotesPresent
+
+        case [.visibleExternals]:
+            return BannerStrings.externalsPresent
+
+        case [.visibleGuests]:
+            return BannerStrings.guestsPresent
+
+        case [.visibleServices]:
+            return BannerStrings.servicesActive
+
+        default:
+            return nil
         }
     }
 

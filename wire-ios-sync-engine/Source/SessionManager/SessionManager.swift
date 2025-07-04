@@ -221,7 +221,8 @@ public final class SessionManager: NSObject, SessionManagerType {
     /// Default Maximum number of accounts which can be logged in simultanously
     public static let defaultMaxNumberAccounts: Int = 3
 
-    public let appVersion: String
+    public let currentAppVersion: String
+    public let currentBuildVersion: String
     var isAppVersionBlacklisted = false
     public weak var delegate: SessionManagerDelegate?
     public let accountManager: AccountManager
@@ -350,7 +351,8 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     public convenience init(
         maxNumberAccounts: Int = defaultMaxNumberAccounts,
-        appVersion: String,
+        currentAppVersion: String,
+        currentBuildVersion: String,
         mediaManager: MediaManagerType,
         delegate: SessionManagerDelegate?,
         application: ZMApplication,
@@ -381,7 +383,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         let dispatchGroup = dispatchGroup ?? ZMSDispatchGroup(label: "WireSyncEngine.SessionManager.private")
 
         let unauthenticatedSessionFactory = UnauthenticatedSessionFactory(
-            appVersion: appVersion,
+            appVersion: currentBuildVersion,
             environment: environment,
             proxyUsername: proxyCredentials?.username,
             proxyPassword: proxyCredentials?.password,
@@ -389,7 +391,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         )
 
         let authenticatedSessionFactory = AuthenticatedSessionFactory(
-            appVersion: appVersion,
+            appVersion: currentBuildVersion,
             application: application,
             mediaManager: mediaManager,
             flowManager: flowManager,
@@ -402,7 +404,8 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         try self.init(
             maxNumberAccounts: maxNumberAccounts,
-            appVersion: appVersion,
+            currentAppVersion: currentAppVersion,
+            currentBuildVersion: currentBuildVersion,
             authenticatedSessionFactory: authenticatedSessionFactory,
             unauthenticatedSessionFactory: unauthenticatedSessionFactory,
             reachability: reachability,
@@ -466,7 +469,8 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     init(
         maxNumberAccounts: Int = defaultMaxNumberAccounts,
-        appVersion: String,
+        currentAppVersion: String,
+        currentBuildVersion: String,
         authenticatedSessionFactory: AuthenticatedSessionFactory,
         unauthenticatedSessionFactory: UnauthenticatedSessionFactory,
         reachability: ReachabilityWrapper,
@@ -491,7 +495,8 @@ public final class SessionManager: NSObject, SessionManagerType {
     ) throws {
         SessionManager.enableLogsByEnvironmentVariable()
         self.environment = environment
-        self.appVersion = appVersion
+        self.currentAppVersion = currentAppVersion
+        self.currentBuildVersion = currentBuildVersion
         self.application = application
         self.delegate = delegate
         self.dispatchGroup = dispatchGroup
@@ -511,7 +516,10 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
 
         self.sharedContainerURL = sharedContainerURL
-        self.accountManager = try AccountManager(sharedDirectory: sharedContainerURL)
+        self.accountManager = try AccountManager(
+            currentAppVersion: currentAppVersion,
+            sharedDirectory: sharedContainerURL
+        )
 
         WireLogger.sessionManager.debug("Starting the session manager:")
 
@@ -595,7 +603,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             blacklistVerificator?.tearDown()
             blacklistVerificator = ZMBlacklistVerificator(
                 checkInterval: configuration.blacklistDownloadInterval,
-                version: appVersion,
+                version: currentBuildVersion,
                 environment: environment,
                 proxyUsername: proxyCredentials?.username,
                 proxyPassword: proxyCredentials?.password,

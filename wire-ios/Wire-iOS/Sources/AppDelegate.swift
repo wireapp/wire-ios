@@ -368,8 +368,14 @@ private extension AppDelegate {
     }
 
     private func createSessionManager() throws -> SessionManager {
-        guard let appVersion = Bundle.main.infoDictionary?[kCFBundleVersionKey as String] as? String  else {
-            throw SessionManagerSetupError.missingAppVersion
+        let infoDictionary = Bundle.main.infoDictionary
+
+        guard let currentAppVersion = infoDictionary?["CFBundleShortVersionString"] as? String  else {
+            throw SessionManagerSetupError.missingCurrentAppVersion
+        }
+
+        guard let currentBuildVersion = infoDictionary?[kCFBundleVersionKey as String] as? String  else {
+            throw SessionManagerSetupError.missingCurrentBuildVersion
         }
 
         guard
@@ -392,7 +398,8 @@ private extension AppDelegate {
 
         let sessionManager = try SessionManager(
             maxNumberAccounts: maxNumberAccounts,
-            appVersion: appVersion,
+            currentAppVersion: currentAppVersion,
+            currentBuildVersion: currentBuildVersion,
             mediaManager: mediaManager,
             delegate: appStateCalculator,
             application: UIApplication.shared,
@@ -439,7 +446,8 @@ private extension AppDelegate {
 
 private enum SessionManagerSetupError: Error {
 
-    case missingAppVersion
+    case missingCurrentAppVersion
+    case missingCurrentBuildVersion
     case missingConfiguration
     case missingMediaManager
     case initializationFailed(any Error)

@@ -19,6 +19,7 @@
 import SwiftUI
 import WireCommonComponents
 import WireDataModel
+import WireDomain
 import WireRequestStrategy
 import WireSyncEngine
 import WireTransport
@@ -151,7 +152,8 @@ final class DeveloperToolsViewModel: ObservableObject {
             items: [
                 .text(TextItem(title: "App version", value: appVersion)),
                 .text(TextItem(title: "Build number", value: buildNumber)),
-                .text(TextItem(title: "Bundle Identifier", value: bundleIdentifier))
+                .text(TextItem(title: "Bundle Identifier", value: bundleIdentifier)),
+                .text(TextItem(title: "Last version migration", value: lastCompletedAppMigration ?? "None"))
             ]
         ))
     }
@@ -369,6 +371,14 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     private var buildNumber: String {
         Bundle.main.infoDictionary?[kCFBundleVersionKey as String] as? String ?? "Unknown"
+    }
+
+    private var lastCompletedAppMigration: String? {
+        guard let selfUser else { return nil }
+        return Journal(
+            userID: selfUser.remoteIdentifier,
+            storage: UserDefaults.shared()
+        ).lastCompletedAppVersionMigration?.string
     }
 
     private var backendName: String {
