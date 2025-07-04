@@ -41,6 +41,7 @@ jobs:
   run-tests:
     name: Run tests
     runs-on: ghcr.io/cirruslabs/macos-runner:sequoia
+    timeout-minutes: 90
     outputs:
       xcresult_files: ${{ steps.find-xcresults.outputs.xcresult_files }}
     env:
