@@ -1586,7 +1586,7 @@ extension ZMUserSession {
     }
 
     private func makePullAllConversationsSync() -> (any PullAllConversationsSyncProtocol)? {
-        guard let apiService,
+        guard let apiService = viewContext.performAndWait({ apiService }),
               let backendInfoApiVersion = BackendInfo.apiVersion,
               let apiVersion = WireAPI.APIVersion(
                   rawValue: UInt(backendInfoApiVersion.rawValue)
