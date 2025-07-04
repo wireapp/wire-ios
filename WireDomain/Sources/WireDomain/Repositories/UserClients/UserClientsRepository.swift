@@ -60,7 +60,7 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
 
     public func fetchOrCreateClient(
         id: String
-    ) async throws -> (client: WireDataModel.UserClient, isNew: Bool) {
+    ) async -> (client: WireDataModel.UserClient, isNew: Bool) {
         await userClientsLocalStore.fetchOrCreateClient(
             id: id
         )
@@ -104,7 +104,7 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
         id: String,
         from remoteClient: WireNetwork.SelfUserClient,
         isNewClient: Bool
-    ) async throws {
+    ) async {
         await userClientsLocalStore.updateClient(
             id: id,
             isNewClient: isNewClient,

@@ -20,6 +20,7 @@ import Foundation
 import WireAuthenticationAPI
 import WireNetwork
 
+// TODO: [WPB-12140] Delete after multibackend support
 public struct ResolveBackendMetadataUseCase: ResolveBackendMetadataUseCaseProtocol {
 
     public typealias Failure = ResolveBackendMetadataUseCaseFailure

@@ -608,6 +608,7 @@ public final class ZMUserSession: NSObject {
     }
 
     public func migrateToConsumableNotificationsIfNeeded() async {
+        guard DeveloperFlag.consumableNotifications.isOn else { return }
         guard !journal[.isConsumableNotificationsEnabled] else { return }
         guard let migrator = clientSessionComponent?.consumableNotificationsMigrator() else {
             WireLogger.sync.warn("No consumable-notifications migrator available")

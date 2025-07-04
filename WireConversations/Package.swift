@@ -42,7 +42,8 @@ let package = Package(
             name: "WireConversationsImplementation",
             dependencies: [
                 "WireConversationsAPI",
-                "WireConversationsResources"
+                "WireConversationsResources",
+                "WireFoundation"
             ]
         ),
         .target(
@@ -57,7 +58,7 @@ let package = Package(
                 "WireConversationsResources",
                 .product(name: "WireDesign", package: "WireUI"),
                 .product(name: "WireReusableUIComponents", package: "WireUI"),
-                .product(name: "WireFoundation", package: "WireFoundation")
+                "WireFoundation"
             ],
             plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
         ),
@@ -73,7 +74,7 @@ let package = Package(
             name: "WireConversationsTests",
             dependencies: [
                 "WireConversationsUI",
-                .product(name: "WireFoundation", package: "WireFoundation")
+                "WireFoundation"
             ]
         ),
         .testTarget(
@@ -82,7 +83,7 @@ let package = Package(
                 "WireConversationsUIBindings",
                 "WireConversationsUI",
                 "WireConversationsImplementationSupport",
-                .product(name: "WireFoundation", package: "WireFoundation")
+                "WireFoundation"
             ]
         ),
     ]
