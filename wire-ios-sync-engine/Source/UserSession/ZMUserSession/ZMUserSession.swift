@@ -1573,6 +1573,8 @@ extension ZMUserSession {
 
     private func makeAppVersionMigrations() -> [any AppVersionMigration] {
         var appVersionMigrations: [any AppVersionMigration] = []
+        
+        delegate?.clientWillMigrateAppVersions()
 
         if let pullAllConversationsSync = makePullAllConversationsSync() {
             let appVersionMigration4_1_0 = AppVersionMigration_4_1_0(

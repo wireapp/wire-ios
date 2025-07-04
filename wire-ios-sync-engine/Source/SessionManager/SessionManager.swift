@@ -91,6 +91,7 @@ public protocol SessionManagerDelegate: AnyObject, SessionActivationObserver {
         error: any Error,
         retryHandler: @escaping () -> Void
     )
+    func sessionManagerWillMigrateAppVersions()
 
     var isInAuthenticatedAppState: Bool { get }
     var isInUnathenticatedAppState: Bool { get }
