@@ -35,7 +35,7 @@ struct AppVersionMigration_4_1_0: AppVersionMigration {
     }
 
     func perform() async throws {
-        
+
         try await pullAllConversationsSync.pull()
     }
 }
