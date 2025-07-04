@@ -65,7 +65,7 @@ public class UserClient: ZMManagedObject, UserClientType {
     @NSManaged public var needsSessionMigration: Bool
     @NSManaged public var discoveredByMessage: ZMOTRMessage?
 
-    /// Client has the capability to use new `consumable-notifications` synchronisation system (v8+)
+    /// Client has the capability to use new `consumable-notifications` synchronization system (v8+)
     @NSManaged public var isConsumableNotificationsCapable: Bool
 
     /// Clients that are trusted by self client.

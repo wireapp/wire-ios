@@ -202,7 +202,10 @@ public final class PushChannelV2: PushChannelV2Protocol {
 
         switch message {
         case let .data(data):
-            WireLogger.pushChannel.debug("received web socket data, decoding...", attributes: .pushChannelV2)
+            WireLogger.pushChannel.debug(
+                "received web socket data, decoding...",
+                attributes: .pushChannelV2
+            )
             let envelope = try decoder.decode(WebSocketNotification.self, from: data)
 
             switch envelope.type {
