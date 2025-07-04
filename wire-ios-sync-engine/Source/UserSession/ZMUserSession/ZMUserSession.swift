@@ -658,6 +658,7 @@ public final class ZMUserSession: NSObject {
             )
 
             try await appVersionMigrationService.performAppMigrations()
+
         } catch {
             WireLogger.session.error("Failed to perform app version migrations: \(String(describing: error))")
         }
@@ -1573,8 +1574,6 @@ extension ZMUserSession {
 
     private func makeAppVersionMigrations() -> [any AppVersionMigration] {
         var appVersionMigrations: [any AppVersionMigration] = []
-        
-        delegate?.clientWillMigrateAppVersions()
 
         if let pullAllConversationsSync = makePullAllConversationsSync() {
             let appVersionMigration4_1_0 = AppVersionMigration_4_1_0(

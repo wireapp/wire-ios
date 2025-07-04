@@ -33,8 +33,6 @@ protocol UserSessionSelfUserClientDelegate: AnyObject {
         error: any Error,
         retryHandler: @escaping () -> Void
     )
-    
-    func clientWillMigrateAppVersions()
 }
 
 extension SessionManager: UserSessionSelfUserClientDelegate {
@@ -91,9 +89,5 @@ extension SessionManager: UserSessionSelfUserClientDelegate {
             error: error,
             retryHandler: retryHandler
         )
-    }
-    
-    func clientWillMigrateAppVersions() {
-        delegate?.sessionManagerWillMigrateAppVersions()
     }
 }

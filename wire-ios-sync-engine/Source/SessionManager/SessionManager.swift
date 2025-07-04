@@ -1102,6 +1102,8 @@ public final class SessionManager: NSObject, SessionManagerType {
                         journal: journal
                     )
 
+                    self.delegate?.sessionManagerWillMigrateAppVersions()
+
                     await userSession.performAppMigrationsIfNeeded()
 
                     await MainActor.run {
