@@ -52,6 +52,7 @@ protocol AuthenticationStepDescription {
     var subtext: NSAttributedString? { get }
     var secondaryView: AuthenticationSecondaryViewDescription? { get }
     var footerView: AuthenticationFooterViewDescription? { get }
+    var analyticsEventTracker: (any AuthenticationStepAnalyticsEventTracker)? { get }
 }
 
 protocol DefaultValidatingStepDescription: AuthenticationStepDescription {
