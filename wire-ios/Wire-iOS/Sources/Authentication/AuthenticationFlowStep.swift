@@ -54,7 +54,7 @@ indirect enum AuthenticationFlowStep: Equatable {
     case addEmailAndPassword
     case enrollE2EIdentity
     case enrollE2EIdentitySuccess(String)
-    case addUsername(context: AddUsernameContext)
+    case addUsername
     case registerEmailCredentials(UserEmailCredentials, isResend: Bool)
     case pendingEmailLinkVerification(UserEmailCredentials)
     case pendingInitialSync
@@ -114,7 +114,7 @@ indirect enum AuthenticationFlowStep: Equatable {
 extension AuthenticationFlowStep: CustomStringConvertible {
 
     // Don't include any of the associated values as they may be
-    // sensitve and it's know everywhere we log steps.
+    // sensitive and it's know everywhere we log steps.
 
     var description: String {
         switch self {
