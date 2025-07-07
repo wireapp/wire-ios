@@ -175,6 +175,7 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
             acknowledgementCount: nbOfBatches + 1
         )
 
+        // verify acknowledgement of synchronisation marker
         XCTAssertTrue(pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations[1].multiple == false)
         XCTAssertTrue(pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations[4].multiple == false)
     }
