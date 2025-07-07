@@ -590,7 +590,6 @@ extension AuthenticationCoordinator {
             return
         }
 
-        // TODO test
         UIAlertController.requestTOSApproval(over: presenter, forTeamAccount: false) { approved in
             if approved {
                 unregisteredUser.acceptedTermsOfService = true

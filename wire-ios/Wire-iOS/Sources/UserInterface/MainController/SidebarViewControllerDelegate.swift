@@ -18,6 +18,7 @@
 
 import UIKit
 import WireAnalytics
+import WireCommonComponents
 import WireMainNavigationUI
 import WireSidebarUI
 
@@ -116,12 +117,15 @@ final class SidebarViewControllerDelegate: WireSidebarUI.SidebarViewControllerDe
 
     @MainActor
     public func sidebarViewControllerDidSelectSupport(_ viewController: SidebarViewController) {
-        // TODO
-        let url = WireURLs.shared.support
-        let browser = BrowserViewController(url: url)
-        browser.modalPresentationCapturesStatusBarAppearance = true
-        Task {
-            await mainCoordinator.presentViewController(browser)
+        if SecurityFlags.openLinksExternally.isEnabled {
+            WireURLs.shared.support.open()
+        } else {
+            let url = WireURLs.shared.support
+            let browser = BrowserViewController(url: url)
+            browser.modalPresentationCapturesStatusBarAppearance = true
+            Task {
+                await mainCoordinator.presentViewController(browser)
+            }
         }
     }
 }

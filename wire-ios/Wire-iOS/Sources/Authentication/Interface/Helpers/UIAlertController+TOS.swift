@@ -21,7 +21,6 @@ import UIKit
 import WireCommonComponents
 
 extension UIAlertController {
-    // TODO test
     static func requestTOSApproval(
         over controller: UIViewController,
         forTeamAccount: Bool,

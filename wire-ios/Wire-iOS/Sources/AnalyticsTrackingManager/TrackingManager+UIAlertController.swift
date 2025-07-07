@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireCommonComponents
 import WireLogging
 import WireSystem
 
@@ -87,8 +88,11 @@ extension TrackingManager {
             return
         }
 
-        // TODO
-        let browserViewController = BrowserViewController(url: WireURLs.shared.privacyPolicy)
-        topViewController.present(browserViewController, animated: true)
+        if SecurityFlags.openLinksExternally.isEnabled {
+            WireURLs.shared.privacyPolicy.open()
+        } else {
+            let browserViewController = BrowserViewController(url: WireURLs.shared.privacyPolicy)
+            topViewController.present(browserViewController, animated: true)
+        }
     }
 }

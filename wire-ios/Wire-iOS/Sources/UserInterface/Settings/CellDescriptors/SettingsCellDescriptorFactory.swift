@@ -19,10 +19,10 @@
 import avs
 import Foundation
 import SafariServices
+import WireCommonComponents
 import WireMainNavigationUI
 import WireSettingsUI
 import WireSyncEngine
-import WireCommonComponents
 
 struct SettingsCellDescriptorFactory {
 

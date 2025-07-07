@@ -48,10 +48,13 @@ extension UIAlertAction {
             title: title,
             style: .default
         ) { [weak presenter] _ in
-            // TODO test it
-            let browserViewController = BrowserViewController(url: url)
-            browserViewController.onDismiss = onDismiss
-            presenter?.present(browserViewController, animated: true)
+            if SecurityFlags.openLinksExternally.isEnabled {
+                url.open()
+            } else {
+                let browserViewController = BrowserViewController(url: url)
+                browserViewController.onDismiss = onDismiss
+                presenter?.present(browserViewController, animated: true)
+            }
         }
     }
 

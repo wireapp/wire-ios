@@ -18,6 +18,7 @@
 
 import SafariServices
 import UIKit
+import WireCommonComponents
 import WireDataModel
 
 private var lastPreviewURL: URL?
@@ -49,8 +50,11 @@ extension ConversationContentViewController: UIViewControllerPreviewingDelegate 
         if message.isText, cell.selectionView is ArticleView,
            let url = message.textMessageData?.linkPreview?.openableURL as URL? {
             lastPreviewURL = url
-            // TODO test it
-            controller = BrowserViewController(url: url)
+            if SecurityFlags.openLinksExternally.isEnabled {
+                url.open()
+            } else {
+                controller = BrowserViewController(url: url)
+            }
         } else if message.isImage {
             // Preview an image
             controller = messagePresenter.viewController(

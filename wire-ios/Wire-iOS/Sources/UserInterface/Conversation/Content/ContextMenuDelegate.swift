@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireCommonComponents
 import WireDataModel
 
 protocol ContextMenuDelegate: AnyObject {
@@ -55,8 +56,12 @@ extension ContextMenuDelegate where Self: LinkViewDelegate {
         }
 
         let previewProvider: UIContextMenuContentPreviewProvider = {
-            // TODO test it
-            BrowserViewController(url: url)
+            if SecurityFlags.openLinksExternally.isEnabled {
+                url.open()
+                return nil
+            } else {
+                return BrowserViewController(url: url)
+            }
         }
 
         return UIContextMenuConfiguration(

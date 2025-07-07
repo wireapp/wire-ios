@@ -402,13 +402,16 @@ private extension URLActionRouter {
             style: .cancel
         ))
 
-        // TODO test it
         switch error {
         case URLActionError.conversationLinkIsDisabled:
             let topmostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
             let guestLinksLearnMoreHandler: ((UIAlertAction) -> Swift.Void) = { _ in
-                let browserViewController = BrowserViewController(url: WireURLs.shared.guestLinksInfo)
-                topmostViewController?.present(browserViewController, animated: true)
+                if SecurityFlags.openLinksExternally.isEnabled {
+                    WireURLs.shared.guestLinksInfo.open()
+                } else {
+                    let browserViewController = BrowserViewController(url: WireURLs.shared.guestLinksInfo)
+                    topmostViewController?.present(browserViewController, animated: true)
+                }
             }
             alert.addAction(UIAlertAction(
                 title: L10n.Localizable.UrlAction.JoinConversation.Error.Alert.LearnMore.action,
