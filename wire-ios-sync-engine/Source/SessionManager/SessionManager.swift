@@ -91,10 +91,21 @@ public protocol SessionManagerDelegate: AnyObject, SessionActivationObserver {
         error: any Error,
         retryHandler: @escaping () -> Void
     )
-    func sessionManagerWillMigrateAppVersions()
-
     var isInAuthenticatedAppState: Bool { get }
     var isInUnathenticatedAppState: Bool { get }
+}
+
+extension SessionManagerDelegate {
+
+    @MainActor
+    func sessionManagerWillMigrateAccount() async {
+        await withCheckedContinuation { continuation in
+            sessionManagerWillMigrateAccount {
+                continuation.resume()
+            }
+        }
+    }
+
 }
 
 /// The public interface for the session manager.
@@ -1102,9 +1113,10 @@ public final class SessionManager: NSObject, SessionManagerType {
                         journal: journal
                     )
 
-                    self.delegate?.sessionManagerWillMigrateAppVersions()
-
+                    await self.delegate?.sessionManagerWillMigrateAccount()
                     await userSession.performAppMigrationsIfNeeded()
+
+                    userSession.triggerSyncsIfNeeded()
 
                     await MainActor.run {
                         onCompletion(userSession)
@@ -1157,21 +1169,6 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         } catch {
             WireLogger.sync.critical("failed to migrate update events: \(error)")
-        }
-    }
-
-    /// Executes post migration slow sync or sync resources
-    private func triggerMigrationsNeedsActionsIfNeeded(
-        journal: Journal,
-        userSession: ZMUserSession
-    ) {
-        let context = userSession.syncContext
-        context.perform {
-            if context.readMigrationNeedsSlowSyncFlag() || journal[.isInitialSyncRequired] {
-                userSession.triggerInitialSync()
-            } else if context.readMigrationNeedsSyncResourcesFlag() {
-                userSession.triggerResourcesSync()
-            }
         }
     }
 

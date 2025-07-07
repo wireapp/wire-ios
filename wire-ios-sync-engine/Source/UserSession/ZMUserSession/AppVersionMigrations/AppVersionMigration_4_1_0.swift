@@ -18,24 +18,26 @@
 
 import Foundation
 import WireDomain
-import WireLogging
 
-/// Issue: some users had conversations in their database that weren't fully up do date with the backend.
-/// Fix: re-sync all conversations.
+/// **Issue:** some users had conversations in their database that weren't
+/// fully up do date with the backend.
+/// **Fix:** mark conversations needing resync.
 
-struct AppVersionMigration_4_1_0: AppVersionMigration {
+final class AppVersionMigration_4_1_0: AppVersionMigration {
 
     let version: SemanticVersion = "4.1.0"
-    private let pullAllConversationsSync: any PullAllConversationsSyncProtocol
+    private var journal: any JournalProtocol
 
-    init(
-        pullAllConversationsSync: any PullAllConversationsSyncProtocol
-    ) {
-        self.pullAllConversationsSync = pullAllConversationsSync
+    init(journal: any JournalProtocol) {
+        self.journal = journal
     }
 
     func perform() async throws {
-
-        try await pullAllConversationsSync.pull()
+        // Syncing conversations may take time (due to number of
+        // conversations and network speed) and this work is not
+        // crucial, we simply mark the sync as needed and later
+        // we'll perform it asynchronously.
+        journal[.isConversationSyncRequired] = true
     }
+
 }

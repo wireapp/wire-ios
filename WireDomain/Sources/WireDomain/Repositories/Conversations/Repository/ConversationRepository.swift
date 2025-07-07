@@ -39,8 +39,6 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     private let backendInfo: BackendInfo
     private let mlsProvider: MLSProvider
 
-    private let pullAllConversationsSync: PullAllConversationsSync
-
     // MARK: - Object lifecycle
 
     public init(
@@ -59,13 +57,6 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         self.messageRepository = messageRepository
         self.backendInfo = backendInfo
         self.mlsProvider = mlsProvider
-        self.pullAllConversationsSync = PullAllConversationsSync(
-            localDomain: backendInfo.domain,
-            isFederationEnabled: backendInfo.isFederationEnabled,
-            isMLSEnabled: backendInfo.isMLSEnabled,
-            api: conversationsAPI,
-            store: conversationsLocalStore
-        )
     }
 
     // MARK: - Public
@@ -133,10 +124,6 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
             isFederationEnabled: backendInfo.isFederationEnabled,
             isMLSEnabled: backendInfo.isMLSEnabled
         )
-    }
-
-    public func pullConversations() async throws {
-        try await pullAllConversationsSync.pull()
     }
 
     public func pullMLSOneToOneConversation(

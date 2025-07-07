@@ -233,7 +233,8 @@ public final class ClientSessionComponent {
         isFederationEnabled: BackendInfo.isFederationEnabled,
         isMLSEnabled: BackendInfo.isMLSEnabled,
         api: conversationsAPI,
-        store: conversationLocalStore
+        store: conversationLocalStore,
+        journal: journal
     )
 
     private lazy var pullAllFeatureConfigsSync = PullAllFeatureConfigsSync(

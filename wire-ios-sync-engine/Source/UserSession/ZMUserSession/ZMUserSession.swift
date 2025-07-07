@@ -382,6 +382,7 @@ public final class ZMUserSession: NSObject {
     var callStateObserverToken: AnyObject?
 
     private let userSessionComponent: UserSessionComponent
+    private var clientSessionComponent: ClientSessionComponent?
 
     // MARK: - Initialize
 
@@ -571,6 +572,7 @@ public final class ZMUserSession: NSObject {
                 onProcessedTypingUsers: onProcessedTypingUsers
             )
         )
+        self.clientSessionComponent = clientSessionComponent
 
         if asyncStreamEnabled {
             // TODO: [WPB-17223] move this just after the migration is done
@@ -650,11 +652,14 @@ public final class ZMUserSession: NSObject {
 
     public func performAppMigrationsIfNeeded() async {
         do {
+            let allMigrations = [
+                AppVersionMigration_4_1_0(journal: journal)
+            ]
 
             let appVersionMigrationService: AppVersionMigrationService = .init(
                 journal: journal,
                 currentVersion: SemanticVersion(stringLiteral: currentAppVersion),
-                allMigrations: makeAppVersionMigrations()
+                allMigrations: allMigrations
             )
 
             try await appVersionMigrationService.performAppMigrations()
@@ -847,6 +852,26 @@ public final class ZMUserSession: NSObject {
     }
 
     // MARK: - Trigger syncing
+
+    func triggerSyncsIfNeeded() {
+        Task {
+            let (isInitialSyncRequired, isResourceSyncRequired) = await syncContext.perform {
+                (
+                    self.syncContext.readMigrationNeedsSlowSyncFlag(),
+                    self.syncContext.readMigrationNeedsSyncResourcesFlag()
+                )
+            }
+
+            if isInitialSyncRequired || journal[.isInitialSyncRequired] {
+                self.triggerInitialSync()
+            } else if isResourceSyncRequired {
+                self.triggerResourcesSync()
+            } else if journal[.isConversationSyncRequired] {
+                let sync = self.clientSessionComponent?.pullAllConversationsSync
+                try? await sync?.pull()
+            }
+        }
+    }
 
     public func triggerInitialSync() {
         Task {
@@ -1568,51 +1593,4 @@ extension ZMUserSession {
         }
 
     }
-}
-
-extension ZMUserSession {
-
-    private func makeAppVersionMigrations() -> [any AppVersionMigration] {
-        var appVersionMigrations: [any AppVersionMigration] = []
-
-        if let pullAllConversationsSync = makePullAllConversationsSync() {
-            let appVersionMigration4_1_0 = AppVersionMigration_4_1_0(
-                pullAllConversationsSync: pullAllConversationsSync
-            )
-
-            appVersionMigrations.append(appVersionMigration4_1_0)
-        }
-
-        return appVersionMigrations
-    }
-
-    private func makePullAllConversationsSync() -> (any PullAllConversationsSyncProtocol)? {
-        let (clientID, asyncStreamCapable) = syncContext.performAndWait {
-            let selfUser = ZMUser.selfUser(in: syncContext)
-            let selfClient = selfUser.selfClient()
-
-            return (selfClient?.remoteIdentifier, selfClient?.asyncStreamCapable)
-        }
-
-        guard let clientID, let asyncStreamCapable else {
-            WireLogger.appVersionMigration.debug(
-                "Could not perform app version migration on 4.1.0 - missing clientID or asyncStreamCapable"
-            )
-            return nil
-        }
-
-        let clientSessionComponent = userSessionComponent.clientSessionComponent(
-            clientID: clientID,
-            asyncStreamEnabled: asyncStreamCapable,
-            completionHandlers: .init(
-                onProcessedCallEvent: onProcessedCallEvent,
-                onSelfClientInvalidated: onSelfClientInvalidated,
-                onAuthenticationFailure: onAuthenticationFailure,
-                onProcessedTypingUsers: onProcessedTypingUsers
-            )
-        )
-
-        return clientSessionComponent.pullAllConversationsSync
-    }
-
 }
