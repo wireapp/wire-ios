@@ -22,6 +22,7 @@ import WireDataModel
 import WireLogging
 import WireNetwork
 
+/// Closure to generate syncMarker, use for testing
 public typealias SyncMarkerGenerator = () -> String
 
 public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protocol {
