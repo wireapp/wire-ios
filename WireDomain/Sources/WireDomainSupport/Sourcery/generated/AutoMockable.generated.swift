@@ -3150,6 +3150,35 @@ class MockPullSelfUserSyncProtocol: PullSelfUserSyncProtocol {
 
 }
 
+public class MockPullServerTimeSyncProtocol: PullServerTimeSyncProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - pull
+
+    public var pull_Invocations: [Void] = []
+    public var pull_MockError: Error?
+    public var pull_MockMethod: (() async throws -> Void)?
+
+    public func pull() async throws {
+        pull_Invocations.append(())
+
+        if let error = pull_MockError {
+            throw error
+        }
+
+        guard let mock = pull_MockMethod else {
+            fatalError("no mock for `pull`")
+        }
+
+        try await mock()
+    }
+
+}
+
 class MockPullUserConnectionsSyncProtocol: PullUserConnectionsSyncProtocol {
 
     // MARK: - Life cycle

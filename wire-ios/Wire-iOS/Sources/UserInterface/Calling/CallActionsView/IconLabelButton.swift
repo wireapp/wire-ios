@@ -60,7 +60,8 @@ class IconLabelButton: ButtonWithLargerHitArea {
     }
 
     private func setupViews() {
-        iconButton.translatesAutoresizingMaskIntoConstraints = false
+        iconButton
+            .translatesAutoresizingMaskIntoConstraints = false
         iconButton.isUserInteractionEnabled = false
         iconButton.borderWidth = 0
         iconButton.circular = true

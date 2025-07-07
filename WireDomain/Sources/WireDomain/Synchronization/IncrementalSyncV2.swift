@@ -32,6 +32,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     }
 
     private let selfClientID: String
+    private let pullServerTimeSync: any PullServerTimeSyncProtocol
     private let pushChannelAPI: any PushChannelV2API
     private let decryptor: any UpdateEventDecryptorProtocol
     private let updateEventsStore: any UpdateEventsLocalStoreProtocol
@@ -46,6 +47,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
 
     public init(
         selfClientID: String,
+        pullServerTimeSync: any PullServerTimeSyncProtocol,
         pushChannelAPI: any PushChannelV2API,
         decryptor: any UpdateEventDecryptorProtocol,
         updateEventsStore: any UpdateEventsLocalStoreProtocol,
@@ -57,6 +59,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         journal: Journal
     ) {
         self.selfClientID = selfClientID
+        self.pullServerTimeSync = pullServerTimeSync
         self.pushChannelAPI = pushChannelAPI
         self.decryptor = decryptor
         self.updateEventsStore = updateEventsStore
@@ -70,6 +73,9 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
 
     public func perform() async throws -> IncrementalSync.Token {
         logger.debug("performing live sync", attributes: .syncAttributes(initialSync: false))
+
+        try await pullServerTimeSync.pull()
+
         let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID)
 
         logger.debug("opening new push channel", attributes: .syncAttributes(initialSync: false))
