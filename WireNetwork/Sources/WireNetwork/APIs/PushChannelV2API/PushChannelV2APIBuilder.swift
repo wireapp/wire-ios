@@ -35,7 +35,7 @@ public struct PushChannelV2APIBuilder {
 
     public func makeAPI(for apiVersion: APIVersion) -> any PushChannelV2API {
         switch apiVersion {
-            
+
         case .v0:
             PushChannelV2APIV0(pushChannelService: pushChannelService)
         case .v1:

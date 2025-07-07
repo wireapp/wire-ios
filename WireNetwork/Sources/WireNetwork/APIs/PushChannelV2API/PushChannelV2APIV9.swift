@@ -19,9 +19,9 @@
 import Foundation
 
 final class PushChannelV2APIV9: PushChannelV2APIV8 {
-    
+
     override var apiVersion: APIVersion { .v9 }
-    
+
     override func createPushChannel(clientID: String, marker: String) async throws -> any PushChannelV2Protocol {
         let path = "\(pathPrefix)/events"
 
@@ -33,6 +33,5 @@ final class PushChannelV2APIV9: PushChannelV2APIV8 {
 
         return try await pushChannelService.createPushChannelV2(request)
     }
-
 
 }

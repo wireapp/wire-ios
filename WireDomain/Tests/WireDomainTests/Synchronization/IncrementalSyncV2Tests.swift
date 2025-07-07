@@ -105,8 +105,10 @@ final class IncrementalSyncV2Tests: XCTestCase {
         pushChannel.open_MockValue = AsyncThrowingStream { continuation in
             Task {
                 continuation.yield(PushChannelV2.Element.events([Scaffolding.event2]))
-                continuation.yield(PushChannelV2.Element.syncMarker(id: Scaffolding.markerID,
-                                                                    deliveryTag: Scaffolding.markerDeliveryTag))
+                continuation.yield(PushChannelV2.Element.syncMarker(
+                    id: Scaffolding.markerID,
+                    deliveryTag: Scaffolding.markerDeliveryTag
+                ))
                 continuation.finish()
             }
         }
@@ -176,9 +178,10 @@ final class IncrementalSyncV2Tests: XCTestCase {
 
         // Then push channel was created.
         try XCTAssertCount(
-            pushChannelAPI.createPushChannelClientIDMarker_Invocations, count: 1)
+            pushChannelAPI.createPushChannelClientIDMarker_Invocations, count: 1
+        )
         let invocation = try XCTUnwrap(pushChannelAPI.createPushChannelClientIDMarker_Invocations.first)
-        
+
         XCTAssertEqual(invocation.clientID, Scaffolding.selfClientID)
         XCTAssertEqual(invocation.marker, Scaffolding.markerID)
 
@@ -222,7 +225,10 @@ final class IncrementalSyncV2Tests: XCTestCase {
         XCTAssertTrue(pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations.first?.multiple == true)
 
         XCTAssertTrue(pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations.last?.multiple == false)
-        XCTAssertTrue(pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations.last?.deliveryTag == Scaffolding.markerDeliveryTag)
+        XCTAssertTrue(
+            pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations.last?.deliveryTag == Scaffolding
+                .markerDeliveryTag
+        )
     }
 
     func testPerform_AcknowledgementFullSync() async throws {
@@ -277,12 +283,12 @@ final class IncrementalSyncV2Tests: XCTestCase {
 
         // Then push channel was created.
         try XCTAssertCount(
-            pushChannelAPI.createPushChannelClientIDMarker_Invocations, count: 1)
+            pushChannelAPI.createPushChannelClientIDMarker_Invocations, count: 1
+        )
         let invocation = try XCTUnwrap(pushChannelAPI.createPushChannelClientIDMarker_Invocations.first)
-        
+
         XCTAssertEqual(invocation.clientID, Scaffolding.selfClientID)
         XCTAssertEqual(invocation.marker, Scaffolding.markerID)
-
 
         // Then push channel was opened.
         XCTAssertEqual(pushChannel.open_Invocations.count, 1)
@@ -326,7 +332,10 @@ final class IncrementalSyncV2Tests: XCTestCase {
             Task {
                 continuation.yield(PushChannelV2.Element.events([Scaffolding.event2, Scaffolding.event5]))
                 continuation.yield(PushChannelV2.Element.events([Scaffolding.event3, Scaffolding.event4]))
-                continuation.yield(PushChannelV2.Element.syncMarker(id: Scaffolding.markerID, deliveryTag: Scaffolding.markerDeliveryTag))
+                continuation.yield(PushChannelV2.Element.syncMarker(
+                    id: Scaffolding.markerID,
+                    deliveryTag: Scaffolding.markerDeliveryTag
+                ))
                 continuation.finish()
             }
         }
@@ -382,12 +391,13 @@ final class IncrementalSyncV2Tests: XCTestCase {
 
         // Then push channel was created.
         try XCTAssertCount(
-            pushChannelAPI.createPushChannelClientIDMarker_Invocations, count: 1)
+            pushChannelAPI.createPushChannelClientIDMarker_Invocations, count: 1
+        )
         let invocation = try XCTUnwrap(pushChannelAPI.createPushChannelClientIDMarker_Invocations.first)
-        
+
         XCTAssertEqual(invocation.clientID, Scaffolding.selfClientID)
         XCTAssertEqual(invocation.marker, Scaffolding.markerID)
-        
+
         // Then push channel was opened.
         XCTAssertEqual(pushChannel.open_Invocations.count, 1)
 
@@ -427,13 +437,16 @@ final class IncrementalSyncV2Tests: XCTestCase {
 
         // Then ack of events done after processing
         try XCTAssertCount(pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations, count: 3)
-        
-        for i in 0...1 {
+
+        for i in 0 ... 1 {
             XCTAssertTrue(pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations[i].multiple == true)
         }
-        
+
         XCTAssertTrue(pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations.last?.multiple == false)
-        XCTAssertTrue(pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations.last?.deliveryTag == Scaffolding.markerDeliveryTag)
+        XCTAssertTrue(
+            pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations.last?.deliveryTag == Scaffolding
+                .markerDeliveryTag
+        )
     }
 }
 
@@ -468,7 +481,7 @@ private enum Scaffolding {
 
     static let markerID = "marker-id"
     static let markerDeliveryTag: UInt64 = 123
-    
+
     static func createEvent(
         message: String,
         timeIntervalSinceNow: TimeInterval,

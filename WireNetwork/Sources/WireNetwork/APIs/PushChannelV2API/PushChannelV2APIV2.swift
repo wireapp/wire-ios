@@ -23,4 +23,3 @@ class PushChannelV2APIV2: PushChannelV2APIV1 {
     override var apiVersion: APIVersion { .v2 }
 
 }
-

@@ -18,7 +18,7 @@
 
 /// Errors originating from `PushChannelV2Error`.
 public enum PushChannelV2Error: Error {
-    
+
     /// Unsupported endpoint for API version
 
     case unsupportedEndpointForAPIVersion

@@ -26,7 +26,7 @@ import XCTest
 @testable import WireDomain
 
 class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
-    
+
     var sut: PullPendingUpdateEventsSyncV2!
     var pushChannelAPI: MockPushChannelV2API!
     var decryptor: MockUpdateEventDecryptorProtocol!
@@ -37,7 +37,7 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
     var journal: Journal!
     var coreCryptoProvider: MockCoreCryptoProviderProtocol!
     var coreCrypto: MockSafeCoreCrypto!
-    
+
     override func setUp() {
         pushChannelAPI = MockPushChannelV2API()
         decryptor = MockUpdateEventDecryptorProtocol()
@@ -46,7 +46,7 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
         processor = MockUpdateEventProcessorProtocol()
         coreCryptoProvider = MockCoreCryptoProviderProtocol()
         coreCrypto = MockSafeCoreCrypto()
-        
+
         journal = Journal(
             userID: UUID(),
             storage: UserDefaults.temporary()
@@ -60,18 +60,18 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
             coreCryptoProvider: coreCryptoProvider,
             syncMarkerGenerator: { Scaffolding.markerID }
         )
-        
+
         // Setup mocks
         coreCryptoProvider.coreCrypto_MockValue = coreCrypto
         decryptor.decryptEventsInContext_MockMethod = { envelope, _ in
             EventDecryptorResult(events: envelope.events, brokenMLSGroupIDs: [Scaffolding.mlsGroupID])
         }
-        
+
         var indices = [Int64(10), 11, 12, 13, 14, 15]
         updateEventsStore.indexOfLastEventEnvelope_MockMethod = { indices.remove(at: 0) }
         updateEventsStore.persistEventEnvelopeIndex_MockMethod = { _, _ async throws in }
     }
-    
+
     override func tearDown() {
         sut = nil
         pushChannelAPI = nil
@@ -83,27 +83,29 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
         coreCrypto = nil
         journal = nil
     }
-    
+
     private func setupPushChannel(stream: AsyncThrowingStream<PushChannelV2.Element, any Error>)
-    -> MockPushChannelV2Protocol {
+        -> MockPushChannelV2Protocol {
         // Some live events, some of which were already pulled.
         let pushChannel = MockPushChannelV2Protocol()
         pushChannel.close_MockMethod = {}
         pushChannel.open_MockValue = stream
         pushChannel.acknowledgeEventDeliveryTagMultiple_MockMethod = { _, _ in }
-        pushChannelAPI.createPushChannelClientIDMarker_MockMethod = { _, markerID in
-            return pushChannel
+        pushChannelAPI.createPushChannelClientIDMarker_MockMethod = { _, _ in
+            pushChannel
         }
         return pushChannel
     }
-    
+
     func testPull_receiving_no_events() async throws {
         let nbEventsToPull = 0
         let nbOfBatches = 0
 
         let upstream = AsyncThrowingStream { continuation in
-            continuation.yield(PushChannelV2.Element.syncMarker(id: Scaffolding.markerID,
-                                                                deliveryTag: Scaffolding.markerDeliveryTag))
+            continuation.yield(PushChannelV2.Element.syncMarker(
+                id: Scaffolding.markerID,
+                deliveryTag: Scaffolding.markerDeliveryTag
+            ))
         }
         try await internalTestPull(
             stream: upstream,
@@ -113,11 +115,11 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
             acknowledgementCount: nbOfBatches + 1
         )
     }
-    
+
     func testPull_receiving_events() async throws {
         let nbEventsToPull = 5
         let nbOfBatches = 3
-        
+
         let upstream = AsyncThrowingStream { continuation in
             continuation.yield(PushChannelV2.Element.events([Scaffolding.event2, Scaffolding.event3]))
             continuation.yield(PushChannelV2.Element.events([Scaffolding.event4, Scaffolding.event5]))
@@ -126,11 +128,13 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
                 timeIntervalSinceNow: -5,
                 deliveryTag: 6
             )]))
-            continuation.yield(PushChannelV2.Element.syncMarker(id: Scaffolding.markerID,
-                                                                deliveryTag: Scaffolding.markerDeliveryTag))
+            continuation.yield(PushChannelV2.Element.syncMarker(
+                id: Scaffolding.markerID,
+                deliveryTag: Scaffolding.markerDeliveryTag
+            ))
             continuation.finish()
         }
-        
+
         try await internalTestPull(
             stream: upstream,
             receivedEventsCount: nbEventsToPull,
@@ -139,7 +143,7 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
             acknowledgementCount: nbOfBatches + 1
         )
     }
-    
+
     func internalTestPull(
         stream: AsyncThrowingStream<PushChannelV2.Element, any Error>,
         receivedEventsCount: Int,
@@ -150,14 +154,14 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
         line: UInt = #line
     ) async throws {
         let pushChannel = setupPushChannel(stream: stream)
-        
+
         try await sut.pull()
-        
+
         var receivedEvents: [[UpdateEvent]] = []
         for try await element in sut.stream {
             receivedEvents.append(element)
         }
-        
+
         // check decryption of events
         XCTAssertEqual(receivedEvents.count, receivedEventsCount, file: file, line: line)
         try XCTAssertCount(
@@ -179,7 +183,7 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
             file: file,
             line: line
         )
-        
+
         // check events ack
         try XCTAssertCount(
             pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations,
@@ -191,34 +195,34 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
 }
 
 private enum Scaffolding {
-    
+
     static let selfClientID: String = .randomClientIdentifier()
     static let mlsGroupID = "ASDF"
-    
+
     static let event2 = createEvent(
         message: "ciao",
         timeIntervalSinceNow: -9,
         deliveryTag: 2
     )
-    
+
     static let event3 = createEvent(
         message: "hola",
         timeIntervalSinceNow: -8,
         deliveryTag: 3
     )
-    
+
     static let event4 = createEvent(
         message: "hallo",
         timeIntervalSinceNow: -7,
         deliveryTag: 4
     )
-    
+
     static let event5 = createEvent(
         message: "bonjour",
         timeIntervalSinceNow: -6,
         deliveryTag: 5
     )
-    
+
     static func createEvent(
         message: String,
         timeIntervalSinceNow: TimeInterval,
@@ -249,9 +253,8 @@ private enum Scaffolding {
             deliveryTag: deliveryTag
         )
     }
-    
+
     static let markerID = "marker-id"
     static let markerDeliveryTag: UInt64 = 123
-    
-    
+
 }

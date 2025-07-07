@@ -86,7 +86,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
                         }
                         batch = []
                     }
-                    
+
                     let result: PushChannelV2.InternalElement
                     do {
                         result = try receiveMessage(message)
@@ -96,7 +96,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
                     } catch {
                         throw error
                     }
-                    
+
                     switch result {
                     case let .event(event):
                         batch.append(event)
@@ -115,7 +115,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
                             batch = []
                             batchTask?.cancel()
                         }
-                        
+
                         continuation.yield(.syncMarker(id: id, deliveryTag: deliveryTag))
                     }
 
@@ -190,7 +190,6 @@ public final class PushChannelV2: PushChannelV2Protocol {
         let data = try encoder.encode(acknowledgement)
         try await write(data: data)
     }
-
 
     // MARK: - Helpers
 

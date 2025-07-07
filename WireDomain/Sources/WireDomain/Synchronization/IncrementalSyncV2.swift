@@ -178,9 +178,9 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                 )
                 switch element {
                 case let .syncMarker(id, deliveryTag):
-                    
+
                     try await pushChannel.acknowledgeEvent(deliveryTag: deliveryTag, multiple: false)
-                    
+
                     if id == syncMarker {
                         logger.debug("upToDate event", attributes: .syncAttributes(initialSync: false))
                         syncStateSubject.send(.liveSyncing(.ongoing))

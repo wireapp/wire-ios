@@ -19,17 +19,17 @@
 import Foundation
 
 class PushChannelV2APIV0: VersionedAPI, PushChannelV2API {
-    
+
     let pushChannelService: any PushChannelServiceProtocol
-    
+
     var apiVersion: APIVersion {
         .v0
     }
-    
+
     init(pushChannelService: any PushChannelServiceProtocol) {
         self.pushChannelService = pushChannelService
     }
-    
+
     func createPushChannel(clientID: String, marker: String) async throws -> AnyPushChannelV2 {
         throw PushChannelV2Error.unsupportedEndpointForAPIVersion
     }

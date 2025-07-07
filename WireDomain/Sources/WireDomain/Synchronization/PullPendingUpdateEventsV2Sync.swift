@@ -70,7 +70,7 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
 
     public func pull() async throws {
         let syncMarker = syncMarkerGenerator()
-        
+
         let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID, marker: syncMarker)
 
         let liveEventStream = try await pushChannel.open()

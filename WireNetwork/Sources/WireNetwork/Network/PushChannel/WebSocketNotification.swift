@@ -23,7 +23,7 @@ struct WebSocketNotification: Decodable {
     enum NotificationType: String, Decodable {
         case event
         case notificationsMissed = "notifications_missed"
-        case synchronization = "synchronization"
+        case synchronization
     }
 
     enum DataType: Decodable {
@@ -40,7 +40,7 @@ struct WebSocketNotification: Decodable {
         var deliveryTag: UInt64
         var event: UpdateEventEnvelopeV8
     }
-    
+
     struct SynchronisationData: Decodable {
         enum CodingKeys: String, CodingKey {
             case deliveryTag = "delivery_tag"
@@ -100,7 +100,7 @@ struct WebSocketNotification: Decodable {
             nil
         }
     }
-    
+
     var synchronizationData: SynchronisationData? {
         switch data {
         case let .synchronization(data):

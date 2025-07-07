@@ -116,8 +116,10 @@ final class PushChannelV2Tests: XCTestCase {
         try XCTAssertCount(receivedEnvelopes, count: 2)
 
         XCTAssertEqual(receivedEnvelopes[0], .events([Scaffolding.envelope1, Scaffolding.envelope2]))
-        XCTAssertEqual(receivedEnvelopes[1], .syncMarker(id: Scaffolding.endOfQueueID,
-                                                         deliveryTag: Scaffolding.endOfQueueDeliveryTag))
+        XCTAssertEqual(receivedEnvelopes[1], .syncMarker(
+            id: Scaffolding.endOfQueueID,
+            deliveryTag: Scaffolding.endOfQueueDeliveryTag
+        ))
     }
 
     func testOpen_MissedNotificationsEvent() async throws {
@@ -186,7 +188,7 @@ final class PushChannelV2Tests: XCTestCase {
         }
 
         // should not throw
-        let _ = try await sut.open()
+        _ = try await sut.open()
     }
 
     func testOpen_SendsKeepAlivePings() async throws {
@@ -230,8 +232,10 @@ final class PushChannelV2Tests: XCTestCase {
         // at least 2 in 1.5 seconds).
         XCTAssertGreaterThanOrEqual(webSocket.sendPing_Invocations.count, 2)
         try XCTAssertCount(receivedEnvelopes, count: 1)
-        XCTAssertEqual(receivedEnvelopes.last, .syncMarker(id: Scaffolding.endOfQueueID,
-                                                   deliveryTag: Scaffolding.endOfQueueDeliveryTag))
+        XCTAssertEqual(receivedEnvelopes.last, .syncMarker(
+            id: Scaffolding.endOfQueueID,
+            deliveryTag: Scaffolding.endOfQueueDeliveryTag
+        ))
 
     }
 
@@ -289,8 +293,10 @@ final class PushChannelV2Tests: XCTestCase {
             }
         }
 
-        XCTAssertEqual(collected.last, .syncMarker(id: Scaffolding.endOfQueueID,
-                                                   deliveryTag: Scaffolding.endOfQueueDeliveryTag))
+        XCTAssertEqual(collected.last, .syncMarker(
+            id: Scaffolding.endOfQueueID,
+            deliveryTag: Scaffolding.endOfQueueDeliveryTag
+        ))
     }
 
     func testOpen_CollectFlushes_withUnevenBatchCount() async throws {
@@ -337,8 +343,10 @@ final class PushChannelV2Tests: XCTestCase {
                 XCTFail("wrong number of events in batch, got \(batch), expected .events")
             }
         }
-        XCTAssertEqual(collected.last, .syncMarker(id: Scaffolding.endOfQueueID,
-                                                   deliveryTag: Scaffolding.endOfQueueDeliveryTag))
+        XCTAssertEqual(collected.last, .syncMarker(
+            id: Scaffolding.endOfQueueID,
+            deliveryTag: Scaffolding.endOfQueueDeliveryTag
+        ))
 
     }
 
@@ -385,9 +393,11 @@ final class PushChannelV2Tests: XCTestCase {
         } else {
             XCTFail("wrong number of events in batch, got \(batch), expected .events")
         }
-        
-        XCTAssertEqual(collected.last, .syncMarker(id: Scaffolding.endOfQueueID,
-                                                   deliveryTag: Scaffolding.endOfQueueDeliveryTag))
+
+        XCTAssertEqual(collected.last, .syncMarker(
+            id: Scaffolding.endOfQueueID,
+            deliveryTag: Scaffolding.endOfQueueDeliveryTag
+        ))
     }
 
     func testOpen_CollectFlushesOnTimeout() async throws {
@@ -437,8 +447,10 @@ final class PushChannelV2Tests: XCTestCase {
                 XCTFail("wrong number of events in batch, got \(batch), expected .events")
             }
         }
-        XCTAssertEqual(collected.last, .syncMarker(id: Scaffolding.endOfQueueID,
-                                                   deliveryTag: Scaffolding.endOfQueueDeliveryTag))
+        XCTAssertEqual(collected.last, .syncMarker(
+            id: Scaffolding.endOfQueueID,
+            deliveryTag: Scaffolding.endOfQueueDeliveryTag
+        ))
     }
 }
 
