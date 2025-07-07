@@ -194,6 +194,15 @@ class MockAppStateCalculatorDelegate: AppStateCalculatorDelegate {
 
 }
 
+public class MockAuthenticationStepAnalyticsEventTracker: AuthenticationStepAnalyticsEventTracker {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+}
+
 class MockCallQualityRouterProtocol: CallQualityRouterProtocol {
 
     // MARK: - Life cycle

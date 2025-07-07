@@ -31,7 +31,7 @@ final class AddUsernameStepDescription: DefaultValidatingStepDescription {
     let secondaryView: AuthenticationSecondaryViewDescription? = nil
     let initialValidation: ValueValidation
     let footerView: AuthenticationFooterViewDescription? = nil
-    let analyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
+    let analyticsEventTracker: (any AuthenticationStepAnalyticsEventTracker)? = nil // TODO: inject
 
     init() {
         let textField = TextFieldDescription(
@@ -46,6 +46,5 @@ final class AddUsernameStepDescription: DefaultValidatingStepDescription {
         self.headline = Username.title
         self.subtext = .markdown(from: Username.message, style: .login)
         self.initialValidation = .info(HandleChange.footer)
-        self.analyticsTracker = nil // TODO: inject
     }
 }

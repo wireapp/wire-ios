@@ -28,6 +28,7 @@ final class PersonalRegistrationStepDescription: AuthenticationStepDescription {
     let subtext: NSAttributedString?
     let secondaryView: AuthenticationSecondaryViewDescription?
     let footerView: AuthenticationFooterViewDescription?
+    let analyticsEventTracker: (any AuthenticationStepAnalyticsEventTracker)? = nil
 
     init() {
         self.backButton = BackButtonDescription()

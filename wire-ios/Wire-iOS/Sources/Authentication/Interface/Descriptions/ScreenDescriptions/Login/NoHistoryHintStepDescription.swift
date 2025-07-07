@@ -29,6 +29,7 @@ final class NoHistoryHintStepDescription: AuthenticationStepDescription {
     let subtext: NSAttributedString?
     let secondaryView: AuthenticationSecondaryViewDescription?
     let footerView: AuthenticationFooterViewDescription? = nil
+    let analyticsEventTracker: (any AuthenticationStepAnalyticsEventTracker)? = nil
 
     init(context: NoHistoryContext) {
 

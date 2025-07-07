@@ -26,6 +26,7 @@ final class EmailLinkVerificationStepDescription: AuthenticationStepDescription 
     let subtext: NSAttributedString?
     let secondaryView: AuthenticationSecondaryViewDescription?
     let footerView: AuthenticationFooterViewDescription?
+    let analyticsEventTracker: (any AuthenticationStepAnalyticsEventTracker)? = nil
 
     init(emailAddress: String) {
         self.backButton = BackButtonDescription()

@@ -63,6 +63,7 @@ final class VerifyEmailStepDescription: AuthenticationStepDescription {
     let subtext: NSAttributedString?
     let secondaryView: AuthenticationSecondaryViewDescription?
     let footerView: AuthenticationFooterViewDescription?
+    let analyticsEventTracker: (any AuthenticationStepAnalyticsEventTracker)? = nil
 
     init(email: String, canChangeEmail: Bool = true) {
         self.email = email
