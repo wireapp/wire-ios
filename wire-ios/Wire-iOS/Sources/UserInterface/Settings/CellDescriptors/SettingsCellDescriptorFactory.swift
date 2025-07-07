@@ -22,6 +22,7 @@ import SafariServices
 import WireMainNavigationUI
 import WireSettingsUI
 import WireSyncEngine
+import WireCommonComponents
 
 struct SettingsCellDescriptorFactory {
 
@@ -63,7 +64,12 @@ struct SettingsCellDescriptorFactory {
             presentationStyle: PresentationStyle.modal,
             identifier: nil,
             presentationAction: { () -> (UIViewController?) in
-                return BrowserViewController(url: URL.manageTeam(source: .settings))
+                if SecurityFlags.openLinksExternally.isEnabled {
+                    URL.manageTeam(source: .settings).open()
+                    return nil
+                } else {
+                    return BrowserViewController(url: URL.manageTeam(source: .settings))
+                }
             },
             previewGenerator: nil,
             icon: .team,
@@ -244,7 +250,12 @@ struct SettingsCellDescriptorFactory {
             isDestructive: false,
             presentationStyle: .modal,
             presentationAction: {
-                BrowserViewController(url: WireURLs.shared.support)
+                if SecurityFlags.openLinksExternally.isEnabled {
+                    WireURLs.shared.support.open()
+                    return nil
+                } else {
+                    return BrowserViewController(url: WireURLs.shared.support)
+                }
             },
             previewGenerator: .none
         )
@@ -254,7 +265,12 @@ struct SettingsCellDescriptorFactory {
             isDestructive: false,
             presentationStyle: .modal,
             presentationAction: {
-                BrowserViewController(url: WireURLs.shared.askSupportArticle)
+                if SecurityFlags.openLinksExternally.isEnabled {
+                    WireURLs.shared.askSupportArticle.open()
+                    return nil
+                } else {
+                    return BrowserViewController(url: WireURLs.shared.askSupportArticle)
+                }
             },
             previewGenerator: .none
         )
@@ -266,7 +282,12 @@ struct SettingsCellDescriptorFactory {
             isDestructive: false,
             presentationStyle: .modal,
             presentationAction: {
-                BrowserViewController(url: WireURLs.shared.reportAbuse)
+                if SecurityFlags.openLinksExternally.isEnabled {
+                    WireURLs.shared.reportAbuse.open()
+                    return nil
+                } else {
+                    return BrowserViewController(url: WireURLs.shared.reportAbuse)
+                }
             },
             previewGenerator: .none
         )
@@ -292,7 +313,12 @@ struct SettingsCellDescriptorFactory {
             isDestructive: false,
             presentationStyle: .modal,
             presentationAction: {
-                BrowserViewController(url: WireURLs.shared.legal)
+                if SecurityFlags.openLinksExternally.isEnabled {
+                    WireURLs.shared.legal.open()
+                    return nil
+                } else {
+                    return BrowserViewController(url: WireURLs.shared.legal)
+                }
             },
             previewGenerator: .none
         )
@@ -318,7 +344,12 @@ struct SettingsCellDescriptorFactory {
             isDestructive: false,
             presentationStyle: .modal,
             presentationAction: {
-                BrowserViewController(url: WireURLs.shared.website)
+                if SecurityFlags.openLinksExternally.isEnabled {
+                    WireURLs.shared.website.open()
+                    return nil
+                } else {
+                    return BrowserViewController(url: WireURLs.shared.website)
+                }
             },
             previewGenerator: .none
         )

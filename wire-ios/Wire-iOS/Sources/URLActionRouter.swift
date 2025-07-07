@@ -402,6 +402,7 @@ private extension URLActionRouter {
             style: .cancel
         ))
 
+        // TODO test it
         switch error {
         case URLActionError.conversationLinkIsDisabled:
             let topmostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)

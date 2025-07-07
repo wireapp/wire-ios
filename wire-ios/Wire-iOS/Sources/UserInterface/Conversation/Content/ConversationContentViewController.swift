@@ -592,6 +592,7 @@ private extension UIAlertController {
         let topmostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
 
         let legalHoldLearnMoreHandler: ((UIAlertAction) -> Swift.Void) = { _ in
+            // TODO
             let browserViewController = BrowserViewController(url: WireURLs.shared.legalHoldInfo)
             topmostViewController?.present(browserViewController, animated: true)
         }

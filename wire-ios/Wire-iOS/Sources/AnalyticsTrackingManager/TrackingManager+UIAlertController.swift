@@ -87,6 +87,7 @@ extension TrackingManager {
             return
         }
 
+        // TODO
         let browserViewController = BrowserViewController(url: WireURLs.shared.privacyPolicy)
         topViewController.present(browserViewController, animated: true)
     }
