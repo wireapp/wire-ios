@@ -70,7 +70,8 @@ final class IncrementalSyncV2Tests: XCTestCase {
             databaseSaver: databaseSaver,
             syncStateSubject: syncStateSubject,
             coreCryptoProvider: coreCryptoProvider,
-            journal: journal
+            journal: journal,
+            syncMarkerGenerator: { Scaffolding.markerID }
         )
         sut.delegate = liveDelegate
         liveDelegate.isUpToDateSync_MockMethod = { _ in }
@@ -100,18 +101,17 @@ final class IncrementalSyncV2Tests: XCTestCase {
 
         // Some live events, some of which were already pulled.
         let pushChannel = MockPushChannelV2Protocol()
-        pushChannel.acknowledgeMessageCount_MockMethod = {}
 
         pushChannel.open_MockValue = AsyncThrowingStream { continuation in
             Task {
-                continuation.yield(PushChannelV2.Element.syncing(eventsCount: 1))
                 continuation.yield(PushChannelV2.Element.events([Scaffolding.event2]))
-                continuation.yield(PushChannelV2.Element.upToDate)
+                continuation.yield(PushChannelV2.Element.syncMarker(id: Scaffolding.markerID,
+                                                                    deliveryTag: Scaffolding.markerDeliveryTag))
                 continuation.finish()
             }
         }
         pushChannel.acknowledgeEventDeliveryTagMultiple_MockMethod = { _, _ in }
-        pushChannelAPI.createPushChannelClientID_MockMethod = { _ in pushChannel }
+        pushChannelAPI.createPushChannelClientIDMarker_MockMethod = { _, _ in pushChannel }
 
         // Events stored from NSE which needs to be processed
         var storedEnvelopes = [
@@ -175,10 +175,12 @@ final class IncrementalSyncV2Tests: XCTestCase {
         await token.task.value
 
         // Then push channel was created.
-        XCTAssertEqual(
-            pushChannelAPI.createPushChannelClientID_Invocations,
-            [Scaffolding.selfClientID]
-        )
+        try XCTAssertCount(
+            pushChannelAPI.createPushChannelClientIDMarker_Invocations, count: 1)
+        let invocation = try XCTUnwrap(pushChannelAPI.createPushChannelClientIDMarker_Invocations.first)
+        
+        XCTAssertEqual(invocation.clientID, Scaffolding.selfClientID)
+        XCTAssertEqual(invocation.marker, Scaffolding.markerID)
 
         // Then push channel was opened.
         XCTAssertEqual(pushChannel.open_Invocations.count, 1)
@@ -216,8 +218,11 @@ final class IncrementalSyncV2Tests: XCTestCase {
         XCTAssertEqual(databaseSaver.save_Invocations.count, numberOfInvocationInProcessEvents + 1)
 
         // Then ack of events done after processing
-        XCTAssertEqual(pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations.count, 1)
+        XCTAssertEqual(pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations.count, 2)
         XCTAssertTrue(pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations.first?.multiple == true)
+
+        XCTAssertTrue(pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations.last?.multiple == false)
+        XCTAssertTrue(pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations.last?.deliveryTag == Scaffolding.markerDeliveryTag)
     }
 
     func testPerform_AcknowledgementFullSync() async throws {
@@ -234,7 +239,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
             }
         }
         pushChannel.acknowledgeEventDeliveryTagMultiple_MockMethod = { _, _ in }
-        pushChannelAPI.createPushChannelClientID_MockMethod = { _ in pushChannel }
+        pushChannelAPI.createPushChannelClientIDMarker_MockMethod = { _, _ in pushChannel }
 
         // Events stored from NSE which needs to be processed
         updateEventsStore.fetchStoredEventEnvelopesLimit_MockMethod = { _ in
@@ -271,10 +276,13 @@ final class IncrementalSyncV2Tests: XCTestCase {
         await token.task.value
 
         // Then push channel was created.
-        XCTAssertEqual(
-            pushChannelAPI.createPushChannelClientID_Invocations,
-            [Scaffolding.selfClientID]
-        )
+        try XCTAssertCount(
+            pushChannelAPI.createPushChannelClientIDMarker_Invocations, count: 1)
+        let invocation = try XCTUnwrap(pushChannelAPI.createPushChannelClientIDMarker_Invocations.first)
+        
+        XCTAssertEqual(invocation.clientID, Scaffolding.selfClientID)
+        XCTAssertEqual(invocation.marker, Scaffolding.markerID)
+
 
         // Then push channel was opened.
         XCTAssertEqual(pushChannel.open_Invocations.count, 1)
@@ -313,19 +321,17 @@ final class IncrementalSyncV2Tests: XCTestCase {
 
         // Some live events, some of which were already pulled.
         let pushChannel = MockPushChannelV2Protocol()
-        pushChannel.acknowledgeMessageCount_MockMethod = {}
 
         pushChannel.open_MockValue = AsyncThrowingStream { continuation in
             Task {
-                continuation.yield(PushChannelV2.Element.syncing(eventsCount: 1))
                 continuation.yield(PushChannelV2.Element.events([Scaffolding.event2, Scaffolding.event5]))
                 continuation.yield(PushChannelV2.Element.events([Scaffolding.event3, Scaffolding.event4]))
-                continuation.yield(PushChannelV2.Element.upToDate)
+                continuation.yield(PushChannelV2.Element.syncMarker(id: Scaffolding.markerID, deliveryTag: Scaffolding.markerDeliveryTag))
                 continuation.finish()
             }
         }
         pushChannel.acknowledgeEventDeliveryTagMultiple_MockMethod = { _, _ in }
-        pushChannelAPI.createPushChannelClientID_MockMethod = { _ in pushChannel }
+        pushChannelAPI.createPushChannelClientIDMarker_MockMethod = { _, _ in pushChannel }
 
         // Events stored from NSE which needs to be processed
         updateEventsStore.fetchStoredEventEnvelopesLimit_MockMethod = { _ in
@@ -375,11 +381,13 @@ final class IncrementalSyncV2Tests: XCTestCase {
         await token.task.value
 
         // Then push channel was created.
-        XCTAssertEqual(
-            pushChannelAPI.createPushChannelClientID_Invocations,
-            [Scaffolding.selfClientID]
-        )
-
+        try XCTAssertCount(
+            pushChannelAPI.createPushChannelClientIDMarker_Invocations, count: 1)
+        let invocation = try XCTUnwrap(pushChannelAPI.createPushChannelClientIDMarker_Invocations.first)
+        
+        XCTAssertEqual(invocation.clientID, Scaffolding.selfClientID)
+        XCTAssertEqual(invocation.marker, Scaffolding.markerID)
+        
         // Then push channel was opened.
         XCTAssertEqual(pushChannel.open_Invocations.count, 1)
 
@@ -418,8 +426,14 @@ final class IncrementalSyncV2Tests: XCTestCase {
         XCTAssertEqual(databaseSaver.save_Invocations.count, numberOfInvocationInProcessEvents + 2)
 
         // Then ack of events done after processing
-        XCTAssertEqual(pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations.count, 2)
-        XCTAssertTrue(pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations.first?.multiple == true)
+        try XCTAssertCount(pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations, count: 3)
+        
+        for i in 0...1 {
+            XCTAssertTrue(pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations[i].multiple == true)
+        }
+        
+        XCTAssertTrue(pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations.last?.multiple == false)
+        XCTAssertTrue(pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations.last?.deliveryTag == Scaffolding.markerDeliveryTag)
     }
 }
 
@@ -452,6 +466,9 @@ private enum Scaffolding {
         deliveryTag: 5
     )
 
+    static let markerID = "marker-id"
+    static let markerDeliveryTag: UInt64 = 123
+    
     static func createEvent(
         message: String,
         timeIntervalSinceNow: TimeInterval,

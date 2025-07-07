@@ -22,8 +22,9 @@ import WireDataModel
 import WireLogging
 import WireNetwork
 
-public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protocol {
+public typealias SyncMarkerGenerator = () -> String
 
+public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protocol {
     enum Failure: Error {
         case acknowledgeFailed
     }
@@ -36,6 +37,7 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
     private let coreCryptoProvider: any CoreCryptoProviderProtocol
     private let jsonEncoder = JSONEncoder()
     private let logger = WireLogger.sync
+    private let syncMarkerGenerator: SyncMarkerGenerator
 
     let stream: AsyncStream<[UpdateEvent]>
     private let continuation: AsyncStream<[UpdateEvent]>.Continuation
@@ -46,7 +48,8 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
         updateEventsStore: any UpdateEventsLocalStoreProtocol,
         journal: Journal,
         decryptor: any UpdateEventDecryptorProtocol,
-        coreCryptoProvider: any CoreCryptoProviderProtocol
+        coreCryptoProvider: any CoreCryptoProviderProtocol,
+        syncMarkerGenerator: @escaping SyncMarkerGenerator = { UUID().uuidString }
     ) {
         self.selfClientID = selfClientID
         self.pushChannelAPI = pushChannelAPI
@@ -58,6 +61,7 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
         let (finalStream, continuation) = AsyncStream<[UpdateEvent]>.makeStream()
         self.stream = finalStream
         self.continuation = continuation
+        self.syncMarkerGenerator = syncMarkerGenerator
     }
 
     private var logAttributes: WireLogging.LogAttributes {
@@ -65,7 +69,7 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
     }
 
     public func pull() async throws {
-        let syncMarker = UUID().uuidString
+        let syncMarker = syncMarkerGenerator()
         
         let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID, marker: syncMarker)
 

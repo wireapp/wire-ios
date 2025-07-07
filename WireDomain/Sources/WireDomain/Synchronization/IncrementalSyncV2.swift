@@ -43,6 +43,8 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     private let syncStateSubject: CurrentValueSubject<SyncState, Never>
     private let logger = WireLogger.sync
     private let journal: Journal
+    private let syncMarkerGenerator: SyncMarkerGenerator
+
     weak var delegate: (any LiveSyncDelegate)?
 
     public init(
@@ -56,7 +58,8 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         databaseSaver: any DatabaseSaverProtocol,
         syncStateSubject: CurrentValueSubject<SyncState, Never>,
         coreCryptoProvider: any CoreCryptoProviderProtocol,
-        journal: Journal
+        journal: Journal,
+        syncMarkerGenerator: @escaping SyncMarkerGenerator = { UUID().uuidString }
     ) {
         self.selfClientID = selfClientID
         self.pullServerTimeSync = pullServerTimeSync
@@ -69,6 +72,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         self.syncStateSubject = syncStateSubject
         self.coreCryptoProvider = coreCryptoProvider
         self.journal = journal
+        self.syncMarkerGenerator = syncMarkerGenerator
     }
 
     public func perform() async throws -> IncrementalSync.Token {
@@ -76,7 +80,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
 
         try await pullServerTimeSync.pull()
 
-        let syncMarker = UUID().uuidString
+        let syncMarker = syncMarkerGenerator()
         let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID, marker: syncMarker)
 
         logger.debug("opening new push channel", attributes: .syncAttributes(initialSync: false))
