@@ -144,6 +144,42 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
         )
     }
 
+    func testPull_skipsSyncMarkerIfInterrupted() async throws {
+        let nbEventsToPull = 5
+        let nbOfBatches = 4
+
+        let upstream = AsyncThrowingStream { continuation in
+            continuation.yield(PushChannelV2.Element.events([Scaffolding.event2, Scaffolding.event3]))
+            continuation.yield(PushChannelV2.Element.syncMarker(
+                id: "ignored marker",
+                deliveryTag: 3
+            ))
+            continuation.yield(PushChannelV2.Element.events([Scaffolding.event4, Scaffolding.event5]))
+            continuation.yield(PushChannelV2.Element.events([Scaffolding.createEvent(
+                message: "test",
+                timeIntervalSinceNow: -5,
+                deliveryTag: 6
+            )]))
+            continuation.yield(PushChannelV2.Element.syncMarker(
+                id: Scaffolding.markerID,
+                deliveryTag: Scaffolding.markerDeliveryTag
+            ))
+            continuation.finish()
+        }
+
+        let pushChannel = try await internalTestPull(
+            stream: upstream,
+            receivedEventsCount: nbEventsToPull,
+            decryptionCount: nbEventsToPull,
+            storedEventsCount: nbEventsToPull,
+            acknowledgementCount: nbOfBatches + 1
+        )
+
+        XCTAssertTrue(pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations[1].multiple == false)
+        XCTAssertTrue(pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations[4].multiple == false)
+    }
+
+    @discardableResult
     func internalTestPull(
         stream: AsyncThrowingStream<PushChannelV2.Element, any Error>,
         receivedEventsCount: Int,
@@ -152,7 +188,7 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
         acknowledgementCount: Int,
         file: StaticString = #filePath,
         line: UInt = #line
-    ) async throws {
+    ) async throws -> MockPushChannelV2Protocol {
         let pushChannel = setupPushChannel(stream: stream)
 
         try await sut.pull()
@@ -191,6 +227,8 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
             file: file,
             line: line
         )
+
+        return pushChannel
     }
 }
 

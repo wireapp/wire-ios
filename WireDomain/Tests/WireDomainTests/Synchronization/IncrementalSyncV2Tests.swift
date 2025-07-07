@@ -448,7 +448,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
                 .markerDeliveryTag
         )
     }
-    
+
     func testPerform_skipsSyncMarkerIfInterrupted() async throws {
         // Mock
 
