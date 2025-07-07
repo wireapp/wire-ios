@@ -575,12 +575,6 @@ public final class SessionManager: NSObject, SessionManagerType {
             )
         }
 
-        // TODO: enable tracking later
-//        Journal(userID: account.userIdentifier, storage: sharedUserDefaults)
-//        if let analyticsService, analyticsServiceConfiguration?.didUserGiveTrackingConsent == true {
-//            analyticsService.enableTracking()
-//        }
-
         super.init()
 
         callKitManager.setDelegate(self)

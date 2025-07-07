@@ -30,16 +30,12 @@ final class TrackingManager: TrackingInterface {
     private var observerToken: NSObjectProtocol?
 
     private var journal: Journal? {
-        let selectedAccount = sessionManager.accountManager.selectedAccount
-        print("selectedAccount", selectedAccount)
-        let j = sessionManager.accountManager.selectedAccount.map { selectedAccount in
+        sessionManager.accountManager.selectedAccount.map { selectedAccount in
             Journal(
                 userID: selectedAccount.userIdentifier,
                 storage: sharedUserDefaults
             )
         }
-        print("journal: \(j)")
-        return j
     }
 
     init(
@@ -66,7 +62,6 @@ final class TrackingManager: TrackingInterface {
 
     private var doesUserConsentPreferenceExist: Bool {
         migrateFromLegacyStorageIfNeeded()
-        print("journal?[.isAnalyticsTrackingConsentGiven]", journal?[.isAnalyticsTrackingConsentGiven])
         return journal?[.isAnalyticsTrackingConsentGiven] != nil
     }
 
@@ -89,7 +84,6 @@ final class TrackingManager: TrackingInterface {
     func firstTimeRequestToEnableAnalytics() async throws {
         // Ask if user has not given a preference yet
         // and tracking can be enabled
-print("doesUserConsentPreferenceExist", doesUserConsentPreferenceExist)
         guard !doesUserConsentPreferenceExist, sessionManager.canEnableTracking else {
             return
         }
