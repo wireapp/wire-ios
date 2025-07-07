@@ -102,9 +102,6 @@
       location = "group:crowdin.yml">
    </FileRef>
    <FileRef
-      location = "group:Jenkinsfile">
-   </FileRef>
-   <FileRef
       location = "group:WireAVS">
    </FileRef>
    <FileRef

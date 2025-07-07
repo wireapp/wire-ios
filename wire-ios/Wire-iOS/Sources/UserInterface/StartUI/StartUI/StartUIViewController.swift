@@ -20,8 +20,10 @@ import SwiftUI
 import UIKit
 import WireCommonComponents
 import WireConversationsAPI
+import WireConversationsUI
 import WireConversationsUIBindings
 import WireDesign
+import WireFoundation
 import WireMainNavigationUI
 import WireReusableUIComponents
 import WireSyncEngine
@@ -42,7 +44,7 @@ final class StartUIViewController: UIViewController {
     let groupSelector = SearchGroupSelector()
 
     lazy var conversationTypePicker: UIViewController = {
-        let availableConversationTypes: Set<WireMultiParticipantConversationType> = if canCreateChannel {
+        let availableConversationTypes: Set<WireMultiParticipantConversationType> = if areChannelsSupported {
             [.channel, .group]
         } else {
             [.group]
@@ -59,7 +61,12 @@ final class StartUIViewController: UIViewController {
                     }
                 case .channel:
                     Task { @MainActor [weak self] in
-                        self?.navigateToChannelCreation()
+                        guard let self else { return }
+                        if userSession.channelsFeature.canCreateChannels(role: userSession.selfUser.teamRole) {
+                            navigateToChannelCreation()
+                        } else {
+                            presentCreateTeamBanner()
+                        }
                     }
                 }
             }
@@ -77,6 +84,7 @@ final class StartUIViewController: UIViewController {
     let mainCoordinator: AnyMainCoordinator
     let createGroupConversationUIBuilder: CreateGroupConversationViewControllerBuilderProtocol
     let channelConversationFormFactory: WireConversationChannelCreationFormViewControllerFactory
+    let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
 
     let isFederationEnabled: Bool
 
@@ -123,6 +131,7 @@ final class StartUIViewController: UIViewController {
         self.mainCoordinator = mainCoordinator
         self.createGroupConversationUIBuilder = createGroupConversationUIBuilder
         self.channelConversationFormFactory = channelConversationFormFactory
+        self.selfProfileUIBuilder = selfProfileUIBuilder
         self.profilePresenter = .init(
             mainCoordinator: mainCoordinator,
             selfProfileUIBuilder: selfProfileUIBuilder
@@ -312,11 +321,8 @@ final class StartUIViewController: UIViewController {
     /// - API >= v8
     /// https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/1712979983/Channels
 
-    private var canCreateChannel: Bool {
+    private var areChannelsSupported: Bool {
         guard let backendInfoApiVersion = BackendInfo.apiVersion else {
-            return false
-        }
-        guard userSession.channelsFeature.canCreateChannels(role: userSession.selfUser.teamRole) else {
             return false
         }
         guard BackendInfo.isMLSEnabled else {
@@ -327,6 +333,54 @@ final class StartUIViewController: UIViewController {
         }
         return true
     }
+
+    private func presentCreateTeamBanner() {
+
+        typealias Localizable = L10n.Localizable.Peoplepicker
+        typealias Accessibility = L10n.Accessibility.Peoplepicker
+
+        let configuration = WireChannelBannerView.Configuration(
+            title: Localizable.UpgradeBanner.headline,
+            message: Localizable.UpgradeBanner.subheadline,
+            mainButtonTitle: Localizable.UpgradeBanner.Button.title,
+            mainButtonAction: { [weak self] in
+                self?.dismiss(animated: true) { [weak self] in self?.presentPersonalToTeamMigration() }
+            },
+            closeButton: .init(
+                accessibilityLabel: Accessibility.UpgradeBanner.CloseButton.label,
+                action: { [weak self] in self?.dismiss(animated: true) }
+            )
+        )
+        let banner = WireChannelBannerView(configuration: configuration)
+        // Dimmer that covers entire screen and intercepts taps
+        let rootView = ZStack {
+            Color.black.opacity(0.5)
+                .edgesIgnoringSafeArea(.all)
+            banner
+        }
+        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+
+        let hostingController = UIHostingController(rootView: rootView)
+        hostingController.view.backgroundColor = .clear
+        hostingController.modalPresentationStyle = .overFullScreen
+        hostingController.modalTransitionStyle   = .crossDissolve
+        hostingController.overrideUserInterfaceStyle = .dark
+        present(hostingController, animated: true)
+    }
+
+    private func presentPersonalToTeamMigration() {
+        Task {
+            let rootViewController = self.selfProfileUIBuilder.build(mainCoordinator: mainCoordinator)
+            let navigationController = UINavigationController(rootViewController: rootViewController)
+            navigationController.modalPresentationStyle = .formSheet
+            navigationController.presentationController?.delegate = rootViewController
+            await mainCoordinator.presentViewController(navigationController)
+            if let selfProfileViewController = rootViewController as? SelfProfileViewController {
+                selfProfileViewController.triggerCreateTeamFlow()
+            }
+        }
+    }
+
 }
 
 // MARK: - UISearchResultsUpdating, UISearchBarDelegate
