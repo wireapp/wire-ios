@@ -1,0 +1,16 @@
+name: Run all tests
+
+on:
+  workflow_dispatch:
+# This is what will cancel the workflow
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  trigger_tests:
+    uses: ./.github/workflows/_reusable_run_tests.yml
+    with:
+      all: true
+      notify_secret: WIRE_IOS_CI_WEBHOOK
+    secrets: inherit
