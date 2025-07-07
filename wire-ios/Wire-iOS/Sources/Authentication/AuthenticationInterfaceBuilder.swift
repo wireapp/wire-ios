@@ -202,8 +202,8 @@ final class AuthenticationInterfaceBuilder {
             )
             return viewController
 
-        case .addUsername:
-            let addUsernameStep = AddUsernameStepDescription()
+        case let .addUsername(analyticsEventTracker):
+            let addUsernameStep = AddUsernameStepDescription(analyticsEventTracker: analyticsEventTracker)
             return makeViewController(for: addUsernameStep)
 
         case let .enterActivationCode(unverifiedEmail, _):

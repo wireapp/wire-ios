@@ -16,10 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-/// Allows for tracking events on authentication step screens.
-public protocol AuthenticationStepAnalyticsEventTracker {
-
-    func trackStepReached()
-
+struct AddUsernameContext: Equatable {
+    let analyticsEventTracker: (any AuthenticationStepAnalyticsEventTrackerProtocol)?
 }

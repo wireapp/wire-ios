@@ -54,7 +54,7 @@ indirect enum AuthenticationFlowStep: Equatable {
     case addEmailAndPassword
     case enrollE2EIdentity
     case enrollE2EIdentitySuccess(String)
-    case addUsername
+    case addUsername(context: AddUsernameContext)
     case registerEmailCredentials(UserEmailCredentials, isResend: Bool)
     case pendingEmailLinkVerification(UserEmailCredentials)
     case pendingInitialSync

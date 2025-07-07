@@ -31,9 +31,11 @@ final class AddUsernameStepDescription: DefaultValidatingStepDescription {
     let secondaryView: AuthenticationSecondaryViewDescription? = nil
     let initialValidation: ValueValidation
     let footerView: AuthenticationFooterViewDescription? = nil
-    let analyticsEventTracker: (any AuthenticationStepAnalyticsEventTracker)? = nil // TODO: inject
+    let analyticsEventTracker: (any AuthenticationStepAnalyticsEventTrackerProtocol)?
 
-    init() {
+    init(
+        analyticsEventTracker: (any AuthenticationStepAnalyticsEventTrackerProtocol)?
+    ) {
         let textField = TextFieldDescription(
             placeholder: Username.placeholder,
             actionDescription: L10n.Localizable.General.confirm,
@@ -46,5 +48,6 @@ final class AddUsernameStepDescription: DefaultValidatingStepDescription {
         self.headline = Username.title
         self.subtext = .markdown(from: Username.message, style: .login)
         self.initialValidation = .info(HandleChange.footer)
+        self.analyticsEventTracker = analyticsEventTracker
     }
 }

@@ -194,12 +194,27 @@ class MockAppStateCalculatorDelegate: AppStateCalculatorDelegate {
 
 }
 
-public class MockAuthenticationStepAnalyticsEventTracker: AuthenticationStepAnalyticsEventTracker {
+public class MockAuthenticationStepAnalyticsEventTrackerProtocol: AuthenticationStepAnalyticsEventTrackerProtocol {
 
     // MARK: - Life cycle
 
     public init() {}
 
+
+    // MARK: - trackStepReached
+
+    public var trackStepReached_Invocations: [Void] = []
+    public var trackStepReached_MockMethod: (() -> Void)?
+
+    public func trackStepReached() {
+        trackStepReached_Invocations.append(())
+
+        guard let mock = trackStepReached_MockMethod else {
+            fatalError("no mock for `trackStepReached`")
+        }
+
+        mock()
+    }
 
 }
 

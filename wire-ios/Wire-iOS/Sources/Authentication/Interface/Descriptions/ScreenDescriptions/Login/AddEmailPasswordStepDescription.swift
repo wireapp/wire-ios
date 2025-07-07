@@ -31,7 +31,7 @@ final class AddEmailPasswordStepDescription: DefaultValidatingStepDescription {
     let secondaryView: AuthenticationSecondaryViewDescription?
     let initialValidation: ValueValidation
     let footerView: AuthenticationFooterViewDescription?
-    let analyticsEventTracker: (any AuthenticationStepAnalyticsEventTracker)? = nil
+    let analyticsEventTracker: (any AuthenticationStepAnalyticsEventTrackerProtocol)? = nil
 
     private let emailPasswordFieldDescription = EmailPasswordFieldDescription(
         forRegistration: true,
