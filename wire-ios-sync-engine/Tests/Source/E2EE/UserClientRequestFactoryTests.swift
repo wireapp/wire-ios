@@ -73,7 +73,7 @@ final class UserClientRequestFactoryTests: MessagingTest {
         try testThatItCreatesRegistrationRequestCorrectly(
             credentials: credentials,
             usingProteusService: true,
-            apiVersion: .v8
+            apiVersion: .v9
         )
     }
 
