@@ -109,6 +109,13 @@ public final class PushChannelV2: PushChannelV2Protocol {
                     case .missedEvents:
                         continuation.yield(.missedEvents)
                     case let .syncMarker(id, deliveryTag):
+                        // we're uptodate, let's give any remaining batch if any
+                        if !batch.isEmpty {
+                            continuation.yield(.events(batch))
+                            batch = []
+                            batchTask?.cancel()
+                        }
+                        
                         continuation.yield(.syncMarker(id: id, deliveryTag: deliveryTag))
                     }
 
