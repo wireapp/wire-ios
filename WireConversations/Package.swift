@@ -83,6 +83,7 @@ let package = Package(
                 "WireConversationsUIBindings",
                 "WireConversationsUI",
                 "WireConversationsImplementationSupport",
+                .product(name: "WireDesign", package: "WireUI"),
                 "WireFoundation"
             ]
         ),

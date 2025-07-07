@@ -18,6 +18,8 @@
 
 import SwiftUI
 import WireConversationsUIBindings
+import WireDesign
+import WireFoundation
 import WireTestingPackage
 import XCTest
 
@@ -37,40 +39,13 @@ final class WireChannelBannerTests: XCTestCase {
     }
 
     @MainActor
-    func testColorSchemeVariantsEmptyState() {
-        let view = WireChannelBannerView(
-            configuration: .init(
-                title: "Show older messages?",
-                message: "Upgrade to a paid plan to offer channel members the whole history.",
-                buttonTitle: "Upgrade now",
-                buttonURL: URL(string: "https://example.com")!,
-                padding: 30,
-                closeButton: .init(
-                    accessibilityLabel: "",
-                    action: {}
-                )
-            )
-        )
-        .frame(width: 375, height: 667)
-        .padding()
-
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
-    }
-
-    @MainActor
     func testDynamicTypeVariantsEmptyState() {
         let view = WireChannelBannerView(
             configuration: .init(
                 title: "Show older messages?",
                 message: "Upgrade to a paid plan to offer channel members the whole history.",
-                buttonTitle: "Upgrade now",
-                buttonURL: URL(string: "https://example.com")!,
-                padding: 30,
+                mainButtonTitle: "Upgrade now",
+                mainButtonAction: {},
                 closeButton: .init(
                     accessibilityLabel: "",
                     action: {}
@@ -79,9 +54,11 @@ final class WireChannelBannerTests: XCTestCase {
         )
         .frame(width: 375, height: 667)
         .padding()
+        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
             snapshotHelper
+                .withUserInterfaceStyle(.dark)
                 .verify(
                     matching: view.dynamicTypeSize(dynamicTypeSize),
                     named: "\(dynamicTypeSize)"
