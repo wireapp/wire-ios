@@ -32,6 +32,10 @@ public final class AppVersionMigrationService {
     let currentVersion: SemanticVersion
     let allMigrations: [any AppVersionMigration]
 
+    public var isMigrationNeeded: Bool {
+        !eligibleMigrations.isEmpty
+    }
+
     public init(
         journal: any JournalProtocol,
         currentVersion: SemanticVersion,
@@ -53,19 +57,21 @@ public final class AppVersionMigrationService {
     }
 
     public func performAppMigrations() async throws {
-        // Get the last completed migration version.
-        let lastVersion = journal.lastCompletedAppVersionMigration ?? currentVersion
-
         // Find eligible migrations.
-        var eligibleMigrations = allMigrations
-            .filter { $0.version > lastVersion }
-            .sorted { $0.version > $1.version }
+        var eligibleMigrations = eligibleMigrations.sorted {
+            $0.version > $1.version
+        }
 
         // Perform each migration.
         while let nextMigration = eligibleMigrations.popLast() {
             try await nextMigration.perform()
             journal.lastCompletedAppVersionMigration = nextMigration.version
         }
+    }
+
+    private var eligibleMigrations: [any AppVersionMigration] {
+        let lastVersion = journal.lastCompletedAppVersionMigration ?? currentVersion
+        return allMigrations.filter { $0.version > lastVersion }
     }
 
 }

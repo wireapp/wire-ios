@@ -1113,8 +1113,18 @@ public final class SessionManager: NSObject, SessionManagerType {
                         journal: journal
                     )
 
-                    await self.delegate?.sessionManagerWillMigrateAccount()
-                    await userSession.performAppMigrationsIfNeeded()
+                    let migrationService = userSession.makeAppVersionMigrationService()
+                    if migrationService.isMigrationNeeded {
+                        await self.delegate?.sessionManagerWillMigrateAccount()
+
+                        do {
+                            try await migrationService.performAppMigrations()
+                        } catch {
+                            WireLogger.session.error(
+                                "Failed to perform app version migrations: \(String(describing: error))"
+                            )
+                        }
+                    }
 
                     userSession.triggerSyncsIfNeeded()
 

@@ -186,7 +186,8 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
         journal.lastCompletedAppVersionMigration = "0.0.0"
 
         Task { @MainActor in
-            await userSession.performAppMigrationsIfNeeded()
+            let service = userSession.makeAppVersionMigrationService()
+            try? await service.performAppMigrations()
             // setting back the value
             journal.lastCompletedAppVersionMigration = lastCompletedAppVersionMigration
         }

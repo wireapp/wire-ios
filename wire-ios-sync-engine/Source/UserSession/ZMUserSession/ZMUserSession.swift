@@ -650,23 +650,16 @@ public final class ZMUserSession: NSObject {
 
     // MARK: - Methods
 
-    public func performAppMigrationsIfNeeded() async {
-        do {
-            let allMigrations = [
-                AppVersionMigration_4_1_0(journal: journal)
-            ]
-
-            let appVersionMigrationService: AppVersionMigrationService = .init(
-                journal: journal,
-                currentVersion: SemanticVersion(stringLiteral: currentAppVersion),
-                allMigrations: allMigrations
-            )
-
-            try await appVersionMigrationService.performAppMigrations()
-
-        } catch {
-            WireLogger.session.error("Failed to perform app version migrations: \(String(describing: error))")
-        }
+    public func makeAppVersionMigrationService() -> AppVersionMigrationService {
+        let allMigrations = [
+            AppVersionMigration_4_1_0(journal: journal)
+        ]
+        
+        return AppVersionMigrationService(
+            journal: journal,
+            currentVersion: SemanticVersion(stringLiteral: currentAppVersion),
+            allMigrations: allMigrations
+        )
     }
 
     private func configureTransportSession() {
