@@ -56,7 +56,6 @@ final class RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
         do {
             let analyticsUser = createAnalyticsUserIfNeeded()
             try enableAnalytics(user: analyticsUser)
-
         } catch {
             logger.error("Can't set up analytics during personal account registration")
         }
@@ -120,13 +119,11 @@ final class RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
 
     private func createAnalyticsUserIfNeeded() -> AnalyticsUser {
         if let existingID = userDefaults.string(forKey: Constants.analyticsIdentifierKey) {
-            print("KKKKK existingID \(existingID)")
             return AnalyticsUser(analyticsIdentifier: existingID, teamInfo: nil)
         }
 
         let newAnalyticsID = UUID().transportString()
         userDefaults.set(newAnalyticsID, forKey: Constants.analyticsIdentifierKey)
-        print("KKKKK newAnalyticsID \(newAnalyticsID)")
         return AnalyticsUser(
             analyticsIdentifier: newAnalyticsID,
             teamInfo: nil

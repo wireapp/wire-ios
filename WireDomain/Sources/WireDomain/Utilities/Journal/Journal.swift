@@ -67,9 +67,11 @@ public struct Journal: JournalProtocol {
 
     public subscript(_ key: JournalKey<Bool?>) -> Bool? {
         get {
-            (storage.object(forKey: rawKey(for: key)) as? Bool) ?? key.defaultValue
+            print("\(storage) object(forKey: '\(rawKey(for: key))'): \( storage.object(forKey: rawKey(for: key)) )")
+            return (storage.object(forKey: rawKey(for: key)) as? Bool) ?? key.defaultValue
         }
         nonmutating set {
+            print("\(storage) set('\( newValue )' forKey: '\(rawKey(for: key)))'")
             storage.set(newValue, forKey: rawKey(for: key))
         }
     }

@@ -227,6 +227,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
             if let analyticsIDString = analyticsEventTracker?.currentDeviceID,
                let analyticsID = UUID(uuidString: analyticsIDString) {
                 analyticsIDRepository.storeAnalyticsID(for: userID, analyticsID: analyticsID)
+                analyticsIDRepository.updateAnalyticsTrackingConsent(for: userID, isGiven: true)
             }
         } else {
             analyticsIDRepository.deleteAnalyticsID(for: userID)
