@@ -19,41 +19,26 @@
 public import SwiftUI
 
 import WireDesign
+import WireFoundation
 import WireReusableUIComponents
 
 public struct WireChannelBannerView: View {
 
-    public struct Configuration {
-        var title: String
-        var message: String
-        var buttonTitle: String
-        var buttonURL: URL
-        var padding: CGFloat
-        var closeButton: CloseButton?
-
-        struct CloseButton {
-            var accessibilityLabel: String
-            var action: () -> Void
-        }
-    }
-
     private let configuration: Configuration
 
+    @ScaledMetric private var mainButtonFontSize: CGFloat = 14
     @ScaledMetric private var maxWidth: CGFloat = 350
 
-    init(
-        configuration: Configuration
-    ) {
+    public init(configuration: Configuration) {
         self.configuration = configuration
     }
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: 15) {
-            HStack {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .top) {
                 Text(configuration.title)
-                    .wireTextStyle(.buttonSmall)
+                    .wireTextStyle(.body3)
                     .foregroundStyle(Color.white)
-                    .bold()
                     .accessibilityLabel(Text(configuration.title))
 
                 Spacer()
@@ -68,41 +53,39 @@ public struct WireChannelBannerView: View {
             }
 
             Text(configuration.message)
+                .wireTextStyle(.body1)
                 .foregroundStyle(.white)
                 .accessibilityLabel(
                     configuration.message
                 )
 
-            Link(
-                configuration.buttonTitle,
-                destination: configuration.buttonURL
-            )
-            .lineLimit(1)
-            .padding(8)
-            .background(Color.white.opacity(0.2))
-            .foregroundStyle(Color.white)
-            .wireTextStyle(.buttonSmall)
-            .overlay {
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(.black)
-            }
-            .clipShape(.rect(cornerRadius: 12))
-
+            Button(configuration.mainButtonTitle, action: configuration.mainButtonAction)
+                .lineLimit(1)
+                .padding(8)
+                .background(ColorTheme.Buttons.Secondary.enabledOutline.color)
+                .foregroundStyle(ColorTheme.Buttons.Secondary.onEnabled.color)
+                .font(.system(size: mainButtonFontSize, weight: .semibold, design: .default))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(BaseColorPalette.Grays.gray100.color, lineWidth: 1)
+                }
+                .clipShape(.rect(cornerRadius: 12))
+                .padding(.top, 8)
         }
-        .padding(.all, 15)
+        .padding(.horizontal, 16)
+        .padding(.top, 12)
+        .padding(.bottom, 20)
         .background(alignment: .top) {
             Image("wire_banner_background", bundle: .resources)
                 .resizable()
                 .aspectRatio(contentMode: .fill)
         }
         .cornerRadius(10)
-        .clipped()
         .frame(maxWidth: maxWidth)
         .overlay(
             RoundedRectangle(cornerRadius: 10)
-                .stroke(SemanticColors.View.channelBannerBorderColor.color, lineWidth: 1)
+                .stroke(BaseColorPalette.Grays.gray90.color, lineWidth: 1)
         )
-        .padding([.leading, .trailing], configuration.padding)
     }
 }
 
@@ -111,13 +94,14 @@ public struct WireChannelBannerView: View {
         configuration: .init(
             title: "Show older messages?",
             message: "Upgrade to a paid plan to offer channel members the whole history.",
-            buttonTitle: "Upgrade now",
-            buttonURL: URL(string: "https://example.com")!,
-            padding: 30,
+            mainButtonTitle: "Upgrade now",
+            mainButtonAction: {},
             closeButton: .init(
                 accessibilityLabel: "close banner",
                 action: {}
             )
         )
     )
+    .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+    .preferredColorScheme(.dark)
 }
