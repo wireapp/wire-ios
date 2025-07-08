@@ -89,6 +89,8 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
     /// The object to use to start and control the company login flow.
     let companyLoginController = CompanyLoginController(withDefaultEnvironment: ())
 
+    var analyticsEventTracker: (any AuthenticationAnalyticsEventTracker)?
+
     // MARK: - Internal State
 
     private var loginObservers: [Any] = []
@@ -115,12 +117,14 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
         presenter: UINavigationController,
         sessionManager: ObservableSessionManager,
         featureProvider: AuthenticationFeatureProvider,
-        statusProvider: AuthenticationStatusProvider
+        statusProvider: AuthenticationStatusProvider,
+        analyticsEventTracker: (any AuthenticationAnalyticsEventTracker)?
     ) {
         self.presenter = presenter
         self.activityIndicator = BlockingActivityIndicator(view: presenter.view)
         self.sessionManager = sessionManager
         self.statusProvider = statusProvider
+        self.analyticsEventTracker = analyticsEventTracker
         self.featureProvider = featureProvider
         self.stateController = AuthenticationStateController()
         self.interfaceBuilder = AuthenticationInterfaceBuilder(
@@ -176,6 +180,8 @@ extension AuthenticationCoordinator: @preconcurrency AuthenticationStateControll
         _ newState: AuthenticationFlowStep,
         mode: AuthenticationStateController.StateChangeMode
     ) {
+        analyticsEventTracker?.authenticationFlowStepReached(newState)
+
         guard let presenter, newState.needsInterface else {
             return
         }

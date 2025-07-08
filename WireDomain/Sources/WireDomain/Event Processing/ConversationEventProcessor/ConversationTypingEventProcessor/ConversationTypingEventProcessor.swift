@@ -47,10 +47,12 @@ struct ConversationTypingEventProcessor: ConversationTypingEventProcessorProtoco
 
         // Since we'll be manipulating managed object IDs in `ConversationTypingUsersTimeout`
         // we need to make sure we have valid, consistent IDs for the user and conversation.
-        conversationLocalStore.obtainPermanentIDs(
-            user: user,
-            conversation: conversation
-        )
+        await user.managedObjectContext?.perform {
+            conversationLocalStore.obtainPermanentIDs(
+                user: user,
+                conversation: conversation
+            )
+        }
 
         let userObjectID = user.objectID
         let conversationObjectID = conversation.objectID
