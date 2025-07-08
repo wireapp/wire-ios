@@ -16,27 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireCellsAPI
+public import Foundation
 
-extension WireCellsDraft {
-    static func fixture(
-        nodeID: UUID = UUID(),
-        versionID: UUID = UUID(),
-        assetURL: URL = URL(string: "https://example.com")!,
-        status: WireCellsUploadStatus = .uploaded(isDraft: true),
-        deleteAfterUpload: Bool = false
-    ) -> WireCellsDraft {
-        WireCellsDraft(
-            nodeID: nodeID,
-            versionID: versionID,
-            assetURL: assetURL,
-            fileType: nil,
-            status: status,
-            name: "Draft",
-            bytes: 1024,
-            mimeType: nil,
-            deleteAfterUpload: deleteAfterUpload
-        )
-    }
+public protocol WireCellsDeleteDraftUseCaseProtocol {
+
+    func invoke(nodeID: UUID) async throws
+
 }

@@ -41,7 +41,8 @@ package struct UploadDraftUseCase: WireCellsUploadDraftUseCaseProtocol {
             assetSize: fileSize,
             cellName: cellName,
             fileName: fileURL.lastPathComponent,
-            fileType: resourceValues.contentType
+            fileType: resourceValues.contentType,
+            deleteAfterUpload: false
         )
     }
 
