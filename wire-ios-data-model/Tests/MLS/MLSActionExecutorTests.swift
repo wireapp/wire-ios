@@ -104,7 +104,6 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         // Mock decrypt message
         let decryptedMessage = DecryptedMessage(
             message: nil,
-            proposals: [],
             isActive: false,
             commitDelay: 0,
             senderClientId: nil,
@@ -171,7 +170,6 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         // Mock decrypt message
         let decryptedMessage = DecryptedMessage(
             message: nil,
-            proposals: [],
             isActive: false,
             commitDelay: 0,
             senderClientId: nil,
@@ -527,7 +525,6 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         let encryptedMessage = Data.random(byteCount: 1)
         let decryptedMessage = DecryptedMessage(
             message: nil,
-            proposals: [],
             isActive: false,
             commitDelay: 0,
             senderClientId: nil,
@@ -554,7 +551,6 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         let encryptedMessage = Data.random(byteCount: 1)
         let decryptedMessage = DecryptedMessage(
             message: nil,
-            proposals: [],
             isActive: false,
             commitDelay: 0,
             senderClientId: nil,
