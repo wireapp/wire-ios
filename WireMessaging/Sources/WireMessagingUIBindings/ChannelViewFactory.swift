@@ -16,25 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
-import WireMessagingAPI
+public import SwiftUI
+public import WireMessagingImplementation
+public import WireMessagingAPI
 import WireMessagingUI
-import WireSyncEngine
 
-final class WireConversationChannelCreationFormViewControllerFactory {
-
-    weak var delegate: ConversationCreationControllerDelegate?
-
-    public init() {}
-
+public class ChannelViewFactory {
     @MainActor
-    func create(
-        userSession: UserSession
-    ) -> WireConversationChannelCreationFormViewController {
-        let vc = WireConversationChannelCreationFormViewController(
-            userSession: userSession
+    public static func makeChannelAccessView(
+        permission: ChannelAccessLevelPermission?,
+        accentColor: Color,
+        repository: any ChannelAccessRepositoryProtocol
+    ) -> UIViewController {
+        let useCase = ChannelAccessUseCase(permission: permission, repository: repository)
+        let viewModel = ChannelAccessViewModel(
+            accentColor: accentColor, useCase: useCase
         )
-        vc.delegate = delegate
-        return vc
+
+        return ChannelAccessHostingController(viewModel: viewModel)
     }
 }

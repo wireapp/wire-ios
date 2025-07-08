@@ -18,8 +18,8 @@
 
 import SwiftUI
 import UIKit
-import WireConversationsAPI
-import WireConversationsUI
+import WireMessagingAPI
+import WireMessagingUI
 import WireDomain
 import WireLogging
 import WireNetwork

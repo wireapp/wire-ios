@@ -16,25 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
-import WireMessagingAPI
-import WireMessagingUI
-import WireSyncEngine
+package import SwiftUI
+package import WireMessagingResources
 
-final class WireConversationChannelCreationFormViewControllerFactory {
+package struct WireConversationGroupIcon: View {
+    let groupIcon: WireConversationGroupIconAsset
 
-    weak var delegate: ConversationCreationControllerDelegate?
-
-    public init() {}
-
-    @MainActor
-    func create(
-        userSession: UserSession
-    ) -> WireConversationChannelCreationFormViewController {
-        let vc = WireConversationChannelCreationFormViewController(
-            userSession: userSession
-        )
-        vc.delegate = delegate
-        return vc
+    package init(asset: WireConversationGroupIconAsset) {
+        self.groupIcon = asset
     }
+
+    package var body: some View {
+        groupIcon.image
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+    }
+}
+
+#Preview {
+    WireConversationGroupIcon(asset: WireConversationGroupIconAsset._1)
+        .frame(width: 40, height: 40)
+    WireConversationGroupIcon(asset: WireConversationGroupIconAsset._2)
+        .frame(width: 40, height: 40)
 }

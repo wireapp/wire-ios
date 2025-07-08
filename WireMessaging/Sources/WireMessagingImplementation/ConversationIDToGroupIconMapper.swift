@@ -16,25 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
 import WireMessagingAPI
-import WireMessagingUI
-import WireSyncEngine
+package import WireMessagingResources
 
-final class WireConversationChannelCreationFormViewControllerFactory {
+package final class ConversationIDToGroupIconMapper: ConversationIDToPaletteMapper {
 
-    weak var delegate: ConversationCreationControllerDelegate?
+    let palette: [WireConversationGroupIconAsset] = WireConversationGroupIconAsset.all
 
-    public init() {}
+    package init() {}
 
-    @MainActor
-    func create(
-        userSession: UserSession
-    ) -> WireConversationChannelCreationFormViewController {
-        let vc = WireConversationChannelCreationFormViewController(
-            userSession: userSession
-        )
-        vc.delegate = delegate
-        return vc
+    package func palette(for conversationID: String) -> WireConversationGroupIconAsset {
+        // make sure id is lowercased
+        let id = conversationID.lowercased()
+        // Calculate the combined hash
+        let hashValue = stringHashCode(id)
+        // Convert to positive Int for indexing
+        let index = abs(Int(hashValue)) % palette.count
+        return palette[index]
     }
 }

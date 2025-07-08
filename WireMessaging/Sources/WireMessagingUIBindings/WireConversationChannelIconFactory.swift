@@ -16,25 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+public import SwiftUI
 import WireMessagingAPI
+import WireMessagingImplementation
 import WireMessagingUI
-import WireSyncEngine
 
-final class WireConversationChannelCreationFormViewControllerFactory {
+public final class WireConversationChannelIconFactory {
 
-    weak var delegate: ConversationCreationControllerDelegate?
+    private let mapper = ConversationIDToChannelIconMapper()
 
     public init() {}
 
     @MainActor
-    func create(
-        userSession: UserSession
-    ) -> WireConversationChannelCreationFormViewController {
-        let vc = WireConversationChannelCreationFormViewController(
-            userSession: userSession
-        )
-        vc.delegate = delegate
-        return vc
+    public func create(conversationID: String) -> some View {
+        WireConversationChannelIcon(asset: mapper.palette(for: conversationID))
+    }
+
+    @MainActor
+    public func createUIKit(conversationID: String, isPrivateChannel: Bool) -> UIView {
+        WireConversationChannelIconUIKit(asset: mapper.palette(for: conversationID), isPrivateChannel: isPrivateChannel)
     }
 }

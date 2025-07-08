@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import WireConversationsUIBindings
+import WireMessagingUIBindings
 import WireMainNavigationUI
 import WireSyncEngine
 

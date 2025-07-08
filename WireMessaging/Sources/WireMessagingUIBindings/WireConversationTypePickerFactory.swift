@@ -16,25 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
-import WireMessagingAPI
+public import SwiftUI
+public import WireMessagingAPI
+import WireMessagingImplementation
 import WireMessagingUI
-import WireSyncEngine
+import WireFoundation
 
-final class WireConversationChannelCreationFormViewControllerFactory {
-
-    weak var delegate: ConversationCreationControllerDelegate?
-
+public final class WireConversationTypePickerFactory {
     public init() {}
 
     @MainActor
-    func create(
-        userSession: UserSession
-    ) -> WireConversationChannelCreationFormViewController {
-        let vc = WireConversationChannelCreationFormViewController(
-            userSession: userSession
+    public func create(
+        availableConversationTypes: Set<WireMultiParticipantConversationType>,
+        onConversationTypeSelected: @escaping @Sendable (WireMultiParticipantConversationType) -> Void
+    ) -> some View {
+        WireConversationTypePicker(
+            availableConversationTypes: availableConversationTypes,
+            onConversationTypeSelected: onConversationTypeSelected
         )
-        vc.delegate = delegate
-        return vc
+        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
     }
 }

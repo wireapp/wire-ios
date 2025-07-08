@@ -18,8 +18,8 @@
 
 import SwiftUI
 import UIKit
-import WireConversationsAPI
-import WireConversationsUIBindings
+import WireMessagingAPI
+import WireMessagingUIBindings
 import WireDesign
 import WireLogging
 import WireMainNavigationUI

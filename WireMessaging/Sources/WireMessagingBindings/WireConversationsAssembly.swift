@@ -16,25 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
-import WireMessagingAPI
-import WireMessagingUI
-import WireSyncEngine
+public final class WireMessagingAssembly {
 
-final class WireConversationChannelCreationFormViewControllerFactory {
-
-    weak var delegate: ConversationCreationControllerDelegate?
-
-    public init() {}
-
-    @MainActor
-    func create(
-        userSession: UserSession
-    ) -> WireConversationChannelCreationFormViewController {
-        let vc = WireConversationChannelCreationFormViewController(
-            userSession: userSession
-        )
-        vc.delegate = delegate
-        return vc
+    public init() {
+//        registerProviderFactories()
     }
 }
