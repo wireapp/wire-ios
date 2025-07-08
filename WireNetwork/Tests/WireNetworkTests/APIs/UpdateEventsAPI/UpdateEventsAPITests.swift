@@ -253,7 +253,7 @@ final class UpdateEventsAPITests: XCTestCase {
     func testServerTime_givenV0_To_V8_AndFailure_Unsupported_Endpoint_For_API_Version() async throws {
 
         // given
-        let unsupportedVersions = Set(APIVersion.allCases).subtracting([.v8])
+        let unsupportedVersions = Set(APIVersion.allCases).subtracting([.v9])
 
         let apiService = MockAPIServiceProtocol.withError(statusCode: .unreachable, label: "")
 
