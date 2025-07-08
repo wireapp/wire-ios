@@ -31,7 +31,7 @@ struct ObserveDraftsUseCaseTests {
         let draftsRepository = DraftsRepositoryProtocolMock()
         let sut = ObserveDraftsUseCase(cellName: "cell-name", draftRepository: draftsRepository)
         let (stream, continuation) = AsyncStream.makeStream(of: [WireCellsDraft].self)
-        await draftsRepository.setDraftsForCellNameStringAsyncStreamWireCellsDraftReturnValue(stream)
+        draftsRepository.draftsForCellNameStringAsyncStreamWireCellsDraftReturnValue = stream
 
         // When
         let output = await sut.invoke()
