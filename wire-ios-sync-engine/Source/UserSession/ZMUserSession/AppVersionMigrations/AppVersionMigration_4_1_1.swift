@@ -23,9 +23,9 @@ import WireDomain
 /// fully up do date with the backend.
 /// **Fix:** mark conversations needing resync.
 
-final class AppVersionMigration_4_1_0: AppVersionMigration {
+final class AppVersionMigration_4_1_1: AppVersionMigration {
 
-    let version: SemanticVersion = "4.1.0"
+    let version: SemanticVersion = "4.1.1"
     private var journal: any JournalProtocol
 
     init(journal: any JournalProtocol) {
