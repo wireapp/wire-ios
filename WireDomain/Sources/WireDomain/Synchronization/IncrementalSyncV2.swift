@@ -172,10 +172,6 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
 
         do {
             for try await element in liveEventStream {
-                logger.debug(
-                    "received live element: \(element)",
-                    attributes: .syncAttributes(initialSync: false)
-                )
                 switch element {
                 case let .syncMarker(id, deliveryTag):
 
