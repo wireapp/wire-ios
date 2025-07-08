@@ -101,14 +101,12 @@ final class TrackingManager: TrackingInterface {
 
     func enableAnalytics() async throws {
         try await sessionManager.makeEnableAnalyticsUseCase()?.invoke()
-        ExtensionSettings.shared.disableAnalyticsSharing = false
         AVSFlowManager.getInstance()?.setEnableMetrics(true)
         journal?[.isAnalyticsTrackingConsentGiven] = true
     }
 
     func disableAnalytics() throws {
         try sessionManager.makeDisableAnalyticsUseCase()?.invoke()
-        ExtensionSettings.shared.disableAnalyticsSharing = true
         AVSFlowManager.getInstance()?.setEnableMetrics(false)
         journal?[.isAnalyticsTrackingConsentGiven] = false
     }
