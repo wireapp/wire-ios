@@ -110,7 +110,15 @@ public extension MessagingTest {
         ]
 
         if capabilities.isEmpty == false {
-            payload["capabilities"] = capabilities.map(\.rawValue) as AnyObject
+            let rawCapabilities: [String] = capabilities.map {
+                switch $0 {
+                case .consumableNotifications:
+                    "consumable-notifications"
+                case .legalholdConsent:
+                    "legalhold-implicit-consent"
+                }
+            }
+            payload["capabilities"] = rawCapabilities as AnyObject
         }
         _ = UserClient.createOrUpdateSelfUserClient(payload, context: syncMOC)
         syncMOC.saveOrRollback()

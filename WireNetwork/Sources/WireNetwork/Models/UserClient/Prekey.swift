@@ -20,7 +20,7 @@ import Foundation
 
 /// A Proteus client prekey used to establish a Proteus session.
 
-public struct Prekey: Equatable, Codable, Sendable {
+public struct Prekey: Equatable, Sendable {
 
     /// The prekey id.
 
@@ -38,4 +38,16 @@ public struct Prekey: Equatable, Codable, Sendable {
         self.base64EncodedKey = base64EncodedKey
     }
 
+}
+
+struct PrekeyV0: Equatable, Sendable, Encodable {
+
+    let id: Int
+    let base64EncodedKey: String
+}
+
+extension Prekey: ToNetworkConvertible {
+    func toNetworkModel() -> PrekeyV0 {
+        .init(id: id, base64EncodedKey: base64EncodedKey)
+    }
 }

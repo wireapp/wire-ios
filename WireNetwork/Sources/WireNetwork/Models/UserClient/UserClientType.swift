@@ -20,7 +20,7 @@ import Foundation
 
 /// Types of a user client.
 
-public enum UserClientType: String, Codable, Sendable {
+public enum UserClientType: Sendable {
 
     /// A client intended to be used for long periods of time,
     /// such as a mobile device or web application.
@@ -38,4 +38,21 @@ public enum UserClientType: String, Codable, Sendable {
 
     case legalhold
 
+}
+
+enum UserClientTypeV0: String, Sendable, Codable, ToAPIModelConvertible {
+    case permanent
+    case temporary
+    case legalhold
+
+    func toAPIModel() -> UserClientType {
+        switch self {
+        case .permanent:
+            .permanent
+        case .temporary:
+            .temporary
+        case .legalhold:
+            .legalhold
+        }
+    }
 }

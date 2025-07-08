@@ -214,13 +214,13 @@ extension ConversationMessageAddEventNotificationBuilder {
             conversationID: ConversationID
         ) async -> Bool {
             let conversation = await conversationLocalStore.fetchOrCreateConversation(
-                id: conversationID.uuid,
+                id: conversationID.id,
                 domain: conversationID.domain
             )
 
             let isMessageSilenced = await conversationLocalStore.isMessageSilenced(
                 message,
-                senderID: senderID.uuid,
+                senderID: senderID.id,
                 conversation: conversation
             )
 

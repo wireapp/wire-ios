@@ -29,7 +29,7 @@ struct MLSMigrationFeatureConfigDecoder {
         )
 
         return MLSMigrationFeatureConfig(
-            status: payload.status,
+            status: payload.status.toAPIModel(),
             startTime: payload.config.startTime?.date,
             finaliseRegardlessAfter: payload.config.finaliseRegardlessAfter?.date
         )
