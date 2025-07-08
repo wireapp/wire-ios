@@ -16,14 +16,14 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:",
+        "containerPath" : "container:WireMessaging",
         "identifier" : "WireMessagingTests",
         "name" : "WireMessagingTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:",
+        "containerPath" : "container:WireMessaging",
         "identifier" : "WireMessagingUITests",
         "name" : "WireMessagingUITests"
       }
