@@ -48,7 +48,8 @@ final class AuthenticationEventResponderChain {
 
     /// The supported event types.
 
-    enum EventType {
+    enum EventType: CustomStringConvertible {
+
         case wireAuthenticationModuleComplete(AuthenticationResult)
         case flowStart(NSError?, Int)
         case backupReady(Bool)
@@ -61,6 +62,36 @@ final class AuthenticationEventResponderChain {
         case userProfileChange(UserChangeInfo)
         case userInput(Any)
         case deviceConfigurationComplete
+
+        var description: String {
+            switch self {
+            case .wireAuthenticationModuleComplete:
+                "wireAuthenticationModuleComplete"
+            case .flowStart:
+                "flowStart"
+            case .backupReady:
+                "backupReady"
+            case .clientRegistrationError:
+                "clientRegistrationError"
+            case .clientRegistrationSuccess:
+                "clientRegistrationSuccess"
+            case .authenticationFailure:
+                "authenticationFailure"
+            case .loginCodeAvailable:
+                "loginCodeAvailable"
+            case .registrationError:
+                "registrationError"
+            case .registrationStepSuccess:
+                "registrationStepSuccess"
+            case .userProfileChange:
+                "userProfileChange"
+            case .userInput:
+                "userInput"
+            case .deviceConfigurationComplete:
+                "deviceConfigurationComplete"
+            }
+        }
+
     }
 
     // MARK: - Properties
@@ -182,8 +213,8 @@ final class AuthenticationEventResponderChain {
 
     // MARK: - Event Handling
 
-    /// Call this method to notify the responder chain that a supported event occured.
-    /// - parameter eventType: The type of event that occured, and any required context.
+    /// Call this method to notify the responder chain that a supported event occurred.
+    /// - parameter eventType: The type of event that occurred, and any required context.
 
     func handleEvent(ofType eventType: EventType) {
         if case .userInput = eventType {

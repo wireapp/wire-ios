@@ -31,7 +31,7 @@ final class MockDependencies {
     }
 
     var environmentType: BackendEnvironmentType {
-        .production
+        .default
     }
 
     private var backendConfig: BackendConfig {

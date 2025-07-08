@@ -102,8 +102,8 @@
 "peoplepicker.federation.domain_unvailable" = "Domena federowana jest obecnie niedostępna. [Dowiedz się więcej](%@)";
 
 "add_participants.alert.title" = "Ta rozmowa jest przepełniona";
-"add_participants.alert.message.new_conversation" = "Do %d osób może dołączyć do rozmowy.";
-"add_participants.alert.message.existing_conversation" = "Do %1$d osób może dołączyć do rozmowy. Obecnie jest tylko miejsce dla dodatkowych %2$d osób.";
+"add_participants.alert.message.new_conversation" = "Up to %@ people can join a conversation.";
+"add_participants.alert.message.existing_conversation" = "Up to %@ people can join a conversation. Currently there is only room for %@ more.";
 
 // Channel Creation UI - Navigation
 "conversation.create.channel.title" = "New channel";
@@ -368,6 +368,22 @@
 "conversation.banner.are_present" = "%@ jest obecny";
 "conversation.banner.are_active" = "%@ są aktywne";
 "conversation.banner.separator" = " i ";
+
+"conversation.banner.remotes_externals_guests_services_present" = "Federated users, externals, guests and services are present";
+"conversation.banner.remotes_externals_guests_present" = "Federated users, externals and guests are present";
+"conversation.banner.remotes_externals_services_present" = "Federated users, externals and services are present";
+"conversation.banner.remotes_guests_services_present" = "Federated users, guests and services are present";
+"conversation.banner.externals_guests_services_present" = "Externals, guests and services are present";
+"conversation.banner.remotes_externals_present" = "Federated users and externals are present";
+"conversation.banner.remotes_guests_present" = "Federated users and guests are present";
+"conversation.banner.remotes_services_present" = "Federated users and services are present";
+"conversation.banner.externals_guests_present" = "Externals and guests are present";
+"conversation.banner.externals_services_present" = "Externals and services are present";
+"conversation.banner.guests_services_present" = "Guests and services are present";
+"conversation.banner.remotes_present" = "Federated users are present";
+"conversation.banner.externals_present" = "Externals are present";
+"conversation.banner.guests_present" = "Guests are present";
+"conversation.banner.services_active" = "Services are active";
 
 "conversation.action.search" = "Wyszukaj";
 "conversation.action.conversationDetails" = "Conversation Details";
@@ -654,6 +670,7 @@
 "content.collapsed.video.title" = "You sent a video";
 "content.collapsed.audio.title" = "You sent an audio message";
 "content.collapsed.location.title" = "You sent your location";
+"content.collapsed.link.title" = "You sent a link";
 
 "content.message.like" = "Polub";
 "content.message.unlike" = "Przestań lubić";
@@ -859,7 +876,7 @@
 "participants.section.services" = "Usługi (%d)";
 "participants.section.settings" = "Opcje";
 "participants.footer.add_title" = "Dodaj uczestników";
-"participants.section.name.footer" = "Up to %1$d participants can join a conversation.";
+"participants.section.name.footer" = "Up to %@ participants can join a conversation.";
 "participants.section.admins.footer" = "Brak administratorów.";
 "participants.section.members.footer" = "Brak rozmówców.";
 
@@ -1122,8 +1139,8 @@
 
 // Settings - top level
 "self.settings.create_team.title" = "Utwórz nowy zespół";
+"self.settings.add_account_or_team.title" = "Add Account or Team";
 "self.settings.manage_team.title" = "Zarządzaj zespołem";
-"self.settings.add_team_or_account.title" = "Dodaj konto";
 "self.settings.add_account.title" = "Dodaj konto";
 
 "self.settings.add_account.error.title" = "Trzy konta aktywne";
@@ -1158,6 +1175,7 @@
 "self.settings.account_details.remove_device.password.error" = "Hasło nieprawidłowe";
 
 "self.settings.account_appearance_group.title" = "Wygląd";
+"self.settings.account_appearance_group.footer" = "When this is on, your conversations show a background based on your profile color and light or dark theme.";
 
 "self.settings.privacy_section_group.title" = "Prywatność";
 "self.settings.enable_read_receipts.title" = "Wyświetlaj potwierdzenie przeczytania";
@@ -1176,6 +1194,7 @@
 "self.settings.account_picture_group.accent_color.amber" = "Bursztynowy";
 "self.settings.account_picture_group.accent_color.turquoise" = "Turkusowy";
 "self.settings.account_picture_group.accent_color.purple" = "Fioletowy";
+"self.settings.account_picture_group.background.title" = "Conversation background color";
 
 "self.settings.account_personal_information_group.title" = "Twoje dane";
 
@@ -1280,13 +1299,8 @@
 // Open in
 "self.settings.external_apps.header" = "Otwórz za pomocą";
 
-"self.settings.link_options.twitter.title" = "Tweety";
 "self.settings.link_options.maps.title" = "Lokalizacja";
 "self.settings.link_options.browser.title" = "Przeglądarka";
-
-"open_link.twitter.option.default" = "Przeglądarka / Twitter";
-"open_link.twitter.option.tweetbot" = "Tweetbot";
-"open_link.twitter.option.twitterrific" = "Twitterrific";
 
 "open_link.maps.option.apple" = "Mapy";
 "open_link.maps.option.google" = "Mapy Google";
@@ -1308,7 +1322,6 @@
 "self.settings.developer_options.title" = "Opcje programistyczne";
 "self.settings.developer_options.loggin.title" = "Opcje";
 "self.settings.developer_options.database_statistics.title" = "Statystyki bazy danych";
-"self.settings.apns_logging.title" = "Rejestrowanie usługi APNS";
 
 // Privacy (visibility) options
 "self.settings.options_menu.title" = "Opcje";
@@ -1333,7 +1346,7 @@
 "self.settings.privacy_security.disable_link_previews.footer" = "Podglądy linków otrzymanych od innych osób mogą być nadal wyświetlane.";
 
 "self.settings.privacy_security.collapse_own_messages.title" = "Collapse my messages";
-"self.settings.privacy_security.collapse_own_messages.footer" = "When this is on, all your messages collapse to a single line.";
+"self.settings.privacy_security.collapse_own_messages.footer" = "When this is on, all your messages collapse after three lines.";
 
 "self.settings.privacy_analytics_menu.devices.title" = "Urządzenia";
 
@@ -1597,6 +1610,7 @@
 "enroll_e2ei_certificate.subtitle" = "The certificate is active and your device is verified.";
 "enroll_e2ei_certificate.certificate_details_button" = "Certificate Details";
 "enroll_e2ei_certificate.ok_button" = "OK";
+"enroll_e2ei_certificate.idp_url_title" = "Identity Provider URL";
 
 // Update e2ei certificate
 "update_e2ei_certificate.title" = "Certificate updated";

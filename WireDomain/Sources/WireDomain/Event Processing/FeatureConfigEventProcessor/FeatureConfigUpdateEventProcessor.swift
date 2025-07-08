@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import WireNetwork
 
 struct FeatureConfigUpdateEventProcessor: FeatureConfigUpdateEventProcessorProtocol {
 
     let repository: any FeatureConfigRepositoryProtocol
 
-    func processEvent(_ event: FeatureConfigUpdateEvent) async throws {
-        try await repository.updateFeatureConfig(event.featureConfig)
+    func processEvent(_ event: FeatureConfigUpdateEvent) async {
+        await repository.updateFeatureConfig(event.featureConfig)
     }
 
 }

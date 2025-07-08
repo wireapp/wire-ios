@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireFoundation
 import WireLogging
 import WireMainNavigationUI
 import WireRequestStrategy
@@ -71,6 +72,8 @@ final class ConversationContentViewController: UIViewController {
         return button
     }()
 
+    private let userDefaults: PrivateUserDefaults<ConversationBackgroundKey>
+
     let tableView: UpsideDownTableView = .init(frame: .zero, style: .plain)
     let bottomContainer: UIView = .init(frame: .zero)
     var searchQueries: [String]? {
@@ -89,7 +92,8 @@ final class ConversationContentViewController: UIViewController {
         tableView: tableView,
         actionResponder: self,
         cellDelegate: self,
-        userSession: userSession
+        userSession: userSession,
+        getUserByIDUseCase: GetUserByIdUseCase()
     )
 
     /// Fired regularly in order to always correct time values (like the number of seconds a self-deleting message has
@@ -114,8 +118,10 @@ final class ConversationContentViewController: UIViewController {
     private var token: NSObjectProtocol?
 
     private(set) lazy var activityIndicator = BlockingActivityIndicator(view: view)
+    let linkDetector = NSDataDetector.linkDetector
 
     private let logger: WireLogger
+    private var accentColorChangeHandler: AccentColorChangeHandler?
 
     init(
         conversation: ZMConversation,
@@ -123,7 +129,8 @@ final class ConversationContentViewController: UIViewController {
         mediaPlaybackManager: MediaPlaybackManager?,
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
-        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
+        selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
+        userDefaults: UserDefaultsProtocol = UserDefaults.standard
     ) {
         self.messagePresenter = MessagePresenter(mediaPlaybackManager: mediaPlaybackManager)
         self.userSession = userSession
@@ -132,6 +139,10 @@ final class ConversationContentViewController: UIViewController {
         self.conversation = conversation
         self.messageVisibleOnLoad = message ?? conversation.firstUnreadMessage
         self.logger = .conversation
+        self.userDefaults = PrivateUserDefaults<ConversationBackgroundKey>(
+            userID: userSession.selfUser.remoteIdentifier,
+            storage: userDefaults
+        )
 
         super.init(nibName: nil, bundle: nil)
 
@@ -168,11 +179,8 @@ final class ConversationContentViewController: UIViewController {
 
     deinit {
         DeveloperToolsViewModel.context.currentConversation = nil
-        NotificationCenter.default.removeObserver(
-            self,
-            name: ZMConversation.failedToSendMessageNotificationName,
-            object: nil
-        )
+        NotificationCenter.default.removeObserver(self)
+        accentColorChangeHandler = nil
     }
 
     @available(*, unavailable)
@@ -230,9 +238,6 @@ final class ConversationContentViewController: UIViewController {
         tableView.keyboardDismissMode = AutomationHelper.sharedHelper
             .disableInteractiveKeyboardDismissal ? .none : .interactive
 
-        tableView.backgroundColor = SemanticColors.View.backgroundConversationView
-        view.backgroundColor = SemanticColors.View.backgroundConversationView
-
         setupMentionsResultsView()
 
         NotificationCenter.default.addObserver(
@@ -248,12 +253,30 @@ final class ConversationContentViewController: UIViewController {
             name: ZMConversation.failedToSendMessageNotificationName,
             object: .none
         )
+
+        updateBackgroundColor(color: userSession.selfUser.zmAccentColor)
+
+        accentColorChangeHandler = AccentColorChangeHandler
+            .addObserver(userSession: userSession) { [unowned self] color in
+                updateBackgroundColor(color: color)
+            }
+    }
+
+    private func updateBackgroundColor(color: ZMAccentColor?) {
+        func set(color: UIColor) {
+            tableView.backgroundColor = color
+            view.backgroundColor = color
+        }
+        guard let color, userDefaults.bool(forKey: .conversationBackground) else {
+            set(color: SemanticColors.View.backgroundConversationView)
+            return
+        }
+        set(color: color.accentColor.conversationBackgroundColor)
     }
 
     @objc
     private func applicationDidBecomeActive(_ notification: Notification) {
         dataSource.resetSectionControllers()
-        tableView.reloadData()
     }
 
     private func handleScrollToBottomTapped() {
@@ -298,7 +321,7 @@ final class ConversationContentViewController: UIViewController {
         messagePresenter.modalTargetController = parent
 
         updateHeaderHeight()
-
+        updateBackgroundColor(color: userSession.selfUser.zmAccentColor)
         setNeedsStatusBarAppearanceUpdate()
     }
 
@@ -315,7 +338,8 @@ final class ConversationContentViewController: UIViewController {
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        dataSource.contentWidth = tableView.bounds.width
+        let margins = HorizontalMargins.conversationHorizontalMargins()
+        dataSource.contentWidth = tableView.bounds.width - margins.right - margins.left
         scrollToFirstUnreadMessageIfNeeded()
     }
 
@@ -351,7 +375,8 @@ final class ConversationContentViewController: UIViewController {
 
     @discardableResult
     func willSelectRow(at indexPath: IndexPath, tableView: UITableView) -> IndexPath? {
-        guard dataSource.messages.indices.contains(indexPath.section) == true else { return nil }
+        let messages = dataSource.allMessages
+        guard messages.indices.contains(indexPath.section) == true else { return nil }
 
         // If the menu is visible, hide it and do nothing
         if UIMenuController.shared.isMenuVisible {
@@ -359,7 +384,7 @@ final class ConversationContentViewController: UIViewController {
             return nil
         }
 
-        let message = dataSource.messages[indexPath.section]
+        let message = messages[indexPath.section]
 
         if message == dataSource.selectedMessage {
 
@@ -422,12 +447,12 @@ final class ConversationContentViewController: UIViewController {
 
         let indexPathsForVisibleRows = tableView.indexPathsForVisibleRows
 
-        if let firstIndexPath = indexPathsForVisibleRows?.first {
-            let lastVisibleMessage = dataSource.messages[firstIndexPath.section]
+        if let firstIndexPath = indexPathsForVisibleRows?.first,
+           let lastVisibleMessage = dataSource.allMessages[ifExists: firstIndexPath.section] {
             conversation.markMessagesAsRead(until: lastVisibleMessage)
         }
 
-        // Update media bar visiblity
+        // Update media bar visibility
         updateMediaBar()
     }
 
@@ -569,19 +594,41 @@ extension ConversationContentViewController: UITableViewDelegate {
         willSelectRow(at: indexPath, tableView: tableView)
     }
 
+    private func actionControllerToSwipe(
+        indexPath: IndexPath,
+        isLeading: Bool
+    ) -> ConversationMessageActionController? {
+
+        let section = dataSource.currentSections[ifExists: indexPath.section]?.elements[ifExists: indexPath.row]
+        let actionController = section?.actionController
+        let cellDescription = section?.instance
+        // There were a bug with no able to swipe https://wearezeta.atlassian.net/browse/WPB-17839
+        // Happened because action controller of a section controller was nil and
+        // different to actionControllers[<message.nonce>], so it was out of sync
+        // it was fixed but for extra safety backup action controller if not found
+        var backupActionController: ConversationMessageActionController?
+        if let nonce = cellDescription?.message?.nonce {
+            backupActionController = dataSource.sectionControllers.get(for: nonce)?.actionController
+        }
+
+        if cellDescription?.supportsActions ?? false,
+           let actionController = actionController ?? backupActionController,
+           isLeading ? actionController.message.canAddReaction : actionController
+           .canPerformAction(action: .react("❤️")) {
+            return actionController
+        }
+
+        return nil
+    }
+
     func tableView(
         _ tableView: UITableView,
         leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath
     ) -> UISwipeActionsConfiguration? {
 
-        let sections = dataSource.currentSections
-        guard
-            sections.indices.contains(indexPath.section),
-            sections[indexPath.section].elements.indices.contains(indexPath.row),
-            sections[indexPath.section].elements[indexPath.row].instance.supportsActions,
-            let actionController = sections[indexPath.section].elements[indexPath.row].actionController,
-            actionController.message.canAddReaction
-        else { return nil }
+        guard let actionController = actionControllerToSwipe(indexPath: indexPath, isLeading: true) else {
+            return nil
+        }
 
         // setting an empty title string since it would be displayed upside down
         // TODO: [WPB-16341] set "Reply" as text for accessibility reasons
@@ -606,14 +653,9 @@ extension ConversationContentViewController: UITableViewDelegate {
         trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
     ) -> UISwipeActionsConfiguration? {
 
-        let sections = dataSource.currentSections
-        guard
-            sections.indices.contains(indexPath.section),
-            sections[indexPath.section].elements.indices.contains(indexPath.row),
-            sections[indexPath.section].elements[indexPath.row].instance.supportsActions,
-            let actionController = sections[indexPath.section].elements[indexPath.row].actionController,
-            actionController.canPerformAction(action: .react("❤️"))
-        else { return nil }
+        guard let actionController = actionControllerToSwipe(indexPath: indexPath, isLeading: true) else {
+            return nil
+        }
 
         // since the table view is flipped vertically we also render the image flipped
         // TODO: [WPB-16341] use the real image, remove the upsideDownImage
@@ -670,8 +712,7 @@ private extension UIAlertController {
         let topmostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
 
         let legalHoldLearnMoreHandler: ((UIAlertAction) -> Swift.Void) = { _ in
-            let browserViewController = BrowserViewController(url: WireURLs.shared.legalHoldInfo)
-            topmostViewController?.present(browserViewController, animated: true)
+            WireURLs.shared.legalHoldInfo.open(from: topmostViewController)
         }
 
         let alertController = UIAlertController(
@@ -693,4 +734,23 @@ private extension UIAlertController {
         topmostViewController?.present(alertController, animated: true)
     }
 
+}
+
+extension AccentColor {
+    var conversationBackgroundColor: UIColor {
+        switch self {
+        case .blue:
+            SemanticColors.View.conversationBackgroundBlue
+        case .purple:
+            SemanticColors.View.conversationBackgroundPurple
+        case .green:
+            SemanticColors.View.conversationBackgroundGreen
+        case .amber:
+            SemanticColors.View.conversationBackgroundAmber
+        case .red:
+            SemanticColors.View.conversationBackgroundRed
+        case .turquoise:
+            SemanticColors.View.conversationBackgroundTurquoise
+        }
+    }
 }

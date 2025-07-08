@@ -768,33 +768,3 @@ static NSString * const KeysForCachedValuesKey = @"ZMKeysForCachedValues";
 }
 
 @end
-
-
-
-
-@implementation ZMManagedObject (NonpersistedObjectIdentifer)
-
-- (NSString *)nonpersistedObjectIdentifer;
-{
-    return [NSString stringWithFormat:@"Z%tx", (unsigned long) self];
-}
-
-+ (instancetype)existingObjectWithNonpersistedObjectIdentifer:(NSString *)identifier inUserSession:(id<ContextProvider>)userSession;
-{
-    VerifyReturnNil(identifier != nil);
-    intptr_t value = 0;
-    if (sscanf([identifier UTF8String], "Z%tx", &value) != 1) {
-        return nil;
-    }
-    
-    NSManagedObjectContext *moc = userSession.viewContext;
-    for (ZMManagedObject *mo in moc.registeredObjects) {
-        intptr_t otherValue = (intptr_t) ((__bridge void *) mo);
-        if (otherValue == value) {
-            return mo;
-        }
-    }
-    return nil;
-}
-
-@end

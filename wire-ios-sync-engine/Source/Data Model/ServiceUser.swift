@@ -213,7 +213,7 @@ public extension ServiceUser {
 
     internal func createConversation(
         transportSession: TransportSessionType,
-        eventProcessor: ConversationEventProcessorProtocol,
+        eventProcessor: LegacyConversationEventProcessorProtocol,
         contextProvider: ContextProvider,
         completionHandler: @escaping (Result<ZMConversation, Error>) -> Void
     ) {
@@ -325,7 +325,7 @@ public extension ZMConversation {
     internal func add(
         serviceUser serviceUserData: ServiceUserData,
         transportSession: TransportSessionType,
-        eventProcessor: ConversationEventProcessorProtocol,
+        eventProcessor: LegacyConversationEventProcessorProtocol,
         contextProvider: ContextProvider,
         completionHandler: @escaping (Result<Void, Error>) -> Void
     ) {

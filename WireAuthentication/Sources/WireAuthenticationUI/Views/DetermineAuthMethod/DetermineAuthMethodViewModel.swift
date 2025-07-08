@@ -45,7 +45,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     }
 
     var isOnPremiseBackend: Bool {
-        backendInfo.environmentType != .production
+        backendInfo.environmentType != .default
     }
 
     // MARK: - Dependencies

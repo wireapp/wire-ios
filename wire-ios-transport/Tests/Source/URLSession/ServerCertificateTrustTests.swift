@@ -92,7 +92,7 @@ final class BackendTrustProviderTests: XCTestCase {
 
         guard let certificatesURL = mainBundle.url(forResource: "certificates", withExtension: "json")
         else { XCTFail("Could find certificates.json"); return }
-        guard let trustDataURL = backendBundle.url(forResource: "production", withExtension: "json")
+        guard let trustDataURL = backendBundle.url(forResource: "default", withExtension: "json")
         else { XCTFail("Could find trust_data.json"); return }
 
         do {
@@ -127,7 +127,8 @@ final class BackendTrustProviderTests: XCTestCase {
     func testThatItVerifiesWithNoPinnedKeys() {
         // given
         let trustExpectation = expectation(description: "It should verify server trust")
-        let trustProvider = ServerCertificateTrust(trustData: [], currentDateProvider: mockDateProvider)
+        // We use a real date provider as this tests downloads a real live certificate
+        let trustProvider = ServerCertificateTrust(trustData: [], currentDateProvider: .system)
         let trustVerificator = TestTrustVerificator(trustProvider: trustProvider) { trusted in
             if trusted {
                 trustExpectation.fulfill()

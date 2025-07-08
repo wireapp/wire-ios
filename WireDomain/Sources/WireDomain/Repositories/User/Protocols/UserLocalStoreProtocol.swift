@@ -69,7 +69,7 @@ public protocol UserLocalStoreProtocol {
         id: UUID,
         domain: String?,
         date: Date
-    ) async throws
+    ) async
 
     /// Adds a legal hold request to self.
     ///
@@ -177,4 +177,6 @@ public protocol UserLocalStoreProtocol {
     ) async -> UUID
 
     func fetchSelfUserAvailability() async -> Availability
+
+    func updateUser(with userID: WireDataModel.QualifiedID, availability: Availability) async
 }

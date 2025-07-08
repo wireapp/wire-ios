@@ -99,6 +99,10 @@ public protocol ZMConversationMessage: NSObjectProtocol {
     /// The location message data associated with the message. If the message is not a location message, it will be nil
     var locationMessageData: LocationMessageData? { get }
 
+    /// The multipart message data associated with the message. If the message is not a multipart message, it will be
+    /// nil
+    var multipartMessageData: MultipartMessageData? { get }
+
     var usersReaction: [String: [UserType]] { get }
     var reactionData: Set<ReactionData> { get }
     func reactionsSortedByCreationDate() -> [ReactionData]
@@ -151,9 +155,6 @@ public protocol ZMConversationMessage: NSObjectProtocol {
 
     /// The replies quoting this message.
     var replies: Set<ZMMessage> { get }
-
-    /// An in-memory identifier for tracking the message during its life cycle.
-    var objectIdentifier: String { get }
 
     /// The links attached to the message.
     var linkAttachments: [LinkAttachment]? { get set }
@@ -243,10 +244,6 @@ extension ZMMessage: ZMConversationMessage {
         confirmations
             .filter { $0.type == .read }
             .sortedAscendingPrependingNil(by: \.serverTimestamp)
-    }
-
-    public var objectIdentifier: String {
-        nonpersistedObjectIdentifer
     }
 
     public var causedSecurityLevelDegradation: Bool {
@@ -339,6 +336,10 @@ public extension ZMMessage {
     }
 
     @objc var locationMessageData: LocationMessageData? {
+        nil
+    }
+
+    @objc var multipartMessageData: MultipartMessageData? {
         nil
     }
 

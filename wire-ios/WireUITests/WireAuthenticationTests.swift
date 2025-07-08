@@ -18,23 +18,7 @@
 
 import XCTest
 
-final class WireAuthenticationTests: XCTestCase {
-
-    var app: XCUIApplication!
-
-    override func setUpWithError() throws {
-        app = XCUIApplication()
-        app.launchArguments = [
-            "-BackendEnvironmentTypeOverrideKey staging",
-            "--preferred-api-version=8"
-        ]
-        app.useWireAuthentication()
-
-        app.launch()
-
-        // In UI tests it is usually best to stop immediately when a failure occurs.
-        continueAfterFailure = false
-    }
+final class WireAuthenticationTests: WireUITestCase {
 
     override func tearDownWithError() throws {
         app = nil
@@ -43,42 +27,18 @@ final class WireAuthenticationTests: XCTestCase {
     @MainActor
     func test_Login_withWrongEmail_NextIsDisabled() throws {
 
-        let textField = emailTextField()
-        textField.tap()
-        textField.typeText("notAnEmail.com")
+        let welcomePage = try WelcomePage()
+            .typeEmailOrSSO("notAnEmail.com")
 
-        let nextButton = nextButton()
-        XCTAssertFalse(nextButton.isEnabled, "nextButton should be disabled if no email")
+        XCTAssertFalse(welcomePage.nextButton.isEnabled, "nextButton should be disabled if no email")
     }
 
-    @MainActor // note: comment @MainActor to use recorder
-    func test_Login_withEmail() throws {
-        throw XCTSkip("This should be fixed once SSO is merged")
+    @MainActor
+    func test_Login_withoutPassword_NextIsDisabled() throws {
 
-        let textField = emailTextField()
-        textField.tap()
-        textField.typeText(LoginCredentials.email)
+        let loginPage = try WelcomePage()
+            .enterEmailOrSSO(LoginCredentials.email)
 
-        let nextButton = nextButton()
-        nextButton.tap()
-
-        let errorAlert = app.alerts["Error"]
-        XCTAssertFalse(errorAlert.exists)
-    }
-
-    // MARK: - Helpers
-
-    private func nextButton() -> XCUIElement {
-        let elementsQuery = app.scrollViews.otherElements
-        return elementsQuery.buttons["Next"]
-    }
-
-    private func emailTextField() -> XCUIElement {
-        let elementsQuery = app.scrollViews.otherElements
-        let textField = elementsQuery.textFields["Email or SSO code"]
-        let exists = NSPredicate(format: "exists == 1")
-        expectation(for: exists, evaluatedWith: textField, handler: nil)
-        waitForExpectations(timeout: 5, handler: nil)
-        return textField
+        XCTAssertFalse(loginPage.nextButton.isEnabled, "nextButton should be disabled if no password")
     }
 }

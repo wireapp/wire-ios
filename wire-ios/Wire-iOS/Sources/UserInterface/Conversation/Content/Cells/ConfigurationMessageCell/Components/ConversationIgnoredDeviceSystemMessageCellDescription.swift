@@ -38,7 +38,8 @@ final class ConversationIgnoredDeviceSystemMessageCellDescription: ConversationM
     init(
         message: ZMConversationMessage,
         data: ZMSystemMessageData,
-        user: UserType
+        user: UserType,
+        onUserTap: @escaping (_ userID: Any) -> Void
     ) {
 
         let title = ConversationIgnoredDeviceSystemMessageCellDescription.makeAttributedString(
@@ -49,7 +50,7 @@ final class ConversationIgnoredDeviceSystemMessageCellDescription: ConversationM
         self.configuration = View.Configuration(
             attributedText: title,
             icon: WireStyleKit.imageOfShieldnotverified,
-            linkTarget: .user(user)
+            linkTarget: .user(user.objectId, onUserTap)
         )
 
         self.accessibilityLabel = configuration.attributedText?.string

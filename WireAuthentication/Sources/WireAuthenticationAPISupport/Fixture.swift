@@ -22,7 +22,7 @@ import WireAuthenticationAPI
 public enum Fixture {
 
     public static let backendEnvironment = WireAuthenticationBackendEnvironment(
-        environmentType: .production,
+        environmentType: .default,
         config: BackendConfig(
             title: "Mock backend",
             endpoints: Endpoints(
@@ -58,5 +58,7 @@ public enum Fixture {
         type: "type",
         expirationDate: Date()
     )
+
+    public static let uuid = UUID()
 
 }

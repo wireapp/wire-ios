@@ -21,6 +21,7 @@ import UIKit
 import WireAnalytics
 import WireCommonComponents
 import WireDesign
+import WireReusableUIComponents
 import WireSyncEngine
 
 // MARK: - AppRootRouter
@@ -259,24 +260,15 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         error: any Error,
         onRetry: @escaping () -> Void
     ) {
-
-        let syncErrorMessage = if DeveloperFlag.showDetailedErrors.isOn {
-            // show detailed sync error message
-            (error as NSError).description
-        } else {
-            // show generic sync error message
-            L10n.Localizable.Sync.Error.message
-        }
-
         let alert = UIAlertController(
-            title: L10n.Localizable.Sync.Error.title,
-            message: syncErrorMessage,
+            title: L10n.Localizable.General.failure,
+            message: (error as NSError).description,
             preferredStyle: .alert
         )
 
         alert.addAction(
             UIAlertAction(
-                title: L10n.Localizable.Sync.Error.retry,
+                title: L10n.Localizable.Content.System.FailedtosendMessage.retry, // reusing retry string
                 style: .default
             ) { [weak self] _ in
                 onRetry()

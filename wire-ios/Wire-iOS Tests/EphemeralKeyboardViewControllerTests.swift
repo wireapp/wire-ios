@@ -43,15 +43,17 @@ final class EphemeralKeyboardViewControllerTests: CoreDataSnapshotTestCase {
         super.tearDown()
     }
 
-    func testThatItRendersCorrectInitially() {
-        snapshotHelper.verify(matching: sut.prepareForSnapshots())
-    }
+    // TODO: [WPB-17509] Uncomment this test which renders differently locally and on CI
+//    func testThatItRendersCorrectInitially() {
+//        snapshotHelper.verify(matching: sut.prepareForSnapshots())
+//    }
 
-    func testThatItRendersCorrectIntially_DarkMode() {
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: sut.prepareForSnapshots())
-    }
+    // TODO: [WPB-17509] Uncomment this test which renders differently locally and on CI
+//    func testThatItRendersCorrectIntially_DarkMode() {
+//        snapshotHelper
+//            .withUserInterfaceStyle(.dark)
+//            .verify(matching: sut.prepareForSnapshots())
+//    }
 }
 
 private extension UIViewController {

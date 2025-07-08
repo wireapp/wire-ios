@@ -41,6 +41,8 @@ package struct DetermineAuthMethodView: View {
 
     @StateObject var viewModel: DetermineAuthMethodViewModel
 
+    private typealias Strings = L10n.Localizable.Authentication
+
     package init(factory: @autoclosure @escaping () -> any DetermineAuthMethodFactory) {
         self._viewModel = StateObject(wrappedValue: factory().viewModel)
     }
@@ -68,7 +70,7 @@ package struct DetermineAuthMethodView: View {
             title: { Text($0.title) },
             message: { Text($0.message) },
             actions: { _ in
-                Button(L10n.Authentication.Error.confirm, action: viewModel.onAlertDismiss)
+                Button(Strings.Error.confirm, action: viewModel.onAlertDismiss)
             }
         )
         .navigationDestination(for: DetermineAuthMethodDestination.self) {
@@ -86,27 +88,20 @@ package struct DetermineAuthMethodView: View {
     // MARK: - Views
 
     @ViewBuilder private var header: some View {
-        HStack {
-            Spacer()
-                .frame(maxWidth: .infinity)
+        Group {
             if viewModel.isOnPremiseBackend {
                 OnPremHeaderView(backendConfig: viewModel.backendInfo.backendConfig)
-                    .foregroundColor(ColorTheme.Backgrounds.onBackground.color)
-                    .frame(width: 164, height: 95)
+                    .frame(maxWidth: .infinity, alignment: .center)
             } else {
-                Logo()
-                    .foregroundColor(ColorTheme.Backgrounds.onBackground.color)
-                    .frame(width: 164, height: 95)
+                Logo().frame(width: 164, height: 95)
             }
-
-            Spacer()
-                .frame(maxWidth: .infinity)
         }
+        .foregroundColor(ColorTheme.Backgrounds.onBackground.color)
     }
 
     @ViewBuilder private var message: some View {
-        Text(L10n.Authentication.Identity.Input.body)
-            .multilineTextAlignment(.leading)
+        Text(Strings.Identity.Input.body)
+            .multilineTextAlignment(.center)
             .wireTextStyle(.body1)
             .lineLimit(nil)
             .fixedSize(horizontal: false, vertical: true)
@@ -117,8 +112,8 @@ package struct DetermineAuthMethodView: View {
         VStack(alignment: .leading, spacing: 8) {
             LabeledTextField(
                 isMandatory: false,
-                placeholder: L10n.Authentication.Identity.Input.Field.placeholder,
-                title: L10n.Authentication.Identity.Input.Field.title,
+                placeholder: Strings.Identity.Input.Field.placeholder,
+                title: Strings.Identity.Input.Field.title,
                 string: $viewModel.emailOrSSOCode
             )
             .autocapitalization(.none)
@@ -141,7 +136,7 @@ package struct DetermineAuthMethodView: View {
                     ProgressView()
                 }
 
-                Text(L10n.Authentication.Identity.Input.submit)
+                Text(Strings.Identity.Input.submit)
                     .lineLimit(nil)
             }
         })

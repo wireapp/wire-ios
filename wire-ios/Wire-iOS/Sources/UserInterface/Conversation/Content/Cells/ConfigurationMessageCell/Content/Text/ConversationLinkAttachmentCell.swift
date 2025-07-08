@@ -23,9 +23,14 @@ import WireDesign
 
 final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, HighlightableView, ContextMenuDelegate {
 
-    struct Configuration {
-        let attachment: LinkAttachment
-        let thumbnailResource: WireImageResource?
+    struct Configuration: Equatable {
+        var attachment: LinkAttachment
+        var thumbnailResource: WireImageResource?
+
+        static func == (lhs: Configuration, rhs: Configuration) -> Bool {
+            lhs.attachment == rhs.attachment &&
+                lhs.thumbnailResource?.cacheIdentifier == rhs.thumbnailResource?.cacheIdentifier
+        }
     }
 
     lazy var attachmentView: MediaPreviewView = {
@@ -147,9 +152,17 @@ extension ConversationLinkAttachmentCell: LinkViewDelegate {
 final class ConversationLinkAttachmentCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationLinkAttachmentCell
 
-    let configuration: View.Configuration
+    var configuration: View.Configuration
 
-    weak var message: ZMConversationMessage?
+    weak var message: ZMConversationMessage? {
+        didSet {
+            if let message, let attachment = message.linkAttachments?.first {
+                configuration.thumbnailResource = message.linkAttachmentImage
+                configuration.attachment = attachment
+            }
+        }
+    }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 

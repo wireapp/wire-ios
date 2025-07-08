@@ -102,8 +102,8 @@
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
 
 "add_participants.alert.title" = "Susirašinėjimas pilnas";
-"add_participants.alert.message.new_conversation" = "Susirašinėjime gali būti iki %d pašnekovų.";
-"add_participants.alert.message.existing_conversation" = "Susirašinėjime gali būti iki %1$d pašnekovų. Šiuo metu dar gali prisijungti %2$d.";
+"add_participants.alert.message.new_conversation" = "Up to %@ people can join a conversation.";
+"add_participants.alert.message.existing_conversation" = "Up to %@ people can join a conversation. Currently there is only room for %@ more.";
 
 // Channel Creation UI - Navigation
 "conversation.create.channel.title" = "New channel";
@@ -368,6 +368,22 @@
 "conversation.banner.are_present" = "%@ are present";
 "conversation.banner.are_active" = "%@ are active";
 "conversation.banner.separator" = " and ";
+
+"conversation.banner.remotes_externals_guests_services_present" = "Federated users, externals, guests and services are present";
+"conversation.banner.remotes_externals_guests_present" = "Federated users, externals and guests are present";
+"conversation.banner.remotes_externals_services_present" = "Federated users, externals and services are present";
+"conversation.banner.remotes_guests_services_present" = "Federated users, guests and services are present";
+"conversation.banner.externals_guests_services_present" = "Externals, guests and services are present";
+"conversation.banner.remotes_externals_present" = "Federated users and externals are present";
+"conversation.banner.remotes_guests_present" = "Federated users and guests are present";
+"conversation.banner.remotes_services_present" = "Federated users and services are present";
+"conversation.banner.externals_guests_present" = "Externals and guests are present";
+"conversation.banner.externals_services_present" = "Externals and services are present";
+"conversation.banner.guests_services_present" = "Guests and services are present";
+"conversation.banner.remotes_present" = "Federated users are present";
+"conversation.banner.externals_present" = "Externals are present";
+"conversation.banner.guests_present" = "Guests are present";
+"conversation.banner.services_active" = "Services are active";
 
 "conversation.action.search" = "Ieškoti";
 "conversation.action.conversationDetails" = "Conversation Details";
@@ -654,6 +670,7 @@
 "content.collapsed.video.title" = "You sent a video";
 "content.collapsed.audio.title" = "You sent an audio message";
 "content.collapsed.location.title" = "You sent your location";
+"content.collapsed.link.title" = "You sent a link";
 
 "content.message.like" = "Patinka";
 "content.message.unlike" = "Nebepatinka";
@@ -859,7 +876,7 @@
 "participants.section.services" = "Paslaugos (%d)";
 "participants.section.settings" = "Parinktys";
 "participants.footer.add_title" = "Pridėti dalyvių";
-"participants.section.name.footer" = "Up to %1$d participants can join a conversation.";
+"participants.section.name.footer" = "Up to %@ participants can join a conversation.";
 "participants.section.admins.footer" = "Administratorių nėra.";
 "participants.section.members.footer" = "Narių nėra.";
 
@@ -1122,8 +1139,8 @@
 
 // Settings - top level
 "self.settings.create_team.title" = "Sukurti komandą";
+"self.settings.add_account_or_team.title" = "Add Account or Team";
 "self.settings.manage_team.title" = "Valdyti komandą";
-"self.settings.add_team_or_account.title" = "Pridėti paskyrą";
 "self.settings.add_account.title" = "Pridėti paskyrą";
 
 "self.settings.add_account.error.title" = "Aktyvios trys paskyros";
@@ -1158,6 +1175,7 @@
 "self.settings.account_details.remove_device.password.error" = "Neteisingas slaptažodis";
 
 "self.settings.account_appearance_group.title" = "Išvaizda";
+"self.settings.account_appearance_group.footer" = "When this is on, your conversations show a background based on your profile color and light or dark theme.";
 
 "self.settings.privacy_section_group.title" = "Privatumas";
 "self.settings.enable_read_receipts.title" = "Siųsti perskaitymo patvirtinimus";
@@ -1176,6 +1194,7 @@
 "self.settings.account_picture_group.accent_color.amber" = "Amber";
 "self.settings.account_picture_group.accent_color.turquoise" = "Turquoise";
 "self.settings.account_picture_group.accent_color.purple" = "Purple";
+"self.settings.account_picture_group.background.title" = "Conversation background color";
 
 "self.settings.account_personal_information_group.title" = "Asmeninė informacija";
 
@@ -1280,13 +1299,8 @@
 // Open in
 "self.settings.external_apps.header" = "Atverti naudojant";
 
-"self.settings.link_options.twitter.title" = "„Tweets“";
 "self.settings.link_options.maps.title" = "Vieta";
 "self.settings.link_options.browser.title" = "Naršyklė";
-
-"open_link.twitter.option.default" = "Naršyklė / „Twitter“";
-"open_link.twitter.option.tweetbot" = "„Tweetbot“";
-"open_link.twitter.option.twitterrific" = "„Twitterrific“";
 
 "open_link.maps.option.apple" = "Žemėlapiai";
 "open_link.maps.option.google" = "„Google Maps“";
@@ -1308,7 +1322,6 @@
 "self.settings.developer_options.title" = "Kūrėjo nustatymai";
 "self.settings.developer_options.loggin.title" = "Parinktys";
 "self.settings.developer_options.database_statistics.title" = "Database Statistics";
-"self.settings.apns_logging.title" = "„APNS“ registravimas";
 
 // Privacy (visibility) options
 "self.settings.options_menu.title" = "Parinktys";
@@ -1333,7 +1346,7 @@
 "self.settings.privacy_security.disable_link_previews.footer" = "Kitų žmonių siunčiamų nuorodų peržiūros vis dar gali būti rodomos.";
 
 "self.settings.privacy_security.collapse_own_messages.title" = "Collapse my messages";
-"self.settings.privacy_security.collapse_own_messages.footer" = "When this is on, all your messages collapse to a single line.";
+"self.settings.privacy_security.collapse_own_messages.footer" = "When this is on, all your messages collapse after three lines.";
 
 "self.settings.privacy_analytics_menu.devices.title" = "Įrenginiai";
 
@@ -1597,6 +1610,7 @@
 "enroll_e2ei_certificate.subtitle" = "The certificate is active and your device is verified.";
 "enroll_e2ei_certificate.certificate_details_button" = "Certificate Details";
 "enroll_e2ei_certificate.ok_button" = "GERAI";
+"enroll_e2ei_certificate.idp_url_title" = "Identity Provider URL";
 
 // Update e2ei certificate
 "update_e2ei_certificate.title" = "Certificate updated";

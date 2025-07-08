@@ -17,10 +17,10 @@
 //
 
 import Foundation
-import WireAPI
 import WireDataModel
 import WireDomainPackage
 import WireLogging
+import WireNetwork
 import WireSystem
 
 public struct IndividualToTeamMigrationUseCase: IndividualToTeamMigrationUseCaseProtocol {

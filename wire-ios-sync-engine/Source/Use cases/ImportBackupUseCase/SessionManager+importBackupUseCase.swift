@@ -16,20 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDomainPackage
+public import Foundation
+
+import WireFoundation
 
 public extension SessionManager {
 
-    var importBackupUseCase: ImportBackupUseCaseProtocol? {
+    func importLegacyBackupUseCase(url: URL) -> ImportBackupUseCaseProtocol? {
 
         // return `nil` immediately if there is no active user session
         activeUserSession.map { _ in
 
-            ImportBackupUseCase(
+            ImportLegacyBackupUseCase(
+                url: url,
                 userSession: { [weak self] in self?.activeUserSession },
                 dispatchGroup: dispatchGroup,
-                streamDecryptor: ImportBackupStreamDecryptor(),
-                fileArchiver: ImportBackupFileArchiver(),
+                streamDecryptor: ImportLegacyBackupStreamDecryptor(),
+                fileUnarchiver: ImportBackupFileArchiver(),
                 entityStorage: ImportBackupEntityStorage(),
                 appStateUpdater: ImportBackupAppStateUpdater(sessionManager: self),
                 sharedContainerURL: sharedContainerURL,

@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import WireAPI
 import WireDataModel
 import WireLogging
+import WireNetwork
 
 public struct PullMLSStatusSync: PullMLSStatusSyncProtocol {
 
@@ -44,6 +44,8 @@ public struct PullMLSStatusSync: PullMLSStatusSyncProtocol {
             case .unsupportedEndpointForAPIVersion, .mlsNotEnabled:
                 WireLogger.mls.info("backend has no MLS public keys")
                 store.storeIsMLSEnabledStatus(newValue: false)
+            default:
+                throw error
             }
         }
     }

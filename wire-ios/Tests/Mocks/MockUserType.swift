@@ -50,6 +50,9 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
 
     var teamIdentifier: UUID?
     var remoteIdentifier: UUID?
+    var objectId: Any {
+        remoteIdentifier ?? UUID()
+    }
 
     var canLeaveConversation = false
     var canCreateConversation = true

@@ -17,16 +17,25 @@
 //
 
 import SwiftUI
-import WireAnalytics
-import WireAPI
+import WireAccountImageUI
 import WireCommonComponents
 import WireDesign
 import WireDomainPackage
+import WireFoundation
 import WireIndividualToTeamMigrationUI
 import WireMainNavigationUI
+import WireMultiBackendUI
+import WireNetwork
 import WireReusableUIComponents
 import WireSettingsUI
 import WireSyncEngine
+import WireUtilities
+
+// sourcery: AutoMockable
+protocol SelfProfileAccountManager {
+    func sortedAccounts() -> [Account]
+    var selectedAccount: Account? { get }
+}
 
 /// The first page of the user settings.
 final class SelfProfileViewController: UIViewController {
@@ -36,7 +45,9 @@ final class SelfProfileViewController: UIViewController {
 
     // MARK: - Views
 
-    private let settingsController: SettingsTableViewController
+    private var bottomController: UIViewController!
+    private var settingsController: SettingsTableViewController?
+    private var accountSwitcherViewController: AccountSwitcherHostingController?
     private weak var accountSelectorView: AccountSelectorView?
     private let profileLayoutGuide = UILayoutGuide()
     private var profileLayoutGuideViewTopConstraint = NSLayoutConstraint()
@@ -48,7 +59,8 @@ final class SelfProfileViewController: UIViewController {
     private let accountSelector: AccountSelector?
     let mainCoordinator: AnyMainCoordinator
     private let selfProfileViewsMonitor: SelfProfileViewsMonitor
-    private let analyticsEventTracker: (any AnalyticsEventTracker)?
+    private let analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?
+    private let accountManager: (any SelfProfileAccountManager)?
 
     // MARK: - Configuration
 
@@ -64,11 +76,13 @@ final class SelfProfileViewController: UIViewController {
         userSession: UserSession,
         accountSelector: AccountSelector?,
         mainCoordinator: AnyMainCoordinator,
-        analyticsEventTracker: (any AnalyticsEventTracker)?
+        analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?,
+        accountManager: (any SelfProfileAccountManager)?
     ) {
         self.accountSelector = accountSelector
         self.mainCoordinator = mainCoordinator
         self.analyticsEventTracker = analyticsEventTracker
+        self.accountManager = accountManager
 
         // Create the settings hierarchy
         let settingsPropertyFactory = SettingsPropertyFactory(
@@ -85,8 +99,6 @@ final class SelfProfileViewController: UIViewController {
         )
 
         let rootGroup = settingsCellDescriptorFactory.rootGroup(userSession: userSession)
-
-        self.settingsController = rootGroup.generateViewController()! as! SettingsTableViewController
 
         var options: ProfileHeaderViewController.Options
         options = selfUser.isTeamMember ? [.allowEditingAvailability] : [.hideAvailability]
@@ -114,7 +126,7 @@ final class SelfProfileViewController: UIViewController {
             }
         } else if
             let backendInfoApiVersion = BackendInfo.apiVersion,
-            let apiVersion = WireAPI.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
+            let apiVersion = WireNetwork.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
             apiVersion >= .v7 {
             self.teamMigrationBanner = SelfProfileViewCallToActionBannerHostingController(
                 actionCallback: { [weak self] action in
@@ -122,6 +134,50 @@ final class SelfProfileViewController: UIViewController {
                 }
             )
         }
+
+        if DeveloperFlag.multibackend.isOn {
+            let accountSwitcherViewController = makeAccountSwitcherViewController(
+                settingsCellDescriptorFactory: settingsCellDescriptorFactory
+            )
+            self.bottomController = accountSwitcherViewController
+            self.accountSwitcherViewController = accountSwitcherViewController
+        } else {
+            let settingsController = rootGroup.generateViewController()! as! SettingsTableViewController
+            self.bottomController = settingsController
+            self.settingsController = settingsController
+        }
+    }
+
+    private func makeAccountSwitcherViewController(settingsCellDescriptorFactory: SettingsCellDescriptorFactory)
+        -> AccountSwitcherHostingController {
+        var options = [Option.addAccountOption(action: {
+            settingsCellDescriptorFactory
+                .addAccountOrTeamCell().select(.none, sender: UIView())
+        })]
+        if userSession.selfUser.canManageTeam == true {
+            options.append(Option.manageTeamOption(action: { [weak self] in
+                let controllerToShow = BrowserViewController(url: URL.manageTeam(source: .settings))
+                controllerToShow.modalPresentationCapturesStatusBarAppearance = true
+                self?.present(controllerToShow, animated: true, completion: .none)
+            }))
+        }
+
+        let otherAccounts = (accountManager?.sortedAccounts() ?? [])
+            .filter {
+                !$0.isEqual(accountManager?.selectedAccount)
+            }
+            .map { account in
+                account.toUIModel(action: { [weak self] in
+                    self?.handleAccountSelected(account)
+                })
+            }
+
+        let appSwitcherController = AccountSwitcherHostingController(
+            otherAccounts: otherAccounts,
+            options: options
+        )
+        appSwitcherController.sizingOptions = .intrinsicContentSize
+        return appSwitcherController
     }
 
     @available(*, unavailable)
@@ -142,11 +198,11 @@ final class SelfProfileViewController: UIViewController {
         view.addSubview(profileHeaderViewController.view)
         profileHeaderViewController.didMove(toParent: self)
 
-        addChild(settingsController)
-        view.addSubview(settingsController.view)
-        settingsController.didMove(toParent: self)
+        addChild(bottomController)
+        view.addSubview(bottomController.view)
+        bottomController.didMove(toParent: self)
 
-        settingsController.tableView.isScrollEnabled = false
+        settingsController?.tableView.isScrollEnabled = false
 
         if let teamMigrationBanner {
             addChild(teamMigrationBanner)
@@ -179,7 +235,10 @@ final class SelfProfileViewController: UIViewController {
     }
 
     private func configureAccountTitle() {
-        if let accounts = SessionManager.shared?.accountManager.accounts, accounts.count > 1 {
+        guard !DeveloperFlag.multibackend.isOn else {
+            return
+        }
+        if let accounts = accountManager?.sortedAccounts(), accounts.count > 1 {
             let accountSelectorView = AccountSelectorView()
             accountSelectorView.delegate = self
             accountSelectorView.accounts = accounts
@@ -192,7 +251,7 @@ final class SelfProfileViewController: UIViewController {
 
     private func createConstraints() {
         profileHeaderViewController.view.translatesAutoresizingMaskIntoConstraints = false
-        settingsController.view.translatesAutoresizingMaskIntoConstraints = false
+        bottomController.view.translatesAutoresizingMaskIntoConstraints = false
 
         profileLayoutGuideViewTopConstraint = profileLayoutGuide.topAnchor
             .constraint(equalTo: view.safeAreaLayoutGuide.topAnchor)
@@ -219,7 +278,8 @@ final class SelfProfileViewController: UIViewController {
         NSLayoutConstraint.activate([
 
             // profileLayoutGuide
-            profileLayoutGuide.bottomAnchor.constraint(equalTo: settingsController.view.topAnchor),
+            profileLayoutGuide.bottomAnchor
+                .constraint(equalTo: bottomController.view.topAnchor),
 
             // profileView
             profileHeaderViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -230,9 +290,9 @@ final class SelfProfileViewController: UIViewController {
             profileHeaderViewController.view.centerYAnchor.constraint(equalTo: profileLayoutGuide.centerYAnchor),
 
             // settingsControllerView
-            settingsController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            settingsController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            settingsController.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            bottomController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            bottomController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            bottomController.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
 
@@ -247,7 +307,7 @@ final class SelfProfileViewController: UIViewController {
 
     private func onTeamCreationBannerInteraction(
         _ action: SelfProfileViewCallToActionBanner.Action,
-        apiVersion: WireAPI.APIVersion
+        apiVersion: WireNetwork.APIVersion
     ) {
         switch action {
         case .createWireTeam:
@@ -262,9 +322,21 @@ final class SelfProfileViewController: UIViewController {
         }
     }
 
+    func triggerCreateTeamFlow() {
+        if let backendInfoApiVersion = BackendInfo.apiVersion,
+           let apiVersion = APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
+           apiVersion >= .v7 {
+            onTeamCreationBannerInteraction(.createWireTeam, apiVersion: apiVersion)
+        }
+    }
+
     private func userDidTapCreateTeam(useCase: any IndividualToTeamMigrationUseCaseProtocol, userName: String) {
 
         analyticsEventTracker?.trackEvent(.UI.personalToTeamMigrationCTA)
+
+        let analyticsEventTracker = analyticsEventTracker.map {
+            AccountMigrationAnalyticsTracker(analyticsEventTracker: $0)
+        }
 
         let viewController = IndividualToTeamMigrationViewController(
             privacyPolicyURL: WireURLs.shared.privacyPolicy.absoluteString,
@@ -307,7 +379,14 @@ final class SelfProfileViewController: UIViewController {
         )
         viewController.modalPresentationStyle = .formSheet
         viewController.presentationController?.delegate = viewController
-        present(viewController, animated: true)
+
+        if presentedViewController != nil {
+            dismiss(animated: true) {
+                self.present(viewController, animated: true)
+            }
+        } else {
+            present(viewController, animated: true)
+        }
     }
 
     private func dismissIndividualToTeamMigrationBanner() {
@@ -369,8 +448,8 @@ extension SelfProfileViewController: UIAdaptivePresentationControllerDelegate {
 
 extension SelfProfileViewController: AccountSelectorViewDelegate {
 
-    func accountSelectorView(_ view: AccountSelectorView, didSelect account: Account) {
-        guard SessionManager.shared?.accountManager.selectedAccount != account else { return }
+    private func handleAccountSelected(_ account: Account) {
+        guard accountManager?.selectedAccount != account else { return }
 
         sendDismissAnalyticsEventIfNeeded()
         presentingViewController?.dismiss(animated: true) {
@@ -380,6 +459,10 @@ extension SelfProfileViewController: AccountSelectorViewDelegate {
             self.accountSelector?.switchTo(account: account)
         }
     }
+
+    func accountSelectorView(_ view: AccountSelectorView, didSelect account: Account) {
+        handleAccountSelected(account)
+    }
 }
 
 // MARK: - Notifications
@@ -387,4 +470,28 @@ extension SelfProfileViewController: AccountSelectorViewDelegate {
 public extension Notification.Name {
     // Used to notify the app that the user has viewed their own profile
     static let userDidViewSelfProfile = Notification.Name("userDidViewSelfProfile")
+}
+
+extension Account {
+    func toUIModel(action: @escaping () -> Void) -> AccountUIModel {
+        let avatarSource: WireAccountImageUI.AccountImageSource
+        if let imageData,
+           let avatarImage = UIImage(data: imageData) {
+            avatarSource = .image(avatarImage)
+        } else {
+            let personName = PersonName.person(
+                withName: userName,
+                schemeTagger: nil
+            )
+            avatarSource = .text(personName.initials)
+        }
+        return AccountUIModel(
+            avatarSource: avatarSource,
+            name: userName,
+            handle: handle,
+            teamName: teamName,
+            backendName: nil, // TODO: [WPB-18008] "Back END INFO" https://wearezeta.atlassian.net/browse/WPB-18008
+            action: action
+        )
+    }
 }

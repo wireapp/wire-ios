@@ -158,7 +158,7 @@ extension ZMConversationMessage {
     }
 }
 
-// MARK: - popover apperance update
+// MARK: - popover appearance update
 
 extension ConversationContentViewController {
 
@@ -183,8 +183,6 @@ extension ConversationContentViewController {
         // is hidden or shown. This is a quick fix for now. To improve later
         coordinator.animate(alongsideTransition: nil) { _ in
             self.dataSource.resetSectionControllers()
-            self.dataSource.reloadSections(newSections: self.dataSource.calculateSections())
-            self.tableView.reloadData()
         }
     }
 

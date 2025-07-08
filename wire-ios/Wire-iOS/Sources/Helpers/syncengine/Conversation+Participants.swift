@@ -21,7 +21,7 @@ import WireSyncEngine
 
 extension GroupDetailsConversation where Self: ZMConversation {
     var freeParticipantSlots: Int {
-        ZMConversation.maxParticipants - localParticipants.count
+        Self.getMaxParticipants(isChannel: isChannel) - localParticipants.count
     }
 }
 
@@ -33,10 +33,19 @@ extension ZMConversation {
 
     static let legacyGroupVideoParticipantLimit: Int = 4
 
-    static let maxParticipants: Int = 500
+    static let maxParticipantsForChannels: Int = 2000
+    static let maxParticipantsForGroups: Int = 500
 
-    static var maxParticipantsExcludingSelf: Int {
-        maxParticipants - 1
+    static func maxParticipantsExcludingSelf(isChannel: Bool) -> Int {
+        getMaxParticipants(isChannel: isChannel) - 1
+    }
+
+    static func getMaxParticipants(isChannel: Bool) -> Int {
+        if isChannel {
+            ZMConversation.maxParticipantsForChannels
+        } else {
+            ZMConversation.maxParticipantsForGroups
+        }
     }
 
     func addOrShowError(participants: [UserType]) {

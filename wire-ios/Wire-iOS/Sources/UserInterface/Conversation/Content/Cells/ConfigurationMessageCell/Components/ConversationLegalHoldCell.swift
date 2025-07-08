@@ -26,12 +26,12 @@ final class ConversationLegalHoldSystemMessageCell: ConversationIconBasedCell<Co
 
     static var legalHoldURL: URL { WireURLs.shared.legalHoldInfo }
 
-    var conversation: ZMConversation?
+    var conversation: ConversationLike?
 
     struct Configuration {
         let attributedText: NSAttributedString?
         var icon: UIImage?
-        var conversation: ZMConversation?
+        var conversation: ConversationLike?
     }
 
     override init(frame: CGRect) {
@@ -57,9 +57,16 @@ final class ConversationLegalHoldSystemMessageCell: ConversationIconBasedCell<Co
 
 final class ConversationLegalHoldCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationLegalHoldSystemMessageCell
-    let configuration: View.Configuration
+    var configuration: View.Configuration
 
-    var message: ZMConversationMessage?
+    var message: ZMConversationMessage? {
+        didSet {
+            if let message {
+                configuration.conversation = message.conversationLike
+            }
+        }
+    }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 

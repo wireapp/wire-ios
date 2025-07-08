@@ -39,7 +39,7 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
 
     let decoder: JSONDecoder = .defaultDecoder
 
-    private let eventProcessor: ConversationEventProcessorProtocol
+    private let eventProcessor: LegacyConversationEventProcessorProtocol
 
     override convenience init(context: NSManagedObjectContext) {
         self.init(
@@ -50,7 +50,7 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
 
     init(
         context: NSManagedObjectContext,
-        eventProcessor: ConversationEventProcessorProtocol
+        eventProcessor: LegacyConversationEventProcessorProtocol
     ) {
         self.eventProcessor = eventProcessor
         super.init(context: context)
@@ -62,7 +62,7 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
             v0Request(for: action)
         case .v1:
             v1Request(for: action)
-        case .v2, .v3, .v4, .v5, .v6, .v7, .v8:
+        case .v2, .v3, .v4, .v5, .v6, .v7, .v8, .v9:
             v2Request(for: action, apiVersion: apiVersion)
         }
     }

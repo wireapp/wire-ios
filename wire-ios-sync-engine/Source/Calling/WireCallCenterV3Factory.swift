@@ -47,7 +47,6 @@ public enum WireCallCenterV3Factory {
         flowManager: FlowManagerType,
         transport: WireCallCenterTransport
     ) -> WireCallCenterV3 {
-
         if let wireCallCenter = uiMOC.zm_callCenter {
             return wireCallCenter
         } else {

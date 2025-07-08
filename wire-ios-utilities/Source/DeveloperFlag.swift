@@ -22,6 +22,7 @@ public enum DeveloperFlag: String, CaseIterable {
 
     public static var storage = UserDefaults.standard
 
+    case createLegacyBackups
     case showCreateMLSGroupToggle
     case proteusViaCoreCrypto
     case forceDatabaseLoadingFailure
@@ -31,12 +32,16 @@ public enum DeveloperFlag: String, CaseIterable {
     case decryptAndStoreEventsSleep
     case forceCRLExpiryAfterOneMinute
     case useWireAuthentication
-    case wireCellsAttachmentsPreviews
-    case asyncStreamNotifications
-    case showDetailedErrors
+    case wireCells
+    case consumableNotifications
+    case multibackend
+    case newRegistration
 
     public var description: String {
         switch self {
+        case .createLegacyBackups:
+            "Don't use the cross-platform library when creating backups."
+
         case .showCreateMLSGroupToggle:
             "Turn on to show the MLS toggle when creating a new group."
 
@@ -64,14 +69,17 @@ public enum DeveloperFlag: String, CaseIterable {
         case .useWireAuthentication:
             "Use the new WireAuthentication feature module"
 
-        case .wireCellsAttachmentsPreviews:
-            "Use the new WireCells previews for conversations attachments"
+        case .wireCells:
+            "Use the wire cells feature"
 
-        case .asyncStreamNotifications:
+        case .consumableNotifications:
             "Turn on to enable new sync with consumable notifications"
 
-        case .showDetailedErrors:
-            "Show detailed errors"
+        case .multibackend:
+            "Turn on to be able to log in with accounts from multiple backends"
+
+        case .newRegistration:
+            "Turn on to use the new registration flow"
         }
     }
 
@@ -98,8 +106,10 @@ public enum DeveloperFlag: String, CaseIterable {
         }
     }
 
-    var bundleKey: String? {
+    private var bundleKey: String? {
         switch self {
+        case .createLegacyBackups:
+            "CreateLegacyBackupsEnabled"
         case .proteusViaCoreCrypto:
             "ProteusByCoreCryptoEnabled"
         case .forceDatabaseLoadingFailure:
@@ -108,6 +118,8 @@ public enum DeveloperFlag: String, CaseIterable {
             "IgnoreIncomingEventsEnabled"
         case .useWireAuthentication:
             "WireAuthenticationEnabled"
+        case .newRegistration:
+            "NewRegistrationEnabled"
         default:
             nil
         }

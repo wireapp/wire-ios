@@ -21,7 +21,6 @@
 @import WireSystem;
 
 static NSString * const WireTeamIdentifier = @"EDF3JCE8BC";
-static NSString * const ZetaProjectEnterpriseIdentifier = @"W5KEQBF9B5";
 
 @interface ZMMobileProvisionParser ()
 
@@ -29,7 +28,6 @@ static NSString * const ZetaProjectEnterpriseIdentifier = @"W5KEQBF9B5";
 @property (nonatomic) ZMAPSEnvironment APSEnvironment;
 
 @end
-
 
 
 @implementation ZMMobileProvisionParser
@@ -87,8 +85,6 @@ static NSString * const ZetaProjectEnterpriseIdentifier = @"W5KEQBF9B5";
         NSString *teamIdentifier = identifiers.firstObject;
         if ([WireTeamIdentifier isEqual:teamIdentifier]) {
             self.team = ZMProvisionTeamAppStore;
-        } else if ([ZetaProjectEnterpriseIdentifier isEqual:teamIdentifier]) {
-            self.team = ZMProvisionTeamEnterprise;
         } else {
             self.team = ZMProvisionTeamUnknown;
         }
@@ -113,7 +109,7 @@ static NSString * const ZetaProjectEnterpriseIdentifier = @"W5KEQBF9B5";
 {
     return [NSString stringWithFormat:@"<%@: %p> Team \"%@\", %@",
             self.class, self,
-            (self.team == ZMProvisionTeamAppStore) ? @"App Store" : ((self.team == ZMProvisionTeamEnterprise) ? @"Enterprise" : @"<unknown APNS>"),
+            (self.team == ZMProvisionTeamAppStore) ? @"App Store" : @"<unknown APNS>",
             (self.APSEnvironment == ZMAPSEnvironmentProduction) ? @"Production APNS" : ((self.APSEnvironment == ZMAPSEnvironmentSandbox) ? @"Sandbox APNS" : @"<unknown APNS>")];
 }
 

@@ -22,10 +22,13 @@ import WireDesign
 
 final class ConversationFileMessageCell: UIView, ConversationMessageCell {
 
-    struct Configuration {
-        let message: ZMConversationMessage
-        var isObfuscated: Bool {
-            message.isObfuscated
+    struct Configuration: Equatable {
+        var message: ZMConversationMessage
+        var isObfuscated: Bool
+
+        static func == (lhs: Configuration, rhs: Configuration) -> Bool {
+            lhs.message == rhs.message &&
+                lhs.isObfuscated == rhs.isObfuscated
         }
     }
 
@@ -126,12 +129,19 @@ extension ConversationFileMessageCell: TransferViewDelegate {
 final class ConversationFileMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationFileMessageCell
 
-    let configuration: View.Configuration
+    var configuration: View.Configuration
 
     let supportsActions: Bool = true
     let containsHighlightableContent: Bool = true
 
-    weak var message: ZMConversationMessage?
+    weak var message: ZMConversationMessage? {
+        didSet {
+            if let message {
+                configuration.message = message
+            }
+        }
+    }
+
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
@@ -143,7 +153,7 @@ final class ConversationFileMessageCellDescription: ConversationMessageCellDescr
 
     init(message: ZMConversationMessage) {
         self.configuration = View
-            .Configuration(message: message)
+            .Configuration(message: message, isObfuscated: message.isObfuscated)
     }
 
 }

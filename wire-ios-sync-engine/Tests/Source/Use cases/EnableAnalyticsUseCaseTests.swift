@@ -18,6 +18,8 @@
 
 import WireAnalytics
 import WireAnalyticsSupport
+import WireFoundation
+import WireFoundationSupport
 import XCTest
 
 @testable import WireSyncEngine
@@ -27,14 +29,14 @@ final class EnableAnalyticsUseCaseTests: XCTestCase, AnalyticsEventTrackerProvid
 
     private var sut: EnableAnalyticsUseCase!
     private var currentUser: AnalyticsUser!
-    private var service: MockAnalyticsServiceProtocol!
+    private var service: AnalyticsServiceProtocolMock!
 
-    var analyticsEventTracker: (any AnalyticsEventTracker)?
+    var analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?
 
     override func setUp() {
         super.setUp()
         currentUser = AnalyticsUser(analyticsIdentifier: UUID().transportString())
-        service = MockAnalyticsServiceProtocol()
+        service = AnalyticsServiceProtocolMock()
         sut = EnableAnalyticsUseCase(service: service, provider: self)
     }
 
@@ -46,7 +48,7 @@ final class EnableAnalyticsUseCaseTests: XCTestCase, AnalyticsEventTrackerProvid
         super.tearDown()
     }
 
-    func setAnalyticsEventTracker(_ tracker: (any AnalyticsEventTracker)?) {
+    func setAnalyticsEventTracker(_ tracker: (any AnalyticsEventTrackerProtocol)?) {
         analyticsEventTracker = tracker
     }
 
@@ -56,8 +58,8 @@ final class EnableAnalyticsUseCaseTests: XCTestCase, AnalyticsEventTrackerProvid
 
     func testInvoke_enables_and_switches_user_via_service() async throws {
         // Mock
-        service.enableTracking_MockMethod = {}
-        service.switchUser_MockMethod = { _ in }
+        service.enableTrackingVoidClosure = {}
+        service.switchUserUserAnalyticsUserVoidClosure = { _ in }
 
         // Given
         XCTAssertNil(analyticsEventTracker)
@@ -66,8 +68,8 @@ final class EnableAnalyticsUseCaseTests: XCTestCase, AnalyticsEventTrackerProvid
         try await sut.invoke()
 
         // Then
-        XCTAssertEqual(service.enableTracking_Invocations.count, 1)
-        XCTAssertEqual(service.switchUser_Invocations, [currentUser])
+        XCTAssertEqual(service.enableTrackingVoidCallsCount, 1)
+        XCTAssertEqual(service.switchUserUserAnalyticsUserVoidReceivedInvocations, [currentUser])
         XCTAssertNotNil(analyticsEventTracker)
     }
 }

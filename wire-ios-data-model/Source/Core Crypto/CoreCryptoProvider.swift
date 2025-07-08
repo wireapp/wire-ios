@@ -42,6 +42,18 @@ public protocol CoreCryptoProviderProtocol {
     func initialiseMLSWithEndToEndIdentity(enrollment: E2eiEnrollment, certificateChain: String) async throws
         -> CRLsDistributionPoints?
 
+    /// Provide the mls transport which will be registered with the core crypto instance
+    ///
+    /// - parameters:
+    ///   - transport: mls transport which sends mls messages to the backend
+    func registerMlsTransport(_ transport: any MlsTransport)
+
+    /// Register observer of epochs
+    ///
+    /// - parameters:
+    ///   - epochObserver: observer which will be informed on epoch changes
+    func registerEpochObserver(_ epochObserver: any WireCoreCryptoUniffi.EpochObserver) async
+
 }
 
 public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
@@ -49,6 +61,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     private let sharedContainerURL: URL
     private let accountDirectory: URL
     private let cryptoboxMigrationManager: CryptoboxMigrationManagerInterface
+    private var coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol?
     private let featureRespository: FeatureRepositoryInterface
     private let syncContext: NSManagedObjectContext
     private let allowCreation: Bool
@@ -56,7 +69,11 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     private var loadingCoreCrypto = false
     private var initialisatingMLS = false
     private var hasInitialisedMLS = false
+    private var hasRegisteredMlsTransport = false
+    private var hasRegisteredEpochObserver = false
     private var coreCryptoContinuations: [CheckedContinuation<SafeCoreCrypto, Error>] = []
+    private nonisolated(unsafe) var mlsTransport: MlsTransport?
+    private var epochObserver: WireCoreCryptoUniffi.EpochObserver?
 
     public init(
         selfUserID: UUID,
@@ -64,6 +81,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         accountDirectory: URL,
         syncContext: NSManagedObjectContext,
         cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
+        coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol?,
         allowCreation: Bool = true
     ) {
         self.selfUserID = selfUserID
@@ -72,23 +90,27 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         self.syncContext = syncContext
         self.allowCreation = allowCreation
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
+        self.coreCryptoKeyMigrationManager = coreCryptoKeyMigrationManager
         self.featureRespository = FeatureRepository(context: syncContext)
     }
 
     public func coreCrypto() async throws -> SafeCoreCryptoProtocol {
-        try await getCoreCrypto()
+        let coreCrypto = try await getCoreCrypto()
+        try await registerMlsTransportIfNecessary(with: coreCrypto)
+        return coreCrypto
     }
 
     public func initialiseMLSWithBasicCredentials(mlsClientID: MLSClientID) async throws {
         WireLogger.mls.info("Initialising MLS client with basic credentials")
         let defaultCiphersuite = await featureRespository.fetchMLS().config.defaultCipherSuite
-        _ = try await coreCrypto().perform { coreCrypto in
-            try await coreCrypto.mlsInit(
+        let coreCrypto = try await coreCrypto()
+        _ = try await coreCrypto.perform { context in
+            try await context.mlsInit(
                 clientId: Data(mlsClientID.rawValue.utf8),
                 ciphersuites: [UInt16(defaultCiphersuite.rawValue)],
                 nbKeyPackage: nil
             )
-            try await generateClientPublicKeys(with: coreCrypto, credentialType: .basic)
+            try await self.generateClientPublicKeys(with: context, credentialType: .basic)
         }
     }
 
@@ -97,15 +119,51 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         certificateChain: String
     ) async throws -> CRLsDistributionPoints? {
         WireLogger.mls.info("Initialising MLS client from end-to-end identity enrollment")
-        return try await coreCrypto().perform { coreCrypto in
-            let crlsDistributionPoints = try await coreCrypto.e2eiMlsInitOnly(
+        let coreCrypto = try await coreCrypto()
+        return try await coreCrypto.perform { context in
+            let crlsDistributionPoints = try await context.e2eiMlsInitOnly(
                 enrollment: enrollment,
                 certificateChain: certificateChain,
                 nbKeyPackage: nil
             )
-            try await generateClientPublicKeys(with: coreCrypto, credentialType: .x509)
+            try await self.generateClientPublicKeys(with: context, credentialType: .x509)
             return CRLsDistributionPoints(from: crlsDistributionPoints)
         }
+    }
+
+    public func registerEpochObserver(_ epochObserver: any EpochObserver) async {
+        self.epochObserver = epochObserver
+
+        do {
+            try await registerEpochObserverIfNecessary(with: coreCrypto())
+        } catch {
+            WireLogger.mls.error("Failed to register epoch observer: \(error)")
+        }
+    }
+
+    private func registerEpochObserverIfNecessary(with coreCrypto: SafeCoreCryptoProtocol) async throws {
+        guard let epochObserver, !hasRegisteredEpochObserver else {
+            return
+        }
+        try await coreCrypto.configure { configure in
+            try await configure.registerEpochObserver(epochObserver)
+        }
+        hasRegisteredEpochObserver = true
+    }
+
+    public nonisolated func registerMlsTransport(_ transport: any MlsTransport) {
+        mlsTransport = transport
+    }
+
+    private func registerMlsTransportIfNecessary(with coreCrypto: SafeCoreCrypto) async throws {
+        guard let mlsTransport, !hasRegisteredMlsTransport else {
+            return
+        }
+
+        try await coreCrypto.configure { coreCrypto in
+            try await coreCrypto.provideTransport(transport: mlsTransport)
+        }
+        hasRegisteredMlsTransport = true
     }
 
     // Create an CoreCrypto instance with guranteees that only one task is performing
@@ -148,9 +206,10 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     }
 
     func createCoreCrypto() async throws -> SafeCoreCrypto {
-        let provider = CoreCryptoConfigProvider()
+        let coreCryptoKeyProvider = CoreCryptoKeyProvider(coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager)
+        let provider = CoreCryptoConfigProvider(coreCryptoKeyProvider: coreCryptoKeyProvider)
 
-        let configuration = try provider.createInitialConfiguration(
+        let configuration = try await provider.createInitialConfiguration(
             sharedContainerURL: sharedContainerURL,
             userID: selfUserID,
             createKeyIfNeeded: allowCreation
@@ -254,8 +313,8 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     }
 
     private func generateClientPublicKeys(
-        with coreCrypto: CoreCryptoProtocol,
-        credentialType: MlsCredentialType
+        with coreCrypto: CoreCryptoContextProtocol,
+        credentialType: CredentialType
     ) async throws {
         WireLogger.mls.info("generating public key")
         let ciphersuite = await featureRespository.fetchMLS().config.defaultCipherSuite

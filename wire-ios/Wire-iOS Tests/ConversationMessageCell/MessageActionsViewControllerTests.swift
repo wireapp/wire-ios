@@ -34,6 +34,8 @@ final class MessageActionsViewControllerTests: XCTestCase {
 
         let mockSelfUser = MockUserType.createSelfUser(name: "selfUser")
         SelfUser.provider = SelfProvider(providedSelfUser: mockSelfUser)
+        mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = []
+        mockUserDefaults.setValueAnyForKeyDefaultNameStringVoidClosure = { _, _ in }
         mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = false
     }
 
@@ -186,7 +188,6 @@ final class MessageActionsViewControllerTests: XCTestCase {
         actionController.isCollapsed?.toggle()
 
         XCTAssertEqual(actionController.isCollapsed, false)
-        XCTAssertEqual(actionController.selfUserId, selfUser.remoteIdentifier)
 
         let sut = MessageActionsViewController.controller(
             withActions: MessageAction.allCases,
@@ -199,6 +200,38 @@ final class MessageActionsViewControllerTests: XCTestCase {
         XCTAssertEqual(
             sut.titles,
             ["Collapse", "Reply", "Details", "Download", "Delete", "Cancel"]
+        )
+    }
+
+    func testMenuActionsForImageMessage_collapseOwnMessagesEnabled_wasUncollapsedBefore() {
+        // GIVEN
+        let selfUser = MockUserType.createSelfUser(name: "Tarja Turunen")
+        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
+
+        let message = MockMessageFactory.imageMessage()
+        mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = [message.nonce!.uuidString]
+        // WHEN
+        let (actionController, _) = makeSut(
+            message: message,
+            sender: selfUser,
+            isCollapsed: false,
+            selfUserId: selfUser.remoteIdentifier
+        )
+        message.senderUser = selfUser
+
+        XCTAssertEqual(actionController.isCollapsed, false)
+
+        let sut = MessageActionsViewController.controller(
+            withActions: MessageAction.allCases,
+            actionController: actionController
+        )
+
+        // expand message
+
+        // THEN
+        XCTAssertEqual(
+            sut.titles,
+            ["Copy", "Collapse", "Reply", "Details", "Save", "Delete", "Cancel"]
         )
     }
 
@@ -217,10 +250,53 @@ final class MessageActionsViewControllerTests: XCTestCase {
         message.senderUser = selfUser
 
         XCTAssertEqual(actionController.isCollapsed, false)
-        XCTAssertEqual(actionController.selfUserId, selfUser.remoteIdentifier)
 
         // THEN
         XCTAssertEqual(sut.titles, ["Reply", "Details", "Download", "Delete", "Cancel"])
+    }
+
+    func testMenuActionsForTextMessageWithPreview_hasCollapse() {
+        // GIVEN
+        let message = MockMessageFactory.linkMessage()
+        let selfUser = MockUserType.createSelfUser(name: "Tarja Turunen")
+        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
+        mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = [message.nonce!.uuidString]
+
+        // WHEN
+        let (actionController, sut) = makeSut(
+            message: message,
+            sender: selfUser,
+            isCollapsed: false,
+            selfUserId: selfUser.remoteIdentifier
+        )
+        message.senderUser = selfUser
+
+        XCTAssertEqual(actionController.isCollapsed, false)
+
+        // THEN
+        XCTAssertTrue(sut.titles.contains("Collapse"))
+    }
+
+    func testMenuActionsForTextMessageWithLinkAttachments_hasCollapse() {
+        // GIVEN
+        let message = MockMessageFactory.textMessageWithLinkAttachment()
+        let selfUser = MockUserType.createSelfUser(name: "Tarja Turunen")
+        mockUserDefaults.boolForKeyDefaultNameStringBoolReturnValue = true
+        mockUserDefaults.stringArrayForKeyDefaultNameStringStringReturnValue = [message.nonce!.uuidString]
+
+        // WHEN
+        let (actionController, sut) = makeSut(
+            message: message,
+            sender: selfUser,
+            isCollapsed: false,
+            selfUserId: selfUser.remoteIdentifier
+        )
+        message.senderUser = selfUser
+
+        XCTAssertEqual(actionController.isCollapsed, false)
+
+        // THEN
+        XCTAssertTrue(sut.titles.contains("Collapse"))
     }
 
     private func actionsTitlesForMessage(message: MockMessage) -> [String] {

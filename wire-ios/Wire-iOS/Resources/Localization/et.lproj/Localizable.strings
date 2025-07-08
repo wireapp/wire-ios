@@ -102,8 +102,8 @@
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
 
 "add_participants.alert.title" = "Vestlus on täis";
-"add_participants.alert.message.new_conversation" = "Vestlusega saab liituda kuni %d inimest.";
-"add_participants.alert.message.existing_conversation" = "Vestlusega saab liituda kuni %1$d inimest. Hetkel on siin ruumi veel %2$d inimesele.";
+"add_participants.alert.message.new_conversation" = "Up to %@ people can join a conversation.";
+"add_participants.alert.message.existing_conversation" = "Up to %@ people can join a conversation. Currently there is only room for %@ more.";
 
 // Channel Creation UI - Navigation
 "conversation.create.channel.title" = "New channel";
@@ -368,6 +368,22 @@
 "conversation.banner.are_present" = "%@ are present";
 "conversation.banner.are_active" = "%@ are active";
 "conversation.banner.separator" = " and ";
+
+"conversation.banner.remotes_externals_guests_services_present" = "Federated users, externals, guests and services are present";
+"conversation.banner.remotes_externals_guests_present" = "Federated users, externals and guests are present";
+"conversation.banner.remotes_externals_services_present" = "Federated users, externals and services are present";
+"conversation.banner.remotes_guests_services_present" = "Federated users, guests and services are present";
+"conversation.banner.externals_guests_services_present" = "Externals, guests and services are present";
+"conversation.banner.remotes_externals_present" = "Federated users and externals are present";
+"conversation.banner.remotes_guests_present" = "Federated users and guests are present";
+"conversation.banner.remotes_services_present" = "Federated users and services are present";
+"conversation.banner.externals_guests_present" = "Externals and guests are present";
+"conversation.banner.externals_services_present" = "Externals and services are present";
+"conversation.banner.guests_services_present" = "Guests and services are present";
+"conversation.banner.remotes_present" = "Federated users are present";
+"conversation.banner.externals_present" = "Externals are present";
+"conversation.banner.guests_present" = "Guests are present";
+"conversation.banner.services_active" = "Services are active";
 
 "conversation.action.search" = "Otsing";
 "conversation.action.conversationDetails" = "Conversation Details";
@@ -654,6 +670,7 @@
 "content.collapsed.video.title" = "You sent a video";
 "content.collapsed.audio.title" = "You sent an audio message";
 "content.collapsed.location.title" = "You sent your location";
+"content.collapsed.link.title" = "You sent a link";
 
 "content.message.like" = "Meeldib";
 "content.message.unlike" = "Ei meeldi";
@@ -859,7 +876,7 @@
 "participants.section.services" = "Teenused (%d)";
 "participants.section.settings" = "Valikud";
 "participants.footer.add_title" = "Lisa osalejaid";
-"participants.section.name.footer" = "Up to %1$d participants can join a conversation.";
+"participants.section.name.footer" = "Up to %@ participants can join a conversation.";
 "participants.section.admins.footer" = "Adminid puuduvad.";
 "participants.section.members.footer" = "There are no members.";
 
@@ -1122,8 +1139,8 @@
 
 // Settings - top level
 "self.settings.create_team.title" = "Loo uus tiim";
+"self.settings.add_account_or_team.title" = "Add Account or Team";
 "self.settings.manage_team.title" = "Tiimi haldus";
-"self.settings.add_team_or_account.title" = "Lisa konto";
 "self.settings.add_account.title" = "Lisa konto";
 
 "self.settings.add_account.error.title" = "Kolm aktiivset kontot";
@@ -1158,6 +1175,7 @@
 "self.settings.account_details.remove_device.password.error" = "Vale parool";
 
 "self.settings.account_appearance_group.title" = "Välimus";
+"self.settings.account_appearance_group.footer" = "When this is on, your conversations show a background based on your profile color and light or dark theme.";
 
 "self.settings.privacy_section_group.title" = "Privaatsus";
 "self.settings.enable_read_receipts.title" = "Saada lugemiskinnitusi";
@@ -1176,6 +1194,7 @@
 "self.settings.account_picture_group.accent_color.amber" = "Amber";
 "self.settings.account_picture_group.accent_color.turquoise" = "Turquoise";
 "self.settings.account_picture_group.accent_color.purple" = "Purple";
+"self.settings.account_picture_group.background.title" = "Conversation background color";
 
 "self.settings.account_personal_information_group.title" = "Isikuandmed";
 
@@ -1280,13 +1299,8 @@
 // Open in
 "self.settings.external_apps.header" = "Ava rakendusega";
 
-"self.settings.link_options.twitter.title" = "Säutsud";
 "self.settings.link_options.maps.title" = "Kaardirakendus";
 "self.settings.link_options.browser.title" = "Veebilehitseja";
-
-"open_link.twitter.option.default" = "Browser / Twitter";
-"open_link.twitter.option.tweetbot" = "Tweetbot";
-"open_link.twitter.option.twitterrific" = "Twitterrific";
 
 "open_link.maps.option.apple" = "Maps";
 "open_link.maps.option.google" = "Google Maps";
@@ -1308,7 +1322,6 @@
 "self.settings.developer_options.title" = "Arendaja Valikud";
 "self.settings.developer_options.loggin.title" = "Seaded";
 "self.settings.developer_options.database_statistics.title" = "Database Statistics";
-"self.settings.apns_logging.title" = "APNS logimine";
 
 // Privacy (visibility) options
 "self.settings.options_menu.title" = "Seaded";
@@ -1333,7 +1346,7 @@
 "self.settings.privacy_security.disable_link_previews.footer" = "Eelvaateid võidakse siiski näidata teiste saadetud linkide puhul.";
 
 "self.settings.privacy_security.collapse_own_messages.title" = "Collapse my messages";
-"self.settings.privacy_security.collapse_own_messages.footer" = "When this is on, all your messages collapse to a single line.";
+"self.settings.privacy_security.collapse_own_messages.footer" = "When this is on, all your messages collapse after three lines.";
 
 "self.settings.privacy_analytics_menu.devices.title" = "Seadmed";
 
@@ -1597,6 +1610,7 @@
 "enroll_e2ei_certificate.subtitle" = "The certificate is active and your device is verified.";
 "enroll_e2ei_certificate.certificate_details_button" = "Certificate Details";
 "enroll_e2ei_certificate.ok_button" = "OK";
+"enroll_e2ei_certificate.idp_url_title" = "Identity Provider URL";
 
 // Update e2ei certificate
 "update_e2ei_certificate.title" = "Certificate updated";

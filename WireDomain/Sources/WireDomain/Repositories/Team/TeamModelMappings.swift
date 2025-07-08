@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import WireNetwork
 
-extension WireAPI.ConversationRole {
+extension WireNetwork.ConversationRole {
 
     func toDomainModel() -> TeamRoleInfo {
         .init(
@@ -29,7 +29,7 @@ extension WireAPI.ConversationRole {
 
 }
 
-extension WireAPI.TeamMember {
+extension WireNetwork.TeamMember {
 
     func toDomainModel() -> TeamMemberInfo {
         .init(
@@ -42,7 +42,7 @@ extension WireAPI.TeamMember {
 
 }
 
-private extension WireAPI.ConversationAction {
+private extension WireNetwork.ConversationAction {
 
     var name: String {
         switch self {

@@ -72,7 +72,7 @@ public final class E2EISetupService: E2EISetupServiceInterface {
 
     public func isTrustAnchorRegistered() async throws -> Bool {
         try await coreCryptoProvider.coreCrypto().perform { coreCrypto in
-            await coreCrypto.e2eiIsPkiEnvSetup()
+            try await coreCrypto.e2eiIsPkiEnvSetup()
         }
     }
 

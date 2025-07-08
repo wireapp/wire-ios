@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDomain
 
 @testable import WireSyncEngine
 
@@ -28,7 +29,11 @@ class MockSessionManager: NSObject, WireSyncEngine.SessionManagerType {
     var foregroundNotificationResponder: ForegroundNotificationResponder?
     var callKitManager: CallKitManagerInterface = MockCallKitManager()
     var callNotificationStyle: CallNotificationStyle = .pushNotifications
-    var accountManager: AccountManager = .init(sharedDirectory: accountManagerURL)
+    var accountManager: AccountManager = try! .init(
+        currentAppVersion: "1.0.0",
+        sharedDirectory: accountManagerURL,
+        defaults: .temporary()
+    )
     var backgroundUserSessions: [UUID: ZMUserSession] = [:]
     var mockUserSession: ZMUserSession?
 

@@ -323,4 +323,10 @@
 "searchGifs.gifItems_loaded.announcement" = "%@ novos GIFs carregados";
 
 // MARK: - Channel Creation UI - Navigation
+
 "conversation.create.channel.back" = "Voltar a visão geral da nova conversa";
+
+// MARK: - E2EI
+
+"webAuth.urlLabel.description" = "Identity Provider URL";
+"webAuth.urlLabel.hint" = "Select to open the complete URL.";

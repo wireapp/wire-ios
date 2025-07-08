@@ -24,6 +24,10 @@ public typealias Conversation = ConversationLike & SwiftConversationLike
 // sourcery: AutoMockable
 @objc
 public protocol ConversationLike: AnyObject {
+
+    // Any as type eraser to hide NSManagedObjectID behind it
+    var objectId: Any { get }
+
     var conversationType: ZMConversationType { get }
     var isSelfAnActiveMember: Bool { get }
     var teamRemoteIdentifier: UUID? { get }
@@ -53,6 +57,9 @@ public protocol ConversationLike: AnyObject {
     var domain: String? { get }
     var isChannel: Bool { get }
     var privateChannelPermission: PrivateChannelPermission { get }
+
+    /// The name of the `cell` used for Wire Cells file management.
+    var wireCellName: String { get }
 }
 
 // Since ConversationLike must have @objc signature(@objc UserType has a ConversationLike property), create another
@@ -70,6 +77,11 @@ public protocol SwiftConversationLike {
 }
 
 extension ZMConversation: ConversationLike {
+
+    public var objectId: Any {
+        objectID
+    }
+
     public var localParticipantsCount: Int {
         localParticipants.count
     }
@@ -101,5 +113,11 @@ extension ZMConversation: ConversationLike {
 
     public var isProteusConversationDegraded: Bool {
         securityLevel == .secureWithIgnored
+    }
+
+    public var wireCellName: String {
+        guard let qualifiedID else { return "unknown" }
+
+        return "\(qualifiedID.uuid.uuidString.lowercased())@\(qualifiedID.domain)"
     }
 }

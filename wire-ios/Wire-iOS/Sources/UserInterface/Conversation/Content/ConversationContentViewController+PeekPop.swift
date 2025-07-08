@@ -37,7 +37,7 @@ extension ConversationContentViewController: UIViewControllerPreviewingDelegate 
             return .none
         }
 
-        let message = dataSource.messages[cellIndexPath.section]
+        let message = dataSource.allMessages[cellIndexPath.section]
         guard !message.isObfuscated else {
             return nil
         }
@@ -49,7 +49,7 @@ extension ConversationContentViewController: UIViewControllerPreviewingDelegate 
         if message.isText, cell.selectionView is ArticleView,
            let url = message.textMessageData?.linkPreview?.openableURL as URL? {
             lastPreviewURL = url
-            controller = BrowserViewController(url: url)
+            controller = url.browserControllerOrOpenExternally()
         } else if message.isImage {
             // Preview an image
             controller = messagePresenter.viewController(

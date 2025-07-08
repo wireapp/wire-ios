@@ -1,6 +1,9 @@
 name: Beta
 
 on: 
+  push:
+    branches:
+      - 'release/cycle-*' # automatically trigger a beta build when merge is done to the branch
   workflow_dispatch:
     inputs:
       distribute_externals:

@@ -30,6 +30,8 @@ public enum EventConversation {
     static let addOTRAsset = "conversation.otr-asset-add"
 }
 
+struct DummyError: Error {}
+
 class EventDecoderTest: MessagingTestBase {
 
     var sut: EventDecoder!
@@ -452,7 +454,7 @@ extension EventDecoderTest {
         let mockProteusService = MockProteusServiceInterface()
 
         // Given
-        mockProteusService.decryptDataForSession_MockMethod = { data, _ in
+        mockProteusService.decryptDataForSessionContext_MockMethod = { data, _, _ in
             (didCreateNewSession: false, decryptedData: data)
         }
 
@@ -473,7 +475,7 @@ extension EventDecoderTest {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
-        XCTAssertEqual(mockProteusService.decryptDataForSession_Invocations.count, 1)
+        XCTAssertEqual(mockProteusService.decryptDataForSessionContext_Invocations.count, 1)
 
         // Cleanup
         proteusViaCoreCrypto.isOn = false
@@ -490,7 +492,7 @@ extension EventDecoderTest {
             case decryptionError
         }
         // Given
-        mockProteusService.decryptDataForSession_MockMethod = { _, _ in
+        mockProteusService.decryptDataForSessionContext_MockMethod = { _, _, _ in
             throw FakeError.decryptionError
         }
 
@@ -509,7 +511,7 @@ extension EventDecoderTest {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
-        XCTAssertEqual(mockProteusService.decryptDataForSession_Invocations.count, 1)
+        XCTAssertEqual(mockProteusService.decryptDataForSessionContext_Invocations.count, 1)
         XCTAssertEqual(lastEventIDRepository.storeLastEventID_Invocations.count, 1)
     }
 
@@ -521,13 +523,14 @@ extension EventDecoderTest {
             DeveloperFlag.proteusViaCoreCrypto.enable(false, storage: .standard)
         }
         let mockProteusService = MockProteusServiceInterface()
+        let decryptionErrorReason = DummyError()
 
-        mockProteusService.decryptDataForSession_MockMethod = { data, _ in
+        mockProteusService.decryptDataForSessionContext_MockMethod = { data, _, _ in
             (didCreateNewSession: false, decryptedData: data)
         }
 
-        mockMLSService.decryptMessageForSubconversationType_MockMethod = { _, _, _ in
-            throw MLSDecryptionService.MLSMessageDecryptionError.failedToDecryptMessage
+        mockMLSService.decryptMessageForSubconversationTypeContext_MockMethod = { _, _, _, _ in
+            throw MLSDecryptionService.MLSMessageDecryptionError.failedToDecryptMessage(reason: decryptionErrorReason)
         }
 
         let mlsEvent: ZMUpdateEvent = await syncMOC.perform { [self] in
@@ -546,7 +549,7 @@ extension EventDecoderTest {
             _ = try await sut.decryptAndStoreEvents([mlsEvent])
         } catch let error as MLSDecryptionService.MLSMessageDecryptionError {
             // Then
-            XCTAssert(error == .failedToDecryptMessage)
+            XCTAssert(error == .failedToDecryptMessage(reason: decryptionErrorReason))
             XCTAssertEqual(lastEventIDRepository.storeLastEventID_Invocations.count, 0)
         }
 
@@ -561,7 +564,7 @@ extension EventDecoderTest {
         }
         let mockProteusService = MockProteusServiceInterface()
 
-        mockProteusService.decryptDataForSession_MockMethod = { data, _ in
+        mockProteusService.decryptDataForSessionContext_MockMethod = { data, _, _ in
             (didCreateNewSession: false, decryptedData: data)
         }
 
@@ -579,7 +582,7 @@ extension EventDecoderTest {
             self.syncMOC.proteusService = mockProteusService
         }
 
-        mockMLSService.decryptMessageForSubconversationType_MockMethod = { _, _, _ in
+        mockMLSService.decryptMessageForSubconversationTypeContext_MockMethod = { _, _, _, _ in
             [] // decryption success with empty results
         }
 
@@ -610,7 +613,7 @@ extension EventDecoderTest {
         }
         let mockProteusService = MockProteusServiceInterface()
 
-        mockProteusService.decryptDataForSession_MockMethod = { data, _ in
+        mockProteusService.decryptDataForSessionContext_MockMethod = { data, _, _ in
             (didCreateNewSession: false, decryptedData: data)
         }
 
@@ -628,7 +631,7 @@ extension EventDecoderTest {
             self.syncMOC.proteusService = mockProteusService
         }
 
-        mockMLSService.decryptMessageForSubconversationType_MockMethod = { _, _, _ in
+        mockMLSService.decryptMessageForSubconversationTypeContext_MockMethod = { _, _, _, _ in
             [.proposal(10)] // decryption success with result of type `proposal`
         }
 
@@ -681,7 +684,7 @@ extension EventDecoderTest {
         // Given
         let messageData = Data.random()
         let senderClientID = "clientID"
-        mockMLSService.decryptMessageForSubconversationType_MockMethod = { _, _, _ in
+        mockMLSService.decryptMessageForSubconversationTypeContext_MockMethod = { _, _, _, _ in
             [.message(messageData, senderClientID)]
         }
         let event: ZMUpdateEvent = await syncMOC.perform { [self] in
@@ -717,7 +720,7 @@ extension EventDecoderTest {
         }
         var expectedCommitDate = try XCTUnwrap(event.timestamp)
         expectedCommitDate += TimeInterval(commitDelay)
-        mockMLSService.decryptMessageForSubconversationType_MockMethod = { _, _, _ in
+        mockMLSService.decryptMessageForSubconversationTypeContext_MockMethod = { _, _, _, _ in
             [.proposal(commitDelay)]
         }
 
@@ -747,7 +750,7 @@ extension EventDecoderTest {
             )
         }
         event.source = .webSocket
-        mockMLSService.decryptMessageForSubconversationType_MockMethod = { _, _, _ in
+        mockMLSService.decryptMessageForSubconversationTypeContext_MockMethod = { _, _, _, _ in
             [.proposal(commitDelay)]
         }
 
@@ -771,7 +774,7 @@ extension EventDecoderTest {
             )
         }
         event.source = .download
-        mockMLSService.decryptMessageForSubconversationType_MockMethod = { _, _, _ in
+        mockMLSService.decryptMessageForSubconversationTypeContext_MockMethod = { _, _, _, _ in
             [.proposal(commitDelay)]
         }
 
@@ -819,7 +822,7 @@ extension EventDecoderTest {
 
     func test_DecryptMLSMessage_ReturnsNoEvent_WhenDecryptedDataIsNil() async throws {
         // Given
-        mockMLSService.decryptMessageForSubconversationType_MockMethod = { _, _, _ in
+        mockMLSService.decryptMessageForSubconversationTypeContext_MockMethod = { _, _, _, _ in
             []
         }
 
@@ -839,8 +842,9 @@ extension EventDecoderTest {
 
     func test_DecryptMLSMessage_ReturnsNoEvent_WhenmlsServiceThrows() async throws {
         // Given
-        mockMLSService.decryptMessageForSubconversationType_MockMethod = { _, _, _ in
-            throw MLSDecryptionService.MLSMessageDecryptionError.failedToDecryptMessage
+        let decryptionErrorReason = DummyError()
+        mockMLSService.decryptMessageForSubconversationTypeContext_MockMethod = { _, _, _, _ in
+            throw MLSDecryptionService.MLSMessageDecryptionError.failedToDecryptMessage(reason: decryptionErrorReason)
         }
 
         let event = await syncMOC.perform { [self] in
@@ -855,7 +859,7 @@ extension EventDecoderTest {
             _ = try await sut.decryptMlsMessage(from: event, context: syncMOC)
         } catch let error as MLSDecryptionService.MLSMessageDecryptionError {
             // Then
-            XCTAssert(error == .failedToDecryptMessage)
+            XCTAssert(error == .failedToDecryptMessage(reason: decryptionErrorReason))
         }
     }
 
@@ -865,7 +869,7 @@ extension EventDecoderTest {
         let groupID = MLSGroupID.random()
         let event = mlsWelcomeMessageEvent(data: Data.random(), conversationID: conversationID)
 
-        mockMLSService.processWelcomeMessageWelcomeMessage_MockValue = groupID
+        mockMLSService.processWelcomeMessageWelcomeMessageContext_MockValue = groupID
 
         // When
         let result = try await sut.decryptAndStoreEvents([event])
@@ -880,13 +884,13 @@ extension EventDecoderTest {
         let groupID = MLSGroupID.random()
         let event = mlsWelcomeMessageEvent(data: Data.random(), conversationID: conversationID)
 
-        mockMLSService.processWelcomeMessageWelcomeMessage_MockValue = groupID
+        mockMLSService.processWelcomeMessageWelcomeMessageContext_MockValue = groupID
 
         // When
         _ = try await sut.decryptAndStoreEvents([event])
 
         // Then
-        XCTAssertEqual(mockMLSService.processWelcomeMessageWelcomeMessage_Invocations.count, 1)
+        XCTAssertEqual(mockMLSService.processWelcomeMessageWelcomeMessageContext_Invocations.count, 1)
     }
 }
 

@@ -40,7 +40,6 @@ public extension WireProtos.Asset {
                     $0.durationInMillis = UInt64(metadata.duration * 1000)
                     $0.normalizedLoudness = NSData(bytes: loudnessArray, length: loudnessArray.count) as Data
                 }
-
             }
         }
     }

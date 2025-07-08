@@ -17,15 +17,15 @@
 //
 
 import Combine
-import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
+import WireNetworkSupport
 import WireTestingPackage
 import XCTest
 
-@testable import WireAPI
 @testable import WireDomain
+@testable import WireNetwork
 
 final class ConversationLocalStoreTests: XCTestCase {
 
@@ -428,40 +428,6 @@ final class ConversationLocalStoreTests: XCTestCase {
         await context.perform {
             XCTAssertTrue(conversation.localParticipants.contains(addedUser))
         }
-    }
-
-    func testUpdateTypingUsers_It_Sends_A_Notification_With_Typing_Users() async throws {
-
-        let (userObjectID, conversationObjectID) = try await context.perform { [self] in
-            let user = modelHelper.createUser(in: context)
-            let conversation = modelHelper.createGroupConversation(in: context)
-
-            try context.obtainPermanentIDs(for: [user, conversation])
-
-            return (user.objectID, conversation.objectID)
-
-        }
-
-        let expectation = XCTestExpectation()
-
-        subscription = NotificationCenter.default.publisher(for: .typingNotification)
-            .compactMap { $0.userInfo?["typingUsers"] as? Set<ZMUser> }
-            .sink { typingUsers in
-                // Then
-                XCTAssertEqual(typingUsers.first?.objectID, userObjectID)
-                expectation.fulfill()
-            }
-
-        // When
-
-        await sut.updateTypingUsers(
-            conversationID: conversationObjectID,
-            usersID: Set([userObjectID])
-        )
-
-        // Then
-
-        await fulfillment(of: [expectation], timeout: 5.0)
     }
 
     func testStoreMLSConversationEstablished_It_Sets_MLS_Status_Ready_And_Updates_MLS_Group_ID() async throws {

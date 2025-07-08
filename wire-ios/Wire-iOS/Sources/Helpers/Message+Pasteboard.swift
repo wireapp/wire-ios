@@ -27,8 +27,7 @@ extension ZMConversationMessage {
             if let text = textMessageData?.messageText, !text.isEmpty {
                 pasteboard.string = text
             }
-        } else if isImage,
-                  let imageData = imageMessageData?.imageData {
+        } else if isImage, let imageData = imageMessageData?.imageData {
 
             let mediaAsset: MediaAsset? = if imageMessageData?.isAnimatedGIF == true {
                 FLAnimatedImage(animatedGIFData: imageData)

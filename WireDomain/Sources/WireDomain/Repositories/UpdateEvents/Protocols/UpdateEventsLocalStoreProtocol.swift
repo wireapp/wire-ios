@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireAPI
+import CoreData
+import WireNetwork
 
 // sourcery: AutoMockable
 public protocol UpdateEventsLocalStoreProtocol {
@@ -31,6 +31,10 @@ public protocol UpdateEventsLocalStoreProtocol {
     /// - parameter id: The last event ID to store.
 
     func storeLastEventID(id: UUID)
+
+    /// Sets last event ID to nil.
+
+    func resetLastEventID()
 
     /// Retrieves the index of the last event envelope.
     /// - returns: The last index event envelope.
@@ -47,20 +51,34 @@ public protocol UpdateEventsLocalStoreProtocol {
         index: Int64
     ) async throws
 
+    /// Persists an event envelopes locally.
+    /// - Parameters:
+    ///     - eventEnvelopes: The event envelopes to persist.
+    ///     - index: The event envelope start index.
+
+    func persistEventEnvelopes(
+        _ eventEnvelopes: [UpdateEventEnvelope],
+        index: Int64
+    ) async throws
+
     /// Fetches stored event envelopes.
     /// - parameter limit: A fetch limit.
-    /// - returns: A list of event envelopes.
+    /// - returns: A list of decoded event envelopes and their related object IDs.
 
     func fetchStoredEventEnvelopes(
         limit: UInt
-    ) async throws -> [UpdateEventEnvelope]
+    ) async throws -> [(envelope: UpdateEventEnvelope, objectID: NSManagedObjectID)]
 
     /// Deletes next pending events locally.
-    /// - parameter limit: A fetch limit.
+    /// - parameter objectIDs: The `StoredUpdateEventEnvelope` object IDs to delete.
 
     func deleteNextPendingEvents(
-        limit: UInt
+        with objectIDs: [NSManagedObjectID]
     ) async throws
+
+    /// Delete all stored events matching given indexes
+    /// - Parameter indexes: array of indexes matching the stored events
+    func deleteEventEnvelopes(at indexes: [Int64]) async throws
 
     /// Delete the event envelope with the given index.
     /// - parameter index: The index of the envelope to delete
@@ -70,4 +88,8 @@ public protocol UpdateEventsLocalStoreProtocol {
     ) async throws
 
     func calculateLastUnreadMessages() async
+
+    func storeServerTimeDelta(
+        _ serverTimeDelta: TimeInterval
+    ) async
 }

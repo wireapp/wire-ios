@@ -27,13 +27,13 @@ final class DeepLinkURLActionProcessorTests: DatabaseTest {
     var presentationDelegate: MockPresentationDelegate!
     var sut: WireSyncEngine.DeepLinkURLActionProcessor!
     var mockTransportSession: MockTransportSession!
-    var mockEventProcessor: MockConversationEventProcessorProtocol!
+    var mockEventProcessor: MockLegacyConversationEventProcessorProtocol!
 
     override func setUp() {
         super.setUp()
 
         mockTransportSession = MockTransportSession(dispatchGroup: dispatchGroup)
-        mockEventProcessor = MockConversationEventProcessorProtocol()
+        mockEventProcessor = MockLegacyConversationEventProcessorProtocol()
         mockEventProcessor.processConversationEvents_MockMethod = { _ in }
         presentationDelegate = MockPresentationDelegate()
 
@@ -91,7 +91,7 @@ final class DeepLinkURLActionProcessorTests: DatabaseTest {
     func testThatItAsksToShowUserProfile_WhenUserIsKnown() {
         // GIVEN
         let userId = UUID()
-        let action: URLAction = .openUserProfile(id: userId)
+        let action: URLAction = .openUserProfile(id: userId, domain: nil)
         let user = ZMUser.insertNewObject(in: uiMOC)
         user.remoteIdentifier = userId
 
@@ -106,7 +106,7 @@ final class DeepLinkURLActionProcessorTests: DatabaseTest {
     func testThatItAsksToShowConnectionRequest_WhenUserIsUnknown() {
         // GIVEN
         let userId = UUID()
-        let action: URLAction = .openUserProfile(id: userId)
+        let action: URLAction = .openUserProfile(id: userId, domain: nil)
 
         // WHEN
         sut.process(urlAction: action, delegate: presentationDelegate)

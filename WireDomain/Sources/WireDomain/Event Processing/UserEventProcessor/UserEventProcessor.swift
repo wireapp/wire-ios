@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 struct UserEventProcessor: UserEventProcessorProtocol {
 
@@ -58,7 +58,7 @@ struct UserEventProcessor: UserEventProcessorProtocol {
             try await legalholdEnableEventProcessor.processEvent(event)
 
         case let .legalholdRequest(event):
-            try await legalholdRequestEventProcessor.processEvent(event)
+            await legalholdRequestEventProcessor.processEvent(event)
 
         case let .propertiesSet(event):
             try await propertiesSetEventProcessor.processEvent(event)
@@ -70,7 +70,7 @@ struct UserEventProcessor: UserEventProcessorProtocol {
             pushRemoveEventProcessor.processEvent()
 
         case let .update(event):
-            try await updateEventProcessor.processEvent(event)
+            await updateEventProcessor.processEvent(event)
         }
     }
 

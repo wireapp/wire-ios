@@ -268,6 +268,12 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
+    public func fetchServerTimeDelta() async -> TimeInterval {
+        await context.perform { [context] in
+            context.serverTimeDelta
+        }
+    }
+
     public func addParticipants(
         _ participants: [(id: UUID, domain: String?, role: String?)],
         addedBy sender: (id: UUID, domain: String?),
@@ -348,30 +354,6 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             localConversation.addParticipantsAndUpdateConversationState(
                 usersAndRoles: usersAndRoles
             )
-        }
-    }
-
-    public func updateTypingUsers(
-        conversationID: NSManagedObjectID,
-        usersID: Set<NSManagedObjectID>
-    ) async {
-        await context.perform { [context] in
-            if let conversation = context.object(with: conversationID) as? ZMConversation {
-
-                let users = usersID.compactMap {
-                    context.object(with: $0) as? ZMUser
-                }
-
-                context.typingUsers?.update(
-                    typingUsers: Set(users),
-                    in: conversation
-                )
-
-                self.notifyTypingUsers(
-                    Set(users),
-                    in: conversation
-                )
-            }
         }
     }
 

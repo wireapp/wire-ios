@@ -27,17 +27,14 @@ public extension ZMUserSession {
         // MARK: - Properties
 
         public let appLockConfig: AppLockController.LegacyConfig?
-        public let useLegacyPushNotifications: Bool
 
         // MARK: - Life cycle
 
         public init(
-            appLockConfig: AppLockController.LegacyConfig? = nil,
-            useLegacyPushNotifications: Bool = true
+            appLockConfig: AppLockController.LegacyConfig? = nil
         ) {
 
             self.appLockConfig = appLockConfig
-            self.useLegacyPushNotifications = useLegacyPushNotifications
         }
 
     }
