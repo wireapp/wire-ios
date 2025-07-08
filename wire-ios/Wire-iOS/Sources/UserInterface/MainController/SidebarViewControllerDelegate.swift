@@ -116,11 +116,10 @@ final class SidebarViewControllerDelegate: WireSidebarUI.SidebarViewControllerDe
 
     @MainActor
     public func sidebarViewControllerDidSelectSupport(_ viewController: SidebarViewController) {
-        let url = WireURLs.shared.support
-        let browser = BrowserViewController(url: url)
-        browser.modalPresentationCapturesStatusBarAppearance = true
-        Task {
-            await mainCoordinator.presentViewController(browser)
+        if let browser = WireURLs.shared.support.browserControllerOrOpenExternally() {
+            Task {
+                await mainCoordinator.presentViewController(browser)
+            }
         }
     }
 }
