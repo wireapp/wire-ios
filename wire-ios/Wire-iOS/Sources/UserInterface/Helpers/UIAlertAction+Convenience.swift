@@ -48,9 +48,7 @@ extension UIAlertAction {
             title: title,
             style: .default
         ) { [weak presenter] _ in
-            let browserViewController = BrowserViewController(url: url)
-            browserViewController.onDismiss = onDismiss
-            presenter?.present(browserViewController, animated: true)
+            url.open(from: presenter, onDismiss: onDismiss)
         }
     }
 
