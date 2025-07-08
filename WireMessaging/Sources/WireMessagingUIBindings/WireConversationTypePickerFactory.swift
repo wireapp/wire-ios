@@ -18,9 +18,9 @@
 
 public import SwiftUI
 public import WireMessagingAPI
+import WireFoundation
 import WireMessagingImplementation
 import WireMessagingUI
-import WireFoundation
 
 public final class WireConversationTypePickerFactory {
     public init() {}

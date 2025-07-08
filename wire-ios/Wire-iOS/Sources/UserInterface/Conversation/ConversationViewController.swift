@@ -18,10 +18,10 @@
 
 import UIKit
 import WireCommonComponents
-import WireMessagingUI
 import WireDesign
 import WireLogging
 import WireMainNavigationUI
+import WireMessagingUI
 import WireSyncEngine
 
 final class ConversationViewController: UIViewController {

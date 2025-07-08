@@ -18,10 +18,10 @@
 
 import SwiftUI
 import UIKit
-import WireMessagingAPI
-import WireMessagingUI
 import WireDomain
 import WireLogging
+import WireMessagingAPI
+import WireMessagingUI
 import WireNetwork
 import WireReusableUIComponents
 import WireSyncEngine

@@ -18,11 +18,11 @@
 
 import SwiftUI
 import UIKit
-import WireMessagingAPI
-import WireMessagingUIBindings
 import WireDesign
 import WireLogging
 import WireMainNavigationUI
+import WireMessagingAPI
+import WireMessagingUIBindings
 import WireSyncEngine
 
 final class GroupDetailsViewController: UIViewController, ZMConversationObserver, GroupDetailsFooterViewDelegate {

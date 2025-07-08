@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireMessagingUI
 import WireDataModel
+import WireMessagingUI
 import WireUtilities
 
 protocol ConversationMessageCellDelegate: AnyObject, MessageActionResponder {

@@ -21,11 +21,11 @@ import SwiftUI
 import UIKit
 import WireAccountImageUI
 import WireCommonComponents
-import WireMessagingUIBindings
 import WireDesign
 import WireFoundation
 import WireLogging
 import WireMainNavigationUI
+import WireMessagingUIBindings
 import WireSidebarUI
 import WireSyncEngine
 

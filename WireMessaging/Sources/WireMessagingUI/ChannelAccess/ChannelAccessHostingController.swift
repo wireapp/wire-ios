@@ -19,10 +19,10 @@
 import Combine
 package import SwiftUI
 import UIKit
+import WireDesign
 import WireMessagingAPI
 import WireMessagingImplementation
 import WireMessagingImplementationSupport
-import WireDesign
 import WireReusableUIComponents
 
 package  final class ChannelAccessHostingController: UIHostingController<ChannelAccessView> {

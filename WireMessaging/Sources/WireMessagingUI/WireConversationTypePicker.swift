@@ -17,10 +17,10 @@
 //
 
 package import SwiftUI
-package import WireMessagingAPI
-import WireMessagingResources
 import WireDesign
 import WireFoundation
+package import WireMessagingAPI
+import WireMessagingResources
 
 package struct WireConversationTypePicker: View {
     private enum Constants {

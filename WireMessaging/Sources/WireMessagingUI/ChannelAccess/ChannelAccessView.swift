@@ -17,10 +17,10 @@
 //
 
 package import SwiftUI
+import WireDesign
 import WireMessagingAPI
 import WireMessagingImplementation
 import WireMessagingImplementationSupport
-import WireDesign
 
 package struct ChannelAccessView: View {
 
