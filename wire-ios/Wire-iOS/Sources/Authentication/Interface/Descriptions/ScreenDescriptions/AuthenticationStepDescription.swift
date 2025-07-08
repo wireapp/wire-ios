@@ -22,7 +22,6 @@ typealias AuthenticationSecondaryViewDescription = AuthenticationActionable & Se
 
 typealias AuthenticationFooterViewDescription = AuthenticationActionable & FooterViewDescription
 
-// typealias AuthenticationStepPresented = () -> Void // TODO: remove
 typealias ValueSubmitted = (Any) -> Void
 typealias ValueValidated = (ValueValidation?) -> Void
 
@@ -53,8 +52,6 @@ protocol AuthenticationStepDescription {
     var subtext: NSAttributedString? { get }
     var secondaryView: AuthenticationSecondaryViewDescription? { get }
     var footerView: AuthenticationFooterViewDescription? { get }
-    /// A callback handler which is executed once the user is presented this authentication step.
-    // var stepPresented: AuthenticationStepPresented { get } // TODO: remove
 }
 
 protocol DefaultValidatingStepDescription: AuthenticationStepDescription {

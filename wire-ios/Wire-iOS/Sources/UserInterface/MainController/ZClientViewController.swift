@@ -290,7 +290,7 @@ final class ZClientViewController: UIViewController {
         super.viewDidAppear(animated)
 
         migrateAnalytics()
-        firstTimeRequestToEnableAnalytics() // TODO: maybe Countly could be setup here, but how to tear it down properly?
+        firstTimeRequestToEnableAnalytics()
         view.backgroundColor = ColorTheme.Backgrounds.surface
     }
 

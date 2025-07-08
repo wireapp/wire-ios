@@ -110,12 +110,6 @@ class AuthenticationStepController: AuthenticationStepViewController {
         configureObservers()
         showKeyboard()
         UIAccessibility.post(notification: .screenChanged, argument: headlineLabel)
-
-        // TODO: delete
-        // if !didReportDescriptionPresented {
-        //     description.presented()
-        //     didReportDescriptionPresented = true
-        // }
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {

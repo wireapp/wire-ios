@@ -40,7 +40,8 @@ public extension AnalyticsEvent {
             )
         }
 
-        /// An event tracking when the user dismisses the self profile and the personal to team migration banner was visible.
+        /// An event tracking when the user dismisses the self profile and the personal to team migration banner was
+        /// visible.
 
         public static var dismissedSelfProfileWithToTeamMigrationBanner: AnalyticsEvent {
             personalMigrationCTA(
