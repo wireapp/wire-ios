@@ -57,7 +57,7 @@ final class TeamManageTests: WireUITestCase {
     }
 
     @MainActor
-    func test_NewEmployee_OnboardingTeamSetup() async throws {
+    func test_PersonalUser_InvitedToTeam() async throws {
         let owner = try await userManager.createPersonalUser()
         let memberUser = UserGenerator.generateUniqueUserInfo()
         let teamID = try await BackendClient.upgradePersonalToTeam(

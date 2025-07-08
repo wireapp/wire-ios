@@ -29,6 +29,7 @@ class FirstTimePage: PageModel {
         app.buttons["OK"]
     }
 
+    // Tap OK button on first time using Wire popup
     func acceptFirstTimeAlert() -> FirstTimePage {
         okButton.tap()
         return self

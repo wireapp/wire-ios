@@ -209,7 +209,7 @@ enum BackendClient {
         ]
 
         let envVariables = try EnvironmentVariables()
-        let requestUrl = envVariables.backendURL.appending(path: "/v8/teams/\(teamID)/invitations")
+        let requestUrl = envVariables.backendURL.appending(path: "/\(apiVersion)/teams/\(teamID)/invitations")
 
         var request = URLRequest(url: requestUrl)
         request.httpMethod = "POST"
