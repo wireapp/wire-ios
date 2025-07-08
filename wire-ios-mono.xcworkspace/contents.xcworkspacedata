@@ -216,7 +216,7 @@
       location = "group:WireCells">
    </FileRef>
    <FileRef
-      location = "group:WireConversations">
+      location = "group:WireMessaging">
    </FileRef>
    <FileRef
       location = "container:WireDebug">

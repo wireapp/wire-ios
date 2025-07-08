@@ -60,6 +60,10 @@ public struct WireCellsDraft: Hashable, Sendable {
 
     public var mimeType: String?
 
+    /// Whether the file should be deleted after upload.
+
+    public let deleteAfterUpload: Bool
+
     package init(
         nodeID: UUID,
         versionID: UUID,
@@ -68,7 +72,8 @@ public struct WireCellsDraft: Hashable, Sendable {
         status: WireCellsUploadStatus,
         name: String,
         bytes: Int,
-        mimeType: String?
+        mimeType: String?,
+        deleteAfterUpload: Bool
     ) {
         self.nodeID = nodeID
         self.versionID = versionID
@@ -78,5 +83,6 @@ public struct WireCellsDraft: Hashable, Sendable {
         self.name = name
         self.bytes = bytes
         self.mimeType = mimeType
+        self.deleteAfterUpload = deleteAfterUpload
     }
 }

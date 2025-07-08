@@ -61,7 +61,7 @@ struct SettingsCellDescriptorFactory {
             presentationStyle: .modal,
             identifier: nil,
             presentationAction: { () -> (UIViewController?) in
-                BrowserViewController(url: URL.manageTeam(source: .settings))
+                URL.manageTeam(source: .settings).browserControllerOrOpenExternally()
             },
             previewGenerator: nil,
             icon: .team,
@@ -246,7 +246,7 @@ struct SettingsCellDescriptorFactory {
             isDestructive: false,
             presentationStyle: .modal,
             presentationAction: {
-                BrowserViewController(url: WireURLs.shared.support)
+                WireURLs.shared.support.browserControllerOrOpenExternally()
             },
             previewGenerator: .none
         )
@@ -256,7 +256,7 @@ struct SettingsCellDescriptorFactory {
             isDestructive: false,
             presentationStyle: .modal,
             presentationAction: {
-                BrowserViewController(url: WireURLs.shared.askSupportArticle)
+                WireURLs.shared.askSupportArticle.browserControllerOrOpenExternally()
             },
             previewGenerator: .none
         )
@@ -268,7 +268,7 @@ struct SettingsCellDescriptorFactory {
             isDestructive: false,
             presentationStyle: .modal,
             presentationAction: {
-                BrowserViewController(url: WireURLs.shared.reportAbuse)
+                WireURLs.shared.reportAbuse.browserControllerOrOpenExternally()
             },
             previewGenerator: .none
         )
@@ -294,7 +294,7 @@ struct SettingsCellDescriptorFactory {
             isDestructive: false,
             presentationStyle: .modal,
             presentationAction: {
-                BrowserViewController(url: WireURLs.shared.legal)
+                WireURLs.shared.legal.browserControllerOrOpenExternally()
             },
             previewGenerator: .none
         )
@@ -320,7 +320,7 @@ struct SettingsCellDescriptorFactory {
             isDestructive: false,
             presentationStyle: .modal,
             presentationAction: {
-                BrowserViewController(url: WireURLs.shared.website)
+                WireURLs.shared.website.browserControllerOrOpenExternally()
             },
             previewGenerator: .none
         )
