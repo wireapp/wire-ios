@@ -38,6 +38,9 @@ struct DeveloperDebugActionsView: View {
             }
         }
         .sheet(item: $viewModel.mlsGroupSearchItem, content: mlsGroupSearchView)
+        .sheet(isPresented: $viewModel.isAppVersionInputPresented) {
+            appVersionInputView
+        }
         .presentationDetents([.medium])
         .presentationDragIndicator(.visible)
     }
@@ -82,6 +85,20 @@ struct DeveloperDebugActionsView: View {
         Task {
             await viewModel.findConversations(with: userInput.trim())
         }
+    }
+
+    @ViewBuilder
+    private var appVersionInputView: some View {
+        TextField(
+            "Enter app version, like 1.2.3",
+            text: $userInput
+        )
+        .textFieldStyle(.roundedBorder)
+        .onSubmit {
+            viewModel.setLastCompletedAppVersionMigration(version: userInput)
+        }
+        .padding()
+        .presentationDetents([.height(200)])
     }
 }
 
