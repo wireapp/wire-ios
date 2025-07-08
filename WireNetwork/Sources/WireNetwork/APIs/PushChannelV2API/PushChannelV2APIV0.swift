@@ -16,25 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class PushChannelV2APIImpl: PushChannelV2API, VersionedAPI {
+import Foundation
+
+class PushChannelV2APIV0: VersionedAPI, PushChannelV2API {
 
     let pushChannelService: any PushChannelServiceProtocol
-    let apiVersion: APIVersion
 
-    init(pushChannelService: any PushChannelServiceProtocol, apiVersion: APIVersion) {
+    var apiVersion: APIVersion {
+        .v0
+    }
+
+    init(pushChannelService: any PushChannelServiceProtocol) {
         self.pushChannelService = pushChannelService
-        self.apiVersion = apiVersion
     }
 
-    func createPushChannel(clientID: String) async throws -> any PushChannelV2Protocol {
-        let path = "\(pathPrefix)/events"
-
-        let request = try URLRequestBuilder(path: path)
-            .withMethod(.get)
-            .withQueryItem(name: "client", value: clientID)
-            .build()
-
-        return try await pushChannelService.createPushChannelV2(request)
+    func createPushChannel(clientID: String, marker: String) async throws -> AnyPushChannelV2 {
+        throw PushChannelV2Error.unsupportedEndpointForAPIVersion
     }
-
 }

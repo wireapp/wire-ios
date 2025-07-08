@@ -16,18 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-/// An API access object for endpoints concerning the push channel.
-public protocol PushChannelV2API {
+import Foundation
 
-    /// Create a new push channel.
-    ///
-    /// - Parameter clientID: The id of the self client.
-    /// - Returns: A push channel.
+class PushChannelV2APIV1: PushChannelV2APIV0 {
 
-    func createPushChannel(clientID: String) async throws -> AnyPushChannelV2
+    override var apiVersion: APIVersion { .v1 }
 
 }
-
-// Workaround for automockable compiler error.
-public typealias AnyPushChannelV2 = any PushChannelV2Protocol
