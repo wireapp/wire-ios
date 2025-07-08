@@ -44,7 +44,7 @@ package protocol NodesAPIProtocol: Sendable {
 
     func deleteFile(nodeID: UUID) async throws
 
-    func cancelDraft(nodeID: UUID, versionID: UUID) async throws
+    func deleteVersion(nodeID: UUID, versionID: UUID) async throws
 
     func publishDraft(nodeID: UUID, versionID: UUID) async throws
 
@@ -127,8 +127,8 @@ package final actor NodesAPI: NodesAPIProtocol {
         try await restAPI.publishDraft(uuid: nodeID, versionID: versionID)
     }
 
-    package func cancelDraft(nodeID: UUID, versionID: UUID) async throws {
-        try await restAPI.cancelDraft(uuid: nodeID, versionID: versionID)
+    package func deleteVersion(nodeID: UUID, versionID: UUID) async throws {
+        try await restAPI.deleteVersion(uuid: nodeID, versionID: versionID)
     }
 
     package func downloadFile(
