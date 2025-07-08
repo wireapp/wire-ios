@@ -63,7 +63,7 @@ struct SettingsCellDescriptorFactory {
             presentationStyle: PresentationStyle.modal,
             identifier: nil,
             presentationAction: { () -> (UIViewController?) in
-                URL.manageTeam(source: .settings).browserControllerOrOpenExternally
+                URL.manageTeam(source: .settings).browserControllerOrOpenExternally()
             },
             previewGenerator: nil,
             icon: .team,
@@ -244,7 +244,7 @@ struct SettingsCellDescriptorFactory {
             isDestructive: false,
             presentationStyle: .modal,
             presentationAction: {
-                WireURLs.shared.support.browserControllerOrOpenExternally
+                WireURLs.shared.support.browserControllerOrOpenExternally()
             },
             previewGenerator: .none
         )
@@ -254,7 +254,7 @@ struct SettingsCellDescriptorFactory {
             isDestructive: false,
             presentationStyle: .modal,
             presentationAction: {
-                WireURLs.shared.askSupportArticle.browserControllerOrOpenExternally
+                WireURLs.shared.askSupportArticle.browserControllerOrOpenExternally()
             },
             previewGenerator: .none
         )
@@ -266,7 +266,7 @@ struct SettingsCellDescriptorFactory {
             isDestructive: false,
             presentationStyle: .modal,
             presentationAction: {
-                WireURLs.shared.reportAbuse.browserControllerOrOpenExternally
+                WireURLs.shared.reportAbuse.browserControllerOrOpenExternally()
             },
             previewGenerator: .none
         )
@@ -292,7 +292,7 @@ struct SettingsCellDescriptorFactory {
             isDestructive: false,
             presentationStyle: .modal,
             presentationAction: {
-                WireURLs.shared.legal.browserControllerOrOpenExternally
+                WireURLs.shared.legal.browserControllerOrOpenExternally()
             },
             previewGenerator: .none
         )
@@ -318,7 +318,7 @@ struct SettingsCellDescriptorFactory {
             isDestructive: false,
             presentationStyle: .modal,
             presentationAction: {
-                WireURLs.shared.website.browserControllerOrOpenExternally
+                WireURLs.shared.website.browserControllerOrOpenExternally()
             },
             previewGenerator: .none
         )

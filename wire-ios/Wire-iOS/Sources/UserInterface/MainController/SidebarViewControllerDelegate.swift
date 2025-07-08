@@ -116,7 +116,7 @@ final class SidebarViewControllerDelegate: WireSidebarUI.SidebarViewControllerDe
 
     @MainActor
     public func sidebarViewControllerDidSelectSupport(_ viewController: SidebarViewController) {
-        if let browser = WireURLs.shared.support.browserControllerOrOpenExternally {
+        if let browser = WireURLs.shared.support.browserControllerOrOpenExternally() {
             Task {
                 await mainCoordinator.presentViewController(browser)
             }

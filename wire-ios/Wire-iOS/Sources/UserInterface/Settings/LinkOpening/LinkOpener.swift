@@ -51,7 +51,7 @@ extension URL {
     /// Returns a browser view controller if `openLinksExternally` is false, or opens externally if
     /// `openLinksExternally` is true.
     /// - Returns: A view controller to present, or `nil` if already opened externally.
-    var browserControllerOrOpenExternally: UIViewController? {
+    func browserControllerOrOpenExternally() -> UIViewController? {
         if SecurityFlags.openLinksExternally.isEnabled {
             open()
             return nil
@@ -66,7 +66,7 @@ extension URL {
         from presenter: UIViewController?,
         onDismiss: (() -> Void)? = nil
     ) {
-        if let browserVC = browserControllerOrOpenExternally as? BrowserViewController {
+        if let browserVC = browserControllerOrOpenExternally() as? BrowserViewController {
             browserVC.onDismiss = onDismiss
             browserVC.modalPresentationCapturesStatusBarAppearance = true
             presenter?.present(browserVC, animated: true)

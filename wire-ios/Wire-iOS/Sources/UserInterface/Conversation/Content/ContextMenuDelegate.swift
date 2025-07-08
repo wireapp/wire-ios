@@ -55,7 +55,7 @@ extension ContextMenuDelegate where Self: LinkViewDelegate {
         }
 
         let previewProvider: UIContextMenuContentPreviewProvider = {
-            url.browserControllerOrOpenExternally
+            url.browserControllerOrOpenExternally()
         }
 
         return UIContextMenuConfiguration(
