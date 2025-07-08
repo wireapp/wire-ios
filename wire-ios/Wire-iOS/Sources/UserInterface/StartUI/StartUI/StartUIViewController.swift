@@ -19,12 +19,12 @@
 import SwiftUI
 import UIKit
 import WireCommonComponents
-import WireConversationsAPI
-import WireConversationsUI
-import WireConversationsUIBindings
 import WireDesign
 import WireFoundation
 import WireMainNavigationUI
+import WireMessagingAPI
+import WireMessagingUI
+import WireMessagingUIBindings
 import WireReusableUIComponents
 import WireSyncEngine
 import WireUtilities

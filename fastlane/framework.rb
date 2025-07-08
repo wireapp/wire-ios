@@ -8,7 +8,7 @@ class Framework
             "WireAuthentication",
             "WireBackup",
             "WireCells",
-            "WireConversations",
+            "WireMessaging",
             "WireDomain",
             "WireFoundation",
             "WireUI",
@@ -42,7 +42,7 @@ class Framework
         frameworks["wire-ios"].add_dependency(frameworks["WireBackup"])
         frameworks["wire-ios"].add_dependency(frameworks["WireFoundation"])
         frameworks["wire-ios"].add_dependency(frameworks["WireAuthentication"])
-        frameworks["wire-ios"].add_dependency(frameworks["WireConversations"])
+        frameworks["wire-ios"].add_dependency(frameworks["WireMessaging"])
         frameworks["wire-ios"].add_dependency(frameworks["wire-ios-testing"]) # included in WireiOSTests
 
         frameworks["wire-ios-notification-engine"].add_dependency(frameworks["wire-ios-request-strategy"])
@@ -100,7 +100,7 @@ class Framework
         frameworks["WireCells"].add_dependency(frameworks["WireFoundation"])
         frameworks["WireCells"].add_dependency(frameworks["WireUI"])
 
-        frameworks["WireConversations"].add_dependency(frameworks["WireFoundation"])
+        frameworks["WireMessaging"].add_dependency(frameworks["WireFoundation"])
 
         frameworks
     end
@@ -146,8 +146,8 @@ class Framework
             "WireBackupAll"
         when "WireCells"
             "WireCellsAll"
-        when "WireConversations"
-            "WireConversationsAll" # use a custom scheme that includes all targets in the package
+        when "WireMessaging"
+            "WireMessagingAll" # use a custom scheme that includes all targets in the package
         when "WireDomain"
             name
         when "WireAnalytics"
