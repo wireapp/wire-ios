@@ -28,7 +28,7 @@ struct FileSharingFeatureConfigDecoder {
             forKey: .payload
         )
 
-        return FileSharingFeatureConfig(status: payload.status)
+        return FileSharingFeatureConfig(status: payload.status.toAPIModel())
     }
 
 }

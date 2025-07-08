@@ -218,7 +218,7 @@ extension WireConversationChannelCreationFormViewController: AddParticipantsConv
             allowGuests: values.allowGuests,
             allowServices: values.shouldIncludeServices ? values.allowServices : false
         ).compactMap {
-            WireNetwork.ConversationAccessRole(rawValue: $0.rawValue)
+            $0.toNetworkModel()
         }
 
         do {

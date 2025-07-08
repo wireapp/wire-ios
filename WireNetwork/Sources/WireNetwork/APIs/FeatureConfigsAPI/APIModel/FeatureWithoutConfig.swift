@@ -20,6 +20,6 @@ import Foundation
 
 struct FeatureWithoutConfig: Decodable {
 
-    let status: FeatureConfigStatus
+    let status: FeatureConfigStatusV0
 
 }

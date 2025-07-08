@@ -29,7 +29,7 @@ struct ConferenceCallingFeatureConfigDecoder {
         )
 
         return ConferenceCallingFeatureConfig(
-            status: payload.status,
+            status: payload.status.toAPIModel(),
             useSFTForOneToOneCalls: false
         )
     }

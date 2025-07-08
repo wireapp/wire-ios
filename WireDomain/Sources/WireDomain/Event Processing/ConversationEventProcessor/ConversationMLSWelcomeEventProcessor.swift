@@ -45,19 +45,19 @@ struct ConversationMLSWelcomeEventProcessor: ConversationMLSWelcomeEventProcesso
         )
 
         var conversation = await conversationRepository.fetchConversation(
-            id: conversationID.uuid,
+            id: conversationID.id,
             domain: conversationID.domain
         )
 
         if conversation == nil {
             // sync conversation with backend
             try await conversationRepository.pullConversation(
-                id: conversationID.uuid,
+                id: conversationID.id,
                 domain: conversationID.domain
             )
 
             conversation = await conversationRepository.fetchConversation(
-                id: conversationID.uuid,
+                id: conversationID.id,
                 domain: conversationID.domain
             )
         }

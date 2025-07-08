@@ -20,7 +20,7 @@ public import Foundation
 
 /// Service information for a bot.
 
-public struct Service: Equatable, Codable, Sendable {
+public struct Service: Equatable, Sendable {
 
     /// The service's id.
 
@@ -35,4 +35,16 @@ public struct Service: Equatable, Codable, Sendable {
         self.provider = provider
     }
 
+}
+
+struct ServiceV0: Equatable, Sendable, Decodable {
+    let id: UUID
+    let provider: UUID
+
+}
+
+extension ServiceV0: ToAPIModelConvertible {
+    func toAPIModel() -> Service {
+        Service(id: id, provider: provider)
+    }
 }

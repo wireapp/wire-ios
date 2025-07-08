@@ -28,7 +28,7 @@ struct DigitalSignatureFeatureConfigDecoder {
             forKey: .payload
         )
 
-        return DigitalSignatureFeatureConfig(status: payload.status)
+        return DigitalSignatureFeatureConfig(status: payload.status.toAPIModel())
     }
 
 }
