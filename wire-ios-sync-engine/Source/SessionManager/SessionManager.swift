@@ -91,9 +91,21 @@ public protocol SessionManagerDelegate: AnyObject, SessionActivationObserver {
         error: any Error,
         retryHandler: @escaping () -> Void
     )
-
     var isInAuthenticatedAppState: Bool { get }
     var isInUnathenticatedAppState: Bool { get }
+}
+
+extension SessionManagerDelegate {
+
+    @MainActor
+    func sessionManagerWillMigrateAccount() async {
+        await withCheckedContinuation { continuation in
+            sessionManagerWillMigrateAccount {
+                continuation.resume()
+            }
+        }
+    }
+
 }
 
 /// The public interface for the session manager.
@@ -244,7 +256,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     public static let defaultMaxNumberAccounts: Int = 3
 
     public let currentAppVersion: String
-    public let currentBuildVersion: String
+    public let currentBuildNumber: String
     var isAppVersionBlacklisted = false
     public weak var delegate: SessionManagerDelegate?
     public let accountManager: AccountManager
@@ -372,7 +384,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     public convenience init(
         maxNumberAccounts: Int = defaultMaxNumberAccounts,
         currentAppVersion: String,
-        currentBuildVersion: String,
+        currentBuildNumber: String,
         mediaManager: MediaManagerType,
         delegate: SessionManagerDelegate?,
         application: ZMApplication,
@@ -402,7 +414,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         let dispatchGroup = dispatchGroup ?? ZMSDispatchGroup(label: "WireSyncEngine.SessionManager.private")
 
         let unauthenticatedSessionFactory = UnauthenticatedSessionFactory(
-            appVersion: currentBuildVersion,
+            appVersion: currentBuildNumber,
             environment: environment,
             proxyUsername: proxyCredentials?.username,
             proxyPassword: proxyCredentials?.password,
@@ -410,7 +422,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         )
 
         let authenticatedSessionFactory = AuthenticatedSessionFactory(
-            appVersion: currentBuildVersion,
+            currentAppVersion: currentAppVersion,
+            currentBuildNumber: currentBuildNumber,
             application: application,
             mediaManager: mediaManager,
             flowManager: flowManager,
@@ -424,7 +437,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         try self.init(
             maxNumberAccounts: maxNumberAccounts,
             currentAppVersion: currentAppVersion,
-            currentBuildVersion: currentBuildVersion,
+            currentBuildNumber: currentBuildNumber,
             authenticatedSessionFactory: authenticatedSessionFactory,
             unauthenticatedSessionFactory: unauthenticatedSessionFactory,
             reachability: reachability,
@@ -488,7 +501,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     init(
         maxNumberAccounts: Int = defaultMaxNumberAccounts,
         currentAppVersion: String,
-        currentBuildVersion: String,
+        currentBuildNumber: String,
         authenticatedSessionFactory: AuthenticatedSessionFactory,
         unauthenticatedSessionFactory: UnauthenticatedSessionFactory,
         reachability: ReachabilityWrapper,
@@ -512,7 +525,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         SessionManager.enableLogsByEnvironmentVariable()
         self.environment = environment
         self.currentAppVersion = currentAppVersion
-        self.currentBuildVersion = currentBuildVersion
+        self.currentBuildNumber = currentBuildNumber
         self.application = application
         self.delegate = delegate
         self.dispatchGroup = dispatchGroup
@@ -606,7 +619,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             blacklistVerificator?.tearDown()
             blacklistVerificator = ZMBlacklistVerificator(
                 checkInterval: configuration.blacklistDownloadInterval,
-                version: currentBuildVersion,
+                version: currentBuildNumber,
                 environment: environment,
                 proxyUsername: proxyCredentials?.username,
                 proxyPassword: proxyCredentials?.password,
@@ -1094,18 +1107,28 @@ public final class SessionManager: NSObject, SessionManagerType {
                         )
                     }
 
+                    let userSession = await self.startBackgroundSession(
+                        for: account,
+                        with: coreDataStack,
+                        journal: journal
+                    )
+
+                    let migrationService = userSession.makeAppVersionMigrationService()
+                    if migrationService.isMigrationNeeded {
+                        await self.delegate?.sessionManagerWillMigrateAccount()
+
+                        do {
+                            try await migrationService.performAppMigrations()
+                        } catch {
+                            WireLogger.session.error(
+                                "Failed to perform app version migrations: \(String(describing: error))"
+                            )
+                        }
+                    }
+
+                    userSession.triggerSyncsIfNeeded()
+
                     await MainActor.run {
-                        let userSession = self.startBackgroundSession(
-                            for: account,
-                            with: coreDataStack,
-                            journal: journal
-                        )
-
-                        self.triggerMigrationsNeedsActionsIfNeeded(
-                            journal: journal,
-                            userSession: userSession
-                        )
-
                         onCompletion(userSession)
                     }
                 }
@@ -1156,21 +1179,6 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         } catch {
             WireLogger.sync.critical("failed to migrate update events: \(error)")
-        }
-    }
-
-    /// Executes post migration slow sync or sync resources
-    private func triggerMigrationsNeedsActionsIfNeeded(
-        journal: Journal,
-        userSession: ZMUserSession
-    ) {
-        let context = userSession.syncContext
-        context.perform {
-            if context.readMigrationNeedsSlowSyncFlag() || journal[.isInitialSyncRequired] {
-                userSession.triggerInitialSync()
-            } else if context.readMigrationNeedsSyncResourcesFlag() {
-                userSession.triggerResourcesSync()
-            }
         }
     }
 
@@ -1296,6 +1304,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     // Creates the user session for @c account given, calls @c completion when done.
+    @MainActor
     private func startBackgroundSession(
         for account: Account,
         with coreDataStack: CoreDataStack,

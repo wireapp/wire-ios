@@ -19,29 +19,32 @@
 import Foundation
 import WireAPI
 
-struct PullAllConversationsSync: PullAllConversationsSyncProtocol {
+public final class PullAllConversationsSync: PullAllConversationsSyncProtocol {
 
     private let localDomain: String
     private let isFederationEnabled: Bool
     private let isMLSEnabled: Bool
     private let api: any ConversationsAPI
     private let store: any ConversationLocalStoreProtocol
+    private var journal: any JournalProtocol
 
-    init(
+    public init(
         localDomain: String,
         isFederationEnabled: Bool,
         isMLSEnabled: Bool,
         api: any ConversationsAPI,
-        store: any ConversationLocalStoreProtocol
+        store: any ConversationLocalStoreProtocol,
+        journal: any JournalProtocol
     ) {
         self.localDomain = localDomain
         self.isFederationEnabled = isFederationEnabled
         self.isMLSEnabled = isMLSEnabled
         self.api = api
         self.store = store
+        self.journal = journal
     }
 
-    func pull() async throws {
+    public func pull() async throws {
         var conversationIDs = [QualifiedID]()
         do {
             for try await ids in try await api.getConversationIdentifiers() {
@@ -81,6 +84,8 @@ struct PullAllConversationsSync: PullAllConversationsSyncProtocol {
                 conversationDomain: id.domain
             )
         }
+
+        journal[.isConversationSyncRequired] = false
     }
 
 }
