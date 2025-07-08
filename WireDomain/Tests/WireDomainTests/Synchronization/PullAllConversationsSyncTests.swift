@@ -28,26 +28,33 @@ final class PullAllConversationsSyncTests: XCTestCase {
     private var sut: PullAllConversationsSync!
     private var api: MockConversationsAPI!
     private var store: MockConversationLocalStoreProtocol!
+    private var journal: Journal!
 
     override func setUp() async throws {
         api = MockConversationsAPI()
         store = MockConversationLocalStoreProtocol()
+        journal = Journal(userID: UUID(), storage: UserDefaults.temporary())
         sut = PullAllConversationsSync(
             localDomain: Scaffolding.localDomain,
             isFederationEnabled: Scaffolding.isFederationEnabled,
             isMLSEnabled: Scaffolding.isMLSEnabled,
             api: api,
-            store: store
+            store: store,
+            journal: journal
         )
     }
 
     override func tearDown() async throws {
         api = nil
         store = nil
+        journal = nil
         sut = nil
     }
 
     func testPull() async throws {
+        // Given
+        journal[.isConversationSyncRequired] = true
+
         // Mock
         api.getConversationIdentifiers_MockValue = .init(fetchPage: { _ in
             .init(
@@ -93,6 +100,8 @@ final class PullAllConversationsSyncTests: XCTestCase {
         try XCTAssertCount(storeFailedInvocations, count: 1)
         XCTAssertEqual(storeFailedInvocations[0].conversationID, Scaffolding.conversationID3.uuid)
         XCTAssertEqual(storeFailedInvocations[0].conversationDomain, Scaffolding.conversationID3.domain)
+
+        XCTAssertEqual(journal[.isConversationSyncRequired], false)
     }
 
     // TODO: [WPB-15185] Re-enable

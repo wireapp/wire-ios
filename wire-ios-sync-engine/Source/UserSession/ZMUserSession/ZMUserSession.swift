@@ -39,7 +39,8 @@ public final class ZMUserSession: NSObject {
 
     // MARK: Properties
 
-    private let appVersion: String
+    private let currentAppVersion: String
+    private let currentBuildNumber: String
     private var tokens: [Any] = []
     public private(set) var isTornDown = false
 
@@ -383,6 +384,7 @@ public final class ZMUserSession: NSObject {
     var callStateObserverToken: AnyObject?
 
     private let userSessionComponent: UserSessionComponent
+    private var clientSessionComponent: ClientSessionComponent?
 
     // MARK: - Initialize
 
@@ -393,7 +395,8 @@ public final class ZMUserSession: NSObject {
         flowManager: any FlowManagerType,
         apiServiceFactory: @escaping @Sendable (_ clientID: String, _ userID: UUID) -> APIServiceProtocol,
         application: ZMApplication,
-        appVersion: String,
+        currentAppVersion: String,
+        currentBuildNumber: String,
         coreDataStack: CoreDataStack,
         earService: any EARServiceInterface,
         mlsService: any MLSServiceInterface,
@@ -416,7 +419,8 @@ public final class ZMUserSession: NSObject {
     ) {
         self.apiServiceFactory = apiServiceFactory
         self.application = application
-        self.appVersion = appVersion
+        self.currentAppVersion = currentAppVersion
+        self.currentBuildNumber = currentBuildNumber
         self.flowManager = flowManager
         self.mediaManager = mediaManager
         self.coreDataStack = coreDataStack
@@ -570,6 +574,14 @@ public final class ZMUserSession: NSObject {
             )
         )
         self.clientSessionComponent = clientSessionComponent
+<<<<<<< HEAD
+=======
+
+        if asyncStreamEnabled {
+            // TODO: [WPB-17223] move this just after the migration is done
+            journal[.isSyncV3Enabled] = true
+        }
+>>>>>>> 67bef52e9c (fix: missing groups and channels - WPB-18477 (#3300))
 
         coreCryptoProvider.registerMlsTransport(clientSessionComponent.mlsTransport)
 
@@ -670,6 +682,18 @@ public final class ZMUserSession: NSObject {
     }
 
     // MARK: - Methods
+
+    public func makeAppVersionMigrationService() -> AppVersionMigrationService {
+        let allMigrations = [
+            AppVersionMigration_4_1_1(journal: journal)
+        ]
+
+        return AppVersionMigrationService(
+            journal: journal,
+            currentVersion: SemanticVersion(stringLiteral: currentAppVersion),
+            allMigrations: allMigrations
+        )
+    }
 
     private func configureTransportSession() {
         transportSession.pushChannel.clientID = selfUserClient?.remoteIdentifier
@@ -855,12 +879,43 @@ public final class ZMUserSession: NSObject {
 
     // MARK: - Trigger syncing
 
+<<<<<<< HEAD
     public func triggerInitialSync() async {
         do {
             syncAgent?.suspend()
             try await syncAgent?.performInitialSync()
         } catch {
             WireLogger.sync.error("failed to perform initial sync: \(String(describing: error))")
+=======
+    func triggerSyncsIfNeeded() {
+        Task {
+            let (isInitialSyncRequired, isResourceSyncRequired) = await syncContext.perform {
+                (
+                    self.syncContext.readMigrationNeedsSlowSyncFlag(),
+                    self.syncContext.readMigrationNeedsSyncResourcesFlag()
+                )
+            }
+
+            if isInitialSyncRequired || journal[.isInitialSyncRequired] {
+                self.triggerInitialSync()
+            } else if isResourceSyncRequired {
+                self.triggerResourcesSync()
+            } else if journal[.isConversationSyncRequired] {
+                let sync = self.clientSessionComponent?.pullAllConversationsSync
+                try? await sync?.pull()
+            }
+        }
+    }
+
+    public func triggerInitialSync() {
+        Task {
+            do {
+                syncAgent?.suspend()
+                try await syncAgent?.performInitialSync()
+            } catch {
+                WireLogger.sync.error("failed to perform initial sync: \(String(describing: error))")
+            }
+>>>>>>> 67bef52e9c (fix: missing groups and channels - WPB-18477 (#3300))
         }
     }
 

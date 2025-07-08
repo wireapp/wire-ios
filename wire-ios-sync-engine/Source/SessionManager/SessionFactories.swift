@@ -23,7 +23,8 @@ import WireNetwork
 
 open class AuthenticatedSessionFactory {
 
-    let appVersion: String
+    let currentAppVersion: String
+    let currentBuildNumber: String
     let mediaManager: MediaManagerType
     let flowManager: FlowManagerType
     let application: ZMApplication
@@ -34,7 +35,8 @@ open class AuthenticatedSessionFactory {
     let minTLSVersion: String?
 
     public init(
-        appVersion: String,
+        currentAppVersion: String,
+        currentBuildNumber: String,
         application: ZMApplication,
         mediaManager: MediaManagerType,
         flowManager: FlowManagerType,
@@ -44,7 +46,8 @@ open class AuthenticatedSessionFactory {
         reachability: Reachability,
         minTLSVersion: String?
     ) {
-        self.appVersion = appVersion
+        self.currentAppVersion = currentAppVersion
+        self.currentBuildNumber = currentBuildNumber
         self.mediaManager = mediaManager
         self.flowManager = flowManager
         self.application = application
@@ -111,7 +114,7 @@ open class AuthenticatedSessionFactory {
             reachability: reachability,
             initialAccessToken: nil,
             applicationGroupIdentifier: nil,
-            applicationVersion: appVersion,
+            applicationVersion: currentBuildNumber,
             minTLSVersion: minTLSVersion,
             selfClientID: selfClientID,
             isSyncV2Enabled: journal[.isSyncV2Enabled]
@@ -134,7 +137,8 @@ open class AuthenticatedSessionFactory {
             apiServiceFactory: apiServiceFactory,
             backendEnvironment: environment,
             wireAPIBackendEnvironment: wireAPIBackendEnvironment,
-            appVersion: appVersion,
+            currentAppVersion: currentAppVersion,
+            currentBuildNumber: currentBuildNumber,
             application: application,
             cryptoboxMigrationManager: CryptoboxMigrationManager(),
             coreDataStack: coreDataStack,
