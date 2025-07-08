@@ -16,23 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// Configuration settings file format documentation can be found at:
-// https://help.apple.com/xcode/#/dev745c5c974
+public import Foundation
 
-CLIPBOARD_ENABLED=1
-FORCE_CBR_ENABLED=0
-GENERATE_LINK_PREVIEW_ENABLED=1
-CUSTOM_BACKEND_ENABLED=1
-CAMERA_ROLL_ENABLED=1
-FILE_SHARING_ENABLED=1
-LOCATION_SHARING_ENABLED=1
+public protocol WireCellsDeleteDraftUseCaseProtocol {
 
-/// Whether encryption at rest is enabled and can't be disabled.
+    func invoke(nodeID: UUID) async throws
 
-FORCE_ENCRYPTION_AT_REST_ENABLED=0
-
-// The minimum TLS version used by the app.
-// Possible values are [1.2, 1.3].
-
-MIN_TLS_VERSION=1.2
-OPEN_LINKS_EXTERNALLY=0
+}

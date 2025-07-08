@@ -57,8 +57,8 @@ final class UploadDraftUseCaseTests {
         try await sut.invoke(fileURL: fileURL)
 
         // Then
-        let receivedArgs = await draftsRepository
-            .addAssetURLURLAssetSizeIntCellNameStringFileNameStringFileTypeUTTypeVoidReceivedArguments
+        let receivedArgs = draftsRepository
+            .addAssetURLURLAssetSizeIntCellNameStringFileNameStringFileTypeUTTypeDeleteAfterUploadBoolVoidReceivedArguments
         #expect(receivedArgs?.assetURL == fileURL)
         #expect(receivedArgs?.assetSize == data.count)
         #expect(receivedArgs?.cellName == "cell-name")
