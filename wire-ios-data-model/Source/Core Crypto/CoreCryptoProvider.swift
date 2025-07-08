@@ -120,7 +120,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     ) async throws -> CRLsDistributionPoints? {
         WireLogger.mls.info("Initialising MLS client from end-to-end identity enrollment")
         let coreCrypto = try await coreCrypto()
-        let crls = try await coreCrypto.perform { context in
+        return try await coreCrypto.perform { context in
             let crlsDistributionPoints = try await context.e2eiMlsInitOnly(
                 enrollment: enrollment,
                 certificateChain: certificateChain,
@@ -129,7 +129,6 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             try await self.generateClientPublicKeys(with: context, credentialType: .x509)
             return CRLsDistributionPoints(from: crlsDistributionPoints)
         }
-        return crls
     }
 
     public func registerEpochObserver(_ epochObserver: any EpochObserver) async {
