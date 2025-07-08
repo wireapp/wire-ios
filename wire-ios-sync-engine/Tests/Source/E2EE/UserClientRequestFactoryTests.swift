@@ -157,8 +157,8 @@ final class UserClientRequestFactoryTests: MessagingTest {
 
         // then
         let transportRequest = try XCTUnwrap(request.transportRequest)
-        if apiVersion >= .v8 {
-            assertRequest(transportRequest, path: "/v8/clients", method: .post)
+        if apiVersion >= .v9 {
+            assertRequest(transportRequest, path: "/v\(apiVersion.rawValue)/clients", method: .post)
         } else {
             assertRequest(transportRequest, path: "/clients", method: .post)
         }
@@ -175,7 +175,7 @@ final class UserClientRequestFactoryTests: MessagingTest {
             XCTAssertEqual(payload.verificationCode, emailVerificationCode)
         }
 
-        if apiVersion >= .v8, DeveloperFlag.consumableNotifications.isOn {
+        if apiVersion >= .v9, DeveloperFlag.consumableNotifications.isOn {
             XCTAssertEqual(payload.capabilities, ["legalhold-implicit-consent", "consumable-notifications"])
         } else {
             XCTAssertEqual(payload.capabilities, ["legalhold-implicit-consent"])
