@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import WireConversationUI
+import WireMessagingUI
 import WireDataModel
 import WireUtilities
 

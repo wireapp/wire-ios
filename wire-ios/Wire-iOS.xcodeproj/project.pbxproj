@@ -108,7 +108,7 @@
 		CB71EE212DDF5A1000E7A3AF /* WireCellsAPI in Frameworks */ = {isa = PBXBuildFile; productRef = CB71EE202DDF5A1000E7A3AF /* WireCellsAPI */; };
 		CBDDB1832DD4BCA700A0A1F3 /* WireCellsBindings in Frameworks */ = {isa = PBXBuildFile; productRef = CBDDB1822DD4BCA700A0A1F3 /* WireCellsBindings */; };
 		D0E258152DDC864100959FB9 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = D0E258142DDC864100959FB9 /* WireFoundation */; };
-		E40050762D71A80100B7962B /* WireConversationUI in Frameworks */ = {isa = PBXBuildFile; productRef = E40050752D71A80100B7962B /* WireConversationUI */; };
+		E40050762D71A80100B7962B /* WireMessagingUI in Frameworks */ = {isa = PBXBuildFile; productRef = E40050752D71A80100B7962B /* WireMessagingUI */; };
 		E416B8E42DE8560600882C63 /* WireMultiBackendUI in Frameworks */ = {isa = PBXBuildFile; productRef = E416B8E32DE8560600882C63 /* WireMultiBackendUI */; };
 		E489D8312DF709CE008966AE /* WireMultiBackendUI in Frameworks */ = {isa = PBXBuildFile; productRef = E489D8302DF709CE008966AE /* WireMultiBackendUI */; };
 		E6C25FC52AFFAAC300406A1C /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E6C25FC42AFFAAC300406A1C /* WireTesting.framework */; };
@@ -966,7 +966,7 @@
 				591B6E172C8B095B009F8A7B /* WireNotificationEngine.framework in Frameworks */,
 				59537D952CFFA11A00920B59 /* WireLogging in Frameworks */,
 				E9FBF3A62C47C23100C65DA8 /* FLAnimatedImage in Frameworks */,
-				E40050762D71A80100B7962B /* WireConversationUI in Frameworks */,
+				E40050762D71A80100B7962B /* WireMessagingUI in Frameworks */,
 				E9BA75C62CD51DF100F6EDDF /* WireMoveToFolderUI in Frameworks */,
 				EEE25B4D29719D0B0008B894 /* ZipArchive.xcframework in Frameworks */,
 				061F34192B1E2ED50099CBAB /* AppAuth in Frameworks */,
@@ -1366,7 +1366,7 @@
 				EE543B492D564AC000CA96BA /* WireAuthentication */,
 				01D2B7A42D64A9190030D28D /* WireCoreCrypto */,
 				767F41E72D7F95C100E4E090 /* WireMessagingUIBindings */,
-				E40050752D71A80100B7962B /* WireConversationUI */,
+				E40050752D71A80100B7962B /* WireMessagingUI */,
 				01C774262D9EECE100A2FF07 /* WireAVS */,
 				76BFA65C2D89E6B8000F2D0A /* WireMessagingAPI */,
 				76BFA65E2D89E6D8000F2D0A /* WireMessagingUIBindings */,
@@ -2967,9 +2967,9 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = WireFoundation;
 		};
-		E40050752D71A80100B7962B /* WireConversationUI */ = {
+		E40050752D71A80100B7962B /* WireMessagingUI */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = WireConversationUI;
+			productName = WireMessagingUI;
 		};
 		E416B8E32DE8560600882C63 /* WireMultiBackendUI */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -18,18 +18,6 @@
 
 import UIKit
 
-public extension ConversationCellModel {
-
-    @MainActor
-    func configureCell(_ cell: UITableViewCell) {
-        switch self {
-
-        case let .timeDivider(timeDivider):
-            guard let cell = cell as? ConversationCell<TimeDividerModel> else { break }
-            return cell.model = timeDivider
-        }
-
-        assertionFailure("unexpected cell: \(cell)")
-    }
-
+extension UIImage {
+    static let dropdown = UIImage(resource: .dropdown)
 }

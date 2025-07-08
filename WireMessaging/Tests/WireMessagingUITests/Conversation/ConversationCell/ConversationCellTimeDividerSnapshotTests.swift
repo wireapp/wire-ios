@@ -20,7 +20,7 @@ import SwiftUI
 import WireTestingPackage
 import XCTest
 
-@testable import WireConversationUI
+@testable import WireMessagingUI
 
 final class ConversationCellTimeDividerSnapshotTests: XCTestCase {
 

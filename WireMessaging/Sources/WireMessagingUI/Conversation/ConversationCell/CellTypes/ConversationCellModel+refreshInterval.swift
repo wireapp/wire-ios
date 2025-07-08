@@ -16,8 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+public import Foundation
 
-public extension UIImage {
-    static let dropdown = UIImage(resource: .dropdown)
+public extension ConversationCellModel {
+
+    var refreshInterval: TimeInterval {
+        switch self {
+        case .timeDivider:
+            10
+        default:
+            .zero
+        }
+    }
+
 }

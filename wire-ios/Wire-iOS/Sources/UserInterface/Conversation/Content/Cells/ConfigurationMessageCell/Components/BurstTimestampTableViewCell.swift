@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import WireConversationUI
+import WireMessagingUI
 import WireFoundation
 
 final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellDescription {

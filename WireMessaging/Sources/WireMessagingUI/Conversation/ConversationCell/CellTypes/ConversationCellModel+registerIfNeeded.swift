@@ -16,17 +16,33 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import UIKit
 
 public extension ConversationCellModel {
 
-    var refreshInterval: TimeInterval {
-        switch self {
+    @MainActor
+    func registerIfNeeded(in tableView: UITableView) {
+        guard !tableView.registeredIdentifiers.contains(cellReuseIdentifier) else { return }
+
+        let cellType = switch self {
+
         case .timeDivider:
-            10
-        default:
-            .zero
+            ConversationCell<TimeDividerModel>.self
         }
+
+        tableView.register(cellType, forCellReuseIdentifier: cellReuseIdentifier)
+        tableView.registeredIdentifiers.insert(cellReuseIdentifier)
     }
 
 }
+
+private extension UITableView {
+
+    var registeredIdentifiers: Set<String> {
+        get { objc_getAssociatedObject(self, &registeredIdentifiersKey) as? Set<String> ?? [] }
+        set { objc_setAssociatedObject(self, &registeredIdentifiersKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+
+}
+
+@MainActor private var registeredIdentifiersKey = 0

@@ -20,6 +20,7 @@ import SwiftUI
 import WireAccountImageUI
 import WireDesign
 import WireReusableUIComponents
+public import UIKit
 
 public class ConversationTitleView: UIView {
 

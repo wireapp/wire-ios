@@ -20,7 +20,7 @@ import WireAccountImageUI
 import WireTestingPackage
 import XCTest
 
-@testable import WireConversationUI
+@testable import WireMessagingUI
 
 final class ConversationTitleViewSnapshotTests: XCTestCase {
 
