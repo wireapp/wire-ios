@@ -64,7 +64,11 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     private var subscription: AnyCancellable?
 
     private var hasCompletedInitialSync: Bool {
-        lastUpdateEventIDRepository.fetchLastEventID() != nil
+        if journal[.isConsumableNotificationsEnabled] {
+           return !journal[.isInitialSyncRequired]
+        } else {
+           return lastUpdateEventIDRepository.fetchLastEventID() != nil
+        }
     }
 
     var isLive: Bool {
