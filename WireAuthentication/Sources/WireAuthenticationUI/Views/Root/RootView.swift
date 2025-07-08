@@ -30,10 +30,6 @@ package protocol RootFactory {
     func accountsSwitcherFactory() -> any AccountSwitcherFactory
 }
 
-enum RootDestination: Hashable {
-    case switchAccounts
-}
-
 package struct RootView: View {
 
     @StateObject private var viewModel: RootViewModel
@@ -80,26 +76,78 @@ package struct RootView: View {
             // it will dismiss the sheet.
             .alert(
                 item: $viewModel.alert,
-                title: { Text($0.title) },
-                message: { Text($0.message) },
+                title: { alert in
+                    switch alert {
+                    case .obsoleteClient:
+                        Text(
+                            viewModel.isMultibackendEnabled ? L10n.Localizable.ObsoleteClientMultibackend.Alert
+                                .title : L10n.Localizable.ObsoleteClient.Alert.title
+                        )
+                    default:
+                        Text(alert.title)
+                    }
+                },
+                message: { alert in
+                    switch alert {
+                    case .obsoleteBackend:
+                        Text(
+                            viewModel.isMultibackendEnabled ? L10n.Localizable.ObsoleteBackendMultibackend.Alert
+                                .message : L10n.Localizable.ObsoleteBackend.Alert.message
+                        )
+                    case .obsoleteClient:
+                        Text(
+                            viewModel.isMultibackendEnabled ? L10n.Localizable.ObsoleteClientMultibackend
+                                .Alert.message : L10n.Localizable.ObsoleteClient.Alert.message
+                        )
+                    default:
+                        Text(alert.message)
+                    }
+                },
                 actions: { alert in
                     switch alert {
                     case .obsoleteClient:
-                        Button(
-                            Strings.ObsoleteClient.Alert.okButton,
-                            action: viewModel.goToAppStore
-                        )
-                    // for dev purposes only
-                    // will be added in tickets to implement real alerts
-                    // TODO: [WPB-17804] https://wearezeta.atlassian.net/browse/WPB-17804
-//                        Button(
-//                            Strings.ObsoleteClient.Alert.switchAccounts,
-//                            action: viewModel.switchAccounts
-//                        )
+                        obsoleteClientAlertActions()
+                    case .obsoleteBackend where viewModel.isMultibackendEnabled:
+                        obsoleteBackendAlertActions()
                     default:
                         Button(Strings.Authentication.Error.confirm, action: {})
                     }
                 }
+            )
+        }
+    }
+
+    @ViewBuilder
+    fileprivate func switchAccountsAlertButtonIfNeeded() -> some View {
+        if viewModel.shouldShowSwitchAccountsAlertButton {
+            Button(
+                Strings.Obsolete.Alert.switchAccounts,
+                action: viewModel.switchAccounts
+            )
+        }
+    }
+
+    @ViewBuilder
+    private func obsoleteBackendAlertActions() -> some View {
+        Button(
+            Strings.Obsolete.Alert.ok,
+            action: viewModel.dismissAlert
+        )
+        switchAccountsAlertButtonIfNeeded()
+    }
+
+    @ViewBuilder
+    private func obsoleteClientAlertActions() -> some View {
+        Button(
+            viewModel.isMultibackendEnabled ? Strings.Obsolete.Alert.updateButton : Strings.ObsoleteClient.Alert
+                .okButton,
+            action: viewModel.goToAppStore
+        )
+        switchAccountsAlertButtonIfNeeded()
+        if viewModel.isMultibackendEnabled {
+            Button(
+                Strings.Obsolete.Alert.cancel,
+                action: viewModel.dismissAlert
             )
         }
     }

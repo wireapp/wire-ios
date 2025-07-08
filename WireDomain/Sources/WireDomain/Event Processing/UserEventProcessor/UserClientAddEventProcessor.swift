@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import WireNetwork
 
 struct UserClientAddEventProcessor: UserClientAddEventProcessorProtocol {
 
@@ -26,20 +26,16 @@ struct UserClientAddEventProcessor: UserClientAddEventProcessorProtocol {
 
     let repository: any UserClientsRepositoryProtocol
 
-    func processEvent(_ event: UserClientAddEvent) async throws {
-        do {
-            let localUserClient = try await repository.fetchOrCreateClient(
-                id: event.client.id
-            )
+    func processEvent(_ event: UserClientAddEvent) async {
+        let localUserClient = await repository.fetchOrCreateClient(
+            id: event.client.id
+        )
 
-            try await repository.updateClient(
-                id: event.client.id,
-                from: event.client,
-                isNewClient: localUserClient.isNew
-            )
-        } catch {
-            throw Error.failedToUpdateUserClient(error)
-        }
+        await repository.updateClient(
+            id: event.client.id,
+            from: event.client,
+            isNewClient: localUserClient.isNew
+        )
     }
 
 }

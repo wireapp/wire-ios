@@ -17,7 +17,7 @@
 //
 
 import CoreData
-import WireAPI
+import WireNetwork
 
 // sourcery: AutoMockable
 public protocol UpdateEventsLocalStoreProtocol {
@@ -76,6 +76,10 @@ public protocol UpdateEventsLocalStoreProtocol {
         with objectIDs: [NSManagedObjectID]
     ) async throws
 
+    /// Delete all stored events matching given indexes
+    /// - Parameter indexes: array of indexes matching the stored events
+    func deleteEventEnvelopes(at indexes: [Int64]) async throws
+
     /// Delete the event envelope with the given index.
     /// - parameter index: The index of the envelope to delete
 
@@ -84,4 +88,8 @@ public protocol UpdateEventsLocalStoreProtocol {
     ) async throws
 
     func calculateLastUnreadMessages() async
+
+    func storeServerTimeDelta(
+        _ serverTimeDelta: TimeInterval
+    ) async
 }

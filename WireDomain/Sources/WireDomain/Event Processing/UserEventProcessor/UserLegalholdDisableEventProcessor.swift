@@ -16,13 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import WireNetwork
 
 struct UserLegalholdDisableEventProcessor: UserLegalholdDisableEventProcessorProtocol {
 
     let repository: any UserRepositoryProtocol
 
-    func processEvent(_: UserLegalholdDisableEvent) async throws {
+    func processEvent(_: UserLegalholdDisableEvent) async {
         await repository.disableUserLegalHold()
     }
 

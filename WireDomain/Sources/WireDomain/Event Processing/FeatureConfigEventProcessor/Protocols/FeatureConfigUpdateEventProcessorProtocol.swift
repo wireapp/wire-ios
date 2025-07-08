@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import WireNetwork
 
 /// Process feature config update events.
 
@@ -26,6 +26,6 @@ protocol FeatureConfigUpdateEventProcessorProtocol {
     ///
     /// - Parameter event: A feature config update event.
 
-    func processEvent(_ event: FeatureConfigUpdateEvent) async throws
+    func processEvent(_ event: FeatureConfigUpdateEvent) async
 
 }

@@ -18,8 +18,8 @@
 
 import Combine
 import Foundation
-import WireAPI
 import WireLogging
+import WireNetwork
 
 public struct IncrementalSync: IncrementalSyncProtocol {
 
@@ -38,6 +38,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
     private let syncStateSubject: CurrentValueSubject<SyncState, Never>
     private let logger = WireLogger.sync
     private let journal: Journal
+    private let mlsGroupRepairAgent: MLSGroupRepairAgentProtocol
 
     public init(
         selfClientID: String,
@@ -49,7 +50,8 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         processor: any UpdateEventProcessorProtocol,
         databaseSaver: any DatabaseSaverProtocol,
         syncStateSubject: CurrentValueSubject<SyncState, Never>,
-        journal: Journal
+        journal: Journal,
+        mlsGroupRepairAgent: MLSGroupRepairAgentProtocol
     ) {
         self.selfClientID = selfClientID
         self.pushChannelAPI = pushChannelAPI
@@ -61,6 +63,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         self.databaseSaver = databaseSaver
         self.syncStateSubject = syncStateSubject
         self.journal = journal
+        self.mlsGroupRepairAgent = mlsGroupRepairAgent
     }
 
     public func perform() async throws -> Token {
@@ -113,6 +116,8 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                     throw error
                 }
             }
+
+            await mlsGroupRepairAgent.repairConversations()
 
             let liveEventTask = Task { @Sendable [self] in
                 logger.debug("handling live event stream", attributes: .syncAttributes(initialSync: false))
@@ -193,7 +198,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                     continue
                 }
 
-                // Bump the last event id so we don't refech it.
+                // Bump the last event id so we don't refetch it.
                 if !envelope.isTransient {
                     logger.debug(
                         "updating last event id",
@@ -328,4 +333,16 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         }
     }
 
+}
+
+extension IncrementalSyncV1: SyncMigratorProtocol {
+    public func migrateFromIncrementalSyncV1() async throws {
+        logger.debug("pulling pending update events", attributes: .syncAttributes(initialSync: false))
+        syncStateSubject.send(.incrementalSyncing(.pullPendingEvents))
+        try await updateEventsSync.pull()
+
+        logger.debug("processing stored update events", attributes: .syncAttributes(initialSync: false))
+        syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
+        _ = try await processStoredEvents()
+    }
 }

@@ -102,9 +102,6 @@
       location = "group:crowdin.yml">
    </FileRef>
    <FileRef
-      location = "group:Jenkinsfile">
-   </FileRef>
-   <FileRef
       location = "group:WireAVS">
    </FileRef>
    <FileRef
@@ -210,9 +207,6 @@
       location = "group:WireAnalytics">
    </FileRef>
    <FileRef
-      location = "group:WireAPI">
-   </FileRef>
-   <FileRef
       location = "group:WireAuthentication">
    </FileRef>
    <FileRef
@@ -235,6 +229,9 @@
    </FileRef>
    <FileRef
       location = "group:WireLogging">
+   </FileRef>
+   <FileRef
+      location = "group:WireNetwork">
    </FileRef>
    <FileRef
       location = "group:WirePlugins">

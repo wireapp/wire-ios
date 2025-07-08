@@ -17,10 +17,10 @@
 //
 
 import Foundation
-import WireAPI
 import WireDataModel
 import WireDomain
 import WireLinkPreview
+import WireNetwork
 import WireRequestStrategy
 import WireTransport
 
@@ -315,7 +315,7 @@ public final class SharingSession {
             isSyncV2Enabled: false
         )
 
-        let proxySettings: WireAPI.ProxySettings? = {
+        let proxySettings: WireNetwork.ProxySettings? = {
             guard let proxy = environment.proxy else { return nil }
 
             if proxy.needsAuthentication {
@@ -343,6 +343,7 @@ public final class SharingSession {
             pinnedKeys: environment.trustData.map { trustData in
                 PinnedKey(
                     key: trustData.certificateKey,
+                    rawKey: trustData.rawCertificateKey,
                     hosts: trustData.hosts.map { host in
                         switch host.rule {
                         case .equals:
@@ -357,7 +358,7 @@ public final class SharingSession {
         )
 
         guard let apiVersion = BackendInfo.apiVersion,
-              let wireAPIVersion = WireAPI.APIVersion(rawValue: UInt(apiVersion.rawValue)) else {
+              let wireAPIVersion = WireNetwork.APIVersion(rawValue: UInt(apiVersion.rawValue)) else {
             fatal("cannot resolve api version")
 
         }
@@ -456,9 +457,9 @@ public final class SharingSession {
         cachesDirectory: URL,
         accountContainer: URL,
         appLockConfig: AppLockController.LegacyConfig?,
-        wireAPIBackendEnvironment: WireAPI.BackendEnvironment,
-        minTLSVersion: WireAPI.TLSVersion,
-        apiVersion: WireAPI.APIVersion,
+        wireAPIBackendEnvironment: WireNetwork.BackendEnvironment,
+        minTLSVersion: WireNetwork.TLSVersion,
+        apiVersion: WireNetwork.APIVersion,
         sharedUserDefaults: UserDefaults
     ) throws {
 
@@ -562,7 +563,6 @@ public final class SharingSession {
         let selfClient = ZMUser.selfUser(in: coreDataStack.viewContext).selfClient()
         let clientUserSessionComponent = userSessionComponent.clientSessionComponent(
             clientID: selfClientID,
-            asyncStreamEnabled: selfClient?.asyncStreamCapable == true,
             completionHandlers: completionHandlers
         )
 

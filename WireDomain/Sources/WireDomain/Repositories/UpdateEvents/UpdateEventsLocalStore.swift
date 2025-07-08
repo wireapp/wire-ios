@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
 import WireFoundation
 import WireLogging
+import WireNetwork
 import WireUpdateEventCoding
 
 final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
@@ -64,6 +64,14 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
         storage.getUUID(
             forKey: .lastEventID
         )
+    }
+
+    public func storeServerTimeDelta(
+        _ serverTimeDelta: TimeInterval
+    ) async {
+        await syncContext.perform { [syncContext] in
+            syncContext.serverTimeDelta = serverTimeDelta
+        }
     }
 
     public func storeLastEventID(id: UUID) {
@@ -145,6 +153,38 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
 
             WireLogger.sync.debug(
                 "deleting \(objectIDs.count) stored envelopes",
+                attributes: .syncAttributes(initialSync: false)
+            )
+
+            let deletedObjects: [AnyHashable: Any] = [
+                NSDeletedObjectsKey: deleteResult
+            ]
+
+            NSManagedObjectContext.mergeChanges(
+                fromRemoteContextSave: deletedObjects,
+                into: [eventContext]
+            )
+        }
+    }
+
+    public func deleteEventEnvelopes(
+        at indices: [Int64]
+    ) async throws {
+        try await eventContext.perform { [eventContext] in
+            let request = StoredUpdateEventEnvelope.fetchRequest(sortIndices: indices)
+            let untypedRequest: NSFetchRequest<NSFetchRequestResult> = request as! NSFetchRequest<NSFetchRequestResult>
+            let deleteRequest = NSBatchDeleteRequest(fetchRequest: untypedRequest)
+            deleteRequest.resultType = .resultTypeObjectIDs
+            let batchDelete = try eventContext.execute(deleteRequest) as? NSBatchDeleteResult
+
+            guard let deleteResult = batchDelete?.result as? [NSManagedObjectID] else {
+                return assertionFailure(
+                    "batch deletion result should be of NSManagedObjectID type"
+                )
+            }
+
+            WireLogger.sync.debug(
+                "deleting \(indices.count) stored envelopes",
                 attributes: .syncAttributes(initialSync: false)
             )
 

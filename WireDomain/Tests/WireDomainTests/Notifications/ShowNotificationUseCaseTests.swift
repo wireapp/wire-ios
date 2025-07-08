@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPISupport
 import WireDataModel
+import WireNetworkSupport
 import XCTest
-@testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport
+@testable import WireNetwork
 
 final class ShowNotificationUseCaseTests: XCTestCase {
     private var sut: ShowNotificationUseCase!
@@ -42,7 +42,11 @@ final class ShowNotificationUseCaseTests: XCTestCase {
             contentHandler: { _ in self.didDisplayNotification = true },
             conversationLocalStore: conversationLocalStore,
             selectedAccount: Account(userName: .init(), userIdentifier: .mockID1),
-            accountManager: try AccountManager(sharedDirectory: url),
+            accountManager: try AccountManager(
+                currentAppVersion: "1.0.0",
+                sharedDirectory: url,
+                defaults: .temporary()
+            ),
             databaseSaver: databaseSaver
         )
     }

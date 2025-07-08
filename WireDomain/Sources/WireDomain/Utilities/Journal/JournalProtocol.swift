@@ -19,6 +19,7 @@
 public protocol JournalProtocol {
 
     subscript(_ key: JournalKey<Bool>) -> Bool { get set }
+    subscript(_ key: JournalKey<String?>) -> String? { get set }
     func erase()
 
 }

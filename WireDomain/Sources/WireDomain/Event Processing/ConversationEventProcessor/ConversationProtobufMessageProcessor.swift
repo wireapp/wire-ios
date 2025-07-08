@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
 import WireLogging
+import WireNetwork
 import WireProtos
 
 public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcessorProtocol {
@@ -154,14 +154,22 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
                 conversationDomain: conversationID.domain
             )
 
-        case .calling, .availability:
+        case let .availability(availability):
+            let userID = WireDataModel.QualifiedID(uuid: senderID.uuid, domain: senderID.domain)
+            let userAvailability = WireDataModel.Availability(proto: availability)
+            await userLocalStore.updateUser(
+                with: userID,
+                availability: userAvailability
+            )
 
-            // cases not handled
+        case .calling:
+
+            // case not handled here, see `onProcessedCallEvent`
             break
 
         case .inCallEmoji:
 
-            // Not supported yet, just discard.
+            // Not supported yet, just discard. TODO: [WPB-11770] implement here
             break
 
         case .image, .asset:
@@ -214,7 +222,7 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
             break
 
         case .inCallHandRaise:
-            break // Not handled yet
+            break // Not handled yet, TODO: [WPB-11769] implement here
         }
     }
 

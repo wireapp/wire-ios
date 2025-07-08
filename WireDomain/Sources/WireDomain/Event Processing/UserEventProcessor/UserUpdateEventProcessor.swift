@@ -16,13 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import WireNetwork
 
 struct UserUpdateEventProcessor: UserUpdateEventProcessorProtocol {
 
     let repository: any UserRepositoryProtocol
 
-    func processEvent(_ event: UserUpdateEvent) async throws {
+    func processEvent(_ event: UserUpdateEvent) async {
         await repository.updateUser(from: event)
     }
 
