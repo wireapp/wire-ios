@@ -87,8 +87,7 @@ struct DeveloperDebugActionsView: View {
         }
     }
 
-    @ViewBuilder
-    private var appVersionInputView: some View {
+    @ViewBuilder private var appVersionInputView: some View {
         TextField(
             "Enter app version, like 1.2.3",
             text: $userInput

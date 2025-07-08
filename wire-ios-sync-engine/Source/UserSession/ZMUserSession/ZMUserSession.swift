@@ -654,7 +654,7 @@ public final class ZMUserSession: NSObject {
         let allMigrations = [
             AppVersionMigration_4_1_0(journal: journal)
         ]
-        
+
         return AppVersionMigrationService(
             journal: journal,
             currentVersion: SemanticVersion(stringLiteral: currentAppVersion),

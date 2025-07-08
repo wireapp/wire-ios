@@ -121,7 +121,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
 
     func setLastCompletedAppVersionMigration(version: String) {
         isAppVersionInputPresented = false
-        
+
         guard let selfUser = userSession?.selfUser else {
             return
         }
