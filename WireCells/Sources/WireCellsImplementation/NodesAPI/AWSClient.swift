@@ -22,6 +22,7 @@ import Foundation
 import SmithyIdentity
 import SmithyStreams
 import WireCellsAPI
+import WireLogging
 
 package enum WireCellsAWSClientError: Error {
     case downloadError
@@ -118,15 +119,19 @@ final class AWSClient: Sendable {
 
     func upload(path: URL, node: WireCellsNodeDTO, versionID: UUID) async -> AsyncThrowingStream<Int, any Error> {
         AsyncThrowingStream { continuation in
-            Task {
+            let task = Task {
                 do {
                     try await self.upload(path: path, node: node, versionID: versionID) { progress in
                         continuation.yield(Int(progress))
                     }
                     continuation.finish()
+
                 } catch {
                     continuation.finish(throwing: error)
                 }
+            }
+            continuation.onTermination = { _ in
+                task.cancel()
             }
         }
     }
@@ -169,7 +174,12 @@ final class AWSClient: Sendable {
             metadata: node.createDraftNodeMetadata(versionID: versionID)
         )
 
-        _ = try await s3.putObject(input: input)
+        try await withTaskCancellationHandler {
+            _ = try await s3.putObject(input: input)
+        } onCancel: {
+            // TODO: [WPB-18574] AWS SDK doesn't support cancelling in flight requests. Find a work around.
+            WireLogger.wireCells.info("Cancelling upload for node: \(node.path)")
+        }
     }
 
     private func uploadMultipart(
