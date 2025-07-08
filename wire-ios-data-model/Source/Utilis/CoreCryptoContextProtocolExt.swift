@@ -79,7 +79,7 @@ public protocol CoreCryptoContextProtocol: AnyObject, Sendable {
     func e2eiDumpPkiEnv() async throws -> WireCoreCryptoUniffi.E2eiDumpedPkiEnv?
 
     /// See [core_crypto::transaction_context::TransactionContext::e2ei_enrollment_stash]
-    /// 
+    ///
     /// Note that this can only succeed if the enrollment is unique and there are no other hard refs to it.
     func e2eiEnrollmentStash(enrollment: WireCoreCryptoUniffi.E2eiEnrollment) async throws -> Data
 
@@ -255,7 +255,7 @@ public protocol CoreCryptoContextProtocol: AnyObject, Sendable {
     func proteusSessionFromPrekey(sessionId: String, prekey: Data) async throws
 
     /// See [core_crypto::transaction_context::TransactionContext::proteus_session_save]
-    /// 
+    ///
     /// **Note**: This isn't usually needed as persisting sessions happens automatically when
     /// decrypting/encrypting messages and initializing Sessions
     func proteusSessionSave(sessionId: String) async throws
