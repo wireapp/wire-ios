@@ -24,7 +24,7 @@ extension RegistrationAnalyticsTracker: AuthenticationAnalyticsEventTracker {
         case .addUsername:
             trackPersonalAccountCreationReachedUsernameForm()
 
-        case .pendingInitialSync:
+        case .reauthenticate:
             trackPersonalAccountCreationCompletion()
 
         default:

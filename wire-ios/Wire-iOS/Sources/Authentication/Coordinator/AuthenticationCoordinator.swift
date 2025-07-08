@@ -180,6 +180,8 @@ extension AuthenticationCoordinator: @preconcurrency AuthenticationStateControll
         _ newState: AuthenticationFlowStep,
         mode: AuthenticationStateController.StateChangeMode
     ) {
+        analyticsEventTracker?.authenticationFlowStepReached(newState)
+
         guard let presenter, newState.needsInterface else {
             return
         }
@@ -193,7 +195,6 @@ extension AuthenticationCoordinator: @preconcurrency AuthenticationStateControll
 
         stepViewController.authenticationCoordinator = self
         currentViewController = stepViewController
-        analyticsEventTracker?.authenticationFlowStepReached(newState)
 
         switch mode {
         case .normal:
