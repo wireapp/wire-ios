@@ -345,9 +345,6 @@ extension AppStateCalculator: SessionManagerDelegate {
         transition(to: .syncFailure(error: error, onRetry: retryHandler))
     }
 
-    func sessionManagerWillMigrateAppVersions() {
-        transition(to: .migrating)
-    }
 }
 
 // MARK: - AuthenticationCoordinatorDelegate
