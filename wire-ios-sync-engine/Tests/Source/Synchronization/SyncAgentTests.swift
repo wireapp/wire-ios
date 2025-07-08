@@ -300,8 +300,9 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
 
     func testPerformIncrementalSync_V3() async throws {
         // Given
+        DeveloperFlag.consumableNotifications.enable(true, storage: .temporary())
+        journal[.isConsumableNotificationsEnabled] = true
         journal[.isSyncV2Enabled] = true
-        journal[.isSyncV3Enabled] = true
 
         // Mock
         liveSync.perform_MockMethod = {

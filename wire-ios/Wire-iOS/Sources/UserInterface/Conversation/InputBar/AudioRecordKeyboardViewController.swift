@@ -104,6 +104,10 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         }
     }
 
+    deinit {
+        accentColorChangeHandler = nil
+    }
+
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -140,7 +144,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         audioPreviewView.gradientColor = backgroundColor
 
         accentColorChangeHandler = AccentColorChangeHandler
-            .addObserver(self, userSession: userSession) { [unowned self] color, _ in
+            .addObserver(userSession: userSession) { [unowned self] color in
                 if let color {
                     audioPreviewView.color = color.accentColor.uiColor
                 }

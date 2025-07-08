@@ -88,27 +88,20 @@ package struct DetermineAuthMethodView: View {
     // MARK: - Views
 
     @ViewBuilder private var header: some View {
-        HStack {
-            Spacer()
-                .frame(maxWidth: .infinity)
+        Group {
             if viewModel.isOnPremiseBackend {
                 OnPremHeaderView(backendConfig: viewModel.backendInfo.backendConfig)
-                    .foregroundColor(ColorTheme.Backgrounds.onBackground.color)
-                    .frame(width: 164, height: 95)
+                    .frame(maxWidth: .infinity, alignment: .center)
             } else {
-                Logo()
-                    .foregroundColor(ColorTheme.Backgrounds.onBackground.color)
-                    .frame(width: 164, height: 95)
+                Logo().frame(width: 164, height: 95)
             }
-
-            Spacer()
-                .frame(maxWidth: .infinity)
         }
+        .foregroundColor(ColorTheme.Backgrounds.onBackground.color)
     }
 
     @ViewBuilder private var message: some View {
         Text(Strings.Identity.Input.body)
-            .multilineTextAlignment(.leading)
+            .multilineTextAlignment(.center)
             .wireTextStyle(.body1)
             .lineLimit(nil)
             .fixedSize(horizontal: false, vertical: true)

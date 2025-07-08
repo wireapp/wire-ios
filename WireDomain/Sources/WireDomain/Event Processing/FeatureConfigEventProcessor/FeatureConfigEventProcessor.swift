@@ -17,16 +17,16 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 struct FeatureConfigEventProcessor: FeatureConfigEventProcessorProtocol {
 
     let updateEventProcessor: any FeatureConfigUpdateEventProcessorProtocol
 
-    func processEvent(_ event: FeatureConfigEvent) async throws {
+    func processEvent(_ event: FeatureConfigEvent) async {
         switch event {
         case let .update(event):
-            try await updateEventProcessor.processEvent(event)
+            await updateEventProcessor.processEvent(event)
         }
     }
 

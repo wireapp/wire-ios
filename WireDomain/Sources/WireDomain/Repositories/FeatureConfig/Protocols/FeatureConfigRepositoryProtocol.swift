@@ -17,8 +17,8 @@
 //
 
 import Combine
-import WireAPI
 import WireDataModel
+import WireNetwork
 
 /// Facilitates access to feature configs related domain objects.
 protocol FeatureConfigRepositoryProtocol {
@@ -57,7 +57,7 @@ protocol FeatureConfigRepositoryProtocol {
 
     func updateFeatureConfig(
         _ featureConfig: FeatureConfig
-    ) async throws
+    ) async
 
     /// Fetches a flag indicating whether the user should be notified of a given feature.
     /// - Parameter name: The feature name.

@@ -16,9 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import WireDataModel
+import WireDataModelSupport
 import WireDomainSupport
+import WireNetwork
 import XCTest
+
 @testable import WireDomain
 
 final class UserConnectionEventProcessorTests: XCTestCase {
@@ -27,18 +30,32 @@ final class UserConnectionEventProcessorTests: XCTestCase {
     private var connectionsRepository: MockConnectionsRepositoryProtocol!
     private var oneOnOneResolver: MockOneOnOneResolverProtocol!
 
+    private var stack: CoreDataStack!
+    private var coreDataStackHelper: CoreDataStackHelper!
+    private var modelHelper: ModelHelper!
+
+    private var context: NSManagedObjectContext {
+        stack.syncContext
+    }
+
     override func setUp() async throws {
-        try await super.setUp()
+        modelHelper = ModelHelper()
+        coreDataStackHelper = CoreDataStackHelper()
+        stack = try await coreDataStackHelper.createStack()
         connectionsRepository = MockConnectionsRepositoryProtocol()
         oneOnOneResolver = MockOneOnOneResolverProtocol()
         sut = UserConnectionEventProcessor(
+            context: context,
             connectionsRepository: connectionsRepository,
             oneOnOneResolver: oneOnOneResolver
         )
     }
 
     override func tearDown() async throws {
-        try await super.tearDown()
+        stack = nil
+        modelHelper = nil
+        try coreDataStackHelper.cleanupDirectory()
+        coreDataStackHelper = nil
         connectionsRepository = nil
         oneOnOneResolver = nil
         sut = nil
@@ -46,18 +63,51 @@ final class UserConnectionEventProcessorTests: XCTestCase {
 
     // MARK: - Tests
 
-    func testProcessEvent_It_Invokes_Repo_And_Resolver_Methods() async throws {
+    func testProcessEvent_Accepted_Connection_It_Invokes_Repo_And_Resolver_Methods() async throws {
         // Given
 
+        let expectation = expectation(description: "resolved 1:1 conversation")
         let event = UserConnectionEvent(
             userName: Scaffolding.username,
-            connection: Scaffolding.connection
+            connection: Scaffolding.acceptedConnection
         )
 
         // Mock
 
         connectionsRepository.updateConnection_MockMethod = { _ in }
-        oneOnOneResolver.resolveAllOneOnOneConversations_MockMethod = {}
+        oneOnOneResolver.resolveOneOnOneConversationWith_MockMethod = { _ in
+            expectation.fulfill()
+        }
+
+        // When
+
+        try await sut.processEvent(event)
+        await fulfillment(of: [expectation])
+
+        // Then
+
+        XCTAssertEqual(connectionsRepository.updateConnection_Invocations, [event.connection])
+        XCTAssertEqual(oneOnOneResolver.resolveOneOnOneConversationWith_Invocations.count, 1)
+    }
+
+    func testProcessEvent_Pending_Connection_It_Invokes_Repo_And_Resolver_Methods() async throws {
+        // Given
+
+        let event = UserConnectionEvent(
+            userName: Scaffolding.username,
+            connection: Scaffolding.pendingConnection
+        )
+
+        // Mock
+
+        connectionsRepository.updateConnection_MockMethod = { _ in }
+        oneOnOneResolver.resolveOneOnOneConversationWith_MockMethod = { _ in }
+        _ = await context.perform { [self] in
+            modelHelper.createUser(
+                qualifiedID: Scaffolding.receiverQualifiedID.toDomainModel(),
+                in: context
+            )
+        }
 
         // When
 
@@ -66,25 +116,42 @@ final class UserConnectionEventProcessorTests: XCTestCase {
         // Then
 
         XCTAssertEqual(connectionsRepository.updateConnection_Invocations, [event.connection])
-        XCTAssertEqual(oneOnOneResolver.resolveAllOneOnOneConversations_Invocations.count, 1)
+        XCTAssertEqual(oneOnOneResolver.resolveOneOnOneConversationWith_Invocations.count, 1)
     }
 
     private enum Scaffolding {
         static let username = "username"
-        static let connection = Connection(
+        static let receiverQualifiedID = WireNetwork.QualifiedID(
+            uuid: UUID(),
+            domain: "domain.com"
+        )
+        static let acceptedConnection = Connection(
             senderID: UUID(),
             receiverID: UUID(),
-            receiverQualifiedID: WireAPI.QualifiedID(
+            receiverQualifiedID: WireNetwork.QualifiedID(
                 uuid: UUID(),
                 domain: "domain.com"
             ),
             conversationID: UUID(),
-            qualifiedConversationID: WireAPI.QualifiedID(
+            qualifiedConversationID: WireNetwork.QualifiedID(
                 uuid: UUID(),
                 domain: "domain.com"
             ),
             lastUpdate: .now,
             status: .accepted
+        )
+
+        static let pendingConnection = Connection(
+            senderID: UUID(),
+            receiverID: UUID(),
+            receiverQualifiedID: receiverQualifiedID,
+            conversationID: UUID(),
+            qualifiedConversationID: WireNetwork.QualifiedID(
+                uuid: UUID(),
+                domain: "domain.com"
+            ),
+            lastUpdate: .now,
+            status: .pending
         )
     }
 

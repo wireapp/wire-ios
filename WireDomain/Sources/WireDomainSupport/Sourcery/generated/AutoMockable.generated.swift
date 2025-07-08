@@ -24,7 +24,7 @@
 // swiftlint:disable variable_name
 
 
-import WireAPI
+import WireNetwork
 import WireDataModel
 import WireDomainPackage
 import WireCoreCrypto
@@ -118,10 +118,10 @@ public class MockCalculateSupportedProtocolsUseCaseProtocol: CalculateSupportedP
     // MARK: - invoke
 
     public var invoke_Invocations: [Void] = []
-    public var invoke_MockMethod: (() async -> Set<WireAPI.MessageProtocol>)?
-    public var invoke_MockValue: Set<WireAPI.MessageProtocol>?
+    public var invoke_MockMethod: (() async -> Set<WireNetwork.MessageProtocol>)?
+    public var invoke_MockValue: Set<WireNetwork.MessageProtocol>?
 
-    public func invoke() async -> Set<WireAPI.MessageProtocol> {
+    public func invoke() async -> Set<WireNetwork.MessageProtocol> {
         invoke_Invocations.append(())
 
         if let mock = invoke_MockMethod {
@@ -1357,6 +1357,24 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         await mock(permission, conversation)
     }
 
+    // MARK: - fetchServerTimeDelta
+
+    public var fetchServerTimeDelta_Invocations: [Void] = []
+    public var fetchServerTimeDelta_MockMethod: (() async -> TimeInterval)?
+    public var fetchServerTimeDelta_MockValue: TimeInterval?
+
+    public func fetchServerTimeDelta() async -> TimeInterval {
+        fetchServerTimeDelta_Invocations.append(())
+
+        if let mock = fetchServerTimeDelta_MockMethod {
+            return await mock()
+        } else if let mock = fetchServerTimeDelta_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchServerTimeDelta`")
+        }
+    }
+
 }
 
 class MockConversationLocationMessageNotificationBuilderProtocol: ConversationLocationMessageNotificationBuilderProtocol {
@@ -1853,12 +1871,12 @@ public class MockCreateChannelUseCaseProtocol: CreateChannelUseCaseProtocol {
 
     // MARK: - invoke
 
-    public var invokeTeamIDNameUsersAccessModeAccessRolesEnableReceipts_Invocations: [(teamID: UUID, name: String?, users: Set<ZMUser>, accessMode: Set<WireAPI.ConversationAccessMode>, accessRoles: Set<WireAPI.ConversationAccessRole>, enableReceipts: Bool)] = []
+    public var invokeTeamIDNameUsersAccessModeAccessRolesEnableReceipts_Invocations: [(teamID: UUID, name: String?, users: Set<ZMUser>, accessMode: Set<WireNetwork.ConversationAccessMode>, accessRoles: Set<WireNetwork.ConversationAccessRole>, enableReceipts: Bool)] = []
     public var invokeTeamIDNameUsersAccessModeAccessRolesEnableReceipts_MockError: Error?
-    public var invokeTeamIDNameUsersAccessModeAccessRolesEnableReceipts_MockMethod: ((UUID, String?, Set<ZMUser>, Set<WireAPI.ConversationAccessMode>, Set<WireAPI.ConversationAccessRole>, Bool) async throws -> ZMConversation)?
+    public var invokeTeamIDNameUsersAccessModeAccessRolesEnableReceipts_MockMethod: ((UUID, String?, Set<ZMUser>, Set<WireNetwork.ConversationAccessMode>, Set<WireNetwork.ConversationAccessRole>, Bool) async throws -> ZMConversation)?
     public var invokeTeamIDNameUsersAccessModeAccessRolesEnableReceipts_MockValue: ZMConversation?
 
-    public func invoke(teamID: UUID, name: String?, users: Set<ZMUser>, accessMode: Set<WireAPI.ConversationAccessMode>, accessRoles: Set<WireAPI.ConversationAccessRole>, enableReceipts: Bool) async throws -> ZMConversation {
+    public func invoke(teamID: UUID, name: String?, users: Set<ZMUser>, accessMode: Set<WireNetwork.ConversationAccessMode>, accessRoles: Set<WireNetwork.ConversationAccessRole>, enableReceipts: Bool) async throws -> ZMConversation {
         invokeTeamIDNameUsersAccessModeAccessRolesEnableReceipts_Invocations.append((teamID: teamID, name: name, users: users, accessMode: accessMode, accessRoles: accessRoles, enableReceipts: enableReceipts))
 
         if let error = invokeTeamIDNameUsersAccessModeAccessRolesEnableReceipts_MockError {
@@ -1885,12 +1903,12 @@ public class MockCreateGroupConversationUseCaseProtocol: CreateGroupConversation
 
     // MARK: - invoke
 
-    public var invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsIsMLSEnabled_Invocations: [(teamID: UUID?, messageProtocol: WireAPI.ConversationMessageProtocol, name: String?, users: Set<ZMUser>, accessMode: Set<WireAPI.ConversationAccessMode>, accessRoles: Set<WireAPI.ConversationAccessRole>, enableReceipts: Bool, isMLSEnabled: Bool)] = []
+    public var invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsIsMLSEnabled_Invocations: [(teamID: UUID?, messageProtocol: WireNetwork.ConversationMessageProtocol, name: String?, users: Set<ZMUser>, accessMode: Set<WireNetwork.ConversationAccessMode>, accessRoles: Set<WireNetwork.ConversationAccessRole>, enableReceipts: Bool, isMLSEnabled: Bool)] = []
     public var invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsIsMLSEnabled_MockError: Error?
-    public var invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsIsMLSEnabled_MockMethod: ((UUID?, WireAPI.ConversationMessageProtocol, String?, Set<ZMUser>, Set<WireAPI.ConversationAccessMode>, Set<WireAPI.ConversationAccessRole>, Bool, Bool) async throws -> ZMConversation)?
+    public var invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsIsMLSEnabled_MockMethod: ((UUID?, WireNetwork.ConversationMessageProtocol, String?, Set<ZMUser>, Set<WireNetwork.ConversationAccessMode>, Set<WireNetwork.ConversationAccessRole>, Bool, Bool) async throws -> ZMConversation)?
     public var invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsIsMLSEnabled_MockValue: ZMConversation?
 
-    public func invoke(teamID: UUID?, messageProtocol: WireAPI.ConversationMessageProtocol, name: String?, users: Set<ZMUser>, accessMode: Set<WireAPI.ConversationAccessMode>, accessRoles: Set<WireAPI.ConversationAccessRole>, enableReceipts: Bool, isMLSEnabled: Bool) async throws -> ZMConversation {
+    public func invoke(teamID: UUID?, messageProtocol: WireNetwork.ConversationMessageProtocol, name: String?, users: Set<ZMUser>, accessMode: Set<WireNetwork.ConversationAccessMode>, accessRoles: Set<WireNetwork.ConversationAccessRole>, enableReceipts: Bool, isMLSEnabled: Bool) async throws -> ZMConversation {
         invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsIsMLSEnabled_Invocations.append((teamID: teamID, messageProtocol: messageProtocol, name: name, users: users, accessMode: accessMode, accessRoles: accessRoles, enableReceipts: enableReceipts, isMLSEnabled: isMLSEnabled))
 
         if let error = invokeTeamIDMessageProtocolNameUsersAccessModeAccessRolesEnableReceiptsIsMLSEnabled_MockError {
@@ -2111,6 +2129,30 @@ public class MockLiveSyncProtocol: LiveSyncProtocol {
         } else {
             fatalError("no mock for `perform`")
         }
+    }
+
+}
+
+public class MockMLSGroupRepairAgentProtocol: MLSGroupRepairAgentProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - repairConversations
+
+    public var repairConversations_Invocations: [Void] = []
+    public var repairConversations_MockMethod: (() async -> Void)?
+
+    public func repairConversations() async {
+        repairConversations_Invocations.append(())
+
+        guard let mock = repairConversations_MockMethod else {
+            fatalError("no mock for `repairConversations`")
+        }
+
+        await mock()
     }
 
 }
@@ -2849,6 +2891,35 @@ public class MockPullPendingUpdateEventsSyncProtocol: PullPendingUpdateEventsSyn
 
 }
 
+public class MockPullPendingUpdateEventsSyncV2Protocol: PullPendingUpdateEventsSyncV2Protocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - pull
+
+    public var pull_Invocations: [Void] = []
+    public var pull_MockError: Error?
+    public var pull_MockMethod: (() async throws -> Void)?
+
+    public func pull() async throws {
+        pull_Invocations.append(())
+
+        if let error = pull_MockError {
+            throw error
+        }
+
+        guard let mock = pull_MockMethod else {
+            fatalError("no mock for `pull`")
+        }
+
+        try await mock()
+    }
+
+}
+
 public class MockPullResourcesSyncProtocol: PullResourcesSyncProtocol {
 
     // MARK: - Life cycle
@@ -3079,6 +3150,35 @@ class MockPullSelfUserSyncProtocol: PullSelfUserSyncProtocol {
 
 }
 
+public class MockPullServerTimeSyncProtocol: PullServerTimeSyncProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - pull
+
+    public var pull_Invocations: [Void] = []
+    public var pull_MockError: Error?
+    public var pull_MockMethod: (() async throws -> Void)?
+
+    public func pull() async throws {
+        pull_Invocations.append(())
+
+        if let error = pull_MockError {
+            throw error
+        }
+
+        guard let mock = pull_MockMethod else {
+            fatalError("no mock for `pull`")
+        }
+
+        try await mock()
+    }
+
+}
+
 class MockPullUserConnectionsSyncProtocol: PullUserConnectionsSyncProtocol {
 
     // MARK: - Life cycle
@@ -3116,11 +3216,11 @@ public class MockPushSupportedProtocolsSyncProtocol: PushSupportedProtocolsSyncP
 
     // MARK: - push
 
-    public var pushSupportedProtocols_Invocations: [Set<WireAPI.MessageProtocol>] = []
+    public var pushSupportedProtocols_Invocations: [Set<WireNetwork.MessageProtocol>] = []
     public var pushSupportedProtocols_MockError: Error?
-    public var pushSupportedProtocols_MockMethod: ((Set<WireAPI.MessageProtocol>) async throws -> Void)?
+    public var pushSupportedProtocols_MockMethod: ((Set<WireNetwork.MessageProtocol>) async throws -> Void)?
 
-    public func push(supportedProtocols: Set<WireAPI.MessageProtocol>) async throws {
+    public func push(supportedProtocols: Set<WireNetwork.MessageProtocol>) async throws {
         pushSupportedProtocols_Invocations.append(supportedProtocols)
 
         if let error = pushSupportedProtocols_MockError {
@@ -3188,6 +3288,63 @@ public class MockSelfUserProviderProtocol: SelfUserProviderProtocol {
         } else {
             fatalError("no mock for `fetchSelfUser`")
         }
+    }
+
+}
+
+class MockSyncEventsUseCaseProtocol: SyncEventsUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - invoke
+
+    var invoke_Invocations: [Void] = []
+    var invoke_MockError: Error?
+    var invoke_MockMethod: (() async throws -> Void)?
+
+    func invoke() async throws {
+        invoke_Invocations.append(())
+
+        if let error = invoke_MockError {
+            throw error
+        }
+
+        guard let mock = invoke_MockMethod else {
+            fatalError("no mock for `invoke`")
+        }
+
+        try await mock()
+    }
+
+}
+
+public class MockSyncMigratorProtocol: SyncMigratorProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - migrateFromIncrementalSyncV1
+
+    public var migrateFromIncrementalSyncV1_Invocations: [Void] = []
+    public var migrateFromIncrementalSyncV1_MockError: Error?
+    public var migrateFromIncrementalSyncV1_MockMethod: (() async throws -> Void)?
+
+    public func migrateFromIncrementalSyncV1() async throws {
+        migrateFromIncrementalSyncV1_Invocations.append(())
+
+        if let error = migrateFromIncrementalSyncV1_MockError {
+            throw error
+        }
+
+        guard let mock = migrateFromIncrementalSyncV1_MockMethod else {
+            fatalError("no mock for `migrateFromIncrementalSyncV1`")
+        }
+
+        try await mock()
     }
 
 }
@@ -3586,19 +3743,14 @@ public class MockUpdateEventDecryptorProtocol: UpdateEventDecryptorProtocol {
     // MARK: - decryptEvents
 
     public var decryptEventsInContext_Invocations: [(eventEnvelope: UpdateEventEnvelope, context: CoreCryptoContextProtocol?)] = []
-    public var decryptEventsInContext_MockError: Error?
-    public var decryptEventsInContext_MockMethod: ((UpdateEventEnvelope, CoreCryptoContextProtocol?) async throws -> EventDecryptorResult)?
+    public var decryptEventsInContext_MockMethod: ((UpdateEventEnvelope, CoreCryptoContextProtocol?) async -> EventDecryptorResult)?
     public var decryptEventsInContext_MockValue: EventDecryptorResult?
 
-    public func decryptEvents(in eventEnvelope: UpdateEventEnvelope, context: CoreCryptoContextProtocol?) async throws -> EventDecryptorResult {
+    public func decryptEvents(in eventEnvelope: UpdateEventEnvelope, context: CoreCryptoContextProtocol?) async -> EventDecryptorResult {
         decryptEventsInContext_Invocations.append((eventEnvelope: eventEnvelope, context: context))
 
-        if let error = decryptEventsInContext_MockError {
-            throw error
-        }
-
         if let mock = decryptEventsInContext_MockMethod {
-            return try await mock(eventEnvelope, context)
+            return await mock(eventEnvelope, context)
         } else if let mock = decryptEventsInContext_MockValue {
             return mock
         } else {
@@ -3798,6 +3950,26 @@ public class MockUpdateEventsLocalStoreProtocol: UpdateEventsLocalStoreProtocol 
         try await mock(objectIDs)
     }
 
+    // MARK: - deleteEventEnvelopes
+
+    public var deleteEventEnvelopesAt_Invocations: [[Int64]] = []
+    public var deleteEventEnvelopesAt_MockError: Error?
+    public var deleteEventEnvelopesAt_MockMethod: (([Int64]) async throws -> Void)?
+
+    public func deleteEventEnvelopes(at indexes: [Int64]) async throws {
+        deleteEventEnvelopesAt_Invocations.append(indexes)
+
+        if let error = deleteEventEnvelopesAt_MockError {
+            throw error
+        }
+
+        guard let mock = deleteEventEnvelopesAt_MockMethod else {
+            fatalError("no mock for `deleteEventEnvelopesAt`")
+        }
+
+        try await mock(indexes)
+    }
+
     // MARK: - deleteEventEnvelope
 
     public var deleteEventEnvelopeAtIndex_Invocations: [Int64] = []
@@ -3831,6 +4003,21 @@ public class MockUpdateEventsLocalStoreProtocol: UpdateEventsLocalStoreProtocol 
         }
 
         await mock()
+    }
+
+    // MARK: - storeServerTimeDelta
+
+    public var storeServerTimeDelta_Invocations: [TimeInterval] = []
+    public var storeServerTimeDelta_MockMethod: ((TimeInterval) async -> Void)?
+
+    public func storeServerTimeDelta(_ serverTimeDelta: TimeInterval) async {
+        storeServerTimeDelta_Invocations.append(serverTimeDelta)
+
+        guard let mock = storeServerTimeDelta_MockMethod else {
+            fatalError("no mock for `storeServerTimeDelta`")
+        }
+
+        await mock(serverTimeDelta)
     }
 
 }
@@ -4043,10 +4230,10 @@ public class MockUserClientsLocalStoreProtocol: UserClientsLocalStoreProtocol {
     // MARK: - fetchSelfClientID
 
     public var fetchSelfClientID_Invocations: [Void] = []
-    public var fetchSelfClientID_MockMethod: (() async -> UUID)?
-    public var fetchSelfClientID_MockValue: UUID?
+    public var fetchSelfClientID_MockMethod: (() async -> String?)?
+    public var fetchSelfClientID_MockValue: String??
 
-    public func fetchSelfClientID() async -> UUID {
+    public func fetchSelfClientID() async -> String? {
         fetchSelfClientID_Invocations.append(())
 
         if let mock = fetchSelfClientID_MockMethod {
@@ -4055,6 +4242,24 @@ public class MockUserClientsLocalStoreProtocol: UserClientsLocalStoreProtocol {
             return mock
         } else {
             fatalError("no mock for `fetchSelfClientID`")
+        }
+    }
+
+    // MARK: - hasRegisteredConsumableNotificationsCapable
+
+    public var hasRegisteredConsumableNotificationsCapable_Invocations: [Void] = []
+    public var hasRegisteredConsumableNotificationsCapable_MockMethod: (() async -> Bool)?
+    public var hasRegisteredConsumableNotificationsCapable_MockValue: Bool?
+
+    public func hasRegisteredConsumableNotificationsCapable() async -> Bool {
+        hasRegisteredConsumableNotificationsCapable_Invocations.append(())
+
+        if let mock = hasRegisteredConsumableNotificationsCapable_MockMethod {
+            return await mock()
+        } else if let mock = hasRegisteredConsumableNotificationsCapable_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `hasRegisteredConsumableNotificationsCapable`")
         }
     }
 
@@ -4108,19 +4313,14 @@ public class MockUserClientsRepositoryProtocol: UserClientsRepositoryProtocol {
     // MARK: - fetchOrCreateClient
 
     public var fetchOrCreateClientId_Invocations: [String] = []
-    public var fetchOrCreateClientId_MockError: Error?
-    public var fetchOrCreateClientId_MockMethod: ((String) async throws -> (client: WireDataModel.UserClient, isNew: Bool))?
+    public var fetchOrCreateClientId_MockMethod: ((String) async -> (client: WireDataModel.UserClient, isNew: Bool))?
     public var fetchOrCreateClientId_MockValue: (client: WireDataModel.UserClient, isNew: Bool)?
 
-    public func fetchOrCreateClient(id: String) async throws -> (client: WireDataModel.UserClient, isNew: Bool) {
+    public func fetchOrCreateClient(id: String) async -> (client: WireDataModel.UserClient, isNew: Bool) {
         fetchOrCreateClientId_Invocations.append(id)
 
-        if let error = fetchOrCreateClientId_MockError {
-            throw error
-        }
-
         if let mock = fetchOrCreateClientId_MockMethod {
-            return try await mock(id)
+            return await mock(id)
         } else if let mock = fetchOrCreateClientId_MockValue {
             return mock
         } else {
@@ -4130,22 +4330,17 @@ public class MockUserClientsRepositoryProtocol: UserClientsRepositoryProtocol {
 
     // MARK: - updateClient
 
-    public var updateClientIdFromIsNewClient_Invocations: [(id: String, remoteClient: WireAPI.SelfUserClient, isNewClient: Bool)] = []
-    public var updateClientIdFromIsNewClient_MockError: Error?
-    public var updateClientIdFromIsNewClient_MockMethod: ((String, WireAPI.SelfUserClient, Bool) async throws -> Void)?
+    public var updateClientIdFromIsNewClient_Invocations: [(id: String, remoteClient: WireNetwork.SelfUserClient, isNewClient: Bool)] = []
+    public var updateClientIdFromIsNewClient_MockMethod: ((String, WireNetwork.SelfUserClient, Bool) async -> Void)?
 
-    public func updateClient(id: String, from remoteClient: WireAPI.SelfUserClient, isNewClient: Bool) async throws {
+    public func updateClient(id: String, from remoteClient: WireNetwork.SelfUserClient, isNewClient: Bool) async {
         updateClientIdFromIsNewClient_Invocations.append((id: id, remoteClient: remoteClient, isNewClient: isNewClient))
-
-        if let error = updateClientIdFromIsNewClient_MockError {
-            throw error
-        }
 
         guard let mock = updateClientIdFromIsNewClient_MockMethod else {
             fatalError("no mock for `updateClientIdFromIsNewClient`")
         }
 
-        try await mock(id, remoteClient, isNewClient)
+        await mock(id, remoteClient, isNewClient)
     }
 
     // MARK: - deleteClient
@@ -4344,21 +4539,16 @@ public class MockUserLocalStoreProtocol: UserLocalStoreProtocol {
     // MARK: - removeUserFromAllConversations
 
     public var removeUserFromAllConversationsIdDomainDate_Invocations: [(id: UUID, domain: String?, date: Date)] = []
-    public var removeUserFromAllConversationsIdDomainDate_MockError: Error?
-    public var removeUserFromAllConversationsIdDomainDate_MockMethod: ((UUID, String?, Date) async throws -> Void)?
+    public var removeUserFromAllConversationsIdDomainDate_MockMethod: ((UUID, String?, Date) async -> Void)?
 
-    public func removeUserFromAllConversations(id: UUID, domain: String?, date: Date) async throws {
+    public func removeUserFromAllConversations(id: UUID, domain: String?, date: Date) async {
         removeUserFromAllConversationsIdDomainDate_Invocations.append((id: id, domain: domain, date: date))
-
-        if let error = removeUserFromAllConversationsIdDomainDate_MockError {
-            throw error
-        }
 
         guard let mock = removeUserFromAllConversationsIdDomainDate_MockMethod else {
             fatalError("no mock for `removeUserFromAllConversationsIdDomainDate`")
         }
 
-        try await mock(id, domain, date)
+        await mock(id, domain, date)
     }
 
     // MARK: - addSelfLegalHoldRequest
@@ -4673,6 +4863,21 @@ public class MockUserLocalStoreProtocol: UserLocalStoreProtocol {
         }
     }
 
+    // MARK: - updateUser
+
+    public var updateUserWithAvailability_Invocations: [(userID: WireDataModel.QualifiedID, availability: Availability)] = []
+    public var updateUserWithAvailability_MockMethod: ((WireDataModel.QualifiedID, Availability) async -> Void)?
+
+    public func updateUser(with userID: WireDataModel.QualifiedID, availability: Availability) async {
+        updateUserWithAvailability_Invocations.append((userID: userID, availability: availability))
+
+        guard let mock = updateUserWithAvailability_MockMethod else {
+            fatalError("no mock for `updateUserWithAvailability`")
+        }
+
+        await mock(userID, availability)
+    }
+
 }
 
 public class MockUserRepositoryProtocol: UserRepositoryProtocol {
@@ -4863,11 +5068,11 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
 
     // MARK: - updateUserProperty
 
-    public var updateUserProperty_Invocations: [WireAPI.UserProperty] = []
+    public var updateUserProperty_Invocations: [WireNetwork.UserProperty] = []
     public var updateUserProperty_MockError: Error?
-    public var updateUserProperty_MockMethod: ((WireAPI.UserProperty) async throws -> Void)?
+    public var updateUserProperty_MockMethod: ((WireNetwork.UserProperty) async throws -> Void)?
 
-    public func updateUserProperty(_ userProperty: WireAPI.UserProperty) async throws {
+    public func updateUserProperty(_ userProperty: WireNetwork.UserProperty) async throws {
         updateUserProperty_Invocations.append(userProperty)
 
         if let error = updateUserProperty_MockError {

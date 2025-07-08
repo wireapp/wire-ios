@@ -20,9 +20,8 @@ import XCTest
 
 class WelcomePage: PageModel {
 
-    override func hasLoaded() {
-        let expectation = emailTextField.waitForExistence(timeout: 10)
-        XCTAssert(expectation, "Welcome page not loaded - can't find email or SSO field")
+    override var pageMainElement: XCUIElement {
+        emailTextField
     }
 
     var nextButton: XCUIElement {
@@ -35,10 +34,15 @@ class WelcomePage: PageModel {
         return elementsQuery["Email or SSO code"]
     }
 
-    func typeEmailOrSSO(_ input: String) -> LoginPage {
+    func enterEmailOrSSO(_ input: String) throws -> LoginPage {
+        try typeEmailOrSSO(input)
+        nextButton.tap()
+        return try LoginPage()
+    }
+
+    func typeEmailOrSSO(_ input: String) -> WelcomePage {
         emailTextField.tap()
         emailTextField.typeText(input)
-        nextButton.tap()
-        return LoginPage()
+        return self
     }
 }

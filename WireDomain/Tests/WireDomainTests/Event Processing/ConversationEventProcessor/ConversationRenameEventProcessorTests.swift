@@ -18,8 +18,8 @@
 
 import WireDomainSupport
 import XCTest
-@testable import WireAPI
 @testable import WireDomain
+@testable import WireNetwork
 
 final class ConversationRenameEventProcessorTests: XCTestCase {
 

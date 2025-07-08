@@ -17,19 +17,19 @@
 //
 
 import Foundation
-import WireAPI
+import WireNetwork
 
 struct StorableUserDeleteEvent: Equatable, Codable, Sendable {
 
     private let qualifiedUserID: StorableQualifiedID
     private let time: Date
 
-    init(_ value: WireAPI.UserDeleteEvent) {
+    init(_ value: WireNetwork.UserDeleteEvent) {
         self.qualifiedUserID = StorableQualifiedID(value.qualifiedUserID)
         self.time = value.time
     }
 
-    func toAPIModel() -> WireAPI.UserDeleteEvent {
+    func toAPIModel() -> WireNetwork.UserDeleteEvent {
         .init(
             qualifiedUserID: qualifiedUserID.toAPIModel(),
             time: time

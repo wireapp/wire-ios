@@ -155,8 +155,8 @@ final class ConversationTableViewDataSource: NSObject {
                     messages: messages
                 )
 
-                let sectionController = if let cachedSectionController = self.sectionControllers
-                    .get(for: element.nonce!) {
+                let sectionController = if let nonce = element.nonce,
+                                           let cachedSectionController = self.sectionControllers.get(for: nonce) {
                     cachedSectionController
                 } else {
                     self.makeSectionController(
@@ -222,9 +222,8 @@ final class ConversationTableViewDataSource: NSObject {
     func calculateSections(
         updating sectionController: ConversationMessageSectionController
     ) -> [Section] {
-        let sectionIdentifier = sectionController.message.nonce!
-
-        guard let section = currentSections.firstIndex(where: { $0.model == sectionIdentifier })
+        guard let sectionIdentifier = sectionController.message.nonce,
+              let section = currentSections.firstIndex(where: { $0.model == sectionIdentifier })
         else { return currentSections }
 
         for (row, description) in sectionController.tableViewCellDescriptions.enumerated() {
@@ -303,7 +302,8 @@ final class ConversationTableViewDataSource: NSObject {
         sectionController: ConversationMessageSectionController,
         selfUser: any UserType
     ) -> ConversationMessageActionController {
-        if let cachedEntry = actionControllers.get(for: message.nonce!) {
+        if let nonce = message.nonce,
+           let cachedEntry = actionControllers.get(for: nonce) {
             return cachedEntry
         }
 
@@ -369,7 +369,8 @@ final class ConversationTableViewDataSource: NSObject {
         selfUser: any UserType,
         messages: [ZMMessage]
     ) -> ConversationMessageSectionController {
-        if let cachedEntry = sectionControllers.get(for: message.nonce!) {
+        if let nonce = message.nonce,
+           let cachedEntry = sectionControllers.get(for: nonce) {
             cachedEntry.contentWidth = contentWidth
             return cachedEntry
         }
@@ -382,7 +383,9 @@ final class ConversationTableViewDataSource: NSObject {
             firstUnreadMessageNonce: firstUnreadMessage?.nonce
         )
 
-        sectionControllers.set(value: sectionController, for: message.nonce!)
+        if let nonce = message.nonce {
+            sectionControllers.set(value: sectionController, for: nonce)
+        }
 
         return sectionController
     }
@@ -659,7 +662,7 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
     }
 
     func collapse(message: ZMConversationMessage) {
-        guard let section = sectionControllers.get(for: message.nonce!) else {
+        guard let nonce = message.nonce, let section = sectionControllers.get(for: nonce) else {
             return
         }
         section.collapse()
@@ -718,7 +721,8 @@ extension ConversationTableViewDataSource: ConversationMessageSectionControllerD
         _ controller: ConversationMessageSectionController,
         didRequestRefreshForMessage message: ZMConversationMessage
     ) {
-        debouncer.call(id: message.nonce!) { [weak self] in
+        guard let nonce = message.nonce else { return }
+        debouncer.call(id: nonce) { [weak self] in
             guard let self else { return }
             reloadSections(newSections: calculateSections(updating: controller))
         }

@@ -17,10 +17,10 @@
 //
 
 import Foundation
-import WireAPI
 import WireCoreCrypto
 import WireDataModel
 import WireLogging
+import WireNetwork
 
 struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
 

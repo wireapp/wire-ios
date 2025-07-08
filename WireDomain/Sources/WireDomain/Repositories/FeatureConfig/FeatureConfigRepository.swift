@@ -17,9 +17,9 @@
 //
 
 import Combine
-import WireAPI
 import WireDataModel
 import WireLogging
+import WireNetwork
 
 final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
 
@@ -110,7 +110,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
 
     func updateFeatureConfig(
         _ featureConfig: FeatureConfig
-    ) async throws {
+    ) async {
         guard let featureConfigInfo = getFeatureConfigInfo(
             featureConfig
         ) else {

@@ -76,6 +76,7 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
 
     /// Start sending analytics data.
 
+    @MainActor
     public func enableTracking() {
 
         logger.debug("enabling tracking")
