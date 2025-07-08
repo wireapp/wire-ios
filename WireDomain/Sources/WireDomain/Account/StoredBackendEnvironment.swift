@@ -82,6 +82,7 @@ public struct StoredBackendEnvironment: Codable, Sendable {
         case v6
         case v7
         case v8
+        case v9
     }
 }
 
@@ -171,6 +172,7 @@ extension WireNetwork.APIVersion {
         case .v6: .v6
         case .v7: .v7
         case .v8: .v8
+        case .v9: .v9
         }
     }
 }
@@ -272,6 +274,7 @@ extension StoredBackendEnvironment.APIVersion {
         case .v6: .v6
         case .v7: .v7
         case .v8: .v8
+        case .v9: .v9
         }
     }
 }

@@ -31,10 +31,9 @@ public struct WireCellsAssembly {
 
     private static let nodesAPI = NodesAPI(credentials: credentials)
 
-    private static let draftsRepository = DraftsRepository(
-        uploadManager: WireCellsNodeUploadManager(nodesAPI: nodesAPI),
-        nodesAPI: nodesAPI
-    )
+    private static let uploadManager = WireCellsNodeUploadManager(nodesAPI: nodesAPI)
+
+    private static let draftsRepository = DraftsRepository(uploadManager: uploadManager, nodesAPI: nodesAPI)
 
     public init() {}
 
@@ -52,6 +51,15 @@ public struct WireCellsAssembly {
 
     public func makeClearPublishedDraftsUseCase(cellName: String) -> any WireCellsClearPublishedDraftsUseCaseProtocol {
         ClearPublishedDraftsUseCase(cellName: cellName, draftRepository: Self.draftsRepository)
+    }
+
+    public func makeDeleteDraftUseCase(cellName: String) -> any WireCellsDeleteDraftUseCaseProtocol {
+        DeleteDraftUseCase(
+            cellName: cellName,
+            draftRepository: Self.draftsRepository,
+            uploadManager: Self.uploadManager,
+            nodesAPI: Self.nodesAPI
+        )
     }
 
 }

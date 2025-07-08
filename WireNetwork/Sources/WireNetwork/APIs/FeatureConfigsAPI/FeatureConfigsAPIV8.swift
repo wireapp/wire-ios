@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class FeatureConfigsAPIV8: FeatureConfigsAPIV7 {
+class FeatureConfigsAPIV8: FeatureConfigsAPIV7 {
     override var apiVersion: APIVersion { .v8 }
 
     override func getFeatureConfigs() async throws -> [FeatureConfig] {

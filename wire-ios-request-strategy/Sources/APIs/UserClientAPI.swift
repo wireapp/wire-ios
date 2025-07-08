@@ -93,6 +93,10 @@ class UserClientAPIV7: UserClientAPIV6 {
     override var apiVersion: APIVersion { .v7 }
 }
 
-final class UserClientAPIV8: UserClientAPIV7 {
+class UserClientAPIV8: UserClientAPIV7 {
     override var apiVersion: APIVersion { .v8 }
+}
+
+final class UserClientAPIV9: UserClientAPIV8 {
+    override var apiVersion: APIVersion { .v9 }
 }
