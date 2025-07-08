@@ -431,6 +431,10 @@ final class InputBar: UIView {
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 
+        if traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
+            updateColors()
+        }
+
         guard traitCollection.horizontalSizeClass != previousTraitCollection?.horizontalSizeClass else { return }
 
         updateLeftAccessoryViewWidth()
@@ -581,17 +585,48 @@ final class InputBar: UIView {
 
             button.layer.borderWidth = 1
 
-            button.setIconColor(SemanticColors.Button.textInputBarItemEnabled, for: .normal)
-            button.setBackgroundImageColor(SemanticColors.Button.backgroundInputBarItemEnabled, for: .normal)
-            button.setBorderColor(SemanticColors.Button.borderInputBarItemEnabled, for: .normal)
+            button
+                .setIconColor(
+                    SemanticColors.Button.textInputBarItemEnabled
+                        .resolvedColor(with: traitCollection),
+                    for: .normal
+                )
+            button
+                .setBackgroundImageColor(
+                    SemanticColors.Button.backgroundInputBarItemEnabled
+                        .resolvedColor(with: traitCollection),
+                    for: .normal
+                )
+            button.setBorderColor(
+                SemanticColors.Button.borderInputBarItemEnabled.resolvedColor(with: traitCollection),
+                for: .normal
+            )
 
-            button.setIconColor(SemanticColors.Button.textInputBarItemHighlighted, for: .highlighted)
-            button.setBackgroundImageColor(SemanticColors.Button.backgroundInputBarItemHighlighted, for: .highlighted)
-            button.setBorderColor(SemanticColors.Button.borderInputBarItemHighlighted, for: .highlighted)
+            button.setIconColor(
+                SemanticColors.Button.textInputBarItemHighlighted.resolvedColor(with: traitCollection),
+                for: .highlighted
+            )
+            button.setBackgroundImageColor(
+                SemanticColors.Button.backgroundInputBarItemHighlighted.resolvedColor(with: traitCollection),
+                for: .highlighted
+            )
+            button.setBorderColor(
+                SemanticColors.Button.borderInputBarItemHighlighted.resolvedColor(with: traitCollection),
+                for: .highlighted
+            )
 
-            button.setIconColor(SemanticColors.Button.textInputBarItemHighlighted, for: .selected)
-            button.setBackgroundImageColor(SemanticColors.Button.backgroundInputBarItemHighlighted, for: .selected)
-            button.setBorderColor(SemanticColors.Button.borderInputBarItemHighlighted, for: .selected)
+            button.setIconColor(
+                SemanticColors.Button.textInputBarItemHighlighted.resolvedColor(with: traitCollection),
+                for: .selected
+            )
+            button.setBackgroundImageColor(
+                SemanticColors.Button.backgroundInputBarItemHighlighted.resolvedColor(with: traitCollection),
+                for: .selected
+            )
+            button.setBorderColor(
+                SemanticColors.Button.borderInputBarItemHighlighted.resolvedColor(with: traitCollection),
+                for: .selected
+            )
 
         }
     }

@@ -179,11 +179,8 @@ final class ConversationContentViewController: UIViewController {
 
     deinit {
         DeveloperToolsViewModel.context.currentConversation = nil
-        NotificationCenter.default.removeObserver(
-            self,
-            name: ZMConversation.failedToSendMessageNotificationName,
-            object: nil
-        )
+        NotificationCenter.default.removeObserver(self)
+        accentColorChangeHandler = nil
     }
 
     @available(*, unavailable)
@@ -260,7 +257,7 @@ final class ConversationContentViewController: UIViewController {
         updateBackgroundColor(color: userSession.selfUser.zmAccentColor)
 
         accentColorChangeHandler = AccentColorChangeHandler
-            .addObserver(self, userSession: userSession) { [unowned self] color, _ in
+            .addObserver(userSession: userSession) { [unowned self] color in
                 updateBackgroundColor(color: color)
             }
     }
@@ -715,8 +712,7 @@ private extension UIAlertController {
         let topmostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
 
         let legalHoldLearnMoreHandler: ((UIAlertAction) -> Swift.Void) = { _ in
-            let browserViewController = BrowserViewController(url: WireURLs.shared.legalHoldInfo)
-            topmostViewController?.present(browserViewController, animated: true)
+            WireURLs.shared.legalHoldInfo.open(from: topmostViewController)
         }
 
         let alertController = UIAlertController(

@@ -18,7 +18,7 @@
 
 import Foundation
 
-final class ConversationsAPIV8: ConversationsAPIV7 {
+class ConversationsAPIV8: ConversationsAPIV7 {
     override var apiVersion: APIVersion { .v8 }
 
     override func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList {

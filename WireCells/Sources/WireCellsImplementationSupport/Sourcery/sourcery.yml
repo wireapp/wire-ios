@@ -5,5 +5,4 @@ templates:
 output:
   ${DERIVED_SOURCES_DIR}
 args:
-  autoMockableImports: ["WireCellsImplementation"]
-  autoMockablePackageImports: ["Foundation", "WireCellsAPI", "AWSS3"]
+  autoMockablePackageImports: ["Foundation", "WireCellsAPI", "AWSS3", "WireCellsImplementation", "UniformTypeIdentifiers"]
