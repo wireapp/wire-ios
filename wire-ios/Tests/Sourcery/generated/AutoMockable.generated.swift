@@ -53,23 +53,22 @@ import WireAccountImageUI
 
 
 
-public class MockAccountSelector: AccountSelector {
+class MockAccountSelector: AccountSelector {
 
     // MARK: - Life cycle
 
-    public init() {}
 
     // MARK: - currentAccount
 
-    public var currentAccount: Account?
+    var currentAccount: Account?
 
 
     // MARK: - switchTo
 
-    public var switchToAccount_Invocations: [Account] = []
-    public var switchToAccount_MockMethod: ((Account) -> Void)?
+    var switchToAccount_Invocations: [Account] = []
+    var switchToAccount_MockMethod: ((Account) -> Void)?
 
-    public func switchTo(account: Account) {
+    func switchTo(account: Account) {
         switchToAccount_Invocations.append(account)
 
         guard let mock = switchToAccount_MockMethod else {
@@ -81,10 +80,10 @@ public class MockAccountSelector: AccountSelector {
 
     // MARK: - switchTo
 
-    public var switchToAccountCompletion_Invocations: [(account: Account, completion: ((UserSession?) -> Void)?)] = []
-    public var switchToAccountCompletion_MockMethod: ((Account, ((UserSession?) -> Void)?) -> Void)?
+    var switchToAccountCompletion_Invocations: [(account: Account, completion: ((UserSession?) -> Void)?)] = []
+    var switchToAccountCompletion_MockMethod: ((Account, ((UserSession?) -> Void)?) -> Void)?
 
-    public func switchTo(account: Account, completion: ((UserSession?) -> Void)?) {
+    func switchTo(account: Account, completion: ((UserSession?) -> Void)?) {
         switchToAccountCompletion_Invocations.append((account: account, completion: completion))
 
         guard let mock = switchToAccountCompletion_MockMethod else {
@@ -190,30 +189,6 @@ class MockAppStateCalculatorDelegate: AppStateCalculatorDelegate {
         }
 
         mock(appStateCalculator, appState, completion)
-    }
-
-}
-
-public class MockAuthenticationStepAnalyticsEventTrackerProtocol: AuthenticationStepAnalyticsEventTrackerProtocol {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - trackStepReached
-
-    public var trackStepReached_Invocations: [Void] = []
-    public var trackStepReached_MockMethod: (() -> Void)?
-
-    public func trackStepReached() {
-        trackStepReached_Invocations.append(())
-
-        guard let mock = trackStepReached_MockMethod else {
-            fatalError("no mock for `trackStepReached`")
-        }
-
-        mock()
     }
 
 }

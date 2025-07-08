@@ -22,6 +22,7 @@ typealias AuthenticationSecondaryViewDescription = AuthenticationActionable & Se
 
 typealias AuthenticationFooterViewDescription = AuthenticationActionable & FooterViewDescription
 
+typealias AuthenticationStepPresented = () -> Void
 typealias ValueSubmitted = (Any) -> Void
 typealias ValueValidated = (ValueValidation?) -> Void
 
@@ -35,6 +36,7 @@ protocol ViewDescriptor: AnyObject {
 }
 
 protocol ValueSubmission: AnyObject {
+    var stepPresented: AuthenticationStepPresented { get set }
     var acceptsInput: Bool { get set }
     var valueSubmitted: ValueSubmitted? { get set }
     var valueValidated: ValueValidated? { get set }
@@ -56,4 +58,20 @@ protocol AuthenticationStepDescription {
 
 protocol DefaultValidatingStepDescription: AuthenticationStepDescription {
     var initialValidation: ValueValidation { get }
+}
+
+/*
+// sourcery: AutoMockable
+/// Allows for tracking events on authentication step screens.
+public protocol AuthenticationStepAnalyticsEventTrackerProtocol: AnyObject {
+    func trackStepReached()
+}
+*/
+
+// TODO: remove this extension
+extension ValueSubmission {
+    var stepPresented: AuthenticationStepPresented {
+        get { fatalError() }
+        set { fatalError() }
+    }
 }
