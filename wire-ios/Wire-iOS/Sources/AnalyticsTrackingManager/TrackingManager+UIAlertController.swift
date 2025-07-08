@@ -88,11 +88,6 @@ extension TrackingManager {
             return
         }
 
-        if SecurityFlags.openLinksExternally.isEnabled {
-            WireURLs.shared.privacyPolicy.open()
-        } else {
-            let browserViewController = BrowserViewController(url: WireURLs.shared.privacyPolicy)
-            topViewController.present(browserViewController, animated: true)
-        }
+        WireURLs.shared.privacyPolicy.open(from: topViewController)
     }
 }

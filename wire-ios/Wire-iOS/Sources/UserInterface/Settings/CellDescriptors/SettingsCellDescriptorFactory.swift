@@ -64,12 +64,7 @@ struct SettingsCellDescriptorFactory {
             presentationStyle: PresentationStyle.modal,
             identifier: nil,
             presentationAction: { () -> (UIViewController?) in
-                if SecurityFlags.openLinksExternally.isEnabled {
-                    URL.manageTeam(source: .settings).open()
-                    return nil
-                } else {
-                    return BrowserViewController(url: URL.manageTeam(source: .settings))
-                }
+                URL.manageTeam(source: .settings).browserControllerOrOpenExternally
             },
             previewGenerator: nil,
             icon: .team,
@@ -250,12 +245,7 @@ struct SettingsCellDescriptorFactory {
             isDestructive: false,
             presentationStyle: .modal,
             presentationAction: {
-                if SecurityFlags.openLinksExternally.isEnabled {
-                    WireURLs.shared.support.open()
-                    return nil
-                } else {
-                    return BrowserViewController(url: WireURLs.shared.support)
-                }
+                WireURLs.shared.support.browserControllerOrOpenExternally
             },
             previewGenerator: .none
         )
@@ -265,12 +255,7 @@ struct SettingsCellDescriptorFactory {
             isDestructive: false,
             presentationStyle: .modal,
             presentationAction: {
-                if SecurityFlags.openLinksExternally.isEnabled {
-                    WireURLs.shared.askSupportArticle.open()
-                    return nil
-                } else {
-                    return BrowserViewController(url: WireURLs.shared.askSupportArticle)
-                }
+                WireURLs.shared.askSupportArticle.browserControllerOrOpenExternally
             },
             previewGenerator: .none
         )
@@ -282,12 +267,7 @@ struct SettingsCellDescriptorFactory {
             isDestructive: false,
             presentationStyle: .modal,
             presentationAction: {
-                if SecurityFlags.openLinksExternally.isEnabled {
-                    WireURLs.shared.reportAbuse.open()
-                    return nil
-                } else {
-                    return BrowserViewController(url: WireURLs.shared.reportAbuse)
-                }
+                WireURLs.shared.reportAbuse.browserControllerOrOpenExternally
             },
             previewGenerator: .none
         )
@@ -313,12 +293,7 @@ struct SettingsCellDescriptorFactory {
             isDestructive: false,
             presentationStyle: .modal,
             presentationAction: {
-                if SecurityFlags.openLinksExternally.isEnabled {
-                    WireURLs.shared.legal.open()
-                    return nil
-                } else {
-                    return BrowserViewController(url: WireURLs.shared.legal)
-                }
+                WireURLs.shared.legal.browserControllerOrOpenExternally
             },
             previewGenerator: .none
         )

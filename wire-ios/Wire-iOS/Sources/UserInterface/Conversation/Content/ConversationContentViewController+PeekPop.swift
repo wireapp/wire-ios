@@ -50,11 +50,7 @@ extension ConversationContentViewController: UIViewControllerPreviewingDelegate 
         if message.isText, cell.selectionView is ArticleView,
            let url = message.textMessageData?.linkPreview?.openableURL as URL? {
             lastPreviewURL = url
-            if SecurityFlags.openLinksExternally.isEnabled {
-                url.open()
-            } else {
-                controller = BrowserViewController(url: url)
-            }
+            controller = url.browserControllerOrOpenExternally
         } else if message.isImage {
             // Preview an image
             controller = messagePresenter.viewController(

@@ -406,12 +406,7 @@ private extension URLActionRouter {
         case URLActionError.conversationLinkIsDisabled:
             let topmostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
             let guestLinksLearnMoreHandler: ((UIAlertAction) -> Swift.Void) = { _ in
-                if SecurityFlags.openLinksExternally.isEnabled {
-                    WireURLs.shared.guestLinksInfo.open()
-                } else {
-                    let browserViewController = BrowserViewController(url: WireURLs.shared.guestLinksInfo)
-                    topmostViewController?.present(browserViewController, animated: true)
-                }
+                WireURLs.shared.guestLinksInfo.open(from: topmostViewController)
             }
             alert.addAction(UIAlertAction(
                 title: L10n.Localizable.UrlAction.JoinConversation.Error.Alert.LearnMore.action,
