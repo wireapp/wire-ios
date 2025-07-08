@@ -18,8 +18,8 @@
 
 import SafariServices
 import UIKit
-import WireSystem
 import WireCommonComponents
+import WireSystem
 
 private let log = ZMSLog(tag: "link opening")
 
@@ -48,7 +48,8 @@ extension URL {
 
 extension URL {
 
-    /// Returns a browser view controller if `openLinksExternally` is false, or opens externally if `openLinksExternally` is true.
+    /// Returns a browser view controller if `openLinksExternally` is false, or opens externally if
+    /// `openLinksExternally` is true.
     /// - Returns: A view controller to present, or `nil` if already opened externally.
     var browserControllerOrOpenExternally: UIViewController? {
         if SecurityFlags.openLinksExternally.isEnabled {
@@ -59,13 +60,15 @@ extension URL {
         }
     }
 
-    /// Opens the URL directly: externally if `openLinksExternally` is true, or presents the internal browser from the given presenter.
+    /// Opens the URL directly: externally if `openLinksExternally` is true, or presents the internal browser from the
+    /// given presenter.
     func open(
         from presenter: UIViewController?,
         onDismiss: (() -> Void)? = nil
     ) {
-        if let browserVC = self.browserControllerOrOpenExternally as? BrowserViewController {
+        if let browserVC = browserControllerOrOpenExternally as? BrowserViewController {
             browserVC.onDismiss = onDismiss
+            browserVC.modalPresentationCapturesStatusBarAppearance = true
             presenter?.present(browserVC, animated: true)
         }
     }

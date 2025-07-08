@@ -319,12 +319,7 @@ struct SettingsCellDescriptorFactory {
             isDestructive: false,
             presentationStyle: .modal,
             presentationAction: {
-                if SecurityFlags.openLinksExternally.isEnabled {
-                    WireURLs.shared.website.open()
-                    return nil
-                } else {
-                    return BrowserViewController(url: WireURLs.shared.website)
-                }
+                WireURLs.shared.website.browserControllerOrOpenExternally
             },
             previewGenerator: .none
         )

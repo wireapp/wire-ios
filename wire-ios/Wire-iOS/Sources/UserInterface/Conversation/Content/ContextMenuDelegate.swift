@@ -56,12 +56,7 @@ extension ContextMenuDelegate where Self: LinkViewDelegate {
         }
 
         let previewProvider: UIContextMenuContentPreviewProvider = {
-            if SecurityFlags.openLinksExternally.isEnabled {
-                url.open()
-                return nil
-            } else {
-                return BrowserViewController(url: url)
-            }
+            url.browserControllerOrOpenExternally
         }
 
         return UIContextMenuConfiguration(

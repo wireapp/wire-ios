@@ -592,12 +592,7 @@ private extension UIAlertController {
         let topmostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
 
         let legalHoldLearnMoreHandler: ((UIAlertAction) -> Swift.Void) = { _ in
-            if SecurityFlags.openLinksExternally.isEnabled {
-                WireURLs.shared.legalHoldInfo.open()
-            } else {
-                let browserViewController = BrowserViewController(url: WireURLs.shared.legalHoldInfo)
-                topmostViewController?.present(browserViewController, animated: true)
-            }
+            WireURLs.shared.legalHoldInfo.open(from: topmostViewController)
         }
 
         let alertController = UIAlertController(
