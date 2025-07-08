@@ -18,7 +18,7 @@
                BlueprintIdentifier = "WireMessagingAPI"
                BuildableName = "WireMessagingAPI"
                BlueprintName = "WireMessagingAPI"
-               ReferencedContainer = "container:">
+               ReferencedContainer = "container:WireMessaging">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -32,7 +32,7 @@
                BlueprintIdentifier = "WireMessagingBindings"
                BuildableName = "WireMessagingBindings"
                BlueprintName = "WireMessagingBindings"
-               ReferencedContainer = "container:">
+               ReferencedContainer = "container:WireMessaging">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -46,7 +46,7 @@
                BlueprintIdentifier = "WireMessagingUI"
                BuildableName = "WireMessagingUI"
                BlueprintName = "WireMessagingUI"
-               ReferencedContainer = "container:">
+               ReferencedContainer = "container:WireMessaging">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -70,7 +70,7 @@
                BlueprintIdentifier = "WireMessagingUITests"
                BuildableName = "WireMessagingUITests"
                BlueprintName = "WireMessagingUITests"
-               ReferencedContainer = "container:">
+               ReferencedContainer = "container:WireMessaging">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -98,7 +98,7 @@
             BlueprintIdentifier = "WireMessagingAPI"
             BuildableName = "WireMessagingAPI"
             BlueprintName = "WireMessagingAPI"
-            ReferencedContainer = "container:">
+            ReferencedContainer = "container:WireMessaging">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
