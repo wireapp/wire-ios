@@ -31,7 +31,6 @@ class EnrollE2EIdentityStepDescription: AuthenticationStepDescription {
     let subtext: NSAttributedString?
     let secondaryView: AuthenticationSecondaryViewDescription?
     let footerView: AuthenticationFooterViewDescription? = nil
-    let analyticsEventTracker: (any AuthenticationStepAnalyticsEventTrackerProtocol)? = nil
 
     init() {
         self.mainView = SolidButtonDescription(

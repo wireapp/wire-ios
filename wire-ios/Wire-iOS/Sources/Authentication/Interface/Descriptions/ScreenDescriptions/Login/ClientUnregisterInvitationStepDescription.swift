@@ -28,7 +28,6 @@ final class ClientUnregisterInvitationStepDescription: AuthenticationStepDescrip
     let subtext: NSAttributedString?
     let secondaryView: AuthenticationSecondaryViewDescription?
     let footerView: AuthenticationFooterViewDescription?
-    let analyticsEventTracker: (any AuthenticationStepAnalyticsEventTrackerProtocol)? = nil
 
     typealias TooManyDevices = L10n.Localizable.Registration.Signin.TooManyDevices
 

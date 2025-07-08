@@ -26,7 +26,6 @@ final class ReauthenticateWithCompanyLoginStepDescription: AuthenticationStepDes
     let subtext: NSAttributedString?
     let secondaryView: AuthenticationSecondaryViewDescription?
     let footerView: AuthenticationFooterViewDescription?
-    let analyticsEventTracker: (any AuthenticationStepAnalyticsEventTrackerProtocol)? = nil
 
     init() {
         self.backButton = BackButtonDescription()

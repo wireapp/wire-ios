@@ -28,7 +28,6 @@ final class SetPasswordStepDescription: DefaultValidatingStepDescription {
     let secondaryView: AuthenticationSecondaryViewDescription?
     let initialValidation: ValueValidation
     let footerView: AuthenticationFooterViewDescription?
-    let analyticsEventTracker: (any AuthenticationStepAnalyticsEventTrackerProtocol)? = nil
 
     init() {
         self.backButton = BackButtonDescription()

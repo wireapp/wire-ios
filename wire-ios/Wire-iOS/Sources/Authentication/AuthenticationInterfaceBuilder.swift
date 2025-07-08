@@ -202,10 +202,9 @@ final class AuthenticationInterfaceBuilder {
             )
             return viewController
 
-        case let .addUsername:
-            fatalError("TODO")
-            // let addUsernameStep = AddUsernameStepDescription(analyticsEventTracker: analyticsEventTracker)
-            // return makeViewController(for: addUsernameStep)
+        case .addUsername:
+            let addUsernameStep = AddUsernameStepDescription()
+            return makeViewController(for: addUsernameStep)
 
         case let .enterActivationCode(unverifiedEmail, _):
             let step = VerifyEmailStepDescription(email: unverifiedEmail)
