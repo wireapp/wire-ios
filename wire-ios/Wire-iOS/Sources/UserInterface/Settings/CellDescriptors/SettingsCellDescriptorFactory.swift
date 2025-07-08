@@ -61,11 +61,7 @@ struct SettingsCellDescriptorFactory {
             presentationStyle: .modal,
             identifier: nil,
             presentationAction: { () -> (UIViewController?) in
-<<<<<<< HEAD
-                BrowserViewController(url: URL.manageTeam(source: .settings))
-=======
                 URL.manageTeam(source: .settings).browserControllerOrOpenExternally()
->>>>>>> c1bfba4593 (feat: open links externally based on the flag - WPB-18501 (#3317))
             },
             previewGenerator: nil,
             icon: .team,
