@@ -47,16 +47,14 @@ final class MLSAPIV9: MLSAPIV8 {
         do {
             return try ResponseParser()
                 .success(code: .ok)
-                .failure(code: .badRequest, label: "mls-protocol-error", error: MLSAPIError.mlsProtocolError(<#T##message: String##String#>))
-                .failure(code: .badRequest, label: "mls-group-id-not-supported", error: MLSAPIError.mlsGroupIDNotSupported)
-                .failure(code: .badRequest, label: "mls-federated-reset-not-supported", error: MLSAPIError.mlsFederatedBackendResetNotSupported)
                 .failure(code: .badRequest, label: "mls-not-enabled", error: MLSAPIError.mlsNotEnabled)
-                .failure(code: .badRequest, label: "body", error: MLSAPIError.mlsNotEnabled)
+//                .failure(code: .badRequest, label: "body", error: MLSAPIError.mlsNotEnabled)
                 .failure(code: .forbidden, label: "action-denied", error: MLSAPIError.insufficientAuthorization)
                 .failure(code: .conflict, decodableError: FailureResponse.self)
                 .parse(code: response.statusCode, data: data)
         } catch {
             if let failureResponse = error as? FailureResponse {
+                throw MLSAPIError(
                 throw MLSAPIError.mlsError(failureResponse.label, failureResponse.message)
             } else {
                 throw error
