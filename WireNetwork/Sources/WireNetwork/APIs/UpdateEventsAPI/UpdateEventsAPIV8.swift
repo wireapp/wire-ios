@@ -18,22 +18,8 @@
 
 import Foundation
 
-final class UpdateEventsAPIV8: UpdateEventsAPIV7 {
+class UpdateEventsAPIV8: UpdateEventsAPIV7 {
+
     override var apiVersion: APIVersion { .v8 }
 
-    override func getServerTime() async throws -> Date {
-        let request = try URLRequestBuilder(path: "\(pathPrefix)/time")
-            .withMethod(.get)
-            .build()
-
-        let (data, response) = try await apiService.executeRequest(
-            request,
-            requiringAccessToken: true
-        )
-
-        return try ResponseParser()
-            .success(code: .ok, type: ServerTimeResponseV8.self)
-            .parse(code: response.statusCode, data: data)
-
-    }
 }

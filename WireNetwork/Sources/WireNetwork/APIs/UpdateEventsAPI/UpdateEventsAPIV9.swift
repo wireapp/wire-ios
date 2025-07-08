@@ -16,25 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class PushChannelV2APIImpl: PushChannelV2API, VersionedAPI {
+import Foundation
 
-    let pushChannelService: any PushChannelServiceProtocol
-    let apiVersion: APIVersion
+final class UpdateEventsAPIV9: UpdateEventsAPIV8 {
+    override var apiVersion: APIVersion { .v9 }
 
-    init(pushChannelService: any PushChannelServiceProtocol, apiVersion: APIVersion) {
-        self.pushChannelService = pushChannelService
-        self.apiVersion = apiVersion
-    }
-
-    func createPushChannel(clientID: String) async throws -> any PushChannelV2Protocol {
-        let path = "\(pathPrefix)/events"
-
-        let request = try URLRequestBuilder(path: path)
+    override func getServerTime() async throws -> Date {
+        let request = try URLRequestBuilder(path: "\(pathPrefix)/time")
             .withMethod(.get)
-            .withQueryItem(name: "client", value: clientID)
             .build()
 
-        return try await pushChannelService.createPushChannelV2(request)
-    }
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
 
+        return try ResponseParser()
+            .success(code: .ok, type: ServerTimeResponseV8.self)
+            .parse(code: response.statusCode, data: data)
+
+    }
 }

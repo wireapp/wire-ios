@@ -51,7 +51,7 @@ public final class ConsumableNotificationsMigrator: ConsumableNotificationsMigra
 
     public func migrate() async throws {
         // 1) register consumable notifications capabilities
-        guard apiVersion >= .v8 else {
+        guard apiVersion >= .v9 else {
             throw Failure.apiVersionTooLow
         }
 

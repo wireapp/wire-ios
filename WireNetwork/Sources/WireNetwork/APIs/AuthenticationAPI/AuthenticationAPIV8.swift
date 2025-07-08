@@ -18,7 +18,7 @@
 
 import Foundation
 
-final class AuthenticationAPIV8: AuthenticationAPIV7 {
+class AuthenticationAPIV8: AuthenticationAPIV7 {
 
     override var apiVersion: APIVersion {
         .v8
