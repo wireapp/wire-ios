@@ -18,7 +18,6 @@
 
 import UIKit
 import WireAnalytics
-import WireCommonComponents
 import WireMainNavigationUI
 import WireSidebarUI
 

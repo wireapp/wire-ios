@@ -17,7 +17,6 @@
 //
 
 import UIKit
-import WireCommonComponents
 import WireDataModel
 
 protocol ContextMenuDelegate: AnyObject {

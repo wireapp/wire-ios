@@ -18,7 +18,6 @@
 
 import SafariServices
 import UIKit
-import WireCommonComponents
 import WireDataModel
 
 private var lastPreviewURL: URL?
