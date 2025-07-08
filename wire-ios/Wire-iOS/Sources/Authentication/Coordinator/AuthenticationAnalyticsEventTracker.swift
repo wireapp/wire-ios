@@ -18,4 +18,5 @@
 
 protocol AuthenticationAnalyticsEventTracker {
     func authenticationFlowStepReached(_ step: AuthenticationFlowStep)
+    func authenticationFlowCompleted()
 }

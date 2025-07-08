@@ -19,18 +19,13 @@
 extension RegistrationAnalyticsTracker: AuthenticationAnalyticsEventTracker {
 
     func authenticationFlowStepReached(_ step: AuthenticationFlowStep) {
-        switch step {
-
-        case .addUsername:
+        if step == .addUsername {
             trackPersonalAccountCreationReachedUsernameForm()
-
-        case .reauthenticate:
-            trackPersonalAccountCreationCompletion()
-
-        default:
-            break
-
         }
+    }
+
+    func authenticationFlowCompleted() {
+        trackPersonalAccountCreationCompletion()
     }
 
 }
