@@ -91,11 +91,11 @@ final class RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
         analyticsTracker?.trackEvent(.Registration.accountSetupStep3)
     }
 
-    func trackPersonalAccountCreationReachedUsernameForm() { // TODO: invoke
+    func trackPersonalAccountCreationReachedUsernameForm() {
         analyticsTracker?.trackEvent(.Registration.accountSetupStep4)
     }
 
-    func trackPersonalAccountCreationCompletion() { // TODO: invoke
+    func trackPersonalAccountCreationCompletion() {
         analyticsTracker?.trackEvent(.Registration.accountSetupStep5)
     }
 

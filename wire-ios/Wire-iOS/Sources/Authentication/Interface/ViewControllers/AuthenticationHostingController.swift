@@ -49,9 +49,6 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
                 /// broadcastAnalyticsID
                 /// selfUser.analyticsIdentifier = analyticsID
                 // TODO: let's use `RegistrationAnalyticsIDRepositoryProtocol` instead
-
-                authenticationCoordinator?.analyticsEventTracker // TODO: set
-
                 authenticationCoordinator?.eventResponderChain.handleEvent(
                     ofType: .wireAuthenticationModuleComplete(authenticationResult)
                 )

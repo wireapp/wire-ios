@@ -120,6 +120,7 @@ final class AuthenticationInterfaceBuilder {
                 registrationAnalyticsTracker: registrationAnalyticsTracker,
                 registrationAnalyticsIDRepository: registrationAnalyticsIDRepository
             )
+            authenticationCoordinator?.analyticsEventTracker = registrationAnalyticsTracker
             return AuthenticationHostingController(
                 rootView: rootView,
                 bridge: bridge,
