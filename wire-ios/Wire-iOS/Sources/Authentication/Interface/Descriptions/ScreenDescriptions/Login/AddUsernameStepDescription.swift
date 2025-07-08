@@ -25,7 +25,7 @@ private typealias Username = L10n.Localizable.Registration.Signin.Username
 final class AddUsernameStepDescription: DefaultValidatingStepDescription {
 
     let backButton: BackButtonDescription?
-    var mainView: ViewDescriptor & ValueSubmission
+    let mainView: ViewDescriptor & ValueSubmission
     let headline: String
     let subtext: NSAttributedString?
     let secondaryView: AuthenticationSecondaryViewDescription? = nil

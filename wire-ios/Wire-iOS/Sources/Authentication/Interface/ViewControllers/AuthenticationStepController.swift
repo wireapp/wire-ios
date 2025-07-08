@@ -26,6 +26,7 @@ class AuthenticationStepController: AuthenticationStepViewController {
 
     /// The step to display.
     let stepDescription: AuthenticationStepDescription
+    private var didReportDescriptionPresented = false
 
     /// The object that coordinates authentication.
     weak var authenticationCoordinator: AuthenticationCoordinator? {
@@ -105,9 +106,16 @@ class AuthenticationStepController: AuthenticationStepViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+
         configureObservers()
         showKeyboard()
         UIAccessibility.post(notification: .screenChanged, argument: headlineLabel)
+
+        // TODO: delete
+        // if !didReportDescriptionPresented {
+        //     description.presented()
+        //     didReportDescriptionPresented = true
+        // }
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
