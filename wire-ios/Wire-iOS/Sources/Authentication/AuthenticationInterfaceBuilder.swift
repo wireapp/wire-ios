@@ -20,6 +20,7 @@ import Combine
 import UIKit
 import WireAuthentication
 import WireCommonComponents
+import WireCountly
 import WireDataModel
 import WireFoundation
 import WireNetwork
@@ -110,6 +111,7 @@ final class AuthenticationInterfaceBuilder {
                 isMultibackendEnabled: DeveloperFlag.multibackend.isOn,
                 registrationAnalyticsTracker: registrationAnalyticsTracker
             )
+            authenticationCoordinator?.analyticsEventTracker = registrationAnalyticsTracker
             return AuthenticationHostingController(
                 rootView: rootView,
                 bridge: bridge,
