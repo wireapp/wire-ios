@@ -26,6 +26,8 @@ public enum MainSidebarMenuItem: Sendable, Equatable {
     case channels
     case oneOnOne
     case unread
+    case mentions
+    case replies
     case archive
     case folders
     // bottom

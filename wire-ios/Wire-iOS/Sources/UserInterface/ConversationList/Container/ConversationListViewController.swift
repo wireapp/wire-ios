@@ -81,6 +81,10 @@ final class ConversationListViewController: UIViewController {
             return FilterMenuLocale.OneOnOneConversations.title
         case .unread:
             return FilterMenuLocale.Unread.title
+        case .mentions:
+            return FilterMenuLocale.Mentions.title
+        case .replies:
+            return FilterMenuLocale.Replies.title
         case let .folder(_, name):
             return name
         case .none:
@@ -453,6 +457,10 @@ final class ConversationListViewController: UIViewController {
             L10n.Localizable.ConversationList.SearchBar.oneOnOnePlaceholder
         case .unread:
             L10n.Localizable.ConversationList.SearchBar.unreadPlaceholder
+        case .mentions:
+            L10n.Localizable.ConversationList.SearchBar.mentionsPlaceholder
+        case .replies:
+            L10n.Localizable.ConversationList.SearchBar.repliesPlaceholder
         case let .folder(_, name):
             L10n.Localizable.ConversationList.SearchBar.foldersPlaceholder(name)
         }

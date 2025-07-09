@@ -235,8 +235,10 @@
 "conversationsList.filter_menu_options.groups.description" = "Show all group conversations";
 "conversationsList.filter_menu_options.channels.description" = "Show all channel conversations";
 "conversationsList.filter_menu_options.oneOnOne.description" = "Show all one on one conversations";
-"conversationsList.filter_menu_options.folders.description" = "Folders";
 "conversationsList.filter_menu_options.unread.description" = "Show all unread conversations";
+"conversationsList.filter_menu_options.mentions.description" = "Show all conversations with mentions";
+"conversationsList.filter_menu_options.replies.description" = "Show all conversations with replies";
+"conversationsList.filter_menu_options.folders.description" = "Folders";
 
 "conversationsList.filter_menu_options.allConversations.selected.description" = "All conversations, selected";
 "conversationsList.filter_menu_options.favorites.selected.description" = "Favorites, selected";
@@ -245,6 +247,8 @@
 "conversationsList.filter_menu_options.oneOnOne.selected.description" = "One-to-one conversations, selected";
 "conversationsList.filter_menu_options.folders.selected.description" = "Folder, selected";
 "conversationsList.filter_menu_options.unread.selected.description" = "Unread, selected";
+"conversationsList.filter_menu_options.mentions.selected.description" = "Mentions, selected";
+"conversationsList.filter_menu_options.replies.selected.description" = "Replies, selected";
 
 
 "conversationsList.filter_view.removeButton.descritpion" = "Remove conversation filter";

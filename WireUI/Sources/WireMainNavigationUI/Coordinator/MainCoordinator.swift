@@ -463,7 +463,11 @@ private extension MainSidebarMenuItem {
         case .oneOnOne:
             self = .oneOnOne
         case .unread:
-            self = .unread 
+            self = .unread
+        case .mentions:
+            self = .mentions
+        case .replies:
+            self = .replies
         case .folder:
             self = .folders
         }

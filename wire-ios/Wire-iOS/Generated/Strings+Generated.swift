@@ -707,12 +707,28 @@ internal enum L10n {
             internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.groups.selected.description", fallback: "Groups, selected")
           }
         }
+        internal enum Mentions {
+          /// Show all conversations with mentions
+          internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.mentions.description", fallback: "Show all conversations with mentions")
+          internal enum Selected {
+            /// Mentions, selected
+            internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.mentions.selected.description", fallback: "Mentions, selected")
+          }
+        }
         internal enum OneOnOne {
           /// Show all one on one conversations
           internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.oneOnOne.description", fallback: "Show all one on one conversations")
           internal enum Selected {
             /// One-to-one conversations, selected
             internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.oneOnOne.selected.description", fallback: "One-to-one conversations, selected")
+          }
+        }
+        internal enum Replies {
+          /// Show all conversations with replies
+          internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.replies.description", fallback: "Show all conversations with replies")
+          internal enum Selected {
+            /// Replies, selected
+            internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.replies.selected.description", fallback: "Replies, selected")
           }
         }
         internal enum Unread {
@@ -2939,6 +2955,18 @@ internal enum L10n {
         }
       }
       internal enum EmptyState {
+        internal enum Mentions {
+          /// All your conversations are up to date
+          internal static let subtitle = L10n.tr("Localizable", "conversation_list.empty_state.mentions.subtitle", fallback: "All your conversations are up to date")
+          /// No conversations with mentions
+          internal static let title = L10n.tr("Localizable", "conversation_list.empty_state.mentions.title", fallback: "No conversations with mentions")
+        }
+        internal enum Replies {
+          /// All your conversations are up to date
+          internal static let subtitle = L10n.tr("Localizable", "conversation_list.empty_state.replies.subtitle", fallback: "All your conversations are up to date")
+          /// No conversations with replies
+          internal static let title = L10n.tr("Localizable", "conversation_list.empty_state.replies.title", fallback: "No conversations with replies")
+        }
         internal enum Unread {
           /// All your conversations are up to date
           internal static let subtitle = L10n.tr("Localizable", "conversation_list.empty_state.unread.subtitle", fallback: "All your conversations are up to date")
@@ -2967,6 +2995,10 @@ internal enum L10n {
           /// Groups
           internal static let title = L10n.tr("Localizable", "conversation_list.filter.groups.title", fallback: "Groups")
         }
+        internal enum Mentions {
+          /// Mentions
+          internal static let title = L10n.tr("Localizable", "conversation_list.filter.mentions.title", fallback: "Mentions")
+        }
         internal enum OneOnOneConversations {
           /// 1:1 Conversations
           internal static let title = L10n.tr("Localizable", "conversation_list.filter.oneOnOneConversations.title", fallback: "1:1 Conversations")
@@ -2974,6 +3006,10 @@ internal enum L10n {
         internal enum RemoveButton {
           /// Remove
           internal static let title = L10n.tr("Localizable", "conversation_list.filter.remove_button.title", fallback: "Remove")
+        }
+        internal enum Replies {
+          /// Replies
+          internal static let title = L10n.tr("Localizable", "conversation_list.filter.replies.title", fallback: "Replies")
         }
         internal enum Unread {
           /// Unread
@@ -3019,10 +3055,14 @@ internal enum L10n {
         }
         /// Search groups
         internal static let groupsPlaceholder = L10n.tr("Localizable", "conversation_list.search_bar.groupsPlaceholder", fallback: "Search groups")
+        /// Search conversations with mentions
+        internal static let mentionsPlaceholder = L10n.tr("Localizable", "conversation_list.search_bar.mentionsPlaceholder", fallback: "Search conversations with mentions")
         /// Search 1:1 conversations
         internal static let oneOnOnePlaceholder = L10n.tr("Localizable", "conversation_list.search_bar.oneOnOnePlaceholder", fallback: "Search 1:1 conversations")
         /// Search conversations
         internal static let placeholder = L10n.tr("Localizable", "conversation_list.search_bar.placeholder", fallback: "Search conversations")
+        /// Search conversations with replies
+        internal static let repliesPlaceholder = L10n.tr("Localizable", "conversation_list.search_bar.repliesPlaceholder", fallback: "Search conversations with replies")
         /// Search unread conversations
         internal static let unreadPlaceholder = L10n.tr("Localizable", "conversation_list.search_bar.unreadPlaceholder", fallback: "Search unread conversations")
       }

@@ -20,5 +20,7 @@
 "sidebar.support.description" = "Support öffnen";
 "sidebar.conversation_filter.oneOnOneConversations.description" = "Eins-zu-Eins Unterhaltungen";
 "sidebar.conversation_filter.unread.description" = "Ungelesene Unterhaltungen";
+"sidebar.conversation_filter.mentions.description" = "Unterhaltungen mit Erwähnung";
+"sidebar.conversation_filter.replied.description" = "Unterhaltungen mit Antworten";
 "sidebar.name.description" = "Profilname";
 "sidebar.handle.description" = "Benutzername";

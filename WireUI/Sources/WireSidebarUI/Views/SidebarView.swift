@@ -122,6 +122,8 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
                 .channels,
                 .oneOnOne,
                 .unread,
+                .mentions,
+                .replies,
                 .folders,
                 .archive
             ]
@@ -224,7 +226,19 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             icon = "1.circle.fill"
             iconHighlighted = "1.circle.fill" // Same icon for both states
             accessibilityLabel = Text(Labels.ConversationFilter.Unread.description)
-
+        
+        case .mentions:
+            text = Text(Strings.ConversationFilter.Mentions.title)
+            icon = "1.circle.fill" // TODO: icon
+            iconHighlighted = "1.circle.fill" // TODO: icon
+            accessibilityLabel = Text(Labels.ConversationFilter.Mentions.description)
+            
+        case .replies:
+            text = Text(Strings.ConversationFilter.Replies.title)
+            icon = "1.circle.fill" // TODO: icon
+            iconHighlighted = "1.circle.fill" // TODO: icon
+            accessibilityLabel = Text(Labels.ConversationFilter.Replies.description)
+            
         case .folders:
             text = Text(Strings.ConversationFilter.Folders.title)
             icon = "folder"
