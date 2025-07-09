@@ -20,6 +20,7 @@ import avs
 import WireAPI
 import WireDataModel
 import WireDomain
+import WireLogging
 
 open class AuthenticatedSessionFactory {
 
@@ -64,7 +65,8 @@ open class AuthenticatedSessionFactory {
         configuration: ZMUserSession.Configuration,
         sharedUserDefaults: UserDefaults,
         isDeveloperModeEnabled: Bool,
-        journal: Journal
+        journal: Journal,
+        logFilesProvider: LogFilesProviding
     ) -> ZMUserSession? {
         let wireAPIBackendEnvironment = BackendEnvironment(
             url: environment.backendURL,
@@ -156,7 +158,8 @@ open class AuthenticatedSessionFactory {
             transportSession: transportSession,
             userId: account.userIdentifier,
             minTLSVersion: minTLSVersion,
-            journal: journal
+            journal: journal,
+            logFilesProvider: logFilesProvider
         )
 
         let userSession = userSessionBuilder.build()
