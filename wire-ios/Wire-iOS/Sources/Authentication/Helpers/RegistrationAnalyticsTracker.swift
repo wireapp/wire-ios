@@ -19,7 +19,7 @@
 import WireAuthenticationAPI
 import WireFoundation
 
-struct PersonalAccountCreationAnalyticsTracker: PersonalAccountCreationAnalyticsTrackerProtocol {
+struct RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
 
     private var analyticsTracker: (any AnalyticsEventTrackerProtocol)!
 
@@ -33,8 +33,8 @@ struct PersonalAccountCreationAnalyticsTracker: PersonalAccountCreationAnalytics
         fatalError("WPB-17530")
     }
 
-    func trackPersonalAccountCreationStart(multiplePasswordAttemptsNeeded multipleAttempts: Bool) {
-        analyticsTracker.trackEvent(.Registration.accountSetupStep0(multiplePasswordAttempts: multipleAttempts))
+    func trackPersonalAccountCreationStart() {
+        analyticsTracker.trackEvent(.Registration.accountSetupStep0)
     }
 
     func trackPersonalAccountCreationReachedTermsOfUseConfirmation() {
