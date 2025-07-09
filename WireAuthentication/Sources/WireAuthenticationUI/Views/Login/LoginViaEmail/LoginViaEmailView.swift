@@ -263,8 +263,8 @@ package struct LoginViaEmailView: View {
                 onTeamAccountCreation: viewModel.handleTeamAccountCreation,
                 onPersonalAccountCreation: viewModel.handlePersonalAccountCreation
             )
-            // TODO: the sheet is presented in full size, not like the rest of the auth ui
-            // use .universalSheet(...) maybe?
+            // TODO: [WPB-18672] The account type selection is presented full-screen, not like the rest of the auth UI
+            // try to use .universalSheet(...) if possible
         }
     }
 
