@@ -103,6 +103,14 @@ public extension LogAttributes {
         ]
     }
 
+    static var syncAttributes: Self {
+        [
+            .syncVersion: syncVersion,
+            .public: true
+        ]
+    }
+
+    
     static func syncPhaseAttributes(
         _ phase: String,
         initialSync: Bool

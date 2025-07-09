@@ -117,7 +117,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         ongoingSyncTask = Task {
             WireLogger.sync.debug(
                 "resuming sync"
-            )
+                , attributes: .syncAttributes)
 
             let retrier = BackoffRetrier()
 
