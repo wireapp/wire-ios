@@ -137,6 +137,9 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                             "processing pending event: \(event.name)",
                             attributes: .syncAttributes(initialSync: false) + [.eventEnvelopeID: envelope.id]
                         )
+                        if event.isTypingEvent {
+                            continue
+                        }
                         try await processor.processEvent(event)
                     } catch {
                         // TODO: [WPB-10458] review handling errors of processingEvents
@@ -354,6 +357,18 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                 "failed to save database: \(String(describing: error))",
                 attributes: .syncAttributes(initialSync: false)
             )
+        }
+    }
+}
+
+private extension UpdateEvent {
+    
+    var isTypingEvent: Bool {
+        switch self {
+        case .conversation(.typing(_)):
+            return true
+        default:
+            return false
         }
     }
 }
