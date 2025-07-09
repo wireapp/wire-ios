@@ -117,14 +117,12 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
         presenter: UINavigationController,
         sessionManager: ObservableSessionManager,
         featureProvider: AuthenticationFeatureProvider,
-        statusProvider: AuthenticationStatusProvider,
-        analyticsEventTracker: (any AuthenticationAnalyticsEventTracker)?
+        statusProvider: AuthenticationStatusProvider
     ) {
         self.presenter = presenter
         self.activityIndicator = BlockingActivityIndicator(view: presenter.view)
         self.sessionManager = sessionManager
         self.statusProvider = statusProvider
-        self.analyticsEventTracker = analyticsEventTracker
         self.featureProvider = featureProvider
         self.stateController = AuthenticationStateController()
         self.interfaceBuilder = AuthenticationInterfaceBuilder(

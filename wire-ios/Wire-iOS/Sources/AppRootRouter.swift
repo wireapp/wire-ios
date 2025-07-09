@@ -386,8 +386,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             presenter: navigationController,
             sessionManager: sessionManager,
             featureProvider: BuildSettingAuthenticationFeatureProvider(),
-            statusProvider: AuthenticationStatusProvider(),
-            analyticsEventTracker: .none
+            statusProvider: AuthenticationStatusProvider()
         )
 
         guard let authenticationCoordinator else {
