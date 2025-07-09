@@ -16,18 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+/// Errors originating from `PushChannelV2API`.
+public enum PushChannelV2APIError: Error {
 
-/// The managing system of the self user identity
-
-public enum ManagingSystem: Sendable {
-
-    /// User identity is managed with Wire
-
-    case wire
-
-    /// User identity is managed with SCIM
-
-    case scim
-
+    /// Unsupported endpoint for API version
+    case unsupportedEndpointForAPIVersion
 }

@@ -25,12 +25,12 @@ struct StorableQualifiedID: Codable, Hashable, Equatable, Sendable {
     let domain: String
 
     init(_ value: WireNetwork.QualifiedID) {
-        self.id = value.uuid
+        self.id = value.id
         self.domain = value.domain
     }
 
     func toAPIModel() -> WireNetwork.QualifiedID {
-        .init(uuid: id, domain: domain)
+        .init(id: id, domain: domain)
     }
 
 }

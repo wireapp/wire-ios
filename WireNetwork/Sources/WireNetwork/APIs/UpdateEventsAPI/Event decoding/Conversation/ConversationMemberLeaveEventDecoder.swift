@@ -24,12 +24,12 @@ struct ConversationMemberLeaveEventDecoder {
         from container: KeyedDecodingContainer<ConversationEventCodingKeys>
     ) throws -> ConversationMemberLeaveEvent {
         let conversationID = try container.decode(
-            ConversationID.self,
+            QualifiedIDV0.self,
             forKey: .conversationQualifiedID
         )
 
         let senderID = try container.decode(
-            UserID.self,
+            QualifiedIDV0.self,
             forKey: .senderQualifiedID
         )
 
@@ -44,18 +44,18 @@ struct ConversationMemberLeaveEventDecoder {
         )
 
         return ConversationMemberLeaveEvent(
-            conversationID: conversationID,
-            senderID: senderID,
+            conversationID: conversationID.toAPIModel(),
+            senderID: senderID.toAPIModel(),
             timestamp: timestamp.date,
-            removedUserIDs: payload.userIDs,
-            reason: payload.reason ?? .userLeft
+            removedUserIDs: Set(payload.userIDs.map { $0.toAPIModel() }),
+            reason: payload.reason?.toAPIModel() ?? .userLeft
         )
     }
 
     private struct Payload: Decodable {
 
-        let userIDs: Set<UserID>
-        let reason: ConversationMemberLeaveReason?
+        let userIDs: Set<QualifiedIDV0>
+        let reason: ConversationMemberLeaveReasonV0?
 
         enum CodingKeys: String, CodingKey {
 

@@ -24,7 +24,7 @@ struct UserDeleteEventDecoder {
         from container: KeyedDecodingContainer<UserEventCodingKeys>
     ) throws -> UserDeleteEvent {
         let qualifiedUserID = try container.decode(
-            QualifiedID.self,
+            QualifiedIDV0.self,
             forKey: .qualifiedID
         )
 
@@ -34,7 +34,7 @@ struct UserDeleteEventDecoder {
         )
 
         return UserDeleteEvent(
-            qualifiedUserID: qualifiedUserID,
+            qualifiedUserID: qualifiedUserID.toAPIModel(),
             time: time?.date ?? .now
         )
     }

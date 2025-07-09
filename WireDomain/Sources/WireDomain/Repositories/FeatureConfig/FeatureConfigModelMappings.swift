@@ -27,9 +27,9 @@ extension WireNetwork.MLSFeatureConfig {
             protocolToggleUsers: Array(protocolToggleUsers),
             defaultProtocol: defaultProtocol == .mls ? .mls : .proteus,
             allowedCipherSuites: allowedCipherSuites.map {
-                .init(rawValue: $0.rawValue)!
+                $0.toConfigModel()
             },
-            defaultCipherSuite: .init(rawValue: defaultCipherSuite.rawValue)!,
+            defaultCipherSuite: defaultCipherSuite.toConfigModel(),
             supportedProtocols: Set(supportedProtocols.map {
                 switch $0 {
                 case .proteus:
@@ -107,9 +107,22 @@ extension WireNetwork.ChannelsFeatureConfig {
 
     func toDomainModel() -> Feature.Channels.Config {
         .init(
-            allowedToCreateChannels: .init(rawValue: allowedToCreateChannels.rawValue)!,
-            allowedToOpenChannels: .init(rawValue: allowedToOpenChannels.rawValue)!
+            allowedToCreateChannels: allowedToCreateChannels.toDomainModel(),
+            allowedToOpenChannels: allowedToOpenChannels.toDomainModel()
         )
     }
 
+}
+
+extension WireNetwork.ChannelsPermision {
+    func toDomainModel() -> Feature.Channels.Config.ChannelsPermision {
+        switch self {
+        case .admins:
+            .admins
+        case .everyone:
+            .everyone
+        case .teamMembers:
+            .teamMembers
+        }
+    }
 }

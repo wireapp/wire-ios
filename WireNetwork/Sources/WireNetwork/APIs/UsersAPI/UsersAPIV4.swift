@@ -25,7 +25,7 @@ class UsersAPIV4: UsersAPIV3 {
     }
 
     override func getUser(for userID: UserID) async throws -> User {
-        let path = "\(pathPrefix)/users/\(userID.domain)/\(userID.uuid.transportString())"
+        let path = "\(pathPrefix)/users/\(userID.domain)/\(userID.id.transportString())"
 
         let request = try URLRequestBuilder(path: path)
             .withMethod(.get)
@@ -43,7 +43,8 @@ class UsersAPIV4: UsersAPIV3 {
     }
 
     override func getUsers(userIDs: [UserID]) async throws -> UserList {
-        let body = try JSONEncoder.defaultEncoder.encode(ListUsersRequestV0(qualifiedIDs: userIDs))
+        let body = try JSONEncoder.defaultEncoder
+            .encode(ListUsersRequestV0(qualifiedIDs: userIDs.map { $0.toNetworkModel() }))
         let path = "\(pathPrefix)/list-users"
 
         let request = try URLRequestBuilder(path: path)
@@ -71,26 +72,29 @@ struct UserListResponseV4: Decodable, ToAPIModelConvertible {
 
     /// List of user IDs for which a user couldn't be retrieved.
     ///
-    let failed: [UserID]?
+    let failed: [QualifiedIDV0]?
 
     func toAPIModel() -> UserList {
-        UserList(found: found.map { $0.toAPIModel() }, failed: failed ?? [])
+        UserList(
+            found: found.map { $0.toAPIModel() },
+            failed: failed?.map { $0.toAPIModel() } ?? []
+        )
     }
 }
 
 struct UserResponseV4: Decodable, ToAPIModelConvertible {
 
-    let id: UserID
+    let id: QualifiedIDV0
     let name: String
     let handle: String?
     let teamID: UUID?
     let accentID: Int
-    let assets: [UserAsset]
+    let assets: [UserAssetV0]
     let deleted: Bool?
     let email: String?
     let expiresAt: UTCTime?
     let service: ServiceResponseV0?
-    let supportedProtocols: Set<MessageProtocol>?
+    let supportedProtocols: Set<MessageProtocolV0>?
     let legalholdStatus: LegalholdStatusV0
 
     enum CodingKeys: String, CodingKey {
@@ -111,18 +115,19 @@ struct UserResponseV4: Decodable, ToAPIModelConvertible {
     }
 
     func toAPIModel() -> User {
-        User(
-            id: id,
+        let supportedProtocols = supportedProtocols?.map { $0.toAPIModel() }
+        return User(
+            id: id.toAPIModel(),
             name: name,
             handle: handle,
             teamID: teamID,
             accentID: accentID,
-            assets: assets,
+            assets: assets.map { $0.toAPIModel() },
             deleted: deleted,
             email: email,
             expiresAt: expiresAt?.date,
             service: service?.toAPIModel(),
-            supportedProtocols: supportedProtocols,
+            supportedProtocols: supportedProtocols.flatMap { Set($0) },
             legalholdStatus: legalholdStatus.toAPIModel()
         )
     }

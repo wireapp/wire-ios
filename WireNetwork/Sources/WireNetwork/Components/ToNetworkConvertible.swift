@@ -18,16 +18,12 @@
 
 import Foundation
 
-/// The managing system of the self user identity
+/// A type that can be converted to an associated network model.
 
-public enum ManagingSystem: Sendable {
+protocol ToNetworkConvertible {
 
-    /// User identity is managed with Wire
+    associatedtype NetworkModel
 
-    case wire
-
-    /// User identity is managed with SCIM
-
-    case scim
+    func toNetworkModel() -> NetworkModel
 
 }

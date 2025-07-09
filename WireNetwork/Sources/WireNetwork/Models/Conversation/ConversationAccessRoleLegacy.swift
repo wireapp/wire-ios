@@ -20,7 +20,7 @@ import Foundation
 
 /// Which users are allowed to be participants in a conversation.
 
-public enum ConversationAccessRoleLegacy: String, Codable, Sendable {
+public enum ConversationAccessRoleLegacy: Sendable {
 
     /// Used in one-to-one and self conversations.
 
@@ -38,6 +38,27 @@ public enum ConversationAccessRoleLegacy: String, Codable, Sendable {
 
     /// Any user, including services.
 
+    case nonActivated
+
+}
+
+enum ConversationAccessRoleLegacyV0: String, Sendable, Decodable, ToAPIModelConvertible {
+
+    case `private`
+    case team
+    case activated
     case nonActivated = "non_activated"
 
+    func toAPIModel() -> ConversationAccessRoleLegacy {
+        switch self {
+        case .private:
+            .private
+        case .team:
+            .team
+        case .activated:
+            .activated
+        case .nonActivated:
+            .nonActivated
+        }
+    }
 }

@@ -77,7 +77,7 @@ final class UserRepositoryTests: XCTestCase {
         await context.perform { [context] in
             // There is no user in the database.
             XCTAssertNil(ZMUser.fetch(
-                with: Scaffolding.user1.id.uuid,
+                with: Scaffolding.user1.id.id,
                 domain: Scaffolding.user1.id.domain,
                 in: context
             ))
@@ -106,7 +106,7 @@ final class UserRepositoryTests: XCTestCase {
 
         _ = await context.perform { [context] in
             // Insert incomplete user in the database.
-            ZMUser.fetchOrCreate(with: Scaffolding.user1.id.uuid, domain: Scaffolding.user1.id.domain, in: context)
+            ZMUser.fetchOrCreate(with: Scaffolding.user1.id.id, domain: Scaffolding.user1.id.domain, in: context)
         }
 
         // Mock
@@ -427,7 +427,7 @@ final class UserRepositoryTests: XCTestCase {
         static let base64encodedString =
             "pQABAQoCoQBYIPEFMBhOtG0dl6gZrh3kgopEK4i62t9sqyqCBckq3IJgA6EAoQBYIC9gPmCdKyqwj9RiAaeSsUI7zPKDZS+CjoN+sfihk/5VBPY="
 
-        static let qualifiedID = UserID(uuid: UUID(), domain: "example.com")
+        static let qualifiedID = UserID(id: UUID(), domain: "example.com")
 
         static let conversationLabel1 = ConversationLabel(
             id: .mockID1,
@@ -460,7 +460,7 @@ final class UserRepositoryTests: XCTestCase {
         )
 
         static let user1 = User(
-            id: QualifiedID(uuid: .mockID1, domain: domain),
+            id: QualifiedID(id: .mockID1, domain: domain),
             name: "user1",
             handle: "handle1",
             teamID: nil,
@@ -475,7 +475,7 @@ final class UserRepositoryTests: XCTestCase {
         )
 
         static let selfUser = SelfUser(
-            id: qualifiedID.uuid,
+            id: qualifiedID.id,
             qualifiedID: qualifiedID,
             ssoID: nil,
             name: "username",

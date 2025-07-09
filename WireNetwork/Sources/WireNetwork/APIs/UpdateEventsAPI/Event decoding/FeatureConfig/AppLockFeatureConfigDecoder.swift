@@ -29,7 +29,7 @@ struct AppLockFeatureConfigDecoder {
         )
 
         return AppLockFeatureConfig(
-            status: payload.status,
+            status: payload.status.toAPIModel(),
             isMandatory: payload.config.enforceAppLock,
             inactivityTimeoutInSeconds: payload.config.inactivityTimeoutSecs
         )

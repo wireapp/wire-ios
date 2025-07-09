@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		017F67942C207AA000B6E02D /* WireDomainSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 017F67822C207A3200B6E02D /* WireDomainSupport.framework */; };
+		01A9C1BD2E0A106D000617B4 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 01A9C1BC2E0A106D000617B4 /* WireFoundation */; };
 		01D0DCC62C1C8CD90076CB1C /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01D0DCC52C1C8CD90076CB1C /* WireTransport.framework */; };
 		34DC44B32E01C206004D5DD5 /* WireNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = 34DC44B22E01C206004D5DD5 /* WireNetwork */; };
 		34F8CA9A2E02C003000FE4E0 /* WireNetworkSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 34F8CA992E02C003000FE4E0 /* WireNetworkSupport */; };
@@ -85,6 +86,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				01A9C1BD2E0A106D000617B4 /* WireFoundation in Frameworks */,
 				C97BCCAA2C98704B004F2D0D /* WireDomain.framework in Frameworks */,
 				34F8CA9C2E02C012000FE4E0 /* WireNetwork in Frameworks */,
 				59202AD22D54D3D500143413 /* WireDomainPackage in Frameworks */,
@@ -197,6 +199,7 @@
 			packageProductDependencies = (
 				59202AD12D54D3D500143413 /* WireDomainPackage */,
 				34F8CA9B2E02C012000FE4E0 /* WireNetwork */,
+				01A9C1BC2E0A106D000617B4 /* WireFoundation */,
 			);
 			productName = WireDomainSupport;
 			productReference = 017F67822C207A3200B6E02D /* WireDomainSupport.framework */;
@@ -781,6 +784,10 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		01A9C1BC2E0A106D000617B4 /* WireFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireFoundation;
+		};
 		34DC44B22E01C206004D5DD5 /* WireNetwork */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireNetwork;
