@@ -20,7 +20,7 @@ import Foundation
 
 /// Classes of user client devices.
 
-public enum DeviceClass: String, Codable, Sendable {
+public enum DeviceClass: Sendable {
 
     /// The client is a phone.
 
@@ -38,4 +38,24 @@ public enum DeviceClass: String, Codable, Sendable {
 
     case legalhold
 
+}
+
+enum DeviceClassV0: String, Sendable, Codable, ToAPIModelConvertible {
+    case phone
+    case tablet
+    case desktop
+    case legalhold
+
+    func toAPIModel() -> DeviceClass {
+        switch self {
+        case .phone:
+            .phone
+        case .tablet:
+            .tablet
+        case .desktop:
+            .desktop
+        case .legalhold:
+            .legalhold
+        }
+    }
 }

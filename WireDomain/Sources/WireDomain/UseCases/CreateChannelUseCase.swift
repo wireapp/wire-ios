@@ -358,7 +358,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
             isMLSEnabled: true
         )
 
-        let qualifiedID = conversation.qualifiedID?.uuid
+        let qualifiedID = conversation.qualifiedID?.id
         guard let conversationID = conversation.id ?? qualifiedID else {
             throw Failure.missingConversationID
         }

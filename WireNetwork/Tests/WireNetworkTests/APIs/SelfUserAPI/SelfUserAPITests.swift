@@ -211,7 +211,7 @@ extension SelfUserAPITests {
     enum Scaffolding {
         static let teamID = UUID(uuidString: "99DB9768-04E3-4B5D-9268-831B6A25C4AB")!
         static let userID = UserID(
-            uuid: UUID(uuidString: "99DB9768-04E3-4B5D-9268-831B6A25C4AB")!,
+            id: UUID(uuidString: "99DB9768-04E3-4B5D-9268-831B6A25C4AB")!,
             domain: "example.com"
         )
         static let selfUserV0 = SelfUser(

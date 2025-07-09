@@ -39,6 +39,26 @@ extension WireNetwork.MLSCipherSuite {
             .MLS_256_DHKEMP384_AES256GCM_SHA384_P384
         }
     }
+
+    func toConfigModel() -> Feature.MLS.Config.MLSCipherSuite {
+        switch self {
+        case .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519:
+            .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
+        case .MLS_128_DHKEMP256_AES128GCM_SHA256_P256:
+            .MLS_128_DHKEMP256_AES128GCM_SHA256_P256
+        case .MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519:
+            .MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519
+        case .MLS_256_DHKEMX448_AES256GCM_SHA512_Ed448:
+            .MLS_256_DHKEMX448_AES256GCM_SHA512_Ed448
+        case .MLS_256_DHKEMP521_AES256GCM_SHA512_P521:
+            .MLS_256_DHKEMP521_AES256GCM_SHA512_P521
+        case .MLS_256_DHKEMX448_CHACHA20POLY1305_SHA512_Ed448:
+            .MLS_256_DHKEMX448_CHACHA20POLY1305_SHA512_Ed448
+        case .MLS_256_DHKEMP384_AES256GCM_SHA384_P384:
+            .MLS_256_DHKEMP384_AES256GCM_SHA384_P384
+        }
+    }
+
 }
 
 extension WireNetwork.ConversationAccessRoleLegacy {
@@ -151,8 +171,8 @@ extension WireNetwork.Conversation {
             name: name,
             messageTimer: messageTimer,
             readReceiptMode: readReceiptMode,
-            access: access?.map(\.rawValue),
-            accessRoles: accessRoles?.map(\.rawValue),
+            access: access?.map { $0.toDomainModel() },
+            accessRoles: accessRoles?.map { $0.toDomainModel() },
             legacyAccessRole: legacyAccessRole?.toDomainModel(),
             lastEvent: lastEvent,
             lastEventTime: lastEventTime,
@@ -160,7 +180,38 @@ extension WireNetwork.Conversation {
             addPermission: addPermission?.toDomainModel()
         )
     }
+}
 
+extension WireNetwork.ConversationAccessRole {
+    func toDomainModel() -> String {
+        switch self {
+        case .teamMember:
+            "team_member"
+        case .nonTeamMember:
+            "non_team_member"
+        case .guest:
+            "guest"
+        case .service:
+            "service"
+        }
+    }
+
+}
+
+extension WireNetwork.ConversationAccessMode {
+    func toDomainModel() -> String {
+        switch self {
+
+        case .private:
+            "private"
+        case .invite:
+            "invite"
+        case .link:
+            "link"
+        case .code:
+            "code"
+        }
+    }
 }
 
 extension WireNetwork.ConversationGroupType {
