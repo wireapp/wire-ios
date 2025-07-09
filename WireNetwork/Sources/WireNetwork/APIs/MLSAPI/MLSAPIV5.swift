@@ -63,7 +63,7 @@ class MLSAPIV5: MLSAPIV4 {
                     label: "mls-commit-missing-references",
                     error: MLSAPIError.mlsCommitMissingReferences
                 )
-                .failure(code: .conflict, decodableError: FailureResponse.self)
+                .failure(code: .conflict, decodableError: FailureResponseV0.self)
                 .parse(code: response.statusCode, data: data)
         } catch {
             if let failureResponse = error as? FailureResponse {
@@ -79,10 +79,10 @@ class MLSAPIV5: MLSAPIV4 {
 
 private struct BackendMLSPublicKeysResponseV5: Decodable, ToAPIModelConvertible {
 
-    var removal: MLSPublicKeys
+    var removal: MLSPublicKeysV0
 
     func toAPIModel() -> BackendMLSPublicKeys {
-        .init(removal: removal)
+        .init(removal: removal.toAPIModel())
     }
 
 }

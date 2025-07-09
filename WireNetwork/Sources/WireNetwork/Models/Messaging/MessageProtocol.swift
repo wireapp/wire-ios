@@ -21,7 +21,7 @@ import Foundation
 /// A message protocol to use in end to end
 /// encrypted communication.
 
-public enum MessageProtocol: String, Codable, Sendable {
+public enum MessageProtocol: Sendable {
 
     /// The Proteus messaging protocol.
 
@@ -31,4 +31,35 @@ public enum MessageProtocol: String, Codable, Sendable {
 
     case mls
 
+}
+
+enum MessageProtocolV0: String, Sendable, Codable {
+
+    case proteus
+    case mls
+
+}
+
+extension MessageProtocolV0: ToAPIModelConvertible {
+
+    func toAPIModel() -> MessageProtocol {
+        switch self {
+        case .proteus:
+            .proteus
+        case .mls:
+            .mls
+        }
+    }
+}
+
+extension MessageProtocol: ToNetworkConvertible {
+
+    func toNetworkModel() -> MessageProtocolV0 {
+        switch self {
+        case .proteus:
+            .proteus
+        case .mls:
+            .mls
+        }
+    }
 }

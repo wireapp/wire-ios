@@ -72,7 +72,7 @@ final class UpdateEventDecryptorTests: XCTestCase {
     func insertScaffoldingData() async throws {
         try await context.perform { [self] in
             let selfUser = modelHelper.createSelfUser(
-                id: Scaffolding.selfUserID.uuid,
+                id: Scaffolding.selfUserID.id,
                 domain: Scaffolding.selfUserID.domain,
                 in: context
             )
@@ -83,7 +83,7 @@ final class UpdateEventDecryptorTests: XCTestCase {
             )
 
             let alice = modelHelper.createUser(
-                id: Scaffolding.aliceID.uuid,
+                id: Scaffolding.aliceID.id,
                 domain: Scaffolding.aliceID.domain,
                 in: context
             )
@@ -94,7 +94,7 @@ final class UpdateEventDecryptorTests: XCTestCase {
             )
 
             let conversation = modelHelper.createGroupConversation(
-                id: Scaffolding.conversationID.uuid,
+                id: Scaffolding.conversationID.id,
                 domain: Scaffolding.conversationID.domain,
                 in: context
             )
@@ -163,7 +163,7 @@ final class UpdateEventDecryptorTests: XCTestCase {
         try await context.perform { [context] in
             let conversation = try XCTUnwrap(
                 ZMConversation.fetch(
-                    with: Scaffolding.conversationID.uuid,
+                    with: Scaffolding.conversationID.id,
                     domain: Scaffolding.conversationID.domain,
                     in: context
                 )
@@ -236,13 +236,13 @@ private enum Scaffolding {
 
     static let localDomain = "local.com"
 
-    static let selfUserID = UserID(uuid: UUID(), domain: localDomain)
+    static let selfUserID = UserID(id: UUID(), domain: localDomain)
     static let selfClientID = "abcd1234"
 
-    static let aliceID = UserID(uuid: UUID(), domain: localDomain)
+    static let aliceID = UserID(id: UUID(), domain: localDomain)
     static let aliceClientID = "efgh5678"
 
-    static let conversationID = ConversationID(uuid: UUID(), domain: localDomain)
+    static let conversationID = ConversationID(id: UUID(), domain: localDomain)
     static let mlsGroupID = MLSGroupID.random()
     static let messageContent = "foo"
     static let timestamp = Date()

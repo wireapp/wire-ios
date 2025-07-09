@@ -20,7 +20,7 @@ import Foundation
 
 /// A configuration for the *File Sharing* feature.
 
-public struct FileSharingFeatureConfig: Codable, Equatable, Sendable {
+public struct FileSharingFeatureConfig: Equatable, Sendable {
 
     /// The feature's status.
 

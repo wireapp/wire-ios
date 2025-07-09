@@ -38,11 +38,11 @@ struct UserConnectionEventDecoder {
             connection: Connection(
                 senderID: connection.from,
                 receiverID: connection.to,
-                receiverQualifiedID: connection.qualifiedTo,
+                receiverQualifiedID: connection.qualifiedTo?.toAPIModel(),
                 conversationID: connection.conversationID,
-                qualifiedConversationID: connection.qualifiedConversationID,
+                qualifiedConversationID: connection.qualifiedConversationID?.toAPIModel(),
                 lastUpdate: connection.lastUpdate.date,
-                status: connection.status
+                status: connection.status.toAPIModel()
             )
         )
     }
@@ -57,11 +57,11 @@ struct UserConnectionEventDecoder {
 
         let from: UUID?
         let to: UUID?
-        let qualifiedTo: QualifiedID?
+        let qualifiedTo: QualifiedIDV0?
         let conversationID: UUID?
-        let qualifiedConversationID: QualifiedID?
+        let qualifiedConversationID: QualifiedIDV0?
         let lastUpdate: UTCTime
-        let status: ConnectionStatus
+        let status: ConnectionStatusV0
 
         enum CodingKeys: String, CodingKey {
             case from

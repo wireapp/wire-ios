@@ -15,26 +15,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+
 import Foundation
 
-public struct PushChannelV2APIBuilder {
+class PushChannelV2APIV2: PushChannelV2APIV1 {
 
-    private let pushChannelService: PushChannelService
-
-    /// Create a new builder.
-    ///
-    /// - Parameter pushChannelService: A push channel service to execute requests.
-    ///
-    public init(pushChannelService: PushChannelService) {
-        self.pushChannelService = pushChannelService
-    }
-
-    /// Make a `PushChannelAPI`.
-    ///
-    /// - Returns: A `PushChannelAPI`.
-
-    public func makeAPI(for apiVersion: APIVersion) -> any PushChannelV2API {
-        PushChannelV2APIImpl(pushChannelService: pushChannelService, apiVersion: apiVersion)
-    }
+    override var apiVersion: APIVersion { .v2 }
 
 }

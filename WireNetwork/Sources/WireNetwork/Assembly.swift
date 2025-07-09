@@ -17,7 +17,7 @@
 //
 
 public import Foundation
-public import WireFoundation
+import WireFoundation
 
 public final class Assembly {
 
