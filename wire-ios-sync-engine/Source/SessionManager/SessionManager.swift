@@ -963,6 +963,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             WireLogger.analytics.debug("configuring analytics for user session")
             let user = try await userSession.createAnalyticsUser()
             try analyticsService?.switchUser(user)
+
             userSession.setAnalyticsEventTracker(analyticsService)
         } catch {
             WireLogger.analytics.error("failed to configure analytics for user session: \(error)")
