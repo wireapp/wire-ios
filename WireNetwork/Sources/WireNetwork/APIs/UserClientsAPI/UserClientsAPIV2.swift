@@ -28,7 +28,7 @@ class UserClientsAPIV2: UserClientsAPIV1 {
         let path = "/users/list-clients"
 
         let body = try JSONEncoder.defaultEncoder.encode(
-            UserClientsRequestV0(qualifiedIDs: Array(userIDs))
+            UserClientsRequestV0(qualifiedIDs: Array(userIDs.map { $0.toNetworkModel() }))
         )
 
         let request = try URLRequestBuilder(path: path)

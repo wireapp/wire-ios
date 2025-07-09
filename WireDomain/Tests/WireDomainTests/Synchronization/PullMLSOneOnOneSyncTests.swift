@@ -83,7 +83,7 @@ private enum Scaffolding {
 
     static let conversation = Conversation(
         id: userID,
-        qualifiedID: .init(uuid: userID, domain: userDomain),
+        qualifiedID: .init(id: userID, domain: userDomain),
         teamID: userID,
         type: .group,
         messageProtocol: .proteus,

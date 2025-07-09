@@ -20,7 +20,7 @@ public extension Conversation {
 
     /// Represents all conversation's members including self.
 
-    struct Members: Equatable, Codable, Sendable {
+    struct Members: Equatable, Sendable {
 
         /// The particiants excluding the self user.
 

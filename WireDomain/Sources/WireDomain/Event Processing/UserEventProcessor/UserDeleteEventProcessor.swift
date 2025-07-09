@@ -24,7 +24,7 @@ struct UserDeleteEventProcessor: UserDeleteEventProcessorProtocol {
 
     func processEvent(_ event: UserDeleteEvent) async throws {
         try await repository.deleteUserAccount(
-            id: event.qualifiedUserID.uuid,
+            id: event.qualifiedUserID.id,
             domain: event.qualifiedUserID.domain,
             at: event.time
         )

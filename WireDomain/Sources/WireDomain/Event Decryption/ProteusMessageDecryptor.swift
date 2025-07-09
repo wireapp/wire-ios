@@ -95,7 +95,7 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
         }
 
         let senderUser = await userLocalStore.fetchOrCreateUser(
-            id: eventData.senderID.uuid,
+            id: eventData.senderID.id,
             domain: eventData.senderID.domain
         )
 

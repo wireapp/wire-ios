@@ -84,7 +84,7 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
     ) async -> UserNotification {
         let callKitContent: [String: Any] = [
             "accountID": accountID.uuidString,
-            "conversationID": conversationID.uuid.uuidString,
+            "conversationID": conversationID.id.uuidString,
             "shouldRing": callContent.isIncomingCall,
             "callerName": await makeCallKitTitle(
                 conversationID: conversationID,
@@ -116,7 +116,7 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
         if callContent.isIncomingCall {
             return buildIncomingCallNotification(
                 selfUserID: selfUserID,
-                senderID: senderID.uuid,
+                senderID: senderID.id,
                 callerID: callerID,
                 conversation: conversation,
                 conversationID: conversationID,
@@ -129,7 +129,7 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
         } else { // Missed call
             return await buildMissedCallNotification(
                 selfUserID: selfUserID,
-                senderID: senderID.uuid,
+                senderID: senderID.id,
                 callerID: callerID,
                 conversation: conversation,
                 conversationID: conversationID,
@@ -184,7 +184,7 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
             callerID: callerID,
             conversationID: conversationID
         )
-        content.threadIdentifier = conversationID.uuid.transportString()
+        content.threadIdentifier = conversationID.id.transportString()
 
         return .text(content)
     }
@@ -226,7 +226,7 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
             callerID: callerID,
             conversationID: conversationID
         )
-        content.threadIdentifier = conversationID.uuid.transportString()
+        content.threadIdentifier = conversationID.id.transportString()
 
         await context.increaseReadCount(
             conversation: conversation
@@ -348,7 +348,7 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
 
         userInfo[NotificationUserInfoKey.selfUserID] = selfUserID.uuidString
         userInfo[NotificationUserInfoKey.senderID] = callerID?.uuidString
-        userInfo[NotificationUserInfoKey.conversationID] = conversationID.uuid.uuidString
+        userInfo[NotificationUserInfoKey.conversationID] = conversationID.id.uuidString
 
         return userInfo
     }
@@ -377,7 +377,7 @@ extension ConversationCallingEventNotificationBuilder {
             callContent: CallContent
         ) async -> Bool {
             let conversation = await conversationLocalStore.fetchOrCreateConversation(
-                id: conversationID.uuid,
+                id: conversationID.id,
                 domain: conversationID.domain
             )
 
@@ -392,7 +392,7 @@ extension ConversationCallingEventNotificationBuilder {
             let loaderUserSessionsIDs = loadedUserSessions.compactMap(UUID.init(uuidString:))
             let isUserSessionLoaded = loaderUserSessionsIDs.contains(accountID)
 
-            let handle = "\(accountID.transportString())+\(conversationID.uuid.transportString())"
+            let handle = "\(accountID.transportString())+\(conversationID.id.transportString())"
             let knownCallHandles = userDefaults.object(forKey: Constants.knownCalls) as? [String] ?? []
             let wasCallHandleReported = knownCallHandles.contains(handle)
 
@@ -427,14 +427,14 @@ extension ConversationCallingEventNotificationBuilder {
             callContent: CallContent
         ) async -> Bool {
             let conversation = await conversationLocalStore.fetchOrCreateConversation(
-                id: conversationID.uuid,
+                id: conversationID.id,
                 domain: conversationID.domain
             )
 
             let selfUser = await userLocalStore.fetchSelfUser()
 
             let caller = await userLocalStore.fetchOrCreateUser(
-                id: senderID.uuid,
+                id: senderID.id,
                 domain: senderID.domain
             )
 
@@ -468,7 +468,7 @@ extension ConversationCallingEventNotificationBuilder {
             conversationID: ConversationID
         ) async -> ZMConversation {
             await conversationLocalStore.fetchOrCreateConversation(
-                id: conversationID.uuid,
+                id: conversationID.id,
                 domain: conversationID.domain
             )
         }
@@ -481,7 +481,7 @@ extension ConversationCallingEventNotificationBuilder {
             senderID: UserID
         ) async -> ZMUser {
             await userLocalStore.fetchOrCreateUser(
-                id: senderID.uuid,
+                id: senderID.id,
                 domain: senderID.domain
             )
         }

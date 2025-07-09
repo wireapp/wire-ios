@@ -86,8 +86,8 @@ final class ConversationAddPermissionEventProcessorTests: XCTestCase {
     private enum Scaffolding {
         static let id = UUID()
         static let domain = "domain.com"
-        static let conversationID = ConversationID(uuid: id, domain: domain)
-        static let senderID = UserID(uuid: id, domain: domain)
+        static let conversationID = ConversationID(id: id, domain: domain)
+        static let senderID = UserID(id: id, domain: domain)
 
         static let event = ConversationAddPermissionEvent(
             conversationID: conversationID,

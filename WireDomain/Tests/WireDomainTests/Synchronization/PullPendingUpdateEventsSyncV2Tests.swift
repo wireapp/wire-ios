@@ -269,11 +269,11 @@ private enum Scaffolding {
     ) -> UpdateEventEnvelope {
         let event = ConversationProteusMessageAddEvent(
             conversationID: ConversationID(
-                uuid: UUID(),
+                id: UUID(),
                 domain: "example.com"
             ),
             senderID: UserID(
-                uuid: UUID(),
+                id: UUID(),
                 domain: "example.com"
             ),
             timestamp: Date(timeIntervalSinceNow: timeIntervalSinceNow),
