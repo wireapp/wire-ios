@@ -70,6 +70,12 @@ extension ConversationListViewController {
                 showArrow: !isIPadRegular(),
                 showButton: isIPadRegular()
             )
+        case .unread:
+            return EmptyPlaceholder(
+                headline: L10n.Localizable.ConversationList.EmptyState.Unread.title,
+                subheadline: L10n.Localizable.ConversationList.EmptyState.Unread.subtitle.attributedString,
+                showArrow: false
+            )
         case .folder:
             // FIXME: [WPB-13905] Disallow this state
             return EmptyPlaceholder(subheadline: "".attributedString)

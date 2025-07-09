@@ -715,6 +715,14 @@ internal enum L10n {
             internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.oneOnOne.selected.description", fallback: "One-to-one conversations, selected")
           }
         }
+        internal enum Unread {
+          /// Show all unread conversations
+          internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.unread.description", fallback: "Show all unread conversations")
+          internal enum Selected {
+            /// Unread, selected
+            internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.unread.selected.description", fallback: "Unread, selected")
+          }
+        }
       }
       internal enum FilterView {
         internal enum RemoveButton {
@@ -2930,6 +2938,14 @@ internal enum L10n {
           }
         }
       }
+      internal enum EmptyState {
+        internal enum Unread {
+          /// All your conversations are up to date
+          internal static let subtitle = L10n.tr("Localizable", "conversation_list.empty_state.unread.subtitle", fallback: "All your conversations are up to date")
+          /// No unread conversations
+          internal static let title = L10n.tr("Localizable", "conversation_list.empty_state.unread.title", fallback: "No unread conversations")
+        }
+      }
       internal enum Filter {
         internal enum AllConversations {
           /// All Conversations
@@ -2958,6 +2974,10 @@ internal enum L10n {
         internal enum RemoveButton {
           /// Remove
           internal static let title = L10n.tr("Localizable", "conversation_list.filter.remove_button.title", fallback: "Remove")
+        }
+        internal enum Unread {
+          /// Unread
+          internal static let title = L10n.tr("Localizable", "conversation_list.filter.unread.title", fallback: "Unread")
         }
       }
       internal enum FilterLabel {
@@ -3003,6 +3023,8 @@ internal enum L10n {
         internal static let oneOnOnePlaceholder = L10n.tr("Localizable", "conversation_list.search_bar.oneOnOnePlaceholder", fallback: "Search 1:1 conversations")
         /// Search conversations
         internal static let placeholder = L10n.tr("Localizable", "conversation_list.search_bar.placeholder", fallback: "Search conversations")
+        /// Search unread conversations
+        internal static let unreadPlaceholder = L10n.tr("Localizable", "conversation_list.search_bar.unreadPlaceholder", fallback: "Search unread conversations")
       }
       internal enum Voiceover {
         internal enum BottomBar {

@@ -36,6 +36,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case consumableNotifications
     case multibackend
     case newRegistration
+    case showUnreadConversationsFilter
 
     public var description: String {
         switch self {
@@ -80,6 +81,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .newRegistration:
             "Turn on to use the new registration flow"
+            
+        case .showUnreadConversationsFilter:
+            "Turn on to show the unread conversations filter option"
         }
     }
 

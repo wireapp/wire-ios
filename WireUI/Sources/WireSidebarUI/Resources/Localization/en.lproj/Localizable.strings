@@ -24,6 +24,7 @@
 "sidebar.conversation_filter.groups.title" = "Groups";
 "sidebar.conversation_filter.channels.title" = "Channels";
 "sidebar.conversation_filter.oneOnOneConversations.title" = "1:1 Conversations";
+"sidebar.conversation_filter.unread.title" = "Unread";
 "sidebar.conversation_filter.folders.title" = "Folders";
 "sidebar.conversation_filter.archived.title" = "Archive";
 

@@ -98,6 +98,8 @@ final class SidebarViewControllerDelegate: WireSidebarUI.SidebarViewControllerDe
                 await mainCoordinator.showConversationList(conversationFilter: .channels)
             case .oneOnOne:
                 await mainCoordinator.showConversationList(conversationFilter: .oneOnOne)
+            case .unread:
+                await mainCoordinator.showConversationList(conversationFilter: .unread)
             case .folders:
                 break // handled by `sidebarViewController(_:didTapFoldersAt:)`
             case .archive:

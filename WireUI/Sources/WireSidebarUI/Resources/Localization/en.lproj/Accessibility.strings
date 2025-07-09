@@ -19,5 +19,6 @@
 "sidebar.settings.description" = "Open your settings";
 "sidebar.support.description" = "Open support";
 "sidebar.conversation_filter.oneOnOneConversations.description" = "One to one conversations";
+"sidebar.conversation_filter.unread.description" = "Show unread conversations";
 "sidebar.name.description" = "Profile name";
 "sidebar.handle.description" = "Username";

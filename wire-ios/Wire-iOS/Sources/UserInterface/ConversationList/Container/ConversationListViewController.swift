@@ -79,6 +79,8 @@ final class ConversationListViewController: UIViewController {
             return FilterMenuLocale.Channels.title
         case .oneOnOne:
             return FilterMenuLocale.OneOnOneConversations.title
+        case .unread:
+            return FilterMenuLocale.Unread.title
         case let .folder(_, name):
             return name
         case .none:
@@ -345,7 +347,9 @@ final class ConversationListViewController: UIViewController {
 
     func updateFilterContainerView() {
         filterContainerView
-            .isHidden = mainSplitViewState == .expanded || isEmptyPlaceholderVisible || listContentController
+            // This used to check for isEmptyPlaceholderVisible as well,
+            // which lead to the filter not being removable if the filter found no matches
+            .isHidden = mainSplitViewState == .expanded || listContentController
             .listViewModel.selectedFilter == .none
         filterLabel.text = L10n.Localizable.ConversationList.FilterLabel.text(selectedFilterLabel)
     }
@@ -447,6 +451,8 @@ final class ConversationListViewController: UIViewController {
             L10n.Localizable.ConversationList.SearchBar.channelsPlaceholder
         case .oneOnOne:
             L10n.Localizable.ConversationList.SearchBar.oneOnOnePlaceholder
+        case .unread:
+            L10n.Localizable.ConversationList.SearchBar.unreadPlaceholder
         case let .folder(_, name):
             L10n.Localizable.ConversationList.SearchBar.foldersPlaceholder(name)
         }

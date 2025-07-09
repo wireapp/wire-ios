@@ -30,6 +30,7 @@ extension SidebarSelectableMenuItem: MainSidebarSelectableMenuItemRepresentable 
         case .groups: self = .groups
         case .channels: self = .channels
         case .oneOnOne: self = .oneOnOne
+        case .unread: self = .unread
         case .folders: self = .folders
         case .archive: self = .archive
         case .settings: self = .settings
@@ -43,6 +44,7 @@ extension SidebarSelectableMenuItem: MainSidebarSelectableMenuItemRepresentable 
         case .groups: .groups
         case .channels: .channels
         case .oneOnOne: .oneOnOne
+        case .unread: .unread
         case .folders: .folders
         case .archive: .archive
         case .settings: .settings

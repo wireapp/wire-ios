@@ -53,6 +53,9 @@ enum FilterImageName: String {
 
     /// Represents a selected or unselected channel icon for channel conversations.
     case number
+    
+    /// Represents a custom unread badge icon (not an SF Symbol)
+    case customUnreadBadge
 
     /// Returns the appropriate `FilterImageName` based on the type of conversation filter and its selection state.
     ///
@@ -84,6 +87,8 @@ enum FilterImageName: String {
             return isSelected ? .folderFill : .folder
         case .channels:
             return .number // Same icon is used for selected and unselected. Just the color changes.
+        case .unread:
+            return .customUnreadBadge // Custom badge icon, not an SF Symbol
         }
     }
 }

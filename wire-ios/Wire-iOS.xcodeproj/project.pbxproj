@@ -2390,6 +2390,7 @@
 		8F42C556199244A700288E4D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Developer ID Application";
 				HEADER_SEARCH_PATHS = "$(SDKROOT)/usr/include/libxml2";
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -2400,6 +2401,7 @@
 		8F42C557199244A700288E4D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Developer ID Application";
 				HEADER_SEARCH_PATHS = "$(SDKROOT)/usr/include/libxml2";
 				SDKROOT = iphoneos;
 				VALIDATE_WORKSPACE = NO;
@@ -2410,11 +2412,15 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 01B71A992D6D2DAB002C5A38 /* Wire-iOS-Debug.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -2658,7 +2664,7 @@
 				01DFC43B2D7B4C6F00D1962A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		065A5AE6279B07AC002D4D1E /* Build configuration list for PBXNativeTarget "Wire Notification Service Extension" */ = {
 			isa = XCConfigurationList;
@@ -2667,7 +2673,7 @@
 				065A5AE8279B07AC002D4D1E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		168A16B41D9597C2005CFA6C /* Build configuration list for PBXNativeTarget "Wire Share Extension" */ = {
 			isa = XCConfigurationList;
@@ -2676,7 +2682,7 @@
 				168A16B61D9597C2005CFA6C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		592996542C2EB98A008C334F /* Build configuration list for PBXAggregateTarget "Format & Lint Swift Code" */ = {
 			isa = XCConfigurationList;
@@ -2685,7 +2691,7 @@
 				592996532C2EB98A008C334F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		8F42C533199244A700288E4D /* Build configuration list for PBXProject "Wire-iOS" */ = {
 			isa = XCConfigurationList;
@@ -2694,7 +2700,7 @@
 				8F42C557199244A700288E4D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		8F42C558199244A700288E4D /* Build configuration list for PBXNativeTarget "Wire-iOS" */ = {
 			isa = XCConfigurationList;
@@ -2703,7 +2709,7 @@
 				8F42C55A199244A700288E4D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		BACB88591AF7C48900DDCDB0 /* Build configuration list for PBXNativeTarget "Wire-iOS-Tests" */ = {
 			isa = XCConfigurationList;
@@ -2712,7 +2718,7 @@
 				BACB885B1AF7C48900DDCDB0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		E6579E3E2AFF9B30004E7FD8 /* Build configuration list for PBXNativeTarget "Wire-iOS UnitTests" */ = {
 			isa = XCConfigurationList;
@@ -2721,7 +2727,7 @@
 				E6579E3D2AFF9B30004E7FD8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		F1FEA15521DCEB1700790A54 /* Build configuration list for PBXNativeTarget "WireCommonComponents" */ = {
 			isa = XCConfigurationList;
@@ -2730,7 +2736,7 @@
 				F1FEA15421DCEB1700790A54 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 

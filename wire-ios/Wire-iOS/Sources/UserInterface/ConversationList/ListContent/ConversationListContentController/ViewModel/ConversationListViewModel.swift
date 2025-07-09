@@ -327,16 +327,32 @@ final class ConversationListViewModel: NSObject {
             } else {
                 []
             }
+        case .unread:
+            // For unread filter, we need to include all conversation types but filter by unread status
+            [.conversations]
         case .none:
             [.contactRequests, .conversations]
         }
 
-        let sections = kinds.map { kind in
+        var sections = kinds.map { kind in
             Section(
                 kind: kind,
                 conversationDirectory: conversationDirectory
             )
         }
+        
+        // Apply unread filter if selected
+        if selectedFilter == .unread {
+            for i in 0..<sections.count {
+                sections[i].items = sections[i].items.filter { sectionItem in
+                    guard let conversation = sectionItem.item as? ZMConversation else {
+                        return false
+                    }
+                    return conversation.estimatedUnreadCount > 0
+                }
+            }
+        }
+        
         let filterUseCase = FilterConversationsUseCase(conversationContainers: sections)
         return filterUseCase.invoke(query: appliedSearchText)
     }

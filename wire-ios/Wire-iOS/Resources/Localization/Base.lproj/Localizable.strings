@@ -136,6 +136,7 @@
 "conversation_list.search_bar.groupsPlaceholder" = "Search groups";
 "conversation_list.search_bar.channelsPlaceholder" = "Search channels";
 "conversation_list.search_bar.oneOnOnePlaceholder" = "Search 1:1 conversations";
+"conversation_list.search_bar.unreadPlaceholder" = "Search unread conversations";
 "conversation_list.search_bar.foldersPlaceholder" = "Search %@";
 
 
@@ -148,6 +149,7 @@
 "conversation_list.filter.folders.title" = "Folders";
 "conversation_list.filter_label.text" = "Filtered by %@";
 "conversation_list.filter.remove_button.title" = "Remove";
+"conversation_list.filter.unread.title" = "Unread";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "Join";
@@ -173,6 +175,9 @@
 "conversation_list.empty_placeholder.search.button.phone" = "New Conversation";
 "conversation_list.empty_placeholder.search.button.ipad" = "Start a new Conversation";
 "conversation_list.empty_placeholder.search.connect_button" = "Connect with People";
+"conversation_list.empty_state.unread.title" = "No unread conversations";
+"conversation_list.empty_state.unread.subtitle" = "All your conversations are up to date";
+
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "in Contacts";
