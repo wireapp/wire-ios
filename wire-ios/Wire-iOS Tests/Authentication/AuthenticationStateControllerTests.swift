@@ -18,6 +18,7 @@
 
 import WireDataModel
 import XCTest
+
 @testable import Wire
 
 class MockAuthenticationStateControllerDelegate: AuthenticationStateControllerDelegate {
