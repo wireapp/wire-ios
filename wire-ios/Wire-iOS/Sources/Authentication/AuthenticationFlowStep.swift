@@ -114,7 +114,7 @@ indirect enum AuthenticationFlowStep: Equatable {
 extension AuthenticationFlowStep: CustomStringConvertible {
 
     // Don't include any of the associated values as they may be
-    // sensitve and it's know everywhere we log steps.
+    // sensitive and it's know everywhere we log steps.
 
     var description: String {
         switch self {

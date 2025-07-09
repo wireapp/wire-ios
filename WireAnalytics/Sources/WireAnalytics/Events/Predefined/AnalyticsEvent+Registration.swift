@@ -23,15 +23,9 @@ public extension AnalyticsEvent {
     enum Registration {
 
         /// An event tracking when the user submits the initial personal account creation form.
-        /// - Parameter multiplePasswordAttempts: `false` if the password was accepted on the first attempt, `true`
-        /// otherwise.
 
-        public static func accountSetupStep0(multiplePasswordAttempts: Bool) -> AnalyticsEvent {
-            AnalyticsEvent(name: "registration.account_setup_screen_1") {
-                if multiplePasswordAttempts {
-                    Segmentation(key: "multiple_password_tries", value: multiplePasswordAttempts)
-                }
-            }
+        public static var accountSetupStep0: AnalyticsEvent {
+            AnalyticsEvent(name: "registration.account_setup_screen_1")
         }
 
         /// An event tracking when the user is dialog to agree to, view or disagree to the terms of use.

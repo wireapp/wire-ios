@@ -16,21 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
-public import WireAnalytics
+extension RegistrationAnalyticsTracker: AuthenticationAnalyticsEventTracker {
 
-public typealias CountlyWrapper = CountlyDummy
+    func authenticationFlowStepReached(_ step: AuthenticationFlowStep) {
+        if step == .addUsername {
+            trackPersonalAccountCreationReachedUsernameForm()
+        }
+    }
 
-public struct CountlyDummy: CountlyProtocol {
-
-    public init() {}
-
-    public func resetInstance() {}
-    public func start(appKey: String, host: URL) {}
-    public func setUserValue(_ value: String?, forKey key: String) {}
-    public func changeDeviceID(_ id: String, mergeData: Bool) {}
-    public func beginSession() {}
-    public func endSession() {}
-    public func recordEvent(_ key: String, segmentation: [String: String]?) {}
+    func authenticationFlowCompleted() {
+        trackPersonalAccountCreationCompletion()
+    }
 
 }
