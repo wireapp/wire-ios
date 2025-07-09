@@ -127,7 +127,7 @@ final class RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
         return AnalyticsUser(
             analyticsIdentifier: newAnalyticsID,
             teamInfo: nil
-        ) // TODO: make sure team info is updated later
+        )
     }
 
     private enum Constants {
