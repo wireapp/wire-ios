@@ -243,7 +243,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             favoritesAction
         ]
         
-        // Add unread filter if developer flag is enabled
+        // Add unread, mentions and replies filters if developer flag is enabled
         if DeveloperFlag.showUnreadConversationsFilter.isOn {
             let unreadAction = createFilterAction(
                 title: L10n.Localizable.ConversationList.Filter.Unread.title,
@@ -251,6 +251,20 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
                 isSelected: listContentController.listViewModel.selectedFilter == .unread
             )
             menuChildren.append(unreadAction)
+            
+            let mentionsAction = createFilterAction(
+                title: L10n.Localizable.ConversationList.Filter.Mentions.title,
+                filter: .mentions,
+                isSelected: listContentController.listViewModel.selectedFilter == .mentions
+            )
+            menuChildren.append(mentionsAction)
+            
+            let repliesAction = createFilterAction(
+                title: L10n.Localizable.ConversationList.Filter.Replies.title,
+                filter: .replies,
+                isSelected: listContentController.listViewModel.selectedFilter == .replies
+            )
+            menuChildren.append(repliesAction)
         }
         
         menuChildren.append(contentsOf: [

@@ -308,6 +308,32 @@ final class ConversationListViewModel: NSObject {
     }
 
     /// Create the section structure
+    private func conversationFilterPredicate(for filter: ConversationFilter?) -> ((SectionItem) -> Bool)? {
+        switch filter {
+        case .unread:
+            return { sectionItem in
+                guard let conversation = sectionItem.item as? ZMConversation else { return false }
+                return conversation.estimatedUnreadCount > 0
+            }
+        case .mentions:
+            return { sectionItem in
+                guard let conversation = sectionItem.item as? ZMConversation else { return false }
+                return conversation.unreadMessages.contains { message in
+                    message.textMessageData?.isMentioningSelf ?? false
+                }
+            }
+        case .replies:
+            return { sectionItem in
+                guard let conversation = sectionItem.item as? ZMConversation else { return false }
+                return conversation.unreadMessages.contains { message in
+                    message.textMessageData?.isQuotingSelf ?? false
+                }
+            }
+        default:
+            return nil
+        }
+    }
+    
     private func createSections() -> [Section] {
         guard let conversationDirectory = userSession?.conversationDirectory else { return [] }
 
@@ -330,6 +356,12 @@ final class ConversationListViewModel: NSObject {
         case .unread:
             // For unread filter, we need to include all conversation types but filter by unread status
             [.conversations]
+        case .mentions:
+            // For mentions filter, we need to include all conversation types but filter by mentions
+            [.conversations]
+        case .replies:
+            // For replies filter, we need to include all conversation types but filter by replies
+            [.conversations]
         case .none:
             [.contactRequests, .conversations]
         }
@@ -341,15 +373,12 @@ final class ConversationListViewModel: NSObject {
             )
         }
         
-        // Apply unread filter if selected
-        if selectedFilter == .unread {
-            for i in 0..<sections.count {
-                sections[i].items = sections[i].items.filter { sectionItem in
-                    guard let conversation = sectionItem.item as? ZMConversation else {
-                        return false
-                    }
-                    return conversation.estimatedUnreadCount > 0
-                }
+        // Apply filters based on selected filter type
+        if let filterPredicate = conversationFilterPredicate(for: selectedFilter) {
+            sections = sections.map { section in
+                var filteredSection = section
+                filteredSection.items = section.items.filter(filterPredicate)
+                return filteredSection
             }
         }
         

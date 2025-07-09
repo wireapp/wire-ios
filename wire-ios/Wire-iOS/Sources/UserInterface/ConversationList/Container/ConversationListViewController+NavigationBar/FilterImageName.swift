@@ -56,6 +56,12 @@ enum FilterImageName: String {
     
     /// Represents a custom unread badge icon (not an SF Symbol)
     case customUnreadBadge
+    
+    /// Represents the at symbol icon for mentions
+    case at
+    
+    /// Represents the reply icon for replies
+    case arrowshapeTurnUpLeft = "arrowshape.turn.up.left"
 
     /// Returns the appropriate `FilterImageName` based on the type of conversation filter and its selection state.
     ///
@@ -89,6 +95,10 @@ enum FilterImageName: String {
             return .number // Same icon is used for selected and unselected. Just the color changes.
         case .unread:
             return .customUnreadBadge // Custom badge icon, not an SF Symbol
+        case .mentions:
+            return .at // Same icon for both states
+        case .replies:
+            return .arrowshapeTurnUpLeft // Same icon for both states
         }
     }
 }

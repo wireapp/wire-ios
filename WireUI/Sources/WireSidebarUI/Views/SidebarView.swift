@@ -229,14 +229,14 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
         
         case .mentions:
             text = Text(Strings.ConversationFilter.Mentions.title)
-            icon = "1.circle.fill" // TODO: icon
-            iconHighlighted = "1.circle.fill" // TODO: icon
+            icon = "at"
+            iconHighlighted = "at"
             accessibilityLabel = Text(Labels.ConversationFilter.Mentions.description)
             
         case .replies:
             text = Text(Strings.ConversationFilter.Replies.title)
-            icon = "1.circle.fill" // TODO: icon
-            iconHighlighted = "1.circle.fill" // TODO: icon
+            icon = "arrowshape.turn.up.left"
+            iconHighlighted = "arrowshape.turn.up.left"
             accessibilityLabel = Text(Labels.ConversationFilter.Replies.description)
             
         case .folders:
