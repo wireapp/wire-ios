@@ -21,7 +21,7 @@ import WireFoundation
 
 struct RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
 
-    private var analyticsTracker: (any AnalyticsEventTrackerProtocol)!
+    private var analyticsTracker: (any AnalyticsEventTrackerProtocol)?
 
     init() {}
 
@@ -34,27 +34,27 @@ struct RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
     }
 
     func trackPersonalAccountCreationStart() {
-        analyticsTracker.trackEvent(.Registration.accountSetupStep0)
+        analyticsTracker?.trackEvent(.Registration.accountSetupStep0)
     }
 
     func trackPersonalAccountCreationReachedTermsOfUseConfirmation() {
-        analyticsTracker.trackEvent(.Registration.accountSetupStep1)
+        analyticsTracker?.trackEvent(.Registration.accountSetupStep1)
     }
 
     func trackPersonalAccountCreationReachedVerificationCode() {
-        analyticsTracker.trackEvent(.Registration.accountSetupStep2)
+        analyticsTracker?.trackEvent(.Registration.accountSetupStep2)
     }
 
     func trackPersonalAccountCreationFailedCodeVerification() {
-        analyticsTracker.trackEvent(.Registration.accountSetupStep3)
+        analyticsTracker?.trackEvent(.Registration.accountSetupStep3)
     }
 
     func trackPersonalAccountCreationReachedUsernameForm() {
-        analyticsTracker.trackEvent(.Registration.accountSetupStep4)
+        analyticsTracker?.trackEvent(.Registration.accountSetupStep4)
     }
 
     func trackPersonalAccountCreationCompletion() {
-        analyticsTracker.trackEvent(.Registration.accountSetupStep5)
+        analyticsTracker?.trackEvent(.Registration.accountSetupStep5)
     }
 
 }
