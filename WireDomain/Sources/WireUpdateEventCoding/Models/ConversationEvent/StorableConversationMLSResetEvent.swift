@@ -26,10 +26,12 @@ struct StorableConversationMLSResetEvent: Equatable, Codable, Sendable {
 
     public let senderID: StorableQualifiedID
 
-    private let mlsGroupIDBase64: String
+    private let oldMLSGroupIDBase64: String
+    private let newMLSGroupIDBase64: String
     
     init(_ value: WireNetwork.ConversationMLSResetEvent) {
-        self.mlsGroupIDBase64 = value.mlsGroupIDBase64
+        self.oldMLSGroupIDBase64 = value.oldMLSGroupIDBase64
+        self.newMLSGroupIDBase64 = value.newMLSGroupIDBase64
         self.conversationID = StorableQualifiedID(value.conversationID)
         self.senderID = StorableQualifiedID(value.senderID)
     }
@@ -38,7 +40,8 @@ struct StorableConversationMLSResetEvent: Equatable, Codable, Sendable {
         .init(
             conversationID: conversationID.toAPIModel(),
             senderID: senderID.toAPIModel(),
-            mlsGroupIDBase64: mlsGroupIDBase64
+            oldMLSGroupIDBase64: oldMLSGroupIDBase64,
+            newMLSGroupIDBase64: newMLSGroupIDBase64
         )
     }
 }

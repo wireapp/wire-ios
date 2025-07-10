@@ -649,7 +649,6 @@ public final class ClientSessionComponent {
     private lazy var mlsResetEventProcessor = ConversationMLSResetEventProcessor(
         localStore: conversationLocalStore,
         mlsService: mlsService,
-        conversationRepository: conversationRepository,
         conversationLocalStore: conversationLocalStore
     )
 

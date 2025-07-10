@@ -42,16 +42,19 @@ struct ConversationMLSResetEventDecoder {
         return ConversationMLSResetEvent(
             conversationID: conversationID,
             senderID: senderID,
-            mlsGroupIDBase64: payload.mlsGroupIDBase64
+            oldMLSGroupIDBase64: payload.oldMLSGroupIDBase64,
+            newMLSGroupIDBase64: payload.newMLSGroupIDBase64,
         )
     }
     
     private struct Payload: Decodable {
 
-        let mlsGroupIDBase64: String
+        let oldMLSGroupIDBase64: String
+        let newMLSGroupIDBase64: String
         
         enum CodingKeys: String, CodingKey {
-            case mlsGroupIDBase64 = "group_id"
+            case oldMLSGroupIDBase64 = "group_id"
+            case newMLSGroupIDBase64 = "new_group_id"
         }
     }
 

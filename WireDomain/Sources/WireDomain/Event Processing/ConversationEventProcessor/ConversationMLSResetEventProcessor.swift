@@ -27,45 +27,36 @@ struct ConversationMLSResetEventProcessor: ConversationMLSResetEventProcessorPro
 
     let localStore: any ConversationLocalStoreProtocol
     let mlsService: any MLSServiceInterface
-    let conversationRepository: any ConversationRepositoryProtocol
     let conversationLocalStore: any ConversationLocalStoreProtocol
 
     func processEvent(_ event: ConversationMLSResetEvent) async throws {
 
         let conversationID = event.conversationID
         
-        let mlsGroupIDBase64 = event.mlsGroupIDBase64
-        guard let mlsGroupID = MLSGroupID(base64Encoded: mlsGroupIDBase64) else {
+        let oldMLSGroupIDBase64 = event.oldMLSGroupIDBase64
+        let newMLSGroupIDBase64 = event.newMLSGroupIDBase64
+        guard
+            let oldMLSGroupID = MLSGroupID(base64Encoded: oldMLSGroupIDBase64),
+            let newMLSGroupID = MLSGroupID(base64Encoded: newMLSGroupIDBase64)
+        else {
             // TODO: ADD logs
             return
         }
 
-        
         guard let localConversation = await localStore.fetchMLSConversation(
-            groupID: mlsGroupID
+            groupID: oldMLSGroupID
         ) else {
             throw Failure.conversationNotFound
         }
 
         do {
-            try await mlsService.wipeGroup(mlsGroupID)
+            try await mlsService.wipeGroup(oldMLSGroupID)
         } catch {
             // TODO: ADD logs
         }
         
-        var fetchedConversation = await conversationRepository.fetchConversation(
-            id: conversationID.uuid,
-            domain: conversationID.domain
-        )
-                
-        
-        guard let newGroupID = fetchedConversation?.mlsGroupID else {
-            // TODO: ADD logs
-            return
-        }
-
         await conversationLocalStore.storeMLSConversationPendingJoin(
-            newMLSGroupID: newGroupID,
+            newMLSGroupID: newMLSGroupID,
             conversation: localConversation
         )
     }
