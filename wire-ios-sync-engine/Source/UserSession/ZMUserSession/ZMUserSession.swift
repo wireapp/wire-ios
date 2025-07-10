@@ -892,7 +892,7 @@ public final class ZMUserSession: NSObject {
         } else if isResourceSyncRequired {
             await triggerResourcesSync()
         } else if journal[.isConversationSyncRequired] {
-            let sync = self.clientSessionComponent?.pullAllConversationsSync
+            let sync = clientSessionComponent?.pullAllConversationsSync
             try? await sync?.pull()
         }
     }
