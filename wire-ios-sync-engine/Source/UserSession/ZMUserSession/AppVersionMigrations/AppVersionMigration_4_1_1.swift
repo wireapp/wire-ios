@@ -16,21 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
-public import WireAnalytics
+import Foundation
+import WireDomain
+import WireLogging
 
-public typealias CountlyWrapper = CountlyDummy
+struct AppVersionMigration_4_1_1: AppVersionMigration {
 
-public struct CountlyDummy: CountlyProtocol {
+    let logFilesProvider: LogFilesProviding
+    let version: SemanticVersion = "4.1.1"
 
-    public init() {}
+    func perform() async throws {
+        // Deletes all raw log files collected from the logger sources.
+        // This removes files from `WireLogger.logFiles` and `ZMSLog.pathsForExistingLogs`,
+        try logFilesProvider.removeLogFiles()
 
-    public func resetInstance() {}
-    public func start(appKey: String, host: URL) {}
-    public func setUserValue(_ value: String?, forKey key: String) {}
-    public func changeDeviceID(_ id: String, mergeData: Bool) {}
-    public func beginSession() {}
-    public func endSession() {}
-    public func recordEvent(_ key: String, segmentation: [String: String]?) {}
+        // Deletes all log-related archives and folders created in the temp directory.
+        try logFilesProvider.removeLegacyLogArchives()
+    }
 
 }

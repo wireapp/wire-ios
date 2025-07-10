@@ -19,30 +19,9 @@
 import UIKit
 import WireCommonComponents
 import WireLogging
+import WireSyncEngine
 import WireSystem
 import ZipArchive
-
-// sourcery: AutoMockable
-protocol LogFilesProviding {
-
-    /// Generates a zip file containing all log files and returns its data before removing the files
-    ///
-    /// - Returns: the log files archive data
-
-    func generateLogFilesData() throws -> Data
-
-    /// Generates a zip file containing all log files
-    ///
-    /// - Returns: the log files archive URL
-
-    func generateLogFilesZip() throws -> URL
-
-    /// Clears the logs directory.
-    /// Call once you are done using the URL returned by `generateLogFilesZip` to clean up.
-
-    func clearLogsDirectory() throws
-
-}
 
 /// Generates log files archives.
 ///
@@ -73,8 +52,7 @@ struct LogFilesProvider: LogFilesProviding {
             isDirectory: true
         )
         return baseURL
-            .appendingPathComponent(UUID().uuidString)
-            .appendingPathComponent("logs")
+            .appendingPathComponent("logs", isDirectory: true)
     }()
 
     private var logFilesURLs: [URL] {
@@ -102,11 +80,15 @@ struct LogFilesProvider: LogFilesProviding {
     func generateLogFilesZip() throws -> URL {
         try? clearLogsDirectory()
 
-        // Create a unique directory
-        var url = try createUniqueLogDirectory()
+        // Re-create the base directory
+        try FileManager.default.createDirectory(at: logsDirectory, withIntermediateDirectories: true)
+
+        // Create a subfolder for the current session
+        var archiveFolder = logsDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: archiveFolder, withIntermediateDirectories: true)
 
         // Create the info file
-        let infoFileURL = try createInfoFile(at: url)
+        let infoFileURL = try createInfoFile(at: archiveFolder)
 
         // Set the list of files to be zipped
         let filesToZip = try filesToZipURLs(
@@ -115,17 +97,25 @@ struct LogFilesProvider: LogFilesProviding {
         )
 
         // Create the zip file
-        url.appendPathComponent("logs.zip")
+        let zipURL = archiveFolder.appendingPathComponent("logs.zip")
         SSZipArchive.createZipFile(
-            atPath: url.path,
+            atPath: zipURL.path,
             withFilesAtPaths: filesToZip.map(\.path)
         )
 
-        return url
+        return zipURL
     }
 
     func clearLogsDirectory() throws {
-        try FileManager.default.removeItem(atPath: logsDirectory.path)
+        if FileManager.default.fileExists(atPath: logsDirectory.path) {
+            try FileManager.default.removeItem(at: logsDirectory)
+        }
+    }
+
+    func removeLogFiles() throws {
+        for fileURL in logFilesURLs {
+            try FileManager.default.removeItem(at: fileURL)
+        }
     }
 
     // MARK: - Helpers
@@ -136,12 +126,6 @@ struct LogFilesProvider: LogFilesProviding {
         }
 
         return logFilesURLs + [infoFileURL]
-    }
-
-    private func createUniqueLogDirectory() throws -> URL {
-        let url = logsDirectory.appendingPathComponent(UUID().uuidString)
-        try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
-        return url
     }
 
     var info: String {
@@ -172,6 +156,26 @@ struct LogFilesProvider: LogFilesProviding {
         )
 
         return infoFileURL
+    }
+
+    /// Deletes all log-related archives and folders created in the temp directory.
+    /// This includes any leftover directories that match the pattern used in `logsDirectory`.
+    func removeLegacyLogArchives() throws {
+        let tempDir = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+        let fileManager = FileManager.default
+
+        let contents = try fileManager.contentsOfDirectory(at: tempDir, includingPropertiesForKeys: nil)
+
+        for url in contents {
+            // The `logsDirectory` structure is /tmp/<UUID>/logs
+            let logsSubdir = url.appendingPathComponent("logs")
+            var isDirectory: ObjCBool = false
+
+            if fileManager.fileExists(atPath: logsSubdir.path, isDirectory: &isDirectory),
+               isDirectory.boolValue {
+                try fileManager.removeItem(at: url)
+            }
+        }
     }
 
 }
