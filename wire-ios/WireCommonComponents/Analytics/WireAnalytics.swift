@@ -67,24 +67,33 @@ extension WireAnalytics.Target {
         switch self {
 
         case .app:
-            let baseDirectory = try? fileManager.url(
+            let cachesDirectory = try? fileManager.url(
                 for: .cachesDirectory,
                 in: .userDomainMask,
                 appropriateFor: nil,
                 create: true
             )
-            return baseDirectory?.appending(path: "Logs", directoryHint: .notDirectory)
+            return cachesDirectory?.appending(path: "Logs", directoryHint: .isDirectory)
 
         case .notificationServiceExtension:
-            fatalError("TODO")
-//        case let .nse(appGroupIdentifier, accountIdentifier):
-//            FileManager.default.cachesURLForAccount(
-//                with: accountIdentifier,
-//                in: FileManager.sharedContainerDirectory(for: appGroupIdentifier)
-//            )
+            guard let appGroupIdentifier = Bundle.main.applicationGroupIdentifier else { return nil }
+            let cachesDirectory = fileManager.cachesURL(
+                forAppGroupIdentifier: appGroupIdentifier,
+                accountIdentifier: nil
+            )
+            return cachesDirectory?
+                .appending(path: "Logs", directoryHint: .isDirectory)
+                .appending(component: "NotificationServiceExtension", directoryHint: .isDirectory)
 
         case .shareExtension:
-            fatalError("TODO")
+            guard let appGroupIdentifier = Bundle.main.applicationGroupIdentifier else { return nil }
+            let cachesDirectory = fileManager.cachesURL(
+                forAppGroupIdentifier: appGroupIdentifier,
+                accountIdentifier: nil
+            )
+            return cachesDirectory?
+                .appending(path: "Logs", directoryHint: .isDirectory)
+                .appending(component: "ShareExtension", directoryHint: .isDirectory)
 
         }
     }
