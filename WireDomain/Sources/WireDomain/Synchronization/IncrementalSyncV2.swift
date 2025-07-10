@@ -138,6 +138,8 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                             attributes: .syncAttributes(initialSync: false) + [.eventEnvelopeID: envelope.id]
                         )
                         if event.isTypingEvent {
+                            // We should only process live typing events, not old stored events
+                            // that are no longer relevant.
                             continue
                         }
                         try await processor.processEvent(event)
