@@ -54,8 +54,11 @@ enum FilterImageName: String {
     /// Represents a selected or unselected channel icon for channel conversations.
     case number
 
-    /// Represents a custom unread badge icon (not an SF Symbol)
-    case customUnreadBadge
+    /// Represents the unread icon - filled square with number 1
+    case oneSquare = "1.square"
+
+    /// Represents the selected unread icon - filled square with number 1
+    case oneSquareFill = "1.square.fill"
 
     /// Represents the at symbol icon for mentions
     case at
@@ -94,7 +97,7 @@ enum FilterImageName: String {
         case .channels:
             return .number // Same icon is used for selected and unselected. Just the color changes.
         case .unread:
-            return .customUnreadBadge // Custom badge icon, not an SF Symbol
+            return isSelected ? .oneSquareFill : .oneSquare
         case .mentions:
             return .at // Same icon for both states
         case .replies:

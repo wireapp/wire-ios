@@ -289,6 +289,19 @@ final class ConversationListViewController: UIViewController {
 
     private func setupObservers() {
         viewModel.setupObservers()
+        
+        // Observe developer flag changes for unread filters
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(developerFlagDidChange),
+            name: UserDefaults.didChangeNotification,
+            object: nil
+        )
+    }
+    
+    @objc private func developerFlagDidChange() {
+        // Update navigation bar to reflect filter visibility changes
+        updateNavigationItem()
     }
 
     /// Sets up a vertical stack view containing all subviews

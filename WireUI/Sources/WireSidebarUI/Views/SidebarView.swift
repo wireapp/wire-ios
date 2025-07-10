@@ -229,8 +229,8 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
 
         case .unread:
             text = Text(Strings.ConversationFilter.Unread.title)
-            icon = "1.circle.fill"
-            iconHighlighted = "1.circle.fill" // Same icon for both states
+            icon = "1.square"
+            iconHighlighted = "1.square.fill"
             accessibilityLabel = Text(Labels.ConversationFilter.Unread.description)
 
         case .mentions:

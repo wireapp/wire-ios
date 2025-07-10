@@ -29,11 +29,6 @@ enum FilterButtonStyleHelper {
     ///   - isSelected: A boolean indicating whether the filter is currently selected.
     /// - Returns: A configured `UIImage`.
     static func makeActionImage(named imageName: String, isSelected: Bool) -> UIImage? {
-        // Handle custom unread badge icon
-        if imageName == "customUnreadBadge" {
-            return createUnreadFilterIcon(isSelected: isSelected)
-        }
-
         let configuration = UIImage.SymbolConfiguration(font: .systemFont(ofSize: 17))
         let actionImage = UIImage(systemName: imageName, withConfiguration: configuration)
 
@@ -42,50 +37,6 @@ enum FilterButtonStyleHelper {
             return actionImage?.withTintColor(UIColor.accent(), renderingMode: .alwaysOriginal)
         } else {
             return actionImage
-        }
-    }
-
-    /// Creates a custom unread filter icon that shows a badge with "1" inside.
-    /// This matches the RoundedBadge appearance from ConversationListAccessoryView.
-    ///
-    /// - Parameter isSelected: Whether the filter is currently selected.
-    /// - Returns: A custom UIImage showing a badge with "1".
-    private static func createUnreadFilterIcon(isSelected: Bool) -> UIImage {
-        let renderer = UIGraphicsImageRenderer(size: CGSize(width: 24, height: 24))
-        return renderer.image { _ in
-            // Draw the badge background
-            let badgeRect = CGRect(x: 2, y: 2, width: 20, height: 20)
-            let path = UIBezierPath(roundedRect: badgeRect, cornerRadius: 10)
-
-            if isSelected {
-                UIColor.accent().setFill()
-                path.fill()
-            } else {
-                SemanticColors.Label.textDefault.setStroke()
-                path.lineWidth = 1.5
-                path.stroke()
-            }
-
-            // Draw the "1" text inside
-            let paragraphStyle = NSMutableParagraphStyle()
-            paragraphStyle.alignment = .center
-
-            let attributes: [NSAttributedString.Key: Any] = [
-                .font: UIFont.mediumSemiboldFont.withSize(12),
-                .foregroundColor: isSelected ? UIColor.white : SemanticColors.Label.textDefault,
-                .paragraphStyle: paragraphStyle
-            ]
-
-            let text = "1"
-            let textSize = text.size(withAttributes: attributes)
-            let textRect = CGRect(
-                x: (24 - textSize.width) / 2,
-                y: (24 - textSize.height) / 2,
-                width: textSize.width,
-                height: textSize.height
-            )
-
-            text.draw(in: textRect, withAttributes: attributes)
         }
     }
 
