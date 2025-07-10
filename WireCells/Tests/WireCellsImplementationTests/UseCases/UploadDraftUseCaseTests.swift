@@ -50,7 +50,7 @@ final class UploadDraftUseCaseTests {
 
         // When, Then
         let sut = sut
-        await #expect(throws: (any Error).self) {
+        await #expect(throws: UploadDraftUseCaseError.draftNotFound) {
             try await sut.invoke(nodeID: nodeID)
         }
     }
