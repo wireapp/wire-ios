@@ -658,7 +658,10 @@ public final class ZMUserSession: NSObject {
 
     public func makeAppVersionMigrationService() -> AppVersionMigrationService {
         let allMigrations = [
-            AppVersionMigration_4_1_1(journal: journal)
+            AppVersionMigration_4_1_1(
+                journal: journal,
+                logFilesProvider: logFilesProvider
+            )
         ]
 
         return AppVersionMigrationService(
