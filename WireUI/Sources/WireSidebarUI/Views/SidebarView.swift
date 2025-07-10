@@ -26,6 +26,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
 
     public var accountInfo: SidebarAccountInfo?
     @Binding public var selectedMenuItem: SidebarSelectableMenuItem
+    public var showUnreadFilters: Bool
 
     private(set) var accountImageAction: () -> Void
     private(set) var foldersAction: (CGRect) -> Void
@@ -42,6 +43,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
     public init(
         accountInfo: SidebarAccountInfo,
         selectedMenuItem: Binding<SidebarSelectableMenuItem>,
+        showUnreadFilters: Bool,
         accountImageAction: @escaping () -> Void,
         foldersAction: @escaping (_ buttonFrame: CGRect) -> Void,
         supportAction: @escaping () -> Void,
@@ -50,6 +52,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
     ) {
         self.accountInfo = accountInfo
         _selectedMenuItem = selectedMenuItem
+        self.showUnreadFilters = showUnreadFilters
         self.accountImageAction = accountImageAction
         self.foldersAction = foldersAction
         self.supportAction = supportAction
@@ -115,21 +118,24 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
     @ViewBuilder private var scrollableMenuItems: some View {
         VStack(alignment: .leading, spacing: 0) {
             menuItemHeader(Strings.ConversationFilter.title, addTopPadding: false)
-            let conversationFilters: [SidebarSelectableMenuItem] = [
-                .all,
-                .favorites,
-                .groups,
-                .channels,
-                .oneOnOne,
-                .unread,
-                .mentions,
-                .replies,
-                .folders,
-                .archive
-            ]
-            ForEach(conversationFilters, id: \.self) { conversationFilter in
-                selectableMenuItem(conversationFilter)
+
+            // Core filters
+            selectableMenuItem(.all)
+            selectableMenuItem(.favorites)
+            selectableMenuItem(.groups)
+            selectableMenuItem(.channels)
+            selectableMenuItem(.oneOnOne)
+
+            // Conditional unread filters
+            if showUnreadFilters {
+                selectableMenuItem(.unread)
+                selectableMenuItem(.mentions)
+                selectableMenuItem(.replies)
             }
+
+            // Additional filters
+            selectableMenuItem(.folders)
+            selectableMenuItem(.archive)
         }
         .padding(.horizontal, 16)
     }

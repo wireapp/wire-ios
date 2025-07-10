@@ -291,6 +291,119 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         snapshotHelper.verify(matching: renderedImage())
     }
 
+    // MARK: - Unread Filter Tests
+
+    func testForShowingConversationsFilteredByUnread() throws {
+        // GIVEN
+        let conversationData = [
+            (name: "iOS Team", iOSTeamID, isFavorite: false),
+            (name: "Web Team", webTeamID, isFavorite: false),
+            (name: "QA Team", qaTeamID, isFavorite: false)
+        ]
+        let conversations = createConversations(conversationsData: conversationData)
+
+        // Mark some conversations as having unread messages
+        conversations[0].lastServerTimeStamp = Date()
+        conversations[0].lastReadServerTimeStamp = Date(timeIntervalSinceNow: -3600)
+        conversations[1].lastServerTimeStamp = Date()
+        conversations[1].lastReadServerTimeStamp = Date(timeIntervalSinceNow: -7200)
+
+        userSession.mockConversationDirectory.mockUnarchivedConversations = conversations
+
+        // WHEN
+        sut.hideNoContactLabel(animated: false)
+        sut.applyFilter(.unread)
+
+        // THEN
+        XCTAssertEqual(searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.unreadPlaceholder)
+        snapshotHelper.verify(matching: renderedImage())
+    }
+
+    func testForShowingNoConversationsFilteredByUnread() {
+        // GIVEN
+        userSession.mockConversationDirectory.mockUnarchivedConversations = []
+
+        // WHEN
+        sut.hideNoContactLabel(animated: false)
+        sut.applyFilter(.unread)
+
+        // THEN
+        XCTAssertEqual(searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.unreadPlaceholder)
+        snapshotHelper.verify(matching: renderedImage())
+    }
+
+    // MARK: - Mentions Filter Tests
+
+    func testForShowingConversationsFilteredByMentions() {
+        // GIVEN
+        let conversationData = [
+            (name: "iOS Team", iOSTeamID, isFavorite: false),
+            (name: "Web Team", webTeamID, isFavorite: false)
+        ]
+        let conversations = createConversations(conversationsData: conversationData)
+
+        // Note: In a real implementation, these conversations would have unread messages
+        // with mentions. The filtering logic is handled by the view model.
+        userSession.mockConversationDirectory.mockUnarchivedConversations = conversations
+
+        // WHEN
+        sut.hideNoContactLabel(animated: false)
+        sut.applyFilter(.mentions)
+
+        // THEN
+        XCTAssertEqual(searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.mentionsPlaceholder)
+        snapshotHelper.verify(matching: renderedImage())
+    }
+
+    func testForShowingNoConversationsFilteredByMentions() {
+        // GIVEN
+        userSession.mockConversationDirectory.mockUnarchivedConversations = []
+
+        // WHEN
+        sut.hideNoContactLabel(animated: false)
+        sut.applyFilter(.mentions)
+
+        // THEN
+        XCTAssertEqual(searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.mentionsPlaceholder)
+        snapshotHelper.verify(matching: renderedImage())
+    }
+
+    // MARK: - Replies Filter Tests
+
+    func testForShowingConversationsFilteredByReplies() {
+        // GIVEN
+        let conversationData = [
+            (name: "Design Team", designTeamID, isFavorite: false),
+            (name: "QA Team", qaTeamID, isFavorite: false)
+        ]
+        let conversations = createConversations(conversationsData: conversationData)
+
+        // Note: In a real implementation, these conversations would have unread
+        // replies to self. The filtering logic is handled by the view model.
+        userSession.mockConversationDirectory.mockUnarchivedConversations = conversations
+
+        // WHEN
+        sut.hideNoContactLabel(animated: false)
+        sut.applyFilter(.replies)
+
+        // THEN
+        XCTAssertEqual(searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.repliesPlaceholder)
+        snapshotHelper.verify(matching: renderedImage())
+    }
+
+    func testForShowingNoConversationsFilteredByReplies() {
+        // GIVEN
+        userSession.mockConversationDirectory.mockUnarchivedConversations = []
+
+        // WHEN
+        sut.hideNoContactLabel(animated: false)
+        sut.applyFilter(.replies)
+
+        // THEN
+        XCTAssertEqual(searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.repliesPlaceholder)
+        snapshotHelper.verify(matching: renderedImage())
+    }
+
     // MARK: - Helper Methods
 
     private func createConversations(conversationsData: [(name: String, id: UUID, isFavorite: Bool)])
