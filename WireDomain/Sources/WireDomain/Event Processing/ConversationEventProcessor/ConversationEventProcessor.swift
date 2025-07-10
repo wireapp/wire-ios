@@ -35,6 +35,7 @@ struct ConversationEventProcessor: ConversationEventProcessorProtocol {
     let renameEventProcessor: any ConversationRenameEventProcessorProtocol
     let typingEventProcessor: any ConversationTypingEventProcessorProtocol
     let addPermissionEventProcessor: any ConversationAddPermissionEventProcessorProtocol
+    let mlsRestEventProcessor: any ConversationMLSResetEventProcessorProtocol
 
     func processEvent(_ event: ConversationEvent) async throws {
         switch event {
@@ -87,6 +88,9 @@ struct ConversationEventProcessor: ConversationEventProcessorProtocol {
 
         case let .permissionUpdate(event):
             await addPermissionEventProcessor.processEvent(event)
+            
+        case let .mlsReset(event):
+            try await mlsRestEventProcessor.processEvent(event)
         }
     }
 

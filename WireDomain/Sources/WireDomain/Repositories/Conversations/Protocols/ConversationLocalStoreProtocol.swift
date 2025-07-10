@@ -380,6 +380,11 @@ public protocol ConversationLocalStoreProtocol {
         mlsGroupID: MLSGroupID,
         conversation: ZMConversation
     ) async
+    
+    func storeMLSConversationPendingJoin(
+        newMLSGroupID: MLSGroupID,
+        conversation: ZMConversation
+    ) async
 
     /// Fetches the other user qualified id (not self user) in a 1:1 conversation.
     /// - Parameters:

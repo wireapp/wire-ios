@@ -90,6 +90,10 @@ extension UpdateEventDecodingProxy {
         case .addPermissionUpdate:
             let event = try ConversationAddPermissionEventDecoder().decode(from: container)
             updateEvent = .conversation(.permissionUpdate(event))
+            
+        case .mlsReset:
+            let event = try ConversationMLSResetEventDecoder().decode(from: container)
+            updateEvent = .conversation(.mlsReset(event))
         }
     }
 
