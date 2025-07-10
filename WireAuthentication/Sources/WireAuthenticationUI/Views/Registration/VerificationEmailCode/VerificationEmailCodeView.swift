@@ -102,6 +102,7 @@ package struct VerificationEmailCodeView: View {
                     .keyboardType(.numberPad)
                     .foregroundColor(.primary)
                     .focused($focusedIndex, equals: index)
+                    .accessibilityIdentifier("VerificationCode")
                     .onChange(of: viewModel.code[index]) { newValue in
                         focusedIndex = viewModel.handleInputReturningFocus(newValue, at: index)
                     }
