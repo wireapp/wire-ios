@@ -142,7 +142,8 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
         WireLogger.sync.debug(
             "suspending sync \(backgroundActivity != nil ? "in a background task" : "")",
-            attributes: .syncAttributes)
+            attributes: .syncAttributes
+        )
 
         ongoingSyncTask?.cancel()
         await incrementalSyncToken?.suspend()

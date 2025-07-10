@@ -1614,7 +1614,7 @@ extension ZMUserSession {
 
     private func makeAppVersionMigrations() -> [any AppVersionMigration] {
         [
-            
+
             AppVersionMigration_4_1_1(logFilesProvider: logFilesProvider),
             AppVersionMigration_4_2_0(lastEventIDRepository: lastEventIDRepository, journal: JournalProtocol)
         ]

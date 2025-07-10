@@ -1,4 +1,3 @@
-
 //
 // Wire
 // Copyright (C) 2025 Wire Swiss GmbH
@@ -20,9 +19,7 @@
 import Foundation
 import WireDomain
 
-/*
- Issue: To simplify the logic, we rely solely on journal value to perform InitialSync or not
- */
+// Issue: To simplify the logic, we rely solely on journal value to perform InitialSync or not
 final class AppVersionMigration_4_2_0: AppVersionMigration {
 
     let lastEventIDRepository: LastEventIDRepositoryInterface
@@ -33,7 +30,7 @@ final class AppVersionMigration_4_2_0: AppVersionMigration {
         self.lastEventIDRepository = lastEventIDRepository
         self.journal = journal
     }
-    
+
     func perform() async throws {
         if lastEventIDRepository.fetchLastEventID() == nil {
             journal[.isInitialSyncRequired] = true
