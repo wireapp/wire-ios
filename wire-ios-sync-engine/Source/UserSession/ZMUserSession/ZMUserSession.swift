@@ -363,10 +363,12 @@ public final class ZMUserSession: NSObject {
     public lazy var changeUsername: ChangeUsernameUseCaseProtocol =
         ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
 
-    private lazy var  mlsClientManager = MLSClientManager(
+    private lazy var mlsClientManager = MLSClientManager(
         coreCryptoProvider: coreCryptoProvider,
         mlsService: mlsService
     )
+
+    let logFilesProvider: LogFilesProviding
 
     // MARK: Dependency Injection
 
@@ -414,7 +416,8 @@ public final class ZMUserSession: NSObject {
         backendEnvironment: WireNetwork.BackendEnvironment,
         minTLSVersion: WireNetwork.TLSVersion,
         apiVersion: WireNetwork.APIVersion,
-        journal: Journal
+        journal: Journal,
+        logFilesProvider: LogFilesProviding
     ) {
         self.apiServiceFactory = apiServiceFactory
         self.application = application
@@ -466,7 +469,10 @@ public final class ZMUserSession: NSObject {
             coreCryptoProvider: coreCryptoProvider
         )
         self.journal = journal
+        self.logFilesProvider = logFilesProvider
+
         super.init()
+
     }
 
     func trackAppOpenAnalyticEventWhenAppBecomesActive() {
@@ -676,7 +682,10 @@ public final class ZMUserSession: NSObject {
 
     public func makeAppVersionMigrationService() -> AppVersionMigrationService {
         let allMigrations = [
-            AppVersionMigration_4_1_1(journal: journal)
+            AppVersionMigration_4_1_1(
+                journal: journal,
+                logFilesProvider: logFilesProvider
+            )
         ]
 
         return AppVersionMigrationService(

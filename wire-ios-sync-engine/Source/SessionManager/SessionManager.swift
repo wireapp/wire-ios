@@ -342,6 +342,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     var proxyCredentials: ProxyCredentials?
 
     public let callKitManager: CallKitManagerInterface
+    private let logFilesProvider: LogFilesProviding
 
     public var isSelectedAccountAuthenticated: Bool {
         guard let selectedAccount = accountManager.selectedAccount else {
@@ -400,7 +401,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         minTLSVersion: String?,
         deleteUserLogs: @escaping () -> Void,
         analyticsServiceConfiguration: AnalyticsServiceConfiguration?,
-        countlyProvider: @escaping () -> CountlyProtocol
+        countlyProvider: @escaping () -> CountlyProtocol,
+        logFilesProvider: LogFilesProviding
     ) throws {
         let flowManager = FlowManager(mediaManager: mediaManager)
         let reachability = environment.reachabilityWrapper()
@@ -456,7 +458,8 @@ public final class SessionManager: NSObject, SessionManagerType {
             minTLSVersion: minTLSVersion,
             deleteUserLogs: deleteUserLogs,
             analyticsServiceConfiguration: analyticsServiceConfiguration,
-            countlyProvider: countlyProvider
+            countlyProvider: countlyProvider,
+            logFilesProvider: logFilesProvider
         )
 
         configureBlacklistDownload()
@@ -520,7 +523,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         minTLSVersion: String? = nil,
         deleteUserLogs: (() -> Void)? = nil,
         analyticsServiceConfiguration: AnalyticsServiceConfiguration?,
-        countlyProvider: @escaping () -> CountlyProtocol
+        countlyProvider: @escaping () -> CountlyProtocol,
+        logFilesProvider: LogFilesProviding
     ) throws {
         SessionManager.enableLogsByEnvironmentVariable()
         self.environment = environment
@@ -538,6 +542,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         self.sharedUserDefaults = sharedUserDefaults
         self.minTLSVersion = minTLSVersion
         self.deleteUserLogs = deleteUserLogs
+        self.logFilesProvider = logFilesProvider
 
         guard let sharedContainerURL = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else {
             preconditionFailure("Unable to get shared container URL")
@@ -976,6 +981,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             WireLogger.analytics.debug("configuring analytics for user session")
             let user = try await userSession.createAnalyticsUser()
             try analyticsService?.switchUser(user)
+
             userSession.setAnalyticsEventTracker(analyticsService)
         } catch {
             WireLogger.analytics.error("failed to configure analytics for user session: \(error)")
@@ -1110,7 +1116,8 @@ public final class SessionManager: NSObject, SessionManagerType {
                     let userSession = await self.startBackgroundSession(
                         for: account,
                         with: coreDataStack,
-                        journal: journal
+                        journal: journal,
+                        logFilesProvider: self.logFilesProvider
                     )
 
                     let migrationService = userSession.makeAppVersionMigrationService()
@@ -1309,7 +1316,8 @@ public final class SessionManager: NSObject, SessionManagerType {
     private func startBackgroundSession(
         for account: Account,
         with coreDataStack: CoreDataStack,
-        journal: Journal
+        journal: Journal,
+        logFilesProvider: LogFilesProviding
     ) -> ZMUserSession {
         let sessionConfig = ZMUserSession.Configuration(
             appLockConfig: configuration.legacyAppLockConfig
@@ -1321,7 +1329,8 @@ public final class SessionManager: NSObject, SessionManagerType {
             configuration: sessionConfig,
             sharedUserDefaults: sharedUserDefaults,
             isDeveloperModeEnabled: isDeveloperModeEnabled,
-            journal: journal
+            journal: journal,
+            logFilesProvider: logFilesProvider
         ) else {
             preconditionFailure("Unable to create session for \(account)")
         }

@@ -20,7 +20,7 @@ import Foundation
 
 /// A object representing an error returned from the server.
 
-public struct FailureResponse: Codable, Error {
+public struct FailureResponse: Error {
 
     /// The http status code.
 
@@ -34,4 +34,16 @@ public struct FailureResponse: Codable, Error {
 
     public let message: String
 
+}
+
+struct FailureResponseV0: Error, Codable {
+    let code: Int
+    let label: String
+    let message: String
+}
+
+extension FailureResponseV0: ToAPIModelConvertible {
+    func toAPIModel() -> FailureResponse {
+        .init(code: code, label: label, message: message)
+    }
 }

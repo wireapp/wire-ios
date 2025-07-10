@@ -93,12 +93,12 @@ final class PullAllConversationsSyncTests: XCTestCase {
             .storeConversationNeedsBackendUpdateConversationIDConversationDomain_Invocations
         try XCTAssertCount(storeNotFoundInvocations, count: 1)
         XCTAssertEqual(storeNotFoundInvocations[0].needsBackendUpdate, true)
-        XCTAssertEqual(storeNotFoundInvocations[0].conversationID, Scaffolding.conversationID2.uuid)
+        XCTAssertEqual(storeNotFoundInvocations[0].conversationID, Scaffolding.conversationID2.id)
         XCTAssertEqual(storeNotFoundInvocations[0].conversationDomain, Scaffolding.conversationID2.domain)
 
         let storeFailedInvocations = store.storeFailedConversationConversationIDConversationDomain_Invocations
         try XCTAssertCount(storeFailedInvocations, count: 1)
-        XCTAssertEqual(storeFailedInvocations[0].conversationID, Scaffolding.conversationID3.uuid)
+        XCTAssertEqual(storeFailedInvocations[0].conversationID, Scaffolding.conversationID3.id)
         XCTAssertEqual(storeFailedInvocations[0].conversationDomain, Scaffolding.conversationID3.domain)
 
         XCTAssertEqual(journal[.isConversationSyncRequired], false)
@@ -110,7 +110,7 @@ final class PullAllConversationsSyncTests: XCTestCase {
         api.getConversationIdentifiers_MockError = ConversationsAPIError.notImplemented
         api.getLegacyConversationIdentifiers_MockValue = .init(fetchPage: { _ in
             .init(
-                element: Scaffolding.conversationIDs.map(\.uuid),
+                element: Scaffolding.conversationIDs.map(\.id),
                 hasMore: false,
                 nextStart: .init()
             )
@@ -152,12 +152,12 @@ final class PullAllConversationsSyncTests: XCTestCase {
             .storeConversationNeedsBackendUpdateConversationIDConversationDomain_Invocations
         try XCTAssertCount(storeNotFoundInvocations, count: 1)
         XCTAssertEqual(storeNotFoundInvocations[0].needsBackendUpdate, true)
-        XCTAssertEqual(storeNotFoundInvocations[0].conversationID, Scaffolding.conversationID2.uuid)
+        XCTAssertEqual(storeNotFoundInvocations[0].conversationID, Scaffolding.conversationID2.id)
         XCTAssertEqual(storeNotFoundInvocations[0].conversationDomain, Scaffolding.conversationID2.domain)
 
         let storeFailedInvocations = store.storeFailedConversationConversationIDConversationDomain_Invocations
         try XCTAssertCount(storeFailedInvocations, count: 1)
-        XCTAssertEqual(storeFailedInvocations[0].conversationID, Scaffolding.conversationID3.uuid)
+        XCTAssertEqual(storeFailedInvocations[0].conversationID, Scaffolding.conversationID3.id)
         XCTAssertEqual(storeFailedInvocations[0].conversationDomain, Scaffolding.conversationID3.domain)
     }
 
@@ -169,9 +169,9 @@ private enum Scaffolding {
     static let isFederationEnabled = false
     static let isMLSEnabled = false
 
-    static let conversationID1 = WireNetwork.QualifiedID(uuid: UUID(), domain: localDomain)
-    static let conversationID2 = WireNetwork.QualifiedID(uuid: UUID(), domain: localDomain)
-    static let conversationID3 = WireNetwork.QualifiedID(uuid: UUID(), domain: localDomain)
+    static let conversationID1 = WireNetwork.QualifiedID(id: UUID(), domain: localDomain)
+    static let conversationID2 = WireNetwork.QualifiedID(id: UUID(), domain: localDomain)
+    static let conversationID3 = WireNetwork.QualifiedID(id: UUID(), domain: localDomain)
 
     static var conversationIDs: [WireNetwork.QualifiedID] {
         [
@@ -182,7 +182,7 @@ private enum Scaffolding {
     }
 
     static let remoteConversation1 = WireNetwork.Conversation(
-        id: conversationID1.uuid,
+        id: conversationID1.id,
         qualifiedID: conversationID1,
         teamID: UUID(),
         type: .group,

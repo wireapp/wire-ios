@@ -36,9 +36,9 @@ struct ConversationMemberJoinEventProcessor: ConversationMemberJoinEventProcesso
 
         try await conversationRepository.addParticipants(
             newParticipants,
-            sender: (senderID.uuid, senderID.domain),
+            sender: (senderID.id, senderID.domain),
             date: event.timestamp,
-            conversationID: conversationID.uuid,
+            conversationID: conversationID.id,
             conversationDomain: conversationID.domain
         )
     }
@@ -46,7 +46,7 @@ struct ConversationMemberJoinEventProcessor: ConversationMemberJoinEventProcesso
     private func getParticipantInfo(
         from member: WireNetwork.Conversation.Member
     ) -> (id: UUID, domain: String?, role: String?)? {
-        guard let userID = member.id ?? member.qualifiedID?.uuid else {
+        guard let userID = member.id ?? member.qualifiedID?.id else {
             return nil
         }
 

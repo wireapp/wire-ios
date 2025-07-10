@@ -344,9 +344,9 @@ final class ConversationRepositoryTests: XCTestCase {
         // When
 
         try await sut.removeMembers(
-            Set([.init(uuid: Scaffolding.id, domain: Scaffolding.domain)]),
-            from: .init(uuid: Scaffolding.id, domain: Scaffolding.domain),
-            initiatedBy: .init(uuid: Scaffolding.id, domain: Scaffolding.domain),
+            Set([.init(id: Scaffolding.id, domain: Scaffolding.domain)]),
+            from: .init(id: Scaffolding.id, domain: Scaffolding.domain),
+            initiatedBy: .init(id: Scaffolding.id, domain: Scaffolding.domain),
             at: .now,
             reason: .userDeleted
         )
@@ -490,7 +490,7 @@ final class ConversationRepositoryTests: XCTestCase {
 
         static let conversation = Conversation(
             id: id,
-            qualifiedID: .init(uuid: id, domain: domain),
+            qualifiedID: .init(id: id, domain: domain),
             teamID: id,
             type: .group,
             messageProtocol: .proteus,

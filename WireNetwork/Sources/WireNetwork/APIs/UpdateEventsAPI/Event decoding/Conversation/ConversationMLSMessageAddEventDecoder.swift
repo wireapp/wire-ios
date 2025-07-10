@@ -24,12 +24,12 @@ struct ConversationMLSMessageAddEventDecoder {
         from container: KeyedDecodingContainer<ConversationEventCodingKeys>
     ) throws -> ConversationMLSMessageAddEvent {
         let conversationID = try container.decode(
-            ConversationID.self,
+            QualifiedIDV0.self,
             forKey: .conversationQualifiedID
         )
 
         let senderID = try container.decode(
-            UserID.self,
+            QualifiedIDV0.self,
             forKey: .senderQualifiedID
         )
 
@@ -49,8 +49,8 @@ struct ConversationMLSMessageAddEventDecoder {
         )
 
         return ConversationMLSMessageAddEvent(
-            conversationID: conversationID,
-            senderID: senderID,
+            conversationID: conversationID.toAPIModel(),
+            senderID: senderID.toAPIModel(),
             subconversation: subconversation,
             message: payload,
             timestamp: timestamp?.date,

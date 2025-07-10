@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 
 /// A service that runs interruptible migrations when the app
 /// is updated from one version to another.
@@ -64,8 +65,14 @@ public final class AppVersionMigrationService {
 
         // Perform each migration.
         while let nextMigration = eligibleMigrations.popLast() {
-            try await nextMigration.perform()
-            journal.lastCompletedAppVersionMigration = nextMigration.version
+            do {
+                try await nextMigration.perform()
+                journal.lastCompletedAppVersionMigration = nextMigration.version
+                WireLogger.session.info("Completed migration to version \(nextMigration.version)")
+            } catch {
+                WireLogger.session.error("Failed migration to version \(nextMigration.version): \(error)")
+                throw error
+            }
         }
     }
 

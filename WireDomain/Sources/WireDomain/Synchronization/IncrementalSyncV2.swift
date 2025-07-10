@@ -43,6 +43,8 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     private let syncStateSubject: CurrentValueSubject<SyncState, Never>
     private let logger = WireLogger.sync
     private let journal: Journal
+    private let syncMarkerGenerator: SyncMarkerGenerator
+
     weak var delegate: (any LiveSyncDelegate)?
 
     public init(
@@ -56,7 +58,8 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         databaseSaver: any DatabaseSaverProtocol,
         syncStateSubject: CurrentValueSubject<SyncState, Never>,
         coreCryptoProvider: any CoreCryptoProviderProtocol,
-        journal: Journal
+        journal: Journal,
+        syncMarkerGenerator: @escaping SyncMarkerGenerator = { UUID().uuidString }
     ) {
         self.selfClientID = selfClientID
         self.pullServerTimeSync = pullServerTimeSync
@@ -69,6 +72,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         self.syncStateSubject = syncStateSubject
         self.coreCryptoProvider = coreCryptoProvider
         self.journal = journal
+        self.syncMarkerGenerator = syncMarkerGenerator
     }
 
     public func perform() async throws -> IncrementalSync.Token {
@@ -76,7 +80,8 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
 
         try await pullServerTimeSync.pull()
 
-        let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID)
+        let syncMarker = syncMarkerGenerator()
+        let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID, marker: syncMarker)
 
         logger.debug("opening new push channel", attributes: .syncAttributes(initialSync: false))
         syncStateSubject.send(.incrementalSyncing(.openPushChannel))
@@ -94,7 +99,8 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         let task = Task { @Sendable [self, pushChannel] in
             await processLiveStream(
                 liveEventStream,
-                pushChannel: pushChannel
+                pushChannel: pushChannel,
+                syncMarker: syncMarker
             )
         }
 
@@ -159,6 +165,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     private func processLiveStream(
         _ liveEventStream: PushChannelV2.Stream,
         pushChannel: PushChannelV2Protocol,
+        syncMarker: String
     ) async {
         logger.debug("handling live event stream", attributes: .syncAttributes(initialSync: false))
         syncStateSubject.send(.incrementalSyncing(.receivingLiveEvents))
@@ -170,19 +177,20 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                     attributes: .syncAttributes(initialSync: false)
                 )
                 switch element {
-                case .upToDate:
-                    logger.debug("upToDate event", attributes: .syncAttributes(initialSync: false))
-                    syncStateSubject.send(.liveSyncing(.ongoing))
-                    delegate?.isUpToDate(sync: self)
+                case let .syncMarker(id, deliveryTag):
+
+                    try await pushChannel.acknowledgeEvent(deliveryTag: deliveryTag, multiple: false)
+
+                    if id == syncMarker {
+                        logger.debug("upToDate event", attributes: .syncAttributes(initialSync: false))
+                        syncStateSubject.send(.liveSyncing(.ongoing))
+                        delegate?.isUpToDate(sync: self)
+                    }
                 case .missedEvents:
                     logger.debug("missedEvents event", attributes: .syncAttributes(initialSync: false))
                     await delegate?.didMissedEvents(sync: self)
                     try await messageStore.addPotentialGapSystemMessage()
                     try await pushChannel.acknowledgeFullSync()
-                case .syncing:
-                    // ignore this event, it gives the number of messages until we're caught up
-                    // TODO: [WPB-18485] remove this event and add endofqueue
-                    break
                 case let .events(envelopes):
                     do {
                         try await processBatch(

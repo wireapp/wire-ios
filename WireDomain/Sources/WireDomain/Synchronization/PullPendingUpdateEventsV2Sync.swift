@@ -22,8 +22,10 @@ import WireDataModel
 import WireLogging
 import WireNetwork
 
-public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protocol {
+/// Closure to generate syncMarker, use for testing
+public typealias SyncMarkerGenerator = () -> String
 
+public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protocol {
     enum Failure: Error {
         case acknowledgeFailed
     }
@@ -36,6 +38,7 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
     private let coreCryptoProvider: any CoreCryptoProviderProtocol
     private let jsonEncoder = JSONEncoder()
     private let logger = WireLogger.sync
+    private let syncMarkerGenerator: SyncMarkerGenerator
 
     let stream: AsyncStream<[UpdateEvent]>
     private let continuation: AsyncStream<[UpdateEvent]>.Continuation
@@ -46,7 +49,8 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
         updateEventsStore: any UpdateEventsLocalStoreProtocol,
         journal: Journal,
         decryptor: any UpdateEventDecryptorProtocol,
-        coreCryptoProvider: any CoreCryptoProviderProtocol
+        coreCryptoProvider: any CoreCryptoProviderProtocol,
+        syncMarkerGenerator: @escaping SyncMarkerGenerator = { UUID().uuidString }
     ) {
         self.selfClientID = selfClientID
         self.pushChannelAPI = pushChannelAPI
@@ -58,6 +62,7 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
         let (finalStream, continuation) = AsyncStream<[UpdateEvent]>.makeStream()
         self.stream = finalStream
         self.continuation = continuation
+        self.syncMarkerGenerator = syncMarkerGenerator
     }
 
     private var logAttributes: WireLogging.LogAttributes {
@@ -65,7 +70,9 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
     }
 
     public func pull() async throws {
-        let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID)
+        let syncMarker = syncMarkerGenerator()
+
+        let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID, marker: syncMarker)
 
         let liveEventStream = try await pushChannel.open()
 
@@ -79,17 +86,15 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
                     attributes: .syncAttributes(initialSync: false)
                 )
                 switch element {
-                case .upToDate:
-                    logger.debug("upToDate event", attributes: logAttributes)
-                    continuation.finish()
-                    break streamLoop
+                case let .syncMarker(marker, deliveryTag):
+                    try await pushChannel.acknowledgeEvent(deliveryTag: deliveryTag, multiple: false)
+                    if marker == syncMarker {
+                        logger.debug("upToDate event", attributes: logAttributes)
+                        continuation.finish()
+                        break streamLoop
+                    }
                 case .missedEvents:
                     logger.debug("missedEvents event", attributes: logAttributes)
-                // do nothing
-                case .syncing:
-                    // ignore this event, it gives the number of messages until we're caught up
-                    // TODO: [WPB-18485] remove this event and add endofqueue
-                    continue
                 case let .events(envelopes):
                     do {
                         try await processBatch(

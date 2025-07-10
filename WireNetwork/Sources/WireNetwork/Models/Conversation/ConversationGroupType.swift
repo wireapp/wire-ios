@@ -18,7 +18,32 @@
 
 import Foundation
 
-public enum ConversationGroupType: String, Codable, Sendable {
+public enum ConversationGroupType: Sendable {
+    case group
+    case channel
+}
+
+enum ConversationGroupTypeV8: String, Sendable, Codable, ToAPIModelConvertible {
     case group = "group_conversation"
     case channel
+
+    func toAPIModel() -> ConversationGroupType {
+        switch self {
+        case .group:
+            .group
+        case .channel:
+            .channel
+        }
+    }
+}
+
+extension ConversationGroupType: ToNetworkConvertible {
+    func toNetworkModel() -> ConversationGroupTypeV8 {
+        switch self {
+        case .group:
+            .group
+        case .channel:
+            .channel
+        }
+    }
 }

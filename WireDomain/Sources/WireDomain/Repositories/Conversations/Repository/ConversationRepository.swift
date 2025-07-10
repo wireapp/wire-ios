@@ -77,7 +77,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     }
 
     public func pullConversation(id: UUID, domain: String) async throws {
-        let qualifiedID = WireNetwork.QualifiedID(uuid: id, domain: domain)
+        let qualifiedID = WireNetwork.QualifiedID(id: id, domain: domain)
         let conversationList = try await conversationsAPI.getConversations(
             for: [qualifiedID]
         )
@@ -307,9 +307,9 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         at date: Date,
         reason: ConversationMemberLeaveReason
     ) async throws {
-        let conversationID = conversation.uuid
+        let conversationID = conversation.id
         let conversationDomain = conversation.domain
-        let senderID = sender.uuid
+        let senderID = sender.id
         let senderDomain = sender.domain
         let removedUserIDs = userIDs
 
@@ -396,7 +396,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
             )
         case .userRemoved, .userLeft:
             .participantsRemoved(
-                participants: removedUsers.map { ($0.uuid, $0.domain) },
+                participants: removedUsers.map { ($0.id, $0.domain) },
                 sender: (senderID, senderDomain),
                 date: date
             )
@@ -416,7 +416,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
             for userID in userIDs {
                 taskGroup.addTask { [self] in
                     await userLocalStore.fetchOrCreateUser(
-                        id: userID.uuid,
+                        id: userID.id,
                         domain: userID.domain
                     )
                 }
@@ -440,7 +440,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
                 taskGroup.addTask { [self] in
                     do {
                         let (_, isSelfUser) = try await userLocalStore.isSelfUser(
-                            id: removedUserID.uuid,
+                            id: removedUserID.id,
                             domain: removedUserID.domain
                         )
                         return isSelfUser
@@ -463,13 +463,13 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
                 taskGroup.addTask { [self] in
                     do {
                         try await teamRepository.deleteMembership(
-                            userID: userID.uuid,
+                            userID: userID.id,
                             domain: userID.domain,
                             date: time
                         )
                     } catch {
                         WireLogger.eventProcessing.error(
-                            "Unable to delete member with id: \(userID.uuid.safeForLoggingDescription)"
+                            "Unable to delete member with id: \(userID.id.safeForLoggingDescription)"
                         )
                     }
                 }

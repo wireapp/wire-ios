@@ -57,7 +57,8 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
             updateEventsStore: updateEventsStore,
             journal: journal,
             decryptor: decryptor,
-            coreCryptoProvider: coreCryptoProvider
+            coreCryptoProvider: coreCryptoProvider,
+            syncMarkerGenerator: { Scaffolding.markerID }
         )
 
         // Setup mocks
@@ -87,11 +88,12 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
         -> MockPushChannelV2Protocol {
         // Some live events, some of which were already pulled.
         let pushChannel = MockPushChannelV2Protocol()
-        pushChannel.acknowledgeMessageCount_MockMethod = {}
         pushChannel.close_MockMethod = {}
         pushChannel.open_MockValue = stream
         pushChannel.acknowledgeEventDeliveryTagMultiple_MockMethod = { _, _ in }
-        pushChannelAPI.createPushChannelClientID_MockMethod = { _ in pushChannel }
+        pushChannelAPI.createPushChannelClientIDMarker_MockMethod = { _, _ in
+            pushChannel
+        }
         return pushChannel
     }
 
@@ -100,17 +102,17 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
         let nbOfBatches = 0
 
         let upstream = AsyncThrowingStream { continuation in
-            Task {
-                continuation.yield(PushChannelV2.Element.syncing(eventsCount: nbEventsToPull))
-                continuation.yield(PushChannelV2.Element.upToDate)
-            }
+            continuation.yield(PushChannelV2.Element.syncMarker(
+                id: Scaffolding.markerID,
+                deliveryTag: Scaffolding.markerDeliveryTag
+            ))
         }
         try await internalTestPull(
             stream: upstream,
             receivedEventsCount: nbEventsToPull,
             decryptionCount: nbEventsToPull,
             storedEventsCount: nbEventsToPull,
-            acknowledgementCount: nbOfBatches
+            acknowledgementCount: nbOfBatches + 1
         )
     }
 
@@ -119,28 +121,66 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
         let nbOfBatches = 3
 
         let upstream = AsyncThrowingStream { continuation in
-            Task {
-                continuation.yield(PushChannelV2.Element.syncing(eventsCount: nbEventsToPull))
-                continuation.yield(PushChannelV2.Element.events([Scaffolding.event2, Scaffolding.event3]))
-                continuation.yield(PushChannelV2.Element.events([Scaffolding.event4, Scaffolding.event5]))
-                continuation.yield(PushChannelV2.Element.events([Scaffolding.createEvent(
-                    message: "test",
-                    timeIntervalSinceNow: -5,
-                    deliveryTag: 6
-                )]))
-                continuation.yield(PushChannelV2.Element.upToDate)
-                continuation.finish()
-            }
+            continuation.yield(PushChannelV2.Element.events([Scaffolding.event2, Scaffolding.event3]))
+            continuation.yield(PushChannelV2.Element.events([Scaffolding.event4, Scaffolding.event5]))
+            continuation.yield(PushChannelV2.Element.events([Scaffolding.createEvent(
+                message: "test",
+                timeIntervalSinceNow: -5,
+                deliveryTag: 6
+            )]))
+            continuation.yield(PushChannelV2.Element.syncMarker(
+                id: Scaffolding.markerID,
+                deliveryTag: Scaffolding.markerDeliveryTag
+            ))
+            continuation.finish()
         }
+
         try await internalTestPull(
             stream: upstream,
             receivedEventsCount: nbEventsToPull,
             decryptionCount: nbEventsToPull,
             storedEventsCount: nbEventsToPull,
-            acknowledgementCount: nbOfBatches
+            acknowledgementCount: nbOfBatches + 1
         )
     }
 
+    func testPull_skipsSyncMarkerIfInterrupted() async throws {
+        let nbEventsToPull = 5
+        let nbOfBatches = 4
+
+        let upstream = AsyncThrowingStream { continuation in
+            continuation.yield(PushChannelV2.Element.events([Scaffolding.event2, Scaffolding.event3]))
+            continuation.yield(PushChannelV2.Element.syncMarker(
+                id: "ignored marker",
+                deliveryTag: 3
+            ))
+            continuation.yield(PushChannelV2.Element.events([Scaffolding.event4, Scaffolding.event5]))
+            continuation.yield(PushChannelV2.Element.events([Scaffolding.createEvent(
+                message: "test",
+                timeIntervalSinceNow: -5,
+                deliveryTag: 6
+            )]))
+            continuation.yield(PushChannelV2.Element.syncMarker(
+                id: Scaffolding.markerID,
+                deliveryTag: Scaffolding.markerDeliveryTag
+            ))
+            continuation.finish()
+        }
+
+        let pushChannel = try await internalTestPull(
+            stream: upstream,
+            receivedEventsCount: nbEventsToPull,
+            decryptionCount: nbEventsToPull,
+            storedEventsCount: nbEventsToPull,
+            acknowledgementCount: nbOfBatches + 1
+        )
+
+        // verify acknowledgement of synchronisation marker
+        XCTAssertTrue(pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations[1].multiple == false)
+        XCTAssertTrue(pushChannel.acknowledgeEventDeliveryTagMultiple_Invocations[4].multiple == false)
+    }
+
+    @discardableResult
     func internalTestPull(
         stream: AsyncThrowingStream<PushChannelV2.Element, any Error>,
         receivedEventsCount: Int,
@@ -149,7 +189,7 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
         acknowledgementCount: Int,
         file: StaticString = #filePath,
         line: UInt = #line
-    ) async throws {
+    ) async throws -> MockPushChannelV2Protocol {
         let pushChannel = setupPushChannel(stream: stream)
 
         try await sut.pull()
@@ -189,6 +229,7 @@ class PullPendingUpdateEventsSyncV2Tests: XCTestCase {
             line: line
         )
 
+        return pushChannel
     }
 }
 
@@ -228,11 +269,11 @@ private enum Scaffolding {
     ) -> UpdateEventEnvelope {
         let event = ConversationProteusMessageAddEvent(
             conversationID: ConversationID(
-                uuid: UUID(),
+                id: UUID(),
                 domain: "example.com"
             ),
             senderID: UserID(
-                uuid: UUID(),
+                id: UUID(),
                 domain: "example.com"
             ),
             timestamp: Date(timeIntervalSinceNow: timeIntervalSinceNow),
@@ -251,5 +292,8 @@ private enum Scaffolding {
             deliveryTag: deliveryTag
         )
     }
+
+    static let markerID = "marker-id"
+    static let markerDeliveryTag: UInt64 = 123
 
 }

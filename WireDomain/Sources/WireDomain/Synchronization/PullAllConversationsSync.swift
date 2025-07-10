@@ -54,7 +54,7 @@ public final class PullAllConversationsSync: PullAllConversationsSyncProtocol {
             // Fallback
             for try await ids in try await api.getLegacyConversationIdentifiers() {
                 conversationIDs.append(contentsOf: ids.map {
-                    .init(uuid: $0, domain: localDomain)
+                    .init(id: $0, domain: localDomain)
                 })
             }
         }
@@ -73,14 +73,14 @@ public final class PullAllConversationsSync: PullAllConversationsSyncProtocol {
         for id in conversations.notFound {
             await store.storeConversation(
                 needsBackendUpdate: true,
-                conversationID: id.uuid,
+                conversationID: id.id,
                 conversationDomain: id.domain
             )
         }
 
         for id in conversations.failed {
             await store.storeFailedConversation(
-                conversationID: id.uuid,
+                conversationID: id.id,
                 conversationDomain: id.domain
             )
         }

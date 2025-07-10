@@ -71,7 +71,7 @@ final class MLSMessageDecryptorTests: XCTestCase {
 
         let conversation = await context.perform { [self] in
             return modelHelper.createMLSConversation(
-                id: Scaffolding.conversationID.uuid,
+                id: Scaffolding.conversationID.id,
                 mlsGroupID: Scaffolding.mlsGroupID,
                 in: context
             )
@@ -133,15 +133,15 @@ final class MLSMessageDecryptorTests: XCTestCase {
 
         static let localDomain = "local.com"
 
-        static let selfUserID = UserID(uuid: UUID(), domain: localDomain)
+        static let selfUserID = UserID(id: UUID(), domain: localDomain)
         static let selfClientID = "selfClientID"
         static let selfClientNumberOfKeys: Int32 = 10
 
-        static let aliceID = UserID(uuid: UUID(), domain: localDomain)
+        static let aliceID = UserID(id: UUID(), domain: localDomain)
         static let aliceClientID1 = "aliceClientID1"
         static let aliceClientID2 = "aliceClientID2"
 
-        static let conversationID = ConversationID(uuid: UUID(), domain: localDomain)
+        static let conversationID = ConversationID(id: UUID(), domain: localDomain)
         static let timestamp = Date()
 
         static let base64EncodedString = "CiQ5ZTU2NTQwOS0xODZiLTRlN2YtYTE4NC05NzE4MGE0MDAwMDQSDAoKRXZlcnl0aGluZw=="
@@ -162,7 +162,7 @@ final class MLSMessageDecryptorTests: XCTestCase {
         static func makeWelcomeEvent() -> ConversationMLSWelcomeEvent {
             ConversationMLSWelcomeEvent(
                 conversationID: conversationID,
-                senderID: UserID(uuid: .mockID1, domain: ""),
+                senderID: UserID(id: .mockID1, domain: ""),
                 welcomeMessage: ""
             )
         }
