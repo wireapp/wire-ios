@@ -70,7 +70,7 @@ final class TeamDeleteEventProcessorTests: XCTestCase {
 
         // When
 
-        try await sut.processEvent()
+        await sut.processEvent()
 
         await fulfillment(of: [expectation], timeout: 5.0)
     }
