@@ -17,8 +17,8 @@
 //
 
 import UserNotifications
-import WireAPI
 import WireDataModel
+import WireNetwork
 
 // sourcery: AutoMockable
 protocol ConversationEventNotificationBuilderProtocol {
@@ -111,7 +111,7 @@ extension ConversationEventNotificationBuilder {
             time: Date?
         ) async -> Bool {
             let conversation = await conversationLocalStore.fetchOrCreateConversation(
-                id: conversationID.uuid,
+                id: conversationID.id,
                 domain: conversationID.domain
             )
 
@@ -120,10 +120,10 @@ extension ConversationEventNotificationBuilder {
                     conversation
                 )
 
-            let isConversationMuted = conversationMutedMessages != .none
+            let isConversationMuted = conversationMutedMessages == .all
 
             let isSenderSelfUser = (try? await userLocalStore.isSelfUser(
-                id: senderID.uuid,
+                id: senderID.id,
                 domain: senderID.domain
             ).isSelfUser) ?? false
 

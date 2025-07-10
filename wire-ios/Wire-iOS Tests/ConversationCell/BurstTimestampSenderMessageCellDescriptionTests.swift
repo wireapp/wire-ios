@@ -20,7 +20,7 @@ import WireFoundationSupport
 import XCTest
 
 @testable import Wire
-@testable import WireConversationUI
+@testable import WireMessagingUI
 
 final class BurstTimestampSenderMessageCellDescriptionTests: XCTestCase {
 

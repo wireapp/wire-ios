@@ -19,12 +19,12 @@
 public import Foundation
 
 public struct WireCellsCredentials: Equatable, Hashable, Sendable {
-    public let serverUrl: URL
+    public let serverURL: URL
     public let accessToken: String
     public let gatewaySecret: String
 
-    package init(serverUrl: URL, accessToken: String, gatewaySecret: String) {
-        self.serverUrl = serverUrl
+    package init(serverURL: URL, accessToken: String, gatewaySecret: String) {
+        self.serverURL = serverURL
         self.accessToken = accessToken
         self.gatewaySecret = gatewaySecret
     }

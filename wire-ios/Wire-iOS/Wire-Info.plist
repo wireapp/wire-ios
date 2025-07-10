@@ -79,6 +79,8 @@
 	<string>$(FORCE_ENCRYPTION_AT_REST_ENABLED)</string>
 	<key>GenerateLinkPreviewEnabled</key>
 	<string>${GENERATE_LINK_PREVIEW_ENABLED}</string>
+	<key>OpenLinksExternally</key>
+	<string>${OPEN_LINKS_EXTERNALLY}</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<true/>
 	<key>ITSEncryptionExportComplianceCode</key>
@@ -239,6 +241,8 @@
 			</dict>
 		</dict>
 	</array>
+	<key>UseEmbeddedIDPUserAgent</key>
+	<string>${USE_EMBEDDED_IDP_USER_AGENT}</string>
 	<key>Wire SSO URL Scheme</key>
 	<string>${WIRE_SSO_URL_SCHEME}</string>
 	<key>WireGroupId</key>

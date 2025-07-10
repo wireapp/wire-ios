@@ -17,17 +17,17 @@
 //
 
 import Foundation
-import WireAPI
 import WireDataModel
 import WireFoundation
+import WireNetwork
 
 public final class UserSessionComponent {
 
     private let selfUserID: UUID
 
-    private let backendEnvironment: WireAPI.BackendEnvironment
-    private let minTLSVersion: WireAPI.TLSVersion
-    private let apiVersion: WireAPI.APIVersion
+    private let backendEnvironment: WireNetwork.BackendEnvironment
+    private let minTLSVersion: WireNetwork.TLSVersion
+    private let apiVersion: WireNetwork.APIVersion
 
     private let localDomain: String
     private let isFederationEnabled: Bool
@@ -40,12 +40,13 @@ public final class UserSessionComponent {
     private let mlsService: any MLSServiceInterface
     private let mlsDecryptionService: any MLSDecryptionServiceInterface
     private let proteusService: any ProteusServiceInterface
+    private let coreCryptoProvider: any CoreCryptoProviderProtocol
 
     public init(
         selfUserID: UUID,
-        backendEnvironment: WireAPI.BackendEnvironment,
-        minTLSVersion: WireAPI.TLSVersion,
-        apiVersion: WireAPI.APIVersion,
+        backendEnvironment: WireNetwork.BackendEnvironment,
+        minTLSVersion: WireNetwork.TLSVersion,
+        apiVersion: WireNetwork.APIVersion,
         localDomain: String,
         isFederationEnabled: Bool,
         isMLSEnabled: Bool,
@@ -54,7 +55,8 @@ public final class UserSessionComponent {
         eventContext: NSManagedObjectContext,
         mlsService: any MLSServiceInterface,
         mlsDecryptionService: any MLSDecryptionServiceInterface,
-        proteusService: any ProteusServiceInterface
+        proteusService: any ProteusServiceInterface,
+        coreCryptoProvider: any CoreCryptoProviderProtocol
     ) {
         self.selfUserID = selfUserID
         self.backendEnvironment = backendEnvironment
@@ -69,6 +71,7 @@ public final class UserSessionComponent {
         self.mlsService = mlsService
         self.mlsDecryptionService = mlsDecryptionService
         self.proteusService = proteusService
+        self.coreCryptoProvider = coreCryptoProvider
     }
 
     private lazy var keychain: some KeychainProtocol = WireFoundation.Keychain()
@@ -123,8 +126,7 @@ public final class UserSessionComponent {
 
     public func clientSessionComponent(
         clientID: String,
-        processorHandlers: ClientSessionComponent.ProcessorHandlers,
-        onAuthenticationFailure: @escaping @Sendable () -> Void
+        completionHandlers: ClientSessionComponent.CompletionHandlers
     ) -> ClientSessionComponent {
         ClientSessionComponent(
             selfUserID: selfUserID,
@@ -142,8 +144,8 @@ public final class UserSessionComponent {
             mlsService: mlsService,
             mlsDecryptionService: mlsDecryptionService,
             proteusService: proteusService,
-            processorHandlers: processorHandlers,
-            onAuthenticationFailure: onAuthenticationFailure
+            coreCryptoProvider: coreCryptoProvider,
+            completionHandlers: completionHandlers
         )
     }
 

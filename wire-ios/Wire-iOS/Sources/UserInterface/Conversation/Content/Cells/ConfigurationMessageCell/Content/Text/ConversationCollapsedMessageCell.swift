@@ -40,6 +40,11 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
+    enum Constants {
+        static let avatarSize: CGFloat = 24.0
+        static let spacingBetweenAvatarAndText: CGFloat = 12
+    }
+
     private lazy var avatar: UserImageView = {
         let view = UserImageView()
         view.userSession = ZMUserSession.shared()
@@ -55,8 +60,9 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         view.isUserInteractionEnabled = true
         view.setContentHuggingPriority(.required, for: .horizontal)
         view.setContentCompressionResistancePriority(.required, for: .horizontal)
-        view.heightAnchor.constraint(equalToConstant: 24).isActive = true
-        view.widthAnchor.constraint(equalToConstant: 24).isActive = true
+        view.heightAnchor
+            .constraint(equalToConstant: Constants.avatarSize).isActive = true
+        view.widthAnchor.constraint(equalToConstant: Constants.avatarSize).isActive = true
         return view
     }()
 
@@ -85,10 +91,9 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         view.textContainerInset = UIEdgeInsets.zero
         view.textContainer.lineFragmentPadding = 0
         view.isUserInteractionEnabled = false
+        view.dataDetectorTypes = []
         view.accessibilityIdentifier = "Message"
         view.accessibilityElementsHidden = false
-        view.dataDetectorTypes = [.link, .address, .phoneNumber, .flightNumber, .calendarEvent, .shipmentTrackingNumber]
-        view.linkTextAttributes = [.foregroundColor: UIColor.accent()]
         view.setContentHuggingPriority(.required, for: .vertical)
         view.setContentCompressionResistancePriority(.required, for: .vertical)
 
@@ -136,6 +141,10 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
     }
 
     func configure(with object: Configuration, animated: Bool) {
+        messageTextView.text = nil
+        messageTextView.attributedText = nil
+        messageTextView.textColor = SemanticColors.Label.textDefault
+
         let user = object.message.senderUser
         avatar.user = user
         availabilityIndicatorView.availability = user?.availability.mapToAccountImageAvailability()
@@ -156,28 +165,29 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
                     )
             }
         } else {
-            messageTextView.font = UIFont.normalLightFont.italic
-            messageTextView.textColor = SemanticColors.Label.textDefault
+            var text = ""
             typeIcon.isHidden = false
             if message.isImage {
                 typeIcon.image = .init(resource: .image)
-                messageTextView.text = L10n.Localizable.Content.Collapsed.Image.title
+                text = L10n.Localizable.Content.Collapsed.Image.title
             } else if message.isVideo {
                 typeIcon.image = .init(resource: .play)
-                messageTextView.text = L10n.Localizable.Content.Collapsed.Video.title
+                text = L10n.Localizable.Content.Collapsed.Video.title
             } else if message.isAudio {
                 typeIcon.image = .init(resource: .micOn)
-                messageTextView.text = L10n.Localizable.Content.Collapsed.Audio.title
+                text = L10n.Localizable.Content.Collapsed.Audio.title
             } else if message.isLocation {
                 typeIcon.image = .init(resource: .location)
-                messageTextView.text = L10n.Localizable.Content.Collapsed.Location.title
+                text = L10n.Localizable.Content.Collapsed.Location.title
             } else if message.isFile {
                 typeIcon.image = .init(resource: .file)
-                messageTextView.text = L10n.Localizable.Content.Collapsed.File.title
+                text = L10n.Localizable.Content.Collapsed.File.title
             } else if message.hasLinks {
                 typeIcon.image = .init(resource: .link)
-                messageTextView.text = L10n.Localizable.Content.Collapsed.Link.title
+                text = L10n.Localizable.Content.Collapsed.Link.title
             }
+            messageTextView.attributedText = text.attributedString &&
+                UIFont.normalLightFont.italic && SemanticColors.Label.textDefault
         }
 
         wholeViewTapButton.removeTarget(nil, action: nil, for: .allEvents)
@@ -205,22 +215,28 @@ final class ConversationCollapsedMessageCell: UIView, ConversationMessageCell {
         ).isActive = true
 
         let spacingView = UIView()
-        spacingView.widthAnchor.constraint(equalToConstant: 13).isActive = true
+        spacingView.widthAnchor
+            .constraint(
+                equalToConstant: margins.left - Constants.avatarSize - Constants.spacingBetweenAvatarAndText
+            ).isActive = true
 
         let rightStack = [typeIcon, collapseButton.wrapInView(trailingInset: margins.right)]
             .horizontalStack(spacing: 8, alignment: .center)
 
+        let avatarContainer = avatar.wrapInViewWithFlexibleTopAndBottom()
+
         let stack = UIStackView.horizontal(
             views: [
                 spacingView,
-                avatar.wrapInViewWithFlexibleTopAndBottom(),
+                avatarContainer,
                 messageTextView,
                 rightStack.wrapInViewWithFlexibleTopAndBottom()
             ],
             spacing: 7,
             alignment: .top
         )
-        stack.setCustomSpacing(12, after: avatar)
+        stack.setCustomSpacing(0, after: spacingView)
+        stack.setCustomSpacing(Constants.spacingBetweenAvatarAndText, after: avatarContainer)
         stack.setCustomSpacing(10, after: messageTextView)
 
         rightStack.centerYAnchor

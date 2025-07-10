@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDomain
 import WireLogging
 import WireRequestStrategy
 
@@ -119,6 +120,7 @@ public final class NotificationSession {
     /// - returns: The initialized session object if no error is thrown
 
     public convenience init(
+        currentAppVersion: String,
         applicationGroupIdentifier: String,
         accountIdentifier: UUID,
         environment: BackendEnvironmentProvider,
@@ -126,7 +128,10 @@ public final class NotificationSession {
         minTLSVersion: String?
     ) throws {
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
-        let accountManager = AccountManager(sharedDirectory: sharedContainerURL)
+        let accountManager = try AccountManager(
+            currentAppVersion: currentAppVersion,
+            sharedDirectory: sharedContainerURL
+        )
 
         guard let account = accountManager.account(with: accountIdentifier) else {
             throw InitializationError.noAccount
@@ -238,12 +243,17 @@ public final class NotificationSession {
         )
 
         let cryptoboxMigrationManager = CryptoboxMigrationManager()
+        let journal = Journal(
+            userID: accountIdentifier,
+            storage: sharedUserDefaults
+        )
         let coreCryptoProvider = CoreCryptoProvider(
             selfUserID: accountIdentifier,
             sharedContainerURL: coreDataStack.applicationContainer,
             accountDirectory: coreDataStack.accountContainer,
             syncContext: coreDataStack.syncContext,
             cryptoboxMigrationManager: cryptoboxMigrationManager,
+            coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager(journal: journal),
             allowCreation: false
         )
         let featureRepository = FeatureRepository(context: coreDataStack.syncContext)
@@ -672,4 +682,14 @@ public struct CallEventPayload {
         self.hasVideo = hasVideo
     }
 
+}
+
+extension LogAttributes {
+    static let newNSE = [
+        LogAttributesKey.nse: "new"
+    ]
+
+    static let legacyNSE = [
+        LogAttributesKey.nse: "legacy"
+    ]
 }

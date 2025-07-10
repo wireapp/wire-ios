@@ -20,9 +20,9 @@ import WireDataModel
 import WireDataModelSupport
 import XCTest
 
-@testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport
+@testable import WireNetwork
 
 final class MLSMessageDecryptorTests: XCTestCase {
 
@@ -71,7 +71,7 @@ final class MLSMessageDecryptorTests: XCTestCase {
 
         let conversation = await context.perform { [self] in
             return modelHelper.createMLSConversation(
-                id: Scaffolding.conversationID.uuid,
+                id: Scaffolding.conversationID.id,
                 mlsGroupID: Scaffolding.mlsGroupID,
                 in: context
             )
@@ -88,37 +88,41 @@ final class MLSMessageDecryptorTests: XCTestCase {
 
         conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
         conversationLocalStore.mlsConversationInfoConversation_MockValue = (try XCTUnwrap(Scaffolding.mlsGroupID), true)
-        mlsDecryptionService.decryptMessageForSubconversationType_MockValue = [mockDecryptionResult]
+        mlsDecryptionService.decryptMessageForSubconversationTypeContext_MockValue = [mockDecryptionResult]
 
         // When
 
         let event = try await sut
-            .decryptedMessageAddEventData(from: Scaffolding.makeAddMessageEvent(content: encryptedMessage))
+            .decryptedMessageAddEventData(
+                from: Scaffolding.makeAddMessageEvent(content: encryptedMessage),
+                context: nil
+            )
 
         // Then
 
         XCTAssertEqual(conversationLocalStore.fetchConversationIdDomain_Invocations.count, 1)
         XCTAssertEqual(conversationLocalStore.mlsConversationInfoConversation_Invocations.count, 1)
-        XCTAssertEqual(mlsDecryptionService.decryptMessageForSubconversationType_Invocations.count, 1)
+        XCTAssertEqual(mlsDecryptionService.decryptMessageForSubconversationTypeContext_Invocations.count, 1)
         XCTAssertEqual(event.decryptedMessages.first?.message, decryptedMessage)
     }
 
     func testDecryptedEventData_It_Decrypts_A_Welcome_Message_Event_And_Invokes_Repo_Methods() async throws {
         // Mock
 
-        mlsDecryptionService.processWelcomeMessageWelcomeMessage_MockValue = Scaffolding.mlsGroupID
+        mlsDecryptionService.processWelcomeMessageWelcomeMessageContext_MockValue = Scaffolding.mlsGroupID
         conversationLocalStore
             .createMLSConversationConversationIDConversationDomainMlsGroupID_MockMethod = { _, _, _ in }
 
         // When
 
         try await sut.decryptedWelcomeMessageEventData(
-            from: Scaffolding.makeWelcomeEvent()
+            from: Scaffolding.makeWelcomeEvent(),
+            context: nil
         )
 
         // Then
 
-        XCTAssertEqual(mlsDecryptionService.processWelcomeMessageWelcomeMessage_Invocations.count, 1)
+        XCTAssertEqual(mlsDecryptionService.processWelcomeMessageWelcomeMessageContext_Invocations.count, 1)
         XCTAssertEqual(
             conversationLocalStore.createMLSConversationConversationIDConversationDomainMlsGroupID_Invocations.count,
             1
@@ -129,15 +133,15 @@ final class MLSMessageDecryptorTests: XCTestCase {
 
         static let localDomain = "local.com"
 
-        static let selfUserID = UserID(uuid: UUID(), domain: localDomain)
+        static let selfUserID = UserID(id: UUID(), domain: localDomain)
         static let selfClientID = "selfClientID"
         static let selfClientNumberOfKeys: Int32 = 10
 
-        static let aliceID = UserID(uuid: UUID(), domain: localDomain)
+        static let aliceID = UserID(id: UUID(), domain: localDomain)
         static let aliceClientID1 = "aliceClientID1"
         static let aliceClientID2 = "aliceClientID2"
 
-        static let conversationID = ConversationID(uuid: UUID(), domain: localDomain)
+        static let conversationID = ConversationID(id: UUID(), domain: localDomain)
         static let timestamp = Date()
 
         static let base64EncodedString = "CiQ5ZTU2NTQwOS0xODZiLTRlN2YtYTE4NC05NzE4MGE0MDAwMDQSDAoKRXZlcnl0aGluZw=="
@@ -158,7 +162,7 @@ final class MLSMessageDecryptorTests: XCTestCase {
         static func makeWelcomeEvent() -> ConversationMLSWelcomeEvent {
             ConversationMLSWelcomeEvent(
                 conversationID: conversationID,
-                senderID: UserID(uuid: .mockID1, domain: ""),
+                senderID: UserID(id: .mockID1, domain: ""),
                 welcomeMessage: ""
             )
         }

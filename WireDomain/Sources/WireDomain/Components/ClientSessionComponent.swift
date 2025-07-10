@@ -18,25 +18,29 @@
 
 import Combine
 import Foundation
-import WireAPI
 import WireCoreCrypto
 import WireDataModel
+import WireNetwork
 
 public final class ClientSessionComponent {
 
-    public struct ProcessorHandlers {
+    /// Provides callbacks for other modules.
+    public struct CompletionHandlers {
         let onProcessedCallEvent: (CallEventInfo) -> Void
         let onSelfClientInvalidated: () async -> Void
         let onProcessedTypingUsers: ([ConversationTypingUsersInfo]) -> Void
+        let onAuthenticationFailure: @Sendable () -> Void
 
         public init(
             onProcessedCallEvent: @escaping (CallEventInfo) -> Void,
             onSelfClientInvalidated: @escaping () async -> Void,
-            onProcessedTypingUsers: @escaping ([ConversationTypingUsersInfo]) -> Void
+            onAuthenticationFailure: @escaping @Sendable () -> Void,
+            onProcessedTypingUsers: @escaping ([ConversationTypingUsersInfo]) -> Void,
         ) {
             self.onProcessedCallEvent = onProcessedCallEvent
             self.onSelfClientInvalidated = onSelfClientInvalidated
             self.onProcessedTypingUsers = onProcessedTypingUsers
+            self.onAuthenticationFailure = onAuthenticationFailure
         }
     }
 
@@ -45,7 +49,7 @@ public final class ClientSessionComponent {
 
     private let networkService: NetworkService
     private let pushChannelNetworkService: NetworkService
-    private let apiVersion: WireAPI.APIVersion
+    private let apiVersion: WireNetwork.APIVersion
 
     private let localDomain: String
     private let isFederationEnabled: Bool
@@ -59,16 +63,15 @@ public final class ClientSessionComponent {
     private let mlsService: any MLSServiceInterface
     private let mlsDecryptionService: any MLSDecryptionServiceInterface
     private let proteusService: any ProteusServiceInterface
-
-    private let processorHandlers: ProcessorHandlers
-    private let onAuthenticationFailure: @Sendable () -> Void
+    private let coreCryptoProvider: any CoreCryptoProviderProtocol
+    private let completionHandlers: CompletionHandlers
 
     public init(
         selfUserID: UUID,
         selfClientID: String,
         networkService: NetworkService,
         pushChannelNetworkService: NetworkService,
-        apiVersion: WireAPI.APIVersion,
+        apiVersion: WireNetwork.APIVersion,
         localDomain: String,
         isFederationEnabled: Bool,
         isMLSEnabled: Bool,
@@ -79,8 +82,8 @@ public final class ClientSessionComponent {
         mlsService: any MLSServiceInterface,
         mlsDecryptionService: any MLSDecryptionServiceInterface,
         proteusService: any ProteusServiceInterface,
-        processorHandlers: ProcessorHandlers,
-        onAuthenticationFailure: @escaping @Sendable () -> Void
+        coreCryptoProvider: any CoreCryptoProviderProtocol,
+        completionHandlers: CompletionHandlers
     ) {
         self.selfUserID = selfUserID
         self.selfClientID = selfClientID
@@ -97,15 +100,15 @@ public final class ClientSessionComponent {
         self.localDomain = localDomain
         self.isFederationEnabled = isFederationEnabled
         self.isMLSEnabled = isMLSEnabled
-        self.processorHandlers = processorHandlers
-        self.onAuthenticationFailure = onAuthenticationFailure
+        self.coreCryptoProvider = coreCryptoProvider
+        self.completionHandlers = completionHandlers
     }
 
     private lazy var authenticationManager = AuthenticationManager(
         clientID: selfClientID,
         cookieStorage: cookieStorage,
         networkService: networkService,
-        onAuthenticationFailure: onAuthenticationFailure
+        onAuthenticationFailure: completionHandlers.onAuthenticationFailure
     )
 
     // MARK: - Network API clients
@@ -133,7 +136,11 @@ public final class ClientSessionComponent {
 
     private lazy var pushChannelAPI = PushChannelAPIBuilder(
         pushChannelService: pushChannelService
-    ).makeAPI()
+    ).makeAPI(for: apiVersion)
+
+    private lazy var pushChannelV2API = PushChannelV2APIBuilder(
+        pushChannelService: pushChannelService
+    ).makeAPI(for: apiVersion)
 
     private lazy var selfUserAPI = SelfUserAPIBuilder(
         apiService: apiService
@@ -201,7 +208,7 @@ public final class ClientSessionComponent {
         sharedUserDefaults: sharedUserDefaults
     )
 
-    private lazy var userClientsLocalStore: some UserClientsLocalStore = UserClientsLocalStore(
+    private lazy var userClientsLocalStore: some UserClientsLocalStoreProtocol = UserClientsLocalStore(
         context: syncContext
     )
 
@@ -258,11 +265,20 @@ public final class ClientSessionComponent {
         store: backendConfigLocalStore
     )
 
+    private var journal: Journal {
+        Journal(
+            userID: selfUserID,
+            storage: sharedUserDefaults
+        )
+    }
+
     private lazy var pullPendingUpdateEventsSync = PullPendingUpdateEventsSync(
         selfClientID: selfClientID,
         api: updateEventsAPI,
         store: updateEventsLocalStore,
-        decryptor: updateEventDecryptor
+        journal: journal,
+        decryptor: updateEventDecryptor,
+        coreCryptoProvider: coreCryptoProvider
     )
 
     private lazy var pullSelfLegalholdInfoSync = PullSelfLegalholdInfoSync(
@@ -304,6 +320,11 @@ public final class ClientSessionComponent {
     private lazy var pullUserConnectionsSync = PullUserConnectionsSync(
         api: userConnectionsAPI,
         store: userConnectionsStore
+    )
+
+    private lazy var pullServerTimeSync = PullServerTimeSync(
+        api: updateEventsAPI,
+        store: updateEventsLocalStore
     )
 
     // MARK: - Push syncs
@@ -348,16 +369,51 @@ public final class ClientSessionComponent {
         authenticationManager: authenticationManager
     )
 
+    private lazy var mlsGroupRepairAgent = MLSGroupRepairAgent(
+        journal: journal,
+        mlsService: mlsService
+    )
+
     public lazy var incrementalSync = IncrementalSync(
         selfClientID: selfClientID,
         pushChannelAPI: pushChannelAPI,
         updateEventsSync: pullPendingUpdateEventsSync,
         decryptor: updateEventDecryptor,
-        store: updateEventsLocalStore,
+        updateEventsStore: updateEventsLocalStore,
+        messageStore: messageLocalStore,
         processor: updateEventProcessor,
         databaseSaver: databaseSaver,
-        syncStateSubject: syncStateSubject
+        syncStateSubject: syncStateSubject,
+        journal: journal,
+        mlsGroupRepairAgent: mlsGroupRepairAgent
     )
+
+    public lazy var incrementalSyncV2 = IncrementalSyncV2(
+        selfClientID: selfClientID,
+        pullServerTimeSync: pullServerTimeSync,
+        pushChannelAPI: pushChannelV2API,
+        decryptor: updateEventDecryptor,
+        updateEventsStore: updateEventsLocalStore,
+        messageStore: messageLocalStore,
+        processor: updateEventProcessor,
+        databaseSaver: databaseSaver,
+        syncStateSubject: syncStateSubject,
+        coreCryptoProvider: coreCryptoProvider,
+        journal: journal
+    )
+
+    public func consumableNotificationsMigrator() -> ConsumableNotificationsMigrator {
+        ConsumableNotificationsMigrator(
+            sync: incrementalSync,
+            userClientsAPI: userClientsAPI,
+            userClientsLocalStore: userClientsLocalStore,
+            apiVersion: apiVersion,
+            journal: Journal(
+                userID: selfUserID,
+                storage: sharedUserDefaults
+            )
+        )
+    }
 
     // MARK: - Repositories
 
@@ -464,7 +520,7 @@ public final class ClientSessionComponent {
         messageLocalStore: messageLocalStore,
         userLocalStore: userLocalStore,
         protobufMessageProcessor: conversationProtobufMessageProcessor,
-        onProcessedCallEvent: processorHandlers.onProcessedCallEvent
+        onProcessedCallEvent: completionHandlers.onProcessedCallEvent
     )
 
     private lazy var conversationMLSWelcomeEventProcessor = ConversationMLSWelcomeEventProcessor(
@@ -480,7 +536,7 @@ public final class ClientSessionComponent {
         messageLocalStore: messageLocalStore,
         userLocalStore: userLocalStore,
         protobufMessageProcessor: conversationProtobufMessageProcessor,
-        onProcessedCallEvent: processorHandlers.onProcessedCallEvent
+        onProcessedCallEvent: completionHandlers.onProcessedCallEvent
     )
 
     private lazy var conversationProtocolUpdateEventProcessor = ConversationProtocolUpdateEventProcessor(
@@ -502,7 +558,7 @@ public final class ClientSessionComponent {
         conversationRepository: conversationRepository,
         conversationLocalStore: conversationLocalStore,
         userRepository: userRepository,
-        onProcessedTypingUsers: processorHandlers.onProcessedTypingUsers
+        onProcessedTypingUsers: completionHandlers.onProcessedTypingUsers
     )
 
     private lazy var featureConfigUpdateEventProcessor = FeatureConfigUpdateEventProcessor(
@@ -527,10 +583,11 @@ public final class ClientSessionComponent {
         pushSupportedProtocolsUseCase: pushSupportedProtocolsUseCase,
         oneOnOneResolver: oneOnOneResolver,
         context: syncContext,
-        onSelfClientInvalidated: processorHandlers.onSelfClientInvalidated
+        onSelfClientInvalidated: completionHandlers.onSelfClientInvalidated
     )
 
     private lazy var userConnectionEventProcessor = UserConnectionEventProcessor(
+        context: syncContext,
         connectionsRepository: userConnectionsRepository,
         oneOnOneResolver: oneOnOneResolver
     )

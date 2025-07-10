@@ -323,4 +323,10 @@
 "searchGifs.gifItems_loaded.announcement" = "已加载 %@ 张新 GIF";
 
 // MARK: - Channel Creation UI - Navigation
+
 "conversation.create.channel.back" = "返回新对话概览";
+
+// MARK: - E2EI
+
+"webAuth.urlLabel.description" = "身份提供商 URL";
+"webAuth.urlLabel.hint" = "选择以打开完整的 URL。";

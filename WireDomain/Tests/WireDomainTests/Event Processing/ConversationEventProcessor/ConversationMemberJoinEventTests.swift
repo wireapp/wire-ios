@@ -20,8 +20,8 @@ import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
 import XCTest
-@testable import WireAPI
 @testable import WireDomain
+@testable import WireNetwork
 
 final class ConversationMemberJoinEventProcessorTests: XCTestCase {
 
@@ -72,7 +72,7 @@ final class ConversationMemberJoinEventProcessorTests: XCTestCase {
 
         let (conversation, sender, addedUser, role) = await context.perform { [self] in
             let conversation = modelHelper.createGroupConversation(
-                id: Scaffolding.conversationID.uuid,
+                id: Scaffolding.conversationID.id,
                 domain: Scaffolding.conversationID.domain,
                 in: context
             )
@@ -109,13 +109,13 @@ final class ConversationMemberJoinEventProcessorTests: XCTestCase {
 
     private enum Scaffolding {
         static let domain = "domain.com"
-        static let conversationID = ConversationID(uuid: UUID(), domain: domain)
-        static let memberID = WireAPI.QualifiedID(uuid: UUID(), domain: domain)
-        static let senderID = UserID(uuid: UUID(), domain: domain)
+        static let conversationID = ConversationID(id: UUID(), domain: domain)
+        static let memberID = WireNetwork.QualifiedID(id: UUID(), domain: domain)
+        static let senderID = UserID(id: UUID(), domain: domain)
 
         static let member = Conversation.Member(
             qualifiedID: memberID,
-            id: memberID.uuid,
+            id: memberID.id,
             qualifiedTarget: nil,
             target: nil,
             conversationRole: ZMConversation.defaultMemberRoleName,

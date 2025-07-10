@@ -16,13 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import WireNetwork
 
 struct UserLegalholdRequestEventProcessor: UserLegalholdRequestEventProcessorProtocol {
 
     let repository: any UserRepositoryProtocol
 
-    func processEvent(_ event: UserLegalholdRequestEvent) async throws {
+    func processEvent(_ event: UserLegalholdRequestEvent) async {
         await repository.addLegalHoldRequest(
             userID: event.userID,
             clientID: event.clientID,

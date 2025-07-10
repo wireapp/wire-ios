@@ -90,8 +90,7 @@ final class SettingsDebugReportViewModelTests: XCTestCase {
 
         // Set mock methods
         mockFetchShareableConversations.invoke_MockValue = [conversation]
-        mockLogsProvider.generateLogFilesZip_MockValue = mockURL
-        mockLogsProvider.clearLogsDirectory_MockMethod = {}
+        mockLogsProvider.mockURL = mockURL
         mockFileMetaDataGenerator.metadataForFileAt_MockMethod = { url in
             XCTAssertEqual(url, mockURL)
             return mockMetadata

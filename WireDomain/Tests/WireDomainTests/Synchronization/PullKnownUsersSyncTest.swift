@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPISupport
+import WireNetworkSupport
 import XCTest
-@testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport
+@testable import WireNetwork
 
 final class PullKnownUsersSyncTests: XCTestCase {
 
@@ -42,7 +42,7 @@ final class PullKnownUsersSyncTests: XCTestCase {
 
     func testPull() async throws {
         // Mock
-        api.getUsersUserIDs_MockValue = WireAPI.UserList(
+        api.getUsersUserIDs_MockValue = WireNetwork.UserList(
             found: [Scaffolding.user1],
             failed: [Scaffolding.user2.id]
         )
@@ -74,7 +74,7 @@ final class PullKnownUsersSyncTests: XCTestCase {
 private enum Scaffolding {
 
     static let user1 = User(
-        id: QualifiedID(uuid: UUID(), domain: "wire.com"),
+        id: QualifiedID(id: UUID(), domain: "wire.com"),
         name: "user1",
         handle: "handle1",
         teamID: nil,
@@ -89,7 +89,7 @@ private enum Scaffolding {
     )
 
     static let user2 = User(
-        id: QualifiedID(uuid: UUID(), domain: "wire.com"),
+        id: QualifiedID(id: UUID(), domain: "wire.com"),
         name: "user2",
         handle: "handle2",
         teamID: nil,

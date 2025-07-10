@@ -155,8 +155,8 @@ final class ConversationTableViewDataSource: NSObject {
                     messages: messages
                 )
 
-                let sectionController = if let cachedSectionController = self.sectionControllers
-                    .get(for: element.nonce!) {
+                let sectionController = if let nonce = element.nonce,
+                                           let cachedSectionController = self.sectionControllers.get(for: nonce) {
                     cachedSectionController
                 } else {
                     self.makeSectionController(
@@ -177,7 +177,6 @@ final class ConversationTableViewDataSource: NSObject {
             DispatchQueue.main.async {
                 var sections = [Section]()
 
-                let allMessages = messagesOnMainThread
                 for (messageObjectId, sectionController, context) in result {
 
                     // saving calculations result in local cache
@@ -223,9 +222,8 @@ final class ConversationTableViewDataSource: NSObject {
     func calculateSections(
         updating sectionController: ConversationMessageSectionController
     ) -> [Section] {
-        let sectionIdentifier = sectionController.message.nonce!
-
-        guard let section = currentSections.firstIndex(where: { $0.model == sectionIdentifier })
+        guard let sectionIdentifier = sectionController.message.nonce,
+              let section = currentSections.firstIndex(where: { $0.model == sectionIdentifier })
         else { return currentSections }
 
         for (row, description) in sectionController.tableViewCellDescriptions.enumerated() {
@@ -285,11 +283,13 @@ final class ConversationTableViewDataSource: NSObject {
     }
 
     func resetSectionControllers() {
-        sectionControllers.reset()
-        calculateSections { [weak self] sections in
-            guard let self else { return }
-            currentSections = sections
-            tableView.reloadData()
+        debouncer.call(id: nil) { [weak self] in
+            self?.sectionControllers.reset()
+            self?.calculateSections { [weak self] sections in
+                guard let self else { return }
+                currentSections = sections
+                tableView.reloadData()
+            }
         }
     }
 
@@ -302,7 +302,8 @@ final class ConversationTableViewDataSource: NSObject {
         sectionController: ConversationMessageSectionController,
         selfUser: any UserType
     ) -> ConversationMessageActionController {
-        if let cachedEntry = actionControllers.get(for: message.nonce!) {
+        if let nonce = message.nonce,
+           let cachedEntry = actionControllers.get(for: nonce) {
             return cachedEntry
         }
 
@@ -368,7 +369,8 @@ final class ConversationTableViewDataSource: NSObject {
         selfUser: any UserType,
         messages: [ZMMessage]
     ) -> ConversationMessageSectionController {
-        if let cachedEntry = sectionControllers.get(for: message.nonce!) {
+        if let nonce = message.nonce,
+           let cachedEntry = sectionControllers.get(for: nonce) {
             cachedEntry.contentWidth = contentWidth
             return cachedEntry
         }
@@ -381,7 +383,9 @@ final class ConversationTableViewDataSource: NSObject {
             firstUnreadMessageNonce: firstUnreadMessage?.nonce
         )
 
-        sectionControllers.set(value: sectionController, for: message.nonce!)
+        if let nonce = message.nonce {
+            sectionControllers.set(value: sectionController, for: nonce)
+        }
 
         return sectionController
     }
@@ -464,10 +468,12 @@ final class ConversationTableViewDataSource: NSObject {
         hasNewerMessagesToLoad = offset > 0
         firstUnreadMessage = conversation.firstUnreadMessage
 
-        calculateSections(forceRecalculate: forceRecalculate) { [weak self] sections in
-            self?.currentSections = sections
-            self?.tableView.reloadData()
-            completion?()
+        debouncer.call(id: nil) { [weak self] in
+            self?.calculateSections(forceRecalculate: forceRecalculate) { [weak self] sections in
+                self?.currentSections = sections
+                self?.tableView.reloadData()
+                completion?()
+            }
         }
     }
 
@@ -656,7 +662,7 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
     }
 
     func collapse(message: ZMConversationMessage) {
-        guard let section = sectionControllers.get(for: message.nonce!) else {
+        guard let nonce = message.nonce, let section = sectionControllers.get(for: nonce) else {
             return
         }
         section.collapse()
@@ -715,7 +721,8 @@ extension ConversationTableViewDataSource: ConversationMessageSectionControllerD
         _ controller: ConversationMessageSectionController,
         didRequestRefreshForMessage message: ZMConversationMessage
     ) {
-        debouncer.call(id: message.nonce!) { [weak self] in
+        guard let nonce = message.nonce else { return }
+        debouncer.call(id: nonce) { [weak self] in
             guard let self else { return }
             reloadSections(newSections: calculateSections(updating: controller))
         }

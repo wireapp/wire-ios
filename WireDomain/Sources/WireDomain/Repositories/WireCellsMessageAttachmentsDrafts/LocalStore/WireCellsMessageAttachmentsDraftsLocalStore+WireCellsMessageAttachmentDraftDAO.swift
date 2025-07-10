@@ -135,7 +135,7 @@ extension WireCellsMessageAttachmentsDraftsLocalStore: WireCellsMessageAttachmen
             return []
         }
 
-        return try await WireCellsMessageAttachmentDraftsObserverImplementation(
+        return WireCellsMessageAttachmentDraftsObserverImplementation(
             fetchedResultsController: fetchedResultsController,
             initialValues: initialValues
         )

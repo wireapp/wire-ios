@@ -18,11 +18,11 @@
 
 import SwiftUI
 import UIKit
-import WireAPI
-import WireConversationsAPI
-import WireConversationsUI
 import WireDomain
 import WireLogging
+import WireMessagingAPI
+import WireMessagingUI
+import WireNetwork
 import WireReusableUIComponents
 import WireSyncEngine
 
@@ -202,7 +202,7 @@ extension WireConversationChannelCreationFormViewController: AddParticipantsConv
         users: [ZMUser]
     ) async {
         guard let backendInfoApiVersion = BackendInfo.apiVersion,
-              let apiVersion = WireAPI.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
+              let apiVersion = WireNetwork.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
               let apiService = session.apiService else { return }
 
         let context = session.syncContext
@@ -213,12 +213,12 @@ extension WireConversationChannelCreationFormViewController: AddParticipantsConv
             context: context
         )
 
-        let accessMode: [WireAPI.ConversationAccessMode] = values.allowGuests ? [.invite, .code] : []
+        let accessMode: [WireNetwork.ConversationAccessMode] = values.allowGuests ? [.invite, .code] : []
         let accessRoles = ConversationAccessRoleV2.from(
             allowGuests: values.allowGuests,
             allowServices: values.shouldIncludeServices ? values.allowServices : false
         ).compactMap {
-            WireAPI.ConversationAccessRole(rawValue: $0.rawValue)
+            $0.toNetworkModel()
         }
 
         do {
@@ -270,7 +270,7 @@ extension WireConversationChannelCreationFormViewController: AddParticipantsConv
 private extension WireConversationChannelCreationFormViewController {
     func makeCreateChannelUseCase(
         apiService: any APIServiceProtocol,
-        apiVersion: WireAPI.APIVersion,
+        apiVersion: WireNetwork.APIVersion,
         context: NSManagedObjectContext
     ) -> any CreateChannelUseCaseProtocol {
         let conversationsAPI = ConversationsAPIBuilder(

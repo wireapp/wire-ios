@@ -20,8 +20,8 @@ import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
 import XCTest
-@testable import WireAPI
 @testable import WireDomain
+@testable import WireNetwork
 
 final class ConversationProteusMessageAddEventProcessorTests: XCTestCase {
 
@@ -214,8 +214,8 @@ final class ConversationProteusMessageAddEventProcessorTests: XCTestCase {
             "CiQzMzRmN2Y3Yi1hNDk5LTQ1MTMtOTJhOC1hZTg4MDI0OTQ0ZTlCRAog4H1nD6bG2sCxC/tZBnIG7avLYhkCsSfv0ATNqnfug7wSIJCkkpWzMVxHXfu33pMQfEK+u/5qY426AbK9sC3Fu8Mx"
 
         static let largeMessageEvent = ConversationProteusMessageAddEvent(
-            conversationID: ConversationID(uuid: .mockID1, domain: domain),
-            senderID: UserID(uuid: .mockID1, domain: domain),
+            conversationID: ConversationID(id: .mockID1, domain: domain),
+            senderID: UserID(id: .mockID1, domain: domain),
             timestamp: .now,
             message: .init(encryptedMessage: "", decryptedMessage: externalMessage),
             // Large message payload -> message is external
@@ -225,8 +225,8 @@ final class ConversationProteusMessageAddEventProcessorTests: XCTestCase {
         )
 
         static let regularMessageEvent = ConversationProteusMessageAddEvent(
-            conversationID: ConversationID(uuid: .mockID1, domain: domain),
-            senderID: UserID(uuid: .mockID1, domain: domain),
+            conversationID: ConversationID(id: .mockID1, domain: domain),
+            senderID: UserID(id: .mockID1, domain: domain),
             timestamp: .now,
             message: .init(encryptedMessage: "", decryptedMessage: regularMessage),
             // Message is regular, no external data payload
@@ -235,8 +235,8 @@ final class ConversationProteusMessageAddEventProcessorTests: XCTestCase {
         )
 
         static let callingMessageEvent = ConversationProteusMessageAddEvent(
-            conversationID: ConversationID(uuid: .mockID1, domain: domain),
-            senderID: UserID(uuid: .mockID1, domain: domain),
+            conversationID: ConversationID(id: .mockID1, domain: domain),
+            senderID: UserID(id: .mockID1, domain: domain),
             timestamp: .now,
             message: .init(encryptedMessage: "", decryptedMessage: text!),
             // Message has calling

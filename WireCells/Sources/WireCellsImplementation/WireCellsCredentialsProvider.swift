@@ -27,19 +27,19 @@ final class WireCellsCredentialsProvider {
 
         if apiUrl.hasSuffix("imai.wire.link") {
             return WireCellsCredentials(
-                serverUrl: URL(string: "https://service.zeta.pydiocells.com")!,
+                serverURL: URL(string: "https://service.zeta.pydiocells.com")!,
                 accessToken: "fybwjf05cs4bex54ufvmnktttttov1pw:\(userID)",
                 gatewaySecret: "gatewaysecret"
             )
         } else if apiUrl.hasSuffix("fulu.wire.link") {
             return WireCellsCredentials(
-                serverUrl: URL(string: "https://shares.fulu.wire.link")!,
+                serverURL: URL(string: "https://shares.fulu.wire.link")!,
                 accessToken: "rnFZ9M3L27j2rxR3h8mvNs3X4ZKk2427ZH5gBnTt:\(userID)",
                 gatewaySecret: "gatewaysecret"
             )
         } else {
             return WireCellsCredentials(
-                serverUrl: URL(string: "https://service.zeta.pydiocells.com")!,
+                serverURL: URL(string: "https://service.zeta.pydiocells.com")!,
                 accessToken: "",
                 gatewaySecret: ""
             )

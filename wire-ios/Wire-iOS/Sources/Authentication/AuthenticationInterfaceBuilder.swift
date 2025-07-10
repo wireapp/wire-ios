@@ -16,11 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import UIKit
-import WireAPI
 import WireAuthentication
 import WireCommonComponents
+import WireCountly
 import WireDataModel
+import WireFoundation
+import WireNetwork
 import WireSyncEngine
 
 /// A type of view controller that can be managed by an authentication coordinator.
@@ -44,6 +47,8 @@ final class AuthenticationInterfaceBuilder {
         BackendEnvironment.shared
     }
 
+    private var accountSelector: AccountSelector?
+
     // MARK: - Initialization
 
     /// Creates an interface builder with the specified set of features.
@@ -51,10 +56,12 @@ final class AuthenticationInterfaceBuilder {
 
     init(
         featureProvider: AuthenticationFeatureProvider,
+        accountSelector: AccountSelector?,
         backendEnvironmentProvider: @escaping () -> BackendEnvironmentProvider = { BackendEnvironment.shared }
     ) {
         self.featureProvider = featureProvider
         self.backendEnvironmentProvider = backendEnvironmentProvider
+        self.accountSelector = accountSelector
     }
 
     // MARK: - Interface Building
@@ -76,10 +83,16 @@ final class AuthenticationInterfaceBuilder {
         switch step {
         case .wireAuthenticationModule:
             let assembly = WireAuthenticationAssembly()
-            let numberOfAccounts = SessionManager.shared?.accountManager.accounts.count ?? 0
+            let accounts = (SessionManager.shared?.accountManager.accounts ?? [])
+                .map { account in
+                    account.toUIModel { [weak self] in
+                        self?.accountSelector?.switchTo(account: account)
+                    }
+                }
             let preferredAPIVersion = BackendInfo.preferredAPIVersion.flatMap {
-                WireAPI.APIVersion(rawValue: UInt($0.rawValue))
+                WireNetwork.APIVersion(rawValue: UInt($0.rawValue))
             }
+            let registrationAnalyticsTracker = RegistrationAnalyticsTracker()
             let (rootView, bridge) = assembly.assemble(
                 environmentType: BackendEnvironmentType(environment.environmentType.value),
                 backendConfig: BackendConfig(environment),
@@ -88,11 +101,17 @@ final class AuthenticationInterfaceBuilder {
                 accountsURL: environment.accountsURL,
                 howToChangeEmailURL: WireURLs.shared.howToChangeEmail,
                 howToDeleteAccountURL: WireURLs.shared.howToDeleteAccount,
+                privacyPolicyURL: WireURLs.shared.privacyPolicy,
+                termsOfUseURL: WireURLs.shared.legal,
                 passwordValidator: AuthenticationPasswordValidator(),
                 ssoCallbackURLScheme: Bundle.ssoURLScheme ?? "wire-sso",
                 appStoreURL: WireURLs.shared.appOnItunes,
-                existsAnotherAccount: numberOfAccounts > 0
+                accountsPublisher: CurrentValuePublisher(subject: CurrentValueSubject(accounts)),
+                useLegacyRegistrationFlow: !DeveloperFlag.newRegistration.isOn,
+                isMultibackendEnabled: DeveloperFlag.multibackend.isOn,
+                registrationAnalyticsTracker: registrationAnalyticsTracker
             )
+            authenticationCoordinator?.analyticsEventTracker = registrationAnalyticsTracker
             return AuthenticationHostingController(
                 rootView: rootView,
                 bridge: bridge,

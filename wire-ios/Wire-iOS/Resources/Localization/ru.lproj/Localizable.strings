@@ -102,8 +102,8 @@
 "peoplepicker.federation.domain_unvailable" = "Федеративный домен в настоящее время недоступен. [Подробнее](%@)";
 
 "add_participants.alert.title" = "Беседа переполнена";
-"add_participants.alert.message.new_conversation" = "К беседе могут присоединиться до %d человек.";
-"add_participants.alert.message.existing_conversation" = "К беседе может присоединиться до %1$d человек. На текущий момент в комнате есть места еще для %2$d.";
+"add_participants.alert.message.new_conversation" = "К беседе могут присоединиться до %@ человек.";
+"add_participants.alert.message.existing_conversation" = "К беседе может присоединиться до %@ человек. На текущий момент в комнате есть места еще для %@.";
 
 // Channel Creation UI - Navigation
 "conversation.create.channel.title" = "Новый канал";
@@ -368,6 +368,22 @@
 "conversation.banner.are_present" = "%@ присутствуют";
 "conversation.banner.are_active" = "%@ активны";
 "conversation.banner.separator" = " и ";
+
+"conversation.banner.remotes_externals_guests_services_present" = "Federated users, externals, guests and services are present";
+"conversation.banner.remotes_externals_guests_present" = "Federated users, externals and guests are present";
+"conversation.banner.remotes_externals_services_present" = "Federated users, externals and services are present";
+"conversation.banner.remotes_guests_services_present" = "Federated users, guests and services are present";
+"conversation.banner.externals_guests_services_present" = "Externals, guests and services are present";
+"conversation.banner.remotes_externals_present" = "Federated users and externals are present";
+"conversation.banner.remotes_guests_present" = "Federated users and guests are present";
+"conversation.banner.remotes_services_present" = "Federated users and services are present";
+"conversation.banner.externals_guests_present" = "Externals and guests are present";
+"conversation.banner.externals_services_present" = "Externals and services are present";
+"conversation.banner.guests_services_present" = "Guests and services are present";
+"conversation.banner.remotes_present" = "Federated users are present";
+"conversation.banner.externals_present" = "Externals are present";
+"conversation.banner.guests_present" = "Guests are present";
+"conversation.banner.services_active" = "Services are active";
 
 "conversation.action.search" = "Поиск";
 "conversation.action.conversationDetails" = "Информация о беседе";
@@ -654,6 +670,7 @@
 "content.collapsed.video.title" = "Вы отправили видео";
 "content.collapsed.audio.title" = "Вы отправили аудиосообщение";
 "content.collapsed.location.title" = "Вы отправили свое местоположение";
+"content.collapsed.link.title" = "Вы отправили ссылку";
 
 "content.message.like" = "Нравится";
 "content.message.unlike" = "Не нравится";
@@ -859,7 +876,7 @@
 "participants.section.services" = "Сервисы (%d)";
 "participants.section.settings" = "Настройки";
 "participants.footer.add_title" = "Добавить участников";
-"participants.section.name.footer" = "К беседе могут присоединиться до %1$d участников.";
+"participants.section.name.footer" = "К беседе могут присоединиться до %@ участников.";
 "participants.section.admins.footer" = "Здесь нет администраторов.";
 "participants.section.members.footer" = "Здесь нет участников.";
 
@@ -1122,8 +1139,8 @@
 
 // Settings - top level
 "self.settings.create_team.title" = "Создать команду";
+"self.settings.add_account_or_team.title" = "Добавить аккаунт или команду";
 "self.settings.manage_team.title" = "Управлять командой";
-"self.settings.add_team_or_account.title" = "Добавить аккаунт";
 "self.settings.add_account.title" = "Добавить аккаунт";
 
 "self.settings.add_account.error.title" = "Активны три аккаунта";
@@ -1158,6 +1175,7 @@
 "self.settings.account_details.remove_device.password.error" = "Неверный пароль";
 
 "self.settings.account_appearance_group.title" = "Внешний вид";
+"self.settings.account_appearance_group.footer" = "Когда эта функция включена, фон ваших бесед будет соответствовать цвету вашего профиля, а также светлой или темной теме.";
 
 "self.settings.privacy_section_group.title" = "Конфиденциальность";
 "self.settings.enable_read_receipts.title" = "Отправлять отчеты о прочтении";
@@ -1176,6 +1194,7 @@
 "self.settings.account_picture_group.accent_color.amber" = "Янтарный";
 "self.settings.account_picture_group.accent_color.turquoise" = "Бирюзовый";
 "self.settings.account_picture_group.accent_color.purple" = "Фиолетовый";
+"self.settings.account_picture_group.background.title" = "Цвет фона беседы";
 
 "self.settings.account_personal_information_group.title" = "Личные данные";
 
@@ -1327,7 +1346,7 @@
 "self.settings.privacy_security.disable_link_previews.footer" = "Эта опция не влияет на предварительный просмотр ссылок от других пользователей.";
 
 "self.settings.privacy_security.collapse_own_messages.title" = "Свернуть мои сообщения";
-"self.settings.privacy_security.collapse_own_messages.footer" = "Когда эта функция включена, все ваши сообщения сворачиваются в одну строку.";
+"self.settings.privacy_security.collapse_own_messages.footer" = "Когда эта функция включена, все ваши сообщения сворачиваются после трех строк.";
 
 "self.settings.privacy_analytics_menu.devices.title" = "Устройства";
 
@@ -1591,6 +1610,7 @@
 "enroll_e2ei_certificate.subtitle" = "Сертификат активен, а устройство верифицировано.";
 "enroll_e2ei_certificate.certificate_details_button" = "Сведения о сертификате";
 "enroll_e2ei_certificate.ok_button" = "OK";
+"enroll_e2ei_certificate.idp_url_title" = "URL провайдера идентификации";
 
 // Update e2ei certificate
 "update_e2ei_certificate.title" = "Сертификат обновлен";

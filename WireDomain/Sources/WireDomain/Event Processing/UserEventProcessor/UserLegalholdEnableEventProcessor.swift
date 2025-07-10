@@ -17,7 +17,7 @@
 //
 
 import CoreData
-import WireAPI
+import WireNetwork
 
 struct UserLegalholdEnableEventProcessor: UserLegalholdEnableEventProcessorProtocol {
 

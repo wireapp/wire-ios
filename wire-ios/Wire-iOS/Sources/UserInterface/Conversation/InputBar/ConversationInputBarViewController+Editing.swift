@@ -27,7 +27,7 @@ extension ConversationInputBarViewController {
         guard let text = message.textMessageData?.messageText else { return }
         mode = .textInput
         editingMessage = message
-        updateRightAccessoryView()
+        updateButtonStates()
 
         inputBar.setInputBarState(
             .editing(originalText: text, mentions: message.textMessageData?.mentions ?? []),
@@ -70,7 +70,7 @@ extension ConversationInputBarViewController {
     func updateWritingState(animated: Bool) {
         guard editingMessage == nil else { return }
         inputBar.setInputBarState(.writing(ephemeral: ephemeralState), animated: animated)
-        updateRightAccessoryView()
+        updateButtonStates()
         updateMarkdownButton()
     }
 

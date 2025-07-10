@@ -36,7 +36,12 @@ class IncrementalSyncObserverTests {
     func ifAppIsLiveThenDontWait() async {
         // Given
         syncAgent.isSyncV2Enabled = true
-        syncAgent.syncStatePublisher = Just(SyncState.liveSyncing).eraseToAnyPublisher()
+        let subject = PassthroughSubject<SyncState, Never>()
+        syncAgent.syncStatePublisher = subject.eraseToAnyPublisher()
+        Task {
+            try? await Task.sleep(nanoseconds: 1_000_000)
+            subject.send(.liveSyncing(.ongoing))
+        }
 
         // When
         let before = Date.now
@@ -67,9 +72,26 @@ class IncrementalSyncObserverTests {
         let syncStateSubject = CurrentValueSubject<SyncState, Never>(.incrementalSyncing(.pullPendingEvents))
         syncAgent.syncStatePublisher = syncStateSubject.eraseToAnyPublisher()
 
+        let flag = ObserverFlag()
+
+        Task {
+            await flag.markStarted()
+            await sut.waitUntilCanSendMessage()
+        }
+
+        let didStart = await flag.waitUntilStarted()
+        #expect(didStart, "Observer never subscribed in time")
+
         Task {
             // Send the next state after a pause.
             try? await Task.sleep(for: .seconds(0.25))
+            syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
+
+            // Sending the states again to ensure we don't crash due to a misuse of `continuation.resume()` as it must
+            // be called only once.
+            // Since we're cancelling the subscription when `DecryptionState` is `.done` `continuation.resume()` should
+            // not be called again.
+            syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
             syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
         }
 
@@ -113,3 +135,20 @@ class IncrementalSyncObserverTests {
 // MARK: -
 
 private class MockNotificationContext: NSObject, NotificationContext {}
+
+private actor ObserverFlag {
+    private var started = false
+
+    func markStarted() {
+        started = true
+    }
+
+    func waitUntilStarted(timeout: TimeInterval = 1.0) async -> Bool {
+        let deadline = Date().addingTimeInterval(timeout)
+        while !started {
+            if Date() > deadline { return false }
+            try? await Task.sleep(nanoseconds: 10_000_000)
+        }
+        return true
+    }
+}

@@ -20,8 +20,8 @@ import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
 import XCTest
-@testable import WireAPI
 @testable import WireDomain
+@testable import WireNetwork
 
 final class UserLegalHoldEnableEventProcessorTests: XCTestCase {
 
@@ -103,7 +103,7 @@ final class UserLegalHoldEnableEventProcessorTests: XCTestCase {
 
         static let deletedUserClientID = UUID()
 
-        static let userClient1 = WireAPI.SelfUserClient(
+        static let userClient1 = WireNetwork.SelfUserClient(
             id: UUID().uuidString,
             type: .permanent,
             activationDate: .now,
@@ -113,7 +113,7 @@ final class UserLegalHoldEnableEventProcessorTests: XCTestCase {
             capabilities: []
         )
 
-        static let userClient2 = WireAPI.SelfUserClient(
+        static let userClient2 = WireNetwork.SelfUserClient(
             id: UUID().uuidString,
             type: .permanent,
             activationDate: .now,
@@ -123,7 +123,7 @@ final class UserLegalHoldEnableEventProcessorTests: XCTestCase {
             capabilities: []
         )
 
-        static let userClient3 = WireAPI.SelfUserClient(
+        static let userClient3 = WireNetwork.SelfUserClient(
             id: UUID().uuidString,
             type: .permanent,
             activationDate: .now,

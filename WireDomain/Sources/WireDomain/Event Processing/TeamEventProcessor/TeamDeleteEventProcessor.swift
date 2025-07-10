@@ -17,14 +17,14 @@
 //
 
 import CoreData
-import WireAPI
 import WireDataModel
+import WireNetwork
 
 struct TeamDeleteEventProcessor: TeamDeleteEventProcessorProtocol {
 
     let context: NSManagedObjectContext
 
-    func processEvent() async throws {
+    func processEvent() async {
         // swiftlint:disable:next todo_requires_jira_link
         // TODO: revisit this implementation
         let notification = AccountDeletedNotification(context: context)

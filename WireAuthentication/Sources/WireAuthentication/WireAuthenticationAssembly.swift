@@ -16,11 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import Foundation
 import NeedleFoundation
 import SwiftUI
-import WireAPI
 import WireAuthenticationAPI
+import WireFoundation
+import WireMultiBackendUI
+import WireNetwork
 import WireReusableUIComponents
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
@@ -49,10 +52,15 @@ public struct WireAuthenticationAssembly {
         accountsURL: URL,
         howToChangeEmailURL: URL,
         howToDeleteAccountURL: URL,
+        privacyPolicyURL: URL,
+        termsOfUseURL: URL,
         passwordValidator: any PasswordValidator,
         ssoCallbackURLScheme: String,
         appStoreURL: URL,
-        existsAnotherAccount: Bool
+        accountsPublisher: CurrentValuePublisher<[AccountUIModel]>,
+        useLegacyRegistrationFlow: Bool,
+        isMultibackendEnabled: Bool,
+        registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
         let backendInfo = BackendInfo(
             environmentType: environmentType,
@@ -64,10 +72,15 @@ public struct WireAuthenticationAssembly {
             minTLSVersion: minTLSVersion,
             howToChangeEmailURL: howToChangeEmailURL,
             howToDeleteAccountURL: howToDeleteAccountURL,
+            privacyPolicyURL: privacyPolicyURL,
+            termsOfUseURL: termsOfUseURL,
             passwordValidator: passwordValidator,
             ssoCallbackURLScheme: ssoCallbackURLScheme,
             appStoreURL: appStoreURL,
-            existsAnotherAccount: existsAnotherAccount
+            accountsPublisher: accountsPublisher,
+            useLegacyRegistrationFlow: useLegacyRegistrationFlow,
+            isMultibackendEnabled: isMultibackendEnabled,
+            registrationAnalyticsTracker: registrationAnalyticsTracker
         )
 
         return (view: RootView(factory: rootComponent), bridge: rootComponent.bridge)

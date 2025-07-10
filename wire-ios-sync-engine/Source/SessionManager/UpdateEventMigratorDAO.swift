@@ -18,10 +18,9 @@
 
 @preconcurrency import CoreData
 import Foundation
-import WireAPI
+import WireNetwork
 import WireUpdateEventCoding
 
-// sourcery: AutoMockable
 protocol UpdateEventMigratorDAOProtocol {
 
     func existsLegacyEvent() async throws -> Bool

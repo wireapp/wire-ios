@@ -26,6 +26,7 @@ final class CocoaLumberjackLogger: LoggerProtocol {
 
     private let fileLogger: DDFileLogger
     private var tags = [LogAttributesKey: String]()
+    private let tagsQueue = DispatchQueue(label: "CocoaLumberjackLogger.tagsQueue", attributes: .concurrent)
 
     /// - Parameter logsDirectory: If `nil` the default logs directory of `CocoaLumberjack` is used, otherwise the provided URL.
     init(logsDirectory: URL?) {
@@ -101,8 +102,13 @@ final class CocoaLumberjackLogger: LoggerProtocol {
         var entry =
             "[\(formattedLevel(level))] \(message.logDescription)\(attributesDescription(from: mergedAttributes))"
 
-        if !tags.isEmpty {
-            let extraInfo = tags.map { key, value in "[\(key.rawValue):\(value)]" }.joined()
+        var currentTags: [LogAttributesKey: String] = [:]
+        tagsQueue.sync {
+            currentTags = tags
+        }
+
+        if !currentTags.isEmpty {
+            let extraInfo = currentTags.map { key, value in "[\(key.rawValue):\(value)]" }.joined()
             entry += extraInfo
         }
 
@@ -115,10 +121,12 @@ final class CocoaLumberjackLogger: LoggerProtocol {
     }
 
     func addTag(_ key: LogAttributesKey, value: String?) {
-        if let value {
-            tags[key] = value
-        } else {
-            tags.removeValue(forKey: key)
+        tagsQueue.async(flags: .barrier) { [weak self] in
+            if let value {
+                self?.tags[key] = value
+            } else {
+                self?.tags.removeValue(forKey: key)
+            }
         }
     }
 

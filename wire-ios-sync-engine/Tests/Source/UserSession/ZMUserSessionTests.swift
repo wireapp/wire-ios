@@ -145,6 +145,26 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertTrue(syncStatus.isSlowSyncing)
     }
 
+    func test_didRegisterSelfUserClient_withConsumableNotificationsCapabableEnablesSyncV3() async throws {
+        // GIVEN
+        mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
+        DeveloperFlag.consumableNotifications.enable(true, storage: .temporary())
+        defer {
+            DeveloperFlag.storage = .standard
+        }
+        let userClient = await syncMOC.perform {
+            self.createSelfClient(capabilities: [.consumableNotifications, .legalholdConsent])
+        }
+
+        // WHEN
+        await syncMOC.perform {
+            self.sut.didRegisterSelfUserClient(userClient)
+        }
+
+        // THEN
+        XCTAssertTrue(sut.journal[.isConsumableNotificationsEnabled])
+    }
+
     func testThatPerformChangesAreDoneSynchronouslyOnTheMainQueue() {
         // GIVEN
         var executed = false

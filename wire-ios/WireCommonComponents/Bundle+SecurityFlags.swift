@@ -30,6 +30,7 @@ public enum SecurityFlags {
     case forceCallKitDisabled
     case clipboard
     case collapseOwnMessages
+    case openLinksExternally
 
     /// Whether encryption at rest is enabled and can't be disabled.
 
@@ -38,6 +39,10 @@ public enum SecurityFlags {
     /// The minimum TLS version supported by the app.
 
     case minTLSVersion
+
+    /// Whether an embedded user agent should be used for IDP authentication.
+
+    case useEmbeddedIDPUserAgent
 
     var bundleKey: String {
         switch self {
@@ -65,6 +70,10 @@ public enum SecurityFlags {
             "ClipboardEnabled"
         case .collapseOwnMessages:
             "CollapseOwnMessages"
+        case .useEmbeddedIDPUserAgent:
+            "UseEmbeddedIDPUserAgent"
+        case .openLinksExternally:
+            "OpenLinksExternally"
         }
     }
 

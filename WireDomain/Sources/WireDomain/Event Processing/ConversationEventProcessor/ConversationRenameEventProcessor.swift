@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import WireNetwork
 
 struct ConversationRenameEventProcessor: ConversationRenameEventProcessorProtocol {
 
@@ -30,9 +30,9 @@ struct ConversationRenameEventProcessor: ConversationRenameEventProcessorProtoco
 
         await repository.updateConversationName(
             newName: newName,
-            conversationID: conversationID.uuid,
+            conversationID: conversationID.id,
             conversationDomain: conversationID.domain,
-            senderID: senderID.uuid,
+            senderID: senderID.id,
             senderDomain: senderID.domain,
             date: timestamp
         )

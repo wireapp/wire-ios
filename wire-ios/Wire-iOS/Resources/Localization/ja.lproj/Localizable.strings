@@ -102,8 +102,8 @@
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
 
 "add_participants.alert.title" = "会話数が上限に達しました。";
-"add_participants.alert.message.new_conversation" = "グループ会話には %d 人まで参加することができます。";
-"add_participants.alert.message.existing_conversation" = "グループ会話には %1$d 人まで参加することができます。あと %2$d 人が参加できます。";
+"add_participants.alert.message.new_conversation" = "Up to %@ people can join a conversation.";
+"add_participants.alert.message.existing_conversation" = "Up to %@ people can join a conversation. Currently there is only room for %@ more.";
 
 // Channel Creation UI - Navigation
 "conversation.create.channel.title" = "New channel";
@@ -368,6 +368,22 @@
 "conversation.banner.are_present" = "%@ are present";
 "conversation.banner.are_active" = "%@ are active";
 "conversation.banner.separator" = " and ";
+
+"conversation.banner.remotes_externals_guests_services_present" = "Federated users, externals, guests and services are present";
+"conversation.banner.remotes_externals_guests_present" = "Federated users, externals and guests are present";
+"conversation.banner.remotes_externals_services_present" = "Federated users, externals and services are present";
+"conversation.banner.remotes_guests_services_present" = "Federated users, guests and services are present";
+"conversation.banner.externals_guests_services_present" = "Externals, guests and services are present";
+"conversation.banner.remotes_externals_present" = "Federated users and externals are present";
+"conversation.banner.remotes_guests_present" = "Federated users and guests are present";
+"conversation.banner.remotes_services_present" = "Federated users and services are present";
+"conversation.banner.externals_guests_present" = "Externals and guests are present";
+"conversation.banner.externals_services_present" = "Externals and services are present";
+"conversation.banner.guests_services_present" = "Guests and services are present";
+"conversation.banner.remotes_present" = "Federated users are present";
+"conversation.banner.externals_present" = "Externals are present";
+"conversation.banner.guests_present" = "Guests are present";
+"conversation.banner.services_active" = "Services are active";
 
 "conversation.action.search" = "検索";
 "conversation.action.conversationDetails" = "Conversation Details";
@@ -654,6 +670,7 @@
 "content.collapsed.video.title" = "You sent a video";
 "content.collapsed.audio.title" = "You sent an audio message";
 "content.collapsed.location.title" = "You sent your location";
+"content.collapsed.link.title" = "You sent a link";
 
 "content.message.like" = "いいね！";
 "content.message.unlike" = "いいね！を取消す";
@@ -859,7 +876,7 @@
 "participants.section.services" = "サービス (%d)";
 "participants.section.settings" = "オプション";
 "participants.footer.add_title" = "参加者を追加";
-"participants.section.name.footer" = "Up to %1$d participants can join a conversation.";
+"participants.section.name.footer" = "Up to %@ participants can join a conversation.";
 "participants.section.admins.footer" = "管理者がいません。";
 "participants.section.members.footer" = "There are no members.";
 
@@ -1122,8 +1139,8 @@
 
 // Settings - top level
 "self.settings.create_team.title" = "新しいチームを作成";
+"self.settings.add_account_or_team.title" = "Add Account or Team";
 "self.settings.manage_team.title" = "チームを管理";
-"self.settings.add_team_or_account.title" = "アカウントを追加";
 "self.settings.add_account.title" = "アカウントを追加";
 
 "self.settings.add_account.error.title" = "3 つのアカウントがアクティブです";
@@ -1158,6 +1175,7 @@
 "self.settings.account_details.remove_device.password.error" = "パスワードが間違っています";
 
 "self.settings.account_appearance_group.title" = "外観";
+"self.settings.account_appearance_group.footer" = "When this is on, your conversations show a background based on your profile color and light or dark theme.";
 
 "self.settings.privacy_section_group.title" = "プライバシー";
 "self.settings.enable_read_receipts.title" = "開封通知を送信";
@@ -1176,6 +1194,7 @@
 "self.settings.account_picture_group.accent_color.amber" = "黄";
 "self.settings.account_picture_group.accent_color.turquoise" = "青緑";
 "self.settings.account_picture_group.accent_color.purple" = "紫";
+"self.settings.account_picture_group.background.title" = "Conversation background color";
 
 "self.settings.account_personal_information_group.title" = "個人情報";
 
@@ -1327,7 +1346,7 @@
 "self.settings.privacy_security.disable_link_previews.footer" = "他ユーザーからのリンクがプレビュー表示されれます";
 
 "self.settings.privacy_security.collapse_own_messages.title" = "Collapse my messages";
-"self.settings.privacy_security.collapse_own_messages.footer" = "When this is on, all your messages collapse to a single line.";
+"self.settings.privacy_security.collapse_own_messages.footer" = "When this is on, all your messages collapse after three lines.";
 
 "self.settings.privacy_analytics_menu.devices.title" = "デバイス";
 
@@ -1591,6 +1610,7 @@
 "enroll_e2ei_certificate.subtitle" = "The certificate is active and your device is verified.";
 "enroll_e2ei_certificate.certificate_details_button" = "Certificate Details";
 "enroll_e2ei_certificate.ok_button" = "OK";
+"enroll_e2ei_certificate.idp_url_title" = "Identity Provider URL";
 
 // Update e2ei certificate
 "update_e2ei_certificate.title" = "Certificate updated";

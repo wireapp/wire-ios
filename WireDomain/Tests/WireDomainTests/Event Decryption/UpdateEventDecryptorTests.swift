@@ -19,7 +19,7 @@
 import WireDataModel
 import WireDataModelSupport
 import XCTest
-@testable import WireAPI
+@testable import WireNetwork
 
 @testable import WireDomain
 @testable import WireDomainSupport
@@ -72,7 +72,7 @@ final class UpdateEventDecryptorTests: XCTestCase {
     func insertScaffoldingData() async throws {
         try await context.perform { [self] in
             let selfUser = modelHelper.createSelfUser(
-                id: Scaffolding.selfUserID.uuid,
+                id: Scaffolding.selfUserID.id,
                 domain: Scaffolding.selfUserID.domain,
                 in: context
             )
@@ -83,7 +83,7 @@ final class UpdateEventDecryptorTests: XCTestCase {
             )
 
             let alice = modelHelper.createUser(
-                id: Scaffolding.aliceID.uuid,
+                id: Scaffolding.aliceID.id,
                 domain: Scaffolding.aliceID.domain,
                 in: context
             )
@@ -94,7 +94,7 @@ final class UpdateEventDecryptorTests: XCTestCase {
             )
 
             let conversation = modelHelper.createGroupConversation(
-                id: Scaffolding.conversationID.uuid,
+                id: Scaffolding.conversationID.id,
                 domain: Scaffolding.conversationID.domain,
                 in: context
             )
@@ -119,10 +119,13 @@ final class UpdateEventDecryptorTests: XCTestCase {
         )
 
         // Mock
-        proteusMessageDecryptor.decryptedEventDataFrom_MockMethod = { $0 }
+
+        proteusMessageDecryptor.decryptedEventDataFromContext_MockMethod = { envelope, _ in
+            envelope
+        }
 
         // When
-        let events = try await sut.decryptEvents(in: envelope)
+        let events = try await sut.decryptEvents(in: envelope, context: nil).events
 
         // Then the "decrypted" (the mock just passes them right back) are returned.
         XCTAssertEqual(
@@ -146,12 +149,12 @@ final class UpdateEventDecryptorTests: XCTestCase {
         )
 
         // Mock
-        proteusMessageDecryptor.decryptedEventDataFrom_MockMethod = { _ in
+        proteusMessageDecryptor.decryptedEventDataFromContext_MockMethod = { _, _ in
             throw ProteusService.DecryptionError.failedToDecryptData(.DuplicateMessage)
         }
 
         // When
-        let events = try await sut.decryptEvents(in: envelope)
+        let events = try await sut.decryptEvents(in: envelope, context: nil).events
 
         // Then we skipped over the proteus message.
         XCTAssertEqual(events, [.user(.pushRemove)])
@@ -160,7 +163,7 @@ final class UpdateEventDecryptorTests: XCTestCase {
         try await context.perform { [context] in
             let conversation = try XCTUnwrap(
                 ZMConversation.fetch(
-                    with: Scaffolding.conversationID.uuid,
+                    with: Scaffolding.conversationID.id,
                     domain: Scaffolding.conversationID.domain,
                     in: context
                 )
@@ -182,10 +185,12 @@ final class UpdateEventDecryptorTests: XCTestCase {
         )
 
         // Mock
-        mlsMessageDecryptor.decryptedMessageAddEventDataFrom_MockMethod = { $0 }
+        mlsMessageDecryptor.decryptedMessageAddEventDataFromContext_MockMethod = { envelope, _ in
+            envelope
+        }
 
         // When
-        let events = try await sut.decryptEvents(in: envelope)
+        let events = try await sut.decryptEvents(in: envelope, context: nil).events
 
         // Then the "decrypted" (the mock just passes them right back) are returned.
         XCTAssertEqual(
@@ -201,19 +206,44 @@ final class UpdateEventDecryptorTests: XCTestCase {
         XCTAssertEqual(mlsService.commitPendingProposalsIfNeeded_Invocations.count, 1)
     }
 
+    func testWhenWrongEpochErrorIsThrown() async throws {
+        // Given some events.
+        let envelope = UpdateEventEnvelope(
+            id: UUID(),
+            events: [
+                .conversation(.mlsMessageAdd(Scaffolding.mlsMessage)),
+                .user(.pushRemove)
+            ],
+            isTransient: false
+        )
+
+        // Mock
+        mlsMessageDecryptor.decryptedMessageAddEventDataFromContext_MockMethod = { _, _ in
+            throw MLSMessageDecryptorError.wrongEpoch(mlsGroupID: Scaffolding.mlsGroupID)
+        }
+
+        // When
+        let decryptEvents = try await sut.decryptEvents(in: envelope, context: nil)
+
+        // Then we skipped over the mls message.
+        XCTAssertEqual(decryptEvents.events, [.user(.pushRemove)])
+        XCTAssertEqual(decryptEvents.brokenMLSGroupIDs.first, Scaffolding.mlsGroupID.description)
+    }
+
 }
 
 private enum Scaffolding {
 
     static let localDomain = "local.com"
 
-    static let selfUserID = UserID(uuid: UUID(), domain: localDomain)
+    static let selfUserID = UserID(id: UUID(), domain: localDomain)
     static let selfClientID = "abcd1234"
 
-    static let aliceID = UserID(uuid: UUID(), domain: localDomain)
+    static let aliceID = UserID(id: UUID(), domain: localDomain)
     static let aliceClientID = "efgh5678"
 
-    static let conversationID = ConversationID(uuid: UUID(), domain: localDomain)
+    static let conversationID = ConversationID(id: UUID(), domain: localDomain)
+    static let mlsGroupID = MLSGroupID.random()
     static let messageContent = "foo"
     static let timestamp = Date()
 

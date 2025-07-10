@@ -18,10 +18,10 @@
 
 import Foundation
 import SwiftUI
-import WireAPI
 import WireDataModel
 import WireFoundation
 import WireLogging
+import WireNetwork
 import WireSyncEngine
 
 struct ConversationResult {
@@ -207,7 +207,9 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
     // MARK: Resync resources
 
     private func triggerResourcesSync() {
-        userSession?.triggerResourcesSync()
+        Task {
+            await userSession?.triggerResourcesSync()
+        }
     }
 
     // MARK: Proteus to MLS migration

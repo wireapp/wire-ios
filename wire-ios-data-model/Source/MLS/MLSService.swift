@@ -18,10 +18,10 @@
 
 import Combine
 import Foundation
-import WireAPI
 import WireCoreCrypto
 import WireFoundation
 import WireLogging
+import WireNetwork
 
 // sourcery: AutoMockable
 public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptionServiceInterface {
@@ -407,7 +407,10 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// If rejoining is successful, a system message will be appended
     /// to the conversation to indicate a potential gap in history.
 
-    func fetchAndRepairGroup(with groupID: MLSGroupID) async
+    func fetchAndRepairGroup(
+        with groupID: MLSGroupID,
+        shouldPerformIncrementalSync: Bool
+    ) async
 
     // MARK: - Epoch
 
@@ -1213,8 +1216,14 @@ public final class MLSService: MLSServiceInterface {
         return result
     }
 
-    public func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID {
-        try await decryptionService.processWelcomeMessage(welcomeMessage: welcomeMessage)
+    public func processWelcomeMessage(
+        welcomeMessage: String,
+        context: CoreCryptoContextProtocol?
+    ) async throws -> MLSGroupID {
+        try await decryptionService.processWelcomeMessage(
+            welcomeMessage: welcomeMessage,
+            context: context
+        )
     }
 
     // MARK: - Joining conversations
@@ -1337,19 +1346,28 @@ public final class MLSService: MLSServiceInterface {
 
     public func fetchAndRepairGroupIfPossible(with groupID: MLSGroupID) async {
         await launchGroupRepairTaskIfNotInProgress(for: groupID) {
-            await self.fetchAndRepairGroup(with: groupID)
+            await self.fetchAndRepairGroup(with: groupID, shouldPerformIncrementalSync: true)
         }
     }
 
-    public func fetchAndRepairGroup(with groupID: MLSGroupID) async {
+    public func fetchAndRepairGroup(
+        with groupID: MLSGroupID,
+        shouldPerformIncrementalSync: Bool
+    ) async {
         if let subgroupInfo = await subconversationGroupIDRepository.findSubgroupTypeAndParentID(for: groupID) {
             await fetchAndRepairSubgroup(parentGroupID: subgroupInfo.parentID)
         } else {
-            await fetchAndRepairParentGroup(with: groupID)
+            await fetchAndRepairParentGroup(
+                with: groupID,
+                shouldPerformIncrementalSync: shouldPerformIncrementalSync
+            )
         }
     }
 
-    private func fetchAndRepairParentGroup(with groupID: MLSGroupID) async {
+    private func fetchAndRepairParentGroup(
+        with groupID: MLSGroupID,
+        shouldPerformIncrementalSync: Bool
+    ) async {
         guard let context else {
             return
         }
@@ -1357,9 +1375,11 @@ public final class MLSService: MLSServiceInterface {
         do {
             logger.info("repairing out of sync conversation... (\(groupID.safeForLoggingDescription))")
 
-            // In case of `WrongEpoch` error, local and remote epochs have diverged so we may have missed events.
-            // This ensures we're on the latest state.
-            try await mlsSyncDelegate?.recoverWithIncrementalSync()
+            if shouldPerformIncrementalSync {
+                // In case of `WrongEpoch` error, local and remote epochs have diverged so we may have missed events.
+                // This ensures we're on the latest state.
+                try await mlsSyncDelegate?.recoverWithIncrementalSync()
+            }
 
             guard let conversationInfo = fetchConversationInfo(
                 with: groupID,
@@ -1689,7 +1709,8 @@ public final class MLSService: MLSServiceInterface {
     public func decrypt(
         message: String,
         for groupID: MLSGroupID,
-        subconversationType: SubgroupType?
+        subconversationType: SubgroupType?,
+        context: CoreCryptoContextProtocol?
     ) async throws -> [MLSDecryptResult] {
         typealias DecryptionError = MLSDecryptionService.MLSMessageDecryptionError
 
@@ -1697,7 +1718,8 @@ public final class MLSService: MLSServiceInterface {
             return try await decryptionService.decrypt(
                 message: message,
                 for: groupID,
-                subconversationType: subconversationType
+                subconversationType: subconversationType,
+                context: context
             )
         } catch DecryptionError.wrongEpoch {
             Task.detached { [self] in
@@ -1963,7 +1985,11 @@ public final class MLSService: MLSServiceInterface {
                     "failed to send commit, repairing group then retrying operation...",
                     attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
                 )
-                await fetchAndRepairGroup(with: groupID)
+                await fetchAndRepairGroup(
+                    with: groupID,
+                    shouldPerformIncrementalSync: true
+                )
+
                 logger.info(
                     "repair finished, retrying operation...",
                     attributes: [.mlsGroupID: groupID.safeForLoggingDescription]

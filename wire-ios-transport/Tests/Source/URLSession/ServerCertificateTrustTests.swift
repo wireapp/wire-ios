@@ -92,7 +92,7 @@ final class BackendTrustProviderTests: XCTestCase {
 
         guard let certificatesURL = mainBundle.url(forResource: "certificates", withExtension: "json")
         else { XCTFail("Could find certificates.json"); return }
-        guard let trustDataURL = backendBundle.url(forResource: "production", withExtension: "json")
+        guard let trustDataURL = backendBundle.url(forResource: "default", withExtension: "json")
         else { XCTFail("Could find trust_data.json"); return }
 
         do {

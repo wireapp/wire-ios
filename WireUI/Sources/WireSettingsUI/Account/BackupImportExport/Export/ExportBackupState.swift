@@ -20,7 +20,7 @@ import Foundation
 
 enum ExportBackupState {
     case requestingPassword(password: String)
-    case creatingBackup(progress: Float)
+    case creatingBackup(current: Int, total: Int)
     case backupReady(url: URL)
     case backupFailed(any Error)
 }

@@ -39,6 +39,13 @@ public enum WireAnalytics {
 
         WireAnalytics.Datadog.shared.enable()
 
+        WireLogger.initialize {
+            #if DEBUG
+                SystemLogger()
+            #endif
+            CocoaLumberjackLogger()
+            WireAnalytics.Datadog.shared
+        }
         WireLogger.initialize(
             loggers: [
                 SystemLogger(),

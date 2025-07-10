@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import WireNetwork
 import WireSystem
 
 struct ConversationMemberUpdateEventProcessor: ConversationMemberUpdateEventProcessorProtocol {
@@ -26,22 +26,22 @@ struct ConversationMemberUpdateEventProcessor: ConversationMemberUpdateEventProc
     let localStore: any ConversationLocalStoreProtocol
 
     func processEvent(_ event: ConversationMemberUpdateEvent) async throws {
-        let senderID = event.senderID
         let conversationID = event.conversationID
         let memberChange = event.memberChange
+        let memberChangeID = memberChange.id
         let muteStatus = memberChange.newMuteStatus
         let muteStatusDate = memberChange.muteStatusReferenceDate
         let archivedStatus = memberChange.newArchivedStatus
         let archivedStatusDate = memberChange.archivedStatusReferenceDate
 
         let conversation = await conversationRepository.fetchOrCreateConversation(
-            id: conversationID.uuid,
+            id: conversationID.id,
             domain: conversationID.domain
         )
 
         let isSelfUser = try await userRepository.isSelfUser(
-            id: senderID.uuid,
-            domain: senderID.domain
+            id: memberChangeID.id,
+            domain: memberChangeID.domain
         )
 
         if isSelfUser {
@@ -57,10 +57,10 @@ struct ConversationMemberUpdateEventProcessor: ConversationMemberUpdateEventProc
         }
 
         await conversationRepository.addOrUpdateParticipant(
-            participantID: senderID.uuid,
-            participantDomain: senderID.domain,
+            participantID: memberChangeID.id,
+            participantDomain: memberChangeID.domain,
             participantRole: role,
-            conversationID: conversationID.uuid,
+            conversationID: conversationID.id,
             conversationDomain: conversationID.domain
         )
     }

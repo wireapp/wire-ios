@@ -20,32 +20,32 @@ public import SwiftUI
 
 public struct AttachmentsCarousel: View {
 
-    @State private var items: [AttachmentsCarouselItem]
+    @ObservedObject private var viewModel: AttachmentsCarouselViewModel
     private let onTap: (AttachmentsCarouselItem) -> Void
     private let onRemove: (AttachmentsCarouselItem) -> Void
-    private let onOptions: (AttachmentsCarouselItem) -> Void
+    private let onRetry: (AttachmentsCarouselItem) -> Void
 
     public init(
-        items: [AttachmentsCarouselItem],
+        viewModel: AttachmentsCarouselViewModel,
         onTap: @escaping (AttachmentsCarouselItem) -> Void,
         onRemove: @escaping (AttachmentsCarouselItem) -> Void,
-        onOptions: @escaping (AttachmentsCarouselItem) -> Void
+        onRetry: @escaping (AttachmentsCarouselItem) -> Void
     ) {
-        self.items = items
+        self.viewModel = viewModel
         self.onTap = onTap
         self.onRemove = onRemove
-        self.onOptions = onOptions
+        self.onRetry = onRetry
     }
 
     public var body: some View {
         ScrollView(.horizontal) {
             HStack(spacing: 4) {
-                ForEach(items) { item in
+                ForEach(viewModel.items) { item in
                     AttachmentsCarouselItemView(
                         item: item,
                         onTap: { onTap(item) },
                         onRemove: { onRemove(item) },
-                        onOptions: { onOptions(item) }
+                        onRetry: { onRetry(item) }
                     )
                 }
             }
@@ -66,7 +66,7 @@ private struct AttachmentsCarouselItemView: View {
     let item: AttachmentsCarouselItem
     let onTap: () -> Void
     let onRemove: () -> Void
-    let onOptions: () -> Void
+    let onRetry: () -> Void
 
     var body: some View {
         ZStack {
@@ -95,19 +95,31 @@ private struct AttachmentsCarouselItemView: View {
             .onTapGesture(perform: onTap)
     }
 
+    // TODO: [WPB-17604] Add missing accessibility labels
     var cornerButton: some View {
         VStack {
             HStack {
                 Spacer()
-                Button(
-                    action: item.state.isFailed ? onOptions : onRemove,
-                    label: {
-                        Image(systemName: item.state.isFailed ? "ellipsis.circle.fill" : "xmark.circle.fill")
-                            .font(.system(size: Constants.cornerButtonRadius * 2))
-                            .foregroundStyle(.black)
+
+                if item.state.isFailed {
+                    Menu {
+                        Button(L10n.Conversation.Draft.AttachmentMenu.retry, action: onRetry)
+                        Button(L10n.Conversation.Draft.AttachmentMenu.remove, action: onRemove)
+                    } label: {
+                        Image(systemName: "ellipsis.circle.fill")
                     }
-                )
+                } else {
+                    Button(
+                        action: onRemove,
+                        label: {
+                            Image(systemName: "xmark.circle.fill")
+                        }
+                    )
+                }
             }
+            .font(.system(size: Constants.cornerButtonRadius * 2))
+            .foregroundStyle(.black)
+
             Spacer()
         }
     }
@@ -163,25 +175,27 @@ private extension AttachmentsCarouselItem.State {
 
 #Preview {
     AttachmentsCarousel(
-        items: [
-            AttachmentsCarouselItem(
-                id: UUID(),
-                state: .uploading(progress: 0.5),
-                kind: .audio(samples: [0.1, 0.2, 0.3]),
-                name: "Image",
-                size: "1.2 MB"
-            ),
-            AttachmentsCarouselItem(
-                id: UUID(),
-                state: .failed,
-                kind: .image(thumbnail: UIImage()),
-                name: "Image",
-                size: "1.2 MB"
-            )
-        ],
+        viewModel: AttachmentsCarouselViewModel(
+            items: [
+                AttachmentsCarouselItem(
+                    id: UUID(),
+                    state: .failed,
+                    kind: .image(thumbnail: UIImage()),
+                    name: "Image",
+                    size: "1.2 MB"
+                ),
+                AttachmentsCarouselItem(
+                    id: UUID(),
+                    state: .uploading(progress: 0.5),
+                    kind: .video(thumbnail: UIImage()),
+                    name: "Video",
+                    size: "1.2 MB"
+                )
+            ]
+        ),
         onTap: { _ in },
         onRemove: { _ in },
-        onOptions: { _ in }
+        onRetry: { _ in }
     )
     .frame(height: 74)
     .background(Color.red)

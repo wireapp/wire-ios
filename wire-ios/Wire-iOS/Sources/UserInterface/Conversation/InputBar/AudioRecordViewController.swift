@@ -155,7 +155,7 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
 
     private func configureViews(userSession: UserSession) {
         accentColorChangeHandler = AccentColorChangeHandler
-            .addObserver(self, userSession: userSession) { [unowned self] color, _ in
+            .addObserver(userSession: userSession) { [unowned self] color in
                 if let color {
                     audioPreviewView.color = color.accentColor.uiColor
                 }
@@ -471,7 +471,7 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
                 if success {
                     self.delegate?.audioRecordViewControllerWantsToSendAudio(
                         self,
-                        recordingURL: NSURL(fileURLWithPath: convertedPath) as URL,
+                        recordingURL: URL(fileURLWithPath: convertedPath),
                         duration: self.recorder.currentDuration,
                         filter: .none
                     )

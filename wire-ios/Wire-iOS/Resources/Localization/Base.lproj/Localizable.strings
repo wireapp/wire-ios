@@ -61,6 +61,10 @@
 "peoplepicker.header.directory" = "Connect";
 "peoplepicker.header.federation" = "Connect with other domain";
 
+"peoplepicker.upgrade_banner.headline" = "Channels are available for team members.";
+"peoplepicker.upgrade_banner.subheadline" = "Create a team and start collaborating for free!";
+"peoplepicker.upgrade_banner.button.title" = "Create Wire Team";
+
 "peoplepicker.group.title.singular" = "Select Participants";
 "peoplepicker.group.title.plural" = "Select Participants (%d)";
 "peoplepicker.group.skip" = "Skip";
@@ -102,8 +106,8 @@
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
 
 "add_participants.alert.title" = "The conversation is full";
-"add_participants.alert.message.new_conversation" = "Up to %d people can join a conversation.";
-"add_participants.alert.message.existing_conversation" = "Up to %1$d people can join a conversation. Currently there is only room for %2$d more.";
+"add_participants.alert.message.new_conversation" = "Up to %@ people can join a conversation.";
+"add_participants.alert.message.existing_conversation" = "Up to %@ people can join a conversation. Currently there is only room for %@ more.";
 
 // Channel Creation UI - Navigation
 "conversation.create.channel.title" = "New channel";
@@ -368,6 +372,22 @@
 "conversation.banner.are_present" = "%@ are present";
 "conversation.banner.are_active" = "%@ are active";
 "conversation.banner.separator" = " and ";
+
+"conversation.banner.remotes_externals_guests_services_present" = "Federated users, externals, guests and services are present";
+"conversation.banner.remotes_externals_guests_present" = "Federated users, externals and guests are present";
+"conversation.banner.remotes_externals_services_present" = "Federated users, externals and services are present";
+"conversation.banner.remotes_guests_services_present" = "Federated users, guests and services are present";
+"conversation.banner.externals_guests_services_present" = "Externals, guests and services are present";
+"conversation.banner.remotes_externals_present" = "Federated users and externals are present";
+"conversation.banner.remotes_guests_present" = "Federated users and guests are present";
+"conversation.banner.remotes_services_present" = "Federated users and services are present";
+"conversation.banner.externals_guests_present" = "Externals and guests are present";
+"conversation.banner.externals_services_present" = "Externals and services are present";
+"conversation.banner.guests_services_present" = "Guests and services are present";
+"conversation.banner.remotes_present" = "Federated users are present";
+"conversation.banner.externals_present" = "Externals are present";
+"conversation.banner.guests_present" = "Guests are present";
+"conversation.banner.services_active" = "Services are active";
 
 "conversation.action.search" = "Search";
 "conversation.action.conversationDetails" = "Conversation Details";
@@ -860,7 +880,7 @@
 "participants.section.services" = "Services (%d)";
 "participants.section.settings" = "Options";
 "participants.footer.add_title" = "Add Participants";
-"participants.section.name.footer" = "Up to %1$d participants can join a conversation.";
+"participants.section.name.footer" = "Up to %@ participants can join a conversation.";
 "participants.section.admins.footer" = "There are no admins.";
 "participants.section.members.footer" = "There are no members.";
 
@@ -1123,8 +1143,8 @@
 
 // Settings - top level
 "self.settings.create_team.title" = "Create a team";
+"self.settings.add_account_or_team.title" = "Add Account or Team";
 "self.settings.manage_team.title" = "Manage Team";
-"self.settings.add_team_or_account.title" = "Add Account";
 "self.settings.add_account.title" = "Add an account";
 
 "self.settings.add_account.error.title" = "Three accounts active";
@@ -1594,6 +1614,7 @@
 "enroll_e2ei_certificate.subtitle" = "The certificate is active and your device is verified.";
 "enroll_e2ei_certificate.certificate_details_button" = "Certificate Details";
 "enroll_e2ei_certificate.ok_button" = "OK";
+"enroll_e2ei_certificate.idp_url_title" = "Identity Provider URL";
 
 // Update e2ei certificate
 "update_e2ei_certificate.title" = "Certificate updated";

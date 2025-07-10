@@ -16,18 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
 import WireLogging
+import WireNetwork
 import WireProtos
 
-struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcessorProtocol {
+public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcessorProtocol {
 
     let messageLocalStore: any MessageLocalStoreProtocol
     let conversationLocalStore: any ConversationLocalStoreProtocol
     let userLocalStore: any UserLocalStoreProtocol
 
-    func processProtobufMessage(
+    public init(
+        messageLocalStore: any MessageLocalStoreProtocol,
+        conversationLocalStore: any ConversationLocalStoreProtocol,
+        userLocalStore: any UserLocalStoreProtocol
+    ) {
+        self.messageLocalStore = messageLocalStore
+        self.conversationLocalStore = conversationLocalStore
+        self.userLocalStore = userLocalStore
+    }
+
+    public func processProtobufMessage(
         _ message: GenericMessage,
         content: GenericMessage.OneOf_Content,
         conversation: ZMConversation,
@@ -40,7 +50,7 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
 
         let logAttributes: LogAttributes = [
             .messageType: eventMessage,
-            .conversationId: conversationID.uuid.safeForLoggingDescription,
+            .conversationId: conversationID.id.safeForLoggingDescription,
             .nonce: UUID(uuidString: message.messageID) ?? "<nil>"
         ]
         WireLogger.eventProcessing.debug("Processing:\n\(message)")
@@ -84,7 +94,7 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
             await messageLocalStore.deleteMessageForEveryone(
                 deleted,
                 in: conversation,
-                senderID: senderID.uuid
+                senderID: senderID.id
             )
 
         case let .reaction(reaction):
@@ -92,14 +102,19 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
             await messageLocalStore.addMessageReaction(
                 reaction,
                 in: conversation,
-                senderID: senderID.uuid,
+                senderID: senderID.id,
                 date: date
             )
 
-        case .confirmation:
+        case let .confirmation(confirmation):
 
-            // Some logic was done here but it seems unnecessary - see legacy `ZMOTRMessage+UpdateEvent`
-            break
+            await messageLocalStore.addMessageConfirmation(
+                confirmation,
+                in: conversation,
+                senderID: senderID.id,
+                senderDomain: senderID.domain,
+                date: date
+            )
 
         case let .buttonActionConfirmation(buttonActionConfirmation):
 
@@ -113,7 +128,7 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
             await messageLocalStore.editMessage(
                 edited,
                 in: conversation,
-                senderID: senderID.uuid,
+                senderID: senderID.id,
                 genericMessage: message,
                 date: date
             )
@@ -128,25 +143,33 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
             }
 
             let systemMessageType: SystemMessageType = .sessionReset(
-                sender: (senderID.uuid, senderID.domain),
+                sender: (senderID.id, senderID.domain),
                 senderClientID: senderClientID,
                 date: date
             )
 
             await messageLocalStore.addSystemMessage(
                 messageType: systemMessageType,
-                conversationID: conversationID.uuid,
+                conversationID: conversationID.id,
                 conversationDomain: conversationID.domain
             )
 
-        case .calling, .availability:
+        case let .availability(availability):
+            let userID = WireDataModel.QualifiedID(uuid: senderID.id, domain: senderID.domain)
+            let userAvailability = WireDataModel.Availability(proto: availability)
+            await userLocalStore.updateUser(
+                with: userID,
+                availability: userAvailability
+            )
 
-            // cases not handled
+        case .calling:
+
+            // case not handled here, see `onProcessedCallEvent`
             break
 
         case .inCallEmoji:
 
-            // Not supported yet, just discard.
+            // Not supported yet, just discard. TODO: [WPB-11770] implement here
             break
 
         case .image, .asset:
@@ -154,7 +177,7 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
             try await processAssetMessageContent(
                 message: message,
                 conversation: conversation,
-                sender: (senderID.uuid, senderID.domain, senderClientID),
+                sender: (senderID.id, senderID.domain, senderClientID),
                 date: date,
                 logAttributes: logAttributes
             )
@@ -166,7 +189,7 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
                 try await processAssetMessageContent(
                     message: message,
                     conversation: conversation,
-                    sender: (senderID.uuid, senderID.domain, senderClientID),
+                    sender: (senderID.id, senderID.domain, senderClientID),
                     date: date,
                     logAttributes: logAttributes
                 )
@@ -175,18 +198,18 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
                 try await processMessageContent(
                     message: message,
                     conversation: conversation,
-                    sender: (senderID.uuid, senderID.domain, senderClientID),
+                    sender: (senderID.id, senderID.domain, senderClientID),
                     date: date,
                     logAttributes: logAttributes
                 )
             }
 
-        case .text, .knock, .location, .composite, .buttonAction:
+        case .text, .knock, .location, .composite, .buttonAction, .multipart:
 
             try await processMessageContent(
                 message: message,
                 conversation: conversation,
-                sender: (senderID.uuid, senderID.domain, senderClientID),
+                sender: (senderID.id, senderID.domain, senderClientID),
                 date: date,
                 logAttributes: logAttributes
             )
@@ -199,7 +222,7 @@ struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcesso
             break
 
         case .inCallHandRaise:
-            break // Not handled yet
+            break // Not handled yet, TODO: [WPB-11769] implement here
         }
     }
 

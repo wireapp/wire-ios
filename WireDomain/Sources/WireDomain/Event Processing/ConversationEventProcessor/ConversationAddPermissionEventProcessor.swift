@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import WireNetwork
 
 struct ConversationAddPermissionEventProcessor: ConversationAddPermissionEventProcessorProtocol {
 
@@ -28,7 +28,7 @@ struct ConversationAddPermissionEventProcessor: ConversationAddPermissionEventPr
         let addPermission = event.addPermission
 
         let localConversation = await localStore.fetchOrCreateConversation(
-            id: conversationID.uuid,
+            id: conversationID.id,
             domain: conversationID.domain
         )
 

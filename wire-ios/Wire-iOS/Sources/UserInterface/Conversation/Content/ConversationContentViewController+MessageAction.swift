@@ -180,12 +180,10 @@ extension ConversationContentViewController {
                 useCase.invoke(reaction, for: message, in: self.conversation)
             }
         case .visitLink:
-            if let textMessageData = message.textMessageData,
-               let path = textMessageData.linkPreview?.originalURLString ?? textMessageData.messageText,
-               let url = URL(string: path),
-               UIApplication.shared.canOpenURL(url) {
-                UIApplication.shared.open(url)
-            }
+            let textMessageData = message.textMessageData
+            let content = textMessageData?.linkPreview?.originalURLString ?? textMessageData?.messageText
+            guard let content, let url = linkDetector?.detectLinks(in: content).first else { return }
+            UIApplication.shared.open(url)
         case .collapse:
             dataSource.collapse(message: message)
         }

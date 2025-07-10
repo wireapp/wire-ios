@@ -19,19 +19,13 @@
 import WireDataModel
 import WireLogging
 
-public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
+public struct UserClientsLocalStore: UserClientsLocalStoreProtocol {
 
     // MARK: - Properties
 
-    private let context: NSManagedObjectContext
+    let context: NSManagedObjectContext
 
-    // MARK: - Object lifecycle
-
-    init(
-        context: NSManagedObjectContext
-    ) {
-        self.context = context
-    }
+    // MARK: - Methods
 
     public func fetchSelfClient() async -> UserClient? {
         await context.perform { [context] in
@@ -40,10 +34,10 @@ public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
         }
     }
 
-    public func fetchSelfClientID() async -> UUID {
+    public func fetchSelfClientID() async -> String? {
         await context.perform { [context] in
             let selfUser = ZMUser.selfUser(in: context)
-            return selfUser.remoteIdentifier
+            return selfUser.selfClient()?.remoteIdentifier
         }
     }
 
@@ -134,7 +128,8 @@ public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
             localClient.activationDate = userClientInfo.activationDate
             localClient.lastActiveDate = userClientInfo.lastActiveDate
             localClient.remoteIdentifier = userClientInfo.id
-            localClient.asyncStreamCapable = userClientInfo.capabilities.contains(.consumableNotifications)
+            localClient.isConsumableNotificationsCapable = userClientInfo.capabilities
+                .contains(.consumableNotifications)
 
             let selfUser = ZMUser.selfUser(in: context)
             localClient.user = localClient.user ?? selfUser
@@ -158,22 +153,18 @@ public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
                 )
             }
 
-            let selfClient = selfUser.selfClient()
-            let isNotSameId = localClient.remoteIdentifier != selfClient?.remoteIdentifier
-            let localClientActivationDate = localClient.activationDate
-            let selfClientActivationDate = selfClient?.activationDate
+            guard let selfClient = selfUser.selfClient(), isNewClient else { return }
 
-            if selfClient != nil, isNotSameId, let localClientActivationDate, let selfClientActivationDate {
-                let comparisonResult = localClientActivationDate
-                    .compare(selfClientActivationDate)
-
-                if comparisonResult == .orderedDescending {
-                    localClient.needsToNotifyUser = true
-                }
+            if
+                localClient.remoteIdentifier != selfClient.remoteIdentifier,
+                let localClientActivationDate = localClient.activationDate,
+                let selfClientActivationDate = selfClient.activationDate,
+                localClientActivationDate.compare(selfClientActivationDate) == .orderedDescending {
+                localClient.needsToNotifyUser = true
             }
 
-            selfUser.selfClient()?.addNewClientToIgnored(localClient)
-            selfUser.selfClient()?.updateSecurityLevelAfterDiscovering(Set([localClient]))
+            selfClient.addNewClientToIgnored(localClient)
+            selfClient.updateSecurityLevelAfterDiscovering(Set([localClient]))
         }
     }
 
@@ -254,6 +245,13 @@ public final class UserClientsLocalStore: UserClientsLocalStoreProtocol {
             selfClient.clearMLSPublicKeys()
             context.setPersistentStoreMetadata(nil as String?, key: ZMPersistedClientIdKey)
             context.saveOrRollback()
+        }
+    }
+
+    public func hasRegisteredConsumableNotificationsCapable() async -> Bool {
+        await context.perform { [context] in
+            let selfClient = ZMUser.selfUser(in: context).selfClient()
+            return selfClient?.isConsumableNotificationsCapable == true
         }
     }
 

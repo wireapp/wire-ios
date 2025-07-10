@@ -18,18 +18,21 @@
 
 import UIKit
 import WireCommonComponents
+import WireLogging
+import WireSyncEngine
 
 extension ConversationInputBarViewController {
     func sendText() {
 
         let checker = PrivacyWarningChecker(conversation: conversation) {
-            self._sendText()
+            Task { await self._sendText() }
         }
 
         checker.performAction()
     }
 
-    private func _sendText() {
+    @MainActor
+    private func _sendText() async {
         let (text, mentions) = inputBar.textView.preparedText
         let quote = quotedMessage
 
@@ -42,9 +45,28 @@ extension ConversationInputBarViewController {
             editingMessage = nil
             updateWritingState(animated: true)
         } else {
+            if !attachments.isEmpty {
+                do {
+                    try await publishDraftsUseCase.invoke()
+                    await clearPublishedDraftsUseCase.invoke()
+                } catch {
+                    WireLogger.conversation.error("Failed to publish drafts: \(error)")
+                    return
+                }
+            }
+
             clearInputBar()
             delegate?.conversationInputBarViewControllerDidComposeText(
                 text: text,
+                attachments: attachments.map { draft in
+                    MultipartAttachment(
+                        uuid: draft.nodeID,
+                        contentType: draft.mimeType,
+                        initialName: draft.name,
+                        initialSize: draft.bytes,
+                        initialMetadata: nil // FIXME: [WPB-18130] Send metadata
+                    )
+                },
                 mentions: mentions,
                 replyingTo: quote
             )

@@ -53,23 +53,22 @@ import WireAccountImageUI
 
 
 
-public class MockAccountSelector: AccountSelector {
+class MockAccountSelector: AccountSelector {
 
     // MARK: - Life cycle
 
-    public init() {}
 
     // MARK: - currentAccount
 
-    public var currentAccount: Account?
+    var currentAccount: Account?
 
 
     // MARK: - switchTo
 
-    public var switchToAccount_Invocations: [Account] = []
-    public var switchToAccount_MockMethod: ((Account) -> Void)?
+    var switchToAccount_Invocations: [Account] = []
+    var switchToAccount_MockMethod: ((Account) -> Void)?
 
-    public func switchTo(account: Account) {
+    func switchTo(account: Account) {
         switchToAccount_Invocations.append(account)
 
         guard let mock = switchToAccount_MockMethod else {
@@ -81,10 +80,10 @@ public class MockAccountSelector: AccountSelector {
 
     // MARK: - switchTo
 
-    public var switchToAccountCompletion_Invocations: [(account: Account, completion: ((UserSession?) -> Void)?)] = []
-    public var switchToAccountCompletion_MockMethod: ((Account, ((UserSession?) -> Void)?) -> Void)?
+    var switchToAccountCompletion_Invocations: [(account: Account, completion: ((UserSession?) -> Void)?)] = []
+    var switchToAccountCompletion_MockMethod: ((Account, ((UserSession?) -> Void)?) -> Void)?
 
-    public func switchTo(account: Account, completion: ((UserSession?) -> Void)?) {
+    func switchTo(account: Account, completion: ((UserSession?) -> Void)?) {
         switchToAccountCompletion_Invocations.append((account: account, completion: completion))
 
         guard let mock = switchToAccountCompletion_MockMethod else {
@@ -824,80 +823,6 @@ class MockImageTransformer: ImageTransformer {
 
 }
 
-class MockLogFilesProviding: LogFilesProviding {
-
-    // MARK: - Life cycle
-
-
-
-    // MARK: - generateLogFilesData
-
-    var generateLogFilesData_Invocations: [Void] = []
-    var generateLogFilesData_MockError: Error?
-    var generateLogFilesData_MockMethod: (() throws -> Data)?
-    var generateLogFilesData_MockValue: Data?
-
-    func generateLogFilesData() throws -> Data {
-        generateLogFilesData_Invocations.append(())
-
-        if let error = generateLogFilesData_MockError {
-            throw error
-        }
-
-        if let mock = generateLogFilesData_MockMethod {
-            return try mock()
-        } else if let mock = generateLogFilesData_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `generateLogFilesData`")
-        }
-    }
-
-    // MARK: - generateLogFilesZip
-
-    var generateLogFilesZip_Invocations: [Void] = []
-    var generateLogFilesZip_MockError: Error?
-    var generateLogFilesZip_MockMethod: (() throws -> URL)?
-    var generateLogFilesZip_MockValue: URL?
-
-    func generateLogFilesZip() throws -> URL {
-        generateLogFilesZip_Invocations.append(())
-
-        if let error = generateLogFilesZip_MockError {
-            throw error
-        }
-
-        if let mock = generateLogFilesZip_MockMethod {
-            return try mock()
-        } else if let mock = generateLogFilesZip_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `generateLogFilesZip`")
-        }
-    }
-
-    // MARK: - clearLogsDirectory
-
-    var clearLogsDirectory_Invocations: [Void] = []
-    var clearLogsDirectory_MockError: Error?
-    var clearLogsDirectory_MockMethod: (() throws -> Void)?
-
-    func clearLogsDirectory() throws {
-        clearLogsDirectory_Invocations.append(())
-
-        if let error = clearLogsDirectory_MockError {
-            throw error
-        }
-
-        guard let mock = clearLogsDirectory_MockMethod else {
-            fatalError("no mock for `clearLogsDirectory`")
-        }
-
-        try mock()
-    }
-
-}
-
 public class MockNetworkStatusObservable: NetworkStatusObservable {
 
     // MARK: - Life cycle
@@ -1429,6 +1354,36 @@ class MockProfileViewControllerViewModeling: ProfileViewControllerViewModeling {
 
 }
 
+class MockSelfProfileAccountManager: SelfProfileAccountManager {
+
+    // MARK: - Life cycle
+
+
+    // MARK: - selectedAccount
+
+    var selectedAccount: Account?
+
+
+    // MARK: - sortedAccounts
+
+    var sortedAccounts_Invocations: [Void] = []
+    var sortedAccounts_MockMethod: (() -> [Account])?
+    var sortedAccounts_MockValue: [Account]?
+
+    func sortedAccounts() -> [Account] {
+        sortedAccounts_Invocations.append(())
+
+        if let mock = sortedAccounts_MockMethod {
+            return mock()
+        } else if let mock = sortedAccounts_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `sortedAccounts`")
+        }
+    }
+
+}
+
 class MockSelfProfileViewControllerBuilderProtocol: SelfProfileViewControllerBuilderProtocol {
 
     // MARK: - Life cycle
@@ -1608,6 +1563,86 @@ class MockTopOverlayPresenting: TopOverlayPresenting {
         }
 
         mock(animated)
+    }
+
+}
+
+class MockTrackingInterface: TrackingInterface {
+
+    // MARK: - Life cycle
+
+
+    // MARK: - isAnalyticsDisabled
+
+    var isAnalyticsDisabled: Bool {
+        get { return underlyingIsAnalyticsDisabled }
+        set(value) { underlyingIsAnalyticsDisabled = value }
+    }
+
+    var underlyingIsAnalyticsDisabled: Bool!
+
+
+    // MARK: - requestAnalyticsConsent
+
+    var requestAnalyticsConsent_Invocations: [Void] = []
+    var requestAnalyticsConsent_MockError: Error?
+    var requestAnalyticsConsent_MockMethod: (() async throws -> Bool)?
+    var requestAnalyticsConsent_MockValue: Bool?
+
+    func requestAnalyticsConsent() async throws -> Bool {
+        requestAnalyticsConsent_Invocations.append(())
+
+        if let error = requestAnalyticsConsent_MockError {
+            throw error
+        }
+
+        if let mock = requestAnalyticsConsent_MockMethod {
+            return try await mock()
+        } else if let mock = requestAnalyticsConsent_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `requestAnalyticsConsent`")
+        }
+    }
+
+    // MARK: - disableAnalytics
+
+    var disableAnalytics_Invocations: [Void] = []
+    var disableAnalytics_MockError: Error?
+    var disableAnalytics_MockMethod: (() throws -> Void)?
+
+    func disableAnalytics() throws {
+        disableAnalytics_Invocations.append(())
+
+        if let error = disableAnalytics_MockError {
+            throw error
+        }
+
+        guard let mock = disableAnalytics_MockMethod else {
+            fatalError("no mock for `disableAnalytics`")
+        }
+
+        try mock()
+    }
+
+    // MARK: - enableAnalytics
+
+    var enableAnalytics_Invocations: [Void] = []
+    var enableAnalytics_MockError: Error?
+    var enableAnalytics_MockMethod: (() async throws -> Void)?
+
+    func enableAnalytics() async throws {
+        enableAnalytics_Invocations.append(())
+
+        if let error = enableAnalytics_MockError {
+            throw error
+        }
+
+        guard let mock = enableAnalytics_MockMethod else {
+            fatalError("no mock for `enableAnalytics`")
+        }
+
+        try await mock()
     }
 
 }

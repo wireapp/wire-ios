@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import WireNetwork
 
 struct StorableConversationAccessUpdateEvent: Equatable, Codable, Sendable {
 
@@ -26,7 +26,7 @@ struct StorableConversationAccessUpdateEvent: Equatable, Codable, Sendable {
     private let accessRoles: [StorableConversationAccessRole]?
     private let legacyAccessRole: StorableConversationAccessRoleLegacy?
 
-    init(_ value: WireAPI.ConversationAccessUpdateEvent) {
+    init(_ value: WireNetwork.ConversationAccessUpdateEvent) {
         self.conversationID = StorableQualifiedID(value.conversationID)
         self.senderID = StorableQualifiedID(value.senderID)
         self.accessModes = value.accessModes.map(StorableConversationAccessMode.init)
@@ -34,7 +34,7 @@ struct StorableConversationAccessUpdateEvent: Equatable, Codable, Sendable {
         self.legacyAccessRole = value.legacyAccessRole.map { StorableConversationAccessRoleLegacy($0) }
     }
 
-    func toAPIModel() -> WireAPI.ConversationAccessUpdateEvent {
+    func toAPIModel() -> WireNetwork.ConversationAccessUpdateEvent {
         .init(
             conversationID: conversationID.toAPIModel(),
             senderID: senderID.toAPIModel(),

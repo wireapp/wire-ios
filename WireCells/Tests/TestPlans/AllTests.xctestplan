@@ -15,17 +15,10 @@
   },
   "testTargets" : [
     {
-      "skippedTests" : [
-        "WireCellsTests",
-        "WireCellsTests\/testListFilesEmptyFolder()",
-        "WireCellsTests\/testListFilesEmptyFolderTree()",
-        "WireCellsTests\/testListFilesRoot()",
-        "WireCellsTests\/testUploadFile()"
-      ],
       "target" : {
         "containerPath" : "container:WireCells",
-        "identifier" : "WireCellsTests",
-        "name" : "WireCellsTests"
+        "identifier" : "WireCellsImplementationTests",
+        "name" : "WireCellsImplementationTests"
       }
     },
     {

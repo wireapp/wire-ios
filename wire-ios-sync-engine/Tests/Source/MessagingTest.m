@@ -355,16 +355,6 @@ static ZMReachability *sharedReachabilityMock = nil;
     return client;
 }
 
-- (UserClient *)createSelfClient
-{
-    UserClient *selfClient = [self setupSelfClientInMoc:self.syncMOC];
-    NSDictionary *payload = @{@"id": selfClient.remoteIdentifier, @"type": @"permanent", @"time": [[NSDate date] transportString]};
-    NOT_USED([UserClient createOrUpdateSelfUserClient:payload context:self.syncMOC]);
-    [self.syncMOC saveOrRollback];
-    
-    return selfClient;
-}
-
 @end
 
 @implementation  MessagingTest (SwiftBridgeConversation)

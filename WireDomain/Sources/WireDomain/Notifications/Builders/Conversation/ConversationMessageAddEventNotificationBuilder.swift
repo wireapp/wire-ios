@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
 import WireFoundation
+import WireNetwork
 
 struct ConversationMessageAddEventNotificationBuilder: ConversationMessageAddEventNotificationBuilderProtocol {
 
@@ -214,13 +214,13 @@ extension ConversationMessageAddEventNotificationBuilder {
             conversationID: ConversationID
         ) async -> Bool {
             let conversation = await conversationLocalStore.fetchOrCreateConversation(
-                id: conversationID.uuid,
+                id: conversationID.id,
                 domain: conversationID.domain
             )
 
             let isMessageSilenced = await conversationLocalStore.isMessageSilenced(
                 message,
-                senderID: senderID.uuid,
+                senderID: senderID.id,
                 conversation: conversation
             )
 

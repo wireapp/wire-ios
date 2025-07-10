@@ -17,11 +17,14 @@
 //
 
 import SwiftUI
+import WireBackup
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireDomain
 import WireFoundation
 import WireLogging
+import WireNetwork
 import WireSettingsUI
 import WireSyncEngine
 
@@ -237,7 +240,7 @@ extension SettingsCellDescriptorFactory {
                         SettingsCellPreview.text(L10n.Localizable.Self.addEmailPassword)
                     }
                 },
-                accessoryViewMode: .alwaysHide
+                accessoryView: .none
             )
         } else {
             textValueCellDescriptor(propertyName: .email, enabled: enabled)
@@ -275,7 +278,7 @@ extension SettingsCellDescriptorFactory {
                     presentationStyle: .navigation,
                     presentationAction: presentation,
                     previewGenerator: preview,
-                    accessoryViewMode: .alwaysHide,
+                    accessoryView: .none,
                     copiableText: copiableText
                 )
             }
@@ -388,17 +391,51 @@ extension SettingsCellDescriptorFactory {
 
         // force-unwrapping should be fine, since we should have a session manager and an active user session here
         let sessionManager = SessionManager.shared!
-        let importBackupUseCase = sessionManager.importBackupUseCase!
+        let selfUser = ZMUser.selfUser()!
+        let context = selfUser.managedObjectContext!.performAndWait {
+            selfUser.managedObjectContext!.zm_sync!
+        }
+        let backupLocalStore = BackupLocalStore(
+            context: context,
+            processor: ConversationProtobufMessageProcessor(context: context)
+        )
+        let userSession = sessionManager.activeUserSession!
+        let importBackupUseCaseFactory = ImportBackupUseCaseFactory { url in
+            ImportBackupUseCase(
+                url: url,
+                selfUserID: .init(selfUser.qualifiedID!),
+                backupLocalStore: backupLocalStore,
+                fileUnarchiver: ZipArchiveFileUnarchiver(),
+                syncTrigger: {
+                    Task {
+                        await userSession.triggerResourcesSync()
+                    }
+                },
+                logger: WireLogger.backupImport
+            )
+        } legacyImportBackupUseCase: { url in
+            sessionManager.importLegacyBackupUseCase(url: url)!
+        }
+        let createBackupUseCase: CreateBackupUseCaseProtocol = if DeveloperFlag.createLegacyBackups.isOn {
+            CreateLegacyBackupUseCase(sessionManager: sessionManager)
+        } else {
+            CreateBackupUseCase(
+                selfUserID: .init(selfUser.qualifiedID!),
+                backupLocalStore: backupLocalStore,
+                fileArchiver: ZIPFoundationFileArchiver(),
+                logger: WireLogger.backupExport
+            )
+        }
 
         return BackupImportExportBuilder(
             backupPasswordValidator: BackupPasswordValidator(),
-            createBackupUseCase: CreateLegacyBackupUseCase(sessionManager: sessionManager),
-            importBackupUseCase: importBackupUseCase,
+            createBackupUseCase: createBackupUseCase,
+            importBackupUseCaseFactory: importBackupUseCaseFactory,
             cleanUpBackupsUseCase: CleanUpBackupsUseCase(sessionManager: sessionManager),
             exportBackupLogger: WireLogger.backupExport,
             importBackupLogger: WireLogger.backupImport,
             wireAccentColorMapping: WireAccentColorMapping(),
-            wireAccentColor: ZMUser.selfUser()?.accentColor ?? .default
+            wireAccentColor: selfUser.accentColor ?? .default
         )
     }
 
@@ -482,6 +519,28 @@ extension SettingsCellDescriptorFactory {
 
     func signOutElement() -> any SettingsCellDescriptorType {
         SettingsSignOutCellDescriptor()
+    }
+
+}
+
+// MARK: -
+
+private extension ConversationProtobufMessageProcessor {
+
+    init(context: NSManagedObjectContext) {
+        let messageLocalStore = MessageLocalStore(context: context)
+        self.init(
+            messageLocalStore: messageLocalStore,
+            conversationLocalStore: ConversationLocalStore(
+                context: context,
+                mlsService: context.performAndWait { context.mlsService },
+                messageLocalStore: messageLocalStore
+            ),
+            userLocalStore: UserLocalStore(
+                context: context,
+                messageLocalStore: messageLocalStore
+            )
+        )
     }
 
 }

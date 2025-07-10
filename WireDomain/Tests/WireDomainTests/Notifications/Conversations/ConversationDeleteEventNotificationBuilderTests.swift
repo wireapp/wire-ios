@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
+import WireNetworkSupport
 import WireTestingPackage
 import XCTest
-@testable import WireAPI
 @testable import WireDomain
 @testable import WireDomainSupport
+@testable import WireNetwork
 
 final class ConversationDeleteEventNotificationBuilderTests: XCTestCase {
     private var sut: ConversationDeleteEventNotificationBuilder!
@@ -182,7 +182,7 @@ final class ConversationDeleteEventNotificationBuilderTests: XCTestCase {
         // Thread ID
         XCTAssertEqual(
             notificationContent.threadIdentifier,
-            Scaffolding.conversationID.uuid.uuidString.lowercased()
+            Scaffolding.conversationID.id.uuidString.lowercased()
         )
 
         // User info
@@ -219,8 +219,8 @@ final class ConversationDeleteEventNotificationBuilderTests: XCTestCase {
         static let senderName = "User1"
         static let conversationName = "Conversation1"
         static let teamName = "Team1"
-        static let conversationID = WireAPI.QualifiedID(uuid: .mockID2, domain: "domain.com")
-        static let userID = UserID(uuid: .mockID3, domain: "domain.com")
+        static let conversationID = WireNetwork.QualifiedID(id: .mockID2, domain: "domain.com")
+        static let userID = UserID(id: .mockID3, domain: "domain.com")
         static let event = ConversationDeleteEvent(
             conversationID: conversationID,
             senderID: userID,

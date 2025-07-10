@@ -17,9 +17,9 @@
 //
 
 import Combine
-import WireAPI
 import WireDataModelSupport
 import WireDomain
+import WireNetwork
 import WireRequestStrategySupport
 import WireTransportSupport
 @testable import WireSyncEngine
@@ -33,7 +33,7 @@ class ZMUserSessionTestsBase: MessagingTest {
     var mockEARService: MockEARServiceInterface!
     var mockMLSService: MockMLSServiceInterface!
     var backendEnvironment: WireTransport.BackendEnvironment!
-    var wireAPIBackendEnvironment: WireAPI.BackendEnvironment!
+    var wireAPIBackendEnvironment: WireNetwork.BackendEnvironment!
     var transportSession: RecordingMockTransportSession!
     var cookieStorage: ZMPersistentCookieStorage!
     var validCookie: Data!
@@ -67,7 +67,7 @@ class ZMUserSessionTestsBase: MessagingTest {
         backendEnvironment = WireTransport.BackendEnvironment(
             title: "Mock backend environment",
             trustData: [],
-            environmentType: .production,
+            environmentType: .default,
             endpoints: BackendEndpoints(
                 backendURL: baseURL,
                 backendWSURL: baseURL,
@@ -81,7 +81,7 @@ class ZMUserSessionTestsBase: MessagingTest {
             certificateTrust: ServerCertificateTrust(trustData: [], currentDateProvider: .system)
         )
 
-        wireAPIBackendEnvironment = WireAPI.BackendEnvironment(
+        wireAPIBackendEnvironment = WireNetwork.BackendEnvironment(
             url: backendEnvironment.backendURL,
             webSocketURL: backendEnvironment.backendWSURL,
             pinnedKeys: [],
@@ -175,13 +175,15 @@ class ZMUserSessionTestsBase: MessagingTest {
             userID: coreDataStack.account.userIdentifier,
             storage: UserDefaults.temporary()
         )
+        let logFilesProvider = MockLogFilesProviding()
 
         var builder = ZMUserSessionBuilder()
         builder.withAllDependencies(
             apiServiceFactory: { _, _ in MockAPIService() },
             backendEnvironment: backendEnvironment,
             wireAPIBackendEnvironment: wireAPIBackendEnvironment,
-            appVersion: "00000",
+            currentAppVersion: "3.120.0",
+            currentBuildNumber: "00000",
             application: application,
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             coreDataStack: coreDataStack,
@@ -198,7 +200,8 @@ class ZMUserSessionTestsBase: MessagingTest {
             transportSession: transportSession,
             userId: coreDataStack.account.userIdentifier,
             minTLSVersion: nil,
-            journal: journal
+            journal: journal,
+            logFilesProvider: logFilesProvider
         )
 
         let userSession = builder.build()

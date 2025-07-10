@@ -14,18 +14,18 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
-        .package(path: "../WireAPI"),
+        .package(path: "../WireNetwork"),
         .package(path: "../WireFoundation"),
         .package(path: "../WireLogging"),
-        .package(path: "../WirePlugins"),
+        .package(path: "../WirePlugins")
     ],
     targets: [
         .target(
             name: "WireDomainPackage",
             dependencies: [
-                "WireAPI",
+                "WireNetwork",
                 "WireLogging",
-                .product(name: "WireFoundation", package: "WireFoundation")
+                "WireFoundation"
             ]
         ),
         .target(
@@ -43,12 +43,12 @@ let package = Package(
         ),
         .target(
             name: "WireUpdateEventCoding",
-            dependencies: ["WireAPI"]
+            dependencies: ["WireNetwork"]
         ),
     ]
 )
 
-for target in package.targets where target.type != .binary {
+for target in package.targets {
     target.swiftSettings = [
         .enableUpcomingFeature("InternalImportsByDefault"),
         .enableUpcomingFeature("ExistentialAny")

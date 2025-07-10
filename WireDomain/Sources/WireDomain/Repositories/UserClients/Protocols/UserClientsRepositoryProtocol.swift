@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
+import WireNetwork
 
 // sourcery: AutoMockable
 /// Facilitate access to user clients related domain objects.
@@ -46,7 +46,7 @@ public protocol UserClientsRepositoryProtocol {
 
     func fetchOrCreateClient(
         id: String
-    ) async throws -> (client: WireDataModel.UserClient, isNew: Bool)
+    ) async -> (client: WireDataModel.UserClient, isNew: Bool)
 
     /// Updates the user client informations locally.
     ///
@@ -57,9 +57,9 @@ public protocol UserClientsRepositoryProtocol {
 
     func updateClient(
         id: String,
-        from remoteClient: WireAPI.SelfUserClient,
+        from remoteClient: WireNetwork.SelfUserClient,
         isNewClient: Bool
-    ) async throws
+    ) async
 
     /// Deletes client locally.
     /// - parameter id: The client id.

@@ -17,10 +17,11 @@
 //
 
 import Foundation
-import WireAPI
 import WireDataModel
 import WireDomain
 import WireFoundation
+import WireLogging
+import WireNetwork
 import WireRequestStrategy
 import WireUtilities
 
@@ -30,8 +31,9 @@ struct ZMUserSessionBuilder {
 
     private var apiServiceFactory: APIServiceFactory?
     private var backendEnvironment: WireTransport.BackendEnvironment?
-    private var wireAPIBackendEnvironment: WireAPI.BackendEnvironment?
-    private var appVersion: String?
+    private var wireAPIBackendEnvironment: WireNetwork.BackendEnvironment?
+    private var currentAppVersion: String?
+    private var currentBuildNumber: String?
     private var appLock: (any AppLockType)?
     private var application: (any ZMApplication)?
     private var applicationStatusDirectory: ApplicationStatusDirectory?
@@ -53,8 +55,9 @@ struct ZMUserSessionBuilder {
     private var transportSession: (any TransportSessionType)?
     private var userId: UUID?
     private var minTLSVersion: String?
-    private var apiVersion: WireAPI.APIVersion?
+    private var apiVersion: WireNetwork.APIVersion?
     private var journal: Journal?
+    private var logFilesProvider: LogFilesProviding?
 
     // MARK: - Initialize
 
@@ -65,7 +68,8 @@ struct ZMUserSessionBuilder {
     func build() -> ZMUserSession {
         guard
             let apiServiceFactory,
-            let appVersion,
+            let currentAppVersion,
+            let currentBuildNumber,
             let appLock,
             let application,
             let applicationStatusDirectory,
@@ -88,7 +92,8 @@ struct ZMUserSessionBuilder {
             let userId,
             let wireAPIBackendEnvironment,
             let apiVersion,
-            let journal
+            let journal,
+            let logFilesProvider
         else {
             fatalError("cannot build 'ZMUserSession' without required dependencies")
         }
@@ -100,7 +105,8 @@ struct ZMUserSessionBuilder {
             flowManager: flowManager,
             apiServiceFactory: apiServiceFactory,
             application: application,
-            appVersion: appVersion,
+            currentAppVersion: currentAppVersion,
+            currentBuildNumber: currentBuildNumber,
             coreDataStack: coreDataStack,
             earService: earService,
             mlsService: mlsService,
@@ -119,7 +125,8 @@ struct ZMUserSessionBuilder {
             backendEnvironment: wireAPIBackendEnvironment,
             minTLSVersion: .minVersionFrom(minTLSVersion),
             apiVersion: apiVersion,
-            journal: journal
+            journal: journal,
+            logFilesProvider: logFilesProvider
         )
     }
 
@@ -128,8 +135,9 @@ struct ZMUserSessionBuilder {
     mutating func withAllDependencies(
         apiServiceFactory: @escaping APIServiceFactory,
         backendEnvironment: WireTransport.BackendEnvironment,
-        wireAPIBackendEnvironment: WireAPI.BackendEnvironment,
-        appVersion: String,
+        wireAPIBackendEnvironment: WireNetwork.BackendEnvironment,
+        currentAppVersion: String,
+        currentBuildNumber: String,
         application: any ZMApplication,
         cryptoboxMigrationManager: any CryptoboxMigrationManagerInterface,
         coreDataStack: CoreDataStack,
@@ -146,7 +154,8 @@ struct ZMUserSessionBuilder {
         transportSession: any TransportSessionType,
         userId: UUID,
         minTLSVersion: String?,
-        journal: Journal
+        journal: Journal,
+        logFilesProvider: LogFilesProviding
     ) {
         // reused dependencies
 
@@ -212,14 +221,15 @@ struct ZMUserSessionBuilder {
 
         if
             let wireTransportAPIVersion = WireTransport.BackendInfo.apiVersion,
-            let apiVersion = WireAPI.APIVersion(rawValue: UInt(wireTransportAPIVersion.rawValue)) {
+            let apiVersion = WireNetwork.APIVersion(rawValue: UInt(wireTransportAPIVersion.rawValue)) {
             self.apiVersion = apiVersion
         }
 
         // setup builder
 
         self.apiServiceFactory = apiServiceFactory
-        self.appVersion = appVersion
+        self.currentAppVersion = currentAppVersion
+        self.currentBuildNumber = currentBuildNumber
         self.appLock = appLock
         self.application = application
         self.applicationStatusDirectory = applicationStatusDirectory
@@ -243,6 +253,7 @@ struct ZMUserSessionBuilder {
         self.minTLSVersion = minTLSVersion
         self.wireAPIBackendEnvironment = wireAPIBackendEnvironment
         self.journal = journal
+        self.logFilesProvider = logFilesProvider
     }
 
     // MARK: UserSesssionDependencies

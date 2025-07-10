@@ -17,15 +17,15 @@
 //
 
 import Combine
-import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
+import WireNetworkSupport
 import WireTestingPackage
 import XCTest
 
-@testable import WireAPI
 @testable import WireDomain
+@testable import WireNetwork
 
 final class ConversationLocalStoreTests: XCTestCase {
 
@@ -74,7 +74,7 @@ final class ConversationLocalStoreTests: XCTestCase {
 
         let groupConversation = Scaffolding.groupConversation
         let qualifiedID = try XCTUnwrap(groupConversation.qualifiedID)
-        let id = qualifiedID.uuid
+        let id = qualifiedID.id
         let domain = qualifiedID.domain
 
         // When
@@ -104,7 +104,7 @@ final class ConversationLocalStoreTests: XCTestCase {
 
         let groupConversation = Scaffolding.groupConversation
         let qualifiedID = try XCTUnwrap(groupConversation.qualifiedID)
-        let id = qualifiedID.uuid
+        let id = qualifiedID.id
         let domain = qualifiedID.domain
 
         // When
@@ -132,7 +132,7 @@ final class ConversationLocalStoreTests: XCTestCase {
 
         let groupConversation = Scaffolding.groupConversation
         let qualifiedID = try XCTUnwrap(groupConversation.qualifiedID)
-        let id = qualifiedID.uuid
+        let id = qualifiedID.id
         let domain = qualifiedID.domain
 
         await context.perform { [self] in
@@ -569,7 +569,7 @@ final class ConversationLocalStoreTests: XCTestCase {
 
         static let groupConversation = Conversation(
             id: .mockID1,
-            qualifiedID: .init(uuid: .mockID1, domain: domain),
+            qualifiedID: .init(id: .mockID1, domain: domain),
             teamID: .mockID2,
             type: .group,
             messageProtocol: .proteus,

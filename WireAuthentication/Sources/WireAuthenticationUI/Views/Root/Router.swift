@@ -24,6 +24,7 @@ import WireLogging
 @MainActor
 package protocol Router {
 
+    func pop()
     func popToRoot()
 
     func navigate<Destination: Hashable>(to destination: Destination)

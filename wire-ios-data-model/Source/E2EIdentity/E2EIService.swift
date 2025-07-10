@@ -135,7 +135,7 @@ public final class E2EIService: E2EIServiceInterface {
                 throw E2EIServiceFailure.missingCoreCrypto
             }
 
-            return try await self.e2eIdentity.contextNewOidcChallengeResponse(cc: coreCrypto, challenge: challenge)
+            return try await self.e2eIdentity.newOidcChallengeResponse(cc: coreCrypto, challenge: challenge)
         }
     }
 
