@@ -1,0 +1,2999 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 71;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		592996512C2EB98A008C334F /* Format & Lint Swift Code */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 592996542C2EB98A008C334F /* Build configuration list for PBXAggregateTarget "Format & Lint Swift Code" */;
+			buildPhases = (
+				592996552C2EB996008C334F /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = "Format & Lint Swift Code";
+			productName = "Format Swift Code";
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		0143895E2BC81DC200EC6920 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 0143895D2BC81DC200EC6920 /* PrivacyInfo.xcprivacy */; };
+		0145AE992B1156FC0097E3B8 /* WireSyncEngineSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0145AE982B1156FC0097E3B8 /* WireSyncEngineSupport.framework */; };
+		016DB6DE2C261A4900DEB81B /* WireDomain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 016DB6DD2C261A4900DEB81B /* WireDomain.framework */; };
+		016DB6DF2C261A4900DEB81B /* WireDomain.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 016DB6DD2C261A4900DEB81B /* WireDomain.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		01B71B952D6D2DAB002C5A38 /* RedactedScript-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 01B71AA22D6D2DAB002C5A38 /* RedactedScript-Regular.ttf */; };
+		01B71B962D6D2DAB002C5A38 /* emoticons.min.json in Resources */ = {isa = PBXBuildFile; fileRef = 01B71B922D6D2DAB002C5A38 /* emoticons.min.json */; };
+		01B71B972D6D2DAB002C5A38 /* Accessibility.strings in Resources */ = {isa = PBXBuildFile; fileRef = 01B71AD82D6D2DAB002C5A38 /* Accessibility.strings */; };
+		01B71B982D6D2DAB002C5A38 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 01B71B202D6D2DAB002C5A38 /* InfoPlist.strings */; };
+		01B71B992D6D2DAB002C5A38 /* Emoji.strings in Resources */ = {isa = PBXBuildFile; fileRef = 01B71AED2D6D2DAB002C5A38 /* Emoji.strings */; };
+		01B71B9A2D6D2DAB002C5A38 /* emojis.json in Resources */ = {isa = PBXBuildFile; fileRef = 01B71B912D6D2DAB002C5A38 /* emojis.json */; };
+		01B71B9B2D6D2DAB002C5A38 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 01B71AA42D6D2DAB002C5A38 /* Images.xcassets */; };
+		01B71B9C2D6D2DAB002C5A38 /* hotping_from_them.caf in Resources */ = {isa = PBXBuildFile; fileRef = 01B71B8A2D6D2DAB002C5A38 /* hotping_from_them.caf */; };
+		01B71B9D2D6D2DAB002C5A38 /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 01B71B862D6D2DAB002C5A38 /* Localizable.stringsdict */; };
+		01B71B9E2D6D2DAB002C5A38 /* OtherImages.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 01B71AA52D6D2DAB002C5A38 /* OtherImages.xcassets */; };
+		01B71B9F2D6D2DAB002C5A38 /* audio-notifications in Resources */ = {isa = PBXBuildFile; fileRef = 01B71B882D6D2DAB002C5A38 /* audio-notifications */; };
+		01B71BA02D6D2DAB002C5A38 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 01B71B932D6D2DAB002C5A38 /* Settings.bundle */; };
+		01B71BA12D6D2DAB002C5A38 /* ping_from_them.caf in Resources */ = {isa = PBXBuildFile; fileRef = 01B71B8D2D6D2DAB002C5A38 /* ping_from_them.caf */; };
+		01B71BA22D6D2DAB002C5A38 /* first_message.caf in Resources */ = {isa = PBXBuildFile; fileRef = 01B71B892D6D2DAB002C5A38 /* first_message.caf */; };
+		01B71BA32D6D2DAB002C5A38 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 01B71B532D6D2DAB002C5A38 /* Localizable.strings */; };
+		01B71BA42D6D2DAB002C5A38 /* new_message.caf in Resources */ = {isa = PBXBuildFile; fileRef = 01B71B8C2D6D2DAB002C5A38 /* new_message.caf */; };
+		01B71BA52D6D2DAB002C5A38 /* silence.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 01B71B8F2D6D2DAB002C5A38 /* silence.m4a */; };
+		01B71BA62D6D2DAB002C5A38 /* ringing_from_them_long.caf in Resources */ = {isa = PBXBuildFile; fileRef = 01B71B8E2D6D2DAB002C5A38 /* ringing_from_them_long.caf */; };
+		01B71BA72D6D2DAB002C5A38 /* emoticons.min.json in Resources */ = {isa = PBXBuildFile; fileRef = 01B71B922D6D2DAB002C5A38 /* emoticons.min.json */; };
+		01C1A7C72A54C45A0058D578 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 01C1A7C62A54C45A0058D578 /* SnapshotTesting */; };
+		01C774272D9EECE100A2FF07 /* WireAVS in Frameworks */ = {isa = PBXBuildFile; productRef = 01C774262D9EECE100A2FF07 /* WireAVS */; };
+		01D2B7A52D64A9190030D28D /* WireCoreCrypto in Frameworks */ = {isa = PBXBuildFile; productRef = 01D2B7A42D64A9190030D28D /* WireCoreCrypto */; };
+		0619A95C2D3FE78700876BDE /* WireAuthenticationUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0619A95B2D3FE78700876BDE /* WireAuthenticationUI */; };
+		061F34192B1E2ED50099CBAB /* AppAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 061F34182B1E2ED50099CBAB /* AppAuth */; };
+		061F341B2B1E2ED50099CBAB /* AppAuthCore in Frameworks */ = {isa = PBXBuildFile; productRef = 061F341A2B1E2ED50099CBAB /* AppAuthCore */; };
+		065A5AE5279B07AC002D4D1E /* Wire Notification Service Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 065A5ADE279B07AC002D4D1E /* Wire Notification Service Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		16EE08AE2D92E861001B372C /* WireCoreCryptoUniffi in Frameworks */ = {isa = PBXBuildFile; productRef = 16EE08AD2D92E861001B372C /* WireCoreCryptoUniffi */; };
+		34DC44AD2E01C1E6004D5DD5 /* WireNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = 34DC44AC2E01C1E6004D5DD5 /* WireNetwork */; };
+		407831AD2AC4636F005C2978 /* DifferenceKit in Frameworks */ = {isa = PBXBuildFile; productRef = 407831AC2AC4636F005C2978 /* DifferenceKit */; };
+		59076F952C934A9800AE7529 /* WireAccountImageUI in Frameworks */ = {isa = PBXBuildFile; productRef = 59076F942C934A9800AE7529 /* WireAccountImageUI */; };
+		590DCA082C971A56002D0A2C /* WireSidebarUI in Frameworks */ = {isa = PBXBuildFile; productRef = 590DCA072C971A56002D0A2C /* WireSidebarUI */; };
+		591B6E172C8B095B009F8A7B /* WireNotificationEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A8585298B0A3B00064A9C /* WireNotificationEngine.framework */; };
+		591B6E182C8B095B009F8A7B /* WireNotificationEngine.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A8585298B0A3B00064A9C /* WireNotificationEngine.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		591B6E192C8B0960009F8A7B /* WireCommonComponents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */; };
+		591B6E1C2C8B0964009F8A7B /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59AADE222BB4299900D9E658 /* WireDataModelSupport.framework */; };
+		591B6E212C8B096C009F8A7B /* WireCommonComponents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */; };
+		591B6E242C8B0970009F8A7B /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59AADE222BB4299900D9E658 /* WireDataModelSupport.framework */; };
+		5929CB222CA6C9C800070488 /* WireConversationListUI in Frameworks */ = {isa = PBXBuildFile; productRef = 5929CB212CA6C9C800070488 /* WireConversationListUI */; };
+		592ED06E2C1C7D0700FE1F4E /* WireReusableUIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = 592ED06D2C1C7D0700FE1F4E /* WireReusableUIComponents */; };
+		594341D72D08611700A6C0B5 /* WireCountly in Frameworks */ = {isa = PBXBuildFile; productRef = 594341D62D08611700A6C0B5 /* WireCountly */; };
+		5945D02A2C219F7200D039E3 /* WireDesign in Frameworks */ = {isa = PBXBuildFile; productRef = 5945D0292C219F7200D039E3 /* WireDesign */; };
+		59537D8F2CFFA05600920B59 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59537D8E2CFFA05600920B59 /* WireLogging */; };
+		59537D912CFFA0BA00920B59 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59537D902CFFA0BA00920B59 /* WireLogging */; };
+		59537D932CFFA0DA00920B59 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59537D922CFFA0DA00920B59 /* WireLogging */; };
+		59537D952CFFA11A00920B59 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59537D942CFFA11A00920B59 /* WireLogging */; };
+		59592D1F2D4B9527005EDF16 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 590DCA092C971AFF002D0A2C /* WireFoundation */; };
+		59592D202D4B9527005EDF16 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59191A642D0051C7001AB388 /* WireLogging */; };
+		595C49692CA995E900F8F881 /* WireSettingsUI in Frameworks */ = {isa = PBXBuildFile; productRef = 595C49682CA995E900F8F881 /* WireSettingsUI */; };
+		59703B282DD4A42000B45773 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 59703B272DD4A42000B45773 /* ZIPFoundation */; };
+		5977ED1F2D26747900F5C78E /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 5977ED1E2D26747900F5C78E /* WireLogging */; };
+		597D9BEF2DA7DA7B000031DE /* WireUtilitiesSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 597D9BEE2DA7DA7B000031DE /* WireUtilitiesSupport.framework */; };
+		598E86D12BF4D97800FC5438 /* WireUtilitiesSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E86D02BF4D97800FC5438 /* WireUtilitiesSupport.framework */; };
+		598E86F72BF4DD5C00FC5438 /* WireSystemSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E86F62BF4DD5C00FC5438 /* WireSystemSupport.framework */; };
+		5996E8A42C19D074007A52F0 /* WireRequestStrategySupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59AADE262BB429B200D9E658 /* WireRequestStrategySupport.framework */; };
+		5996E8A62C19D090007A52F0 /* WireSyncEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F739296F0E28001D7C88 /* WireSyncEngine.framework */; };
+		5996E8A72C19D090007A52F0 /* WireSyncEngine.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F739296F0E28001D7C88 /* WireSyncEngine.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		5996E8A82C19D09D007A52F0 /* WireSyncEngineSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0145AE982B1156FC0097E3B8 /* WireSyncEngineSupport.framework */; };
+		5996E8AA2C19D0D6007A52F0 /* WireSystemSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E86F62BF4DD5C00FC5438 /* WireSystemSupport.framework */; };
+		5996E8AD2C19D0DF007A52F0 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E6C25FC42AFFAAC300406A1C /* WireTesting.framework */; };
+		59AADE272BB429B200D9E658 /* WireRequestStrategySupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59AADE262BB429B200D9E658 /* WireRequestStrategySupport.framework */; };
+		59B48C622C89CD3D00EA7999 /* WireTestingPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59B48C612C89CD3D00EA7999 /* WireTestingPackage */; };
+		59B768432D2D58BE007B5F1E /* WireFoundationSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 59B768422D2D58BE007B5F1E /* WireFoundationSupport */; };
+		59B7684B2D2D5A17007B5F1E /* WireFoundationSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 59B7684A2D2D5A17007B5F1E /* WireFoundationSupport */; };
+		59B99FAA2C89DE8600201827 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 59B99FA92C89DE8600201827 /* WireFoundation */; };
+		59BAEAFC2DBF483400B54AC4 /* WireBackup in Frameworks */ = {isa = PBXBuildFile; productRef = 59BAEAFB2DBF483400B54AC4 /* WireBackup */; };
+		59C4FBF12C45B7130037030B /* WireShareEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE33C48C296485FA00C058D1 /* WireShareEngine.framework */; };
+		59CDB3F62C4EA08F0049D1AB /* WireReusableUIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = 59CDB3F52C4EA08F0049D1AB /* WireReusableUIComponents */; };
+		59D038272C85D31E009FE583 /* WireMainNavigationUI in Frameworks */ = {isa = PBXBuildFile; productRef = 59D038262C85D31E009FE583 /* WireMainNavigationUI */; };
+		767F41E82D7F95C100E4E090 /* WireMessagingUIBindings in Frameworks */ = {isa = PBXBuildFile; productRef = 767F41E72D7F95C100E4E090 /* WireMessagingUIBindings */; };
+		76ACF8A22D4215E2001F48A1 /* WireViewsDebugUI in Frameworks */ = {isa = PBXBuildFile; productRef = 76ACF8A12D4215E2001F48A1 /* WireViewsDebugUI */; };
+		76BFA65D2D89E6B8000F2D0A /* WireMessagingAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 76BFA65C2D89E6B8000F2D0A /* WireMessagingAPI */; };
+		76BFA65F2D89E6D8000F2D0A /* WireMessagingUIBindings in Frameworks */ = {isa = PBXBuildFile; productRef = 76BFA65E2D89E6D8000F2D0A /* WireMessagingUIBindings */; };
+		76D15E712CEFAE8A0059215D /* WireIndividualToTeamMigrationUI in Frameworks */ = {isa = PBXBuildFile; productRef = 76D15E702CEFAE8A0059215D /* WireIndividualToTeamMigrationUI */; };
+		76ED41EC2E053E3200A286F4 /* WireNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = 76ED41EB2E053E3200A286F4 /* WireNetwork */; };
+		A96867FA26A5EB8400679D95 /* WireCommonComponents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */; };
+		A96867FB26A5EB8400679D95 /* WireCommonComponents.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CB1428452DCB8A820092E7AE /* WireCellsUI in Frameworks */ = {isa = PBXBuildFile; productRef = CB1428442DCB8A820092E7AE /* WireCellsUI */; };
+		CB43D9BD2CDBBBB900BF5AEB /* WireFolderPickerUI in Frameworks */ = {isa = PBXBuildFile; productRef = CB43D9BC2CDBBBB900BF5AEB /* WireFolderPickerUI */; };
+		CB4870F22C7F4FE5001E9151 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB4870F12C7F4FE5001E9151 /* WireTransportSupport.framework */; };
+		CB4E15122C81CC81005DDEC8 /* Down in Frameworks */ = {isa = PBXBuildFile; productRef = CB4E15112C81CC81005DDEC8 /* Down */; };
+		CB71EE212DDF5A1000E7A3AF /* WireCellsAPI in Frameworks */ = {isa = PBXBuildFile; productRef = CB71EE202DDF5A1000E7A3AF /* WireCellsAPI */; };
+		CBDDB1832DD4BCA700A0A1F3 /* WireCellsBindings in Frameworks */ = {isa = PBXBuildFile; productRef = CBDDB1822DD4BCA700A0A1F3 /* WireCellsBindings */; };
+		D0E258152DDC864100959FB9 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = D0E258142DDC864100959FB9 /* WireFoundation */; };
+		E40050762D71A80100B7962B /* WireMessagingUI in Frameworks */ = {isa = PBXBuildFile; productRef = E40050752D71A80100B7962B /* WireMessagingUI */; };
+		E416B8E42DE8560600882C63 /* WireMultiBackendUI in Frameworks */ = {isa = PBXBuildFile; productRef = E416B8E32DE8560600882C63 /* WireMultiBackendUI */; };
+		E489D8312DF709CE008966AE /* WireMultiBackendUI in Frameworks */ = {isa = PBXBuildFile; productRef = E489D8302DF709CE008966AE /* WireMultiBackendUI */; };
+		E6C25FC52AFFAAC300406A1C /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E6C25FC42AFFAAC300406A1C /* WireTesting.framework */; };
+		E9816C902CC9244700D77F22 /* WireSyncEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9816C8F2CC9244700D77F22 /* WireSyncEngine.framework */; };
+		E985CB8F2CEB4FCB0075DAD6 /* WireDatadog in Frameworks */ = {isa = PBXBuildFile; productRef = 016A141C2CE6BFC4006A7EF5 /* WireDatadog */; };
+		E9BA75C62CD51DF100F6EDDF /* WireMoveToFolderUI in Frameworks */ = {isa = PBXBuildFile; productRef = E9BA75C52CD51DF100F6EDDF /* WireMoveToFolderUI */; };
+		E9FBF3A62C47C23100C65DA8 /* FLAnimatedImage in Frameworks */ = {isa = PBXBuildFile; productRef = E9FBF3A52C47C23100C65DA8 /* FLAnimatedImage */; };
+		EE33C48D296485FA00C058D1 /* WireShareEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE33C48C296485FA00C058D1 /* WireShareEngine.framework */; };
+		EE33C48E296485FA00C058D1 /* WireShareEngine.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE33C48C296485FA00C058D1 /* WireShareEngine.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EE543B4A2D564AC000CA96BA /* WireAuthentication in Frameworks */ = {isa = PBXBuildFile; productRef = EE543B492D564AC000CA96BA /* WireAuthentication */; };
+		EE67F73E296F0E7D001D7C88 /* Ziphy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F73D296F0E7D001D7C88 /* Ziphy.framework */; };
+		EE67F73F296F0E7D001D7C88 /* Ziphy.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F73D296F0E7D001D7C88 /* Ziphy.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EE67F741296F0EBC001D7C88 /* WireCanvas.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F740296F0EBC001D7C88 /* WireCanvas.framework */; };
+		EE67F742296F0EBC001D7C88 /* WireCanvas.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F740296F0EBC001D7C88 /* WireCanvas.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EE7905F627F326EB00FCBF8C /* Wire Share Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 168A16A91D9597C2005CFA6C /* Wire Share Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		EE9A8586298B0A3B00064A9C /* WireNotificationEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A8585298B0A3B00064A9C /* WireNotificationEngine.framework */; };
+		EEE25B2A29719A730008B894 /* cryptobox.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B2729719A730008B894 /* cryptobox.xcframework */; };
+		EEE25B3529719BD30008B894 /* WireCryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B3429719BD30008B894 /* WireCryptobox.framework */; };
+		EEE25B3629719BD30008B894 /* WireCryptobox.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B3429719BD30008B894 /* WireCryptobox.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EEE25B3829719C170008B894 /* WireDataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B3729719C170008B894 /* WireDataModel.framework */; };
+		EEE25B3929719C170008B894 /* WireDataModel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B3729719C170008B894 /* WireDataModel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EEE25B3B29719C370008B894 /* WireLinkPreview.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B3A29719C370008B894 /* WireLinkPreview.framework */; };
+		EEE25B3C29719C370008B894 /* WireLinkPreview.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B3A29719C370008B894 /* WireLinkPreview.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EEE25B3E29719C580008B894 /* WireProtos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B3D29719C580008B894 /* WireProtos.framework */; };
+		EEE25B3F29719C580008B894 /* WireProtos.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B3D29719C580008B894 /* WireProtos.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EEE25B4129719C750008B894 /* WireRequestStrategy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B4029719C750008B894 /* WireRequestStrategy.framework */; };
+		EEE25B4229719C750008B894 /* WireRequestStrategy.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B4029719C750008B894 /* WireRequestStrategy.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EEE25B4429719C950008B894 /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B4329719C950008B894 /* WireSystem.framework */; };
+		EEE25B4529719C950008B894 /* WireSystem.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B4329719C950008B894 /* WireSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EEE25B4729719CB30008B894 /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B4629719CB30008B894 /* WireTransport.framework */; };
+		EEE25B4829719CB30008B894 /* WireTransport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B4629719CB30008B894 /* WireTransport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EEE25B4A29719CDC0008B894 /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B4929719CDC0008B894 /* WireUtilities.framework */; };
+		EEE25B4B29719CDC0008B894 /* WireUtilities.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B4929719CDC0008B894 /* WireUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EEE25B4D29719D0B0008B894 /* ZipArchive.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B4C29719D0B0008B894 /* ZipArchive.xcframework */; };
+		EEE25B4E29719D0B0008B894 /* ZipArchive.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B4C29719D0B0008B894 /* ZipArchive.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EEE25B5329719D540008B894 /* libPhoneNumberiOS.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B5229719D540008B894 /* libPhoneNumberiOS.xcframework */; };
+		EEE25B5429719D540008B894 /* libPhoneNumberiOS.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B5229719D540008B894 /* libPhoneNumberiOS.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EEE25B5929719DA80008B894 /* WireImages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B5829719DA80008B894 /* WireImages.framework */; };
+		EEE25B5A29719DA80008B894 /* WireImages.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B5829719DA80008B894 /* WireImages.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		01DFC4372D7B4C6F00D1962A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8F42C530199244A700288E4D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8F42C537199244A700288E4D;
+			remoteInfo = "Wire-iOS";
+		};
+		065A5AE3279B07AC002D4D1E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8F42C530199244A700288E4D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 065A5ADD279B07AC002D4D1E;
+			remoteInfo = "Wire Notification Service Extension";
+		};
+		065A5AEC279B0821002D4D1E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8F42C530199244A700288E4D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F1FEA14921DCEB1700790A54;
+			remoteInfo = WireCommonComponents;
+		};
+		168A16B11D9597C2005CFA6C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8F42C530199244A700288E4D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 168A16A81D9597C2005CFA6C;
+			remoteInfo = "Wire-iOS Share Extension";
+		};
+		BACB88571AF7C48900DDCDB0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8F42C530199244A700288E4D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8F42C537199244A700288E4D;
+			remoteInfo = "ZClient-iOS";
+		};
+		E6579E3A2AFF9B30004E7FD8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8F42C530199244A700288E4D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8F42C537199244A700288E4D;
+			remoteInfo = "Wire-iOS";
+		};
+		F1FEA14F21DCEB1700790A54 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8F42C530199244A700288E4D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F1FEA14921DCEB1700790A54;
+			remoteInfo = WireCommonComponents;
+		};
+		F1FEA15621DCEC3D00790A54 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8F42C530199244A700288E4D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F1FEA14921DCEB1700790A54;
+			remoteInfo = WireCommonComponents;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		065A5AE9279B07AC002D4D1E /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				EE7905F627F326EB00FCBF8C /* Wire Share Extension.appex in Embed App Extensions */,
+				065A5AE5279B07AC002D4D1E /* Wire Notification Service Extension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A96867A826A5E52F00679D95 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				5996E8A72C19D090007A52F0 /* WireSyncEngine.framework in Embed Frameworks */,
+				EEE25B4E29719D0B0008B894 /* ZipArchive.xcframework in Embed Frameworks */,
+				591B6E182C8B095B009F8A7B /* WireNotificationEngine.framework in Embed Frameworks */,
+				EEE25B3629719BD30008B894 /* WireCryptobox.framework in Embed Frameworks */,
+				EE33C48E296485FA00C058D1 /* WireShareEngine.framework in Embed Frameworks */,
+				EE67F73F296F0E7D001D7C88 /* Ziphy.framework in Embed Frameworks */,
+				EEE25B4229719C750008B894 /* WireRequestStrategy.framework in Embed Frameworks */,
+				EEE25B5429719D540008B894 /* libPhoneNumberiOS.xcframework in Embed Frameworks */,
+				EEE25B3C29719C370008B894 /* WireLinkPreview.framework in Embed Frameworks */,
+				EEE25B4B29719CDC0008B894 /* WireUtilities.framework in Embed Frameworks */,
+				EEE25B4829719CB30008B894 /* WireTransport.framework in Embed Frameworks */,
+				EEE25B3929719C170008B894 /* WireDataModel.framework in Embed Frameworks */,
+				EEE25B4529719C950008B894 /* WireSystem.framework in Embed Frameworks */,
+				EEE25B5A29719DA80008B894 /* WireImages.framework in Embed Frameworks */,
+				A96867FB26A5EB8400679D95 /* WireCommonComponents.framework in Embed Frameworks */,
+				016DB6DF2C261A4900DEB81B /* WireDomain.framework in Embed Frameworks */,
+				EE67F742296F0EBC001D7C88 /* WireCanvas.framework in Embed Frameworks */,
+				EEE25B3F29719C580008B894 /* WireProtos.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		0143895D2BC81DC200EC6920 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		0145AE982B1156FC0097E3B8 /* WireSyncEngineSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSyncEngineSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		015DC1DC2D68DD85004EE8C9 /* iOS StyleKit.pcvd */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "iOS StyleKit.pcvd"; sourceTree = "<group>"; };
+		015DC1DD2D68DD85004EE8C9 /* SECURITY.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = SECURITY.md; sourceTree = "<group>"; };
+		015DC1DE2D68DD85004EE8C9 /* swiftgen.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = swiftgen.yml; sourceTree = "<group>"; };
+		015DC1DF2D68DD85004EE8C9 /* swiftgenShareExtension.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = swiftgenShareExtension.yml; sourceTree = "<group>"; };
+		016DB6DD2C261A4900DEB81B /* WireDomain.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDomain.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		01B71A8A2D6D2DAB002C5A38 /* CommonComponents-Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "CommonComponents-Base.xcconfig"; sourceTree = "<group>"; };
+		01B71A8B2D6D2DAB002C5A38 /* CommonComponents-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "CommonComponents-Debug.xcconfig"; sourceTree = "<group>"; };
+		01B71A8C2D6D2DAB002C5A38 /* CommonComponents-Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "CommonComponents-Release.xcconfig"; sourceTree = "<group>"; };
+		01B71A8E2D6D2DAB002C5A38 /* Notification-Extension-Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Notification-Extension-Base.xcconfig"; sourceTree = "<group>"; };
+		01B71A8F2D6D2DAB002C5A38 /* Notification-Extension-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Notification-Extension-Debug.xcconfig"; sourceTree = "<group>"; };
+		01B71A902D6D2DAB002C5A38 /* Notification-Extension-Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Notification-Extension-Release.xcconfig"; sourceTree = "<group>"; };
+		01B71A922D6D2DAB002C5A38 /* Share-Extension-Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Share-Extension-Base.xcconfig"; sourceTree = "<group>"; };
+		01B71A932D6D2DAB002C5A38 /* Share-Extension-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Share-Extension-Debug.xcconfig"; sourceTree = "<group>"; };
+		01B71A942D6D2DAB002C5A38 /* Share-Extension-Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Share-Extension-Release.xcconfig"; sourceTree = "<group>"; };
+		01B71A962D6D2DAB002C5A38 /* Tests-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Tests-Debug.xcconfig"; sourceTree = "<group>"; };
+		01B71A982D6D2DAB002C5A38 /* Wire-iOS-Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Wire-iOS-Base.xcconfig"; sourceTree = "<group>"; };
+		01B71A992D6D2DAB002C5A38 /* Wire-iOS-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Wire-iOS-Debug.xcconfig"; sourceTree = "<group>"; };
+		01B71A9A2D6D2DAB002C5A38 /* Wire-iOS-Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Wire-iOS-Release.xcconfig"; sourceTree = "<group>"; };
+		01B71A9C2D6D2DAB002C5A38 /* Project-Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Project-Base.xcconfig"; sourceTree = "<group>"; };
+		01B71A9D2D6D2DAB002C5A38 /* Project-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Project-Debug.xcconfig"; sourceTree = "<group>"; };
+		01B71A9E2D6D2DAB002C5A38 /* Project-Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Project-Release.xcconfig"; sourceTree = "<group>"; };
+		01B71A9F2D6D2DAB002C5A38 /* Version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
+		01B71AA02D6D2DAB002C5A38 /* Warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Warnings.xcconfig; sourceTree = "<group>"; };
+		01B71AA22D6D2DAB002C5A38 /* RedactedScript-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "RedactedScript-Regular.ttf"; sourceTree = "<group>"; };
+		01B71AA42D6D2DAB002C5A38 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		01B71AA52D6D2DAB002C5A38 /* OtherImages.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = OtherImages.xcassets; sourceTree = "<group>"; };
+		01B71AA72D6D2DAB002C5A38 /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/Accessibility.strings; sourceTree = "<group>"; };
+		01B71AA82D6D2DAB002C5A38 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Accessibility.strings; sourceTree = "<group>"; };
+		01B71AAE2D6D2DAB002C5A38 /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = da; path = da.lproj/Accessibility.strings; sourceTree = "<group>"; };
+		01B71AAF2D6D2DAB002C5A38 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Accessibility.strings; sourceTree = "<group>"; };
+		01B71AB12D6D2DAB002C5A38 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Accessibility.strings; sourceTree = "<group>"; };
+		01B71AB22D6D2DAB002C5A38 /* et */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = et; path = et.lproj/Accessibility.strings; sourceTree = "<group>"; };
+		01B71AB52D6D2DAB002C5A38 /* fi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fi; path = fi.lproj/Accessibility.strings; sourceTree = "<group>"; };
+		01B71AB62D6D2DAB002C5A38 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Accessibility.strings; sourceTree = "<group>"; };
+		01B71ABC2D6D2DAB002C5A38 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Accessibility.strings; sourceTree = "<group>"; };
+		01B71ABD2D6D2DAB002C5A38 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Accessibility.strings; sourceTree = "<group>"; };
+		01B71AC02D6D2DAB002C5A38 /* lt */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = lt; path = lt.lproj/Accessibility.strings; sourceTree = "<group>"; };
+		01B71AC42D6D2DAB002C5A38 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Accessibility.strings; sourceTree = "<group>"; };
+		01B71AC62D6D2DAB002C5A38 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/Accessibility.strings; sourceTree = "<group>"; };
+		01B71AC82D6D2DAB002C5A38 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/Accessibility.strings"; sourceTree = "<group>"; };
+		01B71ACA2D6D2DAB002C5A38 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Accessibility.strings; sourceTree = "<group>"; };
+		01B71ACD2D6D2DAB002C5A38 /* sl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sl; path = sl.lproj/Accessibility.strings; sourceTree = "<group>"; };
+		01B71AD22D6D2DAB002C5A38 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/Accessibility.strings; sourceTree = "<group>"; };
+		01B71AD32D6D2DAB002C5A38 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/Accessibility.strings; sourceTree = "<group>"; };
+		01B71AD62D6D2DAB002C5A38 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Accessibility.strings"; sourceTree = "<group>"; };
+		01B71AD72D6D2DAB002C5A38 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Accessibility.strings"; sourceTree = "<group>"; };
+		01B71AD92D6D2DAB002C5A38 /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/Emoji.strings; sourceTree = "<group>"; };
+		01B71ADA2D6D2DAB002C5A38 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Emoji.strings; sourceTree = "<group>"; };
+		01B71ADB2D6D2DAB002C5A38 /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = da; path = da.lproj/Emoji.strings; sourceTree = "<group>"; };
+		01B71ADC2D6D2DAB002C5A38 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Emoji.strings; sourceTree = "<group>"; };
+		01B71ADD2D6D2DAB002C5A38 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Emoji.strings; sourceTree = "<group>"; };
+		01B71ADE2D6D2DAB002C5A38 /* et */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = et; path = et.lproj/Emoji.strings; sourceTree = "<group>"; };
+		01B71ADF2D6D2DAB002C5A38 /* fi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fi; path = fi.lproj/Emoji.strings; sourceTree = "<group>"; };
+		01B71AE02D6D2DAB002C5A38 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Emoji.strings; sourceTree = "<group>"; };
+		01B71AE12D6D2DAB002C5A38 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Emoji.strings; sourceTree = "<group>"; };
+		01B71AE22D6D2DAB002C5A38 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Emoji.strings; sourceTree = "<group>"; };
+		01B71AE32D6D2DAB002C5A38 /* lt */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = lt; path = lt.lproj/Emoji.strings; sourceTree = "<group>"; };
+		01B71AE42D6D2DAB002C5A38 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Emoji.strings; sourceTree = "<group>"; };
+		01B71AE52D6D2DAB002C5A38 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/Emoji.strings; sourceTree = "<group>"; };
+		01B71AE62D6D2DAB002C5A38 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/Emoji.strings"; sourceTree = "<group>"; };
+		01B71AE72D6D2DAB002C5A38 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Emoji.strings; sourceTree = "<group>"; };
+		01B71AE82D6D2DAB002C5A38 /* sl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sl; path = sl.lproj/Emoji.strings; sourceTree = "<group>"; };
+		01B71AE92D6D2DAB002C5A38 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/Emoji.strings; sourceTree = "<group>"; };
+		01B71AEA2D6D2DAB002C5A38 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/Emoji.strings; sourceTree = "<group>"; };
+		01B71AEB2D6D2DAB002C5A38 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Emoji.strings"; sourceTree = "<group>"; };
+		01B71AEC2D6D2DAB002C5A38 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Emoji.strings"; sourceTree = "<group>"; };
+		01B71AEE2D6D2DAB002C5A38 /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		01B71AEF2D6D2DAB002C5A38 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		01B71AF52D6D2DAB002C5A38 /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = da; path = da.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		01B71AF62D6D2DAB002C5A38 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		01B71AF82D6D2DAB002C5A38 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		01B71AF92D6D2DAB002C5A38 /* et */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = et; path = et.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		01B71AFC2D6D2DAB002C5A38 /* fi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fi; path = fi.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		01B71AFD2D6D2DAB002C5A38 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		01B71B032D6D2DAB002C5A38 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		01B71B042D6D2DAB002C5A38 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		01B71B072D6D2DAB002C5A38 /* lt */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = lt; path = lt.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		01B71B0B2D6D2DAB002C5A38 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		01B71B0D2D6D2DAB002C5A38 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		01B71B0F2D6D2DAB002C5A38 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		01B71B112D6D2DAB002C5A38 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		01B71B142D6D2DAB002C5A38 /* sl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sl; path = sl.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		01B71B1A2D6D2DAB002C5A38 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		01B71B1B2D6D2DAB002C5A38 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		01B71B1E2D6D2DAB002C5A38 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		01B71B1F2D6D2DAB002C5A38 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		01B71B212D6D2DAB002C5A38 /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/Localizable.strings; sourceTree = "<group>"; };
+		01B71B222D6D2DAB002C5A38 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
+		01B71B282D6D2DAB002C5A38 /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = da; path = da.lproj/Localizable.strings; sourceTree = "<group>"; };
+		01B71B292D6D2DAB002C5A38 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
+		01B71B2B2D6D2DAB002C5A38 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
+		01B71B2C2D6D2DAB002C5A38 /* et */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = et; path = et.lproj/Localizable.strings; sourceTree = "<group>"; };
+		01B71B2F2D6D2DAB002C5A38 /* fi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fi; path = fi.lproj/Localizable.strings; sourceTree = "<group>"; };
+		01B71B302D6D2DAB002C5A38 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
+		01B71B362D6D2DAB002C5A38 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Localizable.strings; sourceTree = "<group>"; };
+		01B71B372D6D2DAB002C5A38 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
+		01B71B3A2D6D2DAB002C5A38 /* lt */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = lt; path = lt.lproj/Localizable.strings; sourceTree = "<group>"; };
+		01B71B3E2D6D2DAB002C5A38 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Localizable.strings; sourceTree = "<group>"; };
+		01B71B402D6D2DAB002C5A38 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/Localizable.strings; sourceTree = "<group>"; };
+		01B71B422D6D2DAB002C5A38 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		01B71B442D6D2DAB002C5A38 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
+		01B71B472D6D2DAB002C5A38 /* sl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sl; path = sl.lproj/Localizable.strings; sourceTree = "<group>"; };
+		01B71B4D2D6D2DAB002C5A38 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/Localizable.strings; sourceTree = "<group>"; };
+		01B71B4E2D6D2DAB002C5A38 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/Localizable.strings; sourceTree = "<group>"; };
+		01B71B512D6D2DAB002C5A38 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		01B71B522D6D2DAB002C5A38 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		01B71B542D6D2DAB002C5A38 /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ar; path = ar.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		01B71B552D6D2DAB002C5A38 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = Base; path = Base.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		01B71B5B2D6D2DAB002C5A38 /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = da; path = da.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		01B71B5C2D6D2DAB002C5A38 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = de; path = de.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		01B71B5E2D6D2DAB002C5A38 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = es; path = es.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		01B71B5F2D6D2DAB002C5A38 /* et */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = et; path = et.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		01B71B622D6D2DAB002C5A38 /* fi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = fi; path = fi.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		01B71B632D6D2DAB002C5A38 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = fr; path = fr.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		01B71B692D6D2DAB002C5A38 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = it; path = it.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		01B71B6A2D6D2DAB002C5A38 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ja; path = ja.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		01B71B6D2D6D2DAB002C5A38 /* lt */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = lt; path = lt.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		01B71B712D6D2DAB002C5A38 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = nl; path = nl.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		01B71B732D6D2DAB002C5A38 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = pl; path = pl.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		01B71B752D6D2DAB002C5A38 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = "pt-BR"; path = "pt-BR.lproj/Localizable.stringsdict"; sourceTree = "<group>"; };
+		01B71B772D6D2DAB002C5A38 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ru; path = ru.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		01B71B7A2D6D2DAB002C5A38 /* sl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = sl; path = sl.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		01B71B802D6D2DAB002C5A38 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = tr; path = tr.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		01B71B812D6D2DAB002C5A38 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = uk; path = uk.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		01B71B842D6D2DAB002C5A38 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.stringsdict"; sourceTree = "<group>"; };
+		01B71B852D6D2DAB002C5A38 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = "zh-Hant"; path = "zh-Hant.lproj/Localizable.stringsdict"; sourceTree = "<group>"; };
+		01B71B882D6D2DAB002C5A38 /* audio-notifications */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "audio-notifications"; sourceTree = "<group>"; };
+		01B71B892D6D2DAB002C5A38 /* first_message.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = first_message.caf; sourceTree = "<group>"; };
+		01B71B8A2D6D2DAB002C5A38 /* hotping_from_them.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = hotping_from_them.caf; sourceTree = "<group>"; };
+		01B71B8B2D6D2DAB002C5A38 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		01B71B8C2D6D2DAB002C5A38 /* new_message.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = new_message.caf; sourceTree = "<group>"; };
+		01B71B8D2D6D2DAB002C5A38 /* ping_from_them.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = ping_from_them.caf; sourceTree = "<group>"; };
+		01B71B8E2D6D2DAB002C5A38 /* ringing_from_them_long.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = ringing_from_them_long.caf; sourceTree = "<group>"; };
+		01B71B8F2D6D2DAB002C5A38 /* silence.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = silence.m4a; sourceTree = "<group>"; };
+		01B71B912D6D2DAB002C5A38 /* emojis.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = emojis.json; sourceTree = "<group>"; };
+		01B71B922D6D2DAB002C5A38 /* emoticons.min.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = emoticons.min.json; sourceTree = "<group>"; };
+		01B71B932D6D2DAB002C5A38 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
+		01DFC4312D7B4C6F00D1962A /* WireUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		065A5ADE279B07AC002D4D1E /* Wire Notification Service Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Wire Notification Service Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		168A16A91D9597C2005CFA6C /* Wire Share Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Wire Share Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		597D9BEE2DA7DA7B000031DE /* WireUtilitiesSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilitiesSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		598E86D02BF4D97800FC5438 /* WireUtilitiesSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilitiesSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		598E86F62BF4DD5C00FC5438 /* WireSystemSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSystemSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		59AADE222BB4299900D9E658 /* WireDataModelSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModelSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		59AADE262BB429B200D9E658 /* WireRequestStrategySupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireRequestStrategySupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		87C8D7FB1BA8261C00B0530B /* Entitlements-Dev.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "Entitlements-Dev.entitlements"; path = "Wire-iOS/Entitlements-Dev.entitlements"; sourceTree = "<group>"; };
+		87C8D7FC1BA8261C00B0530B /* Entitlements-Prod.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = "Entitlements-Prod.entitlements"; path = "Wire-iOS/Entitlements-Prod.entitlements"; sourceTree = "<group>"; };
+		8F42C538199244A700288E4D /* Wire.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Wire.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8FC853A0199245770008B66B /* Wire-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "Wire-Info.plist"; path = "Wire-iOS/Wire-Info.plist"; sourceTree = "<group>"; };
+		BACB88511AF7C48900DDCDB0 /* Wire-iOS-Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Wire-iOS-Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CB4870F12C7F4FE5001E9151 /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E6579E362AFF9B30004E7FD8 /* Wire-iOS UnitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Wire-iOS UnitTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E6C25FC42AFFAAC300406A1C /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E970F6E42CC90115007A2CEB /* WireTransport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E9816C8F2CC9244700D77F22 /* WireSyncEngine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSyncEngine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE33C48C296485FA00C058D1 /* WireShareEngine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireShareEngine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE67F6D7296F06B3001D7C88 /* FLAnimatedImage.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FLAnimatedImage.xcframework; path = ../Carthage/Build/FLAnimatedImage.xcframework; sourceTree = "<group>"; };
+		EE67F739296F0E28001D7C88 /* WireSyncEngine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSyncEngine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE67F73D296F0E7D001D7C88 /* Ziphy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Ziphy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE67F740296F0EBC001D7C88 /* WireCanvas.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireCanvas.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE9A8585298B0A3B00064A9C /* WireNotificationEngine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireNotificationEngine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE9AEC9D2BD15A3600F7853F /* Wire-iOS.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = "Wire-iOS.docc"; sourceTree = "<group>"; };
+		EEE25B2629719A730008B894 /* Clibsodium.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Clibsodium.xcframework; path = ../Carthage/Build/Clibsodium.xcframework; sourceTree = "<group>"; };
+		EEE25B2729719A730008B894 /* cryptobox.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = cryptobox.xcframework; path = ../Carthage/Build/cryptobox.xcframework; sourceTree = "<group>"; };
+		EEE25B3429719BD30008B894 /* WireCryptobox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireCryptobox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EEE25B3729719C170008B894 /* WireDataModel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EEE25B3A29719C370008B894 /* WireLinkPreview.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireLinkPreview.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EEE25B3D29719C580008B894 /* WireProtos.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireProtos.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EEE25B4029719C750008B894 /* WireRequestStrategy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireRequestStrategy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EEE25B4329719C950008B894 /* WireSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EEE25B4629719CB30008B894 /* WireTransport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EEE25B4929719CDC0008B894 /* WireUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EEE25B4C29719D0B0008B894 /* ZipArchive.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = ZipArchive.xcframework; path = ../Carthage/Build/ZipArchive.xcframework; sourceTree = "<group>"; };
+		EEE25B5229719D540008B894 /* libPhoneNumberiOS.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libPhoneNumberiOS.xcframework; path = ../Carthage/Build/libPhoneNumberiOS.xcframework; sourceTree = "<group>"; };
+		EEE25B5829719DA80008B894 /* WireImages.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireImages.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireCommonComponents.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		015B25D32D68EAD000959185 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 168A16A81D9597C2005CFA6C /* Wire Share Extension */;
+		};
+		015DB0212D68DAB1004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"Authentication/Interface/Helpers/UIColor+TeamCreation.swift",
+				Helpers/ColorScheme.swift,
+				Helpers/MediaShareRestrictionManager.swift,
+				Helpers/SessionFileRestrictionsProtocol.swift,
+				"Helpers/String+URL.swift",
+				"Helpers/UIImage+ImageUtilities.swift",
+				UserInterface/Components/Constants.swift,
+				"UserInterface/Components/NSTextAttachment+Icon.swift",
+				"UserInterface/Components/StyleKitIcon+Const.swift",
+				"UserInterface/Components/UIImage+DownSize.swift",
+				"UserInterface/CustomAppLock/UIView+ConstraintFactory.swift",
+				"UserInterface/Helpers/UIStackView+Helper.swift",
+			);
+			target = 168A16A81D9597C2005CFA6C /* Wire Share Extension */;
+		};
+		015DB0222D68DAB1004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Helpers/AttributedStringOperators.swift,
+			);
+			target = F1FEA14921DCEB1700790A54 /* WireCommonComponents */;
+		};
+		015DB0F92D68DB05004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Sourcery/AutoMockable.stencil,
+				Sourcery/config.yml,
+				TestPlans/AllTests.xctestplan,
+				TestPlans/GermanLocaleTests.xctestplan,
+				TestPlans/SecurityTests.xctestplan,
+				TestPlans/UITests.xctestplan,
+				TestPlans/UnitTests.xctestplan,
+			);
+			target = BACB88501AF7C48900DDCDB0 /* Wire-iOS-Tests */;
+		};
+		015DB0FA2D68DB05004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Sourcery/AutoMockable.stencil,
+				Sourcery/config.yml,
+				TestPlans/AllTests.xctestplan,
+				TestPlans/GermanLocaleTests.xctestplan,
+				TestPlans/SecurityTests.xctestplan,
+				TestPlans/UITests.xctestplan,
+				TestPlans/UnitTests.xctestplan,
+			);
+			target = E6579E352AFF9B30004E7FD8 /* Wire-iOS UnitTests */;
+		};
+		015DB1642D68DB7F004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				LegacyNotificationService.swift,
+				Logger.swift,
+			);
+			target = BACB88501AF7C48900DDCDB0 /* Wire-iOS-Tests */;
+		};
+		015DB1652D68DB7F004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 065A5ADD279B07AC002D4D1E /* Wire Notification Service Extension */;
+		};
+		015DD6E62D68E261004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				a_lot_of_people.json,
+				AccentColorPickerSnapshotTests.swift,
+				AccessoryTextField/AccessoryTextFieldValidationTests.swift,
+				AccessoryTextField/EmailAdresssValidatorTests.swift,
+				AccessoryTextField/LinkInteractionTextViewTests.swift,
+				AccessoryTextField/TextFieldValidatorTests.swift,
+				AccessoryTextField/ValidatedTextFieldTests.swift,
+				AccountViewSnapshotTests.swift,
+				AddParticipantsViewControllerSnapshotTests.swift,
+				AppLockModuleViewTests.swift,
+				AppStateCalculatorTests.swift,
+				ArticleViewTests.swift,
+				AudioButtonOverlayTests.swift,
+				AudioEffectsPickerViewControllerTests.swift,
+				AudioMessageViewTests.swift,
+				AudioProcessingTests.swift,
+				AudioRecordKeyboardViewControllerSnapshotTests.swift,
+				AudioRecordKeyboardViewControllerTests.swift,
+				AudioRecordViewControllerTests.swift,
+				Authentication/AuthenticationInterfaceBuilderTests.swift,
+				Authentication/AuthenticationStateControllerTests.swift,
+				Authentication/MockAuthenticationFeatureProvider.swift,
+				AvailabilityLabelTests.swift,
+				"AVAsset/AVURLAsset+conversionTests.swift",
+				Backup/BackupExcluderTests.swift,
+				"Bundle/URL+WireTests.swift",
+				Bundle/URLsTests.swift,
+				Bundle/WireEmailTests.swift,
+				Button/ButtonTests.swift,
+				Button/SpinnerButtonTests.swift,
+				CallControllerTests.swift,
+				Calling/ActiveCallRouterTests.swift,
+				Calling/Analytics/CallEndedAnalyticsControllerTests.swift,
+				Calling/CallActionsViewSnapshotTests.swift,
+				Calling/CallGridViewControllerSnapshotTests.swift,
+				Calling/CallHapticsControllerTests.swift,
+				Calling/CallInfoConfigurationTests.swift,
+				Calling/CallInfoTestFixture.swift,
+				Calling/CallParticipantDetailsViewTests.swift,
+				Calling/CallParticipantsListViewControllerTests.swift,
+				Calling/CallParticipantViewTests.swift,
+				Calling/CallStatusViewInputTypeTests.swift,
+				Calling/CallViewControllerTests.swift,
+				Calling/GridViewTests.swift,
+				Calling/Mocks/MockCallGridHintNotificationLabel.swift,
+				Calling/Mocks/MockCallGridViewControllerDelegate.swift,
+				Calling/RoundedPageIndicatorTests.swift,
+				Calling/ScalableViewTests.swift,
+				Calling/SelfCallParticipantViewTests.swift,
+				Calling/StreamStubProvider.swift,
+				Calling/VoiceChannelStreamArrangmentTests.swift,
+				CallStatusViewTests.swift,
+				CallSystemMessageTests.swift,
+				CameraKeyboardViewControllerTests.swift,
+				CanvasViewControllerTests.swift,
+				ChangeEmailViewControllerSnapshotTests.swift,
+				ChangeHandleViewControllerTests.swift,
+				CharacterInputFieldSnapshotTests.swift,
+				CharacterInputFieldTests.swift,
+				CheckmarkCellTests.swift,
+				Collection/CollectionsViewControllerTests.swift,
+				Collection/TextSearchResultsViewSnapshotTests.swift,
+				CollectionViewContainerCellSnapshotTests.swift,
+				Color/ColorSchemeTests.swift,
+				ColorSchemeControllerTests.swift,
+				Components/NotificationLabelTests.swift,
+				Components/RoundedBlurViewTests.swift,
+				ConfirmAssetViewControllerTests.swift,
+				ConfirmEmailViewControllerTests.swift,
+				ConnectRequestsViewControllerSnapshotTests.swift,
+				ContextMenu/MessageActionTests.swift,
+				ConversationAvatarViewModeTests.swift,
+				ConversationAvatarViewTests.swift,
+				ConversationCell/BurstTimestampSenderMessageCellDescriptionTests.swift,
+				ConversationCell/CompositeMessageCellTests.swift,
+				ConversationCell/ConversationRenamedCellTests.swift,
+				ConversationCell/ConversationSystemMessageCellSnapshotTests.swift,
+				ConversationCell/ConversationSystemMessageMlsSupportSnapshotTests.swift,
+				ConversationCell/LocationMessageCellTests.swift,
+				ConversationCell/MarkDownSnapshotTests.swift,
+				ConversationCell/MultiParagraphSnapshotTests.swift,
+				ConversationCell/StartedConversationCellTests.swift,
+				ConversationCell/TextMessageMentionsTests.swift,
+				ConversationCell/UnknownMessageCellTests.swift,
+				ConversationContentViewControllerTests.swift,
+				ConversationCreationControllerSnapshotTests.swift,
+				ConversationDetail/ConversationDetailsTests.swift,
+				ConversationDetail/GroupDetailsReceiptOptionsCellTests.swift,
+				ConversationDetail/GroupDetailsTimeoutOptionsCellTests.swift,
+				ConversationDetail/GroupDetailsViewControllerSnapshotTests.swift,
+				ConversationDetail/ServiceDetailViewControllerSnapshotTests.swift,
+				ConversationImagesViewControllerTests.swift,
+				"ConversationInputBarViewController/ConversationInputBarViewController+DropInteractionTests.swift",
+				ConversationInputBarViewController/ConversationInputBarViewControllerAudioRecorderSnapshotTests.swift,
+				ConversationInputBarViewController/ConversationInputBarViewControllerDelegateTests.swift,
+				ConversationInputBarViewController/ConversationInputBarViewControllerTests.swift,
+				ConversationList/ConnectRequestsCell/ConnectRequestsCellSnapshotTests.swift,
+				ConversationList/ConnectRequestsCell/ConnectRequestsCellTests.swift,
+				ConversationList/Container/ConversationListViewControllerSnapshotTests.swift,
+				ConversationList/Container/ConversationListViewControllerViewModelSnapshotTests.swift,
+				ConversationList/Container/ConversationListViewControllerViewModelTests.swift,
+				ConversationList/Container/MockConversationListContainer.swift,
+				ConversationList/Container/MockSelfProfileViewsMonitorImplementation.swift,
+				ConversationList/ConversationListCell/ConversationListCellTests.swift,
+				ConversationList/ConversationListCell/ConversationStatusLineTests.swift,
+				"ConversationList/ConversationListCell/ConversationStatusLineTests+Muting.swift",
+				"ConversationList/ConversationListCell/CoreDataSnapshotTestCase+appendMessage.swift",
+				ConversationList/ConversationListViewModel/ConversationListViewModelTests.swift,
+				ConversationList/SectionHeader/ConversationListHeaderViewSnapshotTests.swift,
+				ConversationList/SectionHeader/ConversationListHeaderViewTests.swift,
+				ConversationListAccessoryViewTests.swift,
+				ConversationMessageActionControllerTests.swift,
+				ConversationMessageCell/BasicReactionPickerSnapshotTests.swift,
+				ConversationMessageCell/CompleteReactionPickerViewControllerTests.swift,
+				ConversationMessageCell/ConversationAudioMessageCellTests.swift,
+				ConversationMessageCell/ConversationCollapsedMessageCellSnapshotTests.swift,
+				ConversationMessageCell/ConversationFileMessageCellTests.swift,
+				ConversationMessageCell/ConversationImageMessageTests.swift,
+				ConversationMessageCell/ConversationLinkAttachmentMessageCellTests.swift,
+				ConversationMessageCell/ConversationMessageFailedRecipientsTests.swift,
+				ConversationMessageCell/ConversationMessageSectionControllerTests.swift,
+				ConversationMessageCell/ConversationMessageSnapshotTestCase.swift,
+				ConversationMessageCell/ConversationPingMessageTests.swift,
+				ConversationMessageCell/ConversationReactionMessageTests.swift,
+				ConversationMessageCell/ConversationSenderMessageDetailsCellSnapshotTests.swift,
+				ConversationMessageCell/ConversationSystemMessageTests.swift,
+				ConversationMessageCell/ConversationTextMessageTests.swift,
+				ConversationMessageCell/ConversationVideoMessageCellTests.swift,
+				ConversationMessageCell/EmoliRepositoryTests.swift,
+				ConversationMessageCell/MessageActionsViewControllerTests.swift,
+				ConversationMessageCell/MessageToolboxViewTests.swift,
+				ConversationMessageCell/MockCell.swift,
+				ConversationMessageCell/ReadReceiptSystemMessage/ReadReceiptViewModelTests.swift,
+				ConversationOptionsServicesViewControllerTests.swift,
+				ConversationOptionsViewControllerTests.swift,
+				ConversationReplyCellDescriptionTests.swift,
+				ConversationReplyCellTests.swift,
+				ConversationStatusTests.swift,
+				"ConversationStatusTests+Icon.swift",
+				ConversationTitleViewTests.swift,
+				"ConversationViewController+GuestBarTests.swift",
+				ConversationViewControllerSnapshotTests.swift,
+				CreateSecureGuestLinkViewModelTests.swift,
+				CustomAppLock/AppLockChangeWarningViewControllerTests.swift,
+				CustomAppLock/PasscodeSetupViewControllerTests.swift,
+				CustomAppLock/UnlockViewControllerTests.swift,
+				CustomAppLock/WipeCompletionViewControllerTests.swift,
+				CustomAppLock/WipeDatabaseViewControllerTests.swift,
+				Data_ImageTypeTests.swift,
+				"Data+FingerprintStringTests.swift",
+				DateFormatterTests.swift,
+				DeleteMessageTests.swift,
+				DestructionCountdownViewTests.swift,
+				DeviceManagement/ClientListViewControllerTests.swift,
+				DeviceManagement/ClientTableViewCellTests.swift,
+				DeviceManagement/DeviceDetailsViewActionsHandlerTests.swift,
+				DeviceManagement/DeviceDetailsViewTests.swift,
+				DeviceManagement/E2eIdentityCertificateViewTests.swift,
+				DeviceManagement/MockContextProvider.swift,
+				DeviceManagement/MockSaveFileManager.swift,
+				DigitalSignatureVerificationViewControllerTest.swift,
+				DismissalTests.swift,
+				"EmoticonSubstitution/emo-test-01.json",
+				"EmoticonSubstitution/emo-test-02.json",
+				"EmoticonSubstitution/emo-test-03.json",
+				EmoticonSubstitution/EmoticonSubstitutionConfigurationTests.swift,
+				"EmoticonSubstitution/NSMutableAttributedString+ReplaceEmojiTests.swift",
+				"EmoticonSubstitution/NSString+EmoticonSubstitutionTests.swift",
+				"EmoticonSubstitution/XCTestCase+EmoticonSubstitutionConfiguration.swift",
+				EmptySearchResultsViewTests.swift,
+				EphemeralKeyboardViewControllerTests.swift,
+				EphemeralTimeoutFormatterTests.swift,
+				ExtensionSettingsTests.swift,
+				FilePreviewGeneratorTests.swift,
+				FontBookSnapshotTests.swift,
+				FontSchemeTests.swift,
+				FullscreenImageViewController/FullscreenImageViewControllerSnapshotTests.swift,
+				FullscreenImageViewController/FullscreenImageViewControllerTests.swift,
+				"FullscreenImageViewController/XCTestCase+FullscreenImageViewController.swift",
+				Giphy/GiphyConfirmationViewControllerSnapshotTests.swift,
+				GiphySearchViewControllerSnapshotTests.swift,
+				GiphySearchViewControllerTests.swift,
+				GroupConversationCellTests.swift,
+				GroupParticipantsDetailViewControllerSnapshotTests.swift,
+				Helpers/MockSystemSaveFilePresenter.swift,
+				Helpers/SaveFileManagerTests.swift,
+				"Helpers/XCTestCase+Extensions.swift",
+				IconLabelButtonTests.swift,
+				ImageCache/DecodeImageOperationTests.swift,
+				ImageCache/identicon.png,
+				IncomingConnectionViewTests.swift,
+				IncomingRequestFooterTests.swift,
+				InputBar/InputBarEditViewTests.swift,
+				LandingViewControllerSnapshotTests.swift,
+				LaunchImageViewControllerSnapshotTests.swift,
+				LegalHoldAlertFactoryTests.swift,
+				LegalHoldDetailsViewControllerSnapshotTests.swift,
+				LinkOpeningOption/BrowserOpeningOptionTests.swift,
+				LocationDataTests.swift,
+				LocationSendViewControllerTests.swift,
+				MarkdownTextStorageTests.swift,
+				MarkdownTextViewTests.swift,
+				MediaBarSnapshotTests.swift,
+				MediaPreviewViewSnapshotTests.swift,
+				MentionsHandlerTests.swift,
+				"Message+FormattingTests.swift",
+				MessageDestructionTimeoutValueTests.swift,
+				MessageDetails/MessageDetailsActionTests.swift,
+				MessageDetails/MessageDetailsViewControllerTests.swift,
+				MessageDetails/MockReadReceipt.swift,
+				MessagePresenterTests.swift,
+				MessageReplyPreviewViewTests.swift,
+				MessageTests.swift,
+				MockPhotoPermissionsController.swift,
+				"Mocks/QualifiedID+Mock.swift",
+				MockStableRandomParticipantsConversation.swift,
+				NetworkStatusView/NetworkStatusViewControllerSnapshotTests.swift,
+				NetworkStatusView/NetworkStatusViewControllerTests.swift,
+				NetworkStatusView/NetworkStatusViewSnapshotTests.swift,
+				NetworkStatusView/NetworkStatusViewTests.swift,
+				"Notification Service Extension/LegacyNotificationServiceTest.swift",
+				"NSAttributedString+DownTests.swift",
+				NSAttributedStringHighlightTests.swift,
+				OtherUserDeviceDetailsViewTests.swift,
+				PasswordRules/PasswordRuleSetTests.swift,
+				PreBackendSwitchViewControllerSnapshotTests.swift,
+				ProfileActionsFactoryTests.swift,
+				ProfileDetailsViewControllerTests.swift,
+				ProfileFooterViewTests.swift,
+				ProfileViewTests.swift,
+				RandomGeneratorFromDataTests.swift,
+				RemoveClientStepViewControllerSnapshotTests.swift,
+				ReplyComposingViewTests.swift,
+				RequestPasswordViewControllerSnapshotTests.swift,
+				Resources/0x0.pdf,
+				Resources/20000x20000.gif,
+				Resources/animated.gif,
+				Resources/audio_sample.m4a,
+				"Resources/conversations-01.json",
+				Resources/huge.pdf,
+				Resources/not_animated.gif,
+				"Resources/people-01.json",
+				"Resources/people-02.json",
+				"Resources/people-15Sections.json",
+				Resources/sample.pkpass,
+				Resources/transparent.png,
+				Resources/unsplash_burger.jpg,
+				Resources/unsplash_matterhorn_exact_size.jpg,
+				Resources/unsplash_matterhorn_small_height.jpg,
+				Resources/unsplash_matterhorn_small_size.jpg,
+				Resources/unsplash_matterhorn_small_width.jpg,
+				Resources/unsplash_matterhorn_very_small_size_40x20.jpg,
+				Resources/unsplash_matterhorn.jpg,
+				Resources/unsplash_pano.jpg,
+				Resources/unsplash_small.jpg,
+				Resources/unsplash_square.jpg,
+				Resources/unsplash_vertical_pano.jpg,
+				Resources/video.mp4,
+				Routers/URLActionRouterTests.swift,
+				SavableImageTests.swift,
+				ScreenCurtainWindowTests.swift,
+				Search/SearchResultsViewControllerTests.swift,
+				SecurityLevel/SecurityLevelViewTests.swift,
+				SelfProfileViewControllerTests.swift,
+				"Settings/Debug Report/LogFilesProviderTests.swift",
+				"Settings/Debug Report/SettingsDebugReportViewControllerSnapshotTests.swift",
+				"Settings/Debug Report/SettingsDebugReportViewModelTests.swift",
+				Settings/SettingsTests.swift,
+				"Settings+Reset.swift",
+				SettingsTableViewControllerSnapshotTests.swift,
+				SettingsTextCellSnapshotTests.swift,
+				ShareDestinationCellTests.swift,
+				ShareViewControllerTests.swift,
+				SketchColorPickerControllerSnapshotTests.swift,
+				SoundEventRulesWatchDogTests.swift,
+				StartUIViewControllerSnapshotTests.swift,
+				Status/StatusMessageTypeTests.swift,
+				"String+FingerprintTests.swift",
+				StringFingerprintTests.swift,
+				"SwiftSnapshotTesting/SnapshotTesting+UITableViewCell.swift",
+				"SwiftSnapshotTesting/XCTestCase+SnapshotTesting.swift",
+				SwitchBackendConfirmationViewModelTests.swift,
+				SwitchBackendConfirmationViewTests.swift,
+				TeamMetadataRefresherTests.swift,
+				ThumbnailCreationTests.swift,
+				Token/TokenFieldTests.swift,
+				Token/TokenSeparatorAttachmentSnapshotTests.swift,
+				Token/TokenTextAttachmentSnapshotTests.swift,
+				TopPeopleCellSnapshotTests.swift,
+				TypingIndicatorViewTests.swift,
+				UIAlertControllerFeatureConfigSnapshotTests.swift,
+				"UIAlertViewController+CompanyLoginTests.swift",
+				"UIImage/UIImage+DownsizeTests.swift",
+				"URL/URL+StringTests.swift",
+				"URL+EncodeTests.swift",
+				URLWireLocaleTests.swift,
+				UserCellTests.swift,
+				UserClientCellTests.swift,
+				UserConnectionViewSnapshotTests.swift,
+				UserImageViewContainerSnapshotTests.swift,
+				UserInterface/ConversationList/ArchivedList/ArchivedListViewControllerSnapshotTests.swift,
+				UserInterface/ConversationList/ArchivedList/ArchivedListViewModelTests.swift,
+				UserInterface/E2EIdentity/SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift,
+				UserInterface/E2EIdentity/WebViewUserAgentTests.swift,
+				UserInterface/GroupDetails/Cells/GroupDetailsNotificationOptionsCellTests.swift,
+				UserInterface/GroupDetails/GroupDetailsViewControllerTests.swift,
+				UserInterface/MainController/ConversationFilterSelectorTests.swift,
+				UserInterface/MainController/SidebarViewControllerBuilderSnapshotTests.swift,
+				UserInterface/MainCoordinator/MockMainCoordinator.swift,
+				UserInterface/Settings/ImportBackupUseCaseFactoryTests.swift,
+				UserNameDetailViewTests.swift,
+				UserProfile/ProfileViewControllerTests.swift,
+				UserProfile/ProfileViewControllerViewModelTests.swift,
+				UserSearchResultsViewControllerTests.swift,
+				UserStatusViewSnapshotTests.swift,
+				"Utils/Array+Prefix.swift",
+				Utils/CoreDataSnapshotTestCase.swift,
+				"Utils/Date+Generator.swift",
+				Utils/MockImageResource.swift,
+				Utils/TestSetup.swift,
+				"Utils/UITableViewCell+Snapshot.swift",
+				"Utils/UIViewController+iPhoneSize.swift",
+				"Utils/XCTestCase+AccentColor.swift",
+				"Utils/XCTestCase+DayFormatter.swift",
+				"Utils/XCTestCase+DeviceSize.swift",
+				"Utils/XCTestCase+ImageFromBundle.swift",
+				Utils/ZMSnapshotTestCase.swift,
+				Views/PulsingIconImageViewTests.swift,
+				Views/RoundedSegmentedViewTests.swift,
+				WarningLabelViewTests.swift,
+				WirelessExpirationTimeFormatterTests.swift,
+				ZClientViewControllerTests.swift,
+				ZipFile/ZipFileTests.swift,
+			);
+			target = BACB88501AF7C48900DDCDB0 /* Wire-iOS-Tests */;
+		};
+		015DD6E72D68E261004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				DeviceManagement/MockContextProvider.swift,
+				Settings/SettingsPropertyTests.swift,
+			);
+			target = E6579E352AFF9B30004E7FD8 /* Wire-iOS UnitTests */;
+		};
+		01B71BC42D6D2DB3002C5A38 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Images.xcassets,
+				session_manager.json,
+			);
+			target = 168A16A81D9597C2005CFA6C /* Wire Share Extension */;
+		};
+		01B71BC62D6D2DC6002C5A38 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Backend.bundle,
+				email.json,
+				Images.xcassets,
+				password_rules.json,
+				session_manager.json,
+				url.json,
+			);
+			target = 8F42C537199244A700288E4D /* Wire-iOS */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		015B25B72D68EAD000959185 /* Wire-iOS Share Extension */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (015B25D32D68EAD000959185 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "Wire-iOS Share Extension"; sourceTree = "<group>"; };
+		015D91E72D68D481004EE8C9 /* Scripts */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Scripts; sourceTree = "<group>"; };
+		015DA6092D68DA96004EE8C9 /* Generated */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); name = Generated; path = "Wire-iOS/Generated"; sourceTree = "<group>"; };
+		015DAB7D2D68DAB0004EE8C9 /* Sources */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (015DB0212D68DAB1004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 015DB0222D68DAB1004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); name = Sources; path = "Wire-iOS/Sources"; sourceTree = "<group>"; };
+		015DB07A2D68DB05004EE8C9 /* Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (015DB0F92D68DB05004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 015DB0FA2D68DB05004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Tests; sourceTree = "<group>"; };
+		015DB12B2D68DB7B004EE8C9 /* WireCommonComponents */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = WireCommonComponents; sourceTree = "<group>"; };
+		015DB15C2D68DB7F004EE8C9 /* Wire Notification Service Extension */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (015DB1642D68DB7F004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 015DB1652D68DB7F004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "Wire Notification Service Extension"; sourceTree = "<group>"; };
+		015DC2042D68E01D004EE8C9 /* Wire-iOS UnitTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Wire-iOS UnitTests"; sourceTree = "<group>"; };
+		015DD59D2D68E261004EE8C9 /* Wire-iOS Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (015DD6E62D68E261004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 015DD6E72D68E261004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "Wire-iOS Tests"; sourceTree = "<group>"; };
+		01B71BB42D6D2DB3002C5A38 /* Configuration */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (01B71BC62D6D2DC6002C5A38 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 01B71BC42D6D2DB3002C5A38 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Configuration; sourceTree = "<group>"; };
+		01DFC4322D7B4C6F00D1962A /* WireUITests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = WireUITests; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		01DFC42E2D7B4C6F00D1962A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D0E258152DDC864100959FB9 /* WireFoundation in Frameworks */,
+				76ED41EC2E053E3200A286F4 /* WireNetwork in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		065A5ADB279B07AC002D4D1E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				591B6E212C8B096C009F8A7B /* WireCommonComponents.framework in Frameworks */,
+				59537D912CFFA0BA00920B59 /* WireLogging in Frameworks */,
+				EE9A8586298B0A3B00064A9C /* WireNotificationEngine.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		168A16A61D9597C2005CFA6C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E489D8312DF709CE008966AE /* WireMultiBackendUI in Frameworks */,
+				591B6E192C8B0960009F8A7B /* WireCommonComponents.framework in Frameworks */,
+				59C4FBF12C45B7130037030B /* WireShareEngine.framework in Frameworks */,
+				59537D932CFFA0DA00920B59 /* WireLogging in Frameworks */,
+				59CDB3F62C4EA08F0049D1AB /* WireReusableUIComponents in Frameworks */,
+				5945D02A2C219F7200D039E3 /* WireDesign in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8F42C535199244A700288E4D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CB71EE212DDF5A1000E7A3AF /* WireCellsAPI in Frameworks */,
+				0619A95C2D3FE78700876BDE /* WireAuthenticationUI in Frameworks */,
+				EEE25B4129719C750008B894 /* WireRequestStrategy.framework in Frameworks */,
+				EE543B4A2D564AC000CA96BA /* WireAuthentication in Frameworks */,
+				EEE25B3529719BD30008B894 /* WireCryptobox.framework in Frameworks */,
+				01C774272D9EECE100A2FF07 /* WireAVS in Frameworks */,
+				595C49692CA995E900F8F881 /* WireSettingsUI in Frameworks */,
+				76BFA65D2D89E6B8000F2D0A /* WireMessagingAPI in Frameworks */,
+				59BAEAFC2DBF483400B54AC4 /* WireBackup in Frameworks */,
+				EEE25B4729719CB30008B894 /* WireTransport.framework in Frameworks */,
+				59703B282DD4A42000B45773 /* ZIPFoundation in Frameworks */,
+				01D2B7A52D64A9190030D28D /* WireCoreCrypto in Frameworks */,
+				A96867FA26A5EB8400679D95 /* WireCommonComponents.framework in Frameworks */,
+				592ED06E2C1C7D0700FE1F4E /* WireReusableUIComponents in Frameworks */,
+				EE67F741296F0EBC001D7C88 /* WireCanvas.framework in Frameworks */,
+				CB43D9BD2CDBBBB900BF5AEB /* WireFolderPickerUI in Frameworks */,
+				EEE25B4A29719CDC0008B894 /* WireUtilities.framework in Frameworks */,
+				34DC44AD2E01C1E6004D5DD5 /* WireNetwork in Frameworks */,
+				EE67F73E296F0E7D001D7C88 /* Ziphy.framework in Frameworks */,
+				CB4E15122C81CC81005DDEC8 /* Down in Frameworks */,
+				EEE25B3829719C170008B894 /* WireDataModel.framework in Frameworks */,
+				59D038272C85D31E009FE583 /* WireMainNavigationUI in Frameworks */,
+				CBDDB1832DD4BCA700A0A1F3 /* WireCellsBindings in Frameworks */,
+				767F41E82D7F95C100E4E090 /* WireMessagingUIBindings in Frameworks */,
+				CB1428452DCB8A820092E7AE /* WireCellsUI in Frameworks */,
+				EE33C48D296485FA00C058D1 /* WireShareEngine.framework in Frameworks */,
+				EEE25B2A29719A730008B894 /* cryptobox.xcframework in Frameworks */,
+				EEE25B3E29719C580008B894 /* WireProtos.framework in Frameworks */,
+				59076F952C934A9800AE7529 /* WireAccountImageUI in Frameworks */,
+				590DCA082C971A56002D0A2C /* WireSidebarUI in Frameworks */,
+				594341D72D08611700A6C0B5 /* WireCountly in Frameworks */,
+				59B99FAA2C89DE8600201827 /* WireFoundation in Frameworks */,
+				EEE25B5329719D540008B894 /* libPhoneNumberiOS.xcframework in Frameworks */,
+				EEE25B3B29719C370008B894 /* WireLinkPreview.framework in Frameworks */,
+				407831AD2AC4636F005C2978 /* DifferenceKit in Frameworks */,
+				EEE25B4429719C950008B894 /* WireSystem.framework in Frameworks */,
+				76ACF8A22D4215E2001F48A1 /* WireViewsDebugUI in Frameworks */,
+				591B6E172C8B095B009F8A7B /* WireNotificationEngine.framework in Frameworks */,
+				59537D952CFFA11A00920B59 /* WireLogging in Frameworks */,
+				E9FBF3A62C47C23100C65DA8 /* FLAnimatedImage in Frameworks */,
+				E40050762D71A80100B7962B /* WireMessagingUI in Frameworks */,
+				E9BA75C62CD51DF100F6EDDF /* WireMoveToFolderUI in Frameworks */,
+				EEE25B4D29719D0B0008B894 /* ZipArchive.xcframework in Frameworks */,
+				061F34192B1E2ED50099CBAB /* AppAuth in Frameworks */,
+				061F341B2B1E2ED50099CBAB /* AppAuthCore in Frameworks */,
+				76D15E712CEFAE8A0059215D /* WireIndividualToTeamMigrationUI in Frameworks */,
+				016DB6DE2C261A4900DEB81B /* WireDomain.framework in Frameworks */,
+				E416B8E42DE8560600882C63 /* WireMultiBackendUI in Frameworks */,
+				5996E8A62C19D090007A52F0 /* WireSyncEngine.framework in Frameworks */,
+				EEE25B5929719DA80008B894 /* WireImages.framework in Frameworks */,
+				76BFA65F2D89E6D8000F2D0A /* WireMessagingUIBindings in Frameworks */,
+				16EE08AE2D92E861001B372C /* WireCoreCryptoUniffi in Frameworks */,
+				5929CB222CA6C9C800070488 /* WireConversationListUI in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BACB884E1AF7C48900DDCDB0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				59592D202D4B9527005EDF16 /* WireLogging in Frameworks */,
+				59592D1F2D4B9527005EDF16 /* WireFoundation in Frameworks */,
+				59B48C622C89CD3D00EA7999 /* WireTestingPackage in Frameworks */,
+				01C1A7C72A54C45A0058D578 /* SnapshotTesting in Frameworks */,
+				CB4870F22C7F4FE5001E9151 /* WireTransportSupport.framework in Frameworks */,
+				59B7684B2D2D5A17007B5F1E /* WireFoundationSupport in Frameworks */,
+				5996E8A82C19D09D007A52F0 /* WireSyncEngineSupport.framework in Frameworks */,
+				5996E8A42C19D074007A52F0 /* WireRequestStrategySupport.framework in Frameworks */,
+				598E86F72BF4DD5C00FC5438 /* WireSystemSupport.framework in Frameworks */,
+				598E86D12BF4D97800FC5438 /* WireUtilitiesSupport.framework in Frameworks */,
+				591B6E1C2C8B0964009F8A7B /* WireDataModelSupport.framework in Frameworks */,
+				5996E8AD2C19D0DF007A52F0 /* WireTesting.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E6579E332AFF9B30004E7FD8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				59AADE272BB429B200D9E658 /* WireRequestStrategySupport.framework in Frameworks */,
+				5996E8AA2C19D0D6007A52F0 /* WireSystemSupport.framework in Frameworks */,
+				5977ED1F2D26747900F5C78E /* WireLogging in Frameworks */,
+				597D9BEF2DA7DA7B000031DE /* WireUtilitiesSupport.framework in Frameworks */,
+				0145AE992B1156FC0097E3B8 /* WireSyncEngineSupport.framework in Frameworks */,
+				E6C25FC52AFFAAC300406A1C /* WireTesting.framework in Frameworks */,
+				59B768432D2D58BE007B5F1E /* WireFoundationSupport in Frameworks */,
+				591B6E242C8B0970009F8A7B /* WireDataModelSupport.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F1FEA14721DCEB1700790A54 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E985CB8F2CEB4FCB0075DAD6 /* WireDatadog in Frameworks */,
+				59537D8F2CFFA05600920B59 /* WireLogging in Frameworks */,
+				E9816C902CC9244700D77F22 /* WireSyncEngine.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		01B71A8D2D6D2DAB002C5A38 /* CommonComponents */ = {
+			isa = PBXGroup;
+			children = (
+				01B71A8A2D6D2DAB002C5A38 /* CommonComponents-Base.xcconfig */,
+				01B71A8B2D6D2DAB002C5A38 /* CommonComponents-Debug.xcconfig */,
+				01B71A8C2D6D2DAB002C5A38 /* CommonComponents-Release.xcconfig */,
+			);
+			path = CommonComponents;
+			sourceTree = "<group>";
+		};
+		01B71A912D6D2DAB002C5A38 /* Notification Extension */ = {
+			isa = PBXGroup;
+			children = (
+				01B71A8E2D6D2DAB002C5A38 /* Notification-Extension-Base.xcconfig */,
+				01B71A8F2D6D2DAB002C5A38 /* Notification-Extension-Debug.xcconfig */,
+				01B71A902D6D2DAB002C5A38 /* Notification-Extension-Release.xcconfig */,
+			);
+			path = "Notification Extension";
+			sourceTree = "<group>";
+		};
+		01B71A952D6D2DAB002C5A38 /* Share Extension */ = {
+			isa = PBXGroup;
+			children = (
+				01B71A922D6D2DAB002C5A38 /* Share-Extension-Base.xcconfig */,
+				01B71A932D6D2DAB002C5A38 /* Share-Extension-Debug.xcconfig */,
+				01B71A942D6D2DAB002C5A38 /* Share-Extension-Release.xcconfig */,
+			);
+			path = "Share Extension";
+			sourceTree = "<group>";
+		};
+		01B71A972D6D2DAB002C5A38 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				01B71A962D6D2DAB002C5A38 /* Tests-Debug.xcconfig */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		01B71A9B2D6D2DAB002C5A38 /* Wire-iOS */ = {
+			isa = PBXGroup;
+			children = (
+				01B71A982D6D2DAB002C5A38 /* Wire-iOS-Base.xcconfig */,
+				01B71A992D6D2DAB002C5A38 /* Wire-iOS-Debug.xcconfig */,
+				01B71A9A2D6D2DAB002C5A38 /* Wire-iOS-Release.xcconfig */,
+			);
+			path = "Wire-iOS";
+			sourceTree = "<group>";
+		};
+		01B71AA12D6D2DAB002C5A38 /* Configuration */ = {
+			isa = PBXGroup;
+			children = (
+				01B71A8D2D6D2DAB002C5A38 /* CommonComponents */,
+				01B71A912D6D2DAB002C5A38 /* Notification Extension */,
+				01B71A952D6D2DAB002C5A38 /* Share Extension */,
+				01B71A972D6D2DAB002C5A38 /* Tests */,
+				01B71A9B2D6D2DAB002C5A38 /* Wire-iOS */,
+				01B71A9C2D6D2DAB002C5A38 /* Project-Base.xcconfig */,
+				01B71A9D2D6D2DAB002C5A38 /* Project-Debug.xcconfig */,
+				01B71A9E2D6D2DAB002C5A38 /* Project-Release.xcconfig */,
+				01B71A9F2D6D2DAB002C5A38 /* Version.xcconfig */,
+				01B71AA02D6D2DAB002C5A38 /* Warnings.xcconfig */,
+			);
+			path = Configuration;
+			sourceTree = "<group>";
+		};
+		01B71AA32D6D2DAB002C5A38 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				01B71AA22D6D2DAB002C5A38 /* RedactedScript-Regular.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
+		01B71AA62D6D2DAB002C5A38 /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				01B71AA42D6D2DAB002C5A38 /* Images.xcassets */,
+				01B71AA52D6D2DAB002C5A38 /* OtherImages.xcassets */,
+			);
+			path = Images;
+			sourceTree = "<group>";
+		};
+		01B71B872D6D2DAB002C5A38 /* Localization */ = {
+			isa = PBXGroup;
+			children = (
+				01B71AD82D6D2DAB002C5A38 /* Accessibility.strings */,
+				01B71AED2D6D2DAB002C5A38 /* Emoji.strings */,
+				01B71B202D6D2DAB002C5A38 /* InfoPlist.strings */,
+				01B71B532D6D2DAB002C5A38 /* Localizable.strings */,
+				01B71B862D6D2DAB002C5A38 /* Localizable.stringsdict */,
+			);
+			path = Localization;
+			sourceTree = "<group>";
+		};
+		01B71B902D6D2DAB002C5A38 /* Sounds */ = {
+			isa = PBXGroup;
+			children = (
+				01B71B882D6D2DAB002C5A38 /* audio-notifications */,
+				01B71B892D6D2DAB002C5A38 /* first_message.caf */,
+				01B71B8A2D6D2DAB002C5A38 /* hotping_from_them.caf */,
+				01B71B8B2D6D2DAB002C5A38 /* LICENSE */,
+				01B71B8C2D6D2DAB002C5A38 /* new_message.caf */,
+				01B71B8D2D6D2DAB002C5A38 /* ping_from_them.caf */,
+				01B71B8E2D6D2DAB002C5A38 /* ringing_from_them_long.caf */,
+				01B71B8F2D6D2DAB002C5A38 /* silence.m4a */,
+			);
+			path = Sounds;
+			sourceTree = "<group>";
+		};
+		01B71B942D6D2DAB002C5A38 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				01B71AA12D6D2DAB002C5A38 /* Configuration */,
+				01B71AA32D6D2DAB002C5A38 /* Fonts */,
+				01B71AA62D6D2DAB002C5A38 /* Images */,
+				01B71B872D6D2DAB002C5A38 /* Localization */,
+				01B71B902D6D2DAB002C5A38 /* Sounds */,
+				01B71B912D6D2DAB002C5A38 /* emojis.json */,
+				01B71B922D6D2DAB002C5A38 /* emoticons.min.json */,
+				01B71B932D6D2DAB002C5A38 /* Settings.bundle */,
+			);
+			name = Resources;
+			path = "Wire-iOS/Resources";
+			sourceTree = "<group>";
+		};
+		8286E48D7CC440448CBD8F48 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				597D9BEE2DA7DA7B000031DE /* WireUtilitiesSupport.framework */,
+				E9816C8F2CC9244700D77F22 /* WireSyncEngine.framework */,
+				E970F6E42CC90115007A2CEB /* WireTransport.framework */,
+				EE67F740296F0EBC001D7C88 /* WireCanvas.framework */,
+				EEE25B3429719BD30008B894 /* WireCryptobox.framework */,
+				EEE25B3729719C170008B894 /* WireDataModel.framework */,
+				59AADE222BB4299900D9E658 /* WireDataModelSupport.framework */,
+				016DB6DD2C261A4900DEB81B /* WireDomain.framework */,
+				EEE25B5829719DA80008B894 /* WireImages.framework */,
+				EEE25B3A29719C370008B894 /* WireLinkPreview.framework */,
+				EE9A8585298B0A3B00064A9C /* WireNotificationEngine.framework */,
+				EEE25B3D29719C580008B894 /* WireProtos.framework */,
+				EEE25B4029719C750008B894 /* WireRequestStrategy.framework */,
+				59AADE262BB429B200D9E658 /* WireRequestStrategySupport.framework */,
+				EE33C48C296485FA00C058D1 /* WireShareEngine.framework */,
+				EE67F739296F0E28001D7C88 /* WireSyncEngine.framework */,
+				0145AE982B1156FC0097E3B8 /* WireSyncEngineSupport.framework */,
+				EEE25B4329719C950008B894 /* WireSystem.framework */,
+				598E86F62BF4DD5C00FC5438 /* WireSystemSupport.framework */,
+				E6C25FC42AFFAAC300406A1C /* WireTesting.framework */,
+				EEE25B4629719CB30008B894 /* WireTransport.framework */,
+				CB4870F12C7F4FE5001E9151 /* WireTransportSupport.framework */,
+				EEE25B4929719CDC0008B894 /* WireUtilities.framework */,
+				598E86D02BF4D97800FC5438 /* WireUtilitiesSupport.framework */,
+				EE67F73D296F0E7D001D7C88 /* Ziphy.framework */,
+				EEE25B2629719A730008B894 /* Clibsodium.xcframework */,
+				EEE25B2729719A730008B894 /* cryptobox.xcframework */,
+				EE67F6D7296F06B3001D7C88 /* FLAnimatedImage.xcframework */,
+				EEE25B5229719D540008B894 /* libPhoneNumberiOS.xcframework */,
+				EEE25B4C29719D0B0008B894 /* ZipArchive.xcframework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		8F42C52F199244A700288E4D = {
+			isa = PBXGroup;
+			children = (
+				EE9AEC9D2BD15A3600F7853F /* Wire-iOS.docc */,
+				015D91E72D68D481004EE8C9 /* Scripts */,
+				015DC1DC2D68DD85004EE8C9 /* iOS StyleKit.pcvd */,
+				015DC1DD2D68DD85004EE8C9 /* SECURITY.md */,
+				015DC1DE2D68DD85004EE8C9 /* swiftgen.yml */,
+				015DC1DF2D68DD85004EE8C9 /* swiftgenShareExtension.yml */,
+				87C8D7FB1BA8261C00B0530B /* Entitlements-Dev.entitlements */,
+				87C8D7FC1BA8261C00B0530B /* Entitlements-Prod.entitlements */,
+				8FC853A0199245770008B66B /* Wire-Info.plist */,
+				0143895D2BC81DC200EC6920 /* PrivacyInfo.xcprivacy */,
+				01B71BB42D6D2DB3002C5A38 /* Configuration */,
+				01B71B942D6D2DAB002C5A38 /* Resources */,
+				015DA6092D68DA96004EE8C9 /* Generated */,
+				015DAB7D2D68DAB0004EE8C9 /* Sources */,
+				015DB07A2D68DB05004EE8C9 /* Tests */,
+				015DD59D2D68E261004EE8C9 /* Wire-iOS Tests */,
+				015DC2042D68E01D004EE8C9 /* Wire-iOS UnitTests */,
+				015B25B72D68EAD000959185 /* Wire-iOS Share Extension */,
+				015DB12B2D68DB7B004EE8C9 /* WireCommonComponents */,
+				015DB15C2D68DB7F004EE8C9 /* Wire Notification Service Extension */,
+				01DFC4322D7B4C6F00D1962A /* WireUITests */,
+				8286E48D7CC440448CBD8F48 /* Frameworks */,
+				8F42C539199244A700288E4D /* Products */,
+			);
+			indentWidth = 4;
+			sourceTree = "<group>";
+			tabWidth = 4;
+			usesTabs = 0;
+			wrapsLines = 1;
+		};
+		8F42C539199244A700288E4D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8F42C538199244A700288E4D /* Wire.app */,
+				BACB88511AF7C48900DDCDB0 /* Wire-iOS-Tests.xctest */,
+				168A16A91D9597C2005CFA6C /* Wire Share Extension.appex */,
+				F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */,
+				065A5ADE279B07AC002D4D1E /* Wire Notification Service Extension.appex */,
+				E6579E362AFF9B30004E7FD8 /* Wire-iOS UnitTests.xctest */,
+				01DFC4312D7B4C6F00D1962A /* WireUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		01DFC4302D7B4C6F00D1962A /* WireUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 01DFC4392D7B4C6F00D1962A /* Build configuration list for PBXNativeTarget "WireUITests" */;
+			buildPhases = (
+				01DFC42D2D7B4C6F00D1962A /* Sources */,
+				01DFC42E2D7B4C6F00D1962A /* Frameworks */,
+				01DFC42F2D7B4C6F00D1962A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				01DFC4382D7B4C6F00D1962A /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				01DFC4322D7B4C6F00D1962A /* WireUITests */,
+			);
+			name = WireUITests;
+			packageProductDependencies = (
+				D0E258142DDC864100959FB9 /* WireFoundation */,
+				76ED41EB2E053E3200A286F4 /* WireNetwork */,
+			);
+			productName = WireUITests;
+			productReference = 01DFC4312D7B4C6F00D1962A /* WireUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		065A5ADD279B07AC002D4D1E /* Wire Notification Service Extension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 065A5AE6279B07AC002D4D1E /* Build configuration list for PBXNativeTarget "Wire Notification Service Extension" */;
+			buildPhases = (
+				065A5ADA279B07AC002D4D1E /* Sources */,
+				065A5ADB279B07AC002D4D1E /* Frameworks */,
+				065A5ADC279B07AC002D4D1E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				065A5AED279B0821002D4D1E /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				015DB15C2D68DB7F004EE8C9 /* Wire Notification Service Extension */,
+			);
+			name = "Wire Notification Service Extension";
+			productName = "Wire Notification Service Extension";
+			productReference = 065A5ADE279B07AC002D4D1E /* Wire Notification Service Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		168A16A81D9597C2005CFA6C /* Wire Share Extension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 168A16B41D9597C2005CFA6C /* Build configuration list for PBXNativeTarget "Wire Share Extension" */;
+			buildPhases = (
+				E96301B82B4EDFE700726CDB /* Run SwiftGen */,
+				168A16A51D9597C2005CFA6C /* Sources */,
+				168A16A61D9597C2005CFA6C /* Frameworks */,
+				168A16A71D9597C2005CFA6C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F1FEA15721DCEC3D00790A54 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				015B25B72D68EAD000959185 /* Wire-iOS Share Extension */,
+			);
+			name = "Wire Share Extension";
+			packageProductDependencies = (
+				5945D0292C219F7200D039E3 /* WireDesign */,
+				59CDB3F52C4EA08F0049D1AB /* WireReusableUIComponents */,
+				59537D922CFFA0DA00920B59 /* WireLogging */,
+				E489D8302DF709CE008966AE /* WireMultiBackendUI */,
+			);
+			productName = "Wire-iOS Share Extension";
+			productReference = 168A16A91D9597C2005CFA6C /* Wire Share Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		8F42C537199244A700288E4D /* Wire-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8F42C558199244A700288E4D /* Build configuration list for PBXNativeTarget "Wire-iOS" */;
+			buildPhases = (
+				EEF9786E25D2923A00F7333E /* Run SwiftGen */,
+				E64120D52C1C7A820097526C /* Run Sourcery */,
+				8F42C534199244A700288E4D /* Sources */,
+				8F42C535199244A700288E4D /* Frameworks */,
+				8F42C536199244A700288E4D /* Resources */,
+				160EABBA1D47BD7200F83CA7 /* Copy Extra Audio Notifications */,
+				5E055B28228AAF1500E91314 /* Update Settings.bundle */,
+				A96867A826A5E52F00679D95 /* Embed Frameworks */,
+				065A5AE9279B07AC002D4D1E /* Embed App Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F1FEA15021DCEB1700790A54 /* PBXTargetDependency */,
+				168A16B21D9597C2005CFA6C /* PBXTargetDependency */,
+				065A5AE4279B07AC002D4D1E /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				015DA6092D68DA96004EE8C9 /* Generated */,
+				015DAB7D2D68DAB0004EE8C9 /* Sources */,
+			);
+			name = "Wire-iOS";
+			packageProductDependencies = (
+				407831AC2AC4636F005C2978 /* DifferenceKit */,
+				061F34182B1E2ED50099CBAB /* AppAuth */,
+				061F341A2B1E2ED50099CBAB /* AppAuthCore */,
+				592ED06D2C1C7D0700FE1F4E /* WireReusableUIComponents */,
+				E9FBF3A52C47C23100C65DA8 /* FLAnimatedImage */,
+				CB4E15112C81CC81005DDEC8 /* Down */,
+				59D038262C85D31E009FE583 /* WireMainNavigationUI */,
+				59B99FA92C89DE8600201827 /* WireFoundation */,
+				59076F942C934A9800AE7529 /* WireAccountImageUI */,
+				590DCA072C971A56002D0A2C /* WireSidebarUI */,
+				5929CB212CA6C9C800070488 /* WireConversationListUI */,
+				595C49682CA995E900F8F881 /* WireSettingsUI */,
+				59076F942C934A9800AE7529 /* WireAccountImageUI */,
+				590DCA072C971A56002D0A2C /* WireSidebarUI */,
+				CB43D9BC2CDBBBB900BF5AEB /* WireFolderPickerUI */,
+				E9BA75C52CD51DF100F6EDDF /* WireMoveToFolderUI */,
+				59537D942CFFA11A00920B59 /* WireLogging */,
+				76D15E702CEFAE8A0059215D /* WireIndividualToTeamMigrationUI */,
+				594341D62D08611700A6C0B5 /* WireCountly */,
+				0619A95B2D3FE78700876BDE /* WireAuthenticationUI */,
+				76ACF8A12D4215E2001F48A1 /* WireViewsDebugUI */,
+				EE543B492D564AC000CA96BA /* WireAuthentication */,
+				01D2B7A42D64A9190030D28D /* WireCoreCrypto */,
+				767F41E72D7F95C100E4E090 /* WireMessagingUIBindings */,
+				E40050752D71A80100B7962B /* WireMessagingUI */,
+				01C774262D9EECE100A2FF07 /* WireAVS */,
+				76BFA65C2D89E6B8000F2D0A /* WireMessagingAPI */,
+				76BFA65E2D89E6D8000F2D0A /* WireMessagingUIBindings */,
+				59BAEAFB2DBF483400B54AC4 /* WireBackup */,
+				16EE08AD2D92E861001B372C /* WireCoreCryptoUniffi */,
+				CB1428442DCB8A820092E7AE /* WireCellsUI */,
+				59703B272DD4A42000B45773 /* ZIPFoundation */,
+				CBDDB1822DD4BCA700A0A1F3 /* WireCellsBindings */,
+				CB71EE202DDF5A1000E7A3AF /* WireCellsAPI */,
+				E416B8E32DE8560600882C63 /* WireMultiBackendUI */,
+				34DC44AC2E01C1E6004D5DD5 /* WireNetwork */,
+			);
+			productName = "ZClient iOS";
+			productReference = 8F42C538199244A700288E4D /* Wire.app */;
+			productType = "com.apple.product-type.application";
+		};
+		BACB88501AF7C48900DDCDB0 /* Wire-iOS-Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BACB88591AF7C48900DDCDB0 /* Build configuration list for PBXNativeTarget "Wire-iOS-Tests" */;
+			buildPhases = (
+				BACB884D1AF7C48900DDCDB0 /* Sources */,
+				BACB884E1AF7C48900DDCDB0 /* Frameworks */,
+				BACB884F1AF7C48900DDCDB0 /* Resources */,
+				BFE731DE20A2F2270088BA22 /* Remove Old Snapshot Results */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				BACB88581AF7C48900DDCDB0 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				015DB07A2D68DB05004EE8C9 /* Tests */,
+			);
+			name = "Wire-iOS-Tests";
+			packageProductDependencies = (
+				01C1A7C62A54C45A0058D578 /* SnapshotTesting */,
+				59B48C612C89CD3D00EA7999 /* WireTestingPackage */,
+				590DCA092C971AFF002D0A2C /* WireFoundation */,
+				59B7684A2D2D5A17007B5F1E /* WireFoundationSupport */,
+				59191A642D0051C7001AB388 /* WireLogging */,
+			);
+			productName = "ZClient-iOS Tests";
+			productReference = BACB88511AF7C48900DDCDB0 /* Wire-iOS-Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		E6579E352AFF9B30004E7FD8 /* Wire-iOS UnitTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E6579E3E2AFF9B30004E7FD8 /* Build configuration list for PBXNativeTarget "Wire-iOS UnitTests" */;
+			buildPhases = (
+				E6579E322AFF9B30004E7FD8 /* Sources */,
+				E6579E332AFF9B30004E7FD8 /* Frameworks */,
+				E6579E342AFF9B30004E7FD8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E6579E3B2AFF9B30004E7FD8 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				015DB07A2D68DB05004EE8C9 /* Tests */,
+				015DC2042D68E01D004EE8C9 /* Wire-iOS UnitTests */,
+			);
+			name = "Wire-iOS UnitTests";
+			packageProductDependencies = (
+				5977ED1E2D26747900F5C78E /* WireLogging */,
+			);
+			productName = "Wire-iOS UnitTests";
+			productReference = E6579E362AFF9B30004E7FD8 /* Wire-iOS UnitTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		F1FEA14921DCEB1700790A54 /* WireCommonComponents */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F1FEA15521DCEB1700790A54 /* Build configuration list for PBXNativeTarget "WireCommonComponents" */;
+			buildPhases = (
+				F1FEA14621DCEB1700790A54 /* Sources */,
+				F1FEA14721DCEB1700790A54 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				015DB12B2D68DB7B004EE8C9 /* WireCommonComponents */,
+			);
+			name = WireCommonComponents;
+			packageProductDependencies = (
+				016A141C2CE6BFC4006A7EF5 /* WireDatadog */,
+				59537D8E2CFFA05600920B59 /* WireLogging */,
+			);
+			productName = WireCommonComponents;
+			productReference = F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		8F42C530199244A700288E4D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				DefaultBuildSystemTypeForWorkspace = Original;
+				LastSwiftMigration = 0710;
+				LastSwiftUpdateCheck = 1620;
+				LastUpgradeCheck = 1310;
+				ORGANIZATIONNAME = "Zeta Project Germany GmbH";
+				TargetAttributes = {
+					01DFC4302D7B4C6F00D1962A = {
+						CreatedOnToolsVersion = 16.2;
+						TestTargetID = 8F42C537199244A700288E4D;
+					};
+					065A5ADD279B07AC002D4D1E = {
+						CreatedOnToolsVersion = 13.1;
+					};
+					168A16A81D9597C2005CFA6C = {
+						CreatedOnToolsVersion = 8.0;
+						LastSwiftMigration = 1000;
+						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 1;
+							};
+						};
+					};
+					592996512C2EB98A008C334F = {
+						CreatedOnToolsVersion = 15.3;
+					};
+					8F42C537199244A700288E4D = {
+						CreatedOnToolsVersion = 6.0;
+						LastSwiftMigration = 1000;
+						SystemCapabilities = {
+							com.apple.SafariKeychain = {
+								enabled = 1;
+							};
+							com.apple.iCloud = {
+								enabled = 1;
+							};
+						};
+					};
+					BACB88501AF7C48900DDCDB0 = {
+						CreatedOnToolsVersion = 6.3;
+						DevelopmentTeam = W5KEQBF9B5;
+						LastSwiftMigration = 1000;
+						ProvisioningStyle = Manual;
+						TestTargetID = 8F42C537199244A700288E4D;
+					};
+					E6579E352AFF9B30004E7FD8 = {
+						CreatedOnToolsVersion = 15.0.1;
+						TestTargetID = 8F42C537199244A700288E4D;
+					};
+					F1FEA14921DCEB1700790A54 = {
+						CreatedOnToolsVersion = 10.0;
+						LastSwiftMigration = 1000;
+					};
+				};
+			};
+			buildConfigurationList = 8F42C533199244A700288E4D /* Build configuration list for PBXProject "Wire-iOS" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+				de,
+				"pt-BR",
+				uk,
+				es,
+				ru,
+				ja,
+				it,
+				nl,
+				tr,
+				da,
+				fr,
+				ar,
+				"zh-Hans",
+				sl,
+				et,
+				fi,
+				pl,
+				"zh-Hant",
+				lt,
+				is,
+				ca,
+				hu,
+				ka,
+				bn,
+				vi,
+				he,
+				lv,
+				th,
+				sk,
+				pt,
+				fa,
+				si,
+				my,
+				cs,
+				ko,
+				el,
+				ro,
+				sv,
+				ms,
+				sr,
+				bg,
+				be,
+				hr,
+				eu,
+				ur,
+				"sr-Latn",
+				no,
+				id,
+				"sr-CS",
+				nb,
+				"sr-RS",
+			);
+			mainGroup = 8F42C52F199244A700288E4D;
+			packageReferences = (
+				01C1A7C52A54C45A0058D578 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */,
+				407831AB2AC4636F005C2978 /* XCRemoteSwiftPackageReference "DifferenceKit" */,
+				061F34172B1E2E8F0099CBAB /* XCRemoteSwiftPackageReference "AppAuth-iOS" */,
+				E9FBF3A42C47C23100C65DA8 /* XCRemoteSwiftPackageReference "FLAnimatedImage" */,
+				CB4E15102C81CC81005DDEC8 /* XCRemoteSwiftPackageReference "Down" */,
+				59703B262DD4A42000B45773 /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
+			);
+			productRefGroup = 8F42C539199244A700288E4D /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8F42C537199244A700288E4D /* Wire-iOS */,
+				168A16A81D9597C2005CFA6C /* Wire Share Extension */,
+				BACB88501AF7C48900DDCDB0 /* Wire-iOS-Tests */,
+				F1FEA14921DCEB1700790A54 /* WireCommonComponents */,
+				065A5ADD279B07AC002D4D1E /* Wire Notification Service Extension */,
+				E6579E352AFF9B30004E7FD8 /* Wire-iOS UnitTests */,
+				592996512C2EB98A008C334F /* Format & Lint Swift Code */,
+				01DFC4302D7B4C6F00D1962A /* WireUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		01DFC42F2D7B4C6F00D1962A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		065A5ADC279B07AC002D4D1E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		168A16A71D9597C2005CFA6C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8F42C536199244A700288E4D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				01B71B952D6D2DAB002C5A38 /* RedactedScript-Regular.ttf in Resources */,
+				01B71B962D6D2DAB002C5A38 /* emoticons.min.json in Resources */,
+				01B71B972D6D2DAB002C5A38 /* Accessibility.strings in Resources */,
+				01B71B982D6D2DAB002C5A38 /* InfoPlist.strings in Resources */,
+				01B71B992D6D2DAB002C5A38 /* Emoji.strings in Resources */,
+				01B71B9A2D6D2DAB002C5A38 /* emojis.json in Resources */,
+				01B71B9B2D6D2DAB002C5A38 /* Images.xcassets in Resources */,
+				01B71B9C2D6D2DAB002C5A38 /* hotping_from_them.caf in Resources */,
+				01B71B9D2D6D2DAB002C5A38 /* Localizable.stringsdict in Resources */,
+				01B71B9E2D6D2DAB002C5A38 /* OtherImages.xcassets in Resources */,
+				01B71B9F2D6D2DAB002C5A38 /* audio-notifications in Resources */,
+				01B71BA02D6D2DAB002C5A38 /* Settings.bundle in Resources */,
+				01B71BA12D6D2DAB002C5A38 /* ping_from_them.caf in Resources */,
+				01B71BA22D6D2DAB002C5A38 /* first_message.caf in Resources */,
+				01B71BA32D6D2DAB002C5A38 /* Localizable.strings in Resources */,
+				01B71BA42D6D2DAB002C5A38 /* new_message.caf in Resources */,
+				01B71BA52D6D2DAB002C5A38 /* silence.m4a in Resources */,
+				01B71BA62D6D2DAB002C5A38 /* ringing_from_them_long.caf in Resources */,
+				0143895E2BC81DC200EC6920 /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BACB884F1AF7C48900DDCDB0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				01B71BA72D6D2DAB002C5A38 /* emoticons.min.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E6579E342AFF9B30004E7FD8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		160EABBA1D47BD7200F83CA7 /* Copy Extra Audio Notifications */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/wire-ios-build-assets/extra-audio-notifications",
+			);
+			name = "Copy Extra Audio Notifications";
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/copied-audio-notifications.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "$SRCROOT/Scripts/copyExtraAudioNotifications\n\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"YES\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+		};
+		592996552C2EB996008C334F /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Format\n\"$PROJECT_DIR/../scripts/run-swiftformat.sh\" \\\n    \"$PROJECT_DIR/..\"\n\n# Lint\n\"$PROJECT_DIR/../scripts/run-swiftlint.sh\" \\\n    --fix \\\n    --no-cache \\\n    --quiet \\\n    \"$PROJECT_DIR/..\"\n\"$PROJECT_DIR/../scripts/run-swiftlint.sh\" \\\n    --strict \\\n    --no-cache \\\n    --quiet \\\n    \"$PROJECT_DIR/..\"\n";
+		};
+		5E055B28228AAF1500E91314 /* Update Settings.bundle */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Update Settings.bundle";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "SETTINGS_DIR=\"$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app/Settings.bundle\"\n\nif [ $IS_INTERNAL_BUILD == '1' ]; then\n    echo \"Copy internal Settings.bundle\"\n    mv \"$SETTINGS_DIR/Root_internal.plist\" \"$SETTINGS_DIR/Root.plist\" \nelse\n    echo \"Copy public Settings.bundle\"\n    mv \"$SETTINGS_DIR/Root_public.plist\" \"$SETTINGS_DIR/Root.plist\"\nfi\n";
+		};
+		BFE731DE20A2F2270088BA22 /* Remove Old Snapshot Results */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Remove Old Snapshot Results";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "rm -rf \"${SOURCE_ROOT}\"/SnapshotResults/*\n";
+		};
+		E64120D52C1C7A820097526C /* Run Sourcery */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Sourcery";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "../scripts/run-sourcery.sh --config ./Tests/Sourcery/config.yml\n";
+		};
+		E96301B82B4EDFE700726CDB /* Run SwiftGen */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run SwiftGen";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "../scripts/run-swiftgen.sh --config \"$PROJECT_DIR/swiftgenShareExtension.yml\"\n";
+		};
+		EEF9786E25D2923A00F7333E /* Run SwiftGen */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 12;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run SwiftGen";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "../scripts/run-swiftgen.sh --config \"$PROJECT_DIR/swiftgen.yml\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		01DFC42D2D7B4C6F00D1962A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		065A5ADA279B07AC002D4D1E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		168A16A51D9597C2005CFA6C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8F42C534199244A700288E4D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BACB884D1AF7C48900DDCDB0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E6579E322AFF9B30004E7FD8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F1FEA14621DCEB1700790A54 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		01DFC4382D7B4C6F00D1962A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8F42C537199244A700288E4D /* Wire-iOS */;
+			targetProxy = 01DFC4372D7B4C6F00D1962A /* PBXContainerItemProxy */;
+		};
+		065A5AE4279B07AC002D4D1E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 065A5ADD279B07AC002D4D1E /* Wire Notification Service Extension */;
+			targetProxy = 065A5AE3279B07AC002D4D1E /* PBXContainerItemProxy */;
+		};
+		065A5AED279B0821002D4D1E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F1FEA14921DCEB1700790A54 /* WireCommonComponents */;
+			targetProxy = 065A5AEC279B0821002D4D1E /* PBXContainerItemProxy */;
+		};
+		168A16B21D9597C2005CFA6C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 168A16A81D9597C2005CFA6C /* Wire Share Extension */;
+			targetProxy = 168A16B11D9597C2005CFA6C /* PBXContainerItemProxy */;
+		};
+		BACB88581AF7C48900DDCDB0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8F42C537199244A700288E4D /* Wire-iOS */;
+			targetProxy = BACB88571AF7C48900DDCDB0 /* PBXContainerItemProxy */;
+		};
+		E6579E3B2AFF9B30004E7FD8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8F42C537199244A700288E4D /* Wire-iOS */;
+			targetProxy = E6579E3A2AFF9B30004E7FD8 /* PBXContainerItemProxy */;
+		};
+		F1FEA15021DCEB1700790A54 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F1FEA14921DCEB1700790A54 /* WireCommonComponents */;
+			targetProxy = F1FEA14F21DCEB1700790A54 /* PBXContainerItemProxy */;
+		};
+		F1FEA15721DCEC3D00790A54 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F1FEA14921DCEB1700790A54 /* WireCommonComponents */;
+			targetProxy = F1FEA15621DCEC3D00790A54 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		01B71AD82D6D2DAB002C5A38 /* Accessibility.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				01B71AA72D6D2DAB002C5A38 /* ar */,
+				01B71AA82D6D2DAB002C5A38 /* Base */,
+				01B71AAE2D6D2DAB002C5A38 /* da */,
+				01B71AAF2D6D2DAB002C5A38 /* de */,
+				01B71AB12D6D2DAB002C5A38 /* es */,
+				01B71AB22D6D2DAB002C5A38 /* et */,
+				01B71AB52D6D2DAB002C5A38 /* fi */,
+				01B71AB62D6D2DAB002C5A38 /* fr */,
+				01B71ABC2D6D2DAB002C5A38 /* it */,
+				01B71ABD2D6D2DAB002C5A38 /* ja */,
+				01B71AC02D6D2DAB002C5A38 /* lt */,
+				01B71AC42D6D2DAB002C5A38 /* nl */,
+				01B71AC62D6D2DAB002C5A38 /* pl */,
+				01B71AC82D6D2DAB002C5A38 /* pt-BR */,
+				01B71ACA2D6D2DAB002C5A38 /* ru */,
+				01B71ACD2D6D2DAB002C5A38 /* sl */,
+				01B71AD22D6D2DAB002C5A38 /* tr */,
+				01B71AD32D6D2DAB002C5A38 /* uk */,
+				01B71AD62D6D2DAB002C5A38 /* zh-Hans */,
+				01B71AD72D6D2DAB002C5A38 /* zh-Hant */,
+			);
+			name = Accessibility.strings;
+			sourceTree = "<group>";
+		};
+		01B71AED2D6D2DAB002C5A38 /* Emoji.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				01B71AD92D6D2DAB002C5A38 /* ar */,
+				01B71ADA2D6D2DAB002C5A38 /* Base */,
+				01B71ADB2D6D2DAB002C5A38 /* da */,
+				01B71ADC2D6D2DAB002C5A38 /* de */,
+				01B71ADD2D6D2DAB002C5A38 /* es */,
+				01B71ADE2D6D2DAB002C5A38 /* et */,
+				01B71ADF2D6D2DAB002C5A38 /* fi */,
+				01B71AE02D6D2DAB002C5A38 /* fr */,
+				01B71AE12D6D2DAB002C5A38 /* it */,
+				01B71AE22D6D2DAB002C5A38 /* ja */,
+				01B71AE32D6D2DAB002C5A38 /* lt */,
+				01B71AE42D6D2DAB002C5A38 /* nl */,
+				01B71AE52D6D2DAB002C5A38 /* pl */,
+				01B71AE62D6D2DAB002C5A38 /* pt-BR */,
+				01B71AE72D6D2DAB002C5A38 /* ru */,
+				01B71AE82D6D2DAB002C5A38 /* sl */,
+				01B71AE92D6D2DAB002C5A38 /* tr */,
+				01B71AEA2D6D2DAB002C5A38 /* uk */,
+				01B71AEB2D6D2DAB002C5A38 /* zh-Hans */,
+				01B71AEC2D6D2DAB002C5A38 /* zh-Hant */,
+			);
+			name = Emoji.strings;
+			sourceTree = "<group>";
+		};
+		01B71B202D6D2DAB002C5A38 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				01B71AEE2D6D2DAB002C5A38 /* ar */,
+				01B71AEF2D6D2DAB002C5A38 /* Base */,
+				01B71AF52D6D2DAB002C5A38 /* da */,
+				01B71AF62D6D2DAB002C5A38 /* de */,
+				01B71AF82D6D2DAB002C5A38 /* es */,
+				01B71AF92D6D2DAB002C5A38 /* et */,
+				01B71AFC2D6D2DAB002C5A38 /* fi */,
+				01B71AFD2D6D2DAB002C5A38 /* fr */,
+				01B71B032D6D2DAB002C5A38 /* it */,
+				01B71B042D6D2DAB002C5A38 /* ja */,
+				01B71B072D6D2DAB002C5A38 /* lt */,
+				01B71B0B2D6D2DAB002C5A38 /* nl */,
+				01B71B0D2D6D2DAB002C5A38 /* pl */,
+				01B71B0F2D6D2DAB002C5A38 /* pt-BR */,
+				01B71B112D6D2DAB002C5A38 /* ru */,
+				01B71B142D6D2DAB002C5A38 /* sl */,
+				01B71B1A2D6D2DAB002C5A38 /* tr */,
+				01B71B1B2D6D2DAB002C5A38 /* uk */,
+				01B71B1E2D6D2DAB002C5A38 /* zh-Hans */,
+				01B71B1F2D6D2DAB002C5A38 /* zh-Hant */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		01B71B532D6D2DAB002C5A38 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				01B71B212D6D2DAB002C5A38 /* ar */,
+				01B71B222D6D2DAB002C5A38 /* Base */,
+				01B71B282D6D2DAB002C5A38 /* da */,
+				01B71B292D6D2DAB002C5A38 /* de */,
+				01B71B2B2D6D2DAB002C5A38 /* es */,
+				01B71B2C2D6D2DAB002C5A38 /* et */,
+				01B71B2F2D6D2DAB002C5A38 /* fi */,
+				01B71B302D6D2DAB002C5A38 /* fr */,
+				01B71B362D6D2DAB002C5A38 /* it */,
+				01B71B372D6D2DAB002C5A38 /* ja */,
+				01B71B3A2D6D2DAB002C5A38 /* lt */,
+				01B71B3E2D6D2DAB002C5A38 /* nl */,
+				01B71B402D6D2DAB002C5A38 /* pl */,
+				01B71B422D6D2DAB002C5A38 /* pt-BR */,
+				01B71B442D6D2DAB002C5A38 /* ru */,
+				01B71B472D6D2DAB002C5A38 /* sl */,
+				01B71B4D2D6D2DAB002C5A38 /* tr */,
+				01B71B4E2D6D2DAB002C5A38 /* uk */,
+				01B71B512D6D2DAB002C5A38 /* zh-Hans */,
+				01B71B522D6D2DAB002C5A38 /* zh-Hant */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		01B71B862D6D2DAB002C5A38 /* Localizable.stringsdict */ = {
+			isa = PBXVariantGroup;
+			children = (
+				01B71B542D6D2DAB002C5A38 /* ar */,
+				01B71B552D6D2DAB002C5A38 /* Base */,
+				01B71B5B2D6D2DAB002C5A38 /* da */,
+				01B71B5C2D6D2DAB002C5A38 /* de */,
+				01B71B5E2D6D2DAB002C5A38 /* es */,
+				01B71B5F2D6D2DAB002C5A38 /* et */,
+				01B71B622D6D2DAB002C5A38 /* fi */,
+				01B71B632D6D2DAB002C5A38 /* fr */,
+				01B71B692D6D2DAB002C5A38 /* it */,
+				01B71B6A2D6D2DAB002C5A38 /* ja */,
+				01B71B6D2D6D2DAB002C5A38 /* lt */,
+				01B71B712D6D2DAB002C5A38 /* nl */,
+				01B71B732D6D2DAB002C5A38 /* pl */,
+				01B71B752D6D2DAB002C5A38 /* pt-BR */,
+				01B71B772D6D2DAB002C5A38 /* ru */,
+				01B71B7A2D6D2DAB002C5A38 /* sl */,
+				01B71B802D6D2DAB002C5A38 /* tr */,
+				01B71B812D6D2DAB002C5A38 /* uk */,
+				01B71B842D6D2DAB002C5A38 /* zh-Hans */,
+				01B71B852D6D2DAB002C5A38 /* zh-Hant */,
+			);
+			name = Localizable.stringsdict;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		01DFC43A2D7B4C6F00D1962A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 01DFC4322D7B4C6F00D1962A /* WireUITests */;
+			baseConfigurationReferenceRelativePath = env.xcconfig;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = EDF3JCE8BC;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Wire-iOS";
+			};
+			name = Debug;
+		};
+		01DFC43B2D7B4C6F00D1962A /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 01B71A962D6D2DAB002C5A38 /* Tests-Debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = EDF3JCE8BC;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Wire-iOS";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		065A5AE7279B07AC002D4D1E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 01B71A8F2D6D2DAB002C5A38 /* Notification-Extension-Debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = "$(CODE_SIGN_ENTITLEMENTS)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				ENABLE_BITCODE = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "$(INFOPLIST_FILE)";
+				INFOPLIST_KEY_CFBundleDisplayName = Wire;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Zeta Project Germany GmbH. All rights reserved.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)";
+				PRODUCT_NAME = "$(PRODUCT_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "$(PROVISIONING_PROFILE_SPECIFIER)";
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		065A5AE8279B07AC002D4D1E /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 01B71A902D6D2DAB002C5A38 /* Notification-Extension-Release.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = "$(CODE_SIGN_ENTITLEMENTS)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				ENABLE_BITCODE = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "$(INFOPLIST_FILE)";
+				INFOPLIST_KEY_CFBundleDisplayName = Wire;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Zeta Project Germany GmbH. All rights reserved.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)";
+				PRODUCT_NAME = "$(PRODUCT_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "$(PROVISIONING_PROFILE_SPECIFIER)";
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		168A16B51D9597C2005CFA6C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 01B71A932D6D2DAB002C5A38 /* Share-Extension-Debug.xcconfig */;
+			buildSettings = {
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		168A16B61D9597C2005CFA6C /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 01B71A942D6D2DAB002C5A38 /* Share-Extension-Release.xcconfig */;
+			buildSettings = {
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		592996522C2EB98A008C334F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		592996532C2EB98A008C334F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		8F42C556199244A700288E4D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = "$(SDKROOT)/usr/include/libxml2";
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				VALIDATE_WORKSPACE = YES;
+			};
+			name = Debug;
+		};
+		8F42C557199244A700288E4D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = "$(SDKROOT)/usr/include/libxml2";
+				SDKROOT = iphoneos;
+				VALIDATE_WORKSPACE = NO;
+			};
+			name = Release;
+		};
+		8F42C559199244A700288E4D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 01B71A992D6D2DAB002C5A38 /* Wire-iOS-Debug.xcconfig */;
+			buildSettings = {
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		8F42C55A199244A700288E4D /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 01B71A9A2D6D2DAB002C5A38 /* Wire-iOS-Release.xcconfig */;
+			buildSettings = {
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		BACB885A1AF7C48900DDCDB0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 01B71A962D6D2DAB002C5A38 /* Tests-Debug.xcconfig */;
+			buildSettings = {
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_WORKSPACE = YES;
+			};
+			name = Debug;
+		};
+		BACB885B1AF7C48900DDCDB0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 01B71A962D6D2DAB002C5A38 /* Tests-Debug.xcconfig */;
+			buildSettings = {
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_WORKSPACE = NO;
+			};
+			name = Release;
+		};
+		E6579E3C2AFF9B30004E7FD8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 01B71A962D6D2DAB002C5A38 /* Tests-Debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = EDF3JCE8BC;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.Wire-iOS-UnitTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "Wire-iOS UnitTests/Wire-iOS-UnitTests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Wire.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Wire";
+			};
+			name = Debug;
+		};
+		E6579E3D2AFF9B30004E7FD8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 01B71A962D6D2DAB002C5A38 /* Tests-Debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = EDF3JCE8BC;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.Wire-iOS-UnitTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "Wire-iOS UnitTests/Wire-iOS-UnitTests-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Wire.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Wire";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		F1FEA15321DCEB1700790A54 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 01B71A8B2D6D2DAB002C5A38 /* CommonComponents-Debug.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_WORKSPACE = YES;
+			};
+			name = Debug;
+		};
+		F1FEA15421DCEB1700790A54 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 01B71A8C2D6D2DAB002C5A38 /* CommonComponents-Release.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_WORKSPACE = NO;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		01DFC4392D7B4C6F00D1962A /* Build configuration list for PBXNativeTarget "WireUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				01DFC43A2D7B4C6F00D1962A /* Debug */,
+				01DFC43B2D7B4C6F00D1962A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		065A5AE6279B07AC002D4D1E /* Build configuration list for PBXNativeTarget "Wire Notification Service Extension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				065A5AE7279B07AC002D4D1E /* Debug */,
+				065A5AE8279B07AC002D4D1E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		168A16B41D9597C2005CFA6C /* Build configuration list for PBXNativeTarget "Wire Share Extension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				168A16B51D9597C2005CFA6C /* Debug */,
+				168A16B61D9597C2005CFA6C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		592996542C2EB98A008C334F /* Build configuration list for PBXAggregateTarget "Format & Lint Swift Code" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				592996522C2EB98A008C334F /* Debug */,
+				592996532C2EB98A008C334F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8F42C533199244A700288E4D /* Build configuration list for PBXProject "Wire-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8F42C556199244A700288E4D /* Debug */,
+				8F42C557199244A700288E4D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8F42C558199244A700288E4D /* Build configuration list for PBXNativeTarget "Wire-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8F42C559199244A700288E4D /* Debug */,
+				8F42C55A199244A700288E4D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BACB88591AF7C48900DDCDB0 /* Build configuration list for PBXNativeTarget "Wire-iOS-Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BACB885A1AF7C48900DDCDB0 /* Debug */,
+				BACB885B1AF7C48900DDCDB0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E6579E3E2AFF9B30004E7FD8 /* Build configuration list for PBXNativeTarget "Wire-iOS UnitTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E6579E3C2AFF9B30004E7FD8 /* Debug */,
+				E6579E3D2AFF9B30004E7FD8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F1FEA15521DCEB1700790A54 /* Build configuration list for PBXNativeTarget "WireCommonComponents" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F1FEA15321DCEB1700790A54 /* Debug */,
+				F1FEA15421DCEB1700790A54 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		01C1A7C52A54C45A0058D578 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-snapshot-testing";
+			requirement = {
+				kind = exactVersion;
+				version = 1.18.3;
+			};
+		};
+		061F34172B1E2E8F0099CBAB /* XCRemoteSwiftPackageReference "AppAuth-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/openid/AppAuth-iOS.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.6.2;
+			};
+		};
+		407831AB2AC4636F005C2978 /* XCRemoteSwiftPackageReference "DifferenceKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/wireapp/DifferenceKit/";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 1.3.0;
+			};
+		};
+		59703B262DD4A42000B45773 /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/weichsel/ZIPFoundation.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.0;
+			};
+		};
+		CB4E15102C81CC81005DDEC8 /* XCRemoteSwiftPackageReference "Down" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/wireapp/Down";
+			requirement = {
+				kind = exactVersion;
+				version = 2.3.5;
+			};
+		};
+		E9FBF3A42C47C23100C65DA8 /* XCRemoteSwiftPackageReference "FLAnimatedImage" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Flipboard/FLAnimatedImage";
+			requirement = {
+				kind = exactVersion;
+				version = 1.0.17;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		016A141C2CE6BFC4006A7EF5 /* WireDatadog */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireDatadog;
+		};
+		01C1A7C62A54C45A0058D578 /* SnapshotTesting */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 01C1A7C52A54C45A0058D578 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */;
+			productName = SnapshotTesting;
+		};
+		01C774262D9EECE100A2FF07 /* WireAVS */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireAVS;
+		};
+		01D2B7A42D64A9190030D28D /* WireCoreCrypto */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireCoreCrypto;
+		};
+		0619A95B2D3FE78700876BDE /* WireAuthenticationUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireAuthenticationUI;
+		};
+		061F34182B1E2ED50099CBAB /* AppAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 061F34172B1E2E8F0099CBAB /* XCRemoteSwiftPackageReference "AppAuth-iOS" */;
+			productName = AppAuth;
+		};
+		061F341A2B1E2ED50099CBAB /* AppAuthCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 061F34172B1E2E8F0099CBAB /* XCRemoteSwiftPackageReference "AppAuth-iOS" */;
+			productName = AppAuthCore;
+		};
+		16EE08AD2D92E861001B372C /* WireCoreCryptoUniffi */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireCoreCryptoUniffi;
+		};
+		34DC44AC2E01C1E6004D5DD5 /* WireNetwork */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireNetwork;
+		};
+		407831AC2AC4636F005C2978 /* DifferenceKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 407831AB2AC4636F005C2978 /* XCRemoteSwiftPackageReference "DifferenceKit" */;
+			productName = DifferenceKit;
+		};
+		59076F942C934A9800AE7529 /* WireAccountImageUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireAccountImageUI;
+		};
+		590DCA072C971A56002D0A2C /* WireSidebarUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireSidebarUI;
+		};
+		590DCA092C971AFF002D0A2C /* WireFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireFoundation;
+		};
+		59191A642D0051C7001AB388 /* WireLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireLogging;
+		};
+		5929CB212CA6C9C800070488 /* WireConversationListUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireConversationListUI;
+		};
+		592ED06D2C1C7D0700FE1F4E /* WireReusableUIComponents */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireReusableUIComponents;
+		};
+		594341D62D08611700A6C0B5 /* WireCountly */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireCountly;
+		};
+		5945D0292C219F7200D039E3 /* WireDesign */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireDesign;
+		};
+		59537D8E2CFFA05600920B59 /* WireLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireLogging;
+		};
+		59537D902CFFA0BA00920B59 /* WireLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireLogging;
+		};
+		59537D922CFFA0DA00920B59 /* WireLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireLogging;
+		};
+		59537D942CFFA11A00920B59 /* WireLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireLogging;
+		};
+		595C49682CA995E900F8F881 /* WireSettingsUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireSettingsUI;
+		};
+		59703B272DD4A42000B45773 /* ZIPFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 59703B262DD4A42000B45773 /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
+			productName = ZIPFoundation;
+		};
+		5977ED1E2D26747900F5C78E /* WireLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireLogging;
+		};
+		59B48C612C89CD3D00EA7999 /* WireTestingPackage */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireTestingPackage;
+		};
+		59B768422D2D58BE007B5F1E /* WireFoundationSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireFoundationSupport;
+		};
+		59B7684A2D2D5A17007B5F1E /* WireFoundationSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireFoundationSupport;
+		};
+		59B99FA92C89DE8600201827 /* WireFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireFoundation;
+		};
+		59BAEAFB2DBF483400B54AC4 /* WireBackup */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireBackup;
+		};
+		59CDB3F52C4EA08F0049D1AB /* WireReusableUIComponents */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireReusableUIComponents;
+		};
+		59D038262C85D31E009FE583 /* WireMainNavigationUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireMainNavigationUI;
+		};
+		767F41E72D7F95C100E4E090 /* WireMessagingUIBindings */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireMessagingUIBindings;
+		};
+		76ACF8A12D4215E2001F48A1 /* WireViewsDebugUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireViewsDebugUI;
+		};
+		76BFA65C2D89E6B8000F2D0A /* WireMessagingAPI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireMessagingAPI;
+		};
+		76BFA65E2D89E6D8000F2D0A /* WireMessagingUIBindings */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireMessagingUIBindings;
+		};
+		76D15E702CEFAE8A0059215D /* WireIndividualToTeamMigrationUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireIndividualToTeamMigrationUI;
+		};
+		76ED41EB2E053E3200A286F4 /* WireNetwork */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireNetwork;
+		};
+		CB1428442DCB8A820092E7AE /* WireCellsUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireCellsUI;
+		};
+		CB43D9BC2CDBBBB900BF5AEB /* WireFolderPickerUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireFolderPickerUI;
+		};
+		CB4E15112C81CC81005DDEC8 /* Down */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CB4E15102C81CC81005DDEC8 /* XCRemoteSwiftPackageReference "Down" */;
+			productName = Down;
+		};
+		CB71EE202DDF5A1000E7A3AF /* WireCellsAPI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireCellsAPI;
+		};
+		CBDDB1822DD4BCA700A0A1F3 /* WireCellsBindings */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireCellsBindings;
+		};
+		D0E258142DDC864100959FB9 /* WireFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireFoundation;
+		};
+		E40050752D71A80100B7962B /* WireMessagingUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireMessagingUI;
+		};
+		E416B8E32DE8560600882C63 /* WireMultiBackendUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireMultiBackendUI;
+		};
+		E489D8302DF709CE008966AE /* WireMultiBackendUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireMultiBackendUI;
+		};
+		E9BA75C52CD51DF100F6EDDF /* WireMoveToFolderUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireMoveToFolderUI;
+		};
+		E9FBF3A52C47C23100C65DA8 /* FLAnimatedImage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E9FBF3A42C47C23100C65DA8 /* XCRemoteSwiftPackageReference "FLAnimatedImage" */;
+			productName = FLAnimatedImage;
+		};
+		EE543B492D564AC000CA96BA /* WireAuthentication */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireAuthentication;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 8F42C530199244A700288E4D /* Project object */;
+}
