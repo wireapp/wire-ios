@@ -17,19 +17,21 @@
 //
 
 import Foundation
+import WireDomain
+import WireLogging
 
-/// A migration to be performed when the app updates
-/// to or past a particular version.
+struct AppVersionMigration_4_1_1: AppVersionMigration {
 
-public protocol AppVersionMigration {
+    let logFilesProvider: LogFilesProviding
+    let version: SemanticVersion = "4.1.1"
 
-    /// The app version for which this migration should
-    /// be run.
+    func perform() async throws {
+        // Deletes all raw log files collected from the logger sources.
+        // This removes files from `WireLogger.logFiles` and `ZMSLog.pathsForExistingLogs`,
+        try logFilesProvider.removeLogFiles()
 
-    var version: SemanticVersion { get }
-
-    /// Perform the migration.
-
-    func perform() async throws
+        // Deletes all log-related archives and folders created in the temp directory.
+        try logFilesProvider.removeLegacyLogArchives()
+    }
 
 }

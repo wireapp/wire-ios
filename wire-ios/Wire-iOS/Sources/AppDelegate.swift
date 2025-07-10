@@ -378,7 +378,7 @@ private extension AppDelegate {
             throw SessionManagerSetupError.missingCurrentAppVersion
         }
 
-        guard let currentBuildVersion = infoDictionary?[kCFBundleVersionKey as String] as? String  else {
+        guard let currentBuildNumber = infoDictionary?[kCFBundleVersionKey as String] as? String  else {
             throw SessionManagerSetupError.missingCurrentBuildVersion
         }
 
@@ -403,7 +403,7 @@ private extension AppDelegate {
         let sessionManager = try SessionManager(
             maxNumberAccounts: maxNumberAccounts,
             currentAppVersion: currentAppVersion,
-            currentBuildVersion: currentBuildVersion,
+            currentBuildNumber: currentBuildNumber,
             mediaManager: mediaManager,
             delegate: appStateCalculator,
             application: UIApplication.shared,
@@ -417,7 +417,8 @@ private extension AppDelegate {
             minTLSVersion: SecurityFlags.minTLSVersion.stringValue,
             deleteUserLogs: LogFileDestination.deleteAllLogs,
             analyticsServiceConfiguration: AnalyticsServiceConfigurationBuilder.build(),
-            countlyProvider: { CountlyWrapper() }
+            countlyProvider: { CountlyWrapper() },
+            logFilesProvider: LogFilesProvider()
         )
 
         voIPPushManager.delegate = sessionManager
