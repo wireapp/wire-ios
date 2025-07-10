@@ -75,7 +75,7 @@ extension WireAnalytics.Target {
             )
             return cachesDirectory?.appending(path: "Logs", directoryHint: .isDirectory)
 
-        case .notificationServiceExtension:
+        case .notificationServiceExtension, .shareExtension:
             guard let appGroupIdentifier = Bundle.main.applicationGroupIdentifier else { return nil }
             let cachesDirectory = fileManager.cachesURL(
                 forAppGroupIdentifier: appGroupIdentifier,
@@ -83,18 +83,16 @@ extension WireAnalytics.Target {
             )
             return cachesDirectory?
                 .appending(path: "Logs", directoryHint: .isDirectory)
-                .appending(component: "NotificationServiceExtension", directoryHint: .isDirectory)
+                .appending(component: subdirectory, directoryHint: .isDirectory)
 
-        case .shareExtension:
-            guard let appGroupIdentifier = Bundle.main.applicationGroupIdentifier else { return nil }
-            let cachesDirectory = fileManager.cachesURL(
-                forAppGroupIdentifier: appGroupIdentifier,
-                accountIdentifier: nil
-            )
-            return cachesDirectory?
-                .appending(path: "Logs", directoryHint: .isDirectory)
-                .appending(component: "ShareExtension", directoryHint: .isDirectory)
+        }
+    }
 
+    private var subdirectory: String {
+        switch self {
+        case .app: "App"
+        case .notificationServiceExtension: "NotificationServiceExtension"
+        case .shareExtension: "ShareExtension"
         }
     }
 
