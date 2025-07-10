@@ -70,26 +70,27 @@ final class ConversationMemberJoinEventProcessorTests: XCTestCase {
     func testProcessEvent_It_Adds_Participants_To_Conversation() async throws {
         // Mock
 
-        let (conversation, sender, addedUser, role) = await context.perform { [self] in
-            let conversation = modelHelper.createGroupConversation(
+        await context.perform { [self] in
+            // conversation
+            modelHelper.createGroupConversation(
                 id: Scaffolding.conversationID.id,
                 domain: Scaffolding.conversationID.domain,
                 in: context
             )
 
-            let sender = modelHelper.createUser(
+            // sender
+            modelHelper.createUser(
                 qualifiedID: Scaffolding.senderID.toDomainModel(),
                 in: context
             )
 
-            let addedUser = modelHelper.createUser(
+            // addedUser
+            modelHelper.createUser(
                 qualifiedID: Scaffolding.memberID.toDomainModel(),
                 in: context
             )
-
-            let role = modelHelper.createRole(in: context)
-
-            return (conversation, sender, addedUser, role)
+            // role
+            modelHelper.createRole(in: context)
         }
 
         conversationRepository

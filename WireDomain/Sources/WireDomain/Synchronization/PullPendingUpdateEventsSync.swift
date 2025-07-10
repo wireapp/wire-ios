@@ -104,7 +104,7 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
                     )
 
                     var decryptedEnvelope = envelope
-                    let decryptionEventsResult = try await decryptor.decryptEvents(in: envelope, context: context)
+                    let decryptionEventsResult = await decryptor.decryptEvents(in: envelope, context: context)
                     let decryptedEvents = decryptionEventsResult.events
                     decryptedEnvelope.events = decryptedEvents
 

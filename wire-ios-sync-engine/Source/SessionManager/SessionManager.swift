@@ -1109,7 +1109,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                     )
 
                     await userSession.performAppMigrationsIfNeeded()
-                  
+
                     var shouldTriggerSync = true
                     do {
                         try await userSession.migrateToConsumableNotificationsIfNeeded()

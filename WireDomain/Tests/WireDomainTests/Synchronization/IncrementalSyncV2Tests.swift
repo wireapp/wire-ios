@@ -681,10 +681,10 @@ private enum Scaffolding {
         id: UUID(),
         events: [
             UpdateEvent.conversation(.typing(.init(conversationID: ConversationID(
-                uuid: UUID(),
+                id: UUID(),
                 domain: "example.com"
             ), senderID: UserID(
-                uuid: UUID(),
+                id: UUID(),
                 domain: "example.com"
             ), isTyping: true)))
         ], isTransient: false,
