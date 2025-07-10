@@ -53,12 +53,9 @@ public enum WireAnalytics {
     }
 
     public enum Target {
-        case app // TODO: we actually want one log bucket per account
-        case nse(
-            appGroupIdentifier: String,
-            accountIdentifier: UUID
-        )
-        case se
+        case app
+        case notificationServiceExtension
+        case shareExtension
     }
 
 }
@@ -66,18 +63,27 @@ public enum WireAnalytics {
 extension WireAnalytics.Target {
 
     fileprivate var logsDirectory: URL? {
+        let fileManager = FileManager.default
         switch self {
 
         case .app:
-            nil // use the default
-
-        case let .nse(appGroupIdentifier, accountIdentifier):
-            FileManager.default.cachesURLForAccount(
-                with: accountIdentifier,
-                in: FileManager.sharedContainerDirectory(for: appGroupIdentifier)
+            let baseDirectory = try? fileManager.url(
+                for: .cachesDirectory,
+                in: .userDomainMask,
+                appropriateFor: nil,
+                create: true
             )
+            return baseDirectory?.appending(path: "Logs", directoryHint: .notDirectory)
 
-        case .se:
+        case .notificationServiceExtension:
+            fatalError("TODO")
+//        case let .nse(appGroupIdentifier, accountIdentifier):
+//            FileManager.default.cachesURLForAccount(
+//                with: accountIdentifier,
+//                in: FileManager.sharedContainerDirectory(for: appGroupIdentifier)
+//            )
+
+        case .shareExtension:
             fatalError("TODO")
 
         }

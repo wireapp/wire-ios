@@ -146,7 +146,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     }
 
     private func setUpDatadog() {
-        WireAnalytics.setup(for: .app)
+        WireAnalytics.setup(for: .shareExtension)
     }
 
     override func viewDidLoad() {

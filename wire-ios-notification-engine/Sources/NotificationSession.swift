@@ -293,7 +293,7 @@ public final class NotificationSession {
     init(
         coreDataStack: CoreDataStack,
         transportSession: ZMTransportSession,
-        cachesDirectory _: URL,
+        cachesDirectory: URL,
         saveNotificationPersistence: ContextDidSaveNotificationPersistence,
         applicationStatusDirectory: ApplicationStatusDirectory,
         operationLoop: RequestGeneratingOperationLoop,
