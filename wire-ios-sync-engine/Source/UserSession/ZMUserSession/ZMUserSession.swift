@@ -35,7 +35,7 @@ typealias UserSessionDelegate = UserSessionAppLockDelegate
 public typealias APIServiceFactory = @Sendable (_ clientID: String, _ userID: UUID) -> APIServiceProtocol
 
 enum ZMUserSessionError: Error {
-    case noConsumableNotificationsMigrator
+    case selfClientNotReady
 }
 
 @objcMembers
@@ -624,7 +624,7 @@ public final class ZMUserSession: NSObject {
         guard DeveloperFlag.consumableNotifications.isOn else { return }
         guard !journal[.isConsumableNotificationsEnabled] else { return }
         guard let migrator = clientSessionComponent?.consumableNotificationsMigrator() else {
-            throw ZMUserSessionError.noConsumableNotificationsMigrator
+            throw ZMUserSessionError.selfClientNotReady
         }
         do {
             try await migrator.migrate()
