@@ -116,14 +116,9 @@ final class IncrementalSyncV2Tests: XCTestCase {
         pushChannelAPI.createPushChannelClientIDMarker_MockMethod = { _, _ in pushChannel }
 
         // Events stored from NSE which needs to be processed
-        var storedEnvelopes = [
+        setPendingEvents(envelopes: [
             (Scaffolding.event4, NSManagedObjectID())
-        ]
-        updateEventsStore.fetchStoredEventEnvelopesLimit_MockMethod = { _ in
-            let envelopes = storedEnvelopes
-            storedEnvelopes = []
-            return envelopes
-        }
+        ])
 
         // Pending events are deleted in batches.
         updateEventsStore.deleteNextPendingEventsWith_MockMethod = { _ in }
@@ -248,9 +243,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
         pushChannelAPI.createPushChannelClientIDMarker_MockMethod = { _, _ in pushChannel }
 
         // Events stored from NSE which needs to be processed
-        updateEventsStore.fetchStoredEventEnvelopesLimit_MockMethod = { _ in
-            []
-        }
+        setPendingEvents(envelopes: [])
 
         // Some indices at which live events will be stored.
         var indices = [Int64(10), 11]
@@ -343,9 +336,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
         pushChannelAPI.createPushChannelClientIDMarker_MockMethod = { _, _ in pushChannel }
 
         // Events stored from NSE which needs to be processed
-        updateEventsStore.fetchStoredEventEnvelopesLimit_MockMethod = { _ in
-            []
-        }
+        setPendingEvents(envelopes: [])
 
         // Live envelopes are peristed one by one and deleted by batch.
         updateEventsStore.persistEventEnvelopeIndex_MockMethod = { _, _ async throws in }
@@ -474,9 +465,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
         pushChannelAPI.createPushChannelClientIDMarker_MockMethod = { _, _ in pushChannel }
 
         // Events stored from NSE which needs to be processed
-        updateEventsStore.fetchStoredEventEnvelopesLimit_MockMethod = { _ in
-            []
-        }
+        setPendingEvents(envelopes: [])
 
         // Live envelopes are peristed one by one and deleted by batch.
         updateEventsStore.persistEventEnvelopeIndex_MockMethod = { _, _ async throws in }
@@ -580,6 +569,86 @@ final class IncrementalSyncV2Tests: XCTestCase {
                 .markerDeliveryTag
         )
     }
+
+
+    func testPerform_skipsProcessingPendingTypingEvent() async throws {
+        // Mock
+
+        // Some live events, some of which were already pulled.
+        let pushChannel = MockPushChannelV2Protocol()
+
+        pushChannel.open_MockValue = AsyncThrowingStream { continuation in
+            continuation.yield(PushChannelV2.Element.syncMarker(
+                id: Scaffolding.markerID,
+                deliveryTag: Scaffolding.markerDeliveryTag
+            ))
+            continuation.finish()
+        }
+
+
+        pushChannel.acknowledgeEventDeliveryTagMultiple_MockMethod = { _, _ in }
+        pushChannelAPI.createPushChannelClientIDMarker_MockMethod = { _, _ in pushChannel }
+
+        // Events stored from NSE which needs to be processed
+        setPendingEvents(envelopes: [
+            (Scaffolding.typingEvent, NSManagedObjectID())
+        ])
+
+        // Pending events are deleted in batches.
+        updateEventsStore.deleteNextPendingEventsWith_MockMethod = { _ in }
+
+        // Live envelopes are peristed one by one and deleted by batch.
+        updateEventsStore.persistEventEnvelopeIndex_MockMethod = { _, _ async throws in }
+        updateEventsStore.deleteEventEnvelopesAt_MockMethod = { _ in }
+
+        // Some indices at which live events will be stored.
+        var indices = [Int64(10), Int64(11), Int64(12), Int64(13)]
+        updateEventsStore.indexOfLastEventEnvelope_MockMethod = { indices.remove(at: 0) }
+
+        // Live events are decrypted.
+        decryptor.decryptEventsInContext_MockMethod = { envelope, _ in
+            EventDecryptorResult(events: envelope.events, brokenMLSGroupIDs: [Scaffolding.mlsGroupID])
+        }
+
+        // Last event is being updated.
+        updateEventsStore.storeLastEventIDId_MockMethod = { _ in }
+
+        // Events are processed.
+        processor.processEvent_MockMethod = { _ in }
+
+        // Unread messages are set
+        updateEventsStore.calculateLastUnreadMessages_MockMethod = {}
+
+        // Database is saved.
+        databaseSaver.save_MockMethod = {}
+
+        // When
+        let _ = try await sut.perform()
+
+        let numberOfPendingEvents = 1
+        // Then stored events were processed, we fetch N+1 with N the number of envelopes
+        XCTAssertEqual(updateEventsStore.fetchStoredEventEnvelopesLimit_Invocations.count, numberOfPendingEvents + 1)
+        // typing event is skipped
+        XCTAssertEqual(processor.processEvent_Invocations.count, 0)
+        // typing event is deleted
+        XCTAssertEqual(updateEventsStore.deleteNextPendingEventsWith_Invocations.count, numberOfPendingEvents)
+        XCTAssertEqual(
+            updateEventsStore.calculateLastUnreadMessages_Invocations.count,
+            numberOfPendingEvents
+        )
+        XCTAssertEqual(databaseSaver.save_Invocations.count, numberOfPendingEvents)
+
+    }
+
+
+    private func setPendingEvents(envelopes: [(UpdateEventEnvelope, NSManagedObjectID)]) {
+        var storedEnvelopes = envelopes
+        updateEventsStore.fetchStoredEventEnvelopesLimit_MockMethod = { _ in
+            let envelopes = storedEnvelopes
+            storedEnvelopes = []
+            return envelopes
+        }
+    }
 }
 
 private enum Scaffolding {
@@ -609,6 +678,20 @@ private enum Scaffolding {
         message: "bonjour",
         timeIntervalSinceNow: -6,
         deliveryTag: 5
+    )
+
+    static let typingEvent = UpdateEventEnvelope(
+        id: UUID(),
+        events: [
+            UpdateEvent.conversation(.typing(.init(conversationID: ConversationID(
+                uuid: UUID(),
+                domain: "example.com"
+            ), senderID: UserID(
+                uuid: UUID(),
+                domain: "example.com"
+            ), isTyping: true)))
+        ], isTransient: false,
+        deliveryTag: 10
     )
 
     static let markerID = "marker-id"

@@ -65,9 +65,9 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
     private var hasCompletedInitialSync: Bool {
         if journal[.isConsumableNotificationsEnabled] {
-           return !journal[.isInitialSyncRequired]
+            !journal[.isInitialSyncRequired]
         } else {
-           return lastUpdateEventIDRepository.fetchLastEventID() != nil
+            lastUpdateEventIDRepository.fetchLastEventID() != nil
         }
     }
 
@@ -116,8 +116,9 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
         ongoingSyncTask = Task {
             WireLogger.sync.debug(
-                "resuming sync"
-                , attributes: .syncAttributes)
+                "resuming sync",
+                attributes: .syncAttributes
+            )
 
             let retrier = BackoffRetrier()
 

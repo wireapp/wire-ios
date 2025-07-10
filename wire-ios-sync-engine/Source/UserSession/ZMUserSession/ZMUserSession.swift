@@ -610,7 +610,7 @@ public final class ZMUserSession: NSObject {
             )
         }
     }
-    
+
     public func migrateToConsumableNotificationsIfNeeded() async throws {
         guard DeveloperFlag.consumableNotifications.isOn else { return }
         guard !journal[.isConsumableNotificationsEnabled] else { return }

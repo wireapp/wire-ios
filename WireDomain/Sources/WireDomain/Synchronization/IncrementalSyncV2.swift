@@ -362,13 +362,13 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
 }
 
 private extension UpdateEvent {
-    
+
     var isTypingEvent: Bool {
         switch self {
         case .conversation(.typing(_)):
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 }
