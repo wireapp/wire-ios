@@ -22,4 +22,53 @@ final class MLSAPIV9: MLSAPIV8 {
 
     override var apiVersion: APIVersion { .v9 }
 
+    override func resetMLSConversation(epoch: Int64, groupID: String) async throws {
+        let parameters = MLSResetParameters(epoch: epoch, groupID: groupID)
+               
+        let encodedJSON: Data
+        do {
+            encodedJSON = try JSONEncoder.defaultEncoder.encode(parameters)
+        } catch {
+            assertionFailure("failed to encode body")
+            throw MLSAPIError.invalidRequestBody(error)
+        }
+        
+        let request = try URLRequestBuilder(path: "\(pathPrefix)/mls/reset-conversation")
+            .withMethod(.post)
+            .withAcceptType(.json)
+            .withBody(encodedJSON, contentType: .json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        do {
+            return try ResponseParser()
+                .success(code: .ok)
+                .failure(code: .badRequest, label: "mls-protocol-error", error: MLSAPIError.mlsProtocolError(<#T##message: String##String#>))
+                .failure(code: .badRequest, label: "mls-group-id-not-supported", error: MLSAPIError.mlsGroupIDNotSupported)
+                .failure(code: .badRequest, label: "mls-federated-reset-not-supported", error: MLSAPIError.mlsFederatedBackendResetNotSupported)
+                .failure(code: .badRequest, label: "mls-not-enabled", error: MLSAPIError.mlsNotEnabled)
+                .failure(code: .badRequest, label: "body", error: MLSAPIError.mlsNotEnabled)
+                .failure(code: .forbidden, label: "action-denied", error: MLSAPIError.insufficientAuthorization)
+                .failure(code: .conflict, decodableError: FailureResponse.self)
+                .parse(code: response.statusCode, data: data)
+        } catch {
+            if let failureResponse = error as? FailureResponse {
+                throw MLSAPIError.mlsError(failureResponse.label, failureResponse.message)
+            } else {
+                throw error
+            }
+        }
+
+    }
 }
+
+struct MLSResetParameters: Encodable {
+    var epoch: Int64
+    var groupID: String
+}
+
+
