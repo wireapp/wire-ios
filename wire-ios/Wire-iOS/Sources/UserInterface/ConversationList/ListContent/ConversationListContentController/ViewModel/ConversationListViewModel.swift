@@ -311,29 +311,29 @@ final class ConversationListViewModel: NSObject {
     private func conversationFilterPredicate(for filter: ConversationFilter?) -> ((SectionItem) -> Bool)? {
         switch filter {
         case .unread:
-            return { sectionItem in
+            { sectionItem in
                 guard let conversation = sectionItem.item as? ZMConversation else { return false }
                 return conversation.estimatedUnreadCount > 0
             }
         case .mentions:
-            return { sectionItem in
+            { sectionItem in
                 guard let conversation = sectionItem.item as? ZMConversation else { return false }
                 return conversation.unreadMessages.contains { message in
                     message.textMessageData?.isMentioningSelf ?? false
                 }
             }
         case .replies:
-            return { sectionItem in
+            { sectionItem in
                 guard let conversation = sectionItem.item as? ZMConversation else { return false }
                 return conversation.unreadMessages.contains { message in
                     message.textMessageData?.isQuotingSelf ?? false
                 }
             }
         default:
-            return nil
+            nil
         }
     }
-    
+
     private func createSections() -> [Section] {
         guard let conversationDirectory = userSession?.conversationDirectory else { return [] }
 
@@ -372,7 +372,7 @@ final class ConversationListViewModel: NSObject {
                 conversationDirectory: conversationDirectory
             )
         }
-        
+
         // Apply filters based on selected filter type
         if let filterPredicate = conversationFilterPredicate(for: selectedFilter) {
             sections = sections.map { section in
@@ -381,7 +381,7 @@ final class ConversationListViewModel: NSObject {
                 return filteredSection
             }
         }
-        
+
         let filterUseCase = FilterConversationsUseCase(conversationContainers: sections)
         return filterUseCase.invoke(query: appliedSearchText)
     }

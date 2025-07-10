@@ -242,7 +242,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             allConversationsAction,
             favoritesAction
         ]
-        
+
         // Add unread, mentions and replies filters if developer flag is enabled
         if DeveloperFlag.showUnreadConversationsFilter.isOn {
             let unreadAction = createFilterAction(
@@ -251,14 +251,14 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
                 isSelected: listContentController.listViewModel.selectedFilter == .unread
             )
             menuChildren.append(unreadAction)
-            
+
             let mentionsAction = createFilterAction(
                 title: L10n.Localizable.ConversationList.Filter.Mentions.title,
                 filter: .mentions,
                 isSelected: listContentController.listViewModel.selectedFilter == .mentions
             )
             menuChildren.append(mentionsAction)
-            
+
             let repliesAction = createFilterAction(
                 title: L10n.Localizable.ConversationList.Filter.Replies.title,
                 filter: .replies,
@@ -266,7 +266,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             )
             menuChildren.append(repliesAction)
         }
-        
+
         menuChildren.append(contentsOf: [
             groupsAction,
             channelsAction,
@@ -375,17 +375,17 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
                 .description
 
         case .unread:
-            return isSelected ? accessibilityLocale.Unread.Selected.description: accessibilityLocale.Unread
+            return isSelected ? accessibilityLocale.Unread.Selected.description : accessibilityLocale.Unread
                 .description
-        
+
         case .mentions:
-            return isSelected ? accessibilityLocale.Mentions.Selected.description: accessibilityLocale.Mentions
+            return isSelected ? accessibilityLocale.Mentions.Selected.description : accessibilityLocale.Mentions
                 .description
-        
+
         case .replies:
-            return isSelected ? accessibilityLocale.Replies.Selected.description: accessibilityLocale.Replies
+            return isSelected ? accessibilityLocale.Replies.Selected.description : accessibilityLocale.Replies
                 .description
-            
+
         case .folder:
             return isSelected ? accessibilityLocale.Folders.Selected.description : accessibilityLocale.Folders
                 .description

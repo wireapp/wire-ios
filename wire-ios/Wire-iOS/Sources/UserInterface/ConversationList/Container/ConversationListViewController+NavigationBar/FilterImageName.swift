@@ -53,13 +53,13 @@ enum FilterImageName: String {
 
     /// Represents a selected or unselected channel icon for channel conversations.
     case number
-    
+
     /// Represents a custom unread badge icon (not an SF Symbol)
     case customUnreadBadge
-    
+
     /// Represents the at symbol icon for mentions
     case at
-    
+
     /// Represents the reply icon for replies
     case arrowshapeTurnUpLeft = "arrowshape.turn.up.left"
 

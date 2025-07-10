@@ -81,7 +81,7 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .newRegistration:
             "Turn on to use the new registration flow"
-            
+
         case .showUnreadConversationsFilter:
             "Turn on to show the new conversation filter options"
         }

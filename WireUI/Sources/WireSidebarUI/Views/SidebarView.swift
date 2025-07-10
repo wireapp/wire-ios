@@ -226,19 +226,19 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             icon = "1.circle.fill"
             iconHighlighted = "1.circle.fill" // Same icon for both states
             accessibilityLabel = Text(Labels.ConversationFilter.Unread.description)
-        
+
         case .mentions:
             text = Text(Strings.ConversationFilter.Mentions.title)
             icon = "at"
             iconHighlighted = "at"
             accessibilityLabel = Text(Labels.ConversationFilter.Mentions.description)
-            
+
         case .replies:
             text = Text(Strings.ConversationFilter.Replies.title)
             icon = "arrowshape.turn.up.left"
             iconHighlighted = "arrowshape.turn.up.left"
             accessibilityLabel = Text(Labels.ConversationFilter.Replies.description)
-            
+
         case .folders:
             text = Text(Strings.ConversationFilter.Folders.title)
             icon = "folder"

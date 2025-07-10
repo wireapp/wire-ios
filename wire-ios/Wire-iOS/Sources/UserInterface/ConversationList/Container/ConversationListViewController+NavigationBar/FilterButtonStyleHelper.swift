@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireDesign
 import WireCommonComponents
+import WireDesign
 
 enum FilterButtonStyleHelper {
 
@@ -33,7 +33,7 @@ enum FilterButtonStyleHelper {
         if imageName == "customUnreadBadge" {
             return createUnreadFilterIcon(isSelected: isSelected)
         }
-        
+
         let configuration = UIImage.SymbolConfiguration(font: .systemFont(ofSize: 17))
         let actionImage = UIImage(systemName: imageName, withConfiguration: configuration)
 
@@ -52,11 +52,11 @@ enum FilterButtonStyleHelper {
     /// - Returns: A custom UIImage showing a badge with "1".
     private static func createUnreadFilterIcon(isSelected: Bool) -> UIImage {
         let renderer = UIGraphicsImageRenderer(size: CGSize(width: 24, height: 24))
-        return renderer.image { context in
+        return renderer.image { _ in
             // Draw the badge background
             let badgeRect = CGRect(x: 2, y: 2, width: 20, height: 20)
             let path = UIBezierPath(roundedRect: badgeRect, cornerRadius: 10)
-            
+
             if isSelected {
                 UIColor.accent().setFill()
                 path.fill()
@@ -65,17 +65,17 @@ enum FilterButtonStyleHelper {
                 path.lineWidth = 1.5
                 path.stroke()
             }
-            
+
             // Draw the "1" text inside
             let paragraphStyle = NSMutableParagraphStyle()
             paragraphStyle.alignment = .center
-            
+
             let attributes: [NSAttributedString.Key: Any] = [
                 .font: UIFont.mediumSemiboldFont.withSize(12),
                 .foregroundColor: isSelected ? UIColor.white : SemanticColors.Label.textDefault,
                 .paragraphStyle: paragraphStyle
             ]
-            
+
             let text = "1"
             let textSize = text.size(withAttributes: attributes)
             let textRect = CGRect(
@@ -84,7 +84,7 @@ enum FilterButtonStyleHelper {
                 width: textSize.width,
                 height: textSize.height
             )
-            
+
             text.draw(in: textRect, withAttributes: attributes)
         }
     }
