@@ -136,8 +136,8 @@ final class ConversationMLSMessageAddEventProcessorTests: XCTestCase {
 
     private enum Scaffolding {
         static let event = ConversationMLSMessageAddEvent(
-            conversationID: ConversationID(uuid: UUID(), domain: "domain.com"),
-            senderID: UserID(uuid: UUID(), domain: "domain.com"),
+            conversationID: ConversationID(id: UUID(), domain: "domain.com"),
+            senderID: UserID(id: UUID(), domain: "domain.com"),
             subconversation: "",
             message: "",
             timestamp: .now,
@@ -148,8 +148,8 @@ final class ConversationMLSMessageAddEventProcessorTests: XCTestCase {
         )
 
         static let callingMessageEvent = ConversationMLSMessageAddEvent(
-            conversationID: ConversationID(uuid: UUID(), domain: "domain.com"),
-            senderID: UserID(uuid: UUID(), domain: "domain.com"),
+            conversationID: ConversationID(id: UUID(), domain: "domain.com"),
+            senderID: UserID(id: UUID(), domain: "domain.com"),
             subconversation: "",
             message: "",
             timestamp: .now,

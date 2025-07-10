@@ -147,8 +147,8 @@ final class ConversationMessageAddEventNotificationBuilderTests: XCTestCase {
     // TODO: [WPB-17284] Add UTs (if possible) for other message content types
 
     private enum Scaffolding {
-        static let conversationID = WireNetwork.QualifiedID(uuid: .mockID2, domain: "domain.com")
-        static let userID = UserID(uuid: .mockID3, domain: "domain.com")
+        static let conversationID = WireNetwork.QualifiedID(id: .mockID2, domain: "domain.com")
+        static let userID = UserID(id: .mockID3, domain: "domain.com")
         static let mlsTextMessageEvent = ConversationMLSMessageAddEvent(
             conversationID: conversationID,
             senderID: userID,

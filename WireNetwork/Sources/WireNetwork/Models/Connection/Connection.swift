@@ -18,7 +18,7 @@
 
 public import Foundation
 
-public struct Connection: Equatable, Codable, Sendable {
+public struct Connection: Equatable, Sendable {
 
     /// Remote identifier of the sender
 

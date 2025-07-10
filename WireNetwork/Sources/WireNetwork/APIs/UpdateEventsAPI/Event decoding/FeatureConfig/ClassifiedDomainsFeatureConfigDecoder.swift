@@ -29,7 +29,7 @@ struct ClassifiedDomainsFeatureConfigDecoder {
         )
 
         return ClassifiedDomainsFeatureConfig(
-            status: payload.status,
+            status: payload.status.toAPIModel(),
             domains: payload.config.domains
         )
     }

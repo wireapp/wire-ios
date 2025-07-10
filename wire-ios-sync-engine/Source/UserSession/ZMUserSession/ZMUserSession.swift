@@ -43,7 +43,8 @@ public final class ZMUserSession: NSObject {
 
     // MARK: Properties
 
-    private let appVersion: String
+    private let currentAppVersion: String
+    private let currentBuildNumber: String
     private var tokens: [Any] = []
     public private(set) var isTornDown = false
 
@@ -367,10 +368,12 @@ public final class ZMUserSession: NSObject {
     public lazy var changeUsername: ChangeUsernameUseCaseProtocol =
         ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
 
-    private lazy var  mlsClientManager = MLSClientManager(
+    private lazy var mlsClientManager = MLSClientManager(
         coreCryptoProvider: coreCryptoProvider,
         mlsService: mlsService
     )
+
+    let logFilesProvider: LogFilesProviding
 
     // MARK: Dependency Injection
 
@@ -397,7 +400,8 @@ public final class ZMUserSession: NSObject {
         flowManager: any FlowManagerType,
         apiServiceFactory: @escaping @Sendable (_ clientID: String, _ userID: UUID) -> APIServiceProtocol,
         application: ZMApplication,
-        appVersion: String,
+        currentAppVersion: String,
+        currentBuildNumber: String,
         coreDataStack: CoreDataStack,
         earService: any EARServiceInterface,
         mlsService: any MLSServiceInterface,
@@ -416,11 +420,13 @@ public final class ZMUserSession: NSObject {
         backendEnvironment: WireNetwork.BackendEnvironment,
         minTLSVersion: WireNetwork.TLSVersion,
         apiVersion: WireNetwork.APIVersion,
-        journal: Journal
+        journal: Journal,
+        logFilesProvider: LogFilesProviding
     ) {
         self.apiServiceFactory = apiServiceFactory
         self.application = application
-        self.appVersion = appVersion
+        self.currentAppVersion = currentAppVersion
+        self.currentBuildNumber = currentBuildNumber
         self.flowManager = flowManager
         self.mediaManager = mediaManager
         self.coreDataStack = coreDataStack
@@ -467,7 +473,10 @@ public final class ZMUserSession: NSObject {
             coreCryptoProvider: coreCryptoProvider
         )
         self.journal = journal
+        self.logFilesProvider = logFilesProvider
+
         super.init()
+
     }
 
     func trackAppOpenAnalyticEventWhenAppBecomesActive() {
@@ -623,6 +632,20 @@ public final class ZMUserSession: NSObject {
             // ignore error
         } catch {
             WireLogger.session.error("Failed to migrate to consumable-notifications: \(String(describing: error))")
+        }
+    }
+
+    public func performAppMigrationsIfNeeded() async {
+        do {
+            let appVersionMigrationService: AppVersionMigrationService = .init(
+                journal: journal,
+                currentVersion: SemanticVersion(stringLiteral: currentAppVersion),
+                allMigrations: makeAppVersionMigrations()
+            )
+
+            try await appVersionMigrationService.performAppMigrations()
+        } catch {
+            WireLogger.session.error("Failed to perform app version migrations")
         }
     }
 
@@ -1585,4 +1608,14 @@ extension ZMUserSession {
         }
 
     }
+}
+
+extension ZMUserSession {
+
+    private func makeAppVersionMigrations() -> [any AppVersionMigration] {
+        [
+            AppVersionMigration_4_1_1(logFilesProvider: logFilesProvider)
+        ]
+    }
+
 }

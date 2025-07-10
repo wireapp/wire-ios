@@ -23,6 +23,7 @@ import WireLogging
 import WireSyncEngine
 import WireUtilities
 
+// sourcery: AutoMockable
 protocol TrackingInterface {
 
     var isAnalyticsDisabled: Bool { get }

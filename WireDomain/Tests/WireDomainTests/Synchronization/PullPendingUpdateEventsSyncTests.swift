@@ -125,13 +125,13 @@ final class PullPendingUpdateEventsSyncTests: XCTestCase {
 private enum Scaffolding {
 
     static let localDomain = "wire.com"
-    static let selfUserID = UserID(uuid: UUID(), domain: localDomain)
+    static let selfUserID = UserID(id: UUID(), domain: localDomain)
     static let selfClientID = "abcd1234"
-    static let conversationID = ConversationID(uuid: UUID(), domain: localDomain)
+    static let conversationID = ConversationID(id: UUID(), domain: localDomain)
     static let mlsGroupID = "ASDF"
 
     static let otherDomain = "other.com"
-    static let aliceID = UserID(uuid: .mockID3, domain: otherDomain)
+    static let aliceID = UserID(id: .mockID3, domain: otherDomain)
     static let aliceClientID = "efgh5678"
 
     static let lastEventID = UUID()

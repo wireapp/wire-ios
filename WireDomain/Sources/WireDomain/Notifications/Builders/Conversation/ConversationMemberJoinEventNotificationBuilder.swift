@@ -56,7 +56,7 @@ struct ConversationMemberJoinEventNotificationBuilder: ConversationMemberJoinEve
             conversationName: conversationName,
             senderName: senderName,
             selfUserID: selfUserID,
-            senderID: senderID.uuid,
+            senderID: senderID.id,
             conversationID: conversationID
         )
     }
@@ -97,7 +97,7 @@ struct ConversationMemberJoinEventNotificationBuilder: ConversationMemberJoinEve
             senderID: senderID,
             conversationID: conversationID
         )
-        content.threadIdentifier = conversationID.uuid.transportString()
+        content.threadIdentifier = conversationID.id.transportString()
 
         return .text(content)
     }
@@ -153,7 +153,7 @@ struct ConversationMemberJoinEventNotificationBuilder: ConversationMemberJoinEve
 
         userInfo[NotificationUserInfoKey.selfUserID] = selfUserID.uuidString
         userInfo[NotificationUserInfoKey.senderID] = senderID.uuidString
-        userInfo[NotificationUserInfoKey.conversationID] = conversationID.uuid.uuidString
+        userInfo[NotificationUserInfoKey.conversationID] = conversationID.id.uuidString
 
         return userInfo
     }
@@ -183,7 +183,7 @@ extension ConversationMemberJoinEventNotificationBuilder {
             conversationID: ConversationID
         ) async -> ZMConversation {
             await conversationLocalStore.fetchOrCreateConversation(
-                id: conversationID.uuid,
+                id: conversationID.id,
                 domain: conversationID.domain
             )
         }
@@ -196,7 +196,7 @@ extension ConversationMemberJoinEventNotificationBuilder {
             senderID: UserID
         ) async -> ZMUser {
             await userLocalStore.fetchOrCreateUser(
-                id: senderID.uuid,
+                id: senderID.id,
                 domain: senderID.domain
             )
         }

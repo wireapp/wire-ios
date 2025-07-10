@@ -34,12 +34,12 @@ struct ConversationTypingEventProcessor: ConversationTypingEventProcessorProtoco
         let isTyping = event.isTyping
 
         let user = await userRepository.fetchOrCreateUser(
-            id: senderID.uuid,
+            id: senderID.id,
             domain: senderID.domain
         )
 
         let conversation = await conversationRepository.fetchOrCreateConversation(
-            id: conversationID.uuid,
+            id: conversationID.id,
             domain: conversationID.domain
         )
 

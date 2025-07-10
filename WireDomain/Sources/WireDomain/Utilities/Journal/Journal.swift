@@ -30,7 +30,7 @@ import Foundation
 
 import WireFoundation
 
-public class Journal: JournalProtocol {
+public struct Journal: JournalProtocol {
 
     private let userID: UUID
     private let storage: any UserDefaultsProtocol
@@ -59,18 +59,29 @@ public class Journal: JournalProtocol {
         get {
             (storage.object(forKey: rawKey(for: key)) as? Bool) ?? key.defaultValue
         }
-        set {
+        nonmutating set {
             storage.set(newValue, forKey: rawKey(for: key))
         }
     }
 
-    /// Get or set a string value.
+    /// Get or set an optional boolean value.
+
+    public subscript(_ key: JournalKey<Bool?>) -> Bool? {
+        get {
+            (storage.object(forKey: rawKey(for: key)) as? Bool) ?? key.defaultValue
+        }
+        nonmutating set {
+            storage.set(newValue, forKey: rawKey(for: key))
+        }
+    }
+
+    /// Get or set an optional string value.
 
     public subscript(_ key: JournalKey<String?>) -> String? {
         get {
-            storage.string(forKey: rawKey(for: key))
+            storage.string(forKey: rawKey(for: key)) ?? key.defaultValue
         }
-        set {
+        nonmutating set {
             storage.set(newValue, forKey: rawKey(for: key))
         }
     }
@@ -85,7 +96,7 @@ public class Journal: JournalProtocol {
                 key.defaultValue
             }
         }
-        set {
+        nonmutating set {
             storage.set(Array(newValue), forKey: rawKey(for: key))
         }
     }

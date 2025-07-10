@@ -76,8 +76,8 @@ final class ConversationMemberLeaveEventProcessorTests: XCTestCase {
 
     private enum Scaffolding {
         static let event = ConversationMemberLeaveEvent(
-            conversationID: ConversationID(uuid: UUID(), domain: "domain.com"),
-            senderID: UserID(uuid: UUID(), domain: "domain.com"),
+            conversationID: ConversationID(id: UUID(), domain: "domain.com"),
+            senderID: UserID(id: UUID(), domain: "domain.com"),
             timestamp: .now,
             removedUserIDs: [],
             reason: .userDeleted

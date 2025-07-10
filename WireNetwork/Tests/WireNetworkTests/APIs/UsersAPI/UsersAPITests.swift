@@ -168,7 +168,7 @@ final class UsersAPITests: XCTestCase {
     enum Scaffolding {
         static let teamID = UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!
         static let userID = UserID(
-            uuid: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
+            id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
             domain: "example.com"
         )
         static let user = User(

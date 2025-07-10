@@ -66,7 +66,6 @@ extension URL {
 
     func appendingEventStoreFile() -> URL {
         appendingPathComponent("ZMEventModel.sqlite")
-
     }
 
     /// Returns the location of the persistent store file in the given account folder

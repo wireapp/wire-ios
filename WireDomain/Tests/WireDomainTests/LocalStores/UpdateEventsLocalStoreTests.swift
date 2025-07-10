@@ -54,7 +54,7 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
         sut = UpdateEventsLocalStore(
             eventContext: eventContext,
             syncContext: syncContext,
-            userID: Scaffolding.selfUserID.uuid,
+            userID: Scaffolding.selfUserID.id,
             sharedUserDefaults: mockUserDefaults
         )
     }
@@ -291,12 +291,12 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
     private enum Scaffolding {
 
         static let localDomain = "local.com"
-        static let selfUserID = UserID(uuid: .mockID1, domain: localDomain)
+        static let selfUserID = UserID(id: .mockID1, domain: localDomain)
         static let selfClientID = "abcd1234"
-        static let conversationID = ConversationID(uuid: .mockID2, domain: localDomain)
+        static let conversationID = ConversationID(id: .mockID2, domain: localDomain)
         static let lastEventID = UUID.mockID3
         static let otherDomain = "other.com"
-        static let aliceID = UserID(uuid: .mockID4, domain: otherDomain)
+        static let aliceID = UserID(id: .mockID4, domain: otherDomain)
         static let aliceClientID = "efgh5678"
         static let defaultsTestSuiteName = UUID().uuidString
 
@@ -309,7 +309,7 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
         static let time30SecondsAgo = Date(timeIntervalSinceNow: -30)
         static let time20SecondsAgo = Date(timeIntervalSinceNow: -20)
 
-        static let lastEventIDUserDefaultsKey = "\(selfUserID.uuid.uuidString)_lastEventID"
+        static let lastEventIDUserDefaultsKey = "\(selfUserID.id.uuidString)_lastEventID"
 
         static let envelope1 = UpdateEventEnvelope(
             id: id1,
