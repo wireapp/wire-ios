@@ -68,9 +68,9 @@ public final class AppVersionMigrationService {
             do {
                 try await nextMigration.perform()
                 journal.lastCompletedAppVersionMigration = nextMigration.version
-                WireLogger.session.info("Completed migration to version \(nextMigration.version)")
+                WireLogger.appVersionMigration.info("Completed migration to version \(nextMigration.version)")
             } catch {
-                WireLogger.session.error("Failed migration to version \(nextMigration.version): \(error)")
+                WireLogger.appVersionMigration.error("Failed migration to version \(nextMigration.version): \(error)")
                 throw error
             }
         }
