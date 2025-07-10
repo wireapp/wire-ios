@@ -365,7 +365,7 @@ private extension UpdateEvent {
 
     var isTypingEvent: Bool {
         switch self {
-        case .conversation(.typing(_)):
+        case .conversation(.typing):
             true
         default:
             false

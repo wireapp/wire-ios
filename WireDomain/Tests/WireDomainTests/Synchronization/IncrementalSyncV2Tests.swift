@@ -570,7 +570,6 @@ final class IncrementalSyncV2Tests: XCTestCase {
         )
     }
 
-
     func testPerform_skipsProcessingPendingTypingEvent() async throws {
         // Mock
 
@@ -584,7 +583,6 @@ final class IncrementalSyncV2Tests: XCTestCase {
             ))
             continuation.finish()
         }
-
 
         pushChannel.acknowledgeEventDeliveryTagMultiple_MockMethod = { _, _ in }
         pushChannelAPI.createPushChannelClientIDMarker_MockMethod = { _, _ in pushChannel }
@@ -623,7 +621,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
         databaseSaver.save_MockMethod = {}
 
         // When
-        let _ = try await sut.perform()
+        _ = try await sut.perform()
 
         let numberOfPendingEvents = 1
         // Then stored events were processed, we fetch N+1 with N the number of envelopes
@@ -639,7 +637,6 @@ final class IncrementalSyncV2Tests: XCTestCase {
         XCTAssertEqual(databaseSaver.save_Invocations.count, numberOfPendingEvents)
 
     }
-
 
     private func setPendingEvents(envelopes: [(UpdateEventEnvelope, NSManagedObjectID)]) {
         var storedEnvelopes = envelopes

@@ -110,7 +110,6 @@ public extension LogAttributes {
         ]
     }
 
-
     static func syncPhaseAttributes(
         _ phase: String,
         initialSync: Bool
