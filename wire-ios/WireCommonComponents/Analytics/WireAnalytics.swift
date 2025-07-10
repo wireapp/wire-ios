@@ -43,16 +43,9 @@ public enum WireAnalytics {
             #if DEBUG
                 SystemLogger()
             #endif
-            CocoaLumberjackLogger()
+            CocoaLumberjackLogger(logsDirectory: target.logsDirectory)
             WireAnalytics.Datadog.shared
         }
-        WireLogger.initialize(
-            loggers: [
-                SystemLogger(),
-                CocoaLumberjackLogger(logsDirectory: target.logsDirectory),
-                WireAnalytics.Datadog.shared
-            ]
-        )
 
         // pass tags to Datadog through WireLogger
         WireLogger.system.addTag(.processId, value: "\(ProcessInfo.processInfo.processIdentifier)")
@@ -65,6 +58,7 @@ public enum WireAnalytics {
             appGroupIdentifier: String,
             accountIdentifier: UUID
         )
+        case se
     }
 
 }
@@ -73,13 +67,19 @@ extension WireAnalytics.Target {
 
     fileprivate var logsDirectory: URL? {
         switch self {
+
         case .app:
             nil // use the default
+
         case let .nse(appGroupIdentifier, accountIdentifier):
             FileManager.default.cachesURLForAccount(
                 with: accountIdentifier,
                 in: FileManager.sharedContainerDirectory(for: appGroupIdentifier)
             )
+
+        case .se:
+            fatalError("TODO")
+
         }
     }
 
