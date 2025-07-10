@@ -342,8 +342,6 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         ]
         let conversations = createConversations(conversationsData: conversationData)
 
-        // Note: In a real implementation, these conversations would have unread messages
-        // with mentions. The filtering logic is handled by the view model.
         userSession.mockConversationDirectory.mockUnarchivedConversations = conversations
 
         // WHEN
@@ -378,8 +376,6 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         ]
         let conversations = createConversations(conversationsData: conversationData)
 
-        // Note: In a real implementation, these conversations would have unread
-        // replies to self. The filtering logic is handled by the view model.
         userSession.mockConversationDirectory.mockUnarchivedConversations = conversations
 
         // WHEN
@@ -401,6 +397,39 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.repliesPlaceholder)
+        snapshotHelper.verify(matching: renderedImage())
+    }
+
+    // MARK: - Drafts Filter Tests
+
+    func testForShowingConversationsFilteredByDrafts() {
+        // GIVEN
+        let conversationData = [
+            (name: "iOS Team", iOSTeamID, isFavorite: false),
+            (name: "Design Team", designTeamID, isFavorite: false)
+        ]
+        let conversations = createConversations(conversationsData: conversationData)
+        userSession.mockConversationDirectory.mockUnarchivedConversations = conversations
+
+        // WHEN
+        sut.hideNoContactLabel(animated: false)
+        sut.applyFilter(.drafts)
+
+        // THEN
+        XCTAssertEqual(searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.draftsPlaceholder)
+        snapshotHelper.verify(matching: renderedImage())
+    }
+
+    func testForShowingNoConversationsFilteredByDrafts() {
+        // GIVEN
+        userSession.mockConversationDirectory.mockUnarchivedConversations = []
+
+        // WHEN
+        sut.hideNoContactLabel(animated: false)
+        sut.applyFilter(.drafts)
+
+        // THEN
+        XCTAssertEqual(searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.draftsPlaceholder)
         snapshotHelper.verify(matching: renderedImage())
     }
 

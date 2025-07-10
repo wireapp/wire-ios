@@ -45,195 +45,140 @@ final class ConversationListViewModelFilterTests: XCTestCase {
 
     // MARK: - Unread Filter Tests
 
-    func testUnreadFilterPredicate_ShowsConversationWithUnreadMessages() {
+    func testUnreadFilter_UsesUnreadConversationListType() {
         // GIVEN
-        let conversation = MockConversation()
-        conversation.estimatedUnreadCount = 5
-        let sectionItem = ConversationListViewModel.SectionItem(
-            item: conversation,
-            kind: .conversations
-        )
+        sut.selectedFilter = .unread
 
         // WHEN
-        let predicate = sut.conversationFilterPredicate(for: .unread)
+        let sections = sut.createSections()
 
         // THEN
-        XCTAssertNotNil(predicate)
-        XCTAssertTrue(predicate?(sectionItem) ?? false)
+        XCTAssertEqual(sections.count, 1)
+        XCTAssertEqual(sections.first?.kind, .conversations)
     }
 
-    func testUnreadFilterPredicate_HidesConversationWithoutUnreadMessages() {
+    func testUnreadFilter_ShowsOnlyConversationsSection() {
         // GIVEN
-        let conversation = MockConversation()
-        conversation.estimatedUnreadCount = 0
-        let sectionItem = ConversationListViewModel.SectionItem(
-            item: conversation,
-            kind: .conversations
-        )
+        sut.selectedFilter = .unread
 
         // WHEN
-        let predicate = sut.conversationFilterPredicate(for: .unread)
+        let sections = sut.createSections()
 
         // THEN
-        XCTAssertNotNil(predicate)
-        XCTAssertFalse(predicate?(sectionItem) ?? true)
+        XCTAssertEqual(sections.count, 1)
+        XCTAssertEqual(sections.first?.kind, .conversations)
     }
 
     // MARK: - Mentions Filter Tests
 
-    func testMentionsFilterPredicate_ShowsConversationWithMentions() {
+    func testMentionsFilter_UsesMentionsConversationListType() {
         // GIVEN
-        let conversation = MockConversation()
-        let message = MockMessage()
-        let textData = MockTextMessageData()
-        textData.isMentioningSelf = true
-        message.backingTextMessageData = textData
-        conversation.unreadMessages = [message]
-
-        let sectionItem = ConversationListViewModel.SectionItem(
-            item: conversation,
-            kind: .conversations
-        )
+        sut.selectedFilter = .mentions
 
         // WHEN
-        let predicate = sut.conversationFilterPredicate(for: .mentions)
+        let sections = sut.createSections()
 
         // THEN
-        XCTAssertNotNil(predicate)
-        XCTAssertTrue(predicate?(sectionItem) ?? false)
+        XCTAssertEqual(sections.count, 1)
+        XCTAssertEqual(sections.first?.kind, .conversations)
     }
 
-    func testMentionsFilterPredicate_HidesConversationWithoutMentions() {
+    func testMentionsFilter_ShowsOnlyConversationsSection() {
         // GIVEN
-        let conversation = MockConversation()
-        let message = MockMessage()
-        let textData = MockTextMessageData()
-        textData.isMentioningSelf = false
-        message.backingTextMessageData = textData
-        conversation.unreadMessages = [message]
-
-        let sectionItem = ConversationListViewModel.SectionItem(
-            item: conversation,
-            kind: .conversations
-        )
+        sut.selectedFilter = .mentions
 
         // WHEN
-        let predicate = sut.conversationFilterPredicate(for: .mentions)
+        let sections = sut.createSections()
 
         // THEN
-        XCTAssertNotNil(predicate)
-        XCTAssertFalse(predicate?(sectionItem) ?? true)
+        XCTAssertEqual(sections.count, 1)
+        XCTAssertEqual(sections.first?.kind, .conversations)
     }
 
     // MARK: - Replies Filter Tests
 
-    func testRepliesFilterPredicate_ShowsConversationWithRepliesToSelf() {
+    func testRepliesFilter_UsesRepliesConversationListType() {
         // GIVEN
-        let conversation = MockConversation()
-        let message = MockMessage()
-        let textData = MockTextMessageData()
-        textData.isQuotingSelf = true
-        message.backingTextMessageData = textData
-        conversation.unreadMessages = [message]
-
-        let sectionItem = ConversationListViewModel.SectionItem(
-            item: conversation,
-            kind: .conversations
-        )
+        sut.selectedFilter = .replies
 
         // WHEN
-        let predicate = sut.conversationFilterPredicate(for: .replies)
+        let sections = sut.createSections()
 
         // THEN
-        XCTAssertNotNil(predicate)
-        XCTAssertTrue(predicate?(sectionItem) ?? false)
+        XCTAssertEqual(sections.count, 1)
+        XCTAssertEqual(sections.first?.kind, .conversations)
     }
 
-    func testRepliesFilterPredicate_HidesConversationWithoutRepliesToSelf() {
+    func testRepliesFilter_ShowsOnlyConversationsSection() {
         // GIVEN
-        let conversation = MockConversation()
-        let message = MockMessage()
-        let textData = MockTextMessageData()
-        textData.isQuotingSelf = false
-        message.backingTextMessageData = textData
-        conversation.unreadMessages = [message]
-
-        let sectionItem = ConversationListViewModel.SectionItem(
-            item: conversation,
-            kind: .conversations
-        )
+        sut.selectedFilter = .replies
 
         // WHEN
-        let predicate = sut.conversationFilterPredicate(for: .replies)
+        let sections = sut.createSections()
 
         // THEN
-        XCTAssertNotNil(predicate)
-        XCTAssertFalse(predicate?(sectionItem) ?? true)
+        XCTAssertEqual(sections.count, 1)
+        XCTAssertEqual(sections.first?.kind, .conversations)
+    }
+
+    // MARK: - Drafts Filter Tests
+
+    func testDraftsFilter_UsesDraftsConversationListType() {
+        // GIVEN
+        sut.selectedFilter = .drafts
+
+        // WHEN
+        let sections = sut.createSections()
+
+        // THEN
+        XCTAssertEqual(sections.count, 1)
+        XCTAssertEqual(sections.first?.kind, .conversations)
+    }
+
+    func testDraftsFilter_ShowsOnlyConversationsSection() {
+        // GIVEN
+        sut.selectedFilter = .drafts
+
+        // WHEN
+        let sections = sut.createSections()
+
+        // THEN
+        XCTAssertEqual(sections.count, 1)
+        XCTAssertEqual(sections.first?.kind, .conversations)
     }
 
     // MARK: - No Filter Tests
 
-    func testNoFilterPredicate_ReturnsNil() {
+    func testNoFilter_ShowsContactRequestsAndConversations() {
+        // GIVEN
+        sut.selectedFilter = nil
+
         // WHEN
-        let predicate = sut.conversationFilterPredicate(for: nil)
+        let sections = sut.createSections()
 
         // THEN
-        XCTAssertNil(predicate)
+        XCTAssertEqual(sections.count, 2)
+        XCTAssertEqual(sections[0].kind, .contactRequests)
+        XCTAssertEqual(sections[1].kind, .conversations)
     }
 
-    func testOtherFilterPredicate_ReturnsNil() {
-        // WHEN
-        let predicateGroups = sut.conversationFilterPredicate(for: .groups)
-        let predicateFavorites = sut.conversationFilterPredicate(for: .favorites)
+    func testOtherFilters_ShowCorrectSections() {
+        // Test Groups Filter
+        sut.selectedFilter = .groups
+        var sections = sut.createSections()
+        XCTAssertEqual(sections.count, 1)
+        XCTAssertEqual(sections.first?.kind, .groups)
 
-        // THEN
-        XCTAssertNil(predicateGroups)
-        XCTAssertNil(predicateFavorites)
+        // Test Favorites Filter
+        sut.selectedFilter = .favorites
+        sections = sut.createSections()
+        XCTAssertEqual(sections.count, 1)
+        XCTAssertEqual(sections.first?.kind, .favorites)
+
+        // Test Drafts Filter
+        sut.selectedFilter = .drafts
+        sections = sut.createSections()
+        XCTAssertEqual(sections.count, 1)
+        XCTAssertEqual(sections.first?.kind, .conversations)
     }
-}
-
-// MARK: - Mock Classes
-
-private class MockConversation: NSObject, ZMConversation {
-    var estimatedUnreadCount: Int32 = 0
-    var unreadMessages: [ZMConversationMessage] = []
-
-    // Required protocol stubs
-    var conversationType: ZMConversationType = .group
-    var isSelfAnActiveMember: Bool = true
-    var isArchived: Bool = false
-    var isFavorite: Bool = false
-    var isPendingConnectionConversation: Bool = false
-    var remoteIdentifier: UUID? = UUID()
-    var teamRemoteIdentifier: UUID?
-    var userDefinedName: String?
-    var lastServerTimeStamp: Date?
-    var lastReadServerTimeStamp: Date?
-}
-
-private class MockMessage: NSObject, ZMConversationMessage {
-    var backingTextMessageData: MockTextMessageData?
-
-    var textMessageData: ZMTextMessageData? {
-        backingTextMessageData
-    }
-
-    // Required protocol stubs
-    var nonce: UUID? = UUID()
-    var serverTimestamp: Date?
-    var conversation: ZMConversation?
-    var sender: UserType?
-    var senderClientID: String?
-}
-
-private class MockTextMessageData: NSObject, ZMTextMessageData {
-    var isMentioningSelf: Bool = false
-    var isQuotingSelf: Bool = false
-
-    // Required protocol stubs
-    var messageText: String?
-    var linkPreview: LinkPreview?
-    var mentions: [Mention] = []
-    var quote: ZMMessage?
-    var hasQuote: Bool = false
 }

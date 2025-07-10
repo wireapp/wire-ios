@@ -28,6 +28,7 @@ public enum MainSidebarMenuItem: Sendable, Equatable {
     case unread
     case mentions
     case replies
+    case drafts
     case archive
     case folders
     // bottom

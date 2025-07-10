@@ -44,6 +44,7 @@ extension ConversationFilter: MainConversationFilterRepresentable {
         case .unread: self = .unread
         case .mentions: self = .mentions
         case .replies: self = .replies
+        case .drafts: self = .drafts
         case let .folder(id, name): self = .folder(id: id, name: name)
         }
     }
@@ -57,6 +58,7 @@ extension ConversationFilter: MainConversationFilterRepresentable {
         case .unread: .unread
         case .mentions: .mentions
         case .replies: .replies
+        case .drafts: .drafts
         case let .folder(id, name): .folder(id: id, name: name)
         }
     }

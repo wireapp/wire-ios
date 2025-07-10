@@ -56,12 +56,14 @@ final class ConversationListViewModelFilterIntegrationTests: XCTestCase {
         let conversationWithUnread = createConversationWithUnread()
         let conversationWithMention = createConversationWithUnreadMention()
         let conversationWithReply = createConversationWithUnreadReply()
+        let conversationWithDraft = createConversationWithDraft()
         let conversationNoUnread = createConversationWithoutUnread()
 
         mockUserSession.mockConversationDirectory.mockUnarcchivedConversations = [
             conversationWithUnread,
             conversationWithMention,
             conversationWithReply,
+            conversationWithDraft,
             conversationNoUnread
         ]
 
@@ -95,13 +97,21 @@ final class ConversationListViewModelFilterIntegrationTests: XCTestCase {
         )
         XCTAssertEqual(sut.section(at: 0)?.count, 1, "Replies filter should show 1 conversation")
 
+        // Switch to drafts filter
+        sut.selectedFilter = .drafts
+        sut.conversationDirectoryDidChange(
+            conversationDirectory: mockUserSession.mockConversationDirectory,
+            changeInfo: info
+        )
+        XCTAssertEqual(sut.section(at: 0)?.count, 1, "Drafts filter should show 1 conversation")
+
         // Switch back to no filter
         sut.selectedFilter = nil
         sut.conversationDirectoryDidChange(
             conversationDirectory: mockUserSession.mockConversationDirectory,
             changeInfo: info
         )
-        XCTAssertEqual(sut.section(at: 0)?.count, 4, "No filter should show all 4 conversations")
+        XCTAssertEqual(sut.section(at: 0)?.count, 5, "No filter should show all 5 conversations")
     }
 
     // MARK: - Dynamic Update Tests
@@ -299,6 +309,16 @@ final class ConversationListViewModelFilterIntegrationTests: XCTestCase {
                     conversation.lastReadServerTimeStamp = Date(timeIntervalSinceNow: -60)
                 }
 
+                // Add drafts to 20%
+                if i % 5 == 0 {
+                    let draft = DraftMessage(
+                        text: "Draft message \(i)",
+                        mentions: [],
+                        quote: nil
+                    )
+                    conversation.draftMessage = draft
+                }
+
                 conversation.needsToCalculateUnreadMessages = true
                 conversations.append(conversation)
             }
@@ -423,6 +443,26 @@ final class ConversationListViewModelFilterIntegrationTests: XCTestCase {
             conversation.lastReadServerTimeStamp = Date()
             conversation.needsToCalculateUnreadMessages = true
             ZMConversation.calculateLastUnreadMessages(in: self.coreDataFixture.uiMOC)
+        }
+
+        return conversation
+    }
+
+    private func createConversationWithDraft() -> ZMConversation {
+        let conversation = ZMConversation.createTeamGroupConversation(
+            moc: coreDataFixture.uiMOC,
+            otherUser: coreDataFixture.otherUser,
+            selfUser: coreDataFixture.selfUser
+        )
+
+        coreDataFixture.uiMOC.performGroupedBlockAndWait {
+            // Add draft message
+            let draft = DraftMessage(
+                text: "This is a draft message",
+                mentions: [],
+                quote: nil
+            )
+            conversation.draftMessage = draft
         }
 
         return conversation

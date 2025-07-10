@@ -28,6 +28,7 @@ public enum SidebarSelectableMenuItem: Comparable, Sendable, Hashable {
     case unread
     case mentions
     case replies
+    case drafts
     case folders
     // archived conversations
     case archive

@@ -683,6 +683,14 @@ internal enum L10n {
             internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.channels.selected.description", fallback: "Channels, selected")
           }
         }
+        internal enum Drafts {
+          /// Show all conversations with drafted messages
+          internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.drafts.description", fallback: "Show all conversations with drafted messages")
+          internal enum Selected {
+            /// Drafts, selected
+            internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.drafts.selected.description", fallback: "Drafts, selected")
+          }
+        }
         internal enum Favorites {
           /// Show all favorite conversations
           internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.favorites.description", fallback: "Show all favorite conversations")
@@ -2955,6 +2963,12 @@ internal enum L10n {
         }
       }
       internal enum EmptyState {
+        internal enum Drafts {
+          /// All your conversations are up to date
+          internal static let subtitle = L10n.tr("Localizable", "conversation_list.empty_state.drafts.subtitle", fallback: "All your conversations are up to date")
+          /// No drafts
+          internal static let title = L10n.tr("Localizable", "conversation_list.empty_state.drafts.title", fallback: "No drafts")
+        }
         internal enum Mentions {
           /// All your conversations are up to date
           internal static let subtitle = L10n.tr("Localizable", "conversation_list.empty_state.mentions.subtitle", fallback: "All your conversations are up to date")
@@ -2982,6 +2996,10 @@ internal enum L10n {
         internal enum Channels {
           /// Channels
           internal static let title = L10n.tr("Localizable", "conversation_list.filter.channels.title", fallback: "Channels")
+        }
+        internal enum Drafts {
+          /// Drafts
+          internal static let title = L10n.tr("Localizable", "conversation_list.filter.drafts.title", fallback: "Drafts")
         }
         internal enum Favorites {
           /// Favorites
@@ -3047,6 +3065,8 @@ internal enum L10n {
       internal enum SearchBar {
         /// Search channels
         internal static let channelsPlaceholder = L10n.tr("Localizable", "conversation_list.search_bar.channelsPlaceholder", fallback: "Search channels")
+        /// Search conversations with drafts
+        internal static let draftsPlaceholder = L10n.tr("Localizable", "conversation_list.search_bar.draftsPlaceholder", fallback: "Search conversations with drafts")
         /// Search favourites
         internal static let favoritesPlaceholder = L10n.tr("Localizable", "conversation_list.search_bar.favoritesPlaceholder", fallback: "Search favourites")
         /// Search %@

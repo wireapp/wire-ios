@@ -142,9 +142,14 @@ final class ConversationListViewModel: NSObject {
 
         init(
             kind: Kind,
-            conversationDirectory: ConversationDirectoryType
+            conversationDirectory: ConversationDirectoryType,
+            selectedFilter: ConversationFilter? = nil
         ) {
-            self.items = ConversationListViewModel.newList(for: kind, conversationDirectory: conversationDirectory)
+            self.items = ConversationListViewModel.newList(
+                for: kind,
+                conversationDirectory: conversationDirectory,
+                selectedFilter: selectedFilter
+            )
             self.kind = kind
         }
     }
@@ -266,7 +271,8 @@ final class ConversationListViewModel: NSObject {
 
     private static func newList(
         for kind: Section.Kind,
-        conversationDirectory: ConversationDirectoryType
+        conversationDirectory: ConversationDirectoryType,
+        selectedFilter: ConversationFilter? = nil
     ) -> [SectionItem] {
         let conversationListType: ConversationListType
         switch kind {
@@ -277,7 +283,19 @@ final class ConversationListViewModel: NSObject {
                 kind: kind
             )]
         case .conversations:
-            conversationListType = .unarchived
+            // Check if we have a special filter active
+            switch selectedFilter {
+            case .unread:
+                conversationListType = .unread
+            case .mentions:
+                conversationListType = .mentions
+            case .replies:
+                conversationListType = .replies
+            case .drafts:
+                conversationListType = .drafts
+            case .none, .favorites, .groups, .channels, .oneOnOne, .folder:
+                conversationListType = .unarchived
+            }
         case .contacts:
             conversationListType = .contacts
         case .groups:
@@ -308,33 +326,7 @@ final class ConversationListViewModel: NSObject {
     }
 
     /// Create the section structure
-    private func conversationFilterPredicate(for filter: ConversationFilter?) -> ((SectionItem) -> Bool)? {
-        switch filter {
-        case .unread:
-            { sectionItem in
-                guard let conversation = sectionItem.item as? ZMConversation else { return false }
-                return conversation.estimatedUnreadCount > 0
-            }
-        case .mentions:
-            { sectionItem in
-                guard let conversation = sectionItem.item as? ZMConversation else { return false }
-                return conversation.unreadMessages.contains { message in
-                    message.textMessageData?.isMentioningSelf ?? false
-                }
-            }
-        case .replies:
-            { sectionItem in
-                guard let conversation = sectionItem.item as? ZMConversation else { return false }
-                return conversation.unreadMessages.contains { message in
-                    message.textMessageData?.isQuotingSelf ?? false
-                }
-            }
-        default:
-            nil
-        }
-    }
-
-    private func createSections() -> [Section] {
+    func createSections() -> [Section] {
         guard let conversationDirectory = userSession?.conversationDirectory else { return [] }
 
         // Filter sections based on the selected filter
@@ -353,33 +345,19 @@ final class ConversationListViewModel: NSObject {
             } else {
                 []
             }
-        case .unread:
-            // For unread filter, we need to include all conversation types but filter by unread status
-            [.conversations]
-        case .mentions:
-            // For mentions filter, we need to include all conversation types but filter by mentions
-            [.conversations]
-        case .replies:
-            // For replies filter, we need to include all conversation types but filter by replies
+        case .unread, .mentions, .replies, .drafts:
+            // These filters have their own conversation lists in the data layer
             [.conversations]
         case .none:
             [.contactRequests, .conversations]
         }
 
-        var sections = kinds.map { kind in
+        let sections = kinds.map { kind in
             Section(
                 kind: kind,
-                conversationDirectory: conversationDirectory
+                conversationDirectory: conversationDirectory,
+                selectedFilter: selectedFilter
             )
-        }
-
-        // Apply filters based on selected filter type
-        if let filterPredicate = conversationFilterPredicate(for: selectedFilter) {
-            sections = sections.map { section in
-                var filteredSection = section
-                filteredSection.items = section.items.filter(filterPredicate)
-                return filteredSection
-            }
         }
 
         let filterUseCase = FilterConversationsUseCase(conversationContainers: sections)
@@ -507,6 +485,14 @@ extension ConversationListViewModel: ConversationDirectoryObserver {
             .channels
         case .favorites:
             .favorites
+        case .unread:
+            .conversations
+        case .mentions:
+            .conversations
+        case .replies:
+            .conversations
+        case .drafts:
+            .conversations
         case let .folder(label):
             .folder(label: label)
         case .archived:

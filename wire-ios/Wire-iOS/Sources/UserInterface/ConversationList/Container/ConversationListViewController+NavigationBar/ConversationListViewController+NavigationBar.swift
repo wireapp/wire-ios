@@ -165,6 +165,8 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             L10n.Localizable.ConversationList.Filter.Mentions.title
         case (.expanded, .replies):
             L10n.Localizable.ConversationList.Filter.Replies.title
+        case (.expanded, .drafts):
+            L10n.Localizable.ConversationList.Filter.Drafts.title
         case (.expanded, .folder):
             L10n.Localizable.ConversationList.Filter.Folders.title
         case (.collapsed, _):
@@ -199,7 +201,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         )!
 
         let selectedFilterImage: UIImage = switch listContentController.listViewModel.selectedFilter {
-        case .favorites, .groups, .channels, .oneOnOne, .unread, .mentions, .replies, .folder:
+        case .favorites, .groups, .channels, .oneOnOne, .unread, .mentions, .replies, .drafts, .folder:
             filledFilterImage
         case .none:
             defaultFilterImage
@@ -265,6 +267,13 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
                 isSelected: listContentController.listViewModel.selectedFilter == .replies
             )
             menuChildren.append(repliesAction)
+
+            let draftsAction = createFilterAction(
+                title: L10n.Localizable.ConversationList.Filter.Drafts.title,
+                filter: .drafts,
+                isSelected: listContentController.listViewModel.selectedFilter == .drafts
+            )
+            menuChildren.append(draftsAction)
         }
 
         menuChildren.append(contentsOf: [
@@ -384,6 +393,10 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
 
         case .replies:
             return isSelected ? accessibilityLocale.Replies.Selected.description : accessibilityLocale.Replies
+                .description
+
+        case .drafts:
+            return isSelected ? accessibilityLocale.Drafts.Selected.description : accessibilityLocale.Drafts
                 .description
 
         case .folder:

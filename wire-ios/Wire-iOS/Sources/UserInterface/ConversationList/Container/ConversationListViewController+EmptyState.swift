@@ -88,6 +88,12 @@ extension ConversationListViewController {
                 subheadline: L10n.Localizable.ConversationList.EmptyState.Replies.subtitle.attributedString,
                 showArrow: false
             )
+        case .drafts:
+            return EmptyPlaceholder(
+                headline: L10n.Localizable.ConversationList.EmptyState.Drafts.title,
+                subheadline: L10n.Localizable.ConversationList.EmptyState.Drafts.subtitle.attributedString,
+                showArrow: false
+            )
         case .folder:
             // FIXME: [WPB-13905] Disallow this state
             return EmptyPlaceholder(subheadline: "".attributedString)

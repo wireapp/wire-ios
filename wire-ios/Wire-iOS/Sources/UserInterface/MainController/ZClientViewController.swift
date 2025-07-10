@@ -222,10 +222,15 @@ final class ZClientViewController: UIViewController {
                     break
                 }
             }
-        
+
         // Observe developer flag changes
         NotificationCenter.default
-            .addObserver(self, selector: #selector(developerFlagDidChange), name: UserDefaults.didChangeNotification, object: nil)
+            .addObserver(
+                self,
+                selector: #selector(developerFlagDidChange),
+                name: UserDefaults.didChangeNotification,
+                object: nil
+            )
 
         createLegalHoldDisclosureController()
     }
@@ -805,8 +810,9 @@ final class ZClientViewController: UIViewController {
     private func conversationFilter() -> ConversationFilter? {
         conversationListViewController.conversationFilter
     }
-    
-    @objc private func developerFlagDidChange() {
+
+    @objc
+    private func developerFlagDidChange() {
         // Update sidebar's showUnreadFilters when developer flag changes
         sidebarViewController.showUnreadFilters = DeveloperFlag.showUnreadConversationsFilter.isOn
     }

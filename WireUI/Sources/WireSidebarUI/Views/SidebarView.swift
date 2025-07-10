@@ -131,6 +131,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
                 selectableMenuItem(.unread)
                 selectableMenuItem(.mentions)
                 selectableMenuItem(.replies)
+                selectableMenuItem(.drafts)
             }
 
             // Additional filters
@@ -244,6 +245,12 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             icon = "arrowshape.turn.up.left"
             iconHighlighted = "arrowshape.turn.up.left"
             accessibilityLabel = Text(Labels.ConversationFilter.Replies.description)
+
+        case .drafts:
+            text = Text(Strings.ConversationFilter.Drafts.title)
+            icon = "pencil.and.ellipsis.rectangle"
+            iconHighlighted = "pencil.and.ellipsis.rectangle.fill"
+            accessibilityLabel = Text(Labels.ConversationFilter.Drafts.description)
 
         case .folders:
             text = Text(Strings.ConversationFilter.Folders.title)

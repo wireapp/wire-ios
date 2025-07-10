@@ -66,6 +66,12 @@ enum FilterImageName: String {
     /// Represents the reply icon for replies
     case arrowshapeTurnUpLeft = "arrowshape.turn.up.left"
 
+    /// Represents the draft icon - pencil and ellipsis in rectangle
+    case pencilAndEllipsisRectangle = "pencil.and.ellipsis.rectangle"
+
+    /// Represents the selected draft icon - pencil and ellipsis in rectangle (filled)
+    case pencilAndEllipsisRectangleFill = "pencil.and.ellipsis.rectangle.fill"
+
     /// Returns the appropriate `FilterImageName` based on the type of conversation filter and its selection state.
     ///
     /// - Parameters:
@@ -102,6 +108,8 @@ enum FilterImageName: String {
             return .at // Same icon for both states
         case .replies:
             return .arrowshapeTurnUpLeft // Same icon for both states
+        case .drafts:
+            return isSelected ? .pencilAndEllipsisRectangleFill : .pencilAndEllipsisRectangle
         }
     }
 }

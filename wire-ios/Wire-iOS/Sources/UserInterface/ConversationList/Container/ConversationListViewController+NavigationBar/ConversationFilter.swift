@@ -26,6 +26,7 @@ public enum ConversationFilter: Sendable, Equatable {
     case unread
     case mentions
     case replies
+    case drafts
     case folder(id: UUID, name: String)
 
     /// Returns the associated `id` & `name` data if the filter is a `folder`.

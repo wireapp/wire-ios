@@ -286,6 +286,117 @@ final class ConversationFilterPredicateTests: XCTestCase {
         XCTAssertFalse(hasReplies, "Conversation should not have replies to self")
     }
 
+    // MARK: - Drafts Predicate Tests
+
+    func testDraftsPredicate_WithDraftMessage() {
+        // GIVEN
+        let conversation = createConversation()
+
+        coreDataFixture.uiMOC.performGroupedBlockAndWait {
+            // Add draft message
+            let draft = DraftMessage(
+                text: "This is a draft message",
+                mentions: [],
+                quote: nil
+            )
+            conversation.draftMessage = draft
+        }
+
+        // WHEN
+        let hasDraft = conversation.draftMessage != nil
+
+        // THEN
+        XCTAssertTrue(hasDraft, "Conversation should have a draft message")
+    }
+
+    func testDraftsPredicate_WithoutDraftMessage() {
+        // GIVEN
+        let conversation = createConversation()
+
+        coreDataFixture.uiMOC.performGroupedBlockAndWait {
+            // Ensure no draft message
+            conversation.draftMessage = nil
+        }
+
+        // WHEN
+        let hasDraft = conversation.draftMessage != nil
+
+        // THEN
+        XCTAssertFalse(hasDraft, "Conversation should not have a draft message")
+    }
+
+    func testDraftsPredicate_WithEmptyDraftMessage() {
+        // GIVEN
+        let conversation = createConversation()
+
+        coreDataFixture.uiMOC.performGroupedBlockAndWait {
+            // Add empty draft message
+            let draft = DraftMessage(
+                text: "",
+                mentions: [],
+                quote: nil
+            )
+            conversation.draftMessage = draft
+        }
+
+        // WHEN
+        let hasDraft = conversation.draftMessage != nil
+
+        // THEN
+        XCTAssertTrue(hasDraft, "Conversation should have a draft message even if empty")
+    }
+
+    func testDraftsPredicate_WithDraftContainingMentions() {
+        // GIVEN
+        let conversation = createConversation()
+
+        coreDataFixture.uiMOC.performGroupedBlockAndWait {
+            // Add draft with mentions
+            let mention = Mention(range: NSRange(location: 0, length: 5), user: self.otherUser)
+            let draft = DraftMessage(
+                text: "@user This is a draft with mention",
+                mentions: [mention],
+                quote: nil
+            )
+            conversation.draftMessage = draft
+        }
+
+        // WHEN
+        let hasDraft = conversation.draftMessage != nil
+        let hasMentions = conversation.draftMessage?.mentions.isEmpty == false
+
+        // THEN
+        XCTAssertTrue(hasDraft, "Conversation should have a draft message")
+        XCTAssertTrue(hasMentions, "Draft should contain mentions")
+    }
+
+    func testDraftsPredicate_WithDraftContainingQuote() {
+        // GIVEN
+        let conversation = createConversation()
+
+        coreDataFixture.uiMOC.performGroupedBlockAndWait {
+            // Create a message to quote
+            let originalMessage = try! conversation.appendText(content: "Original message") as! ZMClientMessage
+            originalMessage.serverTimestamp = Date(timeIntervalSinceNow: -120)
+
+            // Add draft with quote
+            let draft = DraftMessage(
+                text: "This is a reply draft",
+                mentions: [],
+                quote: originalMessage
+            )
+            conversation.draftMessage = draft
+        }
+
+        // WHEN
+        let hasDraft = conversation.draftMessage != nil
+        let hasQuote = conversation.draftMessage?.quote != nil
+
+        // THEN
+        XCTAssertTrue(hasDraft, "Conversation should have a draft message")
+        XCTAssertTrue(hasQuote, "Draft should contain a quote")
+    }
+
     // MARK: - Combined Predicate Tests
 
     func testCombinedPredicates_UnreadWithMentionAndReply() {
@@ -341,6 +452,33 @@ final class ConversationFilterPredicateTests: XCTestCase {
             conversation.unreadMessages.contains { $0.textMessageData?.isQuotingSelf ?? false },
             "Should have unread replies"
         )
+    }
+
+    func testCombinedPredicates_ConversationWithDraftAndUnreadMessages() {
+        // GIVEN
+        let conversation = createConversation()
+
+        coreDataFixture.uiMOC.performGroupedBlockAndWait {
+            // Add draft message
+            let draft = DraftMessage(
+                text: "This is my draft",
+                mentions: [],
+                quote: nil
+            )
+            conversation.draftMessage = draft
+
+            // Add unread message
+            let unreadMessage = try! conversation.appendText(content: "Unread message") as! ZMClientMessage
+            unreadMessage.serverTimestamp = Date()
+            conversation.updateTimestampsAfterUpdatingMessage(unreadMessage)
+            conversation.lastReadServerTimeStamp = Date(timeIntervalSinceNow: -60)
+            conversation.needsToCalculateUnreadMessages = true
+            ZMConversation.calculateLastUnreadMessages(in: self.coreDataFixture.uiMOC)
+        }
+
+        // WHEN & THEN
+        XCTAssertTrue(conversation.draftMessage != nil, "Should have draft message")
+        XCTAssertTrue(conversation.estimatedUnreadCount > 0, "Should have unread messages")
     }
 
     // MARK: - Edge Cases

@@ -26,6 +26,7 @@ public enum MainConversationFilter: Sendable, Equatable {
     case unread
     case mentions
     case replies
+    case drafts
     case folder(id: UUID, name: String)
 }
 

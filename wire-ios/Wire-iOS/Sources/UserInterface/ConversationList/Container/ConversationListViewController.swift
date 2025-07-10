@@ -85,6 +85,8 @@ final class ConversationListViewController: UIViewController {
             return FilterMenuLocale.Mentions.title
         case .replies:
             return FilterMenuLocale.Replies.title
+        case .drafts:
+            return FilterMenuLocale.Drafts.title
         case let .folder(_, name):
             return name
         case .none:
@@ -289,7 +291,7 @@ final class ConversationListViewController: UIViewController {
 
     private func setupObservers() {
         viewModel.setupObservers()
-        
+
         // Observe developer flag changes for unread filters
         NotificationCenter.default.addObserver(
             self,
@@ -298,8 +300,9 @@ final class ConversationListViewController: UIViewController {
             object: nil
         )
     }
-    
-    @objc private func developerFlagDidChange() {
+
+    @objc
+    private func developerFlagDidChange() {
         // Update navigation bar to reflect filter visibility changes
         updateNavigationItem()
     }
@@ -474,6 +477,8 @@ final class ConversationListViewController: UIViewController {
             L10n.Localizable.ConversationList.SearchBar.mentionsPlaceholder
         case .replies:
             L10n.Localizable.ConversationList.SearchBar.repliesPlaceholder
+        case .drafts:
+            L10n.Localizable.ConversationList.SearchBar.draftsPlaceholder
         case let .folder(_, name):
             L10n.Localizable.ConversationList.SearchBar.foldersPlaceholder(name)
         }

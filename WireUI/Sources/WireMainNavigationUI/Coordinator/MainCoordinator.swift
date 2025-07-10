@@ -468,6 +468,8 @@ private extension MainSidebarMenuItem {
             self = .mentions
         case .replies:
             self = .replies
+        case .drafts:
+            self = .drafts
         case .folder:
             self = .folders
         }
