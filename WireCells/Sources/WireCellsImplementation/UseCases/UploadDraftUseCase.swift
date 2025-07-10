@@ -20,14 +20,31 @@ import Foundation
 import WireCellsAPI
 import WireLogging
 
-package struct UploadDraftUseCase: WireCellsUploadDraftUseCaseProtocol {
+enum UploadDraftUseCaseError: Error {
+
+    /// The draft was not found in the draft repository.
+
+    case draftNotFound
+
+}
+
+package struct UploadDraftUseCase: WireCellsUploadDraftUseCaseProtocol, WireCellsRetryUploadDraftUseCaseProtocol {
 
     private let cellName: String
     private let draftRepository: any DraftsRepositoryProtocol
+    private let uploadManager: any WireCellsNodeUploadManagerProtocol
+    private let nodesAPI: any NodesAPIProtocol
 
-    package init(cellName: String, draftRepository: any DraftsRepositoryProtocol) {
+    package init(
+        cellName: String,
+        draftRepository: any DraftsRepositoryProtocol,
+        uploadManager: any WireCellsNodeUploadManagerProtocol,
+        nodesAPI: any NodesAPIProtocol
+    ) {
         self.cellName = cellName
         self.draftRepository = draftRepository
+        self.uploadManager = uploadManager
+        self.nodesAPI = nodesAPI
     }
 
     func invoke(fileURL: URL) async throws {
@@ -36,14 +53,65 @@ package struct UploadDraftUseCase: WireCellsUploadDraftUseCaseProtocol {
             throw WireCellsUploadDraftUseCaseError.missingFileSize
         }
 
-        await draftRepository.add(
+        let draft = WireCellsDraft(
+            nodeID: UUID(),
+            versionID: UUID(),
             assetURL: fileURL,
-            assetSize: fileSize,
-            cellName: cellName,
-            fileName: fileURL.lastPathComponent,
             fileType: resourceValues.contentType,
+            status: .uploading(progress: 0),
+            name: fileURL.lastPathComponent,
+            bytes: fileSize,
+            mimeType: nil,
             deleteAfterUpload: false
         )
+
+        await draftRepository.addDraft(draft, for: cellName)
+        try await invoke(nodeID: draft.nodeID)
+    }
+
+    /// Uploads a file using an existing draft's nodeID.
+    ///
+    /// - throws: `UploadDraftUseCaseError.draftNotFound` if the draft does not exist in the draft repository.
+
+    func invoke(nodeID: UUID) async throws {
+        guard var draft = await draftRepository.fetchDraft(nodeID: nodeID, cellName: cellName) else {
+            throw UploadDraftUseCaseError.draftNotFound
+        }
+
+        draft.status = .uploading(progress: 0)
+        await draftRepository.updateDraft(draft, for: cellName)
+
+        do {
+            let (node, stream) = try await uploadManager.upload(
+                nodeID: draft.nodeID,
+                versionID: draft.versionID,
+                assetPath: draft.assetURL,
+                assetSize: UInt64(draft.bytes),
+                destNodePath: "\(cellName)/\(draft.name)"
+            )
+
+            // Update draft name if changed
+            if let updatedName = URL(string: node.path)?.lastPathComponent {
+                draft.name = updatedName
+                await draftRepository.updateDraft(draft, for: cellName)
+            }
+
+            for await status in stream {
+                draft.status = status
+                await draftRepository.updateDraft(draft, for: cellName)
+            }
+
+            // Set post upload values
+            let latestNode = try await nodesAPI.getNode(nodeID: draft.nodeID)
+            if let mimeTime = latestNode.mimeType {
+                draft.mimeType = mimeTime
+                await draftRepository.updateDraft(draft, for: cellName)
+            }
+
+        } catch {
+            draft.status = .failed(error: WireCellsUploadError(error))
+            await draftRepository.updateDraft(draft, for: cellName)
+        }
     }
 
     func invoke(imageData: Data) async throws {
