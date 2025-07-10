@@ -26,7 +26,6 @@ class AuthenticationStepController: AuthenticationStepViewController {
 
     /// The step to display.
     let stepDescription: AuthenticationStepDescription
-    private var didReportDescriptionPresented = false
 
     /// The object that coordinates authentication.
     weak var authenticationCoordinator: AuthenticationCoordinator? {
