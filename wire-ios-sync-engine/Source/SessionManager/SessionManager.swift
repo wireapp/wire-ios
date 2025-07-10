@@ -1113,11 +1113,6 @@ public final class SessionManager: NSObject, SessionManagerType {
                         journal: journal
                     )
 
-<<<<<<< HEAD
-                    await userSession.migrateToConsumableNotificationsIfNeeded()
-
-                    await userSession.triggerSync()
-=======
                     let migrationService = userSession.makeAppVersionMigrationService()
                     if migrationService.isMigrationNeeded {
                         await self.delegate?.sessionManagerWillMigrateAccount()
@@ -1131,8 +1126,8 @@ public final class SessionManager: NSObject, SessionManagerType {
                         }
                     }
 
-                    userSession.triggerSyncsIfNeeded()
->>>>>>> 67bef52e9c (fix: missing groups and channels - WPB-18477 (#3300))
+                    await userSession.migrateToConsumableNotificationsIfNeeded()
+                    await userSession.triggerSyncsIfNeeded()
 
                     await MainActor.run {
                         onCompletion(userSession)

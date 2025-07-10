@@ -104,7 +104,6 @@ public final class ZMUserSession: NSObject {
     let conversationEventProcessor: ConversationEventProcessor
 
     var syncAgent: SyncAgent?
-    private(set) var clientSessionComponent: ClientSessionComponent?
 
     public var hasCompletedInitialSync: Bool = false
 
@@ -384,7 +383,7 @@ public final class ZMUserSession: NSObject {
     var callStateObserverToken: AnyObject?
 
     private let userSessionComponent: UserSessionComponent
-    private var clientSessionComponent: ClientSessionComponent?
+    private(set) var clientSessionComponent: ClientSessionComponent?
 
     // MARK: - Initialize
 
@@ -574,14 +573,6 @@ public final class ZMUserSession: NSObject {
             )
         )
         self.clientSessionComponent = clientSessionComponent
-<<<<<<< HEAD
-=======
-
-        if asyncStreamEnabled {
-            // TODO: [WPB-17223] move this just after the migration is done
-            journal[.isSyncV3Enabled] = true
-        }
->>>>>>> 67bef52e9c (fix: missing groups and channels - WPB-18477 (#3300))
 
         coreCryptoProvider.registerMlsTransport(clientSessionComponent.mlsTransport)
 
@@ -879,43 +870,30 @@ public final class ZMUserSession: NSObject {
 
     // MARK: - Trigger syncing
 
-<<<<<<< HEAD
+    func triggerSyncsIfNeeded() async {
+        let (isInitialSyncRequired, isResourceSyncRequired) = await syncContext.perform {
+            (
+                self.syncContext.readMigrationNeedsSlowSyncFlag(),
+                self.syncContext.readMigrationNeedsSyncResourcesFlag()
+            )
+        }
+
+        if isInitialSyncRequired || journal[.isInitialSyncRequired] {
+            await triggerInitialSync()
+        } else if isResourceSyncRequired {
+            await triggerResourcesSync()
+        } else if journal[.isConversationSyncRequired] {
+            let sync = self.clientSessionComponent?.pullAllConversationsSync
+            try? await sync?.pull()
+        }
+    }
+
     public func triggerInitialSync() async {
         do {
             syncAgent?.suspend()
             try await syncAgent?.performInitialSync()
         } catch {
             WireLogger.sync.error("failed to perform initial sync: \(String(describing: error))")
-=======
-    func triggerSyncsIfNeeded() {
-        Task {
-            let (isInitialSyncRequired, isResourceSyncRequired) = await syncContext.perform {
-                (
-                    self.syncContext.readMigrationNeedsSlowSyncFlag(),
-                    self.syncContext.readMigrationNeedsSyncResourcesFlag()
-                )
-            }
-
-            if isInitialSyncRequired || journal[.isInitialSyncRequired] {
-                self.triggerInitialSync()
-            } else if isResourceSyncRequired {
-                self.triggerResourcesSync()
-            } else if journal[.isConversationSyncRequired] {
-                let sync = self.clientSessionComponent?.pullAllConversationsSync
-                try? await sync?.pull()
-            }
-        }
-    }
-
-    public func triggerInitialSync() {
-        Task {
-            do {
-                syncAgent?.suspend()
-                try await syncAgent?.performInitialSync()
-            } catch {
-                WireLogger.sync.error("failed to perform initial sync: \(String(describing: error))")
-            }
->>>>>>> 67bef52e9c (fix: missing groups and channels - WPB-18477 (#3300))
         }
     }
 

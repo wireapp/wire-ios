@@ -30,14 +30,9 @@ struct ZMUserSessionBuilder {
 
     private var apiServiceFactory: APIServiceFactory?
     private var backendEnvironment: WireTransport.BackendEnvironment?
-<<<<<<< HEAD
     private var wireAPIBackendEnvironment: WireNetwork.BackendEnvironment?
-    private var appVersion: String?
-=======
-    private var wireAPIBackendEnvironment: WireAPI.BackendEnvironment?
     private var currentAppVersion: String?
     private var currentBuildNumber: String?
->>>>>>> 67bef52e9c (fix: missing groups and channels - WPB-18477 (#3300))
     private var appLock: (any AppLockType)?
     private var application: (any ZMApplication)?
     private var applicationStatusDirectory: ApplicationStatusDirectory?
@@ -136,14 +131,9 @@ struct ZMUserSessionBuilder {
     mutating func withAllDependencies(
         apiServiceFactory: @escaping APIServiceFactory,
         backendEnvironment: WireTransport.BackendEnvironment,
-<<<<<<< HEAD
         wireAPIBackendEnvironment: WireNetwork.BackendEnvironment,
-        appVersion: String,
-=======
-        wireAPIBackendEnvironment: WireAPI.BackendEnvironment,
         currentAppVersion: String,
         currentBuildNumber: String,
->>>>>>> 67bef52e9c (fix: missing groups and channels - WPB-18477 (#3300))
         application: any ZMApplication,
         cryptoboxMigrationManager: any CryptoboxMigrationManagerInterface,
         coreDataStack: CoreDataStack,
