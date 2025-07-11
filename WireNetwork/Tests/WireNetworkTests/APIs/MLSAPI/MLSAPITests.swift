@@ -195,6 +195,11 @@ final class MLSAPITests: XCTestCase {
         try await api.resetMLSConversation(epoch: Scaffolding.epoch, groupID: Scaffolding.groupID)
     }
 
+    // TODO: add the tests
+//    status code: 400 label: mls-invalid-leaf-node-index
+//
+//    status code: 400 label:  mls-invalid-leaf-node-signature
+
 }
 
 private extension APIVersion {
