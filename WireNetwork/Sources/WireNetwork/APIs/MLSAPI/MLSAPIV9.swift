@@ -47,15 +47,36 @@ final class MLSAPIV9: MLSAPIV8 {
         do {
             return try ResponseParser()
                 .success(code: .ok)
-                .failure(code: .badRequest, label: "mls-not-enabled", error: MLSAPIError.mlsNotEnabled)
-//                .failure(code: .badRequest, label: "body", error: MLSAPIError.mlsNotEnabled)
-                .failure(code: .forbidden, label: "action-denied", error: MLSAPIError.insufficientAuthorization)
-                .failure(code: .conflict, decodableError: FailureResponse.self)
+                .failure(code: .badRequest, decodableError: FailureResponseV0.self) // 400
+                .failure(code: .forbidden, decodableError: FailureResponseV0.self) // 403
+                .failure(code: .notFound, decodableError: FailureResponseV0.self) // 404
+                .failure(code: .conflict, decodableError: FailureResponseV0.self) // 409
                 .parse(code: response.statusCode, data: data)
         } catch {
             if let failureResponse = error as? FailureResponse {
-                throw MLSAPIError(
-                throw MLSAPIError.mlsError(failureResponse.label, failureResponse.message)
+                
+                switch failureResponse.label {
+                case "mls-protocol-error":
+                    throw MLSAPIError.mlsProtocolError(failureResponse.message)
+                case "mls-group-id-not-supported":
+                    throw MLSAPIError.mlsGroupIdNotSupported(failureResponse.message)
+                case "mls-federated-reset-not-supported":
+                    throw MLSAPIError.mlsFederatedResetNotSupported(failureResponse.message)
+                case "mls-not-enabled":
+                    throw MLSAPIError.mlsNotEnabled(failureResponse.message)
+                case "action-denied":
+                    throw MLSAPIError.actionDenied(failureResponse.message)
+                case "invalid-op":
+                    throw MLSAPIError.invalidOperation(failureResponse.message)
+                case "no-conversation":
+                    throw MLSAPIError.noConversation(failureResponse.message)
+                case "mls-stale-message":
+                    throw MLSAPIError.mlsStaleMessage(failureResponse.message)
+
+                default:
+                    throw MLSAPIError.mlsError(failureResponse.label, failureResponse.message)
+                }
+
             } else {
                 throw error
             }
