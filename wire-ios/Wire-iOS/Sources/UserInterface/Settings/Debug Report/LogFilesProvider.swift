@@ -84,7 +84,7 @@ struct LogFilesProvider: LogFilesProviding {
         try FileManager.default.createDirectory(at: logsDirectory, withIntermediateDirectories: true)
 
         // Create a subfolder for the current session
-        var archiveFolder = logsDirectory.appendingPathComponent(UUID().uuidString)
+        let archiveFolder = logsDirectory.appendingPathComponent(UUID().uuidString)
         try FileManager.default.createDirectory(at: archiveFolder, withIntermediateDirectories: true)
 
         // Create the info file
