@@ -20,20 +20,20 @@ import Foundation
 import WireDomain
 
 // Issue: To simplify the logic, we rely solely on journal value to perform InitialSync or not
-final class AppVersionMigration_4_2_0: AppVersionMigration {
+struct AppVersionMigration_4_2_0: AppVersionMigration {
 
     let lastEventIDRepository: LastEventIDRepositoryInterface
-    var journal: JournalProtocol
+    let journal: JournalProtocol
     let version: SemanticVersion = "4.2.0"
 
-    init(lastEventIDRepository: LastEventIDRepositoryInterface, journal: JournalProtocol) {
-        self.lastEventIDRepository = lastEventIDRepository
-        self.journal = journal
-    }
-
     func perform() async throws {
+
         if lastEventIDRepository.fetchLastEventID() == nil {
             journal[.isInitialSyncRequired] = true
         }
+
+        // TODO: migrate the global `ExtensionSettingsKey.disableAnalyticsSharing` property to a per-account storage
+
     }
+
 }

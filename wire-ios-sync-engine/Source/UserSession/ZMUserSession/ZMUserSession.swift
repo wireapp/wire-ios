@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import WireFoundation
+
 import Combine
 import Foundation
 import WireCoreCrypto
@@ -25,7 +27,6 @@ import WireLogging
 import WireNetwork
 import WireRequestStrategy
 import WireSystem
-public import WireFoundation
 
 typealias UserSessionDelegate = UserSessionAppLockDelegate
     & UserSessionEncryptionAtRestDelegate
@@ -637,12 +638,11 @@ public final class ZMUserSession: NSObject {
 
     public func performAppMigrationsIfNeeded() async {
         do {
-            let appVersionMigrationService: AppVersionMigrationService = .init(
+            let appVersionMigrationService = AppVersionMigrationService(
                 journal: journal,
                 currentVersion: SemanticVersion(stringLiteral: currentAppVersion),
                 allMigrations: makeAppVersionMigrations()
             )
-
             try await appVersionMigrationService.performAppMigrations()
         } catch {
             WireLogger.session.error("Failed to perform app version migrations")
@@ -1614,7 +1614,6 @@ extension ZMUserSession {
 
     private func makeAppVersionMigrations() -> [any AppVersionMigration] {
         [
-
             AppVersionMigration_4_1_1(logFilesProvider: logFilesProvider),
             AppVersionMigration_4_2_0(lastEventIDRepository: lastEventIDRepository, journal: journal)
         ]
