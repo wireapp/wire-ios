@@ -81,10 +81,6 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
             streamLoop: for try await element in liveEventStream {
                 try Task.checkCancellation()
 
-                logger.debug(
-                    "received live element: \(element)",
-                    attributes: .syncAttributes(initialSync: false)
-                )
                 switch element {
                 case let .syncMarker(marker, deliveryTag):
                     try await pushChannel.acknowledgeEvent(deliveryTag: deliveryTag, multiple: false)

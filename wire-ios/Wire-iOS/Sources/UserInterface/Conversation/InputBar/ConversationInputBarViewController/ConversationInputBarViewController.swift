@@ -231,6 +231,7 @@ final class ConversationInputBarViewController: UIViewController,
     let clearPublishedDraftsUseCase: WireCellsClearPublishedDraftsUseCaseProtocol
     private let observeDraftsUseCase: WireCellsObserveDraftsUseCaseProtocol
     private let deleteDraftUseCase: WireCellsDeleteDraftUseCaseProtocol
+    private let retryUploadDraftUseCase: WireCellsRetryUploadDraftUseCaseProtocol
     private let attachmentsCarouselViewModel = AttachmentsCarouselViewModel(items: [])
 
     private var inputBarButtons: [IconButton] {
@@ -377,6 +378,9 @@ final class ConversationInputBarViewController: UIViewController,
             cellName: conversation.wireCellName
         )
         self.deleteDraftUseCase = wireCellsAssembly.makeDeleteDraftUseCase(
+            cellName: conversation.wireCellName
+        )
+        self.retryUploadDraftUseCase = wireCellsAssembly.makeRetryUploadDraftUseCase(
             cellName: conversation.wireCellName
         )
 
@@ -1097,7 +1101,11 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
                         try? await deleteDraftUseCase.invoke(nodeID: item.id)
                     }
                 },
-                onRetry: { WireLogger.conversation.debug("Did tap retry on draft attachment: \($0)") }
+                onRetry: { [retryUploadDraftUseCase] item in
+                    Task.detached {
+                        try? await retryUploadDraftUseCase.invoke(nodeID: item.id)
+                    }
+                }
             )
         )
         addChild(carouselViewController)

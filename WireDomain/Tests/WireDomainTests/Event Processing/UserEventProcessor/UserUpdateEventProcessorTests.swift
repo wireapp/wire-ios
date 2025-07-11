@@ -61,7 +61,7 @@ final class UserUpdateEventProcessorTests: XCTestCase {
 
         // When
 
-        try await sut.processEvent(event)
+        await sut.processEvent(event)
 
         // Then
 
