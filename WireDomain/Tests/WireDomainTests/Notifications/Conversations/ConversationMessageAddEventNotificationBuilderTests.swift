@@ -113,7 +113,7 @@ final class ConversationMessageAddEventNotificationBuilderTests: XCTestCase {
 
         // When
 
-        let userNotification = try await sut.buildContent(
+        _ = try await sut.buildContent(
             event: .left(Scaffolding.mlsTextMessageEvent)
         )
 
@@ -136,7 +136,7 @@ final class ConversationMessageAddEventNotificationBuilderTests: XCTestCase {
 
         // When
 
-        let userNotification = try await sut.buildContent(
+        _ = try await sut.buildContent(
             event: .right(Scaffolding.proteusTextMessageEvent)
         )
 

@@ -66,7 +66,7 @@ final class UserLegalHoldEnableEventProcessorTests: XCTestCase {
     func testProcessEvent_It_Invokes_Repo_Methods() async throws {
         // Mock
 
-        let (selfUser, selfClient) = await context.perform { [self] in
+        let (selfUser, _) = await context.perform { [self] in
             let selfUser = modelHelper.createSelfUser(
                 id: Scaffolding.selfUserID,
                 domain: nil,
