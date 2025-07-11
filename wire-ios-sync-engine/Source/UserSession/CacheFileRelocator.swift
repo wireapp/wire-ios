@@ -20,7 +20,7 @@ import Foundation
 
 struct CacheFileRelocator {
 
-    // Whitelisted files, so the FileRelocator doesn't consider to check these system files.
+    // Whitelisted files, so the FileRelocator doesn't consider to check these files.
     private let whitelistedFiles = [
         // com.apple.nsurlsessiond is used by the system as cache while sharing an item.
         "com.apple.nsurlsessiond",
