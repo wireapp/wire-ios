@@ -25,13 +25,10 @@ struct ConversationMLSResetEventProcessor: ConversationMLSResetEventProcessorPro
         case conversationNotFound
     }
 
-    let localStore: any ConversationLocalStoreProtocol
     let mlsService: any MLSServiceInterface
     let conversationLocalStore: any ConversationLocalStoreProtocol
 
     func processEvent(_ event: ConversationMLSResetEvent) async throws {
-
-        let conversationID = event.conversationID
         
         let oldMLSGroupIDBase64 = event.oldMLSGroupIDBase64
         let newMLSGroupIDBase64 = event.newMLSGroupIDBase64
@@ -43,7 +40,7 @@ struct ConversationMLSResetEventProcessor: ConversationMLSResetEventProcessorPro
             return
         }
 
-        guard let localConversation = await localStore.fetchMLSConversation(
+        guard let localConversation = await conversationLocalStore.fetchMLSConversation(
             groupID: oldMLSGroupID
         ) else {
             throw Failure.conversationNotFound
