@@ -19,6 +19,7 @@
 import Foundation
 import WireDataModel
 
+// TODO: check if can be removed
 class SendCommitBundleActionHandler: ActionHandler<SendCommitBundleAction> {
     typealias EventPayload = [AnyHashable: Any]
 
