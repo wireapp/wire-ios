@@ -417,9 +417,15 @@ public final class ZMUserSession: NSObject {
         contextStorage: LAContextStorable,
         recurringActionService: any RecurringActionServiceInterface,
         dependencies: UserSessionDependencies,
+<<<<<<< HEAD
         backendEnvironment: WireNetwork.BackendEnvironment,
         minTLSVersion: WireNetwork.TLSVersion,
         apiVersion: WireNetwork.APIVersion,
+=======
+        backendEnvironment: WireAPI.BackendEnvironment,
+        minTLSVersion: WireAPI.TLSVersion,
+        apiVersion: WireAPI.APIVersion,
+>>>>>>> 662fbea128 (chore: cc changes - WPB-18434 (#3332))
         journal: Journal,
         logFilesProvider: LogFilesProviding
     ) {
@@ -697,6 +703,24 @@ public final class ZMUserSession: NSObject {
 
     // MARK: - Methods
 
+<<<<<<< HEAD
+=======
+    public func makeAppVersionMigrationService() -> AppVersionMigrationService {
+        let allMigrations = [
+            AppVersionMigration_4_1_1(
+                journal: journal,
+                logFilesProvider: logFilesProvider
+            )
+        ]
+
+        return AppVersionMigrationService(
+            journal: journal,
+            currentVersion: SemanticVersion(stringLiteral: currentAppVersion),
+            allMigrations: allMigrations
+        )
+    }
+
+>>>>>>> 662fbea128 (chore: cc changes - WPB-18434 (#3332))
     private func configureTransportSession() {
         transportSession.pushChannel.clientID = selfUserClient?.remoteIdentifier
         transportSession.setNetworkStateDelegate(self)

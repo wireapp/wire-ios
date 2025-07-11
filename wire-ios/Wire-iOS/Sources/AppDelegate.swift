@@ -413,7 +413,11 @@ private extension AppDelegate {
             sharedUserDefaults: .applicationGroup,
             minTLSVersion: SecurityFlags.minTLSVersion.stringValue,
             deleteUserLogs: LogFileDestination.deleteAllLogs,
+<<<<<<< HEAD
             analyticsServiceConfiguration: AnalyticsServiceConfigurationBuilder.build(),
+=======
+            analyticsServiceConfiguration: AnalyticsServiceConfigurationBuilder().build(),
+>>>>>>> 662fbea128 (chore: cc changes - WPB-18434 (#3332))
             countlyProvider: { CountlyWrapper() },
             logFilesProvider: LogFilesProvider()
         )

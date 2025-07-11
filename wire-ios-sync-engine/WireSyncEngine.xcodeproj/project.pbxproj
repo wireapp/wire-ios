@@ -3750,6 +3750,7 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = WireLogging;
 		};
+<<<<<<< HEAD
 		34DC44B02E01C1FC004D5DD5 /* WireNetwork */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireNetwork;
@@ -3758,6 +3759,8 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = WireNetwork;
 		};
+=======
+>>>>>>> 662fbea128 (chore: cc changes - WPB-18434 (#3332))
 		59202AD32D54D49400143413 /* WireDomainPackage */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireDomainPackage;
