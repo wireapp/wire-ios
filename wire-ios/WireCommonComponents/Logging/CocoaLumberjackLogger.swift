@@ -31,10 +31,7 @@ final class CocoaLumberjackLogger: LoggerProtocol {
     /// - Parameter logsDirectory: If `nil` the default logs directory of `CocoaLumberjack` is used, otherwise the
     /// provided URL.
     init(logsDirectory: URL?) {
-        let logFileManager = DDLogFileManagerDefault(
-            logsDirectory: logsDirectory?.path(),
-            defaultFileProtectionLevel: .none
-        )
+        let logFileManager = DDLogFileManagerDefault(logsDirectory: logsDirectory?.path())
         self.fileLogger = DDFileLogger(logFileManager: logFileManager)
         fileLogger.rollingFrequency = 60 * 60 * 24 // 24 hours
         fileLogger.maximumFileSize = 100_000_000 // 100Mb
