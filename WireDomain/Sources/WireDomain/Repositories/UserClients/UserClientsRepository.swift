@@ -84,7 +84,7 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
                 id: remoteSelfClient.id
             )
 
-            try await updateClient(
+            await updateClient(
                 id: remoteSelfClient.id,
                 from: remoteSelfClient,
                 isNewClient: localUserClient.isNew

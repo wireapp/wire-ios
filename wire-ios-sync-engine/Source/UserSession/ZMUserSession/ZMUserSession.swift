@@ -34,6 +34,10 @@ typealias UserSessionDelegate = UserSessionAppLockDelegate
 
 public typealias APIServiceFactory = @Sendable (_ clientID: String, _ userID: UUID) -> APIServiceProtocol
 
+enum ZMUserSessionError: Error {
+    case selfClientNotReady
+}
+
 @objcMembers
 public final class ZMUserSession: NSObject {
 
@@ -616,12 +620,11 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-    public func migrateToConsumableNotificationsIfNeeded() async {
+    public func migrateToConsumableNotificationsIfNeeded() async throws {
         guard DeveloperFlag.consumableNotifications.isOn else { return }
         guard !journal[.isConsumableNotificationsEnabled] else { return }
         guard let migrator = clientSessionComponent?.consumableNotificationsMigrator() else {
-            WireLogger.sync.warn("No consumable-notifications migrator available")
-            return
+            throw ZMUserSessionError.selfClientNotReady
         }
         do {
             try await migrator.migrate()
@@ -648,14 +651,14 @@ public final class ZMUserSession: NSObject {
 
     /// Executes specific or regular sync after db migration
     public func triggerSync() async {
-        let (initialSync, resoucesSync) = await syncContext.perform { (
+        let (initialSync, resourcesSync) = await syncContext.perform { (
             self.syncContext.readMigrationNeedsSlowSyncFlag(),
             self.syncContext.readMigrationNeedsSyncResourcesFlag()
         ) }
 
         if initialSync || journal[.isInitialSyncRequired] {
             await triggerInitialSync()
-        } else if resoucesSync {
+        } else if resourcesSync {
             await triggerResourcesSync()
         } else {
             syncAgent?.resume()
@@ -1431,7 +1434,10 @@ extension ZMUserSession: ZMClientRegistrationStatusDelegate {
                 // activate new sync with consumable notifications
                 journal[.isConsumableNotificationsEnabled] = true
             }
+            // this is a fresh client so we need an initialSync
+            journal[.isInitialSyncRequired] = true
             Task {
+                WireLogger.sync.debug("Triggering initial sync after client registration")
                 await triggerSync()
             }
         }
@@ -1608,7 +1614,9 @@ extension ZMUserSession {
 
     private func makeAppVersionMigrations() -> [any AppVersionMigration] {
         [
-            AppVersionMigration_4_1_1(logFilesProvider: logFilesProvider)
+
+            AppVersionMigration_4_1_1(logFilesProvider: logFilesProvider),
+            AppVersionMigration_4_2_0(lastEventIDRepository: lastEventIDRepository, journal: journal)
         ]
     }
 

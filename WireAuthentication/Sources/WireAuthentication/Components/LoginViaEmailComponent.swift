@@ -31,7 +31,6 @@ protocol LoginViaEmailComponentDependency: Dependency {
     var preferredAPIVersion: APIVersion? { get }
     var backendInfo: BackendInfo { get }
     var minTLSVersion: TLSVersion { get }
-    var useLegacyRegistrationFlow: Bool { get }
 
 }
 
@@ -105,24 +104,7 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
             email: email,
             backendInfo: networkStack.backendInfo,
             canCreateAccount: canCreateAccount,
-            didDetectDomainConflict: didDetectDomainConflict,
-            onCreateAccount: dependency.useLegacyRegistrationFlow ? { [dependency, networkStack, email] in
-                guard let dependency else { return }
-                Task<Void, Never> { @MainActor in
-                    do {
-                        let backendEnvironment = try await networkStack.makeBackendEnvironment()
-                        dependency.router.dismissSheet()
-                        dependency.bridge.sendOutboundEvent(
-                            .accountRegistrationRequested(
-                                email: email,
-                                backendEnvironment
-                            )
-                        )
-                    } catch {
-                        dependency.router.presentAlert(for: error)
-                    }
-                }
-            } : nil
+            didDetectDomainConflict: didDetectDomainConflict
         )
     }
 

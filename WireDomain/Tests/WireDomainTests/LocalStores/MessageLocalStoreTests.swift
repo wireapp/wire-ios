@@ -58,7 +58,7 @@ final class MessageLocalStoreTests: XCTestCase {
     func testAddTextMessage_It_Adds_Message_To_Conversation() async throws {
         // Mock
 
-        let (clientMessage, groupConversation, selfUser, user) = await context.perform { [self] in
+        let (clientMessage, groupConversation, _, _) = await context.perform { [self] in
             let conversation = modelHelper.createGroupConversation(
                 in: context
             )

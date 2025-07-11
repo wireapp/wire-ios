@@ -95,9 +95,6 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
     package let factory: any Factory
     private let router: any Router
-    /// This property is used for presenting the legacy registration flow.
-    /// If `nil` the new registration flow is presented.
-    private let onCreateAccount: (() -> Void)?
     private let didDetectDomainConflict: Bool
 
     // MARK: - Life cycle
@@ -108,8 +105,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
         email: String?,
         backendInfo: BackendInfo,
         canCreateAccount: Bool,
-        didDetectDomainConflict: Bool,
-        onCreateAccount: (() -> Void)?
+        didDetectDomainConflict: Bool
     ) {
         self.factory = factory
         self.router = router
@@ -118,7 +114,6 @@ package final class LoginViaEmailViewModel: ObservableObject {
         self.canCreateAccount = canCreateAccount
         self.didDetectDomainConflict = didDetectDomainConflict
         self.isEmailPrefilled = email != nil
-        self.onCreateAccount = onCreateAccount
     }
 
     // MARK: - Actions
@@ -191,12 +186,6 @@ package final class LoginViaEmailViewModel: ObservableObject {
     }
 
     func createAccount() {
-        // legacy flow
-        if let onCreateAccount {
-            return onCreateAccount()
-        }
-
-        // new flow
         modalDestination = .accountTypeSelection
     }
 

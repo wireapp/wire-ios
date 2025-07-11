@@ -16,5 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-PROTEUS_BY_CORECRYPTO_ENABLED=1
-WIRE_AUTHENTICATION_ENABLED=1
+public import Foundation
+
+public protocol WireCellsRetryUploadDraftUseCaseProtocol {
+
+    func invoke(nodeID: UUID) async throws
+
+}

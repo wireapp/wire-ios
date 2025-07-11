@@ -16,5 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-PROTEUS_BY_CORECRYPTO_ENABLED=1
-WIRE_AUTHENTICATION_ENABLED=1
+extension AsyncStream where Element: Sendable {
+    static func make(_ elements: [Element]) -> AsyncStream {
+        AsyncStream { continuation in
+            for item in elements {
+                continuation.yield(item)
+            }
+            continuation.finish()
+        }
+    }
+}

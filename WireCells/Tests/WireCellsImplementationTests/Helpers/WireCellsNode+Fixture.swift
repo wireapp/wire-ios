@@ -19,26 +19,14 @@
 import Foundation
 import WireCellsAPI
 
-extension WireCellsDraft {
+extension WireCellsNode {
     static func fixture(
-        nodeID: UUID = UUID(),
-        versionID: UUID = UUID(uuidString: "11111111-1111-1111-1111-111111111111")!,
-        assetURL: URL = URL(string: "https://example.com")!,
-        status: WireCellsUploadStatus = .uploaded(isDraft: true),
-        name: String = "Draft",
-        mimeType: String? = nil,
-        deleteAfterUpload: Bool = false
-    ) -> WireCellsDraft {
-        WireCellsDraft(
-            nodeID: nodeID,
-            versionID: versionID,
-            assetURL: assetURL,
-            fileType: nil,
-            status: status,
-            name: name,
-            bytes: 1024,
-            mimeType: mimeType,
-            deleteAfterUpload: deleteAfterUpload
+        uuid: UUID = UUID(),
+        path: String = "some/path",
+    ) -> WireCellsNode {
+        WireCellsNode(
+            uuid: uuid,
+            path: "some/path"
         )
     }
 }
