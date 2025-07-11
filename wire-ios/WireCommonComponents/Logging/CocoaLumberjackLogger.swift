@@ -28,13 +28,14 @@ final class CocoaLumberjackLogger: LoggerProtocol {
     private var tags = [LogAttributesKey: String]()
     private let tagsQueue = DispatchQueue(label: "CocoaLumberjackLogger.tagsQueue", attributes: .concurrent)
 
-    /// - Parameter logsDirectory: If `nil` the default logs directory of `CocoaLumberjack` is used, otherwise the provided URL.
+    /// - Parameter logsDirectory: If `nil` the default logs directory of `CocoaLumberjack` is used, otherwise the
+    /// provided URL.
     init(logsDirectory: URL?) {
         let logFileManager = DDLogFileManagerDefault(
             logsDirectory: logsDirectory?.path(),
             defaultFileProtectionLevel: .none
         )
-        fileLogger = DDFileLogger(logFileManager: logFileManager)
+        self.fileLogger = DDFileLogger(logFileManager: logFileManager)
         fileLogger.rollingFrequency = 60 * 60 * 24 // 24 hours
         fileLogger.maximumFileSize = 100_000_000 // 100Mb
         fileLogger.logFileManager.maximumNumberOfLogFiles = 7

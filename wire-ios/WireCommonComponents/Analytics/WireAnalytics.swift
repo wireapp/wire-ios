@@ -84,7 +84,6 @@ extension WireAnalytics.Target {
             return cachesDirectory?
                 .appending(path: "Logs", directoryHint: .isDirectory)
                 .appending(component: subdirectory, directoryHint: .isDirectory)
-
         }
     }
 
