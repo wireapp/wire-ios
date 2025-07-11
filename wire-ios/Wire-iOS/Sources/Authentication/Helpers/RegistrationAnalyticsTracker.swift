@@ -70,21 +70,15 @@ final class RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
     }
 
     func trackPersonalAccountCreationStart() {
-        if let analyticsTracker {
-            analyticsTracker.trackEvent(.Registration.accountSetupStep0)
-        }
+        analyticsTracker?.trackEvent(.Registration.accountSetupStep0)
     }
 
     func trackPersonalAccountCreationReachedTermsOfUseConfirmation() {
-        if let analyticsTracker {
-            analyticsTracker.trackEvent(.Registration.accountSetupStep1)
-        }
+        analyticsTracker?.trackEvent(.Registration.accountSetupStep1)
     }
 
     func trackPersonalAccountCreationReachedVerificationCode() {
-        if let analyticsTracker {
-            analyticsTracker.trackEvent(.Registration.accountSetupStep2)
-        }
+        analyticsTracker?.trackEvent(.Registration.accountSetupStep2)
     }
 
     func trackPersonalAccountCreationFailedCodeVerification() {
