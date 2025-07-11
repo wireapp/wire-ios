@@ -414,7 +414,8 @@ private extension AppDelegate {
             minTLSVersion: SecurityFlags.minTLSVersion.stringValue,
             deleteUserLogs: LogFileDestination.deleteAllLogs,
             analyticsServiceConfiguration: AnalyticsServiceConfigurationBuilder().build(),
-            countlyProvider: { CountlyWrapper() }
+            countlyProvider: { CountlyWrapper() },
+            logFilesProvider: LogFilesProvider()
         )
 
         voIPPushManager.delegate = sessionManager

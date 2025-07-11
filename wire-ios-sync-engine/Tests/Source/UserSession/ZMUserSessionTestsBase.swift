@@ -175,6 +175,7 @@ class ZMUserSessionTestsBase: MessagingTest {
             userID: coreDataStack.account.userIdentifier,
             storage: UserDefaults.temporary()
         )
+        let logFilesProvider = MockLogFilesProviding()
 
         var builder = ZMUserSessionBuilder()
         builder.withAllDependencies(
@@ -199,7 +200,8 @@ class ZMUserSessionTestsBase: MessagingTest {
             transportSession: transportSession,
             userId: coreDataStack.account.userIdentifier,
             minTLSVersion: nil,
-            journal: journal
+            journal: journal,
+            logFilesProvider: logFilesProvider
         )
 
         let userSession = builder.build()
