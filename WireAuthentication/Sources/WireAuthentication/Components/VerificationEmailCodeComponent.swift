@@ -40,24 +40,18 @@ final class VerificationEmailCodeComponent: Component<VerificationEmailCodeCompo
     private let password: String
     private let name: String
     private let isDataUsageAgreementAccepted: Bool
-    private let registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
-    private let registrationAnalyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
 
     init(
         parent: any Scope,
         email: String,
         password: String,
         name: String,
-        isDataUsageAgreementAccepted: Bool,
-        analyticsEventTracker: (any RegistrationAnalyticsTrackerProtocol)?,
-        analyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
+        isDataUsageAgreementAccepted: Bool
     ) {
         self.email = email
         self.password = password
         self.name = name
         self.isDataUsageAgreementAccepted = isDataUsageAgreementAccepted
-        self.registrationAnalyticsTracker = analyticsEventTracker
-        self.registrationAnalyticsIDRepository = analyticsIDRepository
         super.init(parent: parent)
     }
 
@@ -78,8 +72,8 @@ extension VerificationEmailCodeComponent: VerificationEmailCodeViewModel.Factory
             onFlowCompletion: { [dependency] authenticationResult in
                 dependency?.bridge.sendOutboundEvent(.userAuthenticated(authenticationResult))
             },
-            analyticsEventTracker: registrationAnalyticsTracker,
-            analyticsIDRepository: registrationAnalyticsIDRepository
+            analyticsEventTracker: dependency.registrationAnalyticsTracker,
+            analyticsIDRepository: dependency.registrationAnalyticsIDRepository
         )
     }
 

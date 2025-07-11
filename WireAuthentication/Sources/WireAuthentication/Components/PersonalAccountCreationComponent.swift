@@ -46,18 +46,14 @@ final class PersonalAccountCreationComponent: Component<PersonalAccountCreationC
         email: String,
         password: String,
         name: String,
-        isDataUsageAgreementAccepted: Bool,
-        analyticsEventTracker: (any RegistrationAnalyticsTrackerProtocol)?,
-        analyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
+        isDataUsageAgreementAccepted: Bool
     ) -> VerificationEmailCodeComponent {
         VerificationEmailCodeComponent(
             parent: self,
             email: email,
             password: password,
             name: name,
-            isDataUsageAgreementAccepted: isDataUsageAgreementAccepted,
-            analyticsEventTracker: analyticsEventTracker,
-            analyticsIDRepository: analyticsIDRepository
+            isDataUsageAgreementAccepted: isDataUsageAgreementAccepted
         )
     }
 
@@ -86,17 +82,13 @@ extension PersonalAccountCreationComponent: PersonalAccountCreationViewModel.Fac
         email: String,
         password: String,
         name: String,
-        isDataUsageAgreementAccepted: Bool,
-        analyticsEventTracker: (any RegistrationAnalyticsTrackerProtocol)?,
-        analyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
+        isDataUsageAgreementAccepted: Bool
     ) -> any VerificationEmailCodeFactory {
         verificationEmailCodeComponent(
             email: email,
             password: password,
             name: name,
-            isDataUsageAgreementAccepted: isDataUsageAgreementAccepted,
-            analyticsEventTracker: analyticsEventTracker,
-            analyticsIDRepository: analyticsIDRepository
+            isDataUsageAgreementAccepted: isDataUsageAgreementAccepted
         )
     }
 

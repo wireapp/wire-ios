@@ -51,9 +51,7 @@ struct FakePersonalAccountCreationFactory: PersonalAccountCreationFactory, Regis
         email: String,
         password: String,
         name: String,
-        isDataUsageAgreementAccepted: Bool,
-        analyticsEventTracker: (any RegistrationAnalyticsTrackerProtocol)?,
-        analyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
+        isDataUsageAgreementAccepted: Bool
     ) -> any VerificationEmailCodeFactory {
         fatalError()
     }
