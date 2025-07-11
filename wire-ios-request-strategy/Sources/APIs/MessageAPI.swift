@@ -362,7 +362,9 @@ class MessageAPIV5: MessageAPIV4 {
             contentDisposition: nil,
             apiVersion: apiVersion.rawValue
         )
-
+        // TODO: check here status code: 400 label: mls-invalid-leaf-node-index
+        // status code: 400 label:  mls-invalid-leaf-node-signature
+        // if error we should trigger mlsReset (higher level)
         if let expirationDate {
             request.expire(at: expirationDate)
         }
