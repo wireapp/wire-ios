@@ -30,6 +30,7 @@ final class TrackingManager: TrackingInterface {
     private let sessionManager: SessionManager
     private var observerToken: NSObjectProtocol?
 
+    private typealias UserDefaultsKey = AnalyticsTrackingPrivateUserDefaultsKey
     private var privateUserDefaults: PrivateUserDefaults<UserDefaultsKey>? {
         sessionManager.accountManager.selectedAccount.map { selectedAccount in
             PrivateUserDefaults<UserDefaultsKey>(
@@ -125,23 +126,6 @@ final class TrackingManager: TrackingInterface {
         }
 
         ExtensionSettings.shared.disableAnalyticsSharing = nil
-    }
-
-}
-
-// MARK: - TrackingManager + UserDefaultsKey
-
-extension TrackingManager {
-
-    struct UserDefaultsKey: DefaultsKey {
-
-        static let isAnalyticsTrackingEnabled = UserDefaultsKey("isAnalyticsTrackingEnabled")
-
-        var rawValue: String
-
-        private init(_ rawValue: String) {
-            self.rawValue = rawValue
-        }
     }
 
 }
