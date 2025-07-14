@@ -48,7 +48,6 @@ class MLSAPITests_SwiftTesting {
         _ testData: (HTTPStatusCode, String, MLSAPIError)
     ) async {
         // Given
-
         let apiService = MockAPIServiceProtocol.withError(
             statusCode: testData.0,
             label: testData.1
