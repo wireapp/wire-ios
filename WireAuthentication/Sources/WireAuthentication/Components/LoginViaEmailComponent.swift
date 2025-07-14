@@ -58,29 +58,6 @@ final class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> 
 
     // MARK: - Children
 
-    private func verificationCodeComponent(
-        email: String,
-        password: String,
-        proxyCredentials: ProxyCredentials?
-    ) -> VerificationCodeComponent {
-        VerificationCodeComponent(
-            parent: self,
-            email: email,
-            password: password,
-            proxyCredentials: proxyCredentials
-        )
-    }
-
-    private func noHistoryComponent(
-        authenticationResult: AuthenticationResult
-    ) -> NoHistoryComponent {
-        NoHistoryComponent(
-            parent: self,
-            authenticationResult: authenticationResult,
-            didDetectDomainConflict: didDetectDomainConflict
-        )
-    }
-
     private func personalAccountCreationComponent() -> PersonalAccountCreationComponent {
         PersonalAccountCreationComponent(
             parent: self,
@@ -93,33 +70,35 @@ final class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> 
 extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
 
     // MARK: - Factory
-
+    
     @MainActor
-    func destinationView(for destination: LoginViaEmailDestination) -> AnyView {
-        switch destination {
-        case let .verifyLogin(
-            email,
-            password,
-            proxyCredentials
-        ):
-            AnyView(VerificationCodeView(
-                factory: { [unowned self] in
-                    verificationCodeFactory(
-                        email: email,
-                        password: password,
-                        proxyCredentials: proxyCredentials
-                    )
-                }
-            ))
-        case let .noHistory(authenticationResult):
-            AnyView(
-                NoHistoryView(
-                    factory: { [unowned self] in
-                        noHistoryFactory(authenticationResult: authenticationResult)
-                    }
+    func verifyLoginView(
+        email: String,
+        password: String,
+        proxyCredentials: ProxyCredentials?
+    ) -> VerificationCodeView {
+        VerificationCodeView(
+            factory: { [unowned self] in
+                verificationCodeFactory(
+                    email: email,
+                    password: password,
+                    proxyCredentials: proxyCredentials
                 )
-            )
-        }
+            }
+        )
+    }
+    
+    @MainActor
+    func noHistoryView(result: AuthenticationResult) -> NoHistoryView {
+        NoHistoryView(
+            factory: { [unowned self] in
+                NoHistoryComponent(
+                    parent: self,
+                    authenticationResult: result,
+                    didDetectDomainConflict: didDetectDomainConflict
+                )
+            }
+        )
     }
 
     @MainActor var viewModel: LoginViaEmailViewModel {
@@ -155,18 +134,11 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
         password: String,
         proxyCredentials: ProxyCredentials?
     ) -> any VerificationCodeFactory {
-        verificationCodeComponent(
+        VerificationCodeComponent(
+            parent: self,
             email: email,
             password: password,
             proxyCredentials: proxyCredentials
-        )
-    }
-
-    func noHistoryFactory(
-        authenticationResult: AuthenticationResult
-    ) -> any NoHistoryFactory {
-        noHistoryComponent(
-            authenticationResult: authenticationResult
         )
     }
 

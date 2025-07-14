@@ -25,7 +25,23 @@ package protocol DetermineAuthMethodFactory {
 
     @MainActor var viewModel: DetermineAuthMethodViewModel { get }
 
-    func destinationView(for destination: DetermineAuthMethodDestination) -> AnyView
+    @MainActor
+    func loginView(
+        email: String?,
+        didDetectDomainConflict: Bool,
+        backendInfo: BackendInfo
+    ) -> LoginViaEmailView
+    
+    @MainActor
+    func loginOrRegisterView(
+        email: String?,
+        didDetectDomainConflict: Bool,
+        backendInfo: BackendInfo
+    ) -> LoginViaEmailView
+    
+    @MainActor
+    func noHistoryView(result: AuthenticationResult) -> NoHistoryView
+    
 }
 
 package struct DetermineAuthMethodView: View {
@@ -154,7 +170,28 @@ package struct DetermineAuthMethodView: View {
 
     @ViewBuilder
     private func destinationView(for destination: DetermineAuthMethodDestination) -> some View {
-        viewModel.factory.destinationView(for: destination)
+        switch destination {
+        case .login(let email, let didDetectDomainConflict, let backendInfo):
+            viewModel.factory
+                .loginView(
+                    email: email,
+                    didDetectDomainConflict: didDetectDomainConflict,
+                    backendInfo: backendInfo
+                )
+        case .loginOrRegister(
+            let email,
+            let didDetectDomainConflict,
+            let backendInfo
+        ):
+            viewModel.factory
+                .loginOrRegisterView(
+                    email: email,
+                    didDetectDomainConflict: didDetectDomainConflict,
+                    backendInfo: backendInfo
+                )
+        case .noHistory(let authenticationResult):
+            viewModel.factory.noHistoryView(result: authenticationResult)
+        }
     }
 
     @ViewBuilder

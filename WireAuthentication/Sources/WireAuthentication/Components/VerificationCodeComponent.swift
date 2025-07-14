@@ -50,16 +50,6 @@ class VerificationCodeComponent: Component<VerificationCodeComponentDependency> 
         super.init(parent: parent)
     }
 
-    // MARK: - Children
-
-    func noHistoryComponent(authenticationResult: AuthenticationResult) -> NoHistoryComponent {
-        NoHistoryComponent(
-            parent: self,
-            authenticationResult: authenticationResult,
-            didDetectDomainConflict: dependency.didDetectDomainConflict
-        )
-    }
-
 }
 
 extension VerificationCodeComponent: VerificationCodeViewModel.Factory {
@@ -75,9 +65,15 @@ extension VerificationCodeComponent: VerificationCodeViewModel.Factory {
             router: dependency.router
         )
     }
-
-    func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory {
-        noHistoryComponent(authenticationResult: authenticationResult)
+    
+    func noHistoryView(result: AuthenticationResult) -> NoHistoryView {
+        NoHistoryView { [unowned self] in
+            NoHistoryComponent(
+                parent: self,
+                authenticationResult: result,
+                didDetectDomainConflict: dependency.didDetectDomainConflict
+            )
+        }
     }
 
     // MARK: - Use cases

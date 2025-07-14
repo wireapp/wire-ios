@@ -43,7 +43,11 @@ struct FakeLoginViaEmailFactory: LoginViaEmailFactory, CreateAuthenticationResul
         )
     }
 
-    func destinationView(for destination: LoginViaEmailDestination) -> AnyView {
+    func verifyLoginView(email: String, password: String, proxyCredentials: ProxyCredentials?) -> VerificationCodeView {
+        fatalError()
+    }
+    
+    func noHistoryView(result: AuthenticationResult) -> NoHistoryView {
         fatalError()
     }
 

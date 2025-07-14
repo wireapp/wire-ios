@@ -103,10 +103,13 @@ final class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Fact
     ) -> any VerificationCodeFactory {
         fatalError("not needed here")
     }
-
-    func noHistoryFactory(authenticationResult: AuthenticationResult) -> any WireAuthenticationUI
-        .NoHistoryFactory {
-        fatalError("not needed here")
+    
+    func verifyLoginView(email: String, password: String, proxyCredentials: ProxyCredentials?) -> VerificationCodeView {
+        fatalError()
+    }
+    
+    func noHistoryView(result: AuthenticationResult) -> NoHistoryView {
+        fatalError()
     }
 
     func personalAccountCreationFactory() -> any PersonalAccountCreationFactory {

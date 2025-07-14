@@ -25,7 +25,15 @@ package protocol LoginViaEmailFactory {
 
     @MainActor var viewModel: LoginViaEmailViewModel { get }
 
-    func destinationView(for destination: LoginViaEmailDestination) -> AnyView
+    @MainActor
+    func verifyLoginView(
+        email: String,
+        password: String,
+        proxyCredentials: ProxyCredentials?
+    ) -> VerificationCodeView
+    
+    @MainActor
+    func noHistoryView(result: AuthenticationResult) -> NoHistoryView
 }
 
 package struct LoginViaEmailView: View {
@@ -93,7 +101,17 @@ package struct LoginViaEmailView: View {
 
     @ViewBuilder
     func destinationView(_ destination: LoginViaEmailDestination) -> some View {
-        viewModel.factory.destinationView(for: destination)
+        switch destination {
+        case .verifyLogin(let email, let password, let proxyCredentials):
+            viewModel.factory
+                .verifyLoginView(
+                    email: email,
+                    password: password,
+                    proxyCredentials: proxyCredentials
+                )
+        case .noHistory(let authenticationResult):
+            viewModel.factory.noHistoryView(result: authenticationResult)
+        }
     }
 
     @ViewBuilder private var welcomeMessage: some View {

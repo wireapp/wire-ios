@@ -42,8 +42,8 @@ struct FakeVerificationCodeFactory: VerificationCodeFactory,
             router: FakeRootFactory().viewModel
         )
     }
-
-    func noHistoryFactory(authenticationResult: WireAuthenticationAPI.AuthenticationResult) -> any NoHistoryFactory {
+    
+    func noHistoryView(result: AuthenticationResult) -> NoHistoryView {
         fatalError()
     }
 

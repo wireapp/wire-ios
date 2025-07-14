@@ -44,10 +44,18 @@ struct FakeDetermineAuthMethodFactory: DetermineAuthMethodFactory,
         return viewModel
     }
 
-    func destinationView(for destination: DetermineAuthMethodDestination) -> AnyView {
+    func loginView(email: String?, didDetectDomainConflict: Bool, backendInfo: BackendInfo) -> LoginViaEmailView {
         fatalError()
     }
-
+    
+    func loginOrRegisterView(email: String?, didDetectDomainConflict: Bool, backendInfo: BackendInfo) -> LoginViaEmailView {
+        fatalError()
+    }
+    
+    func noHistoryView(result: AuthenticationResult) -> NoHistoryView {
+        fatalError()
+    }
+    
     // MARK: - UseCases
 
     func determineAuthMethodUseCase() async throws -> any WireAuthenticationAPI.DetermineAuthMethodUseCaseProtocol {

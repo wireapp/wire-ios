@@ -25,7 +25,8 @@ package protocol VerificationCodeFactory {
     @MainActor var viewModel: VerificationCodeViewModel { get }
 
     @MainActor
-    func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory
+    func noHistoryView(result: AuthenticationResult) -> NoHistoryView
+
 }
 
 package struct VerificationCodeView: View {
@@ -91,11 +92,7 @@ package struct VerificationCodeView: View {
         .navigationDestination(for: VerificationCodeDestination.self) {
             switch $0 {
             case let .noHistory(authenticationResult):
-                NoHistoryView(
-                    factory: { viewModel.factory.noHistoryFactory(
-                        authenticationResult: authenticationResult
-                    ) }
-                )
+                viewModel.factory.noHistoryView(result: authenticationResult)
             }
         }
         .onAppear {

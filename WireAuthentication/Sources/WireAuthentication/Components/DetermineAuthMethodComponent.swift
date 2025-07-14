@@ -47,71 +47,47 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         super.init(parent: parent)
     }
 
-    // MARK: - Children
-
-    private func loginViaEmailComponent(
-        email: String?,
-        canCreateAccount: Bool,
-        didDetectDomainConflict: Bool,
-        backendInfo: BackendInfo
-    ) -> LoginViaEmailComponent {
-        let networkStack = NetworkStack(
-            backendInfo: backendInfo,
-            minTLSVersion: dependency.minTLSVersion,
-            preferredAPIVersion: dependency.preferredAPIVersion
-        )
-        return LoginViaEmailComponent(
-            parent: self,
-            email: email,
-            canCreateAccount: canCreateAccount,
-            didDetectDomainConflict: didDetectDomainConflict,
-            networkStack: networkStack
-        )
-    }
-
-    private func noHistoryComponent(authenticationResult: AuthenticationResult) -> NoHistoryComponent {
-        NoHistoryComponent(
-            parent: self,
-            authenticationResult: authenticationResult,
-            didDetectDomainConflict: false
-        )
-    }
 }
 
 extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
 
-    // MARK: Factory
-
     @MainActor
-    func destinationView(for destination: DetermineAuthMethodDestination) -> AnyView {
-        switch destination {
-        case let .login(
-            email,
-            didDetectDomainConflict,
-            backendInfo
-        ):
-            AnyView(LoginViaEmailView(factory: { [unowned self] in loginViaEmailFactory(
+    func loginView(
+        email: String?,
+        didDetectDomainConflict: Bool,
+        backendInfo: BackendInfo
+    ) -> LoginViaEmailView {
+        LoginViaEmailView(
+            factory: { [unowned self] in loginViaEmailFactory(
                 email: email,
                 canCreateAccount: false,
                 didDetectDomainConflict: didDetectDomainConflict,
                 backendInfo: backendInfo
-            ) }))
-        case let .loginOrRegister(
-            email,
-            didDetectDomainConflict,
-            backendInfo
-        ):
-            AnyView(LoginViaEmailView(factory: { [unowned self] in loginViaEmailFactory(
+            ) }
+        )
+    }
+    
+    @MainActor
+    func loginOrRegisterView(
+        email: String?,
+        didDetectDomainConflict: Bool,
+        backendInfo: BackendInfo
+    ) -> LoginViaEmailView {
+        LoginViaEmailView(
+            factory: { [unowned self] in loginViaEmailFactory(
                 email: email,
                 canCreateAccount: true,
                 didDetectDomainConflict: didDetectDomainConflict,
                 backendInfo: backendInfo
-            ) }))
-        case let .noHistory(authenticationResult):
-            AnyView(NoHistoryView(factory: { [unowned self] in
-                noHistoryFactory(authenticationResult: authenticationResult)
-            }))
-        }
+            ) }
+        )
+    }
+    
+    @MainActor
+    func noHistoryView(result: AuthenticationResult) -> NoHistoryView {
+        NoHistoryView(factory: { [unowned self] in
+            noHistoryFactory(authenticationResult: result)
+        })
     }
 
     @MainActor var viewModel: DetermineAuthMethodViewModel {
@@ -130,16 +106,26 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
         didDetectDomainConflict: Bool,
         backendInfo: BackendInfo
     ) -> any WireAuthenticationUI.LoginViaEmailFactory {
-        loginViaEmailComponent(
+        let networkStack = NetworkStack(
+            backendInfo: backendInfo,
+            minTLSVersion: dependency.minTLSVersion,
+            preferredAPIVersion: dependency.preferredAPIVersion
+        )
+        return LoginViaEmailComponent(
+            parent: self,
             email: email,
             canCreateAccount: canCreateAccount,
             didDetectDomainConflict: didDetectDomainConflict,
-            backendInfo: backendInfo
+            networkStack: networkStack
         )
     }
 
     private func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory {
-        noHistoryComponent(authenticationResult: authenticationResult)
+        NoHistoryComponent(
+            parent: self,
+            authenticationResult: authenticationResult,
+            didDetectDomainConflict: false
+        )
     }
 
     // MARK: Use cases
