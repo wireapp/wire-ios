@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireCellsBindings
 import WireCommonComponents
 import WireDesign
 import WireMainNavigationUI
@@ -46,7 +47,8 @@ final class ConversationRootViewController: UIViewController {
         userSession: UserSession,
         mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
-        mediaPlaybackManager: MediaPlaybackManager?
+        mediaPlaybackManager: MediaPlaybackManager?,
+        wireCellsFactory: WireCellsFactory
     ) {
         self.conversation = conversation
 
@@ -63,7 +65,8 @@ final class ConversationRootViewController: UIViewController {
                 repository: GetParticipantImageSourceRepository(
                     userSession: userSession
                 )
-            )
+            ),
+            wireCellsFactory: wireCellsFactory
         )
 
         self.conversationViewController = conversationController

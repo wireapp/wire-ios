@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireCellsBindings
 import WireCommonComponents
 import WireDesign
 import WireLogging
@@ -134,7 +135,8 @@ final class ConversationViewController: UIViewController {
         mediaPlaybackManager: MediaPlaybackManager?,
         classificationProvider: (any SecurityClassificationProviding)?,
         networkStatusObservable: any NetworkStatusObservable,
-        getParticipantImageSourceUseCase: any GetParticipantImageSourceUseCaseProtocol
+        getParticipantImageSourceUseCase: any GetParticipantImageSourceUseCaseProtocol,
+        wireCellsFactory: WireCellsFactory
     ) {
         self.conversation = conversation
         self.visibleMessage = visibleMessage
@@ -158,7 +160,8 @@ final class ConversationViewController: UIViewController {
             conversation: conversation,
             userSession: userSession,
             classificationProvider: classificationProvider,
-            networkStatusObservable: networkStatusObservable
+            networkStatusObservable: networkStatusObservable,
+            wireCellsFactory: wireCellsFactory
         )
 
         self.mediaBarViewController = MediaBarViewController(mediaPlaybackManager: mediaPlaybackManager)

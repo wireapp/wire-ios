@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireCellsBindings
 import WireDataModel
 import WireMainNavigationUI
 import WireSyncEngine
@@ -30,6 +31,7 @@ struct ConversationViewControllerBuilder: MainConversationUIBuilderProtocol {
     var userSession: UserSession
     var selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     var mediaPlaybackManager: MediaPlaybackManager?
+    var wireCellsFactory: WireCellsFactory
 
     func build<MainCoordinator: MainCoordinatorProtocol>(
         conversation: ConversationModel,
@@ -43,7 +45,8 @@ struct ConversationViewControllerBuilder: MainConversationUIBuilderProtocol {
             userSession: userSession,
             mainCoordinator: .init(mainCoordinator: mainCoordinator),
             selfProfileUIBuilder: selfProfileUIBuilder,
-            mediaPlaybackManager: mediaPlaybackManager
+            mediaPlaybackManager: mediaPlaybackManager,
+            wireCellsFactory: wireCellsFactory
         )
         viewController.hidesBottomBarWhenPushed = true
         return viewController

@@ -21,6 +21,7 @@ public import WireFoundation
 import Foundation
 import LocalAuthentication
 import WireDataModel
+import WireDomain
 
 /// An abstraction of the user session for use in the presentation
 /// layer.
@@ -295,4 +296,7 @@ public protocol UserSession: AnyObject {
 
     /// Cache for search users.
     var searchUsersCache: SearchUsersCache { get }
+
+    /// The authentication manager for the user session
+    var clientSessionComponent: ClientSessionComponent? { get }
 }

@@ -65,6 +65,7 @@ final class AuthenticatedRouter {
         mainWindow: UIWindow,
         account: Account,
         userSession: UserSession,
+        environment: BackendEnvironment,
         notificationCenter: NotificationCenter = .default,
         trackingManager: TrackingManager,
         featureRepositoryProvider: any FeatureRepositoryProvider,
@@ -79,7 +80,8 @@ final class AuthenticatedRouter {
         self.zClientControllerBuilder = .init(
             account: account,
             userSession: userSession,
-            trackingManager: trackingManager
+            trackingManager: trackingManager,
+            environment: environment
         )
 
         self.notificationCenter = notificationCenter

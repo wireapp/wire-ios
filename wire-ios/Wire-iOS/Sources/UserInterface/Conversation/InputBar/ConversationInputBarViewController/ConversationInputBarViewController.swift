@@ -28,6 +28,7 @@ import WireCellsUI
 import WireCommonComponents
 import WireDesign
 import WireLogging
+import WireNetwork
 import WireSyncEngine
 
 enum ConversationInputBarViewControllerMode {
@@ -358,29 +359,29 @@ final class ConversationInputBarViewController: UIViewController,
         userSession: UserSession,
         classificationProvider: (any SecurityClassificationProviding)?,
         networkStatusObservable: any NetworkStatusObservable,
-        wireCellsAssembly: WireCellsAssembly = WireCellsAssembly()
+        wireCellsFactory: WireCellsFactory
     ) {
         self.conversation = conversation
         self.userSession = userSession
         self.classificationProvider = classificationProvider
         self.networkStatusObservable = networkStatusObservable
         self.fileMetaDataGenerator = FileMetaDataGenerator.shared
-        self.uploadDraftUseCase = wireCellsAssembly.makeUploadDraftUseCase(
+        self.uploadDraftUseCase = wireCellsFactory.makeUploadDraftUseCase(
             cellName: conversation.wireCellName
         )
-        self.observeDraftsUseCase = wireCellsAssembly.makeObserveDraftsUseCase(
+        self.observeDraftsUseCase = wireCellsFactory.makeObserveDraftsUseCase(
             cellName: conversation.wireCellName
         )
-        self.clearPublishedDraftsUseCase = wireCellsAssembly.makeClearPublishedDraftsUseCase(
+        self.clearPublishedDraftsUseCase = wireCellsFactory.makeClearPublishedDraftsUseCase(
             cellName: conversation.wireCellName
         )
-        self.publishDraftsUseCase = wireCellsAssembly.makePublishDraftsUseCase(
+        self.publishDraftsUseCase = wireCellsFactory.makePublishDraftsUseCase(
             cellName: conversation.wireCellName
         )
-        self.deleteDraftUseCase = wireCellsAssembly.makeDeleteDraftUseCase(
+        self.deleteDraftUseCase = wireCellsFactory.makeDeleteDraftUseCase(
             cellName: conversation.wireCellName
         )
-        self.retryUploadDraftUseCase = wireCellsAssembly.makeRetryUploadDraftUseCase(
+        self.retryUploadDraftUseCase = wireCellsFactory.makeRetryUploadDraftUseCase(
             cellName: conversation.wireCellName
         )
 

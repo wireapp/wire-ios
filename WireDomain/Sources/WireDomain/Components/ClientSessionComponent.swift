@@ -104,7 +104,7 @@ public final class ClientSessionComponent {
         self.completionHandlers = completionHandlers
     }
 
-    private lazy var authenticationManager = AuthenticationManager(
+    private(set) public lazy var authenticationManager = AuthenticationManager(
         clientID: selfClientID,
         cookieStorage: cookieStorage,
         networkService: networkService,

@@ -51,6 +51,8 @@ public final class ZMUserSession: NSObject {
     private(set) var isNetworkOnline = true
 
     public private(set) var coreDataStack: CoreDataStack!
+
+    // FIXME: Use component instead
     private let apiServiceFactory: APIServiceFactory
     public var apiService: APIServiceProtocol? {
         guard let clientId = selfUserClient?.remoteIdentifier else {
@@ -389,7 +391,7 @@ public final class ZMUserSession: NSObject {
     var callStateObserverToken: AnyObject?
 
     private let userSessionComponent: UserSessionComponent
-    private(set) var clientSessionComponent: ClientSessionComponent?
+    private(set) public var clientSessionComponent: ClientSessionComponent?
 
     // MARK: - Initialize
 
@@ -398,7 +400,7 @@ public final class ZMUserSession: NSObject {
         transportSession: any TransportSessionType,
         mediaManager: any MediaManagerType,
         flowManager: any FlowManagerType,
-        apiServiceFactory: @escaping @Sendable (_ clientID: String, _ userID: UUID) -> APIServiceProtocol,
+        apiServiceFactory: @escaping APIServiceFactory,
         application: ZMApplication,
         currentAppVersion: String,
         currentBuildNumber: String,
