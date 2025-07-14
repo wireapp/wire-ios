@@ -145,7 +145,6 @@ private struct MockRegistrationAnalyticsTrackerProtocol: RegistrationAnalyticsTr
 private struct RegistrationAnalyticsIDRepositoryProtocolMock: RegistrationAnalyticsIDRepositoryProtocol {
 
     func storeAnalyticsID(for userID: UUID, analyticsID: UUID) {}
-    func updateAnalyticsTrackingConsent(for userID: UUID, isGiven: Bool) {}
     func deleteAnalyticsID(for userID: UUID) {}
 
 }

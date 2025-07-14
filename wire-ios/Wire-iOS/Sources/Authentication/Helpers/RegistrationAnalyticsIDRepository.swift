@@ -39,8 +39,4 @@ struct RegistrationAnalyticsIDRepository: RegistrationAnalyticsIDRepositoryProto
         journal(for: userID)[.analyticsIDFromRegistration] = nil
     }
 
-    func updateAnalyticsTrackingConsent(for userID: UUID, isGiven: Bool) {
-        journal(for: userID)[.isAnalyticsTrackingConsentGiven] = isGiven
-    }
-
 }

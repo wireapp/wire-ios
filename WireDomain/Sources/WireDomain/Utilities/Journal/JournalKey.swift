@@ -69,17 +69,6 @@ public extension JournalKey where Value == Bool {
 
 }
 
-public extension JournalKey where Value == Bool? {
-
-    /// Whether the user has given consent to track analytics.
-
-    static let isAnalyticsTrackingConsentGiven = Self(
-        "isAnalyticsTrackingConsentGiven",
-        defaultValue: nil
-    )
-
-}
-
 public extension JournalKey where Value == String? { // TODO: delete
 
     /// If the user went through the flow of registering a new personal account and gave consent to analytics tracking,
