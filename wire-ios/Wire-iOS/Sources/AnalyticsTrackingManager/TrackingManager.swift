@@ -20,6 +20,7 @@ import avs
 import Foundation
 import WireCommonComponents
 import WireDomain
+import WireFoundation
 import WireLogging
 import WireSyncEngine
 
@@ -29,9 +30,9 @@ final class TrackingManager: TrackingInterface {
     private let sessionManager: SessionManager
     private var observerToken: NSObjectProtocol?
 
-    private var journal: Journal? {
+    private var privateUserDefaults: PrivateUserDefaults<UserDefaultsKey>? {
         sessionManager.accountManager.selectedAccount.map { selectedAccount in
-            Journal(
+            PrivateUserDefaults<UserDefaultsKey>(
                 userID: selectedAccount.userIdentifier,
                 storage: sharedUserDefaults
             )
@@ -62,12 +63,12 @@ final class TrackingManager: TrackingInterface {
 
     private var doesUserConsentPreferenceExist: Bool {
         migrateFromLegacyStorageIfNeeded()
-        return journal?[.isAnalyticsTrackingConsentGiven] != nil
+        return privateUserDefaults?.object(forKey: .isAnalyticsTrackingEnabled) as? Bool != nil
     }
 
     var isAnalyticsTrackingEnabled: Bool {
         migrateFromLegacyStorageIfNeeded()
-        return journal?[.isAnalyticsTrackingConsentGiven] ?? false
+        return privateUserDefaults?.object(forKey: .isAnalyticsTrackingEnabled) as? Bool ?? false
     }
 
     func migrateAnalyticsSetupIfNeeded() async throws {
@@ -102,19 +103,19 @@ final class TrackingManager: TrackingInterface {
     func enableAnalytics() async throws {
         try await sessionManager.makeEnableAnalyticsUseCase()?.invoke()
         AVSFlowManager.getInstance()?.setEnableMetrics(true)
-        journal?[.isAnalyticsTrackingConsentGiven] = true
+        privateUserDefaults?.set(true, forKey: .isAnalyticsTrackingEnabled)
     }
 
     func disableAnalytics() throws {
         try sessionManager.makeDisableAnalyticsUseCase()?.invoke()
         AVSFlowManager.getInstance()?.setEnableMetrics(false)
-        journal?[.isAnalyticsTrackingConsentGiven] = false
+        privateUserDefaults?.set(false, forKey: .isAnalyticsTrackingEnabled)
     }
 
     /// Previously the consent for analytics tracking was stored only once per app.
     /// If the consent has been given, mark all currently set up accounts as consent being given.
 
-    private func migrateFromLegacyStorageIfNeeded() {
+    private func migrateFromLegacyStorageIfNeeded() { // TODO: use AppVersionMigration_4_2_0
         guard let disableAnalyticsSharing = ExtensionSettings.shared.disableAnalyticsSharing else { return }
 
         for account in sessionManager.accountManager.accounts {
@@ -124,6 +125,23 @@ final class TrackingManager: TrackingInterface {
         }
 
         ExtensionSettings.shared.disableAnalyticsSharing = nil
+    }
+
+}
+
+// MARK: - TrackingManager + UserDefaultsKey
+
+extension TrackingManager {
+
+    struct UserDefaultsKey: DefaultsKey {
+
+        static let isAnalyticsTrackingEnabled = UserDefaultsKey("isAnalyticsTrackingEnabled")
+
+        var rawValue: String
+
+        private init(_ rawValue: String) {
+            self.rawValue = rawValue
+        }
     }
 
 }

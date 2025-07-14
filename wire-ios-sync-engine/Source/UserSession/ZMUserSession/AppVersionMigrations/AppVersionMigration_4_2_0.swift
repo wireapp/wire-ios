@@ -24,6 +24,7 @@ struct AppVersionMigration_4_2_0: AppVersionMigration {
 
     let lastEventIDRepository: LastEventIDRepositoryInterface
     let journal: JournalProtocol
+    //let userDefaults: PrivateUserDefaults<>
     let version: SemanticVersion = "4.2.0"
 
     func perform() async throws {
