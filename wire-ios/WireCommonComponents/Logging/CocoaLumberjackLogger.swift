@@ -26,6 +26,7 @@ final class CocoaLumberjackLogger: LoggerProtocol {
 
     private let fileLogger: DDFileLogger = .init() // File Logger
     private var tags = [LogAttributesKey: String]()
+    private let tagsQueue = DispatchQueue(label: "CocoaLumberjackLogger.tagsQueue", attributes: .concurrent)
 
     init() {
         fileLogger.rollingFrequency = 60 * 60 * 24 // 24 hours
@@ -69,12 +70,11 @@ final class CocoaLumberjackLogger: LoggerProtocol {
             mergedAttributes.merge($0) { _, new in new }
         }
 
-        // TODO: [WPB-6432] enable when ZMSLog is cleaned up
-        // let isSafe = mergedAttributes[.public] as? Bool == true
-        // guard isDebug || isSafe else {
-        //    // skips logs in production builds with non redacted info
-        //    return
-        // }
+        let isSafe = mergedAttributes[.public] as? Bool == true
+        guard isDebug || isSafe else {
+            // skips logs in production builds with non redacted info
+            return
+        }
 
         // Filter logs by level:
         // Only continue if we're running a DEBUG build or
@@ -95,8 +95,13 @@ final class CocoaLumberjackLogger: LoggerProtocol {
         var entry =
             "[\(formattedLevel(level))] \(message.logDescription)\(attributesDescription(from: mergedAttributes))"
 
-        if !tags.isEmpty {
-            let extraInfo = tags.map { key, value in "[\(key.rawValue):\(value)]" }.joined()
+        var currentTags: [LogAttributesKey: String] = [:]
+        tagsQueue.sync {
+            currentTags = tags
+        }
+
+        if !currentTags.isEmpty {
+            let extraInfo = currentTags.map { key, value in "[\(key.rawValue):\(value)]" }.joined()
             entry += extraInfo
         }
 
@@ -109,10 +114,12 @@ final class CocoaLumberjackLogger: LoggerProtocol {
     }
 
     func addTag(_ key: LogAttributesKey, value: String?) {
-        if let value {
-            tags[key] = value
-        } else {
-            tags.removeValue(forKey: key)
+        tagsQueue.async(flags: .barrier) { [weak self] in
+            if let value {
+                self?.tags[key] = value
+            } else {
+                self?.tags.removeValue(forKey: key)
+            }
         }
     }
 

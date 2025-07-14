@@ -230,6 +230,8 @@ final class ConversationInputBarViewController: UIViewController,
     let publishDraftsUseCase: WireCellsPublishDraftsUseCaseProtocol
     let clearPublishedDraftsUseCase: WireCellsClearPublishedDraftsUseCaseProtocol
     private let observeDraftsUseCase: WireCellsObserveDraftsUseCaseProtocol
+    private let deleteDraftUseCase: WireCellsDeleteDraftUseCaseProtocol
+    private let retryUploadDraftUseCase: WireCellsRetryUploadDraftUseCaseProtocol
     private let attachmentsCarouselViewModel = AttachmentsCarouselViewModel(items: [])
 
     private var inputBarButtons: [IconButton] {
@@ -373,6 +375,12 @@ final class ConversationInputBarViewController: UIViewController,
             cellName: conversation.wireCellName
         )
         self.publishDraftsUseCase = wireCellsAssembly.makePublishDraftsUseCase(
+            cellName: conversation.wireCellName
+        )
+        self.deleteDraftUseCase = wireCellsAssembly.makeDeleteDraftUseCase(
+            cellName: conversation.wireCellName
+        )
+        self.retryUploadDraftUseCase = wireCellsAssembly.makeRetryUploadDraftUseCase(
             cellName: conversation.wireCellName
         )
 
@@ -1088,8 +1096,16 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
             rootView: AttachmentsCarousel(
                 viewModel: attachmentsCarouselViewModel,
                 onTap: { WireLogger.conversation.debug("Did tap draft attachment: \($0)") },
-                onRemove: { WireLogger.conversation.debug("Did tap remove draft attachment: \($0)") },
-                onOptions: { WireLogger.conversation.debug("Did tap options on draft attachment: \($0)") }
+                onRemove: { [deleteDraftUseCase] item in
+                    Task.detached {
+                        try? await deleteDraftUseCase.invoke(nodeID: item.id)
+                    }
+                },
+                onRetry: { [retryUploadDraftUseCase] item in
+                    Task.detached {
+                        try? await retryUploadDraftUseCase.invoke(nodeID: item.id)
+                    }
+                }
             )
         )
         addChild(carouselViewController)

@@ -52,8 +52,8 @@ public final class WireAuthenticationBridge {
     public enum OutboundEvent {
 
         case userAuthenticated(AuthenticationResult)
-        case accountRegistrationRequested(email: String?, WireAuthenticationBackendEnvironment)
         case exitFlowRequested
+
     }
 
     /// Events originating outside the feature module and

@@ -110,7 +110,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
 
     func updateFeatureConfig(
         _ featureConfig: FeatureConfig
-    ) async throws {
+    ) async {
         guard let featureConfigInfo = getFeatureConfigInfo(
             featureConfig
         ) else {

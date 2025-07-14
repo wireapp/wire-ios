@@ -17,8 +17,8 @@
 //
 
 import SwiftUI
-import WireConversationsAPI
-import WireConversationsUI
+import WireMessagingAPI
+import WireMessagingUI
 import WireSyncEngine
 
 final class WireConversationChannelCreationFormViewControllerFactory {

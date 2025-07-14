@@ -18,11 +18,10 @@
 
 import UIKit
 import WireCommonComponents
-import WireConversationsUI
-import WireConversationUI
 import WireDesign
 import WireLogging
 import WireMainNavigationUI
+import WireMessagingUI
 import WireSyncEngine
 
 final class ConversationViewController: UIViewController {
@@ -85,9 +84,9 @@ final class ConversationViewController: UIViewController {
     let conversationBarController: BarController = .init()
     let guestsBarController: GuestsBarController = .init()
     let invisibleInputAccessoryView: InvisibleInputAccessoryView = .init()
-    let mediaBarViewController: MediaBarViewController
+    private let mediaBarViewController: MediaBarViewController
 
-    private let titleView: WireConversationUI.ConversationTitleView
+    private let titleView: WireMessagingUI.ConversationTitleView
 
     let userSession: UserSession
 
@@ -164,7 +163,7 @@ final class ConversationViewController: UIViewController {
 
         self.mediaBarViewController = MediaBarViewController(mediaPlaybackManager: mediaPlaybackManager)
 
-        self.titleView = WireConversationUI.ConversationTitleView(
+        self.titleView = WireMessagingUI.ConversationTitleView(
             source: ConversationTitleSource(
                 accountImageSource: nil,
                 title: conversation.displayNameWithFallback,
@@ -742,13 +741,11 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
             contentViewController.scrollToBottomIfNeeded()
         }
 
-        setGuestBarForceHidden(true)
         return true
     }
 
     func conversationInputBarViewControllerShouldEndEditing(_ controller: ConversationInputBarViewController) -> Bool {
-        setGuestBarForceHidden(false)
-        return true
+        true
     }
 
     func conversationInputBarViewControllerDidFinishEditing(

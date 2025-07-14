@@ -34,7 +34,7 @@ final class TrackingManager: TrackingInterface {
         self.observerToken = NotificationCenter.default.addObserver(
             forName: FlowManager.AVSFlowManagerCreatedNotification,
             object: nil,
-            queue: OperationQueue.main,
+            queue: .main,
             using: { [weak self] _ in
                 guard let self else { return }
                 AVSFlowManager.getInstance()?.setEnableMetrics(!isAnalyticsDisabled)

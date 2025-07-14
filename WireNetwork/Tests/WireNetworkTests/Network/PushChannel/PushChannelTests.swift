@@ -191,12 +191,12 @@ private enum Scaffolding {
     }
 
     static let conversationID = ConversationID(
-        uuid: UUID(uuidString: "a644fa88-2d83-406b-8a85-d4fd8dedad6b")!,
+        id: UUID(uuidString: "a644fa88-2d83-406b-8a85-d4fd8dedad6b")!,
         domain: "example.com"
     )
 
     static let senderID = UserID(
-        uuid: UUID(uuidString: "f55fe9b0-a0cc-4b11-944b-125c834d9b6a")!,
+        id: UUID(uuidString: "f55fe9b0-a0cc-4b11-944b-125c834d9b6a")!,
         domain: "example.com"
     )
 

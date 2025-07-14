@@ -175,13 +175,15 @@ class ZMUserSessionTestsBase: MessagingTest {
             userID: coreDataStack.account.userIdentifier,
             storage: UserDefaults.temporary()
         )
+        let logFilesProvider = MockLogFilesProviding()
 
         var builder = ZMUserSessionBuilder()
         builder.withAllDependencies(
             apiServiceFactory: { _, _ in MockAPIService() },
             backendEnvironment: backendEnvironment,
             wireAPIBackendEnvironment: wireAPIBackendEnvironment,
-            appVersion: "00000",
+            currentAppVersion: "3.120.0",
+            currentBuildNumber: "00000",
             application: application,
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             coreDataStack: coreDataStack,
@@ -198,7 +200,8 @@ class ZMUserSessionTestsBase: MessagingTest {
             transportSession: transportSession,
             userId: coreDataStack.account.userIdentifier,
             minTLSVersion: nil,
-            journal: journal
+            journal: journal,
+            logFilesProvider: logFilesProvider
         )
 
         let userSession = builder.build()

@@ -81,10 +81,10 @@ struct ConversationTextMessageNotificationBuilder: ConversationTextMessageNotifi
         content.sound = makeSound()
         content.userInfo = makeUserInfo(
             selfUserID: selfUserID,
-            senderID: senderID.uuid,
+            senderID: senderID.id,
             conversationID: conversationID
         )
-        content.threadIdentifier = conversationID.uuid.transportString()
+        content.threadIdentifier = conversationID.id.transportString()
 
         if isMention {
             await context.increateUnreadSelfMentionCount(
@@ -150,7 +150,7 @@ struct ConversationTextMessageNotificationBuilder: ConversationTextMessageNotifi
 
         userInfo[NotificationUserInfoKey.selfUserID] = selfUserID.uuidString
         userInfo[NotificationUserInfoKey.senderID] = senderID.uuidString
-        userInfo[NotificationUserInfoKey.conversationID] = conversationID.uuid.uuidString
+        userInfo[NotificationUserInfoKey.conversationID] = conversationID.id.uuidString
 
         return userInfo
     }
@@ -171,7 +171,7 @@ extension ConversationTextMessageNotificationBuilder {
             conversationID: ConversationID
         ) async -> ZMConversation {
             await conversationLocalStore.fetchOrCreateConversation(
-                id: conversationID.uuid,
+                id: conversationID.id,
                 domain: conversationID.domain
             )
         }
@@ -184,7 +184,7 @@ extension ConversationTextMessageNotificationBuilder {
             senderID: UserID
         ) async -> ZMUser {
             await userLocalStore.fetchOrCreateUser(
-                id: senderID.uuid,
+                id: senderID.id,
                 domain: senderID.domain
             )
         }
@@ -221,7 +221,7 @@ extension ConversationTextMessageNotificationBuilder {
         ) async -> ZMOTRMessage? {
             await messageLocalStore.fetchMessage(
                 id: id,
-                conversationID: conversationID.uuid,
+                conversationID: conversationID.id,
                 conversationDomain: conversationID.domain
             )
         }

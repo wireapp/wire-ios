@@ -20,23 +20,44 @@ import Foundation
 
 /// The various types of conversations.
 
-public enum ConversationType: Int, Codable, Sendable {
+public enum ConversationType: Sendable {
 
     /// A conversation with many participants.
 
-    case group = 0
+    case group
 
     /// A conversation with only the self user.
 
-    case `self` = 1
+    case `self`
 
     /// A conversation between the two users.
 
-    case oneOnOne = 2
+    case oneOnOne
 
     /// A placeholder conversation for a pending connection
     /// to another user.
 
+    case connection
+
+}
+
+enum ConversationTypeV0: Int, Sendable, Decodable, ToAPIModelConvertible {
+
+    case group = 0
+    case `self` = 1
+    case oneOnOne = 2
     case connection = 3
 
+    func toAPIModel() -> ConversationType {
+        switch self {
+        case .group:
+            .group
+        case .self:
+            .self
+        case .oneOnOne:
+            .oneOnOne
+        case .connection:
+            .connection
+        }
+    }
 }

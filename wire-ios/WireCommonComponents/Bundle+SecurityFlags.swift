@@ -30,6 +30,7 @@ public enum SecurityFlags {
     case forceCallKitDisabled
     case clipboard
     case collapseOwnMessages
+    case openLinksExternally
 
     /// Whether encryption at rest is enabled and can't be disabled.
 
@@ -71,6 +72,8 @@ public enum SecurityFlags {
             "CollapseOwnMessages"
         case .useEmbeddedIDPUserAgent:
             "UseEmbeddedIDPUserAgent"
+        case .openLinksExternally:
+            "OpenLinksExternally"
         }
     }
 

@@ -21,7 +21,7 @@ import Foundation
 /// A migration to be performed when the app updates
 /// to or past a particular version.
 
-protocol AppVersionMigration {
+public protocol AppVersionMigration {
 
     /// The app version for which this migration should
     /// be run.

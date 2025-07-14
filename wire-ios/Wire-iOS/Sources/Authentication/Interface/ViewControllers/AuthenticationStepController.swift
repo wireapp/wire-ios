@@ -105,6 +105,7 @@ class AuthenticationStepController: AuthenticationStepViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+
         configureObservers()
         showKeyboard()
         UIAccessibility.post(notification: .screenChanged, argument: headlineLabel)

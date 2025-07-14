@@ -322,6 +322,11 @@ public final class ClientSessionComponent {
         store: userConnectionsStore
     )
 
+    private lazy var pullServerTimeSync = PullServerTimeSync(
+        api: updateEventsAPI,
+        store: updateEventsLocalStore
+    )
+
     // MARK: - Push syncs
 
     private lazy var pushSupportedProtocolsSync = PushSupportedProtocolsSync(
@@ -385,6 +390,7 @@ public final class ClientSessionComponent {
 
     public lazy var incrementalSyncV2 = IncrementalSyncV2(
         selfClientID: selfClientID,
+        pullServerTimeSync: pullServerTimeSync,
         pushChannelAPI: pushChannelV2API,
         decryptor: updateEventDecryptor,
         updateEventsStore: updateEventsLocalStore,
@@ -392,6 +398,7 @@ public final class ClientSessionComponent {
         processor: updateEventProcessor,
         databaseSaver: databaseSaver,
         syncStateSubject: syncStateSubject,
+        coreCryptoProvider: coreCryptoProvider,
         journal: journal
     )
 

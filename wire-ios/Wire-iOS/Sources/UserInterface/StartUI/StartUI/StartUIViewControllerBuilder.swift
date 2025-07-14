@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireConversationsUIBindings
 import WireMainNavigationUI
+import WireMessagingUIBindings
 import WireSyncEngine
 
 final class StartUIViewControllerBuilder: ConnectViewControllerBuilderProtocol {

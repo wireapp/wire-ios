@@ -32,4 +32,5 @@ public struct CountlyDummy: CountlyProtocol {
     public func beginSession() {}
     public func endSession() {}
     public func recordEvent(_ key: String, segmentation: [String: String]?) {}
+
 }

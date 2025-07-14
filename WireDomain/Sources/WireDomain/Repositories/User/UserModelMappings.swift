@@ -31,7 +31,7 @@ extension Collection<WireDataModel.QualifiedID> {
 extension WireDataModel.QualifiedID {
 
     func toAPIModel() -> WireNetwork.QualifiedID {
-        UserID(uuid: uuid, domain: domain)
+        UserID(id: uuid, domain: domain)
     }
 
 }
@@ -39,7 +39,7 @@ extension WireDataModel.QualifiedID {
 extension WireNetwork.QualifiedID {
 
     func toDomainModel() -> WireDataModel.QualifiedID {
-        WireDataModel.QualifiedID(uuid: uuid, domain: domain)
+        WireDataModel.QualifiedID(uuid: id, domain: domain)
     }
 
 }

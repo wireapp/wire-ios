@@ -69,7 +69,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
     func decryptEvents(
         in eventEnvelope: UpdateEventEnvelope,
         context: CoreCryptoContextProtocol?
-    ) async throws -> EventDecryptorResult {
+    ) async -> EventDecryptorResult {
         guard !DeveloperFlag.skipMLSMessagesDecryption.isOn else {
             return EventDecryptorResult(events: [], brokenMLSGroupIDs: [])
         }
@@ -197,7 +197,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         }
 
         let systemMessageType: SystemMessageType = .decryptionFailed(
-            sender: (eventData.senderID.uuid, eventData.senderID.domain),
+            sender: (eventData.senderID.id, eventData.senderID.domain),
             senderClientID: eventData.messageSenderClientID,
             remoteIdentityChanged: error == .RemoteIdentityChanged,
             date: eventData.timestamp
@@ -205,7 +205,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
 
         await messageLocalStore.addSystemMessage(
             messageType: systemMessageType,
-            conversationID: eventData.conversationID.uuid,
+            conversationID: eventData.conversationID.id,
             conversationDomain: eventData.conversationID.domain
         )
     }

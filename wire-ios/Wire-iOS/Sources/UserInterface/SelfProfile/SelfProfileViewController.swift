@@ -322,6 +322,14 @@ final class SelfProfileViewController: UIViewController {
         }
     }
 
+    func triggerCreateTeamFlow() {
+        if let backendInfoApiVersion = BackendInfo.apiVersion,
+           let apiVersion = APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
+           apiVersion >= .v7 {
+            onTeamCreationBannerInteraction(.createWireTeam, apiVersion: apiVersion)
+        }
+    }
+
     private func userDidTapCreateTeam(useCase: any IndividualToTeamMigrationUseCaseProtocol, userName: String) {
 
         analyticsEventTracker?.trackEvent(.UI.personalToTeamMigrationCTA)
@@ -371,7 +379,14 @@ final class SelfProfileViewController: UIViewController {
         )
         viewController.modalPresentationStyle = .formSheet
         viewController.presentationController?.delegate = viewController
-        present(viewController, animated: true)
+
+        if presentedViewController != nil {
+            dismiss(animated: true) {
+                self.present(viewController, animated: true)
+            }
+        } else {
+            present(viewController, animated: true)
+        }
     }
 
     private func dismissIndividualToTeamMigrationBanner() {
