@@ -97,7 +97,7 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
             }
         )
     }
-    
+
     @MainActor
     func personalAccountCreationView(teamAccountCreationLink: URL?) -> PersonalAccountCreationView {
         let factory = personalAccountCreationFactory(

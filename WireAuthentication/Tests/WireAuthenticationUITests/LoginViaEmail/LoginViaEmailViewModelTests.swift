@@ -110,7 +110,7 @@ final class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Fact
     func noHistoryView(result: AuthenticationResult) -> NoHistoryView {
         fatalError()
     }
-    
+
     func personalAccountCreationView(teamAccountCreationLink: URL?) -> PersonalAccountCreationView {
         fatalError("not needed here")
     }
