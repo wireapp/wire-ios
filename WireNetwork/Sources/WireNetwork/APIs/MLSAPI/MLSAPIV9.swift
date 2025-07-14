@@ -30,7 +30,7 @@ final class MLSAPIV9: MLSAPIV8 {
             encodedJSON = try JSONEncoder.defaultEncoder.encode(parameters)
         } catch {
             assertionFailure("failed to encode body")
-            throw MLSAPIError.invalidRequestBody(error)
+            throw MLSAPIError.invalidRequestBody
         }
         
         let request = try URLRequestBuilder(path: "\(pathPrefix)/mls/reset-conversation")
@@ -53,30 +53,31 @@ final class MLSAPIV9: MLSAPIV8 {
                 .failure(code: .conflict, decodableError: FailureResponseV0.self) // 409
                 .parse(code: response.statusCode, data: data)
         } catch {
-            if let failureResponse = error as? FailureResponse {
+            if let failureResponse = error as? FailureResponseV0 {
                 
                 switch failureResponse.label {
                 case "mls-protocol-error":
-                    throw MLSAPIError.mlsProtocolError(failureResponse.message)
+                    throw MLSAPIError
+                        .mlsProtocolError(message: failureResponse.message)
                 case "mls-group-id-not-supported":
-                    throw MLSAPIError.mlsGroupIdNotSupported(failureResponse.message)
+                    throw MLSAPIError.mlsGroupIdNotSupported(message: failureResponse.message)
                 case "mls-federated-reset-not-supported":
-                    throw MLSAPIError.mlsFederatedResetNotSupported(failureResponse.message)
+                    throw MLSAPIError.mlsFederatedResetNotSupported(message: failureResponse.message)
                 case "mls-not-enabled":
-                    throw MLSAPIError.mlsNotEnabled(failureResponse.message)
-                case "action-denied":
-                    throw MLSAPIError.actionDenied(failureResponse.message)
+                    throw MLSAPIError.mlsNotEnabledWithMessage(message: failureResponse.message)
                 case "invalid-op":
-                    throw MLSAPIError.invalidOperation(failureResponse.message)
+                    throw MLSAPIError.invalidOperation(message: failureResponse.message)
+                case "action-denied":
+                    throw MLSAPIError.actionDenied(message: failureResponse.message)
+                case "access-denied":
+                    throw MLSAPIError.accessDenied(message: failureResponse.message)
                 case "no-conversation":
-                    throw MLSAPIError.noConversation(failureResponse.message)
+                    throw MLSAPIError.noConversation(message: failureResponse.message)
                 case "mls-stale-message":
-                    throw MLSAPIError.mlsStaleMessage(failureResponse.message)
-
+                    throw MLSAPIError.mlsStaleMessageWithMessage(message: failureResponse.message)
                 default:
                     throw MLSAPIError.mlsError(failureResponse.label, failureResponse.message)
                 }
-
             } else {
                 throw error
             }

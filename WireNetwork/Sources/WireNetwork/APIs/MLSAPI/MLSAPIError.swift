@@ -33,6 +33,10 @@ public enum MLSAPIError: Error, Equatable {
         let encodableObject = toNetworkModel()
         return String(decoding: try encoder.encode(encodableObject), as: UTF8.self)
     }
+    
+    /// Request body is invalid
+    
+    case invalidRequestBody
 
     /// Unsupported endpoint for API version
 
@@ -41,12 +45,14 @@ public enum MLSAPIError: Error, Equatable {
     /// MLS is not configured on this backend
 
     case mlsNotEnabled
-    //case mlsNotEnabled(message: String)
+    
+    case mlsNotEnabledWithMessage(message: String)
 
     /// Message was sent in an too old epoch
 
     case mlsStaleMessage
-    //case mlsStaleMessage(message: String)
+    
+    case mlsStaleMessageWithMessage(message: String)
 
     /// A proposal of type Add or Remove does not apply to the full list of clients for a user
 
@@ -72,9 +78,13 @@ public enum MLSAPIError: Error, Equatable {
 
     case mlsFederatedResetNotSupported(message: String)
     
-    /// Insufficient authorization (missing leave_conversation) | Conversation access denied
+    /// Insufficient authorization (missing leave_conversation)
 
     case actionDenied(message: String)
+    
+    /// Conversation access denied
+
+    case accessDenied(message: String)
     
     /// Invalid operation
 
