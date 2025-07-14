@@ -35,7 +35,7 @@ final class TrackingManager: TrackingInterface {
         sessionManager.accountManager.selectedAccount.map { selectedAccount in
             PrivateUserDefaults<UserDefaultsKey>(
                 userID: selectedAccount.userIdentifier,
-                storage: sharedUserDefaults
+                storage: UserDefaults.standard
             )
         }
     }
