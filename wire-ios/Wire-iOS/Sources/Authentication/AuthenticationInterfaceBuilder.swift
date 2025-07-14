@@ -97,7 +97,7 @@ final class AuthenticationInterfaceBuilder {
                 RegistrationAnalyticsTracker(
                     analyticsServiceConfiguration: analyticsServiceConfiguration,
                     countlyProvider: { CountlyWrapper() },
-                    userDefaults: .applicationGroup
+                    userDefaults: .applicationGroup // TODO: .standard could be used
                 )
             }
             let registrationAnalyticsIDRepository = RegistrationAnalyticsIDRepository(userDefaults: .applicationGroup)

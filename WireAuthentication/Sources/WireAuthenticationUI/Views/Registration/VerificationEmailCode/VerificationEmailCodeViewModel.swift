@@ -222,7 +222,6 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
     }
 
     private func configureAnalytics(for userID: UUID) {
-        analyticsEventTracker?.deleteTempAnalyticsID()
         if isDataUsageAgreementAccepted {
             if let analyticsIDString = analyticsEventTracker?.currentDeviceID,
                let analyticsID = UUID(uuidString: analyticsIDString) {
@@ -232,6 +231,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
         } else {
             analyticsIDRepository.deleteAnalyticsID(for: userID)
         }
+        analyticsEventTracker?.deleteTempAnalyticsID()
     }
 
 }
