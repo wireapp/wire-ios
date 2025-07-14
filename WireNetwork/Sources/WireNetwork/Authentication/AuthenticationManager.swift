@@ -21,7 +21,7 @@ import WireFoundation
 import WireLogging
 
 // sourcery: AutoMockable
-public protocol AuthenticationManagerProtocol {
+public protocol AuthenticationManagerProtocol: Sendable {
 
     func getValidAccessToken() async throws -> AccessToken
     func refreshAccessToken() async throws -> AccessToken
@@ -44,13 +44,13 @@ public actor AuthenticationManager: AuthenticationManagerProtocol {
     }
 
     private var currentToken: CurrentToken?
-    private let clientID: String?
+    private let clientID: String
     private let cookieStorage: any CookieStorageProtocol
     private let networkService: any NetworkServiceProtocol
     private let onAuthenticationFailure: () -> Void
 
     public init(
-        clientID: String?,
+        clientID: String,
         cookieStorage: any CookieStorageProtocol,
         networkService: any NetworkServiceProtocol,
         onAuthenticationFailure: @escaping () -> Void
@@ -141,17 +141,11 @@ public actor AuthenticationManager: AuthenticationManagerProtocol {
         Task {
             let cookies = try await cookieStorage.fetchCookies()
 
-            var requestBuilder = try URLRequestBuilder(path: "/access")
+            let requestBuilder = try URLRequestBuilder(path: "/access")
                 .withMethod(.post)
                 .withAcceptType(.json)
                 .withCookies(cookies)
-
-            if let clientID {
-                requestBuilder = requestBuilder.withQueryItem(
-                    name: "client_id",
-                    value: clientID
-                )
-            }
+                .withQueryItem(name: "client_id", value: clientID)
 
             var request = requestBuilder.build()
 
