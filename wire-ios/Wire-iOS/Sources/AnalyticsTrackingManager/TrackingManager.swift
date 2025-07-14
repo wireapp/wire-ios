@@ -61,7 +61,7 @@ final class TrackingManager: TrackingInterface {
     }
 
     private var doesUserConsentPreferenceExist: Bool {
-        privateUserDefaults?.object(forKey: .isAnalyticsTrackingEnabled) as? Bool != nil
+        privateUserDefaults?.object(forKey: .isAnalyticsTrackingEnabled) is Bool
     }
 
     var isAnalyticsTrackingEnabled: Bool {

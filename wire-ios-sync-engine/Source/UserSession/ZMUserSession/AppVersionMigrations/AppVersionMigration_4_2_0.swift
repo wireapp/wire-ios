@@ -41,10 +41,11 @@ struct AppVersionMigration_4_2_0: AppVersionMigration {
     /// Previously the decision for enabling analytics was stored only once per app and will be migrated to per account.
 
     private func migrateAnalyticsTrackingUserDefaultsValue() {
+        let oldUserDefaultsKey = "disableAnalyticsSharing"
         guard
             let sessionManager,
             let sharedUserDefaults = UserDefaults.shared(),
-            let disableAnalyticsSharing = sharedUserDefaults.value(forKey: "disableAnalyticsSharing") as? Bool
+            let disableAnalyticsSharing = sharedUserDefaults.value(forKey: oldUserDefaultsKey) as? Bool
         else { return }
 
         for account in sessionManager.accountManager.accounts {
@@ -55,6 +56,8 @@ struct AppVersionMigration_4_2_0: AppVersionMigration {
             )
             privateUserDefaults.set(!disableAnalyticsSharing, forKey: .isAnalyticsTrackingEnabled)
         }
+
+        sharedUserDefaults.removeObject(forKey: oldUserDefaultsKey)
     }
 
 }
