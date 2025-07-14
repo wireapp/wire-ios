@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import SwiftUI
 import WireAuthenticationAPI
 import WireReusableUIComponents
 
@@ -46,7 +45,7 @@ struct FakeLoginViaEmailFactory: LoginViaEmailFactory, CreateAuthenticationResul
     func verifyLoginView(email: String, password: String, proxyCredentials: ProxyCredentials?) -> VerificationCodeView {
         fatalError()
     }
-    
+
     func noHistoryView(result: AuthenticationResult) -> NoHistoryView {
         fatalError()
     }

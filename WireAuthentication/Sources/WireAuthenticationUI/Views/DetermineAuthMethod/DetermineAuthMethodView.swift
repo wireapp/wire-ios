@@ -31,17 +31,17 @@ package protocol DetermineAuthMethodFactory {
         didDetectDomainConflict: Bool,
         backendInfo: BackendInfo
     ) -> LoginViaEmailView
-    
+
     @MainActor
     func loginOrRegisterView(
         email: String?,
         didDetectDomainConflict: Bool,
         backendInfo: BackendInfo
     ) -> LoginViaEmailView
-    
+
     @MainActor
     func noHistoryView(result: AuthenticationResult) -> NoHistoryView
-    
+
 }
 
 package struct DetermineAuthMethodView: View {
@@ -171,17 +171,17 @@ package struct DetermineAuthMethodView: View {
     @ViewBuilder
     private func destinationView(for destination: DetermineAuthMethodDestination) -> some View {
         switch destination {
-        case .login(let email, let didDetectDomainConflict, let backendInfo):
+        case let .login(email, didDetectDomainConflict, backendInfo):
             viewModel.factory
                 .loginView(
                     email: email,
                     didDetectDomainConflict: didDetectDomainConflict,
                     backendInfo: backendInfo
                 )
-        case .loginOrRegister(
-            let email,
-            let didDetectDomainConflict,
-            let backendInfo
+        case let .loginOrRegister(
+            email,
+            didDetectDomainConflict,
+            backendInfo
         ):
             viewModel.factory
                 .loginOrRegisterView(
@@ -189,7 +189,7 @@ package struct DetermineAuthMethodView: View {
                     didDetectDomainConflict: didDetectDomainConflict,
                     backendInfo: backendInfo
                 )
-        case .noHistory(let authenticationResult):
+        case let .noHistory(authenticationResult):
             viewModel.factory.noHistoryView(result: authenticationResult)
         }
     }

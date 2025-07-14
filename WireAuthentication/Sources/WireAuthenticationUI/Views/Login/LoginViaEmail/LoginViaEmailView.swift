@@ -31,7 +31,7 @@ package protocol LoginViaEmailFactory {
         password: String,
         proxyCredentials: ProxyCredentials?
     ) -> VerificationCodeView
-    
+
     @MainActor
     func noHistoryView(result: AuthenticationResult) -> NoHistoryView
 }
@@ -43,7 +43,7 @@ package struct LoginViaEmailView: View {
     private typealias Strings = L10n.Localizable
 
     package init(
-        factory: @escaping () -> any LoginViaEmailFactory
+        factory: @autoclosure @escaping () -> any LoginViaEmailFactory
     ) {
         self._viewModel = StateObject(wrappedValue: factory().viewModel)
     }
@@ -102,14 +102,14 @@ package struct LoginViaEmailView: View {
     @ViewBuilder
     func destinationView(_ destination: LoginViaEmailDestination) -> some View {
         switch destination {
-        case .verifyLogin(let email, let password, let proxyCredentials):
+        case let .verifyLogin(email, password, proxyCredentials):
             viewModel.factory
                 .verifyLoginView(
                     email: email,
                     password: password,
                     proxyCredentials: proxyCredentials
                 )
-        case .noHistory(let authenticationResult):
+        case let .noHistory(authenticationResult):
             viewModel.factory.noHistoryView(result: authenticationResult)
         }
     }

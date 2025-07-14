@@ -19,7 +19,7 @@
 import Foundation
 import WireAuthenticationAPI
 
-package enum LoginViaEmailDestination: Hashable {
+enum LoginViaEmailDestination: Hashable {
 
     case verifyLogin(
         email: String,

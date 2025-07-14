@@ -70,24 +70,21 @@ final class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> 
 extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
 
     // MARK: - Factory
-    
+
     @MainActor
     func verifyLoginView(
         email: String,
         password: String,
         proxyCredentials: ProxyCredentials?
     ) -> VerificationCodeView {
-        VerificationCodeView(
-            factory: { [unowned self] in
-                verificationCodeFactory(
-                    email: email,
-                    password: password,
-                    proxyCredentials: proxyCredentials
-                )
-            }
+        let factory = verificationCodeFactory(
+            email: email,
+            password: password,
+            proxyCredentials: proxyCredentials
         )
+        return VerificationCodeView(factory: factory)
     }
-    
+
     @MainActor
     func noHistoryView(result: AuthenticationResult) -> NoHistoryView {
         NoHistoryView(

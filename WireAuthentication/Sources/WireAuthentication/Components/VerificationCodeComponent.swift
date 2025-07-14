@@ -65,7 +65,7 @@ extension VerificationCodeComponent: VerificationCodeViewModel.Factory {
             router: dependency.router
         )
     }
-    
+
     func noHistoryView(result: AuthenticationResult) -> NoHistoryView {
         NoHistoryView { [unowned self] in
             NoHistoryComponent(

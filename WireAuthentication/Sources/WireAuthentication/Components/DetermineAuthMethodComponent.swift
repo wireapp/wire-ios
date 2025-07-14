@@ -57,32 +57,30 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
         didDetectDomainConflict: Bool,
         backendInfo: BackendInfo
     ) -> LoginViaEmailView {
-        LoginViaEmailView(
-            factory: { [unowned self] in loginViaEmailFactory(
-                email: email,
-                canCreateAccount: false,
-                didDetectDomainConflict: didDetectDomainConflict,
-                backendInfo: backendInfo
-            ) }
+        let factory = loginViaEmailFactory(
+            email: email,
+            canCreateAccount: false,
+            didDetectDomainConflict: didDetectDomainConflict,
+            backendInfo: backendInfo
         )
+        return LoginViaEmailView(factory: factory)
     }
-    
+
     @MainActor
     func loginOrRegisterView(
         email: String?,
         didDetectDomainConflict: Bool,
         backendInfo: BackendInfo
     ) -> LoginViaEmailView {
-        LoginViaEmailView(
-            factory: { [unowned self] in loginViaEmailFactory(
-                email: email,
-                canCreateAccount: true,
-                didDetectDomainConflict: didDetectDomainConflict,
-                backendInfo: backendInfo
-            ) }
+        let factory = loginViaEmailFactory(
+            email: email,
+            canCreateAccount: true,
+            didDetectDomainConflict: didDetectDomainConflict,
+            backendInfo: backendInfo
         )
+        return LoginViaEmailView(factory: factory)
     }
-    
+
     @MainActor
     func noHistoryView(result: AuthenticationResult) -> NoHistoryView {
         NoHistoryView(factory: { [unowned self] in

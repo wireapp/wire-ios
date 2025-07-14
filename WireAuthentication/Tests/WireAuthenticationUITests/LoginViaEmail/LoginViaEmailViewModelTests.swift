@@ -103,11 +103,11 @@ final class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Fact
     ) -> any VerificationCodeFactory {
         fatalError("not needed here")
     }
-    
+
     func verifyLoginView(email: String, password: String, proxyCredentials: ProxyCredentials?) -> VerificationCodeView {
         fatalError()
     }
-    
+
     func noHistoryView(result: AuthenticationResult) -> NoHistoryView {
         fatalError()
     }

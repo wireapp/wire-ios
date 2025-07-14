@@ -77,7 +77,7 @@ final class VerificationCodeViewModelTests: VerificationCodeViewModel.Factory {
     var viewModel: WireAuthenticationUI.VerificationCodeViewModel {
         fatalError("not needed here")
     }
-    
+
     func noHistoryView(result: AuthenticationResult) -> NoHistoryView {
         fatalError()
     }

@@ -38,7 +38,7 @@ package struct VerificationCodeView: View {
     private typealias Strings = L10n.Localizable
 
     package init(
-        factory: @escaping () -> VerificationCodeFactory
+        factory: @autoclosure @escaping () -> VerificationCodeFactory
     ) {
         self._viewModel = StateObject(wrappedValue: factory().viewModel)
     }

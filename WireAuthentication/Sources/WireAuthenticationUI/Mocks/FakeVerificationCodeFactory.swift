@@ -42,7 +42,7 @@ struct FakeVerificationCodeFactory: VerificationCodeFactory,
             router: FakeRootFactory().viewModel
         )
     }
-    
+
     func noHistoryView(result: AuthenticationResult) -> NoHistoryView {
         fatalError()
     }
