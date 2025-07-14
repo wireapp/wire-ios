@@ -23,7 +23,7 @@ public import Foundation
 /// (registration) UI.
 public protocol RegistrationAnalyticsIDRepositoryProtocol {
 
-    func storeAnalyticsID(for userID: UUID, analyticsID: UUID)
+    func storeAnalyticsID(for userID: UUID, analyticsID: UUID) // TODO: Countly uses type String, maybe we shouldn't be more restrictive than needed
     func deleteAnalyticsID(for userID: UUID)
     func updateAnalyticsTrackingConsent(for userID: UUID, isGiven: Bool)
 

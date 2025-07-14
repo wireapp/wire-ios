@@ -24,7 +24,7 @@ struct RegistrationAnalyticsIDRepository: RegistrationAnalyticsIDRepositoryProto
 
     let userDefaults: UserDefaults
 
-    private func journal(for userID: UUID) -> Journal {
+    private func journal(for userID: UUID) -> Journal { // TODO: don't use Journal, maybe PrivateUserDefaults
         Journal(
             userID: userID,
             storage: userDefaults

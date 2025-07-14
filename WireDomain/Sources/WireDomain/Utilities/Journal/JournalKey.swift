@@ -80,7 +80,7 @@ public extension JournalKey where Value == Bool? {
 
 }
 
-public extension JournalKey where Value == String? {
+public extension JournalKey where Value == String? { // TODO: delete
 
     /// If the user went through the flow of registering a new personal account and gave consent to analytics tracking,
     /// the newly created analytics id is temporarily stored in this property. After setting up the user session this
