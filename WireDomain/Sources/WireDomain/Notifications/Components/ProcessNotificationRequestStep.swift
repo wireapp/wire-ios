@@ -21,6 +21,7 @@ import UserNotifications
 import WireDataModel
 
 protocol ProcessNotificationRequestDependency: Dependency {
+    var currentAppVersion: String { get }
     var applicationContainer: URL { get }
 }
 
@@ -49,7 +50,8 @@ final class ProcessNotificationRequestStep: Component<ProcessNotificationRequest
         userID: UUID,
         eventID: UUID
     ) throws -> VerifyUserStep {
-        let accountManager = AccountManager(
+        let accountManager = try AccountManager(
+            currentAppVersion: dependency.currentAppVersion,
             sharedDirectory: dependency.applicationContainer
         )
 

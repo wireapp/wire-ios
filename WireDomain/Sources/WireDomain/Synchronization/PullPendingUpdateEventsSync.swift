@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import WireAPI
 import WireDataModel
 import WireLogging
+import WireNetwork
 
 public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
 
@@ -58,13 +58,24 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
 
         var events: [UpdateEvent] = []
 
-        // Events are fetched in batches.
-        for try await envelopes in api.getUpdateEvents(
+        let timestampedUpdateEvents = api.getUpdateEvents(
             selfClientID: selfClientID,
             sinceEventID: lastEventID
-        ) {
+        )
+
+        // Events are fetched in batches.
+        for try await timestampedEnvelope in timestampedUpdateEvents {
+            let envelopes = timestampedEnvelope.updateEventEnvelopes
+            let timestamp = timestampedEnvelope.time
             let batchCount = envelopes.count
             var count = 0
+
+            if let timestamp {
+                WireLogger.sync.debug("storing server time delta")
+                await store.storeServerTimeDelta(
+                    timestamp.timeIntervalSinceNow
+                )
+            }
 
             if batchCount > 0 {
                 WireLogger.sync.debug("fetched \(batchCount) envelopes from remote")
@@ -93,7 +104,7 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
                     )
 
                     var decryptedEnvelope = envelope
-                    let decryptionEventsResult = try await decryptor.decryptEvents(in: envelope, context: context)
+                    let decryptionEventsResult = await decryptor.decryptEvents(in: envelope, context: context)
                     let decryptedEvents = decryptionEventsResult.events
                     decryptedEnvelope.events = decryptedEvents
 
@@ -115,7 +126,7 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
 
                 if let lastEnvelopeID {
                     // We keep track of the last event id so next time we fetch
-                    // only new events. We don't track tranisent events because
+                    // only new events. We don't track transient events because
                     // these events aren't stored in the backend.
                     WireLogger.sync.debug("storing last event id", attributes: [.eventEnvelopeID: lastEnvelopeID])
                     store.storeLastEventID(id: lastEnvelopeID)

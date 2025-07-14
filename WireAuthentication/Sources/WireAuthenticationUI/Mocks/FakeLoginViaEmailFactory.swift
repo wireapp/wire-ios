@@ -37,8 +37,7 @@ struct FakeLoginViaEmailFactory: LoginViaEmailFactory, CreateAuthenticationResul
             email: email,
             backendInfo: backendInfo,
             canCreateAccount: canCreateAccount,
-            didDetectDomainConflict: didDetectDomainConflict,
-            onCreateAccount: {}
+            didDetectDomainConflict: didDetectDomainConflict
         )
     }
 
@@ -47,6 +46,10 @@ struct FakeLoginViaEmailFactory: LoginViaEmailFactory, CreateAuthenticationResul
     }
 
     func noHistoryView(result: AuthenticationResult) -> NoHistoryView {
+        fatalError()
+    }
+    
+    func personalAccountCreationView(teamAccountCreationLink: URL?) -> PersonalAccountCreationView {
         fatalError()
     }
 

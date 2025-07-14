@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
+import WireNetwork
 
 struct ConversationAudioMessageNotificationBuilder: ConversationAudioMessageNotificationBuilderProtocol {
     let context: Context
@@ -57,10 +57,10 @@ struct ConversationAudioMessageNotificationBuilder: ConversationAudioMessageNoti
         content.sound = makeSound()
         content.userInfo = makeUserInfo(
             selfUserID: selfUserID,
-            senderID: senderID.uuid,
+            senderID: senderID.id,
             conversationID: conversationID
         )
-        content.threadIdentifier = conversationID.uuid.transportString()
+        content.threadIdentifier = conversationID.id.transportString()
 
         await context.increaseReadCount(conversation: conversation)
 
@@ -114,7 +114,7 @@ struct ConversationAudioMessageNotificationBuilder: ConversationAudioMessageNoti
 
         userInfo[NotificationUserInfoKey.selfUserID] = selfUserID.uuidString
         userInfo[NotificationUserInfoKey.senderID] = senderID.uuidString
-        userInfo[NotificationUserInfoKey.conversationID] = conversationID.uuid.uuidString
+        userInfo[NotificationUserInfoKey.conversationID] = conversationID.id.uuidString
 
         return userInfo
     }
@@ -134,7 +134,7 @@ extension ConversationAudioMessageNotificationBuilder {
             conversationID: ConversationID
         ) async -> ZMConversation {
             await conversationLocalStore.fetchOrCreateConversation(
-                id: conversationID.uuid,
+                id: conversationID.id,
                 domain: conversationID.domain
             )
         }
@@ -147,7 +147,7 @@ extension ConversationAudioMessageNotificationBuilder {
             senderID: UserID
         ) async -> ZMUser {
             await userLocalStore.fetchOrCreateUser(
-                id: senderID.uuid,
+                id: senderID.id,
                 domain: senderID.domain
             )
         }

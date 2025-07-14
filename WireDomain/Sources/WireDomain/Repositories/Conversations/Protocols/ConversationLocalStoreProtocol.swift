@@ -343,7 +343,7 @@ public protocol ConversationLocalStoreProtocol {
     func obtainPermanentIDs(
         user: ZMUser,
         conversation: ZMConversation
-    )
+    ) async
 
     /// Fetches the current conversation name
     /// - parameter conversation: The conversation to fetch the name for.
@@ -440,5 +440,7 @@ public protocol ConversationLocalStoreProtocol {
         permission: WireDomain.Conversation.ChannelPermission,
         conversation: ZMConversation
     ) async
+
+    func fetchServerTimeDelta() async -> TimeInterval
 
 }

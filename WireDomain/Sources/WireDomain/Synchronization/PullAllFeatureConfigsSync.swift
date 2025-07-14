@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireAPI
 import WireLogging
+import WireNetwork
 
 struct PullAllFeatureConfigsSync: PullAllFeatureConfigsSyncProtocol {
 
@@ -45,7 +45,7 @@ struct PullAllFeatureConfigsSync: PullAllFeatureConfigsSyncProtocol {
 
 private extension FeatureConfigLocalStoreProtocol {
 
-    func storeFeatureConfig(_ featureConfig: WireAPI.FeatureConfig) async {
+    func storeFeatureConfig(_ featureConfig: WireNetwork.FeatureConfig) async {
         switch featureConfig {
         case let .appLock(config):
             await storeFeature(

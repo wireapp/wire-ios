@@ -124,5 +124,9 @@ public protocol UserClientsLocalStoreProtocol {
         createIfNeeded: Bool
     ) async -> WireDataModel.UserClient?
 
-    func fetchSelfClientID() async -> UUID
+    func fetchSelfClientID() async -> String?
+
+    /// Checks if self client has consumable notifications capability
+    /// - Returns: True if capability is there, false otherwise
+    func hasRegisteredConsumableNotificationsCapable() async -> Bool
 }

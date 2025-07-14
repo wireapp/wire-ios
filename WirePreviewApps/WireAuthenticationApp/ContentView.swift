@@ -18,11 +18,11 @@
 
 import Combine
 import SwiftUI
-import WireAPI
 import WireAuthentication
 import WireAuthenticationUI
 import WireFoundation
 import WireMultiBackendUI
+import WireNetwork
 import WireReusableUIComponents
 
 struct ContentView: View {
@@ -42,7 +42,7 @@ struct ContentView: View {
                         teamsURL: URL(string: "https://teams.wire.com")!,
                         accountsURL: URL(string: "https://account.wire.com")!,
                         websiteURL: URL(string: "https://wire.com")!,
-                        countlyURL: URL(string: "https://countly.wire.com")!
+                        countlyURL: URL(string: "https://wire.count.ly")!,
                     ),
                     proxySettings: nil,
                     pinnedKeys: nil
@@ -53,11 +53,11 @@ struct ContentView: View {
                 howToChangeEmailURL: URL(string: "www.example.com")!,
                 howToDeleteAccountURL: URL(string: "www.example.com")!,
                 privacyPolicyURL: URL(string: "www.example.com")!,
+                termsOfUseURL: URL(string: "www.example.com")!,
                 passwordValidator: configuration.passwordValidator,
                 ssoCallbackURLScheme: "some scheme",
                 appStoreURL: URL(string: "www.example.com")!,
-                existsAnotherAccount: true,
-                otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>(
+                accountsPublisher: CurrentValuePublisher<[AccountUIModel]>(
                     subject: CurrentValueSubject<[AccountUIModel], Never>(
                         [
                             AccountUIModel(
@@ -79,8 +79,8 @@ struct ContentView: View {
                         ]
                     )
                 ),
-                useLegacyRegistrationFlow: false,
-                personalAccountCreationAnalyticsTracker: MockPersonalAccountCreationAnalyticsTracker()
+                isMultibackendEnabled: true,
+                registrationAnalyticsTracker: MockPersonalAccountCreationAnalyticsTracker()
             ).view
     }
 

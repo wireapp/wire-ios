@@ -33,9 +33,8 @@ public enum DeveloperFlag: String, CaseIterable {
     case forceCRLExpiryAfterOneMinute
     case useWireAuthentication
     case wireCells
-    case asyncStreamNotifications
+    case consumableNotifications
     case multibackend
-    case newRegistration
 
     public var description: String {
         switch self {
@@ -72,14 +71,11 @@ public enum DeveloperFlag: String, CaseIterable {
         case .wireCells:
             "Use the wire cells feature"
 
-        case .asyncStreamNotifications:
+        case .consumableNotifications:
             "Turn on to enable new sync with consumable notifications"
 
         case .multibackend:
             "Turn on to be able to log in with accounts from multiple backends"
-
-        case .newRegistration:
-            "Turn on to use the new registration flow"
         }
     }
 

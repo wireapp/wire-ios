@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDomain
 import WireFoundation
 import WireMainNavigationUI
 import WireSyncEngine
@@ -51,7 +52,10 @@ final class SelfProfileViewControllerBuilder: SelfProfileViewControllerBuilderPr
             userSession: userSession,
             accountSelector: accountSelector,
             mainCoordinator: mainCoordinator,
-            analyticsEventTracker: analyticsEventTracker()
+            analyticsEventTracker: analyticsEventTracker(),
+            accountManager: SessionManager.shared?.accountManager
         )
     }
 }
+
+extension AccountManager: SelfProfileAccountManager {}

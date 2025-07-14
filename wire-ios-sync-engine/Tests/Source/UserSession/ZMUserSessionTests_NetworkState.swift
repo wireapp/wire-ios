@@ -19,7 +19,9 @@
 import WireDataModelSupport
 import WireDomain
 import XCTest
+@testable import WireLogging
 @testable import WireSyncEngine
+@testable import WireSyncEngineSupport
 
 final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
 
@@ -56,13 +58,15 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
             userID: coreDataStack.account.userIdentifier,
             storage: UserDefaults.temporary()
         )
+        let logFilesProvider = MockLogFilesProviding()
 
         var builder = ZMUserSessionBuilder()
         builder.withAllDependencies(
             apiServiceFactory: { _, _ in MockAPIService() },
             backendEnvironment: backendEnvironment,
             wireAPIBackendEnvironment: wireAPIBackendEnvironment,
-            appVersion: "00000",
+            currentAppVersion: "3.120.0",
+            currentBuildNumber: "00000",
             application: application,
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             coreDataStack: coreDataStack,
@@ -79,7 +83,8 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
             transportSession: transportSession,
             userId: userId,
             minTLSVersion: nil,
-            journal: journal
+            journal: journal,
+            logFilesProvider: logFilesProvider
         )
         let testSession = builder.build()
         testSession.setup(

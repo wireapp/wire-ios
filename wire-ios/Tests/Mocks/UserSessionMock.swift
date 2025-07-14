@@ -314,6 +314,10 @@ final class UserSessionMock: UserSession {
         AppendTextMessageUseCase(analyticsEventTracker: nil)
     }
 
+    func makeAppendMultipartMessageUseCase() -> any AppendMultipartMessageUseCaseProtocol {
+        AppendMultipartMessageUseCase(analyticsEventTracker: nil)
+    }
+
     func makeAppendImageMessageUseCase() -> any AppendImageMessageUseCaseProtocol {
         AppendImageMessageUseCase(analyticsEventTracker: nil)
     }

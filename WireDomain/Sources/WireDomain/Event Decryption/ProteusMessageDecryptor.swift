@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import WireAPI
 import WireCoreCrypto
 import WireDataModel
+import WireNetwork
 
 struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
 
@@ -95,7 +95,7 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
         }
 
         let senderUser = await userLocalStore.fetchOrCreateUser(
-            id: eventData.senderID.uuid,
+            id: eventData.senderID.id,
             domain: eventData.senderID.domain
         )
 

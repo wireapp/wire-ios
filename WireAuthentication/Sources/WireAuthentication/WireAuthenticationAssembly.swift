@@ -20,10 +20,10 @@ import Combine
 import Foundation
 import NeedleFoundation
 import SwiftUI
-import WireAPI
 import WireAuthenticationAPI
 import WireFoundation
 import WireMultiBackendUI
+import WireNetwork
 import WireReusableUIComponents
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
@@ -53,13 +53,13 @@ public struct WireAuthenticationAssembly {
         howToChangeEmailURL: URL,
         howToDeleteAccountURL: URL,
         privacyPolicyURL: URL,
+        termsOfUseURL: URL,
         passwordValidator: any PasswordValidator,
         ssoCallbackURLScheme: String,
         appStoreURL: URL,
-        existsAnotherAccount: Bool,
-        otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>,
-        useLegacyRegistrationFlow: Bool,
-        personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
+        accountsPublisher: CurrentValuePublisher<[AccountUIModel]>,
+        isMultibackendEnabled: Bool,
+        registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
         let backendInfo = BackendInfo(
             environmentType: environmentType,
@@ -72,13 +72,13 @@ public struct WireAuthenticationAssembly {
             howToChangeEmailURL: howToChangeEmailURL,
             howToDeleteAccountURL: howToDeleteAccountURL,
             privacyPolicyURL: privacyPolicyURL,
+            termsOfUseURL: termsOfUseURL,
             passwordValidator: passwordValidator,
             ssoCallbackURLScheme: ssoCallbackURLScheme,
             appStoreURL: appStoreURL,
-            existsAnotherAccount: existsAnotherAccount,
-            otherAccountsPublisher: otherAccountsPublisher,
-            useLegacyRegistrationFlow: useLegacyRegistrationFlow,
-            personalAccountCreationAnalyticsTracker: personalAccountCreationAnalyticsTracker
+            accountsPublisher: accountsPublisher,
+            isMultibackendEnabled: isMultibackendEnabled,
+            registrationAnalyticsTracker: registrationAnalyticsTracker
         )
 
         return (view: RootView(factory: rootComponent), bridge: rootComponent.bridge)

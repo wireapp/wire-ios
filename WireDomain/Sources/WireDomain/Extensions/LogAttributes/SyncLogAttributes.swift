@@ -103,6 +103,13 @@ public extension LogAttributes {
         ]
     }
 
+    static var syncAttributes: Self {
+        [
+            .syncVersion: syncVersion,
+            .public: true
+        ]
+    }
+
     static func syncPhaseAttributes(
         _ phase: String,
         initialSync: Bool
@@ -115,8 +122,8 @@ public extension LogAttributes {
         ]
     }
 
-    private static var syncVersion: String {
-        DeveloperFlag.asyncStreamNotifications.isOn ? Constants.v3 : Constants.v2
+    static var syncVersion: String {
+        DeveloperFlag.consumableNotifications.isOn ? Constants.v3 : Constants.v2
     }
 }
 

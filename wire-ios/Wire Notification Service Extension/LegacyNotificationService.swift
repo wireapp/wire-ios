@@ -55,10 +55,20 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
     private var session: NotificationSession?
     private var contentHandler: ((UNNotificationContent) -> Void)?
 
-    private lazy var accountManager: AccountManager = {
+    private lazy var accountManager: AccountManager? = {
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: appGroupID)
-        return AccountManager(sharedDirectory: sharedContainerURL)
+        return try? AccountManager(
+            currentAppVersion: currentAppVersion,
+            sharedDirectory: sharedContainerURL
+        )
     }()
+
+    private var currentAppVersion: String {
+        guard let currentAppVersion = Bundle.main.shortVersionString else {
+            fatalError("cannot get current app version identifier")
+        }
+        return currentAppVersion
+    }
 
     private var appGroupID: String {
         guard let groupID = Bundle.main.applicationGroupIdentifier else {
@@ -217,6 +227,7 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
 
     private func createSession(accountID: UUID) throws -> NotificationSession {
         let session = try NotificationSession(
+            currentAppVersion: currentAppVersion,
             applicationGroupIdentifier: appGroupID,
             accountIdentifier: accountID,
             environment: BackendEnvironment.shared,
@@ -229,13 +240,19 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
     }
 
     private func totalUnreadCount(_ unreadConversationCount: Int) -> NSNumber? {
-        guard let session else {
+        guard
+            let session,
+            let accountManager
+        else {
             return nil
         }
-        let account = accountManager.account(with: session.accountIdentifier)
-        account?.unreadConversationCount = unreadConversationCount
-        let totalUnreadCount = accountManager.totalUnreadCount
 
+        if let account = accountManager.account(with: session.accountIdentifier) {
+            account.unreadConversationCount = unreadConversationCount
+            accountManager.addOrUpdate(account)
+        }
+
+        let totalUnreadCount = accountManager.totalUnreadCount
         return NSNumber(value: totalUnreadCount)
     }
 

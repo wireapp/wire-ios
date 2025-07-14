@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import WireNetwork
 
 /// Process federation delete events.
 
@@ -26,6 +26,6 @@ protocol FederationDeleteEventProcessorProtocol {
     ///
     /// - Parameter event: A federation delete event.
 
-    func processEvent(_ event: FederationDeleteEvent) async throws
+    func processEvent(_ event: FederationDeleteEvent) async
 
 }

@@ -23,11 +23,16 @@ package import UniformTypeIdentifiers
 package import WireCellsAPI
 import WireLogging
 
-package protocol DraftsRepositoryProtocol: Actor {
+// sourcery: AutoMockable
+package protocol DraftsRepositoryProtocol: Sendable {
 
-    func add(assetURL: URL, assetSize: Int, cellName: String, fileName: String, fileType: UTType?) async
-    func drafts(for cellName: String) -> AsyncStream<[WireCellsDraft]>
+    func drafts(for cellName: String) async -> AsyncStream<[WireCellsDraft]>
     func publishAll(for cellName: String) async throws
+    func clearPublishedDrafts(for cellName: String) async
+    func addDraft(_ draft: WireCellsDraft, for cellName: String) async
+    func fetchDraft(nodeID: UUID, cellName: String) async -> WireCellsDraft?
+    func deleteDraft(nodeID: UUID, cellName: String) async
+    func updateDraft(_ draft: WireCellsDraft, for cellName: String) async
 
 }
 
@@ -42,7 +47,7 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
 
     typealias CellName = String
 
-    private let drafts: CurrentValueSubject<[CellName: OrderedDictionary<WireCellsNodeID, WireCellsDraft>], Never>
+    private let drafts: CurrentValueSubject<[CellName: OrderedDictionary<UUID, WireCellsDraft>], Never>
     private var continuations: [UUID: AsyncStream<[WireCellsDraft]>.Continuation] = [:]
     private let uploadManager: any WireCellsNodeUploadManagerProtocol
     private let nodesAPI: any NodesAPIProtocol
@@ -54,7 +59,7 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
     init(
         uploadManager: any WireCellsNodeUploadManagerProtocol,
         nodesAPI: any NodesAPIProtocol,
-        drafts: [CellName: OrderedDictionary<WireCellsNodeID, WireCellsDraft>]
+        drafts: [CellName: OrderedDictionary<UUID, WireCellsDraft>]
     ) {
         self.uploadManager = uploadManager
         self.nodesAPI = nodesAPI
@@ -65,44 +70,11 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
         continuations.values.forEach { $0.finish() }
     }
 
-    package func add(assetURL: URL, assetSize: Int, cellName: String, fileName: String, fileType: UTType?) async {
-        let draft = WireCellsDraft(
-            id: .new(),
-            assetURL: assetURL,
-            fileType: fileType,
-            status: .uploading(progress: 0),
-            name: fileName,
-            bytes: assetSize
-        )
-        drafts.value[cellName, default: [:]][draft.id] = draft
-
-        do {
-            let (node, stream) = try await uploadManager.upload(
-                id: draft.id,
-                assetPath: assetURL,
-                assetSize: UInt64(assetSize),
-                destNodePath: "\(cellName)/\(fileName)"
-            )
-
-            // Update draft name if changed
-            if let updatedName = URL(string: node.path)?.lastPathComponent, updatedName != draft.name {
-                drafts.value[cellName]?[draft.id]?.name = updatedName
-            }
-
-            for await status in stream {
-                setStatus(status, cellName: cellName, id: draft.id)
-            }
-
-        } catch {
-            setStatus(.failed(error: WireCellsUploadError(error)), cellName: cellName, id: draft.id)
-        }
-    }
-
     package func drafts(for cellName: String) -> AsyncStream<[WireCellsDraft]> {
         let continuationID = UUID()
         let (stream, continuation) = AsyncStream.makeStream(
             of: [WireCellsDraft].self,
-            bufferingPolicy: .bufferingOldest(0)
+            bufferingPolicy: .bufferingNewest(1)
         )
 
         let cancellable = drafts.sink { drafts in
@@ -136,13 +108,13 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
         }
 
         let results = await withTaskGroup(
-            of: Result<WireCellsNodeID, any Error>.self,
-            returning: [Result<WireCellsNodeID, any Error>].self
+            of: Result<UUID, any Error>.self,
+            returning: [Result<UUID, any Error>].self
         ) { [nodesAPI] group in
             for (nodeID, draft) in drafts where draft.status == .uploaded(isDraft: true) {
                 group.addTask {
                     do {
-                        try await nodesAPI.publishDraft(nodeID: nodeID)
+                        try await nodesAPI.publishDraft(nodeID: nodeID, versionID: draft.versionID)
                         return .success(nodeID)
                     } catch {
                         WireLogger.wireCells.error("Failed to publish draft: \(error)")
@@ -166,42 +138,59 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
         }
     }
 
+    package func clearPublishedDrafts(for cellName: String) {
+        drafts.value[cellName]?.removeAll { $0.value.status == .uploaded(isDraft: false) }
+    }
+
+    /// Adds a draft for the given cell name.
+
+    package func addDraft(_ draft: WireCellsDraft, for cellName: String) {
+        drafts.value[cellName, default: [:]][draft.nodeID] = draft
+    }
+
+    /// Returns the draft for the given node ID and cell name, if it exists.
+
+    package func fetchDraft(nodeID: UUID, cellName: String) -> WireCellsDraft? {
+        drafts.value[cellName]?[nodeID]
+    }
+
+    /// Deletes draft for the given node ID and cell name.
+
+    package func deleteDraft(nodeID: UUID, cellName: String) {
+        drafts.value[cellName]?.removeValue(forKey: nodeID)
+    }
+
+    /// Updates draft for the given cell name.
+
+    package func updateDraft(_ new: WireCellsDraft, for cellName: String) {
+        guard let old = fetchDraft(nodeID: new.nodeID, cellName: cellName), new != old else { return }
+
+        drafts.value[cellName]?[new.nodeID] = new
+    }
+
+    // MARK: - Private
+
     private func removeContinuation(for uuid: UUID) async {
         continuations[uuid] = nil
     }
 
-    private func allDraftsArePublished(cellName: CellName) -> Bool {
-        guard let drafts = drafts.value[cellName] else { return false }
-        return drafts.values.allSatisfy { $0.status == .uploaded(isDraft: false) }
-    }
-
-    private func getStatus(cellName: CellName, id: WireCellsNodeID) -> WireCellsUploadStatus? {
-        drafts.value[cellName]?[id]?.status
-    }
-
-    private func setStatus(_ status: WireCellsUploadStatus, cellName: CellName, id: WireCellsNodeID) {
+    private func setStatus(_ status: WireCellsUploadStatus, cellName: CellName, id: UUID) {
         drafts.value[cellName]?[id]?.status = status
     }
 
     #if DEBUG
-        var getDraftsForTesting: [CellName: OrderedDictionary<WireCellsNodeID, WireCellsDraft>] {
+        var getDraftsForTesting: [CellName: OrderedDictionary<UUID, WireCellsDraft>] {
             drafts.value
         }
 
-        func setDraftsForTesting(_ drafts: [CellName: OrderedDictionary<WireCellsNodeID, WireCellsDraft>]) {
+        func setDraftsForTesting(_ drafts: [CellName: OrderedDictionary<UUID, WireCellsDraft>]) {
             self.drafts.value = drafts
         }
     #endif
 
 }
 
-private extension WireCellsNodeID {
-    static func new() -> WireCellsNodeID {
-        WireCellsNodeID(uuid: UUID(), versionID: UUID())
-    }
-}
-
-private extension OrderedDictionary<WireCellsNodeID, WireCellsDraft> {
+private extension OrderedDictionary<UUID, WireCellsDraft> {
     var areAllUploaded: Bool {
         allSatisfy {
             switch $0.value.status {

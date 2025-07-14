@@ -18,7 +18,7 @@
 
 import WireAuthenticationAPI
 
-struct MockPersonalAccountCreationAnalyticsTracker: PersonalAccountCreationAnalyticsTrackerProtocol {
+struct MockPersonalAccountCreationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
 
     func setUp() {}
 
@@ -36,4 +36,5 @@ struct MockPersonalAccountCreationAnalyticsTracker: PersonalAccountCreationAnaly
 
     func trackPersonalAccountCreationCompletion() {}
 
+    func trackPersonalAccountCreationStart() {}
 }

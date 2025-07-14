@@ -24,28 +24,54 @@ final class PersonalUsersTests: WireUITestCase {
     func test_Register_asPersonalUser() async throws {
         let user = UserGenerator.generateUniqueUserInfo()
 
-        let page = WelcomePage()
-            .typeEmailOrSSO(user.email)
+        let welcomePage = try WelcomePage()
+
+        let createPersonalAccountFormPage = try welcomePage
+            .enterEmailOrSSO(user.email)
             .tapCreatePersonalAccountLink()
-            .tapConfirmCreateAccount()
+
+        let verificationPage = try createPersonalAccountFormPage
+            .enterName(user.name)
+            .enterPassword(user.password)
+            .enterConfirmPassword(user.password)
+            .tapContinueButton()
             .tapAcceptButton()
 
         let verificationCode = try await InbucketClient.getVerificationCode(email: user.email)
 
-        let accountPage = page
-            .enterVerificationCode(verificationCode)
-            .setName(user.name)
-            .setPassword(user.password)
-            .acceptPopup()
+        let setUsernamePage = try verificationPage
+            .enterVerificationCodeAndConfirm(verificationCode)
+
+        let conversationsPage = try setUsernamePage
             .setUsername(user.username)
+
+        let settingsPage = try conversationsPage
             .openSettings()
+
+        let accountPage = try settingsPage
             .openAccountSettings()
 
-        XCTAssertTrue(accountPage.getAccountName().elementsEqual(user.name), "Account name didn't match \(user.name)")
+        let accountName = try XCTUnwrap(accountPage.getAccountName())
+        XCTAssertEqual(accountName, user.name, "Account name didn't match \(user.name)")
         XCTAssertTrue(accountPage.getUsername().contains(user.username), "Username didn't contain \(user.username)")
-        XCTAssertTrue(accountPage.getEmail().elementsEqual(user.email))
+        XCTAssertEqual(accountPage.getEmail(), user.email, "Email didn't contain \(user.email)")
 
-        accountPage.logout()
+        try accountPage.logout()
+            .enterPassword(user.password)
+    }
+
+    @MainActor
+    func test_Login_asExistingPersonalUser() async throws {
+        let user = try await userManager.createPersonalUser()
+
+        let welcomePage = try WelcomePage()
+            .enterEmailOrSSO(user.email)
+            .enterPassword(user.password)
+            .acceptFirstTimeAlert()
+            .acceptPopup()
+            .openSettings()
+            .openAccountSettings()
+            .logout()
             .enterPassword(user.password)
     }
 }

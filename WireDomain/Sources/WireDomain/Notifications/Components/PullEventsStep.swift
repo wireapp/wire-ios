@@ -17,9 +17,9 @@
 //
 
 import NeedleFoundation
-import WireAPI
 import WireDataModel
 import WireFoundation
+import WireNetwork
 
 protocol PullEventsDependency: Dependency {
     var userID: UUID { get }
@@ -44,15 +44,16 @@ final class PullEventsStep: Component<PullEventsDependency>, PullEventsStepProto
         case apiVersionNotFound
     }
 
-    private var selfUserID: UUID
+    private var selfUserID: UUID {
+        dependency.userID
+    }
+
     private var selfClientID: String
 
     init(
         parent: any Scope,
-        selfUserID: UUID,
         selfClientID: String
     ) {
-        self.selfUserID = selfUserID
         self.selfClientID = selfClientID
         super.init(parent: parent)
     }
@@ -93,6 +94,10 @@ extension PullEventsStep {
             mlsService: nil,
             messageLocalStore: dependency.messageLocalStore
         )
+    }
+
+    public var databaseSaver: any DatabaseSaverProtocol {
+        DatabaseSaver(context: dependency.coreData.syncContext)
     }
 
     private var sharedUserDefaults: UserDefaults {
@@ -198,7 +203,7 @@ extension PullEventsStep {
         }
     }
 
-    var apiVersion: WireAPI.APIVersion {
+    var apiVersion: WireNetwork.APIVersion {
         get throws {
             let key = "SelectedAPIVersion"
             let sharedUserDefaults = dependency.sharedUserDefaults
@@ -211,7 +216,7 @@ extension PullEventsStep {
             let legacyAPIVersion = APIVersion(rawValue: Int32(storedValue))
 
             guard let legacyAPIVersion,
-                  let apiVersion = WireAPI.APIVersion(rawValue: UInt(legacyAPIVersion.rawValue)) else {
+                  let apiVersion = WireNetwork.APIVersion(rawValue: UInt(legacyAPIVersion.rawValue)) else {
                 throw Failure.apiVersionNotFound
             }
 
@@ -253,7 +258,7 @@ extension PullEventsStep {
         return backendEnvironment
     }
 
-    var backendEnvironment: WireAPI.BackendEnvironment {
+    var backendEnvironment: WireNetwork.BackendEnvironment {
         get async throws {
             BackendEnvironment(
                 url: legacyBackendEnvironment.backendURL,
@@ -261,6 +266,7 @@ extension PullEventsStep {
                 pinnedKeys: legacyBackendEnvironment.trustData.map { trustData in
                     PinnedKey(
                         key: trustData.certificateKey,
+                        rawKey: trustData.rawCertificateKey,
                         hosts: trustData.hosts.map { host in
                             switch host.rule {
                             case .equals:
@@ -276,7 +282,7 @@ extension PullEventsStep {
         }
     }
 
-    var proxySettings: WireAPI.ProxySettings? {
+    var proxySettings: WireNetwork.ProxySettings? {
         get async throws {
             guard let proxy = legacyBackendEnvironment.proxy else { return nil }
 
@@ -335,7 +341,7 @@ extension PullEventsStep {
                 )
             )
 
-            let minTLSVersion = WireAPI.TLSVersion.minVersionFrom(minTLSVersion)
+            let minTLSVersion = WireNetwork.TLSVersion.minVersionFrom(minTLSVersion)
             let config = await URLSessionConfigurationFactory(
                 minTLSVersion: minTLSVersion,
                 proxySettings: try proxySettings

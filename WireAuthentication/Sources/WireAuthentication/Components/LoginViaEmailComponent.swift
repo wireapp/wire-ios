@@ -18,8 +18,8 @@
 
 import NeedleFoundation
 import SwiftUI
-import WireAPI
 import WireAuthenticationAPI
+import WireNetwork
 internal import WireAuthenticationUI
 internal import WireAuthenticationLogic
 import WireReusableUIComponents
@@ -31,7 +31,6 @@ protocol LoginViaEmailComponentDependency: Dependency {
     var preferredAPIVersion: APIVersion? { get }
     var backendInfo: BackendInfo { get }
     var minTLSVersion: TLSVersion { get }
-    var useLegacyRegistrationFlow: Bool { get }
 
 }
 
@@ -58,10 +57,11 @@ final class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> 
 
     // MARK: - Children
 
-    private func personalAccountCreationComponent() -> PersonalAccountCreationComponent {
+    private func personalAccountCreationComponent(teamAccountCreationLink: URL?) -> PersonalAccountCreationComponent {
         PersonalAccountCreationComponent(
             parent: self,
-            email: email ?? ""
+            email: email ?? "",
+            teamAccountCreationLink: teamAccountCreationLink
         )
     }
 
@@ -97,6 +97,14 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
             }
         )
     }
+    
+    @MainActor
+    func personalAccountCreationView(teamAccountCreationLink: URL?) -> PersonalAccountCreationView {
+        let factory = personalAccountCreationFactory(
+            teamAccountCreationLink: teamAccountCreationLink
+        )
+        return PersonalAccountCreationView(factory: factory)
+    }
 
     @MainActor var viewModel: LoginViaEmailViewModel {
         LoginViaEmailViewModel(
@@ -105,24 +113,7 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
             email: email,
             backendInfo: networkStack.backendInfo,
             canCreateAccount: canCreateAccount,
-            didDetectDomainConflict: didDetectDomainConflict,
-            onCreateAccount: dependency.useLegacyRegistrationFlow ? { [dependency, networkStack, email] in
-                guard let dependency else { return }
-                Task<Void, Never> { @MainActor in
-                    do {
-                        let backendEnvironment = try await networkStack.makeBackendEnvironment()
-                        dependency.router.dismissSheet()
-                        dependency.bridge.sendOutboundEvent(
-                            .accountRegistrationRequested(
-                                email: email,
-                                backendEnvironment
-                            )
-                        )
-                    } catch {
-                        dependency.router.presentAlert(for: error)
-                    }
-                }
-            } : nil
+            didDetectDomainConflict: didDetectDomainConflict
         )
     }
 
@@ -139,8 +130,10 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
         )
     }
 
-    func personalAccountCreationFactory() -> any PersonalAccountCreationFactory {
-        personalAccountCreationComponent()
+    func personalAccountCreationFactory(teamAccountCreationLink: URL?) -> any PersonalAccountCreationFactory {
+        personalAccountCreationComponent(
+            teamAccountCreationLink: teamAccountCreationLink
+        )
     }
 
     // MARK: - Use cases

@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
+import WireNetwork
 
 /// Handles a calling notification (using CallKit in priority if available) related to an incoming / missed call
 struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNotificationBuilderProtocol {
@@ -40,13 +40,14 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
             conversationID: conversationID,
             senderID: senderID,
             accountID: accountID,
+            eventTimestamp: time,
             callContent: callContent
         )
 
         let displayCallNotification = await validator.validateCallNotification(
             conversationID: conversationID,
             senderID: senderID,
-            time: time,
+            eventTimestamp: time,
             callContent: callContent
         )
 
@@ -83,7 +84,7 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
     ) async -> UserNotification {
         let callKitContent: [String: Any] = [
             "accountID": accountID.uuidString,
-            "conversationID": conversationID.uuid.uuidString,
+            "conversationID": conversationID.id.uuidString,
             "shouldRing": callContent.isIncomingCall,
             "callerName": await makeCallKitTitle(
                 conversationID: conversationID,
@@ -115,7 +116,7 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
         if callContent.isIncomingCall {
             return buildIncomingCallNotification(
                 selfUserID: selfUserID,
-                senderID: senderID.uuid,
+                senderID: senderID.id,
                 callerID: callerID,
                 conversation: conversation,
                 conversationID: conversationID,
@@ -128,7 +129,7 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
         } else { // Missed call
             return await buildMissedCallNotification(
                 selfUserID: selfUserID,
-                senderID: senderID.uuid,
+                senderID: senderID.id,
                 callerID: callerID,
                 conversation: conversation,
                 conversationID: conversationID,
@@ -183,7 +184,7 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
             callerID: callerID,
             conversationID: conversationID
         )
-        content.threadIdentifier = conversationID.uuid.transportString()
+        content.threadIdentifier = conversationID.id.transportString()
 
         return .text(content)
     }
@@ -225,7 +226,7 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
             callerID: callerID,
             conversationID: conversationID
         )
-        content.threadIdentifier = conversationID.uuid.transportString()
+        content.threadIdentifier = conversationID.id.transportString()
 
         await context.increaseReadCount(
             conversation: conversation
@@ -347,7 +348,7 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
 
         userInfo[NotificationUserInfoKey.selfUserID] = selfUserID.uuidString
         userInfo[NotificationUserInfoKey.senderID] = callerID?.uuidString
-        userInfo[NotificationUserInfoKey.conversationID] = conversationID.uuid.uuidString
+        userInfo[NotificationUserInfoKey.conversationID] = conversationID.id.uuidString
 
         return userInfo
     }
@@ -372,10 +373,11 @@ extension ConversationCallingEventNotificationBuilder {
             conversationID: ConversationID,
             senderID: UserID,
             accountID: UUID,
+            eventTimestamp: Date?,
             callContent: CallContent
         ) async -> Bool {
             let conversation = await conversationLocalStore.fetchOrCreateConversation(
-                id: conversationID.uuid,
+                id: conversationID.id,
                 domain: conversationID.domain
             )
 
@@ -390,11 +392,11 @@ extension ConversationCallingEventNotificationBuilder {
             let loaderUserSessionsIDs = loadedUserSessions.compactMap(UUID.init(uuidString:))
             let isUserSessionLoaded = loaderUserSessionsIDs.contains(accountID)
 
-            let handle = "\(accountID.transportString())+\(conversationID.uuid.transportString())"
+            let handle = "\(accountID.transportString())+\(conversationID.id.transportString())"
             let knownCallHandles = userDefaults.object(forKey: Constants.knownCalls) as? [String] ?? []
             let wasCallHandleReported = knownCallHandles.contains(handle)
 
-            let initiatesRinging = callContent.isIncomingCall || wasCallHandleReported
+            let initiatesRinging = callContent.isIncomingCall && !wasCallHandleReported
             let terminatesRinging = (
                 callContent.isEndCall || callContent.isAnsweredElsewhere || callContent
                     .isRejected
@@ -402,12 +404,18 @@ extension ConversationCallingEventNotificationBuilder {
 
             let isValidState = initiatesRinging || terminatesRinging
 
+            let serverTimeDelta = await conversationLocalStore.fetchServerTimeDelta()
+            let currentTimestamp = Date.now.addingTimeInterval(serverTimeDelta)
+            let isCallTimeOut = eventTimestamp != nil ? Int(currentTimestamp.timeIntervalSince(eventTimestamp!)) > 30 :
+                true
+
             return !needsToBeUpdatedFromBackend
                 && !isConversationMuted
                 && !isConversationForcedReadOnly
                 && isAVSReady
                 && isCallKitReady
                 && isUserSessionLoaded
+                && !isCallTimeOut
                 && isValidState
         }
 
@@ -415,25 +423,29 @@ extension ConversationCallingEventNotificationBuilder {
         func validateCallNotification(
             conversationID: ConversationID,
             senderID: UserID,
-            time: Date?,
+            eventTimestamp: Date?,
             callContent: CallContent
         ) async -> Bool {
             let conversation = await conversationLocalStore.fetchOrCreateConversation(
-                id: conversationID.uuid,
+                id: conversationID.id,
                 domain: conversationID.domain
             )
 
             let selfUser = await userLocalStore.fetchSelfUser()
 
             let caller = await userLocalStore.fetchOrCreateUser(
-                id: senderID.uuid,
+                id: senderID.id,
                 domain: senderID.domain
             )
+
+            let serverTimeDelta = await conversationLocalStore.fetchServerTimeDelta()
+            let currentTimestamp = Date.now.addingTimeInterval(serverTimeDelta)
 
             let mutedMessagesTypes = await conversationLocalStore
                 .conversationMutedMessageTypesIncludingAvailability(conversation)
             let isConversationMuted = mutedMessagesTypes == .all
-            let isCallTimeOut = time != nil ? Int(Date.now.timeIntervalSince(time!)) > 30 : true
+            let isCallTimeOut = eventTimestamp != nil ? Int(currentTimestamp.timeIntervalSince(eventTimestamp!)) > 30 :
+                true
             let isCallerSelf = selfUser == caller
 
             let isIncomingCall = callContent.isIncomingCall
@@ -456,7 +468,7 @@ extension ConversationCallingEventNotificationBuilder {
             conversationID: ConversationID
         ) async -> ZMConversation {
             await conversationLocalStore.fetchOrCreateConversation(
-                id: conversationID.uuid,
+                id: conversationID.id,
                 domain: conversationID.domain
             )
         }
@@ -469,7 +481,7 @@ extension ConversationCallingEventNotificationBuilder {
             senderID: UserID
         ) async -> ZMUser {
             await userLocalStore.fetchOrCreateUser(
-                id: senderID.uuid,
+                id: senderID.id,
                 domain: senderID.domain
             )
         }

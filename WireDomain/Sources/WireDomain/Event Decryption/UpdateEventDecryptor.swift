@@ -17,10 +17,10 @@
 //
 
 import Foundation
-import WireAPI
 import WireCoreCrypto
 import WireDataModel
 import WireLogging
+import WireNetwork
 
 struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
 
@@ -69,11 +69,11 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
     func decryptEvents(
         in eventEnvelope: UpdateEventEnvelope,
         context: CoreCryptoContextProtocol?
-    ) async throws -> EventDecryptorResult {
+    ) async -> EventDecryptorResult {
         guard !DeveloperFlag.skipMLSMessagesDecryption.isOn else {
             return EventDecryptorResult(events: [], brokenMLSGroupIDs: [])
         }
-        let logAttributes: LogAttributes = [
+        var logAttributes: LogAttributes = [
             .eventId: eventEnvelope.id.safeForLoggingDescription,
             .public: true
         ]
@@ -83,6 +83,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         var shouldCommitPendingProposals = false
 
         for event in eventEnvelope.events {
+            logAttributes[.messageType] = event.name
             switch event {
             case let .conversation(.proteusMessageAdd(eventData)):
                 WireLogger.updateEvent.info(
@@ -196,7 +197,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         }
 
         let systemMessageType: SystemMessageType = .decryptionFailed(
-            sender: (eventData.senderID.uuid, eventData.senderID.domain),
+            sender: (eventData.senderID.id, eventData.senderID.domain),
             senderClientID: eventData.messageSenderClientID,
             remoteIdentityChanged: error == .RemoteIdentityChanged,
             date: eventData.timestamp
@@ -204,7 +205,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
 
         await messageLocalStore.addSystemMessage(
             messageType: systemMessageType,
-            conversationID: eventData.conversationID.uuid,
+            conversationID: eventData.conversationID.id,
             conversationDomain: eventData.conversationID.domain
         )
     }

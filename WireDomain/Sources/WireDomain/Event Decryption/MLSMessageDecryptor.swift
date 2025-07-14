@@ -17,10 +17,10 @@
 //
 
 import Foundation
-import WireAPI
 import WireCoreCrypto
 import WireDataModel
 import WireLogging
+import WireNetwork
 
 struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
 
@@ -40,7 +40,7 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
         )
 
         await conversationLocalStore.createMLSConversation(
-            conversationID: conversationID.uuid,
+            conversationID: conversationID.id,
             conversationDomain: conversationID.domain,
             mlsGroupID: groupID
         )
@@ -53,7 +53,7 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
         let conversationID = eventData.conversationID
 
         guard let mlsConversation = await conversationLocalStore.fetchConversation(
-            id: conversationID.uuid,
+            id: conversationID.id,
             domain: conversationID.domain
         ) else {
             throw MLSMessageDecryptorError.conversationNotFound
@@ -81,7 +81,7 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
             let decryptedMessages = await processMLSMessageDecryptionResults(
                 decryptionResults,
                 mlsConversation: mlsConversation,
-                senderID: eventData.senderID.uuid,
+                senderID: eventData.senderID.id,
                 senderDomain: eventData.senderID.domain,
                 date: eventData.timestamp
             )

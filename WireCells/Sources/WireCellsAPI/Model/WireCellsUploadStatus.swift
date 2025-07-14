@@ -23,6 +23,15 @@ public enum WireCellsUploadStatus: Equatable, Hashable, Sendable {
     case uploaded(isDraft: Bool)
     case failed(error: WireCellsUploadError)
     case cancelled
+
+    public var isUploaded: Bool {
+        switch self {
+        case .uploaded:
+            true
+        default:
+            false
+        }
+    }
 }
 
 public enum WireCellsUploadError: Error, Equatable, Hashable, Sendable {

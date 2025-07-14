@@ -17,11 +17,11 @@
 //
 
 import Foundation
-import WireAPI
-import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
+import WireNetwork
+import WireNetworkSupport
 import XCTest
 @testable import WireDomain
 
@@ -75,7 +75,6 @@ final class OneOnOneResolverTests: XCTestCase {
         // Given
 
         let commonProtocol = WireDataModel.MessageProtocol.mls
-        let mlsEpoch: UInt64 = 0
 
         let (selfUser, user, mlsOneOnOneConversation) = try await context.perform { [self] in
             try setupManagedObjects(
@@ -289,7 +288,7 @@ final class OneOnOneResolverTests: XCTestCase {
         mlsEpoch: UInt64 = 0
     ) throws -> ManagedObjects {
         let user = modelHelper.createUser(
-            id: Scaffolding.receiverQualifiedID.uuid,
+            id: Scaffolding.receiverQualifiedID.id,
             domain: Scaffolding.receiverQualifiedID.domain,
             in: context
         )
@@ -361,13 +360,13 @@ final class OneOnOneResolverTests: XCTestCase {
         static let username = "username"
         static let senderID = UUID()
         static let receiverID = UUID()
-        static let receiverQualifiedID = WireAPI.QualifiedID(
-            uuid: receiverID,
+        static let receiverQualifiedID = WireNetwork.QualifiedID(
+            id: receiverID,
             domain: "domain.com"
         )
         static let conversationID = UUID()
-        static let qualifiedConversationID = WireAPI.QualifiedID(
-            uuid: conversationID,
+        static let qualifiedConversationID = WireNetwork.QualifiedID(
+            id: conversationID,
             domain: "domain.com"
         )
 

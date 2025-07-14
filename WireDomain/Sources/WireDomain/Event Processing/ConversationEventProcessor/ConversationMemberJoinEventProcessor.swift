@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
+import WireNetwork
 import WireSystem
 
 struct ConversationMemberJoinEventProcessor: ConversationMemberJoinEventProcessorProtocol {
@@ -36,17 +36,17 @@ struct ConversationMemberJoinEventProcessor: ConversationMemberJoinEventProcesso
 
         try await conversationRepository.addParticipants(
             newParticipants,
-            sender: (senderID.uuid, senderID.domain),
+            sender: (senderID.id, senderID.domain),
             date: event.timestamp,
-            conversationID: conversationID.uuid,
+            conversationID: conversationID.id,
             conversationDomain: conversationID.domain
         )
     }
 
     private func getParticipantInfo(
-        from member: WireAPI.Conversation.Member
+        from member: WireNetwork.Conversation.Member
     ) -> (id: UUID, domain: String?, role: String?)? {
-        guard let userID = member.id ?? member.qualifiedID?.uuid else {
+        guard let userID = member.id ?? member.qualifiedID?.id else {
             return nil
         }
 

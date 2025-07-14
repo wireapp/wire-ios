@@ -17,3 +17,4 @@
 //
 
 "account_type_selector.close.label" = "关闭账户选择";
+"create_personal_account.close.label" = "关闭个人账户创建";

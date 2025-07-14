@@ -52,7 +52,7 @@ private extension AttachmentsCarouselItem {
         }
 
         self.init(
-            id: draft.id.uuid,
+            id: draft.nodeID,
             state: state,
             kind: AttachmentsCarouselItem.Kind(draft.fileType),
             name: draft.name,

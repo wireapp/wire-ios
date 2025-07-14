@@ -19,9 +19,9 @@
 import WireCommonComponents
 import WireSyncEngine
 
-struct AnalyticsServiceConfigurationBuilder {
+enum AnalyticsServiceConfigurationBuilder {
 
-    func build() -> AnalyticsServiceConfiguration? {
+    static func build() -> AnalyticsServiceConfiguration? {
         guard
             let secretKey = Bundle.countlyAppKey,
             !secretKey.isEmpty,

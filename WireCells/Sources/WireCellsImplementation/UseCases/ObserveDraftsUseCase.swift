@@ -18,7 +18,7 @@
 
 import WireCellsAPI
 
-package final class ObserveDraftsUseCase: WireCellsObserveDraftsUseCaseProtocol {
+package struct ObserveDraftsUseCase: WireCellsObserveDraftsUseCaseProtocol {
 
     private let cellName: String
     private let draftRepository: any DraftsRepositoryProtocol

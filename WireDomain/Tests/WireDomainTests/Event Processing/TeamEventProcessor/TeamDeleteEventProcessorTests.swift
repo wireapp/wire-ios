@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
 import WireDataModelSupport
+import WireNetwork
 import XCTest
 @testable import WireDomain
 
@@ -70,7 +70,7 @@ final class TeamDeleteEventProcessorTests: XCTestCase {
 
         // When
 
-        try await sut.processEvent()
+        await sut.processEvent()
 
         await fulfillment(of: [expectation], timeout: 5.0)
     }

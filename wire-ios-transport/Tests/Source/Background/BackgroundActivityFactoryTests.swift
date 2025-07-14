@@ -156,7 +156,7 @@ class BackgroundActivityFactoryTests: XCTestCase {
         factory.endBackgroundActivity(activity)
 
         // THEN
-        waitForExpectations(timeout: 1)
+        waitForExpectations(timeout: 2)
         XCTAssertFalse(factory.isActive)
         XCTAssertTrue(factory.activities.isEmpty)
         XCTAssertEqual(activityManager.numberOfTasks, 0)

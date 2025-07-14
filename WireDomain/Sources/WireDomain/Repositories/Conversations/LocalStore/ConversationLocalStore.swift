@@ -268,6 +268,12 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
+    public func fetchServerTimeDelta() async -> TimeInterval {
+        await context.perform { [context] in
+            context.serverTimeDelta
+        }
+    }
+
     public func addParticipants(
         _ participants: [(id: UUID, domain: String?, role: String?)],
         addedBy sender: (id: UUID, domain: String?),
@@ -354,14 +360,16 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     public func obtainPermanentIDs(
         user: ZMUser,
         conversation: ZMConversation
-    ) {
-        if user.objectID.isTemporaryID || conversation.objectID.isTemporaryID {
-            do {
-                try context.obtainPermanentIDs(for: [user, conversation])
-            } catch {
-                WireLogger.eventProcessing.error(
-                    "Failed to obtain permanent object ids: \(error.localizedDescription)"
-                )
+    ) async {
+        await context.perform { [context] in
+            if user.objectID.isTemporaryID || conversation.objectID.isTemporaryID {
+                do {
+                    try context.obtainPermanentIDs(for: [user, conversation])
+                } catch {
+                    WireLogger.eventProcessing.error(
+                        "Failed to obtain permanent object ids: \(error.localizedDescription)"
+                    )
+                }
             }
         }
     }

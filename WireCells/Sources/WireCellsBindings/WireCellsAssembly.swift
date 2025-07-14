@@ -31,19 +31,49 @@ public struct WireCellsAssembly {
 
     private static let nodesAPI = NodesAPI(credentials: credentials)
 
-    private static let draftsRepository = DraftsRepository(
-        uploadManager: WireCellsNodeUploadManager(nodesAPI: nodesAPI),
-        nodesAPI: nodesAPI
-    )
+    private static let uploadManager = WireCellsNodeUploadManager(nodesAPI: nodesAPI)
+
+    private static let draftsRepository = DraftsRepository(uploadManager: uploadManager, nodesAPI: nodesAPI)
 
     public init() {}
 
     public func makeUploadDraftUseCase(cellName: String) -> any WireCellsUploadDraftUseCaseProtocol {
-        UploadDraftUseCase(cellName: cellName, draftRepository: Self.draftsRepository)
+        UploadDraftUseCase(
+            cellName: cellName,
+            draftRepository: Self.draftsRepository,
+            uploadManager: Self.uploadManager,
+            nodesAPI: Self.nodesAPI
+        )
     }
 
     public func makeObserveDraftsUseCase(cellName: String) -> any WireCellsObserveDraftsUseCaseProtocol {
         ObserveDraftsUseCase(cellName: cellName, draftRepository: Self.draftsRepository)
+    }
+
+    public func makePublishDraftsUseCase(cellName: String) -> any WireCellsPublishDraftsUseCaseProtocol {
+        PublishDraftsUseCase(cellName: cellName, draftRepository: Self.draftsRepository)
+    }
+
+    public func makeClearPublishedDraftsUseCase(cellName: String) -> any WireCellsClearPublishedDraftsUseCaseProtocol {
+        ClearPublishedDraftsUseCase(cellName: cellName, draftRepository: Self.draftsRepository)
+    }
+
+    public func makeDeleteDraftUseCase(cellName: String) -> any WireCellsDeleteDraftUseCaseProtocol {
+        DeleteDraftUseCase(
+            cellName: cellName,
+            draftRepository: Self.draftsRepository,
+            uploadManager: Self.uploadManager,
+            nodesAPI: Self.nodesAPI
+        )
+    }
+
+    public func makeRetryUploadDraftUseCase(cellName: String) -> any WireCellsRetryUploadDraftUseCaseProtocol {
+        UploadDraftUseCase(
+            cellName: cellName,
+            draftRepository: Self.draftsRepository,
+            uploadManager: Self.uploadManager,
+            nodesAPI: Self.nodesAPI
+        )
     }
 
 }

@@ -18,6 +18,7 @@
 
 import WireDataModel
 import WireLogging
+import WireNetwork
 
 public final class UserLocalStore: UserLocalStoreProtocol {
 
@@ -244,7 +245,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
         id: UUID,
         domain: String?,
         date: Date
-    ) async throws {
+    ) async {
         let user = await context.perform { [context] in
             ZMUser.fetchOrCreate(
                 with: id,
@@ -405,6 +406,14 @@ public final class UserLocalStore: UserLocalStoreProtocol {
     public func fetchSelfUserAvailability() async -> Availability {
         await context.perform { [context] in
             ZMUser.selfUser(in: context).availability
+        }
+    }
+
+    public func updateUser(with userID: WireDataModel.QualifiedID, availability: Availability) async {
+        await context.perform { [context] in
+            let user = ZMUser.fetch(with: userID.uuid, domain: userID.domain, in: context)
+            user?.updateAvailability(availability)
+            context.saveOrRollback()
         }
     }
 

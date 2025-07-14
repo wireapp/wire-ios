@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
 import WireLogging
+import WireNetwork
 
 struct ConversationMLSWelcomeEventProcessor: ConversationMLSWelcomeEventProcessorProtocol {
 
@@ -45,19 +45,19 @@ struct ConversationMLSWelcomeEventProcessor: ConversationMLSWelcomeEventProcesso
         )
 
         var conversation = await conversationRepository.fetchConversation(
-            id: conversationID.uuid,
+            id: conversationID.id,
             domain: conversationID.domain
         )
 
         if conversation == nil {
             // sync conversation with backend
             try await conversationRepository.pullConversation(
-                id: conversationID.uuid,
+                id: conversationID.id,
                 domain: conversationID.domain
             )
 
             conversation = await conversationRepository.fetchConversation(
-                id: conversationID.uuid,
+                id: conversationID.id,
                 domain: conversationID.domain
             )
         }

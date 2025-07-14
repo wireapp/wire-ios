@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireBackup
 import WireDataModel
 import WireFoundation
+import WireNetwork
 
 extension BackupLocalStore {
 
@@ -64,8 +64,9 @@ extension BackupLocalStore {
 
     func addMessage(_ backupMessage: MessageBackupModel) async throws {
         let conversationID = backupMessage.conversationID
-        let conversation = await context.perform {
-            ZMConversation.fetch(with: conversationID.id, domain: conversationID.domain, in: context)
+        let (conversation, lastReadServerTimeStamp) = await context.perform {
+            let conversation = ZMConversation.fetch(with: conversationID.id, domain: conversationID.domain, in: context)
+            return (conversation, conversation?.lastReadServerTimeStamp)
         }
         guard
             let conversation,
@@ -77,12 +78,17 @@ extension BackupLocalStore {
             genericMessage,
             content: genericMessage.content!,
             conversation: conversation,
-            conversationID: WireAPI.QualifiedID(conversationID),
-            senderID: WireAPI.QualifiedID(backupMessage.senderUserID),
+            conversationID: conversationID,
+            senderID: backupMessage.senderUserID,
             senderClientID: backupMessage.senderClientID,
             date: backupMessage.creationDate,
             eventMessage: ""
         )
+
+        // restore `lastReadServerTimeStamp`, messages imported from backups shouldn't be marked as unread
+        await context.perform {
+            conversation.lastReadServerTimeStamp = lastReadServerTimeStamp ?? .now
+        }
     }
 
 }

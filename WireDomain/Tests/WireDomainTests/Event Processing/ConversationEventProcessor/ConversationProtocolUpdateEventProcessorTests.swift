@@ -18,8 +18,8 @@
 
 import WireDomainSupport
 import XCTest
-@testable import WireAPI
 @testable import WireDomain
+@testable import WireNetwork
 
 final class ConversationProtocolUpdateEventProcessorTests: XCTestCase {
 
@@ -58,8 +58,8 @@ final class ConversationProtocolUpdateEventProcessorTests: XCTestCase {
 
     private enum Scaffolding {
         static let event = ConversationProtocolUpdateEvent(
-            conversationID: ConversationID(uuid: UUID(), domain: "domain.com"),
-            senderID: UserID(uuid: UUID(), domain: "domain.com"),
+            conversationID: ConversationID(id: UUID(), domain: "domain.com"),
+            senderID: UserID(id: UUID(), domain: "domain.com"),
             newProtocol: .mls
         )
     }

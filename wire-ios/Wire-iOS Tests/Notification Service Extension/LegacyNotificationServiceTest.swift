@@ -18,6 +18,7 @@
 
 import Foundation
 import Wire_Notification_Service_Extension
+import WireDomain
 import WireNotificationEngine
 import XCTest
 
@@ -125,9 +126,13 @@ final class LegacyNotificationServiceTests: XCTestCase {
             fatalError()
         }
 
-        let manager = AccountManager(sharedDirectory: sharedContainer)
+        let manager = try? AccountManager(
+            currentAppVersion: "1.0.0",
+            sharedDirectory: sharedContainer,
+            defaults: .temporary()
+        )
         let account = Account(userName: "Test Account", userIdentifier: id)
-        manager.addOrUpdate(account)
+        manager?.addOrUpdate(account)
     }
 
     private func createNotificationContent() -> UNMutableNotificationContent {

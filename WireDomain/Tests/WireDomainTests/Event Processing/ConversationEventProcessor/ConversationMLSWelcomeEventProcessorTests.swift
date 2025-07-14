@@ -20,8 +20,8 @@ import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
 import XCTest
-@testable import WireAPI
 @testable import WireDomain
+@testable import WireNetwork
 
 final class ConversationMLSWelcomeEventProcessorTests: XCTestCase {
 
@@ -82,7 +82,7 @@ final class ConversationMLSWelcomeEventProcessorTests: XCTestCase {
 
         let conversation = await context.perform { [self] in
             modelHelper.createGroupConversation(
-                id: Scaffolding.conversationID.uuid,
+                id: Scaffolding.conversationID.id,
                 domain: Scaffolding.conversationID.domain,
                 in: context
             )
@@ -116,8 +116,8 @@ final class ConversationMLSWelcomeEventProcessorTests: XCTestCase {
 
     private enum Scaffolding {
         static let domain = "domain.com"
-        static let conversationID = ConversationID(uuid: .mockID1, domain: domain)
-        static let senderID = UserID(uuid: .mockID2, domain: domain)
+        static let conversationID = ConversationID(id: .mockID1, domain: domain)
+        static let senderID = UserID(id: .mockID2, domain: domain)
         static let mlsGroupID = MLSGroupID.random()
         static let qualifiedID = WireDataModel.QualifiedID(uuid: .mockID1, domain: domain)
 

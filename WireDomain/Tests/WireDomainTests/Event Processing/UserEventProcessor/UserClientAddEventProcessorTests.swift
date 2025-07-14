@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
+import WireNetwork
 import XCTest
 
 @testable import WireDomain
@@ -74,7 +74,7 @@ final class UserClientAddEventProcessorTests: XCTestCase {
 
         // When
 
-        try await sut.processEvent(Scaffolding.event)
+        await sut.processEvent(Scaffolding.event)
 
         // Then
 

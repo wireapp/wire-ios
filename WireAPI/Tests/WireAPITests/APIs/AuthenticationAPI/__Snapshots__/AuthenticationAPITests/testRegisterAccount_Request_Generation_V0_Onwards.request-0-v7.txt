@@ -1,5 +1,0 @@
-curl \
-	--request POST \
-	--header "Content-Type: application/json" \
-	--data "{\"email\":\"john.smith@example.com\",\"emailCode\":\"555666\",\"locale\":\"en\",\"name\":\"John Smith\",\"password\":\"abcd\"}" \
-	"/v7/register"

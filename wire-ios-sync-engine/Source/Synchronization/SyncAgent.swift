@@ -63,10 +63,6 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     private var ongoingSyncTask: Task<Void, Never>?
     private var subscription: AnyCancellable?
 
-    private var hasCompletedInitialSync: Bool {
-        lastUpdateEventIDRepository.fetchLastEventID() != nil
-    }
-
     var isLive: Bool {
         if isSyncV2Enabled {
             syncStateSubject.value == .liveSyncing(.ongoing)
@@ -112,7 +108,8 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
         ongoingSyncTask = Task {
             WireLogger.sync.debug(
-                "resuming sync"
+                "resuming sync",
+                attributes: .syncAttributes
             )
 
             let retrier = BackoffRetrier()
@@ -139,11 +136,25 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     }
 
     private func suspend() async {
-        WireLogger.sync.debug("suspending sync")
+        let backgroundActivity = BackgroundActivityFactory.shared.startBackgroundActivity(
+            name: "suspending sync"
+        )
+
+        WireLogger.sync.debug(
+            "suspending sync \(backgroundActivity != nil ? "in a background task" : "")",
+            attributes: .syncAttributes
+        )
+
         ongoingSyncTask?.cancel()
         await incrementalSyncToken?.suspend()
         incrementalSyncToken = nil
         syncStateSubject.send(.suspended)
+
+        if let backgroundActivity {
+            BackgroundActivityFactory.shared.endBackgroundActivity(
+                backgroundActivity
+            )
+        }
     }
 
     /// Performs the appropriate sync depending in the local state.
@@ -152,7 +163,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     /// otherwise the incremental sync will be performed.
 
     func performSync() async throws {
-        if !hasCompletedInitialSync {
+        if journal[.isInitialSyncRequired] {
             try await performInitialSync()
         } else {
             try await performIncrementalSync()
@@ -163,16 +174,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
     func performInitialSync() async throws {
         if isSyncV2Enabled {
-            do {
-                delegate?.syncAgentDidStartInitialSync(self)
-                try await initialSyncProvider.provideInitialSync().perform(skipPullingLastUpdateEventID: false)
-                journal[.isInitialSyncRequired] = false
-                delegate?.syncAgentDidFinishInitialSync(self)
-            } catch {
-                WireLogger.sync.error("failed to perform new initial sync: \(String(describing: error))")
-                throw error
-            }
-
+            try await performInitialSyncV2()
             try await performIncrementalSync()
         } else {
             // Incremental sync automatically follows the slow sync.
@@ -205,14 +207,24 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     /// Perform an incremental sync.
 
     func performIncrementalSync() async throws {
+        let isConsumableNotificationsEnabled = journal[.isConsumableNotificationsEnabled] && DeveloperFlag
+            .consumableNotifications.isOn
+
         if isSyncV2Enabled {
 
             do {
                 try await incrementalSyncTaskManager.performIfNeeded { [weak self] in
                     guard let self else { return }
                     delegate?.syncAgentDidStartIncrementalSync(self)
-                    incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync().perform()
-                    delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: false)
+
+                    if isConsumableNotificationsEnabled {
+                        incrementalSyncToken = try await incrementalSyncProvider.provideLiveSync(delegate: self)
+                            .perform()
+                    } else {
+                        incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync()
+                            .perform()
+                        delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: false)
+                    }
                 }
             } catch IncrementalSync.Failure.missedEvents {
                 WireLogger.sync.error(
@@ -231,6 +243,25 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         }
     }
 
+    private func performInitialSyncV2() async throws {
+        do {
+            delegate?.syncAgentDidStartInitialSync(self)
+            WireLogger.sync.debug("did start new initial sync")
+            try await initialSyncProvider.provideInitialSync()
+                .perform(skipPullingLastUpdateEventID: skipPullingLastNotificationID)
+            WireLogger.sync.debug("did finish new initial sync")
+            journal[.isInitialSyncRequired] = false
+            delegate?.syncAgentDidFinishInitialSync(self)
+        } catch {
+            WireLogger.sync.error("failed to perform new initial sync: \(String(describing: error))")
+            throw error
+        }
+    }
+
+    private var skipPullingLastNotificationID: Bool {
+        journal[.isConsumableNotificationsEnabled]
+    }
+
     private func setupBindings() {
         subscription = syncStateSubject
             .receive(on: DispatchQueue.main)
@@ -246,7 +277,30 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                 self?.resume()
             }
     }
+}
 
+extension SyncAgent: LiveSyncDelegate {
+
+    func isUpToDate(sync: IncrementalSyncV2) {
+        delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: false)
+    }
+
+    func didMissedEvents(sync: IncrementalSyncV2) async {
+        WireLogger.sync.debug("slow sync requested by sync v3")
+        do {
+            try await performInitialSyncV2()
+            WireLogger.sync.debug("slow sync done, should ack full sync")
+        } catch {
+            WireLogger.sync.error("error while requesing slow sync: \(error.localizedDescription)")
+        }
+    }
+
+    func didFail(sync: IncrementalSyncV2, error: any Error) {
+        delegate?.syncAgentDidFailSyncing(
+            self,
+            error: error
+        )
+    }
 }
 
 // MARK: - MLS sync delegate
@@ -264,7 +318,8 @@ extension SyncAgent: MLSSyncDelegate {
                 try await incrementalSyncTaskManager.performIfNeeded { [weak self] in
                     guard let self else { return }
                     delegate?.syncAgentDidStartIncrementalSync(self)
-                    incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync().perform()
+                    incrementalSyncToken = try await incrementalSyncProvider.provideIncrementalSync()
+                        .perform()
                     delegate?.syncAgentDidFinishIncrementalSync(self, isRecovering: true)
                 }
             } catch {

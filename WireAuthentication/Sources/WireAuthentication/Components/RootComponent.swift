@@ -19,7 +19,7 @@
 import Combine
 import NeedleFoundation
 import SwiftUI
-import WireAPI
+import WireNetwork
 import WireReusableUIComponents
 internal import WireAuthenticationUI
 import WireAuthenticationAPI
@@ -36,13 +36,13 @@ final class RootComponent: BootstrapComponent {
     public let howToChangeEmailURL: URL
     public let howToDeleteAccountURL: URL
     public let privacyPolicyURL: URL
+    public let termsOfUseURL: URL
     public let passwordValidator: any PasswordValidator
     public let ssoCallbackURLScheme: String
     public let appStoreURL: URL
-    public let existsAnotherAccount: Bool
-    public var otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>
-    public let useLegacyRegistrationFlow: Bool
-    public let personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
+    public let accountsPublisher: CurrentValuePublisher<[AccountUIModel]>
+    public let isMultibackendEnabled: Bool
+    public let registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
 
     @MainActor public var bridge: WireAuthenticationBridge {
         shared {
@@ -61,13 +61,13 @@ final class RootComponent: BootstrapComponent {
         howToChangeEmailURL: URL,
         howToDeleteAccountURL: URL,
         privacyPolicyURL: URL,
+        termsOfUseURL: URL,
         passwordValidator: any PasswordValidator,
         ssoCallbackURLScheme: String,
         appStoreURL: URL,
-        existsAnotherAccount: Bool,
-        otherAccountsPublisher: ReadOnlyCurrentValueSubject<[AccountUIModel]>,
-        useLegacyRegistrationFlow: Bool,
-        personalAccountCreationAnalyticsTracker: any PersonalAccountCreationAnalyticsTrackerProtocol
+        accountsPublisher: CurrentValuePublisher<[AccountUIModel]>,
+        isMultibackendEnabled: Bool,
+        registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
     ) {
         self.backendInfo = backendInfo
         self.preferredAPIVersion = preferredAPIVersion
@@ -76,13 +76,13 @@ final class RootComponent: BootstrapComponent {
         self.howToChangeEmailURL = howToChangeEmailURL
         self.howToDeleteAccountURL = howToDeleteAccountURL
         self.privacyPolicyURL = privacyPolicyURL
+        self.termsOfUseURL = termsOfUseURL
         self.passwordValidator = passwordValidator
         self.ssoCallbackURLScheme = ssoCallbackURLScheme
         self.appStoreURL = appStoreURL
-        self.existsAnotherAccount = existsAnotherAccount
-        self.otherAccountsPublisher = otherAccountsPublisher
-        self.useLegacyRegistrationFlow = useLegacyRegistrationFlow
-        self.personalAccountCreationAnalyticsTracker = personalAccountCreationAnalyticsTracker
+        self.accountsPublisher = accountsPublisher
+        self.isMultibackendEnabled = isMultibackendEnabled
+        self.registrationAnalyticsTracker = registrationAnalyticsTracker
     }
 
     // MARK: - Children
@@ -96,7 +96,8 @@ final class RootComponent: BootstrapComponent {
 
         return DetermineAuthMethodComponent(
             parent: self,
-            networkStack: networkStack
+            networkStack: networkStack,
+            existsAnotherAccount: !accountsPublisher.value.isEmpty
         )
     }
 
@@ -111,7 +112,11 @@ extension RootComponent: RootViewModel.Factory {
             RootViewModel(
                 factory: self,
                 bridge: bridge,
-                backendInfo: backendInfo
+                backendInfo: backendInfo,
+                isMultibackendEnabled: isMultibackendEnabled,
+                hasOtherAccountsProvider: { [accountsPublisher] in
+                    !accountsPublisher.value.isEmpty
+                }
             )
         }
     }
@@ -121,10 +126,6 @@ extension RootComponent: RootViewModel.Factory {
     }
 
     func accountsSwitcherFactory() -> any AccountSwitcherFactory {
-        accountSwitcherComponent()
-    }
-
-    func accountSwitcherComponent() -> AccountSwitcherComponent {
         AccountSwitcherComponent(parent: self)
     }
 

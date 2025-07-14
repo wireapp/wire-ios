@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
 import WireLogging
+import WireNetwork
 import WireProtos
 
 public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcessorProtocol {
@@ -50,7 +50,7 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
 
         let logAttributes: LogAttributes = [
             .messageType: eventMessage,
-            .conversationId: conversationID.uuid.safeForLoggingDescription,
+            .conversationId: conversationID.id.safeForLoggingDescription,
             .nonce: UUID(uuidString: message.messageID) ?? "<nil>"
         ]
         WireLogger.eventProcessing.debug("Processing:\n\(message)")
@@ -94,7 +94,7 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
             await messageLocalStore.deleteMessageForEveryone(
                 deleted,
                 in: conversation,
-                senderID: senderID.uuid
+                senderID: senderID.id
             )
 
         case let .reaction(reaction):
@@ -102,7 +102,7 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
             await messageLocalStore.addMessageReaction(
                 reaction,
                 in: conversation,
-                senderID: senderID.uuid,
+                senderID: senderID.id,
                 date: date
             )
 
@@ -111,7 +111,7 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
             await messageLocalStore.addMessageConfirmation(
                 confirmation,
                 in: conversation,
-                senderID: senderID.uuid,
+                senderID: senderID.id,
                 senderDomain: senderID.domain,
                 date: date
             )
@@ -128,7 +128,7 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
             await messageLocalStore.editMessage(
                 edited,
                 in: conversation,
-                senderID: senderID.uuid,
+                senderID: senderID.id,
                 genericMessage: message,
                 date: date
             )
@@ -143,25 +143,33 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
             }
 
             let systemMessageType: SystemMessageType = .sessionReset(
-                sender: (senderID.uuid, senderID.domain),
+                sender: (senderID.id, senderID.domain),
                 senderClientID: senderClientID,
                 date: date
             )
 
             await messageLocalStore.addSystemMessage(
                 messageType: systemMessageType,
-                conversationID: conversationID.uuid,
+                conversationID: conversationID.id,
                 conversationDomain: conversationID.domain
             )
 
-        case .calling, .availability:
+        case let .availability(availability):
+            let userID = WireDataModel.QualifiedID(uuid: senderID.id, domain: senderID.domain)
+            let userAvailability = WireDataModel.Availability(proto: availability)
+            await userLocalStore.updateUser(
+                with: userID,
+                availability: userAvailability
+            )
 
-            // cases not handled
+        case .calling:
+
+            // case not handled here, see `onProcessedCallEvent`
             break
 
         case .inCallEmoji:
 
-            // Not supported yet, just discard.
+            // Not supported yet, just discard. TODO: [WPB-11770] implement here
             break
 
         case .image, .asset:
@@ -169,7 +177,7 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
             try await processAssetMessageContent(
                 message: message,
                 conversation: conversation,
-                sender: (senderID.uuid, senderID.domain, senderClientID),
+                sender: (senderID.id, senderID.domain, senderClientID),
                 date: date,
                 logAttributes: logAttributes
             )
@@ -181,7 +189,7 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
                 try await processAssetMessageContent(
                     message: message,
                     conversation: conversation,
-                    sender: (senderID.uuid, senderID.domain, senderClientID),
+                    sender: (senderID.id, senderID.domain, senderClientID),
                     date: date,
                     logAttributes: logAttributes
                 )
@@ -190,7 +198,7 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
                 try await processMessageContent(
                     message: message,
                     conversation: conversation,
-                    sender: (senderID.uuid, senderID.domain, senderClientID),
+                    sender: (senderID.id, senderID.domain, senderClientID),
                     date: date,
                     logAttributes: logAttributes
                 )
@@ -201,7 +209,7 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
             try await processMessageContent(
                 message: message,
                 conversation: conversation,
-                sender: (senderID.uuid, senderID.domain, senderClientID),
+                sender: (senderID.id, senderID.domain, senderClientID),
                 date: date,
                 logAttributes: logAttributes
             )
@@ -214,7 +222,7 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
             break
 
         case .inCallHandRaise:
-            break // Not handled yet
+            break // Not handled yet, TODO: [WPB-11769] implement here
         }
     }
 

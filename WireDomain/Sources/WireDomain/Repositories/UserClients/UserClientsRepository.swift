@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireAPI
 import WireDataModel
+import WireNetwork
 
 public struct UserClientsRepository: UserClientsRepositoryProtocol {
 
@@ -60,7 +60,7 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
 
     public func fetchOrCreateClient(
         id: String
-    ) async throws -> (client: WireDataModel.UserClient, isNew: Bool) {
+    ) async -> (client: WireDataModel.UserClient, isNew: Bool) {
         await userClientsLocalStore.fetchOrCreateClient(
             id: id
         )
@@ -84,7 +84,7 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
                 id: remoteSelfClient.id
             )
 
-            try await updateClient(
+            await updateClient(
                 id: remoteSelfClient.id,
                 from: remoteSelfClient,
                 isNewClient: localUserClient.isNew
@@ -102,9 +102,9 @@ public struct UserClientsRepository: UserClientsRepositoryProtocol {
 
     public func updateClient(
         id: String,
-        from remoteClient: WireAPI.SelfUserClient,
+        from remoteClient: WireNetwork.SelfUserClient,
         isNewClient: Bool
-    ) async throws {
+    ) async {
         await userClientsLocalStore.updateClient(
             id: id,
             isNewClient: isNewClient,

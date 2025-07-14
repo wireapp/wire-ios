@@ -43,6 +43,8 @@ extension WireTransport.APIVersion {
             self = .v7
         case .v8:
             self = .v8
+        case .v9:
+            self = .v9
         }
     }
 

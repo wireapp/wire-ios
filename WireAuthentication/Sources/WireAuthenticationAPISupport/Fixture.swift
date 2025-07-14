@@ -59,4 +59,6 @@ public enum Fixture {
         expirationDate: Date()
     )
 
+    public static let uuid = UUID()
+
 }

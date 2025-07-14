@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
+import WireNetwork
 
 /// Process user client add events.
 
@@ -26,6 +26,6 @@ protocol UserClientAddEventProcessorProtocol {
     ///
     /// - Parameter event: A user client add event.
 
-    func processEvent(_ event: UserClientAddEvent) async throws
+    func processEvent(_ event: UserClientAddEvent) async
 
 }

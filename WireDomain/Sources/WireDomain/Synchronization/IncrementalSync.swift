@@ -18,8 +18,8 @@
 
 import Combine
 import Foundation
-import WireAPI
 import WireLogging
+import WireNetwork
 
 public struct IncrementalSync: IncrementalSyncProtocol {
 
@@ -38,6 +38,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
     private let syncStateSubject: CurrentValueSubject<SyncState, Never>
     private let logger = WireLogger.sync
     private let journal: Journal
+    private let mlsGroupRepairAgent: MLSGroupRepairAgentProtocol
 
     public init(
         selfClientID: String,
@@ -49,7 +50,8 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         processor: any UpdateEventProcessorProtocol,
         databaseSaver: any DatabaseSaverProtocol,
         syncStateSubject: CurrentValueSubject<SyncState, Never>,
-        journal: Journal
+        journal: Journal,
+        mlsGroupRepairAgent: MLSGroupRepairAgentProtocol
     ) {
         self.selfClientID = selfClientID
         self.pushChannelAPI = pushChannelAPI
@@ -61,6 +63,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         self.databaseSaver = databaseSaver
         self.syncStateSubject = syncStateSubject
         self.journal = journal
+        self.mlsGroupRepairAgent = mlsGroupRepairAgent
     }
 
     public func perform() async throws -> Token {
@@ -82,12 +85,15 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 syncStateSubject.send(.incrementalSyncing(.pullPendingEvents))
                 try await updateEventsSync.pull()
 
-                logger.debug("processing stored update events")
+                logger.debug("processing stored update events", attributes: .syncAttributes(initialSync: false))
                 syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
                 processedEnvelopeIDs = try await processStoredEvents()
             } catch {
                 func tearDown() async {
-                    logger.debug("incremental sync interrupted, tearing down...")
+                    logger.debug(
+                        "incremental sync interrupted, tearing down...",
+                        attributes: .syncAttributes(initialSync: false)
+                    )
                     await pushChannel.close()
                 }
 
@@ -110,6 +116,8 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                     throw error
                 }
             }
+
+            await mlsGroupRepairAgent.repairConversations()
 
             let liveEventTask = Task { @Sendable [self] in
                 logger.debug("handling live event stream", attributes: .syncAttributes(initialSync: false))
@@ -149,28 +157,19 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                     continue
                 }
 
-                do {
-                    // Decrypt.
-                    logger.debug(
-                        "decrypting live event envelope",
-                        attributes: .syncAttributes(initialSync: false) + [.eventEnvelopeID: envelope.id]
-                    )
+                // Decrypt.
+                logger.debug(
+                    "decrypting live event envelope",
+                    attributes: .syncAttributes(initialSync: false) + [.eventEnvelopeID: envelope.id]
+                )
 
-                    let decryptionEventsResult = try await decryptor.decryptEvents(in: envelope, context: nil)
+                let decryptionEventsResult = await decryptor.decryptEvents(in: envelope, context: nil)
 
-                    envelope.events = decryptionEventsResult.events
+                envelope.events = decryptionEventsResult.events
 
-                    let brokenMLSGroupIDs = decryptionEventsResult.brokenMLSGroupIDs
-                    if !brokenMLSGroupIDs.isEmpty {
-                        journal.addValues(Set(brokenMLSGroupIDs), for: .brokenMLSGroupIDs)
-                    }
-
-                } catch {
-                    logger.error(
-                        "failed to decrypt live event envelope: \(String(describing: error))",
-                        attributes: .syncAttributes(initialSync: false) + [.eventEnvelopeID: envelope.id]
-                    )
-                    continue
+                let brokenMLSGroupIDs = decryptionEventsResult.brokenMLSGroupIDs
+                if !brokenMLSGroupIDs.isEmpty {
+                    journal.addValues(Set(brokenMLSGroupIDs), for: .brokenMLSGroupIDs)
                 }
 
                 let index: Int64
@@ -190,7 +189,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                     continue
                 }
 
-                // Bump the last event id so we don't refech it.
+                // Bump the last event id so we don't refetch it.
                 if !envelope.isTransient {
                     logger.debug(
                         "updating last event id",
@@ -253,7 +252,9 @@ public struct IncrementalSync: IncrementalSyncProtocol {
             // If we need to abort, do it before processing the next batch.
             try Task.checkCancellation()
 
-            let envelopes = try await updateEventsStore.fetchStoredEventEnvelopes(limit: batchSize)
+            let envelopesWithObjectIDs = try await updateEventsStore.fetchStoredEventEnvelopes(limit: batchSize)
+            let envelopes = envelopesWithObjectIDs.map(\.envelope)
+            let envelopesObjectIDs = envelopesWithObjectIDs.map(\.objectID)
 
             guard !envelopes.isEmpty else {
                 break
@@ -282,7 +283,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
             }
 
             processedEnvelopeIDs.formUnion(envelopes.map(\.id))
-            try await updateEventsStore.deleteNextPendingEvents(limit: batchSize)
+            try await updateEventsStore.deleteNextPendingEvents(with: envelopesObjectIDs)
             await updateEventsStore.calculateLastUnreadMessages()
 
             do {
@@ -323,4 +324,16 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         }
     }
 
+}
+
+extension IncrementalSyncV1: SyncMigratorProtocol {
+    public func migrateFromIncrementalSyncV1() async throws {
+        logger.debug("pulling pending update events", attributes: .syncAttributes(initialSync: false))
+        syncStateSubject.send(.incrementalSyncing(.pullPendingEvents))
+        try await updateEventsSync.pull()
+
+        logger.debug("processing stored update events", attributes: .syncAttributes(initialSync: false))
+        syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
+        _ = try await processStoredEvents()
+    }
 }

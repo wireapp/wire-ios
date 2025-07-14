@@ -35,17 +35,15 @@ struct SettingsCellDescriptorFactory {
         SettingsInternalGroupCellDescriptorType {
         var rootElements: [any SettingsCellDescriptorType] = []
 
+        #if !MULTIPLE_ACCOUNTS_DISABLED
+            rootElements.append(addAccountOrTeamCell())
+        #endif
+
         if ZMUser.selfUser()?.canManageTeam == true {
             rootElements.append(manageTeamCell())
         }
 
-        #if MULTIPLE_ACCOUNTS_DISABLED
-        // We skip "add account" cell
-        #else
-            rootElements.append(addAccountOrTeamCell())
-        #endif
         let topSection = SettingsSectionDescriptor(cellDescriptors: rootElements)
-
         return SettingsGroupCellDescriptor(
             items: [topSection],
             title: L10n.Localizable.Self.profile,
@@ -60,14 +58,14 @@ struct SettingsCellDescriptorFactory {
         SettingsExternalScreenCellDescriptor(
             title: L10n.Localizable.Self.Settings.ManageTeam.title,
             isDestructive: false,
-            presentationStyle: PresentationStyle.modal,
+            presentationStyle: .modal,
             identifier: nil,
             presentationAction: { () -> (UIViewController?) in
-                return BrowserViewController(url: URL.manageTeam(source: .settings))
+                URL.manageTeam(source: .settings).browserControllerOrOpenExternally()
             },
             previewGenerator: nil,
             icon: .team,
-            accessoryViewMode: .alwaysHide,
+            accessoryView: .externalLink,
             copiableText: nil,
             settingsTopLevelMenuItem: nil
         )
@@ -79,7 +77,7 @@ struct SettingsCellDescriptorFactory {
 
         let presentationAction: () -> UIViewController? = {
             if
-                let count = sessionManager?.accountManager.accounts.count,
+                let count = sessionManager?.accountManager.numberOfAccounts,
                 let maxNumberAccounts = sessionManager?.maxNumberAccounts,
                 count < maxNumberAccounts {
                 sessionManager?.addAccount()
@@ -103,14 +101,14 @@ struct SettingsCellDescriptorFactory {
         }
 
         return SettingsExternalScreenCellDescriptor(
-            title: L10n.Localizable.Self.Settings.AddTeamOrAccount.title,
+            title: L10n.Localizable.Self.Settings.AddAccountOrTeam.title,
             isDestructive: false,
-            presentationStyle: PresentationStyle.modal,
+            presentationStyle: .modal,
             identifier: nil,
             presentationAction: presentationAction,
             previewGenerator: nil,
             icon: .plus,
-            accessoryViewMode: .alwaysHide,
+            accessoryView: .none,
             copiableText: nil,
             settingsTopLevelMenuItem: nil
         )
@@ -136,6 +134,10 @@ struct SettingsCellDescriptorFactory {
             aboutSection()
         ]
 
+        if userSession.selfUser.canManageTeam {
+            topLevelElements.append(manageTeamLink)
+        }
+
         if Bundle.developerModeEnabled {
             topLevelElements.append(developerGroup)
         }
@@ -158,7 +160,7 @@ struct SettingsCellDescriptorFactory {
         SettingsExternalScreenCellDescriptor(
             title: L10n.Localizable.Self.Settings.PrivacyAnalyticsMenu.Devices.title,
             isDestructive: false,
-            presentationStyle: PresentationStyle.navigation,
+            presentationStyle: .navigation,
             identifier: type(of: self).settingsDevicesCellIdentifier,
             presentationAction: { () -> (UIViewController?) in
                 return ClientListViewController(
@@ -244,7 +246,7 @@ struct SettingsCellDescriptorFactory {
             isDestructive: false,
             presentationStyle: .modal,
             presentationAction: {
-                BrowserViewController(url: WireURLs.shared.support)
+                WireURLs.shared.support.browserControllerOrOpenExternally()
             },
             previewGenerator: .none
         )
@@ -254,7 +256,7 @@ struct SettingsCellDescriptorFactory {
             isDestructive: false,
             presentationStyle: .modal,
             presentationAction: {
-                BrowserViewController(url: WireURLs.shared.askSupportArticle)
+                WireURLs.shared.askSupportArticle.browserControllerOrOpenExternally()
             },
             previewGenerator: .none
         )
@@ -266,7 +268,7 @@ struct SettingsCellDescriptorFactory {
             isDestructive: false,
             presentationStyle: .modal,
             presentationAction: {
-                BrowserViewController(url: WireURLs.shared.reportAbuse)
+                WireURLs.shared.reportAbuse.browserControllerOrOpenExternally()
             },
             previewGenerator: .none
         )
@@ -292,7 +294,7 @@ struct SettingsCellDescriptorFactory {
             isDestructive: false,
             presentationStyle: .modal,
             presentationAction: {
-                BrowserViewController(url: WireURLs.shared.legal)
+                WireURLs.shared.legal.browserControllerOrOpenExternally()
             },
             previewGenerator: .none
         )
@@ -318,7 +320,7 @@ struct SettingsCellDescriptorFactory {
             isDestructive: false,
             presentationStyle: .modal,
             presentationAction: {
-                BrowserViewController(url: WireURLs.shared.website)
+                WireURLs.shared.website.browserControllerOrOpenExternally()
             },
             previewGenerator: .none
         )
@@ -337,4 +339,22 @@ struct SettingsCellDescriptorFactory {
             settingsCoordinator: settingsCoordinator
         )
     }
+
+    private var manageTeamLink: some SettingsCellDescriptorType {
+        SettingsExternalScreenCellDescriptor(
+            title: L10n.Localizable.Self.Settings.ManageTeam.title,
+            isDestructive: false,
+            presentationStyle: .modal,
+            identifier: nil,
+            presentationAction: { () -> (UIViewController?) in
+                BrowserViewController(url: URL.manageTeam(source: .settings))
+            },
+            previewGenerator: nil,
+            icon: .team,
+            accessoryView: .externalLink,
+            copiableText: nil,
+            settingsTopLevelMenuItem: nil
+        )
+    }
+
 }

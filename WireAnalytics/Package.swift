@@ -17,7 +17,7 @@ let package = Package(
         .library(name: "WireDatadog", targets: ["WireDatadog"])
     ],
     dependencies: [
-        .package(url: "https://github.com/Countly/countly-sdk-ios.git", exact: "24.4.2"),
+        .package(url: "https://github.com/Countly/countly-sdk-ios.git", exact: "25.4.3"),
         .package(url: "https://github.com/DataDog/dd-sdk-ios.git", exact: "2.27.0"),
         .package(path: "../WireFoundation"),
         .package(path: "../WireLogging"),
@@ -30,7 +30,7 @@ let package = Package(
         ),
         .target(
             name: "WireAnalyticsSupport",
-            dependencies: ["WireAnalytics"],
+            dependencies: ["WireAnalytics", "WireFoundation"],
             plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
         ),
         .testTarget(

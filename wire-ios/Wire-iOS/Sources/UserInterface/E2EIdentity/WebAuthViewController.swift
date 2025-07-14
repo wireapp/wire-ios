@@ -27,6 +27,7 @@ protocol WebAuthViewControllerDelegate: AnyObject {
 
     func webAuthViewDidReceiveCallback(url: URL)
     func webAuthViewDidCancel()
+    func webAuthViewDidFail(error: Error)
 
 }
 
@@ -198,6 +199,26 @@ final class WebAuthViewController: UIViewController, WKUIDelegate, WKNavigationD
         .deny
     }
 
+    func webView(
+        _ webView: WKWebView,
+        didFail navigation: WKNavigation!,
+        withError error: any Error
+    ) {
+        delegate?.webAuthViewDidFail(error: error)
+    }
+
+    func webView(
+        _ webView: WKWebView,
+        didFailProvisionalNavigation navigation: WKNavigation!,
+        withError error: any Error
+    ) {
+        delegate?.webAuthViewDidFail(error: error)
+    }
+
+    func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
+        delegate?.webAuthViewDidFail(error: Failure.webKitProcessTerminated)
+    }
+
     @objc
     private func cancelButtonTapped() {
         delegate?.webAuthViewDidCancel()
@@ -213,11 +234,19 @@ final class WebAuthViewController: UIViewController, WKUIDelegate, WKNavigationD
 
     func wipeDataStore() {
         // Even though it's non persistent, clear it just to be safe.
-        let types = WKWebsiteDataStore.allWebsiteDataTypes()
-        webView.configuration.websiteDataStore.removeData(
-            ofTypes: types,
-            modifiedSince: Date.distantPast
-        ) {}
+        DispatchQueue.main.async { [weak self] in
+            let types = WKWebsiteDataStore.allWebsiteDataTypes()
+            self?.webView.configuration.websiteDataStore.removeData(
+                ofTypes: types,
+                modifiedSince: Date.distantPast
+            ) {}
+        }
+    }
+
+    enum Failure: Error {
+
+        case webKitProcessTerminated
+
     }
 
 }

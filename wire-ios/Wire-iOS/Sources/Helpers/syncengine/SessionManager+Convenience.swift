@@ -28,7 +28,7 @@ extension SessionManager {
     }
 
     static var numberOfAccounts: Int {
-        SessionManager.shared?.accountManager.accounts.count ?? 0
+        SessionManager.shared?.accountManager.numberOfAccounts ?? 0
     }
 
     var firstAuthenticatedAccount: Account? {

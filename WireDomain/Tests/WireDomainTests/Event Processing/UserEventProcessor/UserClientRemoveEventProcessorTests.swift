@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
+import WireNetwork
 import XCTest
 
 @testable import WireDomain
@@ -81,7 +81,7 @@ final class UserClientRemoveEventProcessorTests: XCTestCase {
         // Mock
 
         await context.perform { [self] in
-            modelHelper.createSelfClient(
+            _ = modelHelper.createSelfClient(
                 id: Scaffolding.selfClientID,
                 in: context
             )
@@ -103,7 +103,7 @@ final class UserClientRemoveEventProcessorTests: XCTestCase {
         // Mock
 
         await context.perform { [self] in
-            modelHelper.createSelfClient(
+            _ = modelHelper.createSelfClient(
                 id: Scaffolding.selfClientID,
                 in: context
             )

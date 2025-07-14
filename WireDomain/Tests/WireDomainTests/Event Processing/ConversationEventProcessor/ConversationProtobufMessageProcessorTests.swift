@@ -21,8 +21,8 @@ import WireDataModelSupport
 import WireDomainSupport
 import WireTestingPackage
 import XCTest
-@testable import WireAPI
 @testable import WireDomain
+@testable import WireNetwork
 
 final class ConversationProtobufMessageProcessorTests: XCTestCase {
 
@@ -143,15 +143,47 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
         let invocation = messageLocalStore.addMessageConfirmationInSenderIDSenderDomainDate_Invocations[0]
         XCTAssertEqual(invocation.confirmation, confirmation)
         XCTAssertEqual(invocation.conversation, conversation)
-        XCTAssertEqual(invocation.senderID, Scaffolding.userID.uuid)
+        XCTAssertEqual(invocation.senderID, Scaffolding.userID.id)
         XCTAssertEqual(invocation.senderDomain, Scaffolding.userID.domain)
         XCTAssertEqual(invocation.date, Scaffolding.eventDate)
     }
 
+    func testProcessEvent_Availability_Invokes_UserLocalStoreMethod() async throws {
+        // Given
+        let conversation = await context.perform { [self] in
+            modelHelper.createGroupConversation(in: context)
+        }
+        userLocalStore.updateUserWithAvailability_MockMethod = { _, _ in }
+        messageLocalStore.addMessageConfirmationInSenderIDSenderDomainDate_MockMethod = { _, _, _, _, _ in }
+
+        let genericMessage = GenericMessage.with {
+            $0.messageID = UUID().uuidString
+            $0.availability = WireProtos.Availability(.available)
+        }
+
+        // When
+        try await sut.processProtobufMessage(
+            genericMessage,
+            content: try XCTUnwrap(genericMessage.content),
+            conversation: conversation,
+            conversationID: Scaffolding.conversationID,
+            senderID: Scaffolding.userID,
+            senderClientID: "clientID123",
+            date: Scaffolding.eventDate,
+            eventMessage: "confirmation"
+        )
+
+        // Then
+        let invocation = try XCTUnwrap(userLocalStore.updateUserWithAvailability_Invocations.first)
+        XCTAssertEqual(invocation.availability, .available)
+        XCTAssertEqual(invocation.userID.uuid, Scaffolding.userID.id)
+        XCTAssertEqual(invocation.userID.domain, Scaffolding.userID.domain)
+    }
+
     private enum Scaffolding {
         static let eventDate = Date()
-        static let conversationID = ConversationID(uuid: .mockID1, domain: "domain.com")
-        static let userID = ConversationID(uuid: .mockID1, domain: "domain.com")
+        static let conversationID = ConversationID(id: .mockID1, domain: "domain.com")
+        static let userID = ConversationID(id: .mockID1, domain: "domain.com")
         static let base64EncodedString = "CiQ5ZTU2NTQwOS0xODZiLTRlN2YtYTE4NC05NzE4MGE0MDAwMDQSDAoKRXZlcnl0aGluZw=="
     }
 }

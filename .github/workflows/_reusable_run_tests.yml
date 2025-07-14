@@ -16,7 +16,9 @@ on:
       test_dependencies:
         type: boolean
         default: false
-      
+      run_critical_flows:
+        type: boolean
+        required: true
     secrets:
       ZENKINS_USERNAME:
         required: true
@@ -41,6 +43,7 @@ jobs:
   run-tests:
     name: Run tests
     runs-on: ghcr.io/cirruslabs/macos-runner:sequoia
+    timeout-minutes: 90
     outputs:
       xcresult_files: ${{ steps.find-xcresults.outputs.xcresult_files }}
     env:
@@ -124,14 +127,16 @@ jobs:
           bundle exec fastlane prepare_for_tests
 
       - name: Install 1Password
+        if: ${{ inputs.run_critical_flows }}
         uses: 1password/install-cli-action@v1
 
       - name: Generate env file
+        if: ${{ inputs.run_critical_flows }}
         run: |
           bundle exec fastlane generate_env
 
       - name: "Test new critical flows"
-        if: ${{ inputs.test_dependencies == false }}
+        if: ${{ inputs.run_critical_flows }}
         run: |
           bundle exec fastlane run_uitests
 

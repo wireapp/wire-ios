@@ -96,7 +96,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
 
     public func coreCrypto() async throws -> SafeCoreCryptoProtocol {
         let coreCrypto = try await getCoreCrypto()
-        try await registerMlsTransportIfNecessary(coreCrypto: coreCrypto)
+        try await registerMlsTransportIfNecessary(with: coreCrypto)
         return coreCrypto
     }
 
@@ -112,7 +112,6 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             )
             try await self.generateClientPublicKeys(with: context, credentialType: .basic)
         }
-        try await registerEpochObserverIfNecessary(with: coreCrypto)
     }
 
     public func initialiseMLSWithEndToEndIdentity(
@@ -121,7 +120,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     ) async throws -> CRLsDistributionPoints? {
         WireLogger.mls.info("Initialising MLS client from end-to-end identity enrollment")
         let coreCrypto = try await coreCrypto()
-        let crls = try await coreCrypto.perform { context in
+        return try await coreCrypto.perform { context in
             let crlsDistributionPoints = try await context.e2eiMlsInitOnly(
                 enrollment: enrollment,
                 certificateChain: certificateChain,
@@ -130,8 +129,6 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             try await self.generateClientPublicKeys(with: context, credentialType: .x509)
             return CRLsDistributionPoints(from: crlsDistributionPoints)
         }
-        try await registerEpochObserverIfNecessary(with: coreCrypto)
-        return crls
     }
 
     public func registerEpochObserver(_ epochObserver: any EpochObserver) async {
@@ -140,7 +137,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         do {
             try await registerEpochObserverIfNecessary(with: coreCrypto())
         } catch {
-            WireLogger.mls.warn("Failed to register epoch observer, will try again later")
+            WireLogger.mls.error("Failed to register epoch observer: \(error)")
         }
     }
 
@@ -158,7 +155,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         mlsTransport = transport
     }
 
-    private func registerMlsTransportIfNecessary(coreCrypto: SafeCoreCrypto) async throws {
+    private func registerMlsTransportIfNecessary(with coreCrypto: SafeCoreCrypto) async throws {
         guard let mlsTransport, !hasRegisteredMlsTransport else {
             return
         }
@@ -259,7 +256,6 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
                 ciphersuites: [cipherSuite],
                 nbKeyPackage: nil
             ) }
-            try await registerEpochObserverIfNecessary(with: coreCrypto)
         }
     }
 

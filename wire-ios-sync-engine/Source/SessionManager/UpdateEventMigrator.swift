@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import WireAPI
 import WireDomain
 import WireLogging
+import WireNetwork
 import WireTransport
 
 struct UpdateEventMigrator {
@@ -259,7 +259,7 @@ private extension UpdateEvent {
         for userID in payload.data.userIDs ?? [] {
             removedUserIDs.insert(
                 UserID(
-                    uuid: userID,
+                    id: userID,
                     domain: localDomain
                 )
             )
@@ -268,7 +268,7 @@ private extension UpdateEvent {
         for qualifiedUserID in payload.data.qualifiedUserIDs ?? [] {
             removedUserIDs.insert(
                 UserID(
-                    uuid: qualifiedUserID.uuid,
+                    id: qualifiedUserID.uuid,
                     domain: qualifiedUserID.domain
                 )
             )
@@ -459,7 +459,7 @@ private extension Payload.ConversationEvent {
         }
 
         return ConversationID(
-            uuid: uuid,
+            id: uuid,
             domain: qualifiedID?.domain ?? localDomain
         )
     }
@@ -470,7 +470,7 @@ private extension Payload.ConversationEvent {
         }
 
         return UserID(
-            uuid: uuid,
+            id: uuid,
             domain: qualifiedFrom?.domain ?? localDomain
         )
     }

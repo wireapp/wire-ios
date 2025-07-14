@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDomainSupport
+import WireNetwork
 import XCTest
 
 @testable import WireDomain
@@ -54,7 +54,7 @@ final class FeatureConfigUpdateEventProcessorTests: XCTestCase {
 
         // When
 
-        try await sut.processEvent(event)
+        await sut.processEvent(event)
 
         // Then
 

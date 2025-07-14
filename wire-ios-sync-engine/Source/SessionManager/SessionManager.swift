@@ -36,6 +36,24 @@ public extension Bundle {
     @objc var appGroupIdentifier: String? {
         bundleIdentifier.map { "group." + $0 }
     }
+
+    static var developerModeEnabled: Bool {
+        Bundle.appMainBundle.infoForKey("EnableDeveloperMenu") == "1"
+    }
+
+    private static var appMainBundle: Bundle {
+        let mainBundle: Bundle
+        let runningInExtension = Bundle.main.bundlePath.hasSuffix(".appex")
+        if runningInExtension {
+            let extensionBundleURL = Bundle.main.bundleURL
+            let mainAppBundleURL = extensionBundleURL.deletingLastPathComponent().deletingLastPathComponent()
+            guard let bundle = Bundle(url: mainAppBundleURL) else { fatalError("Failed to find main app bundle") }
+            mainBundle = bundle
+        } else {
+            mainBundle = .main
+        }
+        return mainBundle
+    }
 }
 
 @objc
@@ -225,7 +243,8 @@ public final class SessionManager: NSObject, SessionManagerType {
     /// Default Maximum number of accounts which can be logged in simultanously
     public static let defaultMaxNumberAccounts: Int = 3
 
-    public let appVersion: String
+    public let currentAppVersion: String
+    public let currentBuildNumber: String
     var isAppVersionBlacklisted = false
     public weak var delegate: SessionManagerDelegate?
     public let accountManager: AccountManager
@@ -311,6 +330,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     var proxyCredentials: ProxyCredentials?
 
     public let callKitManager: CallKitManagerInterface
+    private let logFilesProvider: LogFilesProviding
 
     public var isSelectedAccountAuthenticated: Bool {
         guard let selectedAccount = accountManager.selectedAccount else {
@@ -341,7 +361,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private let minTLSVersion: String?
 
-    let analyticsService: AnalyticsService
+    let analyticsService: AnalyticsService?
 
     public override init() {
         fatal("init() not implemented")
@@ -349,9 +369,11 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private let sharedUserDefaults: UserDefaults
 
+    @MainActor
     public convenience init(
         maxNumberAccounts: Int = defaultMaxNumberAccounts,
-        appVersion: String,
+        currentAppVersion: String,
+        currentBuildNumber: String,
         mediaManager: MediaManagerType,
         delegate: SessionManagerDelegate?,
         application: ZMApplication,
@@ -367,8 +389,9 @@ public final class SessionManager: NSObject, SessionManagerType {
         minTLSVersion: String?,
         deleteUserLogs: @escaping () -> Void,
         analyticsServiceConfiguration: AnalyticsServiceConfiguration?,
-        countlyProvider: @escaping () -> CountlyProtocol
-    ) {
+        countlyProvider: @escaping () -> CountlyProtocol,
+        logFilesProvider: LogFilesProviding
+    ) throws {
         let flowManager = FlowManager(mediaManager: mediaManager)
         let reachability = environment.reachabilityWrapper()
 
@@ -381,7 +404,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         let dispatchGroup = dispatchGroup ?? ZMSDispatchGroup(label: "WireSyncEngine.SessionManager.private")
 
         let unauthenticatedSessionFactory = UnauthenticatedSessionFactory(
-            appVersion: appVersion,
+            appVersion: currentBuildNumber,
             environment: environment,
             proxyUsername: proxyCredentials?.username,
             proxyPassword: proxyCredentials?.password,
@@ -389,7 +412,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         )
 
         let authenticatedSessionFactory = AuthenticatedSessionFactory(
-            appVersion: appVersion,
+            currentAppVersion: currentAppVersion,
+            currentBuildNumber: currentBuildNumber,
             application: application,
             mediaManager: mediaManager,
             flowManager: flowManager,
@@ -400,9 +424,10 @@ public final class SessionManager: NSObject, SessionManagerType {
             minTLSVersion: minTLSVersion
         )
 
-        self.init(
+        try self.init(
             maxNumberAccounts: maxNumberAccounts,
-            appVersion: appVersion,
+            currentAppVersion: currentAppVersion,
+            currentBuildNumber: currentBuildNumber,
             authenticatedSessionFactory: authenticatedSessionFactory,
             unauthenticatedSessionFactory: unauthenticatedSessionFactory,
             reachability: reachability,
@@ -421,7 +446,8 @@ public final class SessionManager: NSObject, SessionManagerType {
             minTLSVersion: minTLSVersion,
             deleteUserLogs: deleteUserLogs,
             analyticsServiceConfiguration: analyticsServiceConfiguration,
-            countlyProvider: countlyProvider
+            countlyProvider: countlyProvider,
+            logFilesProvider: logFilesProvider
         )
 
         configureBlacklistDownload()
@@ -462,9 +488,11 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     }
 
+    @MainActor
     init(
         maxNumberAccounts: Int = defaultMaxNumberAccounts,
-        appVersion: String,
+        currentAppVersion: String,
+        currentBuildNumber: String,
         authenticatedSessionFactory: AuthenticatedSessionFactory,
         unauthenticatedSessionFactory: UnauthenticatedSessionFactory,
         reachability: ReachabilityWrapper,
@@ -483,11 +511,13 @@ public final class SessionManager: NSObject, SessionManagerType {
         minTLSVersion: String? = nil,
         deleteUserLogs: (() -> Void)? = nil,
         analyticsServiceConfiguration: AnalyticsServiceConfiguration?,
-        countlyProvider: @escaping () -> CountlyProtocol
-    ) {
+        countlyProvider: @escaping () -> CountlyProtocol,
+        logFilesProvider: LogFilesProviding
+    ) throws {
         SessionManager.enableLogsByEnvironmentVariable()
         self.environment = environment
-        self.appVersion = appVersion
+        self.currentAppVersion = currentAppVersion
+        self.currentBuildNumber = currentBuildNumber
         self.application = application
         self.delegate = delegate
         self.dispatchGroup = dispatchGroup
@@ -500,17 +530,21 @@ public final class SessionManager: NSObject, SessionManagerType {
         self.sharedUserDefaults = sharedUserDefaults
         self.minTLSVersion = minTLSVersion
         self.deleteUserLogs = deleteUserLogs
+        self.logFilesProvider = logFilesProvider
 
         guard let sharedContainerURL = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else {
             preconditionFailure("Unable to get shared container URL")
         }
 
         self.sharedContainerURL = sharedContainerURL
-        self.accountManager = AccountManager(sharedDirectory: sharedContainerURL)
+        self.accountManager = try AccountManager(
+            currentAppVersion: currentAppVersion,
+            sharedDirectory: sharedContainerURL
+        )
 
         WireLogger.sessionManager.debug("Starting the session manager:")
 
-        if !accountManager.accounts.isEmpty {
+        if accountManager.hasAccounts {
             WireLogger.sessionManager.debug("Known accounts:")
             accountManager.accounts.forEach { account in
                 WireLogger.sessionManager
@@ -538,28 +572,17 @@ public final class SessionManager: NSObject, SessionManagerType {
         // non nil in order to process the notification
         BackgroundActivityFactory.shared.activityManager = UIApplication.shared
 
-        let analyticsConfig = analyticsServiceConfiguration.map {
-            AnalyticsService.Config(
-                secretKey: $0.secretKey,
-                serverHost: $0.serverHost
+        self.analyticsService = analyticsServiceConfiguration.map { config in
+            AnalyticsService(
+                config: CountlyConfiguration(appKey: config.secretKey, host: config.serverHost),
+                deviceModel: UIDevice.current.model,
+                osVersion: UIDevice.current.systemVersion,
+                countlyProvider: countlyProvider
             )
         }
 
-        self.analyticsService = AnalyticsService(
-            config: analyticsConfig,
-            deviceModel: UIDevice.current.model,
-            osVersion: UIDevice.current.systemVersion,
-            countlyProvider: countlyProvider
-        )
-
-        if analyticsServiceConfiguration?.didUserGiveTrackingConsent == true {
-            Task { [analyticsService] in
-                do {
-                    try await analyticsService.enableTracking()
-                } catch {
-                    WireLogger.analytics.error("failed to enable tracking: \(error)")
-                }
-            }
+        if let analyticsService, analyticsServiceConfiguration?.didUserGiveTrackingConsent == true {
+            analyticsService.enableTracking()
         }
 
         super.init()
@@ -589,7 +612,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             blacklistVerificator?.tearDown()
             blacklistVerificator = ZMBlacklistVerificator(
                 checkInterval: configuration.blacklistDownloadInterval,
-                version: appVersion,
+                version: currentBuildNumber,
                 environment: environment,
                 proxyUsername: proxyCredentials?.username,
                 proxyPassword: proxyCredentials?.password,
@@ -668,18 +691,6 @@ public final class SessionManager: NSObject, SessionManagerType {
             return
         }
         delete(account: account)
-    }
-
-    /// Creates an account with the given identifier and migrates its cookie storage.
-    private func migrateAccount(with identifier: UUID) -> Account {
-        let account = Account(userName: "", userIdentifier: identifier)
-        accountManager.addAndSelect(account)
-        let migrator = ZMPersistentCookieStorageMigrator(
-            userIdentifier: identifier,
-            serverName: authenticatedSessionFactory.environment.backendURL.host!
-        )
-        _ = migrator.createStoreMigratingLegacyStoreIfNeeded()
-        return account
     }
 
     private func selectInitialAccount(
@@ -782,8 +793,9 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     fileprivate func deleteAllAccounts(reason: ZMAccountDeletedReason) {
-        let inactiveAccounts = accountManager.accounts.filter { $0 != accountManager.selectedAccount }
-        inactiveAccounts.forEach { delete(account: $0, reason: reason) }
+        accountManager.inactiveAccounts.forEach {
+            delete(account: $0, reason: reason)
+        }
 
         if let activeAccount = accountManager.selectedAccount {
             delete(account: activeAccount, reason: reason)
@@ -792,7 +804,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     func delete(account: Account, reason: ZMAccountDeletedReason) {
         WireLogger.sessionManager.debug("Deleting account \(account.userIdentifier)...")
-        if let secondAccount = accountManager.accounts.first(where: { $0.userIdentifier != account.userIdentifier }) {
+        if let secondAccount = accountManager.inactiveAccounts.first {
             // Deleted an account but we can switch to another account
             select(secondAccount, tearDownCompletion: { [weak self] in
                 self?.tearDownSessionAndDelete(account: account)
@@ -947,15 +959,17 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
+    @MainActor
     func configureAnalytics(for userSession: ZMUserSession) async {
-        guard analyticsService.isTrackingEnabled else {
+        guard let isTrackingEnabled = analyticsService?.isTrackingEnabled, isTrackingEnabled else {
             return
         }
 
         do {
             WireLogger.analytics.debug("configuring analytics for user session")
             let user = try await userSession.createAnalyticsUser()
-            try analyticsService.switchUser(user)
+            try analyticsService?.switchUser(user)
+
             userSession.setAnalyticsEventTracker(analyticsService)
         } catch {
             WireLogger.analytics.error("failed to configure analytics for user session: \(error)")
@@ -1087,18 +1101,30 @@ public final class SessionManager: NSObject, SessionManagerType {
                         )
                     }
 
+                    let userSession = await self.startBackgroundSession(
+                        for: account,
+                        with: coreDataStack,
+                        journal: journal,
+                        logFilesProvider: self.logFilesProvider
+                    )
+
+                    await userSession.performAppMigrationsIfNeeded()
+
+                    var shouldTriggerSync = true
+                    do {
+                        try await userSession.migrateToConsumableNotificationsIfNeeded()
+                    } catch ZMUserSessionError.selfClientNotReady {
+                        // we skip trigger sync, because in this case (fresh login),
+                        // we don't have a registered client yet, so no consumable capability
+                        WireLogger.sync.warn("No consumable-notifications migrator available")
+                        shouldTriggerSync = false
+                    }
+
+                    if shouldTriggerSync {
+                        await userSession.triggerSync()
+                    }
+
                     await MainActor.run {
-                        let userSession = self.startBackgroundSession(
-                            for: account,
-                            with: coreDataStack,
-                            journal: journal
-                        )
-
-                        self.triggerMigrationsNeedsActionsIfNeeded(
-                            journal: journal,
-                            userSession: userSession
-                        )
-
                         onCompletion(userSession)
                     }
                 }
@@ -1109,10 +1135,6 @@ public final class SessionManager: NSObject, SessionManagerType {
     private func shouldEnableSyncV2(journal: Journal) -> Bool {
         guard let apiVersion = BackendInfo.apiVersion else {
             fatalError("api version unknown")
-        }
-        guard isDeveloperModeEnabled else {
-            // [WPB-18030] disabled new sync for Cloud build 3.124
-            return false
         }
 
         let isAvailable = apiVersion >= .v8
@@ -1153,21 +1175,6 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         } catch {
             WireLogger.sync.critical("failed to migrate update events: \(error)")
-        }
-    }
-
-    /// Executes post migration slow sync or sync resources
-    private func triggerMigrationsNeedsActionsIfNeeded(
-        journal: Journal,
-        userSession: ZMUserSession
-    ) {
-        let context = userSession.syncContext
-        context.perform {
-            if context.readMigrationNeedsSlowSyncFlag() || journal[.isInitialSyncRequired] {
-                userSession.triggerInitialSync()
-            } else if context.readMigrationNeedsSyncResourcesFlag() {
-                userSession.triggerResourcesSync()
-            }
         }
     }
 
@@ -1234,13 +1241,6 @@ public final class SessionManager: NSObject, SessionManagerType {
             for: ConversationList.pendingConnectionConversations(inUserSession: session)!,
             userSession: session
         )
-        let unreadCountObserver = NotificationInContext.addObserver(
-            name: .AccountUnreadCountDidChangeNotification,
-            context: account
-        ) { [weak self] note in
-            guard let account = note.context as? Account else { return }
-            self?.accountManager.addOrUpdate(account)
-        }
 
         let databaseEncryptionObserverToken = session.registerDatabaseLockedHandler { [weak self] _ in
             guard session == self?.activeUserSession else { return }
@@ -1252,7 +1252,6 @@ public final class SessionManager: NSObject, SessionManagerType {
             selfObserver!,
             conversationListObserver,
             connectionRequestObserver,
-            unreadCountObserver,
             databaseEncryptionObserverToken
         ]
     }
@@ -1301,10 +1300,12 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     // Creates the user session for @c account given, calls @c completion when done.
+    @MainActor
     private func startBackgroundSession(
         for account: Account,
         with coreDataStack: CoreDataStack,
-        journal: Journal
+        journal: Journal,
+        logFilesProvider: LogFilesProviding
     ) -> ZMUserSession {
         let sessionConfig = ZMUserSession.Configuration(
             appLockConfig: configuration.legacyAppLockConfig
@@ -1316,7 +1317,8 @@ public final class SessionManager: NSObject, SessionManagerType {
             configuration: sessionConfig,
             sharedUserDefaults: sharedUserDefaults,
             isDeveloperModeEnabled: isDeveloperModeEnabled,
-            journal: journal
+            journal: journal,
+            logFilesProvider: logFilesProvider
         ) else {
             preconditionFailure("Unable to create session for \(account)")
         }
@@ -1495,7 +1497,13 @@ public final class SessionManager: NSObject, SessionManagerType {
 extension SessionManager {
     func updateCurrentAccount(in managedObjectContext: NSManagedObjectContext) {
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
-        if let account = accountManager.accounts.first(where: { $0.userIdentifier == selfUser.remoteIdentifier }) {
+
+        // Nothing to update if the user hasn't been registerd yet.
+        guard let id = selfUser.remoteIdentifier else {
+            return
+        }
+
+        if let account = accountManager.account(with: id) {
             if let name = selfUser.team?.name {
                 account.teamName = name
             }
@@ -1507,6 +1515,9 @@ extension SessionManager {
             }
             if let teamImageData = selfUser.team?.imageData {
                 account.teamImageData = teamImageData
+            }
+            if let handle = selfUser.handle {
+                account.handle = handle
             }
 
             account.loginCredentials = selfUser.loginCredentials
@@ -1541,7 +1552,8 @@ extension SessionManager: UserObserving {
 
         if changeInfo.analyticsIdentifierChanged {
             guard
-                analyticsService.isTrackingEnabled,
+                let isTrackingEnabled = analyticsService?.isTrackingEnabled,
+                isTrackingEnabled,
                 changeInfo.user.isSelfUser,
                 let userSession = activeUserSession
             else {
@@ -1550,7 +1562,7 @@ extension SessionManager: UserObserving {
 
             Task {
                 do {
-                    try await analyticsService.updateCurrentUser(userSession.createAnalyticsUser())
+                    try await analyticsService?.updateCurrentUser(userSession.createAnalyticsUser())
                 } catch {
                     WireLogger.analytics.error("failed to update current user: \(error)")
                 }
@@ -1579,14 +1591,14 @@ extension SessionManager: UnauthenticatedSessionDelegate {
     public func sessionIsAllowedToCreateNewAccount(
         _ session: UnauthenticatedSession
     ) -> Bool {
-        accountManager.accounts.count < maxNumberAccounts
+        accountManager.numberOfAccounts < maxNumberAccounts
     }
 
     public func session(
         session: UnauthenticatedSession,
         isExistingAccount account: Account
     ) -> Bool {
-        accountManager.accounts.contains(account)
+        accountManager.account(with: account.userIdentifier) != nil
     }
 
     public func session(
@@ -1607,7 +1619,7 @@ extension SessionManager: UnauthenticatedSessionDelegate {
         session: UnauthenticatedSession,
         createdAccount account: Account
     ) {
-        let numberOfExistingAccounts = accountManager.accounts.count
+        let numberOfExistingAccounts = accountManager.numberOfAccounts
         let createdAccountIsKnown = accountManager.account(with: account.userIdentifier) != nil
 
         guard
@@ -1724,6 +1736,7 @@ extension SessionManager: ZMConversationListObserver {
         }
 
         account.unreadConversationCount = Int(ZMConversation.unreadConversationCount(in: session.managedObjectContext))
+        accountManager.addOrUpdate(account)
     }
 
     fileprivate func updateAllUnreadCounts() {
@@ -1734,8 +1747,11 @@ extension SessionManager: ZMConversationListObserver {
 
     public func updateAppIconBadge(accountID: UUID, unreadCount: Int) {
         DispatchQueue.main.async {
-            let account = self.accountManager.account(with: accountID)
-            account?.unreadConversationCount = unreadCount
+            if let account = self.accountManager.account(with: accountID) {
+                account.unreadConversationCount = unreadCount
+                self.accountManager.addOrUpdate(account)
+            }
+
             let totalUnreadCount = self.accountManager.totalUnreadCount
             self.application.applicationIconBadgeNumber = totalUnreadCount
             WireLogger.notifications

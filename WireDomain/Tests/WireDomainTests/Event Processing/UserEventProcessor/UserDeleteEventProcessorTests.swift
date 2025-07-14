@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAPI
 import WireDomainSupport
+import WireNetwork
 import XCTest
 @testable import WireDomain
 
@@ -57,7 +57,7 @@ final class UserDeleteEventProcessorTests: XCTestCase {
     private enum Scaffolding {
         static let event = UserDeleteEvent(
             qualifiedUserID: QualifiedID(
-                uuid: UUID(),
+                id: UUID(),
                 domain: "domain.com"
             ),
             time: .now

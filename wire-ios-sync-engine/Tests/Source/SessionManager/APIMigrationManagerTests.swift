@@ -17,10 +17,11 @@
 //
 
 import Foundation
-import WireAPI
 import WireDataModelSupport
 import WireDomain
+import WireNetwork
 import XCTest
+@testable import WireLogging
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
 @testable import WireTransport
@@ -275,7 +276,7 @@ final class APIMigrationManagerTests: MessagingTest {
             certificateTrust: ServerCertificateTrust(trustData: [], currentDateProvider: .system)
         )
 
-        let wireAPIBackendEnvironment = WireAPI.BackendEnvironment(
+        let wireAPIBackendEnvironment = WireNetwork.BackendEnvironment(
             url: backendEnvironment.backendURL,
             webSocketURL: backendEnvironment.backendWSURL,
             pinnedKeys: [],
@@ -299,13 +300,15 @@ final class APIMigrationManagerTests: MessagingTest {
             userID: userID,
             storage: UserDefaults.temporary()
         )
+        let logFilesProvider = MockLogFilesProviding()
 
         var builder = ZMUserSessionBuilder()
         builder.withAllDependencies(
             apiServiceFactory: { _, _ in MockAPIService() },
             backendEnvironment: backendEnvironment,
             wireAPIBackendEnvironment: wireAPIBackendEnvironment,
-            appVersion: "999",
+            currentAppVersion: "3.120.0",
+            currentBuildNumber: "999",
             application: application,
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             coreDataStack: createCoreDataStack(),
@@ -322,7 +325,8 @@ final class APIMigrationManagerTests: MessagingTest {
             transportSession: mockTransportSession,
             userId: userID,
             minTLSVersion: nil,
-            journal: journal
+            journal: journal,
+            logFilesProvider: logFilesProvider
         )
 
         let userSession = builder.build()
