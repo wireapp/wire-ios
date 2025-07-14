@@ -42,6 +42,7 @@ class MLSAPITests_SwiftTesting {
             (HTTPStatusCode.notFound, "no-conversation", MLSAPIError.noConversation(message: "")),
 
             (HTTPStatusCode.conflict, "mls-stale-message", MLSAPIError.mlsStaleMessage)
+            (HTTPStatusCode.conflict, "mls-stale-message", MLSAPIError.mlsStaleMessageWithMessage(message: ""))
         ]
     )
     func testResetBrokenMLSConversations_Failed(
