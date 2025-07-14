@@ -88,6 +88,7 @@ public final class ZMUserSession: NSObject {
     var cryptoboxMigrationManager: CryptoboxMigrationManagerInterface
     private(set) var coreCryptoProvider: CoreCryptoProviderProtocol
     private(set) var userId: UUID
+    private let sharedUserDefaults: UserDefaults
     let proteusService: ProteusServiceInterface
     private(set) var mlsService: MLSServiceInterface
     private(set) var proteusProvider: ProteusProviding!
@@ -475,6 +476,7 @@ public final class ZMUserSession: NSObject {
         )
         self.journal = journal
         self.logFilesProvider = logFilesProvider
+        self.sharedUserDefaults = sharedUserDefaults
 
         super.init()
 
@@ -1615,7 +1617,11 @@ extension ZMUserSession {
     private func makeAppVersionMigrations() -> [any AppVersionMigration] {
         [
             AppVersionMigration_4_1_1(logFilesProvider: logFilesProvider),
-            AppVersionMigration_4_2_0(lastEventIDRepository: lastEventIDRepository, journal: journal)
+            AppVersionMigration_4_2_0(
+                lastEventIDRepository: lastEventIDRepository,
+                journal: journal,
+                sessionManager: sessionManager
+            )
         ]
     }
 

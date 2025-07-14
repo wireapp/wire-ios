@@ -25,7 +25,7 @@ struct AppVersionMigration_4_2_0: AppVersionMigration {
 
     let lastEventIDRepository: LastEventIDRepositoryInterface
     let journal: JournalProtocol
-    let analyticsTrackingPrivateUserDefaults: PrivateUserDefaults<AnalyticsTrackingPrivateUserDefaultsKey>
+    let sessionManager: (any SessionManagerType)?
     let version: SemanticVersion = "4.2.0"
 
     func perform() async throws {
@@ -34,8 +34,27 @@ struct AppVersionMigration_4_2_0: AppVersionMigration {
             journal[.isInitialSyncRequired] = true
         }
 
-        // TODO: migrate the global `ExtensionSettingsKey.disableAnalyticsSharing` property to a per-account storage
+        migrateAnalyticsTrackingUserDefaultsValue()
 
+    }
+
+    /// Previously the decision for enabling analytics was stored only once per app and will be migrated to per account.
+
+    private func migrateAnalyticsTrackingUserDefaultsValue() {
+        guard
+            let sessionManager,
+            let sharedUserDefaults = UserDefaults.shared(),
+            let disableAnalyticsSharing = sharedUserDefaults.value(forKey: "disableAnalyticsSharing") as? Bool
+        else { return }
+
+        for account in sessionManager.accountManager.accounts {
+            let userID = account.userIdentifier
+            let privateUserDefaults = PrivateUserDefaults<AnalyticsTrackingPrivateUserDefaultsKey>(
+                userID: userID,
+                storage: UserDefaults.standard
+            )
+            privateUserDefaults.set(!disableAnalyticsSharing, forKey: .isAnalyticsTrackingEnabled)
+        }
     }
 
 }

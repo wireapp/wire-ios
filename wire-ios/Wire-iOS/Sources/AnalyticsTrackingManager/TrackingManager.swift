@@ -47,8 +47,6 @@ final class TrackingManager: TrackingInterface {
         self.sharedUserDefaults = sharedUserDefaults
         self.sessionManager = sessionManager
 
-        migrateFromLegacyStorageIfNeeded()
-
         self.observerToken = NotificationCenter.default.addObserver(
             forName: FlowManager.AVSFlowManagerCreatedNotification,
             object: nil,
@@ -63,13 +61,11 @@ final class TrackingManager: TrackingInterface {
     }
 
     private var doesUserConsentPreferenceExist: Bool {
-        migrateFromLegacyStorageIfNeeded()
-        return privateUserDefaults?.object(forKey: .isAnalyticsTrackingEnabled) as? Bool != nil
+        privateUserDefaults?.object(forKey: .isAnalyticsTrackingEnabled) as? Bool != nil
     }
 
     var isAnalyticsTrackingEnabled: Bool {
-        migrateFromLegacyStorageIfNeeded()
-        return privateUserDefaults?.object(forKey: .isAnalyticsTrackingEnabled) as? Bool ?? false
+        privateUserDefaults?.object(forKey: .isAnalyticsTrackingEnabled) as? Bool ?? false
     }
 
     func migrateAnalyticsSetupIfNeeded() async throws {
@@ -111,21 +107,6 @@ final class TrackingManager: TrackingInterface {
         try sessionManager.makeDisableAnalyticsUseCase()?.invoke()
         AVSFlowManager.getInstance()?.setEnableMetrics(false)
         privateUserDefaults?.set(false, forKey: .isAnalyticsTrackingEnabled)
-    }
-
-    /// Previously the consent for analytics tracking was stored only once per app.
-    /// If the consent has been given, mark all currently set up accounts as consent being given.
-
-    private func migrateFromLegacyStorageIfNeeded() { // TODO: use AppVersionMigration_4_2_0
-        guard let disableAnalyticsSharing = ExtensionSettings.shared.disableAnalyticsSharing else { return }
-
-        for account in sessionManager.accountManager.accounts {
-            let userID = account.userIdentifier
-            let journal = Journal(userID: userID, storage: sharedUserDefaults)
-            journal[.isAnalyticsTrackingConsentGiven] = !disableAnalyticsSharing
-        }
-
-        ExtensionSettings.shared.disableAnalyticsSharing = nil
     }
 
 }
