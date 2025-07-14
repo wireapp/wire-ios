@@ -180,9 +180,9 @@ final class MLSAPITests: XCTestCase {
             try await api.postCommitBundle(Scaffolding.commitBundle)
         }
     }
-    
+
     // MARK: - Reset MLS conversation
-    
+
     func testResetMLSConversation_SuccessResponse_V9() async throws {
         // Given
         let apiService = MockAPIServiceProtocol.withResponses([
@@ -215,9 +215,9 @@ private extension APIVersion {
 
 private enum Scaffolding {
 
-    static let epoch: Int64 = .random(in: 1...1000)
+    static let epoch: Int64 = .random(in: 1 ... 1000)
     static let groupID: String = "123456789"
-    
+
     static let commitBundle = CommitBundle(
         welcome: nil,
         commit: Data("commit".utf8),

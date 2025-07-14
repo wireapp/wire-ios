@@ -16,29 +16,31 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Testing
 @testable import WireNetwork
 @testable import WireNetworkSupport
 
 @Suite(.serialized)
 class MLSAPITests_SwiftTesting {
-    
-    
+
     @Test(
         "Test reset MLS broken conversation failures",
         arguments: [
             (HTTPStatusCode.badRequest, "mls-protocol-error", MLSAPIError.mlsProtocolError(message: "")),
             (HTTPStatusCode.badRequest, "mls-group-id-not-supported", MLSAPIError.mlsGroupIdNotSupported(message: "")),
-            (HTTPStatusCode.badRequest, "mls-federated-reset-not-supported", MLSAPIError.mlsFederatedResetNotSupported(message: "")),
+            (
+                HTTPStatusCode.badRequest,
+                "mls-federated-reset-not-supported",
+                MLSAPIError.mlsFederatedResetNotSupported(message: "")
+            ),
             (HTTPStatusCode.badRequest, "mls-not-enabled", MLSAPIError.mlsNotEnabledWithMessage(message: "")),
-            
+
             (HTTPStatusCode.forbidden, "action-denied", MLSAPIError.actionDenied(message: "")),
             (HTTPStatusCode.forbidden, "access-denied", MLSAPIError.accessDenied(message: "")),
             (HTTPStatusCode.forbidden, "invalid-op", MLSAPIError.invalidOperation(message: "")),
-            
+
             (HTTPStatusCode.notFound, "no-conversation", MLSAPIError.noConversation(message: "")),
-            
+
             (HTTPStatusCode.conflict, "mls-stale-message", MLSAPIError.mlsStaleMessageWithMessage(message: ""))
         ]
     )
@@ -46,17 +48,17 @@ class MLSAPITests_SwiftTesting {
         _ testData: (HTTPStatusCode, String, MLSAPIError)
     ) async {
         // Given
-                
+
         let apiService = MockAPIServiceProtocol.withError(
             statusCode: testData.0,
             label: testData.1
         )
-        
+
         // When
         let api = MLSAPIV9(apiService: apiService)
-        
+
         // Then
-        
+
         do {
             try await api.resetMLSConversation(epoch: Scaffolding.epoch, groupID: Scaffolding.groupID)
             #expect(Bool(false), "Expected an error to be thrown")
@@ -72,7 +74,7 @@ class MLSAPITests_SwiftTesting {
 
 private enum Scaffolding {
 
-    static let epoch: Int64 = .random(in: 1...1000)
+    static let epoch: Int64 = .random(in: 1 ... 1000)
     static let groupID: String = "123456789"
-    
+
 }

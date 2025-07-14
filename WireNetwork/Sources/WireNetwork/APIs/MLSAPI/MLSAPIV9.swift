@@ -24,7 +24,7 @@ final class MLSAPIV9: MLSAPIV8 {
 
     override func resetMLSConversation(epoch: Int64, groupID: String) async throws {
         let parameters = MLSResetParameters(epoch: epoch, groupID: groupID)
-               
+
         let encodedJSON: Data
         do {
             encodedJSON = try JSONEncoder.defaultEncoder.encode(parameters)
@@ -32,7 +32,7 @@ final class MLSAPIV9: MLSAPIV8 {
             assertionFailure("failed to encode body")
             throw MLSAPIError.invalidRequestBody
         }
-        
+
         let request = try URLRequestBuilder(path: "\(pathPrefix)/mls/reset-conversation")
             .withMethod(.post)
             .withAcceptType(.json)
@@ -54,7 +54,7 @@ final class MLSAPIV9: MLSAPIV8 {
                 .parse(code: response.statusCode, data: data)
         } catch {
             if let failureResponse = error as? FailureResponseV0 {
-                
+
                 switch failureResponse.label {
                 case "mls-protocol-error":
                     throw MLSAPIError
@@ -90,5 +90,3 @@ struct MLSResetParameters: Encodable {
     var epoch: Int64
     var groupID: String
 }
-
-
