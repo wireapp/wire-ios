@@ -18,7 +18,6 @@
 
 public import Foundation
 
-// sourcery: AutoMockable
 /// Uploads file as a draft to the cells server.
 
 public protocol WireCellsUploadDraftUseCaseProtocol: Sendable {

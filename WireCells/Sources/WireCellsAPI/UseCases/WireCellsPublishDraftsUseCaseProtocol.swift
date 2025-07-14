@@ -18,7 +18,6 @@
 
 import Foundation
 
-// sourcery: AutoMockable
 /// Publishes all drafts associated with a given conversation.
 
 public protocol WireCellsPublishDraftsUseCaseProtocol {
