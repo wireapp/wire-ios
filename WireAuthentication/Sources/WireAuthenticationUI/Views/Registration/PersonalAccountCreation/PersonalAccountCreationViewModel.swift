@@ -66,8 +66,8 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
     private let termsOfUseURL: URL
     package let teamAccountCreationLink: URL?
     private let passwordValidator: any PasswordValidator
-    let analyticsEventTracker: (any RegistrationAnalyticsTrackerProtocol)?
-    let analyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
+    private let analyticsEventTracker: (any RegistrationAnalyticsTrackerProtocol)?
+    private let analyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
 
     package init(
         factory: any Factory,

@@ -364,10 +364,7 @@ private extension AppDelegate {
             mainWindow: mainWindow,
             sessionManager: sessionManager,
             appStateCalculator: appStateCalculator,
-            trackingManager: TrackingManager(
-                sharedUserDefaults: .applicationGroup,
-                sessionManager: sessionManager
-            )
+            trackingManager: TrackingManager(sessionManager: sessionManager)
         )
     }
 

@@ -26,7 +26,6 @@ import WireSyncEngine
 
 final class TrackingManager: TrackingInterface {
 
-    private let sharedUserDefaults: UserDefaults
     private let sessionManager: SessionManager
     private var observerToken: NSObjectProtocol?
 
@@ -40,11 +39,7 @@ final class TrackingManager: TrackingInterface {
         }
     }
 
-    init(
-        sharedUserDefaults: UserDefaults,
-        sessionManager: SessionManager
-    ) {
-        self.sharedUserDefaults = sharedUserDefaults
+    init(sessionManager: SessionManager) {
         self.sessionManager = sessionManager
 
         self.observerToken = NotificationCenter.default.addObserver(

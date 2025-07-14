@@ -88,7 +88,6 @@ public final class ZMUserSession: NSObject {
     var cryptoboxMigrationManager: CryptoboxMigrationManagerInterface
     private(set) var coreCryptoProvider: CoreCryptoProviderProtocol
     private(set) var userId: UUID
-    private let sharedUserDefaults: UserDefaults
     let proteusService: ProteusServiceInterface
     private(set) var mlsService: MLSServiceInterface
     private(set) var proteusProvider: ProteusProviding!
@@ -476,7 +475,6 @@ public final class ZMUserSession: NSObject {
         )
         self.journal = journal
         self.logFilesProvider = logFilesProvider
-        self.sharedUserDefaults = sharedUserDefaults
 
         super.init()
 
