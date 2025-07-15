@@ -58,7 +58,6 @@ public struct WireAuthenticationAssembly {
         ssoCallbackURLScheme: String,
         appStoreURL: URL,
         accountsPublisher: CurrentValuePublisher<[AccountUIModel]>,
-        useLegacyRegistrationFlow: Bool,
         isMultibackendEnabled: Bool,
         registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
@@ -78,7 +77,6 @@ public struct WireAuthenticationAssembly {
             ssoCallbackURLScheme: ssoCallbackURLScheme,
             appStoreURL: appStoreURL,
             accountsPublisher: accountsPublisher,
-            useLegacyRegistrationFlow: useLegacyRegistrationFlow,
             isMultibackendEnabled: isMultibackendEnabled,
             registrationAnalyticsTracker: registrationAnalyticsTracker
         )

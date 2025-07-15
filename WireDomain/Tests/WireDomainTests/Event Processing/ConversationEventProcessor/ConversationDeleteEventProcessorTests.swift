@@ -61,7 +61,7 @@ final class ConversationDeleteEventProcessorTests: XCTestCase {
     func testProcessEvent_It_Invokes_Delete_Conversation_Repo_Method() async throws {
         // Mock
 
-        let conversation = await context.perform { [self] in
+        _ = await context.perform { [self] in
             modelHelper.createGroupConversation(
                 id: Scaffolding.conversationID.id,
                 in: context

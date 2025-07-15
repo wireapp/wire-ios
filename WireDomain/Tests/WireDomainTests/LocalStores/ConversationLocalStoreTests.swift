@@ -381,7 +381,7 @@ final class ConversationLocalStoreTests: XCTestCase {
     func testAddParticipants_It_Adds_Participants_To_Conversation() async throws {
         // Mock
 
-        let (conversation, sender, addedUser) = await context.perform { [self] in
+        let (conversation, _, addedUser) = await context.perform { [self] in
             let conversation = modelHelper.createGroupConversation(
                 id: Scaffolding.conversationID,
                 domain: Scaffolding.domain,

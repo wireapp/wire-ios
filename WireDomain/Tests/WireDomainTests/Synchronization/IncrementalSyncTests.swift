@@ -302,7 +302,7 @@ final class IncrementalSyncTests: XCTestCase {
     func test_perform_Missed_Events() async throws {
         // Mock
         let pushChannel = MockPushChannelProtocol()
-        pushChannel.open_MockValue = AsyncThrowingStream { _ in [] }
+        pushChannel.open_MockValue = AsyncThrowingStream { _ in }
         pushChannel.close_MockMethod = {}
         pushChannelAPI.createPushChannelClientID_MockMethod = { _ in pushChannel }
         updateEventsSync.pull_MockError = UpdateEventsAPIError.notFound

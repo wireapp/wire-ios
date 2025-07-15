@@ -55,8 +55,7 @@ final class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Fact
             email: "mika@example.com",
             backendInfo: MockDependencies().backendInfo,
             canCreateAccount: true,
-            didDetectDomainConflict: false,
-            onCreateAccount: { [self] in onCreateAccountCalled = true }
+            didDetectDomainConflict: false
         )
 
         sut.$isLoading.dropFirst().sink { [self] in isLoadingCalls.append($0) }.store(in: &cancellables)

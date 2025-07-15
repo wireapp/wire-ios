@@ -16,5 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-PROTEUS_BY_CORECRYPTO_ENABLED=1
-WIRE_AUTHENTICATION_ENABLED=1
+import Foundation
+import WireDomain
+
+// Issue: To simplify the logic, we rely solely on journal value to perform InitialSync or not
+final class AppVersionMigration_4_2_0: AppVersionMigration {
+
+    let lastEventIDRepository: LastEventIDRepositoryInterface
+    var journal: JournalProtocol
+    let version: SemanticVersion = "4.2.0"
+
+    init(lastEventIDRepository: LastEventIDRepositoryInterface, journal: JournalProtocol) {
+        self.lastEventIDRepository = lastEventIDRepository
+        self.journal = journal
+    }
+
+    func perform() async throws {
+        if lastEventIDRepository.fetchLastEventID() == nil {
+            journal[.isInitialSyncRequired] = true
+        }
+    }
+}
