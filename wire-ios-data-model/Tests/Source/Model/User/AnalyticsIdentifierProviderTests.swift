@@ -26,7 +26,7 @@ final class AnalyticsIdentifierProviderTests: ModelObjectsTests {
         let selfUser = createUser(selfUser: true, inTeam: true)
 
         let sut = AnalyticsIdentifierProvider(selfUser: selfUser)
-        sut.setIdentifierIfNeeded()
+        sut.generateTrackingIDIfNeeded()
 
         // Then
         XCTAssertNotNil(selfUser.analyticsIdentifier)
@@ -43,7 +43,7 @@ final class AnalyticsIdentifierProviderTests: ModelObjectsTests {
         // Given
         let selfUser = createUser(selfUser: true, inTeam: true)
         let sut = AnalyticsIdentifierProvider(selfUser: selfUser)
-        sut.setIdentifierIfNeeded()
+        sut.generateTrackingIDIfNeeded()
 
         let existingIdentifier = selfUser.analyticsIdentifier
         XCTAssertNotNil(existingIdentifier)
@@ -57,7 +57,7 @@ final class AnalyticsIdentifierProviderTests: ModelObjectsTests {
         let sut = createUser(selfUser: true, inTeam: true)
 
         let provider = AnalyticsIdentifierProvider(selfUser: sut)
-        provider.setIdentifierIfNeeded()
+        provider.generateTrackingIDIfNeeded()
 
         // Then
         let id = try XCTUnwrap(sut.analyticsIdentifier)
@@ -75,7 +75,7 @@ final class AnalyticsIdentifierProviderTests: ModelObjectsTests {
         XCTAssertTrue(selfConversation.allMessages.isEmpty)
 
         // When
-        provider.setIdentifierIfNeeded()
+        provider.generateTrackingIDIfNeeded()
 
         // Then
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -95,7 +95,7 @@ final class AnalyticsIdentifierProviderTests: ModelObjectsTests {
 
         let provider = AnalyticsIdentifierProvider(selfUser: sut)
 
-        provider.setIdentifierIfNeeded()
+        provider.generateTrackingIDIfNeeded()
         let identifier = try XCTUnwrap(sut.analyticsIdentifier)
 
         let selfConversation = ZMConversation.selfConversation(in: uiMOC)
@@ -105,7 +105,7 @@ final class AnalyticsIdentifierProviderTests: ModelObjectsTests {
             XCTAssertEqual(selfConv.numberOfDataTransferMessagesContaining(analyticsIdentifier: identifier), 1)
         }
         // When
-        provider.setIdentifierIfNeeded()
+        provider.generateTrackingIDIfNeeded()
 
         // Then
         try syncMOC.performAndWait {

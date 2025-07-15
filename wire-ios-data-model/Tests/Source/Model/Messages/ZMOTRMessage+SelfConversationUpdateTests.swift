@@ -125,7 +125,7 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
             self.createMembership(in: self.syncMOC, user: selfUser, team: team)
             selfUser.analyticsIdentifier = "foo"
 
-            let trackingIdentifier = UUID.create()
+            let trackingIdentifier = UUID.create().transportString()
 
             let event = self.createUpdateEvent(
                 trackingIdentifier: trackingIdentifier,
@@ -137,7 +137,7 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
             ZMOTRMessage.createOrUpdate(from: event, in: self.syncMOC, prefetchResult: nil)
 
             // Then
-            XCTAssertEqual(selfUser.analyticsIdentifier, trackingIdentifier.transportString())
+            XCTAssertEqual(selfUser.analyticsIdentifier, trackingIdentifier)
         }
     }
 
@@ -150,7 +150,7 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
             selfUser.analyticsIdentifier = "foo"
 
             let event = self.createUpdateEvent(
-                trackingIdentifier: .create(),
+                trackingIdentifier: UUID.create().transportString(),
                 conversation: .selfConversation(in: self.syncMOC),
                 sender: self.createUser(in: self.syncMOC)
             )
@@ -172,7 +172,7 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
             selfUser.analyticsIdentifier = "foo"
 
             let event = self.createUpdateEvent(
-                trackingIdentifier: .create(),
+                trackingIdentifier: UUID.create().transportString(),
                 conversation: self.conversation,
                 sender: self.createUser(in: self.syncMOC)
             )
@@ -186,7 +186,7 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
     }
 
     private func createUpdateEvent(
-        trackingIdentifier: UUID,
+        trackingIdentifier: String,
         conversation: ZMConversation,
         sender: ZMUser
     ) -> ZMUpdateEvent {

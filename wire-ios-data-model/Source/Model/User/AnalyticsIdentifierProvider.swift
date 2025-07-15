@@ -27,34 +27,35 @@ public struct AnalyticsIdentifierProvider {
         self.selfUser = selfUser
     }
 
-    public func setIdentifierIfNeeded() {
+    public func generateTrackingIDIfNeeded() {
         guard let user = selfUser as? ZMUser, user.analyticsIdentifier == nil else { return }
 
-        let newId = UUID()
-        setAnalytics(identifier: newId, forSelfUser: user)
+        let newID = UUID().transportString()
+        setTrackingID(trackingID: newID, forSelfUser: user)
     }
 
-    func setAnalytics(identifier: UUID, forSelfUser user: ZMUser) {
+    func setTrackingID(trackingID: String, forSelfUser user: ZMUser) {
         guard user.isSelfUser else { return }
 
-        user.analyticsIdentifier = identifier.transportString()
+        user.analyticsIdentifier = trackingID
 
         guard let syncContext = user.managedObjectContext?.zm_sync else {
             return
         }
 
         syncContext.performGroupedBlock {
-            broadcast(identifier: identifier, context: syncContext)
+            broadcast(trackingID: trackingID, context: syncContext)
         }
     }
 
-    private func broadcast(identifier: UUID, context: NSManagedObjectContext) {
-        let message = DataTransfer(trackingIdentifier: identifier)
+    private func broadcast(trackingID: String, context: NSManagedObjectContext) {
+        let message = DataTransfer(trackingIdentifier: trackingID)
         do {
             try ZMConversation.sendMessageToSelfClients(message, in: context)
         } catch {
+            let redactedID = UUID(uuidString: trackingID)?.safeForLoggingDescription ?? "invalid UUID"
             WireLogger.messaging
-                .error("Error broadcasting analytics ID: \(identifier.safeForLoggingDescription) \(error)")
+                .error("Error broadcasting analytics ID: \(redactedID) \(error)")
         }
     }
 

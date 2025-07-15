@@ -45,9 +45,8 @@ extension ZMUserSession: AnalyticsEventTrackerProvider {
             if let existingID = selfUser.analyticsIdentifier {
                 analyticsID = existingID
             } else {
-                let newID = UUID()
-                analyticsID = newID.transportString()
-                try self.broadcastAnalyticsID(newID)
+                analyticsID = UUID().transportString()
+                try self.broadcastAnalyticsID(analyticsID)
                 selfUser.analyticsIdentifier = analyticsID
             }
 
@@ -68,7 +67,7 @@ extension ZMUserSession: AnalyticsEventTrackerProvider {
         )
     }
 
-    private func broadcastAnalyticsID(_ id: UUID) throws {
+    private func broadcastAnalyticsID(_ id: String) throws {
         do {
             WireLogger.analytics.debug("broadcasting new analytics id")
             let message = DataTransfer(trackingIdentifier: id)
