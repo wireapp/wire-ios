@@ -862,7 +862,7 @@ public final class ZMUserSession: NSObject {
     // MARK: - Trigger syncing
 
     /// Executes specific or regular sync after db migration
-    public func triggerSync() async {
+    func triggerSync() async {
         let (initialSync, resourcesSync) = await syncContext.perform { (
             self.syncContext.readMigrationNeedsSlowSyncFlag(),
             self.syncContext.readMigrationNeedsSyncResourcesFlag()
