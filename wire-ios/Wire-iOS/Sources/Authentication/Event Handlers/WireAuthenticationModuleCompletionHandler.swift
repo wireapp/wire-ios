@@ -25,7 +25,7 @@ final class WireAuthenticationModuleCompletionHandler: AuthenticationEventHandle
 
     func handleEvent(
         currentStep: AuthenticationFlowStep,
-        context: AuthenticationResult
+        context: (AuthenticationResult, trackingID: UUID?)
     ) -> [AuthenticationCoordinatorAction]? {
         switch currentStep {
         case .wireAuthenticationModule:

@@ -302,7 +302,7 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
 
                 unauthenticatedSession.continueAfterBackupImportStep()
 
-            case let .completeWireAuthenticationLogin(result):
+            case let .completeWireAuthenticationLogin((result, trackingID)): // TODO: use trackingID
                 // Make sure we use the same backend from the authentication flow.
                 let backendEnvironment = BackendEnvironment(
                     type: result.backendEnvironment.environmentType,

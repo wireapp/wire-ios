@@ -30,7 +30,7 @@ extension ZMUserSession: AnalyticsEventTrackerProvider {
     }
 
     func createAnalyticsUser() async throws -> AnalyticsUser {
-        let (trackingID, teamInfo): (String, TeamInfo?) = try await syncContext.perform { [syncContext] in
+        let (trackingID, teamInfo): (UUID, TeamInfo?) = try await syncContext.perform { [syncContext] in
             let selfUser = ZMUser.selfUser(in: syncContext)
 
             // Sanity check that we don't setup analytics too early.
@@ -47,7 +47,7 @@ extension ZMUserSession: AnalyticsEventTrackerProvider {
             ).object(forKey: .trackingIDFromRegistration) as? String
             if let existingID = selfUser.trackingID {
                 trackingID = existingID
-            } else if let trackingIDFromRegistration {
+            } else if let trackingIDFromRegistration = trackingIDFromRegistration.flatMap(UUID.init(transportString:)) {
                 trackingID = trackingIDFromRegistration
                 try self.broadcastTrackingID(trackingID)
                 selfUser.trackingID = trackingID
@@ -59,7 +59,7 @@ extension ZMUserSession: AnalyticsEventTrackerProvider {
 
             if let team = selfUser.team, let teamID = team.remoteIdentifier {
                 teamInfo = TeamInfo(
-                    id: teamID.uuidString,
+                    id: teamID.transportString(),
                     role: selfUser.teamRole.analyticsValue,
                     size: UInt(team.members.count)
                 )

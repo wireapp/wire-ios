@@ -52,7 +52,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
 
     package let factory: any Factory
     private let router: any Router
-    private let onFlowCompletion: (AuthenticationResult, _ trackingID: String?) -> Void
+    private let onFlowCompletion: (AuthenticationResult, _ trackingID: UUID?) -> Void
     private static let numberOfDigits = 6
     private var analyticsEventTracker: (any RegistrationAnalyticsTrackerProtocol)?
     private var analyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
@@ -66,7 +66,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
         password: String,
         name: String,
         isDataUsageAgreementAccepted: Bool,
-        onFlowCompletion: @escaping (AuthenticationResult, _ trackingID: String?) -> Void,
+        onFlowCompletion: @escaping (AuthenticationResult, _ trackingID: UUID?) -> Void,
         numberOfDigits: Int = VerificationEmailCodeViewModel.numberOfDigits,
         analyticsEventTracker: (any RegistrationAnalyticsTrackerProtocol)?,
         analyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
@@ -221,7 +221,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
         )
     }
 
-    private func configureAnalytics(for userID: UUID) -> String? {
+    private func configureAnalytics(for userID: UUID) -> UUID? {
         var analyticsID: UUID?
         if isDataUsageAgreementAccepted {
             if let analyticsIDString = analyticsEventTracker?.currentDeviceID,

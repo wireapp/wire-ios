@@ -112,11 +112,11 @@ final class RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
     }
 
     private func createAnalyticsUserIfNeeded() -> AnalyticsUser {
-        if let trackingID = userDefaults.string(forKey: Constants.analyticsIdentifierKey) {
+        if let trackingID = userDefaults.string(forKey: Constants.analyticsIdentifierKey).flatMap(UUID.init(transportString:)) {
             return AnalyticsUser(trackingID: trackingID, teamInfo: nil)
         }
 
-        let trackingID = UUID().transportString()
+        let trackingID = UUID()
         userDefaults.set(trackingID, forKey: Constants.analyticsIdentifierKey)
         return AnalyticsUser(
             trackingID: trackingID,

@@ -44,9 +44,9 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
 
         bridge.outboundEvents.sink { [weak authenticationCoordinator, weak self] event in
             switch event {
-            case let .userAuthenticated(authenticationResult):
+            case let .userAuthenticated(context):
                 authenticationCoordinator?.eventResponderChain.handleEvent(
-                    ofType: .wireAuthenticationModuleComplete(authenticationResult)
+                    ofType: .wireAuthenticationModuleComplete(context)
                 )
             case .exitFlowRequested:
                 self?.selectAccount()

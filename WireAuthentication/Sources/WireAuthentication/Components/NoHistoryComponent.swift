@@ -34,13 +34,13 @@ protocol NoHistoryComponentDependency: Dependency {
 final class NoHistoryComponent: Component<NoHistoryComponentDependency> {
 
     private let authenticationResult: AuthenticationResult
-    private let trackingID: String?
+    private let trackingID: UUID?
     private let didDetectDomainConflict: Bool
 
     init(
         parent: any Scope,
         authenticationResult: AuthenticationResult,
-        trackingID: String?,
+        trackingID: UUID?,
         didDetectDomainConflict: Bool
     ) {
         self.authenticationResult = authenticationResult
