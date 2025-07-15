@@ -29,12 +29,10 @@ public struct TrackingIDProvider {
 
     public func generateTrackingIDIfNeeded() {
         guard let user = selfUser as? ZMUser, user.trackingID == nil else { return }
-
-        let newID = UUID().transportString()
-        setTrackingID(trackingID: newID, forSelfUser: user)
+        setTrackingID(trackingID: UUID(), forSelfUser: user)
     }
 
-    func setTrackingID(trackingID: String, forSelfUser user: ZMUser) {
+    func setTrackingID(trackingID: UUID, forSelfUser user: ZMUser) {
         guard user.isSelfUser else { return }
 
         user.trackingID = trackingID
@@ -48,12 +46,12 @@ public struct TrackingIDProvider {
         }
     }
 
-    private func broadcast(trackingID: String, context: NSManagedObjectContext) {
-        let message = DataTransfer(trackingIdentifier: trackingID)
+    private func broadcast(trackingID: UUID, context: NSManagedObjectContext) {
+        let message = DataTransfer(trackingIdentifier: trackingID.transportString())
         do {
             try ZMConversation.sendMessageToSelfClients(message, in: context)
         } catch {
-            let redactedID = UUID(uuidString: trackingID)?.safeForLoggingDescription ?? "invalid UUID"
+            let redactedID = trackingID.safeForLoggingDescription
             WireLogger.messaging
                 .error("Error broadcasting tracking ID: \(redactedID) \(error)")
         }

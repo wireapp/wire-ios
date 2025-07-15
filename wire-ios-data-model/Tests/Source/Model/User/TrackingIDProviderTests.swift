@@ -61,7 +61,7 @@ final class TrackingIDProviderTests: ModelObjectsTests {
         provider.generateTrackingIDIfNeeded()
 
         // Then
-        let id = try XCTUnwrap(sut.trackingID)
+        let id = try XCTUnwrap(sut.trackingID?.transportString())
 
         XCTAssertNotNil(UUID(uuidString: id))
     }
@@ -133,12 +133,12 @@ private extension TrackingIDProviderTests {
 
 private extension ZMConversation {
 
-    func numberOfDataTransferMessagesContaining(trackingID: String) -> Int {
+    func numberOfDataTransferMessagesContaining(trackingID: UUID) -> Int {
         allMessages.lazy
             .compactMap { $0 as? ZMClientMessage }
             .compactMap(\.underlyingMessage)
             .filter(\.hasDataTransfer)
-            .map(\.dataTransfer.trackingIdentifier.identifier)
+            .compactMap { UUID(transportString: $0.dataTransfer.trackingIdentifier.identifier) }
             .filter { $0 == trackingID }
             .count
     }

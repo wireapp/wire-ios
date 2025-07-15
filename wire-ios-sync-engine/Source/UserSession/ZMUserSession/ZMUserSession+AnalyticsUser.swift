@@ -37,13 +37,13 @@ extension ZMUserSession: AnalyticsEventTrackerProvider {
                 throw AnalyticsError.selfClientIsNotRegistered
             }
 
-            let trackingID: String
+            let trackingID: UUID
             var teamInfo: TeamInfo?
 
             if let existingID = selfUser.trackingID {
                 trackingID = existingID
             } else {
-                trackingID = UUID().transportString()
+                trackingID = UUID()
                 try self.broadcastTrackingID(trackingID)
                 selfUser.trackingID = trackingID
             }
@@ -65,10 +65,10 @@ extension ZMUserSession: AnalyticsEventTrackerProvider {
         )
     }
 
-    private func broadcastTrackingID(_ trackingID: String) throws {
+    private func broadcastTrackingID(_ trackingID: UUID) throws {
         do {
             WireLogger.analytics.debug("broadcasting new analytics id")
-            let message = DataTransfer(trackingIdentifier: trackingID)
+            let message = DataTransfer(trackingIdentifier: trackingID.transportString())
             try ZMConversation.sendMessageToSelfClients(message, in: syncContext)
         } catch {
             throw AnalyticsError.failedToBroadcastTrackingID(error)

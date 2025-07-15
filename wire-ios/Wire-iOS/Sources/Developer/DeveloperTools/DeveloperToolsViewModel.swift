@@ -160,13 +160,19 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     private func setupSelfUser() {
         if let selfUser {
-            sections.append(Section(
+            sections.append(
+Section(
                 header: "Self user",
                 items: [
                     .text(TextItem(title: "Handle", value: selfUser.handleDisplayString(withDomain: true) ?? "None")),
                     .text(TextItem(title: "Email", value: selfUser.emailAddress ?? "None")),
                     .text(TextItem(title: "User ID", value: selfUser.remoteIdentifier.uuidString)),
-                    .text(TextItem(title: "Analytics ID", value: selfUser.trackingID?.uppercased() ?? "None")),
+                    .text(
+                        TextItem(
+                            title: "Analytics ID",
+                            value: selfUser.trackingID?.transportString().uppercased() ?? "None"
+                        )
+                    ),
                     .text(TextItem(title: "Client ID", value: selfClient?.remoteIdentifier?.uppercased() ?? "None")),
                     .text(
                         TextItem(
@@ -184,7 +190,8 @@ final class DeveloperToolsViewModel: ObservableObject {
                         value: selfClient?.isConsumableNotificationsCapable == true ? "Yes" : "No"
                     ))
                 ]
-            ))
+            )
+)
         }
     }
 

@@ -229,7 +229,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
     }
 
     public func updateSelfUserTrackingID(
-        trackingID: String,
+        trackingID: UUID,
         conversation: ZMConversation
     ) async {
         await context.perform { [context] in

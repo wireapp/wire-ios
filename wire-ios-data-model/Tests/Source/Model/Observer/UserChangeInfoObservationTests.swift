@@ -672,12 +672,12 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
     func testThatItNotifiesTheObserverOfTrackingIDChange() {
         // given
         let user = ZMUser.selfUser(in: uiMOC)
-        user.trackingID = "foo"
+        user.trackingID = UUID()
 
         // when
         checkThatItNotifiesTheObserverOfAChange(
             user,
-            modifier: { $0.trackingID = "bar" },
+            modifier: { $0.trackingID = UUID() },
             expectedChangedField: .trackingID
         )
     }

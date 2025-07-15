@@ -34,7 +34,7 @@ final class EnableAnalyticsUseCaseTests: XCTestCase, AnalyticsEventTrackerProvid
     var analyticsEventTracker: (any AnalyticsEventTrackerProtocol)?
 
     override func setUp() {
-        currentUser = AnalyticsUser(trackingID: UUID().transportString())
+        currentUser = AnalyticsUser(trackingID: UUID())
         service = AnalyticsServiceProtocolMock()
         sut = EnableAnalyticsUseCase(service: service, provider: self)
     }

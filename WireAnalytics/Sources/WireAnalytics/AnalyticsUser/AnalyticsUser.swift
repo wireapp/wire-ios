@@ -16,13 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import Foundation
+
 /// The subject of analytics tracking.
 
 public struct AnalyticsUser: Equatable, Sendable {
 
     /// A unique id.
 
-    public let trackingID: String
+    public let trackingID: UUID
 
     /// The user's team information.
 
@@ -35,7 +37,7 @@ public struct AnalyticsUser: Equatable, Sendable {
     ///   - teamInfo: The user's team information.
 
     public init(
-        trackingID: String,
+        trackingID: UUID,
         teamInfo: TeamInfo? = nil
     ) {
         self.trackingID = trackingID

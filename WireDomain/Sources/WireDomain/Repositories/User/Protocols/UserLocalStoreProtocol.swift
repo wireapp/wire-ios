@@ -130,7 +130,7 @@ public protocol UserLocalStoreProtocol {
     func markAccountAsDeleted(for user: ZMUser) async
 
     func updateSelfUserTrackingID(
-        trackingID: String,
+        trackingID: UUID,
         conversation: ZMConversation
     ) async
 
