@@ -26,6 +26,7 @@
 "sidebar.conversation_filter.unread.title" = "Ungelesene";
 "sidebar.conversation_filter.mentions.title" = "Erwähnungen";
 "sidebar.conversation_filter.replies.title" = "Antworten";
+"sidebar.conversation_filter.drafts.title" = "Entwürfe";
 "sidebar.conversation_filter.oneOnOneConversations.title" = "1:1 Unterhaltungen";
 "sidebar.conversation_filter.folders.title" = "Ordner";
 "sidebar.conversation_filter.archived.title" = "Archiv";

@@ -2972,14 +2972,14 @@ internal enum L10n {
         internal enum Mentions {
           /// All your conversations are up to date
           internal static let subtitle = L10n.tr("Localizable", "conversation_list.empty_state.mentions.subtitle", fallback: "All your conversations are up to date")
-          /// No conversations with mentions
-          internal static let title = L10n.tr("Localizable", "conversation_list.empty_state.mentions.title", fallback: "No conversations with mentions")
+          /// No mentions
+          internal static let title = L10n.tr("Localizable", "conversation_list.empty_state.mentions.title", fallback: "No mentions")
         }
         internal enum Replies {
           /// All your conversations are up to date
           internal static let subtitle = L10n.tr("Localizable", "conversation_list.empty_state.replies.subtitle", fallback: "All your conversations are up to date")
-          /// No conversations with replies
-          internal static let title = L10n.tr("Localizable", "conversation_list.empty_state.replies.title", fallback: "No conversations with replies")
+          /// No replies
+          internal static let title = L10n.tr("Localizable", "conversation_list.empty_state.replies.title", fallback: "No replies")
         }
         internal enum Unread {
           /// All your conversations are up to date

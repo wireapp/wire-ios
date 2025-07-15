@@ -421,7 +421,7 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
     }
 
     func testForShowingNoConversationsFilteredByDrafts() {
-        // GIVEN
+        // GIVEN#imageLiteral(resourceName: "testForShowingConversationsFilteredByDrafts.1.png")
         userSession.mockConversationDirectory.mockUnarchivedConversations = []
 
         // WHEN

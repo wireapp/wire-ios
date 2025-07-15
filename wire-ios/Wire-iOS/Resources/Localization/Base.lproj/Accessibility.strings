@@ -238,6 +238,7 @@
 "conversationsList.filter_menu_options.unread.description" = "Show all unread conversations";
 "conversationsList.filter_menu_options.mentions.description" = "Show all conversations with mentions";
 "conversationsList.filter_menu_options.replies.description" = "Show all conversations with replies";
+"conversationsList.filter_menu_options.drafts.description" = "Show all conversations with drafted messages";
 "conversationsList.filter_menu_options.folders.description" = "Folders";
 
 "conversationsList.filter_menu_options.allConversations.selected.description" = "All conversations, selected";
@@ -248,6 +249,7 @@
 "conversationsList.filter_menu_options.folders.selected.description" = "Folder, selected";
 "conversationsList.filter_menu_options.unread.selected.description" = "Unread, selected";
 "conversationsList.filter_menu_options.mentions.selected.description" = "Mentions, selected";
+"conversationsList.filter_menu_options.drafts.selected.description" = "Drafts, selected";
 "conversationsList.filter_menu_options.replies.selected.description" = "Replies, selected";
 
 
