@@ -46,7 +46,7 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
 
         let conversation = await context.perform { [self] in
             modelHelper.createGroupConversation(
-                id: Scaffolding.conversationID.uuid,
+                id: Scaffolding.conversationID.id,
                 domain: Scaffolding.conversationID.domain,
                 in: context
             )
@@ -133,8 +133,8 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
 
     private enum Scaffolding {
         static let domain = "domain.com"
-        static let conversationID = ConversationID(uuid: .mockID1, domain: domain)
-        static let senderID = UserID(uuid: .mockID2, domain: domain)
+        static let conversationID = ConversationID(id: .mockID1, domain: domain)
+        static let senderID = UserID(id: .mockID2, domain: domain)
         static let oldMLSGroupIDData = Data.random()
         static let newMLSGroupIDData = Data.random()
 
