@@ -39,7 +39,7 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
         case richProfile = "richProfileChanged"
         case legalHoldStatus = "legalHoldStatusChanged"
         case isUnderLegalHold = "isUnderLegalHoldChanged"
-        case analyticsIdentifier = "analyticsIdentifierChanged"
+        case trackingID = "trackingIDChanged"
     }
 
     let userInfoChangeKeys: [UserInfoChangeKey] = UserInfoChangeKey.allCases
@@ -669,7 +669,7 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
         )
     }
 
-    func testThatItNotifiesTheObserverOfAnalyticsIdentifierChange() {
+    func testThatItNotifiesTheObserverOfTrackingIDChange() {
         // given
         let user = ZMUser.selfUser(in: uiMOC)
         user.trackingID = "foo"
@@ -678,7 +678,7 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
         checkThatItNotifiesTheObserverOfAChange(
             user,
             modifier: { $0.trackingID = "bar" },
-            expectedChangedField: .analyticsIdentifier
+            expectedChangedField: .trackingID
         )
     }
 

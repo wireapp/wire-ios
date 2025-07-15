@@ -19,7 +19,7 @@
 import Foundation
 import WireLogging
 
-public struct AnalyticsIdentifierProvider {
+public struct TrackingIDProvider {
 
     public var selfUser: UserType
 

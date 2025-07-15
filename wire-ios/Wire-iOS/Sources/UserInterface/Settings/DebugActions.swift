@@ -157,7 +157,7 @@ enum DebugActions {
         }
     }
 
-    static func showAnalyticsIdentifier(_ type: any SettingsCellDescriptorType) {
+    static func showTrackingID(_ type: any SettingsCellDescriptorType) {
         guard
             let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false),
             let userSession = ZMUserSession.shared()

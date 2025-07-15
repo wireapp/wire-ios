@@ -20,30 +20,30 @@ import XCTest
 
 @testable import WireDataModel
 
-final class AnalyticsIdentifierProviderTests: ModelObjectsTests {
+final class TrackingIDProviderTests: ModelObjectsTests {
 
-    func testTheAnalyticsIdentifierIsGeneratedByProvider() {
+    func testTheTrackingIDIsGeneratedByProvider() {
         // Given
         let selfUser = createUser(selfUser: true, inTeam: true)
 
-        let sut = AnalyticsIdentifierProvider(selfUser: selfUser)
+        let sut = TrackingIDProvider(selfUser: selfUser)
         sut.generateTrackingIDIfNeeded()
 
         // Then
         XCTAssertNotNil(selfUser.trackingID)
     }
 
-    func testTheAnalyticsIdentifierIsNotAutomaticallyGenerated() {
+    func testTheTrackingIDIsNotAutomaticallyGenerated() {
         // Given, then
         XCTAssertNil(createUser(selfUser: true, inTeam: false).trackingID)
         XCTAssertNil(createUser(selfUser: false, inTeam: false).trackingID)
         XCTAssertNil(createUser(selfUser: false, inTeam: true).trackingID)
     }
 
-    func testTheAnalyticsIdentifierIsNotRegeneratedIfAValueExists() {
+    func testTheTrackingIDIsNotRegeneratedIfAValueExists() {
         // Given
         let selfUser = createUser(selfUser: true, inTeam: true)
-        let sut = AnalyticsIdentifierProvider(selfUser: selfUser)
+        let sut = TrackingIDProvider(selfUser: selfUser)
         sut.generateTrackingIDIfNeeded()
 
         let existingTrackingID = selfUser.trackingID
@@ -53,11 +53,11 @@ final class AnalyticsIdentifierProviderTests: ModelObjectsTests {
         XCTAssertEqual(selfUser.trackingID, existingTrackingID)
     }
 
-    func testTheAnalyticsIdentifierIsEncodedAsUUIDTransportString() throws {
+    func testTheTrackingIDIsEncodedAsUUIDTransportString() throws {
         // Given
         let sut = createUser(selfUser: true, inTeam: true)
 
-        let provider = AnalyticsIdentifierProvider(selfUser: sut)
+        let provider = TrackingIDProvider(selfUser: sut)
         provider.generateTrackingIDIfNeeded()
 
         // Then
@@ -66,11 +66,11 @@ final class AnalyticsIdentifierProviderTests: ModelObjectsTests {
         XCTAssertNotNil(UUID(uuidString: id))
     }
 
-    func testTheAnalyticsIdentifierIsBroadcastedInSelfConversationWhenGenerated() throws {
+    func testTheTrackingIDIsBroadcastedInSelfConversationWhenGenerated() throws {
         // Given
         let sut = createUser(selfUser: true, inTeam: true)
 
-        let provider = AnalyticsIdentifierProvider(selfUser: sut)
+        let provider = TrackingIDProvider(selfUser: sut)
 
         let selfConversation = ZMConversation.selfConversation(in: uiMOC)
         XCTAssertTrue(selfConversation.allMessages.isEmpty)
@@ -94,7 +94,7 @@ final class AnalyticsIdentifierProviderTests: ModelObjectsTests {
         // Given
         let sut = createUser(selfUser: true, inTeam: true)
 
-        let provider = AnalyticsIdentifierProvider(selfUser: sut)
+        let provider = TrackingIDProvider(selfUser: sut)
 
         provider.generateTrackingIDIfNeeded()
         let trackingID = try XCTUnwrap(sut.trackingID)
@@ -120,7 +120,7 @@ final class AnalyticsIdentifierProviderTests: ModelObjectsTests {
 
 // MARK: - Helpers
 
-private extension AnalyticsIdentifierProviderTests {
+private extension TrackingIDProviderTests {
 
     func createUser(selfUser: Bool, inTeam: Bool) -> ZMUser {
         let user = selfUser ? self.selfUser! : createUser(in: uiMOC)

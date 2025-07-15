@@ -24,10 +24,8 @@ import WireLogging
 extension ZMUserSession: AnalyticsEventTrackerProvider {
 
     enum AnalyticsError: Error {
-
         case selfClientIsNotRegistered
-        case failedToBroadcastAnalyticsID(any Error)
-
+        case failedToBroadcastTrackingID(any Error)
     }
 
     func createAnalyticsUser() async throws -> AnalyticsUser {
@@ -73,7 +71,7 @@ extension ZMUserSession: AnalyticsEventTrackerProvider {
             let message = DataTransfer(trackingIdentifier: trackingID)
             try ZMConversation.sendMessageToSelfClients(message, in: syncContext)
         } catch {
-            throw AnalyticsError.failedToBroadcastAnalyticsID(error)
+            throw AnalyticsError.failedToBroadcastTrackingID(error)
         }
     }
 
