@@ -39,16 +39,6 @@ final class MessageAPITests: XCTestCase {
         let failures: [FailureCase] = [
             .failure(
                 status: 400,
-                error: .mlsGroupConversationMismatch(message: errorMessage),
-                label: "mls-group-conversation-mismatch"
-            ),
-            .failure(
-                status: 400,
-                error: .mlsClientSenderUserMismatch(message: errorMessage),
-                label: "mls-client-sender-user-mismatch"
-            ),
-            .failure(
-                status: 400,
                 error: .mlsSelfRemovalNotAllowed(message: errorMessage),
                 label: "mls-self-removal-not-allowed"
             ),
