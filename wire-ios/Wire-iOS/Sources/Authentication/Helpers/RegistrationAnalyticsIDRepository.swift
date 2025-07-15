@@ -31,7 +31,7 @@ struct RegistrationAnalyticsIDRepository: RegistrationAnalyticsIDRepositoryProto
         privateUserDefaults.set(analyticsID.transportString(), forKey: .analyticsIDFromRegistration)
     }
 
-    //func get // TODO: fix
+    // func get // TODO: fix
 
     func deleteAnalyticsID(for userID: UUID) {
         let privateUserDefaults = PrivateUserDefaults<AnalyticsUserIDDefaultsKey>(userID: userID, storage: storage)

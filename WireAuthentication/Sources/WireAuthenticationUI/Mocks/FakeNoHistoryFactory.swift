@@ -18,12 +18,13 @@
 import Foundation
 
 struct FakeNoHistoryFactory: NoHistoryFactory {
+
     var viewModel: NoHistoryViewModel {
         NoHistoryViewModel(
             didDetectDomainConflict: false,
             howToChangeEmailURL: URL(string: "https://wire.com")!,
             howToDeleteAccountURL: URL(string: "https://wire.com")!,
-            onFlowCompletion: {}
+            onFlowCompletion: { _ in }
         )
     }
 

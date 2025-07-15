@@ -69,8 +69,8 @@ extension VerificationEmailCodeComponent: VerificationEmailCodeViewModel.Factory
             password: password,
             name: name,
             isDataUsageAgreementAccepted: isDataUsageAgreementAccepted,
-            onFlowCompletion: { [dependency] authenticationResult in
-                dependency?.bridge.sendOutboundEvent(.userAuthenticated(authenticationResult))
+            onFlowCompletion: { [dependency] authenticationResult, analyticsID in
+                dependency?.bridge.sendOutboundEvent(.userAuthenticated(authenticationResult, analyticsID: analyticsID))
             },
             analyticsEventTracker: dependency.registrationAnalyticsTracker,
             analyticsIDRepository: dependency.registrationAnalyticsIDRepository

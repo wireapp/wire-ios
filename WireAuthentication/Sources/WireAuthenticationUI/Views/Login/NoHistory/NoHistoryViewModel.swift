@@ -40,7 +40,7 @@ package final class NoHistoryViewModel: ObservableObject {
     private let didDetectDomainConflict: Bool
     private let howToChangeEmailURL: URL
     private let howToDeleteAccountURL: URL
-    private let onFlowCompletion: () -> Void
+    private let onFlowCompletion: (_ analyticsID: UUID?) -> Void
 
     /// Tracks if the user has already acknowledged the alert.
     private var didConfirmAlert = false
@@ -51,7 +51,7 @@ package final class NoHistoryViewModel: ObservableObject {
         didDetectDomainConflict: Bool,
         howToChangeEmailURL: URL,
         howToDeleteAccountURL: URL,
-        onFlowCompletion: @escaping () -> Void
+        onFlowCompletion: @escaping (_ analyticsID: UUID?) -> Void
     ) {
         self.didDetectDomainConflict = didDetectDomainConflict
         self.howToChangeEmailURL = howToChangeEmailURL
@@ -62,7 +62,7 @@ package final class NoHistoryViewModel: ObservableObject {
     // MARK: Actions
 
     func confirm() {
-        onFlowCompletion()
+        onFlowCompletion(nil) // TODO: pass value
 
         // For now, the flow will continue outside this module and operations
         // may happen while we still see this view. Show the loading indicator

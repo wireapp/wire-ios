@@ -21,7 +21,7 @@ public import Foundation
 // sourcery: AutoMockable
 public protocol RegistrationAnalyticsIDRepositoryProtocol { // TODO: delete
 
-    func storeAnalyticsID(for userID: UUID, analyticsID: UUID) // TODO: Countly uses type String for userID, probably we shouldn't be more restrictive than needed
+    func storeAnalyticsID(for userID: UUID, analyticsID: UUID)
     func deleteAnalyticsID(for userID: UUID)
 
 }

@@ -52,7 +52,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
 
     package let factory: any Factory
     private let router: any Router
-    private let onFlowCompletion: (AuthenticationResult) -> Void
+    private let onFlowCompletion: (AuthenticationResult, _ analyticsID: UUID?) -> Void  // TODO: Countly uses type String for the ID, probably we shouldn't be more restrictive than needed
     private static let numberOfDigits = 6
     private var analyticsEventTracker: (any RegistrationAnalyticsTrackerProtocol)?
     private var analyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
@@ -66,7 +66,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
         password: String,
         name: String,
         isDataUsageAgreementAccepted: Bool,
-        onFlowCompletion: @escaping (AuthenticationResult) -> Void,
+        onFlowCompletion: @escaping (AuthenticationResult, _ analyticsID: UUID?) -> Void,
         numberOfDigits: Int = VerificationEmailCodeViewModel.numberOfDigits,
         analyticsEventTracker: (any RegistrationAnalyticsTrackerProtocol)?,
         analyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
@@ -141,9 +141,9 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
                 emailCredentials: emailCredentials,
                 userID: userID
             )
-            configureAnalytics(for: userID)
+            let analyticsID = configureAnalytics(for: userID)
 
-            onFlowCompletion(authenticationResult)
+            onFlowCompletion(authenticationResult, analyticsID)
         } catch {
             WireLogger.authentication.error("register personal account failed: \(error)")
             analyticsEventTracker?.trackPersonalAccountCreationFailedCodeVerification()
@@ -221,16 +221,19 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
         )
     }
 
-    private func configureAnalytics(for userID: UUID) {
+    private func configureAnalytics(for userID: UUID) -> UUID? {
+        var analyticsID: UUID?
         if isDataUsageAgreementAccepted {
             if let analyticsIDString = analyticsEventTracker?.currentDeviceID,
-               let analyticsID = UUID(uuidString: analyticsIDString) {
-                analyticsIDRepository.storeAnalyticsID(for: userID, analyticsID: analyticsID)
+               let analyticsID_ = UUID(uuidString: analyticsIDString) {
+                analyticsIDRepository.storeAnalyticsID(for: userID, analyticsID: analyticsID_)
+                analyticsID = analyticsID_
             }
         } else {
             analyticsIDRepository.deleteAnalyticsID(for: userID)
         }
         analyticsEventTracker?.deleteTempAnalyticsID()
+        return analyticsID
     }
 
 }

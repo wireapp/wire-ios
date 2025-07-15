@@ -51,7 +51,7 @@ public final class WireAuthenticationBridge {
 
     public enum OutboundEvent {
 
-        case userAuthenticated(AuthenticationResult)
+        case userAuthenticated(AuthenticationResult, analyticsID: UUID?)
         case exitFlowRequested
 
     }
