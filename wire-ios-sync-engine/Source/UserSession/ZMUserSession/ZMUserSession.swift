@@ -668,12 +668,7 @@ public final class ZMUserSession: NSObject {
     // MARK: - Methods
 
     public func makeAppVersionMigrationService() -> AppVersionMigrationService {
-        let allMigrations = [
-            AppVersionMigration_4_1_1(
-                journal: journal,
-                logFilesProvider: logFilesProvider
-            )
-        ]
+        let allMigrations = makeAppVersionMigrations()
 
         return AppVersionMigrationService(
             journal: journal,
@@ -1618,8 +1613,7 @@ extension ZMUserSession {
 
     private func makeAppVersionMigrations() -> [any AppVersionMigration] {
         [
-
-            AppVersionMigration_4_1_1(logFilesProvider: logFilesProvider),
+            AppVersionMigration_4_1_1(journal: journal, logFilesProvider: logFilesProvider),
             AppVersionMigration_4_2_0(lastEventIDRepository: lastEventIDRepository, journal: journal)
         ]
     }
