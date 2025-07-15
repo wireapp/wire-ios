@@ -16,9 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
 /// Provides an up-to-date access token for wire cells API.
-
+// sourcery: AutoMockable
 public protocol AccessTokenProvider: Sendable {
 
     func accessToken() async throws -> WireCellsAccessToken
