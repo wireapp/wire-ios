@@ -24,12 +24,12 @@ struct ConversationReceiptModeUpdateEventDecoder {
         from container: KeyedDecodingContainer<ConversationEventCodingKeys>
     ) throws -> ConversationReceiptModeUpdateEvent {
         let conversationID = try container.decode(
-            ConversationID.self,
+            QualifiedIDV0.self,
             forKey: .conversationQualifiedID
         )
 
         let senderID = try container.decode(
-            UserID.self,
+            QualifiedIDV0.self,
             forKey: .senderQualifiedID
         )
 
@@ -39,8 +39,8 @@ struct ConversationReceiptModeUpdateEventDecoder {
         )
 
         return ConversationReceiptModeUpdateEvent(
-            conversationID: conversationID,
-            senderID: senderID,
+            conversationID: conversationID.toAPIModel(),
+            senderID: senderID.toAPIModel(),
             newReceiptMode: payload.receiptMode
         )
     }

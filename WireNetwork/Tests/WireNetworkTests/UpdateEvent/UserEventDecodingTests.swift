@@ -312,12 +312,12 @@ final class UserEventDecodingTests: XCTestCase {
                 senderID: UUID(uuidString: "67b39b90-bd3c-41dd-ab58-35905afda19c")!,
                 receiverID: UUID(uuidString: "7fdaac60-68cc-4c3b-b337-8202506a2db6")!,
                 receiverQualifiedID: QualifiedID(
-                    uuid: UUID(uuidString: "7fdaac60-68cc-4c3b-b337-8202506a2db6")!,
+                    id: UUID(uuidString: "7fdaac60-68cc-4c3b-b337-8202506a2db6")!,
                     domain: "example.com"
                 ),
                 conversationID: UUID(uuidString: "ef84379d-9bd6-432f-b2d6-ff636343596b")!,
                 qualifiedConversationID: QualifiedID(
-                    uuid: UUID(uuidString: "ef84379d-9bd6-432f-b2d6-ff636343596b")!,
+                    id: UUID(uuidString: "ef84379d-9bd6-432f-b2d6-ff636343596b")!,
                     domain: "example.com"
                 ),
                 lastUpdate: fractionalDate(from: "2024-06-04T15:03:07.598Z"),
@@ -329,7 +329,7 @@ final class UserEventDecodingTests: XCTestCase {
 
         static let userDeleteEvent = UserDeleteEvent(
             qualifiedUserID: QualifiedID(
-                uuid: UUID(uuidString: "426525d3-81fc-467a-843a-1d1c375ca4b4")!,
+                id: UUID(uuidString: "426525d3-81fc-467a-843a-1d1c375ca4b4")!,
                 domain: "example.com"
             ),
             time: fractionalDate(from: "2021-05-12T10:52:02.671Z")

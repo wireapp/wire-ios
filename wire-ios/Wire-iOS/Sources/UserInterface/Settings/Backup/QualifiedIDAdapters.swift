@@ -41,14 +41,3 @@ extension WireDataModel.QualifiedID {
     }
 
 }
-
-extension WireNetwork.QualifiedID {
-
-    init(_ qualifiedID: WireFoundation.QualifiedID) {
-        self.init(
-            uuid: qualifiedID.id,
-            domain: qualifiedID.domain
-        )
-    }
-
-}

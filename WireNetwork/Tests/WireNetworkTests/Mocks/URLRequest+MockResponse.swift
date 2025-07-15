@@ -64,7 +64,7 @@ extension URLRequest {
             throw "Unable to create mock response"
         }
 
-        let jsonPayload = FailureResponse(code: statusCode.rawValue, label: label, message: "")
+        let jsonPayload = FailureResponseV0(code: statusCode.rawValue, label: label, message: "")
         let jsonData = try JSONEncoder().encode(jsonPayload)
 
         return (jsonData, response)

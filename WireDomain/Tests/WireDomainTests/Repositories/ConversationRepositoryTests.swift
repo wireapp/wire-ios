@@ -94,7 +94,7 @@ final class ConversationRepositoryTests: XCTestCase {
         // Mock
         conversationsAPI.getConversationIdentifiers_MockValue = .init(fetchPage: { _ in
             .init(
-                element: [QualifiedID(uuid: Scaffolding.id, domain: Scaffolding.domain)],
+                element: [QualifiedID(id: Scaffolding.id, domain: Scaffolding.domain)],
                 hasMore: false,
                 nextStart: .init()
             )
@@ -127,7 +127,7 @@ final class ConversationRepositoryTests: XCTestCase {
 
         conversationsAPI.getConversationIdentifiers_MockValue = .init(fetchPage: { _ in
             .init(
-                element: [QualifiedID(uuid: Scaffolding.id, domain: Scaffolding.domain)],
+                element: [QualifiedID(id: Scaffolding.id, domain: Scaffolding.domain)],
                 hasMore: false,
                 nextStart: .init()
             )
@@ -135,7 +135,7 @@ final class ConversationRepositoryTests: XCTestCase {
 
         conversationsAPI.getConversationsFor_MockValue = .init(
             found: [],
-            notFound: [QualifiedID(uuid: Scaffolding.id, domain: Scaffolding.domain)],
+            notFound: [QualifiedID(id: Scaffolding.id, domain: Scaffolding.domain)],
             failed: []
         )
 
@@ -161,7 +161,7 @@ final class ConversationRepositoryTests: XCTestCase {
         // Mock
         conversationsAPI.getConversationIdentifiers_MockValue = .init(fetchPage: { _ in
             .init(
-                element: [QualifiedID(uuid: Scaffolding.id, domain: Scaffolding.domain)],
+                element: [QualifiedID(id: Scaffolding.id, domain: Scaffolding.domain)],
                 hasMore: false,
                 nextStart: .init()
             )
@@ -170,7 +170,7 @@ final class ConversationRepositoryTests: XCTestCase {
         conversationsAPI.getConversationsFor_MockValue = .init(
             found: [],
             notFound: [],
-            failed: [QualifiedID(uuid: Scaffolding.id, domain: Scaffolding.domain)]
+            failed: [QualifiedID(id: Scaffolding.id, domain: Scaffolding.domain)]
         )
 
         conversationsLocalStore.storeFailedConversationConversationIDConversationDomain_MockMethod = { _, _ in }
@@ -443,9 +443,9 @@ final class ConversationRepositoryTests: XCTestCase {
         // When
 
         try await sut.removeMembers(
-            Set([.init(uuid: Scaffolding.id, domain: Scaffolding.domain)]),
-            from: .init(uuid: Scaffolding.id, domain: Scaffolding.domain),
-            initiatedBy: .init(uuid: Scaffolding.id, domain: Scaffolding.domain),
+            Set([.init(id: Scaffolding.id, domain: Scaffolding.domain)]),
+            from: .init(id: Scaffolding.id, domain: Scaffolding.domain),
+            initiatedBy: .init(id: Scaffolding.id, domain: Scaffolding.domain),
             at: .now,
             reason: .userDeleted
         )
@@ -589,7 +589,7 @@ final class ConversationRepositoryTests: XCTestCase {
 
         static let conversation = Conversation(
             id: id,
-            qualifiedID: .init(uuid: id, domain: domain),
+            qualifiedID: .init(id: id, domain: domain),
             teamID: id,
             type: .group,
             messageProtocol: .proteus,

@@ -29,6 +29,11 @@ class LoginPage: PageModel {
         return elementsQuery.buttons["Create account or team"]
     }
 
+    var createPersonalAccountButton: XCUIElement {
+        let elementsQuery = app.scrollViews.otherElements
+        return elementsQuery.buttons["Create Personal Account"]
+    }
+
     var nextButton: XCUIElement {
         let elementsQuery = app.scrollViews.otherElements
         return elementsQuery.buttons["Next"]
@@ -38,9 +43,10 @@ class LoginPage: PageModel {
         app.secureTextFields["Enter password"]
     }
 
-    func tapCreatePersonalAccountLink() throws -> CreateAccountPage {
+    func tapCreatePersonalAccountLink() throws -> CreatePersonalAccountFormPage {
         createPersonalAccountLink.tap()
-        return try CreateAccountPage()
+        createPersonalAccountButton.tap()
+        return try CreatePersonalAccountFormPage()
     }
 
     func enterPassword(_ password: String) throws -> FirstTimePage {

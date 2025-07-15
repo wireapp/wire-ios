@@ -49,7 +49,7 @@ final class UserLegalHoldDisableEventProcessorTests: XCTestCase {
 
         // When
 
-        try await sut.processEvent(Scaffolding.event)
+        await sut.processEvent(Scaffolding.event)
 
         // Then
 

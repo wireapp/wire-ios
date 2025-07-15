@@ -17,10 +17,12 @@
 //
 
 // sourcery: AutoMockable
-public protocol PersonalAccountCreationAnalyticsTrackerProtocol {
+/// Allows for setting up and tearing down an analytics events tracker and submitting tracking events.
+public protocol RegistrationAnalyticsTrackerProtocol {
 
     /// Start analytics after the user agreed.
 
+    @MainActor
     func setUp()
 
     /// Stop analytics when the account creation flow is left.
@@ -28,10 +30,8 @@ public protocol PersonalAccountCreationAnalyticsTrackerProtocol {
     func tearDown()
 
     /// Invoked when the user submits the personal account creation form.
-    /// - Parameter multiplePasswordAttemptsNeeded: `true` if it took the user more than one try to enter a valid
-    /// password.
 
-    func trackPersonalAccountCreationStart(multiplePasswordAttemptsNeeded: Bool)
+    func trackPersonalAccountCreationStart()
 
     /// Invoked when the user is presented the UI for accepting the terms of use.
 

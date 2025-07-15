@@ -18,15 +18,40 @@
 
 /// Capabilities of a user client.
 
-public enum UserClientCapability: String, Codable, Sendable {
+public enum UserClientCapability: Sendable {
 
     /// The client consents to being subject legalhold
     /// (directly or indirectly).
 
-    case legalholdConsent = "legalhold-implicit-consent"
+    case legalholdConsent
 
     /// The client is able to use new incremental sync from server using websocket acknowledgement (async notifications)
 
+    case consumableNotifications
+
+}
+
+enum UserClientCapabilityV0: String, Codable, Sendable, ToAPIModelConvertible {
+    case legalholdConsent = "legalhold-implicit-consent"
     case consumableNotifications = "consumable-notifications"
 
+    func toAPIModel() -> UserClientCapability {
+        switch self {
+        case .legalholdConsent:
+            .legalholdConsent
+        case .consumableNotifications:
+            .consumableNotifications
+        }
+    }
+}
+
+extension UserClientCapability: ToNetworkConvertible {
+    func toNetworkModel() -> UserClientCapabilityV0 {
+        switch self {
+        case .legalholdConsent:
+            .legalholdConsent
+        case .consumableNotifications:
+            .consumableNotifications
+        }
+    }
 }
