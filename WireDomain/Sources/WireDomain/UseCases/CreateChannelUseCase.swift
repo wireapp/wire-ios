@@ -331,22 +331,6 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
                 conversation: conversation
             )
 
-        } catch let SendCommitBundleAction.Failure.nonFederatingDomains(domains: domains) {
-
-            try await handleNonFederatingDomains(
-                domains,
-                users: users,
-                conversation: conversation
-            )
-
-        } catch let SendCommitBundleAction.Failure.unreachableDomains(domains: domains) {
-
-            try await handleUnreachableDomains(
-                domains,
-                users: users,
-                conversation: conversation
-            )
-
         } catch {
             WireLogger.mls.warn(
                 "failed to add members to conversation (\(String(describing: qualifiedID))): \(String(describing: error))"
