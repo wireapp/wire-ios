@@ -274,8 +274,7 @@ public extension ZMUser {
     ///
     /// This identifier should only exist for the self user
 
-    @objc
-    var trackingID: UUID? {
+    @objc var trackingID: UUID? {
         get { analyticsIdentifier.flatMap(UUID.init(transportString:)) }
         set { analyticsIdentifier = newValue?.transportString() }
     }

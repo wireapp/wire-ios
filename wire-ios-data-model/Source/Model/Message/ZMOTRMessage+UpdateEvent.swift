@@ -100,7 +100,8 @@ extension ZMOTRMessage {
             ZMMessage.remove(remotelyHiddenMessage: message.hidden, inContext: moc)
 
         case let .dataTransfer(dataTransfer) where conversation.isSelfConversation:
-            guard let trackingID = dataTransfer.trackingIdentifierData.flatMap(UUID.init(transportString:)) else { break }
+            guard let trackingID = dataTransfer.trackingIdentifierData.flatMap(UUID.init(transportString:))
+            else { break }
             ZMUser.selfUser(in: moc).trackingID = trackingID
 
         case .deleted:
