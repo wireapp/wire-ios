@@ -413,10 +413,16 @@ public final class MessageSender: MessageSenderInterface {
                     mlsService: mlsService,
                     operation: operation
                 )
+            case .mlsInvalidLeafNodeIndex:
+                handleNeedToResetMLSConversation()
             default:
                 throw error
             }
         }
+    }
+    
+    private func handleNeedToResetMLSConversation() {
+        // TODO
     }
 
     private func handleMLSStaleMessageError(

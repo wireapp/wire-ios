@@ -65,6 +65,14 @@ public enum MLSAPIError: Error, Equatable {
     /// The commit is not referencing all pending proposals
 
     case mlsCommitMissingReferences
+    
+    /// A referenced leaf node index points to a blank or non-existing node
+    
+    case mlsInvalidLeafNodeIndex
+    
+    /// TBD
+    
+    case mlsInvalidLeafNodeSignature
 
     /// Generic error for all non recoverable MLS error
 
