@@ -146,7 +146,7 @@ final class AnalyticsServiceTests: XCTestCase {
             return
         }
 
-        XCTAssertEqual(deviceChangeInvocations[0].id, Scaffolding.userWithTeam.trackingID)
+        XCTAssertEqual(deviceChangeInvocations[0].id, Scaffolding.userWithTeam.trackingID.uuidString.lowercased())
         XCTAssertEqual(deviceChangeInvocations[0].mergeData, false)
 
         // Then the user details were set.
@@ -219,7 +219,7 @@ final class AnalyticsServiceTests: XCTestCase {
             return
         }
 
-        XCTAssertEqual(deviceChangeInvocations[0].id, Scaffolding.userWithTeam.trackingID)
+        XCTAssertEqual(deviceChangeInvocations[0].id, Scaffolding.userWithTeam.trackingID.uuidString.lowercased())
         XCTAssertEqual(deviceChangeInvocations[0].mergeData, true)
 
         // Then the user details were set.
@@ -297,10 +297,10 @@ private enum Scaffolding {
         host: URL(string: "www.example.com")!
     )
 
-    static let user = AnalyticsUser(trackingID: "user1")
+    static let user = AnalyticsUser(trackingID: UUID())
 
     static let userWithTeam = AnalyticsUser(
-        trackingID: "user2",
+        trackingID: UUID(),
         teamInfo: TeamInfo(
             id: "teamID",
             role: "admin",
