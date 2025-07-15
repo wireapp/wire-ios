@@ -471,12 +471,15 @@ public final class SharingSession {
             linkPreviewDetector: applicationStatusDirectory.linkPreviewDetector,
             managedObjectContext: coreDataStack.syncContext
         )
-
+        
+        let resetMLSConversationHandler = ResetMLSConversationHandler()
+        
         let strategyFactory = StrategyFactory(
             syncContext: coreDataStack.syncContext,
             applicationStatus: applicationStatusDirectory,
             linkPreviewPreprocessor: linkPreviewPreprocessor,
-            transportSession: transportSession
+            transportSession: transportSession,
+            resetMLSConversationHandler: resetMLSConversationHandler
         )
 
         let requestGeneratorStore = RequestGeneratorStore(strategies: strategyFactory.strategies)
@@ -659,3 +662,5 @@ private extension WireDataModel.ConversationList {
         items.filter { !$0.isReadOnly }
     }
 }
+
+extension ResetMLSConversationHandler: WireRequestStrategy.ResetMLSConversationHandlerProtocol { }

@@ -38,6 +38,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
     public private(set) var eventConsumers: [ZMEventConsumer]
     public private(set) var eventAsyncConsumers: [ZMEventAsyncConsumer]
     public private(set) var contextChangeTrackers: [ZMContextChangeTracker]
+    public private(set) var resetMLSConversationHandler: WireRequestStrategy.ResetMLSConversationHandlerProtocol
 
     init(
         contextProvider: ContextProvider,
@@ -53,7 +54,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         mlsService: MLSServiceInterface,
         coreCryptoProvider: CoreCryptoProviderProtocol,
         pullSelfUserClientsFactory: @escaping PullSelfUserClientsFactory,
-        searchUsersCache: SearchUsersCache?
+        searchUsersCache: SearchUsersCache?,
+        resetMLSConversationHandler: WireRequestStrategy.ResetMLSConversationHandlerProtocol
     ) {
         self.strategies = Self.buildStrategies(
             contextProvider: contextProvider,
@@ -71,6 +73,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             pullSelfUserClientsFactory: pullSelfUserClientsFactory,
             searchUsersCache: searchUsersCache
         )
+        self.resetMLSConversationHandler = resetMLSConversationHandler
 
         self.requestStrategies = strategies.compactMap { $0 as? RequestStrategy }
         self.eventConsumers = strategies.compactMap { $0 as? ZMEventConsumer }
@@ -373,12 +376,16 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 context: syncContext,
                 apiProvider: apiProvider
             )
+            
+            let resetMLSConversationHandler = ResetMLSConversationHandler()
+
             let messageSender = MessageSender(
                 apiProvider: apiProvider,
                 sessionEstablisher: sessionEstablisher,
                 messageDependencyResolver: messageDependencyResolver,
                 context: syncContext,
-                incrementalSyncObserver: incrementalSyncObserver
+                incrementalSyncObserver: incrementalSyncObserver,
+                resetMLSConversationHandler: resetMLSConversationHandler
             )
 
             let strategies: [Any] = [

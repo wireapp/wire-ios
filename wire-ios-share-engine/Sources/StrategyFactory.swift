@@ -35,7 +35,8 @@ final class StrategyFactory {
         syncContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
         linkPreviewPreprocessor: LinkPreviewPreprocessor,
-        transportSession: TransportSessionType
+        transportSession: TransportSessionType,
+        resetMLSConversationHandler: ResetMLSConversationHandlerProtocol
     ) {
         let httpClient = HttpClientImpl(transportSession: transportSession, queue: syncContext)
         let apiProvider = APIProvider(httpClient: httpClient)
@@ -49,7 +50,8 @@ final class StrategyFactory {
             sessionEstablisher: sessionEstablisher,
             messageDependencyResolver: messageDependencyResolver,
             context: syncContext,
-            incrementalSyncObserver: NoOpIncrementalSyncObserver()
+            incrementalSyncObserver: NoOpIncrementalSyncObserver(),
+            resetMLSConversationHandler: resetMLSConversationHandler
         )
         self.strategies = createStrategies(linkPreviewPreprocessor: linkPreviewPreprocessor)
     }
