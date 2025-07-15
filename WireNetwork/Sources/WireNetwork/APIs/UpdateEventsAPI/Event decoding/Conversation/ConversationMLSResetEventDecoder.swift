@@ -25,12 +25,12 @@ struct ConversationMLSResetEventDecoder {
     ) throws -> ConversationMLSResetEvent {
 
         let conversationID = try container.decode(
-            ConversationID.self,
+            QualifiedIDV0.self,
             forKey: .conversationQualifiedID
         )
 
         let senderID = try container.decode(
-            UserID.self,
+            QualifiedIDV0.self,
             forKey: .senderQualifiedID
         )
 
@@ -40,8 +40,8 @@ struct ConversationMLSResetEventDecoder {
         )
 
         return ConversationMLSResetEvent(
-            conversationID: conversationID,
-            senderID: senderID,
+            conversationID: conversationID.toAPIModel(),
+            senderID: senderID.toAPIModel(),
             oldMLSGroupIDBase64: payload.oldMLSGroupIDBase64,
             newMLSGroupIDBase64: payload.newMLSGroupIDBase64,
         )
