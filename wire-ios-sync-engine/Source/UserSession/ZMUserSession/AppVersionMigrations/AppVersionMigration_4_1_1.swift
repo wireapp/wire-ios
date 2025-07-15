@@ -15,26 +15,23 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+
 import Foundation
+import WireDomain
+import WireLogging
 
-public struct PushChannelV2APIBuilder {
+struct AppVersionMigration_4_1_1: AppVersionMigration {
 
-    private let pushChannelService: PushChannelService
+    let logFilesProvider: LogFilesProviding
+    let version: SemanticVersion = "4.1.1"
 
-    /// Create a new builder.
-    ///
-    /// - Parameter pushChannelService: A push channel service to execute requests.
-    ///
-    public init(pushChannelService: PushChannelService) {
-        self.pushChannelService = pushChannelService
-    }
+    func perform() async throws {
+        // Deletes all raw log files collected from the logger sources.
+        // This removes files from `WireLogger.logFiles` and `ZMSLog.pathsForExistingLogs`,
+        try logFilesProvider.removeLogFiles()
 
-    /// Make a `PushChannelAPI`.
-    ///
-    /// - Returns: A `PushChannelAPI`.
-
-    public func makeAPI(for apiVersion: APIVersion) -> any PushChannelV2API {
-        PushChannelV2APIImpl(pushChannelService: pushChannelService, apiVersion: apiVersion)
+        // Deletes all log-related archives and folders created in the temp directory.
+        try logFilesProvider.removeLegacyLogArchives()
     }
 
 }

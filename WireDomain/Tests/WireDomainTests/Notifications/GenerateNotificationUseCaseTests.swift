@@ -68,8 +68,8 @@ final class GenerateNotificationUseCaseTests: XCTestCase {
     }
 
     private enum Scaffolding {
-        static let conversationID = WireNetwork.QualifiedID(uuid: .mockID2, domain: "domain.com")
-        static let userID = UserID(uuid: .mockID3, domain: "domain.com")
+        static let conversationID = WireNetwork.QualifiedID(id: .mockID2, domain: "domain.com")
+        static let userID = UserID(id: .mockID3, domain: "domain.com")
         static let userPushRemoveEvent = UpdateEvent.user(.pushRemove)
         static let conversationRenameEvent = UpdateEvent.conversation(
             .rename(

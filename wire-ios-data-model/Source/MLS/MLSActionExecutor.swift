@@ -274,7 +274,6 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
                         clients: clients
                     )
                 }
-                WireLogger.mls.info("success: removing clients from group (\(groupID.safeForLoggingDescription))")
             } catch {
                 WireLogger.mls
                     .info(
@@ -292,7 +291,6 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
                 return try await coreCrypto.perform {
                     try await $0.updateKeyingMaterial(conversationId: groupID.data)
                 }
-                WireLogger.mls.info("success: updating key material for group (\(groupID.safeForLoggingDescription))")
             } catch {
                 WireLogger.mls
                     .info(

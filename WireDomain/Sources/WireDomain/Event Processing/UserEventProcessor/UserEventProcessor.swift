@@ -36,7 +36,7 @@ struct UserEventProcessor: UserEventProcessorProtocol {
     func processEvent(_ event: UserEvent) async throws {
         switch event {
         case let .clientAdd(event):
-            try await clientAddEventProcessor.processEvent(event)
+            await clientAddEventProcessor.processEvent(event)
 
         case let .clientRemove(event):
             try await clientRemoveEventProcessor.processEvent(event)

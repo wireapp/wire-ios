@@ -149,7 +149,7 @@ final class CreateChannelUseCaseTests: XCTestCase {
             if apiRetryCount == 0 {
                 // First, we try to create conversation with all users
                 XCTAssertEqual(
-                    Set(parameters.qualifiedUserIDs.map(\.uuid)),
+                    Set(parameters.qualifiedUserIDs.map(\.id)),
                     Set([UUID.mockID1, .mockID2, .mockID3])
                 )
 
@@ -157,7 +157,7 @@ final class CreateChannelUseCaseTests: XCTestCase {
             } else {
                 // On retry, we only try to create conversation with federated domains
                 XCTAssertEqual(
-                    Set(parameters.qualifiedUserIDs.map(\.uuid)),
+                    Set(parameters.qualifiedUserIDs.map(\.id)),
                     Set([UUID.mockID1, .mockID2])
                 )
                 return Scaffolding.conversation
@@ -587,7 +587,7 @@ final class CreateChannelUseCaseTests: XCTestCase {
         static let conversationID = UUID.mockID1
         static let conversation = WireNetwork.Conversation(
             id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ad")!,
-            qualifiedID: .init(uuid: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ad")!, domain: "example.com"),
+            qualifiedID: .init(id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ad")!, domain: "example.com"),
             teamID: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ad")!,
             type: .group,
             messageProtocol: .proteus,

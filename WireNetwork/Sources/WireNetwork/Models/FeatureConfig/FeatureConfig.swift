@@ -20,7 +20,7 @@ import Foundation
 
 /// Configurations for various app features.
 
-public enum FeatureConfig: Equatable, Codable, Sendable {
+public enum FeatureConfig: Equatable, Sendable {
 
     /// Config for the *App Lock* feature.
     ///

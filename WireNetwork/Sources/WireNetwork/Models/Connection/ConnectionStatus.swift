@@ -18,7 +18,7 @@
 
 import Foundation
 
-public enum ConnectionStatus: String, Codable, Equatable, Sendable {
+public enum ConnectionStatus: Equatable, Sendable {
 
     /// The connection is complete and the conversation is in its normal state
 
@@ -46,5 +46,37 @@ public enum ConnectionStatus: String, Codable, Equatable, Sendable {
 
     /// The connection is missing legal hold consent
 
+    case missingLegalholdConsent
+}
+
+enum ConnectionStatusV0: String, Equatable, Sendable, Decodable {
+
+    case accepted
+    case blocked
+    case pending
+    case ignored
+    case sent
+    case cancelled
     case missingLegalholdConsent = "missing-legalhold-consent"
+}
+
+extension ConnectionStatusV0: ToAPIModelConvertible {
+    func toAPIModel() -> ConnectionStatus {
+        switch self {
+        case .accepted:
+            .accepted
+        case .blocked:
+            .blocked
+        case .pending:
+            .pending
+        case .ignored:
+            .ignored
+        case .sent:
+            .sent
+        case .cancelled:
+            .cancelled
+        case .missingLegalholdConsent:
+            .missingLegalholdConsent
+        }
+    }
 }

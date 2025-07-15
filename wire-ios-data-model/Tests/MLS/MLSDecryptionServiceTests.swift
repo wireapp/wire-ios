@@ -130,7 +130,6 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         mockMLSActionExecutor.mockDecryptMessage = { _, _ in
             DecryptedMessage(
                 message: nil,
-                proposals: [],
                 isActive: false,
                 commitDelay: nil,
                 senderClientId: nil,
@@ -172,7 +171,6 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
 
             return DecryptedMessage(
                 message: messageData,
-                proposals: [],
                 isActive: false,
                 commitDelay: nil,
                 senderClientId: sender.rawValue.data(using: .utf8)!,
@@ -215,7 +213,6 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
 
             return DecryptedMessage(
                 message: messageData,
-                proposals: [],
                 isActive: false,
                 commitDelay: nil,
                 senderClientId: sender.rawValue.data(using: .utf8)!,
@@ -294,7 +291,6 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
 
             return DecryptedMessage(
                 message: nil,
-                proposals: [],
                 isActive: false,
                 commitDelay: nil,
                 senderClientId: nil,
@@ -303,7 +299,6 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
                 bufferedMessages: [
                     BufferedDecryptedMessage(
                         message: messageData,
-                        proposals: [],
                         isActive: false,
                         commitDelay: nil,
                         senderClientId: sender.rawValue.data(using: .utf8)!,
@@ -343,7 +338,6 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         mockMLSActionExecutor.mockDecryptMessage = { _, _ in
             DecryptedMessage(
                 message: messageData,
-                proposals: [],
                 isActive: false,
                 commitDelay: nil,
                 senderClientId: senderData,

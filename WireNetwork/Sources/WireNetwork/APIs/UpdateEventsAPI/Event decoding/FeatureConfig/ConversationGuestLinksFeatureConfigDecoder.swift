@@ -28,7 +28,7 @@ struct ConversationGuestLinksFeatureConfigDecoder {
             forKey: .payload
         )
 
-        return ConversationGuestLinksFeatureConfig(status: payload.status)
+        return ConversationGuestLinksFeatureConfig(status: payload.status.toAPIModel())
     }
 
 }

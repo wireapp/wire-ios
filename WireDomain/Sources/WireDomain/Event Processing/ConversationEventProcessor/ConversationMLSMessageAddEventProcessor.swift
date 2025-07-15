@@ -64,7 +64,7 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
         date: Date?
     ) async throws {
         guard let conversation = await conversationLocalStore.fetchConversation(
-            id: conversationID.uuid,
+            id: conversationID.id,
             domain: conversationID.domain
         ) else {
             throw Failure.mlsConversationNotFound
@@ -72,13 +72,13 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
 
         let logAttributes: LogAttributes = [
             .messageType: "conversation.mls-message-add",
-            .conversationId: conversationID.uuid.safeForLoggingDescription
+            .conversationId: conversationID.id.safeForLoggingDescription
         ]
 
         // Ensure is self conversation, sender is self user and conversation is not read-only
         guard await messageLocalStore.canAddMessage(
             conversation: conversation,
-            senderID: senderID.uuid
+            senderID: senderID.id
         ) else {
             return WireLogger.eventProcessing.warn(
                 "Ignoring incoming message: illegal sender or conversation",
@@ -123,7 +123,7 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
         // Verifies that a sender of an update event is part of the conversation. If they are not,
         // it means that our local state is out of sync and we need to update the list of participants.
         await conversationLocalStore.addParticipantIfNeeded(
-            participantID: senderID.uuid,
+            participantID: senderID.id,
             participantDomain: senderID.domain,
             in: conversation,
             date: date?.addingTimeInterval(-0.01) ?? .now
@@ -160,13 +160,13 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
         date: Date
     ) async {
         let systemMessageType: SystemMessageType = .invalid(
-            sender: (senderID.uuid, senderID.domain),
+            sender: (senderID.id, senderID.domain),
             date: date
         )
 
         await messageLocalStore.addSystemMessage(
             messageType: systemMessageType,
-            conversationID: conversationID.uuid,
+            conversationID: conversationID.id,
             conversationDomain: conversationID.domain
         )
     }
@@ -199,7 +199,7 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
         let clientID = decryptedMessage.senderClientID
 
         let conversationID = !callingConversationID.id
-            .isEmpty ? UUID(uuidString: callingConversationID.id)! : event.conversationID.uuid
+            .isEmpty ? UUID(uuidString: callingConversationID.id)! : event.conversationID.id
 
         let conversationDomain = !callingConversationID.domain.isEmpty ? callingConversationID.domain : event
             .conversationID.domain
@@ -212,7 +212,7 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
             data: payload,
             conversationID: conversationID,
             conversationDomain: conversationDomain,
-            userID: senderID.uuid,
+            userID: senderID.id,
             userDomain: senderID.domain,
             eventTimestamp: eventTimestamp,
             clientID: clientID,

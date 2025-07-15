@@ -75,7 +75,11 @@ extension PersonalAccountCreationComponent: PersonalAccountCreationViewModel.Fac
         password: String,
         name: String
     ) -> any VerificationEmailCodeFactory {
-        verificationEmailCodeComponent(email: email, password: password, name: name)
+        verificationEmailCodeComponent(
+            email: email,
+            password: password,
+            name: name
+        )
     }
 
     // MARK: - Use cases
