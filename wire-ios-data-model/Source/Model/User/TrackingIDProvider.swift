@@ -55,7 +55,7 @@ public struct TrackingIDProvider {
         } catch {
             let redactedID = UUID(uuidString: trackingID)?.safeForLoggingDescription ?? "invalid UUID"
             WireLogger.messaging
-                .error("Error broadcasting analytics ID: \(redactedID) \(error)")
+                .error("Error broadcasting tracking ID: \(redactedID) \(error)")
         }
     }
 
