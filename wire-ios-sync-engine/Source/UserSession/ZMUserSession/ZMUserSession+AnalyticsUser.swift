@@ -19,6 +19,7 @@
 import Foundation
 import WireAnalytics
 import WireDataModel
+import WireFoundation
 import WireLogging
 
 extension ZMUserSession: AnalyticsEventTrackerProvider {
@@ -31,22 +32,26 @@ extension ZMUserSession: AnalyticsEventTrackerProvider {
     }
 
     func createAnalyticsUser() async throws -> AnalyticsUser {
-        let (analyticsID, teamInfo) = try await syncContext.perform { [syncContext, journal] in
+        let (analyticsID, teamInfo): (String, TeamInfo?) = try await syncContext.perform { [syncContext] in
             let selfUser = ZMUser.selfUser(in: syncContext)
 
             // Sanity check that we don't setup analytics too early.
-            guard selfUser.selfClient()?.remoteIdentifier != nil else {
+            guard let userID = selfUser.selfClient()?.remoteIdentifier.flatMap(UUID.init(uuidString:)) else {
                 throw AnalyticsError.selfClientIsNotRegistered
             }
 
             let analyticsID: String
             var teamInfo: TeamInfo?
 
+            let analyticsIDFromRegistration = PrivateUserDefaults<AnalyticsUserIDDefaultsKey>(
+                userID: userID,
+                storage: UserDefaults.standard
+            ).object(forKey: .analyticsIDFromRegistration) as? String
             if let existingID = selfUser.analyticsIdentifier {
                 analyticsID = existingID
-            } else if let existingIDFromRegistration = journal[.analyticsIDFromRegistration] {
-                analyticsID = existingIDFromRegistration
-                if let analyticsUUID = UUID(uuidString: existingIDFromRegistration) {
+            } else if let analyticsIDFromRegistration {
+                analyticsID = analyticsIDFromRegistration
+                if let analyticsUUID = UUID(uuidString: analyticsIDFromRegistration) {
                     try self.broadcastAnalyticsID(analyticsUUID)
                 }
                 selfUser.analyticsIdentifier = analyticsID
@@ -84,4 +89,14 @@ extension ZMUserSession: AnalyticsEventTrackerProvider {
         }
     }
 
+}
+
+// MARK: -
+
+/// If the user went through the flow of registering a new personal account and gave consent to analytics tracking,
+/// the newly created analytics id is temporarily stored in this property. After setting up the user session this
+/// property will be cleared and the value stored in the database under `ZMUser.analyticsIdentifier` property.
+
+private enum AnalyticsUserIDDefaultsKey: String, DefaultsKey {
+    case analyticsIDFromRegistration
 }

@@ -69,19 +69,6 @@ public extension JournalKey where Value == Bool {
 
 }
 
-public extension JournalKey where Value == String? { // TODO: delete
-
-    /// If the user went through the flow of registering a new personal account and gave consent to analytics tracking,
-    /// the newly created analytics id is temporarily stored in this property. After setting up the user session this
-    /// property will be cleared and the value stored in the database under `ZMUser.analyticsIdentifier` property.
-
-    static let analyticsIDFromRegistration = Self(
-        "analyticsIDFromRegistration",
-        defaultValue: nil
-    )
-
-}
-
 public extension JournalKey where Value == Set<String> {
 
     /// The set of MLS group IDs to be repaired.

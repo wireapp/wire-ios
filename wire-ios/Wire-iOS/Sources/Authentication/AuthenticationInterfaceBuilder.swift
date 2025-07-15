@@ -100,7 +100,7 @@ final class AuthenticationInterfaceBuilder {
                     userDefaults: .applicationGroup // TODO: .standard could be used
                 )
             }
-            let registrationAnalyticsIDRepository = RegistrationAnalyticsIDRepository(userDefaults: .applicationGroup)
+            let registrationAnalyticsIDRepository = RegistrationAnalyticsIDRepository(storage: UserDefaults.standard)
             let (rootView, bridge) = assembly.assemble(
                 environmentType: BackendEnvironmentType(environment.environmentType.value),
                 backendConfig: BackendConfig(environment),

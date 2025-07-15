@@ -16,18 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import avs
-import Foundation
-import WireCommonComponents
-import WireDomain
 import WireFoundation
 import WireLogging
 import WireSyncEngine
 
-final class TrackingManager: TrackingInterface {
+struct TrackingManager: TrackingInterface {
 
     private let sessionManager: SessionManager
-    private var observerToken: NSObjectProtocol?
 
     private typealias UserDefaultsKey = AnalyticsTrackingPrivateUserDefaultsKey
     private var privateUserDefaults: PrivateUserDefaults<UserDefaultsKey>? {
@@ -41,18 +36,6 @@ final class TrackingManager: TrackingInterface {
 
     init(sessionManager: SessionManager) {
         self.sessionManager = sessionManager
-
-        self.observerToken = NotificationCenter.default.addObserver(
-            forName: FlowManager.AVSFlowManagerCreatedNotification,
-            object: nil,
-            queue: .main,
-            using: { [weak self] _ in
-                guard let self else { return }
-                AVSFlowManager.getInstance()?.setEnableMetrics(isAnalyticsTrackingEnabled)
-            }
-        )
-
-        AVSFlowManager.getInstance()?.setEnableMetrics(isAnalyticsTrackingEnabled)
     }
 
     private var doesUserConsentPreferenceExist: Bool {
@@ -94,13 +77,11 @@ final class TrackingManager: TrackingInterface {
 
     func enableAnalytics() async throws {
         try await sessionManager.makeEnableAnalyticsUseCase()?.invoke()
-        AVSFlowManager.getInstance()?.setEnableMetrics(true)
         privateUserDefaults?.set(true, forKey: .isAnalyticsTrackingEnabled)
     }
 
     func disableAnalytics() throws {
         try sessionManager.makeDisableAnalyticsUseCase()?.invoke()
-        AVSFlowManager.getInstance()?.setEnableMetrics(false)
         privateUserDefaults?.set(false, forKey: .isAnalyticsTrackingEnabled)
     }
 

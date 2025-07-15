@@ -19,9 +19,7 @@
 public import Foundation
 
 // sourcery: AutoMockable
-/// A repository which allows reading, writing and deleting a temporary analytics id for the account creation
-/// (registration) UI.
-public protocol RegistrationAnalyticsIDRepositoryProtocol {
+public protocol RegistrationAnalyticsIDRepositoryProtocol { // TODO: delete
 
     func storeAnalyticsID(for userID: UUID, analyticsID: UUID) // TODO: Countly uses type String for userID, probably we shouldn't be more restrictive than needed
     func deleteAnalyticsID(for userID: UUID)

@@ -18,25 +18,28 @@
 
 import Foundation
 import WireAuthenticationAPI
-import WireDomain
+import WireFoundation
+
+// TODO: delete file
 
 struct RegistrationAnalyticsIDRepository: RegistrationAnalyticsIDRepositoryProtocol {
 
-    let userDefaults: UserDefaults
-
-    private func journal(for userID: UUID) -> Journal { // TODO: don't use Journal, maybe PrivateUserDefaults
-        Journal(
-            userID: userID,
-            storage: userDefaults
-        )
-    }
+    var storage: UserDefaultsProtocol
 
     func storeAnalyticsID(for userID: UUID, analyticsID: UUID) {
-        journal(for: userID)[.analyticsIDFromRegistration] = analyticsID.transportString()
+        let privateUserDefaults = PrivateUserDefaults<AnalyticsUserIDDefaultsKey>(userID: userID, storage: storage)
+        privateUserDefaults.set(analyticsID.transportString(), forKey: .analyticsIDFromRegistration)
     }
+
+    //func get // TODO: fix
 
     func deleteAnalyticsID(for userID: UUID) {
-        journal(for: userID)[.analyticsIDFromRegistration] = nil
+        let privateUserDefaults = PrivateUserDefaults<AnalyticsUserIDDefaultsKey>(userID: userID, storage: storage)
+        privateUserDefaults.removeObject(forKey: .analyticsIDFromRegistration)
     }
 
+}
+
+private enum AnalyticsUserIDDefaultsKey: String, DefaultsKey {
+    case analyticsIDFromRegistration
 }
