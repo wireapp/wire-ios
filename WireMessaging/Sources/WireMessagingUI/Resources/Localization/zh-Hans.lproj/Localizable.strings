@@ -32,16 +32,9 @@
 "channel_access_level.participants_footer" = "选择谁可以将参与者添加到私人频道";
 
 
-"channel_access_level.change_level_alert.title" = "频道访问权限";
-"channel_access_level.change_level_alert.message" = "将频道访问权限更改为私人将产生以下影响：
-
-团队成员不能再自行加入频道。
-新成员只能由频道管理员或其他成员添加，具体取决于“添加参与者”设置。
-频道访问权限不能再转回公开。
-
-是否要将频道访问权限更改为私人？";
-
-"channel_access_level.change_level_alert.button.change" = "更改";
+"channel_access_level.change_level_alert.title" = "将访问权限从公共更改为私人？";
+"channel_access_level.change_level_alert.message" = "这意味着：团队成员无法自行加入此频道。\n根据您的选择，只有频道管理员或管理员、成员二者可以添加新参与者。\n此步骤无法撤消。该频道将保持私人状态。";
+"channel_access_level.change_level_alert.button.change" = "更改为私人";
 "channel_access_level.change_level_alert.button.cancel" = "取消";
 
 
