@@ -27,7 +27,7 @@ struct ConversationAccessUpdateEventProcessor: ConversationAccessUpdateEventProc
         let conversationID = event.conversationID
 
         let localConversation = await repository.fetchOrCreateConversation(
-            id: conversationID.uuid,
+            id: conversationID.id,
             domain: conversationID.domain
         )
 
@@ -39,8 +39,8 @@ struct ConversationAccessUpdateEventProcessor: ConversationAccessUpdateEventProc
 
         await localStore.updateAccesses(
             for: localConversation,
-            accessModes: event.accessModes.map(\.rawValue),
-            accessRoles: accessRoles.map(\.rawValue)
+            accessModes: event.accessModes.map { $0.toDataModel() },
+            accessRoles: accessRoles.map { $0.toDataModel() }
         )
     }
 
@@ -59,4 +59,34 @@ struct ConversationAccessUpdateEventProcessor: ConversationAccessUpdateEventProc
         }
     }
 
+}
+
+private extension WireNetwork.ConversationAccessMode {
+    func toDataModel() -> String {
+        switch self {
+        case .private:
+            "private"
+        case .invite:
+            "invite"
+        case .link:
+            "link"
+        case .code:
+            "code"
+        }
+    }
+}
+
+private extension WireNetwork.ConversationAccessRole {
+    func toDataModel() -> String {
+        switch self {
+        case .teamMember:
+            "team_member"
+        case .nonTeamMember:
+            "non_team_member"
+        case .guest:
+            "guest"
+        case .service:
+            "service"
+        }
+    }
 }

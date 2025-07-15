@@ -35,12 +35,12 @@ struct ConversationMemberUpdateEventProcessor: ConversationMemberUpdateEventProc
         let archivedStatusDate = memberChange.archivedStatusReferenceDate
 
         let conversation = await conversationRepository.fetchOrCreateConversation(
-            id: conversationID.uuid,
+            id: conversationID.id,
             domain: conversationID.domain
         )
 
         let isSelfUser = try await userRepository.isSelfUser(
-            id: memberChangeID.uuid,
+            id: memberChangeID.id,
             domain: memberChangeID.domain
         )
 
@@ -57,10 +57,10 @@ struct ConversationMemberUpdateEventProcessor: ConversationMemberUpdateEventProc
         }
 
         await conversationRepository.addOrUpdateParticipant(
-            participantID: memberChangeID.uuid,
+            participantID: memberChangeID.id,
             participantDomain: memberChangeID.domain,
             participantRole: role,
-            conversationID: conversationID.uuid,
+            conversationID: conversationID.id,
             conversationDomain: conversationID.domain
         )
     }

@@ -24,12 +24,12 @@ struct ConversationAccessUpdateEventDecoder {
         from container: KeyedDecodingContainer<ConversationEventCodingKeys>
     ) throws -> ConversationAccessUpdateEvent {
         let conversationID = try container.decode(
-            ConversationID.self,
+            QualifiedIDV0.self,
             forKey: .conversationQualifiedID
         )
 
         let senderID = try container.decode(
-            UserID.self,
+            QualifiedIDV0.self,
             forKey: .senderQualifiedID
         )
 
@@ -38,20 +38,21 @@ struct ConversationAccessUpdateEventDecoder {
             forKey: .payload
         )
 
+        let accessRoles = payload.accessRoles?.map { $0.toAPIModel() }
         return ConversationAccessUpdateEvent(
-            conversationID: conversationID,
-            senderID: senderID,
-            accessModes: payload.accessModes,
-            accessRoles: payload.accessRoles,
-            legacyAccessRole: payload.legacyAccessRole
+            conversationID: conversationID.toAPIModel(),
+            senderID: senderID.toAPIModel(),
+            accessModes: Set(payload.accessModes.map { $0.toAPIModel() }),
+            accessRoles: accessRoles.flatMap { Set($0) },
+            legacyAccessRole: payload.legacyAccessRole?.toAPIModel()
         )
     }
 
     private struct Payload: Decodable {
 
-        let accessModes: Set<ConversationAccessMode>
-        let legacyAccessRole: ConversationAccessRoleLegacy?
-        let accessRoles: Set<ConversationAccessRole>?
+        let accessModes: Set<ConversationAccessModeV0>
+        let legacyAccessRole: ConversationAccessRoleLegacyV0?
+        let accessRoles: Set<ConversationAccessRoleV0>?
 
         enum CodingKeys: String, CodingKey {
 

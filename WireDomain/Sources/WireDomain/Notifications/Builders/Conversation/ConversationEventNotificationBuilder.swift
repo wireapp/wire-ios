@@ -111,7 +111,7 @@ extension ConversationEventNotificationBuilder {
             time: Date?
         ) async -> Bool {
             let conversation = await conversationLocalStore.fetchOrCreateConversation(
-                id: conversationID.uuid,
+                id: conversationID.id,
                 domain: conversationID.domain
             )
 
@@ -123,7 +123,7 @@ extension ConversationEventNotificationBuilder {
             let isConversationMuted = conversationMutedMessages == .all
 
             let isSenderSelfUser = (try? await userLocalStore.isSelfUser(
-                id: senderID.uuid,
+                id: senderID.id,
                 domain: senderID.domain
             ).isSelfUser) ?? false
 

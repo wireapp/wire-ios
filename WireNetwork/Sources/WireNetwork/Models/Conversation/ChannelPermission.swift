@@ -18,7 +18,32 @@
 
 import Foundation
 
-public enum ChannelPermission: String, Codable, Sendable {
+public enum ChannelPermission: Sendable {
     case everyone
     case admins
+}
+
+enum ChannelPermissionV8: String, Sendable, Codable, ToAPIModelConvertible {
+    case everyone
+    case admins
+
+    func toAPIModel() -> ChannelPermission {
+        switch self {
+        case .everyone:
+            .everyone
+        case .admins:
+            .admins
+        }
+    }
+}
+
+extension ChannelPermission: ToNetworkConvertible {
+    func toNetworkModel() -> ChannelPermissionV8 {
+        switch self {
+        case .everyone:
+            .everyone
+        case .admins:
+            .admins
+        }
+    }
 }

@@ -44,7 +44,7 @@ class SelfUserAPIV4: SelfUserAPIV3 {
 struct SelfUserV4: Decodable, ToAPIModelConvertible {
 
     let accentID: Int
-    let assets: [UserAsset]?
+    let assets: [UserAssetV0]?
     let deleted: Bool?
     let email: String?
     let expiresAt: UTCTime?
@@ -55,10 +55,10 @@ struct SelfUserV4: Decodable, ToAPIModelConvertible {
     let name: String
     let phone: String?
     let picture: [String]?
-    let qualifiedID: UserID
+    let qualifiedID: QualifiedIDV0
     let service: ServiceResponseV0?
     let ssoID: SSOIDV0?
-    let supportedProtocols: Set<MessageProtocol>?
+    let supportedProtocols: Set<MessageProtocolV0>?
     let teamID: UUID?
 
     enum CodingKeys: String, CodingKey {
@@ -76,9 +76,10 @@ struct SelfUserV4: Decodable, ToAPIModelConvertible {
     }
 
     func toAPIModel() -> SelfUser {
-        SelfUser(
+        let supportedProtocols = supportedProtocols?.map { $0.toAPIModel() } ?? [.proteus]
+        return SelfUser(
             id: id,
-            qualifiedID: qualifiedID,
+            qualifiedID: qualifiedID.toAPIModel(),
             ssoID: ssoID?.toAPIModel(),
             name: name,
             handle: handle,
@@ -86,12 +87,12 @@ struct SelfUserV4: Decodable, ToAPIModelConvertible {
             phone: phone,
             accentID: accentID,
             managedBy: managedBy?.toAPIModel(),
-            assets: assets,
+            assets: assets?.map { $0.toAPIModel() },
             deleted: deleted,
             email: email,
             expiresAt: expiresAt?.date,
             service: service?.toAPIModel(),
-            supportedProtocols: supportedProtocols ?? [.proteus]
+            supportedProtocols: Set(supportedProtocols)
         )
     }
 }

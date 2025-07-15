@@ -52,6 +52,7 @@ extension AuthenticationCoordinator: LoginDelegate {
 
     /// Invoked when a client is successfully registered
     func clientRegistrationDidSucceed(accountId: UUID) {
+        analyticsEventTracker?.authenticationFlowCompleted()
         eventResponderChain.handleEvent(ofType: .clientRegistrationSuccess)
     }
 

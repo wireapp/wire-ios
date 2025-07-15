@@ -109,6 +109,7 @@ final class ZClientViewController: UIViewController {
                 self?.mainSplitViewController.settingsUI as? SettingsTableViewController ??
                 self?.mainTabBarController.settingsUI as? SettingsTableViewController
         }
+
         return DefaultSettingsPropertyFactoryDelegate(
             userSession: userSession,
             settingsTableViewController: settingsTableViewController,

@@ -45,7 +45,7 @@ final class ConsumableNotificationsMigratorTests: XCTestCase {
             sync: mockSync,
             userClientsAPI: mockUserClientsAPI,
             userClientsLocalStore: mockLocalStore,
-            apiVersion: .v8,
+            apiVersion: .v9,
             journal: journal
         )
     }

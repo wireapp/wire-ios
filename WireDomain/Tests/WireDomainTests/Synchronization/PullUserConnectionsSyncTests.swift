@@ -75,9 +75,9 @@ private enum Scaffolding {
     static let remoteConnection = WireNetwork.Connection(
         senderID: senderID,
         receiverID: receiverID,
-        receiverQualifiedID: .init(uuid: senderID, domain: domain),
+        receiverQualifiedID: .init(id: senderID, domain: domain),
         conversationID: Scaffolding.conversationID,
-        qualifiedConversationID: .init(uuid: conversationID, domain: domain),
+        qualifiedConversationID: .init(id: conversationID, domain: domain),
         lastUpdate: Date(),
         status: .accepted
     )

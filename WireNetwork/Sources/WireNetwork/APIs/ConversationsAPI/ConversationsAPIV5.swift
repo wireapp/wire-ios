@@ -26,7 +26,7 @@ class ConversationsAPIV5: ConversationsAPIV4 {
     }
 
     override func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList {
-        let parameters = GetConversationsParametersV0(qualifiedIdentifiers: identifiers)
+        let parameters = GetConversationsParametersV0(qualifiedIdentifiers: identifiers.map { $0.toNetworkModel() })
         let body = try JSONEncoder.defaultEncoder.encode(parameters)
         let path = "\(pathPrefix)\(basePath)/list"
 
@@ -138,14 +138,14 @@ private struct QualifiedConversationListV5: Decodable, ToAPIModelConvertible {
     }
 
     let found: [ConversationV5]
-    let notFound: [QualifiedID]
-    let failed: [QualifiedID]
+    let notFound: [QualifiedIDV0]
+    let failed: [QualifiedIDV0]
 
     func toAPIModel() -> ConversationList {
         ConversationList(
             found: found.map { $0.toAPIModel() },
-            notFound: notFound,
-            failed: failed
+            notFound: notFound.map { $0.toAPIModel() },
+            failed: failed.map { $0.toAPIModel() }
         )
     }
 }
@@ -172,9 +172,9 @@ struct ConversationV5: Decodable, ToAPIModelConvertible {
         case type
     }
 
-    var access: Set<ConversationAccessMode>?
-    var accessRoles: Set<ConversationAccessRole>?
-    var cipherSuite: MLSCipherSuite? // New field
+    var access: Set<ConversationAccessModeV0>?
+    var accessRoles: Set<ConversationAccessRoleV0>?
+    var cipherSuite: MLSCipherSuiteV0? // New field
     var creator: UUID?
     var epoch: UInt?
     var epochTimestamp: UTCTime? // New field
@@ -182,24 +182,26 @@ struct ConversationV5: Decodable, ToAPIModelConvertible {
     var lastEvent: String?
     var lastEventTime: UTCTime?
     var members: QualifiedConversationMembers?
-    var messageProtocol: ConversationMessageProtocol?
+    var messageProtocol: ConversationMessageProtocolV0?
     var messageTimer: TimeInterval?
     var mlsGroupID: String?
     var name: String?
-    var qualifiedID: QualifiedID?
+    var qualifiedID: QualifiedIDV0?
     var readReceiptMode: Int?
     var teamID: UUID?
-    var type: ConversationType?
+    var type: ConversationTypeV0?
 
     func toAPIModel() -> Conversation {
-        Conversation(
+        let access = access?.map { $0.toAPIModel() }
+        let accessRoles = accessRoles?.map { $0.toAPIModel() }
+        return Conversation(
             id: id,
-            qualifiedID: qualifiedID,
+            qualifiedID: qualifiedID?.toAPIModel(),
             teamID: teamID,
-            type: type,
-            messageProtocol: messageProtocol,
+            type: type?.toAPIModel(),
+            messageProtocol: messageProtocol?.toAPIModel(),
             mlsGroupID: mlsGroupID,
-            cipherSuite: cipherSuite,
+            cipherSuite: cipherSuite?.toAPIModel(),
             epoch: epoch,
             epochTimestamp: epochTimestamp?.date,
             creator: creator,
@@ -207,8 +209,8 @@ struct ConversationV5: Decodable, ToAPIModelConvertible {
             name: name,
             messageTimer: messageTimer,
             readReceiptMode: readReceiptMode,
-            access: access,
-            accessRoles: accessRoles,
+            access: access.flatMap { Set($0) },
+            accessRoles: accessRoles.flatMap { Set($0) },
             legacyAccessRole: nil,
             lastEvent: lastEvent,
             lastEventTime: lastEventTime?.date
