@@ -34,7 +34,7 @@ protocol DetermineAuthMethodComponentDependency: Dependency {
 
 }
 
-class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDependency> {
+final class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDependency> {
 
     public let networkStack: NetworkStack
     private let existsAnotherAccount: Bool
@@ -75,6 +75,7 @@ class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDepend
         NoHistoryComponent(
             parent: self,
             authenticationResult: authenticationResult,
+            trackingID: nil, // TODO: pass value
             didDetectDomainConflict: false
         )
     }

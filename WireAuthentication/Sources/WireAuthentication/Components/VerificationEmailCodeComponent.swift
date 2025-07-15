@@ -69,11 +69,11 @@ extension VerificationEmailCodeComponent: VerificationEmailCodeViewModel.Factory
             password: password,
             name: name,
             isDataUsageAgreementAccepted: isDataUsageAgreementAccepted,
-            onFlowCompletion: { [dependency] authenticationResult, analyticsID in
-                dependency?.bridge.sendOutboundEvent(.userAuthenticated(authenticationResult, analyticsID: analyticsID))
+            onFlowCompletion: { [dependency] authenticationResult, trackingID in
+                dependency?.bridge.sendOutboundEvent(.userAuthenticated(authenticationResult, trackingID: trackingID))
             },
             analyticsEventTracker: dependency.registrationAnalyticsTracker,
-            analyticsIDRepository: dependency.registrationAnalyticsIDRepository
+            analyticsIDRepository: dependency.registrationAnalyticsIDRepository // TODO: delete
         )
     }
 

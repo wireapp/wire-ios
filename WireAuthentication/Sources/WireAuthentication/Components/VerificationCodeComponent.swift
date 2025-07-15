@@ -32,7 +32,7 @@ protocol VerificationCodeComponentDependency: Dependency {
 
 }
 
-class VerificationCodeComponent: Component<VerificationCodeComponentDependency> {
+final class VerificationCodeComponent: Component<VerificationCodeComponentDependency> {
 
     private let email: String
     private let password: String
@@ -56,6 +56,7 @@ class VerificationCodeComponent: Component<VerificationCodeComponentDependency> 
         NoHistoryComponent(
             parent: self,
             authenticationResult: authenticationResult,
+            trackingID: nil, // TODO: pass value
             didDetectDomainConflict: dependency.didDetectDomainConflict
         )
     }

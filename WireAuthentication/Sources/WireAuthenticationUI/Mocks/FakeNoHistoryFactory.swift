@@ -15,6 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+
 import Foundation
 
 struct FakeNoHistoryFactory: NoHistoryFactory {
@@ -24,7 +25,7 @@ struct FakeNoHistoryFactory: NoHistoryFactory {
             didDetectDomainConflict: false,
             howToChangeEmailURL: URL(string: "https://wire.com")!,
             howToDeleteAccountURL: URL(string: "https://wire.com")!,
-            onFlowCompletion: { _ in }
+            onFlowCompletion: {}
         )
     }
 
