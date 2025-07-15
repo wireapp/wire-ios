@@ -38,10 +38,10 @@ class LoginPage: PageModel {
         app.secureTextFields["Enter password"]
     }
 
-    func tapCreatePersonalAccountLink() throws -> CreateAccountPage {
-
+    func tapCreatePersonalAccountLink() throws -> CreatePersonalAccountFormPage {
         createPersonalAccountLink.tap()
-        return try CreateAccountPage()
+        createPersonalAccountButton.tap()
+        return try CreatePersonalAccountFormPage()
     }
 
     func enterPassword(_ password: String) throws -> FirstTimePage {
