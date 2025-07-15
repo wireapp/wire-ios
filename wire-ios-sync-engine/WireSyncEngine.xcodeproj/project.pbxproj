@@ -14,7 +14,6 @@
 		015E2F8B2E26A53A00470025 /* AppVersionMigration_4_2_0.swift in Sources */ = {isa = PBXBuildFile; fileRef = 015E2F8A2E26A53A00470025 /* AppVersionMigration_4_2_0.swift */; };
 		018F17B92B83B70A00E0594D /* AVSConversationType+Conference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018F17B82B83B70A00E0594D /* AVSConversationType+Conference.swift */; };
 		01C774292D9EF01400A2FF07 /* WireAVS in Frameworks */ = {isa = PBXBuildFile; productRef = 01C774282D9EF01400A2FF07 /* WireAVS */; };
-		01FA80EB2E20064400E9B9CE /* AppVersionMigration_4_2_0.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01FA80EA2E20064400E9B9CE /* AppVersionMigration_4_2_0.swift */; };
 		0601900B2678750D0043F8F8 /* DeepLinkURLActionProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161ACB3E23F6E4C200ABFF33 /* DeepLinkURLActionProcessorTests.swift */; };
 		060C06682B7619E300B484C6 /* SelfClientCertificateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 060C06672B7619E300B484C6 /* SelfClientCertificateProvider.swift */; };
 		061F791C2B767B3D00E8827B /* SelfClientCertificateProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 061F791A2B767AE100E8827B /* SelfClientCertificateProviderTests.swift */; };
@@ -3195,7 +3194,6 @@
 				16030DC921B01B7500F8032E /* Conversation+ReadReceiptMode.swift in Sources */,
 				F19F4F4F1E6575F700F4D8FF /* UserProfileImageOwner.swift in Sources */,
 				8754B84C1F73C38900EC02AD /* MessageChangeInfo+UserSession.swift in Sources */,
-				01FA80EB2E20064400E9B9CE /* AppVersionMigration_4_2_0.swift in Sources */,
 				59271BE82B908DAC0019B726 /* SecurityClassificationProviding.swift in Sources */,
 				EE46EF262942033C007BBD99 /* SessionManager+PushToken.swift in Sources */,
 				162DEE111F87B9800034C8F9 /* ZMUserSession+Calling.swift in Sources */,
