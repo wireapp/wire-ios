@@ -165,7 +165,7 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
 
         if let id = user?.trackingID {
             countly.changeDeviceID(
-                id,
+                id.uuidString.lowercased(),
                 mergeData: mergeData
             )
         }

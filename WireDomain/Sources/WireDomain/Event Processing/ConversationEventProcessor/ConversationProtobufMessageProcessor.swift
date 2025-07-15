@@ -80,7 +80,7 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
             )
 
         case let .dataTransfer(dataTransfer):
-            guard let trackingID = dataTransfer.trackingIdentifierData else {
+            guard let trackingID = dataTransfer.trackingIdentifierData.flatMap(UUID.init(transportString:)) else {
                 break
             }
 

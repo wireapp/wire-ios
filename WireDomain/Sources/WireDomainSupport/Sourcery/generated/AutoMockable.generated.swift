@@ -4689,10 +4689,10 @@ public class MockUserLocalStoreProtocol: UserLocalStoreProtocol {
 
     // MARK: - updateSelfUserTrackingID
 
-    public var updateSelfUserTrackingIDTrackingIDConversation_Invocations: [(trackingID: String, conversation: ZMConversation)] = []
-    public var updateSelfUserTrackingIDTrackingIDConversation_MockMethod: ((String, ZMConversation) async -> Void)?
+    public var updateSelfUserTrackingIDTrackingIDConversation_Invocations: [(trackingID: UUID, conversation: ZMConversation)] = []
+    public var updateSelfUserTrackingIDTrackingIDConversation_MockMethod: ((UUID, ZMConversation) async -> Void)?
 
-    public func updateSelfUserTrackingID(trackingID: String, conversation: ZMConversation) async {
+    public func updateSelfUserTrackingID(trackingID: UUID, conversation: ZMConversation) async {
         updateSelfUserTrackingIDTrackingIDConversation_Invocations.append((trackingID: trackingID, conversation: conversation))
 
         guard let mock = updateSelfUserTrackingIDTrackingIDConversation_MockMethod else {

@@ -19,6 +19,7 @@
 import Foundation
 import WireFoundation
 import WireSystem
+import WireTransport
 import WireUtilities
 
 extension ZMUser: UserType {
@@ -273,7 +274,12 @@ public extension ZMUser {
     ///
     /// This identifier should only exist for the self user
 
-    @NSManaged @objc(analyticsIdentifier) var trackingID: String?
+    @objc var trackingID: UUID? {
+        get { analyticsIdentifier.flatMap(UUID.init(transportString:)) }
+        set { analyticsIdentifier = newValue?.transportString() }
+    }
+
+    @NSManaged private var analyticsIdentifier: String? // TODO: [WPB-17530] rename and use Data in Core Data model `primitiveTrackingID`?
 
     internal static let domainKey: String = "domain"
     @NSManaged private var primitiveDomain: String?
