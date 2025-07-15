@@ -22,7 +22,7 @@ public struct AnalyticsUser: Equatable, Sendable {
 
     /// A unique id.
 
-    public let analyticsIdentifier: String
+    public let trackingID: String
 
     /// The user's team information.
 
@@ -31,14 +31,14 @@ public struct AnalyticsUser: Equatable, Sendable {
     /// Create a new `AnalyticsUser`.
     ///
     /// - Parameters:
-    ///   - analyticsIdentifier: A uniqe id.
+    ///   - trackingID: A uniqe id.
     ///   - teamInfo: The user's team information.
 
     public init(
-        analyticsIdentifier: String,
+        trackingID: String,
         teamInfo: TeamInfo? = nil
     ) {
-        self.analyticsIdentifier = analyticsIdentifier
+        self.trackingID = trackingID
         self.teamInfo = teamInfo
     }
 

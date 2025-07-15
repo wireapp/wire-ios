@@ -169,7 +169,7 @@ enum DebugActions {
 
         let alert = UIAlertController(
             title: "Analytics identifier",
-            message: "\(selfUser.analyticsIdentifier ?? "nil")",
+            message: "\(selfUser.trackingID ?? "nil")",
             preferredStyle: .alert
         )
         alert.addAction(UIAlertAction(

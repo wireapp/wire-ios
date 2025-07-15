@@ -672,12 +672,12 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
     func testThatItNotifiesTheObserverOfAnalyticsIdentifierChange() {
         // given
         let user = ZMUser.selfUser(in: uiMOC)
-        user.analyticsIdentifier = "foo"
+        user.trackingID = "foo"
 
         // when
         checkThatItNotifiesTheObserverOfAChange(
             user,
-            modifier: { $0.analyticsIdentifier = "bar" },
+            modifier: { $0.trackingID = "bar" },
             expectedChangedField: .analyticsIdentifier
         )
     }

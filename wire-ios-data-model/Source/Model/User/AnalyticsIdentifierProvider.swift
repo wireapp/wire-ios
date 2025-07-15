@@ -28,7 +28,7 @@ public struct AnalyticsIdentifierProvider {
     }
 
     public func generateTrackingIDIfNeeded() {
-        guard let user = selfUser as? ZMUser, user.analyticsIdentifier == nil else { return }
+        guard let user = selfUser as? ZMUser, user.trackingID == nil else { return }
 
         let newID = UUID().transportString()
         setTrackingID(trackingID: newID, forSelfUser: user)
@@ -37,7 +37,7 @@ public struct AnalyticsIdentifierProvider {
     func setTrackingID(trackingID: String, forSelfUser user: ZMUser) {
         guard user.isSelfUser else { return }
 
-        user.analyticsIdentifier = trackingID
+        user.trackingID = trackingID
 
         guard let syncContext = user.managedObjectContext?.zm_sync else {
             return

@@ -51,7 +51,7 @@ extension ZMUser: ObjectInSnapshot {
             #keyPath(ZMUser.providerIdentifier),
             ZMUserKeys.legalHoldRequest,
             #keyPath(ZMUser.isUnderLegalHold),
-            #keyPath(ZMUser.analyticsIdentifier)
+            #keyPath(ZMUser.trackingID)
         ]
     }
 
@@ -161,8 +161,8 @@ open class UserChangeInfo: ObjectChangeInfo {
         changedKeys.contains(#keyPath(ZMUser.participantRoles))
     }
 
-    public var analyticsIdentifierChanged: Bool {
-        changedKeys.contains(#keyPath(ZMUser.analyticsIdentifier))
+    public var trackingIDChanged: Bool {
+        changedKeys.contains(#keyPath(ZMUser.trackingID))
     }
 
     public let user: UserType
