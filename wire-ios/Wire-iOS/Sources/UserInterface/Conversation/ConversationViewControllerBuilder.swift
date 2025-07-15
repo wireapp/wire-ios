@@ -31,7 +31,7 @@ struct ConversationViewControllerBuilder: MainConversationUIBuilderProtocol {
     var userSession: UserSession
     var selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     var mediaPlaybackManager: MediaPlaybackManager?
-    var wireCellsFactory: WireCellsFactory
+    var wireCellsFactory: any WireCellsFactoryProtocol
 
     func build<MainCoordinator: MainCoordinatorProtocol>(
         conversation: ConversationModel,

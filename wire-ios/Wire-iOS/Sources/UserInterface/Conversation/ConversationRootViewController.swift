@@ -48,7 +48,7 @@ final class ConversationRootViewController: UIViewController {
         mainCoordinator: AnyMainCoordinator,
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
         mediaPlaybackManager: MediaPlaybackManager?,
-        wireCellsFactory: WireCellsFactory
+        wireCellsFactory: any WireCellsFactoryProtocol
     ) {
         self.conversation = conversation
 

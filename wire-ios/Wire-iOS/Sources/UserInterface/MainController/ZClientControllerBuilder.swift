@@ -46,7 +46,7 @@ struct ZClientControllerBuilder {
         build(router: router)
     }
 
-    private func buildWireCellsFactory() -> WireCellsFactory {
+    private func buildWireCellsFactory() -> any WireCellsFactoryProtocol {
         if DeveloperFlag.wireCellsManualAuthentication.isOn {
             WireCellsFactory(
                 serverURL: URL(string: "https://service.zeta.pydiocells.com")!,

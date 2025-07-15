@@ -175,7 +175,7 @@ final class ZClientViewController: UIViewController {
     private let colorSchemeController: ColorSchemeController
     private var incomingApnsObserver: NSObjectProtocol?
     private var networkAvailabilityObserverToken: NSObjectProtocol?
-    private let wireCellsFactory: WireCellsFactory
+    private let wireCellsFactory: any WireCellsFactoryProtocol
 
     private(set) lazy var mainCoordinator = MainCoordinator(
         mainSplitViewController: mainSplitViewController,
@@ -190,7 +190,7 @@ final class ZClientViewController: UIViewController {
         selfProfileViewsMonitor: SelfProfileViewsMonitor,
         userSession: UserSession,
         trackingManager: TrackingManager?,
-        wireCellsFactory: WireCellsFactory
+        wireCellsFactory: any WireCellsFactoryProtocol
     ) {
         self.account = account
         self.selfProfileViewsMonitor = selfProfileViewsMonitor

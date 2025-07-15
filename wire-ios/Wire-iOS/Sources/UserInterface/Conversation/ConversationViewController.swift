@@ -136,7 +136,7 @@ final class ConversationViewController: UIViewController {
         classificationProvider: (any SecurityClassificationProviding)?,
         networkStatusObservable: any NetworkStatusObservable,
         getParticipantImageSourceUseCase: any GetParticipantImageSourceUseCaseProtocol,
-        wireCellsFactory: WireCellsFactory
+        wireCellsFactory: any WireCellsFactoryProtocol
     ) {
         self.conversation = conversation
         self.visibleMessage = visibleMessage

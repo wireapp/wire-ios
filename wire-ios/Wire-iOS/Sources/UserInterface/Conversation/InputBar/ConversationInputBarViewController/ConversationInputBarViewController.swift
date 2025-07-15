@@ -359,7 +359,7 @@ final class ConversationInputBarViewController: UIViewController,
         userSession: UserSession,
         classificationProvider: (any SecurityClassificationProviding)?,
         networkStatusObservable: any NetworkStatusObservable,
-        wireCellsFactory: WireCellsFactory
+        wireCellsFactory: any WireCellsFactoryProtocol
     ) {
         self.conversation = conversation
         self.userSession = userSession
