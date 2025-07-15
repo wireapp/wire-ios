@@ -51,7 +51,8 @@ struct FakePersonalAccountCreationFactory: PersonalAccountCreationFactory, Regis
         email: String,
         password: String,
         name: String,
-        isDataUsageAgreementAccepted: Bool
+        isDataUsageAgreementAccepted: Bool,
+        trackingID: UUID?
     ) -> any VerificationEmailCodeFactory {
         fatalError()
     }

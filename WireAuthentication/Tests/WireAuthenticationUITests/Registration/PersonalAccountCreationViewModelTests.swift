@@ -78,7 +78,8 @@ final class PersonalAccountCreationViewModelTests: XCTestCase, PersonalAccountCr
         email: String,
         password: String,
         name: String,
-        isDataUsageAgreementAccepted: Bool
+        isDataUsageAgreementAccepted: Bool,
+        trackingID: UUID?
     ) -> any VerificationEmailCodeFactory {
         fatalError("not needed here")
     }

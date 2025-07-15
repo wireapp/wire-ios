@@ -21,7 +21,7 @@ public import Foundation
 // sourcery: AutoMockable
 public protocol RegistrationAnalyticsIDRepositoryProtocol { // TODO: delete
 
-    func storeAnalyticsID(for userID: UUID, analyticsID: UUID)
-    func deleteAnalyticsID(for userID: UUID)
+    func storeAnalyticsID(for userID: UUID, analyticsID: UUID, temp: Void)
+    func deleteAnalyticsID(for userID: UUID, temp: Void)
 
 }

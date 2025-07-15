@@ -117,7 +117,7 @@ final class RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
         }
 
         let trackingID = UUID()
-        userDefaults.set(trackingID, forKey: Constants.analyticsIdentifierKey)
+        userDefaults.set(trackingID.transportString(), forKey: Constants.analyticsIdentifierKey)
         return AnalyticsUser(
             trackingID: trackingID,
             teamInfo: nil

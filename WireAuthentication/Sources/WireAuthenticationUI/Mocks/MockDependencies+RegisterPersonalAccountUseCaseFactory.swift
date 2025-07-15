@@ -67,6 +67,15 @@ private struct MockRegistrationAnalyticsTracker: RegistrationAnalyticsTrackerPro
 
 private struct RegistrationAnalyticsIDRepositoryProtocolMock: RegistrationAnalyticsIDRepositoryProtocol {
 
+    func storeAnalyticsID(for userID: UUID, analyticsID: UUID, temp: Void) {
+        fatalError() // TODO: delete
+    }
+
+    func deleteAnalyticsID(for userID: UUID, temp: Void) {
+        fatalError() // TODO: delete
+    }
+
+
     func storeAnalyticsID(for userID: UUID, analyticsID: UUID) {}
     func deleteAnalyticsID(for userID: UUID) {}
 

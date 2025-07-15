@@ -26,14 +26,14 @@ struct RegistrationAnalyticsIDRepository: RegistrationAnalyticsIDRepositoryProto
 
     var storage: UserDefaultsProtocol
 
-    func storeAnalyticsID(for userID: UUID, analyticsID: UUID) {
+    func storeAnalyticsID(for userID: UUID, analyticsID: UUID, temp: Void) {
         let privateUserDefaults = PrivateUserDefaults<AnalyticsUserIDDefaultsKey>(userID: userID, storage: storage)
         privateUserDefaults.set(analyticsID.transportString(), forKey: .analyticsIDFromRegistration)
     }
 
     // func get // TODO: fix
 
-    func deleteAnalyticsID(for userID: UUID) {
+    func deleteAnalyticsID(for userID: UUID, temp: Void) {
         let privateUserDefaults = PrivateUserDefaults<AnalyticsUserIDDefaultsKey>(userID: userID, storage: storage)
         privateUserDefaults.removeObject(forKey: .analyticsIDFromRegistration)
     }

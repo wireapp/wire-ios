@@ -28,7 +28,8 @@ package protocol PersonalAccountCreationFactory {
         email: String,
         password: String,
         name: String,
-        isDataUsageAgreementAccepted: Bool
+        isDataUsageAgreementAccepted: Bool,
+        trackingID: UUID?
     ) -> any VerificationEmailCodeFactory
 
 }

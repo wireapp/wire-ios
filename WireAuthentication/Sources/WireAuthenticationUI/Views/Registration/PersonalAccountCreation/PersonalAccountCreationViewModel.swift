@@ -38,6 +38,14 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
     @Published var password: String = ""
     @Published var confirmedPassword: String = ""
 
+    var trackingID: UUID? {
+        if let trackingID = analyticsEventTracker?.currentDeviceID.map(UUID.init(uuidString:)) {
+            trackingID
+        } else {
+            .none
+        }
+    }
+
     // MARK: - Dependencies
 
     var localizedPasswordRules: String {
@@ -124,7 +132,7 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
             let requestEmailVerificationCodeUseCase = try await factory.requestEmailVerificationCodeUseCase()
             try await requestEmailVerificationCodeUseCase.invoke(email: email)
 
-            if isDataUsageAgreementAccepted {
+            if isDataUsageAgreementAccepted { // TODO: set up analytics
                 analyticsEventTracker?.setUp()
                 analyticsEventTracker?.trackPersonalAccountCreationStart()
                 analyticsEventTracker?.trackPersonalAccountCreationReachedTermsOfUseConfirmation()

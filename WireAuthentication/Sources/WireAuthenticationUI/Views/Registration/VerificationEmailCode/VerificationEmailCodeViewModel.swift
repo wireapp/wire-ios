@@ -65,7 +65,8 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
         email: String,
         password: String,
         name: String,
-        isDataUsageAgreementAccepted: Bool,
+        isDataUsageAgreementAccepted: Bool, // TODO: delete
+        // trackingID: UUID?, maybe not needed
         onFlowCompletion: @escaping (AuthenticationResult, _ trackingID: UUID?) -> Void,
         numberOfDigits: Int = VerificationEmailCodeViewModel.numberOfDigits,
         analyticsEventTracker: (any RegistrationAnalyticsTrackerProtocol)?,
@@ -79,6 +80,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
         self.password = password
         self.name = name
         self.isDataUsageAgreementAccepted = isDataUsageAgreementAccepted
+        // TODO: trackingID?
         self.onFlowCompletion = onFlowCompletion
         self.code = Array(repeating: "", count: numberOfDigits)
         self.numberOfDigits = numberOfDigits
@@ -141,7 +143,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
                 emailCredentials: emailCredentials,
                 userID: userID
             )
-            let trackingID = configureAnalytics(for: userID)
+            let trackingID = configureAnalytics(for: userID) // TODO: tracking it could have been passed as argument
 
             onFlowCompletion(authenticationResult, trackingID)
         } catch {
@@ -222,19 +224,18 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
     }
 
     private func configureAnalytics(for userID: UUID) -> UUID? {
-        var analyticsID: UUID?
+        var trackingID: UUID?
         if isDataUsageAgreementAccepted {
-            if let analyticsIDString = analyticsEventTracker?.currentDeviceID,
-               let analyticsID_ = UUID(uuidString: analyticsIDString) {
-                analyticsIDRepository.storeAnalyticsID(for: userID, analyticsID: analyticsID_)
-                analyticsID = analyticsID_
+            if let trackingIDString = analyticsEventTracker?.currentDeviceID,
+               let trackingID_ = UUID(uuidString: trackingIDString) {
+                analyticsIDRepository.storeAnalyticsID(for: userID, analyticsID: trackingID_, temp: ())
+                trackingID = trackingID_
             }
         } else {
-            analyticsIDRepository.deleteAnalyticsID(for: userID)
+            analyticsIDRepository.deleteAnalyticsID(for: userID, temp: ())
         }
         analyticsEventTracker?.deleteTempAnalyticsID()
-        fatalError("TODO") // TODO: fix
-        // return analyticsID
+        return trackingID
     }
 
 }

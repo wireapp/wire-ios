@@ -50,7 +50,8 @@ struct PersonalAccountCreationView: View {
                         email: email,
                         password: password,
                         name: name,
-                        isDataUsageAgreementAccepted: viewModel.isDataUsageAgreementAccepted
+                        isDataUsageAgreementAccepted: viewModel.isDataUsageAgreementAccepted,
+                        trackingID: viewModel.trackingID
                     )
                 )
             }

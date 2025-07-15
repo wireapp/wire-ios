@@ -46,14 +46,16 @@ final class PersonalAccountCreationComponent: Component<PersonalAccountCreationC
         email: String,
         password: String,
         name: String,
-        isDataUsageAgreementAccepted: Bool
+        isDataUsageAgreementAccepted: Bool,
+        trackingID: UUID?
     ) -> VerificationEmailCodeComponent {
         VerificationEmailCodeComponent(
             parent: self,
             email: email,
             password: password,
             name: name,
-            isDataUsageAgreementAccepted: isDataUsageAgreementAccepted
+            isDataUsageAgreementAccepted: isDataUsageAgreementAccepted,
+            trackingID: trackingID
         )
     }
 
@@ -82,13 +84,15 @@ extension PersonalAccountCreationComponent: PersonalAccountCreationViewModel.Fac
         email: String,
         password: String,
         name: String,
-        isDataUsageAgreementAccepted: Bool
+        isDataUsageAgreementAccepted: Bool,
+        trackingID: UUID?
     ) -> any VerificationEmailCodeFactory {
         verificationEmailCodeComponent(
             email: email,
             password: password,
             name: name,
-            isDataUsageAgreementAccepted: isDataUsageAgreementAccepted
+            isDataUsageAgreementAccepted: isDataUsageAgreementAccepted,
+            trackingID: trackingID
         )
     }
 

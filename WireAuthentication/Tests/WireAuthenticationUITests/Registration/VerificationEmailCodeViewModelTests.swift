@@ -144,7 +144,7 @@ private struct MockRegistrationAnalyticsTrackerProtocol: RegistrationAnalyticsTr
 
 private struct RegistrationAnalyticsIDRepositoryProtocolMock: RegistrationAnalyticsIDRepositoryProtocol {
 
-    func storeAnalyticsID(for userID: UUID, analyticsID: UUID) {}
-    func deleteAnalyticsID(for userID: UUID) {}
+    func storeAnalyticsID(for userID: UUID, analyticsID: UUID, temp: Void) {}
+    func deleteAnalyticsID(for userID: UUID, temp: Void) {}
 
 }
