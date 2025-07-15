@@ -74,6 +74,7 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
         super.viewDidLayoutSubviews()
 
         canvas.setNeedsDisplay()
+        colorPickerController.selectedColorIndex = 0
     }
 
     override func viewDidLoad() {

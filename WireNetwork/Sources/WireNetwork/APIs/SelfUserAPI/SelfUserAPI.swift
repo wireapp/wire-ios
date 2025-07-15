@@ -43,4 +43,13 @@ public protocol SelfUserAPI {
     #if DEBUG
         func updateHandle(handle: String) async throws
     #endif
+
+    /// Delete a team
+    /// - Parameters:
+    ///   - teamId: teamId fetched by user
+    ///   - password: password
+    ///   - verificationCode: verification Code sent to delete_team
+    #if DEBUG
+        func deleteTeam(teamId: UUID, password: String, verificationCode: String) async throws
+    #endif
 }
