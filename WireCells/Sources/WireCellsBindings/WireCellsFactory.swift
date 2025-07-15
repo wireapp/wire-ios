@@ -27,6 +27,16 @@ public struct WireCellsFactory {
     private let draftsRepository: DraftsRepository
 
     public init(serverURL: URL, accessToken: any AccessTokenProvider) {
+        // TODO: [WPB-18798] Remove serverURL temporary override when there exists a method to obtain the correct URL.
+        let serverURL = switch serverURL.host {
+        case "nginz-https.fulu.wire.link":
+            URL(string: "https://cells.fulu.wire.link")!
+        case "nginz-https.imai.wire.link":
+            URL(string: "https://service.zeta.pydiocells.com")!
+        default:
+            serverURL
+        }
+
         self.nodesAPI = NodesAPI(serverURL: serverURL, accessToken: accessToken)
         self.uploadManager = WireCellsNodeUploadManager(nodesAPI: nodesAPI)
         self.draftsRepository = DraftsRepository(uploadManager: uploadManager, nodesAPI: nodesAPI)
