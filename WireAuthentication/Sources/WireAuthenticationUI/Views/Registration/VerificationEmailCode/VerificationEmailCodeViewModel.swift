@@ -223,7 +223,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
         )
     }
 
-    private func configureAnalytics(for userID: UUID) -> UUID? {
+    private func configureAnalytics(for userID: UUID) -> UUID? { // TODO: delete?
         var trackingID: UUID?
         if isDataUsageAgreementAccepted {
             if let trackingIDString = analyticsEventTracker?.currentDeviceID,

@@ -72,7 +72,7 @@ extension VerificationEmailCodeComponent: VerificationEmailCodeViewModel.Factory
             password: password,
             name: name,
             isDataUsageAgreementAccepted: isDataUsageAgreementAccepted,
-            onFlowCompletion: { [dependency, trackingID] authenticationResult, trackingID_ in
+            onFlowCompletion: { [dependency, trackingID] authenticationResult, trackingID_ in // TODO: clean up privateuserdefaults here?
                 dependency?.bridge.sendOutboundEvent(.userAuthenticated(authenticationResult, trackingID: trackingID))
             },
             analyticsEventTracker: dependency.registrationAnalyticsTracker,
