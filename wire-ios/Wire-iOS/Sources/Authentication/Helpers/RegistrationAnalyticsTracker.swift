@@ -47,7 +47,7 @@ final class RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
         self.logger = .authentication
     }
 
-    var currentDeviceID: String? {
+    var currentDeviceID: String? { // TODO: needed?
         analyticsService?.currentDeviceID
     }
 
@@ -112,14 +112,14 @@ final class RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
     }
 
     private func createAnalyticsUserIfNeeded() -> AnalyticsUser {
-        if let existingID = userDefaults.string(forKey: Constants.analyticsIdentifierKey) {
-            return AnalyticsUser(analyticsIdentifier: existingID, teamInfo: nil)
+        if let trackingID = userDefaults.string(forKey: Constants.analyticsIdentifierKey) {
+            return AnalyticsUser(trackingID: trackingID, teamInfo: nil)
         }
 
-        let newAnalyticsID = UUID().transportString()
-        userDefaults.set(newAnalyticsID, forKey: Constants.analyticsIdentifierKey)
+        let trackingID = UUID().transportString()
+        userDefaults.set(trackingID, forKey: Constants.analyticsIdentifierKey)
         return AnalyticsUser(
-            analyticsIdentifier: newAnalyticsID,
+            trackingID: trackingID,
             teamInfo: nil
         )
     }
@@ -128,7 +128,7 @@ final class RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
         /// This UserDefaults key is used for storing an analytics ID during the process of creating a new personal user
         /// account. The value is cleared only once the flow is completed, so that switching back and forth between
         /// enabling or disabling analytics is tracked under the same identifier.
-        static let analyticsIdentifierKey = "temp_analytics_identifier"
+        static let analyticsIdentifierKey = "temp_analytics_identifier" // TODO: rename trackingIDKey
     }
 
 }

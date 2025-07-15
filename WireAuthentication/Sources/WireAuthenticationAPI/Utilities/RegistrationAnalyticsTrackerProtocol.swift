@@ -22,13 +22,13 @@ public protocol RegistrationAnalyticsTrackerProtocol {
 
     /// The current analytics identifier.
 
-    var currentDeviceID: String? { get }
+    var currentDeviceID: String? { get } // TODO: rename trackingID
 
     /// During account registration a temporary analytics id might have been created and stored globally in user
     /// defaults, since there is no user/account ID available yet.
     /// This method cleans up the temporary id from the user defaults.
 
-    func deleteTempAnalyticsID()
+    func deleteTempAnalyticsID() // TODO: needed?
 
     /// Start analytics after the user agreed.
 
