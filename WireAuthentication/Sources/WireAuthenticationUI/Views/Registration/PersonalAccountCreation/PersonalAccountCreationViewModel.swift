@@ -129,7 +129,7 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
             let requestEmailVerificationCodeUseCase = try await factory.requestEmailVerificationCodeUseCase()
             try await requestEmailVerificationCodeUseCase.invoke(email: email)
 
-            if isDataUsageAgreementAccepted { // TODO: set up analytics
+            if isDataUsageAgreementAccepted {
                 analyticsEventTracker?.setUp()
                 analyticsEventTracker?.trackPersonalAccountCreationStart()
                 analyticsEventTracker?.trackPersonalAccountCreationReachedTermsOfUseConfirmation()

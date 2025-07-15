@@ -25,6 +25,9 @@ import WireSyncEngine
 
 final class RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
 
+    /// This UserDefaults key is used for storing an analytics tracking ID during the process of creating a new personal user account. The value is cleared only once the flow is completed, so that switching back and forth between enabling or disabling analytics is tracked under the same identifier.
+    private let trackingIDDefaultsKey = "tempTrackingID"
+
     private var analyticsService: AnalyticsService?
     private var analyticsTracker: (any AnalyticsEventTrackerProtocol)?
     private let userDefaults: UserDefaults
@@ -94,7 +97,7 @@ final class RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
     }
 
     func deleteTempAnalyticsID() {
-        userDefaults.removeObject(forKey: Constants.analyticsIdentifierKey)
+        userDefaults.removeObject(forKey: trackingIDDefaultsKey)
     }
 
     // MARK: - Helpers
@@ -112,23 +115,15 @@ final class RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
     }
 
     private func createAnalyticsUserIfNeeded() -> AnalyticsUser {
-        if let trackingID = userDefaults.string(forKey: Constants.analyticsIdentifierKey).flatMap(UUID.init(transportString:)) {
+
+        if let trackingID = userDefaults.string(forKey: trackingIDDefaultsKey).flatMap(UUID.init(transportString:)) {
             return AnalyticsUser(trackingID: trackingID, teamInfo: nil)
         }
 
         let trackingID = UUID()
-        userDefaults.set(trackingID.transportString(), forKey: Constants.analyticsIdentifierKey)
-        return AnalyticsUser(
-            trackingID: trackingID,
-            teamInfo: nil
-        )
-    }
+        userDefaults.set(trackingID.transportString(), forKey: trackingIDDefaultsKey)
+        return AnalyticsUser(trackingID: trackingID, teamInfo: nil)
 
-    private enum Constants { // TODO: actually use PrivateUserDefaults here
-        /// This UserDefaults key is used for storing an analytics ID during the process of creating a new personal user
-        /// account. The value is cleared only once the flow is completed, so that switching back and forth between
-        /// enabling or disabling analytics is tracked under the same identifier.
-        static let analyticsIdentifierKey = "temp_analytics_identifier" // TODO: rename trackingIDKey
     }
 
 }
