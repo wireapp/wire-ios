@@ -32,6 +32,10 @@ enum HTTPStatusCode: Int {
 
     case created = 201
 
+    /// accepted - 202
+
+    case accepted = 202
+
     /// no content - 204
 
     case noContent = 204
