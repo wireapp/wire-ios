@@ -11,6 +11,7 @@
 		015519462C20D20800037358 /* WireDomain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 015519452C20D20800037358 /* WireDomain.framework */; };
 		015DE3A72DB29CE000DC34E8 /* SessionManagerEncryptionAtRestMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 015DE3A62DB29CE000DC34E8 /* SessionManagerEncryptionAtRestMigrationTests.swift */; };
 		015DE3A92DB29D4000DC34E8 /* MockUserSessionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 015DE3A82DB29D4000DC34E8 /* MockUserSessionDelegate.swift */; };
+		015E2F8B2E26A53A00470025 /* AppVersionMigration_4_2_0.swift in Sources */ = {isa = PBXBuildFile; fileRef = 015E2F8A2E26A53A00470025 /* AppVersionMigration_4_2_0.swift */; };
 		018F17B92B83B70A00E0594D /* AVSConversationType+Conference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018F17B82B83B70A00E0594D /* AVSConversationType+Conference.swift */; };
 		01C774292D9EF01400A2FF07 /* WireAVS in Frameworks */ = {isa = PBXBuildFile; productRef = 01C774282D9EF01400A2FF07 /* WireAVS */; };
 		01FA80EB2E20064400E9B9CE /* AppVersionMigration_4_2_0.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01FA80EA2E20064400E9B9CE /* AppVersionMigration_4_2_0.swift */; };
@@ -602,6 +603,7 @@
 		0155194D2C20D29400037358 /* WireDomainSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDomainSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		015DE3A62DB29CE000DC34E8 /* SessionManagerEncryptionAtRestMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManagerEncryptionAtRestMigrationTests.swift; sourceTree = "<group>"; };
 		015DE3A82DB29D4000DC34E8 /* MockUserSessionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockUserSessionDelegate.swift; sourceTree = "<group>"; };
+		015E2F8A2E26A53A00470025 /* AppVersionMigration_4_2_0.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppVersionMigration_4_2_0.swift; sourceTree = "<group>"; };
 		018F17B82B83B70A00E0594D /* AVSConversationType+Conference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AVSConversationType+Conference.swift"; sourceTree = "<group>"; };
 		01FA80EA2E20064400E9B9CE /* AppVersionMigration_4_2_0.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppVersionMigration_4_2_0.swift; sourceTree = "<group>"; };
 		060C06672B7619E300B484C6 /* SelfClientCertificateProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfClientCertificateProvider.swift; sourceTree = "<group>"; };
@@ -1350,15 +1352,6 @@
 			path = CRL;
 			sourceTree = "<group>";
 		};
-		06FC8DC62E150A6900D5629D /* AppVersionMigrations */ = {
-			isa = PBXGroup;
-			children = (
-				06FC8DC72E150AA000D5629D /* AppVersionMigration_4_1_1.swift */,
-				01FA80EA2E20064400E9B9CE /* AppVersionMigration_4_2_0.swift */,
-			);
-			path = AppVersionMigrations;
-			sourceTree = "<group>";
-		};
 		0994E1DB1B835C4900A51721 /* zmc-config */ = {
 			isa = PBXGroup;
 			children = (
@@ -1456,6 +1449,7 @@
 			isa = PBXGroup;
 			children = (
 				06FC8DC72E150AA000D5629D /* AppVersionMigration_4_1_1.swift */,
+				01FA80EA2E20064400E9B9CE /* AppVersionMigration_4_2_0.swift */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -2269,6 +2263,7 @@
 			isa = PBXGroup;
 			children = (
 				34B448372E1FB6DD00A5BC07 /* AppVersionMigration_4_1_1.swift */,
+				015E2F8A2E26A53A00470025 /* AppVersionMigration_4_2_0.swift */,
 			);
 			path = AppVersionMigrations;
 			sourceTree = "<group>";
@@ -3249,6 +3244,7 @@
 				63497702268A20EC00824A05 /* AVSParticipantsChange.swift in Sources */,
 				8717DFA71F6EF44E0087EFE4 /* SessionManager+Push.swift in Sources */,
 				D52257232062637500562561 /* DeletableAssetIdentifierProvider.swift in Sources */,
+				015E2F8B2E26A53A00470025 /* AppVersionMigration_4_2_0.swift in Sources */,
 				70355A7327AAE62E00F02C76 /* ZMUserSession+SecurityClassificationProviding.swift in Sources */,
 				D5225720206261AA00562561 /* AssetDeletionStatus.swift in Sources */,
 				5E8BB8A02147F5BC00EEA64B /* CallSnapshot.swift in Sources */,
