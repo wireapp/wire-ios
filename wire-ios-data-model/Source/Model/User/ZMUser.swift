@@ -273,7 +273,7 @@ public extension ZMUser {
     ///
     /// This identifier should only exist for the self user
 
-    @NSManaged var analyticsIdentifier: String?
+    @NSManaged @objc(analyticsIdentifier) var trackingID: String?
 
     internal static let domainKey: String = "domain"
     @NSManaged private var primitiveDomain: String?

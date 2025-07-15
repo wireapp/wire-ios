@@ -17,19 +17,20 @@
 //
 
 import XCTest
+
 @testable import WireDataModel
 
 class GenericMessageHelperTests: XCTestCase {
 
     func testCreatingADataTransferMessageWithATrackingIdentifier() {
         // Given
-        let id = UUID.create()
+        let id = UUID.create().transportString()
 
         // When
         let sut = DataTransfer(trackingIdentifier: id)
 
         // Then
-        XCTAssertEqual(sut.trackingIdentifier.identifier, id.transportString())
+        XCTAssertEqual(sut.trackingIdentifier.identifier, id)
     }
 
 }

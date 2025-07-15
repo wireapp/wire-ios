@@ -49,7 +49,7 @@ final class DisableAnalyticsUseCaseTests: XCTestCase, AnalyticsEventTrackerProvi
     }
 
     func createAnalyticsUser() async throws -> AnalyticsUser {
-        AnalyticsUser(analyticsIdentifier: UUID().uuidString)
+        AnalyticsUser(trackingID: UUID().transportString())
     }
 
     func testInvoke_disables_via_service() throws {

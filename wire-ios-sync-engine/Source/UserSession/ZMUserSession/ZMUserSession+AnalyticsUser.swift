@@ -25,14 +25,12 @@ import WireLogging
 extension ZMUserSession: AnalyticsEventTrackerProvider {
 
     enum AnalyticsError: Error {
-
         case selfClientIsNotRegistered
-        case failedToBroadcastAnalyticsID(any Error)
-
+        case failedToBroadcastTrackingID(any Error)
     }
 
     func createAnalyticsUser() async throws -> AnalyticsUser {
-        let (analyticsID, teamInfo): (String, TeamInfo?) = try await syncContext.perform { [syncContext] in
+        let (trackingID, teamInfo): (String, TeamInfo?) = try await syncContext.perform { [syncContext] in
             let selfUser = ZMUser.selfUser(in: syncContext)
 
             // Sanity check that we don't setup analytics too early.
@@ -40,26 +38,23 @@ extension ZMUserSession: AnalyticsEventTrackerProvider {
                 throw AnalyticsError.selfClientIsNotRegistered
             }
 
-            let analyticsID: String
+            let trackingID: String
             var teamInfo: TeamInfo?
 
-            let analyticsIDFromRegistration = PrivateUserDefaults<AnalyticsUserIDDefaultsKey>(
+            let trackingIDFromRegistration = PrivateUserDefaults<AnalyticsUserIDDefaultsKey>(
                 userID: userID,
                 storage: UserDefaults.standard
-            ).object(forKey: .analyticsIDFromRegistration) as? String
-            if let existingID = selfUser.analyticsIdentifier {
-                analyticsID = existingID
-            } else if let analyticsIDFromRegistration {
-                analyticsID = analyticsIDFromRegistration
-                if let analyticsUUID = UUID(uuidString: analyticsIDFromRegistration) {
-                    try self.broadcastAnalyticsID(analyticsUUID)
-                }
-                selfUser.analyticsIdentifier = analyticsID
+            ).object(forKey: .trackingIDFromRegistration) as? String
+            if let existingID = selfUser.trackingID {
+                trackingID = existingID
+            } else if let trackingIDFromRegistration {
+                trackingID = trackingIDFromRegistration
+                try self.broadcastTrackingID(trackingID)
+                selfUser.trackingID = trackingID
             } else {
-                let newID = UUID()
-                analyticsID = newID.transportString()
-                try self.broadcastAnalyticsID(newID)
-                selfUser.analyticsIdentifier = analyticsID
+                trackingID = UUID().transportString()
+                try self.broadcastTrackingID(trackingID)
+                selfUser.trackingID = trackingID
             }
 
             if let team = selfUser.team, let teamID = team.remoteIdentifier {
@@ -70,22 +65,22 @@ extension ZMUserSession: AnalyticsEventTrackerProvider {
                 )
             }
 
-            return (analyticsID, teamInfo)
+            return (trackingID, teamInfo)
         }
 
         return AnalyticsUser(
-            analyticsIdentifier: analyticsID,
+            trackingID: trackingID,
             teamInfo: teamInfo
         )
     }
 
-    private func broadcastAnalyticsID(_ id: UUID) throws {
+    private func broadcastTrackingID(_ trackingID: String) throws {
         do {
             WireLogger.analytics.debug("broadcasting new analytics id")
-            let message = DataTransfer(trackingIdentifier: id)
+            let message = DataTransfer(trackingIdentifier: trackingID)
             try ZMConversation.sendMessageToSelfClients(message, in: syncContext)
         } catch {
-            throw AnalyticsError.failedToBroadcastAnalyticsID(error)
+            throw AnalyticsError.failedToBroadcastTrackingID(error)
         }
     }
 
@@ -95,8 +90,8 @@ extension ZMUserSession: AnalyticsEventTrackerProvider {
 
 /// If the user went through the flow of registering a new personal account and gave consent to analytics tracking,
 /// the newly created analytics id is temporarily stored in this property. After setting up the user session this
-/// property will be cleared and the value stored in the database under `ZMUser.analyticsIdentifier` property.
+/// property will be cleared and the value stored in the database under `ZMUser.trackingID` property.
 
 private enum AnalyticsUserIDDefaultsKey: String, DefaultsKey {
-    case analyticsIDFromRegistration
+    case trackingIDFromRegistration
 }

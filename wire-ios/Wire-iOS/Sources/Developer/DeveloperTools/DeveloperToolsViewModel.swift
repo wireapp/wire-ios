@@ -166,7 +166,7 @@ final class DeveloperToolsViewModel: ObservableObject {
                     .text(TextItem(title: "Handle", value: selfUser.handleDisplayString(withDomain: true) ?? "None")),
                     .text(TextItem(title: "Email", value: selfUser.emailAddress ?? "None")),
                     .text(TextItem(title: "User ID", value: selfUser.remoteIdentifier.uuidString)),
-                    .text(TextItem(title: "Analytics ID", value: selfUser.analyticsIdentifier?.uppercased() ?? "None")),
+                    .text(TextItem(title: "Analytics ID", value: selfUser.trackingID?.uppercased() ?? "None")),
                     .text(TextItem(title: "Client ID", value: selfClient?.remoteIdentifier?.uppercased() ?? "None")),
                     .text(
                         TextItem(

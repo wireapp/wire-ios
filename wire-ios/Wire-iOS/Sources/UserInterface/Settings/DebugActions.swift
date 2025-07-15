@@ -157,7 +157,7 @@ enum DebugActions {
         }
     }
 
-    static func showAnalyticsIdentifier(_ type: any SettingsCellDescriptorType) {
+    static func showTrackingID(_ type: any SettingsCellDescriptorType) {
         guard
             let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false),
             let userSession = ZMUserSession.shared()
@@ -169,7 +169,7 @@ enum DebugActions {
 
         let alert = UIAlertController(
             title: "Analytics identifier",
-            message: "\(selfUser.analyticsIdentifier ?? "nil")",
+            message: "\(selfUser.trackingID ?? "nil")",
             preferredStyle: .alert
         )
         alert.addAction(UIAlertAction(
