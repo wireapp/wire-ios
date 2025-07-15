@@ -52,13 +52,11 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
             )
         }
         zmConversation = conversation
-        
+
         mlsService.wipeGroup_MockMethod = { _ in }
         conversationLocalStore.fetchMLSConversationGroupID_MockValue = conversation
-        conversationLocalStore.storeMLSConversationPendingJoinNewMLSGroupIDConversation_MockMethod = { _,_ in }
-        
-        
-        
+        conversationLocalStore.storeMLSConversationPendingJoinNewMLSGroupIDConversation_MockMethod = { _, _ in }
+
         sut = ConversationMLSResetEventProcessor(
             mlsService: mlsService,
             conversationLocalStore: conversationLocalStore
@@ -84,7 +82,7 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
         try await sut.processEvent(Scaffolding.event)
 
         // Then
-        
+
         XCTAssertEqual(mlsService.wipeGroup_Invocations.count, 1)
         mlsService.wipeGroup_Invocations
             .forEach {
@@ -93,7 +91,7 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
                     MLSGroupID(Scaffolding.oldMLSGroupIDData)
                 )
             }
-        
+
         XCTAssertEqual(
             conversationLocalStore.storeMLSConversationPendingJoinNewMLSGroupIDConversation_Invocations.count,
             1
@@ -106,25 +104,25 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
                 )
             }
     }
-    
+
     func testNoConversationFound() async throws {
-        
+
         // Given
-        
+
         conversationLocalStore.fetchMLSConversationGroupID_MockValue = .some(nil)
-        
+
         // When and Then
         await XCTAssertThrowsErrorAsync(ConversationMLSResetEventProcessor.Failure.conversationNotFound) {
             try await self.sut.processEvent(Scaffolding.event)
         }
     }
-    
+
     func testErrorOnWipeGroup() async throws {
-        
+
         // Given
-        
-        mlsService.wipeGroup_MockError = TestError.init(message: "some error")
-        
+
+        mlsService.wipeGroup_MockError = TestError(message: "some error")
+
         // When and Then
         await XCTAssertThrowsErrorAsync(
             ConversationMLSResetEventProcessor.Failure.failedToWipeMLSConversation

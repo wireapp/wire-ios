@@ -645,7 +645,7 @@ public final class ClientSessionComponent {
     private lazy var addPermissionEventProcessor = ConversationAddPermissionEventProcessor(
         localStore: conversationLocalStore
     )
-    
+
     private lazy var mlsResetEventProcessor = ConversationMLSResetEventProcessor(
         mlsService: mlsService,
         conversationLocalStore: conversationLocalStore

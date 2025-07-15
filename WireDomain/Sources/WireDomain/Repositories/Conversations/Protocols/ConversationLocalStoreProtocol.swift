@@ -380,9 +380,7 @@ public protocol ConversationLocalStoreProtocol {
         mlsGroupID: MLSGroupID,
         conversation: ZMConversation
     ) async
-    
-    
-    
+
     /// Stores new conversation MLS group ID and marks it as 'pendingJoin'
     /// - Parameters:
     ///   - newMLSGroupID: The new generated MLS group ID

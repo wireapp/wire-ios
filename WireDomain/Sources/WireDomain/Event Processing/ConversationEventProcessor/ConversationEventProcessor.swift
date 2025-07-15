@@ -88,7 +88,7 @@ struct ConversationEventProcessor: ConversationEventProcessorProtocol {
 
         case let .permissionUpdate(event):
             await addPermissionEventProcessor.processEvent(event)
-            
+
         case let .mlsReset(event):
             try await mlsRestEventProcessor.processEvent(event)
         }

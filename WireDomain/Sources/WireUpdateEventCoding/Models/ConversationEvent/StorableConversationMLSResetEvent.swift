@@ -21,14 +21,13 @@ import WireNetwork
 
 struct StorableConversationMLSResetEvent: Equatable, Codable, Sendable {
 
-    
     public let conversationID: StorableQualifiedID
 
     public let senderID: StorableQualifiedID
 
     private let oldMLSGroupIDBase64: String
     private let newMLSGroupIDBase64: String
-    
+
     init(_ value: WireNetwork.ConversationMLSResetEvent) {
         self.oldMLSGroupIDBase64 = value.oldMLSGroupIDBase64
         self.newMLSGroupIDBase64 = value.newMLSGroupIDBase64

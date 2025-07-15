@@ -104,7 +104,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             conversation.mlsGroupID = mlsGroupID
         }
     }
-    
+
     public func storeMLSConversationPendingJoin(
         newMLSGroupID: MLSGroupID,
         conversation: ZMConversation

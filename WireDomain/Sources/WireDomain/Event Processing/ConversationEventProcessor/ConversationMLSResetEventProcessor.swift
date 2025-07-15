@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireNetwork
 import WireDataModel
 import WireLogging
+import WireNetwork
 
 struct ConversationMLSResetEventProcessor: ConversationMLSResetEventProcessorProtocol {
 
@@ -58,12 +58,12 @@ struct ConversationMLSResetEventProcessor: ConversationMLSResetEventProcessorPro
             WireLogger.mls.error("Failed to wipe group in order to reset MLS conversation")
             throw Failure.failedToWipeMLSConversation
         }
-        
+
         await conversationLocalStore.storeMLSConversationPendingJoin(
             newMLSGroupID: newMLSGroupID,
             conversation: localConversation
         )
-        
+
         WireLogger.mls.info("MLS event processor is finished processing reset broken MLS conversation")
     }
 

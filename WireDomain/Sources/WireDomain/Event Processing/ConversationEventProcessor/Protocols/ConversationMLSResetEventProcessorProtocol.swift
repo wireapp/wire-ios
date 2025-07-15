@@ -21,7 +21,7 @@ import WireNetwork
 /// Process conversation mls reset events.
 
 protocol ConversationMLSResetEventProcessorProtocol {
-    
+
     /// Process a conversation mls reset event.
     ///
     /// - Parameter event: A conversation mls reset event.

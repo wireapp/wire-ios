@@ -46,12 +46,12 @@ struct ConversationMLSResetEventDecoder {
             newMLSGroupIDBase64: payload.newMLSGroupIDBase64,
         )
     }
-    
+
     private struct Payload: Decodable {
 
         let oldMLSGroupIDBase64: String
         let newMLSGroupIDBase64: String
-        
+
         enum CodingKeys: String, CodingKey {
             case oldMLSGroupIDBase64 = "group_id"
             case newMLSGroupIDBase64 = "new_group_id"

@@ -31,10 +31,10 @@ public struct ConversationMLSResetEvent: Equatable, Sendable {
     public let senderID: UserID
 
     /// The old group id before reset
-    
+
     public let oldMLSGroupIDBase64: String
     public let newMLSGroupIDBase64: String
-    
+
     public init(
         conversationID: ConversationID,
         senderID: UserID,
