@@ -58,6 +58,8 @@ class MLSAPIV5: MLSAPIV4 {
                 .success(code: .created, type: CommitBundleResponseV5.self)
                 .failure(code: .conflict, label: "mls-stale-message", error: MLSAPIError.mlsStaleMessage)
                 .failure(code: .conflict, label: "mls-client-mismatch", error: MLSAPIError.mlsClientMismatch)
+                .failure(code: .badRequest, label: "mls-invalid-leaf-node-index", error: MLSAPIError.mlsInvalidLeafNodeIndex)
+                .failure(code: .badRequest, label: "mls-invalid-leaf-node-signature", error: MLSAPIError.mlsInvalidLeafNodeSignature)
                 .failure(
                     code: .badRequest,
                     label: "mls-commit-missing-references",
