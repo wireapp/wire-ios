@@ -1146,8 +1146,6 @@ public final class SessionManager: NSObject, SessionManagerType {
                     if shouldTriggerSync {
                         await userSession.triggerSync()
                     }
-                    // TODO: check triggerSyncsIfNeeded vs triggerSync
-                    await userSession.triggerSyncsIfNeeded()
 
                     await MainActor.run {
                         onCompletion(userSession)

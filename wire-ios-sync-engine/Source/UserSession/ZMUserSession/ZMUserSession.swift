@@ -635,22 +635,6 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-    /// Executes specific or regular sync after db migration
-    public func triggerSync() async {
-        let (initialSync, resourcesSync) = await syncContext.perform { (
-            self.syncContext.readMigrationNeedsSlowSyncFlag(),
-            self.syncContext.readMigrationNeedsSyncResourcesFlag()
-        ) }
-
-        if initialSync || journal[.isInitialSyncRequired] {
-            await triggerInitialSync()
-        } else if resourcesSync {
-            await triggerResourcesSync()
-        } else {
-            syncAgent?.resume()
-        }
-    }
-
     // MARK: - Deinitalize
 
     deinit {
@@ -882,21 +866,22 @@ public final class ZMUserSession: NSObject {
 
     // MARK: - Trigger syncing
 
-    func triggerSyncsIfNeeded() async {
-        let (isInitialSyncRequired, isResourceSyncRequired) = await syncContext.perform {
-            (
-                self.syncContext.readMigrationNeedsSlowSyncFlag(),
-                self.syncContext.readMigrationNeedsSyncResourcesFlag()
-            )
-        }
+    /// Executes specific or regular sync after db migration
+    public func triggerSync() async {
+        let (initialSync, resourcesSync) = await syncContext.perform { (
+            self.syncContext.readMigrationNeedsSlowSyncFlag(),
+            self.syncContext.readMigrationNeedsSyncResourcesFlag()
+        ) }
 
-        if isInitialSyncRequired || journal[.isInitialSyncRequired] {
+        if initialSync || journal[.isInitialSyncRequired] {
             await triggerInitialSync()
-        } else if isResourceSyncRequired {
+        } else if resourcesSync {
             await triggerResourcesSync()
         } else if journal[.isConversationSyncRequired] {
             let sync = clientSessionComponent?.pullAllConversationsSync
             try? await sync?.pull()
+        } else {
+            syncAgent?.resume()
         }
     }
 
