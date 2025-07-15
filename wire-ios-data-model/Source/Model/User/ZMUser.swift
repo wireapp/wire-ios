@@ -318,7 +318,7 @@ public extension ZMUser {
         }
     }
 
-    var objectId: Any { // TODO: delete
+    var objectId: Any {
         objectID
     }
 
