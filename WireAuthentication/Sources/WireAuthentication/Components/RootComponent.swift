@@ -42,7 +42,6 @@ final class RootComponent: BootstrapComponent {
     public let appStoreURL: URL
     public let accountsPublisher: CurrentValuePublisher<[AccountUIModel]>
     public let isMultibackendEnabled: Bool
-    public let useLegacyRegistrationFlow: Bool
     public let registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
 
     @MainActor public var bridge: WireAuthenticationBridge {
@@ -67,7 +66,6 @@ final class RootComponent: BootstrapComponent {
         ssoCallbackURLScheme: String,
         appStoreURL: URL,
         accountsPublisher: CurrentValuePublisher<[AccountUIModel]>,
-        useLegacyRegistrationFlow: Bool,
         isMultibackendEnabled: Bool,
         registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
     ) {
@@ -83,7 +81,6 @@ final class RootComponent: BootstrapComponent {
         self.ssoCallbackURLScheme = ssoCallbackURLScheme
         self.appStoreURL = appStoreURL
         self.accountsPublisher = accountsPublisher
-        self.useLegacyRegistrationFlow = useLegacyRegistrationFlow
         self.isMultibackendEnabled = isMultibackendEnabled
         self.registrationAnalyticsTracker = registrationAnalyticsTracker
     }
