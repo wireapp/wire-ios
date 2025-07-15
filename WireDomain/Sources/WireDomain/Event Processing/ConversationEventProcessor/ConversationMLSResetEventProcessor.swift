@@ -18,44 +18,53 @@
 
 import WireNetwork
 import WireDataModel
+import WireLogging
 
 struct ConversationMLSResetEventProcessor: ConversationMLSResetEventProcessorProtocol {
 
     enum Failure: Error {
         case conversationNotFound
+        case invalidArguments
+        case failedToWipeMLSConversation
     }
 
     let mlsService: any MLSServiceInterface
     let conversationLocalStore: any ConversationLocalStoreProtocol
 
     func processEvent(_ event: ConversationMLSResetEvent) async throws {
-        
+
+        WireLogger.mls.info("MLS event processor is processing reset broken MLS conversation")
+
         let oldMLSGroupIDBase64 = event.oldMLSGroupIDBase64
         let newMLSGroupIDBase64 = event.newMLSGroupIDBase64
         guard
             let oldMLSGroupID = MLSGroupID(base64Encoded: oldMLSGroupIDBase64),
             let newMLSGroupID = MLSGroupID(base64Encoded: newMLSGroupIDBase64)
         else {
-            // TODO: ADD logs
-            return
+            WireLogger.mls.error("Failed to get old and new group IDs to reset MLS conversation")
+            throw Failure.invalidArguments
         }
 
         guard let localConversation = await conversationLocalStore.fetchMLSConversation(
             groupID: oldMLSGroupID
         ) else {
+            WireLogger.mls.error("Failed to get local conversation to reset MLS conversation")
             throw Failure.conversationNotFound
         }
 
         do {
             try await mlsService.wipeGroup(oldMLSGroupID)
         } catch {
-            // TODO: ADD logs
+            WireLogger.mls.error("Failed to wipe group in order to reset MLS conversation")
+            throw Failure.failedToWipeMLSConversation
         }
         
         await conversationLocalStore.storeMLSConversationPendingJoin(
             newMLSGroupID: newMLSGroupID,
             conversation: localConversation
         )
+        
+        WireLogger.mls.info("MLS event processor is finished processing reset broken MLS conversation")
     }
 
 }

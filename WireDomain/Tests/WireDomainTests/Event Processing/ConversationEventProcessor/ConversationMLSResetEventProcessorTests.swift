@@ -31,8 +31,7 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
     private var coreDataStackHelper: CoreDataStackHelper!
     private var conversationLocalStore: MockConversationLocalStoreProtocol!
     private var mlsService: MockMLSServiceInterface!
-//    private var mlsDecryptionService: MockMLSDecryptionServiceInterface!
-//    private var oneOnOneResolver: MockOneOnOneResolverProtocol!
+    private var zmConversation: ZMConversation!
 
     private var context: NSManagedObjectContext {
         coreDataStack.syncContext
@@ -43,11 +42,23 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
         coreDataStackHelper = CoreDataStackHelper()
         coreDataStack = try await coreDataStackHelper.createStack()
         conversationLocalStore = MockConversationLocalStoreProtocol()
-//        userLocalStore = MockUserLocalStoreProtocol()
         mlsService = MockMLSServiceInterface()
-//        mlsDecryptionService = MockMLSDecryptionServiceInterface()
-//        oneOnOneResolver = MockOneOnOneResolverProtocol()
 
+        let conversation = await context.perform { [self] in
+            modelHelper.createGroupConversation(
+                id: Scaffolding.conversationID.uuid,
+                domain: Scaffolding.conversationID.domain,
+                in: context
+            )
+        }
+        zmConversation = conversation
+        
+        mlsService.wipeGroup_MockMethod = { _ in }
+        conversationLocalStore.fetchMLSConversationGroupID_MockValue = conversation
+        conversationLocalStore.storeMLSConversationPendingJoinNewMLSGroupIDConversation_MockMethod = { _,_ in }
+        
+        
+        
         sut = ConversationMLSResetEventProcessor(
             mlsService: mlsService,
             conversationLocalStore: conversationLocalStore
@@ -62,59 +73,78 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
         coreDataStackHelper = nil
         conversationLocalStore = nil
         mlsService = nil
-//        mlsDecryptionService = nil
-//        oneOnOneResolver = nil
     }
 
     // MARK: - Tests
 
     func testProcessEvent() async throws {
 
-        // Mock
-
-        let conversation = await context.perform { [self] in
-            modelHelper.createGroupConversation(
-                id: Scaffolding.conversationID.uuid,
-                domain: Scaffolding.conversationID.domain,
-                in: context
-            )
-        }
-
-//        mlsDecryptionService.processWelcomeMessageWelcomeMessageContext_MockValue = Scaffolding.mlsGroupID
-//        conversationRepository.fetchConversationIdDomain_MockValue = conversation
-        conversationLocalStore.storeMLSConversationEstablishedMlsGroupIDConversation_MockMethod = { _, _ in }
-        conversationLocalStore.updateOrCreateMLSGroupGroupID_MockMethod = { _ in }
-        mlsService.uploadKeyPackagesIfNeeded_MockMethod = {}
-//        oneOnOneResolver.resolveOneOnOneConversationWith_MockMethod = { _ in }
-
         // When
 
         try await sut.processEvent(Scaffolding.event)
 
         // Then
-
-//        XCTAssertEqual(mlsDecryptionService.processWelcomeMessageWelcomeMessageContext_Invocations.count, 1)
-//        XCTAssertEqual(conversationRepository.fetchConversationIdDomain_Invocations.count, 1)
-//        XCTAssertEqual(
-//            conversationLocalStore.storeMLSConversationEstablishedMlsGroupIDConversation_Invocations.count,
-//            1
-//        )
-//        XCTAssertEqual(conversationLocalStore.updateOrCreateMLSGroupGroupID_Invocations.count, 1)
-//        XCTAssertEqual(mlsService.uploadKeyPackagesIfNeeded_Invocations.count, 1)
-//        XCTAssertEqual(conversationLocalStore.fetchOtherUserIDInOneOnOneConversationConversation_Invocations.count, 1)
-//        XCTAssertEqual(oneOnOneResolver.resolveOneOnOneConversationWith_Invocations.count, 1)
+        
+        XCTAssertEqual(mlsService.wipeGroup_Invocations.count, 1)
+        mlsService.wipeGroup_Invocations
+            .forEach {
+                XCTAssertEqual(
+                    $0,
+                    MLSGroupID(Scaffolding.oldMLSGroupIDData)
+                )
+            }
+        
+        XCTAssertEqual(
+            conversationLocalStore.storeMLSConversationPendingJoinNewMLSGroupIDConversation_Invocations.count,
+            1
+        )
+        conversationLocalStore.storeMLSConversationPendingJoinNewMLSGroupIDConversation_Invocations
+            .forEach {
+                XCTAssertEqual(
+                    $0.newMLSGroupID,
+                    MLSGroupID(Scaffolding.newMLSGroupIDData)
+                )
+            }
+    }
+    
+    func testNoConversationFound() async throws {
+        
+        // Given
+        
+        conversationLocalStore.fetchMLSConversationGroupID_MockValue = .some(nil)
+        
+        // When and Then
+        await XCTAssertThrowsErrorAsync(ConversationMLSResetEventProcessor.Failure.conversationNotFound) {
+            try await self.sut.processEvent(Scaffolding.event)
+        }
+    }
+    
+    func testErrorOnWipeGroup() async throws {
+        
+        // Given
+        
+        mlsService.wipeGroup_MockError = TestError.init(message: "some error")
+        
+        // When and Then
+        await XCTAssertThrowsErrorAsync(
+            ConversationMLSResetEventProcessor.Failure.failedToWipeMLSConversation
+        ) {
+            try await self.sut.processEvent(Scaffolding.event)
+        }
     }
 
     private enum Scaffolding {
         static let domain = "domain.com"
         static let conversationID = ConversationID(uuid: .mockID1, domain: domain)
         static let senderID = UserID(uuid: .mockID2, domain: domain)
+        static let oldMLSGroupIDData = Data.random()
+        static let newMLSGroupIDData = Data.random()
 
         static let event = ConversationMLSResetEvent(
             conversationID: conversationID,
             senderID: senderID,
-            oldMLSGroupIDBase64: Data.random().base64EncodedString(),
-            newMLSGroupIDBase64: Data.random().base64EncodedString()
+            oldMLSGroupIDBase64: oldMLSGroupIDData.base64EncodedString(),
+            newMLSGroupIDBase64: newMLSGroupIDData.base64EncodedString()
         )
     }
 
