@@ -16,28 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import Foundation
+import WireDomain
 
-class SetNamePage: PageModel {
+// Issue: To simplify the logic, we rely solely on journal value to perform InitialSync or not
+final class AppVersionMigration_4_2_0: AppVersionMigration {
 
-    override var pageMainElement: XCUIElement {
-        nameField
+    let lastEventIDRepository: LastEventIDRepositoryInterface
+    var journal: JournalProtocol
+    let version: SemanticVersion = "4.2.0"
+
+    init(lastEventIDRepository: LastEventIDRepositoryInterface, journal: JournalProtocol) {
+        self.lastEventIDRepository = lastEventIDRepository
+        self.journal = journal
     }
 
-    var nameNextButton: XCUIElement {
-        let elementsQuery = nameField.descendants(matching: .any)["ConfirmButton"]
-        return elementsQuery.firstMatch
-    }
-
-    var nameField: XCUIElement {
-        let elementsQuery = app.descendants(matching: .any)["NameField"]
-        return elementsQuery.firstMatch
-    }
-
-    func setName(_ name: String) throws -> SetPasswordPage {
-        nameField.tap()
-        nameField.typeText(name)
-        nameNextButton.tap()
-        return try SetPasswordPage()
+    func perform() async throws {
+        if lastEventIDRepository.fetchLastEventID() == nil {
+            journal[.isInitialSyncRequired] = true
+        }
     }
 }

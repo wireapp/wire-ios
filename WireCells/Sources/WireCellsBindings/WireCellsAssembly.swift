@@ -38,7 +38,12 @@ public struct WireCellsAssembly {
     public init() {}
 
     public func makeUploadDraftUseCase(cellName: String) -> any WireCellsUploadDraftUseCaseProtocol {
-        UploadDraftUseCase(cellName: cellName, draftRepository: Self.draftsRepository)
+        UploadDraftUseCase(
+            cellName: cellName,
+            draftRepository: Self.draftsRepository,
+            uploadManager: Self.uploadManager,
+            nodesAPI: Self.nodesAPI
+        )
     }
 
     public func makeObserveDraftsUseCase(cellName: String) -> any WireCellsObserveDraftsUseCaseProtocol {
@@ -55,6 +60,15 @@ public struct WireCellsAssembly {
 
     public func makeDeleteDraftUseCase(cellName: String) -> any WireCellsDeleteDraftUseCaseProtocol {
         DeleteDraftUseCase(
+            cellName: cellName,
+            draftRepository: Self.draftsRepository,
+            uploadManager: Self.uploadManager,
+            nodesAPI: Self.nodesAPI
+        )
+    }
+
+    public func makeRetryUploadDraftUseCase(cellName: String) -> any WireCellsRetryUploadDraftUseCaseProtocol {
+        UploadDraftUseCase(
             cellName: cellName,
             draftRepository: Self.draftsRepository,
             uploadManager: Self.uploadManager,

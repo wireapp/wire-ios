@@ -95,7 +95,7 @@ final class UserClientsRepositoryTests: XCTestCase {
 
         // When
 
-        try await sut.updateClient(
+        await sut.updateClient(
             id: Scaffolding.userClientID,
             from: Scaffolding.selfUserClient,
             isNewClient: false
