@@ -52,7 +52,6 @@ public final class ZMUserSession: NSObject {
 
     public private(set) var coreDataStack: CoreDataStack!
 
-    // FIXME: Use component instead
     private let apiServiceFactory: APIServiceFactory
     public var apiService: APIServiceProtocol? {
         guard let clientId = selfUserClient?.remoteIdentifier else {
@@ -391,7 +390,7 @@ public final class ZMUserSession: NSObject {
     var callStateObserverToken: AnyObject?
 
     private let userSessionComponent: UserSessionComponent
-    private(set) public var clientSessionComponent: ClientSessionComponent?
+    public private(set) var clientSessionComponent: ClientSessionComponent?
 
     // MARK: - Initialize
 
