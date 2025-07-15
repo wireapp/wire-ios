@@ -268,6 +268,30 @@ enum BackendClient {
         _ = try await httpPostRequest(url: "\(backendURL)/register", body: body)
     }
 
+    static func registerTeamOwner(
+        _ teamOwner: UserInfo
+    ) async throws -> UserInfo {
+        let (code, _) = try await getActivationCode(email: teamOwner.email)
+        let body: [String: Any] = [
+            "email": teamOwner.email,
+            "password": teamOwner.password,
+            "name": teamOwner.email,
+            "email_code": code,
+            "team": [
+                "name": teamOwner.teamName,
+                "icon": "default",
+                "binding": true
+            ]
+        ]
+
+        let response = try await httpPostRequest(url: "\(backendURL)/register", body: body)
+        let userData: teamOwnerResponse = try JSONDecoder().decode(teamOwnerResponse.self, from: response)
+        var updatedUser = UserInfo()
+        updatedUser.id = userData.id
+        updatedUser.teamID = userData.teamID
+        return updatedUser
+    }
+
 }
 
 private struct LoginMessage: Decodable {
@@ -305,4 +329,9 @@ private struct InviteUserToTeamResponse: Decodable {
 
 private struct InvitationCodeReponse: Decodable {
     let code: String
+}
+
+private struct teamOwnerResponse: Decodable {
+    let id: String
+    let teamID : UUID
 }

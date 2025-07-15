@@ -97,4 +97,53 @@ final class TeamManageTests: WireUITestCase {
             .enterPassword(memberUser.password)
 
     }
+
+    @MainActor
+    func test_TeamOwner_GroupConversation() async throws {
+
+        var teamOwner = UserGenerator.generateUniqueUserInfo()
+        let teamMember1 = UserGenerator.generateUniqueUserInfo()
+        let teamMember2 = UserGenerator.generateUniqueUserInfo()
+
+        // create team owner with team
+        // create personal user and register them with team via invitation code
+        // team owner login in app and create group
+        // add service
+        // add team members
+        
+        teamOwner =  try await BackendClient.registerTeamOwner(teamOwner)
+        guard let teamID = teamOwner.teamID else {
+            return
+        }
+        let invigationIDForMember1 = try await BackendClient.inviteUserToTeam(
+            teamID: teamID,
+            email: teamOwner.email,
+            password: teamOwner.password,
+            memberName: teamMember1.name,
+            memberEmail: teamMember1.email
+        )
+        let invitationCodeForMember1 = try await BackendClient.getInvitationCode(team: teamID, invitationID: invigationIDForMember1)
+        
+        let invigationIDForMember2 = try await BackendClient.inviteUserToTeam(
+            teamID: teamID,
+            email: teamOwner.email,
+            password: teamOwner.password,
+            memberName: teamMember2.name,
+            memberEmail: teamMember2.email
+        )
+        let invitationCodeForMember2 = try await BackendClient.getInvitationCode(team: teamID, invitationID: invigationIDForMember2)
+        
+        try await BackendClient.registerTeamMember(teamMember1, invitationCode: invitationCodeForMember1)
+        try await BackendClient.registerTeamMember(teamMember2, invitationCode: invitationCodeForMember2)
+        
+        let welcomePage = try WelcomePage()
+
+        let loginPage = try welcomePage
+            .enterEmailOrSSO(teamOwner.email)
+
+        let conversationPage = try loginPage.enterPassword(teamOwner.password)
+            .acceptFirstTimeAlert()
+            .acceptPopupOnTeamMemberSetup()
+            .setUsername(teamOwner.username)
+    }
 }
