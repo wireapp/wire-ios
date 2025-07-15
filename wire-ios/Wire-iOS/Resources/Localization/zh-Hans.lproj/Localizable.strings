@@ -61,6 +61,10 @@
 "peoplepicker.header.directory" = "添加好友";
 "peoplepicker.header.federation" = "与其他域连接";
 
+"peoplepicker.upgrade_banner.headline" = "频道可供团队成员使用。";
+"peoplepicker.upgrade_banner.subheadline" = "创建团队并开始免费协作！";
+"peoplepicker.upgrade_banner.button.title" = "创建 Wire 团队";
+
 "peoplepicker.group.title.singular" = "选择参与者";
 "peoplepicker.group.title.plural" = "选择参与者 (%d)";
 "peoplepicker.group.skip" = "跳过";
@@ -369,21 +373,21 @@
 "conversation.banner.are_active" = "%@ 处于活动状态";
 "conversation.banner.separator" = "与";
 
-"conversation.banner.remotes_externals_guests_services_present" = "Federated users, externals, guests and services are present";
-"conversation.banner.remotes_externals_guests_present" = "Federated users, externals and guests are present";
-"conversation.banner.remotes_externals_services_present" = "Federated users, externals and services are present";
-"conversation.banner.remotes_guests_services_present" = "Federated users, guests and services are present";
-"conversation.banner.externals_guests_services_present" = "Externals, guests and services are present";
-"conversation.banner.remotes_externals_present" = "Federated users and externals are present";
-"conversation.banner.remotes_guests_present" = "Federated users and guests are present";
-"conversation.banner.remotes_services_present" = "Federated users and services are present";
-"conversation.banner.externals_guests_present" = "Externals and guests are present";
-"conversation.banner.externals_services_present" = "Externals and services are present";
-"conversation.banner.guests_services_present" = "Guests and services are present";
-"conversation.banner.remotes_present" = "Federated users are present";
-"conversation.banner.externals_present" = "Externals are present";
-"conversation.banner.guests_present" = "Guests are present";
-"conversation.banner.services_active" = "Services are active";
+"conversation.banner.remotes_externals_guests_services_present" = "存在联合用户、外部人员、访客和服务";
+"conversation.banner.remotes_externals_guests_present" = "存在联合用户、外部人员和访客";
+"conversation.banner.remotes_externals_services_present" = "存在联合用户、外部人员和服务";
+"conversation.banner.remotes_guests_services_present" = "存在联合用户、访客和服务";
+"conversation.banner.externals_guests_services_present" = "存在外部人员、访客和服务";
+"conversation.banner.remotes_externals_present" = "存在联合用户和外部人员";
+"conversation.banner.remotes_guests_present" = "存在联合用户和访客";
+"conversation.banner.remotes_services_present" = "存在联合用户和服务";
+"conversation.banner.externals_guests_present" = "存在外部人员和访客";
+"conversation.banner.externals_services_present" = "存在外部人员和服务";
+"conversation.banner.guests_services_present" = "存在访客和服务";
+"conversation.banner.remotes_present" = "存在联合用户";
+"conversation.banner.externals_present" = "存在外部人员";
+"conversation.banner.guests_present" = "存在访客";
+"conversation.banner.services_active" = "服务处于活动中";
 
 "conversation.action.search" = "搜索";
 "conversation.action.conversationDetails" = "对话详情";
