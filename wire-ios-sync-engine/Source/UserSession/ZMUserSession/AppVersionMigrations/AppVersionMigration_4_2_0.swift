@@ -19,7 +19,7 @@
 import Foundation
 import WireDomain
 
-// Issue: To simplify the logic, we rely solely on journal value to perform InitialSync or not
+/// **Issue:**: To simplify the logic, we rely solely on journal value to perform InitialSync or not
 final class AppVersionMigration_4_2_0: AppVersionMigration {
 
     let lastEventIDRepository: LastEventIDRepositoryInterface
