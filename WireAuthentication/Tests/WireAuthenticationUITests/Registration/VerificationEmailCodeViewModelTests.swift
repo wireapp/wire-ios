@@ -46,10 +46,8 @@ final class VerificationEmailCodeViewModelTests: XCTestCase, VerificationEmailCo
             email: "mika@example.com",
             password: "password",
             name: "mika",
-            isDataUsageAgreementAccepted: false,
-            onFlowCompletion: { [self] _, _ in onRegisterAccountCalled = true },
-            analyticsEventTracker: MockRegistrationAnalyticsTrackerProtocol(),
-            analyticsIDRepository: RegistrationAnalyticsIDRepositoryProtocolMock()
+            onFlowCompletion: { [self] _ in onRegisterAccountCalled = true },
+            analyticsEventTracker: MockRegistrationAnalyticsTrackerProtocol()
         )
     }
 
@@ -139,12 +137,5 @@ private struct MockRegistrationAnalyticsTrackerProtocol: RegistrationAnalyticsTr
     func trackPersonalAccountCreationReachedUsernameForm() {}
     func trackPersonalAccountCreationCompletion() {}
     func deleteTempAnalyticsID() {}
-
-}
-
-private struct RegistrationAnalyticsIDRepositoryProtocolMock: RegistrationAnalyticsIDRepositoryProtocol {
-
-    func storeAnalyticsID(for userID: UUID, analyticsID: UUID, temp: Void) {}
-    func deleteAnalyticsID(for userID: UUID, temp: Void) {}
 
 }

@@ -31,6 +31,5 @@ protocol PersonalAccountCreationComponentDependency: Dependency {
     var privacyPolicyURL: URL { get }
     var termsOfUseURL: URL { get }
     var registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)? { get }
-    var registrationAnalyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol { get }
 
 }

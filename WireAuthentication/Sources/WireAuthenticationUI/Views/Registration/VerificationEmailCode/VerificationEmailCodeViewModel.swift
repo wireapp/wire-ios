@@ -41,7 +41,6 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
     let email: String
     let password: String
     let name: String
-    private let isDataUsageAgreementAccepted: Bool
     let numberOfDigits: Int
 
     var isConfirmButtonDisabled: Bool {
@@ -52,10 +51,9 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
 
     package let factory: any Factory
     private let router: any Router
-    private let onFlowCompletion: (AuthenticationResult, _ trackingID: UUID?) -> Void
+    private let onFlowCompletion: (AuthenticationResult) -> Void
     private static let numberOfDigits = 6
     private var analyticsEventTracker: (any RegistrationAnalyticsTrackerProtocol)?
-    private var analyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
 
     // MARK: - Life cycle
 
@@ -65,12 +63,9 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
         email: String,
         password: String,
         name: String,
-        isDataUsageAgreementAccepted: Bool, // TODO: delete
-        // trackingID: UUID?, maybe not needed
-        onFlowCompletion: @escaping (AuthenticationResult, _ trackingID: UUID?) -> Void,
+        onFlowCompletion: @escaping (AuthenticationResult) -> Void,
         numberOfDigits: Int = VerificationEmailCodeViewModel.numberOfDigits,
-        analyticsEventTracker: (any RegistrationAnalyticsTrackerProtocol)?,
-        analyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
+        analyticsEventTracker: (any RegistrationAnalyticsTrackerProtocol)?
     ) {
         precondition(numberOfDigits > 0)
 
@@ -79,13 +74,10 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
         self.email = email
         self.password = password
         self.name = name
-        self.isDataUsageAgreementAccepted = isDataUsageAgreementAccepted
-        // TODO: trackingID?
         self.onFlowCompletion = onFlowCompletion
         self.code = Array(repeating: "", count: numberOfDigits)
         self.numberOfDigits = numberOfDigits
         self.analyticsEventTracker = analyticsEventTracker
-        self.analyticsIDRepository = analyticsIDRepository
     }
 
     // MARK: - Actions
@@ -143,9 +135,7 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
                 emailCredentials: emailCredentials,
                 userID: userID
             )
-            let trackingID = configureAnalytics(for: userID) // TODO: tracking it could have been passed as argument
-
-            onFlowCompletion(authenticationResult, trackingID)
+            onFlowCompletion(authenticationResult)
         } catch {
             WireLogger.authentication.error("register personal account failed: \(error)")
             analyticsEventTracker?.trackPersonalAccountCreationFailedCodeVerification()
@@ -221,21 +211,6 @@ public final class VerificationEmailCodeViewModel: ObservableObject {
             accessToken: nil,
             emailCredentials: emailCredentials
         )
-    }
-
-    private func configureAnalytics(for userID: UUID) -> UUID? { // TODO: delete?
-        var trackingID: UUID?
-        if isDataUsageAgreementAccepted {
-            if let trackingIDString = analyticsEventTracker?.currentDeviceID,
-               let trackingID_ = UUID(uuidString: trackingIDString) {
-                analyticsIDRepository.storeAnalyticsID(for: userID, analyticsID: trackingID_, temp: ())
-                trackingID = trackingID_
-            }
-        } else {
-            analyticsIDRepository.deleteAnalyticsID(for: userID, temp: ())
-        }
-        analyticsEventTracker?.deleteTempAnalyticsID()
-        return trackingID
     }
 
 }

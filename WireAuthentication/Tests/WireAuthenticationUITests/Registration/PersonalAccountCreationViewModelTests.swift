@@ -208,8 +208,7 @@ final class PersonalAccountCreationViewModelTests: XCTestCase, PersonalAccountCr
             termsOfUseURL: URL(string: "https://wire.com")!,
             teamAccountCreationLink: URL(string: "https://wire.com")!,
             passwordValidator: passwordValidator,
-            analyticsEventTracker: analyticsEventTracker,
-            analyticsIDRepository: MockRegistrationAnalyticsIDRepositoryProtocol()
+            analyticsEventTracker: analyticsEventTracker
         )
     }
 

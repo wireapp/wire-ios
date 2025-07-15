@@ -30,7 +30,6 @@ protocol VerificationEmailCodeComponentDependency: Dependency {
     @MainActor var bridge: WireAuthenticationBridge { get }
     @MainActor var router: any Router { get }
     var registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)? { get }
-    var registrationAnalyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol { get }
 
 }
 
@@ -71,12 +70,11 @@ extension VerificationEmailCodeComponent: VerificationEmailCodeViewModel.Factory
             email: email,
             password: password,
             name: name,
-            isDataUsageAgreementAccepted: isDataUsageAgreementAccepted,
-            onFlowCompletion: { [dependency, trackingID] authenticationResult, trackingID_ in // TODO: clean up privateuserdefaults here?
+            onFlowCompletion: { [dependency, trackingID] authenticationResult in
+                // TODO: clean up privateuserdefaults here?
                 dependency?.bridge.sendOutboundEvent(.userAuthenticated(authenticationResult, trackingID: trackingID))
             },
-            analyticsEventTracker: dependency.registrationAnalyticsTracker,
-            analyticsIDRepository: dependency.registrationAnalyticsIDRepository // TODO: delete
+            analyticsEventTracker: dependency.registrationAnalyticsTracker
         )
     }
 

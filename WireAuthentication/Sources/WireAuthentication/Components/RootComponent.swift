@@ -43,7 +43,6 @@ final class RootComponent: BootstrapComponent {
     public let accountsPublisher: CurrentValuePublisher<[AccountUIModel]>
     public let isMultibackendEnabled: Bool
     public let registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
-    public let registrationAnalyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
 
     @MainActor public var bridge: WireAuthenticationBridge {
         shared {
@@ -68,8 +67,7 @@ final class RootComponent: BootstrapComponent {
         appStoreURL: URL,
         accountsPublisher: CurrentValuePublisher<[AccountUIModel]>,
         isMultibackendEnabled: Bool,
-        registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?,
-        registrationAnalyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
+        registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
     ) {
         self.backendInfo = backendInfo
         self.preferredAPIVersion = preferredAPIVersion
@@ -85,7 +83,6 @@ final class RootComponent: BootstrapComponent {
         self.accountsPublisher = accountsPublisher
         self.isMultibackendEnabled = isMultibackendEnabled
         self.registrationAnalyticsTracker = registrationAnalyticsTracker
-        self.registrationAnalyticsIDRepository = registrationAnalyticsIDRepository
     }
 
     // MARK: - Children

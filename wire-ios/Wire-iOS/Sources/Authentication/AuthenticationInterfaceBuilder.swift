@@ -100,7 +100,6 @@ final class AuthenticationInterfaceBuilder {
                     userDefaults: .standard
                 )
             }
-            let registrationAnalyticsIDRepository = RegistrationAnalyticsIDRepository(storage: UserDefaults.standard)
             let (rootView, bridge) = assembly.assemble(
                 environmentType: BackendEnvironmentType(environment.environmentType.value),
                 backendConfig: BackendConfig(environment),
@@ -116,8 +115,7 @@ final class AuthenticationInterfaceBuilder {
                 appStoreURL: WireURLs.shared.appOnItunes,
                 accountsPublisher: CurrentValuePublisher(subject: CurrentValueSubject(accounts)),
                 isMultibackendEnabled: DeveloperFlag.multibackend.isOn,
-                registrationAnalyticsTracker: registrationAnalyticsTracker,
-                registrationAnalyticsIDRepository: registrationAnalyticsIDRepository
+                registrationAnalyticsTracker: registrationAnalyticsTracker
             )
             authenticationCoordinator?.analyticsEventTracker = registrationAnalyticsTracker
             return AuthenticationHostingController(

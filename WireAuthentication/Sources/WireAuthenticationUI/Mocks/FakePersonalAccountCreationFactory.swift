@@ -42,8 +42,7 @@ struct FakePersonalAccountCreationFactory: PersonalAccountCreationFactory, Regis
             termsOfUseURL: termsOfUseURL,
             teamAccountCreationLink: teamAccountCreationLink,
             passwordValidator: passwordValidator,
-            analyticsEventTracker: mockDependencies.analyticsEventTracker,
-            analyticsIDRepository: mockDependencies.analyticsIDRepository
+            analyticsEventTracker: mockDependencies.analyticsEventTracker
         )
     }
 

@@ -59,8 +59,7 @@ public struct WireAuthenticationAssembly {
         appStoreURL: URL,
         accountsPublisher: CurrentValuePublisher<[AccountUIModel]>,
         isMultibackendEnabled: Bool,
-        registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?,
-        registrationAnalyticsIDRepository: any RegistrationAnalyticsIDRepositoryProtocol
+        registrationAnalyticsTracker: (any RegistrationAnalyticsTrackerProtocol)?
     ) -> (view: some View, bridge: WireAuthenticationBridge) {
         let backendInfo = BackendInfo(
             environmentType: environmentType,
@@ -79,8 +78,7 @@ public struct WireAuthenticationAssembly {
             appStoreURL: appStoreURL,
             accountsPublisher: accountsPublisher,
             isMultibackendEnabled: isMultibackendEnabled,
-            registrationAnalyticsTracker: registrationAnalyticsTracker,
-            registrationAnalyticsIDRepository: registrationAnalyticsIDRepository
+            registrationAnalyticsTracker: registrationAnalyticsTracker
         )
 
         return (view: RootView(factory: rootComponent), bridge: rootComponent.bridge)

@@ -22,6 +22,7 @@ import WireFoundation
 
 // TODO: delete file
 
+/*
 struct RegistrationAnalyticsIDRepository: RegistrationAnalyticsIDRepositoryProtocol {
 
     var storage: UserDefaultsProtocol
@@ -43,3 +44,4 @@ struct RegistrationAnalyticsIDRepository: RegistrationAnalyticsIDRepositoryProto
 private enum AnalyticsUserIDDefaultsKey: String, DefaultsKey {
     case analyticsIDFromRegistration
 }
+*/
