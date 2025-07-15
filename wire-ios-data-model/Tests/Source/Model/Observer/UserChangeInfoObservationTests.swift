@@ -17,6 +17,7 @@
 //
 
 import Foundation
+
 @testable import WireDataModel
 
 final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
@@ -672,12 +673,13 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
     func testThatItNotifiesTheObserverOfTrackingIDChange() {
         // given
         let user = ZMUser.selfUser(in: uiMOC)
-        user.trackingID = UUID()
+        let trackingID = UUID()
+        user.trackingID = trackingID
 
         // when
         checkThatItNotifiesTheObserverOfAChange(
             user,
-            modifier: { $0.trackingID = UUID() },
+            modifier: { $0.trackingID = trackingID },
             expectedChangedField: .trackingID
         )
     }
