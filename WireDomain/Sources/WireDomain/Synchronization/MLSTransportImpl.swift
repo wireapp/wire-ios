@@ -45,7 +45,11 @@ final class MLSTransportImpl: MlsTransport {
         } catch let error as MLSAPIError {
             switch error {
             case .mlsInvalidLeafNodeSignature, .mlsInvalidLeafNodeIndex:
-                await resetMLSConversationHandler.handleResetMLSBrokenConversation()
+                await resetMLSConversationHandler
+                    .handleResetMLSBrokenConversation(
+                        groupID: .init(base64Encoded: "")!,
+                        epoch: 0
+                    )
             default: break
             }
             do {

@@ -34,11 +34,15 @@ public typealias SendableMessage = MLSMessage & ProteusMessage
 
 // sourcery: AutoMockable
 public protocol MessageSenderInterface {
-
+    
     func sendMessage(message: any SendableMessage) async throws
-
+    
     func broadcastMessage(message: any ProteusMessage) async throws
+    
+}
 
+public protocol ResetMLSConversationHandlerProtocol {
+    func handleResetMLSBrokenConversation(groupID: MLSGroupID, epoch: UInt64?) async
 }
 
 public final class MessageSender: MessageSenderInterface {
@@ -48,7 +52,8 @@ public final class MessageSender: MessageSenderInterface {
         sessionEstablisher: SessionEstablisherInterface,
         messageDependencyResolver: MessageDependencyResolverInterface,
         context: NSManagedObjectContext,
-        incrementalSyncObserver: IncrementalSyncObserverProtocol
+        incrementalSyncObserver: IncrementalSyncObserverProtocol,
+        resetMLSConversationHandler: ResetMLSConversationHandlerProtocol
     ) {
         self.apiProvider = apiProvider
         self.sessionEstablisher = sessionEstablisher
@@ -56,8 +61,10 @@ public final class MessageSender: MessageSenderInterface {
         self.context = context
         self.logAttributesBuilder = MessageLogAttributesBuilder(context: context)
         self.incrementalSyncObserver = incrementalSyncObserver
+        self.resetMLSConversationHandler = resetMLSConversationHandler
     }
 
+    private let resetMLSConversationHandler: ResetMLSConversationHandlerProtocol
     private let incrementalSyncObserver: IncrementalSyncObserverProtocol
     private let apiProvider: APIProviderInterface
     private let context: NSManagedObjectContext
@@ -414,17 +421,16 @@ public final class MessageSender: MessageSenderInterface {
                     operation: operation
                 )
             case .mlsInvalidLeafNodeIndex, .mlsInvalidLeafNodeSignature:
-                handleNeedToResetMLSConversation(groupID: groupID)
+                await resetMLSConversationHandler
+                    .handleResetMLSBrokenConversation(
+                        groupID: groupID,
+                        epoch: message.conversation?.epoch)
             default:
                 throw error
             }
         }
     }
     
-    private func handleNeedToResetMLSConversation(groupID: MLSGroupID) {
-        
-    }
-
     private func handleMLSStaleMessageError(
         groupID: MLSGroupID,
         mlsService: MLSServiceInterface,

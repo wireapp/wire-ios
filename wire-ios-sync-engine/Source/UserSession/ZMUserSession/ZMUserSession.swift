@@ -713,7 +713,8 @@ public final class ZMUserSession: NSObject {
                 }
                 return pullSelfUserClientsFactory(context: context)
             },
-            searchUsersCache: dependencies.caches.searchUsers
+            searchUsersCache: dependencies.caches.searchUsers,
+            resetMLSConversationHandler: ResetMLSConversationHandler()
         )
     }
 
@@ -1647,3 +1648,5 @@ extension ZMUserSession {
     }
 
 }
+
+extension ResetMLSConversationHandler: WireRequestStrategy.ResetMLSConversationHandlerProtocol { }

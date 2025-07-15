@@ -17,13 +17,19 @@
 //
 
 import Foundation
+import WireDataModel
 
-protocol ResetMLSConversationHandlerProtocol {
-    func handleResetMLSBrokenConversation() async
+public protocol ResetMLSConversationHandlerProtocol {
+    func handleResetMLSBrokenConversation(groupID: WireDataModel.MLSGroupID, epoch: UInt64?) async
 }
 
-struct ResetMLSConversationHandler: ResetMLSConversationHandlerProtocol {
-    func handleResetMLSBrokenConversation() async {
-        // TODO
+public struct ResetMLSConversationHandler: ResetMLSConversationHandlerProtocol {
+    
+    public init () {
+        
+    }
+    
+    public func handleResetMLSBrokenConversation(groupID: WireDataModel.MLSGroupID, epoch: UInt64?) async {
+
     }
 }
