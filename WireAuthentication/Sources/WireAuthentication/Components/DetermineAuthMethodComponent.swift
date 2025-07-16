@@ -75,7 +75,6 @@ final class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponent
         NoHistoryComponent(
             parent: self,
             authenticationResult: authenticationResult,
-            isAnalyticsTrackingEnabled: false, // TODO: pass nil?
             didDetectDomainConflict: false
         )
     }

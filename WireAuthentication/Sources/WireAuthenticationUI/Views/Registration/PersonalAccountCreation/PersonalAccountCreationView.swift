@@ -50,7 +50,7 @@ struct PersonalAccountCreationView: View {
                         email: email,
                         password: password,
                         name: name,
-                        trackingID: viewModel.trackingID
+                        trackingInfo: viewModel.trackingInfo
                     )
                 )
             }

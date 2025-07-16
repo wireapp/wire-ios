@@ -16,25 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireAuthenticationAPI
+public import Foundation
 
-final class WireAuthenticationModuleCompletionHandler: AuthenticationEventHandler {
-
-    var statusProvider: AuthenticationStatusProvider?
-
-    func handleEvent(
-        currentStep: AuthenticationFlowStep,
-        context: (AuthenticationResult, RegistrationAnalyticsTrackingInfo)
-    ) -> [AuthenticationCoordinatorAction]? {
-        switch currentStep {
-        case .wireAuthenticationModule:
-            return [.showLoadingView, .configureNotifications, .completeWireAuthenticationLogin(context)]
-
-        default:
-            assertionFailure("Got auth flow success but on wrong step: \(currentStep)")
-            return nil
-        }
-    }
-
+public enum RegistrationAnalyticsTrackingInfo {
+    case enabled(trackingID: UUID)
+    case disabled
+    case unknown
 }

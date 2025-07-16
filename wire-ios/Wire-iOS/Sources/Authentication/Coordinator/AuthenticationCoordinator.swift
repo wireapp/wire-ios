@@ -303,7 +303,7 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
 
                 unauthenticatedSession.continueAfterBackupImportStep()
 
-            case let .completeWireAuthenticationLogin((result, isAnalyticsTrackingEnabled)):
+            case let .completeWireAuthenticationLogin((result, trackingInfo)):
                 // Make sure we use the same backend from the authentication flow.
                 let backendEnvironment = BackendEnvironment(
                     type: result.backendEnvironment.environmentType,
@@ -341,17 +341,23 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                     )
                 }
 
-                if let isAnalyticsTrackingEnabled {
+                switch trackingInfo {
+                case .disabled:
                     PrivateUserDefaults<AnalyticsTrackingPrivateUserDefaultsKey>(
                         userID: result.userID,
                         storage: UserDefaults.standard
-                    ).set(isAnalyticsTrackingEnabled, forKey: .isAnalyticsTrackingEnabled)
-
-                    // TODO: set trackingID
-//                    PrivateUserDefaults<RegistrationAnalyticsTrackingIDKey>(
-//                        userID: result.userID,
-//                        storage: UserDefaults.standard
-//                    ).set(<#T##value: Bool##Bool#>, forKey: <#T##RegistrationAnalyticsTrackingIDKey#>)
+                    ).set(false, forKey: .isAnalyticsTrackingEnabled)
+                case .enabled(let trackingID):
+                    PrivateUserDefaults<AnalyticsTrackingPrivateUserDefaultsKey>(
+                        userID: result.userID,
+                        storage: UserDefaults.standard
+                    ).set(false, forKey: .isAnalyticsTrackingEnabled)
+                    PrivateUserDefaults<RegistrationAnalyticsTrackingIDKey>(
+                        userID: result.userID,
+                        storage: UserDefaults.standard
+                    ).set(trackingID.transportString(), forKey: .trackingIDFromRegistration)
+                case .unknown:
+                    break
                 }
 
                 unauthenticatedSession.upgradeToAuthenticatedSession(with: userInfo)

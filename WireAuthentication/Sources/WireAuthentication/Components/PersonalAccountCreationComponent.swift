@@ -46,14 +46,14 @@ final class PersonalAccountCreationComponent: Component<PersonalAccountCreationC
         email: String,
         password: String,
         name: String,
-        trackingID: UUID?
+        trackingInfo: RegistrationAnalyticsTrackingInfo
     ) -> VerificationEmailCodeComponent {
         VerificationEmailCodeComponent(
             parent: self,
             email: email,
             password: password,
             name: name,
-            trackingID: trackingID
+            trackingInfo: trackingInfo
         )
     }
 
@@ -81,13 +81,13 @@ extension PersonalAccountCreationComponent: PersonalAccountCreationViewModel.Fac
         email: String,
         password: String,
         name: String,
-        trackingID: UUID?
+        trackingInfo: RegistrationAnalyticsTrackingInfo
     ) -> any VerificationEmailCodeFactory {
         verificationEmailCodeComponent(
             email: email,
             password: password,
             name: name,
-            trackingID: trackingID
+            trackingInfo: trackingInfo
         )
     }
 

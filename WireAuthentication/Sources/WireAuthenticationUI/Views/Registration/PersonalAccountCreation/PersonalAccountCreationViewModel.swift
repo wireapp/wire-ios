@@ -38,11 +38,11 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
     @Published var password: String = ""
     @Published var confirmedPassword: String = ""
 
-    var trackingID: UUID? { // TODO: consider deleting
-        if let trackingID = analyticsEventTracker?.currentDeviceID.map(UUID.init(uuidString:)) {
-            trackingID
+    var trackingInfo: RegistrationAnalyticsTrackingInfo {
+        if let trackingID = analyticsEventTracker?.currentDeviceID.flatMap(UUID.init(uuidString:)) {
+            .enabled(trackingID: trackingID)
         } else {
-            .none
+            .disabled
         }
     }
 

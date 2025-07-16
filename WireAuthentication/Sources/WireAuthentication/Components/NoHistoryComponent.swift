@@ -34,17 +34,14 @@ protocol NoHistoryComponentDependency: Dependency {
 final class NoHistoryComponent: Component<NoHistoryComponentDependency> {
 
     private let authenticationResult: AuthenticationResult
-    private let isAnalyticsTrackingEnabled: Bool
     private let didDetectDomainConflict: Bool
 
     init(
         parent: any Scope,
         authenticationResult: AuthenticationResult,
-        isAnalyticsTrackingEnabled: Bool,
         didDetectDomainConflict: Bool
     ) {
         self.authenticationResult = authenticationResult
-        self.isAnalyticsTrackingEnabled = isAnalyticsTrackingEnabled
         self.didDetectDomainConflict = didDetectDomainConflict
         super.init(parent: parent)
     }
@@ -62,7 +59,7 @@ extension NoHistoryComponent: NoHistoryFactory {
             howToDeleteAccountURL: dependency.howToDeleteAccountURL,
             onFlowCompletion: { [dependency, authenticationResult] in
                 dependency?.bridge.sendOutboundEvent(
-                    .userAuthenticated(authenticationResult, isAnalyticsTrackingEnabled: nil)
+                    .userAuthenticated(authenticationResult, .unknown)
                 )
             }
         )
