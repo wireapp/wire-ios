@@ -47,11 +47,13 @@ struct TrackingManager: TrackingInterface {
     }
 
     func migrateAnalyticsSetupIfNeeded() async throws {
-        if doesUserConsentPreferenceExist, isAnalyticsTrackingEnabled {
-            try await enableAnalytics()
-        } else {
-            try disableAnalytics()
-        }
+        guard doesUserConsentPreferenceExist else { return }
+
+            if isAnalyticsTrackingEnabled {
+                try await enableAnalytics()
+            } else {
+                try disableAnalytics()
+            }
     }
 
     @MainActor
