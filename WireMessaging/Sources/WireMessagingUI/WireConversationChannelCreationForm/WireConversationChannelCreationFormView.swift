@@ -24,6 +24,9 @@ import WireReusableUIComponents
 public struct WireConversationChannelCreationForm: View {
     public typealias ViewModel = WireConversationChannelCreationFormViewModel
 
+    private typealias Strings = L10n.Localizable.Conversation
+    private typealias Labels = L10n.Accessibility.Conversation.CreationForm.ChannelHistory
+
     @State private var channelName: String
     @Environment(\.openURL) var openURL
     @ObservedObject private var viewModel: WireConversationChannelCreationFormViewModel
@@ -57,12 +60,12 @@ public struct WireConversationChannelCreationForm: View {
 
                         WireChannelBannerView(
                             configuration: .init(
-                                title: L10n.Localizable.Conversation.ChannelHistory.UpgradeBanner.title,
-                                message: L10n.Localizable.Conversation.ChannelHistory.UpgradeBanner.message,
-                                mainButtonTitle: L10n.Localizable.Conversation.ChannelHistory.UpgradeBanner.button,
+                                title: Strings.ChannelHistory.UpgradeBanner.title,
+                                message: Strings.ChannelHistory.UpgradeBanner.message,
+                                mainButtonTitle: Strings.ChannelHistory.UpgradeBanner.button,
                                 mainButtonAction: { openURL(viewModel.teamsURL) },
                                 closeButton: .init(
-                                    accessibilityLabel: "close",
+                                    accessibilityLabel: Labels.UpgradeBanner.close,
                                     action: { viewModel.hideUpgradeBanner() }
                                 )
                             )
@@ -76,12 +79,12 @@ public struct WireConversationChannelCreationForm: View {
     }
 
     var channelNameSection: some View {
-        Section(L10n.Localizable.Conversation.CreationForm.ChannelName.sectionTitle) {
+        Section(Strings.CreationForm.ChannelName.sectionTitle) {
             TextField(
                 text: $channelName,
-                prompt: Text(L10n.Localizable.Conversation.CreationForm.ChannelName.placeholder),
+                prompt: Text(Strings.CreationForm.ChannelName.placeholder),
                 label: {
-                    Text(L10n.Localizable.Conversation.CreationForm.ChannelName.label)
+                    Text(Strings.CreationForm.ChannelName.label)
                 }
             )
         }
@@ -90,35 +93,35 @@ public struct WireConversationChannelCreationForm: View {
     var channelAccessSection: some View {
         Section(content: {
             HStack {
-                Text(L10n.Localizable.Conversation.CreationForm.Options.channelAccess)
+                Text(Strings.CreationForm.Options.channelAccess)
 
                 Spacer()
 
                 HStack(spacing: 4) {
                     Image(systemName: "lock.fill")
                         .foregroundColor(.gray)
-                    Text(L10n.Localizable.Conversation.CreationForm.Options.ChannelAccess.private)
+                    Text(Strings.CreationForm.Options.ChannelAccess.private)
                         .foregroundColor(.gray)
                 }
             }
             if case .private = viewModel.channelAccess {
                 Picker(
-                    L10n.Localizable.Conversation.CreationForm.Options.ChannelAccess.invitePolicy,
+                    Strings.CreationForm.Options.ChannelAccess.invitePolicy,
                     selection: $viewModel.channelInvitePolicy
                 ) {
-                    Text(L10n.Localizable.Conversation.CreationForm.Options.ChannelAccess.InvitePolicy.adminsOnly)
+                    Text(Strings.CreationForm.Options.ChannelAccess.InvitePolicy.adminsOnly)
                         .tag(ViewModel.ChannelInvitePolicyOption.admins)
                     Text(
-                        L10n.Localizable.Conversation.CreationForm.Options.ChannelAccess.InvitePolicy
+                        Strings.CreationForm.Options.ChannelAccess.InvitePolicy
                             .adminsAndMembers
                     )
                     .tag(ViewModel.ChannelInvitePolicyOption.adminsAndMembers)
                 }
             }
         }, header: {
-            Text(L10n.Localizable.Conversation.CreationForm.Options.sectionTitle)
+            Text(Strings.CreationForm.Options.sectionTitle)
         }, footer: {
-            Text(L10n.Localizable.Conversation.CreationForm.Options.footer)
+            Text(Strings.CreationForm.Options.footer)
         })
     }
 
@@ -131,13 +134,13 @@ public struct WireConversationChannelCreationForm: View {
             }
 
         }, footer: {
-            Text(L10n.Localizable.Conversation.CreationForm.ChannelHistory.sectionFootnote)
+            Text(Strings.CreationForm.ChannelHistory.sectionFootnote)
         })
     }
 
     var channelHistoryPicker: some View {
         Picker(
-            L10n.Localizable.Conversation.ChannelHistory.Picker.title,
+            Strings.ChannelHistory.Picker.title,
             selection: $viewModel.channelHistoryOption
         ) {
             ForEach(viewModel.channelHistoryAvailableOptions(), id: \.self) { channelHistoryOption in
@@ -168,18 +171,18 @@ public struct WireConversationChannelCreationForm: View {
 
     var servicesSection: some View {
         Section(content: {
-            Toggle(L10n.Localizable.Conversation.CreationForm.Services.toggle, isOn: $viewModel.servicesAllowed)
-            Toggle(L10n.Localizable.Conversation.CreationForm.Guests.toggle, isOn: $viewModel.guestsAllowed)
+            Toggle(Strings.CreationForm.Services.toggle, isOn: $viewModel.servicesAllowed)
+            Toggle(Strings.CreationForm.Guests.toggle, isOn: $viewModel.guestsAllowed)
         }, footer: {
-            Text(L10n.Localizable.Conversation.CreationForm.Guests.description)
+            Text(Strings.CreationForm.Guests.description)
         })
     }
 
     var readReceiptsSection: some View {
         Section(content: {
-            Toggle(L10n.Localizable.Conversation.CreationForm.ReadReceipts.toggle, isOn: $viewModel.readReceiptsEnabled)
+            Toggle(Strings.CreationForm.ReadReceipts.toggle, isOn: $viewModel.readReceiptsEnabled)
         }, footer: {
-            Text(L10n.Localizable.Conversation.CreationForm.ReadReceipts.description)
+            Text(Strings.CreationForm.ReadReceipts.description)
         })
     }
 }
@@ -189,7 +192,7 @@ public struct WireConversationChannelCreationForm: View {
         viewModel: WireConversationChannelCreationFormViewModel(
             channelName: "",
             isUserPremium: false,
-            teamsURL: URL(string: "https://google.com")!
+            teamsURL: URL(string: "https://wire.com")!
         ) { _ in }
     )
 }

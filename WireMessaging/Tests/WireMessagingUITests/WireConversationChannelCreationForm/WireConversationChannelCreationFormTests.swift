@@ -41,7 +41,7 @@ class WireConversationChannelCreationFormTests: XCTestCase {
             viewModel: WireConversationChannelCreationFormViewModel(
                 channelName: "",
                 isUserPremium: true,
-                teamsURL: URL(string: "https://google.com")!
+                teamsURL: URL(string: "https://wire.com")!
             ) { _ in }
         )
         .frame(width: 375, height: 667)
@@ -61,7 +61,7 @@ class WireConversationChannelCreationFormTests: XCTestCase {
             viewModel: WireConversationChannelCreationFormViewModel(
                 channelName: "",
                 isUserPremium: true,
-                teamsURL: URL(string: "https://google.com")!
+                teamsURL: URL(string: "https://wire.com")!
             ) { _ in }
         )
         .frame(width: 375, height: 667)
@@ -81,7 +81,7 @@ class WireConversationChannelCreationFormTests: XCTestCase {
         let viewModel = WireConversationChannelCreationFormViewModel(
             channelName: "",
             isUserPremium: true,
-            teamsURL: URL(string: "https://google.com")!
+            teamsURL: URL(string: "https://wire.com")!
         ) { _ in }
 
         viewModel.channelHistoryOption = .custom
@@ -105,7 +105,7 @@ class WireConversationChannelCreationFormTests: XCTestCase {
         let viewModel = WireConversationChannelCreationFormViewModel(
             channelName: "",
             isUserPremium: true,
-            teamsURL: URL(string: "https://google.com")!
+            teamsURL: URL(string: "https://wire.com")!
         ) { _ in }
 
         viewModel.channelHistoryOption = .custom
@@ -129,7 +129,7 @@ class WireConversationChannelCreationFormTests: XCTestCase {
         let viewModel = WireConversationChannelCreationFormViewModel(
             channelName: "",
             isUserPremium: true,
-            teamsURL: URL(string: "https://google.com")!
+            teamsURL: URL(string: "https://wire.com")!
         ) { _ in }
 
         viewModel.channelHistoryOption = .custom
@@ -155,7 +155,7 @@ class WireConversationChannelCreationFormTests: XCTestCase {
         let viewModel = WireConversationChannelCreationFormViewModel(
             channelName: "",
             isUserPremium: true,
-            teamsURL: URL(string: "https://google.com")!
+            teamsURL: URL(string: "https://wire.com")!
         ) { _ in }
 
         viewModel.channelHistoryOption = .custom

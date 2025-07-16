@@ -28,7 +28,7 @@ final class WireConversationChannelCreationFormViewModelTests: XCTestCase {
         let sut = WireConversationChannelCreationFormViewModel(
             channelName: "",
             isUserPremium: true,
-            teamsURL: URL(string: "https://google.com")!
+            teamsURL: URL(string: "https://wire.com")!
         ) { _ in }
         let value = ""
 
@@ -46,7 +46,7 @@ final class WireConversationChannelCreationFormViewModelTests: XCTestCase {
         let sut = WireConversationChannelCreationFormViewModel(
             channelName: "",
             isUserPremium: true,
-            teamsURL: URL(string: "https://google.com")!
+            teamsURL: URL(string: "https://wire.com")!
         ) { _ in }
         let value = String(
             repeating: "a",
@@ -67,7 +67,7 @@ final class WireConversationChannelCreationFormViewModelTests: XCTestCase {
         let sut = WireConversationChannelCreationFormViewModel(
             channelName: "",
             isUserPremium: true,
-            teamsURL: URL(string: "https://google.com")!
+            teamsURL: URL(string: "https://wire.com")!
         ) { _ in }
         let value = String(
             repeating: "\(0x27BF)",
@@ -88,7 +88,7 @@ final class WireConversationChannelCreationFormViewModelTests: XCTestCase {
         let sut = WireConversationChannelCreationFormViewModel(
             channelName: "",
             isUserPremium: true,
-            teamsURL: URL(string: "https://google.com")!
+            teamsURL: URL(string: "https://wire.com")!
         ) { _ in }
         let value = String(
             repeating: " ",
@@ -109,7 +109,7 @@ final class WireConversationChannelCreationFormViewModelTests: XCTestCase {
         let sut = WireConversationChannelCreationFormViewModel(
             channelName: "",
             isUserPremium: true,
-            teamsURL: URL(string: "https://google.com")!
+            teamsURL: URL(string: "https://wire.com")!
         ) { _ in }
         let value = " " +
             String(
@@ -135,7 +135,7 @@ final class WireConversationChannelCreationFormViewModelTests: XCTestCase {
         let sut = WireConversationChannelCreationFormViewModel(
             channelName: "",
             isUserPremium: true,
-            teamsURL: URL(string: "https://google.com")!
+            teamsURL: URL(string: "https://wire.com")!
         ) { _ in }
         let value = "a"
         let expectedValue = "a"
@@ -154,7 +154,7 @@ final class WireConversationChannelCreationFormViewModelTests: XCTestCase {
         let sut = WireConversationChannelCreationFormViewModel(
             channelName: "Test",
             isUserPremium: true,
-            teamsURL: URL(string: "https://google.com")!
+            teamsURL: URL(string: "https://wire.com")!
         ) { _ in }
 
         let useCases = [

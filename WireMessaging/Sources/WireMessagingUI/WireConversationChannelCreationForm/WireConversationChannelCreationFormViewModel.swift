@@ -66,13 +66,13 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
         public struct Custom: Equatable, Hashable {
             public enum Unit: Equatable, Hashable, CaseIterable {
                 case days
-                case week
+                case weeks
 
                 var title: String {
                     switch self {
                     case .days:
                         L10n.Localizable.Conversation.ChannelHistory.CustomPicker.days
-                    case .week:
+                    case .weeks:
                         L10n.Localizable.Conversation.ChannelHistory.CustomPicker.weeks
                     }
                 }
@@ -268,7 +268,7 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
         switch channelHistoryOptionCustom.unit {
         case .days:
             return value * oneDay
-        case .week:
+        case .weeks:
             return value * 7 * oneDay
         }
     }
