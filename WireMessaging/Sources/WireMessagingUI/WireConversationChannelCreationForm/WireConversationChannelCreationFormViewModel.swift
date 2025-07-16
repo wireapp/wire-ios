@@ -19,7 +19,7 @@
 public import Foundation
 public import Combine
 import WireFoundation
-public import SwiftUI
+import SwiftUI
 public import WireMessagingAPI
 
 public final class WireConversationChannelCreationFormViewModel: ObservableObject {

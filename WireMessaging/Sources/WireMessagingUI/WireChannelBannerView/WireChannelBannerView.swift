@@ -35,42 +35,9 @@ public struct WireChannelBannerView: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack(alignment: .top) {
-                Text(configuration.title)
-                    .wireTextStyle(.body3)
-                    .foregroundStyle(Color.white)
-                    .accessibilityLabel(Text(configuration.title))
-
-                Spacer()
-
-                if let closeButtonConfiguration = configuration.closeButton {
-                    CloseButton(
-                        action: { closeButtonConfiguration.action() },
-                        foregroundColor: SemanticColors.Label.textWhite,
-                        accessibilityLabel: closeButtonConfiguration.accessibilityLabel
-                    )
-                }
-            }
-
-            Text(configuration.message)
-                .wireTextStyle(.body1)
-                .foregroundStyle(.white)
-                .accessibilityLabel(
-                    configuration.message
-                )
-
-            Button(configuration.mainButtonTitle, action: configuration.mainButtonAction)
-                .lineLimit(1)
-                .padding(8)
-                .background(ColorTheme.Buttons.Secondary.enabledOutline.color)
-                .foregroundStyle(ColorTheme.Buttons.Secondary.onEnabled.color)
-                .font(.system(size: mainButtonFontSize, weight: .semibold, design: .default))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(BaseColorPalette.Grays.gray100.color, lineWidth: 1)
-                }
-                .clipShape(.rect(cornerRadius: 12))
-                .padding(.top, 8)
+            titleView
+            messageView
+            buttonView
         }
         .padding(.horizontal, 16)
         .padding(.top, 12)
@@ -86,6 +53,49 @@ public struct WireChannelBannerView: View {
             RoundedRectangle(cornerRadius: 10)
                 .stroke(BaseColorPalette.Grays.gray90.color, lineWidth: 1)
         )
+    }
+    
+    private var titleView: some View {
+        HStack(alignment: .top) {
+            Text(configuration.title)
+                .wireTextStyle(.body3)
+                .foregroundStyle(Color.white)
+                .accessibilityLabel(Text(configuration.title))
+
+            Spacer()
+
+            if let closeButtonConfiguration = configuration.closeButton {
+                CloseButton(
+                    action: { closeButtonConfiguration.action() },
+                    foregroundColor: SemanticColors.Label.textWhite,
+                    accessibilityLabel: closeButtonConfiguration.accessibilityLabel
+                )
+            }
+        }
+    }
+    
+    private var messageView: some View {
+        Text(configuration.message)
+            .wireTextStyle(.body1)
+            .foregroundStyle(.white)
+            .accessibilityLabel(
+                configuration.message
+            )
+    }
+    
+    private var buttonView: some View {
+        Button(configuration.mainButtonTitle, action: configuration.mainButtonAction)
+            .lineLimit(1)
+            .padding(8)
+            .background(ColorTheme.Buttons.Secondary.enabledOutline.color)
+            .foregroundStyle(ColorTheme.Buttons.Secondary.onEnabled.color)
+            .font(.system(size: mainButtonFontSize, weight: .semibold, design: .default))
+            .overlay {
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(BaseColorPalette.Grays.gray100.color, lineWidth: 1)
+            }
+            .clipShape(.rect(cornerRadius: 12))
+            .padding(.top, 8)
     }
 }
 
