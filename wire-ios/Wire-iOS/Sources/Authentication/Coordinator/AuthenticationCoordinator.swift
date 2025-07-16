@@ -341,8 +341,7 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                     )
                 }
 
-                // TODO: remember analytics consent
-                if isAnalyticsTrackingEnabled { // TODO: bool check
+                if let isAnalyticsTrackingEnabled {
                     let privateUserDefaults = PrivateUserDefaults<AnalyticsTrackingPrivateUserDefaultsKey>(
                         userID: result.userID,
                         storage: UserDefaults.standard

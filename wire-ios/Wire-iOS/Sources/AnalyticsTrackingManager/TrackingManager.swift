@@ -39,7 +39,7 @@ struct TrackingManager: TrackingInterface {
     }
 
     private var doesUserConsentPreferenceExist: Bool {
-        privateUserDefaults?.object(forKey: .isAnalyticsTrackingEnabled) is Bool // TODO: fix
+        privateUserDefaults?.object(forKey: .isAnalyticsTrackingEnabled) is Bool
     }
 
     var isAnalyticsTrackingEnabled: Bool {

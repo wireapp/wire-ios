@@ -50,7 +50,7 @@ final class AuthenticationEventResponderChain {
 
     enum EventType: CustomStringConvertible {
 
-        case wireAuthenticationModuleComplete((AuthenticationResult, isAnalyticsTrackingEnabled: Bool))
+        case wireAuthenticationModuleComplete((AuthenticationResult, isAnalyticsTrackingEnabled: Bool?))
         case flowStart(NSError?, Int)
         case backupReady(Bool)
         case clientRegistrationError(NSError, UUID)
@@ -113,7 +113,7 @@ final class AuthenticationEventResponderChain {
     // MARK: - Configuration
 
     var flowStartHandlers: [AnyAuthenticationEventHandler<(NSError?, Int)>] = []
-    var wireAuthenticationModuleHandlers: [AnyAuthenticationEventHandler<(AuthenticationResult, isAnalyticsTrackingEnabled: Bool)>] = []
+    var wireAuthenticationModuleHandlers: [AnyAuthenticationEventHandler<(AuthenticationResult, isAnalyticsTrackingEnabled: Bool?)>] = []
     var backupEventHandlers: [AnyAuthenticationEventHandler<Bool>] = []
     var clientRegistrationErrorHandlers: [AnyAuthenticationEventHandler<(NSError, UUID)>] = []
     var clientRegistrationSuccessHandlers: [AnyAuthenticationEventHandler<Void>] = []

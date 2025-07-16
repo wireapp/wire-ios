@@ -51,7 +51,8 @@ public final class WireAuthenticationBridge {
 
     public enum OutboundEvent {
 
-        case userAuthenticated(AuthenticationResult, isAnalyticsTrackingEnabled: Bool)
+        /// If `isAnalyticsTrackingEnabled` is `nil`, the user will be asked after the first login.
+        case userAuthenticated(AuthenticationResult, isAnalyticsTrackingEnabled: Bool?)
         case exitFlowRequested
 
     }

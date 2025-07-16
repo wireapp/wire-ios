@@ -60,9 +60,9 @@ extension NoHistoryComponent: NoHistoryFactory {
             didDetectDomainConflict: didDetectDomainConflict,
             howToChangeEmailURL: dependency.howToChangeEmailURL,
             howToDeleteAccountURL: dependency.howToDeleteAccountURL,
-            onFlowCompletion: { [dependency, authenticationResult, isAnalyticsTrackingEnabled] in
+            onFlowCompletion: { [dependency, authenticationResult] in
                 dependency?.bridge.sendOutboundEvent(
-                    .userAuthenticated(authenticationResult, isAnalyticsTrackingEnabled: isAnalyticsTrackingEnabled) // TODO: pass nil?
+                    .userAuthenticated(authenticationResult, isAnalyticsTrackingEnabled: nil)
                 )
             }
         )
