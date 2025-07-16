@@ -19,6 +19,7 @@
 import Foundation
 import SwiftUI
 import WireDataModel
+import WireDomain
 import WireFoundation
 import WireLogging
 import WireNetwork
@@ -49,6 +50,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
 
     @Published var debugItems: [DeveloperDebugActionsDisplayModel.DebugItem] = []
     @Published var mlsGroupSearchItem: MLSGroupSearchItem?
+    @Published var isAppVersionInputPresented = false
 
     private var userSession: ZMUserSession? { ZMUserSession.shared() }
 
@@ -81,7 +83,9 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             .init(title: "Delete domains in the database", action: deleteDomains),
             .init(title: "Find Conversation with MLS Group", action: showSearchMLSConversations),
             .init(title: "Clear collapsed messages cache", action: clearCollapsedMessagesCache),
-            .init(title: "Simulate access token failure", action: simulateAccessTokenFailure)
+            .init(title: "Simulate access token failure", action: simulateAccessTokenFailure),
+            .init(title: "Invalidate all conversations", action: invalidateAllConversations),
+            .init(title: "Set last app version migration", action: requestAppVersionInput)
         ]
 
         let toggleItems: [DeveloperDebugActionsDisplayModel.ToggleItem] = [
@@ -92,6 +96,42 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
         ]
 
         debugItems = buttonItems.map { .button($0) } + toggleItems.map { .toggle($0) }
+    }
+
+    // MARK: - App version migration
+
+    private func invalidateAllConversations() {
+        guard let context = userSession?.syncContext else {
+            return
+        }
+
+        context.perform {
+            let request = ZMConversation.fetchRequest()
+            let converstions = try! context.fetch(request) as! [ZMConversation]
+            for conversation in converstions {
+                conversation.conversationType = .invalid
+            }
+            try! context.save()
+        }
+    }
+
+    private func requestAppVersionInput() {
+        isAppVersionInputPresented = true
+    }
+
+    func setLastCompletedAppVersionMigration(version: String) {
+        isAppVersionInputPresented = false
+
+        guard let selfUser = userSession?.selfUser else {
+            return
+        }
+
+        var journal = Journal(
+            userID: selfUser.remoteIdentifier,
+            storage: UserDefaults.shared()
+        )
+
+        journal.lastCompletedAppVersionMigration = SemanticVersion(stringLiteral: version)
     }
 
     // MARK: - CallKit

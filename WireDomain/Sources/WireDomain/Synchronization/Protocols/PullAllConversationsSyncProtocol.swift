@@ -19,7 +19,7 @@
 // sourcery: AutoMockable
 /// An object to keep the local conversations up to date
 /// with the remote conversations.
-protocol PullAllConversationsSyncProtocol {
+public protocol PullAllConversationsSyncProtocol {
 
     /// Fetch all conversations from remote, then create and update
     /// them locally.

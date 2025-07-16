@@ -60,6 +60,13 @@ public extension JournalKey where Value == Bool {
         defaultValue: false
     )
 
+    /// Whether all conversations should be pulled from the backend.
+
+    static let isConversationSyncRequired = Self(
+        "isConversationSyncRequired",
+        defaultValue: false
+    )
+
     /// Whether a core crypto key migration needs to be performed.
 
     static let isCoreCryptoKeyMigrationRequired = Self(

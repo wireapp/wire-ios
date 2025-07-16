@@ -66,10 +66,6 @@ public protocol ConversationRepositoryProtocol {
         domain: String?
     ) async -> ZMConversation
 
-    /// Fetches and persists all conversations
-
-    func pullConversations() async throws
-
     /// Pulls and stores a MLS one to one conversation locally.
     ///
     /// - parameters:

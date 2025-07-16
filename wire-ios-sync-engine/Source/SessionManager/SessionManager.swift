@@ -91,9 +91,21 @@ public protocol SessionManagerDelegate: AnyObject, SessionActivationObserver {
         error: any Error,
         retryHandler: @escaping () -> Void
     )
-
     var isInAuthenticatedAppState: Bool { get }
     var isInUnathenticatedAppState: Bool { get }
+}
+
+extension SessionManagerDelegate {
+
+    @MainActor
+    func sessionManagerWillMigrateAccount() async {
+        await withCheckedContinuation { continuation in
+            sessionManagerWillMigrateAccount {
+                continuation.resume()
+            }
+        }
+    }
+
 }
 
 /// The public interface for the session manager.
@@ -1104,7 +1116,18 @@ public final class SessionManager: NSObject, SessionManagerType {
                         logFilesProvider: self.logFilesProvider
                     )
 
-                    await userSession.performAppMigrationsIfNeeded()
+                    let migrationService = userSession.makeAppVersionMigrationService()
+                    if migrationService.isMigrationNeeded {
+                        await self.delegate?.sessionManagerWillMigrateAccount()
+
+                        do {
+                            try await migrationService.performAppMigrations()
+                        } catch {
+                            WireLogger.session.error(
+                                "Failed to perform app version migrations: \(String(describing: error))"
+                            )
+                        }
+                    }
 
                     var shouldTriggerSync = true
                     do {

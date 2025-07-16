@@ -278,8 +278,7 @@ public extension ZMUser {
         get { analyticsIdentifier.flatMap(UUID.init(transportString:)) }
         set { analyticsIdentifier = newValue?.transportString() }
     }
-
-    @NSManaged private var analyticsIdentifier: String? // TODO: [WPB-17530] rename and use Data in Core Data model `primitiveTrackingID`?
+    @NSManaged var analyticsIdentifier: String?
 
     internal static let domainKey: String = "domain"
     @NSManaged private var primitiveDomain: String?
