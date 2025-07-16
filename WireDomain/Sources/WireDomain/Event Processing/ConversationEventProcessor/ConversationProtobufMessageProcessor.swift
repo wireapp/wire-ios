@@ -80,12 +80,12 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
             )
 
         case let .dataTransfer(dataTransfer):
-            guard let trackingIdentifier = dataTransfer.trackingIdentifierData else {
+            guard let trackingID = dataTransfer.trackingIdentifierData.flatMap(UUID.init(transportString:)) else {
                 break
             }
 
-            await userLocalStore.updateSelfUserAnalyticsID(
-                analyticsID: trackingIdentifier,
+            await userLocalStore.updateSelfUserTrackingID(
+                trackingID: trackingID,
                 conversation: conversation
             )
 
