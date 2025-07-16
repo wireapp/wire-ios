@@ -303,7 +303,7 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
 
                 unauthenticatedSession.continueAfterBackupImportStep()
 
-            case let .completeWireAuthenticationLogin((result, trackingInfo)):
+            case let .completeWireAuthenticationLogin((result, trackingConsent)):
                 // Make sure we use the same backend from the authentication flow.
                 let backendEnvironment = BackendEnvironment(
                     type: result.backendEnvironment.environmentType,
@@ -341,13 +341,13 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                     )
                 }
 
-                switch trackingInfo {
-                case .disabled:
+                switch trackingConsent {
+                case .declined:
                     PrivateUserDefaults<AnalyticsTrackingPrivateUserDefaultsKey>(
                         userID: result.userID,
                         storage: UserDefaults.standard
                     ).set(false, forKey: .isAnalyticsTrackingEnabled)
-                case let .enabled(trackingID):
+                case let .agreed(trackingID):
                     PrivateUserDefaults<AnalyticsTrackingPrivateUserDefaultsKey>(
                         userID: result.userID,
                         storage: UserDefaults.standard

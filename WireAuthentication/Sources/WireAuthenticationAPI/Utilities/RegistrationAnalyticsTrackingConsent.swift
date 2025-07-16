@@ -18,8 +18,8 @@
 
 public import Foundation
 
-public enum RegistrationAnalyticsTrackingInfo {
-    case enabled(trackingID: UUID)
-    case disabled
+public enum RegistrationAnalyticsTrackingConsent {
+    case agreed(trackingID: UUID)
+    case declined
     case unknown
 }

@@ -38,19 +38,19 @@ final class VerificationEmailCodeComponent: Component<VerificationEmailCodeCompo
     private let email: String
     private let password: String
     private let name: String
-    private let trackingInfo: RegistrationAnalyticsTrackingInfo
+    private let trackingConsent: RegistrationAnalyticsTrackingConsent
 
     init(
         parent: any Scope,
         email: String,
         password: String,
         name: String,
-        trackingInfo: RegistrationAnalyticsTrackingInfo
+        trackingConsent: RegistrationAnalyticsTrackingConsent
     ) {
         self.email = email
         self.password = password
         self.name = name
-        self.trackingInfo = trackingInfo
+        self.trackingConsent = trackingConsent
         super.init(parent: parent)
     }
 
@@ -67,9 +67,9 @@ extension VerificationEmailCodeComponent: VerificationEmailCodeViewModel.Factory
             email: email,
             password: password,
             name: name,
-            onFlowCompletion: { [dependency, trackingInfo] authenticationResult in
+            onFlowCompletion: { [dependency, trackingConsent] authenticationResult in
                 dependency?.registrationAnalyticsTracker?.deleteTemporaryTrackingID()
-                dependency?.bridge.sendOutboundEvent(.userAuthenticated(authenticationResult, trackingInfo))
+                dependency?.bridge.sendOutboundEvent(.userAuthenticated(authenticationResult, trackingConsent))
             },
             analyticsEventTracker: dependency.registrationAnalyticsTracker
         )

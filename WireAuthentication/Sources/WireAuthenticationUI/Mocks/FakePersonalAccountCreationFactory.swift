@@ -50,7 +50,7 @@ struct FakePersonalAccountCreationFactory: PersonalAccountCreationFactory, Regis
         email: String,
         password: String,
         name: String,
-        trackingInfo: RegistrationAnalyticsTrackingInfo
+        trackingConsent: RegistrationAnalyticsTrackingConsent
     ) -> any VerificationEmailCodeFactory {
         fatalError()
     }

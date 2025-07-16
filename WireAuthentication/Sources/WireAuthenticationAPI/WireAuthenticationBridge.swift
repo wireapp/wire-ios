@@ -51,7 +51,7 @@ public final class WireAuthenticationBridge {
 
     public enum OutboundEvent {
 
-        case userAuthenticated(AuthenticationResult, RegistrationAnalyticsTrackingInfo)
+        case userAuthenticated(AuthenticationResult, RegistrationAnalyticsTrackingConsent)
         case exitFlowRequested
 
     }
