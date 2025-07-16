@@ -86,8 +86,8 @@ public enum ConversationEvent: Equatable, Sendable {
 
     case permissionUpdate(ConversationAddPermissionEvent)
 
-    /// A permission for a private conversation (aka channel) was updated.
-    ///
+    /// Event to fix broken MLS conversation by reseting it
+
     case mlsReset(ConversationMLSResetEvent)
 
 }
