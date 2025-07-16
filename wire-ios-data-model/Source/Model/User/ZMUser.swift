@@ -19,6 +19,7 @@
 import Foundation
 import WireFoundation
 import WireSystem
+import WireTransport
 import WireUtilities
 
 extension ZMUser: UserType {
@@ -272,6 +273,11 @@ public extension ZMUser {
     /// The analytics identifier used for tag analytic events.
     ///
     /// This identifier should only exist for the self user
+
+    @objc var trackingID: UUID? {
+        get { analyticsIdentifier.flatMap(UUID.init(transportString:)) }
+        set { analyticsIdentifier = newValue?.transportString() }
+    }
 
     @NSManaged var analyticsIdentifier: String?
 
