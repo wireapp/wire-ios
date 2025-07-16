@@ -53,7 +53,7 @@ final class RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
     }
 
     var trackingID: String? {
-        analyticsService?.trackingID
+        analyticsService?.currentDeviceID
     }
 
     @MainActor

@@ -35,7 +35,7 @@ extension ZMUserSession: AnalyticsEventTrackerProvider {
 
             // Sanity check that we don't setup analytics too early.
             guard selfUser.selfClient()?.remoteIdentifier != nil else {
-                throw AnalyticsError.selfClientIsNotRegistered // TODO: fix
+                throw AnalyticsError.selfClientIsNotRegistered
             }
 
             let trackingID: UUID
