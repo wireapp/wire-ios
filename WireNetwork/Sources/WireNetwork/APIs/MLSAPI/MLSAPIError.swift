@@ -70,7 +70,7 @@ public enum MLSAPIError: Error, Equatable {
 
     case mlsInvalidLeafNodeIndex
 
-    /// TBD
+    /// A referenced leaf node signature is invalid
 
     case mlsInvalidLeafNodeSignature
 
