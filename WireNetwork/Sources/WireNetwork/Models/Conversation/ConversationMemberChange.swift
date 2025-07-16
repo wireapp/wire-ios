@@ -20,7 +20,7 @@ public import Foundation
 
 /// Changed metadata for a member of a conversation.
 
-public struct ConversationMemberChange: Equatable, Codable, Sendable {
+public struct ConversationMemberChange: Equatable, Sendable {
 
     /// The id of the member.
 

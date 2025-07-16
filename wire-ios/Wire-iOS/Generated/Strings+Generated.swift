@@ -921,6 +921,14 @@ internal enum L10n {
         internal static let description = L10n.tr("Accessibility", "optionsSettings.backButton.description", fallback: "Go back to Options")
       }
     }
+    internal enum Peoplepicker {
+      internal enum UpgradeBanner {
+        internal enum CloseButton {
+          /// Close team creation option
+          internal static let label = L10n.tr("Accessibility", "peoplepicker.upgrade_banner.close_button.label", fallback: "Close team creation option")
+        }
+      }
+    }
     internal enum PictureView {
       internal enum CloseButton {
         /// Close picture view
@@ -4681,6 +4689,16 @@ internal enum L10n {
         /// Knows %@ and %@
         internal static func knowsTwo(_ p1: Any, _ p2: Any) -> String {
           return L10n.tr("Localizable", "peoplepicker.suggested.knows_two", String(describing: p1), String(describing: p2), fallback: "Knows %@ and %@")
+        }
+      }
+      internal enum UpgradeBanner {
+        /// Channels are available for team members.
+        internal static let headline = L10n.tr("Localizable", "peoplepicker.upgrade_banner.headline", fallback: "Channels are available for team members.")
+        /// Create a team and start collaborating for free!
+        internal static let subheadline = L10n.tr("Localizable", "peoplepicker.upgrade_banner.subheadline", fallback: "Create a team and start collaborating for free!")
+        internal enum Button {
+          /// Create Wire Team
+          internal static let title = L10n.tr("Localizable", "peoplepicker.upgrade_banner.button.title", fallback: "Create Wire Team")
         }
       }
     }

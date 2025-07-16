@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class FeatureConfigsAPIV8: FeatureConfigsAPIV7 {
+class FeatureConfigsAPIV8: FeatureConfigsAPIV7 {
     override var apiVersion: APIVersion { .v8 }
 
     override func getFeatureConfigs() async throws -> [FeatureConfig] {
@@ -63,37 +63,40 @@ struct FeatureConfigsResponseAPIV8: Decodable, ToAPIModelConvertible {
         featureConfigs.append(.classifiedDomains(classifiedDomainsConfig))
 
         let conferenceCallingConfig = ConferenceCallingFeatureConfig(
-            status: conferenceCalling.status,
+            status: conferenceCalling.status.toAPIModel(),
             useSFTForOneToOneCalls: conferenceCalling.config.useSFTForOneToOneCalls
         )
 
         featureConfigs.append(.conferenceCalling(conferenceCallingConfig))
 
-        let conversationGuestLinksConfig = ConversationGuestLinksFeatureConfig(status: conversationGuestLinks.status)
+        let conversationGuestLinksConfig = ConversationGuestLinksFeatureConfig(
+            status: conversationGuestLinks.status
+                .toAPIModel()
+        )
         featureConfigs.append(.conversationGuestLinks(conversationGuestLinksConfig))
 
-        let digitalSignaturesConfig = DigitalSignatureFeatureConfig(status: digitalSignatures.status)
+        let digitalSignaturesConfig = DigitalSignatureFeatureConfig(status: digitalSignatures.status.toAPIModel())
         featureConfigs.append(.digitalSignature(digitalSignaturesConfig))
 
-        let fileSharingConfig = FileSharingFeatureConfig(status: fileSharing.status)
+        let fileSharingConfig = FileSharingFeatureConfig(status: fileSharing.status.toAPIModel())
         featureConfigs.append(.fileSharing(fileSharingConfig))
 
         let selfDeletingMessagesConfig = selfDeletingMessages.toAPIModel()
         featureConfigs.append(.selfDeletingMessages(selfDeletingMessagesConfig))
 
         let mlsConfig = MLSFeatureConfig(
-            status: mls.status,
+            status: mls.status.toAPIModel(),
             protocolToggleUsers: mls.config.protocolToggleUsers,
-            defaultProtocol: mls.config.defaultProtocol,
-            allowedCipherSuites: mls.config.allowedCipherSuites,
-            defaultCipherSuite: mls.config.defaultCipherSuite,
-            supportedProtocols: mls.config.supportedProtocols
+            defaultProtocol: mls.config.defaultProtocol.toAPIModel(),
+            allowedCipherSuites: mls.config.allowedCipherSuites.map { $0.toAPIModel() },
+            defaultCipherSuite: mls.config.defaultCipherSuite.toAPIModel(),
+            supportedProtocols: Set(mls.config.supportedProtocols.map { $0.toAPIModel() })
         )
 
         featureConfigs.append(.mls(mlsConfig))
 
         let mlsMigrationConfig = MLSMigrationFeatureConfig(
-            status: mlsMigration.status,
+            status: mlsMigration.status.toAPIModel(),
             startTime: mlsMigration.config.startTime?.date,
             finaliseRegardlessAfter: mlsMigration.config.finaliseRegardlessAfter?.date
         )
@@ -101,7 +104,7 @@ struct FeatureConfigsResponseAPIV8: Decodable, ToAPIModelConvertible {
         featureConfigs.append(.mlsMigration(mlsMigrationConfig))
 
         let mlsE2EIdConfig = EndToEndIdentityFeatureConfig(
-            status: mlsE2EId.status,
+            status: mlsE2EId.status.toAPIModel(),
             acmeDiscoveryURL: mlsE2EId.config.acmeDiscoveryUrl,
             verificationExpiration: mlsE2EId.config.verificationExpiration,
             crlProxy: mlsE2EId.config.crlProxy,
@@ -111,9 +114,9 @@ struct FeatureConfigsResponseAPIV8: Decodable, ToAPIModelConvertible {
         featureConfigs.append(.endToEndIdentity(mlsE2EIdConfig))
 
         let channelsConfig = ChannelsFeatureConfig(
-            status: channels.status, // this is added in v8
-            allowedToCreateChannels: channels.config.allowedToCreateChannels,
-            allowedToOpenChannels: channels.config.allowedToOpenChannels
+            status: channels.status.toAPIModel(), // this is added in v8
+            allowedToCreateChannels: channels.config.allowedToCreateChannels.toAPIModel(),
+            allowedToOpenChannels: channels.config.allowedToOpenChannels.toAPIModel()
         )
         featureConfigs.append(.channels(channelsConfig))
 
@@ -130,18 +133,18 @@ extension FeatureConfigResponse {
             case allowedToOpenChannels = "allowed_to_open_channels"
         }
 
-        public let allowedToCreateChannels: ChannelsPermision
-        public let allowedToOpenChannels: ChannelsPermision
+        let allowedToCreateChannels: ChannelsPermisionV0
+        let allowedToOpenChannels: ChannelsPermisionV0
 
-        public init(from decoder: any Decoder) throws {
+        init(from decoder: any Decoder) throws {
             let container: KeyedDecodingContainer<CodingKeys> = try decoder
                 .container(keyedBy: CodingKeys.self)
 
             self.allowedToCreateChannels = try container.decode(
-                ChannelsPermision.self,
+                ChannelsPermisionV0.self,
                 forKey: .allowedToCreateChannels
             )
-            self.allowedToOpenChannels = try container.decode(ChannelsPermision.self, forKey: .allowedToOpenChannels)
+            self.allowedToOpenChannels = try container.decode(ChannelsPermisionV0.self, forKey: .allowedToOpenChannels)
         }
     }
 }

@@ -20,6 +20,38 @@ package import Foundation
 package import WireCellsAPI
 import WireLogging
 
+// sourcery: AutoMockable
+package protocol WireCellsNodeUploadManagerProtocol: Sendable {
+    /// Starts file upload. Returns the new node after pre-checking.
+    func upload(
+        nodeID: UUID,
+        versionID: UUID,
+        assetPath: URL,
+        assetSize: UInt64,
+        destNodePath: String
+    ) async throws -> (node: WireCellsNode, stream: AsyncStream<WireCellsUploadStatus>)
+
+    /// Observe upload events for a specific node UUID.
+    func observeUpload(nodeID: UUID) async -> AsyncStream<WireCellsUploadStatus>?
+
+    /// Cancel an ongoing upload.
+    func cancelUpload(nodeID: UUID) async
+
+    /// Get current upload info for a node, if any.
+    func getUploadInfo(nodeID: UUID) async -> WireCellsNodeUploadInfo?
+
+    /// Check if a node is currently uploading.
+    func isUploading(nodeID: UUID) async -> Bool
+}
+
+package struct WireCellsNodeUploadInfo: Equatable, Hashable, Sendable {
+    public let progress: Float
+
+    package init(progress: Float = 0.0) {
+        self.progress = progress
+    }
+}
+
 package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtocol {
     private let fileManager: FileManager
     private let nodesAPI: any NodesAPIProtocol
@@ -124,7 +156,7 @@ package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtoc
             } catch {
                 WireLogger.wireCells.info("Failed to upload file: \(error)")
 
-                await uploads.update(node.id) { $0.withUploadFailed() }
+                await uploads.remove(node.id)
                 continuation.yield(WireCellsUploadStatus.failed(error: WireCellsUploadError(error)))
                 continuation.finish()
             }
@@ -146,23 +178,6 @@ package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtoc
 
     package func observeUpload(nodeID: UUID) async -> AsyncStream<WireCellsUploadStatus>? {
         await uploads.get(nodeID)?.stream
-    }
-
-    package func retryUpload(nodeID: UUID) async {
-        if let info = await uploads.get(nodeID) {
-            if fileManager.fileExists(atPath: info.localPath.path) == true, let assetSize = info.node.size {
-                _ = await startUpload(
-                    assetPath: info.localPath,
-                    assetSize: assetSize,
-                    node: info.node,
-                    versionID: info.versionID
-                )
-            } else {
-                await uploads.update(nodeID) { $0.withUploadFailed() }
-                info.continuation.yield(.failed(error: .fileNotFound))
-                info.continuation.finish()
-            }
-        }
     }
 
     package func cancelUpload(nodeID: UUID) async {
@@ -196,23 +211,16 @@ struct WireCellsUploadInfo {
 
     var continuation: AsyncStream<WireCellsUploadStatus>.Continuation
     var progress: Float = 0.0
-    var uploadFailed: Bool = false
 
     var stream: AsyncStream<WireCellsUploadStatus>
 
     func toUploadInfo() -> WireCellsNodeUploadInfo {
-        WireCellsNodeUploadInfo(progress: progress, uploadFailed: uploadFailed)
+        WireCellsNodeUploadInfo(progress: progress)
     }
 
     func withProgress(_ newProgress: Float) -> WireCellsUploadInfo {
         var copy = self
         copy.progress = newProgress
-        return copy
-    }
-
-    func withUploadFailed() -> WireCellsUploadInfo {
-        var copy = self
-        copy.uploadFailed = true
         return copy
     }
 }

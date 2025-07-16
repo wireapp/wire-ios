@@ -34,12 +34,17 @@ typealias UserSessionDelegate = UserSessionAppLockDelegate
 
 public typealias APIServiceFactory = @Sendable (_ clientID: String, _ userID: UUID) -> APIServiceProtocol
 
+enum ZMUserSessionError: Error {
+    case selfClientNotReady
+}
+
 @objcMembers
 public final class ZMUserSession: NSObject {
 
     // MARK: Properties
 
-    private let appVersion: String
+    private let currentAppVersion: String
+    private let currentBuildNumber: String
     private var tokens: [Any] = []
     public private(set) var isTornDown = false
 
@@ -103,7 +108,6 @@ public final class ZMUserSession: NSObject {
     let conversationEventProcessor: ConversationEventProcessor
 
     var syncAgent: SyncAgent?
-    private(set) var clientSessionComponent: ClientSessionComponent?
 
     public var hasCompletedInitialSync: Bool = false
 
@@ -363,10 +367,12 @@ public final class ZMUserSession: NSObject {
     public lazy var changeUsername: ChangeUsernameUseCaseProtocol =
         ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
 
-    private lazy var  mlsClientManager = MLSClientManager(
+    private lazy var mlsClientManager = MLSClientManager(
         coreCryptoProvider: coreCryptoProvider,
         mlsService: mlsService
     )
+
+    let logFilesProvider: LogFilesProviding
 
     // MARK: Dependency Injection
 
@@ -383,6 +389,7 @@ public final class ZMUserSession: NSObject {
     var callStateObserverToken: AnyObject?
 
     private let userSessionComponent: UserSessionComponent
+    private(set) var clientSessionComponent: ClientSessionComponent?
 
     // MARK: - Initialize
 
@@ -393,7 +400,8 @@ public final class ZMUserSession: NSObject {
         flowManager: any FlowManagerType,
         apiServiceFactory: @escaping @Sendable (_ clientID: String, _ userID: UUID) -> APIServiceProtocol,
         application: ZMApplication,
-        appVersion: String,
+        currentAppVersion: String,
+        currentBuildNumber: String,
         coreDataStack: CoreDataStack,
         earService: any EARServiceInterface,
         mlsService: any MLSServiceInterface,
@@ -412,11 +420,13 @@ public final class ZMUserSession: NSObject {
         backendEnvironment: WireNetwork.BackendEnvironment,
         minTLSVersion: WireNetwork.TLSVersion,
         apiVersion: WireNetwork.APIVersion,
-        journal: Journal
+        journal: Journal,
+        logFilesProvider: LogFilesProviding
     ) {
         self.apiServiceFactory = apiServiceFactory
         self.application = application
-        self.appVersion = appVersion
+        self.currentAppVersion = currentAppVersion
+        self.currentBuildNumber = currentBuildNumber
         self.flowManager = flowManager
         self.mediaManager = mediaManager
         self.coreDataStack = coreDataStack
@@ -463,7 +473,10 @@ public final class ZMUserSession: NSObject {
             coreCryptoProvider: coreCryptoProvider
         )
         self.journal = journal
+        self.logFilesProvider = logFilesProvider
+
         super.init()
+
     }
 
     func trackAppOpenAnalyticEventWhenAppBecomesActive() {
@@ -607,11 +620,11 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-    public func migrateToConsumableNotificationsIfNeeded() async {
+    public func migrateToConsumableNotificationsIfNeeded() async throws {
+        guard DeveloperFlag.consumableNotifications.isOn else { return }
         guard !journal[.isConsumableNotificationsEnabled] else { return }
         guard let migrator = clientSessionComponent?.consumableNotificationsMigrator() else {
-            WireLogger.sync.warn("No consumable-notifications migrator available")
-            return
+            throw ZMUserSessionError.selfClientNotReady
         }
         do {
             try await migrator.migrate()
@@ -619,22 +632,6 @@ public final class ZMUserSession: NSObject {
             // ignore error
         } catch {
             WireLogger.session.error("Failed to migrate to consumable-notifications: \(String(describing: error))")
-        }
-    }
-
-    /// Executes specific or regular sync after db migration
-    public func triggerSync() async {
-        let (initialSync, resoucesSync) = await syncContext.perform { (
-            self.syncContext.readMigrationNeedsSlowSyncFlag(),
-            self.syncContext.readMigrationNeedsSyncResourcesFlag()
-        ) }
-
-        if initialSync || journal[.isInitialSyncRequired] {
-            await triggerInitialSync()
-        } else if resoucesSync {
-            await triggerResourcesSync()
-        } else {
-            syncAgent?.resume()
         }
     }
 
@@ -669,6 +666,16 @@ public final class ZMUserSession: NSObject {
     }
 
     // MARK: - Methods
+
+    public func makeAppVersionMigrationService() -> AppVersionMigrationService {
+        let allMigrations = makeAppVersionMigrations()
+
+        return AppVersionMigrationService(
+            journal: journal,
+            currentVersion: SemanticVersion(stringLiteral: currentAppVersion),
+            allMigrations: allMigrations
+        )
+    }
 
     private func configureTransportSession() {
         transportSession.pushChannel.clientID = selfUserClient?.remoteIdentifier
@@ -853,6 +860,25 @@ public final class ZMUserSession: NSObject {
     }
 
     // MARK: - Trigger syncing
+
+    /// Executes specific or regular sync after db migration
+    func triggerSync() async {
+        let (initialSync, resourcesSync) = await syncContext.perform { (
+            self.syncContext.readMigrationNeedsSlowSyncFlag(),
+            self.syncContext.readMigrationNeedsSyncResourcesFlag()
+        ) }
+
+        if initialSync || journal[.isInitialSyncRequired] {
+            await triggerInitialSync()
+        } else if resourcesSync {
+            await triggerResourcesSync()
+        } else if journal[.isConversationSyncRequired] {
+            let sync = clientSessionComponent?.pullAllConversationsSync
+            try? await sync?.pull()
+        } else {
+            syncAgent?.resume()
+        }
+    }
 
     public func triggerInitialSync() async {
         do {
@@ -1407,7 +1433,10 @@ extension ZMUserSession: ZMClientRegistrationStatusDelegate {
                 // activate new sync with consumable notifications
                 journal[.isConsumableNotificationsEnabled] = true
             }
+            // this is a fresh client so we need an initialSync
+            journal[.isInitialSyncRequired] = true
             Task {
+                WireLogger.sync.debug("Triggering initial sync after client registration")
                 await triggerSync()
             }
         }
@@ -1578,4 +1607,15 @@ extension ZMUserSession {
         }
 
     }
+}
+
+extension ZMUserSession {
+
+    private func makeAppVersionMigrations() -> [any AppVersionMigration] {
+        [
+            AppVersionMigration_4_1_1(journal: journal, logFilesProvider: logFilesProvider),
+            AppVersionMigration_4_2_0(lastEventIDRepository: lastEventIDRepository, journal: journal)
+        ]
+    }
+
 }

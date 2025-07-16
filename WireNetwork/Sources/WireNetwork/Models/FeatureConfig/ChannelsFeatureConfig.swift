@@ -18,7 +18,7 @@
 
 /// A configuration for the *Channels* feature.
 
-public struct ChannelsFeatureConfig: Codable, Equatable, Sendable {
+public struct ChannelsFeatureConfig: Equatable, Sendable {
 
     /// The feature's status.
 
@@ -43,12 +43,30 @@ public struct ChannelsFeatureConfig: Codable, Equatable, Sendable {
     }
 }
 
-public enum ChannelsPermision: String, Codable, Sendable {
+public enum ChannelsPermision: Sendable {
 
     /// Member, Admin, Owner
-    case teamMembers = "team-members"
+    case teamMembers
     /// Partner (a.k.a. external), Member, Admin, Owner
     case everyone
     /// Admin, Owner
     case admins
+}
+
+enum ChannelsPermisionV0: String, Sendable, Decodable, ToAPIModelConvertible {
+
+    case teamMembers = "team-members"
+    case everyone
+    case admins
+
+    func toAPIModel() -> ChannelsPermision {
+        switch self {
+        case .teamMembers:
+            .teamMembers
+        case .everyone:
+            .everyone
+        case .admins:
+            .admins
+        }
+    }
 }

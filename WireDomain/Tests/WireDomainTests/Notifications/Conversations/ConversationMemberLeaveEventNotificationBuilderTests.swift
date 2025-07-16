@@ -211,7 +211,7 @@ final class ConversationMemberLeaveEventNotificationBuilderTests: XCTestCase {
         // Thread ID
         XCTAssertEqual(
             notificationContent.threadIdentifier,
-            Scaffolding.conversationID.uuid.uuidString.lowercased()
+            Scaffolding.conversationID.id.uuidString.lowercased()
         )
 
         // User info
@@ -249,15 +249,15 @@ final class ConversationMemberLeaveEventNotificationBuilderTests: XCTestCase {
         static let senderName = "User1"
         static let conversationName = "Conversation1"
         static let teamName = "Team1"
-        static let conversationID = WireNetwork.QualifiedID(uuid: .mockID2, domain: "domain.com")
-        static let userID = UserID(uuid: .mockID3, domain: "domain.com")
+        static let conversationID = WireNetwork.QualifiedID(id: .mockID2, domain: "domain.com")
+        static let userID = UserID(id: .mockID3, domain: "domain.com")
         static let selfUserID = UUID.mockID1
 
         static let selfUserRemovedEvent = ConversationMemberLeaveEvent(
             conversationID: conversationID,
             senderID: userID, // self user was removed, notification will be processed
             timestamp: .now,
-            removedUserIDs: [.init(uuid: selfUserID, domain: "")],
+            removedUserIDs: [.init(id: selfUserID, domain: "")],
             reason: .userRemoved
         )
 
@@ -265,7 +265,7 @@ final class ConversationMemberLeaveEventNotificationBuilderTests: XCTestCase {
             conversationID: conversationID,
             senderID: userID, // self user was not removed, notification will NOT be processed
             timestamp: .now,
-            removedUserIDs: [.init(uuid: .mockID4, domain: "")],
+            removedUserIDs: [.init(id: .mockID4, domain: "")],
             reason: .userRemoved
         )
     }

@@ -122,19 +122,19 @@ final class UserConnectionEventProcessorTests: XCTestCase {
     private enum Scaffolding {
         static let username = "username"
         static let receiverQualifiedID = WireNetwork.QualifiedID(
-            uuid: UUID(),
+            id: UUID(),
             domain: "domain.com"
         )
         static let acceptedConnection = Connection(
             senderID: UUID(),
             receiverID: UUID(),
             receiverQualifiedID: WireNetwork.QualifiedID(
-                uuid: UUID(),
+                id: UUID(),
                 domain: "domain.com"
             ),
             conversationID: UUID(),
             qualifiedConversationID: WireNetwork.QualifiedID(
-                uuid: UUID(),
+                id: UUID(),
                 domain: "domain.com"
             ),
             lastUpdate: .now,
@@ -147,7 +147,7 @@ final class UserConnectionEventProcessorTests: XCTestCase {
             receiverQualifiedID: receiverQualifiedID,
             conversationID: UUID(),
             qualifiedConversationID: WireNetwork.QualifiedID(
-                uuid: UUID(),
+                id: UUID(),
                 domain: "domain.com"
             ),
             lastUpdate: .now,

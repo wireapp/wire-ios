@@ -360,7 +360,7 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
             allowGuests: values.allowGuests,
             allowServices: values.shouldIncludeServices ? values.allowServices : false
         ).compactMap {
-            WireNetwork.ConversationAccessRole(rawValue: $0.rawValue)
+            $0.toNetworkModel()
         }
 
         let conversationMessageProtocol: WireNetwork.ConversationMessageProtocol = switch values.encryptionProtocol {
@@ -605,5 +605,20 @@ extension ConversationCreationController {
         ]
 
         return alert
+    }
+}
+
+extension ConversationAccessRoleV2 {
+    func toNetworkModel() -> WireNetwork.ConversationAccessRole {
+        switch self {
+        case .teamMember:
+            .teamMember
+        case .nonTeamMember:
+            .nonTeamMember
+        case .guest:
+            .guest
+        case .service:
+            .service
+        }
     }
 }

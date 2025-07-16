@@ -20,7 +20,7 @@ public import Foundation
 
 /// Client device for a self user.
 
-public struct SelfUserClient: Equatable, Identifiable, Codable, Sendable {
+public struct SelfUserClient: Equatable, Identifiable, Sendable {
 
     /// The unique id of the client.
 

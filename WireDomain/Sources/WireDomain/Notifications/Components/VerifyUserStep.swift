@@ -80,21 +80,34 @@ final class VerifyUserStep: Component<VerifyUserDependency>, VerifyUserStepProto
             throw Failure.missingSelfClientID
         }
 
-        try await pullEventsStep(
-            selfUserID: selfUser.id,
-            selfClientID: selfClientID
-        ).pullEvents()
+        if journal[.isConsumableNotificationsEnabled] {
+            try await syncEventsStep(
+                selfClientID: selfClientID
+            ).pullEvents()
+
+        } else {
+            try await pullEventsStep(
+                selfClientID: selfClientID
+            ).pullEvents()
+        }
     }
 
     // MARK: - Children
 
     func pullEventsStep(
-        selfUserID: UUID,
         selfClientID: String
     ) -> PullEventsStep {
         PullEventsStep(
             parent: self,
-            selfUserID: selfUserID,
+            selfClientID: selfClientID
+        )
+    }
+
+    func syncEventsStep(
+        selfClientID: String
+    ) -> SyncEventsStep {
+        SyncEventsStep(
+            parent: self,
             selfClientID: selfClientID
         )
     }

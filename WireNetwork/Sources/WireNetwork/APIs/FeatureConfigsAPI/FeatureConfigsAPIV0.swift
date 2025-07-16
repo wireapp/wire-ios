@@ -101,26 +101,26 @@ struct FeatureConfigsResponseAPIV0: Decodable, ToAPIModelConvertible {
         featureConfigs.append(.classifiedDomains(classifiedDomainsConfig))
 
         let conferenceCallingConfig = ConferenceCallingFeatureConfig(
-            status: conferenceCalling.status,
+            status: conferenceCalling.status.toAPIModel(),
             useSFTForOneToOneCalls: false
         )
 
         featureConfigs.append(.conferenceCalling(conferenceCallingConfig))
 
         let conversationGuestLinksConfig = ConversationGuestLinksFeatureConfig(
-            status: conversationGuestLinks.status
+            status: conversationGuestLinks.status.toAPIModel()
         )
 
         featureConfigs.append(.conversationGuestLinks(conversationGuestLinksConfig))
 
         let digitalSignaturesConfig = DigitalSignatureFeatureConfig(
-            status: digitalSignatures.status
+            status: digitalSignatures.status.toAPIModel()
         )
 
         featureConfigs.append(.digitalSignature(digitalSignaturesConfig))
 
         let fileSharingConfig = FileSharingFeatureConfig(
-            status: fileSharing.status
+            status: fileSharing.status.toAPIModel()
         )
 
         featureConfigs.append(.fileSharing(fileSharingConfig))
@@ -137,7 +137,7 @@ extension FeatureWithConfig<FeatureConfigResponse.AppLockV0>: ToAPIModelConverti
 
     func toAPIModel() -> AppLockFeatureConfig {
         AppLockFeatureConfig(
-            status: status,
+            status: status.toAPIModel(),
             isMandatory: config.enforceAppLock,
             inactivityTimeoutInSeconds: config.inactivityTimeoutSecs
         )
@@ -149,7 +149,7 @@ extension FeatureWithConfig<FeatureConfigResponse.ClassifiedDomainsV0> {
 
     func toAPIModel() -> ClassifiedDomainsFeatureConfig {
         ClassifiedDomainsFeatureConfig(
-            status: status,
+            status: status.toAPIModel(),
             domains: config.domains
         )
     }
@@ -160,7 +160,7 @@ extension FeatureWithConfig<FeatureConfigResponse.SelfDeletingMessagesV0> {
 
     func toAPIModel() -> SelfDeletingMessagesFeatureConfig {
         SelfDeletingMessagesFeatureConfig(
-            status: status,
+            status: status.toAPIModel(),
             enforcedTimeoutSeconds: config.enforcedTimeoutSeconds
         )
     }

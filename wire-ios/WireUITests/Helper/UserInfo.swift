@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+
 class UserInfo {
 
     var name: String
@@ -25,8 +27,10 @@ class UserInfo {
     var password: String
     var id: String
     var backendDomain: String
+    var teamName: String
+    var teamID: UUID?
 
-    init(name: String, username: String, password: String, domain: String) {
+    init(name: String, username: String, password: String, domain: String, teamName: String, teamID: UUID?) {
         self.name = name
         self.username = username
         self.password = password
@@ -34,6 +38,8 @@ class UserInfo {
         self.email = username + "@" + domain
         self.id = ""
         self.backendDomain = ""
+        self.teamName = teamName
+        self.teamID = teamID
     }
 
     init(email: String, password: String) {
@@ -44,6 +50,7 @@ class UserInfo {
         self.email = email
         self.id = ""
         self.backendDomain = ""
+        self.teamName = ""
     }
 
     init() {
@@ -54,6 +61,8 @@ class UserInfo {
         self.email = ""
         self.id = ""
         self.backendDomain = ""
+        self.teamName = ""
+        self.teamID = nil
     }
 
     func updateUserInfo(newInfo: UserInfo) {

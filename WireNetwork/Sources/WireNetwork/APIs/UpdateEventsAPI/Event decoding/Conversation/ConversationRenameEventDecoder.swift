@@ -24,12 +24,12 @@ struct ConversationRenameEventDecoder {
         from container: KeyedDecodingContainer<ConversationEventCodingKeys>
     ) throws -> ConversationRenameEvent {
         let conversationID = try container.decode(
-            ConversationID.self,
+            QualifiedIDV0.self,
             forKey: .conversationQualifiedID
         )
 
         let senderID = try container.decode(
-            UserID.self,
+            QualifiedIDV0.self,
             forKey: .senderQualifiedID
         )
 
@@ -44,8 +44,8 @@ struct ConversationRenameEventDecoder {
         )
 
         return ConversationRenameEvent(
-            conversationID: conversationID,
-            senderID: senderID,
+            conversationID: conversationID.toAPIModel(),
+            senderID: senderID.toAPIModel(),
             timestamp: timestamp.date,
             newName: payload.name
         )
