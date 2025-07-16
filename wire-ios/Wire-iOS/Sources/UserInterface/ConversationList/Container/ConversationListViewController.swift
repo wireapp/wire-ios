@@ -25,6 +25,7 @@ import WireDesign
 import WireMainNavigationUI
 import WireReusableUIComponents
 import WireSyncEngine
+import WireUtilities
 
 final class ConversationListViewController: UIViewController {
 
@@ -41,6 +42,7 @@ final class ConversationListViewController: UIViewController {
 
     private var viewDidAppearCalled = false
     private static let contentControllerBottomInset: CGFloat = 16
+    private var userDefaultsObserverToken: SelfUnregisteringNotificationCenterToken?
 
     private lazy var filterContainerView = UIView()
 
@@ -293,7 +295,7 @@ final class ConversationListViewController: UIViewController {
         viewModel.setupObservers()
 
         // Observe developer flag changes for unread filters
-        NotificationCenter.default.addObserver(
+        let token = NotificationCenter.default.addObserver(
             forName: UserDefaults.didChangeNotification,
             object: nil,
             queue: .main
@@ -301,6 +303,7 @@ final class ConversationListViewController: UIViewController {
             // Update navigation bar to reflect filter visibility changes
             self?.updateNavigationItem()
         }
+        userDefaultsObserverToken = SelfUnregisteringNotificationCenterToken(token)
     }
 
     /// Sets up a vertical stack view containing all subviews

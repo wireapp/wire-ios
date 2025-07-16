@@ -179,6 +179,11 @@ public final class MainSplitViewController<Sidebar, TabController>: UISplitViewC
     }
 
     private func setConversationUI(_ conversationUI: ConversationUI?, animated: Bool) {
+        // Before replacing the conversation, ensure the current one saves its draft
+        if let currentConversation = _conversationUI {
+            currentConversation.view.endEditing(true)
+        }
+        
         _conversationUI = conversationUI
 
         let viewControllers = [conversationUI ?? noConversationPlaceholder].compactMap(\.self)
