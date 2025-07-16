@@ -18,13 +18,14 @@
 
 public import SwiftUI
 import WireDesign
-import WireReusableUIComponents
 import WireMessagingAPI
+import WireReusableUIComponents
 
 public struct WireConversationChannelCreationForm: View {
     public typealias ViewModel = WireConversationChannelCreationFormViewModel
 
     @State private var channelName: String
+    @Environment(\.openURL) var openURL
     @ObservedObject private var viewModel: WireConversationChannelCreationFormViewModel
 
     public init(
@@ -58,9 +59,8 @@ public struct WireConversationChannelCreationForm: View {
                             configuration: .init(
                                 title: L10n.Localizable.Conversation.ChannelHistory.UpgradeBanner.title,
                                 message: L10n.Localizable.Conversation.ChannelHistory.UpgradeBanner.message,
-                                buttonTitle: L10n.Localizable.Conversation.ChannelHistory.UpgradeBanner.button,
-                                buttonURL: viewModel.teamsURL,
-                                padding: 30,
+                                mainButtonTitle: L10n.Localizable.Conversation.ChannelHistory.UpgradeBanner.button,
+                                mainButtonAction: { openURL(viewModel.teamsURL) },
                                 closeButton: .init(
                                     accessibilityLabel: "close",
                                     action: { viewModel.hideUpgradeBanner() }
