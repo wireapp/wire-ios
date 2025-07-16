@@ -62,13 +62,13 @@ private struct PaginatedConversationIDsV1: Decodable, ToAPIModelConvertible {
         case hasMore = "has_more"
     }
 
-    let conversationIDs: [QualifiedID]
+    let conversationIDs: [QualifiedIDV0]
     let pagingState: String
     let hasMore: Bool
 
     func toAPIModel() -> PayloadPager<[QualifiedID]>.Page {
         PayloadPager<[QualifiedID]>.Page(
-            element: conversationIDs,
+            element: conversationIDs.map { $0.toAPIModel() },
             hasMore: hasMore,
             nextStart: pagingState
         )

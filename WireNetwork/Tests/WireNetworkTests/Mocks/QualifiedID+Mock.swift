@@ -20,7 +20,7 @@ import WireNetwork
 
 extension QualifiedID {
 
-    static let mockID1 = QualifiedID(uuid: .mockID1, domain: "example.com")
-    static let mockID2 = QualifiedID(uuid: .mockID2, domain: "example.com")
-    static let mockID3 = QualifiedID(uuid: .mockID3, domain: "example.com")
+    static let mockID1 = QualifiedID(id: .mockID1, domain: "example.com")
+    static let mockID2 = QualifiedID(id: .mockID2, domain: "example.com")
+    static let mockID3 = QualifiedID(id: .mockID3, domain: "example.com")
 }

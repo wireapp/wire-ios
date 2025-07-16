@@ -26,25 +26,21 @@ final class PersonalUsersTests: WireUITestCase {
 
         let welcomePage = try WelcomePage()
 
-        let createAccountPage = try welcomePage
+        let createPersonalAccountFormPage = try welcomePage
             .enterEmailOrSSO(user.email)
             .tapCreatePersonalAccountLink()
 
-        let verificationPage = try createAccountPage
-            .tapConfirmCreateAccount()
+        let verificationPage = try createPersonalAccountFormPage
+            .enterName(user.name)
+            .enterPassword(user.password)
+            .enterConfirmPassword(user.password)
+            .tapContinueButton()
             .tapAcceptButton()
 
         let verificationCode = try await InbucketClient.getVerificationCode(email: user.email)
 
-        let setNamePage = try verificationPage
-            .enterVerificationCode(verificationCode)
-
-        let setPasswordPage = try setNamePage
-            .setName(user.name)
-
-        let setUsernamePage = try setPasswordPage
-            .setPassword(user.password)
-            .acceptPopup()
+        let setUsernamePage = try verificationPage
+            .enterVerificationCodeAndConfirm(verificationCode)
 
         let conversationsPage = try setUsernamePage
             .setUsername(user.username)
@@ -68,7 +64,7 @@ final class PersonalUsersTests: WireUITestCase {
     func test_Login_asExistingPersonalUser() async throws {
         let user = try await userManager.createPersonalUser()
 
-        let welcomePage = try WelcomePage()
+        _ = try WelcomePage()
             .enterEmailOrSSO(user.email)
             .enterPassword(user.password)
             .acceptFirstTimeAlert()

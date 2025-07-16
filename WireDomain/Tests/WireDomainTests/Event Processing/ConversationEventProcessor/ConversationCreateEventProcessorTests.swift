@@ -59,13 +59,13 @@ final class ConversationCreateEventProcessorTests: XCTestCase {
 
     private enum Scaffolding {
 
-        static let conversationID = ConversationID(uuid: UUID(), domain: "domain.com")
+        static let conversationID = ConversationID(id: UUID(), domain: "domain.com")
 
-        static let senderID = UserID(uuid: UUID(), domain: "domain.com")
+        static let senderID = UserID(id: UUID(), domain: "domain.com")
 
         static let conversation = WireNetwork.Conversation(
             id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ad")!,
-            qualifiedID: .init(uuid: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ad")!, domain: "example.com"),
+            qualifiedID: .init(id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ad")!, domain: "example.com"),
             teamID: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ad")!,
             type: .group,
             messageProtocol: .proteus,

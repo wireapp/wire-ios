@@ -579,7 +579,7 @@ extension AddParticipantsViewController: EmptySearchResultsViewDelegate {
     func execute(action: EmptySearchResultsViewAction, from: EmptySearchResultsView) {
         switch action {
         case .openManageServices:
-            URL.manageTeam(source: .onboarding).openInApp(above: self)
+            URL.manageTeam(source: .onboarding).open(from: self)
         case .openSearchSupportPage:
             WireURLs.shared.searchSupport.open()
         }

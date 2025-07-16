@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireConversationsAPI
-import WireConversationsImplementation
 import WireDomain
+import WireMessagingAPI
+import WireMessagingImplementation
 import WireNetwork
 import WireSyncEngine
 import WireTransport
@@ -40,8 +40,8 @@ class ChannelAccessRepository: ChannelAccessRepositoryProtocol {
     }
 
     func updateParticipantPermission(
-        to permission: WireConversationsAPI.ChannelAccessLevelPermission
-    ) async throws -> WireConversationsAPI.ChannelAccessLevelPermission {
+        to permission: WireMessagingAPI.ChannelAccessLevelPermission
+    ) async throws -> WireMessagingAPI.ChannelAccessLevelPermission {
 
         guard let backendInfoApiVersion = BackendInfo.apiVersion,
               let apiVersion = WireNetwork.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
@@ -63,7 +63,7 @@ class ChannelAccessRepository: ChannelAccessRepositoryProtocol {
     }
 }
 
-extension WireConversationsAPI.ChannelAccessLevelPermission {
+extension WireMessagingAPI.ChannelAccessLevelPermission {
     func toNetworkPermission() -> WireNetwork.ChannelPermission {
         switch self {
         case .admins:
@@ -75,7 +75,7 @@ extension WireConversationsAPI.ChannelAccessLevelPermission {
 }
 
 extension WireNetwork.ChannelPermission {
-    func toDomain() -> WireConversationsAPI.ChannelAccessLevelPermission {
+    func toDomain() -> WireMessagingAPI.ChannelAccessLevelPermission {
         switch self {
         case .admins:
             .admins

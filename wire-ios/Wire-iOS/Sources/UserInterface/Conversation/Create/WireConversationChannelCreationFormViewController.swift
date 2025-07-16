@@ -18,10 +18,10 @@
 
 import SwiftUI
 import UIKit
-import WireConversationsAPI
-import WireConversationsUI
 import WireDomain
 import WireLogging
+import WireMessagingAPI
+import WireMessagingUI
 import WireNetwork
 import WireReusableUIComponents
 import WireSyncEngine
@@ -244,7 +244,7 @@ extension WireConversationChannelCreationFormViewController: AddParticipantsConv
             allowGuests: values.allowGuests,
             allowServices: values.shouldIncludeServices ? values.allowServices : false
         ).compactMap {
-            WireNetwork.ConversationAccessRole(rawValue: $0.rawValue)
+            $0.toNetworkModel()
         }
 
         let channelHistoryDepth = values.channelHistoryDepth

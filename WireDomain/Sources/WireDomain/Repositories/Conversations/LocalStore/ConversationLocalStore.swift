@@ -360,14 +360,16 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     public func obtainPermanentIDs(
         user: ZMUser,
         conversation: ZMConversation
-    ) {
-        if user.objectID.isTemporaryID || conversation.objectID.isTemporaryID {
-            do {
-                try context.obtainPermanentIDs(for: [user, conversation])
-            } catch {
-                WireLogger.eventProcessing.error(
-                    "Failed to obtain permanent object ids: \(error.localizedDescription)"
-                )
+    ) async {
+        await context.perform { [context] in
+            if user.objectID.isTemporaryID || conversation.objectID.isTemporaryID {
+                do {
+                    try context.obtainPermanentIDs(for: [user, conversation])
+                } catch {
+                    WireLogger.eventProcessing.error(
+                        "Failed to obtain permanent object ids: \(error.localizedDescription)"
+                    )
+                }
             }
         }
     }
@@ -1082,13 +1084,13 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
         await context.perform { [self] in
             if isInitialFetch {
-                /// we just got a new conversation, we display new conversation header
+                // we just got a new conversation, we display new conversation header
                 localConversation.appendNewConversationSystemMessage(
                     at: .distantPast,
                     users: localConversation.localParticipants
                 )
 
-                /// Slow synced conversations should be considered read from the start
+                // Slow synced conversations should be considered read from the start
                 localConversation.lastReadServerTimeStamp = localConversation.lastModifiedDate
 
                 Flow.createGroup.checkpoint(
@@ -1096,9 +1098,12 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                 )
             }
 
-            /// If we discover this group is actually a fake one on one,
-            /// then we should link the one on one user.
+            // If we discover this group is actually a fake one on one,
+            // then we should link the one on one user.
             linkOneOnOneUserIfNeeded(for: localConversation)
+
+            // All metadata has been updated, object does not need to be updated from backend
+            localConversation.needsToBeUpdatedFromBackend = false
         }
     }
 

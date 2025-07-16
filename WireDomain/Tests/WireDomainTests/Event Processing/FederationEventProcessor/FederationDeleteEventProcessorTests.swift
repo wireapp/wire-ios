@@ -56,7 +56,7 @@ final class FederationDeleteEventProcessorTests: XCTestCase {
 
         try await context.perform { [self] in
 
-            let conversation = makeGroupConversation()
+            _ = makeGroupConversation()
             let otherUser = try XCTUnwrap(ZMUser.fetch(
                 with: Scaffolding.otherUserID,
                 in: context
@@ -69,7 +69,7 @@ final class FederationDeleteEventProcessorTests: XCTestCase {
 
         // When
 
-        try await sut.processEvent(Scaffolding.event)
+        await sut.processEvent(Scaffolding.event)
 
         // Then
 
@@ -107,7 +107,7 @@ final class FederationDeleteEventProcessorTests: XCTestCase {
 
         // When
 
-        try await sut.processEvent(Scaffolding.event)
+        await sut.processEvent(Scaffolding.event)
 
         // Then
 
@@ -142,7 +142,7 @@ final class FederationDeleteEventProcessorTests: XCTestCase {
 
         // When
 
-        try await sut.processEvent(Scaffolding.event)
+        await sut.processEvent(Scaffolding.event)
 
         // Then
 
@@ -175,7 +175,7 @@ final class FederationDeleteEventProcessorTests: XCTestCase {
 
         // When
 
-        try await sut.processEvent(Scaffolding.event)
+        await sut.processEvent(Scaffolding.event)
 
         // Then
 
@@ -213,7 +213,7 @@ final class FederationDeleteEventProcessorTests: XCTestCase {
 
         // When
 
-        try await sut.processEvent(Scaffolding.event)
+        await sut.processEvent(Scaffolding.event)
 
         // Then
 
@@ -276,7 +276,7 @@ final class FederationDeleteEventProcessorTests: XCTestCase {
 
         // When
 
-        try await sut.processEvent(Scaffolding.event)
+        await sut.processEvent(Scaffolding.event)
 
         // Then
 
@@ -347,7 +347,7 @@ final class FederationDeleteEventProcessorTests: XCTestCase {
 
         // When
 
-        try await sut.processEvent(Scaffolding.event)
+        await sut.processEvent(Scaffolding.event)
 
         // Then
 

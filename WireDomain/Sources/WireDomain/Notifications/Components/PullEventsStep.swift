@@ -44,15 +44,16 @@ final class PullEventsStep: Component<PullEventsDependency>, PullEventsStepProto
         case apiVersionNotFound
     }
 
-    private var selfUserID: UUID
+    private var selfUserID: UUID {
+        dependency.userID
+    }
+
     private var selfClientID: String
 
     init(
         parent: any Scope,
-        selfUserID: UUID,
         selfClientID: String
     ) {
-        self.selfUserID = selfUserID
         self.selfClientID = selfClientID
         super.init(parent: parent)
     }
@@ -265,6 +266,7 @@ extension PullEventsStep {
                 pinnedKeys: legacyBackendEnvironment.trustData.map { trustData in
                     PinnedKey(
                         key: trustData.certificateKey,
+                        rawKey: trustData.rawCertificateKey,
                         hosts: trustData.hosts.map { host in
                             switch host.rule {
                             case .equals:

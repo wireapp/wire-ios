@@ -41,7 +41,7 @@ final class ResponseParserTests: XCTestCase {
 
         // given
         let code = HTTPStatusCode.badRequest
-        let data = try JSONEncoder().encode(FailureResponse(code: code.rawValue, label: "b", message: "message"))
+        let data = try JSONEncoder().encode(FailureResponseV0(code: code.rawValue, label: "b", message: "message"))
 
         // when
         XCTAssertThrowsError(

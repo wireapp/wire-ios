@@ -22,6 +22,7 @@ import WireFoundation
 import WireLogging
 import WireNetwork
 
+// TODO: [WPB-12140] Delete after multibackend support
 package final class NetworkStack {
 
     package let backendInfo: BackendInfo
@@ -178,6 +179,8 @@ private extension APIVersion {
             self = .v7
         case .v8:
             self = .v8
+        case .v9:
+            self = .v9
         }
     }
 
@@ -187,7 +190,7 @@ private extension PinnedKey {
 
     init(_ trustData: TrustData) throws {
         try self.init(
-            key: trustData.certificateKey,
+            rawKey: trustData.certificateKey,
             hosts: trustData.hosts.map { host in
                 switch host.rule {
                 case .equals:

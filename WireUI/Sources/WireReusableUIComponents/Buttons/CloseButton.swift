@@ -25,16 +25,6 @@ public struct CloseButton: View {
     private let accessibilityLabel: String
     private let foregroundColor: UIColor
 
-    public var body: some View {
-        Button(action: action) {
-            Image(.close)
-        }
-        .buttonStyle(.plain)
-        .foregroundColor(Color(uiColor: foregroundColor))
-        .accessibilityLabel(Text(accessibilityLabel))
-        .accessibilityIdentifier("close")
-    }
-
     public init(
         action: @escaping @MainActor () -> Void,
         foregroundColor: UIColor = SemanticColors.Icon.foregroundDefaultBlack,
@@ -45,6 +35,15 @@ public struct CloseButton: View {
         self.accessibilityLabel = accessibilityLabel
     }
 
+    public var body: some View {
+        Button(action: action) {
+            Image(.close)
+        }
+        .buttonStyle(.plain)
+        .foregroundColor(Color(uiColor: foregroundColor))
+        .accessibilityLabel(Text(accessibilityLabel))
+        .accessibilityIdentifier("close")
+    }
 }
 
 #Preview {

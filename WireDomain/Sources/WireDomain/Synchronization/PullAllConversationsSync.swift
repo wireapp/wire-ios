@@ -19,29 +19,32 @@
 import Foundation
 import WireNetwork
 
-struct PullAllConversationsSync: PullAllConversationsSyncProtocol {
+public final class PullAllConversationsSync: PullAllConversationsSyncProtocol {
 
     private let localDomain: String
     private let isFederationEnabled: Bool
     private let isMLSEnabled: Bool
     private let api: any ConversationsAPI
     private let store: any ConversationLocalStoreProtocol
+    private var journal: any JournalProtocol
 
-    init(
+    public init(
         localDomain: String,
         isFederationEnabled: Bool,
         isMLSEnabled: Bool,
         api: any ConversationsAPI,
-        store: any ConversationLocalStoreProtocol
+        store: any ConversationLocalStoreProtocol,
+        journal: any JournalProtocol
     ) {
         self.localDomain = localDomain
         self.isFederationEnabled = isFederationEnabled
         self.isMLSEnabled = isMLSEnabled
         self.api = api
         self.store = store
+        self.journal = journal
     }
 
-    func pull() async throws {
+    public func pull() async throws {
         var conversationIDs = [QualifiedID]()
         do {
             for try await ids in try await api.getConversationIdentifiers() {
@@ -51,7 +54,7 @@ struct PullAllConversationsSync: PullAllConversationsSyncProtocol {
             // Fallback
             for try await ids in try await api.getLegacyConversationIdentifiers() {
                 conversationIDs.append(contentsOf: ids.map {
-                    .init(uuid: $0, domain: localDomain)
+                    .init(id: $0, domain: localDomain)
                 })
             }
         }
@@ -70,17 +73,19 @@ struct PullAllConversationsSync: PullAllConversationsSyncProtocol {
         for id in conversations.notFound {
             await store.storeConversation(
                 needsBackendUpdate: true,
-                conversationID: id.uuid,
+                conversationID: id.id,
                 conversationDomain: id.domain
             )
         }
 
         for id in conversations.failed {
             await store.storeFailedConversation(
-                conversationID: id.uuid,
+                conversationID: id.id,
                 conversationDomain: id.domain
             )
         }
+
+        journal[.isConversationSyncRequired] = false
     }
 
 }

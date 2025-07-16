@@ -70,26 +70,27 @@ final class ConversationMemberJoinEventProcessorTests: XCTestCase {
     func testProcessEvent_It_Adds_Participants_To_Conversation() async throws {
         // Mock
 
-        let (conversation, sender, addedUser, role) = await context.perform { [self] in
-            let conversation = modelHelper.createGroupConversation(
-                id: Scaffolding.conversationID.uuid,
+        await context.perform { [self] in
+            // conversation
+            modelHelper.createGroupConversation(
+                id: Scaffolding.conversationID.id,
                 domain: Scaffolding.conversationID.domain,
                 in: context
             )
 
-            let sender = modelHelper.createUser(
+            // sender
+            modelHelper.createUser(
                 qualifiedID: Scaffolding.senderID.toDomainModel(),
                 in: context
             )
 
-            let addedUser = modelHelper.createUser(
+            // addedUser
+            modelHelper.createUser(
                 qualifiedID: Scaffolding.memberID.toDomainModel(),
                 in: context
             )
-
-            let role = modelHelper.createRole(in: context)
-
-            return (conversation, sender, addedUser, role)
+            // role
+            modelHelper.createRole(in: context)
         }
 
         conversationRepository
@@ -109,13 +110,13 @@ final class ConversationMemberJoinEventProcessorTests: XCTestCase {
 
     private enum Scaffolding {
         static let domain = "domain.com"
-        static let conversationID = ConversationID(uuid: UUID(), domain: domain)
-        static let memberID = WireNetwork.QualifiedID(uuid: UUID(), domain: domain)
-        static let senderID = UserID(uuid: UUID(), domain: domain)
+        static let conversationID = ConversationID(id: UUID(), domain: domain)
+        static let memberID = WireNetwork.QualifiedID(id: UUID(), domain: domain)
+        static let senderID = UserID(id: UUID(), domain: domain)
 
         static let member = Conversation.Member(
             qualifiedID: memberID,
-            id: memberID.uuid,
+            id: memberID.id,
             qualifiedTarget: nil,
             target: nil,
             conversationRole: ZMConversation.defaultMemberRoleName,

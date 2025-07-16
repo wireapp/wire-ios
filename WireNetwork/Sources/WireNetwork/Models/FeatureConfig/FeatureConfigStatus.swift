@@ -27,9 +27,24 @@ import Foundation
 /// In other cases, `enabled` may mean that the feature
 /// is turned on, because it is always available.
 
-public enum FeatureConfigStatus: String, Codable, Sendable {
+public enum FeatureConfigStatus: Sendable {
 
     case enabled
     case disabled
 
+}
+
+enum FeatureConfigStatusV0: String, Sendable, Decodable, ToAPIModelConvertible {
+
+    case enabled
+    case disabled
+
+    func toAPIModel() -> FeatureConfigStatus {
+        switch self {
+        case .enabled:
+            .enabled
+        case .disabled:
+            .disabled
+        }
+    }
 }

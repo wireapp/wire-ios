@@ -81,7 +81,7 @@ final class UserClientRemoveEventProcessorTests: XCTestCase {
         // Mock
 
         await context.perform { [self] in
-            modelHelper.createSelfClient(
+            _ = modelHelper.createSelfClient(
                 id: Scaffolding.selfClientID,
                 in: context
             )
@@ -103,7 +103,7 @@ final class UserClientRemoveEventProcessorTests: XCTestCase {
         // Mock
 
         await context.perform { [self] in
-            modelHelper.createSelfClient(
+            _ = modelHelper.createSelfClient(
                 id: Scaffolding.selfClientID,
                 in: context
             )

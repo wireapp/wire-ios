@@ -31,15 +31,15 @@ struct UserClientAddEventDecoder {
         return UserClientAddEvent(
             client: SelfUserClient(
                 id: payload.id,
-                type: payload.type,
+                type: payload.type.toAPIModel(),
                 activationDate: payload.activationDate?.date,
                 label: payload.label,
                 model: payload.model,
-                deviceClass: payload.deviceClass,
+                deviceClass: payload.deviceClass?.toAPIModel(),
                 lastActiveDate: payload.lastActiveDate?.date,
-                mlsPublicKeys: payload.mlsPublicKeys,
+                mlsPublicKeys: payload.mlsPublicKeys?.toAPIModel(),
                 cookie: payload.cookie,
-                capabilities: payload.capabilities?.capabilities ?? []
+                capabilities: payload.capabilities?.capabilities.map { $0.toAPIModel() } ?? []
             )
         )
     }
@@ -47,13 +47,13 @@ struct UserClientAddEventDecoder {
     private struct Payload: Decodable {
 
         let id: String
-        let type: UserClientType
+        let type: UserClientTypeV0
         let activationDate: UTCTime?
         let label: String?
         let model: String?
-        let deviceClass: DeviceClass?
+        let deviceClass: DeviceClassV0?
         let lastActiveDate: UTCTime?
-        let mlsPublicKeys: MLSPublicKeys?
+        let mlsPublicKeys: MLSPublicKeysV0?
         let cookie: String?
         let capabilities: CapabilitiesList?
 
@@ -76,7 +76,7 @@ struct UserClientAddEventDecoder {
 
     private struct CapabilitiesList: Decodable {
 
-        let capabilities: [UserClientCapability]
+        let capabilities: [UserClientCapabilityV0]
 
     }
 

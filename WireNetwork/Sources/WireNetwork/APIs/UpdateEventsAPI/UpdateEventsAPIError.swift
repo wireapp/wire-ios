@@ -34,4 +34,8 @@ public enum UpdateEventsAPIError: Error {
 
     case notFound
 
+    /// Unsupported endpoint for API version
+
+    case unsupportedEndpointForAPIVersion
+
 }

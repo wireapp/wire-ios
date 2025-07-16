@@ -24,12 +24,12 @@ struct ConversationCodeUpdateEventDecoder {
         from container: KeyedDecodingContainer<ConversationEventCodingKeys>
     ) throws -> ConversationCodeUpdateEvent {
         let conversationID = try container.decode(
-            ConversationID.self,
+            QualifiedIDV0.self,
             forKey: .conversationQualifiedID
         )
 
         let senderID = try container.decode(
-            UserID.self,
+            QualifiedIDV0.self,
             forKey: .senderQualifiedID
         )
 
@@ -39,8 +39,8 @@ struct ConversationCodeUpdateEventDecoder {
         )
 
         return ConversationCodeUpdateEvent(
-            conversationID: conversationID,
-            senderID: senderID,
+            conversationID: conversationID.toAPIModel(),
+            senderID: senderID.toAPIModel(),
             uri: payload.uri,
             key: payload.key,
             code: payload.code,

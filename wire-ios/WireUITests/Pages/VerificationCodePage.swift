@@ -25,13 +25,22 @@ class VerificationCodePage: PageModel {
     }
 
     var verificationCodeInput: XCUIElement {
-        let elementsQuery = app.descendants(matching: .any)["VerificationCode"]
+        let elementsQuery = app.descendants(matching: .any).matching(identifier: "VerificationCode")
         return elementsQuery.firstMatch
     }
 
-    func enterVerificationCode(_ verificationCode: String) throws -> SetNamePage {
-        verificationCodeInput.tap()
-        verificationCodeInput.typeText(verificationCode)
-        return try SetNamePage()
+    var verificationCodeConfirmButton: XCUIElement {
+        let elementsQuery = app.descendants(matching: .any)["Confirm"]
+        return elementsQuery.firstMatch
     }
+
+    func enterVerificationCodeAndConfirm(_ verificationCode: String) throws -> SetUsernamePage {
+        let element = app.textFields
+        for (index, digit) in verificationCode.enumerated() {
+            element.element(boundBy: index).typeText(String(digit))
+        }
+        verificationCodeConfirmButton.tap()
+        return try SetUsernamePage()
+    }
+
 }
