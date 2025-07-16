@@ -26,8 +26,7 @@ struct AppVersionMigration_4_2_0: AppVersionMigration {
     let lastEventIDRepository: LastEventIDRepositoryInterface
     let journal: JournalProtocol
     let sessionManager: (any SessionManagerType)?
-    let version: SemanticVersion = "4.2.1" // TODO: [WPB-17530] set to "4.2.0" before shipping and cherry-picking
-    // the idea is to run this migration once again for users who use an earlier version of 4.2.0 beta already
+    let version: SemanticVersion = "4.2.0"
 
     func perform() async throws {
 
