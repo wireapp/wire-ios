@@ -39,8 +39,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
     public private(set) var eventConsumers: [ZMEventConsumer]
     public private(set) var eventAsyncConsumers: [ZMEventAsyncConsumer]
     public private(set) var contextChangeTrackers: [ZMContextChangeTracker]
-    public private(set) var resetMLSConversationHandlerFactory: (NSManagedObjectContext) -> WireRequestStrategy
-        .ResetMLSConversationHandlerProtocol
+    public private(set) var initiateResetMLSConversationUseCaseFactory: (NSManagedObjectContext) -> WireRequestStrategy
+        .InitiateResetMLSConversationUseCaseProtocol
 
     init(
         contextProvider: ContextProvider,
@@ -57,8 +57,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         coreCryptoProvider: CoreCryptoProviderProtocol,
         pullSelfUserClientsFactory: @escaping PullSelfUserClientsFactory,
         searchUsersCache: SearchUsersCache?,
-        resetMLSConversationHandlerFactory: @escaping (NSManagedObjectContext) -> WireRequestStrategy
-            .ResetMLSConversationHandlerProtocol
+        initiateResetMLSConversationUseCaseFactory: @escaping (NSManagedObjectContext) -> WireRequestStrategy
+            .InitiateResetMLSConversationUseCaseProtocol
     ) {
         self.strategies = Self.buildStrategies(
             contextProvider: contextProvider,
@@ -76,7 +76,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             pullSelfUserClientsFactory: pullSelfUserClientsFactory,
             searchUsersCache: searchUsersCache
         )
-        self.resetMLSConversationHandlerFactory = resetMLSConversationHandlerFactory
+        self.initiateResetMLSConversationUseCaseFactory = initiateResetMLSConversationUseCaseFactory
 
         self.requestStrategies = strategies.compactMap { $0 as? RequestStrategy }
         self.eventConsumers = strategies.compactMap { $0 as? ZMEventConsumer }
@@ -386,9 +386,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 messageDependencyResolver: messageDependencyResolver,
                 context: syncContext,
                 incrementalSyncObserver: incrementalSyncObserver,
-                resetMLSConversationHandler: resetMLSConversationHandlerFactory(
-                    syncContext
-                )
+                initiateResetMLSConversationUseCase: initiateResetMLSConversationUseCaseFactory(syncContext)
             )
 
             let strategies: [Any] = [

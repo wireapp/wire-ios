@@ -21,11 +21,11 @@ import WireDataModel
 import WireLogging
 import WireNetwork
 
-public protocol ResetMLSConversationHandlerProtocol {
-    func handleResetMLSBrokenConversation(groupID: WireDataModel.MLSGroupID, epoch: Int64) async
+public protocol InitiateResetMLSConversationUseCaseProtocol {
+    func invoke(groupID: WireDataModel.MLSGroupID, epoch: Int64) async
 }
 
-public struct ResetMLSConversationHandler: ResetMLSConversationHandlerProtocol {
+public struct InitiateResetMLSConversationUseCase: InitiateResetMLSConversationUseCaseProtocol {
 
     private let api: MLSAPI
     private let mlsService: MLSServiceInterface
@@ -45,7 +45,7 @@ public struct ResetMLSConversationHandler: ResetMLSConversationHandlerProtocol {
         self.conversationLocalStore = conversationLocalStore
     }
 
-    public func handleResetMLSBrokenConversation(groupID: WireDataModel.MLSGroupID, epoch: Int64) async {
+    public func invoke(groupID: WireDataModel.MLSGroupID, epoch: Int64) async {
         do {
             guard let conversation = await conversationLocalStore.fetchMLSConversation(
                 groupID: groupID
@@ -70,14 +70,14 @@ public struct ResetMLSConversationHandler: ResetMLSConversationHandlerProtocol {
     }
 }
 
-public extension ResetMLSConversationHandler {
+public extension InitiateResetMLSConversationUseCase {
     static func make(
         apiService: APIServiceProtocol,
         apiVersion: WireNetwork.APIVersion,
         mlsService: MLSServiceInterface,
         context: NSManagedObjectContext
     ) -> Self {
-        ResetMLSConversationHandler(
+        InitiateResetMLSConversationUseCase(
             api: MLSAPIBuilder(apiService: apiService)
                 .makeAPI(for: apiVersion),
             mlsService: mlsService,

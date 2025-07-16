@@ -41,8 +41,8 @@ public protocol MessageSenderInterface {
 
 }
 
-public protocol ResetMLSConversationHandlerProtocol {
-    func handleResetMLSBrokenConversation(groupID: MLSGroupID, epoch: Int64) async
+public protocol InitiateResetMLSConversationUseCaseProtocol {
+    func invoke(groupID: MLSGroupID, epoch: Int64) async
 }
 
 public final class MessageSender: MessageSenderInterface {
@@ -53,7 +53,7 @@ public final class MessageSender: MessageSenderInterface {
         messageDependencyResolver: MessageDependencyResolverInterface,
         context: NSManagedObjectContext,
         incrementalSyncObserver: IncrementalSyncObserverProtocol,
-        resetMLSConversationHandler: ResetMLSConversationHandlerProtocol
+        initiateResetMLSConversationUseCase: InitiateResetMLSConversationUseCaseProtocol
     ) {
         self.apiProvider = apiProvider
         self.sessionEstablisher = sessionEstablisher
@@ -61,10 +61,10 @@ public final class MessageSender: MessageSenderInterface {
         self.context = context
         self.logAttributesBuilder = MessageLogAttributesBuilder(context: context)
         self.incrementalSyncObserver = incrementalSyncObserver
-        self.resetMLSConversationHandler = resetMLSConversationHandler
+        self.initiateResetMLSConversationUseCase = initiateResetMLSConversationUseCase
     }
 
-    private let resetMLSConversationHandler: ResetMLSConversationHandlerProtocol
+    private let initiateResetMLSConversationUseCase: InitiateResetMLSConversationUseCaseProtocol
     private let incrementalSyncObserver: IncrementalSyncObserverProtocol
     private let apiProvider: APIProviderInterface
     private let context: NSManagedObjectContext
@@ -421,7 +421,7 @@ public final class MessageSender: MessageSenderInterface {
                     operation: operation
                 )
             case .mlsInvalidLeafNodeIndex, .mlsInvalidLeafNodeSignature:
-                await resetMLSConversationHandler
+                await initiateResetMLSConversationUseCase
                     .handleResetMLSBrokenConversation(
                         groupID: groupID,
                         epoch: Int64(message.conversation?.epoch ?? 0)
