@@ -39,7 +39,7 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
     @Published var confirmedPassword: String = ""
 
     var trackingInfo: RegistrationAnalyticsTrackingInfo {
-        if let trackingID = analyticsEventTracker?.currentDeviceID.flatMap(UUID.init(uuidString:)) {
+        if let trackingID = analyticsEventTracker?.trackingID.flatMap(UUID.init(uuidString:)) {
             .enabled(trackingID: trackingID)
         } else {
             .disabled

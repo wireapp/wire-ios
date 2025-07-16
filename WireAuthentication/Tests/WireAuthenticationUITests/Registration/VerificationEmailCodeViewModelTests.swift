@@ -126,7 +126,7 @@ final class VerificationEmailCodeViewModelTests: XCTestCase, VerificationEmailCo
 
 private struct MockRegistrationAnalyticsTrackerProtocol: RegistrationAnalyticsTrackerProtocol {
 
-    var currentDeviceID: String?
+    var trackingID: String?
     func setUp() {}
     func tearDown() {}
 

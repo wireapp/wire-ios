@@ -22,7 +22,7 @@ public protocol RegistrationAnalyticsTrackerProtocol {
 
     /// The current analytics identifier.
 
-    var currentDeviceID: String? { get } // TODO: rename trackingID
+    var trackingID: String? { get }
 
     /// During account registration a temporary analytics id might have been created and stored globally in user
     /// defaults, since there is no user/account ID available yet.

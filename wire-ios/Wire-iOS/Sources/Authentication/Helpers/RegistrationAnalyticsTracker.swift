@@ -52,8 +52,8 @@ final class RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
         self.logger = .authentication
     }
 
-    var currentDeviceID: String? {
-        analyticsService?.currentDeviceID
+    var trackingID: String? {
+        analyticsService?.trackingID
     }
 
     @MainActor

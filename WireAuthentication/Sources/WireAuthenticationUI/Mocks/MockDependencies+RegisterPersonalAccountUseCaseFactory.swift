@@ -47,7 +47,7 @@ struct MockRegisterPersonalAccountUseCase: RegisterPersonalAccountUseCaseProtoco
 
 private struct MockRegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
 
-    var currentDeviceID: String?
+    var trackingID: String?
     func setUp() {}
     func tearDown() {}
 
