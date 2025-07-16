@@ -34,15 +34,15 @@ public typealias SendableMessage = MLSMessage & ProteusMessage
 
 // sourcery: AutoMockable
 public protocol MessageSenderInterface {
-    
+
     func sendMessage(message: any SendableMessage) async throws
-    
+
     func broadcastMessage(message: any ProteusMessage) async throws
-    
+
 }
 
 public protocol ResetMLSConversationHandlerProtocol {
-    func handleResetMLSBrokenConversation(groupID: MLSGroupID, epoch: UInt64?) async
+    func handleResetMLSBrokenConversation(groupID: MLSGroupID, epoch: Int64) async
 }
 
 public final class MessageSender: MessageSenderInterface {
@@ -424,13 +424,14 @@ public final class MessageSender: MessageSenderInterface {
                 await resetMLSConversationHandler
                     .handleResetMLSBrokenConversation(
                         groupID: groupID,
-                        epoch: message.conversation?.epoch)
+                        epoch: Int64(message.conversation?.epoch ?? 0)
+                    )
             default:
                 throw error
             }
         }
     }
-    
+
     private func handleMLSStaleMessageError(
         groupID: MLSGroupID,
         mlsService: MLSServiceInterface,

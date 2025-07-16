@@ -362,7 +362,7 @@ class MessageAPIV5: MessageAPIV4 {
             contentDisposition: nil,
             apiVersion: apiVersion.rawValue
         )
-        
+
         if let expirationDate {
             request.expire(at: expirationDate)
         }

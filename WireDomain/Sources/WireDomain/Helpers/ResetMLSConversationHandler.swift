@@ -18,18 +18,74 @@
 
 import Foundation
 import WireDataModel
+import WireLogging
+import WireNetwork
 
 public protocol ResetMLSConversationHandlerProtocol {
-    func handleResetMLSBrokenConversation(groupID: WireDataModel.MLSGroupID, epoch: UInt64?) async
+    func handleResetMLSBrokenConversation(groupID: WireDataModel.MLSGroupID, epoch: Int64) async
 }
 
 public struct ResetMLSConversationHandler: ResetMLSConversationHandlerProtocol {
-    
-    public init () {
-        
-    }
-    
-    public func handleResetMLSBrokenConversation(groupID: WireDataModel.MLSGroupID, epoch: UInt64?) async {
 
+    private let api: MLSAPI
+    private let mlsService: MLSServiceInterface
+    private let conversationLocalStore: ConversationLocalStore
+
+    enum Failure {
+        case noConversation
+    }
+
+    public init(
+        api: MLSAPI,
+        mlsService: MLSServiceInterface,
+        conversationLocalStore: ConversationLocalStore
+    ) {
+        self.api = api
+        self.mlsService = mlsService
+        self.conversationLocalStore = conversationLocalStore
+    }
+
+    public func handleResetMLSBrokenConversation(groupID: WireDataModel.MLSGroupID, epoch: Int64) async {
+        do {
+            guard let conversation = await conversationLocalStore.fetchMLSConversation(
+                groupID: groupID
+            ) else {
+                WireLogger.mls.error("Initiate reset broken MLS conversation failed: no conversation found")
+                return
+            }
+
+            // send request to BE to reset broken conversation
+            try await api
+                .resetMLSConversation(
+                    epoch: epoch,
+                    groupID: groupID.data.base64String()
+                )
+
+            // re-create group and re-add all participants
+            let users = conversation.localParticipants.map(MLSUser.init)
+            _ = try await mlsService.establishGroup(for: groupID, with: users, removalKeys: nil)
+        } catch {
+            WireLogger.mls.error("Initiate reset broken MLS conversation failed: \(error.localizedDescription)")
+        }
+    }
+}
+
+public extension ResetMLSConversationHandler {
+    static func make(
+        apiService: APIServiceProtocol,
+        apiVersion: WireNetwork.APIVersion,
+        mlsService: MLSServiceInterface,
+        context: NSManagedObjectContext
+    ) -> Self {
+        ResetMLSConversationHandler(
+            api: MLSAPIBuilder(apiService: apiService)
+                .makeAPI(for: apiVersion),
+            mlsService: mlsService,
+            conversationLocalStore: ConversationLocalStore(
+                context: context,
+                mlsService: mlsService,
+                messageLocalStore: MessageLocalStore(context: context)
+            )
+        )
     }
 }
