@@ -68,7 +68,7 @@ extension ZMUserSession: AnalyticsEventTrackerProvider {
     private func broadcastTrackingID(_ trackingID: UUID) throws {
         do {
             WireLogger.analytics.debug("broadcasting new analytics id")
-            let message = DataTransfer(trackingIdentifier: trackingID.transportString())
+            let message = DataTransfer(trackingIdentifier: trackingID)
             try ZMConversation.sendMessageToSelfClients(message, in: syncContext)
         } catch {
             throw AnalyticsError.failedToBroadcastTrackingID(error)
