@@ -477,7 +477,7 @@ public final class SharingSession {
             applicationStatus: applicationStatusDirectory,
             linkPreviewPreprocessor: linkPreviewPreprocessor,
             transportSession: transportSession,
-            resetMLSConversationHandler: NullResetMLSConversationHandler()
+            initiateResetMLSConversationUseCase: NullInitiateResetMLSConversationUseCase()
         )
 
         let requestGeneratorStore = RequestGeneratorStore(strategies: strategyFactory.strategies)
@@ -661,11 +661,11 @@ private extension WireDataModel.ConversationList {
     }
 }
 
-extension ResetMLSConversationHandler: WireRequestStrategy.ResetMLSConversationHandlerProtocol {}
+extension InitiateResetMLSConversationUseCase: WireRequestStrategy.InitiateResetMLSConversationUseCaseProtocol {}
 
 // No need to handle it in share extension for now
-struct NullResetMLSConversationHandler: WireRequestStrategy.ResetMLSConversationHandlerProtocol {
-    func handleResetMLSBrokenConversation(groupID: WireDataModel.MLSGroupID, epoch: Int64) async {
+struct NullInitiateResetMLSConversationUseCase: WireRequestStrategy.InitiateResetMLSConversationUseCaseProtocol {
+    func invoke(groupID: WireDataModel.MLSGroupID, epoch: Int64) async {
         // do nothing
     }
 }

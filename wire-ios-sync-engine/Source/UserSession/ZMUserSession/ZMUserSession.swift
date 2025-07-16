@@ -714,11 +714,11 @@ public final class ZMUserSession: NSObject {
                 return makePullSelfUserClients(context: context)
             },
             searchUsersCache: dependencies.caches.searchUsers,
-            resetMLSConversationHandlerFactory: { [weak self] context in
+            initiateResetMLSConversationUseCaseFactory: { [weak self] context in
                 guard let self else {
                     fatal("userSession not reachable")
                 }
-                return makeResetMLSConversationHandler(context: context)
+                return makeInitiateResetMLSConversationUseCase(context: context)
             }
         )
     }
@@ -1300,12 +1300,12 @@ extension ZMUserSession: SyncAgentDelegate {
         )
     }
 
-    private func makeResetMLSConversationHandler(
+    private func makeInitiateResetMLSConversationUseCase(
         context: NSManagedObjectContext
-    ) -> WireRequestStrategy.ResetMLSConversationHandlerProtocol {
+    ) -> WireRequestStrategy.InitiateResetMLSConversationUseCaseProtocol {
         let (apiService, apiVersion) = makeApiServiceAndAPIVersion()
 
-        return ResetMLSConversationHandler
+        return InitiateResetMLSConversationUseCase
             .make(
                 apiService: apiService,
                 apiVersion: apiVersion,
@@ -1674,4 +1674,4 @@ extension ZMUserSession {
 
 }
 
-extension ResetMLSConversationHandler: WireRequestStrategy.ResetMLSConversationHandlerProtocol {}
+extension InitiateResetMLSConversationUseCase: WireRequestStrategy.InitiateResetMLSConversationUseCaseProtocol {}

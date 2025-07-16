@@ -746,7 +746,7 @@ public final class ClientSessionComponent {
         isMLSEnabled: isMLSEnabled
     )
 
-    private lazy var resetMLSConversationHandler = ResetMLSConversationHandler(
+    private lazy var initiateResetMLSConversationUseCase = InitiateResetMLSConversationUseCase(
         api: mlsAPI,
         mlsService: mlsService,
         conversationLocalStore: conversationLocalStore
@@ -755,7 +755,7 @@ public final class ClientSessionComponent {
     public lazy var mlsTransport: any WireCoreCryptoUniffi.MlsTransport = MLSTransportImpl(
         mlsAPI: mlsAPI,
         conversationEventProcessor: conversationEventProcessor,
-        resetMLSConversationHandler: resetMLSConversationHandler
+        initiateResetMLSConversationUseCase: initiateResetMLSConversationUseCase
     )
 
 }
