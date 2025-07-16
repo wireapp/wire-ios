@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireFoundation
 import WireLogging
 import WireReusableUIComponents
 import WireSyncEngine
@@ -302,7 +303,7 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
 
                 unauthenticatedSession.continueAfterBackupImportStep()
 
-            case let .completeWireAuthenticationLogin((result, trackingID)): // TODO: use trackingID
+            case let .completeWireAuthenticationLogin((result, isAnalyticsTrackingEnabled)):
                 // Make sure we use the same backend from the authentication flow.
                 let backendEnvironment = BackendEnvironment(
                     type: result.backendEnvironment.environmentType,
@@ -338,6 +339,15 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                         username: username,
                         password: password
                     )
+                }
+
+                // TODO: remember analytics consent
+                if isAnalyticsTrackingEnabled { // TODO: bool check
+                    let privateUserDefaults = PrivateUserDefaults<AnalyticsTrackingPrivateUserDefaultsKey>(
+                        userID: result.userID,
+                        storage: UserDefaults.standard
+                    )
+                    privateUserDefaults.set(isAnalyticsTrackingEnabled, forKey: .isAnalyticsTrackingEnabled)
                 }
 
                 unauthenticatedSession.upgradeToAuthenticatedSession(with: userInfo)

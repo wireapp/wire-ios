@@ -50,7 +50,7 @@ final class AuthenticationEventResponderChain {
 
     enum EventType: CustomStringConvertible {
 
-        case wireAuthenticationModuleComplete((AuthenticationResult, trackingID: UUID?))
+        case wireAuthenticationModuleComplete((AuthenticationResult, isAnalyticsTrackingEnabled: Bool))
         case flowStart(NSError?, Int)
         case backupReady(Bool)
         case clientRegistrationError(NSError, UUID)
@@ -113,7 +113,7 @@ final class AuthenticationEventResponderChain {
     // MARK: - Configuration
 
     var flowStartHandlers: [AnyAuthenticationEventHandler<(NSError?, Int)>] = []
-    var wireAuthenticationModuleHandlers: [AnyAuthenticationEventHandler<(AuthenticationResult, trackingID: UUID?)>] = []
+    var wireAuthenticationModuleHandlers: [AnyAuthenticationEventHandler<(AuthenticationResult, isAnalyticsTrackingEnabled: Bool)>] = []
     var backupEventHandlers: [AnyAuthenticationEventHandler<Bool>] = []
     var clientRegistrationErrorHandlers: [AnyAuthenticationEventHandler<(NSError, UUID)>] = []
     var clientRegistrationSuccessHandlers: [AnyAuthenticationEventHandler<Void>] = []
@@ -277,10 +277,9 @@ final class AuthenticationEventResponderChain {
         }
 
         guard let (name, actions) = lookupResult else {
-            log
-                .error(
-                    "No handler was found to handle the event.\nCurrentStep = \(delegate.stateController.currentStep)"
-                )
+            log.error(
+                "No handler was found to handle the event.\nCurrentStep = \(delegate.stateController.currentStep)"
+            )
             return
         }
 

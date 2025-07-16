@@ -76,7 +76,7 @@ final class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> 
         NoHistoryComponent(
             parent: self,
             authenticationResult: authenticationResult,
-            trackingID: nil, // TODO: pass value
+            isAnalyticsTrackingEnabled: false, // TODO: optional bool needed? then pass nil
             didDetectDomainConflict: didDetectDomainConflict
         )
     }

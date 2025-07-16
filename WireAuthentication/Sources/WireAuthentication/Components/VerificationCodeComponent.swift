@@ -43,6 +43,7 @@ final class VerificationCodeComponent: Component<VerificationCodeComponentDepend
         email: String,
         password: String,
         proxyCredentials: ProxyCredentials?
+        // TODO: isAnalyticsTrackingEnabled ?
     ) {
         self.email = email
         self.password = password
@@ -56,7 +57,7 @@ final class VerificationCodeComponent: Component<VerificationCodeComponentDepend
         NoHistoryComponent(
             parent: self,
             authenticationResult: authenticationResult,
-            trackingID: nil, // TODO: pass value
+            isAnalyticsTrackingEnabled: false, // TODO: pass actual value
             didDetectDomainConflict: dependency.didDetectDomainConflict
         )
     }

@@ -39,7 +39,7 @@ struct TrackingManager: TrackingInterface {
     }
 
     private var doesUserConsentPreferenceExist: Bool {
-        privateUserDefaults?.object(forKey: .isAnalyticsTrackingEnabled) is Bool
+        privateUserDefaults?.object(forKey: .isAnalyticsTrackingEnabled) is Bool // TODO: fix
     }
 
     var isAnalyticsTrackingEnabled: Bool {
@@ -47,12 +47,10 @@ struct TrackingManager: TrackingInterface {
     }
 
     func migrateAnalyticsSetupIfNeeded() async throws {
-        if doesUserConsentPreferenceExist {
-            if isAnalyticsTrackingEnabled {
-                try await enableAnalytics()
-            } else {
-                try disableAnalytics()
-            }
+        if doesUserConsentPreferenceExist, isAnalyticsTrackingEnabled {
+            try await enableAnalytics()
+        } else {
+            try disableAnalytics()
         }
     }
 
