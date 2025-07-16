@@ -192,7 +192,7 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
         conversation: ZMConversation,
         sender: ZMUser
     ) -> ZMUpdateEvent {
-        let message = GenericMessage(content: DataTransfer(trackingIdentifier: trackingID.transportString()))
+        let message = GenericMessage(content: DataTransfer(trackingIdentifier: trackingID))
         let nonce = UUID.create()
 
         return createUpdateEvent(

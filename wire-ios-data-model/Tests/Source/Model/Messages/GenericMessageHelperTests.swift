@@ -24,13 +24,13 @@ class GenericMessageHelperTests: XCTestCase {
 
     func testCreatingADataTransferMessageWithATrackingIdentifier() {
         // Given
-        let id = UUID.create().transportString()
+        let id = UUID.create()
 
         // When
         let sut = DataTransfer(trackingIdentifier: id)
 
         // Then
-        XCTAssertEqual(sut.trackingIdentifier.identifier, id)
+        XCTAssertEqual(sut.trackingIdentifier.identifier, id.transportString())
     }
 
 }

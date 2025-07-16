@@ -874,7 +874,7 @@ public extension ImageAsset {
 
 public extension DataTransfer {
 
-    init(trackingIdentifier: String) {
+    init(trackingIdentifier: UUID) {
         self = DataTransfer.with {
             $0.trackingIdentifier = TrackingIdentifier(trackingIdentifier)
         }
@@ -895,9 +895,9 @@ public extension DataTransfer {
 // MARK: - TrackingIdentifier
 
 extension TrackingIdentifier {
-    init(_ id: String) {
+    init(_ uuid: UUID) {
         self = TrackingIdentifier.with {
-            $0.identifier = id
+            $0.identifier = uuid.transportString()
         }
     }
 }
