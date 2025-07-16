@@ -160,31 +160,44 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     private func setupSelfUser() {
         if let selfUser {
-            sections.append(Section(
-                header: "Self user",
-                items: [
-                    .text(TextItem(title: "Handle", value: selfUser.handleDisplayString(withDomain: true) ?? "None")),
-                    .text(TextItem(title: "Email", value: selfUser.emailAddress ?? "None")),
-                    .text(TextItem(title: "User ID", value: selfUser.remoteIdentifier.uuidString)),
-                    .text(TextItem(title: "Analytics ID", value: selfUser.analyticsIdentifier?.uppercased() ?? "None")),
-                    .text(TextItem(title: "Client ID", value: selfClient?.remoteIdentifier?.uppercased() ?? "None")),
-                    .text(
-                        TextItem(
-                            title: "Supported protocols",
-                            value: selfUser.supportedProtocols.map(\.rawValue).joined(separator: ", ")
-                        )
-                    ),
-                    .text(TextItem(
-                        title: "MLS public key",
-                        value: selfClient?.mlsPublicKeys.allKeys.first?.uppercased() ?? "None"
-                    )),
-                    .text(TextItem(title: "1-1 MLS Conversations", value: oneOnOneMLSConversationsCount())),
-                    .text(TextItem(
-                        title: "Consumable Notifications Capability",
-                        value: selfClient?.isConsumableNotificationsCapable == true ? "Yes" : "No"
-                    ))
-                ]
-            ))
+            sections.append(
+                Section(
+                    header: "Self user",
+                    items: [
+                        .text(TextItem(
+                            title: "Handle",
+                            value: selfUser.handleDisplayString(withDomain: true) ?? "None"
+                        )),
+                        .text(TextItem(title: "Email", value: selfUser.emailAddress ?? "None")),
+                        .text(TextItem(title: "User ID", value: selfUser.remoteIdentifier.uuidString)),
+                        .text(
+                            TextItem(
+                                title: "Analytics ID",
+                                value: selfUser.trackingID?.transportString().uppercased() ?? "None"
+                            )
+                        ),
+                        .text(TextItem(
+                            title: "Client ID",
+                            value: selfClient?.remoteIdentifier?.uppercased() ?? "None"
+                        )),
+                        .text(
+                            TextItem(
+                                title: "Supported protocols",
+                                value: selfUser.supportedProtocols.map(\.rawValue).joined(separator: ", ")
+                            )
+                        ),
+                        .text(TextItem(
+                            title: "MLS public key",
+                            value: selfClient?.mlsPublicKeys.allKeys.first?.uppercased() ?? "None"
+                        )),
+                        .text(TextItem(title: "1-1 MLS Conversations", value: oneOnOneMLSConversationsCount())),
+                        .text(TextItem(
+                            title: "Consumable Notifications Capability",
+                            value: selfClient?.isConsumableNotificationsCapable == true ? "Yes" : "No"
+                        ))
+                    ]
+                )
+            )
         }
     }
 

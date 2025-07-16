@@ -123,12 +123,12 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let team = self.createTeam(in: self.syncMOC)
             self.createMembership(in: self.syncMOC, user: selfUser, team: team)
-            selfUser.analyticsIdentifier = "foo"
+            selfUser.trackingID = UUID()
 
-            let trackingIdentifier = UUID.create()
+            let trackingID = UUID.create()
 
             let event = self.createUpdateEvent(
-                trackingIdentifier: trackingIdentifier,
+                trackingID: trackingID,
                 conversation: .selfConversation(in: self.syncMOC),
                 sender: selfUser
             )
@@ -137,7 +137,7 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
             ZMOTRMessage.createOrUpdate(from: event, in: self.syncMOC, prefetchResult: nil)
 
             // Then
-            XCTAssertEqual(selfUser.analyticsIdentifier, trackingIdentifier.transportString())
+            XCTAssertEqual(selfUser.trackingID, trackingID)
         }
     }
 
@@ -147,10 +147,11 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let team = self.createTeam(in: self.syncMOC)
             self.createMembership(in: self.syncMOC, user: selfUser, team: team)
-            selfUser.analyticsIdentifier = "foo"
+            let trackingID = UUID()
+            selfUser.trackingID = trackingID
 
             let event = self.createUpdateEvent(
-                trackingIdentifier: .create(),
+                trackingID: UUID.create(),
                 conversation: .selfConversation(in: self.syncMOC),
                 sender: self.createUser(in: self.syncMOC)
             )
@@ -159,7 +160,7 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
             ZMOTRMessage.createOrUpdate(from: event, in: self.syncMOC, prefetchResult: nil)
 
             // Then
-            XCTAssertEqual(selfUser.analyticsIdentifier, "foo")
+            XCTAssertEqual(selfUser.trackingID, trackingID)
         }
     }
 
@@ -169,10 +170,11 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let team = self.createTeam(in: self.syncMOC)
             self.createMembership(in: self.syncMOC, user: selfUser, team: team)
-            selfUser.analyticsIdentifier = "foo"
+            let trackingID = UUID()
+            selfUser.trackingID = trackingID
 
             let event = self.createUpdateEvent(
-                trackingIdentifier: .create(),
+                trackingID: UUID.create(),
                 conversation: self.conversation,
                 sender: self.createUser(in: self.syncMOC)
             )
@@ -181,16 +183,16 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
             ZMOTRMessage.createOrUpdate(from: event, in: self.syncMOC, prefetchResult: nil)
 
             // Then
-            XCTAssertEqual(selfUser.analyticsIdentifier, "foo")
+            XCTAssertEqual(selfUser.trackingID, trackingID)
         }
     }
 
     private func createUpdateEvent(
-        trackingIdentifier: UUID,
+        trackingID: UUID,
         conversation: ZMConversation,
         sender: ZMUser
     ) -> ZMUpdateEvent {
-        let message = GenericMessage(content: DataTransfer(trackingIdentifier: trackingIdentifier))
+        let message = GenericMessage(content: DataTransfer(trackingIdentifier: trackingID))
         let nonce = UUID.create()
 
         return createUpdateEvent(
