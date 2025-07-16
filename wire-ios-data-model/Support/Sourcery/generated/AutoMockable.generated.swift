@@ -4688,6 +4688,21 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         mock(delegate)
     }
 
+    // MARK: - setResetBrokenMLSConversationDelegate
+
+    public var setResetBrokenMLSConversationDelegate_Invocations: [any ResetBrokenMLSConversationDelegate] = []
+    public var setResetBrokenMLSConversationDelegate_MockMethod: ((any ResetBrokenMLSConversationDelegate) -> Void)?
+
+    public func setResetBrokenMLSConversationDelegate(_ delegate: any ResetBrokenMLSConversationDelegate) {
+        setResetBrokenMLSConversationDelegate_Invocations.append(delegate)
+
+        guard let mock = setResetBrokenMLSConversationDelegate_MockMethod else {
+            fatalError("no mock for `setResetBrokenMLSConversationDelegate`")
+        }
+
+        mock(delegate)
+    }
+
     // MARK: - onNewCRLsDistributionPoints
 
     public var onNewCRLsDistributionPoints_Invocations: [Void] = []
@@ -5261,6 +5276,30 @@ class MockProteusToMLSMigrationStorageInterface: ProteusToMLSMigrationStorageInt
 
     var underlyingMigrationStatus: ProteusToMLSMigrationCoordinator.MigrationStatus!
 
+
+}
+
+public class MockResetBrokenMLSConversationDelegate: ResetBrokenMLSConversationDelegate {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - didCatchBrokenMLSConversation
+
+    public var didCatchBrokenMLSConversationGroupIDEpoch_Invocations: [(groupID: MLSGroupID, epoch: Int64)] = []
+    public var didCatchBrokenMLSConversationGroupIDEpoch_MockMethod: ((MLSGroupID, Int64) async -> Void)?
+
+    public func didCatchBrokenMLSConversation(groupID: MLSGroupID, epoch: Int64) async {
+        didCatchBrokenMLSConversationGroupIDEpoch_Invocations.append((groupID: groupID, epoch: epoch))
+
+        guard let mock = didCatchBrokenMLSConversationGroupIDEpoch_MockMethod else {
+            fatalError("no mock for `didCatchBrokenMLSConversationGroupIDEpoch`")
+        }
+
+        await mock(groupID, epoch)
+    }
 
 }
 

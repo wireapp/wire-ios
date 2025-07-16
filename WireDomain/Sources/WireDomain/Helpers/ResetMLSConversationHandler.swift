@@ -25,7 +25,7 @@ public protocol InitiateResetMLSConversationUseCaseProtocol {
     func invoke(groupID: WireDataModel.MLSGroupID, epoch: Int64) async
 }
 
-public struct InitiateResetMLSConversationUseCase: InitiateResetMLSConversationUseCaseProtocol {
+public class InitiateResetMLSConversationUseCase: InitiateResetMLSConversationUseCaseProtocol {
 
     private let api: MLSAPI
     private let mlsService: MLSServiceInterface
@@ -47,6 +47,8 @@ public struct InitiateResetMLSConversationUseCase: InitiateResetMLSConversationU
 
     public func invoke(groupID: WireDataModel.MLSGroupID, epoch: Int64) async {
         do {
+            WireLogger.mls.info("Initiate reset broken MLS conversation use case started")
+
             guard let conversation = await conversationLocalStore.fetchMLSConversation(
                 groupID: groupID
             ) else {
@@ -60,8 +62,11 @@ public struct InitiateResetMLSConversationUseCase: InitiateResetMLSConversationU
             // re-create group and re-add all participants
             let users = conversation.localParticipants.map(MLSUser.init)
             _ = try await mlsService.establishGroup(for: groupID, with: users, removalKeys: nil)
+
+            WireLogger.mls.info("Initiate reset broken MLS conversation use case finished")
+
         } catch {
-            WireLogger.mls.error("Initiate reset broken MLS conversation failed: \(error.localizedDescription)")
+            WireLogger.mls.error("Initiate reset broken MLS conversation use case failed: \(error.localizedDescription)")
         }
     }
 }
@@ -72,7 +77,7 @@ public extension InitiateResetMLSConversationUseCase {
         apiVersion: WireNetwork.APIVersion,
         mlsService: MLSServiceInterface,
         context: NSManagedObjectContext
-    ) -> Self {
+    ) -> InitiateResetMLSConversationUseCase {
         InitiateResetMLSConversationUseCase(
             api: MLSAPIBuilder(apiService: apiService)
                 .makeAPI(for: apiVersion),

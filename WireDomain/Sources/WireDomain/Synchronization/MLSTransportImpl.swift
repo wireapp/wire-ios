@@ -24,16 +24,13 @@ final class MLSTransportImpl: MlsTransport {
 
     let mlsAPI: MLSAPI
     let conversationEventProcessor: ConversationEventProcessorProtocol
-    let initiateResetMLSConversationUseCase: InitiateResetMLSConversationUseCaseProtocol
-
+    
     init(
         mlsAPI: MLSAPI,
-        conversationEventProcessor: ConversationEventProcessorProtocol,
-        initiateResetMLSConversationUseCase: InitiateResetMLSConversationUseCaseProtocol
+        conversationEventProcessor: ConversationEventProcessorProtocol
     ) {
         self.mlsAPI = mlsAPI
         self.conversationEventProcessor = conversationEventProcessor
-        self.initiateResetMLSConversationUseCase = initiateResetMLSConversationUseCase
     }
 
     func sendCommitBundle(commitBundle: WireCoreCryptoUniffi.CommitBundle) async -> WireCoreCryptoUniffi
@@ -43,15 +40,6 @@ final class MLSTransportImpl: MlsTransport {
         do {
             events = try await mlsAPI.postCommitBundle(commitBundle.toAPIModel())
         } catch let error as MLSAPIError {
-            switch error {
-            case .mlsInvalidLeafNodeSignature, .mlsInvalidLeafNodeIndex:
-                await initiateResetMLSConversationUseCase
-                    .invoke(
-                        groupID: .init(base64Encoded: "")!, // TODO: 
-                        epoch: 0
-                    )
-            default: break
-            }
             do {
                 return .abort(reason: try error.encodeAsString())
             } catch {

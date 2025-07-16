@@ -488,6 +488,8 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// - Parameter delegate: The sync delegate to set.
 
     func setSyncDelegate(_ delegate: any MLSSyncDelegate)
+    
+    func setResetBrokenMLSConversationDelegate(_ delegate: any ResetBrokenMLSConversationDelegate)
 }
 
 // This is only used in tests, so it should be removed.
@@ -532,6 +534,7 @@ public final class MLSService: MLSServiceInterface {
     private let groupsBeingRepaired = GroupsBeingRepaired()
     private let featureRepository: FeatureRepositoryInterface
     private weak var mlsSyncDelegate: (any MLSSyncDelegate)?
+    private weak var resetBrokenMLSConversationDelegate: (any ResetBrokenMLSConversationDelegate)?
     private let onEpochChangedSubject = PassthroughSubject<MLSGroupID, Never>()
 
     private var coreCrypto: SafeCoreCryptoProtocol {
@@ -635,6 +638,12 @@ public final class MLSService: MLSServiceInterface {
 
     public func setSyncDelegate(_ delegate: any MLSSyncDelegate) {
         mlsSyncDelegate = delegate
+    }
+    
+    public func setResetBrokenMLSConversationDelegate(
+        _ delegate: any ResetBrokenMLSConversationDelegate
+    ) {
+        self.resetBrokenMLSConversationDelegate = delegate
     }
 
     // MARK: - Conference info for subconversations
@@ -1932,6 +1941,10 @@ public final class MLSService: MLSServiceInterface {
         /// There is no way to automatically recover from the error.
 
         case giveUp
+        
+        /// When MLS conversation happened to be broken
+        
+        case resetBrokenMLSConversation
 
         init(from reason: String) {
             if let error = try? MLSAPIError(from: reason) {
@@ -1940,6 +1953,8 @@ public final class MLSService: MLSServiceInterface {
                     self = .retryAfterQuickSync
                 case .mlsStaleMessage:
                     self = .retryAfterRepairingGroup
+                case .mlsInvalidLeafNodeIndex, .mlsInvalidLeafNodeSignature:
+                    self = .resetBrokenMLSConversation
                 default:
                     self = .giveUp
                 }
@@ -1970,16 +1985,16 @@ public final class MLSService: MLSServiceInterface {
                     "sync finished, retrying operation...",
                     attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
                 )
-
+                
                 guard retryCount <= maxRetryAttempts else {
                     throw MLSRetryError.retryLimitReached
                 }
-
+                
                 var currentRetryCount = retryCount
                 currentRetryCount += 1
-
+                
                 try await retryOnCommitFailure(for: groupID, operation: operation, retryCount: currentRetryCount)
-
+                
             case .retryAfterRepairingGroup:
                 logger.warn(
                     "failed to send commit, repairing group then retrying operation...",
@@ -1989,19 +2004,33 @@ public final class MLSService: MLSServiceInterface {
                     with: groupID,
                     shouldPerformIncrementalSync: true
                 )
-
+                
                 logger.info(
                     "repair finished, retrying operation...",
                     attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
                 )
                 try await operation()
-
+                
             case .giveUp:
                 logger.warn(
                     "failed to send commit, giving up...",
                     attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
                 )
                 throw MLSRetryError.nonRecoverableError(reason)
+                
+            case .resetBrokenMLSConversation:
+                logger.info(
+                    "Handling reset broken MLS conversation recovery strategy...",
+                    attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                )
+                var epoch: Int64 = 0
+                if let context, let conversation = fetchConversationInfo(
+                    with: groupID,
+                    in: context
+                )?.conversation {
+                    epoch = Int64(conversation.epoch)
+                }
+                await resetBrokenMLSConversationDelegate?.didCatchBrokenMLSConversation(groupID: groupID, epoch: epoch)
             }
         }
     }

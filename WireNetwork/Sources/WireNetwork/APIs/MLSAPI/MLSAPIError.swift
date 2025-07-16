@@ -118,7 +118,8 @@ enum MLSAPIV0Error: Error, Codable, Equatable {
     case actionDenied(message: String)
     case invalidOperation(message: String)
     case noConversation(message: String)
-
+    case mlsInvalidLeafNodeIndex
+    case mlsInvalidLeafNodeSignature
 }
 
 extension MLSAPIV0Error: ToAPIModelConvertible {
@@ -138,6 +139,10 @@ extension MLSAPIV0Error: ToAPIModelConvertible {
             .mlsCommitMissingReferences
         case let .mlsError(label, message):
             .mlsError(label, message)
+        case .mlsInvalidLeafNodeIndex:
+            .mlsInvalidLeafNodeIndex
+        case .mlsInvalidLeafNodeSignature:
+            .mlsInvalidLeafNodeSignature
         default:
             fatalError()
         }
@@ -161,6 +166,10 @@ extension MLSAPIError: ToNetworkConvertible {
             .mlsCommitMissingReferences
         case let .mlsError(label, message):
             .mlsError(label, message)
+        case .mlsInvalidLeafNodeIndex:
+            .mlsInvalidLeafNodeIndex
+        case .mlsInvalidLeafNodeSignature:
+            .mlsInvalidLeafNodeSignature
         default:
             fatalError()
         }
