@@ -746,7 +746,7 @@ public final class ClientSessionComponent {
         isMLSEnabled: isMLSEnabled
     )
 
-    private lazy var initiateResetMLSConversationUseCase = InitiateResetMLSConversationUseCase(
+    public lazy var initiateResetMLSConversationUseCase = InitiateResetMLSConversationUseCase(
         api: mlsAPI,
         mlsService: mlsService,
         conversationLocalStore: conversationLocalStore
@@ -754,8 +754,15 @@ public final class ClientSessionComponent {
 
     public lazy var mlsTransport: any WireCoreCryptoUniffi.MlsTransport = MLSTransportImpl(
         mlsAPI: mlsAPI,
-        conversationEventProcessor: conversationEventProcessor,
-        initiateResetMLSConversationUseCase: initiateResetMLSConversationUseCase
+        conversationEventProcessor: conversationEventProcessor
     )
+
+}
+
+extension InitiateResetMLSConversationUseCase: ResetBrokenMLSConversationDelegate {
+    
+    public func didCatchBrokenMLSConversation(groupID: MLSGroupID, epoch: Int64) async {
+        await invoke(groupID: groupID, epoch: epoch)
+    }
 
 }

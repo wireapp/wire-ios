@@ -422,7 +422,7 @@ public final class MessageSender: MessageSenderInterface {
                 )
             case .mlsInvalidLeafNodeIndex, .mlsInvalidLeafNodeSignature:
                 await initiateResetMLSConversationUseCase
-                    .handleResetMLSBrokenConversation(
+                    .invoke(
                         groupID: groupID,
                         epoch: Int64(message.conversation?.epoch ?? 0)
                     )
