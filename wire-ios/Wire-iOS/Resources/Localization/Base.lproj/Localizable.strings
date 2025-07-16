@@ -1401,7 +1401,6 @@
 
 "self.settings.conversations.title" = "History";
 "self.settings.history_backup.title" = "Back up or Restore";
-"self.settings.history_backup.error.title" = "Error";
 "self.settings.history_backup.set_email.title" = "Set an email and password.";
 "self.settings.history_backup.set_email.message" = "You need an email and a password in order to back up your conversation history. You can do it from the account page in Settings.";
 
