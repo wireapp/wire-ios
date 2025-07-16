@@ -54,7 +54,7 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
         zmConversation = conversation
 
         mlsService.wipeGroup_MockMethod = { _ in }
-        conversationLocalStore.fetchMLSConversationGroupID_MockValue = conversation
+        conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
         conversationLocalStore.storeMLSConversationPendingJoinNewMLSGroupIDConversation_MockMethod = { _, _ in }
 
         sut = ConversationMLSResetEventProcessor(
@@ -109,7 +109,7 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
 
         // Given
 
-        conversationLocalStore.fetchMLSConversationGroupID_MockValue = .some(nil)
+        conversationLocalStore.fetchConversationIdDomain_MockValue = .some(nil)
 
         // When and Then
         await XCTAssertThrowsErrorAsync(ConversationMLSResetEventProcessor.Failure.conversationNotFound) {

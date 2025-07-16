@@ -45,9 +45,8 @@ struct ConversationMLSResetEventProcessor: ConversationMLSResetEventProcessorPro
             throw Failure.invalidArguments
         }
 
-        guard let localConversation = await conversationLocalStore.fetchMLSConversation(
-            groupID: oldMLSGroupID
-        ) else {
+        guard let localConversation = await conversationLocalStore
+            .fetchConversation(id: event.conversationID.id, domain: event.conversationID.domain) else {
             WireLogger.mls.error("Failed to get local conversation to reset MLS conversation")
             throw Failure.conversationNotFound
         }
