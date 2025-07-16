@@ -39,6 +39,31 @@ final class WireChannelBannerTests: XCTestCase {
     }
 
     @MainActor
+    func testColorSchemeVariantsEmptyState() {
+        let view = WireChannelBannerView(
+            configuration: .init(
+                title: "Show older messages?",
+                message: "Upgrade to a paid plan to offer channel members the whole history.",
+                mainButtonTitle: "Upgrade now",
+                mainButtonAction: {},
+                closeButton: .init(
+                    accessibilityLabel: "",
+                    action: {}
+                )
+            )
+        )
+        .frame(width: 375, height: 667)
+        .padding()
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
+    }
+
+    @MainActor
     func testDynamicTypeVariantsEmptyState() {
         let view = WireChannelBannerView(
             configuration: .init(
