@@ -20,14 +20,15 @@ import Foundation
 import WireCellsAPI
 import WireCellsBindings
 
+// sourcery: AutoMockable
 protocol WireCellsFactoryProtocol {
 
-    func makeUploadDraftUseCase(cellName: String) -> any WireCellsUploadDraftUseCaseProtocol
-    func makeObserveDraftsUseCase(cellName: String) -> any WireCellsObserveDraftsUseCaseProtocol
-    func makePublishDraftsUseCase(cellName: String) -> any WireCellsPublishDraftsUseCaseProtocol
-    func makeClearPublishedDraftsUseCase(cellName: String) -> any WireCellsClearPublishedDraftsUseCaseProtocol
-    func makeDeleteDraftUseCase(cellName: String) -> any WireCellsDeleteDraftUseCaseProtocol
-    func makeRetryUploadDraftUseCase(cellName: String) -> any WireCellsRetryUploadDraftUseCaseProtocol
+    func makeUploadDraftUseCase(cellName: String) -> WireCellsUploadDraftUseCaseProtocol
+    func makeObserveDraftsUseCase(cellName: String) -> WireCellsObserveDraftsUseCaseProtocol
+    func makePublishDraftsUseCase(cellName: String) -> WireCellsPublishDraftsUseCaseProtocol
+    func makeClearPublishedDraftsUseCase(cellName: String) -> WireCellsClearPublishedDraftsUseCaseProtocol
+    func makeDeleteDraftUseCase(cellName: String) -> WireCellsDeleteDraftUseCaseProtocol
+    func makeRetryUploadDraftUseCase(cellName: String) -> WireCellsRetryUploadDraftUseCaseProtocol
 
 }
 

@@ -28,6 +28,7 @@ import CoreLocation
 import WireDataModel
 import WireSyncEngine
 import WireAccountImageUI
+import WireCellsAPI
 
 @testable import Wire
 @testable import WireCommonComponents
@@ -1643,6 +1644,122 @@ class MockTrackingInterface: TrackingInterface {
         }
 
         try await mock()
+    }
+
+}
+
+class MockWireCellsFactoryProtocol: WireCellsFactoryProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - makeUploadDraftUseCase
+
+    var makeUploadDraftUseCaseCellName_Invocations: [String] = []
+    var makeUploadDraftUseCaseCellName_MockMethod: ((String) -> WireCellsUploadDraftUseCaseProtocol)?
+    var makeUploadDraftUseCaseCellName_MockValue: WireCellsUploadDraftUseCaseProtocol?
+
+    func makeUploadDraftUseCase(cellName: String) -> WireCellsUploadDraftUseCaseProtocol {
+        makeUploadDraftUseCaseCellName_Invocations.append(cellName)
+
+        if let mock = makeUploadDraftUseCaseCellName_MockMethod {
+            return mock(cellName)
+        } else if let mock = makeUploadDraftUseCaseCellName_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeUploadDraftUseCaseCellName`")
+        }
+    }
+
+    // MARK: - makeObserveDraftsUseCase
+
+    var makeObserveDraftsUseCaseCellName_Invocations: [String] = []
+    var makeObserveDraftsUseCaseCellName_MockMethod: ((String) -> WireCellsObserveDraftsUseCaseProtocol)?
+    var makeObserveDraftsUseCaseCellName_MockValue: WireCellsObserveDraftsUseCaseProtocol?
+
+    func makeObserveDraftsUseCase(cellName: String) -> WireCellsObserveDraftsUseCaseProtocol {
+        makeObserveDraftsUseCaseCellName_Invocations.append(cellName)
+
+        if let mock = makeObserveDraftsUseCaseCellName_MockMethod {
+            return mock(cellName)
+        } else if let mock = makeObserveDraftsUseCaseCellName_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeObserveDraftsUseCaseCellName`")
+        }
+    }
+
+    // MARK: - makePublishDraftsUseCase
+
+    var makePublishDraftsUseCaseCellName_Invocations: [String] = []
+    var makePublishDraftsUseCaseCellName_MockMethod: ((String) -> WireCellsPublishDraftsUseCaseProtocol)?
+    var makePublishDraftsUseCaseCellName_MockValue: WireCellsPublishDraftsUseCaseProtocol?
+
+    func makePublishDraftsUseCase(cellName: String) -> WireCellsPublishDraftsUseCaseProtocol {
+        makePublishDraftsUseCaseCellName_Invocations.append(cellName)
+
+        if let mock = makePublishDraftsUseCaseCellName_MockMethod {
+            return mock(cellName)
+        } else if let mock = makePublishDraftsUseCaseCellName_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makePublishDraftsUseCaseCellName`")
+        }
+    }
+
+    // MARK: - makeClearPublishedDraftsUseCase
+
+    var makeClearPublishedDraftsUseCaseCellName_Invocations: [String] = []
+    var makeClearPublishedDraftsUseCaseCellName_MockMethod: ((String) -> WireCellsClearPublishedDraftsUseCaseProtocol)?
+    var makeClearPublishedDraftsUseCaseCellName_MockValue: WireCellsClearPublishedDraftsUseCaseProtocol?
+
+    func makeClearPublishedDraftsUseCase(cellName: String) -> WireCellsClearPublishedDraftsUseCaseProtocol {
+        makeClearPublishedDraftsUseCaseCellName_Invocations.append(cellName)
+
+        if let mock = makeClearPublishedDraftsUseCaseCellName_MockMethod {
+            return mock(cellName)
+        } else if let mock = makeClearPublishedDraftsUseCaseCellName_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeClearPublishedDraftsUseCaseCellName`")
+        }
+    }
+
+    // MARK: - makeDeleteDraftUseCase
+
+    var makeDeleteDraftUseCaseCellName_Invocations: [String] = []
+    var makeDeleteDraftUseCaseCellName_MockMethod: ((String) -> WireCellsDeleteDraftUseCaseProtocol)?
+    var makeDeleteDraftUseCaseCellName_MockValue: WireCellsDeleteDraftUseCaseProtocol?
+
+    func makeDeleteDraftUseCase(cellName: String) -> WireCellsDeleteDraftUseCaseProtocol {
+        makeDeleteDraftUseCaseCellName_Invocations.append(cellName)
+
+        if let mock = makeDeleteDraftUseCaseCellName_MockMethod {
+            return mock(cellName)
+        } else if let mock = makeDeleteDraftUseCaseCellName_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeDeleteDraftUseCaseCellName`")
+        }
+    }
+
+    // MARK: - makeRetryUploadDraftUseCase
+
+    var makeRetryUploadDraftUseCaseCellName_Invocations: [String] = []
+    var makeRetryUploadDraftUseCaseCellName_MockMethod: ((String) -> WireCellsRetryUploadDraftUseCaseProtocol)?
+    var makeRetryUploadDraftUseCaseCellName_MockValue: WireCellsRetryUploadDraftUseCaseProtocol?
+
+    func makeRetryUploadDraftUseCase(cellName: String) -> WireCellsRetryUploadDraftUseCaseProtocol {
+        makeRetryUploadDraftUseCaseCellName_Invocations.append(cellName)
+
+        if let mock = makeRetryUploadDraftUseCaseCellName_MockMethod {
+            return mock(cellName)
+        } else if let mock = makeRetryUploadDraftUseCaseCellName_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeRetryUploadDraftUseCaseCellName`")
+        }
     }
 
 }
