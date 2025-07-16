@@ -347,7 +347,7 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                         userID: result.userID,
                         storage: UserDefaults.standard
                     ).set(false, forKey: .isAnalyticsTrackingEnabled)
-                case .enabled(let trackingID):
+                case let .enabled(trackingID):
                     PrivateUserDefaults<AnalyticsTrackingPrivateUserDefaultsKey>(
                         userID: result.userID,
                         storage: UserDefaults.standard

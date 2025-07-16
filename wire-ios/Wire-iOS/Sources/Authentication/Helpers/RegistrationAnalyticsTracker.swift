@@ -25,7 +25,9 @@ import WireSyncEngine
 
 final class RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
 
-    /// This UserDefaults key is used for storing an analytics tracking ID during the process of creating a new personal user account. The value is cleared only once the flow is completed, so that switching back and forth between enabling or disabling analytics is tracked under the same identifier.
+    /// This UserDefaults key is used for storing an analytics tracking ID during the process of creating a new personal
+    /// user account. The value is cleared only once the flow is completed, so that switching back and forth between
+    /// enabling or disabling analytics is tracked under the same identifier.
     private let trackingIDDefaultsKey = "tempTrackingID"
 
     private var analyticsService: AnalyticsService?

@@ -113,7 +113,10 @@ final class AuthenticationEventResponderChain {
     // MARK: - Configuration
 
     var flowStartHandlers: [AnyAuthenticationEventHandler<(NSError?, Int)>] = []
-    var wireAuthenticationModuleHandlers: [AnyAuthenticationEventHandler<(AuthenticationResult, RegistrationAnalyticsTrackingInfo)>] = []
+    var wireAuthenticationModuleHandlers: [AnyAuthenticationEventHandler<(
+        AuthenticationResult,
+        RegistrationAnalyticsTrackingInfo
+    )>] = []
     var backupEventHandlers: [AnyAuthenticationEventHandler<Bool>] = []
     var clientRegistrationErrorHandlers: [AnyAuthenticationEventHandler<(NSError, UUID)>] = []
     var clientRegistrationSuccessHandlers: [AnyAuthenticationEventHandler<Void>] = []
