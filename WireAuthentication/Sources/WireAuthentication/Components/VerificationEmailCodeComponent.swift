@@ -68,7 +68,7 @@ extension VerificationEmailCodeComponent: VerificationEmailCodeViewModel.Factory
             password: password,
             name: name,
             onFlowCompletion: { [dependency, trackingInfo] authenticationResult in
-                dependency?.registrationAnalyticsTracker?.deleteTempAnalyticsID()
+                dependency?.registrationAnalyticsTracker?.deleteTemporaryTrackingID()
                 dependency?.bridge.sendOutboundEvent(.userAuthenticated(authenticationResult, trackingInfo))
             },
             analyticsEventTracker: dependency.registrationAnalyticsTracker

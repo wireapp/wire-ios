@@ -52,7 +52,7 @@ final class RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
         self.logger = .authentication
     }
 
-    var currentDeviceID: String? { // TODO: needed?
+    var currentDeviceID: String? {
         analyticsService?.currentDeviceID
     }
 
@@ -98,7 +98,7 @@ final class RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
         analyticsTracker?.trackEvent(.Registration.accountSetupStep5)
     }
 
-    func deleteTempAnalyticsID() {
+    func deleteTemporaryTrackingID() {
         userDefaults.removeObject(forKey: trackingIDDefaultsKey)
     }
 

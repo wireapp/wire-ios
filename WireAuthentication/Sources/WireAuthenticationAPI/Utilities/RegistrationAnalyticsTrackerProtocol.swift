@@ -28,7 +28,7 @@ public protocol RegistrationAnalyticsTrackerProtocol {
     /// defaults, since there is no user/account ID available yet.
     /// This method cleans up the temporary id from the user defaults.
 
-    func deleteTempAnalyticsID() // TODO: needed? rename
+    func deleteTemporaryTrackingID()
 
     /// Start analytics after the user agreed.
 

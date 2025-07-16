@@ -57,6 +57,6 @@ private struct MockRegistrationAnalyticsTracker: RegistrationAnalyticsTrackerPro
     func trackPersonalAccountCreationFailedCodeVerification() {}
     func trackPersonalAccountCreationReachedUsernameForm() {}
     func trackPersonalAccountCreationCompletion() {}
-    func deleteTempAnalyticsID() {}
+    func deleteTemporaryTrackingID() {}
 
 }
