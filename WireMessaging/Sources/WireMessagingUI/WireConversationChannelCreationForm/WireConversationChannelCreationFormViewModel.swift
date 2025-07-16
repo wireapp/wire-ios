@@ -18,8 +18,8 @@
 
 public import Foundation
 public import Combine
-import WireFoundation
 import SwiftUI
+import WireFoundation
 public import WireMessagingAPI
 
 public final class WireConversationChannelCreationFormViewModel: ObservableObject {
@@ -255,7 +255,7 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
                     servicesAllowed: servicesAllowed,
                     guestsAllowed: guestsAllowed,
                     readReceiptsEnabled: readReceiptsEnabled,
-                    historyDepth: historyDepth != nil ? Int(historyDepth!) : nil
+                    historyDepth: historyDepth.map(Int.init)
                 )
             }
             .get()

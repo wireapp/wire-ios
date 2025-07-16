@@ -34,27 +34,13 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
     private lazy var viewModel = WireConversationChannelCreationFormViewModel(
         channelName: "",
         isUserPremium: isUserPremium,
-        teamsURL: teamsURL,
+        teamsURL: URL.manageTeam(source: .settings),
         onFormValidityUpdate: { formIsValid in
             Task { @MainActor [weak self] in
                 self?.onFormValidityUpdate(formIsValid: formIsValid)
             }
         }
     )
-
-    private var teamsURL: URL {
-        let baseURL = BackendEnvironment.shared.teamsURL
-
-        let queryItems = [
-            URLQueryItem(name: "utm_source", value: "client_settings"),
-            URLQueryItem(name: "utm_term", value: "ios")
-        ]
-
-        var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)
-        components?.queryItems = queryItems
-
-        return components!.url!.appendingLocaleParameter
-    }
 
     private lazy var isUserPremium: Bool = {
         guard let userSession = userSession as? ZMUserSession else { return false }
