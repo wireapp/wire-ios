@@ -17,7 +17,6 @@
 //
 
 import Foundation
-
 @testable import WireDataModel
 
 final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
@@ -40,7 +39,7 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
         case richProfile = "richProfileChanged"
         case legalHoldStatus = "legalHoldStatusChanged"
         case isUnderLegalHold = "isUnderLegalHoldChanged"
-        case trackingID = "trackingIDChanged"
+        case analyticsIdentifier = "analyticsIdentifierChanged"
     }
 
     let userInfoChangeKeys: [UserInfoChangeKey] = UserInfoChangeKey.allCases
@@ -670,17 +669,16 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
         )
     }
 
-    func testThatItNotifiesTheObserverOfTrackingIDChange() {
+    func testThatItNotifiesTheObserverOfAnalyticsIdentifierChange() {
         // given
         let user = ZMUser.selfUser(in: uiMOC)
-        let trackingID = UUID()
-        user.trackingID = trackingID
+        user.analyticsIdentifier = "foo"
 
         // when
         checkThatItNotifiesTheObserverOfAChange(
             user,
-            modifier: { $0.trackingID = trackingID },
-            expectedChangedField: .trackingID
+            modifier: { $0.analyticsIdentifier = "bar" },
+            expectedChangedField: .analyticsIdentifier
         )
     }
 

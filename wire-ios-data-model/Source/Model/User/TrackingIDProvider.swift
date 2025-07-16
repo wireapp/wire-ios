@@ -47,7 +47,7 @@ public struct TrackingIDProvider {
     }
 
     private func broadcast(trackingID: UUID, context: NSManagedObjectContext) {
-        let message = DataTransfer(trackingIdentifier: trackingID.transportString())
+        let message = DataTransfer(trackingIdentifier: trackingID)
         do {
             try ZMConversation.sendMessageToSelfClients(message, in: context)
         } catch {
