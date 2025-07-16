@@ -17,9 +17,9 @@
 //
 
 import XCTest
-@testable import WireConversationsAPI
-@testable import WireConversationsImplementationSupport
-@testable import WireConversationsUI
+@testable import WireMessagingAPI
+@testable import WireMessagingImplementationSupport
+@testable import WireMessagingUI
 
 @MainActor
 final class ChannelHistoryViewModelTests: XCTestCase {

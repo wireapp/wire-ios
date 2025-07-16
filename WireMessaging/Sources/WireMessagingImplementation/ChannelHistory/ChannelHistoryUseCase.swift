@@ -18,7 +18,7 @@
 
 import Foundation
 import WireFoundation
-public import WireConversationsAPI
+public import WireMessagingAPI
 
 @MainActor
 public protocol ChannelHistoryUseCaseProtocol {

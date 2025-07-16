@@ -18,8 +18,8 @@
 
 import Combine
 package import SwiftUI
-import WireConversationsAPI
-package import WireConversationsImplementation
+import WireMessagingAPI
+package import WireMessagingImplementation
 
 @MainActor
 package class ChannelHistoryViewModel: ObservableObject {

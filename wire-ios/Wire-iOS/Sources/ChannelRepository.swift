@@ -45,8 +45,8 @@ class ChannelRepository: ChannelRepositoryProtocol {
     }
 
     func updateParticipantPermission(
-        to permission: WireConversationsAPI.ChannelAccessLevelPermission
-    ) async throws -> WireConversationsAPI.ChannelAccessLevelPermission {
+        to permission: WireMessagingAPI.ChannelAccessLevelPermission
+    ) async throws -> WireMessagingAPI.ChannelAccessLevelPermission {
         let permission = try await api
             .addChannelPermission(
                 conversationID: conversationID,

@@ -22,9 +22,9 @@ import UIKit
 import WireTestingPackage
 import XCTest
 
-import WireConversationsAPI
-@testable import WireConversationsImplementationSupport
-@testable import WireConversationsUI
+import WireMessagingAPI
+@testable import WireMessagingImplementationSupport
+@testable import WireMessagingUI
 
 class ChannelHistoryViewSnapshotTests: XCTestCase {
 

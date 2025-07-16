@@ -29,13 +29,13 @@ public class MockChannelHistoryUseCaseProtocol: ChannelHistoryUseCaseProtocol {
 
     // MARK: updateHistoryDepth
 
-    public var updateHistoryDepth_Invocations: [(WireConversationsAPI.ChannelHistoryOption, WireConversationsAPI.ChannelHistoryOption.Custom)] = []
-    public var updateHistoryDepth_MockMethod: (((WireConversationsAPI.ChannelHistoryOption, WireConversationsAPI.ChannelHistoryOption.Custom)) async throws -> Void)?
+    public var updateHistoryDepth_Invocations: [(WireMessagingAPI.ChannelHistoryOption, WireMessagingAPI.ChannelHistoryOption.Custom)] = []
+    public var updateHistoryDepth_MockMethod: (((WireMessagingAPI.ChannelHistoryOption, WireMessagingAPI.ChannelHistoryOption.Custom)) async throws -> Void)?
     public var updateHistoryDepth_MockError: (any Error)?
 
     public func updateHistoryDepth(
-        channelHistoryOption: WireConversationsAPI.ChannelHistoryOption,
-        channelHistoryOptionCustom: WireConversationsAPI.ChannelHistoryOption.Custom
+        channelHistoryOption: WireMessagingAPI.ChannelHistoryOption,
+        channelHistoryOptionCustom: WireMessagingAPI.ChannelHistoryOption.Custom
     ) async throws {
         updateHistoryDepth_Invocations.append((channelHistoryOption, channelHistoryOptionCustom))
 
