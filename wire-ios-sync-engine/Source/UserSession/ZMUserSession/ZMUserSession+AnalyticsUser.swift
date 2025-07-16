@@ -77,7 +77,7 @@ extension ZMUserSession: AnalyticsEventTrackerProvider {
     private func broadcastTrackingID(_ trackingID: UUID) throws {
         do {
             WireLogger.analytics.debug("broadcasting new analytics id")
-            let message = DataTransfer(trackingIdentifier: trackingID.transportString())
+            let message = DataTransfer(trackingIdentifier: trackingID)
             try ZMConversation.sendMessageToSelfClients(message, in: syncContext)
         } catch {
             throw AnalyticsError.failedToBroadcastTrackingID(error)
@@ -92,6 +92,6 @@ extension ZMUserSession: AnalyticsEventTrackerProvider {
 /// the newly created analytics id is temporarily stored in this property. After setting up the user session this
 /// property will be cleared and the value stored in the database under `ZMUser.trackingID` property.
 
-private enum AnalyticsUserIDDefaultsKey: String, DefaultsKey {
+private enum AnalyticsUserIDDefaultsKey: String, DefaultsKey { // TODO: still needed?
     case trackingIDFromRegistration
 }
