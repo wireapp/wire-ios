@@ -54,7 +54,7 @@ public struct WireChannelBannerView: View {
                 .stroke(BaseColorPalette.Grays.gray90.color, lineWidth: 1)
         )
     }
-    
+
     private var titleView: some View {
         HStack(alignment: .top) {
             Text(configuration.title)
@@ -73,7 +73,7 @@ public struct WireChannelBannerView: View {
             }
         }
     }
-    
+
     private var messageView: some View {
         Text(configuration.message)
             .wireTextStyle(.body1)
@@ -82,7 +82,7 @@ public struct WireChannelBannerView: View {
                 configuration.message
             )
     }
-    
+
     private var buttonView: some View {
         Button(configuration.mainButtonTitle, action: configuration.mainButtonAction)
             .lineLimit(1)
