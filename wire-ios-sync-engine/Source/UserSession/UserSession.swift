@@ -297,6 +297,6 @@ public protocol UserSession: AnyObject {
     /// Cache for search users.
     var searchUsersCache: SearchUsersCache { get }
 
-    /// The authentication manager for the user session
+    /// Dependencies owned by the user session that require a client
     var clientSessionComponent: ClientSessionComponent? { get }
 }
