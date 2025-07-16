@@ -1573,7 +1573,7 @@ extension SessionManager: UserObserving {
             updateCurrentAccount(in: managedObjectContext)
         }
 
-        if changeInfo.trackingIDChanged {
+        if changeInfo.analyticsIdentifierChanged {
             guard
                 let isTrackingEnabled = analyticsService?.isTrackingEnabled,
                 isTrackingEnabled,
