@@ -28,6 +28,7 @@ import WireMainNavigationUI
 import WireMessagingUIBindings
 import WireSidebarUI
 import WireSyncEngine
+import WireUtilities
 
 final class ZClientViewController: UIViewController {
 
@@ -163,7 +164,7 @@ final class ZClientViewController: UIViewController {
 
     var userObserverToken: NSObjectProtocol?
     var conferenceCallingUnavailableObserverToken: Any?
-    var userDidViewSelfProfileToken: NSObjectProtocol?
+    var userDidViewSelfProfileToken: SelfUnregisteringNotificationCenterToken?
 
     private let topOverlayContainer = UIView()
     private var topOverlayViewController: UIViewController?
@@ -171,6 +172,9 @@ final class ZClientViewController: UIViewController {
     private let colorSchemeController: ColorSchemeController
     private var incomingApnsObserver: NSObjectProtocol?
     private var networkAvailabilityObserverToken: NSObjectProtocol?
+    private var featureChangeObserverToken: SelfUnregisteringNotificationCenterToken?
+    private var userDefaultsObserverToken: SelfUnregisteringNotificationCenterToken?
+    private var loggingRequestLoopObserverToken: SelfUnregisteringNotificationCenterToken?
 
     private(set) lazy var mainCoordinator = MainCoordinator(
         mainSplitViewController: mainSplitViewController,
@@ -208,7 +212,7 @@ final class ZClientViewController: UIViewController {
 
         NotificationCenter.default.post(name: NSNotification.Name.ZMUserSessionDidBecomeAvailable, object: nil)
 
-        NotificationCenter.default
+        let featureToken = NotificationCenter.default
             .addObserver(forName: .featureDidChangeNotification, object: nil, queue: .main) { [weak self] note in
                 guard let change = note.object as? FeatureRepository.FeatureChange else { return }
 
@@ -222,9 +226,10 @@ final class ZClientViewController: UIViewController {
                     break
                 }
             }
+        featureChangeObserverToken = SelfUnregisteringNotificationCenterToken(featureToken)
 
         // Observe developer flag changes
-        NotificationCenter.default
+        let userDefaultsToken = NotificationCenter.default
             .addObserver(
                 forName: UserDefaults.didChangeNotification,
                 object: nil,
@@ -233,6 +238,7 @@ final class ZClientViewController: UIViewController {
                 // Update sidebar's showUnreadFilters when developer flag changes
                 self?.sidebarViewController.showUnreadFilters = DeveloperFlag.showUnreadConversationsFilter.isOn
             }
+        userDefaultsObserverToken = SelfUnregisteringNotificationCenterToken(userDefaultsToken)
 
         createLegalHoldDisclosureController()
     }
@@ -280,12 +286,14 @@ final class ZClientViewController: UIViewController {
 
         if Bundle.developerModeEnabled {
             // better way of dealing with this?
-            NotificationCenter.default.addObserver(
-                self,
-                selector: #selector(requestLoopNotification(_:)),
-                name: .loggingRequestLoop,
-                object: nil
-            )
+            let loggingToken = NotificationCenter.default.addObserver(
+                forName: .loggingRequestLoop,
+                object: nil,
+                queue: .main
+            ) { [weak self] notification in
+                self?.requestLoopNotification(notification)
+            }
+            loggingRequestLoopObserverToken = SelfUnregisteringNotificationCenterToken(loggingToken)
         }
 
         setupUserChangeInfoObserver()
@@ -855,7 +863,7 @@ extension ZClientViewController: UserObserving {
 
 extension ZClientViewController {
     func setupDidViewSelfProfileObserver() {
-        userDidViewSelfProfileToken = NotificationCenter.default.addObserver(
+        let token = NotificationCenter.default.addObserver(
             forName: .userDidViewSelfProfile,
             object: nil,
             queue: .main
@@ -864,5 +872,6 @@ extension ZClientViewController {
                 await self?.updateCachedAccountInfo()
             }
         }
+        userDidViewSelfProfileToken = SelfUnregisteringNotificationCenterToken(token)
     }
 }
