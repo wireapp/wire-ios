@@ -94,10 +94,10 @@ public enum SendMLSMessageFailure: Error, LocalizedError, Equatable {
 
         case let .invalidRequestBody(message):
             "Invalid request body. message: \(message)"
-            
+
         case let .mlsInvalidLeafNodeIndex(message):
             "A referenced leaf node index points to a blank or non-existing node: \(message)"
-        
+
         case let .mlsInvalidLeafNodeSignature(message):
             "TBD" // TODO:
 
@@ -163,10 +163,10 @@ public enum SendMLSMessageFailure: Error, LocalizedError, Equatable {
 
         case (400, "mls-protocol-error"):
             self = .mlsProtocolError(message: payloadMessage)
-            
+
         case (400, "mls-invalid-leaf-node-index"):
             self = .mlsInvalidLeafNodeIndex(message: payloadMessage)
-        
+
         case (400, "mls-invalid-leaf-node-signature"):
             self = .mlsInvalidLeafNodeSignature(message: payloadMessage)
 

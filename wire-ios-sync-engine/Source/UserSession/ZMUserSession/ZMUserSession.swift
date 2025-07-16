@@ -711,10 +711,15 @@ public final class ZMUserSession: NSObject {
                 guard let self else {
                     fatal("userSession not reachable")
                 }
-                return pullSelfUserClientsFactory(context: context)
+                return makePullSelfUserClients(context: context)
             },
             searchUsersCache: dependencies.caches.searchUsers,
-            resetMLSConversationHandler: ResetMLSConversationHandler()
+            resetMLSConversationHandlerFactory: { [weak self] context in
+                guard let self else {
+                    fatal("userSession not reachable")
+                }
+                return makeResetMLSConversationHandler(context: context)
+            }
         )
     }
 
@@ -1291,11 +1296,25 @@ extension ZMUserSession: SyncAgentDelegate {
             context: context,
             supportedProtocolService: supportedProtocolService,
             resolver: resolver,
-            pullSelfUserClientsFactory: pullSelfUserClientsFactory
+            pullSelfUserClientsFactory: makePullSelfUserClients
         )
     }
 
-    private func pullSelfUserClientsFactory(context: NSManagedObjectContext) -> PullSelfUserClientsSyncProtocol {
+    private func makeResetMLSConversationHandler(
+        context: NSManagedObjectContext
+    ) -> WireRequestStrategy.ResetMLSConversationHandlerProtocol {
+        let (apiService, apiVersion) = makeApiServiceAndAPIVersion()
+
+        return ResetMLSConversationHandler
+            .make(
+                apiService: apiService,
+                apiVersion: apiVersion,
+                mlsService: mlsService,
+                context: context
+            )
+    }
+
+    private func makeApiServiceAndAPIVersion() -> (APIServiceProtocol, WireNetwork.APIVersion) {
         guard let apiService = managedObjectContext.performAndWait({ self.apiService }) else {
             fatal("cannot initialize ResolveOneOnOneConversationsUseCase")
         }
@@ -1307,9 +1326,15 @@ extension ZMUserSession: SyncAgentDelegate {
 
         }
 
+        return (apiService, wireAPIVersion)
+    }
+
+    private func makePullSelfUserClients(context: NSManagedObjectContext) -> PullSelfUserClientsSyncProtocol {
+        let (apiService, apiVersion) = makeApiServiceAndAPIVersion()
+
         return PullSelfUserClientsSync.make(
             apiService: apiService,
-            apiVersion: wireAPIVersion,
+            apiVersion: apiVersion,
             context: context
         )
     }
@@ -1649,4 +1674,4 @@ extension ZMUserSession {
 
 }
 
-extension ResetMLSConversationHandler: WireRequestStrategy.ResetMLSConversationHandlerProtocol { }
+extension ResetMLSConversationHandler: WireRequestStrategy.ResetMLSConversationHandlerProtocol {}

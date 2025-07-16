@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDomain
+import WireNetwork
 import WireRequestStrategy
 
 @objc
@@ -38,7 +39,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
     public private(set) var eventConsumers: [ZMEventConsumer]
     public private(set) var eventAsyncConsumers: [ZMEventAsyncConsumer]
     public private(set) var contextChangeTrackers: [ZMContextChangeTracker]
-    public private(set) var resetMLSConversationHandler: WireRequestStrategy.ResetMLSConversationHandlerProtocol
+    public private(set) var resetMLSConversationHandlerFactory: (NSManagedObjectContext) -> WireRequestStrategy
+        .ResetMLSConversationHandlerProtocol
 
     init(
         contextProvider: ContextProvider,
@@ -55,7 +57,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         coreCryptoProvider: CoreCryptoProviderProtocol,
         pullSelfUserClientsFactory: @escaping PullSelfUserClientsFactory,
         searchUsersCache: SearchUsersCache?,
-        resetMLSConversationHandler: WireRequestStrategy.ResetMLSConversationHandlerProtocol
+        resetMLSConversationHandlerFactory: @escaping (NSManagedObjectContext) -> WireRequestStrategy
+            .ResetMLSConversationHandlerProtocol
     ) {
         self.strategies = Self.buildStrategies(
             contextProvider: contextProvider,
@@ -73,7 +76,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             pullSelfUserClientsFactory: pullSelfUserClientsFactory,
             searchUsersCache: searchUsersCache
         )
-        self.resetMLSConversationHandler = resetMLSConversationHandler
+        self.resetMLSConversationHandlerFactory = resetMLSConversationHandlerFactory
 
         self.requestStrategies = strategies.compactMap { $0 as? RequestStrategy }
         self.eventConsumers = strategies.compactMap { $0 as? ZMEventConsumer }
@@ -376,8 +379,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 context: syncContext,
                 apiProvider: apiProvider
             )
-            
-            let resetMLSConversationHandler = ResetMLSConversationHandler()
 
             let messageSender = MessageSender(
                 apiProvider: apiProvider,
@@ -385,7 +386,9 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 messageDependencyResolver: messageDependencyResolver,
                 context: syncContext,
                 incrementalSyncObserver: incrementalSyncObserver,
-                resetMLSConversationHandler: resetMLSConversationHandler
+                resetMLSConversationHandler: resetMLSConversationHandlerFactory(
+                    syncContext
+                )
             )
 
             let strategies: [Any] = [
