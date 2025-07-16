@@ -32,7 +32,7 @@ public struct WireCellsFactory {
         case "nginz-https.fulu.wire.link":
             URL(string: "https://cells.fulu.wire.link")!
         case "nginz-https.imai.wire.link":
-            URL(string: "https://service.zeta.pydiocells.com")!
+            URL(string: "https://cells.imai.wire.link")!
         default:
             serverURL
         }
