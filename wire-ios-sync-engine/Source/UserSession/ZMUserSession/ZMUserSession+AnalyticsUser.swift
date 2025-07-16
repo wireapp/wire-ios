@@ -34,15 +34,15 @@ extension ZMUserSession: AnalyticsEventTrackerProvider {
             let selfUser = ZMUser.selfUser(in: syncContext)
 
             // Sanity check that we don't setup analytics too early.
-            guard let userID = selfUser.selfClient()?.remoteIdentifier.flatMap(UUID.init(uuidString:)) else {
-                throw AnalyticsError.selfClientIsNotRegistered // TODO: fix 
+            guard selfUser.selfClient()?.remoteIdentifier != nil else {
+                throw AnalyticsError.selfClientIsNotRegistered // TODO: fix
             }
 
             let trackingID: UUID
             var teamInfo: TeamInfo?
 
             let trackingIDFromRegistration = PrivateUserDefaults<AnalyticsUserIDDefaultsKey>(
-                userID: userID,
+                userID: selfUser.remoteIdentifier,
                 storage: UserDefaults.standard
             ).object(forKey: .trackingIDFromRegistration) as? String
             if let existingID = selfUser.trackingID {
