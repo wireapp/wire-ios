@@ -55,11 +55,7 @@ public struct InitiateResetMLSConversationUseCase: InitiateResetMLSConversationU
             }
 
             // send request to BE to reset broken conversation
-            try await api
-                .resetMLSConversation(
-                    epoch: epoch,
-                    groupID: groupID.data.base64String()
-                )
+            try await api.resetMLSConversation(epoch: epoch, groupID: groupID.data.base64String())
 
             // re-create group and re-add all participants
             let users = conversation.localParticipants.map(MLSUser.init)

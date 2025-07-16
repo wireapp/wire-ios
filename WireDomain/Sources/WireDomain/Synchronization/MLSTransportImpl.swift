@@ -47,7 +47,7 @@ final class MLSTransportImpl: MlsTransport {
             case .mlsInvalidLeafNodeSignature, .mlsInvalidLeafNodeIndex:
                 await initiateResetMLSConversationUseCase
                     .invoke(
-                        groupID: .init(base64Encoded: "")!,
+                        groupID: .init(base64Encoded: "")!, // TODO: 
                         epoch: 0
                     )
             default: break
