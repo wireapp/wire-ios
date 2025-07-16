@@ -342,11 +342,16 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                 }
 
                 if let isAnalyticsTrackingEnabled {
-                    let privateUserDefaults = PrivateUserDefaults<AnalyticsTrackingPrivateUserDefaultsKey>(
+                    PrivateUserDefaults<AnalyticsTrackingPrivateUserDefaultsKey>(
                         userID: result.userID,
                         storage: UserDefaults.standard
-                    )
-                    privateUserDefaults.set(isAnalyticsTrackingEnabled, forKey: .isAnalyticsTrackingEnabled)
+                    ).set(isAnalyticsTrackingEnabled, forKey: .isAnalyticsTrackingEnabled)
+
+                    // TODO: set trackingID
+//                    PrivateUserDefaults<RegistrationAnalyticsTrackingIDKey>(
+//                        userID: result.userID,
+//                        storage: UserDefaults.standard
+//                    ).set(<#T##value: Bool##Bool#>, forKey: <#T##RegistrationAnalyticsTrackingIDKey#>)
                 }
 
                 unauthenticatedSession.upgradeToAuthenticatedSession(with: userInfo)

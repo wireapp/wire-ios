@@ -38,7 +38,7 @@ final class VerificationEmailCodeComponent: Component<VerificationEmailCodeCompo
     private let email: String
     private let password: String
     private let name: String
-    private let trackingID: UUID?
+    private let trackingID: UUID? // TODO: create type RegistrationAnalyticsTrackingInfo
 
     init(
         parent: any Scope,

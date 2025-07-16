@@ -18,8 +18,10 @@
 
 public import WireFoundation
 
-/// Stores the info if the user gave consent to analytics tracking.
+/// If the user went through the flow of registering a new personal account and gave consent to analytics tracking,
+/// the newly created analytics id is temporarily stored in this property. After setting up the user session this
+/// property will be cleared and the value stored in the database under `ZMUser.trackingID` property.
 
-public enum AnalyticsTrackingPrivateUserDefaultsKey: String, DefaultsKey {
-    case isAnalyticsTrackingEnabled
+public enum RegistrationAnalyticsTrackingIDKey: String, DefaultsKey {
+    case trackingIDFromRegistration
 }

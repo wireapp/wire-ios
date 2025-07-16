@@ -29,7 +29,7 @@ enum AuthenticationCoordinatorAction {
     case presentAlert(AuthenticationCoordinatorAlert)
     case presentErrorAlert(AuthenticationCoordinatorErrorAlert)
     case completeBackupStep(didSucceed: Bool?)
-    case completeWireAuthenticationLogin((AuthenticationResult, isAnalyticsTrackingEnabled: Bool?))
+    case completeWireAuthenticationLogin((AuthenticationResult, isAnalyticsTrackingEnabled: Bool?)) // TODO: registrationanalyticstrackinginfo
     case completeLoginFlow
     case startPostLoginFlow
     case transition(AuthenticationFlowStep, mode: AuthenticationStateController.StateChangeMode)
