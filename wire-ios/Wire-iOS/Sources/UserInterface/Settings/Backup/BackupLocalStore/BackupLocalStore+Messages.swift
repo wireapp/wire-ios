@@ -87,7 +87,7 @@ extension BackupLocalStore {
 
         // restore `lastReadServerTimeStamp`, messages imported from backups shouldn't be marked as unread
         await context.perform {
-            conversation.lastReadServerTimeStamp = lastReadServerTimeStamp
+            conversation.lastReadServerTimeStamp = lastReadServerTimeStamp ?? .now
         }
     }
 

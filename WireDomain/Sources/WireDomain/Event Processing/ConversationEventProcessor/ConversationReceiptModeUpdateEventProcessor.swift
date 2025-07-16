@@ -53,7 +53,7 @@ struct ConversationReceiptModeUpdateEventProcessor: ConversationReceiptModeUpdat
             for: conversation
         )
 
-        let systemMessage = SystemMessage(
+        _ = SystemMessage(
             type: isEnabled ? .readReceiptsEnabled : .readReceiptsDisabled,
             sender: sender,
             timestamp: .now

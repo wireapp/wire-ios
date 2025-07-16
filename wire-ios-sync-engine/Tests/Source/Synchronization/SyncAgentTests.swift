@@ -91,6 +91,7 @@ final class SyncAgentTests: XCTestCase, InitialSyncProvider, IncrementalSyncProv
     func testPerformSyncIfNeeded_InitialSync() async throws {
         // Given
         journal[.isSyncV2Enabled] = true
+        journal[.isInitialSyncRequired] = true
 
         // Mock
         lastUpdateEventIDRepository.fetchLastEventID_MockValue = .some(nil)
