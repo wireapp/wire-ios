@@ -224,12 +224,13 @@ public final class ClientSessionComponent {
 
     // MARK: - Pull syncs
 
-    private lazy var pullAllConversationsSync = PullAllConversationsSync(
+    public lazy var pullAllConversationsSync = PullAllConversationsSync(
         localDomain: localDomain,
         isFederationEnabled: BackendInfo.isFederationEnabled,
         isMLSEnabled: BackendInfo.isMLSEnabled,
         api: conversationsAPI,
-        store: conversationLocalStore
+        store: conversationLocalStore,
+        journal: journal
     )
 
     private lazy var pullAllFeatureConfigsSync = PullAllFeatureConfigsSync(
@@ -322,6 +323,11 @@ public final class ClientSessionComponent {
         store: userConnectionsStore
     )
 
+    private lazy var pullServerTimeSync = PullServerTimeSync(
+        api: updateEventsAPI,
+        store: updateEventsLocalStore
+    )
+
     // MARK: - Push syncs
 
     private lazy var pushSupportedProtocolsSync = PushSupportedProtocolsSync(
@@ -385,6 +391,7 @@ public final class ClientSessionComponent {
 
     public lazy var incrementalSyncV2 = IncrementalSyncV2(
         selfClientID: selfClientID,
+        pullServerTimeSync: pullServerTimeSync,
         pushChannelAPI: pushChannelV2API,
         decryptor: updateEventDecryptor,
         updateEventsStore: updateEventsLocalStore,

@@ -378,7 +378,7 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
             isMLSEnabled: isMLSEnabled
         )
 
-        let qualifiedID = conversation.qualifiedID?.uuid
+        let qualifiedID = conversation.qualifiedID?.id
         guard let conversationID = conversation.id ?? qualifiedID else {
             throw Failure.missingConversationID
         }

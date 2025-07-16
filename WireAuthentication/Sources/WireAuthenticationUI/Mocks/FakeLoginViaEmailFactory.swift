@@ -53,8 +53,7 @@ struct FakeLoginViaEmailFactory: LoginViaEmailFactory, CreateAuthenticationResul
             email: email,
             backendInfo: backendInfo,
             canCreateAccount: canCreateAccount,
-            didDetectDomainConflict: didDetectDomainConflict,
-            onCreateAccount: {}
+            didDetectDomainConflict: didDetectDomainConflict
         )
     }
 

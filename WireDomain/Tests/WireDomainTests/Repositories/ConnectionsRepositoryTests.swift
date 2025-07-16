@@ -90,17 +90,17 @@ final class ConnectionsRepositoryTests: XCTestCase {
     }
 
     private enum Scaffolding {
-        static let member1ID = WireNetwork.QualifiedID(uuid: .mockID1, domain: String.randomDomain())
-        static let conversationID = WireNetwork.QualifiedID(uuid: .mockID2, domain: String.randomDomain())
-        static let member2ID = WireNetwork.QualifiedID(uuid: .mockID3, domain: String.randomDomain())
+        static let member1ID = WireNetwork.QualifiedID(id: .mockID1, domain: String.randomDomain())
+        static let conversationID = WireNetwork.QualifiedID(id: .mockID2, domain: String.randomDomain())
+        static let member2ID = WireNetwork.QualifiedID(id: .mockID3, domain: String.randomDomain())
         static let lastUpdate = Date()
         static let connectionStatus = ConnectionStatus.accepted
 
         static let connection = WireNetwork.Connection(
-            senderID: Scaffolding.member1ID.uuid,
-            receiverID: Scaffolding.member2ID.uuid,
+            senderID: Scaffolding.member1ID.id,
+            receiverID: Scaffolding.member2ID.id,
             receiverQualifiedID: Scaffolding.member2ID,
-            conversationID: Scaffolding.conversationID.uuid,
+            conversationID: Scaffolding.conversationID.id,
             qualifiedConversationID: Scaffolding.conversationID,
             lastUpdate: Scaffolding.lastUpdate,
             status: Scaffolding.connectionStatus

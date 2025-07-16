@@ -20,15 +20,15 @@ import Foundation
 
 /// Which users are allowed to be participants in a conversation.
 
-public enum ConversationAccessRole: String, Codable, Sendable {
+public enum ConversationAccessRole: Sendable {
 
     /// Members of the owning team.
 
-    case teamMember = "team_member"
+    case teamMember
 
     /// Any user outside the owning team.
 
-    case nonTeamMember = "non_team_member"
+    case nonTeamMember
 
     /// Users that are not in the team and are not services.
 
@@ -38,4 +38,40 @@ public enum ConversationAccessRole: String, Codable, Sendable {
 
     case service
 
+}
+
+enum ConversationAccessRoleV0: String, Sendable, Decodable, ToAPIModelConvertible {
+    case teamMember = "team_member"
+    case nonTeamMember = "non_team_member"
+    case guest
+    case service
+
+    func toAPIModel() -> ConversationAccessRole {
+        switch self {
+        case .teamMember:
+            .teamMember
+        case .nonTeamMember:
+            .nonTeamMember
+        case .guest:
+            .guest
+        case .service:
+            .service
+        }
+    }
+}
+
+extension ConversationAccessRole: ToNetworkConvertible {
+
+    func toNetworkModel() -> ConversationAccessRoleV0 {
+        switch self {
+        case .teamMember:
+            .teamMember
+        case .nonTeamMember:
+            .nonTeamMember
+        case .guest:
+            .guest
+        case .service:
+            .service
+        }
+    }
 }

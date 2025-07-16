@@ -24,12 +24,12 @@ struct ConversationMemberUpdateEventDecoder {
         from container: KeyedDecodingContainer<ConversationEventCodingKeys>
     ) throws -> ConversationMemberUpdateEvent {
         let conversationID = try container.decode(
-            ConversationID.self,
+            QualifiedIDV0.self,
             forKey: .conversationQualifiedID
         )
 
         let senderID = try container.decode(
-            UserID.self,
+            QualifiedIDV0.self,
             forKey: .senderQualifiedID
         )
 
@@ -44,11 +44,11 @@ struct ConversationMemberUpdateEventDecoder {
         )
 
         return ConversationMemberUpdateEvent(
-            conversationID: conversationID,
-            senderID: senderID,
+            conversationID: conversationID.toAPIModel(),
+            senderID: senderID.toAPIModel(),
             timestamp: timestamp.date,
             memberChange: ConversationMemberChange(
-                id: payload.userID,
+                id: payload.userID.toAPIModel(),
                 newRoleName: payload.role,
                 newMuteStatus: payload.muteStatus,
                 muteStatusReferenceDate: payload.muteStatusReference?.date,
@@ -60,7 +60,7 @@ struct ConversationMemberUpdateEventDecoder {
 
     private struct Payload: Decodable {
 
-        let userID: UserID
+        let userID: QualifiedIDV0
         let role: String?
         let muteStatus: Int?
         let muteStatusReference: UTCTime?

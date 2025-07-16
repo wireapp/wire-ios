@@ -22,18 +22,23 @@ import WireCellsAPI
 extension WireCellsDraft {
     static func fixture(
         nodeID: UUID = UUID(),
-        versionID: UUID = UUID(),
-        status: WireCellsUploadStatus = .uploaded(isDraft: true)
+        versionID: UUID = UUID(uuidString: "11111111-1111-1111-1111-111111111111")!,
+        assetURL: URL = URL(string: "https://example.com")!,
+        status: WireCellsUploadStatus = .uploaded(isDraft: true),
+        name: String = "Draft",
+        mimeType: String? = nil,
+        deleteAfterUpload: Bool = false
     ) -> WireCellsDraft {
         WireCellsDraft(
             nodeID: nodeID,
             versionID: versionID,
-            assetURL: URL(string: "https://example.com")!,
+            assetURL: assetURL,
             fileType: nil,
             status: status,
-            name: "Draft",
+            name: name,
             bytes: 1024,
-            mimeType: nil
+            mimeType: mimeType,
+            deleteAfterUpload: deleteAfterUpload
         )
     }
 }

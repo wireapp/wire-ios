@@ -37,7 +37,7 @@ extension SessionManager: APIVersionResolverDelegate {
             proxyUsername: proxyCredentials?.username,
             proxyPassword: proxyCredentials?.password,
             reachability: reachability,
-            applicationVersion: currentBuildVersion,
+            applicationVersion: currentBuildNumber,
             readyForRequests: isUnauthenticatedTransportSessionReady
         )
 

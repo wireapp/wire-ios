@@ -57,6 +57,8 @@ public struct MLSAPIBuilder {
             MLSAPIV7(apiService: apiService)
         case .v8:
             MLSAPIV8(apiService: apiService)
+        case .v9:
+            MLSAPIV9(apiService: apiService)
         }
     }
 

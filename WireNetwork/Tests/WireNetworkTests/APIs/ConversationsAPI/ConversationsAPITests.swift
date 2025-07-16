@@ -209,7 +209,7 @@ final class ConversationsAPITests: XCTestCase {
 
         let expectedIDs: [QualifiedID] = [
             QualifiedID(
-                uuid: try XCTUnwrap(UUID(uuidString: "14c3f0ff-1a46-4e66-8845-ae084f09c483")),
+                id: try XCTUnwrap(UUID(uuidString: "14c3f0ff-1a46-4e66-8845-ae084f09c483")),
                 domain: "staging.zinfra.io"
             )
         ]
@@ -254,7 +254,7 @@ final class ConversationsAPITests: XCTestCase {
         let apiVersions = APIVersion.allCases
 
         let qualifiedID = QualifiedID(
-            uuid: try XCTUnwrap(UUID(uuidString: "213248a1-5499-418f-8173-5010d1c1e506")),
+            id: try XCTUnwrap(UUID(uuidString: "213248a1-5499-418f-8173-5010d1c1e506")),
             domain: "wire.com"
         )
 
@@ -318,7 +318,7 @@ final class ConversationsAPITests: XCTestCase {
             XCTAssertEqual(error.code, 503)
             XCTAssertEqual(error.label, "service unavailable")
         } catch {
-            XCTFail("expected error 'FailureResponse'")
+            XCTFail("expected error 'FailureResponse', got \(String(describing: error))")
         }
     }
 
@@ -376,7 +376,7 @@ final class ConversationsAPITests: XCTestCase {
             XCTAssertEqual(error.code, 503)
             XCTAssertEqual(error.label, "service unavailable")
         } catch {
-            XCTFail("expected error 'FailureResponse'")
+            XCTFail("expected error 'FailureResponse', got \(String(describing: error))")
         }
     }
 
@@ -437,7 +437,7 @@ final class ConversationsAPITests: XCTestCase {
             XCTAssertEqual(error.code, 503)
             XCTAssertEqual(error.label, "service unavailable")
         } catch {
-            XCTFail("expected error 'FailureResponse'")
+            XCTFail("expected error 'FailureResponse', got \(String(describing: error))")
         }
     }
 
@@ -479,7 +479,7 @@ final class ConversationsAPITests: XCTestCase {
             XCTAssertEqual(error.code, 503)
             XCTAssertEqual(error.label, "service unavailable")
         } catch {
-            XCTFail("expected error 'FailureResponse'")
+            XCTFail("expected error 'FailureResponse', got \(String(describing: error))")
         }
     }
 
@@ -1260,7 +1260,7 @@ final class ConversationsAPITests: XCTestCase {
     func testCreateGroupConversation_givenV0_To_V7_Unsupported_Channel_Creation() async throws {
 
         // given
-        let unsupportedVersions = Set(APIVersion.allCases).subtracting([.v8])
+        let unsupportedVersions = APIVersion.allCasesUpTo(.v8)
         let apiService = MockAPIServiceProtocol.withError(statusCode: .unreachable, label: "")
         let suts = unsupportedVersions.map { $0.buildAPI(apiService: apiService) }
 
@@ -1339,7 +1339,7 @@ final class ConversationsAPITests: XCTestCase {
     func testAddChannelPermission_givenV0_To_V7_AndFailure_Unsupported_Endpoint_For_API_Version() async throws {
 
         // given
-        let unsupportedVersions = Set(APIVersion.allCases).subtracting([.v8])
+        let unsupportedVersions = APIVersion.allCasesUpTo(.v8)
         let apiService = MockAPIServiceProtocol.withError(statusCode: .unreachable, label: "")
         let suts = unsupportedVersions.map { $0.buildAPI(apiService: apiService) }
 

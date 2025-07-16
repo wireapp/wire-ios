@@ -480,12 +480,12 @@ extension SearchResultsViewController: SearchSectionControllerDelegate {
 
 extension SearchResultsViewController: InviteTeamMemberSectionDelegate {
     func inviteSectionDidRequestTeamManagement() {
-        URL.manageTeam(source: .onboarding).openInApp(above: self)
+        URL.manageTeam(source: .onboarding).open(from: self)
     }
 }
 
 extension SearchResultsViewController: SearchServicesSectionDelegate {
     func addServicesSectionDidRequestOpenServicesAdmin() {
-        URL.manageTeam(source: .settings).openInApp(above: self)
+        URL.manageTeam(source: .settings).open(from: self)
     }
 }

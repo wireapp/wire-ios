@@ -52,7 +52,7 @@ class UserClientsAPIV0: UserClientsAPI, VersionedAPI {
         let path = "/users/list-clients/v2"
 
         let body = try JSONEncoder.defaultEncoder.encode(
-            UserClientsRequestV0(qualifiedIDs: Array(userIDs))
+            UserClientsRequestV0(qualifiedIDs: Array(userIDs.map { $0.toNetworkModel() }))
         )
 
         let request = try URLRequestBuilder(path: path)
@@ -112,19 +112,19 @@ struct ListUserClientV0: Decodable, ToAPIModelConvertible {
 struct SelfUserClientV0: Decodable, ToAPIModelConvertible {
 
     let id: String
-    let type: UserClientType
+    let type: UserClientTypeV0
     let activationDate: UTCTime?
     let label: String?
     let model: String?
-    let deviceClass: DeviceClass?
+    let deviceClass: DeviceClassV0?
     let lastActiveDate: UTCTime?
-    let mlsPublicKeys: MLSPublicKeys?
+    let mlsPublicKeys: MLSPublicKeysV0?
     let cookie: String?
     let capabilities: CapabilitiesList?
 
     struct CapabilitiesList: Decodable {
 
-        let capabilities: [UserClientCapability]
+        let capabilities: [UserClientCapabilityV0]
 
     }
 
@@ -146,15 +146,15 @@ struct SelfUserClientV0: Decodable, ToAPIModelConvertible {
     func toAPIModel() -> SelfUserClient {
         SelfUserClient(
             id: id,
-            type: type,
+            type: type.toAPIModel(),
             activationDate: activationDate?.date,
             label: label,
             model: model,
-            deviceClass: deviceClass,
+            deviceClass: deviceClass?.toAPIModel(),
             lastActiveDate: lastActiveDate?.date,
-            mlsPublicKeys: mlsPublicKeys,
+            mlsPublicKeys: mlsPublicKeys?.toAPIModel(),
             cookie: cookie,
-            capabilities: capabilities?.capabilities ?? []
+            capabilities: capabilities?.capabilities.map { $0.toAPIModel() } ?? []
         )
     }
 
@@ -162,7 +162,7 @@ struct SelfUserClientV0: Decodable, ToAPIModelConvertible {
 
 struct UserClientsRequestV0: Encodable {
 
-    let qualifiedIDs: [UserID]
+    let qualifiedIDs: [QualifiedIDV0]
 
     enum CodingKeys: String, CodingKey {
         case qualifiedIDs = "qualified_users"
@@ -173,7 +173,7 @@ struct UserClientsRequestV0: Encodable {
 struct OtherUserClientV0: Decodable, ToAPIModelConvertible {
 
     let id: String
-    let deviceClass: DeviceClass?
+    let deviceClass: DeviceClassV0?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -181,7 +181,7 @@ struct OtherUserClientV0: Decodable, ToAPIModelConvertible {
     }
 
     func toAPIModel() -> OtherUserClient {
-        OtherUserClient(id: id, deviceClass: deviceClass)
+        OtherUserClient(id: id, deviceClass: deviceClass?.toAPIModel())
     }
 
 }
@@ -227,7 +227,7 @@ struct ClientUpdateV0: Equatable, Sendable, Encodable {
     /// The capabilities of the client.
     /// - Note: capabilities cannot be removed once added to a client,
     ///  so once 1 capability added it must always be present
-    let capabilities: [UserClientCapability]? // TODO: [WPB-18279] remove public conformance of Encodable, don't rely on public models
+    let capabilities: [UserClientCapabilityV0]?
 
     /// A label describing the client.
 
@@ -235,26 +235,26 @@ struct ClientUpdateV0: Equatable, Sendable, Encodable {
 
     /// The last resort Prekey
 
-    let lastKey: Prekey? // TODO: [WPB-18279] remove public conformance of Encodable, don't rely on public models
+    let lastKey: PrekeyV0?
 
     /// The mls public keys for the client.
 
-    let mlsPublicKeys: MLSPublicKeys? // TODO: [WPB-18279] remove public conformance of Encodable, don't rely on public models
+    let mlsPublicKeys: MLSPublicKeysV0?
 
     /// New prekeys for other clients to establish OTR sessions.
 
-    let preKeys: [Prekey]? // TODO: [WPB-18279] remove public conformance of Encodable, don't rely on public models
+    let preKeys: [PrekeyV0]?
 }
 
 extension ClientUpdate {
 
     func toNetworkModel() -> ClientUpdateV0 {
         ClientUpdateV0(
-            capabilities: capabilities,
+            capabilities: capabilities?.map { $0.toNetworkModel() },
             label: label,
-            lastKey: lastKey,
-            mlsPublicKeys: mlsPublicKeys,
-            preKeys: preKeys
+            lastKey: lastKey?.toNetworkModel(),
+            mlsPublicKeys: mlsPublicKeys?.toNetworkModel(),
+            preKeys: preKeys?.map { $0.toNetworkModel() }
         )
     }
 }

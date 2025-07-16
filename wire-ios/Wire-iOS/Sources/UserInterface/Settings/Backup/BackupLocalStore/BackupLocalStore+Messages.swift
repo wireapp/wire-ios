@@ -78,8 +78,8 @@ extension BackupLocalStore {
             genericMessage,
             content: genericMessage.content!,
             conversation: conversation,
-            conversationID: WireNetwork.QualifiedID(conversationID),
-            senderID: WireNetwork.QualifiedID(backupMessage.senderUserID),
+            conversationID: conversationID,
+            senderID: backupMessage.senderUserID,
             senderClientID: backupMessage.senderClientID,
             date: backupMessage.creationDate,
             eventMessage: ""
@@ -87,7 +87,7 @@ extension BackupLocalStore {
 
         // restore `lastReadServerTimeStamp`, messages imported from backups shouldn't be marked as unread
         await context.perform {
-            conversation.lastReadServerTimeStamp = lastReadServerTimeStamp
+            conversation.lastReadServerTimeStamp = lastReadServerTimeStamp ?? .now
         }
     }
 

@@ -89,13 +89,6 @@
     {
       "target" : {
         "containerPath" : "container:WireUI",
-        "identifier" : "WireConversationUITests",
-        "name" : "WireConversationUITests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:WireUI",
         "identifier" : "WireIndividualToTeamMigrationUITests",
         "name" : "WireIndividualToTeamMigrationUITests"
       }
@@ -112,13 +105,6 @@
         "containerPath" : "container:WireUI",
         "identifier" : "WireMultiBackendUITests",
         "name" : "WireMultiBackendUITests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:WireConversations",
-        "identifier" : "WireConversationsUITests",
-        "name" : "WireConversationsUITests"
       }
     }
   ],

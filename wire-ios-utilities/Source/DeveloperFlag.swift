@@ -35,7 +35,6 @@ public enum DeveloperFlag: String, CaseIterable {
     case wireCells
     case consumableNotifications
     case multibackend
-    case newRegistration
 
     public var description: String {
         switch self {
@@ -77,9 +76,6 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .multibackend:
             "Turn on to be able to log in with accounts from multiple backends"
-
-        case .newRegistration:
-            "Turn on to use the new registration flow"
         }
     }
 
@@ -118,8 +114,6 @@ public enum DeveloperFlag: String, CaseIterable {
             "IgnoreIncomingEventsEnabled"
         case .useWireAuthentication:
             "WireAuthenticationEnabled"
-        case .newRegistration:
-            "NewRegistrationEnabled"
         default:
             nil
         }

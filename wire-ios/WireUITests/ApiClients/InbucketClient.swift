@@ -48,7 +48,9 @@ enum InbucketClient {
             pureResponse = httpResponse
             timeout += 1
             if timeout == 100, pureResponse.statusCode != 200 {
+
                 throw EmailFetchError.unableToRetrieveLatestMessage(email: email, statusCode: pureResponse.statusCode)
+
             }
         }
 

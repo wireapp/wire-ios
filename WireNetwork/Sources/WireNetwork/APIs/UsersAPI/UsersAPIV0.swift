@@ -33,7 +33,7 @@ class UsersAPIV0: UsersAPI, VersionedAPI {
     // MARK: - Get team
 
     func getUser(for userID: UserID) async throws -> User {
-        let path = "\(pathPrefix)/users/\(userID.domain)/\(userID.uuid.transportString())"
+        let path = "\(pathPrefix)/users/\(userID.domain)/\(userID.id.transportString())"
 
         let request = try URLRequestBuilder(path: path)
             .withMethod(.get)
@@ -51,7 +51,8 @@ class UsersAPIV0: UsersAPI, VersionedAPI {
     }
 
     func getUsers(userIDs: [UserID]) async throws -> UserList {
-        let body = try JSONEncoder.defaultEncoder.encode(ListUsersRequestV0(qualifiedIDs: userIDs))
+        let body = try JSONEncoder.defaultEncoder
+            .encode(ListUsersRequestV0(qualifiedIDs: userIDs.map { $0.toNetworkModel() }))
         let path = "\(pathPrefix)/list-users"
 
         let request = try URLRequestBuilder(path: path)
@@ -72,12 +73,12 @@ class UsersAPIV0: UsersAPI, VersionedAPI {
 
 struct UserResponseV0: Decodable, ToAPIModelConvertible {
 
-    let id: UserID
+    let id: QualifiedIDV0
     let name: String
     let handle: String?
     let teamID: UUID?
     let accentID: Int
-    let assets: [UserAsset]
+    let assets: [UserAssetV0]
     let deleted: Bool?
     let email: String?
     let expiresAt: UTCTime?
@@ -102,12 +103,12 @@ struct UserResponseV0: Decodable, ToAPIModelConvertible {
 
     func toAPIModel() -> User {
         User(
-            id: id,
+            id: id.toAPIModel(),
             name: name,
             handle: handle,
             teamID: teamID,
             accentID: accentID,
-            assets: assets,
+            assets: assets.map { $0.toAPIModel() },
             deleted: deleted,
             email: email,
             expiresAt: expiresAt?.date,
@@ -120,7 +121,7 @@ struct UserResponseV0: Decodable, ToAPIModelConvertible {
 
 struct ListUsersRequestV0: Encodable {
 
-    let qualifiedIDs: [QualifiedID]
+    let qualifiedIDs: [QualifiedIDV0]
 
     enum CodingKeys: String, CodingKey {
 

@@ -91,9 +91,21 @@ public protocol SessionManagerDelegate: AnyObject, SessionActivationObserver {
         error: any Error,
         retryHandler: @escaping () -> Void
     )
-
     var isInAuthenticatedAppState: Bool { get }
     var isInUnathenticatedAppState: Bool { get }
+}
+
+extension SessionManagerDelegate {
+
+    @MainActor
+    func sessionManagerWillMigrateAccount() async {
+        await withCheckedContinuation { continuation in
+            sessionManagerWillMigrateAccount {
+                continuation.resume()
+            }
+        }
+    }
+
 }
 
 /// The public interface for the session manager.
@@ -244,7 +256,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     public static let defaultMaxNumberAccounts: Int = 3
 
     public let currentAppVersion: String
-    public let currentBuildVersion: String
+    public let currentBuildNumber: String
     var isAppVersionBlacklisted = false
     public weak var delegate: SessionManagerDelegate?
     public let accountManager: AccountManager
@@ -330,6 +342,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     var proxyCredentials: ProxyCredentials?
 
     public let callKitManager: CallKitManagerInterface
+    private let logFilesProvider: LogFilesProviding
 
     public var isSelectedAccountAuthenticated: Bool {
         guard let selectedAccount = accountManager.selectedAccount else {
@@ -372,7 +385,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     public convenience init(
         maxNumberAccounts: Int = defaultMaxNumberAccounts,
         currentAppVersion: String,
-        currentBuildVersion: String,
+        currentBuildNumber: String,
         mediaManager: MediaManagerType,
         delegate: SessionManagerDelegate?,
         application: ZMApplication,
@@ -388,7 +401,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         minTLSVersion: String?,
         deleteUserLogs: @escaping () -> Void,
         analyticsServiceConfiguration: AnalyticsServiceConfiguration?,
-        countlyProvider: @escaping () -> CountlyProtocol
+        countlyProvider: @escaping () -> CountlyProtocol,
+        logFilesProvider: LogFilesProviding
     ) throws {
         let flowManager = FlowManager(mediaManager: mediaManager)
         let reachability = environment.reachabilityWrapper()
@@ -402,7 +416,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         let dispatchGroup = dispatchGroup ?? ZMSDispatchGroup(label: "WireSyncEngine.SessionManager.private")
 
         let unauthenticatedSessionFactory = UnauthenticatedSessionFactory(
-            appVersion: currentBuildVersion,
+            appVersion: currentBuildNumber,
             environment: environment,
             proxyUsername: proxyCredentials?.username,
             proxyPassword: proxyCredentials?.password,
@@ -410,7 +424,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         )
 
         let authenticatedSessionFactory = AuthenticatedSessionFactory(
-            appVersion: currentBuildVersion,
+            currentAppVersion: currentAppVersion,
+            currentBuildNumber: currentBuildNumber,
             application: application,
             mediaManager: mediaManager,
             flowManager: flowManager,
@@ -424,7 +439,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         try self.init(
             maxNumberAccounts: maxNumberAccounts,
             currentAppVersion: currentAppVersion,
-            currentBuildVersion: currentBuildVersion,
+            currentBuildNumber: currentBuildNumber,
             authenticatedSessionFactory: authenticatedSessionFactory,
             unauthenticatedSessionFactory: unauthenticatedSessionFactory,
             reachability: reachability,
@@ -443,7 +458,8 @@ public final class SessionManager: NSObject, SessionManagerType {
             minTLSVersion: minTLSVersion,
             deleteUserLogs: deleteUserLogs,
             analyticsServiceConfiguration: analyticsServiceConfiguration,
-            countlyProvider: countlyProvider
+            countlyProvider: countlyProvider,
+            logFilesProvider: logFilesProvider
         )
 
         configureBlacklistDownload()
@@ -488,7 +504,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     init(
         maxNumberAccounts: Int = defaultMaxNumberAccounts,
         currentAppVersion: String,
-        currentBuildVersion: String,
+        currentBuildNumber: String,
         authenticatedSessionFactory: AuthenticatedSessionFactory,
         unauthenticatedSessionFactory: UnauthenticatedSessionFactory,
         reachability: ReachabilityWrapper,
@@ -507,12 +523,13 @@ public final class SessionManager: NSObject, SessionManagerType {
         minTLSVersion: String? = nil,
         deleteUserLogs: (() -> Void)? = nil,
         analyticsServiceConfiguration: AnalyticsServiceConfiguration?,
-        countlyProvider: @escaping () -> CountlyProtocol
+        countlyProvider: @escaping () -> CountlyProtocol,
+        logFilesProvider: LogFilesProviding
     ) throws {
         SessionManager.enableLogsByEnvironmentVariable()
         self.environment = environment
         self.currentAppVersion = currentAppVersion
-        self.currentBuildVersion = currentBuildVersion
+        self.currentBuildNumber = currentBuildNumber
         self.application = application
         self.delegate = delegate
         self.dispatchGroup = dispatchGroup
@@ -525,6 +542,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         self.sharedUserDefaults = sharedUserDefaults
         self.minTLSVersion = minTLSVersion
         self.deleteUserLogs = deleteUserLogs
+        self.logFilesProvider = logFilesProvider
 
         guard let sharedContainerURL = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else {
             preconditionFailure("Unable to get shared container URL")
@@ -606,7 +624,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             blacklistVerificator?.tearDown()
             blacklistVerificator = ZMBlacklistVerificator(
                 checkInterval: configuration.blacklistDownloadInterval,
-                version: currentBuildVersion,
+                version: currentBuildNumber,
                 environment: environment,
                 proxyUsername: proxyCredentials?.username,
                 proxyPassword: proxyCredentials?.password,
@@ -963,6 +981,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             WireLogger.analytics.debug("configuring analytics for user session")
             let user = try await userSession.createAnalyticsUser()
             try analyticsService?.switchUser(user)
+
             userSession.setAnalyticsEventTracker(analyticsService)
         } catch {
             WireLogger.analytics.error("failed to configure analytics for user session: \(error)")
@@ -1097,12 +1116,36 @@ public final class SessionManager: NSObject, SessionManagerType {
                     let userSession = await self.startBackgroundSession(
                         for: account,
                         with: coreDataStack,
-                        journal: journal
+                        journal: journal,
+                        logFilesProvider: self.logFilesProvider
                     )
 
-                    await userSession.migrateToConsumableNotificationsIfNeeded()
+                    let migrationService = userSession.makeAppVersionMigrationService()
+                    if migrationService.isMigrationNeeded {
+                        await self.delegate?.sessionManagerWillMigrateAccount()
 
-                    await userSession.triggerSync()
+                        do {
+                            try await migrationService.performAppMigrations()
+                        } catch {
+                            WireLogger.session.error(
+                                "Failed to perform app version migrations: \(String(describing: error))"
+                            )
+                        }
+                    }
+
+                    var shouldTriggerSync = true
+                    do {
+                        try await userSession.migrateToConsumableNotificationsIfNeeded()
+                    } catch ZMUserSessionError.selfClientNotReady {
+                        // we skip trigger sync, because in this case (fresh login),
+                        // we don't have a registered client yet, so no consumable capability
+                        WireLogger.sync.warn("No consumable-notifications migrator available")
+                        shouldTriggerSync = false
+                    }
+
+                    if shouldTriggerSync {
+                        await userSession.triggerSync()
+                    }
 
                     await MainActor.run {
                         onCompletion(userSession)
@@ -1284,7 +1327,8 @@ public final class SessionManager: NSObject, SessionManagerType {
     private func startBackgroundSession(
         for account: Account,
         with coreDataStack: CoreDataStack,
-        journal: Journal
+        journal: Journal,
+        logFilesProvider: LogFilesProviding
     ) -> ZMUserSession {
         let sessionConfig = ZMUserSession.Configuration(
             appLockConfig: configuration.legacyAppLockConfig
@@ -1296,7 +1340,8 @@ public final class SessionManager: NSObject, SessionManagerType {
             configuration: sessionConfig,
             sharedUserDefaults: sharedUserDefaults,
             isDeveloperModeEnabled: isDeveloperModeEnabled,
-            journal: journal
+            journal: journal,
+            logFilesProvider: logFilesProvider
         ) else {
             preconditionFailure("Unable to create session for \(account)")
         }

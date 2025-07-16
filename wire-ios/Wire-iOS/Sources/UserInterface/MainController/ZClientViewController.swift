@@ -21,11 +21,11 @@ import SwiftUI
 import UIKit
 import WireAccountImageUI
 import WireCommonComponents
-import WireConversationsUIBindings
 import WireDesign
 import WireFoundation
 import WireLogging
 import WireMainNavigationUI
+import WireMessagingUIBindings
 import WireSidebarUI
 import WireSyncEngine
 
@@ -109,6 +109,7 @@ final class ZClientViewController: UIViewController {
                 self?.mainSplitViewController.settingsUI as? SettingsTableViewController ??
                 self?.mainTabBarController.settingsUI as? SettingsTableViewController
         }
+
         return DefaultSettingsPropertyFactoryDelegate(
             userSession: userSession,
             settingsTableViewController: settingsTableViewController,

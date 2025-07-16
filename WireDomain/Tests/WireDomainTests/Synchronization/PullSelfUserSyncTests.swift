@@ -55,7 +55,7 @@ final class PullSelfUserSyncTests: XCTestCase {
         try XCTAssertCount(storeInvocations, count: 1)
         XCTAssertEqual(storeInvocations[0], Scaffolding.localSelfUser)
 
-        XCTAssertEqual(result.id, Scaffolding.remoteSelfUser.qualifiedID.uuid)
+        XCTAssertEqual(result.id, Scaffolding.remoteSelfUser.qualifiedID.id)
         XCTAssertEqual(result.domain, Scaffolding.remoteSelfUser.qualifiedID.domain)
         XCTAssertEqual(result.teamID, Scaffolding.remoteSelfUser.teamID)
     }
@@ -65,12 +65,12 @@ final class PullSelfUserSyncTests: XCTestCase {
 private enum Scaffolding {
 
     static let qualifiedID = UserID(
-        uuid: UUID(),
+        id: UUID(),
         domain: "example.com"
     )
 
     static let remoteSelfUser = SelfUser(
-        id: qualifiedID.uuid,
+        id: qualifiedID.id,
         qualifiedID: qualifiedID,
         ssoID: nil,
         name: "username",

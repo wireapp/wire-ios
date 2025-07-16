@@ -16,6 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class UpdateEventsAPIV8: UpdateEventsAPIV7 {
+import Foundation
+
+class UpdateEventsAPIV8: UpdateEventsAPIV7 {
+
     override var apiVersion: APIVersion { .v8 }
+
 }

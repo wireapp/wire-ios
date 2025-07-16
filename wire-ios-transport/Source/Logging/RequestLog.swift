@@ -176,6 +176,10 @@ extension WireLoggerObjC {
 
     @objc(logRequestLoopAtPath:)
     static func logRequestLoop(at path: String) {
-        WireLogger.network.warn("Request loop detected for \(path)", attributes: .safePublic)
+        if let endpointDescription = URL(string: path)?.endpointRemoteLogDescription {
+            WireLogger.network.warn("Request loop detected for \(endpointDescription)", attributes: .safePublic)
+        } else {
+            WireLogger.network.warn("Request loop detected for \(path)")
+        }
     }
 }
