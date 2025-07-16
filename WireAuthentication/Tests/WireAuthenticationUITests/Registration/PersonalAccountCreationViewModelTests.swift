@@ -78,7 +78,7 @@ final class PersonalAccountCreationViewModelTests: XCTestCase, PersonalAccountCr
         email: String,
         password: String,
         name: String,
-        trackingID: UUID?
+        trackingConsent: RegistrationAnalyticsTrackingConsent
     ) -> any VerificationEmailCodeFactory {
         fatalError("not needed here")
     }
