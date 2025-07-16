@@ -616,6 +616,10 @@
 
 "content.system.message_read_receipt_on_add_to_group" = "Read receipts are on";
 
+// history depth
+"content.system.message_history_depth" = "%@ set conversation history to %@";
+"content.system.message_history_depth_disabled" = "%@ disabled conversation history";
+
 // legal hold
 
 "content.system.message_legal_hold.enabled" = "This conversation is under legal hold [LEARN MORE](%@)";
@@ -1398,7 +1402,6 @@
 
 "self.settings.conversations.title" = "History";
 "self.settings.history_backup.title" = "Back up or Restore";
-"self.settings.history_backup.error.title" = "Error";
 "self.settings.history_backup.set_email.title" = "Set an email and password.";
 "self.settings.history_backup.set_email.message" = "You need an email and a password in order to back up your conversation history. You can do it from the account page in Settings.";
 
