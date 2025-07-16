@@ -33,6 +33,7 @@ final class VerificationEmailCodeViewModelTests: XCTestCase, VerificationEmailCo
     private var mockRegisterPersonalAccountUseCase: MockRegisterPersonalAccountUseCaseProtocol!
     private var mockRequestEmailVerificationCodeUseCase: MockRequestEmailVerificationCodeUseCaseProtocol!
     private var onRegisterAccountCalled = false
+    private var analyticsEventTracker: MockRegistrationAnalyticsTrackerProtocol!
 
     @MainActor
     override func setUp() async throws {
@@ -40,6 +41,8 @@ final class VerificationEmailCodeViewModelTests: XCTestCase, VerificationEmailCo
         router = MockRouter()
         mockRegisterPersonalAccountUseCase = MockRegisterPersonalAccountUseCaseProtocol()
         mockRequestEmailVerificationCodeUseCase = MockRequestEmailVerificationCodeUseCaseProtocol()
+        analyticsEventTracker = MockRegistrationAnalyticsTrackerProtocol()
+        analyticsEventTracker.trackPersonalAccountCreationFailedCodeVerification_MockMethod = {}
         sut = VerificationEmailCodeViewModel(
             factory: self,
             router: router,
@@ -47,7 +50,7 @@ final class VerificationEmailCodeViewModelTests: XCTestCase, VerificationEmailCo
             password: "password",
             name: "mika",
             onFlowCompletion: { [self] _ in onRegisterAccountCalled = true },
-            analyticsEventTracker: MockRegistrationAnalyticsTrackerProtocol()
+            analyticsEventTracker: analyticsEventTracker
         )
     }
 
@@ -57,6 +60,7 @@ final class VerificationEmailCodeViewModelTests: XCTestCase, VerificationEmailCo
         sut = nil
         mockRegisterPersonalAccountUseCase = nil
         mockRequestEmailVerificationCodeUseCase = nil
+        analyticsEventTracker = nil
     }
 
     // MARK: - Factory
@@ -121,21 +125,5 @@ final class VerificationEmailCodeViewModelTests: XCTestCase, VerificationEmailCo
         // then
         XCTAssertEqual(sut.alert, .blacklistedEmail)
     }
-
-}
-
-private struct MockRegistrationAnalyticsTrackerProtocol: RegistrationAnalyticsTrackerProtocol {
-
-    var trackingID: String?
-    func setUp() {}
-    func tearDown() {}
-
-    func trackPersonalAccountCreationStart() {}
-    func trackPersonalAccountCreationReachedTermsOfUseConfirmation() {}
-    func trackPersonalAccountCreationReachedVerificationCode() {}
-    func trackPersonalAccountCreationFailedCodeVerification() {}
-    func trackPersonalAccountCreationReachedUsernameForm() {}
-    func trackPersonalAccountCreationCompletion() {}
-    func deleteTemporaryTrackingID() {}
 
 }
