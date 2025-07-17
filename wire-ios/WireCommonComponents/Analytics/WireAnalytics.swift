@@ -45,7 +45,7 @@ public enum WireAnalytics {
             #if DEBUG
                 SystemLogger()
             #endif
-            CocoaLumberjackLogger(for: target)
+            CocoaLumberjackLogger(logsDirectory: logsDirectory(for: target))
             WireAnalytics.Datadog.shared
         }
 
@@ -54,11 +54,7 @@ public enum WireAnalytics {
         WireLogger.system.addTag(.processName, value: ProcessInfo.processInfo.processName)
     }
 
-}
-
-private extension CocoaLumberjackLogger {
-
-    convenience init(for target: LogTarget) {
+    private static func logsDirectory(for target: LogTarget) -> URL? {
 
         // this was the previous directory for the main target (app)
         // let cachesDirectory = try? fileManager.url(
@@ -69,21 +65,13 @@ private extension CocoaLumberjackLogger {
         // )
         // return cachesDirectory?.appending(path: "Logs", directoryHint: .isDirectory)
 
-        let logsDirectory: URL?
-        if let appGroupIdentifier = Bundle.main.applicationGroupIdentifier {
-            let fileManager = FileManager.default
-            let cachesDirectory = fileManager.cachesURL(
-                forAppGroupIdentifier: appGroupIdentifier,
-                accountIdentifier: nil
-            )
-            logsDirectory = cachesDirectory?
-                .appending(path: "Logs", directoryHint: .isDirectory)
-                .appending(component: target.rawValue, directoryHint: .isDirectory)
-        } else {
-            logsDirectory = nil
-        }
+        guard let appGroupIdentifier = Bundle.main.applicationGroupIdentifier else { return nil }
 
-        self.init(logsDirectory: logsDirectory)
+        let fileManager = FileManager.default
+        let cachesDirectory = fileManager.cachesURL(forAppGroupIdentifier: appGroupIdentifier, accountIdentifier: nil)
+        return cachesDirectory?
+            .appending(path: sharedLogsDirectory, directoryHint: .isDirectory)
+            .appending(component: target.rawValue, directoryHint: .isDirectory)
 
     }
 
