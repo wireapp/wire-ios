@@ -226,13 +226,14 @@ final class ZClientViewController: UIViewController {
                     break
                 }
             }
-        featureChangeObserverToken = SelfUnregisteringNotificationCenterToken(featureToken)
+        self.featureChangeObserverToken = SelfUnregisteringNotificationCenterToken(featureToken)
 
         // Observe developer flag changes using KVO
-        userDefaultsObservation = UserDefaults.standard.observe(\.showUnreadConversationsFilter, options: [.new]) { [weak self] _, _ in
-            // Update sidebar's showUnreadFilters when developer flag changes
-            self?.sidebarViewController.showUnreadFilters = DeveloperFlag.showUnreadConversationsFilter.isOn
-        }
+        self.userDefaultsObservation = UserDefaults.standard
+            .observe(\.showUnreadConversationsFilter, options: [.new]) { [weak self] _, _ in
+                // Update sidebar's showUnreadFilters when developer flag changes
+                self?.sidebarViewController.showUnreadFilters = DeveloperFlag.showUnreadConversationsFilter.isOn
+            }
 
         createLegalHoldDisclosureController()
     }

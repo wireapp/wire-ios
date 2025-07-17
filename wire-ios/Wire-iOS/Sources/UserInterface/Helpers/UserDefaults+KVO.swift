@@ -22,7 +22,7 @@ extension UserDefaults {
     /// KVO-compatible property for observing the showUnreadConversationsFilter developer flag
     @objc dynamic var showUnreadConversationsFilter: Bool {
         get {
-            return bool(forKey: "showUnreadConversationsFilter")
+            bool(forKey: "showUnreadConversationsFilter")
         }
         set {
             set(newValue, forKey: "showUnreadConversationsFilter")

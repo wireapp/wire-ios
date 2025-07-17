@@ -347,7 +347,7 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         let selfUser = coreDataFixture.selfUser!
         let otherUser = modelHelper.createUser(in: coreDataFixture.coreDataStack.viewContext)
         otherUser.name = "Alice"
-        
+
         let mention = Mention(range: NSRange(location: 0, length: 5), user: selfUser)
         let message = try! conversations[0].appendText(
             content: "@self check this out",
@@ -362,7 +362,7 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         conversations[0].lastReadServerTimeStamp = Date(timeIntervalSinceNow: -60)
         conversations[0].setPrimitiveValue(1, forKey: ZMConversationInternalEstimatedUnreadSelfMentionCountKey)
         conversations[0].needsToCalculateUnreadMessages = true
-        
+
         // Add mention to second conversation
         let mention2 = Mention(range: NSRange(location: 0, length: 5), user: selfUser)
         let message2 = try! conversations[1].appendText(
@@ -378,7 +378,7 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         conversations[1].lastReadServerTimeStamp = Date(timeIntervalSinceNow: -60)
         conversations[1].setPrimitiveValue(1, forKey: ZMConversationInternalEstimatedUnreadSelfMentionCountKey)
         conversations[1].needsToCalculateUnreadMessages = true
-        
+
         ZMConversation.calculateLastUnreadMessages(in: coreDataFixture.coreDataStack.viewContext)
 
         userSession.mockConversationDirectory.mockUnarchivedConversations = conversations
@@ -419,13 +419,14 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         let selfUser = coreDataFixture.selfUser!
         let otherUser = modelHelper.createUser(in: coreDataFixture.coreDataStack.viewContext)
         otherUser.name = "Bob"
-        
+
         // Add reply to first conversation
         // Create original message from self
-        let originalMessage1 = try! conversations[0].appendText(content: "What about the new design?") as! ZMClientMessage
+        let originalMessage1 = try! conversations[0]
+            .appendText(content: "What about the new design?") as! ZMClientMessage
         originalMessage1.sender = selfUser
         originalMessage1.serverTimestamp = Date(timeIntervalSinceNow: -180)
-        
+
         // Create reply from other user
         let replyMessage1 = try! conversations[0].appendText(
             content: "I think it looks great!",
@@ -440,12 +441,13 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         conversations[0].lastReadServerTimeStamp = Date(timeIntervalSinceNow: -60)
         conversations[0].setPrimitiveValue(1, forKey: ZMConversationInternalEstimatedUnreadSelfReplyCountKey)
         conversations[0].needsToCalculateUnreadMessages = true
-        
+
         // Add reply to second conversation
-        let originalMessage2 = try! conversations[1].appendText(content: "Can you test this feature?") as! ZMClientMessage
+        let originalMessage2 = try! conversations[1]
+            .appendText(content: "Can you test this feature?") as! ZMClientMessage
         originalMessage2.sender = selfUser
         originalMessage2.serverTimestamp = Date(timeIntervalSinceNow: -180)
-        
+
         let replyMessage2 = try! conversations[1].appendText(
             content: "Testing it now",
             mentions: [],
@@ -459,7 +461,7 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         conversations[1].lastReadServerTimeStamp = Date(timeIntervalSinceNow: -60)
         conversations[1].setPrimitiveValue(1, forKey: ZMConversationInternalEstimatedUnreadSelfReplyCountKey)
         conversations[1].needsToCalculateUnreadMessages = true
-        
+
         ZMConversation.calculateLastUnreadMessages(in: coreDataFixture.coreDataStack.viewContext)
 
         userSession.mockConversationDirectory.mockUnarchivedConversations = conversations
@@ -495,7 +497,7 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
             (name: "Design Team", designTeamID, isFavorite: false)
         ]
         let conversations = createConversations(conversationsData: conversationData)
-        
+
         // Add drafts to conversations
         // Add draft to first conversation
         let draft1 = DraftMessage(
@@ -504,7 +506,7 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
             quote: nil
         )
         conversations[0].draftMessage = draft1
-        
+
         // Add draft to second conversation
         let draft2 = DraftMessage(
             text: "I think we should redesign the",
@@ -512,7 +514,7 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
             quote: nil
         )
         conversations[1].draftMessage = draft2
-        
+
         userSession.mockConversationDirectory.mockUnarchivedConversations = conversations
 
         // WHEN

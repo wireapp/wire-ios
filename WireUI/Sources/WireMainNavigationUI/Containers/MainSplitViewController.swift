@@ -183,7 +183,7 @@ public final class MainSplitViewController<Sidebar, TabController>: UISplitViewC
         if let currentConversation = _conversationUI {
             currentConversation.view.endEditing(true)
         }
-        
+
         _conversationUI = conversationUI
 
         let viewControllers = [conversationUI ?? noConversationPlaceholder].compactMap(\.self)

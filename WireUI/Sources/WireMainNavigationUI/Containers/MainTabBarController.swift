@@ -222,7 +222,7 @@ public final class MainTabBarController<
         if let currentConversation = _conversationUI {
             currentConversation.view.endEditing(true)
         }
-        
+
         _conversationUI = conversationUI
 
         if conversationListUI == nil, conversationUI != nil {

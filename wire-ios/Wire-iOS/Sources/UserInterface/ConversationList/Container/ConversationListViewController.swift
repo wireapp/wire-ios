@@ -294,10 +294,11 @@ final class ConversationListViewController: UIViewController {
         viewModel.setupObservers()
 
         // Observe developer flag changes for unread filters using KVO
-        userDefaultsObservation = UserDefaults.standard.observe(\.showUnreadConversationsFilter, options: [.new]) { [weak self] _, _ in
-            // Update navigation bar to reflect filter visibility changes
-            self?.updateNavigationItem()
-        }
+        userDefaultsObservation = UserDefaults.standard
+            .observe(\.showUnreadConversationsFilter, options: [.new]) { [weak self] _, _ in
+                // Update navigation bar to reflect filter visibility changes
+                self?.updateNavigationItem()
+            }
     }
 
     /// Sets up a vertical stack view containing all subviews
