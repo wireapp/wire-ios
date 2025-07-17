@@ -61,7 +61,7 @@ public enum WireAnalytics {
             .appending(component: target.rawValue, directoryHint: .isDirectory)
     }
 
-    /// With release 4.3.0 the log files of all targets (main app, notification service extension and share extension)
+    /// With release 4.2.0 the log files of all targets (main app, notification service extension and share extension)
     /// are written to the shared container. This code tries to move the old files for the case that all log files want
     /// to be retrieved/exported.
     /// Eventually this func can just be deleted.
