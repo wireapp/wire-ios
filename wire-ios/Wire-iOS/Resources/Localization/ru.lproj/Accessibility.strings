@@ -22,6 +22,8 @@
 ///  "<screen>.<component>.<usage>"
 
 
+"peoplepicker.upgrade_banner.close_button.label" = "Закрыть возможность создания команды";
+
 "conversation.backButton.description" = "Вернуться к списку бесед";
 "conversation.searchButton.description" = "Открыть поиск";
 "conversation.profileImage.description" = "Изображение профиля";

@@ -89,9 +89,32 @@ class UserManager {
         try await selfUserAPI.deleteSelf(password: user.password)
     }
 
-    func deleteCreatedUsers() async throws {
+    func deleteTeam(teamID: UUID, password: String, code: String) async throws {
+        try await selfUserAPI.deleteTeam(
+            teamId: teamID,
+            password: password,
+            verificationCode: code
+        )
+    }
+
+    func deleteCreatedUsers() async {
         for user in createdUsers {
-            try await deleteUser(user)
+            do {
+                if let teamID = try await BackendClient.getTeamIDFromSelfRequest(
+                    email: user.email,
+                    password: user.password
+                ) {
+                    // If team exists, try deleting the team
+                    try await BackendClient.sendVerificationCode(email: user.email, password: user.password)
+                    let code = try await InbucketClient.getVerificationCode(email: user.email)
+                    try await deleteTeam(teamID: teamID, password: user.password, code: code)
+                } else {
+                    // If no team, delete user
+                    try await deleteUser(user)
+                }
+            } catch {
+                print("❌ Failed to clean up user \(user.email): \(error)")
+            }
         }
     }
 }

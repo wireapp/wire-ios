@@ -61,6 +61,10 @@
 "peoplepicker.header.directory" = "Se connecter";
 "peoplepicker.header.federation" = "Se connecter à un autre domaine";
 
+"peoplepicker.upgrade_banner.headline" = "Channels are available for team members.";
+"peoplepicker.upgrade_banner.subheadline" = "Create a team and start collaborating for free!";
+"peoplepicker.upgrade_banner.button.title" = "Create Wire Team";
+
 "peoplepicker.group.title.singular" = "Sélectionner des participants";
 "peoplepicker.group.title.plural" = "Sélectionner des participants (%d)";
 "peoplepicker.group.skip" = "Passer";
