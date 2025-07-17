@@ -98,7 +98,7 @@ final class ZClientViewController: UIViewController {
 
     private lazy var settingsViewControllerBuilder = {
         let whitelistedDomains = ["wire.com", "staging.zinfra.io"]
-        let isAnalyticsTrackingAvailable = userSession.selfUser.domain.map(whitelistedDomains.contains) ?? true
+        let isAnalyticsTrackingAvailable = userSession.selfUser.domain.map(whitelistedDomains.contains) ?? false
         return SettingsViewControllerBuilder(
             isAnalyticsTrackingAvailable: isAnalyticsTrackingAvailable,
             userSession: userSession,

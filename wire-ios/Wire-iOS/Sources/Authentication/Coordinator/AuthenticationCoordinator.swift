@@ -351,7 +351,7 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                     PrivateUserDefaults<AnalyticsTrackingPrivateUserDefaultsKey>(
                         userID: result.userID,
                         storage: UserDefaults.standard
-                    ).set(false, forKey: .isAnalyticsTrackingEnabled)
+                    ).set(true, forKey: .isAnalyticsTrackingEnabled)
                     PrivateUserDefaults<RegistrationAnalyticsTrackingIDKey>(
                         userID: result.userID,
                         storage: UserDefaults.standard
