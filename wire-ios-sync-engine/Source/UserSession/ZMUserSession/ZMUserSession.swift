@@ -108,7 +108,7 @@ public final class ZMUserSession: NSObject {
     let conversationEventProcessor: ConversationEventProcessor
 
     var syncAgent: SyncAgent?
-    private(set) var clientSessionComponent: ClientSessionComponent?
+    public private(set) var clientSessionComponent: ClientSessionComponent?
 
     public var hasCompletedInitialSync: Bool = false
 

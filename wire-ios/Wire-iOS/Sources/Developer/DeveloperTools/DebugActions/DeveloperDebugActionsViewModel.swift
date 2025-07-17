@@ -23,6 +23,7 @@ import WireFoundation
 import WireLogging
 import WireNetwork
 import WireSyncEngine
+import WireDomain
 
 struct ConversationResult {
     var id: String
@@ -81,7 +82,8 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             .init(title: "Delete domains in the database", action: deleteDomains),
             .init(title: "Find Conversation with MLS Group", action: showSearchMLSConversations),
             .init(title: "Clear collapsed messages cache", action: clearCollapsedMessagesCache),
-            .init(title: "Simulate access token failure", action: simulateAccessTokenFailure)
+            .init(title: "Simulate access token failure", action: simulateAccessTokenFailure),
+            .init(title: "Initiate reset of first from top MLS", action: initiateResetBrokenMLSConversation)
         ]
 
         let toggleItems: [DeveloperDebugActionsDisplayModel.ToggleItem] = [
@@ -106,6 +108,26 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
     }
 
     // MARK: - Forces logout
+    
+    private func initiateResetBrokenMLSConversation() {
+        guard
+            let selfClient,
+            let context = selfClient.managedObjectContext,
+            let userSession
+        else { return }
+
+        Task { @MainActor in
+            guard let conversation = await firstGroupConversation(of: selfClient, in: context, isMLS: true),
+                    let mlsGroupID = conversation.mlsGroupID else {
+                return
+            }
+            await userSession.clientSessionComponent?.initiateResetMLSConversationUseCase.invoke(
+                groupID: mlsGroupID,
+                epoch: Int64(conversation.epoch)
+            )
+        }
+
+    }
 
     private func simulateAccessTokenFailure() {
         guard let selfUserID = userSession?.managedObjectContext.performAndWait({
@@ -243,8 +265,8 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             let userSession
         else { return }
 
-        Task {
-            guard let qualifiedID = await qualifiedIDOfFirstGroupConversation(of: selfClient, in: context) else {
+        Task { @MainActor in
+            guard let qualifiedID = await firstGroupConversation(of: selfClient, in: context)?.qualifiedID else {
                 assertionFailure("no conversation found to update protocol change")
                 return
             }
@@ -264,13 +286,20 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
         }
     }
 
-    private func qualifiedIDOfFirstGroupConversation(
+    private func firstGroupConversation(
         of userClient: UserClient,
-        in context: NSManagedObjectContext
-    ) async -> WireDataModel.QualifiedID? {
+        in context: NSManagedObjectContext,
+        isMLS: Bool? = nil
+    ) async -> ZMConversation? {
         await context.perform {
             userClient.user?.conversations
                 .filter { $0.conversationType == .group }
+                .filter {
+                    if let isMLS = isMLS {
+                        return isMLS ? $0.messageProtocol == .mls : $0.messageProtocol != .mls
+                    }
+                    return true
+                }
                 .sorted { // sort descending by lastModifiedDate
                     guard
                         let lhsDate = $0.lastModifiedDate,
@@ -278,8 +307,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
                     else { return false }
                     return lhsDate > rhsDate
                 }
-                .first?
-                .qualifiedID
+                .first
         }
     }
 
