@@ -39,10 +39,6 @@ final class CocoaLumberjackLogger: LoggerProtocol {
         DDLog.add(fileLogger)
     }
 
-    var logFiles: [URL] {
-        fileLogger.logFileManager.unsortedLogFilePaths.map { URL(fileURLWithPath: $0) }
-    }
-
     func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
         log(message, attributes: attributes, level: .debug)
     }

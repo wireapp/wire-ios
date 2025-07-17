@@ -46,18 +46,17 @@ struct LogFilesProvider: LogFilesProviding {
 
     // MARK: - Properties
 
-    private var logsDirectory: URL = {
-        let baseURL = URL(
-            fileURLWithPath: NSTemporaryDirectory(),
-            isDirectory: true
-        )
-        return baseURL
-            .appendingPathComponent("logs", isDirectory: true)
-    }()
+    private let logsDirectory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+        .appendingPathComponent("logs", isDirectory: true)
 
     private var logFilesURLs: [URL] {
-        var urls = WireLogger.logFiles
-        urls.append(contentsOf: ZMSLog.pathsForExistingLogs)
+        var urls = ZMSLog.pathsForExistingLogs
+
+        // add the root directory of the app, NSE and SE logs
+        if let appGroupIdentifier = Bundle.main.applicationGroupIdentifier, let sharedLogsDirectoryURL = FileManager.default.sharedLogsDirectoryURL(for: appGroupIdentifier) {
+            urls.append(sharedLogsDirectoryURL)
+        }
+
         return urls
     }
 
@@ -78,30 +77,40 @@ struct LogFilesProvider: LogFilesProviding {
     }
 
     func generateLogFilesZip() throws -> URL {
+
+        let logFilesURLs = logFilesURLs
+        guard !logFilesURLs.isEmpty else {
+            throw Error.noLogs(description: logFilesURLs.description)
+        }
+
         try? clearLogsDirectory()
+        let fileManager = FileManager.default
 
         // Re-create the base directory
-        try FileManager.default.createDirectory(at: logsDirectory, withIntermediateDirectories: true)
+        try fileManager.createDirectory(at: logsDirectory, withIntermediateDirectories: true)
 
         // Create a subfolder for the current session
         let archiveFolder = logsDirectory.appendingPathComponent(UUID().uuidString)
-        try FileManager.default.createDirectory(at: archiveFolder, withIntermediateDirectories: true)
+        try fileManager.createDirectory(at: archiveFolder, withIntermediateDirectories: true)
 
         // Create the info file
-        let infoFileURL = try createInfoFile(at: archiveFolder)
+        _ = try createInfoFile(at: archiveFolder)
 
-        // Set the list of files to be zipped
-        let filesToZip = try filesToZipURLs(
-            logFilesURLs: logFilesURLs,
-            infoFileURL: infoFileURL
-        )
+        // Copy files to be zipped
+        for logFilesURL in logFilesURLs {
+            let copy = archiveFolder.appending(path: logFilesURL.lastPathComponent, directoryHint: .notDirectory)
+            try fileManager.copyItem(at: logFilesURL, to: copy)
+        }
 
         // Create the zip file
-        let zipURL = archiveFolder.appendingPathComponent("logs.zip")
-        SSZipArchive.createZipFile(
-            atPath: zipURL.path,
-            withFilesAtPaths: filesToZip.map(\.path)
+        let zipURL = logsDirectory.appendingPathComponent("logs.zip")
+        SSZipArchive.createZipFile( // TODO: try to use ZIPFoundation
+            atPath: zipURL.path(),
+            withContentsOfDirectory: archiveFolder.path(),
+            keepParentDirectory: false
         )
+
+        try fileManager.removeItem(at: archiveFolder)
 
         return zipURL
     }
@@ -119,14 +128,6 @@ struct LogFilesProvider: LogFilesProviding {
     }
 
     // MARK: - Helpers
-
-    private func filesToZipURLs(logFilesURLs: [URL], infoFileURL: URL) throws -> [URL] {
-        guard !logFilesURLs.isEmpty else {
-            throw Error.noLogs(description: logFilesURLs.description)
-        }
-
-        return logFilesURLs + [infoFileURL]
-    }
 
     var info: String {
         let date = Date()

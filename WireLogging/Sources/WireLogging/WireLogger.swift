@@ -41,10 +41,6 @@ public struct WireLogger: LoggerProtocol, Sendable {
 
     // MARK: - LoggerProtocol
 
-    public var logFiles: [URL] {
-        Self.provider?.logFiles ?? []
-    }
-
     public func addTag(_ key: LogAttributesKey, value: String?) {
         Self.provider?.addTag(key, value: value)
     }
@@ -95,11 +91,6 @@ public struct WireLogger: LoggerProtocol, Sendable {
         return finalizedAttributes
     }
 
-    // MARK: Static Functions
-
-    public static var logFiles: [URL] {
-        provider?.logFiles ?? []
-    }
 }
 
 // MARK: - Helpers
