@@ -77,7 +77,6 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
     }
 
     func getConversationIdentifiers() async throws -> PayloadPager<[QualifiedID]> {
-        assertionFailure("not implemented! use getLegacyConversationIdentifiers() instead")
         throw ConversationsAPIError.notImplemented
     }
 
