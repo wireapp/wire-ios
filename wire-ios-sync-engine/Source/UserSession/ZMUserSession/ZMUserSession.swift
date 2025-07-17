@@ -108,7 +108,6 @@ public final class ZMUserSession: NSObject {
     let conversationEventProcessor: ConversationEventProcessor
 
     var syncAgent: SyncAgent?
-    private(set) var clientSessionComponent: ClientSessionComponent?
 
     public var hasCompletedInitialSync: Bool = false
 
@@ -390,6 +389,7 @@ public final class ZMUserSession: NSObject {
     var callStateObserverToken: AnyObject?
 
     private let userSessionComponent: UserSessionComponent
+    private(set) var clientSessionComponent: ClientSessionComponent?
 
     // MARK: - Initialize
 
@@ -635,36 +635,6 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-    public func performAppMigrationsIfNeeded() async {
-        do {
-            let appVersionMigrationService: AppVersionMigrationService = .init(
-                journal: journal,
-                currentVersion: SemanticVersion(stringLiteral: currentAppVersion),
-                allMigrations: makeAppVersionMigrations()
-            )
-
-            try await appVersionMigrationService.performAppMigrations()
-        } catch {
-            WireLogger.session.error("Failed to perform app version migrations")
-        }
-    }
-
-    /// Executes specific or regular sync after db migration
-    public func triggerSync() async {
-        let (initialSync, resourcesSync) = await syncContext.perform { (
-            self.syncContext.readMigrationNeedsSlowSyncFlag(),
-            self.syncContext.readMigrationNeedsSyncResourcesFlag()
-        ) }
-
-        if initialSync || journal[.isInitialSyncRequired] {
-            await triggerInitialSync()
-        } else if resourcesSync {
-            await triggerResourcesSync()
-        } else {
-            syncAgent?.resume()
-        }
-    }
-
     // MARK: - Deinitalize
 
     deinit {
@@ -696,6 +666,16 @@ public final class ZMUserSession: NSObject {
     }
 
     // MARK: - Methods
+
+    public func makeAppVersionMigrationService() -> AppVersionMigrationService {
+        let allMigrations = makeAppVersionMigrations()
+
+        return AppVersionMigrationService(
+            journal: journal,
+            currentVersion: SemanticVersion(stringLiteral: currentAppVersion),
+            allMigrations: allMigrations
+        )
+    }
 
     private func configureTransportSession() {
         transportSession.pushChannel.clientID = selfUserClient?.remoteIdentifier
@@ -880,6 +860,25 @@ public final class ZMUserSession: NSObject {
     }
 
     // MARK: - Trigger syncing
+
+    /// Executes specific or regular sync after db migration
+    func triggerSync() async {
+        let (initialSync, resourcesSync) = await syncContext.perform { (
+            self.syncContext.readMigrationNeedsSlowSyncFlag(),
+            self.syncContext.readMigrationNeedsSyncResourcesFlag()
+        ) }
+
+        if initialSync || journal[.isInitialSyncRequired] {
+            await triggerInitialSync()
+        } else if resourcesSync {
+            await triggerResourcesSync()
+        } else if journal[.isConversationSyncRequired] {
+            let sync = clientSessionComponent?.pullAllConversationsSync
+            try? await sync?.pull()
+        } else {
+            syncAgent?.resume()
+        }
+    }
 
     public func triggerInitialSync() async {
         do {
@@ -1614,8 +1613,7 @@ extension ZMUserSession {
 
     private func makeAppVersionMigrations() -> [any AppVersionMigration] {
         [
-
-            AppVersionMigration_4_1_1(logFilesProvider: logFilesProvider),
+            AppVersionMigration_4_1_1(journal: journal, logFilesProvider: logFilesProvider),
             AppVersionMigration_4_2_0(lastEventIDRepository: lastEventIDRepository, journal: journal)
         ]
     }
