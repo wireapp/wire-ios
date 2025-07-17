@@ -416,9 +416,9 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
 
             case let .signOut(warn):
                 signOut(warn: warn)
-                
+
             case let .deleteSession(eraseData):
-                
+
                 deleteSession(eraseData: eraseData)
 
             case let .addEmailAndPassword(newCredentials):
@@ -511,7 +511,7 @@ extension AuthenticationCoordinator {
                 coordinatorActions: [.showLoadingView, .deleteSession(eraseData: true)],
                 style: .default
             )
-            
+
             let noAction = AuthenticationCoordinatorAlertAction(
                 title: L10n.Localizable.Self.Settings.AccountDetails.LogOut.EraseData.Alert.no,
                 coordinatorActions: [.showLoadingView, .deleteSession(eraseData: false)],
@@ -529,19 +529,19 @@ extension AuthenticationCoordinator {
             deleteSession(eraseData: true)
         }
     }
-    
-    
+
+
     func deleteSession(eraseData: Bool) {
         guard let accountId = unauthenticatedSession.accountId,
               let unauthenticatedAccount = sessionManager.accountManager.account(with: accountId) else {
             fatal("No unauthenticated account to log out from")
         }
-        
+
         sessionManager.delete(
             account: unauthenticatedAccount,
             eraseData: eraseData
         )
-        
+
     }
 
     /// Repeats the current action.
