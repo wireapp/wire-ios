@@ -1,8 +1,8 @@
 sources:
-- ${PACKAGE_ROOT_DIR}/Sources/WireFoundation
+- ${PACKAGE_ROOT_DIR}/Sources/WireLogging
 templates:
 - ${TARGET_DIR}/Sourcery/AutoMockable.stencil
 output:
   ${DERIVED_SOURCES_DIR}
 args:
-  autoMockablePublicImports: []
+  autoMockablePublicImports: ["Foundation", "WireLogging"]
