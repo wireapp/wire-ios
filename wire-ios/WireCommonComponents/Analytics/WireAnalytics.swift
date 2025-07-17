@@ -69,25 +69,12 @@ public enum WireAnalytics {
 
             let fileManager = FileManager.default
             guard let newRootDirectory = logsDirectory(for: target) else { return }
-
-            let previousRootDirectory: URL
-            switch target {
-
-            case .app:
-                previousRootDirectory = try fileManager.url(
-                    for: .cachesDirectory,
-                    in: .userDomainMask,
-                    appropriateFor: nil,
-                    create: false
-                ).appending(path: "Logs", directoryHint: .isDirectory)
-
-            case .notificationServiceExtension:
-                fatalError("TODO")
-
-            case .shareExtension:
-                fatalError("TODO")
-
-            }
+            let previousRootDirectory = try fileManager.url(
+                for: .cachesDirectory,
+                in: .userDomainMask,
+                appropriateFor: nil,
+                create: false
+            ).appending(path: "Logs", directoryHint: .isDirectory)
 
             guard fileManager.fileExists(atPath: previousRootDirectory.path()) else { return }
 
