@@ -67,10 +67,7 @@ public enum WireAnalytics {
 
         guard let appGroupIdentifier = Bundle.main.applicationGroupIdentifier else { return nil }
 
-        let fileManager = FileManager.default
-        let cachesDirectory = fileManager.cachesURL(forAppGroupIdentifier: appGroupIdentifier, accountIdentifier: nil)
-        return cachesDirectory?
-            .appending(path: sharedLogsDirectory, directoryHint: .isDirectory)
+        return FileManager.default.sharedLogsDirectoryURL(for: appGroupIdentifier)?
             .appending(component: target.rawValue, directoryHint: .isDirectory)
 
     }

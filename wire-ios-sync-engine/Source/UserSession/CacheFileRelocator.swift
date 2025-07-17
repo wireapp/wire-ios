@@ -27,7 +27,7 @@ struct CacheFileRelocator {
         // .DS_Store is the hidden file for folder preferences used in macOS (only for simulator)
         ".DS_Store",
         // Global logs directory. Ideally logs would be grouped by account as well, but we're not there yet.
-        "Logs"
+        FileManager.sharedLogsDirectoryName
     ]
     private let zmLog = ZMSLog(tag: "ZMUserSession")
 
