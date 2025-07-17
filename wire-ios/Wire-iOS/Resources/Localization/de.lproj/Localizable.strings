@@ -61,6 +61,10 @@
 "peoplepicker.header.directory" = "Verbinden";
 "peoplepicker.header.federation" = "Mit einer anderen Domain verbinden";
 
+"peoplepicker.upgrade_banner.headline" = "Channels sind für Team-Mitglieder verfügbar.";
+"peoplepicker.upgrade_banner.subheadline" = "Erstellen Sie ein Team und arbeiten Sie kostenlos zusammen!";
+"peoplepicker.upgrade_banner.button.title" = "Wire Team erstellen";
+
 "peoplepicker.group.title.singular" = "Teilnehmer auswählen";
 "peoplepicker.group.title.plural" = "Teilnehmer auswählen (%d)";
 "peoplepicker.group.skip" = "Überspringen";
@@ -1591,7 +1595,7 @@
 
 "registration.terms_of_use.terms.title" = "Nutzungsbedingungen";
 "registration.terms_of_use.terms.message" = "Bitte akzeptieren Sie die Nutzungsbedingungen, um fortzufahren.";
-"registration.terms_of_use.terms.view" = "Ansicht";
+"registration.terms_of_use.terms.view" = "Anzeigen";
 "registration.terms_of_use.accept" = "Annehmen";
 
 "registration.email_flow.title" = "Mit E-Mail registrieren";

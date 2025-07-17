@@ -32,16 +32,9 @@
 "channel_access_level.participants_footer" = "Selecione quem pode adicionar participantes a um canal privado";
 
 
-"channel_access_level.change_level_alert.title" = "Acesso ao canal";
-"channel_access_level.change_level_alert.message" = "Alterar o acesso ao canal para privado terá as seguintes consequências:
-
-Membros da equipe não entrarão mais no canal sem serem convidados.
-Novos membros do canal só podem ser adicionados pela administração ou por outros membros, dependendo da configuração de \"Adicionar participantes\".
-O acesso ao canal não pode mais ser alterado para público.
-
-Deseja alterar o acesso ao canal para privado?";
-
-"channel_access_level.change_level_alert.button.change" = "Alterar";
+"channel_access_level.change_level_alert.title" = "Change access from public to private?";
+"channel_access_level.change_level_alert.message" = "It means: Team members can't join this channel themselves.\nDepending on your choice, only channel admins or both admins and members can add new participants.\nYou can't undo this step. The channel will stay private.";
+"channel_access_level.change_level_alert.button.change" = "Change to Private";
 "channel_access_level.change_level_alert.button.cancel" = "Cancelar";
 
 

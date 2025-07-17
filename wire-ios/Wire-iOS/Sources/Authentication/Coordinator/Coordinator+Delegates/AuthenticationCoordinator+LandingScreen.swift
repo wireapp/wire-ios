@@ -50,39 +50,6 @@ extension AuthenticationCoordinator: LandingViewControllerDelegate {
         stateController.transition(to: .createCredentials(unregisteredUser))
     }
 
-    func wireAuthenticationDidRequestAccountRegistration(
-        email: String?,
-        backendEnvironment: WireAuthenticationBackendEnvironment
-    ) {
-        typealias Alert = L10n.Localizable.Landing.Alert.CreateNewAccount.NotSupported
-
-        guard !shouldShowProxyWarning else {
-            showProxyAlert(title: Alert.title, message: Alert.message)
-            return
-        }
-
-        // Make sure we use the same backend from the WireAuthentication.
-        let backendMetadata = backendEnvironment.metadata
-        let backendEnvironment = BackendEnvironment(
-            type: backendEnvironment.environmentType,
-            backendConfig: backendEnvironment.config
-        )
-
-        BackendEnvironment.shared = backendEnvironment
-        SessionManager.shared?.switchBackendWithoutResolving(to: backendEnvironment)
-
-        // Make sure we persist and backend info gathered from WireAuthentication.
-        BackendInfo.apiVersion = APIVersion(backendMetadata.apiVersion)
-        BackendInfo.domain = backendMetadata.domain
-        BackendInfo.isFederationEnabled = backendMetadata.isFederationEnabled
-
-        let unregisteredUser = makeUnregisteredUser()
-        if let email {
-            unregisteredUser.unverifiedEmail = email
-        }
-        stateController.transition(to: .createCredentials(unregisteredUser))
-    }
-
     func landingViewControllerDidChooseEnterpriseLogin() {
         typealias Alert = L10n.Localizable.Landing.Alert.Sso.NotSupported
 
