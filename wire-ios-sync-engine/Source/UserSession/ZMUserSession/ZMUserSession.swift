@@ -622,11 +622,14 @@ public final class ZMUserSession: NSObject {
     }
 
     public func migrateToConsumableNotificationsIfNeeded() async throws {
-        guard DeveloperFlag.consumableNotifications.isOn else { return }
-        guard !journal[.isConsumableNotificationsEnabled] else { return }
-        guard let migrator = clientSessionComponent?.consumableNotificationsMigrator() else {
+        guard let clientSessionComponent else {
             throw ZMUserSessionError.selfClientNotReady
         }
+        
+        guard DeveloperFlag.consumableNotifications.isOn else { return }
+        guard !journal[.isConsumableNotificationsEnabled] else { return }
+
+        let migrator = clientSessionComponent.consumableNotificationsMigrator()
         do {
             try await migrator.migrate()
         } catch ConsumableNotificationsMigrator.Failure.apiVersionTooLow {
@@ -874,8 +877,11 @@ public final class ZMUserSession: NSObject {
         } else if resourcesSync {
             await triggerResourcesSync()
         } else if journal[.isConversationSyncRequired] {
-            let sync = clientSessionComponent?.pullAllConversationsSync
-            try? await sync?.pull()
+            // as wanted this should not be blocking, see AppVersionMigration_4_1_1
+            Task {
+                let sync = clientSessionComponent?.pullAllConversationsSync
+                try? await sync?.pull()
+            }
         } else {
             syncAgent?.resume()
         }
@@ -886,7 +892,7 @@ public final class ZMUserSession: NSObject {
             syncAgent?.suspend()
             try await syncAgent?.performInitialSync()
         } catch {
-            WireLogger.sync.error("failed to perform initial sync: \(String(describing: error))")
+            WireLogger.sync.error("failed to perform initial sync: \(String(describing: error))", attributes: .syncAttributes(initialSync: true))
         }
     }
 
@@ -895,7 +901,7 @@ public final class ZMUserSession: NSObject {
             syncAgent?.suspend()
             try await syncAgent?.performResourceSync()
         } catch {
-            WireLogger.sync.error("failed to perform resource sync: \(String(describing: error))")
+            WireLogger.sync.error("failed to perform resource sync: \(String(describing: error))", attributes: .syncAttributes)
         }
     }
 
@@ -905,7 +911,7 @@ public final class ZMUserSession: NSObject {
             do {
                 try await syncAgent?.performIncrementalSync()
             } catch {
-                WireLogger.sync.error("failed to perform incremental sync: \(String(describing: error))")
+                WireLogger.sync.error("failed to perform incremental sync: \(String(describing: error))", attributes: .syncAttributes(initialSync: false))
             }
         }
     }
