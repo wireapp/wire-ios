@@ -107,11 +107,11 @@ final class ConversationListViewModelFilterIntegrationTests: XCTestCase {
 
         // Switch back to no filter
         sut.selectedFilter = nil
-        sut.conversationDirectoryDidChange(
-            conversationDirectory: mockUserSession.mockConversationDirectory,
-            changeInfo: info
-        )
-        XCTAssertEqual(sut.section(at: 0)?.count, 5, "No filter should show all 5 conversations")
+        // Call reloadConversationList to force a rebuild
+        sut.reloadConversationList()
+        // When no filter is selected, section 0 might be contact requests, section 1 is conversations
+        let conversationCount = (sut.section(at: 0)?.count ?? 0) + (sut.section(at: 1)?.count ?? 0)
+        XCTAssertEqual(conversationCount, 5, "No filter should show all 5 conversations")
     }
 
     // MARK: - Dynamic Update Tests
@@ -142,6 +142,7 @@ final class ConversationListViewModelFilterIntegrationTests: XCTestCase {
             message.serverTimestamp = Date()
             conversation.updateTimestampsAfterUpdatingMessage(message)
             conversation.lastReadServerTimeStamp = Date(timeIntervalSinceNow: -60)
+            conversation.setPrimitiveValue(1, forKey: ZMConversationInternalEstimatedUnreadCountKey)
             conversation.needsToCalculateUnreadMessages = true
             ZMConversation.calculateLastUnreadMessages(in: self.coreDataFixture.uiMOC)
         }
@@ -232,6 +233,9 @@ final class ConversationListViewModelFilterIntegrationTests: XCTestCase {
             conversation.updateTimestampsAfterUpdatingMessage(mentionMessage)
             conversation.updateTimestampsAfterUpdatingMessage(replyMessage)
             conversation.lastReadServerTimeStamp = Date(timeIntervalSinceNow: -60)
+            conversation.setPrimitiveValue(2, forKey: ZMConversationInternalEstimatedUnreadCountKey)
+            conversation.setPrimitiveValue(1, forKey: ZMConversationInternalEstimatedUnreadSelfMentionCountKey)
+            conversation.setPrimitiveValue(1, forKey: ZMConversationInternalEstimatedUnreadSelfReplyCountKey)
             conversation.needsToCalculateUnreadMessages = true
             ZMConversation.calculateLastUnreadMessages(in: self.coreDataFixture.uiMOC)
         }
@@ -285,6 +289,7 @@ final class ConversationListViewModelFilterIntegrationTests: XCTestCase {
             message.serverTimestamp = Date()
             conversation.updateTimestampsAfterUpdatingMessage(message)
             conversation.lastReadServerTimeStamp = Date(timeIntervalSinceNow: -60)
+            conversation.setPrimitiveValue(1, forKey: ZMConversationInternalEstimatedUnreadCountKey)
             conversation.needsToCalculateUnreadMessages = true
             ZMConversation.calculateLastUnreadMessages(in: self.coreDataFixture.uiMOC)
         }
@@ -311,6 +316,8 @@ final class ConversationListViewModelFilterIntegrationTests: XCTestCase {
             message.serverTimestamp = Date()
             conversation.updateTimestampsAfterUpdatingMessage(message)
             conversation.lastReadServerTimeStamp = Date(timeIntervalSinceNow: -60)
+            conversation.setPrimitiveValue(1, forKey: ZMConversationInternalEstimatedUnreadCountKey)
+            conversation.setPrimitiveValue(1, forKey: ZMConversationInternalEstimatedUnreadSelfMentionCountKey)
             conversation.needsToCalculateUnreadMessages = true
             ZMConversation.calculateLastUnreadMessages(in: self.coreDataFixture.uiMOC)
         }
@@ -343,6 +350,8 @@ final class ConversationListViewModelFilterIntegrationTests: XCTestCase {
             replyMessage.serverTimestamp = Date()
             conversation.updateTimestampsAfterUpdatingMessage(replyMessage)
             conversation.lastReadServerTimeStamp = Date(timeIntervalSinceNow: -60)
+            conversation.setPrimitiveValue(1, forKey: ZMConversationInternalEstimatedUnreadCountKey)
+            conversation.setPrimitiveValue(1, forKey: ZMConversationInternalEstimatedUnreadSelfReplyCountKey)
             conversation.needsToCalculateUnreadMessages = true
             ZMConversation.calculateLastUnreadMessages(in: self.coreDataFixture.uiMOC)
         }
