@@ -625,7 +625,7 @@ public final class ZMUserSession: NSObject {
         guard let clientSessionComponent else {
             throw ZMUserSessionError.selfClientNotReady
         }
-        
+
         guard DeveloperFlag.consumableNotifications.isOn else { return }
         guard !journal[.isConsumableNotificationsEnabled] else { return }
 
@@ -892,7 +892,10 @@ public final class ZMUserSession: NSObject {
             syncAgent?.suspend()
             try await syncAgent?.performInitialSync()
         } catch {
-            WireLogger.sync.error("failed to perform initial sync: \(String(describing: error))", attributes: .syncAttributes(initialSync: true))
+            WireLogger.sync.error(
+                "failed to perform initial sync: \(String(describing: error))",
+                attributes: .syncAttributes(initialSync: true)
+            )
         }
     }
 
@@ -901,7 +904,10 @@ public final class ZMUserSession: NSObject {
             syncAgent?.suspend()
             try await syncAgent?.performResourceSync()
         } catch {
-            WireLogger.sync.error("failed to perform resource sync: \(String(describing: error))", attributes: .syncAttributes)
+            WireLogger.sync.error(
+                "failed to perform resource sync: \(String(describing: error))",
+                attributes: .syncAttributes
+            )
         }
     }
 
@@ -911,7 +917,10 @@ public final class ZMUserSession: NSObject {
             do {
                 try await syncAgent?.performIncrementalSync()
             } catch {
-                WireLogger.sync.error("failed to perform incremental sync: \(String(describing: error))", attributes: .syncAttributes(initialSync: false))
+                WireLogger.sync.error(
+                    "failed to perform incremental sync: \(String(describing: error))",
+                    attributes: .syncAttributes(initialSync: false)
+                )
             }
         }
     }

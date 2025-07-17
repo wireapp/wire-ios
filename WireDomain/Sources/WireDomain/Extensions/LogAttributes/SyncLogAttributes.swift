@@ -96,14 +96,14 @@ public extension LogAttributes {
             .syncType: Constants.incremental
         ]
     }
-    
+
     static var initialSync: Self {
         [
             .syncType: Constants.initial
         ]
     }
 
-    
+
     // MARK: - New sync (V2, V3)
 
     static func syncAttributes(
