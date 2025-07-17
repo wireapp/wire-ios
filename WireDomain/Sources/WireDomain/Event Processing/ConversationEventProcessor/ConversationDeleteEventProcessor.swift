@@ -29,7 +29,7 @@ struct ConversationDeleteEventProcessor: ConversationDeleteEventProcessorProtoco
     let repository: any ConversationRepositoryProtocol
 
     func processEvent(_ event: ConversationDeleteEvent) async throws {
-        let id = event.conversationID.uuid
+        let id = event.conversationID.id
         let domain = event.conversationID.domain
 
         do {

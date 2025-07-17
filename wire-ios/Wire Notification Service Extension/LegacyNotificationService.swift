@@ -57,8 +57,18 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
 
     private lazy var accountManager: AccountManager? = {
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: appGroupID)
-        return try? AccountManager(sharedDirectory: sharedContainerURL)
+        return try? AccountManager(
+            currentAppVersion: currentAppVersion,
+            sharedDirectory: sharedContainerURL
+        )
     }()
+
+    private var currentAppVersion: String {
+        guard let currentAppVersion = Bundle.main.shortVersionString else {
+            fatalError("cannot get current app version identifier")
+        }
+        return currentAppVersion
+    }
 
     private var appGroupID: String {
         guard let groupID = Bundle.main.applicationGroupIdentifier else {
@@ -217,6 +227,7 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
 
     private func createSession(accountID: UUID) throws -> NotificationSession {
         let session = try NotificationSession(
+            currentAppVersion: currentAppVersion,
             applicationGroupIdentifier: appGroupID,
             accountIdentifier: accountID,
             environment: BackendEnvironment.shared,

@@ -16,13 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
+import Foundation
 
 public extension Conversation {
 
     /// Represents a conversation's member.
 
-    struct Member: Equatable, Codable, Sendable {
+    struct Member: Equatable, Sendable {
 
         public let qualifiedID: QualifiedID?
         public let id: UUID?
@@ -64,6 +64,53 @@ public extension Conversation {
             self.mutedStatus = mutedStatus
             self.mutedReference = mutedReference
         }
+    }
+
+}
+
+extension Conversation {
+    struct MemberV0: Equatable, Decodable, Sendable, ToAPIModelConvertible {
+
+        let qualifiedID: QualifiedIDV0?
+        let id: UUID?
+        let qualifiedTarget: QualifiedIDV0?
+        let target: UUID?
+        let conversationRole: String?
+        let service: ServiceV0?
+        let archived: Bool?
+        let archivedReference: Date?
+        let hidden: Bool?
+        let hiddenReference: String?
+        let mutedStatus: Int?
+        let mutedReference: Date?
+
+        init(
+            qualifiedID: QualifiedIDV0? = nil,
+            id: UUID? = nil,
+            qualifiedTarget: QualifiedIDV0? = nil,
+            target: UUID? = nil,
+            conversationRole: String? = nil,
+            service: ServiceV0? = nil,
+            archived: Bool? = nil,
+            archivedReference: Date? = nil,
+            hidden: Bool? = nil,
+            hiddenReference: String? = nil,
+            mutedStatus: Int? = nil,
+            mutedReference: Date? = nil
+        ) {
+            self.qualifiedID = qualifiedID
+            self.id = id
+            self.qualifiedTarget = qualifiedTarget
+            self.target = target
+            self.conversationRole = conversationRole
+            self.service = service
+            self.archived = archived
+            self.archivedReference = archivedReference
+            self.hidden = hidden
+            self.hiddenReference = hiddenReference
+            self.mutedStatus = mutedStatus
+            self.mutedReference = mutedReference
+        }
 
         enum CodingKeys: String, CodingKey {
 
@@ -82,6 +129,22 @@ public extension Conversation {
 
         }
 
+        func toAPIModel() -> Member {
+            Conversation.Member(
+                qualifiedID: qualifiedID?.toAPIModel(),
+                id: id,
+                qualifiedTarget: qualifiedTarget?.toAPIModel(),
+                target: target,
+                conversationRole: conversationRole,
+                service: service?.toAPIModel(),
+                archived: archived,
+                archivedReference: archivedReference,
+                hidden: hidden,
+                hiddenReference: hiddenReference,
+                mutedStatus: mutedStatus,
+                mutedReference: mutedReference
+            )
+        }
     }
 
 }

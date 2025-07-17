@@ -24,7 +24,6 @@ public protocol SelfUserAPI {
 
     /// Get user details for self user
     /// - Returns: The self user.
-
     func getSelfUser() async throws -> SelfUser
 
     /// Push supported protocols for self user
@@ -32,4 +31,25 @@ public protocol SelfUserAPI {
     /// - Parameter supportedProtocols: list of supported protocols
     ///
     func pushSupportedProtocols(_ supportedProtocols: Set<MessageProtocol>) async throws
+
+    /// Delete self user
+    /// - Parameter password: password
+    #if DEBUG
+        func deleteSelf(password: String) async throws
+    #endif
+
+    /// update user handle
+    /// - Parameter handle: updated handle  info
+    #if DEBUG
+        func updateHandle(handle: String) async throws
+    #endif
+
+    /// Delete a team
+    /// - Parameters:
+    ///   - teamId: teamId fetched by user
+    ///   - password: password
+    ///   - verificationCode: verification Code sent to delete_team
+    #if DEBUG
+        func deleteTeam(teamId: UUID, password: String, verificationCode: String) async throws
+    #endif
 }

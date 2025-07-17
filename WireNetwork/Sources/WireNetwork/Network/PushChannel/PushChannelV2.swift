@@ -24,8 +24,13 @@ import WireLogging
 public final class PushChannelV2: PushChannelV2Protocol {
 
     public enum Element: Equatable {
-        case syncing(eventsCount: Int)
-        case upToDate
+        case syncMarker(id: String, deliveryTag: UInt64)
+        case events([UpdateEventEnvelope])
+        case missedEvents
+    }
+
+    enum InternalElement: Equatable {
+        case syncMarker(id: String, deliveryTag: UInt64)
         case event(UpdateEventEnvelope)
         case missedEvents
     }
@@ -38,9 +43,8 @@ public final class PushChannelV2: PushChannelV2Protocol {
 
     private var keepAliveTask: Task<Void, any Error>?
     private let keepAliveInterval: TimeInterval
-
-    private var numberOfReceivedEvents = 0
-    private var remainingEventCount: Int?
+    let maxBatchEventsCount: Int
+    let batchDelay: TimeInterval
 
     private var (stream, continuation) = AsyncThrowingStream<Element, any Error>.makeStream()
 
@@ -48,30 +52,80 @@ public final class PushChannelV2: PushChannelV2Protocol {
     /// - Parameters:
     ///   - webSocket: webSocket to use
     ///   - keepAliveInterval: interval for sending ping and keep webSocket open
+    ///   - maxBatchEventsCount: maxBatchEventsCount number of events per batch. Minimum valid value is 1.
+    ///   - batchDelay: timeInterval to wait for elements until batch is returned
     public init(
         webSocket: any WebSocketProtocol,
-        keepAliveInterval: TimeInterval
+        keepAliveInterval: TimeInterval,
+        maxBatchEventsCount: Int,
+        batchDelay: TimeInterval
     ) {
         self.webSocket = webSocket
         self.keepAliveInterval = keepAliveInterval
+        self.maxBatchEventsCount = max(maxBatchEventsCount, 1)
+        self.batchDelay = batchDelay
     }
 
     public func open() async throws -> AsyncThrowingStream<Element, any Error> {
         WireLogger.pushChannel.debug("opening new push channel", attributes: .pushChannelV2)
 
         let sourceStream = try await webSocket.open()
+        var batch: [UpdateEventEnvelope] = []
+        var batchTask: Task<Void, any Error>?
 
         Task { [weak self] in
             guard let self else { return }
             do {
                 for try await message in sourceStream {
 
-                    let result = try receiveMessage(message)
-
-                    continuation.yield(result)
-                    if numberOfReceivedEvents == remainingEventCount {
-                        continuation.yield(.upToDate)
+                    batchTask?.cancel()
+                    batchTask = Task {
+                        try await Task.sleep(for: .seconds(batchDelay))
+                        if !batch.isEmpty {
+                            continuation.yield(.events(batch))
+                            WireLogger.pushChannel.debug("batch of size '\(batch.count)' yield")
+                        }
+                        batch = []
                     }
+
+                    let result: PushChannelV2.InternalElement
+                    do {
+                        result = try receiveMessage(message)
+                    } catch PushChannelError.receivedInvalidMessage {
+                        WireLogger.pushChannel.warn("ignore invalid message, continue", attributes: .pushChannelV2)
+                        continue
+                    } catch {
+                        throw error
+                    }
+
+                    switch result {
+                    case let .event(event):
+                        batch.append(event)
+                        if batch.count == maxBatchEventsCount {
+                            continuation.yield(.events(batch))
+                            WireLogger.pushChannel.debug("batch of size '\(batch.count)' yield")
+                            batch = []
+                            batchTask?.cancel()
+                        }
+                    case .missedEvents:
+                        continuation.yield(.missedEvents)
+                    case let .syncMarker(id, deliveryTag):
+                        // we're uptodate, let's give any remaining batch if any
+                        if !batch.isEmpty {
+                            continuation.yield(.events(batch))
+                            WireLogger.pushChannel.debug("batch of size '\(batch.count)' yield")
+                            batch = []
+                            batchTask?.cancel()
+                        }
+
+                        continuation.yield(.syncMarker(id: id, deliveryTag: deliveryTag))
+                    }
+
+                }
+                // just in case to handle left batch if haven't deal with everything when we go to background
+                if !batch.isEmpty {
+                    continuation.yield(.events(batch))
+                    WireLogger.pushChannel.debug("batch of size '\(batch.count)' yield")
                 }
             } catch {
                 WireLogger.pushChannel.error("got error: \(error)", attributes: .pushChannelV2)
@@ -140,27 +194,22 @@ public final class PushChannelV2: PushChannelV2Protocol {
         try await write(data: data)
     }
 
-    public func acknowledgeMessageCount() async throws {
-        WireLogger.pushChannel.debug("acknowledgeMessageCount", attributes: .pushChannelV2)
-        let acknowledgement = MessageCountAcknowledgment()
-        let data = try encoder.encode(acknowledgement)
-        try await write(data: data)
-    }
-
     // MARK: - Helpers
 
-    private func receiveMessage(_ message: URLSessionWebSocketTask.Message) throws -> Element {
+    private func receiveMessage(_ message: URLSessionWebSocketTask.Message) throws -> InternalElement {
 
         switch message {
         case let .data(data):
-            WireLogger.pushChannel.debug("received web socket data, decoding...", attributes: .pushChannelV2)
+            WireLogger.pushChannel.debug(
+                "received web socket data, decoding...",
+                attributes: .pushChannelV2
+            )
             let envelope = try decoder.decode(WebSocketNotification.self, from: data)
 
             switch envelope.type {
             case .event:
                 if let element = envelope.updateEventEnveloppe {
-                    numberOfReceivedEvents += 1
-                    return Element.event(element)
+                    return .event(element)
                 } else {
                     WireLogger.pushChannel.debug(
                         "received web socket invalid data \(String(describing: data)), ignoring...",
@@ -168,16 +217,14 @@ public final class PushChannelV2: PushChannelV2Protocol {
                     )
                     throw PushChannelError.receivedInvalidMessage
                 }
-            case .messagesCount:
-                WireLogger.pushChannel.info(
-                    "\(envelope.messageCount) until we're up to date",
-                    attributes: .pushChannelV2
-                )
-                remainingEventCount = envelope.messageCount
-                numberOfReceivedEvents = 0
-                return .syncing(eventsCount: envelope.messageCount)
+            case .synchronization:
+                if let data = envelope.synchronizationData {
+                    return .syncMarker(id: data.markerId, deliveryTag: data.deliveryTag)
+                } else {
+                    throw PushChannelError.receivedInvalidMessage
+                }
             case .notificationsMissed:
-                return Element.missedEvents
+                return .missedEvents
             }
 
         case .string:

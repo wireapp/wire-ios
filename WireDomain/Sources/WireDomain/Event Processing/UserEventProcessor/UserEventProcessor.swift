@@ -36,7 +36,7 @@ struct UserEventProcessor: UserEventProcessorProtocol {
     func processEvent(_ event: UserEvent) async throws {
         switch event {
         case let .clientAdd(event):
-            try await clientAddEventProcessor.processEvent(event)
+            await clientAddEventProcessor.processEvent(event)
 
         case let .clientRemove(event):
             try await clientRemoveEventProcessor.processEvent(event)
@@ -58,7 +58,7 @@ struct UserEventProcessor: UserEventProcessorProtocol {
             try await legalholdEnableEventProcessor.processEvent(event)
 
         case let .legalholdRequest(event):
-            try await legalholdRequestEventProcessor.processEvent(event)
+            await legalholdRequestEventProcessor.processEvent(event)
 
         case let .propertiesSet(event):
             try await propertiesSetEventProcessor.processEvent(event)
@@ -70,7 +70,7 @@ struct UserEventProcessor: UserEventProcessorProtocol {
             pushRemoveEventProcessor.processEvent()
 
         case let .update(event):
-            try await updateEventProcessor.processEvent(event)
+            await updateEventProcessor.processEvent(event)
         }
     }
 

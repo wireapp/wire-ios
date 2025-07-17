@@ -48,14 +48,6 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
                 authenticationCoordinator?.eventResponderChain.handleEvent(
                     ofType: .wireAuthenticationModuleComplete(authenticationResult)
                 )
-            case let .accountRegistrationRequested(
-                email,
-                backendEnvironment
-            ):
-                authenticationCoordinator?.wireAuthenticationDidRequestAccountRegistration(
-                    email: email,
-                    backendEnvironment: backendEnvironment
-                )
             case .exitFlowRequested:
                 self?.selectAccount()
             }

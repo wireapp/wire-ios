@@ -22,7 +22,7 @@ struct UserLegalholdRequestEventProcessor: UserLegalholdRequestEventProcessorPro
 
     let repository: any UserRepositoryProtocol
 
-    func processEvent(_ event: UserLegalholdRequestEvent) async throws {
+    func processEvent(_ event: UserLegalholdRequestEvent) async {
         await repository.addLegalHoldRequest(
             userID: event.userID,
             clientID: event.clientID,

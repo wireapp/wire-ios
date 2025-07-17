@@ -69,7 +69,7 @@ public protocol UserLocalStoreProtocol {
         id: UUID,
         domain: String?,
         date: Date
-    ) async throws
+    ) async
 
     /// Adds a legal hold request to self.
     ///
@@ -129,8 +129,8 @@ public protocol UserLocalStoreProtocol {
 
     func markAccountAsDeleted(for user: ZMUser) async
 
-    func updateSelfUserAnalyticsID(
-        analyticsID: String,
+    func updateSelfUserTrackingID(
+        trackingID: UUID,
         conversation: ZMConversation
     ) async
 

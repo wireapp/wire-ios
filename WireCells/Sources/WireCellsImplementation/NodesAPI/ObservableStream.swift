@@ -81,6 +81,11 @@ final class ObservableStream: Smithy.Stream, Sendable {
         return result
     }
 
+    func seek(toOffset offset: Int) throws {
+        try wrappedStream.seek(toOffset: offset)
+        readContinuation.yield(position)
+    }
+
     // MARK: - WriteableStream
 
     func write(contentsOf data: Data) throws {

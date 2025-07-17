@@ -52,12 +52,62 @@ class SelfUserAPIV0: SelfUserAPI, VersionedAPI {
     func pushSupportedProtocols(_: Set<MessageProtocol>) async throws {
         throw SelfUserAPIError.unsupportedEndpointForAPIVersion
     }
+
+    func deleteSelf(password: String) async throws {
+        let body = try JSONEncoder.defaultEncoder.encode(
+            DeleteSelfRequestBodyV0(password: password)
+        )
+
+        let request = try URLRequestBuilder(path: resourcePath)
+            .withMethod(.delete)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(request, requiringAccessToken: true)
+        return try ResponseParser()
+            .success(code: .ok)
+            .parse(code: response.statusCode, data: data)
+
+    }
+
+    func deleteTeam(teamId: UUID, password: String, verificationCode: String) async throws {
+        let body = try JSONEncoder.defaultEncoder.encode(
+            DeleteTeamRequestBodyV0(password: password, verificationCode: verificationCode)
+        )
+
+        let request = try URLRequestBuilder(path: "\(pathPrefix)/teams/\(teamId)")
+            .withMethod(.delete)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(request, requiringAccessToken: true)
+        return try ResponseParser()
+            .success(code: .accepted)
+            .parse(code: response.statusCode, data: data)
+    }
+
+    func updateHandle(handle: String) async throws {
+        let body = try JSONEncoder.defaultEncoder.encode(
+            UpdateHandleRequestBodyV0(handle: handle)
+        )
+
+        let request = try URLRequestBuilder(path: "\(resourcePath)/handle")
+            .withMethod(.put)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(request, requiringAccessToken: true)
+        return try ResponseParser()
+            .success(code: .ok)
+            .parse(code: response.statusCode, data: data)
+    }
+
 }
 
 struct SelfUserV0: Decodable, ToAPIModelConvertible {
 
     let accentID: Int
-    let assets: [UserAsset]?
+    let assets: [UserAssetV0]?
     let deleted: Bool?
     let email: String?
     let expiresAt: UTCTime?
@@ -68,7 +118,7 @@ struct SelfUserV0: Decodable, ToAPIModelConvertible {
     let name: String
     let phone: String?
     let picture: [String]?
-    let qualifiedID: UserID
+    let qualifiedID: QualifiedIDV0
     let service: ServiceResponseV0?
     let ssoID: SSOIDV0?
     let teamID: UUID?
@@ -89,7 +139,7 @@ struct SelfUserV0: Decodable, ToAPIModelConvertible {
     func toAPIModel() -> SelfUser {
         SelfUser(
             id: id,
-            qualifiedID: qualifiedID,
+            qualifiedID: qualifiedID.toAPIModel(),
             ssoID: ssoID?.toAPIModel(),
             name: name,
             handle: handle,
@@ -97,7 +147,7 @@ struct SelfUserV0: Decodable, ToAPIModelConvertible {
             phone: phone,
             accentID: accentID,
             managedBy: managedBy?.toAPIModel(),
-            assets: assets,
+            assets: assets?.map { $0.toAPIModel() },
             deleted: deleted,
             email: email,
             expiresAt: expiresAt?.date,
@@ -139,4 +189,22 @@ struct SSOIDV0: Decodable, ToAPIModelConvertible {
             tenant: tenant
         )
     }
+}
+
+private struct DeleteSelfRequestBodyV0: Encodable {
+    var password: String
+}
+
+private struct UpdateHandleRequestBodyV0: Encodable {
+    var handle: String
+}
+
+private struct DeleteTeamRequestBodyV0: Encodable {
+    var password: String
+    var verificationCode: String
+}
+
+private struct MigratePersonalToTeamBodyV0: Encodable {
+    var icon: String
+    var name: String
 }

@@ -82,14 +82,16 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         _ contentViewController: ConversationContentViewController,
         willDisplayActiveMediaPlayerFor message: ZMConversationMessage?
     ) {
-        conversationBarController.dismiss(bar: mediaBarViewController)
+        /// Do not handle intentionally due to the issue described in the
+        /// https://wearezeta.atlassian.net/browse/WPB-18452
     }
 
     func conversationContentViewController(
         _ contentViewController: ConversationContentViewController,
         didEndDisplayingActiveMediaPlayerFor message: ZMConversationMessage
     ) {
-        conversationBarController.present(bar: mediaBarViewController)
+        /// Do not handle intentionally due to the issue described in the
+        /// https://wearezeta.atlassian.net/browse/WPB-18452
     }
 
     func conversationContentViewController(

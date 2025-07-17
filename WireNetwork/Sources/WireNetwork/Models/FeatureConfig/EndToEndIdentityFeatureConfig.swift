@@ -20,7 +20,7 @@ import Foundation
 
 /// A configuration for the *End To End Identity* feature.
 
-public struct EndToEndIdentityFeatureConfig: Equatable, Codable, Sendable {
+public struct EndToEndIdentityFeatureConfig: Equatable, Sendable {
 
     /// The feature's status.
 

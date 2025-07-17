@@ -369,8 +369,14 @@ private extension AppDelegate {
     }
 
     private func createSessionManager() throws -> SessionManager {
-        guard let appVersion = Bundle.main.infoDictionary?[kCFBundleVersionKey as String] as? String  else {
-            throw SessionManagerSetupError.missingAppVersion
+        let infoDictionary = Bundle.main.infoDictionary
+
+        guard let currentAppVersion = infoDictionary?["CFBundleShortVersionString"] as? String  else {
+            throw SessionManagerSetupError.missingCurrentAppVersion
+        }
+
+        guard let currentBuildNumber = infoDictionary?[kCFBundleVersionKey as String] as? String  else {
+            throw SessionManagerSetupError.missingCurrentBuildVersion
         }
 
         guard
@@ -393,7 +399,8 @@ private extension AppDelegate {
 
         let sessionManager = try SessionManager(
             maxNumberAccounts: maxNumberAccounts,
-            appVersion: appVersion,
+            currentAppVersion: currentAppVersion,
+            currentBuildNumber: currentBuildNumber,
             mediaManager: mediaManager,
             delegate: appStateCalculator,
             application: UIApplication.shared,
@@ -406,8 +413,9 @@ private extension AppDelegate {
             sharedUserDefaults: .applicationGroup,
             minTLSVersion: SecurityFlags.minTLSVersion.stringValue,
             deleteUserLogs: LogFileDestination.deleteAllLogs,
-            analyticsServiceConfiguration: AnalyticsServiceConfigurationBuilder().build(),
-            countlyProvider: { CountlyWrapper() }
+            analyticsServiceConfiguration: AnalyticsServiceConfigurationBuilder.build(),
+            countlyProvider: { CountlyWrapper() },
+            logFilesProvider: LogFilesProvider()
         )
 
         voIPPushManager.delegate = sessionManager
@@ -434,7 +442,8 @@ private extension AppDelegate {
 
 private enum SessionManagerSetupError: Error {
 
-    case missingAppVersion
+    case missingCurrentAppVersion
+    case missingCurrentBuildVersion
     case missingConfiguration
     case missingMediaManager
     case initializationFailed(any Error)

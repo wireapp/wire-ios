@@ -228,8 +228,8 @@ public final class UserLocalStore: UserLocalStoreProtocol {
         }
     }
 
-    public func updateSelfUserAnalyticsID(
-        analyticsID: String,
+    public func updateSelfUserTrackingID(
+        trackingID: UUID,
         conversation: ZMConversation
     ) async {
         await context.perform { [context] in
@@ -237,7 +237,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
                 return
             }
 
-            ZMUser.selfUser(in: context).analyticsIdentifier = analyticsID
+            ZMUser.selfUser(in: context).trackingID = trackingID
         }
     }
 
@@ -245,7 +245,7 @@ public final class UserLocalStore: UserLocalStoreProtocol {
         id: UUID,
         domain: String?,
         date: Date
-    ) async throws {
+    ) async {
         let user = await context.perform { [context] in
             ZMUser.fetchOrCreate(
                 with: id,

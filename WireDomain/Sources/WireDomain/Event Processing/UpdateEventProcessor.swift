@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 import WireNetwork
 
 struct UpdateEventProcessor: UpdateEventProcessorProtocol {
@@ -33,7 +34,7 @@ struct UpdateEventProcessor: UpdateEventProcessorProtocol {
             try await conversationEventProcessor.processEvent(event)
 
         case let .featureConfig(event):
-            try await featureConfigEventProcessor.processEvent(event)
+            await featureConfigEventProcessor.processEvent(event)
 
         case let .federation(event):
             try await federationEventProcessor.processEvent(event)
@@ -45,7 +46,7 @@ struct UpdateEventProcessor: UpdateEventProcessorProtocol {
             try await teamEventProcessor.processEvent(event)
 
         case let .unknown(event):
-            print("can not process unknown event: \(event)")
+            WireLogger.eventProcessing.warn("can not process unknown event: \(event)")
         }
     }
 

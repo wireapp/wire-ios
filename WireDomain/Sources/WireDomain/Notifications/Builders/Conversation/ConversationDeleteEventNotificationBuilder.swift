@@ -56,7 +56,7 @@ struct ConversationDeleteEventNotificationBuilder: ConversationDeleteEventNotifi
             conversationName: conversationName,
             senderName: senderName,
             selfUserID: selfUserID,
-            senderID: senderID.uuid,
+            senderID: senderID.id,
             conversationID: conversationID
         )
     }
@@ -98,7 +98,7 @@ struct ConversationDeleteEventNotificationBuilder: ConversationDeleteEventNotifi
             senderID: senderID,
             conversationID: conversationID
         )
-        content.threadIdentifier = conversationID.uuid.transportString()
+        content.threadIdentifier = conversationID.id.transportString()
 
         await context.decreaseUnreadCount(
             conversation: conversation
@@ -158,7 +158,7 @@ struct ConversationDeleteEventNotificationBuilder: ConversationDeleteEventNotifi
 
         userInfo[NotificationUserInfoKey.selfUserID] = selfUserID.uuidString
         userInfo[NotificationUserInfoKey.senderID] = senderID.uuidString
-        userInfo[NotificationUserInfoKey.conversationID] = conversationID.uuid.uuidString
+        userInfo[NotificationUserInfoKey.conversationID] = conversationID.id.uuidString
 
         return userInfo
     }
@@ -171,7 +171,7 @@ extension ConversationDeleteEventNotificationBuilder {
 
         func validate(conversationID: ConversationID) async -> Bool {
             let conversation = await conversationLocalStore.fetchOrCreateConversation(
-                id: conversationID.uuid,
+                id: conversationID.id,
                 domain: conversationID.domain
             )
 
@@ -187,7 +187,7 @@ extension ConversationDeleteEventNotificationBuilder {
             conversationID: ConversationID
         ) async -> ZMConversation {
             await conversationLocalStore.fetchOrCreateConversation(
-                id: conversationID.uuid,
+                id: conversationID.id,
                 domain: conversationID.domain
             )
         }
@@ -200,7 +200,7 @@ extension ConversationDeleteEventNotificationBuilder {
             senderID: UserID
         ) async -> ZMUser {
             await userLocalStore.fetchOrCreateUser(
-                id: senderID.uuid,
+                id: senderID.id,
                 domain: senderID.domain
             )
         }

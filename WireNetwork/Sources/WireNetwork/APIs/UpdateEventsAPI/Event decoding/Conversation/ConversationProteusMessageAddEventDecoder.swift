@@ -24,12 +24,12 @@ struct ConversationProteusMessageAddEventDecoder {
         from container: KeyedDecodingContainer<ConversationEventCodingKeys>
     ) throws -> ConversationProteusMessageAddEvent {
         let conversationID = try container.decode(
-            ConversationID.self,
+            QualifiedIDV0.self,
             forKey: .conversationQualifiedID
         )
 
         let senderID = try container.decode(
-            UserID.self,
+            QualifiedIDV0.self,
             forKey: .senderQualifiedID
         )
 
@@ -44,8 +44,8 @@ struct ConversationProteusMessageAddEventDecoder {
         )
 
         return ConversationProteusMessageAddEvent(
-            conversationID: conversationID,
-            senderID: senderID,
+            conversationID: conversationID.toAPIModel(),
+            senderID: senderID.toAPIModel(),
             timestamp: timestamp.date,
             message: .init(encryptedMessage: payload.text),
             externalData: payload.data.map { .init(encryptedMessage: $0) },

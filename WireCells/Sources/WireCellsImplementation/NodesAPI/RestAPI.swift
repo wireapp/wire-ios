@@ -104,7 +104,7 @@ final class RestAPI: Sendable {
         )
     }
 
-    func cancelDraft(uuid: UUID, versionID: UUID) async throws {
+    func deleteVersion(uuid: UUID, versionID: UUID) async throws {
         _ = try await NodeServiceAPI.deleteVersion(
             uuid: uuid.uuidString,
             versionId: versionID.uuidString,

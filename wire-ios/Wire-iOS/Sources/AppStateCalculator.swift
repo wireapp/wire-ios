@@ -344,6 +344,7 @@ extension AppStateCalculator: SessionManagerDelegate {
     ) {
         transition(to: .syncFailure(error: error, onRetry: retryHandler))
     }
+
 }
 
 // MARK: - AuthenticationCoordinatorDelegate

@@ -149,6 +149,9 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         // GIVEN
         mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
         DeveloperFlag.consumableNotifications.enable(true, storage: .temporary())
+        defer {
+            DeveloperFlag.storage = .standard
+        }
         let userClient = await syncMOC.perform {
             self.createSelfClient(capabilities: [.consumableNotifications, .legalholdConsent])
         }

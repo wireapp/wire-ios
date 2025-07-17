@@ -29,7 +29,7 @@ struct TeamEventProcessor: TeamEventProcessorProtocol {
     func processEvent(_ event: TeamEvent) async throws {
         switch event {
         case .delete:
-            try await deleteEventProcessor.processEvent()
+            await deleteEventProcessor.processEvent()
 
         case let .memberLeave(event):
             try await memberLeaveEventProcessor.processEvent(event)
@@ -38,7 +38,7 @@ struct TeamEventProcessor: TeamEventProcessorProtocol {
             try await memberUpdateEventProcessor.processEvent(event)
 
         case let .create(event):
-            try await createEventProcessor.processEvent(event)
+            await createEventProcessor.processEvent(event)
         }
     }
 

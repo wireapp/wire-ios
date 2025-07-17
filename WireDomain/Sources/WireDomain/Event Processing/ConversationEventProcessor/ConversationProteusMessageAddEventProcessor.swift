@@ -44,7 +44,7 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
         }
 
         guard let conversation = await conversationLocalStore.fetchConversation(
-            id: conversationID.uuid,
+            id: conversationID.id,
             domain: conversationID.domain
         ) else {
             return WireLogger.proteus.error(
@@ -54,13 +54,13 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
 
         let logAttributes: LogAttributes = [
             .messageType: "conversation.otr-message-add",
-            .conversationId: conversationID.uuid.safeForLoggingDescription
+            .conversationId: conversationID.id.safeForLoggingDescription
         ]
 
         // Ensure is not self conversation, sender is self user and conversation is not read-only
         guard await messageLocalStore.canAddMessage(
             conversation: conversation,
-            senderID: senderID.uuid
+            senderID: senderID.id
         ) else {
             return WireLogger.eventProcessing.warn(
                 "Ignoring incoming message: illegal sender or conversation",
@@ -105,7 +105,7 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
         // Verifies that a sender of an update event is part of the conversation. If they are not,
         // it means that our local state is out of sync and we need to update the list of participants.
         await conversationLocalStore.addParticipantIfNeeded(
-            participantID: senderID.uuid,
+            participantID: senderID.id,
             participantDomain: senderID.domain,
             in: conversation,
             date: date.addingTimeInterval(-0.01)
@@ -190,13 +190,13 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
         date: Date
     ) async {
         let systemMessageType: SystemMessageType = .invalid(
-            sender: (senderID.uuid, senderID.domain),
+            sender: (senderID.id, senderID.domain),
             date: date
         )
 
         await messageLocalStore.addSystemMessage(
             messageType: systemMessageType,
-            conversationID: conversationID.uuid,
+            conversationID: conversationID.id,
             conversationDomain: conversationID.domain
         )
     }
@@ -228,7 +228,7 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
         let clientID = event.messageSenderClientID
 
         let conversationID = !callingConversationID.id
-            .isEmpty ? UUID(uuidString: callingConversationID.id)! : event.conversationID.uuid
+            .isEmpty ? UUID(uuidString: callingConversationID.id)! : event.conversationID.id
 
         let conversationDomain = !callingConversationID.domain.isEmpty ? callingConversationID.domain : event
             .conversationID.domain
@@ -237,7 +237,7 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
             data: payload,
             conversationID: conversationID,
             conversationDomain: conversationDomain,
-            userID: senderID.uuid,
+            userID: senderID.id,
             userDomain: senderID.domain,
             eventTimestamp: eventTimestamp,
             clientID: clientID,

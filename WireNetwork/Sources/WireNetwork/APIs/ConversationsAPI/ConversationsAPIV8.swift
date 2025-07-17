@@ -18,11 +18,11 @@
 
 import Foundation
 
-final class ConversationsAPIV8: ConversationsAPIV7 {
+class ConversationsAPIV8: ConversationsAPIV7 {
     override var apiVersion: APIVersion { .v8 }
 
     override func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList {
-        let parameters = GetConversationsParametersV0(qualifiedIdentifiers: identifiers)
+        let parameters = GetConversationsParametersV0(qualifiedIdentifiers: identifiers.map { $0.toNetworkModel() })
         let body = try JSONEncoder.defaultEncoder.encode(parameters)
         let path = "\(pathPrefix)\(basePath)/list"
 
@@ -98,7 +98,7 @@ final class ConversationsAPIV8: ConversationsAPIV7 {
         conversationDomain: String,
         permission: ChannelPermission
     ) async throws -> ChannelPermission {
-        let input = ChannelPermissionParametersV8(from: permission)
+        let input = ChannelPermissionParametersV8(from: permission.toNetworkModel())
         let body = try JSONEncoder.defaultEncoder.encode(input)
         let path = "\(pathPrefix)/conversations/\(conversationDomain)/\(conversationID)/add-permission"
 
@@ -164,14 +164,14 @@ private struct QualifiedConversationListV8: Decodable, ToAPIModelConvertible {
     }
 
     let found: [ConversationV8] // in v8, decode (if present) the add_permission value
-    let notFound: [QualifiedID]
-    let failed: [QualifiedID]
+    let notFound: [QualifiedIDV0]
+    let failed: [QualifiedIDV0]
 
     func toAPIModel() -> ConversationList {
         ConversationList(
             found: found.map { $0.toAPIModel() },
-            notFound: notFound,
-            failed: failed
+            notFound: notFound.map { $0.toAPIModel() },
+            failed: failed.map { $0.toAPIModel() }
         )
     }
 }
@@ -179,13 +179,13 @@ private struct QualifiedConversationListV8: Decodable, ToAPIModelConvertible {
 private struct ChannelPermissionResponseV8: Decodable, ToAPIModelConvertible {
     let conversationID: UUID
     let senderID: UUID
-    let conversationQualifiedID: QualifiedID
-    let senderQualifiedID: QualifiedID
+    let conversationQualifiedID: QualifiedIDV0
+    let senderQualifiedID: QualifiedIDV0
     let payload: Payload
 
     struct Payload: Decodable {
 
-        let addPermission: ChannelPermission
+        let addPermission: ChannelPermissionV8
 
         enum CodingKeys: String, CodingKey {
             case addPermission = "add_permission"
@@ -204,15 +204,15 @@ private struct ChannelPermissionResponseV8: Decodable, ToAPIModelConvertible {
     }
 
     func toAPIModel() -> ChannelPermission {
-        payload.addPermission
+        payload.addPermission.toAPIModel()
     }
 
 }
 
 struct ChannelPermissionParametersV8: Encodable {
-    let addPermission: ChannelPermission
+    let addPermission: ChannelPermissionV8
 
-    init(from channelPermission: ChannelPermission) {
+    init(from channelPermission: ChannelPermissionV8) {
         self.addPermission = channelPermission
     }
 
@@ -223,7 +223,7 @@ struct ChannelPermissionParametersV8: Encodable {
 
 struct CreateGroupConversationParametersV8: Encodable {
     let users: [UUID]?
-    let qualifiedUsers: [QualifiedID]?
+    let qualifiedUsers: [QualifiedIDV0]?
     let access: [String]?
     let accessRoles: [String]?
     let name: String?
@@ -232,7 +232,7 @@ struct CreateGroupConversationParametersV8: Encodable {
     let readReceiptMode: Int?
     let conversationRole: String?
     let messageProtocol: String
-    let conversationGroupType: ConversationGroupType // Introduced in v8
+    let conversationGroupType: ConversationGroupTypeV8 // Introduced in v8
 
     enum CodingKeys: String, CodingKey {
         case users
@@ -250,16 +250,17 @@ struct CreateGroupConversationParametersV8: Encodable {
 
     init(from parameters: CreateGroupConversationParameters) {
         self.users = parameters.messageProtocol == .proteus ? parameters.unqualifiedUserIDs : nil
-        self.qualifiedUsers = parameters.messageProtocol == .proteus ? parameters.qualifiedUserIDs : nil
-        self.access = parameters.accessMode.map(\.rawValue)
-        self.accessRoles = parameters.accessRoles.map(\.rawValue)
+        self.qualifiedUsers = parameters.messageProtocol == .proteus ? parameters.qualifiedUserIDs
+            .map { $0.toNetworkModel() } : nil
+        self.access = parameters.accessMode.map { $0.toNetworkModel().rawValue }
+        self.accessRoles = parameters.accessRoles.map { $0.toNetworkModel().rawValue }
         self.name = parameters.name
         self.team = parameters.teamID.map { .init(teamID: $0) }
         self.messageTimer = nil
         self.readReceiptMode = parameters.isReadReceiptsEnabled ? 1 : 0
         self.conversationRole = "wire_member"
-        self.messageProtocol = parameters.messageProtocol.rawValue
-        self.conversationGroupType = parameters.groupType
+        self.messageProtocol = parameters.messageProtocol.toNetworkModel().rawValue
+        self.conversationGroupType = parameters.groupType.toNetworkModel()
     }
 
 }
@@ -290,9 +291,9 @@ struct ConversationV8: Decodable, ToAPIModelConvertible {
         case addPermission = "add_permission"
     }
 
-    var access: Set<ConversationAccessMode>?
-    var accessRoles: Set<ConversationAccessRole>?
-    var cipherSuite: MLSCipherSuite?
+    var access: Set<ConversationAccessModeV0>?
+    var accessRoles: Set<ConversationAccessRoleV0>?
+    var cipherSuite: MLSCipherSuiteV0?
     var creator: UUID?
     var epoch: UInt?
     var epochTimestamp: UTCTime?
@@ -300,26 +301,28 @@ struct ConversationV8: Decodable, ToAPIModelConvertible {
     var lastEvent: String?
     var lastEventTime: UTCTime?
     var members: QualifiedConversationMembers?
-    var messageProtocol: ConversationMessageProtocol?
+    var messageProtocol: ConversationMessageProtocolV0?
     var messageTimer: TimeInterval?
     var mlsGroupID: String?
     var name: String?
-    var qualifiedID: QualifiedID?
+    var qualifiedID: QualifiedIDV0?
     var readReceiptMode: Int?
     var teamID: UUID?
-    var type: ConversationType?
-    var groupType: ConversationGroupType? // Introduced in v8
-    var addPermission: ChannelPermission? // Introduced in v8
+    var type: ConversationTypeV0?
+    var groupType: ConversationGroupTypeV8? // Introduced in v8
+    var addPermission: ChannelPermissionV8? // Introduced in v8
 
     func toAPIModel() -> Conversation {
-        Conversation(
+        let access = access?.map { $0.toAPIModel() }
+        let accessRoles = accessRoles?.map { $0.toAPIModel() }
+        return Conversation(
             id: id,
-            qualifiedID: qualifiedID,
+            qualifiedID: qualifiedID?.toAPIModel(),
             teamID: teamID,
-            type: type,
-            messageProtocol: messageProtocol,
+            type: type?.toAPIModel(),
+            messageProtocol: messageProtocol?.toAPIModel(),
             mlsGroupID: mlsGroupID,
-            cipherSuite: cipherSuite,
+            cipherSuite: cipherSuite?.toAPIModel(),
             epoch: epoch,
             epochTimestamp: epochTimestamp?.date,
             creator: creator,
@@ -327,13 +330,13 @@ struct ConversationV8: Decodable, ToAPIModelConvertible {
             name: name,
             messageTimer: messageTimer,
             readReceiptMode: readReceiptMode,
-            access: access,
-            accessRoles: accessRoles,
+            access: access.flatMap { Set($0) },
+            accessRoles: accessRoles.flatMap { Set($0) },
             legacyAccessRole: nil,
             lastEvent: lastEvent,
             lastEventTime: lastEventTime?.date,
-            groupType: groupType,
-            addPermission: addPermission
+            groupType: groupType?.toAPIModel(),
+            addPermission: addPermission?.toAPIModel()
         )
     }
 }

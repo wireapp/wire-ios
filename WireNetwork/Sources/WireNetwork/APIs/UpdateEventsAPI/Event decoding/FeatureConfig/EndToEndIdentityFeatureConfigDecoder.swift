@@ -29,7 +29,7 @@ struct EndToEndIdentityFeatureConfigDecoder {
         )
 
         return EndToEndIdentityFeatureConfig(
-            status: payload.status,
+            status: payload.status.toAPIModel(),
             acmeDiscoveryURL: payload.config.acmeDiscoveryURL,
             verificationExpiration: payload.config.verificationExpiration,
             crlProxy: nil,

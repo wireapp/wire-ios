@@ -23,12 +23,16 @@ package import UniformTypeIdentifiers
 package import WireCellsAPI
 import WireLogging
 
-package protocol DraftsRepositoryProtocol: Actor {
+// sourcery: AutoMockable
+package protocol DraftsRepositoryProtocol: Sendable {
 
-    func add(assetURL: URL, assetSize: Int, cellName: String, fileName: String, fileType: UTType?) async
-    func drafts(for cellName: String) -> AsyncStream<[WireCellsDraft]>
+    func drafts(for cellName: String) async -> AsyncStream<[WireCellsDraft]>
     func publishAll(for cellName: String) async throws
-    func clearPublishedDrafts(for cellName: String)
+    func clearPublishedDrafts(for cellName: String) async
+    func addDraft(_ draft: WireCellsDraft, for cellName: String) async
+    func fetchDraft(nodeID: UUID, cellName: String) async -> WireCellsDraft?
+    func deleteDraft(nodeID: UUID, cellName: String) async
+    func updateDraft(_ draft: WireCellsDraft, for cellName: String) async
 
 }
 
@@ -64,48 +68,6 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
 
     deinit {
         continuations.values.forEach { $0.finish() }
-    }
-
-    package func add(assetURL: URL, assetSize: Int, cellName: String, fileName: String, fileType: UTType?) async {
-        let draft = WireCellsDraft(
-            nodeID: UUID(),
-            versionID: UUID(),
-            assetURL: assetURL,
-            fileType: fileType,
-            status: .uploading(progress: 0),
-            name: fileName,
-            bytes: assetSize,
-            mimeType: nil
-        )
-        drafts.value[cellName, default: [:]][draft.nodeID] = draft
-
-        do {
-            let (node, stream) = try await uploadManager.upload(
-                nodeID: draft.nodeID,
-                versionID: draft.versionID,
-                assetPath: assetURL,
-                assetSize: UInt64(assetSize),
-                destNodePath: "\(cellName)/\(fileName)"
-            )
-
-            // Update draft name if changed
-            if let updatedName = URL(string: node.path)?.lastPathComponent, updatedName != draft.name {
-                drafts.value[cellName]?[draft.nodeID]?.name = updatedName
-            }
-
-            for await status in stream {
-                setStatus(status, cellName: cellName, id: draft.nodeID)
-            }
-
-            // Set post upload values
-            let latestNode = try await nodesAPI.getNode(nodeID: draft.nodeID)
-            if let mimeTime = latestNode.mimeType {
-                drafts.value[cellName]?[draft.nodeID]?.mimeType = mimeTime
-            }
-
-        } catch {
-            setStatus(.failed(error: WireCellsUploadError(error)), cellName: cellName, id: draft.nodeID)
-        }
     }
 
     package func drafts(for cellName: String) -> AsyncStream<[WireCellsDraft]> {
@@ -179,6 +141,34 @@ package actor DraftsRepository: DraftsRepositoryProtocol {
     package func clearPublishedDrafts(for cellName: String) {
         drafts.value[cellName]?.removeAll { $0.value.status == .uploaded(isDraft: false) }
     }
+
+    /// Adds a draft for the given cell name.
+
+    package func addDraft(_ draft: WireCellsDraft, for cellName: String) {
+        drafts.value[cellName, default: [:]][draft.nodeID] = draft
+    }
+
+    /// Returns the draft for the given node ID and cell name, if it exists.
+
+    package func fetchDraft(nodeID: UUID, cellName: String) -> WireCellsDraft? {
+        drafts.value[cellName]?[nodeID]
+    }
+
+    /// Deletes draft for the given node ID and cell name.
+
+    package func deleteDraft(nodeID: UUID, cellName: String) {
+        drafts.value[cellName]?.removeValue(forKey: nodeID)
+    }
+
+    /// Updates draft for the given cell name.
+
+    package func updateDraft(_ new: WireCellsDraft, for cellName: String) {
+        guard let old = fetchDraft(nodeID: new.nodeID, cellName: cellName), new != old else { return }
+
+        drafts.value[cellName]?[new.nodeID] = new
+    }
+
+    // MARK: - Private
 
     private func removeContinuation(for uuid: UUID) async {
         continuations[uuid] = nil

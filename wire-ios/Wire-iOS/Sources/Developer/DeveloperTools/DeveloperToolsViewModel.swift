@@ -19,6 +19,7 @@
 import SwiftUI
 import WireCommonComponents
 import WireDataModel
+import WireDomain
 import WireRequestStrategy
 import WireSyncEngine
 import WireTransport
@@ -151,38 +152,52 @@ final class DeveloperToolsViewModel: ObservableObject {
             items: [
                 .text(TextItem(title: "App version", value: appVersion)),
                 .text(TextItem(title: "Build number", value: buildNumber)),
-                .text(TextItem(title: "Bundle Identifier", value: bundleIdentifier))
+                .text(TextItem(title: "Bundle Identifier", value: bundleIdentifier)),
+                .text(TextItem(title: "Last version migration", value: lastCompletedAppMigration ?? "None"))
             ]
         ))
     }
 
     private func setupSelfUser() {
         if let selfUser {
-            sections.append(Section(
-                header: "Self user",
-                items: [
-                    .text(TextItem(title: "Handle", value: selfUser.handleDisplayString(withDomain: true) ?? "None")),
-                    .text(TextItem(title: "Email", value: selfUser.emailAddress ?? "None")),
-                    .text(TextItem(title: "User ID", value: selfUser.remoteIdentifier.uuidString)),
-                    .text(TextItem(title: "Analytics ID", value: selfUser.analyticsIdentifier?.uppercased() ?? "None")),
-                    .text(TextItem(title: "Client ID", value: selfClient?.remoteIdentifier?.uppercased() ?? "None")),
-                    .text(
-                        TextItem(
-                            title: "Supported protocols",
-                            value: selfUser.supportedProtocols.map(\.rawValue).joined(separator: ", ")
-                        )
-                    ),
-                    .text(TextItem(
-                        title: "MLS public key",
-                        value: selfClient?.mlsPublicKeys.allKeys.first?.uppercased() ?? "None"
-                    )),
-                    .text(TextItem(title: "1-1 MLS Conversations", value: oneOnOneMLSConversationsCount())),
-                    .text(TextItem(
-                        title: "Consumable Notifications Capability",
-                        value: selfClient?.isConsumableNotificationsCapable == true ? "Yes" : "No"
-                    ))
-                ]
-            ))
+            sections.append(
+                Section(
+                    header: "Self user",
+                    items: [
+                        .text(TextItem(
+                            title: "Handle",
+                            value: selfUser.handleDisplayString(withDomain: true) ?? "None"
+                        )),
+                        .text(TextItem(title: "Email", value: selfUser.emailAddress ?? "None")),
+                        .text(TextItem(title: "User ID", value: selfUser.remoteIdentifier.uuidString)),
+                        .text(
+                            TextItem(
+                                title: "Analytics ID",
+                                value: selfUser.trackingID?.transportString().uppercased() ?? "None"
+                            )
+                        ),
+                        .text(TextItem(
+                            title: "Client ID",
+                            value: selfClient?.remoteIdentifier?.uppercased() ?? "None"
+                        )),
+                        .text(
+                            TextItem(
+                                title: "Supported protocols",
+                                value: selfUser.supportedProtocols.map(\.rawValue).joined(separator: ", ")
+                            )
+                        ),
+                        .text(TextItem(
+                            title: "MLS public key",
+                            value: selfClient?.mlsPublicKeys.allKeys.first?.uppercased() ?? "None"
+                        )),
+                        .text(TextItem(title: "1-1 MLS Conversations", value: oneOnOneMLSConversationsCount())),
+                        .text(TextItem(
+                            title: "Consumable Notifications Capability",
+                            value: selfClient?.isConsumableNotificationsCapable == true ? "Yes" : "No"
+                        ))
+                    ]
+                )
+            )
         }
     }
 
@@ -393,6 +408,14 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     private var buildNumber: String {
         Bundle.main.infoDictionary?[kCFBundleVersionKey as String] as? String ?? "Unknown"
+    }
+
+    private var lastCompletedAppMigration: String? {
+        guard let selfUser else { return nil }
+        return Journal(
+            userID: selfUser.remoteIdentifier,
+            storage: UserDefaults.shared()
+        ).lastCompletedAppVersionMigration?.string
     }
 
     private var backendName: String {
