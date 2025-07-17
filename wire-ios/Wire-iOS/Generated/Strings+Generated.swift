@@ -5314,10 +5314,10 @@ internal enum L10n {
             }
             internal enum EraseData {
               internal enum Alert {
+                /// Delete all your personal information and conversations on this device ?
+                internal static let message = L10n.tr("Localizable", "self.settings.account_details.log_out.erase_data.alert.message", fallback: "Delete all your personal information and conversations on this device ?")
                 /// No
                 internal static let no = L10n.tr("Localizable", "self.settings.account_details.log_out.erase_data.alert.no", fallback: "No")
-                /// Delete all your personal information and conversations on this device ?
-                internal static let title = L10n.tr("Localizable", "self.settings.account_details.log_out.erase_data.alert.title", fallback: "Delete all your personal information and conversations on this device ?")
                 /// Yes
                 internal static let yes = L10n.tr("Localizable", "self.settings.account_details.log_out.erase_data.alert.yes", fallback: "Yes")
               }

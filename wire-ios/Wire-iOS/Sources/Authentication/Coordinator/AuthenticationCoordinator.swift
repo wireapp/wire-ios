@@ -509,7 +509,7 @@ extension AuthenticationCoordinator {
             let yesAction = AuthenticationCoordinatorAlertAction(
                 title: L10n.Localizable.Self.Settings.AccountDetails.LogOut.EraseData.Alert.yes,
                 coordinatorActions: [.showLoadingView, .deleteSession(eraseData: true)],
-                style: .default
+                style: .destructive
             )
 
             let noAction = AuthenticationCoordinatorAlertAction(
@@ -519,8 +519,8 @@ extension AuthenticationCoordinator {
             )
 
             let alertModel = AuthenticationCoordinatorAlert(
-                title: L10n.Localizable.Self.Settings.AccountDetails.LogOut.EraseData.Alert.title,
-                message: nil,
+                title: L10n.Localizable.Self.Settings.AccountDetails.LogOut.Alert.title,
+                message: L10n.Localizable.Self.Settings.AccountDetails.LogOut.EraseData.Alert.message,
                 actions: [yesAction, noAction, .cancel]
             )
 

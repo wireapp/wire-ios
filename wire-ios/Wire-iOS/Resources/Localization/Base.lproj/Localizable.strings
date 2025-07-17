@@ -1199,7 +1199,7 @@
 "self.settings.account_details.log_out.alert.title" = "Log out";
 "self.settings.account_details.log_out.alert.message" = "Your message history will be erased on this device.";
 "self.settings.account_details.log_out.alert.password" = "Password";
-"self.settings.account_details.log_out.erase_data.alert.title" = "Delete all your personal information and conversations on this device ?";
+"self.settings.account_details.log_out.erase_data.alert.message" = "Delete all your personal information and conversations on this device ?";
 "self.settings.account_details.log_out.erase_data.alert.yes" = "Yes";
 "self.settings.account_details.log_out.erase_data.alert.no" = "No";
 
