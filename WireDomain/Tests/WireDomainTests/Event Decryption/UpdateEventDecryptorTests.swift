@@ -125,7 +125,7 @@ final class UpdateEventDecryptorTests: XCTestCase {
         }
 
         // When
-        let events = try await sut.decryptEvents(in: envelope, context: nil).events
+        let events = await sut.decryptEvents(in: envelope, context: nil).events
 
         // Then the "decrypted" (the mock just passes them right back) are returned.
         XCTAssertEqual(
@@ -154,7 +154,7 @@ final class UpdateEventDecryptorTests: XCTestCase {
         }
 
         // When
-        let events = try await sut.decryptEvents(in: envelope, context: nil).events
+        let events = await sut.decryptEvents(in: envelope, context: nil).events
 
         // Then we skipped over the proteus message.
         XCTAssertEqual(events, [.user(.pushRemove)])
@@ -190,7 +190,7 @@ final class UpdateEventDecryptorTests: XCTestCase {
         }
 
         // When
-        let events = try await sut.decryptEvents(in: envelope, context: nil).events
+        let events = await sut.decryptEvents(in: envelope, context: nil).events
 
         // Then the "decrypted" (the mock just passes them right back) are returned.
         XCTAssertEqual(
@@ -223,7 +223,7 @@ final class UpdateEventDecryptorTests: XCTestCase {
         }
 
         // When
-        let decryptEvents = try await sut.decryptEvents(in: envelope, context: nil)
+        let decryptEvents = await sut.decryptEvents(in: envelope, context: nil)
 
         // Then we skipped over the mls message.
         XCTAssertEqual(decryptEvents.events, [.user(.pushRemove)])

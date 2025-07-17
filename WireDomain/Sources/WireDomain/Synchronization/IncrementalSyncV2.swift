@@ -137,6 +137,11 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                             "processing pending event: \(event.name)",
                             attributes: .syncAttributes(initialSync: false) + [.eventEnvelopeID: envelope.id]
                         )
+                        if event.isTypingEvent {
+                            // We should only process live typing events, not old stored events
+                            // that are no longer relevant.
+                            continue
+                        }
                         try await processor.processEvent(event)
                     } catch {
                         // TODO: [WPB-10458] review handling errors of processingEvents
@@ -172,10 +177,6 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
 
         do {
             for try await element in liveEventStream {
-                logger.debug(
-                    "received live element: \(element)",
-                    attributes: .syncAttributes(initialSync: false)
-                )
                 switch element {
                 case let .syncMarker(id, deliveryTag):
 
@@ -358,6 +359,18 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                 "failed to save database: \(String(describing: error))",
                 attributes: .syncAttributes(initialSync: false)
             )
+        }
+    }
+}
+
+private extension UpdateEvent {
+
+    var isTypingEvent: Bool {
+        switch self {
+        case .conversation(.typing):
+            true
+        default:
+            false
         }
     }
 }

@@ -87,6 +87,9 @@ struct ConversationEventProcessor: ConversationEventProcessorProtocol {
 
         case let .permissionUpdate(event):
             await addPermissionEventProcessor.processEvent(event)
+            // TODO: [WPB-18464] - process new event when backend ready, processor will properly map the duration to a localized string and pass it to the messageLocalStore.addSystemMessage(..)
+//        case let .channelHistoryDepthModified(event):
+//            await channelHistoryDepthModifiedProcessor.processEvent(event)
         }
     }
 

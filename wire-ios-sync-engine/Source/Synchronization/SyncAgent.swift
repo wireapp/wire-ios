@@ -63,10 +63,6 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     private var ongoingSyncTask: Task<Void, Never>?
     private var subscription: AnyCancellable?
 
-    private var hasCompletedInitialSync: Bool {
-        lastUpdateEventIDRepository.fetchLastEventID() != nil
-    }
-
     var isLive: Bool {
         if isSyncV2Enabled {
             syncStateSubject.value == .liveSyncing(.ongoing)
@@ -112,7 +108,8 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
         ongoingSyncTask = Task {
             WireLogger.sync.debug(
-                "resuming sync"
+                "resuming sync",
+                attributes: .syncAttributes
             )
 
             let retrier = BackoffRetrier()
@@ -145,7 +142,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
 
         WireLogger.sync.debug(
             "suspending sync \(backgroundActivity != nil ? "in a background task" : "")",
-            attributes: .syncAttributes(initialSync: !hasCompletedInitialSync)
+            attributes: .syncAttributes
         )
 
         ongoingSyncTask?.cancel()
@@ -166,7 +163,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     /// otherwise the incremental sync will be performed.
 
     func performSync() async throws {
-        if !hasCompletedInitialSync {
+        if journal[.isInitialSyncRequired] {
             try await performInitialSync()
         } else {
             try await performIncrementalSync()

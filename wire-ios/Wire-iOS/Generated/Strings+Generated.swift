@@ -1934,6 +1934,14 @@ internal enum L10n {
         internal static let isVerified = L10n.tr("Localizable", "content.system.is_verified", fallback: "All fingerprints are verified")
         /// Tap to like
         internal static let likeTooltip = L10n.tr("Localizable", "content.system.like_tooltip", fallback: "Tap to like")
+        /// %@ set conversation history to %@
+        internal static func messageHistoryDepth(_ p1: Any, _ p2: Any) -> String {
+          return L10n.tr("Localizable", "content.system.message_history_depth", String(describing: p1), String(describing: p2), fallback: "%@ set conversation history to %@")
+        }
+        /// %@ disabled conversation history
+        internal static func messageHistoryDepthDisabled(_ p1: Any) -> String {
+          return L10n.tr("Localizable", "content.system.message_history_depth_disabled", String(describing: p1), fallback: "%@ disabled conversation history")
+        }
         /// %@ turned read receipts off for everyone
         internal static func messageReadReceiptOff(_ p1: Any) -> String {
           return L10n.tr("Localizable", "content.system.message_read_receipt_off", String(describing: p1), fallback: "%@ turned read receipts off for everyone")
@@ -5701,10 +5709,6 @@ internal enum L10n {
         internal enum HistoryBackup {
           /// Back up or Restore
           internal static let title = L10n.tr("Localizable", "self.settings.history_backup.title", fallback: "Back up or Restore")
-          internal enum Error {
-            /// Error
-            internal static let title = L10n.tr("Localizable", "self.settings.history_backup.error.title", fallback: "Error")
-          }
           internal enum SetEmail {
             /// You need an email and a password in order to back up your conversation history. You can do it from the account page in Settings.
             internal static let message = L10n.tr("Localizable", "self.settings.history_backup.set_email.message", fallback: "You need an email and a password in order to back up your conversation history. You can do it from the account page in Settings.")

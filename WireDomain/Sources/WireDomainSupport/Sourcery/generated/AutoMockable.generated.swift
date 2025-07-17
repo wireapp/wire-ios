@@ -1063,16 +1063,16 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
     // MARK: - obtainPermanentIDs
 
     public var obtainPermanentIDsUserConversation_Invocations: [(user: ZMUser, conversation: ZMConversation)] = []
-    public var obtainPermanentIDsUserConversation_MockMethod: ((ZMUser, ZMConversation) -> Void)?
+    public var obtainPermanentIDsUserConversation_MockMethod: ((ZMUser, ZMConversation) async -> Void)?
 
-    public func obtainPermanentIDs(user: ZMUser, conversation: ZMConversation) {
+    public func obtainPermanentIDs(user: ZMUser, conversation: ZMConversation) async {
         obtainPermanentIDsUserConversation_Invocations.append((user: user, conversation: conversation))
 
         guard let mock = obtainPermanentIDsUserConversation_MockMethod else {
             fatalError("no mock for `obtainPermanentIDsUserConversation`")
         }
 
-        mock(user, conversation)
+        await mock(user, conversation)
     }
 
     // MARK: - conversationName
@@ -1612,26 +1612,6 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol 
         } else {
             fatalError("no mock for `fetchOrCreateConversationIdDomain`")
         }
-    }
-
-    // MARK: - pullConversations
-
-    public var pullConversations_Invocations: [Void] = []
-    public var pullConversations_MockError: Error?
-    public var pullConversations_MockMethod: (() async throws -> Void)?
-
-    public func pullConversations() async throws {
-        pullConversations_Invocations.append(())
-
-        if let error = pullConversations_MockError {
-            throw error
-        }
-
-        guard let mock = pullConversations_MockMethod else {
-            fatalError("no mock for `pullConversations`")
-        }
-
-        try await mock()
     }
 
     // MARK: - pullMLSOneToOneConversation
@@ -2625,19 +2605,20 @@ class MockProteusMessageDecryptorProtocol: ProteusMessageDecryptorProtocol {
 
 }
 
-class MockPullAllConversationsSyncProtocol: PullAllConversationsSyncProtocol {
+public class MockPullAllConversationsSyncProtocol: PullAllConversationsSyncProtocol {
 
     // MARK: - Life cycle
 
+    public init() {}
 
 
     // MARK: - pull
 
-    var pull_Invocations: [Void] = []
-    var pull_MockError: Error?
-    var pull_MockMethod: (() async throws -> Void)?
+    public var pull_Invocations: [Void] = []
+    public var pull_MockError: Error?
+    public var pull_MockMethod: (() async throws -> Void)?
 
-    func pull() async throws {
+    public func pull() async throws {
         pull_Invocations.append(())
 
         if let error = pull_MockError {
@@ -4687,19 +4668,19 @@ public class MockUserLocalStoreProtocol: UserLocalStoreProtocol {
         await mock(user)
     }
 
-    // MARK: - updateSelfUserAnalyticsID
+    // MARK: - updateSelfUserTrackingID
 
-    public var updateSelfUserAnalyticsIDAnalyticsIDConversation_Invocations: [(analyticsID: String, conversation: ZMConversation)] = []
-    public var updateSelfUserAnalyticsIDAnalyticsIDConversation_MockMethod: ((String, ZMConversation) async -> Void)?
+    public var updateSelfUserTrackingIDTrackingIDConversation_Invocations: [(trackingID: UUID, conversation: ZMConversation)] = []
+    public var updateSelfUserTrackingIDTrackingIDConversation_MockMethod: ((UUID, ZMConversation) async -> Void)?
 
-    public func updateSelfUserAnalyticsID(analyticsID: String, conversation: ZMConversation) async {
-        updateSelfUserAnalyticsIDAnalyticsIDConversation_Invocations.append((analyticsID: analyticsID, conversation: conversation))
+    public func updateSelfUserTrackingID(trackingID: UUID, conversation: ZMConversation) async {
+        updateSelfUserTrackingIDTrackingIDConversation_Invocations.append((trackingID: trackingID, conversation: conversation))
 
-        guard let mock = updateSelfUserAnalyticsIDAnalyticsIDConversation_MockMethod else {
-            fatalError("no mock for `updateSelfUserAnalyticsIDAnalyticsIDConversation`")
+        guard let mock = updateSelfUserTrackingIDTrackingIDConversation_MockMethod else {
+            fatalError("no mock for `updateSelfUserTrackingIDTrackingIDConversation`")
         }
 
-        await mock(analyticsID, conversation)
+        await mock(trackingID, conversation)
     }
 
     // MARK: - persistUser

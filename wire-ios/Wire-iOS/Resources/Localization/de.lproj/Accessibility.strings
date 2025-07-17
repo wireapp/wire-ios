@@ -22,6 +22,8 @@
 ///  "<screen>.<component>.<usage>"
 
 
+"peoplepicker.upgrade_banner.close_button.label" = "Team-Erstellungsoption schließen";
+
 "conversation.backButton.description" = "Zurück zur Unterhaltungsliste";
 "conversation.searchButton.description" = "Suche öffnen";
 "conversation.profileImage.description" = "Profilbild";

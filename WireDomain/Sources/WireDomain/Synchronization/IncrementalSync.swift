@@ -157,28 +157,19 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                     continue
                 }
 
-                do {
-                    // Decrypt.
-                    logger.debug(
-                        "decrypting live event envelope",
-                        attributes: .syncAttributes(initialSync: false) + [.eventEnvelopeID: envelope.id]
-                    )
+                // Decrypt.
+                logger.debug(
+                    "decrypting live event envelope",
+                    attributes: .syncAttributes(initialSync: false) + [.eventEnvelopeID: envelope.id]
+                )
 
-                    let decryptionEventsResult = try await decryptor.decryptEvents(in: envelope, context: nil)
+                let decryptionEventsResult = await decryptor.decryptEvents(in: envelope, context: nil)
 
-                    envelope.events = decryptionEventsResult.events
+                envelope.events = decryptionEventsResult.events
 
-                    let brokenMLSGroupIDs = decryptionEventsResult.brokenMLSGroupIDs
-                    if !brokenMLSGroupIDs.isEmpty {
-                        journal.addValues(Set(brokenMLSGroupIDs), for: .brokenMLSGroupIDs)
-                    }
-
-                } catch {
-                    logger.error(
-                        "failed to decrypt live event envelope: \(String(describing: error))",
-                        attributes: .syncAttributes(initialSync: false) + [.eventEnvelopeID: envelope.id]
-                    )
-                    continue
+                let brokenMLSGroupIDs = decryptionEventsResult.brokenMLSGroupIDs
+                if !brokenMLSGroupIDs.isEmpty {
+                    journal.addValues(Set(brokenMLSGroupIDs), for: .brokenMLSGroupIDs)
                 }
 
                 let index: Int64

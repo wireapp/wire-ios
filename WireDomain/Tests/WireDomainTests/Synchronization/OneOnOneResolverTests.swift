@@ -75,7 +75,6 @@ final class OneOnOneResolverTests: XCTestCase {
         // Given
 
         let commonProtocol = WireDataModel.MessageProtocol.mls
-        let mlsEpoch: UInt64 = 0
 
         let (selfUser, user, mlsOneOnOneConversation) = try await context.perform { [self] in
             try setupManagedObjects(
