@@ -23,10 +23,12 @@ import WireSystem
 /// Namespace for analytics tools.
 public enum WireAnalytics {
 
+    public static let sharedLogsDirectory = "Logs"
+
     private static let isSetUpLock = NSLock()
     private static var isSetUp = false
 
-    public static func setup(for target: Target) {
+    public static func setup(for target: LogTarget) {
         // Adding a lock here since some app extension might execute this setup in the same process as the main app.
         // https://stackoverflow.com/a/62674277
         isSetUpLock.lock()
@@ -43,7 +45,7 @@ public enum WireAnalytics {
             #if DEBUG
                 SystemLogger()
             #endif
-            CocoaLumberjackLogger(logsDirectory: target.logsDirectory)
+            CocoaLumberjackLogger(for: target)
             WireAnalytics.Datadog.shared
         }
 
@@ -52,47 +54,37 @@ public enum WireAnalytics {
         WireLogger.system.addTag(.processName, value: ProcessInfo.processInfo.processName)
     }
 
-    public enum Target {
-        case app
-        case notificationServiceExtension
-        case shareExtension
-    }
-
 }
 
-extension WireAnalytics.Target {
+private extension CocoaLumberjackLogger {
 
-    fileprivate var logsDirectory: URL? {
-        let fileManager = FileManager.default
-        switch self {
+    convenience init(for target: LogTarget) {
 
-        case .app:
-            let cachesDirectory = try? fileManager.url(
-                for: .cachesDirectory,
-                in: .userDomainMask,
-                appropriateFor: nil,
-                create: true
-            )
-            return cachesDirectory?.appending(path: "Logs", directoryHint: .isDirectory)
+        // this was the previous directory for the main target (app)
+        // let cachesDirectory = try? fileManager.url(
+        //     for: .cachesDirectory,
+        //     in: .userDomainMask,
+        //     appropriateFor: nil,
+        //     create: true
+        // )
+        // return cachesDirectory?.appending(path: "Logs", directoryHint: .isDirectory)
 
-        case .notificationServiceExtension, .shareExtension:
-            guard let appGroupIdentifier = Bundle.main.applicationGroupIdentifier else { return nil }
+        let logsDirectory: URL?
+        if let appGroupIdentifier = Bundle.main.applicationGroupIdentifier {
+            let fileManager = FileManager.default
             let cachesDirectory = fileManager.cachesURL(
                 forAppGroupIdentifier: appGroupIdentifier,
                 accountIdentifier: nil
             )
-            return cachesDirectory?
+            logsDirectory = cachesDirectory?
                 .appending(path: "Logs", directoryHint: .isDirectory)
-                .appending(component: subdirectory, directoryHint: .isDirectory)
+                .appending(component: target.rawValue, directoryHint: .isDirectory)
+        } else {
+            logsDirectory = nil
         }
-    }
 
-    private var subdirectory: String {
-        switch self {
-        case .app: "App"
-        case .notificationServiceExtension: "NotificationServiceExtension"
-        case .shareExtension: "ShareExtension"
-        }
+        self.init(logsDirectory: logsDirectory)
+
     }
 
 }
