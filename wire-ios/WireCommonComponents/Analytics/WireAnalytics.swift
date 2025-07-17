@@ -24,8 +24,6 @@ import WireSystem
 /// Namespace for analytics tools.
 public enum WireAnalytics {
 
-    public static let sharedLogsDirectory = "Logs"
-
     private static let isSetUpLock = NSLock()
     private static var isSetUp = false
 
@@ -91,10 +89,13 @@ public enum WireAnalytics {
 
             }
 
+            guard fileManager.fileExists(atPath: previousRootDirectory.path()) else { return }
+
             let previousLogFileURLs = try fileManager.contentsOfDirectory(at: previousRootDirectory, includingPropertiesForKeys: nil)
             if !previousLogFileURLs.isEmpty {
                 try fileManager.createDirectory(at: newRootDirectory, withIntermediateDirectories: true)
             }
+
             for previousLogFileURL in previousLogFileURLs {
                 let newLogFileURL = newRootDirectory.appending(
                     path: previousLogFileURL.lastPathComponent,
