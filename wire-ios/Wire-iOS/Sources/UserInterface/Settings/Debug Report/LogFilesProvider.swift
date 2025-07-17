@@ -54,7 +54,8 @@ struct LogFilesProvider: LogFilesProviding {
         var urls = ZMSLog.pathsForExistingLogs
 
         // add the root directory of the app, NSE and SE logs
-        if let appGroupIdentifier = Bundle.main.applicationGroupIdentifier, let sharedLogsDirectoryURL = fileManager.sharedLogsDirectoryURL(for: appGroupIdentifier) {
+        if let appGroupIdentifier = Bundle.main.applicationGroupIdentifier,
+           let sharedLogsDirectoryURL = fileManager.sharedLogsDirectoryURL(for: appGroupIdentifier) {
             let targetLogDirectories = try? fileManager.contentsOfDirectory(
                 at: sharedLogsDirectoryURL,
                 includingPropertiesForKeys: .none

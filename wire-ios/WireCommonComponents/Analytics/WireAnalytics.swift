@@ -61,7 +61,9 @@ public enum WireAnalytics {
             .appending(component: target.rawValue, directoryHint: .isDirectory)
     }
 
-    /// With release 4.3.0 the log files of all targets (main app, notification service extension and share extension) are written to the shared container. This code tries to move the old files for the case that all log files want to be retrieved/exported.
+    /// With release 4.3.0 the log files of all targets (main app, notification service extension and share extension)
+    /// are written to the shared container. This code tries to move the old files for the case that all log files want
+    /// to be retrieved/exported.
     /// Eventually this func can just be deleted.
 
     private static func migrateLogFilesToNewLocation(target: LogTarget) {
@@ -78,7 +80,10 @@ public enum WireAnalytics {
 
             guard fileManager.fileExists(atPath: previousRootDirectory.path()) else { return }
 
-            let previousLogFileURLs = try fileManager.contentsOfDirectory(at: previousRootDirectory, includingPropertiesForKeys: nil)
+            let previousLogFileURLs = try fileManager.contentsOfDirectory(
+                at: previousRootDirectory,
+                includingPropertiesForKeys: nil
+            )
             if !previousLogFileURLs.isEmpty {
                 try fileManager.createDirectory(at: newRootDirectory, withIntermediateDirectories: true)
             }
