@@ -59,7 +59,7 @@ final class ConversationListViewModelFilterIntegrationTests: XCTestCase {
         let conversationWithDraft = createConversationWithDraft()
         let conversationNoUnread = createConversationWithoutUnread()
 
-        mockUserSession.mockConversationDirectory.mockUnarcchivedConversations = [
+        mockUserSession.mockConversationDirectory.mockUnarchivedConversations = [
             conversationWithUnread,
             conversationWithMention,
             conversationWithReply,
@@ -119,7 +119,7 @@ final class ConversationListViewModelFilterIntegrationTests: XCTestCase {
     func testFilterUpdatesWhenConversationStateChanges() {
         // GIVEN
         let conversation = createConversationWithoutUnread()
-        mockUserSession.mockConversationDirectory.mockUnarcchivedConversations = [conversation]
+        mockUserSession.mockConversationDirectory.mockUnarchivedConversations = [conversation]
 
         sut.selectedFilter = .unread
         let info = ConversationDirectoryChangeInfo(
@@ -166,7 +166,7 @@ final class ConversationListViewModelFilterIntegrationTests: XCTestCase {
         let conversationNoMatch = createConversationWithUnread()
         conversationNoMatch.userDefinedName = "Random Chat"
 
-        mockUserSession.mockConversationDirectory.mockUnarcchivedConversations = [
+        mockUserSession.mockConversationDirectory.mockUnarchivedConversations = [
             conversationMatch,
             conversationNoMatch
         ]
@@ -236,7 +236,7 @@ final class ConversationListViewModelFilterIntegrationTests: XCTestCase {
             ZMConversation.calculateLastUnreadMessages(in: self.coreDataFixture.uiMOC)
         }
 
-        mockUserSession.mockConversationDirectory.mockUnarcchivedConversations = [conversation]
+        mockUserSession.mockConversationDirectory.mockUnarchivedConversations = [conversation]
 
         let info = ConversationDirectoryChangeInfo(
             reloaded: true,
@@ -326,7 +326,7 @@ final class ConversationListViewModelFilterIntegrationTests: XCTestCase {
             ZMConversation.calculateLastUnreadMessages(in: self.coreDataFixture.uiMOC)
         }
 
-        mockUserSession.mockConversationDirectory.mockUnarcchivedConversations = conversations
+        mockUserSession.mockConversationDirectory.mockUnarchivedConversations = conversations
 
         // WHEN - Measure filter performance
         sut.selectedFilter = .unread

@@ -173,7 +173,7 @@ final class ZClientViewController: UIViewController {
     private var incomingApnsObserver: NSObjectProtocol?
     private var networkAvailabilityObserverToken: NSObjectProtocol?
     private var featureChangeObserverToken: SelfUnregisteringNotificationCenterToken?
-    private var userDefaultsObserverToken: SelfUnregisteringNotificationCenterToken?
+    private var userDefaultsObservation: NSKeyValueObservation?
     private var loggingRequestLoopObserverToken: SelfUnregisteringNotificationCenterToken?
 
     private(set) lazy var mainCoordinator = MainCoordinator(
@@ -228,17 +228,11 @@ final class ZClientViewController: UIViewController {
             }
         featureChangeObserverToken = SelfUnregisteringNotificationCenterToken(featureToken)
 
-        // Observe developer flag changes
-        let userDefaultsToken = NotificationCenter.default
-            .addObserver(
-                forName: UserDefaults.didChangeNotification,
-                object: nil,
-                queue: .main
-            ) { [weak self] _ in
-                // Update sidebar's showUnreadFilters when developer flag changes
-                self?.sidebarViewController.showUnreadFilters = DeveloperFlag.showUnreadConversationsFilter.isOn
-            }
-        userDefaultsObserverToken = SelfUnregisteringNotificationCenterToken(userDefaultsToken)
+        // Observe developer flag changes using KVO
+        userDefaultsObservation = UserDefaults.standard.observe(\.showUnreadConversationsFilter, options: [.new]) { [weak self] _, _ in
+            // Update sidebar's showUnreadFilters when developer flag changes
+            self?.sidebarViewController.showUnreadFilters = DeveloperFlag.showUnreadConversationsFilter.isOn
+        }
 
         createLegalHoldDisclosureController()
     }
