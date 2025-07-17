@@ -93,8 +93,7 @@ final class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtoc
         let body = mailComposeViewController.prefilledBody()
         mailComposeViewController.setMessageBody(body, isHTML: false)
 
-        activityIndicator.stop()
-        let topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
+        activityIndicator.start()
         Task.detached(priority: .userInitiated) { [activityIndicator] in
             await mailComposeViewController.attachLogs()
 
