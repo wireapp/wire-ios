@@ -5312,6 +5312,16 @@ internal enum L10n {
               /// Log out
               internal static let title = L10n.tr("Localizable", "self.settings.account_details.log_out.alert.title", fallback: "Log out")
             }
+            internal enum EraseData {
+              internal enum Alert {
+                /// No
+                internal static let no = L10n.tr("Localizable", "self.settings.account_details.log_out.erase_data.alert.no", fallback: "No")
+                /// Delete all your personal information and conversations on this device ?
+                internal static let title = L10n.tr("Localizable", "self.settings.account_details.log_out.erase_data.alert.title", fallback: "Delete all your personal information and conversations on this device ?")
+                /// Yes
+                internal static let yes = L10n.tr("Localizable", "self.settings.account_details.log_out.erase_data.alert.yes", fallback: "Yes")
+              }
+            }
           }
           internal enum RemoveDevice {
             /// Your password is required to remove the device

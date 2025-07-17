@@ -1199,6 +1199,9 @@
 "self.settings.account_details.log_out.alert.title" = "Abmelden";
 "self.settings.account_details.log_out.alert.message" = "Der Nachrichtenverlauf wird auf diesem Gerät gelöscht.";
 "self.settings.account_details.log_out.alert.password" = "Passwort";
+"self.settings.account_details.log_out.erase_data.alert.title" = "Alle Ihre persönlichen Daten und Gespräche auf diesem Gerät löschen ?";
+"self.settings.account_details.log_out.erase_data.alert.yes" = "Ja";
+"self.settings.account_details.log_out.erase_data.alert.no" = "Nein";
 
 // Settings - Personal information
 "self.settings.privacy_analytics_section.title" = "Nutzungs- und Fehlerberichte";
