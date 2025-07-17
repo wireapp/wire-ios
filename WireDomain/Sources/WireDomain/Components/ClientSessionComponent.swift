@@ -667,7 +667,7 @@ public final class ClientSessionComponent {
         renameEventProcessor: conversationRenameEventProcessor,
         typingEventProcessor: conversationTypingEventProcessor,
         addPermissionEventProcessor: addPermissionEventProcessor,
-        mlsRestEventProcessor: mlsResetEventProcessor
+        mlsResetEventProcessor: mlsResetEventProcessor
     )
 
     private lazy var updateEventProcessor: UpdateEventProcessor = {
