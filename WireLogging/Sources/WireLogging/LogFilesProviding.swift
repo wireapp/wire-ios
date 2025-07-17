@@ -36,11 +36,11 @@ public protocol LogFilesProviding {
     /// Clears the logs directory.
     /// Call once you are done using the URL returned by `generateLogFilesZip` to clean up.
 
-    func clearLogsDirectory() throws
+    func clearLogsDirectory(fileManager: FileManager) throws
 
     /// Clears individual log files from their source locations.
 
-    func removeLogFiles() throws
+    func removeLogFiles(fileManager: FileManager) throws
 
     /// Deletes all log-related legacy archives
 

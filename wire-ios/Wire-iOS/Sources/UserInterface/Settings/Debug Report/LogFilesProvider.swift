@@ -21,7 +21,7 @@ import WireCommonComponents
 import WireLogging
 import WireSyncEngine
 import WireSystem
-import ZipArchive
+import ZIPFoundation
 
 /// Generates log files archives.
 ///
@@ -50,11 +50,16 @@ struct LogFilesProvider: LogFilesProviding {
         .appendingPathComponent("logs", isDirectory: true)
 
     private var logFilesURLs: [URL] {
+        let fileManager = FileManager.default
         var urls = ZMSLog.pathsForExistingLogs
 
         // add the root directory of the app, NSE and SE logs
-        if let appGroupIdentifier = Bundle.main.applicationGroupIdentifier, let sharedLogsDirectoryURL = FileManager.default.sharedLogsDirectoryURL(for: appGroupIdentifier) {
-            urls.append(sharedLogsDirectoryURL)
+        if let appGroupIdentifier = Bundle.main.applicationGroupIdentifier, let sharedLogsDirectoryURL = fileManager.sharedLogsDirectoryURL(for: appGroupIdentifier) {
+            let targetLogDirectories = try? fileManager.contentsOfDirectory(
+                at: sharedLogsDirectoryURL,
+                includingPropertiesForKeys: .none
+            )
+            urls.append(contentsOf: targetLogDirectories ?? [])
         }
 
         return urls
@@ -63,13 +68,14 @@ struct LogFilesProvider: LogFilesProviding {
     // MARK: - Interface
 
     func generateLogFilesData() throws -> Data {
+        let fileManager = FileManager.default
         defer {
             // because we don't rotate file for this one, we clean it once sent
             // this regenerated from os_log anyway
             if let url = LogFileDestination.main.log {
-                try? FileManager.default.removeItem(at: url)
+                try? fileManager.removeItem(at: url)
             }
-            try? clearLogsDirectory()
+            try? clearLogsDirectory(fileManager: fileManager)
         }
 
         let logFilesURL = try generateLogFilesZip()
@@ -77,14 +83,14 @@ struct LogFilesProvider: LogFilesProviding {
     }
 
     func generateLogFilesZip() throws -> URL {
+        let fileManager = FileManager.default
+        try? clearLogsDirectory(fileManager: fileManager)
 
+        // Determine files to export
         let logFilesURLs = logFilesURLs
         guard !logFilesURLs.isEmpty else {
             throw Error.noLogs(description: logFilesURLs.description)
         }
-
-        try? clearLogsDirectory()
-        let fileManager = FileManager.default
 
         // Re-create the base directory
         try fileManager.createDirectory(at: logsDirectory, withIntermediateDirectories: true)
@@ -104,26 +110,23 @@ struct LogFilesProvider: LogFilesProviding {
 
         // Create the zip file
         let zipURL = logsDirectory.appendingPathComponent("logs.zip")
-        SSZipArchive.createZipFile( // TODO: try to use ZIPFoundation
-            atPath: zipURL.path(),
-            withContentsOfDirectory: archiveFolder.path(),
-            keepParentDirectory: false
-        )
+        try fileManager.zipItem(at: archiveFolder, to: zipURL, shouldKeepParent: false, compressionMethod: .deflate)
 
+        // Clean up
         try fileManager.removeItem(at: archiveFolder)
 
         return zipURL
     }
 
-    func clearLogsDirectory() throws {
-        if FileManager.default.fileExists(atPath: logsDirectory.path) {
-            try FileManager.default.removeItem(at: logsDirectory)
+    func clearLogsDirectory(fileManager: FileManager) throws {
+        if fileManager.fileExists(atPath: logsDirectory.path) {
+            try fileManager.removeItem(at: logsDirectory)
         }
     }
 
-    func removeLogFiles() throws {
+    func removeLogFiles(fileManager: FileManager) throws {
         for fileURL in logFilesURLs {
-            try FileManager.default.removeItem(at: fileURL)
+            try fileManager.removeItem(at: fileURL)
         }
     }
 
