@@ -379,7 +379,11 @@ final class ConversationListViewModel: NSObject {
         if let kind,
            let sectionNumber = sectionNumber(for: kind) {
             newValue = sections
-            let newList = ConversationListViewModel.newList(for: kind, conversationDirectory: conversationDirectory, selectedFilter: selectedFilter)
+            let newList = ConversationListViewModel.newList(
+                for: kind,
+                conversationDirectory: conversationDirectory,
+                selectedFilter: selectedFilter
+            )
 
             newValue[sectionNumber].items = newList
 
