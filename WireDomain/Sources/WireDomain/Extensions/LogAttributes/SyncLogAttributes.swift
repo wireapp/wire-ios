@@ -103,7 +103,6 @@ public extension LogAttributes {
         ]
     }
 
-
     // MARK: - New sync (V2, V3)
 
     static func syncAttributes(
