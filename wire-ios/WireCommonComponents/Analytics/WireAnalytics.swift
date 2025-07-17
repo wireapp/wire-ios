@@ -55,21 +55,9 @@ public enum WireAnalytics {
     }
 
     private static func logsDirectory(for target: LogTarget) -> URL? {
-
-        // this was the previous directory for the main target (app)
-        // let cachesDirectory = try? fileManager.url(
-        //     for: .cachesDirectory,
-        //     in: .userDomainMask,
-        //     appropriateFor: nil,
-        //     create: true
-        // )
-        // return cachesDirectory?.appending(path: "Logs", directoryHint: .isDirectory)
-
         guard let appGroupIdentifier = Bundle.main.applicationGroupIdentifier else { return nil }
-
         return FileManager.default.sharedLogsDirectoryURL(for: appGroupIdentifier)?
             .appending(component: target.rawValue, directoryHint: .isDirectory)
-
     }
 
 }
