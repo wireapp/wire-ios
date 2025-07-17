@@ -1116,7 +1116,7 @@ extension ZMUserSession: SyncAgentDelegate {
             )
         }
 
-        WireLogger.sync.error("failed to perform sync: \(String(describing: error))")
+        WireLogger.sync.error("failed to perform sync: \(String(describing: error))", attributes: .syncAttributes)
 
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.isPerformingSync = false
@@ -1139,7 +1139,6 @@ extension ZMUserSession: SyncAgentDelegate {
             managedObjectContext.resetMigrationNeedsSlowSyncFlagIfNeeded()
             managedObjectContext.resetMigrationNeedsSyncResoucesFlagIfNeeded()
 
-            hasCompletedInitialSync = true
             notificationDispatcher.isEnabled = true
             delegate?.clientCompletedInitialSync(accountId: account.userIdentifier)
 
@@ -1166,7 +1165,7 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     func didStartIncrementalSync() {
-        WireLogger.sync.debug("did start incremental sync")
+        WireLogger.sync.debug("did start incremental sync", attributes: .incrementalSync)
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.isPerformingSync = true
             self?.updateNetworkState()
@@ -1176,7 +1175,7 @@ extension ZMUserSession: SyncAgentDelegate {
     func didFinishIncrementalSync(isRecovering: Bool) {
         syncContext.performGroupedBlock { [weak self] in
             guard let self else { return }
-            WireLogger.sync.debug("did finish incremental sync")
+            WireLogger.sync.debug("did finish incremental sync", attributes: .incrementalSync)
 
             func showSyncBar(_ show: Bool) {
                 managedObjectContext.performGroupedBlock { [weak self] in
