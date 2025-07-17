@@ -488,7 +488,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// - Parameter delegate: The sync delegate to set.
 
     func setSyncDelegate(_ delegate: any MLSSyncDelegate)
-    
+
     func setResetBrokenMLSConversationDelegate(_ delegate: any ResetBrokenMLSConversationDelegate)
 }
 
@@ -639,11 +639,11 @@ public final class MLSService: MLSServiceInterface {
     public func setSyncDelegate(_ delegate: any MLSSyncDelegate) {
         mlsSyncDelegate = delegate
     }
-    
+
     public func setResetBrokenMLSConversationDelegate(
         _ delegate: any ResetBrokenMLSConversationDelegate
     ) {
-        self.resetBrokenMLSConversationDelegate = delegate
+        resetBrokenMLSConversationDelegate = delegate
     }
 
     // MARK: - Conference info for subconversations
@@ -1941,9 +1941,9 @@ public final class MLSService: MLSServiceInterface {
         /// There is no way to automatically recover from the error.
 
         case giveUp
-        
+
         /// When MLS conversation happened to be broken
-        
+
         case resetBrokenMLSConversation
 
         init(from reason: String) {
@@ -1985,16 +1985,16 @@ public final class MLSService: MLSServiceInterface {
                     "sync finished, retrying operation...",
                     attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
                 )
-                
+
                 guard retryCount <= maxRetryAttempts else {
                     throw MLSRetryError.retryLimitReached
                 }
-                
+
                 var currentRetryCount = retryCount
                 currentRetryCount += 1
-                
+
                 try await retryOnCommitFailure(for: groupID, operation: operation, retryCount: currentRetryCount)
-                
+
             case .retryAfterRepairingGroup:
                 logger.warn(
                     "failed to send commit, repairing group then retrying operation...",
@@ -2004,20 +2004,20 @@ public final class MLSService: MLSServiceInterface {
                     with: groupID,
                     shouldPerformIncrementalSync: true
                 )
-                
+
                 logger.info(
                     "repair finished, retrying operation...",
                     attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
                 )
                 try await operation()
-                
+
             case .giveUp:
                 logger.warn(
                     "failed to send commit, giving up...",
                     attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
                 )
                 throw MLSRetryError.nonRecoverableError(reason)
-                
+
             case .resetBrokenMLSConversation:
                 logger.info(
                     "Handling reset broken MLS conversation recovery strategy...",
