@@ -753,7 +753,7 @@ public final class ClientSessionComponent {
 }
 
 extension InitiateResetMLSConversationUseCase: ResetBrokenMLSConversationDelegate {
-    
+
     public func didCatchBrokenMLSConversation(groupID: MLSGroupID, epoch: Int64) async {
         await invoke(groupID: groupID, epoch: epoch)
     }

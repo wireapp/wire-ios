@@ -66,7 +66,8 @@ public class InitiateResetMLSConversationUseCase: InitiateResetMLSConversationUs
             WireLogger.mls.info("Initiate reset broken MLS conversation use case finished")
 
         } catch {
-            WireLogger.mls.error("Initiate reset broken MLS conversation use case failed: \(error.localizedDescription)")
+            WireLogger.mls
+                .error("Initiate reset broken MLS conversation use case failed: \(error.localizedDescription)")
         }
     }
 }
