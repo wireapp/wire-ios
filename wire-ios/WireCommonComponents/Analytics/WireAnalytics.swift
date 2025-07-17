@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import os
 import WireLogging
 import WireSystem
 
@@ -41,6 +42,8 @@ public enum WireAnalytics {
 
         WireAnalytics.Datadog.shared.enable()
 
+        migrateLogFilesToNewLocation(target: target)
+
         WireLogger.initialize {
             #if DEBUG
                 SystemLogger()
@@ -58,6 +61,57 @@ public enum WireAnalytics {
         guard let appGroupIdentifier = Bundle.main.applicationGroupIdentifier else { return nil }
         return FileManager.default.sharedLogsDirectoryURL(for: appGroupIdentifier)?
             .appending(component: target.rawValue, directoryHint: .isDirectory)
+    }
+
+    /// With release 4.3.0 the log files of all targets (main app, notification service extension and share extension) are written to the shared container. This code tries to move the old files for the case the logs want to be retrieved.
+    /// Eventually this func can just be deleted.
+
+    private static func migrateLogFilesToNewLocation(target: LogTarget) {
+        do {
+
+            let fileManager = FileManager.default
+            guard let newRootDirectory = logsDirectory(for: target) else { return }
+
+            let previousRootDirectory: URL
+            switch target {
+
+            case .app:
+                previousRootDirectory = try fileManager.url(
+                    for: .cachesDirectory,
+                    in: .userDomainMask,
+                    appropriateFor: nil,
+                    create: false
+                ).appending(path: "Logs", directoryHint: .isDirectory)
+
+            case .notificationServiceExtension:
+                fatalError("TODO")
+
+            case .shareExtension:
+                fatalError("TODO")
+
+            }
+
+            let previousLogFileURLs = try fileManager.contentsOfDirectory(at: previousRootDirectory, includingPropertiesForKeys: nil)
+            if !previousLogFileURLs.isEmpty {
+                try fileManager.createDirectory(at: newRootDirectory, withIntermediateDirectories: true)
+            }
+            for previousLogFileURL in previousLogFileURLs {
+                let newLogFileURL = newRootDirectory.appending(
+                    path: previousLogFileURL.lastPathComponent,
+                    directoryHint: .notDirectory
+                )
+                if fileManager.fileExists(atPath: newLogFileURL.path()) {
+                    continue // don't overwrite, instead delete the old file (unlikely anyway)
+                }
+                try fileManager.moveItem(at: previousLogFileURL, to: newLogFileURL)
+            }
+
+            try fileManager.removeItem(at: previousRootDirectory)
+
+        } catch {
+            let logger = os.Logger(subsystem: Bundle.main.bundleIdentifier!, category: "analytics")
+            logger.error("Failed to migrate old log files to new location: \(error)")
+        }
     }
 
 }
