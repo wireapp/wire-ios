@@ -530,7 +530,6 @@ extension AuthenticationCoordinator {
         }
     }
 
-
     func deleteSession(eraseData: Bool) {
         guard let accountId = unauthenticatedSession.accountId,
               let unauthenticatedAccount = sessionManager.accountManager.account(with: accountId) else {
