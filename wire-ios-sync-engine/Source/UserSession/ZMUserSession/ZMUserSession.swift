@@ -109,7 +109,9 @@ public final class ZMUserSession: NSObject {
 
     var syncAgent: SyncAgent?
 
-    public var hasCompletedInitialSync: Bool = false
+    public var hasCompletedInitialSync: Bool {
+        !journal[.isInitialSyncRequired]
+    }
 
     public var topConversationsDirectory: TopConversationsDirectory
 
@@ -526,7 +528,6 @@ public final class ZMUserSession: NSObject {
             syncManagedObjectContext.mlsService = mlsService
 
             applicationStatusDirectory.clientRegistrationStatus.prepareForClientRegistration()
-            hasCompletedInitialSync = lastEventIDRepository.fetchLastEventID() != nil
             applicationStatusDirectory.clientUpdateStatus.determineInitialClientStatus()
             applicationStatusDirectory.clientRegistrationStatus.determineInitialRegistrationStatus()
         }
