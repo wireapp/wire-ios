@@ -60,7 +60,7 @@ public class InitiateResetMLSConversationUseCase: InitiateResetMLSConversationUs
             try await api.resetMLSConversation(epoch: epoch, groupID: groupID.data.base64String())
 
             // re-create group and re-add all participants
-            let users = conversation.localParticipants.map(MLSUser.init)
+            let users = await conversationLocalStore.localParticipantsAsMLSUsers(in: conversation)
             _ = try await mlsService.establishGroup(for: groupID, with: users, removalKeys: nil)
 
             WireLogger.mls.info("Initiate reset broken MLS conversation use case finished")

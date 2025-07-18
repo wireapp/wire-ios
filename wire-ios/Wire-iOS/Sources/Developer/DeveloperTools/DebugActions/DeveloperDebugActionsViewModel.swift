@@ -154,15 +154,32 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             let context = selfClient.managedObjectContext,
             let userSession
         else { return }
-
+        
         Task { @MainActor in
             guard let conversation = await firstGroupConversation(of: selfClient, in: context, isMLS: true),
-                    let mlsGroupID = conversation.mlsGroupID else {
+                  let mlsGroupID = conversation.mlsGroupID else {
                 return
             }
+            
+            WireLogger.mls
+                .info(
+                    "Triggering initiate reset for conversation: \(conversation.name ?? "-"), mlsGroupID: \(mlsGroupID), conversationID: \(String(describing: conversation.remoteIdentifier))"
+                )
+            
+            let qualifiedID = WireNetwork.QualifiedID(
+                id: conversation.qualifiedID!.uuid,
+                domain: conversation.qualifiedID!.domain
+            )
+            
+            guard let remoteConversation = try? await userSession.clientSessionComponent?.conversationsAPI.getConversations(
+                for: [qualifiedID]
+            ).found.first else {
+                return
+            }
+                        
             await userSession.clientSessionComponent?.initiateResetMLSConversationUseCase.invoke(
-                groupID: mlsGroupID,
-                epoch: Int64(conversation.epoch)
+                groupID: MLSGroupID(base64Encoded: remoteConversation.mlsGroupID!)!,
+                epoch: Int64(remoteConversation.epoch ?? 0)
             )
         }
 
@@ -333,6 +350,9 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
         await context.perform {
             userClient.user?.conversations
                 .filter { $0.conversationType == .group }
+                .filter {
+                    !$0.isDeleted && !$0.isArchived && !$0.isDeletedRemotely
+                }
                 .filter {
                     if let isMLS = isMLS {
                         return isMLS ? $0.messageProtocol == .mls : $0.messageProtocol != .mls

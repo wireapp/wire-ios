@@ -254,6 +254,14 @@ public protocol ConversationLocalStoreProtocol {
         in conversation: ZMConversation
     ) async -> Set<ZMUser>
 
+    
+    /// Fetches local participants from a conversation and maps to [MLSUser].
+    /// - parameter conversation: The related conversation.
+    /// - returns: A list of MLSUser participants.
+    func localParticipantsAsMLSUsers(
+        in conversation: ZMConversation
+    ) async -> [MLSUser]
+
     /// Whether the conversation is a group conversation.
     /// - parameter conversation: The given conversation.
     /// - returns: A flag indicating whether the conversation is a group one.
