@@ -412,7 +412,9 @@ private extension AppDelegate {
             isDeveloperModeEnabled: Bundle.developerModeEnabled,
             sharedUserDefaults: .applicationGroup,
             minTLSVersion: SecurityFlags.minTLSVersion.stringValue,
-            deleteUserLogs: LogFileDestination.deleteAllLogs,
+            deleteUserLogs: {
+                // TODO: actually delete logs
+            },
             analyticsServiceConfiguration: AnalyticsServiceConfigurationBuilder.build(),
             countlyProvider: { CountlyWrapper() },
             logFilesProvider: LogFilesProvider()
