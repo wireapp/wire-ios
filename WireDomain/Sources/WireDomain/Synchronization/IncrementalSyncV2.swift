@@ -23,6 +23,33 @@ import WireDataModel
 import WireLogging
 import WireNetwork
 
+
+public struct PushChannelState {
+    let fileContext: SafeFileContext
+    init(sharedContainerURL: URL, clientID: String) {
+        let url = sharedContainerURL.appendingPathComponent("client_id_\(clientID)")
+        if !FileManager.default.fileExists(atPath: url.path) {
+            let created = FileManager.default.createFile(atPath: url.path, contents: Data())
+            if !created {
+                fatal("could not create file")
+            }
+        }
+        fileContext = SafeFileContext(fileURL: url)
+    }
+    
+    func isOpen() -> Bool {
+        return fileContext.isLocked()
+    }
+    
+    func markAsOpen() {
+        fileContext.acquireDirectoryLock()
+    }
+    
+    func markAsClosed() {
+        fileContext.releaseDirectoryLock()
+    }
+}
+
 /// IncrementalSync using new backend API consumable notifications sync system
 public struct IncrementalSyncV2: LiveSyncProtocol {
 
@@ -44,7 +71,8 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     private let logger = WireLogger.sync
     private let journal: Journal
     private let syncMarkerGenerator: SyncMarkerGenerator
-
+    private let pushChannelState: PushChannelState
+    
     weak var delegate: (any LiveSyncDelegate)?
 
     public init(
@@ -59,6 +87,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         syncStateSubject: CurrentValueSubject<SyncState, Never>,
         coreCryptoProvider: any CoreCryptoProviderProtocol,
         journal: Journal,
+        pushChannelState: PushChannelState,
         syncMarkerGenerator: @escaping SyncMarkerGenerator = { UUID().uuidString }
     ) {
         self.selfClientID = selfClientID
@@ -73,8 +102,10 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         self.coreCryptoProvider = coreCryptoProvider
         self.journal = journal
         self.syncMarkerGenerator = syncMarkerGenerator
+        self.pushChannelState = pushChannelState
     }
 
+    
     public func perform() async throws -> IncrementalSync.Token {
         logger.debug("performing live sync", attributes: .syncAttributes(initialSync: false))
 
@@ -85,7 +116,15 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
 
         logger.debug("opening new push channel", attributes: .syncAttributes(initialSync: false))
         syncStateSubject.send(.incrementalSyncing(.openPushChannel))
-        let liveEventStream = try await pushChannel.open()
+        
+        let liveEventStream: PushChannelV2.Stream
+        do {
+            liveEventStream = try await pushChannel.open()
+            pushChannelState.markAsOpen()
+        } catch {
+            pushChannelState.markAsClosed()
+            throw error
+        }
 
         logger.debug("processing stored update events", attributes: .syncAttributes(initialSync: false))
         syncStateSubject.send(.incrementalSyncing(.processPendingEvents))
@@ -93,6 +132,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
             try await processStoredEvents()
         } catch {
             await pushChannel.close()
+            pushChannelState.markAsClosed()
             throw error
         }
 
@@ -106,6 +146,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
 
         return IncrementalSync.Token(task: task, closePushChannel: {
             await pushChannel.close()
+            pushChannelState.markAsClosed()
         })
     }
 

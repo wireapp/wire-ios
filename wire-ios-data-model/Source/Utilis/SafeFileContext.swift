@@ -21,40 +21,53 @@ import WireSystem
 
 /// Provides safe access to a file with lock mechanism
 public final class SafeFileContext: NSObject {
-
+    
     let fileURL: URL
     fileprivate var fileDescriptor: CInt!
-
+    
     public init(fileURL: URL) {
         self.fileURL = fileURL
         super.init()
-
+        
         self.fileDescriptor = open(self.fileURL.path, 0)
         if fileDescriptor <= 0 {
             fatal("Can't obtain FileDescriptor for \(self.fileURL)")
         }
     }
-
+    
     deinit {
         // unlock
         self.releaseDirectoryLock()
         // close
         close(self.fileDescriptor)
     }
-
+    
 }
 
 public extension SafeFileContext {
-
+    
     func acquireDirectoryLock() {
         if flock(fileDescriptor, LOCK_EX) != 0 {
             fatal("Failed to lock \(fileURL)")
         }
     }
-
+    
     func releaseDirectoryLock() {
         if flock(fileDescriptor, LOCK_UN) != 0 {
             fatal("Failed to unlock \(fileURL)")
+        }
+    }
+    
+    /// Check if the file is already locked by another process
+    func isLocked() -> Bool {
+        // Try non-blocking exclusive lock
+        if flock(fileDescriptor, LOCK_EX | LOCK_NB) == 0 {
+            // We got the lock: unlock immediately and return false
+            flock(fileDescriptor, LOCK_UN)
+            return false
+        } else {
+            // If errno is EWOULDBLOCK, the file is already locked
+            return errno == EWOULDBLOCK
         }
     }
 }

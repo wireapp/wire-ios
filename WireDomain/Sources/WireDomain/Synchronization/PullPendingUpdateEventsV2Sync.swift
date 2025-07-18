@@ -39,7 +39,7 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
     private let jsonEncoder = JSONEncoder()
     private let logger = WireLogger.sync
     private let syncMarkerGenerator: SyncMarkerGenerator
-
+    
     let stream: AsyncStream<[UpdateEvent]>
     private let continuation: AsyncStream<[UpdateEvent]>.Continuation
 

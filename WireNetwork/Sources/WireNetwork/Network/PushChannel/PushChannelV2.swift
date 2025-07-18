@@ -80,10 +80,11 @@ public final class PushChannelV2: PushChannelV2Protocol {
 
                     batchTask?.cancel()
                     batchTask = Task {
+                        WireLogger.pushChannel.debug("batch sleep for \(batchDelay) seconds (batch size '\(batch.count)')")
                         try await Task.sleep(for: .seconds(batchDelay))
                         if !batch.isEmpty {
                             continuation.yield(.events(batch))
-                            WireLogger.pushChannel.debug("batch of size '\(batch.count)' yield")
+                            WireLogger.pushChannel.debug("timeout and batch of size '\(batch.count)' yield")
                         }
                         batch = []
                     }
@@ -103,7 +104,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
                         batch.append(event)
                         if batch.count == maxBatchEventsCount {
                             continuation.yield(.events(batch))
-                            WireLogger.pushChannel.debug("batch of size '\(batch.count)' yield")
+                            WireLogger.pushChannel.debug("reached batch of size '\(batch.count)' yield")
                             batch = []
                             batchTask?.cancel()
                         }
@@ -113,7 +114,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
                         // we're uptodate, let's give any remaining batch if any
                         if !batch.isEmpty {
                             continuation.yield(.events(batch))
-                            WireLogger.pushChannel.debug("batch of size '\(batch.count)' yield")
+                            WireLogger.pushChannel.debug("syncMarker batch of size '\(batch.count)' yield")
                             batch = []
                             batchTask?.cancel()
                         }
@@ -125,7 +126,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
                 // just in case to handle left batch if haven't deal with everything when we go to background
                 if !batch.isEmpty {
                     continuation.yield(.events(batch))
-                    WireLogger.pushChannel.debug("batch of size '\(batch.count)' yield")
+                    WireLogger.pushChannel.debug("end batch of size '\(batch.count)' yield")
                 }
             } catch {
                 WireLogger.pushChannel.error("got error: \(error)", attributes: .pushChannelV2)

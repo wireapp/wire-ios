@@ -37,6 +37,7 @@ final class VerifyUserStep: Component<VerifyUserDependency>, VerifyUserStepProto
     enum Failure: Error {
         case noAccountFound
         case missingSelfClientID
+        case mainAppPushChannelOpened
     }
 
     public var selectedAccount: Account
@@ -61,10 +62,18 @@ final class VerifyUserStep: Component<VerifyUserDependency>, VerifyUserStepProto
         }
 
         self.selectedAccount = selectedAccount
-
+        
+        
         super.init(parent: parent)
     }
 
+    func verifyMainPushChannelClosed(clientID: String) throws {
+        let pushChannelState = PushChannelState(sharedContainerURL: dependency.applicationContainer, clientID: clientID)
+        if pushChannelState.isOpen() {
+            throw Failure.mainAppPushChannelOpened
+        }
+    }
+    
     func verifyUserSession() async throws {
         let verifyUserSessionUseCase = VerifyUserSessionUseCase(
             journal: journal,
@@ -79,8 +88,11 @@ final class VerifyUserStep: Component<VerifyUserDependency>, VerifyUserStepProto
         guard let selfClientID = selfUser.clientId else {
             throw Failure.missingSelfClientID
         }
-
+        
         if journal[.isConsumableNotificationsEnabled] {
+        
+            try verifyMainPushChannelClosed(clientID: selfClientID)
+            
             try await syncEventsStep(
                 selfClientID: selfClientID
             ).pullEvents()

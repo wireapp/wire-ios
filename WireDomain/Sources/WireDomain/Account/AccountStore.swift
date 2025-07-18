@@ -154,6 +154,16 @@ struct AccountStore {
         }
     }
 
+    func mainWebsocketLockFileURL(accountID: UUID) throws -> URL {
+        let url = accountDataURL(accountID: accountID).appendingPathComponent("mainWebsocketLockFile")
+        if !FileManager.default
+            .fileExists(atPath:url.absoluteString) {
+            FileManager.default.createFile(atPath: url.absoluteString, contents: nil)
+        }
+        return url
+    }
+    
+    
     /// Fetch a backend environment for account.
     ///
     /// - parameter accountID: The `UUID` of the user the account belongs to.
