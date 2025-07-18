@@ -71,11 +71,6 @@ struct LogFilesProvider: LogFilesProviding {
     func generateLogFilesData() throws -> Data {
         let fileManager = FileManager.default
         defer {
-            // because we don't rotate file for this one, we clean it once sent
-            // this regenerated from os_log anyway
-            if let url = LogFileDestination.main.log {
-                try? fileManager.removeItem(at: url)
-            }
             try? clearLogsDirectory(fileManager: fileManager)
         }
 
