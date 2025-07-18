@@ -33,9 +33,7 @@ public enum WireAnalytics {
         isSetUpLock.lock()
         defer { isSetUpLock.unlock() }
 
-        guard !isSetUp else {
-            return
-        }
+        guard !isSetUp else { return }
         isSetUp = true
 
         WireAnalytics.Datadog.shared.enable()
@@ -102,7 +100,7 @@ public enum WireAnalytics {
             try fileManager.removeItem(at: previousRootDirectory)
 
         } catch {
-            let logger = os.Logger(subsystem: Bundle.main.bundleIdentifier!, category: "analytics")
+            let logger = os.Logger(subsystem: Bundle.main.bundleIdentifier!, category: "system")
             logger.error("Failed to migrate old log files to new location: \(error)")
         }
     }

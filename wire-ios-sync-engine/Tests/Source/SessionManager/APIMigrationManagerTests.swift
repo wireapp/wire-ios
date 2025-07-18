@@ -302,7 +302,7 @@ final class APIMigrationManagerTests: MessagingTest {
             userID: userID,
             storage: UserDefaults.temporary()
         )
-        let logFilesProvider = MockLogFilesProviding()
+        let logFilesProvider = LogFilesProvidingMock()
 
         var builder = ZMUserSessionBuilder()
         builder.withAllDependencies(
