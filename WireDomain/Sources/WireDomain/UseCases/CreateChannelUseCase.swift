@@ -414,6 +414,64 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
         )
     }
 
+    private func handleUnreachableDomains(
+        _ domains: Set<String>,
+        users: Set<ZMUser>,
+        conversation: ZMConversation
+    ) async throws {
+        let unreachableUsers = await context.perform { users.belongingTo(domains: domains) }
+
+        if unreachableUsers.isEmpty {
+
+            /// Backend is not able to determine which users are unreachable.
+            /// We just insert a message and do not attempt to retry
+
+            await appendFailedToAddUsersMessage(
+                in: conversation,
+                users: Set(users)
+            )
+        } else {
+            try await retryAddingMLSParticipants(
+                users,
+                to: conversation,
+                excludingDomains: domains
+            )
+        }
+    }
+
+    private func handleNonFederatingDomains(
+        _ domains: Set<String>,
+        users: Set<ZMUser>,
+        conversation: ZMConversation
+    ) async throws {
+        try await retryAddingMLSParticipants(
+            users,
+            to: conversation,
+            excludingDomains: domains
+        )
+    }
+
+    private func retryAddingMLSParticipants(
+        _ users: Set<ZMUser>,
+        to conversation: ZMConversation,
+        excludingDomains domains: Set<String>
+    ) async throws {
+        let usersToExclude = await context.perform { users.belongingTo(domains: domains) }
+        let usersToAdd = Set(users).subtracting(usersToExclude)
+
+        await appendFailedToAddUsersMessage(
+            in: conversation,
+            users: usersToExclude
+        )
+
+        guard !usersToAdd.isEmpty else { return }
+
+        try await addMLSParticipants(
+            usersToAdd,
+            to: conversation
+        )
+    }
+
     // MARK: - Helpers
 
     private func appendFailedToAddUsersMessage(
