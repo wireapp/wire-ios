@@ -417,6 +417,10 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
             case let .signOut(warn):
                 signOut(warn: warn)
 
+            case let .deleteSession(eraseData):
+
+                deleteSession(eraseData: eraseData)
+
             case let .addEmailAndPassword(newCredentials):
                 setEmailCredentialsForCurrentUser(newCredentials)
 
@@ -502,32 +506,44 @@ extension AuthenticationCoordinator {
     /// Signs the current user out with a warning.
     private func signOut(warn: Bool) {
         if warn {
-            let signOutAction = AuthenticationCoordinatorAlertAction(
-                title: L10n.Localizable.General.ok,
-                coordinatorActions: [
-                    .showLoadingView,
-                    .signOut(
-                        warn: false
-                    )
-                ],
+
+            typealias l10nAlert = L10n.Localizable.Self.Settings.AccountDetails.LogOut.EraseData.Alert
+
+            let logoutDeleteDataAction = AuthenticationCoordinatorAlertAction(
+                title: l10nAlert.logoutAndClear,
+                coordinatorActions: [.showLoadingView, .deleteSession(eraseData: true)],
                 style: .destructive
             )
 
+            let logoutKeepDataAction = AuthenticationCoordinatorAlertAction(
+                title: l10nAlert.logoutAndKeep,
+                coordinatorActions: [.showLoadingView, .deleteSession(eraseData: false)],
+                style: .default
+            )
+
             let alertModel = AuthenticationCoordinatorAlert(
-                title: L10n.Localizable.Self.Settings.AccountDetails.LogOut.Alert.title,
-                message: L10n.Localizable.Self.Settings.AccountDetails.LogOut.Alert.message,
-                actions: [.cancel, signOutAction]
+                title: l10nAlert.title,
+                message: l10nAlert.message,
+                actions: [logoutKeepDataAction, logoutDeleteDataAction, .cancel]
             )
 
             presentAlert(for: alertModel)
         } else {
-            guard let accountId = unauthenticatedSession.accountId,
-                  let unauthenticatedAccount = sessionManager.accountManager.account(with: accountId) else {
-                fatal("No unauthenticated account to log out from")
-            }
-
-            sessionManager.delete(account: unauthenticatedAccount)
+            deleteSession(eraseData: true)
         }
+    }
+
+    func deleteSession(eraseData: Bool) {
+        guard let accountId = unauthenticatedSession.accountId,
+              let unauthenticatedAccount = sessionManager.accountManager.account(with: accountId) else {
+            fatal("No unauthenticated account to log out from")
+        }
+
+        sessionManager.delete(
+            account: unauthenticatedAccount,
+            eraseData: eraseData
+        )
+
     }
 
     /// Repeats the current action.

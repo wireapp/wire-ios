@@ -54,7 +54,7 @@ protocol ObservableSessionManager: SessionManagerType {
     func addSessionManagerCreatedSessionObserver(_ observer: SessionManagerCreatedSessionObserver) -> Any
 
     /// Deletes the selected account.
-    func delete(account: Account)
+    func delete(account: Account, eraseData: Bool)
 
     /// Add a new account.
     func addAccount(userInfo: [String: Any]?)
