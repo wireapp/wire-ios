@@ -413,7 +413,7 @@ private extension AppDelegate {
             sharedUserDefaults: .applicationGroup,
             minTLSVersion: SecurityFlags.minTLSVersion.stringValue,
             deleteUserLogs: {
-                // TODO: actually delete logs
+                // TODO: [WPB-15114] actually delete log files from the shared container
             },
             analyticsServiceConfiguration: AnalyticsServiceConfigurationBuilder.build(),
             countlyProvider: { CountlyWrapper() },
