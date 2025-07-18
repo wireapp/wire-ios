@@ -506,22 +506,25 @@ extension AuthenticationCoordinator {
     /// Signs the current user out with a warning.
     private func signOut(warn: Bool) {
         if warn {
-            let yesAction = AuthenticationCoordinatorAlertAction(
-                title: L10n.Localizable.Self.Settings.AccountDetails.LogOut.EraseData.Alert.yes,
+
+            typealias l10nAlert = L10n.Localizable.Self.Settings.AccountDetails.LogOut.EraseData.Alert
+
+            let logoutDeleteDataAction = AuthenticationCoordinatorAlertAction(
+                title: l10nAlert.logoutAndClear,
                 coordinatorActions: [.showLoadingView, .deleteSession(eraseData: true)],
                 style: .destructive
             )
 
-            let noAction = AuthenticationCoordinatorAlertAction(
-                title: L10n.Localizable.Self.Settings.AccountDetails.LogOut.EraseData.Alert.no,
+            let logoutKeepDataAction = AuthenticationCoordinatorAlertAction(
+                title: l10nAlert.logoutAndKeep,
                 coordinatorActions: [.showLoadingView, .deleteSession(eraseData: false)],
                 style: .default
             )
 
             let alertModel = AuthenticationCoordinatorAlert(
-                title: L10n.Localizable.Self.Settings.AccountDetails.LogOut.Alert.title,
-                message: L10n.Localizable.Self.Settings.AccountDetails.LogOut.EraseData.Alert.message,
-                actions: [yesAction, noAction, .cancel]
+                title: l10nAlert.title,
+                message: l10nAlert.message,
+                actions: [logoutKeepDataAction, logoutDeleteDataAction, .cancel]
             )
 
             presentAlert(for: alertModel)

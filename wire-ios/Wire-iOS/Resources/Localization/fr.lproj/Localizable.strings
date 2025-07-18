@@ -1199,9 +1199,10 @@
 "self.settings.account_details.log_out.alert.title" = "Se déconnecter";
 "self.settings.account_details.log_out.alert.message" = "L'historique de vos messages sera effacé de cet appareil.";
 "self.settings.account_details.log_out.alert.password" = "Mot de passe";
+"self.settings.account_details.log_out.erase_data.alert.title" = "Se déconnecter";
 "self.settings.account_details.log_out.erase_data.alert.message" = "Supprimer toutes vos informations personnelles et conversations sur cet appareil ?";
-"self.settings.account_details.log_out.erase_data.alert.yes" = "Oui";
-"self.settings.account_details.log_out.erase_data.alert.no" = "Non";
+"self.settings.account_details.log_out.erase_data.alert.logoutAndClear" = "Déconnexion et suppression des données";
+"self.settings.account_details.log_out.erase_data.alert.logoutAndKeep" = "Déconnexion sans suppression";
 
 // Settings - Personal information
 "self.settings.privacy_analytics_section.title" = "Rapports d’utilisation et de plantage";
