@@ -35,5 +35,10 @@ final class AppVersionMigration_4_2_0: AppVersionMigration {
         if lastEventIDRepository.fetchLastEventID() == nil {
             journal[.isInitialSyncRequired] = true
         }
+
+        // TODO: clean up old log files
+        // "oslog_dump.log"
+        // "oslog_NSE_dump.log"
+        // "oslog_share_dump.log"
     }
 }
