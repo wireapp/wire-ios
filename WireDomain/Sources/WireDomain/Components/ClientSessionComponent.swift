@@ -147,7 +147,8 @@ public final class ClientSessionComponent {
     ).makeAPI(for: apiVersion)
 
     private lazy var teamsAPI = TeamsAPIBuilder(
-        apiService: apiService
+        apiService: apiService,
+        networkService: networkService
     ).makeAPI(for: apiVersion)
 
     private lazy var updateEventsAPI = UpdateEventsAPIBuilder(

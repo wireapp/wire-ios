@@ -23,13 +23,15 @@ import Foundation
 public struct TeamsAPIBuilder {
 
     let apiService: any APIServiceProtocol
+    let networkService: any NetworkServiceProtocol
 
     /// Create a new builder.
     ///
     /// - Parameter APIService: An api service.
 
-    public init(apiService: any APIServiceProtocol) {
+    public init(apiService: any APIServiceProtocol, networkService: any NetworkServiceProtocol) {
         self.apiService = apiService
+        self.networkService = networkService
     }
 
     /// Make a versioned`TeamsAPI`.
@@ -40,25 +42,25 @@ public struct TeamsAPIBuilder {
     public func makeAPI(for version: APIVersion) -> any TeamsAPI {
         switch version {
         case .v0:
-            TeamsAPIV0(apiService: apiService)
+            TeamsAPIV0(apiService: apiService, networkService: networkService)
         case .v1:
-            TeamsAPIV1(apiService: apiService)
+            TeamsAPIV1(apiService: apiService, networkService: networkService)
         case .v2:
-            TeamsAPIV2(apiService: apiService)
+            TeamsAPIV2(apiService: apiService, networkService: networkService)
         case .v3:
-            TeamsAPIV3(apiService: apiService)
+            TeamsAPIV3(apiService: apiService, networkService: networkService)
         case .v4:
-            TeamsAPIV4(apiService: apiService)
+            TeamsAPIV4(apiService: apiService, networkService: networkService)
         case .v5:
-            TeamsAPIV5(apiService: apiService)
+            TeamsAPIV5(apiService: apiService, networkService: networkService)
         case .v6:
-            TeamsAPIV6(apiService: apiService)
+            TeamsAPIV6(apiService: apiService, networkService: networkService)
         case .v7:
-            TeamsAPIV7(apiService: apiService)
+            TeamsAPIV7(apiService: apiService, networkService: networkService)
         case .v8:
-            TeamsAPIV8(apiService: apiService)
+            TeamsAPIV8(apiService: apiService, networkService: networkService)
         case .v9:
-            TeamsAPIV9(apiService: apiService)
+            TeamsAPIV9(apiService: apiService, networkService: networkService)
         }
     }
 }

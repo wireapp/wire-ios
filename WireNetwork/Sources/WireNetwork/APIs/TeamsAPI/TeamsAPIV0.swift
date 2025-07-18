@@ -21,9 +21,11 @@ import Foundation
 class TeamsAPIV0: TeamsAPI, VersionedAPI {
 
     let apiService: any APIServiceProtocol
+    let networkService: any NetworkServiceProtocol
 
-    init(apiService: any APIServiceProtocol) {
+    init(apiService: any APIServiceProtocol, networkService: any NetworkServiceProtocol) {
         self.apiService = apiService
+        self.networkService = networkService
     }
 
     var apiVersion: APIVersion {
@@ -124,6 +126,39 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
             .parse(code: response.statusCode, data: data)
     }
 
+    // MARK: - Invite memeber to Team
+
+    func inviteMemberToTeam(
+        access_token: String,
+        teamID: UUID,
+        memberName: String,
+        memberEmail: String
+    ) async throws -> UUID {
+        let path = "\(basePath(for: teamID))/invitations"
+
+        let body = try JSONEncoder.defaultEncoder.encode(
+            InviteMemberToTeamBodyV0(
+                email: memberEmail,
+                name: memberName,
+                role: "member"
+            )
+        )
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.post)
+            .withBody(body, contentType: .json)
+            .withAcceptType(.json)
+            .addingHeader(field: "Authorization", value: "Bearer \(access_token)")
+            .build()
+
+        let (data, response) = try await networkService.executeRequest(request)
+
+        let payload = try ResponseParser()
+            .success(code: .created, type: InviteMemeberToTeamResponseV0.self)
+            .parse(code: response.statusCode, data: data)
+
+        return payload.id
+    }
 }
 
 struct TeamResponseV0: Decodable, ToAPIModelConvertible {
@@ -249,6 +284,16 @@ struct TeamMemberListResponseV0: Decodable, ToAPIModelConvertible {
 
 }
 
+struct InviteMemeberToTeamResponseV0: Decodable, ToAPIModelConvertible {
+
+    let id: UUID
+
+    func toAPIModel() -> InvitationIDToJoinTeam {
+        InvitationIDToJoinTeam(id: id)
+    }
+
+}
+
 struct TeamMemberResponseV0: Decodable {
 
     let user: UUID
@@ -354,4 +399,10 @@ struct LegalholdClientV0: Decodable {
 
     let id: String
 
+}
+
+private struct InviteMemberToTeamBodyV0: Encodable {
+    var email: String
+    var name: String
+    var role: String
 }

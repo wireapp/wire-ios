@@ -95,6 +95,51 @@ final class TeamManageTests: WireUITestCase {
             .openAccountSettings()
             .logout()
             .enterPassword(memberUser.password)
+    }
 
+    @MainActor
+    func test_TeamOwner_GroupConversation() async throws {
+
+        let teamOwner = try await userManager.registerUserAsTeamOwner()
+        var teamMember1 = UserGenerator.generateUniqueUserInfo()
+        var teamMember2 = UserGenerator.generateUniqueUserInfo()
+
+        let invitationID1 = try await userManager
+            .getInvitationIdToAddMemberInTeam(
+                email: teamOwner.email,
+                password: teamOwner.password,
+                teamID: teamOwner.teamID!,
+                memberEmail: teamMember1.email,
+                memberName: teamMember1.name
+            )
+
+        let invitationCodeFormember1 = try await userManager.getInvitationCodeToAddMemberInTeam(
+            teamID: teamOwner.teamID!,
+            invitationID: invitationID1
+        )
+
+        let invitationID2 = try await userManager
+            .getInvitationIdToAddMemberInTeam(
+                email: teamOwner.email,
+                password: teamOwner.password,
+                teamID: teamOwner.teamID!,
+                memberEmail: teamMember2.email,
+                memberName: teamMember2.name
+            )
+
+        let invitationCodeFormember2 = try await userManager.getInvitationCodeToAddMemberInTeam(
+            teamID: teamOwner.teamID!,
+            invitationID: invitationID2
+        )
+
+        try await userManager.registerUserAsTeamMember(
+            teamMember: teamMember1,
+            invitationCode: invitationCodeFormember1
+        )
+
+        try await userManager.registerUserAsTeamMember(
+            teamMember: teamMember2,
+            invitationCode: invitationCodeFormember2
+        )
     }
 }

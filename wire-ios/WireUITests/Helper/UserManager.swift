@@ -23,8 +23,10 @@ class UserManager {
     var createdUsers: [UserInfo]
     var networkStack: NetworkStack
     var apiService: APIService
+    var networkService: NetworkService
 
     let authenticationAPI: AuthenticationAPI
+    let teamsAPI: TeamsAPI
     let selfUserAPI: SelfUserAPI
     let authenticationManager: AuthenticationManager
 
@@ -37,11 +39,12 @@ class UserManager {
             minTLSVersion: .v1_2,
             cookieEncryptionKey: Data()
         )
+        self.networkService = networkStack.apiNetworkService
         self.cookieStorage = MockCookieStorage()
         self.authenticationManager = AuthenticationManager(
             clientID: nil,
             cookieStorage: cookieStorage,
-            networkService: networkStack.apiNetworkService,
+            networkService: networkService,
             onAuthenticationFailure: { @Sendable () in }
         )
         self.apiService = APIService(
@@ -51,6 +54,8 @@ class UserManager {
         self.authenticationAPI = AuthenticationAPIBuilder(networkService: networkStack.apiNetworkService)
             .makeAPI(for: apiVersion)
         self.selfUserAPI = SelfUserAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
+        self.teamsAPI = TeamsAPIBuilder(apiService: apiService, networkService: networkStack.apiNetworkService)
+            .makeAPI(for: apiVersion)
     }
 
     func createPersonalUser() async throws -> UserInfo {
@@ -116,6 +121,62 @@ class UserManager {
                 print("❌ Failed to clean up user \(user.email): \(error)")
             }
         }
+    }
+
+    func registerUserAsTeamOwner() async throws -> UserInfo {
+        var teamOwner = UserGenerator.generateUniqueUserInfo()
+
+        let teamID = try await authenticationAPI.registerTeamOwner(
+            email: teamOwner.email,
+            password: teamOwner.password,
+            name: teamOwner.name,
+            teamName: teamOwner.teamName
+        )
+
+        teamOwner.teamID = teamID
+        createdUsers.append(teamOwner)
+        return teamOwner
+    }
+
+    func getInvitationIdToAddMemberInTeam(
+        email: String,
+        password: String,
+        teamID: UUID,
+        memberEmail: String,
+        memberName: String
+    ) async throws -> UUID {
+
+        let (activationCode, activationKey) = try await authenticationAPI.getActivationCode(forEmail: email)
+
+        try await authenticationAPI.activateUser(email: email, key: activationKey, code: activationCode)
+
+        let (_, AccessToken) = try await authenticationAPI.login(
+            email: email,
+            password: password,
+            verificationCode: nil,
+            label: nil
+        )
+        return try await teamsAPI.inviteMemberToTeam(
+            access_token: AccessToken.token,
+            teamID: teamID,
+            memberName: memberName,
+            memberEmail: memberEmail
+        )
+    }
+
+    func getInvitationCodeToAddMemberInTeam(teamID: UUID, invitationID: UUID) async throws -> String {
+
+        try await authenticationAPI.getInvitationCode(teamID: teamID, invitationID: invitationID)
+    }
+
+    func registerUserAsTeamMember(teamMember: UserInfo, invitationCode: String) async throws {
+
+        try await authenticationAPI.registerTeamMember(
+            email: teamMember.email,
+            password: teamMember.password,
+            name: teamMember.name,
+            invitationCode: invitationCode
+        )
     }
 }
 

@@ -63,4 +63,20 @@ public protocol TeamsAPI {
         userID: UUID
     ) async throws -> TeamMemberLegalholdInfo
 
+    /// Invite a member  to team
+    /// - Parameters:
+    ///   - teamID: The id of the team.
+    ///   - email: team owner email
+    ///   - password: team owner password
+    ///   - memberName: member  name
+    ///   - memberEmail: member password
+    #if DEBUG
+        func inviteMemberToTeam(
+            access_token: String,
+            teamID: UUID,
+            memberName: String,
+            memberEmail: String
+        ) async throws -> UUID
+    #endif
+
 }
