@@ -20,5 +20,5 @@ jobs:
       countly_enabled: true
       datadog_enabled: true
       fastlane_action: testflight_beta
-      distribute_externals: ${{ inputs.distribute_externals }}
+      distribute_externals: ${{ inputs.distribute_externals || false }}
     secrets: inherit
