@@ -122,7 +122,7 @@ public final class ClientSessionComponent {
         networkService: networkService
     ).makeAPI()
 
-    private lazy var conversationsAPI = ConversationsAPIBuilder(
+    public lazy var conversationsAPI = ConversationsAPIBuilder(
         apiService: apiService
     ).makeAPI(for: apiVersion)
 
