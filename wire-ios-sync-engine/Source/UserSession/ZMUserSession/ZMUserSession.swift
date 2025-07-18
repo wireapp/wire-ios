@@ -1141,6 +1141,10 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     func didStartInitialSync() {
+        if !journal[.isSyncV2Enabled], !journal[.isInitialSyncRequired] {
+            // in legacy, we need to set this flag here
+            journal[.isInitialSyncRequired] = true
+        }
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.isPerformingSync = true
             self?.notificationDispatcher.isEnabled = false
@@ -1154,7 +1158,10 @@ extension ZMUserSession: SyncAgentDelegate {
 
             managedObjectContext.resetMigrationNeedsSlowSyncFlagIfNeeded()
             managedObjectContext.resetMigrationNeedsSyncResoucesFlagIfNeeded()
-
+            if !journal[.isSyncV2Enabled] {
+                // in legacy, we need to reset this flag here
+                journal[.isInitialSyncRequired] = false
+            }
             notificationDispatcher.isEnabled = true
             delegate?.clientCompletedInitialSync(accountId: account.userIdentifier)
 
