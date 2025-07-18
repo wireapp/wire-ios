@@ -148,7 +148,6 @@ final class MLSActionsProvider: MLSActionsProviderProtocol {
         return try await action.perform(in: context)
     }
 
-    // TODO: check if still called, if not called remove SendCommitBundleAction and SendCommitBundleActionHandler
     func sendCommitBundle(
         _ bundle: Data,
         in context: NotificationContext
