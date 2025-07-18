@@ -18,8 +18,8 @@
 
 import WireDataModelSupport
 import WireDomain
-import XCTest
 import WireLoggingSupport
+import XCTest
 
 @testable import WireLogging
 @testable import WireSyncEngine
