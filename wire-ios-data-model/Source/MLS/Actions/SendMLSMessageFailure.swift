@@ -39,9 +39,13 @@ import Foundation
 public enum SendMLSMessageFailure: Error, LocalizedError, Equatable {
 
     case endpointUnavailable
+    case malformedRequest
     case malformedResponse
 
     // 400
+    case mlsWelcomeMismatch(message: String)
+    case mlsGroupConversationMismatch(message: String)
+    case mlsClientSenderUserMismatch(message: String)
     case mlsSelfRemovalNotAllowed(message: String)
     case mlsCommitMissingReferences(message: String)
     case mlsProtocolError(message: String)
@@ -80,8 +84,20 @@ public enum SendMLSMessageFailure: Error, LocalizedError, Equatable {
         case .endpointUnavailable:
             "Endpoint not available"
 
+        case .malformedRequest:
+            "The request could not be formed"
+
         case .malformedResponse:
             "The response payload could not be decoded"
+
+        case let .mlsWelcomeMismatch(message):
+            "The list of targets of a welcome message does not match the list of new clients in a group. message: \(message)"
+
+        case let .mlsGroupConversationMismatch(message):
+            "Conversation ID resolved from group ID does not match submitted conversation ID. message: \(message)"
+
+        case let .mlsClientSenderUserMismatch(message):
+            "User ID resolved from client ID does not match message's sender user ID. message: \(message)"
 
         case let .mlsSelfRemovalNotAllowed(message):
             "Self removal from group is not allowed. message: \(message)"
@@ -154,6 +170,11 @@ public enum SendMLSMessageFailure: Error, LocalizedError, Equatable {
         let payloadMessage = response.payloadMessage() ?? ""
 
         switch (response.httpStatus, label) {
+        case (400, "mls-group-conversation-mismatch"):
+            self = .mlsGroupConversationMismatch(message: payloadMessage)
+
+        case (400, "mls-client-sender-user-mismatch"):
+            self = .mlsClientSenderUserMismatch(message: payloadMessage)
 
         case (400, "mls-self-removal-not-allowed"):
             self = .mlsSelfRemovalNotAllowed(message: payloadMessage)
