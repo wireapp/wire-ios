@@ -18,11 +18,7 @@
 
 public import Foundation
 
-import OSLog
-
-public protocol FileLoggerDestination {
-    var log: URL? { get }
-}
+import os
 
 public class SystemLogger: LoggerProtocol {
 
