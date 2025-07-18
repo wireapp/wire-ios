@@ -72,13 +72,6 @@ let package = Package(
             plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
         ),
         .testTarget(
-            name: "WireMessagingTests",
-            dependencies: [
-                "WireMessagingUI",
-                "WireFoundation"
-            ]
-        ),
-        .testTarget(
             name: "WireMessagingUITests",
             dependencies: [
                 "WireMessagingUIBindings",
