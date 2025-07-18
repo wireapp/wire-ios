@@ -68,6 +68,7 @@ public extension ZMConversation {
             let conversation = ZMConversation.insertNewObject(in: context)
             conversation.remoteIdentifier = remoteIdentifier
             conversation.domain = if let domain, !domain.isEmpty { domain } else { .none }
+            conversation.needsToBeUpdatedFromBackend = true
             return conversation
         }
     }

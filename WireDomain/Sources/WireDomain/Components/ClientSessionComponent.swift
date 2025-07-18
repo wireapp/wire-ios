@@ -225,12 +225,13 @@ public final class ClientSessionComponent {
 
     // MARK: - Pull syncs
 
-    private lazy var pullAllConversationsSync = PullAllConversationsSync(
+    public lazy var pullAllConversationsSync = PullAllConversationsSync(
         localDomain: localDomain,
         isFederationEnabled: BackendInfo.isFederationEnabled,
         isMLSEnabled: BackendInfo.isMLSEnabled,
         api: conversationsAPI,
-        store: conversationLocalStore
+        store: conversationLocalStore,
+        journal: journal
     )
 
     private lazy var pullAllFeatureConfigsSync = PullAllFeatureConfigsSync(

@@ -142,10 +142,22 @@ public class ConversationEventProcessor: NSObject, LegacyConversationEventProces
 
             await processConversationAddPermissionUpdate(event: event)
 
+        // TODO: [WPB-18464] - process new event when backend ready, processor will properly map the duration to a localized string and create the ZMSystemMessage
+//        case let .channelHistoryDepthModified(event):
+//            await processConversationChannelHistoryDepthModified(event: event)
         default:
             break
         }
     }
+
+//    private func processConversationChannelHistoryDepthModified(event: ZMUpdateEvent) {
+//        guard let payload = try? eventPayloadDecoder.decode(
+//            Payload.ConversationEvent<Payload.ChannelHistoryDepthModified>.self,
+//            from: event.payload
+//        ) else { return }
+//
+//        await processor.processPayload(payload, in: context)
+//    }
 
     private func processConversationAddPermissionUpdate(event: ZMUpdateEvent) async {
         guard let payload = try? eventPayloadDecoder.decode(
