@@ -23,6 +23,7 @@ import WireFoundation
 // Issue: To simplify the logic, we rely solely on journal value to perform InitialSync or not
 struct AppVersionMigration_4_2_0: AppVersionMigration {
 
+    let appGroupIdentifier: String?
     let lastEventIDRepository: LastEventIDRepositoryInterface
     let journal: JournalProtocol
     let sessionManager: (any SessionManagerType)?
@@ -34,12 +35,35 @@ struct AppVersionMigration_4_2_0: AppVersionMigration {
             journal[.isInitialSyncRequired] = true
         }
 
+        deleteOldLogFiles()
+
         migrateAnalyticsTrackingUserDefaultsValue()
 
     }
 
-    /// Previously the decision for enabling analytics was stored only once per app and will be migrated to per account.
+    /// `FileLoggerDestination` protocol and `LogFileDestination.swift` have been deleted.
+    /// This code cleans up potentially left-over files which could have been deleted by the removed code.
+    private func deleteOldLogFiles() {
+        let fileManager = FileManager.default
 
+        // main app
+        if let cachesDirectory = fileManager.urls(for: .cachesDirectory, in: .userDomainMask).first {
+            let mainAppLogFileURL = cachesDirectory.appendingPathComponent("oslog_dump.log")
+            try? fileManager.removeItem(at: mainAppLogFileURL)
+        }
+
+        // nse
+        guard let appGroupIdentifier else { return }
+        let containerDirectory = FileManager.sharedContainerDirectory(for: appGroupIdentifier)
+        let nseLogFileURL = containerDirectory.appending(path: "oslog_NSE_dump.log", directoryHint: .notDirectory)
+        try? fileManager.removeItem(at: nseLogFileURL)
+
+        // se
+        let seLogFileURL = containerDirectory.appending(path: "oslog_NSE_dump.log", directoryHint: .notDirectory)
+        try? fileManager.removeItem(at: seLogFileURL)
+    }
+
+    /// Previously the decision for enabling analytics was stored only once per app and will be migrated to per account.
     private func migrateAnalyticsTrackingUserDefaultsValue() {
         let oldUserDefaultsKey = "disableAnalyticsSharing"
         guard

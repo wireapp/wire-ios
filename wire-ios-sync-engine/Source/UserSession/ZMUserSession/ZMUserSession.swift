@@ -1616,6 +1616,7 @@ extension ZMUserSession {
         [
             AppVersionMigration_4_1_1(journal: journal, logFilesProvider: logFilesProvider),
             AppVersionMigration_4_2_0(
+                appGroupIdentifier: Bundle.main.appGroupIdentifier,
                 lastEventIDRepository: lastEventIDRepository,
                 journal: journal,
                 sessionManager: sessionManager

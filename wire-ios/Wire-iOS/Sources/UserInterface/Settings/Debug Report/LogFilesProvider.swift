@@ -65,11 +65,6 @@ struct LogFilesProvider: LogFilesProviding {
 
     func generateLogFilesData() throws -> Data {
         defer {
-            // because we don't rotate file for this one, we clean it once sent
-            // this regenerated from os_log anyway
-            if let url = LogFileDestination.main.log {
-                try? FileManager.default.removeItem(at: url)
-            }
             try? clearLogsDirectory()
         }
 
@@ -84,7 +79,7 @@ struct LogFilesProvider: LogFilesProviding {
         try FileManager.default.createDirectory(at: logsDirectory, withIntermediateDirectories: true)
 
         // Create a subfolder for the current session
-        var archiveFolder = logsDirectory.appendingPathComponent(UUID().uuidString)
+        let archiveFolder = logsDirectory.appendingPathComponent(UUID().uuidString)
         try FileManager.default.createDirectory(at: archiveFolder, withIntermediateDirectories: true)
 
         // Create the info file
