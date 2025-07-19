@@ -92,7 +92,7 @@ public enum WireAnalytics {
                     directoryHint: .notDirectory
                 )
                 if fileManager.fileExists(atPath: newLogFileURL.path()) {
-                    continue // don't overwrite, instead delete the old file (unlikely anyway)
+                    continue
                 }
                 try fileManager.moveItem(at: previousLogFileURL, to: newLogFileURL)
             }

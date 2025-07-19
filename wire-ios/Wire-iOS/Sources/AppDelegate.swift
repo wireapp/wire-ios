@@ -397,6 +397,14 @@ private extension AppDelegate {
         // flag defined
         let maxNumberAccounts = SecurityFlags.maxNumberAccounts.intValue ?? SessionManager.defaultMaxNumberAccounts
 
+        func deleteAllAccountsLogs() { // we don't have per account logging yet
+            let fileManager = FileManager.default
+            if let appGroupIdentifier = Bundle.main.applicationGroupIdentifier,
+               let logsDirectory = FileManager.default.sharedLogsDirectoryURL(for: appGroupIdentifier) {
+                try? fileManager.removeItem(at: logsDirectory)
+            }
+        }
+
         let sessionManager = try SessionManager(
             maxNumberAccounts: maxNumberAccounts,
             currentAppVersion: currentAppVersion,
@@ -412,9 +420,7 @@ private extension AppDelegate {
             isDeveloperModeEnabled: Bundle.developerModeEnabled,
             sharedUserDefaults: .applicationGroup,
             minTLSVersion: SecurityFlags.minTLSVersion.stringValue,
-            deleteUserLogs: {
-                // TODO: actually delete log files from the shared container
-            },
+            deleteUserLogs: deleteAllAccountsLogs,
             analyticsServiceConfiguration: AnalyticsServiceConfigurationBuilder.build(),
             countlyProvider: { CountlyWrapper() },
             logFilesProvider: LogFilesProvider()
