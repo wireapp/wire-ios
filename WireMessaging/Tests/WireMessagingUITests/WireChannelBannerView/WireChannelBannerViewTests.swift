@@ -19,7 +19,7 @@
 import SwiftUI
 import WireDesign
 import WireFoundation
-import WireMessagingUIBindings
+import WireMessagingBindings
 import WireTestingPackage
 import XCTest
 

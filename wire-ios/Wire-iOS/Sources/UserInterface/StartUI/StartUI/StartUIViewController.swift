@@ -24,7 +24,7 @@ import WireFoundation
 import WireMainNavigationUI
 import WireMessagingAPI
 import WireMessagingUI
-import WireMessagingUIBindings
+import WireMessagingBindings
 import WireReusableUIComponents
 import WireSyncEngine
 import WireUtilities

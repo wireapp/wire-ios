@@ -20,7 +20,7 @@ import SwiftUI
 import WireTestingPackage
 import XCTest
 
-import WireMessagingUIBindings
+import WireMessagingBindings
 
 class WireConversationTypePickerTests: XCTestCase {
 

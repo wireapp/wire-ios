@@ -20,7 +20,7 @@ import WireDesign
 import WireTestingPackage
 import XCTest
 
-import WireMessagingUIBindings
+import WireMessagingBindings
 @testable import Wire
 
 final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {

@@ -11,8 +11,7 @@ let package = Package(
     products: [
         .library(name: "WireMessagingAPI", targets: ["WireMessagingAPI"]),
         .library(name: "WireMessagingBindings", targets: ["WireMessagingBindings"]),
-        .library(name: "WireMessagingUI", targets: ["WireMessagingUI"]),
-        .library(name: "WireMessagingUIBindings", targets: ["WireMessagingUIBindings"])
+        .library(name: "WireMessagingUI", targets: ["WireMessagingUI"])
     ],
     dependencies: [
         .package(name: "WireFoundation", path: "../WireFoundation"),
@@ -25,13 +24,6 @@ let package = Package(
         ),
         .target(
             name: "WireMessagingBindings",
-            dependencies: [
-                "WireMessagingAPI",
-                "WireMessagingImplementation"
-            ]
-        ),
-        .target(
-            name: "WireMessagingUIBindings",
             dependencies: [
                 "WireMessagingAPI",
                 "WireMessagingImplementation",
@@ -74,7 +66,7 @@ let package = Package(
         .testTarget(
             name: "WireMessagingUITests",
             dependencies: [
-                "WireMessagingUIBindings",
+                "WireMessagingBindings",
                 "WireMessagingUI",
                 "WireMessagingImplementationSupport",
                 .product(name: "WireDesign", package: "WireUI"),
