@@ -75,6 +75,10 @@ final class MLSAPIV9: MLSAPIV8 {
                     throw MLSAPIError.noConversation(message: failureResponse.message)
                 case "mls-stale-message":
                     throw MLSAPIError.mlsStaleMessageWithMessage(message: failureResponse.message)
+                case "mls-invalid-leaf-node-index":
+                    throw MLSAPIError.mlsInvalidLeafNodeIndex
+                case "mls-invalid-leaf-node-signature":
+                    throw MLSAPIError.mlsInvalidLeafNodeSignature
                 default:
                     throw MLSAPIError.mlsError(failureResponse.label, failureResponse.message)
                 }
