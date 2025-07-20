@@ -87,6 +87,8 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             .init(title: "Invalidate all conversations", action: invalidateAllConversations),
             .init(title: "Set last app version migration", action: requestAppVersionInput),
             .init(title: "Initiate reset of first from top MLS", action: initiateResetBrokenMLSConversation)
+            .init(title: "Logout", action: logout)
+
         ]
 
         let toggleItems: [DeveloperDebugActionsDisplayModel.ToggleItem] = [
@@ -193,6 +195,10 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
 
     }
 
+    func logout() {
+        LogOutHelper(showLoading: {}, hideLoading: {}).logout()
+    }
+    
     private func simulateAccessTokenFailure() {
         guard let selfUserID = userSession?.managedObjectContext.performAndWait({
             userSession?.selfUser.remoteIdentifier
