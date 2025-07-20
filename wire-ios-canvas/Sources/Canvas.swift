@@ -69,7 +69,7 @@ public final class Canvas: UIView {
     public weak var delegate: CanvasDelegate?
 
     /// Defines the apperance of the brush strokes when drawing
-    public var brush = Brush(size: 2, color: .black)
+    public var brush = Brush(size: 8, color: .black)
 
     /// Active mode of the canvas. See `EditingMode` for possible values.
     public var mode: EditingMode = .draw {

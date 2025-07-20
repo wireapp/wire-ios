@@ -142,7 +142,7 @@
 "create_personal_account.confirmation_alert.title" = "Nutzungsbedingungen";
 "create_personal_account.confirmation_alert.message" = "Bitte akzeptieren Sie die Nutzungsbedingungen, um fortzufahren.";
 "create_personal_account.confirmation_alert.accept" = "Annehmen";
-"create_personal_account.confirmation_alert.view" = "Ansicht";
+"create_personal_account.confirmation_alert.view" = "Anzeigen";
 "create_personal_account.confirmation_alert.cancel" = "Abbrechen";
 "create_personal_account.verification_code.resend_code" = "Code erneut senden";
 "create_personal_account.verification_code.confirm" = "Bestätigen";

@@ -295,6 +295,170 @@ final class CreateChannelUseCaseTests: XCTestCase {
         }
     }
 
+    func testInvoke_MLS_Non_Federating_Domains_Failure_It_Retries_Once_With_Federated_Users() async throws {
+        // Mock
+
+        let (mlsConversation, participant1, participant2) = await context.perform { [self] in
+            modelHelper.createSelfClient(in: context)
+            let participant1 = modelHelper.createUser(id: .mockID1, domain: "federated1", in: context)
+            let participant2 = modelHelper.createUser(id: .mockID2, domain: "nonfederated2", in: context)
+
+            let mlsConversation = modelHelper.createMLSConversation(
+                mlsGroupID: .random(),
+                with: [participant1, participant2],
+                in: context
+            )
+
+            return (mlsConversation, participant1, participant2)
+        }
+
+        var apiRetryCount = 0
+
+        conversationsAPI
+            .createGroupConversationParameters_MockValue =
+            Scaffolding.conversation
+
+        conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod = { _, _, _, _ in }
+
+        conversationLocalStore.fetchConversationIdDomain_MockValue = mlsConversation
+        mlsService.addMembersToConversationWithFor_MockMethod = { [self] users, _ in
+            defer { apiRetryCount += 1 }
+            let usersIds = Set(await context.perform { users.map(\.id) })
+
+            if apiRetryCount == 0 {
+                // First, we try to add all MLS participants
+                XCTAssertEqual(
+                    Set(usersIds),
+                    Set([UUID.mockID1, .mockID2])
+                )
+
+                throw SendCommitBundleAction.Failure.nonFederatingDomains(Set(["nonfederated2"]))
+            } else {
+                // On retry, we only try to add MLS participants which are on a federated domain
+                XCTAssertEqual(
+                    Set(usersIds),
+                    Set([.mockID1])
+                )
+                return
+            }
+        }
+        mlsService.createGroupForRemovalKeys_MockValue = .MLS_128_DHKEMP256_AES128GCM_SHA256_P256
+
+        // When
+
+        let conversation = try await sut.invoke(
+            teamID: .mockID1,
+            name: "test",
+            users: [participant1, participant2],
+            accessMode: [.invite, .code],
+            accessRoles: [.teamMember],
+            enableReceipts: true
+        )
+
+        // Then
+
+        XCTAssertEqual(conversation, mlsConversation)
+        XCTAssertEqual(
+            conversationsAPI
+                .createGroupConversationParameters_Invocations
+                .count,
+            1
+        )
+        XCTAssertEqual(
+            conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations.count,
+            1
+        )
+        XCTAssertEqual(conversationLocalStore.fetchConversationIdDomain_Invocations.count, 1)
+        XCTAssertEqual(
+            mlsService.addMembersToConversationWithFor_Invocations.count,
+            2
+        ) // called twice, first try to add all MLS participants, on retry try to add only MLS participants which are on
+        // a federated domain
+        XCTAssertEqual(mlsService.createGroupForRemovalKeys_Invocations.count, 1)
+    }
+
+    func testInvoke_MLS_Unreachable_Domains_Failure_It_Retries_Once_With_Unreachable_Users() async throws {
+        // Mock
+
+        let (mlsConversation, participant1, participant2) = await context.perform { [self] in
+            modelHelper.createSelfClient(in: context)
+            let participant1 = modelHelper.createUser(id: .mockID1, domain: "federated1", in: context)
+            let participant2 = modelHelper.createUser(id: .mockID2, domain: "federated2", in: context)
+
+            let mlsConversation = modelHelper.createMLSConversation(
+                mlsGroupID: .random(),
+                with: [participant1, participant2],
+                in: context
+            )
+
+            return (mlsConversation, participant1, participant2)
+        }
+
+        var apiRetryCount = 0
+
+        conversationsAPI
+            .createGroupConversationParameters_MockValue =
+            Scaffolding.conversation
+
+        conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod = { _, _, _, _ in }
+
+        conversationLocalStore.fetchConversationIdDomain_MockValue = mlsConversation
+        mlsService.addMembersToConversationWithFor_MockMethod = { [self] users, _ in
+            defer { apiRetryCount += 1 }
+            let usersIds = Set(await context.perform { users.map(\.id) })
+
+            if apiRetryCount == 0 {
+                // First, we try to add all MLS participants
+                XCTAssertEqual(
+                    Set(usersIds),
+                    Set([UUID.mockID1, .mockID2])
+                )
+
+                throw SendCommitBundleAction.Failure.unreachableDomains(Set(["federated2"]))
+            } else {
+                // On retry, we try to add all MLS participants that are on a reachable domain
+                XCTAssertEqual(
+                    Set(usersIds),
+                    Set([.mockID1])
+                )
+                return
+            }
+        }
+        mlsService.createGroupForRemovalKeys_MockValue = .MLS_128_DHKEMP256_AES128GCM_SHA256_P256
+
+        // When
+
+        let conversation = try await sut.invoke(
+            teamID: .mockID1,
+            name: "test",
+            users: [participant1, participant2],
+            accessMode: [.invite, .code],
+            accessRoles: [.teamMember],
+            enableReceipts: true
+        )
+
+        // Then
+
+        XCTAssertEqual(conversation, mlsConversation)
+        XCTAssertEqual(
+            conversationsAPI
+                .createGroupConversationParameters_Invocations
+                .count,
+            1
+        )
+        XCTAssertEqual(
+            conversationLocalStore.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations.count,
+            1
+        )
+        XCTAssertEqual(conversationLocalStore.fetchConversationIdDomain_Invocations.count, 1)
+        XCTAssertEqual(
+            mlsService.addMembersToConversationWithFor_Invocations.count,
+            2
+        ) // called twice, first try to add all MLS participants, on retry try to add only participants that are on a
+        // reachable domain
+        XCTAssertEqual(mlsService.createGroupForRemovalKeys_Invocations.count, 1)
+    }
+
     func testInvoke_API_Failure_It_Throws_Non_Federating_Domains() async throws {
         // Mock
 

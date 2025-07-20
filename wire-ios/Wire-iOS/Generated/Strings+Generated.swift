@@ -5619,10 +5619,6 @@ internal enum L10n {
         internal enum HistoryBackup {
           /// Back up or Restore
           internal static let title = L10n.tr("Localizable", "self.settings.history_backup.title", fallback: "Back up or Restore")
-          internal enum Error {
-            /// Error
-            internal static let title = L10n.tr("Localizable", "self.settings.history_backup.error.title", fallback: "Error")
-          }
           internal enum SetEmail {
             /// You need an email and a password in order to back up your conversation history. You can do it from the account page in Settings.
             internal static let message = L10n.tr("Localizable", "self.settings.history_backup.set_email.message", fallback: "You need an email and a password in order to back up your conversation history. You can do it from the account page in Settings.")

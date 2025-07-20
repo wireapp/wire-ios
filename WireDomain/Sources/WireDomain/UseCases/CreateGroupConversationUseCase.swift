@@ -343,6 +343,22 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
                 conversation: conversation
             )
 
+        } catch let SendCommitBundleAction.Failure.nonFederatingDomains(domains: domains) {
+
+            try await handleNonFederatingDomains(
+                domains,
+                users: users,
+                conversation: conversation
+            )
+
+        } catch let SendCommitBundleAction.Failure.unreachableDomains(domains: domains) {
+
+            try await handleUnreachableDomains(
+                domains,
+                users: users,
+                conversation: conversation
+            )
+
         } catch {
             WireLogger.mls.warn(
                 "failed to add members to conversation (\(String(describing: qualifiedID))): \(String(describing: error))"
@@ -423,6 +439,64 @@ public struct CreateGroupConversationUseCase: CreateGroupConversationUseCaseProt
         await appendFailedToAddUsersMessage(
             in: conversation,
             users: failedUsers
+        )
+    }
+
+    private func handleUnreachableDomains(
+        _ domains: Set<String>,
+        users: Set<ZMUser>,
+        conversation: ZMConversation
+    ) async throws {
+        let unreachableUsers = await context.perform { users.belongingTo(domains: domains) }
+
+        if unreachableUsers.isEmpty {
+
+            /// Backend is not able to determine which users are unreachable.
+            /// We just insert a message and do not attempt to retry
+
+            await appendFailedToAddUsersMessage(
+                in: conversation,
+                users: Set(users)
+            )
+        } else {
+            try await retryAddingMLSParticipants(
+                users,
+                to: conversation,
+                excludingDomains: domains
+            )
+        }
+    }
+
+    private func handleNonFederatingDomains(
+        _ domains: Set<String>,
+        users: Set<ZMUser>,
+        conversation: ZMConversation
+    ) async throws {
+        try await retryAddingMLSParticipants(
+            users,
+            to: conversation,
+            excludingDomains: domains
+        )
+    }
+
+    private func retryAddingMLSParticipants(
+        _ users: Set<ZMUser>,
+        to conversation: ZMConversation,
+        excludingDomains domains: Set<String>
+    ) async throws {
+        let usersToExclude = await context.perform { users.belongingTo(domains: domains) }
+        let usersToAdd = Set(users).subtracting(usersToExclude)
+
+        await appendFailedToAddUsersMessage(
+            in: conversation,
+            users: usersToExclude
+        )
+
+        guard !usersToAdd.isEmpty else { return }
+
+        try await addMLSParticipants(
+            usersToAdd,
+            to: conversation
         )
     }
 
