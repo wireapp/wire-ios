@@ -19,11 +19,11 @@
 import Foundation
 import SwiftUI
 import WireDataModel
+import WireDomain
 import WireFoundation
 import WireLogging
 import WireNetwork
 import WireSyncEngine
-import WireDomain
 
 struct ConversationResult {
     var id: String
@@ -108,36 +108,37 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
     }
 
     // MARK: - Forces logout
-    
+
     private func initiateResetBrokenMLSConversation() {
         guard
             let selfClient,
             let context = selfClient.managedObjectContext,
             let userSession
         else { return }
-        
+
         Task { @MainActor in
             guard let conversation = await firstGroupConversation(of: selfClient, in: context, isMLS: true),
                   let mlsGroupID = conversation.mlsGroupID else {
                 return
             }
-            
+
             WireLogger.mls
                 .info(
                     "Triggering initiate reset for conversation: \(conversation.name ?? "-"), mlsGroupID: \(mlsGroupID), conversationID: \(String(describing: conversation.remoteIdentifier))"
                 )
-            
+
             let qualifiedID = WireNetwork.QualifiedID(
                 id: conversation.qualifiedID!.uuid,
                 domain: conversation.qualifiedID!.domain
             )
-            
-            guard let remoteConversation = try? await userSession.clientSessionComponent?.conversationsAPI.getConversations(
-                for: [qualifiedID]
-            ).found.first else {
+
+            guard let remoteConversation = try? await userSession.clientSessionComponent?.conversationsAPI
+                .getConversations(
+                    for: [qualifiedID]
+                ).found.first else {
                 return
             }
-                        
+
             await userSession.clientSessionComponent?.initiateResetMLSConversationUseCase.invoke(
                 groupID: MLSGroupID(base64Encoded: remoteConversation.mlsGroupID!)!,
                 epoch: Int64(remoteConversation.epoch ?? 0)
@@ -315,7 +316,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
                     !$0.isDeleted && !$0.isArchived && !$0.isDeletedRemotely
                 }
                 .filter {
-                    if let isMLS = isMLS {
+                    if let isMLS {
                         return isMLS ? $0.messageProtocol == .mls : $0.messageProtocol != .mls
                     }
                     return true

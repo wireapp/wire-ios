@@ -89,7 +89,7 @@ final class MLSAPIV9: MLSAPIV8 {
 struct MLSResetParameters: Encodable {
     var epoch: Int64
     var groupID: String
-    
+
     enum CodingKeys: String, CodingKey {
         case groupID = "group_id"
         case epoch
