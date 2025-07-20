@@ -860,12 +860,12 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             conversation.localParticipants
         }
     }
-    
+
     public func localParticipantsAsMLSUsers(
         in conversation: ZMConversation
     ) async -> [MLSUser] {
         await context.perform {
-            conversation.localParticipants.map { MLSUser.init(from: $0) }
+            conversation.localParticipants.map { MLSUser(from: $0) }
         }
     }
 

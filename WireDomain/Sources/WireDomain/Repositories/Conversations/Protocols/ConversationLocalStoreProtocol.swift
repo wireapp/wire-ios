@@ -254,7 +254,6 @@ public protocol ConversationLocalStoreProtocol {
         in conversation: ZMConversation
     ) async -> Set<ZMUser>
 
-    
     /// Fetches local participants from a conversation and maps to [MLSUser].
     /// - parameter conversation: The related conversation.
     /// - returns: A list of MLSUser participants.
