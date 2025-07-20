@@ -17,101 +17,102 @@
 //
 
 import XCTest
+
 @testable import WireDataModel
 
-final class AnalyticsIdentifierProviderTests: ModelObjectsTests {
+final class TrackingIDProviderTests: ModelObjectsTests {
 
-    func testTheAnalyticsIdentifierIsGeneratedByProvider() {
+    func testTheTrackingIDIsGeneratedByProvider() {
         // Given
         let selfUser = createUser(selfUser: true, inTeam: true)
 
-        let sut = AnalyticsIdentifierProvider(selfUser: selfUser)
-        sut.setIdentifierIfNeeded()
+        let sut = TrackingIDProvider(selfUser: selfUser)
+        sut.generateTrackingIDIfNeeded()
 
         // Then
-        XCTAssertNotNil(selfUser.analyticsIdentifier)
+        XCTAssertNotNil(selfUser.trackingID)
     }
 
-    func testTheAnalyticsIdentifierIsNotAutomaticallyGenerated() {
+    func testTheTrackingIDIsNotAutomaticallyGenerated() {
         // Given, then
-        XCTAssertNil(createUser(selfUser: true, inTeam: false).analyticsIdentifier)
-        XCTAssertNil(createUser(selfUser: false, inTeam: false).analyticsIdentifier)
-        XCTAssertNil(createUser(selfUser: false, inTeam: true).analyticsIdentifier)
+        XCTAssertNil(createUser(selfUser: true, inTeam: false).trackingID)
+        XCTAssertNil(createUser(selfUser: false, inTeam: false).trackingID)
+        XCTAssertNil(createUser(selfUser: false, inTeam: true).trackingID)
     }
 
-    func testTheAnalyticsIdentifierIsNotRegeneratedIfAValueExists() {
+    func testTheTrackingIDIsNotRegeneratedIfAValueExists() {
         // Given
         let selfUser = createUser(selfUser: true, inTeam: true)
-        let sut = AnalyticsIdentifierProvider(selfUser: selfUser)
-        sut.setIdentifierIfNeeded()
+        let sut = TrackingIDProvider(selfUser: selfUser)
+        sut.generateTrackingIDIfNeeded()
 
-        let existingIdentifier = selfUser.analyticsIdentifier
-        XCTAssertNotNil(existingIdentifier)
+        let existingTrackingID = selfUser.trackingID
+        XCTAssertNotNil(existingTrackingID)
 
         // Then
-        XCTAssertEqual(selfUser.analyticsIdentifier, existingIdentifier)
+        XCTAssertEqual(selfUser.trackingID, existingTrackingID)
     }
 
-    func testTheAnalyticsIdentifierIsEncodedAsUUIDTransportString() throws {
+    func testTheTrackingIDIsEncodedAsUUIDTransportString() throws {
         // Given
         let sut = createUser(selfUser: true, inTeam: true)
 
-        let provider = AnalyticsIdentifierProvider(selfUser: sut)
-        provider.setIdentifierIfNeeded()
+        let provider = TrackingIDProvider(selfUser: sut)
+        provider.generateTrackingIDIfNeeded()
 
         // Then
-        let id = try XCTUnwrap(sut.analyticsIdentifier)
+        let id = try XCTUnwrap(sut.trackingID?.transportString())
 
         XCTAssertNotNil(UUID(uuidString: id))
     }
 
-    func testTheAnalyticsIdentifierIsBroadcastedInSelfConversationWhenGenerated() throws {
+    func testTheTrackingIDIsBroadcastedInSelfConversationWhenGenerated() throws {
         // Given
         let sut = createUser(selfUser: true, inTeam: true)
 
-        let provider = AnalyticsIdentifierProvider(selfUser: sut)
+        let provider = TrackingIDProvider(selfUser: sut)
 
         let selfConversation = ZMConversation.selfConversation(in: uiMOC)
         XCTAssertTrue(selfConversation.allMessages.isEmpty)
 
         // When
-        provider.setIdentifierIfNeeded()
+        provider.generateTrackingIDIfNeeded()
 
         // Then
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let identifier = try XCTUnwrap(sut.analyticsIdentifier)
+        let trackingID = try XCTUnwrap(sut.trackingID)
 
         try syncMOC.performAndWait {
             let selfConv = try syncMOC.existingObject(with: selfConversation.objectID) as! ZMConversation
 
-            XCTAssertEqual(selfConv.numberOfDataTransferMessagesContaining(analyticsIdentifier: identifier), 1)
+            XCTAssertEqual(selfConv.numberOfDataTransferMessagesContaining(trackingID: trackingID), 1)
         }
     }
 
-    func testTheAnalyticsIdentifierIsNotRebroadcastedInSelfConversation() throws {
+    func testTheTrackingIDIsNotRebroadcastedInSelfConversation() throws {
         // Given
         let sut = createUser(selfUser: true, inTeam: true)
 
-        let provider = AnalyticsIdentifierProvider(selfUser: sut)
+        let provider = TrackingIDProvider(selfUser: sut)
 
-        provider.setIdentifierIfNeeded()
-        let identifier = try XCTUnwrap(sut.analyticsIdentifier)
+        provider.generateTrackingIDIfNeeded()
+        let trackingID = try XCTUnwrap(sut.trackingID)
 
         let selfConversation = ZMConversation.selfConversation(in: uiMOC)
         try syncMOC.performAndWait {
             let selfConv = try syncMOC.existingObject(with: selfConversation.objectID) as! ZMConversation
 
-            XCTAssertEqual(selfConv.numberOfDataTransferMessagesContaining(analyticsIdentifier: identifier), 1)
+            XCTAssertEqual(selfConv.numberOfDataTransferMessagesContaining(trackingID: trackingID), 1)
         }
         // When
-        provider.setIdentifierIfNeeded()
+        provider.generateTrackingIDIfNeeded()
 
         // Then
         try syncMOC.performAndWait {
             let selfConv = try syncMOC.existingObject(with: selfConversation.objectID) as! ZMConversation
 
-            XCTAssertEqual(selfConv.numberOfDataTransferMessagesContaining(analyticsIdentifier: identifier), 1)
+            XCTAssertEqual(selfConv.numberOfDataTransferMessagesContaining(trackingID: trackingID), 1)
         }
     }
 
@@ -119,7 +120,7 @@ final class AnalyticsIdentifierProviderTests: ModelObjectsTests {
 
 // MARK: - Helpers
 
-private extension AnalyticsIdentifierProviderTests {
+private extension TrackingIDProviderTests {
 
     func createUser(selfUser: Bool, inTeam: Bool) -> ZMUser {
         let user = selfUser ? self.selfUser! : createUser(in: uiMOC)
@@ -132,13 +133,13 @@ private extension AnalyticsIdentifierProviderTests {
 
 private extension ZMConversation {
 
-    func numberOfDataTransferMessagesContaining(analyticsIdentifier: String) -> Int {
+    func numberOfDataTransferMessagesContaining(trackingID: UUID) -> Int {
         allMessages.lazy
             .compactMap { $0 as? ZMClientMessage }
             .compactMap(\.underlyingMessage)
             .filter(\.hasDataTransfer)
-            .map(\.dataTransfer.trackingIdentifier.identifier)
-            .filter { $0 == analyticsIdentifier }
+            .compactMap { UUID(transportString: $0.dataTransfer.trackingIdentifier.identifier) }
+            .filter { $0 == trackingID }
             .count
     }
 

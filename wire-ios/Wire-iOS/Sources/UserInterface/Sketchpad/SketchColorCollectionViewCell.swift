@@ -166,7 +166,7 @@ final class SketchColorCollectionViewCell: UICollectionViewCell {
         }
     }
 
-    var brushWidth: CGFloat = 6 {
+    var brushWidth: CGFloat = 8 {
         didSet {
             guard brushWidth != oldValue else {
                 return
@@ -196,7 +196,7 @@ final class SketchColorCollectionViewCell: UICollectionViewCell {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.knobView = ColorKnobView()
+        self.knobView = ColorKnobView(knobDiameter: brushWidth)
 
         contentStackView.axis = .vertical
         contentStackView.alignment = .center
