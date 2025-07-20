@@ -18,7 +18,6 @@
 
 public import SwiftUI
 import WireMessagingDomain
-import WireMessagingImplementation
 import WireMessagingUI
 
 public final class WireConversationChannelIconFactory {

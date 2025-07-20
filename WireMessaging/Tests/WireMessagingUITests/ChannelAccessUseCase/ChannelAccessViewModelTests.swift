@@ -18,7 +18,7 @@
 
 import XCTest
 @testable import WireMessagingDomain
-@testable import WireMessagingImplementationSupport
+@testable import WireMessagingDomainSupport
 @testable import WireMessagingUI
 
 @MainActor

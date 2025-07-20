@@ -17,8 +17,7 @@
 //
 
 package import SwiftUI
-import WireMessagingDomain
-package import WireMessagingImplementation
+package import WireMessagingDomain
 
 @MainActor
 package class ChannelAccessViewModel: ObservableObject {

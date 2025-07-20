@@ -18,7 +18,6 @@
 
 import WireDomain
 import WireMessagingDomain
-import WireMessagingImplementation
 import WireNetwork
 import WireSyncEngine
 import WireTransport

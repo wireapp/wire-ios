@@ -24,7 +24,7 @@ import XCTest
 
 import WireMessagingDomain
 import WireMessagingUI
-@testable import WireMessagingImplementationSupport
+@testable import WireMessagingDomainSupport
 
 class ChannelAccessViewSnapshotTests: XCTestCase {
 

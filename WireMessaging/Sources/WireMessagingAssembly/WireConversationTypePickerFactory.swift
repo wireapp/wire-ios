@@ -19,7 +19,6 @@
 public import SwiftUI
 public import WireMessagingDomain
 import WireFoundation
-import WireMessagingImplementation
 import WireMessagingUI
 
 public final class WireConversationTypePickerFactory {

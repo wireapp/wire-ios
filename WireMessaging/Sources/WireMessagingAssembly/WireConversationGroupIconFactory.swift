@@ -17,7 +17,7 @@
 //
 
 public import SwiftUI
-import WireMessagingImplementation
+import WireMessagingDomain
 import WireMessagingUI
 
 public final class WireConversationGroupIconFactory {

@@ -20,22 +20,17 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "WireMessagingDomain"
+            name: "WireMessagingDomain",
+            dependencies: [
+                "WireMessagingResources",
+                "WireFoundation"
+            ]
         ),
         .target(
             name: "WireMessagingAssembly",
             dependencies: [
                 "WireMessagingDomain",
-                "WireMessagingImplementation",
                 "WireMessagingUI"
-            ]
-        ),
-        .target(
-            name: "WireMessagingImplementation",
-            dependencies: [
-                "WireMessagingDomain",
-                "WireMessagingResources",
-                "WireFoundation"
             ]
         ),
         .target(
@@ -45,8 +40,7 @@ let package = Package(
             name: "WireMessagingUI",
             dependencies: [
                 "WireMessagingDomain",
-                "WireMessagingImplementation",
-                "WireMessagingImplementationSupport",
+                "WireMessagingDomainSupport",
                 "WireMessagingResources",
                 .product(name: "WireDesign", package: "WireUI"),
                 .product(name: "WireReusableUIComponents", package: "WireUI"),
@@ -56,9 +50,8 @@ let package = Package(
             plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
         ),
         .target(
-            name: "WireMessagingImplementationSupport",
+            name: "WireMessagingDomainSupport",
             dependencies: [
-                "WireMessagingImplementation",
                 "WireMessagingDomain"
             ],
             plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
@@ -68,7 +61,7 @@ let package = Package(
             dependencies: [
                 "WireMessagingAssembly",
                 "WireMessagingUI",
-                "WireMessagingImplementationSupport",
+                "WireMessagingDomainSupport",
                 .product(name: "WireDesign", package: "WireUI"),
                 "WireFoundation"
             ]

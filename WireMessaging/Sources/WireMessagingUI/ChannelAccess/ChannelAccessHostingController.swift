@@ -21,8 +21,7 @@ package import SwiftUI
 import UIKit
 import WireDesign
 import WireMessagingDomain
-import WireMessagingImplementation
-import WireMessagingImplementationSupport
+import WireMessagingDomainSupport
 import WireReusableUIComponents
 
 package  final class ChannelAccessHostingController: UIHostingController<ChannelAccessView> {
