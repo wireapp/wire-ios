@@ -22,7 +22,7 @@ import WireCommonComponents
 import WireDesign
 import WireFoundation
 import WireMainNavigationUI
-import WireMessagingAPI
+import WireMessagingDomain
 import WireMessagingUI
 import WireMessagingAssembly
 import WireReusableUIComponents

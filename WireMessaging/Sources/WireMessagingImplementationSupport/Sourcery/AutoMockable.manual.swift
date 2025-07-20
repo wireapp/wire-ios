@@ -17,7 +17,7 @@
 //
 
 public import WireMessagingImplementation
-public import WireMessagingAPI
+public import WireMessagingDomain
 
 import UIKit
 
@@ -79,9 +79,9 @@ public class MockChannelAccessRepositoryProtocol: ChannelAccessRepositoryProtoco
 
     public var updateParticipantPermissionTo_Invocations: [ChannelAccessLevelPermission] = []
     public var updateParticipantPermissionTo_MockError: (any Error)?
-    public var updateParticipantPermissionTo_MockValue: WireMessagingAPI.ChannelAccessLevelPermission?
+    public var updateParticipantPermissionTo_MockValue: WireMessagingDomain.ChannelAccessLevelPermission?
 
-    public func updateParticipantPermission(to permission: ChannelAccessLevelPermission) async throws -> WireMessagingAPI.ChannelAccessLevelPermission {
+    public func updateParticipantPermission(to permission: ChannelAccessLevelPermission) async throws -> WireMessagingDomain.ChannelAccessLevelPermission {
         updateParticipantPermissionTo_Invocations.append(permission)
 
         if let error = updateParticipantPermissionTo_MockError {

@@ -17,7 +17,7 @@
 //
 
 package import SwiftUI
-import WireMessagingAPI
+import WireMessagingDomain
 package import WireMessagingImplementation
 
 @MainActor

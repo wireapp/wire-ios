@@ -17,7 +17,7 @@
 //
 
 public import SwiftUI
-import WireMessagingAPI
+import WireMessagingDomain
 
 public struct WireConversationChannelCreationForm: View {
     public typealias ViewModel = WireConversationChannelCreationFormViewModel

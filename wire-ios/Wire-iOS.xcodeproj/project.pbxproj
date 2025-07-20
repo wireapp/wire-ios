@@ -94,7 +94,6 @@
 		59CDB3F62C4EA08F0049D1AB /* WireReusableUIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = 59CDB3F52C4EA08F0049D1AB /* WireReusableUIComponents */; };
 		59D038272C85D31E009FE583 /* WireMainNavigationUI in Frameworks */ = {isa = PBXBuildFile; productRef = 59D038262C85D31E009FE583 /* WireMainNavigationUI */; };
 		76ACF8A22D4215E2001F48A1 /* WireViewsDebugUI in Frameworks */ = {isa = PBXBuildFile; productRef = 76ACF8A12D4215E2001F48A1 /* WireViewsDebugUI */; };
-		76BFA65D2D89E6B8000F2D0A /* WireMessagingAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 76BFA65C2D89E6B8000F2D0A /* WireMessagingAPI */; };
 		76D15E712CEFAE8A0059215D /* WireIndividualToTeamMigrationUI in Frameworks */ = {isa = PBXBuildFile; productRef = 76D15E702CEFAE8A0059215D /* WireIndividualToTeamMigrationUI */; };
 		76ED41EC2E053E3200A286F4 /* WireNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = 76ED41EB2E053E3200A286F4 /* WireNetwork */; };
 		A96867FA26A5EB8400679D95 /* WireCommonComponents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */; };
@@ -935,7 +934,6 @@
 				01C774272D9EECE100A2FF07 /* WireAVS in Frameworks */,
 				CBE5BB862E2D4A9200AC731F /* WireMessagingAssembly in Frameworks */,
 				595C49692CA995E900F8F881 /* WireSettingsUI in Frameworks */,
-				76BFA65D2D89E6B8000F2D0A /* WireMessagingAPI in Frameworks */,
 				59BAEAFC2DBF483400B54AC4 /* WireBackup in Frameworks */,
 				EEE25B4729719CB30008B894 /* WireTransport.framework in Frameworks */,
 				59703B282DD4A42000B45773 /* ZIPFoundation in Frameworks */,
@@ -1367,7 +1365,6 @@
 				01D2B7A42D64A9190030D28D /* WireCoreCrypto */,
 				E40050752D71A80100B7962B /* WireMessagingUI */,
 				01C774262D9EECE100A2FF07 /* WireAVS */,
-				76BFA65C2D89E6B8000F2D0A /* WireMessagingAPI */,
 				59BAEAFB2DBF483400B54AC4 /* WireBackup */,
 				16EE08AD2D92E861001B372C /* WireCoreCryptoUniffi */,
 				CB1428442DCB8A820092E7AE /* WireCellsUI */,
@@ -2920,10 +2917,6 @@
 		76ACF8A12D4215E2001F48A1 /* WireViewsDebugUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireViewsDebugUI;
-		};
-		76BFA65C2D89E6B8000F2D0A /* WireMessagingAPI */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = WireMessagingAPI;
 		};
 		76D15E702CEFAE8A0059215D /* WireIndividualToTeamMigrationUI */ = {
 			isa = XCSwiftPackageProductDependency;

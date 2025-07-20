@@ -22,7 +22,7 @@ import UIKit
 import WireTestingPackage
 import XCTest
 
-import WireMessagingAPI
+import WireMessagingDomain
 import WireMessagingUI
 @testable import WireMessagingImplementationSupport
 

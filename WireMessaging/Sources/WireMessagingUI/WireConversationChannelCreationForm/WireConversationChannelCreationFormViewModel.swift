@@ -17,7 +17,7 @@
 //
 
 public import SwiftUI
-public import WireMessagingAPI
+public import WireMessagingDomain
 
 public final class WireConversationChannelCreationFormViewModel: ObservableObject {
 

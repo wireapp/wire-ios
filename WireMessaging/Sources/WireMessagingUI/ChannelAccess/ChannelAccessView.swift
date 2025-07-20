@@ -18,7 +18,7 @@
 
 package import SwiftUI
 import WireDesign
-import WireMessagingAPI
+import WireMessagingDomain
 import WireMessagingImplementation
 import WireMessagingImplementationSupport
 

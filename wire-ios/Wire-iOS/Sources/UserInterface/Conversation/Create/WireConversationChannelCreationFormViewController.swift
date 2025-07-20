@@ -20,7 +20,7 @@ import SwiftUI
 import UIKit
 import WireDomain
 import WireLogging
-import WireMessagingAPI
+import WireMessagingDomain
 import WireMessagingUI
 import WireNetwork
 import WireReusableUIComponents

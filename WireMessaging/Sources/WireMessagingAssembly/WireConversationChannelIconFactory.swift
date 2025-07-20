@@ -17,7 +17,7 @@
 //
 
 public import SwiftUI
-import WireMessagingAPI
+import WireMessagingDomain
 import WireMessagingImplementation
 import WireMessagingUI
 

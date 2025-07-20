@@ -20,7 +20,7 @@ import Combine
 package import SwiftUI
 import UIKit
 import WireDesign
-import WireMessagingAPI
+import WireMessagingDomain
 import WireMessagingImplementation
 import WireMessagingImplementationSupport
 import WireReusableUIComponents

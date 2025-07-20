@@ -18,7 +18,7 @@
 
 public import SwiftUI
 public import WireMessagingImplementation
-public import WireMessagingAPI
+public import WireMessagingDomain
 import WireMessagingUI
 
 public class ChannelViewFactory {

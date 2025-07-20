@@ -19,7 +19,7 @@
 package import SwiftUI
 import WireDesign
 import WireFoundation
-package import WireMessagingAPI
+package import WireMessagingDomain
 import WireMessagingResources
 
 package struct WireConversationTypePicker: View {

@@ -21,7 +21,7 @@ import UIKit
 import WireDesign
 import WireLogging
 import WireMainNavigationUI
-import WireMessagingAPI
+import WireMessagingDomain
 import WireMessagingAssembly
 import WireSyncEngine
 

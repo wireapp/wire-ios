@@ -17,7 +17,7 @@
 //
 
 import Foundation
-public import WireMessagingAPI
+public import WireMessagingDomain
 
 @MainActor
 public protocol ChannelAccessUseCaseProtocol {
@@ -30,7 +30,7 @@ public protocol ChannelAccessUseCaseProtocol {
 public protocol ChannelAccessRepositoryProtocol {
     func updateParticipantPermission(
         to permission: ChannelAccessLevelPermission
-    ) async throws -> WireMessagingAPI.ChannelAccessLevelPermission
+    ) async throws -> WireMessagingDomain.ChannelAccessLevelPermission
 }
 
 public enum ChannelAccessError: Error {

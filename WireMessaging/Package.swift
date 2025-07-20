@@ -9,7 +9,7 @@ let package = Package(
     defaultLocalization: "en",
     platforms: [.iOS("16.4"), .macOS(.v12)],
     products: [
-        .library(name: "WireMessagingAPI", targets: ["WireMessagingAPI"]),
+        .library(name: "WireMessagingDomain", targets: ["WireMessagingDomain"]),
         .library(name: "WireMessagingAssembly", targets: ["WireMessagingAssembly"]),
         .library(name: "WireMessagingUI", targets: ["WireMessagingUI"])
     ],
@@ -20,12 +20,12 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "WireMessagingAPI"
+            name: "WireMessagingDomain"
         ),
         .target(
             name: "WireMessagingAssembly",
             dependencies: [
-                "WireMessagingAPI",
+                "WireMessagingDomain",
                 "WireMessagingImplementation",
                 "WireMessagingUI"
             ]
@@ -33,7 +33,7 @@ let package = Package(
         .target(
             name: "WireMessagingImplementation",
             dependencies: [
-                "WireMessagingAPI",
+                "WireMessagingDomain",
                 "WireMessagingResources",
                 "WireFoundation"
             ]
@@ -44,7 +44,7 @@ let package = Package(
         .target(
             name: "WireMessagingUI",
             dependencies: [
-                "WireMessagingAPI",
+                "WireMessagingDomain",
                 "WireMessagingImplementation",
                 "WireMessagingImplementationSupport",
                 "WireMessagingResources",
@@ -59,7 +59,7 @@ let package = Package(
             name: "WireMessagingImplementationSupport",
             dependencies: [
                 "WireMessagingImplementation",
-                "WireMessagingAPI"
+                "WireMessagingDomain"
             ],
             plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
         ),
