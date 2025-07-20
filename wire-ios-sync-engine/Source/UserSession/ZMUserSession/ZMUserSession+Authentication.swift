@@ -69,16 +69,18 @@ extension ZMUserSession {
 
     func close(deleteCookie: Bool, completion: @escaping () -> Void) {
         // Clear all notifications associated with the account from the notification center
-        syncManagedObjectContext.performGroupedBlock {
-            self.localNotificationDispatcher?.cancelAllNotifications()
+        
+        syncManagedObjectContext.performAndWait { [weak self] in
+            self?.syncManagedObjectContext.disableSaves()
+            self?.localNotificationDispatcher?.cancelAllNotifications()
         }
 
         if deleteCookie {
             deleteUserKeychainItems()
         }
 
-        syncManagedObjectContext.perform {
-            self.tearDown()
+        syncManagedObjectContext.performAndWait { [weak self] in
+            self?.tearDown()
         }
 
         completion()
