@@ -10,7 +10,7 @@ let package = Package(
     platforms: [.iOS("16.4"), .macOS(.v12)],
     products: [
         .library(name: "WireMessagingAPI", targets: ["WireMessagingAPI"]),
-        .library(name: "WireMessagingBindings", targets: ["WireMessagingBindings"]),
+        .library(name: "WireMessagingAssembly", targets: ["WireMessagingAssembly"]),
         .library(name: "WireMessagingUI", targets: ["WireMessagingUI"])
     ],
     dependencies: [
@@ -23,7 +23,7 @@ let package = Package(
             name: "WireMessagingAPI"
         ),
         .target(
-            name: "WireMessagingBindings",
+            name: "WireMessagingAssembly",
             dependencies: [
                 "WireMessagingAPI",
                 "WireMessagingImplementation",
@@ -66,7 +66,7 @@ let package = Package(
         .testTarget(
             name: "WireMessagingUITests",
             dependencies: [
-                "WireMessagingBindings",
+                "WireMessagingAssembly",
                 "WireMessagingUI",
                 "WireMessagingImplementationSupport",
                 .product(name: "WireDesign", package: "WireUI"),

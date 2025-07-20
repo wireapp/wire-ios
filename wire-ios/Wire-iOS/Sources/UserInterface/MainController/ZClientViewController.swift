@@ -25,7 +25,7 @@ import WireDesign
 import WireFoundation
 import WireLogging
 import WireMainNavigationUI
-import WireMessagingBindings
+import WireMessagingAssembly
 import WireSidebarUI
 import WireSyncEngine
 

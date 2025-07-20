@@ -22,7 +22,7 @@ import WireDesign
 import WireLogging
 import WireMainNavigationUI
 import WireMessagingAPI
-import WireMessagingBindings
+import WireMessagingAssembly
 import WireSyncEngine
 
 final class GroupDetailsViewController: UIViewController, ZMConversationObserver, GroupDetailsFooterViewDelegate {

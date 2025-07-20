@@ -29,9 +29,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireMessagingBindings"
-               BuildableName = "WireMessagingBindings"
-               BlueprintName = "WireMessagingBindings"
+               BlueprintIdentifier = "WireMessagingAssembly"
+               BuildableName = "WireMessagingAssembly"
+               BlueprintName = "WireMessagingAssembly"
                ReferencedContainer = "container:WireMessaging">
             </BuildableReference>
          </BuildActionEntry>

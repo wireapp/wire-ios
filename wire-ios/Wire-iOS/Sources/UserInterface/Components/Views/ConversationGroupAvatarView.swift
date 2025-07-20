@@ -17,7 +17,7 @@
 //
 
 import SwiftUI
-import WireMessagingBindings
+import WireMessagingAssembly
 import WireSyncEngine
 
 typealias ConversationGroupAvatarViewConversation
