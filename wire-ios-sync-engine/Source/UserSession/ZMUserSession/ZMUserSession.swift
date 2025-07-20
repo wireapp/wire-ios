@@ -655,7 +655,9 @@ public final class ZMUserSession: NSObject {
         operationLoop = nil
         transportSession.tearDown()
         notificationDispatcher.tearDown()
-        callCenter?.tearDown()
+        managedObjectContext.perform { [weak self] in
+            self?.callCenter?.tearDown()
+        }
         coreDataStack.close()
         contextStorage.clear()
 
