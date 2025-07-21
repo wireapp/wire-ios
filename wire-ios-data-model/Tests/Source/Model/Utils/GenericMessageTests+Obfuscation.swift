@@ -17,6 +17,8 @@
 //
 
 import Foundation
+import GenericMessageProtocol
+
 @testable import WireDataModel
 
 class GenericMessageTests_Obfuscation: ZMBaseManagedObjectTest {

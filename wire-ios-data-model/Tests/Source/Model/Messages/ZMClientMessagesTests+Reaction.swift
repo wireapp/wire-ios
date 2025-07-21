@@ -17,6 +17,7 @@
 //
 
 import WireTesting
+import GenericMessageProtocol
 
 class ZMClientMessageTests_Reaction: BaseZMClientMessageTests {}
 

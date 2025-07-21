@@ -17,6 +17,8 @@
 //
 
 import XCTest
+import GenericMessageProtocol
+
 @testable import WireDataModel
 
 final class ZMConversationTests_Timestamps: ZMConversationTestsBase {

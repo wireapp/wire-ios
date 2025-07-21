@@ -17,6 +17,8 @@
 //
 
 import XCTest
+import GenericMessageProtocol
+
 @testable import WireDataModel
 
 // MARK: - Sending

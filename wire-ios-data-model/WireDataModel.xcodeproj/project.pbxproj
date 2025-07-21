@@ -300,12 +300,15 @@
 		591F8A022B8CB4DE00D562A6 /* IsSelfUserE2EICertifiedUseCaseProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591F8A012B8CB4DE00D562A6 /* IsSelfUserE2EICertifiedUseCaseProtocol.swift */; };
 		591F8A042B8CB4EF00D562A6 /* IsSelfUserE2EICertifiedUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591F8A032B8CB4EF00D562A6 /* IsSelfUserE2EICertifiedUseCase.swift */; };
 		591F8A072B8CB82400D562A6 /* IsSelfUserE2EICertifiedUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591F8A052B8CB81400D562A6 /* IsSelfUserE2EICertifiedUseCaseTests.swift */; };
+		59506A882E2E61BD0051B07A /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = 59506A872E2E61BD0051B07A /* SwiftProtobuf */; };
 		59537CDB2CFF8F2B00920B59 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59537CDA2CFF8F2B00920B59 /* WireLogging */; };
 		5966D82E2BD6A33F00305BBC /* UserPropertyValidating.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D82D2BD6A33F00305BBC /* UserPropertyValidating.swift */; };
 		5966D8302BD6AA4100305BBC /* UserPropertyNormalization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D82F2BD6AA4100305BBC /* UserPropertyNormalization.swift */; };
 		5966D8322BD6AA8200305BBC /* UserPropertyNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D8312BD6AA8200305BBC /* UserPropertyNormalizer.swift */; };
 		5966D8342BD6ADCA00305BBC /* UserPropertyNormalizerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D8332BD6ADCA00305BBC /* UserPropertyNormalizerTests.swift */; };
 		5966D8362BD6AF1700305BBC /* UserPropertyNormalizationResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D8352BD6AF1700305BBC /* UserPropertyNormalizationResult.swift */; };
+		5978BFD12E2E60A4004778CC /* GenericMessageProtocol in Frameworks */ = {isa = PBXBuildFile; productRef = 5978BFD02E2E60A4004778CC /* GenericMessageProtocol */; };
+		5978BFD42E2E6132004778CC /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = 5978BFD32E2E6132004778CC /* SwiftProtobuf */; };
 		5979E8482D478DD20051080F /* store2-121-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 5979E8472D478DD20051080F /* store2-121-0.wiredatabase */; };
 		597A3BB42B6416CA0020E337 /* Availability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597A3BB32B6416CA0020E337 /* Availability.swift */; };
 		597A3BB72B6418170020E337 /* Availability+WireProtos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597A3BB62B6418170020E337 /* Availability+WireProtos.swift */; };
@@ -1912,6 +1915,7 @@
 				591B6E4C2C8B09C6009F8A7B /* CoreData.framework in Frameworks */,
 				76E000BC2DAFED3A00853C45 /* WireCellsAPI in Frameworks */,
 				EE8DA96D2954A03800F58B79 /* WireLinkPreview.framework in Frameworks */,
+				59506A882E2E61BD0051B07A /* SwiftProtobuf in Frameworks */,
 				E6707E902BBD683F00469D57 /* PINCache in Frameworks */,
 				59B48C5C2C89CBBD00EA7999 /* WireFoundation in Frameworks */,
 				EE8DA9702954A03E00F58B79 /* WireImages.framework in Frameworks */,
@@ -1927,11 +1931,13 @@
 			files = (
 				59D1C30E2B1DEC300016F6B2 /* WireDataModelSupport.framework in Frameworks */,
 				CB7979182C747652006FBA58 /* WireTransportSupport.framework in Frameworks */,
+				5978BFD12E2E60A4004778CC /* GenericMessageProtocol in Frameworks */,
 				F9C9A5071CAD5DF10039E10C /* WireDataModel.framework in Frameworks */,
 				59D398D02D552573001C9C5F /* WireTestingPackage in Frameworks */,
 				59FFAD9D2C822977000C8085 /* WireTesting.framework in Frameworks */,
 				5902AC752DA92365000A8F7F /* WireFoundationSupport in Frameworks */,
 				591B6E4E2C8B09CA009F8A7B /* OCMock.xcframework in Frameworks */,
+				5978BFD42E2E6132004778CC /* SwiftProtobuf in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3869,6 +3875,7 @@
 				76E000BB2DAFED3A00853C45 /* WireCellsAPI */,
 				34DC44B42E01C210004D5DD5 /* WireNetwork */,
 				590900932E2E5BD40035D9D7 /* GenericMessageProtocol */,
+				59506A872E2E61BD0051B07A /* SwiftProtobuf */,
 			);
 			productName = WireDataModel;
 			productReference = F9C9A4FC1CAD5DF10039E10C /* WireDataModel.framework */;
@@ -3959,6 +3966,7 @@
 			packageReferences = (
 				E6707E8E2BBD683F00469D57 /* XCRemoteSwiftPackageReference "PINCache" */,
 				590900922E2E5BD40035D9D7 /* XCRemoteSwiftPackageReference "generic-message-proto" */,
+				5978BFD22E2E6132004778CC /* XCRemoteSwiftPackageReference "swift-protobuf" */,
 			);
 			productRefGroup = F9C9A4FD1CAD5DF10039E10C /* Products */;
 			projectDirPath = "";
@@ -5231,6 +5239,14 @@
 				minimumVersion = 1.53.2;
 			};
 		};
+		5978BFD22E2E6132004778CC /* XCRemoteSwiftPackageReference "swift-protobuf" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-protobuf.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.30.0;
+			};
+		};
 		E6707E8E2BBD683F00469D57 /* XCRemoteSwiftPackageReference "PINCache" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pinterest/PINCache";
@@ -5263,9 +5279,24 @@
 			package = 590900922E2E5BD40035D9D7 /* XCRemoteSwiftPackageReference "generic-message-proto" */;
 			productName = GenericMessageProtocol;
 		};
+		59506A872E2E61BD0051B07A /* SwiftProtobuf */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5978BFD22E2E6132004778CC /* XCRemoteSwiftPackageReference "swift-protobuf" */;
+			productName = SwiftProtobuf;
+		};
 		59537CDA2CFF8F2B00920B59 /* WireLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireLogging;
+		};
+		5978BFD02E2E60A4004778CC /* GenericMessageProtocol */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 590900922E2E5BD40035D9D7 /* XCRemoteSwiftPackageReference "generic-message-proto" */;
+			productName = GenericMessageProtocol;
+		};
+		5978BFD32E2E6132004778CC /* SwiftProtobuf */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5978BFD22E2E6132004778CC /* XCRemoteSwiftPackageReference "swift-protobuf" */;
+			productName = SwiftProtobuf;
 		};
 		59B48C5B2C89CBBD00EA7999 /* WireFoundation */ = {
 			isa = XCSwiftPackageProductDependency;

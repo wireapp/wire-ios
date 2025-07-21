@@ -19,6 +19,8 @@
 import WireLinkPreview
 import WireUtilities
 import XCTest
+import GenericMessageProtocol
+
 @testable import WireDataModel
 
 class ZMOTRMessage_SecurityDegradationTests: BaseZMClientMessageTests {

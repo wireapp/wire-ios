@@ -17,6 +17,8 @@
 //
 
 import Foundation
+import GenericMessageProtocol
+
 @testable import WireDataModel
 @testable import WireDataModelSupport
 

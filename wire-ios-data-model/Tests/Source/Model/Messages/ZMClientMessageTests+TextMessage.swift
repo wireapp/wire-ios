@@ -17,6 +17,7 @@
 //
 
 import WireLinkPreview
+import GenericMessageProtocol
 import XCTest
 
 @testable import WireDataModel

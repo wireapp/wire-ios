@@ -19,6 +19,7 @@
 import Foundation
 import WireCryptobox
 import WireLinkPreview
+import GenericMessageProtocol
 
 @testable import WireDataModel
 

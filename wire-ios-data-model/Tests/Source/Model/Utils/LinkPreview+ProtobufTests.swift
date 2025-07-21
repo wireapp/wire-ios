@@ -18,6 +18,7 @@
 
 import WireDataModel
 import WireLinkPreview
+import GenericMessageProtocol
 import XCTest
 
 class LinkPreview_ProtobufTests: XCTestCase {

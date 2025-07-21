@@ -11,9 +11,6 @@
       location = "group:Cartfile">
    </FileRef>
    <FileRef
-      location = "group:Cartfile.private">
-   </FileRef>
-   <FileRef
       location = "group:Cartfile.resolved">
    </FileRef>
    <Group

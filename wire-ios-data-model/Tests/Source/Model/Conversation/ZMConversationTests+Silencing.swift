@@ -17,6 +17,8 @@
 //
 
 import XCTest
+import GenericMessageProtocol
+
 @testable import WireDataModel
 
 class ZMConversationTests_Silencing: ZMConversationTestsBase {
@@ -36,7 +38,7 @@ class ZMConversationTests_Silencing: ZMConversationTestsBase {
         XCTAssertTrue(conversation.modifiedKeys!.contains(ZMConversationSilencedChangedTimeStampKey))
     }
 
-    // We still want to synchronize silenced changes even if nothing has happend in between
+    // We still want to synchronize silenced changes even if nothing has happened in between
     func testThatSilencingUpdatesPropertiesWhenLastServerTimestampHasNotChanged() {
         // given
         let timestamp = Date()
@@ -92,7 +94,7 @@ class ZMConversationTests_Silencing: ZMConversationTestsBase {
     func event(
         for message: String,
         in conversation: ZMConversation,
-        mentions: [Mention] = [],
+        mentions: [WireDataModel.Mention] = [],
         replyingTo quotedMessage: ZMClientMessage? = nil
     ) -> ZMUpdateEvent {
         let text = Text(content: message, mentions: mentions, linkPreviews: [], replyingTo: quotedMessage)

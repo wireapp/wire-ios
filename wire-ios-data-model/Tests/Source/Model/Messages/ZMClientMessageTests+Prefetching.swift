@@ -17,6 +17,7 @@
 //
 
 import XCTest
+import GenericMessageProtocol
 
 class ZMClientMessageTests_Prefetching: BaseZMClientMessageTests {
 

@@ -17,11 +17,13 @@
 //
 
 import XCTest
+import GenericMessageProtocol
+
 @testable import WireDataModel
 
 class ZMClientMessageTests_Mentions: BaseZMClientMessageTests {
 
-    func createMessage(text: String, mentions: [Mention]) -> ZMClientMessage {
+    func createMessage(text: String, mentions: [WireDataModel.Mention]) -> ZMClientMessage {
         let text = Text(content: text, mentions: mentions, linkPreviews: [])
         let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
 
