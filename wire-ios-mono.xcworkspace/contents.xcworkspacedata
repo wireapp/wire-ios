@@ -231,9 +231,6 @@
       location = "group:WireNetwork">
    </FileRef>
    <FileRef
-      location = "group:WireProtos">
-   </FileRef>
-   <FileRef
       location = "group:WirePlugins">
    </FileRef>
 </Workspace>
