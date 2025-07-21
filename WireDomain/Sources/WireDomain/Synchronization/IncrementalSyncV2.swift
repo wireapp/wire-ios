@@ -23,33 +23,6 @@ import WireDataModel
 import WireLogging
 import WireNetwork
 
-
-public struct PushChannelState {
-    let fileContext: SafeFileContext
-    init(sharedContainerURL: URL, clientID: String) {
-        let url = sharedContainerURL.appendingPathComponent("client_id_\(clientID)")
-        if !FileManager.default.fileExists(atPath: url.path) {
-            let created = FileManager.default.createFile(atPath: url.path, contents: Data())
-            if !created {
-                fatal("could not create file")
-            }
-        }
-        fileContext = SafeFileContext(fileURL: url)
-    }
-    
-    func isOpen() -> Bool {
-        return fileContext.isLocked()
-    }
-    
-    func markAsOpen() {
-        fileContext.acquireDirectoryLock()
-    }
-    
-    func markAsClosed() {
-        fileContext.releaseDirectoryLock()
-    }
-}
-
 /// IncrementalSync using new backend API consumable notifications sync system
 public struct IncrementalSyncV2: LiveSyncProtocol {
 
@@ -71,7 +44,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     private let logger = WireLogger.sync
     private let journal: Journal
     private let syncMarkerGenerator: SyncMarkerGenerator
-    private let pushChannelState: PushChannelState
+    private let pushChannelState: PushChannelStateProtocol
     
     weak var delegate: (any LiveSyncDelegate)?
 
@@ -87,7 +60,9 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         syncStateSubject: CurrentValueSubject<SyncState, Never>,
         coreCryptoProvider: any CoreCryptoProviderProtocol,
         journal: Journal,
-        pushChannelState: PushChannelState,
+        
+        
+        pushChannelState: PushChannelStateProtocol,
         syncMarkerGenerator: @escaping SyncMarkerGenerator = { UUID().uuidString }
     ) {
         self.selfClientID = selfClientID
