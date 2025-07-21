@@ -105,6 +105,16 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
     }
 
+    public func storeMLSConversationPendingJoin(
+        newMLSGroupID: MLSGroupID,
+        conversation: ZMConversation
+    ) async {
+        await context.perform {
+            conversation.mlsStatus = .pendingJoin
+            conversation.mlsGroupID = newMLSGroupID
+        }
+    }
+
     public func updateOrCreateMLSGroup(
         groupID: MLSGroupID
     ) async {
