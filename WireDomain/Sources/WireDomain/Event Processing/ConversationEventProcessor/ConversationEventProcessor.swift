@@ -88,15 +88,12 @@ struct ConversationEventProcessor: ConversationEventProcessorProtocol {
 
         case let .permissionUpdate(event):
             await addPermissionEventProcessor.processEvent(event)
-<<<<<<< HEAD
-            // TODO: [WPB-18464] - process new event when backend ready, processor will properly map the duration to a localized string and pass it to the messageLocalStore.addSystemMessage(..)
+        // TODO: [WPB-18464] - process new event when backend ready, processor will properly map the duration to a localized string and pass it to the messageLocalStore.addSystemMessage(..)
 //        case let .channelHistoryDepthModified(event):
 //            await channelHistoryDepthModifiedProcessor.processEvent(event)
-=======
 
         case let .mlsReset(event):
             try await mlsResetEventProcessor.processEvent(event)
->>>>>>> b3dd17426d (feat: Handle mls-reset event - WPB-18664 (#3331))
         }
     }
 
