@@ -17,12 +17,13 @@
 //
 
 import Combine
+import GenericMessageProtocol
 import WireDataModelSupport
 import WireDomainSupport
 import WireNetwork
 import WireNetworkSupport
-import GenericMessageProtocol
 import XCTest
+
 @testable import WireDomain
 
 class PullPendingUpdateEventsSyncV2Tests: XCTestCase {

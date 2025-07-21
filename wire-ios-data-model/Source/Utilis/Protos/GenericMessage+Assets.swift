@@ -113,7 +113,12 @@ public extension GenericMessageProtocol.Asset {
 
 public extension GenericMessageProtocol.Asset.Original {
 
-    init(withSize size: UInt64, mimeType: String, name: String?, imageMetaData: GenericMessageProtocol.Asset.ImageMetaData? = nil) {
+    init(
+        withSize size: UInt64,
+        mimeType: String,
+        name: String?,
+        imageMetaData: GenericMessageProtocol.Asset.ImageMetaData? = nil
+    ) {
         self = GenericMessageProtocol.Asset.Original.with {
             $0.size = size
             $0.mimeType = mimeType

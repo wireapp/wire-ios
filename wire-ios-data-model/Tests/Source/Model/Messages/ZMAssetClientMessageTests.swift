@@ -93,7 +93,10 @@ class BaseZMAssetClientMessageTests: BaseZMClientMessageTests {
         let nonce = UUID.create()
         let message = try! conversation.appendImage(from: data, nonce: nonce) as! ZMAssetClientMessage
 
-        let uploaded = GenericMessageProtocol.Asset(withUploadedOTRKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key())
+        let uploaded = GenericMessageProtocol.Asset(
+            withUploadedOTRKey: .randomEncryptionKey(),
+            sha256: .zmRandomSHA256Key()
+        )
 
         do {
             try message.setUnderlyingMessage(GenericMessage(content: uploaded, nonce: nonce))
@@ -399,7 +402,10 @@ extension ZMAssetClientMessageTests {
         let updateEvent = createUpdateEvent(nonce, conversationID: UUID.create(), genericMessage: message)
         sut.update(with: updateEvent, initialUpdate: true)
 
-        let canceledMessage = GenericMessage(content: GenericMessageProtocol.Asset(withNotUploaded: .cancelled), nonce: nonce)
+        let canceledMessage = GenericMessage(
+            content: GenericMessageProtocol.Asset(withNotUploaded: .cancelled),
+            nonce: nonce
+        )
         let updateEventForCanceled = createUpdateEvent(
             nonce,
             conversationID: UUID.create(),
@@ -524,7 +530,11 @@ extension ZMAssetClientMessageTests {
             sut.sender = ZMUser.selfUser(in: syncMOC)
             sut.visibleInConversation = syncConversation
             let original = GenericMessage(
-                content: GenericMessageProtocol.Asset(imageSize: CGSize(width: 10, height: 10), mimeType: "text/plain", size: 256),
+                content: GenericMessageProtocol.Asset(
+                    imageSize: CGSize(width: 10, height: 10),
+                    mimeType: "text/plain",
+                    size: 256
+                ),
                 nonce: sut.nonce!
             )
 
@@ -674,7 +684,10 @@ extension ZMAssetClientMessageTests {
             // given
             let previewSize: UInt64 = 46
             let previewMimeType = "image/jpeg"
-            let remoteData = GenericMessageProtocol.Asset.RemoteData(withOTRKey: .zmRandomSHA256Key(), sha256: .zmRandomSHA256Key())
+            let remoteData = GenericMessageProtocol.Asset.RemoteData(
+                withOTRKey: .zmRandomSHA256Key(),
+                sha256: .zmRandomSHA256Key()
+            )
             let imageMetadata = GenericMessageProtocol.Asset.ImageMetaData(width: 4235, height: 324)
             let sut = appendFileMessage(to: syncConversation)!
 
@@ -726,7 +739,10 @@ extension ZMAssetClientMessageTests {
         // given
         let previewSize: UInt64 = 46
         let previewMimeType = "image/jpeg"
-        let remoteData = GenericMessageProtocol.Asset.RemoteData(withOTRKey: .zmRandomSHA256Key(), sha256: .zmRandomSHA256Key())
+        let remoteData = GenericMessageProtocol.Asset.RemoteData(
+            withOTRKey: .zmRandomSHA256Key(),
+            sha256: .zmRandomSHA256Key()
+        )
         let imageMetadata = GenericMessageProtocol.Asset.ImageMetaData(width: 4235, height: 324)
 
         let uuid = UUID.create()
@@ -1359,7 +1375,12 @@ extension ZMAssetClientMessageTests {
         mimeType: String = "image/jpeg",
         name: String? = nil
     ) -> ZMUpdateEvent {
-        let original = GenericMessageProtocol.Asset.Original(withSize: 128, mimeType: mimeType, name: name, imageMetaData: image)
+        let original = GenericMessageProtocol.Asset.Original(
+            withSize: 128,
+            mimeType: mimeType,
+            name: name,
+            imageMetaData: image
+        )
         let asset = GenericMessageProtocol.Asset(original: original, preview: preview)
         return createUpdateEvent(
             nonce,
@@ -1399,7 +1420,12 @@ extension ZMAssetClientMessageTests {
         otr: Data = .randomEncryptionKey(),
         sha: Data = .randomEncryptionKey()
     ) -> (GenericMessage, PreviewMeta) {
-        let remoteData = GenericMessageProtocol.Asset.RemoteData(withOTRKey: otr, sha256: sha, assetId: assetId, assetToken: token)
+        let remoteData = GenericMessageProtocol.Asset.RemoteData(
+            withOTRKey: otr,
+            sha256: sha,
+            assetId: assetId,
+            assetToken: token
+        )
         let preview = GenericMessageProtocol.Asset.Preview(
             size: 512,
             mimeType: "image/jpeg",

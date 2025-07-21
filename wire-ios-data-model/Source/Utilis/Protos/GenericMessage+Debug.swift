@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import SwiftProtobuf
 import GenericMessageProtocol
+import SwiftProtobuf
 
 private let redactedValue = "<redacted>"
 

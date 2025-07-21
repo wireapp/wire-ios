@@ -17,10 +17,10 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireCoreCrypto
 import WireCryptobox
 import WireDataModel
-import GenericMessageProtocol
 import XCTest
 
 @testable import WireDataModelSupport

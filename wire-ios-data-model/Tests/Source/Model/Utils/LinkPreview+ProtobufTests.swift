@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireDataModel
 import WireLinkPreview
-import GenericMessageProtocol
 import XCTest
 
 class LinkPreview_ProtobufTests: XCTestCase {

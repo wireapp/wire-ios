@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireTesting
 import GenericMessageProtocol
+import WireTesting
 import XCTest
 
 @testable import WireDataModel
@@ -180,7 +180,12 @@ class ProtobufUtilitiesTests: BaseZMClientMessageTests {
         let previewAsset = GenericMessageProtocol.Asset.Preview(
             size: 128,
             mimeType: "image/jpg",
-            remoteData: GenericMessageProtocol.Asset.RemoteData(withOTRKey: otr, sha256: sha, assetId: nil, assetToken: nil),
+            remoteData: GenericMessageProtocol.Asset.RemoteData(
+                withOTRKey: otr,
+                sha256: sha,
+                assetId: nil,
+                assetToken: nil
+            ),
             imageMetadata: GenericMessageProtocol.Asset.ImageMetaData(width: 123, height: 420)
         )
 
@@ -211,7 +216,12 @@ class ProtobufUtilitiesTests: BaseZMClientMessageTests {
         let previewAsset = GenericMessageProtocol.Asset.Preview(
             size: 128,
             mimeType: "image/jpg",
-            remoteData: GenericMessageProtocol.Asset.RemoteData(withOTRKey: otr, sha256: sha, assetId: nil, assetToken: nil),
+            remoteData: GenericMessageProtocol.Asset.RemoteData(
+                withOTRKey: otr,
+                sha256: sha,
+                assetId: nil,
+                assetToken: nil
+            ),
             imageMetadata: GenericMessageProtocol.Asset.ImageMetaData(width: 123, height: 420)
         )
 
@@ -256,7 +266,11 @@ extension ProtobufUtilitiesTests {
     func testThatItUpdatesAGenericMessageWithAssetUploadedWithAssetIdAndTokenAndDomain_SwiftProtobufAPI() {
         // given
         let (assetId, token, domain) = ("id", "token", "domain")
-        let asset = GenericMessageProtocol.Asset(imageSize: CGSize(width: 42, height: 12), mimeType: "image/jpeg", size: 123)
+        let asset = GenericMessageProtocol.Asset(
+            imageSize: CGSize(width: 42, height: 12),
+            mimeType: "image/jpeg",
+            size: 123
+        )
         var sut = GenericMessage(content: asset, nonce: UUID.create())
 
         // when
@@ -273,7 +287,11 @@ extension ProtobufUtilitiesTests {
     func testThatItUpdatesAGenericMessageWithAssetUploadedWithAssetIdAndTokenAndDomain_Ephemeral_SwiftProtobufAP() {
         // given
         let (assetId, token, domain) = ("id", "token", "domain")
-        let asset = GenericMessageProtocol.Asset(imageSize: CGSize(width: 42, height: 12), mimeType: "image/jpeg", size: 123)
+        let asset = GenericMessageProtocol.Asset(
+            imageSize: CGSize(width: 42, height: 12),
+            mimeType: "image/jpeg",
+            size: 123
+        )
         var sut = GenericMessage(content: asset, nonce: UUID.create(), expiresAfter: .tenSeconds)
 
         // when

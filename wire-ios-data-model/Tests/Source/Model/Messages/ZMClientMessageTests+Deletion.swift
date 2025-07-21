@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import GenericMessageProtocol
+import XCTest
 
 @testable import WireDataModel
 
@@ -117,7 +117,10 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
 
         // expect
         let assetId = UUID.create().transportString()
-        let asset1 = GenericMessageProtocol.Asset(withUploadedOTRKey: .zmRandomSHA256Key(), sha256: .zmRandomSHA256Key())
+        let asset1 = GenericMessageProtocol.Asset(
+            withUploadedOTRKey: .zmRandomSHA256Key(),
+            sha256: .zmRandomSHA256Key()
+        )
         var message = GenericMessage(content: asset1, nonce: sut.nonce!)
         message.updateUploaded(assetId: assetId, token: nil, domain: nil)
         let updateEvent1 = createUpdateEvent(sut.nonce!, conversationID: UUID.create(), genericMessage: message)

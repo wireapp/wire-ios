@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireTesting
 import GenericMessageProtocol
+import WireTesting
 
 @testable import WireDataModel
 
@@ -55,7 +55,10 @@ class GenericMessageTests_LegalHoldStatus: BaseZMClientMessageTests {
     func testThatItUpdatesLegalHoldStatusFlagForKnock() {
 
         // given
-        var genericMessage = GenericMessage(content: GenericMessageProtocol.Knock.with { $0.hotKnock = true }, nonce: UUID.create())
+        var genericMessage = GenericMessage(
+            content: GenericMessageProtocol.Knock.with { $0.hotKnock = true },
+            nonce: UUID.create()
+        )
 
         // when
         XCTAssertEqual(genericMessage.knock.legalHoldStatus, .unknown)
@@ -86,7 +89,11 @@ class GenericMessageTests_LegalHoldStatus: BaseZMClientMessageTests {
 
         // given
         var genericMessage = GenericMessage(
-            content: GenericMessageProtocol.Asset(imageSize: CGSize(width: 42, height: 12), mimeType: "image/jpeg", size: 123),
+            content: GenericMessageProtocol.Asset(
+                imageSize: CGSize(width: 42, height: 12),
+                mimeType: "image/jpeg",
+                size: 123
+            ),
             nonce: UUID.create()
         )
 
@@ -101,7 +108,11 @@ class GenericMessageTests_LegalHoldStatus: BaseZMClientMessageTests {
     func testThatItUpdatesLegalHoldStatusFlagForEphemeral() {
 
         // given
-        let asset = GenericMessageProtocol.Asset(imageSize: CGSize(width: 42, height: 12), mimeType: "image/jpeg", size: 123)
+        let asset = GenericMessageProtocol.Asset(
+            imageSize: CGSize(width: 42, height: 12),
+            mimeType: "image/jpeg",
+            size: 123
+        )
         var genericMessage = GenericMessage(content: asset, nonce: UUID.create(), expiresAfter: .tenSeconds)
 
         // when

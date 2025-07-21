@@ -17,9 +17,9 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireCryptobox
 import WireLinkPreview
-import GenericMessageProtocol
 
 @testable import WireDataModel
 
@@ -179,7 +179,10 @@ extension ZMClientMessageTests_Ephemeral {
             }
 
             let uploaded = GenericMessage(
-                content: GenericMessageProtocol.Asset(withUploadedOTRKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key()),
+                content: GenericMessageProtocol.Asset(
+                    withUploadedOTRKey: .randomEncryptionKey(),
+                    sha256: .zmRandomSHA256Key()
+                ),
                 nonce: message.nonce!,
                 expiresAfter: self.syncConversation.activeMessageDestructionTimeoutValue
             )

@@ -17,9 +17,9 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireBackup
 import WireDataModel
-import GenericMessageProtocol
 
 extension GenericMessage {
 

@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import GenericMessageProtocol
+import XCTest
 
 @testable import WireDataModel
 
@@ -74,7 +74,11 @@ final class SignatureStatusTests: ZMBaseManagedObjectTest {
     private func createAsset() -> GenericMessageProtocol.Asset {
         let (otrKey, sha) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
         let (assetId, token) = ("id", "token")
-        let original = GenericMessageProtocol.Asset.Original(withSize: 200, mimeType: "application/pdf", name: "PDF test")
+        let original = GenericMessageProtocol.Asset.Original(
+            withSize: 200,
+            mimeType: "application/pdf",
+            name: "PDF test"
+        )
 
         let remoteData = GenericMessageProtocol.Asset.RemoteData(
             withOTRKey: otrKey,

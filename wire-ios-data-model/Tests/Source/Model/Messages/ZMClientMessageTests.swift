@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import GenericMessageProtocol
+import XCTest
 
 @testable import WireDataModel
 
@@ -483,7 +483,10 @@ extension ClientMessageTests {
         conversation.remoteIdentifier = UUID.create()
 
         let existingMessage = ZMClientMessage(nonce: nonce, managedObjectContext: uiMOC)
-        let message = GenericMessage(content: GenericMessageProtocol.Knock.with { $0.hotKnock = true }, nonce: UUID.create())
+        let message = GenericMessage(
+            content: GenericMessageProtocol.Knock.with { $0.hotKnock = true },
+            nonce: UUID.create()
+        )
         try existingMessage.setUnderlyingMessage(message)
         existingMessage.visibleInConversation = conversation
 
