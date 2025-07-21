@@ -19,6 +19,12 @@
 import Foundation
 import WireNetwork
 
+struct Member {
+    let name: String
+    let email: String
+    let password: String
+}
+
 class UserManager {
     var createdUsers: [UserInfo]
     var networkStack: NetworkStack
@@ -138,45 +144,43 @@ class UserManager {
         return teamOwner
     }
 
-    func getInvitationIdToAddMemberInTeam(
-        email: String,
-        password: String,
-        teamID: UUID,
-        memberEmail: String,
-        memberName: String
-    ) async throws -> UUID {
-
+    func fetchAccessToken(email: String, password: String) async throws -> String {
         let (activationCode, activationKey) = try await authenticationAPI.getActivationCode(forEmail: email)
 
         try await authenticationAPI.activateUser(email: email, key: activationKey, code: activationCode)
 
-        let (_, AccessToken) = try await authenticationAPI.login(
+        let (_, accessToken) = try await authenticationAPI.login(
             email: email,
             password: password,
             verificationCode: nil,
             label: nil
         )
-        return try await teamsAPI.inviteMemberToTeam(
-            access_token: AccessToken.token,
-            teamID: teamID,
-            memberName: memberName,
-            memberEmail: memberEmail
-        )
+
+        return accessToken.token
     }
 
-    func getInvitationCodeToAddMemberInTeam(teamID: UUID, invitationID: UUID) async throws -> String {
+    func registerUsersAsTeamMember(accessToken: String, teamID: UUID, members: [Member]) async throws {
 
-        try await authenticationAPI.getInvitationCode(teamID: teamID, invitationID: invitationID)
-    }
+        for member in members {
+            let invitationID = try await teamsAPI.inviteMemberToTeam(
+                access_token: accessToken,
+                teamID: teamID,
+                memberName: member.name,
+                memberEmail: member.email
+            )
 
-    func registerUserAsTeamMember(teamMember: UserInfo, invitationCode: String) async throws {
+            let invitationCode = try await authenticationAPI.getInvitationCode(
+                teamID: teamID,
+                invitationID: invitationID
+            )
 
-        try await authenticationAPI.registerTeamMember(
-            email: teamMember.email,
-            password: teamMember.password,
-            name: teamMember.name,
-            invitationCode: invitationCode
-        )
+            try await authenticationAPI.registerTeamMember(
+                email: member.email,
+                password: member.password,
+                name: member.name,
+                invitationCode: invitationCode
+            )
+        }
     }
 }
 

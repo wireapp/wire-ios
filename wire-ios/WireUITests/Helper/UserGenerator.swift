@@ -22,11 +22,11 @@ enum UserGenerator {
 
     static func generateUniqueUserInfo() -> UserInfo {
         let password = generateRandomPassword()
-        let time = Int(NSDate().timeIntervalSince1970 * 1000)
-        let username = "smoketester\(time)"
+        let uniqueID = UUID().uuidString.replacingOccurrences(of: "-", with: "").prefix(14)
+        let username = "smoketester\(uniqueID)"
         let domain = "wire.engineering"
-        let name = "Smoke Tester \(time)"
-        let teamName = "Team-Smoke \(time)"
+        let name = "Smoke Tester \(uniqueID)"
+        let teamName = "Team-Smoke \(uniqueID)"
         return UserInfo(
             name: name,
             username: username,

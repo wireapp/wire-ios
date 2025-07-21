@@ -100,46 +100,44 @@ final class TeamManageTests: WireUITestCase {
     @MainActor
     func test_TeamOwner_GroupConversation() async throws {
 
+        let groupName = "Group \(UUID().uuidString.replacingOccurrences(of: "-", with: "").prefix(6))"
+        let messageFromOwner = "Hello from the owner!"
+
         let teamOwner = try await userManager.registerUserAsTeamOwner()
-        var teamMember1 = UserGenerator.generateUniqueUserInfo()
-        var teamMember2 = UserGenerator.generateUniqueUserInfo()
+        let teamMember1 = UserGenerator.generateUniqueUserInfo()
+        let teamMember2 = UserGenerator.generateUniqueUserInfo()
 
-        let invitationID1 = try await userManager
-            .getInvitationIdToAddMemberInTeam(
-                email: teamOwner.email,
-                password: teamOwner.password,
-                teamID: teamOwner.teamID!,
-                memberEmail: teamMember1.email,
-                memberName: teamMember1.name
-            )
+        let accessToken = try await userManager.fetchAccessToken(
+            email: teamOwner.email,
+            password: teamOwner.password
+        )
 
-        let invitationCodeFormember1 = try await userManager.getInvitationCodeToAddMemberInTeam(
+        let members = [
+            Member(name: teamMember1.name, email: teamMember1.email, password: teamMember1.password),
+            Member(name: teamMember2.name, email: teamMember2.email, password: teamMember2.password)
+        ]
+
+        try await userManager.registerUsersAsTeamMember(
+            accessToken: accessToken,
             teamID: teamOwner.teamID!,
-            invitationID: invitationID1
+            members: members
         )
 
-        let invitationID2 = try await userManager
-            .getInvitationIdToAddMemberInTeam(
-                email: teamOwner.email,
-                password: teamOwner.password,
-                teamID: teamOwner.teamID!,
-                memberEmail: teamMember2.email,
-                memberName: teamMember2.name
-            )
+        let welcomePage = try WelcomePage()
 
-        let invitationCodeFormember2 = try await userManager.getInvitationCodeToAddMemberInTeam(
-            teamID: teamOwner.teamID!,
-            invitationID: invitationID2
-        )
+        let loginPage = try welcomePage
+            .enterEmailOrSSO(teamOwner.email)
 
-        try await userManager.registerUserAsTeamMember(
-            teamMember: teamMember1,
-            invitationCode: invitationCodeFormember1
-        )
+        let conversationPage = try loginPage.enterPassword(teamOwner.password)
+            .acceptFirstTimeAlert()
+            .acceptPopupOnTeamMemberSetup()
+            .setUsername(teamOwner.username)
 
-        try await userManager.registerUserAsTeamMember(
-            teamMember: teamMember2,
-            invitationCode: invitationCodeFormember2
-        )
+        let groupConversationPage = try conversationPage.tapPlusButtonToCreateGroup()
+            .tapNewGroupButton()
+            .enterGroupName(groupName)
+            .tapMemberCells(withLabelPrefixes: [teamMember1.name, teamMember2.name])
+            .doneSelectingMembers()
+            .sendMessage(input: messageFromOwner)
     }
 }
