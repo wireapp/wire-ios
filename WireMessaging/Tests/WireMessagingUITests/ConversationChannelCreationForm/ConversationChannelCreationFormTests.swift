@@ -22,7 +22,7 @@ import XCTest
 
 import WireMessagingUI
 
-class WireConversationChannelCreationFormTests: XCTestCase {
+class ConversationChannelCreationFormTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
@@ -37,8 +37,8 @@ class WireConversationChannelCreationFormTests: XCTestCase {
 
     @MainActor
     func testColorSchemeVariantsEmptyState() {
-        let view = WireConversationChannelCreationForm(
-            viewModel: WireConversationChannelCreationFormViewModel(channelName: "") { _ in }
+        let view = ConversationChannelCreationForm(
+            viewModel: ConversationChannelCreationFormViewModel(channelName: "") { _ in }
         )
         .frame(width: 375, height: 667)
         .padding()
@@ -53,8 +53,8 @@ class WireConversationChannelCreationFormTests: XCTestCase {
 
     @MainActor
     func testDynamicTypeVariantsEmptyState() {
-        let view = WireConversationChannelCreationForm(
-            viewModel: WireConversationChannelCreationFormViewModel(channelName: "") { _ in }
+        let view = ConversationChannelCreationForm(
+            viewModel: ConversationChannelCreationFormViewModel(channelName: "") { _ in }
         )
         .frame(width: 375, height: 667)
         .padding()

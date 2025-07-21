@@ -19,13 +19,13 @@
 import XCTest
 @testable import WireMessagingUI
 
-final class WireConversationChannelCreationFormViewModelTests: XCTestCase {
+final class ConversationChannelCreationFormViewModelTests: XCTestCase {
 
     // MARK: - Update Channel Name with Empty String
 
     func testOnChannelNameUpdate_emptyValue() {
         // Given
-        let sut = WireConversationChannelCreationFormViewModel(channelName: "") { _ in }
+        let sut = ConversationChannelCreationFormViewModel(channelName: "") { _ in }
         let value = ""
 
         // When
@@ -39,10 +39,10 @@ final class WireConversationChannelCreationFormViewModelTests: XCTestCase {
 
     func testOnChannelNameUpdate_longString() {
         // Given
-        let sut = WireConversationChannelCreationFormViewModel(channelName: "") { _ in }
+        let sut = ConversationChannelCreationFormViewModel(channelName: "") { _ in }
         let value = String(
             repeating: "a",
-            count: WireConversationChannelCreationFormViewModel.Constants.channelNameMaxStringLength + 1
+            count: ConversationChannelCreationFormViewModel.Constants.channelNameMaxStringLength + 1
         )
 
         // When
@@ -56,10 +56,10 @@ final class WireConversationChannelCreationFormViewModelTests: XCTestCase {
 
     func testOnChannelNameUpdate_bigString() {
         // Given
-        let sut = WireConversationChannelCreationFormViewModel(channelName: "") { _ in }
+        let sut = ConversationChannelCreationFormViewModel(channelName: "") { _ in }
         let value = String(
             repeating: "\(0x27BF)",
-            count: WireConversationChannelCreationFormViewModel.Constants.channelNameMaxByteLength + 1
+            count: ConversationChannelCreationFormViewModel.Constants.channelNameMaxByteLength + 1
         )
 
         // When
@@ -73,10 +73,10 @@ final class WireConversationChannelCreationFormViewModelTests: XCTestCase {
 
     func testOnChannelNameUpdate_whitespaceString() {
         // Given
-        let sut = WireConversationChannelCreationFormViewModel(channelName: "") { _ in }
+        let sut = ConversationChannelCreationFormViewModel(channelName: "") { _ in }
         let value = String(
             repeating: " ",
-            count: WireConversationChannelCreationFormViewModel.Constants.channelNameMaxStringLength
+            count: ConversationChannelCreationFormViewModel.Constants.channelNameMaxStringLength
         )
 
         // When
@@ -90,15 +90,15 @@ final class WireConversationChannelCreationFormViewModelTests: XCTestCase {
 
     func testOnChannelNameUpdate_whitespaceSurroundedString() {
         // Given
-        let sut = WireConversationChannelCreationFormViewModel(channelName: "") { _ in }
+        let sut = ConversationChannelCreationFormViewModel(channelName: "") { _ in }
         let value = " " +
             String(
                 repeating: "a",
-                count: WireConversationChannelCreationFormViewModel.Constants.channelNameMaxStringLength
+                count: ConversationChannelCreationFormViewModel.Constants.channelNameMaxStringLength
             ) + " "
         let expectedValue = String(
             repeating: "a",
-            count: WireConversationChannelCreationFormViewModel.Constants.channelNameMaxStringLength
+            count: ConversationChannelCreationFormViewModel.Constants.channelNameMaxStringLength
         )
 
         // When
@@ -112,7 +112,7 @@ final class WireConversationChannelCreationFormViewModelTests: XCTestCase {
 
     func testOnChannelNameUpdate_validString() {
         // Given
-        let sut = WireConversationChannelCreationFormViewModel(channelName: "") { _ in }
+        let sut = ConversationChannelCreationFormViewModel(channelName: "") { _ in }
         let value = "a"
         let expectedValue = "a"
 

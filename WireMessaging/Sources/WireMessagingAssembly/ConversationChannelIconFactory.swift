@@ -20,7 +20,7 @@ public import SwiftUI
 import WireMessagingDomain
 import WireMessagingUI
 
-public final class WireConversationChannelIconFactory {
+public final class ConversationChannelIconFactory {
 
     private let mapper = ConversationIDToChannelIconMapper()
 
@@ -28,11 +28,11 @@ public final class WireConversationChannelIconFactory {
 
     @MainActor
     public func create(conversationID: String) -> some View {
-        WireConversationChannelIcon(asset: mapper.palette(for: conversationID))
+        ConversationChannelIcon(asset: mapper.palette(for: conversationID))
     }
 
     @MainActor
     public func createUIKit(conversationID: String, isPrivateChannel: Bool) -> UIView {
-        WireConversationChannelIconUIKit(asset: mapper.palette(for: conversationID), isPrivateChannel: isPrivateChannel)
+        ConversationChannelIconUIKit(asset: mapper.palette(for: conversationID), isPrivateChannel: isPrivateChannel)
     }
 }

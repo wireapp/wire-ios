@@ -20,7 +20,7 @@ import SwiftUI
 package import UIKit
 import WireMessagingDomain
 
-extension WireConversationGroupIconAsset {
+extension ConversationGroupIconAsset {
     var imageName: String {
         "group-icon-\(index)"
     }

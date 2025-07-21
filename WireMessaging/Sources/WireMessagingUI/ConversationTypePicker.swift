@@ -21,7 +21,7 @@ import WireDesign
 import WireFoundation
 package import WireMessagingDomain
 
-package struct WireConversationTypePicker: View {
+package struct ConversationTypePicker: View {
     private enum Constants {
         static let verticalSpacing: CGFloat = 12
         static let maxIconWidth: CGFloat = 27
@@ -33,7 +33,7 @@ package struct WireConversationTypePicker: View {
         case group
         case divider
 
-        init(_ conversationType: WireMultiParticipantConversationType) {
+        init(_ conversationType: MultiParticipantConversationType) {
             switch conversationType {
             case .channel:
                 self = .channel
@@ -44,13 +44,13 @@ package struct WireConversationTypePicker: View {
     }
 
     private let displayedItems: [DisplayedItem]
-    private let onConversationTypeSelected: @Sendable (WireMultiParticipantConversationType) -> Void
+    private let onConversationTypeSelected: @Sendable (MultiParticipantConversationType) -> Void
 
     package init(
-        availableConversationTypes: Set<WireMultiParticipantConversationType>,
-        onConversationTypeSelected: @escaping @Sendable (WireMultiParticipantConversationType) -> Void
+        availableConversationTypes: Set<MultiParticipantConversationType>,
+        onConversationTypeSelected: @escaping @Sendable (MultiParticipantConversationType) -> Void
     ) {
-        let orderedConversationTypes: [WireMultiParticipantConversationType] = [.channel, .group]
+        let orderedConversationTypes: [MultiParticipantConversationType] = [.channel, .group]
 
         self.displayedItems = Array(
             orderedConversationTypes
@@ -145,7 +145,7 @@ package struct WireConversationTypePicker: View {
 
 #Preview {
     VStack {
-        WireConversationTypePicker(
+        ConversationTypePicker(
             availableConversationTypes: [.channel, .group],
             onConversationTypeSelected: { _ in }
         )

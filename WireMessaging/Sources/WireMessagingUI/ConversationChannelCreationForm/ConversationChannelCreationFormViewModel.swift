@@ -19,7 +19,7 @@
 public import SwiftUI
 public import WireMessagingDomain
 
-public final class WireConversationChannelCreationFormViewModel: ObservableObject {
+public final class ConversationChannelCreationFormViewModel: ObservableObject {
 
     enum Constants {
         static let channelNameMinStringLength = 1
@@ -48,7 +48,7 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
         case `public`
         case `private`
 
-        fileprivate func wireChannelAccess(invitePolicy: ChannelInvitePolicyOption) -> WireConversationChannelAccess {
+        fileprivate func wireChannelAccess(invitePolicy: ChannelInvitePolicyOption) -> ConversationChannelAccess {
             switch self {
             case .public:
                 .public
@@ -62,7 +62,7 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
         case admins
         case adminsAndMembers
 
-        fileprivate var wireChannelInvitePolicy: WireConversationChannelAccess.PrivateChannelInvitePolicy {
+        fileprivate var wireChannelInvitePolicy: ConversationChannelAccess.PrivateChannelInvitePolicy {
             switch self {
             case .admins:
                 .admins
@@ -152,10 +152,10 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
         return .success(trimmed)
     }
 
-    public func getChannelCreationSettings() -> WireConversationChannelCreationSettings? {
+    public func getChannelCreationSettings() ->ConversationChannelCreationSettings? {
         try? channelName
             .map { value in
-                WireConversationChannelCreationSettings(
+               ConversationChannelCreationSettings(
                     channelName: value,
                     channelAccess: channelAccess.wireChannelAccess(
                         invitePolicy: channelInvitePolicy

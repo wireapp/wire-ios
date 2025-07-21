@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package enum WireConversationGroupIconAsset {
+package enum ConversationGroupIconAsset {
     case _1
     case _2
     case _3
@@ -53,7 +53,7 @@ package enum WireConversationGroupIconAsset {
         }
     }
 
-    package static var all: [WireConversationGroupIconAsset] {
+    package static var all: [ConversationGroupIconAsset] {
         [
             ._1,
             ._2,

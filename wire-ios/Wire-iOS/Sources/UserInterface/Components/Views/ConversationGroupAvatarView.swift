@@ -39,9 +39,9 @@ final class ConversationGroupAvatarView: UIView {
 
         let iconView = if conversation.isChannel {
             // TODO: [WPB-16527] Pass in correct `isPrivateChannel` when we implement public channels
-            WireConversationChannelIconFactory().createUIKit(conversationID: id, isPrivateChannel: true)
+            ConversationChannelIconFactory().createUIKit(conversationID: id, isPrivateChannel: true)
         } else {
-            WireConversationGroupIconFactory().createUIKit(conversationID: id)
+            ConversationGroupIconFactory().createUIKit(conversationID: id)
         }
 
         iconContainer.removeSubviews()

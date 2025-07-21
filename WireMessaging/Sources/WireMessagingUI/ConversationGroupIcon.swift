@@ -19,10 +19,10 @@
 package import SwiftUI
 package import WireMessagingDomain
 
-package struct WireConversationGroupIcon: View {
-    let groupIcon: WireConversationGroupIconAsset
+package struct ConversationGroupIcon: View {
+    let groupIcon:ConversationGroupIconAsset
 
-    package init(asset: WireConversationGroupIconAsset) {
+    package init(asset:ConversationGroupIconAsset) {
         self.groupIcon = asset
     }
 
@@ -34,8 +34,8 @@ package struct WireConversationGroupIcon: View {
 }
 
 #Preview {
-    WireConversationGroupIcon(asset: WireConversationGroupIconAsset._1)
+   ConversationGroupIcon(asset:ConversationGroupIconAsset._1)
         .frame(width: 40, height: 40)
-    WireConversationGroupIcon(asset: WireConversationGroupIconAsset._2)
+   ConversationGroupIcon(asset:ConversationGroupIconAsset._2)
         .frame(width: 40, height: 40)
 }

@@ -22,7 +22,7 @@ import WireDesign
 import WireFoundation
 import WireReusableUIComponents
 
-public struct WireChannelBannerView: View {
+public struct ChannelBannerView: View {
 
     private let configuration: Configuration
 
@@ -90,7 +90,7 @@ public struct WireChannelBannerView: View {
 }
 
 #Preview {
-    WireChannelBannerView(
+    ChannelBannerView(
         configuration: .init(
             title: "Show older messages?",
             message: "Upgrade to a paid plan to offer channel members the whole history.",

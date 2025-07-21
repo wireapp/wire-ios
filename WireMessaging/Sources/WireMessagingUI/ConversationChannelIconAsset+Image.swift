@@ -19,7 +19,7 @@
 import SwiftUI
 import WireMessagingDomain
 
-extension WireConversationChannelIconAsset {
+extension ConversationChannelIconAsset {
     var imageName: String {
         "channel-icon-\(rawValue)"
     }

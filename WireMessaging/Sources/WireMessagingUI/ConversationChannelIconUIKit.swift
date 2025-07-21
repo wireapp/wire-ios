@@ -19,7 +19,7 @@
 package import UIKit
 package import WireMessagingDomain
 
-package class WireConversationChannelIconUIKit: UIView {
+package class ConversationChannelIconUIKit: UIView {
     private enum Constants {
         static let padlockSize: CGFloat = 14
         static let padlockOverhang: CGFloat = 4
@@ -28,7 +28,7 @@ package class WireConversationChannelIconUIKit: UIView {
     private let iconView: UIImageView
     private let padlockView: UIImageView?
 
-    package init(asset: WireConversationChannelIconAsset, isPrivateChannel: Bool) {
+    package init(asset: ConversationChannelIconAsset, isPrivateChannel: Bool) {
         self.iconView = UIImageView(image: asset.uiKitImage)
         self.padlockView = isPrivateChannel ? Self.makePadlockView() : nil
 

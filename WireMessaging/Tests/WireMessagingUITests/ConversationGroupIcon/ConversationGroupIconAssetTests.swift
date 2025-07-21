@@ -22,7 +22,7 @@ import XCTest
 
 @testable import WireMessagingUI
 
-final class WireConversationGroupIconAssetTests: XCTestCase {
+final class ConversationGroupIconAssetTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
@@ -37,7 +37,7 @@ final class WireConversationGroupIconAssetTests: XCTestCase {
 
     @MainActor
     func testImage() {
-        let testCases = WireConversationGroupIconAsset.all
+        let testCases = ConversationGroupIconAsset.all
 
         for asset in testCases {
             let view = asset.image

@@ -18,11 +18,11 @@
 
 package final class ConversationIDToChannelIconMapper: ConversationIDToPaletteMapper {
 
-    let palette: [WireConversationChannelIconAsset] = WireConversationChannelIconAsset.all
+    let palette: [ConversationChannelIconAsset] = ConversationChannelIconAsset.all
 
     package init() {}
 
-    package func palette(for conversationID: String) -> WireConversationChannelIconAsset {
+    package func palette(for conversationID: String) -> ConversationChannelIconAsset {
         // make sure id is lowercased
         let id = conversationID.lowercased()
         // Calculate the combined hash

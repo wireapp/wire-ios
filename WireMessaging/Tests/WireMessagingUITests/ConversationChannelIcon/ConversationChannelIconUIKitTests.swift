@@ -21,7 +21,7 @@ import WireMessagingUI
 import WireTestingPackage
 import XCTest
 
-class WireConversationChannelIconUIKitTests: XCTestCase {
+class ConversationChannelIconUIKitTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
@@ -36,7 +36,7 @@ class WireConversationChannelIconUIKitTests: XCTestCase {
 
     @MainActor
     func testColorSchemeVariantsWhenPublic() {
-        let sut = WireConversationChannelIconUIKit(asset: .gray, isPrivateChannel: false)
+        let sut = ConversationChannelIconUIKit(asset: .gray, isPrivateChannel: false)
         let container = makeContainer(sut: sut)
 
         snapshotHelper
@@ -49,7 +49,7 @@ class WireConversationChannelIconUIKitTests: XCTestCase {
 
     @MainActor
     func testColorSchemeVariantsWhenPrivate() {
-        let sut = WireConversationChannelIconUIKit(asset: .gray, isPrivateChannel: true)
+        let sut = ConversationChannelIconUIKit(asset: .gray, isPrivateChannel: true)
         let container = makeContainer(sut: sut)
 
         snapshotHelper

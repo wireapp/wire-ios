@@ -22,7 +22,7 @@ import WireMessagingUI
 import WireTestingPackage
 import XCTest
 
-class WireConversationTypePickerTests: XCTestCase {
+class ConversationTypePickerTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
@@ -38,7 +38,7 @@ class WireConversationTypePickerTests: XCTestCase {
     @MainActor
     func testColorSchemeVariantsEmptyState() {
         let view = VStack {
-            WireConversationTypePicker(
+            ConversationTypePicker(
                 availableConversationTypes: [.channel, .group],
                 onConversationTypeSelected: { _ in }
             )
@@ -59,7 +59,7 @@ class WireConversationTypePickerTests: XCTestCase {
     @MainActor
     func testDynamicTypeVariantsEmptyState() {
         let view = VStack {
-            WireConversationTypePicker(
+            ConversationTypePicker(
                 availableConversationTypes: [.channel, .group],
                 onConversationTypeSelected: { _ in }
             )

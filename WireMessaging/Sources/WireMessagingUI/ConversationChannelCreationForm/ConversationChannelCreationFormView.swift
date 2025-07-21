@@ -19,15 +19,15 @@
 public import SwiftUI
 import WireMessagingDomain
 
-public struct WireConversationChannelCreationForm: View {
-    public typealias ViewModel = WireConversationChannelCreationFormViewModel
+public struct ConversationChannelCreationForm: View {
+    public typealias ViewModel = ConversationChannelCreationFormViewModel
 
     @State private var channelName: String
 
-    @ObservedObject private var viewModel: WireConversationChannelCreationFormViewModel
+    @ObservedObject private var viewModel: ConversationChannelCreationFormViewModel
 
     public init(
-        viewModel: WireConversationChannelCreationFormViewModel
+        viewModel: ConversationChannelCreationFormViewModel
     ) {
         self.viewModel = viewModel
         self.channelName = (try? viewModel.channelName.get()) ?? ""
@@ -146,7 +146,7 @@ public struct WireConversationChannelCreationForm: View {
 }
 
 #Preview {
-    WireConversationChannelCreationForm(
-        viewModel: WireConversationChannelCreationFormViewModel(channelName: "") { _ in }
+    ConversationChannelCreationForm(
+        viewModel: ConversationChannelCreationFormViewModel(channelName: "") { _ in }
     )
 }

@@ -24,7 +24,7 @@ import XCTest
 
 @testable import WireMessagingUI
 
-final class WireChannelBannerTests: XCTestCase {
+final class ChannelBannerTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
@@ -39,7 +39,7 @@ final class WireChannelBannerTests: XCTestCase {
 
     @MainActor
     func testDynamicTypeVariantsEmptyState() {
-        let view = WireChannelBannerView(
+        let view = ChannelBannerView(
             configuration: .init(
                 title: "Show older messages?",
                 message: "Upgrade to a paid plan to offer channel members the whole history.",

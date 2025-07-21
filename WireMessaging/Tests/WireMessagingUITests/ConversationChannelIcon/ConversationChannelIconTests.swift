@@ -21,7 +21,7 @@ import WireMessagingUI
 import WireTestingPackage
 import XCTest
 
-class WireConversationChannelIconTests: XCTestCase {
+class ConversationChannelIconTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
@@ -36,7 +36,7 @@ class WireConversationChannelIconTests: XCTestCase {
 
     @MainActor
     func testColorSchemeVariantsEmptyState() {
-        let view = WireConversationChannelIcon(asset: .gray)
+        let view = ConversationChannelIcon(asset: .gray)
             .frame(width: 40, height: 40)
             .padding()
 

@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public extension WireChannelBannerView {
+public extension ChannelBannerView {
 
     struct Configuration {
 
@@ -44,7 +44,7 @@ public extension WireChannelBannerView {
 
 }
 
-public extension WireChannelBannerView.Configuration {
+public extension ChannelBannerView.Configuration {
 
     struct CloseButton {
 

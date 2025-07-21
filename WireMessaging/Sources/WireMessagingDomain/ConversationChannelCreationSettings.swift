@@ -18,16 +18,16 @@
 
 import Foundation
 
-public struct WireConversationChannelCreationSettings: Equatable, Hashable {
+public struct ConversationChannelCreationSettings: Equatable, Hashable {
     public let channelName: String
-    public let channelAccess: WireConversationChannelAccess
+    public let channelAccess: ConversationChannelAccess
     public let servicesAllowed: Bool
     public let guestsAllowed: Bool
     public let readReceiptsEnabled: Bool
 
     package init(
         channelName: String,
-        channelAccess: WireConversationChannelAccess,
+        channelAccess: ConversationChannelAccess,
         servicesAllowed: Bool,
         guestsAllowed: Bool,
         readReceiptsEnabled: Bool

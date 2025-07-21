@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum WireConversationChannelAccess: Equatable, Hashable {
+public enum ConversationChannelAccess: Equatable, Hashable {
     public enum PrivateChannelInvitePolicy: Equatable, Hashable {
         case admins
         case adminsAndMembers

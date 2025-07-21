@@ -22,7 +22,7 @@ import WireMessagingUI
 import WireTestingPackage
 import XCTest
 
-class WireConversationGroupIconTests: XCTestCase {
+class ConversationGroupIconTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
@@ -37,7 +37,7 @@ class WireConversationGroupIconTests: XCTestCase {
 
     @MainActor
     func testDynamicTypeVariantsEmptyState() {
-        let view = WireConversationGroupIcon(asset: ._3)
+        let view = ConversationGroupIcon(asset: ._3)
             .frame(width: 40, height: 40)
             .padding()
 
@@ -52,7 +52,7 @@ class WireConversationGroupIconTests: XCTestCase {
 
     @MainActor
     func testColorSchemeVariantsEmptyState_uiKitView() {
-        let view = UIImageView(image: WireConversationGroupIconAsset._3.uiKitImage)
+        let view = UIImageView(image:ConversationGroupIconAsset._3.uiKitImage)
         view.frame = .init(x: 0, y: 0, width: 40, height: 40)
 
         snapshotHelper

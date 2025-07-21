@@ -20,7 +20,7 @@ public import SwiftUI
 import WireMessagingDomain
 import WireMessagingUI
 
-public final class WireConversationGroupIconFactory {
+public final class ConversationGroupIconFactory {
 
     private let mapper = ConversationIDToGroupIconMapper()
 
@@ -28,7 +28,7 @@ public final class WireConversationGroupIconFactory {
 
     @MainActor
     public func create(conversationID: String) -> some View {
-        WireConversationGroupIcon(asset: mapper.palette(for: conversationID))
+       ConversationGroupIcon(asset: mapper.palette(for: conversationID))
     }
 
     @MainActor

@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package enum WireConversationChannelIconAsset: String {
+package enum ConversationChannelIconAsset: String {
     case blue
     case purple
     case red
@@ -25,7 +25,7 @@ package enum WireConversationChannelIconAsset: String {
     case petrol
     case gray
 
-    package static var all: [WireConversationChannelIconAsset] {
+    package static var all: [ConversationChannelIconAsset] {
         [
             .blue,
             .purple,

@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum WireMultiParticipantConversationType: Equatable, Hashable {
+public enum MultiParticipantConversationType: Equatable, Hashable {
     case channel
     case group
 }

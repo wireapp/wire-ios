@@ -18,7 +18,7 @@
 
 // TODO: [WPB-16814] This will be used when implementing the channels history settings.
 
-// public enum WireConversationChannelHistorySetting: Equatable, Hashable {
+// public enum ConversationChannelHistorySetting: Equatable, Hashable {
 //    public struct LimitedHistoryValue: Equatable, Hashable {
 //        public enum Unit: Equatable, Hashable {
 //            case day

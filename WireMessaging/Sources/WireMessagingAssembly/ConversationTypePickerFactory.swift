@@ -21,15 +21,15 @@ public import WireMessagingDomain
 import WireFoundation
 import WireMessagingUI
 
-public final class WireConversationTypePickerFactory {
+public final class ConversationTypePickerFactory {
     public init() {}
 
     @MainActor
     public func create(
-        availableConversationTypes: Set<WireMultiParticipantConversationType>,
-        onConversationTypeSelected: @escaping @Sendable (WireMultiParticipantConversationType) -> Void
+        availableConversationTypes: Set<MultiParticipantConversationType>,
+        onConversationTypeSelected: @escaping @Sendable (MultiParticipantConversationType) -> Void
     ) -> some View {
-        WireConversationTypePicker(
+        ConversationTypePicker(
             availableConversationTypes: availableConversationTypes,
             onConversationTypeSelected: onConversationTypeSelected
         )
