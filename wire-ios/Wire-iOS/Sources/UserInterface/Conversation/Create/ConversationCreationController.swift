@@ -283,13 +283,10 @@ final class ConversationCreationController: UIViewController {
     }
 
     private func isGroupNameValid() -> Bool {
-        guard let value = nameSection.value else {
-            return false
-        }
-        switch value {
-        case let .valid(text):
-            return !text.isEmpty
-        case .error:
+        switch nameSection.value {
+        case let .valid(name)? where !name.isEmpty:
+            return true
+        default:
             return false
         }
     }
