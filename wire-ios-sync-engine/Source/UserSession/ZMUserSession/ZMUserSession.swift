@@ -137,7 +137,7 @@ public final class ZMUserSession: NSObject {
 
     public var selfDeletingMessagesFeature: Feature.SelfDeletingMessages {
         let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
-        return featureRepository.fetchSelfDeletingMesssages()
+        return featureRepository.fetchSelfDeletingMessages()
     }
 
     public var conversationGuestLinksFeature: Feature.ConversationGuestLinks {

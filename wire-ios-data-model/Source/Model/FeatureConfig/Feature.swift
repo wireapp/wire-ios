@@ -43,6 +43,7 @@ public class Feature: ZMManagedObject {
         case e2ei = "mlsE2EId"
         case mlsMigration
         case channels
+        case resetMLSConversation = "mlsConversationReset20250709"
 
     }
 
@@ -223,6 +224,21 @@ public class Feature: ZMManagedObject {
 
             needsToNotifyUser = oldConfig.enforcedTimeoutSeconds != newConfig.enforcedTimeoutSeconds
 
+        case .resetMLSConversation: // NEEDED?
+            let decoder = JSONDecoder()
+
+            guard
+                !needsToNotifyUser,
+                let oldValue = oldData,
+                let newValue = newData,
+                let oldConfig = try? decoder.decode(Feature.ResetMLSConversations.Config.self, from: oldValue),
+                let newConfig = try? decoder.decode(Feature.ResetMLSConversations.Config.self, from: newValue)
+            else {
+                return
+            }
+
+            needsToNotifyUser = oldConfig.mlsConversationReset20250709 != newConfig.mlsConversationReset20250709
+            
         case .conferenceCalling,
              .fileSharing,
              .conversationGuestLinks,

@@ -94,6 +94,8 @@ struct FeatureConfigsPayloadProcessor {
                 )
             )
         }
+        
+        // TODO: add?
 
         if let mlsMigration = payload.mlsMigration {
             repository.storeMLSMigration(
@@ -249,7 +251,16 @@ struct FeatureConfigsPayloadProcessor {
                 from: data
             )
             repository.storeSelfDeletingMessages(.init(status: response.status, config: response.config))
-
+            
+        case .resetMLSConversation:
+            let response = try decoder.decode(
+                FeatureStatusWithConfig<Feature.ResetMLSConversations.Config>.self,
+                from: data
+            )
+            repository.storeResetMLSConversations(.init(
+                status: response.status,
+                config: response.config
+            ))
         case .conversationGuestLinks:
             let response = try decoder.decode(FeatureStatus.self, from: data)
             repository.storeConversationGuestLinks(.init(status: response.status))

@@ -28,8 +28,10 @@ public protocol FeatureRepositoryInterface {
     func storeConferenceCalling(_ conferenceCalling: Feature.ConferenceCalling)
     func fetchFileSharing() -> Feature.FileSharing
     func storeFileSharing(_ fileSharing: Feature.FileSharing)
-    func fetchSelfDeletingMesssages() -> Feature.SelfDeletingMessages
+    func fetchSelfDeletingMessages() -> Feature.SelfDeletingMessages
     func storeSelfDeletingMessages(_ selfDeletingMessages: Feature.SelfDeletingMessages)
+    func fetchResetMLSConversations() -> Feature.ResetMLSConversations
+    func storeResetMLSConversations(_ selfDeletingMessages: Feature.ResetMLSConversations)
     func fetchConversationGuestLinks() -> Feature.ConversationGuestLinks
     func storeConversationGuestLinks(_ conversationGuestLinks: Feature.ConversationGuestLinks)
     func fetchClassifiedDomains() -> Feature.ClassifiedDomains
@@ -187,7 +189,7 @@ public class FeatureRepository: FeatureRepositoryInterface {
 
     // MARK: - Self deleting messages
 
-    public func fetchSelfDeletingMesssages() -> Feature.SelfDeletingMessages {
+    public func fetchSelfDeletingMessages() -> Feature.SelfDeletingMessages {
         guard
             let feature = Feature.fetch(name: .selfDeletingMessages, context: context),
             let featureConfig = feature.config
@@ -230,6 +232,14 @@ public class FeatureRepository: FeatureRepositoryInterface {
         } catch {
             logger.error("failed to encode Feature.SelfDeletingMessages.Config: \(error)")
         }
+    }
+    
+    public func storeResetMLSConversations( _ resetMLSConversation: Feature.ResetMLSConversations) {
+        print("DS:") // TODO:
+    }
+    
+    public func fetchResetMLSConversations() -> Feature.ResetMLSConversations {
+        Feature.ResetMLSConversations() // TODO:
     }
 
     // MARK: - Conversation guest links
@@ -476,6 +486,9 @@ public class FeatureRepository: FeatureRepositoryInterface {
 
             case .selfDeletingMessages:
                 storeSelfDeletingMessages(.init())
+            
+            case .resetMLSConversation:
+                storeResetMLSConversations(.init())
 
             case .conversationGuestLinks:
                 storeConversationGuestLinks(.init())

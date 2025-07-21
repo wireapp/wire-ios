@@ -541,6 +541,7 @@
 		D5FA30CF2063F8EC00716618 /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5FA30CE2063F8EC00716618 /* Version.swift */; };
 		D5FA30D12063FD3A00716618 /* VersionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5FA30D02063FD3A00716618 /* VersionTests.swift */; };
 		E4AD4E412E281FB800308EDC /* ResetBrokenMLSConversationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4AD4E402E281FB800308EDC /* ResetBrokenMLSConversationDelegate.swift */; };
+		E4AD6D9E2E2E4B5400308EDC /* Feature.ResetMLSConversations.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4AD6D9C2E2E4B5400308EDC /* Feature.ResetMLSConversations.swift */; };
 		E6067C002BAD9461005A7474 /* OneOnOneResolverError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6067BFF2BAD9461005A7474 /* OneOnOneResolverError.swift */; };
 		E608F4B22B5EACE000FF98A1 /* OneOnOneResolvedState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E608F4B12B5EACE000FF98A1 /* OneOnOneResolvedState.swift */; };
 		E61B3F382BA85923005FF9F8 /* OneOnOneConversationMigrationAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = E61B3F372BA85923005FF9F8 /* OneOnOneConversationMigrationAction.swift */; };
@@ -1456,6 +1457,7 @@
 		D5FA30CE2063F8EC00716618 /* Version.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Version.swift; sourceTree = "<group>"; };
 		D5FA30D02063FD3A00716618 /* VersionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionTests.swift; sourceTree = "<group>"; };
 		E4AD4E402E281FB800308EDC /* ResetBrokenMLSConversationDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetBrokenMLSConversationDelegate.swift; sourceTree = "<group>"; };
+		E4AD6D9C2E2E4B5400308EDC /* Feature.ResetMLSConversations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feature.ResetMLSConversations.swift; sourceTree = "<group>"; };
 		E6067BFF2BAD9461005A7474 /* OneOnOneResolverError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneOnOneResolverError.swift; sourceTree = "<group>"; };
 		E608F4B12B5EACE000FF98A1 /* OneOnOneResolvedState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneOnOneResolvedState.swift; sourceTree = "<group>"; };
 		E61B3F372BA85923005FF9F8 /* OneOnOneConversationMigrationAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneOnOneConversationMigrationAction.swift; sourceTree = "<group>"; };
@@ -2165,6 +2167,7 @@
 				EECA830126EF34FB0087ECB0 /* SelfDeletingMessages */,
 				064F8E07255E04800040371D /* Feature.swift */,
 				01C66E462D9352EB00B937B4 /* Channels */,
+				E4AD6D9D2E2E4B5400308EDC /* ResetMLSConversations */,
 			);
 			path = FeatureConfig;
 			sourceTree = "<group>";
@@ -2497,6 +2500,14 @@
 				4058AAA12AA76BFA0013DE71 /* ReactionData.swift */,
 			);
 			name = Reaction;
+			sourceTree = "<group>";
+		};
+		E4AD6D9D2E2E4B5400308EDC /* ResetMLSConversations */ = {
+			isa = PBXGroup;
+			children = (
+				E4AD6D9C2E2E4B5400308EDC /* Feature.ResetMLSConversations.swift */,
+			);
+			path = ResetMLSConversations;
 			sourceTree = "<group>";
 		};
 		E62EE7F62B3447A3002A54EF /* 106-107 */ = {
@@ -4150,6 +4161,7 @@
 				F18998831E7AC6D900E579A2 /* ZMUser.swift in Sources */,
 				E608F4B22B5EACE000FF98A1 /* OneOnOneResolvedState.swift in Sources */,
 				E6E5043B2BC542C5004948E7 /* EARPublicKeys.swift in Sources */,
+				E4AD6D9E2E2E4B5400308EDC /* Feature.ResetMLSConversations.swift in Sources */,
 				EE30F45B2592A357000FC69C /* AppLockController.PasscodeKeychainItem.swift in Sources */,
 				54563B761E0161730089B1D7 /* ZMMessage+Categorization.swift in Sources */,
 				E6067C002BAD9461005A7474 /* OneOnOneResolverError.swift in Sources */,
