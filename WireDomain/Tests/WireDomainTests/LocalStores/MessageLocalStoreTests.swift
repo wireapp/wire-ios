@@ -228,6 +228,8 @@ final class MessageLocalStoreTests: XCTestCase {
             (messagesCount: 1, [.sessionReset])
         case .channelHistoryDepthModified:
             (messagesCount: 1, [.channelHistoryDepthModified])
+        case let .channelMoreHistoryAvailability(hasMoreHistory):
+            (messagesCount: 1, [hasMoreHistory ? .moreHistoryAvailable : .noMoreHistoryAvailable])
         }
     }
 
@@ -273,7 +275,9 @@ final class MessageLocalStoreTests: XCTestCase {
             ),
             .conversationNameChanged(newName: "newName", sender: (userID, domain1), date: date),
             .readReceiptsStatus(isEnabled: Bool.random(), sender: (userID, domain1), date: date),
-            .channelHistoryDepthModified(sender: .init(id: userID, domain: domain1), newHistoryDepth: "13 days")
+            .channelHistoryDepthModified(sender: .init(id: userID, domain: domain1), newHistoryDepth: "13 days"),
+            .channelMoreHistoryAvailability(moreHistoryAvailable: true),
+            .channelMoreHistoryAvailability(moreHistoryAvailable: false)
         ]
     }
 

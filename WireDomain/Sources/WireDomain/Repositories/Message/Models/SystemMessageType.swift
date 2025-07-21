@@ -117,4 +117,8 @@ public enum SystemMessageType: Sendable {
         newHistoryDepth: String?
     )
 
+    case channelMoreHistoryAvailability(
+        moreHistoryAvailable: Bool
+    )
+
 }

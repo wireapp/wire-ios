@@ -919,12 +919,45 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             )
 
             return [systemMessage]
+
+        case let .channelMoreHistoryAvailability(hasMoreHistory):
+
+            // Deletes the currently displayed system messages:
+            // 1. when new history messages are displayed and there are more messages to show up, same system message
+            // must be removed and repositioned to the top of the latest messages.
+            // 2. when there is no more history message, system message must be removed and replaced by the "no more
+            // history" system message.
+
+            await context.perform {
+                let deletableSystemMessages = conversation.allMessages.compactMap {
+                    $0 as? ZMSystemMessage
+                }.filter {
+                    $0.systemMessageType == .moreHistoryAvailable || $0.systemMessageType == .noMoreHistoryAvailable
+                }
+
+                conversation.removeAllMessages(Set(deletableSystemMessages))
+            }
+
+            // Setup a date that is older than all other messages so this system message always shows up on top of the
+            // rest.
+            let oldestMessageTimestamp = await context.perform {
+                let oldestTimestamp = conversation.allMessages.compactMap(\.serverTimestamp).min()
+
+                return oldestTimestamp?.addingTimeInterval(-.oneMinute) ?? .distantPast
+            }
+
+            let systemMessage = await createSystemMessage(
+                messageType: hasMoreHistory ? .moreHistoryAvailable : .noMoreHistoryAvailable,
+                timestamp: oldestMessageTimestamp
+            )
+
+            return [systemMessage]
         }
     }
 
     private func createSystemMessage(
         messageType: ZMSystemMessageType,
-        sender: ZMUser,
+        sender: ZMUser? = nil,
         users: Set<ZMUser>? = nil,
         addedUsers: Set<ZMUser> = Set(),
         clients: Set<UserClient>? = nil,
