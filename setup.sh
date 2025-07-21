@@ -47,6 +47,8 @@ die "Xcode version for the repository should be at least ${repository_xcode_vers
 if ! command -v protoc-gen-swift &> /dev/null; then
     echo -e "Error: swift-protobuf is not installed.\nPlease install it using Homebrew:\n    brew install swift-protobuf"
     exit 1
+elif [[ -n "${CI-}" ]]; then
+    brew install swift-protobuf
 else
     echo "swift-protobuf found: $(protoc-gen-swift --version)"
 fi
