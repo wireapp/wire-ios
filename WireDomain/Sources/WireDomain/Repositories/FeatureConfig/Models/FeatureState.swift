@@ -23,11 +23,9 @@ import WireDataModel
 struct FeatureState {
     let name: Feature.Name
     let isEnabled: Bool
-//    let shouldNotifyUser: Bool
     
-    init(name: Feature.Name, isEnabled: Bool, shouldNotifyUser: Bool) {
+    init(name: Feature.Name, isEnabled: Bool) {
         self.name = name
         self.isEnabled = isEnabled
-//        self.shouldNotifyUser = shouldNotifyUser
     }
 }
