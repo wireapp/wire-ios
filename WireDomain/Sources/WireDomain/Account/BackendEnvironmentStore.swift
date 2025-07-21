@@ -51,8 +51,8 @@ public  struct BackendEnvironmentStore {
         } catch {
             log.error(
                 "Unable to store backend environment \(backendEnvironment) for " +
-                "account with ID \(accountID.safeForLoggingDescription), " +
-                "error: \(error.safeForLoggingDescription)"
+                    "account with ID \(accountID.safeForLoggingDescription), " +
+                    "error: \(error.safeForLoggingDescription)"
             )
             throw error
         }
@@ -74,8 +74,8 @@ public  struct BackendEnvironmentStore {
         } catch {
             log.error(
                 "Unable to store backend metadata \(metadata) for " +
-                "account with ID \(accountID.safeForLoggingDescription), " +
-                "error: \(error.safeForLoggingDescription)"
+                    "account with ID \(accountID.safeForLoggingDescription), " +
+                    "error: \(error.safeForLoggingDescription)"
             )
             throw error
         }
@@ -95,15 +95,14 @@ public  struct BackendEnvironmentStore {
             let nsError = error as NSError
             if
                 nsError.domain == NSCocoaErrorDomain,
-                nsError.code == NSFileReadNoSuchFileError
-            {
+                nsError.code == NSFileReadNoSuchFileError {
                 return nil
             }
 
             log.error(
                 "Unable to fetch backend environment for account " +
-                "with ID \(accountID.safeForLoggingDescription), " +
-                "error: \(error.safeForLoggingDescription)"
+                    "with ID \(accountID.safeForLoggingDescription), " +
+                    "error: \(error.safeForLoggingDescription)"
             )
             throw error
         }
@@ -123,21 +122,20 @@ public  struct BackendEnvironmentStore {
             let nsError = error as NSError
             if
                 nsError.domain == NSCocoaErrorDomain,
-                nsError.code == NSFileReadNoSuchFileError
-            {
+                nsError.code == NSFileReadNoSuchFileError {
                 return nil
             }
 
             log.error(
                 "Unable to fetch backend metadata for account " +
-                "with ID \(accountID.safeForLoggingDescription), " +
-                "error: \(error.safeForLoggingDescription)"
+                    "with ID \(accountID.safeForLoggingDescription), " +
+                    "error: \(error.safeForLoggingDescription)"
             )
             throw error
         }
     }
 
-    public func deleteBackendData(accountID: UUID) throws  {
+    public func deleteBackendData(accountID: UUID) throws {
         do {
             for fileURL in [
                 backendEnvironmentURL(for: accountID),
@@ -148,8 +146,8 @@ public  struct BackendEnvironmentStore {
         } catch {
             log.error(
                 "Unable to delete backend data for " +
-                "accountID \(accountID.safeForLoggingDescription), " +
-                "error: \(error.safeForLoggingDescription)"
+                    "accountID \(accountID.safeForLoggingDescription), " +
+                    "error: \(error.safeForLoggingDescription)"
             )
             throw error
         }

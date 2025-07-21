@@ -19,8 +19,8 @@
 
 import Foundation
 import Testing
-@testable import WireNetwork
 @testable import WireDomain
+@testable import WireNetwork
 
 @Suite(.serialized)
 final class BackendEnvironmentStoreTests {
@@ -126,7 +126,7 @@ final class BackendEnvironmentStoreTests {
         #expect(storedMetadata == nil)
     }
 
-   @Test("Delete backend data")
+    @Test("Delete backend data")
     func deleteBackendData() throws {
         // Given
         let sut = try BackendEnvironmentStore(root: url)
@@ -167,9 +167,9 @@ final class BackendEnvironmentStoreTests {
             let pinnedKey = try? PinnedKey(
                 rawKey: keyData,
                 hosts: [
-                  .endsWith("prod-nginz-https.wire.com"),
-                  .equals("clientblacklist.wire.com")
-              ]
+                    .endsWith("prod-nginz-https.wire.com"),
+                    .equals("clientblacklist.wire.com")
+                ]
             )
         else {
             fatalError()
@@ -184,7 +184,7 @@ final class BackendEnvironmentStoreTests {
             )
         }
 
-        let environment = BackendEnvironment2(
+        return BackendEnvironment2(
             title: "Staging",
             environmentType: .staging,
             config: .init(
@@ -201,8 +201,6 @@ final class BackendEnvironmentStoreTests {
                 proxyConfig: proxyConfig
             )
         )
-
-        return environment
     }
 }
 
