@@ -23,9 +23,4 @@ import WireDataModel
 struct FeatureState {
     let name: Feature.Name
     let isEnabled: Bool
-    
-    init(name: Feature.Name, isEnabled: Bool) {
-        self.name = name
-        self.isEnabled = isEnabled
-    }
 }

@@ -75,8 +75,7 @@ public final class MessageSender: MessageSenderInterface {
     private let logAttributesBuilder: MessageLogAttributesBuilder
     private let maxRetryAttempts = 3
     private var retryCount = 0
-    
-    
+
     private var resetBrokenMLSConversationsFeature: Feature.ResetMLSConversations? {
         let featureRepository = FeatureRepository(context: context)
         return featureRepository.fetchResetMLSConversations()
@@ -428,7 +427,7 @@ public final class MessageSender: MessageSenderInterface {
                 )
             case .mlsInvalidLeafNodeIndex, .mlsInvalidLeafNodeSignature:
                 let feature = resetBrokenMLSConversationsFeature
-                guard feature?.status == .enabled && feature?.config.mlsConversationReset == true else {
+                guard feature?.status == .enabled, feature?.config.mlsConversationReset == true else {
                     WireLogger.messaging.debug(
                         "No need to initiate reset broken MLS conversation, FF is OFF"
                     )

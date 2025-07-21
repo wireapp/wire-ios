@@ -31,7 +31,7 @@ struct ConversationMLSResetEventProcessor: ConversationMLSResetEventProcessorPro
     private let mlsService: any MLSServiceInterface
     private let conversationLocalStore: any ConversationLocalStoreProtocol
     private let featureRepository: any FeatureRepositoryInterface
-    
+
     init(
         mlsService: any MLSServiceInterface,
         conversationLocalStore: any ConversationLocalStoreProtocol,
@@ -41,11 +41,11 @@ struct ConversationMLSResetEventProcessor: ConversationMLSResetEventProcessorPro
         self.conversationLocalStore = conversationLocalStore
         self.featureRepository = featureRepository
     }
-    
+
     func processEvent(_ event: ConversationMLSResetEvent) async throws {
-        
+
         let feature = await featureRepository.fetchResetMLSConversationsAsync()
-        guard feature.status == .enabled && feature.config.mlsConversationReset == true else {
+        guard feature.status == .enabled, feature.config.mlsConversationReset == true else {
             WireLogger.mls.debug(
                 "No need to process reset broken MLS conversation, FF is OFF"
             )
