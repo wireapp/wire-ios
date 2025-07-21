@@ -843,7 +843,8 @@ final class MessageSenderTests: MessagingTestBase {
                     sessionEstablisher: sessionEstablisher,
                     messageDependencyResolver: messageDependencyResolver,
                     context: coreDataStack.syncContext,
-                    incrementalSyncObserver: incrementalSyncObserver
+                    incrementalSyncObserver: incrementalSyncObserver,
+                    initiateResetMLSConversationUseCase: MockInitiateResetMLSConversationUseCase()
                 )
             )
         }
@@ -874,4 +875,8 @@ extension MessageSendError: @retroactive Equatable {
             false
         }
     }
+}
+
+struct MockInitiateResetMLSConversationUseCase: WireRequestStrategy.InitiateResetMLSConversationUseCaseProtocol {
+    func invoke(groupID: WireDataModel.MLSGroupID, epoch: Int64) async {}
 }
