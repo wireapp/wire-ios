@@ -28,24 +28,6 @@ protocol FeatureConfigLocalStoreProtocol {
         name: Feature.Name
     ) async throws -> Feature
 
-    /// Stores a flag indicating whether the user needs to be notified of the feature.
-    /// - parameters:
-    ///     - needsNotifyUser: The flag to update.
-    ///     - feature: The feature to update the flag for.
-
-    func storeFeature(
-        needsNotifyUser: Bool,
-        feature: Feature
-    ) async
-
-    /// Fetches a flag whether the user needs to be notified for the feature.
-    /// - parameter feature: A given feature.
-    /// - returns: Whether the user needs to be notified.
-
-    func featureNeedsNotifyUser(
-        feature: Feature
-    ) async -> Bool
-
     /// Stores a feature locally.
     /// - parameters:
     ///     - name: The name of the feature

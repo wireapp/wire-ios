@@ -82,32 +82,6 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
         return LocalFeature(status: featureConfig.status, config: nil)
     }
 
-    func needsToNotifyUser(
-        name: Feature.Name
-    ) async throws -> Bool {
-        let feature = try await featureConfigLocalStore.fetchFeature(
-            name: name
-        )
-
-        return await featureConfigLocalStore.featureNeedsNotifyUser(
-            feature: feature
-        )
-    }
-
-    func storeFeatureNeedsToNotifyUser(
-        _ notifyUser: Bool,
-        name: Feature.Name
-    ) async throws {
-        let feature = try await featureConfigLocalStore.fetchFeature(
-            name: name
-        )
-
-        await featureConfigLocalStore.storeFeature(
-            needsNotifyUser: notifyUser,
-            feature: feature
-        )
-    }
-
     func updateFeatureConfig(
         _ featureConfig: FeatureConfig
     ) async {
@@ -142,93 +116,77 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
 
             return FeatureState(
                 name: .appLock,
-                isEnabled: appLockFeatureConfig.status == .enabled,
-                shouldNotifyUser: false
+                isEnabled: appLockFeatureConfig.status == .enabled
             )
 
         case let .classifiedDomains(classifiedDomainsFeatureConfig):
 
             return FeatureState(
                 name: .classifiedDomains,
-                isEnabled: classifiedDomainsFeatureConfig.status == .enabled,
-                shouldNotifyUser: false
+                isEnabled: classifiedDomainsFeatureConfig.status == .enabled
             )
 
         case let .conferenceCalling(conferenceCallingFeatureConfig):
 
-            let needsToNotifyUser = try await needsToNotifyUser(name: .conferenceCalling)
             return FeatureState(
                 name: .conferenceCalling,
-                isEnabled: conferenceCallingFeatureConfig.status == .enabled,
-                shouldNotifyUser: needsToNotifyUser
+                isEnabled: conferenceCallingFeatureConfig.status == .enabled
             )
 
         case let .conversationGuestLinks(conversationGuestLinksFeatureConfig):
 
-            let needsToNotifyUser = try await needsToNotifyUser(name: .conversationGuestLinks)
             return FeatureState(
                 name: .conversationGuestLinks,
-                isEnabled: conversationGuestLinksFeatureConfig.status == .enabled,
-                shouldNotifyUser: needsToNotifyUser
+                isEnabled: conversationGuestLinksFeatureConfig.status == .enabled
             )
 
         case let .digitalSignature(digitalSignatureFeatureConfig):
 
             return FeatureState(
                 name: .digitalSignature,
-                isEnabled: digitalSignatureFeatureConfig.status == .enabled,
-                shouldNotifyUser: false
+                isEnabled: digitalSignatureFeatureConfig.status == .enabled
             )
 
         case let .endToEndIdentity(endToEndIdentityFeatureConfig):
 
             return FeatureState(
                 name: .e2ei,
-                isEnabled: endToEndIdentityFeatureConfig.status == .enabled,
-                shouldNotifyUser: false
+                isEnabled: endToEndIdentityFeatureConfig.status == .enabled
             )
 
         case let .fileSharing(fileSharingFeatureConfig):
 
-            let needsToNotifyUser = try await needsToNotifyUser(name: .fileSharing)
             return FeatureState(
                 name: .fileSharing,
-                isEnabled: fileSharingFeatureConfig.status == .enabled,
-                shouldNotifyUser: needsToNotifyUser
+                isEnabled: fileSharingFeatureConfig.status == .enabled
             )
 
         case let .mls(mlsFeatureConfig):
 
             return FeatureState(
                 name: .mls,
-                isEnabled: mlsFeatureConfig.status == .enabled,
-                shouldNotifyUser: false
+                isEnabled: mlsFeatureConfig.status == .enabled
             )
 
         case let .mlsMigration(mLSMigrationFeatureConfig):
 
             return FeatureState(
                 name: .mlsMigration,
-                isEnabled: mLSMigrationFeatureConfig.status == .enabled,
-                shouldNotifyUser: false
+                isEnabled: mLSMigrationFeatureConfig.status == .enabled
             )
 
         case let .selfDeletingMessages(selfDeletingMessagesFeatureConfig):
 
-            let needsToNotifyUser = try await needsToNotifyUser(name: .selfDeletingMessages)
             return FeatureState(
                 name: .selfDeletingMessages,
-                isEnabled: selfDeletingMessagesFeatureConfig.status == .enabled,
-                shouldNotifyUser: needsToNotifyUser
+                isEnabled: selfDeletingMessagesFeatureConfig.status == .enabled
             )
 
         case let .channels(channelsFeatureConfig):
 
-            let needsToNotifyUser = try await needsToNotifyUser(name: .channels)
             return FeatureState(
                 name: .channels,
-                isEnabled: channelsFeatureConfig.status == .enabled,
-                shouldNotifyUser: needsToNotifyUser
+                isEnabled: channelsFeatureConfig.status == .enabled
             )
 
         case let .unknown(featureName):

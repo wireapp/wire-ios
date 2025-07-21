@@ -3184,16 +3184,16 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
 
     // MARK: - fetchSelfDeletingMessages
 
-    public var fetchSelfDeletingMesssages_Invocations: [Void] = []
-    public var fetchSelfDeletingMesssages_MockMethod: (() -> Feature.SelfDeletingMessages)?
-    public var fetchSelfDeletingMesssages_MockValue: Feature.SelfDeletingMessages?
+    public var fetchSelfDeletingMessages_Invocations: [Void] = []
+    public var fetchSelfDeletingMessages_MockMethod: (() -> Feature.SelfDeletingMessages)?
+    public var fetchSelfDeletingMessages_MockValue: Feature.SelfDeletingMessages?
 
     public func fetchSelfDeletingMessages() -> Feature.SelfDeletingMessages {
-        fetchSelfDeletingMesssages_Invocations.append(())
+        fetchSelfDeletingMessages_Invocations.append(())
 
-        if let mock = fetchSelfDeletingMesssages_MockMethod {
+        if let mock = fetchSelfDeletingMessages_MockMethod {
             return mock()
-        } else if let mock = fetchSelfDeletingMesssages_MockValue {
+        } else if let mock = fetchSelfDeletingMessages_MockValue {
             return mock
         } else {
             fatalError("no mock for `fetchSelfDeletingMessages`")
@@ -3210,6 +3210,39 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
 
         guard let mock = storeSelfDeletingMessages_MockMethod else {
             fatalError("no mock for `storeSelfDeletingMessages`")
+        }
+
+        mock(selfDeletingMessages)
+    }
+
+    // MARK: - fetchResetMLSConversations
+
+    public var fetchResetMLSConversations_Invocations: [Void] = []
+    public var fetchResetMLSConversations_MockMethod: (() -> Feature.ResetMLSConversations)?
+    public var fetchResetMLSConversations_MockValue: Feature.ResetMLSConversations?
+
+    public func fetchResetMLSConversations() -> Feature.ResetMLSConversations {
+        fetchResetMLSConversations_Invocations.append(())
+
+        if let mock = fetchResetMLSConversations_MockMethod {
+            return mock()
+        } else if let mock = fetchResetMLSConversations_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchResetMLSConversations`")
+        }
+    }
+
+    // MARK: - storeResetMLSConversations
+
+    public var storeResetMLSConversations_Invocations: [Feature.ResetMLSConversations] = []
+    public var storeResetMLSConversations_MockMethod: ((Feature.ResetMLSConversations) -> Void)?
+
+    public func storeResetMLSConversations(_ selfDeletingMessages: Feature.ResetMLSConversations) {
+        storeResetMLSConversations_Invocations.append(selfDeletingMessages)
+
+        guard let mock = storeResetMLSConversations_MockMethod else {
+            fatalError("no mock for `storeResetMLSConversations`")
         }
 
         mock(selfDeletingMessages)
