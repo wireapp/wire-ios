@@ -32,7 +32,6 @@ enum ConversationSystemMessageCellDescription {
     ) -> [AnyConversationMessageCellDescription] {
 
         guard let systemMessageData = message.systemMessageData,
-              let sender = message.senderUser,
               let conversation = message.conversationLike
         else {
             assertionFailure("Invalid system message")
@@ -44,7 +43,7 @@ enum ConversationSystemMessageCellDescription {
             break // Deprecated
 
         case .conversationNameChanged:
-            guard let newName = systemMessageData.text else {
+            guard let newName = systemMessageData.text, let sender = message.senderUser else {
                 fallthrough
             }
 
@@ -68,6 +67,8 @@ enum ConversationSystemMessageCellDescription {
             return []
 
         case .messageDeletedForEveryone:
+            guard let sender = message.senderUser else { return [] }
+
             let senderCell = ConversationSenderMessageCellDescription(
                 sender: sender,
                 selfUser: selfUser,
@@ -76,7 +77,7 @@ enum ConversationSystemMessageCellDescription {
             return [AnyConversationMessageCellDescription(senderCell)]
 
         case .messageTimerUpdate:
-            guard let timer = systemMessageData.messageTimer else {
+            guard let timer = systemMessageData.messageTimer, let sender = message.senderUser else {
                 fallthrough
             }
 
@@ -101,6 +102,8 @@ enum ConversationSystemMessageCellDescription {
             return [AnyConversationMessageCellDescription(shieldCell)]
 
         case .sessionReset:
+            guard let sender = message.senderUser else { return [] }
+
             let sessionResetCell = ConversationSessionResetSystemMessageCellDescription(
                 message: message,
                 data: systemMessageData,
@@ -109,6 +112,8 @@ enum ConversationSystemMessageCellDescription {
             return [AnyConversationMessageCellDescription(sessionResetCell)]
 
         case .decryptionFailed, .decryptionFailedResolved, .decryptionFailed_RemoteIdentityChanged:
+            guard let sender = message.senderUser else { return [] }
+
             let decryptionCell = ConversationCannotDecryptSystemMessageCellDescription(
                 message: message,
                 data: systemMessageData,
@@ -160,6 +165,8 @@ enum ConversationSystemMessageCellDescription {
         case .readReceiptsEnabled,
              .readReceiptsDisabled,
              .readReceiptsOn:
+            guard let sender = message.senderUser else { return [] }
+
             let cell = ConversationReadReceiptSettingChangedCellDescription(
                 sender: sender,
                 systemMessageType: systemMessageData.systemMessageType
@@ -230,15 +237,20 @@ enum ConversationSystemMessageCellDescription {
         case .invalid:
             let unknownMessage = UnknownMessageCellDescription()
             return [AnyConversationMessageCellDescription(unknownMessage)]
-            
+
         case .moreHistoryAvailable:
-            let moreHistoryAvailableCellDescription = ConversationChannelMoreHistoryAvailableCellDescription(hasMoreHistory: true)
+            let moreHistoryAvailableCellDescription =
+                ConversationChannelMoreHistoryAvailableCellDescription(hasMoreHistory: true)
             return [AnyConversationMessageCellDescription(moreHistoryAvailableCellDescription)]
+
         case .noMoreHistoryAvailable:
-            let noMoreHistoryAvailableCellDescription = ConversationChannelMoreHistoryAvailableCellDescription(hasMoreHistory: false)
+            let noMoreHistoryAvailableCellDescription =
+                ConversationChannelMoreHistoryAvailableCellDescription(hasMoreHistory: false)
             return [AnyConversationMessageCellDescription(noMoreHistoryAvailableCellDescription)]
 
         case .channelHistoryDepthModified:
+            guard let sender = message.senderUser else { return [] }
+
             let cell = ConversationHistoryDepthChangedCellDescription(
                 sender: sender,
                 text: systemMessageData.text

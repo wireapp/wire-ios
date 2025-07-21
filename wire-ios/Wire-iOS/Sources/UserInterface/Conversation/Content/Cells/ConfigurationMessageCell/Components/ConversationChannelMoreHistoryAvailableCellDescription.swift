@@ -41,7 +41,8 @@ final class ConversationChannelMoreHistoryAvailableCellDescription: Conversation
 
     init(hasMoreHistory: Bool) {
         let image = hasMoreHistory ? UIImage(systemName: "arrow.trianglehead.counterclockwise") : nil
-        let title = hasMoreHistory ? L10n.Localizable.Content.System.messageMoreHistoryAvailable: L10n.Localizable.Content.System.messageNoMoreHistoryAvailable
+        let title = hasMoreHistory ? L10n.Localizable.Content.System.messageMoreHistoryAvailable : L10n.Localizable
+            .Content.System.messageNoMoreHistoryAvailable
         self.configuration = View.Configuration(image: image, title: title)
         self.actionController = nil
     }
@@ -93,28 +94,34 @@ final class ConversationChannelHistoryAvailableCell: UIView, ConversationMessage
         containerView.layer.cornerRadius = 15
         containerView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(containerView)
-        
+
         stackView.axis = .horizontal
         stackView.spacing = 5
         stackView.alignment = .center
         stackView.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(stackView)
-        
+
         [imageView, titleLabel].forEach(stackView.addArrangedSubview)
         imageView.image = UIImage(systemName: "arrow.trianglehead.counterclockwise")
+        imageView.tintColor = SemanticColors.Icon.foregroundDefault
         titleLabel.numberOfLines = 0
         titleLabel.textColor = SemanticColors.Label.textDefault
-        titleLabel.font = FontSpec.mediumFont.font!
+        titleLabel.font = FontSpec.smallFont.font!
     }
 
     private func createConstraints() {
         let padding: CGFloat = 10
-        
+
+        NSLayoutConstraint.activate([
+            imageView.widthAnchor.constraint(equalToConstant: 10),
+            imageView.heightAnchor.constraint(equalToConstant: 10)
+        ])
+
         NSLayoutConstraint.activate([
             stackView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: padding),
             stackView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: padding),
             containerView.trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: padding),
-            containerView.bottomAnchor.constraint(equalTo: stackView.bottomAnchor, constant: padding),
+            containerView.bottomAnchor.constraint(equalTo: stackView.bottomAnchor, constant: padding)
         ])
 
         NSLayoutConstraint.activate([
