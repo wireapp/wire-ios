@@ -92,12 +92,12 @@
         }
       },
       {
-        "package": "GenericMessage",
+        "package": "GenericMessageProtocol",
         "repositoryURL": "https://github.com/caldrian/generic-message-proto.git",
         "state": {
           "branch": null,
-          "revision": "83b3a959a5b48a51736c177420ae76669f89351d",
-          "version": "1.53.1"
+          "revision": "a2e0161ced061f7fcafae5838e34ebc7dd6af143",
+          "version": "1.53.2"
         }
       },
       {
