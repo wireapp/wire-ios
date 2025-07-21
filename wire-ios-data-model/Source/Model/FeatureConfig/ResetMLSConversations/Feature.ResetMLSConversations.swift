@@ -34,7 +34,7 @@ public extension Feature {
 
         // MARK: - Life cycle
 
-        public init(status: Feature.Status = .enabled, config: Config = .init()) {
+        public init(status: Feature.Status = .disabled, config: Config = .init()) {
             self.status = status
             self.config = config
         }
@@ -51,10 +51,10 @@ public extension Feature {
             ///
             /// A value of 0 indicates that the self-deleting messages are not mandatory.
 
-            public let mlsConversationReset20250709: Bool
+            public let mlsConversationReset: Bool
 
-            public init(mlsConversationReset20250709: Bool = false) {
-                self.mlsConversationReset20250709 = mlsConversationReset20250709
+            public init(mlsConversationReset: Bool = false) {
+                self.mlsConversationReset = mlsConversationReset
             }
 
         }

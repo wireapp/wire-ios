@@ -28,10 +28,29 @@ struct ConversationMLSResetEventProcessor: ConversationMLSResetEventProcessorPro
         case failedToWipeMLSConversation
     }
 
-    let mlsService: any MLSServiceInterface
-    let conversationLocalStore: any ConversationLocalStoreProtocol
-
+    private let mlsService: any MLSServiceInterface
+    private let conversationLocalStore: any ConversationLocalStoreProtocol
+    private let featureRepository: any FeatureRepositoryInterface
+    
+    init(
+        mlsService: any MLSServiceInterface,
+        conversationLocalStore: any ConversationLocalStoreProtocol,
+        featureRepository: any FeatureRepositoryInterface
+    ) {
+        self.mlsService = mlsService
+        self.conversationLocalStore = conversationLocalStore
+        self.featureRepository = featureRepository
+    }
+    
     func processEvent(_ event: ConversationMLSResetEvent) async throws {
+        
+        let feature = await featureRepository.fetchResetMLSConversations()
+        guard feature.status == .enabled && feature.config.mlsConversationReset == true else {
+            WireLogger.mls.debug(
+                "No need to process reset broken MLS conversation, FF is OFF"
+            )
+            return
+        }
 
         WireLogger.mls.info("MLS event processor is processing reset broken MLS conversation")
 
