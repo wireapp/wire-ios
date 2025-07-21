@@ -3182,13 +3182,13 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
         mock(fileSharing)
     }
 
-    // MARK: - fetchSelfDeletingMesssages
+    // MARK: - fetchSelfDeletingMessages
 
     public var fetchSelfDeletingMesssages_Invocations: [Void] = []
     public var fetchSelfDeletingMesssages_MockMethod: (() -> Feature.SelfDeletingMessages)?
     public var fetchSelfDeletingMesssages_MockValue: Feature.SelfDeletingMessages?
 
-    public func fetchSelfDeletingMesssages() -> Feature.SelfDeletingMessages {
+    public func fetchSelfDeletingMessages() -> Feature.SelfDeletingMessages {
         fetchSelfDeletingMesssages_Invocations.append(())
 
         if let mock = fetchSelfDeletingMesssages_MockMethod {
@@ -3196,7 +3196,7 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
         } else if let mock = fetchSelfDeletingMesssages_MockValue {
             return mock
         } else {
-            fatalError("no mock for `fetchSelfDeletingMesssages`")
+            fatalError("no mock for `fetchSelfDeletingMessages`")
         }
     }
 
