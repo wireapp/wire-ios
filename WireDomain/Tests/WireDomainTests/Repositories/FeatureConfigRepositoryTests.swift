@@ -196,7 +196,7 @@ final class FeatureConfigRepositoryTests: XCTestCase {
         )
 
         static let featureConfigs: [FeatureConfig] = [
-            // TODO: add tests
+            // add tests
             .appLock(
                 .init(
                     status: .enabled,

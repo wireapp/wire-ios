@@ -63,7 +63,7 @@ final class FeatureConfigLocalStore: FeatureConfigLocalStoreProtocol {
             (feature.status, feature.config)
         }
     }
-    
+
     public func storeFeature(
         name: Feature.Name,
         isEnabled: Bool,

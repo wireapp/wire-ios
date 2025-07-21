@@ -234,8 +234,8 @@ public class FeatureRepository: FeatureRepositoryInterface {
             logger.error("failed to encode Feature.SelfDeletingMessages.Config: \(error)")
         }
     }
-    
-    public func storeResetMLSConversations( _ resetMLSConversation: Feature.ResetMLSConversations) {
+
+    public func storeResetMLSConversations(_ resetMLSConversation: Feature.ResetMLSConversations) {
         do {
             let config = try encoder.encode(resetMLSConversation.config)
 
@@ -247,14 +247,14 @@ public class FeatureRepository: FeatureRepositoryInterface {
             logger.error("failed to encode Feature.ResetMLSConversations.Config: \(error)")
         }
     }
-    
+
     public func fetchResetMLSConversations() -> Feature.ResetMLSConversations {
         guard let feature = Feature.fetch(name: .resetMLSConversation, context: context),
-                let featureConfig = feature.config
+              let featureConfig = feature.config
         else {
             return .init()
         }
-        
+
         var config = Feature.ResetMLSConversations.Config()
 
         do {
@@ -269,17 +269,17 @@ public class FeatureRepository: FeatureRepositoryInterface {
         return .init(status: feature.status, config: config)
 
     }
-    
+
     public func fetchResetMLSConversationsAsync() async -> Feature.ResetMLSConversations {
         let (featureStatus, featureConfig) = await context.perform {
             let feature = Feature.fetch(name: .resetMLSConversation, context: self.context)
             return (feature?.status, feature?.config)
         }
-        
+
         guard let featureConfig, let featureStatus else {
             return .init()
         }
-        
+
         var config = Feature.ResetMLSConversations.Config()
 
         do {
@@ -294,7 +294,6 @@ public class FeatureRepository: FeatureRepositoryInterface {
         return .init(status: featureStatus, config: config)
 
     }
-
 
     // MARK: - Conversation guest links
 
@@ -540,7 +539,7 @@ public class FeatureRepository: FeatureRepositoryInterface {
 
             case .selfDeletingMessages:
                 storeSelfDeletingMessages(.init())
-            
+
             case .resetMLSConversation:
                 storeResetMLSConversations(.init())
 
