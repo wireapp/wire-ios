@@ -31,7 +31,7 @@ public protocol FeatureRepositoryInterface {
     func fetchSelfDeletingMessages() -> Feature.SelfDeletingMessages
     func storeSelfDeletingMessages(_ selfDeletingMessages: Feature.SelfDeletingMessages)
     func fetchResetMLSConversations() -> Feature.ResetMLSConversations
-    func fetchResetMLSConversations() async -> Feature.ResetMLSConversations
+    func fetchResetMLSConversationsAsync() async -> Feature.ResetMLSConversations
     func storeResetMLSConversations(_ resetMLSConversations: Feature.ResetMLSConversations)
     func fetchConversationGuestLinks() -> Feature.ConversationGuestLinks
     func storeConversationGuestLinks(_ conversationGuestLinks: Feature.ConversationGuestLinks)
@@ -270,7 +270,7 @@ public class FeatureRepository: FeatureRepositoryInterface {
 
     }
     
-    public func fetchResetMLSConversations() async -> Feature.ResetMLSConversations {
+    public func fetchResetMLSConversationsAsync() async -> Feature.ResetMLSConversations {
         let (featureStatus, featureConfig) = await context.perform {
             let feature = Feature.fetch(name: .resetMLSConversation, context: self.context)
             return (feature?.status, feature?.config)

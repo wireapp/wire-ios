@@ -3233,6 +3233,24 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
         }
     }
 
+    // MARK: - fetchResetMLSConversationsAsync
+
+    public var fetchResetMLSConversationsAsync_Invocations: [Void] = []
+    public var fetchResetMLSConversationsAsync_MockMethod: (() async -> Feature.ResetMLSConversations)?
+    public var fetchResetMLSConversationsAsync_MockValue: Feature.ResetMLSConversations?
+
+    public func fetchResetMLSConversationsAsync() async -> Feature.ResetMLSConversations {
+        fetchResetMLSConversationsAsync_Invocations.append(())
+
+        if let mock = fetchResetMLSConversationsAsync_MockMethod {
+            return await mock()
+        } else if let mock = fetchResetMLSConversationsAsync_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchResetMLSConversationsAsync`")
+        }
+    }
+
     // MARK: - storeResetMLSConversations
 
     public var storeResetMLSConversations_Invocations: [Feature.ResetMLSConversations] = []
