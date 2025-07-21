@@ -56,6 +56,8 @@ public extension UpdateEvent {
                 "conversation.typing"
             case .permissionUpdate:
                 "conversation.add-permission-update"
+            case .mlsReset:
+                "conversation.mls-reset"
             }
         case let .featureConfig(event):
             switch event {
