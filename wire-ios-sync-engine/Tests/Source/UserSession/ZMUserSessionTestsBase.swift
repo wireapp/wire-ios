@@ -111,6 +111,7 @@ class ZMUserSessionTestsBase: MessagingTest {
             continuation.finish()
         }
         mockMLSService.setSyncDelegate_MockMethod = { _ in }
+        mockMLSService.setResetBrokenMLSConversationDelegate_MockMethod = { _ in }
 
         mockRecurringActionService = MockRecurringActionServiceInterface()
         mockRecurringActionService.registerAction_MockMethod = { _ in }
