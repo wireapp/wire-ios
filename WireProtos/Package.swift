@@ -11,6 +11,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-protobuf.git", from: "1.30.0"),
+        .package(url: "https://github.com/caldrian/generic-message-proto.git", from: "1.53.0"),
 //        .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
 //        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", exact: "1.18.3"),
         .package(path: "../WirePlugins")
@@ -19,6 +20,7 @@ let package = Package(
         .target(
             name: "WireProtos",
             dependencies: [
+                .product(name: "GenericMessage", package: "generic-message-proto"),
                 .product(name: "SwiftProtobuf", package: "swift-protobuf")
             ]
         ),

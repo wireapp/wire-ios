@@ -92,6 +92,15 @@
         }
       },
       {
+        "package": "GenericMessage",
+        "repositoryURL": "https://github.com/caldrian/generic-message-proto.git",
+        "state": {
+          "branch": null,
+          "revision": "83b3a959a5b48a51736c177420ae76669f89351d",
+          "version": "1.53.1"
+        }
+      },
+      {
         "package": "HTMLString",
         "repositoryURL": "https://github.com/wireapp/HTMLString",
         "state": {
