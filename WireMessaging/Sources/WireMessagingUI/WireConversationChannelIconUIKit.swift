@@ -17,7 +17,7 @@
 //
 
 package import UIKit
-package import WireMessagingResources
+package import WireMessagingDomain
 
 package class WireConversationChannelIconUIKit: UIView {
     private enum Constants {

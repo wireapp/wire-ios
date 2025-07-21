@@ -17,7 +17,7 @@
 //
 
 package import SwiftUI
-package import WireMessagingResources
+package import WireMessagingDomain
 
 package struct WireConversationGroupIcon: View {
     let groupIcon: WireConversationGroupIconAsset

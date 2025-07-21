@@ -16,9 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireMessagingDomain
-package import WireMessagingResources
-
 package final class ConversationIDToChannelIconMapper: ConversationIDToPaletteMapper {
 
     let palette: [WireConversationChannelIconAsset] = WireConversationChannelIconAsset.all

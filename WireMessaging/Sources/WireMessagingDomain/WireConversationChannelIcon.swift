@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import SwiftUI
-
 package enum WireConversationChannelIconAsset: String {
     case blue
     case purple
@@ -37,17 +35,5 @@ package enum WireConversationChannelIconAsset: String {
             .petrol,
             .gray
         ]
-    }
-
-    package var imageName: String {
-        "channel-icon-\(rawValue)"
-    }
-
-    package var image: Image {
-        Image(imageName, bundle: .module)
-    }
-
-    package var uiKitImage: UIImage {
-        UIImage(resource: .init(name: imageName, bundle: .module))
     }
 }

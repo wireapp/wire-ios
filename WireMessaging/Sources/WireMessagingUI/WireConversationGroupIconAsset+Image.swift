@@ -16,19 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package final class ConversationIDToGroupIconMapper: ConversationIDToPaletteMapper {
+import SwiftUI
+package import UIKit
+import WireMessagingDomain
 
-    let palette: [WireConversationGroupIconAsset] = WireConversationGroupIconAsset.all
+extension WireConversationGroupIconAsset {
+    var imageName: String {
+        "group-icon-\(index)"
+    }
 
-    package init() {}
+    var image: Image {
+        Image(imageName, bundle: .module)
+    }
 
-    package func palette(for conversationID: String) -> WireConversationGroupIconAsset {
-        // make sure id is lowercased
-        let id = conversationID.lowercased()
-        // Calculate the combined hash
-        let hashValue = stringHashCode(id)
-        // Convert to positive Int for indexing
-        let index = abs(Int(hashValue)) % palette.count
-        return palette[index]
+    package var uiKitImage: UIImage {
+        UIImage(resource: .init(name: imageName, bundle: .module))
     }
 }
