@@ -32,6 +32,7 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
     private var conversationLocalStore: MockConversationLocalStoreProtocol!
     private var mlsService: MockMLSServiceInterface!
     private var zmConversation: ZMConversation!
+    private var mockFeatureRepository: MockFeatureRepositoryInterface!
 
     private var context: NSManagedObjectContext {
         coreDataStack.syncContext
@@ -43,6 +44,11 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
         coreDataStack = try await coreDataStackHelper.createStack()
         conversationLocalStore = MockConversationLocalStoreProtocol()
         mlsService = MockMLSServiceInterface()
+        mockFeatureRepository = .init()
+        mockFeatureRepository.fetchResetMLSConversations_MockValue = .init(
+            status: .enabled,
+            config: .init()
+        )
 
         let conversation = await context.perform { [self] in
             modelHelper.createGroupConversation(
@@ -59,7 +65,8 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
 
         sut = ConversationMLSResetEventProcessor(
             mlsService: mlsService,
-            conversationLocalStore: conversationLocalStore
+            conversationLocalStore: conversationLocalStore,
+            featureRepository: MockFeatureRepositoryInterface()
         )
     }
 
