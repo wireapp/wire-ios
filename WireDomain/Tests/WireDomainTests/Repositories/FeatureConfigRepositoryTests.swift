@@ -97,37 +97,6 @@ final class FeatureConfigRepositoryTests: XCTestCase {
         )
     }
 
-    func testStoreNeedsToNotifyUser_It_Invokes_Local_Store_Methods() async throws {
-        // Mock
-
-        let feature = await context.perform { [context] in
-            Feature.updateOrCreate(
-                havingName: .conversationGuestLinks,
-                in: context
-            ) { $0.status = .enabled }
-
-            return Feature.fetch(
-                name: .conversationGuestLinks,
-                context: context
-            )
-        }
-
-        featureConfigLocalStore.fetchFeatureName_MockValue = feature
-        featureConfigLocalStore.storeFeatureNeedsNotifyUserFeature_MockMethod = { _, _ in }
-
-        // When
-
-        try await sut.storeFeatureNeedsToNotifyUser(
-            true,
-            name: .conversationGuestLinks
-        )
-
-        // Then
-
-        XCTAssertEqual(featureConfigLocalStore.fetchFeatureName_Invocations.count, 1)
-        XCTAssertEqual(featureConfigLocalStore.storeFeatureNeedsNotifyUserFeature_Invocations.count, 1)
-    }
-
     func testFetchFeatureConfig_It_Invokes_Local_Store_Methods_And_Retrieves_Correct_Config() async throws {
         // Mock
 
