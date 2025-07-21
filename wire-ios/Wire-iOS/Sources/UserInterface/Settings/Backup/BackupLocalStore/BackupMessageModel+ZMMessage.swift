@@ -18,6 +18,7 @@
 
 import WireBackup
 import WireDataModel
+import GenericMessageProtocol
 import WireFoundation
 
 extension MessageBackupModel {

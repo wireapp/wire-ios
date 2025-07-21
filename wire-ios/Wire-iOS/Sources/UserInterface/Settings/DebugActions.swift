@@ -18,6 +18,7 @@
 
 import UIKit
 import WireSyncEngine
+import GenericMessageProtocol
 
 enum DebugActions {
 

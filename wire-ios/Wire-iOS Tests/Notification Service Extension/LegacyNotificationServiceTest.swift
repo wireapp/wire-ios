@@ -19,6 +19,7 @@
 import Foundation
 import Wire_Notification_Service_Extension
 import WireDomain
+import GenericMessageProtocol
 import WireNotificationEngine
 import XCTest
 
