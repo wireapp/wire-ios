@@ -46,8 +46,8 @@ final class AppVersionMigration_4_1_1: AppVersionMigration {
         journal[.isConversationSyncRequired] = true
 
         // Deletes all raw log files collected from the logger sources.
-        // This removes files from `WireLogger.logFiles` and `ZMSLog.pathsForExistingLogs`,
-        try logFilesProvider.removeLogFiles()
+        // This removes files from CocoaLumberjackLogger and `ZMSLog.pathsForExistingLogs`,
+        try logFilesProvider.removeLogFiles(fileManager: .default)
 
         // Deletes all log-related archives and folders created in the temp directory.
         try logFilesProvider.removeLegacyLogArchives()

@@ -116,7 +116,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         ZMSLog.switchCurrentLogToPrevious()
 
         // Set up Datadog and other loggers
-        WireAnalytics.setup()
+        WireAnalytics.setup(for: .app)
 
         WireLogger.appDelegate.info(
             "application:willFinishLaunchingWithOptions \(String(describing: launchOptions)) (applicationState = \(application.applicationState))"
@@ -397,6 +397,14 @@ private extension AppDelegate {
         // flag defined
         let maxNumberAccounts = SecurityFlags.maxNumberAccounts.intValue ?? SessionManager.defaultMaxNumberAccounts
 
+        func deleteAllAccountsLogs() { // we don't have per account logging yet
+            let fileManager = FileManager.default
+            if let appGroupIdentifier = Bundle.main.applicationGroupIdentifier,
+               let logsDirectory = FileManager.default.sharedLogsDirectoryURL(for: appGroupIdentifier) {
+                try? fileManager.removeItem(at: logsDirectory)
+            }
+        }
+
         let sessionManager = try SessionManager(
             maxNumberAccounts: maxNumberAccounts,
             currentAppVersion: currentAppVersion,
@@ -412,7 +420,7 @@ private extension AppDelegate {
             isDeveloperModeEnabled: Bundle.developerModeEnabled,
             sharedUserDefaults: .applicationGroup,
             minTLSVersion: SecurityFlags.minTLSVersion.stringValue,
-            deleteUserLogs: LogFileDestination.deleteAllLogs,
+            deleteUserLogs: deleteAllAccountsLogs,
             analyticsServiceConfiguration: AnalyticsServiceConfigurationBuilder.build(),
             countlyProvider: { CountlyWrapper() },
             logFilesProvider: LogFilesProvider()

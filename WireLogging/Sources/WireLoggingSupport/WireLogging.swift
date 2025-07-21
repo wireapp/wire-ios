@@ -16,10 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol JournalProtocol {
-
-    subscript(_ key: JournalKey<Bool>) -> Bool { get nonmutating set }
-    subscript(_ key: JournalKey<String?>) -> String? { get nonmutating set }
-    nonmutating func erase()
-
-}
+// This target generates mocks via 'sourcery'. It uses the plugin configured in `Package.swift`.
+// The generated mocks are processed from the sandbox directory and are not visible in the project folder:
+// https://github.com/apple/swift-package-manager/blob/main/Documentation/Plugins.md#implementing-the-build-tool-plugin-script

@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol JournalProtocol {
+/// The executable which logs are produced from.
 
-    subscript(_ key: JournalKey<Bool>) -> Bool { get nonmutating set }
-    subscript(_ key: JournalKey<String?>) -> String? { get nonmutating set }
-    nonmutating func erase()
-
+public enum LogTarget: String {
+    case app = "App"
+    case notificationServiceExtension = "NotificationServiceExtension"
+    case shareExtension = "ShareExtension"
 }
