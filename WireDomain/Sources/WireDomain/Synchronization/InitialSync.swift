@@ -28,7 +28,7 @@ public struct InitialSync: InitialSyncProtocol {
     private let oneOnOneResolver: any OneOnOneResolverProtocol
     private let syncStateSubject: CurrentValueSubject<SyncState, Never>
 
-    private let logger = WireLogger(tag: "initial-sync")
+    private let logger = WireLogger.sync
 
     public init(
         pullLastUpdateEventIDSync: any PullLastUpdateEventIDSyncProtocol,
