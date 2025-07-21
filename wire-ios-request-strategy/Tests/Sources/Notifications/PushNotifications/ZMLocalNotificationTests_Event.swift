@@ -17,6 +17,8 @@
 //
 
 import XCTest
+import GenericMessageProtocol
+
 @testable import WireRequestStrategy
 
 final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {

@@ -18,6 +18,7 @@
 
 import WireCryptobox
 import WireDataModel
+import GenericMessageProtocol
 import WireTesting
 import XCTest
 

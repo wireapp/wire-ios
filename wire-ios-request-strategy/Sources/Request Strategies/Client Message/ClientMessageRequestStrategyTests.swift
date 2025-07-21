@@ -17,8 +17,9 @@
 //
 
 import XCTest
-
+import GenericMessageProtocol
 import WireTransport
+
 @testable import WireDataModelSupport
 @testable import WireRequestStrategy
 @testable import WireRequestStrategySupport

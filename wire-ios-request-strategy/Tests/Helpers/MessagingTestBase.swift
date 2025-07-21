@@ -20,6 +20,7 @@ import WireCryptobox
 import WireDataModel
 import WireLogging
 import WireTesting
+import GenericMessageProtocol
 
 @testable import WireRequestStrategy
 

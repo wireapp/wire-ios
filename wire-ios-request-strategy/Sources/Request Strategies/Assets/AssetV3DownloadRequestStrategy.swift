@@ -17,6 +17,7 @@
 //
 
 import WireImages
+import GenericMessageProtocol
 import WireTransport
 
 private let zmLog = ZMSLog(tag: "Asset V3")
@@ -177,7 +178,7 @@ public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
     }
 
     private func validateAndStoreImage(
-        asset: WireProtos.Asset,
+        asset: GenericMessageProtocol.Asset,
         message: ZMAssetClientMessage,
         data: Data,
         keys: DecryptionKeys
@@ -198,7 +199,7 @@ public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
     }
 
     private func validateAndStoreFile(
-        asset: WireProtos.Asset,
+        asset: GenericMessageProtocol.Asset,
         message: ZMAssetClientMessage,
         data: Data,
         keys: DecryptionKeys

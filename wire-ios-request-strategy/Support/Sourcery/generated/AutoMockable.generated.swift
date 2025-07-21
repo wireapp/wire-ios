@@ -26,6 +26,7 @@
 
 import WireCoreCrypto
 import Combine
+import GenericMessageProtocol
 
 @testable import WireRequestStrategy
 

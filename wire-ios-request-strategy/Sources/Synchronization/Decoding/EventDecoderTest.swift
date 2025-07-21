@@ -19,6 +19,7 @@
 import WireDataModelSupport
 import WireTesting
 import WireTestingPackage
+import GenericMessageProtocol
 
 @testable import WireRequestStrategy
 
@@ -309,7 +310,7 @@ extension EventDecoderTest {
         let event1 = await syncMOC.perform {
             self.eventStreamEvent(
                 conversation: ZMConversation.selfConversation(in: self.syncMOC),
-                genericMessage: GenericMessage(content: WireProtos.Availability(.away))
+                genericMessage: GenericMessage(content: GenericMessageProtocol.Availability(.away))
             )
         }
         let event2 = await syncMOC.perform {

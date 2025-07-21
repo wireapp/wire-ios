@@ -355,7 +355,7 @@ extension LocalNotificationDispatcherTests {
             event = createUpdateEvent(
                 UUID.create(),
                 conversationID: conversation1.remoteIdentifier!,
-                genericMessage: GenericMessage(content: WireProtos.Asset(audioMetadata)),
+                genericMessage: GenericMessage(content: GenericMessageProtocol.Asset(audioMetadata)),
                 senderID: user1.remoteIdentifier
             )
 

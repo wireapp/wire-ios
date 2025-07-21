@@ -21,7 +21,7 @@ import WireBackup
 
 extension MessageBackupModel.Content.AssetContent.EncryptionAlgorithm {
 
-    init(_ encryptionAlgorithm: WireProtos.EncryptionAlgorithm) {
+    init(_ encryptionAlgorithm: GenericMessageProtocol.EncryptionAlgorithm) {
         switch encryptionAlgorithm {
         case .aesCbc:
             self = .aesCBC

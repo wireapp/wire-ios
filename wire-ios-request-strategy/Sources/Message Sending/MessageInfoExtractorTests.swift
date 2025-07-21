@@ -17,9 +17,10 @@
 //
 
 import XCTest
-
+import GenericMessageProtocol
 import WireDataModelSupport
 import WireRequestStrategySupport
+
 @testable import WireRequestStrategy
 
 final class MessageInfoExtractorTests: XCTestCase {

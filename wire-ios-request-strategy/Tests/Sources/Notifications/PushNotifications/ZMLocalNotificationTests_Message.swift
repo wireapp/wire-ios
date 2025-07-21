@@ -20,6 +20,8 @@ import WireDataModel
 import WireDataModelSupport
 import WireTesting
 import XCTest
+import GenericMessageProtocol
+
 @testable import WireRequestStrategy
 
 final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
@@ -641,7 +643,7 @@ extension ZMLocalNotificationTests_Message {
         let expiresAfter: TimeInterval = isEphemeral ? 10 : 0
         let imageData = verySmallJPEGData()
         let assetMessage = GenericMessage(
-            content: WireProtos.Asset(imageSize: .zero, mimeType: "image/jpeg", size: UInt64(imageData.count)),
+            content: GenericMessageProtocol.Asset(imageSize: .zero, mimeType: "image/jpeg", size: UInt64(imageData.count)),
             nonce: UUID.create(),
             expiresAfterTimeInterval: expiresAfter
         )
@@ -752,11 +754,11 @@ extension ZMLocalNotificationTests_Message {
     ) -> ZMLocalNotification? {
         var asset = switch fileType {
         case .video:
-            WireProtos.Asset(ZMVideoMetadata(fileURL: fileType.testURL))
+            GenericMessageProtocol.Asset(ZMVideoMetadata(fileURL: fileType.testURL))
         case .audio:
-            WireProtos.Asset(ZMAudioMetadata(fileURL: fileType.testURL))
+            GenericMessageProtocol.Asset(ZMAudioMetadata(fileURL: fileType.testURL))
         default:
-            WireProtos.Asset(ZMFileMetadata(fileURL: fileType.testURL))
+            GenericMessageProtocol.Asset(ZMFileMetadata(fileURL: fileType.testURL))
         }
         let expiresAfter: TimeInterval = isEphemeral ? 10 : 0
         let assetMessage = GenericMessage(content: asset, nonce: UUID.create(), expiresAfterTimeInterval: expiresAfter)

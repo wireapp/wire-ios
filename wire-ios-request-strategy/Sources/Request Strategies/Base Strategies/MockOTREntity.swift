@@ -18,6 +18,7 @@
 
 import WireDataModel
 import XCTest
+import GenericMessageProtocol
 
 @testable import WireRequestStrategy
 
@@ -71,7 +72,7 @@ final class MockOTREntity: OTREntity {
 }
 
 extension MockOTREntity: ProteusMessage {
-    func setUnderlyingMessage(_ message: WireProtos.GenericMessage) throws {}
+    func setUnderlyingMessage(_ message: GenericMessageProtocol.GenericMessage) throws {}
 
     var targetRecipients: WireRequestStrategy.Recipients {
         .conversationParticipants

@@ -19,6 +19,7 @@
 import WireRequestStrategy
 import WireRequestStrategySupport
 import XCTest
+import GenericMessageProtocol
 
 class AvailabilityRequestStrategyTests: MessagingTestBase {
 
@@ -109,7 +110,7 @@ class AvailabilityRequestStrategyTests: MessagingTestBase {
             _ = ZMConversation
                 .fetchOrCreate(with: selfUser.remoteIdentifier!, domain: nil, in: syncMOC) // create self conversation
 
-            let message = GenericMessage(content: WireProtos.Availability(.away))
+            let message = GenericMessage(content: GenericMessageProtocol.Availability(.away))
             let messageData = try message.serializedData()
             let dict = [
                 "recipient": self.selfClient.remoteIdentifier!,

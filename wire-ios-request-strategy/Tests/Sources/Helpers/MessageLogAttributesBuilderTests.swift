@@ -18,6 +18,7 @@
 
 import WireDataModelSupport
 import XCTest
+import GenericMessageProtocol
 
 @testable import WireRequestStrategy
 

@@ -158,7 +158,7 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
 
         let genericMessage = GenericMessage.with {
             $0.messageID = UUID().uuidString
-            $0.availability = WireProtos.Availability(.available)
+            $0.availability = GenericMessageProtocol.Availability(.available)
         }
 
         // When

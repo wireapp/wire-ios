@@ -306,7 +306,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
     }
 
     public func addMessageReaction(
-        _ messageReaction: WireProtos.Reaction,
+        _ messageReaction: GenericMessageProtocol.Reaction,
         in conversation: ZMConversation,
         senderID: UUID,
         date: Date
@@ -323,7 +323,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
     }
 
     public func addMessageConfirmation(
-        _ confirmation: WireProtos.Confirmation,
+        _ confirmation: GenericMessageProtocol.Confirmation,
         in conversation: ZMConversation,
         senderID: UUID,
         senderDomain: String,

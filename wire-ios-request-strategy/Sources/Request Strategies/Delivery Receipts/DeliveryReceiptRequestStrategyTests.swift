@@ -17,6 +17,7 @@
 //
 
 import XCTest
+import GenericMessageProtocol
 
 @testable import WireRequestStrategy
 @testable import WireRequestStrategySupport
@@ -219,7 +220,7 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
         timestamp: Date = Date()
     ) -> ZMUpdateEvent {
 
-        let message = GenericMessage(content: WireProtos.Text(content: "Hello World"))
+        let message = GenericMessage(content: GenericMessageProtocol.Text(content: "Hello World"))
         return createUpdateEvent(message: message, from: sender, in: conversation, timestamp: timestamp)
     }
 

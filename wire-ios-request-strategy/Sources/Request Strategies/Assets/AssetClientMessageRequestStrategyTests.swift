@@ -21,6 +21,7 @@ import WireDataModel
 import WireRequestStrategy
 import WireRequestStrategySupport
 import XCTest
+import GenericMessageProtocol
 
 final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
 
@@ -100,9 +101,9 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         if preview {
             let (otr, sha) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
             let previewId: String? = previewAssetId ? UUID.create().transportString() : nil
-            let remote = WireProtos.Asset.RemoteData(withOTRKey: otr, sha256: sha, assetId: previewId, assetToken: nil)
-            let imageMetadata = WireProtos.Asset.ImageMetaData(width: 123, height: 420)
-            let previewAsset = WireProtos.Asset.Preview(
+            let remote = GenericMessageProtocol.Asset.RemoteData(withOTRKey: otr, sha256: sha, assetId: previewId, assetToken: nil)
+            let imageMetadata = GenericMessageProtocol.Asset.ImageMetaData(width: 123, height: 420)
+            let previewAsset = GenericMessageProtocol.Asset.Preview(
                 size: 128,
                 mimeType: "image/jpg",
                 remoteData: remote,
@@ -110,7 +111,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             )
 
             let previewMessage = GenericMessage(
-                content: WireProtos.Asset(original: nil, preview: previewAsset),
+                content: GenericMessageProtocol.Asset(original: nil, preview: previewAsset),
                 nonce: message.nonce!,
                 expiresAfter: targetConversation.activeMessageDestructionTimeoutValue
             )
@@ -129,7 +130,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         if uploaded {
             let (otr, sha) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
             var uploaded = GenericMessage(
-                content: WireProtos.Asset(withUploadedOTRKey: otr, sha256: sha),
+                content: GenericMessageProtocol.Asset(withUploadedOTRKey: otr, sha256: sha),
                 nonce: message.nonce!,
                 expiresAfter: targetConversation.activeMessageDestructionTimeoutValue
             )
