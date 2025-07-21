@@ -93,11 +93,11 @@
       },
       {
         "package": "GenericMessageProtocol",
-        "repositoryURL": "https://github.com/caldrian/generic-message-proto.git",
+        "repositoryURL": "https://github.com/wireapp/generic-message-proto.git",
         "state": {
-          "branch": null,
-          "revision": "a2e0161ced061f7fcafae5838e34ebc7dd6af143",
-          "version": "1.53.2"
+          "branch": "chore/add-package.swift-WPB-10203",
+          "revision": "8072b8f0ccaf3d248c1bf209f2a70d160d581d80",
+          "version": null
         }
       },
       {
