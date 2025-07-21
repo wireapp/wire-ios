@@ -17,10 +17,10 @@
 //
 
 import CoreData
+import GenericMessageProtocol
 import WireCryptobox
 import WireDataModel
 import WireLogging
-import GenericMessageProtocol
 
 public final class MessageLocalStore: MessageLocalStoreProtocol {
 

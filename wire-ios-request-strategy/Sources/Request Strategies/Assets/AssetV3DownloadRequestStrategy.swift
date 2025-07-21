@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireImages
 import GenericMessageProtocol
+import WireImages
 import WireTransport
 
 private let zmLog = ZMSLog(tag: "Asset V3")

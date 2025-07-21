@@ -17,9 +17,9 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireDataModel
 import XCTest
-import GenericMessageProtocol
 
 @testable import WireRequestStrategy
 

@@ -17,11 +17,11 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireDataModel
 import WireRequestStrategy
 import WireRequestStrategySupport
 import XCTest
-import GenericMessageProtocol
 
 final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
 
@@ -101,7 +101,12 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         if preview {
             let (otr, sha) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
             let previewId: String? = previewAssetId ? UUID.create().transportString() : nil
-            let remote = GenericMessageProtocol.Asset.RemoteData(withOTRKey: otr, sha256: sha, assetId: previewId, assetToken: nil)
+            let remote = GenericMessageProtocol.Asset.RemoteData(
+                withOTRKey: otr,
+                sha256: sha,
+                assetId: previewId,
+                assetToken: nil
+            )
             let imageMetadata = GenericMessageProtocol.Asset.ImageMetaData(width: 123, height: 420)
             let previewAsset = GenericMessageProtocol.Asset.Preview(
                 size: 128,

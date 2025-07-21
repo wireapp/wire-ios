@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
 import WireTestingPackage
 import XCTest
-import GenericMessageProtocol
 
 @testable import WireDomain
 

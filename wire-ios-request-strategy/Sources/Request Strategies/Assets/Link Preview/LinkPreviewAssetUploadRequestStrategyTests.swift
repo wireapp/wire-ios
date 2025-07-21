@@ -17,11 +17,11 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireDataModel
 import WireLinkPreview
 import WireRequestStrategy
 import XCTest
-import GenericMessageProtocol
 
 // MARK: - Tests setup
 

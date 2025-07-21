@@ -17,9 +17,9 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireDataModelSupport
 import WireRequestStrategySupport
-import GenericMessageProtocol
 
 @testable import WireDataModel
 @testable import WireRequestStrategy

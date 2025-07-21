@@ -17,10 +17,10 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireDataModel
 import WireTesting
 import XCTest
-import GenericMessageProtocol
 
 @testable import WireSyncEngine
 

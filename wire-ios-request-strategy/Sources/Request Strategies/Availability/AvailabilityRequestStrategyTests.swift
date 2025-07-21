@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireRequestStrategy
 import WireRequestStrategySupport
 import XCTest
-import GenericMessageProtocol
 
 class AvailabilityRequestStrategyTests: MessagingTestBase {
 

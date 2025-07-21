@@ -17,11 +17,11 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireDataModelSupport
 import WireRequestStrategy
 import WireSyncEngineSupport
 import WireTransport
-import GenericMessageProtocol
 
 @testable import WireSyncEngine
 

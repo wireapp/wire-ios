@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireDataModel
 import WireNetwork
-import GenericMessageProtocol
 
 // sourcery: AutoMockable
 protocol ConversationTextMessageNotificationBuilderProtocol {
