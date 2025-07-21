@@ -54,7 +54,6 @@ let package = Package(
         .testTarget(
             name: "WireMessagingUITests",
             dependencies: [
-                "WireMessagingAssembly",
                 "WireMessagingUI",
                 "WireMessagingDomainSupport",
                 .product(name: "WireDesign", package: "WireUI"),

@@ -17,15 +17,14 @@
 //
 
 import SwiftUI
+import WireFoundation
+import WireMessagingUI
 import WireTestingPackage
 import XCTest
-
-import WireMessagingAssembly
 
 class WireConversationTypePickerTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
-    private let viewFactory = WireConversationTypePickerFactory()
 
     override func setUp() {
         snapshotHelper = .init()
@@ -39,10 +38,11 @@ class WireConversationTypePickerTests: XCTestCase {
     @MainActor
     func testColorSchemeVariantsEmptyState() {
         let view = VStack {
-            viewFactory.create(
+            WireConversationTypePicker(
                 availableConversationTypes: [.channel, .group],
                 onConversationTypeSelected: { _ in }
             )
+            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
             .frame(width: 350, height: 200)
             .padding()
         }
@@ -59,10 +59,11 @@ class WireConversationTypePickerTests: XCTestCase {
     @MainActor
     func testDynamicTypeVariantsEmptyState() {
         let view = VStack {
-            viewFactory.create(
+            WireConversationTypePicker(
                 availableConversationTypes: [.channel, .group],
                 onConversationTypeSelected: { _ in }
             )
+            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
             .frame(width: 350, height: 200)
             .padding()
         }

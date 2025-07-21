@@ -17,15 +17,13 @@
 //
 
 import SwiftUI
+import WireMessagingDomain
+import WireMessagingUI
 import WireTestingPackage
 import XCTest
 
-import WireMessagingAssembly
-
 class WireConversationGroupIconTests: XCTestCase {
 
-    private let conversationID = "df712f85-662d-42c5-9a82-0de2a710f754"
-    private let viewFactory = WireConversationGroupIconFactory()
     private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
@@ -39,7 +37,7 @@ class WireConversationGroupIconTests: XCTestCase {
 
     @MainActor
     func testDynamicTypeVariantsEmptyState() {
-        let view = viewFactory.create(conversationID: conversationID)
+        let view = WireConversationGroupIcon(asset: ._3)
             .frame(width: 40, height: 40)
             .padding()
 
@@ -54,7 +52,7 @@ class WireConversationGroupIconTests: XCTestCase {
 
     @MainActor
     func testColorSchemeVariantsEmptyState_uiKitView() {
-        let view = viewFactory.createUIKit(conversationID: conversationID)
+        let view = UIImageView(image: WireConversationGroupIconAsset._3.uiKitImage)
         view.frame = .init(x: 0, y: 0, width: 40, height: 40)
 
         snapshotHelper

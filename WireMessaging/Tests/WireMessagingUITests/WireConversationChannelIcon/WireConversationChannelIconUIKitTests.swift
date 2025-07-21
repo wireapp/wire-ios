@@ -17,15 +17,12 @@
 //
 
 import SwiftUI
+import WireMessagingUI
 import WireTestingPackage
 import XCTest
 
-import WireMessagingAssembly
-
 class WireConversationChannelIconUIKitTests: XCTestCase {
 
-    private let conversationID = "df712f85-662d-42c5-9a82-0de2a710f754"
-    private let viewFactory = WireConversationChannelIconFactory()
     private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
@@ -39,7 +36,7 @@ class WireConversationChannelIconUIKitTests: XCTestCase {
 
     @MainActor
     func testColorSchemeVariantsWhenPublic() {
-        let sut = viewFactory.createUIKit(conversationID: conversationID, isPrivateChannel: false)
+        let sut = WireConversationChannelIconUIKit(asset: .gray, isPrivateChannel: false)
         let container = makeContainer(sut: sut)
 
         snapshotHelper
@@ -52,7 +49,7 @@ class WireConversationChannelIconUIKitTests: XCTestCase {
 
     @MainActor
     func testColorSchemeVariantsWhenPrivate() {
-        let sut = viewFactory.createUIKit(conversationID: conversationID, isPrivateChannel: true)
+        let sut = WireConversationChannelIconUIKit(asset: .gray, isPrivateChannel: true)
         let container = makeContainer(sut: sut)
 
         snapshotHelper
