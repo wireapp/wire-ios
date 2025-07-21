@@ -3238,14 +3238,14 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
     public var storeResetMLSConversations_Invocations: [Feature.ResetMLSConversations] = []
     public var storeResetMLSConversations_MockMethod: ((Feature.ResetMLSConversations) -> Void)?
 
-    public func storeResetMLSConversations(_ selfDeletingMessages: Feature.ResetMLSConversations) {
-        storeResetMLSConversations_Invocations.append(selfDeletingMessages)
+    public func storeResetMLSConversations(_ resetMLSConversations: Feature.ResetMLSConversations) {
+        storeResetMLSConversations_Invocations.append(resetMLSConversations)
 
         guard let mock = storeResetMLSConversations_MockMethod else {
             fatalError("no mock for `storeResetMLSConversations`")
         }
 
-        mock(selfDeletingMessages)
+        mock(resetMLSConversations)
     }
 
     // MARK: - fetchConversationGuestLinks

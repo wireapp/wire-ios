@@ -95,7 +95,14 @@ struct FeatureConfigsPayloadProcessor {
             )
         }
         
-        // TODO: add?
+        if let resetMLSConversation = payload.allowedGlobalOperations {
+            repository.storeResetMLSConversations(
+                Feature.ResetMLSConversations(
+                    status: resetMLSConversation.status,
+                    config: resetMLSConversation.config
+                )
+            )
+        }
 
         if let mlsMigration = payload.mlsMigration {
             repository.storeMLSMigration(
