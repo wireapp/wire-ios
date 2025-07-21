@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		591B6E562C8B09D6009F8A7B /* OCMock.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5996E8C22C19FFDB007A52F0 /* OCMock.xcframework */; };
 		591B6E592C8B09DA009F8A7B /* WireMockTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54C902331B7532DD007162A8 /* WireMockTransport.framework */; };
+		5950B03A2E2EA5990051B07A /* GenericMessageProtocol in Frameworks */ = {isa = PBXBuildFile; productRef = 5950B0392E2EA5990051B07A /* GenericMessageProtocol */; };
 		59EC73FB2C20B82F00E5C036 /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59EC73FA2C20B82F00E5C036 /* WireSystem.framework */; };
 		CB79AC682C6D0009003CF5F4 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB79AC672C6D0009003CF5F4 /* WireTransportSupport.framework */; };
 		EE67F700296F09D8001D7C88 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6FF296F09D8001D7C88 /* WireTesting.framework */; };
@@ -88,6 +89,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5950B03A2E2EA5990051B07A /* GenericMessageProtocol in Frameworks */,
 				EE974125295498DA000C9340 /* WireCryptobox.framework in Frameworks */,
 				59EC73FB2C20B82F00E5C036 /* WireSystem.framework in Frameworks */,
 				EE67F700296F09D8001D7C88 /* WireTesting.framework in Frameworks */,
@@ -230,6 +232,9 @@
 				Base,
 			);
 			mainGroup = 54C902291B7532DD007162A8;
+			packageReferences = (
+				5950B0382E2EA5990051B07A /* XCRemoteSwiftPackageReference "generic-message-proto" */,
+			);
 			productRefGroup = 54C902341B7532DD007162A8 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -388,6 +393,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		5950B0382E2EA5990051B07A /* XCRemoteSwiftPackageReference "generic-message-proto" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/wireapp/generic-message-proto.git";
+			requirement = {
+				branch = "chore/add-package.swift-WPB-10203";
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		5950B0392E2EA5990051B07A /* GenericMessageProtocol */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5950B0382E2EA5990051B07A /* XCRemoteSwiftPackageReference "generic-message-proto" */;
+			productName = GenericMessageProtocol;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 54C9022A1B7532DD007162A8 /* Project object */;
 }

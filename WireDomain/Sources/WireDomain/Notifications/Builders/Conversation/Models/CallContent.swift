@@ -18,6 +18,7 @@
 
 import GenericMessageProtocol
 import WireLogging
+import Foundation
 
 struct CallContent: Decodable {
 

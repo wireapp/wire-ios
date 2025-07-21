@@ -19,6 +19,7 @@
 import WireDataModel
 import WireFoundation
 import WireNetwork
+import GenericMessageProtocol
 
 struct ConversationMessageAddEventNotificationBuilder: ConversationMessageAddEventNotificationBuilderProtocol {
 

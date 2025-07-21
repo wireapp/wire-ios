@@ -17,6 +17,7 @@
 //
 
 import GenericMessageProtocol
+import Foundation
 
 struct ProtobufMessageDecoder {
 

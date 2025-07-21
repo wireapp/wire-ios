@@ -17,6 +17,7 @@
 //
 
 import WireDataModel
+import GenericMessageProtocol
 
 let IsTypingKey = "isTyping"
 

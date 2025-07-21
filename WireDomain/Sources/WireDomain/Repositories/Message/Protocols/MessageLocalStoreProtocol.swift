@@ -19,6 +19,8 @@
 public import Foundation
 public import WireDataModel
 
+import GenericMessageProtocol
+
 // sourcery: AutoMockable
 /// Facilitate access to message related domain objects.
 public protocol MessageLocalStoreProtocol {

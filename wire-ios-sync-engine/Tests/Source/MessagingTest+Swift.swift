@@ -18,6 +18,8 @@
 
 import WireNetwork
 import WireTransport
+import GenericMessageProtocol
+
 @testable import WireSyncEngine
 
 public extension MessagingTest {

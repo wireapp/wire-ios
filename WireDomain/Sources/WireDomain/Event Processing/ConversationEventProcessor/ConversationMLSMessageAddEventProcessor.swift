@@ -19,6 +19,7 @@
 import WireDataModel
 import WireLogging
 import WireNetwork
+import GenericMessageProtocol
 import WireSystem
 
 struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventProcessorProtocol {

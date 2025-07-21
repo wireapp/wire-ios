@@ -24,6 +24,7 @@
 // swiftlint:disable variable_name
 
 
+import GenericMessageProtocol
 import WireNetwork
 import WireDataModel
 import WireDomainPackage

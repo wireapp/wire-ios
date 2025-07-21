@@ -18,6 +18,7 @@
 
 import WireDataModel
 import WireNetwork
+import GenericMessageProtocol
 
 // sourcery: AutoMockable
 protocol ConversationTextMessageNotificationBuilderProtocol {

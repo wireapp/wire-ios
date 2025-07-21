@@ -18,6 +18,7 @@
 
 import WireDataModel
 import WireNetwork
+import GenericMessageProtocol
 
 struct ConversationEphemeralMessageNotificationBuilder: ConversationEphemeralMessageNotificationBuilderProtocol {
     let context: Context

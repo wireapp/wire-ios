@@ -18,6 +18,7 @@
 
 import Foundation
 import WireLogging
+import GenericMessageProtocol
 
 @objc
 public extension ZMUserSession {

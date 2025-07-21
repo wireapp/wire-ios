@@ -17,6 +17,7 @@
 //
 
 import WireDataModel
+import GenericMessageProtocol
 import WireLogging
 import WireNetwork
 

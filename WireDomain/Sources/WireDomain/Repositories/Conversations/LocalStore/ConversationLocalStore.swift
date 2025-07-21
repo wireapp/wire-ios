@@ -18,6 +18,7 @@
 
 import CoreData
 import WireDataModel
+import GenericMessageProtocol
 import WireLogging
 
 public final class ConversationLocalStore: ConversationLocalStoreProtocol {

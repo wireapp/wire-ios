@@ -19,6 +19,7 @@
 import Combine
 import Foundation
 import WireDataModel
+import GenericMessageProtocol
 import WireLogging
 import WireRequestStrategy
 

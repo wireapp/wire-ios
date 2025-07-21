@@ -19,6 +19,7 @@
 import UserNotifications
 import WireUtilitiesSupport
 import XCTest
+import GenericMessageProtocol
 
 @testable import WireSyncEngine
 

@@ -20,6 +20,7 @@ import Foundation
 import WireDataModel
 import WireTesting
 import XCTest
+import GenericMessageProtocol
 
 @testable import WireSyncEngine
 

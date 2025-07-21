@@ -17,6 +17,8 @@
 //
 
 import XCTest
+import GenericMessageProtocol
+
 @testable import WireSyncEngine
 
 class MockTyping: WireSyncEngine.Typing {

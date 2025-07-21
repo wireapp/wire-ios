@@ -21,6 +21,7 @@ import WireDataModelSupport
 import WireRequestStrategy
 import WireSyncEngineSupport
 import WireTransport
+import GenericMessageProtocol
 
 @testable import WireSyncEngine
 
