@@ -26,6 +26,12 @@ let package = Package(
             ]
         ),
         .target(
+            name: "WireMessagingData",
+            dependencies: [
+                "WireMessagingDomain"
+            ]
+        ),
+        .target(
             name: "WireMessagingAssembly",
             dependencies: [
                 "WireMessagingDomain",
