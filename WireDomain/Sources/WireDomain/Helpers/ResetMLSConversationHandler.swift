@@ -21,7 +21,6 @@ import WireDataModel
 import WireLogging
 import WireNetwork
 
-// sourcery: AutoMockable
 public protocol InitiateResetMLSConversationUseCaseProtocol {
     func invoke(groupID: WireDataModel.MLSGroupID, epoch: Int64) async
 }
