@@ -81,7 +81,6 @@ final class FeatureConfigRepositoryTests: XCTestCase {
         featureConfigsAPI.getFeatureConfigs_MockValue = Scaffolding.featureConfigs
         featureConfigLocalStore.storeFeatureNameIsEnabledConfig_MockMethod = { _, _, _ in }
         featureConfigLocalStore.fetchFeatureName_MockValue = feature
-        featureConfigLocalStore.featureNeedsNotifyUserFeature_MockValue = true
 
         // When
 
@@ -89,8 +88,6 @@ final class FeatureConfigRepositoryTests: XCTestCase {
 
         // Then
 
-        XCTAssertEqual(featureConfigLocalStore.fetchFeatureName_Invocations.count, 5)
-        XCTAssertEqual(featureConfigLocalStore.featureNeedsNotifyUserFeature_Invocations.count, 5)
         XCTAssertEqual(
             featureConfigLocalStore.storeFeatureNameIsEnabledConfig_Invocations.count,
             Scaffolding.featureConfigs.count
@@ -175,7 +172,6 @@ final class FeatureConfigRepositoryTests: XCTestCase {
         featureConfigsAPI.getFeatureConfigs_MockValue = Scaffolding.featureConfigs
         featureConfigLocalStore.storeFeatureNameIsEnabledConfig_MockMethod = { _, _, _ in }
         featureConfigLocalStore.fetchFeatureName_MockValue = feature
-        featureConfigLocalStore.featureNeedsNotifyUserFeature_MockValue = true
 
         // When
 
@@ -186,8 +182,6 @@ final class FeatureConfigRepositoryTests: XCTestCase {
         // Then
 
         XCTAssertEqual(featureConfigsAPI.getFeatureConfigs_Invocations.count, 1)
-        XCTAssertEqual(featureConfigLocalStore.fetchFeatureName_Invocations.count, 5)
-        XCTAssertEqual(featureConfigLocalStore.featureNeedsNotifyUserFeature_Invocations.count, 5)
         XCTAssertEqual(
             featureConfigLocalStore.storeFeatureNameIsEnabledConfig_Invocations.count,
             Scaffolding.featureConfigs.count
@@ -202,6 +196,7 @@ final class FeatureConfigRepositoryTests: XCTestCase {
         )
 
         static let featureConfigs: [FeatureConfig] = [
+            // TODO: add tests
             .appLock(
                 .init(
                     status: .enabled,

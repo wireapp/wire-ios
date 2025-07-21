@@ -45,9 +45,9 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
         conversationLocalStore = MockConversationLocalStoreProtocol()
         mlsService = MockMLSServiceInterface()
         mockFeatureRepository = .init()
-        mockFeatureRepository.fetchResetMLSConversations_MockValue = .init(
+        mockFeatureRepository.fetchResetMLSConversationsAsync_MockValue = .init(
             status: .enabled,
-            config: .init()
+            config: .init(mlsConversationReset: true)
         )
 
         let conversation = await context.perform { [self] in
@@ -66,7 +66,7 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
         sut = ConversationMLSResetEventProcessor(
             mlsService: mlsService,
             conversationLocalStore: conversationLocalStore,
-            featureRepository: MockFeatureRepositoryInterface()
+            featureRepository: mockFeatureRepository
         )
     }
 
