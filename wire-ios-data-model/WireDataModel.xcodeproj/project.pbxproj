@@ -313,6 +313,7 @@
 		5986A08D2C6B710E00299181 /* TextMessageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5986A08C2C6B710E00299181 /* TextMessageData.swift */; };
 		5986A08F2C6B744300299181 /* TextMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5986A08E2C6B744300299181 /* TextMessage.swift */; };
 		598796302B45880400A6FC63 /* ZMUpdateEvent+allTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5987962F2B45880400A6FC63 /* ZMUpdateEvent+allTypes.swift */; };
+		5994C4F92E2E550700EF9C1C /* GenericMessage in Frameworks */ = {isa = PBXBuildFile; productRef = 5994C4F82E2E550700EF9C1C /* GenericMessage */; };
 		599EA3D02C246886009319D4 /* FilterConversationsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599EA3CF2C246886009319D4 /* FilterConversationsUseCase.swift */; };
 		599EA3D32C2468A0009319D4 /* FilterConversationsUseCase Protocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599EA3D22C2468A0009319D4 /* FilterConversationsUseCase Protocol.swift */; };
 		599EA3D52C246955009319D4 /* MutableConversationContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599EA3D42C246955009319D4 /* MutableConversationContainer.swift */; };
@@ -1911,6 +1912,7 @@
 				76E000BC2DAFED3A00853C45 /* WireCellsAPI in Frameworks */,
 				EE8DA96D2954A03800F58B79 /* WireLinkPreview.framework in Frameworks */,
 				E6707E902BBD683F00469D57 /* PINCache in Frameworks */,
+				5994C4F92E2E550700EF9C1C /* GenericMessage in Frameworks */,
 				59B48C5C2C89CBBD00EA7999 /* WireFoundation in Frameworks */,
 				EE8DA9702954A03E00F58B79 /* WireImages.framework in Frameworks */,
 				59537CDB2CFF8F2B00920B59 /* WireLogging in Frameworks */,
@@ -3866,6 +3868,7 @@
 				1657FA992D9C2EB800A7B337 /* WireCoreCryptoUniffi */,
 				76E000BB2DAFED3A00853C45 /* WireCellsAPI */,
 				34DC44B42E01C210004D5DD5 /* WireNetwork */,
+				5994C4F82E2E550700EF9C1C /* GenericMessage */,
 			);
 			productName = WireDataModel;
 			productReference = F9C9A4FC1CAD5DF10039E10C /* WireDataModel.framework */;
@@ -3955,6 +3958,7 @@
 			mainGroup = F9C9A4F21CAD5DF10039E10C;
 			packageReferences = (
 				E6707E8E2BBD683F00469D57 /* XCRemoteSwiftPackageReference "PINCache" */,
+				5994C4F72E2E550700EF9C1C /* XCRemoteSwiftPackageReference "generic-message-proto" */,
 			);
 			productRefGroup = F9C9A4FD1CAD5DF10039E10C /* Products */;
 			projectDirPath = "";
@@ -5219,6 +5223,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		5994C4F72E2E550700EF9C1C /* XCRemoteSwiftPackageReference "generic-message-proto" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/caldrian/generic-message-proto.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.53.1;
+			};
+		};
 		E6707E8E2BBD683F00469D57 /* XCRemoteSwiftPackageReference "PINCache" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pinterest/PINCache";
@@ -5249,6 +5261,11 @@
 		59537CDA2CFF8F2B00920B59 /* WireLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireLogging;
+		};
+		5994C4F82E2E550700EF9C1C /* GenericMessage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5994C4F72E2E550700EF9C1C /* XCRemoteSwiftPackageReference "generic-message-proto" */;
+			productName = GenericMessage;
 		};
 		59B48C5B2C89CBBD00EA7999 /* WireFoundation */ = {
 			isa = XCSwiftPackageProductDependency;
