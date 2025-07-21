@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import MobileCoreServices
 
 // MARK: - ZMFileMessageData

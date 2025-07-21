@@ -199,7 +199,7 @@ class PBMessageValidationTests: XCTestCase {
     // MARK: Reaction
 
     func testThatItCreatesReactionWithValidFields() {
-        let reaction = WireProtos.Reaction.with {
+        let reaction = GenericMessageProtocol.Reaction.with {
             $0.messageID = "8B496992-E74D-41D2-A2C4-C92EEE777DCE"
             $0.emoji = "🤩"
         }
@@ -208,7 +208,7 @@ class PBMessageValidationTests: XCTestCase {
     }
 
     func testThatItDoesNotCreateReactionWithInvalidFields() {
-        let reaction = WireProtos.Reaction.with {
+        let reaction = GenericMessageProtocol.Reaction.with {
             $0.messageID = "Not-A-UUID"
             $0.emoji = "🤩"
         }
@@ -330,16 +330,16 @@ class PBMessageValidationTests: XCTestCase {
         assetDomain: String?,
         preview: Bool
     ) -> GenericMessage? {
-        var assetPreview: WireProtos.Asset.Preview!
+        var assetPreview: GenericMessageProtocol.Asset.Preview!
 
         if preview {
-            let metadata = WireProtos.Asset.ImageMetaData.with {
+            let metadata = GenericMessageProtocol.Asset.ImageMetaData.with {
                 $0.width = 1000
                 $0.height = 1000
                 $0.tag = "tag"
             }
 
-            assetPreview = WireProtos.Asset.Preview.with {
+            assetPreview = GenericMessageProtocol.Asset.Preview.with {
                 $0.size = 1000
                 $0.mimeType = "image/png"
                 $0.remote = assetRemoteData(id: assetId, token: assetToken!, domain: assetDomain!)
@@ -347,7 +347,7 @@ class PBMessageValidationTests: XCTestCase {
             }
         }
 
-        let asset = WireProtos.Asset.with {
+        let asset = GenericMessageProtocol.Asset.with {
             if preview {
                 $0.preview = assetPreview
             }
@@ -357,8 +357,8 @@ class PBMessageValidationTests: XCTestCase {
         return GenericMessage(content: asset).validatingFields()
     }
 
-    private func assetRemoteData(id: String, token: String, domain: String) -> WireProtos.Asset.RemoteData {
-        WireProtos.Asset.RemoteData.with {
+    private func assetRemoteData(id: String, token: String, domain: String) -> GenericMessageProtocol.Asset.RemoteData {
+        GenericMessageProtocol.Asset.RemoteData.with {
             $0.assetID = id
             $0.assetToken = token
             $0.assetDomain = domain
@@ -557,7 +557,7 @@ class ModelValidationTests: XCTestCase {
 
     func testThatItCreatesReactionWithValidFields() {
 
-        let reaction = WireProtos.Reaction.createReaction(
+        let reaction = GenericMessageProtocol.Reaction.createReaction(
             emojis: ["🤩"],
             messageID: UUID(uuidString: "8B496992-E74D-41D2-A2C4-C92EEE777DCE")!
         )
@@ -567,7 +567,7 @@ class ModelValidationTests: XCTestCase {
 
     func testThatItDoesNotCreateReactionWithInvalidFields() {
 
-        let reaction = WireProtos.Reaction.with {
+        let reaction = GenericMessageProtocol.Reaction.with {
             $0.emoji = "🤩"
             $0.messageID = "Not-A-UUID"
         }
@@ -701,20 +701,20 @@ class ModelValidationTests: XCTestCase {
         preview: Bool
     ) -> GenericMessage? {
 
-        var asset = WireProtos.Asset()
+        var asset = GenericMessageProtocol.Asset()
 
         if preview {
-            let imageMetaData = WireProtos.Asset.ImageMetaData.with {
+            let imageMetaData = GenericMessageProtocol.Asset.ImageMetaData.with {
                 $0.tag = "tag"
                 $0.width = 1000
                 $0.height = 1000
             }
 
-            let remoteData = WireProtos.Asset.RemoteData.with {
+            let remoteData = GenericMessageProtocol.Asset.RemoteData.with {
                 $0.assetID = assetId
                 $0.assetToken = assetToken ?? ""
             }
-            let preview = WireProtos.Asset.Preview(
+            let preview = GenericMessageProtocol.Asset.Preview(
                 size: 1000,
                 mimeType: "image/png",
                 remoteData: remoteData,
@@ -723,7 +723,7 @@ class ModelValidationTests: XCTestCase {
             asset.preview = preview
         }
 
-        asset.uploaded = WireProtos.Asset.RemoteData.with {
+        asset.uploaded = GenericMessageProtocol.Asset.RemoteData.with {
             $0.assetID = assetId
             $0.assetToken = assetToken ?? ""
             $0.assetDomain = assetDomain ?? ""

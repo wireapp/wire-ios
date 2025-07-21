@@ -65,7 +65,7 @@ class GenericMessageTests: XCTestCase {
     }
 
     func testThatItConsidersAssetMessageTypeAsKnownMessage() {
-        let assetMessageType = GenericMessage(content: WireProtos.Asset(
+        let assetMessageType = GenericMessage(content: GenericMessageProtocol.Asset(
             imageSize: .zero,
             mimeType: "image/jpeg",
             size: 0
@@ -92,7 +92,7 @@ class GenericMessageTests: XCTestCase {
     }
 
     func testThatItConsidersCreatingReactionMessageTypeAsKnownMessage() {
-        let creatingReactionMessageType = GenericMessage(content: WireProtos.Reaction.createReaction(
+        let creatingReactionMessageType = GenericMessage(content: GenericMessageProtocol.Reaction.createReaction(
             emojis: ["❤️"],
             messageID: UUID.create()
         ))
@@ -100,7 +100,7 @@ class GenericMessageTests: XCTestCase {
     }
 
     func testThatItConsidersAvailabilityMessageTypeAsKnownMessage() {
-        let awayAvailabilityMessageType = GenericMessage(content: WireProtos.Availability(.away))
+        let awayAvailabilityMessageType = GenericMessage(content: GenericMessageProtocol.Availability(.away))
         XCTAssertTrue(awayAvailabilityMessageType.knownMessage)
     }
 }

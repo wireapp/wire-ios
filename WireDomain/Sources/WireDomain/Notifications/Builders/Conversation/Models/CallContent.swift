@@ -17,7 +17,7 @@
 //
 
 import WireLogging
-import WireProtos
+import GenericMessageProtocol
 
 struct CallContent: Decodable {
 

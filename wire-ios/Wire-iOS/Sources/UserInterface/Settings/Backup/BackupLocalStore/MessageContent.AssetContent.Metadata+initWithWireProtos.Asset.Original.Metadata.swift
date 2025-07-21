@@ -17,7 +17,7 @@
 //
 
 import WireBackup
-import WireProtos
+import GenericMessageProtocol
 
 extension MessageBackupModel.Content.AssetContent.Metadata {
 

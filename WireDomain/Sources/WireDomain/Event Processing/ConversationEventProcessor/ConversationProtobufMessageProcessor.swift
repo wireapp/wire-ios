@@ -19,7 +19,7 @@
 import WireDataModel
 import WireLogging
 import WireNetwork
-import WireProtos
+import GenericMessageProtocol
 
 public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcessorProtocol {
 

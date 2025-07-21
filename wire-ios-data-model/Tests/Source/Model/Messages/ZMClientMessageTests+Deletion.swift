@@ -74,7 +74,7 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
 
         // expect
         let assetId = "asset-id"
-        let asset = WireProtos.Asset(withUploadedOTRKey: .zmRandomSHA256Key(), sha256: .zmRandomSHA256Key())
+        let asset = GenericMessageProtocol.Asset(withUploadedOTRKey: .zmRandomSHA256Key(), sha256: .zmRandomSHA256Key())
         var message = GenericMessage(content: asset, nonce: sut.nonce!)
         message.updateUploaded(assetId: assetId, token: nil, domain: nil)
         let updateEvent = createUpdateEvent(sut.nonce!, conversationID: UUID.create(), genericMessage: message)
@@ -115,27 +115,27 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
 
         // expect
         let assetId = UUID.create().transportString()
-        let asset1 = WireProtos.Asset(withUploadedOTRKey: .zmRandomSHA256Key(), sha256: .zmRandomSHA256Key())
+        let asset1 = GenericMessageProtocol.Asset(withUploadedOTRKey: .zmRandomSHA256Key(), sha256: .zmRandomSHA256Key())
         var message = GenericMessage(content: asset1, nonce: sut.nonce!)
         message.updateUploaded(assetId: assetId, token: nil, domain: nil)
         let updateEvent1 = createUpdateEvent(sut.nonce!, conversationID: UUID.create(), genericMessage: message)
         sut.update(with: updateEvent1, initialUpdate: true)
 
         let previewAssetId = UUID.create().transportString()
-        let remote = WireProtos.Asset.RemoteData(
+        let remote = GenericMessageProtocol.Asset.RemoteData(
             withOTRKey: .zmRandomSHA256Key(),
             sha256: .zmRandomSHA256Key(),
             assetId: previewAssetId,
             assetToken: nil
         )
-        let image = WireProtos.Asset.ImageMetaData(width: 1024, height: 1024)
-        let preview = WireProtos.Asset.Preview(
+        let image = GenericMessageProtocol.Asset.ImageMetaData(width: 1024, height: 1024)
+        let preview = GenericMessageProtocol.Asset.Preview(
             size: 256,
             mimeType: "image/png",
             remoteData: remote,
             imageMetadata: image
         )
-        let asset2 = WireProtos.Asset(original: nil, preview: preview)
+        let asset2 = GenericMessageProtocol.Asset(original: nil, preview: preview)
         let genericMessage = GenericMessage(content: asset2, nonce: sut.nonce!)
         let updateEvent2 = createUpdateEvent(sut.nonce!, conversationID: UUID.create(), genericMessage: genericMessage)
         sut.update(with: updateEvent2, initialUpdate: true)

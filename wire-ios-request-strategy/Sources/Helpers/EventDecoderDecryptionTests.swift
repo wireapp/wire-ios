@@ -20,7 +20,7 @@ import Foundation
 import WireCoreCrypto
 import WireCryptobox
 import WireDataModel
-import WireProtos
+import GenericMessageProtocol
 import XCTest
 
 @testable import WireDataModelSupport

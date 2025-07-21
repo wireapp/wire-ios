@@ -493,7 +493,7 @@ extension ZMUserTests_Swift {
         // given
         let user = ZMUser.insert(in: uiMOC, name: "Foo")
         XCTAssertEqual(user.availability, .none)
-        let availability = WireProtos.Availability(.away)
+        let availability = GenericMessageProtocol.Availability(.away)
         // when
         user.updateAvailability(from: GenericMessage(content: availability))
 

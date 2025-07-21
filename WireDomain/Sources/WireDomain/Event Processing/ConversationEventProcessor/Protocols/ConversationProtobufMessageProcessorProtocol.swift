@@ -18,7 +18,7 @@
 
 import WireDataModel
 import WireNetwork
-import WireProtos
+import GenericMessageProtocol
 
 // sourcery: AutoMockable
 /// A common processor for processing MLS / Proteus protobuf message.

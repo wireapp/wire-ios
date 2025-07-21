@@ -17,7 +17,7 @@
 //
 
 import WireDataModel
-import WireProtos
+import GenericMessageProtocol
 import WireTransport
 import WireUtilities
 import XCTest

@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireProtos
+import GenericMessageProtocol
 
 public extension UUID {
 
@@ -136,8 +136,8 @@ public extension Quote {
 
 // MARK: Mention
 
-public extension WireProtos.Mention {
-    func validatingFields() -> WireProtos.Mention? {
+public extension GenericMessageProtocol.Mention {
+    func validatingFields() -> GenericMessageProtocol.Mention? {
         UUID.isValid(object: userID) ? self : nil
     }
 }
@@ -200,24 +200,24 @@ public extension Confirmation {
 
 // MARK: Reaction
 
-public extension WireProtos.Reaction {
-    func validatingFields() -> WireProtos.Reaction? {
+public extension GenericMessageProtocol.Reaction {
+    func validatingFields() -> GenericMessageProtocol.Reaction? {
         UUID.isValid(object: messageID) ? self : nil
     }
 }
 
 // MARK: User ID
 
-public extension WireProtos.Proteus_UserId {
-    func validatingFields() -> WireProtos.Proteus_UserId? {
+public extension GenericMessageProtocol.Proteus_UserId {
+    func validatingFields() -> GenericMessageProtocol.Proteus_UserId? {
         UUID.isValid(bytes: uuid) ? self : nil
     }
 }
 
 // MARK: - Asset
 
-public extension WireProtos.Asset {
-    func validatingFields() -> WireProtos.Asset? {
+public extension GenericMessageProtocol.Asset {
+    func validatingFields() -> GenericMessageProtocol.Asset? {
         if hasPreview, preview.hasRemote {
             guard preview.remote.validatingFields() != nil else { return nil }
         }
@@ -230,8 +230,8 @@ public extension WireProtos.Asset {
     }
 }
 
-public extension WireProtos.Asset.RemoteData {
-    func validatingFields() -> WireProtos.Asset.RemoteData? {
+public extension GenericMessageProtocol.Asset.RemoteData {
+    func validatingFields() -> GenericMessageProtocol.Asset.RemoteData? {
         guard assetID.isValidAssetID else { return nil }
         guard assetToken.isValidBearerToken else { return nil }
         return self

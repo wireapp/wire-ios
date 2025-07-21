@@ -38,7 +38,7 @@ class GenericMessageTests_LegalHoldStatus: BaseZMClientMessageTests {
     func testThatItUpdatesLegalHoldStatusFlagForReaction() {
 
         // given
-        var genericMessage = GenericMessage(content: WireProtos.Reaction.createReaction(
+        var genericMessage = GenericMessage(content: GenericMessageProtocol.Reaction.createReaction(
             emojis: ["🤠"],
             messageID: UUID.create()
         ))
@@ -54,7 +54,7 @@ class GenericMessageTests_LegalHoldStatus: BaseZMClientMessageTests {
     func testThatItUpdatesLegalHoldStatusFlagForKnock() {
 
         // given
-        var genericMessage = GenericMessage(content: WireProtos.Knock.with { $0.hotKnock = true }, nonce: UUID.create())
+        var genericMessage = GenericMessage(content: GenericMessageProtocol.Knock.with { $0.hotKnock = true }, nonce: UUID.create())
 
         // when
         XCTAssertEqual(genericMessage.knock.legalHoldStatus, .unknown)
@@ -67,7 +67,7 @@ class GenericMessageTests_LegalHoldStatus: BaseZMClientMessageTests {
     func testThatItUpdatesLegalHoldStatusFlagForLocation() {
 
         // given
-        let location = WireProtos.Location.with {
+        let location = GenericMessageProtocol.Location.with {
             $0.latitude = 0.0
             $0.longitude = 0.0
         }
@@ -85,7 +85,7 @@ class GenericMessageTests_LegalHoldStatus: BaseZMClientMessageTests {
 
         // given
         var genericMessage = GenericMessage(
-            content: WireProtos.Asset(imageSize: CGSize(width: 42, height: 12), mimeType: "image/jpeg", size: 123),
+            content: GenericMessageProtocol.Asset(imageSize: CGSize(width: 42, height: 12), mimeType: "image/jpeg", size: 123),
             nonce: UUID.create()
         )
 
@@ -100,7 +100,7 @@ class GenericMessageTests_LegalHoldStatus: BaseZMClientMessageTests {
     func testThatItUpdatesLegalHoldStatusFlagForEphemeral() {
 
         // given
-        let asset = WireProtos.Asset(imageSize: CGSize(width: 42, height: 12), mimeType: "image/jpeg", size: 123)
+        let asset = GenericMessageProtocol.Asset(imageSize: CGSize(width: 42, height: 12), mimeType: "image/jpeg", size: 123)
         var genericMessage = GenericMessage(content: asset, nonce: UUID.create(), expiresAfter: .tenSeconds)
 
         // when

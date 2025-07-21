@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 @objc
 public enum MutedMessageOptionValue: Int32 {

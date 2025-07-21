@@ -17,7 +17,6 @@
 //
 
 @import WireImages;
-@import WireProtos;
 @import WireTransport;
 
 #import <WireDataModel/ZMMessage.h>
