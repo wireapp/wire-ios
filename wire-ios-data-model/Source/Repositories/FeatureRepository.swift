@@ -31,7 +31,7 @@ public protocol FeatureRepositoryInterface {
     func fetchSelfDeletingMessages() -> Feature.SelfDeletingMessages
     func storeSelfDeletingMessages(_ selfDeletingMessages: Feature.SelfDeletingMessages)
     func fetchResetMLSConversations() -> Feature.ResetMLSConversations
-    func storeResetMLSConversations(_ selfDeletingMessages: Feature.ResetMLSConversations)
+    func storeResetMLSConversations(_ resetMLSConversations: Feature.ResetMLSConversations)
     func fetchConversationGuestLinks() -> Feature.ConversationGuestLinks
     func storeConversationGuestLinks(_ conversationGuestLinks: Feature.ConversationGuestLinks)
     func fetchClassifiedDomains() -> Feature.ClassifiedDomains
@@ -235,11 +235,38 @@ public class FeatureRepository: FeatureRepositoryInterface {
     }
     
     public func storeResetMLSConversations( _ resetMLSConversation: Feature.ResetMLSConversations) {
-        print("DS:") // TODO:
+        do {
+            let config = try encoder.encode(resetMLSConversation.config)
+
+            Feature.updateOrCreate(havingName: .resetMLSConversation, in: context) {
+                $0.status = resetMLSConversation.status
+                $0.config = config
+            }
+        } catch {
+            logger.error("failed to encode Feature.ResetMLSConversations.Config: \(error)")
+        }
     }
     
     public func fetchResetMLSConversations() -> Feature.ResetMLSConversations {
-        Feature.ResetMLSConversations() // TODO:
+        guard let feature = Feature.fetch(name: .resetMLSConversation, context: context),
+                let featureConfig = feature.config
+        else {
+            return .init()
+        }
+        
+        var config = Feature.ResetMLSConversations.Config()
+
+        do {
+            config = try decoder.decode(
+                Feature.ResetMLSConversations.Config.self,
+                from: featureConfig
+            )
+        } catch {
+            logger.error("failed to decode Feature.ResetMLSConversations.Config: \(error)")
+        }
+
+        return .init(status: feature.status, config: config)
+
     }
 
     // MARK: - Conversation guest links
