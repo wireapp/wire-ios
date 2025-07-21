@@ -19,16 +19,15 @@
 import Foundation
 import WireNetwork
 
-public struct StoredBackendEnvironment: Codable, Sendable {
+struct StoredBackendEnvironment: Codable, Sendable {
 
-    public let title: String
-    public let environmentType: EnvironmentType
-    public let endpoints: Endpoints
-    public let pinnedKeys: [PinnedKey]
-    public let proxyConfig: ProxyConfig?
-    public let metadata: ResolvedBackendMetadata
+    let title: String
+    let environmentType: EnvironmentType
+    let endpoints: Endpoints
+    let pinnedKeys: [PinnedKey]
+    let proxyConfig: ProxyConfig?
 
-    public enum EnvironmentType: Codable, Sendable {
+    enum EnvironmentType: Codable, Sendable {
         case `default`
         case staging
         case anta
@@ -40,63 +39,44 @@ public struct StoredBackendEnvironment: Codable, Sendable {
         case custom(url: URL)
     }
 
-    public struct Endpoints: Codable, Sendable {
-        public let restAPIURL: URL
-        public let websocketURL: URL
-        public let blacklistURL: URL
-        public let teamsURL: URL
-        public let accountsURL: URL
-        public let websiteURL: URL
-        public let countlyURL: URL?
+    struct Endpoints: Codable, Sendable {
+        let restAPIURL: URL
+        let websocketURL: URL
+        let blacklistURL: URL
+        let teamsURL: URL
+        let accountsURL: URL
+        let websiteURL: URL
+        let countlyURL: URL?
     }
 
-    public struct ResolvedBackendMetadata: Codable, Sendable {
-        public let apiVersion: APIVersion
-        public let domain: String
-        public let isFederationEnabled: Bool
+    struct ProxyConfig: Codable, Sendable {
+        let host: String
+        let port: Int
+        let needsAuthentication: Bool
     }
 
-    public struct ProxyConfig: Codable, Sendable {
-        public let host: String
-        public let port: Int
-        public let needsAuthentication: Bool
-    }
-
-    public struct PinnedKey: Codable, Sendable {
-        public enum Host: Codable, Sendable {
+    struct PinnedKey: Codable, Sendable {
+        enum Host: Codable, Sendable {
             case endsWith(String)
             case equals(String)
         }
 
-        public let keyDataBase64: String
-        public let hosts: [Host]
+        let keyDataBase64: String
+        let hosts: [Host]
     }
 
-    public enum APIVersion: UInt, Codable, Sendable {
-        case v0
-        case v1
-        case v2
-        case v3
-        case v4
-        case v5
-        case v6
-        case v7
-        case v8
-        case v9
-    }
 }
 
 // MARK: - To Stored
 
 extension BackendEnvironment2 {
-    func toStored(with metadata: ResolvedBackendMetadata) -> StoredBackendEnvironment {
+    func toStored() -> StoredBackendEnvironment {
         .init(
             title: title,
             environmentType: environmentType.toStored(),
             endpoints: config.endpoints.toStored(),
             pinnedKeys: config.pinnedKeys.compactMap { $0.toStored() },
             proxyConfig: config.proxyConfig?.toStored(),
-            metadata: metadata.toStored()
         )
     }
 }
@@ -151,7 +131,7 @@ extension BackendEnvironment2.ProxyConfig {
 }
 
 extension ResolvedBackendMetadata {
-    func toStored() -> StoredBackendEnvironment.ResolvedBackendMetadata {
+    func toStored() -> StoredResolvedBackendMetadata {
         .init(
             apiVersion: apiVersion.toStored(),
             domain: domain,
@@ -161,7 +141,7 @@ extension ResolvedBackendMetadata {
 }
 
 extension WireNetwork.APIVersion {
-    func toStored() -> StoredBackendEnvironment.APIVersion {
+    func toStored() -> StoredResolvedBackendMetadata.APIVersion {
         switch self {
         case .v0: .v0
         case .v1: .v1
@@ -198,8 +178,8 @@ extension PinnedKey.Host {
 // MARK: - To API
 
 extension StoredBackendEnvironment {
-    func toDomain() throws -> (BackendEnvironment2, WireNetwork.ResolvedBackendMetadata) {
-        let backendEnvironment = BackendEnvironment2(
+    func toDomain() throws -> BackendEnvironment2 {
+        BackendEnvironment2(
             title: title,
             environmentType: environmentType.toDomain(),
             config: BackendEnvironment2.Config(
@@ -208,8 +188,6 @@ extension StoredBackendEnvironment {
                 proxyConfig: proxyConfig?.toDomain()
             )
         )
-        let metadata = metadata.toDomain()
-        return (backendEnvironment, metadata)
     }
 }
 
@@ -252,7 +230,7 @@ extension StoredBackendEnvironment.Endpoints {
     }
 }
 
-extension StoredBackendEnvironment.ResolvedBackendMetadata {
+extension StoredResolvedBackendMetadata {
     func toDomain() -> ResolvedBackendMetadata {
         .init(
             apiVersion: apiVersion.toDomain(),
@@ -262,7 +240,7 @@ extension StoredBackendEnvironment.ResolvedBackendMetadata {
     }
 }
 
-extension StoredBackendEnvironment.APIVersion {
+extension StoredResolvedBackendMetadata.APIVersion {
     func toDomain() -> WireNetwork.APIVersion {
         switch self {
         case .v0: .v0
@@ -312,4 +290,25 @@ extension StoredBackendEnvironment.PinnedKey.Host {
         case let .equals(v): .equals(v)
         }
     }
+}
+
+struct StoredResolvedBackendMetadata: Codable, Sendable {
+
+    let apiVersion: APIVersion
+    let domain: String
+    let isFederationEnabled: Bool
+
+    enum APIVersion: UInt, Codable, Sendable {
+        case v0
+        case v1
+        case v2
+        case v3
+        case v4
+        case v5
+        case v6
+        case v7
+        case v8
+        case v9
+    }
+
 }
