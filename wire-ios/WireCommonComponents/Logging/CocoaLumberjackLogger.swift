@@ -24,19 +24,19 @@ import WireSystem
 /// Logger to write logs to fileSystem via CocoaLumberjack
 final class CocoaLumberjackLogger: LoggerProtocol {
 
-    private let fileLogger: DDFileLogger = .init() // File Logger
+    private let fileLogger: DDFileLogger
     private var tags = [LogAttributesKey: String]()
     private let tagsQueue = DispatchQueue(label: "CocoaLumberjackLogger.tagsQueue", attributes: .concurrent)
 
-    init() {
+    /// - Parameter logsDirectory: If `nil` the default logs directory of `CocoaLumberjack` is used, otherwise the
+    /// provided URL.
+    init(logsDirectory: URL?) {
+        let logFileManager = DDLogFileManagerDefault(logsDirectory: logsDirectory?.path())
+        self.fileLogger = DDFileLogger(logFileManager: logFileManager)
         fileLogger.rollingFrequency = 60 * 60 * 24 // 24 hours
         fileLogger.maximumFileSize = 100_000_000 // 100Mb
         fileLogger.logFileManager.maximumNumberOfLogFiles = 7
         DDLog.add(fileLogger)
-    }
-
-    var logFiles: [URL] {
-        fileLogger.logFileManager.unsortedLogFilePaths.map { URL(fileURLWithPath: $0) }
     }
 
     func debug(_ message: any LogConvertible, attributes: LogAttributes...) {

@@ -27,8 +27,6 @@ public protocol LoggerProtocol {
     func error(_ message: any LogConvertible, attributes: LogAttributes...)
     func critical(_ message: any LogConvertible, attributes: LogAttributes...)
 
-    var logFiles: [URL] { get }
-
     /// Add an attribute, value to each logs - DataDog only
     func addTag(_ key: LogAttributesKey, value: String?)
 }
