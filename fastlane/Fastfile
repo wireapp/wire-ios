@@ -222,7 +222,7 @@ platform :ios do
         options[:build_type] = "RC"
         options[:override_folder] = "BK-COLUMN1"
         options[:s3_subfolder] = ENV['C1_S3_SUBFOLDER_RESTRICTED']
-        options[:upload_app_store] = true
+        options[:upload_testflight] = true
         options[:produce_debug_builds] = true
         save_app_name('Column 1 Restricted')
         build_and_upload_app(options)
@@ -233,7 +233,7 @@ platform :ios do
         options[:build_type] = "RC"
         options[:override_folder] = "BK-COLUMN2"
         options[:s3_subfolder] = ENV['C2_S3_SUBFOLDER_RESTRICTED']
-        options[:upload_app_store] = true
+        options[:upload_testflight] = true
         options[:produce_debug_builds] = true
         save_app_name('Column 2 Restricted')
         build_and_upload_app(options)
@@ -244,7 +244,7 @@ platform :ios do
         options[:build_type] = "RC"
         options[:override_folder] = "BK-COLUMN3"
         options[:s3_subfolder] = ENV['C3_S3_SUBFOLDER_RESTRICTED']
-        options[:upload_app_store] = true
+        options[:upload_testflight] = true
         options[:produce_debug_builds] = true
         save_app_name('Column 3 Restricted')
         build_and_upload_app(options)
@@ -625,11 +625,11 @@ platform :ios do
         changelog = ""
         changelog_path = './../CHANGELOG.md'
 
-        if build.playground_build
+        if build.playground_build 
             changelog += "Playground build for #{build.git_branch}\n\n"
         end
-        
-        if File.exist?(changelog_path)
+
+        if !build.development_build && build.File.exist?(changelog_path)
             changelog += File.read(changelog_path)
         else 
             changelog += "**Last commits:**\n" + changelog_from_git_commits(
