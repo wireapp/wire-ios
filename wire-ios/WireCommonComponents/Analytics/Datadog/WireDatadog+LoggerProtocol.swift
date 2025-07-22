@@ -100,7 +100,4 @@ extension WireDatadog: LoggerProtocol {
         )
     }
 
-    public var logFiles: [URL] {
-        []
-    }
 }
