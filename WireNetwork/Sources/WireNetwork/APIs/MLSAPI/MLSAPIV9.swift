@@ -18,7 +18,7 @@
 
 import Foundation
 
-final class MLSAPIV9: MLSAPIV8 {
+class MLSAPIV9: MLSAPIV8 {
 
     override var apiVersion: APIVersion { .v9 }
 

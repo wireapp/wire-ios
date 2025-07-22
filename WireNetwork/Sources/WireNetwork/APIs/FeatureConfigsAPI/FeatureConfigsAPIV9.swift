@@ -16,6 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class FeatureConfigsAPIV9: FeatureConfigsAPIV8 {
+class FeatureConfigsAPIV9: FeatureConfigsAPIV8 {
     override var apiVersion: APIVersion { .v8 }
 }

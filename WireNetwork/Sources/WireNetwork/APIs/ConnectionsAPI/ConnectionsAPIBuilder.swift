@@ -59,6 +59,8 @@ public struct ConnectionsAPIBuilder {
             ConnectionsAPIV8(apiService: apiService)
         case .v9:
             ConnectionsAPIV9(apiService: apiService)
+       case .v10:
+            ConnectionsAPIV10(apiService: apiService)
         }
     }
 
