@@ -104,9 +104,9 @@ public enum FeatureConfig: Equatable, Sendable {
     /// **Channels** are discoverable groups
     /// with history sharing capabilities
     case channels(ChannelsFeatureConfig)
-        
+
     /// Global config, that contains other config inside, e.g. 'reset broken mls'
-    
+
     case allowGlobalOperations(AllowGlobalOperationsFeatureConfig)
 
     /// An unknown feature.

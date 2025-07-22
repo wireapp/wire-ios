@@ -188,7 +188,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 name: .channels,
                 isEnabled: channelsFeatureConfig.status == .enabled
             )
-            
+
         case let .allowGlobalOperations(config):
             return FeatureState(
                 name: .allowGlobalOperations,
@@ -295,7 +295,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 channelsFeatureConfig.status == .enabled,
                 channelsFeatureConfig.toDomainModel()
             )
-            
+
         case let .allowGlobalOperations(config):
             return (
                 .allowGlobalOperations,

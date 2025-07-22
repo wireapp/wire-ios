@@ -111,12 +111,12 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                 )
             )
         case let .allowGlobalOperations(config):
-                .allowGlobalOperations(
-                    StorableAllowGlobalOperationsFeatureConfig(
-                        status: StorableFeatureConfigStatus(config.status),
-                        resetMLSConversations: config.resetMLSConversations
-                    )
+            .allowGlobalOperations(
+                StorableAllowGlobalOperationsFeatureConfig(
+                    status: StorableFeatureConfigStatus(config.status),
+                    resetMLSConversations: config.resetMLSConversations
                 )
+            )
         case let .unknown(featureName):
             .unknown(featureName: featureName)
         }
@@ -208,14 +208,13 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                     allowedToOpenChannels: config.allowedToOpenChannels.toAPIModel()
                 )
             )
-            
         case let .allowGlobalOperations(config):
-                .allowGlobalOperations(
-                    AllowGlobalOperationsFeatureConfig(
-                        status: config.status.toAPIModel(),
-                        resetMLSConversations: config.resetMLSConversations
-                    )
+            .allowGlobalOperations(
+                AllowGlobalOperationsFeatureConfig(
+                    status: config.status.toAPIModel(),
+                    resetMLSConversations: config.resetMLSConversations
                 )
+            )
         case let .unknown(featureName):
             .unknown(featureName: featureName)
         }
@@ -342,7 +341,7 @@ struct StorableSelfDeletingMessagesFeatureConfig: Equatable, Codable, Sendable {
 }
 
 struct StorableAllowGlobalOperationsFeatureConfig: Equatable, Codable, Sendable {
-    
+
     let status: StorableFeatureConfigStatus
     let resetMLSConversations: Bool
 }
