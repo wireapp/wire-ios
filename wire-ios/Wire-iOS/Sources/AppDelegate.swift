@@ -150,14 +150,14 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // MARK: - Reset
 
-    func resetUserDefaults() {
+    private func resetUserDefaults() {
         if let bundleID = Bundle.main.bundleIdentifier {
             UserDefaults.standard.removePersistentDomain(forName: bundleID)
             UserDefaults.standard.synchronize()
         }
     }
 
-    func resetKeychain() {
+    private func resetKeychain() {
         let secItemClasses = [
             kSecClassGenericPassword,
             kSecClassInternetPassword,
@@ -171,7 +171,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
 
-    func resetFileSystem() {
+    private func resetFileSystem() {
         guard let rootURL = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else {
             preconditionFailure("Unable to get shared container URL")
         }
