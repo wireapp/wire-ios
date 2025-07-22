@@ -284,14 +284,16 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
                     if let error {
                         continuation.resume(throwing: error)
                     } else {
-                        self.configureContextReferences()
-                        self.configureViewContext(self.viewContext)
-                        self.configureSyncContext(self.syncContext)
-                        self.configureSearchContext(self.searchContext)
                         continuation.resume()
                     }
                 }
             }
+
+            await configureContextReferences()
+            await configureViewContext(viewContext)
+            await configureSyncContext(syncContext)
+            await configureSearchContext(searchContext)
+
         } catch {
             WireLogger.localStorage.critical(
                 "failed to load message store: \(String(describing: error))",
@@ -314,11 +316,13 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
                     if let error {
                         continuation.resume(throwing: error)
                     } else {
-                        self.configureEventContext(self.eventContext)
                         continuation.resume()
                     }
                 }
             }
+
+            await configureEventContext(eventContext)
+
         } catch {
             WireLogger.localStorage.critical(
                 "failed to load event store: \(String(describing: error))",
@@ -349,40 +353,40 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
 
     // MARK: - Configure Contexts
 
-    func configureViewContext(_ context: NSManagedObjectContext) {
-        context.performAndWait {
+    func configureViewContext(_ context: NSManagedObjectContext) async {
+        await context.perform {
             context.markAsUIContext()
             context.createDispatchGroups()
-            dispatchGroup.map(context.addGroup(_:))
+            self.dispatchGroup.map(context.addGroup(_:))
             context.mergePolicy = NSMergePolicy(merge: .rollbackMergePolicyType)
             ZMUser.selfUser(in: context)
             Label.fetchOrCreateFavoriteLabel(in: context, create: true)
         }
     }
 
-    func configureContextReferences() {
-        viewContext.performAndWait {
-            viewContext.zm_sync = syncContext
+    func configureContextReferences() async {
+        await viewContext.perform {
+            self.viewContext.zm_sync = self.syncContext
         }
-        syncContext.performAndWait {
-            syncContext.zm_userInterface = viewContext
+        await syncContext.perform {
+            self.syncContext.zm_userInterface = self.viewContext
         }
     }
 
-    func configureSyncContext(_ context: NSManagedObjectContext) {
+    func configureSyncContext(_ context: NSManagedObjectContext) async {
         context.markAsSyncContext()
-        context.performAndWait {
+        await context.perform {
             context.createDispatchGroups()
-            dispatchGroup.map(context.addGroup(_:))
+            self.dispatchGroup.map(context.addGroup(_:))
             context.setupLocalCachedSessionAndSelfUser()
 
-            context.accountDirectoryURL = accountContainer
-            context.applicationContainerURL = applicationContainer
+            context.accountDirectoryURL = self.accountContainer
+            context.applicationContainerURL = self.applicationContainer
 
             if !DeveloperFlag.proteusViaCoreCrypto.isOn {
                 context.setupUserKeyStore(
-                    accountDirectory: accountContainer,
-                    applicationContainer: applicationContainer
+                    accountDirectory: self.accountContainer,
+                    applicationContainer: self.applicationContainer
                 )
             }
 
@@ -400,22 +404,21 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
         }
     }
 
-    func configureSearchContext(_ context: NSManagedObjectContext) {
+    func configureSearchContext(_ context: NSManagedObjectContext) async {
         context.markAsSearch()
-        context.performAndWait {
+        await context.perform {
             context.createDispatchGroups()
-            dispatchGroup.map(context.addGroup(_:))
+            self.dispatchGroup.map(context.addGroup(_:))
             context.setupLocalCachedSessionAndSelfUser()
             context.undoManager = nil
             context.mergePolicy = NSMergePolicy(merge: .rollbackMergePolicyType)
-
         }
     }
 
-    func configureEventContext(_ context: NSManagedObjectContext) {
-        context.performAndWait {
+    func configureEventContext(_ context: NSManagedObjectContext) async {
+        await context.perform {
             context.createDispatchGroups()
-            dispatchGroup.map(context.addGroup(_:))
+            self.dispatchGroup.map(context.addGroup(_:))
         }
     }
 
