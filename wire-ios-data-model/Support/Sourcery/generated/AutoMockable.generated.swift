@@ -2124,19 +2124,24 @@ public class MockCoreDataStackProtocol: CoreDataStackProtocol {
     public var underlyingEventContext: NSManagedObjectContext!
 
 
-    // MARK: - loadStores
+    // MARK: - load
 
-    public var loadStoresCompletionHandler_Invocations: [(Error?) -> Void] = []
-    public var loadStoresCompletionHandler_MockMethod: ((@escaping (Error?) -> Void) -> Void)?
+    public var load_Invocations: [Void] = []
+    public var load_MockError: Error?
+    public var load_MockMethod: (() async throws -> Void)?
 
-    public func loadStores(completionHandler: @escaping (Error?) -> Void) {
-        loadStoresCompletionHandler_Invocations.append(completionHandler)
+    public func load() async throws {
+        load_Invocations.append(())
 
-        guard let mock = loadStoresCompletionHandler_MockMethod else {
-            fatalError("no mock for `loadStoresCompletionHandler`")
+        if let error = load_MockError {
+            throw error
         }
 
-        mock(completionHandler)
+        guard let mock = load_MockMethod else {
+            fatalError("no mock for `load`")
+        }
+
+        try await mock()
     }
 
     // MARK: - newBackgroundContext
