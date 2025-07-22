@@ -177,7 +177,6 @@ public enum SemanticColors {
         public static let conversationBackgroundAmber = UIColor(light: .amber50Light, dark: .amber900Dark)
         public static let conversationBackgroundRed = UIColor(light: .red50Light, dark: .red900Dark)
         public static let conversationBackgroundTurquoise = UIColor(light: .turquoise50Light, dark: .turquoise900Dark)
-
     }
 
     public enum TabBar {
