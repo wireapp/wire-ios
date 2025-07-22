@@ -1141,7 +1141,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                     } catch ZMUserSessionError.selfClientNotReady {
                         // we skip trigger sync, because in this case (fresh login),
                         // we don't have a registered client yet, so no consumable capability
-                        WireLogger.sync.warn("No consumable-notifications migrator available")
+                        WireLogger.sync.warn("No clientSessionComponent available")
                         shouldTriggerSync = false
                     }
 
