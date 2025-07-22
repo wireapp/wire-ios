@@ -796,8 +796,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    public func delete(account: Account) {
-        delete(account: account, reason: .userInitiated)
+    public func delete(account: Account, eraseData: Bool = true) {
+        delete(account: account, reason: .userInitiated, eraseData: eraseData)
     }
 
     public func wipeDatabase(for account: Account) {
@@ -814,29 +814,31 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    func delete(account: Account, reason: ZMAccountDeletedReason) {
+    func delete(account: Account, reason: ZMAccountDeletedReason, eraseData: Bool = true) {
         WireLogger.sessionManager.debug("Deleting account \(account.userIdentifier)...")
         if let secondAccount = accountManager.inactiveAccounts.first {
             // Deleted an account but we can switch to another account
             select(secondAccount, tearDownCompletion: { [weak self] in
-                self?.tearDownSessionAndDelete(account: account)
+                self?.tearDownSessionAndDelete(account: account, eraseData: eraseData)
             })
         } else if accountManager.selectedAccount != account {
             // Deleted an inactive account, there's no need notify the UI
-            tearDownSessionAndDelete(account: account)
+            tearDownSessionAndDelete(account: account, eraseData: eraseData)
         } else {
             // Deleted the last account so we need to return to the logged out area
             logoutCurrentSession(
-                deleteCookie: true,
-                deleteAccount: true,
+                deleteCookie: eraseData,
+                deleteAccount: eraseData,
                 error: NSError(userSessionErrorCode: .accountDeleted, userInfo: [ZMAccountDeletedReasonKey: reason])
             )
         }
     }
 
-    fileprivate func tearDownSessionAndDelete(account: Account) {
+    fileprivate func tearDownSessionAndDelete(account: Account, eraseData: Bool) {
         tearDownBackgroundSession(for: account.userIdentifier) {
-            self.deleteAccountData(for: account)
+            if eraseData {
+                self.deleteAccountData(for: account)
+            }
         }
     }
 
@@ -1139,7 +1141,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                     } catch ZMUserSessionError.selfClientNotReady {
                         // we skip trigger sync, because in this case (fresh login),
                         // we don't have a registered client yet, so no consumable capability
-                        WireLogger.sync.warn("No consumable-notifications migrator available")
+                        WireLogger.sync.warn("No clientSessionComponent available")
                         shouldTriggerSync = false
                     }
 
