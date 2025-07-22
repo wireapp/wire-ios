@@ -50,6 +50,7 @@ enum AuthenticationCoordinatorAction {
     case startCompanyLogin(code: UUID?)
     case startSSOFlow
     case signOut(warn: Bool)
+    case deleteSession(eraseData: Bool)
     case addEmailAndPassword(UserEmailCredentials)
     case configureDevicePermissions
     case startE2EIEnrollment
