@@ -19,11 +19,11 @@
 // Test CI: modify this line to run ci tests, sometimes it's the easiest way.
 
 import avs
-import CoreData
 import UIKit
 import WireCommonComponents
 import WireCoreCrypto
 import WireCountly
+import WireDomain
 import WireLogging
 import WireSyncEngine
 
@@ -140,9 +140,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         private func resetApp() {
             let arguments = ProcessInfo.processInfo.arguments
             if arguments.contains("-resetData") {
+                resetFileSystem()
                 resetUserDefaults()
                 resetKeychain()
-                resetFileSystem()
                 print("app reset done")
             }
         }
@@ -172,6 +172,10 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func resetFileSystem() {
+        guard let rootURL = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else {
+            preconditionFailure("Unable to get shared container URL")
+        }
+        AccountManager.delete(at: rootURL)
         let fileManager = FileManager.default
         let directories: [FileManager.SearchPathDirectory] = [
             .documentDirectory,
