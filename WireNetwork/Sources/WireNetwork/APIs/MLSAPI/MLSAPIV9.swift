@@ -64,7 +64,7 @@ final class MLSAPIV9: MLSAPIV8 {
                 case "mls-federated-reset-not-supported":
                     throw MLSAPIError.mlsFederatedResetNotSupported(message: failureResponse.message)
                 case "mls-not-enabled":
-                    throw MLSAPIError.mlsNotEnabledWithMessage(message: failureResponse.message)
+                    throw MLSAPIError.mlsNotEnabled
                 case "invalid-op":
                     throw MLSAPIError.invalidOperation(message: failureResponse.message)
                 case "action-denied":
@@ -74,7 +74,7 @@ final class MLSAPIV9: MLSAPIV8 {
                 case "no-conversation":
                     throw MLSAPIError.noConversation(message: failureResponse.message)
                 case "mls-stale-message":
-                    throw MLSAPIError.mlsStaleMessageWithMessage(message: failureResponse.message)
+                    throw MLSAPIError.mlsStaleMessage
                 default:
                     throw MLSAPIError.mlsError(failureResponse.label, failureResponse.message)
                 }

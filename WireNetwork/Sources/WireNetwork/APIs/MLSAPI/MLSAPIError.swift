@@ -46,13 +46,9 @@ public enum MLSAPIError: Error, Equatable {
 
     case mlsNotEnabled
 
-    case mlsNotEnabledWithMessage(message: String)
-
     /// Message was sent in an too old epoch
 
     case mlsStaleMessage
-
-    case mlsStaleMessageWithMessage(message: String)
 
     /// A proposal of type Add or Remove does not apply to the full list of clients for a user
 
@@ -108,7 +104,9 @@ enum MLSAPIV0Error: Error, Codable, Equatable {
     case mlsGroupIdNotSupported(message: String)
     case mlsFederatedResetNotSupported(message: String)
     case actionDenied(message: String)
+    case accessDenied(message: String)
     case invalidOperation(message: String)
+    case invalidRequestBody
     case noConversation(message: String)
 
 }
@@ -130,8 +128,22 @@ extension MLSAPIV0Error: ToAPIModelConvertible {
             .mlsCommitMissingReferences
         case let .mlsError(label, message):
             .mlsError(label, message)
-        default:
-            fatalError()
+        case let .mlsProtocolError(message: message):
+            .mlsProtocolError(message: message)
+        case let .mlsGroupIdNotSupported(message: message):
+            .mlsGroupIdNotSupported(message: message)
+        case let .mlsFederatedResetNotSupported(message: message):
+            .mlsFederatedResetNotSupported(message: message)
+        case let .actionDenied(message: message):
+            .actionDenied(message: message)
+        case let .accessDenied(message: message):
+            .accessDenied(message: message)
+        case let .invalidOperation(message: message):
+            .invalidOperation(message: message)
+        case .invalidRequestBody:
+            .invalidRequestBody
+        case let .noConversation(message: message):
+            .noConversation(message: message)
         }
     }
 }
@@ -153,8 +165,22 @@ extension MLSAPIError: ToNetworkConvertible {
             .mlsCommitMissingReferences
         case let .mlsError(label, message):
             .mlsError(label, message)
-        default:
-            fatalError()
+        case let .mlsProtocolError(message: message):
+            .mlsProtocolError(message: message)
+        case let .mlsGroupIdNotSupported(message: message):
+            .mlsGroupIdNotSupported(message: message)
+        case let .mlsFederatedResetNotSupported(message: message):
+            .mlsFederatedResetNotSupported(message: message)
+        case let .actionDenied(message: message):
+            .actionDenied(message: message)
+        case let .invalidOperation(message: message):
+            .invalidOperation(message: message)
+        case let .noConversation(message: message):
+            .noConversation(message: message)
+        case .invalidRequestBody:
+            .invalidRequestBody
+        case let .accessDenied(message: message):
+            .accessDenied(message: message)
         }
     }
 }

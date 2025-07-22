@@ -33,7 +33,7 @@ class MLSAPITests_SwiftTesting {
                 "mls-federated-reset-not-supported",
                 MLSAPIError.mlsFederatedResetNotSupported(message: "")
             ),
-            (HTTPStatusCode.badRequest, "mls-not-enabled", MLSAPIError.mlsNotEnabledWithMessage(message: "")),
+            (HTTPStatusCode.badRequest, "mls-not-enabled", MLSAPIError.mlsNotEnabled),
 
             (HTTPStatusCode.forbidden, "action-denied", MLSAPIError.actionDenied(message: "")),
             (HTTPStatusCode.forbidden, "access-denied", MLSAPIError.accessDenied(message: "")),
@@ -41,7 +41,7 @@ class MLSAPITests_SwiftTesting {
 
             (HTTPStatusCode.notFound, "no-conversation", MLSAPIError.noConversation(message: "")),
 
-            (HTTPStatusCode.conflict, "mls-stale-message", MLSAPIError.mlsStaleMessageWithMessage(message: ""))
+            (HTTPStatusCode.conflict, "mls-stale-message", MLSAPIError.mlsStaleMessage)
         ]
     )
     func testResetBrokenMLSConversations_Failed(
