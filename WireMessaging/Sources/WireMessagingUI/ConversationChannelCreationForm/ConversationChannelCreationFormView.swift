@@ -17,13 +17,18 @@
 //
 
 public import SwiftUI
+import WireDesign
 import WireMessagingDomain
+import WireReusableUIComponents
 
 public struct ConversationChannelCreationForm: View {
     public typealias ViewModel = ConversationChannelCreationFormViewModel
 
-    @State private var channelName: String
+    private typealias Strings = L10n.Localizable.Conversation
+    private typealias Labels = L10n.Accessibility.Conversation.CreationForm.ChannelHistory
 
+    @State private var channelName: String
+    @Environment(\.openURL) var openURL
     @ObservedObject private var viewModel: ConversationChannelCreationFormViewModel
 
     public init(
@@ -37,24 +42,49 @@ public struct ConversationChannelCreationForm: View {
         Form {
             channelNameSection
             channelAccessSection
-            // TODO: [WPB-16814] This will be used when implementing the channels history settings.
-//            channelHistorySection
+            channelHistorySection
             servicesSection
             // TODO: [WPB-16771] Uncomment when read receipts supported on MLS
-//            readReceiptsSection
+            //            readReceiptsSection
         }
         .onChange(of: channelName) { newValue in
             viewModel.onChannelNameUpdate(newValue)
         }
+        .overlay {
+            ZStack {
+                if viewModel.showUpgradeBanner {
+                    ZStack {
+                        Rectangle()
+                            .foregroundColor(Color.black.opacity(0.6))
+                            .edgesIgnoringSafeArea(.all)
+
+                        ChannelBannerView(
+                            configuration: .init(
+                                title: Strings.ChannelHistory.UpgradeBanner.title,
+                                message: Strings.ChannelHistory.UpgradeBanner.message,
+                                mainButtonTitle: Strings.ChannelHistory.UpgradeBanner.button,
+                                mainButtonAction: { openURL(viewModel.teamsURL) },
+                                closeButton: .init(
+                                    accessibilityLabel: Labels.UpgradeBanner.close,
+                                    action: { viewModel.hideUpgradeBanner() }
+                                )
+                            )
+                        ).transition(.opacity)
+                    }
+                }
+            }
+            .animation(.easeInOut, value: viewModel.showUpgradeBanner)
+        }
+
     }
 
     var channelNameSection: some View {
-        Section(L10n.Localizable.Conversation.CreationForm.ChannelName.sectionTitle) {
+        Section(Strings.CreationForm.ChannelName.sectionTitle) {
             TextField(
                 text: $channelName,
-                prompt: Text(L10n.Localizable.Conversation.CreationForm.ChannelName.placeholder),
+                prompt: Text(Strings.CreationForm.ChannelName.placeholder),
                 label: {
-                    Text(L10n.Localizable.Conversation.CreationForm.ChannelName.label)
+                    Text(Strings.CreationForm.ChannelName.label)
                 }
             )
         }
@@ -62,91 +92,107 @@ public struct ConversationChannelCreationForm: View {
 
     var channelAccessSection: some View {
         Section(content: {
-            // Channel access is always hard coded to private for now.
-//            Picker(
-//                L10n.Localizable.Conversation.CreationForm.Options.channelAccess,
-//                selection: $viewModel.channelAccess
-//            ) {
-//                Text(L10n.Localizable.Conversation.CreationForm.Options.ChannelAccess.public)
-//                    .tag(ViewModel.ChannelAccessOption.public)
-//                Label(
-//                    L10n.Localizable.Conversation.CreationForm.Options.ChannelAccess.private,
-//                    systemImage: "lock.fill"
-//                )
-//                .tag(ViewModel.ChannelAccessOption.private)
-//            }
             HStack {
-                Text(L10n.Localizable.Conversation.CreationForm.Options.channelAccess)
+                Text(Strings.CreationForm.Options.channelAccess)
 
                 Spacer()
 
                 HStack(spacing: 4) {
                     Image(systemName: "lock.fill")
                         .foregroundColor(.gray)
-                    Text(L10n.Localizable.Conversation.CreationForm.Options.ChannelAccess.private)
+                    Text(Strings.CreationForm.Options.ChannelAccess.private)
                         .foregroundColor(.gray)
                 }
             }
             if case .private = viewModel.channelAccess {
                 Picker(
-                    L10n.Localizable.Conversation.CreationForm.Options.ChannelAccess.invitePolicy,
+                    Strings.CreationForm.Options.ChannelAccess.invitePolicy,
                     selection: $viewModel.channelInvitePolicy
                 ) {
-                    Text(L10n.Localizable.Conversation.CreationForm.Options.ChannelAccess.InvitePolicy.adminsOnly)
+                    Text(Strings.CreationForm.Options.ChannelAccess.InvitePolicy.adminsOnly)
                         .tag(ViewModel.ChannelInvitePolicyOption.admins)
                     Text(
-                        L10n.Localizable.Conversation.CreationForm.Options.ChannelAccess.InvitePolicy
+                        Strings.CreationForm.Options.ChannelAccess.InvitePolicy
                             .adminsAndMembers
                     )
                     .tag(ViewModel.ChannelInvitePolicyOption.adminsAndMembers)
                 }
             }
         }, header: {
-            Text(L10n.Localizable.Conversation.CreationForm.Options.sectionTitle)
+            Text(Strings.CreationForm.Options.sectionTitle)
         }, footer: {
-            Text(L10n.Localizable.Conversation.CreationForm.Options.footer)
+            Text(Strings.CreationForm.Options.footer)
         })
     }
 
-    // TODO: [WPB-16814] This will be used when implementing the channels history settings.
-//    var channelHistorySection: some View {
-//            Section(content: {
-//                Picker("Channel history", selection: $channelHistory) {
-//                    Text("Off")
-//                        .tag(ChannelHistoryOption.off)
-//                    Text("1 day")
-//                        .tag(ChannelHistoryOption.oneDay)
-//                    Text("1 week")
-//                        .tag(ChannelHistoryOption.oneWeek)
-//                    Text("Unlimited")
-//                        .tag(ChannelHistoryOption.unlimited)
-//                }
-//            }, footer: {
-//                Text("Select a period. When participants join this channel, they can follow the history for this time
-//                frame.")
-//            })
-//    }
+    var channelHistorySection: some View {
+        Section(content: {
+            channelHistoryPicker
+
+            if viewModel.showChannelCustomHistoryPickers() {
+                channelCustomHistoryPickers
+            }
+
+        }, footer: {
+            Text(Strings.CreationForm.ChannelHistory.sectionFootnote)
+        })
+    }
+
+    var channelHistoryPicker: some View {
+        Picker(
+            Strings.ChannelHistory.Picker.title,
+            selection: $viewModel.channelHistoryOption
+        ) {
+            ForEach(viewModel.channelHistoryAvailableOptions(), id: \.self) { channelHistoryOption in
+                Text(channelHistoryOption.title)
+                    .tag(channelHistoryOption)
+                    .accessibilityLabel(channelHistoryOption.title)
+            }
+        }
+    }
+
+    var channelCustomHistoryPickers: some View {
+        HStack {
+            Picker("", selection: $viewModel.channelHistoryOptionCustom.value) {
+                ForEach(1 ... 99, id: \.self) { number in
+                    Text("\(number)").tag(number)
+                }
+            }
+            .pickerStyle(.wheel)
+
+            Picker("", selection: $viewModel.channelHistoryOptionCustom.unit) {
+                ForEach(ViewModel.ChannelHistoryOption.Custom.Unit.allCases, id: \.self) { unit in
+                    Text(unit.title).tag(unit)
+                }
+            }
+            .pickerStyle(.wheel)
+        }
+    }
 
     var servicesSection: some View {
         Section(content: {
-            Toggle(L10n.Localizable.Conversation.CreationForm.Services.toggle, isOn: $viewModel.servicesAllowed)
-            Toggle(L10n.Localizable.Conversation.CreationForm.Guests.toggle, isOn: $viewModel.guestsAllowed)
+            Toggle(Strings.CreationForm.Services.toggle, isOn: $viewModel.servicesAllowed)
+            Toggle(Strings.CreationForm.Guests.toggle, isOn: $viewModel.guestsAllowed)
         }, footer: {
-            Text(L10n.Localizable.Conversation.CreationForm.Guests.description)
+            Text(Strings.CreationForm.Guests.description)
         })
     }
 
     var readReceiptsSection: some View {
         Section(content: {
-            Toggle(L10n.Localizable.Conversation.CreationForm.ReadReceipts.toggle, isOn: $viewModel.readReceiptsEnabled)
+            Toggle(Strings.CreationForm.ReadReceipts.toggle, isOn: $viewModel.readReceiptsEnabled)
         }, footer: {
-            Text(L10n.Localizable.Conversation.CreationForm.ReadReceipts.description)
+            Text(Strings.CreationForm.ReadReceipts.description)
         })
     }
 }
 
 #Preview {
     ConversationChannelCreationForm(
-        viewModel: ConversationChannelCreationFormViewModel(channelName: "") { _ in }
+        viewModel: ConversationChannelCreationFormViewModel(
+            channelName: "",
+            isUserPremium: false,
+            teamsURL: URL(string: "https://wire.com")!
+        ) { _ in }
     )
 }

@@ -20,7 +20,7 @@ import SwiftUI
 import WireTestingPackage
 import XCTest
 
-import WireMessagingUI
+@testable import WireMessagingUI
 
 class ConversationChannelCreationFormTests: XCTestCase {
 
@@ -38,7 +38,11 @@ class ConversationChannelCreationFormTests: XCTestCase {
     @MainActor
     func testColorSchemeVariantsEmptyState() {
         let view = ConversationChannelCreationForm(
-            viewModel: ConversationChannelCreationFormViewModel(channelName: "") { _ in }
+            viewModel: ConversationChannelCreationFormViewModel(
+                channelName: "",
+                isUserPremium: true,
+                teamsURL: URL(string: "https://wire.com")!
+            ) { _ in }
         )
         .frame(width: 375, height: 667)
         .padding()
@@ -54,7 +58,11 @@ class ConversationChannelCreationFormTests: XCTestCase {
     @MainActor
     func testDynamicTypeVariantsEmptyState() {
         let view = ConversationChannelCreationForm(
-            viewModel: ConversationChannelCreationFormViewModel(channelName: "") { _ in }
+            viewModel: ConversationChannelCreationFormViewModel(
+                channelName: "",
+                isUserPremium: true,
+                teamsURL: URL(string: "https://wire.com")!
+            ) { _ in }
         )
         .frame(width: 375, height: 667)
         .padding()
@@ -67,4 +75,104 @@ class ConversationChannelCreationFormTests: XCTestCase {
                 )
         }
     }
+
+    @MainActor
+    func testColorSchemeVariantsEmptyState_Visible_Picker() {
+        let viewModel = ConversationChannelCreationFormViewModel(
+            channelName: "",
+            isUserPremium: true,
+            teamsURL: URL(string: "https://wire.com")!
+        ) { _ in }
+
+        viewModel.channelHistoryOption = .custom
+
+        let view = ConversationChannelCreationForm(
+            viewModel: viewModel
+        )
+        .frame(width: 375, height: 667)
+        .padding()
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
+    }
+
+    @MainActor
+    func testDynamicTypeVariantsEmptyState_Visible_Picker() {
+        let viewModel = ConversationChannelCreationFormViewModel(
+            channelName: "",
+            isUserPremium: true,
+            teamsURL: URL(string: "https://wire.com")!
+        ) { _ in }
+
+        viewModel.channelHistoryOption = .custom
+        let view = ConversationChannelCreationForm(
+            viewModel: viewModel
+        )
+        .frame(width: 375, height: 667)
+        .padding()
+
+        for dynamicTypeSize in DynamicTypeSize.allCases {
+            snapshotHelper
+                .verify(
+                    matching: view.dynamicTypeSize(dynamicTypeSize),
+                    named: "\(dynamicTypeSize)"
+                )
+        }
+    }
+
+    @MainActor
+    func testDynamicTypeVariants_Upgrade_Banner_Visible() {
+        let viewModel = ConversationChannelCreationFormViewModel(
+            channelName: "",
+            isUserPremium: true,
+            teamsURL: URL(string: "https://wire.com")!
+        ) { _ in }
+
+        viewModel.channelHistoryOption = .custom
+        viewModel.showUpgradeBanner = true
+
+        let view = ConversationChannelCreationForm(
+            viewModel: viewModel
+        )
+        .frame(width: 375, height: 667)
+        .padding()
+
+        for dynamicTypeSize in DynamicTypeSize.allCases {
+            snapshotHelper
+                .verify(
+                    matching: view.dynamicTypeSize(dynamicTypeSize),
+                    named: "\(dynamicTypeSize)"
+                )
+        }
+    }
+
+    @MainActor
+    func testColorSchemeVariants_Upgrade_Banner_Visible() {
+        let viewModel = ConversationChannelCreationFormViewModel(
+            channelName: "",
+            isUserPremium: true,
+            teamsURL: URL(string: "https://wire.com")!
+        ) { _ in }
+
+        viewModel.channelHistoryOption = .custom
+        viewModel.showUpgradeBanner = true
+
+        let view = ConversationChannelCreationForm(
+            viewModel: viewModel
+        )
+        .frame(width: 375, height: 667)
+        .padding()
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
+    }
+
 }

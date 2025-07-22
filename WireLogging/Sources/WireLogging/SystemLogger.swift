@@ -25,10 +25,6 @@ public class SystemLogger: LoggerProtocol {
     let persistQueue = DispatchQueue(label: "persistQueue")
     private var tags = [LogAttributesKey: String]()
 
-    public var logFiles: [URL] {
-        []
-    }
-
     var lastReportTime: Date? {
         get {
             guard let interval = UserDefaults.standard.object(forKey: "com.wire.log.lastReportTime") as? TimeInterval

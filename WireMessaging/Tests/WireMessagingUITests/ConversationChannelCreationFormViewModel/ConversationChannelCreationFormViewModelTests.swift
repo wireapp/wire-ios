@@ -25,7 +25,11 @@ final class ConversationChannelCreationFormViewModelTests: XCTestCase {
 
     func testOnChannelNameUpdate_emptyValue() {
         // Given
-        let sut = ConversationChannelCreationFormViewModel(channelName: "") { _ in }
+        let sut = ConversationChannelCreationFormViewModel(
+            channelName: "",
+            isUserPremium: true,
+            teamsURL: URL(string: "https://wire.com")!
+        ) { _ in }
         let value = ""
 
         // When
@@ -39,7 +43,11 @@ final class ConversationChannelCreationFormViewModelTests: XCTestCase {
 
     func testOnChannelNameUpdate_longString() {
         // Given
-        let sut = ConversationChannelCreationFormViewModel(channelName: "") { _ in }
+        let sut = ConversationChannelCreationFormViewModel(
+            channelName: "",
+            isUserPremium: true,
+            teamsURL: URL(string: "https://wire.com")!
+        ) { _ in }
         let value = String(
             repeating: "a",
             count: ConversationChannelCreationFormViewModel.Constants.channelNameMaxStringLength + 1
@@ -56,7 +64,11 @@ final class ConversationChannelCreationFormViewModelTests: XCTestCase {
 
     func testOnChannelNameUpdate_bigString() {
         // Given
-        let sut = ConversationChannelCreationFormViewModel(channelName: "") { _ in }
+        let sut = ConversationChannelCreationFormViewModel(
+            channelName: "",
+            isUserPremium: true,
+            teamsURL: URL(string: "https://wire.com")!
+        ) { _ in }
         let value = String(
             repeating: "\(0x27BF)",
             count: ConversationChannelCreationFormViewModel.Constants.channelNameMaxByteLength + 1
@@ -73,7 +85,11 @@ final class ConversationChannelCreationFormViewModelTests: XCTestCase {
 
     func testOnChannelNameUpdate_whitespaceString() {
         // Given
-        let sut = ConversationChannelCreationFormViewModel(channelName: "") { _ in }
+        let sut = ConversationChannelCreationFormViewModel(
+            channelName: "",
+            isUserPremium: true,
+            teamsURL: URL(string: "https://wire.com")!
+        ) { _ in }
         let value = String(
             repeating: " ",
             count: ConversationChannelCreationFormViewModel.Constants.channelNameMaxStringLength
@@ -90,7 +106,11 @@ final class ConversationChannelCreationFormViewModelTests: XCTestCase {
 
     func testOnChannelNameUpdate_whitespaceSurroundedString() {
         // Given
-        let sut = ConversationChannelCreationFormViewModel(channelName: "") { _ in }
+        let sut = ConversationChannelCreationFormViewModel(
+            channelName: "",
+            isUserPremium: true,
+            teamsURL: URL(string: "https://wire.com")!
+        ) { _ in }
         let value = " " +
             String(
                 repeating: "a",
@@ -112,7 +132,11 @@ final class ConversationChannelCreationFormViewModelTests: XCTestCase {
 
     func testOnChannelNameUpdate_validString() {
         // Given
-        let sut = ConversationChannelCreationFormViewModel(channelName: "") { _ in }
+        let sut = ConversationChannelCreationFormViewModel(
+            channelName: "",
+            isUserPremium: true,
+            teamsURL: URL(string: "https://wire.com")!
+        ) { _ in }
         let value = "a"
         let expectedValue = "a"
 
@@ -121,5 +145,46 @@ final class ConversationChannelCreationFormViewModelTests: XCTestCase {
 
         // Then
         XCTAssertEqual(sut.channelName, .success(expectedValue))
+    }
+
+    // MARK: - History option
+
+    func testOnHistoryOptionSelected_Returns_Correct_Value() {
+        // Given
+        let sut = ConversationChannelCreationFormViewModel(
+            channelName: "Test",
+            isUserPremium: true,
+            teamsURL: URL(string: "https://wire.com")!
+        ) { _ in }
+
+        let useCases = [
+            ConversationChannelCreationFormViewModel.ChannelHistoryOption.oneDay,
+            .oneWeek,
+            .fourWeeks,
+            .unlimited,
+            .custom
+        ]
+
+        for useCase in useCases {
+            // When
+            sut.channelHistoryOption = useCase
+            let channelCreationSettings = sut.getChannelCreationSettings()
+            // Then
+            switch useCase {
+            case .off:
+                XCTAssertNil(channelCreationSettings?.historyDepth)
+            case .oneDay:
+                XCTAssertEqual(channelCreationSettings?.historyDepth, 86_400)
+            case .oneWeek:
+                XCTAssertEqual(channelCreationSettings?.historyDepth, 604_800)
+            case .fourWeeks:
+                XCTAssertEqual(channelCreationSettings?.historyDepth, 2_419_200)
+            case .unlimited:
+                XCTAssertEqual(channelCreationSettings?.historyDepth, 31_536_000)
+            case .custom: // 10 days
+                XCTAssertEqual(channelCreationSettings?.historyDepth, 864_000)
+            }
+        }
+
     }
 }

@@ -54,6 +54,8 @@ extension ConversationEvent {
             event.senderID
         case let .permissionUpdate(event):
             event.senderID
+        case let .mlsReset(event):
+            event.senderID
         }
     }
 
@@ -90,6 +92,8 @@ extension ConversationEvent {
         case let .typing(event):
             event.conversationID
         case let .permissionUpdate(event):
+            event.conversationID
+        case let .mlsReset(event):
             event.conversationID
         }
     }
