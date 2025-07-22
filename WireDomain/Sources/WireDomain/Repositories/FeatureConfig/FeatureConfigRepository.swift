@@ -289,6 +289,13 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 channelsFeatureConfig.status == .enabled,
                 channelsFeatureConfig.toDomainModel()
             )
+            
+        case let .allowGlobalOperations(allowGlobalOperationsFeatureConfig):
+            return (
+                .resetMLSConversation,
+                allowGlobalOperationsFeatureConfig.status == .enabled,
+                allowGlobalOperationsFeatureConfig.toDomainModel()
+            )
 
         case let .unknown(featureName):
             logger.warn(
