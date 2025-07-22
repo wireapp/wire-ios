@@ -115,7 +115,7 @@ public enum SendMLSMessageFailure: Error, LocalizedError, Equatable {
             "A referenced leaf node index points to a blank or non-existing node: \(message)"
 
         case let .mlsInvalidLeafNodeSignature(message):
-            "TBD" // TODO:
+            "Invalid leaf node signature: \(message)"
 
         case let .missingLegalHoldConsent(message):
             "Failed to connect to a user or to invite a user to a group because somebody is under legal hold and somebody else has not granted consent. message: \(message)"
