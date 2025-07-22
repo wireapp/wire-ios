@@ -1388,12 +1388,21 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     func processPendingCallEvents() async {
-        WireLogger.updateEvent.info("process pending call events")
-        do {
-            // TODO: [WPB-15391] why not processing only the call events (should be stored here?)
-            try await legacyUpdateEventProcessor!.processBufferedEvents()
-        } catch {
-            WireLogger.updateEvent.error("Failed to process pending call events: \(String(reflecting: error))")
+        if journal[.isSyncV2Enabled] {
+            WireLogger.sync.debug(
+                "process pending callEvents for sync v2 aka resume sync",
+                attributes: .syncAttributes
+            )
+
+            syncAgent?.resume()
+        } else {
+            WireLogger.updateEvent.info("process pending call events")
+            do {
+                // TODO: [WPB-15391] why not processing only the call events (should be stored here?)
+                try await legacyUpdateEventProcessor!.processBufferedEvents()
+            } catch {
+                WireLogger.updateEvent.error("Failed to process pending call events: \(String(reflecting: error))")
+            }
         }
     }
 
