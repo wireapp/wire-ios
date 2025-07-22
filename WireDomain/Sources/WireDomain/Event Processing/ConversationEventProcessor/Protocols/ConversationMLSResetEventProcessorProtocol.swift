@@ -16,10 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol JournalProtocol {
+import WireNetwork
 
-    subscript(_ key: JournalKey<Bool>) -> Bool { get nonmutating set }
-    subscript(_ key: JournalKey<String?>) -> String? { get nonmutating set }
-    nonmutating func erase()
+/// Process conversation mls reset events.
+
+protocol ConversationMLSResetEventProcessorProtocol {
+
+    /// Process a conversation mls reset event.
+    ///
+    /// - Parameter event: A conversation mls reset event.
+
+    func processEvent(_ event: ConversationMLSResetEvent) async throws
 
 }
