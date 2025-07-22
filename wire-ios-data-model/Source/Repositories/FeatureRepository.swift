@@ -30,8 +30,7 @@ public protocol FeatureRepositoryInterface {
     func storeFileSharing(_ fileSharing: Feature.FileSharing)
     func fetchSelfDeletingMessages() -> Feature.SelfDeletingMessages
     func storeSelfDeletingMessages(_ selfDeletingMessages: Feature.SelfDeletingMessages)
-    func fetchResetMLSConversations() -> Feature.ResetMLSConversations
-    func fetchResetMLSConversationsAsync() async -> Feature.ResetMLSConversations
+    func fetchResetMLSConversations() async -> Feature.ResetMLSConversations
     func storeResetMLSConversations(_ resetMLSConversations: Feature.ResetMLSConversations)
     func fetchConversationGuestLinks() -> Feature.ConversationGuestLinks
     func storeConversationGuestLinks(_ conversationGuestLinks: Feature.ConversationGuestLinks)
@@ -248,29 +247,7 @@ public class FeatureRepository: FeatureRepositoryInterface {
         }
     }
 
-    public func fetchResetMLSConversations() -> Feature.ResetMLSConversations {
-        guard let feature = Feature.fetch(name: .resetMLSConversation, context: context),
-              let featureConfig = feature.config
-        else {
-            return .init()
-        }
-
-        var config = Feature.ResetMLSConversations.Config()
-
-        do {
-            config = try decoder.decode(
-                Feature.ResetMLSConversations.Config.self,
-                from: featureConfig
-            )
-        } catch {
-            logger.error("failed to decode Feature.ResetMLSConversations.Config: \(error)")
-        }
-
-        return .init(status: feature.status, config: config)
-
-    }
-
-    public func fetchResetMLSConversationsAsync() async -> Feature.ResetMLSConversations {
+    public func fetchResetMLSConversations() async -> Feature.ResetMLSConversations {
         let (featureStatus, featureConfig) = await context.perform {
             let feature = Feature.fetch(name: .resetMLSConversation, context: self.context)
             return (feature?.status, feature?.config)

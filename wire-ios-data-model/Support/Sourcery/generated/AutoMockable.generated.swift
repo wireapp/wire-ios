@@ -3218,36 +3218,18 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
     // MARK: - fetchResetMLSConversations
 
     public var fetchResetMLSConversations_Invocations: [Void] = []
-    public var fetchResetMLSConversations_MockMethod: (() -> Feature.ResetMLSConversations)?
+    public var fetchResetMLSConversations_MockMethod: (() async -> Feature.ResetMLSConversations)?
     public var fetchResetMLSConversations_MockValue: Feature.ResetMLSConversations?
 
-    public func fetchResetMLSConversations() -> Feature.ResetMLSConversations {
+    public func fetchResetMLSConversations() async -> Feature.ResetMLSConversations {
         fetchResetMLSConversations_Invocations.append(())
 
         if let mock = fetchResetMLSConversations_MockMethod {
-            return mock()
+            return await mock()
         } else if let mock = fetchResetMLSConversations_MockValue {
             return mock
         } else {
             fatalError("no mock for `fetchResetMLSConversations`")
-        }
-    }
-
-    // MARK: - fetchResetMLSConversationsAsync
-
-    public var fetchResetMLSConversationsAsync_Invocations: [Void] = []
-    public var fetchResetMLSConversationsAsync_MockMethod: (() async -> Feature.ResetMLSConversations)?
-    public var fetchResetMLSConversationsAsync_MockValue: Feature.ResetMLSConversations?
-
-    public func fetchResetMLSConversationsAsync() async -> Feature.ResetMLSConversations {
-        fetchResetMLSConversationsAsync_Invocations.append(())
-
-        if let mock = fetchResetMLSConversationsAsync_MockMethod {
-            return await mock()
-        } else if let mock = fetchResetMLSConversationsAsync_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchResetMLSConversationsAsync`")
         }
     }
 

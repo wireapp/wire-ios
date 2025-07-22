@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModel
 import WireDomain
 import WireNetwork
 import WireRequestStrategy
@@ -386,7 +387,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 messageDependencyResolver: messageDependencyResolver,
                 context: syncContext,
                 incrementalSyncObserver: incrementalSyncObserver,
-                initiateResetMLSConversationUseCase: initiateResetMLSConversationUseCaseFactory(syncContext)
+                initiateResetMLSConversationUseCase: initiateResetMLSConversationUseCaseFactory(syncContext),
+                featureRepository: FeatureRepository(context: syncContext)
             )
 
             let strategies: [Any] = [

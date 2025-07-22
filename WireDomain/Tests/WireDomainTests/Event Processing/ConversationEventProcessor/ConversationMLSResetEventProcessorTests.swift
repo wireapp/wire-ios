@@ -45,7 +45,7 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
         conversationLocalStore = MockConversationLocalStoreProtocol()
         mlsService = MockMLSServiceInterface()
         mockFeatureRepository = .init()
-        mockFeatureRepository.fetchResetMLSConversationsAsync_MockValue = .init(
+        mockFeatureRepository.fetchResetMLSConversations_MockValue = .init(
             status: .enabled,
             config: .init(mlsConversationReset: true)
         )
@@ -110,6 +110,27 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
                     MLSGroupID(Scaffolding.newMLSGroupIDData)
                 )
             }
+    }
+
+    func testDoNotProcessEventWhenFFIsOff() async throws {
+
+        mockFeatureRepository.fetchResetMLSConversations_MockValue = .init(
+            status: .disabled,
+            config: .init(mlsConversationReset: false)
+        )
+
+        // When
+
+        try await sut.processEvent(Scaffolding.event)
+
+        // Then
+
+        XCTAssertEqual(mlsService.wipeGroup_Invocations.count, 0)
+
+        XCTAssertEqual(
+            conversationLocalStore.storeMLSConversationPendingJoinNewMLSGroupIDConversation_Invocations.count,
+            0
+        )
     }
 
     func testNoConversationFound() async throws {

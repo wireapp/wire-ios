@@ -44,6 +44,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     var privateUserDefaults: PrivateUserDefaults<MLSService.Keys>!
     var mockSubconversationGroupIDRepository: MockSubconversationGroupIDRepositoryInterface!
     var mockFeatureRepository: MockFeatureRepositoryInterface!
+    var resetMLSConversationDelegate = MockResetBrokenMLSConversationDelegate()
 
     let groupID = MLSGroupID(.init([1, 2, 3]))
     let defaultCipherSuite: Feature.MLS.Config.MLSCipherSuite = .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
@@ -84,6 +85,13 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             config: .init(defaultCipherSuite: defaultCipherSuite)
         )
 
+        mockFeatureRepository.fetchResetMLSConversations_MockValue = Feature.ResetMLSConversations(
+            status: .enabled,
+            config: .init(mlsConversationReset: true)
+        )
+
+        resetMLSConversationDelegate.didCatchBrokenMLSConversationGroupIDEpoch_MockMethod = { _, _ in }
+
         createSut()
     }
 
@@ -104,6 +112,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             subconversationGroupIDRepository: mockSubconversationGroupIDRepository
         )
         sut.setSyncDelegate(mockSyncDelegate)
+        sut.setResetBrokenMLSConversationDelegate(resetMLSConversationDelegate)
     }
 
     override func tearDown() {
@@ -2847,6 +2856,78 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Then
         XCTAssertEqual(commitPendingProposalsInvocations, [groupID])
         XCTAssertEqual(updateKeyMaterialInvocations, [groupID])
+    }
+
+    func test_GenerateNewEpochFailsWithResetMLSConversationError_FeatureON() async throws {
+        // Given
+        let groupID = MLSGroupID.random()
+
+        var commitPendingProposalsInvocations = [MLSGroupID]()
+        mockMLSActionExecutor.mockCommitPendingProposals = {
+            commitPendingProposalsInvocations.append($0)
+        }
+
+        let updateKeyMaterialInvocations = [MLSGroupID]()
+        mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
+            throw CoreCryptoError
+                .Mls(.MessageRejected(reason: try MLSAPIError.mlsInvalidLeafNodeSignature.encodeAsString()))
+        }
+
+        // When
+
+        XCTAssertTrue(resetMLSConversationDelegate.didCatchBrokenMLSConversationGroupIDEpoch_Invocations.isEmpty)
+
+        try await sut.generateNewEpoch(groupID: groupID)
+
+        // Then
+        XCTAssertEqual(commitPendingProposalsInvocations, [groupID])
+        XCTAssertEqual(updateKeyMaterialInvocations, [])
+        XCTAssertEqual(mockFeatureRepository.fetchResetMLSConversations_Invocations.count, 1)
+        XCTAssertEqual(resetMLSConversationDelegate.didCatchBrokenMLSConversationGroupIDEpoch_Invocations.count, 1)
+        let invocation = try XCTUnwrap(
+            resetMLSConversationDelegate
+                .didCatchBrokenMLSConversationGroupIDEpoch_Invocations.first
+        )
+        XCTAssertEqual(invocation.groupID, groupID)
+        XCTAssertEqual(invocation.epoch, 0)
+    }
+
+    func test_GenerateNewEpochFailsWithResetMLSConversationError_FeatureOff() async throws {
+        // Given
+        let groupID = MLSGroupID.random()
+
+        mockFeatureRepository.fetchResetMLSConversations_MockValue = Feature
+            .ResetMLSConversations(
+                status: .disabled,
+                config: .init(mlsConversationReset: true)
+            )
+
+        var commitPendingProposalsInvocations = [MLSGroupID]()
+        mockMLSActionExecutor.mockCommitPendingProposals = {
+            commitPendingProposalsInvocations.append($0)
+        }
+
+        let reason = try MLSAPIError.mlsInvalidLeafNodeIndex.encodeAsString()
+        let updateKeyMaterialInvocations = [MLSGroupID]()
+        mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
+            throw CoreCryptoError
+                .Mls(.MessageRejected(reason: reason))
+        }
+
+        // When
+
+        let delegate = MockResetBrokenMLSConversationDelegate()
+        sut.setResetBrokenMLSConversationDelegate(delegate)
+        XCTAssertTrue(delegate.didCatchBrokenMLSConversationGroupIDEpoch_Invocations.isEmpty)
+        await XCTAssertThrowsErrorAsync(MLSService.MLSRetryError.nonRecoverableError(reason)) {
+            try await self.sut.generateNewEpoch(groupID: groupID)
+        }
+
+        // Then
+        XCTAssertEqual(commitPendingProposalsInvocations, [groupID])
+        XCTAssertEqual(updateKeyMaterialInvocations, [])
+        XCTAssertEqual(mockFeatureRepository.fetchResetMLSConversations_Invocations.count, 1)
+        XCTAssertTrue(delegate.didCatchBrokenMLSConversationGroupIDEpoch_Invocations.isEmpty)
     }
 
     // MARK: - Guest links
