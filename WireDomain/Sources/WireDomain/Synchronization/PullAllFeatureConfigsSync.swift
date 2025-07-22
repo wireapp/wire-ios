@@ -113,7 +113,6 @@ private extension FeatureConfigLocalStoreProtocol {
                 isEnabled: config.status == .enabled,
                 config: config.toDomainModel()
             )
-            
         case let .allowGlobalOperations(config):
             await storeFeature(
                 name: .allowGlobalOperations,
