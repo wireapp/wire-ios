@@ -25,7 +25,7 @@ import UIKit
 class TailEditingTextField: UITextField {
     override init(frame: CGRect) {
         super.init(frame: frame)
-
+//+1
         setup()
     }
 

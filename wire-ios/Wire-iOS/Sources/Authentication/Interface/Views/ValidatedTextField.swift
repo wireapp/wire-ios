@@ -19,6 +19,7 @@
 import UIKit
 import WireDesign
 import WireReusableUIComponents
+import WireSyncEngine
 
 protocol TextFieldValidationDelegate: AnyObject {
 
@@ -90,6 +91,33 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
     var overrideButtonIcon: StyleKitIcon? {
         didSet {
             updateButtonIcon()
+        }
+    }
+
+    var canUseClipboard: Bool {
+        MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()).canUseClipboard
+    }
+
+    override func canPerformAction(
+        _ action: Selector,
+        withSender sender: Any?
+    ) -> Bool {
+        if !canUseClipboard {
+            let validActions = [
+                #selector(UIResponderStandardEditActions.select(_:)),
+                #selector(UIResponderStandardEditActions.selectAll(_:))
+            ]
+            return text!.isEmpty ? false : validActions.contains(action)
+        } else {
+            return super.canPerformAction(action, withSender: sender)
+        }
+    }
+
+    override func buildMenu(with builder: any UIMenuBuilder) {
+        if !canUseClipboard {
+            if #available(iOS 17.0, *) {
+                builder.remove(menu: .autoFill)
+            }
         }
     }
 
