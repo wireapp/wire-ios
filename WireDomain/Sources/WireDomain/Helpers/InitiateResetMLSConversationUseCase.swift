@@ -29,7 +29,7 @@ public class InitiateResetMLSConversationUseCase: InitiateResetMLSConversationUs
 
     private let api: MLSAPI
     private let mlsService: MLSServiceInterface
-    private let conversationLocalStore: ConversationLocalStore
+    private let conversationLocalStore: ConversationLocalStoreProtocol
 
     enum Failure {
         case noConversation
@@ -38,7 +38,7 @@ public class InitiateResetMLSConversationUseCase: InitiateResetMLSConversationUs
     public init(
         api: MLSAPI,
         mlsService: MLSServiceInterface,
-        conversationLocalStore: ConversationLocalStore
+        conversationLocalStore: ConversationLocalStoreProtocol
     ) {
         self.api = api
         self.mlsService = mlsService
@@ -58,6 +58,9 @@ public class InitiateResetMLSConversationUseCase: InitiateResetMLSConversationUs
 
             // send request to BE to reset broken conversation
             try await api.resetMLSConversation(epoch: epoch, groupID: groupID.data.base64String())
+
+            // wipe group
+            try await mlsService.wipeGroup(groupID)
 
             // re-create group and re-add all participants
             let users = await conversationLocalStore.localParticipantsAsMLSUsers(in: conversation)
