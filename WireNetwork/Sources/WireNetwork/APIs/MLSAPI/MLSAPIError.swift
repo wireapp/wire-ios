@@ -50,13 +50,9 @@ public enum MLSAPIError: Error, Equatable {
 
     case mlsNotEnabled
 
-    case mlsNotEnabledWithMessage(message: String)
-
     /// Message was sent in an too old epoch
 
     case mlsStaleMessage
-
-    case mlsStaleMessageWithMessage(message: String)
 
     /// A proposal of type Add or Remove does not apply to the full list of clients for a user
 
