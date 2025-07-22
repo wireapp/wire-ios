@@ -3215,34 +3215,34 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
         mock(selfDeletingMessages)
     }
 
-    // MARK: - fetchResetMLSConversations
+    // MARK: - fetchAllowGlobalOperations
 
-    public var fetchResetMLSConversations_Invocations: [Void] = []
-    public var fetchResetMLSConversations_MockMethod: (() async -> Feature.ResetMLSConversations)?
-    public var fetchResetMLSConversations_MockValue: Feature.ResetMLSConversations?
+    public var fetchAllowGlobalOperations_Invocations: [Void] = []
+    public var fetchAllowGlobalOperations_MockMethod: (() async -> Feature.AllowGlobalOperations)?
+    public var fetchAllowGlobalOperations_MockValue: Feature.AllowGlobalOperations?
 
-    public func fetchResetMLSConversations() async -> Feature.ResetMLSConversations {
-        fetchResetMLSConversations_Invocations.append(())
+    public func fetchAllowGlobalOperations() async -> Feature.AllowGlobalOperations {
+        fetchAllowGlobalOperations_Invocations.append(())
 
-        if let mock = fetchResetMLSConversations_MockMethod {
+        if let mock = fetchAllowGlobalOperations_MockMethod {
             return await mock()
-        } else if let mock = fetchResetMLSConversations_MockValue {
+        } else if let mock = fetchAllowGlobalOperations_MockValue {
             return mock
         } else {
-            fatalError("no mock for `fetchResetMLSConversations`")
+            fatalError("no mock for `fetchAllowGlobalOperations`")
         }
     }
 
-    // MARK: - storeResetMLSConversations
+    // MARK: - storeAllowGlobalOperations
 
-    public var storeResetMLSConversations_Invocations: [Feature.ResetMLSConversations] = []
-    public var storeResetMLSConversations_MockMethod: ((Feature.ResetMLSConversations) -> Void)?
+    public var storeAllowGlobalOperations_Invocations: [Feature.AllowGlobalOperations] = []
+    public var storeAllowGlobalOperations_MockMethod: ((Feature.AllowGlobalOperations) -> Void)?
 
-    public func storeResetMLSConversations(_ resetMLSConversations: Feature.ResetMLSConversations) {
-        storeResetMLSConversations_Invocations.append(resetMLSConversations)
+    public func storeAllowGlobalOperations(_ resetMLSConversations: Feature.AllowGlobalOperations) {
+        storeAllowGlobalOperations_Invocations.append(resetMLSConversations)
 
-        guard let mock = storeResetMLSConversations_MockMethod else {
-            fatalError("no mock for `storeResetMLSConversations`")
+        guard let mock = storeAllowGlobalOperations_MockMethod else {
+            fatalError("no mock for `storeAllowGlobalOperations`")
         }
 
         mock(resetMLSConversations)

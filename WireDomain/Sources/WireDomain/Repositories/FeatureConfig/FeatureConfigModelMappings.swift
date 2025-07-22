@@ -104,7 +104,7 @@ extension WireNetwork.SelfDeletingMessagesFeatureConfig {
 }
 
 extension WireNetwork.AllowGlobalOperationsFeatureConfig {
-    func toDomainModel() -> Feature.ResetMLSConversations.Config {
+    func toDomainModel() -> Feature.AllowGlobalOperations.Config {
         .init(mlsConversationReset: resetMLSConversations)
     }
 }

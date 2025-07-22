@@ -116,7 +116,7 @@ private extension FeatureConfigLocalStoreProtocol {
             
         case let .allowGlobalOperations(config):
             await storeFeature(
-                name: .resetMLSConversation,
+                name: .allowGlobalOperations,
                 isEnabled: config.status == .enabled,
                 config: config.toDomainModel()
             )
