@@ -28,7 +28,7 @@ public final class ConversationGroupIconFactory {
 
     @MainActor
     public func create(conversationID: String) -> some View {
-       ConversationGroupIcon(asset: mapper.palette(for: conversationID))
+        ConversationGroupIcon(asset: mapper.palette(for: conversationID))
     }
 
     @MainActor

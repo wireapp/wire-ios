@@ -247,7 +247,7 @@ public final class ConversationChannelCreationFormViewModel: ObservableObject {
 
         return try? channelName
             .map { value in
-               ConversationChannelCreationSettings(
+                ConversationChannelCreationSettings(
                     channelName: value,
                     channelAccess: channelAccess.wireChannelAccess(
                         invitePolicy: channelInvitePolicy

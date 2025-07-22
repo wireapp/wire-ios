@@ -60,7 +60,7 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
         return UIHostingController(rootView: rootView)
     }()
 
-    @MainActor var channelCreationSettings:ConversationChannelCreationSettings? {
+    @MainActor var channelCreationSettings: ConversationChannelCreationSettings? {
         viewModel.getChannelCreationSettings()
     }
 

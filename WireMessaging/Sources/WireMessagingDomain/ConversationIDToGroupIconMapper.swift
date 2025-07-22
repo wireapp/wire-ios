@@ -22,7 +22,7 @@ package final class ConversationIDToGroupIconMapper: ConversationIDToPaletteMapp
 
     package init() {}
 
-    package func palette(for conversationID: String) ->ConversationGroupIconAsset {
+    package func palette(for conversationID: String) -> ConversationGroupIconAsset {
         // make sure id is lowercased
         let id = conversationID.lowercased()
         // Calculate the combined hash
