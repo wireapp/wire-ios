@@ -45,7 +45,7 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
         conversationLocalStore = MockConversationLocalStoreProtocol()
         mlsService = MockMLSServiceInterface()
         mockFeatureRepository = .init()
-        mockFeatureRepository.fetchResetMLSConversations_MockValue = .init(
+        mockFeatureRepository.fetchAllowGlobalOperations_MockValue = .init(
             status: .enabled,
             config: .init(mlsConversationReset: true)
         )
@@ -114,7 +114,7 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
 
     func testDoNotProcessEventWhenFFIsOff() async throws {
 
-        mockFeatureRepository.fetchResetMLSConversations_MockValue = .init(
+        mockFeatureRepository.fetchAllowGlobalOperations_MockValue = .init(
             status: .disabled,
             config: .init(mlsConversationReset: false)
         )

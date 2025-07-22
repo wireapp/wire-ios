@@ -20,7 +20,7 @@ import Foundation
 
 public extension Feature {
 
-    struct ResetMLSConversations: Codable {
+    struct AllowGlobalOperations: Codable {
 
         // MARK: - Properties
 

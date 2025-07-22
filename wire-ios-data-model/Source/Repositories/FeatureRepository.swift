@@ -30,8 +30,8 @@ public protocol FeatureRepositoryInterface {
     func storeFileSharing(_ fileSharing: Feature.FileSharing)
     func fetchSelfDeletingMessages() -> Feature.SelfDeletingMessages
     func storeSelfDeletingMessages(_ selfDeletingMessages: Feature.SelfDeletingMessages)
-    func fetchResetMLSConversations() async -> Feature.ResetMLSConversations
-    func storeResetMLSConversations(_ resetMLSConversations: Feature.ResetMLSConversations)
+    func fetchAllowGlobalOperations() async -> Feature.AllowGlobalOperations
+    func storeAllowGlobalOperations(_ resetMLSConversations: Feature.AllowGlobalOperations) // RENAME
     func fetchConversationGuestLinks() -> Feature.ConversationGuestLinks
     func storeConversationGuestLinks(_ conversationGuestLinks: Feature.ConversationGuestLinks)
     func fetchClassifiedDomains() -> Feature.ClassifiedDomains
@@ -234,22 +234,22 @@ public class FeatureRepository: FeatureRepositoryInterface {
         }
     }
 
-    public func storeResetMLSConversations(_ resetMLSConversation: Feature.ResetMLSConversations) {
+    public func storeAllowGlobalOperations(_ allowGlobalOperations: Feature.AllowGlobalOperations) {
         do {
-            let config = try encoder.encode(resetMLSConversation.config)
+            let config = try encoder.encode(allowGlobalOperations.config)
 
-            Feature.updateOrCreate(havingName: .resetMLSConversation, in: context) {
-                $0.status = resetMLSConversation.status
+            Feature.updateOrCreate(havingName: .allowGlobalOperations, in: context) {
+                $0.status = allowGlobalOperations.status
                 $0.config = config
             }
         } catch {
-            logger.error("failed to encode Feature.ResetMLSConversations.Config: \(error)")
+            logger.error("failed to encode Feature.AllowGlobalOperations.Config: \(error)")
         }
     }
 
-    public func fetchResetMLSConversations() async -> Feature.ResetMLSConversations {
+    public func fetchAllowGlobalOperations() async -> Feature.AllowGlobalOperations {
         let (featureStatus, featureConfig) = await context.perform {
-            let feature = Feature.fetch(name: .resetMLSConversation, context: self.context)
+            let feature = Feature.fetch(name: .allowGlobalOperations, context: self.context)
             return (feature?.status, feature?.config)
         }
 
@@ -257,15 +257,15 @@ public class FeatureRepository: FeatureRepositoryInterface {
             return .init()
         }
 
-        var config = Feature.ResetMLSConversations.Config()
+        var config = Feature.AllowGlobalOperations.Config()
 
         do {
             config = try decoder.decode(
-                Feature.ResetMLSConversations.Config.self,
+                Feature.AllowGlobalOperations.Config.self,
                 from: featureConfig
             )
         } catch {
-            logger.error("failed to decode Feature.ResetMLSConversations.Config: \(error)")
+            logger.error("failed to decode Feature.AllowGlobalOperations.Config: \(error)")
         }
 
         return .init(status: featureStatus, config: config)
@@ -517,8 +517,8 @@ public class FeatureRepository: FeatureRepositoryInterface {
             case .selfDeletingMessages:
                 storeSelfDeletingMessages(.init())
 
-            case .resetMLSConversation:
-                storeResetMLSConversations(.init())
+            case .allowGlobalOperations:
+                storeAllowGlobalOperations(.init())
 
             case .conversationGuestLinks:
                 storeConversationGuestLinks(.init())

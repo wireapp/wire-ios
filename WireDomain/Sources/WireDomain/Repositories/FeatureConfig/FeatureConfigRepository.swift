@@ -188,6 +188,12 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 name: .channels,
                 isEnabled: channelsFeatureConfig.status == .enabled
             )
+            
+        case let .allowGlobalOperations(config):
+            return FeatureState(
+                name: .allowGlobalOperations,
+                isEnabled: config.status == .enabled
+            )
 
         case let .unknown(featureName):
             logger.warn(
@@ -290,11 +296,11 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 channelsFeatureConfig.toDomainModel()
             )
             
-        case let .allowGlobalOperations(allowGlobalOperationsFeatureConfig):
+        case let .allowGlobalOperations(config):
             return (
-                .resetMLSConversation,
-                allowGlobalOperationsFeatureConfig.status == .enabled,
-                allowGlobalOperationsFeatureConfig.toDomainModel()
+                .allowGlobalOperations,
+                config.status == .enabled,
+                config.toDomainModel()
             )
 
         case let .unknown(featureName):

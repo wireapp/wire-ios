@@ -95,11 +95,11 @@ struct FeatureConfigsPayloadProcessor {
             )
         }
 
-        if let resetMLSConversation = payload.allowedGlobalOperations {
-            repository.storeResetMLSConversations(
-                Feature.ResetMLSConversations(
-                    status: resetMLSConversation.status,
-                    config: resetMLSConversation.config
+        if let allowedGlobalOperations = payload.allowedGlobalOperations {
+            repository.storeAllowGlobalOperations(
+                Feature.AllowGlobalOperations(
+                    status: allowedGlobalOperations.status,
+                    config: allowedGlobalOperations.config
                 )
             )
         }
@@ -259,12 +259,12 @@ struct FeatureConfigsPayloadProcessor {
             )
             repository.storeSelfDeletingMessages(.init(status: response.status, config: response.config))
 
-        case .resetMLSConversation:
+        case .allowGlobalOperations:
             let response = try decoder.decode(
-                FeatureStatusWithConfig<Feature.ResetMLSConversations.Config>.self,
+                FeatureStatusWithConfig<Feature.AllowGlobalOperations.Config>.self,
                 from: data
             )
-            repository.storeResetMLSConversations(.init(
+            repository.storeAllowGlobalOperations(.init(
                 status: response.status,
                 config: response.config
             ))
