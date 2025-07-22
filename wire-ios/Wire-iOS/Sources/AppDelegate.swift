@@ -19,6 +19,7 @@
 // Test CI: modify this line to run ci tests, sometimes it's the easiest way.
 
 import avs
+import CoreData
 import UIKit
 import WireCommonComponents
 import WireCoreCrypto
@@ -100,6 +101,10 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
 
+        #if DEBUG
+            resetApp()
+        #endif
+
         guard !application.supportsMultipleScenes else {
             fatalError("Multiple scenes are currently not supported")
         }
@@ -129,6 +134,56 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         )
 
         return true
+    }
+
+    #if DEBUG
+        private func resetApp() {
+            let arguments = ProcessInfo.processInfo.arguments
+            if arguments.contains("-resetData") {
+                resetUserDefaults()
+                resetKeychain()
+                resetFileSystem()
+                print("app reset done")
+            }
+        }
+    #endif
+
+    // MARK: - Reset
+
+    func resetUserDefaults() {
+        if let bundleID = Bundle.main.bundleIdentifier {
+            UserDefaults.standard.removePersistentDomain(forName: bundleID)
+            UserDefaults.standard.synchronize()
+        }
+    }
+
+    func resetKeychain() {
+        let secItemClasses = [
+            kSecClassGenericPassword,
+            kSecClassInternetPassword,
+            kSecClassCertificate,
+            kSecClassKey,
+            kSecClassIdentity
+        ]
+        for itemClass in secItemClasses {
+            let query: [String: Any] = [kSecClass as String: itemClass]
+            SecItemDelete(query as CFDictionary)
+        }
+    }
+
+    func resetFileSystem() {
+        let fileManager = FileManager.default
+        let directories: [FileManager.SearchPathDirectory] = [
+            .documentDirectory,
+            .cachesDirectory,
+            .applicationSupportDirectory
+        ]
+
+        for dir in directories {
+            if let url = fileManager.urls(for: dir, in: .userDomainMask).first {
+                try? fileManager.removeItem(at: url)
+            }
+        }
     }
 
     private func setNavigationAppearance() {
