@@ -39,7 +39,9 @@ extension SessionManager: UserSessionEncryptionAtRestDelegate {
                     completion: { result in
                         switch result {
                         case .success:
-                            self?.loadSession(for: account, completion: { _ in })
+                            Task {
+                                _ = await self?.loadSession(for: account)
+                            }
                         case let .failure(error):
                             WireLogger.ear.error("failed to migrate account: \(error)")
                         }

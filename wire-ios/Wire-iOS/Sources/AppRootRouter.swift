@@ -37,7 +37,6 @@ final class AppRootRouter {
     private let switchingAccountRouter: SwitchingAccountRouter
     private let sessionManagerLifeCycleObserver: SessionManagerLifeCycleObserver
     private let foregroundNotificationFilter: ForegroundNotificationFilter
-    private var quickActionsManager: QuickActionsManager
     private var authenticatedRouter: AuthenticatedRouter?
 
     private var observerTokens: [NSObjectProtocol] = []
@@ -78,14 +77,12 @@ final class AppRootRouter {
             sessionManager: sessionManager
         )
         self.switchingAccountRouter = SwitchingAccountRouter()
-        self.quickActionsManager = QuickActionsManager()
         self.foregroundNotificationFilter = ForegroundNotificationFilter()
         self.sessionManagerLifeCycleObserver = SessionManagerLifeCycleObserver()
         self.trackingManager = trackingManager
 
         sessionManagerLifeCycleObserver.sessionManager = sessionManager
         foregroundNotificationFilter.sessionManager = sessionManager
-        quickActionsManager.sessionManager = sessionManager
 
         sessionManager.foregroundNotificationResponder = foregroundNotificationFilter
         sessionManager.switchingDelegate = switchingAccountRouter
@@ -111,13 +108,6 @@ final class AppRootRouter {
 
     func openDeepLinkURL(_ deepLinkURL: URL) -> Bool {
         urlActionRouter.open(url: deepLinkURL)
-    }
-
-    func performQuickAction(
-        for shortcutItem: UIApplicationShortcutItem,
-        completionHandler: ((Bool) -> Void)?
-    ) {
-        quickActionsManager.performAction(for: shortcutItem, completionHandler: completionHandler)
     }
 
     // MARK: - Private implementation
@@ -321,7 +311,9 @@ extension AppRootRouter: AppStateCalculatorDelegate {
 
     private func showInitial(launchOptions: LaunchOptions) {
         enqueueTransition(to: .headless) { [weak self] in
-            self?.sessionManager.start(launchOptions: launchOptions)
+            Task { @MainActor in
+                await self?.sessionManager.start(launchOptions: launchOptions)
+            }
         }
     }
 
@@ -433,7 +425,9 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         guard let launchOptions = lastLaunchOptions else { return }
         completion()
         enqueueTransition(to: .headless) { [weak self] in
-            self?.sessionManager.start(launchOptions: launchOptions)
+            Task { @MainActor in
+                await self?.sessionManager.start(launchOptions: launchOptions)
+            }
         }
     }
 

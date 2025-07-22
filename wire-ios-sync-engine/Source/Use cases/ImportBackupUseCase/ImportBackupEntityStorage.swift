@@ -60,18 +60,7 @@ struct ImportBackupEntityStorage: ImportBackupEntityStorageProtocol {
             dispatchGroup: dispatchGroup
         )
 
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-
-            stack.loadStores { error in
-                if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    continuation.resume()
-                }
-            }
-
-        }
-
+        try await stack.load()
         return stack
 
     }

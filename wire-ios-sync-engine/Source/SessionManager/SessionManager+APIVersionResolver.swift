@@ -123,16 +123,17 @@ extension SessionManager: APIVersionResolverDelegate {
             accountManager.accounts.forEach { account in
                 dispatchGroup.enter()
 
-                if account == self.accountManager.selectedAccount {
-                    // When completed, this should trigger an AppState change through the SessionManagerDelegate
-                    self.loadSession(for: account) { _ in
-                        dispatchGroup.leave()
-                    }
-                } else {
-                    self.withSession(for: account) { _ in
-                        dispatchGroup.leave()
-                    }
-                }
+                // TODO: fix
+//                if account == self.accountManager.selectedAccount {
+//                    // When completed, this should trigger an AppState change through the SessionManagerDelegate
+//                    self.loadSession(for: account) { _ in
+//                        dispatchGroup.leave()
+//                    }
+//                } else {
+//                    self.withSession(for: account) { _ in
+//                        dispatchGroup.leave()
+//                    }
+//                }
             }
 
             dispatchGroup.wait(forInterval: 1)

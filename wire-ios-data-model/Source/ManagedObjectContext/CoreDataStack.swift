@@ -105,10 +105,12 @@ public extension NSURL {
 
 // sourcery: AutoMockable
 public protocol CoreDataStackProtocol: ContextProvider {
+
     var storesExists: Bool { get }
     var needsMigration: Bool { get }
 
-    func loadStores(completionHandler: @escaping (Error?) -> Void)
+    func load() async throws
+
 }
 
 @objcMembers
@@ -221,6 +223,8 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
         close()
     }
 
+    // MARK: - Close
+
     public func close() {
         guard !hasBeenClosed  else {
             return
@@ -251,167 +255,74 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
         }
     }
 
-    public func setup(
-        onStartMigration: () -> Void,
-        onFailure: @escaping (Error) -> Void,
-        onCompletion: @escaping (CoreDataStack) -> Void
-    ) {
-        if needsMigration {
-            onStartMigration()
+    // MARK: - Load
+
+    @MainActor
+    public func load() async throws {
+        if needsMessagingStoreMigration() {
+            try migrateMessagingStore()
         }
-        DispatchQueue.global(qos: .userInitiated).async {
-            if self.needsMessagingStoreMigration() {
-                let tp = TimePoint(interval: 60.0, label: "db migration")
-                WireLogger.localStorage.info(
-                    "[setup] start migration of core data messaging store!",
-                    attributes: .safePublic
-                )
 
-                do {
-                    try self.migrateMessagingStore()
-                    WireLogger.localStorage.info(
-                        "[setup] finished migration of core data messaging store!",
-                        attributes: .safePublic
-                    )
-                } catch {
-                    let logMessage =
-                        "[setup] failed migration of core data messaging store: \(error.localizedDescription)."
-                    WireLogger.localStorage.error(logMessage, attributes: .safePublic)
-
-                    DispatchQueue.main.async {
-                        onFailure(error)
-                    }
-                    return
-                }
-                if tp.warnIfLongerThanInterval() == false {
-                    WireLogger.localStorage.info(
-                        "time spent in migration only: \(tp.elapsedTime)",
-                        attributes: .safePublic
-                    )
-                }
-            }
-
-            if self.needsEventStoreMigration() {
-                let tp = TimePoint(interval: 60.0, label: "db migration")
-                WireLogger.localStorage.info(
-                    "[setup] start migration of core data event store!",
-                    attributes: .safePublic
-                )
-
-                do {
-                    try self.migrateEventStore()
-                    WireLogger.localStorage.info(
-                        "[setup] finished migration of core data event store!",
-                        attributes: .safePublic
-                    )
-                } catch {
-                    let logMessage = "[setup] failed migration of core data event store: \(error.localizedDescription)."
-                    WireLogger.localStorage.error(logMessage, attributes: .safePublic)
-
-                    DispatchQueue.main.async {
-                        onFailure(error)
-                    }
-                    return
-                }
-                if tp.warnIfLongerThanInterval() == false {
-                    WireLogger.localStorage.info(
-                        "time spent in migration only: \(tp.elapsedTime)",
-                        attributes: .safePublic
-                    )
-                }
-            }
-
-            DispatchQueue.main.async {
-                WireLogger.localStorage.info("[setup] load core data stores!", attributes: .safePublic)
-                self.loadStores { error in
-                    if DeveloperFlag.forceDatabaseLoadingFailure.isOn {
-                        // flip off the flag in order not to be stuck in failure
-                        var flag = DeveloperFlag.forceDatabaseLoadingFailure
-                        flag.isOn = false
-                        onFailure(CoreDataStackError.simulateDatabaseLoadingFailure)
-                        return
-                    }
-
-                    if let error {
-                        onFailure(error)
-                        return
-                    }
-                    onCompletion(self)
-                }
-            }
+        if needsEventStoreMigration() {
+            try migrateEventStore()
         }
+
+        try await loadMessagesStore()
+        try await loadEventStore()
     }
 
-    public func loadStores(completionHandler: @escaping (Error?) -> Void) {
-
-        let dispatchGroup = DispatchGroup()
-        var loadingStoreError: Error?
-
-        dispatchGroup.enter()
-        loadMessagesStore { error in
-            if let error {
-                WireLogger.localStorage.error("failed to load message store: \(error)", attributes: .safePublic)
-            }
-            loadingStoreError = loadingStoreError ?? error
-            dispatchGroup.leave()
-        }
-
-        dispatchGroup.enter()
-        loadEventStore { error in
-            if let error {
-                WireLogger.localStorage.error("failed to load event store: \(error)")
-            }
-            loadingStoreError = loadingStoreError ?? error
-            dispatchGroup.leave()
-        }
-
-        dispatchGroup.notify(queue: .main) {
-            completionHandler(loadingStoreError)
-        }
-    }
-
-    func loadMessagesStore(completionHandler: @escaping (Error?) -> Void) {
+    func loadMessagesStore() async throws {
         do {
+            WireLogger.localStorage.info(
+                "loading message store",
+                attributes: .safePublic
+            )
+
             try createStoreDirectory(for: messagesContainer)
-        } catch {
-            completionHandler(error)
-            return
-        }
-
-        messagesContainer.loadPersistentStores { _, error in
-
-            guard error == nil else {
-                completionHandler(error)
-                return
+            try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, any Error>) in
+                messagesContainer.loadPersistentStores { _, error in
+                    if let error {
+                        continuation.resume(throwing: error)
+                    } else {
+                        self.configureContextReferences()
+                        self.configureViewContext(self.viewContext)
+                        self.configureSyncContext(self.syncContext)
+                        self.configureSearchContext(self.searchContext)
+                        continuation.resume()
+                    }
+                }
             }
-
-            self.configureContextReferences()
-            self.configureViewContext(self.viewContext)
-            self.configureSyncContext(self.syncContext)
-            self.configureSearchContext(self.searchContext)
-
-            completionHandler(nil)
+        } catch {
+            WireLogger.localStorage.critical(
+                "failed to load message store: \(String(describing: error))",
+                attributes: .safePublic
+            )
         }
     }
 
-    func loadEventStore(completionHandler: @escaping (Error?) -> Void) {
+    func loadEventStore() async throws {
         do {
+            WireLogger.localStorage.info(
+                "loading event store",
+                attributes: .safePublic
+            )
+
             try createStoreDirectory(for: eventsContainer)
-        } catch {
-            completionHandler(error)
-            return
-        }
-
-        eventsContainer.loadPersistentStores { _, error in
-
-            guard error == nil else {
-                completionHandler(error)
-                return
+            try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, any Error>) in
+                eventsContainer.loadPersistentStores { _, error in
+                    if let error {
+                        continuation.resume(throwing: error)
+                    } else {
+                        self.configureEventContext(self.eventContext)
+                        continuation.resume()
+                    }
+                }
             }
-
-            self.configureEventContext(self.eventContext)
-
-            completionHandler(nil)
+        } catch {
+            WireLogger.localStorage.critical(
+                "failed to load event store: \(String(describing: error))",
+                attributes: .safePublic
+            )
         }
     }
 
@@ -437,12 +348,14 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
     // MARK: - Configure Contexts
 
     func configureViewContext(_ context: NSManagedObjectContext) {
-        context.markAsUIContext()
-        context.createDispatchGroups()
-        dispatchGroup.map(context.addGroup(_:))
-        context.mergePolicy = NSMergePolicy(merge: .rollbackMergePolicyType)
-        ZMUser.selfUser(in: context)
-        Label.fetchOrCreateFavoriteLabel(in: context, create: true)
+        context.performAndWait {
+            context.markAsUIContext()
+            context.createDispatchGroups()
+            dispatchGroup.map(context.addGroup(_:))
+            context.mergePolicy = NSMergePolicy(merge: .rollbackMergePolicyType)
+            ZMUser.selfUser(in: context)
+            Label.fetchOrCreateFavoriteLabel(in: context, create: true)
+        }
     }
 
     func configureContextReferences() {
@@ -548,33 +461,81 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
     // MARK: - Migration
 
     public func needsMessagingStoreMigration() -> Bool {
-        guard let storeURL = messagesContainer.storeURL else {
-            return false
-        }
+        guard let storeURL = messagesContainer.storeURL else { return false }
         return messagesMigrator.requiresMigration(at: storeURL, toVersion: .current)
     }
 
     public func migrateMessagingStore() throws {
+        WireLogger.localStorage.info(
+            "migrating messaging store",
+            attributes: .safePublic
+        )
+
+        let startDate = Date()
+
         guard let storeURL = messagesContainer.storeURL else {
+            WireLogger.localStorage.critical(
+                "failed to migrate messaging store: missing store URL",
+                attributes: .safePublic
+            )
             throw CoreDataMigratorError.missingStoreURL
         }
 
-        try messagesMigrator.migrateStore(at: storeURL, toVersion: .current)
+        do {
+            try messagesMigrator.migrateStore(at: storeURL, toVersion: .current)
+            let duration = (startDate..<(.now)).formatted(
+                Date.ComponentsFormatStyle(style: .narrow)
+            )
+            WireLogger.localStorage.info(
+                "message store migration completed in \(duration)",
+                attributes: .safePublic
+            )
+        } catch {
+            WireLogger.localStorage.critical(
+                "failed to migrate messaging store: \(String(describing: error))",
+                attributes: .safePublic
+            )
+            throw error
+        }
     }
 
     public func needsEventStoreMigration() -> Bool {
-        guard let storeURL = eventsContainer.storeURL else {
-            return false
-        }
+        guard let storeURL = eventsContainer.storeURL else { return false }
         return eventsMigrator.requiresMigration(at: storeURL, toVersion: .current)
     }
 
     public func migrateEventStore() throws {
+        WireLogger.localStorage.info(
+            "migrating event store",
+            attributes: .safePublic
+        )
+
+        let startDate = Date()
+
         guard let storeURL = eventsContainer.storeURL else {
+            WireLogger.localStorage.critical(
+                "failed to migrate event store: missing store URL",
+                attributes: .safePublic
+            )
             throw CoreDataMigratorError.missingStoreURL
         }
 
-        try eventsMigrator.migrateStore(at: storeURL, toVersion: .current)
+        do {
+            try eventsMigrator.migrateStore(at: storeURL, toVersion: .current)
+            let duration = (startDate..<(.now)).formatted(
+                Date.ComponentsFormatStyle(style: .narrow)
+            )
+            WireLogger.localStorage.info(
+                "event store migration completed in \(duration)",
+                attributes: .safePublic
+            )
+        } catch {
+            WireLogger.localStorage.critical(
+                "failed to migrate event store: \(String(describing: error))",
+                attributes: .safePublic
+            )
+            throw error
+        }
     }
 
 }

@@ -126,7 +126,7 @@ public final class NotificationSession {
         environment: BackendEnvironmentProvider,
         sharedUserDefaults: UserDefaults,
         minTLSVersion: String?
-    ) throws {
+    ) async throws {
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
         let accountManager = try AccountManager(
             currentAppVersion: currentAppVersion,
@@ -150,16 +150,8 @@ public final class NotificationSession {
             throw InitializationError.coreDataMigrationRequired
         }
 
-        coreDataStack.loadStores { error in
-            // ⚠️ errors are not handled and `NotificationSession` will be created.
-            // Currently it is the given behavior, but should be refactored
-            // into a "setup" or "load" func that can be async and handle errors.
-
-            if let error {
-                WireLogger.notifications.error("Loading coreDataStack with error: \(error.localizedDescription)")
-            }
-        }
-
+        try await coreDataStack.load()
+    
         // Don't cache the cookie because if the user logs out and back in again in the main app
         // process, then the cached cookie will be invalid.
         let cookieStorage = ZMPersistentCookieStorage(
