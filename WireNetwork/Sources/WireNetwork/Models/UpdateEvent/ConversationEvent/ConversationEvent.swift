@@ -86,4 +86,8 @@ public enum ConversationEvent: Equatable, Sendable {
 
     case permissionUpdate(ConversationAddPermissionEvent)
 
+    /// Event to fix broken MLS conversation by reseting it
+
+    case mlsReset(ConversationMLSResetEvent)
+
 }
