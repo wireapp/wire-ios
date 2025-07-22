@@ -61,7 +61,7 @@ class DatabaseTest: ZMTBaseTest {
         }
     }
 
-    private func createCoreDataStack() -> CoreDataStack {
+    private func createCoreDataStack() async throws -> CoreDataStack {
         let account = Account(userName: "", userIdentifier: accountId)
         let stack = CoreDataStack(
             account: account,
@@ -70,10 +70,15 @@ class DatabaseTest: ZMTBaseTest {
             dispatchGroup: dispatchGroup
         )
 
-        stack.loadStores { error in
-            XCTAssertNil(error)
-        }
+//        Task {
+//            do {
+//                try await stack.load()
+//            } catch {
+//                XCTFail("failed to load core data stack: \(error)")
+//            }
+//        }
 
+        try await stack.load()
         return stack
     }
 
@@ -90,10 +95,10 @@ class DatabaseTest: ZMTBaseTest {
         }
     }
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
 
-        coreDataStack = createCoreDataStack()
+        coreDataStack = try await createCoreDataStack()
 
         configureCaches()
     }
