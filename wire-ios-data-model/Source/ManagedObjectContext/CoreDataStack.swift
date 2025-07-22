@@ -297,6 +297,7 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
                 "failed to load message store: \(String(describing: error))",
                 attributes: .safePublic
             )
+            throw error
         }
     }
 
@@ -323,6 +324,7 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
                 "failed to load event store: \(String(describing: error))",
                 attributes: .safePublic
             )
+            throw error
         }
     }
 
