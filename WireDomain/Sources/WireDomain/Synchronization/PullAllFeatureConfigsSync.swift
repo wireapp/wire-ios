@@ -113,6 +113,13 @@ private extension FeatureConfigLocalStoreProtocol {
                 isEnabled: config.status == .enabled,
                 config: config.toDomainModel()
             )
+            
+        case let .allowGlobalOperations(config):
+            await storeFeature(
+                name: .resetMLSConversation,
+                isEnabled: config.status == .enabled,
+                config: config.toDomainModel()
+            )
         case let .unknown(name):
             WireLogger.featureConfigs.warn("encountered unknown feature config '\(name)' when storing, skipping")
             return

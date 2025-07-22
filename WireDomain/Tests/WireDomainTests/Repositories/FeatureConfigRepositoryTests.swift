@@ -196,7 +196,6 @@ final class FeatureConfigRepositoryTests: XCTestCase {
         )
 
         static let featureConfigs: [FeatureConfig] = [
-            // add tests
             .appLock(
                 .init(
                     status: .enabled,
@@ -265,7 +264,13 @@ final class FeatureConfigRepositoryTests: XCTestCase {
                 status: .enabled,
                 allowedToCreateChannels: .admins,
                 allowedToOpenChannels: .everyone
-            ))
+            )),
+            .allowGlobalOperations(
+                AllowGlobalOperationsFeatureConfig(
+                    status: .enabled,
+                    resetMLSConversations: true
+                )
+            )
         ]
 
     }
