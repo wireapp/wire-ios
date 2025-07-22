@@ -96,11 +96,6 @@ public final class MLSService: MLSServiceInterface {
 
     weak var delegate: MLSServiceDelegate?
 
-    private var resetBrokenMLSConversationsFeature: Feature.ResetMLSConversations? {
-        guard let context else { return nil }
-        return featureRepository.fetchResetMLSConversations()
-    }
-
     // MARK: - Life cycle
 
     public convenience init(
@@ -1555,8 +1550,8 @@ public final class MLSService: MLSServiceInterface {
                 throw MLSRetryError.nonRecoverableError(reason)
 
             case .resetBrokenMLSConversation:
-                let feature = resetBrokenMLSConversationsFeature
-                guard feature?.status == .enabled, feature?.config.mlsConversationReset == true else {
+                let feature = await featureRepository.fetchResetMLSConversations()
+                guard feature.status == .enabled, feature.config.mlsConversationReset == true else {
                     logger.info(
                         "no need to apply recovery strategy for reset broken MLS conversation, FF is OFF",
                         attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
