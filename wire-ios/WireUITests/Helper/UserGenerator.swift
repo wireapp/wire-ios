@@ -22,10 +22,10 @@ enum UserGenerator {
 
     static func generateUniqueUserInfo() -> UserInfo {
         let password = generateRandomPassword()
-        
+
         let time = Int(Date().timeIntervalSince1970 * 1000)
-        let random = Int.random(in: 100...999)
-    
+        let random = Int.random(in: 100 ... 999)
+
         let username = "smoketester\(time)\(random)"
         let domain = "wire.engineering"
         let name = "Smoke Tester \(time)\(random)"
@@ -62,14 +62,14 @@ enum UserGenerator {
     }
 
     static func generateRandomGroupName() -> String {
-        let timestamp = Int(Date().timeIntervalSince1970) % 100000
-        let hex = String(format: "%03x", Int.random(in: 0...0xFFF))
+        let timestamp = Int(Date().timeIntervalSince1970) % 100_000
+        let hex = String(format: "%03x", Int.random(in: 0 ... 0xFFF))
         return "Group_\(timestamp)\(hex)"
     }
 
     static func generateRandomMessage() -> String {
         let timestamp = Int(Date().timeIntervalSince1970 * 1000)
-        let random = Int.random(in: 100_000...999_999)
+        let random = Int.random(in: 100_000 ... 999_999)
         return "hello! \(timestamp)_\(random)"
     }
 

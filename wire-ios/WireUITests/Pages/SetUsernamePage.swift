@@ -36,7 +36,7 @@ class SetUsernamePage: PageModel {
 
     func setUsername(_ username: String) throws -> ConversationsPage {
         usernameField.tap()
-        //Note: Need another tap as sometimes it doesn't perform tap
+        // Note: Need another tap as sometimes it doesn't perform tap
         usernameField.tap()
         usernameField.typeText(username)
         usernameConfirmButton.tap()
