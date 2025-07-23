@@ -200,6 +200,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                         logger.debug("upToDate event", attributes: .syncAttributes(initialSync: false))
                         syncStateSubject.send(.liveSyncing(.ongoing))
                         delegate?.isUpToDate(sync: self)
+                        pushChannel.disableBatching(true)
                     }
                 case .missedEvents:
                     logger.debug("missedEvents event", attributes: .syncAttributes(initialSync: false))
@@ -214,6 +215,8 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                         )
 
                     } catch {
+                        WireLogger.sync.error("event processing failed: \(error)", attributes: .syncAttributes)
+                        assertionFailure("event processing failed: \(error)")
                         // TODO: [WPB-10458] review handling errors of processingEvents
                         // in case of thrown errors, we skip to the next event
                         // errors are already logged if needed
@@ -290,8 +293,8 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         in context: CoreCryptoContextProtocol
     ) async -> [UpdateEvent] {
         logger.debug(
-            "decrypting live event envelope  v3",
-            attributes: [.eventEnvelopeID: envelope.id]
+            "decrypting live event envelope",
+            attributes: [.eventEnvelopeID: envelope.id] + .syncAttributes
         )
         let decryptionEventsResult = await decryptor.decryptEvents(in: envelope, context: context)
 
