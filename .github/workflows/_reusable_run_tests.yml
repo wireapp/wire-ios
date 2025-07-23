@@ -106,7 +106,7 @@ jobs:
         # Resolve Swift Package Dependencies
       - name: Resolve Swift Package Dependencies
         run: |
-          ( cd $REPO_ROOT && xcodebuild -skipPackagePluginValidation -resolvePackageDependencies -disableAutomaticPackageResolution -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
+          ( cd $REPO_ROOT && xcodebuild -resolvePackageDependencies -disableAutomaticPackageResolution -clonedSourcePackagesDirPath "$PACKAGES_DIR" )
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
