@@ -1015,20 +1015,17 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
     private func fetchOldestMessageTimestamp() async -> Date? {
         await context.perform { [context] in
-            let fetchRequest = NSFetchRequest<NSDictionary>(entityName: ZMMessage.entityName())
-            let targetPropertyName = "serverTimestamp"
+            let fetchRequest = NSFetchRequest<ZMMessage>(entityName: ZMMessage.entityName())
 
-            fetchRequest.fetchLimit = 1
-            fetchRequest.resultType = .dictionaryResultType
-            fetchRequest.sortDescriptors = [
-                NSSortDescriptor(key: targetPropertyName, ascending: true)
-            ]
-            fetchRequest.propertiesToFetch = [targetPropertyName]
+            let sort = NSSortDescriptor(
+                key: #keyPath(ZMMessage.serverTimestamp),
+                ascending: true
+            )
+            fetchRequest.sortDescriptors = [sort]
 
             do {
                 let results = try context.fetch(fetchRequest)
-                let dict = results.first
-                return dict?[targetPropertyName] as? Date
+                return results.first?.serverTimestamp
             } catch {
                 return nil
             }
