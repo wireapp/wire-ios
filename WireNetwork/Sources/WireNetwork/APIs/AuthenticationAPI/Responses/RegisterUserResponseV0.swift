@@ -18,12 +18,13 @@
 
 import Foundation
 
-struct RegisterTeamOwnerResponseV0: Decodable, ToAPIModelConvertible {
+struct RegisterUserResponseV0: Decodable, ToAPIModelConvertible {
 
     let team: UUID
+    let id: String
 
     func toAPIModel() -> TeamID {
-        TeamID(team: team)
+        TeamID(team: team, id: id)
     }
 
 }

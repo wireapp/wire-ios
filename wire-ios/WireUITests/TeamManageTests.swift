@@ -100,8 +100,8 @@ final class TeamManageTests: WireUITestCase {
     @MainActor
     func test_TeamOwner_GroupConversation() async throws {
 
-        let groupName = "Group \(UUID().uuidString.replacingOccurrences(of: "-", with: "").prefix(6))"
-        let messageFromOwner = "Hello from the owner!"
+        let groupName = UserGenerator.generateRandomGroupName()
+        let messageFromOwner = UserGenerator.generateRandomeMessage()
 
         let teamOwner = try await userManager.registerUserAsTeamOwner()
         let teamMember1 = UserGenerator.generateUniqueUserInfo()
@@ -112,15 +112,16 @@ final class TeamManageTests: WireUITestCase {
             password: teamOwner.password
         )
 
-        let members = [
-            Member(name: teamMember1.name, email: teamMember1.email, password: teamMember1.password),
-            Member(name: teamMember2.name, email: teamMember2.email, password: teamMember2.password)
-        ]
-
-        try await userManager.registerUsersAsTeamMember(
+        let teamMember1_id = try await userManager.registerUsersAsTeamMember(
             accessToken: accessToken,
             teamID: teamOwner.teamID!,
-            members: members
+            member: teamMember1
+        )
+
+        let  teamMember2_id = try await userManager.registerUsersAsTeamMember(
+            accessToken: accessToken,
+            teamID: teamOwner.teamID!,
+            member: teamMember2
         )
 
         let welcomePage = try WelcomePage()
@@ -139,5 +140,15 @@ final class TeamManageTests: WireUITestCase {
             .tapMemberCells(withLabelPrefixes: [teamMember1.name, teamMember2.name])
             .doneSelectingMembers()
             .sendMessage(input: messageFromOwner)
+
+        let senderName = try XCTUnwrap(groupConversationPage.getSenderName())
+        XCTAssertEqual(senderName, teamOwner.name, "Sender info didn't match expected value \(teamOwner.name)")
+
+        let sentMessageInfo = try XCTUnwrap(groupConversationPage.getSentMessage())
+        XCTAssertEqual(
+            sentMessageInfo,
+            messageFromOwner,
+            "Sent message mismatch with expected value \(messageFromOwner)"
+        )
     }
 }

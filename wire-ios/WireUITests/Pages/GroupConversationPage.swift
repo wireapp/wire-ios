@@ -36,10 +36,26 @@ class GroupConversationPage: PageModel {
         app.descendants(matching: .any)["sendButton"].firstMatch
     }
 
+    var senderNameLabel: XCUIElement {
+        app.descendants(matching: .any)["author.name"].firstMatch
+    }
+
+    var messageLabel: XCUIElement {
+        app.textViews["Message"].firstMatch
+    }
+
     func sendMessage(input: String) throws -> GroupConversationPage {
         typeMessageField.tap()
         typeMessageField.typeText(input)
         sendButton.tap()
         return self
+    }
+
+    func getSenderName() -> String? {
+        senderNameLabel.label as? String
+    }
+
+    func getSentMessage() -> String? {
+        messageLabel.value as? String
     }
 }

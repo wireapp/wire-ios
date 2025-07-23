@@ -57,4 +57,15 @@ enum UserGenerator {
         let character = array[array.index(array.startIndex, offsetBy: randomIndex)]
         return String(character)
     }
+
+    static func generateRandomGroupName() -> String {
+        let random = (0 ..< 6).map { _ in String(format: "%02x", Int.random(in: 0 ..< 256)) }.joined()
+        return "Group \(random.prefix(6))"
+    }
+
+    static func generateRandomeMessage() -> String {
+        let random = (0 ..< 10).map { _ in String(format: "%01x", Int.random(in: 0 ..< 16)) }.joined()
+        return "hello! \(random)"
+    }
+
 }

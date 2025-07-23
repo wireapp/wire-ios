@@ -21,9 +21,11 @@ import Foundation
 public struct TeamID {
 
     public let team: UUID
+    public let id: String
 
-    public init(team: UUID) {
+    public init(team: UUID, id: String) {
         self.team = team
+        self.id = id
     }
 
 }

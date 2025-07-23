@@ -409,7 +409,7 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
         password: String,
         name: String,
         teamName: String
-    ) async throws -> UUID {
+    ) async throws -> (teamId: UUID, id: String) {
         let path = "\(pathPrefix)/register"
 
         let body = try JSONEncoder.defaultEncoder.encode(
@@ -433,10 +433,10 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
         let (data, response) = try await networkService.executeRequest(request)
 
         let payload = try ResponseParser()
-            .success(code: .created, type: RegisterTeamOwnerResponseV0.self)
+            .success(code: .created, type: RegisterUserResponseV0.self)
             .parse(code: response.statusCode, data: data)
 
-        return payload.team
+        return (payload.team, payload.id)
     }
 
     func registerTeamMember(
@@ -444,7 +444,7 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
         password: String,
         name: String,
         invitationCode: String
-    ) async throws {
+    ) async throws -> String {
         let path = "\(pathPrefix)/register"
 
         let body = try JSONEncoder.defaultEncoder.encode(
@@ -461,10 +461,13 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
             .withBody(body, contentType: .json)
             .build()
 
-        let (_, _) = try await networkService.executeRequest(request)
+        let (data, response) = try await networkService.executeRequest(request)
 
-        _ = try ResponseParser()
-            .success(code: .created)
+        let payload = try ResponseParser()
+            .success(code: .created, type: RegisterUserResponseV0.self)
+            .parse(code: response.statusCode, data: data)
+
+        return payload.id
     }
 
     func getInvitationCode(teamID: UUID, invitationID: UUID) async throws -> String {
