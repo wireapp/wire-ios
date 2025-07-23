@@ -392,22 +392,20 @@ public final class ClientSessionComponent {
         mlsGroupRepairAgent: mlsGroupRepairAgent
     )
 
-    public lazy var incrementalSyncV2: IncrementalSyncV2 = {        
-       return IncrementalSyncV2(
-            selfClientID: selfClientID,
-            pullServerTimeSync: pullServerTimeSync,
-            pushChannelAPI: pushChannelV2API,
-            decryptor: updateEventDecryptor,
-            updateEventsStore: updateEventsLocalStore,
-            messageStore: messageLocalStore,
-            processor: updateEventProcessor,
-            databaseSaver: databaseSaver,
-            syncStateSubject: syncStateSubject,
-            coreCryptoProvider: coreCryptoProvider,
-            journal: journal,
-            pushChannelState: PushChannelState(sharedContainerURL: sharedContainerURL, clientID: self.selfClientID)
-        )
-    }()
+    public lazy var incrementalSyncV2: IncrementalSyncV2 = .init(
+        selfClientID: selfClientID,
+        pullServerTimeSync: pullServerTimeSync,
+        pushChannelAPI: pushChannelV2API,
+        decryptor: updateEventDecryptor,
+        updateEventsStore: updateEventsLocalStore,
+        messageStore: messageLocalStore,
+        processor: updateEventProcessor,
+        databaseSaver: databaseSaver,
+        syncStateSubject: syncStateSubject,
+        coreCryptoProvider: coreCryptoProvider,
+        journal: journal,
+        pushChannelState: PushChannelState(sharedContainerURL: sharedContainerURL, clientID: self.selfClientID)
+    )
 
     public func consumableNotificationsMigrator() -> ConsumableNotificationsMigrator {
         ConsumableNotificationsMigrator(

@@ -45,7 +45,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
     private let journal: Journal
     private let syncMarkerGenerator: SyncMarkerGenerator
     private let pushChannelState: PushChannelStateProtocol
-    
+
     weak var delegate: (any LiveSyncDelegate)?
 
     public init(
@@ -60,8 +60,8 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         syncStateSubject: CurrentValueSubject<SyncState, Never>,
         coreCryptoProvider: any CoreCryptoProviderProtocol,
         journal: Journal,
-        
-        
+
+
         pushChannelState: PushChannelStateProtocol,
         syncMarkerGenerator: @escaping SyncMarkerGenerator = { UUID().uuidString }
     ) {
@@ -80,7 +80,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         self.pushChannelState = pushChannelState
     }
 
-    
+
     public func perform() async throws -> IncrementalSync.Token {
         logger.debug("performing live sync", attributes: .syncAttributes(initialSync: false))
 
@@ -91,7 +91,7 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
 
         logger.debug("opening new push channel", attributes: .syncAttributes(initialSync: false))
         syncStateSubject.send(.incrementalSyncing(.openPushChannel))
-        
+
         let liveEventStream: PushChannelV2.Stream
         do {
             liveEventStream = try await pushChannel.open()

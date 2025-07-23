@@ -60,7 +60,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
             storage: UserDefaults.temporary()
         )
         pushChannelState = MockPushChannelStateProtocol()
-        
+
         sut = IncrementalSyncV2(
             selfClientID: Scaffolding.selfClientID,
             pullServerTimeSync: pullServerTimeSync,
@@ -649,15 +649,15 @@ final class IncrementalSyncV2Tests: XCTestCase {
         )
         XCTAssertEqual(databaseSaver.save_Invocations.count, numberOfPendingEvents)
     }
-    
+
     func testPerform_MarkAsCloseWhenClosesPushChannel() async throws {
-  
+
         // Mock
-        liveDelegate.didFailSyncError_MockMethod = {_, _ in }
-        
+        liveDelegate.didFailSyncError_MockMethod = { _, _ in }
+
         // Some live events, some of which were already pulled.
         let pushChannel = MockPushChannelV2Protocol()
-        pushChannel.close_MockMethod = { }
+        pushChannel.close_MockMethod = {}
         pushChannel.open_MockValue = AsyncThrowingStream { continuation in
             continuation.finish(throwing: TestError(message: "something went wrong"))
         }
@@ -699,20 +699,22 @@ final class IncrementalSyncV2Tests: XCTestCase {
         // When
         let token = try await sut.perform()
         await token.suspend()
-        
+
         try XCTAssertCount(pushChannel.close_Invocations, count: 1)
         try XCTAssertCount(pushChannelState.markAsClosed_Invocations, count: 1)
-        
+
     }
 
     func testPerform_ClosesPushChannelOnErrorProcessingPendingEvents() async throws {
-  
+        let expectedError = TestError(message: "error occured")
         // Mock
-        liveDelegate.didFailSyncError_MockMethod = {_, _ in }
-        
+        liveDelegate.didFailSyncError_MockMethod = { _, _ in }
+
         // Some live events, some of which were already pulled.
         let pushChannel = MockPushChannelV2Protocol()
 
+
+        pushChannel.close_MockMethod = {}
         pushChannel.open_MockValue = AsyncThrowingStream { continuation in
             continuation.finish()
         }
@@ -721,15 +723,13 @@ final class IncrementalSyncV2Tests: XCTestCase {
         pushChannelAPI.createPushChannelClientIDMarker_MockMethod = { _, _ in pushChannel }
 
         // Events stored from NSE which needs to be processed
-        setPendingEvents(envelopes: [
-            (Scaffolding.event4, NSManagedObjectID())
-        ])
+        updateEventsStore.fetchStoredEventEnvelopesLimit_MockError = expectedError
 
         // Pending events are deleted in batches.
         updateEventsStore.deleteNextPendingEventsWith_MockMethod = { _ in }
 
         // Live envelopes are peristed one by one and deleted by batch.
-        updateEventsStore.persistEventEnvelopeIndex_MockError = TestError(message: "error occured")
+        updateEventsStore.persistEventEnvelopeIndex_MockMethod = { _, _ async throws in }
         updateEventsStore.deleteEventEnvelopesAt_MockMethod = { _ in }
 
         // Some indices at which live events will be stored.
@@ -754,12 +754,16 @@ final class IncrementalSyncV2Tests: XCTestCase {
         databaseSaver.save_MockMethod = {}
 
         // When
-        let _ = try await sut.perform()
-        
+        await XCTAssertThrowsErrorAsync(expectedError) {
+            let _ = try await self.sut.perform()
+        }
+
+
         try XCTAssertCount(pushChannel.close_Invocations, count: 1)
         try XCTAssertCount(pushChannelState.markAsClosed_Invocations, count: 1)
-        
+
     }
+
     private func setPendingEvents(envelopes: [(UpdateEventEnvelope, NSManagedObjectID)]) {
         var storedEnvelopes = envelopes
         updateEventsStore.fetchStoredEventEnvelopesLimit_MockMethod = { _ in

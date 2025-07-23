@@ -80,7 +80,8 @@ public final class PushChannelV2: PushChannelV2Protocol {
 
                     batchTask?.cancel()
                     batchTask = Task {
-                        WireLogger.pushChannel.debug("batch sleep for \(batchDelay) seconds (batch size '\(batch.count)')")
+                        WireLogger.pushChannel
+                            .debug("batch sleep for \(batchDelay) seconds (batch size '\(batch.count)')")
                         try await Task.sleep(for: .seconds(batchDelay))
                         if !batch.isEmpty {
                             continuation.yield(.events(batch))

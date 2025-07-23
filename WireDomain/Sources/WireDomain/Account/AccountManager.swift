@@ -209,10 +209,10 @@ public final class AccountManager: NSObject {
             }
         }
     }
-    
-    
+
+
     func selectedMainWebsocketFileURL() throws -> URL? {
-        if let selectedAccount = selectedAccount {
+        if let selectedAccount {
             return try? store.mainWebsocketLockFileURL(accountID: selectedAccount.userIdentifier)
         }
         return nil

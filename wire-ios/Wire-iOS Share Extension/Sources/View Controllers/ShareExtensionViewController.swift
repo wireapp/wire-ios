@@ -196,7 +196,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         else { return }
 
         let legacyConfig = AppLockController.LegacyConfig.fromBundle()
-        
+
         sharingSession = try SharingSession(
             applicationGroupIdentifier: applicationGroupIdentifier,
             accountIdentifier: accountIdentifier,

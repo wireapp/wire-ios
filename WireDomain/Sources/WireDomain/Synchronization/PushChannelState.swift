@@ -34,17 +34,17 @@ struct PushChannelState: PushChannelStateProtocol {
                 fatal("could not create file")
             }
         }
-        fileContext = SafeFileContext(fileURL: url)
+        self.fileContext = SafeFileContext(fileURL: url)
     }
-    
+
     func isOpen() -> Bool {
-        return fileContext.isLocked()
+        fileContext.isLocked()
     }
-    
+
     func markAsOpen() {
         fileContext.acquireDirectoryLock()
     }
-    
+
     func markAsClosed() {
         fileContext.releaseDirectoryLock()
     }
