@@ -35,4 +35,13 @@ public protocol MLSAPI {
 
     func postCommitBundle(_ bundle: CommitBundle) async throws -> [UpdateEvent]
 
+    /// Reset an MLS Conversation to epoch 0
+    /// - Parameters:
+    ///   - epoch: current epoch
+    ///   - groupID: MLS group id of the conversation
+    ///
+    /// Available from ``APIVersion`` v9.
+    ///
+
+    func resetMLSConversation(epoch: Int64, groupID: String) async throws
 }
