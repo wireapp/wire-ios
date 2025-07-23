@@ -18,20 +18,12 @@
 
 public import Foundation
 
-import OSLog
-
-public protocol FileLoggerDestination {
-    var log: URL? { get }
-}
+import os
 
 public class SystemLogger: LoggerProtocol {
 
     let persistQueue = DispatchQueue(label: "persistQueue")
     private var tags = [LogAttributesKey: String]()
-
-    public var logFiles: [URL] {
-        []
-    }
 
     var lastReportTime: Date? {
         get {

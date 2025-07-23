@@ -16,7 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import SwiftUI
+public import Foundation
+public import Combine
+import SwiftUI
+import WireFoundation
 public import WireMessagingAPI
 
 public final class WireConversationChannelCreationFormViewModel: ObservableObject {
@@ -35,14 +38,50 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
 
     typealias TextFieldValue<ValidationError: Error & Equatable> = Result<String, ValidationError>
 
-    // TODO: [WPB-16814] This will be used when implementing the channels history settings.
-//    enum ChannelHistoryOption: Equatable, Hashable {
-//        case off
-//        case oneDay
-//        case oneWeek
-//        case unlimited
-//        case custom(WireConversationChannelHistorySetting.LimitedHistoryValue)
-//    }
+    public enum ChannelHistoryOption: Equatable, Hashable {
+        case off
+        case oneDay
+        case oneWeek
+        case fourWeeks
+        case unlimited
+        case custom
+
+        var title: String {
+            switch self {
+            case .off:
+                L10n.Localizable.Conversation.ChannelHistory.Picker.off
+            case .oneDay:
+                L10n.Localizable.Conversation.ChannelHistory.Picker.oneDay
+            case .oneWeek:
+                L10n.Localizable.Conversation.ChannelHistory.Picker.oneWeek
+            case .fourWeeks:
+                L10n.Localizable.Conversation.ChannelHistory.Picker.fourWeeks
+            case .unlimited:
+                L10n.Localizable.Conversation.ChannelHistory.Picker.unlimited
+            case .custom:
+                L10n.Localizable.Conversation.ChannelHistory.Picker.custom
+            }
+        }
+
+        public struct Custom: Equatable, Hashable {
+            public enum Unit: Equatable, Hashable, CaseIterable {
+                case days
+                case weeks
+
+                var title: String {
+                    switch self {
+                    case .days:
+                        L10n.Localizable.Conversation.ChannelHistory.CustomPicker.days
+                    case .weeks:
+                        L10n.Localizable.Conversation.ChannelHistory.CustomPicker.weeks
+                    }
+                }
+            }
+
+            public var unit: Unit = .days
+            public var value: Int = 10
+        }
+    }
 
     public enum ChannelAccessOption: Equatable, Hashable {
         case `public`
@@ -78,27 +117,32 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
     }
 
     @Published private(set) var channelName: TextFieldValue<ChannelNameValidationError>
-
     @Published var channelAccess: ChannelAccessOption
     @Published var channelInvitePolicy: ChannelInvitePolicyOption
-    // TODO: [WPB-16814] This will be used when implementing the channels history settings.
-//    @Published internal(set) public channelHistory: ChannelHistoryOption
+    @Published var channelHistoryOption: ChannelHistoryOption
+    @Published var channelHistoryOptionCustom: ChannelHistoryOption.Custom = .init()
+    @Published var showUpgradeBanner: Bool = false
     @Published var servicesAllowed: Bool
     @Published var guestsAllowed: Bool
     @Published var readReceiptsEnabled: Bool
-
     @Published public private(set) var isFormValid: Bool
 
+    let teamsURL: URL
     private let onFormValidityUpdate: @Sendable (_ isValid: Bool) -> Void
+    private let isUserPremium: Bool
+    private var subscriptions = Set<AnyCancellable>()
 
     public init(
         channelName: String,
         // Channel access is always hard coded to private for now.
         channelAccess: ChannelAccessOption = .private,
         channelInvitePolicy: ChannelInvitePolicyOption = .admins,
+        channelHistoryOption: ChannelHistoryOption = .off,
         servicesAllowed: Bool = true,
         guestsAllowed: Bool = true,
         readReceiptsEnabled: Bool = true,
+        isUserPremium: Bool,
+        teamsURL: URL,
         onFormValidityUpdate: @escaping @Sendable (_ isValid: Bool) -> Void
     ) {
         let channelName = Self.validateChannelName(channelName)
@@ -107,11 +151,42 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
         self.channelName = channelName
         self.channelAccess = channelAccess
         self.channelInvitePolicy = channelInvitePolicy
+        self.channelHistoryOption = channelHistoryOption
         self.servicesAllowed = servicesAllowed
         self.guestsAllowed = guestsAllowed
         self.readReceiptsEnabled = readReceiptsEnabled
-
+        self.isUserPremium = isUserPremium
+        self.teamsURL = teamsURL
         self.onFormValidityUpdate = onFormValidityUpdate
+
+        bind()
+    }
+
+    // MARK: History sharing
+
+    private func bind() {
+        $channelHistoryOption
+            .filter { [self] in $0 == .custom && !isUserPremium }
+            .map { _ in true }
+            .assign(to: \.showUpgradeBanner, on: self)
+            .store(in: &subscriptions)
+    }
+
+    func channelHistoryAvailableOptions() -> [ChannelHistoryOption] {
+        if isUserPremium {
+            [.off, .oneDay, .oneWeek, .fourWeeks, .unlimited, .custom]
+        } else {
+            [.off, .oneDay, .custom]
+        }
+    }
+
+    func showChannelCustomHistoryPickers() -> Bool {
+        channelHistoryOption == .custom && isUserPremium
+    }
+
+    func hideUpgradeBanner() {
+        showUpgradeBanner = false
+        channelHistoryOption = .oneDay
     }
 
     func onChannelNameUpdate(_ value: String) {
@@ -153,7 +228,24 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
     }
 
     public func getChannelCreationSettings() -> WireConversationChannelCreationSettings? {
-        try? channelName
+
+        // TODO: [WPB-18347] - check history length expected type when endpoint is ready
+        let historyDepth: TimeInterval? = switch channelHistoryOption {
+        case .off:
+            nil
+        case .oneDay:
+            TimeInterval.oneDay
+        case .oneWeek:
+            TimeInterval.oneWeek
+        case .fourWeeks:
+            TimeInterval.fourWeeks
+        case .unlimited:
+            TimeInterval.oneYearFromNow
+        case .custom:
+            computeHistoryCustomLength()
+        }
+
+        return try? channelName
             .map { value in
                 WireConversationChannelCreationSettings(
                     channelName: value,
@@ -162,10 +254,23 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
                     ),
                     servicesAllowed: servicesAllowed,
                     guestsAllowed: guestsAllowed,
-                    readReceiptsEnabled: readReceiptsEnabled
+                    readReceiptsEnabled: readReceiptsEnabled,
+                    historyDepth: historyDepth.map(Int.init)
                 )
             }
             .get()
+    }
+
+    private func computeHistoryCustomLength() -> TimeInterval {
+        let value = TimeInterval(channelHistoryOptionCustom.value)
+        let oneDay = TimeInterval.oneDay
+
+        switch channelHistoryOptionCustom.unit {
+        case .days:
+            return value * oneDay
+        case .weeks:
+            return value * 7 * oneDay
+        }
     }
 }
 
