@@ -9,10 +9,9 @@ let package = Package(
     defaultLocalization: "en",
     platforms: [.iOS("16.4"), .macOS(.v12)],
     products: [
-        .library(name: "WireMessagingAPI", targets: ["WireMessagingAPI"]),
-        .library(name: "WireMessagingBindings", targets: ["WireMessagingBindings"]),
-        .library(name: "WireMessagingUI", targets: ["WireMessagingUI"]),
-        .library(name: "WireMessagingUIBindings", targets: ["WireMessagingUIBindings"])
+        .library(name: "WireMessagingDomain", targets: ["WireMessagingDomain"]),
+        .library(name: "WireMessagingAssembly", targets: ["WireMessagingAssembly"]),
+        .library(name: "WireMessagingUI", targets: ["WireMessagingUI"])
     ],
     dependencies: [
         .package(name: "WireFoundation", path: "../WireFoundation"),
@@ -21,41 +20,29 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "WireMessagingAPI"
-        ),
-        .target(
-            name: "WireMessagingBindings",
+            name: "WireMessagingDomain",
             dependencies: [
-                "WireMessagingAPI",
-                "WireMessagingImplementation"
-            ]
-        ),
-        .target(
-            name: "WireMessagingUIBindings",
-            dependencies: [
-                "WireMessagingAPI",
-                "WireMessagingImplementation",
-                "WireMessagingUI"
-            ]
-        ),
-        .target(
-            name: "WireMessagingImplementation",
-            dependencies: [
-                "WireMessagingAPI",
-                "WireMessagingResources",
                 "WireFoundation"
             ]
         ),
         .target(
-            name: "WireMessagingResources"
+            name: "WireMessagingData",
+            dependencies: [
+                "WireMessagingDomain"
+            ]
+        ),
+        .target(
+            name: "WireMessagingAssembly",
+            dependencies: [
+                "WireMessagingDomain",
+                "WireMessagingUI"
+            ]
         ),
         .target(
             name: "WireMessagingUI",
             dependencies: [
-                "WireMessagingAPI",
-                "WireMessagingImplementation",
-                "WireMessagingImplementationSupport",
-                "WireMessagingResources",
+                "WireMessagingDomain",
+                "WireMessagingDomainSupport",
                 .product(name: "WireDesign", package: "WireUI"),
                 .product(name: "WireReusableUIComponents", package: "WireUI"),
                 .product(name: "WireAccountImageUI", package: "WireUI"),
@@ -64,26 +51,17 @@ let package = Package(
             plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
         ),
         .target(
-            name: "WireMessagingImplementationSupport",
+            name: "WireMessagingDomainSupport",
             dependencies: [
-                "WireMessagingImplementation",
-                "WireMessagingAPI"
+                "WireMessagingDomain"
             ],
             plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
         ),
         .testTarget(
-            name: "WireMessagingTests",
-            dependencies: [
-                "WireMessagingUI",
-                "WireFoundation"
-            ]
-        ),
-        .testTarget(
             name: "WireMessagingUITests",
             dependencies: [
-                "WireMessagingUIBindings",
                 "WireMessagingUI",
-                "WireMessagingImplementationSupport",
+                "WireMessagingDomainSupport",
                 .product(name: "WireDesign", package: "WireUI"),
                 "WireFoundation"
             ]
