@@ -63,7 +63,6 @@ final class VerifyUserStep: Component<VerifyUserDependency>, VerifyUserStepProto
 
         self.selectedAccount = selectedAccount
 
-
         super.init(parent: parent)
     }
 

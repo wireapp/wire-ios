@@ -163,7 +163,6 @@ struct AccountStore {
         return url
     }
 
-
     /// Fetch a backend environment for account.
     ///
     /// - parameter accountID: The `UUID` of the user the account belongs to.

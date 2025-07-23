@@ -713,7 +713,6 @@ final class IncrementalSyncV2Tests: XCTestCase {
         // Some live events, some of which were already pulled.
         let pushChannel = MockPushChannelV2Protocol()
 
-
         pushChannel.close_MockMethod = {}
         pushChannel.open_MockValue = AsyncThrowingStream { continuation in
             continuation.finish()
@@ -755,9 +754,8 @@ final class IncrementalSyncV2Tests: XCTestCase {
 
         // When
         await XCTAssertThrowsErrorAsync(expectedError) {
-            let _ = try await self.sut.perform()
+            _ = try await self.sut.perform()
         }
-
 
         try XCTAssertCount(pushChannel.close_Invocations, count: 1)
         try XCTAssertCount(pushChannelState.markAsClosed_Invocations, count: 1)

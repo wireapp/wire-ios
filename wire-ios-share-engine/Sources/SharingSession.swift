@@ -547,7 +547,7 @@ public final class SharingSession {
             isFederationEnabled: WireTransport.BackendInfo.isFederationEnabled,
             isMLSEnabled: WireTransport.BackendInfo.isMLSEnabled,
             sharedUserDefaults: sharedUserDefaults,
-            sharedContainerURL: URL(string: "WWW")!,
+            sharedContainerURL: nil, // the container is not used in this case
             syncContext: coreDataStack.syncContext,
             eventContext: coreDataStack.eventContext,
             mlsService: mlsService,

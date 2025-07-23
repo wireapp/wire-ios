@@ -61,7 +61,6 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         coreCryptoProvider: any CoreCryptoProviderProtocol,
         journal: Journal,
 
-
         pushChannelState: PushChannelStateProtocol,
         syncMarkerGenerator: @escaping SyncMarkerGenerator = { UUID().uuidString }
     ) {
@@ -79,7 +78,6 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
         self.syncMarkerGenerator = syncMarkerGenerator
         self.pushChannelState = pushChannelState
     }
-
 
     public func perform() async throws -> IncrementalSync.Token {
         logger.debug("performing live sync", attributes: .syncAttributes(initialSync: false))

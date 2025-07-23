@@ -34,7 +34,7 @@ public final class UserSessionComponent {
     private let isMLSEnabled: Bool
 
     private let sharedUserDefaults: UserDefaults
-    private let sharedContainerURL: URL
+    private let sharedContainerURL: URL?
     private let syncContext: NSManagedObjectContext
     private let eventContext: NSManagedObjectContext
 
@@ -52,7 +52,7 @@ public final class UserSessionComponent {
         isFederationEnabled: Bool,
         isMLSEnabled: Bool,
         sharedUserDefaults: UserDefaults,
-        sharedContainerURL: URL,
+        sharedContainerURL: URL?,
         syncContext: NSManagedObjectContext,
         eventContext: NSManagedObjectContext,
         mlsService: any MLSServiceInterface,

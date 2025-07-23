@@ -56,7 +56,7 @@ public final class ClientSessionComponent {
     private let isMLSEnabled: Bool
 
     private let cookieStorage: any CookieStorageProtocol
-    private let sharedContainerURL: URL
+    private let sharedContainerURL: URL?
     private let sharedUserDefaults: UserDefaults
     private let syncContext: NSManagedObjectContext
     private let eventContext: NSManagedObjectContext
@@ -77,7 +77,7 @@ public final class ClientSessionComponent {
         isFederationEnabled: Bool,
         isMLSEnabled: Bool,
         cookieStorage: any CookieStorageProtocol,
-        sharedContainerURL: URL,
+        sharedContainerURL: URL?,
         sharedUserDefaults: UserDefaults,
         syncContext: NSManagedObjectContext,
         eventContext: NSManagedObjectContext,
@@ -392,20 +392,24 @@ public final class ClientSessionComponent {
         mlsGroupRepairAgent: mlsGroupRepairAgent
     )
 
-    public lazy var incrementalSyncV2: IncrementalSyncV2 = .init(
-        selfClientID: selfClientID,
-        pullServerTimeSync: pullServerTimeSync,
-        pushChannelAPI: pushChannelV2API,
-        decryptor: updateEventDecryptor,
-        updateEventsStore: updateEventsLocalStore,
-        messageStore: messageLocalStore,
-        processor: updateEventProcessor,
-        databaseSaver: databaseSaver,
-        syncStateSubject: syncStateSubject,
-        coreCryptoProvider: coreCryptoProvider,
-        journal: journal,
-        pushChannelState: PushChannelState(sharedContainerURL: sharedContainerURL, clientID: self.selfClientID)
-    )
+    public lazy var incrementalSyncV2: IncrementalSyncV2 = if let sharedContainerURL {
+        IncrementalSyncV2(
+            selfClientID: selfClientID,
+            pullServerTimeSync: pullServerTimeSync,
+            pushChannelAPI: pushChannelV2API,
+            decryptor: updateEventDecryptor,
+            updateEventsStore: updateEventsLocalStore,
+            messageStore: messageLocalStore,
+            processor: updateEventProcessor,
+            databaseSaver: databaseSaver,
+            syncStateSubject: syncStateSubject,
+            coreCryptoProvider: coreCryptoProvider,
+            journal: journal,
+            pushChannelState: PushChannelState(sharedContainerURL: sharedContainerURL, clientID: selfClientID)
+        )
+    } else {
+        fatal("you must provide sharedContainerURL - incrementalSyncV2 is not supported in SharingSession")
+    }
 
     public func consumableNotificationsMigrator() -> ConsumableNotificationsMigrator {
         ConsumableNotificationsMigrator(
