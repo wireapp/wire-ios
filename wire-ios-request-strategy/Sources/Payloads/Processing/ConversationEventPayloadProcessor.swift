@@ -808,7 +808,7 @@ struct ConversationEventPayloadProcessor {
         shouldRemoveParticipants: Bool = true,
         context: NSManagedObjectContext
     ) {
-        guard let members = payload.members else {
+        guard let members = payload.membersSplitBySelfAndOther else {
             return
         }
 
@@ -848,7 +848,7 @@ struct ConversationEventPayloadProcessor {
         from payload: Payload.Conversation,
         for conversation: ZMConversation
     ) {
-        if let selfMember = payload.members?.selfMember {
+        if let selfMember = payload.membersSplitBySelfAndOther?.selfMember {
             updateMemberStatus(
                 from: selfMember,
                 for: conversation

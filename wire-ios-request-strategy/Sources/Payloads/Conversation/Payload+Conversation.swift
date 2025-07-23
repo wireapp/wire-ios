@@ -30,7 +30,7 @@ extension Payload {
             case accessRole = "access_role"
             case accessRoleV2 = "access_role_v2"
             case name
-            case members
+            case membersSplitBySelfAndOther = "members"
             case lastEvent = "last_event"
             case lastEventTime = "last_event_time"
             case teamID = "team"
@@ -57,7 +57,7 @@ extension Payload {
         var accessRoles: [String]?
         var legacyAccessRole: String?
         var name: String?
-        var members: ConversationMembers?
+        var membersSplitBySelfAndOther: ConversationMembers?
         var lastEvent: String?
         var lastEventTime: String?
         var teamID: UUID?
@@ -80,7 +80,7 @@ extension Payload {
             legacyAccessRole: String? = nil,
             accessRoles: [String]? = nil,
             name: String? = nil,
-            members: ConversationMembers? = nil,
+            membersSplitBySelfAndOther: ConversationMembers? = nil,
             lastEvent: String? = nil,
             lastEventTime: String? = nil,
             teamID: UUID? = nil,
@@ -102,7 +102,7 @@ extension Payload {
             self.legacyAccessRole = legacyAccessRole
             self.accessRoles = accessRoles
             self.name = name
-            self.members = members
+            self.membersSplitBySelfAndOther = membersSplitBySelfAndOther
             self.lastEvent = lastEvent
             self.lastEventTime = lastEventTime
             self.teamID = teamID
@@ -125,7 +125,7 @@ extension Payload {
             self.creator = try container.decodeIfPresent(UUID.self, forKey: .creator)
             self.access = try container.decodeIfPresent([String].self, forKey: .access)
             self.name = try container.decodeIfPresent(String.self, forKey: .name)
-            self.members = try container.decodeIfPresent(ConversationMembers.self, forKey: .members)
+            self.membersSplitBySelfAndOther = try container.decodeIfPresent(ConversationMembers.self, forKey: .membersSplitBySelfAndOther)
             self.lastEvent = try container.decodeIfPresent(String.self, forKey: .lastEvent)
             self.lastEventTime = try container.decodeIfPresent(String.self, forKey: .lastEventTime)
             self.teamID = try container.decodeIfPresent(UUID.self, forKey: .teamID)
@@ -182,7 +182,7 @@ extension Payload {
             try container.encodeIfPresent(creator, forKey: .creator)
             try container.encodeIfPresent(access, forKey: .access)
             try container.encodeIfPresent(name, forKey: .name)
-            try container.encodeIfPresent(members, forKey: .members)
+            try container.encodeIfPresent(membersSplitBySelfAndOther, forKey: .membersSplitBySelfAndOther)
             try container.encodeIfPresent(lastEvent, forKey: .lastEvent)
             try container.encodeIfPresent(lastEventTime, forKey: .lastEventTime)
             try container.encodeIfPresent(teamID, forKey: .teamID)

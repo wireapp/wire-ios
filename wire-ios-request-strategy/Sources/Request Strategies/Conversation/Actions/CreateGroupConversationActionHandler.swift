@@ -20,6 +20,7 @@ import Foundation
 import WireDataModel
 import WireLogging
 
+// TODO
 public final class CreateGroupConversationAction: EntityAction {
 
     public typealias Result = NSManagedObjectID
