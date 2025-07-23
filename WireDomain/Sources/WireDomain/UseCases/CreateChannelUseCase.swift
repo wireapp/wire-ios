@@ -27,6 +27,7 @@ public protocol CreateChannelUseCaseProtocol {
     func invoke(
         teamID: UUID,
         name: String?,
+        historyDepth: Int?,
         users: Set<ZMUser>,
         accessMode: Set<WireNetwork.ConversationAccessMode>,
         accessRoles: Set<WireNetwork.ConversationAccessRole>,
@@ -76,6 +77,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
     public func invoke(
         teamID: UUID,
         name: String?,
+        historyDepth: Int?,
         users: Set<ZMUser>,
         accessMode: Set<WireNetwork.ConversationAccessMode>,
         accessRoles: Set<WireNetwork.ConversationAccessRole>,
@@ -85,6 +87,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
             return try await createChannel(
                 teamID: teamID,
                 name: name,
+                historyDepth: historyDepth,
                 users: users,
                 accessMode: accessMode,
                 accessRoles: accessRoles,
@@ -110,6 +113,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
                         name: name,
                         accessMode: accessMode,
                         accessRoles: accessRoles,
+                        historyDepth: historyDepth,
                         enableReceipts: enableReceipts,
                         users: users
                     )
@@ -128,6 +132,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
     private func createChannel(
         teamID: UUID,
         name: String?,
+        historyDepth: Int?,
         users: Set<ZMUser>,
         accessMode: Set<WireNetwork.ConversationAccessMode>,
         accessRoles: Set<WireNetwork.ConversationAccessRole>,
@@ -162,6 +167,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
                 unqualifiedUserIDs
             )
         }
+        // TODO: [WPB-18347] - add history length parameter to body when API is ready
 
         let apiParameters = CreateGroupConversationParameters(
             groupType: .channel,
@@ -201,6 +207,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
         name: String?,
         accessMode: Set<WireNetwork.ConversationAccessMode>,
         accessRoles: Set<WireNetwork.ConversationAccessRole>,
+        historyDepth: Int?,
         enableReceipts: Bool,
         users: Set<ZMUser>
     ) async throws -> ZMConversation {
@@ -215,6 +222,7 @@ public struct CreateChannelUseCase: CreateChannelUseCaseProtocol {
         let conversation = try await createChannel(
             teamID: teamID,
             name: name,
+            historyDepth: historyDepth,
             users: reachableUsers,
             accessMode: accessMode,
             accessRoles: accessRoles,

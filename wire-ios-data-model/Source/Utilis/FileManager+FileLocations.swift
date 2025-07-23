@@ -48,7 +48,7 @@ public extension FileManager {
 
     /// Returns the URL for caches appending the accountIdentifier if specified
     @objc
-    func cachesURL(forAppGroupIdentifier appGroupIdentifier: String, accountIdentifier: UUID?) -> URL? {
+    func cachesURL(for appGroupIdentifier: String, accountIdentifier: UUID?) -> URL? {
         guard let sharedContainerURL = containerURL(forSecurityApplicationGroupIdentifier: appGroupIdentifier)
         else { return nil }
         return cachesURLForAccount(with: accountIdentifier, in: sharedContainerURL)
@@ -66,6 +66,13 @@ public extension FileManager {
             )
         }
         return url
+    }
+
+    static let sharedLogsDirectoryName = "Logs"
+
+    func sharedLogsDirectoryURL(for appGroupIdentifier: String) -> URL? {
+        cachesURL(for: appGroupIdentifier, accountIdentifier: nil)?
+            .appending(path: Self.sharedLogsDirectoryName, directoryHint: .isDirectory)
     }
 
 }

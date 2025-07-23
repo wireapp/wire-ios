@@ -91,6 +91,8 @@
 		59B99FAA2C89DE8600201827 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 59B99FA92C89DE8600201827 /* WireFoundation */; };
 		59BAEAFC2DBF483400B54AC4 /* WireBackup in Frameworks */ = {isa = PBXBuildFile; productRef = 59BAEAFB2DBF483400B54AC4 /* WireBackup */; };
 		59C4FBF12C45B7130037030B /* WireShareEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE33C48C296485FA00C058D1 /* WireShareEngine.framework */; };
+		59C951C22E2B67E3002C0A3E /* WireLoggingSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 59C951C12E2B67E3002C0A3E /* WireLoggingSupport */; };
+		59C951C42E2B67E8002C0A3E /* WireLoggingSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 59C951C32E2B67E8002C0A3E /* WireLoggingSupport */; };
 		59CDB3F62C4EA08F0049D1AB /* WireReusableUIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = 59CDB3F52C4EA08F0049D1AB /* WireReusableUIComponents */; };
 		59D038272C85D31E009FE583 /* WireMainNavigationUI in Frameworks */ = {isa = PBXBuildFile; productRef = 59D038262C85D31E009FE583 /* WireMainNavigationUI */; };
 		767F41E82D7F95C100E4E090 /* WireMessagingUIBindings in Frameworks */ = {isa = PBXBuildFile; productRef = 767F41E72D7F95C100E4E090 /* WireMessagingUIBindings */; };
@@ -993,6 +995,7 @@
 				5996E8A42C19D074007A52F0 /* WireRequestStrategySupport.framework in Frameworks */,
 				598E86F72BF4DD5C00FC5438 /* WireSystemSupport.framework in Frameworks */,
 				598E86D12BF4D97800FC5438 /* WireUtilitiesSupport.framework in Frameworks */,
+				59C951C22E2B67E3002C0A3E /* WireLoggingSupport in Frameworks */,
 				591B6E1C2C8B0964009F8A7B /* WireDataModelSupport.framework in Frameworks */,
 				5996E8AD2C19D0DF007A52F0 /* WireTesting.framework in Frameworks */,
 			);
@@ -1003,6 +1006,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				59AADE272BB429B200D9E658 /* WireRequestStrategySupport.framework in Frameworks */,
+				59C951C42E2B67E8002C0A3E /* WireLoggingSupport in Frameworks */,
 				5996E8AA2C19D0D6007A52F0 /* WireSystemSupport.framework in Frameworks */,
 				5977ED1F2D26747900F5C78E /* WireLogging in Frameworks */,
 				597D9BEF2DA7DA7B000031DE /* WireUtilitiesSupport.framework in Frameworks */,
@@ -1403,6 +1407,7 @@
 				590DCA092C971AFF002D0A2C /* WireFoundation */,
 				59B7684A2D2D5A17007B5F1E /* WireFoundationSupport */,
 				59191A642D0051C7001AB388 /* WireLogging */,
+				59C951C12E2B67E3002C0A3E /* WireLoggingSupport */,
 			);
 			productName = "ZClient-iOS Tests";
 			productReference = BACB88511AF7C48900DDCDB0 /* Wire-iOS-Tests.xctest */;
@@ -1428,6 +1433,7 @@
 			name = "Wire-iOS UnitTests";
 			packageProductDependencies = (
 				5977ED1E2D26747900F5C78E /* WireLogging */,
+				59C951C32E2B67E8002C0A3E /* WireLoggingSupport */,
 			);
 			productName = "Wire-iOS UnitTests";
 			productReference = E6579E362AFF9B30004E7FD8 /* Wire-iOS UnitTests.xctest */;
@@ -2905,6 +2911,14 @@
 		59BAEAFB2DBF483400B54AC4 /* WireBackup */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireBackup;
+		};
+		59C951C12E2B67E3002C0A3E /* WireLoggingSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireLoggingSupport;
+		};
+		59C951C32E2B67E8002C0A3E /* WireLoggingSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireLoggingSupport;
 		};
 		59CDB3F52C4EA08F0049D1AB /* WireReusableUIComponents */ = {
 			isa = XCSwiftPackageProductDependency;
