@@ -34,6 +34,10 @@ public enum MLSAPIError: Error, Equatable {
         return String(decoding: try encoder.encode(encodableObject), as: UTF8.self)
     }
 
+    /// Request body is invalid
+
+    case invalidRequestBody
+
     /// Unsupported endpoint for API version
 
     case unsupportedEndpointForAPIVersion
@@ -57,34 +61,53 @@ public enum MLSAPIError: Error, Equatable {
     /// Generic error for all non recoverable MLS error
 
     case mlsError(_ label: String, _ message: String)
+
+    /// MLS protocol error
+
+    case mlsProtocolError(message: String)
+
+    /// The group ID version of the conversation is not supported by one of the federated backends
+
+    case mlsGroupIdNotSupported(message: String)
+
+    /// Reset is not supported by the owning backend of the conversation
+
+    case mlsFederatedResetNotSupported(message: String)
+
+    /// Insufficient authorization (missing leave_conversation)
+
+    case actionDenied(message: String)
+
+    /// Conversation access denied
+
+    case accessDenied(message: String)
+
+    /// Invalid operation
+
+    case invalidOperation(message: String)
+
+    /// Conversation not found
+
+    case noConversation(message: String)
 
 }
 
 enum MLSAPIV0Error: Error, Codable, Equatable {
 
-    /// Unsupported endpoint for API version
-
     case unsupportedEndpointForAPIVersion
-
-    /// MLS is not configured on this backend
-
     case mlsNotEnabled
-
-    /// Message was sent in an too old epoch
-
     case mlsStaleMessage
-
-    /// A proposal of type Add or Remove does not apply to the full list of clients for a user
-
     case mlsClientMismatch
-
-    /// The commit is not referencing all pending proposals
-
     case mlsCommitMissingReferences
-
-    /// Generic error for all non recoverable MLS error
-
     case mlsError(_ label: String, _ message: String)
+    case mlsProtocolError(message: String)
+    case mlsGroupIdNotSupported(message: String)
+    case mlsFederatedResetNotSupported(message: String)
+    case actionDenied(message: String)
+    case accessDenied(message: String)
+    case invalidOperation(message: String)
+    case invalidRequestBody
+    case noConversation(message: String)
 
 }
 
@@ -105,6 +128,22 @@ extension MLSAPIV0Error: ToAPIModelConvertible {
             .mlsCommitMissingReferences
         case let .mlsError(label, message):
             .mlsError(label, message)
+        case let .mlsProtocolError(message: message):
+            .mlsProtocolError(message: message)
+        case let .mlsGroupIdNotSupported(message: message):
+            .mlsGroupIdNotSupported(message: message)
+        case let .mlsFederatedResetNotSupported(message: message):
+            .mlsFederatedResetNotSupported(message: message)
+        case let .actionDenied(message: message):
+            .actionDenied(message: message)
+        case let .accessDenied(message: message):
+            .accessDenied(message: message)
+        case let .invalidOperation(message: message):
+            .invalidOperation(message: message)
+        case .invalidRequestBody:
+            .invalidRequestBody
+        case let .noConversation(message: message):
+            .noConversation(message: message)
         }
     }
 }
@@ -126,6 +165,22 @@ extension MLSAPIError: ToNetworkConvertible {
             .mlsCommitMissingReferences
         case let .mlsError(label, message):
             .mlsError(label, message)
+        case let .mlsProtocolError(message: message):
+            .mlsProtocolError(message: message)
+        case let .mlsGroupIdNotSupported(message: message):
+            .mlsGroupIdNotSupported(message: message)
+        case let .mlsFederatedResetNotSupported(message: message):
+            .mlsFederatedResetNotSupported(message: message)
+        case let .actionDenied(message: message):
+            .actionDenied(message: message)
+        case let .invalidOperation(message: message):
+            .invalidOperation(message: message)
+        case let .noConversation(message: message):
+            .noConversation(message: message)
+        case .invalidRequestBody:
+            .invalidRequestBody
+        case let .accessDenied(message: message):
+            .accessDenied(message: message)
         }
     }
 }
