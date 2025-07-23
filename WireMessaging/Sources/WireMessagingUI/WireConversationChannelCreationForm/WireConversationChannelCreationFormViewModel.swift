@@ -163,6 +163,13 @@ public final class WireConversationChannelCreationFormViewModel: ObservableObjec
     }
 
     // MARK: History sharing
+    
+    func isChannelHistoryFeatureEnabled() -> Bool {
+        // mimic DeveloperFlag.channelsHistory.isOn
+        return UserDefaults.standard.object(
+            forKey: "channelsHistory"
+        ) as? Bool ?? false
+    }
 
     private func bind() {
         $channelHistoryOption
