@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct InvitationIDToJoinTeam {
+public struct InvitationIdToJoinTeam {
 
     public let id: UUID
 

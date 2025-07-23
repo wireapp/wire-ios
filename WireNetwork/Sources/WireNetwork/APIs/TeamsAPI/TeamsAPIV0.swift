@@ -288,8 +288,8 @@ struct InviteMemeberToTeamResponseV0: Decodable, ToAPIModelConvertible {
 
     let id: UUID
 
-    func toAPIModel() -> InvitationIDToJoinTeam {
-        InvitationIDToJoinTeam(id: id)
+    func toAPIModel() -> InvitationIdToJoinTeam {
+        InvitationIdToJoinTeam(id: id)
     }
 
 }

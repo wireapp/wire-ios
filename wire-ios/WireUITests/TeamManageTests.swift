@@ -101,7 +101,7 @@ final class TeamManageTests: WireUITestCase {
     func test_TeamOwner_GroupCreatedAndSendMessage() async throws {
 
         let groupName = UserGenerator.generateRandomGroupName()
-        let messageFromOwner = UserGenerator.generateRandomeMessage()
+        let messageFromOwner = UserGenerator.generateRandomMessage()
 
         let teamOwner = try await userManager.registerUserAsTeamOwner()
         let teamMember1 = UserGenerator.generateUniqueUserInfo()
