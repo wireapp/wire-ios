@@ -254,7 +254,7 @@ extension EventDecoderTest {
             // given
             let event1 = self.eventStreamEvent(
                 conversation: ZMConversation.selfConversation(in: self.syncMOC),
-                genericMessage: GenericMessage(content: WireProtos.Availability(.away))
+                genericMessage: GenericMessage(content: WireProtos.Availability(.away)) // TODO: doesn't it fail?
             )
             let event2 = self.eventStreamEvent()
 
