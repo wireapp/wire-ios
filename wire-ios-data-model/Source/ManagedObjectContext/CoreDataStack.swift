@@ -354,8 +354,8 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
     // MARK: - Configure Contexts
 
     func configureViewContext(_ context: NSManagedObjectContext) async {
+        context.markAsUIContext()
         await context.perform {
-            context.markAsUIContext()
             context.createDispatchGroups()
             self.dispatchGroup.map(context.addGroup(_:))
             context.mergePolicy = NSMergePolicy(merge: .rollbackMergePolicyType)

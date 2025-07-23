@@ -70,7 +70,7 @@ public extension MessagingTest {
     }
 
     @objc
-    func createCoreDataStack() -> CoreDataStack {
+    func createCoreDataStack() async throws -> CoreDataStack {
         let account = Account(userName: "", userIdentifier: userIdentifier)
         let stack = CoreDataStack(
             account: account,
@@ -79,10 +79,7 @@ public extension MessagingTest {
             dispatchGroup: dispatchGroup
         )
 
-        stack.loadStores(completionHandler: { error in
-            XCTAssertNil(error)
-        })
-
+        try await stack.load()
         return stack
     }
 
