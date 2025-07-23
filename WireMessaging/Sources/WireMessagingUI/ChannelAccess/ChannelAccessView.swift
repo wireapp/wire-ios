@@ -18,9 +18,8 @@
 
 package import SwiftUI
 import WireDesign
-import WireMessagingAPI
-import WireMessagingImplementation
-import WireMessagingImplementationSupport
+import WireMessagingDomain
+import WireMessagingDomainSupport
 
 package struct ChannelAccessView: View {
 
