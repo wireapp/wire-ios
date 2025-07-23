@@ -44,7 +44,15 @@ final class StartUIViewController: UIViewController {
     let groupSelector = SearchGroupSelector()
 
     lazy var conversationTypePicker: UIViewController = {
-        let availableConversationTypes: Set<WireMultiParticipantConversationType> = if areChannelsSupported {
+        let canCreateChannels = userSession.channelsFeature.canCreateChannels(
+            role: userSession.selfUser.teamRole
+        )
+
+        let isTeamUser = userSession.selfUser.hasTeam
+
+        let availableConversationTypes: Set<WireMultiParticipantConversationType> = if areChannelsSupported,
+                                                                                       canCreateChannels ||
+                                                                                       !isTeamUser {
             [.channel, .group]
         } else {
             [.group]
@@ -62,7 +70,7 @@ final class StartUIViewController: UIViewController {
                 case .channel:
                     Task { @MainActor [weak self] in
                         guard let self else { return }
-                        if userSession.channelsFeature.canCreateChannels(role: userSession.selfUser.teamRole) {
+                        if canCreateChannels {
                             navigateToChannelCreation()
                         } else {
                             presentCreateTeamBanner()
@@ -331,6 +339,7 @@ final class StartUIViewController: UIViewController {
         guard backendInfoApiVersion >= .v8 else {
             return false
         }
+
         return true
     }
 
