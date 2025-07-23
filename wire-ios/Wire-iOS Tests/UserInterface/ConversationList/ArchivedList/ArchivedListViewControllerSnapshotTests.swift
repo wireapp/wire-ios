@@ -52,9 +52,9 @@ final class ArchivedListViewControllerSnapshotTests: XCTestCase {
         snapshotHelper.verify(matching: UINavigationController(rootViewController: sut))
     }
 
-    func testNonEmpty() {
+    func testNonEmpty() async throws {
 
-        let fixture = CoreDataFixture()
+        let fixture = try await CoreDataFixture()
         let modelHelper = ModelHelper()
         let conversation = modelHelper.createGroupConversation(
             id: .init(uuidString: "E621E1F8-C36C-495A-93FC-0C247A3E6E56")!,

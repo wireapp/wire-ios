@@ -29,8 +29,8 @@ final class ConversationViewControllerGuestBarTests: XCTestCase, CoreDataFixture
     var coreDataFixture: CoreDataFixture!
 
     @MainActor
-    override func setUp() {
-        coreDataFixture = CoreDataFixture()
+    override func setUp() async throws {
+        coreDataFixture = try await CoreDataFixture()
         userSession = UserSessionMock(mockUser: .createSelfUser(name: "Bob"))
         mockMainCoordinator = .init(mainCoordinator: MockMainCoordinator())
         let conversation = createTeamGroupConversation()

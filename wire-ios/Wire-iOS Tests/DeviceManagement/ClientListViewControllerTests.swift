@@ -35,10 +35,10 @@ final class ClientListViewControllerTests: XCTestCase, CoreDataFixtureTestHelper
 
     // MARK: - setUp
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         snapshotHelper = SnapshotHelper()
-        coreDataFixture = CoreDataFixture()
+        coreDataFixture = try await CoreDataFixture()
 
         mockUser = SwiftMockLoader.mockUsers().first
         selfClient = mockUserClient()

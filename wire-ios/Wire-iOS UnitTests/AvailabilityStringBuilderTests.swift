@@ -31,10 +31,10 @@ final class AvailabilityStringBuilderTests: XCTestCase {
 
     // MARK: - setUp
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
 
-        fixture = CoreDataFixture()
+        fixture = try await CoreDataFixture()
         selfUser = ZMUser.selfUser(in: fixture.uiMOC)
         otherUser = ZMUser.insertNewObject(in: fixture.uiMOC)
         otherUser.availability = .available

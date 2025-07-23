@@ -54,8 +54,8 @@ final class ConversationListViewModelTests: XCTestCase {
     // Constants for section indices
     let sectionGroups = 0
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
 
         mockUserSession = UserSessionMock()
         sut = ConversationListViewModel(userSession: mockUserSession)
@@ -63,7 +63,7 @@ final class ConversationListViewModelTests: XCTestCase {
         mockConversationListViewModelDelegate = MockConversationListViewModelDelegate()
         sut.delegate = mockConversationListViewModelDelegate
 
-        coreDataFixture = CoreDataFixture()
+        coreDataFixture = try await CoreDataFixture()
         mockConversation = ZMConversation.createOtherUserConversation(
             moc: coreDataFixture.uiMOC,
             otherUser: coreDataFixture.otherUser

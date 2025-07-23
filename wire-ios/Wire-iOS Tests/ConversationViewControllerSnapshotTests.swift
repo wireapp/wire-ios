@@ -31,8 +31,8 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
     var coreDataFixture: CoreDataFixture!
     var snapshotHelper: SnapshotHelper!
 
-    override func setupCoreDataStack() {
-        coreDataFixture = CoreDataFixture()
+    override func setupCoreDataStack() async throws {
+        coreDataFixture = try await CoreDataFixture()
         coreDataStack = coreDataFixture.coreDataStack
         uiMOC = coreDataFixture.coreDataStack.viewContext
     }
