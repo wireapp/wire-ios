@@ -44,7 +44,6 @@ public struct CloseButton: View {
         .accessibilityLabel(Text(accessibilityLabel))
         .accessibilityIdentifier("close")
     }
-
 }
 
 #Preview {
