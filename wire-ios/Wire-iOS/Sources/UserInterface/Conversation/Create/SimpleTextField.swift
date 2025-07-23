@@ -27,11 +27,11 @@ protocol SimpleTextFieldDelegate: AnyObject {
     func textFieldDidBeginEditing(_ textField: SimpleTextField)
 }
 
-// +1
 final class SimpleTextField: UITextField, DynamicTypeCapable {
 
     // MARK: - Properties
 
+    private let isContextMenuAllowed: Bool
     var attribute: [NSAttributedString.Key: Any] = [
         .foregroundColor: SemanticColors.SearchBar.textInputViewPlaceholder,
         .font: FontSpec.smallRegularFont.font!
@@ -64,12 +64,16 @@ final class SimpleTextField: UITextField, DynamicTypeCapable {
 
     /// Init with kind for keyboard style and validator type. Default is .unknown
     ///
-    /// - Parameter kind: the type of text field
-    init() {
+    /// - Parameters:
+    /// - isContextMenuAllowed: show or hide the context menu
+    init(
+        isContextMenuAllowed: Bool
+    ) {
         let leftInset: CGFloat = 8
 
         let topInset: CGFloat = 0
         self.placeholderInsets = UIEdgeInsets(top: topInset, left: leftInset, bottom: 0, right: 16)
+        self.isContextMenuAllowed = isContextMenuAllowed
 
         super.init(frame: .zero)
 
@@ -190,4 +194,31 @@ extension SimpleTextField: SimpleTextFieldValidatorDelegate {
     func textFieldDidBeginEditing() {
         textFieldDelegate?.textFieldDidBeginEditing(self)
     }
+}
+
+extension SimpleTextField {
+
+    override func canPerformAction(
+        _ action: Selector,
+        withSender sender: Any?
+    ) -> Bool {
+        if !isContextMenuAllowed {
+            let validActions = [
+                #selector((any UIResponderStandardEditActions).select(_:)),
+                #selector((any UIResponderStandardEditActions).selectAll(_:))
+            ]
+            return text!.isEmpty ? false : validActions.contains(action)
+        } else {
+            return super.canPerformAction(action, withSender: sender)
+        }
+    }
+
+    override func buildMenu(with builder: any UIMenuBuilder) {
+        if !isContextMenuAllowed {
+            if #available(iOS 17.0, *) {
+                builder.remove(menu: .autoFill)
+            }
+        }
+    }
+
 }

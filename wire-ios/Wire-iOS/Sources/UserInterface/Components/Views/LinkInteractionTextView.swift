@@ -24,6 +24,7 @@ protocol TextViewInteractionDelegate: AnyObject {
     func textViewDidLongPress(_ textView: LinkInteractionTextView)
 }
 
+// +2
 final class LinkInteractionTextView: UITextView {
     weak var interactionDelegate: TextViewInteractionDelegate?
 

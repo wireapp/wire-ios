@@ -22,7 +22,7 @@ import WireDesign
 import WireSystem
 
 private let zmLog = ZMSLog(tag: "TokenField")
-
+// +2
 final class TokenField: UIView {
     let accessoryButtonSize: CGFloat = 32
 

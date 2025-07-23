@@ -71,7 +71,7 @@ class EmailPasswordTextField: UIView, MagicTappable {
 
     private(set) var emailValidationError: TextFieldValidator.ValidationError? = .tooShort(kind: .email)
     private(set) var passwordValidationError: TextFieldValidator.ValidationError? = .tooShort(kind: .email)
-    
+
     // MARK: - Helpers
 
     var isPasswordEmpty: Bool {

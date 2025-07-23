@@ -92,7 +92,6 @@ class MediaShareRestrictionManager {
     }
 
     var canUseClipboard: Bool {
-//        true
         canUploadMedia(from: .clipboard)
     }
 

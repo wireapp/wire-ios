@@ -94,33 +94,6 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
         }
     }
 
-    var canUseClipboard: Bool {
-        MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()).canUseClipboard
-    }
-
-    override func canPerformAction(
-        _ action: Selector,
-        withSender sender: Any?
-    ) -> Bool {
-        if !canUseClipboard {
-            let validActions = [
-                #selector(UIResponderStandardEditActions.select(_:)),
-                #selector(UIResponderStandardEditActions.selectAll(_:))
-            ]
-            return text!.isEmpty ? false : validActions.contains(action)
-        } else {
-            return super.canPerformAction(action, withSender: sender)
-        }
-    }
-
-    override func buildMenu(with builder: any UIMenuBuilder) {
-        if !canUseClipboard {
-            if #available(iOS 17.0, *) {
-                builder.remove(menu: .autoFill)
-            }
-        }
-    }
-
     /// Whether to display the confirm button.
     var showConfirmButton: Bool = true {
         didSet {
@@ -190,7 +163,9 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
         super.init(
             leftInset: leftInset,
             accessoryTrailingInset: accessoryTrailingInset,
-            textFieldAttributes: textFieldAttributes
+            textFieldAttributes: textFieldAttributes,
+            isContextMenuAllowed: MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared())
+                .canUseClipboard
         )
         setupTextFieldProperties()
 

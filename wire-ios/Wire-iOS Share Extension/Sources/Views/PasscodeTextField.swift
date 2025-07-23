@@ -19,6 +19,7 @@
 import UIKit
 import WireDesign
 import WireReusableUIComponents
+import WireSyncEngine
 
 protocol PasscodeTextFieldDelegate: AnyObject {
     func textFieldValueChanged(_ value: String?)
@@ -64,13 +65,15 @@ final class PasscodeTextField: AccessoryTextField {
     override init(
         leftInset: CGFloat,
         accessoryTrailingInset: CGFloat,
-        textFieldAttributes: Attributes
+        textFieldAttributes: Attributes,
+        isContextMenuAllowed: Bool
     ) {
 
         super.init(
             leftInset: leftInset,
             accessoryTrailingInset: accessoryTrailingInset,
-            textFieldAttributes: textFieldAttributes
+            textFieldAttributes: textFieldAttributes,
+            isContextMenuAllowed: isContextMenuAllowed
         )
 
         setupView()
@@ -120,7 +123,10 @@ extension PasscodeTextField {
 
 extension PasscodeTextField {
 
-    static func createPasscodeTextField(delegate: PasscodeTextFieldDelegate?) -> PasscodeTextField {
+    static func createPasscodeTextField(
+        delegate: PasscodeTextFieldDelegate?,
+        isContextMenuAllowed: Bool
+    ) -> PasscodeTextField {
         let textFieldAttributes = AccessoryTextField.Attributes(
             textFont: .normalMediumFont,
             textColor: UIColor.Team.textColor,
@@ -130,10 +136,12 @@ extension PasscodeTextField {
             cornerRadius: 4
         )
 
+        let aaa = true
         let textField = PasscodeTextField(
             leftInset: 0,
             accessoryTrailingInset: 0,
-            textFieldAttributes: textFieldAttributes
+            textFieldAttributes: textFieldAttributes,
+            isContextMenuAllowed: isContextMenuAllowed
         )
 
         textField.revealButtonIcon = StyleKitIcon.AppLock.reveal

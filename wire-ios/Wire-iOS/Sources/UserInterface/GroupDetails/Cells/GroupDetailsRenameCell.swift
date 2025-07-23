@@ -20,12 +20,15 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireSyncEngine
 
 final class GroupDetailsRenameCell: UICollectionViewCell {
 
     let verifiedIconView = UIImageView()
     let accessoryIconView = UIImageView()
-    let titleTextField = SimpleTextField()
+    let titleTextField = SimpleTextField(
+        isContextMenuAllowed: MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()).canUseClipboard
+    )
     var contentStackView: UIStackView!
 
     override init(frame: CGRect) {

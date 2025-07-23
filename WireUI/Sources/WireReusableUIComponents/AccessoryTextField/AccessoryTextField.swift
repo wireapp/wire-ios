@@ -18,7 +18,7 @@
 
 import UIKit
 import WireDesign
-//+1
+
 open class AccessoryTextField: UITextField, DynamicTypeCapable {
 
     public func redrawFont() {
@@ -79,6 +79,7 @@ open class AccessoryTextField: UITextField, DynamicTypeCapable {
     let placeholderInsets: UIEdgeInsets
     let accessoryTrailingInset: CGFloat
     let textFieldAttributes: Attributes
+    let isContextMenuAllowed: Bool
 
     // MARK: - Life cycle
 
@@ -86,16 +87,19 @@ open class AccessoryTextField: UITextField, DynamicTypeCapable {
     ///   - leftInset: placeholder left inset
     ///   - accessoryTrailingInset: accessory stack right inset
     ///   - textFieldAttributes: text field attributes
+    ///   - isContextMenuAllowed: show or hide the context menu
     public init(
         leftInset: CGFloat = 8,
         accessoryTrailingInset: CGFloat = 16,
-        textFieldAttributes: Attributes
+        textFieldAttributes: Attributes,
+        isContextMenuAllowed: Bool
     ) {
         let topInset: CGFloat = 0
         self.placeholderInsets = UIEdgeInsets(top: topInset, left: leftInset, bottom: 0, right: horizonalInset)
         self.textInsets = UIEdgeInsets(top: 0, left: horizonalInset, bottom: 0, right: horizonalInset)
         self.accessoryTrailingInset = accessoryTrailingInset
         self.textFieldAttributes = textFieldAttributes
+        self.isContextMenuAllowed = isContextMenuAllowed
         super.init(frame: .zero)
         setupViews()
         setupTextField(with: textFieldAttributes)
@@ -105,6 +109,30 @@ open class AccessoryTextField: UITextField, DynamicTypeCapable {
     public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    open override func canPerformAction(
+        _ action: Selector,
+        withSender sender: Any?
+    ) -> Bool {
+        if !isContextMenuAllowed {
+            let validActions = [
+                #selector((any UIResponderStandardEditActions).select(_:)),
+                #selector((any UIResponderStandardEditActions).selectAll(_:))
+            ]
+            return text!.isEmpty ? false : validActions.contains(action)
+        } else {
+            return super.canPerformAction(action, withSender: sender)
+        }
+    }
+
+    open override func buildMenu(with builder: any UIMenuBuilder) {
+        if !isContextMenuAllowed {
+            if #available(iOS 17.0, *) {
+                builder.remove(menu: .autoFill)
+            }
+        }
+    }
+
 }
 
 // MARK: - View creation

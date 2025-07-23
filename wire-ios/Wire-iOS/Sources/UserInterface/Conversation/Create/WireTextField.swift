@@ -28,7 +28,7 @@ class WireTextField: UITextField {
         case valid(String)
         case error(SimpleTextFieldValidator.ValidationError)
     }
-
+    private let isContextMenuAllowed: Bool
     private let borderWidth: CGFloat = 1
     private let cornerRadius: CGFloat = 12
 
@@ -50,14 +50,15 @@ class WireTextField: UITextField {
 
     // MARK: - Initialization
 
-    override init(frame: CGRect) {
+    init(frame: CGRect, isContextMenuAllowed: Bool) {
+        self.isContextMenuAllowed = isContextMenuAllowed
         super.init(frame: frame)
         setup()
     }
 
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        setup()
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
 
     // MARK: - Setup
@@ -184,4 +185,31 @@ extension WireTextField: SimpleTextFieldValidatorDelegate {
     func textFieldDidBeginEditing() {
         wireTextFieldDelegate?.textFieldDidBeginEditing(self)
     }
+}
+
+extension WireTextField {
+
+    override func canPerformAction(
+        _ action: Selector,
+        withSender sender: Any?
+    ) -> Bool {
+        if !isContextMenuAllowed {
+            let validActions = [
+                #selector((any UIResponderStandardEditActions).select(_:)),
+                #selector((any UIResponderStandardEditActions).selectAll(_:))
+            ]
+            return text!.isEmpty ? false : validActions.contains(action)
+        } else {
+            return super.canPerformAction(action, withSender: sender)
+        }
+    }
+
+    override func buildMenu(with builder: any UIMenuBuilder) {
+        if !isContextMenuAllowed {
+            if #available(iOS 17.0, *) {
+                builder.remove(menu: .autoFill)
+            }
+        }
+    }
+
 }

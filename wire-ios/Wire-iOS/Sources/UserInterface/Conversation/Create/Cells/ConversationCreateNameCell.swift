@@ -30,7 +30,7 @@ final class ConversationCreateNameCell: UICollectionViewCell {
         color: SemanticColors.Label.textUserPropertyCellName
     )
 
-    let textField = WireTextField()
+    let textField = WireTextField(frame: CGRect.zero, isContextMenuAllowed: false)
 
     private var cancellables = Set<AnyCancellable>()
 
