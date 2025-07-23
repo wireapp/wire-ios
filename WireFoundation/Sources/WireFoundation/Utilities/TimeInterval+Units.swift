@@ -16,21 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// TODO: [WPB-16814] This will be used when implementing the channels history settings.
+public import Foundation
 
-// public enum WireConversationChannelHistorySetting: Equatable, Hashable {
-//    public struct LimitedHistoryValue: Equatable, Hashable {
-//        public enum Unit: Equatable, Hashable {
-//            case day
-//            case week
-//            case month
-//        }
-//
-//        public var unit: Unit
-//        public var value: UInt
-//    }
-//
-//    case off
-//    case unlimited
-//    case limited(LimitedHistoryValue)
-// }
+public extension TimeInterval {
+
+    static let fourWeeks = 4 * oneWeek
+    static let oneWeek = 7 * oneDay
+    static let oneDay = 24 * oneHour
+    static let oneHour = 60 * oneMinute
+    static let fiveMinutes = 5 * oneMinute
+    static let oneMinute = 60 * oneSecond
+    static let tenSeconds = 10 * oneSecond
+    static let oneSecond = TimeInterval(1)
+
+    /// Number of seconds for a whole year (accounting for leap years) from now.
+
+    static var oneYearFromNow: Self {
+        let now = Date()
+        let oneYearFromNow = Calendar.current.date(byAdding: .year, value: 1, to: now)!
+        return oneYearFromNow.timeIntervalSince(now)
+    }
+
+}
