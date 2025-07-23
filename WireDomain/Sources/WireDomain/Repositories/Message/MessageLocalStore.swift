@@ -920,7 +920,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
             return [systemMessage]
 
-        case let .channelMoreHistoryAvailability(hasMoreHistory):
+        case let .channelHistoryAvailability(hasMore):
 
             // Deletes the currently displayed system messages:
             // 1. when new history messages are displayed and there are more messages to show up, same system message
@@ -931,14 +931,13 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                 conversation: conversation
             )
 
-
             // Setup a date that is older than all other messages so this system message always shows up on top of the
             // rest.
             let oldestMessageTimestamp = await fetchOldestMessageTimestamp()
             let timestamp = oldestMessageTimestamp?.addingTimeInterval(-.oneMinute) ?? .distantPast
 
             let systemMessage = await createSystemMessage(
-                messageType: hasMoreHistory ? .moreHistoryAvailable : .noMoreHistoryAvailable,
+                messageType: hasMore ? .moreHistoryAvailable : .noMoreHistoryAvailable,
                 timestamp: timestamp
             )
 
