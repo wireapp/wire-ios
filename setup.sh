@@ -43,19 +43,6 @@ REPOSITORY_XCODE_VERSION=( ${repository_xcode_version//./ } )
 ( ${LOCAL_XCODE_VERSION[0]} -eq ${REPOSITORY_XCODE_VERSION[0]} && ${LOCAL_XCODE_VERSION[1]} -ge ${REPOSITORY_XCODE_VERSION[1]} ) ]] ||
 die "Xcode version for the repository should be at least ${repository_xcode_version}. The current local version is ${local_xcode_version}. If you have multiple versions of Xcode installed, please run: sudo xcode-select --switch /Applications/Xcode_${repository_xcode_version}.app"
 
-# Install swift-protobus on CI
-if [[ -n "${CI-}" ]]; then
-    brew install swift-protobuf
-fi
-
-# Check if swift-protobuf is installed
-if ! command -v protoc-gen-swift &> /dev/null; then
-    echo -e "Error: swift-protobuf is not installed.\nPlease install it using Homebrew:\n    brew install swift-protobuf"
-    exit 1
-else
-    echo "swift-protobuf found: $(protoc-gen-swift --version)"
-fi
-
 # SETUP
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
