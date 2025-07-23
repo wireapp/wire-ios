@@ -20,7 +20,7 @@ import SwiftUI
 import UIKit
 import WireDomain
 import WireLogging
-import WireMessagingAPI
+import WireMessagingDomain
 import WireMessagingUI
 import WireNetwork
 import WireReusableUIComponents
@@ -31,7 +31,7 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
     private let userSession: UserSession
     private var values: ConversationCreationValues
 
-    private lazy var viewModel = WireConversationChannelCreationFormViewModel(
+    private lazy var viewModel = ConversationChannelCreationFormViewModel(
         channelName: "",
         isUserPremium: isUserPremium,
         teamsURL: URL.manageTeam(source: .settings),
@@ -53,14 +53,14 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
 
     weak var delegate: ConversationCreationControllerDelegate?
 
-    private lazy var hostingController: UIHostingController<WireConversationChannelCreationForm> = {
-        let rootView = WireConversationChannelCreationForm(
+    private lazy var hostingController: UIHostingController<ConversationChannelCreationForm> = {
+        let rootView = ConversationChannelCreationForm(
             viewModel: viewModel
         )
         return UIHostingController(rootView: rootView)
     }()
 
-    @MainActor var channelCreationSettings: WireConversationChannelCreationSettings? {
+    @MainActor var channelCreationSettings: ConversationChannelCreationSettings? {
         viewModel.getChannelCreationSettings()
     }
 
