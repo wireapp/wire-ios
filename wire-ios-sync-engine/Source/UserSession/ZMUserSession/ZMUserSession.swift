@@ -1390,7 +1390,7 @@ extension ZMUserSession: SyncAgentDelegate {
     func processPendingCallEvents() async {
         if journal[.isSyncV2Enabled] {
             WireLogger.sync.debug(
-                "process pending callEvents for sync v2 aka resume sync",
+                "process pending call events",
                 attributes: .syncAttributes
             )
 
