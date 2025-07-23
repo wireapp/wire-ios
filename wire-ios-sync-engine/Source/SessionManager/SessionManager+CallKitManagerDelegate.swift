@@ -39,13 +39,13 @@ extension SessionManager: CallKitManagerDelegate {
         }
 
         Task { @MainActor in
-            // TODO: fix bang
-            let userSession = await withSession(for: account)!
-
-            guard let conversation = ZMConversation.fetch(
-                with: handle.conversationID,
-                in: userSession.managedObjectContext
-            ) else {
+            guard
+                let userSession = await withSession(for: account),
+                let conversation = ZMConversation.fetch(
+                    with: handle.conversationID,
+                    in: userSession.managedObjectContext
+                )
+            else {
                 return completionHandler(.failure(ConversationLookupError.conversationDoesNotExist))
             }
 
@@ -64,13 +64,13 @@ extension SessionManager: CallKitManagerDelegate {
         }
 
         Task { @MainActor in
-            // TODO: fix bang
-            let userSession = await withSession(for: account)!
-
-            guard let conversation = ZMConversation.fetch(
-                with: handle.conversationID,
-                in: userSession.managedObjectContext
-            ) else {
+            guard
+                let userSession = await withSession(for: account),
+                let conversation = ZMConversation.fetch(
+                    with: handle.conversationID,
+                    in: userSession.managedObjectContext
+                )
+            else {
                 return completionHandler(.failure(ConversationLookupError.conversationDoesNotExist))
             }
 

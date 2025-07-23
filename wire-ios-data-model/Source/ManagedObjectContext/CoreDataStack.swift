@@ -488,7 +488,7 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
 
         do {
             try messagesMigrator.migrateStore(at: storeURL, toVersion: .current)
-            let duration = (startDate..<(.now)).formatted(
+            let duration = (startDate ..< .now).formatted(
                 Date.ComponentsFormatStyle(style: .narrow)
             )
             WireLogger.localStorage.info(
@@ -527,7 +527,7 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
 
         do {
             try eventsMigrator.migrateStore(at: storeURL, toVersion: .current)
-            let duration = (startDate..<(.now)).formatted(
+            let duration = (startDate ..< .now).formatted(
                 Date.ComponentsFormatStyle(style: .narrow)
             )
             WireLogger.localStorage.info(

@@ -142,7 +142,6 @@ class BaseTest: ZMTBaseTest {
             context.saveOrRollback()
         }
 
-
         mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
         mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
 

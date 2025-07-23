@@ -718,7 +718,6 @@ public final class SessionManager: NSObject, SessionManagerType {
             return
         }
 
-        // TODO: what happens if no session?
         if let session = await loadSession(for: account) {
             updateCurrentAccount(in: session.managedObjectContext)
             session.application(application, didFinishLaunching: launchOptions)
@@ -766,10 +765,10 @@ public final class SessionManager: NSObject, SessionManagerType {
                         }
 
                         let session = await loadSession(for: account)
-                        self.isSelectingAccount = false
+                        isSelectingAccount = false
 
                         if let session {
-                            self.accountManager.select(account)
+                            accountManager.select(account)
                             completion?(session)
                         } else {
                             completion?(nil)
@@ -944,11 +943,11 @@ public final class SessionManager: NSObject, SessionManagerType {
     fileprivate func activateSession(for account: Account) async -> ZMUserSession {
         // TODO: fix bang
         let session = await withSession(for: account, notifyAboutMigration: true)!
-        self.activeUserSession = session
-        
+        activeUserSession = session
+
         WireLogger.sessionManager.debug(
             "Activated ZMUserSession for account - "
-            + account.userIdentifier.safeForLoggingDescription
+                + account.userIdentifier.safeForLoggingDescription
         )
 
         delegate?.sessionManagerDidChangeActiveUserSession(userSession: session)
@@ -959,14 +958,11 @@ public final class SessionManager: NSObject, SessionManagerType {
         // If the user isn't logged in it's because they still need
         // to complete the login flow, which will be handle elsewhere.
         if session.isLoggedIn {
-            self.delegate?.sessionManagerDidReportLockChange(forSession: session)
-            self.performPostUnlockActionsIfPossible(for: session)
+            delegate?.sessionManagerDidReportLockChange(forSession: session)
+            performPostUnlockActionsIfPossible(for: session)
 
-            // TODO: check if we can keep this in current task
-            Task {
-                await self.configureAnalytics(for: session)
-                await self.requestCertificateEnrollmentIfNeeded()
-            }
+            await configureAnalytics(for: session)
+            await requestCertificateEnrollmentIfNeeded()
         }
 
         return session
@@ -1070,7 +1066,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         )
 
         if shouldEnableSyncV2(journal: journal) {
-            await self.enableSyncV2(
+            await enableSyncV2(
                 journal: journal,
                 coreDataStack: coreDataStack
             )
