@@ -22,11 +22,11 @@ import XCTest
 @testable import WireNetworkSupport
 
 final class MLSAPITests: XCTestCase {
-    
+
     private var apiSnapshotHelper: APIServiceSnapshotHelper<any MLSAPI>!
-    
+
     // MARK: - Setup
-    
+
     override func setUp() {
         super.setUp()
         apiSnapshotHelper = APIServiceSnapshotHelper { apiService, apiVersion in
@@ -34,41 +34,41 @@ final class MLSAPITests: XCTestCase {
             return builder.makeAPI(for: apiVersion)
         }
     }
-    
+
     override func tearDown() {
         apiSnapshotHelper = nil
         super.tearDown()
     }
-    
+
     // MARK: - Get backend MLS public keys
-    
+
     func testGetBackendMLSPublicKeysRequest() async throws {
         // Given
         let apiVersions = APIVersion.v5.andNextVersions
-        
+
         // Then
         try await apiSnapshotHelper.verifyRequest(for: apiVersions) { sut in
             // When
             _ = try await sut.getBackendMLSPublicKeys()
         }
     }
-    
+
     func testGetBackendMLSPublicKeys_SuccessResponse_200_V5_And_Next_Versions() async throws {
         // Given
         try await withThrowingTaskGroup(of: BackendMLSPublicKeys.self) { taskGroup in
             let testedVersions = APIVersion.v5.andNextVersions
-            
+
             for version in testedVersions {
                 let apiService = MockAPIServiceProtocol.withResponses([
                     (.ok, "GetBackendMLSPublicKeysSuccessResponse1")
                 ])
                 let sut = version.buildAPI(apiService: apiService)
-                
+
                 taskGroup.addTask {
                     // When
                     try await sut.getBackendMLSPublicKeys()
                 }
-                
+
                 for try await value in taskGroup {
                     // Then
                     XCTAssertEqual(
@@ -87,52 +87,52 @@ final class MLSAPITests: XCTestCase {
             }
         }
     }
-    
+
     func testGetBackendMLSPublicKeys_givenV5AndErrorResponse() async throws {
         // Given
         let apiService = MockAPIServiceProtocol.withError(
             statusCode: .badRequest,
             label: "mls-not-enabled"
         )
-        
+
         let api = MLSAPIV5(apiService: apiService)
-        
+
         // Then
         await XCTAssertThrowsErrorAsync(MLSAPIError.mlsNotEnabled) {
             // When
             try await api.getBackendMLSPublicKeys()
         }
     }
-    
+
     // MARK: - Send commit bundle
-    
+
     func testPostCommitBundleRequest() async throws {
         // Given
         let apiVersions = APIVersion.v5.andNextVersions
-        
+
         // Then
         try await apiSnapshotHelper.verifyRequest(for: apiVersions) { sut in
             // When
             _ = try await sut.postCommitBundle(Scaffolding.commitBundle)
         }
     }
-    
+
     func testPostCommitBundle_SuccessResponse_201_V5_And_Next_Versions() async throws {
         // Given
         try await withThrowingTaskGroup(of: [UpdateEvent].self) { taskGroup in
             let testedVersions = APIVersion.v5.andNextVersions
-            
+
             for version in testedVersions {
                 let apiService = MockAPIServiceProtocol.withResponses([
                     (.created, "PostCommitBundleSuccessResponse1")
                 ])
                 let sut = version.buildAPI(apiService: apiService)
-                
+
                 taskGroup.addTask {
                     // When
                     try await sut.postCommitBundle(Scaffolding.commitBundle)
                 }
-                
+
                 for try await value in taskGroup {
                     // Then
                     XCTAssertEqual(value, [], "should get 201 for APIVersion  \(version)")
@@ -140,23 +140,23 @@ final class MLSAPITests: XCTestCase {
             }
         }
     }
-    
+
     func testPostCommitBundle_SuccessResponseWithEvents_201_V5_And_Next_Versions() async throws {
         // Given
         try await withThrowingTaskGroup(of: [UpdateEvent].self) { taskGroup in
             let testedVersions = APIVersion.v5.andNextVersions
-            
+
             for version in testedVersions {
                 let apiService = MockAPIServiceProtocol.withResponses([
                     (.created, "PostCommitBundleSuccessResponse2")
                 ])
                 let sut = version.buildAPI(apiService: apiService)
-                
+
                 taskGroup.addTask {
                     // When
                     try await sut.postCommitBundle(Scaffolding.commitBundle)
                 }
-                
+
                 for try await value in taskGroup {
                     // Then
                     XCTAssertEqual(value, Scaffolding.updateEvents, "should get 201 for APIVersion  \(version)")
@@ -164,37 +164,37 @@ final class MLSAPITests: XCTestCase {
             }
         }
     }
-    
+
     func testPostCommitBundle_givenV5AndErrorResponse() async throws {
         // Given
         let apiService = MockAPIServiceProtocol.withError(
             statusCode: .conflict,
             label: "mls-stale-message"
         )
-        
+
         let api = MLSAPIV5(apiService: apiService)
-        
+
         // Then
         await XCTAssertThrowsErrorAsync(MLSAPIError.mlsStaleMessage) {
             // When
             try await api.postCommitBundle(Scaffolding.commitBundle)
         }
     }
-    
+
     // MARK: - Reset MLS conversation
-    
+
     func testResetMLSConversation_SuccessResponse_V9() async throws {
         // Given
         let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, nil)
         ])
         let api = MLSAPIV9(apiService: apiService)
-        
+
         // Then
         // When
         try await api.resetMLSConversation(epoch: Scaffolding.epoch, groupID: Scaffolding.groupID)
     }
-    
+
 }
 
 private extension APIVersion {

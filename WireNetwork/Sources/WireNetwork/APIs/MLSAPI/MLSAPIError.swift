@@ -38,10 +38,6 @@ public enum MLSAPIError: Error, Equatable {
 
     case invalidRequestBody
 
-    /// Request body is invalid
-
-    case invalidRequestBody
-
     /// Unsupported endpoint for API version
 
     case unsupportedEndpointForAPIVersion
@@ -101,35 +97,6 @@ public enum MLSAPIError: Error, Equatable {
     /// Conversation not found
 
     case noConversation(message: String)
-
-    /// MLS protocol error
-
-    case mlsProtocolError(message: String)
-
-    /// The group ID version of the conversation is not supported by one of the federated backends
-
-    case mlsGroupIdNotSupported(message: String)
-
-    /// Reset is not supported by the owning backend of the conversation
-
-    case mlsFederatedResetNotSupported(message: String)
-
-    /// Insufficient authorization (missing leave_conversation)
-
-    case actionDenied(message: String)
-
-    /// Conversation access denied
-
-    case accessDenied(message: String)
-
-    /// Invalid operation
-
-    case invalidOperation(message: String)
-
-    /// Conversation not found
-
-    case noConversation(message: String)
-
 }
 
 enum MLSAPIV0Error: Error, Codable, Equatable {
