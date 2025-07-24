@@ -39,7 +39,7 @@ class UserManager {
         )
         self.cookieStorage = MockCookieStorage()
         self.authenticationManager = AuthenticationManager(
-            clientID: "some-client-id",
+            clientID: nil,
             cookieStorage: cookieStorage,
             networkService: networkStack.apiNetworkService,
             onAuthenticationFailure: { @Sendable () in }
