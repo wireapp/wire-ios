@@ -17,6 +17,7 @@
 //
 
 import avs
+import WireFoundation
 import XCTest
 @testable import Wire
 

@@ -17,7 +17,7 @@
 //
 
 import SwiftUI
-import WireUtilities
+import WireFoundation
 
 struct DeveloperE2eiView: View {
 

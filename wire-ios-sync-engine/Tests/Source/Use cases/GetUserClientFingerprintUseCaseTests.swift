@@ -18,10 +18,10 @@
 
 import Foundation
 import WireDataModelSupport
+import WireFoundation
 import WireSyncEngineSupport
 import WireTesting
 import XCTest
-
 @testable import WireSyncEngine
 
 final class GetUserClientFingerprintUseCaseTests: MessagingTest {

@@ -20,6 +20,7 @@ import Foundation
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireFoundation
 import WireLogging
 import WireSyncEngine
 
@@ -163,7 +164,7 @@ final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
         }
     }
 
-    private func isOneOnOneReady(userID: QualifiedID) async -> Bool {
+    private func isOneOnOneReady(userID: WireDataModel.QualifiedID) async -> Bool {
         do {
             return try await userSession.checkOneOnOneConversationIsReady.invoke(userID: userID)
         } catch {

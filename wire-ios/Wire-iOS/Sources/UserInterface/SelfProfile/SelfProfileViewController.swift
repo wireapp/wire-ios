@@ -29,7 +29,6 @@ import WireNetwork
 import WireReusableUIComponents
 import WireSettingsUI
 import WireSyncEngine
-import WireUtilities
 
 // sourcery: AutoMockable
 protocol SelfProfileAccountManager {

@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
 public enum DeveloperFlag: String, CaseIterable {
 
-    public static var storage = UserDefaults.standard
+    public nonisolated(unsafe) static var storage = UserDefaults.standard
 
     case createLegacyBackups
     case showCreateMLSGroupToggle
@@ -135,10 +135,10 @@ public enum DeveloperFlag: String, CaseIterable {
     }
 }
 
-private final class DeveloperFlagsDefault {
+private enum DeveloperFlagsDefault {
 
     static func isEnabled(for bundleKey: String) -> Bool {
-        Bundle(for: self).infoForKey(bundleKey) == "1"
+        Bundle.main.infoForKey(bundleKey) == "1"
     }
 }
 

@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireFoundation
 import WireLogging
 import WireMainNavigationUI
 import WireSyncEngine

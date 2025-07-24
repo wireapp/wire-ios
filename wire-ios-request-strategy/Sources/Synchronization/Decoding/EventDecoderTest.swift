@@ -17,6 +17,7 @@
 //
 
 import WireDataModelSupport
+import WireFoundation
 import WireTesting
 import WireTestingPackage
 

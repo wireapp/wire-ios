@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireCommonComponents
+import WireFoundation
 import WireSyncEngine
 
 extension Notification.Name {
@@ -239,7 +240,7 @@ extension URLActionRouter: PresentationDelegate {
         }
     }
 
-    func showConnectionRequest(qualifiedID: QualifiedID) {
+    func showConnectionRequest(qualifiedID: WireDataModel.QualifiedID) {
         navigate(to: .connectionRequest(qualifiedID))
     }
 

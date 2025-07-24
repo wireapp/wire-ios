@@ -20,10 +20,10 @@ import Foundation
 import WireCryptobox
 import WireDataModel
 import WireDataModelSupport
+import WireFoundation
 import WireMockTransport
 import WireTesting
 import WireUtilities
-
 @testable import WireSyncEngine
 
 final class UserClientRequestFactoryTests: MessagingTest {

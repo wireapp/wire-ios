@@ -21,6 +21,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireFoundation
 
 extension Settings {
     var returnKeyType: UIReturnKeyType {

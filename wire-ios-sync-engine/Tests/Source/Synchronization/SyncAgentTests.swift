@@ -19,6 +19,7 @@
 import Combine
 import WireDomain
 import WireDomainSupport
+import WireFoundation
 import XCTest
 
 @testable import WireDataModelSupport

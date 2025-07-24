@@ -19,6 +19,7 @@
 import Foundation
 import WireCellsBindings
 import WireCommonComponents
+import WireFoundation
 import WireLogging
 import WireSyncEngine
 

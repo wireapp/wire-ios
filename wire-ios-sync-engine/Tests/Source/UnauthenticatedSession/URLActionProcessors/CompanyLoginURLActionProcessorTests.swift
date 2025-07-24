@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireFoundation
 @testable import WireSyncEngine
 
 final class CompanyLoginURLActionProcessorTests: ZMTBaseTest, UnauthenticatedSessionStatusDelegate {

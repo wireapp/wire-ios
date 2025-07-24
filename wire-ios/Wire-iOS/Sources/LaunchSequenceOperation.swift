@@ -20,6 +20,7 @@ import avs
 import Foundation
 import WireCommonComponents
 import WireDesign
+import WireFoundation
 import WireLogging
 import WireSyncEngine
 
