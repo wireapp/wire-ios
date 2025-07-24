@@ -364,7 +364,10 @@ private extension AppDelegate {
             mainWindow: mainWindow,
             sessionManager: sessionManager,
             appStateCalculator: appStateCalculator,
-            trackingManager: TrackingManager(sessionManager: sessionManager)
+            trackingManager: TrackingManager(
+                sessionManager: sessionManager,
+                availabilityChecker: .default
+            )
         )
     }
 

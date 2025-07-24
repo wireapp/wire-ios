@@ -16,15 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import WireAuthentication
+public import Foundation
 
-final class WireAuthenticationTests: XCTestCase {
-    func testExample() throws {
-        // XCTest Documentation
-        // https://developer.apple.com/documentation/xctest
-
-        // Defining Test Cases and Test Methods
-        // https://developer.apple.com/documentation/xctest/defining_test_cases_and_test_methods
-    }
+public enum RegistrationAnalyticsTrackingConsent {
+    case agreed(trackingID: UUID)
+    case declined
+    case unknown
 }

@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import WireFoundation
+
 import Combine
 import Foundation
 import WireCoreCrypto
@@ -25,7 +27,6 @@ import WireLogging
 import WireNetwork
 import WireRequestStrategy
 import WireSystem
-public import WireFoundation
 
 typealias UserSessionDelegate = UserSessionAppLockDelegate
     & UserSessionEncryptionAtRestDelegate
@@ -1639,7 +1640,8 @@ extension ZMUserSession {
             AppVersionMigration_4_2_0(
                 appGroupIdentifier: Bundle.main.appGroupIdentifier,
                 lastEventIDRepository: lastEventIDRepository,
-                journal: journal
+                journal: journal,
+                sessionManager: sessionManager
             )
         ]
     }

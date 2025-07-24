@@ -16,27 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Enum representing the type of domain.
-///
-/// - publicDomain: Represents a public domain, like "wire.com".
-/// - privateDomain: Represents a private domain (any domain other than public).
-/// - unknown: Represents an unknown or undefined domain.
-enum DomainType {
+import WireAuthenticationAPI
 
-    case publicDomain
-    case privateDomain
-    case unknown
+/// Determines if analytics tracking is available or not, based on backend config properties.
+
+protocol AnalyticsTrackingAvailabilityCheckerProtocol {
+
+    func isAnalyticsTrackingAvailable(for domain: String) -> Bool
+    func isAnalyticsTrackingAvailable(for backendConfig: BackendConfig) -> Bool
 
 }
 
-extension String {
-
-    var domainType: DomainType {
-        switch self {
-        case "wire.com", "staging.zinfra.io":
-            .publicDomain
-        default:
-            .privateDomain
-        }
+extension AnalyticsTrackingAvailabilityCheckerProtocol where Self == AnalyticsTrackingAvailabilityChecker {
+    static var `default`: Self {
+        Self()
     }
 }
