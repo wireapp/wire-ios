@@ -199,7 +199,11 @@ public struct IncrementalSyncV2: LiveSyncProtocol {
                     if id == syncMarker {
                         logger.debug("upToDate event", attributes: .syncAttributes(initialSync: false))
                         syncStateSubject.send(.liveSyncing(.ongoing))
-                        await pushChannel.disableBatching(true)
+                        if DeveloperFlag.disablePushChannelBatching.isOn {
+                            await pushChannel.disableBatching(true)
+                        } else {
+                            WireLogger.sync.warn("keep batching enabled", attributes: .syncAttributes)
+                        }
                         delegate?.isUpToDate(sync: self)
                     }
                 case .missedEvents:

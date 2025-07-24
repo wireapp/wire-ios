@@ -20,6 +20,7 @@ import Foundation
 import WireFoundation
 import WireLogging
 
+
 /// PushChannel using new consumable notifications
 public final class PushChannelV2: PushChannelV2Protocol {
 
@@ -48,12 +49,11 @@ public final class PushChannelV2: PushChannelV2Protocol {
     private let batchInterval: TimeInterval
     private let batchBuffer = BatchBuffer()
 
-
     let maxBatchEventsCount: Int
-    
+
     private var batchSize: Int
     private var (stream, continuation) = AsyncThrowingStream<Element, any Error>.makeStream()
-    
+
     /// Initialize PushChannel with Async Stream capabitilites
     /// - Parameters:
     ///   - webSocket: webSocket to use
@@ -80,7 +80,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
 
         Task { [weak self] in
             guard let self else { return }
-            
+
             do {
                 for try await message in sourceStream {
 
@@ -103,9 +103,10 @@ public final class PushChannelV2: PushChannelV2Protocol {
                             WireLogger.pushChannel.debug("reached batch of size '\(drained.count)' yield")
                             tearDownBatchTask()
                         }
-                        
+
                     case .missedEvents:
                         continuation.yield(.missedEvents)
+
                     case let .syncMarker(id, deliveryTag):
                         // we're uptodate, let's give any remaining batch if any
                         let drained = await batchBuffer.drain()
@@ -140,10 +141,10 @@ public final class PushChannelV2: PushChannelV2Protocol {
         setUpKeepAliveTask()
 
         setUpBatchTask()
-        
+
         return stream
     }
-    
+
     public func close() async {
         WireLogger.pushChannel.debug("closing push channel", attributes: .pushChannelV2)
 
@@ -153,7 +154,7 @@ public final class PushChannelV2: PushChannelV2Protocol {
     }
 
     public func disableBatching(_ disabled: Bool) async {
-        self.batchSize = disabled ? 1 : maxBatchEventsCount
+        batchSize = disabled ? 1 : maxBatchEventsCount
         if disabled {
             tearDownBatchTask()
             if !(await batchBuffer.isEmpty()) {
@@ -165,9 +166,9 @@ public final class PushChannelV2: PushChannelV2Protocol {
             setUpBatchTask()
         }
     }
-    
+
     // MARK: - Batch task
-    
+
     private func setUpBatchTask() {
         WireLogger.pushChannel.debug("batchTask setup", attributes: .pushChannelV2)
         tearDownBatchTask()
@@ -195,7 +196,6 @@ public final class PushChannelV2: PushChannelV2Protocol {
         self.batchTask = nil
     }
 
-    
     // MARK: - Keep alive
 
     private func setUpKeepAliveTask() {
