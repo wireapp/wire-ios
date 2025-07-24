@@ -48,9 +48,10 @@ struct MockRegisterPersonalAccountUseCase: RegisterPersonalAccountUseCaseProtoco
 private struct MockRegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
 
     var trackingID: String?
+
+    func isAnalyticsTrackingAvailable(for backendConfig: BackendConfig) -> Bool { false }
     func setUp() {}
     func tearDown() {}
-
     func trackPersonalAccountCreationStart() {}
     func trackPersonalAccountCreationReachedTermsOfUseConfirmation() {}
     func trackPersonalAccountCreationReachedVerificationCode() {}

@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireTestingPackage
+import WireAuthenticationAPI
 import XCTest
 
 @testable import WireAuthenticationUI
@@ -41,7 +42,7 @@ final class PersonalAccountCreationViewTests: XCTestCase {
 
         let view = PersonalAccountCreationView(factory: FakePersonalAccountCreationFactory(
             email: "foo@bar.com",
-            backendURL: URL(string: "https://prod-nginz-https.wire.com")!,
+            backendConfig: Scaffolding.backendConfig(backendURL: "https://prod-nginz-https.wire.com"),
             privacyPolicyURL: URL(string: "www.wire.com")!,
             termsOfUseURL: URL(string: "www.wire.com")!,
             passwordValidator: MockPasswordValidator()
@@ -61,7 +62,7 @@ final class PersonalAccountCreationViewTests: XCTestCase {
 
         let view = PersonalAccountCreationView(factory: FakePersonalAccountCreationFactory(
             email: "foo@bar.com",
-            backendURL: URL(string: "https://prod-nginz-https.wire.com")!,
+            backendConfig: Scaffolding.backendConfig(backendURL: "https://prod-nginz-https.wire.com"),
             privacyPolicyURL: URL(string: "www.wire.com")!,
             termsOfUseURL: URL(string: "www.wire.com")!,
             passwordValidator: MockPasswordValidator()
@@ -75,4 +76,25 @@ final class PersonalAccountCreationViewTests: XCTestCase {
                 )
         }
     }
+}
+
+private enum Scaffolding {
+
+    static func backendConfig(backendURL: String) -> BackendConfig {
+        BackendConfig(
+            title: "mock",
+            endpoints: Endpoints(
+                backendURL: URL(string: backendURL)!,
+                backendWSURL: URL(string: "https://wire.com")!,
+                blackListURL: URL(string: "https://wire.com")!,
+                teamsURL: URL(string: "https://wire.com")!,
+                accountsURL: URL(string: "https://wire.com")!,
+                websiteURL: URL(string: "https://wire.com")!,
+                countlyURL: URL(string: "https://wire.com")!
+            ),
+            proxySettings: .none,
+            pinnedKeys: .none
+        )
+    }
+
 }

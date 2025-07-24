@@ -172,7 +172,7 @@ final class PersonalAccountCreationViewModelTests: XCTestCase, PersonalAccountCr
 
         // Then
         for sut in suts {
-            XCTAssertTrue(sut.isAnalyticsTrackingAvailable, sut.backendURL.path())
+            XCTAssertTrue(sut.isAnalyticsTrackingAvailable, sut.backendConfig.endpoints.backendURL.path())
         }
     }
 
@@ -187,7 +187,7 @@ final class PersonalAccountCreationViewModelTests: XCTestCase, PersonalAccountCr
 
         // Then
         for sut in suts {
-            XCTAssertFalse(sut.isAnalyticsTrackingAvailable, sut.backendURL.path())
+            XCTAssertFalse(sut.isAnalyticsTrackingAvailable, sut.backendConfig.endpoints.backendURL.path())
         }
     }
 
@@ -202,12 +202,33 @@ final class PersonalAccountCreationViewModelTests: XCTestCase, PersonalAccountCr
             factory: self,
             router: router,
             email: "mika@example.com",
-            backendURL: backendURL,
+            backendConfig: Scaffolding.backendConfig(backendURL: backendURL),
             privacyPolicyURL: URL(string: "https://wire.com")!,
             termsOfUseURL: URL(string: "https://wire.com")!,
             teamAccountCreationLink: URL(string: "https://wire.com")!,
             passwordValidator: passwordValidator,
             analyticsEventTracker: analyticsEventTracker
+        )
+    }
+
+}
+
+private enum Scaffolding {
+
+    static func backendConfig(backendURL: URL) -> BackendConfig {
+        BackendConfig(
+            title: "mock",
+            endpoints: Endpoints(
+                backendURL: backendURL,
+                backendWSURL: URL(string: "https://wire.com")!,
+                blackListURL: URL(string: "https://wire.com")!,
+                teamsURL: URL(string: "https://wire.com")!,
+                accountsURL: URL(string: "https://wire.com")!,
+                websiteURL: URL(string: "https://wire.com")!,
+                countlyURL: URL(string: "https://wire.com")!
+            ),
+            proxySettings: .none,
+            pinnedKeys: .none
         )
     }
 

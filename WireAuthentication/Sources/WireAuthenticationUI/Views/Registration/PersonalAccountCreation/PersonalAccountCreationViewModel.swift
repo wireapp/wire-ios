@@ -55,6 +55,9 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
     var isAnalyticsTrackingAvailable: Bool {
         // `analyticsEventTracker` will be nil if the app is not shipped with Countly credentials.
         // If credentials are available, we only want to enable Countly for prod and staging backends.
+        analyticsEventTracker?.isAnalyticsTrackingAvailable(for: backendConfig) ?? false
+        // TODO: clean up
+        /*
         if analyticsEventTracker != nil, let backendHost = backendURL.host() {
             [
                 // prod
@@ -65,13 +68,14 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
         } else {
             false
         }
+         */
     }
 
     package let factory: any Factory
     private let router: any Router
-    package let backendURL: URL
+    package let backendConfig: BackendConfig
     package let privacyPolicyURL: URL
-    private let termsOfUseURL: URL
+    private let termsOfUseURL: URL // TODO: is it contained in the backendConfig?
     package let teamAccountCreationLink: URL?
     private let passwordValidator: any PasswordValidator
     private let analyticsEventTracker: (any RegistrationAnalyticsTrackerProtocol)?
@@ -80,7 +84,7 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
         factory: any Factory,
         router: any Router,
         email: String,
-        backendURL: URL,
+        backendConfig: BackendConfig,
         privacyPolicyURL: URL,
         termsOfUseURL: URL,
         teamAccountCreationLink: URL?,
@@ -90,7 +94,7 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
         self.factory = factory
         self.router = router
         self.email = email
-        self.backendURL = backendURL
+        self.backendConfig = backendConfig
         self.privacyPolicyURL = privacyPolicyURL
         self.termsOfUseURL = termsOfUseURL
         self.teamAccountCreationLink = teamAccountCreationLink
