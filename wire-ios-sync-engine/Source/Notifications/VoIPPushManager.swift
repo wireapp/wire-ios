@@ -147,7 +147,7 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
                 reason: .unanswered
             )
         }
-        
+
 
         Task {
             Self.logger.debug("processPendingCallEvents")
