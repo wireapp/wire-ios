@@ -18,7 +18,7 @@
 
 public import Foundation
 
-public struct WireCellsLocalAssetMetadata: Equatable {
+public struct WireCellsLocalAssetMetadata: Equatable, Sendable {
 
     public let nodeID: UUID
     public var eTag: String

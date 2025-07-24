@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import Foundation
 import Testing
 import WireCellsAPI
@@ -31,6 +32,8 @@ final class WireCellsLocalAssetRepositoryTests {
     private let fileCache = FileCacheMock()
     private let store = WireCellsLocalAssetMetadataStoreMock()
     private let sut: WireCellsLocalAssetRepository
+    private var storeBacking: [UUID: WireCellsLocalAssetMetadata] = [:]
+    private var cancellables = Set<AnyCancellable>()
 
     init() {
         self.sut = WireCellsLocalAssetRepository(
@@ -39,6 +42,12 @@ final class WireCellsLocalAssetRepositoryTests {
             fileCache: fileCache,
             store: store
         )
+        store.assetMetadataNodeIDUUIDWireCellsLocalAssetMetadataClosure = { [weak self] nodeID in
+            self?.storeBacking[nodeID]
+        }
+        store.upsertAssetMetadataMetadataWireCellsLocalAssetMetadataVoidClosure = { [weak self] metadata in
+            self?.storeBacking[metadata.nodeID] = metadata
+        }
     }
 
     @Test
@@ -58,7 +67,7 @@ final class WireCellsLocalAssetRepositoryTests {
         // given
         let nodeID = UUID()
         let assetMetadata = WireCellsLocalAssetMetadata.fixture(isDownloaded: true)
-        store.assetMetadataNodeIDUUIDWireCellsLocalAssetMetadataReturnValue = assetMetadata
+        storeBacking[nodeID] = assetMetadata
 
         var downloadStates: [UUID: WireCellsLocalAssetRepository.DownloadState] = [:]
         downloadStates[nodeID] = downloadState
@@ -98,7 +107,7 @@ final class WireCellsLocalAssetRepositoryTests {
         // given
         let nodeID = UUID()
         let assetMetadata = WireCellsLocalAssetMetadata.fixture(isDownloaded: false)
-        store.assetMetadataNodeIDUUIDWireCellsLocalAssetMetadataReturnValue = assetMetadata
+        storeBacking[nodeID] = assetMetadata
 
         var downloadStates: [UUID: WireCellsLocalAssetRepository.DownloadState] = [:]
         downloadStates[nodeID] = inputDownloadState
@@ -126,6 +135,123 @@ final class WireCellsLocalAssetRepositoryTests {
         )
     }
 
+    @Test
+    func refreshMetadata_success_whenNoExistingMetadata() async throws {
+        // given
+        let nodeID = UUID()
+
+        storeBacking[nodeID] = nil
+
+        let node = WireCellsNode.fixture(
+            uuid: nodeID,
+            path: "path/file.png",
+            size: 1234,
+            eTag: "abc",
+            mimeType: "image/png",
+        )
+        nodesAPI.getNodeNodeIDUUIDWireCellsNodeReturnValue = node
+
+        var observedAssets: [WireCellsLocalAsset?] = []
+        sut.observeAsset(nodeID: nodeID).sink { asset in
+            observedAssets.append(asset)
+        }.store(in: &cancellables)
+
+        // when
+        let metadata = try await sut.refreshMetadata(nodeID: nodeID)
+
+        // then the returned metadata is correct
+        #expect(
+            metadata == WireCellsLocalAssetMetadata(
+                nodeID: nodeID,
+                eTag: "abc",
+                path: "path/file.png",
+                contentType: "image/png",
+                size: 1234,
+                isDownloaded: false
+            )
+        )
+
+        // then the store is updated with the new metadata
+        #expect(storeBacking[nodeID] == metadata)
+
+        // then no files are deleted
+        #expect(fileCache.deleteFileForKeyKeyStringVoidCalled == false)
+
+        // then one asset change is observed
+        try #require(observedAssets.count == 1)
+        #expect(
+            observedAssets.first == WireCellsLocalAsset(
+                nodeID: nodeID,
+                eTag: "abc",
+                path: "path/file.png",
+                contentType: "image/png",
+                size: 1234,
+                downloadState: .pending,
+            )
+        )
+    }
+
+    @Test
+    func refreshMetadata_success_whenOutOfDateExistingMetadata() async throws {
+        // given
+        let nodeID = UUID()
+
+        storeBacking[nodeID] = WireCellsLocalAssetMetadata(
+            nodeID: nodeID,
+            eTag: "def", // eTag is out of date
+            path: "path/file.png",
+            contentType: "image/png",
+            size: 1234,
+            isDownloaded: true
+        )
+
+        nodesAPI.getNodeNodeIDUUIDWireCellsNodeReturnValue = WireCellsNode.fixture(
+            uuid: nodeID,
+            path: "path/file.png",
+            size: 1234,
+            eTag: "abc",
+            mimeType: "image/png",
+        )
+
+        var observedAssets: [WireCellsLocalAsset?] = []
+        sut.observeAsset(nodeID: nodeID).sink { asset in
+            observedAssets.append(asset)
+        }.store(in: &cancellables)
+
+        // when
+        let metadata = try await sut.refreshMetadata(nodeID: nodeID)
+
+        // then the returned metadata is correct
+        #expect(
+            metadata == WireCellsLocalAssetMetadata(
+                nodeID: nodeID,
+                eTag: "abc",
+                path: "path/file.png",
+                contentType: "image/png",
+                size: 1234,
+                isDownloaded: false
+            )
+        )
+
+        // then the store is updated with the new metadata
+        #expect(storeBacking[nodeID] == metadata)
+
+        // then old files are deleted
+        #expect(fileCache.deleteFileForKeyKeyStringVoidReceivedInvocations == ["\(nodeID.uuidString)-def"])
+
+        // then one asset change is observed
+        try #require(observedAssets.count == 1)
+        #expect(
+            observedAssets.first == WireCellsLocalAsset(
+                nodeID: nodeID,
+                eTag: "abc",
+                path: "path/file.png",
+                contentType: "image/png",
+                size: 1234,
+                downloadState: .pending,
+            )
+        )
+    }
 }
 
 // MARK: - Helper Extensions
