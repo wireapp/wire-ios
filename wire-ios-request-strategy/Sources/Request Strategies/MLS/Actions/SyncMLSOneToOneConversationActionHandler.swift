@@ -153,11 +153,11 @@ private extension Payload.Conversation {
 
     mutating func addMissingMember(userID: QualifiedID) {
         guard
-            let selfMember = membersSplitBySelfAndOther?.selfMember,
-            membersSplitBySelfAndOther?.others.isEmpty == true
+            let selfMember = members?.selfMember,
+            members?.others.isEmpty == true
         else { return }
 
-        membersSplitBySelfAndOther = Payload.ConversationMembers(
+        members = Payload.ConversationMembers(
             selfMember: selfMember,
             others: [Payload.ConversationMember(
                 id: userID.uuid,

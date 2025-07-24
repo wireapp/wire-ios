@@ -808,7 +808,7 @@ struct ConversationEventPayloadProcessor {
         shouldRemoveParticipants: Bool = true,
         context: NSManagedObjectContext
     ) {
-        guard let members = payload.membersSplitBySelfAndOther else {
+        guard let members = payload.members else {
             return
         }
 
@@ -848,7 +848,7 @@ struct ConversationEventPayloadProcessor {
         from payload: Payload.Conversation,
         for conversation: ZMConversation
     ) {
-        if let selfMember = payload.membersSplitBySelfAndOther?.selfMember {
+        if let selfMember = payload.members?.selfMember {
             updateMemberStatus(
                 from: selfMember,
                 for: conversation
@@ -1080,11 +1080,11 @@ struct ConversationEventPayloadProcessor {
     }
 
     func fetchUserAndRole(
-        from payload: Payload.ConversationMember,
+        from payload: Payload.ConversationMember?,
         for conversation: ZMConversation,
         in context: NSManagedObjectContext
     ) -> (ZMUser, Role?)? {
-        guard let userID = payload.id ?? payload.qualifiedID?.uuid else {
+        guard let payload, let userID = payload.id ?? payload.qualifiedID?.uuid else {
             return nil
         }
 
