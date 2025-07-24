@@ -38,18 +38,33 @@ final class RegistrationAnalyticsTrackerTests: XCTestCase {
         }
     }
 
-    func testIsAnalyticsTrackingUnavailable() {
+    func testIsAnalyticsTrackingUnavailableDueToNonWhitelistedURL() {
         // Given
         let sut = makeSUT()
         let backendConfigs = [
             makeBackendConfig(backendURL: "https://account.bella.wire.link"),
             makeBackendConfig(backendURL: "https://some-other.link"),
-            makeBackendConfig(backendURL: "https://prod-nginz-https.wire.com")
+            makeBackendConfig(backendURL: "invalid")
         ]
 
         // Then
         for backendConfig in backendConfigs {
-            XCTAssertFalse(!sut.isAnalyticsTrackingAvailable(for: backendConfig))
+            XCTAssertFalse(sut.isAnalyticsTrackingAvailable(for: backendConfig), "\(backendConfig.endpoints.backendURL.absoluteString)")
+        }
+    }
+
+    func testIsAnalyticsTrackingUnavailableDueToNoConfig() {
+        // Given
+        let sut = makeSUT(useNilConfig: true)
+        let backendConfigs = [
+            makeBackendConfig(backendURL: "https://prod-nginz-https.wire.com"),
+            makeBackendConfig(backendURL: "https://staging-nginz-https.zinfra.io"),
+            makeBackendConfig(backendURL: "https://account.bella.wire.link")
+        ]
+
+        // Then
+        for backendConfig in backendConfigs {
+            XCTAssertFalse(sut.isAnalyticsTrackingAvailable(for: backendConfig), "\(backendConfig.endpoints.backendURL.absoluteString)")
         }
     }
 
@@ -70,10 +85,10 @@ final class RegistrationAnalyticsTrackerTests: XCTestCase {
         )
     }
 
-    private func makeSUT() -> RegistrationAnalyticsTracker {
+    private func makeSUT(useNilConfig: Bool = false) -> RegistrationAnalyticsTracker {
         let config = AnalyticsServiceConfiguration(secretKey: "", serverHost: URL(string: "https://wire.com")!)
         return RegistrationAnalyticsTracker(
-            analyticsServiceConfiguration: config,
+            analyticsServiceConfiguration: useNilConfig ? .none : config,
             countlyProvider: { CountlyProtocolMock() },
             userDefaults: .temporary()
         )
