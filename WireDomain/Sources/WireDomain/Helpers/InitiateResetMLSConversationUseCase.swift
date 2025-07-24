@@ -31,10 +31,6 @@ public class InitiateResetMLSConversationUseCase: InitiateResetMLSConversationUs
     private let mlsService: MLSServiceInterface
     private let conversationLocalStore: ConversationLocalStoreProtocol
 
-    enum Failure {
-        case noConversation
-    }
-
     public init(
         api: MLSAPI,
         mlsService: MLSServiceInterface,
