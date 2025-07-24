@@ -19,7 +19,7 @@
 import UIKit
 import WireDesign
 
-open class AccessoryTextField: UITextField, DynamicTypeCapable {
+open class AccessoryTextField: ContextMenuControllableTextField, DynamicTypeCapable {
 
     public func redrawFont() {
         font = textFieldAttributes.textFont.font
@@ -79,7 +79,6 @@ open class AccessoryTextField: UITextField, DynamicTypeCapable {
     let placeholderInsets: UIEdgeInsets
     let accessoryTrailingInset: CGFloat
     let textFieldAttributes: Attributes
-    let isContextMenuAllowed: Bool
 
     // MARK: - Life cycle
 
@@ -99,8 +98,7 @@ open class AccessoryTextField: UITextField, DynamicTypeCapable {
         self.textInsets = UIEdgeInsets(top: 0, left: horizonalInset, bottom: 0, right: horizonalInset)
         self.accessoryTrailingInset = accessoryTrailingInset
         self.textFieldAttributes = textFieldAttributes
-        self.isContextMenuAllowed = isContextMenuAllowed
-        super.init(frame: .zero)
+        super.init(frame: .zero, isContextMenuAllowed: isContextMenuAllowed)
         setupViews()
         setupTextField(with: textFieldAttributes)
     }
@@ -108,29 +106,6 @@ open class AccessoryTextField: UITextField, DynamicTypeCapable {
     @available(*, unavailable)
     public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    open override func canPerformAction(
-        _ action: Selector,
-        withSender sender: Any?
-    ) -> Bool {
-        if !isContextMenuAllowed {
-            let validActions = [
-                #selector((any UIResponderStandardEditActions).select(_:)),
-                #selector((any UIResponderStandardEditActions).selectAll(_:))
-            ]
-            return text!.isEmpty ? false : validActions.contains(action)
-        } else {
-            return super.canPerformAction(action, withSender: sender)
-        }
-    }
-
-    open override func buildMenu(with builder: any UIMenuBuilder) {
-        if !isContextMenuAllowed {
-            if #available(iOS 17.0, *) {
-                builder.remove(menu: .autoFill)
-            }
-        }
     }
 
 }
