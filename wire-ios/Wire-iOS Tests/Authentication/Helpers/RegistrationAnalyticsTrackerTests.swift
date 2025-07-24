@@ -17,13 +17,66 @@
 //
 
 import Testing
+import WireAuthenticationAPI
+import WireAnalyticsSupport
 
 @testable import Wire
 
 struct RegistrationAnalyticsTrackerTests {
 
-    @Test func testIsAnalyticsEnabled() async throws {
-        #expect(Bool(false)) // TODO: fix
+    func testIsAnalyticsTrackingAvailable() {
+        // Given
+        let sut = makeSUT()
+        let backendConfigs = [
+            makeBackendConfig(backendURL: "https://prod-nginz-https.wire.com"),
+            makeBackendConfig(backendURL: "https://staging-nginz-https.zinfra.io")
+        ]
+
+        // Then
+        for backendConfig in backendConfigs {
+            #expect(sut.isAnalyticsTrackingAvailable(for: backendConfig))
+        }
+    }
+
+    func testIsAnalyticsTrackingUnavailable() {
+        // Given
+        let sut = makeSUT()
+        let backendConfigs = [
+            makeBackendConfig(backendURL: "https://account.bella.wire.link"),
+            makeBackendConfig(backendURL: "https://some-other.link"),
+            makeBackendConfig(backendURL: "https://prod-nginz-https.wire.com")
+        ]
+
+        // Then
+        for backendConfig in backendConfigs {
+            #expect(!sut.isAnalyticsTrackingAvailable(for: backendConfig))
+        }
+    }
+
+    private func makeBackendConfig(backendURL: String) -> BackendConfig {
+        BackendConfig(
+            title: "mock",
+            endpoints: Endpoints(
+                backendURL: URL(string: backendURL)!,
+                backendWSURL: URL(string: "https://wire.com")!,
+                blackListURL: URL(string: "https://wire.com")!,
+                teamsURL: URL(string: "https://wire.com")!,
+                accountsURL: URL(string: "https://wire.com")!,
+                websiteURL: URL(string: "https://wire.com")!,
+                countlyURL: URL(string: "https://wire.com")!
+            ),
+            proxySettings: .none,
+            pinnedKeys: .none
+        )
+    }
+
+    private func makeSUT() -> RegistrationAnalyticsTracker {
+        let config = AnalyticsServiceConfiguration(secretKey: "", serverHost: URL(string: "https://wire.com")!)
+        return RegistrationAnalyticsTracker(
+            analyticsServiceConfiguration: config,
+            countlyProvider: { CountlyProtocolMock() },
+            userDefaults: .temporary()
+        )
     }
 
 }

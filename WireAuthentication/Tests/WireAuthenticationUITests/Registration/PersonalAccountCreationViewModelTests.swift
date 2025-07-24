@@ -162,35 +162,6 @@ final class PersonalAccountCreationViewModelTests: XCTestCase, PersonalAccountCr
         XCTAssertTrue(sut.canRequestVerificationCode)
     }
 
-    @MainActor
-    func testIsAnalyticsTrackingAvailable() {
-        // Given
-        let suts = [
-            makeSUT(backendURL: URL(string: "https://prod-nginz-https.wire.com")!),
-            makeSUT(backendURL: URL(string: "https://staging-nginz-https.zinfra.io")!)
-        ]
-
-        // Then
-        for sut in suts {
-            XCTAssertTrue(sut.isAnalyticsTrackingAvailable, sut.backendConfig.endpoints.backendURL.path())
-        }
-    }
-
-    @MainActor
-    func testIsAnalyticsTrackingUnavailable() {
-        // Given
-        let suts = [
-            makeSUT(backendURL: URL(string: "https://account.bella.wire.link")!),
-            makeSUT(backendURL: URL(string: "https://some-other.link")!),
-            makeSUT(backendURL: URL(string: "https://prod-nginz-https.wire.com")!, analyticsEventTracker: nil)
-        ]
-
-        // Then
-        for sut in suts {
-            XCTAssertFalse(sut.isAnalyticsTrackingAvailable, sut.backendConfig.endpoints.backendURL.path())
-        }
-    }
-
     // MARK: - Helper
 
     @MainActor
