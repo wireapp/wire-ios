@@ -16,13 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Testing
-import WireAuthenticationAPI
+import XCTest
 import WireAnalyticsSupport
+import WireAuthenticationAPI
 
 @testable import Wire
 
-struct RegistrationAnalyticsTrackerTests {
+final class RegistrationAnalyticsTrackerTests: XCTestCase {
 
     func testIsAnalyticsTrackingAvailable() {
         // Given
@@ -34,7 +34,7 @@ struct RegistrationAnalyticsTrackerTests {
 
         // Then
         for backendConfig in backendConfigs {
-            #expect(sut.isAnalyticsTrackingAvailable(for: backendConfig))
+            XCTAssertTrue(sut.isAnalyticsTrackingAvailable(for: backendConfig))
         }
     }
 
@@ -49,7 +49,7 @@ struct RegistrationAnalyticsTrackerTests {
 
         // Then
         for backendConfig in backendConfigs {
-            #expect(!sut.isAnalyticsTrackingAvailable(for: backendConfig))
+            XCTAssertFalse(!sut.isAnalyticsTrackingAvailable(for: backendConfig))
         }
     }
 
