@@ -16,15 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import WireAuthentication
+public import WireFoundation
 
-final class WireAuthenticationTests: XCTestCase {
-    func testExample() throws {
-        // XCTest Documentation
-        // https://developer.apple.com/documentation/xctest
+/// If the user went through the flow of registering a new personal account and gave consent to analytics tracking,
+/// the newly created analytics id is temporarily stored in this property. After setting up the user session this
+/// property will be cleared and the value stored in the database under `ZMUser.trackingID` property.
 
-        // Defining Test Cases and Test Methods
-        // https://developer.apple.com/documentation/xctest/defining_test_cases_and_test_methods
-    }
+public enum RegistrationAnalyticsTrackingIDKey: String, DefaultsKey {
+    case trackingIDFromRegistration
 }

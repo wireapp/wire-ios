@@ -16,27 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Enum representing the type of domain.
-///
-/// - publicDomain: Represents a public domain, like "wire.com".
-/// - privateDomain: Represents a private domain (any domain other than public).
-/// - unknown: Represents an unknown or undefined domain.
-enum DomainType {
+public import Foundation
 
-    case publicDomain
-    case privateDomain
+public enum RegistrationAnalyticsTrackingConsent {
+    case agreed(trackingID: UUID)
+    case declined
     case unknown
-
-}
-
-extension String {
-
-    var domainType: DomainType {
-        switch self {
-        case "wire.com", "staging.zinfra.io":
-            .publicDomain
-        default:
-            .privateDomain
-        }
-    }
 }

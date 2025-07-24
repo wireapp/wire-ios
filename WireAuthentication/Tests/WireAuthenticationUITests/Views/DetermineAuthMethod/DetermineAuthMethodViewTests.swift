@@ -47,10 +47,11 @@ final class DetermineAuthMethodViewTests: XCTestCase {
 
             let factory = FakeDetermineAuthMethodFactory(emailOrSSOCode: emailOrSSOCode)
 
-            let view = DetermineAuthMethodView(factory: factory)
-                .inNavigationStack()
-                .environment(\.wireTextStyleMapping, WireTextStyleMapping())
-                .frame(width: screenBounds.width, height: screenBounds.height)
+            let view = NavigationStack {
+                DetermineAuthMethodView(factory: factory)
+            }
+            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+            .frame(width: screenBounds.width, height: screenBounds.height)
             snapshotHelper
                 .withUserInterfaceStyle(.light)
                 .verify(matching: view, named: "variant\(index)-light")
@@ -64,10 +65,11 @@ final class DetermineAuthMethodViewTests: XCTestCase {
     func testDynamicTypeVariants() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = DetermineAuthMethodView(factory: FakeDetermineAuthMethodFactory())
-            .inNavigationStack()
-            .frame(width: screenBounds.width, height: screenBounds.height)
-            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+        let view = NavigationStack {
+            DetermineAuthMethodView(factory: FakeDetermineAuthMethodFactory())
+        }
+        .frame(width: screenBounds.width, height: screenBounds.height)
+        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
             snapshotHelper
