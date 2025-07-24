@@ -21,7 +21,7 @@ import Foundation
 public extension ZMConversation {
 
     // TODO: [WPB-18396] implement NSManagedObject local property and use it when ready
-    
+
     var channelHistoryDepth: String? {
         nil
     }

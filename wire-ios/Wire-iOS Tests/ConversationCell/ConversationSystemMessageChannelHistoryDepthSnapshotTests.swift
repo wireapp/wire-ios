@@ -83,7 +83,7 @@ final class ConversationSystemMessageChannelHistoryDepthSnapshotTests: Conversat
         message.senderUser = otherUser
         verify(message: message)
     }
-    
+
     func testChannelHistoryDepthForNewConversation() {
         mockConversation.isChannel = true
         mockConversation.conversationType = .group
@@ -93,11 +93,11 @@ final class ConversationSystemMessageChannelHistoryDepthSnapshotTests: Conversat
         selfUser.teamIdentifier = .mockID1
         selfUser.canAddUserToConversation = true
         userSession.selfUser = selfUser
-        
+
         let message = makeMessage(
             messageType: .newConversation
         )
-        
+
         verify(message: message)
     }
 

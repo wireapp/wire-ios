@@ -34,22 +34,23 @@ struct HistoryDepthViewModel {
 
     func image() -> UIImage? {
         UIImage(
-            systemName: isNewConversation ? "arrow.trianglehead.counterclockwise.rotate.90" : "clock.arrow.trianglehead.counterclockwise.rotate.90"
+            systemName: isNewConversation ? "arrow.trianglehead.counterclockwise.rotate.90" :
+                "clock.arrow.trianglehead.counterclockwise.rotate.90"
         )?.withTintColor(iconColor, renderingMode: .alwaysOriginal)
     }
 
     func createSystemMessage(template: String) -> NSAttributedString {
         if isNewConversation {
-            return historyDepthInitiallySetAttributedText(
+            historyDepthInitiallySetAttributedText(
                 template: template
             )
         } else {
-            return historyDepthModifiedAttributedText(
+            historyDepthModifiedAttributedText(
                 template: template
             )
         }
     }
-    
+
     private func historyDepthInitiallySetAttributedText(
         template: String
     ) -> NSAttributedString {
@@ -58,7 +59,7 @@ struct HistoryDepthViewModel {
                 "Should not reach this point if this is a new conversation and history depth is null"
             )
         }
-        
+
         var updateText: NSAttributedString
         // TODO: [WPB-18396] map historyDepth to string value
         let text = "13 days"
@@ -67,15 +68,15 @@ struct HistoryDepthViewModel {
             attributes: baseAttributes
         )
         .adding(font: .mediumSemiboldFont, to: text)
-        
+
         return updateText
     }
-    
+
     private func historyDepthModifiedAttributedText(
         template: String
     ) -> NSAttributedString {
         var updateText: NSAttributedString
-        
+
         if sender.isSelfUser {
             let youLocalized = L10n.Localizable.Content.System.youStarted
 
@@ -111,17 +112,17 @@ struct HistoryDepthViewModel {
                 .adding(font: .mediumSemiboldFont, to: otherUserName)
             }
         }
-        
+
         return updateText
     }
 
     func attributedTitle() -> NSAttributedString? {
         if isNewConversation {
-            return createSystemMessage(
+            createSystemMessage(
                 template: "content.system.message_history_depth_initially_set"
             )
         } else {
-            return createSystemMessage(
+            createSystemMessage(
                 template: historyDepth != nil ? "content.system.message_history_depth_modified" :
                     "content.system.message_history_depth_modified_disabled"
             )

@@ -192,14 +192,14 @@ enum ConversationSystemMessageCellDescription {
                 let encryptionInfoCell = ConversationEncryptionInfoSystemMessageCellDescription()
                 cells.append(AnyConversationMessageCellDescription(encryptionInfoCell))
             }
-            
+
             if conversation.isChannel, let channelHistoryDepth = conversation.channelHistoryDepth {
                 let cell = ConversationChannelHistoryDepthSystemMessageCellDescription(
                     sender: sender,
                     historyDepth: channelHistoryDepth,
                     isNewConversation: true
                 )
-                
+
                 cells.append(AnyConversationMessageCellDescription(cell))
             }
 
