@@ -16,19 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum WireCellsNodeConversationRepositoryError: Error {
-    case cellNameNotFound
-    case genericError(any Error)
-}
+public import Foundation
 
-public protocol WireCellsNodeConversationRepository {
-    func getCellName(conversationID: WireCellsConversationID) async throws(WireCellsNodeConversationRepositoryError)
-        -> String
+public struct WireCellsAccessToken: Sendable {
 
-    func setWireCell(
-        conversationID: WireCellsConversationID,
-        cellName: String
-    ) async throws(WireCellsNodeConversationRepositoryError)
+    package let token: String
+    package let expirationDate: Date
 
-    func getConversationNames() async throws(WireCellsNodeConversationRepositoryError) -> [WireCellsConversation]
+    public init(token: String, expirationDate: Date) {
+        self.token = token
+        self.expirationDate = expirationDate
+    }
+
 }

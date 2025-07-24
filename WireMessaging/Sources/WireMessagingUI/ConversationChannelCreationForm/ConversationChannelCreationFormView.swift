@@ -74,7 +74,7 @@ public struct ConversationChannelCreationForm: View {
                 }
             }
             .animation(.easeInOut, value: viewModel.showUpgradeBanner)
-        }
+        }.animation(.easeInOut, value: viewModel.channelHistoryOption)
 
     }
 
@@ -130,7 +130,9 @@ public struct ConversationChannelCreationForm: View {
             channelHistoryPicker
 
             if viewModel.showChannelCustomHistoryPickers() {
-                channelCustomHistoryPickers
+                withAnimation {
+                    channelCustomHistoryPickers
+                }
             }
 
         }, footer: {

@@ -20,12 +20,15 @@ import avs
 import SwiftUI
 import UIKit
 import WireAccountImageUI
+import WireCellsAPI
+import WireCellsBindings
 import WireCommonComponents
 import WireDesign
 import WireFoundation
 import WireLogging
 import WireMainNavigationUI
 import WireMessagingAssembly
+import WireNetwork
 import WireSidebarUI
 import WireSyncEngine
 
@@ -33,7 +36,7 @@ final class ZClientViewController: UIViewController {
 
     typealias MainCoordinator = WireMainNavigationUI.MainCoordinator<MainCoordinatorDependencies>
 
-    // MARK: - Private Members
+    // MARK: - Private Members - Add wire cells factory here somehow
 
     let account: Account
     let userSession: UserSession
@@ -91,7 +94,8 @@ final class ZClientViewController: UIViewController {
     private lazy var conversationViewControllerBuilder = ConversationViewControllerBuilder(
         userSession: userSession,
         selfProfileUIBuilder: selfProfileViewControllerBuilder,
-        mediaPlaybackManager: mediaPlaybackManager
+        mediaPlaybackManager: mediaPlaybackManager,
+        wireCellsFactory: wireCellsFactory
     )
 
     private lazy var channelConversationFormFactory = WireConversationChannelCreationFormViewControllerFactory()
@@ -170,6 +174,7 @@ final class ZClientViewController: UIViewController {
     private let colorSchemeController: ColorSchemeController
     private var incomingApnsObserver: NSObjectProtocol?
     private var networkAvailabilityObserverToken: NSObjectProtocol?
+    private let wireCellsFactory: any WireCellsFactoryProtocol
 
     private(set) lazy var mainCoordinator = MainCoordinator(
         mainSplitViewController: mainSplitViewController,
@@ -183,13 +188,16 @@ final class ZClientViewController: UIViewController {
         account: Account,
         selfProfileViewsMonitor: SelfProfileViewsMonitor,
         userSession: UserSession,
-        trackingManager: TrackingManager?
+        trackingManager: TrackingManager?,
+        wireCellsFactory: any WireCellsFactoryProtocol
     ) {
         self.account = account
         self.selfProfileViewsMonitor = selfProfileViewsMonitor
         self.userSession = userSession
         self.trackingManager = trackingManager
         self.colorSchemeController = .init(userSession: userSession)
+        self.wireCellsFactory = wireCellsFactory
+
         super.init(nibName: nil, bundle: nil)
 
         self.proximityMonitorManager = ProximityMonitorManager()

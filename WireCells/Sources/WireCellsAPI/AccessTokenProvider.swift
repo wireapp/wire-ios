@@ -16,26 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
-
 // sourcery: AutoMockable
-/// Uploads file as a draft to the cells server.
+/// Provides an up-to-date access token for wire cells API.
+public protocol AccessTokenProvider: Sendable {
 
-public protocol WireCellsUploadDraftUseCaseProtocol: Sendable {
-
-    /// Uploads the file at `fileURL` to the cells server.
-
-    func invoke(fileURL: URL) async throws
-
-    /// Creates a file using `imageData` and uploads it to the cells server.
-
-    func invoke(imageData: Data) async throws
-}
-
-public enum WireCellsUploadDraftUseCaseError: Error, Sendable {
-
-    /// The file size of the requested file cannot be determined.
-
-    case missingFileSize
+    func accessToken() async throws -> WireCellsAccessToken
 
 }

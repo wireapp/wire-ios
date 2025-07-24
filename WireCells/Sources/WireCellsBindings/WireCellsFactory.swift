@@ -16,63 +16,68 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import Foundation
 public import WireCellsAPI
-import Foundation
 import WireCellsImplementation
 
-public struct WireCellsAssembly {
+public struct WireCellsFactory {
 
-    // This implementation is just for development. How authentication will be handled in production is not yet known.
-    private static let credentials = WireCellsCredentials(
-        serverURL: URL(string: "https://service.zeta.pydiocells.com")!,
-        accessToken: UserDefaults.standard.string(forKey: "ZMWireCellsAccessToken") ?? "unknown",
-        gatewaySecret: UserDefaults.standard.string(forKey: "ZMWireCellsGatewaySecret") ?? "unknown"
-    )
+    private let nodesAPI: NodesAPI
+    private let uploadManager: WireCellsNodeUploadManager
+    private let draftsRepository: DraftsRepository
 
-    private static let nodesAPI = NodesAPI(credentials: credentials)
+    public init(serverURL: URL, accessToken: any AccessTokenProvider) {
+        // TODO: [WPB-18798] Remove serverURL temporary override when there exists a method to obtain the correct URL.
+        let serverURL = switch serverURL.host {
+        case "nginz-https.fulu.wire.link":
+            URL(string: "https://cells.fulu.wire.link")!
+        case "nginz-https.imai.wire.link":
+            URL(string: "https://cells.imai.wire.link")!
+        default:
+            serverURL
+        }
 
-    private static let uploadManager = WireCellsNodeUploadManager(nodesAPI: nodesAPI)
-
-    private static let draftsRepository = DraftsRepository(uploadManager: uploadManager, nodesAPI: nodesAPI)
-
-    public init() {}
+        self.nodesAPI = NodesAPI(serverURL: serverURL, accessToken: accessToken)
+        self.uploadManager = WireCellsNodeUploadManager(nodesAPI: nodesAPI)
+        self.draftsRepository = DraftsRepository(uploadManager: uploadManager, nodesAPI: nodesAPI)
+    }
 
     public func makeUploadDraftUseCase(cellName: String) -> any WireCellsUploadDraftUseCaseProtocol {
         UploadDraftUseCase(
             cellName: cellName,
-            draftRepository: Self.draftsRepository,
-            uploadManager: Self.uploadManager,
-            nodesAPI: Self.nodesAPI
+            draftRepository: draftsRepository,
+            uploadManager: uploadManager,
+            nodesAPI: nodesAPI
         )
     }
 
     public func makeObserveDraftsUseCase(cellName: String) -> any WireCellsObserveDraftsUseCaseProtocol {
-        ObserveDraftsUseCase(cellName: cellName, draftRepository: Self.draftsRepository)
+        ObserveDraftsUseCase(cellName: cellName, draftRepository: draftsRepository)
     }
 
     public func makePublishDraftsUseCase(cellName: String) -> any WireCellsPublishDraftsUseCaseProtocol {
-        PublishDraftsUseCase(cellName: cellName, draftRepository: Self.draftsRepository)
+        PublishDraftsUseCase(cellName: cellName, draftRepository: draftsRepository)
     }
 
     public func makeClearPublishedDraftsUseCase(cellName: String) -> any WireCellsClearPublishedDraftsUseCaseProtocol {
-        ClearPublishedDraftsUseCase(cellName: cellName, draftRepository: Self.draftsRepository)
+        ClearPublishedDraftsUseCase(cellName: cellName, draftRepository: draftsRepository)
     }
 
     public func makeDeleteDraftUseCase(cellName: String) -> any WireCellsDeleteDraftUseCaseProtocol {
         DeleteDraftUseCase(
             cellName: cellName,
-            draftRepository: Self.draftsRepository,
-            uploadManager: Self.uploadManager,
-            nodesAPI: Self.nodesAPI
+            draftRepository: draftsRepository,
+            uploadManager: uploadManager,
+            nodesAPI: nodesAPI
         )
     }
 
     public func makeRetryUploadDraftUseCase(cellName: String) -> any WireCellsRetryUploadDraftUseCaseProtocol {
         UploadDraftUseCase(
             cellName: cellName,
-            draftRepository: Self.draftsRepository,
-            uploadManager: Self.uploadManager,
-            nodesAPI: Self.nodesAPI
+            draftRepository: draftsRepository,
+            uploadManager: uploadManager,
+            nodesAPI: nodesAPI
         )
     }
 
