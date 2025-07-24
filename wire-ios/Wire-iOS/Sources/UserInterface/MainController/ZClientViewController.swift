@@ -101,7 +101,6 @@ final class ZClientViewController: UIViewController {
     private lazy var channelConversationFormFactory = WireConversationChannelCreationFormViewControllerFactory()
 
     private lazy var settingsViewControllerBuilder = SettingsViewControllerBuilder(
-        isPublicDomain: userSession.selfUser.domain?.domainType == .publicDomain,
         userSession: userSession,
         trackingManager: trackingManager
     )
@@ -293,14 +292,29 @@ final class ZClientViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
+        migrateAnalytics()
         firstTimeRequestToEnableAnalytics()
         view.backgroundColor = ColorTheme.Backgrounds.surface
+    }
+
+    private func migrateAnalytics() {
+        Task {
+            do {
+                guard let trackingManager, let domain = userSession.selfUser.domain,
+                      trackingManager.isAnalyticsTrackingAvailable(for: domain) else { return }
+                try await trackingManager.migrateAnalyticsSetupIfNeeded()
+            } catch {
+                WireLogger.analytics.error("failed to migrate analytics between accounts: \(error)")
+            }
+        }
     }
 
     private func firstTimeRequestToEnableAnalytics() {
         Task {
             do {
-                try await trackingManager?.firstTimeRequestToEnableAnalytics()
+                guard let trackingManager, let domain = userSession.selfUser.domain,
+                      trackingManager.isAnalyticsTrackingAvailable(for: domain) else { return }
+                try await trackingManager.firstTimeRequestToEnableAnalytics()
             } catch {
                 WireLogger.analytics.error("failed to first time enable analytics: \(error)")
             }

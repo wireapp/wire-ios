@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireAuthenticationAPI
 import WireTestingPackage
 import XCTest
 
@@ -39,12 +40,15 @@ final class PersonalAccountCreationViewTests: XCTestCase {
     func testColorSchemeVariants() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = PersonalAccountCreationView(factory: FakePersonalAccountCreationFactory(
-            email: "foo@bar.com",
-            privacyPolicyURL: URL(string: "www.wire.com")!,
-            termsOfUseURL: URL(string: "www.wire.com")!,
-            passwordValidator: MockPasswordValidator()
-        )).frame(width: screenBounds.width, height: screenBounds.height)
+        let view = NavigationStack {
+            PersonalAccountCreationView(factory: FakePersonalAccountCreationFactory(
+                email: "foo@bar.com",
+                backendConfig: Scaffolding.backendConfig(backendURL: "https://prod-nginz-https.wire.com"),
+                privacyPolicyURL: URL(string: "www.wire.com")!,
+                termsOfUseURL: URL(string: "www.wire.com")!,
+                passwordValidator: MockPasswordValidator()
+            ))
+        }.frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -58,12 +62,15 @@ final class PersonalAccountCreationViewTests: XCTestCase {
     func testDynamicTypeVariants() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = PersonalAccountCreationView(factory: FakePersonalAccountCreationFactory(
-            email: "foo@bar.com",
-            privacyPolicyURL: URL(string: "www.wire.com")!,
-            termsOfUseURL: URL(string: "www.wire.com")!,
-            passwordValidator: MockPasswordValidator()
-        )).frame(width: screenBounds.width, height: screenBounds.height)
+        let view = NavigationStack {
+            PersonalAccountCreationView(factory: FakePersonalAccountCreationFactory(
+                email: "foo@bar.com",
+                backendConfig: Scaffolding.backendConfig(backendURL: "https://prod-nginz-https.wire.com"),
+                privacyPolicyURL: URL(string: "www.wire.com")!,
+                termsOfUseURL: URL(string: "www.wire.com")!,
+                passwordValidator: MockPasswordValidator()
+            ))
+        }.frame(width: screenBounds.width, height: screenBounds.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
             snapshotHelper
@@ -73,4 +80,25 @@ final class PersonalAccountCreationViewTests: XCTestCase {
                 )
         }
     }
+}
+
+private enum Scaffolding {
+
+    static func backendConfig(backendURL: String) -> BackendConfig {
+        BackendConfig(
+            title: "mock",
+            endpoints: Endpoints(
+                backendURL: URL(string: backendURL)!,
+                backendWSURL: URL(string: "https://wire.com")!,
+                blackListURL: URL(string: "https://wire.com")!,
+                teamsURL: URL(string: "https://wire.com")!,
+                accountsURL: URL(string: "https://wire.com")!,
+                websiteURL: URL(string: "https://wire.com")!,
+                countlyURL: URL(string: "https://wire.com")!
+            ),
+            proxySettings: .none,
+            pinnedKeys: .none
+        )
+    }
+
 }

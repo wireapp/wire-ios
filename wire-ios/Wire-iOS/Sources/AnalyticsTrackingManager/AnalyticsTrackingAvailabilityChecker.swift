@@ -16,25 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireAuthenticationAPI
 
-final class WireAuthenticationModuleCompletionHandler: AuthenticationEventHandler {
+struct AnalyticsTrackingAvailabilityChecker: AnalyticsTrackingAvailabilityCheckerProtocol {
 
-    var statusProvider: AuthenticationStatusProvider?
+    func isAnalyticsTrackingAvailable(for domain: String) -> Bool {
+        let whitelistedDomains = [
+            "wire.com",
+            "staging.zinfra.io"
+        ]
+        return whitelistedDomains.contains(domain)
+    }
 
-    func handleEvent(
-        currentStep: AuthenticationFlowStep,
-        context: (AuthenticationResult, RegistrationAnalyticsTrackingConsent)
-    ) -> [AuthenticationCoordinatorAction]? {
-        switch currentStep {
-        case .wireAuthenticationModule:
-            return [.showLoadingView, .configureNotifications, .completeWireAuthenticationLogin(context)]
+    func isAnalyticsTrackingAvailable(for backendConfig: BackendConfig) -> Bool {
+        guard let backendConfigHost = backendConfig.endpoints.backendURL.host() else { return false }
 
-        default:
-            assertionFailure("Got auth flow success but on wrong step: \(currentStep)")
-            return nil
-        }
+        let whitelistedHosts = [
+            // prod
+            "prod-nginz-https.wire.com",
+            // staging
+            "staging-nginz-https.zinfra.io"
+        ]
+        return whitelistedHosts.contains(backendConfigHost)
     }
 
 }

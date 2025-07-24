@@ -16,25 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireAuthenticationAPI
+public import WireFoundation
 
-final class WireAuthenticationModuleCompletionHandler: AuthenticationEventHandler {
+/// Stores the info if the user gave consent to analytics tracking.
 
-    var statusProvider: AuthenticationStatusProvider?
-
-    func handleEvent(
-        currentStep: AuthenticationFlowStep,
-        context: (AuthenticationResult, RegistrationAnalyticsTrackingConsent)
-    ) -> [AuthenticationCoordinatorAction]? {
-        switch currentStep {
-        case .wireAuthenticationModule:
-            return [.showLoadingView, .configureNotifications, .completeWireAuthenticationLogin(context)]
-
-        default:
-            assertionFailure("Got auth flow success but on wrong step: \(currentStep)")
-            return nil
-        }
-    }
-
+public enum AnalyticsTrackingPrivateUserDefaultsKey: String, DefaultsKey {
+    case isAnalyticsTrackingEnabled
 }

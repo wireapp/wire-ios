@@ -33,7 +33,6 @@ public extension ZMUserSession {
         public init(
             appLockConfig: AppLockController.LegacyConfig? = nil
         ) {
-
             self.appLockConfig = appLockConfig
         }
 

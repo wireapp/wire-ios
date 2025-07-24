@@ -16,13 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import WireAuthenticationAPI
 
-extension View {
+/// Determines if analytics tracking is available or not, based on backend config properties.
 
-    @available(*, deprecated, message: "use NavigationStack directly")
-    func inNavigationStack() -> some View {
-        NavigationStack(root: { self })
+protocol AnalyticsTrackingAvailabilityCheckerProtocol {
+
+    func isAnalyticsTrackingAvailable(for domain: String) -> Bool
+    func isAnalyticsTrackingAvailable(for backendConfig: BackendConfig) -> Bool
+
+}
+
+extension AnalyticsTrackingAvailabilityCheckerProtocol where Self == AnalyticsTrackingAvailabilityChecker {
+    static var `default`: Self {
+        Self()
     }
-
 }

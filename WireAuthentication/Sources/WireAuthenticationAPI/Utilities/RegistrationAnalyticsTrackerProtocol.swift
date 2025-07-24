@@ -16,9 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import Foundation
+
 // sourcery: AutoMockable
 /// Allows for setting up and tearing down an analytics events tracker and submitting tracking events.
 public protocol RegistrationAnalyticsTrackerProtocol {
+
+    /// The current analytics identifier.
+
+    var trackingID: String? { get }
+
+    /// During account registration a temporary analytics id might have been created and stored globally in user
+    /// defaults, since there is no user/account ID available yet.
+    /// This method cleans up the temporary id from the user defaults.
+
+    func deleteTemporaryTrackingID()
+
+    /// Analytics tracking should only be enabled for certain backend environments.
+
+    func isAnalyticsTrackingAvailable(for backendConfig: BackendConfig) -> Bool
 
     /// Start analytics after the user agreed.
 

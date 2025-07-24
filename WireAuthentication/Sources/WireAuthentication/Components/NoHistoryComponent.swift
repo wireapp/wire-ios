@@ -31,7 +31,7 @@ protocol NoHistoryComponentDependency: Dependency {
 
 }
 
-class NoHistoryComponent: Component<NoHistoryComponentDependency> {
+final class NoHistoryComponent: Component<NoHistoryComponentDependency> {
 
     private let authenticationResult: AuthenticationResult
     private let didDetectDomainConflict: Bool
@@ -58,7 +58,9 @@ extension NoHistoryComponent: NoHistoryFactory {
             howToChangeEmailURL: dependency.howToChangeEmailURL,
             howToDeleteAccountURL: dependency.howToDeleteAccountURL,
             onFlowCompletion: { [dependency, authenticationResult] in
-                dependency?.bridge.sendOutboundEvent(.userAuthenticated(authenticationResult))
+                dependency?.bridge.sendOutboundEvent(
+                    .userAuthenticated(authenticationResult, .unknown)
+                )
             }
         )
     }

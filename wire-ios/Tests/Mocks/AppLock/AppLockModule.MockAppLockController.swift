@@ -18,6 +18,7 @@
 
 import Foundation
 import LocalAuthentication
+
 @testable import Wire
 
 extension AppLockModule {
