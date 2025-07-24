@@ -45,5 +45,5 @@ public protocol PushChannelV2Protocol: Sendable {
     
     /// Disable batching of events
     /// - Parameter disabled: true set batchSize to 1, false back to maxBatchEventsCount
-    func disableBatching(_ disabled: Bool)
+    func disableBatching(_ disabled: Bool) async
 }
