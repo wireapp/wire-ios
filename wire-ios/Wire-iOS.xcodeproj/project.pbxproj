@@ -523,6 +523,7 @@
 				AccessoryTextField/ValidatedTextFieldTests.swift,
 				AccountViewSnapshotTests.swift,
 				AddParticipantsViewControllerSnapshotTests.swift,
+				AnalyticsTrackingManager/AnalyticsTrackingAvailabilityCheckerTests.swift,
 				AppLockModuleViewTests.swift,
 				AppStateCalculatorTests.swift,
 				ArticleViewTests.swift,

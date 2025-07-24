@@ -96,6 +96,7 @@ final class AuthenticationInterfaceBuilder {
             let registrationAnalyticsTracker = analyticsServiceConfiguration.map { analyticsServiceConfiguration in
                 RegistrationAnalyticsTracker(
                     analyticsServiceConfiguration: analyticsServiceConfiguration,
+                    availabilityChecker: .default,
                     countlyProvider: { CountlyWrapper() },
                     userDefaults: .standard
                 )

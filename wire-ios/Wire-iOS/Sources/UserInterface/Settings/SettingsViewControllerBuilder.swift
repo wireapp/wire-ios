@@ -23,7 +23,6 @@ import WireSyncEngine
 @MainActor
 final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSettingsContentUIBuilderProtocol {
 
-    let isAnalyticsTrackingAvailable: Bool
     let userSession: UserSession
     let trackingManager: (any TrackingInterface)?
     weak var settingsPropertyFactoryDelegate: SettingsPropertyFactoryDelegate?
@@ -47,12 +46,15 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
         )
     }
 
+    private var isAnalyticsTrackingAvailable: Bool {
+        guard let domain = userSession.selfUser.domain, let isAnalyticsTrackingAvailable = trackingManager?.isAnalyticsTrackingAvailable(for: domain) else { return false }
+        return isAnalyticsTrackingAvailable
+    }
+
     init(
-        isAnalyticsTrackingAvailable: Bool,
         userSession: UserSession,
         trackingManager: (any TrackingInterface)?
     ) {
-        self.isAnalyticsTrackingAvailable = isAnalyticsTrackingAvailable
         self.userSession = userSession
         self.trackingManager = trackingManager
     }

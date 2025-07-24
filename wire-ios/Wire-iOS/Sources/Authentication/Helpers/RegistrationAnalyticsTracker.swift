@@ -32,11 +32,13 @@ final class RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
 
     private var analyticsService: AnalyticsService?
     private var analyticsTracker: (any AnalyticsEventTrackerProtocol)?
+    private var availabilityChecker: any AnalyticsTrackingAvailabilityCheckerProtocol
     private let userDefaults: UserDefaults
     private let logger: WireLogger
 
     init(
         analyticsServiceConfiguration: AnalyticsServiceConfiguration?,
+        availabilityChecker: any AnalyticsTrackingAvailabilityCheckerProtocol,
         countlyProvider: @escaping () -> any CountlyProtocol,
         userDefaults: UserDefaults
     ) {
@@ -48,6 +50,7 @@ final class RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
                 countlyProvider: countlyProvider
             )
         }
+        self.availabilityChecker = availabilityChecker
         self.userDefaults = userDefaults
         self.logger = .authentication
     }
@@ -57,17 +60,8 @@ final class RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
     }
 
     func isAnalyticsTrackingAvailable(for backendConfig: BackendConfig) -> Bool {
-        guard analyticsService != nil, let backendConfigHost = backendConfig.endpoints.backendURL.host() else {
-            return false
-        }
-
-        let whitelistedHosts = [
-            // prod
-            "prod-nginz-https.wire.com",
-            // staging
-            "staging-nginz-https.zinfra.io"
-        ]
-        return whitelistedHosts.contains(backendConfigHost)
+        guard analyticsService != nil else { return false }
+        return availabilityChecker.isAnalyticsTrackingAvailable(for: backendConfig)
     }
 
     @MainActor

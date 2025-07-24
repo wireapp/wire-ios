@@ -23,6 +23,7 @@ import WireSyncEngine
 struct TrackingManager: TrackingInterface {
 
     private let sessionManager: SessionManager
+    private let availabilityChecker: AnalyticsTrackingAvailabilityCheckerProtocol
 
     private typealias UserDefaultsKey = AnalyticsTrackingPrivateUserDefaultsKey
     private var privateUserDefaults: PrivateUserDefaults<UserDefaultsKey>? {
@@ -34,8 +35,12 @@ struct TrackingManager: TrackingInterface {
         }
     }
 
-    init(sessionManager: SessionManager) {
+    init(
+        sessionManager: SessionManager,
+        availabilityChecker: AnalyticsTrackingAvailabilityCheckerProtocol
+    ) {
         self.sessionManager = sessionManager
+        self.availabilityChecker = availabilityChecker
     }
 
     private var doesUserConsentPreferenceExist: Bool {
@@ -44,6 +49,10 @@ struct TrackingManager: TrackingInterface {
 
     var isAnalyticsTrackingEnabled: Bool {
         privateUserDefaults?.object(forKey: .isAnalyticsTrackingEnabled) as? Bool ?? false
+    }
+
+    func isAnalyticsTrackingAvailable(for domain: String) -> Bool {
+        availabilityChecker.isAnalyticsTrackingAvailable(for: domain)
     }
 
     func migrateAnalyticsSetupIfNeeded() async throws {

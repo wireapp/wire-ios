@@ -1,0 +1,41 @@
+//
+// Wire
+// Copyright (C) 2025 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import WireAuthenticationAPI
+
+struct AnalyticsTrackingAvailabilityChecker: AnalyticsTrackingAvailabilityCheckerProtocol {
+
+    func isAnalyticsTrackingAvailable(for domain: String) -> Bool {
+        let whitelistedDomains = ["wire.com", "staging.zinfra.io"]
+        // TODO: somewhere when switching accounts this should be checked as well
+        return whitelistedDomains.contains(domain)
+    }
+
+    func isAnalyticsTrackingAvailable(for backendConfig: BackendConfig) -> Bool {
+        guard let backendConfigHost = backendConfig.endpoints.backendURL.host() else { return false }
+
+        let whitelistedHosts = [
+            // prod
+            "prod-nginz-https.wire.com",
+            // staging
+            "staging-nginz-https.zinfra.io"
+        ]
+        return whitelistedHosts.contains(backendConfigHost)
+    }
+
+}

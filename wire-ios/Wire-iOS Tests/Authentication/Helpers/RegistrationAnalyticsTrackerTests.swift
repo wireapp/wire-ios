@@ -24,48 +24,49 @@ import WireAuthenticationAPI
 
 final class RegistrationAnalyticsTrackerTests: XCTestCase {
 
-    func testIsAnalyticsTrackingAvailable() {
-        // Given
-        let sut = makeSUT()
-        let backendConfigs = [
-            makeBackendConfig(backendURL: "https://prod-nginz-https.wire.com"),
-            makeBackendConfig(backendURL: "https://staging-nginz-https.zinfra.io")
-        ]
+    private var sut: RegistrationAnalyticsTracker!
+    private var availabilityChecker: AnalyticsTrackingAvailabilityCheckerProtocolMock!
 
-        // Then
-        for backendConfig in backendConfigs {
-            XCTAssertTrue(sut.isAnalyticsTrackingAvailable(for: backendConfig))
-        }
+    override func setUp() {
+        availabilityChecker = AnalyticsTrackingAvailabilityCheckerProtocolMock()
+        sut = makeSUT()
     }
 
-    func testIsAnalyticsTrackingUnavailableDueToNonWhitelistedURL() {
+    override func tearDown() {
+        sut = nil
+        availabilityChecker = nil
+    }
+
+    func testIsAnalyticsTrackingAvailableCallsChecker() {
         // Given
-        let sut = makeSUT()
-        let backendConfigs = [
-            makeBackendConfig(backendURL: "https://account.bella.wire.link"),
-            makeBackendConfig(backendURL: "https://some-other.link"),
-            makeBackendConfig(backendURL: "invalid")
-        ]
+        let backendConfig = makeBackendConfig(backendURL: "https://account.bella.wire.link")
+        availabilityChecker.isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolReturnValue = true
+
+        // When
+        let result = sut.isAnalyticsTrackingAvailable(for: backendConfig)
 
         // Then
-        for backendConfig in backendConfigs {
-            XCTAssertFalse(sut.isAnalyticsTrackingAvailable(for: backendConfig), "\(backendConfig.endpoints.backendURL.absoluteString)")
-        }
+        XCTAssertTrue(result)
+        XCTAssertEqual(
+            availabilityChecker.isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolReceivedInvocations,
+            [backendConfig]
+        )
     }
 
     func testIsAnalyticsTrackingUnavailableDueToNoConfig() {
         // Given
-        let sut = makeSUT(useNilConfig: true)
-        let backendConfigs = [
-            makeBackendConfig(backendURL: "https://prod-nginz-https.wire.com"),
-            makeBackendConfig(backendURL: "https://staging-nginz-https.zinfra.io"),
-            makeBackendConfig(backendURL: "https://account.bella.wire.link")
-        ]
+        sut = makeSUT(useNilConfig: true)
+        let backendConfig = makeBackendConfig(backendURL: "https://account.bella.wire.link")
+
+        // When
+        let result = sut.isAnalyticsTrackingAvailable(for: backendConfig)
 
         // Then
-        for backendConfig in backendConfigs {
-            XCTAssertFalse(sut.isAnalyticsTrackingAvailable(for: backendConfig), "\(backendConfig.endpoints.backendURL.absoluteString)")
-        }
+        XCTAssertFalse(result)
+        XCTAssertEqual(
+            availabilityChecker.isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolReceivedInvocations,
+            []
+        )
     }
 
     private func makeBackendConfig(backendURL: String) -> BackendConfig {
@@ -89,9 +90,58 @@ final class RegistrationAnalyticsTrackerTests: XCTestCase {
         let config = AnalyticsServiceConfiguration(secretKey: "", serverHost: URL(string: "https://wire.com")!)
         return RegistrationAnalyticsTracker(
             analyticsServiceConfiguration: useNilConfig ? .none : config,
+            availabilityChecker: availabilityChecker,
             countlyProvider: { CountlyProtocolMock() },
             userDefaults: .temporary()
         )
+    }
+
+}
+
+private final class AnalyticsTrackingAvailabilityCheckerProtocolMock: AnalyticsTrackingAvailabilityCheckerProtocol {
+
+    //MARK: - isAnalyticsTrackingAvailable
+
+    var isAnalyticsTrackingAvailableForDomainStringBoolCallsCount = 0
+    var isAnalyticsTrackingAvailableForDomainStringBoolCalled: Bool {
+        return isAnalyticsTrackingAvailableForDomainStringBoolCallsCount > 0
+    }
+    var isAnalyticsTrackingAvailableForDomainStringBoolReceivedDomain: (String)?
+    var isAnalyticsTrackingAvailableForDomainStringBoolReceivedInvocations: [(String)] = []
+    var isAnalyticsTrackingAvailableForDomainStringBoolReturnValue: Bool!
+    var isAnalyticsTrackingAvailableForDomainStringBoolClosure: ((String) -> Bool)?
+
+    func isAnalyticsTrackingAvailable(for domain: String) -> Bool {
+        isAnalyticsTrackingAvailableForDomainStringBoolCallsCount += 1
+        isAnalyticsTrackingAvailableForDomainStringBoolReceivedDomain = domain
+        isAnalyticsTrackingAvailableForDomainStringBoolReceivedInvocations.append(domain)
+        if let isAnalyticsTrackingAvailableForDomainStringBoolClosure = isAnalyticsTrackingAvailableForDomainStringBoolClosure {
+            return isAnalyticsTrackingAvailableForDomainStringBoolClosure(domain)
+        } else {
+            return isAnalyticsTrackingAvailableForDomainStringBoolReturnValue
+        }
+    }
+
+    //MARK: - isAnalyticsTrackingAvailable
+
+    var isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolCallsCount = 0
+    var isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolCalled: Bool {
+        return isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolCallsCount > 0
+    }
+    var isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolReceivedBackendConfig: (BackendConfig)?
+    var isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolReceivedInvocations: [(BackendConfig)] = []
+    var isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolReturnValue: Bool!
+    var isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolClosure: ((BackendConfig) -> Bool)?
+
+    func isAnalyticsTrackingAvailable(for backendConfig: BackendConfig) -> Bool {
+        isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolCallsCount += 1
+        isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolReceivedBackendConfig = backendConfig
+        isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolReceivedInvocations.append(backendConfig)
+        if let isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolClosure = isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolClosure {
+            return isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolClosure(backendConfig)
+        } else {
+            return isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolReturnValue
+        }
     }
 
 }

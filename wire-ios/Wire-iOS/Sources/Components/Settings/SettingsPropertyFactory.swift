@@ -26,6 +26,7 @@ import WireUtilities
 // sourcery: AutoMockable
 protocol TrackingInterface {
 
+    func isAnalyticsTrackingAvailable(for domain: String) -> Bool
     var isAnalyticsTrackingEnabled: Bool { get }
     func requestAnalyticsConsent() async throws -> Bool
     func disableAnalytics() throws
