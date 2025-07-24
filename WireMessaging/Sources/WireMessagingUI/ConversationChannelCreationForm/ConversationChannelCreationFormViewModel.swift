@@ -163,10 +163,10 @@ public final class ConversationChannelCreationFormViewModel: ObservableObject {
     }
 
     // MARK: History sharing
-    
+
     func isChannelHistoryFeatureEnabled() -> Bool {
         // mimic DeveloperFlag.channelsHistory.isOn
-        return UserDefaults.standard.object(
+        UserDefaults.standard.object(
             forKey: "channelsHistory"
         ) as? Bool ?? false
     }
