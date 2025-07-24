@@ -16,12 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import XCTest
+
 @testable import WireDataModel
 
 class ZMClientMessageTests_Mentions: BaseZMClientMessageTests {
 
-    func createMessage(text: String, mentions: [Mention]) -> ZMClientMessage {
+    func createMessage(text: String, mentions: [WireDataModel.Mention]) -> ZMClientMessage {
         let text = Text(content: text, mentions: mentions, linkPreviews: [])
         let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
 

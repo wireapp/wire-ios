@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 final class ConversationTests: ZMConversationTestsBase {
 

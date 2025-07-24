@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 public extension ZMMessage {
 
@@ -77,7 +78,7 @@ public extension ZMMessage {
             return nil
         }
 
-        let genericMessage = GenericMessage(content: WireProtos.Reaction.createReaction(
+        let genericMessage = GenericMessage(content: GenericMessageProtocol.Reaction.createReaction(
             emojis: reactions,
             messageID: messageID
         ))

@@ -18,6 +18,7 @@
 
 import CoreLocation
 import Foundation
+import GenericMessageProtocol
 
 @objc(ZMLocationMessageData)
 public protocol LocationMessageData: NSObjectProtocol {
