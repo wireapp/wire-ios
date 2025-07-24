@@ -22,7 +22,7 @@ import WireNetwork
 
 private let log = WireLogger(tag: "Accounts")
 
-public  struct BackendEnvironmentStore {
+public struct BackendEnvironmentStore {
 
     private let directory: URL
     private let fileManager = FileManager.default
@@ -41,7 +41,8 @@ public  struct BackendEnvironmentStore {
     ) throws {
         do {
             let accountDataURL = accountDataURL(id: accountID)
-            if !fileManager.fileExists(atPath: accountDataURL.absoluteString) {
+            let path = accountDataURL.path(percentEncoded: false)
+            if !fileManager.fileExists(atPath: path) {
                 try fileManager.createAndProtectDirectory(at: accountDataURL)
             }
             let storedBackendEnvironment = backendEnvironment.toStored()
@@ -64,7 +65,8 @@ public  struct BackendEnvironmentStore {
     ) throws {
         do {
             let accountDataURL = accountDataURL(id: accountID)
-            if !fileManager.fileExists(atPath: accountDataURL.absoluteString) {
+            let path = accountDataURL.path(percentEncoded: false)
+            if !fileManager.fileExists(atPath: path) {
                 try fileManager.createAndProtectDirectory(at: accountDataURL)
             }
             let storedBackendMetadata = metadata.toStored()
