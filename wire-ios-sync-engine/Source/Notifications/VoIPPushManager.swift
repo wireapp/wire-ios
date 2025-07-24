@@ -148,7 +148,6 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
             )
         }
 
-
         Task {
             Self.logger.debug("processPendingCallEvents")
             await delegate?.processPendingCallEvents(accountID: accountID)
