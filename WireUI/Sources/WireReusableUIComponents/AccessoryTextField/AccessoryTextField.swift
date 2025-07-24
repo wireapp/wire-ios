@@ -107,7 +107,6 @@ open class AccessoryTextField: ContextMenuControllableTextField, DynamicTypeCapa
     public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
 }
 
 // MARK: - View creation
