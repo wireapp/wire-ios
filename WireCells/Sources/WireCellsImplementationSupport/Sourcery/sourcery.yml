@@ -6,5 +6,5 @@ templates:
 output:
   ${DERIVED_SOURCES_DIR}
 args:
-  autoMockablePackageImports: ["Foundation", "WireCellsAPI", "AWSS3", "WireCellsImplementation", "UniformTypeIdentifiers"]
-  autoMockablePublicImports: ["WireCellsAPI"]
+  autoMockablePackageImports: ["Foundation", "AWSS3", "WireCellsImplementation", "UniformTypeIdentifiers"]
+  autoMockablePublicImports: ["Foundation", "WireCellsAPI"]
