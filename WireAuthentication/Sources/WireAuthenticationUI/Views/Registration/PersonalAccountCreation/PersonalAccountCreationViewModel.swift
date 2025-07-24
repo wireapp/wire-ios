@@ -32,11 +32,19 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
 
     @Published var alert: Alert?
     @Published var isCreateTeamAccountPresented = false
-    @Published var dataUsageAgreementAccepted = false
+    @Published var isDataUsageAgreementAccepted = false
     @Published var name: String = ""
     @Published var email: String
     @Published var password: String = ""
     @Published var confirmedPassword: String = ""
+
+    var trackingConsent: RegistrationAnalyticsTrackingConsent {
+        if let trackingID = analyticsEventTracker?.trackingID.flatMap(UUID.init(uuidString:)) {
+            .agreed(trackingID: trackingID)
+        } else {
+            .declined
+        }
+    }
 
     // MARK: - Dependencies
 
@@ -44,29 +52,41 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
         passwordValidator.localizedRulesDescription ?? ""
     }
 
+    var isAnalyticsTrackingAvailable: Bool {
+        // `analyticsEventTracker` will be nil if the app is not shipped with Countly credentials.
+        // If credentials are available, we only want to enable Countly for prod and staging backends.
+        analyticsEventTracker?.isAnalyticsTrackingAvailable(for: backendConfig) ?? false
+    }
+
     package let factory: any Factory
     private let router: any Router
+    package let backendConfig: BackendConfig
     package let privacyPolicyURL: URL
-    package let termsOfUseURL: URL
+    private let termsOfUseURL: URL // TODO: is it contained in the backendConfig?
     package let teamAccountCreationLink: URL?
     private let passwordValidator: any PasswordValidator
+    private let analyticsEventTracker: (any RegistrationAnalyticsTrackerProtocol)?
 
     package init(
         factory: any Factory,
         router: any Router,
         email: String,
+        backendConfig: BackendConfig,
         privacyPolicyURL: URL,
         termsOfUseURL: URL,
         teamAccountCreationLink: URL?,
-        passwordValidator: any PasswordValidator
+        passwordValidator: any PasswordValidator,
+        analyticsEventTracker: (any RegistrationAnalyticsTrackerProtocol)?
     ) {
         self.factory = factory
         self.router = router
         self.email = email
+        self.backendConfig = backendConfig
         self.privacyPolicyURL = privacyPolicyURL
         self.termsOfUseURL = termsOfUseURL
         self.teamAccountCreationLink = teamAccountCreationLink
         self.passwordValidator = passwordValidator
+        self.analyticsEventTracker = analyticsEventTracker
     }
 
     // MARK: - Validations
@@ -97,8 +117,16 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
             return
         }
         do {
-            let requestEmailVerificationCode = try await factory.requestEmailVerificationCodeUseCase()
-            try await requestEmailVerificationCode.invoke(email: email)
+            let requestEmailVerificationCodeUseCase = try await factory.requestEmailVerificationCodeUseCase()
+            try await requestEmailVerificationCodeUseCase.invoke(email: email)
+
+            if isDataUsageAgreementAccepted {
+                analyticsEventTracker?.setUp()
+                analyticsEventTracker?.trackPersonalAccountCreationStart()
+                analyticsEventTracker?.trackPersonalAccountCreationReachedTermsOfUseConfirmation()
+            } else {
+                analyticsEventTracker?.tearDown()
+            }
 
             router.navigate(to: PersonalAccountCreationDestination.verifyEmail(
                 email: email,
@@ -106,7 +134,7 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
                 name: name
             ))
         } catch {
-            WireLogger.authentication.error("request email erification code failed: \(error)")
+            WireLogger.authentication.error("request email verification code failed: \(error)")
 
             switch error {
             case RequestEmailVerificationCodeUseCaseFailure.invalidEmail:

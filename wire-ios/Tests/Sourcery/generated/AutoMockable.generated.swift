@@ -1572,15 +1572,33 @@ class MockTrackingInterface: TrackingInterface {
     // MARK: - Life cycle
 
 
-    // MARK: - isAnalyticsDisabled
+    // MARK: - isAnalyticsTrackingEnabled
 
-    var isAnalyticsDisabled: Bool {
-        get { return underlyingIsAnalyticsDisabled }
-        set(value) { underlyingIsAnalyticsDisabled = value }
+    var isAnalyticsTrackingEnabled: Bool {
+        get { return underlyingIsAnalyticsTrackingEnabled }
+        set(value) { underlyingIsAnalyticsTrackingEnabled = value }
     }
 
-    var underlyingIsAnalyticsDisabled: Bool!
+    var underlyingIsAnalyticsTrackingEnabled: Bool!
 
+
+    // MARK: - isAnalyticsTrackingAvailable
+
+    var isAnalyticsTrackingAvailableFor_Invocations: [String] = []
+    var isAnalyticsTrackingAvailableFor_MockMethod: ((String) -> Bool)?
+    var isAnalyticsTrackingAvailableFor_MockValue: Bool?
+
+    func isAnalyticsTrackingAvailable(for domain: String) -> Bool {
+        isAnalyticsTrackingAvailableFor_Invocations.append(domain)
+
+        if let mock = isAnalyticsTrackingAvailableFor_MockMethod {
+            return mock(domain)
+        } else if let mock = isAnalyticsTrackingAvailableFor_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `isAnalyticsTrackingAvailableFor`")
+        }
+    }
 
     // MARK: - requestAnalyticsConsent
 
