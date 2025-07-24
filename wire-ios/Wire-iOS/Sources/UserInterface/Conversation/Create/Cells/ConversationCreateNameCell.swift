@@ -20,6 +20,7 @@ import Combine
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireSyncEngine
 
 final class ConversationCreateNameCell: UICollectionViewCell {
 
@@ -30,7 +31,10 @@ final class ConversationCreateNameCell: UICollectionViewCell {
         color: SemanticColors.Label.textUserPropertyCellName
     )
 
-    let textField = WireTextField(frame: CGRect.zero, isContextMenuAllowed: false)
+    let textField = WireTextField(
+        frame: CGRect.zero,
+        isContextMenuAllowed: MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()).canUseClipboard
+    )
 
     private var cancellables = Set<AnyCancellable>()
 
