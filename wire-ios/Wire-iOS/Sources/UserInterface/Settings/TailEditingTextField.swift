@@ -22,13 +22,10 @@ import UIKit
 /// field
 /// with spaces. Default implementation collapses the trailing spaces as you type, which looks confusing. This control
 /// can be used "as-is" without any additional configuration.
-class TailEditingTextField: UITextField {
-
-    private let isContextMenuAllowed: Bool
+class TailEditingTextField: ContextMenuControllableTextField {
     
-    init(frame: CGRect, isContextMenuAllowed: Bool) {
-        self.isContextMenuAllowed = isContextMenuAllowed
-        super.init(frame: frame)
+    override init(frame: CGRect, isContextMenuAllowed: Bool) {
+        super.init(frame: frame, isContextMenuAllowed: isContextMenuAllowed)
         setup()
     }
 
@@ -71,31 +68,4 @@ class TailEditingTextField: UITextField {
 
         text = text?.replacingOccurrences(of: String.nonBreakingSpace, with: String.breakingSpace)
     }
-}
-
-extension TailEditingTextField {
-
-    override func canPerformAction(
-        _ action: Selector,
-        withSender sender: Any?
-    ) -> Bool {
-        if !isContextMenuAllowed {
-            let validActions = [
-                #selector((any UIResponderStandardEditActions).select(_:)),
-                #selector((any UIResponderStandardEditActions).selectAll(_:))
-            ]
-            return text!.isEmpty ? false : validActions.contains(action)
-        } else {
-            return super.canPerformAction(action, withSender: sender)
-        }
-    }
-
-    override func buildMenu(with builder: any UIMenuBuilder) {
-        if !isContextMenuAllowed {
-            if #available(iOS 17.0, *) {
-                builder.remove(menu: .autoFill)
-            }
-        }
-    }
-
 }

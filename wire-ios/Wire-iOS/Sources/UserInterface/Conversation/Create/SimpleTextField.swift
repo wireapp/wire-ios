@@ -65,7 +65,7 @@ final class SimpleTextField: ContextMenuControllableTextField, DynamicTypeCapabl
     ///
     /// - Parameters:
     /// - isContextMenuAllowed: show or hide the context menu
-    override init(
+    init(
         isContextMenuAllowed: Bool
     ) {
         let leftInset: CGFloat = 8
@@ -73,7 +73,7 @@ final class SimpleTextField: ContextMenuControllableTextField, DynamicTypeCapabl
         let topInset: CGFloat = 0
         self.placeholderInsets = UIEdgeInsets(top: topInset, left: leftInset, bottom: 0, right: 16)
 
-        super.init(isContextMenuAllowed: isContextMenuAllowed)
+        super.init(frame: .zero, isContextMenuAllowed: isContextMenuAllowed)
         setupTextFieldProperties()
 
         tintColor = .accent()

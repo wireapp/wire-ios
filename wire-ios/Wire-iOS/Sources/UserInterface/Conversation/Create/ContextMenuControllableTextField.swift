@@ -22,9 +22,10 @@ class ContextMenuControllableTextField: UITextField {
 
     private let isContextMenuAllowed: Bool
 
-    init(isContextMenuAllowed: Bool) {
+    init(frame: CGRect, isContextMenuAllowed: Bool) {
         self.isContextMenuAllowed = isContextMenuAllowed
-        super.init(frame: .zero)
+
+        super.init(frame: frame)
     }
 
     required init?(coder: NSCoder) {
