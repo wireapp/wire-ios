@@ -17,8 +17,10 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireDataModel
 import XCTest
+
 @testable import WireRequestStrategy
 
 class ImageV2DownloadRequestStrategyTests: MessagingTestBase {

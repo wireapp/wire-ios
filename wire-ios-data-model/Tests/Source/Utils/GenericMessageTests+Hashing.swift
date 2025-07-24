@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import XCTest
 
 @testable import WireDataModel
@@ -64,7 +65,7 @@ class GenericMessageTests_Hashing: XCTestCase {
 
     func testCorrectHashValueForLocation1() {
         // given
-        let location = WireProtos.Location.with {
+        let location = GenericMessageProtocol.Location.with {
             $0.latitude = 52.5166667
             $0.longitude = 13.4
         }
@@ -80,7 +81,7 @@ class GenericMessageTests_Hashing: XCTestCase {
 
     func testCorrectHashValueForLocation2() {
         // given
-        let location = WireProtos.Location.with {
+        let location = GenericMessageProtocol.Location.with {
             $0.latitude = 51.509143
             $0.longitude = -0.117277
         }
@@ -98,7 +99,7 @@ class GenericMessageTests_Hashing: XCTestCase {
 
     func testCorrectHashValueForAsset1() {
         // given
-        let asset = WireProtos.Asset.with {
+        let asset = GenericMessageProtocol.Asset.with {
             $0.uploaded.otrKey = Data()
             $0.uploaded.sha256 = Data()
         }
@@ -115,7 +116,7 @@ class GenericMessageTests_Hashing: XCTestCase {
 
     func testCorrectHashValueForAsset2() {
         // given
-        let asset = WireProtos.Asset.with {
+        let asset = GenericMessageProtocol.Asset.with {
             $0.uploaded.otrKey = Data()
             $0.uploaded.sha256 = Data()
         }

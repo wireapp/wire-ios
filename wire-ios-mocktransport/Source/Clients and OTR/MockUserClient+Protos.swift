@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireProtos
+import GenericMessageProtocol
 
 public protocol OtrMessage {
     var sender: Proteus_ClientId { get }

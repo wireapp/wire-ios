@@ -16,7 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public extension WireProtos.Asset.Original {
+import GenericMessageProtocol
+
+public extension GenericMessageProtocol.Asset.Original {
     var hasRasterImage: Bool {
         guard case .image? = metaData else {
             return false
