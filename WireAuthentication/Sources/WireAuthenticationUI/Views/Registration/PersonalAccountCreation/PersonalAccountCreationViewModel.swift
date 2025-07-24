@@ -56,19 +56,6 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
         // `analyticsEventTracker` will be nil if the app is not shipped with Countly credentials.
         // If credentials are available, we only want to enable Countly for prod and staging backends.
         analyticsEventTracker?.isAnalyticsTrackingAvailable(for: backendConfig) ?? false
-        // TODO: clean up
-        /*
-        if analyticsEventTracker != nil, let backendHost = backendURL.host() {
-            [
-                // prod
-                "prod-nginz-https.wire.com",
-                // staging
-                "staging-nginz-https.zinfra.io"
-            ].contains(backendHost)
-        } else {
-            false
-        }
-         */
     }
 
     package let factory: any Factory

@@ -56,6 +56,20 @@ final class RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
         analyticsService?.currentDeviceID
     }
 
+    func isAnalyticsTrackingAvailable(for backendConfig: BackendConfig) -> Bool {
+        guard analyticsService != nil, let backendConfigHost = backendConfig.endpoints.backendURL.host() else {
+            return false
+        }
+
+        let whitelistedHosts = [
+            // prod
+            "prod-nginz-https.wire.com",
+            // staging
+            "staging-nginz-https.zinfra.io"
+        ]
+        return whitelistedHosts.contains(backendConfigHost)
+    }
+
     @MainActor
     func setUp() {
         do {
