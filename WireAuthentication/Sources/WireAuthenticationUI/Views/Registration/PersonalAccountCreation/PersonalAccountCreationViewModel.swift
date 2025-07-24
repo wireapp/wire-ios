@@ -62,7 +62,7 @@ package final class PersonalAccountCreationViewModel: ObservableObject {
     private let router: any Router
     package let backendConfig: BackendConfig
     package let privacyPolicyURL: URL
-    private let termsOfUseURL: URL // TODO: is it contained in the backendConfig?
+    private let termsOfUseURL: URL
     package let teamAccountCreationLink: URL?
     private let passwordValidator: any PasswordValidator
     private let analyticsEventTracker: (any RegistrationAnalyticsTrackerProtocol)?
