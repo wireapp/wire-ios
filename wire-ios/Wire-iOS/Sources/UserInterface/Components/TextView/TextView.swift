@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireSyncEngine
 import WireSystem
 
 private let zmLog = ZMSLog(tag: "TextView")
@@ -177,6 +178,18 @@ class TextView: UITextView {
         }
 
         return super.canPerformAction(action, withSender: sender)
+    }
+
+    var isContextMenuAllowed: Bool {
+        MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()).canUseClipboard
+    }
+
+    override func buildMenu(with builder: any UIMenuBuilder) {
+        if !isContextMenuAllowed {
+            if #available(iOS 17.0, *) {
+                builder.remove(menu: .autoFill)
+            }
+        }
     }
 
     @discardableResult

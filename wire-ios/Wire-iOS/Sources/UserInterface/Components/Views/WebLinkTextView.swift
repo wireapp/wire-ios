@@ -23,7 +23,6 @@ import UIKit
 // On the Mac client we are using something similar to also stop the user from being able to select the text
 // (selection property needs to be enabled to make the NSLinkAttribute work on the string). We may want to add this
 // in the future here as well
-// +2
 final class WebLinkTextView: UITextView {
 
     init() {

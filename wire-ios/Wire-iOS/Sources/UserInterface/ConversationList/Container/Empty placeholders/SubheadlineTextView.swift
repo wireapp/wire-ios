@@ -19,7 +19,6 @@
 import UIKit
 import WireFoundation
 
-// +2
 final class SubheadlineTextView: UITextView {
 
     // MARK: - Init
