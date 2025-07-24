@@ -61,13 +61,12 @@ struct HistoryDepthViewModel {
         }
 
         var updateText: NSAttributedString
-        // TODO: [WPB-18396] map historyDepth to string value
-        let text = "13 days"
+
         updateText = NSAttributedString(
-            string: template.localized(args: text),
+            string: template.localized(args: historyDepth),
             attributes: baseAttributes
         )
-        .adding(font: .mediumSemiboldFont, to: text)
+        .adding(font: .mediumSemiboldFont, to: historyDepth)
 
         return updateText
     }

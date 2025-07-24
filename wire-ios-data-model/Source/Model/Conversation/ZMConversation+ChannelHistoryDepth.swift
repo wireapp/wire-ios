@@ -20,7 +20,7 @@ import Foundation
 
 public extension ZMConversation {
 
-    // TODO: [WPB-18396] implement NSManagedObject local property and use it when ready
+    // TODO: [WPB-18396] implement NSManagedObject local property and map it to return proper duration value
 
     var channelHistoryDepth: String? {
         nil
