@@ -16,10 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
-protocol FileDownloading {
+// sourcery: AutoMockable
+public protocol FileDownloading {
 
-    func download(from url: URL) -> (progress: AsyncStream<Double>, getResult: () async throws -> (URL, URLResponse))
+    func download(from url: URL) -> (progress: AsyncStream<Double>, download: Task<(URL, URLResponse), any Error>)
 
 }

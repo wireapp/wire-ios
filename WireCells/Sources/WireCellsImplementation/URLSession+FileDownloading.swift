@@ -16,24 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Combine
 import Foundation
+public import WireCellsAPI
 
-final class URLSessionTaskProgressDelegate: NSObject, URLSessionTaskDelegate, @unchecked Sendable {
+extension URLSession: FileDownloading {
 
-    private let progress: @Sendable (Double) -> Void
-    private var cancellables: Set<AnyCancellable> = []
+    func download(from url: URL) -> (progress: AsyncStream<Double>, download: Task<(URL, URLResponse), any Error>) {
+        let (progressStream, progressContinuation) = AsyncStream.makeStream(of: Double.self)
 
-    init(progress: @Sendable @escaping (Double) -> Void) {
-        self.progress = progress
-    }
+        let delegate = URLSessionTaskProgressDelegate { fractionCompleted in
+            progressContinuation.yield(fractionCompleted)
+        }
 
-    func urlSession(_ session: URLSession, didCreateTask task: URLSessionTask) {
-        precondition(cancellables.isEmpty, "Delegate must not be reused across multiple tasks.")
+        let downloadTask = Task {
+            let result = try await download(from: url, delegate: delegate)
+            progressContinuation.finish()
+            return result
+        }
 
-        task.progress.publisher(for: \.fractionCompleted)
-            .sink { [progress] in progress($0) }
-            .store(in: &cancellables)
+        return (progress: progressStream, download: downloadTask)
     }
 
 }
