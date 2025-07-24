@@ -21,7 +21,7 @@ import Foundation
 final class AuthenticationAPIV10: AuthenticationAPIV9 {
 
     override var apiVersion: APIVersion { .v10 }
-    
+
     override func getDomainRegistration(forEmail email: String) async throws -> DomainRegistrationConfiguration {
         let path = "/get-domain-registration"
         let body = GetDomainRegistrationParametersV8(email: email)

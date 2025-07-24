@@ -30,7 +30,7 @@ extension Payload {
             case accessRole = "access_role"
             case accessRoleV2 = "access_role_v2"
             case name
-            case members = "members"
+            case members
             case lastEvent = "last_event"
             case lastEventTime = "last_event_time"
             case teamID = "team"

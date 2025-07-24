@@ -132,7 +132,7 @@ extension Payload {
                 self.accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRole)
                 self.legacyAccessRole = nil
             }
-            
+
             if case .v10 = apiVersion {
                 self.skipCreator = try container.decodeIfPresent(Bool.self, forKey: .skipCreator)
             } else {
@@ -161,9 +161,9 @@ extension Payload {
             case .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10:
                 try container.encodeIfPresent(accessRoles, forKey: .accessRole)
             }
-            
+
             if case .v10 = apiVersion {
-                try container.encodeIfPresent(self.skipCreator, forKey: .skipCreator)
+                try container.encodeIfPresent(skipCreator, forKey: .skipCreator)
             }
         }
     }

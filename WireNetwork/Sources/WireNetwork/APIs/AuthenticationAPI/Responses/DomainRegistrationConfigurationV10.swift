@@ -19,11 +19,11 @@
 import Foundation
 
 struct DomainRegistrationConfigurationV10: Decodable, ToAPIModelConvertible {
-    
+
     struct Backend: Decodable, Sendable {
         let configURLString: String
         let webAppURLString: String?
-        
+
         enum CodingKeys: String, CodingKey {
             case configURLString = "config_url"
             case webAppURLString = "webapp_url"
