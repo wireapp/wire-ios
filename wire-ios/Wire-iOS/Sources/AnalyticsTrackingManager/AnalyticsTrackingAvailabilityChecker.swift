@@ -21,8 +21,10 @@ import WireAuthenticationAPI
 struct AnalyticsTrackingAvailabilityChecker: AnalyticsTrackingAvailabilityCheckerProtocol {
 
     func isAnalyticsTrackingAvailable(for domain: String) -> Bool {
-        let whitelistedDomains = ["wire.com", "staging.zinfra.io"]
-        // TODO: somewhere when switching accounts this should be checked as well
+        let whitelistedDomains = [
+            "wire.com",
+            "staging.zinfra.io"
+        ]
         return whitelistedDomains.contains(domain)
     }
 

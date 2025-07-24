@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import WireAnalyticsSupport
 import WireAuthenticationAPI
+import XCTest
 
 @testable import Wire
 
@@ -100,14 +100,15 @@ final class RegistrationAnalyticsTrackerTests: XCTestCase {
 
 private final class AnalyticsTrackingAvailabilityCheckerProtocolMock: AnalyticsTrackingAvailabilityCheckerProtocol {
 
-    //MARK: - isAnalyticsTrackingAvailable
+    // MARK: - isAnalyticsTrackingAvailable
 
     var isAnalyticsTrackingAvailableForDomainStringBoolCallsCount = 0
     var isAnalyticsTrackingAvailableForDomainStringBoolCalled: Bool {
-        return isAnalyticsTrackingAvailableForDomainStringBoolCallsCount > 0
+        isAnalyticsTrackingAvailableForDomainStringBoolCallsCount > 0
     }
-    var isAnalyticsTrackingAvailableForDomainStringBoolReceivedDomain: (String)?
-    var isAnalyticsTrackingAvailableForDomainStringBoolReceivedInvocations: [(String)] = []
+
+    var isAnalyticsTrackingAvailableForDomainStringBoolReceivedDomain: String?
+    var isAnalyticsTrackingAvailableForDomainStringBoolReceivedInvocations: [String] = []
     var isAnalyticsTrackingAvailableForDomainStringBoolReturnValue: Bool!
     var isAnalyticsTrackingAvailableForDomainStringBoolClosure: ((String) -> Bool)?
 
@@ -115,21 +116,22 @@ private final class AnalyticsTrackingAvailabilityCheckerProtocolMock: AnalyticsT
         isAnalyticsTrackingAvailableForDomainStringBoolCallsCount += 1
         isAnalyticsTrackingAvailableForDomainStringBoolReceivedDomain = domain
         isAnalyticsTrackingAvailableForDomainStringBoolReceivedInvocations.append(domain)
-        if let isAnalyticsTrackingAvailableForDomainStringBoolClosure = isAnalyticsTrackingAvailableForDomainStringBoolClosure {
+        if let isAnalyticsTrackingAvailableForDomainStringBoolClosure {
             return isAnalyticsTrackingAvailableForDomainStringBoolClosure(domain)
         } else {
             return isAnalyticsTrackingAvailableForDomainStringBoolReturnValue
         }
     }
 
-    //MARK: - isAnalyticsTrackingAvailable
+    // MARK: - isAnalyticsTrackingAvailable
 
     var isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolCallsCount = 0
     var isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolCalled: Bool {
-        return isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolCallsCount > 0
+        isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolCallsCount > 0
     }
-    var isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolReceivedBackendConfig: (BackendConfig)?
-    var isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolReceivedInvocations: [(BackendConfig)] = []
+
+    var isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolReceivedBackendConfig: BackendConfig?
+    var isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolReceivedInvocations: [BackendConfig] = []
     var isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolReturnValue: Bool!
     var isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolClosure: ((BackendConfig) -> Bool)?
 
@@ -137,7 +139,7 @@ private final class AnalyticsTrackingAvailabilityCheckerProtocolMock: AnalyticsT
         isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolCallsCount += 1
         isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolReceivedBackendConfig = backendConfig
         isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolReceivedInvocations.append(backendConfig)
-        if let isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolClosure = isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolClosure {
+        if let isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolClosure {
             return isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolClosure(backendConfig)
         } else {
             return isAnalyticsTrackingAvailableForBackendConfigBackendConfigBoolReturnValue

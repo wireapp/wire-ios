@@ -47,7 +47,9 @@ final class SettingsViewControllerBuilder: MainSettingsUIBuilderProtocol, MainSe
     }
 
     private var isAnalyticsTrackingAvailable: Bool {
-        guard let domain = userSession.selfUser.domain, let isAnalyticsTrackingAvailable = trackingManager?.isAnalyticsTrackingAvailable(for: domain) else { return false }
+        guard let domain = userSession.selfUser.domain,
+              let isAnalyticsTrackingAvailable = trackingManager?.isAnalyticsTrackingAvailable(for: domain)
+        else { return false }
         return isAnalyticsTrackingAvailable
     }
 

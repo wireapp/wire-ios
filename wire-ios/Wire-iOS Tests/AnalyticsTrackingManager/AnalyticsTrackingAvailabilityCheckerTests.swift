@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import WireAnalyticsSupport
 import WireAuthenticationAPI
+import XCTest
 
 @testable import Wire
 
@@ -49,7 +49,10 @@ final class AnalyticsTrackingAvailabilityCheckerTests: XCTestCase {
 
         // Then
         for backendConfig in backendConfigs {
-            XCTAssertFalse(sut.isAnalyticsTrackingAvailable(for: backendConfig), "\(backendConfig.endpoints.backendURL.absoluteString)")
+            XCTAssertFalse(
+                sut.isAnalyticsTrackingAvailable(for: backendConfig),
+                "\(backendConfig.endpoints.backendURL.absoluteString)"
+            )
         }
     }
 
