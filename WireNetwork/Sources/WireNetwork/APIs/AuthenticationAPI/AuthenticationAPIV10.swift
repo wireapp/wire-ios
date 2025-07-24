@@ -21,4 +21,36 @@ import Foundation
 final class AuthenticationAPIV10: AuthenticationAPIV9 {
 
     override var apiVersion: APIVersion { .v10 }
+    
+    override func getDomainRegistration(forEmail email: String) async throws -> DomainRegistrationConfiguration {
+        let path = "/get-domain-registration"
+        let body = GetDomainRegistrationParametersV8(email: email)
+
+        let encodedJSON: Data
+        do {
+            encodedJSON = try JSONEncoder.defaultEncoder.encode(body)
+        } catch {
+            assertionFailure("failed to encode body")
+            throw AuthenticationAPIError.invalidRequestBody
+        }
+
+        let request = try URLRequestBuilder(path: path)
+            .withBody(encodedJSON, contentType: .json)
+            .withMethod(.post)
+            .build()
+
+        let (data, response) = try await networkService.executeRequest(request)
+
+        return try ResponseParser()
+            .success(code: .ok, type: DomainRegistrationConfigurationV10.self)
+            .failure(
+                code: .serviceUnavailable,
+                label: "enterprise-service-not-enabled",
+                error: AuthenticationAPIError.serviceUnavailable
+            )
+            .failure(code: .badRequest, label: "invalid-domain", error: AuthenticationAPIError.invalidDomain)
+            .failure(code: .badRequest, error: AuthenticationAPIError.invalidRequestBody)
+            .parse(code: response.statusCode, data: data)
+    }
+
 }
