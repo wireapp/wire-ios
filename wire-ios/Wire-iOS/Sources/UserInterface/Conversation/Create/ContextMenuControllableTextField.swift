@@ -18,6 +18,12 @@
 
 import UIKit
 
+/// A UITextField subclass that provides centralized control over context menu actions
+/// such as copy, paste, select, select all, and the AutoFill menu.
+///
+/// Use `isContextMenuAllowed` to enable or restrict specific actions.
+/// This base class is designed to be subclassed by custom UITextField implementations
+/// that require consistent context menu behavior across the app.
 class ContextMenuControllableTextField: UITextField {
 
     private let isContextMenuAllowed: Bool

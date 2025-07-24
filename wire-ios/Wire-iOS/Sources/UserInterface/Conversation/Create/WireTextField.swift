@@ -28,6 +28,7 @@ class WireTextField: ContextMenuControllableTextField {
         case valid(String)
         case error(SimpleTextFieldValidator.ValidationError)
     }
+
     private let borderWidth: CGFloat = 1
     private let cornerRadius: CGFloat = 12
 
