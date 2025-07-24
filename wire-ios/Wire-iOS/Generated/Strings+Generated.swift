@@ -1902,13 +1902,17 @@ internal enum L10n {
         internal static let isVerified = L10n.tr("Localizable", "content.system.is_verified", fallback: "All fingerprints are verified")
         /// Tap to like
         internal static let likeTooltip = L10n.tr("Localizable", "content.system.like_tooltip", fallback: "Tap to like")
+        /// New participants can see messages from the last %@
+        internal static func messageHistoryDepthInitiallySet(_ p1: Any) -> String {
+          return L10n.tr("Localizable", "content.system.message_history_depth_initially_set", String(describing: p1), fallback: "New participants can see messages from the last %@")
+        }
         /// %@ set conversation history to %@
-        internal static func messageHistoryDepth(_ p1: Any, _ p2: Any) -> String {
-          return L10n.tr("Localizable", "content.system.message_history_depth", String(describing: p1), String(describing: p2), fallback: "%@ set conversation history to %@")
+        internal static func messageHistoryDepthModified(_ p1: Any, _ p2: Any) -> String {
+          return L10n.tr("Localizable", "content.system.message_history_depth_modified", String(describing: p1), String(describing: p2), fallback: "%@ set conversation history to %@")
         }
         /// %@ disabled conversation history
-        internal static func messageHistoryDepthDisabled(_ p1: Any) -> String {
-          return L10n.tr("Localizable", "content.system.message_history_depth_disabled", String(describing: p1), fallback: "%@ disabled conversation history")
+        internal static func messageHistoryDepthModifiedDisabled(_ p1: Any) -> String {
+          return L10n.tr("Localizable", "content.system.message_history_depth_modified_disabled", String(describing: p1), fallback: "%@ disabled conversation history")
         }
         /// %@ turned read receipts off for everyone
         internal static func messageReadReceiptOff(_ p1: Any) -> String {
