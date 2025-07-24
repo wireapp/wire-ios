@@ -35,6 +35,7 @@ package struct WireCellsNodeDTO: Equatable, Hashable, Sendable {
     package let ownerUserId: String?
     package let conversationId: String?
     package let publicLinkId: String?
+    package let downloadURL: URL?
 
     package init(
         uuid: UUID,
@@ -51,7 +52,8 @@ package struct WireCellsNodeDTO: Equatable, Hashable, Sendable {
         previews: [PreviewDTO] = [],
         ownerUserId: String? = nil,
         conversationId: String? = nil,
-        publicLinkId: String? = nil
+        publicLinkId: String? = nil,
+        downloadURL: URL? = nil
     ) {
         self.uuid = uuid
         self.path = path
@@ -68,6 +70,7 @@ package struct WireCellsNodeDTO: Equatable, Hashable, Sendable {
         self.ownerUserId = ownerUserId
         self.conversationId = conversationId
         self.publicLinkId = publicLinkId
+        self.downloadURL = downloadURL
     }
 }
 
@@ -88,7 +91,8 @@ package extension WireCellsNodeDTO {
             previews: previews.map { $0.toModel() },
             ownerUserID: ownerUserId,
             conversationID: conversationId.flatMap(WireCellsConversationID.init(string:)),
-            publicLinkID: publicLinkId.map(WireCellsPublicLinkID.init(string:))
+            publicLinkID: publicLinkId.map(WireCellsPublicLinkID.init(string:)),
+            downloadURL: downloadURL
         )
     }
 }
@@ -140,7 +144,8 @@ package extension RestNode {
                 .first(where: { $0.namespace == "usermeta-owner-uuid" })?
                 .jsonValue.trimmingCharacters(in: CharacterSet(charactersIn: "\"")),
             conversationId: contextWorkspace?.uuid,
-            publicLinkId: shares?.first?.uuid
+            publicLinkId: shares?.first?.uuid,
+            downloadURL: preSignedGET?.url.flatMap(URL.init(string:))
         )
     }
 }

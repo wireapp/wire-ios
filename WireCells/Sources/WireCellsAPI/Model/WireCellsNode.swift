@@ -43,6 +43,10 @@ public struct WireCellsNode: Equatable, Identifiable, Sendable {
     public let conversationID: WireCellsConversationID?
     public let publicLinkID: WireCellsPublicLinkID?
 
+    /// A pre-signed URL to download the file. Note that this URL will expire so shouldn't be stored long-term.
+
+    public let downloadURL: URL?
+
     package init(
         uuid: UUID,
         path: String,
@@ -58,7 +62,8 @@ public struct WireCellsNode: Equatable, Identifiable, Sendable {
         previews: [WireCellsNodePreview] = [],
         ownerUserID: String? = nil,
         conversationID: WireCellsConversationID? = nil,
-        publicLinkID: WireCellsPublicLinkID? = nil
+        publicLinkID: WireCellsPublicLinkID? = nil,
+        downloadURL: URL? = nil
     ) {
         self.id = uuid
         self.path = path
@@ -75,5 +80,6 @@ public struct WireCellsNode: Equatable, Identifiable, Sendable {
         self.ownerUserID = ownerUserID
         self.conversationID = conversationID
         self.publicLinkID = publicLinkID
+        self.downloadURL = downloadURL
     }
 }
