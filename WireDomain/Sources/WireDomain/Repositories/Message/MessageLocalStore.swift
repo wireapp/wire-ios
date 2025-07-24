@@ -904,7 +904,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
             return [systemMessage]
 
-        case let .channelHistoryDepthModified(sender, newHistoryDepth): // newHistoryDepth null if disabled
+        case let .channelHistoryDepthModified(sender):
             guard let sender = await fetchUser(
                 id: sender.id,
                 domain: sender.domain
@@ -915,7 +915,6 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             let systemMessage = await createSystemMessage(
                 messageType: .channelHistoryDepthModified,
                 sender: sender,
-                text: newHistoryDepth
             )
 
             return [systemMessage]
