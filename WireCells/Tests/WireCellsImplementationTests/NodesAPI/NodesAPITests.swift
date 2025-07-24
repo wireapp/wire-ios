@@ -47,7 +47,7 @@ final class NodesAPITests {
             ),
             restAPI: RestAPI(
                 serverURL: URL(string: "example.com")!,
-                accessToken: "exampleAccessToken"
+                accessToken: AccessTokenProviderMock()
             ),
         )
     }
