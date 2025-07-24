@@ -17,7 +17,6 @@
 //
 
 @import WireUtilities;
-@import WireProtos;
 @import MobileCoreServices;
 @import ImageIO;
 

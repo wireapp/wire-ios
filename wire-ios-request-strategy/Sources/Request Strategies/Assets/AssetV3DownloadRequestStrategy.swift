@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireImages
 import WireTransport
 
@@ -177,7 +178,7 @@ public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
     }
 
     private func validateAndStoreImage(
-        asset: WireProtos.Asset,
+        asset: GenericMessageProtocol.Asset,
         message: ZMAssetClientMessage,
         data: Data,
         keys: DecryptionKeys
@@ -198,7 +199,7 @@ public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
     }
 
     private func validateAndStoreFile(
-        asset: WireProtos.Asset,
+        asset: GenericMessageProtocol.Asset,
         message: ZMAssetClientMessage,
         data: Data,
         keys: DecryptionKeys

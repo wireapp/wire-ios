@@ -16,7 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import XCTest
+
 @testable import WireDataModel
 
 final class ClientMessageTests: BaseZMClientMessageTests {
@@ -339,11 +341,11 @@ final class ClientMessageTests: BaseZMClientMessageTests {
             let sha256 = Data.zmRandomSHA256Key()
 
             // when
-            let remoteData = WireProtos.Asset.RemoteData.with {
+            let remoteData = GenericMessageProtocol.Asset.RemoteData.with {
                 $0.otrKey = otrKey
                 $0.sha256 = sha256
             }
-            let asset = WireProtos.Asset.with {
+            let asset = GenericMessageProtocol.Asset.with {
                 $0.uploaded = remoteData
             }
             let linkPreview = LinkPreview.with {
@@ -481,7 +483,10 @@ extension ClientMessageTests {
         conversation.remoteIdentifier = UUID.create()
 
         let existingMessage = ZMClientMessage(nonce: nonce, managedObjectContext: uiMOC)
-        let message = GenericMessage(content: WireProtos.Knock.with { $0.hotKnock = true }, nonce: UUID.create())
+        let message = GenericMessage(
+            content: GenericMessageProtocol.Knock.with { $0.hotKnock = true },
+            nonce: UUID.create()
+        )
         try existingMessage.setUnderlyingMessage(message)
         existingMessage.visibleInConversation = conversation
 
@@ -509,7 +514,7 @@ extension ClientMessageTests {
         let senderClientID: String = .randomClientIdentifier()
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID.create()
-        let availability = WireProtos.Availability(.away)
+        let availability = GenericMessageProtocol.Availability(.away)
         let contentData = try GenericMessage(content: availability, nonce: UUID.create()).serializedData()
         let data: NSDictionary = try [
             "sender": XCTUnwrap(senderClientID),

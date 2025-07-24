@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireTesting
 import WireTestingPackage
 
@@ -77,22 +78,22 @@ extension ZMAssetClientMessageTests_Ephemeral {
         XCTAssertEqual(message.underlyingMessage!.ephemeral.expireAfterMillis, Int64(10 * 1000))
     }
 
-    func assetWithImage() -> WireProtos.Asset {
-        let original = WireProtos.Asset.Original(withSize: 1000, mimeType: "image", name: "foo")
-        let remoteData = WireProtos.Asset.RemoteData(
+    func assetWithImage() -> GenericMessageProtocol.Asset {
+        let original = GenericMessageProtocol.Asset.Original(withSize: 1000, mimeType: "image", name: "foo")
+        let remoteData = GenericMessageProtocol.Asset.RemoteData(
             withOTRKey: Data(),
             sha256: Data(),
             assetId: "id",
             assetToken: "token"
         )
-        let imageMetaData = WireProtos.Asset.ImageMetaData(width: 30, height: 40)
-        let preview = WireProtos.Asset.Preview(
+        let imageMetaData = GenericMessageProtocol.Asset.ImageMetaData(width: 30, height: 40)
+        let preview = GenericMessageProtocol.Asset.Preview(
             size: 2000,
             mimeType: "video",
             remoteData: remoteData,
             imageMetadata: imageMetaData
         )
-        return WireProtos.Asset(original: original, preview: preview)
+        return GenericMessageProtocol.Asset(original: original, preview: preview)
     }
 
     func thumbnailEvent(for message: ZMAssetClientMessage) -> ZMUpdateEvent {
@@ -223,7 +224,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
         let message = try! conversation.appendFile(with: fileMetadata) as! ZMAssetClientMessage
         message.sender = sender
         try message.setUnderlyingMessage(GenericMessage(
-            content: WireProtos.Asset(withUploadedOTRKey: Data(), sha256: Data()),
+            content: GenericMessageProtocol.Asset(withUploadedOTRKey: Data(), sha256: Data()),
             nonce: message.nonce!
         ))
         XCTAssertTrue(message.underlyingMessage!.assetData!.hasUploaded)
@@ -247,7 +248,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
             let message = appendImageMessage(to: syncConversation)
             message.sender = sender
             try message.setUnderlyingMessage(GenericMessage(
-                content: WireProtos.Asset(withUploadedOTRKey: Data(), sha256: Data()),
+                content: GenericMessageProtocol.Asset(withUploadedOTRKey: Data(), sha256: Data()),
                 nonce: message.nonce!
             ))
             XCTAssertTrue(message.underlyingMessage!.assetData!.hasUploaded)
@@ -275,14 +276,17 @@ extension ZMAssetClientMessageTests_Ephemeral {
 
         let imageData = verySmallJPEGData()
         let assetMessage = GenericMessage(
-            content: WireProtos.Asset(imageSize: .zero, mimeType: "", size: UInt64(imageData.count)),
+            content: GenericMessageProtocol.Asset(imageSize: .zero, mimeType: "", size: UInt64(imageData.count)),
             nonce: nonce,
             expiresAfter: .tenSeconds
         )
         try message.setUnderlyingMessage(assetMessage)
 
         let uploaded = GenericMessage(
-            content: WireProtos.Asset(withUploadedOTRKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key()),
+            content: GenericMessageProtocol.Asset(
+                withUploadedOTRKey: .randomEncryptionKey(),
+                sha256: .zmRandomSHA256Key()
+            ),
             nonce: message.nonce!,
             expiresAfter: conversation.activeMessageDestructionTimeoutValue
         )
@@ -374,7 +378,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
         let message = try! conversation.appendFile(with: fileMetadata) as! ZMAssetClientMessage
         message.sender = sender
         try message.setUnderlyingMessage(GenericMessage(
-            content: WireProtos.Asset(withNotUploaded: .cancelled),
+            content: GenericMessageProtocol.Asset(withNotUploaded: .cancelled),
             nonce: message.nonce!
         ))
         XCTAssertTrue(message.underlyingMessage!.assetData!.hasNotUploaded)
@@ -393,7 +397,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
         let fileMetadata = createFileMetadata()
         let message = try! conversation.appendFile(with: fileMetadata) as! ZMAssetClientMessage
         try message.setUnderlyingMessage(GenericMessage(
-            content: WireProtos.Asset(withUploadedOTRKey: Data(), sha256: Data()),
+            content: GenericMessageProtocol.Asset(withUploadedOTRKey: Data(), sha256: Data()),
             nonce: message.nonce!
         ))
         XCTAssertTrue(message.underlyingMessage!.assetData!.hasUploaded)
@@ -415,7 +419,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
         message.sender = ZMUser.insertNewObject(in: uiMOC)
         message.sender?.remoteIdentifier = UUID.create()
         try message.setUnderlyingMessage(GenericMessage(
-            content: WireProtos.Asset(withUploadedOTRKey: Data(), sha256: Data()),
+            content: GenericMessageProtocol.Asset(withUploadedOTRKey: Data(), sha256: Data()),
             nonce: message.nonce!
         ))
         XCTAssertTrue(message.underlyingMessage!.assetData!.hasUploaded)
@@ -456,7 +460,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
         message.sender?.remoteIdentifier = UUID.create()
 
         try message.setUnderlyingMessage(GenericMessage(
-            content: WireProtos.Asset(withUploadedOTRKey: Data(), sha256: Data()),
+            content: GenericMessageProtocol.Asset(withUploadedOTRKey: Data(), sha256: Data()),
             nonce: message.nonce!
         ))
         XCTAssertTrue(message.underlyingMessage!.assetData!.hasUploaded)
@@ -491,7 +495,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
         message.sender?.remoteIdentifier = UUID.create()
 
         try message.setUnderlyingMessage(GenericMessage(
-            content: WireProtos.Asset(withUploadedOTRKey: Data(), sha256: Data()),
+            content: GenericMessageProtocol.Asset(withUploadedOTRKey: Data(), sha256: Data()),
             nonce: message.nonce!
         ))
         XCTAssertTrue(message.underlyingMessage!.assetData!.hasUploaded)
