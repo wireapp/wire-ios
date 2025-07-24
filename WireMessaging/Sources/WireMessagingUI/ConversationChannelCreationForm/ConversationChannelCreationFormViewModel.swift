@@ -164,13 +164,6 @@ public final class ConversationChannelCreationFormViewModel: ObservableObject {
 
     // MARK: History sharing
 
-    func isChannelHistoryFeatureEnabled() -> Bool {
-        // mimic DeveloperFlag.channelsHistory.isOn
-        UserDefaults.standard.object(
-            forKey: "channelsHistory"
-        ) as? Bool ?? false
-    }
-
     private func bind() {
         $channelHistoryOption
             .filter { [self] in $0 == .custom && !isUserPremium }

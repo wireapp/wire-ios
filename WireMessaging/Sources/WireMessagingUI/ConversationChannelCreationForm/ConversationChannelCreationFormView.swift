@@ -20,6 +20,7 @@ public import SwiftUI
 import WireDesign
 import WireMessagingDomain
 import WireReusableUIComponents
+import WireFoundation
 
 public struct ConversationChannelCreationForm: View {
     public typealias ViewModel = ConversationChannelCreationFormViewModel
@@ -42,7 +43,7 @@ public struct ConversationChannelCreationForm: View {
         Form {
             channelNameSection
             channelAccessSection
-            if viewModel.isChannelHistoryFeatureEnabled() {
+            if DeveloperFlag.channelsHistory.isOn {
                 channelHistorySection
             }
             servicesSection

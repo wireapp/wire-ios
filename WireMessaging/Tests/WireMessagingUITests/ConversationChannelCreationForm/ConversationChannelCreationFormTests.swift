@@ -19,7 +19,7 @@
 import SwiftUI
 import WireTestingPackage
 import XCTest
-
+import WireFoundation
 @testable import WireMessagingUI
 
 class ConversationChannelCreationFormTests: XCTestCase {
@@ -27,13 +27,15 @@ class ConversationChannelCreationFormTests: XCTestCase {
     private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
-        UserDefaults.standard.set(true, forKey: "channelsHistory")
+        DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
+        var flag = DeveloperFlag.channelsHistory
+        flag.isOn = true
         snapshotHelper = .init()
             .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
     }
 
     override func tearDown() {
-        UserDefaults.standard.set(false, forKey: "channelsHistory")
+        DeveloperFlag.storage = UserDefaults.standard
         snapshotHelper = nil
     }
 
