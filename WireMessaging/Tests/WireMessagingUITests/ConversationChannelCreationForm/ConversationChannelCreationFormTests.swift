@@ -17,9 +17,9 @@
 //
 
 import SwiftUI
+import WireFoundation
 import WireTestingPackage
 import XCTest
-import WireFoundation
 @testable import WireMessagingUI
 
 class ConversationChannelCreationFormTests: XCTestCase {

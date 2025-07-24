@@ -18,9 +18,9 @@
 
 public import SwiftUI
 import WireDesign
+import WireFoundation
 import WireMessagingDomain
 import WireReusableUIComponents
-import WireFoundation
 
 public struct ConversationChannelCreationForm: View {
     public typealias ViewModel = ConversationChannelCreationFormViewModel
