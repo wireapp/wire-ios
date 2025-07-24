@@ -20,7 +20,6 @@ import Foundation
 import WireFoundation
 import WireLogging
 
-
 /// PushChannel using new consumable notifications
 public final class PushChannelV2: PushChannelV2Protocol {
 
