@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireDataModel
 import WireLogging
 import WireNetwork
-import WireProtos
 
 public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageProcessorProtocol {
 
@@ -80,12 +80,12 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
             )
 
         case let .dataTransfer(dataTransfer):
-            guard let trackingIdentifier = dataTransfer.trackingIdentifierData else {
+            guard let trackingID = dataTransfer.trackingIdentifierData.flatMap(UUID.init(transportString:)) else {
                 break
             }
 
-            await userLocalStore.updateSelfUserAnalyticsID(
-                analyticsID: trackingIdentifier,
+            await userLocalStore.updateSelfUserTrackingID(
+                trackingID: trackingID,
                 conversation: conversation
             )
 
@@ -288,6 +288,7 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
             senderID: sender.id,
             senderDomain: sender.domain
         )
+
     }
 
 }

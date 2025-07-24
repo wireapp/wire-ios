@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 protocol BigEndianDataConvertible {
     var asBigEndianData: Data { get }
@@ -57,7 +58,7 @@ extension MessageEdit: BigEndianDataConvertible {
     }
 }
 
-extension WireProtos.Text: BigEndianDataConvertible {
+extension GenericMessageProtocol.Text: BigEndianDataConvertible {
     var asBigEndianData: Data {
         content.asBigEndianData
     }
@@ -71,7 +72,7 @@ extension Location: BigEndianDataConvertible {
     }
 }
 
-extension WireProtos.Asset: BigEndianDataConvertible {
+extension GenericMessageProtocol.Asset: BigEndianDataConvertible {
     var asBigEndianData: Data {
         uploaded.assetID.asBigEndianData
     }

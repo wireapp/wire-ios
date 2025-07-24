@@ -11,9 +11,6 @@
       location = "group:Cartfile">
    </FileRef>
    <FileRef
-      location = "group:Cartfile.private">
-   </FileRef>
-   <FileRef
       location = "group:Cartfile.resolved">
    </FileRef>
    <Group
@@ -178,9 +175,6 @@
    </FileRef>
    <FileRef
       location = "group:WirePreviewApps/WirePreviewApps.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:wire-ios-protos/WireProtos.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:wire-ios-cryptobox/WireCryptobox.xcodeproj">

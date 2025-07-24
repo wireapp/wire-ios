@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireDataModel
 
 // sourcery: AutoMockable
@@ -378,6 +379,15 @@ public protocol ConversationLocalStoreProtocol {
 
     func storeMLSConversationEstablished(
         mlsGroupID: MLSGroupID,
+        conversation: ZMConversation
+    ) async
+
+    /// Stores new conversation MLS group ID and marks it as 'pendingJoin'
+    /// - Parameters:
+    ///   - newMLSGroupID: The new generated MLS group ID
+    ///   - conversation: The conversation to update the properties for.
+    func storeMLSConversationPendingJoin(
+        newMLSGroupID: MLSGroupID,
         conversation: ZMConversation
     ) async
 

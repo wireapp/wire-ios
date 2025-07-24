@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireDataModelSupport
 import WireTesting
 import WireTestingPackage
@@ -309,7 +310,7 @@ extension EventDecoderTest {
         let event1 = await syncMOC.perform {
             self.eventStreamEvent(
                 conversation: ZMConversation.selfConversation(in: self.syncMOC),
-                genericMessage: GenericMessage(content: WireProtos.Availability(.away))
+                genericMessage: GenericMessage(content: GenericMessageProtocol.Availability(.away))
             )
         }
         let event2 = await syncMOC.perform {

@@ -23,6 +23,7 @@ import UIKit
 import WireCommonComponents
 import WireCoreCrypto
 import WireCountly
+import WireDomain
 import WireLogging
 import WireSyncEngine
 
@@ -100,6 +101,10 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
 
+        #if DEBUG
+            resetApp()
+        #endif
+
         guard !application.supportsMultipleScenes else {
             fatalError("Multiple scenes are currently not supported")
         }
@@ -116,7 +121,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         ZMSLog.switchCurrentLogToPrevious()
 
         // Set up Datadog and other loggers
-        WireAnalytics.setup()
+        WireAnalytics.setup(for: .app)
 
         WireLogger.appDelegate.info(
             "application:willFinishLaunchingWithOptions \(String(describing: launchOptions)) (applicationState = \(application.applicationState))"
@@ -129,6 +134,60 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         )
 
         return true
+    }
+
+    #if DEBUG
+        private func resetApp() {
+            let arguments = ProcessInfo.processInfo.arguments
+            if arguments.contains("-resetData") {
+                resetFileSystem()
+                resetUserDefaults()
+                resetKeychain()
+                print("app reset done")
+            }
+        }
+    #endif
+
+    // MARK: - Reset
+
+    private func resetUserDefaults() {
+        if let bundleID = Bundle.main.bundleIdentifier {
+            UserDefaults.standard.removePersistentDomain(forName: bundleID)
+            UserDefaults.standard.synchronize()
+        }
+    }
+
+    private func resetKeychain() {
+        let secItemClasses = [
+            kSecClassGenericPassword,
+            kSecClassInternetPassword,
+            kSecClassCertificate,
+            kSecClassKey,
+            kSecClassIdentity
+        ]
+        for itemClass in secItemClasses {
+            let query: [String: Any] = [kSecClass as String: itemClass]
+            SecItemDelete(query as CFDictionary)
+        }
+    }
+
+    private func resetFileSystem() {
+        guard let rootURL = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else {
+            preconditionFailure("Unable to get shared container URL")
+        }
+        AccountManager.delete(at: rootURL)
+        let fileManager = FileManager.default
+        let directories: [FileManager.SearchPathDirectory] = [
+            .documentDirectory,
+            .cachesDirectory,
+            .applicationSupportDirectory
+        ]
+
+        for dir in directories {
+            if let url = fileManager.urls(for: dir, in: .userDomainMask).first {
+                try? fileManager.removeItem(at: url)
+            }
+        }
     }
 
     private func setNavigationAppearance() {
@@ -397,6 +456,14 @@ private extension AppDelegate {
         // flag defined
         let maxNumberAccounts = SecurityFlags.maxNumberAccounts.intValue ?? SessionManager.defaultMaxNumberAccounts
 
+        func deleteAllAccountsLogs() { // we don't have per account logging yet
+            let fileManager = FileManager.default
+            if let appGroupIdentifier = Bundle.main.applicationGroupIdentifier,
+               let logsDirectory = FileManager.default.sharedLogsDirectoryURL(for: appGroupIdentifier) {
+                try? fileManager.removeItem(at: logsDirectory)
+            }
+        }
+
         let sessionManager = try SessionManager(
             maxNumberAccounts: maxNumberAccounts,
             currentAppVersion: currentAppVersion,
@@ -412,7 +479,7 @@ private extension AppDelegate {
             isDeveloperModeEnabled: Bundle.developerModeEnabled,
             sharedUserDefaults: .applicationGroup,
             minTLSVersion: SecurityFlags.minTLSVersion.stringValue,
-            deleteUserLogs: LogFileDestination.deleteAllLogs,
+            deleteUserLogs: deleteAllAccountsLogs,
             analyticsServiceConfiguration: AnalyticsServiceConfigurationBuilder.build(),
             countlyProvider: { CountlyWrapper() },
             logFilesProvider: LogFilesProvider()

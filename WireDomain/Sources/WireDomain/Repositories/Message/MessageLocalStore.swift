@@ -17,6 +17,7 @@
 //
 
 import CoreData
+import GenericMessageProtocol
 import WireCryptobox
 import WireDataModel
 import WireLogging
@@ -306,7 +307,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
     }
 
     public func addMessageReaction(
-        _ messageReaction: WireProtos.Reaction,
+        _ messageReaction: GenericMessageProtocol.Reaction,
         in conversation: ZMConversation,
         senderID: UUID,
         date: Date
@@ -323,7 +324,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
     }
 
     public func addMessageConfirmation(
-        _ confirmation: WireProtos.Confirmation,
+        _ confirmation: GenericMessageProtocol.Confirmation,
         in conversation: ZMConversation,
         senderID: UUID,
         senderDomain: String,
@@ -903,6 +904,22 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             }
 
             return [systemMessage]
+
+        case let .channelHistoryDepthModified(sender, newHistoryDepth): // newHistoryDepth null if disabled
+            guard let sender = await fetchUser(
+                id: sender.id,
+                domain: sender.domain
+            ) else {
+                return []
+            }
+
+            let systemMessage = await createSystemMessage(
+                messageType: .channelHistoryDepthModified,
+                sender: sender,
+                text: newHistoryDepth
+            )
+
+            return [systemMessage]
         }
     }
 
@@ -912,6 +929,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         users: Set<ZMUser>? = nil,
         addedUsers: Set<ZMUser> = Set(),
         clients: Set<UserClient>? = nil,
+        text: String? = nil,
         timestamp: Date = .now,
         duration: TimeInterval? = nil,
         messageTimer: Double? = nil,
@@ -927,6 +945,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             systemMessage.addedUsers = addedUsers
             systemMessage.clients = clients ?? Set()
             systemMessage.serverTimestamp = timestamp
+            systemMessage.text = text
 
             if let duration {
                 systemMessage.duration = duration

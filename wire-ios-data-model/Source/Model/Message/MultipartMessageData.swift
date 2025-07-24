@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
+
 // TODO: [WPB-16311] This is currently just a stub and needs to be implemented properly.
 public final class MultipartMessageData: NSObject {
 

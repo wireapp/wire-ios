@@ -647,6 +647,11 @@ public final class ClientSessionComponent {
         localStore: conversationLocalStore
     )
 
+    private lazy var mlsResetEventProcessor = ConversationMLSResetEventProcessor(
+        mlsService: mlsService,
+        conversationLocalStore: conversationLocalStore
+    )
+
     private lazy var conversationEventProcessor = ConversationEventProcessor(
         accessUpdateEventProcessor: conversationAccessUpdateEventProcessor,
         createEventProcessor: conversationCreateEventProcessor,
@@ -662,7 +667,8 @@ public final class ClientSessionComponent {
         receiptModeUpdateEventProcessor: conversationReceiptModeUpdateEventProcessor,
         renameEventProcessor: conversationRenameEventProcessor,
         typingEventProcessor: conversationTypingEventProcessor,
-        addPermissionEventProcessor: addPermissionEventProcessor
+        addPermissionEventProcessor: addPermissionEventProcessor,
+        mlsResetEventProcessor: mlsResetEventProcessor
     )
 
     private lazy var updateEventProcessor: UpdateEventProcessor = {

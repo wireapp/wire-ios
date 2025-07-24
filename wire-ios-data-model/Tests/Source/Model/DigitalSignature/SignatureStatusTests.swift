@@ -16,12 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import XCTest
+
 @testable import WireDataModel
 
 final class SignatureStatusTests: ZMBaseManagedObjectTest {
     var status: SignatureStatus!
-    var asset: WireProtos.Asset?
+    var asset: GenericMessageProtocol.Asset?
 
     override func setUp() {
         super.setUp()
@@ -69,18 +71,22 @@ final class SignatureStatusTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(status.fileName, asset?.original.name)
     }
 
-    private func createAsset() -> WireProtos.Asset {
+    private func createAsset() -> GenericMessageProtocol.Asset {
         let (otrKey, sha) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
         let (assetId, token) = ("id", "token")
-        let original = WireProtos.Asset.Original(withSize: 200, mimeType: "application/pdf", name: "PDF test")
+        let original = GenericMessageProtocol.Asset.Original(
+            withSize: 200,
+            mimeType: "application/pdf",
+            name: "PDF test"
+        )
 
-        let remoteData = WireProtos.Asset.RemoteData(
+        let remoteData = GenericMessageProtocol.Asset.RemoteData(
             withOTRKey: otrKey,
             sha256: sha,
             assetId: assetId,
             assetToken: token
         )
-        let asset = WireProtos.Asset.with {
+        let asset = GenericMessageProtocol.Asset.with {
             $0.original = original
             $0.uploaded = remoteData
         }

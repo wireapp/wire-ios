@@ -20,7 +20,7 @@ import SwiftUI
 import UIKit
 import WireDomain
 import WireLogging
-import WireMessagingAPI
+import WireMessagingDomain
 import WireMessagingUI
 import WireNetwork
 import WireReusableUIComponents
@@ -31,8 +31,10 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
     private let userSession: UserSession
     private var values: ConversationCreationValues
 
-    private lazy var viewModel = WireConversationChannelCreationFormViewModel(
+    private lazy var viewModel = ConversationChannelCreationFormViewModel(
         channelName: "",
+        isUserPremium: isUserPremium,
+        teamsURL: URL.manageTeam(source: .settings),
         onFormValidityUpdate: { formIsValid in
             Task { @MainActor [weak self] in
                 self?.onFormValidityUpdate(formIsValid: formIsValid)
@@ -40,16 +42,25 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
         }
     )
 
+    private lazy var isUserPremium: Bool = {
+        guard let userSession = userSession as? ZMUserSession else { return false }
+        let conferenceCalling = userSession.syncContext.performAndWait {
+            userSession.featureRepository.fetchConferenceCalling()
+        }
+
+        return conferenceCalling.status == .enabled
+    }()
+
     weak var delegate: ConversationCreationControllerDelegate?
 
-    private lazy var hostingController: UIHostingController<WireConversationChannelCreationForm> = {
-        let rootView = WireConversationChannelCreationForm(
+    private lazy var hostingController: UIHostingController<ConversationChannelCreationForm> = {
+        let rootView = ConversationChannelCreationForm(
             viewModel: viewModel
         )
         return UIHostingController(rootView: rootView)
     }()
 
-    @MainActor var channelCreationSettings: WireConversationChannelCreationSettings? {
+    @MainActor var channelCreationSettings: ConversationChannelCreationSettings? {
         viewModel.getChannelCreationSettings()
     }
 
@@ -136,6 +147,7 @@ final class WireConversationChannelCreationFormViewController: UIViewController 
         values.allowGuests = channelCreationSettings.guestsAllowed
         values.allowServices = channelCreationSettings.servicesAllowed
         values.enableReceipts = channelCreationSettings.readReceiptsEnabled
+        values.channelHistoryDepth = channelCreationSettings.historyDepth
 
         let participantsController = AddParticipantsViewController(
             context: .create(values),
@@ -221,10 +233,13 @@ extension WireConversationChannelCreationFormViewController: AddParticipantsConv
             $0.toNetworkModel()
         }
 
+        let channelHistoryDepth = values.channelHistoryDepth
+
         do {
             let conversation = try await channelUseCase.invoke(
                 teamID: teamID,
                 name: values.name,
+                historyDepth: channelHistoryDepth,
                 users: Set(users),
                 accessMode: Set(accessMode),
                 accessRoles: Set(accessRoles),

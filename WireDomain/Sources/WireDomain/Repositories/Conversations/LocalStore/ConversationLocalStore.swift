@@ -17,6 +17,7 @@
 //
 
 import CoreData
+import GenericMessageProtocol
 import WireDataModel
 import WireLogging
 
@@ -102,6 +103,16 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         await context.perform {
             conversation.mlsStatus = .ready
             conversation.mlsGroupID = mlsGroupID
+        }
+    }
+
+    public func storeMLSConversationPendingJoin(
+        newMLSGroupID: MLSGroupID,
+        conversation: ZMConversation
+    ) async {
+        await context.perform {
+            conversation.mlsStatus = .pendingJoin
+            conversation.mlsGroupID = newMLSGroupID
         }
     }
 

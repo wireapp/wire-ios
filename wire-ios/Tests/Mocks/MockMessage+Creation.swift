@@ -117,6 +117,7 @@ enum MockMessageFactory {
         conversation: Conversation? = nil,
         users numUsers: Int = 0,
         sender: UserType? = nil,
+        text: String? = nil,
         reason: ZMParticipantsRemovedReason = .none,
         domains: [String]? = nil
     ) -> (MockMessage?, MockSystemMessageData) {
@@ -127,6 +128,8 @@ enum MockMessageFactory {
             reason: reason,
             domains: domains
         )
+
+        mockSystemMessageData.text = text
 
         message.serverTimestamp = Date(timeIntervalSince1970: 12_345_678_564)
 
@@ -145,6 +148,7 @@ enum MockMessageFactory {
         users numUsers: Int = 0,
         clients numClients: Int = 0,
         sender: UserType? = nil,
+        text: String? = nil,
         reason: ZMParticipantsRemovedReason = .none,
         domains: [String]? = nil
     ) -> MockMessage? {
@@ -154,6 +158,7 @@ enum MockMessageFactory {
             conversation: conversation,
             users: numUsers,
             sender: sender,
+            text: text,
             reason: reason,
             domains: domains
         )
