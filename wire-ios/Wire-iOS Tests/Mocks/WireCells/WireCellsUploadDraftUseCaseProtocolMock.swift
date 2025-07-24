@@ -16,16 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
+import Foundation
+import WireCellsAPI
 
-public struct WireCellsCredentials: Equatable, Hashable, Sendable {
-    public let serverURL: URL
-    public let accessToken: String
-    public let gatewaySecret: String
+final class WireCellsUploadDraftUseCaseProtocolMock: WireCellsUploadDraftUseCaseProtocol {
 
-    package init(serverURL: URL, accessToken: String, gatewaySecret: String) {
-        self.serverURL = serverURL
-        self.accessToken = accessToken
-        self.gatewaySecret = gatewaySecret
+    func invoke(fileURL: URL) async throws {
+        fatalError("Implement")
     }
+
+    func invoke(imageData: Data) async throws {
+        fatalError("Implement")
+    }
+
 }

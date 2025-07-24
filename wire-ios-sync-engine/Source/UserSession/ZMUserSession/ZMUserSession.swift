@@ -391,7 +391,7 @@ public final class ZMUserSession: NSObject {
     var callStateObserverToken: AnyObject?
 
     private let userSessionComponent: UserSessionComponent
-    private(set) var clientSessionComponent: ClientSessionComponent?
+    public private(set) var clientSessionComponent: ClientSessionComponent?
 
     // MARK: - Initialize
 
@@ -400,7 +400,7 @@ public final class ZMUserSession: NSObject {
         transportSession: any TransportSessionType,
         mediaManager: any MediaManagerType,
         flowManager: any FlowManagerType,
-        apiServiceFactory: @escaping @Sendable (_ clientID: String, _ userID: UUID) -> APIServiceProtocol,
+        apiServiceFactory: @escaping APIServiceFactory,
         application: ZMApplication,
         currentAppVersion: String,
         currentBuildNumber: String,

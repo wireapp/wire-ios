@@ -16,19 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum WireCellsNodeConversationRepositoryError: Error {
-    case cellNameNotFound
-    case genericError(any Error)
-}
+import WireCellsAPI
 
-public protocol WireCellsNodeConversationRepository {
-    func getCellName(conversationID: WireCellsConversationID) async throws(WireCellsNodeConversationRepositoryError)
-        -> String
+final class WireCellsClearPublishedDraftsUseCaseProtocolMock: WireCellsClearPublishedDraftsUseCaseProtocol {
 
-    func setWireCell(
-        conversationID: WireCellsConversationID,
-        cellName: String
-    ) async throws(WireCellsNodeConversationRepositoryError)
+    func invoke() async {
+        fatalError("Implement")
+    }
 
-    func getConversationNames() async throws(WireCellsNodeConversationRepositoryError) -> [WireCellsConversation]
 }

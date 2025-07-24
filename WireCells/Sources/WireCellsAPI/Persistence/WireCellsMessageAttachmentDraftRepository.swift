@@ -24,7 +24,6 @@ public enum MessageAttachmentDraftRepositoryError: Error, Sendable {
     case notFound
 }
 
-// sourcery: AutoMockable
 public protocol WireCellsMessageAttachmentDraftRepository {
 
     @discardableResult

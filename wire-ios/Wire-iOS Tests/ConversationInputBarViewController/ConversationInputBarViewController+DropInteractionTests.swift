@@ -73,7 +73,8 @@ final class ConversationInputBarViewControllerDropInteractionTests: XCTestCase {
             conversation: conversation,
             userSession: mockUserSession,
             classificationProvider: mockSecurityClassificationProviding,
-            networkStatusObservable: MockNetworkStatusObservable()
+            networkStatusObservable: MockNetworkStatusObservable(),
+            wireCellsFactory: MockWireCellsFactoryProtocol.makeDefault()
         )
     }
 }

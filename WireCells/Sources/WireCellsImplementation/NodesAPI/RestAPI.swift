@@ -32,17 +32,16 @@ final class RestAPI: Sendable {
 
     }
 
-    private let configuration: CellsSDKAPIConfiguration
+    private let serverURL: URL
+    private let accessTokenProvider: any AccessTokenProvider
 
-    init(serverURL: URL, accessToken: String) {
-        let config = CellsSDKAPIConfiguration()
-        config.basePath = serverURL.absoluteString
-        config.customHeaders = ["Authorization": "Bearer \(accessToken)"]
-        self.configuration = config
+    init(serverURL: URL, accessToken: any AccessTokenProvider) {
+        self.serverURL = serverURL
+        self.accessTokenProvider = accessToken
     }
 
     func getNode(uuid: UUID) async throws -> WireCellsNodeDTO {
-        let response = try await NodeServiceAPI.getByUuid(uuid: uuid.uuidString, apiConfiguration: configuration)
+        let response = try await NodeServiceAPI.getByUuid(uuid: uuid.uuidString, apiConfiguration: makeConfiguration())
         guard let dto = response.toDTO() else {
             throw WireCellsNodesAPIError.failedToDecodeNode
         }
@@ -58,7 +57,7 @@ final class RestAPI: Sendable {
             sortField: Constants.sortedBy
         )
 
-        return try await NodeServiceAPI.lookup(body: request, apiConfiguration: configuration).toDTO()
+        return try await NodeServiceAPI.lookup(body: request, apiConfiguration: makeConfiguration()).toDTO()
     }
 
     func getFilesForPath(path: String, limit: Int, offset: Int) async throws -> WireCellsGetFilesResponseDTO {
@@ -72,7 +71,7 @@ final class RestAPI: Sendable {
             sortField: Constants.sortedBy
         )
 
-        return try await NodeServiceAPI.lookup(body: request, apiConfiguration: configuration).toDTO()
+        return try await NodeServiceAPI.lookup(body: request, apiConfiguration: makeConfiguration()).toDTO()
     }
 
     func delete(uuid: UUID) async throws {
@@ -80,7 +79,7 @@ final class RestAPI: Sendable {
         _ = try await NodeServiceAPI.performAction(
             name: .delete,
             parameters: parameters,
-            apiConfiguration: configuration
+            apiConfiguration: makeConfiguration()
         )
     }
 
@@ -90,7 +89,7 @@ final class RestAPI: Sendable {
         _ = try await NodeServiceAPI.performAction(
             name: .delete,
             parameters: parameters,
-            apiConfiguration: configuration
+            apiConfiguration: makeConfiguration()
         )
     }
 
@@ -100,7 +99,7 @@ final class RestAPI: Sendable {
             uuid: uuid.uuidString,
             versionId: versionID.uuidString,
             parameters: parameters,
-            apiConfiguration: configuration
+            apiConfiguration: makeConfiguration()
         )
     }
 
@@ -108,7 +107,7 @@ final class RestAPI: Sendable {
         _ = try await NodeServiceAPI.deleteVersion(
             uuid: uuid.uuidString,
             versionId: versionID.uuidString,
-            apiConfiguration: configuration
+            apiConfiguration: makeConfiguration()
         )
     }
 
@@ -121,7 +120,7 @@ final class RestAPI: Sendable {
             )]
         )
 
-        let response = try await NodeServiceAPI.createCheck(body: request, apiConfiguration: configuration)
+        let response = try await NodeServiceAPI.createCheck(body: request, apiConfiguration: makeConfiguration())
 
         if let result = response.results?.first {
             return WireCellsPreCheckResultDTO(
@@ -136,7 +135,7 @@ final class RestAPI: Sendable {
     func getPublicLink(uuid: UUID) async throws -> URL {
         let response = try await NodeServiceAPI.getPublicLink(
             linkUuid: uuid.uuidString,
-            apiConfiguration: configuration
+            apiConfiguration: makeConfiguration()
         )
 
         guard let urlString = response.linkUrl else {
@@ -160,7 +159,7 @@ final class RestAPI: Sendable {
         let response = try await NodeServiceAPI.createPublicLink(
             uuid: uuid.uuidString,
             publicLinkRequest: request,
-            apiConfiguration: configuration
+            apiConfiguration: makeConfiguration()
         )
 
         guard let idString = response.uuid else {
@@ -181,6 +180,14 @@ final class RestAPI: Sendable {
     }
 
     func deletePublicLink(uuid: UUID) async throws {
-        _ = try await NodeServiceAPI.deletePublicLink(linkUuid: uuid.uuidString, apiConfiguration: configuration)
+        _ = try await NodeServiceAPI.deletePublicLink(linkUuid: uuid.uuidString, apiConfiguration: makeConfiguration())
+    }
+
+    private func makeConfiguration() async throws -> CellsSDKAPIConfiguration {
+        let config = CellsSDKAPIConfiguration()
+        config.basePath = serverURL.absoluteString
+        config.customHeaders = ["Authorization": "Bearer \(try await accessTokenProvider.accessToken().token)"]
+
+        return config
     }
 }

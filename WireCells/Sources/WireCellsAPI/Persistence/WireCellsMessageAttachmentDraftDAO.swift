@@ -30,7 +30,6 @@ public protocol FetchedResultsControllerObserver<T>: Actor where T: Sendable {
     func observe() -> AsyncStream<T>
 }
 
-// sourcery: AutoMockable
 public protocol WireCellsMessageAttachmentDraftDAO {
 
     associatedtype DraftsObserver: FetchedResultsControllerObserver<[WireCellsMessageAttachmentDraft]>

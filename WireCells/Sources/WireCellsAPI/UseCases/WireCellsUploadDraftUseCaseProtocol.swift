@@ -16,19 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum WireCellsNodeConversationRepositoryError: Error {
-    case cellNameNotFound
-    case genericError(any Error)
+public import Foundation
+
+/// Uploads file as a draft to the cells server.
+
+public protocol WireCellsUploadDraftUseCaseProtocol: Sendable {
+
+    /// Uploads the file at `fileURL` to the cells server.
+
+    func invoke(fileURL: URL) async throws
+
+    /// Creates a file using `imageData` and uploads it to the cells server.
+
+    func invoke(imageData: Data) async throws
 }
 
-public protocol WireCellsNodeConversationRepository {
-    func getCellName(conversationID: WireCellsConversationID) async throws(WireCellsNodeConversationRepositoryError)
-        -> String
+public enum WireCellsUploadDraftUseCaseError: Error, Sendable {
 
-    func setWireCell(
-        conversationID: WireCellsConversationID,
-        cellName: String
-    ) async throws(WireCellsNodeConversationRepositoryError)
+    /// The file size of the requested file cannot be determined.
 
-    func getConversationNames() async throws(WireCellsNodeConversationRepositoryError) -> [WireCellsConversation]
+    case missingFileSize
+
 }
