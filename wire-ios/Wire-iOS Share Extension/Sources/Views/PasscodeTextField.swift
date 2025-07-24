@@ -19,7 +19,6 @@
 import UIKit
 import WireDesign
 import WireReusableUIComponents
-import WireSyncEngine
 
 protocol PasscodeTextFieldDelegate: AnyObject {
     func textFieldValueChanged(_ value: String?)
@@ -136,7 +135,6 @@ extension PasscodeTextField {
             cornerRadius: 4
         )
 
-        let aaa = true
         let textField = PasscodeTextField(
             leftInset: 0,
             accessoryTrailingInset: 0,
