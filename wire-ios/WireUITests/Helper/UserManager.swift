@@ -30,7 +30,6 @@ class UserManager {
     var createdUsers: [UserInfo]
     var networkStack: NetworkStack
     var apiService: APIService
-    var networkService: NetworkService
 
     let authenticationAPI: AuthenticationAPI
     let teamsAPI: TeamsAPI
@@ -47,12 +46,11 @@ class UserManager {
             minTLSVersion: .v1_2,
             cookieEncryptionKey: Data()
         )
-        self.networkService = networkStack.apiNetworkService
         self.cookieStorage = MockCookieStorage()
         self.authenticationManager = AuthenticationManager(
             clientID: nil,
             cookieStorage: cookieStorage,
-            networkService: networkService,
+            networkService: networkStack.apiNetworkService,
             onAuthenticationFailure: { @Sendable () in }
         )
         self.apiService = APIService(
@@ -62,7 +60,7 @@ class UserManager {
         self.authenticationAPI = AuthenticationAPIBuilder(networkService: networkStack.apiNetworkService)
             .makeAPI(for: apiVersion)
         self.selfUserAPI = SelfUserAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
-        self.teamsAPI = TeamsAPIBuilder(apiService: apiService, networkService: networkStack.apiNetworkService)
+        self.teamsAPI = TeamsAPIBuilder(apiService: apiService)
             .makeAPI(for: apiVersion)
         self.conversationsAPI = ConversationsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
     }

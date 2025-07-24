@@ -29,7 +29,7 @@ final class TeamsAPITests: XCTestCase {
     override func setUp() {
         super.setUp()
         apiSnapshotHelper = APIServiceSnapshotHelper { apiService, apiVersion in
-            let builder = TeamsAPIBuilder(apiService: apiService, networkService: <#any NetworkServiceProtocol#>)
+            let builder = TeamsAPIBuilder(apiService: apiService)
             return builder.makeAPI(for: apiVersion)
         }
     }
@@ -104,7 +104,7 @@ final class TeamsAPITests: XCTestCase {
             label: ""
         )
 
-        let sut = TeamsAPIV0(apiService: apiService, networkService: <#any NetworkServiceProtocol#>)
+        let sut = TeamsAPIV0(apiService: apiService)
 
         // Then
         await XCTAssertThrowsErrorAsync(TeamsAPIError.invalidTeamID) {
@@ -120,7 +120,7 @@ final class TeamsAPITests: XCTestCase {
             label: "no-team"
         )
 
-        let sut = TeamsAPIV0(apiService: apiService, networkService: <#any NetworkServiceProtocol#>)
+        let sut = TeamsAPIV0(apiService: apiService)
 
         // Then
         await XCTAssertThrowsErrorAsync(TeamsAPIError.teamNotFound) {
@@ -164,7 +164,7 @@ final class TeamsAPITests: XCTestCase {
             label: "no-team-member"
         )
 
-        let sut = TeamsAPIV0(apiService: apiService, networkService: <#any NetworkServiceProtocol#>)
+        let sut = TeamsAPIV0(apiService: apiService)
 
         // Then
         await XCTAssertThrowsErrorAsync(TeamsAPIError.selfUserIsNotTeamMember) {
@@ -180,7 +180,7 @@ final class TeamsAPITests: XCTestCase {
             label: ""
         )
 
-        let sut = TeamsAPIV0(apiService: apiService, networkService: <#any NetworkServiceProtocol#>)
+        let sut = TeamsAPIV0(apiService: apiService)
 
         // Then
         await XCTAssertThrowsErrorAsync(TeamsAPIError.teamNotFound) {
@@ -233,7 +233,7 @@ final class TeamsAPITests: XCTestCase {
             label: ""
         )
 
-        let sut = TeamsAPIV0(apiService: apiService, networkService: <#any NetworkServiceProtocol#>)
+        let sut = TeamsAPIV0(apiService: apiService)
 
         // Then
         await XCTAssertThrowsErrorAsync(TeamsAPIError.invalidQueryParmeter) {
@@ -252,7 +252,7 @@ final class TeamsAPITests: XCTestCase {
             label: "no-team-member"
         )
 
-        let sut = TeamsAPIV0(apiService: apiService, networkService: <#any NetworkServiceProtocol#>)
+        let sut = TeamsAPIV0(apiService: apiService)
 
         // Then
         await XCTAssertThrowsErrorAsync(TeamsAPIError.selfUserIsNotTeamMember) {
@@ -271,7 +271,7 @@ final class TeamsAPITests: XCTestCase {
             label: ""
         )
 
-        let sut = TeamsAPIV0(apiService: apiService, networkService: <#any NetworkServiceProtocol#>)
+        let sut = TeamsAPIV0(apiService: apiService)
 
         // Then
         await XCTAssertThrowsErrorAsync(TeamsAPIError.teamNotFound) {
@@ -364,7 +364,7 @@ final class TeamsAPITests: XCTestCase {
             label: ""
         )
 
-        let sut = TeamsAPIV4(apiService: apiService, networkService: <#any NetworkServiceProtocol#>)
+        let sut = TeamsAPIV4(apiService: apiService)
 
         // Then
         await XCTAssertThrowsErrorAsync(TeamsAPIError.invalidTeamID) {
@@ -380,7 +380,7 @@ final class TeamsAPITests: XCTestCase {
             label: ""
         )
 
-        let sut = TeamsAPIV4(apiService: apiService, networkService: <#any NetworkServiceProtocol#>)
+        let sut = TeamsAPIV4(apiService: apiService)
 
         // Then
         await XCTAssertThrowsErrorAsync(TeamsAPIError.teamNotFound) {
@@ -396,7 +396,7 @@ final class TeamsAPITests: XCTestCase {
             label: ""
         )
 
-        let sut = TeamsAPIV4(apiService: apiService, networkService: <#any NetworkServiceProtocol#>)
+        let sut = TeamsAPIV4(apiService: apiService)
 
         // Then
         await XCTAssertThrowsErrorAsync(TeamsAPIError.invalidRequest) {
@@ -426,7 +426,7 @@ final class TeamsAPITests: XCTestCase {
             label: ""
         )
 
-        let sut = TeamsAPIV5(apiService: apiService, networkService: <#any NetworkServiceProtocol#>)
+        let sut = TeamsAPIV5(apiService: apiService)
 
         // Then
         await XCTAssertThrowsErrorAsync(TeamsAPIError.invalidTeamID) {
@@ -457,7 +457,7 @@ final class TeamsAPITests: XCTestCase {
             statusCode: code,
             label: errorLabel
         )
-        let builder = TeamsAPIBuilder(apiService: apiService, networkService: <#any NetworkServiceProtocol#>)
+        let builder = TeamsAPIBuilder(apiService: apiService)
         let sut = builder.makeAPI(for: apiVersion)
 
         // Then

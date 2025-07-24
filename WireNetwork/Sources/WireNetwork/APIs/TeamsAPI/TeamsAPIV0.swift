@@ -21,11 +21,9 @@ import Foundation
 class TeamsAPIV0: TeamsAPI, VersionedAPI {
 
     let apiService: any APIServiceProtocol
-    let networkService: any NetworkServiceProtocol
 
-    init(apiService: any APIServiceProtocol, networkService: any NetworkServiceProtocol) {
+    init(apiService: any APIServiceProtocol) {
         self.apiService = apiService
-        self.networkService = networkService
     }
 
     var apiVersion: APIVersion {
@@ -151,7 +149,7 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
             .addingHeader(field: "Authorization", value: "Bearer \(access_token)")
             .build()
 
-        let (data, response) = try await networkService.executeRequest(request)
+        let (data, response) = try await apiService.executeRequest(request, requiringAccessToken: false)
 
         let payload = try ResponseParser()
             .success(code: .created, type: InviteMemeberToTeamResponseV0.self)
