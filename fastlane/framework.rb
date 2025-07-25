@@ -20,7 +20,6 @@ class Framework
             "wire-ios-link-preview",
             "wire-ios-mocktransport",
             "wire-ios-notification-engine",
-            "wire-ios-protos",
             "wire-ios-request-strategy",
             "wire-ios-share-engine",
             "wire-ios-sync-engine",
@@ -61,14 +60,12 @@ class Framework
         frameworks["wire-ios-data-model"].add_dependency(frameworks["wire-ios-cryptobox"])
         frameworks["wire-ios-data-model"].add_dependency(frameworks["wire-ios-images"])
         frameworks["wire-ios-data-model"].add_dependency(frameworks["wire-ios-link-preview"])
-        frameworks["wire-ios-data-model"].add_dependency(frameworks["wire-ios-protos"])
         frameworks["wire-ios-data-model"].add_dependency(frameworks["wire-ios-transport"])
         frameworks["wire-ios-data-model"].add_dependency(frameworks["WireFoundation"])
         frameworks["wire-ios-data-model"].add_dependency(frameworks["wire-ios-testing"]) # included in WireDataModelTests
 
         frameworks["wire-ios-mocktransport"].add_dependency(frameworks["wire-ios-testing"])
         frameworks["wire-ios-mocktransport"].add_dependency(frameworks["wire-ios-cryptobox"])
-        frameworks["wire-ios-mocktransport"].add_dependency(frameworks["wire-ios-protos"])
 
         frameworks["wire-ios-cryptobox"].add_dependency(frameworks["wire-ios-utilities"])
 

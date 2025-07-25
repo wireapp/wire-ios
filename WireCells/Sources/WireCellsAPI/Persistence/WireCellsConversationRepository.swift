@@ -21,7 +21,6 @@ public enum WireCellsNodeConversationRepositoryError: Error {
     case genericError(any Error)
 }
 
-// sourcery: AutoMockable
 public protocol WireCellsNodeConversationRepository {
     func getCellName(conversationID: WireCellsConversationID) async throws(WireCellsNodeConversationRepositoryError)
         -> String

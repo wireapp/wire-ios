@@ -17,6 +17,7 @@
 //
 
 public import Foundation
+public import WireDomain
 public import WireFoundation
 
 import WireAnalytics
@@ -1314,4 +1315,8 @@ public class MockUserSession: UserSession {
             fatalError("no mock for `e2eIdentityUpdateCertificateUpdateStatus`")
         }
     }
+
+    // MARK: - ClientSessionComponent
+
+    public var clientSessionComponent: ClientSessionComponent?
 }

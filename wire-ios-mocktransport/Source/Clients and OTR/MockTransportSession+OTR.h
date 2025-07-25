@@ -18,7 +18,6 @@
 
 #import "MockTransportSession+internal.h"
 
-@import WireProtos;
 
 @interface MockTransportSession (OTR)
 

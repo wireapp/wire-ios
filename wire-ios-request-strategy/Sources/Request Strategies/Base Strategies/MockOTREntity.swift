@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireDataModel
 import XCTest
 
@@ -71,7 +72,7 @@ final class MockOTREntity: OTREntity {
 }
 
 extension MockOTREntity: ProteusMessage {
-    func setUnderlyingMessage(_ message: WireProtos.GenericMessage) throws {}
+    func setUnderlyingMessage(_ message: GenericMessageProtocol.GenericMessage) throws {}
 
     var targetRecipients: WireRequestStrategy.Recipients {
         .conversationParticipants

@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireCryptobox
 import WireLinkPreview
 
@@ -166,7 +167,7 @@ extension ZMClientMessageTests_Ephemeral {
 
             let imageData = self.verySmallJPEGData()
             let assetMessage = GenericMessage(
-                content: WireProtos.Asset(imageSize: .zero, mimeType: "", size: UInt64(imageData.count)),
+                content: GenericMessageProtocol.Asset(imageSize: .zero, mimeType: "", size: UInt64(imageData.count)),
                 nonce: nonce,
                 expiresAfter: .tenSeconds
             )
@@ -178,7 +179,10 @@ extension ZMClientMessageTests_Ephemeral {
             }
 
             let uploaded = GenericMessage(
-                content: WireProtos.Asset(withUploadedOTRKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key()),
+                content: GenericMessageProtocol.Asset(
+                    withUploadedOTRKey: .randomEncryptionKey(),
+                    sha256: .zmRandomSHA256Key()
+                ),
                 nonce: message.nonce!,
                 expiresAfter: self.syncConversation.activeMessageDestructionTimeoutValue
             )
