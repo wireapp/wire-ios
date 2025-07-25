@@ -20,34 +20,9 @@ import Foundation
 import WireLogging
 import WireSystem
 
+// TODO: delete
+
 extension UserClient {
-
-    /// Migrate client sessions from using the client identifier only as session identifier
-    /// to new client sessions  useing user identifier + client identifier as session identifier.
-    /// These have less chances of collision.
-
-    static func migrateAllSessionsClientIdentifiersV2(in moc: NSManagedObjectContext) {
-        WireLogger.proteus.info("migrating all session ids to v2")
-
-        let request = UserClient.sortedFetchRequest()
-
-        guard let allClients = moc.fetchOrAssert(request: request) as? [UserClient] else {
-            WireLogger.proteus.info("migrating all session ids to v2: no clients to migrate")
-            return
-        }
-
-        guard let keyStore = keyStore(in: moc) else {
-            WireLogger.proteus.critical("could not migrate proteus session ids: keystore doesn't exist")
-            fatalError("could not migrate proteus session ids: keystore doesn't exist")
-        }
-
-        keyStore.encryptionContext.perform { session in
-            for client in allClients {
-                client.migrateSessionIdentifierFromV1IfNeeded(sessionDirectory: session)
-                client.needsSessionMigration = false
-            }
-        }
-    }
 
     // Problem:
     // Existing proteus sessions are qualified with user id and client id only. In a
@@ -91,12 +66,13 @@ extension UserClient {
     // instance if the keystore already, we create one temporarily for this migration
     // assuming that we'll perform the migration from Cryptobox to Core Crypto afterwards.
 
+    // TODO: delete
     static func keyStore(in context: NSManagedObjectContext) -> UserClientKeysStore? {
         if let existingKeyStore = context.zm_cryptKeyStore {
             WireLogger.proteus.info("migrating all session ids to v3: using existing keystore")
             return existingKeyStore
-        } else if let accountDirectory = context.accountDirectoryURL,
-                  let applicationContainer = context.applicationContainerURL {
+        } else if let accountDirectory = context.accountDirectoryURL, // TODO: delete
+                  let applicationContainer = context.applicationContainerURL { // TODO: delete
             WireLogger.proteus.info("migrating all session ids to v3: creating temp keystore")
 
             return UserClientKeysStore(
