@@ -19,6 +19,8 @@
 import Foundation
 import WireNetwork
 
+// import WireDomain
+
 class UserManager {
     var createdUsers: [UserInfo]
     var networkStack: NetworkStack
@@ -26,6 +28,8 @@ class UserManager {
 
     let authenticationAPI: AuthenticationAPI
     let selfUserAPI: SelfUserAPI
+
+    let conversationsAPI: ConversationsAPI
     let authenticationManager: AuthenticationManager
 
     private let cookieStorage: any CookieStorageProtocol
@@ -51,6 +55,7 @@ class UserManager {
         self.authenticationAPI = AuthenticationAPIBuilder(networkService: networkStack.apiNetworkService)
             .makeAPI(for: apiVersion)
         self.selfUserAPI = SelfUserAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
+        self.conversationsAPI = ConversationsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
     }
 
     func createPersonalUser() async throws -> UserInfo {
@@ -89,6 +94,32 @@ class UserManager {
         try await selfUserAPI.deleteSelf(password: user.password)
     }
 
+    func getConversationId(matching criteria: FilterConversationsByCriteria) async throws
+        -> (convoId: UUID?, domain: String?) {
+        var conversationIDs = [QualifiedID]()
+
+        for try await ids in try await conversationsAPI.getConversationIdentifiers() {
+            conversationIDs.append(contentsOf: ids)
+        }
+
+        let conversations = try await conversationsAPI.getConversations(for: conversationIDs)
+
+        let filtered = conversations.found.filter { conversation in
+            switch criteria {
+            case let .groupName(name):
+                conversation.name == name
+            case let .conversationType(type):
+                conversation.type == type
+            }
+        }
+
+        if let match = filtered.first {
+            return (match.qualifiedID?.id, match.qualifiedID?.domain)
+        }
+
+        return (nil, nil)
+    }
+
     func deleteTeam(teamID: UUID, password: String, code: String) async throws {
         try await selfUserAPI.deleteTeam(
             teamId: teamID,
@@ -104,16 +135,14 @@ class UserManager {
                     email: user.email,
                     password: user.password
                 ) {
-                    // If team exists, try deleting the team
                     try await BackendClient.sendVerificationCode(email: user.email, password: user.password)
                     let code = try await InbucketClient.getVerificationCode(email: user.email)
                     try await deleteTeam(teamID: teamID, password: user.password, code: code)
                 } else {
-                    // If no team, delete user
                     try await deleteUser(user)
                 }
             } catch {
-                print("❌ Failed to clean up user \(user.email): \(error)")
+                print(error)
             }
         }
     }
@@ -127,6 +156,11 @@ private extension BackendEnvironment {
         pinnedKeys: [],
         proxySettings: nil
     )
+}
+
+enum FilterConversationsByCriteria {
+    case groupName(String)
+    case conversationType(ConversationType?)
 }
 
 private final class MockCookieStorage: CookieStorageProtocol {
