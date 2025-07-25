@@ -149,6 +149,7 @@ final class WireCellsLocalAssetRepositoryTests {
             size: 1234,
             eTag: "abc",
             mimeType: "image/png",
+            downloadURL: URL(string: "https://example.com/file.png")!
         )
         nodesAPI.getNodeNodeIDUUIDWireCellsNodeReturnValue = node
 
@@ -205,6 +206,7 @@ final class WireCellsLocalAssetRepositoryTests {
             size: 1234,
             eTag: "abc",
             mimeType: "image/png",
+            downloadURL: URL(string: "https://example.com/file.png")!
         )
 
         // when
@@ -239,6 +241,102 @@ final class WireCellsLocalAssetRepositoryTests {
                 size: 1234,
                 downloadState: .pending,
             )
+        )
+    }
+
+    @Test
+    func downloadAsset_whenDownloadInProgress() async throws {
+        // given
+        let sut = WireCellsLocalAssetRepository(
+            nodesAPI: nodesAPI,
+            fileDownloader: fileDownloader,
+            fileCache: fileCache,
+            store: store,
+            downloadStates: [nodeID: .downloading(progress: 0.5, task: Task.fixture())]
+        )
+
+        // when, then
+
+        let nodeID = nodeID // Necessary for the macro compiler :(
+        await #expect(throws: WireCellsLocalAssetRepositoryError.downloadAlreadyInProgress) {
+            _ = try await sut.downloadAsset(nodeID: nodeID)
+        }
+    }
+
+    @Test func downloadAsset_whenSuccess() async throws {
+        // given
+        storeBacking[nodeID] = nil
+
+        let node = WireCellsNode.fixture(
+            uuid: nodeID,
+            path: "path/file.png",
+            size: 1234,
+            eTag: "abc",
+            mimeType: "image/png",
+            downloadURL: URL(string: "https://example.com/file.png")!
+        )
+        nodesAPI.getNodeNodeIDUUIDWireCellsNodeReturnValue = node
+
+        let (progressStream, progressContinuation) = AsyncStream.makeStream(of: Double.self)
+        fileDownloader.downloadFromUrlURL_ProgressAsyncStreamDoubleDownloadTaskURLURLResponseAnyErrorReturnValue =
+            (progress: progressStream, download: Task.fixture())
+
+        Task {
+            progressContinuation.yield(0.5)
+            progressContinuation.yield(1)
+            progressContinuation.finish()
+        }
+
+        // when
+        try await sut.downloadAsset(nodeID: nodeID)
+
+        // then
+        #expect(
+            storeBacking[nodeID] == WireCellsLocalAssetMetadata(
+                nodeID: nodeID,
+                eTag: "abc",
+                path: "path/file.png",
+                contentType: "image/png",
+                size: 1234,
+                isDownloaded: true
+            )
+        )
+
+        #expect(
+            observedAssets == [
+                WireCellsLocalAsset(
+                    nodeID: nodeID,
+                    eTag: "abc",
+                    path: "path/file.png",
+                    contentType: "image/png",
+                    size: 1234,
+                    downloadState: .pending,
+                ),
+                WireCellsLocalAsset(
+                    nodeID: nodeID,
+                    eTag: "abc",
+                    path: "path/file.png",
+                    contentType: "image/png",
+                    size: 1234,
+                    downloadState: .downloading(progress: 0.5)
+                ),
+                WireCellsLocalAsset(
+                    nodeID: nodeID,
+                    eTag: "abc",
+                    path: "path/file.png",
+                    contentType: "image/png",
+                    size: 1234,
+                    downloadState: .downloading(progress: 1.0)
+                ),
+                WireCellsLocalAsset(
+                    nodeID: nodeID,
+                    eTag: "abc",
+                    path: "path/file.png",
+                    contentType: "image/png",
+                    size: 1234,
+                    downloadState: .downloaded(cacheKey: "\(nodeID.uuidString)-abc")
+                ),
+            ]
         )
     }
 }

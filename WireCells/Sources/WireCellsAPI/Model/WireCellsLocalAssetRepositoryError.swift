@@ -18,7 +18,7 @@
 
 /// An error specific to the `WireCellsLocalAssetRepository`
 
-public enum WireCellsLocalAssetRepositoryError: Error {
+public enum WireCellsLocalAssetRepositoryError: Error, Equatable {
 
     /// The wire cells node contains no download URL for the asset.
 
