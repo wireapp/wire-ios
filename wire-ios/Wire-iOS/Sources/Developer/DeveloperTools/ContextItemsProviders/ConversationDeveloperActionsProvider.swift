@@ -18,8 +18,8 @@
 
 import Foundation
 import WireDataModel
+import WireFoundation
 import WireLogging
-import WireUtilities
 
 struct ConversationDeveloperActionsProvider: DeveloperToolsContextItemsProvider {
 

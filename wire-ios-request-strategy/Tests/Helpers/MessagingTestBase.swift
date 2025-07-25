@@ -19,6 +19,7 @@
 import GenericMessageProtocol
 import WireCryptobox
 import WireDataModel
+import WireFoundation
 import WireLogging
 import WireTesting
 

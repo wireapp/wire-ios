@@ -19,6 +19,7 @@
 import Foundation
 import WireCoreCrypto
 import WireDataModel
+import WireFoundation
 import WireLogging
 import WireNetwork
 

@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireUtilities
+import WireFoundation
 
 /// Handles requests to add a new user account.
 final class AuthenticationStartAddAccountEventHandler: AuthenticationEventHandler {

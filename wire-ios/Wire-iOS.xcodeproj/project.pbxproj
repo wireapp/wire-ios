@@ -102,6 +102,7 @@
 		76ED41EC2E053E3200A286F4 /* WireNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = 76ED41EB2E053E3200A286F4 /* WireNetwork */; };
 		A96867FA26A5EB8400679D95 /* WireCommonComponents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */; };
 		A96867FB26A5EB8400679D95 /* WireCommonComponents.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		C9B10F8E2E325E8A0093366C /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = C9B10F8D2E325E8A0093366C /* WireFoundation */; };
 		CB1428452DCB8A820092E7AE /* WireCellsUI in Frameworks */ = {isa = PBXBuildFile; productRef = CB1428442DCB8A820092E7AE /* WireCellsUI */; };
 		CB43D9BD2CDBBBB900BF5AEB /* WireFolderPickerUI in Frameworks */ = {isa = PBXBuildFile; productRef = CB43D9BC2CDBBBB900BF5AEB /* WireFolderPickerUI */; };
 		CB4870F22C7F4FE5001E9151 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB4870F12C7F4FE5001E9151 /* WireTransportSupport.framework */; };
@@ -1030,6 +1031,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C9B10F8E2E325E8A0093366C /* WireFoundation in Frameworks */,
 				E985CB8F2CEB4FCB0075DAD6 /* WireDatadog in Frameworks */,
 				59537D8F2CFFA05600920B59 /* WireLogging in Frameworks */,
 				E9816C902CC9244700D77F22 /* WireSyncEngine.framework in Frameworks */,
@@ -1466,6 +1468,7 @@
 			packageProductDependencies = (
 				016A141C2CE6BFC4006A7EF5 /* WireDatadog */,
 				59537D8E2CFFA05600920B59 /* WireLogging */,
+				C9B10F8D2E325E8A0093366C /* WireFoundation */,
 			);
 			productName = WireCommonComponents;
 			productReference = F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */;
@@ -2957,6 +2960,10 @@
 		76ED41EB2E053E3200A286F4 /* WireNetwork */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireNetwork;
+		};
+		C9B10F8D2E325E8A0093366C /* WireFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireFoundation;
 		};
 		CB1428442DCB8A820092E7AE /* WireCellsUI */ = {
 			isa = XCSwiftPackageProductDependency;

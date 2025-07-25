@@ -19,6 +19,7 @@
 import Foundation
 import WireCryptobox
 import WireDataModel
+import WireFoundation
 
 enum UserClientRequestError: Error {
     case noPreKeys

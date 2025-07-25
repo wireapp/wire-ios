@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireUtilities
+import WireFoundation
 
 final class DeveloperFlagsViewModel: ObservableObject {
 

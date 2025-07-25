@@ -17,6 +17,7 @@
 //
 
 import GenericMessageProtocol
+import WireFoundation
 import WireTesting
 
 @testable import WireDataModel

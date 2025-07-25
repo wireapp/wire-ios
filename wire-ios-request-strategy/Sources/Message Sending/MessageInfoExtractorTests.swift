@@ -18,6 +18,7 @@
 
 import GenericMessageProtocol
 import WireDataModelSupport
+import WireFoundation
 import WireRequestStrategySupport
 import XCTest
 

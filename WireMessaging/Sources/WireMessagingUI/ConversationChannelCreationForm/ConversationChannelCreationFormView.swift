@@ -18,6 +18,7 @@
 
 public import SwiftUI
 import WireDesign
+import WireFoundation
 import WireMessagingDomain
 import WireReusableUIComponents
 
@@ -42,7 +43,9 @@ public struct ConversationChannelCreationForm: View {
         Form {
             channelNameSection
             channelAccessSection
-            channelHistorySection
+            if DeveloperFlag.channelsHistory.isOn {
+                channelHistorySection
+            }
             servicesSection
             // TODO: [WPB-16771] Uncomment when read receipts supported on MLS
             //            readReceiptsSection

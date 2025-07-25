@@ -17,5 +17,6 @@
 //
 
 #include "./Security-Flags.xcconfig"
+#include "./Developer-Flags.xcconfig"
 
 WIRE_PRODUCT_NAME = Wire

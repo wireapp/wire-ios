@@ -19,10 +19,10 @@
 import Foundation
 import GenericMessageProtocol
 import WireDataModelSupport
+import WireFoundation
 import WireRequestStrategy
 import WireSyncEngineSupport
 import WireTransport
-
 @testable import WireSyncEngine
 
 class CallingRequestStrategyTests: MessagingTest {
@@ -789,7 +789,7 @@ class MockFetchUserClientsUseCase: FetchUserClientsUseCaseProtocol {
     var mockErrorForFetchUserClients: Error?
 
     func fetchUserClients(
-        userIDs: Set<QualifiedID>,
+        userIDs: Set<WireDataModel.QualifiedID>,
         in context: NSManagedObjectContext
     ) async throws -> Set<QualifiedClientID> {
         if let error = mockErrorForFetchUserClients {

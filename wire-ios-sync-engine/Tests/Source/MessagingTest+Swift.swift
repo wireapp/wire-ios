@@ -17,6 +17,7 @@
 //
 
 import GenericMessageProtocol
+import WireFoundation
 import WireNetwork
 import WireTransport
 

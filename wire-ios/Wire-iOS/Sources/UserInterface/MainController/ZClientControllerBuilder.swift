@@ -19,6 +19,7 @@
 import WireCellsAPI
 import WireCellsBindings
 import WireDataModel
+import WireFoundation
 import WireNetwork
 @preconcurrency import WireSyncEngine
 import WireTransport

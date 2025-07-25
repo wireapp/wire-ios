@@ -20,6 +20,7 @@ import avs
 import Foundation
 import WireCommonComponents
 import WireDesign
+import WireFoundation
 import WireLogging
 import WireSyncEngine
 
@@ -33,8 +34,13 @@ protocol LaunchSequenceOperation {
 
 final class DeveloperFlagOperation: LaunchSequenceOperation {
     func execute() {
+        let developerFlagArguments = AutomationHelper.sharedHelper.developerFlagArguments
+        guard !developerFlagArguments.isEmpty else {
+            return
+        }
+
         DeveloperFlag.storage = .applicationGroup
-        for argument in AutomationHelper.sharedHelper.developerFlagArguments {
+        for argument in developerFlagArguments {
             let keyAndValue = argument.split(separator: ":").map { "\($0)" }
             if keyAndValue.count != 2 {
                 continue

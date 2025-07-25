@@ -27,6 +27,7 @@ import WireCellsBindings
 import WireCellsUI
 import WireCommonComponents
 import WireDesign
+import WireFoundation
 import WireLogging
 import WireNetwork
 import WireSyncEngine
