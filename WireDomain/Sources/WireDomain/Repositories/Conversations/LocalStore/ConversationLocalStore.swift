@@ -17,6 +17,7 @@
 //
 
 import CoreData
+import GenericMessageProtocol
 import WireDataModel
 import WireLogging
 

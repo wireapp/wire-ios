@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 /// The payload of a push for call events.
 

@@ -16,9 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireLinkPreview
 import WireUtilities
 import XCTest
+
 @testable import WireDataModel
 
 class ZMOTRMessage_SecurityDegradationTests: BaseZMClientMessageTests {

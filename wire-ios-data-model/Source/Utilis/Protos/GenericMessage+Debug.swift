@@ -17,8 +17,8 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import SwiftProtobuf
-import WireProtos
 
 private let redactedValue = "<redacted>"
 

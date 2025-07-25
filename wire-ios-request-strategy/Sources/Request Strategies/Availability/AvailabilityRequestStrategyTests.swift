@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireRequestStrategy
 import WireRequestStrategySupport
 import XCTest
@@ -109,7 +110,7 @@ class AvailabilityRequestStrategyTests: MessagingTestBase {
             _ = ZMConversation
                 .fetchOrCreate(with: selfUser.remoteIdentifier!, domain: nil, in: syncMOC) // create self conversation
 
-            let message = GenericMessage(content: WireProtos.Availability(.away))
+            let message = GenericMessage(content: GenericMessageProtocol.Availability(.away))
             let messageData = try message.serializedData()
             let dict = [
                 "recipient": self.selfClient.remoteIdentifier!,

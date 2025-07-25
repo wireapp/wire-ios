@@ -17,9 +17,11 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireDataModel
 import WireTransport
 import XCTest
+
 @testable import WireRequestStrategy
 
 private let testDataURL = Bundle(for: AssetV3DownloadRequestStrategyTests.self).url(
@@ -89,7 +91,7 @@ final class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         let message = try! conversation.appendFile(with: ZMFileMetadata(fileURL: testDataURL)) as! ZMAssetClientMessage
         let messageDomain = isFederationEnabled ? UUID.create().transportString() : nil
         let (assetId, token, domain) = (UUID.create().transportString(), UUID.create().transportString(), messageDomain)
-        let content = WireProtos.Asset(withUploadedOTRKey: otrKey, sha256: sha)
+        let content = GenericMessageProtocol.Asset(withUploadedOTRKey: otrKey, sha256: sha)
         var uploaded = GenericMessage(
             content: content,
             nonce: message.nonce!,
@@ -596,16 +598,16 @@ extension AssetV3DownloadRequestStrategyTests {
         syncMOC.performGroupedAndWait {
 
             // GIVEN
-            var asset = WireProtos.Asset()
-            var imageMetaData = WireProtos.Asset.ImageMetaData(width: 100, height: 100)
+            var asset = GenericMessageProtocol.Asset()
+            var imageMetaData = GenericMessageProtocol.Asset.ImageMetaData(width: 100, height: 100)
             imageMetaData.tag = "medium"
-            asset.original = WireProtos.Asset.Original(
+            asset.original = GenericMessageProtocol.Asset.Original(
                 withSize: UInt64(plainTextData.count),
                 mimeType: "image/jpeg",
                 name: nil,
                 imageMetaData: imageMetaData
             )
-            asset.uploaded = WireProtos.Asset.RemoteData(
+            asset.uploaded = GenericMessageProtocol.Asset.RemoteData(
                 withOTRKey: key,
                 sha256: sha,
                 assetId: "someId",
@@ -688,16 +690,16 @@ extension AssetV3DownloadRequestStrategyTests {
         syncMOC.performGroupedAndWait {
 
             // GIVEN
-            var asset = WireProtos.Asset()
-            var imageMetaData = WireProtos.Asset.ImageMetaData(width: 100, height: 100)
+            var asset = GenericMessageProtocol.Asset()
+            var imageMetaData = GenericMessageProtocol.Asset.ImageMetaData(width: 100, height: 100)
             imageMetaData.tag = "medium"
-            asset.original = WireProtos.Asset.Original(
+            asset.original = GenericMessageProtocol.Asset.Original(
                 withSize: UInt64(plainTextData.count),
                 mimeType: "image/svg+xml",
                 name: nil,
                 imageMetaData: imageMetaData
             ) // Even if we treat them as files, SVGs are sent as images.
-            asset.uploaded = WireProtos.Asset.RemoteData(
+            asset.uploaded = GenericMessageProtocol.Asset.RemoteData(
                 withOTRKey: key,
                 sha256: sha,
                 assetId: "someId",

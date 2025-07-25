@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 public extension ZMClientMessage {
     @objc override var isEphemeral: Bool {

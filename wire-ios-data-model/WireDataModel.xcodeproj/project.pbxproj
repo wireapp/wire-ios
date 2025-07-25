@@ -299,12 +299,16 @@
 		591F8A022B8CB4DE00D562A6 /* IsSelfUserE2EICertifiedUseCaseProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591F8A012B8CB4DE00D562A6 /* IsSelfUserE2EICertifiedUseCaseProtocol.swift */; };
 		591F8A042B8CB4EF00D562A6 /* IsSelfUserE2EICertifiedUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591F8A032B8CB4EF00D562A6 /* IsSelfUserE2EICertifiedUseCase.swift */; };
 		591F8A072B8CB82400D562A6 /* IsSelfUserE2EICertifiedUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591F8A052B8CB81400D562A6 /* IsSelfUserE2EICertifiedUseCaseTests.swift */; };
+		59506A882E2E61BD0051B07A /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = 59506A872E2E61BD0051B07A /* SwiftProtobuf */; };
+		5950B0352E2EA1070051B07A /* GenericMessageProtocol in Frameworks */ = {isa = PBXBuildFile; productRef = 5950B0342E2EA1070051B07A /* GenericMessageProtocol */; };
+		5950B0372E2EA1220051B07A /* GenericMessageProtocol in Frameworks */ = {isa = PBXBuildFile; productRef = 5950B0362E2EA1220051B07A /* GenericMessageProtocol */; };
 		59537CDB2CFF8F2B00920B59 /* WireLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 59537CDA2CFF8F2B00920B59 /* WireLogging */; };
 		5966D82E2BD6A33F00305BBC /* UserPropertyValidating.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D82D2BD6A33F00305BBC /* UserPropertyValidating.swift */; };
 		5966D8302BD6AA4100305BBC /* UserPropertyNormalization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D82F2BD6AA4100305BBC /* UserPropertyNormalization.swift */; };
 		5966D8322BD6AA8200305BBC /* UserPropertyNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D8312BD6AA8200305BBC /* UserPropertyNormalizer.swift */; };
 		5966D8342BD6ADCA00305BBC /* UserPropertyNormalizerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D8332BD6ADCA00305BBC /* UserPropertyNormalizerTests.swift */; };
 		5966D8362BD6AF1700305BBC /* UserPropertyNormalizationResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D8352BD6AF1700305BBC /* UserPropertyNormalizationResult.swift */; };
+		5978BFD42E2E6132004778CC /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = 5978BFD32E2E6132004778CC /* SwiftProtobuf */; };
 		5979E8482D478DD20051080F /* store2-121-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 5979E8472D478DD20051080F /* store2-121-0.wiredatabase */; };
 		597A3BB42B6416CA0020E337 /* Availability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597A3BB32B6416CA0020E337 /* Availability.swift */; };
 		597A3BB72B6418170020E337 /* Availability+WireProtos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597A3BB62B6418170020E337 /* Availability+WireProtos.swift */; };
@@ -593,7 +597,6 @@
 		EE032B3229A62CA600E1DDF3 /* ProteusSessionID+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE032B3029A62CA600E1DDF3 /* ProteusSessionID+Mapping.swift */; };
 		EE032B3629A62CD600E1DDF3 /* ProteusServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE032B3529A62CD600E1DDF3 /* ProteusServiceTests.swift */; };
 		EE04084E28CA85B2009E4B8D /* Date+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE04084D28CA85B2009E4B8D /* Date+Helpers.swift */; };
-		EE09EEB1255959F000919A6B /* TrackingIDProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE09EEB0255959F000919A6B /* TrackingIDProviderTests.swift */; };
 		EE0DE5042A24D2A10029746C /* DeleteSubgroupAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0DE5032A24D2A10029746C /* DeleteSubgroupAction.swift */; };
 		EE128A66286DE31200558550 /* UserClient+MLSPublicKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE128A65286DE31200558550 /* UserClient+MLSPublicKeys.swift */; };
 		EE174FCE2522756700482A70 /* ZMConversationPerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE174FCD2522756700482A70 /* ZMConversationPerformanceTests.swift */; };
@@ -639,7 +642,6 @@
 		EE86678E2A56CF77005CBEA4 /* ZMConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE86678D2A56CF77005CBEA4 /* ZMConversation.swift */; };
 		EE8B09AD25B86AB10057E85C /* AppLockError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8B09AC25B86AB10057E85C /* AppLockError.swift */; };
 		EE8B09AF25B86BB20057E85C /* AppLockPasscodePreference.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8B09AE25B86BB20057E85C /* AppLockPasscodePreference.swift */; };
-		EE8DA9632954A02400F58B79 /* WireProtos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE8DA9622954A02400F58B79 /* WireProtos.framework */; };
 		EE8DA9672954A02B00F58B79 /* WireCryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE8DA9662954A02B00F58B79 /* WireCryptobox.framework */; };
 		EE8DA96A2954A03100F58B79 /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE8DA9692954A03100F58B79 /* WireTransport.framework */; };
 		EE8DA96D2954A03800F58B79 /* WireLinkPreview.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE8DA96C2954A03800F58B79 /* WireLinkPreview.framework */; };
@@ -654,7 +656,6 @@
 		EE9AEC822BD1570E00F7853F /* WireDataModel.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC812BD1570E00F7853F /* WireDataModel.docc */; };
 		EE9B9F572993E57900A257BC /* NSManagedObjectContext+ProteusService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9B9F562993E57900A257BC /* NSManagedObjectContext+ProteusService.swift */; };
 		EE9B9F5929964F6A00A257BC /* NSManagedObjectContext+CoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9B9F5829964F6A00A257BC /* NSManagedObjectContext+CoreCrypto.swift */; };
-		EEA985982555668A002BEF02 /* TrackingIDProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA985972555668A002BEF02 /* TrackingIDProvider.swift */; };
 		EEAAD75A252C6D2700E6A44E /* UnreadMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAAD759252C6D2700E6A44E /* UnreadMessages.swift */; };
 		EEAAD75C252C6DAE00E6A44E /* ModifiedObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAAD75B252C6DAE00E6A44E /* ModifiedObjects.swift */; };
 		EEAAD75E252C711800E6A44E /* ZMManagedObject+ClassIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAAD75D252C711800E6A44E /* ZMManagedObject+ClassIdentifier.swift */; };
@@ -1538,7 +1539,6 @@
 		EE032B3029A62CA600E1DDF3 /* ProteusSessionID+Mapping.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ProteusSessionID+Mapping.swift"; sourceTree = "<group>"; };
 		EE032B3529A62CD600E1DDF3 /* ProteusServiceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProteusServiceTests.swift; sourceTree = "<group>"; };
 		EE04084D28CA85B2009E4B8D /* Date+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Helpers.swift"; sourceTree = "<group>"; };
-		EE09EEB0255959F000919A6B /* TrackingIDProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingIDProviderTests.swift; sourceTree = "<group>"; };
 		EE0DE5032A24D2A10029746C /* DeleteSubgroupAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteSubgroupAction.swift; sourceTree = "<group>"; };
 		EE128A65286DE31200558550 /* UserClient+MLSPublicKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserClient+MLSPublicKeys.swift"; sourceTree = "<group>"; };
 		EE174FCD2522756700482A70 /* ZMConversationPerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ZMConversationPerformanceTests.swift; path = Conversation/ZMConversationPerformanceTests.swift; sourceTree = "<group>"; };
@@ -1586,7 +1586,6 @@
 		EE86678D2A56CF77005CBEA4 /* ZMConversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMConversation.swift; sourceTree = "<group>"; };
 		EE8B09AC25B86AB10057E85C /* AppLockError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockError.swift; sourceTree = "<group>"; };
 		EE8B09AE25B86BB20057E85C /* AppLockPasscodePreference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockPasscodePreference.swift; sourceTree = "<group>"; };
-		EE8DA9622954A02400F58B79 /* WireProtos.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireProtos.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE8DA9662954A02B00F58B79 /* WireCryptobox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireCryptobox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE8DA9692954A03100F58B79 /* WireTransport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE8DA96C2954A03800F58B79 /* WireLinkPreview.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireLinkPreview.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1601,7 +1600,6 @@
 		EE9AEC812BD1570E00F7853F /* WireDataModel.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireDataModel.docc; sourceTree = "<group>"; };
 		EE9B9F562993E57900A257BC /* NSManagedObjectContext+ProteusService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+ProteusService.swift"; sourceTree = "<group>"; };
 		EE9B9F5829964F6A00A257BC /* NSManagedObjectContext+CoreCrypto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+CoreCrypto.swift"; sourceTree = "<group>"; };
-		EEA985972555668A002BEF02 /* TrackingIDProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingIDProvider.swift; sourceTree = "<group>"; };
 		EEAAD759252C6D2700E6A44E /* UnreadMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnreadMessages.swift; sourceTree = "<group>"; };
 		EEAAD75B252C6DAE00E6A44E /* ModifiedObjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModifiedObjects.swift; sourceTree = "<group>"; };
 		EEAAD75D252C711800E6A44E /* ZMManagedObject+ClassIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMManagedObject+ClassIdentifier.swift"; sourceTree = "<group>"; };
@@ -1912,8 +1910,9 @@
 				591B6E4C2C8B09C6009F8A7B /* CoreData.framework in Frameworks */,
 				76E000BC2DAFED3A00853C45 /* WireCellsAPI in Frameworks */,
 				EE8DA96D2954A03800F58B79 /* WireLinkPreview.framework in Frameworks */,
+				5950B0352E2EA1070051B07A /* GenericMessageProtocol in Frameworks */,
+				59506A882E2E61BD0051B07A /* SwiftProtobuf in Frameworks */,
 				E6707E902BBD683F00469D57 /* PINCache in Frameworks */,
-				EE8DA9632954A02400F58B79 /* WireProtos.framework in Frameworks */,
 				59B48C5C2C89CBBD00EA7999 /* WireFoundation in Frameworks */,
 				EE8DA9702954A03E00F58B79 /* WireImages.framework in Frameworks */,
 				59537CDB2CFF8F2B00920B59 /* WireLogging in Frameworks */,
@@ -1933,6 +1932,8 @@
 				59FFAD9D2C822977000C8085 /* WireTesting.framework in Frameworks */,
 				5902AC752DA92365000A8F7F /* WireFoundationSupport in Frameworks */,
 				591B6E4E2C8B09CA009F8A7B /* OCMock.xcframework in Frameworks */,
+				5950B0372E2EA1220051B07A /* GenericMessageProtocol in Frameworks */,
+				5978BFD42E2E6132004778CC /* SwiftProtobuf in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3051,7 +3052,6 @@
 				F18998821E7AC6D900E579A2 /* ZMUser.swift */,
 				EE7061292A72AB4600C9F351 /* ZMUser+SupportedProtocols.swift */,
 				EEDD426928633B2800C9EBC4 /* ZMUser+Patches.swift */,
-				EEA985972555668A002BEF02 /* TrackingIDProvider.swift */,
 				F110503C2220439900F3EB62 /* ZMUser+RichProfile.swift */,
 				55C40BCD22B0316800EFD8BD /* ZMUser+LegalHoldRequest.swift */,
 				F14B7AFE2220302B00458624 /* ZMUser+Predicates.swift */,
@@ -3455,7 +3455,6 @@
 				F18998871E7AF0BE00E579A2 /* ZMUserTests.h */,
 				F9B71F6A1CB2BC85001DB03F /* ZMUserTests.m */,
 				F18998841E7AEEC900E579A2 /* ZMUserTests+Swift.swift */,
-				EE09EEB0255959F000919A6B /* TrackingIDProviderTests.swift */,
 				5EFE9C0B2126CB71007932A6 /* UnregisteredUserTests.swift */,
 				5966D8332BD6ADCA00305BBC /* UserPropertyNormalizerTests.swift */,
 				1670D01D231825BE003A143B /* ZMUserTests+Permissions.swift */,
@@ -3593,7 +3592,6 @@
 				EE8DA9662954A02B00F58B79 /* WireCryptobox.framework */,
 				EE8DA96F2954A03E00F58B79 /* WireImages.framework */,
 				EE8DA96C2954A03800F58B79 /* WireLinkPreview.framework */,
-				EE8DA9622954A02400F58B79 /* WireProtos.framework */,
 				59FFAD9C2C822977000C8085 /* WireTesting.framework */,
 				EE8DA9692954A03100F58B79 /* WireTransport.framework */,
 				CB7979172C747652006FBA58 /* WireTransportSupport.framework */,
@@ -3870,6 +3868,8 @@
 				1657FA992D9C2EB800A7B337 /* WireCoreCryptoUniffi */,
 				76E000BB2DAFED3A00853C45 /* WireCellsAPI */,
 				34DC44B42E01C210004D5DD5 /* WireNetwork */,
+				59506A872E2E61BD0051B07A /* SwiftProtobuf */,
+				5950B0342E2EA1070051B07A /* GenericMessageProtocol */,
 			);
 			productName = WireDataModel;
 			productReference = F9C9A4FC1CAD5DF10039E10C /* WireDataModel.framework */;
@@ -3959,6 +3959,8 @@
 			mainGroup = F9C9A4F21CAD5DF10039E10C;
 			packageReferences = (
 				E6707E8E2BBD683F00469D57 /* XCRemoteSwiftPackageReference "PINCache" */,
+				5978BFD22E2E6132004778CC /* XCRemoteSwiftPackageReference "swift-protobuf" */,
+				5950B0332E2EA1070051B07A /* XCRemoteSwiftPackageReference "generic-message-proto" */,
 			);
 			productRefGroup = F9C9A4FD1CAD5DF10039E10C /* Products */;
 			projectDirPath = "";
@@ -4262,7 +4264,6 @@
 				D5FA30CF2063F8EC00716618 /* Version.swift in Sources */,
 				06D5423C26399C33006B0C5A /* UserType+External.swift in Sources */,
 				F9DBA5201E28EA8B00BE23C0 /* DependencyKeyStore.swift in Sources */,
-				EEA985982555668A002BEF02 /* TrackingIDProvider.swift in Sources */,
 				F125BAD71EE9849B0018C2F8 /* ZMConversation+SystemMessages.swift in Sources */,
 				54F84CFD1F9950B300ABD7D5 /* DuplicatedEntityRemoval.swift in Sources */,
 				EE5316422A13B59500A9E0B1 /* LastUpdateEventIDRepository.swift in Sources */,
@@ -4860,7 +4861,6 @@
 				01E3C8552B308AEA00556D8A /* ZMMessage+ServerTimestamp.swift in Sources */,
 				060D194F2462A9EC00623376 /* ZMMessageTests+GenericMessage.swift in Sources */,
 				A94166FC2680CCB5001F4E37 /* ZMConversationTests.swift in Sources */,
-				EE09EEB1255959F000919A6B /* TrackingIDProviderTests.swift in Sources */,
 				BFFBFD951D59E49D0079773E /* ZMClientMessageTests+Deletion.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5223,6 +5223,22 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		5950B0332E2EA1070051B07A /* XCRemoteSwiftPackageReference "generic-message-proto" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/wireapp/generic-message-proto.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.53.0;
+			};
+		};
+		5978BFD22E2E6132004778CC /* XCRemoteSwiftPackageReference "swift-protobuf" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-protobuf.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.30.0;
+			};
+		};
 		E6707E8E2BBD683F00469D57 /* XCRemoteSwiftPackageReference "PINCache" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pinterest/PINCache";
@@ -5250,9 +5266,29 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = WireFoundationSupport;
 		};
+		59506A872E2E61BD0051B07A /* SwiftProtobuf */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5978BFD22E2E6132004778CC /* XCRemoteSwiftPackageReference "swift-protobuf" */;
+			productName = SwiftProtobuf;
+		};
+		5950B0342E2EA1070051B07A /* GenericMessageProtocol */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5950B0332E2EA1070051B07A /* XCRemoteSwiftPackageReference "generic-message-proto" */;
+			productName = GenericMessageProtocol;
+		};
+		5950B0362E2EA1220051B07A /* GenericMessageProtocol */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5950B0332E2EA1070051B07A /* XCRemoteSwiftPackageReference "generic-message-proto" */;
+			productName = GenericMessageProtocol;
+		};
 		59537CDA2CFF8F2B00920B59 /* WireLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireLogging;
+		};
+		5978BFD32E2E6132004778CC /* SwiftProtobuf */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5978BFD22E2E6132004778CC /* XCRemoteSwiftPackageReference "swift-protobuf" */;
+			productName = SwiftProtobuf;
 		};
 		59B48C5B2C89CBBD00EA7999 /* WireFoundation */ = {
 			isa = XCSwiftPackageProductDependency;

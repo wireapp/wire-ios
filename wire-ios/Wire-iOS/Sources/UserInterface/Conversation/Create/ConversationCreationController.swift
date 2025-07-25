@@ -249,7 +249,7 @@ final class ConversationCreationController: UIViewController {
 
         nextButtonItem.accessibilityIdentifier = "button.newgroup.next"
         nextButtonItem.tintColor = UIColor.accent()
-        nextButtonItem.isEnabled = false
+        nextButtonItem.isEnabled = isGroupNameValid()
         navigationItem.rightBarButtonItem = nextButtonItem
     }
 
@@ -280,6 +280,15 @@ final class ConversationCreationController: UIViewController {
     private func tryToProceed() {
         guard let value = nameSection.value else { return }
         proceedWith(value: value)
+    }
+
+    private func isGroupNameValid() -> Bool {
+        switch nameSection.value {
+        case let .valid(name)? where !name.isEmpty:
+            true
+        default:
+            false
+        }
     }
 
     private func updateOptions() {

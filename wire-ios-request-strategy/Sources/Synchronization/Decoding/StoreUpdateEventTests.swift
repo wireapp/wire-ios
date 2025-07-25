@@ -16,7 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireTesting
+
 @testable import WireDataModel
 @testable import WireRequestStrategy
 

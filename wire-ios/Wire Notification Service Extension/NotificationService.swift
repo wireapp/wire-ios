@@ -32,7 +32,7 @@ final class NotificationService: UNNotificationServiceExtension {
 
     override init() {
         super.init()
-        WireAnalytics.setup()
+        WireAnalytics.setup(for: .notificationServiceExtension)
     }
 
     // MARK: - Methods
