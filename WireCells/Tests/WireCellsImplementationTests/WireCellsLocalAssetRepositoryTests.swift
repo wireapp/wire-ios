@@ -263,7 +263,8 @@ final class WireCellsLocalAssetRepositoryTests {
         }
     }
 
-    @Test func downloadAsset_whenSuccess() async throws {
+    @Test
+    func downloadAsset_whenSuccess() async throws {
         // given
         storeBacking[nodeID] = nil
 
@@ -335,7 +336,7 @@ final class WireCellsLocalAssetRepositoryTests {
                     contentType: "image/png",
                     size: 1234,
                     downloadState: .downloaded(cacheKey: "\(nodeID.uuidString)-abc")
-                ),
+                )
             ]
         )
     }
