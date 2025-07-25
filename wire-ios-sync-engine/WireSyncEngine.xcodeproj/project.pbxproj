@@ -74,7 +74,6 @@
 		162A81D6202B5BC600F6200C /* SessionManagerAVSTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162A81D5202B5BC600F6200C /* SessionManagerAVSTests.swift */; };
 		162DEE111F87B9800034C8F9 /* ZMUserSession+Calling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162DEE101F87B9800034C8F9 /* ZMUserSession+Calling.swift */; };
 		1636EAFF23F6FCCC00CD9527 /* MockPresentationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1636EAFE23F6FCCC00CD9527 /* MockPresentationDelegate.swift */; };
-		1639A8272260CE5000868AB9 /* ZMLocalNotification+AvailabilityAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1639A8262260CE5000868AB9 /* ZMLocalNotification+AvailabilityAlert.swift */; };
 		1639A8542264C52600868AB9 /* ZMLocalNotificationTests_Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1639A8532264C52600868AB9 /* ZMLocalNotificationTests_Alerts.swift */; };
 		163FB9942052EA4C00E74F83 /* OperationLoopNewRequestObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163FB9922052EA4600E74F83 /* OperationLoopNewRequestObserver.swift */; };
 		1645ECF82448A0A3007A82D6 /* Decodable+JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1645ECF72448A0A3007A82D6 /* Decodable+JSON.swift */; };
@@ -676,7 +675,6 @@
 		162A81D5202B5BC600F6200C /* SessionManagerAVSTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManagerAVSTests.swift; sourceTree = "<group>"; };
 		162DEE101F87B9800034C8F9 /* ZMUserSession+Calling.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMUserSession+Calling.swift"; sourceTree = "<group>"; };
 		1636EAFE23F6FCCC00CD9527 /* MockPresentationDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockPresentationDelegate.swift; sourceTree = "<group>"; };
-		1639A8262260CE5000868AB9 /* ZMLocalNotification+AvailabilityAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMLocalNotification+AvailabilityAlert.swift"; sourceTree = "<group>"; };
 		1639A8532264C52600868AB9 /* ZMLocalNotificationTests_Alerts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMLocalNotificationTests_Alerts.swift; sourceTree = "<group>"; };
 		163FB9922052EA4600E74F83 /* OperationLoopNewRequestObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperationLoopNewRequestObserver.swift; sourceTree = "<group>"; };
 		1645ECF72448A0A3007A82D6 /* Decodable+JSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Decodable+JSON.swift"; sourceTree = "<group>"; };
@@ -2042,7 +2040,6 @@
 			isa = PBXGroup;
 			children = (
 				EEEA75F71F8A6141006D1070 /* ZMLocalNotification+Calling.swift */,
-				1639A8262260CE5000868AB9 /* ZMLocalNotification+AvailabilityAlert.swift */,
 				EEEA75F51F8A613F006D1070 /* ZMLocalNotification+ExpiredMessages.swift */,
 			);
 			path = Content;
@@ -3155,7 +3152,6 @@
 				F19E55A422B3A740005C792D /* PKPushPayload+SafeLogging.swift in Sources */,
 				EE1108F923D1F945005DC663 /* TypingUsersTimeout.swift in Sources */,
 				16C4BDA020A309CD00BCDB17 /* CallParticipantSnapshot.swift in Sources */,
-				1639A8272260CE5000868AB9 /* ZMLocalNotification+AvailabilityAlert.swift in Sources */,
 				EE8584DD2B6BD33B0045EAD4 /* ZMUserSession+OneOnOne.swift in Sources */,
 				16ED865F23E3145C00CB1766 /* ZMUserSession+Clients.swift in Sources */,
 				0640C26D26EA0B5C0057AF80 /* NSManagedObjectContext+Packaging.swift in Sources */,

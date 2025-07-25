@@ -526,18 +526,6 @@ extension ZMUserTests_Swift {
         XCTAssertEqual(user.availability, .none)
     }
 
-    func testThatNeedsToNotifyAvailabilityBehaviourChangeDefaultsToNothing() {
-        XCTAssertEqual(selfUser.needsToNotifyAvailabilityBehaviourChange, [])
-    }
-
-    func testThatNeedsToNotifyAvailabilityBehaviourChangeCanBeUpdated() {
-        // given
-        selfUser.needsToNotifyAvailabilityBehaviourChange = .alert
-
-        // then
-        XCTAssertEqual(selfUser.needsToNotifyAvailabilityBehaviourChange, .alert)
-    }
-
 }
 
 // MARK: - Broadcast Recipients
