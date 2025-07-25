@@ -25,14 +25,17 @@ internal import WireAuthenticationLogic
 final class PersonalAccountCreationComponent: Component<PersonalAccountCreationComponentDependency> {
 
     private let email: String
+    private let backendConfig: BackendConfig
     private let teamAccountCreationLink: URL?
 
     init(
         parent: any Scope,
         email: String,
+        backendConfig: BackendConfig,
         teamAccountCreationLink: URL?
     ) {
         self.email = email
+        self.backendConfig = backendConfig
         self.teamAccountCreationLink = teamAccountCreationLink
         super.init(parent: parent)
     }
@@ -42,13 +45,15 @@ final class PersonalAccountCreationComponent: Component<PersonalAccountCreationC
     func verificationEmailCodeComponent(
         email: String,
         password: String,
-        name: String
+        name: String,
+        trackingConsent: RegistrationAnalyticsTrackingConsent
     ) -> VerificationEmailCodeComponent {
         VerificationEmailCodeComponent(
             parent: self,
             email: email,
             password: password,
-            name: name
+            name: name,
+            trackingConsent: trackingConsent
         )
     }
 
@@ -63,22 +68,26 @@ extension PersonalAccountCreationComponent: PersonalAccountCreationViewModel.Fac
             factory: self,
             router: dependency.router,
             email: email,
+            backendConfig: backendConfig,
             privacyPolicyURL: dependency.privacyPolicyURL,
             termsOfUseURL: dependency.termsOfUseURL,
             teamAccountCreationLink: teamAccountCreationLink,
-            passwordValidator: dependency.passwordValidator
+            passwordValidator: dependency.passwordValidator,
+            analyticsEventTracker: dependency.registrationAnalyticsTracker
         )
     }
 
     func verificationEmailCodeFactory(
         email: String,
         password: String,
-        name: String
+        name: String,
+        trackingConsent: RegistrationAnalyticsTrackingConsent
     ) -> any VerificationEmailCodeFactory {
         verificationEmailCodeComponent(
             email: email,
             password: password,
-            name: name
+            name: name,
+            trackingConsent: trackingConsent
         )
     }
 

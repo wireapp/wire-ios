@@ -35,10 +35,6 @@ let package = Package(
                 .product(name: "NeedleFoundation", package: "needle")
             ]
         ),
-        .testTarget(
-            name: "WireAuthenticationTests",
-            dependencies: ["WireAuthentication"]
-        ),
 
         .target(
             name: "WireAuthenticationAPI"

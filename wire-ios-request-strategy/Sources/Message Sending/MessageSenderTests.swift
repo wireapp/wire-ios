@@ -16,9 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
+import WireTransport
 import XCTest
 
-import WireTransport
 @testable import WireDataModelSupport
 @testable import WireRequestStrategySupport
 

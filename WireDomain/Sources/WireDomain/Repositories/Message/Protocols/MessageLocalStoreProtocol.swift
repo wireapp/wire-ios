@@ -19,6 +19,8 @@
 public import Foundation
 public import WireDataModel
 
+import GenericMessageProtocol
+
 // sourcery: AutoMockable
 /// Facilitate access to message related domain objects.
 public protocol MessageLocalStoreProtocol {
@@ -155,7 +157,7 @@ public protocol MessageLocalStoreProtocol {
     /// For instance, like or unlike a message.
 
     func addMessageReaction(
-        _ messageReaction: WireProtos.Reaction,
+        _ messageReaction: GenericMessageProtocol.Reaction,
         in conversation: ZMConversation,
         senderID: UUID,
         date: Date
@@ -170,7 +172,7 @@ public protocol MessageLocalStoreProtocol {
     ///    - date: The date the confirmation was added.
 
     func addMessageConfirmation(
-        _ confirmation: WireProtos.Confirmation,
+        _ confirmation: GenericMessageProtocol.Confirmation,
         in conversation: ZMConversation,
         senderID: UUID,
         senderDomain: String,

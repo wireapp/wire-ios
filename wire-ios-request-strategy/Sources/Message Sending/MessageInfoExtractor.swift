@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireLogging
 
 enum MessageInfoExtractorError: Error {

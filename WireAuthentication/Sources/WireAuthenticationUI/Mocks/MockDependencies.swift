@@ -56,7 +56,7 @@ final class MockDependencies {
     }
 
     var _backendConfig = BackendConfig(
-        title: "backen name",
+        title: "backend name",
         endpoints: Endpoints(
             backendURL: URL(string: "https://example.com")!,
             backendWSURL: URL(string: "https://example.com")!,

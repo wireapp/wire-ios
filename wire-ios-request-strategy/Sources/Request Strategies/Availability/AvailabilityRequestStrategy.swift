@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireLogging
 
 public class AvailabilityRequestStrategy: NSObject, ZMContextChangeTrackerSource {
@@ -47,7 +48,7 @@ extension AvailabilityRequestStrategy: ModifiedKeyObjectSyncTranscoder {
     func synchronize(key: String, for object: ZMUser, completion: @escaping () -> Void) {
         guard object.isSelfUser else { return completion() }
 
-        let message = GenericMessage(content: WireProtos.Availability(object.availability))
+        let message = GenericMessage(content: GenericMessageProtocol.Availability(object.availability))
         let recipients = ZMUser.recipientsForAvailabilityStatusBroadcast(
             in: context,
             maxCount: maximumBroadcastRecipients

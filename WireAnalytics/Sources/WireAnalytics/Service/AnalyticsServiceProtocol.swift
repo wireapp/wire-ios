@@ -26,6 +26,8 @@ public protocol AnalyticsServiceProtocol: AnalyticsEventTrackerProtocol {
 
     var isTrackingEnabled: Bool { get }
 
+    var currentDeviceID: String? { get }
+
     /// Start sending analytics data.
 
     func enableTracking() async throws

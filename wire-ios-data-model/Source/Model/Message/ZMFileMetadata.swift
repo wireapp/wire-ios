@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import MobileCoreServices
 import WireSystem
 import WireUtilities
@@ -47,8 +48,8 @@ open class ZMFileMetadata: NSObject {
         self.init(fileURL: fileURL, thumbnail: thumbnail, name: nil)
     }
 
-    var asset: WireProtos.Asset {
-        WireProtos.Asset(self)
+    var asset: GenericMessageProtocol.Asset {
+        GenericMessageProtocol.Asset(self)
     }
 }
 
@@ -75,8 +76,8 @@ open class ZMAudioMetadata: ZMFileMetadata {
         super.init(fileURL: fileURL, thumbnail: thumbnail, name: name)
     }
 
-    override var asset: WireProtos.Asset {
-        WireProtos.Asset(self)
+    override var asset: GenericMessageProtocol.Asset {
+        GenericMessageProtocol.Asset(self)
     }
 
 }
@@ -100,8 +101,8 @@ open class ZMVideoMetadata: ZMFileMetadata {
         super.init(fileURL: fileURL, thumbnail: thumbnail, name: name)
     }
 
-    override var asset: WireProtos.Asset {
-        WireProtos.Asset(self)
+    override var asset: GenericMessageProtocol.Asset {
+        GenericMessageProtocol.Asset(self)
     }
 
 }

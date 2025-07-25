@@ -20,12 +20,15 @@ import avs
 import SwiftUI
 import UIKit
 import WireAccountImageUI
+import WireCellsAPI
+import WireCellsBindings
 import WireCommonComponents
 import WireDesign
 import WireFoundation
 import WireLogging
 import WireMainNavigationUI
 import WireMessagingAssembly
+import WireNetwork
 import WireSidebarUI
 import WireSyncEngine
 
@@ -33,7 +36,7 @@ final class ZClientViewController: UIViewController {
 
     typealias MainCoordinator = WireMainNavigationUI.MainCoordinator<MainCoordinatorDependencies>
 
-    // MARK: - Private Members
+    // MARK: - Private Members - Add wire cells factory here somehow
 
     let account: Account
     let userSession: UserSession
@@ -91,13 +94,13 @@ final class ZClientViewController: UIViewController {
     private lazy var conversationViewControllerBuilder = ConversationViewControllerBuilder(
         userSession: userSession,
         selfProfileUIBuilder: selfProfileViewControllerBuilder,
-        mediaPlaybackManager: mediaPlaybackManager
+        mediaPlaybackManager: mediaPlaybackManager,
+        wireCellsFactory: wireCellsFactory
     )
 
     private lazy var channelConversationFormFactory = WireConversationChannelCreationFormViewControllerFactory()
 
     private lazy var settingsViewControllerBuilder = SettingsViewControllerBuilder(
-        isPublicDomain: userSession.selfUser.domain?.domainType == .publicDomain,
         userSession: userSession,
         trackingManager: trackingManager
     )
@@ -171,6 +174,7 @@ final class ZClientViewController: UIViewController {
     private let colorSchemeController: ColorSchemeController
     private var incomingApnsObserver: NSObjectProtocol?
     private var networkAvailabilityObserverToken: NSObjectProtocol?
+    private let wireCellsFactory: any WireCellsFactoryProtocol
 
     private(set) lazy var mainCoordinator = MainCoordinator(
         mainSplitViewController: mainSplitViewController,
@@ -184,13 +188,16 @@ final class ZClientViewController: UIViewController {
         account: Account,
         selfProfileViewsMonitor: SelfProfileViewsMonitor,
         userSession: UserSession,
-        trackingManager: TrackingManager?
+        trackingManager: TrackingManager?,
+        wireCellsFactory: any WireCellsFactoryProtocol
     ) {
         self.account = account
         self.selfProfileViewsMonitor = selfProfileViewsMonitor
         self.userSession = userSession
         self.trackingManager = trackingManager
         self.colorSchemeController = .init(userSession: userSession)
+        self.wireCellsFactory = wireCellsFactory
+
         super.init(nibName: nil, bundle: nil)
 
         self.proximityMonitorManager = ProximityMonitorManager()
@@ -285,14 +292,29 @@ final class ZClientViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
+        migrateAnalytics()
         firstTimeRequestToEnableAnalytics()
         view.backgroundColor = ColorTheme.Backgrounds.surface
+    }
+
+    private func migrateAnalytics() {
+        Task {
+            do {
+                guard let trackingManager, let domain = userSession.selfUser.domain,
+                      trackingManager.isAnalyticsTrackingAvailable(for: domain) else { return }
+                try await trackingManager.migrateAnalyticsSetupIfNeeded()
+            } catch {
+                WireLogger.analytics.error("failed to migrate analytics between accounts: \(error)")
+            }
+        }
     }
 
     private func firstTimeRequestToEnableAnalytics() {
         Task {
             do {
-                try await trackingManager?.firstTimeRequestToEnableAnalytics()
+                guard let trackingManager, let domain = userSession.selfUser.domain,
+                      trackingManager.isAnalyticsTrackingAvailable(for: domain) else { return }
+                try await trackingManager.firstTimeRequestToEnableAnalytics()
             } catch {
                 WireLogger.analytics.error("failed to first time enable analytics: \(error)")
             }

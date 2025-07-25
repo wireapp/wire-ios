@@ -26,6 +26,7 @@ struct FakePersonalAccountCreationFactory: PersonalAccountCreationFactory, Regis
     var mockDependencies = MockDependencies()
 
     var email: String
+    var backendConfig: BackendConfig
     var privacyPolicyURL: URL
     var termsOfUseURL: URL
     var teamAccountCreationLink: URL?
@@ -36,17 +37,20 @@ struct FakePersonalAccountCreationFactory: PersonalAccountCreationFactory, Regis
             factory: self,
             router: FakeRootFactory().viewModel,
             email: email,
+            backendConfig: backendConfig,
             privacyPolicyURL: privacyPolicyURL,
             termsOfUseURL: termsOfUseURL,
             teamAccountCreationLink: teamAccountCreationLink,
-            passwordValidator: passwordValidator
+            passwordValidator: passwordValidator,
+            analyticsEventTracker: mockDependencies.analyticsEventTracker
         )
     }
 
     func verificationEmailCodeFactory(
         email: String,
         password: String,
-        name: String
+        name: String,
+        trackingConsent: RegistrationAnalyticsTrackingConsent
     ) -> any VerificationEmailCodeFactory {
         fatalError()
     }
