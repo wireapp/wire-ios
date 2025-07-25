@@ -18,6 +18,7 @@
 
 import CoreData
 import Foundation
+import GenericMessageProtocol
 
 @objc
 public enum MessageConfirmationType: Int16 {

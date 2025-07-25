@@ -18,7 +18,6 @@
 
 @import UIKit;
 @import WireImages;
-@import WireProtos;
 
 @class ZMIImageProperties;
 @class ZMConversation;

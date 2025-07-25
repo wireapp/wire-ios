@@ -26,6 +26,10 @@ extension MockDependencies: RegisterPersonalAccountUseCaseFactory {
         MockRegisterPersonalAccountUseCase()
     }
 
+    var analyticsEventTracker: RegistrationAnalyticsTrackerProtocol {
+        MockRegistrationAnalyticsTracker()
+    }
+
 }
 
 struct MockRegisterPersonalAccountUseCase: RegisterPersonalAccountUseCaseProtocol {
@@ -38,5 +42,22 @@ struct MockRegisterPersonalAccountUseCase: RegisterPersonalAccountUseCaseProtoco
     ) async throws -> ([HTTPCookie], UUID?) {
         ([], UUID())
     }
+
+}
+
+private struct MockRegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
+
+    var trackingID: String?
+
+    func isAnalyticsTrackingAvailable(for backendConfig: BackendConfig) -> Bool { false }
+    func setUp() {}
+    func tearDown() {}
+    func trackPersonalAccountCreationStart() {}
+    func trackPersonalAccountCreationReachedTermsOfUseConfirmation() {}
+    func trackPersonalAccountCreationReachedVerificationCode() {}
+    func trackPersonalAccountCreationFailedCodeVerification() {}
+    func trackPersonalAccountCreationReachedUsernameForm() {}
+    func trackPersonalAccountCreationCompletion() {}
+    func deleteTemporaryTrackingID() {}
 
 }

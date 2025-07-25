@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import UserNotifications
 import WireUtilitiesSupport
 import XCTest
@@ -355,7 +356,7 @@ extension LocalNotificationDispatcherTests {
             event = createUpdateEvent(
                 UUID.create(),
                 conversationID: conversation1.remoteIdentifier!,
-                genericMessage: GenericMessage(content: WireProtos.Asset(audioMetadata)),
+                genericMessage: GenericMessage(content: GenericMessageProtocol.Asset(audioMetadata)),
                 senderID: user1.remoteIdentifier
             )
 

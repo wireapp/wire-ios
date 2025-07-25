@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireBackup
-import WireProtos
 
 extension MessageBackupModel.Content.AssetContent.EncryptionAlgorithm {
 
-    init(_ encryptionAlgorithm: WireProtos.EncryptionAlgorithm) {
+    init(_ encryptionAlgorithm: GenericMessageProtocol.EncryptionAlgorithm) {
         switch encryptionAlgorithm {
         case .aesCbc:
             self = .aesCBC

@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireProtos
+import GenericMessageProtocol
 
 @testable import WireMockTransport
 

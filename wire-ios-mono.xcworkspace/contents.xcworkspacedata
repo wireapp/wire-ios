@@ -11,9 +11,6 @@
       location = "group:Cartfile">
    </FileRef>
    <FileRef
-      location = "group:Cartfile.private">
-   </FileRef>
-   <FileRef
       location = "group:Cartfile.resolved">
    </FileRef>
    <Group
@@ -23,16 +20,10 @@
          location = "group:_reusable_app_release.yml">
       </FileRef>
       <FileRef
-         location = "group:_reusable_app_release_without_changelog.yml">
-      </FileRef>
-      <FileRef
          location = "group:_reusable_run_tests.yml">
       </FileRef>
       <FileRef
          location = "group:beta_app_release.yml">
-      </FileRef>
-      <FileRef
-         location = "group:build_pr.yml">
       </FileRef>
       <FileRef
          location = "group:c1_c2_c3_app_release_production.yml">
@@ -69,6 +60,9 @@
       </FileRef>
       <FileRef
          location = "group:public_app_release.yml">
+      </FileRef>
+      <FileRef
+         location = "group:run_all_tests.yml">
       </FileRef>
       <FileRef
          location = "group:semantic_commit_lint.yml">
@@ -178,9 +172,6 @@
    </FileRef>
    <FileRef
       location = "group:WirePreviewApps/WirePreviewApps.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:wire-ios-protos/WireProtos.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:wire-ios-cryptobox/WireCryptobox.xcodeproj">

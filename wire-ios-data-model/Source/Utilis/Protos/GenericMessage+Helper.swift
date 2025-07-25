@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireProtos
+import GenericMessageProtocol
 
 // MARK: - GenericMessage
 
@@ -170,7 +170,7 @@ public extension GenericMessage {
         }
     }
 
-    var assetData: WireProtos.Asset? {
+    var assetData: GenericMessageProtocol.Asset? {
         guard let content else { return nil }
         switch content {
         case let .asset(data):
@@ -481,7 +481,7 @@ extension ButtonAction {
 
 extension Location {
     init(latitude: Float, longitude: Float) {
-        self = WireProtos.Location.with {
+        self = GenericMessageProtocol.Location.with {
             $0.latitude = latitude
             $0.longitude = longitude
         }
@@ -499,8 +499,8 @@ public extension Text {
     ) {
         self = Text.with {
             $0.content = content
-            $0.mentions = mentions.compactMap { WireProtos.Mention.createMention($0) }
-            $0.linkPreview = linkPreviews.map { WireProtos.LinkPreview($0) }
+            $0.mentions = mentions.compactMap { GenericMessageProtocol.Mention.createMention($0) }
+            $0.linkPreview = linkPreviews.map { GenericMessageProtocol.LinkPreview($0) }
 
             if let quotedMessage = replyingTo,
                let quotedMessageNonce = quotedMessage.nonce,
@@ -542,7 +542,7 @@ public extension Text {
     }
 }
 
-extension WireProtos.InCallHandRaise {
+extension GenericMessageProtocol.InCallHandRaise {
     init(handUp: Bool) {
 
         self = InCallHandRaise.with {
@@ -553,17 +553,17 @@ extension WireProtos.InCallHandRaise {
 
 // MARK: - Reaction
 
-extension WireProtos.Reaction {
+extension GenericMessageProtocol.Reaction {
 
     public static func createReaction(
         emojis: Set<String>,
         messageID: UUID
-    ) -> WireProtos.Reaction {
+    ) -> GenericMessageProtocol.Reaction {
         let transportString = emojis
             .map { $0.trimmingCharacters(in: .whitespaces) }
             .joined(separator: ",")
 
-        return WireProtos.Reaction.with {
+        return GenericMessageProtocol.Reaction.with {
             $0.emoji = transportString
             $0.messageID = messageID.transportString()
         }
@@ -586,8 +586,8 @@ public enum ProtosReactionFactory {
     public static func createReaction(
         emojis: Set<String>,
         messageID: UUID
-    ) -> WireProtos.Reaction {
-        WireProtos.Reaction.createReaction(
+    ) -> GenericMessageProtocol.Reaction {
+        GenericMessageProtocol.Reaction.createReaction(
             emojis: emojis,
             messageID: messageID
         )
@@ -602,7 +602,7 @@ public extension LastRead {
         self = LastRead.with {
             $0.conversationID = conversationID.uuid.transportString()
             $0.lastReadTimestamp = Int64(lastReadTimestamp.timeIntervalSince1970 * 1000)
-            $0.qualifiedConversationID = WireProtos.QualifiedConversationId.with {
+            $0.qualifiedConversationID = GenericMessageProtocol.QualifiedConversationId.with {
                 $0.id = conversationID.uuid.transportString()
                 $0.domain = conversationID.domain
             }
@@ -626,7 +626,7 @@ public extension Calling {
 
 // MARK: - MessageEdit
 
-public extension WireProtos.MessageEdit {
+public extension GenericMessageProtocol.MessageEdit {
     init(replacingMessageID: UUID, text: Text) {
         self = MessageEdit.with {
             $0.replacingMessageID = replacingMessageID.transportString()
@@ -669,13 +669,13 @@ public extension MessageDelete {
 
 // MARK: - Confirmation
 
-public extension WireProtos.Confirmation {
+public extension GenericMessageProtocol.Confirmation {
     init?(messageIds: [UUID], type: Confirmation.TypeEnum = .delivered) {
         guard let firstMessageID = messageIds.first else {
             return nil
         }
         let moreMessageIds = Array(messageIds.dropFirst())
-        self = WireProtos.Confirmation.with {
+        self = GenericMessageProtocol.Confirmation.with {
             $0.firstMessageID = firstMessageID.transportString()
             $0.moreMessageIds = moreMessageIds.map { $0.transportString() }
             $0.type = type
@@ -683,7 +683,7 @@ public extension WireProtos.Confirmation {
     }
 
     init(messageId: UUID, type: Confirmation.TypeEnum = .delivered) {
-        self = WireProtos.Confirmation.with {
+        self = GenericMessageProtocol.Confirmation.with {
             $0.firstMessageID = messageId.transportString()
             $0.type = type
         }
@@ -707,24 +707,24 @@ extension External {
 
 // MARK: - Mention
 
-public extension WireProtos.Mention {
-    static func createMention(_ mention: WireDataModel.Mention) -> WireProtos.Mention? {
+public extension GenericMessageProtocol.Mention {
+    static func createMention(_ mention: WireDataModel.Mention) -> GenericMessageProtocol.Mention? {
         mention.convertToProtosMention()
     }
 }
 
 public extension WireDataModel.Mention {
-    func convertToProtosMention() -> WireProtos.Mention? {
+    func convertToProtosMention() -> GenericMessageProtocol.Mention? {
         guard let userID = (user as? ZMUser)?.remoteIdentifier.transportString() else { return nil }
 
-        return WireProtos.Mention.with {
+        return GenericMessageProtocol.Mention.with {
             $0.start = Int32(range.location)
             $0.length = Int32(range.length)
             $0.userID = userID
 
             guard let domain = user.domain else { return }
 
-            $0.qualifiedUserID = WireProtos.QualifiedUserId.with {
+            $0.qualifiedUserID = GenericMessageProtocol.QualifiedUserId.with {
                 $0.id = userID
                 $0.domain = domain
             }
@@ -759,7 +759,7 @@ public extension LinkPreview {
             $0.title = articleMetadata.title ?? ""
             $0.summary = articleMetadata.summary ?? ""
             if let imageData = articleMetadata.imageData.first {
-                $0.image = WireProtos.Asset(
+                $0.image = GenericMessageProtocol.Asset(
                     imageSize: CGSize(width: 0, height: 0),
                     mimeType: "image/jpeg",
                     size: UInt64(imageData.count)
@@ -776,7 +776,7 @@ public extension LinkPreview {
             $0.urlOffset = Int32(twitterMetadata.characterOffsetInText)
             $0.title = twitterMetadata.message ?? ""
             if let imageData = twitterMetadata.imageData.first {
-                $0.image = WireProtos.Asset(
+                $0.image = GenericMessageProtocol.Asset(
                     imageSize: CGSize(width: 0, height: 0),
                     mimeType: "image/jpeg",
                     size: UInt64(imageData.count)
@@ -786,7 +786,7 @@ public extension LinkPreview {
             guard let author = twitterMetadata.author,
                   let username = twitterMetadata.username else { return }
 
-            $0.tweet = WireProtos.Tweet.with {
+            $0.tweet = GenericMessageProtocol.Tweet.with {
                 $0.author = author
                 $0.username = username
             }
@@ -799,7 +799,7 @@ public extension LinkPreview {
         offset: Int32,
         title: String?,
         summary: String?,
-        imageAsset: WireProtos.Asset?,
+        imageAsset: GenericMessageProtocol.Asset?,
         article: Article? = nil,
         tweet: Tweet? = nil
     ) {
@@ -826,8 +826,8 @@ public extension LinkPreview {
         }
     }
 
-    mutating func update(withOtrKey otrKey: Data, sha256: Data, original: WireProtos.Asset.Original?) {
-        image.uploaded = WireProtos.Asset.RemoteData(withOTRKey: otrKey, sha256: sha256)
+    mutating func update(withOtrKey otrKey: Data, sha256: Data, original: GenericMessageProtocol.Asset.Original?) {
+        image.uploaded = GenericMessageProtocol.Asset.RemoteData(withOTRKey: otrKey, sha256: sha256)
         if let original {
             image.original = original
         }

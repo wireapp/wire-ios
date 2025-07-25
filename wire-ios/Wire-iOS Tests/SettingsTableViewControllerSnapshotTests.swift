@@ -93,7 +93,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
     @MainActor
     func testForSettingGroup() throws {
         let group = settingsCellDescriptorFactory.settingsGroup(
-            isPublicDomain: true,
+            isAnalyticsTrackingAvailable: true,
             userSession: userSession,
             useTypeIntrinsicSizeTableView: true,
             mainCoordinator: MockMainCoordinator()
@@ -113,7 +113,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
 
         MockUserRight.isPermitted = !disabledEditing
         let group = settingsCellDescriptorFactory.accountGroup(
-            isPublicDomain: true,
+            isAnalyticsTrackingAvailable: true,
             userSession: userSession,
             useTypeIntrinsicSizeTableView: true
         )
@@ -244,7 +244,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
     // MARK: - data usage permissions
 
     func testForDataUsagePermissionsForPublicDomain() throws {
-        let group = settingsCellDescriptorFactory.dataUsagePermissionsGroup(isPublicDomain: true)
+        let group = settingsCellDescriptorFactory.dataUsagePermissionsGroup(isAnalyticsTrackingAvailable: true)
         try verify(group: group)
     }
 }
