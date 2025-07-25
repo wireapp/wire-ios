@@ -26,7 +26,6 @@ extension LegacyPersistedDataPatch {
 
     /// List of patches to apply
     static let allPatchesToApply = [
-        LegacyPersistedDataPatch(version: "78.1.0", block: DuplicatedEntityRemoval.removeDuplicated),
         LegacyPersistedDataPatch(version: "81.2.1", block: InvalidClientsRemoval.removeInvalid),
         LegacyPersistedDataPatch(version: "103.0.2", block: InvalidGenericMessageDataRemoval.removeInvalid),
         LegacyPersistedDataPatch(version: "145.0.3", block: InvalidConversationRemoval.removeInvalid),
