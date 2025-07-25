@@ -495,7 +495,6 @@
 		BF3493F21EC3623200B0C314 /* ZMUser+Teams.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3493F11EC3623200B0C314 /* ZMUser+Teams.swift */; };
 		BF3494001EC46D3D00B0C314 /* ZMConversationTests+Teams.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3493FF1EC46D3D00B0C314 /* ZMConversationTests+Teams.swift */; };
 		BF3494081EC5A90400B0C314 /* ZMUser+OneOnOne.h in Headers */ = {isa = PBXBuildFile; fileRef = BF3494071EC5A90400B0C314 /* ZMUser+OneOnOne.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		BF421B2D1EF3F91D0079533A /* Team+Patches.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF421B2C1EF3F91D0079533A /* Team+Patches.swift */; };
 		BF46662A1DCB71B0007463FF /* V3Asset.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4666291DCB71B0007463FF /* V3Asset.swift */; };
 		BF491CCF1F02A6CF0055EE44 /* Member+Patches.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF491CCE1F02A6CF0055EE44 /* Member+Patches.swift */; };
 		BF491CE41F063EDB0055EE44 /* Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF491CE31F063EDB0055EE44 /* Account.swift */; };
@@ -1406,7 +1405,6 @@
 		BF3493F11EC3623200B0C314 /* ZMUser+Teams.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMUser+Teams.swift"; sourceTree = "<group>"; };
 		BF3493FF1EC46D3D00B0C314 /* ZMConversationTests+Teams.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ZMConversationTests+Teams.swift"; path = "Conversation/ZMConversationTests+Teams.swift"; sourceTree = "<group>"; };
 		BF3494071EC5A90400B0C314 /* ZMUser+OneOnOne.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZMUser+OneOnOne.h"; sourceTree = "<group>"; };
-		BF421B2C1EF3F91D0079533A /* Team+Patches.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Team+Patches.swift"; sourceTree = "<group>"; };
 		BF4666291DCB71B0007463FF /* V3Asset.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = V3Asset.swift; sourceTree = "<group>"; };
 		BF491CCE1F02A6CF0055EE44 /* Member+Patches.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Member+Patches.swift"; sourceTree = "<group>"; };
 		BF491CDA1F0525DC0055EE44 /* AccountTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountTests.swift; sourceTree = "<group>"; };
@@ -2440,7 +2438,6 @@
 			isa = PBXGroup;
 			children = (
 				BF1B98031EC313C600DE033B /* Team.swift */,
-				BF421B2C1EF3F91D0079533A /* Team+Patches.swift */,
 				BF491CCE1F02A6CF0055EE44 /* Member+Patches.swift */,
 				BF1B98061EC31A3C00DE033B /* Member.swift */,
 				BF1B98081EC31A4200DE033B /* Permissions.swift */,
@@ -4371,7 +4368,6 @@
 				EEF09CA22B1DB3F500D729A1 /* OneOnOneMigrator.swift in Sources */,
 				597A3BB72B6418170020E337 /* Availability+WireProtos.swift in Sources */,
 				16D68E971CEF2EC4003AB9E0 /* ZMFileMetadata.swift in Sources */,
-				BF421B2D1EF3F91D0079533A /* Team+Patches.swift in Sources */,
 				547E664B1F750E4A008CB1FA /* ZMConnection+Notification.swift in Sources */,
 				D5D10DA9203B161700145497 /* ZMConversation+AccessMode.swift in Sources */,
 				EE70612A2A72AB4600C9F351 /* ZMUser+SupportedProtocols.swift in Sources */,
