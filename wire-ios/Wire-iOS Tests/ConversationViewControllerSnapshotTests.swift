@@ -209,7 +209,8 @@ extension ConversationViewControllerSnapshotTests {
             mediaPlaybackManager: .init(name: nil, userSession: userSession),
             classificationProvider: nil,
             networkStatusObservable: MockNetworkStatusObservable(),
-            getParticipantImageSourceUseCase: MockGetParticipantImageSourceUseCaseProtocol()
+            getParticipantImageSourceUseCase: MockGetParticipantImageSourceUseCaseProtocol(),
+            wireCellsFactory: MockWireCellsFactoryProtocol.makeDefault()
         )
     }
 

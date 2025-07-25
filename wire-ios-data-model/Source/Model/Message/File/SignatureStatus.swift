@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 // MARK: - SignatureObserver
 
@@ -52,7 +53,7 @@ public final class SignatureStatus: NSObject {
 
     // MARK: - Private Property
 
-    private(set) var asset: WireProtos.Asset?
+    private(set) var asset: GenericMessageProtocol.Asset?
     private(set) var managedObjectContext: NSManagedObjectContext
 
     // MARK: - Public Property
@@ -65,7 +66,7 @@ public final class SignatureStatus: NSObject {
     // MARK: - Init
 
     public init(
-        asset: WireProtos.Asset?,
+        asset: GenericMessageProtocol.Asset?,
         data: Data?,
         managedObjectContext: NSManagedObjectContext
     ) {

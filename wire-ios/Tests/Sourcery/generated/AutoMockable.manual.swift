@@ -28,6 +28,7 @@ import CoreLocation
 import WireDataModel
 import WireSyncEngine
 import WireAccountImageUI
+import WireCellsAPI
 
 @testable import Wire
 @testable import WireCommonComponents
@@ -50,7 +51,6 @@ class MockGetUserByIdUseCaseProtocol: GetUserByIDUseCaseProtocol {
     }
 
 }
-
 
 // swiftlint:enable variable_name
 // swiftlint:enable line_length

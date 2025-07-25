@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireLinkPreview
 
 public final class LinkPreviewDetectorHelper: NSObject {

@@ -17,7 +17,9 @@
 //
 
 import WireFoundation
+import GenericMessageProtocol
 import WireTesting
+
 @testable import WireDataModel
 
 private class MockTextSearchQueryDelegate: TextSearchQueryDelegate {
@@ -547,7 +549,7 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
                 "www.example.com/original",
                 "www.example.com/permanent"
             )
-            let image = WireProtos.Asset(
+            let image = GenericMessageProtocol.Asset(
                 withUploadedOTRKey: Data.secureRandomData(ofLength: 16),
                 sha256: Data.secureRandomData(ofLength: 16)
             )

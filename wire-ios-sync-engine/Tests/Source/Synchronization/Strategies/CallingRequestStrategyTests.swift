@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireDataModelSupport
 import WireFoundation
 import WireRequestStrategy

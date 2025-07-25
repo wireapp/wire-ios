@@ -17,9 +17,11 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireDataModel
 import WireTransport
 import XCTest
+
 @testable import WireRequestStrategy
 
 class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
@@ -75,7 +77,7 @@ class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
 
         if article {
             let (otr, sha) = (otrKey ?? Data.randomEncryptionKey(), sha256 ?? Data.zmRandomSHA256Key())
-            let remoteData = WireProtos.Asset.RemoteData.with {
+            let remoteData = GenericMessageProtocol.Asset.RemoteData.with {
                 $0.assetID = assetID
                 if let assetDomain {
                     $0.assetDomain = assetDomain
@@ -83,7 +85,7 @@ class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
                 $0.otrKey = otr
                 $0.sha256 = sha
             }
-            let asset = WireProtos.Asset.with {
+            let asset = GenericMessageProtocol.Asset.with {
                 $0.uploaded = remoteData
             }
             return LinkPreview.with {
@@ -100,7 +102,7 @@ class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
                 $0.permanentURL = URL
                 $0.urlOffset = 42
                 $0.title = "Title"
-                $0.tweet = WireProtos.Tweet.with {
+                $0.tweet = GenericMessageProtocol.Tweet.with {
                     $0.author = "Author"
                     $0.username = "UserName"
                 }

@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireLogging
 
 private let log = ZMSLog(tag: "Conversations")
@@ -307,7 +308,7 @@ public extension ZMConversation {
         // We update the size again when the the preprocessing is done.
         let imageSize = ZMImagePreprocessor.sizeOfPrerotatedImage(with: imageData)
 
-        let asset = WireProtos.Asset(
+        let asset = GenericMessageProtocol.Asset(
             imageSize: imageSize,
             mimeType: mimeType,
             size: UInt64(imageData.count)
@@ -366,7 +367,7 @@ public extension ZMConversation {
     }
 
     private func append(
-        asset: WireProtos.Asset,
+        asset: GenericMessageProtocol.Asset,
         nonce: UUID,
         expires: Bool,
         prepareMessage: (ZMAssetClientMessage) -> Void

@@ -16,10 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireDataModelSupport
 import WireFoundation
 import WireRequestStrategySupport
 import XCTest
+
 @testable import WireRequestStrategy
 
 final class MessageInfoExtractorTests: XCTestCase {
