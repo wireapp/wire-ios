@@ -479,9 +479,9 @@ public extension ZMUser {
             }
             return $0.conversation
         }
+
         conversations.forEach { conversation in
-            let test = conversations.first
-            test?.appendUserRemovedFromTeamSystemMessage(user: self, at: timestamp)
+            conversation.appendUserRemovedFromTeamSystemMessage(user: self, at: timestamp)
         }
     }
 

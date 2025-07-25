@@ -245,7 +245,6 @@ enum ConversationSystemMessageCellDescription {
             )
             missingMessagesCell.showEphemeralTimer = showEphemeralTimer
             return [AnyConversationMessageCellDescription(missingMessagesCell)]
-
         }
 
         return []
