@@ -22,32 +22,6 @@ extension ZMConversation {
     @objc public static let defaultAdminRoleName = "wire_admin"
     @objc public static let defaultMemberRoleName = "wire_member"
 
-    static func predicateSecureWithIgnored() -> NSPredicate {
-        NSPredicate(
-            format: "%K == %d",
-            #keyPath(ZMConversation.securityLevel),
-            ZMConversationSecurityLevel.secureWithIgnored.rawValue
-        )
-    }
-
-    /// After changes to conversation security degradation logic we need
-    /// to migrate all conversations from .secureWithIgnored to .notSecure
-    /// so that users wouldn't get degratation prompts to conversations that
-    /// at any point in the past had been secure
-    static func migrateAllSecureWithIgnored(in moc: NSManagedObjectContext) {
-        let predicate = ZMConversation.predicateSecureWithIgnored()
-
-        let request = ZMConversation.sortedFetchRequest(with: predicate)
-
-        guard let allConversations = moc.fetchOrAssert(request: request) as? [ZMConversation] else {
-            fatal("fetchOrAssert failed")
-        }
-
-        for conversation in allConversations {
-            conversation.securityLevel = .notSecure
-        }
-    }
-
     // Migration rules for the Model version 2.78.0
     static func introduceParticipantRoles(in moc: NSManagedObjectContext) {
         migrateUsersToParticipants(in: moc)

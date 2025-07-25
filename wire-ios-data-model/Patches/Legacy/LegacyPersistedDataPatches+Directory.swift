@@ -26,7 +26,6 @@ extension LegacyPersistedDataPatch {
 
     /// List of patches to apply
     static let allPatchesToApply = [
-        LegacyPersistedDataPatch(version: "43.0.4", block: ZMConversation.migrateAllSecureWithIgnored),
         LegacyPersistedDataPatch(version: "58.4.1", block: Team.deleteLocalTeamsAndMembers),
         LegacyPersistedDataPatch(version: "62.1.0", block: Member.migrateRemoteIdentifiers),
         LegacyPersistedDataPatch(version: "78.1.0", block: DuplicatedEntityRemoval.removeDuplicated),
