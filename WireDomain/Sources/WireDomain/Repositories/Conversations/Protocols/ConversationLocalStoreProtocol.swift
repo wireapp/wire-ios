@@ -32,6 +32,8 @@ import WireDataModel
 /// [here](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/20514628/Conversations)
 public protocol ConversationLocalStoreProtocol {
 
+    func qualifiedID(for conversation: ZMConversation) async -> QualifiedID?
+
     /// Fetches or creates a conversation locally.
     /// - parameter id: The ID of the conversation.
     /// - parameter domain: The domain of the conversation if any.
@@ -257,7 +259,7 @@ public protocol ConversationLocalStoreProtocol {
     /// Fetches local participants from a conversation and maps to [MLSUser].
     /// - parameter conversation: The related conversation.
     /// - returns: A list of MLSUser participants.
-    func localParticipantsAsMLSUsers(
+    func localParticipantsExcludingSelfAsMLSUsers(
         in conversation: ZMConversation
     ) async -> [MLSUser]
 

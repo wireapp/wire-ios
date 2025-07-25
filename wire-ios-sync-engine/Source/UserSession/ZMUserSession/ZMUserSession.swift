@@ -719,6 +719,7 @@ public final class ZMUserSession: NSObject {
                 guard let self else {
                     fatal("userSession not reachable")
                 }
+                // Passing useCase from WireDomain to WireRequestStrategy's MessageSender
                 return makeInitiateResetMLSConversationUseCase(context: context)
             }
         )
