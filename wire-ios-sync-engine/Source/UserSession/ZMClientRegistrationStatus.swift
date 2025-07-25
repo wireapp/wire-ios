@@ -423,7 +423,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     private func insertNewClient(for selfUser: ZMUser) {
         var model = UIDevice.current.zm_model()
         if let appInternalName = Bundle.mainAppInternalName {
-            model += " - \(appInternalName)"
+            model += " (\(appInternalName))"
         }
 
         UserClient.insertNewSelfClient(
