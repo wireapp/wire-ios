@@ -20,6 +20,15 @@ import Foundation
 
 class ConversationsAPIV8: ConversationsAPIV7 {
     override var apiVersion: APIVersion { .v8 }
+    override var basePath: String {
+        "/conversations"
+    }
+
+    // MARK: - Constants
+
+    enum Constants {
+        static let batchSize = 500
+    }
 
     override func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList {
         let parameters = GetConversationsParametersV0(qualifiedIdentifiers: identifiers.map { $0.toNetworkModel() })
@@ -152,6 +161,30 @@ class ConversationsAPIV8: ConversationsAPIV7 {
         }
 
     }
+
+    override func getConversationIdentifiers() async throws -> PayloadPager<[QualifiedID]> {
+        let path = "\(pathPrefix)\(basePath)/list-ids"
+
+        return PayloadPager<[QualifiedID]> { start in
+            let params = PaginationRequest(pagingState: start, size: Constants.batchSize)
+            let body = try JSONEncoder.defaultEncoder.encode(params)
+
+            let request = try URLRequestBuilder(path: path)
+                .withMethod(.post)
+                .withBody(body, contentType: .json)
+                .build()
+
+            let (data, response) = try await self.apiService.executeRequest(
+                request,
+                requiringAccessToken: true
+            )
+
+            return try ResponseParser()
+                .success(code: .ok, type: PaginatedConversationIDsV8.self)
+                .parse(code: response.statusCode, data: data)
+        }
+    }
+
 }
 
 // MARK: - Encodables
@@ -337,6 +370,27 @@ struct ConversationV8: Decodable, ToAPIModelConvertible {
             lastEventTime: lastEventTime?.date,
             groupType: groupType?.toAPIModel(),
             addPermission: addPermission?.toAPIModel()
+        )
+    }
+}
+
+private struct PaginatedConversationIDsV8: Decodable, ToAPIModelConvertible {
+
+    enum CodingKeys: String, CodingKey {
+        case conversationIDs = "qualified_conversations"
+        case pagingState = "paging_state"
+        case hasMore = "has_more"
+    }
+
+    let conversationIDs: [QualifiedIDV0]
+    let pagingState: String
+    let hasMore: Bool
+
+    func toAPIModel() -> PayloadPager<[QualifiedID]>.Page {
+        PayloadPager<[QualifiedID]>.Page(
+            element: conversationIDs.map { $0.toAPIModel() },
+            hasMore: hasMore,
+            nextStart: pagingState
         )
     }
 }
