@@ -20,16 +20,6 @@ import Foundation
 import WireFoundation
 public import WireMessagingAPI
 
-@MainActor
-public protocol ChannelHistoryUseCaseProtocol {
-    func updateHistoryDepth(
-        channelHistoryOption: ChannelHistoryOption,
-        channelHistoryOptionCustom: ChannelHistoryOption.Custom
-    ) async throws
-
-    func isUserPremium() async throws -> Bool
-}
-
 public class ChannelHistoryUseCase: ChannelHistoryUseCaseProtocol {
     public let repository: any ChannelRepositoryProtocol
 
