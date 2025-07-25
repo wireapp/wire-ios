@@ -50,9 +50,10 @@ final class ProcessNotificationRequestStep: Component<ProcessNotificationRequest
         userID: UUID,
         eventID: UUID
     ) throws -> VerifyUserStep {
+        let accountURLs = AccountURLs(root: dependency.applicationContainer)
         let accountManager = try AccountManager(
             currentAppVersion: dependency.currentAppVersion,
-            sharedDirectory: dependency.applicationContainer
+            directory: accountURLs.accounts
         )
 
         return try VerifyUserStep(

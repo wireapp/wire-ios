@@ -45,7 +45,7 @@ final class AccountManagerTests {
     func makeSUT() throws -> AccountManager {
         try AccountManager(
             currentAppVersion: "1.0.0",
-            sharedDirectory: url,
+            directory: url,
             defaults: .temporary()
         )
     }

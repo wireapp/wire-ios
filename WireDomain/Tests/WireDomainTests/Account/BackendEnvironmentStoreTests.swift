@@ -52,7 +52,7 @@ final class BackendEnvironmentStoreTests {
         _ environment: BackendEnvironment2
     ) throws {
         // Given
-        let sut = try BackendEnvironmentStore(root: url)
+        let sut = try BackendEnvironmentStore(directory: url)
         let accountID = UUID()
 
         // When
@@ -72,7 +72,7 @@ final class BackendEnvironmentStoreTests {
     @Test("Fetch non-existent backend environment")
     func fetchNonExistentBackendEnvironment() throws {
         // Given
-        let sut = try BackendEnvironmentStore(root: url)
+        let sut = try BackendEnvironmentStore(directory: url)
         let accountId = UUID()
 
         // When
@@ -96,7 +96,7 @@ final class BackendEnvironmentStoreTests {
     ])
     func testStoreAndFetchBackendMetadata(_ metadata: ResolvedBackendMetadata) throws {
         // Given
-        let sut = try BackendEnvironmentStore(root: url)
+        let sut = try BackendEnvironmentStore(directory: url)
         let accountID = UUID()
 
         // When
@@ -116,7 +116,7 @@ final class BackendEnvironmentStoreTests {
     @Test("Fetch non-existent backend metadata")
     func fetchNonExistentBackendMetadata() throws {
         // Given
-        let sut = try BackendEnvironmentStore(root: url)
+        let sut = try BackendEnvironmentStore(directory: url)
         let accountId = UUID()
 
         // When
@@ -129,7 +129,7 @@ final class BackendEnvironmentStoreTests {
     @Test("Delete backend data")
     func deleteBackendData() throws {
         // Given
-        let sut = try BackendEnvironmentStore(root: url)
+        let sut = try BackendEnvironmentStore(directory: url)
         let accountID = UUID()
         let environment = Self.makeBackendEnvironment()
         let metadata = ResolvedBackendMetadata(

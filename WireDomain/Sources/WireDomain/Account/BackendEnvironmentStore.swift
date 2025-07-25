@@ -30,8 +30,8 @@ public struct BackendEnvironmentStore {
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
 
-    public init(root: URL) throws {
-        self.directory = root.appendingPathComponent("AccountData")
+    public init(directory: URL) throws {
+        self.directory = directory
         try fileManager.createAndProtectDirectory(at: directory)
     }
 

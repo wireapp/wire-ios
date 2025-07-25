@@ -36,8 +36,7 @@ private let log = WireLogger(tag: "Accounts")
 
 struct AccountStore {
 
-    private let accountsDirectory: URL
-    private static let accountsDirectoryName = "Accounts"
+    private let directory: URL
     private let fileManager = FileManager.default
 
     private let encoder = JSONEncoder()
@@ -48,9 +47,9 @@ struct AccountStore {
     /// `Account` objects will be stored in a subdirectory of the passed in url.
     /// - parameter root: The root url in which the storage will use to store its data
 
-    init(root: URL) throws {
-        self.accountsDirectory = root.appendingPathComponent(AccountStore.accountsDirectoryName)
-        try fileManager.createAndProtectDirectory(at: accountsDirectory)
+    init(directory: URL) throws {
+        self.directory = directory
+        try fileManager.createAndProtectDirectory(at: directory)
     }
 
     // MARK: - Fetch
@@ -135,12 +134,12 @@ struct AccountStore {
     ///
     /// Mostly useful for cleaning up after tests or for complete account resets.
     ///
-    /// - parameter root: The root url of the store that should be deleted.
+    /// - parameter directory: The url of the store that should be deleted.
 
     @discardableResult
-    static func delete(at root: URL) -> Bool {
+    static func delete(directory: URL) -> Bool {
         do {
-            try FileManager.default.removeItem(at: root.appendingPathComponent(accountsDirectoryName))
+            try FileManager.default.removeItem(at: directory)
             return true
         } catch {
             log.error("Unable to remove all accounts, error: \(error.safeForLoggingDescription)")
@@ -152,7 +151,7 @@ struct AccountStore {
 
     private func listAccountIDs() -> Set<UUID> {
         do {
-            let paths = try fileManager.contentsOfDirectory(atPath: accountsDirectory.path)
+            let paths = try fileManager.contentsOfDirectory(atPath: directory.path)
             let ids = paths.compactMap(UUID.init(uuidString:))
             return Set(ids)
         } catch {
@@ -162,7 +161,7 @@ struct AccountStore {
     }
 
     private func url(for id: UUID) -> URL {
-        accountsDirectory.appendingPathComponent(id.uuidString)
+        directory.appendingPathComponent(id.uuidString)
     }
 
 }

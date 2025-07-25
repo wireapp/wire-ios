@@ -128,9 +128,10 @@ public final class NotificationSession {
         minTLSVersion: String?
     ) throws {
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
+        let accounURLs = AccountURLs(root: sharedContainerURL)
         let accountManager = try AccountManager(
             currentAppVersion: currentAppVersion,
-            sharedDirectory: sharedContainerURL
+            directory: accounURLs.accounts
         )
 
         guard let account = accountManager.account(with: accountIdentifier) else {
