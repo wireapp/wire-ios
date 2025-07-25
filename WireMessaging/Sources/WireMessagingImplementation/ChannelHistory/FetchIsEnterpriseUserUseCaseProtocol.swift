@@ -16,14 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import WireMessagingAPI
+import Foundation
 
 @MainActor
-public protocol ChannelHistoryUseCaseProtocol {
-    func updateHistoryDepth(
-        channelHistoryOption: ChannelHistoryOption,
-        channelHistoryOptionCustom: ChannelHistoryOption.Custom
-    ) async throws
-
-    func isEnterpriseUser() async throws -> Bool
+public protocol FetchIsEnterpriseUserUseCaseProtocol {
+    func invoke() async throws -> Bool
 }

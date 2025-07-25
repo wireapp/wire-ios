@@ -50,18 +50,18 @@ public class MockChannelHistoryUseCaseProtocol: ChannelHistoryUseCaseProtocol {
         }
     }
 
-    // MARK: - isUserPremium
+    // MARK: - isEnterpriseUser
 
-    public var isUserPremium_Invocations: [Void] = []
-    public var isUserPremium_MockValue: Bool?
+    public var isEnterpriseUser_Invocations: [Void] = []
+    public var isEnterpriseUser_MockValue: Bool?
 
-    public func isUserPremium() async throws -> Bool {
-        isUserPremium_Invocations.append(())
+    public func isEnterpriseUser() async throws -> Bool {
+        isEnterpriseUser_Invocations.append(())
 
-        if let mock = isUserPremium_MockValue {
+        if let mock = isEnterpriseUser_MockValue {
             return mock
         } else {
-            fatalError("no mock for `isUserPremium`")
+            fatalError("no mock for `isEnterpriseUser`")
         }
     }
 

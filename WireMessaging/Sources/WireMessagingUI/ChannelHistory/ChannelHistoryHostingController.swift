@@ -89,7 +89,8 @@ struct ChannelHistoryHostingControllerPreview: UIViewControllerRepresentable {
         repository.isConferenceCallingFeatureEnabled_MockValue = true
 
         let useCase = ChannelHistoryUseCase(
-            repository: repository
+            updateChannelHistoryDepthUseCase: UpdateChannelHistoryDepthUseCase(repository: repository),
+            fetchIsEnterpriseUserUseCase: FetchIsEnterpriseUserUseCase(repository: repository)
         )
 
         let viewModel = ChannelHistoryViewModel(

@@ -28,7 +28,10 @@ final class ChannelHistoryUseCaseTests: XCTestCase {
     func testUpdateHistory_callsRepo() async throws {
         // Given
 
-        let useCase = ChannelHistoryUseCase(repository: repo)
+        let useCase = ChannelHistoryUseCase(
+            updateChannelHistoryDepthUseCase: UpdateChannelHistoryDepthUseCase(repository: repo),
+            fetchIsEnterpriseUserUseCase: FetchIsEnterpriseUserUseCase(repository: repo)
+        )
         repo.updateHistoryDepth_MockMethod = { _ in }
 
         // When
@@ -47,12 +50,15 @@ final class ChannelHistoryUseCaseTests: XCTestCase {
     func testFetchConferenceCallingFeatureConfig_callsRepo() async throws {
         // Given
 
-        let useCase = ChannelHistoryUseCase(repository: repo)
+        let useCase = ChannelHistoryUseCase(
+            updateChannelHistoryDepthUseCase: UpdateChannelHistoryDepthUseCase(repository: repo),
+            fetchIsEnterpriseUserUseCase: FetchIsEnterpriseUserUseCase(repository: repo)
+        )
         repo.isConferenceCallingFeatureEnabled_MockValue = true
 
         // When
 
-        _ = try await useCase.isUserPremium()
+        _ = try await useCase.isEnterpriseUser()
 
         // Then
 

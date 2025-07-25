@@ -18,12 +18,16 @@
 
 public import WireMessagingAPI
 
-@MainActor
-public protocol ChannelHistoryUseCaseProtocol {
-    func updateHistoryDepth(
-        channelHistoryOption: ChannelHistoryOption,
-        channelHistoryOptionCustom: ChannelHistoryOption.Custom
-    ) async throws
+public struct FetchIsEnterpriseUserUseCase: FetchIsEnterpriseUserUseCaseProtocol {
+    public let repository: any ChannelRepositoryProtocol
 
-    func isEnterpriseUser() async throws -> Bool
+    public init(
+        repository: any ChannelRepositoryProtocol
+    ) {
+        self.repository = repository
+    }
+
+    public func invoke() async throws -> Bool {
+        try await repository.isConferenceCallingFeatureEnabled()
+    }
 }

@@ -40,7 +40,7 @@ package struct ChannelHistoryView: View {
                 channelHistorySection
                     .background(.clear)
 
-                if !viewModel.isUserPremium {
+                if !viewModel.isEnterpriseUser {
                     nonPremiumBannerSection
                 }
             }
@@ -195,9 +195,7 @@ struct ChannelHistoryView_Previews: PreviewProvider {
                     historyDepth: 10_000,
                     teamsURL: URL(string: "https://google.com")!,
                     accentColor: .blue,
-                    useCase: ChannelHistoryUseCase(
-                        repository: channelRepository()
-                    )
+                    useCase: channelHistoryUseCase()
                 ))
 
             }
@@ -205,10 +203,14 @@ struct ChannelHistoryView_Previews: PreviewProvider {
 
     }
 
-    static func channelRepository() -> MockChannelRepositoryProtocol {
+    static func channelHistoryUseCase() -> ChannelHistoryUseCase {
         let channelRepository = MockChannelRepositoryProtocol()
         channelRepository.updateHistoryDepth_MockMethod = { _ in }
         channelRepository.isConferenceCallingFeatureEnabled_MockValue = true
-        return channelRepository
+
+        return ChannelHistoryUseCase(
+            updateChannelHistoryDepthUseCase: UpdateChannelHistoryDepthUseCase(repository: channelRepository),
+            fetchIsEnterpriseUserUseCase: FetchIsEnterpriseUserUseCase(repository: channelRepository)
+        )
     }
 }

@@ -26,7 +26,7 @@ package class ChannelHistoryViewModel: ObservableObject {
     @Published var channelHistoryOption: ChannelHistoryOption
     @Published var channelHistoryOptionCustom: ChannelHistoryOption.Custom = .init()
     @Published var isLoading: Bool = false
-    @Published var isUserPremium: Bool = true
+    @Published var isEnterpriseUser: Bool = true
     @Published var channelHistoryAvailableOptions: [ChannelHistoryOption] = []
 
     public let accentColor: Color
@@ -53,8 +53,8 @@ package class ChannelHistoryViewModel: ObservableObject {
     func fetchData() async {
         isLoading = true
         do {
-            isUserPremium = try await useCase.isUserPremium()
-            channelHistoryAvailableOptions = isUserPremium ? [
+            isEnterpriseUser = try await useCase.isEnterpriseUser()
+            channelHistoryAvailableOptions = isEnterpriseUser ? [
                 .off,
                 .oneDay,
                 .oneWeek,

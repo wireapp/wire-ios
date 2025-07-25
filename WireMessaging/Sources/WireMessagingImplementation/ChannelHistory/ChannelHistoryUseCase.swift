@@ -20,66 +20,29 @@ import Foundation
 import WireFoundation
 public import WireMessagingAPI
 
-public class ChannelHistoryUseCase: ChannelHistoryUseCaseProtocol {
-    public let repository: any ChannelRepositoryProtocol
+public struct ChannelHistoryUseCase: ChannelHistoryUseCaseProtocol {
+    public let updateChannelHistoryDepthUseCase: any UpdateChannelHistoryDepthUseCaseProtocol
+    public let fetchIsEnterpriseUserUseCase: any FetchIsEnterpriseUserUseCaseProtocol
 
     public init(
-        repository: any ChannelRepositoryProtocol
+        updateChannelHistoryDepthUseCase: any UpdateChannelHistoryDepthUseCaseProtocol,
+        fetchIsEnterpriseUserUseCase: any FetchIsEnterpriseUserUseCaseProtocol
     ) {
-        self.repository = repository
+        self.updateChannelHistoryDepthUseCase = updateChannelHistoryDepthUseCase
+        self.fetchIsEnterpriseUserUseCase = fetchIsEnterpriseUserUseCase
     }
 
     public func updateHistoryDepth(
         channelHistoryOption: ChannelHistoryOption,
         channelHistoryOptionCustom: ChannelHistoryOption.Custom
     ) async throws {
-        let historyDepth = computeHistoryDepth(
+        try await updateChannelHistoryDepthUseCase.invoke(
             channelHistoryOption: channelHistoryOption,
             channelHistoryOptionCustom: channelHistoryOptionCustom
         )
-
-        try await repository.updateHistoryDepth(
-            historyDepth
-        )
     }
 
-    public func isUserPremium() async throws -> Bool {
-        try await repository.isConferenceCallingFeatureEnabled()
-    }
-
-    private func computeHistoryDepth(
-        channelHistoryOption: ChannelHistoryOption,
-        channelHistoryOptionCustom: ChannelHistoryOption.Custom
-    ) -> Int? {
-        let historyDepth: TimeInterval? = switch channelHistoryOption {
-        case .off:
-            nil
-        case .oneDay:
-            TimeInterval.oneDay
-        case .oneWeek:
-            TimeInterval.oneWeek
-        case .fourWeeks:
-            TimeInterval.fourWeeks
-        case .unlimited:
-            TimeInterval.oneYearFromNow
-        case .custom:
-            computeHistoryCustomDepth(channelHistoryOptionCustom: channelHistoryOptionCustom)
-        }
-
-        return historyDepth != nil ? Int(historyDepth!) : nil
-    }
-
-    private func computeHistoryCustomDepth(
-        channelHistoryOptionCustom: ChannelHistoryOption.Custom
-    ) -> TimeInterval {
-        let value = TimeInterval(channelHistoryOptionCustom.value)
-        let oneDay = TimeInterval.oneDay
-
-        switch channelHistoryOptionCustom.unit {
-        case .days:
-            return value * oneDay
-        case .week:
-            return value * 7 * oneDay
-        }
+    public func isEnterpriseUser() async throws -> Bool {
+        try await fetchIsEnterpriseUserUseCase.invoke()
     }
 }

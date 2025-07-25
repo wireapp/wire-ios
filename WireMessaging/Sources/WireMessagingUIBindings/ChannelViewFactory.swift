@@ -44,7 +44,8 @@ public class ChannelViewFactory {
         repository: any ChannelRepositoryProtocol
     ) -> UIViewController {
         let useCase = ChannelHistoryUseCase(
-            repository: repository
+            updateChannelHistoryDepthUseCase: UpdateChannelHistoryDepthUseCase(repository: repository),
+            fetchIsEnterpriseUserUseCase: FetchIsEnterpriseUserUseCase(repository: repository)
         )
 
         let viewModel = ChannelHistoryViewModel(

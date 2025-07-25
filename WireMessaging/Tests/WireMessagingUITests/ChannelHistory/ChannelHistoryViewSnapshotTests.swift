@@ -61,7 +61,7 @@ class ChannelHistoryViewSnapshotTests: XCTestCase {
 
         let useCase = MockChannelHistoryUseCaseProtocol()
         useCase.updateHistoryDepth_MockMethod = { _ in }
-        useCase.isUserPremium_MockValue = isPremium
+        useCase.isEnterpriseUser_MockValue = isPremium
 
         let viewModel = ChannelHistoryViewModel(
             historyDepth: 10_000,
