@@ -640,6 +640,8 @@
 
 "content.system.unknown_message.body" = "Diese Meldung konnte nicht angezeigt werden. Möglicherweise verwenden Sie eine ältere Version von Wire.";
 
+"content.system.user_removed_from_team" = "Dieser Benutzer ist nicht mehr verfügbar";
+
 "content.file.uploading" = "Hochladen…";
 "content.file.downloading" = "Herunterladen…";
 "content.file.upload_failed" = "Hochladen fehlgeschlagen";
