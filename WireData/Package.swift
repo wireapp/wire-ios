@@ -8,11 +8,13 @@ let package = Package(
     products: [
         .library(
             name: "WireData",
-            targets: ["WireData"]),
+            targets: ["WireData"]
+        ),
     ],
     targets: [
         .target(
-            name: "WireData"),
+            name: "WireData"
+        ),
         .testTarget(
             name: "WireDataTests",
             dependencies: ["WireData"]

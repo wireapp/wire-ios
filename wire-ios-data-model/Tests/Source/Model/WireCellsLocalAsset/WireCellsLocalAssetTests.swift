@@ -28,7 +28,7 @@ struct WireCellsLocalAssetTests {
     private let coreDataStack: CoreDataStack
 
     init() async throws {
-        coreDataStack = try await CoreDataStackHelper().createStack()
+        self.coreDataStack = try await CoreDataStackHelper().createStack()
     }
 
     @Test
