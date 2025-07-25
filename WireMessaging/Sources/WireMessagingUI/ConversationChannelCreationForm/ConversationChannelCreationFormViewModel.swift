@@ -165,7 +165,7 @@ public final class ConversationChannelCreationFormViewModel: ObservableObject {
     // MARK: History sharing
 
     func isChannelHistoryFeatureEnabled() -> Bool {
-        // mimic DeveloperFlag.channelsHistory.isOn
+        // TODO: [WPB-19065] - Move DeveloperFlag from WireUtilities to WireFoundation
         UserDefaults.standard.object(
             forKey: "channelsHistory"
         ) as? Bool ?? false
