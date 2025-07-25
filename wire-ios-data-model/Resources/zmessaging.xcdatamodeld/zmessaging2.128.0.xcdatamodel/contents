@@ -410,6 +410,17 @@
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>
+    <entity name="WireCellsLocalAsset" representedClassName="WireData.WireCellsLocalAsset" syncable="YES">
+        <attribute name="contentType" optional="YES" attributeType="String"/>
+        <attribute name="eTag" attributeType="String"/>
+        <attribute name="isDownloaded" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="nodeID" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="path" attributeType="String"/>
+        <attribute name="size" attributeType="Integer 64" defaultValueString="-1" usesScalarValueType="YES"/>
+        <fetchIndex name="byNodeIDIndex">
+            <fetchIndexElement property="nodeID" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
     <entity name="WireCellsMessageAttachmentDraft" representedClassName="WireDataModel.WireCellsMessageAttachmentDraftEntity" syncable="YES">
         <attribute name="assetDuration" optional="YES" attributeType="Integer 64" usesScalarValueType="NO"/>
         <attribute name="assetHeight" optional="YES" attributeType="Integer 64" usesScalarValueType="NO"/>

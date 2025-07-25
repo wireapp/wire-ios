@@ -532,6 +532,7 @@
 		CB7979182C747652006FBA58 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB7979172C747652006FBA58 /* WireTransportSupport.framework */; };
 		CB79791B2C7476AC006FBA58 /* TestSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB79791A2C7476AC006FBA58 /* TestSetup.swift */; };
 		CBAEABE92DC8DA8A00C62C4E /* store2-126-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = CBAEABE82DC8DA8A00C62C4E /* store2-126-0.wiredatabase */; };
+		CBB648A52E33D18900FA52AA /* WireData in Frameworks */ = {isa = PBXBuildFile; productRef = CBB648A42E33D18900FA52AA /* WireData */; };
 		CBD35F2C2D09EBB20080DA37 /* WireCrypto in Frameworks */ = {isa = PBXBuildFile; productRef = CBD35F2B2D09EBB20080DA37 /* WireCrypto */; };
 		CBED6B442D91B2F500328BED /* ZMConversation+ConversationGroupType.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBED6B432D91B2F500328BED /* ZMConversation+ConversationGroupType.swift */; };
 		CBF4F17F2D36935300C9638B /* ConnectionValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBF4F17E2D36935300C9638B /* ConnectionValidator.swift */; };
@@ -1889,6 +1890,7 @@
 		CB5273202D9C0FA000CF8099 /* Channels */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Channels; sourceTree = "<group>"; };
 		CB9615DC2D47B0E10016389E /* EntityValidation */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = EntityValidation; sourceTree = "<group>"; };
 		CBAE486D2DC5140300C62C4E /* WireCellsMessageAttachmentDraftEntity */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = WireCellsMessageAttachmentDraftEntity; sourceTree = "<group>"; };
+		CBBCDA452E33CD80002E1B17 /* WireCellsLocalAsset */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = WireCellsLocalAsset; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1913,6 +1915,7 @@
 				EE8DA96D2954A03800F58B79 /* WireLinkPreview.framework in Frameworks */,
 				5950B0352E2EA1070051B07A /* GenericMessageProtocol in Frameworks */,
 				59506A882E2E61BD0051B07A /* SwiftProtobuf in Frameworks */,
+				CBB648A52E33D18900FA52AA /* WireData in Frameworks */,
 				E6707E902BBD683F00469D57 /* PINCache in Frameworks */,
 				59B48C5C2C89CBBD00EA7999 /* WireFoundation in Frameworks */,
 				EE8DA9702954A03E00F58B79 /* WireImages.framework in Frameworks */,
@@ -3244,6 +3247,7 @@
 		F9A7080A1CAEEB7400C2F5FE /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				CBBCDA452E33CD80002E1B17 /* WireCellsLocalAsset */,
 				CBAE486D2DC5140300C62C4E /* WireCellsMessageAttachmentDraftEntity */,
 				069D07B6256266F000DBA592 /* FeatureConfiguration */,
 				06F98D61243B2446007E914A /* DigitalSignature */,
@@ -3871,6 +3875,7 @@
 				34DC44B42E01C210004D5DD5 /* WireNetwork */,
 				59506A872E2E61BD0051B07A /* SwiftProtobuf */,
 				5950B0342E2EA1070051B07A /* GenericMessageProtocol */,
+				CBB648A42E33D18900FA52AA /* WireData */,
 			);
 			productName = WireDataModel;
 			productReference = F9C9A4FC1CAD5DF10039E10C /* WireDataModel.framework */;
@@ -3895,6 +3900,7 @@
 				CB5273202D9C0FA000CF8099 /* Channels */,
 				CB9615DC2D47B0E10016389E /* EntityValidation */,
 				CBAE486D2DC5140300C62C4E /* WireCellsMessageAttachmentDraftEntity */,
+				CBBCDA452E33CD80002E1B17 /* WireCellsLocalAsset */,
 			);
 			name = WireDataModelTests;
 			productName = WireDataModelTests;
@@ -5302,6 +5308,10 @@
 		76E000BB2DAFED3A00853C45 /* WireCellsAPI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireCellsAPI;
+		};
+		CBB648A42E33D18900FA52AA /* WireData */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireData;
 		};
 		CBD35F2B2D09EBB20080DA37 /* WireCrypto */ = {
 			isa = XCSwiftPackageProductDependency;
