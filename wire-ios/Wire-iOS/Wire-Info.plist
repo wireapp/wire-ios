@@ -249,5 +249,7 @@
 	<string>${WIRE_BUNDLE_ID}</string>
 	<key>WireAuthenticationEnabled</key>
 	<string>$(WIRE_AUTHENTICATION_ENABLED)</string>
+	<key>CreateLegacyBackupsEnabled</key>
+	<string>$(CREATE_LEGACY_BACKUP_ENABLED)</string>
 </dict>
 </plist>

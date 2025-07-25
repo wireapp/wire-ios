@@ -788,7 +788,7 @@ class MockFetchUserClientsUseCase: FetchUserClientsUseCaseProtocol {
     var mockErrorForFetchUserClients: Error?
 
     func fetchUserClients(
-        userIDs: Set<QualifiedID>,
+        userIDs: Set<WireDataModel.QualifiedID>,
         in context: NSManagedObjectContext
     ) async throws -> Set<QualifiedClientID> {
         if let error = mockErrorForFetchUserClients {
