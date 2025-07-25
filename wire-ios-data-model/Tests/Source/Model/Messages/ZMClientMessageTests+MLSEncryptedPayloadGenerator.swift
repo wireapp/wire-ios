@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireFoundation
 import GenericMessageProtocol
+import WireFoundation
 @testable import WireDataModel
 
 final class ZMClientMessageTests_MLSEncryptedPayloadGenerator: BaseZMClientMessageTests {

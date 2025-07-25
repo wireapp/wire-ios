@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireFoundation
 import GenericMessageProtocol
+import WireFoundation
 @testable import WireDataModel
 
 class BaseZMClientMessageTests: BaseZMMessageTests {

@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireFoundation
 import GenericMessageProtocol
+import WireFoundation
 import WireTesting
 import XCTest
 
