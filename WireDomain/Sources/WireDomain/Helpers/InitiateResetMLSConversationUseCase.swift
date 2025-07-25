@@ -59,10 +59,15 @@ public class InitiateResetMLSConversationUseCase: InitiateResetMLSConversationUs
             try await mlsService.wipeGroup(groupID)
 
             // re-create group and re-add all participants
-            let users = await conversationLocalStore.localParticipantsAsMLSUsers(in: conversation)
+            let users = await conversationLocalStore.localParticipantsExcludingSelfAsMLSUsers(in: conversation)
             _ = try await mlsService.establishGroup(for: groupID, with: users, removalKeys: nil)
 
-            WireLogger.mls.info("Initiate reset broken MLS conversation use case finished")
+            let qualifiedID = await conversationLocalStore.qualifiedID(for: conversation)
+
+            WireLogger.mls.info(
+                "Initiate reset broken MLS conversation use case finished",
+                attributes: [.conversationId: qualifiedID?.safeForLoggingDescription ?? "<nil>"]
+            )
 
         } catch {
             WireLogger.mls
