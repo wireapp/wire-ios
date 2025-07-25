@@ -81,7 +81,7 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .multibackend:
             "Turn on to be able to log in with accounts from multiple backends"
-            
+
         case .channelsHistory:
             "Turn on to enable channels history"
         }
