@@ -26,7 +26,6 @@ extension LegacyPersistedDataPatch {
 
     /// List of patches to apply
     static let allPatchesToApply = [
-        LegacyPersistedDataPatch(version: "161.0.1", block: TransferStateMigration.migrateLegacyTransferState),
         LegacyPersistedDataPatch(
             version: "167.3.0",
             block: AvailabilityBehaviourChange.notifyAvailabilityBehaviourChange

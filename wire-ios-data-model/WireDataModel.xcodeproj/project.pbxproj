@@ -192,8 +192,6 @@
 		167BCC96260DC3F100E9D7E3 /* CoreDataStack+ClearStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167BCC95260DC3F100E9D7E3 /* CoreDataStack+ClearStorage.swift */; };
 		16827AEA2732A3C20079405D /* InvalidDomainRemoval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16827AE92732A3C20079405D /* InvalidDomainRemoval.swift */; };
 		16827AF22732AB2E0079405D /* InvalidDomainRemovalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16827AF12732AB2E0079405D /* InvalidDomainRemovalTests.swift */; };
-		168413ED2225965500FCB9BC /* TransferStateMigration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168413EC2225965500FCB9BC /* TransferStateMigration.swift */; };
-		1684141722282A1A00FCB9BC /* TransferStateMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1684141622282A1A00FCB9BC /* TransferStateMigrationTests.swift */; };
 		1684142A2228421700FCB9BC /* ZMAssetClientMessageTests+AssetMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168414292228421700FCB9BC /* ZMAssetClientMessageTests+AssetMessage.swift */; };
 		1687ABAC20EBE0770007C240 /* UserType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1687ABAB20EBE0770007C240 /* UserType.swift */; };
 		1687ABAE20ECD51E0007C240 /* ZMSearchUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1687ABAD20ECD51E0007C240 /* ZMSearchUser.swift */; };
@@ -1101,8 +1099,6 @@
 		167BCC95260DC3F100E9D7E3 /* CoreDataStack+ClearStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CoreDataStack+ClearStorage.swift"; sourceTree = "<group>"; };
 		16827AE92732A3C20079405D /* InvalidDomainRemoval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvalidDomainRemoval.swift; sourceTree = "<group>"; };
 		16827AF12732AB2E0079405D /* InvalidDomainRemovalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvalidDomainRemovalTests.swift; sourceTree = "<group>"; };
-		168413EC2225965500FCB9BC /* TransferStateMigration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransferStateMigration.swift; sourceTree = "<group>"; };
-		1684141622282A1A00FCB9BC /* TransferStateMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransferStateMigrationTests.swift; sourceTree = "<group>"; };
 		168414292228421700FCB9BC /* ZMAssetClientMessageTests+AssetMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMAssetClientMessageTests+AssetMessage.swift"; sourceTree = "<group>"; };
 		1687ABAB20EBE0770007C240 /* UserType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserType.swift; sourceTree = "<group>"; };
 		1687ABAD20ECD51E0007C240 /* ZMSearchUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMSearchUser.swift; sourceTree = "<group>"; };
@@ -2073,7 +2069,6 @@
 				EEC80B5A29B60F7200099727 /* Legacy */,
 				16827AE92732A3C20079405D /* InvalidDomainRemoval.swift */,
 				163D01DF2472DE6200984999 /* InvalidConnectionRemoval.swift */,
-				168413EC2225965500FCB9BC /* TransferStateMigration.swift */,
 				1639A8122260916E00868AB9 /* AlertAvailabilityBehaviourChange.swift */,
 				0660FEBC2580E4A900F4C19F /* TransferApplockKeychain.swift */,
 				169315EE25AC4C8100709F15 /* MigrateSenderClient.swift */,
@@ -2150,7 +2145,6 @@
 				54FB03AC1E41F6C2000E13DC /* LegacyPersistedDataPatchesTests.swift */,
 				163D01E12472E44000984999 /* InvalidConnectionRemovalTests.swift */,
 				0617001123E2FBC0005C262D /* GenericMessageTests+LinkMetaData.swift */,
-				1684141622282A1A00FCB9BC /* TransferStateMigrationTests.swift */,
 				065D7500239FAB1200275114 /* SelfUserParticipantMigrationTests.swift */,
 				A9EEFEF923A6D0CB0007828A /* RolesMigrationTests.swift */,
 				1639A8502264B91E00868AB9 /* AvailabilityBehaviourChangeTests.swift */,
@@ -4507,7 +4501,6 @@
 				060C06612B73D9D400B484C6 /* E2EIActivationRepository.swift in Sources */,
 				63B1335429A503D100009D84 /* ProteusServiceInterface.swift in Sources */,
 				16D95A421FCEF87B00C96069 /* ZMUser+Availability.swift in Sources */,
-				168413ED2225965500FCB9BC /* TransferStateMigration.swift in Sources */,
 				167BCC96260DC3F100E9D7E3 /* CoreDataStack+ClearStorage.swift in Sources */,
 				F9331C881CB419B500139ECC /* NSFetchRequest+ZMRelationshipKeyPaths.m in Sources */,
 				063D292A24212AFD00FA6FEE /* ZMClientMessage.swift in Sources */,
@@ -4789,7 +4782,6 @@
 				F93A302F1D6F2633005CCB1D /* ZMMessageTests+Confirmation.swift in Sources */,
 				F9331C561CB3BCF300139ECC /* OtrBaseTest.swift in Sources */,
 				EE3EFEA1253090E0009499E5 /* PotentialChangeDetectorTests.swift in Sources */,
-				1684141722282A1A00FCB9BC /* TransferStateMigrationTests.swift in Sources */,
 				16DF3B5F2289510600D09365 /* ZMConversationTests+Legalhold.swift in Sources */,
 				169FF3AA27157F0100330C2E /* ZMSearchUserTests+Connections.swift in Sources */,
 				633722BA2B7D1AAA00BE4E45 /* CRLExpirationDatesRepositoryTests.swift in Sources */,
