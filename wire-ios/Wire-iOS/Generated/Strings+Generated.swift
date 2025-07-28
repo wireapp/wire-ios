@@ -1978,6 +1978,8 @@ internal enum L10n {
         internal static func unverifiedSelfDevices(_ p1: Any) -> String {
           return L10n.tr("Localizable", "content.system.unverified_self_devices", String(describing: p1), fallback: "You unverified one of [your devices](%@)")
         }
+        /// This user is no longer available
+        internal static let userRemovedFromTeam = L10n.tr("Localizable", "content.system.user_removed_from_team", fallback: "This user is no longer available")
         /// Verify devices
         internal static let verifyDevices = L10n.tr("Localizable", "content.system.verify_devices", fallback: "Verify devices")
         /// you

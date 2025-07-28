@@ -237,6 +237,14 @@ enum ConversationSystemMessageCellDescription {
             let unknownMessage = UnknownMessageCellDescription()
             unknownMessage.showEphemeralTimer = showEphemeralTimer
             return [AnyConversationMessageCellDescription(unknownMessage)]
+
+        case .userRemovedFromTeam:
+            let missingMessagesCell = UserRemovedFromTeamSystemMessageCellDescription(
+                message: message,
+                data: systemMessageData
+            )
+            missingMessagesCell.showEphemeralTimer = showEphemeralTimer
+            return [AnyConversationMessageCellDescription(missingMessagesCell)]
         }
 
         return []

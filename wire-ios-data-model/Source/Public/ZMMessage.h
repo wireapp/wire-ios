@@ -109,7 +109,8 @@ typedef NS_CLOSED_ENUM(int16_t, ZMSystemMessageType) {
     ZMSystemMessageTypeMLSMigrationUpdateVersion,
     ZMSystemMessageTypeMLSMigrationPotentialGap,
     ZMSystemMessageTypeMLSNotSupportedSelfUser,
-    ZMSystemMessageTypeMLSNotSupportedOtherUser
+    ZMSystemMessageTypeMLSNotSupportedOtherUser,
+    ZMSystemMessageTypeUserRemovedFromTeam
 };
 
 typedef NS_CLOSED_ENUM(int16_t, ZMParticipantsRemovedReason) {

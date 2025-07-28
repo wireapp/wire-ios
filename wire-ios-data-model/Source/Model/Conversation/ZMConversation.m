@@ -372,7 +372,8 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     (self.conversationType == ZMConversationTypeInvalid) ||
     (self.conversationType == ZMConversationTypeSelf) ||
     (self.conversationType == ZMConversationTypeConnection) ||
-    (self.conversationType == ZMConversationTypeGroup && !self.isSelfAnActiveMember);
+    (self.conversationType == ZMConversationTypeGroup && !self.isSelfAnActiveMember) ||
+    (self.conversationType == ZMConversationTypeOneOnOne && self.connectedUser.isAccountDeleted == YES);
 }
 
 + (NSSet *)keyPathsForValuesAffectingIsReadOnly;

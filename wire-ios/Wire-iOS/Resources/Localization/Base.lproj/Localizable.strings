@@ -640,6 +640,9 @@
 
 "content.system.unknown_message.body" = "This message can’t be displayed. You may be using an older version of Wire.";
 
+// user removed from team
+"content.system.user_removed_from_team" = "This user is no longer available";
+
 "content.file.uploading" = "Uploading…";
 "content.file.downloading" = "Downloading…";
 "content.file.upload_failed" = "Upload failed";
