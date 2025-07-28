@@ -42,8 +42,10 @@ public class InitiateResetMLSConversationUseCase: InitiateResetMLSConversationUs
     }
 
     public func invoke(groupID: WireDataModel.MLSGroupID, epoch: Int64) async {
+
+        var attributes: LogAttributes = [:]
+
         do {
-            WireLogger.mls.info("Initiate reset broken MLS conversation use case started")
 
             guard let conversation = await conversationLocalStore.fetchMLSConversation(
                 groupID: groupID
@@ -51,6 +53,13 @@ public class InitiateResetMLSConversationUseCase: InitiateResetMLSConversationUs
                 WireLogger.mls.error("Initiate reset broken MLS conversation failed: no conversation found")
                 return
             }
+            let qualifiedID = await conversationLocalStore.qualifiedID(for: conversation)
+            attributes = [.conversationId: qualifiedID?.safeForLoggingDescription ?? "<nil>"]
+
+            WireLogger.mls.info(
+                "Initiate reset broken MLS conversation use case started",
+                attributes: attributes
+            )
 
             // send request to BE to reset broken conversation
             try await api.resetMLSConversation(epoch: epoch, groupID: groupID.data.base64String())
@@ -62,16 +71,16 @@ public class InitiateResetMLSConversationUseCase: InitiateResetMLSConversationUs
             let users = await conversationLocalStore.localParticipantsExcludingSelfAsMLSUsers(in: conversation)
             _ = try await mlsService.establishGroup(for: groupID, with: users, removalKeys: nil)
 
-            let qualifiedID = await conversationLocalStore.qualifiedID(for: conversation)
-
             WireLogger.mls.info(
                 "Initiate reset broken MLS conversation use case finished",
-                attributes: [.conversationId: qualifiedID?.safeForLoggingDescription ?? "<nil>"]
+                attributes: attributes
             )
 
         } catch {
-            WireLogger.mls
-                .error("Initiate reset broken MLS conversation use case failed: \(error.localizedDescription)")
+            WireLogger.mls.error(
+                "Initiate reset broken MLS conversation use case failed: \(error.localizedDescription)",
+                attributes: attributes
+            )
         }
     }
 }
