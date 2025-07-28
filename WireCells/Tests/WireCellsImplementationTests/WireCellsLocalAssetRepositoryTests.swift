@@ -154,11 +154,11 @@ final class WireCellsLocalAssetRepositoryTests {
         nodesAPI.getNodeNodeIDUUIDWireCellsNodeReturnValue = node
 
         // when
-        let metadata = try await sut.refreshMetadata(nodeID: nodeID)
+        try await sut.refreshMetadata(nodeID: nodeID)
 
-        // then the returned metadata is correct
+        // then the store is updated with the new metadata
         #expect(
-            metadata == WireCellsLocalAssetMetadata(
+            storeBacking[nodeID] == WireCellsLocalAssetMetadata(
                 nodeID: nodeID,
                 eTag: "abc",
                 path: "path/file.png",
@@ -167,9 +167,6 @@ final class WireCellsLocalAssetRepositoryTests {
                 isDownloaded: false
             )
         )
-
-        // then the store is updated with the new metadata
-        #expect(storeBacking[nodeID] == metadata)
 
         // then no files are deleted
         #expect(fileCache.deleteFileForKeyKeyStringVoidCalled == false)
@@ -210,11 +207,11 @@ final class WireCellsLocalAssetRepositoryTests {
         )
 
         // when
-        let metadata = try await sut.refreshMetadata(nodeID: nodeID)
+        try await sut.refreshMetadata(nodeID: nodeID)
 
-        // then the returned metadata is correct
+        // then the store is updated with the new metadata
         #expect(
-            metadata == WireCellsLocalAssetMetadata(
+            storeBacking[nodeID] == WireCellsLocalAssetMetadata(
                 nodeID: nodeID,
                 eTag: "abc",
                 path: "path/file.png",
@@ -223,9 +220,6 @@ final class WireCellsLocalAssetRepositoryTests {
                 isDownloaded: false
             )
         )
-
-        // then the store is updated with the new metadata
-        #expect(storeBacking[nodeID] == metadata)
 
         // then old files are deleted
         #expect(fileCache.deleteFileForKeyKeyStringVoidReceivedInvocations == ["\(nodeID.uuidString)-def"])

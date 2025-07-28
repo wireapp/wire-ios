@@ -74,8 +74,8 @@ final class WireCellsLocalAssetRepository {
     /// metadata from the server, updates local metadata if it has changed and deletes any cached file if it's
     /// `eTag` has changed.
 
-    func refreshMetadata(nodeID: UUID) async throws -> WireCellsLocalAssetMetadata {
-        try await refreshMetadata(nodeID: nodeID).metadata
+    func refreshMetadata(nodeID: UUID) async throws {
+        _ = try await _refreshMetadata(nodeID: nodeID)
     }
 
     /// Downloads the asset for the given `nodeID`.
@@ -94,7 +94,7 @@ final class WireCellsLocalAssetRepository {
         }
 
         do {
-            var (node, metadata) = try await refreshMetadata(nodeID: nodeID)
+            var (node, metadata) = try await _refreshMetadata(nodeID: nodeID)
             let (downloadURL, eTag) = try node.downloadInfo
 
             let (progress, download) = fileDownloader.download(from: downloadURL)
@@ -144,7 +144,7 @@ final class WireCellsLocalAssetRepository {
 
     // MARK: - Private
 
-    private func refreshMetadata(
+    private func _refreshMetadata(
         nodeID: UUID
     ) async throws -> (node: WireCellsNode, metadata: WireCellsLocalAssetMetadata) {
         let getNodeTask = getNodeTasks[nodeID] ?? Task { [nodesAPI] in
