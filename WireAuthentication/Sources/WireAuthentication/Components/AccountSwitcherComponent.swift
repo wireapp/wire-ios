@@ -30,7 +30,7 @@ protocol AccountSwitcherComponentDependency: Dependency {
 
 }
 
-class AccountSwitcherComponent: Component<AccountSwitcherComponentDependency> {}
+final class AccountSwitcherComponent: Component<AccountSwitcherComponentDependency> {}
 
 extension AccountSwitcherComponent: AccountSwitcherFactory {
 

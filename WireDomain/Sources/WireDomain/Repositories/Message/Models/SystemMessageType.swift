@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireFoundation
 
 public enum SystemMessageType: Sendable {
     case federationTermination(
@@ -109,6 +110,11 @@ public enum SystemMessageType: Sendable {
         isEnabled: Bool,
         sender: (id: UUID, domain: String?),
         date: Date
+    )
+
+    case channelHistoryDepthModified(
+        sender: QualifiedID,
+        newHistoryDepth: String?
     )
 
 }

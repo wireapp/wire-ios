@@ -22,6 +22,8 @@
 ///  "<screen>.<component>.<usage>"
 
 
+"peoplepicker.upgrade_banner.close_button.label" = "关闭团队创建选项";
+
 "conversation.backButton.description" = "返回到对话列表";
 "conversation.searchButton.description" = "打开搜索";
 "conversation.profileImage.description" = "个人图像";

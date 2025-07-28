@@ -20,15 +20,34 @@ import Foundation
 import WireDomain
 import WireLogging
 
-struct AppVersionMigration_4_1_1: AppVersionMigration {
+/// **Issue:** some users had conversations in their database that weren't
+/// fully up do date with the backend.
+/// **Fix:** mark conversations needing resync.
 
-    let logFilesProvider: LogFilesProviding
+final class AppVersionMigration_4_1_1: AppVersionMigration {
+
     let version: SemanticVersion = "4.1.1"
+    private var journal: any JournalProtocol
+    private let logFilesProvider: LogFilesProviding
+
+    init(
+        journal: any JournalProtocol,
+        logFilesProvider: LogFilesProviding
+    ) {
+        self.journal = journal
+        self.logFilesProvider = logFilesProvider
+    }
 
     func perform() async throws {
+        // Syncing conversations may take time (due to number of
+        // conversations and network speed) and this work is not
+        // crucial, we simply mark the sync as needed and later
+        // we'll perform it asynchronously.
+        journal[.isConversationSyncRequired] = true
+
         // Deletes all raw log files collected from the logger sources.
-        // This removes files from `WireLogger.logFiles` and `ZMSLog.pathsForExistingLogs`,
-        try logFilesProvider.removeLogFiles()
+        // This removes files from CocoaLumberjackLogger and `ZMSLog.pathsForExistingLogs`,
+        try logFilesProvider.removeLogFiles(fileManager: .default)
 
         // Deletes all log-related archives and folders created in the temp directory.
         try logFilesProvider.removeLegacyLogArchives()

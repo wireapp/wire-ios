@@ -58,6 +58,9 @@ jobs:
             WireCells:
               - 'WireCells/**'
               - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireCellsAll.xcscheme'
+            WireData:
+              - 'WireData/**'
+              - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireDataAll.xcscheme'
             WireMessaging:
               - 'WireMessaging/**'
               - 'wire-ios-mono.xcworkspace/xcshareddata/xcschemes/WireMessagingAll.xcscheme'
@@ -71,8 +74,6 @@ jobs:
               - 'wire-ios-cryptobox/**'
             wire-ios-mocktransport:
               - 'wire-ios-mocktransport/**'
-            wire-ios-protos:
-              -  'wire-ios-protos/**'
             wire-ios-images:
               - 'wire-ios-images/**'
             wire-ios-link-preview:

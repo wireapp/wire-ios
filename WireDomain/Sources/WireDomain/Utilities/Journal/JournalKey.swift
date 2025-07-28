@@ -23,8 +23,8 @@ import WireFoundation
 
 public struct JournalKey<Value>: Sendable where Value: Sendable {
 
-    let name: String
-    let defaultValue: Value
+    public let name: String
+    public let defaultValue: Value
 
     init(
         _ name: String,
@@ -57,6 +57,13 @@ public extension JournalKey where Value == Bool {
 
     static let isInitialSyncRequired = Self(
         "isInitialSyncRequired",
+        defaultValue: false
+    )
+
+    /// Whether all conversations should be pulled from the backend.
+
+    static let isConversationSyncRequired = Self(
+        "isConversationSyncRequired",
         defaultValue: false
     )
 

@@ -67,6 +67,23 @@ class SelfUserAPIV0: SelfUserAPI, VersionedAPI {
         return try ResponseParser()
             .success(code: .ok)
             .parse(code: response.statusCode, data: data)
+
+    }
+
+    func deleteTeam(teamId: UUID, password: String, verificationCode: String) async throws {
+        let body = try JSONEncoder.defaultEncoder.encode(
+            DeleteTeamRequestBodyV0(password: password, verificationCode: verificationCode)
+        )
+
+        let request = try URLRequestBuilder(path: "\(pathPrefix)/teams/\(teamId)")
+            .withMethod(.delete)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(request, requiringAccessToken: true)
+        return try ResponseParser()
+            .success(code: .accepted)
+            .parse(code: response.statusCode, data: data)
     }
 
     func updateHandle(handle: String) async throws {
@@ -84,6 +101,7 @@ class SelfUserAPIV0: SelfUserAPI, VersionedAPI {
             .success(code: .ok)
             .parse(code: response.statusCode, data: data)
     }
+
 }
 
 struct SelfUserV0: Decodable, ToAPIModelConvertible {
@@ -179,4 +197,14 @@ private struct DeleteSelfRequestBodyV0: Encodable {
 
 private struct UpdateHandleRequestBodyV0: Encodable {
     var handle: String
+}
+
+private struct DeleteTeamRequestBodyV0: Encodable {
+    var password: String
+    var verificationCode: String
+}
+
+private struct MigratePersonalToTeamBodyV0: Encodable {
+    var icon: String
+    var name: String
 }

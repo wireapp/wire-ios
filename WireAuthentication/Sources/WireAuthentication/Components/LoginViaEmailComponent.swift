@@ -61,6 +61,7 @@ final class LoginViaEmailComponent: Component<LoginViaEmailComponentDependency> 
         PersonalAccountCreationComponent(
             parent: self,
             email: email ?? "",
+            backendConfig: networkStack.backendInfo.backendConfig,
             teamAccountCreationLink: teamAccountCreationLink
         )
     }

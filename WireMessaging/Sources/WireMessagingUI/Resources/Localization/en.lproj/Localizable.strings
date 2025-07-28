@@ -32,16 +32,9 @@
 "channel_access_level.participants_footer" = "Select who can add participants to a private channel";
 
 
-"channel_access_level.change_level_alert.title" = "Channel access";
-"channel_access_level.change_level_alert.message" = "Changing the channel access to private will have the following implications:
-
-Team members can not join the channel themselves anymore.
-New members can only be added by channel admins or other members, depending on the “Add participants” setting.
-The channel access can not be turned back to public anymore.
-
-Do you want to change channel access to private?";
-
-"channel_access_level.change_level_alert.button.change" = "Change";
+"channel_access_level.change_level_alert.title" = "Change access from public to private?";
+"channel_access_level.change_level_alert.message" = "It means: Team members can't join this channel themselves.\nDepending on your choice, only channel admins or both admins and members can add new participants.\nYou can't undo this step. The channel will stay private.";
+"channel_access_level.change_level_alert.button.change" = "Change to Private";
 "channel_access_level.change_level_alert.button.cancel" = "Cancel";
 
 
@@ -76,3 +69,20 @@ Do you want to change channel access to private?";
 
 "conversation.creationForm.readReceipts.toggle" = "Read receipts";
 "conversation.creationForm.readReceipts.description" = "When this is on, people can see when their messages in this conversation are read.";
+
+// MARK: - Channel history
+"conversation.channelHistory.upgradeBanner.title" = "Show older messages?";
+"conversation.channelHistory.upgradeBanner.message" = "Upgrade to a paid plan to offer channel members the whole history.";
+"conversation.channelHistory.upgradeBanner.button" = "Upgrade now";
+"conversation.channelHistory.upgradeBanner.closeMessage" = "Close banner";
+"conversation.channelHistory.picker.title" = "Conversation history";
+"conversation.channelHistory.picker.off" = "Off";
+"conversation.channelHistory.picker.oneDay" = "1 day";
+"conversation.channelHistory.picker.oneWeek" = "1 week";
+"conversation.channelHistory.picker.fourWeeks" = "4 weeks";
+"conversation.channelHistory.picker.unlimited" = "Unlimited";
+"conversation.channelHistory.picker.custom" = "Custom";
+"conversation.channelHistory.customPicker.days" = "Days";
+"conversation.channelHistory.customPicker.weeks" = "Weeks";
+"conversation.channelHistory.navigationTitle" = "Conversation history";
+"conversation.creationForm.channelHistory.sectionFootnote" = "Select a period. When participants join this channel, they can follow the history for this time frame.";

@@ -45,11 +45,14 @@ package struct PersonalAccountCreationView: View {
         .navigationDestination(for: PersonalAccountCreationDestination.self) {
             switch $0 {
             case let .verifyEmail(email, password, name):
-                VerificationEmailCodeView(factory: viewModel.factory.verificationEmailCodeFactory(
-                    email: email,
-                    password: password,
-                    name: name
-                ))
+                VerificationEmailCodeView(
+                    factory: viewModel.factory.verificationEmailCodeFactory(
+                        email: email,
+                        password: password,
+                        name: name,
+                        trackingConsent: viewModel.trackingConsent
+                    )
+                )
             }
         }
         .sheet(isPresented: $viewModel.isCreateTeamAccountPresented, content: {
@@ -86,7 +89,9 @@ package struct PersonalAccountCreationView: View {
             emailField
             passwordField
             confirmPasswordField
-            dataUsageAgreementView
+            if viewModel.isAnalyticsTrackingAvailable {
+                dataUsageAgreementView
+            }
             continueButton
             teamAccountCreationView
 
@@ -140,7 +145,7 @@ package struct PersonalAccountCreationView: View {
 
     @ViewBuilder private var dataUsageAgreementView: some View {
         Checkbox(
-            isChecked: $viewModel.dataUsageAgreementAccepted,
+            isChecked: $viewModel.isDataUsageAgreementAccepted,
             title: .formattedMarkdown(
                 key: "create_personal_account.share_data_usage",
                 bundle: .module,

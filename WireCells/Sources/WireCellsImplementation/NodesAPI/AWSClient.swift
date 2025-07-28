@@ -19,6 +19,7 @@
 import AWSClientRuntime
 import AWSS3
 import Foundation
+import Smithy
 import SmithyIdentity
 import SmithyStreams
 import WireCellsAPI
@@ -47,16 +48,11 @@ final class AWSClient: Sendable {
     private let s3: any S3ClientProtocol
     private let makeStream: @Sendable (FileStream) -> ObservableStream
 
-    convenience init(credentials: WireCellsCredentials) {
+    convenience init(serverURL: URL, accessToken: any AccessTokenProvider) {
         let config = try! S3Client.S3ClientConfiguration(
-            awsCredentialIdentityResolver: StaticAWSCredentialIdentityResolver(
-                .init(
-                    accessKey: credentials.accessToken,
-                    secret: credentials.gatewaySecret
-                )
-            ),
+            awsCredentialIdentityResolver: CredentialIdentityResolver(accessTokenProvider: accessToken),
             region: Constants.region,
-            endpoint: credentials.serverURL.absoluteString
+            endpoint: serverURL.absoluteString
         )
         self.init(s3: S3Client(config: config))
     }
@@ -258,4 +254,20 @@ private extension WireCellsNodeDTO {
             "Create-Version-ID": versionID.uuidString
         ]
     }
+}
+
+private struct CredentialIdentityResolver: AWSCredentialIdentityResolver {
+
+    let accessTokenProvider: any AccessTokenProvider
+
+    func getIdentity(identityProperties: Smithy.Attributes?) async throws -> AWSCredentialIdentity {
+        let accessToken = try await accessTokenProvider.accessToken()
+
+        return AWSCredentialIdentity(
+            accessKey: accessToken.token,
+            secret: "gatewaysecret", // This is not used and is safe to commit.
+            expiration: accessToken.expirationDate
+        )
+    }
+
 }

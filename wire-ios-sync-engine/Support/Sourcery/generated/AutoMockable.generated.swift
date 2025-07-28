@@ -220,6 +220,7 @@ public class MockEnableAnalyticsUseCaseProtocol: EnableAnalyticsUseCaseProtocol 
     public var invoke_MockError: Error?
     public var invoke_MockMethod: (() async throws -> Void)?
 
+    @MainActor
     public func invoke() async throws {
         invoke_Invocations.append(())
 

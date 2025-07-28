@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireLogging
 
 extension ZMOTRMessage {
@@ -100,8 +101,9 @@ extension ZMOTRMessage {
             ZMMessage.remove(remotelyHiddenMessage: message.hidden, inContext: moc)
 
         case let .dataTransfer(dataTransfer) where conversation.isSelfConversation:
-            guard let trackingIdentifier = dataTransfer.trackingIdentifierData else { break }
-            ZMUser.selfUser(in: moc).analyticsIdentifier = trackingIdentifier
+            guard let trackingID = dataTransfer.trackingIdentifierData.flatMap(UUID.init(transportString:))
+            else { break }
+            ZMUser.selfUser(in: moc).trackingID = trackingID
 
         case .deleted:
             ZMMessage.remove(

@@ -104,7 +104,7 @@ public final class ClientSessionComponent {
         self.completionHandlers = completionHandlers
     }
 
-    private lazy var authenticationManager = AuthenticationManager(
+    public private(set) lazy var authenticationManager = AuthenticationManager(
         clientID: selfClientID,
         cookieStorage: cookieStorage,
         networkService: networkService,
@@ -224,12 +224,13 @@ public final class ClientSessionComponent {
 
     // MARK: - Pull syncs
 
-    private lazy var pullAllConversationsSync = PullAllConversationsSync(
+    public lazy var pullAllConversationsSync = PullAllConversationsSync(
         localDomain: localDomain,
         isFederationEnabled: BackendInfo.isFederationEnabled,
         isMLSEnabled: BackendInfo.isMLSEnabled,
         api: conversationsAPI,
-        store: conversationLocalStore
+        store: conversationLocalStore,
+        journal: journal
     )
 
     private lazy var pullAllFeatureConfigsSync = PullAllFeatureConfigsSync(
@@ -646,6 +647,11 @@ public final class ClientSessionComponent {
         localStore: conversationLocalStore
     )
 
+    private lazy var mlsResetEventProcessor = ConversationMLSResetEventProcessor(
+        mlsService: mlsService,
+        conversationLocalStore: conversationLocalStore
+    )
+
     private lazy var conversationEventProcessor = ConversationEventProcessor(
         accessUpdateEventProcessor: conversationAccessUpdateEventProcessor,
         createEventProcessor: conversationCreateEventProcessor,
@@ -661,7 +667,8 @@ public final class ClientSessionComponent {
         receiptModeUpdateEventProcessor: conversationReceiptModeUpdateEventProcessor,
         renameEventProcessor: conversationRenameEventProcessor,
         typingEventProcessor: conversationTypingEventProcessor,
-        addPermissionEventProcessor: addPermissionEventProcessor
+        addPermissionEventProcessor: addPermissionEventProcessor,
+        mlsResetEventProcessor: mlsResetEventProcessor
     )
 
     private lazy var updateEventProcessor: UpdateEventProcessor = {

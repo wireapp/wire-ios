@@ -17,6 +17,7 @@
 //
 
 import CoreData
+import GenericMessageProtocol
 import WireDataModel
 import WireLogging
 
@@ -102,6 +103,16 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         await context.perform {
             conversation.mlsStatus = .ready
             conversation.mlsGroupID = mlsGroupID
+        }
+    }
+
+    public func storeMLSConversationPendingJoin(
+        newMLSGroupID: MLSGroupID,
+        conversation: ZMConversation
+    ) async {
+        await context.perform {
+            conversation.mlsStatus = .pendingJoin
+            conversation.mlsGroupID = newMLSGroupID
         }
     }
 
@@ -1084,13 +1095,13 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
         await context.perform { [self] in
             if isInitialFetch {
-                /// we just got a new conversation, we display new conversation header
+                // we just got a new conversation, we display new conversation header
                 localConversation.appendNewConversationSystemMessage(
                     at: .distantPast,
                     users: localConversation.localParticipants
                 )
 
-                /// Slow synced conversations should be considered read from the start
+                // Slow synced conversations should be considered read from the start
                 localConversation.lastReadServerTimeStamp = localConversation.lastModifiedDate
 
                 Flow.createGroup.checkpoint(
@@ -1098,9 +1109,12 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                 )
             }
 
-            /// If we discover this group is actually a fake one on one,
-            /// then we should link the one on one user.
+            // If we discover this group is actually a fake one on one,
+            // then we should link the one on one user.
             linkOneOnOneUserIfNeeded(for: localConversation)
+
+            // All metadata has been updated, object does not need to be updated from backend
+            localConversation.needsToBeUpdatedFromBackend = false
         }
     }
 

@@ -29,7 +29,7 @@ enum AuthenticationCoordinatorAction {
     case presentAlert(AuthenticationCoordinatorAlert)
     case presentErrorAlert(AuthenticationCoordinatorErrorAlert)
     case completeBackupStep(didSucceed: Bool?)
-    case completeWireAuthenticationLogin(AuthenticationResult)
+    case completeWireAuthenticationLogin((AuthenticationResult, RegistrationAnalyticsTrackingConsent))
     case completeLoginFlow
     case startPostLoginFlow
     case transition(AuthenticationFlowStep, mode: AuthenticationStateController.StateChangeMode)
@@ -50,6 +50,7 @@ enum AuthenticationCoordinatorAction {
     case startCompanyLogin(code: UUID?)
     case startSSOFlow
     case signOut(warn: Bool)
+    case deleteSession(eraseData: Bool)
     case addEmailAndPassword(UserEmailCredentials)
     case configureDevicePermissions
     case startE2EIEnrollment

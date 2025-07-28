@@ -74,6 +74,10 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
         countly != nil
     }
 
+    public var currentDeviceID: String? {
+        countly?.deviceID()
+    }
+
     /// Start sending analytics data.
 
     @MainActor
@@ -159,9 +163,9 @@ public final class AnalyticsService: AnalyticsServiceProtocol {
     ) throws {
         guard let countly else { return }
 
-        if let id = user?.analyticsIdentifier {
+        if let id = user?.trackingID {
             countly.changeDeviceID(
-                id,
+                id.uuidString.lowercased(),
                 mergeData: mergeData
             )
         }

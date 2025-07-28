@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 class CompositeMessageItemContent: NSObject {
     private let parentMessage: ZMClientMessage

@@ -92,12 +92,8 @@ package struct LoginViaEmailView: View {
                 Button(Strings.Authentication.Error.confirm, action: {})
             }
         )
-        .fullScreenCover(item: $viewModel.modalDestination) { item in
-            sheetView(for: item)
-        }
-        .navigationDestination(for: LoginViaEmailDestination.self) { destination in
-            destinationView(destination)
-        }
+        .fullScreenCover(item: $viewModel.modalDestination, onDismiss: onSheetDismiss, content: sheetView(for:))
+        .navigationDestination(for: LoginViaEmailDestination.self, destination: destinationView)
         .presentationDetents(viewModel.areProxyCredentialsRequired ? [.large] : [.medium, .large])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
@@ -251,13 +247,20 @@ package struct LoginViaEmailView: View {
     private func sheetView(for sheet: LoginViaEmailSheet) -> some View {
         switch sheet {
         case let .teamAccountCreation(teamAccountCreationLink):
-            SafariBrowserView(url: teamAccountCreationLink).ignoresSafeArea()
+            SafariBrowserView(url: teamAccountCreationLink)
+                .ignoresSafeArea()
         case .accountTypeSelection:
             AccountTypeSelectionView(
-                onTeamAccountCreation: viewModel.handleOnTeamAccountCreation,
-                onPersonalAccountCreation: viewModel.handleoOnPersonalAccountCreation
+                onTeamAccountCreation: viewModel.handleTeamAccountCreation,
+                onPersonalAccountCreation: viewModel.handlePersonalAccountCreation
             )
+            // TODO: [WPB-18672] The account type selection is presented full-screen, not like the rest of the auth UI
+            // try to use .universalSheet(...) if possible
         }
+    }
+
+    private func onSheetDismiss() {
+        viewModel.onSheetDismissAction?()
     }
 
 }
