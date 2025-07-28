@@ -112,7 +112,7 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
             }
     }
 
-    func testDoNotProcessEventWhenFFIsOff() async throws {
+    func testProcessEvent_DoNothingWhenFFIsOff() async throws {
 
         mockFeatureRepository.fetchAllowGlobalOperations_MockValue = .init(
             status: .disabled,

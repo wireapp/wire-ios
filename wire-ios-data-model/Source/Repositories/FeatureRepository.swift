@@ -31,7 +31,7 @@ public protocol FeatureRepositoryInterface {
     func fetchSelfDeletingMessages() -> Feature.SelfDeletingMessages
     func storeSelfDeletingMessages(_ selfDeletingMessages: Feature.SelfDeletingMessages)
     func fetchAllowGlobalOperations() async -> Feature.AllowGlobalOperations
-    func storeAllowGlobalOperations(_ resetMLSConversations: Feature.AllowGlobalOperations) // RENAME
+    func storeAllowGlobalOperations(_ resetMLSConversations: Feature.AllowGlobalOperations)
     func fetchConversationGuestLinks() -> Feature.ConversationGuestLinks
     func storeConversationGuestLinks(_ conversationGuestLinks: Feature.ConversationGuestLinks)
     func fetchClassifiedDomains() -> Feature.ClassifiedDomains
