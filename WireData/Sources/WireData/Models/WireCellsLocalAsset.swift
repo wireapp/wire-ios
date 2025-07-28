@@ -21,7 +21,7 @@ import Foundation
 
 /// Information of a Wire Cells local asset (e.g file) including whether it is downloaded.
 ///
-/// It's download location is determined by its `nodeID` and `eTag` properties.
+/// Its download location is determined by its `nodeID` and `eTag` properties.
 
 public final class WireCellsLocalAsset: NSManagedObject {
 
@@ -33,13 +33,13 @@ public final class WireCellsLocalAsset: NSManagedObject {
 
     @NSManaged public var nodeID: UUID
 
-    /// The eTag of the asset.
+    /// The eTag of the asset. An eTag is a unique identifier for a specific version of a resource.
     ///
     /// If this changes the file represented by `nodeID` has changed and should be re-downloaded.
 
     @NSManaged public var eTag: String
 
-    /// The path representing the asset in the Wire Cells file system.
+    /// The remote key path representing the asset in the Wire Cells file system.
     ///
     /// This is **not** the path on the local file system. It encodes information such as file name and extension.
 
