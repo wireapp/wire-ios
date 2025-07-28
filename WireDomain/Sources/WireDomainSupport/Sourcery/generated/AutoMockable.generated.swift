@@ -2079,6 +2079,30 @@ public class MockInitialSyncProtocol: InitialSyncProtocol {
 
 }
 
+public class MockInitiateResetMLSConversationUseCaseProtocol: InitiateResetMLSConversationUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeGroupIDEpoch_Invocations: [(groupID: WireDataModel.MLSGroupID, epoch: Int64)] = []
+    public var invokeGroupIDEpoch_MockMethod: ((WireDataModel.MLSGroupID, Int64) async -> Void)?
+
+    public func invoke(groupID: WireDataModel.MLSGroupID, epoch: Int64) async {
+        invokeGroupIDEpoch_Invocations.append((groupID: groupID, epoch: epoch))
+
+        guard let mock = invokeGroupIDEpoch_MockMethod else {
+            fatalError("no mock for `invokeGroupIDEpoch`")
+        }
+
+        await mock(groupID, epoch)
+    }
+
+}
+
 public class MockLiveSyncDelegate: LiveSyncDelegate {
 
     // MARK: - Life cycle

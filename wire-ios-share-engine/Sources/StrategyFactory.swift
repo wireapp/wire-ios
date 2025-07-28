@@ -51,7 +51,8 @@ final class StrategyFactory {
             messageDependencyResolver: messageDependencyResolver,
             context: syncContext,
             incrementalSyncObserver: NoOpIncrementalSyncObserver(),
-            initiateResetMLSConversationUseCase: initiateResetMLSConversationUseCase
+            initiateResetMLSConversationUseCase: initiateResetMLSConversationUseCase,
+            featureRepository: FeatureRepository(context: syncContext)
         )
         self.strategies = createStrategies(linkPreviewPreprocessor: linkPreviewPreprocessor)
     }

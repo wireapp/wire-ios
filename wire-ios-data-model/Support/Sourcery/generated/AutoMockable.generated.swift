@@ -3182,21 +3182,21 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
         mock(fileSharing)
     }
 
-    // MARK: - fetchSelfDeletingMesssages
+    // MARK: - fetchSelfDeletingMessages
 
-    public var fetchSelfDeletingMesssages_Invocations: [Void] = []
-    public var fetchSelfDeletingMesssages_MockMethod: (() -> Feature.SelfDeletingMessages)?
-    public var fetchSelfDeletingMesssages_MockValue: Feature.SelfDeletingMessages?
+    public var fetchSelfDeletingMessages_Invocations: [Void] = []
+    public var fetchSelfDeletingMessages_MockMethod: (() -> Feature.SelfDeletingMessages)?
+    public var fetchSelfDeletingMessages_MockValue: Feature.SelfDeletingMessages?
 
-    public func fetchSelfDeletingMesssages() -> Feature.SelfDeletingMessages {
-        fetchSelfDeletingMesssages_Invocations.append(())
+    public func fetchSelfDeletingMessages() -> Feature.SelfDeletingMessages {
+        fetchSelfDeletingMessages_Invocations.append(())
 
-        if let mock = fetchSelfDeletingMesssages_MockMethod {
+        if let mock = fetchSelfDeletingMessages_MockMethod {
             return mock()
-        } else if let mock = fetchSelfDeletingMesssages_MockValue {
+        } else if let mock = fetchSelfDeletingMessages_MockValue {
             return mock
         } else {
-            fatalError("no mock for `fetchSelfDeletingMesssages`")
+            fatalError("no mock for `fetchSelfDeletingMessages`")
         }
     }
 
@@ -3213,6 +3213,39 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
         }
 
         mock(selfDeletingMessages)
+    }
+
+    // MARK: - fetchAllowGlobalOperations
+
+    public var fetchAllowGlobalOperations_Invocations: [Void] = []
+    public var fetchAllowGlobalOperations_MockMethod: (() async -> Feature.AllowGlobalOperations)?
+    public var fetchAllowGlobalOperations_MockValue: Feature.AllowGlobalOperations?
+
+    public func fetchAllowGlobalOperations() async -> Feature.AllowGlobalOperations {
+        fetchAllowGlobalOperations_Invocations.append(())
+
+        if let mock = fetchAllowGlobalOperations_MockMethod {
+            return await mock()
+        } else if let mock = fetchAllowGlobalOperations_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchAllowGlobalOperations`")
+        }
+    }
+
+    // MARK: - storeAllowGlobalOperations
+
+    public var storeAllowGlobalOperations_Invocations: [Feature.AllowGlobalOperations] = []
+    public var storeAllowGlobalOperations_MockMethod: ((Feature.AllowGlobalOperations) -> Void)?
+
+    public func storeAllowGlobalOperations(_ resetMLSConversations: Feature.AllowGlobalOperations) {
+        storeAllowGlobalOperations_Invocations.append(resetMLSConversations)
+
+        guard let mock = storeAllowGlobalOperations_MockMethod else {
+            fatalError("no mock for `storeAllowGlobalOperations`")
+        }
+
+        mock(resetMLSConversations)
     }
 
     // MARK: - fetchConversationGuestLinks
