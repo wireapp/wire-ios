@@ -50,7 +50,12 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
             case .services:      user.canModifyGuestsAccessControlSettings(in: conversation) && conversation
                 .botCanBeAdded
             case .timeout:       user.canModifyEphemeralSettings(in: conversation)
-            case .channelHistoryDepth: user.canModifyChannelHistoryDepthSettings(in: conversation)
+            case .channelHistoryDepth:
+                if DeveloperFlag.channelsHistory.isOn {
+                    user.canModifyChannelHistoryDepthSettings(in: conversation)
+                } else {
+                    false
+                }
             }
         }
 
