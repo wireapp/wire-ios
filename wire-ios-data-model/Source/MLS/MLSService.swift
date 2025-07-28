@@ -488,6 +488,8 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// - Parameter delegate: The sync delegate to set.
 
     func setSyncDelegate(_ delegate: any MLSSyncDelegate)
+
+    func setResetBrokenMLSConversationDelegate(_ delegate: any ResetBrokenMLSConversationDelegate)
 }
 
 // This is only used in tests, so it should be removed.
@@ -532,6 +534,7 @@ public final class MLSService: MLSServiceInterface {
     private let groupsBeingRepaired = GroupsBeingRepaired()
     private let featureRepository: FeatureRepositoryInterface
     private weak var mlsSyncDelegate: (any MLSSyncDelegate)?
+    private weak var resetBrokenMLSConversationDelegate: (any ResetBrokenMLSConversationDelegate)?
     private let onEpochChangedSubject = PassthroughSubject<MLSGroupID, Never>()
 
     private var coreCrypto: SafeCoreCryptoProtocol {
@@ -635,6 +638,12 @@ public final class MLSService: MLSServiceInterface {
 
     public func setSyncDelegate(_ delegate: any MLSSyncDelegate) {
         mlsSyncDelegate = delegate
+    }
+
+    public func setResetBrokenMLSConversationDelegate(
+        _ delegate: any ResetBrokenMLSConversationDelegate
+    ) {
+        resetBrokenMLSConversationDelegate = delegate
     }
 
     // MARK: - Conference info for subconversations
@@ -1933,6 +1942,10 @@ public final class MLSService: MLSServiceInterface {
 
         case giveUp
 
+        /// When MLS conversation happened to be broken
+
+        case resetBrokenMLSConversation
+
         init(from reason: String) {
             if let error = try? MLSAPIError(from: reason) {
                 switch error {
@@ -1940,6 +1953,8 @@ public final class MLSService: MLSServiceInterface {
                     self = .retryAfterQuickSync
                 case .mlsStaleMessage:
                     self = .retryAfterRepairingGroup
+                case .mlsInvalidLeafNodeIndex, .mlsInvalidLeafNodeSignature:
+                    self = .resetBrokenMLSConversation
                 default:
                     self = .giveUp
                 }
@@ -2002,6 +2017,20 @@ public final class MLSService: MLSServiceInterface {
                     attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
                 )
                 throw MLSRetryError.nonRecoverableError(reason)
+
+            case .resetBrokenMLSConversation:
+                logger.info(
+                    "Handling reset broken MLS conversation recovery strategy...",
+                    attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
+                )
+                var epoch: Int64 = 0
+                if let context, let conversation = fetchConversationInfo(
+                    with: groupID,
+                    in: context
+                )?.conversation {
+                    epoch = Int64(conversation.epoch)
+                }
+                await resetBrokenMLSConversationDelegate?.didCatchBrokenMLSConversation(groupID: groupID, epoch: epoch)
             }
         }
     }

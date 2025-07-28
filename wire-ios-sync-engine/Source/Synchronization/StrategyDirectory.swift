@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDomain
+import WireNetwork
 import WireRequestStrategy
 
 @objc
@@ -38,6 +39,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
     public private(set) var eventConsumers: [ZMEventConsumer]
     public private(set) var eventAsyncConsumers: [ZMEventAsyncConsumer]
     public private(set) var contextChangeTrackers: [ZMContextChangeTracker]
+    public private(set) var initiateResetMLSConversationUseCaseFactory: (NSManagedObjectContext) -> WireRequestStrategy
+        .InitiateResetMLSConversationUseCaseProtocol
 
     init(
         contextProvider: ContextProvider,
@@ -53,7 +56,9 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         mlsService: MLSServiceInterface,
         coreCryptoProvider: CoreCryptoProviderProtocol,
         pullSelfUserClientsFactory: @escaping PullSelfUserClientsFactory,
-        searchUsersCache: SearchUsersCache?
+        searchUsersCache: SearchUsersCache?,
+        initiateResetMLSConversationUseCaseFactory: @escaping (NSManagedObjectContext) -> WireRequestStrategy
+            .InitiateResetMLSConversationUseCaseProtocol
     ) {
         self.strategies = Self.buildStrategies(
             contextProvider: contextProvider,
@@ -71,6 +76,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             pullSelfUserClientsFactory: pullSelfUserClientsFactory,
             searchUsersCache: searchUsersCache
         )
+        self.initiateResetMLSConversationUseCaseFactory = initiateResetMLSConversationUseCaseFactory
 
         self.requestStrategies = strategies.compactMap { $0 as? RequestStrategy }
         self.eventConsumers = strategies.compactMap { $0 as? ZMEventConsumer }
@@ -373,12 +379,14 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 context: syncContext,
                 apiProvider: apiProvider
             )
+
             let messageSender = MessageSender(
                 apiProvider: apiProvider,
                 sessionEstablisher: sessionEstablisher,
                 messageDependencyResolver: messageDependencyResolver,
                 context: syncContext,
-                incrementalSyncObserver: incrementalSyncObserver
+                incrementalSyncObserver: incrementalSyncObserver,
+                initiateResetMLSConversationUseCase: initiateResetMLSConversationUseCaseFactory(syncContext)
             )
 
             let strategies: [Any] = [
