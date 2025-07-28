@@ -16,11 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
+/// A configuration for the *Reset MLS Conversations* feature.
 
-/// The state of the feature
+public struct AllowGlobalOperationsFeatureConfig: Equatable, Sendable {
 
-struct FeatureState {
-    let name: Feature.Name
-    let isEnabled: Bool
+    /// The feature's status.
+
+    public let status: FeatureConfigStatus
+
+    /// Configuration that tells weather to reset MLS conversations or not
+
+    public let resetMLSConversations: Bool
+
+    public init(
+        status: FeatureConfigStatus,
+        resetMLSConversations: Bool = false
+    ) {
+        self.status = status
+        self.resetMLSConversations = resetMLSConversations
+    }
+
 }
