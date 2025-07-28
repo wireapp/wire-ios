@@ -20,9 +20,8 @@ import Combine
 package import SwiftUI
 import UIKit
 import WireDesign
-import WireMessagingAPI
-import WireMessagingImplementation
-import WireMessagingImplementationSupport
+import WireMessagingDomain
+import WireMessagingDomainSupport
 import WireReusableUIComponents
 
 package final class ChannelHistoryHostingController: UIHostingController<ChannelHistoryView> {

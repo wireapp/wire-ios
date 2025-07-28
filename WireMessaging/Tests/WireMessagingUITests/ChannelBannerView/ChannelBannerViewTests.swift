@@ -39,7 +39,7 @@ final class ChannelBannerTests: XCTestCase {
 
     @MainActor
     func testColorSchemeVariantsEmptyState() {
-        let view = WireChannelBannerView(
+        let view = ChannelBannerView(
             configuration: .init(
                 title: "Show older messages?",
                 message: "Upgrade to a paid plan to offer channel members the whole history.",

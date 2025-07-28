@@ -286,3 +286,14 @@ private extension Character {
         unicodeScalars.contains(where: characterSet.contains)
     }
 }
+
+extension ChannelHistoryOption.Custom.Unit {
+    var title: String {
+        switch self {
+        case .days:
+            L10n.Localizable.Conversation.ChannelHistory.CustomPicker.days
+        case .weeks:
+            L10n.Localizable.Conversation.ChannelHistory.CustomPicker.weeks
+        }
+    }
+}

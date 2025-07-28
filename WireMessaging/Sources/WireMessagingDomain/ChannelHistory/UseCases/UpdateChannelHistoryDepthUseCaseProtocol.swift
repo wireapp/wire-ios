@@ -16,18 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import WireMessagingAPI
+import Foundation
 
-public struct FetchIsEnterpriseUserUseCase: FetchIsEnterpriseUserUseCaseProtocol {
-    public let repository: any ChannelRepositoryProtocol
-
-    public init(
-        repository: any ChannelRepositoryProtocol
-    ) {
-        self.repository = repository
-    }
-
-    public func invoke() async throws -> Bool {
-        try await repository.isConferenceCallingFeatureEnabled()
-    }
+@MainActor
+public protocol UpdateChannelHistoryDepthUseCaseProtocol {
+    func invoke(
+        channelHistoryOption: ChannelHistoryOption,
+        channelHistoryOptionCustom: ChannelHistoryOption.Custom
+    ) async throws
 }

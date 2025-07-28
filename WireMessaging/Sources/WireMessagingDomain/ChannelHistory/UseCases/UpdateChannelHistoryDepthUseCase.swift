@@ -16,9 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireFoundation
-public import WireMessagingAPI
 import Foundation
+import WireFoundation
 
 public struct UpdateChannelHistoryDepthUseCase: UpdateChannelHistoryDepthUseCaseProtocol {
     public let repository: any ChannelRepositoryProtocol
@@ -74,7 +73,7 @@ public struct UpdateChannelHistoryDepthUseCase: UpdateChannelHistoryDepthUseCase
         switch channelHistoryOptionCustom.unit {
         case .days:
             return value * oneDay
-        case .week:
+        case .weeks:
             return value * 7 * oneDay
         }
     }

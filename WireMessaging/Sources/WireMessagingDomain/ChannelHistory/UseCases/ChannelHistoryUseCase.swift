@@ -18,7 +18,6 @@
 
 import Foundation
 import WireFoundation
-public import WireMessagingAPI
 
 public struct ChannelHistoryUseCase: ChannelHistoryUseCaseProtocol {
     public let updateChannelHistoryDepthUseCase: any UpdateChannelHistoryDepthUseCaseProtocol

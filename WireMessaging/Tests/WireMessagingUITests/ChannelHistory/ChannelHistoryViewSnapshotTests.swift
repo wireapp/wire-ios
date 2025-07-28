@@ -22,8 +22,8 @@ import UIKit
 import WireTestingPackage
 import XCTest
 
-import WireMessagingAPI
-@testable import WireMessagingImplementationSupport
+import WireMessagingDomain
+@testable import WireMessagingDomainSupport
 @testable import WireMessagingUI
 
 class ChannelHistoryViewSnapshotTests: XCTestCase {

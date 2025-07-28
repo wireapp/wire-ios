@@ -16,29 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum ChannelHistoryOption: Equatable, Hashable, CaseIterable, Sendable {
-    case off
-    case oneDay
-    case oneWeek
-    case fourWeeks
-    case unlimited
-    case custom
+import Foundation
 
-    public struct Custom: Equatable, Hashable, Sendable {
-        public enum Unit: Equatable, Hashable, CaseIterable, Sendable {
-            case days
-            case weeks
-        }
+@MainActor
+public protocol ChannelHistoryUseCaseProtocol {
+    func updateHistoryDepth(
+        channelHistoryOption: ChannelHistoryOption,
+        channelHistoryOptionCustom: ChannelHistoryOption.Custom
+    ) async throws
 
-        public init(
-            unit: Unit = .days,
-            value: Int = 10
-        ) {
-            self.unit = unit
-            self.value = value
-        }
-
-        public var unit: Unit
-        public var value: Int
-    }
+    func isEnterpriseUser() async throws -> Bool
 }

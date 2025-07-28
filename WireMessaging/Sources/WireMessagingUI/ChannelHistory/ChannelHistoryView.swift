@@ -18,9 +18,8 @@
 
 package import SwiftUI
 import WireDesign
-import WireMessagingAPI
-import WireMessagingImplementation
-import WireMessagingImplementationSupport
+import WireMessagingDomain
+import WireMessagingDomainSupport
 
 package struct ChannelHistoryView: View {
     @ObservedObject var viewModel: ChannelHistoryViewModel
@@ -109,7 +108,7 @@ package struct ChannelHistoryView: View {
 
     private var nonPremiumBannerSection: some View {
         Section {
-            WireChannelBannerView(
+            ChannelBannerView(
                 configuration: .init(
                     title: ChannelHistory.UpgradeBanner.title,
                     message: ChannelHistory.UpgradeBanner.message,
@@ -170,19 +169,6 @@ extension ChannelHistoryOption {
             ChannelHistory.Picker.unlimited
         case .custom:
             ChannelHistory.Picker.custom
-        }
-    }
-}
-
-extension ChannelHistoryOption.Custom.Unit {
-    typealias ChannelHistory = L10n.Localizable.Conversation.ChannelHistory
-
-    var title: String {
-        switch self {
-        case .days:
-            ChannelHistory.CustomPicker.days
-        case .week:
-            ChannelHistory.CustomPicker.weeks
         }
     }
 }

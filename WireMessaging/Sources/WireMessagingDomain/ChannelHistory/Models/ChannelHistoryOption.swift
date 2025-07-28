@@ -16,14 +16,31 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import WireMessagingAPI
+import Foundation
 
-@MainActor
-public protocol ChannelHistoryUseCaseProtocol {
-    func updateHistoryDepth(
-        channelHistoryOption: ChannelHistoryOption,
-        channelHistoryOptionCustom: ChannelHistoryOption.Custom
-    ) async throws
+public enum ChannelHistoryOption: Equatable, Hashable, CaseIterable, Sendable {
+    case off
+    case oneDay
+    case oneWeek
+    case fourWeeks
+    case unlimited
+    case custom
 
-    func isEnterpriseUser() async throws -> Bool
+    public struct Custom: Equatable, Hashable, Sendable {
+        public enum Unit: Equatable, Hashable, CaseIterable, Sendable {
+            case days
+            case weeks
+        }
+
+        public init(
+            unit: Unit = .days,
+            value: Int = 10
+        ) {
+            self.unit = unit
+            self.value = value
+        }
+
+        public var unit: Unit
+        public var value: Int
+    }
 }

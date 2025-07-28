@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireMessagingDomain
 import XCTest
 @testable import WireMessagingUI
 
@@ -158,7 +159,7 @@ final class ConversationChannelCreationFormViewModelTests: XCTestCase {
         ) { _ in }
 
         let useCases = [
-            ConversationChannelCreationFormViewModel.ChannelHistoryOption.oneDay,
+            ChannelHistoryOption.oneDay,
             .oneWeek,
             .fourWeeks,
             .unlimited,
