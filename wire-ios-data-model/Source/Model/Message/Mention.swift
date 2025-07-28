@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 @objc
 public class Mention: NSObject {
@@ -24,7 +25,7 @@ public class Mention: NSObject {
     public let range: NSRange
     public let user: UserType
 
-    init?(_ protobuf: WireProtos.Mention, context: NSManagedObjectContext) {
+    init?(_ protobuf: GenericMessageProtocol.Mention, context: NSManagedObjectContext) {
         let userRemoteID = protobuf.hasQualifiedUserID ? protobuf.qualifiedUserID.id : protobuf.userID
         let domain = protobuf.hasQualifiedUserID ? protobuf.qualifiedUserID.domain : nil
 
@@ -56,7 +57,7 @@ public class Mention: NSObject {
 
 extension Mention {
     static func mentions(
-        from protos: [WireProtos.Mention]?,
+        from protos: [GenericMessageProtocol.Mention]?,
         messageText: String?,
         moc: NSManagedObjectContext?
     ) -> [Mention] {

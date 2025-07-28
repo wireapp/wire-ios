@@ -66,33 +66,6 @@ final class FeatureConfigLocalStoreTests: XCTestCase {
         }
     }
 
-    func testFeatureNeedsNotifyUser_It_Returns_True() async throws {
-        // Given
-
-        let feature = try await context.perform { [context] in
-            Feature.updateOrCreate(
-                havingName: .conversationGuestLinks,
-                in: context
-            ) { $0.status = .enabled }
-
-            let feature = Feature.fetch(name: .conversationGuestLinks, context: context)
-
-            return try XCTUnwrap(feature)
-        }
-
-        // When
-
-        await sut.storeFeature(
-            needsNotifyUser: true,
-            feature: feature
-        )
-
-        // Then
-
-        let result = await sut.featureNeedsNotifyUser(feature: feature)
-        XCTAssertEqual(result, true)
-    }
-
     func testFetchFeature_It_Retrieves_Feature_With_Correct_Config() async throws {
         // Given
 

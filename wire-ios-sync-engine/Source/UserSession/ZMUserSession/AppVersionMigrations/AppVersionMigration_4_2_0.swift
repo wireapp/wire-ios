@@ -18,13 +18,15 @@
 
 import Foundation
 import WireDomain
+import WireFoundation
 
-/// **Issue:**: To simplify the logic, we rely solely on journal value to perform InitialSync or not
+// Issue: To simplify the logic, we rely solely on journal value to perform InitialSync or not
 struct AppVersionMigration_4_2_0: AppVersionMigration {
 
     let appGroupIdentifier: String?
     let lastEventIDRepository: LastEventIDRepositoryInterface
-    var journal: JournalProtocol
+    let journal: JournalProtocol
+    let sessionManager: (any SessionManagerType)?
     let version: SemanticVersion = "4.2.0"
 
     func perform() async throws {
@@ -34,6 +36,8 @@ struct AppVersionMigration_4_2_0: AppVersionMigration {
         }
 
         deleteOldLogFiles()
+
+        migrateAnalyticsTrackingUserDefaultsValue()
 
     }
 
@@ -57,6 +61,27 @@ struct AppVersionMigration_4_2_0: AppVersionMigration {
         // se
         let seLogFileURL = containerDirectory.appending(path: "oslog_NSE_dump.log", directoryHint: .notDirectory)
         try? fileManager.removeItem(at: seLogFileURL)
+    }
+
+    /// Previously the decision for enabling analytics was stored only once per app and will be migrated to per account.
+    private func migrateAnalyticsTrackingUserDefaultsValue() {
+        let oldUserDefaultsKey = "disableAnalyticsSharing"
+        guard
+            let sessionManager,
+            let sharedUserDefaults = UserDefaults.shared(),
+            let disableAnalyticsSharing = sharedUserDefaults.value(forKey: oldUserDefaultsKey) as? Bool
+        else { return }
+
+        for account in sessionManager.accountManager.accounts {
+            let userID = account.userIdentifier
+            let privateUserDefaults = PrivateUserDefaults<AnalyticsTrackingPrivateUserDefaultsKey>(
+                userID: userID,
+                storage: UserDefaults.standard
+            )
+            privateUserDefaults.set(!disableAnalyticsSharing, forKey: .isAnalyticsTrackingEnabled)
+        }
+
+        sharedUserDefaults.removeObject(forKey: oldUserDefaultsKey)
     }
 
 }

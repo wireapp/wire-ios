@@ -50,7 +50,7 @@ struct ObserveDraftsUseCaseTests {
             result.append(drafts)
         }
 
-        #expect(await draftsRepository.draftsForCellNameStringAsyncStreamWireCellsDraftReceivedCellName == "cell-name")
+        #expect(draftsRepository.draftsForCellNameStringAsyncStreamWireCellsDraftReceivedCellName == "cell-name")
         #expect(result == [[a, b], [b, c]])
     }
 

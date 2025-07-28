@@ -52,5 +52,4 @@ final class AuthenticationAPIV10: AuthenticationAPIV9 {
             .failure(code: .badRequest, error: AuthenticationAPIError.invalidRequestBody)
             .parse(code: response.statusCode, data: data)
     }
-
 }

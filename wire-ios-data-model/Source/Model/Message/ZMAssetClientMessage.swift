@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireLogging
 
 /// An asset message (image, file, ...)
@@ -27,7 +28,7 @@ public class ZMAssetClientMessage: ZMOTRMessage {
     var cachedUnderlyingAssetMessage: GenericMessage?
 
     convenience init(
-        asset: WireProtos.Asset,
+        asset: GenericMessageProtocol.Asset,
         nonce: UUID,
         managedObjectContext: NSManagedObjectContext,
         expiresAfter timeout: TimeInterval?

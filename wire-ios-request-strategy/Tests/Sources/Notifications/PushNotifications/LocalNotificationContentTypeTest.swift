@@ -16,7 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import XCTest
+
 @testable import WireRequestStrategy
 
 class LocalNotificationContentTypeTest: ZMLocalNotificationTests {
@@ -26,7 +28,7 @@ class LocalNotificationContentTypeTest: ZMLocalNotificationTests {
     func testThatItCreatesACorrectLocalNotificationContentTypeForTheLocationMessage() {
         // given
         syncMOC.performGroupedAndWait {
-            let location = WireProtos.Location.with {
+            let location = GenericMessageProtocol.Location.with {
                 $0.latitude = 0.0
                 $0.longitude = 0.0
             }
@@ -44,7 +46,7 @@ class LocalNotificationContentTypeTest: ZMLocalNotificationTests {
     func testThatItCreatesACorrectLocalNotificationContentTypeForTheKnockMessage() {
         // given
         syncMOC.performGroupedAndWait {
-            let message = GenericMessage(content: WireProtos.Knock.with { $0.hotKnock = true })
+            let message = GenericMessage(content: GenericMessageProtocol.Knock.with { $0.hotKnock = true })
             let event = self.createUpdateEvent(UUID.create(), conversationID: UUID.create(), genericMessage: message)
 
             // when
@@ -94,7 +96,7 @@ class LocalNotificationContentTypeTest: ZMLocalNotificationTests {
                 fileURL: self.fileURL(forResource: "video", extension: "mp4"),
                 duration: 100
             )
-            let message = GenericMessage(content: WireProtos.Asset(audioMetadata))
+            let message = GenericMessage(content: GenericMessageProtocol.Asset(audioMetadata))
             let event = self.createUpdateEvent(UUID.create(), conversationID: UUID.create(), genericMessage: message)
 
             // when
@@ -112,7 +114,7 @@ class LocalNotificationContentTypeTest: ZMLocalNotificationTests {
                 fileURL: self.fileURL(forResource: "video", extension: "mp4"),
                 thumbnail: self.verySmallJPEGData()
             )
-            let message = GenericMessage(content: WireProtos.Asset(videoMetadata))
+            let message = GenericMessage(content: GenericMessageProtocol.Asset(videoMetadata))
             let event = self.createUpdateEvent(UUID.create(), conversationID: UUID.create(), genericMessage: message)
 
             // when
@@ -127,7 +129,7 @@ class LocalNotificationContentTypeTest: ZMLocalNotificationTests {
         // given
         syncMOC.performGroupedAndWait {
             let fileMetaData = self.createFileMetadata()
-            let message = GenericMessage(content: WireProtos.Asset(fileMetaData))
+            let message = GenericMessage(content: GenericMessageProtocol.Asset(fileMetaData))
             let event = self.createUpdateEvent(UUID.create(), conversationID: UUID.create(), genericMessage: message)
 
             // when

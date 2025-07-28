@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import SwiftProtobuf
 import WireDataModel
 import WireImages

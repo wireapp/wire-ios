@@ -158,7 +158,7 @@ final class AuthenticationAPITests: XCTestCase {
             )
         )
     }
-    
+
     func testGetDomainRegistration_Response_Handling_V10_Success() async throws {
         // Given
         let networkService = MockNetworkServiceProtocol.withResponses([

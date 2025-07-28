@@ -22,4 +22,81 @@ class MLSAPIV9: MLSAPIV8 {
 
     override var apiVersion: APIVersion { .v9 }
 
+    override func resetMLSConversation(epoch: Int64, groupID: String) async throws {
+        let parameters = MLSResetParameters(epoch: epoch, groupID: groupID)
+
+        let encodedJSON: Data
+        do {
+            encodedJSON = try JSONEncoder.defaultEncoder.encode(parameters)
+        } catch {
+            assertionFailure("failed to encode body")
+            throw MLSAPIError.invalidRequestBody
+        }
+
+        let request = try URLRequestBuilder(path: "\(pathPrefix)/mls/reset-conversation")
+            .withMethod(.post)
+            .withAcceptType(.json)
+            .withBody(encodedJSON, contentType: .json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        do {
+            return try ResponseParser()
+                .success(code: .ok)
+                .failure(code: .badRequest, decodableError: FailureResponseV0.self) // 400
+                .failure(code: .forbidden, decodableError: FailureResponseV0.self) // 403
+                .failure(code: .notFound, decodableError: FailureResponseV0.self) // 404
+                .failure(code: .conflict, decodableError: FailureResponseV0.self) // 409
+                .parse(code: response.statusCode, data: data)
+        } catch {
+            if let failureResponse = error as? FailureResponseV0 {
+
+                switch failureResponse.label {
+                case "mls-protocol-error":
+                    throw MLSAPIError
+                        .mlsProtocolError(message: failureResponse.message)
+                case "mls-group-id-not-supported":
+                    throw MLSAPIError.mlsGroupIdNotSupported(message: failureResponse.message)
+                case "mls-federated-reset-not-supported":
+                    throw MLSAPIError.mlsFederatedResetNotSupported(message: failureResponse.message)
+                case "mls-not-enabled":
+                    throw MLSAPIError.mlsNotEnabled
+                case "invalid-op":
+                    throw MLSAPIError.invalidOperation(message: failureResponse.message)
+                case "action-denied":
+                    throw MLSAPIError.actionDenied(message: failureResponse.message)
+                case "access-denied":
+                    throw MLSAPIError.accessDenied(message: failureResponse.message)
+                case "no-conversation":
+                    throw MLSAPIError.noConversation(message: failureResponse.message)
+                case "mls-stale-message":
+                    throw MLSAPIError.mlsStaleMessage
+                case "mls-invalid-leaf-node-index":
+                    throw MLSAPIError.mlsInvalidLeafNodeIndex
+                case "mls-invalid-leaf-node-signature":
+                    throw MLSAPIError.mlsInvalidLeafNodeSignature
+                default:
+                    throw MLSAPIError.mlsError(failureResponse.label, failureResponse.message)
+                }
+            } else {
+                throw error
+            }
+        }
+
+    }
+}
+
+struct MLSResetParameters: Encodable {
+    var epoch: Int64
+    var groupID: String
+
+    enum CodingKeys: String, CodingKey {
+        case groupID = "group_id"
+        case epoch
+    }
+
 }

@@ -17,6 +17,7 @@
 //
 
 import CoreData
+import GenericMessageProtocol
 import WireDataModel
 import WireLogging
 
@@ -48,6 +49,12 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     }
 
     // MARK: - Public
+
+    public func qualifiedID(for conversation: ZMConversation) async -> QualifiedID? {
+        await context.perform {
+            conversation.qualifiedID
+        }
+    }
 
     public func updateLastReadMessageTimestamp(
         _ lastReadMessage: LastRead,
@@ -857,6 +864,15 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     ) async -> Set<ZMUser> {
         await context.perform {
             conversation.localParticipants
+        }
+    }
+
+    public func localParticipantsExcludingSelfAsMLSUsers(
+        in conversation: ZMConversation
+    ) async -> [MLSUser] {
+        await context.perform {
+            conversation.localParticipantsExcludingSelf
+                .map { MLSUser(from: $0) }
         }
     }
 

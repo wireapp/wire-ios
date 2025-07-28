@@ -70,7 +70,8 @@ final class ConversationInputBarViewControllerAudioRecorderSnapshotTests: CoreDa
             conversation: otherUserConversation,
             userSession: userSession,
             classificationProvider: mockSecurityClassificationProviding,
-            networkStatusObservable: MockNetworkStatusObservable()
+            networkStatusObservable: MockNetworkStatusObservable(),
+            wireCellsFactory: MockWireCellsFactoryProtocol.makeDefault()
         )
         sut.overrideUserInterfaceStyle = .light
         sut.loadViewIfNeeded()
