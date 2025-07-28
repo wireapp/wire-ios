@@ -147,12 +147,10 @@ final class WireCellsLocalAssetRepository {
     private func _refreshMetadata(
         nodeID: UUID
     ) async throws -> (node: WireCellsNode, metadata: WireCellsLocalAssetMetadata) {
-        let getNodeTask = getNodeTasks[nodeID] ?? Task { [nodesAPI] in
-            try await nodesAPI.getNode(nodeID: nodeID)
-        }
+        let task = getNodeTask(nodeID: nodeID)
 
-        getNodeTasks[nodeID] = getNodeTask
-        let node = try await getNodeTask.value
+        getNodeTasks[nodeID] = task
+        let node = try await task.value
         getNodeTasks[nodeID] = nil
 
         guard let eTag = node.eTag else {
@@ -223,6 +221,17 @@ final class WireCellsLocalAssetRepository {
             size: metadata.size,
             downloadState: state
         )
+    }
+
+    private func getNodeTask(nodeID: UUID) -> GetNodeTask {
+        if let task = getNodeTasks[nodeID] {
+            task
+        } else {
+            // swiftlint:disable:next unhandled_throwing_task
+            Task { [nodesAPI] in
+                try await nodesAPI.getNode(nodeID: nodeID)
+            }
+        }
     }
 
 }
