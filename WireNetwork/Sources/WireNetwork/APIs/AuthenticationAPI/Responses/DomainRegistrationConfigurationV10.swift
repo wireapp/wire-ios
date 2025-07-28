@@ -21,7 +21,7 @@ import Foundation
 struct DomainRegistrationConfigurationV10: Decodable, ToAPIModelConvertible {
 
     struct Backend: Decodable, Sendable {
-        let configURLString: String
+        let configURLString: String?
         let webAppURLString: String?
 
         enum CodingKeys: String, CodingKey {
