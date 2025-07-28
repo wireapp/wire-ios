@@ -1,8 +1,10 @@
 sources:
+- ${PACKAGE_ROOT_DIR}/Sources/WireMessagingData
 - ${PACKAGE_ROOT_DIR}/Sources/WireMessagingDomain
 templates:
 - ${TARGET_DIR}/Sourcery/AutoMockable.stencil
 output:
   ${DERIVED_SOURCES_DIR}
 args:
-  autoMockablePublicImports: ["UIKit", "WireMessagingDomain"]
+  autoMockablePackageImports: ["Foundation", "WireMessagingDomain", "UniformTypeIdentifiers", "AWSS3"]
+  autoMockablePublicImports: ["WireMessagingDomain"]

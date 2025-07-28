@@ -86,3 +86,8 @@
 "conversation.channelHistory.customPicker.weeks" = "Weeks";
 "conversation.channelHistory.navigationTitle" = "Conversation history";
 "conversation.creationForm.channelHistory.sectionFootnote" = "Select a period. When participants join this channel, they can follow the history for this time frame.";
+
+// MARK: - Channel history
+"conversation.file.preview.open" = "Open preview";
+"conversation.draft.attachmentMenu.retry" = "Retry";
+"conversation.draft.attachmentMenu.remove" = "Remove File";
