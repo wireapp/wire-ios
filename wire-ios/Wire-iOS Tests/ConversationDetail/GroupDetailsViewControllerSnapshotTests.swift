@@ -136,6 +136,7 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
 
     func testForOptionsForTeamUserInTeamConversation() {
         // GIVEN
+        DeveloperFlag.channelsHistory.enable(true, storage: .temporary())
         setSelfUserInTeam()
         mockSelfUser.teamRole = .member
 
