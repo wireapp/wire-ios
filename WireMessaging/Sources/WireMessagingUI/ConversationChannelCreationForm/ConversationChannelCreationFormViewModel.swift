@@ -38,51 +38,6 @@ public final class ConversationChannelCreationFormViewModel: ObservableObject {
 
     typealias TextFieldValue<ValidationError: Error & Equatable> = Result<String, ValidationError>
 
-    public enum ChannelHistoryOption: Equatable, Hashable {
-        case off
-        case oneDay
-        case oneWeek
-        case fourWeeks
-        case unlimited
-        case custom
-
-        var title: String {
-            switch self {
-            case .off:
-                L10n.Localizable.Conversation.ChannelHistory.Picker.off
-            case .oneDay:
-                L10n.Localizable.Conversation.ChannelHistory.Picker.oneDay
-            case .oneWeek:
-                L10n.Localizable.Conversation.ChannelHistory.Picker.oneWeek
-            case .fourWeeks:
-                L10n.Localizable.Conversation.ChannelHistory.Picker.fourWeeks
-            case .unlimited:
-                L10n.Localizable.Conversation.ChannelHistory.Picker.unlimited
-            case .custom:
-                L10n.Localizable.Conversation.ChannelHistory.Picker.custom
-            }
-        }
-
-        public struct Custom: Equatable, Hashable {
-            public enum Unit: Equatable, Hashable, CaseIterable {
-                case days
-                case weeks
-
-                var title: String {
-                    switch self {
-                    case .days:
-                        L10n.Localizable.Conversation.ChannelHistory.CustomPicker.days
-                    case .weeks:
-                        L10n.Localizable.Conversation.ChannelHistory.CustomPicker.weeks
-                    }
-                }
-            }
-
-            public var unit: Unit = .days
-            public var value: Int = 10
-        }
-    }
-
     public enum ChannelAccessOption: Equatable, Hashable {
         case `public`
         case `private`
