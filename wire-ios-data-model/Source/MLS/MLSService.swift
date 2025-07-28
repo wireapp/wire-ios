@@ -1558,6 +1558,7 @@ public final class MLSService: MLSServiceInterface {
                     )
                     throw MLSRetryError.nonRecoverableError(reason)
                 }
+
                 logger.info(
                     "Handling reset broken MLS conversation recovery strategy...",
                     attributes: [.mlsGroupID: groupID.safeForLoggingDescription]
