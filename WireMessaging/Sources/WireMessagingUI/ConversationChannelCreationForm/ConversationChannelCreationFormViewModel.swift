@@ -164,6 +164,13 @@ public final class ConversationChannelCreationFormViewModel: ObservableObject {
 
     // MARK: History sharing
 
+    func isChannelHistoryFeatureEnabled() -> Bool {
+        // TODO: [WPB-19065] - Move DeveloperFlag from WireUtilities to WireFoundation
+        UserDefaults.standard.object(
+            forKey: "channelsHistory"
+        ) as? Bool ?? false
+    }
+
     private func bind() {
         $channelHistoryOption
             .filter { [self] in $0 == .custom && !isUserPremium }
