@@ -15,43 +15,25 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-
 import Foundation
 
-public class ThreadSafeDictionary<Key: Hashable, Value> {
-    
-    public init() {}
-    
-    private var dictionary = [Key: Value]()
-    private let queue = DispatchQueue(label: "com.example.dictionaryQueue")
-    
-    public func set(value: Value?, for key: Key) {
-        queue.async {
-            self.dictionary[key] = value
+public final class ThreadSafeValue<Value: Sendable> {
+    private var value: Value
+    private let queue = DispatchQueue(label: "com.wire.threadSafeValueQueue", attributes: .concurrent)
+
+    public init(_ initialValue: Value) {
+        self.value = initialValue
+    }
+
+    public func set(_ newValue: Value) {
+        queue.async(flags: .barrier) {
+            self.value = newValue
         }
     }
-    
-    public func get(for key: Key) -> Value? {
+
+    public func get() -> Value {
         queue.sync {
-            self.dictionary[key]
-        }
-    }
-    
-    public func remove(for key: Key) {
-        queue.async {
-            self.dictionary.removeValue(forKey: key)
-        }
-    }
-    
-    public func allItems() -> [Key: Value] {
-        queue.sync {
-            self.dictionary
-        }
-    }
-    
-    public func reset() {
-        queue.async {
-            self.dictionary.removeAll()
+            value
         }
     }
 }
