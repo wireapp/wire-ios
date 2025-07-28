@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import os
 import WireFoundation
 
 private let userAgent = "Wire LinkPreview Bot"
@@ -37,7 +38,7 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
 
     var containerByTaskID = ThreadSafeDictionary<Int, MetaStreamContainer>()
     var completionByURL = ThreadSafeDictionary<URL, DownloadCompletion>()
-    var cancelledTaskIDs = ThreadSafeValue<Set<Int>>(Set<Int>())
+    var cancelledTaskIDs = OSAllocatedUnfairLock(initialState: Set<Int>())
     var session: URLSessionType! = nil
     let resultsQueue: OperationQueue
     let parsingQueue: OperationQueue
@@ -86,7 +87,10 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
         // as we cancel it when we received enough data to generate the link preview and will call the completion
         // handler
         // once we parsde the data.
-        if !cancelledTaskIDs.get().contains(task.taskIdentifier), error != nil {
+        let containsTask = cancelledTaskIDs.withLock { set in
+            set.contains(task.taskIdentifier)
+        }
+        if !containsTask, error != nil {
             completeAndCleanUp(completion, result: nil, url: url, taskIdentifier: task.taskIdentifier)
         }
 
@@ -137,9 +141,9 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
     func cancel(task: URLSessionDataTaskType) {
         // When we manually cancel the task, `urlSession(session:task:didCompleteWithError:) will be called,
         // but we do not want to call the completion handler in that case.
-        var set = cancelledTaskIDs.get()
-        set.insert(task.taskIdentifier)
-        cancelledTaskIDs.set(set)
+        _ = cancelledTaskIDs.withLock { set in
+            set.insert(task.taskIdentifier)
+        }
         task.cancel()
     }
 
@@ -147,9 +151,9 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
         completion(result)
         containerByTaskID.set(value: nil, for: taskIdentifier)
         completionByURL.set(value: nil, for: url)
-        var set = cancelledTaskIDs.get()
-        set.remove(taskIdentifier)
-        cancelledTaskIDs.set(set)
+        _ = cancelledTaskIDs.withLock { set in
+            set.insert(taskIdentifier)
+        }
     }
 
     func parseMetaHeader(_ container: MetaStreamContainer, url: URL, completion: @escaping DownloadCompletion) {
