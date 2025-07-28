@@ -53,8 +53,11 @@ final class InitiateResetMLSConversationUseCaseTests: XCTestCase {
         }
 
         mockConversationLocalStore.fetchMLSConversationGroupID_MockValue = conversation
+        mockConversationLocalStore.qualifiedIDFor_MockValue = await coreDataStack.syncContext.perform {
+            conversation.qualifiedID
+        }
         mockConversationLocalStore
-            .localParticipantsAsMLSUsersIn_MockValue = [MLSUser(WireDataModel.QualifiedID.random())]
+            .localParticipantsExcludingSelfAsMLSUsersIn_MockValue = [MLSUser(WireDataModel.QualifiedID.random())]
     }
 
     func testInvoke() async {
