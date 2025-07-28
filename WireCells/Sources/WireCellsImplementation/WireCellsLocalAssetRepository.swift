@@ -164,7 +164,7 @@ final class WireCellsLocalAssetRepository {
             eTag: eTag,
             path: node.path,
             contentType: node.mimeType,
-            size: node.size.map { Int64($0) }, // TODO: Standardize size to Int64
+            size: node.size,
             isDownloaded: false
         )
 
@@ -174,7 +174,7 @@ final class WireCellsLocalAssetRepository {
         metadata.eTag = eTag
         metadata.path = node.path
         metadata.contentType = node.mimeType
-        metadata.size = node.size.map { Int64($0) }
+        metadata.size = node.size
         metadata.isDownloaded = needsCleanup ? false : metadata.isDownloaded
 
         try metadataStore.upsertAssetMetadata(metadata)

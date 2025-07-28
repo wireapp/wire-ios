@@ -46,7 +46,7 @@ public struct WireCellsLocalAsset: Equatable {
     public let eTag: String
     public let path: String
     public let contentType: String?
-    public let size: Int64?
+    public let size: UInt64?
     public let downloadState: DownloadState
 
     public init(
@@ -54,7 +54,7 @@ public struct WireCellsLocalAsset: Equatable {
         eTag: String,
         path: String,
         contentType: String?,
-        size: Int64?,
+        size: UInt64?,
         downloadState: DownloadState
     ) {
         self.nodeID = nodeID

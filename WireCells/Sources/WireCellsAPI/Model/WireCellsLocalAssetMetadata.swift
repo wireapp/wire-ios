@@ -24,7 +24,7 @@ public struct WireCellsLocalAssetMetadata: Equatable, Sendable {
     public var eTag: String
     public var path: String
     public var contentType: String?
-    public var size: Int64?
+    public var size: UInt64?
     public var isDownloaded: Bool
 
     public init(
@@ -32,7 +32,7 @@ public struct WireCellsLocalAssetMetadata: Equatable, Sendable {
         eTag: String,
         path: String,
         contentType: String?,
-        size: Int64?,
+        size: UInt64?,
         isDownloaded: Bool
     ) {
         self.nodeID = nodeID

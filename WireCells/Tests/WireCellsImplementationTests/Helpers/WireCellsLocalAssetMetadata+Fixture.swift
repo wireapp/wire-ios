@@ -25,7 +25,7 @@ extension WireCellsLocalAssetMetadata {
         eTag: String = "eTag",
         path: String = "path",
         contentType: String? = "contentType",
-        size: Int64? = 100,
+        size: UInt64? = 100,
         isDownloaded: Bool = false
     ) -> WireCellsLocalAssetMetadata {
         WireCellsLocalAssetMetadata(
