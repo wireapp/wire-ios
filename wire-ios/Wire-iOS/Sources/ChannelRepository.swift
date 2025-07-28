@@ -47,17 +47,7 @@ class ChannelRepository: ChannelRepositoryProtocol {
         to permission: WireMessagingDomain.ChannelAccessLevelPermission
     ) async throws -> WireMessagingDomain.ChannelAccessLevelPermission {
 
-        guard let backendInfoApiVersion = BackendInfo.apiVersion,
-              let apiVersion = WireNetwork.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
-              let apiService = session.apiService else {
-            throw ChannelAccessError.notEnoughData
-        }
-
-        let conversationsAPI = ConversationsAPIBuilder(
-            apiService: apiService
-        ).makeAPI(for: apiVersion)
-
-        let permission = try await conversationsAPI
+        let permission = try await api
             .addChannelPermission(
                 conversationID: conversationID,
                 conversationDomain: conversationDomain,
