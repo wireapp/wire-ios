@@ -18,12 +18,28 @@
 
 public import Foundation
 
+/// Information of a Wire Cells local asset (e.g file) including it's download state.
+
 public struct WireCellsLocalAsset: Equatable {
 
+    /// The current download state of the asset.
+
     public enum DownloadState: Equatable, Sendable {
+
+        /// The asset is pending download.
+
         case pending
+
+        /// The asset is currently being downloaded.
+
         case downloading(progress: Double)
+
+        /// The asset has been downloaded and is available at the given cache key.
+
         case downloaded(cacheKey: String)
+
+        /// The asset download failed with an error.
+
         case failed(error: any Error)
 
         public static func == (lhs: DownloadState, rhs: DownloadState) -> Bool {
@@ -42,11 +58,34 @@ public struct WireCellsLocalAsset: Equatable {
         }
     }
 
+    /// The identifier of the asset on the Wire Cells backend.
+
     public let nodeID: UUID
+
+    /// The eTag of the asset.
+    ///
+    /// If this changes the file represented by `nodeID` has changed and should be re-downloaded.
+
     public let eTag: String
+
+    /// The path representing the asset in the Wire Cells file system.
+    ///
+    /// This is **not** the path on the local file system. It encodes information such as file name and extension.
+
     public let path: String
+
+    /// The content type of the asset as defined by the backend.
+    ///
+    /// This is a MIME type (e.g. "image/png", "application/pdf").
+
     public let contentType: String?
+
+    /// The size of the asset in bytes as defined by the backend or `-1` if unknown.
+
     public let size: UInt64?
+
+    /// The download state of the asset.
+
     public let downloadState: DownloadState
 
     public init(
