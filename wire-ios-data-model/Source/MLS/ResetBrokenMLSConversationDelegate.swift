@@ -16,23 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
+import Foundation
+import WireDataModel
 
-final class DeveloperDebugActionsViewModelTests: XCTestCase {
-
-    func testButtonsCount() throws {
-        // given
-        let viewModel = makeViewModel()
-
-        // when
-        // then
-        XCTAssertEqual(viewModel.debugItems.count, 15)
-    }
-
-    // MARK: - Helpers
-
-    private func makeViewModel() -> DeveloperDebugActionsViewModel {
-        DeveloperDebugActionsViewModel(selfClient: nil)
-    }
+// sourcery: AutoMockable
+public protocol ResetBrokenMLSConversationDelegate: AnyObject {
+    func didCatchBrokenMLSConversation(groupID: MLSGroupID, epoch: Int64) async
 }

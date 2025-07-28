@@ -41,6 +41,10 @@ public protocol MessageSenderInterface {
 
 }
 
+public protocol InitiateResetMLSConversationUseCaseProtocol {
+    func invoke(groupID: MLSGroupID, epoch: Int64) async
+}
+
 public final class MessageSender: MessageSenderInterface {
 
     public init(
@@ -48,7 +52,8 @@ public final class MessageSender: MessageSenderInterface {
         sessionEstablisher: SessionEstablisherInterface,
         messageDependencyResolver: MessageDependencyResolverInterface,
         context: NSManagedObjectContext,
-        incrementalSyncObserver: IncrementalSyncObserverProtocol
+        incrementalSyncObserver: IncrementalSyncObserverProtocol,
+        initiateResetMLSConversationUseCase: InitiateResetMLSConversationUseCaseProtocol
     ) {
         self.apiProvider = apiProvider
         self.sessionEstablisher = sessionEstablisher
@@ -56,8 +61,10 @@ public final class MessageSender: MessageSenderInterface {
         self.context = context
         self.logAttributesBuilder = MessageLogAttributesBuilder(context: context)
         self.incrementalSyncObserver = incrementalSyncObserver
+        self.initiateResetMLSConversationUseCase = initiateResetMLSConversationUseCase
     }
 
+    private let initiateResetMLSConversationUseCase: InitiateResetMLSConversationUseCaseProtocol
     private let incrementalSyncObserver: IncrementalSyncObserverProtocol
     private let apiProvider: APIProviderInterface
     private let context: NSManagedObjectContext
@@ -413,6 +420,12 @@ public final class MessageSender: MessageSenderInterface {
                     mlsService: mlsService,
                     operation: operation
                 )
+            case .mlsInvalidLeafNodeIndex, .mlsInvalidLeafNodeSignature:
+                await initiateResetMLSConversationUseCase
+                    .invoke(
+                        groupID: groupID,
+                        epoch: Int64(message.conversation?.epoch ?? 0)
+                    )
             default:
                 throw error
             }
