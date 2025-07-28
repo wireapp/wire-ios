@@ -38,7 +38,7 @@ public extension Bundle {
         }
         return name
     }
-    
+
     static var appMainBundle: Bundle {
         let mainBundle: Bundle
         if UIApplication.runningInExtension {

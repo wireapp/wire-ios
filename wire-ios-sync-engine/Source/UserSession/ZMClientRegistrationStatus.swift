@@ -25,7 +25,6 @@ public extension Bundle {
     static var mainAppInternalName: String?
 }
 
-
 @objc(ZMClientRegistrationPhase)
 public enum ClientRegistrationPhase: UInt {
     /// The client is not registered - we send out a request to register the client
@@ -125,8 +124,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
 
     private var userProfileObserverToken: Any?
     private var clientUpdateObserverToken: Any?
-    
-    
+
     public init(
         context: NSManagedObjectContext,
         cookieProvider: CookieProvider,
