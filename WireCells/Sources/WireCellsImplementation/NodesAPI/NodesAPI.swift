@@ -66,12 +66,12 @@ package final actor NodesAPI: NodesAPIProtocol {
     private let restAPI: RestAPI
     private let fileManager: FileManager
 
-    package init(credentials: WireCellsCredentials) {
+    package init(serverURL: URL, accessToken: any AccessTokenProvider) {
         self.init(
-            awsClient: AWSClient(credentials: credentials),
+            awsClient: AWSClient(serverURL: serverURL, accessToken: accessToken),
             restAPI: RestAPI(
-                serverURL: credentials.serverURL.appendingPathComponent("/v2"),
-                accessToken: credentials.accessToken
+                serverURL: serverURL.appendingPathComponent("/v2"),
+                accessToken: accessToken
             )
         )
     }

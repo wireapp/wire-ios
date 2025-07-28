@@ -31,6 +31,7 @@ public struct CountlyDummy: CountlyProtocol {
     public func changeDeviceID(_ id: String, mergeData: Bool) {}
     public func beginSession() {}
     public func endSession() {}
+    public func deviceID() -> String { "" }
     public func recordEvent(_ key: String, segmentation: [String: String]?) {}
 
 }

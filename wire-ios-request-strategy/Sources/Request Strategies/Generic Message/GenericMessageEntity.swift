@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 public enum Recipients {
     case conversationParticipants
@@ -79,11 +80,11 @@ public class GenericMessageEntity: NSObject, ProteusMessage {
         // no-op
     }
 
-    public func setUnderlyingMessage(_ message: WireProtos.GenericMessage) throws {
+    public func setUnderlyingMessage(_ message: GenericMessageProtocol.GenericMessage) throws {
         self.message = message
     }
 
-    public var underlyingMessage: WireProtos.GenericMessage? {
+    public var underlyingMessage: GenericMessageProtocol.GenericMessage? {
         message
     }
 

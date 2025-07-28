@@ -32,8 +32,7 @@ enum AnalyticsServiceConfigurationBuilder {
 
         return AnalyticsServiceConfiguration(
             secretKey: secretKey,
-            serverHost: countlyURL,
-            didUserGiveTrackingConsent: !(ExtensionSettings.shared.disableAnalyticsSharing ?? true)
+            serverHost: countlyURL
         )
     }
 

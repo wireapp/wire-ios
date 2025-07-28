@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireMessagingImplementation
-import WireMessagingImplementationSupport
+import WireMessagingDomain
+import WireMessagingDomainSupport
 import XCTest
 
 @MainActor

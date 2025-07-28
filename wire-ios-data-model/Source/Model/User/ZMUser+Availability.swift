@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 /// Describes how the user should be notified about a change.
 public struct NotificationMethod: OptionSet {

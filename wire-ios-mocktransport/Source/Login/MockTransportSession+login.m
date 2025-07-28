@@ -18,7 +18,6 @@
 
 @import WireTransport;
 @import WireTesting;
-@import WireProtos;
 @import WireTransportSupport;
 #import "MockTransportSession+assets.h"
 #import "MockTransportSession+OTR.h"

@@ -18,7 +18,6 @@
 
 import Foundation
 
-// sourcery: AutoMockable
 /// Observes changes to all current drafts attachments for a given conversation.
 
 public protocol WireCellsObserveDraftsUseCaseProtocol: Sendable {

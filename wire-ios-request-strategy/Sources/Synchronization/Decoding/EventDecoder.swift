@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireCryptobox
 import WireDataModel
 import WireLogging

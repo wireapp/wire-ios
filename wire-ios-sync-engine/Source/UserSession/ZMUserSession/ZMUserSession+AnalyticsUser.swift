@@ -17,8 +17,10 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireAnalytics
 import WireDataModel
+import WireFoundation
 import WireLogging
 
 extension ZMUserSession: AnalyticsEventTrackerProvider {
@@ -29,7 +31,7 @@ extension ZMUserSession: AnalyticsEventTrackerProvider {
     }
 
     func createAnalyticsUser() async throws -> AnalyticsUser {
-        let (trackingID, teamInfo) = try await syncContext.perform { [syncContext] in
+        let (trackingID, teamInfo): (UUID, TeamInfo?) = try await syncContext.perform { [syncContext] in
             let selfUser = ZMUser.selfUser(in: syncContext)
 
             // Sanity check that we don't setup analytics too early.
@@ -40,8 +42,18 @@ extension ZMUserSession: AnalyticsEventTrackerProvider {
             let trackingID: UUID
             var teamInfo: TeamInfo?
 
+            let privateUserDefaults = PrivateUserDefaults<RegistrationAnalyticsTrackingIDKey>(
+                userID: selfUser.remoteIdentifier,
+                storage: UserDefaults.standard
+            )
+            let trackingIDFromRegistration = privateUserDefaults.object(forKey: .trackingIDFromRegistration) as? String
             if let existingID = selfUser.trackingID {
                 trackingID = existingID
+            } else if let trackingIDFromRegistration = trackingIDFromRegistration.flatMap(UUID.init(transportString:)) {
+                trackingID = trackingIDFromRegistration
+                try self.broadcastTrackingID(trackingID)
+                selfUser.trackingID = trackingID
+                privateUserDefaults.removeObject(forKey: .trackingIDFromRegistration)
             } else {
                 trackingID = UUID()
                 try self.broadcastTrackingID(trackingID)
@@ -50,7 +62,7 @@ extension ZMUserSession: AnalyticsEventTrackerProvider {
 
             if let team = selfUser.team, let teamID = team.remoteIdentifier {
                 teamInfo = TeamInfo(
-                    id: teamID.uuidString,
+                    id: teamID.transportString(),
                     role: selfUser.teamRole.analyticsValue,
                     size: UInt(team.members.count)
                 )

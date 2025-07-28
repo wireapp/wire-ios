@@ -74,6 +74,7 @@
 "conversation.channelHistory.upgradeBanner.title" = "Show older messages?";
 "conversation.channelHistory.upgradeBanner.message" = "Upgrade to a paid plan to offer channel members the whole history.";
 "conversation.channelHistory.upgradeBanner.button" = "Upgrade now";
+"conversation.channelHistory.upgradeBanner.closeMessage" = "Close banner";
 "conversation.channelHistory.picker.title" = "Conversation history";
 "conversation.channelHistory.picker.off" = "Off";
 "conversation.channelHistory.picker.oneDay" = "1 day";
@@ -85,3 +86,4 @@
 "conversation.channelHistory.customPicker.weeks" = "Weeks";
 "conversation.channelHistory.share.sectionFootnote" = "You can share conversation history with new channel members. This way, they can also see older messages and files.\nWhen you set it to off, channel members won't see any conversation history.";
 "conversation.channelHistory.navigationTitle" = "Conversation history";
+"conversation.creationForm.channelHistory.sectionFootnote" = "Select a period. When participants join this channel, they can follow the history for this time frame.";

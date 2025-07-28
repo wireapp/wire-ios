@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 import WireSyncEngine
 
 final class ProfileImagePickerManager: ImagePickerManager {
@@ -24,9 +25,14 @@ final class ProfileImagePickerManager: ImagePickerManager {
     func selectProfileImage(popoverConfiguration: PopoverPresentationControllerConfiguration) -> UIAlertController {
         showActionSheet(popoverConfiguration: popoverConfiguration) { image in
             guard let jpegData = image.jpegData, let session = ZMUserSession.shared() else { return }
+            do {
+                let imageDataWithoutMetadata = try jpegData.wr_removingImageMetadata()
 
-            session.enqueue {
-                session.userProfileImage.updateImage(imageData: jpegData)
+                session.enqueue {
+                    session.userProfileImage.updateImage(imageData: imageDataWithoutMetadata)
+                }
+            } catch {
+                WireLogger.system.error("Failed to remove image metadata: \(error)")
             }
         }
     }

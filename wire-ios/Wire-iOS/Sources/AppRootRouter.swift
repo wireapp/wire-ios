@@ -462,6 +462,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             mainWindow: mainWindow,
             account: account,
             userSession: userSession,
+            environment: sessionManager.environment,
             trackingManager: trackingManager,
             featureRepositoryProvider: userSession,
             featureChangeActionsHandler: E2EINotificationActionsHandler(

@@ -16,21 +16,70 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import UIKit
+import WireAnalytics
 import WireAuthenticationAPI
 import WireFoundation
+import WireLogging
+import WireSyncEngine
 
-struct RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
+final class RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
 
+    /// This UserDefaults key is used for storing an analytics tracking ID during the process of creating a new personal
+    /// user account. The value is cleared only once the flow is completed, so that switching back and forth between
+    /// enabling or disabling analytics is tracked under the same identifier.
+    private let trackingIDDefaultsKey = "tempTrackingID"
+
+    private var analyticsService: AnalyticsService?
     private var analyticsTracker: (any AnalyticsEventTrackerProtocol)?
+    private var availabilityChecker: any AnalyticsTrackingAvailabilityCheckerProtocol
+    private let userDefaults: UserDefaults
+    private let logger: WireLogger
 
-    init() {}
+    init(
+        analyticsServiceConfiguration: AnalyticsServiceConfiguration?,
+        availabilityChecker: any AnalyticsTrackingAvailabilityCheckerProtocol,
+        countlyProvider: @escaping () -> any CountlyProtocol,
+        userDefaults: UserDefaults
+    ) {
+        self.analyticsService = analyticsServiceConfiguration.map { config in
+            AnalyticsService(
+                config: CountlyConfiguration(appKey: config.secretKey, host: config.serverHost),
+                deviceModel: UIDevice.current.model,
+                osVersion: UIDevice.current.systemVersion,
+                countlyProvider: countlyProvider
+            )
+        }
+        self.availabilityChecker = availabilityChecker
+        self.userDefaults = userDefaults
+        self.logger = .authentication
+    }
 
+    var trackingID: String? {
+        analyticsService?.currentDeviceID
+    }
+
+    func isAnalyticsTrackingAvailable(for backendConfig: BackendConfig) -> Bool {
+        guard analyticsService != nil else { return false }
+        return availabilityChecker.isAnalyticsTrackingAvailable(for: backendConfig)
+    }
+
+    @MainActor
     func setUp() {
-        fatalError("WPB-17530")
+        do {
+            let analyticsUser = createAnalyticsUserIfNeeded()
+            try enableAnalytics(user: analyticsUser)
+        } catch {
+            logger.error("Can't set up analytics during personal account registration")
+        }
     }
 
     func tearDown() {
-        fatalError("WPB-17530")
+        do {
+            try disableAnalytics()
+        } catch {
+            logger.error("Can't disable analytics during personal account registration")
+        }
     }
 
     func trackPersonalAccountCreationStart() {
@@ -55,6 +104,36 @@ struct RegistrationAnalyticsTracker: RegistrationAnalyticsTrackerProtocol {
 
     func trackPersonalAccountCreationCompletion() {
         analyticsTracker?.trackEvent(.Registration.accountSetupStep5)
+    }
+
+    func deleteTemporaryTrackingID() {
+        userDefaults.removeObject(forKey: trackingIDDefaultsKey)
+    }
+
+    // MARK: - Helpers
+
+    @MainActor
+    private func enableAnalytics(user: AnalyticsUser) throws {
+        analyticsService?.enableTracking()
+        try analyticsService?.switchUser(user)
+        analyticsTracker = analyticsService
+    }
+
+    private func disableAnalytics() throws {
+        try analyticsService?.disableTracking()
+        analyticsTracker = nil
+    }
+
+    private func createAnalyticsUserIfNeeded() -> AnalyticsUser {
+
+        if let trackingID = userDefaults.string(forKey: trackingIDDefaultsKey).flatMap(UUID.init(transportString:)) {
+            return AnalyticsUser(trackingID: trackingID, teamInfo: nil)
+        }
+
+        let trackingID = UUID()
+        userDefaults.set(trackingID.transportString(), forKey: trackingIDDefaultsKey)
+        return AnalyticsUser(trackingID: trackingID, teamInfo: nil)
+
     }
 
 }

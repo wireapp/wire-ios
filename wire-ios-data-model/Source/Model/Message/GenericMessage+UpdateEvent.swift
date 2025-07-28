@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 public extension GenericMessage {
     init?(from updateEvent: ZMUpdateEvent) {

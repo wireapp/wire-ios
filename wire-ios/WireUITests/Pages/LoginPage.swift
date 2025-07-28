@@ -36,7 +36,7 @@ class LoginPage: PageModel {
 
     var nextButton: XCUIElement {
         let elementsQuery = app.scrollViews.otherElements
-        return elementsQuery.buttons["Next"]
+        return elementsQuery.buttons["Next"].firstMatch
     }
 
     var passwordField: XCUIElement {
