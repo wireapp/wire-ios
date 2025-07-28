@@ -19,36 +19,36 @@
 import Foundation
 
 public class ThreadSafeDictionary<Key: Hashable, Value> {
-    
+
     public init() {}
-    
+
     private var dictionary = [Key: Value]()
     private let queue = DispatchQueue(label: "com.example.dictionaryQueue")
-    
+
     public func set(value: Value?, for key: Key) {
         queue.async {
             self.dictionary[key] = value
         }
     }
-    
+
     public func get(for key: Key) -> Value? {
         queue.sync {
             self.dictionary[key]
         }
     }
-    
+
     public func remove(for key: Key) {
         queue.async {
             self.dictionary.removeValue(forKey: key)
         }
     }
-    
+
     public func allItems() -> [Key: Value] {
         queue.sync {
             self.dictionary
         }
     }
-    
+
     public func reset() {
         queue.async {
             self.dictionary.removeAll()
