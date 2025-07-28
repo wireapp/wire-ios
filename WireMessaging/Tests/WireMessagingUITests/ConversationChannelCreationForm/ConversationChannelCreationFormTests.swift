@@ -27,11 +27,13 @@ class ConversationChannelCreationFormTests: XCTestCase {
     private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
+        UserDefaults.standard.set(true, forKey: "channelsHistory")
         snapshotHelper = .init()
             .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
     }
 
     override func tearDown() {
+        UserDefaults.standard.set(false, forKey: "channelsHistory")
         snapshotHelper = nil
     }
 
