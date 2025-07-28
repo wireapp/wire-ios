@@ -56,6 +56,8 @@ public struct PushChannelV2APIBuilder {
             PushChannelV2APIV8(pushChannelService: pushChannelService)
         case .v9:
             PushChannelV2APIV9(pushChannelService: pushChannelService)
+        case .v10:
+            PushChannelV2APIV10(pushChannelService: pushChannelService)
         }
     }
 
