@@ -20,7 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
-class WireTextField: ContextMenuControllableTextField {
+class WireTextField: ContextMenuControllableUITextField {
 
     // MARK: - Properties
 

@@ -62,7 +62,10 @@ public struct FolderPicker: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     NavigationLink {
                         CreateFolder(
-                            viewModel: CreateFolderViewModel(useCase: createFolderUseCase),
+                            viewModel: CreateFolderViewModel(
+                                useCase: createFolderUseCase,
+                                isContextMenuAllowed: viewModel.isContextMenuAllowed
+                            ),
                             conversationName: conversationName,
                             onFolderCreated: { [weak viewModel] createdFolder in
                                 guard let viewModel else { return }
@@ -125,7 +128,8 @@ public struct FolderPicker: View {
                     Folder(identifier: UUID(), name: "Personal")
                 ]
             ),
-            updateConversationFolderUseCase: PreviewMoveConversationToFolderUseCase()
+            updateConversationFolderUseCase: PreviewMoveConversationToFolderUseCase(),
+            isContextMenuAllowed: true
         ), createFolderUseCase: PreviewCreateConversationFolderUseCase(), conversationName: "Test"
     )
 }

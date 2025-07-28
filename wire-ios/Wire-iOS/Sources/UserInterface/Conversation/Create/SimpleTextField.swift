@@ -27,7 +27,7 @@ protocol SimpleTextFieldDelegate: AnyObject {
     func textFieldDidBeginEditing(_ textField: SimpleTextField)
 }
 
-final class SimpleTextField: ContextMenuControllableTextField, DynamicTypeCapable {
+final class SimpleTextField: ContextMenuControllableUITextField, DynamicTypeCapable {
 
     // MARK: - Properties
 

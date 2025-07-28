@@ -85,11 +85,14 @@ public struct CreateFolder: View {
             RoundedRectangle(cornerRadius: 12)
                 .stroke(Color.gray, lineWidth: 1)
                 .frame(height: 48)
-            TextField(
-                localized("folder.creation.name.placeholder"),
-                text: $viewModel.name
+            ContextMenuControllableTextField(
+                text: $viewModel.name,
+                placeholder: localizedString("folder.creation.name.placeholder"),
+                isContextMenuAllowed: viewModel.isContextMenuAllowed,
+                isSecureTextEntry: false
             )
             .padding(.horizontal, 8)
+            .frame(height: 48)
             .textFieldStyle(.plain)
             .autocorrectionDisabled()
             .accessibilityIdentifier("input.newfolder.name")
@@ -116,6 +119,10 @@ public struct CreateFolder: View {
         LocalizedStringKey(key)
     }
 
+    private func localizedString(_ key: String) -> String {
+        NSLocalizedString(key, comment: "")
+    }
+
     private func createFolder() {
         Task {
             do {
@@ -136,7 +143,8 @@ public struct CreateFolder: View {
 #Preview {
     CreateFolder(
         viewModel: CreateFolderViewModel(
-            useCase: PreviewCreateFolderUseCase()
+            useCase: PreviewCreateFolderUseCase(),
+            isContextMenuAllowed: true
         ),
         conversationName: "iOS Team",
         onFolderCreated: { _ in }

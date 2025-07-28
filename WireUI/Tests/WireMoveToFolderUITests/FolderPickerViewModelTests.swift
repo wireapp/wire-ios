@@ -155,7 +155,8 @@ final class FolderPickerViewModelTests: XCTestCase {
         sut = FolderPickerViewModel(
             conversation: conversation,
             directory: mockDirectory,
-            updateConversationFolderUseCase: mockUpdateFolderUseCase
+            updateConversationFolderUseCase: mockUpdateFolderUseCase,
+            isContextMenuAllowed: true
         )
     }
 }

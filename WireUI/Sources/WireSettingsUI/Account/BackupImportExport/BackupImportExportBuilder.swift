@@ -32,6 +32,7 @@ public struct BackupImportExportBuilder {
     let importBackupLogger: any LoggerProtocol
     let wireAccentColor: WireAccentColor
     let wireAccentColorMapping: WireAccentColorMapping
+    let isContextMenuAllowed: Bool
 
     public init(
         backupPasswordValidator: any BackupPasswordValidatorProtocol,
@@ -41,7 +42,8 @@ public struct BackupImportExportBuilder {
         exportBackupLogger: any LoggerProtocol,
         importBackupLogger: any LoggerProtocol,
         wireAccentColorMapping: WireAccentColorMapping,
-        wireAccentColor: WireAccentColor
+        wireAccentColor: WireAccentColor,
+        isContextMenuAllowed: Bool
     ) {
         self.backupPasswordValidator = backupPasswordValidator
         self.createBackupUseCase = createBackupUseCase
@@ -51,6 +53,7 @@ public struct BackupImportExportBuilder {
         self.importBackupLogger = importBackupLogger
         self.wireAccentColorMapping = wireAccentColorMapping
         self.wireAccentColor = wireAccentColor
+        self.isContextMenuAllowed = isContextMenuAllowed
     }
 
     @MainActor
@@ -82,7 +85,8 @@ public struct BackupImportExportBuilder {
             setBackupPasswordView: {
                 buildSetBackupPasswordView(
                     cancelAction: { [weak viewModel] in viewModel?.cancel() },
-                    setPasswordAction: { [weak viewModel] password in viewModel?.createBackup(password: password) }
+                    setPasswordAction: { [weak viewModel] password in viewModel?.createBackup(password: password) },
+                    isContextMenuAllowed: isContextMenuAllowed
                 )
             },
             creatingBackupProgressView: {
@@ -98,13 +102,15 @@ public struct BackupImportExportBuilder {
     @MainActor @ViewBuilder
     func buildSetBackupPasswordView(
         cancelAction: @escaping () -> Void,
-        setPasswordAction: @escaping (_ password: String) -> Void
+        setPasswordAction: @escaping (_ password: String) -> Void,
+        isContextMenuAllowed: Bool
     ) -> some View {
 
         let setBackupPasswordViewModel = SetBackupPasswordViewModel(
             passwordValidator: backupPasswordValidator,
             cancelAction: cancelAction,
-            setPasswordAction: setPasswordAction
+            setPasswordAction: setPasswordAction,
+            isContextMenuAllowed: isContextMenuAllowed
         )
 
         SetBackupPasswordView(viewModel: setBackupPasswordViewModel)
@@ -116,7 +122,8 @@ public struct BackupImportExportBuilder {
 
         let viewModel = ImportBackupViewModel(
             importBackupUseCase: importBackupUseCase,
-            logger: importBackupLogger
+            logger: importBackupLogger,
+            isContextMenuAllowed: isContextMenuAllowed
         )
         ImportBackupView(viewModel: viewModel)
 
@@ -136,7 +143,8 @@ extension BackupImportExportBuilder {
             exportBackupLogger: PreviewLogger(),
             importBackupLogger: PreviewLogger(),
             wireAccentColorMapping: WireAccentColorMapping(),
-            wireAccentColor: .purple
+            wireAccentColor: .purple,
+            isContextMenuAllowed: true
         )
     }
 }

@@ -383,7 +383,8 @@ extension SettingsCellDescriptorFactory {
             exportBackupLogger: WireLogger.backupExport,
             importBackupLogger: WireLogger.backupImport,
             wireAccentColorMapping: WireAccentColorMapping(),
-            wireAccentColor: ZMUser.selfUser()?.accentColor ?? .default
+            wireAccentColor: ZMUser.selfUser()?.accentColor ?? .default,
+            isContextMenuAllowed: MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()).canUseClipboard
         )
     }
 

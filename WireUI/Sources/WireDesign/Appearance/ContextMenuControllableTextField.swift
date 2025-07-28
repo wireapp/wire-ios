@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 /// A UITextField subclass that provides centralized control over context menu actions
 /// such as copy, paste, select, select all, and the AutoFill menu.
@@ -24,7 +25,7 @@ import UIKit
 /// Use `isContextMenuAllowed` to enable or restrict specific actions.
 /// This base class is designed to be subclassed by custom UITextField implementations
 /// that require consistent context menu behavior across the app.
-open class ContextMenuControllableTextField: UITextField {
+open class ContextMenuControllableUITextField: UITextField {
 
     private let isContextMenuAllowed: Bool
 
@@ -62,4 +63,59 @@ open class ContextMenuControllableTextField: UITextField {
         }
     }
 
+}
+
+public struct ContextMenuControllableTextField: UIViewRepresentable {
+    @Binding var text: String
+    var placeholder: String
+    var isContextMenuAllowed: Bool
+    var isSecureTextEntry: Bool
+
+    public init(
+        text: Binding<String>,
+        placeholder: String,
+        isContextMenuAllowed: Bool = true,
+        isSecureTextEntry: Bool = false
+    ) {
+        self._text = text
+        self.placeholder = placeholder
+        self.isContextMenuAllowed = isContextMenuAllowed
+        self.isSecureTextEntry = isSecureTextEntry
+    }
+
+    public func makeUIView(context: Context) -> UITextField {
+        let textField = ContextMenuControllableUITextField(
+            frame: CGRect.zero,
+            isContextMenuAllowed: isContextMenuAllowed
+        )
+        textField.placeholder = placeholder
+        textField.delegate = context.coordinator
+        textField.text = text
+        textField.autocorrectionType = .no
+        if isSecureTextEntry {
+            textField.isSecureTextEntry = true
+            textField.textContentType = .oneTimeCode
+        }
+        return textField
+    }
+
+    public func updateUIView(_ uiView: UITextField, context: Context) {
+        uiView.text = text
+    }
+
+    public func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+
+    public class Coordinator: NSObject, UITextFieldDelegate {
+        var parent: ContextMenuControllableTextField
+
+        init(_ parent: ContextMenuControllableTextField) {
+            self.parent = parent
+        }
+
+        public func textFieldDidChangeSelection(_ textField: UITextField) {
+            parent.text = textField.text ?? ""
+        }
+    }
 }

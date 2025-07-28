@@ -24,7 +24,8 @@ func ImportBackupPreview() -> some View {
         ImportBackupView(
             viewModel: ImportBackupViewModel(
                 importBackupUseCase: PreviewImportBackupUseCase(),
-                logger: PreviewLogger()
+                logger: PreviewLogger(),
+                isContextMenuAllowed: true
             )
         )
     }

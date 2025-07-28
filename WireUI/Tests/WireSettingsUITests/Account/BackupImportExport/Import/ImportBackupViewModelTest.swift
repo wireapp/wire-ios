@@ -53,7 +53,8 @@ final class ImportBackupViewModelTest: XCTestCase {
 
         sut = .init(
             importBackupUseCase: mockImportBackupUseCase,
-            logger: mockLogger
+            logger: mockLogger,
+            isContextMenuAllowed: true
         )
     }
 

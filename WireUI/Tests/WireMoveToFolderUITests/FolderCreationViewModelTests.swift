@@ -160,6 +160,6 @@ final class FolderCreationViewModelTests: XCTestCase {
 
     @MainActor
     private func createSUT() {
-        sut = CreateFolderViewModel(useCase: mockUseCase)
+        sut = CreateFolderViewModel(useCase: mockUseCase, isContextMenuAllowed: true)
     }
 }

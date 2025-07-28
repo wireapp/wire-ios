@@ -24,6 +24,7 @@ struct EnterPasswordView: View {
     @Binding var password: String
     @Binding var passwordIsWrong: Bool
     var focusPasswordFieldOnAppear = true
+    var isContextMenuAllowed: Bool
 
     let continueAction: (_ password: String) -> Void
     let cancelAction: () -> Void
@@ -86,7 +87,8 @@ struct EnterPasswordView: View {
                 password: $password,
                 placeholder: Strings.EnterPassword.TextField.placeholder,
                 placeholderColor: passwordFieldPlaceholderColor,
-                focusOnAppear: focusPasswordFieldOnAppear
+                focusOnAppear: focusPasswordFieldOnAppear,
+                isContextMenuAllowed: isContextMenuAllowed
             )
             .tint(passwordFieldBorderColor)
             .padding(.bottom, 8)

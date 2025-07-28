@@ -96,7 +96,8 @@ struct SetBackupPasswordView: View {
             password: $viewModel.password,
             placeholder: Strings.ExportBackup.SetBackupPassword.placeholder,
             placeholderColor: passwordFieldPlaceholderColor,
-            focusOnAppear: focusPasswordFieldOnAppear
+            focusOnAppear: focusPasswordFieldOnAppear,
+            isContextMenuAllowed: viewModel.isContextMenuAllowed
         )
         .tint(passwordFieldBorderColor)
     }

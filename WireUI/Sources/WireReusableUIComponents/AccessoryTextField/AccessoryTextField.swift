@@ -19,7 +19,7 @@
 import UIKit
 import WireDesign
 
-open class AccessoryTextField: ContextMenuControllableTextField, DynamicTypeCapable {
+open class AccessoryTextField: ContextMenuControllableUITextField, DynamicTypeCapable {
 
     public func redrawFont() {
         font = textFieldAttributes.textFont.font
