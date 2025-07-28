@@ -59,6 +59,8 @@ public struct SelfUserAPIBuilder {
             SelfUserAPIV8(apiService: apiService)
         case .v9:
             SelfUserAPIV9(apiService: apiService)
+        case .v10:
+            SelfUserAPIV10(apiService: apiService)
         }
     }
 

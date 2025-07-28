@@ -18,7 +18,7 @@
 
 import Foundation
 
-final class PushChannelV2APIV9: PushChannelV2APIV8 {
+class PushChannelV2APIV9: PushChannelV2APIV8 {
 
     override var apiVersion: APIVersion { .v9 }
 
