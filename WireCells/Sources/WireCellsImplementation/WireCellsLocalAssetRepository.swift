@@ -20,6 +20,10 @@ import Combine
 import Foundation
 import WireCellsAPI
 
+/// Repository for accessing & updating `WireCellsLocalAsset`s.
+///
+/// This repository acts on the `@MainActor` to allow for non async main thread access of assets from the UI.
+
 @MainActor
 final class WireCellsLocalAssetRepository {
 
@@ -55,15 +59,29 @@ final class WireCellsLocalAssetRepository {
         self.downloadStates = downloadStates
     }
 
+    /// Returns a `WireCellsLocalAsset` for the given `nodeID` or nil if metadata for the asset has has never been
+    /// fetched.
+
     func asset(nodeID: UUID) throws -> WireCellsLocalAsset? {
         guard let metadata = try metadataStore.assetMetadata(nodeID: nodeID) else { return nil }
 
         return Self.asset(metadata: metadata, downloadState: downloadStates[nodeID])
     }
 
+    /// Refreshes the local asset metadata for a given `nodeID` and deletes any cached file if necessary.
+    ///
+    /// The metadata (name etc) and file associated with a given `nodeID` may change. This method fetches the latest
+    /// metadata from the server, updates local metadata if it has changed and deletes any cached file if it's
+    /// `eTag` has changed.
+
     func refreshMetadata(nodeID: UUID) async throws -> WireCellsLocalAssetMetadata {
         try await refreshMetadata(nodeID: nodeID).metadata
     }
+
+    /// Downloads the asset for the given `nodeID`.
+    ///
+    /// This method first refreshes the assets metadata - see `refreshMetadata(nodeID:)`.
+    /// The download can be observed via the `observeAsset(nodeID:)` method.
 
     func downloadAsset(nodeID: UUID) async throws {
         switch downloadStates[nodeID] {
@@ -105,9 +123,13 @@ final class WireCellsLocalAssetRepository {
 
     }
 
+    /// Observes the asset for the given `nodeID`. A value of `nil` is emitted if the asset has never been fetched.
+
     func observeAsset(nodeID: UUID) -> AnyPublisher<WireCellsLocalAsset?, Never> {
         updates.filter { $0.0 == nodeID }.map(\.1).eraseToAnyPublisher()
     }
+
+    /// Cancels the asset download for a given `nodeID`.
 
     func cancelDownload(nodeID: UUID) {
         switch downloadStates[nodeID] {
