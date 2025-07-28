@@ -19,8 +19,6 @@
 import Foundation
 import WireNetwork
 
-// import WireDomain
-
 class UserManager {
     var createdUsers: [UserInfo]
     var networkStack: NetworkStack
