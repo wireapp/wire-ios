@@ -102,12 +102,12 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
 
     public func initialiseMLSWithBasicCredentials(mlsClientID: MLSClientID) async throws {
         WireLogger.mls.info("Initialising MLS client with basic credentials")
-        let defaultCiphersuite = await featureRespository.fetchMLS().config.defaultCipherSuite
+        let defaultCiphersuite = await featureRespository.fetchMLS().config.defaultCipherSuite.cipherSuite
         let coreCrypto = try await coreCrypto()
         _ = try await coreCrypto.perform { context in
             try await context.mlsInit(
-                clientId: Data(mlsClientID.rawValue.utf8),
-                ciphersuites: [UInt16(defaultCiphersuite.rawValue)],
+                clientId: .init(bytes: mlsClientID.data),
+                ciphersuites: [defaultCiphersuite],
                 nbKeyPackage: nil
             )
             try await self.generateClientPublicKeys(with: context, credentialType: .basic)
