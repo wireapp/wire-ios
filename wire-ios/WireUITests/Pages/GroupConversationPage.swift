@@ -40,8 +40,8 @@ class GroupConversationPage: PageModel {
         app.descendants(matching: .any)["author.name"].firstMatch
     }
 
-    var messageLabel: XCUIElement {
-        app.textViews["Message"].firstMatch
+    var messageLabels: XCUIElementQuery {
+        app.textViews.matching(identifier: "Message")
     }
 
     func sendMessage(input: String) throws -> GroupConversationPage {
@@ -55,7 +55,15 @@ class GroupConversationPage: PageModel {
         senderNameLabel.label as? String
     }
 
-    func getSentMessage() -> String? {
-        messageLabel.value as? String
+    func getSentMessages() -> [String] {
+        var messages: [String] = []
+
+        for i in 0 ..< messageLabels.count {
+            let element = messageLabels.element(boundBy: i)
+            if let value = element.value as? String {
+                messages.append(value)
+            }
+        }
+        return messages
     }
 }

@@ -24,23 +24,16 @@ final class TeamManageTests: WireUITestCase {
     func test_Migrate_PersonalUserToTeam() async throws {
         let user = try await userHelper.createPersonalUser()
 
-        let welcomePage = try WelcomePage()
+        let firstTimePage = try app.loginUser(email: user.email, password: user.password)
+        var userAccountPage = try  firstTimePage.acceptPopup()
+            .openUserAccount()
 
-        var conversationPage = try welcomePage
-            .enterEmailOrSSO(user.email)
-            .enterPassword(user.password)
-            .acceptFirstTimeAlert()
-            .acceptPopup()
-
-        var userAccountPage = try conversationPage.openUserAccount()
-
-        let teamCreationStepsPage = try userAccountPage
+        var conversationPage = try userAccountPage
             .tapCreateTeamButtonAndContinue()
             .tapContinue()
             .typeTeamNameAndContinue(user.teamName)
             .acceptTheConfirmationAndContinue()
-
-        conversationPage = try teamCreationStepsPage.tapBackToWireButton()
+            .tapBackToWireButton()
 
         userAccountPage = try conversationPage.openUserAccount()
 
@@ -76,14 +69,8 @@ final class TeamManageTests: WireUITestCase {
         let code = try await BackendClient.getInvitationCode(team: teamID, invitationID: invitationID)
         try await BackendClient.registerTeamMember(memberUser, invitationCode: code)
 
-        let welcomePage = try WelcomePage()
-
-        let loginPage = try welcomePage
-            .enterEmailOrSSO(memberUser.email)
-
-        let userAccountPage = try loginPage.enterPassword(memberUser.password)
-            .acceptFirstTimeAlert()
-            .acceptPopupOnTeamMemberSetup()
+        let firstTimePage = try app.loginUser(email: memberUser.email, password: memberUser.password)
+        let userAccountPage = try firstTimePage.acceptPopupOnTeamMemberSetup()
             .setUsername(memberUser.username)
             .openUserAccount()
 
@@ -112,26 +99,20 @@ final class TeamManageTests: WireUITestCase {
             password: teamOwner.password
         )
 
-        let teamMember1_id = try await userHelper.registerUsersAsTeamMember(
+        let teamMember1Id = try await userHelper.registerUsersAsTeamMember(
             accessToken: accessToken,
             teamID: teamOwner.teamID!,
             member: teamMember1
         )
 
-        let  teamMember2_id = try await userHelper.registerUsersAsTeamMember(
+        let  teamMember2Id = try await userHelper.registerUsersAsTeamMember(
             accessToken: accessToken,
             teamID: teamOwner.teamID!,
             member: teamMember2
         )
 
-        let welcomePage = try WelcomePage()
-
-        let loginPage = try welcomePage
-            .enterEmailOrSSO(teamOwner.email)
-
-        let conversationPage = try loginPage.enterPassword(teamOwner.password)
-            .acceptFirstTimeAlert()
-            .acceptPopupOnTeamMemberSetup()
+        let firstTimePage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+        let conversationPage = try firstTimePage.acceptPopupOnTeamMemberSetup()
             .setUsername(teamOwner.username)
 
         let groupConversationPage = try conversationPage.tapPlusButtonToCreateGroup()
@@ -144,11 +125,10 @@ final class TeamManageTests: WireUITestCase {
         let senderName = try XCTUnwrap(groupConversationPage.getSenderName())
         XCTAssertEqual(senderName, teamOwner.name, "Sender info didn't match expected value \(teamOwner.name)")
 
-        let sentMessageInfo = try XCTUnwrap(groupConversationPage.getSentMessage())
-        XCTAssertEqual(
-            sentMessageInfo,
-            messageFromOwner,
-            "Sent message mismatch with expected value \(messageFromOwner)"
+        let sentMessages = groupConversationPage.getSentMessages()
+        XCTAssertTrue(
+            sentMessages.contains(messageFromOwner),
+            "Expected message '\(messageFromOwner)' not found in sent messages: \(sentMessages)"
         )
     }
 }
