@@ -17,3 +17,4 @@
 //
 
 "conversation.create.channel.back" = "返回新对话概览";
+"conversation.creationForm.channelHistory.upgradeBanner.close" = "关闭立即升级横幅";
