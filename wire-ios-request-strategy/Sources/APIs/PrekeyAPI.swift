@@ -148,8 +148,12 @@ class PrekeyAPIV8: PrekeyAPIV7 {
     override var apiVersion: APIVersion { .v8 }
 }
 
-final class PrekeyAPIV9: PrekeyAPIV8 {
+class PrekeyAPIV9: PrekeyAPIV8 {
     override var apiVersion: APIVersion { .v9 }
+}
+
+final class PrekeyAPIV10: PrekeyAPIV9 {
+    override var apiVersion: APIVersion { .v10 }
 }
 
 extension Collection<QualifiedClientID> {

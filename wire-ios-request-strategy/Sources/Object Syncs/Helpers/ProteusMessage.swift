@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 // sourcery: AutoMockable
 public protocol ProteusMessage: OTREntity {

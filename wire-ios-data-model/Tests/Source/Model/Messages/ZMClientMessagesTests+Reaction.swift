@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireTesting
 
 class ZMClientMessageTests_Reaction: BaseZMClientMessageTests {}
@@ -37,7 +38,7 @@ extension ZMClientMessageTests_Reaction {
 
     func updateEventForAddingReaction(to message: ZMMessage, sender: ZMUser? = nil) -> ZMUpdateEvent {
         let sender = sender ?? message.sender!
-        let genericMessage = GenericMessage(content: WireProtos.Reaction.createReaction(
+        let genericMessage = GenericMessage(content: GenericMessageProtocol.Reaction.createReaction(
             emojis: ["❤️"],
             messageID: message.nonce!
         ))
@@ -51,7 +52,7 @@ extension ZMClientMessageTests_Reaction {
 
     func updateEventForRemovingReaction(to message: ZMMessage, sender: ZMUser? = nil) -> ZMUpdateEvent {
         let sender = sender ?? message.sender!
-        let genericMessage = GenericMessage(content: WireProtos.Reaction.createReaction(
+        let genericMessage = GenericMessage(content: GenericMessageProtocol.Reaction.createReaction(
             emojis: [],
             messageID: message.nonce!
         ))
@@ -68,7 +69,7 @@ extension ZMClientMessageTests_Reaction {
     func testThatItAppendsAllOfTheReactionsWhenReceivingUpdateEventWithReactions() {
         // GIVEN
         let message = insertMessage()
-        let genericMessage = GenericMessage(content: WireProtos.Reaction.createReaction(
+        let genericMessage = GenericMessage(content: GenericMessageProtocol.Reaction.createReaction(
             emojis: ["🥰", "😃", "❤️", "😍"],
             messageID: message.nonce!
         ))
@@ -127,7 +128,7 @@ extension ZMClientMessageTests_Reaction {
     func testThatItDoesNOTAppendsAReactionWhenReceivingUpdateEventWithInvalidReaction() {
 
         let message = insertMessage()
-        let genericMessage = GenericMessage(content: WireProtos.Reaction.createReaction(
+        let genericMessage = GenericMessage(content: GenericMessageProtocol.Reaction.createReaction(
             emojis: ["TROP BIEN"],
             messageID: message.nonce!
         ))
@@ -152,7 +153,7 @@ extension ZMClientMessageTests_Reaction {
     func testThatItDoesNOTAppendsAnInvalidReactionWhenReceivingUpdateEventWithMultipleReactions() {
         // GIVEN
         let message = insertMessage()
-        let genericMessage = GenericMessage(content: WireProtos.Reaction.createReaction(
+        let genericMessage = GenericMessage(content: GenericMessageProtocol.Reaction.createReaction(
             emojis: ["TROP BIEN", "😃", "❤️", "😍"],
             messageID: message.nonce!
         ))
@@ -245,7 +246,7 @@ extension ZMClientMessageTests_Reaction {
         ZMMessage.addReaction("😍", to: message)
         uiMOC.saveOrRollback()
 
-        let genericMessage = GenericMessage(content: WireProtos.Reaction.createReaction(
+        let genericMessage = GenericMessage(content: GenericMessageProtocol.Reaction.createReaction(
             emojis: ["🥰", "😃", "❤️", "😍"],
             messageID: message.nonce!
         ))
@@ -274,7 +275,7 @@ extension ZMClientMessageTests_Reaction {
         ZMMessage.addReaction("❤️", to: message)
         uiMOC.saveOrRollback()
 
-        let genericMessage = GenericMessage(content: WireProtos.Reaction.createReaction(
+        let genericMessage = GenericMessage(content: GenericMessageProtocol.Reaction.createReaction(
             emojis: ["🥰"],
             messageID: message.nonce!
         ))

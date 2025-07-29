@@ -18,6 +18,8 @@
 
 import CoreLocation
 import Foundation
+import GenericMessageProtocol
+
 @testable import WireDataModel
 
 class ClientMessageTests_Location: BaseZMMessageTests {

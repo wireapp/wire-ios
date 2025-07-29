@@ -59,10 +59,11 @@ final class AccountSwitcherViewTests: XCTestCase {
     func testAccountSwitcher() {
         let screenBounds = UIScreen.main.bounds
 
-        let view = AccountSwitcherModalView(FakeAccountSwitcherFactory(accounts: accounts))
-            .inNavigationStack()
-            .frame(width: screenBounds.width, height: screenBounds.height)
-            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+        let view = NavigationStack {
+            AccountSwitcherModalView(FakeAccountSwitcherFactory(accounts: accounts))
+        }
+        .frame(width: screenBounds.width, height: screenBounds.height)
+        .environment(\.wireTextStyleMapping, WireTextStyleMapping())
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
             snapshotHelper

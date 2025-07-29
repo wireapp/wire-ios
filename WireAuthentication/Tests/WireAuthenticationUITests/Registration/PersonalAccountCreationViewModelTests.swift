@@ -33,6 +33,7 @@ final class PersonalAccountCreationViewModelTests: XCTestCase, PersonalAccountCr
     private var mockRequestEmailVerificationCodeUseCase: MockRequestEmailVerificationCodeUseCaseProtocol!
     private var mockValidateEmailUseCase: MockValidateEmailUseCaseProtocol!
     private var passwordValidator: (any PasswordValidator)!
+    private var analyticsEventTracker: MockRegistrationAnalyticsTrackerProtocol!
 
     @MainActor
     override func setUp() async throws {
@@ -41,15 +42,9 @@ final class PersonalAccountCreationViewModelTests: XCTestCase, PersonalAccountCr
         mockRequestEmailVerificationCodeUseCase = MockRequestEmailVerificationCodeUseCaseProtocol()
         mockValidateEmailUseCase = MockValidateEmailUseCaseProtocol()
         passwordValidator = MockPasswordValidator()
-        sut = PersonalAccountCreationViewModel(
-            factory: self,
-            router: router,
-            email: "mika@example.com",
-            privacyPolicyURL: URL(string: "https://wire.com")!,
-            termsOfUseURL: URL(string: "https://wire.com")!,
-            teamAccountCreationLink: URL(string: "https://wire.com")!,
-            passwordValidator: passwordValidator
-        )
+        analyticsEventTracker = MockRegistrationAnalyticsTrackerProtocol()
+        analyticsEventTracker.tearDown_MockMethod = {}
+        sut = makeSUT(analyticsEventTracker: analyticsEventTracker)
     }
 
     override func tearDown() {
@@ -82,7 +77,8 @@ final class PersonalAccountCreationViewModelTests: XCTestCase, PersonalAccountCr
     func verificationEmailCodeFactory(
         email: String,
         password: String,
-        name: String
+        name: String,
+        trackingConsent: RegistrationAnalyticsTrackingConsent
     ) -> any VerificationEmailCodeFactory {
         fatalError("not needed here")
     }
@@ -164,6 +160,47 @@ final class PersonalAccountCreationViewModelTests: XCTestCase, PersonalAccountCr
 
         mockValidateEmailUseCase.invokeEmail_MockValue = .isValid
         XCTAssertTrue(sut.canRequestVerificationCode)
+    }
+
+    // MARK: - Helper
+
+    @MainActor
+    private func makeSUT(
+        backendURL: URL = URL(string: "https://wire.com")!,
+        analyticsEventTracker: (any RegistrationAnalyticsTrackerProtocol)? = MockRegistrationAnalyticsTrackerProtocol()
+    ) -> PersonalAccountCreationViewModel {
+        PersonalAccountCreationViewModel(
+            factory: self,
+            router: router,
+            email: "mika@example.com",
+            backendConfig: Scaffolding.backendConfig(backendURL: backendURL),
+            privacyPolicyURL: URL(string: "https://wire.com")!,
+            termsOfUseURL: URL(string: "https://wire.com")!,
+            teamAccountCreationLink: URL(string: "https://wire.com")!,
+            passwordValidator: passwordValidator,
+            analyticsEventTracker: analyticsEventTracker
+        )
+    }
+
+}
+
+private enum Scaffolding {
+
+    static func backendConfig(backendURL: URL) -> BackendConfig {
+        BackendConfig(
+            title: "mock",
+            endpoints: Endpoints(
+                backendURL: backendURL,
+                backendWSURL: URL(string: "https://wire.com")!,
+                blackListURL: URL(string: "https://wire.com")!,
+                teamsURL: URL(string: "https://wire.com")!,
+                accountsURL: URL(string: "https://wire.com")!,
+                websiteURL: URL(string: "https://wire.com")!,
+                countlyURL: URL(string: "https://wire.com")!
+            ),
+            proxySettings: .none,
+            pinnedKeys: .none
+        )
     }
 
 }

@@ -33,6 +33,7 @@ final class VerificationEmailCodeViewModelTests: XCTestCase, VerificationEmailCo
     private var mockRegisterPersonalAccountUseCase: MockRegisterPersonalAccountUseCaseProtocol!
     private var mockRequestEmailVerificationCodeUseCase: MockRequestEmailVerificationCodeUseCaseProtocol!
     private var onRegisterAccountCalled = false
+    private var analyticsEventTracker: MockRegistrationAnalyticsTrackerProtocol!
 
     @MainActor
     override func setUp() async throws {
@@ -40,13 +41,16 @@ final class VerificationEmailCodeViewModelTests: XCTestCase, VerificationEmailCo
         router = MockRouter()
         mockRegisterPersonalAccountUseCase = MockRegisterPersonalAccountUseCaseProtocol()
         mockRequestEmailVerificationCodeUseCase = MockRequestEmailVerificationCodeUseCaseProtocol()
+        analyticsEventTracker = MockRegistrationAnalyticsTrackerProtocol()
+        analyticsEventTracker.trackPersonalAccountCreationFailedCodeVerification_MockMethod = {}
         sut = VerificationEmailCodeViewModel(
             factory: self,
             router: router,
             email: "mika@example.com",
             password: "password",
             name: "mika",
-            onFlowCompletion: { [self] _ in onRegisterAccountCalled = true }
+            onFlowCompletion: { [self] _ in onRegisterAccountCalled = true },
+            analyticsEventTracker: analyticsEventTracker
         )
     }
 
@@ -56,6 +60,7 @@ final class VerificationEmailCodeViewModelTests: XCTestCase, VerificationEmailCo
         sut = nil
         mockRegisterPersonalAccountUseCase = nil
         mockRequestEmailVerificationCodeUseCase = nil
+        analyticsEventTracker = nil
     }
 
     // MARK: - Factory

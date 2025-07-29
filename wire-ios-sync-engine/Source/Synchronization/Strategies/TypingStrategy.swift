@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireDataModel
 
 let IsTypingKey = "isTyping"
@@ -223,7 +224,7 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
         case .v0, .v1, .v2:
             path = "/conversations/\(remoteIdentifier.transportString())/typing"
 
-        case .v3, .v4, .v5, .v6, .v7, .v8, .v9:
+        case .v3, .v4, .v5, .v6, .v7, .v8, .v9, .v10:
             let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
             guard let domain else { return nil }
             path = "/conversations/\(domain)/\(remoteIdentifier.transportString())/typing"

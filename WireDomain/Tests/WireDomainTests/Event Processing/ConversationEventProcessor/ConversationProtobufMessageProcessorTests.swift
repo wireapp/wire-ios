@@ -16,11 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
 import WireTestingPackage
 import XCTest
+
 @testable import WireDomain
 @testable import WireNetwork
 
@@ -158,7 +160,7 @@ final class ConversationProtobufMessageProcessorTests: XCTestCase {
 
         let genericMessage = GenericMessage.with {
             $0.messageID = UUID().uuidString
-            $0.availability = WireProtos.Availability(.available)
+            $0.availability = GenericMessageProtocol.Availability(.available)
         }
 
         // When

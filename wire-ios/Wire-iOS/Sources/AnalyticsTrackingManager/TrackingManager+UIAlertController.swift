@@ -67,8 +67,8 @@ extension TrackingManager {
                 UIAlertAction(
                     title: AlertLocale.Button.privacyPolicy,
                     style: .default,
-                    handler: { [weak self] _ in
-                        self?.presentPrivacyPolicy()
+                    handler: { _ in
+                        presentPrivacyPolicy()
                         continuation.resume(returning: false)
                     }
                 )

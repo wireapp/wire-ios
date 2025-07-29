@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireDataModel
 
 // sourcery: AutoMockable
@@ -30,6 +31,8 @@ import WireDataModel
 /// Check out the Confluence page for full details
 /// [here](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/20514628/Conversations)
 public protocol ConversationLocalStoreProtocol {
+
+    func qualifiedID(for conversation: ZMConversation) async -> QualifiedID?
 
     /// Fetches or creates a conversation locally.
     /// - parameter id: The ID of the conversation.
@@ -252,6 +255,13 @@ public protocol ConversationLocalStoreProtocol {
     func localParticipants(
         in conversation: ZMConversation
     ) async -> Set<ZMUser>
+
+    /// Fetches local participants from a conversation and maps to [MLSUser].
+    /// - parameter conversation: The related conversation.
+    /// - returns: A list of MLSUser participants.
+    func localParticipantsExcludingSelfAsMLSUsers(
+        in conversation: ZMConversation
+    ) async -> [MLSUser]
 
     /// Whether the conversation is a group conversation.
     /// - parameter conversation: The given conversation.
