@@ -50,9 +50,9 @@ final class StartUIViewController: UIViewController {
 
         let isTeamUser = userSession.selfUser.hasTeam
 
-        let availableConversationTypes: Set<WireMultiParticipantConversationType> = if areChannelsSupported,
-                                                                                       canCreateChannels ||
-                                                                                       !isTeamUser {
+        let availableConversationTypes: Set<MultiParticipantConversationType> = if areChannelsSupported,
+                                                                                   canCreateChannels ||
+                                                                                   !isTeamUser {
             [.channel, .group]
         } else {
             [.group]
