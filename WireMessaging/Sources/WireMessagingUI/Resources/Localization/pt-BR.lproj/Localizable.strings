@@ -69,3 +69,20 @@
 
 "conversation.creationForm.readReceipts.toggle" = "Confirmação de Leitura";
 "conversation.creationForm.readReceipts.description" = "Quando isso está ativado, as pessoas podem ver quando suas mensagens nessa conversa são lidas.";
+
+// MARK: - Channel history
+"conversation.channelHistory.upgradeBanner.title" = "Show older messages?";
+"conversation.channelHistory.upgradeBanner.message" = "Upgrade to a paid plan to offer channel members the whole history.";
+"conversation.channelHistory.upgradeBanner.button" = "Atualizar agora";
+"conversation.channelHistory.upgradeBanner.closeMessage" = "Close banner";
+"conversation.channelHistory.picker.title" = "Conversation history";
+"conversation.channelHistory.picker.off" = "Desligar";
+"conversation.channelHistory.picker.oneDay" = "1 day";
+"conversation.channelHistory.picker.oneWeek" = "1 week";
+"conversation.channelHistory.picker.fourWeeks" = "4 weeks";
+"conversation.channelHistory.picker.unlimited" = "Unlimited";
+"conversation.channelHistory.picker.custom" = "Custom";
+"conversation.channelHistory.customPicker.days" = "Days";
+"conversation.channelHistory.customPicker.weeks" = "Weeks";
+"conversation.channelHistory.navigationTitle" = "Conversation history";
+"conversation.creationForm.channelHistory.sectionFootnote" = "Select a period. When participants join this channel, they can follow the history for this time frame.";

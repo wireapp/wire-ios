@@ -616,6 +616,10 @@
 
 "content.system.message_read_receipt_on_add_to_group" = "Звіти про перегляд увімкнені";
 
+// history depth
+"content.system.message_history_depth" = "%@ set conversation history to %@";
+"content.system.message_history_depth_disabled" = "%@ disabled conversation history";
+
 // legal hold
 
 "content.system.message_legal_hold.enabled" = "This conversation is under legal hold [LEARN MORE](%@)";
@@ -649,6 +653,9 @@
 "content.system.session_reset.self" = "You were unable to decrypt some of your messages but you solved the issue. This affected all conversations.";
 
 "content.system.unknown_message.body" = "Це повідомлення не може бути показане. Можливо, ваша версія Wire вийшла із вжитку.";
+
+// user removed from team
+"content.system.user_removed_from_team" = "This user is no longer available";
 
 "content.file.uploading" = "Завантаження…";
 "content.file.downloading" = "Скачування…";
@@ -1219,6 +1226,10 @@
 "self.settings.account_details.log_out.alert.title" = "Вийти";
 "self.settings.account_details.log_out.alert.message" = "Ваше повідомлення буде стерто з цього пристрою.";
 "self.settings.account_details.log_out.alert.password" = "Пароль";
+"self.settings.account_details.log_out.erase_data.alert.title" = "Вийти";
+"self.settings.account_details.log_out.erase_data.alert.message" = "Delete all your personal information and conversations on this device?";
+"self.settings.account_details.log_out.erase_data.alert.logoutAndClear" = "Log out and clear data";
+"self.settings.account_details.log_out.erase_data.alert.logoutAndKeep" = "Log out and keep data";
 
 // Settings - Personal information
 "self.settings.privacy_analytics_section.title" = "Статистика використання та збоїв";
@@ -1397,7 +1408,6 @@
 
 "self.settings.conversations.title" = "Історія";
 "self.settings.history_backup.title" = "Back up or Restore";
-"self.settings.history_backup.error.title" = "Помилка";
 "self.settings.history_backup.set_email.title" = "Встановіть адресу електронної пошти та пароль.";
 "self.settings.history_backup.set_email.message" = "Ви повинні мати адресу електронної пошти та пароль для того, щоб створити резервну копію історії розмов. Ви можете додати їх на сторінці Акаунт в налаштуваннях.";
 

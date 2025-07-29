@@ -616,6 +616,10 @@
 
 "content.system.message_read_receipt_on_add_to_group" = "Les accusés de lecture son activés";
 
+// history depth
+"content.system.message_history_depth" = "%@ set conversation history to %@";
+"content.system.message_history_depth_disabled" = "%@ disabled conversation history";
+
 // legal hold
 
 "content.system.message_legal_hold.enabled" = "This conversation is under legal hold [LEARN MORE](%@)";
@@ -649,6 +653,9 @@
 "content.system.session_reset.self" = "You were unable to decrypt some of your messages but you solved the issue. This affected all conversations.";
 
 "content.system.unknown_message.body" = "Impossible d’afficher ce message. Vous utilisez peut-être une version trop ancienne de Wire.";
+
+// user removed from team
+"content.system.user_removed_from_team" = "This user is no longer available";
 
 "content.file.uploading" = "Envoi en cours…";
 "content.file.downloading" = "Téléchargement en cours…";
@@ -1220,9 +1227,9 @@
 "self.settings.account_details.log_out.alert.message" = "L'historique de vos messages sera effacé de cet appareil.";
 "self.settings.account_details.log_out.alert.password" = "Mot de passe";
 "self.settings.account_details.log_out.erase_data.alert.title" = "Se déconnecter";
-"self.settings.account_details.log_out.erase_data.alert.message" = "Supprimer toutes vos informations personnelles et conversations sur cet appareil ?";
-"self.settings.account_details.log_out.erase_data.alert.logoutAndClear" = "Déconnexion et suppression des données";
-"self.settings.account_details.log_out.erase_data.alert.logoutAndKeep" = "Déconnexion sans suppression";
+"self.settings.account_details.log_out.erase_data.alert.message" = "Delete all your personal information and conversations on this device?";
+"self.settings.account_details.log_out.erase_data.alert.logoutAndClear" = "Log out and clear data";
+"self.settings.account_details.log_out.erase_data.alert.logoutAndKeep" = "Log out and keep data";
 
 // Settings - Personal information
 "self.settings.privacy_analytics_section.title" = "Rapports d’utilisation et de plantage";
@@ -1401,7 +1408,6 @@
 
 "self.settings.conversations.title" = "Historique";
 "self.settings.history_backup.title" = "Back up or Restore";
-"self.settings.history_backup.error.title" = "Erreur";
 "self.settings.history_backup.set_email.title" = "Définir une adresse email et un mot de passe.";
 "self.settings.history_backup.set_email.message" = "Vous devez définir une adresse email et un mot de passe pour pouvoir faire une sauvegarde de vos conversations. Vous pouvez les définir dans la section compte des paramètres.";
 
