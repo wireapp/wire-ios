@@ -18,19 +18,19 @@
 
 import CoreData
 import Foundation
-import WireCellsAPI
+import WireMessagingDomain
 import WireDataModel
 
 public final actor WireCellsMessageAttachmentDraftsObserverImplementation: NSObject, NSFetchedResultsControllerDelegate,
     FetchedResultsControllerObserver {
 
-    private var currentValues: [WireCellsAPI.WireCellsMessageAttachmentDraft] = []
-    private var continuations: [UUID: AsyncStream<[WireCellsAPI.WireCellsMessageAttachmentDraft]>.Continuation] = [:]
+    private var currentValues: [WireMessagingDomain.WireCellsMessageAttachmentDraft] = []
+    private var continuations: [UUID: AsyncStream<[WireMessagingDomain.WireCellsMessageAttachmentDraft]>.Continuation] = [:]
     private let fetchedResultsController: NSFetchedResultsController<WireCellsMessageAttachmentDraftEntity>
 
     init(
         fetchedResultsController: NSFetchedResultsController<WireCellsMessageAttachmentDraftEntity>,
-        initialValues: [WireCellsAPI.WireCellsMessageAttachmentDraft]
+        initialValues: [WireMessagingDomain.WireCellsMessageAttachmentDraft]
     ) {
         self.fetchedResultsController = fetchedResultsController
         self.currentValues = initialValues
@@ -49,9 +49,9 @@ public final actor WireCellsMessageAttachmentDraftsObserverImplementation: NSObj
         Task { await send(newValues: mappedEntities) }
     }
 
-    public func observe() -> AsyncStream<[WireCellsAPI.WireCellsMessageAttachmentDraft]> {
+    public func observe() -> AsyncStream<[WireMessagingDomain.WireCellsMessageAttachmentDraft]> {
         let id = UUID()
-        return AsyncStream<[WireCellsAPI.WireCellsMessageAttachmentDraft]> { continuation in
+        return AsyncStream<[WireMessagingDomain.WireCellsMessageAttachmentDraft]> { continuation in
             continuations[id] = continuation
 
             continuation.onTermination = { [weak self] _ in

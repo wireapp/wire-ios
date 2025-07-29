@@ -17,7 +17,7 @@
 //
 
 @preconcurrency import CoreData
-import WireCellsAPI
+import WireMessagingDomain
 import WireDataModel
 import WireLogging
 

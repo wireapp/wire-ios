@@ -16,13 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireCellsAPI
+import WireMessagingDomain
 import WireDataModel
 
 extension ConversationLocalStore: WireCellsConversationDAO {
 
     public func getCellName(
-        conversationID: WireCellsAPI
+        conversationID: WireMessagingDomain
             .WireCellsConversationID
     ) async throws(WireCellsConversationDAOError) -> String {
         do {
@@ -47,7 +47,7 @@ extension ConversationLocalStore: WireCellsConversationDAO {
     }
 
     public func setWireCell(
-        conversationID: WireCellsAPI.WireCellsConversationID,
+        conversationID: WireMessagingDomain.WireCellsConversationID,
         cellName: String
     ) async throws(WireCellsConversationDAOError) {
         do {
