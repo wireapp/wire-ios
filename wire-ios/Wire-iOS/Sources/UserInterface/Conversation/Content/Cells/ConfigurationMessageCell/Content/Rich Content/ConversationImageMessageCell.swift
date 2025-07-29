@@ -180,7 +180,9 @@ final class ConversationImageMessageCellDescription: ConversationMessageCellDesc
         didSet {
             if let message {
                 configuration.message = message
-                configuration.image = message.imageMessageData!
+                if let imageMessageData = message.imageMessageData {
+                    configuration.image = imageMessageData
+                }
             }
         }
     }
