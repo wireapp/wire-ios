@@ -18,7 +18,7 @@
 
 import Foundation
 
-final class UpdateEventsAPIV9: UpdateEventsAPIV8 {
+class UpdateEventsAPIV9: UpdateEventsAPIV8 {
     override var apiVersion: APIVersion { .v9 }
 
     override func getServerTime() async throws -> Date {

@@ -99,6 +99,8 @@ private extension WireAuthenticationAPI.BackendMetadata.APIVersion {
             self = .v8
         case .v9:
             self = .v9
+        case .v10:
+            self = .v10
         }
     }
 

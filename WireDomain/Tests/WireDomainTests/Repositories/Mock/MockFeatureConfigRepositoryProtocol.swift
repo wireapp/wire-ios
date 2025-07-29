@@ -109,24 +109,4 @@ class MockFeatureConfigRepositoryProtocol: FeatureConfigRepositoryProtocol {
         }
     }
 
-    // MARK: - storeNeedsToNotifyUser
-
-    var storeFeatureNeedsToNotifyUserName_Invocations: [(notifyUser: Bool, name: Feature.Name)] = []
-    var storeFeatureNeedsToNotifyUserName_MockError: Error?
-    var storeFeatureNeedsToNotifyUserName_MockMethod: ((Bool, Feature.Name) async throws -> Void)?
-
-    func storeFeatureNeedsToNotifyUser(_ notifyUser: Bool, name: Feature.Name) async throws {
-        storeFeatureNeedsToNotifyUserName_Invocations.append((notifyUser: notifyUser, name: name))
-
-        if let error = storeFeatureNeedsToNotifyUserName_MockError {
-            throw error
-        }
-
-        guard let mock = storeFeatureNeedsToNotifyUserName_MockMethod else {
-            fatalError("no mock for `storeNeedsToNotifyUserForFeatureName`")
-        }
-
-        try await mock(notifyUser, name)
-    }
-
 }

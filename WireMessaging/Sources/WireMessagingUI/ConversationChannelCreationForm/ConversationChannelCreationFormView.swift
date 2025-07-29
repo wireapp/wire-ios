@@ -42,7 +42,9 @@ public struct ConversationChannelCreationForm: View {
         Form {
             channelNameSection
             channelAccessSection
-            channelHistorySection
+            if viewModel.isChannelHistoryFeatureEnabled() {
+                channelHistorySection
+            }
             servicesSection
             // TODO: [WPB-16771] Uncomment when read receipts supported on MLS
             //            readReceiptsSection
