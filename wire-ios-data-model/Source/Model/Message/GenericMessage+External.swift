@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireLogging
 
 private let zmLog = ZMSLog(tag: "GenericMessage")

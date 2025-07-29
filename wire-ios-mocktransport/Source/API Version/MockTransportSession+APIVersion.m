@@ -18,7 +18,6 @@
 
 @import WireTransport;
 @import WireTesting;
-@import WireProtos;
 #import "MockTransportSession+APIVersion.h"
 #import <WireMockTransport/WireMockTransport-Swift.h>
 

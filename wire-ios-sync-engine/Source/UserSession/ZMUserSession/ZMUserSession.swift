@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import WireFoundation
+
 import Combine
 import Foundation
 import WireCoreCrypto
@@ -25,7 +27,6 @@ import WireLogging
 import WireNetwork
 import WireRequestStrategy
 import WireSystem
-public import WireFoundation
 
 typealias UserSessionDelegate = UserSessionAppLockDelegate
     & UserSessionEncryptionAtRestDelegate
@@ -139,7 +140,7 @@ public final class ZMUserSession: NSObject {
 
     public var selfDeletingMessagesFeature: Feature.SelfDeletingMessages {
         let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
-        return featureRepository.fetchSelfDeletingMesssages()
+        return featureRepository.fetchSelfDeletingMessages()
     }
 
     public var conversationGuestLinksFeature: Feature.ConversationGuestLinks {
@@ -391,7 +392,7 @@ public final class ZMUserSession: NSObject {
     var callStateObserverToken: AnyObject?
 
     private let userSessionComponent: UserSessionComponent
-    private(set) var clientSessionComponent: ClientSessionComponent?
+    public private(set) var clientSessionComponent: ClientSessionComponent?
 
     // MARK: - Initialize
 
@@ -400,7 +401,7 @@ public final class ZMUserSession: NSObject {
         transportSession: any TransportSessionType,
         mediaManager: any MediaManagerType,
         flowManager: any FlowManagerType,
-        apiServiceFactory: @escaping @Sendable (_ clientID: String, _ userID: UUID) -> APIServiceProtocol,
+        apiServiceFactory: @escaping APIServiceFactory,
         application: ZMApplication,
         currentAppVersion: String,
         currentBuildNumber: String,
@@ -601,6 +602,7 @@ public final class ZMUserSession: NSObject {
         syncAgent.delegate = self
 
         mlsService.setSyncDelegate(syncAgent)
+        mlsService.setResetBrokenMLSConversationDelegate(clientSessionComponent.initiateResetMLSConversationUseCase)
 
         // Finish setting up the final strategies.
         if
@@ -710,9 +712,16 @@ public final class ZMUserSession: NSObject {
                 guard let self else {
                     fatal("userSession not reachable")
                 }
-                return pullSelfUserClientsFactory(context: context)
+                return makePullSelfUserClients(context: context)
             },
-            searchUsersCache: dependencies.caches.searchUsers
+            searchUsersCache: dependencies.caches.searchUsers,
+            initiateResetMLSConversationUseCaseFactory: { [weak self] context in
+                guard let self else {
+                    fatal("userSession not reachable")
+                }
+                // Passing useCase from WireDomain to WireRequestStrategy's MessageSender
+                return makeInitiateResetMLSConversationUseCase(context: context)
+            }
         )
     }
 
@@ -1289,11 +1298,25 @@ extension ZMUserSession: SyncAgentDelegate {
             context: context,
             supportedProtocolService: supportedProtocolService,
             resolver: resolver,
-            pullSelfUserClientsFactory: pullSelfUserClientsFactory
+            pullSelfUserClientsFactory: makePullSelfUserClients
         )
     }
 
-    private func pullSelfUserClientsFactory(context: NSManagedObjectContext) -> PullSelfUserClientsSyncProtocol {
+    private func makeInitiateResetMLSConversationUseCase(
+        context: NSManagedObjectContext
+    ) -> WireRequestStrategy.InitiateResetMLSConversationUseCaseProtocol {
+        let (apiService, apiVersion) = makeApiServiceAndAPIVersion()
+
+        return InitiateResetMLSConversationUseCase
+            .make(
+                apiService: apiService,
+                apiVersion: apiVersion,
+                mlsService: mlsService,
+                context: context
+            )
+    }
+
+    private func makeApiServiceAndAPIVersion() -> (APIServiceProtocol, WireNetwork.APIVersion) {
         guard let apiService = managedObjectContext.performAndWait({ self.apiService }) else {
             fatal("cannot initialize ResolveOneOnOneConversationsUseCase")
         }
@@ -1305,9 +1328,15 @@ extension ZMUserSession: SyncAgentDelegate {
 
         }
 
+        return (apiService, wireAPIVersion)
+    }
+
+    private func makePullSelfUserClients(context: NSManagedObjectContext) -> PullSelfUserClientsSyncProtocol {
+        let (apiService, apiVersion) = makeApiServiceAndAPIVersion()
+
         return PullSelfUserClientsSync.make(
             apiService: apiService,
-            apiVersion: wireAPIVersion,
+            apiVersion: apiVersion,
             context: context
         )
     }
@@ -1388,12 +1417,21 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     func processPendingCallEvents() async {
-        WireLogger.updateEvent.info("process pending call events")
-        do {
-            // TODO: [WPB-15391] why not processing only the call events (should be stored here?)
-            try await legacyUpdateEventProcessor!.processBufferedEvents()
-        } catch {
-            WireLogger.updateEvent.error("Failed to process pending call events: \(String(reflecting: error))")
+        if journal[.isSyncV2Enabled] {
+            WireLogger.sync.debug(
+                "process pending call events",
+                attributes: .syncAttributes
+            )
+
+            syncAgent?.resume()
+        } else {
+            WireLogger.updateEvent.info("process pending call events")
+            do {
+                // TODO: [WPB-15391] why not processing only the call events (should be stored here?)
+                try await legacyUpdateEventProcessor!.processBufferedEvents()
+            } catch {
+                WireLogger.updateEvent.error("Failed to process pending call events: \(String(reflecting: error))")
+            }
         }
     }
 
@@ -1639,9 +1677,12 @@ extension ZMUserSession {
             AppVersionMigration_4_2_0(
                 appGroupIdentifier: Bundle.main.appGroupIdentifier,
                 lastEventIDRepository: lastEventIDRepository,
-                journal: journal
+                journal: journal,
+                sessionManager: sessionManager
             )
         ]
     }
 
 }
+
+extension InitiateResetMLSConversationUseCase: WireRequestStrategy.InitiateResetMLSConversationUseCaseProtocol {}

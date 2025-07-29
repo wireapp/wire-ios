@@ -32,7 +32,7 @@ protocol VerificationCodeComponentDependency: Dependency {
 
 }
 
-class VerificationCodeComponent: Component<VerificationCodeComponentDependency> {
+final class VerificationCodeComponent: Component<VerificationCodeComponentDependency> {
 
     private let email: String
     private let password: String

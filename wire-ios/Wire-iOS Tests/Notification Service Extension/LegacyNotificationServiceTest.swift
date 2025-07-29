@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import Wire_Notification_Service_Extension
 import WireDomain
 import WireNotificationEngine
