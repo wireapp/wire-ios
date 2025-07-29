@@ -110,9 +110,9 @@ public class V3Asset: NSObject, ZMImageMessageData {
     }
 
     public init?(with message: ZMAssetClientMessage) {
-        guard message.version == 3 else { return nil }
+        guard let managedObjectContext = message.managedObjectContext, message.version == 3 else { return nil }
         self.assetClientMessage = message
-        self.moc = message.managedObjectContext!
+        self.moc = managedObjectContext
     }
 
     public var imageMessageData: ZMImageMessageData? {
