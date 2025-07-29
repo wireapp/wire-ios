@@ -62,7 +62,7 @@ final class PersonalUsersTests: WireUITestCase {
 
     @MainActor
     func test_Login_asExistingPersonalUser() async throws {
-        let user = try await userManager.createPersonalUser()
+        let user = try await userHelper.createPersonalUser()
 
         _ = try WelcomePage()
             .enterEmailOrSSO(user.email)

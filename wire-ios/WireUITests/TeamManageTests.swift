@@ -22,7 +22,7 @@ final class TeamManageTests: WireUITestCase {
 
     @MainActor
     func test_Migrate_PersonalUserToTeam() async throws {
-        let user = try await userManager.createPersonalUser()
+        let user = try await userHelper.createPersonalUser()
 
         let welcomePage = try WelcomePage()
 
@@ -58,7 +58,7 @@ final class TeamManageTests: WireUITestCase {
 
     @MainActor
     func test_PersonalUser_InvitedToTeam() async throws {
-        let owner = try await userManager.createPersonalUser()
+        let owner = try await userHelper.createPersonalUser()
         let memberUser = UserGenerator.generateUniqueUserInfo()
         let teamID = try await BackendClient.upgradePersonalToTeam(
             email: owner.email,
@@ -103,22 +103,22 @@ final class TeamManageTests: WireUITestCase {
         let groupName = UserGenerator.generateRandomGroupName()
         let messageFromOwner = UserGenerator.generateRandomMessage()
 
-        let teamOwner = try await userManager.registerUserAsTeamOwner()
+        let teamOwner = try await userHelper.registerUserAsTeamOwner()
         let teamMember1 = UserGenerator.generateUniqueUserInfo()
         let teamMember2 = UserGenerator.generateUniqueUserInfo()
 
-        let accessToken = try await userManager.fetchAccessToken(
+        let accessToken = try await userHelper.fetchAccessToken(
             email: teamOwner.email,
             password: teamOwner.password
         )
 
-        let teamMember1_id = try await userManager.registerUsersAsTeamMember(
+        let teamMember1_id = try await userHelper.registerUsersAsTeamMember(
             accessToken: accessToken,
             teamID: teamOwner.teamID!,
             member: teamMember1
         )
 
-        let  teamMember2_id = try await userManager.registerUsersAsTeamMember(
+        let  teamMember2_id = try await userHelper.registerUsersAsTeamMember(
             accessToken: accessToken,
             teamID: teamOwner.teamID!,
             member: teamMember2
