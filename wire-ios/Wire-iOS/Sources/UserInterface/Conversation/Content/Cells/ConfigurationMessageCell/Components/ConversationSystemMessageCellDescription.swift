@@ -239,12 +239,8 @@ enum ConversationSystemMessageCellDescription {
             return [AnyConversationMessageCellDescription(cell)]
 
         case .userRemovedFromTeam:
-            let missingMessagesCell = UserRemovedFromTeamSystemMessageCellDescription(
-                message: message,
-                data: systemMessageData
-            )
-            missingMessagesCell.showEphemeralTimer = showEphemeralTimer
-            return [AnyConversationMessageCellDescription(missingMessagesCell)]
+            let cell = UserRemovedFromTeamSystemMessageCellDescription()
+            return [AnyConversationMessageCellDescription(cell)]
         }
 
         return []

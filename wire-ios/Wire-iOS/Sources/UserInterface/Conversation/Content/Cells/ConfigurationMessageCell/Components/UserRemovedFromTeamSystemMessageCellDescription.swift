@@ -40,7 +40,7 @@ final class UserRemovedFromTeamSystemMessageCellDescription: ConversationMessage
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?
 
-    init(message: ZMConversationMessage, data: ZMSystemMessageData) {
+    init() {
         let title = NSMutableAttributedString.markdown(
             from: L10n.Localizable.Content.System.userRemovedFromTeam,
             style: .systemMessage
