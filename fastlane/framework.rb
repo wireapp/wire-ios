@@ -76,7 +76,8 @@ class Framework
         frameworks["wire-ios-transport"].add_dependency(frameworks["wire-ios-testing"]) # included in WireTransportTests
 
         frameworks["wire-ios-link-preview"].add_dependency(frameworks["wire-ios-utilities"])
-
+        frameworks["wire-ios-link-preview"].add_dependency(frameworks["WireFoundation"])
+        
         frameworks["wire-ios-images"].add_dependency(frameworks["wire-ios-utilities"])
 
         frameworks["wire-ios-utilities"].add_dependency(frameworks["wire-ios-system"])
