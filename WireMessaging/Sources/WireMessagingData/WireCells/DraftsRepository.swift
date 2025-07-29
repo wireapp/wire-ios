@@ -20,8 +20,8 @@ import Collections
 @preconcurrency import Combine
 import Foundation
 package import UniformTypeIdentifiers
-package import WireMessagingDomain
 import WireLogging
+package import WireMessagingDomain
 
 enum DraftsRepositoryError: Error, Equatable {
 

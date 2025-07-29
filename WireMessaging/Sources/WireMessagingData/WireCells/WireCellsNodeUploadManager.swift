@@ -17,8 +17,8 @@
 //
 
 package import Foundation
-package import WireMessagingDomain
 import WireLogging
+package import WireMessagingDomain
 
 package final actor WireCellsNodeUploadManager: WireCellsNodeUploadManagerProtocol {
     private let fileManager: FileManager

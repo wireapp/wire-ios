@@ -20,8 +20,8 @@ import Foundation
 import Testing
 import UniformTypeIdentifiers
 
-@testable import WireMessagingDomain
 @testable import WireMessagingData
+@testable import WireMessagingDomain
 @testable import WireMessagingDomainSupport
 
 final class UploadDraftUseCaseTests {

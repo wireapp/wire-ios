@@ -18,9 +18,9 @@
 
 import Foundation
 
-extension WireCellsUploadError {
+public extension WireCellsUploadError {
 
-    public init(_ error: any Error) {
+    init(_ error: any Error) {
         if let error = error as? URLError {
             self = .urlError(error: error)
         } else {

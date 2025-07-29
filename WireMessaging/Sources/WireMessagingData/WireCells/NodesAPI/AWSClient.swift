@@ -22,8 +22,8 @@ import Foundation
 import Smithy
 import SmithyIdentity
 import SmithyStreams
-import WireMessagingDomain
 import WireLogging
+import WireMessagingDomain
 
 package enum WireCellsAWSClientError: Error {
     case downloadError
