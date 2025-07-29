@@ -1,5 +1,4 @@
 sources:
-- ${PACKAGE_ROOT_DIR}/Sources/WireMessagingData
 - ${PACKAGE_ROOT_DIR}/Sources/WireMessagingDomain
 templates:
 - ${TARGET_DIR}/Sourcery/AutoMockable.stencil
