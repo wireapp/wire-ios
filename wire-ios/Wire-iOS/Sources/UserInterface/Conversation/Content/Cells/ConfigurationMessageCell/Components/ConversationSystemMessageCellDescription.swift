@@ -237,6 +237,10 @@ enum ConversationSystemMessageCellDescription {
                 text: systemMessageData.text
             )
             return [AnyConversationMessageCellDescription(cell)]
+
+        case .userRemovedFromTeam:
+            let cell = UserRemovedFromTeamSystemMessageCellDescription()
+            return [AnyConversationMessageCellDescription(cell)]
         }
 
         return []
