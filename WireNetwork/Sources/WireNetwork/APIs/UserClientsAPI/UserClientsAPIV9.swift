@@ -16,6 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class UserClientsAPIV9: UserClientsAPIV8 {
+class UserClientsAPIV9: UserClientsAPIV8 {
     override var apiVersion: APIVersion { .v9 }
 }

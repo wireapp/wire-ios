@@ -110,6 +110,13 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                     allowedToOpenChannels: StorableChannelsFeatureConfig.Permission(config.allowedToOpenChannels)
                 )
             )
+        case let .allowGlobalOperations(config):
+            .allowGlobalOperations(
+                StorableAllowGlobalOperationsFeatureConfig(
+                    status: StorableFeatureConfigStatus(config.status),
+                    resetMLSConversations: config.resetMLSConversations
+                )
+            )
         case let .unknown(featureName):
             .unknown(featureName: featureName)
         }
@@ -201,6 +208,13 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                     allowedToOpenChannels: config.allowedToOpenChannels.toAPIModel()
                 )
             )
+        case let .allowGlobalOperations(config):
+            .allowGlobalOperations(
+                AllowGlobalOperationsFeatureConfig(
+                    status: config.status.toAPIModel(),
+                    resetMLSConversations: config.resetMLSConversations
+                )
+            )
         case let .unknown(featureName):
             .unknown(featureName: featureName)
         }
@@ -228,6 +242,7 @@ enum StorableFeatureConfig: Equatable, Codable, Sendable {
     case mlsMigration(StorableMLSMigrationFeatureConfig)
     case selfDeletingMessages(StorableSelfDeletingMessagesFeatureConfig)
     case channels(StorableChannelsFeatureConfig)
+    case allowGlobalOperations(StorableAllowGlobalOperationsFeatureConfig)
     case unknown(featureName: String)
 
 }
@@ -323,6 +338,12 @@ struct StorableSelfDeletingMessagesFeatureConfig: Equatable, Codable, Sendable {
     let status: StorableFeatureConfigStatus
     let enforcedTimeoutSeconds: UInt
 
+}
+
+struct StorableAllowGlobalOperationsFeatureConfig: Equatable, Codable, Sendable {
+
+    let status: StorableFeatureConfigStatus
+    let resetMLSConversations: Bool
 }
 
 struct StorableChannelsFeatureConfig: Codable, Equatable, Sendable {
