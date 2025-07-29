@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import WireCellsBindings
+import WireMessagingAssembly
 import WireCommonComponents
 import WireDesign
 import WireMainNavigationUI

@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireCellsBindings
+import WireMessagingAssembly
 import WireCommonComponents
 import WireLogging
 import WireSyncEngine

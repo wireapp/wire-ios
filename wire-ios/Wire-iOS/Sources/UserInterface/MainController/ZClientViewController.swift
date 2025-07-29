@@ -20,8 +20,8 @@ import avs
 import SwiftUI
 import UIKit
 import WireAccountImageUI
-import WireCellsAPI
-import WireCellsBindings
+import WireMessagingDomain
+import WireMessagingAssembly
 import WireCommonComponents
 import WireDesign
 import WireFoundation

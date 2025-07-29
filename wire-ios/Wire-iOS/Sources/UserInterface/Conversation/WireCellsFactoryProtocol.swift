@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireCellsAPI
-import WireCellsBindings
+import WireMessagingDomain
+import WireMessagingAssembly
 
 // sourcery: AutoMockable
 protocol WireCellsFactoryProtocol {

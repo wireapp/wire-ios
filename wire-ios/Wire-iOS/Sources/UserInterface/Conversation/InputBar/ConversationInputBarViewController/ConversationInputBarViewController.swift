@@ -22,9 +22,9 @@ import MobileCoreServices
 import Photos
 import SwiftUI
 import UIKit
-import WireCellsAPI
-import WireCellsBindings
-import WireCellsUI
+import WireMessagingDomain
+import WireMessagingAssembly
+import WireMessagingUI
 import WireCommonComponents
 import WireDesign
 import WireLogging
