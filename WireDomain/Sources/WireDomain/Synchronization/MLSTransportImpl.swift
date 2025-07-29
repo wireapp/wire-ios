@@ -25,7 +25,10 @@ final class MLSTransportImpl: MlsTransport {
     let mlsAPI: MLSAPI
     let conversationEventProcessor: ConversationEventProcessorProtocol
 
-    init(mlsAPI: MLSAPI, conversationEventProcessor: ConversationEventProcessorProtocol) {
+    init(
+        mlsAPI: MLSAPI,
+        conversationEventProcessor: ConversationEventProcessorProtocol
+    ) {
         self.mlsAPI = mlsAPI
         self.conversationEventProcessor = conversationEventProcessor
     }

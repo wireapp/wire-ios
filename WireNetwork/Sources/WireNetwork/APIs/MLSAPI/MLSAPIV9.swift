@@ -18,7 +18,7 @@
 
 import Foundation
 
-final class MLSAPIV9: MLSAPIV8 {
+class MLSAPIV9: MLSAPIV8 {
 
     override var apiVersion: APIVersion { .v9 }
 
@@ -75,6 +75,10 @@ final class MLSAPIV9: MLSAPIV8 {
                     throw MLSAPIError.noConversation(message: failureResponse.message)
                 case "mls-stale-message":
                     throw MLSAPIError.mlsStaleMessage
+                case "mls-invalid-leaf-node-index":
+                    throw MLSAPIError.mlsInvalidLeafNodeIndex
+                case "mls-invalid-leaf-node-signature":
+                    throw MLSAPIError.mlsInvalidLeafNodeSignature
                 default:
                     throw MLSAPIError.mlsError(failureResponse.label, failureResponse.message)
                 }
@@ -89,4 +93,10 @@ final class MLSAPIV9: MLSAPIV8 {
 struct MLSResetParameters: Encodable {
     var epoch: Int64
     var groupID: String
+
+    enum CodingKeys: String, CodingKey {
+        case groupID = "group_id"
+        case epoch
+    }
+
 }

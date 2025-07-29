@@ -65,6 +65,11 @@ final class ConversationSystemMessageCellSnapshotTests: ConversationMessageSnaps
         verify(message: message)
     }
 
+    func test_userRemovedFromTeam() {
+        let message = makeMessage(messageType: .userRemovedFromTeam)
+        verify(message: message)
+    }
+
     // MARK: - Helpers
 
     private func makeMessage(messageType: ZMSystemMessageType) -> MockMessage {
