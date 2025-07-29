@@ -110,11 +110,8 @@ typedef NS_CLOSED_ENUM(int16_t, ZMSystemMessageType) {
     ZMSystemMessageTypeMLSMigrationPotentialGap,
     ZMSystemMessageTypeMLSNotSupportedSelfUser,
     ZMSystemMessageTypeMLSNotSupportedOtherUser,
-<<<<<<< HEAD
-    ZMSystemMessageTypeChannelHistoryDepthModified
-=======
+    ZMSystemMessageTypeChannelHistoryDepthModified,
     ZMSystemMessageTypeUserRemovedFromTeam
->>>>>>> 8a944028f6 (feat: handle user delete event for 1:1 - WPB-18849 (#3396))
 };
 
 typedef NS_CLOSED_ENUM(int16_t, ZMParticipantsRemovedReason) {

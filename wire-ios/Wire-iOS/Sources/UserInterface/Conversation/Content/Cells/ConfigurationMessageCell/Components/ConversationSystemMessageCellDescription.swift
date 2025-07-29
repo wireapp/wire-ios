@@ -231,14 +231,12 @@ enum ConversationSystemMessageCellDescription {
             let unknownMessage = UnknownMessageCellDescription()
             return [AnyConversationMessageCellDescription(unknownMessage)]
 
-<<<<<<< HEAD
         case .channelHistoryDepthModified:
             let cell = ConversationHistoryDepthChangedCellDescription(
                 sender: sender,
                 text: systemMessageData.text
             )
             return [AnyConversationMessageCellDescription(cell)]
-=======
         case .userRemovedFromTeam:
             let missingMessagesCell = UserRemovedFromTeamSystemMessageCellDescription(
                 message: message,
@@ -246,7 +244,6 @@ enum ConversationSystemMessageCellDescription {
             )
             missingMessagesCell.showEphemeralTimer = showEphemeralTimer
             return [AnyConversationMessageCellDescription(missingMessagesCell)]
->>>>>>> 8a944028f6 (feat: handle user delete event for 1:1 - WPB-18849 (#3396))
         }
 
         return []
