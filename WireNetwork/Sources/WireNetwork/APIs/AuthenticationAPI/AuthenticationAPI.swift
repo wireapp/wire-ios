@@ -80,7 +80,6 @@ public protocol AuthenticationAPI: Sendable {
     ///   - email: email of the user
     ///   - password: password to authenticate the account
     /// - Returns: HTTP cookie for access token
-
     #if DEBUG
         func registerPersonalAccount(name: String, email: String, password: String) async throws -> [HTTPCookie]
     #endif
@@ -144,6 +143,7 @@ public protocol AuthenticationAPI: Sendable {
     ///   - password: member password
     ///   - name: member name
     ///   - invitationCode: invitation Code to register in team
+    /// - Returns: registered user-id
     #if DEBUG
         func registerTeamMember(
             email: String,

@@ -26,7 +26,7 @@ struct Member {
     var id: String?
 }
 
-class UserManager {
+class UserHelper {
     var createdUsers: [UserInfo]
     var networkStack: NetworkStack
     var apiService: APIService
