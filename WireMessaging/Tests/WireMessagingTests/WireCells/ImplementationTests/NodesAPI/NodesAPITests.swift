@@ -23,8 +23,8 @@ import SmithyStreams
 import Testing
 import WireMessagingDomain
 
-@testable import WireCellsImplementation
-@testable import WireCellsImplementationSupport
+@testable import WireMessagingData
+@testable import WireMessagingDomainSupport
 
 final class NodesAPITests {
 

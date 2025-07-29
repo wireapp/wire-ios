@@ -20,7 +20,7 @@ import Foundation
 import SmithyStreams
 import Testing
 
-@testable import WireCellsImplementation
+@testable import WireMessagingData
 
 final class ObservableStreamTests {
 

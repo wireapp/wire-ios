@@ -17,8 +17,8 @@
 //
 
 public import Foundation
-public import WireCellsAPI
-import WireCellsImplementation
+public import WireMessagingDomain
+import WireMessagingData
 
 public struct WireCellsFactory {
 

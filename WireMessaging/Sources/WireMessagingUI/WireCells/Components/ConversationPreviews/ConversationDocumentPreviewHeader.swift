@@ -66,7 +66,7 @@ public struct ConversationDocumentPreviewHeader: View {
                     .wireTextStyle(.body1)
                     .lineLimit(scalingHeaderLineLimit)
                 Spacer()
-                Text(L10n.Conversation.File.Preview.open)
+                Text(L10n.Localizable.Conversation.File.Preview.open)
                     .foregroundStyle(ColorTheme.Base.secondaryText.color)
                     .wireTextStyle(.body1)
                     .lineLimit(scalingHeaderLineLimit)

@@ -46,7 +46,8 @@ let package = Package(
             name: "WireMessagingAssembly",
             dependencies: [
                 "WireMessagingDomain",
-                "WireMessagingUI"
+                "WireMessagingUI",
+                "WireMessagingData"
             ]
         ),
         .target(
@@ -69,9 +70,10 @@ let package = Package(
             plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
         ),
         .testTarget(
-            name: "WireMessagingUITests",
+            name: "WireMessagingTests",
             dependencies: [
                 "WireMessagingUI",
+                "WireMessagingData",
                 "WireMessagingDomainSupport",
                 .product(name: "WireDesign", package: "WireUI"),
                 "WireFoundation"

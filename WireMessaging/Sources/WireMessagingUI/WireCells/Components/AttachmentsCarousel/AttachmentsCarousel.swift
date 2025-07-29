@@ -103,8 +103,8 @@ private struct AttachmentsCarouselItemView: View {
 
                 if item.state.isFailed {
                     Menu {
-                        Button(L10n.Conversation.Draft.AttachmentMenu.retry, action: onRetry)
-                        Button(L10n.Conversation.Draft.AttachmentMenu.remove, action: onRemove)
+                        Button(L10n.Localizable.Conversation.Draft.AttachmentMenu.retry, action: onRetry)
+                        Button(L10n.Localizable.Conversation.Draft.AttachmentMenu.remove, action: onRemove)
                     } label: {
                         Image(systemName: "ellipsis.circle.fill")
                     }

@@ -19,10 +19,10 @@
 import Foundation
 import Testing
 import UniformTypeIdentifiers
-import WireMessagingDomain
 
-@testable import WireCellsImplementation
-@testable import WireCellsImplementationSupport
+@testable import WireMessagingDomain
+@testable import WireMessagingData
+@testable import WireMessagingDomainSupport
 
 final class UploadDraftUseCaseTests {
 
