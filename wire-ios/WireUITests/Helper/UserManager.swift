@@ -92,13 +92,40 @@ class UserManager {
         try await selfUserAPI.deleteSelf(password: user.password)
     }
 
-    func getConversationId(matching criteria: FilterConversationsByCriteria) async throws
-        -> (convoId: UUID?, domain: String?) {
+    func createGroupConversation(memberUser: UserInfo, groupName: String) async throws {
+        //NEED FIXING
+       _ = try await BackendClient.loginViaAPI(email: memberUser.email, password: memberUser.password)
+        let selfUser = try await selfUserAPI.getSelfUser()
+
+        let params = CreateGroupConversationParameters(
+            groupType: .group,
+            messageProtocol: .proteus,
+            creatorClientID: "deprecated",
+            qualifiedUserIDs: [selfUser.qualifiedID],
+            unqualifiedUserIDs: [],
+            name: groupName,
+            accessMode: [.invite, .code],
+            accessRoles: [.teamMember, .guest],
+            legacyAccessRole: nil,
+            teamID: selfUser.teamID,
+            isReadReceiptsEnabled: true
+        )
+
+        let conversation = try await conversationsAPI.createGroupConversation(parameters: params)
+    }
+
+    func getQualifiedIdsFromConversationList() async throws -> [QualifiedID] {
         var conversationIDs = [QualifiedID]()
 
         for try await ids in try await conversationsAPI.getConversationIdentifiers() {
             conversationIDs.append(contentsOf: ids)
         }
+        return conversationIDs
+    }
+
+    func getConversationId(matching criteria: FilterConversationsByCriteria) async throws
+        -> (convoId: UUID?, domain: String?) {
+        let conversationIDs = try await getQualifiedIdsFromConversationList()
 
         let conversations = try await conversationsAPI.getConversations(for: conversationIDs)
 
