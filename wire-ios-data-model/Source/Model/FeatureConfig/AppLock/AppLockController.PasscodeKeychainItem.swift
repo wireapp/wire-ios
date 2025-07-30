@@ -22,10 +22,6 @@ extension AppLockController {
 
     struct PasscodeKeychainItem: KeychainItem {
 
-        private enum Constant {
-            static let legacyIdentifier = "com.wire.passcode"
-        }
-
         // MARK: - Properties
 
         private let itemIdentifier: String
@@ -33,7 +29,7 @@ extension AppLockController {
         // MARK: - Life cycle
 
         init(userId: UUID) {
-            self.init(itemIdentifier: "\(Constant.legacyIdentifier)-\(userId.uuidString)")
+            self.init(itemIdentifier: "com.wire.passcode-\(userId.uuidString)")
         }
 
         private init(itemIdentifier: String) {
@@ -58,10 +54,5 @@ extension AppLockController {
             ]
         }
 
-        // MARK: Legacy
-
-        static func makeLegacyItem() -> PasscodeKeychainItem {
-            PasscodeKeychainItem(itemIdentifier: Constant.legacyIdentifier)
-        }
     }
 }

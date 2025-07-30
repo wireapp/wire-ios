@@ -26,7 +26,6 @@ extension LegacyPersistedDataPatch {
 
     /// List of patches to apply
     static let allPatchesToApply = [
-        LegacyPersistedDataPatch(version: "234.0.0", block: TransferApplockKeychain.migrateKeychainItems),
         LegacyPersistedDataPatch(version: "234.1.1", block: InvalidConnectionRemoval.removeInvalid),
         LegacyPersistedDataPatch(version: "236.0.0", block: MigrateSenderClient.migrateSenderClientID),
         LegacyPersistedDataPatch(version: "243.0.0", block: InvalidFeatureRemoval.removeInvalid),
