@@ -98,9 +98,6 @@ public protocol E2EIEnrollmentInterface {
     /// Create new MLS client with e2e identity
     func createMLSClient(certificateChain: String) async throws
 
-    /// Fetch the OIDC refresh token.
-    func getOAuthRefreshToken()  async throws -> String?
-
 }
 
 /// This class implements the steps of the E2EI certificate enrollment process.
@@ -434,18 +431,6 @@ public final class E2EIEnrollment: E2EIEnrollmentInterface {
         try await e2eiService.createNewClient(certificateChain: certificateChain)
     }
 
-    public func getOAuthRefreshToken()  async throws -> String? {
-        logger.info("get OAuth refresh token")
-
-        do {
-            return try await e2eiService.getOAuthRefreshToken()
-        } catch {
-            logger.error("failed to get OAuth refresh token: \(error.localizedDescription)")
-
-            throw E2EIRepositoryFailure.failedToGetOAuthRefreshToken(error)
-        }
-    }
-
 }
 
 enum E2EIRepositoryFailure: Error {
@@ -466,7 +451,6 @@ enum E2EIRepositoryFailure: Error {
     case failedToFinalize(_ underlyingError: Error)
     case failedToSendCertificateRequest(_ underlyingError: Error)
     case failedToRotateKeys(_ underlyingError: Error)
-    case failedToGetOAuthRefreshToken(_ underlyingError: Error)
 
 }
 

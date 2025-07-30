@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireCoreCryptoUniffi
 
 /// Represents the identifer for an MLS group.
 
@@ -35,6 +36,14 @@ public struct MLSGroupID: Equatable, Hashable, Sendable {
 
     public init(_ data: Data) {
         self.data = data
+    }
+    
+    public init(_ conversationId: WireCoreCryptoUniffi.ConversationId) {
+        self.data = conversationId.copyBytes()
+    }
+    
+    public var conversationId: WireCoreCryptoUniffi.ConversationId {
+        .init(bytes: data)
     }
 }
 

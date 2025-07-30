@@ -66,4 +66,9 @@ final class MLSTransportImpl: MlsTransport {
         .abort(reason: "not implemented")
     }
 
+    func prepareForTransport(historySecret: WireCoreCryptoUniffi.HistorySecret) async -> WireCoreCryptoUniffi.MlsTransportData {
+        // TODO: [WPB-19197] implement `prepareForTransport(historySecret:)`
+        fatalError("not implemented")
+    }
+ 
 }
