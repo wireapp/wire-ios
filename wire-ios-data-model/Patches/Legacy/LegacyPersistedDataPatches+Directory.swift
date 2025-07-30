@@ -26,7 +26,6 @@ extension LegacyPersistedDataPatch {
 
     /// List of patches to apply
     static let allPatchesToApply = [
-        LegacyPersistedDataPatch(version: "243.0.0", block: InvalidFeatureRemoval.removeInvalid),
         LegacyPersistedDataPatch(
             version: "273.2.0",
             block: InvalidDomainRemoval.removeDuplicatedEntitiesWithInvalidDomain

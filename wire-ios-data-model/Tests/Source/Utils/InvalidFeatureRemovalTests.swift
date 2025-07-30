@@ -24,25 +24,6 @@ final class InvalidFeatureRemovalTests: DiskDatabaseTest {
 
     private var context: NSManagedObjectContext { coreDataStack.syncContext }
 
-    func testAllInstancesRemoved() throws {
-        context.performGroupedAndWait {
-            // Given
-            let team = Team.insertNewObject(in: context)
-            team.remoteIdentifier = UUID()
-
-            Feature.insert(name: .appLock, status: .enabled, config: nil, context: context)
-            Feature.insert(name: .appLock, status: .disabled, config: nil, context: context)
-
-            XCTAssertTrue(self.fetchInstances(in: context).count > 1)
-
-            // When
-            InvalidFeatureRemoval.removeInvalid(in: context)
-
-            // Then
-            XCTAssertEqual(self.fetchInstances(in: context).count, 0)
-        }
-    }
-
     func testRestoreNewDefaultConferenceCallingConfig() throws {
         context.performGroupedAndWait {
             // Given

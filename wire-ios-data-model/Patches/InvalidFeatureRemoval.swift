@@ -20,18 +20,6 @@ import Foundation
 
 enum InvalidFeatureRemoval {
 
-    /// We had an issue where we were creating more than one instance of
-    /// `Feature` for a given name (there should be at most one). This patch
-    /// is to delete all instances of `Feature` in order to have a clean start.
-    /// This isn't a problem because the client creates its own default instance
-    /// and quickly fetches updates from the backend.
-
-    static func removeInvalid(in moc: NSManagedObjectContext) {
-        let fetchRequest = NSFetchRequest<Feature>(entityName: Feature.entityName())
-        let allInstances = moc.fetchOrAssert(request: fetchRequest)
-        allInstances.forEach(moc.delete)
-    }
-
     /// The issue:
     ///
     /// On-premise backends that don't support the conference calling config endpoint
