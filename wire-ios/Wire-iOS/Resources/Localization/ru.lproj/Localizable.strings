@@ -616,6 +616,10 @@
 
 "content.system.message_read_receipt_on_add_to_group" = "Отчеты о прочтении включены";
 
+// history depth
+"content.system.message_history_depth" = "%@ установил историю бесед на %@";
+"content.system.message_history_depth_disabled" = "%@ отключил историю бесед";
+
 // legal hold
 
 "content.system.message_legal_hold.enabled" = "Эта беседа находится под юридическими ограничениями [ПОДРОБНЕЕ](%@)";
@@ -649,6 +653,9 @@
 "content.system.session_reset.self" = "Вам не смогли расшифровать некоторые из ваших сообщений, но проблема была решена. Это затронуло все беседы.";
 
 "content.system.unknown_message.body" = "Сообщение не может быть показано. Возможно, вы используете старую версию Wire.";
+
+// user removed from team
+"content.system.user_removed_from_team" = "Этот пользователь больше не доступен";
 
 "content.file.uploading" = "Отправка…";
 "content.file.downloading" = "Загрузка…";
@@ -1219,6 +1226,10 @@
 "self.settings.account_details.log_out.alert.title" = "Выйти";
 "self.settings.account_details.log_out.alert.message" = "История сообщений будет удалена с этого устройства.";
 "self.settings.account_details.log_out.alert.password" = "Пароль";
+"self.settings.account_details.log_out.erase_data.alert.title" = "Выйти";
+"self.settings.account_details.log_out.erase_data.alert.message" = "Удалить всю личную информацию и беседы на этом устройстве?";
+"self.settings.account_details.log_out.erase_data.alert.logoutAndClear" = "Выйти и очистить данные";
+"self.settings.account_details.log_out.erase_data.alert.logoutAndKeep" = "Выйти и сохранить данные";
 
 // Settings - Personal information
 "self.settings.privacy_analytics_section.title" = "Отчеты об использовании и сбоях";
@@ -1397,7 +1408,6 @@
 
 "self.settings.conversations.title" = "История";
 "self.settings.history_backup.title" = "Резервное копирование или восстановление";
-"self.settings.history_backup.error.title" = "Ошибка";
 "self.settings.history_backup.set_email.title" = "Настройте email и пароль.";
 "self.settings.history_backup.set_email.message" = "Для создания резервной копии истории бесед вам потребуется email и пароль. Вы можете сделать это в настройках учетной записи.";
 

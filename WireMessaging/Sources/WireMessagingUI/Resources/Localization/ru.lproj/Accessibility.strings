@@ -17,3 +17,4 @@
 //
 
 "conversation.create.channel.back" = "Вернуться к обзору новой беседы";
+"conversation.creationForm.channelHistory.upgradeBanner.close" = "Закрыть баннер обновления";

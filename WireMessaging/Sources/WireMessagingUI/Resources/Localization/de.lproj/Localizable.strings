@@ -69,3 +69,20 @@
 
 "conversation.creationForm.readReceipts.toggle" = "Lesebestätigungen";
 "conversation.creationForm.readReceipts.description" = "Wenn diese Option aktiviert ist, können Sender sehen, wenn ihre Nachrichten gelesen werden.";
+
+// MARK: - Channel history
+"conversation.channelHistory.upgradeBanner.title" = "Ältere Nachrichten anzeigen?";
+"conversation.channelHistory.upgradeBanner.message" = "Upgraden Sie auf eine kostenpflichtige Version, um Channel-Mitgliedern den gesamten Gesprächsverlauf zu bieten.";
+"conversation.channelHistory.upgradeBanner.button" = "Jetzt upgraden";
+"conversation.channelHistory.upgradeBanner.closeMessage" = "Close banner";
+"conversation.channelHistory.picker.title" = "Gesprächsverlauf";
+"conversation.channelHistory.picker.off" = "Aus";
+"conversation.channelHistory.picker.oneDay" = "1 Tag";
+"conversation.channelHistory.picker.oneWeek" = "1 Woche";
+"conversation.channelHistory.picker.fourWeeks" = "4 Wochen";
+"conversation.channelHistory.picker.unlimited" = "Unbegrenzt";
+"conversation.channelHistory.picker.custom" = "Benutzerdefiniert";
+"conversation.channelHistory.customPicker.days" = "Tage";
+"conversation.channelHistory.customPicker.weeks" = "Wochen";
+"conversation.channelHistory.navigationTitle" = "Gesprächsverlauf";
+"conversation.creationForm.channelHistory.sectionFootnote" = "Wählen Sie einen Zeitraum. Wenn Teilnehmer diesem Channel beitreten, können sie den Verlauf für diese Zeitspanne verfolgen.";

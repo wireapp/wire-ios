@@ -616,6 +616,10 @@
 
 "content.system.message_read_receipt_on_add_to_group" = "Lesebestätigungen aktiv";
 
+// history depth
+"content.system.message_history_depth" = "%@ hat den Gesprächsverlauf auf %@ eingestellt";
+"content.system.message_history_depth_disabled" = "%@ hat den Gesprächsverlauf deaktiviert";
+
 // legal hold
 
 "content.system.message_legal_hold.enabled" = "Diese Unterhaltung unterliegt der gesetzlichen Aufbewahrung [MEHR ERFAHREN](%@)";
@@ -649,6 +653,9 @@
 "content.system.session_reset.self" = " Sie konnten einige Ihrer Nachrichten nicht entschlüsseln, haben das Problem aber gelöst. Dies betraf alle Unterhaltungen.";
 
 "content.system.unknown_message.body" = "Diese Meldung konnte nicht angezeigt werden. Möglicherweise verwenden Sie eine ältere Version von Wire.";
+
+// user removed from team
+"content.system.user_removed_from_team" = "Dieser Benutzer ist nicht mehr verfügbar";
 
 "content.file.uploading" = "Hochladen…";
 "content.file.downloading" = "Herunterladen…";
@@ -1220,7 +1227,7 @@
 "self.settings.account_details.log_out.alert.message" = "Der Nachrichtenverlauf wird auf diesem Gerät gelöscht.";
 "self.settings.account_details.log_out.alert.password" = "Passwort";
 "self.settings.account_details.log_out.erase_data.alert.title" = "Abmelden";
-"self.settings.account_details.log_out.erase_data.alert.message" = "hre persönlichen Daten und Unterhaltungen vollständig von diesem Gerät entfernen?";
+"self.settings.account_details.log_out.erase_data.alert.message" = "Ihre persönlichen Daten und Unterhaltungen vollständig von diesem Gerät entfernen?";
 "self.settings.account_details.log_out.erase_data.alert.logoutAndClear" = "Abmelden und Daten löschen";
 "self.settings.account_details.log_out.erase_data.alert.logoutAndKeep" = "Abmelden und Daten behalten";
 
@@ -1401,7 +1408,6 @@
 
 "self.settings.conversations.title" = "Gesprächsverlauf";
 "self.settings.history_backup.title" = "Sichern oder Wiederherstellen";
-"self.settings.history_backup.error.title" = "Fehler";
 "self.settings.history_backup.set_email.title" = "Fügen Sie E-Mail-Adresse und Passwort hinzu.";
 "self.settings.history_backup.set_email.message" = "Fügen Sie in den Einstellungen eine E-Mail-Adresse und ein Passwort hinzu, um den Gesprächsverlauf zu sichern.";
 
