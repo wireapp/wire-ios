@@ -126,8 +126,6 @@ public enum DeveloperFlag: String, CaseIterable {
             "IgnoreIncomingEventsEnabled"
         case .useWireAuthentication:
             "WireAuthenticationEnabled"
-        case .chatBubbles:
-            "ChatBubblesEnabled"
         default:
             nil
         }
