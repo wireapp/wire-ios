@@ -39,54 +39,57 @@ struct HistoryDepthViewModel {
         )?.withTintColor(iconColor, renderingMode: .alwaysOriginal)
     }
 
-    func createSystemMessage(template: String) -> NSAttributedString {
-        if isNewConversation {
-            historyDepthInitiallySetAttributedText(
-                template: template
-            )
-        } else {
-            historyDepthModifiedAttributedText(
-                template: template
-            )
+    private func parseHistoryDepth(historyDepth: String) -> (value: String, unit: String) {
+        let components = historyDepth.components(separatedBy: .whitespaces)
+        guard components.count == 2 else {
+            fatalError("Couldn't parse history depth values")
         }
+
+        return (components[0], components[1].lowercased())
     }
 
-    private func historyDepthInitiallySetAttributedText(
-        template: String
-    ) -> NSAttributedString {
+    private func historyDepthInitiallySetAttributedText() -> NSAttributedString {
         guard let historyDepth else {
             fatalError(
                 "Should not reach this point if this is a new conversation and history depth is null"
             )
         }
 
+        let historyDepthParsingResult = parseHistoryDepth(historyDepth: historyDepth)
+        let historyDepthValue = historyDepthParsingResult.value
+        let historyDepthUnit = historyDepthParsingResult.unit
+        let template = "content.system.message_history_depth_initially_set_\(historyDepthUnit)"
         var updateText: NSAttributedString
 
         updateText = NSAttributedString(
-            string: template.localized(args: historyDepth),
+            string: template.localized(args: historyDepthValue),
             attributes: baseAttributes
         )
-        .adding(font: .mediumSemiboldFont, to: historyDepth)
+        .adding(font: .mediumSemiboldFont, to: historyDepthValue)
 
         return updateText
     }
 
-    private func historyDepthModifiedAttributedText(
-        template: String
-    ) -> NSAttributedString {
+    private func historyDepthModifiedAttributedText() -> NSAttributedString {
         var updateText: NSAttributedString
 
         if sender.isSelfUser {
             let youLocalized = L10n.Localizable.Content.System.youStarted
 
             if let historyDepth {
+                let historyDepthParsingResult = parseHistoryDepth(historyDepth: historyDepth)
+                let historyDepthValue = historyDepthParsingResult.value
+                let historyDepthUnit = historyDepthParsingResult.unit
+                let template = "content.system.message_history_depth_modified_\(historyDepthUnit)"
+
                 updateText = NSAttributedString(
-                    string: template.localized(pov: sender.pov, args: youLocalized, historyDepth),
+                    string: template.localized(pov: sender.pov, args: youLocalized, historyDepthValue),
                     attributes: baseAttributes
                 )
                 .adding(font: .mediumSemiboldFont, to: youLocalized)
-                .adding(font: .mediumSemiboldFont, to: historyDepth)
+                .adding(font: .mediumSemiboldFont, to: historyDepthValue)
             } else {
+                let template = "content.system.message_history_depth_modified_disabled"
                 updateText = NSAttributedString(
                     string: template.localized(pov: sender.pov, args: youLocalized),
                     attributes: baseAttributes
@@ -95,14 +98,20 @@ struct HistoryDepthViewModel {
             }
         } else {
             if let historyDepth {
+                let historyDepthParsingResult = parseHistoryDepth(historyDepth: historyDepth)
+                let historyDepthValue = historyDepthParsingResult.value
+                let historyDepthUnit = historyDepthParsingResult.unit
+                let template = "content.system.message_history_depth_modified_\(historyDepthUnit)"
+
                 let otherUserName = sender.name ?? L10n.Localizable.Conversation.Status.someone
                 updateText = NSAttributedString(
-                    string: template.localized(args: otherUserName, historyDepth),
+                    string: template.localized(args: otherUserName, historyDepthValue),
                     attributes: baseAttributes
                 )
                 .adding(font: .mediumSemiboldFont, to: otherUserName)
-                .adding(font: .mediumSemiboldFont, to: historyDepth)
+                .adding(font: .mediumSemiboldFont, to: historyDepthValue)
             } else {
+                let template = "content.system.message_history_depth_modified_disabled"
                 let otherUserName = sender.name ?? L10n.Localizable.Conversation.Status.someone
                 updateText = NSAttributedString(
                     string: template.localized(args: otherUserName),
@@ -117,14 +126,9 @@ struct HistoryDepthViewModel {
 
     func attributedTitle() -> NSAttributedString? {
         if isNewConversation {
-            createSystemMessage(
-                template: "content.system.message_history_depth_initially_set"
-            )
+            historyDepthInitiallySetAttributedText()
         } else {
-            createSystemMessage(
-                template: historyDepth != nil ? "content.system.message_history_depth_modified" :
-                    "content.system.message_history_depth_modified_disabled"
-            )
+            historyDepthModifiedAttributedText()
         }
     }
 

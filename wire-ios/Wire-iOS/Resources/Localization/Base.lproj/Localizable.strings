@@ -617,8 +617,10 @@
 "content.system.message_read_receipt_on_add_to_group" = "Read receipts are on";
 
 // history depth
-"content.system.message_history_depth_initially_set" = "New participants can see messages from the last %@";
-"content.system.message_history_depth_modified" = "%@ set conversation history to %@";
+"content.system.message_history_depth_initially_set_days" = "New participants can see messages from the last %@ days";
+"content.system.message_history_depth_initially_set_weeks" = "New participants can see messages from the last %@ weeks";
+"content.system.message_history_depth_modified_days" = "%@ set conversation history to %@ days";
+"content.system.message_history_depth_modified_weeks" = "%@ set conversation history to %@ weeks";
 "content.system.message_history_depth_modified_disabled" = "%@ disabled conversation history";
 
 // legal hold
