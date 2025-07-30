@@ -30,7 +30,7 @@ extension XCUIElement {
             tap()
             if Date() > Date().addingTimeInterval(timeout) {
                 throw KeyboardFocusError
-                    .failedToFocusWithinTimeout(message: "Failed to focus element within \(timeout) seconds")
+                    .failedToFocusWithinTimeout(message: "Failed to focus keyboard within \(timeout) seconds")
             }
         }
         return self
