@@ -21,6 +21,7 @@ import WireCellsBindings
 import WireCommonComponents
 import WireDesign
 import WireMainNavigationUI
+import WireMessagingUI
 import WireSyncEngine
 
 final class ConversationRootViewController: UIViewController {
@@ -37,7 +38,13 @@ final class ConversationRootViewController: UIViewController {
     /// for NetworkStatusViewDelegate
     var shouldAnimateNetworkStatusView = false
     fileprivate let networkStatusViewController: NetworkStatusViewController = .init()
-    fileprivate(set) weak var conversationViewController: ConversationViewController?
+
+    fileprivate(set) weak var exchangableConversationViewController: UIViewController?
+
+    /// The old UI without chat bubbles
+    var conversationViewController: ConversationViewController? {
+        exchangableConversationViewController as? ConversationViewController
+    }
 
     // MARK: - Init
 
@@ -52,24 +59,28 @@ final class ConversationRootViewController: UIViewController {
     ) {
         self.conversation = conversation
 
-        let conversationController = ConversationViewController(
-            conversation: conversation,
-            visibleMessage: message as? ZMMessage,
-            userSession: userSession,
-            mainCoordinator: mainCoordinator,
-            selfProfileUIBuilder: selfProfileUIBuilder,
-            mediaPlaybackManager: mediaPlaybackManager,
-            classificationProvider: ZMUserSession.shared(),
-            networkStatusObservable: NetworkStatus.shared,
-            getParticipantImageSourceUseCase: GetParticipantImageSourceUseCase(
-                repository: GetParticipantImageSourceRepository(
-                    userSession: userSession
-                )
-            ),
-            wireCellsFactory: wireCellsFactory
-        )
+        let conversationController: UIViewController = if DeveloperFlag.chatBubbles.isOn {
+            ConversationView().viewController
+        } else {
+            ConversationViewController(
+                conversation: conversation,
+                visibleMessage: message as? ZMMessage,
+                userSession: userSession,
+                mainCoordinator: mainCoordinator,
+                selfProfileUIBuilder: selfProfileUIBuilder,
+                mediaPlaybackManager: mediaPlaybackManager,
+                classificationProvider: ZMUserSession.shared(),
+                networkStatusObservable: NetworkStatus.shared,
+                getParticipantImageSourceUseCase: GetParticipantImageSourceUseCase(
+                    repository: GetParticipantImageSourceRepository(
+                        userSession: userSession
+                    )
+                ),
+                wireCellsFactory: wireCellsFactory
+            )
+        }
 
-        self.conversationViewController = conversationController
+        self.exchangableConversationViewController = conversationController
 
         super.init(nibName: .none, bundle: .none)
 
@@ -118,7 +129,7 @@ final class ConversationRootViewController: UIViewController {
 
         shouldAnimateNetworkStatusView = true
         navigationController?.navigationBar.accessibilityElementsHidden = false
-        conversationViewController?.view.accessibilityElementsHidden = false
+        exchangableConversationViewController?.view.accessibilityElementsHidden = false
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -130,11 +141,15 @@ final class ConversationRootViewController: UIViewController {
         super.viewDidDisappear(animated)
 
         navigationController?.navigationBar.accessibilityElementsHidden = true
-        conversationViewController?.view.accessibilityElementsHidden = true
+        exchangableConversationViewController?.view.accessibilityElementsHidden = true
     }
 
     private var child: UIViewController? {
-        conversationViewController?.contentViewController
+        if let conversationViewController {
+            conversationViewController.contentViewController
+        } else {
+            exchangableConversationViewController
+        }
     }
 
     override var childForStatusBarStyle: UIViewController? {
@@ -160,17 +175,15 @@ final class ConversationRootViewController: UIViewController {
     }
 
     func configure() {
-        guard let conversationViewController else { return }
-
         // Set left navigation items (back button, search, unread status, etc.)
-        navigationItem.leftBarButtonItems = conversationViewController
+        navigationItem.leftBarButtonItems = conversationViewController?
             .leftNavigationItems(hasUnread: conversation.hasUnreadMessagesInOtherConversations)
 
         // Set right navigation items (call buttons etc.) from the conversation controller
-        navigationItem.rightBarButtonItems = conversationViewController.navigationItem.rightBarButtonItems
+        navigationItem.rightBarButtonItems = exchangableConversationViewController?.navigationItem.rightBarButtonItems
 
         // Set the custom title view which includes conversation name and search functionality
-        navigationItem.titleView = conversationViewController.navigationItem.titleView
+        navigationItem.titleView = exchangableConversationViewController?.navigationItem.titleView
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
         view.addSubview(contentView)
@@ -178,7 +191,7 @@ final class ConversationRootViewController: UIViewController {
         // This container view will have the same background color as the inputBar
         // and extend to the bottom of the screen.
         let inputBarContainer = UIView()
-        inputBarContainer.backgroundColor = conversationViewController.inputBarController.inputBar.backgroundColor
+        inputBarContainer.backgroundColor = conversationViewController?.inputBarController.inputBar.backgroundColor
         inputBarContainer.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(inputBarContainer)
         contentView.sendSubviewToBack(inputBarContainer)
@@ -187,36 +200,39 @@ final class ConversationRootViewController: UIViewController {
 
         [
             contentView,
-            conversationViewController.view,
+            exchangableConversationViewController?.view,
             networkStatusViewController.view
-        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        ].compactMap(\.self).forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
-        NSLayoutConstraint.activate([
-            networkStatusViewController.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            networkStatusViewController.view.leftAnchor.constraint(equalTo: view.leftAnchor),
-            networkStatusViewController.view.rightAnchor.constraint(equalTo: view.rightAnchor),
+        if let exchangableConversationViewController {
+            NSLayoutConstraint.activate([
+                networkStatusViewController.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+                networkStatusViewController.view.leftAnchor.constraint(equalTo: view.leftAnchor),
+                networkStatusViewController.view.rightAnchor.constraint(equalTo: view.rightAnchor),
 
-            contentView.leftAnchor.constraint(equalTo: view.leftAnchor),
-            contentView.rightAnchor.constraint(equalTo: view.rightAnchor),
-            contentView.topAnchor.constraint(equalTo: networkStatusViewController.view.bottomAnchor),
-            contentView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+                contentView.leftAnchor.constraint(equalTo: view.leftAnchor),
+                contentView.rightAnchor.constraint(equalTo: view.rightAnchor),
+                contentView.topAnchor.constraint(equalTo: networkStatusViewController.view.bottomAnchor),
+                contentView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
 
-            conversationViewController.view.topAnchor.constraint(equalTo: contentView.topAnchor),
-            conversationViewController.view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            conversationViewController.view.leftAnchor.constraint(equalTo: contentView.leftAnchor),
-            conversationViewController.view.rightAnchor.constraint(equalTo: contentView.rightAnchor),
+                exchangableConversationViewController.view.topAnchor.constraint(equalTo: contentView.topAnchor),
+                exchangableConversationViewController.view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+                exchangableConversationViewController.view.leftAnchor.constraint(equalTo: contentView.leftAnchor),
+                exchangableConversationViewController.view.rightAnchor.constraint(equalTo: contentView.rightAnchor),
 
-            inputBarContainer.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            inputBarContainer.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            inputBarContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            inputBarContainer.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor)
-        ])
+                inputBarContainer.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+                inputBarContainer.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+                inputBarContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+                inputBarContainer.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor)
+            ])
+        }
     }
 
     // MARK: - Methods
 
     func scroll(to message: ZMConversationMessage) {
         conversationViewController?.scroll(to: message)
+        // LATER: execute in new UI with chat bubbles or (even better) handle it inside of the new UI without calls from outside.
     }
 }
 
@@ -260,6 +276,7 @@ extension ConversationRootViewController: WireCallCenterCallStateObserver {
         previousCallState: CallState?
     ) {
         conversationViewController?.updateRightNavigationItemsButtons()
+        // LATER: check if it also needs to be triggered in the new UI with chat bubbles
     }
 
 }
