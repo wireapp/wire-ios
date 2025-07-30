@@ -18,8 +18,8 @@
 
 import Foundation
 
-extension ZMConversation {
-    @objc public static let defaultAdminRoleName = "wire_admin"
-    @objc public static let defaultMemberRoleName = "wire_member"
+public extension ZMConversation {
+    @objc static let defaultAdminRoleName = "wire_admin"
+    @objc static let defaultMemberRoleName = "wire_member"
 
 }
