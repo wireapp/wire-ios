@@ -51,22 +51,19 @@ class CreatePersonalAccountFormPage: PageModel {
     }
 
     func enterName(_ name: String) throws -> CreatePersonalAccountFormPage {
-        nameTextField.tap()
-        nameTextField.typeText(name)
+        nameTextField.tapIfKeyboardNotFocused().typeText(name)
         return self
     }
 
     func enterPassword(_ password: String) throws -> CreatePersonalAccountFormPage {
         showPasswordButton.tap()
-        passwordField.tap()
-        passwordField.typeText(password)
+        passwordField.tapIfKeyboardNotFocused().typeText(password)
         return self
     }
 
     func enterConfirmPassword(_ confirmPassword: String) throws -> CreatePersonalAccountFormPage {
         showPasswordButton.tap()
-        confirmPasswordField.tap()
-        confirmPasswordField.typeText(confirmPassword)
+        confirmPasswordField.tapIfKeyboardNotFocused().typeText(confirmPassword)
         return self
     }
 

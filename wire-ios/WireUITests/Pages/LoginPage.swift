@@ -39,6 +39,10 @@ class LoginPage: PageModel {
         return elementsQuery.buttons["Next"].firstMatch
     }
 
+    var emailField: XCUIElement {
+        app.textFields["Enter email"]
+    }
+
     var passwordField: XCUIElement {
         app.secureTextFields["Enter password"]
     }
@@ -50,9 +54,7 @@ class LoginPage: PageModel {
     }
 
     func enterPassword(_ password: String) throws -> FirstTimePage {
-        passwordField.tap()
-        //NEEDS FIXING
-        waitUntilElementHasKeyboardFocus(element: passwordField).typeText(password)
+        passwordField.tapIfKeyboardNotFocused().typeText(password)
         nextButton.tap()
         return try FirstTimePage()
     }

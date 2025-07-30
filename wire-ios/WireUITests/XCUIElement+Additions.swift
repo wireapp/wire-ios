@@ -20,7 +20,13 @@ import WireUtilities
 import XCTest
 
 extension XCUIElement {
-    var hasFocus: Bool {
-        value(forKey: "hasKeyboardFocus") as? Bool ?? false
+
+    @discardableResult
+    func tapIfKeyboardNotFocused() -> XCUIElement {
+        let hasKeyboardFocus = (value(forKey: "hasKeyboardFocus") as? Bool) ?? false
+        if !hasKeyboardFocus {
+            tap()
+        }
+        return self
     }
 }

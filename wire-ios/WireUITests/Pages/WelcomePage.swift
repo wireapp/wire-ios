@@ -41,8 +41,7 @@ class WelcomePage: PageModel {
     }
 
     func typeEmailOrSSO(_ input: String) -> WelcomePage {
-        emailTextField.tap()
-        emailTextField.typeText(input)
+        emailTextField.tapIfKeyboardNotFocused().typeText(input)
         return self
     }
 }
