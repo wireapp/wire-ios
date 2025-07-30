@@ -79,7 +79,6 @@ public final class ZMUserSession: NSObject {
     private(set) var urlActionProcessors: [URLActionProcessor]?
     let debugCommands: [String: DebugCommand]
     let eventProcessingTracker: EventProcessingTracker = .init()
-    let legacyHotFix: ZMHotFix
 
     var accessTokenRenewalObserver: AccessTokenRenewalObserver?
 
@@ -441,7 +440,6 @@ public final class ZMUserSession: NSObject {
         self.userExpirationObserver = UserExpirationObserver(managedObjectContext: coreDataStack.viewContext)
         self.topConversationsDirectory = TopConversationsDirectory(managedObjectContext: coreDataStack.viewContext)
         self.debugCommands = ZMUserSession.initDebugCommands()
-        self.legacyHotFix = ZMHotFix(syncMOC: coreDataStack.syncContext)
         self.appLockController = appLock
         self.coreCryptoProvider = coreCryptoProvider
         self.lastEventIDRepository = lastEventIDRepository
@@ -1399,14 +1397,6 @@ extension ZMUserSession: SyncAgentDelegate {
             }
 
             let isSyncing = await syncContext.perform { self.applicationStatusDirectory.syncStatus.isSyncing }
-
-            if !processingInterrupted {
-                await syncContext.perform {
-                    self.legacyHotFix.applyPatches()
-                    // When we move to the monorepo, uncomment hotFixApplicator applyPatches
-                    // hotFixApplicator.applyPatches(HotfixPatch.self, in: syncContext)
-                }
-            }
 
             await managedObjectContext.perform { [weak self] in
                 self?.isPerformingSync = isSyncing || processingInterrupted
