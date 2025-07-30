@@ -324,6 +324,7 @@ final class APIMigrationManagerTests: MessagingTest {
             proteusToMLSMigrationCoordinator: nil,
             recurringActionService: mockRecurringActionService,
             sharedUserDefaults: sharedUserDefaults,
+            sharedContainerURL: URL(string: "file:///tmp/sharedContainerURL")!,
             transportSession: mockTransportSession,
             userId: userID,
             minTLSVersion: nil,
