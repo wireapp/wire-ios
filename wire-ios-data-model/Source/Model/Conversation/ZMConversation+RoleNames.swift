@@ -18,21 +18,8 @@
 
 import Foundation
 
-extension ZMUser {
-
-    /// **Problem:**
-    /// The domain of a backend changed, so the self user has an old and invalid domain,
-    /// which causes requests to federated endpoints to fail.
-    ///
-    /// **Solution:**
-    /// Refetch the self user's domain.
-
-    static func refetchSelfUserDomain(in context: NSManagedObjectContext) {
-        let selfUser = selfUser(in: context)
-        // Only if the domain is `nil` will we store the domain discovered on the backend.
-        // After that, we don't expect it to change and may crash the app if it does.
-        selfUser.domain = nil
-        selfUser.needsToBeUpdatedFromBackend = true
-    }
+public extension ZMConversation {
+    @objc static let defaultAdminRoleName = "wire_admin"
+    @objc static let defaultMemberRoleName = "wire_member"
 
 }
