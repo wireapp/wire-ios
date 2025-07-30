@@ -655,7 +655,7 @@
 "content.system.unknown_message.body" = "Сообщение не может быть показано. Возможно, вы используете старую версию Wire.";
 
 // user removed from team
-"content.system.user_removed_from_team" = "This user is no longer available";
+"content.system.user_removed_from_team" = "Этот пользователь больше не доступен";
 
 "content.file.uploading" = "Отправка…";
 "content.file.downloading" = "Загрузка…";
