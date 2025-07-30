@@ -17,6 +17,7 @@
 //
 
 public import SwiftUI
+import WireDesign
 
 public struct AttachmentsCarousel: View {
 
@@ -60,7 +61,7 @@ public struct AttachmentsCarousel: View {
 private struct AttachmentsCarouselItemView: View {
 
     enum Constants {
-        static let cornerButtonRadius: CGFloat = 12
+        static let cornerButtonRadius: CGFloat = 24
     }
 
     let item: AttachmentsCarouselItem
@@ -82,7 +83,7 @@ private struct AttachmentsCarouselItemView: View {
                 }
             }
             .aspectRatio(item.aspectRatio, contentMode: .fill)
-            .padding([.top, .trailing], Constants.cornerButtonRadius)
+            .padding([.top, .trailing], Constants.cornerButtonRadius / 2)
 
             cornerButton
         }
@@ -107,22 +108,28 @@ private struct AttachmentsCarouselItemView: View {
                         Button(L10n.Conversation.Draft.AttachmentMenu.remove, action: onRemove)
                     } label: {
                         Image(systemName: "ellipsis.circle.fill")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: Constants.cornerButtonRadius, height: Constants.cornerButtonRadius)
                     }
                 } else {
                     Button(
                         action: onRemove,
                         label: {
                             Image(systemName: "xmark.circle.fill")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: Constants.cornerButtonRadius, height: Constants.cornerButtonRadius)
                         }
                     )
+
                 }
             }
-            .font(.system(size: Constants.cornerButtonRadius * 2))
-            .foregroundStyle(.black)
+            .buttonStyle(CircularIconButtonStyle(padding: 0))
 
             Spacer()
         }
-    }
+    }	
 
     var contentLabel: String {
         switch item.kind {
@@ -174,29 +181,35 @@ private extension AttachmentsCarouselItem.State {
 }
 
 #Preview {
-    AttachmentsCarousel(
-        viewModel: AttachmentsCarouselViewModel(
-            items: [
-                AttachmentsCarouselItem(
-                    id: UUID(),
-                    state: .failed,
-                    kind: .image(thumbnail: UIImage()),
-                    name: "Image",
-                    size: "1.2 MB"
-                ),
-                AttachmentsCarouselItem(
-                    id: UUID(),
-                    state: .uploading(progress: 0.5),
-                    kind: .video(thumbnail: UIImage()),
-                    name: "Video",
-                    size: "1.2 MB"
-                )
-            ]
-        ),
-        onTap: { _ in },
-        onRemove: { _ in },
-        onRetry: { _ in }
-    )
-    .frame(height: 74)
-    .background(Color.red)
+    ZStack {
+        Color(.green).ignoresSafeArea()
+
+        AttachmentsCarousel(
+            viewModel: AttachmentsCarouselViewModel(
+                items: [
+                    AttachmentsCarouselItem(
+                        id: UUID(),
+                        state: .failed,
+                        kind: .image(thumbnail: UIImage()),
+                        name: "Image",
+                        size: "1.2 MB"
+                    ),
+                    AttachmentsCarouselItem(
+                        id: UUID(),
+                        state: .uploading(progress: 0.5),
+                        kind: .video(thumbnail: UIImage()),
+                        name: "Video",
+                        size: "1.2 MB"
+                    )
+                ]
+            ),
+            onTap: { _ in },
+            onRemove: { _ in },
+            onRetry: { _ in }
+        )
+        .frame(height: 74)
+        .background(Color.white)
+    }
+
+
 }
