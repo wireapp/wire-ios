@@ -29,7 +29,8 @@ extension XCUIElement {
         while !(value(forKey: "hasKeyboardFocus") as? Bool ?? false) {
             tap()
             if Date() > Date().addingTimeInterval(timeout) {
-                throw KeyboardFocusError.failedToFocusWithinTimeout(message: "Failed to focus element within \(timeout) seconds")
+                throw KeyboardFocusError
+                    .failedToFocusWithinTimeout(message: "Failed to focus element within \(timeout) seconds")
             }
         }
         return self
