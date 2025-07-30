@@ -20,7 +20,7 @@ import WireDataModel
 import WireLogging
 
 public final class FeatureConfigLocalStore: FeatureConfigLocalStoreProtocol {
-    
+
     // MARK: - Error
 
     enum Error: Swift.Error {
@@ -55,7 +55,7 @@ public final class FeatureConfigLocalStore: FeatureConfigLocalStoreProtocol {
             return feature
         }
     }
-    
+
     public func isFeatureEnabled(
         feature: Feature
     ) async -> Bool {
