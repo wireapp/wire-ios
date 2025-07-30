@@ -17,3 +17,4 @@
 //
 
 "conversation.create.channel.back" = "Voltar a visão geral da nova conversa";
+"conversation.creationForm.channelHistory.upgradeBanner.close" = "Close upgrade now banner";

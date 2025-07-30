@@ -218,6 +218,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                 "application:didFinishLaunchingWithOptions START \(String(describing: launchOptions)) (applicationState = \(application.applicationState))"
             )
 
+        // set internal name to lower layers like SyncEngine
+        Bundle.mainAppInternalName = Bundle.main.appInternalName
+
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(userSessionDidBecomeAvailable(_:)),
