@@ -77,7 +77,7 @@ package class ChannelHistoryViewModel: ObservableObject {
             .store(in: &subscriptions)
 
     }
-    
+
     private func updateHistoryDepth(
         channelHistoryOption: ChannelHistoryOption
     ) {
@@ -88,9 +88,7 @@ package class ChannelHistoryViewModel: ObservableObject {
                     channelHistoryOption: channelHistoryOption,
                     channelHistoryOptionCustom: channelHistoryOptionCustom
                 )
-            } catch {
-                
-            }
+            } catch {}
             isLoading = false
         }
     }
