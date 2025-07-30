@@ -18,7 +18,7 @@
 
 import Foundation
 
-public enum ChannelHistoryOption: Equatable, Hashable, CaseIterable, Sendable {
+public enum ChannelHistoryOption: Equatable, Hashable, CaseIterable, Sendable, Identifiable {
     case off
     case oneDay
     case oneWeek
@@ -26,10 +26,14 @@ public enum ChannelHistoryOption: Equatable, Hashable, CaseIterable, Sendable {
     case unlimited
     case custom
 
+    public var id: Self { self }
+
     public struct Custom: Equatable, Hashable, Sendable {
-        public enum Unit: Equatable, Hashable, CaseIterable, Sendable {
+        public enum Unit: Equatable, Hashable, CaseIterable, Sendable, Identifiable {
             case days
             case weeks
+
+            public var id: Self { self }
         }
 
         public init(

@@ -147,7 +147,7 @@ public struct ConversationChannelCreationForm: View {
             Strings.ChannelHistory.Picker.title,
             selection: $viewModel.channelHistoryOption
         ) {
-            ForEach(viewModel.channelHistoryAvailableOptions(), id: \.self) { channelHistoryOption in
+            ForEach(viewModel.channelHistoryAvailableOptions()) { channelHistoryOption in
                 Text(channelHistoryOption.title)
                     .tag(channelHistoryOption)
                     .accessibilityLabel(channelHistoryOption.title)
@@ -165,7 +165,7 @@ public struct ConversationChannelCreationForm: View {
             .pickerStyle(.wheel)
 
             Picker("", selection: $viewModel.channelHistoryOptionCustom.unit) {
-                ForEach(ChannelHistoryOption.Custom.Unit.allCases, id: \.self) { unit in
+                ForEach(ChannelHistoryOption.Custom.Unit.allCases) { unit in
                     Text(unit.title).tag(unit)
                 }
             }

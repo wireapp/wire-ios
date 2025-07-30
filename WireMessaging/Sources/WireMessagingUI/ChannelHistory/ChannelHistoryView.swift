@@ -61,7 +61,7 @@ package struct ChannelHistoryView: View {
                 .font(.footnote)
                 .foregroundColor(ColorTheme.Base.secondaryText.color)
         ) {
-            ForEach(viewModel.channelHistoryAvailableOptions, id: \.self) { option in
+            ForEach(viewModel.channelHistoryAvailableOptions) { option in
                 channelHistoryRow(for: option)
             }
 
@@ -131,7 +131,7 @@ package struct ChannelHistoryView: View {
             .pickerStyle(.wheel)
 
             Picker("", selection: $viewModel.channelHistoryOptionCustom.unit) {
-                ForEach(ChannelHistoryOption.Custom.Unit.allCases, id: \.self) { unit in
+                ForEach(ChannelHistoryOption.Custom.Unit.allCases) { unit in
                     Text(unit.title).tag(unit)
                 }
             }
