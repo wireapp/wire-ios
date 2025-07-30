@@ -20,14 +20,13 @@ import avs
 import SwiftUI
 import UIKit
 import WireAccountImageUI
-import WireMessagingDomain
-import WireMessagingAssembly
 import WireCommonComponents
 import WireDesign
 import WireFoundation
 import WireLogging
 import WireMainNavigationUI
 import WireMessagingAssembly
+import WireMessagingDomain
 import WireNetwork
 import WireSidebarUI
 import WireSyncEngine

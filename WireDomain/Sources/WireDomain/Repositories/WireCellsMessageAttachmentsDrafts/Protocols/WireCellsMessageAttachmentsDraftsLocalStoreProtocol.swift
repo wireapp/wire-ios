@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireMessagingDomain
 import WireDataModel
+import WireMessagingDomain
 
 // sourcery: AutoMockable
 public protocol WireCellsMessageAttachmentsDraftsLocalStoreProtocol {}

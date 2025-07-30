@@ -28,10 +28,10 @@ struct ObserveDraftsUseCaseTests {
     @Test
     func invoke() async throws {
         // Given
-        let draftsRepository = DraftsRepositoryProtocolMock()
+        let draftsRepository = MockDraftsRepositoryProtocol()
         let sut = ObserveDraftsUseCase(cellName: "cell-name", draftRepository: draftsRepository)
         let (stream, continuation) = AsyncStream.makeStream(of: [WireCellsDraft].self)
-        draftsRepository.draftsForCellNameStringAsyncStreamWireCellsDraftReturnValue = stream
+        draftsRepository.draftsFor_MockValue = stream
 
         // When
         let output = await sut.invoke()
@@ -50,7 +50,7 @@ struct ObserveDraftsUseCaseTests {
             result.append(drafts)
         }
 
-        #expect(draftsRepository.draftsForCellNameStringAsyncStreamWireCellsDraftReceivedCellName == "cell-name")
+        #expect(draftsRepository.draftsFor_Invocations == ["cell-name"])
         #expect(result == [[a, b], [b, c]])
     }
 

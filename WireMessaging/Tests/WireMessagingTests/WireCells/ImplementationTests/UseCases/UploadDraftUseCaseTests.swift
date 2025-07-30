@@ -27,9 +27,9 @@ import UniformTypeIdentifiers
 final class UploadDraftUseCaseTests {
 
     private let fileURL = URL.temporaryDirectory.appendingPathComponent("\(UUID().uuidString).txt")
-    private let draftsRepository = DraftsRepositoryProtocolMock()
-    private let uploadManager = WireCellsNodeUploadManagerProtocolMock()
-    private let nodesAPI = NodesAPIProtocolMock()
+    private let draftsRepository = MockDraftsRepositoryProtocol()
+    private let uploadManager = MockWireCellsNodeUploadManagerProtocol()
+    private let nodesAPI = MockNodesAPIProtocol()
     private lazy var sut = UploadDraftUseCase(
         cellName: "cell-name",
         draftRepository: draftsRepository,
@@ -47,6 +47,7 @@ final class UploadDraftUseCaseTests {
     func invokeWithNodeID_whenUnknownDraft() async {
         // Given
         let nodeID = UUID()
+        draftsRepository.fetchDraftNodeIDCellName_MockValue = .some(nil)
 
         // When, Then
         let sut = sut
@@ -60,14 +61,14 @@ final class UploadDraftUseCaseTests {
         // Given
         let nodeID = UUID()
 
-        draftsRepository.fetchDraftNodeIDUUIDCellNameStringWireCellsDraftReturnValue = WireCellsDraft.fixture(
+        draftsRepository.fetchDraftNodeIDCellName_MockValue = WireCellsDraft.fixture(
             nodeID: nodeID,
             status: .uploading(progress: 0.5),
             name: "original.txt"
         )
 
         uploadManager
-            .uploadNodeIDUUIDVersionIDUUIDAssetPathURLAssetSizeUInt64DestNodePathString_NodeWireCellsNodeStreamAsyncStreamWireCellsUploadStatusReturnValue
+            .uploadNodeIDVersionIDAssetPathAssetSizeDestNodePath_MockValue
             = (
                 WireCellsNode(uuid: nodeID, path: "something/new.txt"),
                 AsyncStream.make(
@@ -79,17 +80,19 @@ final class UploadDraftUseCaseTests {
                 )
             )
 
-        nodesAPI.getNodeNodeIDUUIDWireCellsNodeReturnValue = WireCellsNode(
+        nodesAPI.getNodeNodeID_MockValue = WireCellsNode(
             uuid: nodeID,
             path: "something/new.txt",
             mimeType: "some-mime-type"
         )
 
+        draftsRepository.updateDraftFor_MockMethod = { _, _ in }
+
         // When
         try await sut.invoke(nodeID: nodeID)
 
         // Then
-        let updatesParams = draftsRepository.updateDraftDraftWireCellsDraftForCellNameStringVoidReceivedInvocations
+        let updatesParams = draftsRepository.updateDraftFor_Invocations
         #expect(updatesParams.count == 6)
         #expect(
             updatesParams.map(\.draft) == [
@@ -109,20 +112,21 @@ final class UploadDraftUseCaseTests {
         // Given
         let nodeID = UUID()
 
-        draftsRepository.fetchDraftNodeIDUUIDCellNameStringWireCellsDraftReturnValue = WireCellsDraft.fixture(
+        draftsRepository.fetchDraftNodeIDCellName_MockValue = WireCellsDraft.fixture(
             nodeID: nodeID,
             status: .uploading(progress: 0.5),
         )
 
         uploadManager
-            .uploadNodeIDUUIDVersionIDUUIDAssetPathURLAssetSizeUInt64DestNodePathString_NodeWireCellsNodeStreamAsyncStreamWireCellsUploadStatusThrowableError =
+            .uploadNodeIDVersionIDAssetPathAssetSizeDestNodePath_MockError =
             URLError(.notConnectedToInternet)
+        draftsRepository.updateDraftFor_MockMethod = { _, _ in }
 
         // When
         try await sut.invoke(nodeID: nodeID)
 
         // Then
-        let updatesParams = draftsRepository.updateDraftDraftWireCellsDraftForCellNameStringVoidReceivedInvocations
+        let updatesParams = draftsRepository.updateDraftFor_Invocations
         #expect(updatesParams.count == 2)
         #expect(
             updatesParams.map(\.draft) == [
@@ -155,20 +159,22 @@ final class UploadDraftUseCaseTests {
         try data.write(to: fileURL)
 
         // The following mocked values are not important.
-        draftsRepository.fetchDraftNodeIDUUIDCellNameStringWireCellsDraftReturnValue = WireCellsDraft.fixture()
+        draftsRepository.fetchDraftNodeIDCellName_MockValue = WireCellsDraft.fixture()
         uploadManager
-            .uploadNodeIDUUIDVersionIDUUIDAssetPathURLAssetSizeUInt64DestNodePathString_NodeWireCellsNodeStreamAsyncStreamWireCellsUploadStatusReturnValue =
+            .uploadNodeIDVersionIDAssetPathAssetSizeDestNodePath_MockValue =
             (
                 .fixture(),
                 AsyncStream.make([])
             )
-        nodesAPI.getNodeNodeIDUUIDWireCellsNodeReturnValue = .fixture()
+        nodesAPI.getNodeNodeID_MockValue = .fixture()
+        draftsRepository.addDraftFor_MockMethod = { _, _ in }
+        draftsRepository.updateDraftFor_MockMethod = { _, _ in }
 
         // When
         try await sut.invoke(fileURL: fileURL)
 
         // Then
-        let arguments = try #require(draftsRepository.addDraftDraftWireCellsDraftForCellNameStringVoidReceivedArguments)
+        let arguments = try #require(draftsRepository.addDraftFor_Invocations.first)
         #expect(arguments.cellName == "cell-name")
         #expect(arguments.draft.assetURL == fileURL)
         #expect(arguments.draft.fileType == UTType.plainText)

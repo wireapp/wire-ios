@@ -25,9 +25,9 @@ import WireMessagingDomain
 
 final class DeleteDraftUseCaseTests {
 
-    private let draftsRepository = DraftsRepositoryProtocolMock()
-    private let uploadManager = WireCellsNodeUploadManagerProtocolMock()
-    private let nodesAPI = NodesAPIProtocolMock()
+    private let draftsRepository = MockDraftsRepositoryProtocol()
+    private let uploadManager = MockWireCellsNodeUploadManagerProtocol()
+    private let nodesAPI = MockNodesAPIProtocol()
     private let fileURL = URL.temporaryDirectory.appendingPathComponent(UUID().uuidString)
     private lazy var sut = DeleteDraftUseCase(
         cellName: "test-cell",
@@ -49,14 +49,15 @@ final class DeleteDraftUseCaseTests {
     func invoke_whenNoDraft() async throws {
         // Given
         let nonExistentNodeID = UUID()
+        draftsRepository.fetchDraftNodeIDCellName_MockMethod = { _, _ in nil }
 
         // When
         try await sut.invoke(nodeID: nonExistentNodeID)
 
         // Then
-        #expect(uploadManager.cancelUploadNodeIDUUIDVoidCalled == false)
-        #expect(nodesAPI.deleteVersionNodeIDUUIDVersionIDUUIDVoidCalled == false)
-        #expect(draftsRepository.deleteDraftNodeIDUUIDCellNameStringVoidCalled == false)
+        #expect(uploadManager.cancelUploadNodeID_Invocations.isEmpty)
+        #expect(nodesAPI.deleteVersionNodeIDVersionID_Invocations.isEmpty)
+        #expect(draftsRepository.deleteDraftNodeIDCellName_Invocations.isEmpty)
         #expect(FileManager.default.fileExists(atPath: fileURL.path))
     }
 
@@ -64,17 +65,19 @@ final class DeleteDraftUseCaseTests {
     func invoke_whenUploading() async throws {
         // Given
         let nodeID = UUID()
-        draftsRepository.fetchDraftNodeIDUUIDCellNameStringWireCellsDraftReturnValue = WireCellsDraft.fixture(
+        draftsRepository.fetchDraftNodeIDCellName_MockValue = WireCellsDraft.fixture(
             nodeID: nodeID,
             status: .uploading(progress: 0.5)
         )
+        uploadManager.cancelUploadNodeID_MockMethod = { _ in }
+        draftsRepository.deleteDraftNodeIDCellName_MockMethod = { _, _ in }
 
         // When
         try await sut.invoke(nodeID: nodeID)
 
         // Then
-        #expect(uploadManager.cancelUploadNodeIDUUIDVoidReceivedInvocations == [nodeID])
-        #expect(nodesAPI.deleteVersionNodeIDUUIDVersionIDUUIDVoidCalled == false)
+        #expect(uploadManager.cancelUploadNodeID_Invocations == [nodeID])
+        #expect(nodesAPI.deleteVersionNodeIDVersionID_Invocations.isEmpty)
     }
 
     @Test
@@ -82,52 +85,57 @@ final class DeleteDraftUseCaseTests {
         // Given
         let nodeID = UUID()
         let versionID = UUID()
-        draftsRepository.fetchDraftNodeIDUUIDCellNameStringWireCellsDraftReturnValue = WireCellsDraft.fixture(
+        draftsRepository.fetchDraftNodeIDCellName_MockValue = WireCellsDraft.fixture(
             nodeID: nodeID,
             versionID: versionID,
             status: .uploaded(isDraft: true)
         )
+        nodesAPI.deleteVersionNodeIDVersionID_MockMethod = { _, _ in }
+        draftsRepository.deleteDraftNodeIDCellName_MockMethod = { _, _ in }
 
         // When
         try await sut.invoke(nodeID: nodeID)
 
         // Then
-        #expect(uploadManager.cancelUploadNodeIDUUIDVoidCalled == false)
-        #expect(nodesAPI.deleteVersionNodeIDUUIDVersionIDUUIDVoidReceivedInvocations == [(nodeID, versionID)])
+        #expect(uploadManager.cancelUploadNodeID_Invocations.isEmpty)
+        #expect(nodesAPI.deleteVersionNodeIDVersionID_Invocations == [(nodeID, versionID)])
     }
 
     @Test
     func invoke_whenCancelled() async throws {
         // Given
         let nodeID = UUID()
-        draftsRepository.fetchDraftNodeIDUUIDCellNameStringWireCellsDraftReturnValue = WireCellsDraft.fixture(
+        draftsRepository.fetchDraftNodeIDCellName_MockValue = WireCellsDraft.fixture(
             nodeID: nodeID,
             status: .cancelled
         )
+        draftsRepository.deleteDraftNodeIDCellName_MockMethod = { _, _ in }
+        nodesAPI.deleteVersionNodeIDVersionID_MockMethod = { _, _ in }
 
         // When
         try await sut.invoke(nodeID: nodeID)
 
         // Then
-        #expect(uploadManager.cancelUploadNodeIDUUIDVoidCalled == false)
-        #expect(nodesAPI.deleteVersionNodeIDUUIDVersionIDUUIDVoidCalled == false)
+        #expect(uploadManager.cancelUploadNodeID_Invocations.isEmpty)
+        #expect(nodesAPI.deleteVersionNodeIDVersionID_Invocations.isEmpty)
     }
 
     @Test
     func invoke_whenFailed() async throws {
         // Given
         let nodeID = UUID()
-        draftsRepository.fetchDraftNodeIDUUIDCellNameStringWireCellsDraftReturnValue = WireCellsDraft.fixture(
+        draftsRepository.fetchDraftNodeIDCellName_MockValue = WireCellsDraft.fixture(
             nodeID: nodeID,
             status: .failed(error: .fileNotFound)
         )
+        draftsRepository.deleteDraftNodeIDCellName_MockMethod = { _, _ in }
 
         // When
         try await sut.invoke(nodeID: nodeID)
 
         // Then
-        #expect(uploadManager.cancelUploadNodeIDUUIDVoidCalled == false)
-        #expect(nodesAPI.deleteVersionNodeIDUUIDVersionIDUUIDVoidCalled == false)
+        #expect(uploadManager.cancelUploadNodeID_Invocations.isEmpty)
+        #expect(nodesAPI.deleteVersionNodeIDVersionID_Invocations.isEmpty)
     }
 
     @Test(
@@ -142,16 +150,19 @@ final class DeleteDraftUseCaseTests {
     func invoke_deletesDraftFromRepository(status: WireCellsUploadStatus) async throws {
         // Given
         let nodeID = UUID()
-        draftsRepository.fetchDraftNodeIDUUIDCellNameStringWireCellsDraftReturnValue = WireCellsDraft.fixture(
+        draftsRepository.fetchDraftNodeIDCellName_MockValue = WireCellsDraft.fixture(
             nodeID: nodeID,
             status: status,
         )
+        draftsRepository.deleteDraftNodeIDCellName_MockMethod = { _, _ in }
+        uploadManager.cancelUploadNodeID_MockMethod = { _ in }
+        nodesAPI.deleteVersionNodeIDVersionID_MockMethod = { _, _ in }
 
         // When
         try await sut.invoke(nodeID: nodeID)
 
         // Then
-        #expect(draftsRepository.deleteDraftNodeIDUUIDCellNameStringVoidReceivedInvocations == [(nodeID, "test-cell")])
+        #expect(draftsRepository.deleteDraftNodeIDCellName_Invocations == [(nodeID, "test-cell")])
     }
 
     @Test(
@@ -167,12 +178,15 @@ final class DeleteDraftUseCaseTests {
     func invoke_deletesFileIfNeeded(status: WireCellsUploadStatus, deleteAfterUpload: Bool) async throws {
         // Given
         let nodeID = UUID()
-        draftsRepository.fetchDraftNodeIDUUIDCellNameStringWireCellsDraftReturnValue = WireCellsDraft.fixture(
+        draftsRepository.fetchDraftNodeIDCellName_MockValue = WireCellsDraft.fixture(
             nodeID: nodeID,
             assetURL: fileURL,
             status: status,
             deleteAfterUpload: deleteAfterUpload
         )
+        draftsRepository.deleteDraftNodeIDCellName_MockMethod = { _, _ in }
+        uploadManager.cancelUploadNodeID_MockMethod = { _ in }
+        nodesAPI.deleteVersionNodeIDVersionID_MockMethod = { _, _ in }
 
         // When
         try await sut.invoke(nodeID: nodeID)

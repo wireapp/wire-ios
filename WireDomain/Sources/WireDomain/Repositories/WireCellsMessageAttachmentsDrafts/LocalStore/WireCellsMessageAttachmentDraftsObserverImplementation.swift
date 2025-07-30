@@ -18,14 +18,15 @@
 
 import CoreData
 import Foundation
-import WireMessagingDomain
 import WireDataModel
+import WireMessagingDomain
 
 public final actor WireCellsMessageAttachmentDraftsObserverImplementation: NSObject, NSFetchedResultsControllerDelegate,
     FetchedResultsControllerObserver {
 
     private var currentValues: [WireMessagingDomain.WireCellsMessageAttachmentDraft] = []
-    private var continuations: [UUID: AsyncStream<[WireMessagingDomain.WireCellsMessageAttachmentDraft]>.Continuation] = [:]
+    private var continuations: [UUID: AsyncStream<[WireMessagingDomain.WireCellsMessageAttachmentDraft]>.Continuation] =
+        [:]
     private let fetchedResultsController: NSFetchedResultsController<WireCellsMessageAttachmentDraftEntity>
 
     init(

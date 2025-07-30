@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import WireMessagingAssembly
 import WireCommonComponents
 import WireLogging
+import WireMessagingAssembly
 import WireSyncEngine
 
 extension ConversationInputBarViewController: UINavigationControllerDelegate {}

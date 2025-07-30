@@ -28,8 +28,7 @@ let package = Package(
             dependencies: [
                 "WireFoundation",
                 "WireLogging",
-                .product(name: "CellsSDK", package: "cells-sdk-swift"),
-                .product(name: "AWSS3", package: "aws-sdk-swift")
+                .product(name: "CellsSDK", package: "cells-sdk-swift")
             ]
         ),
         .target(
@@ -65,7 +64,8 @@ let package = Package(
         .target(
             name: "WireMessagingDomainSupport",
             dependencies: [
-                "WireMessagingDomain"
+                "WireMessagingDomain",
+                "WireMessagingData"
             ],
             plugins: [.plugin(name: "SourceryPlugin", package: "WirePlugins")]
         ),
@@ -73,7 +73,6 @@ let package = Package(
             name: "WireMessagingTests",
             dependencies: [
                 "WireMessagingUI",
-                "WireMessagingData",
                 "WireMessagingDomainSupport",
                 .product(name: "WireDesign", package: "WireUI"),
                 "WireFoundation"

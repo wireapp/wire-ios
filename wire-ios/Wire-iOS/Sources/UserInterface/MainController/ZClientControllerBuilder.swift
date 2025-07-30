@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireMessagingDomain
-import WireMessagingAssembly
 import WireDataModel
+import WireMessagingAssembly
+import WireMessagingDomain
 import WireNetwork
 @preconcurrency import WireSyncEngine
 import WireTransport

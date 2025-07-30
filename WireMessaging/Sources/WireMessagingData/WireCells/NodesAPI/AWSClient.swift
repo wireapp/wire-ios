@@ -17,13 +17,27 @@
 //
 
 import AWSClientRuntime
-import AWSS3
-import Foundation
+package import AWSS3
+package import Foundation
 import Smithy
 import SmithyIdentity
 import SmithyStreams
 import WireLogging
 import WireMessagingDomain
+
+// sourcery: AutoMockable
+package protocol S3ClientProtocol: Sendable {
+
+    func getObject(input: GetObjectInput) async throws -> GetObjectOutput
+    func putObject(input: PutObjectInput) async throws -> PutObjectOutput
+    func uploadPart(input: UploadPartInput) async throws -> UploadPartOutput
+    func createMultipartUpload(input: CreateMultipartUploadInput) async throws -> CreateMultipartUploadOutput
+    func completeMultipartUpload(input: CompleteMultipartUploadInput) async throws -> CompleteMultipartUploadOutput
+    func presignedURLForGetObject(input: GetObjectInput, expiration: Foundation.TimeInterval) async throws -> URL
+
+}
+
+extension S3Client: S3ClientProtocol, @unchecked @retroactive Sendable {}
 
 package enum WireCellsAWSClientError: Error {
     case downloadError

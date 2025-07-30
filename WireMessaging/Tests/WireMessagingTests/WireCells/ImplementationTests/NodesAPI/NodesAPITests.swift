@@ -30,14 +30,14 @@ final class NodesAPITests {
 
     private let smallFileURL = URL.temporaryDirectory.appendingPathComponent(UUID().uuidString)
     private let smallFileHandle: FileHandle
-    private let s3: S3ClientProtocolMock
+    private let s3: MockS3ClientProtocol
     private let sut: NodesAPI
 
     init() throws {
         let smallFile = Data(repeating: 0, count: 100)
         try smallFile.write(to: smallFileURL)
 
-        self.s3 = S3ClientProtocolMock()
+        self.s3 = MockS3ClientProtocol()
 
         self.smallFileHandle = try FileHandle(forReadingFrom: smallFileURL)
         self.sut = NodesAPI(
@@ -47,7 +47,7 @@ final class NodesAPITests {
             ),
             restAPI: RestAPI(
                 serverURL: URL(string: "example.com")!,
-                accessToken: AccessTokenProviderMock()
+                accessToken: MockAccessTokenProvider()
             ),
         )
     }
@@ -63,14 +63,14 @@ final class NodesAPITests {
         // Given
         let versionID = UUID()
         let node = WireCellsNode(uuid: UUID(), path: "node-path")
-        s3.putObjectInputPutObjectInputPutObjectOutputReturnValue = PutObjectOutput()
+        s3.putObjectInput_MockValue = PutObjectOutput()
 
         // When
         let stream = await sut.uploadFile(path: smallFileURL, node: node, versionID: versionID)
         _ = try await stream.collect() // Wait for upload to complete
 
         // Then
-        let inputPutObject = try #require(s3.putObjectInputPutObjectInputPutObjectOutputReceivedInput)
+        let inputPutObject = try #require(s3.putObjectInput_Invocations.first)
         #expect(inputPutObject.body?.stream != nil)
         #expect(inputPutObject.bucket == "io")
         #expect(inputPutObject.key == "node-path")
@@ -85,7 +85,7 @@ final class NodesAPITests {
     func testUploadRegularUpload_whenSuccess() async throws {
         // Given
         let node = WireCellsNode(uuid: UUID(), path: "node-path")
-        s3.putObjectInputPutObjectInputPutObjectOutputClosure = { input in
+        s3.putObjectInput_MockMethod = { input in
             let stream = try #require(input.body?.stream)
             _ = try stream.read(upToCount: 1)
             _ = try stream.read(upToCount: 1)
@@ -108,7 +108,7 @@ final class NodesAPITests {
     func testUploadRegularUpload_whenUploadFailure() async throws {
         // Given
         let node = WireCellsNode(uuid: UUID(), path: "node-path")
-        s3.putObjectInputPutObjectInputPutObjectOutputClosure = { _ in
+        s3.putObjectInput_MockMethod = { _ in
             try await Task.sleep(nanoseconds: 100_000_000) // Pause is necessary for progress to complete emitting
 
             throw URLError(.notConnectedToInternet)

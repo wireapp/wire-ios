@@ -17,9 +17,9 @@
 //
 
 @preconcurrency import CoreData
-import WireMessagingDomain
 import WireDataModel
 import WireLogging
+import WireMessagingDomain
 
 public final class WireCellsMessageAttachmentsDraftsLocalStore: WireCellsMessageAttachmentsDraftsLocalStoreProtocol {
 

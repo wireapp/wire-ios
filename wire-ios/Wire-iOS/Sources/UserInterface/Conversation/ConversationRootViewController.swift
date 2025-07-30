@@ -17,10 +17,10 @@
 //
 
 import UIKit
-import WireMessagingAssembly
 import WireCommonComponents
 import WireDesign
 import WireMainNavigationUI
+import WireMessagingAssembly
 import WireSyncEngine
 
 final class ConversationRootViewController: UIViewController {

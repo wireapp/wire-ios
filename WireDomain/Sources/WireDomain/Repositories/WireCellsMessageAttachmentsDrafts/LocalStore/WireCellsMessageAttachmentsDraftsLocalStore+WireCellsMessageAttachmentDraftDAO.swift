@@ -19,8 +19,8 @@
 // Preconcurrency macro to allow for injecting the NSFetchedResultsController
 @preconcurrency import CoreData
 import Foundation
-import WireMessagingDomain
 import WireDataModel
+import WireMessagingDomain
 
 extension WireCellsMessageAttachmentsDraftsLocalStore: WireCellsMessageAttachmentDraftDAO {
 

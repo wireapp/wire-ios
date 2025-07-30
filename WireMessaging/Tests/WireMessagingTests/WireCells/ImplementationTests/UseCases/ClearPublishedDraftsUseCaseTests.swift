@@ -26,7 +26,7 @@ import WireMessagingDomain
 
 final class ClearPublishedDraftsUseCaseTests {
 
-    private let nodesAPI = NodesAPIProtocolMock()
+    private let nodesAPI = MockNodesAPIProtocol()
     private lazy var uploadManager = WireCellsNodeUploadManager(nodesAPI: nodesAPI)
     private lazy var draftsRepository = DraftsRepository(
         uploadManager: uploadManager,

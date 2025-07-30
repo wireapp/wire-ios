@@ -25,7 +25,7 @@ import WireMessagingDomain
 
 final class PublishDraftsUseCaseTests {
 
-    private let nodesAPI = NodesAPIProtocolMock()
+    private let nodesAPI = MockNodesAPIProtocol()
     private lazy var uploadManager = WireCellsNodeUploadManager(nodesAPI: nodesAPI)
     private lazy var draftsRepository = DraftsRepository(
         uploadManager: uploadManager,
@@ -89,7 +89,7 @@ final class PublishDraftsUseCaseTests {
     func invoke_whenPublishingFails() async {
         // Given
         let sut = PublishDraftsUseCase(cellName: "cell-4", draftRepository: draftsRepository)
-        nodesAPI.publishDraftNodeIDUUIDVersionIDUUIDVoidThrowableError = URLError(.notConnectedToInternet)
+        nodesAPI.publishDraftNodeIDVersionID_MockError = URLError(.notConnectedToInternet)
 
         // When, Then
         await #expect(throws: DraftsRepositoryError.notAllFilesArePublished) {
@@ -101,7 +101,7 @@ final class PublishDraftsUseCaseTests {
     func invoke_whenPublishingSucceeds() async throws {
         // Given
         let sut = PublishDraftsUseCase(cellName: "cell-4", draftRepository: draftsRepository)
-        nodesAPI.publishDraftNodeIDUUIDVersionIDUUIDVoidClosure = { _, _ in }
+        nodesAPI.publishDraftNodeIDVersionID_MockMethod = { _, _ in }
 
         // When
         try await sut.invoke()
@@ -110,14 +110,14 @@ final class PublishDraftsUseCaseTests {
         let drafts = try await #require(draftsRepository.getDraftsForTesting["cell-4"]).values
         #expect(drafts.count == 2)
         #expect(drafts.allSatisfy { $0.status == .uploaded(isDraft: false) })
-        #expect(nodesAPI.publishDraftNodeIDUUIDVersionIDUUIDVoidCallsCount == 1)
+        #expect(nodesAPI.publishDraftNodeIDVersionID_Invocations.count == 1)
     }
 
     @Test
     func invoke_whenNewDraftAddedConcurrently() async throws {
         // Given
         let sut = PublishDraftsUseCase(cellName: "cell-4", draftRepository: draftsRepository)
-        nodesAPI.publishDraftNodeIDUUIDVersionIDUUIDVoidClosure = { [draftsRepository] _, _ in
+        nodesAPI.publishDraftNodeIDVersionID_MockMethod = { [draftsRepository] _, _ in
             // Add a new draft while invoke is running
             var drafts = await draftsRepository.getDraftsForTesting
             drafts["cell-4"]?[UUID()] = WireCellsDraft.fixture(status: .uploading(progress: 0.5))

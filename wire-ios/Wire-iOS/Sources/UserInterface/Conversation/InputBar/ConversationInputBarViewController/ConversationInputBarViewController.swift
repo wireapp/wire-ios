@@ -22,12 +22,12 @@ import MobileCoreServices
 import Photos
 import SwiftUI
 import UIKit
-import WireMessagingDomain
-import WireMessagingAssembly
-import WireMessagingUI
 import WireCommonComponents
 import WireDesign
 import WireLogging
+import WireMessagingAssembly
+import WireMessagingDomain
+import WireMessagingUI
 import WireNetwork
 import WireSyncEngine
 
