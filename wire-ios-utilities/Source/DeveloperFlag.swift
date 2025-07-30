@@ -37,6 +37,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case consumableNotifications
     case multibackend
     case channelsHistory
+    case chatBubbles
 
     public var description: String {
         switch self {
@@ -84,6 +85,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .channelsHistory:
             "Turn on to enable channels history"
+
+        case .chatBubbles:
+            "Show conversation messages as chat bubbles"
         }
     }
 
@@ -122,6 +126,8 @@ public enum DeveloperFlag: String, CaseIterable {
             "IgnoreIncomingEventsEnabled"
         case .useWireAuthentication:
             "WireAuthenticationEnabled"
+        case .chatBubbles:
+            "ChatBubblesEnabled"
         default:
             nil
         }
