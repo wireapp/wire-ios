@@ -93,7 +93,7 @@ public enum ColorTheme {
 
         public enum Secondary {
 
-            static let enabled = UIColor(light: .white, dark: .gray90)
+            public static let enabled = UIColor(light: .white, dark: .gray90)
             public static let onEnabled = UIColor(light: .black, dark: .white)
             public static let enabledOutline = UIColor(light: .gray40, dark: .gray90)
 

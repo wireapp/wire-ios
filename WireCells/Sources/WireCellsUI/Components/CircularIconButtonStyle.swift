@@ -21,9 +21,9 @@ import WireDesign
 
 struct CircularIconButtonStyle: ButtonStyle {
     private enum Constants {
-        static let backgroundColor: Color = BaseColorPalette.Neutrals.white.color
-        static let iconColor: Color = BaseColorPalette.Neutrals.black.color
-        static let strokeColor: Color = BaseColorPalette.Grays.gray40.color
+        static let backgroundColor: Color = Color(ColorTheme.Backgrounds.onSurface)
+        static let iconColor: Color = Color(ColorTheme.Buttons.Secondary.enabled)
+        static let strokeColor: Color = Color(ColorTheme.Buttons.Secondary.enabledOutline)
         static let strokeWidth: CGFloat = 1
     }
 
@@ -32,11 +32,12 @@ struct CircularIconButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration
             .label
-            .foregroundStyle(Constants.backgroundColor)
-            .overlay(Circle().stroke(Constants.strokeColor, lineWidth: Constants.strokeWidth).padding(padding))
-            .background(Circle().fill(Constants.iconColor).padding(padding))
-            // Optionally, apply a slight visual change when pressed
-            .opacity(configuration.isPressed ? 0.6 : 1.0)
+            .symbolRenderingMode(.palette)
+            .foregroundStyle(Constants.backgroundColor, Constants.iconColor)
+            .overlay(
+                Circle().strokeBorder(Constants.strokeColor, lineWidth: 1)
+            )
+            .opacity(configuration.isPressed ? 0.5 : 1.0)
     }
 }
 
@@ -45,11 +46,10 @@ struct CircularIconButtonStyle: ButtonStyle {
         print("Tapped")
     }, label: {
         Image(systemName: "xmark.circle.fill")
-            .font(.system(size: 24))
-            .buttonStyle(CircularIconButtonStyle(padding: 2))
+            .resizable()
+            .scaledToFit()
+            .frame(width: 24, height: 24)
     })
-    .foregroundStyle(.white)
-    .frame(width: 35, height: 35)
-    .padding(20)
-    .background(Color.gray)
+    .buttonStyle(CircularIconButtonStyle(padding: 0))
+    .background(Color.green)
 }
