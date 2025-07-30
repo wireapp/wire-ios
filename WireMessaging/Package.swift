@@ -27,8 +27,7 @@ let package = Package(
             name: "WireMessagingDomain",
             dependencies: [
                 "WireFoundation",
-                "WireLogging",
-                .product(name: "CellsSDK", package: "cells-sdk-swift")
+                "WireLogging"
             ]
         ),
         .target(

@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import CellsSDK
 public import Foundation
 
 public enum MessageAttachmentDraftRepositoryError: Error, Sendable {

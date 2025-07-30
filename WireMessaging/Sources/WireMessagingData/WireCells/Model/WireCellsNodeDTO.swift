@@ -17,6 +17,7 @@
 //
 
 import CellsSDK
+package import WireMessagingDomain
 package import Foundation
 
 package struct WireCellsNodeDTO: Equatable, Hashable, Sendable {
