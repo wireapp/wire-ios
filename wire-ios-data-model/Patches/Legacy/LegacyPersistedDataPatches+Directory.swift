@@ -27,10 +27,6 @@ extension LegacyPersistedDataPatch {
     /// List of patches to apply
     static let allPatchesToApply = [
         LegacyPersistedDataPatch(
-            version: "273.2.0",
-            block: InvalidDomainRemoval.removeDuplicatedEntitiesWithInvalidDomain
-        ),
-        LegacyPersistedDataPatch(
             version: "279.0.4",
             block: InvalidFeatureRemoval.restoreDefaultConferenceCallingConfig
         ),
