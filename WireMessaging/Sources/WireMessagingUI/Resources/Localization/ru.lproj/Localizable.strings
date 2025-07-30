@@ -69,3 +69,20 @@
 
 "conversation.creationForm.readReceipts.toggle" = "Отчеты о прочтении";
 "conversation.creationForm.readReceipts.description" = "При включении ваши собеседники смогут видеть когда было прочитано их сообщение.";
+
+// MARK: - Channel history
+"conversation.channelHistory.upgradeBanner.title" = "Показывать старые сообщения?";
+"conversation.channelHistory.upgradeBanner.message" = "Перейдите на платный план, чтобы открыть участникам канала всю историю.";
+"conversation.channelHistory.upgradeBanner.button" = "Перейти сейчас";
+"conversation.channelHistory.upgradeBanner.closeMessage" = "Закрыть баннер";
+"conversation.channelHistory.picker.title" = "История беседы";
+"conversation.channelHistory.picker.off" = "Откл.";
+"conversation.channelHistory.picker.oneDay" = "1 день";
+"conversation.channelHistory.picker.oneWeek" = "1 неделя";
+"conversation.channelHistory.picker.fourWeeks" = "4 недели";
+"conversation.channelHistory.picker.unlimited" = "Неограничено";
+"conversation.channelHistory.picker.custom" = "Пользовательская";
+"conversation.channelHistory.customPicker.days" = "Дн.";
+"conversation.channelHistory.customPicker.weeks" = "Нед.";
+"conversation.channelHistory.navigationTitle" = "История беседы";
+"conversation.creationForm.channelHistory.sectionFootnote" = "Выберите период. Когда участники присоединяются к этому каналу, они могут просматривать историю за этот период времени.";

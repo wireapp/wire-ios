@@ -59,21 +59,4 @@ protocol FeatureConfigRepositoryProtocol {
         _ featureConfig: FeatureConfig
     ) async
 
-    /// Fetches a flag indicating whether the user should be notified of a given feature.
-    /// - Parameter name: The feature name.
-    /// - Returns: `true` if user should be notified.
-
-    func needsToNotifyUser(
-        name: Feature.Name
-    ) async throws -> Bool
-
-    /// Stores a flag indicating whether the user should be notified of a given feature.
-    /// - Parameter notifyUser: Whether the user should be notified for a given feature.
-    /// - Parameter name: The name of the feature to set the flag for.
-
-    func storeFeatureNeedsToNotifyUser(
-        _ notifyUser: Bool,
-        name: Feature.Name
-    ) async throws
-
 }

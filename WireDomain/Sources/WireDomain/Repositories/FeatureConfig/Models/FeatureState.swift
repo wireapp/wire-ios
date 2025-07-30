@@ -23,5 +23,4 @@ import WireDataModel
 struct FeatureState {
     let name: Feature.Name
     let isEnabled: Bool
-    let shouldNotifyUser: Bool
 }

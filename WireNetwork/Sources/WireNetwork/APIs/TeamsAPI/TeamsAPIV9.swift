@@ -16,6 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class TeamsAPIV9: TeamsAPIV8 {
+class TeamsAPIV9: TeamsAPIV8 {
     override var apiVersion: APIVersion { .v9 }
 }

@@ -41,6 +41,11 @@ public protocol MessageSenderInterface {
 
 }
 
+// sourcery: AutoMockable
+public protocol InitiateResetMLSConversationUseCaseProtocol {
+    func invoke(groupID: MLSGroupID, epoch: Int64) async
+}
+
 public final class MessageSender: MessageSenderInterface {
 
     public init(
@@ -48,7 +53,9 @@ public final class MessageSender: MessageSenderInterface {
         sessionEstablisher: SessionEstablisherInterface,
         messageDependencyResolver: MessageDependencyResolverInterface,
         context: NSManagedObjectContext,
-        incrementalSyncObserver: IncrementalSyncObserverProtocol
+        incrementalSyncObserver: IncrementalSyncObserverProtocol,
+        initiateResetMLSConversationUseCase: InitiateResetMLSConversationUseCaseProtocol,
+        featureRepository: FeatureRepositoryInterface
     ) {
         self.apiProvider = apiProvider
         self.sessionEstablisher = sessionEstablisher
@@ -56,8 +63,12 @@ public final class MessageSender: MessageSenderInterface {
         self.context = context
         self.logAttributesBuilder = MessageLogAttributesBuilder(context: context)
         self.incrementalSyncObserver = incrementalSyncObserver
+        self.initiateResetMLSConversationUseCase = initiateResetMLSConversationUseCase
+        self.featureRepository = featureRepository
     }
 
+    private let featureRepository: FeatureRepositoryInterface
+    private let initiateResetMLSConversationUseCase: InitiateResetMLSConversationUseCaseProtocol
     private let incrementalSyncObserver: IncrementalSyncObserverProtocol
     private let apiProvider: APIProviderInterface
     private let context: NSManagedObjectContext
@@ -413,6 +424,22 @@ public final class MessageSender: MessageSenderInterface {
                     mlsService: mlsService,
                     operation: operation
                 )
+            case .mlsInvalidLeafNodeIndex, .mlsInvalidLeafNodeSignature:
+                let feature = await featureRepository.fetchAllowGlobalOperations()
+                guard feature.status == .enabled, feature.config.mlsConversationReset == true else {
+                    WireLogger.messaging.debug(
+                        "No need to initiate reset broken MLS conversation, FF is OFF"
+                    )
+                    throw error
+                }
+
+                let epoch = await context.perform { message.conversation?.epoch }
+
+                await initiateResetMLSConversationUseCase
+                    .invoke(
+                        groupID: groupID,
+                        epoch: Int64(epoch ?? 0)
+                    )
             default:
                 throw error
             }
