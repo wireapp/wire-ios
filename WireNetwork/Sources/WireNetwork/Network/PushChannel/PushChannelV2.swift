@@ -43,9 +43,14 @@ public final class PushChannelV2: PushChannelV2Protocol {
 
     private var keepAliveTask: Task<Void, any Error>?
     private let keepAliveInterval: TimeInterval
-    let maxBatchEventsCount: Int
-    let batchDelay: TimeInterval
 
+    private var batchTask: Task<Void, any Error>?
+    private let batchInterval: TimeInterval
+    private let batchBuffer = BatchBuffer()
+
+    let maxBatchEventsCount: Int
+
+    private var batchSize: Int
     private var (stream, continuation) = AsyncThrowingStream<Element, any Error>.makeStream()
 
     /// Initialize PushChannel with Async Stream capabitilites
@@ -63,30 +68,20 @@ public final class PushChannelV2: PushChannelV2Protocol {
         self.webSocket = webSocket
         self.keepAliveInterval = keepAliveInterval
         self.maxBatchEventsCount = max(maxBatchEventsCount, 1)
-        self.batchDelay = batchDelay
+        self.batchSize = self.maxBatchEventsCount
+        self.batchInterval = batchDelay
     }
 
     public func open() async throws -> AsyncThrowingStream<Element, any Error> {
         WireLogger.pushChannel.debug("opening new push channel", attributes: .pushChannelV2)
 
         let sourceStream = try await webSocket.open()
-        var batch: [UpdateEventEnvelope] = []
-        var batchTask: Task<Void, any Error>?
 
         Task { [weak self] in
             guard let self else { return }
+
             do {
                 for try await message in sourceStream {
-
-                    batchTask?.cancel()
-                    batchTask = Task {
-                        try await Task.sleep(for: .seconds(batchDelay))
-                        if !batch.isEmpty {
-                            continuation.yield(.events(batch))
-                            WireLogger.pushChannel.debug("batch of size '\(batch.count)' yield")
-                        }
-                        batch = []
-                    }
 
                     let result: PushChannelV2.InternalElement
                     do {
@@ -100,22 +95,24 @@ public final class PushChannelV2: PushChannelV2Protocol {
 
                     switch result {
                     case let .event(event):
-                        batch.append(event)
-                        if batch.count == maxBatchEventsCount {
-                            continuation.yield(.events(batch))
-                            WireLogger.pushChannel.debug("batch of size '\(batch.count)' yield")
-                            batch = []
-                            batchTask?.cancel()
+                        await batchBuffer.append(event)
+                        if await batchBuffer.count() >= batchSize {
+                            let drained = await batchBuffer.drain()
+                            continuation.yield(.events(drained))
+                            WireLogger.pushChannel.debug("reached batch of size '\(drained.count)' yield")
+                            tearDownBatchTask()
                         }
+
                     case .missedEvents:
                         continuation.yield(.missedEvents)
+
                     case let .syncMarker(id, deliveryTag):
                         // we're uptodate, let's give any remaining batch if any
-                        if !batch.isEmpty {
-                            continuation.yield(.events(batch))
-                            WireLogger.pushChannel.debug("batch of size '\(batch.count)' yield")
-                            batch = []
-                            batchTask?.cancel()
+                        let drained = await batchBuffer.drain()
+                        if !drained.isEmpty {
+                            continuation.yield(.events(drained))
+                            WireLogger.pushChannel.debug("reached batch of size '\(drained.count)' yield")
+                            tearDownBatchTask()
                         }
 
                         continuation.yield(.syncMarker(id: id, deliveryTag: deliveryTag))
@@ -123,10 +120,12 @@ public final class PushChannelV2: PushChannelV2Protocol {
 
                 }
                 // just in case to handle left batch if haven't deal with everything when we go to background
-                if !batch.isEmpty {
-                    continuation.yield(.events(batch))
-                    WireLogger.pushChannel.debug("batch of size '\(batch.count)' yield")
+                let drained = await batchBuffer.drain()
+                if !drained.isEmpty {
+                    continuation.yield(.events(drained))
+                    WireLogger.pushChannel.debug("end batch of size '\(drained.count)' yield")
                 }
+
             } catch {
                 WireLogger.pushChannel.error("got error: \(error)", attributes: .pushChannelV2)
                 continuation.finish(throwing: error)
@@ -140,6 +139,8 @@ public final class PushChannelV2: PushChannelV2Protocol {
         // if the client doesn’t send a ping message every so often.
         setUpKeepAliveTask()
 
+        setUpBatchTask()
+
         return stream
     }
 
@@ -148,6 +149,50 @@ public final class PushChannelV2: PushChannelV2Protocol {
 
         await webSocket.close()
         tearDownKeepAliveTask()
+        tearDownBatchTask()
+    }
+
+    public func disableBatching(_ disabled: Bool) async {
+        batchSize = disabled ? 1 : maxBatchEventsCount
+        if disabled {
+            tearDownBatchTask()
+            if !(await batchBuffer.isEmpty()) {
+                let drained = await batchBuffer.drain()
+                WireLogger.pushChannel.debug("drain batch '\(drained.count)'", attributes: .pushChannelV2)
+                continuation.yield(.events(drained))
+            }
+        } else {
+            setUpBatchTask()
+        }
+    }
+
+    // MARK: - Batch task
+
+    private func setUpBatchTask() {
+        WireLogger.pushChannel.debug("batchTask setup", attributes: .pushChannelV2)
+        tearDownBatchTask()
+        batchTask = Task { [batchInterval] in
+            do {
+                while batchSize > 1 {
+                    try await Task.sleep(for: .seconds(batchInterval))
+                    if !(await batchBuffer.isEmpty()) {
+                        let drained = await batchBuffer.drain()
+                        WireLogger.pushChannel.debug("yielding batch '\(drained.count)'", attributes: .pushChannelV2)
+                        continuation.yield(.events(drained))
+                    }
+                }
+            } catch {
+                WireLogger.pushChannel.warn("batch task was cancelled", attributes: .pushChannelV2)
+                tearDownBatchTask()
+            }
+        }
+    }
+
+    private func tearDownBatchTask() {
+        guard let batchTask else { return }
+        WireLogger.pushChannel.debug("tearing down batch task", attributes: .pushChannelV2)
+        batchTask.cancel()
+        self.batchTask = nil
     }
 
     // MARK: - Keep alive
@@ -240,5 +285,26 @@ public final class PushChannelV2: PushChannelV2Protocol {
     private func write(data: Data) async throws {
         WireLogger.pushChannel.debug("write data to push channel", attributes: .pushChannelV2)
         try await webSocket.write(data: data)
+    }
+}
+
+actor BatchBuffer {
+    private var buffer: [UpdateEventEnvelope] = []
+
+    func append(_ event: UpdateEventEnvelope) {
+        buffer.append(event)
+    }
+
+    func isEmpty() -> Bool {
+        buffer.isEmpty
+    }
+
+    func count() -> Int {
+        buffer.count
+    }
+
+    func drain() -> [UpdateEventEnvelope] {
+        defer { buffer.removeAll() }
+        return buffer
     }
 }
