@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
 import SwiftUI
+import UIKit
 
 /// A UITextField subclass that provides centralized control over context menu actions
 /// such as copy, paste, select, select all, and the AutoFill menu.

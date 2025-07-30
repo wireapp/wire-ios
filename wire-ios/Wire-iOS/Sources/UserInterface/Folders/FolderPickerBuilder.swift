@@ -40,7 +40,8 @@ struct FolderPickerBuilder {
             conversation: Conversation(conversation),
             directory: directoryMapper,
             updateConversationFolderUseCase: useCase,
-            isContextMenuAllowed: MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()).canUseClipboard
+            isContextMenuAllowed: MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared())
+                .canUseClipboard
         )
 
         return FolderPickerHostingController(
