@@ -26,7 +26,6 @@ extension LegacyPersistedDataPatch {
 
     /// List of patches to apply
     static let allPatchesToApply = [
-        LegacyPersistedDataPatch(version: "285.0.0", block: ZMConversation.introduceAccessRoleV2),
         LegacyPersistedDataPatch(version: "290.0.1", block: ZMUser.refetchSelfUserDomain),
         LegacyPersistedDataPatch(version: "297.0.2", block: UserClient.migrateAllSessionsClientIdentifiersV3)
     ]

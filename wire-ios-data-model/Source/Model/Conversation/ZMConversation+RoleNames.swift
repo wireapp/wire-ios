@@ -22,24 +22,4 @@ extension ZMConversation {
     @objc public static let defaultAdminRoleName = "wire_admin"
     @objc public static let defaultMemberRoleName = "wire_member"
 
-    // Model version add a `accessRoleStringsV2` attribute to the `Conversation` entity. The values from
-    // accessRoleString, need to be migrated to the new relationship
-    static func forceToFetchConversationAccessRoles(in moc: NSManagedObjectContext) {
-        let conversationsToFetch = ZMConversation.fetchRequest()
-
-        guard let conversations = moc.fetchOrAssert(request: conversationsToFetch) as? [ZMConversation] else {
-            fatal("fetchOrAssert failed")
-        }
-
-        conversations.forEach {
-            guard $0.isSelfAnActiveMember else { return }
-            $0.needsToBeUpdatedFromBackend = true
-        }
-    }
-
-    // Migration rules for the Model Version 2.98.0
-    static func introduceAccessRoleV2(in moc: NSManagedObjectContext) {
-        forceToFetchConversationAccessRoles(in: moc)
-    }
-
 }
