@@ -95,6 +95,15 @@ struct FeatureConfigsPayloadProcessor {
             )
         }
 
+        if let allowedGlobalOperations = payload.allowedGlobalOperations {
+            repository.storeAllowGlobalOperations(
+                Feature.AllowGlobalOperations(
+                    status: allowedGlobalOperations.status,
+                    config: allowedGlobalOperations.config
+                )
+            )
+        }
+
         if let mlsMigration = payload.mlsMigration {
             repository.storeMLSMigration(
                 Feature.MLSMigration(
@@ -249,6 +258,16 @@ struct FeatureConfigsPayloadProcessor {
                 from: data
             )
             repository.storeSelfDeletingMessages(.init(status: response.status, config: response.config))
+
+        case .allowGlobalOperations:
+            let response = try decoder.decode(
+                FeatureStatusWithConfig<Feature.AllowGlobalOperations.Config>.self,
+                from: data
+            )
+            repository.storeAllowGlobalOperations(.init(
+                status: response.status,
+                config: response.config
+            ))
 
         case .conversationGuestLinks:
             let response = try decoder.decode(FeatureStatus.self, from: data)

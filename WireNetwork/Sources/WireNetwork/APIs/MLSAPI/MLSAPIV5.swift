@@ -60,6 +60,16 @@ class MLSAPIV5: MLSAPIV4 {
                 .failure(code: .conflict, label: "mls-client-mismatch", error: MLSAPIError.mlsClientMismatch)
                 .failure(
                     code: .badRequest,
+                    label: "mls-invalid-leaf-node-index",
+                    error: MLSAPIError.mlsInvalidLeafNodeIndex
+                )
+                .failure(
+                    code: .badRequest,
+                    label: "mls-invalid-leaf-node-signature",
+                    error: MLSAPIError.mlsInvalidLeafNodeSignature
+                )
+                .failure(
+                    code: .badRequest,
                     label: "mls-commit-missing-references",
                     error: MLSAPIError.mlsCommitMissingReferences
                 )

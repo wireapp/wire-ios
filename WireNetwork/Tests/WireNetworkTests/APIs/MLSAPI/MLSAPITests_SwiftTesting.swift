@@ -26,14 +26,32 @@ class MLSAPITests_SwiftTesting {
     @Test(
         "Test reset MLS broken conversation failures",
         arguments: [
-            (HTTPStatusCode.badRequest, "mls-protocol-error", MLSAPIError.mlsProtocolError(message: "")),
-            (HTTPStatusCode.badRequest, "mls-group-id-not-supported", MLSAPIError.mlsGroupIdNotSupported(message: "")),
+            (
+                HTTPStatusCode.badRequest,
+                "mls-protocol-error",
+                MLSAPIError.mlsProtocolError(message: "")
+            ),
+            (
+                HTTPStatusCode.badRequest,
+                "mls-group-id-not-supported",
+                MLSAPIError.mlsGroupIdNotSupported(message: "")
+            ),
             (
                 HTTPStatusCode.badRequest,
                 "mls-federated-reset-not-supported",
                 MLSAPIError.mlsFederatedResetNotSupported(message: "")
             ),
             (HTTPStatusCode.badRequest, "mls-not-enabled", MLSAPIError.mlsNotEnabled),
+            (
+                HTTPStatusCode.badRequest,
+                "mls-invalid-leaf-node-index",
+                MLSAPIError.mlsInvalidLeafNodeIndex
+            ),
+            (
+                HTTPStatusCode.badRequest,
+                "mls-invalid-leaf-node-signature",
+                MLSAPIError.mlsInvalidLeafNodeSignature
+            ),
 
             (HTTPStatusCode.forbidden, "action-denied", MLSAPIError.actionDenied(message: "")),
             (HTTPStatusCode.forbidden, "access-denied", MLSAPIError.accessDenied(message: "")),
@@ -48,7 +66,6 @@ class MLSAPITests_SwiftTesting {
         _ testData: (HTTPStatusCode, String, MLSAPIError)
     ) async {
         // Given
-
         let apiService = MockAPIServiceProtocol.withError(
             statusCode: testData.0,
             label: testData.1

@@ -126,7 +126,8 @@ class BaseTest: ZMTBaseTest {
                 linkPreviewDetector: linkPreviewDetector,
                 managedObjectContext: coreDataStack.syncContext
             ),
-            transportSession: transportSession
+            transportSession: transportSession,
+            initiateResetMLSConversationUseCase: NullInitiateResetMLSConversationUseCase()
         )
 
         let context = coreDataStack.syncContext

@@ -17,4 +17,4 @@
 //
 
 "conversation.create.channel.back" = "Go back to new conversation overview";
-"conversation.channelHistory.upgradeBanner.closeMessage.TODO" = "Close banner"; // TODO: not used yet
+"conversation.creationForm.channelHistory.upgradeBanner.close" = "Close upgrade now banner";

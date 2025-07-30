@@ -32,6 +32,13 @@ public extension Bundle {
         Bundle.main.infoForKey("CFBundleShortVersionString")
     }
 
+    var appInternalName: String? {
+        guard let name = Bundle.main.infoForKey("WireInternalName"), !name.isEmpty else {
+            return nil
+        }
+        return name
+    }
+
     static var appMainBundle: Bundle {
         let mainBundle: Bundle
         if UIApplication.runningInExtension {

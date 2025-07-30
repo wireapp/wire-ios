@@ -16,6 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class SelfUserAPIV9: SelfUserAPIV8 {
+class SelfUserAPIV9: SelfUserAPIV8 {
     override var apiVersion: APIVersion { .v9 }
 }
