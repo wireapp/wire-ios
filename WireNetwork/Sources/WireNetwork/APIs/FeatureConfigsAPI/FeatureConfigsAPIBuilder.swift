@@ -59,6 +59,8 @@ public struct FeatureConfigsAPIBuilder {
             FeatureConfigsAPIV8(apiService: apiService)
         case .v9:
             FeatureConfigsAPIV9(apiService: apiService)
+        case .v10:
+            FeatureConfigsAPIV10(apiService: apiService)
         }
     }
 }

@@ -698,7 +698,7 @@ class FeatureRepositoryTests: ZMBaseManagedObjectTest {
             }
 
             // When
-            let result = sut.fetchSelfDeletingMesssages()
+            let result = sut.fetchSelfDeletingMessages()
 
             // Then
             XCTAssertEqual(result.status, .disabled)
@@ -719,7 +719,7 @@ class FeatureRepositoryTests: ZMBaseManagedObjectTest {
             }
 
             // When
-            let result = sut.fetchSelfDeletingMesssages()
+            let result = sut.fetchSelfDeletingMessages()
 
             // Then
             XCTAssertEqual(result.status, .enabled)
@@ -736,7 +736,7 @@ class FeatureRepositoryTests: ZMBaseManagedObjectTest {
             self.assertFeatureDoesNotExist(name: .selfDeletingMessages)
 
             // When
-            let result = sut.fetchSelfDeletingMesssages()
+            let result = sut.fetchSelfDeletingMessages()
 
             // Then
             XCTAssertEqual(result.status, .enabled)

@@ -21,6 +21,10 @@ import WireDataModel
 import WireLogging
 import WireSystem
 
+public extension Bundle {
+    static var mainAppInternalName: String?
+}
+
 @objc(ZMClientRegistrationPhase)
 public enum ClientRegistrationPhase: UInt {
     /// The client is not registered - we send out a request to register the client
@@ -415,10 +419,15 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     }
 
     private func insertNewClient(for selfUser: ZMUser) {
+        var model = UIDevice.current.zm_model()
+        if let appInternalName = Bundle.mainAppInternalName {
+            model += " (\(appInternalName))"
+        }
+
         UserClient.insertNewSelfClient(
             in: managedObjectContext,
             selfUser: selfUser,
-            model: UIDevice.current.zm_model(),
+            model: model,
             label: UIDevice.current.name
         )
 

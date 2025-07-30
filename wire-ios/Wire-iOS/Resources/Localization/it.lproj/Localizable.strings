@@ -616,6 +616,10 @@
 
 "content.system.message_read_receipt_on_add_to_group" = "Conferme di lettura attivate";
 
+// history depth
+"content.system.message_history_depth" = "%@ set conversation history to %@";
+"content.system.message_history_depth_disabled" = "%@ disabled conversation history";
+
 // legal hold
 
 "content.system.message_legal_hold.enabled" = "This conversation is under legal hold [LEARN MORE](%@)";
@@ -649,6 +653,9 @@
 "content.system.session_reset.self" = "You were unable to decrypt some of your messages but you solved the issue. This affected all conversations.";
 
 "content.system.unknown_message.body" = "Questo messaggio non può essere visualizzato. Potresti usare una versione non aggiornata di Wire.";
+
+// user removed from team
+"content.system.user_removed_from_team" = "This user is no longer available";
 
 "content.file.uploading" = "Caricamento…";
 "content.file.downloading" = "Download in corso…";
@@ -1219,6 +1226,10 @@
 "self.settings.account_details.log_out.alert.title" = "Logout";
 "self.settings.account_details.log_out.alert.message" = "La tua cronologia dei messaggi sarà cancellata da questo dispositivo.";
 "self.settings.account_details.log_out.alert.password" = "Password";
+"self.settings.account_details.log_out.erase_data.alert.title" = "Logout";
+"self.settings.account_details.log_out.erase_data.alert.message" = "Delete all your personal information and conversations on this device?";
+"self.settings.account_details.log_out.erase_data.alert.logoutAndClear" = "Log out and clear data";
+"self.settings.account_details.log_out.erase_data.alert.logoutAndKeep" = "Log out and keep data";
 
 // Settings - Personal information
 "self.settings.privacy_analytics_section.title" = "Segnalazioni di crash e dati di utilizzo";
@@ -1397,7 +1408,6 @@
 
 "self.settings.conversations.title" = "Cronologia";
 "self.settings.history_backup.title" = "Back up or Restore";
-"self.settings.history_backup.error.title" = "Errore";
 "self.settings.history_backup.set_email.title" = "Imposta un indirizzo email e la password.";
 "self.settings.history_backup.set_email.message" = "Hai bisogno di una email e una password per eseguire il backup delle conversazioni. Potrai eseguirlo dalla schermata Account delle impostazioni.";
 
