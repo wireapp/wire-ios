@@ -26,7 +26,6 @@ extension LegacyPersistedDataPatch {
 
     /// List of patches to apply
     static let allPatchesToApply = [
-        LegacyPersistedDataPatch(version: "198.0.0", block: ZMConversation.introduceParticipantRoles),
         LegacyPersistedDataPatch(version: "220.0.4", block: InvalidConnectionRemoval.removeInvalid),
         LegacyPersistedDataPatch(version: "234.0.0", block: TransferApplockKeychain.migrateKeychainItems),
         LegacyPersistedDataPatch(version: "234.1.1", block: InvalidConnectionRemoval.removeInvalid),

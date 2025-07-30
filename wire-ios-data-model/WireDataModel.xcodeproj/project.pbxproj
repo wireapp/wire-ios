@@ -78,7 +78,6 @@
 		0651D00423FC46A500411A22 /* ZMClientMessage+Confirmations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0651D00323FC46A500411A22 /* ZMClientMessage+Confirmations.swift */; };
 		0651D00623FC481B00411A22 /* ZMAssetClientMessage+Confirmations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0651D00523FC481B00411A22 /* ZMAssetClientMessage+Confirmations.swift */; };
 		0651D00823FC4FDD00411A22 /* GenericMessageTests+LegalHoldStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0651D00723FC4FDC00411A22 /* GenericMessageTests+LegalHoldStatus.swift */; };
-		065D7501239FAB1200275114 /* SelfUserParticipantMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 065D7500239FAB1200275114 /* SelfUserParticipantMigrationTests.swift */; };
 		0660FEBD2580E4A900F4C19F /* TransferApplockKeychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0660FEBC2580E4A900F4C19F /* TransferApplockKeychain.swift */; };
 		0663285E2428CEC3005BB3BE /* ZMClientMessage+Deletion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0663285D2428CEC3005BB3BE /* ZMClientMessage+Deletion.swift */; };
 		066328602428D01C005BB3BE /* ZMClientMessage+GenericMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0663285F2428D01C005BB3BE /* ZMClientMessage+GenericMessage.swift */; };
@@ -467,7 +466,6 @@
 		A995F05C23968D8500FAC3CF /* ParticipantRoleChangeInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = A995F05B23968D8500FAC3CF /* ParticipantRoleChangeInfo.swift */; };
 		A995F05E239690B300FAC3CF /* ParticipantRoleObserverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A995F05D239690B300FAC3CF /* ParticipantRoleObserverTests.swift */; };
 		A99B8A72268221A6006B4D29 /* ZMImageMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99B8A71268221A6006B4D29 /* ZMImageMessage.swift */; };
-		A9EEFEFA23A6D0CB0007828A /* RolesMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9EEFEF923A6D0CB0007828A /* RolesMigrationTests.swift */; };
 		A9FA524823A14E2B003AD4C6 /* RoleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9FA524723A14E2B003AD4C6 /* RoleTests.swift */; };
 		A9FA524A23A1598B003AD4C6 /* ActionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9FA524923A1598B003AD4C6 /* ActionTests.swift */; };
 		BF0D07FB1E4C7B7A00B934EB /* TextSearchQueryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0D07F91E4C7B1100B934EB /* TextSearchQueryTests.swift */; };
@@ -984,7 +982,6 @@
 		0651D00323FC46A500411A22 /* ZMClientMessage+Confirmations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMClientMessage+Confirmations.swift"; sourceTree = "<group>"; };
 		0651D00523FC481B00411A22 /* ZMAssetClientMessage+Confirmations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMAssetClientMessage+Confirmations.swift"; sourceTree = "<group>"; };
 		0651D00723FC4FDC00411A22 /* GenericMessageTests+LegalHoldStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GenericMessageTests+LegalHoldStatus.swift"; sourceTree = "<group>"; };
-		065D7500239FAB1200275114 /* SelfUserParticipantMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfUserParticipantMigrationTests.swift; sourceTree = "<group>"; };
 		0660FEBC2580E4A900F4C19F /* TransferApplockKeychain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransferApplockKeychain.swift; sourceTree = "<group>"; };
 		0663285D2428CEC3005BB3BE /* ZMClientMessage+Deletion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMClientMessage+Deletion.swift"; sourceTree = "<group>"; };
 		0663285F2428D01C005BB3BE /* ZMClientMessage+GenericMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMClientMessage+GenericMessage.swift"; sourceTree = "<group>"; };
@@ -1364,7 +1361,6 @@
 		A995F05B23968D8500FAC3CF /* ParticipantRoleChangeInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParticipantRoleChangeInfo.swift; sourceTree = "<group>"; };
 		A995F05D239690B300FAC3CF /* ParticipantRoleObserverTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParticipantRoleObserverTests.swift; sourceTree = "<group>"; };
 		A99B8A71268221A6006B4D29 /* ZMImageMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMImageMessage.swift; sourceTree = "<group>"; };
-		A9EEFEF923A6D0CB0007828A /* RolesMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RolesMigrationTests.swift; sourceTree = "<group>"; };
 		A9FA524723A14E2B003AD4C6 /* RoleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoleTests.swift; sourceTree = "<group>"; };
 		A9FA524923A1598B003AD4C6 /* ActionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionTests.swift; sourceTree = "<group>"; };
 		BF0D07F91E4C7B1100B934EB /* TextSearchQueryTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextSearchQueryTests.swift; sourceTree = "<group>"; };
@@ -2140,8 +2136,6 @@
 				54FB03AC1E41F6C2000E13DC /* LegacyPersistedDataPatchesTests.swift */,
 				163D01E12472E44000984999 /* InvalidConnectionRemovalTests.swift */,
 				0617001123E2FBC0005C262D /* GenericMessageTests+LinkMetaData.swift */,
-				065D7500239FAB1200275114 /* SelfUserParticipantMigrationTests.swift */,
-				A9EEFEF923A6D0CB0007828A /* RolesMigrationTests.swift */,
 				16626507217F4E0B00300F45 /* GenericMessageTests+Hashing.swift */,
 				871DD79E2084A316006B1C56 /* BatchDeleteTests.swift */,
 				54F84D001F995A1F00ABD7D5 /* DiskDatabaseTests.swift */,
@@ -4598,7 +4592,6 @@
 				16CDEBF72209897D00E74A41 /* ZMMessageTests+ShouldGenerateUnreadCount.swift in Sources */,
 				162294A5222038FA00A98679 /* CacheAssetTests.swift in Sources */,
 				543ABF5C1F34A19C00DBE28B /* DatabaseBaseTest.swift in Sources */,
-				A9EEFEFA23A6D0CB0007828A /* RolesMigrationTests.swift in Sources */,
 				069D07B82562671D00DBA592 /* FeatureTests.swift in Sources */,
 				A9128AD02398067E0056F591 /* ZMConversationTests+Participants.swift in Sources */,
 				E6E5044C2BC56EA0004948E7 /* EARServiceTests.swift in Sources */,
@@ -4765,7 +4758,6 @@
 				069BCC5E2B3094D000DF4EC2 /* E2eIServiceTests.swift in Sources */,
 				63370CF82431F5DE0072C37F /* BaseCompositeMessageTests.swift in Sources */,
 				546D3DE91CE5D24C00A6047F /* RichAssetFileTypeTests.swift in Sources */,
-				065D7501239FAB1200275114 /* SelfUserParticipantMigrationTests.swift in Sources */,
 				59BAE1102C3429EB00F8EEDC /* FilterConversationsUseCaseTests.swift in Sources */,
 				EF3510FA22CA07BB00115B97 /* ZMConversationTests+Transport.swift in Sources */,
 				591F8A072B8CB82400D562A6 /* IsSelfUserE2EICertifiedUseCaseTests.swift in Sources */,
