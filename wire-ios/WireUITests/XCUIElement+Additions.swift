@@ -20,20 +20,16 @@ import WireUtilities
 import XCTest
 
 extension XCUIElement {
+    enum KeyboardFocusError: Error {
+        case failedToFocusWithinTimeout(message: String)
+    }
 
     @discardableResult
-    func tapIfKeyboardNotFocused(timeout: TimeInterval = 3.0) -> XCUIElement {
-        let startTime = Date()
-        while true {
-            let hasKeyboardFocus = (value(forKey: "hasKeyboardFocus") as? Bool) ?? false
-            if hasKeyboardFocus {
-                break
-            }
+    func tapIfKeyboardNotFocused(timeout: TimeInterval = 3.0) throws -> XCUIElement {
+        while !(value(forKey: "hasKeyboardFocus") as? Bool ?? false) {
             tap()
-
-            if Date().timeIntervalSince(startTime) > timeout {
-                XCTFail("Failed to focus keyboard on element within \(timeout) seconds")
-                break
+            if Date() > Date().addingTimeInterval(timeout) {
+                throw KeyboardFocusError.failedToFocusWithinTimeout(message: "Failed to focus element within \(timeout) seconds")
             }
         }
         return self

@@ -40,8 +40,8 @@ class WelcomePage: PageModel {
         return try LoginPage()
     }
 
-    func typeEmailOrSSO(_ input: String) -> WelcomePage {
-        emailTextField.tapIfKeyboardNotFocused().typeText(input)
+    func typeEmailOrSSO(_ input: String) throws -> WelcomePage {
+        try emailTextField.tapIfKeyboardNotFocused().typeText(input)
         return self
     }
 }

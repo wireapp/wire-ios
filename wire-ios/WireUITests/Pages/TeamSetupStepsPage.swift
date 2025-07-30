@@ -46,8 +46,8 @@ class TeamSetupStepsPage: PageModel {
         return try TeamSetupStepsPage()
     }
 
-    func typeTeamNameAndContinue(_ input: String) -> TeamSetupStepsPage {
-        teamNameTextField.tapIfKeyboardNotFocused().typeText(input)
+    func typeTeamNameAndContinue(_ input: String) throws -> TeamSetupStepsPage {
+        try teamNameTextField.tapIfKeyboardNotFocused().typeText(input)
         continueButton.tap()
         return self
     }

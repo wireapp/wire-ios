@@ -34,7 +34,7 @@ class LogOutPage: PageModel {
 
     @discardableResult
     func enterPassword(_ password: String) throws -> WelcomePage {
-        passwordField.tapIfKeyboardNotFocused().typeText(password)
+        try passwordField.tapIfKeyboardNotFocused().typeText(password)
         okButton.tap()
         return try WelcomePage()
     }
