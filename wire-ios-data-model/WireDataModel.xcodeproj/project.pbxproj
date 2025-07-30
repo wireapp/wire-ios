@@ -139,8 +139,6 @@
 		163C92AA2630A80400F8DC14 /* NSManagedObjectContext+SelfUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163C92A92630A80400F8DC14 /* NSManagedObjectContext+SelfUser.swift */; };
 		163CE64E25ACE5DB0013C12D /* store2-89-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 163CE64D25ACE57B0013C12D /* store2-89-0.wiredatabase */; };
 		163CE6AF25BEB9680013C12D /* ZMMessageTests+SystemMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163CE6AE25BEB9680013C12D /* ZMMessageTests+SystemMessages.swift */; };
-		163D01E02472DE6200984999 /* InvalidConnectionRemoval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163D01DF2472DE6200984999 /* InvalidConnectionRemoval.swift */; };
-		163D01E22472E44000984999 /* InvalidConnectionRemovalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163D01E12472E44000984999 /* InvalidConnectionRemovalTests.swift */; };
 		1645ECC2243B643B007A82D6 /* ZMSearchUserTests+TeamUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1645ECC1243B643B007A82D6 /* ZMSearchUserTests+TeamUser.swift */; };
 		1645ECC4243B69A1007A82D6 /* UserTypeTests+Materialize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1645ECC3243B69A1007A82D6 /* UserTypeTests+Materialize.swift */; };
 		16460A44206515370096B616 /* NSManagedObjectContext+BackupImport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16460A43206515370096B616 /* NSManagedObjectContext+BackupImport.swift */; };
@@ -1041,8 +1039,6 @@
 		163C92A92630A80400F8DC14 /* NSManagedObjectContext+SelfUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+SelfUser.swift"; sourceTree = "<group>"; };
 		163CE64D25ACE57B0013C12D /* store2-89-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-89-0.wiredatabase"; sourceTree = "<group>"; };
 		163CE6AE25BEB9680013C12D /* ZMMessageTests+SystemMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMMessageTests+SystemMessages.swift"; sourceTree = "<group>"; };
-		163D01DF2472DE6200984999 /* InvalidConnectionRemoval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvalidConnectionRemoval.swift; sourceTree = "<group>"; };
-		163D01E12472E44000984999 /* InvalidConnectionRemovalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvalidConnectionRemovalTests.swift; sourceTree = "<group>"; };
 		1645ECC1243B643B007A82D6 /* ZMSearchUserTests+TeamUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMSearchUserTests+TeamUser.swift"; sourceTree = "<group>"; };
 		1645ECC3243B69A1007A82D6 /* UserTypeTests+Materialize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UserTypeTests+Materialize.swift"; path = "Tests/Source/Model/UserTypeTests+Materialize.swift"; sourceTree = SOURCE_ROOT; };
 		16460A43206515370096B616 /* NSManagedObjectContext+BackupImport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+BackupImport.swift"; sourceTree = "<group>"; };
@@ -2056,7 +2052,6 @@
 			children = (
 				EEC80B5A29B60F7200099727 /* Legacy */,
 				16827AE92732A3C20079405D /* InvalidDomainRemoval.swift */,
-				163D01DF2472DE6200984999 /* InvalidConnectionRemoval.swift */,
 				169315EE25AC4C8100709F15 /* MigrateSenderClient.swift */,
 				EE2BA00525CB3AA8001EB606 /* InvalidFeatureRemoval.swift */,
 			);
@@ -2129,7 +2124,6 @@
 			isa = PBXGroup;
 			children = (
 				54FB03AC1E41F6C2000E13DC /* LegacyPersistedDataPatchesTests.swift */,
-				163D01E12472E44000984999 /* InvalidConnectionRemovalTests.swift */,
 				0617001123E2FBC0005C262D /* GenericMessageTests+LinkMetaData.swift */,
 				16626507217F4E0B00300F45 /* GenericMessageTests+Hashing.swift */,
 				871DD79E2084A316006B1C56 /* BatchDeleteTests.swift */,
@@ -4390,7 +4384,6 @@
 				63370CC9242E3B990072C37F /* ZMMessage+Conversation.swift in Sources */,
 				63B1335729A503D100009D84 /* MLSActionsProvider.swift in Sources */,
 				EEC794F42A384421008E1A3B /* MLSDecryptionService.swift in Sources */,
-				163D01E02472DE6200984999 /* InvalidConnectionRemoval.swift in Sources */,
 				0158DF212C594B3600C7BFFD /* ZMEventModel.xcdatamodeld in Sources */,
 				5966D8362BD6AF1700305BBC /* UserPropertyNormalizationResult.swift in Sources */,
 				547E66491F7503A5008CB1FA /* ZMConversation+Notifications.swift in Sources */,
@@ -4532,7 +4525,6 @@
 				544E8C0F1E2F69EB00F9B8B8 /* ZMOTRMessage+SecurityDegradationTests.swift in Sources */,
 				F9B720041CB2C770001DB03F /* UserClientTests.swift in Sources */,
 				872A2E8A1FFD2FBF00900B22 /* ZMSearchUserPayloadParsingTests.swift in Sources */,
-				163D01E22472E44000984999 /* InvalidConnectionRemovalTests.swift in Sources */,
 				1672A5FE23434FA200380537 /* ZMConversationTests+Labels.swift in Sources */,
 				BF0D07FB1E4C7B7A00B934EB /* TextSearchQueryTests.swift in Sources */,
 				0189815529A66B0800B52510 /* SafeCoreCryptoTests.swift in Sources */,
