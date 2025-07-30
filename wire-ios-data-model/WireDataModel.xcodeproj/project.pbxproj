@@ -657,7 +657,6 @@
 		EEDA9C0E2510F3D5003A5B27 /* ZMConversation+EncryptionAtRest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEDA9C0D2510F3D5003A5B27 /* ZMConversation+EncryptionAtRest.swift */; };
 		EEDA9C152513A1DA003A5B27 /* ZMClientMessage+EncryptionAtRest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEDA9C132513A0A5003A5B27 /* ZMClientMessage+EncryptionAtRest.swift */; };
 		EEDB51DB255410D000F35A29 /* GenericMessageHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEDB51DA255410D000F35A29 /* GenericMessageHelperTests.swift */; };
-		EEDD426A28633B2800C9EBC4 /* ZMUser+Patches.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEDD426928633B2800C9EBC4 /* ZMUser+Patches.swift */; };
 		EEDE7DB728EC1618007DC6A3 /* MockMLSActionExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEDE7DB628EC1618007DC6A3 /* MockMLSActionExecutor.swift */; };
 		EEE186B2259CC7CD008707CA /* AppLockDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE186B1259CC7CC008707CA /* AppLockDelegate.swift */; };
 		EEE83B4A1FBB496B00FC0296 /* ZMMessageTimerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE83B491FBB496B00FC0296 /* ZMMessageTimerTests.swift */; };
@@ -1574,7 +1573,6 @@
 		EEDA9C0D2510F3D5003A5B27 /* ZMConversation+EncryptionAtRest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversation+EncryptionAtRest.swift"; sourceTree = "<group>"; };
 		EEDA9C132513A0A5003A5B27 /* ZMClientMessage+EncryptionAtRest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMClientMessage+EncryptionAtRest.swift"; sourceTree = "<group>"; };
 		EEDB51DA255410D000F35A29 /* GenericMessageHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericMessageHelperTests.swift; sourceTree = "<group>"; };
-		EEDD426928633B2800C9EBC4 /* ZMUser+Patches.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUser+Patches.swift"; sourceTree = "<group>"; };
 		EEDE7DB628EC1618007DC6A3 /* MockMLSActionExecutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockMLSActionExecutor.swift; sourceTree = "<group>"; };
 		EEE186B1259CC7CC008707CA /* AppLockDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockDelegate.swift; sourceTree = "<group>"; };
 		EEE83B491FBB496B00FC0296 /* ZMMessageTimerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMMessageTimerTests.swift; sourceTree = "<group>"; };
@@ -2970,7 +2968,6 @@
 				F9A706101CAEE01D00C2F5FE /* ZMUser.m */,
 				F18998821E7AC6D900E579A2 /* ZMUser.swift */,
 				EE7061292A72AB4600C9F351 /* ZMUser+SupportedProtocols.swift */,
-				EEDD426928633B2800C9EBC4 /* ZMUser+Patches.swift */,
 				F110503C2220439900F3EB62 /* ZMUser+RichProfile.swift */,
 				55C40BCD22B0316800EFD8BD /* ZMUser+LegalHoldRequest.swift */,
 				F14B7AFE2220302B00458624 /* ZMUser+Predicates.swift */,
@@ -4190,7 +4187,6 @@
 				544E8C111E2F76B400F9B8B8 /* NSManagedObjectContext+UserInfoMerge.swift in Sources */,
 				0649D1C524F6A542001DDC78 /* NSManagedObjectContext+ZMKeyValueStore.swift in Sources */,
 				63D9A19E282AA0050074C20C /* NSManagedObjectContext+Federation.swift in Sources */,
-				EEDD426A28633B2800C9EBC4 /* ZMUser+Patches.swift in Sources */,
 				EEBACDA725B9C2C6000210AC /* AppLockType.swift in Sources */,
 				5966D82E2BD6A33F00305BBC /* UserPropertyValidating.swift in Sources */,
 				EE7CF5E82B725EA1001DC3F9 /* ConversationPredicateFactory.swift in Sources */,
