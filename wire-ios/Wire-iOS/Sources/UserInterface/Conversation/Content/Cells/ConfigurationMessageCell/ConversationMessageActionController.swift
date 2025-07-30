@@ -21,7 +21,7 @@ import WireCommonComponents
 import WireDataModel
 import WireFoundation
 
-final class ConversationMessageActionController {
+public final class ConversationMessageActionController {
 
     enum Context: Int {
         case content

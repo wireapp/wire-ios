@@ -60,7 +60,7 @@ final class ConversationViewController: UIViewController {
 
     @objc
     func gotoBottom(_: Any?) {
-        contentViewController.tableView.scrollToBottom(animated: true)
+        contentViewController.scrollToBottomAnimated()
     }
 
     var conversation: ZMConversation {
@@ -77,7 +77,7 @@ final class ConversationViewController: UIViewController {
 
     private(set) var startCallController: ConversationCallController!
 
-    let contentViewController: ConversationContentViewController
+    var contentViewController: ConversationMessagesUI //ConversationContentViewController
     let inputBarController: ConversationInputBarViewController
 
     var collectionController: CollectionsViewController?
@@ -244,11 +244,11 @@ final class ConversationViewController: UIViewController {
         setupInputBarController()
         setupContentViewController()
 
-        contentViewController.tableView.pannableView = inputBarController.view
+        contentViewController.setPannableView(view: inputBarController.view)
 
         setupMediaBarViewController()
 
-        addToSelf(contentViewController)
+        addToSelf(contentViewController.viewController)
         addToSelf(inputBarController)
         addToSelf(conversationBarController)
 
@@ -369,8 +369,8 @@ final class ConversationViewController: UIViewController {
 
     private func setupContentViewController() {
         contentViewController.delegate = self
-        contentViewController.view.translatesAutoresizingMaskIntoConstraints = false
-        contentViewController.bottomMargin = 16
+        contentViewController.viewController.view.translatesAutoresizingMaskIntoConstraints = false
+        contentViewController.setBottomMargin(16)
         inputBarController.mentionsView = contentViewController.mentionsSearchResultsViewController
         contentViewController.mentionsSearchResultsViewController.delegate = inputBarController
     }

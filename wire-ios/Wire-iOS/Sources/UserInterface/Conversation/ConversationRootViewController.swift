@@ -134,7 +134,7 @@ final class ConversationRootViewController: UIViewController {
     }
 
     private var child: UIViewController? {
-        conversationViewController?.contentViewController
+        conversationViewController?.contentViewController.viewController
     }
 
     override var childForStatusBarStyle: UIViewController? {

@@ -19,7 +19,7 @@
 import UIKit
 import WireDataModel
 
-protocol ConversationContentViewControllerDelegate: AnyObject {
+public protocol ConversationContentViewControllerDelegate: AnyObject {
 
     func conversationContentViewController(
         _ contentViewController: ConversationContentViewController,

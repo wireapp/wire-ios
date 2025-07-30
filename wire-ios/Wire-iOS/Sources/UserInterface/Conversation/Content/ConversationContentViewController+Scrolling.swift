@@ -21,7 +21,7 @@ import WireDataModel
 
 extension ConversationContentViewController {
 
-    func scroll(to message: ZMConversationMessage?, completion: ((UIView) -> Void)? = .none) {
+    public func scroll(to message: ZMConversationMessage?, completion: ((UIView) -> Void)? = .none) {
         if let message {
 
             if message.hasBeenDeleted {
@@ -54,7 +54,7 @@ extension ConversationContentViewController {
     /// Scrolls the tableView to the bottom-most row.
     ///
     /// This method checks if the tableView is not already scrolled to the bottom.
-    func scrollToBottomIfNeeded() {
+    public func scrollToBottomIfNeeded() {
 
         guard !isScrolledToBottom else {
             return

@@ -25,7 +25,7 @@ private var lastPreviewURL: URL?
 extension ConversationContentViewController: UIViewControllerPreviewingDelegate {
 
     @available(iOS, introduced: 9.0, deprecated: 13.0, renamed: "UIContextMenuInteraction")
-    func previewingContext(
+    public func previewingContext(
         _ previewingContext: UIViewControllerPreviewing,
         viewControllerForLocation location: CGPoint
     ) -> UIViewController? {
@@ -72,7 +72,7 @@ extension ConversationContentViewController: UIViewControllerPreviewingDelegate 
     }
 
     @available(iOS, introduced: 9.0, deprecated: 13.0, renamed: "UIContextMenuInteraction")
-    func previewingContext(
+    public func previewingContext(
         _ previewingContext: UIViewControllerPreviewing,
         commit viewControllerToCommit: UIViewController
     ) {

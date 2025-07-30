@@ -64,7 +64,7 @@ private extension ZMConversationMessage {
 
 // MARK: - ReplyComposingView
 
-final class ReplyComposingView: UIView {
+public final class ReplyComposingView: UIView {
     // MARK: - Properties
 
     let message: ZMConversationMessage
@@ -170,7 +170,7 @@ final class ReplyComposingView: UIView {
 // MARK: - ReplyComposingView Extension
 
 extension ReplyComposingView: ZMMessageObserver {
-    func messageDidChange(_ changeInfo: MessageChangeInfo) {
+    public func messageDidChange(_ changeInfo: MessageChangeInfo) {
         if changeInfo.message.hasBeenDeleted {
             delegate?.composingViewDidCancel(composingView: self)
         }

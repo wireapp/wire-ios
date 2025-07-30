@@ -22,7 +22,7 @@ extension ConversationViewController {
     func updateOutgoingConnectionVisibility() {
 
         let outgoingConnection: Bool = conversation.relatedConnectionState == .sent
-        contentViewController.tableView.isScrollEnabled = !outgoingConnection
+        contentViewController.setScrollEnabled(!outgoingConnection)
 
         if outgoingConnection {
             if outgoingConnectionViewController != nil {
@@ -52,7 +52,7 @@ extension ConversationViewController {
     func createConstraints() {
         [
             conversationBarController.view,
-            contentViewController.view,
+            contentViewController.viewController.view,
             inputBarController.view
         ].forEach { $0?.translatesAutoresizingMaskIntoConstraints = false }
 
@@ -60,12 +60,12 @@ extension ConversationViewController {
             conversationBarController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             conversationBarController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             conversationBarController.view.topAnchor.constraint(equalTo: view.topAnchor),
-            contentViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            contentViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            contentViewController.view.topAnchor.constraint(equalTo: view.topAnchor)
+            contentViewController.viewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            contentViewController.viewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            contentViewController.viewController.view.topAnchor.constraint(equalTo: view.topAnchor)
         ])
 
-        contentViewController.view.bottomAnchor.constraint(equalTo: inputBarController.view.topAnchor).isActive = true
+        contentViewController.viewController.view.bottomAnchor.constraint(equalTo: inputBarController.view.topAnchor).isActive = true
         NSLayoutConstraint.activate([
             inputBarController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             inputBarController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),

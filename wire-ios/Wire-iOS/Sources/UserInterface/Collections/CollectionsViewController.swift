@@ -768,7 +768,7 @@ extension CollectionsViewController: UIGestureRecognizerDelegate {
 
 extension CollectionsViewController: MessageActionResponder {
 
-    func perform(action: MessageAction, for message: ZMConversationMessage, view: UIView) {
+    public func perform(action: MessageAction, for message: ZMConversationMessage, view: UIView) {
         perform(action, for: message, source: view)
     }
 }

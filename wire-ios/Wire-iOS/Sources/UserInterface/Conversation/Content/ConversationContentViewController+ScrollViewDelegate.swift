@@ -20,11 +20,11 @@ import UIKit
 
 extension ConversationContentViewController: UIScrollViewDelegate {
 
-    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+    public func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         removeHighlightsAndMenu()
     }
 
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         dataSource.didScroll(tableView: scrollView as! UITableView)
         updateScrollToBottomButtonVisibility()
     }
@@ -46,7 +46,7 @@ extension ConversationContentViewController: UIScrollViewDelegate {
         }
     }
 
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+    public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         dataSource.scrollViewDidEndDecelerating(scrollView)
     }
 }

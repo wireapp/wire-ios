@@ -20,7 +20,7 @@ import Foundation
 import WireSyncEngine
 
 extension ConversationContentViewController {
-    func updateTableViewHeaderView() {
+    public func updateTableViewHeaderView() {
         guard let userSession = ZMUserSession.shared(),
               dataSource.hasOlderMessagesToLoad == false ||
               conversation.conversationType == .connection else {

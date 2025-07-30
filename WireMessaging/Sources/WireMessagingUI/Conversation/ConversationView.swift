@@ -17,6 +17,7 @@
 //
 
 public import SwiftUI
+import Wire
 
 /// The main conversation view, displaying messages as chat bubbles
 public struct ConversationView: View {
@@ -28,6 +29,10 @@ public struct ConversationView: View {
             .multilineTextAlignment(.center)
             .padding()
     }
+}
+
+extension ConversationView: ConversationMessagesUI {
+    
 }
 
 public extension ConversationView {
