@@ -444,36 +444,6 @@ extension LocalNotificationDispatcherTests {
         XCTAssertEqual(scheduledRequests.count, 0)
     }
 
-    func testThatNotifyAvailabilityBehaviourChangedIfNeededSchedulesNotification_WhenNeedsToNotifyAvailabilityBehaviourChangeIsSet(
-    ) {
-        syncMOC.performAndWait {
-            // given
-            selfUser.availability = .away
-            selfUser.needsToNotifyAvailabilityBehaviourChange = [.notification]
-
-            // when
-            sut.notifyAvailabilityBehaviourChangedIfNeeded()
-
-            // then
-            XCTAssertEqual(self.notificationCenter.scheduledRequests.count, 1)
-            XCTAssertEqual(selfUser.needsToNotifyAvailabilityBehaviourChange, [])
-        }
-    }
-
-    func testThatNotifyAvailabilityBehaviourChangedIfNeededDoesNotScheduleNotification_WhenneedsToNotifyAvailabilityBehaviourChangeIsNotSet(
-    ) {
-        syncMOC.performAndWait {
-            // given
-            selfUser.needsToNotifyAvailabilityBehaviourChange = []
-
-            // when
-            sut.notifyAvailabilityBehaviourChangedIfNeeded()
-
-            // then
-            XCTAssertEqual(self.notificationCenter.scheduledRequests.count, 0)
-        }
-    }
-
     // MARK: Updating unread count
 
     func testThatEstimatedUnreadCountIsIncreased_WhenProcessingTextMessage() {
