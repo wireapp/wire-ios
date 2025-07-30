@@ -26,7 +26,7 @@ extension LegacyPersistedDataPatch {
 
     /// List of patches to apply
     static let allPatchesToApply = [
-        LegacyPersistedDataPatch(version: "297.0.2", block: UserClient.migrateAllSessionsClientIdentifiersV3)
-    ]
+        LegacyPersistedDataPatch
+    ]()
 
 }

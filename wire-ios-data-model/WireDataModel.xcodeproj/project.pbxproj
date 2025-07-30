@@ -265,7 +265,6 @@
 		54F6CEAB1CE2972200A1276D /* ZMAssetClientMessage+Download.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54F6CEAA1CE2972200A1276D /* ZMAssetClientMessage+Download.swift */; };
 		54F84D041F995B0700ABD7D5 /* DiskDatabaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54F84D001F995A1F00ABD7D5 /* DiskDatabaseTests.swift */; };
 		54FB03A11E41E273000E13DC /* LegacyPersistedDataPatches.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FB03A01E41E273000E13DC /* LegacyPersistedDataPatches.swift */; };
-		54FB03A31E41E64A000E13DC /* UserClient+Patches.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FB03A21E41E64A000E13DC /* UserClient+Patches.swift */; };
 		54FB03AA1E41F204000E13DC /* LegacyPersistedDataPatches+Directory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FB03A81E41F1B6000E13DC /* LegacyPersistedDataPatches+Directory.swift */; };
 		54FB03AD1E41F6C2000E13DC /* LegacyPersistedDataPatchesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FB03AC1E41F6C2000E13DC /* LegacyPersistedDataPatchesTests.swift */; };
 		54FB03AF1E41FC86000E13DC /* NSManagedObjectContext+Patches.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FB03AE1E41FC86000E13DC /* NSManagedObjectContext+Patches.swift */; };
@@ -1158,7 +1157,6 @@
 		54F6CEAA1CE2972200A1276D /* ZMAssetClientMessage+Download.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMAssetClientMessage+Download.swift"; sourceTree = "<group>"; };
 		54F84D001F995A1F00ABD7D5 /* DiskDatabaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiskDatabaseTests.swift; sourceTree = "<group>"; };
 		54FB03A01E41E273000E13DC /* LegacyPersistedDataPatches.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LegacyPersistedDataPatches.swift; sourceTree = "<group>"; };
-		54FB03A21E41E64A000E13DC /* UserClient+Patches.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UserClient+Patches.swift"; sourceTree = "<group>"; };
 		54FB03A81E41F1B6000E13DC /* LegacyPersistedDataPatches+Directory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "LegacyPersistedDataPatches+Directory.swift"; sourceTree = "<group>"; };
 		54FB03AC1E41F6C2000E13DC /* LegacyPersistedDataPatchesTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LegacyPersistedDataPatchesTests.swift; sourceTree = "<group>"; };
 		54FB03AE1E41FC86000E13DC /* NSManagedObjectContext+Patches.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+Patches.swift"; sourceTree = "<group>"; };
@@ -2994,7 +2992,6 @@
 				F9A706151CAEE01D00C2F5FE /* UserClient+Protobuf.swift */,
 				F9A706161CAEE01D00C2F5FE /* UserClient.swift */,
 				EE128A65286DE31200558550 /* UserClient+MLSPublicKeys.swift */,
-				54FB03A21E41E64A000E13DC /* UserClient+Patches.swift */,
 				16DF3B5C2285B13100D09365 /* UserClientType.swift */,
 				F9A706171CAEE01D00C2F5FE /* UserClientTypes.h */,
 				F9A706181CAEE01D00C2F5FE /* UserClientTypes.m */,
@@ -4331,7 +4328,6 @@
 				F9A706951CAEE01D00C2F5FE /* UserClient.swift in Sources */,
 				EEAAD75E252C711800E6A44E /* ZMManagedObject+ClassIdentifier.swift in Sources */,
 				064F8E08255E04800040371D /* Feature.swift in Sources */,
-				54FB03A31E41E64A000E13DC /* UserClient+Patches.swift in Sources */,
 				F9A706971CAEE01D00C2F5FE /* UserClientTypes.m in Sources */,
 				5E0FB215205176B400FD9867 /* Set+ServiceUser.swift in Sources */,
 				013887A62B9A5C6B00323DD0 /* PrimaryKeyGenerator.swift in Sources */,
