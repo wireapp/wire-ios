@@ -476,13 +476,6 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
 
             FeatureRepository(context: context).createDefaultConfigsIfNeeded()
         }
-
-        // this will be done async, not to block the UI thread, but
-        // enqueued on the syncMOC anyway, so it will execute before
-        // any other block of code has a chance to use it
-        context.performGroupedBlock {
-            context.applyPersistedDataPatchesForCurrentVersion()
-        }
     }
 
     func configureSearchContext(_ context: NSManagedObjectContext) {

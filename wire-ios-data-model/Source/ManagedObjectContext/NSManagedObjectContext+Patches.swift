@@ -19,14 +19,6 @@
 import Foundation
 
 public extension NSManagedObjectContext {
-
-    /// Applies the required patches for the current version of the persisted data
-    func applyPersistedDataPatchesForCurrentVersion() {
-        LegacyPersistedDataPatch.applyAll(in: self)
-    }
-}
-
-public extension NSManagedObjectContext {
     func batchDeleteEntities(named entityName: String, matching predicate: NSPredicate) throws {
         // will skip this during test unless on disk
         guard persistentStoreCoordinator!.persistentStores.first!.type != NSInMemoryStoreType else { return }
