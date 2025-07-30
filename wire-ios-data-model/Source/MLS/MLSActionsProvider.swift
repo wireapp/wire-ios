@@ -137,7 +137,7 @@ final class MLSActionsProvider: MLSActionsProviderProtocol {
         ciphersuite: MLSCipherSuite,
         excludedSelfClientID: String?,
         in context: NotificationContext
-    ) async throws -> [KeyPackage] {
+    ) async throws -> [WireDataModel.KeyPackage] {
         var action = ClaimMLSKeyPackageAction(
             domain: domain,
             userId: userID,

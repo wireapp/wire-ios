@@ -250,9 +250,9 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
 
         // Initialise MLS if we have previously registered an MLS client
         if let mlsClientID {
-            let cipherSuite = UInt16(await featureRespository.fetchMLS().config.defaultCipherSuite.rawValue)
+            let cipherSuite = await featureRespository.fetchMLS().config.defaultCipherSuite.cipherSuite
             try await coreCrypto.perform { try await $0.mlsInit(
-                clientId: Data(mlsClientID.rawValue.utf8),
+                clientId: .init(bytes: mlsClientID.data),
                 ciphersuites: [cipherSuite],
                 nbKeyPackage: nil
             ) }
@@ -319,7 +319,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         WireLogger.mls.info("generating public key")
         let ciphersuite = await featureRespository.fetchMLS().config.defaultCipherSuite
         let keyBytes = try await coreCrypto.clientPublicKey(
-            ciphersuite: UInt16(ciphersuite.rawValue),
+            ciphersuite: ciphersuite.cipherSuite,
             credentialType: credentialType
         )
         let keyData = Data(keyBytes)

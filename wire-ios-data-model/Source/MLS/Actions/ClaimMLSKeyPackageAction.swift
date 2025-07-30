@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireCoreCryptoUniffi
 
 public class ClaimMLSKeyPackageAction: EntityAction {
 
@@ -110,4 +111,13 @@ public struct KeyPackage: Codable, Equatable {
         self.keyPackageRef = keyPackageRef
         self.userID = userID
     }
+    
+    
+}
+
+extension KeyPackage {
+    var ccKeyPackage: WireCoreCryptoUniffi.KeyPackage {
+        .init(bytes: Data(keyPackage.utf8))
+    }
+
 }

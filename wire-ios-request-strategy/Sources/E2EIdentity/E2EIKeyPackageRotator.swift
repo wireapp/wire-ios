@@ -120,7 +120,7 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
         try await coreCrypto.perform { context in
             for groupID in mlsConversationsToMigrate {
                 do {
-                    try await context.e2eiRotate(conversationId: groupID.data)
+                    try await context.e2eiRotate(conversationId: groupID.conversationId)
                 } catch {
                     WireLogger.e2ei
                         .warn(
@@ -145,16 +145,15 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
         }
 
         try await coreCrypto.perform { coreCryptoContext in
-            let rawCiphersuite = UInt16(ciphersuite.rawValue)
+            let rawCiphersuite = ciphersuite.ccCipherSuite
             let newKeyPackages = try await coreCryptoContext.clientKeypackages(
                 ciphersuite: rawCiphersuite,
                 credentialType: .x509,
-                amountRequested: self.newKeyPackageCount
-            ).map { $0.base64String() }
+                amountRequested: self.newKeyPackageCount)
 
             var action = ReplaceSelfMLSKeyPackagesAction(
                 clientID: clientID,
-                keyPackages: newKeyPackages,
+                keyPackages: newKeyPackages.map { $0.copyBytes().base64EncodedString() },
                 ciphersuite: ciphersuite
             )
             try await action.perform(in: self.context.notificationContext)

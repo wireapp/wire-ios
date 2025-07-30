@@ -89,7 +89,7 @@ extension CreateMLSGroupUseCase {
         // won't be able to decrypt external remove proposals from the
         // owning domain.
         let externalSenders = try await coreCrypto.perform {
-            [try await $0.getExternalSender(conversationId: parentGroupID.data)]
+            [try await $0.getExternalSender(conversationId: parentGroupID.conversationId)]
         }
 
         return try await createGroup(
@@ -105,7 +105,7 @@ extension CreateMLSGroupUseCase {
         ciphersuite: MLSCipherSuite
     ) async throws -> MLSCipherSuite {
 
-        let externalSenders: [Data]
+        let externalSenders: [ExternalSenderKey]
 
         do {
             if let removalKeys {
@@ -126,20 +126,20 @@ extension CreateMLSGroupUseCase {
 
     private func createGroup(
         for groupID: MLSGroupID,
-        externalSenders: [Data],
+        externalSenders: [ExternalSenderKey],
         ciphersuite: MLSCipherSuite
     ) async throws -> MLSCipherSuite {
         do {
             let config = ConversationConfiguration(
-                ciphersuite: UInt16(ciphersuite.rawValue),
+                ciphersuite: ciphersuite.ccCipherSuite,
                 externalSenders: externalSenders,
                 custom: .init(keyRotationSpan: nil, wirePolicy: nil)
             )
 
             try await coreCrypto.perform {
-                let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: UInt16(ciphersuite.rawValue))
+                let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: ciphersuite.ccCipherSuite)
                 try await $0.createConversation(
-                    conversationId: groupID.data,
+                    conversationId: groupID.conversationId,
                     creatorCredentialType: e2eiIsEnabled ? .x509 : .basic,
                     config: config
                 )
