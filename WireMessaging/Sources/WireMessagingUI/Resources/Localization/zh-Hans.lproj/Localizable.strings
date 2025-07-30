@@ -69,3 +69,20 @@
 
 "conversation.creationForm.readReceipts.toggle" = "已读回执";
 "conversation.creationForm.readReceipts.description" = "当这启用时, 参与者可以看到他们在此对话中的消息何时已阅读。";
+
+// MARK: - Channel history
+"conversation.channelHistory.upgradeBanner.title" = "显示较早的消息吗？";
+"conversation.channelHistory.upgradeBanner.message" = "升级到付费计划，为频道成员提供完整的历史记录。";
+"conversation.channelHistory.upgradeBanner.button" = "立即升级";
+"conversation.channelHistory.upgradeBanner.closeMessage" = "关闭横幅";
+"conversation.channelHistory.picker.title" = "对话历史记录";
+"conversation.channelHistory.picker.off" = "关闭";
+"conversation.channelHistory.picker.oneDay" = "1 天";
+"conversation.channelHistory.picker.oneWeek" = "1 周";
+"conversation.channelHistory.picker.fourWeeks" = "4 周";
+"conversation.channelHistory.picker.unlimited" = "无限制";
+"conversation.channelHistory.picker.custom" = "自定义";
+"conversation.channelHistory.customPicker.days" = "天";
+"conversation.channelHistory.customPicker.weeks" = "周";
+"conversation.channelHistory.navigationTitle" = "对话历史记录";
+"conversation.creationForm.channelHistory.sectionFootnote" = "选择时间段。参与者加入此频道后，可以关注该时间段内的历史记录。";

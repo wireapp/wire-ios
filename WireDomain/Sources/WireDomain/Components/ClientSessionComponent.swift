@@ -122,7 +122,7 @@ public final class ClientSessionComponent {
         networkService: networkService
     ).makeAPI()
 
-    private lazy var conversationsAPI = ConversationsAPIBuilder(
+    public lazy var conversationsAPI = ConversationsAPIBuilder(
         apiService: apiService
     ).makeAPI(for: apiVersion)
 
@@ -649,7 +649,8 @@ public final class ClientSessionComponent {
 
     private lazy var mlsResetEventProcessor = ConversationMLSResetEventProcessor(
         mlsService: mlsService,
-        conversationLocalStore: conversationLocalStore
+        conversationLocalStore: conversationLocalStore,
+        featureRepository: FeatureRepository(context: syncContext)
     )
 
     private lazy var conversationEventProcessor = ConversationEventProcessor(
@@ -746,9 +747,23 @@ public final class ClientSessionComponent {
         isMLSEnabled: isMLSEnabled
     )
 
+    public lazy var initiateResetMLSConversationUseCase = InitiateResetMLSConversationUseCase(
+        api: mlsAPI,
+        mlsService: mlsService,
+        conversationLocalStore: conversationLocalStore
+    )
+
     public lazy var mlsTransport: any WireCoreCryptoUniffi.MlsTransport = MLSTransportImpl(
         mlsAPI: mlsAPI,
         conversationEventProcessor: conversationEventProcessor
     )
+
+}
+
+extension InitiateResetMLSConversationUseCase: ResetBrokenMLSConversationDelegate {
+
+    public func didCatchBrokenMLSConversation(groupID: MLSGroupID, epoch: Int64) async {
+        await invoke(groupID: groupID, epoch: epoch)
+    }
 
 }
