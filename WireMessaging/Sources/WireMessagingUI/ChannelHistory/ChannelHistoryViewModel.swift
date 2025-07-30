@@ -73,18 +73,25 @@ package class ChannelHistoryViewModel: ObservableObject {
         $channelHistoryOption
             .dropFirst()
             .removeDuplicates()
-            .sink { [self] channelHistoryOption in
-                isLoading = true
-                Task {
-                    do {
-                        try await useCase.updateHistoryDepth(
-                            channelHistoryOption: channelHistoryOption,
-                            channelHistoryOptionCustom: channelHistoryOptionCustom
-                        )
-                    } catch {}
-                    isLoading = false
-                }
-            }.store(in: &subscriptions)
+            .sink(receiveValue: updateHistoryDepth)
+            .store(in: &subscriptions)
 
+    }
+    
+    private func updateHistoryDepth(
+        channelHistoryOption: ChannelHistoryOption
+    ) {
+        Task {
+            isLoading = true
+            do {
+                try await useCase.updateHistoryDepth(
+                    channelHistoryOption: channelHistoryOption,
+                    channelHistoryOptionCustom: channelHistoryOptionCustom
+                )
+            } catch {
+                
+            }
+            isLoading = false
+        }
     }
 }
