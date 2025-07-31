@@ -79,19 +79,19 @@ extension ConversationListViewController {
         case .mentions:
             return EmptyPlaceholder(
                 headline: L10n.Localizable.ConversationList.EmptyState.Mentions.title,
-                subheadline: L10n.Localizable.ConversationList.EmptyState.Mentions.subtitle.attributedString,
+                subheadline: L10n.Localizable.ConversationList.EmptyState.Unread.subtitle.attributedString,
                 showArrow: false
             )
         case .replies:
             return EmptyPlaceholder(
                 headline: L10n.Localizable.ConversationList.EmptyState.Replies.title,
-                subheadline: L10n.Localizable.ConversationList.EmptyState.Replies.subtitle.attributedString,
+                subheadline: L10n.Localizable.ConversationList.EmptyState.Unread.subtitle.attributedString,
                 showArrow: false
             )
         case .drafts:
             return EmptyPlaceholder(
                 headline: L10n.Localizable.ConversationList.EmptyState.Drafts.title,
-                subheadline: L10n.Localizable.ConversationList.EmptyState.Drafts.subtitle.attributedString,
+                subheadline: L10n.Localizable.ConversationList.EmptyState.Unread.subtitle.attributedString,
                 showArrow: false
             )
         case .folder:

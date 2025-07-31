@@ -178,11 +178,8 @@
 "conversation_list.empty_state.unread.title" = "Keine ungelesenen Unterhaltungen";
 "conversation_list.empty_state.unread.subtitle" = "Alle Ihre Unterhaltungen sind auf dem neuesten Stand";
 "conversation_list.empty_state.mentions.title" = "Keine Unterhaltungen mit Erwähnungen";
-"conversation_list.empty_state.mentions.subtitle" = "Alle Ihre Unterhaltungen sind auf dem neuesten Stand";
 "conversation_list.empty_state.replies.title" = "Keine Unterhaltungen mit Antworten";
-"conversation_list.empty_state.replies.subtitle" = "Alle Ihre Unterhaltungen sind auf dem neuesten Stand";
 "conversation_list.empty_state.drafts.title" = "Keine Entwürfe";
-"conversation_list.empty_state.drafts.subtitle" = "Alle Ihre Unterhaltungen sind auf dem neuesten Stand";
 "conversation_list.empty_placeholder.oneonone.button" = "Mit Personen verbinden";
 
 "conversation_list.empty_placeholder.search.subheadline.phone" = "Es konnten keine Unterhaltungen gefunden werden.\n\nVerbinden Sie sich mit Personen oder erstellen Sie eine neue Gruppe:";
