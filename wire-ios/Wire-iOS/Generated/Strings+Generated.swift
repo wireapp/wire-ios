@@ -2084,6 +2084,10 @@ internal enum L10n {
         }
         /// You called
         internal static let youWantedToTalk = L10n.tr("Localizable", "content.system.you_wanted_to_talk", fallback: "You called")
+        internal enum Apps {
+          /// Apps have access to the content of this conversation
+          internal static let warning = L10n.tr("Localizable", "content.system.apps.warning", fallback: "Apps have access to the content of this conversation")
+        }
         internal enum BackendsStopFederating {
           /// The backends **%@** and **%@** stopped federating. [Learn more](%@)
           internal static func otherBackends(_ p1: Any, _ p2: Any, _ p3: Any) -> String {
@@ -2429,10 +2433,6 @@ internal enum L10n {
             /// You
             internal static let you = L10n.tr("Localizable", "content.system.renamed_conv.title.you", fallback: "You")
           }
-        }
-        internal enum Services {
-          /// Services have access to the content of this conversation
-          internal static let warning = L10n.tr("Localizable", "content.system.services.warning", fallback: "Services have access to the content of this conversation")
         }
         internal enum SessionReset {
           /// %@ was unable to decrypt some of your messages but has solved the issue. This affected all conversations you share together.
