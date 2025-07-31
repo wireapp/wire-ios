@@ -75,7 +75,7 @@ jobs:
 
           # abort if the pr already exists
           apt update && apt install -y gh git-lfs
-          git lfs install
+          git lfs install || git lfs update --force
           PR_EXISTS=$(gh pr list --base "$BASE_BRANCH" --head "$HEAD_BRANCH" --state open --json number --jq '.[0].number')
           if [ -n "$PR_EXISTS" ]; then
           echo "A PR already exists, aborting."
