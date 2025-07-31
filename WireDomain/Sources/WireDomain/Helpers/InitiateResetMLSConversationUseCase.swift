@@ -27,20 +27,27 @@ public protocol InitiateResetMLSConversationUseCaseProtocol {
 
 public class InitiateResetMLSConversationUseCase: InitiateResetMLSConversationUseCaseProtocol {
 
+    enum Failure: Error {
+        case noRefreshedConversationFound
+    }
+
     private let api: MLSAPI
     private let mlsService: MLSServiceInterface
     private let conversationLocalStore: ConversationLocalStoreProtocol
+    private let conversationRepository: ConversationRepositoryProtocol
     private let userDefaultsRepository: ResetMLSConversationUserDefaultsRepositoryProtocol
 
     public init(
         api: MLSAPI,
         mlsService: MLSServiceInterface,
         conversationLocalStore: ConversationLocalStoreProtocol,
+        conversationRepository: ConversationRepositoryProtocol,
         userDefaultsRepository: ResetMLSConversationUserDefaultsRepositoryProtocol
     ) {
         self.api = api
         self.mlsService = mlsService
         self.conversationLocalStore = conversationLocalStore
+        self.conversationRepository = conversationRepository
         self.userDefaultsRepository = userDefaultsRepository
     }
 
@@ -72,9 +79,24 @@ public class InitiateResetMLSConversationUseCase: InitiateResetMLSConversationUs
             // wipe group
             try await mlsService.wipeGroup(groupID)
 
+            try await conversationRepository
+                .pullConversation(
+                    id: qualifiedID.uuid,
+                    domain: qualifiedID.domain
+                )
+
+            guard let refreshedConversation = await conversationLocalStore.fetchConversation(
+                id: qualifiedID.uuid,
+                domain: qualifiedID.domain
+            ), let newGroupID = await conversationLocalStore.mlsConversationInfo(
+                conversation: refreshedConversation
+            )?.0 else {
+                throw Failure.noRefreshedConversationFound
+            }
+
             // re-create group and re-add all participants
-            let users = await conversationLocalStore.localParticipantsExcludingSelfAsMLSUsers(in: conversation)
-            _ = try await mlsService.establishGroup(for: groupID, with: users, removalKeys: nil)
+            let users = await conversationLocalStore.localParticipantsExcludingSelfAsMLSUsers(in: refreshedConversation)
+            _ = try await mlsService.establishGroup(for: newGroupID, with: users, removalKeys: nil)
 
             WireLogger.mls.info(
                 "Initiate reset broken MLS conversation use case finished",
@@ -95,18 +117,21 @@ public extension InitiateResetMLSConversationUseCase {
         apiService: APIServiceProtocol,
         apiVersion: WireNetwork.APIVersion,
         mlsService: MLSServiceInterface,
+        conversationRepository: ConversationRepositoryProtocol,
         context: NSManagedObjectContext,
         userID: UUID
     ) -> InitiateResetMLSConversationUseCase {
-        InitiateResetMLSConversationUseCase(
+        let conversationLocalStore = ConversationLocalStore(
+            context: context,
+            mlsService: mlsService,
+            messageLocalStore: MessageLocalStore(context: context)
+        )
+        return InitiateResetMLSConversationUseCase(
             api: MLSAPIBuilder(apiService: apiService)
                 .makeAPI(for: apiVersion),
             mlsService: mlsService,
-            conversationLocalStore: ConversationLocalStore(
-                context: context,
-                mlsService: mlsService,
-                messageLocalStore: MessageLocalStore(context: context)
-            ),
+            conversationLocalStore: conversationLocalStore,
+            conversationRepository: conversationRepository,
             userDefaultsRepository: ResetMLSConversationUserDefaultsRepository(
                 userID: userID
             )

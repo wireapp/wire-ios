@@ -423,7 +423,7 @@ public final class ClientSessionComponent {
         conversationLabelsLocalStore: conversationLabelsLocalStore
     )
 
-    private lazy var conversationRepository = ConversationRepository(
+    public lazy var conversationRepository = ConversationRepository(
         conversationsAPI: conversationsAPI,
         conversationsLocalStore: conversationLocalStore,
         userLocalStore: userLocalStore,
@@ -756,6 +756,7 @@ public final class ClientSessionComponent {
         api: mlsAPI,
         mlsService: mlsService,
         conversationLocalStore: conversationLocalStore,
+        conversationRepository: conversationRepository,
         userDefaultsRepository: resetMLSConversationUserDefaultsRepository
     )
 
