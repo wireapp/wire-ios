@@ -43,7 +43,8 @@ final class ProcessNotificationRequestStep: Component<ProcessNotificationRequest
         try await verifyUserStep(
             userID: payload.userID,
             eventID: payload.eventID
-        ).verifyUserSession()
+        )
+        .verifyUserSession()
     }
 
     func verifyUserStep(
