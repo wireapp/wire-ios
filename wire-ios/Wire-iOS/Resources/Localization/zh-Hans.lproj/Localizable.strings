@@ -182,13 +182,10 @@
 "conversation_list.empty_placeholder.search.button.ipad" = "开始新对话";
 "conversation_list.empty_placeholder.search.connect_button" = "与人联系";
 "conversation_list.empty_state.unread.title" = "没有未读对话";
-"conversation_list.empty_state.unread.subtitle" = "您的所有对话都是最新的";
 "conversation_list.empty_state.mentions.title" = "没有提及";
-"conversation_list.empty_state.mentions.subtitle" = "您的所有对话都是最新的";
 "conversation_list.empty_state.replies.title" = "没有回复";
-"conversation_list.empty_state.replies.subtitle" = "您的所有对话都是最新的";
 "conversation_list.empty_state.drafts.title" = "没有草稿";
-"conversation_list.empty_state.drafts.subtitle" = "您的所有对话都是最新的";
+"conversation_list.empty_state.up_to_date.subtitle" = "All your conversations are up to date";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "在联系人中";
