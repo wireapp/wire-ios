@@ -26,7 +26,6 @@
 #import "ZMSyncStrategy+Internal.h"
 #import "ZMSyncStrategy+ManagedObjectChanges.h"
 #import "WireSyncEngineLogs.h"
-#import "ZMHotFix.h"
 #import <WireSyncEngine/WireSyncEngine-Swift.h>
 
 @interface ZMSyncStrategy ()
