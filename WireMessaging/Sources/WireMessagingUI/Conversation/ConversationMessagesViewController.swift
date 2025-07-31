@@ -18,26 +18,25 @@
 
 public import SwiftUI
 
-/// The main conversation view, displaying messages as chat bubbles
-public struct ConversationView: View {
-    public init() {}
-
-    public var body: some View {
-        let text = "The new conversation view for messages displayed as chat bubbles."
-        Text(text)
-            .multilineTextAlignment(.center)
-            .padding()
+public final class ConversationMessagesViewController: UIViewController {
+    public override func viewDidLoad() {
+        super.viewDidLoad()
+        let label = UILabel()
+        label.text = "The new conversation view \nfor messages displayed \nas chat bubbles."
+        label.numberOfLines = 0
+        label.sizeToFit()
+        view.addSubview(label)
     }
 }
 
-public extension ConversationView {
-    var viewController: UIViewController {
-        let viewController = UIHostingController(rootView: Self())
-        viewController.view.backgroundColor = .clear
-        return viewController
+private struct ConversationMessagesViewControllerPreview: UIViewControllerRepresentable {
+    func makeUIViewController(context: Context) -> ConversationMessagesViewController {
+        ConversationMessagesViewController()
     }
+    
+    func updateUIViewController(_ uiViewController: ConversationMessagesViewController, context: Context) {}
 }
 
 #Preview {
-    ConversationView()
+    ConversationMessagesViewControllerPreview()
 }
