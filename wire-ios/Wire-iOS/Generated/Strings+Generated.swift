@@ -2998,10 +2998,12 @@ internal enum L10n {
           internal static let title = L10n.tr("Localizable", "conversation_list.empty_state.replies.title", fallback: "No replies")
         }
         internal enum Unread {
-          /// All your conversations are up to date
-          internal static let subtitle = L10n.tr("Localizable", "conversation_list.empty_state.unread.subtitle", fallback: "All your conversations are up to date")
           /// No unread conversations
           internal static let title = L10n.tr("Localizable", "conversation_list.empty_state.unread.title", fallback: "No unread conversations")
+        }
+        internal enum UpToDate {
+          /// All your conversations are up to date
+          internal static let subtitle = L10n.tr("Localizable", "conversation_list.empty_state.up_to_date.subtitle", fallback: "All your conversations are up to date")
         }
       }
       internal enum Filter {

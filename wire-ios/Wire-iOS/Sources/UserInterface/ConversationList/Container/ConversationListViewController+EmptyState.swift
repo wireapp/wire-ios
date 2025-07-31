@@ -73,25 +73,25 @@ extension ConversationListViewController {
         case .unread:
             return EmptyPlaceholder(
                 headline: L10n.Localizable.ConversationList.EmptyState.Unread.title,
-                subheadline: L10n.Localizable.ConversationList.EmptyState.Unread.subtitle.attributedString,
+                subheadline: L10n.Localizable.ConversationList.EmptyState.UpToDate.subtitle.attributedString,
                 showArrow: false
             )
         case .mentions:
             return EmptyPlaceholder(
                 headline: L10n.Localizable.ConversationList.EmptyState.Mentions.title,
-                subheadline: L10n.Localizable.ConversationList.EmptyState.Unread.subtitle.attributedString,
+                subheadline: L10n.Localizable.ConversationList.EmptyState.UpToDate.subtitle.attributedString,
                 showArrow: false
             )
         case .replies:
             return EmptyPlaceholder(
                 headline: L10n.Localizable.ConversationList.EmptyState.Replies.title,
-                subheadline: L10n.Localizable.ConversationList.EmptyState.Unread.subtitle.attributedString,
+                subheadline: L10n.Localizable.ConversationList.EmptyState.UpToDate.subtitle.attributedString,
                 showArrow: false
             )
         case .drafts:
             return EmptyPlaceholder(
                 headline: L10n.Localizable.ConversationList.EmptyState.Drafts.title,
-                subheadline: L10n.Localizable.ConversationList.EmptyState.Unread.subtitle.attributedString,
+                subheadline: L10n.Localizable.ConversationList.EmptyState.UpToDate.subtitle.attributedString,
                 showArrow: false
             )
         case .folder:
