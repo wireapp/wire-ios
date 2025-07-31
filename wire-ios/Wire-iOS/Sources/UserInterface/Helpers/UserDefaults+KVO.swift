@@ -16,12 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-"sidebar.settings.description" = "Ihre Einstellungen öffnen";
-"sidebar.support.description" = "Support öffnen";
-"sidebar.conversation_filter.oneOnOneConversations.description" = "Eins-zu-Eins Unterhaltungen";
-"sidebar.conversation_filter.unread.description" = "Ungelesene Unterhaltungen";
-"sidebar.conversation_filter.mentions.description" = "Unterhaltungen mit Erwähnung";
-"sidebar.conversation_filter.replied.description" = "Unterhaltungen mit Antworten";
-"sidebar.conversation_filter.drafts.description" = "Unterhaltungen mit Entwürfen";
-"sidebar.name.description" = "Profilname";
-"sidebar.handle.description" = "Benutzername";
+import Foundation
+
+extension UserDefaults {
+    /// KVO-compatible property for observing the showUnreadConversationsFilter developer flag
+    @objc dynamic var showUnreadConversationsFilter: Bool {
+        get {
+            bool(forKey: "showUnreadConversationsFilter")
+        }
+        set {
+            set(newValue, forKey: "showUnreadConversationsFilter")
+        }
+    }
+}

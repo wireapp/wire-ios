@@ -784,7 +784,12 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
 
     func conversationInputBarViewControllerDidComposeDraft(message: DraftMessage) {
         userSession.enqueue {
-            self.conversation.draftMessage = message
+            // Clear draft if text is empty, otherwise save it
+            if message.text.isEmpty {
+                self.conversation.draftMessage = nil
+            } else {
+                self.conversation.draftMessage = message
+            }
         }
     }
 
