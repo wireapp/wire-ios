@@ -1175,8 +1175,6 @@ internal enum L10n {
   internal enum Localizable {
     /// Connection Request
     internal static let connectionRequestPendingTitle = L10n.tr("Localizable", "connection_request_pending_title", fallback: "Connection Request")
-    /// todo
-    internal static let todo = L10n.tr("Localizable", "todo", fallback: "todo")
     internal enum About {
       internal enum Copyright {
         /// © Wire Swiss GmbH
@@ -1251,6 +1249,20 @@ internal enum L10n {
       internal enum UnlockButton {
         /// Unlock
         internal static let title = L10n.tr("Localizable", "appLockModule.unlockButton.title", fallback: "Unlock")
+      }
+    }
+    internal enum AppsOptions {
+      internal enum AllowApps {
+        /// Open this conversation to apps.
+        internal static let subtitle = L10n.tr("Localizable", "apps_options.allow_apps.subtitle", fallback: "Open this conversation to apps.")
+        /// Allow apps
+        internal static let title = L10n.tr("Localizable", "apps_options.allow_apps.title", fallback: "Allow apps")
+      }
+      internal enum RemoveApps {
+        /// Remove
+        internal static let action = L10n.tr("Localizable", "apps_options.remove_apps.action", fallback: "Remove")
+        /// Current apps will be removed from the conversation. New apps will not be allowed.
+        internal static let message = L10n.tr("Localizable", "apps_options.remove_apps.message", fallback: "Current apps will be removed from the conversation. New apps will not be allowed.")
       }
     }
     internal enum ArchivedList {
@@ -6006,20 +6018,6 @@ internal enum L10n {
     internal enum SendInvitationNoEmail {
       /// I’m on Wire. Visit get.wire.com to connect with me.
       internal static let text = L10n.tr("Localizable", "send_invitation_no_email.text", fallback: "I’m on Wire. Visit get.wire.com to connect with me.")
-    }
-    internal enum ServicesOptions {
-      internal enum AllowServices {
-        /// Open this conversation to services.
-        internal static let subtitle = L10n.tr("Localizable", "services_options.allow_services.subtitle", fallback: "Open this conversation to services.")
-        /// Allow services
-        internal static let title = L10n.tr("Localizable", "services_options.allow_services.title", fallback: "Allow services")
-      }
-      internal enum RemoveServices {
-        /// Remove
-        internal static let action = L10n.tr("Localizable", "services_options.remove_services.action", fallback: "Remove")
-        /// Current services will be removed from the conversation. New services will not be allowed.
-        internal static let message = L10n.tr("Localizable", "services_options.remove_services.message", fallback: "Current services will be removed from the conversation. New services will not be allowed.")
-      }
     }
     internal enum ShareExtension {
       internal enum Voiceover {
