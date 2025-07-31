@@ -35,7 +35,7 @@ final class AccountManagerTests {
         )
         .first!
         .appendingPathComponent("AccountManagerTests")
-        url = root.appendingPathComponent("Accounts")
+        self.url = root.appendingPathComponent("Accounts")
     }
 
     deinit {
