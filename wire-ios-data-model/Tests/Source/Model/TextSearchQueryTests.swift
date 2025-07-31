@@ -16,7 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireTesting
+
 @testable import WireDataModel
 
 private class MockTextSearchQueryDelegate: TextSearchQueryDelegate {
@@ -546,7 +548,7 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
                 "www.example.com/original",
                 "www.example.com/permanent"
             )
-            let image = WireProtos.Asset(
+            let image = GenericMessageProtocol.Asset(
                 withUploadedOTRKey: Data.secureRandomData(ofLength: 16),
                 sha256: Data.secureRandomData(ofLength: 16)
             )

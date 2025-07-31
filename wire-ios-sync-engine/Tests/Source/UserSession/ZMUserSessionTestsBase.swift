@@ -19,9 +19,11 @@
 import Combine
 import WireDataModelSupport
 import WireDomain
+import WireLoggingSupport
 import WireNetwork
 import WireRequestStrategySupport
 import WireTransportSupport
+
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
 @testable import WireTransport
@@ -111,6 +113,7 @@ class ZMUserSessionTestsBase: MessagingTest {
             continuation.finish()
         }
         mockMLSService.setSyncDelegate_MockMethod = { _ in }
+        mockMLSService.setResetBrokenMLSConversationDelegate_MockMethod = { _ in }
 
         mockRecurringActionService = MockRecurringActionServiceInterface()
         mockRecurringActionService.registerAction_MockMethod = { _ in }
@@ -175,7 +178,7 @@ class ZMUserSessionTestsBase: MessagingTest {
             userID: coreDataStack.account.userIdentifier,
             storage: UserDefaults.temporary()
         )
-        let logFilesProvider = MockLogFilesProviding()
+        let logFilesProvider = LogFilesProvidingMock()
 
         var builder = ZMUserSessionBuilder()
         builder.withAllDependencies(
@@ -197,6 +200,7 @@ class ZMUserSessionTestsBase: MessagingTest {
             proteusToMLSMigrationCoordinator: MockProteusToMLSMigrationCoordinating(),
             recurringActionService: mockRecurringActionService,
             sharedUserDefaults: sharedUserDefaults,
+            sharedContainerURL: URL(string: "file:///tmp/sharedContainerURL")!,
             transportSession: transportSession,
             userId: coreDataStack.account.userIdentifier,
             minTLSVersion: nil,

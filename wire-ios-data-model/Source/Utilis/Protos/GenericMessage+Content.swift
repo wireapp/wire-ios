@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 // MARK: - GenericMessage
 
@@ -30,11 +31,11 @@ public extension GenericMessage {
     }
 
     var hasReaction: Bool {
-        messageData is WireProtos.Reaction
+        messageData is GenericMessageProtocol.Reaction
     }
 
     var hasAsset: Bool {
-        messageData is WireProtos.Asset
+        messageData is GenericMessageProtocol.Asset
     }
 
     var hasClientAction: Bool {
@@ -58,7 +59,7 @@ public extension GenericMessage {
     }
 
     var hasAvailability: Bool {
-        messageData is WireProtos.Availability
+        messageData is GenericMessageProtocol.Availability
     }
 
     var hasEdited: Bool {
@@ -90,7 +91,7 @@ public extension GenericMessage {
 
 public extension Ephemeral {
     var hasAsset: Bool {
-        messageData is WireProtos.Asset
+        messageData is GenericMessageProtocol.Asset
     }
 
     var hasKnock: Bool {

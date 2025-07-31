@@ -33,10 +33,13 @@ public enum DeveloperFlag: String, CaseIterable {
     case forceCRLExpiryAfterOneMinute
     case useWireAuthentication
     case wireCells
+    case wireCellsManualAuthentication
     case consumableNotifications
+    case disablePushChannelBatching
     case multibackend
     case newRegistration
     case showUnreadConversationsFilter
+    case channelsHistory
 
     public var description: String {
         switch self {
@@ -73,8 +76,14 @@ public enum DeveloperFlag: String, CaseIterable {
         case .wireCells:
             "Use the wire cells feature"
 
+        case .wireCellsManualAuthentication:
+            "Use manual authentication for the wire cells feature"
+
         case .consumableNotifications:
             "Turn on to enable new sync with consumable notifications"
+
+        case .disablePushChannelBatching:
+            "Turn on to disable batching while app is live"
 
         case .multibackend:
             "Turn on to be able to log in with accounts from multiple backends"
@@ -84,6 +93,8 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .showUnreadConversationsFilter:
             "Turn on to show the new conversation filter options"
+        case .channelsHistory:
+            "Turn on to enable channels history"
         }
     }
 

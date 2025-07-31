@@ -139,7 +139,7 @@ enum DebugAlert {
             activityViewController.configurePopoverPresentationController(using: popoverPresentationConfiguration)
             activityViewController.completionWithItemsHandler = { _, _, _, _ in
                 do {
-                    try logFilesProvider.clearLogsDirectory()
+                    try logFilesProvider.clearLogsDirectory(fileManager: .default)
                 } catch {
                     WireLogger.system.warn("Unable to clear temporary directory: \(error)")
                 }

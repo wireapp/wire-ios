@@ -17,9 +17,11 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireDataModel
 import WireTesting
 import WireTransport
+
 @testable import WireRequestStrategy
 
 private let testDataURL = Bundle(for: AssetV3PreviewDownloadRequestStrategyTests.self).url(
@@ -80,7 +82,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
             UUID.create().transportString()
         )
         var uploaded = GenericMessage(
-            content: WireProtos.Asset(withUploadedOTRKey: otrKey, sha256: sha),
+            content: GenericMessageProtocol.Asset(withUploadedOTRKey: otrKey, sha256: sha),
             nonce: message.nonce!,
             expiresAfter: conversation.activeMessageDestructionTimeoutValue
         )
@@ -109,19 +111,19 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
             UUID.create().transportString()
         )
 
-        let remote = WireProtos.Asset.RemoteData(
+        let remote = GenericMessageProtocol.Asset.RemoteData(
             withOTRKey: otr,
             sha256: sha,
             assetId: assetId,
             assetToken: token,
             assetDomain: domain
         )
-        let preview = WireProtos.Asset.Preview.with {
+        let preview = GenericMessageProtocol.Asset.Preview.with {
             $0.size = 512
             $0.mimeType = "image/jpg"
             $0.remote = remote
         }
-        let asset = WireProtos.Asset(original: nil, preview: preview)
+        let asset = GenericMessageProtocol.Asset(original: nil, preview: preview)
 
         let previewMeta = (otr, sha, assetId, token, domain)
         return (GenericMessage(content: asset, nonce: nonce), previewMeta)

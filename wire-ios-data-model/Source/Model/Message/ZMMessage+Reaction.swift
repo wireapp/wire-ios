@@ -17,11 +17,12 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 public extension ZMMessage {
 
     static func add(
-        reaction: WireProtos.Reaction,
+        reaction: GenericMessageProtocol.Reaction,
         senderID: UUID,
         conversation: ZMConversation,
         creationDate: Date?,

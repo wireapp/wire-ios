@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 /// Container of information needed to encrypt a message
 struct MessageInfo {

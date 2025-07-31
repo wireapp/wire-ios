@@ -56,28 +56,11 @@ final class FeatureConfigLocalStore: FeatureConfigLocalStoreProtocol {
         }
     }
 
-    public func storeFeature(
-        needsNotifyUser: Bool,
-        feature: Feature
-    ) async {
-        await context.perform {
-            feature.needsToNotifyUser = needsNotifyUser
-        }
-    }
-
     public func featureConfig(
         feature: Feature
     ) async -> (status: Feature.Status, config: Data?) {
         await context.perform {
             (feature.status, feature.config)
-        }
-    }
-
-    func featureNeedsNotifyUser(
-        feature: Feature
-    ) async -> Bool {
-        await context.perform {
-            feature.needsToNotifyUser
         }
     }
 

@@ -39,7 +39,6 @@ final class ConversationListViewController: UIViewController {
     let folderPickerViewControllerBuilder: FolderPickerViewControllerBuilder
     weak var zClientViewController: ZClientViewController?
 
-    private var viewDidAppearCalled = false
     private static let contentControllerBottomInset: CGFloat = 16
     private var userDefaultsObservation: NSKeyValueObservation?
 
@@ -257,12 +256,6 @@ final class ConversationListViewController: UIViewController {
         zClientViewController?.notifyUserOfDisabledAppLockIfNeeded()
 
         viewModel.updateE2EICertifiedStatus()
-
-        if !viewDidAppearCalled {
-            viewDidAppearCalled = true
-
-            zClientViewController?.showAvailabilityBehaviourChangeAlertIfNeeded()
-        }
 
         navigationItem.hidesSearchBarWhenScrolling = true
     }

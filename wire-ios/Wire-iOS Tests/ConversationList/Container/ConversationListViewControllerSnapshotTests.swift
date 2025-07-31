@@ -75,7 +75,8 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
             account: coreDataStack.account,
             selfProfileViewsMonitor: SelfProfileViewsMonitorImplementation(),
             userSession: userSession,
-            trackingManager: nil
+            trackingManager: nil,
+            wireCellsFactory: MockWireCellsFactoryProtocol.makeDefault()
         )
         sut = .init(
             account: coreDataStack.account,

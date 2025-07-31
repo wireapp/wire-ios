@@ -16,21 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireCellsAPI
+import WireCellsBindings
 import WireDataModel
-import WireSyncEngine
+import WireNetwork
+@preconcurrency import WireSyncEngine
+import WireTransport
 
 struct ZClientControllerBuilder {
 
     private(set) var account: Account
     private(set) var userSession: UserSession
     private(set) var trackingManager: TrackingManager?
+    let environment: WireTransport.BackendEnvironment
 
     func build(router: AuthenticatedRouterProtocol) -> ZClientViewController {
         let viewController = ZClientViewController(
             account: account,
             selfProfileViewsMonitor: SelfProfileViewsMonitorImplementation(),
             userSession: userSession,
-            trackingManager: trackingManager
+            trackingManager: trackingManager,
+            wireCellsFactory: buildWireCellsFactory()
         )
         viewController.router = router
         return viewController
@@ -38,5 +44,50 @@ struct ZClientControllerBuilder {
 
     func callAsFunction(router: AuthenticatedRouterProtocol) -> ZClientViewController {
         build(router: router)
+    }
+
+    private func buildWireCellsFactory() -> any WireCellsFactoryProtocol {
+        if DeveloperFlag.wireCellsManualAuthentication.isOn {
+            WireCellsFactory(
+                serverURL: URL(string: "https://service.zeta.pydiocells.com")!,
+                accessToken: ManualTokenProvider()
+            )
+        } else {
+            WireCellsFactory(
+                serverURL: environment.backendURL,
+                accessToken: DefaultAccessTokenProvider(userSession: userSession)
+            )
+        }
+    }
+}
+
+private struct DefaultAccessTokenProvider: AccessTokenProvider {
+
+    enum Error: Swift.Error {
+        case noAuthenticationManager
+    }
+
+    let userSession: UserSession
+
+    func accessToken() async throws -> WireCellsAccessToken {
+        guard let authManager = userSession.clientSessionComponent?.authenticationManager else {
+            throw Error.noAuthenticationManager
+        }
+
+        let token = try await authManager.getValidAccessToken()
+        return WireCellsAccessToken(
+            token: token.token,
+            expirationDate: token.expirationDate
+        )
+    }
+}
+
+private struct ManualTokenProvider: AccessTokenProvider {
+
+    func accessToken() async throws -> WireCellsAccessToken {
+        WireCellsAccessToken(
+            token: UserDefaults.standard.string(forKey: "ZMWireCellsAccessToken") ?? "unknown",
+            expirationDate: Date.distantFuture
+        )
     }
 }

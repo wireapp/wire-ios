@@ -56,6 +56,7 @@ public final class ClientSessionComponent {
     private let isMLSEnabled: Bool
 
     private let cookieStorage: any CookieStorageProtocol
+    private let sharedContainerURL: URL?
     private let sharedUserDefaults: UserDefaults
     private let syncContext: NSManagedObjectContext
     private let eventContext: NSManagedObjectContext
@@ -76,6 +77,7 @@ public final class ClientSessionComponent {
         isFederationEnabled: Bool,
         isMLSEnabled: Bool,
         cookieStorage: any CookieStorageProtocol,
+        sharedContainerURL: URL?,
         sharedUserDefaults: UserDefaults,
         syncContext: NSManagedObjectContext,
         eventContext: NSManagedObjectContext,
@@ -91,6 +93,7 @@ public final class ClientSessionComponent {
         self.networkService = networkService
         self.pushChannelNetworkService = pushChannelNetworkService
         self.apiVersion = apiVersion
+        self.sharedContainerURL = sharedContainerURL
         self.sharedUserDefaults = sharedUserDefaults
         self.syncContext = syncContext
         self.eventContext = eventContext
@@ -104,7 +107,7 @@ public final class ClientSessionComponent {
         self.completionHandlers = completionHandlers
     }
 
-    private lazy var authenticationManager = AuthenticationManager(
+    public private(set) lazy var authenticationManager = AuthenticationManager(
         clientID: selfClientID,
         cookieStorage: cookieStorage,
         networkService: networkService,
@@ -122,7 +125,7 @@ public final class ClientSessionComponent {
         networkService: networkService
     ).makeAPI()
 
-    private lazy var conversationsAPI = ConversationsAPIBuilder(
+    public lazy var conversationsAPI = ConversationsAPIBuilder(
         apiService: apiService
     ).makeAPI(for: apiVersion)
 
@@ -389,19 +392,24 @@ public final class ClientSessionComponent {
         mlsGroupRepairAgent: mlsGroupRepairAgent
     )
 
-    public lazy var incrementalSyncV2 = IncrementalSyncV2(
-        selfClientID: selfClientID,
-        pullServerTimeSync: pullServerTimeSync,
-        pushChannelAPI: pushChannelV2API,
-        decryptor: updateEventDecryptor,
-        updateEventsStore: updateEventsLocalStore,
-        messageStore: messageLocalStore,
-        processor: updateEventProcessor,
-        databaseSaver: databaseSaver,
-        syncStateSubject: syncStateSubject,
-        coreCryptoProvider: coreCryptoProvider,
-        journal: journal
-    )
+    public lazy var incrementalSyncV2: IncrementalSyncV2 = if let sharedContainerURL {
+        IncrementalSyncV2(
+            selfClientID: selfClientID,
+            pullServerTimeSync: pullServerTimeSync,
+            pushChannelAPI: pushChannelV2API,
+            decryptor: updateEventDecryptor,
+            updateEventsStore: updateEventsLocalStore,
+            messageStore: messageLocalStore,
+            processor: updateEventProcessor,
+            databaseSaver: databaseSaver,
+            syncStateSubject: syncStateSubject,
+            coreCryptoProvider: coreCryptoProvider,
+            journal: journal,
+            pushChannelState: PushChannelState(sharedContainerURL: sharedContainerURL, clientID: selfClientID)
+        )
+    } else {
+        fatal("you must provide sharedContainerURL - incrementalSyncV2 is not supported in SharingSession")
+    }
 
     public func consumableNotificationsMigrator() -> ConsumableNotificationsMigrator {
         ConsumableNotificationsMigrator(
@@ -649,7 +657,8 @@ public final class ClientSessionComponent {
 
     private lazy var mlsResetEventProcessor = ConversationMLSResetEventProcessor(
         mlsService: mlsService,
-        conversationLocalStore: conversationLocalStore
+        conversationLocalStore: conversationLocalStore,
+        featureRepository: FeatureRepository(context: syncContext)
     )
 
     private lazy var conversationEventProcessor = ConversationEventProcessor(
@@ -746,9 +755,23 @@ public final class ClientSessionComponent {
         isMLSEnabled: isMLSEnabled
     )
 
+    public lazy var initiateResetMLSConversationUseCase = InitiateResetMLSConversationUseCase(
+        api: mlsAPI,
+        mlsService: mlsService,
+        conversationLocalStore: conversationLocalStore
+    )
+
     public lazy var mlsTransport: any WireCoreCryptoUniffi.MlsTransport = MLSTransportImpl(
         mlsAPI: mlsAPI,
         conversationEventProcessor: conversationEventProcessor
     )
+
+}
+
+extension InitiateResetMLSConversationUseCase: ResetBrokenMLSConversationDelegate {
+
+    public func didCatchBrokenMLSConversation(groupID: MLSGroupID, epoch: Int64) async {
+        await invoke(groupID: groupID, epoch: epoch)
+    }
 
 }

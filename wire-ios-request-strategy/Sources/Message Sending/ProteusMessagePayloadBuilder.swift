@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireProtos
+import GenericMessageProtocol
 
 enum ProteusMessagePayloadBuilderError: Error {
     case unableToEncryptForExternalData

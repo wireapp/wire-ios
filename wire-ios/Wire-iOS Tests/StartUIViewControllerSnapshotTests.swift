@@ -20,7 +20,7 @@ import WireDesign
 import WireTestingPackage
 import XCTest
 
-import WireMessagingUIBindings
+import WireMessagingAssembly
 @testable import Wire
 
 final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
@@ -122,5 +122,67 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
                 .withUserInterfaceStyle(.dark)
                 .verify(matching: navigationController.view)
         }
+    }
+
+    func testStartUIViewControllerShowNewChannelOptionForPersonalUser() {
+        // Given, channels are supported and user is a personal user
+        BackendInfo.apiVersion = .v8
+        BackendInfo.isMLSEnabled = true
+
+        nonTeamTest {
+            let navigationController = setupNavigationController()
+            snapshotHelper
+                .withUserInterfaceStyle(.dark)
+                .verify(matching: navigationController.view)
+        }
+    }
+
+    func testStartUIViewControllerShowNewChannelOptionForTeamUser() {
+        // Given, channels are supported
+        BackendInfo.apiVersion = .v8
+        BackendInfo.isMLSEnabled = true
+        // channels are enabled
+        userSession.channelsFeature = Feature.Channels(
+            status: .enabled,
+            config: .init(
+                allowedToCreateChannels: .teamMembers,
+                allowedToOpenChannels: .admins
+            )
+        )
+        // user is in a team and is allowed to create a channel
+        let mockUserType = MockUserType()
+        mockUserType.hasTeam = true
+        mockUserType.teamRole = .member
+        userSession.selfUser = mockUserType
+
+        let navigationController = setupNavigationController()
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: navigationController.view)
+    }
+
+    func testStartUIViewControllerHideNewChannelOptionForTeamUser() {
+        // Given, channels are supported
+        BackendInfo.apiVersion = .v8
+        BackendInfo.isMLSEnabled = true
+
+        // user is in a team
+        let mockUserType = MockUserType()
+        mockUserType.hasTeam = true
+        userSession.selfUser = mockUserType
+
+        // but channels are disabled
+        userSession.channelsFeature = Feature.Channels(
+            status: .disabled,
+            config: .init(
+                allowedToCreateChannels: .teamMembers,
+                allowedToOpenChannels: .admins
+            )
+        )
+
+        let navigationController = setupNavigationController()
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: navigationController.view)
     }
 }

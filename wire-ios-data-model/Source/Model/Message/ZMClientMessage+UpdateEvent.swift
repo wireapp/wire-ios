@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 
 extension ZMClientMessage {
     open override func update(with updateEvent: ZMUpdateEvent, initialUpdate: Bool) {

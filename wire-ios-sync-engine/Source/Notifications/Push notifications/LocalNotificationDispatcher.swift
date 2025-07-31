@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import UserNotifications
 import WireLogging
 
@@ -138,25 +139,6 @@ extension LocalNotificationDispatcher: ZMEventConsumer {
             note.map(scheduleLocalNotification)
         }
     }
-}
-
-// MARK: - Availability behaviour change
-
-public extension LocalNotificationDispatcher {
-
-    func notifyAvailabilityBehaviourChangedIfNeeded() {
-        let selfUser = ZMUser.selfUser(in: syncMOC)
-        var notify = selfUser.needsToNotifyAvailabilityBehaviourChange
-
-        guard notify.contains(.notification) else { return }
-
-        let note = ZMLocalNotification(availability: selfUser.availability, managedObjectContext: syncMOC)
-        note.map(scheduleLocalNotification)
-        notify.remove(.notification)
-        selfUser.needsToNotifyAvailabilityBehaviourChange = notify
-        syncMOC.enqueueDelayedSave()
-    }
-
 }
 
 // MARK: - Failed messages

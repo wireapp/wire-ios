@@ -19,8 +19,10 @@
 import Foundation
 import WireDataModelSupport
 import WireDomain
+import WireLoggingSupport
 import WireNetwork
 import XCTest
+
 @testable import WireLogging
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
@@ -300,7 +302,7 @@ final class APIMigrationManagerTests: MessagingTest {
             userID: userID,
             storage: UserDefaults.temporary()
         )
-        let logFilesProvider = MockLogFilesProviding()
+        let logFilesProvider = LogFilesProvidingMock()
 
         var builder = ZMUserSessionBuilder()
         builder.withAllDependencies(
@@ -322,6 +324,7 @@ final class APIMigrationManagerTests: MessagingTest {
             proteusToMLSMigrationCoordinator: nil,
             recurringActionService: mockRecurringActionService,
             sharedUserDefaults: sharedUserDefaults,
+            sharedContainerURL: URL(string: "file:///tmp/sharedContainerURL")!,
             transportSession: mockTransportSession,
             userId: userID,
             minTLSVersion: nil,

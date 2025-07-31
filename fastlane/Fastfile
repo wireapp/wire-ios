@@ -629,7 +629,7 @@ platform :ios do
             changelog += "Playground build for #{build.git_branch}\n\n"
         end
 
-        if !build.development_build && build.File.exist?(changelog_path)
+        if !build.development_build && File.exist?(changelog_path)
             changelog += File.read(changelog_path)
         else 
             changelog += "**Last commits:**\n" + changelog_from_git_commits(
@@ -909,4 +909,3 @@ class Build
         end
     end
 end
-

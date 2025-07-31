@@ -17,6 +17,7 @@
 //
 
 import CoreData
+import GenericMessageProtocol
 import WireCryptobox
 import WireDataModel
 import WireLogging
@@ -306,7 +307,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
     }
 
     public func addMessageReaction(
-        _ messageReaction: WireProtos.Reaction,
+        _ messageReaction: GenericMessageProtocol.Reaction,
         in conversation: ZMConversation,
         senderID: UUID,
         date: Date
@@ -323,7 +324,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
     }
 
     public func addMessageConfirmation(
-        _ confirmation: WireProtos.Confirmation,
+        _ confirmation: GenericMessageProtocol.Confirmation,
         in conversation: ZMConversation,
         senderID: UUID,
         senderDomain: String,
@@ -904,7 +905,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
             return [systemMessage]
 
-        case let .channelHistoryDepthModified(sender, newHistoryDepth): // newHistoryDepth null if disabled
+        case let .channelHistoryDepthModified(sender):
             guard let sender = await fetchUser(
                 id: sender.id,
                 domain: sender.domain
@@ -915,7 +916,6 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             let systemMessage = await createSystemMessage(
                 messageType: .channelHistoryDepthModified,
                 sender: sender,
-                text: newHistoryDepth
             )
 
             return [systemMessage]

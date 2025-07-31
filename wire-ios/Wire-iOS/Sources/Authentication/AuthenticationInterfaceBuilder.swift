@@ -92,7 +92,15 @@ final class AuthenticationInterfaceBuilder {
             let preferredAPIVersion = BackendInfo.preferredAPIVersion.flatMap {
                 WireNetwork.APIVersion(rawValue: UInt($0.rawValue))
             }
-            let registrationAnalyticsTracker = RegistrationAnalyticsTracker()
+            let analyticsServiceConfiguration = AnalyticsServiceConfigurationBuilder.build()
+            let registrationAnalyticsTracker = analyticsServiceConfiguration.map { analyticsServiceConfiguration in
+                RegistrationAnalyticsTracker(
+                    analyticsServiceConfiguration: analyticsServiceConfiguration,
+                    availabilityChecker: .default,
+                    countlyProvider: { CountlyWrapper() },
+                    userDefaults: .standard
+                )
+            }
             let (rootView, bridge) = assembly.assemble(
                 environmentType: BackendEnvironmentType(environment.environmentType.value),
                 backendConfig: BackendConfig(environment),

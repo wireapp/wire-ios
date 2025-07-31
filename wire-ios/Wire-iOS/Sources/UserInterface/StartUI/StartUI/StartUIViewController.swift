@@ -22,9 +22,9 @@ import WireCommonComponents
 import WireDesign
 import WireFoundation
 import WireMainNavigationUI
-import WireMessagingAPI
+import WireMessagingAssembly
+import WireMessagingDomain
 import WireMessagingUI
-import WireMessagingUIBindings
 import WireReusableUIComponents
 import WireSyncEngine
 import WireUtilities
@@ -44,13 +44,21 @@ final class StartUIViewController: UIViewController {
     let groupSelector = SearchGroupSelector()
 
     lazy var conversationTypePicker: UIViewController = {
-        let availableConversationTypes: Set<WireMultiParticipantConversationType> = if areChannelsSupported {
+        let canCreateChannels = userSession.channelsFeature.canCreateChannels(
+            role: userSession.selfUser.teamRole
+        )
+
+        let isTeamUser = userSession.selfUser.hasTeam
+
+        let availableConversationTypes: Set<MultiParticipantConversationType> = if areChannelsSupported,
+                                                                                   canCreateChannels ||
+                                                                                   !isTeamUser {
             [.channel, .group]
         } else {
             [.group]
         }
 
-        let view = WireConversationTypePickerFactory().create(
+        let view = ConversationTypePickerFactory().create(
             availableConversationTypes: availableConversationTypes,
             onConversationTypeSelected: { [weak self] selectedConversationType in
                 guard let self else { return }
@@ -62,7 +70,7 @@ final class StartUIViewController: UIViewController {
                 case .channel:
                     Task { @MainActor [weak self] in
                         guard let self else { return }
-                        if userSession.channelsFeature.canCreateChannels(role: userSession.selfUser.teamRole) {
+                        if canCreateChannels {
                             navigateToChannelCreation()
                         } else {
                             presentCreateTeamBanner()
@@ -331,6 +339,7 @@ final class StartUIViewController: UIViewController {
         guard backendInfoApiVersion >= .v8 else {
             return false
         }
+
         return true
     }
 
@@ -339,7 +348,7 @@ final class StartUIViewController: UIViewController {
         typealias Localizable = L10n.Localizable.Peoplepicker
         typealias Accessibility = L10n.Accessibility.Peoplepicker
 
-        let configuration = WireChannelBannerView.Configuration(
+        let configuration = ChannelBannerView.Configuration(
             title: Localizable.UpgradeBanner.headline,
             message: Localizable.UpgradeBanner.subheadline,
             mainButtonTitle: Localizable.UpgradeBanner.Button.title,
@@ -351,7 +360,7 @@ final class StartUIViewController: UIViewController {
                 action: { [weak self] in self?.dismiss(animated: true) }
             )
         )
-        let banner = WireChannelBannerView(configuration: configuration)
+        let banner = ChannelBannerView(configuration: configuration)
         // Dimmer that covers entire screen and intercepts taps
         let rootView = ZStack {
             Color.black.opacity(0.5)
