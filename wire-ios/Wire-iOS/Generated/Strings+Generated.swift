@@ -4602,13 +4602,13 @@ internal enum L10n {
         }
       }
       internal enum Section {
+        /// Apps (%d)
+        internal static func apps(_ p1: Int) -> String {
+          return L10n.tr("Localizable", "participants.section.apps", p1, fallback: "Apps (%d)")
+        }
         /// People (%d)
         internal static func participants(_ p1: Int) -> String {
           return L10n.tr("Localizable", "participants.section.participants", p1, fallback: "People (%d)")
-        }
-        /// Services (%d)
-        internal static func services(_ p1: Int) -> String {
-          return L10n.tr("Localizable", "participants.section.services", p1, fallback: "Services (%d)")
         }
         /// Options
         internal static let settings = L10n.tr("Localizable", "participants.section.settings", fallback: "Options")
@@ -4653,6 +4653,24 @@ internal enum L10n {
       internal static let noSearchResults = L10n.tr("Localizable", "peoplepicker.no_search_results", fallback: "No matching results. Try entering a different name.")
       /// Search by name or username
       internal static let searchPlaceholder = L10n.tr("Localizable", "peoplepicker.search_placeholder", fallback: "Search by name or username")
+      internal enum Apps {
+        internal enum AddApp {
+          /// Add app
+          internal static let button = L10n.tr("Localizable", "peoplepicker.apps.add_app.button", fallback: "Add app")
+          internal enum Error {
+            /// The app is unavailable at the moment
+            internal static let `default` = L10n.tr("Localizable", "peoplepicker.apps.add_app.error.default", fallback: "The app is unavailable at the moment")
+            /// The conversation is full
+            internal static let full = L10n.tr("Localizable", "peoplepicker.apps.add_app.error.full", fallback: "The conversation is full")
+            /// The app can’t be added
+            internal static let title = L10n.tr("Localizable", "peoplepicker.apps.add_app.error.title", fallback: "The app can’t be added")
+          }
+        }
+        internal enum OpenConversation {
+          /// Open conversation
+          internal static let item = L10n.tr("Localizable", "peoplepicker.apps.open_conversation.item", fallback: "Open conversation")
+        }
+      }
       internal enum Button {
         /// Add Participants
         internal static let addToConversation = L10n.tr("Localizable", "peoplepicker.button.add_to_conversation", fallback: "Add Participants")
@@ -4682,6 +4700,8 @@ internal enum L10n {
         }
       }
       internal enum Header {
+        /// Apps
+        internal static let apps = L10n.tr("Localizable", "peoplepicker.header.apps", fallback: "Apps")
         /// Contacts
         internal static let contacts = L10n.tr("Localizable", "peoplepicker.header.contacts", fallback: "Contacts")
         /// Personal Contacts
@@ -4696,8 +4716,6 @@ internal enum L10n {
         internal static let people = L10n.tr("Localizable", "peoplepicker.header.people", fallback: "People")
         /// Invite
         internal static let sendInvitation = L10n.tr("Localizable", "peoplepicker.header.send_invitation", fallback: "Invite")
-        /// Services
-        internal static let services = L10n.tr("Localizable", "peoplepicker.header.services", fallback: "Services")
         /// %@ Groups
         internal static func teamConversations(_ p1: Any) -> String {
           return L10n.tr("Localizable", "peoplepicker.header.team_conversations", String(describing: p1), fallback: "%@ Groups")
@@ -4751,24 +4769,6 @@ internal enum L10n {
           internal static let ok = L10n.tr("Localizable", "peoplepicker.send_invitation.dialog.ok", fallback: "OK")
           /// Invitation sent
           internal static let title = L10n.tr("Localizable", "peoplepicker.send_invitation.dialog.title", fallback: "Invitation sent")
-        }
-      }
-      internal enum Services {
-        internal enum AddService {
-          /// Add service
-          internal static let button = L10n.tr("Localizable", "peoplepicker.services.add_service.button", fallback: "Add service")
-          internal enum Error {
-            /// The service is unavailable at the moment
-            internal static let `default` = L10n.tr("Localizable", "peoplepicker.services.add_service.error.default", fallback: "The service is unavailable at the moment")
-            /// The conversation is full
-            internal static let full = L10n.tr("Localizable", "peoplepicker.services.add_service.error.full", fallback: "The conversation is full")
-            /// The service can’t be added
-            internal static let title = L10n.tr("Localizable", "peoplepicker.services.add_service.error.title", fallback: "The service can’t be added")
-          }
-        }
-        internal enum OpenConversation {
-          /// Open conversation
-          internal static let item = L10n.tr("Localizable", "peoplepicker.services.open_conversation.item", fallback: "Open conversation")
         }
       }
       internal enum Suggested {

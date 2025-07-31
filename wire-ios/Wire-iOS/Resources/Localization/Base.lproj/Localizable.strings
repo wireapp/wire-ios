@@ -71,12 +71,12 @@
 "peoplepicker.group.create" = "Create";
 
 "peoplepicker.header.people" = "People";
-"peoplepicker.header.services" = "Services";
-"peoplepicker.services.open_conversation.item" = "Open conversation";
-"peoplepicker.services.add_service.button" = "Add service";
-"peoplepicker.services.add_service.error.title" = "The service can’t be added";
-"peoplepicker.services.add_service.error.default" = "The service is unavailable at the moment";
-"peoplepicker.services.add_service.error.full" = "The conversation is full";
+"peoplepicker.header.apps" = "Apps";
+"peoplepicker.apps.open_conversation.item" = "Open conversation";
+"peoplepicker.apps.add_app.button" = "Add app";
+"peoplepicker.apps.add_app.error.title" = "The app can’t be added";
+"peoplepicker.apps.add_app.error.default" = "The app is unavailable at the moment";
+"peoplepicker.apps.add_app.error.full" = "The conversation is full";
 
 "peoplepicker.no_contacts_title" = "No Contacts.";
 
@@ -894,7 +894,7 @@
 "participants.title" = "Details";
 "participants.all.title" = "People";
 "participants.section.participants" = "People (%d)";
-"participants.section.services" = "Services (%d)";
+"participants.section.apps" = "Apps (%d)";
 "participants.section.settings" = "Options";
 "participants.footer.add_title" = "Add Participants";
 "participants.section.name.footer" = "Up to %@ participants can join a conversation.";
