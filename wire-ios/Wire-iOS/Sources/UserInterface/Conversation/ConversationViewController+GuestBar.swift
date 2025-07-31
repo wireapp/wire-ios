@@ -34,7 +34,7 @@ extension ConversationViewController {
         else {
             return .hidden
         }
-        return .visible(labelKey: labelKey, identifier: identifier(for: state))
+        return .visible(labelKey: labelKey)
 
     }
 
@@ -43,19 +43,19 @@ extension ConversationViewController {
 
         switch state {
         case [.visibleRemotes, .visibleExternals, .visibleGuests, .visibleApps]:
-            return BannerStrings.remotesExternalsGuestsServicesPresent
+            return BannerStrings.remotesExternalsGuestsAppsPresent
 
         case [.visibleRemotes, .visibleExternals, .visibleGuests]:
             return BannerStrings.remotesExternalsGuestsPresent
 
         case [.visibleRemotes, .visibleExternals, .visibleApps]:
-            return BannerStrings.remotesExternalsServicesPresent
+            return BannerStrings.remotesExternalsAppsPresent
 
         case [.visibleRemotes, .visibleGuests, .visibleApps]:
-            return BannerStrings.remotesGuestsServicesPresent
+            return BannerStrings.remotesGuestsAppsPresent
 
         case [.visibleExternals, .visibleGuests, .visibleApps]:
-            return BannerStrings.externalsGuestsServicesPresent
+            return BannerStrings.externalsGuestsAppsPresent
 
         case [.visibleRemotes, .visibleExternals]:
             return BannerStrings.remotesExternalsPresent
@@ -64,13 +64,13 @@ extension ConversationViewController {
             return BannerStrings.remotesGuestsPresent
 
         case [.visibleRemotes, .visibleApps]:
-            return BannerStrings.remotesServicesPresent
+            return BannerStrings.remotesAppsPresent
 
         case [.visibleExternals, .visibleGuests]:
             return BannerStrings.externalsGuestsPresent
 
         case [.visibleExternals, .visibleApps]:
-            return BannerStrings.externalsServicesPresent
+            return BannerStrings.externalsAppsPresent
 
         case [.visibleGuests, .visibleApps]:
             return BannerStrings.guestsAppsPresent
@@ -85,33 +85,11 @@ extension ConversationViewController {
             return BannerStrings.guestsPresent
 
         case [.visibleApps]:
-            return BannerStrings.servicesActive
+            return BannerStrings.appsActive
 
         default:
             return nil
         }
-    }
-
-    func identifier(for state: ZMConversation.ExternalParticipantsState) -> String {
-        var identifiers: [String] = []
-
-        if conversation.externalParticipantsState.contains(.visibleRemotes) {
-            identifiers.append("remotes")
-        }
-
-        if conversation.externalParticipantsState.contains(.visibleExternals) {
-            identifiers.append("externals")
-        }
-
-        if conversation.externalParticipantsState.contains(.visibleGuests) {
-            identifiers.append("guests")
-        }
-
-        if conversation.externalParticipantsState.contains(.visibleApps) {
-            identifiers.append("services") // TODO: fix
-        }
-
-        return "has\(identifiers.joined(separator: "and"))"
     }
 
     /// Updates the visibility of the guest bar.
