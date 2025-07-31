@@ -222,9 +222,11 @@ extension StoredBackendEnvironment.Endpoints {
 extension StoredResolvedBackendMetadata {
     func toDomain() throws -> ResolvedBackendMetadata {
         guard let apiVersion = APIVersion(rawValue: apiVersion) else {
-            throw DecodingError.dataCorrupted(.init(
-                codingPath: [CodingKeys.apiVersion],
-                debugDescription: "Stored version \(apiVersion)")
+            throw DecodingError.dataCorrupted(
+                .init(
+                    codingPath: [CodingKeys.apiVersion],
+                    debugDescription: "Stored version \(apiVersion)"
+                )
             )
         }
 

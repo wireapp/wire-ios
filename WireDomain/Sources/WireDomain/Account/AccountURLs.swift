@@ -54,11 +54,11 @@ public struct AccountURLs {
 
     public init(root: URL) {
         self.root = root
-        accounts = root.appending(
+        self.accounts = root.appending(
             path: "Accounts",
             directoryHint: .isDirectory
         )
-        accountData = root.appending(
+        self.accountData = root.appending(
             path: "AccountData",
             directoryHint: .isDirectory
         )
