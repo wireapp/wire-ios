@@ -138,4 +138,3 @@ echo "ℹ️ Generate UITests demo user credentials"
 scripts/generate_ui_tests_credentials.sh
 
 echo "✅  Wire project was set up, you can now open wire-ios-mono.xcworkspace"
-

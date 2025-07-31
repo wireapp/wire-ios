@@ -49,7 +49,6 @@ public enum WireCellsConversationDAOError: Error {
     case storageFailure
 }
 
-// sourcery: AutoMockable
 public protocol WireCellsConversationDAO {
 
     func getCellName(conversationID: WireCellsConversationID) async throws(WireCellsConversationDAOError) -> String

@@ -21,6 +21,7 @@ import LocalAuthentication
 import WireAnalytics
 import WireDataModel
 import WireDataModelSupport
+import WireDomain
 import WireFoundation
 import WireRequestStrategySupport
 import WireSyncEngine
@@ -423,6 +424,10 @@ final class UserSessionMock: UserSession {
     var contextProvider: any ContextProvider {
         coreDataStack ?? MockContextProvider()
     }
+
+    // MARK: - ClientSessionComponent?
+
+    var clientSessionComponent: WireDomain.ClientSessionComponent?
 }
 
 // MARK: - UserSessionMock + ContextProvider

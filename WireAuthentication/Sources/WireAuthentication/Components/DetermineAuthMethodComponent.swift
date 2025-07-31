@@ -34,7 +34,7 @@ protocol DetermineAuthMethodComponentDependency: Dependency {
 
 }
 
-class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDependency> {
+final class DetermineAuthMethodComponent: Component<DetermineAuthMethodComponentDependency> {
 
     public let networkStack: NetworkStack
     private let existsAnotherAccount: Bool

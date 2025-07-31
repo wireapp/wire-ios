@@ -50,7 +50,7 @@ final class AuthenticationEventResponderChain {
 
     enum EventType: CustomStringConvertible {
 
-        case wireAuthenticationModuleComplete(AuthenticationResult)
+        case wireAuthenticationModuleComplete((AuthenticationResult, RegistrationAnalyticsTrackingConsent))
         case flowStart(NSError?, Int)
         case backupReady(Bool)
         case clientRegistrationError(NSError, UUID)
@@ -113,7 +113,10 @@ final class AuthenticationEventResponderChain {
     // MARK: - Configuration
 
     var flowStartHandlers: [AnyAuthenticationEventHandler<(NSError?, Int)>] = []
-    var wireAuthenticationModuleHandlers: [AnyAuthenticationEventHandler<AuthenticationResult>] = []
+    var wireAuthenticationModuleHandlers: [AnyAuthenticationEventHandler<(
+        AuthenticationResult,
+        RegistrationAnalyticsTrackingConsent
+    )>] = []
     var backupEventHandlers: [AnyAuthenticationEventHandler<Bool>] = []
     var clientRegistrationErrorHandlers: [AnyAuthenticationEventHandler<(NSError, UUID)>] = []
     var clientRegistrationSuccessHandlers: [AnyAuthenticationEventHandler<Void>] = []
@@ -224,8 +227,8 @@ final class AuthenticationEventResponderChain {
         }
 
         switch eventType {
-        case let .wireAuthenticationModuleComplete(result):
-            handleEvent(with: wireAuthenticationModuleHandlers, context: result)
+        case let .wireAuthenticationModuleComplete(context):
+            handleEvent(with: wireAuthenticationModuleHandlers, context: context)
         case let .flowStart(error, numberOfAccounts):
             handleEvent(with: flowStartHandlers, context: (error, numberOfAccounts))
         case let .backupReady(existingAccount):
@@ -277,10 +280,9 @@ final class AuthenticationEventResponderChain {
         }
 
         guard let (name, actions) = lookupResult else {
-            log
-                .error(
-                    "No handler was found to handle the event.\nCurrentStep = \(delegate.stateController.currentStep)"
-                )
+            log.error(
+                "No handler was found to handle the event.\nCurrentStep = \(delegate.stateController.currentStep)"
+            )
             return
         }
 

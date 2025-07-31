@@ -79,6 +79,11 @@ final class ConversationFilterSelectorTests: XCTestCase {
             .favorites,
             .groups,
             .oneOnOne,
+            .channels,
+            .unread,
+            .mentions,
+            .replies,
+            .drafts,
             .none
         ]
 

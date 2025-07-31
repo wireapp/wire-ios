@@ -74,7 +74,8 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
             account: coreDataStack.account,
             selfProfileViewsMonitor: SelfProfileViewsMonitorImplementation(),
             userSession: userSession,
-            trackingManager: nil
+            trackingManager: nil,
+            wireCellsFactory: MockWireCellsFactoryProtocol.makeDefault()
         )
         sut = .init(
             account: coreDataStack.account,
@@ -287,6 +288,254 @@ final class ConversationListViewControllerSnapshotTests: XCTestCase {
         sut.hideNoContactLabel(animated: false)
 
         // THEN
+        snapshotHelper.verify(matching: renderedImage())
+    }
+
+    // MARK: - Unread Filter Tests
+
+    func testForShowingConversationsFilteredByUnread() throws {
+        // GIVEN
+        let conversationData = [
+            (name: "iOS Team", iOSTeamID, isFavorite: false),
+            (name: "Web Team", webTeamID, isFavorite: false),
+            (name: "QA Team", qaTeamID, isFavorite: false)
+        ]
+        let conversations = createConversations(conversationsData: conversationData)
+
+        // Mark some conversations as having unread messages
+        conversations[0].lastServerTimeStamp = Date()
+        conversations[0].lastReadServerTimeStamp = Date(timeIntervalSinceNow: -3600)
+        conversations[1].lastServerTimeStamp = Date()
+        conversations[1].lastReadServerTimeStamp = Date(timeIntervalSinceNow: -7200)
+
+        userSession.mockConversationDirectory.mockUnarchivedConversations = conversations
+
+        // WHEN
+        sut.hideNoContactLabel(animated: false)
+        sut.applyFilter(.unread)
+
+        // THEN
+        XCTAssertEqual(searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.unreadPlaceholder)
+        snapshotHelper.verify(matching: renderedImage())
+    }
+
+    func testForShowingNoConversationsFilteredByUnread() {
+        // GIVEN
+        userSession.mockConversationDirectory.mockUnarchivedConversations = []
+
+        // WHEN
+        sut.hideNoContactLabel(animated: false)
+        sut.applyFilter(.unread)
+
+        // THEN
+        XCTAssertEqual(searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.unreadPlaceholder)
+        snapshotHelper.verify(matching: renderedImage())
+    }
+
+    // MARK: - Mentions Filter Tests
+
+    func testForShowingConversationsFilteredByMentions() {
+        // GIVEN
+        let conversationData = [
+            (name: "iOS Team", iOSTeamID, isFavorite: false),
+            (name: "Web Team", webTeamID, isFavorite: false)
+        ]
+        let conversations = createConversations(conversationsData: conversationData)
+
+        // Add mentions to conversations
+        // Add mention to first conversation
+        let selfUser = coreDataFixture.selfUser!
+        let otherUser = modelHelper.createUser(in: coreDataFixture.coreDataStack.viewContext)
+        otherUser.name = "Alice"
+
+        let mention = Mention(range: NSRange(location: 0, length: 5), user: selfUser)
+        let message = try! conversations[0].appendText(
+            content: "@self check this out",
+            mentions: [mention],
+            replyingTo: nil,
+            fetchLinkPreview: false,
+            nonce: UUID()
+        ) as! ZMClientMessage
+        message.sender = otherUser
+        message.serverTimestamp = Date()
+        conversations[0].updateTimestampsAfterUpdatingMessage(message)
+        conversations[0].lastReadServerTimeStamp = Date(timeIntervalSinceNow: -60)
+        conversations[0].setPrimitiveValue(1, forKey: ZMConversationInternalEstimatedUnreadSelfMentionCountKey)
+        conversations[0].needsToCalculateUnreadMessages = true
+
+        // Add mention to second conversation
+        let mention2 = Mention(range: NSRange(location: 0, length: 5), user: selfUser)
+        let message2 = try! conversations[1].appendText(
+            content: "@self urgent task",
+            mentions: [mention2],
+            replyingTo: nil,
+            fetchLinkPreview: false,
+            nonce: UUID()
+        ) as! ZMClientMessage
+        message2.sender = otherUser
+        message2.serverTimestamp = Date()
+        conversations[1].updateTimestampsAfterUpdatingMessage(message2)
+        conversations[1].lastReadServerTimeStamp = Date(timeIntervalSinceNow: -60)
+        conversations[1].setPrimitiveValue(1, forKey: ZMConversationInternalEstimatedUnreadSelfMentionCountKey)
+        conversations[1].needsToCalculateUnreadMessages = true
+
+        ZMConversation.calculateLastUnreadMessages(in: coreDataFixture.coreDataStack.viewContext)
+
+        userSession.mockConversationDirectory.mockUnarchivedConversations = conversations
+
+        // WHEN
+        sut.hideNoContactLabel(animated: false)
+        sut.applyFilter(.mentions)
+
+        // THEN
+        XCTAssertEqual(searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.mentionsPlaceholder)
+        snapshotHelper.verify(matching: renderedImage())
+    }
+
+    func testForShowingNoConversationsFilteredByMentions() {
+        // GIVEN
+        userSession.mockConversationDirectory.mockUnarchivedConversations = []
+
+        // WHEN
+        sut.hideNoContactLabel(animated: false)
+        sut.applyFilter(.mentions)
+
+        // THEN
+        XCTAssertEqual(searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.mentionsPlaceholder)
+        snapshotHelper.verify(matching: renderedImage())
+    }
+
+    // MARK: - Replies Filter Tests
+
+    func testForShowingConversationsFilteredByReplies() {
+        // GIVEN
+        let conversationData = [
+            (name: "Design Team", designTeamID, isFavorite: false),
+            (name: "QA Team", qaTeamID, isFavorite: false)
+        ]
+        let conversations = createConversations(conversationsData: conversationData)
+
+        // Add replies to conversations
+        let selfUser = coreDataFixture.selfUser!
+        let otherUser = modelHelper.createUser(in: coreDataFixture.coreDataStack.viewContext)
+        otherUser.name = "Bob"
+
+        // Add reply to first conversation
+        // Create original message from self
+        let originalMessage1 = try! conversations[0]
+            .appendText(content: "What about the new design?") as! ZMClientMessage
+        originalMessage1.sender = selfUser
+        originalMessage1.serverTimestamp = Date(timeIntervalSinceNow: -180)
+
+        // Create reply from other user
+        let replyMessage1 = try! conversations[0].appendText(
+            content: "I think it looks great!",
+            mentions: [],
+            replyingTo: originalMessage1,
+            fetchLinkPreview: false,
+            nonce: UUID()
+        ) as! ZMClientMessage
+        replyMessage1.sender = otherUser
+        replyMessage1.serverTimestamp = Date()
+        conversations[0].updateTimestampsAfterUpdatingMessage(replyMessage1)
+        conversations[0].lastReadServerTimeStamp = Date(timeIntervalSinceNow: -60)
+        conversations[0].setPrimitiveValue(1, forKey: ZMConversationInternalEstimatedUnreadSelfReplyCountKey)
+        conversations[0].needsToCalculateUnreadMessages = true
+
+        // Add reply to second conversation
+        let originalMessage2 = try! conversations[1]
+            .appendText(content: "Can you test this feature?") as! ZMClientMessage
+        originalMessage2.sender = selfUser
+        originalMessage2.serverTimestamp = Date(timeIntervalSinceNow: -180)
+
+        let replyMessage2 = try! conversations[1].appendText(
+            content: "Testing it now",
+            mentions: [],
+            replyingTo: originalMessage2,
+            fetchLinkPreview: false,
+            nonce: UUID()
+        ) as! ZMClientMessage
+        replyMessage2.sender = otherUser
+        replyMessage2.serverTimestamp = Date()
+        conversations[1].updateTimestampsAfterUpdatingMessage(replyMessage2)
+        conversations[1].lastReadServerTimeStamp = Date(timeIntervalSinceNow: -60)
+        conversations[1].setPrimitiveValue(1, forKey: ZMConversationInternalEstimatedUnreadSelfReplyCountKey)
+        conversations[1].needsToCalculateUnreadMessages = true
+
+        ZMConversation.calculateLastUnreadMessages(in: coreDataFixture.coreDataStack.viewContext)
+
+        userSession.mockConversationDirectory.mockUnarchivedConversations = conversations
+
+        // WHEN
+        sut.hideNoContactLabel(animated: false)
+        sut.applyFilter(.replies)
+
+        // THEN
+        XCTAssertEqual(searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.repliesPlaceholder)
+        snapshotHelper.verify(matching: renderedImage())
+    }
+
+    func testForShowingNoConversationsFilteredByReplies() {
+        // GIVEN
+        userSession.mockConversationDirectory.mockUnarchivedConversations = []
+
+        // WHEN
+        sut.hideNoContactLabel(animated: false)
+        sut.applyFilter(.replies)
+
+        // THEN
+        XCTAssertEqual(searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.repliesPlaceholder)
+        snapshotHelper.verify(matching: renderedImage())
+    }
+
+    // MARK: - Drafts Filter Tests
+
+    func testForShowingConversationsFilteredByDrafts() {
+        // GIVEN
+        let conversationData = [
+            (name: "iOS Team", iOSTeamID, isFavorite: false),
+            (name: "Design Team", designTeamID, isFavorite: false)
+        ]
+        let conversations = createConversations(conversationsData: conversationData)
+
+        // Add drafts to conversations
+        // Add draft to first conversation
+        let draft1 = DraftMessage(
+            text: "Working on the new feature...",
+            mentions: [],
+            quote: nil
+        )
+        conversations[0].draftMessage = draft1
+
+        // Add draft to second conversation
+        let draft2 = DraftMessage(
+            text: "I think we should redesign the",
+            mentions: [],
+            quote: nil
+        )
+        conversations[1].draftMessage = draft2
+
+        userSession.mockConversationDirectory.mockUnarchivedConversations = conversations
+
+        // WHEN
+        sut.hideNoContactLabel(animated: false)
+        sut.applyFilter(.drafts)
+
+        // THEN
+        XCTAssertEqual(searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.draftsPlaceholder)
+        snapshotHelper.verify(matching: renderedImage())
+    }
+
+    func testForShowingNoConversationsFilteredByDrafts() {
+        // GIVEN#imageLiteral(resourceName: "testForShowingConversationsFilteredByDrafts.1.png")
+        userSession.mockConversationDirectory.mockUnarchivedConversations = []
+
+        // WHEN
+        sut.hideNoContactLabel(animated: false)
+        sut.applyFilter(.drafts)
+
+        // THEN
+        XCTAssertEqual(searchBar.placeholder, L10n.Localizable.ConversationList.SearchBar.draftsPlaceholder)
         snapshotHelper.verify(matching: renderedImage())
     }
 

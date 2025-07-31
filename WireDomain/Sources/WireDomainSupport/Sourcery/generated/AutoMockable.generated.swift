@@ -24,6 +24,7 @@
 // swiftlint:disable variable_name
 
 
+import GenericMessageProtocol
 import WireNetwork
 import WireDataModel
 import WireDomainPackage
@@ -565,6 +566,24 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
     public init() {}
 
 
+    // MARK: - qualifiedID
+
+    public var qualifiedIDFor_Invocations: [ZMConversation] = []
+    public var qualifiedIDFor_MockMethod: ((ZMConversation) async -> QualifiedID?)?
+    public var qualifiedIDFor_MockValue: QualifiedID??
+
+    public func qualifiedID(for conversation: ZMConversation) async -> QualifiedID? {
+        qualifiedIDFor_Invocations.append(conversation)
+
+        if let mock = qualifiedIDFor_MockMethod {
+            return await mock(conversation)
+        } else if let mock = qualifiedIDFor_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `qualifiedIDFor`")
+        }
+    }
+
     // MARK: - fetchOrCreateConversation
 
     public var fetchOrCreateConversationIdDomain_Invocations: [(id: UUID, domain: String?)] = []
@@ -916,6 +935,24 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
             return mock
         } else {
             fatalError("no mock for `localParticipantsIn`")
+        }
+    }
+
+    // MARK: - localParticipantsExcludingSelfAsMLSUsers
+
+    public var localParticipantsExcludingSelfAsMLSUsersIn_Invocations: [ZMConversation] = []
+    public var localParticipantsExcludingSelfAsMLSUsersIn_MockMethod: ((ZMConversation) async -> [MLSUser])?
+    public var localParticipantsExcludingSelfAsMLSUsersIn_MockValue: [MLSUser]?
+
+    public func localParticipantsExcludingSelfAsMLSUsers(in conversation: ZMConversation) async -> [MLSUser] {
+        localParticipantsExcludingSelfAsMLSUsersIn_Invocations.append(conversation)
+
+        if let mock = localParticipantsExcludingSelfAsMLSUsersIn_MockMethod {
+            return await mock(conversation)
+        } else if let mock = localParticipantsExcludingSelfAsMLSUsersIn_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `localParticipantsExcludingSelfAsMLSUsersIn`")
         }
     }
 
@@ -2371,10 +2408,10 @@ public class MockMessageLocalStoreProtocol: MessageLocalStoreProtocol {
 
     // MARK: - addMessageReaction
 
-    public var addMessageReactionInSenderIDDate_Invocations: [(messageReaction: WireProtos.Reaction, conversation: ZMConversation, senderID: UUID, date: Date)] = []
-    public var addMessageReactionInSenderIDDate_MockMethod: ((WireProtos.Reaction, ZMConversation, UUID, Date) async -> Void)?
+    public var addMessageReactionInSenderIDDate_Invocations: [(messageReaction: GenericMessageProtocol.Reaction, conversation: ZMConversation, senderID: UUID, date: Date)] = []
+    public var addMessageReactionInSenderIDDate_MockMethod: ((GenericMessageProtocol.Reaction, ZMConversation, UUID, Date) async -> Void)?
 
-    public func addMessageReaction(_ messageReaction: WireProtos.Reaction, in conversation: ZMConversation, senderID: UUID, date: Date) async {
+    public func addMessageReaction(_ messageReaction: GenericMessageProtocol.Reaction, in conversation: ZMConversation, senderID: UUID, date: Date) async {
         addMessageReactionInSenderIDDate_Invocations.append((messageReaction: messageReaction, conversation: conversation, senderID: senderID, date: date))
 
         guard let mock = addMessageReactionInSenderIDDate_MockMethod else {
@@ -2386,10 +2423,10 @@ public class MockMessageLocalStoreProtocol: MessageLocalStoreProtocol {
 
     // MARK: - addMessageConfirmation
 
-    public var addMessageConfirmationInSenderIDSenderDomainDate_Invocations: [(confirmation: WireProtos.Confirmation, conversation: ZMConversation, senderID: UUID, senderDomain: String, date: Date)] = []
-    public var addMessageConfirmationInSenderIDSenderDomainDate_MockMethod: ((WireProtos.Confirmation, ZMConversation, UUID, String, Date) async -> Void)?
+    public var addMessageConfirmationInSenderIDSenderDomainDate_Invocations: [(confirmation: GenericMessageProtocol.Confirmation, conversation: ZMConversation, senderID: UUID, senderDomain: String, date: Date)] = []
+    public var addMessageConfirmationInSenderIDSenderDomainDate_MockMethod: ((GenericMessageProtocol.Confirmation, ZMConversation, UUID, String, Date) async -> Void)?
 
-    public func addMessageConfirmation(_ confirmation: WireProtos.Confirmation, in conversation: ZMConversation, senderID: UUID, senderDomain: String, date: Date) async {
+    public func addMessageConfirmation(_ confirmation: GenericMessageProtocol.Confirmation, in conversation: ZMConversation, senderID: UUID, senderDomain: String, date: Date) async {
         addMessageConfirmationInSenderIDSenderDomainDate_Invocations.append((confirmation: confirmation, conversation: conversation, senderID: senderID, senderDomain: senderDomain, date: date))
 
         guard let mock = addMessageConfirmationInSenderIDSenderDomainDate_MockMethod else {
@@ -3199,6 +3236,63 @@ class MockPullUserConnectionsSyncProtocol: PullUserConnectionsSyncProtocol {
         }
 
         try await mock()
+    }
+
+}
+
+public class MockPushChannelStateProtocol: PushChannelStateProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - isOpen
+
+    public var isOpen_Invocations: [Void] = []
+    public var isOpen_MockMethod: (() -> Bool)?
+    public var isOpen_MockValue: Bool?
+
+    public func isOpen() -> Bool {
+        isOpen_Invocations.append(())
+
+        if let mock = isOpen_MockMethod {
+            return mock()
+        } else if let mock = isOpen_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `isOpen`")
+        }
+    }
+
+    // MARK: - markAsOpen
+
+    public var markAsOpen_Invocations: [Void] = []
+    public var markAsOpen_MockMethod: (() -> Void)?
+
+    public func markAsOpen() {
+        markAsOpen_Invocations.append(())
+
+        guard let mock = markAsOpen_MockMethod else {
+            fatalError("no mock for `markAsOpen`")
+        }
+
+        mock()
+    }
+
+    // MARK: - markAsClosed
+
+    public var markAsClosed_Invocations: [Void] = []
+    public var markAsClosed_MockMethod: (() -> Void)?
+
+    public func markAsClosed() {
+        markAsClosed_Invocations.append(())
+
+        guard let mock = markAsClosed_MockMethod else {
+            fatalError("no mock for `markAsClosed`")
+        }
+
+        mock()
     }
 
 }

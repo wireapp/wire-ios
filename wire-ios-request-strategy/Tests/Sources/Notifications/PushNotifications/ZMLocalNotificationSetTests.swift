@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireDataModel
 import WireTesting
 import WireUtilitiesSupport
@@ -92,7 +93,7 @@ class ZMLocalNotificationSetTests: MessagingTestBase {
     func testThatYouCanAddNAndRemoveNotifications() {
 
         // given
-        let text = GenericMessage(content: WireProtos.Text(content: "Hello Hello"))
+        let text = GenericMessage(content: GenericMessageProtocol.Text(content: "Hello Hello"))
         let event = createUpdateEvent(
             UUID.create(),
             conversationID: conversation1.remoteIdentifier!,
@@ -120,7 +121,7 @@ class ZMLocalNotificationSetTests: MessagingTestBase {
         let event1 = createUpdateEvent(
             UUID.create(),
             conversationID: conversation1.remoteIdentifier!,
-            genericMessage: GenericMessage(content: WireProtos.Text(content: "Hello Hello")),
+            genericMessage: GenericMessage(content: GenericMessageProtocol.Text(content: "Hello Hello")),
             senderID: sender.remoteIdentifier!
         )
         let note1 = ZMLocalNotification(event: event1, conversation: conversation1, managedObjectContext: uiMOC)
@@ -128,7 +129,7 @@ class ZMLocalNotificationSetTests: MessagingTestBase {
         let event2 = createUpdateEvent(
             UUID.create(),
             conversationID: conversation1.remoteIdentifier!,
-            genericMessage: GenericMessage(content: WireProtos.Text(content: "Bye BYe")),
+            genericMessage: GenericMessage(content: GenericMessageProtocol.Text(content: "Bye BYe")),
             senderID: sender.remoteIdentifier!
         )
         let note2 = ZMLocalNotification(event: event2, conversation: conversation2, managedObjectContext: uiMOC)
@@ -152,7 +153,7 @@ class ZMLocalNotificationSetTests: MessagingTestBase {
         let event = createUpdateEvent(
             UUID.create(),
             conversationID: conversation1.remoteIdentifier!,
-            genericMessage: GenericMessage(content: WireProtos.Text(content: "Hello")),
+            genericMessage: GenericMessage(content: GenericMessageProtocol.Text(content: "Hello")),
             senderID: sender.remoteIdentifier!
         )
         let note = ZMLocalNotification(event: event, conversation: conversation1, managedObjectContext: uiMOC)
@@ -171,7 +172,7 @@ class ZMLocalNotificationSetTests: MessagingTestBase {
         let event = createUpdateEvent(
             UUID.create(),
             conversationID: conversation1.remoteIdentifier!,
-            genericMessage: GenericMessage(content: WireProtos.Text(content: "Hello")),
+            genericMessage: GenericMessage(content: GenericMessageProtocol.Text(content: "Hello")),
             senderID: sender.remoteIdentifier!
         )
         let note = ZMLocalNotification(event: event, conversation: conversation1, managedObjectContext: uiMOC)

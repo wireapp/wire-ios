@@ -71,13 +71,13 @@ extension ZMConversation: InputBarConversation {
 
     var isSelfDeletingMessageSendingDisabled: Bool {
         guard let context = managedObjectContext else { return false }
-        let feature = FeatureRepository(context: context).fetchSelfDeletingMesssages()
+        let feature = FeatureRepository(context: context).fetchSelfDeletingMessages()
         return feature.status == .disabled
     }
 
     var isSelfDeletingMessageTimeoutForced: Bool {
         guard let context = managedObjectContext else { return false }
-        let feature = FeatureRepository(context: context).fetchSelfDeletingMesssages()
+        let feature = FeatureRepository(context: context).fetchSelfDeletingMessages()
         return feature.config.enforcedTimeoutSeconds > 0
     }
 

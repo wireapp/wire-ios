@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import UserNotifications
 import WireUtilitiesSupport
 import XCTest
@@ -355,7 +356,7 @@ extension LocalNotificationDispatcherTests {
             event = createUpdateEvent(
                 UUID.create(),
                 conversationID: conversation1.remoteIdentifier!,
-                genericMessage: GenericMessage(content: WireProtos.Asset(audioMetadata)),
+                genericMessage: GenericMessage(content: GenericMessageProtocol.Asset(audioMetadata)),
                 senderID: user1.remoteIdentifier
             )
 
@@ -441,36 +442,6 @@ extension LocalNotificationDispatcherTests {
 
         // THEN
         XCTAssertEqual(scheduledRequests.count, 0)
-    }
-
-    func testThatNotifyAvailabilityBehaviourChangedIfNeededSchedulesNotification_WhenNeedsToNotifyAvailabilityBehaviourChangeIsSet(
-    ) {
-        syncMOC.performAndWait {
-            // given
-            selfUser.availability = .away
-            selfUser.needsToNotifyAvailabilityBehaviourChange = [.notification]
-
-            // when
-            sut.notifyAvailabilityBehaviourChangedIfNeeded()
-
-            // then
-            XCTAssertEqual(self.notificationCenter.scheduledRequests.count, 1)
-            XCTAssertEqual(selfUser.needsToNotifyAvailabilityBehaviourChange, [])
-        }
-    }
-
-    func testThatNotifyAvailabilityBehaviourChangedIfNeededDoesNotScheduleNotification_WhenneedsToNotifyAvailabilityBehaviourChangeIsNotSet(
-    ) {
-        syncMOC.performAndWait {
-            // given
-            selfUser.needsToNotifyAvailabilityBehaviourChange = []
-
-            // when
-            sut.notifyAvailabilityBehaviourChangedIfNeeded()
-
-            // then
-            XCTAssertEqual(self.notificationCenter.scheduledRequests.count, 0)
-        }
     }
 
     // MARK: Updating unread count

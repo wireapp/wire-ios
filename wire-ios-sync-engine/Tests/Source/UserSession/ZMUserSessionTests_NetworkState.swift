@@ -83,6 +83,7 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
             proteusToMLSMigrationCoordinator: MockProteusToMLSMigrationCoordinating(),
             recurringActionService: mockRecurringActionService,
             sharedUserDefaults: sharedUserDefaults,
+            sharedContainerURL: URL(string: "file:///tmp/sharedContainerURL")!,
             transportSession: transportSession,
             userId: userId,
             minTLSVersion: nil,

@@ -43,7 +43,8 @@ final class ConversationViewControllerGuestBarTests: XCTestCase, CoreDataFixture
             mediaPlaybackManager: nil,
             classificationProvider: nil,
             networkStatusObservable: MockNetworkStatusObservable(),
-            getParticipantImageSourceUseCase: MockGetParticipantImageSourceUseCaseProtocol()
+            getParticipantImageSourceUseCase: MockGetParticipantImageSourceUseCaseProtocol(),
+            wireCellsFactory: MockWireCellsFactoryProtocol.makeDefault()
         )
     }
 

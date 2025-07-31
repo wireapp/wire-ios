@@ -28,8 +28,10 @@ public protocol FeatureRepositoryInterface {
     func storeConferenceCalling(_ conferenceCalling: Feature.ConferenceCalling)
     func fetchFileSharing() -> Feature.FileSharing
     func storeFileSharing(_ fileSharing: Feature.FileSharing)
-    func fetchSelfDeletingMesssages() -> Feature.SelfDeletingMessages
+    func fetchSelfDeletingMessages() -> Feature.SelfDeletingMessages
     func storeSelfDeletingMessages(_ selfDeletingMessages: Feature.SelfDeletingMessages)
+    func fetchAllowGlobalOperations() async -> Feature.AllowGlobalOperations
+    func storeAllowGlobalOperations(_ resetMLSConversations: Feature.AllowGlobalOperations)
     func fetchConversationGuestLinks() -> Feature.ConversationGuestLinks
     func storeConversationGuestLinks(_ conversationGuestLinks: Feature.ConversationGuestLinks)
     func fetchClassifiedDomains() -> Feature.ClassifiedDomains
@@ -187,7 +189,7 @@ public class FeatureRepository: FeatureRepositoryInterface {
 
     // MARK: - Self deleting messages
 
-    public func fetchSelfDeletingMesssages() -> Feature.SelfDeletingMessages {
+    public func fetchSelfDeletingMessages() -> Feature.SelfDeletingMessages {
         guard
             let feature = Feature.fetch(name: .selfDeletingMessages, context: context),
             let featureConfig = feature.config
@@ -230,6 +232,44 @@ public class FeatureRepository: FeatureRepositoryInterface {
         } catch {
             logger.error("failed to encode Feature.SelfDeletingMessages.Config: \(error)")
         }
+    }
+
+    public func storeAllowGlobalOperations(_ allowGlobalOperations: Feature.AllowGlobalOperations) {
+        do {
+            let config = try encoder.encode(allowGlobalOperations.config)
+
+            Feature.updateOrCreate(havingName: .allowGlobalOperations, in: context) {
+                $0.status = allowGlobalOperations.status
+                $0.config = config
+            }
+        } catch {
+            logger.error("failed to encode Feature.AllowGlobalOperations.Config: \(error)")
+        }
+    }
+
+    public func fetchAllowGlobalOperations() async -> Feature.AllowGlobalOperations {
+        let (featureStatus, featureConfig) = await context.perform {
+            let feature = Feature.fetch(name: .allowGlobalOperations, context: self.context)
+            return (feature?.status, feature?.config)
+        }
+
+        guard let featureConfig, let featureStatus else {
+            return .init()
+        }
+
+        var config = Feature.AllowGlobalOperations.Config()
+
+        do {
+            config = try decoder.decode(
+                Feature.AllowGlobalOperations.Config.self,
+                from: featureConfig
+            )
+        } catch {
+            logger.error("failed to decode Feature.AllowGlobalOperations.Config: \(error)")
+        }
+
+        return .init(status: featureStatus, config: config)
+
     }
 
     // MARK: - Conversation guest links
@@ -476,6 +516,9 @@ public class FeatureRepository: FeatureRepositoryInterface {
 
             case .selfDeletingMessages:
                 storeSelfDeletingMessages(.init())
+
+            case .allowGlobalOperations:
+                storeAllowGlobalOperations(.init())
 
             case .conversationGuestLinks:
                 storeConversationGuestLinks(.init())

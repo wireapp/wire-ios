@@ -593,10 +593,6 @@ public final class SessionManager: NSObject, SessionManagerType {
             )
         }
 
-        if let analyticsService, analyticsServiceConfiguration?.didUserGiveTrackingConsent == true {
-            analyticsService.enableTracking()
-        }
-
         super.init()
 
         callKitManager.setDelegate(self)

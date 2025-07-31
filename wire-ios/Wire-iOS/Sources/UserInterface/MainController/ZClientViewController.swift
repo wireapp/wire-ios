@@ -20,20 +20,24 @@ import avs
 import SwiftUI
 import UIKit
 import WireAccountImageUI
+import WireCellsAPI
+import WireCellsBindings
 import WireCommonComponents
 import WireDesign
 import WireFoundation
 import WireLogging
 import WireMainNavigationUI
 import WireMessagingAssembly
+import WireNetwork
 import WireSidebarUI
 import WireSyncEngine
+import WireUtilities
 
 final class ZClientViewController: UIViewController {
 
     typealias MainCoordinator = WireMainNavigationUI.MainCoordinator<MainCoordinatorDependencies>
 
-    // MARK: - Private Members
+    // MARK: - Private Members - Add wire cells factory here somehow
 
     let account: Account
     let userSession: UserSession
@@ -91,13 +95,13 @@ final class ZClientViewController: UIViewController {
     private lazy var conversationViewControllerBuilder = ConversationViewControllerBuilder(
         userSession: userSession,
         selfProfileUIBuilder: selfProfileViewControllerBuilder,
-        mediaPlaybackManager: mediaPlaybackManager
+        mediaPlaybackManager: mediaPlaybackManager,
+        wireCellsFactory: wireCellsFactory
     )
 
     private lazy var channelConversationFormFactory = WireConversationChannelCreationFormViewControllerFactory()
 
     private lazy var settingsViewControllerBuilder = SettingsViewControllerBuilder(
-        isPublicDomain: userSession.selfUser.domain?.domainType == .publicDomain,
         userSession: userSession,
         trackingManager: trackingManager
     )
@@ -163,7 +167,7 @@ final class ZClientViewController: UIViewController {
 
     var userObserverToken: NSObjectProtocol?
     var conferenceCallingUnavailableObserverToken: Any?
-    var userDidViewSelfProfileToken: NSObjectProtocol?
+    var userDidViewSelfProfileToken: SelfUnregisteringNotificationCenterToken?
 
     private let topOverlayContainer = UIView()
     private var topOverlayViewController: UIViewController?
@@ -171,6 +175,10 @@ final class ZClientViewController: UIViewController {
     private let colorSchemeController: ColorSchemeController
     private var incomingApnsObserver: NSObjectProtocol?
     private var networkAvailabilityObserverToken: NSObjectProtocol?
+    private var featureChangeObserverToken: SelfUnregisteringNotificationCenterToken?
+    private var userDefaultsObservation: NSKeyValueObservation?
+    private var loggingRequestLoopObserverToken: SelfUnregisteringNotificationCenterToken?
+    private let wireCellsFactory: any WireCellsFactoryProtocol
 
     private(set) lazy var mainCoordinator = MainCoordinator(
         mainSplitViewController: mainSplitViewController,
@@ -184,13 +192,16 @@ final class ZClientViewController: UIViewController {
         account: Account,
         selfProfileViewsMonitor: SelfProfileViewsMonitor,
         userSession: UserSession,
-        trackingManager: TrackingManager?
+        trackingManager: TrackingManager?,
+        wireCellsFactory: any WireCellsFactoryProtocol
     ) {
         self.account = account
         self.selfProfileViewsMonitor = selfProfileViewsMonitor
         self.userSession = userSession
         self.trackingManager = trackingManager
         self.colorSchemeController = .init(userSession: userSession)
+        self.wireCellsFactory = wireCellsFactory
+
         super.init(nibName: nil, bundle: nil)
 
         self.proximityMonitorManager = ProximityMonitorManager()
@@ -208,7 +219,7 @@ final class ZClientViewController: UIViewController {
 
         NotificationCenter.default.post(name: NSNotification.Name.ZMUserSessionDidBecomeAvailable, object: nil)
 
-        NotificationCenter.default
+        let featureToken = NotificationCenter.default
             .addObserver(forName: .featureDidChangeNotification, object: nil, queue: .main) { [weak self] note in
                 guard let change = note.object as? FeatureRepository.FeatureChange else { return }
 
@@ -221,6 +232,14 @@ final class ZClientViewController: UIViewController {
                 default:
                     break
                 }
+            }
+        self.featureChangeObserverToken = SelfUnregisteringNotificationCenterToken(featureToken)
+
+        // Observe developer flag changes using KVO
+        self.userDefaultsObservation = UserDefaults.standard
+            .observe(\.showUnreadConversationsFilter, options: [.new]) { [weak self] _, _ in
+                // Update sidebar's showUnreadFilters when developer flag changes
+                self?.sidebarViewController.showUnreadFilters = DeveloperFlag.showUnreadConversationsFilter.isOn
             }
 
         createLegalHoldDisclosureController()
@@ -269,12 +288,14 @@ final class ZClientViewController: UIViewController {
 
         if Bundle.developerModeEnabled {
             // better way of dealing with this?
-            NotificationCenter.default.addObserver(
-                self,
-                selector: #selector(requestLoopNotification(_:)),
-                name: .loggingRequestLoop,
-                object: nil
-            )
+            let loggingToken = NotificationCenter.default.addObserver(
+                forName: .loggingRequestLoop,
+                object: nil,
+                queue: .main
+            ) { [weak self] notification in
+                self?.requestLoopNotification(notification)
+            }
+            loggingRequestLoopObserverToken = SelfUnregisteringNotificationCenterToken(loggingToken)
         }
 
         setupUserChangeInfoObserver()
@@ -285,14 +306,29 @@ final class ZClientViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
+        migrateAnalytics()
         firstTimeRequestToEnableAnalytics()
         view.backgroundColor = ColorTheme.Backgrounds.surface
+    }
+
+    private func migrateAnalytics() {
+        Task {
+            do {
+                guard let trackingManager, let domain = userSession.selfUser.domain,
+                      trackingManager.isAnalyticsTrackingAvailable(for: domain) else { return }
+                try await trackingManager.migrateAnalyticsSetupIfNeeded()
+            } catch {
+                WireLogger.analytics.error("failed to migrate analytics between accounts: \(error)")
+            }
+        }
     }
 
     private func firstTimeRequestToEnableAnalytics() {
         Task {
             do {
-                try await trackingManager?.firstTimeRequestToEnableAnalytics()
+                guard let trackingManager, let domain = userSession.selfUser.domain,
+                      trackingManager.isAnalyticsTrackingAvailable(for: domain) else { return }
+                try await trackingManager.firstTimeRequestToEnableAnalytics()
             } catch {
                 WireLogger.analytics.error("failed to first time enable analytics: \(error)")
             }
@@ -844,7 +880,7 @@ extension ZClientViewController: UserObserving {
 
 extension ZClientViewController {
     func setupDidViewSelfProfileObserver() {
-        userDidViewSelfProfileToken = NotificationCenter.default.addObserver(
+        let token = NotificationCenter.default.addObserver(
             forName: .userDidViewSelfProfile,
             object: nil,
             queue: .main
@@ -853,5 +889,6 @@ extension ZClientViewController {
                 await self?.updateCachedAccountInfo()
             }
         }
+        userDidViewSelfProfileToken = SelfUnregisteringNotificationCenterToken(token)
     }
 }

@@ -27,7 +27,8 @@ package protocol PersonalAccountCreationFactory {
     func verificationEmailCodeFactory(
         email: String,
         password: String,
-        name: String
+        name: String,
+        trackingConsent: RegistrationAnalyticsTrackingConsent
     ) -> any VerificationEmailCodeFactory
 
 }
