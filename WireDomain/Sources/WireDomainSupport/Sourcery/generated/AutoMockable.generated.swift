@@ -3298,6 +3298,63 @@ public class MockPushSupportedProtocolsUseCaseProtocol: PushSupportedProtocolsUs
 
 }
 
+public class MockResetMLSConversationUserDefaultsRepositoryProtocol: ResetMLSConversationUserDefaultsRepositoryProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - setInitiatedReset
+
+    public var setInitiatedResetConversationID_Invocations: [WireDataModel.QualifiedID] = []
+    public var setInitiatedResetConversationID_MockMethod: ((WireDataModel.QualifiedID) -> Void)?
+
+    public func setInitiatedReset(conversationID: WireDataModel.QualifiedID) {
+        setInitiatedResetConversationID_Invocations.append(conversationID)
+
+        guard let mock = setInitiatedResetConversationID_MockMethod else {
+            fatalError("no mock for `setInitiatedResetConversationID`")
+        }
+
+        mock(conversationID)
+    }
+
+    // MARK: - wasResetInitiated
+
+    public var wasResetInitiatedConversationID_Invocations: [WireDataModel.QualifiedID] = []
+    public var wasResetInitiatedConversationID_MockMethod: ((WireDataModel.QualifiedID) -> Bool)?
+    public var wasResetInitiatedConversationID_MockValue: Bool?
+
+    public func wasResetInitiated(conversationID: WireDataModel.QualifiedID) -> Bool {
+        wasResetInitiatedConversationID_Invocations.append(conversationID)
+
+        if let mock = wasResetInitiatedConversationID_MockMethod {
+            return mock(conversationID)
+        } else if let mock = wasResetInitiatedConversationID_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `wasResetInitiatedConversationID`")
+        }
+    }
+
+    // MARK: - removeResetInitiated
+
+    public var removeResetInitiatedConversationID_Invocations: [WireDataModel.QualifiedID] = []
+    public var removeResetInitiatedConversationID_MockMethod: ((WireDataModel.QualifiedID) -> Void)?
+
+    public func removeResetInitiated(conversationID: WireDataModel.QualifiedID) {
+        removeResetInitiatedConversationID_Invocations.append(conversationID)
+
+        guard let mock = removeResetInitiatedConversationID_MockMethod else {
+            fatalError("no mock for `removeResetInitiatedConversationID`")
+        }
+
+        mock(conversationID)
+    }
+
+}
+
 public class MockSelfUserProviderProtocol: SelfUserProviderProtocol {
 
     // MARK: - Life cycle

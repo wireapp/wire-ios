@@ -33,6 +33,7 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
     private var mlsService: MockMLSServiceInterface!
     private var zmConversation: ZMConversation!
     private var mockFeatureRepository: MockFeatureRepositoryInterface!
+    private lazy var mockResetUserDefaultsRepository = MockResetMLSConversationUserDefaultsRepositoryProtocol()
 
     private var context: NSManagedObjectContext {
         coreDataStack.syncContext
@@ -63,10 +64,15 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
         conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
         conversationLocalStore.storeMLSConversationPendingJoinNewMLSGroupIDConversation_MockMethod = { _, _ in }
 
+        mockResetUserDefaultsRepository.removeResetInitiatedConversationID_MockMethod = { _ in }
+        mockResetUserDefaultsRepository.wasResetInitiatedConversationID_MockValue = false
+
         sut = ConversationMLSResetEventProcessor(
             mlsService: mlsService,
             conversationLocalStore: conversationLocalStore,
-            featureRepository: mockFeatureRepository
+            featureRepository: mockFeatureRepository,
+            userDefaultsRepository: mockResetUserDefaultsRepository
+
         )
     }
 
@@ -131,6 +137,25 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
             conversationLocalStore.storeMLSConversationPendingJoinNewMLSGroupIDConversation_Invocations.count,
             0
         )
+    }
+
+    func testProcessEvent_DoNothingWhenInitiatedFromSameDevice() async throws {
+
+        mockResetUserDefaultsRepository.wasResetInitiatedConversationID_MockValue = true
+
+        // When
+
+        try await sut.processEvent(Scaffolding.event)
+
+        // Then
+
+        XCTAssertEqual(mockResetUserDefaultsRepository.removeResetInitiatedConversationID_Invocations.count, 1)
+        XCTAssertEqual(mlsService.wipeGroup_Invocations.count, 0)
+        XCTAssertEqual(
+            conversationLocalStore.storeMLSConversationPendingJoinNewMLSGroupIDConversation_Invocations.count,
+            0
+        )
+        XCTAssertEqual(mlsService.wipeGroup_Invocations.count, 0)
     }
 
     func testNoConversationFound() async throws {

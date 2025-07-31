@@ -31,28 +31,45 @@ struct ConversationMLSResetEventProcessor: ConversationMLSResetEventProcessorPro
     private let mlsService: any MLSServiceInterface
     private let conversationLocalStore: any ConversationLocalStoreProtocol
     private let featureRepository: any FeatureRepositoryInterface
+    private let userDefaultsRepository: ResetMLSConversationUserDefaultsRepositoryProtocol
 
     init(
         mlsService: any MLSServiceInterface,
         conversationLocalStore: any ConversationLocalStoreProtocol,
-        featureRepository: any FeatureRepositoryInterface
+        featureRepository: any FeatureRepositoryInterface,
+        userDefaultsRepository: ResetMLSConversationUserDefaultsRepositoryProtocol
     ) {
         self.mlsService = mlsService
         self.conversationLocalStore = conversationLocalStore
         self.featureRepository = featureRepository
+        self.userDefaultsRepository = userDefaultsRepository
     }
 
     func processEvent(_ event: ConversationMLSResetEvent) async throws {
 
+        let attributes: LogAttributes = [.conversationId: event.conversationID.id.safeForLoggingDescription]
+
         let feature = await featureRepository.fetchAllowedGlobalOperations()
         guard feature.status == .enabled, feature.config.mlsConversationReset == true else {
             WireLogger.mls.debug(
-                "No need to process reset broken MLS conversation, FF is OFF"
+                "No need to process reset broken MLS conversation, FF is OFF",
+                attributes: attributes
             )
             return
         }
+        guard !userDefaultsRepository
+            .wasResetInitiated(conversationID: event.conversationID.toDomainModel()) else {
+            WireLogger.mls.info(
+                "Reset was initiated from this device thus no need to process it", attributes: attributes
+            )
+            userDefaultsRepository.removeResetInitiated(conversationID: event.conversationID.toDomainModel())
+            return
+        }
 
-        WireLogger.mls.info("MLS event processor is processing reset broken MLS conversation")
+        WireLogger.mls.info(
+            "MLS event processor is processing reset broken MLS conversation",
+            attributes: attributes
+        )
 
         let oldMLSGroupIDBase64 = event.oldMLSGroupIDBase64
         let newMLSGroupIDBase64 = event.newMLSGroupIDBase64
@@ -60,20 +77,29 @@ struct ConversationMLSResetEventProcessor: ConversationMLSResetEventProcessorPro
             let oldMLSGroupID = MLSGroupID(base64Encoded: oldMLSGroupIDBase64),
             let newMLSGroupID = MLSGroupID(base64Encoded: newMLSGroupIDBase64)
         else {
-            WireLogger.mls.error("Failed to get old and new group IDs to reset MLS conversation")
+            WireLogger.mls.error(
+                "Failed to get old and new group IDs to reset MLS conversation",
+                attributes: attributes
+            )
             throw Failure.invalidArguments
         }
 
         guard let localConversation = await conversationLocalStore
             .fetchConversation(id: event.conversationID.id, domain: event.conversationID.domain) else {
-            WireLogger.mls.error("Failed to get local conversation to reset MLS conversation")
+            WireLogger.mls.error(
+                "Failed to get local conversation to reset MLS conversation",
+                attributes: attributes
+            )
             throw Failure.conversationNotFound
         }
 
         do {
             try await mlsService.wipeGroup(oldMLSGroupID)
         } catch {
-            WireLogger.mls.error("Failed to wipe group in order to reset MLS conversation")
+            WireLogger.mls.error(
+                "Failed to wipe group in order to reset MLS conversation",
+                attributes: attributes
+            )
             throw Failure.failedToWipeMLSConversation
         }
 
@@ -82,7 +108,10 @@ struct ConversationMLSResetEventProcessor: ConversationMLSResetEventProcessorPro
             conversation: localConversation
         )
 
-        WireLogger.mls.info("MLS event processor is finished processing reset broken MLS conversation")
+        WireLogger.mls.info(
+            "MLS event processor is finished processing reset broken MLS conversation",
+            attributes: attributes
+        )
     }
 
 }
