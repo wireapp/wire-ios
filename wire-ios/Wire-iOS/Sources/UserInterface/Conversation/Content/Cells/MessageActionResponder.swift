@@ -19,7 +19,7 @@
 import UIKit
 import WireDataModel
 
-public protocol MessageActionResponder: AnyObject {
+protocol MessageActionResponder: AnyObject {
     /// perform an action for the message
     ///
     /// - Parameters:

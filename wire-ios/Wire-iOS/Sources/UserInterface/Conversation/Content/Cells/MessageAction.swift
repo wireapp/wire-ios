@@ -21,9 +21,9 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-public enum MessageAction: CaseIterable, Equatable {
+enum MessageAction: CaseIterable, Equatable {
 
-    public static var allCases: [MessageAction] = [
+    static var allCases: [MessageAction] = [
         .visitLink,
         .digitallySign,
         .copy,

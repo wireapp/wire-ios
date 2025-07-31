@@ -24,7 +24,7 @@ import WireSyncEngine
 extension ConversationContentViewController {
     // MARK: - EditMessages
 
-    public func editLastMessage() {
+    func editLastMessage() {
         if let lastEditableMessage = conversation.lastEditableMessage {
             perform(action: .edit, for: lastEditableMessage, view: tableView)
         }
@@ -213,7 +213,7 @@ extension ConversationContentViewController {
 
 extension ConversationContentViewController: UserClientObserver {
 
-    public func userClientDidChange(_ changeInfo: UserClientChangeInfo) {
+    func userClientDidChange(_ changeInfo: UserClientChangeInfo) {
         if changeInfo.sessionHasBeenReset {
             userClientToken = nil
             activityIndicator.stop()
@@ -225,16 +225,16 @@ extension ConversationContentViewController: UserClientObserver {
 
 extension ConversationContentViewController: SignatureObserver {
 
-    public func willReceiveSignatureURL() {
+    func willReceiveSignatureURL() {
         activityIndicator.start()
     }
 
-    public func didReceiveSignatureURL(_ url: URL) {
+    func didReceiveSignatureURL(_ url: URL) {
         activityIndicator.stop()
         presentDigitalSignatureVerification(with: url)
     }
 
-    public func didReceiveDigitalSignature(_ cmsFileMetadata: ZMFileMetadata) {
+    func didReceiveDigitalSignature(_ cmsFileMetadata: ZMFileMetadata) {
         dismissDigitalSignatureVerification { [weak self] in
             ZMUserSession.shared()?.perform {
                 do {
@@ -246,7 +246,7 @@ extension ConversationContentViewController: SignatureObserver {
         }
     }
 
-    public func didFailSignature(errorType: SignatureStatus.ErrorYpe) {
+    func didFailSignature(errorType: SignatureStatus.ErrorYpe) {
         activityIndicator.stop()
         if isDigitalSignatureVerificationShown {
             dismissDigitalSignatureVerification { [weak self] in

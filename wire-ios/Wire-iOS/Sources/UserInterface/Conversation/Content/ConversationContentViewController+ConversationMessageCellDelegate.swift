@@ -60,7 +60,7 @@ extension ConversationContentViewController: ConversationMessageCellDelegate {
 
     // MARK: - MessageActionResponder
 
-    public func perform(
+    func perform(
         action: MessageAction,
         for message: ZMConversationMessage,
         view: UIView

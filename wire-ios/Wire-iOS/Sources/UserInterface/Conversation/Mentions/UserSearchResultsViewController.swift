@@ -40,7 +40,7 @@ protocol UserList: AnyObject {
     func selectNextUser()
 }
 
-public final class UserSearchResultsViewController: UIViewController, KeyboardCollapseObserver {
+final class UserSearchResultsViewController: UIViewController, KeyboardCollapseObserver {
 
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout())
     private var searchResults: [UserType] = [] {
@@ -85,7 +85,7 @@ public final class UserSearchResultsViewController: UIViewController, KeyboardCo
 
     private var keyboardObserver: KeyboardBlockObserver?
 
-    public override func viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
 
         setupCollectionView()
@@ -101,7 +101,7 @@ public final class UserSearchResultsViewController: UIViewController, KeyboardCo
         setupKeyboardObserver()
     }
 
-    public override func viewDidLayoutSubviews() {
+    override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         if collectionView.frame.size != view.bounds.size {
             collectionView.frame = view.bounds
@@ -206,7 +206,7 @@ public final class UserSearchResultsViewController: UIViewController, KeyboardCo
         }
     }
 
-    public override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
 
         coordinator.animate(alongsideTransition: nil) { _ in
@@ -273,17 +273,17 @@ extension UserSearchResultsViewController: UserList {
 
 extension UserSearchResultsViewController: UICollectionViewDelegate {
 
-    public func numberOfSections(in collectionView: UICollectionView) -> Int {
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
         1
     }
 
-    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         searchResults.count
     }
 }
 
 extension UserSearchResultsViewController: UICollectionViewDelegateFlowLayout {
-    public func collectionView(
+    func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
@@ -294,7 +294,7 @@ extension UserSearchResultsViewController: UICollectionViewDelegateFlowLayout {
 
 extension UserSearchResultsViewController: UICollectionViewDataSource {
 
-    public func collectionView(
+    func collectionView(
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
@@ -328,7 +328,7 @@ extension UserSearchResultsViewController: UICollectionViewDataSource {
         return cell
     }
 
-    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         delegate?.didSelect(user: searchResults[indexPath.item])
         dismiss()
     }

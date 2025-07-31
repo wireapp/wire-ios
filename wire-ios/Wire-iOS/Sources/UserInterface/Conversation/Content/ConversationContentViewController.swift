@@ -29,53 +29,10 @@ import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "ConversationContentViewController")
 
-public protocol ConversationMessagesUI {
-    var delegate: ConversationContentViewControllerDelegate? { get set }
-    var viewController: UIViewController { get }
-    //var view: UIView? { get }
-    var mentionsSearchResultsViewController: UserSearchResultsViewController { get }
-    var isScrolledToBottom: Bool { get }
-    var searchQueries: [String]? { get set }
-    func setPannableView(view: UIView)
-    func setBottomMargin(_ bottomMargin: CGFloat)
-    func setScrollEnabled(_ enabled: Bool)
-    func createReplyComposingView(for message: ZMConversationMessage) -> ReplyComposingView
-    func updateTableViewHeaderView()
-    func editLastMessage()
-    func scrollToBottomIfNeeded()
-    func scrollToBottomAnimated()
-    func scroll(to message: ZMConversationMessage?, completion: ((UIView) -> Void)?)
-    func didFinishEditing(_ message: ZMConversationMessage?)
-    func highlight(_ message: ZMConversationMessage)
-    func perform(action: MessageAction, for message: ZMConversationMessage, view: UIView)
-}
-
-extension ConversationContentViewController: ConversationMessagesUI {
-    public var viewController: UIViewController {
-        self
-    }
-    
-    public func scrollToBottomAnimated() {
-        tableView.scrollToBottom(animated: true)
-    }
-    
-    public func setPannableView(view: UIView) {
-        tableView.pannableView = view
-    }
-    
-    public func setBottomMargin(_ bottomMargin: CGFloat) {
-        self.bottomMargin = bottomMargin
-    }
-    
-    public func setScrollEnabled(_ enabled: Bool) {
-        tableView.isScrollEnabled = enabled
-    }
-}
-
 /// The main conversation view controller
-public final class ConversationContentViewController: UIViewController {
+final class ConversationContentViewController: UIViewController {
 
-    weak public var delegate: ConversationContentViewControllerDelegate?
+    weak var delegate: ConversationContentViewControllerDelegate?
     let conversation: ZMConversation
     var bottomMargin: CGFloat = 0 {
         didSet {
@@ -119,7 +76,7 @@ public final class ConversationContentViewController: UIViewController {
 
     let tableView: UpsideDownTableView = .init(frame: .zero, style: .plain)
     let bottomContainer: UIView = .init(frame: .zero)
-    public var searchQueries: [String]? {
+    var searchQueries: [String]? {
         didSet {
             guard let searchQueries,
                   !searchQueries.isEmpty else { return }
@@ -128,7 +85,7 @@ public final class ConversationContentViewController: UIViewController {
         }
     }
 
-    public let mentionsSearchResultsViewController: UserSearchResultsViewController = .init()
+    let mentionsSearchResultsViewController: UserSearchResultsViewController = .init()
 
     lazy var dataSource = ConversationTableViewDataSource(
         conversation: conversation,
@@ -231,7 +188,7 @@ public final class ConversationContentViewController: UIViewController {
         fatalError("init(coder:) is not supported")
     }
 
-    public override func loadView() {
+    override func loadView() {
         view = .init()
 
         view.addSubview(tableView)
@@ -267,7 +224,7 @@ public final class ConversationContentViewController: UIViewController {
         heightCollapsingConstraint.isActive = true
     }
 
-    public override func viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
 
         tableView.rowHeight = UITableView.automaticDimension
@@ -335,7 +292,7 @@ public final class ConversationContentViewController: UIViewController {
         )
     }
 
-    public override func viewDidAppear(_ animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         updateVisibleMessagesWindow()
 
@@ -353,7 +310,7 @@ public final class ConversationContentViewController: UIViewController {
         startRefreshTimerIfNeeded()
     }
 
-    public override func viewWillAppear(_ animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         onScreen = true
 
@@ -368,25 +325,25 @@ public final class ConversationContentViewController: UIViewController {
         setNeedsStatusBarAppearanceUpdate()
     }
 
-    public override func viewWillDisappear(_ animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         onScreen = false
         removeHighlightsAndMenu()
         super.viewWillDisappear(animated)
     }
 
-    public override func viewDidDisappear(_ animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         stopRefreshTimer()
     }
 
-    public override func viewDidLayoutSubviews() {
+    override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         let margins = HorizontalMargins.conversationHorizontalMargins()
         dataSource.contentWidth = tableView.bounds.width - margins.right - margins.left
         scrollToFirstUnreadMessageIfNeeded()
     }
 
-    public override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         wr_supportedInterfaceOrientations
     }
 
@@ -406,7 +363,7 @@ public final class ConversationContentViewController: UIViewController {
         }
     }
 
-    public override func didReceiveMemoryWarning() {
+    override func didReceiveMemoryWarning() {
         zmLog.warn("Received system memory warning.")
         super.didReceiveMemoryWarning()
     }
@@ -457,14 +414,14 @@ public final class ConversationContentViewController: UIViewController {
         tableView.contentOffset = CGPoint(x: tableView.contentOffset.x, y: -bottomMargin)
     }
 
-    public var isScrolledToBottom: Bool {
+    var isScrolledToBottom: Bool {
         !dataSource.hasNewerMessagesToLoad &&
             tableView.contentOffset.y + tableView.correctedContentInset.bottom <= 0
     }
 
     // MARK: - Actions
 
-    public func highlight(_ message: ZMConversationMessage) {
+    func highlight(_ message: ZMConversationMessage) {
         dataSource.highlight(message: message)
     }
 
@@ -505,7 +462,7 @@ public final class ConversationContentViewController: UIViewController {
         UIMenuController.shared.hideMenu()
     }
 
-    public func didFinishEditing(_ message: ZMConversationMessage?) {
+    func didFinishEditing(_ message: ZMConversationMessage?) {
         dataSource.editingMessage = nil
     }
 
@@ -608,7 +565,7 @@ public final class ConversationContentViewController: UIViewController {
 // MARK: - TableView
 
 extension ConversationContentViewController: UITableViewDelegate {
-    public func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if onScreen {
             cell.willDisplayCell()
         }
@@ -623,17 +580,17 @@ extension ConversationContentViewController: UITableViewDelegate {
         cachedRowHeights[indexPath] = cell.frame.size.height
     }
 
-    public func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         cell.didEndDisplayingCell()
 
         cachedRowHeights[indexPath] = cell.frame.size.height
     }
 
-    public func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         cachedRowHeights[indexPath] ?? UITableView.automaticDimension
     }
 
-    public func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
+    func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
         willSelectRow(at: indexPath, tableView: tableView)
     }
 
@@ -664,7 +621,7 @@ extension ConversationContentViewController: UITableViewDelegate {
         return nil
     }
 
-    public func tableView(
+    func tableView(
         _ tableView: UITableView,
         leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath
     ) -> UISwipeActionsConfiguration? {
@@ -691,7 +648,7 @@ extension ConversationContentViewController: UITableViewDelegate {
         return UISwipeActionsConfiguration(actions: [replyAction])
     }
 
-    public func tableView(
+    func tableView(
         _ tableView: UITableView,
         trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
     ) -> UISwipeActionsConfiguration? {
@@ -726,22 +683,22 @@ extension ConversationContentViewController: UITableViewDelegate {
         return UISwipeActionsConfiguration(actions: [reactAction])
     }
 
-    public func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         startRefreshTimerIfNeeded()
     }
 
-    public func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
         // use for example when tapping the arrow to scroll to the bottom
         startRefreshTimerIfNeeded()
     }
 
-    public func scrollViewDidScrollToTop(_ scrollView: UIScrollView) {
+    func scrollViewDidScrollToTop(_ scrollView: UIScrollView) {
         startRefreshTimerIfNeeded()
     }
 }
 
 extension ConversationContentViewController: UITableViewDataSourcePrefetching {
-    public func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
+    func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
         // no-op
     }
 }

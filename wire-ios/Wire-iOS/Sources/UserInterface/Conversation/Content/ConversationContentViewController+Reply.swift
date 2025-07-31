@@ -20,7 +20,7 @@ import Foundation
 import WireDataModel
 
 extension ConversationContentViewController {
-    public func createReplyComposingView(for message: ZMConversationMessage) -> ReplyComposingView {
+    func createReplyComposingView(for message: ZMConversationMessage) -> ReplyComposingView {
         let replyComposingView = ReplyComposingView(message: message)
         replyComposingView.translatesAutoresizingMaskIntoConstraints = false
 

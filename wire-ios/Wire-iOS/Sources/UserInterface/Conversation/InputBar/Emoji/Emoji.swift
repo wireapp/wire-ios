@@ -18,9 +18,9 @@
 
 import Foundation
 
-public final class Emoji: Decodable {
+final class Emoji: Decodable {
 
-    public typealias ID = String
+    typealias ID = String
 
     let value: ID
     let name: String
@@ -75,11 +75,11 @@ public final class Emoji: Decodable {
 
 extension Emoji: Hashable {
 
-    public static func == (lhs: Emoji, rhs: Emoji) -> Bool {
+    static func == (lhs: Emoji, rhs: Emoji) -> Bool {
         lhs.value == rhs.value
     }
 
-    public func hash(into hasher: inout Hasher) {
+    func hash(into hasher: inout Hasher) {
         hasher.combine(value)
     }
 
