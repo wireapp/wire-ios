@@ -185,7 +185,7 @@
 "conversation_list.empty_state.mentions.title" = "No mentions";
 "conversation_list.empty_state.replies.title" = "No replies";
 "conversation_list.empty_state.drafts.title" = "No drafts";
-"conversation_list.empty_state.up_to_date.subtitle" = "All your conversations are up to date";
+"conversation_list.empty_state.up_to_date.subtitle" = "All conversations are up to date";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "in Contacts";
