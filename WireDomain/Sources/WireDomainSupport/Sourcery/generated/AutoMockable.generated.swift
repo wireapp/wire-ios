@@ -566,6 +566,24 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
     public init() {}
 
 
+    // MARK: - qualifiedID
+
+    public var qualifiedIDFor_Invocations: [ZMConversation] = []
+    public var qualifiedIDFor_MockMethod: ((ZMConversation) async -> QualifiedID?)?
+    public var qualifiedIDFor_MockValue: QualifiedID??
+
+    public func qualifiedID(for conversation: ZMConversation) async -> QualifiedID? {
+        qualifiedIDFor_Invocations.append(conversation)
+
+        if let mock = qualifiedIDFor_MockMethod {
+            return await mock(conversation)
+        } else if let mock = qualifiedIDFor_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `qualifiedIDFor`")
+        }
+    }
+
     // MARK: - fetchOrCreateConversation
 
     public var fetchOrCreateConversationIdDomain_Invocations: [(id: UUID, domain: String?)] = []
@@ -917,6 +935,24 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
             return mock
         } else {
             fatalError("no mock for `localParticipantsIn`")
+        }
+    }
+
+    // MARK: - localParticipantsExcludingSelfAsMLSUsers
+
+    public var localParticipantsExcludingSelfAsMLSUsersIn_Invocations: [ZMConversation] = []
+    public var localParticipantsExcludingSelfAsMLSUsersIn_MockMethod: ((ZMConversation) async -> [MLSUser])?
+    public var localParticipantsExcludingSelfAsMLSUsersIn_MockValue: [MLSUser]?
+
+    public func localParticipantsExcludingSelfAsMLSUsers(in conversation: ZMConversation) async -> [MLSUser] {
+        localParticipantsExcludingSelfAsMLSUsersIn_Invocations.append(conversation)
+
+        if let mock = localParticipantsExcludingSelfAsMLSUsersIn_MockMethod {
+            return await mock(conversation)
+        } else if let mock = localParticipantsExcludingSelfAsMLSUsersIn_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `localParticipantsExcludingSelfAsMLSUsersIn`")
         }
     }
 
