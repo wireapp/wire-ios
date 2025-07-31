@@ -1175,6 +1175,8 @@ internal enum L10n {
   internal enum Localizable {
     /// Connection Request
     internal static let connectionRequestPendingTitle = L10n.tr("Localizable", "connection_request_pending_title", fallback: "Connection Request")
+    /// todo
+    internal static let todo = L10n.tr("Localizable", "todo", fallback: "todo")
     internal enum About {
       internal enum Copyright {
         /// © Wire Swiss GmbH
@@ -3747,6 +3749,14 @@ internal enum L10n {
         /// Channel access
         internal static let title = L10n.tr("Localizable", "group_details.access_options_cell.title", fallback: "Channel access")
       }
+      internal enum AppsOptionsCell {
+        /// Off
+        internal static let disabled = L10n.tr("Localizable", "group_details.apps_options_cell.disabled", fallback: "Off")
+        /// On
+        internal static let enabled = L10n.tr("Localizable", "group_details.apps_options_cell.enabled", fallback: "On")
+        /// Apps
+        internal static let title = L10n.tr("Localizable", "group_details.apps_options_cell.title", fallback: "Apps")
+      }
       internal enum ConversationAdminsHeader {
         /// Conversation admins
         internal static let title = L10n.tr("Localizable", "group_details.conversation_admins_header.title", fallback: "Conversation admins")
@@ -3788,14 +3798,6 @@ internal enum L10n {
         internal static let description = L10n.tr("Localizable", "group_details.receipt_options_cell.description", fallback: "When this is on, people can see when their messages in this conversation are read.")
         /// Read receipts
         internal static let title = L10n.tr("Localizable", "group_details.receipt_options_cell.title", fallback: "Read receipts")
-      }
-      internal enum ServicesOptionsCell {
-        /// Off
-        internal static let disabled = L10n.tr("Localizable", "group_details.services_options_cell.disabled", fallback: "Off")
-        /// On
-        internal static let enabled = L10n.tr("Localizable", "group_details.services_options_cell.enabled", fallback: "On")
-        /// Services
-        internal static let title = L10n.tr("Localizable", "group_details.services_options_cell.title", fallback: "Services")
       }
       internal enum TimeoutOptionsCell {
         /// Self-deleting messages
@@ -4565,6 +4567,12 @@ internal enum L10n {
         /// People
         internal static let title = L10n.tr("Localizable", "participants.all.title", fallback: "People")
       }
+      internal enum Apps {
+        internal enum RemoveIntegration {
+          /// Remove app
+          internal static let button = L10n.tr("Localizable", "participants.apps.remove_integration.button", fallback: "Remove app")
+        }
+      }
       internal enum Avatar {
         internal enum Guest {
           /// Guest
@@ -4605,12 +4613,6 @@ internal enum L10n {
           internal static func footer(_ p1: Any) -> String {
             return L10n.tr("Localizable", "participants.section.name.footer", String(describing: p1), fallback: "Up to %@ participants can join a conversation.")
           }
-        }
-      }
-      internal enum Services {
-        internal enum RemoveIntegration {
-          /// Remove service
-          internal static let button = L10n.tr("Localizable", "participants.services.remove_integration.button", fallback: "Remove service")
         }
       }
     }
@@ -4922,8 +4924,8 @@ internal enum L10n {
         internal static let header = L10n.tr("Localizable", "profile.extended_metadata.header", fallback: "Information")
       }
       internal enum GroupAdminStatusMemo {
-        /// When this is on, the admin can add or remove people and services, update group settings, and change a participant's role.
-        internal static let body = L10n.tr("Localizable", "profile.group_admin_status_memo.body", fallback: "When this is on, the admin can add or remove people and services, update group settings, and change a participant's role.")
+        /// When this is on, the admin can add or remove people and apps, update group settings, and change a participant's role.
+        internal static let body = L10n.tr("Localizable", "profile.group_admin_status_memo.body", fallback: "When this is on, the admin can add or remove people and apps, update group settings, and change a participant's role.")
       }
       internal enum Profile {
         internal enum GroupAdminOptions {

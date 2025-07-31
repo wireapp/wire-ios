@@ -1020,7 +1020,7 @@
 "profile.read_receipts_disabled_memo.header" = "YOU HAVE DISABLED READ RECEIPTS";
 "profile.read_receipts_memo.body" = "If both sides turn on read receipts, you can see when messages are read.\n\nYou can change this option in your account settings.";
 
-"profile.group_admin_status_memo.body" = "When this is on, the admin can add or remove people and services, update group settings, and change a participant's role.";
+"profile.group_admin_status_memo.body" = "When this is on, the admin can add or remove people and apps, update group settings, and change a participant's role.";
 
 "profile.extended_metadata.header" = "Information";
 
@@ -1062,15 +1062,15 @@
 "device.type.unknown" = "Unknown";
 
 // Bot
-"participants.services.remove_integration.button" = "Remove service";
+"participants.apps.remove_integration.button" = "Remove app";
 
 // Group details
 "group_details.guest_options_cell.title" = "Guests";
 "group_details.guest_options_cell.enabled" = "On";
 "group_details.guest_options_cell.disabled" = "Off";
-"group_details.services_options_cell.title" = "Services";
-"group_details.services_options_cell.enabled" = "On";
-"group_details.services_options_cell.disabled" = "Off";
+"group_details.apps_options_cell.title" = "Apps";
+"group_details.apps_options_cell.enabled" = "On";
+"group_details.apps_options_cell.disabled" = "Off";
 "group_details.timeout_options_cell.title" = "Self-deleting messages";
 "group_details.notification_options_cell.title" = "Notifications";
 "group_details.notification_options_cell.description" = "You can be notified about everything (including audio and video calls) or only when someone mentions you or replies to one of your messages.";

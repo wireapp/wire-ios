@@ -268,7 +268,7 @@ private extension ZMButton {
     static func createDestructiveServiceButton() -> Self {
         .init(
             style: .accentColorTextButtonStyle,
-            title: L10n.Localizable.Participants.Services.RemoveIntegration.button.capitalized
+            title: L10n.Localizable.Participants.Apps.RemoveIntegration.button.capitalized
         )
     }
 
