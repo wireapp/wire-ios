@@ -635,8 +635,11 @@
 "content.system.message_read_receipt_on_add_to_group" = "Lesebestätigungen aktiv";
 
 // history depth
-"content.system.message_history_depth" = "%@ hat den Gesprächsverlauf auf %@ eingestellt";
-"content.system.message_history_depth_disabled" = "%@ hat den Gesprächsverlauf deaktiviert";
+"content.system.message_history_depth_initially_set_days" = "Neue Teilnehmer können Nachrichten der letzten %@ Tage sehen";
+"content.system.message_history_depth_initially_set_weeks" = "Neue Teilnehmer können Nachrichten der letzten %@ Wochen sehen";
+"content.system.message_history_depth_modified_days" = "%@ hat den Gesprächsverlauf auf %@ Tage eingestellt";
+"content.system.message_history_depth_modified_weeks" = "%@ hat den Gesprächsverlauf auf %@ Wochen eingestellt";
+"content.system.message_history_depth_modified_disabled" = "%@ hat den Gesprächsverlauf deaktiviert";
 
 // legal hold
 
@@ -673,7 +676,7 @@
 "content.system.unknown_message.body" = "Diese Meldung konnte nicht angezeigt werden. Möglicherweise verwenden Sie eine ältere Version von Wire.";
 
 // user removed from team
-"content.system.user_removed_from_team" = "This user is no longer available";
+"content.system.user_removed_from_team" = "Dieser Benutzer ist nicht mehr verfügbar";
 
 "content.file.uploading" = "Hochladen…";
 "content.file.downloading" = "Herunterladen…";
