@@ -65,7 +65,8 @@ extension ConversationViewController {
             exchangeableContentViewController.view.topAnchor.constraint(equalTo: view.topAnchor)
         ])
 
-        exchangeableContentViewController.view.bottomAnchor.constraint(equalTo: inputBarController.view.topAnchor).isActive = true
+        exchangeableContentViewController.view.bottomAnchor.constraint(equalTo: inputBarController.view.topAnchor)
+            .isActive = true
         NSLayoutConstraint.activate([
             inputBarController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             inputBarController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),

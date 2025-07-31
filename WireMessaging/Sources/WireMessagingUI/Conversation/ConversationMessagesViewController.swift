@@ -33,7 +33,7 @@ private struct ConversationMessagesViewControllerPreview: UIViewControllerRepres
     func makeUIViewController(context: Context) -> ConversationMessagesViewController {
         ConversationMessagesViewController()
     }
-    
+
     func updateUIViewController(_ uiViewController: ConversationMessagesViewController, context: Context) {}
 }
 

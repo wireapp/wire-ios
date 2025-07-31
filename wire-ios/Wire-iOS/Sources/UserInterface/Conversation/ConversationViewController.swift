@@ -78,11 +78,11 @@ final class ConversationViewController: UIViewController {
     private(set) var startCallController: ConversationCallController!
 
     let exchangeableContentViewController: UIViewController
-    
+
     var contentViewController: ConversationContentViewController? {
         exchangeableContentViewController as? ConversationContentViewController
     }
-    
+
     let inputBarController: ConversationInputBarViewController
 
     var collectionController: CollectionsViewController?
