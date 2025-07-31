@@ -3219,34 +3219,34 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
         mock(selfDeletingMessages)
     }
 
-    // MARK: - fetchAllowGlobalOperations
+    // MARK: - fetchAllowedGlobalOperations
 
-    public var fetchAllowGlobalOperations_Invocations: [Void] = []
-    public var fetchAllowGlobalOperations_MockMethod: (() async -> Feature.AllowGlobalOperations)?
-    public var fetchAllowGlobalOperations_MockValue: Feature.AllowGlobalOperations?
+    public var fetchAllowedGlobalOperations_Invocations: [Void] = []
+    public var fetchAllowedGlobalOperations_MockMethod: (() async -> Feature.AllowedGlobalOperations)?
+    public var fetchAllowedGlobalOperations_MockValue: Feature.AllowedGlobalOperations?
 
-    public func fetchAllowGlobalOperations() async -> Feature.AllowGlobalOperations {
-        fetchAllowGlobalOperations_Invocations.append(())
+    public func fetchAllowedGlobalOperations() async -> Feature.AllowedGlobalOperations {
+        fetchAllowedGlobalOperations_Invocations.append(())
 
-        if let mock = fetchAllowGlobalOperations_MockMethod {
+        if let mock = fetchAllowedGlobalOperations_MockMethod {
             return await mock()
-        } else if let mock = fetchAllowGlobalOperations_MockValue {
+        } else if let mock = fetchAllowedGlobalOperations_MockValue {
             return mock
         } else {
-            fatalError("no mock for `fetchAllowGlobalOperations`")
+            fatalError("no mock for `fetchAllowedGlobalOperations`")
         }
     }
 
-    // MARK: - storeAllowGlobalOperations
+    // MARK: - storeAllowedGlobalOperations
 
-    public var storeAllowGlobalOperations_Invocations: [Feature.AllowGlobalOperations] = []
-    public var storeAllowGlobalOperations_MockMethod: ((Feature.AllowGlobalOperations) -> Void)?
+    public var storeAllowedGlobalOperations_Invocations: [Feature.AllowedGlobalOperations] = []
+    public var storeAllowedGlobalOperations_MockMethod: ((Feature.AllowedGlobalOperations) -> Void)?
 
-    public func storeAllowGlobalOperations(_ resetMLSConversations: Feature.AllowGlobalOperations) {
-        storeAllowGlobalOperations_Invocations.append(resetMLSConversations)
+    public func storeAllowedGlobalOperations(_ resetMLSConversations: Feature.AllowedGlobalOperations) {
+        storeAllowedGlobalOperations_Invocations.append(resetMLSConversations)
 
-        guard let mock = storeAllowGlobalOperations_MockMethod else {
-            fatalError("no mock for `storeAllowGlobalOperations`")
+        guard let mock = storeAllowedGlobalOperations_MockMethod else {
+            fatalError("no mock for `storeAllowedGlobalOperations`")
         }
 
         mock(resetMLSConversations)

@@ -18,7 +18,7 @@
 
 import Foundation
 
-struct QualifiedConversationMembers: Decodable, ToAPIModelConvertible {
+struct QualifiedConversationMembersV0: Decodable, ToAPIModelConvertible {
     enum CodingKeys: String, CodingKey {
         case others
         case selfMember = "self"

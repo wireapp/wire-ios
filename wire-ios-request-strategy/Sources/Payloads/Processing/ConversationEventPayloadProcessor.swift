@@ -1080,11 +1080,11 @@ struct ConversationEventPayloadProcessor {
     }
 
     func fetchUserAndRole(
-        from payload: Payload.ConversationMember,
+        from payload: Payload.ConversationMember?,
         for conversation: ZMConversation,
         in context: NSManagedObjectContext
     ) -> (ZMUser, Role?)? {
-        guard let userID = payload.id ?? payload.qualifiedID?.uuid else {
+        guard let payload, let userID = payload.id ?? payload.qualifiedID?.uuid else {
             return nil
         }
 

@@ -20,7 +20,7 @@ import Foundation
 
 public extension Feature {
 
-    struct AllowGlobalOperations: Codable {
+    struct AllowedGlobalOperations: Codable {
 
         // MARK: - Properties
 
