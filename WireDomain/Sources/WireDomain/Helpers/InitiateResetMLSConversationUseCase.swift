@@ -30,15 +30,18 @@ public class InitiateResetMLSConversationUseCase: InitiateResetMLSConversationUs
     private let api: MLSAPI
     private let mlsService: MLSServiceInterface
     private let conversationLocalStore: ConversationLocalStoreProtocol
+    private let userDefaultsRepository: ResetMLSConversationUserDefaultsRepositoryProtocol
 
     public init(
         api: MLSAPI,
         mlsService: MLSServiceInterface,
-        conversationLocalStore: ConversationLocalStoreProtocol
+        conversationLocalStore: ConversationLocalStoreProtocol,
+        userDefaultsRepository: ResetMLSConversationUserDefaultsRepositoryProtocol
     ) {
         self.api = api
         self.mlsService = mlsService
         self.conversationLocalStore = conversationLocalStore
+        self.userDefaultsRepository = userDefaultsRepository
     }
 
     public func invoke(groupID: WireDataModel.MLSGroupID, epoch: Int64) async {
@@ -47,14 +50,16 @@ public class InitiateResetMLSConversationUseCase: InitiateResetMLSConversationUs
 
         do {
 
-            guard let conversation = await conversationLocalStore.fetchMLSConversation(
-                groupID: groupID
-            ) else {
+            guard let conversation = await conversationLocalStore.fetchMLSConversation(groupID: groupID),
+                  let qualifiedID = await conversationLocalStore.qualifiedID(for: conversation)
+            else {
                 WireLogger.mls.error("Initiate reset broken MLS conversation failed: no conversation found")
                 return
             }
-            let qualifiedID = await conversationLocalStore.qualifiedID(for: conversation)
-            attributes = [.conversationId: qualifiedID?.safeForLoggingDescription ?? "<nil>"]
+
+            attributes = [.conversationId: qualifiedID.safeForLoggingDescription]
+
+            userDefaultsRepository.setInitiatedReset(conversationID: qualifiedID)
 
             WireLogger.mls.info(
                 "Initiate reset broken MLS conversation use case started",
@@ -90,7 +95,8 @@ public extension InitiateResetMLSConversationUseCase {
         apiService: APIServiceProtocol,
         apiVersion: WireNetwork.APIVersion,
         mlsService: MLSServiceInterface,
-        context: NSManagedObjectContext
+        context: NSManagedObjectContext,
+        userID: UUID
     ) -> InitiateResetMLSConversationUseCase {
         InitiateResetMLSConversationUseCase(
             api: MLSAPIBuilder(apiService: apiService)
@@ -100,6 +106,9 @@ public extension InitiateResetMLSConversationUseCase {
                 context: context,
                 mlsService: mlsService,
                 messageLocalStore: MessageLocalStore(context: context)
+            ),
+            userDefaultsRepository: ResetMLSConversationUserDefaultsRepository(
+                userID: userID
             )
         )
     }

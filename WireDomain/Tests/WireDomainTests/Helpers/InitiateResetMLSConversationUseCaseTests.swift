@@ -29,9 +29,12 @@ final class InitiateResetMLSConversationUseCaseTests: XCTestCase {
     private lazy var mockAPI = MockMLSAPI()
     private lazy var mockMLSService = MockMLSServiceInterface()
     private lazy var mockConversationLocalStore = MockConversationLocalStoreProtocol()
+    private lazy var mockResetUserDefaultsRepository = MockResetMLSConversationUserDefaultsRepositoryProtocol()
     private lazy var modelHelper = ModelHelper()
     private lazy var coreDataStackHelper = CoreDataStackHelper()
     private var coreDataStack: CoreDataStack!
+    private var conversationID: QualifiedID!
+    private var sut: InitiateResetMLSConversationUseCase!
 
     override func setUp() async throws {
 
@@ -52,21 +55,25 @@ final class InitiateResetMLSConversationUseCaseTests: XCTestCase {
             )
         }
 
-        mockConversationLocalStore.fetchMLSConversationGroupID_MockValue = conversation
-        mockConversationLocalStore.qualifiedIDFor_MockValue = await coreDataStack.syncContext.perform {
+        conversationID = await coreDataStack.syncContext.perform {
             conversation.qualifiedID
         }
+
+        mockConversationLocalStore.fetchMLSConversationGroupID_MockValue = conversation
+        mockConversationLocalStore.qualifiedIDFor_MockValue = conversationID
         mockConversationLocalStore
             .localParticipantsExcludingSelfAsMLSUsersIn_MockValue = [MLSUser(WireDataModel.QualifiedID.random())]
+
+        mockResetUserDefaultsRepository.setInitiatedResetConversationID_MockMethod = { _ in }
+        sut = InitiateResetMLSConversationUseCase(
+            api: mockAPI,
+            mlsService: mockMLSService,
+            conversationLocalStore: mockConversationLocalStore,
+            userDefaultsRepository: mockResetUserDefaultsRepository
+        )
     }
 
     func testInvoke() async {
-
-        let sut = InitiateResetMLSConversationUseCase(
-            api: mockAPI,
-            mlsService: mockMLSService,
-            conversationLocalStore: mockConversationLocalStore
-        )
 
         let groupID = MLSGroupID.random()
         // When
@@ -77,17 +84,15 @@ final class InitiateResetMLSConversationUseCaseTests: XCTestCase {
         XCTAssertEqual(mockAPI.resetMLSConversationEpochGroupID_Invocations.count, 1)
         XCTAssertEqual(mockMLSService.wipeGroup_Invocations.first, groupID)
         XCTAssertEqual(mockMLSService.establishGroupForWithRemovalKeys_Invocations.first?.groupID, groupID)
+        XCTAssertEqual(
+            mockResetUserDefaultsRepository.setInitiatedResetConversationID_Invocations.first,
+            conversationID
+        )
     }
 
     func testInvoke_DoNothingWhen_WhenConversationNotFound() async {
 
         mockConversationLocalStore.fetchMLSConversationGroupID_MockValue = .some(nil)
-
-        let sut = InitiateResetMLSConversationUseCase(
-            api: mockAPI,
-            mlsService: mockMLSService,
-            conversationLocalStore: mockConversationLocalStore
-        )
 
         let groupID = MLSGroupID.random()
         // When
@@ -98,6 +103,7 @@ final class InitiateResetMLSConversationUseCaseTests: XCTestCase {
         XCTAssertEqual(mockAPI.resetMLSConversationEpochGroupID_Invocations.count, 0)
         XCTAssertEqual(mockMLSService.wipeGroup_Invocations.count, 0)
         XCTAssertEqual(mockMLSService.establishGroupForWithRemovalKeys_Invocations.count, 0)
+        XCTAssertEqual(mockResetUserDefaultsRepository.setInitiatedResetConversationID_Invocations.count, 0)
     }
 
 }

@@ -1312,7 +1312,8 @@ extension ZMUserSession: SyncAgentDelegate {
                 apiService: apiService,
                 apiVersion: apiVersion,
                 mlsService: mlsService,
-                context: context
+                context: context,
+                userID: userId
             )
     }
 
