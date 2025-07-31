@@ -138,8 +138,8 @@
 "conversation_list.search_bar.oneOnOnePlaceholder" = "1:1 Unterhaltung suchen";
 "conversation_list.search_bar.unreadPlaceholder" = "Ungelesene Unterhaltungen suchen";
 "conversation_list.search_bar.mentionsPlaceholder" = "Unterhaltungen mit Erwähnungen suchen";
-"conversation_list.search_bar.repliesPlaceholder" = "Search conversations with replies";
-"conversation_list.search_bar.draftsPlaceholder" = "Search conversations with drafts";
+"conversation_list.search_bar.repliesPlaceholder" = "Unterhaltungen mit Antworten suchen";
+"conversation_list.search_bar.draftsPlaceholder" = "Unterhaltungen mit Entwürfen suchen";
 "conversation_list.search_bar.foldersPlaceholder" = "%@ suchen";
 
 
@@ -152,10 +152,10 @@
 "conversation_list.filter.folders.title" = "Ordner";
 "conversation_list.filter_label.text" = "Gefiltert nach %@";
 "conversation_list.filter.remove_button.title" = "Entfernen";
-"conversation_list.filter.unread.title" = "Unread";
-"conversation_list.filter.mentions.title" = "Mentions";
-"conversation_list.filter.replies.title" = "Replies";
-"conversation_list.filter.drafts.title" = "Drafts";
+"conversation_list.filter.unread.title" = "Ungelesen";
+"conversation_list.filter.mentions.title" = "Erwähnungen";
+"conversation_list.filter.replies.title" = "Antworten";
+"conversation_list.filter.drafts.title" = "Entwürfe";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "Beitreten";
@@ -181,14 +181,14 @@
 "conversation_list.empty_placeholder.search.button.phone" = "Neue Unterhaltung";
 "conversation_list.empty_placeholder.search.button.ipad" = "Beginnen Sie eine neue Unterhaltung";
 "conversation_list.empty_placeholder.search.connect_button" = "Mit Personen verbinden";
-"conversation_list.empty_state.unread.title" = "No unread conversations";
-"conversation_list.empty_state.unread.subtitle" = "All your conversations are up to date";
-"conversation_list.empty_state.mentions.title" = "No mentions";
-"conversation_list.empty_state.mentions.subtitle" = "All your conversations are up to date";
-"conversation_list.empty_state.replies.title" = "No replies";
-"conversation_list.empty_state.replies.subtitle" = "All your conversations are up to date";
-"conversation_list.empty_state.drafts.title" = "No drafts";
-"conversation_list.empty_state.drafts.subtitle" = "All your conversations are up to date";
+"conversation_list.empty_state.unread.title" = "Keine ungelesenen Unterhaltungen";
+"conversation_list.empty_state.unread.subtitle" = "Alle Ihre Unterhaltungen sind auf dem neuesten Stand";
+"conversation_list.empty_state.mentions.title" = "Keine Unterhaltungen mit Erwähnungen";
+"conversation_list.empty_state.mentions.subtitle" = "Alle Ihre Unterhaltungen sind auf dem neuesten Stand";
+"conversation_list.empty_state.replies.title" = "Keine Unterhaltungen mit Antworten";
+"conversation_list.empty_state.replies.subtitle" = "Alle Ihre Unterhaltungen sind auf dem neuesten Stand";
+"conversation_list.empty_state.drafts.title" = "Keine Entwürfe";
+"conversation_list.empty_state.drafts.subtitle" = "Alle Ihre Unterhaltungen sind auf dem neuesten Stand";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "in Kontakte";
