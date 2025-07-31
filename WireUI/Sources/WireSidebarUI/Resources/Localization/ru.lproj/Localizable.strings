@@ -24,6 +24,10 @@
 "sidebar.conversation_filter.groups.title" = "Группы";
 "sidebar.conversation_filter.channels.title" = "Каналы";
 "sidebar.conversation_filter.oneOnOneConversations.title" = "Беседы 1:1";
+"sidebar.conversation_filter.unread.title" = "Непрочитано";
+"sidebar.conversation_filter.mentions.title" = "Упоминания";
+"sidebar.conversation_filter.replies.title" = "Ответы";
+"sidebar.conversation_filter.drafts.title" = "Черновики";
 "sidebar.conversation_filter.folders.title" = "Папки";
 "sidebar.conversation_filter.archived.title" = "Архивировать";
 
