@@ -22,8 +22,9 @@ import WireDataModel
 import WireDesign
 
 struct HistoryDepthViewModel {
+    let isNewConversation: Bool
     let iconColor: UIColor
-    let text: String?
+    let historyDepth: String?
     let sender: UserType
 
     private let baseAttributes: [NSAttributedString.Key: Any] = [
@@ -33,24 +34,62 @@ struct HistoryDepthViewModel {
 
     func image() -> UIImage? {
         UIImage(
-            systemName: "clock.arrow.trianglehead.counterclockwise.rotate.90"
+            systemName: isNewConversation ? "arrow.trianglehead.counterclockwise.rotate.90" :
+                "clock.arrow.trianglehead.counterclockwise.rotate.90"
         )?.withTintColor(iconColor, renderingMode: .alwaysOriginal)
     }
 
-    func createSystemMessage(template: String) -> NSAttributedString {
+    private func parseHistoryDepth(historyDepth: String) -> (value: String, unit: String) {
+        let components = historyDepth.components(separatedBy: .whitespaces)
+        guard components.count == 2 else {
+            fatalError("Couldn't parse history depth values")
+        }
+
+        return (components[0], components[1].lowercased())
+    }
+
+    private func historyDepthInitiallySetAttributedText() -> NSAttributedString {
+        guard let historyDepth else {
+            fatalError(
+                "Should not reach this point if this is a new conversation and history depth is null"
+            )
+        }
+
+        let historyDepthParsingResult = parseHistoryDepth(historyDepth: historyDepth)
+        let historyDepthValue = historyDepthParsingResult.value
+        let historyDepthUnit = historyDepthParsingResult.unit
+        let template = "content.system.message_history_depth_initially_set_\(historyDepthUnit)"
+        var updateText: NSAttributedString
+
+        updateText = NSAttributedString(
+            string: template.localized(args: historyDepthValue),
+            attributes: baseAttributes
+        )
+        .adding(font: .mediumSemiboldFont, to: historyDepthValue)
+
+        return updateText
+    }
+
+    private func historyDepthModifiedAttributedText() -> NSAttributedString {
         var updateText: NSAttributedString
 
         if sender.isSelfUser {
             let youLocalized = L10n.Localizable.Content.System.youStarted
 
-            if let text {
+            if let historyDepth {
+                let historyDepthParsingResult = parseHistoryDepth(historyDepth: historyDepth)
+                let historyDepthValue = historyDepthParsingResult.value
+                let historyDepthUnit = historyDepthParsingResult.unit
+                let template = "content.system.message_history_depth_modified_\(historyDepthUnit)"
+
                 updateText = NSAttributedString(
-                    string: template.localized(pov: sender.pov, args: youLocalized, text),
+                    string: template.localized(pov: sender.pov, args: youLocalized, historyDepthValue),
                     attributes: baseAttributes
                 )
                 .adding(font: .mediumSemiboldFont, to: youLocalized)
-                .adding(font: .mediumSemiboldFont, to: text)
+                .adding(font: .mediumSemiboldFont, to: historyDepthValue)
             } else {
+                let template = "content.system.message_history_depth_modified_disabled"
                 updateText = NSAttributedString(
                     string: template.localized(pov: sender.pov, args: youLocalized),
                     attributes: baseAttributes
@@ -58,15 +97,21 @@ struct HistoryDepthViewModel {
                 .adding(font: .mediumSemiboldFont, to: youLocalized)
             }
         } else {
-            if let text {
+            if let historyDepth {
+                let historyDepthParsingResult = parseHistoryDepth(historyDepth: historyDepth)
+                let historyDepthValue = historyDepthParsingResult.value
+                let historyDepthUnit = historyDepthParsingResult.unit
+                let template = "content.system.message_history_depth_modified_\(historyDepthUnit)"
+
                 let otherUserName = sender.name ?? L10n.Localizable.Conversation.Status.someone
                 updateText = NSAttributedString(
-                    string: template.localized(args: otherUserName, text),
+                    string: template.localized(args: otherUserName, historyDepthValue),
                     attributes: baseAttributes
                 )
                 .adding(font: .mediumSemiboldFont, to: otherUserName)
-                .adding(font: .mediumSemiboldFont, to: text)
+                .adding(font: .mediumSemiboldFont, to: historyDepthValue)
             } else {
+                let template = "content.system.message_history_depth_modified_disabled"
                 let otherUserName = sender.name ?? L10n.Localizable.Conversation.Status.someone
                 updateText = NSAttributedString(
                     string: template.localized(args: otherUserName),
@@ -80,15 +125,16 @@ struct HistoryDepthViewModel {
     }
 
     func attributedTitle() -> NSAttributedString? {
-        createSystemMessage(
-            template: text != nil ? "content.system.message_history_depth" :
-                "content.system.message_history_depth_disabled"
-        )
+        if isNewConversation {
+            historyDepthInitiallySetAttributedText()
+        } else {
+            historyDepthModifiedAttributedText()
+        }
     }
 
 }
 
-final class ConversationHistoryDepthChangedCellDescription: ConversationMessageCellDescription {
+final class ConversationChannelHistoryDepthSystemMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationSystemMessageCell<ConversationReadReceiptSettingChangedCellDescription>
 
     let configuration: View.Configuration
@@ -104,11 +150,13 @@ final class ConversationHistoryDepthChangedCellDescription: ConversationMessageC
 
     init(
         sender: UserType,
-        text: String?
+        historyDepth: String?,
+        isNewConversation: Bool
     ) {
         let viewModel = HistoryDepthViewModel(
+            isNewConversation: isNewConversation,
             iconColor: SemanticColors.Icon.backgroundDefault,
-            text: text,
+            historyDepth: historyDepth,
             sender: sender
         )
 
