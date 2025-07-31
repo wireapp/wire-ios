@@ -93,7 +93,7 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .showUnreadConversationsFilter:
             "Turn on to show the new conversation filter options"
-            
+
         case .channelsHistory:
             "Turn on to enable channels history"
         }
