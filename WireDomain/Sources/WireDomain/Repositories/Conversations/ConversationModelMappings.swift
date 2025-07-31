@@ -126,7 +126,7 @@ extension WireNetwork.Conversation.Members {
     func toDomainModel() -> WireDomain.Conversation.Members {
         .init(
             others: others.map { $0.toDomainModel() },
-            selfMember: selfMember.toDomainModel()
+            selfMember: selfMember?.toDomainModel()
         )
     }
 

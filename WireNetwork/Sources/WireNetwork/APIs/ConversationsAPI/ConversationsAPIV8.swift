@@ -300,7 +300,7 @@ struct ConversationV8: Decodable, ToAPIModelConvertible {
     var id: UUID?
     var lastEvent: String?
     var lastEventTime: UTCTime?
-    var members: QualifiedConversationMembers?
+    var members: QualifiedConversationMembersV0?
     var messageProtocol: ConversationMessageProtocolV0?
     var messageTimer: TimeInterval?
     var mlsGroupID: String?

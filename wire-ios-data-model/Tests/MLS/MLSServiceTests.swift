@@ -85,7 +85,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             config: .init(defaultCipherSuite: defaultCipherSuite)
         )
 
-        mockFeatureRepository.fetchAllowGlobalOperations_MockValue = Feature.AllowGlobalOperations(
+        mockFeatureRepository.fetchAllowedGlobalOperations_MockValue = Feature.AllowedGlobalOperations(
             status: .enabled,
             config: .init(mlsConversationReset: true)
         )
@@ -2882,7 +2882,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Then
         XCTAssertEqual(commitPendingProposalsInvocations, [groupID])
         XCTAssertEqual(updateKeyMaterialInvocations, [])
-        XCTAssertEqual(mockFeatureRepository.fetchAllowGlobalOperations_Invocations.count, 1)
+        XCTAssertEqual(mockFeatureRepository.fetchAllowedGlobalOperations_Invocations.count, 1)
         XCTAssertEqual(resetMLSConversationDelegate.didCatchBrokenMLSConversationGroupIDEpoch_Invocations.count, 1)
         let invocation = try XCTUnwrap(
             resetMLSConversationDelegate
@@ -2896,8 +2896,8 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Given
         let groupID = MLSGroupID.random()
 
-        mockFeatureRepository.fetchAllowGlobalOperations_MockValue = Feature
-            .AllowGlobalOperations(
+        mockFeatureRepository.fetchAllowedGlobalOperations_MockValue = Feature
+            .AllowedGlobalOperations(
                 status: .disabled,
                 config: .init(mlsConversationReset: true)
             )
@@ -2926,7 +2926,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Then
         XCTAssertEqual(commitPendingProposalsInvocations, [groupID])
         XCTAssertEqual(updateKeyMaterialInvocations, [])
-        XCTAssertEqual(mockFeatureRepository.fetchAllowGlobalOperations_Invocations.count, 1)
+        XCTAssertEqual(mockFeatureRepository.fetchAllowedGlobalOperations_Invocations.count, 1)
         XCTAssertTrue(delegate.didCatchBrokenMLSConversationGroupIDEpoch_Invocations.isEmpty)
     }
 

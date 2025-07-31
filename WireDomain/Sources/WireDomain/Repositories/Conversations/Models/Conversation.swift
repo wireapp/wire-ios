@@ -22,7 +22,7 @@ public struct Conversation: Equatable {
 
     struct Members: Equatable {
         let others: [Member]
-        let selfMember: Member
+        let selfMember: Member?
 
         struct Member: Equatable {
             let qualifiedID: QualifiedID?

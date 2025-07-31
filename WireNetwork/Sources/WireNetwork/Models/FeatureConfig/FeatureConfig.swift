@@ -107,7 +107,7 @@ public enum FeatureConfig: Equatable, Sendable {
 
     /// Global config, that contains other config inside, e.g. 'reset broken mls'
 
-    case allowGlobalOperations(AllowGlobalOperationsFeatureConfig)
+    case allowedGlobalOperations(AllowedGlobalOperationsFeatureConfig)
 
     /// An unknown feature.
 
