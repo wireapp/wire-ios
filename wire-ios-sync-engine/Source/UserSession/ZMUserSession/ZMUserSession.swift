@@ -541,7 +541,6 @@ public final class ZMUserSession: NSObject {
         enableBackgroundFetch()
         observeChangesOnShareExtension()
         startEphemeralTimers()
-        notifyUserAboutChangesInAvailabilityBehaviourIfNeeded()
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
         restoreDebugCommandsState()
         configureRecurringActions()
@@ -862,12 +861,6 @@ public final class ZMUserSession: NSObject {
         // We enable background fetch by setting the minimum interval to something different from
         // UIApplicationBackgroundFetchIntervalNever
         application.setMinimumBackgroundFetchInterval(10.0 * 60.0 + Double.random(in: 0 ..< 300))
-    }
-
-    private func notifyUserAboutChangesInAvailabilityBehaviourIfNeeded() {
-        syncManagedObjectContext.performGroupedBlock {
-            self.localNotificationDispatcher?.notifyAvailabilityBehaviourChangedIfNeeded()
-        }
     }
 
     // MARK: - Trigger syncing

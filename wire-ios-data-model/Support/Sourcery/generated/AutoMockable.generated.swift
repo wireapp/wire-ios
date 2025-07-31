@@ -358,6 +358,10 @@ public class MockConversationLike: ConversationLike {
 
     public var underlyingPrivateChannelPermission: PrivateChannelPermission!
 
+    // MARK: - channelHistoryDepth
+
+    public var channelHistoryDepth: String?
+
     // MARK: - wireCellName
 
     public var wireCellName: String {

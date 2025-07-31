@@ -18,17 +18,12 @@
 
 import Foundation
 
-extension Member {
+public extension ZMConversation {
 
-    // Model version 2.39.0 adds a `remoteIdentifier` attribute to the `Member` entity.
-    // The value should be the same as the `remoteIdentifier` of the members user.
-    static func migrateRemoteIdentifiers(in context: NSManagedObjectContext) {
-        let request = NSFetchRequest<Member>(entityName: Member.entityName())
-        context.fetchOrAssert(request: request).forEach(migrateUserRemoteIdentifer)
-    }
+    // TODO: [WPB-18396] implement NSManagedObject local property and map it to return proper duration value
 
-    private static func migrateUserRemoteIdentifer(for member: Member) {
-        member.remoteIdentifier = member.user?.remoteIdentifier
+    var channelHistoryDepth: String? {
+        nil
     }
 
 }
