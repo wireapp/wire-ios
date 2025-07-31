@@ -336,7 +336,6 @@ public final class SessionManager: NSObject, SessionManagerType {
     let dispatchGroup: ZMSDispatchGroup
     let jailbreakDetector: JailbreakDetectorProtocol?
     fileprivate var accountTokens: [UUID: [Any]] = [:]
-    fileprivate var memoryWarningObserver: NSObjectProtocol?
     fileprivate var isSelectingAccount: Bool = false
 
     var proxyCredentials: ProxyCredentials?
@@ -464,14 +463,14 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         configureBlacklistDownload()
 
-        self.memoryWarningObserver = NotificationCenter.default.addObserver(
-            forName: UIApplication.didReceiveMemoryWarningNotification,
-            object: nil,
-            queue: nil
-        ) { [weak self] _ in
-            WireLogger.sessionManager.debug("Received memory warning, tearing down background user sessions.")
-            self?.tearDownAllBackgroundSessions()
-        }
+        NotificationCenter
+            .default
+            .addObserver(
+                self,
+                selector: #selector(applicationDidReceiveMemoryWarning),
+                name: UIApplication.didReceiveMemoryWarningNotification,
+                object: nil
+            )
 
         NotificationCenter
             .default
@@ -1652,6 +1651,16 @@ extension SessionManager: AccountDeletedObserver {
 // MARK: - Application lifetime notifications
 
 extension SessionManager {
+
+    @objc
+    private func applicationDidReceiveMemoryWarning(_ note: Notification) {
+        WireLogger.sessionManager.debug("Received memory warning, tearing down background user sessions.")
+
+        Task { [weak self] in
+            await self?.tearDownAllBackgroundSessions()
+        }
+    }
+
     @objc
     private func applicationWillEnterForeground(_ note: Notification) {
 
