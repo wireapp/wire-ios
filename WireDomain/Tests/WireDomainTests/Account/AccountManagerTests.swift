@@ -25,15 +25,17 @@ import WireDataModel
 @Suite(.serialized)
 final class AccountManagerTests {
 
+    let root: URL
     let url: URL
 
     init() {
-        self.url = FileManager.default.urls(
+        self.root = FileManager.default.urls(
             for: .applicationSupportDirectory,
             in: .userDomainMask
         )
         .first!
         .appendingPathComponent("AccountManagerTests")
+        url = root.appendingPathComponent("Accounts")
     }
 
     deinit {
@@ -137,7 +139,7 @@ final class AccountManagerTests {
         }
 
         // When
-        AccountManager.delete(at: url)
+        AccountManager.delete(at: root)
 
         // Then
         do {
