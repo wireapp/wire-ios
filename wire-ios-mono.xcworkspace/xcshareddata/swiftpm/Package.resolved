@@ -92,6 +92,15 @@
         }
       },
       {
+        "package": "GenericMessageProtocol",
+        "repositoryURL": "https://github.com/wireapp/generic-message-proto.git",
+        "state": {
+          "branch": "chore/add-package.swift-WPB-10203",
+          "revision": "f955407c5c51f50d7dc1e5d27fadb18c43260760",
+          "version": null
+        }
+      },
+      {
         "package": "HTMLString",
         "repositoryURL": "https://github.com/wireapp/HTMLString",
         "state": {
@@ -215,6 +224,15 @@
           "branch": null,
           "revision": "3d8596ed08bd13520157f0355e35caed215ffbfa",
           "version": "1.6.3"
+        }
+      },
+      {
+        "package": "SwiftProtobuf",
+        "repositoryURL": "https://github.com/apple/swift-protobuf.git",
+        "state": {
+          "branch": null,
+          "revision": "102a647b573f60f73afdce5613a51d71349fe507",
+          "version": "1.30.0"
         }
       },
       {
