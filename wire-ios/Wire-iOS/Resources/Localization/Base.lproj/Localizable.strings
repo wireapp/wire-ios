@@ -85,14 +85,14 @@
 "peoplepicker.no_matching_results.action.send_invite" = "Send an invitation";
 "peoplepicker.no_matching_results.action.share_contacts" = "Share contacts";
 "peoplepicker.no_matching_results.action.learn_more" = "Learn more";
-"peoplepicker.no_matching_results.action.manage_services" = "Manage Services";
+"peoplepicker.no_matching_results.action.manage_apps" = "Manage Apps";
 
 "peoplepicker.no_matching_results.message.users" = "Find people in Wire by name or @username";
 "peoplepicker.no_matching_results.message.usersAndFederation" = "Find people in Wire by name or @username\n\nFind people on another domain by @username@domainname";
 "peoplepicker.no_matching_results.message.users_all_added" = "Everyone’s here.";
-"peoplepicker.no_matching_results.message.services" = "No results.";
-"peoplepicker.no_matching_results.message.services_not_enabled_admin" = "Services are helpers that can improve your workflow.";
-"peoplepicker.no_matching_results.message.services_not_enabled" = "Services are helpers that can improve your workflow. To enable them, ask your administrator.";
+"peoplepicker.no_matching_results.message.apps" = "No results.";
+"peoplepicker.no_matching_results.message.apps_not_enabled_admin" = "Apps are helpers that can improve your workflow.";
+"peoplepicker.no_matching_results.message.apps_not_enabled" = "Apps are helpers that can improve your workflow. To enable them, ask your administrator.";
 
 "peoplepicker.send_invitation.dialog.title" = "Invitation sent";
 "peoplepicker.send_invitation.dialog.message" = "It can be used for 2 weeks. Send a new one if it expires.";
@@ -100,7 +100,7 @@
 
 "peoplepicker.invite_team_members" = "Invite people to join the team";
 "peoplepicker.quick-action.open-conversation" = "Open";
-"peoplepicker.quick-action.admin-services" = "Manage Services";
+"peoplepicker.quick-action.admin-apps" = "Manage Apps";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
 
@@ -354,8 +354,8 @@
 "conversation.create.options.title" = "CONVERSATION OPTIONS";
 "conversation.create.guests.title" = "Allow guests";
 "conversation.create.guests.subtitle" = "Open this conversation to people outside your team.";
-"conversation.create.services.title" = "Allow services";
-"conversation.create.services.subtitle" = "Open this conversation to services.";
+"conversation.create.apps.title" = "Allow apps";
+"conversation.create.apps.subtitle" = "Open this conversation to apps.";
 "conversation.create.receipts.title" = "Read receipts";
 "conversation.create.receipts.subtitle" = "When this is on, people can see when their messages in this conversation are read.";
 "conversation.create.mls.title" = "Protocol";

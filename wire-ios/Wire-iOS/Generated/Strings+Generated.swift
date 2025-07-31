@@ -2544,6 +2544,12 @@ internal enum L10n {
         internal static let sensitiveInformationWarning = L10n.tr("Localizable", "conversation.connection_view.sensitive_information_warning", fallback: "Please still be careful with who you share sensitive information.")
       }
       internal enum Create {
+        internal enum Apps {
+          /// Open this conversation to apps.
+          internal static let subtitle = L10n.tr("Localizable", "conversation.create.apps.subtitle", fallback: "Open this conversation to apps.")
+          /// Allow apps
+          internal static let title = L10n.tr("Localizable", "conversation.create.apps.title", fallback: "Allow apps")
+        }
         internal enum Channel {
           /// Back
           internal static let back = L10n.tr("Localizable", "conversation.create.channel.back", fallback: "Back")
@@ -2614,12 +2620,6 @@ internal enum L10n {
           internal static let subtitle = L10n.tr("Localizable", "conversation.create.receipts.subtitle", fallback: "When this is on, people can see when their messages in this conversation are read.")
           /// Read receipts
           internal static let title = L10n.tr("Localizable", "conversation.create.receipts.title", fallback: "Read receipts")
-        }
-        internal enum Services {
-          /// Open this conversation to services.
-          internal static let subtitle = L10n.tr("Localizable", "conversation.create.services.subtitle", fallback: "Open this conversation to services.")
-          /// Allow services
-          internal static let title = L10n.tr("Localizable", "conversation.create.services.title", fallback: "Allow services")
         }
       }
       internal enum DeleteRequestDialog {
@@ -4731,8 +4731,8 @@ internal enum L10n {
         internal enum Action {
           /// Learn more
           internal static let learnMore = L10n.tr("Localizable", "peoplepicker.no_matching_results.action.learn_more", fallback: "Learn more")
-          /// Manage Services
-          internal static let manageServices = L10n.tr("Localizable", "peoplepicker.no_matching_results.action.manage_services", fallback: "Manage Services")
+          /// Manage Apps
+          internal static let manageApps = L10n.tr("Localizable", "peoplepicker.no_matching_results.action.manage_apps", fallback: "Manage Apps")
           /// Send an invitation
           internal static let sendInvite = L10n.tr("Localizable", "peoplepicker.no_matching_results.action.send_invite", fallback: "Send an invitation")
           /// Share contacts
@@ -4740,11 +4740,11 @@ internal enum L10n {
         }
         internal enum Message {
           /// No results.
-          internal static let services = L10n.tr("Localizable", "peoplepicker.no_matching_results.message.services", fallback: "No results.")
-          /// Services are helpers that can improve your workflow. To enable them, ask your administrator.
-          internal static let servicesNotEnabled = L10n.tr("Localizable", "peoplepicker.no_matching_results.message.services_not_enabled", fallback: "Services are helpers that can improve your workflow. To enable them, ask your administrator.")
-          /// Services are helpers that can improve your workflow.
-          internal static let servicesNotEnabledAdmin = L10n.tr("Localizable", "peoplepicker.no_matching_results.message.services_not_enabled_admin", fallback: "Services are helpers that can improve your workflow.")
+          internal static let apps = L10n.tr("Localizable", "peoplepicker.no_matching_results.message.apps", fallback: "No results.")
+          /// Apps are helpers that can improve your workflow. To enable them, ask your administrator.
+          internal static let appsNotEnabled = L10n.tr("Localizable", "peoplepicker.no_matching_results.message.apps_not_enabled", fallback: "Apps are helpers that can improve your workflow. To enable them, ask your administrator.")
+          /// Apps are helpers that can improve your workflow.
+          internal static let appsNotEnabledAdmin = L10n.tr("Localizable", "peoplepicker.no_matching_results.message.apps_not_enabled_admin", fallback: "Apps are helpers that can improve your workflow.")
           /// Find people in Wire by name or @username
           internal static let users = L10n.tr("Localizable", "peoplepicker.no_matching_results.message.users", fallback: "Find people in Wire by name or @username")
           /// Everyone’s here.
@@ -4756,8 +4756,8 @@ internal enum L10n {
         }
       }
       internal enum QuickAction {
-        /// Manage Services
-        internal static let adminServices = L10n.tr("Localizable", "peoplepicker.quick-action.admin-services", fallback: "Manage Services")
+        /// Manage Apps
+        internal static let adminApps = L10n.tr("Localizable", "peoplepicker.quick-action.admin-apps", fallback: "Manage Apps")
         /// Open
         internal static let openConversation = L10n.tr("Localizable", "peoplepicker.quick-action.open-conversation", fallback: "Open")
       }
