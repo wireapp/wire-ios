@@ -141,20 +141,8 @@ extension ResolvedBackendMetadata {
 }
 
 extension WireNetwork.APIVersion {
-    func toStored() -> StoredResolvedBackendMetadata.APIVersion {
-        switch self {
-        case .v0: .v0
-        case .v1: .v1
-        case .v2: .v2
-        case .v3: .v3
-        case .v4: .v4
-        case .v5: .v5
-        case .v6: .v6
-        case .v7: .v7
-        case .v8: .v8
-        case .v9: .v9
-        case .v10: .v10
-        }
+    func toStored() -> UInt {
+        rawValue
     }
 }
 
@@ -232,30 +220,19 @@ extension StoredBackendEnvironment.Endpoints {
 }
 
 extension StoredResolvedBackendMetadata {
-    func toDomain() -> ResolvedBackendMetadata {
-        .init(
-            apiVersion: apiVersion.toDomain(),
+    func toDomain() throws -> ResolvedBackendMetadata {
+        guard let apiVersion = APIVersion(rawValue: apiVersion) else {
+            throw DecodingError.dataCorrupted(.init(
+                codingPath: [CodingKeys.apiVersion],
+                debugDescription: "Stored version \(apiVersion)")
+            )
+        }
+
+        return ResolvedBackendMetadata(
+            apiVersion: apiVersion,
             domain: domain,
             isFederationEnabled: isFederationEnabled
         )
-    }
-}
-
-extension StoredResolvedBackendMetadata.APIVersion {
-    func toDomain() -> WireNetwork.APIVersion {
-        switch self {
-        case .v0: .v0
-        case .v1: .v1
-        case .v2: .v2
-        case .v3: .v3
-        case .v4: .v4
-        case .v5: .v5
-        case .v6: .v6
-        case .v7: .v7
-        case .v8: .v8
-        case .v9: .v9
-        case .v10: .v10
-        }
     }
 }
 
@@ -296,21 +273,8 @@ extension StoredBackendEnvironment.PinnedKey.Host {
 
 struct StoredResolvedBackendMetadata: Codable, Sendable {
 
-    let apiVersion: APIVersion
+    let apiVersion: UInt
     let domain: String
     let isFederationEnabled: Bool
-
-    enum APIVersion: UInt, Codable, Sendable {
-        case v0
-        case v1
-        case v2
-        case v3
-        case v4
-        case v5
-        case v6
-        case v7
-        case v8
-        case v9
-    }
 
 }

@@ -94,7 +94,7 @@ public struct BackendEnvironmentStore {
                 StoredResolvedBackendMetadata.self,
                 from: data
             )
-            return stored.toDomain()
+            return try stored.toDomain()
         } catch {
             let nsError = error as NSError
             if
