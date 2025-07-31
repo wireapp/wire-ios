@@ -2480,16 +2480,6 @@ internal enum L10n {
         internal static let messageDeleted = L10n.tr("Localizable", "conversation.alert.message_deleted", fallback: "The message is deleted.")
       }
       internal enum Banner {
-        /// %@ are active
-        internal static func areActive(_ p1: Any) -> String {
-          return L10n.tr("Localizable", "conversation.banner.are_active", String(describing: p1), fallback: "%@ are active")
-        }
-        /// %@ are present
-        internal static func arePresent(_ p1: Any) -> String {
-          return L10n.tr("Localizable", "conversation.banner.are_present", String(describing: p1), fallback: "%@ are present")
-        }
-        /// Externals
-        internal static let externals = L10n.tr("Localizable", "conversation.banner.externals", fallback: "Externals")
         /// Externals and guests are present
         internal static let externalsGuestsPresent = L10n.tr("Localizable", "conversation.banner.externals_guests_present", fallback: "Externals and guests are present")
         /// Externals, guests and services are present
@@ -2498,14 +2488,10 @@ internal enum L10n {
         internal static let externalsPresent = L10n.tr("Localizable", "conversation.banner.externals_present", fallback: "Externals are present")
         /// Externals and services are present
         internal static let externalsServicesPresent = L10n.tr("Localizable", "conversation.banner.externals_services_present", fallback: "Externals and services are present")
-        /// Guests
-        internal static let guests = L10n.tr("Localizable", "conversation.banner.guests", fallback: "Guests")
+        /// Guests and apps are present
+        internal static let guestsAppsPresent = L10n.tr("Localizable", "conversation.banner.guests_apps_present", fallback: "Guests and apps are present")
         /// Guests are present
         internal static let guestsPresent = L10n.tr("Localizable", "conversation.banner.guests_present", fallback: "Guests are present")
-        /// Guests and services are present
-        internal static let guestsServicesPresent = L10n.tr("Localizable", "conversation.banner.guests_services_present", fallback: "Guests and services are present")
-        /// Federated users
-        internal static let remotes = L10n.tr("Localizable", "conversation.banner.remotes", fallback: "Federated users")
         /// Federated users, externals and guests are present
         internal static let remotesExternalsGuestsPresent = L10n.tr("Localizable", "conversation.banner.remotes_externals_guests_present", fallback: "Federated users, externals and guests are present")
         /// Federated users, externals, guests and services are present
@@ -2522,10 +2508,6 @@ internal enum L10n {
         internal static let remotesPresent = L10n.tr("Localizable", "conversation.banner.remotes_present", fallback: "Federated users are present")
         /// Federated users and services are present
         internal static let remotesServicesPresent = L10n.tr("Localizable", "conversation.banner.remotes_services_present", fallback: "Federated users and services are present")
-        ///  and 
-        internal static let separator = L10n.tr("Localizable", "conversation.banner.separator", fallback: " and ")
-        /// Services
-        internal static let services = L10n.tr("Localizable", "conversation.banner.services", fallback: "Services")
         /// Services are active
         internal static let servicesActive = L10n.tr("Localizable", "conversation.banner.services_active", fallback: "Services are active")
       }
@@ -3729,8 +3711,6 @@ internal enum L10n {
       internal static let or = L10n.tr("Localizable", "general.or", fallback: "or")
       /// Paste
       internal static let paste = L10n.tr("Localizable", "general.paste", fallback: "Paste")
-      /// Service
-      internal static let service = L10n.tr("Localizable", "general.service", fallback: "Service")
       /// Not Now
       internal static let skip = L10n.tr("Localizable", "general.skip", fallback: "Not Now")
       ///  

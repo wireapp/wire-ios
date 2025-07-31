@@ -42,19 +42,19 @@ extension ConversationViewController {
         typealias BannerStrings = L10n.Localizable.Conversation.Banner
 
         switch state {
-        case [.visibleRemotes, .visibleExternals, .visibleGuests, .visibleServices]:
+        case [.visibleRemotes, .visibleExternals, .visibleGuests, .visibleApps]:
             return BannerStrings.remotesExternalsGuestsServicesPresent
 
         case [.visibleRemotes, .visibleExternals, .visibleGuests]:
             return BannerStrings.remotesExternalsGuestsPresent
 
-        case [.visibleRemotes, .visibleExternals, .visibleServices]:
+        case [.visibleRemotes, .visibleExternals, .visibleApps]:
             return BannerStrings.remotesExternalsServicesPresent
 
-        case [.visibleRemotes, .visibleGuests, .visibleServices]:
+        case [.visibleRemotes, .visibleGuests, .visibleApps]:
             return BannerStrings.remotesGuestsServicesPresent
 
-        case [.visibleExternals, .visibleGuests, .visibleServices]:
+        case [.visibleExternals, .visibleGuests, .visibleApps]:
             return BannerStrings.externalsGuestsServicesPresent
 
         case [.visibleRemotes, .visibleExternals]:
@@ -63,17 +63,17 @@ extension ConversationViewController {
         case [.visibleRemotes, .visibleGuests]:
             return BannerStrings.remotesGuestsPresent
 
-        case [.visibleRemotes, .visibleServices]:
+        case [.visibleRemotes, .visibleApps]:
             return BannerStrings.remotesServicesPresent
 
         case [.visibleExternals, .visibleGuests]:
             return BannerStrings.externalsGuestsPresent
 
-        case [.visibleExternals, .visibleServices]:
+        case [.visibleExternals, .visibleApps]:
             return BannerStrings.externalsServicesPresent
 
-        case [.visibleGuests, .visibleServices]:
-            return BannerStrings.guestsServicesPresent
+        case [.visibleGuests, .visibleApps]:
+            return BannerStrings.guestsAppsPresent
 
         case [.visibleRemotes]:
             return BannerStrings.remotesPresent
@@ -84,7 +84,7 @@ extension ConversationViewController {
         case [.visibleGuests]:
             return BannerStrings.guestsPresent
 
-        case [.visibleServices]:
+        case [.visibleApps]:
             return BannerStrings.servicesActive
 
         default:
@@ -107,8 +107,8 @@ extension ConversationViewController {
             identifiers.append("guests")
         }
 
-        if conversation.externalParticipantsState.contains(.visibleServices) {
-            identifiers.append("services")
+        if conversation.externalParticipantsState.contains(.visibleApps) {
+            identifiers.append("services") // TODO: fix
         }
 
         return "has\(identifiers.joined(separator: "and"))"
