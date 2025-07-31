@@ -288,7 +288,7 @@ final class AccountStoreTests {
             "unreadConversationCount": 1
         }
         """.utf8)
-        try accountJSON.write(to: url.appendingPathComponent("Accounts/invalid_account"))
+        try accountJSON.write(to: url.appendingPathComponent("invalid_account"))
 
         // Then
         #expect(sut.fetchAllAccounts().isEmpty)
@@ -316,7 +316,7 @@ final class AccountStoreTests {
         }
         """.utf8)
 
-        try accountJSON.write(to: url.appendingPathComponent("Accounts/" + accountID.uuidString))
+        try accountJSON.write(to: url.appendingPathComponent(accountID.uuidString))
 
         // When
         let account = sut.fetchAccount(with: accountID)
@@ -355,7 +355,7 @@ final class AccountStoreTests {
         }
         """.utf8)
 
-        try accountJSON.write(to: url.appendingPathComponent("Accounts/" + accountID.uuidString))
+        try accountJSON.write(to: url.appendingPathComponent(accountID.uuidString))
 
         // When
         let account = sut.fetchAccount(with: accountID)
