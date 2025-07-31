@@ -177,6 +177,11 @@ extension NotificationServiceExtension {
                 "Self client ID is missing",
                 attributes: .newNSE
             )
+        case .mainAppPushChannelOpened:
+            logger.error(
+                "Main app is running in foreground with push channel open",
+                attributes: .newNSE
+            )
         }
     }
 

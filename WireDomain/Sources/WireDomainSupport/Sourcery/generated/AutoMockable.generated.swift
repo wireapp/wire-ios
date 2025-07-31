@@ -3240,6 +3240,63 @@ class MockPullUserConnectionsSyncProtocol: PullUserConnectionsSyncProtocol {
 
 }
 
+public class MockPushChannelStateProtocol: PushChannelStateProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - isOpen
+
+    public var isOpen_Invocations: [Void] = []
+    public var isOpen_MockMethod: (() -> Bool)?
+    public var isOpen_MockValue: Bool?
+
+    public func isOpen() -> Bool {
+        isOpen_Invocations.append(())
+
+        if let mock = isOpen_MockMethod {
+            return mock()
+        } else if let mock = isOpen_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `isOpen`")
+        }
+    }
+
+    // MARK: - markAsOpen
+
+    public var markAsOpen_Invocations: [Void] = []
+    public var markAsOpen_MockMethod: (() -> Void)?
+
+    public func markAsOpen() {
+        markAsOpen_Invocations.append(())
+
+        guard let mock = markAsOpen_MockMethod else {
+            fatalError("no mock for `markAsOpen`")
+        }
+
+        mock()
+    }
+
+    // MARK: - markAsClosed
+
+    public var markAsClosed_Invocations: [Void] = []
+    public var markAsClosed_MockMethod: (() -> Void)?
+
+    public func markAsClosed() {
+        markAsClosed_Invocations.append(())
+
+        guard let mock = markAsClosed_MockMethod else {
+            fatalError("no mock for `markAsClosed`")
+        }
+
+        mock()
+    }
+
+}
+
 public class MockPushSupportedProtocolsSyncProtocol: PushSupportedProtocolsSyncProtocol {
 
     // MARK: - Life cycle

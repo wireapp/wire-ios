@@ -41,4 +41,8 @@ public protocol PushChannelV2Protocol: Sendable {
     ///   - multiple: true if all previous events should be acknowledge, false for individual one
 
     func acknowledgeEvent(deliveryTag: UInt64, multiple: Bool) async throws
+
+    /// Disable batching of events
+    /// - Parameter disabled: true set batchSize to 1, false back to maxBatchEventsCount
+    func disableBatching(_ disabled: Bool) async
 }
