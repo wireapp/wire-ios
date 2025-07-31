@@ -19,5 +19,9 @@
 "sidebar.settings.description" = "Открыть настройки";
 "sidebar.support.description" = "Открыть поддержку";
 "sidebar.conversation_filter.oneOnOneConversations.description" = "Беседы один на один";
+"sidebar.conversation_filter.unread.description" = "Показать непрочитанные беседы";
+"sidebar.conversation_filter.mentions.description" = "Показать беседы с упоминаниями";
+"sidebar.conversation_filter.replies.description" = "Показать беседы с ответами";
+"sidebar.conversation_filter.drafts.description" = "Показать беседы с черновиками";
 "sidebar.name.description" = "Название профиля";
 "sidebar.handle.description" = "Псевдоним";
