@@ -14,7 +14,7 @@ concurrency:
 jobs:
   synchronize-with-crowdin:
     runs-on: ubuntu-24.04
-    container: swift:5.10.1
+    container: swift:6.1.2
 
     steps:
       - name: Checkout
@@ -74,7 +74,8 @@ jobs:
           fi
 
           # abort if the pr already exists
-          apt update && apt install -y gh
+          apt update && apt install -y gh git-lfs
+          git lfs install
           PR_EXISTS=$(gh pr list --base "$BASE_BRANCH" --head "$HEAD_BRANCH" --state open --json number --jq '.[0].number')
           if [ -n "$PR_EXISTS" ]; then
           echo "A PR already exists, aborting."
