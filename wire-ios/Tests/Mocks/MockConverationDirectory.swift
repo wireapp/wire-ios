@@ -26,6 +26,7 @@ class MockConversationDirectory: ConversationDirectoryType {
     var mockContactsConversations: [ZMConversation] = []
     var mockFavoritesConversations: [ZMConversation] = []
     var mockUnarchivedConversations: [ZMConversation] = []
+    var mockPendingConversations: [ZMConversation] = []
 
     func createFolder(_ name: String) -> LabelType? {
         nil
@@ -45,6 +46,20 @@ class MockConversationDirectory: ConversationDirectoryType {
             mockFavoritesConversations
         case .unarchived:
             mockUnarchivedConversations
+        case .unread:
+            // Filter unarchived conversations that have unread messages
+            mockUnarchivedConversations.filter { $0.estimatedUnreadCount > 0 }
+        case .mentions:
+            // Filter unarchived conversations that have unread mentions
+            mockUnarchivedConversations.filter { $0.estimatedUnreadSelfMentionCount > 0 }
+        case .replies:
+            // Filter unarchived conversations that have unread replies
+            mockUnarchivedConversations.filter { $0.estimatedUnreadSelfReplyCount > 0 }
+        case .drafts:
+            // Filter unarchived conversations that have drafts
+            mockUnarchivedConversations.filter { $0.draftMessage != nil }
+        case .pending:
+            mockPendingConversations
         default:
             []
         }

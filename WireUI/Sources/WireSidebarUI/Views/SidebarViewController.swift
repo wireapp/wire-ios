@@ -89,6 +89,11 @@ public final class SidebarViewController: UIViewController {
         set { model.sidebarMenuItemIsSelectedTitleForegroundColor = newValue }
     }
 
+    public var showUnreadFilters: Bool {
+        get { model.showUnreadFilters }
+        set { model.showUnreadFilters = newValue }
+    }
+
     // MARK: - Private Properties
 
     private var model: SidebarModel!
@@ -170,6 +175,7 @@ private struct SidebarAdapter<AccountImageView: View, LegalHoldIndicatorView: Vi
         SidebarView(
             accountInfo: model.accountInfo,
             selectedMenuItem: $model.selectedMenuItem,
+            showUnreadFilters: model.showUnreadFilters,
             accountImageAction: model.accountImageAction,
             foldersAction: model.foldersAction,
             supportAction: model.supportAction,

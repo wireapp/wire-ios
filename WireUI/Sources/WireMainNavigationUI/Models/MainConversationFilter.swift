@@ -23,6 +23,10 @@ public enum MainConversationFilter: Sendable, Equatable {
     case groups
     case channels
     case oneOnOne
+    case unread
+    case mentions
+    case replies
+    case drafts
     case folder(id: UUID, name: String)
 }
 
