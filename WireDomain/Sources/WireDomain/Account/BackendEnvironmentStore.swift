@@ -20,8 +20,6 @@ import Foundation
 import WireLogging
 import WireNetwork
 
-private let log = WireLogger(tag: "Accounts")
-
 public struct BackendEnvironmentStore {
 
     private let directory: URL
@@ -39,48 +37,30 @@ public struct BackendEnvironmentStore {
         _ backendEnvironment: BackendEnvironment2,
         for accountID: UUID
     ) throws {
-        do {
-            let accountDataURL = accountDataURL(id: accountID)
-            let path = accountDataURL.path(percentEncoded: false)
-            if !fileManager.fileExists(atPath: path) {
-                try fileManager.createAndProtectDirectory(at: accountDataURL)
-            }
-            let storedBackendEnvironment = backendEnvironment.toStored()
-            let url = backendEnvironmentURL(for: accountID)
-            let data = try encoder.encode(storedBackendEnvironment)
-            try data.write(to: url, options: .atomic)
-        } catch {
-            log.error(
-                "Unable to store backend environment \(backendEnvironment) for " +
-                    "account with ID \(accountID.safeForLoggingDescription), " +
-                    "error: \(error.safeForLoggingDescription)"
-            )
-            throw error
+        let accountDataURL = accountDataURL(id: accountID)
+        let path = accountDataURL.path(percentEncoded: false)
+        if !fileManager.fileExists(atPath: path) {
+            try fileManager.createAndProtectDirectory(at: accountDataURL)
         }
+        let storedBackendEnvironment = backendEnvironment.toStored()
+        let url = backendEnvironmentURL(for: accountID)
+        let data = try encoder.encode(storedBackendEnvironment)
+        try data.write(to: url, options: .atomic)
     }
 
     public func storeBackendMetadata(
         _ metadata: ResolvedBackendMetadata,
         for accountID: UUID
     ) throws {
-        do {
-            let accountDataURL = accountDataURL(id: accountID)
-            let path = accountDataURL.path(percentEncoded: false)
-            if !fileManager.fileExists(atPath: path) {
-                try fileManager.createAndProtectDirectory(at: accountDataURL)
-            }
-            let storedBackendMetadata = metadata.toStored()
-            let url = backendMetadataURL(for: accountID)
-            let data = try encoder.encode(storedBackendMetadata)
-            try data.write(to: url, options: .atomic)
-        } catch {
-            log.error(
-                "Unable to store backend metadata \(metadata) for " +
-                    "account with ID \(accountID.safeForLoggingDescription), " +
-                    "error: \(error.safeForLoggingDescription)"
-            )
-            throw error
+        let accountDataURL = accountDataURL(id: accountID)
+        let path = accountDataURL.path(percentEncoded: false)
+        if !fileManager.fileExists(atPath: path) {
+            try fileManager.createAndProtectDirectory(at: accountDataURL)
         }
+        let storedBackendMetadata = metadata.toStored()
+        let url = backendMetadataURL(for: accountID)
+        let data = try encoder.encode(storedBackendMetadata)
+        try data.write(to: url, options: .atomic)
     }
 
     public func fetchBackendEnvironment(accountID: UUID) throws -> BackendEnvironment2? {
@@ -101,11 +81,6 @@ public struct BackendEnvironmentStore {
                 return nil
             }
 
-            log.error(
-                "Unable to fetch backend environment for account " +
-                    "with ID \(accountID.safeForLoggingDescription), " +
-                    "error: \(error.safeForLoggingDescription)"
-            )
             throw error
         }
     }
@@ -128,30 +103,16 @@ public struct BackendEnvironmentStore {
                 return nil
             }
 
-            log.error(
-                "Unable to fetch backend metadata for account " +
-                    "with ID \(accountID.safeForLoggingDescription), " +
-                    "error: \(error.safeForLoggingDescription)"
-            )
             throw error
         }
     }
 
     public func deleteBackendData(accountID: UUID) throws {
-        do {
-            for fileURL in [
-                backendEnvironmentURL(for: accountID),
-                backendMetadataURL(for: accountID)
-            ] where fileManager.fileExists(atPath: fileURL.path(percentEncoded: false)) {
-                try fileManager.removeItem(at: fileURL)
-            }
-        } catch {
-            log.error(
-                "Unable to delete backend data for " +
-                    "accountID \(accountID.safeForLoggingDescription), " +
-                    "error: \(error.safeForLoggingDescription)"
-            )
-            throw error
+        for fileURL in [
+            backendEnvironmentURL(for: accountID),
+            backendMetadataURL(for: accountID)
+        ] where fileManager.fileExists(atPath: fileURL.path(percentEncoded: false)) {
+            try fileManager.removeItem(at: fileURL)
         }
     }
 
@@ -170,14 +131,6 @@ public struct BackendEnvironmentStore {
     private func accountDataURL(id: UUID) -> URL {
         directory
             .appendingPathComponent(id.uuidString, isDirectory: true)
-    }
-
-}
-
-private extension Error {
-
-    var safeForLoggingDescription: String {
-        (self as NSError).safeForLoggingDescription
     }
 
 }
