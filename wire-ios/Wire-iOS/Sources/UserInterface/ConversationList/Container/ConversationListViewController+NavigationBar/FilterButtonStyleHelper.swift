@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireCommonComponents
 import WireDesign
 
 enum FilterButtonStyleHelper {

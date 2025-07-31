@@ -18,17 +18,12 @@
 
 import Foundation
 
-enum InvalidGenericMessageDataRemoval {
-    static func removeInvalid(in moc: NSManagedObjectContext) {
-        do {
-            try moc.batchDeleteEntities(
-                named: ZMGenericMessageData.entityName(),
-                matching: NSPredicate(
-                    format: "\(ZMGenericMessageData.assetKey) == nil AND \(ZMGenericMessageData.messageKey) == nil"
-                )
-            )
-        } catch {
-            fatalError("Failed to perform batch update: \(error)")
-        }
+public extension ZMConversation {
+
+    // TODO: [WPB-18396] implement NSManagedObject local property and map it to return proper duration value
+
+    var channelHistoryDepth: String? {
+        nil
     }
+
 }

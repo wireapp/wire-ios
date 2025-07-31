@@ -133,6 +133,46 @@ public final class ConversationPredicateFactory: NSObject {
         ])
     }
 
+    @objc(predicateForUnreadConversations)
+    public func predicateForUnreadConversations() -> NSPredicate {
+        let hasUnreadMessages = NSPredicate(format: "internalEstimatedUnreadCount > 0")
+
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [
+            predicateForConversationsExcludingArchived(),
+            hasUnreadMessages
+        ])
+    }
+
+    @objc(predicateForMentionedConversations)
+    public func predicateForMentionedConversations() -> NSPredicate {
+        let hasMentions = NSPredicate(format: "internalEstimatedUnreadSelfMentionCount > 0")
+
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [
+            predicateForConversationsExcludingArchived(),
+            hasMentions
+        ])
+    }
+
+    @objc(predicateForRepliedConversations)
+    public func predicateForRepliedConversations() -> NSPredicate {
+        let hasReplies = NSPredicate(format: "internalEstimatedUnreadSelfReplyCount > 0")
+
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [
+            predicateForConversationsExcludingArchived(),
+            hasReplies
+        ])
+    }
+
+    @objc(predicateForDraftConversations)
+    public func predicateForDraftConversations() -> NSPredicate {
+        let hasDraft = NSPredicate(format: "draftMessageData != nil")
+
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [
+            predicateForConversationsExcludingArchived(),
+            hasDraft
+        ])
+    }
+
     private func predicateForValidConversations() -> NSPredicate {
         let basePredicate = ZMConversation.predicateForFilteringResults()
         return .all(of: [basePredicate, isProtocolReady(), isValidConversation()])

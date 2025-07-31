@@ -50,12 +50,6 @@ public struct ProteusSessionID: Hashable, Equatable {
         self.domain = domain
     }
 
-    /// Use when migrating from old session identifier to new session identifier.
-
-    init(fromLegacyV1Identifier clientID: String) {
-        self.init(userID: "", clientID: clientID)
-    }
-
     public func hash(into hasher: inout Hasher) {
         hasher.combine(rawValue)
     }

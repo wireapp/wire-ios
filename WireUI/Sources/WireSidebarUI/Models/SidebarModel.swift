@@ -40,6 +40,8 @@ final class SidebarModel: ObservableObject {
         didSet { menuItemAction(selectedMenuItem) }
     }
 
+    @Published var showUnreadFilters: Bool = false
+
     let accountImageAction: () -> Void
     let menuItemAction: (_ selectedMenuItem: SidebarSelectableMenuItem) -> Void
     let foldersAction: (CGRect) -> Void

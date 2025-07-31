@@ -683,6 +683,14 @@ internal enum L10n {
             internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.channels.selected.description", fallback: "Channels, selected")
           }
         }
+        internal enum Drafts {
+          /// Show all conversations with drafted messages
+          internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.drafts.description", fallback: "Show all conversations with drafted messages")
+          internal enum Selected {
+            /// Drafts, selected
+            internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.drafts.selected.description", fallback: "Drafts, selected")
+          }
+        }
         internal enum Favorites {
           /// Show all favorite conversations
           internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.favorites.description", fallback: "Show all favorite conversations")
@@ -707,12 +715,36 @@ internal enum L10n {
             internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.groups.selected.description", fallback: "Groups, selected")
           }
         }
+        internal enum Mentions {
+          /// Show all conversations with mentions
+          internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.mentions.description", fallback: "Show all conversations with mentions")
+          internal enum Selected {
+            /// Mentions, selected
+            internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.mentions.selected.description", fallback: "Mentions, selected")
+          }
+        }
         internal enum OneOnOne {
           /// Show all one on one conversations
           internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.oneOnOne.description", fallback: "Show all one on one conversations")
           internal enum Selected {
             /// One-to-one conversations, selected
             internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.oneOnOne.selected.description", fallback: "One-to-one conversations, selected")
+          }
+        }
+        internal enum Replies {
+          /// Show all conversations with replies
+          internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.replies.description", fallback: "Show all conversations with replies")
+          internal enum Selected {
+            /// Replies, selected
+            internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.replies.selected.description", fallback: "Replies, selected")
+          }
+        }
+        internal enum Unread {
+          /// Show all unread conversations
+          internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.unread.description", fallback: "Show all unread conversations")
+          internal enum Selected {
+            /// Unread, selected
+            internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.unread.selected.description", fallback: "Unread, selected")
           }
         }
       }
@@ -1902,13 +1934,25 @@ internal enum L10n {
         internal static let isVerified = L10n.tr("Localizable", "content.system.is_verified", fallback: "All fingerprints are verified")
         /// Tap to like
         internal static let likeTooltip = L10n.tr("Localizable", "content.system.like_tooltip", fallback: "Tap to like")
-        /// %@ set conversation history to %@
-        internal static func messageHistoryDepth(_ p1: Any, _ p2: Any) -> String {
-          return L10n.tr("Localizable", "content.system.message_history_depth", String(describing: p1), String(describing: p2), fallback: "%@ set conversation history to %@")
+        /// New participants can see messages from the last %@ days
+        internal static func messageHistoryDepthInitiallySetDays(_ p1: Any) -> String {
+          return L10n.tr("Localizable", "content.system.message_history_depth_initially_set_days", String(describing: p1), fallback: "New participants can see messages from the last %@ days")
+        }
+        /// New participants can see messages from the last %@ weeks
+        internal static func messageHistoryDepthInitiallySetWeeks(_ p1: Any) -> String {
+          return L10n.tr("Localizable", "content.system.message_history_depth_initially_set_weeks", String(describing: p1), fallback: "New participants can see messages from the last %@ weeks")
+        }
+        /// %@ set conversation history to %@ days
+        internal static func messageHistoryDepthModifiedDays(_ p1: Any, _ p2: Any) -> String {
+          return L10n.tr("Localizable", "content.system.message_history_depth_modified_days", String(describing: p1), String(describing: p2), fallback: "%@ set conversation history to %@ days")
         }
         /// %@ disabled conversation history
-        internal static func messageHistoryDepthDisabled(_ p1: Any) -> String {
-          return L10n.tr("Localizable", "content.system.message_history_depth_disabled", String(describing: p1), fallback: "%@ disabled conversation history")
+        internal static func messageHistoryDepthModifiedDisabled(_ p1: Any) -> String {
+          return L10n.tr("Localizable", "content.system.message_history_depth_modified_disabled", String(describing: p1), fallback: "%@ disabled conversation history")
+        }
+        /// %@ set conversation history to %@ weeks
+        internal static func messageHistoryDepthModifiedWeeks(_ p1: Any, _ p2: Any) -> String {
+          return L10n.tr("Localizable", "content.system.message_history_depth_modified_weeks", String(describing: p1), String(describing: p2), fallback: "%@ set conversation history to %@ weeks")
         }
         /// %@ turned read receipts off for everyone
         internal static func messageReadReceiptOff(_ p1: Any) -> String {
@@ -2940,6 +2984,32 @@ internal enum L10n {
           }
         }
       }
+      internal enum EmptyState {
+        internal enum Drafts {
+          /// All your conversations are up to date
+          internal static let subtitle = L10n.tr("Localizable", "conversation_list.empty_state.drafts.subtitle", fallback: "All your conversations are up to date")
+          /// No drafts
+          internal static let title = L10n.tr("Localizable", "conversation_list.empty_state.drafts.title", fallback: "No drafts")
+        }
+        internal enum Mentions {
+          /// All your conversations are up to date
+          internal static let subtitle = L10n.tr("Localizable", "conversation_list.empty_state.mentions.subtitle", fallback: "All your conversations are up to date")
+          /// No mentions
+          internal static let title = L10n.tr("Localizable", "conversation_list.empty_state.mentions.title", fallback: "No mentions")
+        }
+        internal enum Replies {
+          /// All your conversations are up to date
+          internal static let subtitle = L10n.tr("Localizable", "conversation_list.empty_state.replies.subtitle", fallback: "All your conversations are up to date")
+          /// No replies
+          internal static let title = L10n.tr("Localizable", "conversation_list.empty_state.replies.title", fallback: "No replies")
+        }
+        internal enum Unread {
+          /// All your conversations are up to date
+          internal static let subtitle = L10n.tr("Localizable", "conversation_list.empty_state.unread.subtitle", fallback: "All your conversations are up to date")
+          /// No unread conversations
+          internal static let title = L10n.tr("Localizable", "conversation_list.empty_state.unread.title", fallback: "No unread conversations")
+        }
+      }
       internal enum Filter {
         internal enum AllConversations {
           /// All Conversations
@@ -2948,6 +3018,10 @@ internal enum L10n {
         internal enum Channels {
           /// Channels
           internal static let title = L10n.tr("Localizable", "conversation_list.filter.channels.title", fallback: "Channels")
+        }
+        internal enum Drafts {
+          /// Drafts
+          internal static let title = L10n.tr("Localizable", "conversation_list.filter.drafts.title", fallback: "Drafts")
         }
         internal enum Favorites {
           /// Favorites
@@ -2961,6 +3035,10 @@ internal enum L10n {
           /// Groups
           internal static let title = L10n.tr("Localizable", "conversation_list.filter.groups.title", fallback: "Groups")
         }
+        internal enum Mentions {
+          /// Mentions
+          internal static let title = L10n.tr("Localizable", "conversation_list.filter.mentions.title", fallback: "Mentions")
+        }
         internal enum OneOnOneConversations {
           /// 1:1 Conversations
           internal static let title = L10n.tr("Localizable", "conversation_list.filter.oneOnOneConversations.title", fallback: "1:1 Conversations")
@@ -2968,6 +3046,14 @@ internal enum L10n {
         internal enum RemoveButton {
           /// Remove
           internal static let title = L10n.tr("Localizable", "conversation_list.filter.remove_button.title", fallback: "Remove")
+        }
+        internal enum Replies {
+          /// Replies
+          internal static let title = L10n.tr("Localizable", "conversation_list.filter.replies.title", fallback: "Replies")
+        }
+        internal enum Unread {
+          /// Unread
+          internal static let title = L10n.tr("Localizable", "conversation_list.filter.unread.title", fallback: "Unread")
         }
       }
       internal enum FilterLabel {
@@ -3001,6 +3087,8 @@ internal enum L10n {
       internal enum SearchBar {
         /// Search channels
         internal static let channelsPlaceholder = L10n.tr("Localizable", "conversation_list.search_bar.channelsPlaceholder", fallback: "Search channels")
+        /// Search conversations with drafts
+        internal static let draftsPlaceholder = L10n.tr("Localizable", "conversation_list.search_bar.draftsPlaceholder", fallback: "Search conversations with drafts")
         /// Search favourites
         internal static let favoritesPlaceholder = L10n.tr("Localizable", "conversation_list.search_bar.favoritesPlaceholder", fallback: "Search favourites")
         /// Search %@
@@ -3009,10 +3097,16 @@ internal enum L10n {
         }
         /// Search groups
         internal static let groupsPlaceholder = L10n.tr("Localizable", "conversation_list.search_bar.groupsPlaceholder", fallback: "Search groups")
+        /// Search conversations with mentions
+        internal static let mentionsPlaceholder = L10n.tr("Localizable", "conversation_list.search_bar.mentionsPlaceholder", fallback: "Search conversations with mentions")
         /// Search 1:1 conversations
         internal static let oneOnOnePlaceholder = L10n.tr("Localizable", "conversation_list.search_bar.oneOnOnePlaceholder", fallback: "Search 1:1 conversations")
         /// Search conversations
         internal static let placeholder = L10n.tr("Localizable", "conversation_list.search_bar.placeholder", fallback: "Search conversations")
+        /// Search conversations with replies
+        internal static let repliesPlaceholder = L10n.tr("Localizable", "conversation_list.search_bar.repliesPlaceholder", fallback: "Search conversations with replies")
+        /// Search unread conversations
+        internal static let unreadPlaceholder = L10n.tr("Localizable", "conversation_list.search_bar.unreadPlaceholder", fallback: "Search unread conversations")
       }
       internal enum Voiceover {
         internal enum BottomBar {
