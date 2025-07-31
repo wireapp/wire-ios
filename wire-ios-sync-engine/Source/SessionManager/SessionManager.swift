@@ -374,11 +374,13 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     let analyticsService: AnalyticsService?
 
+    private let sharedUserDefaults: UserDefaults
+
+    // MARK: - Life cycle
+
     public override init() {
         fatal("init() not implemented")
     }
-
-    private let sharedUserDefaults: UserDefaults
 
     @MainActor
     public convenience init(
@@ -614,6 +616,33 @@ public final class SessionManager: NSObject, SessionManagerType {
         checkJailbreakIfNeeded()
     }
 
+    @MainActor
+    public func start(launchOptions: LaunchOptions) async {
+        if
+            let url = launchOptions[UIApplication.LaunchOptionsKey.url] as? URL,
+            let urlAction = try? URLAction(url: url),
+            urlAction.causesLogout
+        {
+            // If a logout is coming, then no need to start.
+            return
+        }
+
+        if shouldPerformPostRebootLogout() {
+            performPostRebootLogout()
+            return
+        }
+
+        if let account = accountManager.selectedAccount {
+            if let session = await loadSession(for: account) {
+                updateCurrentAccount(in: session.managedObjectContext)
+                session.application(application, didFinishLaunching: launchOptions)
+            }
+        } else {
+            createUnauthenticatedSession()
+            delegate?.sessionManagerDidFailToLogin(error: nil)
+        }
+    }
+
     private func configureBlacklistDownload() {
         if configuration.blacklistDownloadInterval > 0 {
             blacklistVerificator?.tearDown()
@@ -679,16 +708,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         unauthenticatedSessionFactory.readyForRequests = ready
     }
 
-    @MainActor
-    public func start(launchOptions: LaunchOptions) async {
-        if let account = accountManager.selectedAccount {
-            await selectInitialAccount(account, launchOptions: launchOptions)
-        } else {
-            createUnauthenticatedSession()
-            delegate?.sessionManagerDidFailToLogin(error: nil)
-        }
-    }
-
     public func removeDatabaseFromDisk() {
         guard let account = accountManager.selectedAccount else {
             return
@@ -696,28 +715,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         delete(account: account)
     }
 
-    @MainActor
-    private func selectInitialAccount(
-        _ account: Account,
-        launchOptions: LaunchOptions
-    ) async {
-        if let url = launchOptions[UIApplication.LaunchOptionsKey.url] as? URL {
-            if (try? URLAction(url: url))?.causesLogout == true {
-                // Do not log in if the launch URL action causes a logout
-                return
-            }
-        }
 
-        guard !shouldPerformPostRebootLogout() else {
-            performPostRebootLogout()
-            return
-        }
 
-        if let session = await loadSession(for: account) {
-            updateCurrentAccount(in: session.managedObjectContext)
-            session.application(application, didFinishLaunching: launchOptions)
-        }
-    }
 
     /// Select the account to be the active account.
     /// - completion: runs when the user session was loaded
