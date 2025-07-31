@@ -35,6 +35,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case wireCells
     case wireCellsManualAuthentication
     case consumableNotifications
+    case disablePushChannelBatching
     case multibackend
     case channelsHistory
 
@@ -78,6 +79,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .consumableNotifications:
             "Turn on to enable new sync with consumable notifications"
+
+        case .disablePushChannelBatching:
+            "Turn on to disable batching while app is live"
 
         case .multibackend:
             "Turn on to be able to log in with accounts from multiple backends"

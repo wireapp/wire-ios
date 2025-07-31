@@ -377,7 +377,8 @@ public final class SharingSession {
             wireAPIBackendEnvironment: wireAPIBackendEnvironment,
             minTLSVersion: .minVersionFrom(minTLSVersion),
             apiVersion: wireAPIVersion,
-            sharedUserDefaults: sharedUserDefaults
+            sharedUserDefaults: sharedUserDefaults,
+            sharedContainerURL: URL("unused")!
         )
     }
 
@@ -460,7 +461,8 @@ public final class SharingSession {
         wireAPIBackendEnvironment: WireNetwork.BackendEnvironment,
         minTLSVersion: WireNetwork.TLSVersion,
         apiVersion: WireNetwork.APIVersion,
-        sharedUserDefaults: UserDefaults
+        sharedUserDefaults: UserDefaults,
+        sharedContainerURL: URL
     ) throws {
 
         let applicationStatusDirectory = ApplicationStatusDirectory(
@@ -546,6 +548,7 @@ public final class SharingSession {
             isFederationEnabled: WireTransport.BackendInfo.isFederationEnabled,
             isMLSEnabled: WireTransport.BackendInfo.isMLSEnabled,
             sharedUserDefaults: sharedUserDefaults,
+            sharedContainerURL: nil, // the container is not used in this case
             syncContext: coreDataStack.syncContext,
             eventContext: coreDataStack.eventContext,
             mlsService: mlsService,

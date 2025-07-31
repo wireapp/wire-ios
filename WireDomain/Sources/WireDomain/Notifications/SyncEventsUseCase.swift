@@ -32,7 +32,6 @@ struct SyncEventsUseCase: SyncEventsUseCaseProtocol {
 
     let pendingEventsSync: PullPendingUpdateEventsSyncV2Protocol
     let timeout: Duration
-
     init(
         pendingEventsSync: PullPendingUpdateEventsSyncV2Protocol,
         timeout: Duration = .seconds(25)
