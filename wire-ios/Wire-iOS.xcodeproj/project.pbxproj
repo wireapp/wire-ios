@@ -618,6 +618,8 @@
 				ConversationList/ConversationListCell/ConversationStatusLineTests.swift,
 				"ConversationList/ConversationListCell/ConversationStatusLineTests+Muting.swift",
 				"ConversationList/ConversationListCell/CoreDataSnapshotTestCase+appendMessage.swift",
+				ConversationList/ConversationListViewModel/ConversationListViewModelFilterIntegrationTests.swift,
+				ConversationList/ConversationListViewModel/ConversationListViewModelFilterTests.swift,
 				ConversationList/ConversationListViewModel/ConversationListViewModelTests.swift,
 				ConversationList/SectionHeader/ConversationListHeaderViewSnapshotTests.swift,
 				ConversationList/SectionHeader/ConversationListHeaderViewTests.swift,

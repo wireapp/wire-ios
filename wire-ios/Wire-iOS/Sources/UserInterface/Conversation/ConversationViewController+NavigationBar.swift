@@ -238,20 +238,20 @@ extension ConversationViewController: CollectionsViewControllerDelegate {
 
         case .showInConversation:
             viewController.dismissIfNeeded(animated: true) {
-                self.contentViewController.scroll(to: message) { _ in
-                    self.contentViewController.highlight(message)
+                self.contentViewController?.scroll(to: message) { _ in
+                    self.contentViewController?.highlight(message)
                 }
             }
 
         case .reply:
             viewController.dismissIfNeeded(animated: true) {
-                self.contentViewController.scroll(to: message) { cell in
-                    self.contentViewController.perform(action: .reply, for: message, view: cell)
+                self.contentViewController?.scroll(to: message) { cell in
+                    self.contentViewController?.perform(action: .reply, for: message, view: cell)
                 }
             }
 
         default:
-            contentViewController.perform(action: action, for: message, view: view)
+            contentViewController?.perform(action: action, for: message, view: view)
         }
     }
 }
