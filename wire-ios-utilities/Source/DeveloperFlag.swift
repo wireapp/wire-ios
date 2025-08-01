@@ -37,7 +37,10 @@ public enum DeveloperFlag: String, CaseIterable {
     case consumableNotifications
     case disablePushChannelBatching
     case multibackend
+    case newRegistration
+    case showUnreadConversationsFilter
     case channelsHistory
+    case chatBubbles
 
     public var description: String {
         switch self {
@@ -86,8 +89,17 @@ public enum DeveloperFlag: String, CaseIterable {
         case .multibackend:
             "Turn on to be able to log in with accounts from multiple backends"
 
+        case .newRegistration:
+            "Turn on to use the new registration flow"
+
+        case .showUnreadConversationsFilter:
+            "Turn on to show the new conversation filter options"
+
         case .channelsHistory:
             "Turn on to enable channels history"
+
+        case .chatBubbles:
+            "Show conversation messages as chat bubbles"
         }
     }
 

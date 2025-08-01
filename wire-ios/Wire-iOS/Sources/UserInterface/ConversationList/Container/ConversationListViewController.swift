@@ -40,6 +40,7 @@ final class ConversationListViewController: UIViewController {
     weak var zClientViewController: ZClientViewController?
 
     private static let contentControllerBottomInset: CGFloat = 16
+    private var userDefaultsObservation: NSKeyValueObservation?
 
     private lazy var filterContainerView = UIView()
 
@@ -78,6 +79,14 @@ final class ConversationListViewController: UIViewController {
             return FilterMenuLocale.Channels.title
         case .oneOnOne:
             return FilterMenuLocale.OneOnOneConversations.title
+        case .unread:
+            return FilterMenuLocale.Unread.title
+        case .mentions:
+            return FilterMenuLocale.Mentions.title
+        case .replies:
+            return FilterMenuLocale.Replies.title
+        case .drafts:
+            return FilterMenuLocale.Drafts.title
         case let .folder(_, name):
             return name
         case .none:
@@ -276,6 +285,13 @@ final class ConversationListViewController: UIViewController {
 
     private func setupObservers() {
         viewModel.setupObservers()
+
+        // Observe developer flag changes for unread filters using KVO
+        userDefaultsObservation = UserDefaults.standard
+            .observe(\.showUnreadConversationsFilter, options: [.new]) { [weak self] _, _ in
+                // Update navigation bar to reflect filter visibility changes
+                self?.updateNavigationItem()
+            }
     }
 
     /// Sets up a vertical stack view containing all subviews
@@ -338,7 +354,9 @@ final class ConversationListViewController: UIViewController {
 
     func updateFilterContainerView() {
         filterContainerView
-            .isHidden = mainSplitViewState == .expanded || isEmptyPlaceholderVisible || listContentController
+            // This used to check for isEmptyPlaceholderVisible as well,
+            // which lead to the filter not being removable if the filter found no matches
+            .isHidden = mainSplitViewState == .expanded || listContentController
             .listViewModel.selectedFilter == .none
         filterLabel.text = L10n.Localizable.ConversationList.FilterLabel.text(selectedFilterLabel)
     }
@@ -440,6 +458,14 @@ final class ConversationListViewController: UIViewController {
             L10n.Localizable.ConversationList.SearchBar.channelsPlaceholder
         case .oneOnOne:
             L10n.Localizable.ConversationList.SearchBar.oneOnOnePlaceholder
+        case .unread:
+            L10n.Localizable.ConversationList.SearchBar.unreadPlaceholder
+        case .mentions:
+            L10n.Localizable.ConversationList.SearchBar.mentionsPlaceholder
+        case .replies:
+            L10n.Localizable.ConversationList.SearchBar.repliesPlaceholder
+        case .drafts:
+            L10n.Localizable.ConversationList.SearchBar.draftsPlaceholder
         case let .folder(_, name):
             L10n.Localizable.ConversationList.SearchBar.foldersPlaceholder(name)
         }
