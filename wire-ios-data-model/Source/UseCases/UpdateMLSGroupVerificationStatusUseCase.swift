@@ -31,14 +31,14 @@ public class UpdateMLSGroupVerificationStatusUseCase: UpdateMLSGroupVerification
 
     private let e2eIVerificationStatusService: E2EIVerificationStatusServiceInterface
     private let context: NSManagedObjectContext
-    private let featureRepository: FeatureRepositoryInterface
+    private let featureRepository: LegacyFeatureRepositoryInterface
 
     // MARK: - Life cycle
 
     public init(
         e2eIVerificationStatusService: E2EIVerificationStatusServiceInterface,
         syncContext: NSManagedObjectContext,
-        featureRepository: FeatureRepositoryInterface
+        featureRepository: LegacyFeatureRepositoryInterface
     ) {
         self.e2eIVerificationStatusService = e2eIVerificationStatusService
         self.context = syncContext

@@ -30,12 +30,12 @@ struct ConversationMLSResetEventProcessor: ConversationMLSResetEventProcessorPro
 
     private let mlsService: any MLSServiceInterface
     private let conversationLocalStore: any ConversationLocalStoreProtocol
-    private let featureRepository: any FeatureRepositoryInterface
+    private let featureRepository: any LegacyFeatureRepositoryInterface
 
     init(
         mlsService: any MLSServiceInterface,
         conversationLocalStore: any ConversationLocalStoreProtocol,
-        featureRepository: any FeatureRepositoryInterface
+        featureRepository: any LegacyFeatureRepositoryInterface
     ) {
         self.mlsService = mlsService
         self.conversationLocalStore = conversationLocalStore

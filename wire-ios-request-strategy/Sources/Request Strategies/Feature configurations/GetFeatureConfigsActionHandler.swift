@@ -56,7 +56,7 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
             }
 
             do {
-                let repository = FeatureRepository(context: context)
+                let repository = LegacyFeatureRepository(context: context)
 
                 let processor = FeatureConfigsPayloadProcessor()
 

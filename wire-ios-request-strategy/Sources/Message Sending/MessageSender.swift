@@ -55,7 +55,7 @@ public final class MessageSender: MessageSenderInterface {
         context: NSManagedObjectContext,
         incrementalSyncObserver: IncrementalSyncObserverProtocol,
         initiateResetMLSConversationUseCase: InitiateResetMLSConversationUseCaseProtocol,
-        featureRepository: FeatureRepositoryInterface
+        featureRepository: LegacyFeatureRepositoryInterface
     ) {
         self.apiProvider = apiProvider
         self.sessionEstablisher = sessionEstablisher
@@ -67,7 +67,7 @@ public final class MessageSender: MessageSenderInterface {
         self.featureRepository = featureRepository
     }
 
-    private let featureRepository: FeatureRepositoryInterface
+    private let featureRepository: LegacyFeatureRepositoryInterface
     private let initiateResetMLSConversationUseCase: InitiateResetMLSConversationUseCaseProtocol
     private let incrementalSyncObserver: IncrementalSyncObserverProtocol
     private let apiProvider: APIProviderInterface
