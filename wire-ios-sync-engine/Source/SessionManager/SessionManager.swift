@@ -714,9 +714,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         delete(account: account)
     }
 
-
-
-
     /// Select the account to be the active account.
     /// - completion: runs when the user session was loaded
     /// - tearDownCompletion: runs when the UI no longer holds any references to the previous user session.
@@ -933,9 +930,14 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     @MainActor
-    fileprivate func activateSession(for account: Account) async -> ZMUserSession {
-        // TODO: fix bang
-        let session = await withSession(for: account, notifyAboutMigration: true)!
+    fileprivate func activateSession(for account: Account) async -> ZMUserSession? {
+        guard let session = await withSession(
+            for: account,
+            notifyAboutMigration: true
+        ) else {
+            return nil
+        }
+
         activeUserSession = session
 
         WireLogger.sessionManager.debug(
@@ -1601,7 +1603,10 @@ extension SessionManager: UnauthenticatedSessionDelegate {
         accountManager.addAndSelect(account)
 
         Task { @MainActor in
-            let userSession = await activateSession(for: account)
+            guard let userSession = await activateSession(for: account) else {
+                return
+            }
+
             updateCurrentAccount(in: userSession.managedObjectContext)
 
             if let profileImageData = session.authenticationStatus.profileImageData {
