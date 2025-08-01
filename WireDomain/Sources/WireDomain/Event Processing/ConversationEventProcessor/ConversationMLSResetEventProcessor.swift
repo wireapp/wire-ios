@@ -24,7 +24,7 @@ struct ConversationMLSResetEventProcessor: ConversationMLSResetEventProcessorPro
 
     enum Failure: Error {
         case conversationNotFound
-        case invalidArguments
+        case failedToGetMLSGroupIDs
         case failedToWipeMLSConversation
     }
 
@@ -77,11 +77,7 @@ struct ConversationMLSResetEventProcessor: ConversationMLSResetEventProcessorPro
             let oldMLSGroupID = MLSGroupID(base64Encoded: oldMLSGroupIDBase64),
             let newMLSGroupID = MLSGroupID(base64Encoded: newMLSGroupIDBase64)
         else {
-            WireLogger.mls.error(
-                "Failed to get old and new group IDs to reset MLS conversation",
-                attributes: attributes
-            )
-            throw Failure.invalidArguments
+            throw Failure.failedToGetMLSGroupIDs
         }
 
         guard let localConversation = await conversationLocalStore
