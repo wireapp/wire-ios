@@ -40,6 +40,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case newRegistration
     case showUnreadConversationsFilter
     case channelsHistory
+    case chatBubbles
 
     public var description: String {
         switch self {
@@ -96,6 +97,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .channelsHistory:
             "Turn on to enable channels history"
+
+        case .chatBubbles:
+            "Show conversation messages as chat bubbles"
         }
     }
 
