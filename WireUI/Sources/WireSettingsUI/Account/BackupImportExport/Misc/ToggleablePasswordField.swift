@@ -79,7 +79,8 @@ struct ToggleablePasswordField: View {
             text: $password,
             placeholder: placeholder,
             isContextMenuAllowed: isContextMenuAllowed,
-            isSecureTextEntry: false
+            isSecureTextEntry: false,
+            placeholderColor: placeholderColor
         )
         .textContentType(.password)
         .autocapitalization(.none)
@@ -92,7 +93,8 @@ struct ToggleablePasswordField: View {
             text: $password,
             placeholder: placeholder,
             isContextMenuAllowed: isContextMenuAllowed,
-            isSecureTextEntry: true
+            isSecureTextEntry: true,
+            placeholderColor: placeholderColor
         )
         .textContentType(.password)
         .focused($focusedField, equals: .secureField)

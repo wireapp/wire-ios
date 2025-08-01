@@ -70,17 +70,20 @@ public struct ContextMenuControllableTextField: UIViewRepresentable {
     var placeholder: String
     var isContextMenuAllowed: Bool
     var isSecureTextEntry: Bool
+    var placeholderColor: Color?
 
     public init(
         text: Binding<String>,
         placeholder: String,
         isContextMenuAllowed: Bool = true,
-        isSecureTextEntry: Bool = false
+        isSecureTextEntry: Bool = false,
+        placeholderColor: Color? = nil
     ) {
         self._text = text
         self.placeholder = placeholder
         self.isContextMenuAllowed = isContextMenuAllowed
         self.isSecureTextEntry = isSecureTextEntry
+        self.placeholderColor = placeholderColor
     }
 
     public func makeUIView(context: Context) -> UITextField {
@@ -96,6 +99,18 @@ public struct ContextMenuControllableTextField: UIViewRepresentable {
             textField.isSecureTextEntry = true
             textField.textContentType = .oneTimeCode
         }
+        if let placeholderColor {
+            let font = UIFont.preferredFont(forTextStyle: .body)
+            let placeholderAttributes: [NSAttributedString.Key: Any] = [
+                .foregroundColor: UIColor(placeholderColor),
+                .font: font
+            ]
+            textField.attributedPlaceholder = NSAttributedString(
+                string: placeholder,
+                attributes: placeholderAttributes
+            )
+        }
+
         return textField
     }
 
