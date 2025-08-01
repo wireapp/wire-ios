@@ -621,8 +621,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         if
             let url = launchOptions[UIApplication.LaunchOptionsKey.url] as? URL,
             let urlAction = try? URLAction(url: url),
-            urlAction.causesLogout
-        {
+            urlAction.causesLogout {
             // If a logout is coming, then no need to start.
             return
         }
