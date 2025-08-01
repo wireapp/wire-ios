@@ -29,6 +29,7 @@ import WireNetwork
 import WireDataModel
 import WireDomainPackage
 import WireCoreCrypto
+import Combine
 
 @testable import WireDomain
 
@@ -1983,6 +1984,159 @@ public class MockDatabaseSaverProtocol: DatabaseSaverProtocol {
         }
 
         try await mock()
+    }
+
+}
+
+class MockFeatureConfigRepositoryProtocol: FeatureConfigRepositoryProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - pullFeatureConfigs
+
+    var pullFeatureConfigs_Invocations: [Void] = []
+    var pullFeatureConfigs_MockError: Error?
+    var pullFeatureConfigs_MockMethod: (() async throws -> Void)?
+
+    func pullFeatureConfigs() async throws {
+        pullFeatureConfigs_Invocations.append(())
+
+        if let error = pullFeatureConfigs_MockError {
+            throw error
+        }
+
+        guard let mock = pullFeatureConfigs_MockMethod else {
+            fatalError("no mock for `pullFeatureConfigs`")
+        }
+
+        try await mock()
+    }
+
+    // MARK: - observeFeatureStates
+
+    var observeFeatureStates_Invocations: [Void] = []
+    var observeFeatureStates_MockMethod: (() -> AnyPublisher<FeatureState, Never>)?
+    var observeFeatureStates_MockValue: AnyPublisher<FeatureState, Never>?
+
+    func observeFeatureStates() -> AnyPublisher<FeatureState, Never> {
+        observeFeatureStates_Invocations.append(())
+
+        if let mock = observeFeatureStates_MockMethod {
+            return mock()
+        } else if let mock = observeFeatureStates_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `observeFeatureStates`")
+        }
+    }
+
+    // MARK: - updateFeatureConfig
+
+    var updateFeatureConfig_Invocations: [FeatureConfig] = []
+    var updateFeatureConfig_MockMethod: ((FeatureConfig) async -> Void)?
+
+    func updateFeatureConfig(_ featureConfig: FeatureConfig) async {
+        updateFeatureConfig_Invocations.append(featureConfig)
+
+        guard let mock = updateFeatureConfig_MockMethod else {
+            fatalError("no mock for `updateFeatureConfig`")
+        }
+
+        await mock(featureConfig)
+    }
+
+    // MARK: - fetchAllowedGlobalOperations
+
+    var fetchAllowedGlobalOperations_Invocations: [Void] = []
+    var fetchAllowedGlobalOperations_MockError: Error?
+    var fetchAllowedGlobalOperations_MockMethod: (() async throws -> LocalFeature<Feature.AllowedGlobalOperations.Config>)?
+    var fetchAllowedGlobalOperations_MockValue: LocalFeature<Feature.AllowedGlobalOperations.Config>?
+
+    func fetchAllowedGlobalOperations() async throws -> LocalFeature<Feature.AllowedGlobalOperations.Config> {
+        fetchAllowedGlobalOperations_Invocations.append(())
+
+        if let error = fetchAllowedGlobalOperations_MockError {
+            throw error
+        }
+
+        if let mock = fetchAllowedGlobalOperations_MockMethod {
+            return try await mock()
+        } else if let mock = fetchAllowedGlobalOperations_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchAllowedGlobalOperations`")
+        }
+    }
+
+    // MARK: - fetchMLSConfig
+
+    var fetchMLSConfig_Invocations: [Void] = []
+    var fetchMLSConfig_MockError: Error?
+    var fetchMLSConfig_MockMethod: (() async throws -> LocalFeature<Feature.MLS.Config>)?
+    var fetchMLSConfig_MockValue: LocalFeature<Feature.MLS.Config>?
+
+    func fetchMLSConfig() async throws -> LocalFeature<Feature.MLS.Config> {
+        fetchMLSConfig_Invocations.append(())
+
+        if let error = fetchMLSConfig_MockError {
+            throw error
+        }
+
+        if let mock = fetchMLSConfig_MockMethod {
+            return try await mock()
+        } else if let mock = fetchMLSConfig_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchMLSConfig`")
+        }
+    }
+
+    // MARK: - fetchMLSMigrationConfig
+
+    var fetchMLSMigrationConfig_Invocations: [Void] = []
+    var fetchMLSMigrationConfig_MockError: Error?
+    var fetchMLSMigrationConfig_MockMethod: (() async throws -> LocalFeature<Feature.MLSMigration.Config>)?
+    var fetchMLSMigrationConfig_MockValue: LocalFeature<Feature.MLSMigration.Config>?
+
+    func fetchMLSMigrationConfig() async throws -> LocalFeature<Feature.MLSMigration.Config> {
+        fetchMLSMigrationConfig_Invocations.append(())
+
+        if let error = fetchMLSMigrationConfig_MockError {
+            throw error
+        }
+
+        if let mock = fetchMLSMigrationConfig_MockMethod {
+            return try await mock()
+        } else if let mock = fetchMLSMigrationConfig_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchMLSMigrationConfig`")
+        }
+    }
+
+    // MARK: - fetchAppLock
+
+    var fetchAppLock_Invocations: [Void] = []
+    var fetchAppLock_MockError: Error?
+    var fetchAppLock_MockMethod: (() async throws -> LocalFeature<Feature.AppLock.Config>)?
+    var fetchAppLock_MockValue: LocalFeature<Feature.AppLock.Config>?
+
+    func fetchAppLock() async throws -> LocalFeature<Feature.AppLock.Config> {
+        fetchAppLock_Invocations.append(())
+
+        if let error = fetchAppLock_MockError {
+            throw error
+        }
+
+        if let mock = fetchAppLock_MockMethod {
+            return try await mock()
+        } else if let mock = fetchAppLock_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchAppLock`")
+        }
     }
 
 }

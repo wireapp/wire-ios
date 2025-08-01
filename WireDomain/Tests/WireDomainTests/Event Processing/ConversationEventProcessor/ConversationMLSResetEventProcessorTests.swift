@@ -18,9 +18,9 @@
 
 import WireDataModel
 import WireDataModelSupport
-import WireDomainSupport
 import XCTest
 @testable import WireDomain
+@testable import WireDomainSupport
 @testable import WireNetwork
 
 final class ConversationMLSResetEventProcessorTests: XCTestCase {
@@ -32,7 +32,7 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
     private var conversationLocalStore: MockConversationLocalStoreProtocol!
     private var mlsService: MockMLSServiceInterface!
     private var zmConversation: ZMConversation!
-    private var mockFeatureRepository: MockFeatureRepositoryInterface!
+    private var mockFeatureConfigRepository: MockFeatureConfigRepositoryProtocol!
     private lazy var mockResetUserDefaultsRepository = MockResetMLSConversationUserDefaultsRepositoryProtocol()
 
     private var context: NSManagedObjectContext {
@@ -45,8 +45,8 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
         coreDataStack = try await coreDataStackHelper.createStack()
         conversationLocalStore = MockConversationLocalStoreProtocol()
         mlsService = MockMLSServiceInterface()
-        mockFeatureRepository = .init()
-        mockFeatureRepository.fetchAllowedGlobalOperations_MockValue = .init(
+        mockFeatureConfigRepository = .init()
+        mockFeatureConfigRepository.fetchAllowedGlobalOperations_MockValue = .init(
             status: .enabled,
             config: .init(mlsConversationReset: true)
         )
@@ -70,7 +70,7 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
         sut = ConversationMLSResetEventProcessor(
             mlsService: mlsService,
             conversationLocalStore: conversationLocalStore,
-            featureRepository: mockFeatureRepository,
+            featureConfigRepository: mockFeatureConfigRepository,
             userDefaultsRepository: mockResetUserDefaultsRepository
 
         )
@@ -120,7 +120,7 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
 
     func testProcessEvent_DoNothingWhenFFIsOff() async throws {
 
-        mockFeatureRepository.fetchAllowedGlobalOperations_MockValue = .init(
+        mockFeatureConfigRepository.fetchAllowedGlobalOperations_MockValue = .init(
             status: .disabled,
             config: .init(mlsConversationReset: false)
         )
@@ -174,12 +174,11 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
 
         // Given
 
-        mlsService.wipeGroup_MockError = TestError(message: "some error")
+        let error = TestError(message: "some error")
+        mlsService.wipeGroup_MockError = error
 
         // When and Then
-        await XCTAssertThrowsErrorAsync(
-            ConversationMLSResetEventProcessor.Failure.failedToWipeMLSConversation
-        ) {
+        await XCTAssertThrowsErrorAsync(error) {
             try await self.sut.processEvent(Scaffolding.event)
         }
     }
