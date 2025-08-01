@@ -1353,10 +1353,6 @@ public final class SessionManager: NSObject, SessionManagerType {
                 unauthenticatedSession?.tearDown()
                 reachability.tearDown()
             }
-
-        if let memoryWarningObserver {
-            NotificationCenter.default.removeObserver(memoryWarningObserver)
-        }
     }
 
     public var isUserSessionActive: Bool {

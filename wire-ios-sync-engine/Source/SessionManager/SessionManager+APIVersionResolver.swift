@@ -120,16 +120,19 @@ extension SessionManager: APIVersionResolverDelegate {
             dispatchGroup.wait(forInterval: 5)
 
             // 3. Reload sessions
-            accountManager.accounts.forEach { _ in
+            accountManager.accounts.forEach { account in
                 dispatchGroup.enter()
 
                 if account == self.accountManager.selectedAccount {
                     // When completed, this should trigger an AppState change through the SessionManagerDelegate
-                    self.loadSession(for: account) { _ in
+                    Task {
+                        _ = await self.loadSession(for: account)
                         dispatchGroup.leave()
                     }
+
                 } else {
-                    self.withSession(for: account) { _ in
+                    Task {
+                        _ = await self.withSession(for: account)
                         dispatchGroup.leave()
                     }
                 }
