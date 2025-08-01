@@ -62,7 +62,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     private let accountDirectory: URL
     private let cryptoboxMigrationManager: CryptoboxMigrationManagerInterface
     private var coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManagerProtocol?
-    private let featureRespository: FeatureRepositoryInterface
+    private let featureRespository: LegacyFeatureRepositoryInterface
     private let syncContext: NSManagedObjectContext
     private let allowCreation: Bool
     private var coreCrypto: SafeCoreCrypto?
@@ -91,7 +91,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         self.allowCreation = allowCreation
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
         self.coreCryptoKeyMigrationManager = coreCryptoKeyMigrationManager
-        self.featureRespository = FeatureRepository(context: syncContext)
+        self.featureRespository = LegacyFeatureRepository(context: syncContext)
     }
 
     public func coreCrypto() async throws -> SafeCoreCryptoProtocol {

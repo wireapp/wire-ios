@@ -1062,7 +1062,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             messageProtocol: "mls"
         )
         await syncMOC.perform {
-            FeatureRepository(context: self.syncMOC).storeMLS(Feature.MLS(status: .enabled))
+            LegacyFeatureRepository(context: self.syncMOC).storeMLS(Feature.MLS(status: .enabled))
         }
 
         // when
@@ -1234,7 +1234,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             wipeGroupExpectation.fulfill()
         }
         await syncMOC.perform {
-            FeatureRepository(context: self.syncMOC).storeMLS(Feature.MLS(status: .enabled))
+            LegacyFeatureRepository(context: self.syncMOC).storeMLS(Feature.MLS(status: .enabled))
         }
 
         let (payload, updateEvent) = await syncMOC.perform { [self] in

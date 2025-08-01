@@ -210,7 +210,7 @@ struct ZMUserSessionBuilder {
             context: coreDataStack.syncContext,
             notificationContext: coreDataStack.syncContext.notificationContext,
             coreCryptoProvider: coreCryptoProvider,
-            featureRepository: FeatureRepository(context: coreDataStack.syncContext),
+            featureRepository: LegacyFeatureRepository(context: coreDataStack.syncContext),
             userDefaults: .standard,
             userID: coreDataStack.account.userIdentifier
         )

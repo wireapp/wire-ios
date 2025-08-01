@@ -119,7 +119,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
     ) -> [Any] {
         let syncMOC = contextProvider.syncContext
 
-        let mlsFeature = FeatureRepository(context: syncMOC).fetchMLS()
+        let mlsFeature = LegacyFeatureRepository(context: syncMOC).fetchMLS()
         let oneOnOneResolver = LegacyOneOnOneResolver(
             migrator: OneOnOneMigrator(mlsService: mlsService),
             isMLSEnabled: mlsFeature.isEnabled
@@ -388,7 +388,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 context: syncContext,
                 incrementalSyncObserver: incrementalSyncObserver,
                 initiateResetMLSConversationUseCase: initiateResetMLSConversationUseCaseFactory(syncContext),
-                featureRepository: FeatureRepository(context: syncContext)
+                featureRepository: LegacyFeatureRepository(context: syncContext)
             )
 
             let strategies: [Any] = [
