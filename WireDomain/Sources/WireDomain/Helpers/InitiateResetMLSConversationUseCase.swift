@@ -79,12 +79,14 @@ public class InitiateResetMLSConversationUseCase: InitiateResetMLSConversationUs
             // wipe group
             try await mlsService.wipeGroup(groupID)
 
+            // sync local database with remote because new group ID has to be generated for a conversation
             try await conversationRepository
                 .pullConversation(
                     id: qualifiedID.uuid,
                     domain: qualifiedID.domain
                 )
 
+            // get that update conversation from local db
             guard let refreshedConversation = await conversationLocalStore.fetchConversation(
                 id: qualifiedID.uuid,
                 domain: qualifiedID.domain
