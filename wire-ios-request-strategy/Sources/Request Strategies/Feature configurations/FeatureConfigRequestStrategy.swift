@@ -136,7 +136,7 @@ extension FeatureConfigRequestStrategy: ZMEventConsumer {
             WireLogger.featureConfigs.info("Process update event '\(name)'")
 
             let payloadData = try JSONSerialization.data(withJSONObject: data, options: [])
-            let repository = FeatureRepository(context: managedObjectContext)
+            let repository = LegacyFeatureRepository(context: managedObjectContext)
 
             let processor = FeatureConfigsPayloadProcessor()
             try processor.processEventPayload(

@@ -25,24 +25,24 @@ class UpdateMLSGroupVerificationStatusUseCaseTests: ZMConversationTestsBase {
 
     var sut: UpdateMLSGroupVerificationStatusUseCaseProtocol!
     var e2eIVerificationStatusService: MockE2EIVerificationStatusServiceInterface!
-    var mockFeatureRepository: MockFeatureRepositoryInterface!
+    var mockLegacyFeatureRepository: MockLegacyFeatureRepositoryInterface!
 
     override func setUp() {
         super.setUp()
 
-        mockFeatureRepository = MockFeatureRepositoryInterface()
-        mockFeatureRepository.fetchE2EI_MockValue = Feature.E2EI(status: .enabled)
+        mockLegacyFeatureRepository = MockLegacyFeatureRepositoryInterface()
+        mockLegacyFeatureRepository.fetchE2EI_MockValue = Feature.E2EI(status: .enabled)
         e2eIVerificationStatusService = MockE2EIVerificationStatusServiceInterface()
         sut = UpdateMLSGroupVerificationStatusUseCase(
             e2eIVerificationStatusService: e2eIVerificationStatusService,
             syncContext: syncMOC,
-            featureRepository: mockFeatureRepository
+            featureRepository: mockLegacyFeatureRepository
         )
 
     }
 
     override func tearDown() {
-        mockFeatureRepository = nil
+        mockLegacyFeatureRepository = nil
         e2eIVerificationStatusService = nil
         sut = nil
 
