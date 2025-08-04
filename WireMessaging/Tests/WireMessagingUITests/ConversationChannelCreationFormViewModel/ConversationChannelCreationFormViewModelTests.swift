@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireMessagingDomain
 import XCTest
 @testable import WireMessagingUI
 
@@ -158,7 +159,7 @@ final class ConversationChannelCreationFormViewModelTests: XCTestCase {
         ) { _ in }
 
         let useCases = [
-            ConversationChannelCreationFormViewModel.ChannelHistoryOption.oneDay,
+            ChannelHistoryOption.oneDay,
             .oneWeek,
             .fourWeeks,
             .unlimited,
@@ -174,15 +175,15 @@ final class ConversationChannelCreationFormViewModelTests: XCTestCase {
             case .off:
                 XCTAssertNil(channelCreationSettings?.historyDepth)
             case .oneDay:
-                XCTAssertEqual(channelCreationSettings?.historyDepth, 86_400)
+                XCTAssertEqual(channelCreationSettings?.historyDepth, "One day")
             case .oneWeek:
-                XCTAssertEqual(channelCreationSettings?.historyDepth, 604_800)
+                XCTAssertEqual(channelCreationSettings?.historyDepth, "One week")
             case .fourWeeks:
-                XCTAssertEqual(channelCreationSettings?.historyDepth, 2_419_200)
+                XCTAssertEqual(channelCreationSettings?.historyDepth, "Four weeks")
             case .unlimited:
-                XCTAssertEqual(channelCreationSettings?.historyDepth, 31_536_000)
+                XCTAssertEqual(channelCreationSettings?.historyDepth, "Unlimited")
             case .custom: // 10 days
-                XCTAssertEqual(channelCreationSettings?.historyDepth, 864_000)
+                XCTAssertEqual(channelCreationSettings?.historyDepth, "10 days")
             }
         }
 

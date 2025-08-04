@@ -19,10 +19,12 @@
 import SwiftUI
 import UIKit
 import WireDesign
+import WireDomain
 import WireLogging
 import WireMainNavigationUI
 import WireMessagingAssembly
 import WireMessagingDomain
+import WireNetwork
 import WireSyncEngine
 
 final class GroupDetailsViewController: UIViewController, ZMConversationObserver, GroupDetailsFooterViewDelegate {
@@ -558,17 +560,90 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
         case .everyone: .everyone
         }
 
+        guard let backendInfoApiVersion = BackendInfo.apiVersion,
+              let apiVersion = WireNetwork.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
+              let apiService = session.apiService else {
+            return WireLogger.conversation.warn("Failed to create API service")
+        }
+
+        let conversationsAPI = ConversationsAPIBuilder(
+            apiService: apiService
+        ).makeAPI(for: apiVersion)
+
+        let messageLocalStore = MessageLocalStore(context: session.syncContext)
+
+        let conversationsLocalStore = ConversationLocalStore(
+            context: session.syncContext,
+            mlsService: nil,
+            messageLocalStore: messageLocalStore
+        )
+
+        let featureConfigLocalStore = FeatureConfigLocalStore(
+            context: session.syncContext
+        )
+
+        let repository = ChannelRepository(
+            api: conversationsAPI,
+            conversationLocalStore: conversationsLocalStore,
+            featureConfigLocalStore: featureConfigLocalStore,
+            conversationID: conversation.remoteIdentifier.uuidString,
+            conversationDomain: conversation.domain ?? ""
+        )
+
         let accessView = ChannelViewFactory.makeChannelAccessView(
             permission: permission,
             accentColor: session.selfUser.accentColor.color,
-            repository: ChannelAccessRepository(
-                conversationID: conversation.remoteIdentifier.uuidString,
-                conversationDomain: conversation.domain ?? "",
-                session: session
-            )
+            repository: repository
         )
 
         navigationController?.pushViewController(accessView, animated: animated)
+    }
+
+    func presentChannelHistoryOptions(animated: Bool) {
+        guard let conversation = conversation as? ZMConversation,
+              let session = ZMUserSession.shared() else { return }
+
+        guard let backendInfoApiVersion = BackendInfo.apiVersion,
+              let apiVersion = WireNetwork.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
+              let apiService = session.apiService else {
+            return WireLogger.conversation.warn("Failed to create API service")
+        }
+
+        let conversationsAPI = ConversationsAPIBuilder(
+            apiService: apiService
+        ).makeAPI(for: apiVersion)
+
+        let messageLocalStore = MessageLocalStore(context: session.syncContext)
+
+        let conversationsLocalStore = ConversationLocalStore(
+            context: session.syncContext,
+            mlsService: nil,
+            messageLocalStore: messageLocalStore
+        )
+
+        let featureConfigLocalStore = FeatureConfigLocalStore(
+            context: session.syncContext
+        )
+
+        // TODO: [WPB-18396] - get correct stored value in DB
+        let channelHistoryDepth = conversation.channelHistoryDepth
+
+        let repository = ChannelRepository(
+            api: conversationsAPI,
+            conversationLocalStore: conversationsLocalStore,
+            featureConfigLocalStore: featureConfigLocalStore,
+            conversationID: conversation.remoteIdentifier.uuidString,
+            conversationDomain: conversation.domain ?? ""
+        )
+
+        let historyView = ChannelViewFactory.makeChannelHistoryView(
+            historyDepth: channelHistoryDepth,
+            accentColor: session.selfUser.accentColor.color,
+            teamsURL: URL.manageTeam(source: .settings),
+            repository: repository
+        )
+
+        navigationController?.pushViewController(historyView, animated: animated)
     }
 }
 

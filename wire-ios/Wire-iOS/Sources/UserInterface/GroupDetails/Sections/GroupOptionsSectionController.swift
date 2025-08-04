@@ -25,6 +25,7 @@ protocol GroupOptionsSectionControllerDelegate: AnyObject {
     func presentServicesOptions(animated: Bool)
     func presentNotificationsOptions(animated: Bool)
     func presentAccessOptions(animated: Bool)
+    func presentChannelHistoryOptions(animated: Bool)
 }
 
 final class GroupOptionsSectionController: GroupDetailsSectionController {
@@ -32,6 +33,7 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
     enum Option: Int, CaseIterable {
 
         case channelAccess = 0
+        case channelHistoryDepth
         case notifications
         case guests
         case services
@@ -48,6 +50,12 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
             case .services:      user.canModifyGuestsAccessControlSettings(in: conversation) && conversation
                 .botCanBeAdded
             case .timeout:       user.canModifyEphemeralSettings(in: conversation)
+            case .channelHistoryDepth:
+                if DeveloperFlag.channelsHistory.isOn {
+                    user.canModifyChannelHistoryDepthSettings(in: conversation)
+                } else {
+                    false
+                }
             }
         }
 
@@ -58,6 +66,7 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
             case .timeout: GroupDetailsTimeoutOptionsCell.zm_reuseIdentifier
             case .notifications: GroupDetailsNotificationOptionsCell.zm_reuseIdentifier
             case .channelAccess: GroupDetailsAccessOptionsCell.zm_reuseIdentifier
+            case .channelHistoryDepth: GroupDetailsChannelHistoryOptionsCell.zm_reuseIdentifier
             }
         }
 
@@ -99,6 +108,7 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
         collectionView.flatMap(GroupDetailsTimeoutOptionsCell.register)
         collectionView.flatMap(GroupDetailsNotificationOptionsCell.register)
         collectionView.flatMap(GroupDetailsAccessOptionsCell.register)
+        collectionView.flatMap(GroupDetailsChannelHistoryOptionsCell.register)
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -144,6 +154,8 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
             delegate?.presentNotificationsOptions(animated: true)
         case .channelAccess:
             delegate?.presentAccessOptions(animated: true)
+        case .channelHistoryDepth:
+            delegate?.presentChannelHistoryOptions(animated: true)
         }
 
     }

@@ -16,18 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+@MainActor
+public protocol ChannelRepositoryProtocol {
+    func updateParticipantPermission(
+        to permission: ChannelAccessLevelPermission
+    ) async throws -> ChannelAccessLevelPermission
 
-public extension ZMConversation {
+    /// Updates the history depth (one day, one week, 4 weeks, unlimited..) for a given channel.
+    /// Past messages for a channel will be shown according to that value.
+    ///
+    /// - parameter historyDepth: The new history depth value.
 
-    // TODO: [WPB-18396] implement NSManagedObject local property and map it to return proper duration value
+    func updateHistoryDepth(
+        _ historyDepth: String?
+    ) async throws
 
-    var channelHistoryDepth: String? {
-        get {
-            nil
-        }
-
-        set {}
-    }
-
+    func isConferenceCallingFeatureEnabled() async throws -> Bool
 }

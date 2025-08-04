@@ -22,43 +22,64 @@ import WireNetwork
 import WireSyncEngine
 import WireTransport
 
-class ChannelAccessRepository: ChannelAccessRepositoryProtocol {
-
+class ChannelRepository: ChannelRepositoryProtocol {
+    private let api: any ConversationsAPI
+    private let conversationLocalStore: any ConversationLocalStoreProtocol
+    private let featureConfigLocalStore: any FeatureConfigLocalStoreProtocol
     private let conversationID: String
     private let conversationDomain: String
-    private let session: ZMUserSession
 
     init(
+        api: any ConversationsAPI,
+        conversationLocalStore: any ConversationLocalStoreProtocol,
+        featureConfigLocalStore: any FeatureConfigLocalStoreProtocol,
         conversationID: String,
-        conversationDomain: String,
-        session: ZMUserSession
+        conversationDomain: String
     ) {
+        self.api = api
+        self.conversationLocalStore = conversationLocalStore
+        self.featureConfigLocalStore = featureConfigLocalStore
         self.conversationID = conversationID
         self.conversationDomain = conversationDomain
-        self.session = session
     }
 
     func updateParticipantPermission(
         to permission: WireMessagingDomain.ChannelAccessLevelPermission
     ) async throws -> WireMessagingDomain.ChannelAccessLevelPermission {
 
-        guard let backendInfoApiVersion = BackendInfo.apiVersion,
-              let apiVersion = WireNetwork.APIVersion(rawValue: UInt(backendInfoApiVersion.rawValue)),
-              let apiService = session.apiService else {
-            throw ChannelAccessError.notEnoughData
-        }
-
-        let conversationsAPI = ConversationsAPIBuilder(
-            apiService: apiService
-        ).makeAPI(for: apiVersion)
-
-        let permission = try await conversationsAPI
+        let permission = try await api
             .addChannelPermission(
                 conversationID: conversationID,
                 conversationDomain: conversationDomain,
                 permission: permission.toNetworkPermission()
             )
         return permission.toDomain()
+    }
+
+    // TODO: [WPB-18347] - call endpoint when backend ready - PUT /conversations/{cnv_domain}/{cnv_id}/history and store history depth to local store
+    func updateHistoryDepth(_ historyDepth: String?) async throws {
+        // let historyDepth = api.updateChannelHistoryDepth(
+        // conversationID: conversationID,
+        // conversationDomain: conversationDomain,
+        // historyDepth: WireAPI.ChannelHistoryDepth)
+
+//        store.storeConversation(
+//            historyDepth: historyDepth,
+//            conversationID: conversationID,
+//            conversationDomain: conversationDomain
+//        )
+
+        // return historyDepth
+    }
+
+    func isConferenceCallingFeatureEnabled() async throws -> Bool {
+        let confCallingFeature = try await featureConfigLocalStore.fetchFeature(
+            name: .conferenceCalling
+        )
+
+        return await featureConfigLocalStore.isFeatureEnabled(
+            feature: confCallingFeature
+        )
     }
 }
 

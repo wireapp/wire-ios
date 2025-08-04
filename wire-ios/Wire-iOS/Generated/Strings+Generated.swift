@@ -3763,6 +3763,10 @@ internal enum L10n {
         /// Channel access
         internal static let title = L10n.tr("Localizable", "group_details.access_options_cell.title", fallback: "Channel access")
       }
+      internal enum ChannelHistoryOptionsCell {
+        /// Conversation history
+        internal static let title = L10n.tr("Localizable", "group_details.channel_history_options_cell.title", fallback: "Conversation history")
+      }
       internal enum ConversationAdminsHeader {
         /// Conversation admins
         internal static let title = L10n.tr("Localizable", "group_details.conversation_admins_header.title", fallback: "Conversation admins")
