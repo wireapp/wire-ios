@@ -130,7 +130,7 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
         ValidateEmailUseCase()
     }
 
-    // MARK: -  private
+    // MARK: - private
 
     private func noHistoryFactory(result: AuthenticationResult) -> NoHistoryComponent {
         NoHistoryComponent(
@@ -139,7 +139,7 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
             didDetectDomainConflict: didDetectDomainConflict
         )
     }
-    
+
     private func verificationCodeFactory(
         email: String,
         password: String,
@@ -152,7 +152,7 @@ extension LoginViaEmailComponent: LoginViaEmailViewModel.Factory {
             proxyCredentials: proxyCredentials
         )
     }
-    
+
     private func personalAccountCreationFactory(teamAccountCreationLink: URL?) -> any PersonalAccountCreationFactory {
         personalAccountCreationComponent(
             teamAccountCreationLink: teamAccountCreationLink
