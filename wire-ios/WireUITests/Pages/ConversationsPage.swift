@@ -32,6 +32,10 @@ class ConversationsPage: PageModel {
         app.descendants(matching: .any)["bottomBarSettingsButton"].firstMatch
     }
 
+    var plusButtonToCreateGroup: XCUIElement {
+        app.descendants(matching: .any)["create_group_or_search_button"].firstMatch
+    }
+
     func openSettings() throws -> SettingsPage {
         settingsButton.tap()
         return try SettingsPage()
@@ -40,5 +44,10 @@ class ConversationsPage: PageModel {
     func openUserAccount() throws -> UserAccountPage {
         profileButton.tap()
         return try UserAccountPage()
+    }
+
+    func tapPlusButtonToCreateGroup() throws -> NewConversationPage {
+        plusButtonToCreateGroup.tap()
+        return try NewConversationPage()
     }
 }

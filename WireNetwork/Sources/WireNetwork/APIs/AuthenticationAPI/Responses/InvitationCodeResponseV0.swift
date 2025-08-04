@@ -16,23 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireUtilities
-import XCTest
+import Foundation
 
-extension XCUIApplication {
+struct InvitationCodeResponseV0: Decodable, ToAPIModelConvertible {
 
-    func useWireAuthentication(_ enabled: Bool = true) {
-        developerFlag(DeveloperFlag.useWireAuthentication, enabled: enabled)
+    let code: String
+
+    func toAPIModel() -> InvitationCode {
+        InvitationCode(code: code)
     }
 
-    func developerFlag(_ developerFlag: DeveloperFlag, enabled: Bool) {
-        launchArguments.append("--developer-flag=\(developerFlag.rawValue):\(enabled ? "true" : "false")")
-    }
-
-    func loginUser(email: String, password: String) throws -> FirstTimePage {
-        try WelcomePage()
-            .enterEmailOrSSO(email)
-            .enterPassword(password)
-            .acceptFirstTimeAlert()
-    }
 }
