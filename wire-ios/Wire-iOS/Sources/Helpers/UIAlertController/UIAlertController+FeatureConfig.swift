@@ -25,7 +25,7 @@ protocol FeatureChangeAcknowledger {
 
 }
 
-extension FeatureRepository: FeatureChangeAcknowledger {
+extension LegacyFeatureRepository: FeatureChangeAcknowledger {
 
     func acknowledgeChange(for featureName: Feature.Name) {
         setNeedsToNotifyUser(false, for: featureName)
@@ -38,7 +38,7 @@ extension UIAlertController {
     private typealias Strings = L10n.Localizable.FeatureConfig
 
     class func fromFeatureChange(
-        _ change: FeatureRepository.FeatureChange,
+        _ change: LegacyFeatureRepository.FeatureChange,
         acknowledger: FeatureChangeAcknowledger
     ) -> UIAlertController? {
         switch change {
@@ -94,7 +94,7 @@ extension UIAlertController {
     }
 
     class func fromFeatureChangeWithActions(
-        _ change: FeatureRepository.FeatureChange,
+        _ change: LegacyFeatureRepository.FeatureChange,
         acknowledger: FeatureChangeAcknowledger,
         actionsHandler: E2EINotificationActions
     ) -> UIAlertController? {

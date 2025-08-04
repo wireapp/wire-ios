@@ -113,9 +113,10 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
             return nil
         }
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
+        let accountURLs = AccountURLs(root: sharedContainerURL)
         return try? AccountManager(
             currentAppVersion: currentAppVersion,
-            sharedDirectory: sharedContainerURL
+            directory: accountURLs.accounts
         )
     }
 

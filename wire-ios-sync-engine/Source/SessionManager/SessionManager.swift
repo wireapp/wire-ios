@@ -551,9 +551,10 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
 
         self.sharedContainerURL = sharedContainerURL
+        let accountURLs = AccountURLs(root: sharedContainerURL)
         self.accountManager = try AccountManager(
             currentAppVersion: currentAppVersion,
-            sharedDirectory: sharedContainerURL
+            directory: accountURLs.accounts
         )
 
         WireLogger.sessionManager.debug("Starting the session manager:")

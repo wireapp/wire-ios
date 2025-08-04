@@ -128,9 +128,10 @@ public final class NotificationSession {
         minTLSVersion: String?
     ) async throws {
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
+        let accounURLs = AccountURLs(root: sharedContainerURL)
         let accountManager = try AccountManager(
             currentAppVersion: currentAppVersion,
-            sharedDirectory: sharedContainerURL
+            directory: accounURLs.accounts
         )
 
         guard let account = accountManager.account(with: accountIdentifier) else {
@@ -248,7 +249,7 @@ public final class NotificationSession {
             coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager(journal: journal),
             allowCreation: false
         )
-        let featureRepository = FeatureRepository(context: coreDataStack.syncContext)
+        let featureRepository = LegacyFeatureRepository(context: coreDataStack.syncContext)
         let mlsActionExecutor = MLSActionExecutor(
             coreCryptoProvider: coreCryptoProvider,
             featureRepository: featureRepository
@@ -323,7 +324,7 @@ public final class NotificationSession {
                 coreDataStack.syncContext.proteusService = proteusService
             }
 
-            let mlsFeature = FeatureRepository(context: coreDataStack.syncContext).fetchMLS()
+            let mlsFeature = LegacyFeatureRepository(context: coreDataStack.syncContext).fetchMLS()
             if mlsFeature.isEnabled, coreDataStack.syncContext.mlsDecryptionService == nil {
                 coreDataStack.syncContext.mlsDecryptionService = mlsDecryptionService
             }

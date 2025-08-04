@@ -239,7 +239,7 @@ public final class SharingSession {
     let earService: EARServiceInterface
 
     public var fileSharingFeature: Feature.FileSharing {
-        let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
+        let featureRepository = LegacyFeatureRepository(context: coreDataStack.viewContext)
         return featureRepository.fetchFileSharing()
     }
 
@@ -429,7 +429,7 @@ public final class SharingSession {
                 coreDataStack.syncContext.proteusService = proteusService
             }
 
-            let mlsFeature = FeatureRepository(context: coreDataStack.syncContext).fetchMLS()
+            let mlsFeature = LegacyFeatureRepository(context: coreDataStack.syncContext).fetchMLS()
             if mlsFeature.isEnabled {
                 if coreDataStack.syncContext.mlsDecryptionService == nil {
                     coreDataStack.syncContext.mlsDecryptionService = mlsDecryptionService
@@ -504,7 +504,7 @@ public final class SharingSession {
             coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager(journal: journal),
             allowCreation: false
         )
-        let featureRepository = FeatureRepository(context: coreDataStack.syncContext)
+        let featureRepository = LegacyFeatureRepository(context: coreDataStack.syncContext)
         let mlsActionExecutor = MLSActionExecutor(
             coreCryptoProvider: coreCryptoProvider,
             featureRepository: featureRepository
@@ -529,7 +529,7 @@ public final class SharingSession {
             context: coreDataStack.syncContext,
             notificationContext: coreDataStack.syncContext.notificationContext,
             coreCryptoProvider: coreCryptoProvider,
-            featureRepository: FeatureRepository(context: coreDataStack.syncContext),
+            featureRepository: LegacyFeatureRepository(context: coreDataStack.syncContext),
             userDefaults: .standard,
             userID: coreDataStack.account.userIdentifier
         )

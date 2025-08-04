@@ -393,7 +393,7 @@ public class CoreDataStack: NSObject, CoreDataStackProtocol {
             context.undoManager = nil
             context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
 
-            FeatureRepository(context: context).createDefaultConfigsIfNeeded()
+            LegacyFeatureRepository(context: context).createDefaultConfigsIfNeeded()
         }
     }
 

@@ -48,7 +48,7 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
     private let coreCryptoProvider: CoreCryptoProviderProtocol
     private let context: NSManagedObjectContext
     private let newKeyPackageCount: UInt32 = 100
-    private let featureRepository: FeatureRepositoryInterface
+    private let featureRepository: LegacyFeatureRepositoryInterface
     private let onNewCRLsDistributionPointsSubject: PassthroughSubject<CRLsDistributionPoints, Never>
 
     private var coreCrypto: SafeCoreCryptoProtocol {
@@ -63,7 +63,7 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
         coreCryptoProvider: CoreCryptoProviderProtocol,
         context: NSManagedObjectContext,
         onNewCRLsDistributionPointsSubject: PassthroughSubject<CRLsDistributionPoints, Never>,
-        featureRepository: FeatureRepositoryInterface
+        featureRepository: LegacyFeatureRepositoryInterface
     ) {
         self.coreCryptoProvider = coreCryptoProvider
         self.context = context

@@ -272,7 +272,7 @@ extension ZMUserSession: UserSession {
         IsUserE2EICertifiedUseCase(
             schedule: .immediate,
             coreCryptoProvider: coreCryptoProvider,
-            featureRepository: FeatureRepository(context: syncContext),
+            featureRepository: LegacyFeatureRepository(context: syncContext),
             featureRepositoryContext: syncContext
         )
     }
@@ -280,7 +280,7 @@ extension ZMUserSession: UserSession {
     public var isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol {
         IsSelfUserE2EICertifiedUseCase(
             context: syncContext,
-            featureRepository: FeatureRepository(context: syncContext),
+            featureRepository: LegacyFeatureRepository(context: syncContext),
             featureRepositoryContext: syncContext,
             isUserE2EICertifiedUseCase: isUserE2EICertifiedUseCase
         )
@@ -294,7 +294,7 @@ extension ZMUserSession: UserSession {
     }
 
     public func makeGetMLSFeatureUseCase() -> GetMLSFeatureUseCaseProtocol {
-        let featureRepository = FeatureRepository(context: syncContext)
+        let featureRepository = LegacyFeatureRepository(context: syncContext)
         return GetMLSFeatureUseCase(featureRepository: featureRepository)
     }
 

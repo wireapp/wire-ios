@@ -42,7 +42,7 @@ struct ContentView: View {
                         teamsURL: URL(string: "https://teams.wire.com")!,
                         accountsURL: URL(string: "https://account.wire.com")!,
                         websiteURL: URL(string: "https://wire.com")!,
-                        countlyURL: URL(string: "https://wire.count.ly")!
+                        countlyURL: URL(string: "https://wire.count.ly")!,
                     ),
                     proxySettings: nil,
                     pinnedKeys: nil
@@ -52,6 +52,8 @@ struct ContentView: View {
                 accountsURL: configuration.accountsURL,
                 howToChangeEmailURL: URL(string: "www.example.com")!,
                 howToDeleteAccountURL: URL(string: "www.example.com")!,
+                privacyPolicyURL: URL(string: "www.example.com")!,
+                termsOfUseURL: URL(string: "www.example.com")!,
                 passwordValidator: configuration.passwordValidator,
                 ssoCallbackURLScheme: "some scheme",
                 appStoreURL: URL(string: "www.example.com")!,
@@ -77,7 +79,8 @@ struct ContentView: View {
                         ]
                     )
                 ),
-                isMultibackendEnabled: true
+                isMultibackendEnabled: true,
+                registrationAnalyticsTracker: MockPersonalAccountCreationAnalyticsTracker()
             ).view
     }
 

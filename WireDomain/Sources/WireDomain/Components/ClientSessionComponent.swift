@@ -658,7 +658,7 @@ public final class ClientSessionComponent {
     private lazy var mlsResetEventProcessor = ConversationMLSResetEventProcessor(
         mlsService: mlsService,
         conversationLocalStore: conversationLocalStore,
-        featureRepository: FeatureRepository(context: syncContext)
+        featureRepository: LegacyFeatureRepository(context: syncContext)
     )
 
     private lazy var conversationEventProcessor = ConversationEventProcessor(

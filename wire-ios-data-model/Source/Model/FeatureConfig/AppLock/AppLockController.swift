@@ -87,7 +87,7 @@ public final class AppLockController: AppLockType {
     // MARK: - Private properties
 
     private let selfUser: ZMUser
-    private let featureRepository: FeatureRepository
+    private let featureRepository: LegacyFeatureRepository
     private let authenticationContext: any AuthenticationContextProtocol
 
     private(set) var state = State.locked
@@ -132,7 +132,7 @@ public final class AppLockController: AppLockType {
         self.legacyConfig = legacyConfig
         self.authenticationContext = authenticationContext
 
-        self.featureRepository = FeatureRepository(context: selfUser.managedObjectContext!)
+        self.featureRepository = LegacyFeatureRepository(context: selfUser.managedObjectContext!)
     }
 
     // MARK: - Methods
