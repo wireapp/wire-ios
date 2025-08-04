@@ -111,8 +111,7 @@ public struct KeyPackage: Codable, Equatable {
         self.keyPackageRef = keyPackageRef
         self.userID = userID
     }
-    
-    
+
 }
 
 extension KeyPackage {

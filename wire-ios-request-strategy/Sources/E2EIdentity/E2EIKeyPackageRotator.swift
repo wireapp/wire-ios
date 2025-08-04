@@ -145,11 +145,11 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
         }
 
         try await coreCrypto.perform { coreCryptoContext in
-            let rawCiphersuite = ciphersuite.ccCipherSuite
             let newKeyPackages = try await coreCryptoContext.clientKeypackages(
-                ciphersuite: rawCiphersuite,
+                ciphersuite: ciphersuite.ccCipherSuite,
                 credentialType: .x509,
-                amountRequested: self.newKeyPackageCount)
+                amountRequested: self.newKeyPackageCount
+            )
 
             var action = ReplaceSelfMLSKeyPackagesAction(
                 clientID: clientID,
@@ -158,7 +158,7 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
             )
             try await action.perform(in: self.context.notificationContext)
             try await coreCryptoContext.deleteStaleKeyPackages(
-                ciphersuite: rawCiphersuite
+                ciphersuite: ciphersuite.ccCipherSuite
             )
         }
     }

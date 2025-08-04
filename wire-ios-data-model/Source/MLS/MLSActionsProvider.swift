@@ -43,7 +43,7 @@ protocol MLSActionsProviderProtocol {
         ciphersuite: MLSCipherSuite,
         excludedSelfClientID: String?,
         in context: NotificationContext
-    ) async throws -> [KeyPackage]
+    ) async throws -> [KeyPackage] //
 
     func sendCommitBundle(
         _ bundle: Data,

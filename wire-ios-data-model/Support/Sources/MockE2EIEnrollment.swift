@@ -23,11 +23,10 @@ class MockE2EIEnrollment: E2eiEnrollmentProtocol {
     func newOidcChallengeRequest(idToken: String, previousNonce: String) async throws -> Data {
         fatalError("used by web")
     }
-    
+
     func newOidcChallengeResponse(challenge: Data) async throws {
         fatalError("used by web")
     }
-    
 
     // MARK: - directoryResponse
 

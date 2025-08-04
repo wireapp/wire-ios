@@ -324,7 +324,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
         try await performNonReentrant(groupID: groupID) {
             do {
                 WireLogger.mls.info("joining group (\(groupID.safeForLoggingDescription)) via external commit")
-                let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.cipherSuite
+                let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.ccCipherSuite
                 let conversationInitBundle = try await coreCrypto.perform {
                     let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: ciphersuite)
                     return try await $0.joinByExternalCommit(

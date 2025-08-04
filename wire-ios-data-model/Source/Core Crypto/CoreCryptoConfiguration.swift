@@ -76,15 +76,3 @@ public class CoreCryptoConfigProvider {
         case failedToGetCoreCryptoKey
     }
 }
-//
-//public extension ClientId {
-//
-//    init?(from string: String) {
-//        guard let data = string.data(using: .utf8) else {
-//            return nil
-//        }
-//
-//        self = data
-//    }
-//
-//}
