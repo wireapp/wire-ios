@@ -17,11 +17,11 @@
 //
 
 import UIKit
-import WireCellsBindings
 import WireCommonComponents
 import WireDesign
 import WireLogging
 import WireMainNavigationUI
+import WireMessagingAssembly
 import WireMessagingUI
 import WireSyncEngine
 
