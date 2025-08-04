@@ -27,6 +27,7 @@ import WireCellsBindings
 import WireCellsUI
 import WireCommonComponents
 import WireDesign
+import WireFoundation
 import WireLogging
 import WireNetwork
 import WireSyncEngine
@@ -1108,6 +1109,7 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
                     }
                 }
             )
+            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
         )
         addChild(carouselViewController)
         carouselViewController.view.translatesAutoresizingMaskIntoConstraints = false
