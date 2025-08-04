@@ -136,6 +136,10 @@
 "conversation_list.search_bar.groupsPlaceholder" = "搜索群组";
 "conversation_list.search_bar.channelsPlaceholder" = "搜索频道";
 "conversation_list.search_bar.oneOnOnePlaceholder" = "搜索 1:1 对话";
+"conversation_list.search_bar.unreadPlaceholder" = "搜索未读对话";
+"conversation_list.search_bar.mentionsPlaceholder" = "搜索提及的对话";
+"conversation_list.search_bar.repliesPlaceholder" = "搜索带有回复的对话";
+"conversation_list.search_bar.draftsPlaceholder" = "搜索带有草稿的对话";
 "conversation_list.search_bar.foldersPlaceholder" = "搜索 %@";
 
 
@@ -148,6 +152,10 @@
 "conversation_list.filter.folders.title" = "文件夹";
 "conversation_list.filter_label.text" = "按 %@ 筛选";
 "conversation_list.filter.remove_button.title" = "移除";
+"conversation_list.filter.unread.title" = "未读";
+"conversation_list.filter.mentions.title" = "提及";
+"conversation_list.filter.replies.title" = "回复";
+"conversation_list.filter.drafts.title" = "草稿";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "加入";
@@ -173,6 +181,11 @@
 "conversation_list.empty_placeholder.search.button.phone" = "新对话";
 "conversation_list.empty_placeholder.search.button.ipad" = "开始新对话";
 "conversation_list.empty_placeholder.search.connect_button" = "与人联系";
+"conversation_list.empty_state.unread.title" = "没有未读对话";
+"conversation_list.empty_state.mentions.title" = "没有提及";
+"conversation_list.empty_state.replies.title" = "没有回复";
+"conversation_list.empty_state.drafts.title" = "没有草稿";
+"conversation_list.empty_state.up_to_date.subtitle" = "All your conversations are up to date";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "在联系人中";
@@ -617,8 +630,11 @@
 "content.system.message_read_receipt_on_add_to_group" = "已读提示已打开";
 
 // history depth
-"content.system.message_history_depth" = "%@ 将对话历史记录设为 %@";
-"content.system.message_history_depth_disabled" = "%@ 禁用了对话历史记录";
+"content.system.message_history_depth_initially_set_days" = "新参与者可以查看过去 %@ 天的消息";
+"content.system.message_history_depth_initially_set_weeks" = "新参与者可以查看过去 %@ 周的消息";
+"content.system.message_history_depth_modified_days" = "%@ 已将对话历史记录设置为 %@ 天";
+"content.system.message_history_depth_modified_weeks" = "%@ 已将对话历史记录设置为 %@ 周";
+"content.system.message_history_depth_modified_disabled" = "%@ 禁用了对话历史记录";
 
 // legal hold
 

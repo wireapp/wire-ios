@@ -367,6 +367,10 @@ public class MockConversationLike: ConversationLike {
 
     public var underlyingPrivateChannelPermission: PrivateChannelPermission!
 
+    // MARK: - channelHistoryDepth
+
+    public var channelHistoryDepth: String?
+
     // MARK: - wireCellName
 
     public var wireCellName: String {
@@ -3085,7 +3089,244 @@ public class MockEARServiceInterface: EARServiceInterface {
 
 }
 
-public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
+class MockFileManagerInterface: FileManagerInterface {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - fileExists
+
+    var fileExistsAtPath_Invocations: [String] = []
+    var fileExistsAtPath_MockMethod: ((String) -> Bool)?
+    var fileExistsAtPath_MockValue: Bool?
+
+    func fileExists(atPath path: String) -> Bool {
+        fileExistsAtPath_Invocations.append(path)
+
+        if let mock = fileExistsAtPath_MockMethod {
+            return mock(path)
+        } else if let mock = fileExistsAtPath_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fileExistsAtPath`")
+        }
+    }
+
+    // MARK: - removeItem
+
+    var removeItemAt_Invocations: [URL] = []
+    var removeItemAt_MockError: Error?
+    var removeItemAt_MockMethod: ((URL) throws -> Void)?
+
+    func removeItem(at url: URL) throws {
+        removeItemAt_Invocations.append(url)
+
+        if let error = removeItemAt_MockError {
+            throw error
+        }
+
+        guard let mock = removeItemAt_MockMethod else {
+            fatalError("no mock for `removeItemAt`")
+        }
+
+        try mock(url)
+    }
+
+    // MARK: - cryptoboxDirectory
+
+    var cryptoboxDirectoryIn_Invocations: [URL] = []
+    var cryptoboxDirectoryIn_MockMethod: ((URL) -> URL)?
+    var cryptoboxDirectoryIn_MockValue: URL?
+
+    func cryptoboxDirectory(in accountDirectory: URL) -> URL {
+        cryptoboxDirectoryIn_Invocations.append(accountDirectory)
+
+        if let mock = cryptoboxDirectoryIn_MockMethod {
+            return mock(accountDirectory)
+        } else if let mock = cryptoboxDirectoryIn_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `cryptoboxDirectoryIn`")
+        }
+    }
+
+}
+
+public class MockIsSelfUserE2EICertifiedUseCaseProtocol: IsSelfUserE2EICertifiedUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invoke_Invocations: [Void] = []
+    public var invoke_MockError: Error?
+    public var invoke_MockMethod: (() async throws -> Bool)?
+    public var invoke_MockValue: Bool?
+
+    public func invoke() async throws -> Bool {
+        invoke_Invocations.append(())
+
+        if let error = invoke_MockError {
+            throw error
+        }
+
+        if let mock = invoke_MockMethod {
+            return try await mock()
+        } else if let mock = invoke_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invoke`")
+        }
+    }
+
+}
+
+public class MockIsUserE2EICertifiedUseCaseProtocol: IsUserE2EICertifiedUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeConversationUser_Invocations: [(conversation: ZMConversation, user: ZMUser)] = []
+    public var invokeConversationUser_MockError: Error?
+    public var invokeConversationUser_MockMethod: ((ZMConversation, ZMUser) async throws -> Bool)?
+    public var invokeConversationUser_MockValue: Bool?
+
+    public func invoke(conversation: ZMConversation, user: ZMUser) async throws -> Bool {
+        invokeConversationUser_Invocations.append((conversation: conversation, user: user))
+
+        if let error = invokeConversationUser_MockError {
+            throw error
+        }
+
+        if let mock = invokeConversationUser_MockMethod {
+            return try await mock(conversation, user)
+        } else if let mock = invokeConversationUser_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invokeConversationUser`")
+        }
+    }
+
+}
+
+public class MockLAContextStorable: LAContextStorable {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - context
+
+    public var context: LAContext?
+
+
+    // MARK: - clear
+
+    public var clear_Invocations: [Void] = []
+    public var clear_MockMethod: (() -> Void)?
+
+    public func clear() {
+        clear_Invocations.append(())
+
+        guard let mock = clear_MockMethod else {
+            fatalError("no mock for `clear`")
+        }
+
+        mock()
+    }
+
+}
+
+public class MockLastEventIDRepositoryInterface: LastEventIDRepositoryInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - fetchLastEventID
+
+    public var fetchLastEventID_Invocations: [Void] = []
+    public var fetchLastEventID_MockMethod: (() -> UUID?)?
+    public var fetchLastEventID_MockValue: UUID??
+
+    public func fetchLastEventID() -> UUID? {
+        fetchLastEventID_Invocations.append(())
+
+        if let mock = fetchLastEventID_MockMethod {
+            return mock()
+        } else if let mock = fetchLastEventID_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchLastEventID`")
+        }
+    }
+
+    // MARK: - storeLastEventID
+
+    public var storeLastEventID_Invocations: [UUID?] = []
+    public var storeLastEventID_MockMethod: ((UUID?) -> Void)?
+
+    public func storeLastEventID(_ id: UUID?) {
+        storeLastEventID_Invocations.append(id)
+
+        guard let mock = storeLastEventID_MockMethod else {
+            fatalError("no mock for `storeLastEventID`")
+        }
+
+        mock(id)
+    }
+
+}
+
+public class MockLegacyConversationEventProcessorProtocol: LegacyConversationEventProcessorProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - processConversationEvents
+
+    public var processConversationEvents_Invocations: [[ZMUpdateEvent]] = []
+    public var processConversationEvents_MockMethod: (([ZMUpdateEvent]) async -> Void)?
+
+    public func processConversationEvents(_ events: [ZMUpdateEvent]) async {
+        processConversationEvents_Invocations.append(events)
+
+        guard let mock = processConversationEvents_MockMethod else {
+            fatalError("no mock for `processConversationEvents`")
+        }
+
+        await mock(events)
+    }
+
+    // MARK: - processAndSaveConversationEvents
+
+    public var processAndSaveConversationEvents_Invocations: [[ZMUpdateEvent]] = []
+    public var processAndSaveConversationEvents_MockMethod: (([ZMUpdateEvent]) async -> Void)?
+
+    public func processAndSaveConversationEvents(_ events: [ZMUpdateEvent]) async {
+        processAndSaveConversationEvents_Invocations.append(events)
+
+        guard let mock = processAndSaveConversationEvents_MockMethod else {
+            fatalError("no mock for `processAndSaveConversationEvents`")
+        }
+
+        await mock(events)
+    }
+
+}
+
+public class MockLegacyFeatureRepositoryInterface: LegacyFeatureRepositoryInterface {
 
     // MARK: - Life cycle
 
@@ -3486,243 +3727,6 @@ public class MockFeatureRepositoryInterface: FeatureRepositoryInterface {
         }
 
         mock(channels)
-    }
-
-}
-
-class MockFileManagerInterface: FileManagerInterface {
-
-    // MARK: - Life cycle
-
-
-
-    // MARK: - fileExists
-
-    var fileExistsAtPath_Invocations: [String] = []
-    var fileExistsAtPath_MockMethod: ((String) -> Bool)?
-    var fileExistsAtPath_MockValue: Bool?
-
-    func fileExists(atPath path: String) -> Bool {
-        fileExistsAtPath_Invocations.append(path)
-
-        if let mock = fileExistsAtPath_MockMethod {
-            return mock(path)
-        } else if let mock = fileExistsAtPath_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fileExistsAtPath`")
-        }
-    }
-
-    // MARK: - removeItem
-
-    var removeItemAt_Invocations: [URL] = []
-    var removeItemAt_MockError: Error?
-    var removeItemAt_MockMethod: ((URL) throws -> Void)?
-
-    func removeItem(at url: URL) throws {
-        removeItemAt_Invocations.append(url)
-
-        if let error = removeItemAt_MockError {
-            throw error
-        }
-
-        guard let mock = removeItemAt_MockMethod else {
-            fatalError("no mock for `removeItemAt`")
-        }
-
-        try mock(url)
-    }
-
-    // MARK: - cryptoboxDirectory
-
-    var cryptoboxDirectoryIn_Invocations: [URL] = []
-    var cryptoboxDirectoryIn_MockMethod: ((URL) -> URL)?
-    var cryptoboxDirectoryIn_MockValue: URL?
-
-    func cryptoboxDirectory(in accountDirectory: URL) -> URL {
-        cryptoboxDirectoryIn_Invocations.append(accountDirectory)
-
-        if let mock = cryptoboxDirectoryIn_MockMethod {
-            return mock(accountDirectory)
-        } else if let mock = cryptoboxDirectoryIn_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `cryptoboxDirectoryIn`")
-        }
-    }
-
-}
-
-public class MockIsSelfUserE2EICertifiedUseCaseProtocol: IsSelfUserE2EICertifiedUseCaseProtocol {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - invoke
-
-    public var invoke_Invocations: [Void] = []
-    public var invoke_MockError: Error?
-    public var invoke_MockMethod: (() async throws -> Bool)?
-    public var invoke_MockValue: Bool?
-
-    public func invoke() async throws -> Bool {
-        invoke_Invocations.append(())
-
-        if let error = invoke_MockError {
-            throw error
-        }
-
-        if let mock = invoke_MockMethod {
-            return try await mock()
-        } else if let mock = invoke_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `invoke`")
-        }
-    }
-
-}
-
-public class MockIsUserE2EICertifiedUseCaseProtocol: IsUserE2EICertifiedUseCaseProtocol {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - invoke
-
-    public var invokeConversationUser_Invocations: [(conversation: ZMConversation, user: ZMUser)] = []
-    public var invokeConversationUser_MockError: Error?
-    public var invokeConversationUser_MockMethod: ((ZMConversation, ZMUser) async throws -> Bool)?
-    public var invokeConversationUser_MockValue: Bool?
-
-    public func invoke(conversation: ZMConversation, user: ZMUser) async throws -> Bool {
-        invokeConversationUser_Invocations.append((conversation: conversation, user: user))
-
-        if let error = invokeConversationUser_MockError {
-            throw error
-        }
-
-        if let mock = invokeConversationUser_MockMethod {
-            return try await mock(conversation, user)
-        } else if let mock = invokeConversationUser_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `invokeConversationUser`")
-        }
-    }
-
-}
-
-public class MockLAContextStorable: LAContextStorable {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-    // MARK: - context
-
-    public var context: LAContext?
-
-
-    // MARK: - clear
-
-    public var clear_Invocations: [Void] = []
-    public var clear_MockMethod: (() -> Void)?
-
-    public func clear() {
-        clear_Invocations.append(())
-
-        guard let mock = clear_MockMethod else {
-            fatalError("no mock for `clear`")
-        }
-
-        mock()
-    }
-
-}
-
-public class MockLastEventIDRepositoryInterface: LastEventIDRepositoryInterface {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - fetchLastEventID
-
-    public var fetchLastEventID_Invocations: [Void] = []
-    public var fetchLastEventID_MockMethod: (() -> UUID?)?
-    public var fetchLastEventID_MockValue: UUID??
-
-    public func fetchLastEventID() -> UUID? {
-        fetchLastEventID_Invocations.append(())
-
-        if let mock = fetchLastEventID_MockMethod {
-            return mock()
-        } else if let mock = fetchLastEventID_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchLastEventID`")
-        }
-    }
-
-    // MARK: - storeLastEventID
-
-    public var storeLastEventID_Invocations: [UUID?] = []
-    public var storeLastEventID_MockMethod: ((UUID?) -> Void)?
-
-    public func storeLastEventID(_ id: UUID?) {
-        storeLastEventID_Invocations.append(id)
-
-        guard let mock = storeLastEventID_MockMethod else {
-            fatalError("no mock for `storeLastEventID`")
-        }
-
-        mock(id)
-    }
-
-}
-
-public class MockLegacyConversationEventProcessorProtocol: LegacyConversationEventProcessorProtocol {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - processConversationEvents
-
-    public var processConversationEvents_Invocations: [[ZMUpdateEvent]] = []
-    public var processConversationEvents_MockMethod: (([ZMUpdateEvent]) async -> Void)?
-
-    public func processConversationEvents(_ events: [ZMUpdateEvent]) async {
-        processConversationEvents_Invocations.append(events)
-
-        guard let mock = processConversationEvents_MockMethod else {
-            fatalError("no mock for `processConversationEvents`")
-        }
-
-        await mock(events)
-    }
-
-    // MARK: - processAndSaveConversationEvents
-
-    public var processAndSaveConversationEvents_Invocations: [[ZMUpdateEvent]] = []
-    public var processAndSaveConversationEvents_MockMethod: (([ZMUpdateEvent]) async -> Void)?
-
-    public func processAndSaveConversationEvents(_ events: [ZMUpdateEvent]) async {
-        processAndSaveConversationEvents_Invocations.append(events)
-
-        guard let mock = processAndSaveConversationEvents_MockMethod else {
-            fatalError("no mock for `processAndSaveConversationEvents`")
-        }
-
-        await mock(events)
     }
 
 }

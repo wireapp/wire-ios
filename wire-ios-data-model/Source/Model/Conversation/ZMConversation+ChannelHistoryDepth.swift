@@ -18,14 +18,12 @@
 
 import Foundation
 
-// TODO: [WPB-18396] - Update with expected type when backend ready, update local db and make `channelHistoryDepth` property @NSManaged
 public extension ZMConversation {
 
-    /// The channel history depth.
+    // TODO: [WPB-18396] implement NSManagedObject local property and map it to return proper duration value
 
-    var channelHistoryDepth: Int {
-        get { 0 }
-        set {}
+    var channelHistoryDepth: String? {
+        nil
     }
 
 }

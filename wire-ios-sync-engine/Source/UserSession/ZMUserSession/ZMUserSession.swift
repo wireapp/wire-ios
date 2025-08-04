@@ -79,7 +79,6 @@ public final class ZMUserSession: NSObject {
     private(set) var urlActionProcessors: [URLActionProcessor]?
     let debugCommands: [String: DebugCommand]
     let eventProcessingTracker: EventProcessingTracker = .init()
-    let legacyHotFix: ZMHotFix
 
     var accessTokenRenewalObserver: AccessTokenRenewalObserver?
 
@@ -93,7 +92,7 @@ public final class ZMUserSession: NSObject {
     private(set) var proteusProvider: ProteusProviding!
     let proteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
 
-    public lazy var featureRepository = FeatureRepository(context: syncContext)
+    public lazy var featureRepository = LegacyFeatureRepository(context: syncContext)
 
     let earService: EARServiceInterface
 
@@ -134,37 +133,37 @@ public final class ZMUserSession: NSObject {
     }
 
     public var fileSharingFeature: Feature.FileSharing {
-        let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
+        let featureRepository = LegacyFeatureRepository(context: coreDataStack.viewContext)
         return featureRepository.fetchFileSharing()
     }
 
     public var selfDeletingMessagesFeature: Feature.SelfDeletingMessages {
-        let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
+        let featureRepository = LegacyFeatureRepository(context: coreDataStack.viewContext)
         return featureRepository.fetchSelfDeletingMessages()
     }
 
     public var conversationGuestLinksFeature: Feature.ConversationGuestLinks {
-        let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
+        let featureRepository = LegacyFeatureRepository(context: coreDataStack.viewContext)
         return featureRepository.fetchConversationGuestLinks()
     }
 
     public var classifiedDomainsFeature: Feature.ClassifiedDomains {
-        let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
+        let featureRepository = LegacyFeatureRepository(context: coreDataStack.viewContext)
         return featureRepository.fetchClassifiedDomains()
     }
 
     public var e2eiFeature: Feature.E2EI {
-        let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
+        let featureRepository = LegacyFeatureRepository(context: coreDataStack.viewContext)
         return featureRepository.fetchE2EI()
     }
 
     public var mlsFeature: Feature.MLS {
-        let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
+        let featureRepository = LegacyFeatureRepository(context: coreDataStack.viewContext)
         return featureRepository.fetchMLS()
     }
 
     public var channelsFeature: Feature.Channels {
-        let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
+        let featureRepository = LegacyFeatureRepository(context: coreDataStack.viewContext)
         return featureRepository.fetchChannels()
     }
 
@@ -411,6 +410,7 @@ public final class ZMUserSession: NSObject {
         cryptoboxMigrationManager: any CryptoboxMigrationManagerInterface,
         proteusToMLSMigrationCoordinator: any ProteusToMLSMigrationCoordinating,
         sharedUserDefaults: UserDefaults,
+        sharedContainerURL: URL,
         appLock: any AppLockType,
         coreCryptoProvider: any CoreCryptoProviderProtocol,
         lastEventIDRepository: any LastEventIDRepositoryInterface,
@@ -441,7 +441,6 @@ public final class ZMUserSession: NSObject {
         self.userExpirationObserver = UserExpirationObserver(managedObjectContext: coreDataStack.viewContext)
         self.topConversationsDirectory = TopConversationsDirectory(managedObjectContext: coreDataStack.viewContext)
         self.debugCommands = ZMUserSession.initDebugCommands()
-        self.legacyHotFix = ZMHotFix(syncMOC: coreDataStack.syncContext)
         self.appLockController = appLock
         self.coreCryptoProvider = coreCryptoProvider
         self.lastEventIDRepository = lastEventIDRepository
@@ -468,6 +467,7 @@ public final class ZMUserSession: NSObject {
             isFederationEnabled: WireTransport.BackendInfo.isFederationEnabled,
             isMLSEnabled: WireTransport.BackendInfo.isMLSEnabled,
             sharedUserDefaults: sharedUserDefaults,
+            sharedContainerURL: sharedContainerURL,
             syncContext: coreDataStack.syncContext,
             eventContext: coreDataStack.eventContext,
             mlsService: mlsService,
@@ -543,7 +543,6 @@ public final class ZMUserSession: NSObject {
         enableBackgroundFetch()
         observeChangesOnShareExtension()
         startEphemeralTimers()
-        notifyUserAboutChangesInAvailabilityBehaviourIfNeeded()
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
         restoreDebugCommandsState()
         configureRecurringActions()
@@ -864,12 +863,6 @@ public final class ZMUserSession: NSObject {
         // We enable background fetch by setting the minimum interval to something different from
         // UIApplicationBackgroundFetchIntervalNever
         application.setMinimumBackgroundFetchInterval(10.0 * 60.0 + Double.random(in: 0 ..< 300))
-    }
-
-    private func notifyUserAboutChangesInAvailabilityBehaviourIfNeeded() {
-        syncManagedObjectContext.performGroupedBlock {
-            self.localNotificationDispatcher?.notifyAvailabilityBehaviourChangedIfNeeded()
-        }
     }
 
     // MARK: - Trigger syncing
@@ -1399,14 +1392,6 @@ extension ZMUserSession: SyncAgentDelegate {
             }
 
             let isSyncing = await syncContext.perform { self.applicationStatusDirectory.syncStatus.isSyncing }
-
-            if !processingInterrupted {
-                await syncContext.perform {
-                    self.legacyHotFix.applyPatches()
-                    // When we move to the monorepo, uncomment hotFixApplicator applyPatches
-                    // hotFixApplicator.applyPatches(HotfixPatch.self, in: syncContext)
-                }
-            }
 
             await managedObjectContext.perform { [weak self] in
                 self?.isPerformingSync = isSyncing || processingInterrupted

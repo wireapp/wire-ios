@@ -49,13 +49,13 @@ extension ZMUser: UserType {
 
     public var hasDigitalSignatureEnabled: Bool {
         guard let context = managedObjectContext else { return false }
-        let featureRepository = FeatureRepository(context: context)
+        let featureRepository = LegacyFeatureRepository(context: context)
         return featureRepository.fetchDigitalSignature().status == .enabled
     }
 
     private func isMLSEnabled() -> Bool {
         guard let context = managedObjectContext else { return false }
-        let mlsFeature = FeatureRepository(context: context).fetchMLS()
+        let mlsFeature = LegacyFeatureRepository(context: context).fetchMLS()
         return mlsFeature.isEnabled
     }
 
@@ -160,7 +160,7 @@ extension ZMUser: UserType {
             return false
         }
 
-        let mlsFeature = FeatureRepository(context: context).fetchMLS()
+        let mlsFeature = LegacyFeatureRepository(context: context).fetchMLS()
         return BackendInfo.isMLSEnabled && mlsFeature.isEnabled && mlsFeature.config.protocolToggleUsers.contains(id)
     }
 

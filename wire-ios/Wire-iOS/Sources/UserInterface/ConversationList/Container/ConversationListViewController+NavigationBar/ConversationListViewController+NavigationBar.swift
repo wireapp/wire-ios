@@ -26,6 +26,7 @@ import WireFolderPickerUI
 import WireMainNavigationUI
 import WireReusableUIComponents
 import WireSyncEngine
+import WireUtilities
 
 extension ConversationListViewController: ConversationListContainerViewModelDelegate {
 
@@ -158,6 +159,14 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             L10n.Localizable.ConversationList.Filter.Channels.title
         case (.expanded, .oneOnOne):
             L10n.Localizable.ConversationList.Filter.OneOnOneConversations.title
+        case (.expanded, .unread):
+            L10n.Localizable.ConversationList.Filter.Unread.title
+        case (.expanded, .mentions):
+            L10n.Localizable.ConversationList.Filter.Mentions.title
+        case (.expanded, .replies):
+            L10n.Localizable.ConversationList.Filter.Replies.title
+        case (.expanded, .drafts):
+            L10n.Localizable.ConversationList.Filter.Drafts.title
         case (.expanded, .folder):
             L10n.Localizable.ConversationList.Filter.Folders.title
         case (.collapsed, _):
@@ -192,7 +201,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         )!
 
         let selectedFilterImage: UIImage = switch listContentController.listViewModel.selectedFilter {
-        case .favorites, .groups, .channels, .oneOnOne, .folder:
+        case .favorites, .groups, .channels, .oneOnOne, .unread, .mentions, .replies, .drafts, .folder:
             filledFilterImage
         case .none:
             defaultFilterImage
@@ -230,17 +239,52 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             isSelected: listContentController.listViewModel.selectedFilter?.folderData != nil
         )
 
+        // Create menu children array
+        var menuChildren = [
+            allConversationsAction,
+            favoritesAction
+        ]
+
+        // Add unread, mentions and replies filters if developer flag is enabled
+        if DeveloperFlag.showUnreadConversationsFilter.isOn {
+            let unreadAction = createFilterAction(
+                title: L10n.Localizable.ConversationList.Filter.Unread.title,
+                filter: .unread,
+                isSelected: listContentController.listViewModel.selectedFilter == .unread
+            )
+            menuChildren.append(unreadAction)
+
+            let mentionsAction = createFilterAction(
+                title: L10n.Localizable.ConversationList.Filter.Mentions.title,
+                filter: .mentions,
+                isSelected: listContentController.listViewModel.selectedFilter == .mentions
+            )
+            menuChildren.append(mentionsAction)
+
+            let repliesAction = createFilterAction(
+                title: L10n.Localizable.ConversationList.Filter.Replies.title,
+                filter: .replies,
+                isSelected: listContentController.listViewModel.selectedFilter == .replies
+            )
+            menuChildren.append(repliesAction)
+
+            let draftsAction = createFilterAction(
+                title: L10n.Localizable.ConversationList.Filter.Drafts.title,
+                filter: .drafts,
+                isSelected: listContentController.listViewModel.selectedFilter == .drafts
+            )
+            menuChildren.append(draftsAction)
+        }
+
+        menuChildren.append(contentsOf: [
+            groupsAction,
+            channelsAction,
+            oneToOneConversationsAction,
+            foldersAction
+        ])
+
         // Create the menu
-        let filterMenu = UIMenu(
-            children: [
-                allConversationsAction,
-                favoritesAction,
-                groupsAction,
-                channelsAction,
-                oneToOneConversationsAction,
-                foldersAction
-            ]
-        )
+        let filterMenu = UIMenu(children: menuChildren)
 
         // Create the filter button and assign the menu
         let filterButton = UIButton(type: .system)
@@ -337,6 +381,22 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
 
         case .oneOnOne:
             return isSelected ? accessibilityLocale.OneOnOne.Selected.description : accessibilityLocale.OneOnOne
+                .description
+
+        case .unread:
+            return isSelected ? accessibilityLocale.Unread.Selected.description : accessibilityLocale.Unread
+                .description
+
+        case .mentions:
+            return isSelected ? accessibilityLocale.Mentions.Selected.description : accessibilityLocale.Mentions
+                .description
+
+        case .replies:
+            return isSelected ? accessibilityLocale.Replies.Selected.description : accessibilityLocale.Replies
+                .description
+
+        case .drafts:
+            return isSelected ? accessibilityLocale.Drafts.Selected.description : accessibilityLocale.Drafts
                 .description
 
         case .folder:

@@ -41,7 +41,7 @@ extension LocalNotificationType {
             default:
                 .newMessage
             }
-        case .failedMessage, .availabilityBehaviourChangeAlert:
+        case .failedMessage:
             .newMessage
         case .bundledMessages:
             .newMessage
@@ -62,8 +62,6 @@ private extension PushNotificationCategory {
             self.init(contentType: contentType)
         case .failedMessage:
             self = .conversation
-        case .availabilityBehaviourChangeAlert:
-            self = .alert
         case .bundledMessages:
             self = .conversation
         }
