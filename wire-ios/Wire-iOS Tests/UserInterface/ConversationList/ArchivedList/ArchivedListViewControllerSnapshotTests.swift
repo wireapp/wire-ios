@@ -52,6 +52,7 @@ final class ArchivedListViewControllerSnapshotTests: XCTestCase {
         snapshotHelper.verify(matching: UINavigationController(rootViewController: sut))
     }
 
+    @MainActor
     func testNonEmpty() async throws {
 
         let fixture = try await CoreDataFixture()

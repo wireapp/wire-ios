@@ -36,6 +36,7 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
     var mockContextProvider: MockContextProvider!
     var mockEnrollE2eICertificateUseCase: EnrollE2EICertificateUseCaseProtocol!
 
+    @MainActor
     override func setUp() async throws {
         try await super.setUp()
         coreDataFixture = try await CoreDataFixture()

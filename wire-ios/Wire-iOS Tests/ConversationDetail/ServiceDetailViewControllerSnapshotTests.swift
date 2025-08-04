@@ -29,8 +29,9 @@ final class ServiceDetailViewControllerSnapshotTests: CoreDataSnapshotTestCase {
     private var mockSelfUser: MockUserType!
     private var snapshotHelper: SnapshotHelper!
 
-    override func setUp() {
-        super.setUp()
+    @MainActor
+    override func setUp() async throws {
+        try await super.setUp()
         snapshotHelper = SnapshotHelper()
         serviceUser = .createServiceUser(name: "ServiceUser")
         groupConversation = createGroupConversation()

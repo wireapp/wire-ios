@@ -29,6 +29,7 @@ final class CallControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     var callConversationProvider: MockCallConversationProvider!
     var userSession: UserSessionMock!
 
+    @MainActor
     override func setUp() async throws {
         try await super.setUp()
         userSession = UserSessionMock()

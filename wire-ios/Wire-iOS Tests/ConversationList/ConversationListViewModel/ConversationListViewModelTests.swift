@@ -54,6 +54,7 @@ final class ConversationListViewModelTests: XCTestCase {
     // Constants for section indices
     let sectionGroups = 0
 
+    @MainActor
     override func setUp() async throws {
         try await super.setUp()
 

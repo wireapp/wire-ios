@@ -35,6 +35,7 @@ final class ClientListViewControllerTests: XCTestCase, CoreDataFixtureTestHelper
 
     // MARK: - setUp
 
+    @MainActor
     override func setUp() async throws {
         try await super.setUp()
         snapshotHelper = SnapshotHelper()

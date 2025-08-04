@@ -39,6 +39,7 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
     var mockContextProvider: ContextProvider!
     private var snapshotHelper: SnapshotHelper!
 
+    @MainActor
     override func setUp() async throws {
         try await super.setUp()
         snapshotHelper = SnapshotHelper()

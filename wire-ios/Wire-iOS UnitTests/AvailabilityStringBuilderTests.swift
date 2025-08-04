@@ -31,6 +31,7 @@ final class AvailabilityStringBuilderTests: XCTestCase {
 
     // MARK: - setUp
 
+    @MainActor
     override func setUp() async throws {
         try await super.setUp()
 

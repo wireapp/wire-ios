@@ -42,6 +42,7 @@ final class OtherUserDeviceDetailsViewTests: XCTestCase {
     private var mockContextProvider: ContextProvider!
     private var snapshotHelper: SnapshotHelper!
 
+    @MainActor
     override func setUp() async throws {
         try await super.setUp()
         snapshotHelper = SnapshotHelper()
