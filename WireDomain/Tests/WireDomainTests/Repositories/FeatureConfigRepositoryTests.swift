@@ -262,8 +262,8 @@ final class FeatureConfigRepositoryTests: XCTestCase {
                 allowedToCreateChannels: .admins,
                 allowedToOpenChannels: .everyone
             )),
-            .allowGlobalOperations(
-                AllowGlobalOperationsFeatureConfig(
+            .allowedGlobalOperations(
+                AllowedGlobalOperationsFeatureConfig(
                     status: .enabled,
                     resetMLSConversations: true
                 )

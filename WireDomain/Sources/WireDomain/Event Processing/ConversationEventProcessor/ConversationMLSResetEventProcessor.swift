@@ -29,22 +29,14 @@ struct ConversationMLSResetEventProcessor: ConversationMLSResetEventProcessorPro
 
     private let mlsService: any MLSServiceInterface
     private let conversationLocalStore: any ConversationLocalStoreProtocol
-<<<<<<< HEAD
-    private let featureRepository: any LegacyFeatureRepositoryInterface
-=======
     private let featureConfigRepository: any FeatureConfigRepositoryProtocol
     private let lockRepository: ResetMLSConversationLockRepositoryProtocol
->>>>>>> d97f6b2466 (feat: Reset MLS conversation Additional logic - WPB-18664 (#3420))
 
     init(
         mlsService: any MLSServiceInterface,
         conversationLocalStore: any ConversationLocalStoreProtocol,
-<<<<<<< HEAD
-        featureRepository: any LegacyFeatureRepositoryInterface
-=======
         featureConfigRepository: any FeatureConfigRepositoryProtocol,
         lockRepository: ResetMLSConversationLockRepositoryProtocol
->>>>>>> d97f6b2466 (feat: Reset MLS conversation Additional logic - WPB-18664 (#3420))
     ) {
         self.mlsService = mlsService
         self.conversationLocalStore = conversationLocalStore
@@ -53,36 +45,6 @@ struct ConversationMLSResetEventProcessor: ConversationMLSResetEventProcessorPro
     }
 
     func processEvent(_ event: ConversationMLSResetEvent) async throws {
-<<<<<<< HEAD
-
-        let feature = await featureRepository.fetchAllowGlobalOperations()
-        guard feature.status == .enabled, feature.config.mlsConversationReset == true else {
-            WireLogger.mls.debug(
-                "No need to process reset broken MLS conversation, FF is OFF"
-            )
-            return
-        }
-
-        WireLogger.mls.info("MLS event processor is processing reset broken MLS conversation")
-
-        let oldMLSGroupIDBase64 = event.oldMLSGroupIDBase64
-        let newMLSGroupIDBase64 = event.newMLSGroupIDBase64
-        guard
-            let oldMLSGroupID = MLSGroupID(base64Encoded: oldMLSGroupIDBase64),
-            let newMLSGroupID = MLSGroupID(base64Encoded: newMLSGroupIDBase64)
-        else {
-            WireLogger.mls.error("Failed to get old and new group IDs to reset MLS conversation")
-            throw Failure.invalidArguments
-        }
-
-        guard let localConversation = await conversationLocalStore
-            .fetchConversation(id: event.conversationID.id, domain: event.conversationID.domain) else {
-            WireLogger.mls.error("Failed to get local conversation to reset MLS conversation")
-            throw Failure.conversationNotFound
-        }
-
-=======
->>>>>>> d97f6b2466 (feat: Reset MLS conversation Additional logic - WPB-18664 (#3420))
         do {
             let attributes: LogAttributes = [.conversationId: event.conversationID.id.safeForLoggingDescription]
 
