@@ -21,18 +21,18 @@ import WireSyncEngine
 
 extension AddBotError {
 
-    typealias PeoplePickerServicesLocale = L10n.Localizable.Peoplepicker.Services.AddService
+    typealias PeoplePickerAppsLocale = L10n.Localizable.Peoplepicker.Apps.AddApp
 
     var localizedTitle: String {
-        PeoplePickerServicesLocale.Error.title
+        PeoplePickerAppsLocale.Error.title
     }
 
     var localizedMessage: String {
         switch self {
         case .tooManyParticipants:
-            PeoplePickerServicesLocale.Error.title
+            PeoplePickerAppsLocale.Error.title
         default:
-            PeoplePickerServicesLocale.Error.default
+            PeoplePickerAppsLocale.Error.default
         }
     }
 
