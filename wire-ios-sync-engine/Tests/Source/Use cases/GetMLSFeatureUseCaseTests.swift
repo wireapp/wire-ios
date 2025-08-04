@@ -22,12 +22,12 @@ import XCTest
 
 final class GetMLSFeatureUseCaseTests: XCTestCase {
 
-    private var mockRepository: MockFeatureRepositoryInterface!
+    private var mockRepository: MockLegacyFeatureRepositoryInterface!
 
     override func setUp() {
         super.setUp()
 
-        mockRepository = MockFeatureRepositoryInterface()
+        mockRepository = MockLegacyFeatureRepositoryInterface()
         mockRepository.fetchMLS_MockValue = .init(status: .enabled, config: .init())
     }
 

@@ -28,7 +28,7 @@ final class SupportedProtocolsServiceTests: XCTestCase {
     private var coreDataStackHelper: CoreDataStackHelper!
     private var mockCoreDataStack: CoreDataStack!
 
-    private var mockFeatureRepository: MockFeatureRepositoryInterface!
+    private var mockLegacyFeatureRepository: MockLegacyFeatureRepositoryInterface!
     private var mockSelfUserProvider: MockSelfUserProviderProtocol!
 
     private var sut: SupportedProtocolsService!
@@ -43,18 +43,18 @@ final class SupportedProtocolsServiceTests: XCTestCase {
         coreDataStackHelper = CoreDataStackHelper()
         mockCoreDataStack = try await coreDataStackHelper.createStack()
 
-        mockFeatureRepository = MockFeatureRepositoryInterface()
+        mockLegacyFeatureRepository = MockLegacyFeatureRepositoryInterface()
         mockSelfUserProvider = MockSelfUserProviderProtocol()
 
         sut = SupportedProtocolsService(
-            featureRepository: mockFeatureRepository,
+            featureRepository: mockLegacyFeatureRepository,
             selfUserProvider: mockSelfUserProvider
         )
     }
 
     override func tearDown() async throws {
         sut = nil
-        mockFeatureRepository = nil
+        mockLegacyFeatureRepository = nil
         mockSelfUserProvider = nil
         mockCoreDataStack = nil
 
@@ -100,7 +100,7 @@ final class SupportedProtocolsServiceTests: XCTestCase {
     }
 
     private func mock(remoteSupportedProtocols: Set<Feature.MLS.Config.MessageProtocol>) {
-        mockFeatureRepository.fetchMLS_MockValue = .init(
+        mockLegacyFeatureRepository.fetchMLS_MockValue = .init(
             status: .enabled,
             config: Feature.MLS.Config(supportedProtocols: remoteSupportedProtocols)
         )
@@ -109,13 +109,13 @@ final class SupportedProtocolsServiceTests: XCTestCase {
     private func mock(migrationState: MigrationState) {
         switch migrationState {
         case .disabled:
-            mockFeatureRepository.fetchMLSMigration_MockValue = .init(
+            mockLegacyFeatureRepository.fetchMLSMigration_MockValue = .init(
                 status: .disabled,
                 config: .init()
             )
 
         case .notStarted:
-            mockFeatureRepository.fetchMLSMigration_MockValue = .init(
+            mockLegacyFeatureRepository.fetchMLSMigration_MockValue = .init(
                 status: .enabled,
                 config: .init(
                     startTime: Date(timeIntervalSinceNow: .oneDay),
@@ -124,7 +124,7 @@ final class SupportedProtocolsServiceTests: XCTestCase {
             )
 
         case .ongoing:
-            mockFeatureRepository.fetchMLSMigration_MockValue = .init(
+            mockLegacyFeatureRepository.fetchMLSMigration_MockValue = .init(
                 status: .enabled,
                 config: .init(
                     startTime: Date(timeIntervalSinceNow: -.oneDay),
@@ -133,7 +133,7 @@ final class SupportedProtocolsServiceTests: XCTestCase {
             )
 
         case .finalised:
-            mockFeatureRepository.fetchMLSMigration_MockValue = .init(
+            mockLegacyFeatureRepository.fetchMLSMigration_MockValue = .init(
                 status: .enabled,
                 config: .init(
                     startTime: Date(timeIntervalSinceNow: -.fourWeeks),

@@ -32,7 +32,7 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
     private var conversationLocalStore: MockConversationLocalStoreProtocol!
     private var mlsService: MockMLSServiceInterface!
     private var zmConversation: ZMConversation!
-    private var mockFeatureRepository: MockFeatureRepositoryInterface!
+    private var mockLegacyFeatureRepository: MockLegacyFeatureRepositoryInterface!
 
     private var context: NSManagedObjectContext {
         coreDataStack.syncContext
@@ -44,8 +44,8 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
         coreDataStack = try await coreDataStackHelper.createStack()
         conversationLocalStore = MockConversationLocalStoreProtocol()
         mlsService = MockMLSServiceInterface()
-        mockFeatureRepository = .init()
-        mockFeatureRepository.fetchAllowGlobalOperations_MockValue = .init(
+        mockLegacyFeatureRepository = .init()
+        mockLegacyFeatureRepository.fetchAllowGlobalOperations_MockValue = .init(
             status: .enabled,
             config: .init(mlsConversationReset: true)
         )
@@ -66,7 +66,7 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
         sut = ConversationMLSResetEventProcessor(
             mlsService: mlsService,
             conversationLocalStore: conversationLocalStore,
-            featureRepository: mockFeatureRepository
+            featureRepository: mockLegacyFeatureRepository
         )
     }
 
@@ -114,7 +114,7 @@ final class ConversationMLSResetEventProcessorTests: XCTestCase {
 
     func testProcessEvent_DoNothingWhenFFIsOff() async throws {
 
-        mockFeatureRepository.fetchAllowGlobalOperations_MockValue = .init(
+        mockLegacyFeatureRepository.fetchAllowGlobalOperations_MockValue = .init(
             status: .disabled,
             config: .init(mlsConversationReset: false)
         )

@@ -25,7 +25,7 @@ import WireTesting
 
 final class SnoozeCertificateEnrollmentUseCaseTests: ZMUserSessionTestsBase {
 
-    private var mockFeatureRepository: MockFeatureRepositoryInterface!
+    private var mockLegacyFeatureRepository: MockLegacyFeatureRepositoryInterface!
     private var mockSelfClientCertificateProvider: MockSelfClientCertificateProviderProtocol!
 
     private var context: NSManagedObjectContext { syncMOC }
@@ -33,14 +33,14 @@ final class SnoozeCertificateEnrollmentUseCaseTests: ZMUserSessionTestsBase {
     override func setUp() {
         super.setUp()
 
-        mockFeatureRepository = MockFeatureRepositoryInterface()
-        mockFeatureRepository.fetchE2EI_MockValue = .init(status: .enabled)
+        mockLegacyFeatureRepository = MockLegacyFeatureRepositoryInterface()
+        mockLegacyFeatureRepository.fetchE2EI_MockValue = .init(status: .enabled)
         mockSelfClientCertificateProvider = MockSelfClientCertificateProviderProtocol()
     }
 
     override func tearDown() {
         mockSelfClientCertificateProvider = nil
-        mockFeatureRepository = nil
+        mockLegacyFeatureRepository = nil
 
         super.tearDown()
     }
@@ -70,7 +70,7 @@ final class SnoozeCertificateEnrollmentUseCaseTests: ZMUserSessionTestsBase {
     private func makeUseCase(recurringActionService: any RecurringActionServiceInterface)
         -> SnoozeCertificateEnrollmentUseCase {
         SnoozeCertificateEnrollmentUseCase(
-            featureRepository: mockFeatureRepository,
+            featureRepository: mockLegacyFeatureRepository,
             featureRepositoryContext: context,
             recurringActionService: recurringActionService,
             accountId: UUID()

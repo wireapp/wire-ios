@@ -676,11 +676,11 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     }
 
     @objc public var needsToEnrollE2EI: Bool {
-        FeatureRepository(context: managedObjectContext).fetchE2EI().isEnabled
+        LegacyFeatureRepository(context: managedObjectContext).fetchE2EI().isEnabled
     }
 
     private var isMLSEnabled: Bool {
-        FeatureRepository(context: managedObjectContext).fetchMLS().isEnabled
+        LegacyFeatureRepository(context: managedObjectContext).fetchMLS().isEnabled
     }
 
     @objc(needsToRegisterMLSClientInContext:)
@@ -689,7 +689,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
             return false
         }
         let hasRegisteredMLSClient = ZMUser.selfUser(in: context).selfClient()?.hasRegisteredMLSClient ?? false
-        let mlsFeature = FeatureRepository(context: context).fetchMLS()
+        let mlsFeature = LegacyFeatureRepository(context: context).fetchMLS()
 
         let shouldRegisterMLSCLient = mlsFeature.isEnabled
         let canRegisterMLSCLient = BackendInfo.isMLSEnabled

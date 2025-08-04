@@ -62,7 +62,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     // MARK: - Properties
 
     private let context: NSManagedObjectContext
-    private let featureRepository: FeatureRepositoryInterface
+    private let featureRepository: LegacyFeatureRepositoryInterface
     private let actionsProvider: MLSActionsProviderProtocol
     private var storage: ProteusToMLSMigrationStorageInterface
 
@@ -86,12 +86,12 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     init(
         context: NSManagedObjectContext,
         storage: ProteusToMLSMigrationStorageInterface,
-        featureRepository: FeatureRepositoryInterface? = nil,
+        featureRepository: LegacyFeatureRepositoryInterface? = nil,
         actionsProvider: MLSActionsProviderProtocol? = nil
     ) {
         self.context = context
         self.storage = storage
-        self.featureRepository = featureRepository ?? FeatureRepository(context: context)
+        self.featureRepository = featureRepository ?? LegacyFeatureRepository(context: context)
         self.actionsProvider = actionsProvider ?? MLSActionsProvider()
     }
 
