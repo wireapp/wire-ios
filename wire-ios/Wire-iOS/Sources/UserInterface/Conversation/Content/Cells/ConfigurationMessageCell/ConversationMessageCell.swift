@@ -75,12 +75,6 @@ protocol ConversationMessageCell: UIView {
 
     /// The message that is displayed.
     var message: ZMConversationMessage? { get set }
-    
-    /// Boolean to check for wrapping message content in Bubble
-    var shouldWrapInBubble: Bool { get }
-    
-    /// Boolean to check for aligning message content for Bubbles
-    var shouldAlignMessageContentForBubbles: Bool { get }
 
     /// The delegate for the cell.
     var delegate: ConversationMessageCellDelegate? { get set }
@@ -121,21 +115,6 @@ extension ConversationMessageCell {
             actionController: actionController,
             conversationMessageCellDelegate: delegate
         )
-    }
-    
-    var shouldWrapInBubble: Bool {
-        guard DeveloperFlag.chatBubblesSimple.isOn, let message = message else {
-            return false
-        }
-        return message.isText
-    }
-    
-    
-    var shouldAlignMessageContentForBubbles: Bool {
-        guard DeveloperFlag.chatBubblesSimple.isOn, let message = message else {
-            return false
-        }
-        return message.isAudio || message.isFile || message.isVideo || message.isImage || message.isLocation || message.isPDF
     }
 
     func willDisplay() {
@@ -181,6 +160,12 @@ protocol ConversationMessageCellDescription: AnyObject {
 
     /// The message that is displayed.
     var message: ZMConversationMessage? { get set }
+    
+    /// Boolean to check for wrapping message content in Bubble
+    var shouldWrapInBubble: Bool { get }
+    
+    /// Boolean to check for aligning message content for Bubbles
+    var shouldAlignMessageContentForBubbles: Bool { get }
 
     /// The delegate for the cell.
     var delegate: ConversationMessageCellDelegate? { get set }
@@ -221,6 +206,21 @@ extension ConversationMessageCellDescription {
 
     var isAccessibilityElement: Bool {
         false
+    }
+    
+    var shouldWrapInBubble: Bool {
+        guard DeveloperFlag.chatBubblesSimple.isOn, let message = message else {
+            return false
+        }
+        return message.isText
+    }
+    
+    
+    var shouldAlignMessageContentForBubbles: Bool {
+        guard DeveloperFlag.chatBubblesSimple.isOn, let message = message else {
+            return false
+        }
+        return message.isAudio || message.isFile || message.isVideo || message.isImage || message.isLocation || message.isPDF
     }
 
     var topMargin: CGFloat {
