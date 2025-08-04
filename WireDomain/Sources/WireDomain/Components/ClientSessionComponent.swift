@@ -431,7 +431,7 @@ public final class ClientSessionComponent {
         conversationLabelsLocalStore: conversationLabelsLocalStore
     )
 
-    private lazy var conversationRepository = ConversationRepository(
+    public lazy var conversationRepository = ConversationRepository(
         conversationsAPI: conversationsAPI,
         conversationsLocalStore: conversationLocalStore,
         userLocalStore: userLocalStore,
@@ -658,7 +658,12 @@ public final class ClientSessionComponent {
     private lazy var mlsResetEventProcessor = ConversationMLSResetEventProcessor(
         mlsService: mlsService,
         conversationLocalStore: conversationLocalStore,
+<<<<<<< HEAD
         featureRepository: LegacyFeatureRepository(context: syncContext)
+=======
+        featureConfigRepository: featureConfigRepository,
+        lockRepository: resetMLSConversationLockRepository
+>>>>>>> d97f6b2466 (feat: Reset MLS conversation Additional logic - WPB-18664 (#3420))
     )
 
     private lazy var conversationEventProcessor = ConversationEventProcessor(
@@ -755,10 +760,16 @@ public final class ClientSessionComponent {
         isMLSEnabled: isMLSEnabled
     )
 
+    private lazy var resetMLSConversationLockRepository = ResetMLSConversationLockRepository(
+        userID: selfUserID
+    )
+
     public lazy var initiateResetMLSConversationUseCase = InitiateResetMLSConversationUseCase(
         api: mlsAPI,
         mlsService: mlsService,
-        conversationLocalStore: conversationLocalStore
+        conversationLocalStore: conversationLocalStore,
+        conversationRepository: conversationRepository,
+        lockRepository: resetMLSConversationLockRepository
     )
 
     public lazy var mlsTransport: any WireCoreCryptoUniffi.MlsTransport = MLSTransportImpl(
