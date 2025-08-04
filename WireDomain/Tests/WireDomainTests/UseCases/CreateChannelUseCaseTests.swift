@@ -101,7 +101,7 @@ final class CreateChannelUseCaseTests: XCTestCase {
         let conversation = try await sut.invoke(
             teamID: .mockID1,
             name: "test",
-            historyDepth: 10_000,
+            historyDepth: "",
             users: [participant1, participant2],
             accessMode: [.invite, .code],
             accessRoles: [.teamMember],
@@ -176,7 +176,7 @@ final class CreateChannelUseCaseTests: XCTestCase {
         let conversation = try await sut.invoke(
             teamID: .mockID1,
             name: "test",
-            historyDepth: 10_000,
+            historyDepth: "",
             users: [participant1, participant2, nonFederatedParticipant3],
             accessMode: [.invite, .code],
             accessRoles: [.teamMember],
@@ -260,7 +260,7 @@ final class CreateChannelUseCaseTests: XCTestCase {
         let conversation = try await sut.invoke(
             teamID: .mockID1,
             name: "test",
-            historyDepth: 10_000,
+            historyDepth: "",
             users: [participant1, participant2],
             accessMode: [.invite, .code],
             accessRoles: [.teamMember],
@@ -352,7 +352,7 @@ final class CreateChannelUseCaseTests: XCTestCase {
         let conversation = try await sut.invoke(
             teamID: .mockID1,
             name: "test",
-            historyDepth: 10_000,
+            historyDepth: "",
             users: [participant1, participant2],
             accessMode: [.invite, .code],
             accessRoles: [.teamMember],
@@ -435,7 +435,7 @@ final class CreateChannelUseCaseTests: XCTestCase {
         let conversation = try await sut.invoke(
             teamID: .mockID1,
             name: "test",
-            historyDepth: 10_000,
+            historyDepth: "",
             users: [participant1, participant2],
             accessMode: [.invite, .code],
             accessRoles: [.teamMember],
@@ -485,7 +485,7 @@ final class CreateChannelUseCaseTests: XCTestCase {
             try await sut.invoke(
                 teamID: .mockID1,
                 name: "test",
-                historyDepth: 10_000,
+                historyDepth: "",
                 users: [nonFederatedParticipant3],
                 accessMode: [.invite, .code],
                 accessRoles: [.teamMember],
@@ -516,7 +516,7 @@ final class CreateChannelUseCaseTests: XCTestCase {
             try await sut.invoke(
                 teamID: .mockID1,
                 name: "test",
-                historyDepth: 10_000,
+                historyDepth: "",
                 users: [participant1, participant2],
                 accessMode: [.invite, .code],
                 accessRoles: [.teamMember],
@@ -548,7 +548,7 @@ final class CreateChannelUseCaseTests: XCTestCase {
             try await sut.invoke(
                 teamID: .mockID1,
                 name: "test",
-                historyDepth: 10_000,
+                historyDepth: "",
                 users: [participant1, participant2],
                 accessMode: [.invite, .code],
                 accessRoles: [.teamMember],
@@ -582,7 +582,7 @@ final class CreateChannelUseCaseTests: XCTestCase {
             _ = try await sut.invoke(
                 teamID: .mockID1,
                 name: "test",
-                historyDepth: 10_000,
+                historyDepth: "",
                 users: [participant1, participant2],
                 accessMode: [.invite, .code],
                 accessRoles: [.teamMember],

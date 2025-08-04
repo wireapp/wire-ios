@@ -1411,6 +1411,26 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         await mock(permission, conversation)
     }
 
+    // MARK: - storeConversation
+
+    public var storeConversationHistoryDepthConversationIDConversationDomain_Invocations: [(historyDepth: String, conversationID: UUID, conversationDomain: String?)] = []
+    public var storeConversationHistoryDepthConversationIDConversationDomain_MockError: Error?
+    public var storeConversationHistoryDepthConversationIDConversationDomain_MockMethod: ((String, UUID, String?) async throws -> Void)?
+
+    public func storeConversation(historyDepth: String, conversationID: UUID, conversationDomain: String?) async throws {
+        storeConversationHistoryDepthConversationIDConversationDomain_Invocations.append((historyDepth: historyDepth, conversationID: conversationID, conversationDomain: conversationDomain))
+
+        if let error = storeConversationHistoryDepthConversationIDConversationDomain_MockError {
+            throw error
+        }
+
+        guard let mock = storeConversationHistoryDepthConversationIDConversationDomain_MockMethod else {
+            fatalError("no mock for `storeConversationHistoryDepthConversationIDConversationDomain`")
+        }
+
+        try await mock(historyDepth, conversationID, conversationDomain)
+    }
+
     // MARK: - fetchServerTimeDelta
 
     public var fetchServerTimeDelta_Invocations: [Void] = []
@@ -1905,12 +1925,12 @@ public class MockCreateChannelUseCaseProtocol: CreateChannelUseCaseProtocol {
 
     // MARK: - invoke
 
-    public var invokeTeamIDNameHistoryDepthUsersAccessModeAccessRolesEnableReceipts_Invocations: [(teamID: UUID, name: String?, historyDepth: Int?, users: Set<ZMUser>, accessMode: Set<WireNetwork.ConversationAccessMode>, accessRoles: Set<WireNetwork.ConversationAccessRole>, enableReceipts: Bool)] = []
+    public var invokeTeamIDNameHistoryDepthUsersAccessModeAccessRolesEnableReceipts_Invocations: [(teamID: UUID, name: String?, historyDepth: String?, users: Set<ZMUser>, accessMode: Set<WireNetwork.ConversationAccessMode>, accessRoles: Set<WireNetwork.ConversationAccessRole>, enableReceipts: Bool)] = []
     public var invokeTeamIDNameHistoryDepthUsersAccessModeAccessRolesEnableReceipts_MockError: Error?
-    public var invokeTeamIDNameHistoryDepthUsersAccessModeAccessRolesEnableReceipts_MockMethod: ((UUID, String?, Int?, Set<ZMUser>, Set<WireNetwork.ConversationAccessMode>, Set<WireNetwork.ConversationAccessRole>, Bool) async throws -> ZMConversation)?
+    public var invokeTeamIDNameHistoryDepthUsersAccessModeAccessRolesEnableReceipts_MockMethod: ((UUID, String?, String?, Set<ZMUser>, Set<WireNetwork.ConversationAccessMode>, Set<WireNetwork.ConversationAccessRole>, Bool) async throws -> ZMConversation)?
     public var invokeTeamIDNameHistoryDepthUsersAccessModeAccessRolesEnableReceipts_MockValue: ZMConversation?
 
-    public func invoke(teamID: UUID, name: String?, historyDepth: Int?, users: Set<ZMUser>, accessMode: Set<WireNetwork.ConversationAccessMode>, accessRoles: Set<WireNetwork.ConversationAccessRole>, enableReceipts: Bool) async throws -> ZMConversation {
+    public func invoke(teamID: UUID, name: String?, historyDepth: String?, users: Set<ZMUser>, accessMode: Set<WireNetwork.ConversationAccessMode>, accessRoles: Set<WireNetwork.ConversationAccessRole>, enableReceipts: Bool) async throws -> ZMConversation {
         invokeTeamIDNameHistoryDepthUsersAccessModeAccessRolesEnableReceipts_Invocations.append((teamID: teamID, name: name, historyDepth: historyDepth, users: users, accessMode: accessMode, accessRoles: accessRoles, enableReceipts: enableReceipts))
 
         if let error = invokeTeamIDNameHistoryDepthUsersAccessModeAccessRolesEnableReceipts_MockError {

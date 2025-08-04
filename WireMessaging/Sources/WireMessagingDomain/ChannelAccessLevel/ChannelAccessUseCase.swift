@@ -17,7 +17,6 @@
 //
 
 import Foundation
-public import WireMessagingDomain
 
 @MainActor
 public protocol ChannelAccessUseCaseProtocol {
@@ -35,17 +34,16 @@ public protocol ChannelAccessRepositoryProtocol {
 
 public enum ChannelAccessError: Error {
     case notAllowed
-    case notEnoughData
 }
 
 public class ChannelAccessUseCase: ChannelAccessUseCaseProtocol {
 
     public private(set) var settings: ChannelAccessSettings
-    public let repository: any ChannelAccessRepositoryProtocol
+    public let repository: any ChannelRepositoryProtocol
 
     public init(
         permission: ChannelAccessLevelPermission?,
-        repository: any ChannelAccessRepositoryProtocol
+        repository: any ChannelRepositoryProtocol
     ) {
         let settings = ChannelAccessSettings(
             // for MVP only private supported, uncomment for next phase
