@@ -716,11 +716,14 @@ public final class ZMUserSession: NSObject {
             },
             searchUsersCache: dependencies.caches.searchUsers,
             initiateResetMLSConversationUseCaseFactory: { [weak self] context in
-                guard let self else {
+                guard let self, let repo = clientSessionComponent?.conversationRepository else {
                     fatal("userSession not reachable")
                 }
                 // Passing useCase from WireDomain to WireRequestStrategy's MessageSender
-                return makeInitiateResetMLSConversationUseCase(context: context)
+                return makeInitiateResetMLSConversationUseCase(
+                    context: context,
+                    conversationRepository: repo
+                )
             }
         )
     }
@@ -1303,7 +1306,8 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     private func makeInitiateResetMLSConversationUseCase(
-        context: NSManagedObjectContext
+        context: NSManagedObjectContext,
+        conversationRepository: ConversationRepositoryProtocol
     ) -> WireRequestStrategy.InitiateResetMLSConversationUseCaseProtocol {
         let (apiService, apiVersion) = makeApiServiceAndAPIVersion()
 
@@ -1312,7 +1316,9 @@ extension ZMUserSession: SyncAgentDelegate {
                 apiService: apiService,
                 apiVersion: apiVersion,
                 mlsService: mlsService,
-                context: context
+                conversationRepository: conversationRepository,
+                context: context,
+                userID: userId
             )
     }
 

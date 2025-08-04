@@ -101,10 +101,7 @@ public struct CalculateSupportedProtocolsUseCase: CalculateSupportedProtocolsUse
     }
 
     private func remotelySupportedProtocols() async -> Set<WireNetwork.MessageProtocol> {
-        let mlsFeature = try? await featureConfigRepository.fetchFeatureConfig(
-            name: .mls,
-            type: Feature.MLS.Config.self
-        )
+        let mlsFeature = try? await featureConfigRepository.fetchMLSConfig()
 
         let mls = (
             status: mlsFeature?.status ?? .disabled,
@@ -130,10 +127,7 @@ public struct CalculateSupportedProtocolsUseCase: CalculateSupportedProtocolsUse
     }
 
     private func currentMigrationState() async -> ProteusToMLSMigrationState {
-        let mlsMigrationFeature = try? await featureConfigRepository.fetchFeatureConfig(
-            name: .mlsMigration,
-            type: Feature.MLSMigration.Config.self
-        )
+        let mlsMigrationFeature = try? await featureConfigRepository.fetchMLSMigrationConfig()
 
         let mlsMigration = (
             status: mlsMigrationFeature?.status ?? .disabled,
