@@ -82,6 +82,39 @@ final class PrivateUserDefaultsTests: XCTestCase {
         XCTAssertEqual(sut.getUUID(forKey: Scaffolding.key), uuid)
     }
 
+    func test_setBool_withAdditionalScope() throws {
+        let extraScope = "extra-scope"
+        XCTAssertFalse(sut.bool(forKey: Scaffolding.key, additionalScope: extraScope))
+
+        sut.set(true, forKey: Scaffolding.key, additionalScope: extraScope)
+        XCTAssertTrue(sut.bool(forKey: Scaffolding.key, additionalScope: extraScope))
+
+        sut.set(false, forKey: Scaffolding.key, additionalScope: extraScope)
+        XCTAssertFalse(sut.bool(forKey: Scaffolding.key, additionalScope: extraScope))
+
+        sut.set(true, forKey: Scaffolding.key, additionalScope: extraScope)
+        XCTAssertTrue(sut.bool(forKey: Scaffolding.key, additionalScope: extraScope))
+
+        sut.removeObject(forKey: Scaffolding.key, additionalScope: extraScope)
+        XCTAssertFalse(sut.bool(forKey: Scaffolding.key, additionalScope: extraScope))
+    }
+
+    func test_doesNotAffectValuesInSameAdditionalScope() throws {
+        let extraScope = "extra-scope"
+        XCTAssertFalse(sut.bool(forKey: Scaffolding.key, additionalScope: extraScope))
+        XCTAssertFalse(sut.bool(forKey: Scaffolding.key2, additionalScope: extraScope))
+
+        sut.set(true, forKey: Scaffolding.key, additionalScope: extraScope)
+        XCTAssertTrue(sut.bool(forKey: Scaffolding.key, additionalScope: extraScope))
+
+        sut.set(true, forKey: Scaffolding.key2, additionalScope: extraScope)
+        XCTAssertTrue(sut.bool(forKey: Scaffolding.key2, additionalScope: extraScope))
+
+        sut.removeObject(forKey: Scaffolding.key2, additionalScope: extraScope)
+        XCTAssertFalse(sut.bool(forKey: Scaffolding.key2, additionalScope: extraScope))
+        XCTAssertTrue(sut.bool(forKey: Scaffolding.key, additionalScope: extraScope))
+    }
+
     // MARK: Removing all
 
     func test_removeAll() throws {
@@ -102,6 +135,7 @@ final class PrivateUserDefaultsTests: XCTestCase {
     private enum Scaffolding {
         static let userID = UUID()
         static let key = "foo"
+        static let key2 = "fooBar"
         static let defaultsTestSuiteName = UUID().uuidString
     }
 }

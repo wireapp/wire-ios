@@ -121,10 +121,7 @@ final class FeatureConfigRepositoryTests: XCTestCase {
 
         // When
 
-        let localFeature = try await sut.fetchFeatureConfig(
-            name: .appLock,
-            type: Feature.AppLock.Config.self
-        )
+        let localFeature = try await sut.fetchAppLock()
 
         // Then
 
