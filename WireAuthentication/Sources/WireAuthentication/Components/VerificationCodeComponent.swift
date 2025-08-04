@@ -50,16 +50,6 @@ final class VerificationCodeComponent: Component<VerificationCodeComponentDepend
         super.init(parent: parent)
     }
 
-    // MARK: - Children
-
-    func noHistoryComponent(authenticationResult: AuthenticationResult) -> NoHistoryComponent {
-        NoHistoryComponent(
-            parent: self,
-            authenticationResult: authenticationResult,
-            didDetectDomainConflict: dependency.didDetectDomainConflict
-        )
-    }
-
 }
 
 extension VerificationCodeComponent: VerificationCodeViewModel.Factory {
@@ -76,8 +66,9 @@ extension VerificationCodeComponent: VerificationCodeViewModel.Factory {
         )
     }
 
-    func noHistoryFactory(authenticationResult: AuthenticationResult) -> any NoHistoryFactory {
-        noHistoryComponent(authenticationResult: authenticationResult)
+    func noHistoryView(result: AuthenticationResult) -> NoHistoryView {
+        let factory = noHistoryFactory(result: result)
+        return NoHistoryView(factory: factory)
     }
 
     // MARK: - Use cases
@@ -100,4 +91,13 @@ extension VerificationCodeComponent: VerificationCodeViewModel.Factory {
         CreateAuthenticationResultUseCase(networkStack: dependency.networkStack)
     }
 
+    // MARK: - Private
+
+    private func noHistoryFactory(result: AuthenticationResult) -> NoHistoryComponent {
+        NoHistoryComponent(
+            parent: self,
+            authenticationResult: result,
+            didDetectDomainConflict: dependency.didDetectDomainConflict
+        )
+    }
 }
