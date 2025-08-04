@@ -16,23 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireUtilities
 import XCTest
 
-extension XCUIApplication {
+class NewConversationPage: PageModel {
 
-    func useWireAuthentication(_ enabled: Bool = true) {
-        developerFlag(DeveloperFlag.useWireAuthentication, enabled: enabled)
+    override var pageMainElement: XCUIElement {
+        newGroupButton
     }
 
-    func developerFlag(_ developerFlag: DeveloperFlag, enabled: Bool) {
-        launchArguments.append("--developer-flag=\(developerFlag.rawValue):\(enabled ? "true" : "false")")
+    var newGroupButton: XCUIElement {
+        app.descendants(matching: .any)["New group"].firstMatch
     }
 
-    func loginUser(email: String, password: String) throws -> FirstTimePage {
-        try WelcomePage()
-            .enterEmailOrSSO(email)
-            .enterPassword(password)
-            .acceptFirstTimeAlert()
+    func tapNewGroupButton() throws -> CreateGroupPage {
+        newGroupButton.tap()
+        return try CreateGroupPage()
     }
 }

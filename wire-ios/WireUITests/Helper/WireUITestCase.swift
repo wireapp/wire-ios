@@ -25,7 +25,7 @@ class WireUITestCase: XCTestCase {
 
     var app: XCUIApplication!
     let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-    let userManager = UserManager()
+    let userHelper = UserHelper()
 
     override func setUpWithError() throws {
         XCUIApplication().terminate()
@@ -48,7 +48,7 @@ class WireUITestCase: XCTestCase {
     }
 
     override func tearDown() async throws {
-        try await userManager.deleteCreatedUsers()
+        try await userHelper.deleteCreatedUsers()
     }
 
 }
