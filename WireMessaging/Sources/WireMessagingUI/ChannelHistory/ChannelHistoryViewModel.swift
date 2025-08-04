@@ -27,7 +27,23 @@ package class ChannelHistoryViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var isEnterpriseUser: Bool = true
     @Published var channelHistoryAvailableOptions: [ChannelHistoryOption] = []
+    @Published var isErrorPresented: Bool = false
 
+    enum Failure: LocalizedError {
+        case unableToFetchHistoryDepthOptions
+        case unableToUpdateHistoryDepth
+
+        var errorDescription: String? {
+            switch self {
+            case .unableToFetchHistoryDepthOptions:
+                L10n.Localizable.Conversation.ChannelHistory.FetchChannelHistoryDepthOptions.error
+            case .unableToUpdateHistoryDepth:
+                L10n.Localizable.Conversation.ChannelHistory.UpdateHistoryDepth.error
+            }
+        }
+    }
+
+    var errorMessage: String?
     public let accentColor: Color
     public let teamsURL: URL
     private let useCase: any ChannelHistoryUseCaseProtocol
@@ -65,7 +81,10 @@ package class ChannelHistoryViewModel: ObservableObject {
                     .off,
                     .oneDay
                 ]
-        } catch {}
+        } catch {
+            errorMessage = Failure.unableToFetchHistoryDepthOptions.localizedDescription
+            isErrorPresented = true
+        }
         isLoading = false
     }
 
@@ -88,7 +107,10 @@ package class ChannelHistoryViewModel: ObservableObject {
                     channelHistoryOption: channelHistoryOption,
                     channelHistoryOptionCustom: channelHistoryOptionCustom
                 )
-            } catch {}
+            } catch {
+                errorMessage = Failure.unableToUpdateHistoryDepth.localizedDescription
+                isErrorPresented = true
+            }
             isLoading = false
         }
     }

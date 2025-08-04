@@ -53,9 +53,14 @@ public class MockChannelHistoryUseCaseProtocol: ChannelHistoryUseCaseProtocol {
 
     public var isEnterpriseUser_Invocations: [Void] = []
     public var isEnterpriseUser_MockValue: Bool?
+    public var isEnterpriseUser_MockError: (any Error)?
 
     public func isEnterpriseUser() async throws -> Bool {
         isEnterpriseUser_Invocations.append(())
+
+        if let error = isEnterpriseUser_MockError {
+            throw error
+        }
 
         if let mock = isEnterpriseUser_MockValue {
             return mock

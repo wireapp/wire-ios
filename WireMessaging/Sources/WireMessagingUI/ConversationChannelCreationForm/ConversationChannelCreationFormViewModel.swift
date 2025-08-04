@@ -191,23 +191,7 @@ public final class ConversationChannelCreationFormViewModel: ObservableObject {
 
     public func getChannelCreationSettings() -> ConversationChannelCreationSettings? {
 
-        // TODO: [WPB-18347] - check history length expected type when endpoint is ready
-        let historyDepth: TimeInterval? = switch channelHistoryOption {
-        case .off:
-            nil
-        case .oneDay:
-            TimeInterval.oneDay
-        case .oneWeek:
-            TimeInterval.oneWeek
-        case .fourWeeks:
-            TimeInterval.fourWeeks
-        case .unlimited:
-            TimeInterval.oneYearFromNow
-        case .custom:
-            computeHistoryCustomLength()
-        }
-
-        return try? channelName
+        try? channelName
             .map { value in
                 ConversationChannelCreationSettings(
                     channelName: value,
@@ -217,21 +201,26 @@ public final class ConversationChannelCreationFormViewModel: ObservableObject {
                     servicesAllowed: servicesAllowed,
                     guestsAllowed: guestsAllowed,
                     readReceiptsEnabled: readReceiptsEnabled,
-                    historyDepth: historyDepth.map(Int.init)
+                    historyDepth: getHistoryDepth()
                 )
             }
             .get()
     }
 
-    private func computeHistoryCustomLength() -> TimeInterval {
-        let value = TimeInterval(channelHistoryOptionCustom.value)
-        let oneDay = TimeInterval.oneDay
-
-        switch channelHistoryOptionCustom.unit {
-        case .days:
-            return value * oneDay
-        case .weeks:
-            return value * 7 * oneDay
+    private func getHistoryDepth() -> String? {
+        switch channelHistoryOption {
+        case .off:
+            .none
+        case .oneDay:
+            "One day"
+        case .oneWeek:
+            "One week"
+        case .fourWeeks:
+            "Four weeks"
+        case .unlimited:
+            "Unlimited"
+        case .custom:
+            "\(channelHistoryOptionCustom.value) \(channelHistoryOptionCustom.unit == .days ? "days" : "weeks")"
         }
     }
 }

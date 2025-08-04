@@ -45,6 +45,11 @@ package struct ChannelHistoryView: View {
             }
             .background(ColorTheme.Backgrounds.background.color)
             .animation(.easeInOut(duration: 2), value: isExpanded)
+            .alert(L10n.Localizable.General.failure, isPresented: $viewModel.isErrorPresented, actions: {
+                Button(L10n.Localizable.General.confirm) {}
+            }, message: {
+                Text(viewModel.errorMessage ?? "")
+            })
         }
         .scrollContentBackground(.hidden)
         .background(ColorTheme.Backgrounds.background.color.ignoresSafeArea())
