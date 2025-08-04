@@ -166,6 +166,7 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
             || changes.labelsChanged
             || changes.mlsStatusChanged
             || changes.oneOnOneUserChanged
+            || changes.draftMessageChanged
 
         guard hasChanged else { return }
 

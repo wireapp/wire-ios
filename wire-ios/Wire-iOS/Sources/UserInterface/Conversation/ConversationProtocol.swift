@@ -71,13 +71,13 @@ extension ZMConversation: InputBarConversation {
 
     var isSelfDeletingMessageSendingDisabled: Bool {
         guard let context = managedObjectContext else { return false }
-        let feature = FeatureRepository(context: context).fetchSelfDeletingMessages()
+        let feature = LegacyFeatureRepository(context: context).fetchSelfDeletingMessages()
         return feature.status == .disabled
     }
 
     var isSelfDeletingMessageTimeoutForced: Bool {
         guard let context = managedObjectContext else { return false }
-        let feature = FeatureRepository(context: context).fetchSelfDeletingMessages()
+        let feature = LegacyFeatureRepository(context: context).fetchSelfDeletingMessages()
         return feature.config.enforcedTimeoutSeconds > 0
     }
 
@@ -130,7 +130,7 @@ extension ZMConversation: GroupDetailsConversation {
 
     var isE2EIEnabled: Bool {
         guard let context = managedObjectContext else { return false }
-        let feature = FeatureRepository(context: context).fetchE2EI()
+        let feature = LegacyFeatureRepository(context: context).fetchE2EI()
         return feature.status == .enabled
     }
 

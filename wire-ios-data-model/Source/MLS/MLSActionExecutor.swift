@@ -140,7 +140,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
     private let coreCryptoProvider: CoreCryptoProviderProtocol
     private var continuationsByGroupID: [MLSGroupID: [CheckedContinuation<Void, Never>]] = [:]
     private let onNewCRLsDistributionPointsSubject = PassthroughSubject<CRLsDistributionPoints, Never>()
-    private let featureRepository: FeatureRepositoryInterface
+    private let featureRepository: LegacyFeatureRepositoryInterface
 
     private var coreCrypto: SafeCoreCryptoProtocol {
         get async throws {
@@ -152,7 +152,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     public init(
         coreCryptoProvider: CoreCryptoProviderProtocol,
-        featureRepository: FeatureRepositoryInterface
+        featureRepository: LegacyFeatureRepositoryInterface
     ) {
         self.coreCryptoProvider = coreCryptoProvider
         self.featureRepository = featureRepository

@@ -20,7 +20,7 @@ import SwiftUI
 import WireDesign
 import WireReusableUIComponents
 
-struct PersonalAccountCreationView: View {
+package struct PersonalAccountCreationView: View {
 
     @StateObject private var viewModel: PersonalAccountCreationViewModel
 

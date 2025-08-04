@@ -28,4 +28,11 @@ extension XCUIApplication {
     func developerFlag(_ developerFlag: DeveloperFlag, enabled: Bool) {
         launchArguments.append("--developer-flag=\(developerFlag.rawValue):\(enabled ? "true" : "false")")
     }
+
+    func loginUser(email: String, password: String) throws -> FirstTimePage {
+        try WelcomePage()
+            .enterEmailOrSSO(email)
+            .enterPassword(password)
+            .acceptFirstTimeAlert()
+    }
 }
